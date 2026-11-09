@@ -1,0 +1,61 @@
+{
+  "scope": [
+    "po_mill",
+    "po_timberyard",
+    "po_slag"
+  ],
+  "source_cross_check": "12 other F03 POI source plans unchanged from R3",
+  "gold_id_change": false,
+  "runtime_art": "Arena v1 pilot unchanged",
+  "geometry": {
+    "po_mill": {
+      "overlap_before": 294,
+      "overlap_after": 0,
+      "levels": [
+        0,
+        1
+      ],
+      "rooms": 12,
+      "stairs": 1
+    },
+    "po_timberyard": {
+      "overlap_before": 398,
+      "overlap_after": 0,
+      "levels": [
+        0,
+        1
+      ],
+      "rooms": 13,
+      "stairs": 1
+    },
+    "po_slag": {
+      "overlap_before": 444,
+      "overlap_after": 0,
+      "levels": [
+        -1,
+        0,
+        1
+      ],
+      "rooms": 13,
+      "stairs": 2
+    }
+  },
+  "native_engine_targets": {
+    "passed": 12,
+    "total": 12
+  },
+  "screenshots": [
+    "evidence/r4_po_mill.png",
+    "evidence/r4_po_timberyard.png",
+    "evidence/r4_po_slag.png"
+  ],
+  "limits": [
+    "C03 original absent: preview 78/81",
+    "E transfer stair not native-click-tested in R4",
+    "not 81-POI visual final"
+  ],
+  "verified_sha256": {
+    "PLAY_VEYRA_F03_FLOW_REWORK_R4.html": "4dbde2b4a960279e4c74b424b7dadd62ecd35ffb33776b11f87b5e24c0e6f13e",
+    "f03.ts": "f8f1d5f6aec45452c7d1adb50494009a0adf437395f5dd8cc843390d1ad8a421"
+  }
+}
