@@ -147,7 +147,13 @@ export interface RunState {
   /** Run-pinned additive source overlay; absent legacy runs keep v1 placements. */
   sourceLayoutVersion?: 2 | 3;
   /** Source map identity is mandatory for v3; older runs retain their own layout. */
-  sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string; veyra?: {sourceCommit:string;sourceDigest:string;originAu:[number,number];unitsPerTile:1.6|2;frameAu:[number,number];projection:'cell-centre-v1'} };
+  sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string; veyra?: import('./veyra/projection').VeyraViewIdentity };
+  /** VEYRA U=0.5 off-window durable deltas, keyed by global tile coordinates. */
+  veyraGlobalSources?: Record<number, { stock:number;hp:number;regrowAt?:number;burnt?:boolean;fire?:number;fireSpreadAt?:number;fireDepth?:number }>;
+  veyraGlobalTerrain?: Record<number,{t:number;until?:number;by?:string}>;
+  veyraGlobalDoors?: Record<number,boolean>;
+  veyraGlobalDiscovered?: Record<string,number>;
+  veyraOffscreenEntities?: Record<string,Entity>;
   /** Additive, pinned when a run is created or first resumed/saved. */
   airdrops?: {version:'airdrop-v1'; mapDigest:string; seed:number; runId:string; startedAt:number; nextIndex:number};
   wreckEconomy?: 'direct-v1' | 'recycler-v1';

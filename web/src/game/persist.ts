@@ -412,6 +412,7 @@ export async function saveDetailed(gs: GameState): Promise<SaveOutcome> {
     if (key && !warnedSave.has(key)) { warnedSave.add(key); console.warn(`[save] ${key}`); }   // category only; no payload
     return o;
   };
+  if ((gs as any).__ephemeralInspect) return record({ok:true,category:'ok',revision:gs.revision,localStatus:'skipped',idbStatus:'skipped'});
   if (!validate(gs)) return record({ ok: false, category: 'invalid-state', revision: null, localStatus: 'skipped', idbStatus: 'skipped', invariant: diagnoseInvalidState(gs) });
   let text: string;
   try { text = serializeSnapshot(gs); }
@@ -435,5 +436,5 @@ export async function saveDetailed(gs: GameState): Promise<SaveOutcome> {
   return record({ ok: false, category, revision: null, localStatus, idbStatus });
 }
 export async function save(gs: GameState): Promise<boolean> { return (await saveDetailed(gs)).ok; }
-export function saveSync(gs: GameState): boolean { try { if (!localReadable) return false; localStorage.setItem(LS, serializeSnapshot(gs)); return true; } catch { return false; } }
+export function saveSync(gs: GameState): boolean { try { if ((gs as any).__ephemeralInspect) return true; if (!localReadable) return false; localStorage.setItem(LS, serializeSnapshot(gs)); return true; } catch { return false; } }
 export async function wipeAll() { try { localStorage.removeItem(LS); } catch { /* */ } const d = await db(); if (d) await new Promise<void>(res => { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).delete(KEY); tx.oncomplete = () => res(); tx.onerror = () => res(); }); }
