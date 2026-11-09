@@ -144,7 +144,7 @@ export const WMP04R1_META = {
       ],
       "noStartingLootGrant": true,
       "repairFlightStatus": "NOT_APPROVED",
-      "gameplayOwnership": "Map location; A0/A3 unique-item custody; A8 interaction; Gameplay machines/vehicles"
+      "gameplayOwnership": "Authored map location; integrated gameplay commits custody, interactions and machine/vehicle effects"
     },
     {
       "id": "creature.western_abyss_leviathan",
@@ -160,7 +160,7 @@ export const WMP04R1_META = {
       "roamingDomain": true,
       "notBoundToFerryRoute": true,
       "spawnAndAiOwner": "GAMEPLAY",
-      "respawnAndUniqueCustodyOwner": "A0/GAMEPLAY",
+      "respawnAndUniqueCustodyOwner": "INTEGRATED_GAMEPLAY_RUNTIME",
       "warningBeforeLethalContact": true,
       "autoInstantDeath": false,
       "lootRewards": "UNDECIDED"
