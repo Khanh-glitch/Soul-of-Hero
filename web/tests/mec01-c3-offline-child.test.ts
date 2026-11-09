@@ -4,7 +4,8 @@
 // writes the settled state to MEC01_C3_RESUMED and a custody report to MEC01_C3_RESULT.
 // If no save is present (e.g. somebody ran this file directly), it SKIPS rather than failing the suite.
 import { describe, it, expect } from 'vitest';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import { settle } from '../src/game/sim';
 import { selectSnapshots, serializeSnapshot, validate } from '../src/game/persist';
 import { C, countItem } from '../src/game/engine';

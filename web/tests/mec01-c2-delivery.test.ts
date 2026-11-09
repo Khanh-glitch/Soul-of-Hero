@@ -24,7 +24,8 @@
 //   This file proves source->container->route->container->destination custody with real UIDs on real map geometry;
 //   it is not a claim of human driving skill, balance enjoyment or NATURAL_INPUT play.
 import { describe, it, expect, afterEach } from 'vitest';
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import { BAL, TILE, WW, WH, T, type Entity, type GameState, type Stack } from '../src/game/core';
 import { addItem, C, dispatch, newGame, cartWeight, invWeight, carryLimit, buildReason, removeItem } from '../src/game/engine';
 import { getWorld, setActiveLayout } from '../src/game/world';

@@ -1043,7 +1043,10 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
         }
       }
     }
-    let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
+    // R11 P0: a timed terrain state ends at its ABSOLUTE expiry. Settle the regrowth of that tile up to exactly that
+    // instant while the frozen/burnt/walled entry still exists, then remove it; the source continues on the underlying
+    // ground from there. Only the entries expiring in this slice are visited (no world scan).
+    let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { const ci = +k; settleRegrowthAt(r, ci % WW, Math.floor(ci / WW), m.untilAt ?? t); delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
     stepLootRespawn(r, t);
     syncDrops(t);

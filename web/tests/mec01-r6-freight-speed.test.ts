@@ -3,7 +3,7 @@
 // and the injected 40 ingots (labelled), the vehicle is placed by real kit placement and refuelled by a real fuel canister.
 // Output: evidence/mec01-r6/freight-speed-<LABEL>.json (LABEL env, default 'current').
 import {describe,it,expect,afterEach} from 'vitest';
-import {writeFileSync} from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import {BAL,TILE,WW,type Entity,type GameState} from '../src/game/core';
 import {addItem,C,dispatch,newGame,cartWeight} from '../src/game/engine';
 import {getWorld,setActiveLayout} from '../src/game/world';

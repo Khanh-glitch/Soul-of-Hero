@@ -6,7 +6,8 @@
 // Not claimed: natural walking from spawn, natural acquisition of the grants, or human play.
 // Same-cargo comparison (walk vs motorbike) is on the same road and the same 40 ingots; a hand cart is covered by b05-freight-compare.
 import {describe,it,expect,afterEach} from 'vitest';
-import {mkdirSync,writeFileSync} from 'node:fs';
+import { mkdirSync } from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import {type GameState,type RunState,type Entity,TILE,WW,BAL} from '../src/game/core';
 import {RECIPES,WORKBENCH_UPGRADE_III} from '../src/game/catalog';
 import {addItem,C,countItem,dispatch,markDirty,newGame,stepStations,buildReason} from '../src/game/engine';

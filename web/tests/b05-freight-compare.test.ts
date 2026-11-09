@@ -5,7 +5,7 @@
 // source-to-destination delivery test and NOT NATURAL_INPUT: cargo/positions are injected and the line oscillates.
 // The end-to-end single-haul delivery proof is tests/mec01-c2-delivery.test.ts (real crate -> real route -> real chest).
 import { describe, it, expect, afterEach } from 'vitest';
-import { writeFileSync } from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import { BAL, TILE, WW, type Entity, type GameState } from '../src/game/core';
 import { addItem, C, dispatch, newGame, cartWeight } from '../src/game/engine';
 import { getWorld, setActiveLayout } from '../src/game/world';

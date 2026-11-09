@@ -7,7 +7,8 @@
 // WHAT IS FIXTURE (labelled): [F1] player placement, [F2] raw-material grants for the bench (wood/stone/ingots/parts/
 // fasteners/spares), [F3] creatures cleared. Gear and pipe are CRAFTED, not granted — both paths consume the same stack.
 import { describe, it, expect } from 'vitest';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import { type GameState, type RunState, TILE, WW } from '../src/game/core';
 import { RECIPES } from '../src/game/catalog';
 import { addItem, countItem, dispatch, markDirty, newGame, stepStations, buildReason, blockGrid, C } from '../src/game/engine';
