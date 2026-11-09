@@ -15,6 +15,7 @@ import { addItem, countItem, dispatch, markDirty, newGame, stepStations, buildRe
 import { setActiveLayout, getWorld } from '../src/game/world';
 import { LOOT_GRAMMAR_CURRENT, lootGrammarRoll, isKnownLootGrammar } from '../src/game/loot-ecology';
 import { SHIPPING_LOOT_SOURCES, specForSite, validLootSourceContract } from '../src/game/loot-source-spec';
+import { validLootSourceContractV3 } from '../src/game/loot-source-v3';
 import type { StaticEnt } from '../src/game/world';
 
 const START = Date.UTC(2026, 10, 8, 9, 0, 0);
@@ -78,7 +79,7 @@ describe('B1: role × grade × access × stock — the three authorized sources 
   });
   it('the run contract stays valid (all three accesses as expected) and the b01 grammar still resolves', () => {
     const g = start(); const r = g.run!;
-    expect(validLootSourceContract(r.lootEcology!.sourceContract!)).toBe(true);
+    expect(validLootSourceContractV3(r.lootEcology!.sourceContract as any)).toBe(true);   // WEC-01: the new run contract is V3
     expect(isKnownLootGrammar('b01-v1')).toBe(true);
     expect(isKnownLootGrammar(LOOT_GRAMMAR_CURRENT)).toBe(true);
   });

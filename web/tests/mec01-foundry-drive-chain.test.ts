@@ -9,7 +9,7 @@ import {RECIPES} from '../src/game/catalog';
 import {addItem,countItem,dispatch,markDirty,newGame,stepStations,buildReason,lootSiteAccess} from '../src/game/engine';
 import {setActiveLayout,getWorld} from '../src/game/world';
 import {serializeSnapshot,selectSnapshots} from '../src/game/persist';
-import {validLootSourceContract} from '../src/game/loot-source-spec';
+import {validLootSourceContractV3} from '../src/game/loot-source-v3';
 
 const START=Date.UTC(2026,10,5);
 let n=0;
@@ -27,7 +27,7 @@ function legalTileNear(g:GameState,cx:number,cy:number):[number,number]{
 describe('MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared)', () => {
   it('the authored cache is physically reachable from spawn, the contract is valid, and the gear comes from it at cycle 0', () => {
     const g=start();const r=g.run!;
-    expect(validLootSourceContract(r.lootEcology!.sourceContract)).toBe(true);
+    expect(validLootSourceContractV3(r.lootEcology!.sourceContract as any)).toBe(true);   // WEC-01: V3 contract
     const spec=getWorld('shipping_fresh').statics.find(s=>s.kind==='loot'&&s.poi==='factory'&&s.loot?.some(([k])=>k==='iron_sword'))!;
     expect(lootSiteAccess(r,spec)).toBe('open');
     expect(r.custody[cacheOf(r).c!].slots.some(s=>s?.key==='mechanical_gear')).toBe(true);

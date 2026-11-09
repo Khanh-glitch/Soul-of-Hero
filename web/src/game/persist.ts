@@ -2,7 +2,8 @@ import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} f
 import { recoveryPlanFor, COMPONENT_RECIPES } from './recycler';
 import { combatKindOf } from './stimulus';
 import { poiContractDigest } from './poi-access';
-import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, isKnownLootGrammar, lootClass, lootRoll, lootSiteIndex, deferredLootSourceIds, deferredLootTable } from './loot-ecology';
+import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, LOOT_GRAMMAR_V3, LOOT_LIFECYCLE_FINITE_V2, isKnownLootGrammar, lootClass, lootRoll, lootSiteIndex, deferredLootSourceIds, drawnOnceStacks, onceSourceId } from './loot-ecology';
+import { validLootSourceContractV3, SHIPPING_LOOT_SOURCES_V3 as LOOT_SOURCE_V3_SPECS } from './loot-source-v3';
 import { validLootSourceContract, specForSite } from './loot-source-spec';
 import { creatorLootV1 } from './creator-loot';
 import { validIntel } from './expedition-intel';
@@ -10,7 +11,7 @@ import { validIntel } from './expedition-intel';
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
 import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, VENDOR_SPARES, VENDOR_SECURED } from './catalog';
-import { newGame, renewableLoot } from './engine';
+import { newGame, renewableBase } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
 import { getWorld, hasLayout, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
@@ -266,9 +267,15 @@ export function validate(raw: any): GameState | null {
     const policy=r.lootEcology;
     if(!obj(policy) || policy.version!==LOOT_ECOLOGY_VERSION || !obj(policy.cycles) || (policy.grammar!==undefined && !isKnownLootGrammar(policy.grammar)) || !r.creatorLootV1 || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId))return null;
     // B05: the recorded physical source contract must match the current versioned spec (digest + every access). Other grammars carry none.
-    if (policy.grammar===LOOT_GRAMMAR_CURRENT ? !validLootSourceContract(policy.sourceContract) : policy.sourceContract!==undefined) return null;
+    const contractOk = policy.grammar === LOOT_GRAMMAR_V3 ? validLootSourceContractV3(policy.sourceContract) : policy.grammar === LOOT_GRAMMAR_CURRENT ? validLootSourceContract(policy.sourceContract) : policy.sourceContract === undefined;
+    if (!contractOk) return null;
+    // Lifecycle marker: only new B05/V3 runs carry it; pre-WEC saves must not.
+    if (policy.lifecycle !== undefined && (policy.lifecycle !== LOOT_LIFECYCLE_FINITE_V2 || (policy.grammar !== LOOT_GRAMMAR_CURRENT && policy.grammar !== LOOT_GRAMMAR_V3))) return null;
     // B05 one-time door-gated draws: only door-gated sourceIds, only under the B05 grammar, no duplicates.
-    if (policy.deferredLoot !== undefined && (policy.grammar !== LOOT_GRAMMAR_CURRENT || !Array.isArray(policy.deferredLoot) || new Set(policy.deferredLoot).size !== policy.deferredLoot.length || policy.deferredLoot.some((id: any) => !deferredLootSourceIds().includes(id)))) return null;
+    // One-time draws: only ids whose source carries one-time stock under this grammar, no duplicates.
+    const onceIds = policy.grammar === LOOT_GRAMMAR_V3 ? LOOT_SOURCE_V3_SPECS.filter(sp => sp.once.length > 0).map(sp => sp.sourceId) : policy.grammar === LOOT_GRAMMAR_CURRENT ? deferredLootSourceIds() : null;
+    if (policy.onceOwed !== undefined && (!onceIds || !Array.isArray(policy.onceOwed) || new Set(policy.onceOwed).size !== policy.onceOwed.length || policy.onceOwed.some((id: any) => !onceIds.includes(id) || policy.deferredLoot?.includes(id)))) return null;
+    if (policy.deferredLoot !== undefined && (!onceIds || !Array.isArray(policy.deferredLoot) || new Set(policy.deferredLoot).size !== policy.deferredLoot.length || policy.deferredLoot.some((id: any) => !onceIds.includes(id)))) return null;
     for(const [key,value] of Object.entries(policy.cycles)) {
       if(!/^(0|[1-9][0-9]*)$/.test(key) || !Number.isSafeInteger(value) || (value as number)<1) return null;
       const site=world.statics.find(s=>s.kind==='loot' && lootSiteIndex(s)===Number(key));
@@ -297,8 +304,8 @@ export function validate(raw: any): GameState | null {
         if(slots.reduce((n:number,s:any)=>n+(s?.qty||0),0)>(site.cash||0))return null;
       } else {
         const cycle=r.lootEcology?.cycles[lootSiteIndex(site)] || 0;
-        const base=r.lootEcology && lootClass(site) && cycle>0 ? renewableLoot(site) : site.loot || [];
-        const drawn = r.lootEcology?.grammar===LOOT_GRAMMAR_CURRENT && r.lootEcology?.deferredLoot?.includes(specForSite(site)?.sourceId ?? '') ? deferredLootTable(site) : []; const available = new Map<string,number>(); for(const [k,q] of [...base,...lootRoll(r,site,cycle),...drawn]) available.set(k,(available.get(k)||0)+q); const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
+        const base=r.lootEcology && lootClass(site) && cycle>0 ? renewableBase(r,site) : site.loot || [];
+        const drawn = r.lootEcology?.deferredLoot?.includes(onceSourceId(r, site) ?? '') ? drawnOnceStacks(r, site) : []; const available = new Map<string,number>(); for(const [k,q] of [...base,...lootRoll(r,site,cycle),...drawn]) available.set(k,(available.get(k)||0)+q); const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
         for(const stack of slots){if(!stack)continue;const key=stack.key==='blueprint'?`blueprint:${stack.meta}`:stack.key;const left=(available.get(key)||0)-stack.qty;if(left<0)return null;available.set(key,left);}
       }
     }

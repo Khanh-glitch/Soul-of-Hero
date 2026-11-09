@@ -4,8 +4,9 @@ import { recoveryPlan, recoveryPlanFor, recoveryFits, COMPONENT_RECIPES } from '
 import { recordIntel, gateKey, placeOfPoi } from './expedition-intel';
 import { poiPowerMissingReason, poiDoorContract, poiGeneratorContract, poiGenerator, poiPowered, interiorRelease, doorwayOccupied, advancePoiAccess, poiContractDigest } from './poi-access';
 import { vehicleClear, vehicleExitPoint } from './motorbike';
-import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, lootSlots, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId, lootSiteFinite, deferredLootGrammar } from './loot-ecology';
+import { LOOT_ECOLOGY_VERSION, LOOT_GRAMMAR_CURRENT, LOOT_GRAMMAR_V3, LOOT_LIFECYCLE_FINITE_V2, lootSlots, LOOT_CLASSES, lootClass, lootRoll, lootSiteIndex, lootSourceId, lootSiteFinite, pendingOnceStacks, onceSourceId } from './loot-ecology';
 import { buildLootSourceContract, specForSite, type PhysicalAccess } from './loot-source-spec';
+import { buildLootSourceContractV3, v3SpecForSite } from './loot-source-v3';
 import { creatorLootV1 } from './creator-loot';
 // Authoritative game engine: GameState + dispatch(intent) → committed state + receipt | rejection.
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
@@ -158,7 +159,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   if (supportsAirdrops(r.layoutId!)) r.airdrops={version:'airdrop-v1',mapDigest:r.sourceMap!.mapDigest!,seed:r.seed,runId:r.id,startedAt:r.startedAt,nextIndex:0};
   r.poiAccessVersion='poi-access-v1';
   r.poiAccessDigest=poiContractDigest(w);
-  if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') { r.creatorLootV1=true; r.lootEcology={version:LOOT_ECOLOGY_VERSION,cycles:{},grammar:LOOT_GRAMMAR_CURRENT}; }
+  if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') { r.creatorLootV1=true; r.lootEcology={version:LOOT_ECOLOGY_VERSION,cycles:{},grammar:LOOT_GRAMMAR_V3,lifecycle:LOOT_LIFECYCLE_FINITE_V2}; }
   const reg = 0; r.spawnRegion = reg; const sp = chooseLegalSpawn(r); if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'}; r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
   r.custody.eq = { id: 'eq', kind: 'eq', slots: [null, null, null] };
@@ -193,6 +194,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   if(site){const e:Entity={id:uid(r,'e'),kind:'recycler',x:site.tx*TILE+8,y:site.ty*TILE+8,tx:site.tx,ty:site.ty,poi:'factory',label:'Foundry Recycler',station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',0).id,outC:mkContainer(r,'out',4).id}};r.entities[e.id]=e;}
   // B05 (loot-source-v2): measure physical access once from the real collision grid, record it, then roll initial stock.
   if (r.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT) r.lootEcology.sourceContract = buildLootSourceContract(w, site => lootSiteAccess(r, site));
+  if (r.lootEcology?.grammar === LOOT_GRAMMAR_V3) r.lootEcology.sourceContract = buildLootSourceContractV3(w, lootAccessMeasurer(r));
   for (const [s, c] of pendingRolls) {
     for (const [key,qty] of lootRoll(r,s,0)) {
       const i=c.slots.findIndex(v=>!v); if(i<0)throw new Error('Loot ecology exceeded authored container capacity');
@@ -202,6 +204,8 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
       if(stack)receipt(r,now,'loot.roll',`${lootSourceId(r,s)}:${LOOT_ECOLOGY_VERSION}:cycle0:slot${i}:${stack.key}${stack.meta?':'+stack.meta:''}x${stack.qty}:${stack.uid}`);
     });
   }
+  // One-time stock whose source is physically open is drawn at start (atomic, exact-once); door-gated stock waits for its opening.
+  drawPendingOnce(r, now, 'start');
   r.wreckEconomy = wreckEconomy(r);
   // creatures (deterministic per run seed) + elders
   for (let k = 0; k < 900 && r.creatures.length < 150; k++) trySpawnCreature(r, now, sp.tx * TILE, sp.ty * TILE, 16);
@@ -874,15 +878,15 @@ export function renewableLoot(site: StaticEnt): [string, number][] {
 /** Physical access to a static cache from the run spawn, using the real collision grid (blockedAt: terrain, buildings, closed doors).
  * 'open': a tile within interaction range is reachable with no door opened. 'door-required': only reachable if every door is opened.
  * 'unreachable': not reachable even then. Never grants access: this only measures geometry. */
-export function lootSiteAccess(r: RunState, site: StaticEnt): PhysicalAccess {
+/** Physical access measurer for one run state. Two full flood fills (doors shut / doors passable) are computed once;
+ * each site then reads its near-tile neighbourhood. Same semantics as the per-site search it replaces. */
+export function lootAccessMeasurer(r: RunState): (site: StaticEnt) => PhysicalAccess {
   const doorTiles = new Set(Object.values(r.entities).filter(e => e.kind === 'door' && e.tx !== undefined && e.ty !== undefined).map(e => e.ty! * WW + e.tx!));
   const start = Math.floor(r.player.y / TILE) * WW + Math.floor(r.player.x / TILE);
-  const near = (i: number) => { const x = i % WW, y = (i / WW) | 0; return Math.hypot(x - site.tx, y - site.ty) <= 2.2; };
-  const reach = (allowDoors: boolean): boolean => {
+  const flood = (allowDoors: boolean): Uint8Array => {
     const seen = new Uint8Array(WW * WH); const q: number[] = [start]; seen[start] = 1;
     for (let h = 0; h < q.length; h++) {
-      const i = q[h]; if (near(i)) return true;
-      const x = i % WW, y = (i / WW) | 0;
+      const i = q[h]; const x = i % WW, y = (i / WW) | 0;
       for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
         const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= WW || ny >= WH) continue;
         const j = ny * WW + nx; if (seen[j]) continue;
@@ -890,14 +894,22 @@ export function lootSiteAccess(r: RunState, site: StaticEnt): PhysicalAccess {
         seen[j] = 1; q.push(j);
       }
     }
+    return seen;
+  };
+  const shut = flood(false), passable = flood(true);
+  const touches = (seen: Uint8Array, site: StaticEnt): boolean => {
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+      if (Math.hypot(dx, dy) > 2.2) continue;
+      const x = site.tx + dx, y = site.ty + dy; if (x < 0 || y < 0 || x >= WW || y >= WH) continue;
+      if (seen[y * WW + x]) return true;
+    }
     return false;
   };
-  if (reach(false)) return 'open';
-  if (reach(true)) return 'door-required';
-  return 'unreachable';
+  return (site: StaticEnt) => touches(shut, site) ? 'open' : touches(passable, site) ? 'door-required' : 'unreachable';
 }
+export function lootSiteAccess(r: RunState, site: StaticEnt): PhysicalAccess { return lootAccessMeasurer(r)(site); }
 export function lootCooldown(site: StaticEnt, r?:RunState): number {
-  const spec = r?.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT ? specForSite(site) : null; if (spec) return spec.cooldownHours*HOUR;
+  const spec = r?.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT ? specForSite(site) : r?.lootEcology?.grammar === LOOT_GRAMMAR_V3 ? v3SpecForSite(site) : null; if (spec) return spec.cooldownHours*HOUR;
   const kind=r?.lootEcology && lootClass(site); if(kind)return LOOT_CLASSES[kind].hours*HOUR;
   const stock = renewableLoot(site);
   const industrial = stock.some(([k]) => ['spares', 'scrap', 'iron_ore', 'iron_ingot', 'coal', 'mechanical_parts', 'fasteners'].includes(k));
@@ -906,28 +918,46 @@ export function lootCooldown(site: StaticEnt, r?:RunState): number {
 }
 /** Ordinary replenishment is the old authored renewable stock plus a bounded W06 roll. */
 /** W06 class renewal is pinned and unchanged. B05 'finite' stock governs only the grammar pool (see lootGrammarRoll). */
-export function renewableStock(r:RunState,site:StaticEnt,cycle:number):[string,number][] {
-  // Finite sources (advanced/Vault class or a finite B05 spec) are never recreated by the ordinary timer.
-  if (lootSiteFinite(r, site)) return [];
-  return [...renewableLoot(site),...lootRoll(r,site,cycle)];
+/** Authored stacks that ordinary renewal may restock. V3 specs name them explicitly; every other authored stack is never re-minted. */
+export function renewableBase(r: RunState, site: StaticEnt): [string, number][] {
+  if (r.lootEcology?.grammar === LOOT_GRAMMAR_V3) { const s = v3SpecForSite(site); if (s) return s.stock === 'renewable' ? (site.loot || []).filter(([k]) => s.renewAuthored.includes(k)) : []; }
+  return renewableLoot(site);
 }
-/** B05 door-gated sources: on a legal physical opening, if the source is now reachable, draw its one-time stock exactly once. */
-function rollDeferredSealedLoot(r: RunState, now: number) {
-  if (r.lootEcology?.grammar !== LOOT_GRAMMAR_CURRENT) return;
+export function renewableStock(r:RunState,site:StaticEnt,cycle:number):[string,number][] {
+  // Finite sources (advanced/Vault class or a finite spec on a finite-v2 run) are never recreated by the ordinary timer.
+  if (lootSiteFinite(r, site)) return [];
+  return [...renewableBase(r,site),...lootRoll(r,site,cycle)];
+}
+/** One-time grammar draws (B05 door-gated and V3 once stock). Atomic: a source receives its whole table or stays owed.
+ * reason 'start': open sources at run start. 'door': a legal poi-door opening, when the source is now reachable from the live collision grid.
+ * 'retry': only sources previously blocked by a full container (onceOwed). Withdrawals never draw an unopened source. */
+export function drawPendingOnce(r: RunState, now: number, reason: 'start' | 'door' | 'retry') {
+  const g = r.lootEcology?.grammar; if (g !== LOOT_GRAMMAR_CURRENT && g !== LOOT_GRAMMAR_V3) return;
+  let meas: ((site: StaticEnt) => PhysicalAccess) | undefined;
   for (const site of getWorld(r.layoutId || 'shipping').statics) {
     if (site.kind !== 'loot') continue;
-    const spec = specForSite(site); if (!spec || spec.access.kind !== 'poi-door') continue;
-    const stacks = deferredLootGrammar(r, site); if (!stacks.length) continue;
-    if (lootSiteAccess(r, site) !== 'open') continue;
+    const stacks = pendingOnceStacks(r, site); if (!stacks.length) continue;
+    const sourceId = onceSourceId(r, site)!;
+    const owed = !!r.lootEcology?.onceOwed?.includes(sourceId);
+    const openSpec = (v3SpecForSite(site)?.access.kind ?? specForSite(site)?.access.kind) === 'open';
+    if (reason === 'start' && !openSpec) continue;
+    if (reason === 'retry' && !owed) continue;
+    meas ??= lootAccessMeasurer(r);
+    if (meas(site) !== 'open') continue;
     const e = Object.values(r.entities).find(v => v.kind === 'loot' && v.tx === site.tx && v.ty === site.ty);
     if (!e?.c || !r.custody[e.c]) continue;
     const c = r.custody[e.c];
-    for (const [key, qty] of stacks) {
-      const i = c.slots.findIndex(v => !v); if (i < 0) break;
-      const st = mkStack(r, key, qty); c.slots[i] = st;
-      receipt(r, now, 'loot.roll', `${spec.sourceId}:${LOOT_GRAMMAR_CURRENT}:door-open:slot${i}:${key}x${qty}:${st.uid}`);
+    const free = c.slots.filter(v => !v).length;
+    if (free < stacks.length) {
+      if (!owed) (r.lootEcology!.onceOwed ??= []).push(sourceId);
+      receipt(r, now, 'loot.once.blocked', `${sourceId}:need${stacks.length}:free${free}`); markDirty(); continue;
     }
-    (r.lootEcology!.deferredLoot ??= []).push(spec.sourceId);
+    stacks.forEach(([key, qty]) => {
+      const i = c.slots.findIndex(v => !v); const st = mkStack(r, key, qty); c.slots[i] = st;
+      receipt(r, now, 'loot.once', `${sourceId}:${g}:slot${i}:${key}x${qty}:${st.uid}`);
+    });
+    (r.lootEcology!.deferredLoot ??= []).push(sourceId);
+    if (owed) r.lootEcology!.onceOwed = r.lootEcology!.onceOwed!.filter(id => id !== sourceId);
     markDirty();
   }
 }
@@ -1277,7 +1307,7 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
     // Only a successful withdrawal/use/drop can empty a public crate. Its authored
     // site remains recorded even after the physical entity and container disappear.
     const source = it.type === 'move' ? it.from : (it.type === 'drop' || it.type === 'useItem') ? it.c : undefined;
-    if (typeof source === 'string') { retireEmptyLoot(r, source, now); const e=Object.values(r.entities).find(e=>e.kind==='airdrop'&&e.c===source);if(e){if(!C(r,source).slots.some(Boolean)){receipt(r,now,'airdrop.empty',String(e.airdrop!.index));removeEntity(r,e);}else if(e.airdrop!.phase==='open'){e.airdrop!.phase='partial';receipt(r,now,'airdrop.partial',String(e.airdrop!.index));}} }
+    if (typeof source === 'string') { retireEmptyLoot(r, source, now); drawPendingOnce(r, now, 'retry'); const e=Object.values(r.entities).find(e=>e.kind==='airdrop'&&e.c===source);if(e){if(!C(r,source).slots.some(Boolean)){receipt(r,now,'airdrop.empty',String(e.airdrop!.index));removeEntity(r,e);}else if(e.airdrop!.phase==='open'){e.airdrop!.phase='partial';receipt(r,now,'airdrop.partial',String(e.airdrop!.index));}} }
     // The receipt ring is intentionally bounded for UI/history, but irreversible command
     // identity is durable run state and must never be evicted: an old replay is still a replay.
     r.seenIntents.push(it.id);
@@ -1780,7 +1810,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         }
         r.poiAccessDigest=poiContractDigest(getWorld(r.layoutId||'shipping'));
         e.poiDoor={version:'poi-access-v1',closeAt:now+BAL.poiAccess.doorOpenMs,scans:(e.poiDoor?.scans||0)+(cardUid?1:0),...(cardUid?{lastCardUid:cardUid}:e.poiDoor?.lastCardUid?{lastCardUid:e.poiDoor.lastCardUid}:{})};
-        e.open=true;markDirty();rollDeferredSealedLoot(r,now);
+        e.open=true;markDirty();drawPendingOnce(r,now,'door');
         return ok(cardUid?'poi.card.scan':'poi.door.open',`${e.id}:${exit?'interior-release':cardUid?`${cardUid}:remaining=${remaining}`:'powered'}`,cardUid?`${(d.cardClass??'vault')[0].toUpperCase()+(d.cardClass??'vault').slice(1)} card scanned; ${remaining} uses remain.`:exit?'Interior release opened the door.':'Powered gate opened.');
       }
       e.open=true;markDirty();return ok('door',`${e.id}:open`);

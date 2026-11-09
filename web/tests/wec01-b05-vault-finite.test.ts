@@ -29,7 +29,7 @@ describe('B05 Vault: the advanced grammar is rolled once, only after the physica
     expect(act(g,{type:'door',eid:door(g).id},START+2).ok).toBe(true);
     expect(door(g).open).toBe(true);
     expect(count(g,'refined_iron_ingot')).toBe(2);expect(count(g,'medkit')).toBe(1);
-    expect(r.lootEcology!.deferredLoot).toEqual(['shipping.factory.vault.advanced-keycard']);
+    expect(r.lootEcology!.deferredLoot).toEqual(expect.arrayContaining(['shipping.factory.vault1.advanced-keycard']));expect(new Set(r.lootEcology!.deferredLoot).size).toBe(r.lootEcology!.deferredLoot!.length);
   });
   it('closing and reopening the door never rolls the one-time stock again', () => {
     const g=fresh();const r=g.run!;addItem(r,'inv','keycard',2);
@@ -47,7 +47,7 @@ describe('B05 Vault: the advanced grammar is rolled once, only after the physica
     expect(back).toBeTruthy();
     const bv=Object.values(back.run!.entities).find(e=>e.kind==='loot'&&e.poi==='factory_vault'&&e.tx===160&&e.ty===96)!;
     expect(C(back.run!,bv.c!).slots.filter(s=>s?.key==='refined_iron_ingot').reduce((a,s)=>a+s!.qty,0)).toBe(2);
-    expect(back.run!.lootEcology!.deferredLoot).toEqual(['shipping.factory.vault.advanced-keycard']);
+    expect(back.run!.lootEcology!.deferredLoot).toEqual(r.lootEcology!.deferredLoot);
     const dr=Object.values(back.run!.entities).find(e=>e.kind==='door'&&e.locked==='keycard')!;
     at(back,dr.x,dr.y+16);
     dispatch(back,{id:'w1-reload-'+(++n),type:'door',eid:dr.id},START+5);

@@ -168,7 +168,7 @@ export interface RunState {
   creatorLootV1?: true;
   renewedLootSites?: number[];
   /** New-run pinned authored-site economy; old runs retain their original tables. */
-  lootEcology?: { version: 'w06-v1'; cycles: Record<string,number>; /** B01 family×grade grammar; absent on pre-B01 runs (no reroll). */ grammar?: 'b01-v1' | 'b04-v1' | 'b05-v1'; /** B05 only: digest-pinned physical source contract measured at run start. */ sourceContract?: import('./loot-source-spec').LootSourceContract; /** B05 only: door-gated sources whose one-time grammar stock was already drawn (sourceIds). */ deferredLoot?: string[] };
+  lootEcology?: { version: 'w06-v1'; cycles: Record<string,number>; /** B01 family×grade grammar; absent on pre-B01 runs (no reroll). */ grammar?: 'b01-v1' | 'b04-v1' | 'b05-v1' | 'loot-source-v3'; /** B05 (v2) and V3 physical source contract measured at run start; the version field selects the validator. */ sourceContract?: import('./loot-source-spec').LootSourceContract | import('./loot-source-v3').LootSourceV3Contract; /** One-time grammar draws already made (sourceIds). Door-gated B05 or any V3 source with once stock. */ deferredLoot?: string[]; /** One-time draws blocked by a full container, owed and retried on withdrawal (sourceIds). */ onceOwed?: string[]; /** Present on runs created after WEC-01 Slice 1: finite sources never respawn on ordinary timers. Absent on pre-WEC saves (historical renewal kept). */ lifecycle?: 'finite-v2' };
   poiAccessVersion?: 'poi-access-v1';
   poiAccessDigest?: string;
   natureTrees?: {tx:number;ty:number;until:number}[];

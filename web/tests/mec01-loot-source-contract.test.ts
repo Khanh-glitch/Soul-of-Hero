@@ -3,7 +3,8 @@
 import {describe,it,expect} from 'vitest';
 import {getWorld,setActiveLayout} from '../src/game/world';
 import {newGame,dispatch,blockedAt,lootSiteAccess,renewableStock,lootCooldown,markDirty} from '../src/game/engine';
-import {lootGrammarRoll,lootRoll,LOOT_B05_TOOLBOX_GRADE,lootSlots,LOOT_GRAMMAR_CURRENT} from '../src/game/loot-ecology';
+import {lootGrammarRoll,lootRoll,LOOT_B05_TOOLBOX_GRADE,lootSlots,LOOT_GRAMMAR_CURRENT,LOOT_GRAMMAR_V3} from '../src/game/loot-ecology';
+import {validLootSourceContractV3} from '../src/game/loot-source-v3';
 import {SHIPPING_LOOT_SOURCES,specForSite,lootSourceContractDigest,validLootSourceContract,lootSignature,expectedAccess} from '../src/game/loot-source-spec';
 import {serializeSnapshot,selectSnapshots} from '../src/game/persist';
 import {TILE,type GameState,type RunState} from '../src/game/core';
@@ -36,10 +37,10 @@ describe('identity: authored sourceId + poi + full loot signature, never item pr
 describe('physical access is measured from the real collision grid, not from metadata', () => {
   it('open caches are reachable from spawn without opening a door; the vault is sealed by its keycard door', () => {
     const g=freshGame();const r=g.run!;const c=r.lootEcology!.sourceContract!;
-    expect(validLootSourceContract(c)).toBe(true);
-    expect(c.sites['shipping.factory.exterior.industrial-toolbox'].access).toBe('open');
-    expect(c.sites['shipping.tp.bow-cache.standard-toolbox'].access).toBe('open');
-    expect(c.sites['shipping.factory.vault.advanced-keycard'].access).toBe('door-required');
+    expect(validLootSourceContractV3(c as any)).toBe(true);
+    expect(c.sites['shipping.factory.exterior.industrial'].access).toBe('open');
+    expect(c.sites['shipping.tp.bow-cache.textile'].access).toBe('open');
+    expect(c.sites['shipping.factory.vault1.advanced-keycard'].access).toBe('door-required');
   });
   it('the vault door is a real collision block while closed, and the vault cache becomes reachable only once that door is opened', () => {
     const g=freshGame();const r=g.run!;
@@ -74,16 +75,19 @@ describe('fail closed: contract tampering and sealed sources roll nothing', () =
 describe('stock, capacity, cooldown, and unique-item exclusion', () => {
   it('renewable toolbox sources roll per cycle within capacity; finite sources never renew', () => {
     const g=freshGame();const r=g.run!;const fx=site('factory','iron_sword');
+    // WEC-01: pool is a choice of alternatives. Each cycle gives refined_iron_ingot plus exactly one alternative.
     for (let c=1;c<=12;c++) {
       const out=lootGrammarRoll(r,fx,c);
       expect(out.length, `cycle ${c}`).toBeLessThanOrEqual(SPEC('factory-exterior-industrial').capacity);
-      expect(out.map(([k])=>k)).toEqual(expect.arrayContaining(['refined_iron_ingot','mechanical_gear']));
+      const ks=out.map(([k])=>k);
+      expect(ks).toContain('refined_iron_ingot');
+      expect(ks.some(k=>k==='mechanical_gear'||k==='metal_pipe')).toBe(true);
     }
     // finite: the B05 grammar pool never renews; the pinned W06 class renewal is unchanged (vault still renews its W06 stock).
     const vault=site('factory_vault','core_fire');
     const grammarKeys=['refined_iron_ingot','mechanical_gear','metal_pipe','iron_plate','fasteners','scrap'];
     expect(renewableStock(r,vault,1).some(([k])=>grammarKeys.includes(k))).toBe(false);
-    expect(renewableStock(r,fx,1).some(([k])=>k==='mechanical_gear')).toBe(true);
+    expect(renewableStock(r,fx,1).some(([k])=>k==='mechanical_gear'||k==='metal_pipe')).toBe(true);   // WEC-01: one pool alternative per cycle
   });
   it('cooldown comes from the versioned spec (24 h toolbox)', () => {
     const g=freshGame();expect(lootCooldown(site('factory','iron_sword'),g.run!)).toBe(24*3600*1000);
@@ -104,8 +108,8 @@ describe('save/reload: the recorded contract and drawn stock survive; withdrawal
     const g=freshGame();const before=JSON.stringify(g.run!.custody);
     const back=selectSnapshots([serializeSnapshot(g),null]).gs!;
     expect(back).toBeTruthy();
-    expect(back.run!.lootEcology!.grammar).toBe(LOOT_GRAMMAR_CURRENT);
-    expect(validLootSourceContract(back.run!.lootEcology!.sourceContract)).toBe(true);
+    expect(back.run!.lootEcology!.grammar).toBe(LOOT_GRAMMAR_V3);
+    expect(validLootSourceContractV3(back.run!.lootEcology!.sourceContract as any)).toBe(true);
     expect(JSON.stringify(back.run!.custody)).toBe(before);
   });
   it('a tampered recorded contract is rejected at load (fail closed, not silently re-rolled)', () => {

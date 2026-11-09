@@ -1,6 +1,7 @@
 import { WW, type RunState } from './core';
 import { type StaticEnt } from './world';
 import { specForSite, validLootSourceContract, SHIPPING_LOOT_SOURCES, type SpecGrade } from './loot-source-spec';
+import { v3SpecForSite, validLootSourceContractV3, type LootSourceV3Spec } from './loot-source-v3';
 import { ITEMS } from './catalog';
 
 /** W06 SOH_NEW_TUNED v1, not historical LI percentages or timer parity.
@@ -52,7 +53,11 @@ export const LOOT_GRAMMAR_VERSION = 'b01-v1' as const;
 export const LOOT_GRAMMAR_B04 = 'b04-v1' as const;
 /** B05 (loot-source-v2, SOH_PROVISIONAL): new runs only. Specified sites roll by authored grade; unspecified sites keep B04. */
 export const LOOT_GRAMMAR_CURRENT = 'b05-v1' as const;
-export function isKnownLootGrammar(v: unknown): v is 'b01-v1' | 'b04-v1' | 'b05-v1' { return v === LOOT_GRAMMAR_VERSION || v === LOOT_GRAMMAR_B04 || v === LOOT_GRAMMAR_CURRENT; }
+/** WEC-01 Slice 2: new runs. Covers all 14 authored Shipping Fresh boxes via loot-source-v3. */
+export const LOOT_GRAMMAR_V3 = 'loot-source-v3' as const;
+export function isKnownLootGrammar(v: unknown): v is 'b01-v1' | 'b04-v1' | 'b05-v1' | 'loot-source-v3' { return v === LOOT_GRAMMAR_VERSION || v === LOOT_GRAMMAR_B04 || v === LOOT_GRAMMAR_CURRENT || v === LOOT_GRAMMAR_V3; }
+/** Lifecycle marker for new runs: finite sources never respawn on ordinary timers. Pre-WEC saves carry no marker and keep their historical renewal. */
+export const LOOT_LIFECYCLE_FINITE_V2 = 'finite-v2' as const;
 /** Toolbox grade pools for B05. Mid keeps the B04 toolbox pool; high is an industrial intermediate cache. */
 export const LOOT_B05_TOOLBOX_GRADE: Record<SpecGrade, { fixed: readonly (readonly [string, number])[]; pool: readonly (readonly [string, number])[] }> = {
   low:  { fixed: [], pool: [['fasteners', 1], ['scrap', 1]] },
@@ -94,9 +99,44 @@ function hashPick(input: string): number {
 export const LOOT_B05_ADVANCED_ONCE: readonly (readonly [string, number])[] = [['refined_iron_ingot', 2], ['medkit', 1]];
 /** Finite sources: a B05 spec with stock 'finite', or any advanced-class cache (its own W06 comment already says exceptional finds are finite). */
 export function lootSiteFinite(r: RunState, site: StaticEnt): boolean {
-  const spec = r.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT ? specForSite(site) : null;
-  if (spec) return spec.stock === 'finite';
+  const g = r.lootEcology?.grammar;
+  if (g === LOOT_GRAMMAR_V3) { const s = v3SpecForSite(site); return s ? s.stock === 'finite' : lootClass(site) === 'advanced'; }
+  // Grandfather: any run without the finite-v2 lifecycle marker keeps its pre-WEC renewal exactly.
+  if (r.lootEcology?.lifecycle !== LOOT_LIFECYCLE_FINITE_V2) return false;
+  if (g === LOOT_GRAMMAR_CURRENT) { const spec = specForSite(site); if (spec) return spec.stock === 'finite'; }
   return lootClass(site) === 'advanced';
+}
+/** V3 ordinary renewal pool for one cycle. Finite and pool-less sources roll nothing here. */
+function v3PoolRoll(r: RunState, site: StaticEnt, cycle: number): [string, number][] {
+  if (!validLootSourceContractV3(r.lootEcology?.sourceContract)) return [];
+  const spec = v3SpecForSite(site); if (!spec || spec.stock !== 'renewable' || (!spec.pool.length && !spec.fixed?.length)) return [];
+  // Same hash prefix as the historical b05 roll: the same seed/source/cycle keeps its authored alternative when a run is re-classified.
+  const base = `${LOOT_GRAMMAR_CURRENT}|${r.seed}|${lootSourceId(r, site)}|${cycle}|${spec.id}|${spec.grade}`;
+  const alt = spec.pool.length ? spec.pool[hashPick(base) % spec.pool.length] : [];
+  return [...(spec.fixed ?? []), ...alt].filter(([k]) => !!ITEMS[k] && !LOOT_B01_FORBIDDEN.has(k)).slice(0, spec.capacity).map(([k, q]) => [k, q] as [string, number]);
+}
+/** The authored one-time table of a V3 source, bounded by its capacity. */
+function v3OnceTable(spec: LootSourceV3Spec): [string, number][] {
+  return spec.once.filter(([k]) => !!ITEMS[k] && !LOOT_B01_FORBIDDEN.has(k)).slice(0, spec.capacity).map(([k, q]) => [k, q] as [string, number]);
+}
+/** Stable source id of the one-time draw for this site, under whichever grammar the run carries. */
+export function onceSourceId(r: RunState, site: StaticEnt): string | undefined {
+  if (r.lootEcology?.grammar === LOOT_GRAMMAR_V3) return v3SpecForSite(site)?.sourceId;
+  return specForSite(site)?.sourceId;
+}
+/** One-time stock still owed to this site (not yet drawn, contract valid). Empty when nothing is owed. */
+export function pendingOnceStacks(r: RunState, site: StaticEnt): [string, number][] {
+  if (r.lootEcology?.grammar === LOOT_GRAMMAR_V3) {
+    const s = v3SpecForSite(site); if (!s || !s.once.length || !validLootSourceContractV3(r.lootEcology?.sourceContract)) return [];
+    if (r.lootEcology?.deferredLoot?.includes(s.sourceId)) return [];
+    return v3OnceTable(s);
+  }
+  return deferredLootGrammar(r, site);
+}
+/** The one-time table a drawn source already carries (used by save validation). */
+export function drawnOnceStacks(r: RunState, site: StaticEnt): [string, number][] {
+  if (r.lootEcology?.grammar !== LOOT_GRAMMAR_V3) return deferredLootTable(site);
+  const s = v3SpecForSite(site); return s ? v3OnceTable(s) : [];
 }
 /** One-time door-gated grammar stock. Fail closed on any invalid contract, a non-door spec, a repeat, or a non-finite spec.
  * The caller must already have measured that the source is physically reachable now. Never consumes world RNG. */
@@ -104,6 +144,7 @@ export function deferredLootGrammar(r: RunState, site: StaticEnt): [string, numb
   if (r.lootEcology?.grammar !== LOOT_GRAMMAR_CURRENT) return [];
   const spec = specForSite(site); if (!spec || spec.access.kind !== 'poi-door' || spec.stock !== 'finite' || spec.role !== 'advanced') return [];
   const c = r.lootEcology?.sourceContract; if (!c || !validLootSourceContract(c)) return [];
+  if (r.lootEcology?.lifecycle !== LOOT_LIFECYCLE_FINITE_V2) return [];
   if (r.lootEcology?.deferredLoot?.includes(spec.sourceId)) return [];
   return deferredLootTable(site);
 }
@@ -119,6 +160,7 @@ const LOOT_B01_FORBIDDEN = new Set(['rcash', 'blueprint', 'keycard', 'damaged_dr
 /** Deterministic per run/source/cycle. Each class receives only its own role; no cross-role overlay. */
 export function lootGrammarRoll(r: RunState, site: StaticEnt, cycle: number): [string, number][] {
   const g = r.lootEcology?.grammar; if (!isKnownLootGrammar(g)) return [];
+  if (g === LOOT_GRAMMAR_V3) return v3PoolRoll(r, site, cycle);
   const kind = lootClass(site); if (!kind) return [];
   if (g === LOOT_GRAMMAR_CURRENT) {
     const spec = specForSite(site);

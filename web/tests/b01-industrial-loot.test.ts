@@ -17,8 +17,8 @@ afterAll(()=>setActiveLayout('shipping'));
 
 describe('B01-R1 A: source-specific loot roles (no universal Food/Medical overlay)',()=>{
   const FOOD=['berries','mushroom','herb'], MED=['bandage','herb'];
-  it('fresh runs carry the current grammar (MEC-01 A: b05-v1); pre-B01 saves (no field) keep only the W06 pair',()=>{
-    const {r}=fresh();expect(r.lootEcology?.grammar).toBe('b05-v1');   // MEC-01 A: new runs use b05-v1; b01-v1 and b04-v1 saves keep their pools
+  it('fresh runs carry the current grammar (WEC-01 P0-4: loot-source-v3); pre-B01 saves (no field) keep only the W06 pair',()=>{
+    const {r}=fresh();expect(r.lootEcology?.grammar).toBe('loot-source-v3');   // WEC-01: new runs use loot-source-v3; b01-v1, b04-v1 and b05-v1 saves keep their pools
     const sites=getWorld('shipping_fresh').statics.filter(s=>lootClass(s));expect(sites.length).toBeGreaterThan(0);
     const saved=r.lootEcology;r.lootEcology={...saved!,grammar:undefined} as any;
     for(const s of sites) expect(lootRoll(r,s,0).length).toBeLessThanOrEqual(2);
