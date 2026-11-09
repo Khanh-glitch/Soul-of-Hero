@@ -11,7 +11,7 @@ import { creatorLootV1 } from './creator-loot';
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { richIronChance } from './catalog';
+import { qualityTierFor, type ExtractionCapability } from './catalog';
 import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -874,20 +874,22 @@ export function award(gs: GameState, key: string, now: number) {
 }
 
 // ---------------- combat / harvesting shared hit rules (C05) ----------------
-export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial<Record<string, number>>, now: number, fromX: number, fromY: number, opts?: { richIron?: boolean }): { result: 'yield' | 'nopower' | 'empty' | 'none'; key?: string; got?: number; mat?: string; depleted?: boolean } {
+export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial<Record<string, number>>, now: number, fromX: number, fromY: number, opts?: { extraction?: ExtractionCapability }): { result: 'yield' | 'nopower' | 'empty' | 'none'; key?: string; got?: number; mat?: string; depleted?: boolean; quality?: number } {
   const r = gs.run!; const s = sourceAt(r, tx, ty, now); if (!s) return { result: 'none' };
   if (s.stock <= 0) return { result: 'empty', key: s.key, mat: s.def.mat };
   const p = power[s.def.mat] || 0; if (p <= 0) return { result: 'nopower', key: s.key, mat: s.def.mat };
   const st = r.sources[s.i] || (r.sources[s.i] = { stock: s.stock, hp: s.hp, burnt: s.st?.burnt });
   const per = s.def.hp / s.def.stock; const before = Math.ceil(st.hp / per - 1e-9);
   st.hp = Math.max(0, st.hp - p); const after = Math.ceil(st.hp / per - 1e-9); let units = Math.min(st.stock, before - after);
-  let got = 0; const cx = tx * TILE + 8, cy = ty * TILE + 8;
+  let got = 0, richGot = 0; const cx = tx * TILE + 8, cy = ty * TILE + 8;
   const ox = (fromX - cx) * 0.3, oy = (fromY - cy) * 0.3;
   for (let u = 0; u < units; u++) {
     st.stock--; for (const [k, q] of s.def.yields) { spawnDrop(r, k, q, cx + ox, cy + oy, now); got += q; }
     for (const [k, ch] of (s.key === 'wreck' ? wreckBonuses(r) : s.def.bonus || [])) if (rngNext(r) < ch) { const drop=spawnDrop(r, k, 1, cx + ox, cy + oy, now); if(k==='damaged_drive')receipt(r,now,'harvest.component',`${s.key}@${tx},${ty}:${C(r,drop.c!).slots[0]!.uid}`); }
     // R8C: a player swing with an iron-class pick can also free high-grade ore from an iron vein (finite, one drop per unit, same RNG stream).
-    if (opts?.richIron && s.key === 'iron') { const rate = richIronChance(power.ore || 0); if (rate > 0 && rngNext(r) < rate) spawnDrop(r, 'rich_iron_ore', 1, cx + ox, cy + oy, now); }
+    // R8D: typed quality contract. One roll per unit only if the source grants this capability to the caller and the tool reaches a tier.
+    const quality = opts?.extraction ? qualityTierFor(s.def, power, opts.extraction) : null;
+    if (quality && rngNext(r) < quality.chance) { spawnDrop(r, quality.item, 1, cx + ox, cy + oy, now); richGot++; }
     // SOH_NEW_TUNED v1: only modern source layouts yield this additional,
     // finite wreck salvage; never modify legacy tables or invent new Map cells.
     if (s.key==='wreck' && r.sourceLayoutVersion===3 && rngNext(r)<SALVAGED_OIL_WRECK_CHANCE) spawnDrop(r,'salvaged_oil',1,cx+ox,cy+oy,now);
@@ -896,7 +898,7 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
   const depleted = st.stock <= 0;
   if (depleted) { if (st.fire) { st.fire = 0; delete st.fireSpreadAt; delete st.fireDepth; } if (s.def.regrow) st.regrowAt = now + s.def.regrow * 1000; markDirty(); }
   if (units) receipt(r, now, 'harvest', `${s.key}@${tx},${ty} -${units}`);
-  return { result: 'yield', key: s.key, got, mat: s.def.mat, depleted };
+  return { result: 'yield', key: s.key, got, mat: s.def.mat, depleted, quality: richGot };
 }
 
 export function killCreature(gs: GameState, m: Creature, now: number) {

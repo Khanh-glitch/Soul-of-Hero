@@ -365,6 +365,7 @@ function airdropCrateArt(g: G, open: boolean) {
 // ===================== ITEM ICONS (16x16) =====================
 function icon(g: G, kind: string, c1: string, c2: string) {
   switch (kind) {
+    case 'rich_ore': R(g, 2, 6, 12, 8, c1); P(g, 4, 8, '#2a2236'); P(g, 9, 10, '#2a2236'); R(g, 5, 7, 3, 2, c2); R(g, 10, 11, 2, 2, c2); P(g, 7, 12, '#fff3b0'); P(g, 12, 7, '#fff3b0'); break;
     case 'plank': R(g, 2, 4, 12, 3, c2); R(g, 2, 7, 12, 3, c1); R(g, 2, 10, 12, 3, c2); R(g, 2, 4, 12, 1, '#fff0c0'); R(g, 2, 13, 12, 1, '#5e4220'); break;
     case 'log': R(g, 2, 6, 12, 5, c1); R(g, 2, 6, 12, 1, c2); ell(g, 13, 8.5, 2, 2.5, c2); P(g, 13, 8, c1); break;
     case 'stone': ell(g, 8, 9, 5, 4, shade(c1, c2, '#4e5058', 1)); break;

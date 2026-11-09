@@ -64,7 +64,7 @@ export const ITEMS: Record<string, ItemDef> = {
   fiber: I({ name: 'Plant Fiber', cat: 'res', icon: 'fiber', c1: '#5d8a3a', c2: '#a5d65e', w: 0.2, max: 80, desc: 'Grass and reed fiber. Rope, thatch, bandages.', fuel: 4 }),
   iron_ore: I({ name: 'Iron Ore', cat: 'res', icon: 'ore', c1: '#6b5a52', c2: '#d08a5a', w: 2, max: 40, desc: 'Smelt in a fueled furnace.' }),
   // SOH_PROVISIONAL (R8C): high-grade ore from an iron vein, only with an iron-class pick. Smelts to two refined ingots with one coal.
-  rich_iron_ore: I({ name: 'Rich Iron Ore', cat: 'res', icon: 'ore', c1: '#4f4560', c2: '#f0c040', w: 2, max: 40, desc: 'High-grade ore from an iron vein. One of these with one coal makes two refined ingots.' }),
+  rich_iron_ore: I({ name: 'Rich Iron Ore', cat: 'res', icon: 'rich_ore', c1: '#4f4560', c2: '#f0c040', w: 2, max: 40, desc: 'High-grade ore from an iron vein. One of these with one coal makes two refined ingots.' }),
   coal: I({ name: 'Coal', cat: 'res', icon: 'ore', c1: '#25252c', c2: '#55556a', w: 1, max: 40, desc: 'Dense fuel. Burns long.', fuel: 80 }),
   charcoal: I({ name: 'Charcoal', cat: 'res', icon: 'ore', c1: '#2b2420', c2: '#6e5a4c', w: 0.5, max: 60, desc: 'Fuel made from burnt wood.', fuel: 55 }),
   crystal: I({ name: 'Frost Crystal', cat: 'res', icon: 'gem', c1: '#4fa6d8', c2: '#c8f0ff', w: 0.5, max: 30, desc: 'Cold-grown crystal from the north. Core synthesis.' }),
@@ -155,7 +155,10 @@ export const ITEMS: Record<string, ItemDef> = {
 };
 
 // ---------- Sources (K3) ----------
-export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; block: boolean; regrow?: number; art: string; tall?: boolean; placement?: SourcePlacementRule[] }
+/** R8D: a source's typed extraction-quality contract. Only a capability the caller names may use it; the caller never supplies rates. */
+export type ExtractionCapability = 'playerTool' | 'environment';
+export interface QualityBonus { capability: 'playerTool'; power: Mat; tiers: { minPower: number; item: string; chance: number }[] }
+export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; qualityBonus?: QualityBonus; block: boolean; regrow?: number; art: string; tall?: boolean; placement?: SourcePlacementRule[] }
 export const SOURCES: Record<string, SourceDef> = {
   oak: { name: 'Oak', mat: 'wood', hp: 18, stock: 6, yields: [['wood', 1]], bonus: [['seed', 0.25]], block: true, art: 'oak', tall: true },
   pine: { name: 'Pine', mat: 'wood', hp: 16, stock: 5, yields: [['wood', 1]], block: true, art: 'pine', tall: true },
@@ -164,7 +167,8 @@ export const SOURCES: Record<string, SourceDef> = {
   willow: { name: 'Mire Willow', mat: 'wood', hp: 14, stock: 4, yields: [['wood', 1]], bonus: [['fiber', 0.4]], block: true, art: 'willow', tall: true },
   deadtree: { name: 'Charred Tree', mat: 'wood', hp: 8, stock: 3, yields: [['charcoal', 1]], block: true, art: 'dead', tall: true },
   rock: { name: 'Boulder', mat: 'stone', hp: 18, stock: 6, yields: [['stone', 1]], block: true, art: 'rock' },
-  iron: { name: 'Iron Vein', mat: 'ore', hp: 24, stock: 5, yields: [['iron_ore', 1]], bonus: [['stone', 0.5]], block: true, art: 'iron' },
+  // R8D: per stock unit taken by a player swing. Iron pick (ore power 5) 8%; salvager (ore 8) 12%; stone pick (2) none.
+  iron: { name: 'Iron Vein', mat: 'ore', hp: 24, stock: 5, yields: [['iron_ore', 1]], bonus: [['stone', 0.5]], qualityBonus: { capability: 'playerTool', power: 'ore', tiers: [{ minPower: 5, item: 'rich_iron_ore', chance: 0.08 }, { minPower: 8, item: 'rich_iron_ore', chance: 0.12 }] }, block: true, art: 'iron' },
   coalv: { name: 'Coal Seam', mat: 'ore', hp: 20, stock: 5, yields: [['coal', 1]], block: true, art: 'coal' },
   crystal: { name: 'Frost Crystal', mat: 'ore', hp: 20, stock: 3, yields: [['crystal', 1]], block: true, art: 'crystal' },
   salt_shale: { name: 'Salt Shale', mat: 'ore', hp: 12, stock: 4, yields: [['raw_salt', 1]], block: true, art: 'crystal', placement: [{ terrain: 'sand', chance: 0.24 }] },
@@ -361,11 +365,15 @@ export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', '
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit
-/** SOH_PROVISIONAL (R8C): per stock unit of an iron vein. Iron-class pick (ore power 5) 12%; salvager (ore 8) 20%.
- *  Expected rich ore per 5-stock vein: 0.6 (iron pick), 1.0 (salvager). Last Island v5 records ~2 rare per ~272 iron (0.7%) as one
- *  observation with unknown scope, so this is a scale difference, not a copy. Stone picks (ore 2) get nothing. */
-export const RICH_IRON_CHANCE = { ironPick: 0.12, salvager: 0.20 } as const;
-export function richIronChance(orePower: number): number { return orePower >= 8 ? RICH_IRON_CHANCE.salvager : orePower >= 5 ? RICH_IRON_CHANCE.ironPick : 0; }
+/** R8D: the highest tier whose minPower the caller's tool reaches, if the source grants that capability. No tier -> no roll.
+ *  Expected extra per 5-unit iron vein: 0.4 rich (iron pick, +24% iron-equivalent on the vein), 0.6 rich (salvager, +36%).
+ *  Last Island v5 D03: one observation (~2 rare per ~272 iron, scope unknown); SOH_PROVISIONAL, not copied. */
+export function qualityTierFor(src: SourceDef, power: Partial<Record<string, number>>, capability: ExtractionCapability): { item: string; chance: number } | null {
+  const q = src.qualityBonus; if (!q || capability !== q.capability) return null;
+  const p = power[q.power] || 0; let best: { item: string; chance: number; minPower: number } | null = null;
+  for (const t of q.tiers) if (p >= t.minPower && (!best || t.minPower > best.minPower)) best = t;
+  return best ? { item: best.item, chance: best.chance } : null;
+}
 // SOH_NEW_TUNED v1. One-way, finite run-local stock; no automatic restock or resale.
 export const VENDOR_SPARES: Record<string, {price:number; qty:number; stock:number}> = {
   iron_ore:{price:3,qty:2,stock:5}, coal:{price:3,qty:2,stock:4}, glass:{price:4,qty:1,stock:3}, salvaged_oil:{price:5,qty:1,stock:4},
@@ -398,6 +406,12 @@ export function validateGameplayCatalog(catalog: GameplayCatalogData = { items: 
   for (const [id, source] of Object.entries(sources)) {
     if (!source.name || !source.mat || source.hp <= 0 || source.stock <= 0 || !source.yields.length) errors.push(`source ${id}: invalid physical source definition`);
     for (const [item, qty] of [...source.yields, ...(source.bonus || [])]) if (!items[item] || !Number.isFinite(qty) || qty <= 0) errors.push(`source ${id}: invalid yield ${item} x${qty}`);
+    if (source.qualityBonus) {
+      const q = source.qualityBonus; const mins = q.tiers.map(t => t.minPower);
+      if (q.capability !== 'playerTool' || q.power !== source.mat) errors.push(`source ${id}: quality contract must name the playerTool capability and the source material`);
+      if (new Set(mins).size !== mins.length || mins.some(m => !Number.isFinite(m) || m <= 0)) errors.push(`source ${id}: quality tiers need distinct positive thresholds`);
+      for (const t of q.tiers) if (!items[t.item] || !(t.chance > 0 && t.chance < 1)) errors.push(`source ${id}: invalid quality tier ${t.item} ${t.chance}`);
+    }
     for (const rule of source.placement || []) {
       if (!validTerrains.has(rule.terrain) || !Number.isFinite(rule.chance) || rule.chance <= 0 || rule.chance > 1) errors.push(`source ${id}: invalid placement rule ${rule.terrain}/${rule.chance}`);
       const previous = placementOwners.get(rule.terrain);

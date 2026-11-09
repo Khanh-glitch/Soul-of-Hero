@@ -3,7 +3,7 @@
 // FIXTURE: starter coal/rich ore for the furnace step, and fuel wood in the furnace fuel container. Not natural play.
 import {describe,it,expect,afterEach} from 'vitest';
 import {type GameState,type RunState,TILE} from '../src/game/core';
-import {RECIPES,richIronChance,RICH_IRON_CHANCE} from '../src/game/catalog';
+import {RECIPES,SOURCES,qualityTierFor} from '../src/game/catalog';
 import {addItem,countItem,dispatch,harvestHit,markDirty,newGame,sourceAt,stepStations,mkContainer} from '../src/game/engine';
 import {getWorld,setActiveLayout} from '../src/game/world';
 import {serializeSnapshot,validate} from '../src/game/persist';
@@ -21,35 +21,44 @@ function ironTile(r:RunState):[number,number]{
 const richOnGround=(r:RunState)=>Object.values(r.custody).filter(c=>c.kind==='drop').flatMap(c=>c.slots).reduce((a,s)=>a+(s?.key==='rich_iron_ore'?s.qty:0),0);
 
 describe('MEC-01 R8C rich iron ore', () => {
-  it('rate is tier-gated: iron-class pick and salvager only; stone pick gets nothing', () => {
-    expect(richIronChance(5)).toBe(RICH_IRON_CHANCE.ironPick);
-    expect(richIronChance(8)).toBe(RICH_IRON_CHANCE.salvager);
-    expect(richIronChance(2)).toBe(0);          // NEGATIVE: stone pick
-    expect(richIronChance(0)).toBe(0);
+  it('rate is tier-gated by the source contract: iron pick 8%, salvager 12%, stone pick none, environment none', () => {
+    const iron=SOURCES.iron;
+    expect(qualityTierFor(iron,{ore:5},'playerTool')).toEqual({item:'rich_iron_ore',chance:0.08});
+    expect(qualityTierFor(iron,{ore:8},'playerTool')).toEqual({item:'rich_iron_ore',chance:0.12});
+    expect(qualityTierFor(iron,{ore:4},'playerTool')).toBeNull();        // NEGATIVE: just below the iron-pick tier
+    expect(qualityTierFor(iron,{ore:2},'playerTool')).toBeNull();        // NEGATIVE: stone pick
+    expect(qualityTierFor(iron,{ore:8},'environment')).toBeNull();       // NEGATIVE: earthquake capability
+    expect(qualityTierFor(SOURCES.rock,{stone:6,ore:5},'playerTool')).toBeNull(); // NEGATIVE: source without a contract
+  });
+
+  it('a generic harvest call with no extraction capability never yields rich ore, even with a top-tier ore power', () => {
+    const g=start(815);const r=g.run!;const [tx,ty]=ironTile(r);
+    for(let i=0;i<30;i++){const s=sourceAt(r,tx,ty,T);if(!s||s.stock<=0)break;harvestHit(g,tx,ty,{stone:6,ore:8},T+i*500,tx*TILE,ty*TILE);}
+    expect(richOnGround(r)).toBe(0);
   });
 
   it('an iron-pick swing that depletes veins drops at most one rich ore per unit taken; stone-pick swings drop none', () => {
     const g=start(811);const r=g.run!;const [tx,ty]=ironTile(r);
     let units=0,rich=0;
     // Iron-class pick: power ore 5 (same as iron_pick). Count the stock actually taken per swing.
-    for(let i=0;i<60;i++){const s=sourceAt(r,tx,ty,T);if(!s||s.stock<=0)break;const before=s.stock;harvestHit(g,tx,ty,{stone:6,ore:5,scrap:4},T+i*500,tx*TILE,ty*TILE,{richIron:true});units+=before-(sourceAt(r,tx,ty,T)?.stock??0);}
+    for(let i=0;i<60;i++){const s=sourceAt(r,tx,ty,T);if(!s||s.stock<=0)break;const before=s.stock;harvestHit(g,tx,ty,{stone:6,ore:5,scrap:4},T+i*500,tx*TILE,ty*TILE,{extraction:'playerTool'});units+=before-(sourceAt(r,tx,ty,T)?.stock??0);}
     rich=richOnGround(r);
     expect(units).toBeGreaterThan(0);
     expect(rich).toBeLessThanOrEqual(units);         // conservation: never more rich ore than units taken
     // Stone-pick swings on a fresh iron vein: no rich ore, only stone/iron ore.
     const g2=start(812);const r2=g2.run!;const [ux,uy]=ironTile(r2);
-    for(let i=0;i<60;i++){const s=sourceAt(r2,ux,uy,T);if(!s||s.stock<=0)break;harvestHit(g2,ux,uy,{stone:3,ore:2},T+i*500,ux*TILE,uy*TILE,{richIron:true});}
+    for(let i=0;i<60;i++){const s=sourceAt(r2,ux,uy,T);if(!s||s.stock<=0)break;harvestHit(g2,ux,uy,{stone:3,ore:2},T+i*500,ux*TILE,uy*TILE,{extraction:'playerTool'});}
     expect(richOnGround(r2)).toBe(0);
   });
 
   it('the rich path produces ore on real iron veins (positive control, not vacuously zero)', () => {
     let total=0;
-    for(const seed of [821,822,823,824]){const g=start(seed);const r=g.run!;const [tx,ty]=ironTile(r);for(let i=0;i<40;i++){const s=sourceAt(r,tx,ty,T);if(!s||s.stock<=0)break;harvestHit(g,tx,ty,{stone:6,ore:5,scrap:4},T+i*500,tx*TILE,ty*TILE,{richIron:true});}total+=richOnGround(r);}
+    for(const seed of [821,822,823,824]){const g=start(seed);const r=g.run!;const [tx,ty]=ironTile(r);for(let i=0;i<40;i++){const s=sourceAt(r,tx,ty,T);if(!s||s.stock<=0)break;harvestHit(g,tx,ty,{stone:6,ore:5,scrap:4},T+i*500,tx*TILE,ty*TILE,{extraction:'playerTool'});}total+=richOnGround(r);}
     expect(total).toBeGreaterThan(0);
   });
 
   it('the same seed and the same swings give the same rich-ore count (replay determinism)', () => {
-    const run=()=>{const g=start(813);const r=g.run!;const [tx,ty]=ironTile(r);for(let i=0;i<40;i++){const s=sourceAt(r,tx,ty,T);if(!s||s.stock<=0)break;harvestHit(g,tx,ty,{stone:6,ore:5,scrap:4},T+i*500,tx*TILE,ty*TILE,{richIron:true});}return richOnGround(r);};
+    const run=()=>{const g=start(813);const r=g.run!;const [tx,ty]=ironTile(r);for(let i=0;i<40;i++){const s=sourceAt(r,tx,ty,T);if(!s||s.stock<=0)break;harvestHit(g,tx,ty,{stone:6,ore:5,scrap:4},T+i*500,tx*TILE,ty*TILE,{extraction:'playerTool'});}return richOnGround(r);};
     expect(run()).toBe(run());
   });
 
