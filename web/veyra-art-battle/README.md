@@ -27,3 +27,7 @@ The cumulative 81-POI release delivered in ChatGPT was an **installer** that req
 
 **Not native Godot integration:** this is an independently isolated browser VEYRA workbench inside the same Soul-of-Hero repository.
 
+
+## Arena art pilot — real-game runtime (2026-11-09)
+
+See [`pilot/README.md`](pilot/README.md). Six Arena-created TypeScript art modules replace the old custom sprites/ground painters. A source-level integration helper (`pilot/build-live-pilot.cjs`) was exercised against the previous full-world standalone runtime. Five F03 sites and two ports were rendered in actual Creator Inspection; filter stair `0 → -1 → 0` was controlled with E. The modified standalone playable HTML and same-camera screenshots were delivered to the creator in the ChatGPT conversation, **not committed as a large binary here**. The real C03 source is still missing. The standalone is a **pilot, not native 81-POI production acceptance**, and this branch's Vite source still needs proper native module wiring/build validation before merge.
