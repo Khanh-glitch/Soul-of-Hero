@@ -1,0 +1,106 @@
+<PARSED TEXT FOR SHEET: 1 / 1 TABS
+TAB NAME: v11__17_EXPLICIT_CROSS_SYSTEM_NETWORK.csv>index,edge_id,from_capability,to_capability,resource_or_event,causal_condition,player_choice,negative_proof,authority,acceptance,evidence_sha
+0,XEDGE-001,SYS16-C03,SYS01-C03,wood/stone/iron source,material type controls tool yield,Carry generic tool or invest in specialist,Rock cannot become wood by catalog lookup,CANON,NOT_RUN,NONE
+1,XEDGE-002,SYS01-C03,SYS02-C01,pick mining power,tool hit releases finite ore stock,Upgrade pick or spend extra swing time,Depleted ore node never yields twice,CANON,NOT_RUN,NONE
+2,XEDGE-003,SYS01-C05,SYS01-C06,damaged tool UID,wear to zero opens paid repair,Repair same UID or craft replacement,Do not delete repairable tool at zero,CANON,NOT_RUN,NONE
+3,XEDGE-004,SYS02-C01,SYS02-C03,iron ore,fuelled furnace transforms ore to ingot,Carry ore or smelt near home,No funded fuel = no ingot,CANON,NOT_RUN,NONE
+4,XEDGE-005,SYS02-C02,SYS03-C02,scrap/wreck stock,physical scrap and drive flow to recycler,Reuse as parts or convert to Spares,Re-harvest impossible on empty wreck,CANON,NOT_RUN,NONE
+5,XEDGE-006,SYS02-C03,SYS02-C05,ingot,ingot supports physical parts recipe,Smelt ingot for tools or parts,No double-reserving one ingot,CANON,NOT_RUN,NONE
+6,XEDGE-007,SYS02-C05,SYS04-C01,mechanical parts,parts upgrade Workbench II/III,Upgrade machine or repair tools,Paid upgrades cannot refund/replay,CANON,NOT_RUN,NONE
+7,XEDGE-008,SYS02-C05,SYS09-C02,mechanical parts,upgrade freight cart holding current cargo,Freight vs industrial tool,Cargo must preserve UID and weight,CANON,NOT_RUN,NONE
+8,XEDGE-009,SYS02-C05,SYS07-C05,parts/fasteners,parts restore physical structures,Repair house or manufacture,Repair destroyed structures must fail,SOH_PROPOSED,NOT_RUN,NONE
+9,XEDGE-010,SYS03-C03,SYS02-C05,damaged drive,drive converted via parts recipe instead of Spares,Physical repair part vs knowledge money,Spend one drive only once across routes,CANON,NOT_RUN,NONE
+10,XEDGE-011,SYS03-C03,SYS18-C01,damaged drive → Spares,drive processed at physical recycler,Research vs tool upgrades,Cannot get both parts and Spares,CANON,NOT_RUN,NONE
+11,XEDGE-012,SYS03-C09,SYS18-C08,recycled vendor purchase,vendor price and salvage return tested,"Buy item for need, not money printer",No positive currency-loop,CANON,NOT_RUN,NONE
+12,XEDGE-013,SYS04-C02,SYS14-C07,knowledge tier/station level,independent recipe.tier/stationLevel validation,"Learn recipe now, build station later",Tier3 old Core cannot auto need LvIII,CANON,NOT_RUN,NONE
+13,XEDGE-014,SYS14-C03,SYS04-C03,research unlock,bounded unknown tech enables later job,Random discovery vs directed research,No known-recipe paid repeat,CANON,NOT_RUN,NONE
+14,XEDGE-015,SYS14-C04,SYS18-C07,Spares tradeoff,directed study consumes same run Spares as shop,Invest in future recipe vs buy immediate tool,No permanent recipe from shop purchase,CANON,NOT_RUN,NONE
+15,XEDGE-016,SYS14-C05,SYS03-C04,specimen UID,real specimen converted into knowledge,Keep specimen/craft or consume to study,No specimen survives destructive study,CANON,NOT_RUN,NONE
+16,XEDGE-017,SYS14-C12,SYS04-C12,unlocked recipe,craft UI shows actual path and cost,Identify where next material comes from,Do not show disabled false craft as success,CANON,NOT_RUN,NONE
+17,XEDGE-018,SYS04-C03,SYS17-C05,reserved job,chronological offline settlement of paid queue,Queue before going to loot,Input cannot return on job completion,CANON,NOT_RUN,NONE
+18,XEDGE-019,SYS04-C04,SYS10-C10,fuel/heat queue,refinery requires time/fuel as real job,Burn fuel at home vs travel,Do not advance unpowered refinery offline,SOH_PROPOSED,NOT_RUN,NONE
+19,XEDGE-020,SYS04-C07,SYS10-C04,Workbench III recipe,advanced station provides refinery components,Pay advanced bench or loot fuel,No industrial bypass without actual source,SOH_PROPOSED,NOT_RUN,NONE
+20,XEDGE-021,SYS04-C07,SYS06-C01,generator circuit parts,advanced station creates real electric consumers,Invest workshop or hand-built shelter,No badge-only station upgrade,SOH_PROPOSED,NOT_RUN,NONE
+21,XEDGE-022,SYS05-C01,SYS05-C03,physical key card,card plus power opens layered POI,Return with both card and fuel,Card alone fails on unpowered door,LI_REFERENCE_ADAPTED,NOT_RUN,NONE
+22,XEDGE-023,SYS05-C02,SYS14-C02,rare blueprint,key-room loot yields specific learned tech,Use blueprint vs continue looting,Cannot consume same blueprint UID twice,LI_REFERENCE_ADAPTED,NOT_RUN,NONE
+23,XEDGE-024,SYS05-C04,SYS06-C05,switch/fuse,POI powered switch opens timed gate,Rush to loot or gather more fuel,Door closes with expired power by policy,LI_REFERENCE_ADAPTED,NOT_RUN,NONE
+24,XEDGE-025,SYS05-C05,SYS15-C04,radiation/toxic region,PPE changes viable route into locked site,Farm safer shells for mask or risk exposure,Mask does not grant full immunity,CANON,NOT_RUN,NONE
+25,XEDGE-026,SYS05-C06,SYS16-C12,Map-certified door,POI access respects streamed world collision,Choose land route and door,No hardcoded pass-through wall,CANON,NOT_RUN,NONE
+26,XEDGE-027,SYS05-C08,SYS11-C08,advanced military crate,deep card room yields high-value stock,Spend card/fuel to attempt rare find,Never same loot table as roadside,LI_REFERENCE_ADAPTED,NOT_RUN,NONE
+27,XEDGE-028,SYS05-C09,SYS11-C10,POI source state,room loot unchanged on save/reopen,Loot now or return later,No reroll by relaunch,CANON,NOT_RUN,NONE
+28,XEDGE-029,SYS06-C01,SYS05-C03,powered door,owned/POI generator allows card gate,Use scarce fuel on entry,Powered state is physically checked,LI_REFERENCE_ADAPTED,NOT_RUN,NONE
+29,XEDGE-030,SYS06-C02,SYS10-C07,shared burnable fuel,generator consumes same physical fuel as vehicle,Generator vs travel,No fuel copy into separate economy,SOH_PROPOSED,NOT_RUN,NONE
+30,XEDGE-031,SYS06-C03,SYS07-C02,circuit path topology,physical wires need build permission/space,Short vulnerable vs long safe wiring,No connectivity across wall by magic,SOH_PROPOSED,NOT_RUN,NONE
+31,XEDGE-032,SYS06-C04,SYS08-C06,power capacity,turret power competes with production,Protect home vs keep refinery running,No free turret under overload,SOH_PROPOSED,NOT_RUN,NONE
+32,XEDGE-033,SYS06-C08,SYS08-C06,ammo/fuel/power,turret shots consume authorized ammo and wattage,Carry energy vs stationary defense,Unpowered/empty turret cannot shoot,SOH_PROPOSED,NOT_RUN,NONE
+33,XEDGE-034,SYS06-C11,SYS17-C05,power outage event,paid jobs pause deterministically offline,Reserve more fuel to prevent outage,No duplicate offline output,SOH_PROPOSED,NOT_RUN,NONE
+34,XEDGE-035,SYS07-C01,SYS07-C02,claim and walls,ownership controls base placement,House location vs distance to sources,No building outside permission,CANON,NOT_RUN,NONE
+35,XEDGE-036,SYS07-C04,SYS17-C04,bed and shelter,valid owned shelter changes hunger and respawn,Build home or risk distant respawn,No protected hunger outside shelter,CANON,NOT_RUN,NONE
+36,XEDGE-037,SYS07-C05,SYS08-C11,structural HP,combat damage has paid aftermath repair,Pre-build defenses vs post-battle repair,No dead wall revival,CANON,NOT_RUN,NONE
+37,XEDGE-038,SYS07-C06,SYS07-C07,upkeep cabinet stored material,size/material rates debit finite reserve,Compact shelter vs industrial compound,No free automatic material pulls,CREATOR_D06,NOT_RUN,NONE
+38,XEDGE-039,SYS07-C07,SYS07-C08,hourly upkeep forecast,coverage estimate displayed before logout,Gather material or risk decay,No falsely precise promise,CREATOR_D06,NOT_RUN,NONE
+39,XEDGE-040,SYS07-C09,SYS15-C03,climate damage,rain/heat/corrosion affects structure materials,Different house material/biome tradeoff,No instant unexplained collapse,CREATOR_D06,NOT_RUN,NONE
+40,XEDGE-041,SYS07-C10,SYS17-C05,offline upkeep tick,chronological reserve debit and wear,Load 48h buffer or return sooner,No double settlement,CREATOR_D06,NOT_RUN,NONE
+41,XEDGE-042,SYS08-C01,SYS15-C12,player trace,creature must actually discover tracked trail,Clear trail near home before offline,No raid from mere proximity,CANON,NOT_RUN,NONE
+42,XEDGE-043,SYS08-C02,SYS15-C07,rain on footprints,rain changes valid trace longevity,Wait for rain or take long detour,No omniscient enemy forecast,SOH_PROPOSED,NOT_RUN,NONE
+43,XEDGE-044,SYS08-C04,SYS07-C03,wall HP/solid,creature actually collides with and damages structure,Build stronger wall/door strategically,No ghost-wall clipping,CANON,NOT_RUN,NONE
+44,XEDGE-045,SYS08-C05,SYS06-C08,turret entity,defense depends on power/ammo stock,Invest resources in turret vs Core,Cannot shoot without ammo,SOH_PROPOSED,NOT_RUN,NONE
+45,XEDGE-046,SYS08-C08,SYS13-C15,Core material damage,fire/ice/impact affects valid building source,Use Gold for fight or building access,No decorative scorches granting drops,CANON,NOT_RUN,NONE
+46,XEDGE-047,SYS08-C10,SYS17-C06,offline unresolved enemy,offline sim has known event boundary,Leave safely after clearing trace,No fabricated offline monster kills,CANON,NOT_RUN,NONE
+47,XEDGE-048,SYS09-C01,SYS16-C10,physical travel cost,cargo threshold changes net resource/time,Choose nearby poor mine or distant rich,No invented travel speed,CANON,NOT_RUN,NONE
+48,XEDGE-049,SYS09-C02,SYS18-C04,cart + vendor item,heavy bought goods need physical carriage,Buy now or return with cart,No teleported purchases,SOH_PROPOSED,NOT_RUN,NONE
+49,XEDGE-050,SYS09-C03,SYS10-C05,vehicle engine/fuel,vehicle only moves on compatible available fuel,Refine fuel or scavenge cans,No fuel-free motion,CREATOR_D02,NOT_RUN,NONE
+50,XEDGE-051,SYS09-C04,SYS16-C07,road/bridge clearance,Map road width decides real vehicle route,Short narrow route vs long open road,No driving through bridge wall,CREATOR_D02,NOT_RUN,NONE
+51,XEDGE-052,SYS09-C05,SYS02-C10,heavy ingot logistics,cargo physically transports metals to workstation,Mine and return or smelt near source,No container item duplication,CREATOR_D02,NOT_RUN,NONE
+52,XEDGE-053,SYS09-C07,SYS02-C05,vehicle repair parts,engine wear demands parts,Repair cart/vehicle or study,No self-healing vehicle,CREATOR_D02,NOT_RUN,NONE
+53,XEDGE-054,SYS09-C11,SYS16-C10,net freight trip,same trip measured hand/cart/motor,Investment threshold vs fuel and upkeep,No winner by fake route,CREATOR_D02,NOT_RUN,NONE
+54,XEDGE-055,SYS10-C01,SYS16-C04,oil POI/biome,Map authorizes crude access in sensible zone,Closer limited fuel vs remote rich oil,No invented off-map station,CREATOR_D02,NOT_RUN,NONE
+55,XEDGE-056,SYS10-C02,SYS06-C01,extractor power,oil pump uses power/parts/time,Produce oil at expense of electricity,Pump cannot run power-off,CREATOR_D02,NOT_RUN,NONE
+56,XEDGE-057,SYS10-C03,SYS09-C03,starter fuel loot,player may use first vehicle before full refinery,Loot/gather vs build refinery,No early-stage fuel deadlock,CREATOR_D02,NOT_RUN,NONE
+57,XEDGE-058,SYS10-C04,SYS09-C06,refined fuel,refinery output consumed by vehicle,Make more fuel or spare for power,No output without time/input,CREATOR_D02,NOT_RUN,NONE
+58,XEDGE-059,SYS10-C07,SYS06-C02,shared fuel tank,same fuel stock operates generator,Power farm or travel expedition,No second virtual fuel account,CREATOR_D02,NOT_RUN,NONE
+59,XEDGE-060,SYS10-C08,SYS02-C06,petrochemical intermediate,byproducts become real complex components,Trade fuel yield for industrial polymer,No orphan plastic/pipe,SOH_PROPOSED,NOT_RUN,NONE
+60,XEDGE-061,SYS11-C01,SYS07-C02,own chest contrast,"world box cannot accept deposits, built chest can",Value of player-built storage,No PUT action in loot,CREATOR_D04,NOT_RUN,NONE
+61,XEDGE-062,SYS11-C02,SYS11-C03,partial stock remaining,last-item removal determines physical despawn,Leave inferior loot or take all,No early despawn with items,CREATOR_D04,NOT_RUN,NONE
+62,XEDGE-063,SYS11-C03,SYS11-C04,source cooldown,emptying starts timed re-instance policy,Revisit POI later,No instant restock,CREATOR_D04,NOT_RUN,NONE
+63,XEDGE-064,SYS11-C05,SYS14-C02,toolbox blueprint,common loot supplies genuine learning item,Road detour may unlock technique,No free learned recipe from view,LI_REFERENCE_ADAPTED,NOT_RUN,NONE
+64,XEDGE-065,SYS11-C07,SYS13-C05,military source energy,some military crates supply special energy,Seek loot vs craft materials,Not sole required energy source,SOH_PROPOSED,NOT_RUN,NONE
+65,XEDGE-066,SYS11-C08,SYS14-C06,rare Core find,advanced loot Core can be used or studied,Valuable weapon vs experiment,No duplicated salvage of found Core,SOH_PROPOSED,NOT_RUN,NONE
+66,XEDGE-067,SYS11-C11,SYS17-C10,finite Ragnarok-only cash,Ragnarok cash chest never normal timer,Risk the endgame route,No cash from ordinary loot respawn,CANON,NOT_RUN,NONE
+67,XEDGE-068,SYS12-C01,SYS17-C01,event schedule on run clock,drop window uses run UTC and saved seed,Change exploration plans,No event trigger via relaunch,SOH_PROPOSED,NOT_RUN,NONE
+68,XEDGE-069,SYS12-C03,SYS16-C07,Map landing eligibility,only valid exterior cells receive drop,Route/boat/travel decision,No crate in unreachably deep water,SOH_PROPOSED,NOT_RUN,NONE
+69,XEDGE-070,SYS12-C04,SYS11-C01,physical drop crate,landed airdrop uses same take-only loot contract,Take valuables under pressure,No invisible loot reward,SOH_PROPOSED,NOT_RUN,NONE
+70,XEDGE-071,SYS12-C06,SYS13-C06,rare essence stock,drop can supply uncommon Core material,Explore dangerous biome vs pursue airdrop,No universal free essence flood,SOH_PROPOSED,NOT_RUN,NONE
+71,XEDGE-072,SYS12-C07,SYS08-C03,noise/flash AI cue,drop may attract only perceiving monsters,Approach quietly or engage,No instant omniscient monsters,SOH_PROPOSED,NOT_RUN,NONE
+72,XEDGE-073,SYS13-C03,SYS01-C01,Basic energy defense,early basic energy enables Core attack without extreme region,Knife-first or Core-first both viable,No mandatory remote essence,CREATOR_D01,NOT_RUN,NONE
+73,XEDGE-074,SYS13-C03,SYS02-C02,scrap starter material,early salvage can fund Basic charge craft,Explore roadside or mine common ore,No starter deadlock,CREATOR_D01,NOT_RUN,NONE
+74,XEDGE-075,SYS13-C04,SYS04-C07,refined energy station,advanced charge production depends on meaningful industrial step,Buy/find refined or upgrade production,No free refined mana click,CREATOR_D01,NOT_RUN,NONE
+75,XEDGE-076,SYS13-C05,SYS16-C04,four essence source bands,safe low-yield and risky rich source geography,Choose risk efficiency,No Elder-exclusive essence,CREATOR_D01,NOT_RUN,NONE
+76,XEDGE-077,SYS13-C07,SYS14-C06,Core Body as both usable/researchable,item classification determines skill and specimen choice,Keep precious core or study,No prompt forcing sacrifice,CREATOR_D01,NOT_RUN,NONE
+77,XEDGE-078,SYS13-C08,SYS13-C11,basic magazine and reload,physical energy moves to Core UID then consumed,Use rare core with cheap ammo,No double debit,CREATOR_D01,NOT_RUN,NONE
+78,XEDGE-079,SYS13-C09,SYS13-C11,refined magazine and reload,refined action depletes reserved energy,Save refined for needed Q,No Gold reserve drained by Q,CREATOR_D01,NOT_RUN,NONE
+79,XEDGE-080,SYS13-C10,SYS13-C11,refined+essence → Gold,atomic loaded charge for exact family,Gold now or save for future fight,No missing essence free Gold,CREATOR_D01,NOT_RUN,NONE
+80,XEDGE-081,SYS13-C12,SYS11-C08,found Core starter Gold,rare box Core can cast signature immediately,Use now vs protect for later,No no-charge rare disappointment,CREATOR_D01,NOT_RUN,NONE
+81,XEDGE-082,SYS13-C15,SYS15-C15,effects and source custody,fire/wood magic changes world but not renewable resource authority,Use environmental effect strategically,No magic→wood→energy infinite loop,CREATOR_D01,NOT_RUN,NONE
+82,XEDGE-083,SYS14-C01,SYS17-C12,research scope reset,run recipe knowledge wiped at finalize,Rebuild tech across replay,No recipes persist across 336h,CANON,NOT_RUN,NONE
+83,XEDGE-084,SYS14-C11,SYS18-C07,research vs shop trade,shared Spares makes immediate vs long-term decision,Buy one tool or learn tool recipe,No duplicate purchase+study for price,CREATOR_D05,NOT_RUN,NONE
+84,XEDGE-085,SYS15-C02,SYS16-C08,night/biome visibility,climate+time guide navigation safety,Travel at night or wait day,Night not just sky darkening,SOH_PROPOSED,NOT_RUN,NONE
+85,XEDGE-086,SYS15-C03,SYS07-C09,heat/cold and structures,house location affects actual upkeep and comfort,Warm house vs cheap materials,No climate ignored in housing,CREATOR_D06,NOT_RUN,NONE
+86,XEDGE-087,SYS15-C07,SYS13-C15,rain/Storm/Fire interplay,wet/weather modifies Gold and burn outcomes,Cast now during rain or save charge,No pure decoration rain,CANON,NOT_RUN,NONE
+87,XEDGE-088,SYS15-C08,SYS16-C07,frozen water traversal,frost makes eligible water temporarily passable,Spend Gold to cross or find bridge,No permanent geography rewrite,CANON,NOT_RUN,NONE
+88,XEDGE-089,SYS15-C09,SYS04-C11,seed-water tender,garden physical inputs become scheduled crop jobs,Plant crop now vs conserve water,No seedless offline production,CANON,NOT_RUN,NONE
+89,XEDGE-090,SYS15-C10,SYS17-C05,food grown offline,"spent real seed/time/water, harvest only once",Return from trip to ripe crop,No login crop mint,CANON,NOT_RUN,NONE
+90,XEDGE-091,SYS16-C02,SYS13-C03,starting cells basic ammo access,every legitimate start has viable materials,Core ammo or knife start,No spawn in empty impossible biome,CREATOR_D01,NOT_RUN,NONE
+91,XEDGE-092,SYS16-C03,SYS11-C09,roads/barrels as real sources,Map authorizes loot object at actual road,Detour and loot barrel,No scenery box gives inventory UI,CREATOR_D04,NOT_RUN,NONE
+92,XEDGE-093,SYS16-C09,SYS17-C11,optional six Elder and nonboss cash,late content never forces Elder for escrow,Boss hunt or no-boss expedition,No only boss route to profile money,CANON,NOT_RUN,NONE
+93,XEDGE-094,SYS17-C02,SYS17-C10,Ragnarok last72 event,late special finite crates become eligible,Plan travel for cash,No early money chest,CANON,NOT_RUN,NONE
+94,XEDGE-095,SYS17-C03,SYS01-C11,death bag with Core/tools,"drop actual carried UID, then rescue trip",Risk rare gear or retreat,No inventory duplication,CANON,NOT_RUN,NONE
+95,XEDGE-096,SYS17-C05,SYS07-C10,offline chronology,funded upkeep and production share timeline,Plan resource budget before logout,No independent contradictory simulators,CANON,NOT_RUN,NONE
+96,XEDGE-097,SYS17-C10,SYS17-C11,cash to escrow deposit,finite physical cash buys legal house chest and deposits,Explore instead of hunting Elder,No Spares→Cash conversion,CANON,NOT_RUN,NONE
+97,XEDGE-098,SYS17-C12,SYS07-C12,finalize 336h wipe,all structures and sources reset with run,No persistent industrial base,No state leak across runs,CANON,NOT_RUN,NONE
+98,XEDGE-099,SYS18-C01,SYS14-C03,Spares paid research,local currency spent for progress,Study random recipe or retain funds,No negative Spares,CREATOR_D05,NOT_RUN,NONE
+99,XEDGE-100,SYS18-C02,SYS16-C06,physical vendor location,trading depends on POI route,Travel with goods or stay home,No menu anywhere global,CREATOR_D05,NOT_RUN,NONE
+100,XEDGE-101,SYS18-C03,SYS11-C07,vendor and loot alternatives,limited stock competes with military loot,Buy expensive item or go explore,No infinite supply off cooldown,CREATOR_D05,NOT_RUN,NONE
+101,XEDGE-102,SYS18-C04,SYS09-C05,purchased cargo load,shop items have weight and UID,Bring cart for bulk trade,No directly injected inventory goods,CREATOR_D05,NOT_RUN,NONE
+102,XEDGE-103,SYS18-C08,SYS03-C09,arbitrage anti-farm,buy/salvage/craft/sell graph bounded,No endless Spares printer,Avoid positive-cycle exploit,CREATOR_D05,NOT_RUN,NONE
+103,XEDGE-104,SYS18-C10,SYS17-C11,currency segregation,run Spares never profile escrow,Research now vs earn actual cash later,No money laundering,CANON,NOT_RUN,NONE

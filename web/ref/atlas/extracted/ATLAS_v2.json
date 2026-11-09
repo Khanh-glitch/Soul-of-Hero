@@ -1,0 +1,3316 @@
+{
+  "name": "Last Island / 文明重启 — Reach-Through Mechanics Atlas v2",
+  "scope": "Independent historical multi-layer gameplay mechanics research. No Soul of Hero comparison. Source provenance recorded at each recipe/edge.",
+  "source_note": "Exact quantities are source-specific. Product ingredients are listed as written. Expanded BOM assumes every intermediate is self-crafted, not looted. No probabilities fabricated.",
+  "recipes": [
+    {
+      "id": "metal_blade",
+      "name": "Metal Blade",
+      "vi": "Lưỡi kim loại",
+      "bench": 2,
+      "ingredients": {
+        "iron_ingot": 30,
+        "parts": 15
+      },
+      "refs": [
+        "s_blade"
+      ],
+      "domain": "metalworking",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "metal_pipe",
+      "name": "Metal Pipe",
+      "vi": "Ống kim loại",
+      "bench": 2,
+      "ingredients": {
+        "refined_iron_ingot": 5,
+        "parts": 30
+      },
+      "refs": [
+        "s_pipe"
+      ],
+      "domain": "metalworking",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "torsion_spring",
+      "name": "Torsion Spring",
+      "vi": "Lò xo xoắn",
+      "bench": 2,
+      "ingredients": {
+        "refined_iron_ingot": 5,
+        "parts": 65
+      },
+      "refs": [
+        "s_spring"
+      ],
+      "domain": "metalworking",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "mechanical_gear",
+      "name": "Mechanical Gear",
+      "vi": "Bánh răng",
+      "bench": 2,
+      "ingredients": {
+        "iron_ingot": 50,
+        "parts": 65
+      },
+      "refs": [
+        "s_gear"
+      ],
+      "domain": "metalworking",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "iron_plate",
+      "name": "Iron Plate",
+      "vi": "Tấm sắt công nghiệp",
+      "bench": 2,
+      "ingredients": {
+        "refined_iron_ingot": 5,
+        "parts": 30
+      },
+      "refs": [
+        "s_plate"
+      ],
+      "domain": "metalworking",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "vehicle_frame",
+      "name": "Vehicle Frame",
+      "vi": "Khung xe",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 100,
+        "refined_iron_ingot": 30,
+        "parts": 50
+      },
+      "refs": [
+        "s_frame"
+      ],
+      "domain": "transport",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "iron_axe",
+      "name": "Iron Axe",
+      "vi": "Rìu sắt",
+      "bench": 1,
+      "ingredients": {
+        "iron_ingot": 75,
+        "wood": 100
+      },
+      "refs": [
+        "s_ironaxe"
+      ],
+      "domain": "tools",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "refined_iron_axe",
+      "name": "Refined Iron Axe",
+      "vi": "Rìu sắt tinh luyện",
+      "bench": 2,
+      "ingredients": {
+        "refined_iron_ingot": 2,
+        "metal_blade": 5,
+        "metal_pipe": 1
+      },
+      "refs": [
+        "s_axe"
+      ],
+      "domain": "tools",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "machete",
+      "name": "Machete",
+      "vi": "Mã tấu",
+      "bench": 2,
+      "ingredients": {
+        "iron_ingot": 100,
+        "metal_blade": 3
+      },
+      "refs": [
+        "s_machete"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "semi_auto_rifle",
+      "name": "Semi-auto Rifle",
+      "vi": "Súng trường bán tự động",
+      "bench": 2,
+      "ingredients": {
+        "iron_ingot": 450,
+        "refined_iron_ingot": 30,
+        "torsion_spring": 2
+      },
+      "refs": [
+        "s_rifle"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "rocket_launcher",
+      "name": "Rocket Launcher",
+      "vi": "Ống phóng",
+      "bench": 3,
+      "ingredients": {
+        "refined_iron_ingot": 50,
+        "metal_pipe": 6,
+        "torsion_spring": 5,
+        "launcher_mechanism": 1
+      },
+      "refs": [
+        "s_rocket"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "electric_door",
+      "name": "Electric Door",
+      "vi": "Cửa điện",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 50,
+        "electronic_parts": 5,
+        "mechanical_gear": 1,
+        "iron_plate": 10
+      },
+      "refs": [
+        "s_door"
+      ],
+      "domain": "electricity",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "fuel_generator",
+      "name": "Fuel Generator",
+      "vi": "Máy phát chạy nhiên liệu",
+      "bench": 3,
+      "ingredients": {
+        "refined_iron_ingot": 20,
+        "iron_ingot": 100,
+        "electronic_parts": 30,
+        "parts": 100
+      },
+      "refs": [
+        "s_door"
+      ],
+      "domain": "electricity",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "switch",
+      "name": "Switch",
+      "vi": "Công tắc",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 10,
+        "electronic_parts": 2,
+        "parts": 10
+      },
+      "refs": [
+        "s_door"
+      ],
+      "domain": "electricity",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "pressure_switch",
+      "name": "Pressure Switch",
+      "vi": "Công tắc áp lực",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 50,
+        "parts": 15,
+        "electronic_parts": 10,
+        "iron_plate": 2
+      },
+      "refs": [
+        "s_door"
+      ],
+      "domain": "electricity",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "infrared_switch",
+      "name": "Infrared Switch",
+      "vi": "Công tắc hồng ngoại",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 30,
+        "electronic_parts": 10,
+        "parts": 15
+      },
+      "refs": [
+        "s_door"
+      ],
+      "domain": "electricity",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "motorcycle",
+      "name": "Motorcycle",
+      "vi": "Xe máy",
+      "bench": 3,
+      "ingredients": {
+        "refined_iron_ingot": 200,
+        "vehicle_frame": 1,
+        "mechanical_gear": 30,
+        "iron_plate": 30
+      },
+      "refs": [
+        "s_motor"
+      ],
+      "domain": "transport",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "oil_refinery",
+      "name": "Oil Refinery",
+      "vi": "Máy lọc dầu",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 500,
+        "wood": 200,
+        "low_quality_fuel": 250
+      },
+      "refs": [
+        "s_refinery"
+      ],
+      "domain": "fuel",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "low_quality_fuel",
+      "name": "Low Quality Fuel",
+      "vi": "Nhiên liệu cấp thấp",
+      "bench": null,
+      "ingredients": {
+        "animal_fat": 3,
+        "cloth": 1
+      },
+      "refs": [
+        "s_fuel"
+      ],
+      "domain": "fuel",
+      "confidence": "B",
+      "kind": "craft"
+    },
+    {
+      "id": "wood_club",
+      "name": "Wooden Club",
+      "vi": "Wooden Club",
+      "ingredients": {
+        "wood": 300
+      },
+      "bench": 0,
+      "refs": [
+        "weapon_cookbook_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "no station",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "cleaver",
+      "name": "Cleaver",
+      "vi": "Cleaver",
+      "ingredients": {
+        "iron_ingot": 15,
+        "metal_blade": 1
+      },
+      "bench": 1,
+      "refs": [
+        "weapon_cookbook_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "simple_revolver",
+      "name": "Simple Revolver",
+      "vi": "Simple Revolver",
+      "ingredients": {
+        "iron_ingot": 125,
+        "cloth": 25,
+        "metal_pipe": 1
+      },
+      "bench": 1,
+      "refs": [
+        "weapon_cookbook_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "9mm",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "semi_auto_pistol",
+      "name": "Semi-auto Pistol",
+      "vi": "Semi-auto Pistol",
+      "ingredients": {
+        "handgun_body": 1,
+        "refined_iron_ingot": 4,
+        "metal_pipe": 1
+      },
+      "bench": 2,
+      "refs": [
+        "weapon_cookbook_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "Body looted; 9mm",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "smg",
+      "name": "SMG",
+      "vi": "SMG",
+      "ingredients": {
+        "iron_ingot": 30,
+        "refined_iron_ingot": 12,
+        "torsion_spring": 2
+      },
+      "bench": 2,
+      "refs": [
+        "weapon_cookbook_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "9mm",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "famas",
+      "name": "FAMAS modified",
+      "vi": "FAMAS modified",
+      "ingredients": {
+        "smg_body": 1,
+        "refined_iron_ingot": 15,
+        "torsion_spring": 2
+      },
+      "bench": 3,
+      "refs": [
+        "weapon_cookbook_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "9mm; firearm characteristics conflict in published guides",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "akm",
+      "name": "AKM modified",
+      "vi": "AKM modified",
+      "ingredients": {
+        "rifle_body": 1,
+        "refined_iron_ingot": 50,
+        "metal_pipe": 2,
+        "torsion_spring": 4
+      },
+      "bench": 3,
+      "refs": [
+        "akm_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "7.62mm",
+      "secs": 30,
+      "qty": 1
+    },
+    {
+      "id": "qbz97",
+      "name": "QBZ97",
+      "vi": "QBZ97",
+      "ingredients": {
+        "rifle_body": 1,
+        "refined_iron_ingot": 50,
+        "metal_pipe": 2,
+        "torsion_spring": 4
+      },
+      "bench": 3,
+      "refs": [
+        "weapon_cookbook_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "5.56mm",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "k31",
+      "name": "K31 Bolt-action",
+      "vi": "K31 Bolt-action",
+      "ingredients": {
+        "sniper_body": 1,
+        "refined_iron_ingot": 20,
+        "metal_pipe": 1,
+        "torsion_spring": 1
+      },
+      "bench": 2,
+      "refs": [
+        "weapon_cookbook_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "5.56mm",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "m24",
+      "name": "M24 Bolt-action",
+      "vi": "M24 Bolt-action",
+      "ingredients": {
+        "sniper_body": 1,
+        "refined_iron_ingot": 50,
+        "metal_pipe": 2,
+        "torsion_spring": 4
+      },
+      "bench": 3,
+      "refs": [
+        "weapon_cookbook_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "7.62mm",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "single_shot_shotgun",
+      "name": "Single Shot Shotgun",
+      "vi": "Single Shot Shotgun",
+      "ingredients": {
+        "refined_iron_ingot": 15,
+        "iron_ingot": 30,
+        "torsion_spring": 1,
+        "metal_pipe": 1
+      },
+      "bench": 2,
+      "refs": [
+        "weapon_cookbook_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "12 gauge",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "double_barrel_shotgun",
+      "name": "Double Barrel Shotgun",
+      "vi": "Double Barrel Shotgun",
+      "ingredients": {
+        "shotgun_body": 1,
+        "refined_iron_ingot": 20,
+        "metal_pipe": 2,
+        "torsion_spring": 1
+      },
+      "bench": 3,
+      "refs": [
+        "weapon_cookbook_2020"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "12 gauge",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "mg4",
+      "name": "MG4",
+      "vi": "MG4",
+      "ingredients": {
+        "launcher_mechanism": 1,
+        "refined_iron_ingot": 80,
+        "metal_pipe": 6,
+        "torsion_spring": 5
+      },
+      "bench": 3,
+      "refs": [
+        "mg4_2019"
+      ],
+      "domain": "combat",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "5.56mm; launcher component is a special looted gate",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "wooden_ladder",
+      "name": "Wooden Ladder",
+      "vi": "Wooden Ladder",
+      "ingredients": {
+        "wood": 300,
+        "rope": 3
+      },
+      "bench": 1,
+      "refs": [
+        "foldladder_2019"
+      ],
+      "domain": "construction",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "steel_folding_ladder",
+      "name": "Steel Folding Ladder",
+      "vi": "Steel Folding Ladder",
+      "ingredients": {
+        "refined_iron_ingot": 30,
+        "wooden_ladder": 1,
+        "mechanical_gear": 3
+      },
+      "bench": 3,
+      "refs": [
+        "foldladder_2019"
+      ],
+      "domain": "construction",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "Alternative looted ladder",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "wood_spikes",
+      "name": "Wooden Spikes",
+      "vi": "Wooden Spikes",
+      "ingredients": {
+        "wood": 300
+      },
+      "bench": 1,
+      "refs": [
+        "trap_2019"
+      ],
+      "domain": "defense",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "Persistent damage while durability; hiding in vegetation",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "bear_trap",
+      "name": "Bear Trap",
+      "vi": "Bear Trap",
+      "ingredients": {
+        "iron_ingot": 50,
+        "mechanical_gear": 1
+      },
+      "bench": 1,
+      "refs": [
+        "trap_2019"
+      ],
+      "domain": "defense",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "Must be manually rearmed after trigger",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "ammo_12g",
+      "name": "12 Gauge",
+      "vi": "12 Gauge",
+      "ingredients": {
+        "iron_ingot": 5,
+        "gunpowder": 10
+      },
+      "bench": 2,
+      "refs": [
+        "ammo_2019"
+      ],
+      "domain": "ammunition",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "Ammo output unit not confirmed",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "ammo_12g_ap",
+      "name": "Armor-Piercing 12 Gauge",
+      "vi": "Armor-Piercing 12 Gauge",
+      "ingredients": {
+        "iron_ingot": 5,
+        "gunpowder": 10,
+        "sulfur_powder": 20
+      },
+      "bench": 3,
+      "refs": [
+        "ammo_2019"
+      ],
+      "domain": "ammunition",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "Ammo output unit not confirmed",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "drawing_bench",
+      "name": "Drawing Bench",
+      "vi": "Drawing Bench",
+      "ingredients": {
+        "iron_ingot": 200,
+        "parts": 75
+      },
+      "bench": null,
+      "refs": [
+        "drawing_2019"
+      ],
+      "domain": "research",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "Copies consumed original into blueprint using Parts",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "energy_refinery",
+      "name": "Energy Refinery",
+      "vi": "Energy Refinery",
+      "ingredients": {
+        "refined_iron_ingot": 200,
+        "parts": 500,
+        "electronic_parts": 50
+      },
+      "bench": 3,
+      "refs": [
+        "energy_2021"
+      ],
+      "domain": "energy",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "Requires Lv10 character, recipe learned",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "energy_extractor",
+      "name": "Energy Ore Extractor",
+      "vi": "Energy Ore Extractor",
+      "ingredients": {
+        "refined_iron_ingot": 30,
+        "metal_pipe": 5,
+        "electronic_parts": 10,
+        "mechanical_gear": 10
+      },
+      "bench": 3,
+      "refs": [
+        "energy_2021"
+      ],
+      "domain": "energy",
+      "confidence": "B",
+      "kind": "craft",
+      "notes": "Specialized ore requires special extractor",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "bandage",
+      "name": "Bandage",
+      "vi": "Bandage",
+      "ingredients": {
+        "cloth": 5
+      },
+      "bench": null,
+      "refs": [
+        "med_2025"
+      ],
+      "domain": "medical",
+      "confidence": "C",
+      "kind": "craft",
+      "notes": "Date-later source; quantity from this source",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "syringe",
+      "name": "Syringe",
+      "vi": "Syringe",
+      "ingredients": {
+        "needle_tube": 1,
+        "low_quality_fuel": 10,
+        "iron_ingot": 10
+      },
+      "bench": 2,
+      "refs": [
+        "med_2025"
+      ],
+      "domain": "medical",
+      "confidence": "C",
+      "kind": "craft",
+      "notes": "Restores 50 HP and additional +15% stated; preserve interpretation uncertainty",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "medkit",
+      "name": "Medkit",
+      "vi": "Medkit",
+      "ingredients": {
+        "syringe": 2,
+        "low_quality_fuel": 50,
+        "wood": 100,
+        "iron_ingot": 2
+      },
+      "bench": 3,
+      "refs": [
+        "med_2025"
+      ],
+      "domain": "medical",
+      "confidence": "C",
+      "kind": "craft",
+      "notes": "Restores 100 HP and +35% stated; preserve interpretation uncertainty",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "canned_meat",
+      "name": "Canned Meat",
+      "vi": "Canned Meat",
+      "ingredients": {
+        "animal_meat": 10,
+        "tin_can": 1
+      },
+      "bench": null,
+      "refs": [
+        "med_2025"
+      ],
+      "domain": "food",
+      "confidence": "C",
+      "kind": "craft",
+      "notes": "",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "jam",
+      "name": "Jam",
+      "vi": "Jam",
+      "ingredients": {
+        "wild_berry": 10,
+        "cloth": 5,
+        "tin_can": 1
+      },
+      "bench": null,
+      "refs": [
+        "med_2025"
+      ],
+      "domain": "food",
+      "confidence": "C",
+      "kind": "craft",
+      "notes": "",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "fruit_juice",
+      "name": "Fruit Juice",
+      "vi": "Fruit Juice",
+      "ingredients": {
+        "wild_berry": 3
+      },
+      "bench": null,
+      "refs": [
+        "med_2025"
+      ],
+      "domain": "food",
+      "confidence": "C",
+      "kind": "craft",
+      "notes": "",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "dried_meat",
+      "name": "Roasted Meat",
+      "vi": "Roasted Meat",
+      "ingredients": {
+        "animal_meat": 1
+      },
+      "bench": null,
+      "refs": [
+        "med_2025"
+      ],
+      "domain": "food",
+      "confidence": "C",
+      "kind": "craft",
+      "notes": "",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "fruit_wine",
+      "name": "Fruit Wine",
+      "vi": "Fruit Wine",
+      "ingredients": {
+        "wild_berry": 5,
+        "tin_can": 1
+      },
+      "bench": null,
+      "refs": [
+        "med_2025"
+      ],
+      "domain": "food",
+      "confidence": "C",
+      "kind": "craft",
+      "notes": "",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "mushroom_soup",
+      "name": "Mushroom Soup",
+      "vi": "Mushroom Soup",
+      "ingredients": {
+        "mushroom": 5,
+        "tin_can": 1
+      },
+      "bench": null,
+      "refs": [
+        "med_2025"
+      ],
+      "domain": "food",
+      "confidence": "C",
+      "kind": "craft",
+      "notes": "",
+      "secs": null,
+      "qty": 1
+    },
+    {
+      "id": "grilled_mushroom",
+      "name": "Grilled Mushroom",
+      "vi": "Grilled Mushroom",
+      "ingredients": {
+        "mushroom": 1
+      },
+      "bench": null,
+      "refs": [
+        "med_2025"
+      ],
+      "domain": "food",
+      "confidence": "C",
+      "kind": "craft",
+      "notes": "",
+      "secs": null,
+      "qty": 1
+    }
+  ],
+  "items": {
+    "parts": {
+      "label": "Parts (零件)",
+      "channels": [
+        "Yellow/blue roadside barrels",
+        "Supply Crates",
+        "Recycler (disassemble other items)"
+      ],
+      "refs": [
+        "s_2019community",
+        "s_loot",
+        "s_recycler"
+      ]
+    },
+    "iron_ingot": {
+      "label": "Iron Ingot",
+      "channels": [
+        "Furnace: Iron Ore + fuel + time"
+      ],
+      "refs": [
+        "qa_2019"
+      ]
+    },
+    "refined_iron_ingot": {
+      "label": "Refined Iron Ingots",
+      "channels": [
+        "Mine rare refined-iron ore from iron deposits → Furnace",
+        "Loot/airdrop/recycle in relevant releases"
+      ],
+      "refs": [
+        "s_rifle",
+        "s_recycler",
+        "s_motor"
+      ]
+    },
+    "electronic_parts": {
+      "label": "Electronic Parts",
+      "channels": [
+        "Airdrops",
+        "Advanced military/supply caches",
+        "Recycler of appropriate equipment"
+      ],
+      "refs": [
+        "s_door"
+      ]
+    },
+    "launcher_mechanism": {
+      "label": "Launcher Mechanism",
+      "channels": [
+        "Airdrop/advanced high-value loot"
+      ],
+      "refs": [
+        "s_rocket"
+      ]
+    },
+    "wood": {
+      "label": "Wood",
+      "channels": [
+        "Trees with suitable axe/club"
+      ],
+      "refs": [
+        "qa_2019"
+      ]
+    },
+    "animal_fat": {
+      "label": "Animal Fat",
+      "channels": [
+        "Animals → hunt"
+      ],
+      "refs": [
+        "s_fuel"
+      ]
+    },
+    "cloth": {
+      "label": "Cloth",
+      "channels": [
+        "Fibrous nettle/plant sources → gather/craft"
+      ],
+      "refs": [
+        "s_fuel"
+      ]
+    },
+    "raw_iron_ore": {
+      "label": "Iron Ore",
+      "channels": [
+        "Iron mineral deposits → mine → smelt to Iron Ingots"
+      ],
+      "refs": [
+        "s_ironaxe"
+      ]
+    },
+    "refined_iron_ore": {
+      "label": "Refined Iron Ore",
+      "channels": [
+        "Rare iron-mine yield / dedicated mining fields → smelt"
+      ],
+      "refs": [
+        "s_rifle",
+        "s_recycler"
+      ]
+    },
+    "crude_oil": {
+      "label": "Crude Oil",
+      "channels": [
+        "Red roadside barrels",
+        "Oil extraction base"
+      ],
+      "refs": [
+        "s_loot"
+      ]
+    },
+    "rifle_body": {
+      "label": "Rifle Body",
+      "channels": [
+        "Scavenging",
+        "Airdrop"
+      ],
+      "refs": [
+        "weapon_cookbook_2020"
+      ]
+    },
+    "handgun_body": {
+      "label": "Handgun Body",
+      "channels": [
+        "Scavenging"
+      ],
+      "refs": [
+        "weapon_cookbook_2020"
+      ]
+    },
+    "smg_body": {
+      "label": "Submachine Gun Body",
+      "channels": [
+        "Scavenging"
+      ],
+      "refs": [
+        "weapon_cookbook_2020"
+      ]
+    },
+    "sniper_body": {
+      "label": "Sniper Body",
+      "channels": [
+        "Scavenging"
+      ],
+      "refs": [
+        "weapon_cookbook_2020"
+      ]
+    },
+    "shotgun_body": {
+      "label": "Shotgun Body",
+      "channels": [
+        "Scavenging"
+      ],
+      "refs": [
+        "weapon_cookbook_2020"
+      ]
+    },
+    "needle_tube": {
+      "label": "Needle Tube",
+      "channels": [
+        "Found as medical component",
+        "Exact loot source unknown"
+      ],
+      "refs": [
+        "med_2025"
+      ]
+    },
+    "tin_can": {
+      "label": "Tin Can",
+      "channels": [
+        "Found industrial/food resources",
+        "Exact loot source unknown"
+      ],
+      "refs": [
+        "med_2025"
+      ]
+    },
+    "gunpowder": {
+      "label": "Gunpowder",
+      "channels": [
+        "Production/salvage",
+        "Exact base ingredient recipe unknown"
+      ],
+      "refs": [
+        "ammo_2019"
+      ]
+    },
+    "sulfur_powder": {
+      "label": "Sulfur Powder",
+      "channels": [
+        "Sulfur source → intermediate",
+        "Conversion ratio unknown"
+      ],
+      "refs": [
+        "ammo_2019"
+      ]
+    }
+  },
+  "containers": [
+    {
+      "id": "yellow_blue_barrel",
+      "label": "Yellow/Blue Oil Barrel",
+      "role": "Parts + assorted manufactured materials",
+      "where": "Roadside scrap piles",
+      "note": "Guarantee category described; not a per-item percentage",
+      "refs": [
+        "s_loot",
+        "s_2019community"
+      ]
+    },
+    {
+      "id": "red_barrel",
+      "label": "Red Oil Barrel",
+      "role": "Crude Oil + low-grade fuel",
+      "where": "Roadside scrap and concentrated oil base",
+      "note": "Source differentiated by fuel economy",
+      "refs": [
+        "s_loot",
+        "s_2019community"
+      ]
+    },
+    {
+      "id": "toolbox",
+      "label": "Toolbox",
+      "role": "Higher tools, melee weapons; some equipment",
+      "where": "Roads and POIs",
+      "note": "May bypass tool crafting and enable specimen study",
+      "refs": [
+        "s_loot",
+        "s_axe"
+      ]
+    },
+    {
+      "id": "supply_box",
+      "label": "Supply Crate",
+      "role": "Parts, industrial semifinished materials, selected equipment",
+      "where": "Roads, POIs, gated interiors",
+      "note": "Common source of plate/blade/pipe-type items",
+      "refs": [
+        "s_loot",
+        "s_2019community"
+      ]
+    },
+    {
+      "id": "food_box",
+      "label": "Food Crate",
+      "role": "Finished food",
+      "where": "Roads and POIs",
+      "note": "Carries a dedicated survival promise",
+      "refs": [
+        "s_loot"
+      ]
+    },
+    {
+      "id": "military_box",
+      "label": "Military Crate",
+      "role": "Weapon/equipment/industrial components",
+      "where": "Hazardous POIs and gated zones",
+      "note": "Higher-value technology sink/source",
+      "refs": [
+        "s_loot"
+      ]
+    },
+    {
+      "id": "advanced_military_box",
+      "label": "Advanced Military Crate",
+      "role": "High-level weapons, specialty components",
+      "where": "High-tier POIs and card rooms",
+      "note": "Found Refined Iron Axe in item guide",
+      "refs": [
+        "s_loot",
+        "s_axe"
+      ]
+    },
+    {
+      "id": "airdrop",
+      "label": "Airdrop",
+      "role": "Rare equipment, key mechanisms, high-tier parts",
+      "where": "Special delivery in world",
+      "note": "Launcher mechanism is a special drop; not all parts craftable",
+      "refs": [
+        "s_rocket",
+        "s_loot"
+      ]
+    },
+    {
+      "id": "medical_box",
+      "label": "Medical Crate",
+      "role": "Medical supplies by grade",
+      "where": "Green/blue/purple rooms",
+      "note": "Explicit official crate family",
+      "refs": [
+        "s_official2022"
+      ]
+    },
+    {
+      "id": "harpoon_box",
+      "label": "Harpoon Crate",
+      "role": "Diving equipment and harpoon tools",
+      "where": "Special underwater-oriented content",
+      "note": "Explicit official content category; not an instruction to clone content",
+      "refs": [
+        "s_official2022"
+      ]
+    }
+  ],
+  "pois": [
+    {
+      "id": "supermarket",
+      "name": "Supermarket",
+      "crates": {
+        "food_box": 1
+      },
+      "gate": "Green card ×1",
+      "risk": "Infected ×1",
+      "refs": [
+        "s_2019poi"
+      ]
+    },
+    {
+      "id": "gas_station",
+      "name": "Gas Station",
+      "crates": {
+        "food_box": 1,
+        "red_barrel": "2–4"
+      },
+      "gate": "Green card ×1",
+      "risk": "Infected ×1",
+      "refs": [
+        "s_2019poi"
+      ]
+    },
+    {
+      "id": "bunker",
+      "name": "Bunker",
+      "crates": {
+        "supply_box": 4,
+        "toolbox": 1,
+        "food_box": 1
+      },
+      "gate": "Blue room → Purple card ×1",
+      "risk": "1 Heavy +6 armored infected",
+      "refs": [
+        "s_2019poi"
+      ]
+    },
+    {
+      "id": "airport",
+      "name": "Airport",
+      "crates": {
+        "supply_box": 9,
+        "military_box": 1,
+        "food_box": 1
+      },
+      "gate": "Green room→Blue; Blue room→Purple",
+      "risk": "6 worker infected +1 sniper",
+      "refs": [
+        "s_poicensus"
+      ]
+    },
+    {
+      "id": "nuclear_plant",
+      "name": "Nuclear Plant",
+      "crates": {
+        "supply_box": "3–5",
+        "military_box": 1
+      },
+      "gate": "Blue room, electricity",
+      "risk": "Hunter + other infected",
+      "refs": [
+        "s_2019poi"
+      ]
+    },
+    {
+      "id": "harbor",
+      "name": "Harbor",
+      "crates": {
+        "supply_box": 9,
+        "toolbox": 1
+      },
+      "gate": "Green→Blue; Purple room",
+      "risk": "Hunter + infected + dogs",
+      "refs": [
+        "s_poicensus"
+      ]
+    },
+    {
+      "id": "radar_station",
+      "name": "Radar Station",
+      "crates": {
+        "supply_box": 5,
+        "food_box": 1,
+        "toolbox": 1
+      },
+      "gate": "Blue room→Purple",
+      "risk": "Low hazard in cited guide",
+      "refs": [
+        "s_poicensus"
+      ]
+    },
+    {
+      "id": "warehouse",
+      "name": "Warehouse",
+      "crates": {
+        "supply_box": 1,
+        "toolbox": 1
+      },
+      "gate": "Recycler access",
+      "risk": "Very low hazard",
+      "refs": [
+        "s_poicensus"
+      ]
+    },
+    {
+      "id": "oil_base",
+      "name": "Oil Extraction Base",
+      "crates": {
+        "supply_box": 4,
+        "red_barrel": "many"
+      },
+      "gate": "Open fuel resource zone",
+      "risk": "Low hazard in cited guide",
+      "refs": [
+        "s_poicensus"
+      ]
+    },
+    {
+      "id": "bio_lab",
+      "name": "Biolab",
+      "crates": {},
+      "gate": "Green room and Purple room, high-value loot",
+      "risk": "EG mutant + infected",
+      "refs": [
+        "s_cards",
+        "s_poicensus"
+      ]
+    }
+  ],
+  "rooms": [
+    {
+      "card": "Green",
+      "crates": {
+        "Low Supply": 2,
+        "Low Toolbox": 1,
+        "Low Military": 1,
+        "Low Food": 1,
+        "Low Medical": 1
+      },
+      "refs": [
+        "s_official2022"
+      ]
+    },
+    {
+      "card": "Blue",
+      "crates": {
+        "Medium Supply": 2,
+        "Low Toolbox": 1,
+        "Medium Military": 1,
+        "Medium Food": 1,
+        "Medium Medical": 1
+      },
+      "refs": [
+        "s_official2022"
+      ]
+    },
+    {
+      "card": "Purple",
+      "crates": {
+        "High Supply": 2,
+        "High Toolbox": 1,
+        "High Military": 1,
+        "Medium Military": 1,
+        "High Food": 1,
+        "High Medical": 1
+      },
+      "refs": [
+        "s_official2022"
+      ]
+    }
+  ],
+  "sources": {
+    "s_gear": {
+      "url": "https://www.9game.cn/daihaoyingxiong/3279007.html",
+      "desc": "Mechanical Gear 50 Iron Ingots + 65 Parts, mid Workbench"
+    },
+    "s_plate": {
+      "url": "https://www.9game.cn/news/3334146.html",
+      "desc": "Iron Plate 5 Refined Iron + 30 Parts, mid Workbench"
+    },
+    "s_blade": {
+      "url": "https://www.9game.cn/daihaoyingxiong/3294352.html",
+      "desc": "Blade 30 Iron + 15 Parts, mid Workbench"
+    },
+    "s_spring": {
+      "url": "https://www.9game.cn/news/3305575.html",
+      "desc": "Torsion Spring 5 Refined Iron + 65 Parts, mid Workbench"
+    },
+    "s_pipe": {
+      "url": "https://www.aspxhome.com/youxi/2023/388245.htm",
+      "desc": "Rocket launcher raw recipe and Pipe material 5 Refined Iron + 30 Parts"
+    },
+    "s_door": {
+      "url": "https://www.9game.cn/news/3336352.html",
+      "desc": "Electric Door + generator + multiple control recipes"
+    },
+    "s_frame": {
+      "url": "https://shouyou.3dmgame.com/gl/135015.html",
+      "desc": "Vehicle Frame 100 Iron + 30 Refined Iron + 50 Parts"
+    },
+    "s_motor": {
+      "url": "https://www.9game.cn/news/3676549.html",
+      "desc": "Motorcycle 200 Refined Iron + Frame + 30 Gears + 30 Plates"
+    },
+    "s_axe": {
+      "url": "https://www.9game.cn/daihaoyingxiong/4515476.html",
+      "desc": "Refined Iron Axe recipe, tool source, craft time and durability"
+    },
+    "s_ironaxe": {
+      "url": "https://www.aspxhome.com/youxi/2023/397622.htm",
+      "desc": "Iron Axe 75 Iron +100 Wood, basic Workbench"
+    },
+    "s_machete": {
+      "url": "https://www.9game.cn/daihaoyingxiong/3298149.html",
+      "desc": "Machete 100 Iron + 3 Blades, mid Workbench"
+    },
+    "s_rifle": {
+      "url": "https://www.9game.cn/news/3425504.html",
+      "desc": "Semi-Auto Rifle 450 Iron +30 Refined Iron + 2 Springs"
+    },
+    "s_rocket": {
+      "url": "https://www.aspxhome.com/youxi/2023/388245.htm",
+      "desc": "Rocket Launcher 50 Refined +6 Pipes +5 Springs +Launcher mechanism"
+    },
+    "s_refinery": {
+      "url": "https://www.9game.cn/news/3448709.html",
+      "desc": "Oil Refinery crafting requirements and low-grade fuel inputs"
+    },
+    "s_recycler": {
+      "url": "https://news.4399.com/zhytgz/xinde/m/895633.html",
+      "desc": "PvE recycler, refined iron, iron barrels and source traversal"
+    },
+    "s_2019poi": {
+      "url": "https://www.hackhome.com/info/483950.html",
+      "desc": "POI crate counts and enemies, 2019-06"
+    },
+    "s_poicensus": {
+      "url": "https://m.duote.com/tech/wmcq/135559.html",
+      "desc": "POI crate and keycard rooms by place"
+    },
+    "s_cards": {
+      "url": "https://hero.yingxiong.com/info/2019/0807/7028.html",
+      "desc": "Developer-published 2019 location/keycard gate source"
+    },
+    "s_loot": {
+      "url": "https://shouyou.3dmgame.com/gl/133819.html",
+      "desc": "2019 item categories for barrel/crate types"
+    },
+    "s_official2022": {
+      "url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "desc": "Official 2022 crate tiers and card-room composition"
+    },
+    "s_2019community": {
+      "url": "https://www.taptap.cn/moment/15201304955586452",
+      "desc": "2019 community source families and green-blue-purple cards"
+    },
+    "s_2020pve": {
+      "url": "https://news.4399.com/zhytgz/xinde/m/895633.html",
+      "desc": "2020 PvE beginner experience and recycler loop"
+    },
+    "s_fuel": {
+      "url": "https://www.9game.cn/news/3448709.html",
+      "desc": "Crude oil refinery and low-quality fuel from fat+cloth"
+    },
+    "s_2022future": {
+      "url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "desc": "Updates to crate tier segmentation"
+    },
+    "official_weapons_2019": {
+      "url": "https://hero.yingxiong.com/info/2019/0927/7249.html",
+      "date": "2019-09-27",
+      "desc": "Official-hosted player weapon source matrix, ammunition and explosives; airdrop six-hour period",
+      "type": "official-hosted-community"
+    },
+    "official_poi_2019": {
+      "url": "https://hero.yingxiong.com/info/2019/0807/7028.html",
+      "date": "2019-08-07",
+      "desc": "Official-hosted POI guide: card spawn, colored doors, three-hour refresh, generator/resistor dependency",
+      "type": "official-hosted-community"
+    },
+    "qa_2019": {
+      "url": "https://news.4399.com/zhytgz/zixun/m/895413.html",
+      "date": "2019-08-01",
+      "desc": "Launch Q&A: 15-real-day run, modes, hunger, death, persistent learnt blueprints, offline danger, level 100",
+      "type": "publisher-guide"
+    },
+    "house_2019": {
+      "url": "https://www.9game.cn/daihaoyingxiong/3660151.html",
+      "date": "2019-09-25",
+      "desc": "Deep player house construction treatise with maintenance thresholds, structures, turret behavior, circuit",
+      "type": "community-guide"
+    },
+    "coldfacts_2019": {
+      "url": "https://www.taptap.cn/moment/15218919606324324",
+      "date": "2019-05-25",
+      "desc": "Community cold facts: bench distance after queueing, foundation support, decoy construction, biomes",
+      "type": "community-guide"
+    },
+    "weapon_cookbook_2020": {
+      "url": "https://www.dlyybbs.com/t28",
+      "date": "2020-04-03",
+      "desc": "Weapon recipe and stat compilation including handgun/rifle bodies and refined metal parts",
+      "type": "community-compilation"
+    },
+    "akm_2020": {
+      "url": "https://a.4399.cn/gl/020918173_115226.html",
+      "date": "2020-06-28",
+      "desc": "AKM recipe, loot and weapon stats from 4399",
+      "type": "publisher-guide"
+    },
+    "mg4_2019": {
+      "url": "https://www.9game.cn/daihaoyingxiong/3270545.html",
+      "date": "2019-06-25",
+      "desc": "MG4 recipe, station and stats",
+      "type": "secondary-guide"
+    },
+    "foldladder_2019": {
+      "url": "https://www.9game.cn/news/3442605.html",
+      "date": "2019-08-08",
+      "desc": "Steel folding ladder: 30 refined iron + wooden ladder + 3 gears; parent ladder recipe",
+      "type": "secondary-guide"
+    },
+    "ammo_2019": {
+      "url": "https://www.9game.cn/daihaoyingxiong/3279791.html",
+      "date": "2019-06-28",
+      "desc": "Shotgun turret uses 12-gauge, ammo and armor-piercing ammo recipes",
+      "type": "secondary-guide"
+    },
+    "trap_2019": {
+      "url": "https://www.onlinedown.net/article/10012371.htm",
+      "date": "2019-10-21",
+      "desc": "Wood spike and bear trap recipes; durable/rearm behavior",
+      "type": "secondary-guide"
+    },
+    "food_2019": {
+      "url": "https://www.9game.cn/news/3416705.html",
+      "date": "2019-08-02",
+      "desc": "Food recipe names and conceptual inputs (some quantities not stated)",
+      "type": "secondary-guide"
+    },
+    "med_2025": {
+      "url": "https://www.9game.cn/news/10769547.html",
+      "date": "2025-01-14",
+      "desc": "Food and medical explicit ingredient amounts, syringe and medkit health impact",
+      "type": "later-compilation"
+    },
+    "energy_2021": {
+      "url": "https://www.biubiu001.com/wpzzwmcq/38708.html",
+      "date": "2021-08-09",
+      "desc": "Energy refinery and specialized extractor recipes; material source paths",
+      "type": "secondary-guide"
+    },
+    "drawing_2019": {
+      "url": "https://www.9game.cn/news/3786502.html",
+      "date": "2019-10-29",
+      "desc": "Drawing bench formula 200 iron +75 Parts, original-object copying mechanic",
+      "type": "secondary-guide"
+    },
+    "research_2021": {
+      "url": "https://hero.yingxiong.com/m/info/2021/0825/6977.html",
+      "date": "2021-08-25",
+      "desc": "Research bench random draw 1000 Parts example and destructive sample drawing",
+      "type": "official-hosted-community"
+    },
+    "maintenance_2019": {
+      "url": "https://www.aspxhome.com/youxi/2022/399674.htm",
+      "date": "published 2022, 2019 adjustment described",
+      "desc": "Territory cupboard maintenance 1000wood/30min baseline vs 3000wood/day revision; 25m area",
+      "type": "reproduced-announcement"
+    },
+    "loot_2019": {
+      "url": "https://www.9game.cn/daihaoyingxiong/3467983.html",
+      "date": "2019-08-14",
+      "desc": "Road yellow/blue guaranteed Parts; Supply probable parts; recycling old items",
+      "type": "secondary-guide"
+    },
+    "recycler_story_2020": {
+      "url": "https://news.4399.com/zhytgz/xinde/m/895633.html",
+      "date": "2020-06-24",
+      "desc": "Guided scavenging route: 2 Parts/barrel anecdote; reverse engineering refined axe; recycler of gears/pipes/blades and refined metal shortcut",
+      "type": "publisher-guide"
+    },
+    "pois_2020": {
+      "url": "https://game.xiaomi.com/viewpoint/1127866428_1601132863008_16",
+      "date": "2020-09-26",
+      "desc": "Hidden damaged crates, keycards, named POI and lab boss",
+      "type": "community-repost"
+    },
+    "source_forge_2019": {
+      "url": "https://www.9game.cn/news/3676549.html",
+      "date": "2019-09-28",
+      "desc": "Motorcycle BOM, refined ore and multi-channel frame/gear/plate",
+      "type": "secondary-guide"
+    }
+  },
+  "expanded_bom": {
+    "metal_blade": {
+      "iron_ingot": 30,
+      "parts": 15
+    },
+    "metal_pipe": {
+      "refined_iron_ingot": 5,
+      "parts": 30
+    },
+    "torsion_spring": {
+      "refined_iron_ingot": 5,
+      "parts": 65
+    },
+    "mechanical_gear": {
+      "iron_ingot": 50,
+      "parts": 65
+    },
+    "iron_plate": {
+      "refined_iron_ingot": 5,
+      "parts": 30
+    },
+    "vehicle_frame": {
+      "iron_ingot": 100,
+      "refined_iron_ingot": 30,
+      "parts": 50
+    },
+    "iron_axe": {
+      "iron_ingot": 75,
+      "wood": 100
+    },
+    "refined_iron_axe": {
+      "refined_iron_ingot": 7,
+      "iron_ingot": 150,
+      "parts": 105
+    },
+    "machete": {
+      "iron_ingot": 190,
+      "parts": 45
+    },
+    "semi_auto_rifle": {
+      "iron_ingot": 450,
+      "refined_iron_ingot": 40,
+      "parts": 130
+    },
+    "rocket_launcher": {
+      "refined_iron_ingot": 105,
+      "parts": 505,
+      "launcher_mechanism": 1
+    },
+    "electric_door": {
+      "iron_ingot": 100,
+      "electronic_parts": 5,
+      "parts": 365,
+      "refined_iron_ingot": 50
+    },
+    "fuel_generator": {
+      "refined_iron_ingot": 20,
+      "iron_ingot": 100,
+      "electronic_parts": 30,
+      "parts": 100
+    },
+    "switch": {
+      "iron_ingot": 10,
+      "electronic_parts": 2,
+      "parts": 10
+    },
+    "pressure_switch": {
+      "iron_ingot": 50,
+      "parts": 75,
+      "electronic_parts": 10,
+      "refined_iron_ingot": 10
+    },
+    "infrared_switch": {
+      "iron_ingot": 30,
+      "electronic_parts": 10,
+      "parts": 15
+    },
+    "motorcycle": {
+      "refined_iron_ingot": 380,
+      "iron_ingot": 1600,
+      "parts": 2900
+    },
+    "oil_refinery": {
+      "iron_ingot": 500,
+      "wood": 200,
+      "animal_fat": 750,
+      "cloth": 250
+    },
+    "low_quality_fuel": {
+      "animal_fat": 3,
+      "cloth": 1
+    },
+    "wood_club": {
+      "wood": 300
+    },
+    "cleaver": {
+      "iron_ingot": 45,
+      "parts": 15
+    },
+    "simple_revolver": {
+      "iron_ingot": 125,
+      "cloth": 25,
+      "refined_iron_ingot": 5,
+      "parts": 30
+    },
+    "semi_auto_pistol": {
+      "handgun_body": 1,
+      "refined_iron_ingot": 9,
+      "parts": 30
+    },
+    "smg": {
+      "iron_ingot": 30,
+      "refined_iron_ingot": 22,
+      "parts": 130
+    },
+    "famas": {
+      "smg_body": 1,
+      "refined_iron_ingot": 25,
+      "parts": 130
+    },
+    "akm": {
+      "rifle_body": 1,
+      "refined_iron_ingot": 80,
+      "parts": 320
+    },
+    "qbz97": {
+      "rifle_body": 1,
+      "refined_iron_ingot": 80,
+      "parts": 320
+    },
+    "k31": {
+      "sniper_body": 1,
+      "refined_iron_ingot": 30,
+      "parts": 95
+    },
+    "m24": {
+      "sniper_body": 1,
+      "refined_iron_ingot": 80,
+      "parts": 320
+    },
+    "single_shot_shotgun": {
+      "refined_iron_ingot": 25,
+      "iron_ingot": 30,
+      "parts": 95
+    },
+    "double_barrel_shotgun": {
+      "shotgun_body": 1,
+      "refined_iron_ingot": 35,
+      "parts": 125
+    },
+    "mg4": {
+      "launcher_mechanism": 1,
+      "refined_iron_ingot": 135,
+      "parts": 505
+    },
+    "wooden_ladder": {
+      "wood": 300,
+      "rope": 3
+    },
+    "steel_folding_ladder": {
+      "refined_iron_ingot": 30,
+      "wood": 300,
+      "rope": 3,
+      "iron_ingot": 150,
+      "parts": 195
+    },
+    "wood_spikes": {
+      "wood": 300
+    },
+    "bear_trap": {
+      "iron_ingot": 100,
+      "parts": 65
+    },
+    "ammo_12g": {
+      "iron_ingot": 5,
+      "gunpowder": 10
+    },
+    "ammo_12g_ap": {
+      "iron_ingot": 5,
+      "gunpowder": 10,
+      "sulfur_powder": 20
+    },
+    "drawing_bench": {
+      "iron_ingot": 200,
+      "parts": 75
+    },
+    "energy_refinery": {
+      "refined_iron_ingot": 200,
+      "parts": 500,
+      "electronic_parts": 50
+    },
+    "energy_extractor": {
+      "refined_iron_ingot": 55,
+      "parts": 800,
+      "electronic_parts": 10,
+      "iron_ingot": 500
+    },
+    "bandage": {
+      "cloth": 5
+    },
+    "syringe": {
+      "needle_tube": 1,
+      "animal_fat": 30,
+      "cloth": 10,
+      "iron_ingot": 10
+    },
+    "medkit": {
+      "needle_tube": 2,
+      "animal_fat": 210,
+      "cloth": 70,
+      "iron_ingot": 22,
+      "wood": 100
+    },
+    "canned_meat": {
+      "animal_meat": 10,
+      "tin_can": 1
+    },
+    "jam": {
+      "wild_berry": 10,
+      "cloth": 5,
+      "tin_can": 1
+    },
+    "fruit_juice": {
+      "wild_berry": 3
+    },
+    "dried_meat": {
+      "animal_meat": 1
+    },
+    "fruit_wine": {
+      "wild_berry": 5,
+      "tin_can": 1
+    },
+    "mushroom_soup": {
+      "mushroom": 5,
+      "tin_can": 1
+    },
+    "grilled_mushroom": {
+      "mushroom": 1
+    }
+  },
+  "assembled_electric_system_bom": {
+    "iron_ingot": 210,
+    "electronic_parts": 37,
+    "parts": 475,
+    "refined_iron_ingot": 70
+  },
+  "updated": "2026-11-04",
+  "principles": [
+    "Preserve literal reported quantities and source-specific dates.",
+    "Multi-source tracing: finished product → ingredient → acquisition → container → POI/gate.",
+    "Do not infer a numerical drop probability from words like 常见, 大概率, 概率, 必出.",
+    "Make crafting alternatives and natural loot alternatives visible.",
+    "Keep contradictory stats side by side; never average or silently prefer.",
+    "A game release/date is metadata, not a reason to exclude its mechanics."
+  ],
+  "loot_edges": [
+    {
+      "item": "iron_axe",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "iron_axe",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "refined_iron_axe",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "refined_iron_axe",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "wood_club",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "cleaver",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "cleaver",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "machete",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "machete",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "machete",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "semi_auto_pistol",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "semi_auto_pistol",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "semi_auto_pistol",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "smg",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "smg",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "famas",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "famas",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "semi_auto_rifle",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "akm",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "akm",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "akm",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "qbz97",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "qbz97",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "k31",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "m24",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "m24",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "single_shot_shotgun",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "single_shot_shotgun",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "double_barrel_shotgun",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "double_barrel_shotgun",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "rocket_launcher",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "rocket_launcher",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "mg4",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_9mm",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_9mm",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_9mm",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_9mm",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_556",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_556",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_556",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_556",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_556_he",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_556_he",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_556_he",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_556_he",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_556_he",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_762",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_762",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_762",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_762",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_762_he",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_762_he",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_762_he",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_12g",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_12g",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_12g",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_12g",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_12g_ap",
+      "container": "toolbox",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_12g_ap",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "ammo_12g_ap",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "rocket_ammo",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "rocket_ammo",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "barrel_bomb",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "barrel_bomb",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "handmade_explosives",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "handmade_explosives",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "handmade_explosives",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "military_c4",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "military_c4",
+      "container": "airdrop",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "dirt_grenade",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "improved_grenade",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "improved_grenade",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "famas",
+      "container": "login_day3_reward",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": "Day 3 login reward in source, not a crate"
+    },
+    {
+      "item": "simple_revolver",
+      "container": "starter_quest_reward",
+      "relation": "confirmed_possible",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "notes": "Early tutorial reward in source"
+    },
+    {
+      "item": "parts",
+      "container": "yellow_blue_barrel",
+      "relation": "guaranteed_category",
+      "refs": [
+        "loot_2019"
+      ],
+      "notes": "Parts plus other materials stated guaranteed in that source"
+    },
+    {
+      "item": "crude_oil",
+      "container": "red_barrel",
+      "relation": "guaranteed_category",
+      "refs": [
+        "s_loot"
+      ],
+      "notes": "Unspecified quantity"
+    },
+    {
+      "item": "low_quality_fuel",
+      "container": "red_barrel",
+      "relation": "guaranteed_category",
+      "refs": [
+        "s_loot"
+      ],
+      "notes": "Unspecified quantity"
+    },
+    {
+      "item": "mechanical_gear",
+      "container": "yellow_blue_barrel",
+      "relation": "confirmed_possible",
+      "refs": [
+        "foldladder_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "mechanical_gear",
+      "container": "military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "foldladder_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "mechanical_gear",
+      "container": "advanced_military_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "foldladder_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "mechanical_gear",
+      "container": "supply_box",
+      "relation": "confirmed_possible",
+      "refs": [
+        "foldladder_2019"
+      ],
+      "notes": ""
+    },
+    {
+      "item": "steel_folding_ladder",
+      "container": "unspecified_loot_crate",
+      "relation": "confirmed_possible",
+      "refs": [
+        "house_2019"
+      ],
+      "notes": "Reported in crates; source does not name a precise crate type"
+    }
+  ],
+  "poi_access_edges": [
+    {
+      "from": "supermarket",
+      "to": "green_keycard",
+      "condition": "table spawn",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "gas_station",
+      "to": "green_keycard",
+      "condition": "table spawn",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "abandoned_research_facility",
+      "to": "green_keycard",
+      "condition": "roof spawn",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "port",
+      "to": "green_keycard",
+      "condition": "roof spawn",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "nuclear_power_plant",
+      "to": "green_keycard",
+      "condition": "roof spawn",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "airport",
+      "to": "blue_keycard",
+      "condition": "roof spawn, enemies nearby",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "green_card_room",
+      "to": "blue_keycard",
+      "condition": "powered + green card",
+      "certainty": "guaranteed_in_source",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "blue_card_room",
+      "to": "purple_keycard",
+      "condition": "powered + blue card, 3-hour refresh reported",
+      "certainty": "guaranteed_in_source",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "abandoned_factory",
+      "to": "green_keycard",
+      "condition": "roof spawn",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "biolab",
+      "to": "green_keycard",
+      "condition": "toilet spawn",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "biolab",
+      "to": "purple_keycard",
+      "condition": "defeat EG mutant, 3-hour spawn reported",
+      "certainty": "secondary-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "bunker",
+      "to": "blue_card_room",
+      "condition": "powered door",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "airport",
+      "to": "blue_card_room",
+      "condition": "powered door",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "nuclear_power_plant",
+      "to": "blue_card_room",
+      "condition": "powered door",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "bandit_camp",
+      "to": "purple_card_room",
+      "condition": "card + electric power, high infected pressure",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "biolab",
+      "to": "purple_card_room",
+      "condition": "card + electric power, EG mutant",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "port",
+      "to": "purple_card_room",
+      "condition": "card + electric power",
+      "certainty": "authoritative-player-guide",
+      "refs": [
+        "official_poi_2019"
+      ]
+    },
+    {
+      "from": "damaged_box",
+      "to": "green_keycard",
+      "condition": "described as likely (qualitative), may yield 2 cards",
+      "certainty": "qualitative",
+      "refs": [
+        "pois_2020"
+      ]
+    },
+    {
+      "from": "damaged_box",
+      "to": "blue_keycard",
+      "condition": "described as rare (qualitative), may yield 2 cards",
+      "certainty": "qualitative",
+      "refs": [
+        "pois_2020"
+      ]
+    }
+  ],
+  "systems": [
+    {
+      "id": "S01",
+      "title": "Tool specialization",
+      "domain": "tools",
+      "mechanism": "Stone → Iron → Refined Iron tools gather wood & ore; durability and loot alternatives. Need harvest per swing and node output rates.",
+      "refs": [
+        "s_axe",
+        "s_ironaxe",
+        "coldfacts_2019"
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "Smelting / refining",
+      "domain": "metallurgy",
+      "mechanism": "Ore → furnace → standard / refined ingots; parallel furnaces multiply throughput; tools may affect refined-ore frequency.",
+      "refs": [
+        "s_motor",
+        "foldladder_2019",
+        "coldfacts_2019"
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "Scrap recycling",
+      "domain": "recycler",
+      "mechanism": "Roadside barrels / spare appliances / blades → recycler at named POI → Parts; exact yield-per-item unresolved.",
+      "refs": [
+        "loot_2019",
+        "s_recycler"
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "Blueprint / knowledge",
+      "domain": "research",
+      "mechanism": "Parts compete among random research, copying a consumed original, bench upgrades and components.",
+      "refs": [
+        "qa_2019",
+        "drawing_2019",
+        "research_2021"
+      ]
+    },
+    {
+      "id": "S05",
+      "title": "Three-tier workstation",
+      "domain": "research",
+      "mechanism": "Bench tier gates production independently of physical item, acquired knowledge and material access.",
+      "refs": [
+        "weapon_cookbook_2020",
+        "qa_2019"
+      ]
+    },
+    {
+      "id": "S06",
+      "title": "Container taxonomy & power progression",
+      "domain": "loot",
+      "mechanism": "Colored barrels, Toolbox, Supply, Military, High Military, Airdrop; loot can bypass long crafting branches.",
+      "refs": [
+        "official_weapons_2019",
+        "s_loot"
+      ]
+    },
+    {
+      "id": "S07",
+      "title": "POI key/gate ladder",
+      "domain": "poi",
+      "mechanism": "Green → Blue → Purple access with independent power, spatial placement and risk; non-POI damaged-box bypass.",
+      "refs": [
+        "official_poi_2019",
+        "pois_2020"
+      ]
+    },
+    {
+      "id": "S08",
+      "title": "Modular electrical circuits",
+      "domain": "electricity",
+      "mechanism": "Generator + fuel → manual / pressure / infrared switch → powered electric door or industrial light; can create traps.",
+      "refs": [
+        "house_2019",
+        "s_door"
+      ]
+    },
+    {
+      "id": "S09",
+      "title": "Building support & upkeep",
+      "domain": "construction",
+      "mechanism": "Square/triangle foundations, stairs, wall support, low-HP doors, storage and upkeep scaling by foundation count.",
+      "refs": [
+        "house_2019",
+        "qa_2019"
+      ]
+    },
+    {
+      "id": "S10",
+      "title": "Defense systems",
+      "domain": "defense",
+      "mechanism": "Turret types differ precision/rate/damage; traps need ammo or rearm, danger from placement and targeting.",
+      "refs": [
+        "house_2019",
+        "ammo_2019",
+        "trap_2019"
+      ]
+    },
+    {
+      "id": "S11",
+      "title": "Vehicle industry",
+      "domain": "transport",
+      "mechanism": "Motorcycle Frame × Gear × Plate; alternative loot/acquisition of entire intermediate parts; 28-day-world spawn detail.",
+      "refs": [
+        "s_motor",
+        "source_forge_2019",
+        "qa_2019"
+      ]
+    },
+    {
+      "id": "S12",
+      "title": "Fuel supply chain",
+      "domain": "fuel",
+      "mechanism": "Oil barrel → crude oil / low-grade fuel; animal fat + cloth, oil refinery; fuel to generator/transport.",
+      "refs": [
+        "s_fuel",
+        "s_refinery",
+        "house_2019"
+      ]
+    },
+    {
+      "id": "S13",
+      "title": "Medical/food production",
+      "domain": "medical",
+      "mechanism": "Wild forage → cloth / tin / meat / mushrooms → healing and preparedness; medical chain bandage→syringe→medkit.",
+      "refs": [
+        "food_2019",
+        "med_2025"
+      ]
+    },
+    {
+      "id": "S14",
+      "title": "Biome sourcing & hazard",
+      "domain": "world",
+      "mechanism": "Snow increases ore; desert sulfur; forest foraging; nuclear / card POI hazard; map route choices.",
+      "refs": [
+        "coldfacts_2019",
+        "official_poi_2019"
+      ]
+    },
+    {
+      "id": "S15",
+      "title": "Real-time survival / reset",
+      "domain": "survival",
+      "mechanism": "15 real days; different mode windows; when logged out character persists; full death drop but learned blueprint survives in that described mode.",
+      "refs": [
+        "qa_2019"
+      ]
+    },
+    {
+      "id": "S16",
+      "title": "Airdrop clock / scarcity",
+      "domain": "loot",
+      "mechanism": "Six-hour world airdrop at named high-value locations, visible global marker; 10 minute unlock after landing, high-tier gear.",
+      "refs": [
+        "official_weapons_2019"
+      ]
+    },
+    {
+      "id": "S17",
+      "title": "Specialized energy gathering",
+      "domain": "energy",
+      "mechanism": "Blue energy ore requires specialized extraction device and refinement station; tier 3 bench, level gate.",
+      "refs": [
+        "energy_2021"
+      ]
+    }
+  ],
+  "maintenance_curve": [
+    {
+      "foundations_at_least": 0,
+      "extra_multiple": 0,
+      "refs": [
+        "house_2019"
+      ]
+    },
+    {
+      "foundations_at_least": 24,
+      "extra_multiple": 0.3,
+      "refs": [
+        "house_2019"
+      ]
+    },
+    {
+      "foundations_at_least": 28,
+      "extra_multiple": 0.6,
+      "refs": [
+        "house_2019"
+      ]
+    },
+    {
+      "foundations_at_least": 32,
+      "extra_multiple": 1.0,
+      "refs": [
+        "house_2019"
+      ]
+    },
+    {
+      "foundations_at_least": 36,
+      "extra_multiple": 1.4,
+      "refs": [
+        "house_2019"
+      ]
+    },
+    {
+      "foundations_at_least": 40,
+      "extra_multiple": 1.9,
+      "refs": [
+        "house_2019"
+      ]
+    },
+    {
+      "foundations_at_least": 44,
+      "extra_multiple": 2.3,
+      "refs": [
+        "house_2019"
+      ]
+    },
+    {
+      "foundations_at_least": 48,
+      "extra_multiple": 2.75,
+      "refs": [
+        "house_2019"
+      ]
+    }
+  ],
+  "known_stats": [
+    {
+      "item": "akm",
+      "damage": 110,
+      "fire_rate": 526,
+      "stability": 167,
+      "range": 200,
+      "magazine": 30,
+      "reload": 290,
+      "refs": [
+        "akm_2020"
+      ]
+    },
+    {
+      "item": "mg4",
+      "damage": 85,
+      "fire_rate": 417,
+      "stability": 167,
+      "range": 200,
+      "magazine": 100,
+      "reload": 483,
+      "refs": [
+        "mg4_2019"
+      ]
+    },
+    {
+      "item": "famas",
+      "damage": 65,
+      "fire_rate": 625,
+      "stability": 238,
+      "range": 100,
+      "magazine": 25,
+      "reload": 290,
+      "refs": [
+        "weapon_cookbook_2020"
+      ]
+    },
+    {
+      "item": "famas",
+      "damage": 45,
+      "fire_rate": 667,
+      "stability": 238,
+      "range": 100,
+      "magazine": 40,
+      "reload": 300,
+      "refs": [
+        "https://www.9game.cn/news/4512552.html"
+      ],
+      "issue": "conflicts with weapon cookbook; likely mislabel, treat as unresolved"
+    }
+  ],
+  "mechanical_rules": [
+    {
+      "id": "circuit_power",
+      "statement": "Generator burns low-grade fuel; direct generator to appliance means always-on; optional manual/pressure/infrared switching allows conditional power; electric doors fail closed on power loss.",
+      "refs": [
+        "house_2019"
+      ],
+      "type": "documented"
+    },
+    {
+      "id": "card_power",
+      "statement": "Correct access card AND active power both required for specific POI doors; improper sequence may consume card durability.",
+      "refs": [
+        "official_poi_2019",
+        "coldfacts_2019"
+      ],
+      "type": "documented"
+    },
+    {
+      "id": "capture_loot_time",
+      "statement": "Airdrop on six-hour cycle, visible marker, can be opened after 10 minutes.",
+      "refs": [
+        "official_weapons_2019"
+      ],
+      "type": "documented"
+    },
+    {
+      "id": "bench_distance",
+      "statement": "After starting a crafting job, player need not stay near Workbench.",
+      "refs": [
+        "coldfacts_2019"
+      ],
+      "type": "community-observed"
+    },
+    {
+      "id": "recycler_world",
+      "statement": "Recycler located at named resource POIs, processes cans, blades, scrap to Parts; yield/item unspecified.",
+      "refs": [
+        "s_recycler",
+        "s_2019community"
+      ],
+      "type": "documented"
+    },
+    {
+      "id": "recycler_refined_shortcut",
+      "statement": "A 2020 field guide explicitly treats recycler of scavenged gears/pipes/blades as a route to Parts and some processed refined material, rather than mining alone; the article offers a 2 Parts/barrel anecdote, not a universal drop rate.",
+      "refs": [
+        "recycler_story_2020"
+      ],
+      "type": "field-guide-observation"
+    },
+    {
+      "id": "foundation_upkeep",
+      "statement": "Connected foundation count determines multiplier; >=24 +30% up to >=48 +275% (reported).",
+      "refs": [
+        "house_2019"
+      ],
+      "type": "community-observed"
+    },
+    {
+      "id": "building_hp",
+      "statement": "Doors have approximately one third HP of same-tier wall; affects optimal access vs defense.",
+      "refs": [
+        "house_2019"
+      ],
+      "type": "community-observed"
+    },
+    {
+      "id": "craft_knowledge",
+      "statement": "A found physical product can be sacrificed to draw a learnable blueprint; learned blueprint remains through death, while unlearned blueprint drops.",
+      "refs": [
+        "qa_2019",
+        "research_2021"
+      ],
+      "type": "documented"
+    },
+    {
+      "id": "pve_window",
+      "statement": "2019 Q&A: PvE mode 15 real days, PvP restriction lifted during late countdown (~71h remaining), distinct from permanent solo offline PvE.",
+      "refs": [
+        "qa_2019"
+      ],
+      "type": "documented"
+    },
+    {
+      "id": "power_ladder",
+      "statement": "Power/credential in POI and local Green→Blue→Purple cards create repeat-visit progression; a 3h card refresh is reported.",
+      "refs": [
+        "official_poi_2019"
+      ],
+      "type": "documented"
+    }
+  ],
+  "unresolved": [
+    {
+      "key": "U01",
+      "domain": "recycler",
+      "question": "Exact per-item Recycler return (metal blade, can, pipe, gear, firearm bodies, etc.)",
+      "next_source": "Recorded recycler screen/video or legacy item tables",
+      "consequence": "Cannot calculate rational Parts equivalence and recycle opportunity cost"
+    },
+    {
+      "key": "U02",
+      "domain": "loot",
+      "question": "Per-item exact drop rates/stack counts from barrel, toolbox, Supply, Military, Advanced Military and Airdrop",
+      "next_source": "Official table or repeated unedited opening footage with denominators",
+      "consequence": "Keep item→container eligibility; never invent probability"
+    },
+    {
+      "key": "U03",
+      "domain": "tools",
+      "question": "Ore/wood yield per tool hit, time-to-break, rare refined iron probability by tool tier",
+      "next_source": "Tool info screens with impact + controlled comparative videos",
+      "consequence": "Need tool payback calculation"
+    },
+    {
+      "key": "U04",
+      "domain": "metallurgy",
+      "question": "Ore→Ingot yield ratio, furnace fuel/time, large furnace throughput",
+      "next_source": "Furnace UI/old patch notes/recorded craft queue",
+      "consequence": "Cannot convert crafted BOM into world-gathering time"
+    },
+    {
+      "key": "U05",
+      "domain": "world",
+      "question": "Respawn intervals for every crate type / static POI across modes",
+      "next_source": "POI refresh guides / video elapsed world timer",
+      "consequence": "Cannot estimate loot route reward/hour"
+    },
+    {
+      "key": "U06",
+      "domain": "crafting",
+      "question": "Craft quantities for ammunition per recipe and repair cost by remaining durability",
+      "next_source": "Workbench screenshots with output counts",
+      "consequence": "No weapon operating-cost calculation"
+    },
+    {
+      "key": "U07",
+      "domain": "energy",
+      "question": "Energy ore extraction throughput and energy consumer registry",
+      "next_source": "Energy-device UI + guide with downstream items",
+      "consequence": "Advanced energy graph incomplete"
+    },
+    {
+      "key": "U08",
+      "domain": "construction",
+      "question": "Absolute upkeep cost formula by material/footprint/size",
+      "next_source": "Territory cupboard readouts and comparison table",
+      "consequence": "Maintenance curve is relative only"
+    },
+    {
+      "key": "U09",
+      "domain": "combat",
+      "question": "FAMAS contradictory damage/fire-rate/magazine figures across source snapshots",
+      "next_source": "Official item stat screen original version",
+      "consequence": "Do not compute weapon meta from the disputed record"
+    },
+    {
+      "key": "U10",
+      "domain": "chemistry",
+      "question": "Gunpowder and sulfur powder full material recipes",
+      "next_source": "Combat crafting recipe tables and item information screenshots",
+      "consequence": "Ammunition total raw material remains partial"
+    },
+    {
+      "key": "U11",
+      "domain": "transport",
+      "question": "Vehicle fuel use, speed, storage, wear/repair and spawn-position distribution",
+      "next_source": "Vehicle guides + item stats + map locations",
+      "consequence": "Cannot estimate economic utility of motorcycle/jeep"
+    },
+    {
+      "key": "U12",
+      "domain": "survival",
+      "question": "Damage/status/armor values for all hazards and creature types",
+      "next_source": "In-game stat cards and observed damage tables",
+      "consequence": "Hard to model PvE danger without arbitrary parameters"
+    }
+  ],
+  "calculation_policy": "Recursive integer expansion of first known recipe only, output quantity assumed 1 unless batch metadata says otherwise. No implicit recycling, drop chance or time cost. Missing subrecipes remain as named leaves.",
+  "stats": {
+    "recipes": 51,
+    "recipes_by_domain": {
+      "metalworking": 5,
+      "transport": 2,
+      "tools": 2,
+      "combat": 16,
+      "electricity": 5,
+      "fuel": 2,
+      "construction": 2,
+      "defense": 2,
+      "ammunition": 2,
+      "research": 1,
+      "energy": 2,
+      "medical": 3,
+      "food": 7
+    },
+    "source_records": 45,
+    "loot_edges": 82,
+    "unique_loot_items": 36,
+    "systems": 17,
+    "poi_access_edges": 19,
+    "unresolved": 12
+  }
+}

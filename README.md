@@ -1,3 +1,7 @@
+> **GAMEPLAY PROJECT AUTHORITY (10 Nov 2026):** Start from [web/ref/README.md](web/ref/README.md). One [Bible](web/ref/bible.md), one [Operations](web/ref/OPERATIONS.md), one [Atlas v1–v11](web/ref/atlas/README.md) source library. Older `docs/` plans and agent assignments are historical, not current execution orders. R12 is the recovery baseline; production is NOT accepted.
+
+---
+
 # SOUL OF HERO
 
 Prototype action RPG 2D top-down bằng Godot 4.7. Bản hiện tại tập trung vào một

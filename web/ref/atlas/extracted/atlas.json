@@ -1,0 +1,862 @@
+{
+  "name": "Last Island Reach-Through Atlas — traceable sample",
+  "scope": "Traceable cross-source dataset; not a complete datamine or guaranteed drop-rate atlas",
+  "source_note": "Exact quantities are source-specific. Product ingredients are listed as written. Expanded BOM assumes every intermediate is self-crafted, not looted. No probabilities fabricated.",
+  "recipes": [
+    {
+      "id": "metal_blade",
+      "name": "Metal Blade",
+      "vi": "Lưỡi kim loại",
+      "bench": 2,
+      "ingredients": {
+        "iron_ingot": 30,
+        "parts": 15
+      },
+      "refs": [
+        "s_blade"
+      ]
+    },
+    {
+      "id": "metal_pipe",
+      "name": "Metal Pipe",
+      "vi": "Ống kim loại",
+      "bench": 2,
+      "ingredients": {
+        "refined_iron_ingot": 5,
+        "parts": 30
+      },
+      "refs": [
+        "s_pipe"
+      ]
+    },
+    {
+      "id": "torsion_spring",
+      "name": "Torsion Spring",
+      "vi": "Lò xo xoắn",
+      "bench": 2,
+      "ingredients": {
+        "refined_iron_ingot": 5,
+        "parts": 65
+      },
+      "refs": [
+        "s_spring"
+      ]
+    },
+    {
+      "id": "mechanical_gear",
+      "name": "Mechanical Gear",
+      "vi": "Bánh răng",
+      "bench": 2,
+      "ingredients": {
+        "iron_ingot": 50,
+        "parts": 65
+      },
+      "refs": [
+        "s_gear"
+      ]
+    },
+    {
+      "id": "iron_plate",
+      "name": "Iron Plate",
+      "vi": "Tấm sắt công nghiệp",
+      "bench": 2,
+      "ingredients": {
+        "refined_iron_ingot": 5,
+        "parts": 30
+      },
+      "refs": [
+        "s_plate"
+      ]
+    },
+    {
+      "id": "vehicle_frame",
+      "name": "Vehicle Frame",
+      "vi": "Khung xe",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 100,
+        "refined_iron_ingot": 30,
+        "parts": 50
+      },
+      "refs": [
+        "s_frame"
+      ]
+    },
+    {
+      "id": "iron_axe",
+      "name": "Iron Axe",
+      "vi": "Rìu sắt",
+      "bench": 1,
+      "ingredients": {
+        "iron_ingot": 75,
+        "wood": 100
+      },
+      "refs": [
+        "s_ironaxe"
+      ]
+    },
+    {
+      "id": "refined_iron_axe",
+      "name": "Refined Iron Axe",
+      "vi": "Rìu sắt tinh luyện",
+      "bench": 2,
+      "ingredients": {
+        "refined_iron_ingot": 2,
+        "metal_blade": 5,
+        "metal_pipe": 1
+      },
+      "refs": [
+        "s_axe"
+      ]
+    },
+    {
+      "id": "machete",
+      "name": "Machete",
+      "vi": "Mã tấu",
+      "bench": 2,
+      "ingredients": {
+        "iron_ingot": 100,
+        "metal_blade": 3
+      },
+      "refs": [
+        "s_machete"
+      ]
+    },
+    {
+      "id": "semi_auto_rifle",
+      "name": "Semi-auto Rifle",
+      "vi": "Súng trường bán tự động",
+      "bench": 2,
+      "ingredients": {
+        "iron_ingot": 450,
+        "refined_iron_ingot": 30,
+        "torsion_spring": 2
+      },
+      "refs": [
+        "s_rifle"
+      ]
+    },
+    {
+      "id": "rocket_launcher",
+      "name": "Rocket Launcher",
+      "vi": "Ống phóng",
+      "bench": 3,
+      "ingredients": {
+        "refined_iron_ingot": 50,
+        "metal_pipe": 6,
+        "torsion_spring": 5,
+        "launcher_mechanism": 1
+      },
+      "refs": [
+        "s_rocket"
+      ]
+    },
+    {
+      "id": "electric_door",
+      "name": "Electric Door",
+      "vi": "Cửa điện",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 50,
+        "electronic_parts": 5,
+        "mechanical_gear": 1,
+        "iron_plate": 10
+      },
+      "refs": [
+        "s_door"
+      ]
+    },
+    {
+      "id": "fuel_generator",
+      "name": "Fuel Generator",
+      "vi": "Máy phát chạy nhiên liệu",
+      "bench": 3,
+      "ingredients": {
+        "refined_iron_ingot": 20,
+        "iron_ingot": 100,
+        "electronic_parts": 30,
+        "parts": 100
+      },
+      "refs": [
+        "s_door"
+      ]
+    },
+    {
+      "id": "switch",
+      "name": "Switch",
+      "vi": "Công tắc",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 10,
+        "electronic_parts": 2,
+        "parts": 10
+      },
+      "refs": [
+        "s_door"
+      ]
+    },
+    {
+      "id": "pressure_switch",
+      "name": "Pressure Switch",
+      "vi": "Công tắc áp lực",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 50,
+        "parts": 15,
+        "electronic_parts": 10,
+        "iron_plate": 2
+      },
+      "refs": [
+        "s_door"
+      ]
+    },
+    {
+      "id": "infrared_switch",
+      "name": "Infrared Switch",
+      "vi": "Công tắc hồng ngoại",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 30,
+        "electronic_parts": 10,
+        "parts": 15
+      },
+      "refs": [
+        "s_door"
+      ]
+    },
+    {
+      "id": "motorcycle",
+      "name": "Motorcycle",
+      "vi": "Xe máy",
+      "bench": 3,
+      "ingredients": {
+        "refined_iron_ingot": 200,
+        "vehicle_frame": 1,
+        "mechanical_gear": 30,
+        "iron_plate": 30
+      },
+      "refs": [
+        "s_motor"
+      ]
+    },
+    {
+      "id": "oil_refinery",
+      "name": "Oil Refinery",
+      "vi": "Máy lọc dầu",
+      "bench": 3,
+      "ingredients": {
+        "iron_ingot": 500,
+        "wood": 200,
+        "low_quality_fuel": 250
+      },
+      "refs": [
+        "s_refinery"
+      ]
+    },
+    {
+      "id": "low_quality_fuel",
+      "name": "Low Quality Fuel",
+      "vi": "Nhiên liệu cấp thấp",
+      "bench": null,
+      "ingredients": {
+        "animal_fat": 3,
+        "cloth": 1
+      },
+      "refs": [
+        "s_fuel"
+      ]
+    }
+  ],
+  "items": {
+    "parts": {
+      "label": "Parts (零件)",
+      "channels": [
+        "Yellow/blue roadside barrels",
+        "Supply Crates",
+        "Recycler (disassemble other items)"
+      ],
+      "refs": [
+        "s_2019community",
+        "s_loot",
+        "s_recycler"
+      ]
+    },
+    "iron_ingot": {
+      "label": "Iron Ingots",
+      "channels": [
+        "Mine iron ore → smelt in Furnace"
+      ],
+      "refs": [
+        "s_rifle",
+        "s_ironaxe"
+      ]
+    },
+    "refined_iron_ingot": {
+      "label": "Refined Iron Ingots",
+      "channels": [
+        "Mine rare refined-iron ore from iron deposits → Furnace",
+        "Loot/airdrop/recycle in relevant releases"
+      ],
+      "refs": [
+        "s_rifle",
+        "s_recycler",
+        "s_motor"
+      ]
+    },
+    "electronic_parts": {
+      "label": "Electronic Parts",
+      "channels": [
+        "Airdrops",
+        "Advanced military/supply caches",
+        "Recycler of appropriate equipment"
+      ],
+      "refs": [
+        "s_door"
+      ]
+    },
+    "launcher_mechanism": {
+      "label": "Launcher Mechanism",
+      "channels": [
+        "Airdrop/advanced high-value loot"
+      ],
+      "refs": [
+        "s_rocket"
+      ]
+    },
+    "wood": {
+      "label": "Wood",
+      "channels": [
+        "Trees → chop"
+      ],
+      "refs": [
+        "s_ironaxe"
+      ]
+    },
+    "animal_fat": {
+      "label": "Animal Fat",
+      "channels": [
+        "Animals → hunt"
+      ],
+      "refs": [
+        "s_fuel"
+      ]
+    },
+    "cloth": {
+      "label": "Cloth",
+      "channels": [
+        "Fibrous nettle/plant sources → gather/craft"
+      ],
+      "refs": [
+        "s_fuel"
+      ]
+    },
+    "raw_iron_ore": {
+      "label": "Iron Ore",
+      "channels": [
+        "Iron mineral deposits → mine → smelt to Iron Ingots"
+      ],
+      "refs": [
+        "s_ironaxe"
+      ]
+    },
+    "refined_iron_ore": {
+      "label": "Refined Iron Ore",
+      "channels": [
+        "Rare iron-mine yield / dedicated mining fields → smelt"
+      ],
+      "refs": [
+        "s_rifle",
+        "s_recycler"
+      ]
+    },
+    "crude_oil": {
+      "label": "Crude Oil",
+      "channels": [
+        "Red roadside barrels",
+        "Oil extraction base"
+      ],
+      "refs": [
+        "s_loot"
+      ]
+    }
+  },
+  "containers": [
+    {
+      "id": "yellow_blue_barrel",
+      "label": "Yellow/Blue Oil Barrel",
+      "role": "Parts + assorted manufactured materials",
+      "where": "Roadside scrap piles",
+      "note": "Guarantee category described; not a per-item percentage",
+      "refs": [
+        "s_loot",
+        "s_2019community"
+      ]
+    },
+    {
+      "id": "red_barrel",
+      "label": "Red Oil Barrel",
+      "role": "Crude Oil + low-grade fuel",
+      "where": "Roadside scrap and concentrated oil base",
+      "note": "Source differentiated by fuel economy",
+      "refs": [
+        "s_loot",
+        "s_2019community"
+      ]
+    },
+    {
+      "id": "toolbox",
+      "label": "Toolbox",
+      "role": "Higher tools, melee weapons; some equipment",
+      "where": "Roads and POIs",
+      "note": "May bypass tool crafting and enable specimen study",
+      "refs": [
+        "s_loot",
+        "s_axe"
+      ]
+    },
+    {
+      "id": "supply_box",
+      "label": "Supply Crate",
+      "role": "Parts, industrial semifinished materials, selected equipment",
+      "where": "Roads, POIs, gated interiors",
+      "note": "Common source of plate/blade/pipe-type items",
+      "refs": [
+        "s_loot",
+        "s_2019community"
+      ]
+    },
+    {
+      "id": "food_box",
+      "label": "Food Crate",
+      "role": "Finished food",
+      "where": "Roads and POIs",
+      "note": "Carries a dedicated survival promise",
+      "refs": [
+        "s_loot"
+      ]
+    },
+    {
+      "id": "military_box",
+      "label": "Military Crate",
+      "role": "Weapon/equipment/industrial components",
+      "where": "Hazardous POIs and gated zones",
+      "note": "Higher-value technology sink/source",
+      "refs": [
+        "s_loot"
+      ]
+    },
+    {
+      "id": "advanced_military_box",
+      "label": "Advanced Military Crate",
+      "role": "High-level weapons, specialty components",
+      "where": "High-tier POIs and card rooms",
+      "note": "Found Refined Iron Axe in item guide",
+      "refs": [
+        "s_loot",
+        "s_axe"
+      ]
+    },
+    {
+      "id": "airdrop",
+      "label": "Airdrop",
+      "role": "Rare equipment, key mechanisms, high-tier parts",
+      "where": "Special delivery in world",
+      "note": "Launcher mechanism is a special drop; not all parts craftable",
+      "refs": [
+        "s_rocket",
+        "s_loot"
+      ]
+    },
+    {
+      "id": "medical_box",
+      "label": "Medical Crate",
+      "role": "Medical supplies by grade",
+      "where": "Green/blue/purple rooms",
+      "note": "Explicit official crate family",
+      "refs": [
+        "s_official2022"
+      ]
+    },
+    {
+      "id": "harpoon_box",
+      "label": "Harpoon Crate",
+      "role": "Diving equipment and harpoon tools",
+      "where": "Special underwater-oriented content",
+      "note": "Explicit official content category; not an instruction to clone content",
+      "refs": [
+        "s_official2022"
+      ]
+    }
+  ],
+  "pois": [
+    {
+      "id": "supermarket",
+      "name": "Supermarket",
+      "crates": {
+        "food_box": 1
+      },
+      "gate": "Green card ×1",
+      "risk": "Infected ×1",
+      "refs": [
+        "s_2019poi"
+      ]
+    },
+    {
+      "id": "gas_station",
+      "name": "Gas Station",
+      "crates": {
+        "food_box": 1,
+        "red_barrel": "2–4"
+      },
+      "gate": "Green card ×1",
+      "risk": "Infected ×1",
+      "refs": [
+        "s_2019poi"
+      ]
+    },
+    {
+      "id": "bunker",
+      "name": "Bunker",
+      "crates": {
+        "supply_box": 4,
+        "toolbox": 1,
+        "food_box": 1
+      },
+      "gate": "Blue room → Purple card ×1",
+      "risk": "1 Heavy +6 armored infected",
+      "refs": [
+        "s_2019poi"
+      ]
+    },
+    {
+      "id": "airport",
+      "name": "Airport",
+      "crates": {
+        "supply_box": 9,
+        "military_box": 1,
+        "food_box": 1
+      },
+      "gate": "Green room→Blue; Blue room→Purple",
+      "risk": "6 worker infected +1 sniper",
+      "refs": [
+        "s_poicensus"
+      ]
+    },
+    {
+      "id": "nuclear_plant",
+      "name": "Nuclear Plant",
+      "crates": {
+        "supply_box": "3–5",
+        "military_box": 1
+      },
+      "gate": "Blue room, electricity",
+      "risk": "Hunter + other infected",
+      "refs": [
+        "s_2019poi"
+      ]
+    },
+    {
+      "id": "harbor",
+      "name": "Harbor",
+      "crates": {
+        "supply_box": 9,
+        "toolbox": 1
+      },
+      "gate": "Green→Blue; Purple room",
+      "risk": "Hunter + infected + dogs",
+      "refs": [
+        "s_poicensus"
+      ]
+    },
+    {
+      "id": "radar_station",
+      "name": "Radar Station",
+      "crates": {
+        "supply_box": 5,
+        "food_box": 1,
+        "toolbox": 1
+      },
+      "gate": "Blue room→Purple",
+      "risk": "Low hazard in cited guide",
+      "refs": [
+        "s_poicensus"
+      ]
+    },
+    {
+      "id": "warehouse",
+      "name": "Warehouse",
+      "crates": {
+        "supply_box": 1,
+        "toolbox": 1
+      },
+      "gate": "Recycler access",
+      "risk": "Very low hazard",
+      "refs": [
+        "s_poicensus"
+      ]
+    },
+    {
+      "id": "oil_base",
+      "name": "Oil Extraction Base",
+      "crates": {
+        "supply_box": 4,
+        "red_barrel": "many"
+      },
+      "gate": "Open fuel resource zone",
+      "risk": "Low hazard in cited guide",
+      "refs": [
+        "s_poicensus"
+      ]
+    },
+    {
+      "id": "bio_lab",
+      "name": "Biolab",
+      "crates": {},
+      "gate": "Green room and Purple room, high-value loot",
+      "risk": "EG mutant + infected",
+      "refs": [
+        "s_cards",
+        "s_poicensus"
+      ]
+    }
+  ],
+  "rooms": [
+    {
+      "card": "Green",
+      "crates": {
+        "Low Supply": 2,
+        "Low Toolbox": 1,
+        "Low Military": 1,
+        "Low Food": 1,
+        "Low Medical": 1
+      },
+      "refs": [
+        "s_official2022"
+      ]
+    },
+    {
+      "card": "Blue",
+      "crates": {
+        "Medium Supply": 2,
+        "Low Toolbox": 1,
+        "Medium Military": 1,
+        "Medium Food": 1,
+        "Medium Medical": 1
+      },
+      "refs": [
+        "s_official2022"
+      ]
+    },
+    {
+      "card": "Purple",
+      "crates": {
+        "High Supply": 2,
+        "High Toolbox": 1,
+        "High Military": 1,
+        "Medium Military": 1,
+        "High Food": 1,
+        "High Medical": 1
+      },
+      "refs": [
+        "s_official2022"
+      ]
+    }
+  ],
+  "sources": {
+    "s_gear": {
+      "url": "https://www.9game.cn/daihaoyingxiong/3279007.html",
+      "desc": "Mechanical Gear 50 Iron Ingots + 65 Parts, mid Workbench"
+    },
+    "s_plate": {
+      "url": "https://www.9game.cn/news/3334146.html",
+      "desc": "Iron Plate 5 Refined Iron + 30 Parts, mid Workbench"
+    },
+    "s_blade": {
+      "url": "https://www.9game.cn/daihaoyingxiong/3294352.html",
+      "desc": "Blade 30 Iron + 15 Parts, mid Workbench"
+    },
+    "s_spring": {
+      "url": "https://www.9game.cn/news/3305575.html",
+      "desc": "Torsion Spring 5 Refined Iron + 65 Parts, mid Workbench"
+    },
+    "s_pipe": {
+      "url": "https://www.aspxhome.com/youxi/2023/388245.htm",
+      "desc": "Rocket launcher raw recipe and Pipe material 5 Refined Iron + 30 Parts"
+    },
+    "s_door": {
+      "url": "https://www.9game.cn/news/3336352.html",
+      "desc": "Electric Door + generator + multiple control recipes"
+    },
+    "s_frame": {
+      "url": "https://shouyou.3dmgame.com/gl/135015.html",
+      "desc": "Vehicle Frame 100 Iron + 30 Refined Iron + 50 Parts"
+    },
+    "s_motor": {
+      "url": "https://www.9game.cn/news/3676549.html",
+      "desc": "Motorcycle 200 Refined Iron + Frame + 30 Gears + 30 Plates"
+    },
+    "s_axe": {
+      "url": "https://www.9game.cn/daihaoyingxiong/4515476.html",
+      "desc": "Refined Iron Axe recipe, tool source, craft time and durability"
+    },
+    "s_ironaxe": {
+      "url": "https://www.aspxhome.com/youxi/2023/397622.htm",
+      "desc": "Iron Axe 75 Iron +100 Wood, basic Workbench"
+    },
+    "s_machete": {
+      "url": "https://www.9game.cn/daihaoyingxiong/3298149.html",
+      "desc": "Machete 100 Iron + 3 Blades, mid Workbench"
+    },
+    "s_rifle": {
+      "url": "https://www.9game.cn/news/3425504.html",
+      "desc": "Semi-Auto Rifle 450 Iron +30 Refined Iron + 2 Springs"
+    },
+    "s_rocket": {
+      "url": "https://www.aspxhome.com/youxi/2023/388245.htm",
+      "desc": "Rocket Launcher 50 Refined +6 Pipes +5 Springs +Launcher mechanism"
+    },
+    "s_refinery": {
+      "url": "https://www.9game.cn/news/3448709.html",
+      "desc": "Oil Refinery crafting requirements and low-grade fuel inputs"
+    },
+    "s_recycler": {
+      "url": "https://news.4399.com/zhytgz/xinde/m/895633.html",
+      "desc": "PvE recycler, refined iron, iron barrels and source traversal"
+    },
+    "s_2019poi": {
+      "url": "https://www.hackhome.com/info/483950.html",
+      "desc": "POI crate counts and enemies, 2019-06"
+    },
+    "s_poicensus": {
+      "url": "https://m.duote.com/tech/wmcq/135559.html",
+      "desc": "POI crate and keycard rooms by place"
+    },
+    "s_cards": {
+      "url": "https://hero.yingxiong.com/info/2019/0807/7028.html",
+      "desc": "Developer-published 2019 location/keycard gate source"
+    },
+    "s_loot": {
+      "url": "https://shouyou.3dmgame.com/gl/133819.html",
+      "desc": "2019 item categories for barrel/crate types"
+    },
+    "s_official2022": {
+      "url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "desc": "Official 2022 crate tiers and card-room composition"
+    },
+    "s_2019community": {
+      "url": "https://www.taptap.cn/moment/15201304955586452",
+      "desc": "2019 community source families and green-blue-purple cards"
+    },
+    "s_2020pve": {
+      "url": "https://news.4399.com/zhytgz/xinde/m/895633.html",
+      "desc": "2020 PvE beginner experience and recycler loop"
+    },
+    "s_fuel": {
+      "url": "https://www.9game.cn/news/3448709.html",
+      "desc": "Crude oil refinery and low-quality fuel from fat+cloth"
+    },
+    "s_2022future": {
+      "url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "desc": "Updates to crate tier segmentation"
+    }
+  },
+  "expanded_bom": {
+    "metal_blade": {
+      "iron_ingot": 30,
+      "parts": 15
+    },
+    "metal_pipe": {
+      "refined_iron_ingot": 5,
+      "parts": 30
+    },
+    "torsion_spring": {
+      "refined_iron_ingot": 5,
+      "parts": 65
+    },
+    "mechanical_gear": {
+      "iron_ingot": 50,
+      "parts": 65
+    },
+    "iron_plate": {
+      "refined_iron_ingot": 5,
+      "parts": 30
+    },
+    "vehicle_frame": {
+      "iron_ingot": 100,
+      "refined_iron_ingot": 30,
+      "parts": 50
+    },
+    "iron_axe": {
+      "iron_ingot": 75,
+      "wood": 100
+    },
+    "refined_iron_axe": {
+      "refined_iron_ingot": 7,
+      "iron_ingot": 150,
+      "parts": 105
+    },
+    "machete": {
+      "iron_ingot": 190,
+      "parts": 45
+    },
+    "semi_auto_rifle": {
+      "iron_ingot": 450,
+      "refined_iron_ingot": 40,
+      "parts": 130
+    },
+    "rocket_launcher": {
+      "refined_iron_ingot": 105,
+      "parts": 505,
+      "launcher_mechanism": 1
+    },
+    "electric_door": {
+      "iron_ingot": 100,
+      "electronic_parts": 5,
+      "parts": 365,
+      "refined_iron_ingot": 50
+    },
+    "fuel_generator": {
+      "refined_iron_ingot": 20,
+      "iron_ingot": 100,
+      "electronic_parts": 30,
+      "parts": 100
+    },
+    "switch": {
+      "iron_ingot": 10,
+      "electronic_parts": 2,
+      "parts": 10
+    },
+    "pressure_switch": {
+      "iron_ingot": 50,
+      "parts": 75,
+      "electronic_parts": 10,
+      "refined_iron_ingot": 10
+    },
+    "infrared_switch": {
+      "iron_ingot": 30,
+      "electronic_parts": 10,
+      "parts": 15
+    },
+    "motorcycle": {
+      "refined_iron_ingot": 380,
+      "iron_ingot": 1600,
+      "parts": 2900
+    },
+    "oil_refinery": {
+      "iron_ingot": 500,
+      "wood": 200,
+      "animal_fat": 750,
+      "cloth": 250
+    },
+    "low_quality_fuel": {
+      "animal_fat": 3,
+      "cloth": 1
+    }
+  },
+  "assembled_electric_system_bom": {
+    "iron_ingot": 210,
+    "electronic_parts": 37,
+    "parts": 475,
+    "refined_iron_ingot": 70
+  }
+}
