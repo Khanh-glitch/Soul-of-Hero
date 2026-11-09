@@ -1,0 +1,47 @@
+name: UIUX Wave4 isolated candidate
+on:
+  push:
+    branches:
+      - uiux/visual-overhaul-wave4-20261110
+    paths:
+      - 'web/uiux/visual-overhaul/**'
+      - '.github/workflows/uiux-wave4.yml'
+  workflow_dispatch:
+
+jobs:
+  candidate-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: web/uiux/visual-overhaul
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require actual imported source
+        shell: bash
+        run: |
+          test -f package.json || { echo "::error::Creator ZIP source is NOT YET IMPORTED. Run scripts/uiux/import_visual_overhaul.py."; exit 1; }
+          test -f src/ui/Game.tsx
+          test -f src/ui/SurvivorScreen.tsx
+          test -f src/ui/BuildBar.tsx
+          test -f src/ui/dragSlots.tsx
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/uiux/visual-overhaul/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Asset fidelity
+        run: npm run verify:assets
+      - name: Static typecheck
+        run: npm run typecheck
+      - name: Source tests
+        run: npm test
+      - name: Production build
+        run: npm run build
+      - name: Ensure standalone output
+        run: |
+          test -f dist/index.html
+          test "$(grep -o 'data:image/png;base64,' dist/index.html | wc -l)" -ge 54
+          echo "SOURCE_COMPILES_ONLY: visual/browser/product acceptance is not implied."
