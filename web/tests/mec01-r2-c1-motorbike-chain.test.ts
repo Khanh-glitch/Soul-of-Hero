@@ -31,9 +31,13 @@ function roadLine(g:GameState){const r=g.run!,w=getWorld(r.layoutId);for(let y=2
 /** Craft one recipe at the bench and move its output into the pack. Real intents, real time. */
 function craftOut(g:GameState,bench:Entity,recipe:string,at:number){
   const r=g.run!;const rc=RECIPES[recipe];place(r,bench.tx!-1,bench.ty!);const pre=act(g,'craft',{eid:bench.id,recipe},at);expect(pre.ok,recipe+': '+(pre as any).reason+' inv='+JSON.stringify(['iron_ingot','fasteners','spares','mechanical_parts','vehicle_frame','vehicle_drive'].map(k=>[k,countItem(r,'inv',k)]))).toBe(true);
-  stepStations(g,rc.secs*1000+500,at+rc.secs*1000+1000);const out=bench.station!.outC!;
+  // Chronology: the job starts at `at`; stepStations(dt, now) uses now - remaining as the event time, so now must be start + dt.
+  const out=bench.station!.outC!;const secs=rc.secs*1000;
+  stepStations(g,secs-1000,at+secs-1000);                                   // NEGATIVE: one second before the real finish
+  expect(r.custody[out].slots.some(s=>s?.key===rc.out),recipe+' not before its real time').toBe(false);
+  stepStations(g,1500,at+secs+500);                                         // now past the real finish (start + secs)
   const i=r.custody[out].slots.findIndex(s=>s?.key===rc.out);expect(i,recipe).toBeGreaterThanOrEqual(0);
-  expect(act(g,'move',{from:out,fs:i,to:'inv'},at+rc.secs*1000+1100).ok).toBe(true);
+  expect(act(g,'move',{from:out,fs:i,to:'inv'},at+secs+600).ok).toBe(true);
 }
 
 describe('MEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + FIXTURE stock + INTENT freight)',()=>{
