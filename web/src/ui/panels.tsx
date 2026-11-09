@@ -416,7 +416,7 @@ export function MenuPanel({ api, onQuit, onSave }: { api: Api; onQuit: () => voi
     <div style={{ fontSize: 10, marginTop: 5, color: '#e6d9bc', lineHeight: 1.2 }}>
       <b>Before you leave</b> · {isSheltered(r, r.player.x, r.player.y) ? 'Sheltered here' : 'Not sheltered here'} · Weather: {weatherAt(r, api.now())}.<br />
       Hunger {Math.round(r.player.hunger)} / thirst {Math.round(r.player.thirst)} / HP {Math.round(r.player.hp)}. Without new hazards: hunger empty ~{survival.hungerHours.toFixed(1)}h; thirst empty ~{survival.thirstHours.toFixed(1)}h; estimated survival ~{survival.survivalHours.toFixed(1)}h. This is not a guarantee: cold, radiation, fire, monsters, changing shelter or run expiry can end it sooner. Shelter prevents hunger-only death, not thirst or other hazards.<br />
-      Next {Math.round(outlook.hours)}h outlook: ~{Math.round(outlook.wetHours)}h wet (global schedule estimate). Footprints fade; rain washes them faster. Change route, clear nearby creatures, wait, or use doors and terrain. No home is required.<br />
+      Next {Math.round(outlook.hours)}h outlook: ~{Math.round(outlook.wetHours)}h wet (exact for the next weather slot, seasonal estimate after). Footprints fade; rain washes them faster. Change route, clear nearby creatures, wait, or use doors and terrain. No home is required.<br />
       {cabinets.length>0 && <>{cabinets.map(c=>{const f=territoryForecast(r,c);return <span key={c.id}>Cabinet {c.tx},{c.ty}: {f.funded ? `${f.hours.toFixed(1)}h upkeep` : 'UNFUNDED — structures decay'}. </span>})}<br /></>}
       While away: weather, fire, production and exposure advance. Limited trace playback can damage reachable structures; other encounters remain unresolved.
     </div>

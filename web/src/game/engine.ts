@@ -55,16 +55,39 @@ export function weatherSlot(seed: number, slot: number, season: Season = 'spring
   for (const k of keys) { x -= w[k]; if (x < 0) return k; } return 'clear';
 }
 export const isWet = (w: Weather) => w === 'rain' || w === 'storm';
-/** Coarse outlook from the current global weather schedule, not a geographic climate model. */
+/** K2 exit outlook. Bible: "dự báo chứ không toàn tri" — the outlook never reads the realized weather beyond its exact
+ * horizon. The first `forecastSlots` weather slots (the slot containing `now` onward) are the exact current schedule;
+ * every later instant is a SEASONAL PROBABILITY: the wet share of the season weights that apply at that instant. So the
+ * far-horizon number depends only on the calendar, not on the seed's realized weather, and it is labelled as such. */
 export function wetOutlook(r: RunState, now: number) {
   const end = Math.min(now + 24 * HOUR, r.startedAt - r.qaOffset + BAL.run.maxRunHours * HOUR);
-  const slotMs = BAL.weather.slotMinutes * 60000; let t = now, wet = 0;
+  const slotMs = BAL.weather.slotMinutes * 60000, origin = r.startedAt - r.qaOffset;
+  const slotEnd = (t: number) => origin + (Math.floor(runElapsedMs(r, t) / slotMs) + 1) * slotMs;
+  const exactEnd = Math.min(end, slotEnd(now) + (Math.max(1, BAL.weather.forecastSlots ?? 1) - 1) * slotMs);
+  let t = now, exactWet = 0, exactHours = 0, seasonalWet = 0;
   while (t < end) {
-    const boundary = r.startedAt - r.qaOffset + (Math.floor(runElapsedMs(r, t) / slotMs) + 1) * slotMs;
-    const next = Math.min(end, boundary); if (next <= t) break;
-    if (isWet(weatherAt(r, t))) wet += next - t; t = next;
+    const next = Math.min(end, slotEnd(t)); if (!(next > t)) break;
+    if (t < exactEnd) {
+      const seg = Math.min(next, exactEnd) - t;
+      exactHours += seg; if (isWet(weatherAt(r, t))) exactWet += seg;
+    }
+    if (next > exactEnd) {
+      const from = Math.max(t, exactEnd), len = next - from;
+      if (len > 0) {
+        const w = seasonWeatherWeights(calendarAt(r, from).season);
+        const total = Object.values(w).reduce((a, b) => a + b, 0);
+        seasonalWet += len * ((w.rain + w.storm) / total);
+      }
+    }
+    t = next;
   }
-  return { hours: Math.max(0, end - now) / HOUR, wetHours: wet / HOUR };
+  return {
+    hours: Math.max(0, end - now) / HOUR,
+    wetHours: (exactWet + seasonalWet) / HOUR,
+    exactHours: exactHours / HOUR, exactWetHours: exactWet / HOUR,
+    seasonalWetHours: seasonalWet / HOUR,
+    reliability: 'exact-near-term+seasonal-probability' as const,
+  };
 }
 
 // ---------------- CAL-01 calendar read model for other owners ----------------

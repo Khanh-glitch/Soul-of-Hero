@@ -242,7 +242,7 @@ describe('trace-grounded home safety', () => {
     expect(full.hours).toBe(24); expect(full.wetHours).toBeGreaterThanOrEqual(0); expect(full.wetHours).toBeLessThanOrEqual(24);
     const nearEnd = T0 + (336 - 2) * 3600000, last = wetOutlook(r, nearEnd);
     expect(last.hours).toBe(2); expect(last.wetHours).toBeLessThanOrEqual(2);
-    expect(wetOutlook(r, T0 + 336 * 3600000)).toEqual({ hours: 0, wetHours: 0 });
+    expect(wetOutlook(r, T0 + 336 * 3600000)).toMatchObject({ hours: 0, wetHours: 0 }); // R11: shape extended (exact/seasonal split)
   });
   it('persists the player’s committed instruments without advancing them; discards hostile ones at the boundary', () => {
     const gs = fresh(), r = gs.run!, spot = clearing(gs), x = spot.x * TILE + 8, y = spot.y * TILE + 8;
