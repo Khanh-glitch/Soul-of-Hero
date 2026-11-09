@@ -346,7 +346,7 @@
     "teleportMs": 600
   },
   "motorbike": {
-    "_status": "SOH_PROVISIONAL v2 (MEC-01 R6): roadSpeed 125->390 so a 40-ingot load on road is ~3.5x loaded walking (measured 92.2 px/s); fuel and wear per pixel unchanged, so speed buys time, not free fuel. ORIGINAL_UNKNOWN handling/fuel/wear/capacity",
+    "_status": "SOH_PROVISIONAL v3 (MEC-01 R7): wearPerPixel 0.002->0.008 so one full 300-unit tank of 40-kg freight costs ~48 of 200 HP (was ~12; wear never bit within a tank). Repair stays 50 HP per 1 MP + 1 fastener, so maintenance is about one part-set per tank. v2 (MEC-01 R6): roadSpeed 125->390 so a 40-ingot load on road is ~3.5x loaded walking (measured 92.2 px/s); fuel and wear per pixel unchanged, so speed buys time, not free fuel. ORIGINAL_UNKNOWN handling/fuel/wear/capacity",
     "slots": 12,
     "maxWeight": 80,
     "maxHp": 200,
@@ -358,7 +358,7 @@
     "fuelPerPixel": 0.05,
     "roughFuelMultiplier": 1.5,
     "loadFuelMultiplier": 0.5,
-    "wearPerPixel": 0.002,
+    "wearPerPixel": 0.008,
     "maxSlope": 0.6,
     "radius": 6,
     "repairHp": 50
