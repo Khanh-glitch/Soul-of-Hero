@@ -73,4 +73,11 @@ Evidence levels: FIXTURE (injected state, labelled), SIM (tick()-driven movement
 
 ## Not done in this round
 - LI motorcycle/gear/frame BOM and economics reconciliation (task 3): NOT done.
-- Single-file build measurement: NOT verified on this runner (previously exit 137). Not recorded as PASS.
+- Build gates on commit 4883246 (this runner, 3.9 GiB RAM):
+  - `npx tsc --noEmit`: exit 0.
+  - Full Vitest `--testTimeout=60000`: 110 files passed / 1 skipped, 812 tests passed / 1 skipped, exit 0.
+  - No-single-file build (temp config, outDir /tmp): exit 0.
+  - Single-file build (`npx vite build`, outDir /tmp/soh-single-dist): exit 0, index.html ~30.35 kB (gzip 20.13 kB), one run.
+  - Earlier exit 137 was with `--outDir dist-http-qa` inside the repo. It was not reproduced with outDir in /tmp. The default outDir (`dist`) was not tested. The earlier 137 is not claimed as resolved in general; this is one measured PASS.
+- LI motorcycle/gear/frame BOM reconciliation: NOT done in this round.
+- Control Tower / ledger: NOT updated in this round (no owner-reviewed handoff yet).
