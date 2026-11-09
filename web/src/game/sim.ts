@@ -10,7 +10,7 @@ import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInR
 import { calendarAt, climateAt, calendarEventV1, phaseBoundaryAt, seasonTransitionsBetween, normalizeCalendarLedger, type Season, type PrecipWeather } from './calendar';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES, stationBurnable } from './catalog';
 import { getWorld } from './world';
-import { regrowNote, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
+import { regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -196,17 +196,17 @@ function commitCore(gs: GameState, now: number, slot: number, a: number) {
   if (core === 'frost') {
     HAZ.push({ kind: 'ring', x: p.x, y: p.y, r: 60, t: 0, tell: 0, dur: 380, dmg: 20, style: 'frostnova', effect: 'slowm', owner: 'player' });
     const cx = tileOf(p.x), cy = tileOf(p.y); let froze = 0;
-    for (let y = cy - 4; y <= cy + 4; y++) for (let x = cx - 4; x <= cx + 4; x++) { if (Math.hypot(x - cx, y - cy) > 4.2) continue; const t = effTile(r, x, y); if (t === T.SHALLOW || t === T.RIVER) { r.terrain[y * WW + x] = { t: T.ICE, until: r.clock.simMs + 90000 }; froze++; } if ((r.sources[y * WW + x] as any)?.fire) (r.sources[y * WW + x] as any).fire = 0; }
+    for (let y = cy - 4; y <= cy + 4; y++) for (let x = cx - 4; x <= cx + 4; x++) { if (Math.hypot(x - cx, y - cy) > 4.2) continue; const t = effTile(r, x, y); if (t === T.SHALLOW || t === T.RIVER) { settleRegrowthAt(r, x, y, now); r.terrain[y * WW + x] = { t: T.ICE, until: r.clock.simMs + 90000, untilAt: now + 90000 }; froze++; } if ((r.sources[y * WW + x] as any)?.fire) (r.sources[y * WW + x] as any).fire = 0; }
     if (froze) { markDirty(); pushLog(r, now, `The water freezes solid (${froze} tiles) — for now.`, 'blue'); }
   }
 }
 
-function freezeTile(r: RunState, tx:number, ty:number, ms:number) {
+function freezeTile(r: RunState, tx:number, ty:number, ms:number, now:number) {
   if(tx<0||ty<0||tx>=WW||ty>=WH)return false;const t=effTile(r,tx,ty);
   if(![T.DEEP,T.SHALLOW,T.RIVER,T.GRASS,T.MEADOW,T.FOREST,T.MARSH,T.SAND,T.ROAD].includes(t))return false;
-  r.terrain[ty*WW+tx]={t:T.ICE,until:r.clock.simMs+ms};return true;
+  settleRegrowthAt(r,tx,ty,now); r.terrain[ty*WW+tx]={t:T.ICE,until:r.clock.simMs+ms,untilAt:now+ms};return true;
 }
-function freezeAround(r: RunState, x:number, y:number, ms:number) {let changed=false;const cx=tileOf(x),cy=tileOf(y);for(let yy=cy-1;yy<=cy+1;yy++)for(let xx=cx-1;xx<=cx+1;xx++)changed=freezeTile(r,xx,yy,ms)||changed;if(changed)markDirty();}
+function freezeAround(r: RunState, x:number, y:number, ms:number, now:number) {let changed=false;const cx=tileOf(x),cy=tileOf(y);for(let yy=cy-1;yy<=cy+1;yy++)for(let xx=cx-1;xx<=cx+1;xx++)changed=freezeTile(r,xx,yy,ms,now)||changed;if(changed)markDirty();}
 
 /** Select ten genuinely vacant nearby tiles without overwriting map sources,
  * structures, creatures or the player; failure spends no reserve. */
@@ -270,7 +270,7 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
     if(mode==='signature') {
       const vx=clamp(Number.isFinite(aim.viewX)?aim.viewX!:p.x-VIEW_W/2,0,WW*TILE-VIEW_W),vy=clamp(Number.isFinite(aim.viewY)?aim.viewY!:p.y-VIEW_H/2,0,WH*TILE-VIEW_H);
       for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&m.x>=vx&&m.x<vx+VIEW_W&&m.y>=vy&&m.y<vy+VIEW_H&&clearPhysicalLine(r,p,m,true))m.frozenUntil=Math.max(m.frozenUntil||0,now+e.enemyMs);
-      let cells=0; for(let y=Math.floor(vy/TILE);y<=Math.floor((vy+VIEW_H-1)/TILE);y++)for(let x=Math.floor(vx/TILE);x<=Math.floor((vx+VIEW_W-1)/TILE);x++)if(freezeTile(r,x,y,e.terrainMs))cells++;
+      let cells=0; for(let y=Math.floor(vy/TILE);y<=Math.floor((vy+VIEW_H-1)/TILE);y++)for(let x=Math.floor(vx/TILE);x<=Math.floor((vx+VIEW_W-1)/TILE);x++)if(freezeTile(r,x,y,e.terrainMs,now))cells++;
       if(cells)markDirty();receipt(r,now,'core.elsa.freeze',`${s.uid}:${cells}`);fx('cast',{x:p.x,y:p.y,core:'frost',a});
     }
     return;
@@ -866,7 +866,7 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
     // player projectiles vs creatures are resolved inside the substep sweep above (R5.1 coarse-slice fix).
     if (dead && (pr.kind === 'fireball' || pr.kind === 'blast_signature') && pr.life <= 0) explode(gs, pr, now);
     if (dead && pr.kind === 'nature_rock') impactRock(gs,pr,now);
-    if (dead && pr.kind === 'elsa_shard') {freezeAround(r,pr.x,pr.y,BAL.creatorCoreElsa.terrainMs);fx('cast',{x:pr.x,y:pr.y,core:'frost',a:0});}
+    if (dead && pr.kind === 'elsa_shard') {freezeAround(r,pr.x,pr.y,BAL.creatorCoreElsa.terrainMs,now);fx('cast',{x:pr.x,y:pr.y,core:'frost',a:0});}
     if (dead && pr.kind === 'blast_bomb' && pr.life <= 0) {
       explode(gs,pr,now); const base=rngNext(r)*Math.PI*2;
       for(let k=0;k<BAL.creatorCoreBlast.fragmentCount;k++){const angle=base+k*Math.PI*2/BAL.creatorCoreBlast.fragmentCount;PROJ.push({x:pr.x,y:pr.y,vx:Math.cos(angle)*120,vy:Math.sin(angle)*120,life:0.65,dmg:BAL.creatorCoreBlast.fragmentDamage,from:'player',kind:'blast_round',r:2});}
@@ -917,7 +917,7 @@ function onHazActivate(gs: GameState, h: Haz, now: number) {
   if (h.effect === 'meteorBurn') { ignite(gs,tileOf(h.x),tileOf(h.y),now); HAZ.push({kind:'pool',x:h.x,y:h.y,r:h.r,t:0,tell:0,dur:BAL.creatorCoreMeteor.burnMs,dmg:BAL.creatorCoreMeteor.burnDamage,style:'burn',owner:'player'}); }
   if (h.effect === 'pool') HAZ.push({ kind: 'pool', x: h.x, y: h.y, r: h.r, t: 0, tell: 0, dur: 6500, dmg: 5, style: 'pool', owner: h.owner, done: false });
   if (h.effect === 'pillar' || h.effect === 'cage') { const tx = tileOf(h.x), ty = tileOf(h.y); const t = effTile(r, tx, ty); const p = r.player;
-    if (![T.DEEP, T.PWALL, T.CLIFF].includes(t) && !(tileOf(p.x) === tx && tileOf(p.y) === ty)) { r.terrain[ty * WW + tx] = { t: T.PWALL, until: r.clock.simMs + (h.effect === 'cage' ? 7000 : 11000), ...({ by: h.elder } as any) }; markDirty(); } }
+    if (![T.DEEP, T.PWALL, T.CLIFF].includes(t) && !(tileOf(p.x) === tx && tileOf(p.y) === ty)) { settleRegrowthAt(r, tx, ty, now); r.terrain[ty * WW + tx] = { t: T.PWALL, until: r.clock.simMs + (h.effect === 'cage' ? 7000 : 11000), untilAt: now + (h.effect === 'cage' ? 7000 : 11000), ...({ by: h.elder } as any) }; markDirty(); } }
   if (h.effect === 'emergeAt') { const m = r.creatures.find(c => c.id === h.owner); if (m) { m.x = h.x; m.y = h.y; if (m.elder) m.elder.submerged = false; fx('emerge', { x: h.x, y: h.y, big: true }); fx('shake', { m: 4 }); } }
   if (h.style === 'meteor' || h.effect === 'knock') fx('shake', { m: 3 });
 }

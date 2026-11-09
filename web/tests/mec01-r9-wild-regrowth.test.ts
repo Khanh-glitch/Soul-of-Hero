@@ -163,12 +163,12 @@ describe('R9 regrowth lifecycle', () => {
     void i;
   });
 
-  it('rate floor and season band: no renewable plant at any sampled bush site drops below the authored floor or exceeds 2x', () => {
+  it('rate floor and season band: R10 bounds [0.15, 2] (minRate 0.5 x soil floor 0.3) at any sampled bush site', () => {
     const gs=start(310);const r=gs.run!;let n=0;
     for(const [tx,ty] of bushTiles(r).slice(0,60)) for(let p=0;p<4;p++){
       const at=phaseBoundaryAt(r,p)+1*SEC;
       const v=wildRegrowRate(r,tx,ty,SOURCES.bush,at); n++;
-      expect(v).toBeGreaterThanOrEqual(0.5); expect(v).toBeLessThanOrEqual(2);
+      expect(v).toBeGreaterThanOrEqual(0.15); expect(v).toBeLessThanOrEqual(2);
       void seasonOfPhase(p);
     }
     expect(n).toBeGreaterThan(0);

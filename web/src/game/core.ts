@@ -173,7 +173,7 @@ export interface RunState {
   poiAccessDigest?: string;
   natureTrees?: {tx:number;ty:number;until:number}[];
   spiritTransit?: { x:number; y:number; arriveAt:number; uid:string };
-  terrain: Record<number, { t: number; until?: number }>; // K2 terrain mutations (burns, ice)
+  terrain: Record<number, { t: number; until?: number; untilAt?: number }>; // K2 terrain mutations (burns, ice)
   entities: Record<string, Entity>;
   custody: Record<string, Container>;
   knowledge: { recipes: string[]; studied: string[] };

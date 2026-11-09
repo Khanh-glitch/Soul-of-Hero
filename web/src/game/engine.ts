@@ -225,14 +225,43 @@ export function pushLog(r: RunState, now: number, msg: string, tone?: string) { 
 export function effTile(r: RunState, tx: number, ty: number) {
   const m = r.terrain[ty * WW + tx]; if (m && (!m.until || m.until > r.clock.simMs)) return m.t; return tileAt(getWorld(), tx, ty);
 }
-/** R9: a wild plant's regrowth rate at a tile and instant: seasonal crop/herb factor x local temperature band (Map + season,
- *  via climateAt). Weather is deliberately NOT an input, so the rate is a pure function of place and season. */
+/** R10: ONE soil-fertility authority for gardens and wild plants. Biome substrate + moisture band + slope, clamped [0.3,1].
+ *  Gardens pass their cold-frame bonus; wild plants pass 0. Numbers are the former gardenEnvironment values. */
+export function soilFertility(biome: string, moisture: number, slope: number, frameBonus = 0): number {
+  const ground: Record<string, number> = { snow: 0.65, sand: 0.8, ash: 0.55, toxic: 0.4, hill: 0.8, marsh: 0.8 };
+  return Math.min(1, Math.max(0.3, (ground[biome] ?? 1) + frameBonus - (moisture < 0.3 || moisture > 0.75 ? 0.1 : 0) - Math.min(0.2, slope * 0.3)));
+}
+/** R10: terrain state of tile index i at an ABSOLUTE instant. Timed entries carry `untilAt`; legacy entries use `until`. */
+export function terrainAtAbs(r: RunState, i: number, at: number): number {
+  const m = r.terrain[i];
+  if (m && (m.untilAt !== undefined ? m.untilAt > at : (!m.until || m.until > r.clock.simMs))) return m.t;
+  return tileAt(getWorld(), i % WW, Math.floor(i / WW));
+}
+/** R10 PHYSICAL SUPPRESSION (hard stop, distinct from slow factors): frozen, walled, molten or burnt ground cannot re-establish. */
+export function regrowSuppressed(r: RunState, tx: number, ty: number, at: number): boolean {
+  const t = terrainAtAbs(r, ty * WW + tx, at);
+  return t === T.ICE || t === T.PWALL || t === T.LAVA || t === T.BURNT;
+}
+/** R10: accrue a depleted source's regrowth up to `now` BEFORE any terrain write on its tile, so a new terrain state never
+ *  applies to time that happened earlier. Idempotent: sourceAt already advances and gates on the current state. */
+export function settleRegrowthAt(r: RunState, tx: number, ty: number, now: number) {
+  const st = r.sources[ty * WW + tx];
+  if (!st || st.stock > 0) return;
+  if (st.regrowFrom === undefined && st.regrowAt === undefined && st.regrowDoneAt === undefined) return;
+  sourceAt(r, tx, ty, now);
+}
+/** R9/R10: wild regrowth rate at a tile and instant. Suppression -> 0. Otherwise max(minRate, seasonal climate x crop/herb
+ *  season factor) x shared soil fertility at the SEASONAL local moisture (wild plants feel drought; gardens are watered).
+ *  Weather is not an input. Bounded [0.15, 2]. */
 export function wildRegrowRate(r: RunState, tx: number, ty: number, def: SourceDef, at: number): number {
   const cls = def.regrowClass; if (!cls) return 0;
+  if (regrowSuppressed(r, tx, ty, at)) return 0;
   const cfg = BAL.wildRegrowth, band = cfg.temperatureBand[cls];
   const local = climateAt(r, tx, ty, at, 'clear'), t = local.temperature;
   const climate = Math.max(cfg.climateFloor, Math.min(1, t < band.low ? 1 - (band.low - t) * cfg.coldSlope : t > band.high ? 1 - (t - band.high) * cfg.heatSlope : 1));
-  return Math.max(cfg.minRate, climate * cropSeasonFactor(local.season, cls));
+  const m = getWorld().economyMap, i = ty * WW + tx;
+  const soil = soilFertility(m.biome[i], local.moisture, m.slope[i], 0);
+  return Math.max(cfg.minRate, climate * cropSeasonFactor(local.season, cls)) * soil;
 }
 /** R9: a regrowing site is physically free only when no entity stands on the tile (structures, doors, loot, machines...). */
 function regrowSiteFree(r: RunState, tx: number, ty: number) { return entsAt(r, tx, ty).length === 0; }
@@ -241,11 +270,13 @@ function regrowSiteFree(r: RunState, tx: number, ty: number) { return entsAt(r, 
 function advanceRegrowth(r: RunState, st: { regrowFrom?: number; regrowAcc?: number; regrowDoneAt?: number }, def: SourceDef, tx: number, ty: number, now: number) {
   if (st.regrowDoneAt !== undefined || st.regrowFrom === undefined || !(now > st.regrowFrom)) return;
   const need = def.regrow! * 1000; let acc = st.regrowAcc ?? 0, t = st.regrowFrom;
-  const cuts = seasonTransitionsBetween(r, st.regrowFrom, now).map(x => x.at);
+  const tm = r.terrain[ty * WW + tx];
+  const termCut = tm && tm.untilAt !== undefined && tm.untilAt > st.regrowFrom && tm.untilAt < now ? [tm.untilAt] : [];
+  const cuts = [...seasonTransitionsBetween(r, st.regrowFrom, now).map(x => x.at), ...termCut].sort((a, b) => a - b);
   for (const b of [...cuts, now]) {
     if (!(b > t)) continue;
     const rate = wildRegrowRate(r, tx, ty, def, t), gain = rate * (b - t);
-    if (acc + gain >= need) { st.regrowDoneAt = t + (need - acc) / rate; st.regrowAcc = need; st.regrowFrom = now; return; }
+    if (rate > 0 && acc + gain >= need) { st.regrowDoneAt = t + (need - acc) / rate; st.regrowAcc = need; st.regrowFrom = now; return; }
     acc += gain; t = b;
   }
   st.regrowAcc = acc; st.regrowFrom = now;
@@ -254,6 +285,7 @@ function advanceRegrowth(r: RunState, st: { regrowFrom?: number; regrowAcc?: num
 export function regrowNote(r: RunState, tx: number, ty: number, now: number): string | null {
   const s = sourceAt(r, tx, ty, now); if (!s || !s.def.regrow || s.stock > 0) return null;
   if (!regrowSiteFree(r, tx, ty)) return 'Exhausted — it can regrow once the tile is clear again.';
+  if (regrowSuppressed(r, tx, ty, now)) return 'Exhausted — frozen or scorched ground; it can regrow once the ground recovers.';
   const rate = wildRegrowRate(r, tx, ty, s.def, now);
   return rate < 0.9 ? 'Exhausted — growth is slowed by the season here.' : rate > 1.05 ? 'Exhausted — growth is quick this season.' : 'Exhausted — this plant can regrow.';
 }
@@ -270,10 +302,10 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
   // Completion needs the tile clear: a structure over a dormant plant delays its emergence; it never refills under the building.
   if (st && stock <= 0 && def.regrow && now !== undefined) {
     if (st.regrowFrom === undefined && st.regrowAt !== undefined) {
-      if (now >= st.regrowAt && regrowSiteFree(r, tx, ty)) { st.stock = def.stock; st.hp = def.hp; delete st.regrowAt; }
+      if (now >= st.regrowAt && regrowSiteFree(r, tx, ty) && !regrowSuppressed(r, tx, ty, now)) { st.stock = def.stock; st.hp = def.hp; delete st.regrowAt; }
     } else if (st.regrowFrom !== undefined) {
       advanceRegrowth(r, st, def, tx, ty, now);
-      if (st.regrowDoneAt !== undefined && now >= st.regrowDoneAt && regrowSiteFree(r, tx, ty)) {
+      if (st.regrowDoneAt !== undefined && now >= st.regrowDoneAt && regrowSiteFree(r, tx, ty) && !regrowSuppressed(r, tx, ty, now)) {
         st.stock = def.stock; st.hp = def.hp; delete st.regrowAt; delete st.regrowFrom; delete st.regrowAcc; delete st.regrowDoneAt;
       }
     }
@@ -1838,7 +1870,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e=r.entities[it.eid];if(!e||e.kind!=='struct'||e.type!=='garden'||!e.garden||!owned(e)||!near(r,e,2.2)||!clearInteraction(r,e))return fail('Use your garden within reach.');
       const i=e.ty!*WW+e.tx!,ground=r.terrain[i];if(!ground||ground.t!==T.BURNT||ground.until)return fail('This soil is not scorched.');
       if(!hasAll(r,'inv',[['fiber',2],['herb',1]]))return fail('Needs 2 fiber and 1 Bitterleaf.');
-      removeItem(r,'inv','fiber',2);removeItem(r,'inv','herb',1);delete r.terrain[i];markDirty();return ok('garden.restore',e.id,'Scorched soil restored with fiber and Bitterleaf.');
+      removeItem(r,'inv','fiber',2);removeItem(r,'inv','herb',1);settleRegrowthAt(r,e.tx!,e.ty!,now);delete r.terrain[i];markDirty();return ok('garden.restore',e.id,'Scorched soil restored with fiber and Bitterleaf.');
     }
     case 'gardenFrame': {
       const e=r.entities[it.eid];if(!e || e.kind!=='struct' || e.type!=='garden' || !e.garden || !owned(e) || !near(r,e,2.2) || !clearInteraction(r,e)) return fail('Use your garden within reach.');
@@ -2095,8 +2127,7 @@ export function gardenEnvironment(r:RunState,e:Entity,wet:boolean,crop:'crop'|'h
   const temperature=Math.min(1,Math.max(0,seasonTemperature+(frame&&seasonTemperature<0.4?BAL.garden.coldFrameWarming:0)-(wet&&!frame&&!isRoofed(r,e)?BAL.garden.wetCooling:0)));
   const low=crop==='herb'?0.34:0.22,high=crop==='herb'?0.78:0.82;
   const climate=Math.max(0.15,Math.min(1,temperature<low?1-(low-temperature)*4:temperature>high?1-(temperature-high)*3:1));
-  const ground:Record<string,number>={snow:0.65,sand:0.8,ash:0.55,toxic:0.4,hill:0.8,marsh:0.8};
-  const fertility=Math.min(1,Math.max(0.3,(ground[biome]??1)+(frame?BAL.garden.coldFrameSoilBonus:0)-(mapMoisture<0.3||mapMoisture>0.75?0.1:0)-Math.min(0.2,slope*0.3)));
+  const fertility=soilFertility(biome,mapMoisture,slope,frame?BAL.garden.coldFrameSoilBonus:0);
   const scorched=effTile(r,x,y)===T.BURNT;
   // Per-crop seasonal suitability: the same plot is a better Sunroot or Bitterleaf
   // investment depending on the season (competing outputs, SYS15-C10).
