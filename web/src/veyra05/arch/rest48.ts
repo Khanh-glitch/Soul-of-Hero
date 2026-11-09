@@ -432,7 +432,7 @@ function typhonFracture(s:RestSite):ArchPlan{
   // Preserve the external rim stair's return connection around the new core walls,
   // without punching an unplanned side entrance into the pressure cleft.
   elderPath(p,'east_rim_stair_link','Narrow east-rim stair return',0,
-    [[x+15,y+1,3,15]],'stone');
+    [[x+15,y+1,3,18],[x+6,y+17,13,4]],'stone');
   p.stair(x+16,y+1,0,1,x+16,y+1,'Surviving skybridge stair','exterior');
   elderStage(p,'rim_perch','Typhon High Rim',2,[[x+11,y-18,12,12],[x+12,y-8,7,12]],'stone');
   p.stair(x+16,y-13,1,2,x+16,y-13,'Rift lookout and return','ladder');
