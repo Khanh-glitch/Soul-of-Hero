@@ -1,0 +1,122 @@
+[
+  {
+    "step": "C1 BEFORE no paid fuel (campfire built, fuel 0)",
+    "warmth": 60,
+    "target": 19,
+    "sheltered": false,
+    "insulation": 0,
+    "fuelLimitH": null,
+    "heater": "out_of_fuel",
+    "earliestColdH": 0.159,
+    "latestColdH": 0.192,
+    "phrase": "Cold threshold reached 10 min to 12 min from now (dry vs wet, roof kept vs lost)."
+  },
+  {
+    "step": "C1 AFTER 6 wood in fuel custody",
+    "warmth": 60,
+    "target": 32.5,
+    "sheltered": false,
+    "insulation": 0,
+    "fuelLimitH": 0.033,
+    "heater": "burning",
+    "earliestColdH": 0.159,
+    "latestColdH": 0.192,
+    "phrase": "Cold threshold reached 10 min to 12 min from now (dry vs wet, roof kept vs lost)."
+  },
+  {
+    "step": "C2 BEFORE walls, no roof",
+    "warmth": 100,
+    "target": 19,
+    "sheltered": false,
+    "insulation": 0,
+    "fuelLimitH": null,
+    "heater": "none",
+    "earliestColdH": 0.159,
+    "latestColdH": 0.192,
+    "phrase": "Cold threshold reached 10 min to 12 min from now (dry vs wet, roof kept vs lost)."
+  },
+  {
+    "step": "C2 AFTER roof_thatch enclosure",
+    "warmth": 100,
+    "target": 25,
+    "sheltered": true,
+    "insulation": 0,
+    "fuelLimitH": null,
+    "heater": "none",
+    "earliestColdH": 0.159,
+    "latestColdH": 0.198,
+    "phrase": "Cold threshold reached 10 min to 12 min from now (dry vs wet, roof kept vs lost)."
+  },
+  {
+    "step": "C3 BEFORE no cold gear",
+    "warmth": 60,
+    "target": 19,
+    "sheltered": false,
+    "insulation": 0,
+    "fuelLimitH": null,
+    "heater": "out_of_fuel",
+    "earliestColdH": 0.159,
+    "latestColdH": 0.192,
+    "phrase": "Cold threshold reached 10 min to 12 min from now (dry vs wet, roof kept vs lost)."
+  },
+  {
+    "step": "C3 AFTER fur_cloak worn",
+    "warmth": 60,
+    "target": 73,
+    "sheltered": false,
+    "insulation": 18,
+    "fuelLimitH": null,
+    "heater": "out_of_fuel",
+    "earliestColdH": null,
+    "latestColdH": null,
+    "phrase": "Not below the cold threshold within 24.0 h under any listed scenario."
+  },
+  {
+    "step": "C4 BEFORE furnace fuelled, idle (no job)",
+    "warmth": 60,
+    "target": 19,
+    "sheltered": false,
+    "insulation": 0,
+    "fuelLimitH": null,
+    "heater": "blocked_by_wall|idle_furnace",
+    "earliestColdH": 0.159,
+    "latestColdH": 0.192,
+    "phrase": "Cold threshold reached 10 min to 12 min from now (dry vs wet, roof kept vs lost)."
+  },
+  {
+    "step": "C4 AFTER furnace job queued (iron_ingot 10 s)",
+    "warmth": 60,
+    "target": 28,
+    "sheltered": false,
+    "insulation": 0,
+    "fuelLimitH": 0.003,
+    "heater": "blocked_by_wall|burning",
+    "earliestColdH": 0.159,
+    "latestColdH": 0.192,
+    "phrase": "Cold threshold reached 10 min to 12 min from now (dry vs wet, roof kept vs lost)."
+  },
+  {
+    "step": "C5 BEFORE on snow beside the campfire",
+    "warmth": 60,
+    "target": 32.5,
+    "sheltered": false,
+    "insulation": 0,
+    "fuelLimitH": 0.033,
+    "heater": "burning",
+    "earliestColdH": 0.159,
+    "latestColdH": 0.192,
+    "phrase": "Cold threshold reached 10 min to 12 min from now (dry vs wet, roof kept vs lost)."
+  },
+  {
+    "step": "C5 AFTER moved to a non-snow tile (campfire out of reach)",
+    "warmth": 60,
+    "target": 100,
+    "sheltered": false,
+    "insulation": 0,
+    "fuelLimitH": null,
+    "heater": "none",
+    "earliestColdH": null,
+    "latestColdH": null,
+    "phrase": "Not below the cold threshold within 24.0 h under any listed scenario."
+  }
+]

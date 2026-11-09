@@ -12,7 +12,7 @@ export function thermalEnvNow(r: RunState, now: number) {
   });
 }
 
-function heaterLine(h: HeaterRow): { text: string; tone: string } {
+export function heaterLine(h: HeaterRow): { text: string; tone: string } {
   const name = h.kind === 'campfire' ? 'Campfire' : 'Furnace', id = h.id.slice(-4);
   // B04-P4: never show a positive burn as 0 min; below one minute show seconds.
   const paid = h.paidMs >= 60000 ? `${Math.floor(h.paidMs / 60000)} min` : `${Math.max(1, Math.ceil(h.paidMs / 1000))} s`;

@@ -1,12 +1,15 @@
 import { recoveryPlan, recoveryFits } from '../game/recycler';
 import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { RunState } from '../game/core';
 import { anyAuthorizedOilSource, owned, clearInteraction } from '../game/engine';
 import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
 import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
 import type { OfflineReturnV1, ReturnSectionId, ReturnTone } from '../game/return-report';
-import { CabinetReadout } from './HomeStatus';
+import { CabinetReadout, CABINET_STATE_LABEL, hoursLabel } from './HomeStatus';
+import { heaterLine } from './ThermalStatus';
+import { departureReadiness, fmtH } from '../game/departure';
+import type { HomeCabinetState } from '../game/engine';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { recipeOutputs } from '../game/engine';
@@ -409,17 +412,69 @@ export function SkillsPanel({ api }: { api: Api }) {
     </div></Panel>;
 }
 
+function ReadinessBlock({ label, tag, tone, children }: { label: string; tag: string; tone: string; children: ReactNode }) {
+  return <div data-testid={`readiness-${label.split(' ')[0].toLowerCase()}`} style={{ border: `1px solid ${tone}66`, borderRadius: 3, padding: '2px 4px', minWidth: 0 }}>
+    <div style={{ fontSize: 10, lineHeight: 1.15, color: tone }}><b style={{ letterSpacing: 0.3 }}>{label}</b> <span style={{ fontSize: 9, color: '#9d8fb0' }}>{tag}</span></div>
+    <div style={{ fontSize: 10, lineHeight: 1.15, color: '#e6d9bc' }}>{children}</div>
+  </div>;
+}
+
 export function MenuPanel({ api, onQuit, onSave }: { api: Api; onQuit: () => void; onSave: () => Promise<boolean> }) {
-  const [confirm, setConfirm] = useState(false); const pf = api.gs.profile; const r = api.gs.run!; const outlook = wetOutlook(r, api.now()); const survival = offlineSurvivalEstimate(r); const cabinets=Object.values(r.entities).filter(e=>e.type==='claim'&&(e.owner===undefined||e.owner==='player'));
-  return <Panel title="Menu — world time continues" style={{ left: 150, top: 40, width: 340, maxHeight: 280, overflowY: 'auto' }} onClose={() => api.open(null)}>
-    <div className="flex flex-wrap gap-1"><button className="btn gold" onClick={() => api.open(null)}>Resume</button><button className="btn" onClick={async () => { const ok = await onSave(); api.toast(ok ? 'Saved locally.' : 'Save failed. Your changes are not confirmed on disk.'); }}>Save now</button><button className="btn" onClick={onQuit}>Save & quit to title</button></div>
-    <div style={{ fontSize: 10, marginTop: 5, color: '#e6d9bc', lineHeight: 1.2 }}>
-      <b>Before you leave</b> · {isSheltered(r, r.player.x, r.player.y) ? 'Sheltered here' : 'Not sheltered here'} · Weather: {weatherAt(r, api.now())}.<br />
-      Hunger {Math.round(r.player.hunger)} / thirst {Math.round(r.player.thirst)} / HP {Math.round(r.player.hp)}. Without new hazards: hunger empty ~{survival.hungerHours.toFixed(1)}h; thirst empty ~{survival.thirstHours.toFixed(1)}h; estimated survival ~{survival.survivalHours.toFixed(1)}h. This is not a guarantee: cold, radiation, fire, monsters, changing shelter or run expiry can end it sooner. Shelter prevents hunger-only death, not thirst or other hazards.<br />
-      Next {Math.round(outlook.hours)}h outlook: ~{Math.round(outlook.wetHours)}h wet (exact for the next weather slot, seasonal estimate after). Footprints fade; rain washes them faster. Change route, clear nearby creatures, wait, or use doors and terrain. No home is required.<br />
-      {cabinets.length>0 && <>{cabinets.map(c=>{const f=territoryForecast(r,c);return <span key={c.id}>Cabinet {c.tx},{c.ty}: {f.funded ? `${f.hours.toFixed(1)}h upkeep` : 'UNFUNDED — structures decay'}. </span>})}<br /></>}
-      While away: weather, fire, production and exposure advance. Limited trace playback can damage reachable structures; other encounters remain unresolved.
+  const [confirm, setConfirm] = useState(false);
+  // Inline, persistent save result (a toast alone disappears). A failure stays visible until the next attempt.
+  const [saveNote, setSaveNote] = useState<{ ok: boolean; text: string } | null>(null);
+  const pf = api.gs.profile; const r = api.gs.run!; const now = api.now();
+  const outlook = wetOutlook(r, now);
+  // R12 J10: read-only departure readiness. Every field is derived from real state; nothing here writes state.
+  const d = departureReadiness(r, now);
+  const cabinets = d.home.cabinets;
+  const fmtOpt = (h: number | null) => (h === null ? '—' : fmtH(h));
+  return <Panel title="Menu — world time continues" style={{ left: 8, top: 8, width: 624, maxHeight: 344, display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClose={() => api.open(null)}>
+    <div className="flex flex-wrap gap-1 items-center" data-testid="menu-actions" style={{ flex: '0 0 auto' }}>
+      <button className="btn gold" onClick={() => api.open(null)}>Resume</button>
+      <button className="btn" onClick={async () => { const ok = await onSave(); const text = ok ? 'Saved locally.' : 'Save failed. Your changes are not confirmed on disk.'; setSaveNote({ ok, text }); api.toast(text); }}>Save now</button>
+      <button className="btn" onClick={onQuit}>Save & quit to title</button>
+      {saveNote && <span data-testid="save-status" style={{ fontSize: 10, color: saveNote.ok ? '#9ae0a0' : '#ff9a8a', fontWeight: saveNote.ok ? 400 : 700 }}>{saveNote.text}</span>}
     </div>
+    <div style={{ overflowY: 'auto', flex: '1 1 auto', minHeight: 0, marginTop: 4, paddingRight: 2 }}>
+      <div style={{ fontSize: 10, color: '#e6d9bc', lineHeight: 1.15 }}><b>Before you leave</b> · read-only · horizon {fmtH(d.horizonH)} ({d.horizonBasis === 'run-remaining' ? 'remaining run' : d.horizonBasis === 'ended' ? 'run ended' : '24 h'}) · stationary estimate, not a guarantee.</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, marginTop: 3 }}>
+        <ReadinessBlock label="NOW" tag="exact · this instant" tone="#e6d9bc">
+          <div>Warmth <b>{d.now.warmth}</b> · target {d.now.target} · {d.now.cold ? <b style={{ color: '#ff9a8a' }}>COLD (below {d.now.coldThreshold})</b> : `not cold (threshold ${d.now.coldThreshold})`}</div>
+          <div>{d.now.sheltered ? 'Roofed enclosure: counts' : 'No roofed enclosure'} · gear insulation {d.now.insulation}</div>
+          <div>Exposure: {d.now.exposures.length ? d.now.exposures.map(e => `${e.id.replace(/_/g, ' ')} ${e.value}`).join(' · ') : 'none'}{d.now.dark ? ' · dark' : ''}{d.now.wetNow ? ' · wet' : ''}</div>
+          <div>Known weather slot ends in {fmtH(d.now.knownWeatherSlotEndsInH)}; later weather is conditional.</div>
+          <div>HP {d.now.hp} · hunger {d.now.hunger} · thirst {d.now.thirst}</div>
+          <div style={{ color: '#b8a8c8' }}>No new hazards: hunger empty ~{fmtOpt(d.survival.hungerH)}, thirst ~{fmtOpt(d.survival.thirstH)}. Not a survival hour.</div>
+        </ReadinessBlock>
+        <ReadinessBlock label="FUEL LIMIT" tag="paid burn only · queued job" tone="#ffb36b">
+          {d.heat.heaters.length === 0 && <div style={{ color: '#ffae89' }}>No campfire or furnace in reach</div>}
+          {d.heat.heaters.map(h => { const l = heaterLine(h); return <div key={h.id} style={{ color: l.tone }}>{l.text}</div>; })}
+          <div><b>{d.heat.fuelLimitH === null ? 'No paid heat in reach.' : `Paid heat ends in ${fmtH(d.heat.fuelLimitH)}.`}</b></div>
+          {d.heat.notHeating.map((t, i) => <div key={i} style={{ color: '#ffae89' }}>{t}</div>)}
+          {d.heat.nearbyStations.map(n => <div key={n.id} style={{ color: '#cfc2dc' }}>{n.name} …{n.id.slice(-4)}: queue {n.queue}{n.firstJob ? ` (${n.firstJob}, ${n.firstLeftMin} min)` : ''} · fuel {n.fuelPaidMin} min + {n.fuelItems} items · free output {n.freeOutputSlots} · {n.note}</div>)}
+          {d.heat.nearbyNone && <div style={{ color: '#9d8fb0' }}>{d.heat.nearbyNone}</div>}
+        </ReadinessBlock>
+        <ReadinessBlock label="CONDITIONAL OUTLOOK" tag="bounded scenarios, not predicted" tone="#8fc8ff">
+          <div><b>{d.outlook.phrase}</b></div>
+          {d.outlook.scenarios.map(sc => <div key={sc.id}>{sc.label}: {sc.coldInH === null ? 'no cold threshold in horizon' : `cold at ${fmtH(sc.coldInH)}`}{sc.supplyEndH !== null ? ` · heat ends ${fmtH(sc.supplyEndH)}, then target ${sc.targetAfterSupply}` : ' · no paid heat'}</div>)}
+          <div style={{ color: '#b8a8c8' }}>Rain/storm in {Math.round(outlook.hours)} h: ~{Math.round(outlook.wetHours)} h (exact next slot, seasonal after).</div>
+        </ReadinessBlock>
+        <ReadinessBlock label="HOME" tag={d.home.hasHome ? 'planned upkeep' : 'no home: no penalty'} tone="#9ae0a0">
+          {!d.home.hasHome && <div>No home cabinet: no upkeep and no decay penalty.</div>}
+          {cabinets.map(c => <div key={c.id}>Cabinet {c.tx},{c.ty}: {CABINET_STATE_LABEL[c.state]}{c.hours !== null ? `, ${hoursLabel(c.hours)} upkeep` : ''}</div>)}
+          {d.home.damagedStructures.map(s => <div key={s.id} style={{ color: '#ffae89' }}>{s.name} {s.hp}/{s.maxHp} HP{s.funded ? '' : ' (unfunded)'}</div>)}
+          <div style={{ color: '#9d8fb0' }}>Traces: observed status only; they fade (rain faster).</div>
+        </ReadinessBlock>
+        <ReadinessBlock label="CHOICES" tag="only when state grounds them" tone="#e6d9bc">
+          {d.choices.length === 0 && <div style={{ color: '#9d8fb0' }}>No state-grounded action right now.</div>}
+          {d.choices.map(c => <div key={c.id}>· {c.text}</div>)}
+        </ReadinessBlock>
+        <ReadinessBlock label="UNKNOWN" tag="not modelled, never assumed safe" tone="#a9a9a9">
+          {d.unknown.map((u, i) => <div key={i}>· {u}</div>)}
+        </ReadinessBlock>
+      </div>
+      <div style={{ fontSize: 10, marginTop: 4, color: '#e6d9bc' }}>While away: weather, fire, production and exposure advance. Limited trace playback can damage reachable structures; other encounters remain unresolved.</div>
     <div style={{ fontSize: 10, marginTop: 6 }} className="flex items-center gap-2">Volume <input type="range" min={0} max={1} step={0.05} value={pf.settings.volume} onChange={e => { pf.settings.volume = +e.target.value; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /><label><input type="checkbox" checked={pf.settings.muted} onChange={e => { pf.settings.muted = e.target.checked; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /> mute</label></div>
     <div style={{ fontSize: 10, marginTop: 6, color: '#cfc2dc', lineHeight: 1.15 }}>WASD move · mouse aim · LMB attack/use · Space dodge-roll · E interact · V repair structure · F pull cart · 1–8 / wheel quickbar · I inventory · C craft · B build (X reclaim) · R research · M map · Tab skills · RMB cancel cast/build · Esc menu</div>
     <div className="panel" style={{ padding: 4, marginTop: 6, background: '#1a0e10' }}><div style={{ fontSize: 10, color: '#ff9a7a' }}>QA time acceleration — marks this run QA · LOCAL/UNVERIFIED (not real elapsed time)</div>
@@ -427,6 +482,7 @@ export function MenuPanel({ api, onQuit, onSave }: { api: Api; onQuit: () => voi
         <button className="btn ghost" onClick={() => api.act('qaAdvance', { hours: Math.max(0, 264.05 - runHours(r, api.now())) })}>→ Ragnarok (h264)</button>
         <button className="btn ghost" onClick={() => api.act('qaAdvance', { hours: Math.max(0, 312.05 - runHours(r, api.now())) })}>→ Day 14 (h312)</button></div></div>
     <div style={{ marginTop: 6 }}>{!confirm ? <button className="btn danger" onClick={() => setConfirm(true)}>Abandon run…</button> : <span className="flex gap-1 items-center" style={{ fontSize: 10 }}>Abandon wipes all run items, home and unsecured cash. <button className="btn danger" onClick={() => api.act('abandon')}>Confirm abandon</button><button className="btn ghost" onClick={() => setConfirm(false)}>No</button></span>}</div>
+    </div>
   </Panel>;
 }
 

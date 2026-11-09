@@ -98,8 +98,8 @@ export function thermalEnv(r: RunState, env: Omit<ThermalEnv, 'torch' | 'tileCol
 const SNOW_TILE = T.SNOW, SHALLOW_TILE = T.SHALLOW, RIVER_TILE = T.RIVER;
 
 /** Physical target Warmth for this instant. Same rule online and offline. */
-export function thermalEvaluate(r: RunState, env: ThermalEnv): ThermalEval {
-  const c = K(); const reasons: string[] = [];
+/** Cold exposure parts for one Map cell at one instant. Pure: no heater or station state is read. */
+export function coldPartsFor(env: ThermalEnv): { id: string; value: number }[] {
   const coldParts: { id: string; value: number }[] = [];
   if (env.zone === 5 || env.tileType === SNOW_TILE) coldParts.push({ id: 'snow_zone', value: 9 });
   if (env.dark) coldParts.push({ id: 'darkness', value: 2.5 });
@@ -108,10 +108,38 @@ export function thermalEvaluate(r: RunState, env: ThermalEnv): ThermalEval {
   // CAL-01: seasonal exposure is additive to the legacy tile/light/water parts and
   // bounded by balance.seasonClimateV1.cold.maxPoints.
   if (env.seasonCold && env.seasonCold.points > 0) coldParts.push({ id: env.seasonCold.reason, value: env.seasonCold.points });
+  return coldParts;
+}
+
+/** Worn cold-protection gear points (legacy insulation, unchanged). */
+export function insulationOf(r: RunState): number {
+  let insulation = 0; for (const s of C(r, 'eq').slots) if (s) insulation += ITEMS[s.key].cold || 0;
+  return insulation;
+}
+
+/** The single target law. thermalEvaluate and the departure forecast both call this with
+ * their own heat points, so no second formula exists. heatPoints = sum of active heater points. */
+export function targetFromParts(input: { coldParts: { id: string; value: number }[]; insulation: number; heatPoints: number; sheltered: boolean; torch: boolean; zone6: boolean }): { target: number; base: number; bonus: number; cold: number; shelterPoints: number } {
+  const c = K();
+  const cold = input.coldParts.reduce((v, p) => v + p.value, 0);
+  const base = 100 - Math.max(0, cold - input.insulation / 3) * 9;
+  const shelterPoints = input.sheltered ? c.sources.enclosedShelter.score : 0;
+  const raw = input.heatPoints + shelterPoints;
+  const score = Math.min(c.scoreCap, raw);
+  const bonus = Math.min(c.targetMaxBonus, score * c.targetPerScore);
+  let target = base + bonus;
+  if (input.torch) target = Math.min(100, target + 20);
+  if (input.zone6) target = 100;
+  target = Math.max(0, Math.min(100, target));
+  return { target, base, bonus, cold, shelterPoints };
+}
+
+export function thermalEvaluate(r: RunState, env: ThermalEnv): ThermalEval {
+  const c = K(); const reasons: string[] = [];
+  const coldParts = coldPartsFor(env);
   const cold = coldParts.reduce((v, p) => v + p.value, 0);
   // Worn cold-protection gear (legacy insulation/3 multiplier, unchanged).
-  let insulation = 0; for (const s of C(r, 'eq').slots) if (s) insulation += ITEMS[s.key].cold || 0;
-  const base = 100 - Math.max(0, cold - insulation / 3) * 9;
+  const insulation = insulationOf(r);
 
   const heaters = heatersInReach(r, env).filter(h => h.st.active);
   const sources = heaters.map(({ e, st }) => ({
@@ -120,15 +148,8 @@ export function thermalEvaluate(r: RunState, env: ThermalEnv): ThermalEval {
     code: st.code,
   }));
   const heatRaw = sources.reduce((v, s) => v + s.points, 0);
-  const shelterPoints = env.sheltered ? c.sources.enclosedShelter.score : 0;
-  const raw = heatRaw + shelterPoints;
-  const score = Math.min(c.scoreCap, raw);
-  const bonus = Math.min(c.targetMaxBonus, score * c.targetPerScore);
-
-  let target = base + bonus;
-  if (env.torch) target = Math.min(100, target + 20);
-  if (env.zone === 6) target = 100;
-  target = Math.max(0, Math.min(100, target));
+  const law = targetFromParts({ coldParts, insulation, heatPoints: heatRaw, sheltered: env.sheltered, torch: !!env.torch, zone6: env.zone === 6 });
+  const { target, base, bonus, shelterPoints } = law;
 
   for (const s of sources) reasons.push(`${s.kind === 'campfire' ? 'Campfire' : 'Furnace'} burning nearby +${s.points} comfort`);
   if (env.sheltered) reasons.push(`Enclosed roofed shelter +${shelterPoints} comfort`);
