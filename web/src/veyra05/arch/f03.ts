@@ -360,11 +360,137 @@ function r3FractureQuarry(s:F03Site):ArchPlan {
  return p.build();
 }
 
+/**
+ * R4: three independently composed industrial POIs. All paths are physically
+ * separated from enclosed roofs except the authored one-cell door thresholds.
+ * Mill = compact river-wheel circuit, timberyard = open sorting hub,
+ * slagworks = high-complexity foundry with optional quench-runoff underpass.
+ * No economy, loot, enemies or interaction mechanics are invented here.
+ */
+function r4MossbrookMill(s:F03Site):ArchPlan {
+ const x=s.cx,y=s.cy,p=f03Start(s);
+ // Source arrival -> wheel apron -> mill house -> dry storage, without
+ // turning the mill into an artificial harbour cross or a deep dungeon.
+ f03Path(p,'miller_road','Miller arrival and grain delivery',0,
+  [[x-7,y-39,6,53],[x-12,y-5,26,5],[x+5,y-16,6,20],
+   [x-9,y+8,26,5],[x+12,y+10,6,12]],'stone');
+ f03Door(p,'wheelhouse','Wheelhouse and Grinding Floor',[x+11,y-22,22,17],'W','wood','stone');
+ f03Path(p,'wheelhouse_service','Millstone entry and flow-control turn',0,
+  [[x+8,y-16,3,8],[x+5,y-16,6,5]],'stone');
+ f03Door(p,'grain_store','Dry Grain and Flour Store',[x-14,y+22,19,13],'N','wood','wood');
+ f03Path(p,'grain_store_spur','Dry output delivery ramp',0,
+  [[x-7,y+10,6,12],[x-9,y+17,10,5]],'wood');
+ f03Door(p,'miller_cottage','Miller Tool and Repair Hut',[x-38,y-30,16,12],'E','wood','wood');
+ f03Path(p,'cottage_bypass','Tool hut backwalk',0,
+  [[x-22,y-23,15,5],[x-25,y-18,6,14],[x-24,y-5,15,5]],'stone');
+ // Short wheel footbridge gives a river-side loop, not a random roof terrace.
+ f03Path(p,'river_apron','Mill wheel splash apron',0,
+  [[x-30,y-6,21,5],[x-30,y-6,5,24],[x-25,y+13,19,5],[x-10,y+10,6,8]],'wood',true);
+ f03Mass(p,'belt_loft','Mill Belt and Grain Sieve Loft',1,
+  [[x+13,y-20,18,13]],'wood','wood');
+ p.stair(x+21,y-15,0,1,x+21,y-15,'Mill drive-belt ladder','ladder');
+ p.prop(x-24,y+5,0,'f03_waterwheel');
+ p.prop(x+20,y-12,0,'f03_sawframe');
+ p.prop(x-7,y+19,0,'grain_sack');
+ p.prop(x-16,y+10,0,'f03_log_cradle');
+ p.prop(x+0,y+26,0,'f03_timber_pile');
+ p.prop(x+24,y-16,1,'f03_chain_rail');
+ p.note(x-26,y+7,0,'Wheel-driven milling starts by the river; inspect the axle before moving flour toward the dry store.');
+ p.note(x+18,y-16,1,'The short belt loft is attached to the real grinding floor, not a tower built for extra levels.');
+ return p.build();
+}
+function r4VerdantTimberyard(s:F03Site):ArchPlan {
+ const x=s.cx,y=s.cy,p=f03Start(s);
+ // GOLD's western bank at this site is water, not flat land. The R3 generic
+ // timberyard straddled the channel and made three buildings unreachable.
+ // Keep the storage and worker flow on the existing eastern bank; this is a
+ // *shore-side yard*, not a fictional bridge or a harbour copied from F02.
+ f03Path(p,'haul_spine','Bank-side log haul and outgoing plank traffic',0,
+  [[x+16,y-14,19,7],[x+17,y-15,6,39],
+   [x+30,y-14,7,36],[x+17,y+18,23,4]],'wood');
+ f03Door(p,'receiving_office','Timber Receiving and Weigh Station',
+  [x+8,y-38,16,12],'E','wood','wood');
+ f03Path(p,'receiving_entry','Receiving station clerk approach',0,
+  [[x+24,y-33,2,6],[x+24,y-27,2,15]],'wood');
+ f03Door(p,'treatment_shed','Resin and Timber Treatment Shed',
+  [x+26,y-29,17,14],'E','tin','wood');
+ f03Path(p,'treatment_entry','East-bank ventilated treatment service',0,
+  [[x+43,y-25,6,7],[x+43,y-19,6,24],[x+34,y-10,12,5]],'stone');
+ f03Door(p,'drying_barn','Air-Dry Timber Storage Barn',
+  [x+24,y+22,18,14],'N','wood','wood');
+ f03Path(p,'drying_entry','Outbound dry timber loading turn',0,
+  [[x+31,y+14,6,8],[x+25,y+18,15,4]],'wood');
+ // Parallel sorting rows and a worker return beside the material spine.
+ f03Path(p,'grading_aisles','Log grading and sorting aisles',0,
+  [[x+11,y-3,29,4],[x+11,y+7,30,5],
+   [x+12,y+12,6,9],[x+35,y+2,6,14]],'wood',true);
+ f03Path(p,'worker_return','Worker shortcut outside the haul track',0,
+  [[x+10,y+1,6,8],[x+11,y-11,6,14]],'wood',true);
+ // Light overhead inventory station, not a second building storey.
+ f03Path(p,'counting_gantry','Log Count Gantry',1,
+  [[x+28,y-9,7,17],[x+25,y+4,17,5]],'wood',true);
+ p.stair(x+32,y-5,0,1,x+32,y-5,'Log count gantry stair','exterior');
+ p.prop(x+14,y-2,0,'f03_log_cradle');
+ p.prop(x+29,y-9,0,'f03_chain_rail');
+ p.prop(x+15,y+9,0,'f03_timber_pile');
+ p.prop(x+37,y+14,0,'f03_timber_pile');
+ p.prop(x+34,y+17,0,'f03_timber_pile');
+ p.prop(x+33,y-22,0,'f03_valve');
+ p.prop(x+34,y+5,1,'f03_chain_rail');
+ p.note(x+17,y+8,0,'Log carts stay on the dry east bank; workers can sort timber without crossing the channel.');
+ p.note(x+34,y-4,1,'The short counting gantry surveys the outbound rows, not an invented roof terrace.');
+ return p.build();
+}
+function r4SlagworksFoundry(s:F03Site):ArchPlan {
+ const x=s.cx,y=s.cy,p=f03Start(s);
+ // Follow a physically plausible production loop: fuel arrives west,
+ // hot feed enters east furnace, liquid/slag quenches south, waste drains
+ // below; the high path only exists above the furnace roof.
+ f03Path(p,'feed_road','Central supply and smelter work route',0,
+  [[x-5,y-41,7,50],[x-13,y-7,30,6],
+   [x+10,y-22,6,40],[x-18,y+10,36,6],[x+14,y+12,21,5]],'stone');
+ f03Door(p,'furnace_house','Primary Iron and Slag Furnace',[x+18,y-30,24,20],'W','tin','brick');
+ f03Path(p,'furnace_threshold_route','Furnace side intake',0,
+  [[x+14,y-22,4,7],[x+10,y-22,6,7]],'stone');
+ f03Door(p,'fuel_store','Charcoal and Coke Receiving',[x-43,y-24,19,13],'E','wood','brick');
+ f03Path(p,'fuel_delivery','Fuel receiving bay and return',0,
+  [[x-20,y-19,8,17],[x-20,y-18,14,5]],'stone');
+ f03Door(p,'slag_sort','Quenched Bloom Sorting Bay',[x+19,y+17,23,16],'N','tin','stone');
+ f03Path(p,'quench_run','Separated hot slag transfer and return loop',0,
+  [[x-29,y+10,12,6],[x-29,y+10,6,27],
+   [x-28,y+31,39,6],[x+6,y+14,6,23]],'stone',true);
+ f03Path(p,'sort_entry','Sorted output shipping and drain rim',0,
+  [[x+18,y+12,17,5],[x+25,y+8,6,9]],'stone');
+ f03Mass(p,'furnace_gallery','Enclosed Furnace Firewatch and Vent Gallery',1,
+  [[x+20,y-28,19,15]],'tin','brick');
+ p.stair(x+23,y-21,0,1,x+23,y-21,'Foundry firewatch stair','interior');
+ p.prop(x+29,y-18,1,'f03_vent_pipe');
+ p.note(x+23,y-25,1,'The upper vent gallery serves the same furnace below; the roof is not a public plaza.');
+ // Optional maintenance descent follows drainage, not an arbitrary cellar.
+ f03Mass(p,'quench_underpass','Quench Drain and Pump Maintenance Underpass',-1,
+  [[x+6,y+23,19,7],[x+20,y+19,7,16],[x+9,y+17,7,15]],null,'stone');
+ p.stair(x+10,y+27,0,-1,x+10,y+27,'Quench drain service hatch','hatch');
+ p.prop(x+14,y+24,-1,'f03_rust_pipe');
+ p.prop(x+23,y+28,-1,'f03_vent_pipe');
+ p.note(x+22,y+28,-1,'The lower drain returns cooling runoff to the pump sump. A compact optional inspection branch.');
+ p.prop(x-33,y-7,0,'f03_charcoal_rick');
+ p.prop(x+25,y-17,0,'f03_kiln_vat');
+ p.prop(x+31,y-23,0,'f03_chimney');
+ p.prop(x+1,y+8,0,'f03_slag_pool');
+ p.prop(x+26,y+20,0,'f03_condenser');
+ p.note(x-20,y-14,0,'Fuel enters the west bay, away from the cooled output and hot metal transfer lane.');
+ p.note(x+3,y+10,0,'Hot bloom travels south to the quench run; maintenance access is beyond the cooling channel.');
+ return p.build();
+}
+
 function f03WritePlan(id:string):ArchPlan{
  const s=f03Profiles()[id];if(!s)throw Error('Unknown canonical F03 site '+id);
  if(id==='po_falls')return r3FallsPowerhouse(s);
  if(id==='po_sawaion')return r3AionSawmill(s);
  if(id==='po_fracquarry')return r3FractureQuarry(s);
+ if(id==='po_mill')return r4MossbrookMill(s);
+ if(id==='po_timberyard')return r4VerdantTimberyard(s);
+ if(id==='po_slag')return r4SlagworksFoundry(s);
  if(s.group==='WATER')return f03Water(s);
  if(s.group==='TIMBER')return f03Timber(s);
  if(s.group==='QUARRY')return f03Quarry(s);
