@@ -1,96 +1,330 @@
-/** Original, deterministic industrial waterfront 1x pixel drawings — C02. */
-import {mk,type Sprite} from '../game/art';
-export function makeIndustrialHarborSprites(factory:typeof mk):Record<string,Sprite>{
- const c02_ore_tipple=factory(70,67,g=>{
-  g.fillStyle='rgba(7,16,18,.42)';g.fillRect(6,60,64,6);
-  g.fillStyle='#323c44';g.fillRect(6,18,7,43);g.fillRect(56,18,8,43);g.fillRect(12,14,48,7);
-  g.fillStyle='#9d7c58';g.fillRect(13,17,44,4);g.fillStyle='#cfaa73';g.fillRect(20,12,25,4);
-  g.fillStyle='#59656a';g.fillRect(16,24,38,12);g.fillStyle='#212d36';g.fillRect(20,26,33,8);
-  g.fillStyle='#ad864f';g.fillRect(30,36,20,7);g.fillStyle='#6d5340';g.fillRect(35,42,12,15);
-  g.fillStyle='#c2b59b';g.fillRect(34,44,3,13);g.fillRect(45,44,3,11);
-  g.fillStyle='#313a3b';for(let i=0;i<5;i++)g.fillRect(14+i*9,21,2,23);
-  g.fillStyle='#caa270';g.fillRect(5,58,58,3);g.fillStyle='#d0a568';g.fillRect(22,48,27,3);
- });
- const c02_rail_wagon=factory(58,37,g=>{
-  g.fillStyle='rgba(21,22,23,.4)';g.fillRect(4,30,52,5);g.fillStyle='#303e43';g.fillRect(2,18,53,15);
-  g.fillStyle='#99734e';g.fillRect(5,13,49,16);g.fillStyle='#b69a65';g.fillRect(7,13,45,3);
-  g.fillStyle='#333b3c';g.fillRect(9,16,39,9);g.fillStyle='#6e7873';g.fillRect(10,17,36,7);
-  g.fillStyle='#cfad76';g.fillRect(15,19,24,2);g.fillStyle='#293039';g.fillRect(10,28,8,8);g.fillRect(40,28,9,8);
-  g.fillStyle='#9fa19c';g.fillRect(12,31,4,3);g.fillRect(43,31,4,3);g.fillStyle='#bd915d';g.fillRect(1,25,55,3);
- });
- const c02_chain_gantry=factory(78,79,g=>{
-  g.fillStyle='rgba(17,22,27,.38)';g.fillRect(8,72,66,6);
-  g.fillStyle='#343e45';g.fillRect(8,17,10,57);g.fillRect(62,17,10,57);g.fillRect(12,10,57,9);
-  g.fillStyle='#b28152';g.fillRect(9,19,6,52);g.fillRect(64,19,6,52);g.fillRect(18,12,46,5);
-  g.fillStyle='#ded0a5';g.fillRect(22,13,35,2);g.fillStyle='#576b71';g.fillRect(20,21,41,6);
-  g.fillStyle='#34383b';g.fillRect(38,24,4,31);
-  for(let i=0;i<5;i++){g.fillStyle='#b2b5a8';g.fillRect(39,28+i*5,2,2)}
-  g.fillStyle='#dfb770';g.fillRect(32,55,17,4);g.fillStyle='#7e5937';g.fillRect(33,60,15,11);
-  g.fillStyle='#333944';g.fillRect(28,68,27,4);g.fillStyle='#e6c487';g.fillRect(17,8,39,3);
- });
- const c02_industrial_chimney=factory(42,90,g=>{
-  g.fillStyle='rgba(24,21,20,.38)';g.fillRect(9,82,28,6);g.fillStyle='#3c3634';g.fillRect(11,12,24,70);
-  g.fillStyle='#996a55';g.fillRect(14,13,18,66);g.fillStyle='#c89567';g.fillRect(17,15,5,60);
-  g.fillStyle='#45444b';for(let y=19;y<77;y+=13)g.fillRect(10,y,26,4);
-  g.fillStyle='#c5b19a';g.fillRect(9,10,28,5);g.fillStyle='#2c3138';g.fillRect(12,6,22,7);
-  g.fillStyle='#e2b57c';g.fillRect(16,4,17,3);g.fillStyle='#62686b';g.fillRect(22,1,12,4);
- });
- const c02_steel_truss=factory(77,37,g=>{
-  g.fillStyle='rgba(12,19,26,.38)';g.fillRect(3,31,70,5);
-  g.fillStyle='#33424c';g.fillRect(2,7,72,5);g.fillRect(2,26,72,6);
-  g.fillStyle='#a5977c';g.fillRect(3,9,70,3);g.fillRect(3,28,70,3);
-  g.strokeStyle='#b2a38b';g.lineWidth=3;for(let x=4;x<68;x+=12){g.beginPath();g.moveTo(x,12);g.lineTo(x+12,26);g.moveTo(x+12,12);g.lineTo(x,26);g.stroke()}
-  g.fillStyle='#272c33';for(let x=4;x<76;x+=12){g.fillRect(x,10,3,18)}
- });
- const c02_ore_bins=factory(59,41,g=>{
-  g.fillStyle='rgba(20,16,17,.35)';g.fillRect(5,34,49,5);g.fillStyle='#313d45';g.fillRect(4,10,50,26);
-  g.fillStyle='#8c6c4d';g.fillRect(6,11,46,5);g.fillStyle='#c1a073';g.fillRect(8,13,43,2);
-  for(let x=8;x<51;x+=15){g.fillStyle='#3e4f57';g.fillRect(x,18,12,14);g.fillStyle='#767d78';g.fillRect(x+2,19,9,9);g.fillStyle='#bd976b';g.fillRect(x+4,17,4,3)}
-  g.fillStyle='#222f33';g.fillRect(2,31,54,5);g.fillStyle='#c6b08b';g.fillRect(12,35,37,2);
- });
- const c02_warning_lamp=factory(29,42,g=>{
-  g.fillStyle='rgba(21,27,24,.3)';g.fillRect(7,37,21,4);g.fillStyle='#38434c';g.fillRect(11,13,6,27);
-  g.fillStyle='#b5a585';g.fillRect(13,15,2,22);g.fillStyle='#252c35';g.fillRect(5,6,19,7);
-  g.fillStyle='#eabb5e';g.fillRect(9,11,12,11);g.fillStyle='#ffeb9b';g.fillRect(12,12,7,7);
-  g.fillStyle='#604336';g.fillRect(10,23,12,3);g.fillStyle='#b49464';g.fillRect(3,3,23,4);
- });
- const c02_heat_grate=factory(45,29,g=>{
-  g.fillStyle='#313a3c';g.fillRect(2,6,41,21);g.fillStyle='#8a7563';g.fillRect(5,9,35,16);
-  for(let x=7;x<40;x+=5){g.fillStyle='#252e36';g.fillRect(x,9,2,16);g.fillStyle='#b79c72';g.fillRect(x+2,11,2,12)}
-  g.fillStyle='#c55d39';g.fillRect(7,14,29,2);g.fillStyle='#9c4b34';g.fillRect(5,23,35,3);
-  g.fillStyle='#d3b38b';g.fillRect(4,5,36,3);
- });
- const c02_tide_gate=factory(69,58,g=>{
-  g.fillStyle='rgba(14,21,29,.4)';g.fillRect(5,51,61,5);
-  g.fillStyle='#313941';g.fillRect(5,9,8,45);g.fillRect(57,9,8,45);
-  g.fillStyle='#a59c87';g.fillRect(8,10,5,40);g.fillRect(58,10,5,40);
-  g.fillStyle='#4e5a63';g.fillRect(13,18,44,30);g.fillStyle='#7d817d';g.fillRect(16,20,38,24);
-  g.fillStyle='#a98f72';for(let y=21;y<44;y+=6)g.fillRect(16,y,38,2);
-  g.fillStyle='#303c44';for(let x=20;x<53;x+=8)g.fillRect(x,14,3,33);
-  g.fillStyle='#dbb986';g.fillRect(10,5,52,6);g.fillStyle='#a78960';g.fillRect(21,2,29,3);
- });
- const c02_counterweight=factory(50,63,g=>{
-  g.fillStyle='rgba(23,25,26,.38)';g.fillRect(6,56,40,6);
-  g.fillStyle='#3d4751';g.fillRect(5,12,9,48);g.fillRect(37,12,9,48);
-  g.fillStyle='#b9a885';g.fillRect(7,14,6,40);g.fillRect(39,14,6,40);
-  g.fillStyle='#252e34';g.fillRect(7,10,39,5);
-  g.fillStyle='#bd955f';g.fillRect(14,18,23,5);g.fillStyle='#697479';g.fillRect(18,23,16,26);
-  g.fillStyle='#d0c2a3';g.fillRect(20,25,3,21);g.fillStyle='#252d35';g.fillRect(24,4,5,35);
-  g.fillStyle='#e0b874';g.fillRect(20,48,14,5);g.fillStyle='#353f43';g.fillRect(16,53,22,5);
- });
- return {c02_ore_tipple,c02_rail_wagon,c02_chain_gantry,c02_industrial_chimney,c02_steel_truss,c02_ore_bins,c02_warning_lamp,c02_heat_grate,c02_tide_gate,c02_counterweight};
+/**
+ * C02 INDUSTRIAL HARBOR PIXEL ART (Ironholm Harbor, Emberport, Sandgate).
+ * 10 industrial waterfront props + `gear_rack` + seamless rail/gantry/ashwork ground painter.
+ */
+import { type Sprite, mk } from '../game/art';
+import {
+  PxBuf,
+  RAMPS,
+  craftSprite,
+  ditherTone,
+  drawCylH,
+  drawCylV,
+  drawOrganicHeap,
+  drawWheel,
+} from './pixel-craft';
+import { drawDeckTileCanvas } from './surface-art';
+
+export function makeIndustrialHarborSprites(_factory: typeof mk): Record<string, Sprite> {
+  // 1. Ore Tipple Headframe Tower (68x64)
+  const c02_ore_tipple = craftSprite(
+    68,
+    64,
+    b => {
+      // Heavy stone pier footings
+      b.rect(7, 50, 12, 8, RAMPS.stone[1]);
+      b.hline(7, 50, 12, RAMPS.stone[3]);
+      b.rect(49, 50, 12, 8, RAMPS.stone[1]);
+      b.hline(49, 50, 12, RAMPS.stone[3]);
+      // Batter timber & steel headframe legs with X-bracing
+      b.line(12, 52, 18, 12, RAMPS.wood[2], 3);
+      b.line(55, 52, 48, 12, RAMPS.wood[1], 3);
+      b.line(16, 36, 51, 20, RAMPS.steel[2]);
+      b.line(51, 36, 16, 20, RAMPS.steel[1]);
+      // Upper rotary railcar dumper gallery & corrugated hood
+      b.rect(14, 10, 40, 11, RAMPS.steel[2]);
+      b.rect(13, 6, 42, 5, RAMPS.rust[3]);
+      b.hline(13, 6, 42, RAMPS.rust[4]);
+      b.rect(18, 13, 32, 6, RAMPS.iron[0]); // dumper throat
+      // Angled steel ore discharge chute funnel spilling into lower ore mound
+      for (let i = 0; i < 14; i++) {
+        b.hline(25 + Math.round(i * 0.35), 21 + i, 18 - Math.round(i * 0.4), i % 3 === 0 ? RAMPS.steel[3] : RAMPS.iron[2]);
+      }
+      drawOrganicHeap(b, 35, 57, 15, 11, RAMPS.ore, 2101, { col: RAMPS.stone[3], chance: 0.16 });
+      // Access ladder on left leg
+      b.vline(10, 14, 42, RAMPS.iron[3]);
+      for (let y = 16; y < 54; y += 4) b.hline(10, y, 3, RAMPS.steel[4]);
+    },
+    { cx: 34, cy: 58, rx: 28, ry: 4 },
+  );
+
+  // 2. Heavy Steel-Ribbed Ore Rail Wagon on Track (58x38)
+  const c02_rail_wagon = craftSprite(
+    58,
+    38,
+    b => {
+      // Twin rail track ties & steel rail beneath wheels
+      for (let x = 4; x < 54; x += 6) b.rect(x, 31, 3, 3, RAMPS.wood[1]);
+      b.hline(2, 32, 54, RAMPS.steel[4]);
+      // Spoked iron rail bogie wheels & couplings
+      drawWheel(b, 13, 29, 4, 4, 4, RAMPS.iron, RAMPS.steel);
+      drawWheel(b, 44, 29, 4, 4, 4, RAMPS.iron, RAMPS.steel);
+      b.rect(1, 24, 4, 2, RAMPS.steel[3]);
+      b.rect(53, 24, 4, 2, RAMPS.steel[3]);
+      // Heaped ironstone ore cargo mound inside hopper top
+      drawOrganicHeap(b, 29, 15, 21, 9, RAMPS.ore, 2204, { col: RAMPS.stone[3], chance: 0.18, hi: RAMPS.gold[4] });
+      // Riveted rust-iron gondola body with angled side ribs
+      b.rect(5, 14, 48, 12, RAMPS.rust[2]);
+      b.hline(5, 14, 48, RAMPS.rust[4]);
+      b.hline(5, 25, 48, RAMPS.iron[0]);
+      for (let x = 8; x < 50; x += 8) {
+        b.rect(x, 15, 2, 10, RAMPS.iron[2]);
+        b.p(x, 16, RAMPS.steel[4]);
+        b.p(x, 23, RAMPS.steel[4]);
+      }
+    },
+    { cx: 29, cy: 34, rx: 26, ry: 3 },
+  );
+
+  // 3. Travelling Port Chain Gantry Crane (76x76)
+  const c02_chain_gantry = craftSprite(
+    76,
+    76,
+    b => {
+      // Twin bogie bases & heavy riveted steel A-frame legs
+      for (const lx of [8, 56]) {
+        b.rect(lx, 63, 12, 6, RAMPS.iron[1]);
+        drawWheel(b, lx + 3, 69, 2, 2, 4, RAMPS.iron, RAMPS.steel);
+        drawWheel(b, lx + 9, 69, 2, 2, 4, RAMPS.iron, RAMPS.steel);
+        b.rect(lx + 3, 15, 6, 49, RAMPS.steel[2]);
+        b.vline(lx + 3, 15, 49, RAMPS.steel[4]);
+        b.vline(lx + 8, 15, 49, RAMPS.iron[0]);
+        for (let y = 18; y < 60; y += 7) b.line(lx + 3, y, lx + 8, y + 5, RAMPS.rust[3]);
+      }
+      // Top cross-truss bridge girder + operator cab on left
+      b.rect(5, 7, 66, 9, RAMPS.rust[2]);
+      b.hline(5, 7, 66, RAMPS.brass[3]);
+      b.hline(5, 15, 66, RAMPS.iron[0]);
+      for (let x = 8; x < 64; x += 8) b.line(x, 8, x + 6, 14, RAMPS.steel[3]);
+      b.rect(14, 16, 11, 9, RAMPS.copper[2]); // operator control cab
+      b.rect(16, 18, 7, 4, RAMPS.water[4]);
+      // Overhead trolley + twin taut hoist chains + heavy ore crate sling
+      b.rect(34, 15, 10, 5, RAMPS.iron[3]);
+      for (let y = 20; y < 48; y += 2) {
+        b.p(37, y, RAMPS.steel[4]);
+        b.p(40, y, RAMPS.steel[4]);
+        b.p(37, y + 1, RAMPS.iron[1]);
+        b.p(40, y + 1, RAMPS.iron[1]);
+      }
+      b.rect(35, 46, 8, 4, RAMPS.brass[3]); // spreader bar
+      b.rect(30, 50, 18, 13, RAMPS.timber[2]);
+      b.hline(30, 50, 18, RAMPS.timber[4]);
+      b.line(31, 51, 46, 61, RAMPS.wood[1]);
+    },
+    { cx: 38, cy: 70, rx: 32, ry: 4 },
+  );
+
+  // 4. Massive Smelter Blast-Furnace Smokestack (40x88)
+  const c02_industrial_chimney = (() => {
+    const b = new PxBuf(40, 88);
+    // Heavy stone & iron-buttressed plinth
+    b.rect(6, 64, 28, 17, RAMPS.stone[2]);
+    b.hline(6, 64, 28, RAMPS.stone[4]);
+    b.rect(15, 70, 10, 11, RAMPS.ember[0]);
+    b.rect(17, 74, 6, 6, RAMPS.ember[2]);
+    b.rect(19, 76, 2, 4, RAMPS.ember[4]);
+    // Tapered riveted iron/brick furnace stack
+    drawCylV(b, 9, 13, 22, 53, RAMPS.brick, { taperTop: 4, hoops: [23, 35, 47, 58] });
+    // Flared cast-iron crown collar
+    b.rect(11, 10, 18, 4, RAMPS.iron[2]);
+    b.hline(11, 10, 18, RAMPS.steel[4]);
+    b.ellipse(20, 10, 7, 2, RAMPS.coal[0]);
+    b.outline();
+    b.shadowEllipse(20, 82, 15, 3.5, 0.34);
+    for (const [sx, sy, sr, a] of [[20, 7, 3, 0.52], [23, 4, 3.5, 0.36], [26, 2, 2.5, 0.22]]) {
+      for (let yy = -4; yy <= 4; yy++) for (let xx = -4; xx <= 4; xx++) {
+        if (xx * xx + yy * yy <= sr * sr) b.blend(sx + xx, sy + yy, 180, 184, 192, a);
+      }
+    }
+    return b.toCanvas();
+  })();
+
+  // 5. Crisp Warren-Truss Overhead Steel Bridge Span (76x36 — zero AA blur!)
+  const c02_steel_truss = craftSprite(
+    76,
+    36,
+    b => {
+      // Bottom deck I-beam & top compression chord
+      b.rect(2, 6, 72, 4, RAMPS.steel[2]);
+      b.hline(2, 6, 72, RAMPS.steel[4]);
+      b.rect(2, 25, 72, 5, RAMPS.iron[2]);
+      b.hline(2, 25, 72, RAMPS.steel[3]);
+      // Crisp pixel-plotted Warren diagonal lattice struts + vertical gussets
+      for (let x = 4; x <= 62; x += 11) {
+        b.rect(x, 9, 2, 17, RAMPS.iron[1]);
+        b.line(x + 1, 10, x + 11, 25, RAMPS.steel[3], 2);
+        b.line(x + 11, 10, x + 1, 25, RAMPS.steel[2], 1);
+        // Gusset plate with rivet
+        b.rect(x, 8, 4, 3, RAMPS.rust[3]);
+        b.p(x + 1, 9, RAMPS.steel[4]);
+      }
+      b.rect(68, 9, 3, 17, RAMPS.iron[2]);
+    },
+    { cx: 38, cy: 32, rx: 35, ry: 2.5 },
+  );
+
+  // 6. Three-Bay Timber & Iron Ore Storage Bins (58x42)
+  const c02_ore_bins = craftSprite(
+    58,
+    42,
+    b => {
+      // Heavy timber frame & sloped roof backplate
+      b.rect(4, 7, 50, 29, RAMPS.wood[1]);
+      b.hline(4, 7, 50, RAMPS.wood[4]);
+      for (let i = 0; i < 3; i++) {
+        const bx = 7 + i * 16;
+        // Distinct cargo in each bay: iron ore, coal, limestone
+        const ramp = i === 0 ? RAMPS.ore : i === 1 ? RAMPS.coal : RAMPS.stone;
+        drawOrganicHeap(b, bx + 6, 23, 6, 8, ramp, 2600 + i);
+        // Hopper chute front apron & iron lever gate
+        b.rect(bx, 22, 13, 12, RAMPS.iron[2]);
+        b.hline(bx, 22, 13, RAMPS.steel[4]);
+        b.rect(bx + 3, 27, 7, 5, RAMPS.rust[2]);
+        b.rect(bx + 11, 24, 2, 5, RAMPS.brass[3]); // chute handle
+      }
+    },
+    { cx: 29, cy: 37, rx: 25, ry: 3 },
+  );
+
+  // 7. Industrial Port Warning Beacon Lamp (28x42)
+  const c02_warning_lamp = craftSprite(
+    28,
+    42,
+    b => {
+      b.rect(8, 34, 12, 5, RAMPS.stone[1]);
+      b.hline(8, 34, 12, RAMPS.stone[3]);
+      // Steel lattice post & ladder rungs
+      b.rect(12, 14, 4, 21, RAMPS.iron[2]);
+      b.vline(12, 14, 21, RAMPS.steel[3]);
+      for (let y = 18; y < 34; y += 4) b.hline(10, y, 4, RAMPS.iron[3]);
+      // Wide copper hood & glowing amber Fresnel warning cage
+      b.rect(6, 4, 16, 4, RAMPS.rust[3]);
+      b.hline(6, 4, 16, RAMPS.rust[4]);
+      b.rect(9, 8, 10, 7, RAMPS.ember[3]);
+      b.rect(11, 9, 6, 5, RAMPS.ember[4]);
+      b.vline(9, 8, 7, RAMPS.iron[0]);
+      b.vline(18, 8, 7, RAMPS.iron[0]);
+    },
+    { cx: 14, cy: 39, rx: 8, ry: 2.5 },
+  );
+
+  // 8. Cast-Iron Floor Flue & Ember Heat Grate (46x28)
+  const c02_heat_grate = craftSprite(
+    46,
+    28,
+    b => {
+      // Heavy stone/iron curb frame
+      b.rect(3, 5, 40, 19, RAMPS.iron[2]);
+      b.hline(3, 5, 40, RAMPS.steel[4]);
+      b.hline(3, 23, 40, RAMPS.iron[0]);
+      // Glowing molten coal bed beneath cast-iron grates
+      b.rect(6, 8, 34, 13, RAMPS.ember[0]);
+      b.rect(9, 10, 28, 9, RAMPS.ember[2]);
+      b.rect(14, 12, 18, 5, RAMPS.ember[4]);
+      // Thick cast-iron grate bars spanning the pit
+      for (let x = 7; x < 39; x += 5) {
+        b.rect(x, 8, 2, 13, RAMPS.iron[1]);
+        b.p(x, 8, RAMPS.steel[4]);
+      }
+      b.hline(6, 14, 34, RAMPS.iron[2]);
+    },
+    { cx: 23, cy: 25, rx: 20, ry: 2.5 },
+  );
+
+  // 9. Monumental Estuary Tidal Sluice Lock Gate (68x56)
+  const c02_tide_gate = craftSprite(
+    68,
+    56,
+    b => {
+      // Water pool & white discharge foam at gate sill
+      b.rect(12, 42, 44, 9, RAMPS.water[1]);
+      for (let x = 14; x < 54; x += 4) b.hline(x, 45 + (x % 3), 3, RAMPS.water[4]);
+      // Twin dressed-granite lock piers
+      for (const px of [5, 53]) {
+        b.rect(px, 12, 10, 39, RAMPS.stone[2]);
+        b.hline(px, 12, 10, RAMPS.stone[4]);
+        for (let y = 20; y < 50; y += 8) b.hline(px, y, 10, RAMPS.stone[0]);
+      }
+      // Riveted iron sluice gate leaves with cross ribs & green algae collar
+      b.rect(15, 18, 38, 26, RAMPS.steel[1]);
+      for (let x = 19; x < 52; x += 6) b.rect(x, 18, 2, 26, RAMPS.steel[3]);
+      b.hline(15, 29, 38, RAMPS.iron[0]);
+      b.rect(15, 40, 38, 4, RAMPS.copper[1]);
+      // Overhead steel lifting bridge & twin handwheel gears
+      b.rect(10, 7, 48, 6, RAMPS.iron[2]);
+      b.hline(10, 7, 48, RAMPS.brass[3]);
+      drawWheel(b, 24, 6, 4, 4, 4, RAMPS.rust, RAMPS.brass);
+      drawWheel(b, 44, 6, 4, 4, 4, RAMPS.rust, RAMPS.brass);
+    },
+    { cx: 34, cy: 52, rx: 28, ry: 3.5 },
+  );
+
+  // 10. Heavy Sluice Counterweight Tower & Ballast Block (50x62)
+  const c02_counterweight = craftSprite(
+    50,
+    62,
+    b => {
+      // Stone bumper pad
+      b.rect(11, 51, 28, 6, RAMPS.stone[1]);
+      b.hline(11, 51, 28, RAMPS.stone[3]);
+      // Twin vertical steel channel guide towers
+      b.rect(7, 10, 6, 45, RAMPS.iron[2]);
+      b.vline(7, 10, 45, RAMPS.steel[4]);
+      b.rect(37, 10, 6, 45, RAMPS.iron[2]);
+      b.vline(37, 10, 45, RAMPS.steel[4]);
+      // Top crosshead girder & twin cast-iron cable sheaves
+      b.rect(5, 7, 40, 5, RAMPS.rust[3]);
+      b.hline(5, 7, 40, RAMPS.brass[3]);
+      drawWheel(b, 17, 7, 4, 4, 4, RAMPS.iron, RAMPS.brass);
+      drawWheel(b, 33, 7, 4, 4, 4, RAMPS.iron, RAMPS.brass);
+      // Taut twin steel hoist chains
+      for (let y = 11; y < 27; y += 2) {
+        b.p(17, y, RAMPS.steel[4]);
+        b.p(33, y, RAMPS.steel[4]);
+      }
+      // Massive concrete-and-iron-banded ballast counterweight suspended mid-travel
+      b.rect(14, 26, 22, 18, RAMPS.stone[2]);
+      b.hline(14, 26, 22, RAMPS.stone[4]);
+      b.rect(14, 30, 22, 2, RAMPS.iron[1]);
+      b.rect(14, 39, 22, 2, RAMPS.iron[1]);
+      b.rect(23, 23, 4, 3, RAMPS.brass[3]);
+    },
+    { cx: 25, cy: 57, rx: 19, ry: 3 },
+  );
+
+  // 11. Wall/Stand Workshop Gear & Tool Rack (22x22 — referenced in c02.ts!)
+  const gear_rack = craftSprite(
+    22,
+    22,
+    b => {
+      b.rect(3, 3, 2, 16, RAMPS.wood[1]);
+      b.rect(17, 3, 2, 16, RAMPS.wood[1]);
+      b.rect(2, 4, 18, 3, RAMPS.wood[3]);
+      b.rect(2, 12, 18, 2, RAMPS.wood[2]);
+      // Hanging wrench, spare bevel gear, and oil can
+      b.rect(5, 6, 2, 9, RAMPS.steel[3]);
+      b.p(6, 6, RAMPS.steel[4]);
+      drawWheel(b, 11, 10, 3, 3, 4, RAMPS.brass, RAMPS.iron);
+      b.rect(14, 9, 3, 4, RAMPS.copper[3]);
+    },
+    { cx: 11, cy: 19, rx: 8, ry: 2 },
+  );
+
+  return {
+    c02_ore_tipple,
+    c02_rail_wagon,
+    c02_chain_gantry,
+    c02_industrial_chimney,
+    c02_steel_truss,
+    c02_ore_bins,
+    c02_warning_lamp,
+    c02_heat_grate,
+    c02_tide_gate,
+    c02_counterweight,
+    gear_rack,
+  };
 }
-export function drawIndustrialHarborTile(g:CanvasRenderingContext2D,x:number,y:number,id:string,edges:number):void {
- const iron=id.startsWith('po_ironharbor.'),ember=id.startsWith('po_ember.'),sand=id.startsWith('po_sandgate.');
- const high=/rail|bridge|truss|belt|gantry|gatewalk|sky|overhead|control|stack/i.test(id);const X=x*16,Y=y*16;
- const deep=iron?'#303e47':ember?'#3f3537':'#485057';const line=iron?'#7b8990':ember?'#98755b':'#a9a69b';const trim=iron?'#c1b89c':ember?'#d19b66':'#d8cfab';
- g.fillStyle='rgba(16,20,29,.35)';g.fillRect(X+1,Y+2,15,14);g.fillStyle=deep;g.fillRect(X,Y,16,16);
- if(sand&&!high){for(let r=0;r<4;r++){g.fillStyle=r%2?line:trim;g.fillRect(X+1,Y+4*r,14,3);g.fillStyle=deep;g.fillRect(X,Y+4*r+3,16,1)}}
- else{for(let r=0;r<4;r++){g.fillStyle=((x*3+y+r)%5===0)?trim:line;g.fillRect(X+1,Y+r*4,14,3);g.fillStyle=deep;g.fillRect(X,Y+r*4+3,16,1);if((r+x+y)%7===0){g.fillStyle='#353c3c';g.fillRect(X+4,Y+r*4+1,4,1)}}}
- if(ember){g.fillStyle='#7a4b3a';if((x+3*y)%9===0)g.fillRect(X+3,Y+4,8,2)}
- if(high){g.fillStyle=deep;g.fillRect(X+7,Y+1,2,14);g.fillStyle=trim;g.fillRect(X+3,Y+3,10,1)}
- if(edges&1){g.fillStyle=trim;g.fillRect(X+2,Y,3,2);g.fillRect(X+12,Y,3,2)}
- if(edges&2){g.fillStyle=deep;g.fillRect(X,Y+14,16,2);g.fillStyle=trim;g.fillRect(X+4,Y+13,3,2)}
- if(edges&4){g.fillStyle=deep;g.fillRect(X,Y,2,16);g.fillStyle=trim;if(y%3===0)g.fillRect(X,Y+6,3,2)}
- if(edges&8){g.fillStyle=deep;g.fillRect(X+14,Y,2,16);g.fillStyle=trim;if(y%3===0)g.fillRect(X+13,Y+5,3,2)}
+
+export function drawIndustrialHarborTile(g: CanvasRenderingContext2D, x: number, y: number, id: string, edges: number): void {
+  drawDeckTileCanvas(g, x, y, { id, open: true, edges });
 }

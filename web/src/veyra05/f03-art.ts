@@ -1,202 +1,804 @@
 /**
- * F03 REMAKE — SOH pixel-sprite grammar.
- * Each sprite is drawn in 1 source pixel blocks at 16px world tile scale.
- * Muted stone, iron, aged timber and oxidized copper belong to the existing
- * world palette. Shapes silhouette INDUSTRIAL PROCESSES, not identical 3-color
- * rectangles with a swapped label. No antialiasing, gradients or vector strokes.
+ * F03 INDUSTRIAL & INFRASTRUCTURE PIXEL ART (29 sprites + 5 material ground painters).
+ *
+ * Completely redesigned from scratch using Soul of Hero's 2.5D top-down oblique
+ * projection, unified `#140c14` outline, NW global lighting, hue-shifted material
+ * ramps, cylindrical/domed Bayer shading, and authentic mechanical engineering.
  */
-import {mk,type Sprite} from '../game/art';
-export function makeF03Sprites(factory:typeof mk):Record<string,Sprite>{
- const c={outline:'#292c30',shadow:'#1f2329',iron:'#4c5a60',ironHi:'#89948e',stone:'#74736c',stoneHi:'#b1a994',wood:'#644c36',woodHi:'#b09065',rust:'#815d4d',copper:'#b48d64',ash:'#4a4743',earth:'#73634f',water:'#466d72',waterHi:'#8da6a2',ember:'#b77b4f',glow:'#e0b175'};
- const sprite=(w:number,h:number,paint:(r:(x:number,y:number,w:number,h:number,color:string)=>void)=>void)=>factory(w,h,g=>{
-  const R=(x:number,y:number,a:number,b:number,color:string)=>{g.fillStyle=color;g.fillRect(x|0,y|0,a|0,b|0)};
-  paint(R);
- },null);
- const f03_turbine=sprite(41,37,R=>{
-  R(5,29,32,5,c.shadow);R(7,5,27,26,c.outline);R(9,7,23,21,c.iron);
-  R(10,9,20,17,c.ironHi);R(14,6,13,24,c.outline);
-  R(7,16,27,5,c.ironHi);R(17,9,6,18,c.rust);R(17,15,6,6,c.copper);
-  for(let j=0;j<4;j++)R(11+j*6,30,3,3,c.stone);
- });
- const f03_waterwheel=sprite(43,45,R=>{
-  R(6,38,32,5,c.shadow);R(6,10,30,29,c.outline);R(10,8,23,32,c.wood);
-  R(13,11,17,25,c.woodHi);R(17,8,9,31,c.outline);R(8,21,27,6,c.outline);
-  R(11,13,20,3,c.wood);R(13,33,16,3,c.wood);R(18,19,7,7,c.iron);R(20,21,3,3,c.copper);
-  R(3,33,7,3,c.water);R(7,37,9,2,c.waterHi);
- });
- const f03_steel_gate=sprite(31,31,R=>{
-  R(3,4,25,26,c.outline);R(5,6,21,21,c.iron);
-  for(let x=7;x<26;x+=5){R(x,6,2,20,c.ironHi);R(x+2,6,1,20,c.shadow)}
-  R(4,12,23,3,c.rust);R(4,24,23,3,c.outline);R(10,3,11,3,c.stone);
- });
- const f03_pipe_bundle=sprite(48,26,R=>{
-  R(2,19,44,5,c.shadow);for(let i=0;i<4;i++){R(3,3+i*5,42,5,c.outline);R(4,4+i*5,40,2,i%2?c.iron:c.stone);R(5,6+i*5,3,1,c.ironHi)}
-  R(17,2,4,23,c.rust);R(36,2,4,23,c.rust);
- });
- const f03_rust_pipe=sprite(38,19,R=>{
-  R(2,10,34,6,c.outline);R(2,11,32,3,c.rust);R(27,4,7,9,c.outline);R(29,5,4,8,c.iron);
-  R(6,12,8,2,c.copper);R(20,12,6,2,c.wood);R(5,17,24,2,c.shadow);
- });
- const f03_valve=sprite(25,32,R=>{
-  R(5,27,16,4,c.shadow);R(10,11,5,18,c.iron);R(7,18,12,6,c.outline);
-  R(3,7,19,4,c.rust);R(8,3,10,4,c.ironHi);R(11,2,3,12,c.outline);
-  R(3,10,4,2,c.ironHi);R(19,10,4,2,c.ironHi);R(11,18,3,3,c.copper);
- });
- const f03_gauge_panel=sprite(26,30,R=>{
-  R(4,4,18,21,c.outline);R(6,6,14,15,c.iron);R(7,8,5,5,c.stoneHi);R(14,8,5,5,c.stoneHi);
-  R(9,10,2,2,c.iron);R(16,10,2,2,c.rust);R(7,16,12,2,c.copper);R(10,25,6,4,c.shadow);
- });
- const f03_log_cradle=sprite(55,30,R=>{
-  R(2,22,51,5,c.shadow);R(4,18,47,6,c.wood);for(let i=0;i<5;i++){
-   const yy=18-(i%2)*6;R(5+i*9,yy,10,7,c.outline);R(6+i*9,yy+1,8,5,c.woodHi);R(7+i*9,yy+2,3,2,c.wood);}
-  R(9,24,3,4,c.iron);R(44,24,3,4,c.iron);
- });
- const f03_timber_pile=sprite(49,33,R=>{
-  R(2,27,45,4,c.shadow);for(let r=0;r<3;r++)for(let j=0;j<4-r;j++){
-   let x=4+r*5+j*10,y=23-r*7;R(x,y,11,7,c.outline);R(x+1,y+1,9,5,c.wood);R(x+2,y+2,4,2,c.woodHi);R(x+6,y+2,2,2,c.stone);}
- });
- const f03_sawframe=sprite(57,43,R=>{
-  R(4,36,48,5,c.shadow);R(4,8,6,29,c.outline);R(47,8,6,29,c.outline);R(7,8,43,5,c.iron);R(8,10,40,2,c.ironHi);
-  R(10,26,37,6,c.wood);R(8,22,42,4,c.woodHi);R(25,11,4,23,c.stoneHi);R(27,15,2,20,c.iron);
-  R(12,30,8,3,c.rust);R(36,30,7,3,c.rust);
- });
- const f03_sawdust=sprite(35,20,R=>{
-  R(4,14,27,3,c.earth);R(8,9,18,5,c.wood);R(13,5,7,6,c.woodHi);
-  for(let i=0;i<14;i++){const x=3+(i*11)%29,y=8+(i*7)%10;R(x,y,2,1,i%3?c.copper:c.stoneHi)}
- });
- const f03_chain_rail=sprite(58,27,R=>{
-  R(1,20,56,4,c.shadow);R(3,9,52,5,c.outline);R(5,10,48,2,c.ironHi);
-  for(let i=0;i<8;i++){const x=5+i*6;R(x,14,3,7,c.iron);R(x+3,16,3,3,c.rust)}
-  R(4,22,10,2,c.wood);R(42,22,10,2,c.wood);
- });
- const f03_ore_ramp=sprite(50,31,R=>{
-  R(2,23,46,5,c.shadow);R(4,8,42,19,c.outline);R(7,11,36,13,c.stone);
-  for(let i=0;i<6;i++){R(8+i*6,9+(i%2)*5,5,4,i%2?c.stoneHi:c.earth);R(8+i*6,23,3,2,c.ash)}
-  R(11,5,25,3,c.rust);R(12,27,32,2,c.shadow);
- });
- const f03_spoil_heap=sprite(48,29,R=>{
-  R(3,24,43,4,c.shadow);R(6,19,36,7,c.ash);R(10,12,30,8,c.stone);R(18,6,18,8,c.stoneHi);
-  R(6,21,6,2,c.earth);R(25,15,9,3,c.outline);R(20,8,7,2,c.earth);R(31,23,8,2,c.stoneHi);
- });
- const f03_ore_seam=sprite(38,25,R=>{
-  R(2,19,34,4,c.shadow);R(5,13,26,10,c.outline);R(8,10,10,7,c.stone);R(18,6,12,12,c.stone);
-  R(10,14,4,5,c.ironHi);R(22,8,4,9,c.woodHi);R(24,17,5,3,c.stoneHi);
- });
- const f03_glass_spoil=sprite(39,28,R=>{
-  R(4,23,32,4,c.shadow);R(6,13,26,12,c.outline);R(15,5,8,17,c.iron);R(10,9,7,15,c.ash);
-  R(23,9,5,13,c.ironHi);R(17,7,2,10,'#668681');R(26,14,2,6,'#90a9a2');
- });
- const f03_crusher=sprite(52,50,R=>{
-  R(4,42,44,5,c.shadow);R(8,9,36,34,c.outline);R(10,11,32,22,c.iron);
-  R(13,13,26,5,c.ironHi);R(12,22,28,10,c.stone);R(14,24,23,5,c.ash);
-  for(let i=0;i<5;i++)R(13+i*6,33,3,5,c.rust);
-  R(5,7,42,4,c.stone);R(9,42,6,3,c.stoneHi);R(38,42,6,3,c.stoneHi);
- });
- const f03_screen=sprite(43,32,R=>{
-  R(3,25,37,5,c.shadow);R(6,7,32,18,c.outline);R(9,9,26,13,c.iron);
-  for(let i=0;i<5;i++)R(9+i*6,8,2,17,c.ironHi);R(9,15,27,2,c.rust);R(14,28,4,3,c.stone);
- });
- const f03_crane=sprite(58,70,R=>{
-  R(4,61,50,6,c.shadow);R(9,15,8,47,c.outline);R(11,18,4,42,c.rust);
-  R(9,11,44,7,c.outline);R(11,13,39,3,c.copper);R(42,18,3,28,c.ironHi);
-  R(40,46,7,6,c.outline);R(42,49,4,11,c.rust);R(44,60,9,5,c.stone);
-  R(4,7,12,5,c.iron);R(13,17,9,3,c.stoneHi);
- });
- const f03_kiln_vat=sprite(50,53,R=>{
-  R(4,44,42,5,c.shadow);R(7,14,36,31,c.outline);R(10,18,30,25,c.rust);
-  R(13,15,24,5,c.stoneHi);R(14,24,23,5,c.ash);R(13,34,24,3,c.outline);
-  R(16,22,4,10,c.copper);R(25,23,6,9,c.ember);R(16,6,8,9,c.iron);
- });
- const f03_charcoal_rick=sprite(40,28,R=>{
-  R(3,22,34,4,c.shadow);R(5,14,30,10,c.outline);R(10,7,19,14,c.ash);
-  R(14,5,10,8,c.iron);R(6,18,5,4,c.stone);R(25,15,6,6,c.stone);
- });
- const f03_condenser=sprite(55,48,R=>{
-  R(4,41,47,5,c.shadow);R(8,12,40,28,c.outline);R(11,15,34,22,c.iron);
-  for(let i=0;i<4;i++){R(13+i*9,17,5,18,c.stone);R(15+i*9,19,2,15,c.ironHi)}
-  R(9,7,13,7,c.rust);R(33,6,9,9,c.stoneHi);R(20,38,15,4,c.rust);
- });
- const f03_chimney=sprite(34,80,R=>{
-  R(8,71,23,6,c.shadow);R(11,9,18,62,c.outline);R(13,9,14,59,c.rust);
-  for(let y=15;y<69;y+=12){R(12,y,16,3,c.stone);R(13,y+3,3,7,c.wood)}
-  R(9,6,22,5,c.iron);R(15,2,9,5,c.ash);
- });
- const f03_vent_pipe=sprite(30,52,R=>{
-  R(5,45,21,4,c.shadow);R(10,8,11,37,c.iron);R(8,8,15,4,c.outline);
-  R(8,4,17,5,c.stone);R(7,19,18,4,c.rust);R(12,25,7,18,c.ironHi);
- });
- const f03_slag_pool=sprite(44,28,R=>{
-  R(2,19,40,6,c.shadow);R(3,10,38,14,c.outline);R(6,12,32,9,c.rust);
-  R(12,14,20,5,c.ember);R(18,15,11,3,c.glow);R(7,8,29,3,c.stone);
- });
- const f03_silo=sprite(50,78,R=>{
-  R(6,68,39,6,c.shadow);R(8,12,35,57,c.outline);R(11,13,29,54,c.stone);
-  for(let y=19;y<63;y+=12){R(12,y,26,2,c.stoneHi);R(13,y+3,5,6,c.ironHi)}
-  R(11,8,29,7,c.iron);R(14,5,23,4,c.stoneHi);R(19,62,14,4,c.rust);
- });
- const f03_filter_tank=sprite(56,41,R=>{
-  R(4,34,48,5,c.shadow);R(6,9,44,27,c.outline);R(9,12,38,20,c.stone);
-  R(12,16,32,13,c.water);R(16,17,24,3,c.waterHi);R(12,31,34,3,c.iron);
-  R(5,7,45,4,c.iron);R(9,9,5,22,c.stoneHi);
- });
- const f03_geo_manifold=sprite(61,39,R=>{
-  R(3,32,55,5,c.shadow);R(5,9,52,24,c.outline);R(8,12,46,18,c.iron);
-  R(12,5,7,25,c.rust);R(31,4,7,25,c.rust);R(48,7,5,23,c.rust);
-  R(8,17,48,4,c.ironHi);R(24,22,11,6,c.stone);R(27,22,4,3,c.copper);
- });
- const f03_signal_lamp=sprite(21,37,R=>{
-  R(4,29,14,5,c.shadow);R(8,9,5,23,c.iron);R(5,5,11,9,c.outline);
-  R(7,7,7,5,c.copper);R(9,8,3,3,c.glow);R(5,4,11,2,c.stone);
- });
- return {f03_turbine,f03_waterwheel,f03_steel_gate,f03_pipe_bundle,f03_rust_pipe,f03_valve,f03_gauge_panel,f03_log_cradle,f03_timber_pile,f03_sawframe,f03_sawdust,f03_chain_rail,f03_ore_ramp,f03_spoil_heap,f03_ore_seam,f03_glass_spoil,f03_crusher,f03_screen,f03_crane,f03_kiln_vat,f03_charcoal_rick,f03_condenser,f03_chimney,f03_vent_pipe,f03_slag_pool,f03_silo,f03_filter_tank,f03_geo_manifold,f03_signal_lamp};
+import { type Sprite, mk } from '../game/art';
+import { hash2 } from '../game/core';
+import {
+  PxBuf,
+  RAMPS,
+  craftSprite,
+  ditherTone,
+  drawCylH,
+  drawCylV,
+  drawOrganicHeap,
+  drawWheel,
+} from './pixel-craft';
+import { drawDeckTileCanvas } from './surface-art';
+
+export function makeF03Sprites(_factory: typeof mk): Record<string, Sprite> {
+  // 1. Hydroelectric Francis Scroll Turbine & Copper Dynamo (44x40)
+  const f03_turbine = craftSprite(
+    44,
+    40,
+    b => {
+      // Dressed stone plinth base
+      b.rect(5, 29, 34, 7, RAMPS.stone[1]);
+      b.hline(5, 29, 34, RAMPS.stone[3]);
+      b.hline(5, 35, 34, RAMPS.stone[0]);
+      for (let x = 9; x < 37; x += 6) b.rect(x, 31, 2, 2, RAMPS.iron[4]);
+      // Submerged penstock flange entering from left
+      drawCylH(b, 2, 22, 12, 8, RAMPS.steel, { flanges: [4, 11] });
+      // Cast-iron spiral scroll volute casing
+      b.ellipse(24, 24, 14, 9, (nx, ny, x, y) => {
+        const d = Math.hypot(nx, ny);
+        if (d > 0.85 && ny > 0.2) return RAMPS.iron[0];
+        return ditherTone(RAMPS.iron, 0.58 - nx * 0.32 - ny * 0.28, x, y, 0.1);
+      });
+      // Vertical copper-teal dynamo stator perched atop volute
+      drawCylV(b, 16, 7, 16, 17, RAMPS.copper, { hoops: [12, 19], seamX: 0.72 });
+      // Brass exciter cap & governor dome
+      drawCylV(b, 20, 3, 8, 5, RAMPS.brass, {});
+      b.p(23, 4, RAMPS.brass[4]);
+      // Side discharge manifold & gauge
+      drawCylH(b, 32, 21, 9, 5, RAMPS.brass, { flanges: [39] });
+    },
+    { cx: 22, cy: 36, rx: 18, ry: 3 },
+  );
+
+  // 2. Overshot Timber Mill Waterwheel & Flume Cascade (46x46)
+  const f03_waterwheel = craftSprite(
+    46,
+    46,
+    b => {
+      // Tailrace churning water pool at base
+      b.ellipse(23, 39, 17, 4, (nx, ny, x, y) => {
+        const r = hash2(x, y, 12);
+        return r > 0.78 ? RAMPS.water[4] : ditherTone(RAMPS.water, 0.45 - ny * 0.25, x, y, 0.12);
+      });
+      // Stone bearing pier on right
+      b.rect(32, 22, 8, 17, RAMPS.stone[1]);
+      b.rect(32, 22, 8, 4, RAMPS.stone[3]);
+      b.hline(32, 22, 8, RAMPS.stone[4]);
+      // Overhead timber headrace flume feeding wheel from left
+      b.rect(2, 5, 22, 5, RAMPS.wood[1]);
+      b.hline(2, 5, 22, RAMPS.wood[4]);
+      b.rect(2, 6, 20, 2, RAMPS.water[3]);
+      // Large 3/4 oak waterwheel with 8 spokes & 12 buckets
+      drawWheel(b, 21, 23, 13, 13, 8, RAMPS.timber, RAMPS.iron, { buckets: 12, angleOff: 0.2 });
+      // Timber A-frame foreground support & iron journal box
+      b.line(15, 39, 21, 23, RAMPS.wood[2], 2);
+      b.line(27, 39, 21, 23, RAMPS.wood[1], 2);
+      b.rect(19, 21, 4, 4, RAMPS.iron[3]);
+      b.p(20, 22, RAMPS.brass[4]);
+      // Cascading water ribbons pouring from flume into upper buckets & splash foam
+      for (let y = 7; y < 22; y += 2) {
+        b.p(18 + (y % 3), y, y % 4 === 1 ? RAMPS.water[4] : RAMPS.water[3]);
+        b.p(15 + (y % 2), y + 4, RAMPS.water[3]);
+      }
+      for (const [sx, sy] of [[12, 37], [16, 38], [22, 39], [28, 38], [19, 36]]) {
+        b.rect(sx, sy, 2, 1, RAMPS.water[4]);
+      }
+    },
+    { cx: 23, cy: 40, rx: 18, ry: 4 },
+  );
+
+  // 3. Geared Rack-and-Pinion Dam Sluice Gate (32x36)
+  const f03_steel_gate = craftSprite(
+    32,
+    36,
+    b => {
+      // Cut stone wing abutments
+      b.rect(2, 13, 5, 20, RAMPS.stone[2]);
+      b.hline(2, 13, 5, RAMPS.stone[4]);
+      b.rect(25, 13, 5, 20, RAMPS.stone[1]);
+      b.hline(25, 13, 5, RAMPS.stone[3]);
+      // Ribbed steel sluice gate leaf
+      b.rect(7, 15, 18, 17, RAMPS.steel[1]);
+      for (let x = 9; x < 24; x += 4) b.vline(x, 15, 17, RAMPS.steel[3]);
+      for (let y = 18; y <= 28; y += 5) b.hline(7, y, 18, RAMPS.iron[0]);
+      // Wet moss/water stain at gate base
+      b.rect(7, 29, 18, 3, RAMPS.copper[1]);
+      b.hline(8, 30, 14, RAMPS.water[3]);
+      // Overhead channel-iron crosshead gantry beam
+      b.rect(3, 10, 26, 4, RAMPS.iron[2]);
+      b.hline(3, 10, 26, RAMPS.iron[4]);
+      // Vertical toothed rack stem + pinion bevel housing + spoked handwheel
+      b.rect(15, 4, 2, 12, RAMPS.steel[3]);
+      for (let y = 5; y < 14; y += 2) b.p(15, y, RAMPS.iron[0]);
+      b.rect(12, 7, 8, 5, RAMPS.brass[2]);
+      drawWheel(b, 16, 5, 5, 3, 4, RAMPS.rust, RAMPS.brass, {});
+    },
+    { cx: 16, cy: 33, rx: 14, ry: 2.5 },
+  );
+
+  // 4. Industrial Flanged Pipe Rack Bundle (48x28)
+  const f03_pipe_bundle = craftSprite(
+    48,
+    28,
+    b => {
+      // Two oak-and-iron pipe sleepers underneath
+      for (const sx of [10, 34]) {
+        b.rect(sx, 5, 4, 19, RAMPS.wood[1]);
+        b.vline(sx, 5, 19, RAMPS.wood[3]);
+      }
+      // Three parallel cylindrical pipes in staggered depth
+      drawCylH(b, 2, 4, 44, 5, RAMPS.copper, { flanges: [14, 30], endCapLeft: true, endCapRight: true });
+      drawCylH(b, 2, 11, 44, 6, RAMPS.steel, { flanges: [9, 24, 38], endCapLeft: true, endCapRight: true });
+      drawCylH(b, 2, 19, 44, 5, RAMPS.rust, { flanges: [18, 33], endCapLeft: true, endCapRight: true });
+      // Brass pressure bleed valve on middle pipe
+      b.rect(23, 9, 3, 2, RAMPS.brass[3]);
+      b.p(24, 8, RAMPS.brass[4]);
+    },
+    { cx: 24, cy: 25, rx: 22, ry: 2.5 },
+  );
+
+  // 5. Ruptured & Corroded Abandoned Pipe (40x24)
+  const f03_rust_pipe = craftSprite(
+    40,
+    24,
+    b => {
+      // Mineral/rust sludge puddle leaking from fracture
+      b.ellipse(14, 18, 9, 3, (nx, ny, x, y) => ditherTone(RAMPS.turbid, 0.4 - ny * 0.2, x, y, 0.14));
+      // Broken stone saddle
+      b.rect(25, 14, 7, 6, RAMPS.stone[1]);
+      b.hline(25, 14, 7, RAMPS.stone[3]);
+      // Corroded iron horizontal pipe ending in jagged break
+      drawCylH(b, 14, 11, 22, 6, RAMPS.rust, { flanges: [28], endCapRight: true });
+      // Vertical upturned fractured riser elbow
+      drawCylV(b, 30, 3, 7, 11, RAMPS.rust, { hoops: [6] });
+      // Jagged broken left pipe mouth + moss creep
+      b.p(13, 12, RAMPS.iron[0]);
+      b.p(12, 14, RAMPS.rust[2]);
+      b.p(13, 16, RAMPS.iron[0]);
+      b.rect(20, 11, 3, 2, RAMPS.moss[2]);
+      b.p(21, 10, RAMPS.moss[3]);
+    },
+    { cx: 21, cy: 20, rx: 16, ry: 2.5 },
+  );
+
+  // 6. Flanged Cast-Iron Gate Valve Assembly (26x34)
+  const f03_valve = craftSprite(
+    26,
+    34,
+    b => {
+      // Pipe line at base
+      drawCylH(b, 3, 22, 20, 6, RAMPS.steel, { flanges: [5, 19], endCapLeft: true, endCapRight: true });
+      // Bolted valve bonnet body
+      drawCylV(b, 9, 13, 8, 12, RAMPS.iron, { hoops: [17] });
+      // Rising brass threaded stem
+      b.rect(12, 7, 2, 7, RAMPS.brass[3]);
+      b.p(12, 9, RAMPS.brass[1]);
+      b.p(12, 11, RAMPS.brass[1]);
+      // Crimson spoked cast-iron handwheel
+      drawWheel(b, 13, 6, 8, 4, 6, RAMPS.cloth, RAMPS.brass, {});
+    },
+    { cx: 13, cy: 29, rx: 10, ry: 2.5 },
+  );
+
+  // 7. Hydraulic / Steam Gauge Pedestal Panel (26x32)
+  const f03_gauge_panel = craftSprite(
+    26,
+    32,
+    b => {
+      // Flanged pedestal foot & post
+      b.rect(8, 25, 10, 4, RAMPS.iron[1]);
+      b.hline(8, 25, 10, RAMPS.iron[3]);
+      b.rect(11, 19, 4, 7, RAMPS.iron[2]);
+      // Copper capillary tubes up left side
+      b.vline(7, 15, 11, RAMPS.copper[3]);
+      b.vline(18, 15, 11, RAMPS.brass[2]);
+      // Sloped steel instrument cabinet
+      b.rect(4, 5, 18, 15, RAMPS.steel[2]);
+      b.rect(4, 4, 18, 3, RAMPS.steel[4]);
+      b.rect(5, 8, 16, 10, RAMPS.iron[0]);
+      // Twin round cream-dial pressure gauges with brass bezels and needles
+      for (const gx of [9, 16]) {
+        b.ellipse(gx, 12, 3, 3, RAMPS.brass[3]);
+        b.ellipse(gx, 12, 2, 2, RAMPS.cream[4]);
+        b.p(gx, 12, RAMPS.cloth[2]);
+        b.p(gx + (gx === 9 ? 1 : -1), 11, RAMPS.cloth[3]);
+      }
+      // Status toggle levers at bottom of panel
+      b.rect(7, 16, 3, 2, RAMPS.cloth[3]);
+      b.rect(15, 16, 3, 2, RAMPS.moss[3]);
+    },
+    { cx: 13, cy: 29, rx: 9, ry: 2.5 },
+  );
+
+  // 8. Felled Log Cradle Bunk (56x32)
+  const f03_log_cradle = craftSprite(
+    56,
+    32,
+    b => {
+      // Heavy notched oak sleeper skids on ground
+      for (const sx of [9, 41]) {
+        b.rect(sx, 22, 6, 6, RAMPS.wood[1]);
+        b.hline(sx, 22, 6, RAMPS.wood[3]);
+      }
+      // Bottom row: 3 bark-clad felled logs with pale growth-ring ends
+      for (let i = 0; i < 3; i++) {
+        drawCylH(b, 4 + i * 16, 17, 15, 8, RAMPS.wood, { endCapRight: true, ringEnd: true });
+      }
+      // Upper cradled logs
+      drawCylH(b, 10, 10, 17, 8, RAMPS.timber, { endCapRight: true, ringEnd: true });
+      drawCylH(b, 28, 10, 17, 8, RAMPS.wood, { endCapRight: true, ringEnd: true });
+      // Top crown log + iron retaining chain
+      drawCylH(b, 19, 4, 17, 7, RAMPS.timber, { endCapRight: true, ringEnd: true });
+      b.vline(14, 10, 16, RAMPS.iron[3]);
+      b.vline(40, 10, 16, RAMPS.iron[3]);
+    },
+    { cx: 28, cy: 28, rx: 24, ry: 3 },
+  );
+
+  // 9. Stickered Air-Drying Sawn Lumber Stack (50x34)
+  const f03_timber_pile = craftSprite(
+    50,
+    34,
+    b => {
+      // Base sleepers
+      b.rect(5, 28, 40, 2, RAMPS.wood[0]);
+      // 3 staggered courses of sawn planks separated by dark air-drying sticker gaps
+      for (let c = 0; c < 3; c++) {
+        const y = 22 - c * 6;
+        const inset = c * 2;
+        const w = 42 - c * 4;
+        // Front plank ends showing distinct individual boards
+        b.rect(4 + inset, y, w, 4, RAMPS.timber[2]);
+        b.hline(4 + inset, y, w, RAMPS.timber[4]);
+        for (let px = 4 + inset + 5; px < 4 + inset + w - 2; px += 6) {
+          b.vline(px, y, 4, RAMPS.wood[0]);
+          b.p(px + 2, y + 2, RAMPS.sawdust[3]); // growth heart
+        }
+        // Dark sticker air-gap line
+        b.hline(5 + inset, y + 4, w - 2, RAMPS.wood[0]);
+        for (let sx = 7 + inset; sx < 4 + inset + w - 4; sx += 11) {
+          b.rect(sx, y + 4, 2, 2, RAMPS.timber[1]); // sticker spacer
+        }
+      }
+      // Sloped corrugated tin rain-cap on top
+      b.rect(6, 5, 38, 5, RAMPS.steel[2]);
+      b.hline(6, 5, 38, RAMPS.steel[4]);
+      for (let x = 9; x < 42; x += 4) b.vline(x, 6, 4, RAMPS.steel[1]);
+    },
+    { cx: 25, cy: 30, rx: 22, ry: 3 },
+  );
+
+  // 10. Carriage / Gang Reciprocating Sawmill Frame (58x46)
+  const f03_sawframe = craftSprite(
+    58,
+    46,
+    b => {
+      // Twin iron log-carriage track rails running horizontally
+      b.hline(2, 36, 54, RAMPS.steel[3]);
+      b.hline(2, 37, 54, RAMPS.iron[0]);
+      b.hline(2, 31, 54, RAMPS.steel[2]);
+      // Wheeled timber carriage bed & half-sawn cedar log moving through
+      b.rect(5, 29, 26, 6, RAMPS.wood[2]);
+      b.hline(5, 29, 26, RAMPS.wood[4]);
+      for (const wx of [9, 18, 27]) drawWheel(b, wx, 36, 2, 2, 4, RAMPS.iron, RAMPS.steel);
+      drawCylH(b, 8, 22, 22, 7, RAMPS.timber, { endCapRight: true, ringEnd: true });
+      // Heavy mortised oak & iron gantry portal straddling the track
+      b.rect(24, 6, 5, 33, RAMPS.wood[1]);
+      b.vline(25, 6, 33, RAMPS.wood[3]);
+      b.rect(43, 6, 5, 33, RAMPS.wood[1]);
+      b.vline(44, 6, 33, RAMPS.wood[3]);
+      b.rect(22, 4, 28, 5, RAMPS.iron[2]);
+      b.hline(22, 4, 28, RAMPS.iron[4]);
+      // Gleaming vertical reciprocating saw blade with serrated teeth
+      b.rect(35, 9, 3, 24, RAMPS.steel[4]);
+      b.vline(37, 9, 24, RAMPS.steel[1]);
+      for (let y = 11; y < 32; y += 2) b.p(34, y, RAMPS.steel[4]); // teeth
+      // Overhead drive flywheel & leather belt on right post
+      drawWheel(b, 48, 12, 5, 5, 4, RAMPS.rust, RAMPS.brass, {});
+      b.line(47, 17, 47, 30, RAMPS.wood[0]);
+      // Golden sawdust spray at blade kerf
+      for (const [sx, sy] of [[31, 33], [33, 35], [37, 34], [39, 36], [35, 37], [30, 36]]) {
+        b.p(sx, sy, RAMPS.sawdust[3]);
+      }
+    },
+    { cx: 29, cy: 40, rx: 25, ry: 4 },
+  );
+
+  // 11. Sawdust Cone & Wooden Scoop (36x24)
+  const f03_sawdust = craftSprite(
+    36,
+    24,
+    b => {
+      drawOrganicHeap(b, 17, 19, 13, 12, RAMPS.sawdust, 303, { col: RAMPS.timber[2], chance: 0.14, hi: RAMPS.sawdust[4] });
+      // Propped wooden grain/sawdust scoop shovel on right flank
+      b.line(22, 16, 30, 6, RAMPS.wood[3]);
+      b.rect(20, 15, 4, 3, RAMPS.steel[3]);
+    },
+    { cx: 18, cy: 20, rx: 14, ry: 3 },
+  );
+
+  // 12. Conveyor Chain & Haulage Rail Track (58x28)
+  const f03_chain_rail = craftSprite(
+    58,
+    28,
+    b => {
+      // Timber trestle sleepers
+      for (let x = 4; x < 54; x += 8) {
+        b.rect(x, 14, 3, 10, RAMPS.wood[1]);
+        b.vline(x, 14, 10, RAMPS.wood[3]);
+      }
+      // Twin steel channel guide rails
+      b.rect(2, 10, 52, 7, RAMPS.iron[1]);
+      b.hline(2, 10, 52, RAMPS.steel[4]);
+      b.hline(2, 16, 52, RAMPS.steel[3]);
+      // Heavy linked haulage chain & spiked drag lugs down the trough
+      b.hline(4, 13, 48, RAMPS.iron[0]);
+      for (let x = 5; x < 51; x += 4) {
+        b.rect(x, 12, 2, 3, RAMPS.rust[3]);
+        b.p(x, 12, RAMPS.steel[4]);
+      }
+      // Tail sprocket drive drum on right
+      drawWheel(b, 51, 13, 4, 4, 4, RAMPS.rust, RAMPS.brass, {});
+    },
+    { cx: 29, cy: 24, rx: 26, ry: 2.5 },
+  );
+
+  // 13. Sloped Timber & Steel Ore Loading Chute Ramp (50x32)
+  const f03_ore_ramp = craftSprite(
+    50,
+    32,
+    b => {
+      // Timber cribwork trestle legs supporting sloped chute from upper-left to lower-right
+      b.rect(6, 12, 4, 16, RAMPS.wood[1]);
+      b.rect(18, 16, 4, 12, RAMPS.wood[1]);
+      b.rect(31, 20, 4, 8, RAMPS.wood[1]);
+      // Angled steel-plated chute floor + sideboards
+      for (let i = 0; i < 36; i++) {
+        const x = 5 + i;
+        const y = 7 + Math.round(i * 0.42);
+        b.rect(x, y, 2, 7, RAMPS.iron[2]);
+        b.p(x, y, RAMPS.steel[4]); // top sideboard rail
+        b.p(x, y + 6, RAMPS.wood[2]); // outer timber lip
+        // Ore pebbles sliding down chute
+        if (i % 5 === 1) b.rect(x, y + 2, 2, 2, RAMPS.ore[3]);
+      }
+      // Spilled ore mound at chute discharge mouth
+      drawOrganicHeap(b, 42, 28, 6, 5, RAMPS.ore, 411, { col: RAMPS.stone[3], chance: 0.2 });
+    },
+    { cx: 25, cy: 28, rx: 22, ry: 3 },
+  );
+
+  // 14. Stratified Quarry Tailings / Waste Rock Heap (48x30)
+  const f03_spoil_heap = craftSprite(
+    48,
+    30,
+    b => {
+      drawOrganicHeap(b, 23, 25, 19, 17, RAMPS.stone, 515, { col: RAMPS.slate[2], chance: 0.25, hi: RAMPS.stone[4] });
+      // Secondary smaller rock shoulder on left
+      drawOrganicHeap(b, 10, 25, 7, 8, RAMPS.slate, 521, { col: RAMPS.stone[3], chance: 0.2 });
+    },
+    { cx: 24, cy: 26, rx: 21, ry: 3 },
+  );
+
+  // 15. Exposed Mineral Ore Vein Outcrop (40x28)
+  const f03_ore_seam = craftSprite(
+    40,
+    28,
+    b => {
+      // Multi-boulder stepped craggy rock shelf (distinct from cone spoil heaps)
+      b.ellipse(15, 18, 10, 7, (nx, ny, x, y) => ditherTone(RAMPS.slate, 0.56 - nx * 0.3 - ny * 0.35, x, y, 0.1));
+      b.ellipse(25, 16, 10, 8, (nx, ny, x, y) => ditherTone(RAMPS.slate, 0.6 - nx * 0.35 - ny * 0.35, x, y, 0.1));
+      b.ellipse(19, 13, 7, 5, (nx, ny, x, y) => ditherTone(RAMPS.slate, 0.66 - nx * 0.3 - ny * 0.35, x, y, 0.08));
+      // Fracture cleavage step & branching metallic copper/iron ore veins
+      b.line(9, 19, 18, 13, RAMPS.slate[0]);
+      b.line(11, 18, 18, 12, RAMPS.ore[3], 2);
+      b.p(15, 14, RAMPS.gold[4]);
+      b.line(22, 20, 30, 12, RAMPS.ore[2], 2);
+      b.p(25, 16, RAMPS.gold[4]);
+      b.p(28, 13, RAMPS.ore[4]);
+      // Miner's iron pickaxe wedged into top fissure
+      b.line(21, 9, 27, 4, RAMPS.wood[3]);
+      b.line(24, 3, 30, 6, RAMPS.steel[4]);
+    },
+    { cx: 20, cy: 24, rx: 16, ry: 3 },
+  );
+
+  // 16. Obsidian Volcanic Glass Shard Heap (40x30)
+  const f03_glass_spoil = craftSprite(
+    40,
+    30,
+    b => {
+      // Dark volcanic ash mound base
+      drawOrganicHeap(b, 20, 25, 15, 6, RAMPS.basalt, 701);
+      // Angular tilted faceted volcanic glass crystal blades leaning outward
+      const shards: [number, number, number, number, number][] = [
+        [15, 22, 7, 11, 3],
+        [18, 22, 17, 4, 4],
+        [23, 22, 26, 6, 4],
+        [26, 23, 34, 13, 3],
+      ];
+      for (const [bx, by, tx, ty, w] of shards) {
+        const steps = Math.max(1, Math.abs(by - ty));
+        for (let i = 0; i <= steps; i++) {
+          const t = i / steps;
+          const cx = Math.round(tx + (bx - tx) * t);
+          const y = Math.round(ty + (by - ty) * t);
+          const half = Math.round(t * w);
+          for (let dx = -half; dx <= half; dx++) {
+            b.p(cx + dx, y, dx < 0 ? RAMPS.obsidian[3] : dx === 0 ? RAMPS.obsidian[2] : RAMPS.obsidian[1]);
+          }
+          if (half > 0) b.p(cx - half, y, RAMPS.obsidian[4]);
+        }
+        b.p(tx, ty, '#ffffff');
+      }
+    },
+    { cx: 20, cy: 26, rx: 16, ry: 3 },
+  );
+
+  // 17. Heavy Blake Jaw Crusher with Flywheel & Feed Hopper (54x52)
+  const f03_crusher = craftSprite(
+    54,
+    52,
+    b => {
+      // Heavy steel & stone mounting frame
+      b.rect(11, 20, 32, 24, RAMPS.iron[1]);
+      b.rect(13, 21, 28, 21, RAMPS.iron[2]);
+      b.hline(11, 20, 32, RAMPS.iron[4]);
+      b.rect(11, 41, 7, 5, RAMPS.stone[2]);
+      b.rect(36, 41, 7, 5, RAMPS.stone[2]);
+      b.rect(18, 36, 18, 8, RAMPS.steel[1]);
+      // Crushed stone gravel discharging onto apron below
+      drawOrganicHeap(b, 27, 47, 9, 5, RAMPS.stone, 809);
+      // Flared feed hopper on top with raw boulders queued inside
+      for (let py = 0; py < 12; py++) {
+        const spread = Math.round((11 - py) * 0.6);
+        b.hline(12 - spread, 8 + py, 30 + spread * 2, py < 2 ? RAMPS.steel[4] : RAMPS.steel[2]);
+      }
+      b.rect(13, 9, 28, 6, RAMPS.iron[0]);
+      for (let x = 15; x < 39; x += 3) b.vline(x, 10, 5, RAMPS.steel[3]);
+      for (const [rx, ry] of [[18, 8], [24, 7], [30, 8]]) {
+        b.ellipse(rx, ry, 3, 2, (nx, ny) => (ny < 0 ? RAMPS.stone[4] : RAMPS.stone[2]));
+      }
+      // Massive spoked cast-iron flywheel + diagonal drive belt
+      b.line(10, 29, 4, 41, RAMPS.wood[0]);
+      drawWheel(b, 10, 29, 8, 9, 6, RAMPS.rust, RAMPS.brass, { angleOff: 0.3 });
+      b.rect(42, 24, 5, 10, RAMPS.steel[2]);
+      b.rect(43, 26, 3, 3, RAMPS.brass[3]);
+    },
+    { cx: 27, cy: 47, rx: 21, ry: 3.5 },
+  );
+
+  // 18. Inclined Vibrating Rock Grizzly Screen (44x34)
+  const f03_screen = craftSprite(
+    44,
+    34,
+    b => {
+      // Steel frame legs & 4 coil suspension springs
+      for (const lx of [7, 33]) {
+        b.rect(lx, 18, 4, 12, RAMPS.iron[1]);
+        for (let sy = 15; sy <= 18; sy += 2) b.hline(lx, sy, 4, RAMPS.brass[3]);
+      }
+      // Tilted screen shaker box
+      b.rect(5, 7, 34, 14, RAMPS.iron[2]);
+      b.hline(5, 7, 34, RAMPS.steel[4]);
+      b.rect(7, 9, 30, 10, RAMPS.iron[0]);
+      // Tensioned grizzly wire-mesh bars
+      for (let x = 9; x < 36; x += 3) b.vline(x, 9, 10, RAMPS.steel[3]);
+      for (let y = 11; y < 18; y += 3) b.hline(7, y, 30, RAMPS.steel[2]);
+      // Sorted pebbles sitting atop mesh & fine sand below
+      for (const [rx, ry] of [[11, 11], [15, 13], [22, 10], [29, 14]]) b.rect(rx, ry, 2, 2, RAMPS.stone[4]);
+      drawOrganicHeap(b, 22, 30, 9, 4, RAMPS.stone, 902);
+    },
+    { cx: 22, cy: 30, rx: 18, ry: 3 },
+  );
+
+  // 19. Heavy Stiff-Leg Quarry Jib Crane (60x72)
+  const f03_crane = craftSprite(
+    60,
+    72,
+    b => {
+      // Stone turntable ring base
+      b.ellipse(16, 62, 11, 5, (nx, ny) => (ny < -0.2 ? RAMPS.stone[3] : RAMPS.stone[1]));
+      b.rect(10, 56, 12, 6, RAMPS.iron[2]);
+      // Winch drum & operator crank behind mast
+      drawCylH(b, 5, 51, 9, 5, RAMPS.rust, { flanges: [5, 13] });
+      // Cross-braced vertical steel/timber mast
+      b.rect(13, 14, 2, 45, RAMPS.rust[3]);
+      b.rect(19, 14, 2, 45, RAMPS.rust[2]);
+      for (let y = 16; y < 56; y += 7) {
+        b.hline(14, y, 6, RAMPS.iron[3]);
+        b.line(14, y, 19, y + 6, RAMPS.rust[4]);
+      }
+      // Counterweight stone box at mast rear
+      b.rect(4, 15, 9, 7, RAMPS.stone[2]);
+      b.hline(4, 15, 9, RAMPS.stone[4]);
+      // Angled steel lattice jib boom reaching upper-right
+      b.line(15, 16, 51, 7, RAMPS.brass[3], 2);
+      b.line(17, 23, 51, 9, RAMPS.rust[2], 1);
+      for (let k = 0; k < 5; k++) {
+        const bx = 21 + k * 6, by = 15 - k * 2;
+        b.line(bx, by, bx + 4, by + 5, RAMPS.brass[2]);
+      }
+      // Steel hoist cable & hanging block lifting cut stone block
+      b.vline(50, 9, 32, RAMPS.steel[4]);
+      b.rect(48, 40, 5, 5, RAMPS.iron[3]); // pulley sheave
+      b.line(50, 45, 46, 49, RAMPS.steel[3]);
+      b.line(50, 45, 54, 49, RAMPS.steel[3]);
+      // Suspended cut stone block
+      b.rect(44, 49, 12, 9, RAMPS.stone[2]);
+      b.rect(44, 49, 12, 3, RAMPS.stone[4]);
+    },
+    { cx: 17, cy: 64, rx: 14, ry: 4 },
+  );
+
+  // 20. Domed Brick Beehive Charcoal Kiln (50x54)
+  const f03_kiln_vat = craftSprite(
+    50,
+    54,
+    b => {
+      // Stone circular footing skirt
+      b.ellipse(25, 44, 18, 6, (nx, ny) => (ny < 0 ? RAMPS.stone[3] : RAMPS.stone[1]));
+      // Domed red-brick masonry beehive shell
+      for (let py = 0; py < 32; py++) {
+        const frac = py / 31; // 0 crown .. 1 base
+        const rx = 7 + Math.sin(frac * Math.PI * 0.52) * 11;
+        for (let dx = -Math.round(rx); dx <= Math.round(rx); dx++) {
+          const nx = dx / Math.max(1, rx);
+          const lum = 0.56 - nx * 0.35 - (frac - 0.3) * 0.25;
+          const gx = 25 + dx, gy = 13 + py;
+          const isMortar = py % 4 === 3 || ((gx + (py >> 2) * 3) % 6 === 0 && py % 4 < 3);
+          b.p(gx, gy, isMortar ? RAMPS.brick[0] : ditherTone(RAMPS.brick, lum, gx, gy, 0.1));
+        }
+      }
+      // Twin wrought-iron tension bands wrapping dome
+      for (const by of [23, 35]) {
+        const w = by === 23 ? 28 : 34;
+        const x0 = 25 - (w >> 1);
+        b.hline(x0, by, w, RAMPS.iron[2]);
+        b.hline(x0, by + 1, w, RAMPS.iron[0]);
+      }
+      // Brick crown chimney vent & smoke wisp
+      drawCylV(b, 20, 6, 10, 9, RAMPS.brick, { hoops: [8] });
+      b.ellipse(25, 6, 4, 1.5, RAMPS.iron[0]);
+      // Arched firebox doorway at front glowing with warm embers
+      b.rect(20, 35, 10, 10, RAMPS.stone[2]);
+      b.ellipse(25, 36, 4, 3, RAMPS.stone[3]);
+      b.rect(22, 37, 6, 8, RAMPS.ember[0]);
+      b.rect(23, 40, 4, 5, RAMPS.ember[2]);
+      b.rect(24, 42, 2, 3, RAMPS.ember[4]);
+      // Side draft ports
+      b.rect(12, 41, 3, 2, RAMPS.ember[1]);
+      b.rect(35, 41, 3, 2, RAMPS.ember[1]);
+    },
+    { cx: 25, cy: 46, rx: 19, ry: 4 },
+  );
+
+  // 21. Stacked Turf-and-Charcoal Mound Rick (40x30)
+  const f03_charcoal_rick = (() => {
+    const b = new PxBuf(40, 30);
+    drawOrganicHeap(b, 20, 25, 16, 15, RAMPS.coal, 1101, { col: RAMPS.ember[2], chance: 0.04, hi: RAMPS.ember[3] });
+    for (const [lx, ly] of [[7, 22], [11, 24], [28, 24], [31, 22]]) {
+      b.rect(lx, ly, 3, 2, RAMPS.wood[1]);
+      b.p(lx, ly, RAMPS.wood[3]);
+    }
+    b.outline();
+    b.shadowEllipse(20, 26, 17, 3, 0.34);
+    // Translucent smoke wisps post-outline (no black rim around smoke)
+    b.blend(19, 7, 210, 208, 200, 0.55);
+    b.blend(20, 5, 225, 222, 215, 0.45);
+    b.blend(21, 3, 235, 235, 230, 0.32);
+    return b.toCanvas();
+  })();
+
+  // 22. Tubular Copper-Iron Vapor Condenser Tank (56x48)
+  const f03_condenser = craftSprite(
+    56,
+    48,
+    b => {
+      for (const px of [11, 37]) {
+        b.rect(px, 32, 8, 10, RAMPS.stone[1]);
+        b.hline(px, 32, 8, RAMPS.stone[3]);
+      }
+      drawCylH(b, 7, 17, 42, 18, RAMPS.iron, { flanges: [14, 28, 41], endCapLeft: true, endCapRight: true });
+      drawCylV(b, 14, 7, 10, 11, RAMPS.copper, { hoops: [10] });
+      for (let i = 0; i < 3; i++) drawCylH(b, 27, 9 + i * 3, 17, 2, RAMPS.brass, {});
+      b.vline(43, 9, 9, RAMPS.brass[2]);
+      b.rect(21, 22, 4, 6, RAMPS.water[3]);
+      b.rect(19, 40, 14, 3, RAMPS.sulfur[2]);
+      b.hline(20, 40, 10, RAMPS.sulfur[4]);
+    },
+    { cx: 28, cy: 43, rx: 23, ry: 3.5 },
+  );
+
+  // 23. Tapered Brick & Iron-Banded Smokestack (34x80)
+  const f03_chimney = (() => {
+    const b = new PxBuf(34, 80);
+    b.rect(6, 58, 22, 16, RAMPS.stone[2]);
+    b.hline(6, 58, 22, RAMPS.stone[4]);
+    b.rect(13, 64, 8, 10, RAMPS.iron[0]);
+    b.hline(14, 64, 6, RAMPS.iron[3]);
+    drawCylV(b, 8, 13, 18, 47, RAMPS.brick, { taperTop: 3, hoops: [23, 36, 49] });
+    b.rect(9, 10, 16, 4, RAMPS.iron[2]);
+    b.hline(9, 10, 16, RAMPS.iron[4]);
+    b.ellipse(17, 10, 6, 2, RAMPS.coal[0]);
+    b.outline();
+    b.shadowEllipse(17, 74, 13, 3.5, 0.34);
+    // Soft translucent rising smoke plume post-outline
+    for (const [sx, sy, sr, a] of [[17, 6, 3, 0.52], [19, 3, 3.5, 0.38], [22, 1, 2.5, 0.22]]) {
+      for (let yy = -4; yy <= 4; yy++) for (let xx = -4; xx <= 4; xx++) {
+        if (xx * xx + yy * yy <= sr * sr) b.blend(sx + xx, sy + yy, 200, 200, 206, a);
+      }
+    }
+    return b.toCanvas();
+  })();
+
+  // 24. Flanged Steam Exhaust Vent Stack with Rain Cowl (30x52)
+  const f03_vent_pipe = (() => {
+    const b = new PxBuf(30, 52);
+    b.rect(8, 41, 14, 6, RAMPS.iron[1]);
+    b.line(8, 41, 11, 33, RAMPS.steel[3]);
+    b.line(21, 41, 18, 33, RAMPS.steel[2]);
+    drawCylV(b, 10, 15, 10, 27, RAMPS.steel, { hoops: [22, 33] });
+    for (let y = 0; y < 5; y++) b.hline(14 - y * 2, 7 + y, 2 + y * 4, y < 2 ? RAMPS.steel[4] : RAMPS.steel[2]);
+    b.outline();
+    b.shadowEllipse(15, 47, 10, 2.5, 0.34);
+    for (const [sx, sy, sr, a] of [[18, 5, 2.5, 0.55], [21, 3, 2, 0.36]]) {
+      for (let yy = -3; yy <= 3; yy++) for (let xx = -3; xx <= 3; xx++) {
+        if (xx * xx + yy * yy <= sr * sr) b.blend(sx + xx, sy + yy, 232, 242, 250, a);
+      }
+    }
+    return b.toCanvas();
+  })();
+
+  // 25. Stone-Curbed Molten Slag Quench Pool (46x30)
+  const f03_slag_pool = craftSprite(
+    46,
+    30,
+    b => {
+      b.ellipse(23, 16, 20, 10, (nx, ny, x, y) => ditherTone(RAMPS.basalt, 0.56 - nx * 0.2 - ny * 0.3, x, y, 0.08));
+      // Dark cooling slag crust plates separated by branching incandescent magma veins
+      b.ellipse(23, 16, 16, 7, (nx, ny, x, y) => {
+        const dx = nx * 1.4, dy = ny;
+        const veinA = Math.abs(dy * 7 + Math.sin(x * 0.35) * 1.8) < 0.9;
+        const veinB = Math.abs(dx * 5 - dy * 4 + Math.cos(y * 0.5) * 1.4) < 0.85;
+        const hotCore = Math.hypot(nx + 0.1, ny) < 0.38;
+        if (hotCore && (veinA || veinB)) return RAMPS.ember[4];
+        if (veinA || veinB) return RAMPS.ember[3];
+        if (Math.abs(dy * 7 + Math.sin(x * 0.35) * 1.8) < 1.8 || hash2(x, y, 22) > 0.92) return RAMPS.ember[1];
+        return hash2(x >> 1, y >> 1, 29) > 0.55 ? RAMPS.coal[2] : RAMPS.coal[1];
+      });
+    },
+    { cx: 23, cy: 25, rx: 20, ry: 3 },
+  );
+
+  // 26. Cylindrical Ribbed Grain Silo with Caged Ladder, Auger & Chute (50x78)
+  const f03_silo = craftSprite(
+    50,
+    78,
+    b => {
+      b.rect(10, 62, 28, 10, RAMPS.stone[2]);
+      b.hline(10, 62, 28, RAMPS.stone[4]);
+      b.rect(19, 64, 10, 8, RAMPS.iron[1]);
+      b.line(29, 67, 38, 72, RAMPS.steel[3], 2);
+      drawOrganicHeap(b, 41, 73, 5, 4, RAMPS.sawdust, 1401);
+      // Diagonal grain elevator auger tube rising on right flank into top cupola
+      b.line(42, 69, 32, 9, RAMPS.steel[3], 2);
+      b.line(43, 69, 33, 9, RAMPS.steel[1], 1);
+      drawCylV(b, 10, 16, 28, 47, RAMPS.steel, { hoops: [24, 34, 44, 54], seamX: 0.65 });
+      for (let py = 0; py < 12; py++) {
+        const hw = 3 + Math.round(py * 1.1);
+        for (let dx = -hw; dx <= hw; dx++) {
+          const lum = 0.65 - (dx / Math.max(1, hw)) * 0.35;
+          b.p(24 + dx, 6 + py, ditherTone(RAMPS.steel, lum, 24 + dx, 6 + py, 0.08));
+        }
+      }
+      b.rect(21, 3, 6, 4, RAMPS.brass[3]);
+      b.vline(7, 17, 53, RAMPS.iron[3]);
+      b.vline(10, 17, 53, RAMPS.iron[3]);
+      for (let y = 19; y < 70; y += 3) b.hline(7, y, 4, RAMPS.steel[4]);
+    },
+    { cx: 25, cy: 73, rx: 18, ry: 4 },
+  );
+
+  // 27. Open Settling & Sand-Filter Basin Tank (56x42)
+  const f03_filter_tank = craftSprite(
+    56,
+    42,
+    b => {
+      b.rect(4, 10, 48, 26, RAMPS.stone[1]);
+      b.rect(5, 8, 46, 24, RAMPS.stone[3]);
+      b.rect(7, 11, 19, 17, RAMPS.turbid[2]);
+      b.hline(7, 11, 19, RAMPS.turbid[0]);
+      for (let x = 9; x < 24; x += 4) b.hline(x, 14 + (x % 3), 3, RAMPS.turbid[3]);
+      b.rect(26, 10, 4, 19, RAMPS.stone[4]);
+      b.rect(26, 14, 4, 7, RAMPS.water[4]);
+      b.rect(30, 11, 19, 17, RAMPS.water[2]);
+      b.hline(30, 11, 19, RAMPS.water[0]);
+      for (let x = 32; x < 47; x += 5) b.hline(x, 15 + (x % 4), 4, RAMPS.water[4]);
+      b.rect(8, 28, 40, 4, RAMPS.steel[2]);
+      for (let x = 10; x < 47; x += 3) b.vline(x, 28, 4, RAMPS.iron[0]);
+      drawCylH(b, 48, 20, 6, 4, RAMPS.brass, { endCapRight: true });
+    },
+    { cx: 28, cy: 36, rx: 24, ry: 3 },
+  );
+
+  // 28. Geothermal Steam Wellhead & Thermal Expansion Manifold (62x40)
+  const f03_geo_manifold = (() => {
+    const b = new PxBuf(62, 40);
+    b.ellipse(31, 30, 26, 6, (nx, ny, x, y) => ditherTone(RAMPS.basalt, 0.45 - ny * 0.25, x, y, 0.1));
+    drawCylV(b, 27, 10, 8, 21, RAMPS.steel, { hoops: [15, 22, 27] });
+    drawCylH(b, 6, 17, 21, 6, RAMPS.copper, { flanges: [11, 22], endCapLeft: true });
+    drawCylH(b, 35, 17, 21, 6, RAMPS.copper, { flanges: [39, 50], endCapRight: true });
+    drawCylV(b, 19, 6, 5, 12, RAMPS.brass, {});
+    drawCylV(b, 38, 6, 5, 12, RAMPS.brass, {});
+    drawCylH(b, 19, 5, 24, 4, RAMPS.brass, { flanges: [30] });
+    drawWheel(b, 12, 13, 4, 3, 4, RAMPS.cloth, RAMPS.brass);
+    drawWheel(b, 49, 13, 4, 3, 4, RAMPS.cloth, RAMPS.brass);
+    b.outline();
+    b.shadowEllipse(31, 34, 25, 3, 0.34);
+    for (const [sx, sy, sr, a] of [[31, 4, 2.5, 0.55], [33, 2, 2, 0.35]]) {
+      for (let yy = -3; yy <= 3; yy++) for (let xx = -3; xx <= 3; xx++) {
+        if (xx * xx + yy * yy <= sr * sr) b.blend(sx + xx, sy + yy, 234, 244, 252, a);
+      }
+    }
+    return b.toCanvas();
+  })();
+
+  // 29. Cast-Iron Industrial Signal Lamp Post (22x38)
+  const f03_signal_lamp = craftSprite(
+    22,
+    38,
+    b => {
+      // Fluted stone/iron plinth
+      b.rect(7, 29, 8, 5, RAMPS.stone[1]);
+      b.hline(7, 29, 8, RAMPS.stone[3]);
+      // Tapered cast-iron post + cantilever bracket
+      b.rect(9, 10, 4, 20, RAMPS.iron[1]);
+      b.vline(10, 10, 20, RAMPS.iron[3]);
+      b.hline(7, 8, 10, RAMPS.iron[3]);
+      // Caged glass warning lantern with warm amber flame core
+      b.rect(6, 3, 10, 2, RAMPS.copper[2]); // copper cap
+      b.rect(7, 5, 8, 6, RAMPS.ember[3]);
+      b.rect(9, 6, 4, 4, RAMPS.ember[4]);
+      b.vline(7, 5, 6, RAMPS.iron[0]); // cage bars
+      b.vline(14, 5, 6, RAMPS.iron[0]);
+    },
+    { cx: 11, cy: 34, rx: 6, ry: 2.5 },
+  );
+
+  return {
+    f03_turbine,
+    f03_waterwheel,
+    f03_steel_gate,
+    f03_pipe_bundle,
+    f03_rust_pipe,
+    f03_valve,
+    f03_gauge_panel,
+    f03_log_cradle,
+    f03_timber_pile,
+    f03_sawframe,
+    f03_sawdust,
+    f03_chain_rail,
+    f03_ore_ramp,
+    f03_spoil_heap,
+    f03_ore_seam,
+    f03_glass_spoil,
+    f03_crusher,
+    f03_screen,
+    f03_crane,
+    f03_kiln_vat,
+    f03_charcoal_rick,
+    f03_condenser,
+    f03_chimney,
+    f03_vent_pipe,
+    f03_slag_pool,
+    f03_silo,
+    f03_filter_tank,
+    f03_geo_manifold,
+    f03_signal_lamp,
+  };
 }
-/**
- * Material-specific 16px terrain art, not F02's plank strip on every surface.
- * IDs include room signature, preventing identical tiling across five industries.
- */
-export function drawF03DeckTile(g:CanvasRenderingContext2D,x:number,y:number,id:string,edges:number):void{
- const X=x*16,Y=y*16;const q=/po_(fracquarry|greyquarry|obsq)/.test(id),t=/po_(sawaion|mill|timberyard)/.test(id),w=/po_(falls|pumphouse|oldpump)/.test(id),h=/po_(kilns|slag|sulfur)/.test(id);
- const rock=q?(/po_obsq/.test(id)?['#34353b','#5a5556','#8a8180']:['#4d4d4d','#797670','#a9a294']):h?['#453e3b','#7d6559','#aa8a76']:w?['#3e4d50','#727c77','#a29c87']:t?['#45372d','#88674c','#baa07a']:['#454e50','#758484','#a2aca3'];
- const [d,m,l]=rock;
- g.fillStyle=d;g.fillRect(X,Y,16,16);
- const raised=/loft|walk|bridge|lip|draught/.test(id);
- if(q){
-  // Uneven shale and geological fault clusters. Repeat periods are deliberately
-  // different along x/y to break the 16px brick-checker pattern.
-  const n=((x*97+y*131)^(x*17+y*23))>>>0;
-  g.fillStyle=n%3===0?m:d;g.fillRect(X+1,Y+1,14,14);
-  g.fillStyle=l;g.fillRect(X+2+(n%5),Y+1+((n>>3)%8),7,2);
-  g.fillStyle=m;g.fillRect(X+3,Y+8,11,3);g.fillRect(X+9,Y+11,5,3);
-  g.fillStyle=d;g.fillRect(X+((n>>2)%7),Y+4,3,6);
-  if(n%5===0){g.fillStyle=l;g.fillRect(X+11,Y+11,3,2)}
-  if(n%7===0){g.fillStyle='#262a30';g.fillRect(X+2,Y+13,9,2)}
- }else if(t){
-  const n=(x*13+y*47)&15;
-  g.fillStyle=m;g.fillRect(X+1,Y+3,14,9);
-  g.fillStyle=n%3===0?l:d;g.fillRect(X+2,Y+4+n%4,11,2);
-  g.fillStyle=d;g.fillRect(X+1,Y+11,14,2);
-  if(n%5===0){g.fillStyle=l;g.fillRect(X+4,Y+13,4,2)}
- }else if(w){
-  // Banded masonry, sluice drains and age stains; not port decking.
-  g.fillStyle=m;g.fillRect(X+1,Y+2,14,12);g.fillStyle=l;g.fillRect(X+2,Y+3,7,2);
-  g.fillStyle=d;g.fillRect(X+1,Y+8,14,1);g.fillRect(X+8,Y+9,1,5);
-  if((x+y)%7===0){g.fillStyle='#496468';g.fillRect(X+10,Y+10,4,3)}
- }else if(h){
-  const n=((x*23+y*31)^(x<<2))&31;
-  g.fillStyle=m;g.fillRect(X+1,Y+1,14,14);
-  g.fillStyle=d;g.fillRect(X+2,Y+7+n%3,12,2);
-  if(n%4===0){g.fillStyle=l;g.fillRect(X+4,Y+3,4,2)}
-  if(n%7===0){g.fillStyle='#302c2c';g.fillRect(X+9,Y+10,6,4)}
- }else{
-  const n=(x*37+y*19)&31;
-  g.fillStyle=n%3===0?d:m;g.fillRect(X+1,Y+1,14,14);
-  g.fillStyle=l;g.fillRect(X+3,Y+3,7,2);
-  if(n%4===0){g.fillStyle=d;g.fillRect(X+6,Y+7,2,7)}
-  if(n%5===0){g.fillStyle='#61787c';g.fillRect(X+10,Y+11,4,2)}
- }
- if(raised){g.fillStyle=d;g.fillRect(X,Y+14,16,2);g.fillStyle=l;g.fillRect(X+2,Y+13,3,1)}
- if(edges&1){g.fillStyle=l;g.fillRect(X+2,Y,11,1)}
- if(edges&2){g.fillStyle=d;g.fillRect(X,Y+15,16,1)}
- if(edges&4){g.fillStyle=d;g.fillRect(X,Y,1,16)}
- if(edges&8){g.fillStyle=d;g.fillRect(X+15,Y,1,16)}
+
+/** Material-specific seamless world-space 16px terrain painter for F03 POIs. */
+export function drawF03DeckTile(g: CanvasRenderingContext2D, x: number, y: number, id: string, edges: number): void {
+  drawDeckTileCanvas(g, x, y, { id, open: true, edges });
 }

@@ -1,0 +1,24 @@
+{
+  "sourcePreview": "VEYRA_81_WORKING_PREVIEW_MISSING_C03.html",
+  "arenaZip": "redesign-veyra-pixel-assets.zip",
+  "artModules": [
+    "pixel-craft",
+    "surface-art",
+    "c04-art",
+    "c01-art",
+    "c02-art",
+    "f03-art"
+  ],
+  "patched": [
+    "...makeWaterfrontSprites(kA)",
+    "...makeUrbanHarborSprites(kA)",
+    "...makeIndustrialHarborSprites(kA)",
+    "...makeF03Sprites(kA)",
+    "drawWaterfrontDeckTile(A,tx,ty,pid,mask)",
+    "drawUrbanHarborDeckTile(A,tx,ty,pid,mask)",
+    "drawIndustrialHarborTile(A,tx,ty,pid,mask)",
+    "drawF03DeckTile(A,tx,ty,pid,mask)"
+  ],
+  "restriction": "C03 source absent from preview; this is a 78 authored POI preview, not 81 verified",
+  "retainsWorld": true
+}
