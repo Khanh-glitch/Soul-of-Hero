@@ -36,7 +36,7 @@ jobs:
         run: npm ci
       - name: Six Elder plan/compiler/walkability gates
         working-directory: web
-        run: npx vitest run src/veyra05/arch/elder-lairs.test.ts src/veyra05/integrated-world.test.ts
+        run: npx vitest run src/veyra05/arch/elder-lairs.test.ts src/veyra05/integrated-world.test.ts src/veyra05/integrated-lifecycle.test.ts
       - name: Web Vite build (integration smoke)
         working-directory: web
         run: npm run build
