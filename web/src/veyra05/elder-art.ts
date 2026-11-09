@@ -3,10 +3,10 @@ import { mk, type Sprite } from '../game/art';
 export function makeElderSprites(factory: typeof mk): Record<string, Sprite> {
 
  const make=(w:number,h:number,fn:(g:CanvasRenderingContext2D)=>void)=>factory(w,h,g=>{g.imageSmoothingEnabled=false;fn(g)});
- const R=(g,x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(x|0,y|0,w|0,h|0)};
- const edge=(g,x,y,w,h,outline,body,top)=>{R(g,x,y,w,h,outline);R(g,x+2,y+2,w-4,h-4,body);R(g,x+3,y+2,w-6,3,top)};
- const gems=(g,pts,c)=>pts.forEach(([x,y])=>{R(g,x,y,4,5,'#191b28');R(g,x+1,y+1,2,3,c);R(g,x+1,y+1,1,1,'#e9edca')});
- const masonry=(g,x,y,w,h,cl)=>{for(let yy=y+9;yy<y+h-2;yy+=10){R(g,x+3,yy,w-6,1,cl);for(let xx=x+4+((yy-y)/10%2)*8;xx<x+w-4;xx+=17)R(g,xx,yy-6,1,6,cl)}};
+ const R=(g:CanvasRenderingContext2D,x:number,y:number,w:number,h:number,c:string)=>{g.fillStyle=c;g.fillRect(x|0,y|0,w|0,h|0)};
+ const edge=(g:CanvasRenderingContext2D,x:number,y:number,w:number,h:number,outline:string,body:string,top:string)=>{R(g,x,y,w,h,outline);R(g,x+2,y+2,w-4,h-4,body);R(g,x+3,y+2,w-6,3,top)};
+ const gems=(g:CanvasRenderingContext2D,pts:Array<[number,number]>,c:string)=>pts.forEach(([x,y])=>{R(g,x,y,4,5,'#191b28');R(g,x+1,y+1,2,3,c);R(g,x+1,y+1,1,1,'#e9edca')});
+ const masonry=(g:CanvasRenderingContext2D,x:number,y:number,w:number,h:number,cl:string)=>{for(let yy=y+9;yy<y+h-2;yy+=10){R(g,x+3,yy,w-6,1,cl);for(let xx=x+4+((yy-y)/10%2)*8;xx<x+w-4;xx+=17)R(g,xx,yy-6,1,6,cl)}};
  const root=make(112,128,g=>{
    R(g,4,112,104,10,'#121a18');R(g,11,108,90,8,'#27392d');
    for(const [x,y,w,h]of [[11,99,22,13],[26,90,18,23],[39,81,14,36],[62,87,17,28],[76,97,24,15],[35,56,14,49],[49,20,23,95],[71,49,13,48],[25,47,17,9],[66,32,23,10],[12,65,28,11],[75,61,27,9]])R(g,x,y,w,h,'#182920');
