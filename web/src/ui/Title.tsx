@@ -3,6 +3,7 @@ import { VIEW_W, VIEW_H, type GameState } from '../game/core';
 import { getArt } from '../game/art';
 import { getMapCanvas, resetRenderCaches } from '../game/render';
 import { getWorld, getActiveLayout, setActiveLayout, listLayouts, mapPackageErrors } from '../game/world';
+import { U05_WORLD_LAYOUT_ID } from '../veyra05/scenes';
 import { ACHIEVEMENTS } from '../game/catalog';
 import { initAudio, sfx } from '../game/audio';
 
@@ -31,7 +32,7 @@ function HeroPreview({ female, active }: { female: boolean; active: boolean }) {
   return <canvas ref={ref} width={64} height={96} style={{ width: 52, height: 78 }} />;
 }
 
-export default function Title({ gs, onContinue, onStart, note, summary, clearSummary }: { gs: GameState; onContinue: () => void; onStart: (c: 'male' | 'female', region: number | null) => void; note?: string; summary: GameState['profile']['history'][number] | null; clearSummary: () => void }) {
+export default function Title({ gs, onContinue, onStart, onInspect, note, summary, clearSummary }: { gs: GameState; onContinue: () => void; onStart: (c: 'male' | 'female', region: number | null) => void; onInspect: () => void; note?: string; summary: GameState['profile']['history'][number] | null; clearSummary: () => void }) {
   const s = useScale(); const [mode, setMode] = useState<'menu' | 'select' | 'history'>('menu'); const [hero, setHero] = useState<'male' | 'female'>('female'); const [region, setRegion] = useState<number | null>(null); const [layout, setLayout] = useState(getActiveLayout());
   const chooseLayout = (id: string) => { if (setActiveLayout(id)) { resetRenderCaches(); setLayout(id); } };
   const pf = gs.profile; const run = gs.run;
@@ -53,7 +54,8 @@ export default function Title({ gs, onContinue, onStart, note, summary, clearSum
         </div>
         {mode === 'menu' && <div className="absolute flex flex-col gap-2 items-center fadein" style={{ left: 0, right: 0, top: 150 }}>
           {run && <button className="btn gold" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); onContinue(); }}>Continue — {run.character === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</button>}
-          <button className="btn" style={{ fontSize: 16, width: 180 }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={() => { click(); if (layout === 'shipping' || layout === 'dev_delta') chooseLayout(layout + '_fresh'); else if (layout === 'veyra-greywater-u16' || layout === 'veyra-greywater-u20') chooseLayout(layout.replace('greywater-', 'greywater-lr02-')); else if (layout === 'veyra-oasis-u20') chooseLayout('veyra-oasis-lr02-u20'); setMode('select'); }}>New run</button>
+          <button className="btn" style={{ fontSize: 16, width: 180 }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={() => { click(); chooseLayout(U05_WORLD_LAYOUT_ID); setMode('select'); }}>New run</button>
+          <button className="btn" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); onInspect(); }}>World Map · 81 POIs</button>
           <button className="btn" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); setMode('history'); }}>Profile & history</button>
           <div style={{ fontSize: 11, color: '#cfc2dc', marginTop: 6, textShadow: '1px 1px 0 #000' }}>Secured Ragnarok cash: <b style={{ color: '#9ae0ff' }}>{pf.securedCash}</b> · Runs: {pf.history.length}</div>
           {note && <div style={{ fontSize: 10, color: '#ffb08a', maxWidth: 380, textAlign: 'center' }}>{note}</div>}

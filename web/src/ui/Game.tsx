@@ -18,6 +18,10 @@ const SAVE_TOAST: Record<string, string> = {
   'idb-transaction': 'Save database write failed; the local copy was written.',
 };
 import { getWorld, ZONES } from '../game/world';
+import { getWindowWorld } from '../veyra05/window';
+import { activeFloor, stairAt, applyFloor } from '../veyra05/floors';
+import { windowOrigin } from '../veyra05/continuity';
+import { resetRenderCaches } from '../game/render';
 import { sfx, setAmbience, initAudio } from '../game/audio';
 import { save, saveSync, saveDetailed, lastSaveOutcome } from '../game/persist';
 import { Slot, Bar, Icon, mkIntent, type Api, type PanelState } from './common';
@@ -27,7 +31,7 @@ import type { OfflineReturnV1 } from '../game/return-report';
 import { RestPanel } from './RestPanel';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 
-export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; report: { lines: string[]; report: OfflineReturnV1 | null } | null; onExit: () => void; onRunEnd: () => void }) {
+export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: GameState; report: { lines: string[]; report: OfflineReturnV1 | null } | null; onExit: () => void; onRunEnd: () => void; onInspect?: () => void }) {
   const cvRef = useRef<HTMLCanvasElement>(null); const stageRef = useRef<HTMLDivElement>(null);
   const [, setFrame] = useState(0); const rerender = useCallback(() => setFrame(f => f + 1), []);
   const [panel, setPanel] = useState<PanelState | null>(report && (report.lines.length || (report.report && !report.report.away.quiet)) ? { kind: 'report', lines: report.lines, report: report.report } : null);
@@ -70,7 +74,23 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const scaleRef = useRef(scale); scaleRef.current = scale; const offRef = useRef(off); offRef.current = off;
 
   const interact = () => {
-    const r = gs.run; if (!r) return; const t = target.current; if (!t) return;
+    const r = gs.run; if (!r) return;
+    if (r.layoutId?.startsWith('veyra05-') && !r.player.dead && !panelRef.current) {
+      const ww = getWindowWorld(r.layoutId);
+      const tx = Math.floor(r.player.x / TILE), ty = Math.floor(r.player.y / TILE);
+      const [ox, oy] = windowOrigin(r);
+      for (const [dx,dy] of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]) {
+        const s = stairAt(ww.floors,r,tx+dx,ty+dy);
+        if (!s) continue;
+        const level = s.from === activeFloor(r) ? s.to : s.from;
+        const landing = level === s.to ? [s.tx-ox,s.ty-oy] : [s.x-ox,s.y-oy];
+        if (applyFloor(gs,ww,ww.floors,level,landing as [number,number],markDirty)) {
+          resetRenderCaches(); cam.init = false; scheduleSave(); toast('Entered ' + s.label + ' · floor ' + level,'ok'); rerender();
+          return;
+        }
+      }
+    }
+    const t = target.current; if (!t) return;
     const e = t.eid ? r.entities[t.eid] : null;
     switch (t.kind) {
       case 'fire': act('douseTree', { tx: Math.floor(t.x/16), ty: Math.floor(t.y/16) }); return;
@@ -119,7 +139,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
           break;
         }
         case 'KeyF': { if(r.player.vehicle){act('vehicleExit',{});break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current) interact(); else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
-        case 'KeyI': toggle('inv'); break; case 'KeyC': toggle('craft'); break; case 'KeyM': toggle('map'); break;
+        case 'KeyI': toggle('inv'); break; case 'KeyC': toggle('craft'); break; case 'KeyM': if(r.layoutId?.startsWith('veyra05-')) onInspect?.(); else toggle('map'); break;
         case 'KeyB': setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); toggle('build'); break;
         case 'KeyG': setEditLayer(v => { const a=['auto','wall','obj','roof','floor']; return a[(a.indexOf(v)+1)%a.length]; }); break;
         case 'KeyU': setPanel(null); setUpgradeMode(v => !v); setBuildType(null); setReclaim(false); setRepairMode(false); break;
