@@ -45,7 +45,7 @@ function measure(g: GameState, ticks: number, mount: Entity | null, carrying: bo
   const pos = () => (mount ? { x: mount.x, y: mount.y } : { x: p.x, y: p.y });
   let last = pos();
   for (let i = 0; i < ticks; i++) {
-    tick(g, Math.floor(i / 12) % 2 ? west : east, 50, t); t += 50;   // short legs keep the whole path on the checked road segment
+    tick(g, Math.floor(i / 4) % 2 ? west : east, 50, t); t += 50;   // 0.2 s legs (~78 px at the 390 px/s bike road speed) keep the path on the 8-tile segment
     const now = pos(); path += Math.hypot(now.x - last.x, now.y - last.y); last = now;   // PATH length, not net displacement
   }
   return { seconds: +(ticks * 0.05).toFixed(2), pixelsPath: Math.round(path), pxPerSec: +(path / (ticks * 0.05)).toFixed(1), fuelUsed: mount ? +(fuel0 - (mount.vehicle?.fuel ?? 0)).toFixed(2) : 0, wearHp: mount ? +(hp0 - (mount.hp ?? 0)).toFixed(2) : 0, carrying };
@@ -76,8 +76,9 @@ describe('B05-R B2: freight modes on the same eligible Shipping road segment', (
       addItem(r, 'inv', 'motorbike_kit', 1);
       expect(act(g, 'placeMotorbike', q).ok).toBe(true);
       const bike = Object.values(r.entities).find(e => e.kind === 'vehicle')!;
-      addItem(r, 'inv', 'fuel_can', 1);
-      expect(act(g, 'vehicleRefuel', { eid: bike.id }).ok).toBe(true);
+      // 3 real canisters, refuelled through the engine intent to a full 300-unit tank (6000 px); a partial tank ran dry and measured fuel, not speed.
+      addItem(r, 'inv', 'fuel_can', 3);
+      for (let k = 0; k < 3; k++) expect(act(g, 'vehicleRefuel', { eid: bike.id }).ok).toBe(true);   // fills the 300-unit tank
       expect(act(g, 'vehicleMount', { eid: bike.id }).ok).toBe(true);
       if (loaded) { addItem(r, 'inv', 'iron_ingot', 4); const i = C(r, 'inv').slots.findIndex(s => s?.key === 'iron_ingot'); expect(act(g, 'move', { from: 'inv', fs: i, to: bike.c }).ok).toBe(true); }
       rows[loaded ? 'bike_loaded' : 'bike_empty'] = { ...measure(g, 240, bike, loaded), cargoWeight: +cartWeight(r, bike.c!).toFixed(1), cargoLimit: BAL.motorbike.maxWeight, slots: BAL.motorbike.slots, tank: BAL.motorbike.tank };

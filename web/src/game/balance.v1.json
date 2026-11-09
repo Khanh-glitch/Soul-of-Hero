@@ -346,13 +346,13 @@
     "teleportMs": 600
   },
   "motorbike": {
-    "_status": "SOH_PROVISIONAL v1; ORIGINAL_UNKNOWN handling/fuel/wear/capacity",
+    "_status": "SOH_PROVISIONAL v2 (MEC-01 R6): roadSpeed 125->390 so a 40-ingot load on road is ~3.5x loaded walking (measured 92.2 px/s); fuel and wear per pixel unchanged, so speed buys time, not free fuel. ORIGINAL_UNKNOWN handling/fuel/wear/capacity",
     "slots": 12,
     "maxWeight": 80,
     "maxHp": 200,
     "tank": 300,
     "canFuel": 100,
-    "roadSpeed": 125,
+    "roadSpeed": 390,
     "groundSpeed": 52,
     "roughSpeed": 35,
     "fuelPerPixel": 0.05,

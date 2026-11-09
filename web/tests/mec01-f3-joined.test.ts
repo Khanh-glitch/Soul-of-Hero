@@ -30,6 +30,8 @@ describe('F3 joined: deposit -> evacuate -> save/reload -> run 2', () => {
   expect(act('deposit',{eid:escrow.id}).ok).toBe(true);expect(g.profile.securedCash).toBe(6);expect(countItem(r,'inv','rcash')).toBe(0);
   // Negative: a second deposit with no physical cash must not credit the profile again.
   expect(act('deposit',{eid:escrow.id}).ok).toBe(false);expect(g.profile.securedCash).toBe(6);
+  // Run-1 learned-recipe sentinel: a recipe the run learned (not in the base list) must not survive into run 2.
+  r.knowledge.recipes.push('motorbike_kit');expect(r.knowledge.recipes.includes('motorbike_kit')).toBe(true);
   // Lawful evacuation: a beacon the player stands on (fixture entity), not a remote evacuation.
   const beacon={id:'fx-evac',kind:'evac',x:r.player.x,y:r.player.y,label:'Fixture evacuation beacon'} as any;r.entities[beacon.id]=beacon;markDirty();
   expect(act('evacuate',{eid:beacon.id}).ok).toBe(true);expect(g.run).toBeNull();expect(g.profile.securedCash).toBe(6);
@@ -39,6 +41,7 @@ describe('F3 joined: deposit -> evacuate -> save/reload -> run 2', () => {
   const g2=reloaded as any;const s2=dispatch(g2,{id:'joined-run2',type:'startRun',character:'female',seed:1988} as any,time+HOUR);
   expect(s2.ok).toBe(true);expect(g2.profile.securedCash).toBe(6);
   expect(countItem(g2.run,'inv','rcash')).toBe(0);expect(countItem(g2.run,'inv','escrow_chest')).toBe(0);
-  expect(g2.run.knowledge.recipes.length).toBeGreaterThan(0);
+  expect(g2.run.knowledge.recipes.includes('motorbike_kit')).toBe(false);   // run-1 learned sentinel wiped
+  expect(g2.run.id).not.toBe(r.id);
  });
 });

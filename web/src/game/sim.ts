@@ -367,7 +367,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
     while(remaining>1e-8){const step=Math.min(remaining,3);const nx=bike.x+mx*step,ny=bike.y+my*step;if(!vehicleClear(r,nx,ny,bike.id)||!vehicleExitPoint(r,nx,ny,bike.id))break;bike.x=nx;bike.y=ny;remaining-=step;
       // Each step is charged at its own rate: protected while lubeLeft>0, full wear after the boundary.
       const protectedPart=Math.min(step,lubeLeft); wearTotal+=protectedPart*lubeReduced+(step-protectedPart)*baseWear; lubeLeft-=protectedPart;}
-    const travelled=dist(ox,oy,bike.x,bike.y);if(travelled>0){bike.vehicle.fuel=Math.max(0,bike.vehicle.fuel-travelled*rate);bike.vehicle.odometer+=travelled;bike.hp=Math.max(0,(bike.hp||0)-wearTotal);bike.deployed.dur=bike.hp;bike.vehicle.angle=Math.atan2(my,mx); if((bike.vehicle.lube||0)>0) bike.vehicle.lube=lubeLeft;}
+    const travelled=dist(ox,oy,bike.x,bike.y);if(travelled>0){bike.vehicle.fuel=Math.max(0,bike.vehicle.fuel-travelled*rate);if(bike.vehicle.fuel<1e-9)bike.vehicle.fuel=0; /* float residue: an empty tank is exactly empty */bike.vehicle.odometer+=travelled;bike.hp=Math.max(0,(bike.hp||0)-wearTotal);bike.deployed.dur=bike.hp;bike.vehicle.angle=Math.atan2(my,mx); if((bike.vehicle.lube||0)>0) bike.vehicle.lube=lubeLeft;}
     p.x=bike.x;p.y=bike.y; if(ml)p.aim=bike.vehicle.angle;
   } else if (p.action?.kind === 'roll') { const ra = p.action.angle; moveBody(r, p, Math.cos(ra) * B.rollSpeed * dt, Math.sin(ra) * B.rollSpeed * dt, 4, 'player'); }
   else if (ml) { moveBody(r, p, mx * sp * dt, my * sp * dt, 4, 'player'); p.stepAcc += sp * dt; if (p.stepAcc > 13) { p.stepAcc = 0; fx('step', { x: p.x, y: p.y + 6, t }); } }
