@@ -1,11 +1,11 @@
-# CAL-01 — `world_calendar_v1`: two-year / eight-season world clock (DRAFT review)
+# CAL-01 — `world_calendar_v1`: two-year / eight-season world clock (Web mechanics joined PR44)
 
-**Status: DRAFT / UNMERGED. NOT a production-ready claim.** Evidence level is mechanics
+**Status: Web mechanics SOURCE-JOINED into PR44 DRAFT at `c0a0ccc4` (CAL PR46 MERGED/CLOSED); NOT production-ready or CI/native/human accepted.** Evidence level is mechanics
 fixture on the real code and the real Map raster; nothing here is natural-play enjoyment
 evidence, a 336 h campaign, or a native/A0 time contract.
 
-**Branch:** `agent/cal01-world-calendar-seasons-20261108` · **Base:** PR #44 head
-`ec909a5eab1099a2cfab44c89ab4e321e529b3dc` (main `5214789`).
+**Original delivery:** PR46 `arena/1f288d1f-soul-of-hero` HEAD `b82b494` against PR44 original base
+`ec909a5eab1099a2cfab44c89ab4e321e529b3dc`. **Current:** contained in PR44 DRAFT at integration commit `c0a0ccc4`; no change to production/main.
 
 ## 1. What this is (and what it is not)
 
@@ -195,7 +195,7 @@ spring→summer crossing h36 **14.15 h**.
 | `npx tsc --noEmit -p tsconfig.test.json` | clean |
 | `npx vitest run tests/cal01-world-calendar.test.ts` | **29 passed** |
 | `npx vitest run tests/cal011-forecast.test.ts` | **5 passed** (CAL-01.1 forecast truth + CAL-01 C3 near-expiry negative test) |
-| `npx vitest run --testTimeout=120000` (full) | **107 files / 804 tests passed, 1 skipped, exit 0** (~315 s) |
+| `npx vitest run --testTimeout=120000` (full) | **Agent-reported at final `b82b494`: 108 files passed / 1 skipped; 809 tests passed / 1 skipped, exit 0** (not independently rerun by Control Tower) |
 | `npx vite build` | built, `dist/index.html` single file |
 | `node scripts/cal01-season-report.mjs` | `web/evidence/cal01-seasons/season-report.json` |
 
@@ -231,7 +231,7 @@ spring→summer crossing h36 **14.15 h**.
 
 ## 11. Non-claims
 
-* Not production-ready; DRAFT PR only, no merge, no force-push.
+* Not production-ready. Web CAL source was merged only into PR44 DRAFT at `c0a0ccc4`; PR44 is not merged into main or production, and CI/native/human gates remain open.
 * No natural-play or enjoyment claim: all time acceleration is the existing `qaAdvance`
   fixture, labelled LOCAL/UNVERIFIED.
 * No native Godot/A0 time implementation (A0 owns it); this is the Web mechanics contract.
