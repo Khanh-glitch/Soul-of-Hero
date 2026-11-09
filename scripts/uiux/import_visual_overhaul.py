@@ -44,6 +44,9 @@ def main():
     current = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True, check=True).stdout.strip()
     if current != BRANCH:
         ap.error(f"Expected branch {BRANCH}; current branch {current}")
+    current = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True, check=True).stdout.strip()
+    if current != BRANCH:
+        ap.error(f"Expected branch {BRANCH}; current branch {current}")
     parent = root / DEST.parent
     parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(archive) as z:
