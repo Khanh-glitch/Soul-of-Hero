@@ -1,0 +1,33 @@
+{
+  "labels": {
+    "crafted": "real craft/upgrade/build/research intents",
+    "fixture": "starter stock grants, cache-side position, one fuel canister",
+    "intent": "tick() road movement and vehicle intents"
+  },
+  "route": {
+    "startTile": [
+      120,
+      109
+    ],
+    "distanceTiles": 6,
+    "tickMs": 50
+  },
+  "motorbike": {
+    "ticks": 19,
+    "seconds": 0.9500000000000001,
+    "fuelUsed": 6.12,
+    "cargoIngots": 40
+  },
+  "walkingSameCargo": {
+    "ticks": 22,
+    "seconds": 1.1
+  },
+  "ratioWalkOverBike": 1.16,
+  "reading": "Over this 6-tile road segment the motorbike saves about 0.15 s versus walking while spending fuel and wear; walking is close on short legs. The gap grows with distance and the outcome is not a claim of general superiority.",
+  "notClaimed": [
+    "natural walk from spawn",
+    "natural acquisition of grants",
+    "human play",
+    "cart comparison (covered by b05-freight-compare)"
+  ]
+}

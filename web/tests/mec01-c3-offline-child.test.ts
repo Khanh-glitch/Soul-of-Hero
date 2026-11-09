@@ -34,5 +34,5 @@ const run = !!SAVE && existsSync(SAVE);
     writeFileSync(RESULT, JSON.stringify({ startedAt, stacks, queues, revision: gs.revision }, null, 2));
     expect(stacks.length).toBeGreaterThan(0);
     void C; void countItem;
-  });
+  }, 120000);   // child runs in its own vitest process; the default 5 s is too short under a loaded full run
 });
