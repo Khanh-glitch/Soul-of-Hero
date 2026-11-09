@@ -192,6 +192,11 @@ export interface RunState {
   elderStones: string[];
   achievements: string[]; score: number; deposited: number;
   clock: { lastSimAt: number; simMs: number; respawnAcc: number; weatherSlot: number; defenseFrames?: number };
+  /** CAL-01 world_calendar_v1 derived observation ledger (see calendar.ts).
+   * It is NOT a time authority: the season is always recomputed from startedAt/qaOffset
+   * and this record only prevents a season event from being announced twice.
+   * Absent on pre-season saves, which are reconstructed from the run clock. */
+  calendar?: import('./calendar').CalendarLedgerV1;
   rng: number; nextId: number;
   receipts: Receipt[]; seenIntents: string[]; seq: number;
   vendorStock: Record<string, number>;

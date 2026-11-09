@@ -1,7 +1,7 @@
 {
   "_meta": {
     "version": 1,
-    "status_legend": "LOCKED_CANON = Bible [CHỐT] law; TUNABLE_BALANCE = editable number; PROPOSED_MECHANISM = reversible design choice ([ĐỀ XUẤT])",
+    "status_legend": "LOCKED_CANON = Bible [CH\u1ed0T] law; TUNABLE_BALANCE = editable number; PROPOSED_MECHANISM = reversible design choice ([\u0110\u1ec0 XU\u1ea4T])",
     "note": "All numbers here are TUNABLE_BALANCE unless marked. Edit and rebuild."
   },
   "run": {
@@ -198,7 +198,7 @@
     "specimenSeconds": 30
   },
   "weather": {
-    "_status": "PROPOSED_MECHANISM seeded schedule; TUNABLE weights",
+    "_status": "PROPOSED_MECHANISM seeded schedule; TUNABLE weights. seasonWeights[season] (SOH_PROVISIONAL) replaces the flat weights per season; spring repeats the existing flat weights so the neutral season is unchanged.",
     "slotMinutes": 9,
     "weights": {
       "clear": 5,
@@ -207,7 +207,38 @@
       "storm": 1,
       "fog": 2
     },
-    "forecastSlots": 1
+    "forecastSlots": 1,
+    "seasonWeights": {
+      "_status": "SOH_PROVISIONAL. Bounded relative weights, same five families. Snow is NOT a new weather enum: a cold-region rain slot lands as snow via seasonClimateV1.snowTemperatureBelow.",
+      "spring": {
+        "clear": 5,
+        "cloudy": 3,
+        "rain": 3,
+        "storm": 1,
+        "fog": 2
+      },
+      "summer": {
+        "clear": 8,
+        "cloudy": 3,
+        "rain": 2,
+        "storm": 2,
+        "fog": 1
+      },
+      "autumn": {
+        "clear": 4,
+        "cloudy": 4,
+        "rain": 4,
+        "storm": 2,
+        "fog": 3
+      },
+      "winter": {
+        "clear": 3,
+        "cloudy": 5,
+        "rain": 3,
+        "storm": 2,
+        "fog": 2
+      }
+    }
   },
   "lootRespawn": {
     "_status": "SOH_NEW_TUNED provisional v1: ordinary authored loot only; never cash, cores, credentials or blueprints",
@@ -1087,5 +1118,64 @@
     "secs": 12,
     "fixtureAuthority": "test-fixture-v1",
     "maxSourceStock": 200
+  },
+  "calendar": {
+    "_status": "LOCKED_CANON scope / TUNABLE_BALANCE numbers. Bible \u00a70.1c D-FINAL-02 (CREATOR_LOCKED 2026-11-08): a run is 336 real hours and contains about two in-world years as two Spring->Summer->Autumn->Winter cycles == eight consecutive seasons. The eight equal phases below are the NOMINAL implementation parameter (42 h/season); only the phase LENGTH is provisional. 336 h, the final 72 h Ragnarok window and the season order are fixed and are not tunable here.",
+    "version": "world_calendar_v1",
+    "phaseHours": 42,
+    "years": 2,
+    "_phaseHoursNote": "SOH_PROVISIONAL nominal parameter = maxRunHours / (years x 4). Tunable only against evidence and only inside the fixed 336 h / 72 h run clock."
+  },
+  "seasonClimateV1": {
+    "_status": "SOH_PROVISIONAL / TUNABLE_BALANCE. Climate AMPLITUDE per region is still [C\u1ea6N \u0110O] per Bible \u00a70.1c; these are bounded global deviations applied to Map-owned temperature/moisture, never new geography. Spring is the neutral reference season (offset 0) so the measured comfortV1 and garden baselines keep their calibration.",
+    "version": "seasonal-climate-v1",
+    "temperatureOffset": {
+      "spring": 0,
+      "summer": 0.1,
+      "autumn": -0.05,
+      "winter": -0.25
+    },
+    "moistureOffset": {
+      "spring": 0,
+      "summer": -0.15,
+      "autumn": 0.08,
+      "winter": 0.02
+    },
+    "snowTemperatureBelow": 0.3,
+    "cold": {
+      "_status": "SOH_PROVISIONAL bounded extra SYS15-C03 exposure points, additive to the legacy snow/water/dark cold parts",
+      "fullDeviation": 0.25,
+      "comfortReference": 0.3,
+      "maxPoints": 7
+    },
+    "heat": {
+      "_status": "SOH_PROVISIONAL water demand from seasonal heat/dryness; the seasonal term is 0 in the neutral season",
+      "temperatureSpan": 0.12,
+      "moistureSpan": 0.15,
+      "dryReference": 0.4,
+      "warmReference": 0.6,
+      "maxThirstBonus": 0.4,
+      "maxEvaporationBonus": 1.5
+    },
+    "growth": {
+      "_status": "SOH_PROVISIONAL competing crops (SYS15-C10): Sunroot peaks in summer, Bitterleaf survives winter",
+      "crop": {
+        "spring": 1,
+        "summer": 1.15,
+        "autumn": 0.9,
+        "winter": 0.55
+      },
+      "herb": {
+        "spring": 1,
+        "summer": 0.9,
+        "autumn": 1.05,
+        "winter": 0.8
+      }
+    },
+    "growthMinFactor": 0.25,
+    "traces": {
+      "_status": "snowfall uses the existing BAL.traces.snowfallSnowMult magnitude: fresh snow buries a print on bare ground faster than rain washes it (rainDecayMult 4), and a print cut into snow/ice divides by snowfallSnowMult so it survives longer",
+      "snowfallDecayMult": 6
+    }
   }
 }
