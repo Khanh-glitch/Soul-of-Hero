@@ -12,6 +12,8 @@ import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './c
 import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, VENDOR_SPARES, VENDOR_SECURED } from './catalog';
 import { newGame, renewableLoot } from './engine';
 import { getWorld, hasLayout, webRecyclerSite } from './world';
+import { getWindowWorld } from '../veyra05/window';
+import { isVeyra05Layout } from '../veyra05/scenes';
 import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
 import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
@@ -60,7 +62,7 @@ export function validate(raw: any): GameState | null {
   // exact built-in geometry which shipped with PR #44, never an imported map.
   const baseline: Record<string,string> = { shipping:'f773dae0', dev_delta:'74b3ed67' };
   if (r.sourceLayoutVersion === 3) {
-    const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || m.rules !== 3 || m.seed !== world.economyMap.seed || m.digest !== sourceDigest(world.sourceV3)) return null;
+    const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || m.rules !== 3 || m.seed !== world.economyMap.seed || m.digest !== sourceDigest(isVeyra05Layout(layout) ? getWindowWorld(layout).floors.ground.sources : world.sourceV3)) return null;
     if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) return null;
     if (world.veyra && JSON.stringify(m.veyra)!==JSON.stringify(world.veyra)) return null;
     if (world.randomSpawn && (!obj(r.spawnChoice) || r.spawnChoice.contract!=='seeded-geographic-v1' || !Number.isInteger(r.spawnChoice.x) || !Number.isInteger(r.spawnChoice.y) || r.spawnChoice.x<1 || r.spawnChoice.y<1 || r.spawnChoice.x>=199 || r.spawnChoice.y>=199)) return null;
