@@ -176,6 +176,7 @@
     "upkeepFractionPerDay": 0.25,
     "materials": [
       "wood",
+      "plank",
       "stone",
       "fiber",
       "rope",
