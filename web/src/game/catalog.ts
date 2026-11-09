@@ -158,7 +158,9 @@ export const ITEMS: Record<string, ItemDef> = {
 /** R8D: a source's typed extraction-quality contract. Only a capability the caller names may use it; the caller never supplies rates. */
 export type ExtractionCapability = 'playerTool' | 'environment';
 export interface QualityBonus { capability: 'playerTool'; power: Mat; tiers: { minPower: number; item: string; chance: number }[] }
-export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; qualityBonus?: QualityBonus; block: boolean; regrow?: number; art: string; tall?: boolean; placement?: SourcePlacementRule[] }
+/** R9: renewable wild plants only. `regrowClass` picks the seasonal growth table (crop or herb). */
+export type RegrowClass = 'crop' | 'herb';
+export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; qualityBonus?: QualityBonus; block: boolean; regrow?: number; regrowClass?: RegrowClass; art: string; tall?: boolean; placement?: SourcePlacementRule[] }
 export const SOURCES: Record<string, SourceDef> = {
   oak: { name: 'Oak', mat: 'wood', hp: 18, stock: 6, yields: [['wood', 1]], bonus: [['seed', 0.25]], block: true, art: 'oak', tall: true },
   pine: { name: 'Pine', mat: 'wood', hp: 16, stock: 5, yields: [['wood', 1]], block: true, art: 'pine', tall: true },
@@ -173,11 +175,11 @@ export const SOURCES: Record<string, SourceDef> = {
   crystal: { name: 'Frost Crystal', mat: 'ore', hp: 20, stock: 3, yields: [['crystal', 1]], block: true, art: 'crystal' },
   salt_shale: { name: 'Salt Shale', mat: 'ore', hp: 12, stock: 4, yields: [['raw_salt', 1]], block: true, art: 'crystal', placement: [{ terrain: 'sand', chance: 0.24 }] },
   sulfur: { name: 'Sulfur Vent', mat: 'ore', hp: 14, stock: 3, yields: [['sulfur', 1]], block: true, art: 'sulfur' },
-  bush: { name: 'Berry Bush', mat: 'plant', hp: 6, stock: 3, yields: [['berries', 1]], bonus: [['seed', 0.3]], block: false, regrow: 420, art: 'bush' },
-  grass: { name: 'Tall Grass', mat: 'plant', hp: 3, stock: 2, yields: [['fiber', 1]], block: false, regrow: 300, art: 'grass' },
-  reed: { name: 'Reeds', mat: 'plant', hp: 4, stock: 3, yields: [['fiber', 1]], block: false, regrow: 360, art: 'reed' },
-  herb: { name: 'Bitterleaf', mat: 'plant', hp: 3, stock: 2, yields: [['herb', 1]], block: false, regrow: 600, art: 'herb' },
-  mushroom: { name: 'Marsh Caps', mat: 'plant', hp: 3, stock: 2, yields: [['mushroom', 1]], block: false, regrow: 600, art: 'mush' },
+  bush: { name: 'Berry Bush', mat: 'plant', hp: 6, stock: 3, yields: [['berries', 1]], bonus: [['seed', 0.3]], block: false, regrow: 420, regrowClass: 'crop', art: 'bush' },
+  grass: { name: 'Tall Grass', mat: 'plant', hp: 3, stock: 2, yields: [['fiber', 1]], block: false, regrow: 300, regrowClass: 'crop', art: 'grass' },
+  reed: { name: 'Reeds', mat: 'plant', hp: 4, stock: 3, yields: [['fiber', 1]], block: false, regrow: 360, regrowClass: 'crop', art: 'reed' },
+  herb: { name: 'Bitterleaf', mat: 'plant', hp: 3, stock: 2, yields: [['herb', 1]], block: false, regrow: 600, regrowClass: 'herb', art: 'herb' },
+  mushroom: { name: 'Marsh Caps', mat: 'plant', hp: 3, stock: 2, yields: [['mushroom', 1]], block: false, regrow: 600, regrowClass: 'herb', art: 'mush' },
   scrap: { name: 'Roadside Scrap', mat: 'scrap', hp: 8, stock: 4, yields: [['scrap', 1]], bonus: [['spares', 0.55]], block: false, art: 'scrap' },
   wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.3], ['damaged_drive', 0.2], ['fuel_can', 0.06], ['mechanical_parts', 0.08], ['fasteners', 0.12], ['field_repair_kit', 0.04]], block: true, art: 'wreck' },
 };
@@ -406,6 +408,12 @@ export function validateGameplayCatalog(catalog: GameplayCatalogData = { items: 
   for (const [id, source] of Object.entries(sources)) {
     if (!source.name || !source.mat || source.hp <= 0 || source.stock <= 0 || !source.yields.length) errors.push(`source ${id}: invalid physical source definition`);
     for (const [item, qty] of [...source.yields, ...(source.bonus || [])]) if (!items[item] || !Number.isFinite(qty) || qty <= 0) errors.push(`source ${id}: invalid yield ${item} x${qty}`);
+    // R9: only wild plants renew. Finite industrial, wreck, iron, rare and cash sources may never carry a regrow timer.
+    if (source.regrow !== undefined) {
+      if (source.mat !== 'plant') errors.push(`source ${id}: only wild plants may regrow (finite ${source.mat} source)`);
+      if (!source.regrowClass) errors.push(`source ${id}: regrow needs a regrowClass (crop|herb)`);
+      if (!(source.regrow > 0)) errors.push(`source ${id}: regrow must be a positive number of seconds`);
+    } else if (source.regrowClass) errors.push(`source ${id}: regrowClass without regrow`);
     if (source.qualityBonus) {
       const q = source.qualityBonus; const mins = q.tiers.map(t => t.minPower);
       if (q.capability !== 'playerTool' || q.power !== source.mat) errors.push(`source ${id}: quality contract must name the playerTool capability and the source material`);

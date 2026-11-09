@@ -11,7 +11,7 @@ import { creatorLootV1 } from './creator-loot';
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
-import { qualityTierFor, type ExtractionCapability } from './catalog';
+import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
 import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -225,6 +225,38 @@ export function pushLog(r: RunState, now: number, msg: string, tone?: string) { 
 export function effTile(r: RunState, tx: number, ty: number) {
   const m = r.terrain[ty * WW + tx]; if (m && (!m.until || m.until > r.clock.simMs)) return m.t; return tileAt(getWorld(), tx, ty);
 }
+/** R9: a wild plant's regrowth rate at a tile and instant: seasonal crop/herb factor x local temperature band (Map + season,
+ *  via climateAt). Weather is deliberately NOT an input, so the rate is a pure function of place and season. */
+export function wildRegrowRate(r: RunState, tx: number, ty: number, def: SourceDef, at: number): number {
+  const cls = def.regrowClass; if (!cls) return 0;
+  const cfg = BAL.wildRegrowth, band = cfg.temperatureBand[cls];
+  const local = climateAt(r, tx, ty, at, 'clear'), t = local.temperature;
+  const climate = Math.max(cfg.climateFloor, Math.min(1, t < band.low ? 1 - (band.low - t) * cfg.coldSlope : t > band.high ? 1 - (t - band.high) * cfg.heatSlope : 1));
+  return Math.max(cfg.minRate, climate * cropSeasonFactor(local.season, cls));
+}
+/** R9: a regrowing site is physically free only when no entity stands on the tile (structures, doors, loot, machines...). */
+function regrowSiteFree(r: RunState, tx: number, ty: number) { return entsAt(r, tx, ty).length === 0; }
+/** R9: integrate the growth rate piecewise over season boundaries from `st.regrowFrom` to `now`. Exact because the rate is
+ *  constant inside one phase. Idempotent and additive: any number or pattern of reads gives the same completion instant. */
+function advanceRegrowth(r: RunState, st: { regrowFrom?: number; regrowAcc?: number; regrowDoneAt?: number }, def: SourceDef, tx: number, ty: number, now: number) {
+  if (st.regrowDoneAt !== undefined || st.regrowFrom === undefined || !(now > st.regrowFrom)) return;
+  const need = def.regrow! * 1000; let acc = st.regrowAcc ?? 0, t = st.regrowFrom;
+  const cuts = seasonTransitionsBetween(r, st.regrowFrom, now).map(x => x.at);
+  for (const b of [...cuts, now]) {
+    if (!(b > t)) continue;
+    const rate = wildRegrowRate(r, tx, ty, def, t), gain = rate * (b - t);
+    if (acc + gain >= need) { st.regrowDoneAt = t + (need - acc) / rate; st.regrowAcc = need; st.regrowFrom = now; return; }
+    acc += gain; t = b;
+  }
+  st.regrowAcc = acc; st.regrowFrom = now;
+}
+/** R9: the player-facing note for an exhausted source (pixel-free text, same toast channel). */
+export function regrowNote(r: RunState, tx: number, ty: number, now: number): string | null {
+  const s = sourceAt(r, tx, ty, now); if (!s || !s.def.regrow || s.stock > 0) return null;
+  if (!regrowSiteFree(r, tx, ty)) return 'Exhausted — it can regrow once the tile is clear again.';
+  const rate = wildRegrowRate(r, tx, ty, s.def, now);
+  return rate < 0.9 ? 'Exhausted — growth is slowed by the season here.' : rate > 1.05 ? 'Exhausted — growth is quick this season.' : 'Exhausted — this plant can regrow.';
+}
 export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
   if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return null;
   const i = ty * WW + tx; const w = getWorld();
@@ -234,7 +266,19 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
   if (st?.burnt) key = 'deadtree';
   const def = SOURCES[key];
   let stock = st ? st.stock : def.stock, hp = st ? st.hp : def.hp;
-  if (st && stock <= 0 && st.regrowAt && now !== undefined && now >= st.regrowAt) { st.stock = def.stock; st.hp = def.hp; delete st.regrowAt; stock = def.stock; hp = def.hp; }
+  // R9 lifecycle: only renewable wild plants regrow. A pre-R9 fixed timer (regrowAt, no regrowFrom) is honoured as saved.
+  // Completion needs the tile clear: a structure over a dormant plant delays its emergence; it never refills under the building.
+  if (st && stock <= 0 && def.regrow && now !== undefined) {
+    if (st.regrowFrom === undefined && st.regrowAt !== undefined) {
+      if (now >= st.regrowAt && regrowSiteFree(r, tx, ty)) { st.stock = def.stock; st.hp = def.hp; delete st.regrowAt; }
+    } else if (st.regrowFrom !== undefined) {
+      advanceRegrowth(r, st, def, tx, ty, now);
+      if (st.regrowDoneAt !== undefined && now >= st.regrowDoneAt && regrowSiteFree(r, tx, ty)) {
+        st.stock = def.stock; st.hp = def.hp; delete st.regrowAt; delete st.regrowFrom; delete st.regrowAcc; delete st.regrowDoneAt;
+      }
+    }
+    if (st.stock !== stock) { stock = st.stock; hp = st.hp; }
+  }
   return { i, key, def, stock, hp, st, fire: (st as any)?.fire as number | undefined };
 }
 // collision cache — rebuilt when structures/sources/terrain change
@@ -896,7 +940,7 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
   }
   r.player.skills.gather += units;
   const depleted = st.stock <= 0;
-  if (depleted) { if (st.fire) { st.fire = 0; delete st.fireSpreadAt; delete st.fireDepth; } if (s.def.regrow) st.regrowAt = now + s.def.regrow * 1000; markDirty(); }
+  if (depleted) { if (st.fire) { st.fire = 0; delete st.fireSpreadAt; delete st.fireDepth; } if (s.def.regrow) { st.regrowFrom = now; st.regrowAcc = 0; delete st.regrowDoneAt; delete st.regrowAt; } markDirty(); }
   if (units) receipt(r, now, 'harvest', `${s.key}@${tx},${ty} -${units}`);
   return { result: 'yield', key: s.key, got, mat: s.def.mat, depleted, quality: richGot };
 }
