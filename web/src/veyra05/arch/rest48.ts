@@ -344,6 +344,9 @@ function atlasThreshold(s:RestSite):ArchPlan{
   elderLair(p,'anchor_vault','Atlas / Folded Subspace Vault',-1,
     [[x-4,y-21,9,18],[x-12,y-6,25,8],[x-8,y+1,17,19],
      [x-15,y+8,9,7],[x+7,y+8,9,7]],'stone');
+  // Connect the relocated hatch back into the original grounded threshold.
+  elderPath(p,'vault_hatch_spur','Narrow return route to the vault hatch',0,
+    [[x-2,y-20,5,12]],'stone');
   p.stair(x,y-17,0,-1,x,y-17,'Subspace vault descent and return','hatch');
   p.partition(x-3,y-8,x+3,y-8,-1);
   p.door(x+2,y-8,-1,'anchor_vault','Bent approach aperture','arch');
@@ -426,6 +429,10 @@ function typhonFracture(s:RestSite):ArchPlan{
   p.stair(x+5,y+8,0,-1,x+5,y+8,'Cleft descent and return','hatch');
   elderStage(p,'surviving_span','Broken Skybridge Above the Rift',1,
     [[x-23,y-22,12,15],[x-18,y-12,37,7],[x+11,y-23,12,17],[x+9,y-9,14,21]],'stone');
+  // Preserve the external rim stair's return connection around the new core walls,
+  // without punching an unplanned side entrance into the pressure cleft.
+  elderPath(p,'east_rim_stair_link','Narrow east-rim stair return',0,
+    [[x+15,y+1,3,15]],'stone');
   p.stair(x+16,y+1,0,1,x+16,y+1,'Surviving skybridge stair','exterior');
   elderStage(p,'rim_perch','Typhon High Rim',2,[[x+11,y-18,12,12],[x+12,y-8,7,12]],'stone');
   p.stair(x+16,y-13,1,2,x+16,y-13,'Rift lookout and return','ladder');
