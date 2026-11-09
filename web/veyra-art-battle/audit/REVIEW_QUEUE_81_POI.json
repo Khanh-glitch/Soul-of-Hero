@@ -1,0 +1,1236 @@
+{
+  "schema": "VEYRA_AUDIT_81_2026-11-09",
+  "status": "NOT_FINAL_VISUAL_ACCEPTED",
+  "canon_families_available": false,
+  "notes": "Priority is a proposed repair severity; no unwarranted pass status.",
+  "sites": [
+    {
+      "id": "po_academy",
+      "name": "Argus Academy",
+      "priority": "P1",
+      "source_group": "FLAGSHIP",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Mốc chuẩn đa tầng; nguy cơ quần thể Argus xung quanh trở nên bản sao đơn giản hơn.",
+      "change_required": "Khóa bảng màu/nhịp vật liệu học thuật làm chuẩn cho Observatory, Archive và Hall of Eyes; kiểm tra quan hệ không gian giữa bốn POI.",
+      "pass_criterion": "Toàn khu Argus đọc thành một di sản nhất quán nhưng mỗi cơ sở có silhouette riêng."
+    },
+    {
+      "id": "po_observatory",
+      "name": "Argus Observatory",
+      "priority": "P0",
+      "source_group": "ARCHIVE",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1,
+        2
+      ],
+      "source_rooms": 7,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh thật: một sân đất chữ thập rất lớn, không có công trình quan sát đọc được ở điểm xuất hiện. Source archive dùng khung hàn lâm chung.",
+      "change_required": "Thiết kế lại theo đài thiên văn đặc hữu: mái vòm/khe quan sát, sân đo thiên, tháp dụng cụ, lối nhìn bầu trời, khung đá cổ.",
+      "pass_criterion": "Ở 1x đầu vào thấy đài thiên văn dù tắt nhãn; đường lên telescope hợp lý."
+    },
+    {
+      "id": "po_archive",
+      "name": "Argus Archive Vaults",
+      "priority": "P0",
+      "source_group": "ARCHIVE",
+      "family_is_canonical": false,
+      "levels": [
+        -1,
+        0
+      ],
+      "source_rooms": 6,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source archive dùng chung hall + office và thêm 1 tầng kho; hiện dễ thành trường học nhỏ.",
+      "change_required": "Hạ tầng lưu trữ đặc hữu: giá sách theo cụm, đường kiểm soát, trục xuống vault kín, các lớp niêm phong/ẩm.",
+      "pass_criterion": "Người chơi nhận ra kho tri thức bị giới hạn tiếp cận, không chỉ phòng học có thang."
+    },
+    {
+      "id": "po_hall_eyes",
+      "name": "Hall of Eyes",
+      "priority": "P0",
+      "source_group": "ARCHIVE",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 6,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Nguồn dùng cùng hall/office với đài quan sát và Lantern; nghi lễ không có dấu thị giác đủ mạnh.",
+      "change_required": "Bố cục nghi lễ bất đối xứng, vòng cột, oculus/biểu tượng ánh sáng, nhịp tối–sáng, tâm nhìn không thành sân đất ngang.",
+      "pass_criterion": "Một ảnh không chữ phải truyền tải sự linh thiêng/ám ảnh riêng của Hall of Eyes."
+    },
+    {
+      "id": "po_lantern",
+      "name": "Lantern Light",
+      "priority": "P1",
+      "source_group": "ARCHIVE",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1,
+        2
+      ],
+      "source_rooms": 7,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Bị nhóm ARCHIVE kéo vào công thức hội trường/hồ sơ; concept lại là tháp hải đăng.",
+      "change_required": "Tách khỏi nhà học thuật; tháp thanh mảnh với chân chịu gió, buồng đèn và đường lên đồng nhất.",
+      "pass_criterion": "Silhouette tháp sáng độc lập và tín hiệu nhìn được từ đường tiếp cận."
+    },
+    {
+      "id": "po_lanternstn",
+      "name": "Lantern Cove Station",
+      "priority": "P1",
+      "source_group": "ARCHIVE",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 5,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Cùng họ archive dù chức năng là trạm liên lạc; chỉ một tầng và vài props.",
+      "change_required": "Làm đài/ăng-ten, hộp truyền, thùng pin, đường dây về cove; mái nhỏ có tính kỹ thuật.",
+      "pass_criterion": "Không nhầm với phòng đọc hay nhà canh."
+    },
+    {
+      "id": "po_kestrel",
+      "name": "Kestrel Radio Tower",
+      "priority": "P0",
+      "source_group": "SIGNAL",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1,
+        2
+      ],
+      "source_rooms": 7,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh thật: nhà/đường ngang lớn, cột radio không chiếm silhouette; 3 tầng trong source nhưng thiếu trục thẳng đứng thuyết phục.",
+      "change_required": "Cột mast có dây neo, bệ, anten, nguồn điện và cabin; tầng cao là giàn leo trụ chứ không mái phòng vuông.",
+      "pass_criterion": "Từ xa đọc đúng trạm phát sóng và trục leo."
+    },
+    {
+      "id": "po_typhon",
+      "name": "Typhon's Fracture",
+      "priority": "P0",
+      "source_group": "RUPTURE",
+      "family_is_canonical": false,
+      "levels": [
+        -1,
+        0
+      ],
+      "source_rooms": 5,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh thật: người chơi đứng trên giao lộ nâu lớn; đường nứt địa chất không hiện lên là yếu tố chủ đạo.",
+      "change_required": "Làm khe nứt đứt lớp đá, vách chênh độ cao, đổ nát đổ theo cùng một vector lực, lối men mép có nguy cơ rõ mà không bịa hazard.",
+      "pass_criterion": "Ngay khi vào thấy đất bị xé làm đôi, không phải sân khu dân cư."
+    },
+    {
+      "id": "po_viaduct",
+      "name": "Crushed Viaduct",
+      "priority": "P0",
+      "source_group": "RUPTURE",
+      "family_is_canonical": false,
+      "levels": [
+        -1,
+        0
+      ],
+      "source_rooms": 5,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source rupture chung khung đường đá và chòi, không chứng minh cầu cạn bị nghiền nát.",
+      "change_required": "Nhịp cầu gãy có trụ đỡ, rãnh sâu, đầu cầu lệch và đường vòng thực sự men mép.",
+      "pass_criterion": "Nhìn đầu cầu từ xa hiểu chỗ mất nhịp và lối qua khả thi."
+    },
+    {
+      "id": "po_freightyard",
+      "name": "Shattered Freight Yard",
+      "priority": "P0",
+      "source_group": "RUPTURE",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 5,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Cùng khuôn đường phế tích; xe hàng props ít nên không giống sân ga đổ nát.",
+      "change_required": "Tạo các ray chạy song song rồi lệch/gãy, nhà ga thấp, toa xe kẹt, đường bốc dỡ và nguồn va đập.",
+      "pass_criterion": "Một ảnh đủ nhận ra bãi đường sắt hàng hóa hỏng."
+    },
+    {
+      "id": "po_fracquarry",
+      "name": "Fracture Quarry",
+      "priority": "P0",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        -1,
+        0,
+        1
+      ],
+      "source_rooms": 11,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh người chơi trước đây cho thấy quarry dễ thành sân đá/cầu sàn; bản R2 có bench nhưng vẫn lộ texture lặp.",
+      "change_required": "Đổi nền thẳng thành mặt cắt vỉa đá nhiều lớp, đường khai thác xoắn theo độ cao, dấu nổ/khối vỡ và vật liệu bụi.",
+      "pass_criterion": "Tại 1x nhìn rõ ít nhất ba tầng địa chất, không cần overlay chữ."
+    },
+    {
+      "id": "po_falls",
+      "name": "Falls Powerhouse",
+      "priority": "P0",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        -1,
+        0,
+        1
+      ],
+      "source_rooms": 12,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh remake còn sân đá/sàn lặp lớn; logic intake→turbine chưa thành biểu tượng công trình từ mặt đất.",
+      "change_required": "Đặt cửa nước, bánh tuabin, dòng chảy, rãnh tràn và cầu kiểm tra có độ cao/độ ướt thật; thay asset F03 bị loại.",
+      "pass_criterion": "Nhìn vào một khung hình hiểu được hướng nước đi và vì sao máy phát hoạt động."
+    },
+    {
+      "id": "po_greywater",
+      "name": "Greywater Hamlet",
+      "priority": "P2",
+      "source_group": "FLAGSHIP",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Mốc đối chiếu về cư dân và tầng ngầm; chưa có screenshot mới nhất trong gói 81.",
+      "change_required": "Giữ cấu trúc nhà ở và liên kết nội khu; chỉnh chi tiết sinh hoạt, đường mòn, vật liệu mòn theo sử dụng.",
+      "pass_criterion": "Người chơi phân biệt được nhà ở, kho và kết nối ngầm mà không cần đọc nhãn."
+    },
+    {
+      "id": "po_pumphouse",
+      "name": "Greywater Pumphouse",
+      "priority": "P0",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        -1,
+        0,
+        1
+      ],
+      "source_rooms": 12,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Cùng hàm f03Water với Falls; đổi vài nhánh/prop chưa đủ để thành trạm bơm riêng.",
+      "change_required": "Lấy các tuyến ống áp lực/bể hút/giàn van làm tâm; bớt hình học giống thủy điện, tăng định hướng hồ.",
+      "pass_criterion": "Đặt hai ảnh Falls/Pumphouse cạnh nhau không thấy cùng footprint máy."
+    },
+    {
+      "id": "po_confluence",
+      "name": "Confluence Waystation",
+      "priority": "P1",
+      "source_group": "WAY",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 5,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source way dùng ngã tư đá dài + hai chòi; điểm ngã ba hợp lưu chưa có dấu thủy văn.",
+      "change_required": "Cho thấy đường sông hợp lưu, điểm nghỉ tránh lũ, cọc báo nước, tuyến bộ men bờ có lý do.",
+      "pass_criterion": "Từ ngã rẽ thấy được sông và quyết định hướng đi."
+    },
+    {
+      "id": "po_sawaion",
+      "name": "Aion Edge Sawmill",
+      "priority": "P0",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 11,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh sawmill sau remake là dải gỗ ngang lặp dài, dây chuyền chưa đọc thành xưởng cưa.",
+      "change_required": "Vẽ xe nạp thân cây, ray dẫn, lưỡi cưa, đường mùn cưa, kho xếp theo chu trình, đổi mái khối lớn.",
+      "pass_criterion": "Từ sân vào xưởng nhìn thấy log→saw→board→stack."
+    },
+    {
+      "id": "po_mill",
+      "name": "Mossbrook Mill",
+      "priority": "P1",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 11,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Cùng template timber, dù ý định có cối nước và xay; chức năng xay khác xưởng cưa chưa nổi.",
+      "change_required": "Lấy bánh nước/cối xay và sàn bột/ngũ cốc làm trung tâm; đường ống/cống và hạt rơi thay ray gỗ.",
+      "pass_criterion": "Không thể nhầm Mossbrook với Aion Edge."
+    },
+    {
+      "id": "po_kilns",
+      "name": "Charcoal Kilns",
+      "priority": "P0",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 9,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh sau remake cho thấy các bệ lò vuông đều, chưa giống lò than với bộ phận dẫn khí.",
+      "change_required": "Bố trí lò vòm/lò gạch có ống khói, cửa nạp, bãi phơi củi, đống than/sườn tro; vật liệu nóng→nguội khác nhau.",
+      "pass_criterion": "Có thể đọc chu trình củi→nung thiếu oxy→lấy than bằng hình ảnh."
+    },
+    {
+      "id": "po_ranger",
+      "name": "Ranger Hut",
+      "priority": "P1",
+      "source_group": "WILD",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Cùng hàm WILD với Research/Mine; căn chòi rừng và tầng nhìn chưa đủ khác.",
+      "change_required": "Chòi kiểm lâm bám cây, bệ quan sát có đường nhìn, dấu tuần tra và đường mòn thú (chỉ art nếu chưa gameplay).",
+      "pass_criterion": "Từ vị trí cao đọc được rìa rừng/đường tuần tra."
+    },
+    {
+      "id": "po_glade",
+      "name": "Mosslight Glade",
+      "priority": "P0",
+      "source_group": "WILD",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 2,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh thật: mảng lát gỗ cực lớn lấp gần toàn màn hình ở một địa điểm được gọi là rừng trống. Đây là lỗi loại vật liệu và tỷ lệ.",
+      "change_required": "Xóa sân gỗ đại trà; tạo vùng cỏ/rêu/phủ lá, bóng tán cây, thảm đá ẩm và cây cổ thụ; đường là nền đất bị giẫm.",
+      "pass_criterion": "Tắt tên HUD vẫn nhận ngay một glade tự nhiên, không phải sân bến."
+    },
+    {
+      "id": "po_sapgrove",
+      "name": "Sap Grove",
+      "priority": "P1",
+      "source_group": "WILD",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source WILD dùng đường mòn gấp khúc giống Glade/Ranger, props thể hiện lấy nhựa chưa đặc thù.",
+      "change_required": "Thể hiện vết chích cây, ống hứng, xô nhựa, đường tập kết theo cây khác nhau, không lát cả đường bằng gỗ.",
+      "pass_criterion": "Biết đây là rừng khai thác nhựa qua cây và dấu nghề nghiệp."
+    },
+    {
+      "id": "po_elderwood",
+      "name": "Heart of the Elderwood",
+      "priority": "P0",
+      "source_group": "WILD",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 2,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source thánh địa chỉ dùng vòng mở + sundial; khó xứng với trung tâm rừng cổ.",
+      "change_required": "Dựng một cây Elderwood khổng lồ tạo kiến trúc tự nhiên: rễ lớn, hốc thân, tán, nhánh bắc qua lối; không dựng pháo đài.",
+      "pass_criterion": "Cây cổ thụ là silhouette chiếm ưu thế, người chơi phải đi quanh rễ để thấy lối khác."
+    },
+    {
+      "id": "po_siloc",
+      "name": "Grain Silo Complex",
+      "priority": "P0",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        0,
+        1,
+        2
+      ],
+      "source_rooms": 9,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Cao độ tới tầng 2 nhưng có ít đạo cụ; mái/sàn đơn giản không chứng minh silo có độ cao.",
+      "change_required": "Thiết kế các trụ silo lớn/đỉnh phễu, máng đổ hạt, thang cứu hộ ngoài thân và ống xả; tầng cao nhìn thấy cơ cấu xả.",
+      "pass_criterion": "Ngay trên mặt đất đã thấy ống silo và dòng vật liệu lên cao."
+    },
+    {
+      "id": "po_meridian",
+      "name": "Meridian Research Station",
+      "priority": "P1",
+      "source_group": "WILD",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Nằm trong template WILD với Ranger, ngôn ngữ nghiên cứu dễ chìm trong rừng.",
+      "change_required": "Thiết bị đo/quan sát gắn GOLD, cabin nghiên cứu, dấu hiệu chọn mẫu, đường tới cache Meridian.",
+      "pass_criterion": "Địa điểm nghiên cứu khoa học khác chòi kiểm lâm."
+    },
+    {
+      "id": "po_oldpump",
+      "name": "Old Pumping Plant",
+      "priority": "P1",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        -1,
+        0,
+        1
+      ],
+      "source_rooms": 12,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Bố cục cùng f03Water; trạng thái bỏ hoang chỉ có ít props ống gỉ/rubble.",
+      "change_required": "Dựng lịch sử xuống cấp: ống nứt, máy dừng, sàn mất, dấu nước cao cũ; khác tuyệt đối nhà máy đang chạy.",
+      "pass_criterion": "Không cần đọc tên vẫn nhận ra nhà máy bỏ hoang."
+    },
+    {
+      "id": "po_strait",
+      "name": "Strait Landing",
+      "priority": "P1",
+      "source_group": "C03",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "C03 v2 có nhiều lớp và cầu hàng nhưng silhouette mảng mái/giàn còn công nghiệp chung.",
+      "change_required": "Tối ưu tuyến hành khách đối lập tuyến hàng; cầu tàu có kết cấu đỡ, kéo nâng, khung hàng; làm nhẹ nhịp sàn trên cao.",
+      "pass_criterion": "Người chơi tự chọn hai hướng tiếp cận bến rồi hiểu nơi chúng giao nhau."
+    },
+    {
+      "id": "po_ironvein",
+      "name": "Ironvein Mine",
+      "priority": "P0",
+      "source_group": "WILD",
+      "family_is_canonical": false,
+      "levels": [
+        -1,
+        0
+      ],
+      "source_rooms": 5,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Mine được nhét vào hàm WILD (chòi rừng + đường mòn + hầm ngắn), tức sai grammar ngay từ source.",
+      "change_required": "Tách thành nhánh địa chất với portal khoét vách, chống lò, tuyến quặng, điểm an toàn và cache foreman.",
+      "pass_criterion": "Nhìn thấy mỏ, không phải trại kiểm lâm với cửa hầm."
+    },
+    {
+      "id": "po_ridgestop",
+      "name": "Ridge Pass Station",
+      "priority": "P1",
+      "source_group": "WAY",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 6,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Template WAY dễ xóa đặc tính gió/núi vì dùng sân đá như trạm nghỉ đồng bằng.",
+      "change_required": "Đặt đường vào theo yên ngựa/nếp đèo, đá chắn gió, nhà nửa chìm và vọng gác nhìn dốc.",
+      "pass_criterion": "Nhìn ảnh nhận ra đang ở một đèo cao."
+    },
+    {
+      "id": "po_rapids",
+      "name": "Rapids Portage Hut",
+      "priority": "P1",
+      "source_group": "WAY",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 5,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Template WAY với nhà chờ tạo cảng khô nhưng chưa làm rõ vì sao phải kéo thuyền qua thác.",
+      "change_required": "Đường portage vòng chướng ngại nước, bãi kéo thuyền, con lăn gỗ, dấu bào mòn sát nước.",
+      "pass_criterion": "Đọc được tuyến tránh ghềnh mà không có boat gameplay."
+    },
+    {
+      "id": "po_hook",
+      "name": "Hook Village",
+      "priority": "P2",
+      "source_group": "H01",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "H01 đã có cụm nhà và tầng ngầm; nguy cơ Hook Mere/Hook Evac trông rời rạc.",
+      "change_required": "Thống nhất nếp xây nhà, bờ hồ, vật liệu gỗ, đường dân cư với POI lân cận.",
+      "pass_criterion": "Từ làng đi sang bến và điểm sơ tán thấy chuyển tiếp vật liệu/nhân sinh hợp lý."
+    },
+    {
+      "id": "po_mere",
+      "name": "Hook Mere Pier",
+      "priority": "P1",
+      "source_group": "C03",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Bến hồ có vòng gác–giàn gỗ; nếu quá nhiều tháp/giàn sẽ làm mất chất dân sinh.",
+      "change_required": "Giữ tỷ lệ nhỏ, vật liệu địa phương, mạng lưới lau sậy; bảo toàn cảm giác nước ngọt và nghề cá.",
+      "pass_criterion": "Bến hồ thân mật, dễ ghi nhớ mà không trông như cảng thu nhỏ."
+    },
+    {
+      "id": "po_timberyard",
+      "name": "Verdant Timberyard",
+      "priority": "P1",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 11,
+      "evidence": "SCREENSHOT",
+      "problem": "Kho gỗ không cần tầng phụ hoặc nhà máy giả; bản hiện vẫn cùng nhịp sàn ván của xưởng cưa.",
+      "change_required": "Xây trục đo/xếp gỗ ngoài trời, bó gỗ các độ dài, bãi xe, dải trống phục vụ xe kéo; tránh mái liên tục.",
+      "pass_criterion": "Nhìn từ trên cao rõ thứ tự đo, phơi và phân loại gỗ."
+    },
+    {
+      "id": "po_ember",
+      "name": "Emberport",
+      "priority": "P1",
+      "source_group": "C02",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SCREENSHOT",
+      "problem": "Emberport dễ trùng Slagworks và Sulfur Works ở màu nóng/sàn thép.",
+      "change_required": "Thể hiện đường tro xỉ và bến nước tách khỏi quá trình luyện; tạo vật liệu bị nhiệt ăn mòn, lối vận chuyển an toàn.",
+      "pass_criterion": "Nhìn thấy cảng hậu cần nhiệt, không phải một xưởng lò được đặt cạnh nước."
+    },
+    {
+      "id": "po_slag",
+      "name": "Slagworks Foundry",
+      "priority": "P0",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 11,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Bản lò/cầu công tác có nguy cơ giống Emberport, thiếu khối nhiệt nặng và cao độ sản xuất.",
+      "change_required": "Đặt lò cao, đường cấp liệu, kênh xỉ, bãi làm nguội, vật liệu rỉ/khói như một hệ thống thống nhất.",
+      "pass_criterion": "Nhìn là lò luyện, không phải khu nhà kho/cảng."
+    },
+    {
+      "id": "po_southfoot",
+      "name": "Southfoot Landing",
+      "priority": "P1",
+      "source_group": "C03",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Trú bão và đê chắn sóng cần ngoại lực thời tiết; ảnh trước thiên về mái/sân khối cứng.",
+      "change_required": "Phân cao độ bờ thật, cọc chắn gió, muối ăn mòn và đường ngắm biển; không dùng cầu giống cảng sông.",
+      "pass_criterion": "Cảm nhận rõ lối trú gió→bờ phơi lộ và đường quay về."
+    },
+    {
+      "id": "po_gulfhead",
+      "name": "Gulfhead",
+      "priority": "P1",
+      "source_group": "C01",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh cho thấy mảng mái/chợ gỗ lớn và đường phố dạng dải; chức năng đô thị có nhưng hình khối chưa đủ nhịp.",
+      "change_required": "Phân phố thành bậc mặt đứng, hẻm, khối nhà nhiều kích cỡ; cho thấy ranh giới công cộng/hoạt động cảng.",
+      "pass_criterion": "Từ cửa phố tới bến có ba cảnh quan liên tiếp khác nhau và điểm định hướng thị giác."
+    },
+    {
+      "id": "po_filter",
+      "name": "Delta Sluice & Filter Station",
+      "priority": "P0",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        -1,
+        0,
+        1
+      ],
+      "source_rooms": 9,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh F03 remake: mảng sàn đá hình chữ thập xen nước/đất, thiếu đường đi của nước và phân ô chức năng.",
+      "change_required": "Xây bể lắng có lòng nước thật, cấp nước bẩn→lọc→đầu ra sạch, cầu bảo trì mảnh, van và đo mẫu; tránh sàn lát kín.",
+      "pass_criterion": "Người chơi nhận ra trạm lọc không cần tên, quan sát được chu trình nước."
+    },
+    {
+      "id": "po_westbank",
+      "name": "Westbank Landing",
+      "priority": "P1",
+      "source_group": "C04",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SCREENSHOT",
+      "problem": "Bến dân cư đang có bơm triều/hầm/giàn; nguy cơ mang nguyên vết công nghiệp của C03.",
+      "change_required": "Định hình bờ dân cư, bậc kè và nhà nhỏ không đồng kích cỡ, khu công khai sát khu vận tải.",
+      "pass_criterion": "Có thể nhìn một góc và phân biệt tuyến người đi với tuyến hàng."
+    },
+    {
+      "id": "po_westmouth",
+      "name": "Westmouth",
+      "priority": "P1",
+      "source_group": "C01",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh street còn trống; đường sông–phố chưa có mật độ và dấu ấn cửa sông rõ.",
+      "change_required": "Nén khối nhà, chợ ven lạch, cầu thuế và hẻm; thể hiện vị trí hai dòng nước gặp nhau.",
+      "pass_criterion": "Bến cửa sông không thể nhầm với Gulfhead hay Saltwick."
+    },
+    {
+      "id": "po_greyquarry",
+      "name": "Greyback Quarry",
+      "priority": "P1",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        -1,
+        0,
+        1
+      ],
+      "source_rooms": 12,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "R2 dùng cùng f03Quarry với Fracture; riêng nhánh gravel screening còn ít.",
+      "change_required": "Địa hình đá sáng/xám, sàng sỏi nhiều nhịp, bãi vụn theo cỡ hạt và đường xe vận chuyển.",
+      "pass_criterion": "Đặt cạnh Fracture, khác ở màu địa tầng và cách khai thác."
+    },
+    {
+      "id": "po_westwood",
+      "name": "Westwood Hamlet",
+      "priority": "P1",
+      "source_group": "WAY",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 8,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Dùng khung ngã tư WAY nên làng nhỏ dễ như trạm giao thông.",
+      "change_required": "Tổ chức nhà ở quanh con đường rừng tự nhiên, vườn nhỏ, mái gỗ nhiều tuổi, lối mòn dẫn tới rìa rừng.",
+      "pass_criterion": "Thấy đời sống dân cư khác hẳn điểm nghỉ chân."
+    },
+    {
+      "id": "po_fishcamp",
+      "name": "Fish Camp",
+      "priority": "P1",
+      "source_group": "WILD",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Dùng WILD; ven nước và hoạt động cá chưa đủ hiện hình ở trung tâm.",
+      "change_required": "Làm bãi cát/đất sát nguồn nước, lưới phơi, dấu xử lý cá, lán nhỏ đúng tỷ lệ.",
+      "pass_criterion": "Không nhầm với chòi kiểm lâm."
+    },
+    {
+      "id": "po_necropolis",
+      "name": "Necropolis of the Hollow Sun",
+      "priority": "P0",
+      "source_group": "CRYPT",
+      "family_is_canonical": false,
+      "levels": [
+        -1,
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh thật: sân đất chữ T rộng, thiếu silhouette mộ, tượng, cột nghi lễ; source chỉ 4 khu.",
+      "change_required": "Thiết kế nghĩa địa cổ theo trục hành lễ, các cụm tháp mộ/vòm khác thời kỳ, lối xuống ossuary, vật liệu đá phong hóa.",
+      "pass_criterion": "Không hiện tên vẫn nhận ra đại necropolis và có thứ tự tiến sâu."
+    },
+    {
+      "id": "po_tombs",
+      "name": "Dune Tombs",
+      "priority": "P0",
+      "source_group": "CRYPT",
+      "family_is_canonical": false,
+      "levels": [
+        -1,
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source dùng đúng crypt() như Necropolis; hầm hai phòng không có cá tính sa mạc.",
+      "change_required": "Làm lối vào chìm dưới cồn cát, hành lang bóp mở, dấu bị cát lấp và phòng mộ nhỏ rẽ nhánh.",
+      "pass_criterion": "Người chơi thấy áp lực cát và tính bí mật ngay trên lối xuống."
+    },
+    {
+      "id": "po_cairns",
+      "name": "Sunken Cairns",
+      "priority": "P1",
+      "source_group": "CRYPT",
+      "family_is_canonical": false,
+      "levels": [
+        -1,
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Cùng template crypt, trong khi cấu trúc cairn cần vòng đá nhỏ thay vì nhà ngưỡng cửa lớn.",
+      "change_required": "Dựng vòng đá rời, gò sụt, ụ mộ cao thấp; chỉ một hốc ngầm nếu có, không thêm hầm hàng loạt.",
+      "pass_criterion": "Cảm giác mộ tiền sử khác lăng mộ xây đá."
+    },
+    {
+      "id": "po_oasis",
+      "name": "Mirage Camp",
+      "priority": "P2",
+      "source_group": "H01",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Điểm cư trú khô hạn cần tương phản rõ với Cinder và các hạ tầng công nghiệp.",
+      "change_required": "Giữ công năng nước, bóng râm, chống cát; ưu tiên chất liệu vải/đá khô và không gian trú.",
+      "pass_criterion": "Nhìn ra nơi ở dựa vào nguồn nước, không giống trại hàng thông thường."
+    },
+    {
+      "id": "po_bonestop",
+      "name": "Bone Road Waystation",
+      "priority": "P1",
+      "source_group": "WAY",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 5,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source WAY gần như mẫu chung, chỉ thay bone props.",
+      "change_required": "Tạo hình xương hóa thạch ven đường và mái trú bé; trọng tâm là cảnh quan xương + tuyến đường nguy hiểm.",
+      "pass_criterion": "Ngã nghỉ đáng nhớ nhờ địa hình xương, không nhờ chữ Bone."
+    },
+    {
+      "id": "po_sandgate",
+      "name": "Sandgate",
+      "priority": "P1",
+      "source_group": "C02",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SCREENSHOT",
+      "problem": "Cảng cửa sông dễ trùng Westmouth nếu chỉ đổi công cụ hàng hóa.",
+      "change_required": "Tạo hệ cống, cửa điều tiết, kho khô, đường cát/lũ và điểm kiểm soát luồng.",
+      "pass_criterion": "Sandgate nhận diện bằng cơ chế thủy văn và luồng hàng, không chỉ bằng biển tên."
+    },
+    {
+      "id": "po_gate",
+      "name": "Threshold Gate",
+      "priority": "P0",
+      "source_group": "WAY",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 6,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Khung WAY với tháp gác 1 tầng chưa đủ thể hiện một cổng ranh giới.",
+      "change_required": "Làm mốc ranh giới lớn có hai hướng tiếp cận, cột/trụ đối xứng hoặc đổ nát, dấu lối bị khóa/đã mở rõ.",
+      "pass_criterion": "Qua cổng là chuyển cảnh quan và cảm giác địa lý thật, không chỉ chòi cạnh ngã tư."
+    },
+    {
+      "id": "po_dpier",
+      "name": "Drowned Pier",
+      "priority": "P1",
+      "source_group": "C04",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SCREENSHOT",
+      "problem": "Mấu chốt là nhịp cầu mất; nếu khoảng trống chỉ như hố game thì cảnh đổ vỡ không thuyết phục.",
+      "change_required": "Thể hiện thanh giằng gãy, sàn lệch, trụ sót, dấu sóng/mòn; buộc đường vòng nhận diện được từ mặt đất.",
+      "pass_criterion": "Đứt nhịp có nguyên nhân vật lý và người chơi hiểu đường thay thế."
+    },
+    {
+      "id": "po_beacon",
+      "name": "Beacon Rock Light",
+      "priority": "P0",
+      "source_group": "SIGNAL",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1,
+        2
+      ],
+      "source_rooms": 7,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source signal dùng template tower chung, trong khi có reservation helicopter MGP-D07 phải giữ trống.",
+      "change_required": "Đài hải đăng bám vách đá thật, cầu thang dọc vách, đèn xoay, sân hạ cánh/neo được chừa rõ; tránh chồng zone.",
+      "pass_criterion": "Không xâm phạm ô [541..546,1301..1306], thấy beacon và bãi reserved có quan hệ hợp lý."
+    },
+    {
+      "id": "po_wreck",
+      "name": "Wreck Isle Salvage",
+      "priority": "P0",
+      "source_group": "RUPTURE",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source rupture + boat_hull prop; bản sắc tàu mắc cạn chưa thành hình khối chính.",
+      "change_required": "Vẽ cấu trúc thân tàu theo trục, gãy boong, sườn tàu, lối lách qua khoang và bãi cứu hộ theo sóng.",
+      "pass_criterion": "Người chơi đang khám phá con tàu bị đắm, không chỉ hai chòi cạnh cái thuyền."
+    },
+    {
+      "id": "po_tidecamp",
+      "name": "Tidepool Fishing Camp",
+      "priority": "P1",
+      "source_group": "COAST",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Cùng template COAST với Saltpans/Kelp, lối ra nước thường thành sân gỗ đều.",
+      "change_required": "Thiết kế mực triều, vũng triều và giá cá thấp; lều chỉ chiếm một phần nhỏ.",
+      "pass_criterion": "Bản đồ thể hiện bờ thay đổi khi nước rút, không phải bãi gỗ cố định."
+    },
+    {
+      "id": "po_gullnest",
+      "name": "Seabird Nesting Cliffs",
+      "priority": "P0",
+      "source_group": "COAST",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Đường biển và loft trong code không diễn đạt vách đá/nơi chim làm tổ, rủi ro chòi cao đơn giản.",
+      "change_required": "Vách đá dựng tầng, gờ chim, tổ, đường đi nghiên cứu nằm men mép với bóng cao độ.",
+      "pass_criterion": "Hình khối vách đá chứ không nhà gỗ mới là yếu tố chính."
+    },
+    {
+      "id": "po_gullpier",
+      "name": "Tern Hut Pier",
+      "priority": "P1",
+      "source_group": "C04",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SCREENSHOT",
+      "problem": "Bến Tern nhỏ có tuyến cao; rủi ro quá công trình hóa nơi chim biển.",
+      "change_required": "Giảm mật độ cầu thép, bổ sung địa hình tổ chim/đường chân vách; chòi quan sát thấp và vải gió.",
+      "pass_criterion": "Cảm giác bến nghiên cứu chim biển, không là tháp cảnh giới khác."
+    },
+    {
+      "id": "po_netcamp",
+      "name": "Gull Net Camp",
+      "priority": "P1",
+      "source_group": "COAST",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source COAST lặp Tidecamp và Kelp, loft không được xây trong bản kế hoạch REST48.",
+      "change_required": "Giàn phơi lưới tạo nhịp xuyên sáng, kho dụng cụ thấp, đường lên gió và đường vận chuyển cá.",
+      "pass_criterion": "Nhận ra Gull Net Camp nhờ lưới và gió biển."
+    },
+    {
+      "id": "po_cindercamp",
+      "name": "Cinder Camp",
+      "priority": "P1",
+      "source_group": "H01",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Đã có đa tầng; khó phân biệt với các POI công nghiệp tro/lò nếu dùng cùng mái và sân.",
+      "change_required": "Giữ dấu vết sinh tồn ở đất nóng: cách nhiệt, che bụi, đường thoát; đối chiếu với Ember Watch và Sulfur Works.",
+      "pass_criterion": "Trại sinh tồn chứ không biến thành nhà máy thứ hai."
+    },
+    {
+      "id": "po_obsq",
+      "name": "Obsidian Quarry",
+      "priority": "P0",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        -1,
+        0,
+        1
+      ],
+      "source_rooms": 12,
+      "evidence": "SCREENSHOT",
+      "problem": "Mỏ obsidian cần tạo cảm giác vật liệu núi lửa; hiện chung footprint stone quarry.",
+      "change_required": "Tạo mặt cắt đá kính đen, vệt nứt sắc, đống mảnh có cạnh hướng thống nhất; làm rõ tương phản an toàn/nguy hiểm bằng hình.",
+      "pass_criterion": "Obsidian khác hai quarry ngay ở silhouette và hệ màu, không chỉ tô đen tile."
+    },
+    {
+      "id": "po_sulfur",
+      "name": "Sulfur Works",
+      "priority": "P0",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 10,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Khu lưu huỳnh dùng phần khung f03Process; nguy cơ chỉ đổi màu vàng.",
+      "change_required": "Thể hiện retort kín, ống ngưng tụ, bồn thu và lớp cặn kết tinh; đọc rõ vùng kín/thoáng qua vật liệu.",
+      "pass_criterion": "Phân biệt nhà máy hóa chất với lò than và slagworks."
+    },
+    {
+      "id": "po_geo",
+      "name": "Geothermal Station",
+      "priority": "P0",
+      "source_group": "F03",
+      "family_is_canonical": true,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 8,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Geothermal dùng khối công nghiệp chung, chưa thấy áp lực hơi và địa nhiệt bám địa hình.",
+      "change_required": "Thiết kế giếng địa nhiệt, đường ống bọc nhiệt, manifold hơi, dàn ngưng tụ, vent có dấu địa hình nóng; bớt hành lang vô cớ.",
+      "pass_criterion": "Cảm nhận được trạm khai thác hơi dưới đất, không phải nhà máy nhiệt bất kỳ."
+    },
+    {
+      "id": "po_emberwatch",
+      "name": "Ember Watch",
+      "priority": "P1",
+      "source_group": "SIGNAL",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1,
+        2
+      ],
+      "source_rooms": 7,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Cùng signal template với radio và hải đăng, chưa khác bằng phương thức quan sát cháy.",
+      "change_required": "Tháp kiểm soát cháy rừng với tầm nhìn theo rặng cây, bồn nước/phòng dụng cụ, dáng tháp gỗ/đá chịu nhiệt.",
+      "pass_criterion": "Biết đây là watch cháy/rừng chứ không phải trạm anten."
+    },
+    {
+      "id": "po_surtur",
+      "name": "Foundry of the First Fire",
+      "priority": "P0",
+      "source_group": "CRYPT",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Foundry of First Fire đang nằm trong CRYPT: source chỉ thay than và rim, không có cổ lò/không gian lửa độc nhất.",
+      "change_required": "Thiết kế di tích lò thần thoại: bệ đúc cổ, ống dẫn khí/tường xỉ hóa thạch, tượng đổ, trục nghi thức; tránh bản sao Charcoal Kilns.",
+      "pass_criterion": "Nhìn phải thấy một di tích lò cổ siêu quy mô, không phải xưởng nung hiện đại."
+    },
+    {
+      "id": "po_saltharbor",
+      "name": "Saltwick Harbor",
+      "priority": "P1",
+      "source_group": "C01",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh bến và chợ có vật liệu đồng màu; chưa kể được chu trình muối từ nước mặn tới hàng hóa.",
+      "change_required": "Tạo chuỗi cống triều→bể cô đặc→sân phơi→kho→thị trường, phối vật liệu muối khô/ẩm.",
+      "pass_criterion": "Đi dọc tuyến công năng hiểu được vì sao Saltwick tồn tại."
+    },
+    {
+      "id": "po_saltpans",
+      "name": "Salt Pans",
+      "priority": "P0",
+      "source_group": "COAST",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh thật: mặt sân gỗ/cát lớn ngay sát nước, chưa thấy nhiều ô bốc hơi với ranh nước–muối rõ.",
+      "change_required": "Dựng dãy bể cạn hình học đúng hoạt động: nước thô→nước mặn đặc→kết tinh trắng→kho khô; mặt nước cạn, phản sáng và bờ đất.",
+      "pass_criterion": "Một ảnh phải nhận ra ruộng muối, không cần nhãn Salt Pans."
+    },
+    {
+      "id": "po_saltlight",
+      "name": "Saltwick Light",
+      "priority": "P1",
+      "source_group": "SIGNAL",
+      "family_is_canonical": false,
+      "levels": [
+        0,
+        1
+      ],
+      "source_rooms": 6,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source signal rút bớt tầng nhưng vẫn dùng mẫu trạm phát.",
+      "change_required": "Dựng hải đăng dẫn luồng nhỏ, móng bờ cát, tầng bảo trì và lối nhìn biển; gắn Saltwick Harbor.",
+      "pass_criterion": "Ngọn đèn là mốc dẫn luồng, không là kiosk dân cư."
+    },
+    {
+      "id": "po_racks",
+      "name": "Kelp Racks",
+      "priority": "P1",
+      "source_group": "COAST",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Source COAST dùng dry-beds gần giống Salt Pans, chỉ thay net_rack.",
+      "change_required": "Giàn phơi tảo/kelp dài nằm trên trụ, bãi ẩm mặn, khoảng cách đi giữa dãy; không lát đất thành sân đóng ván.",
+      "pass_criterion": "Không nhầm với ruộng muối hoặc giàn lưới cá."
+    },
+    {
+      "id": "po_gullwreck",
+      "name": "Gull Isle Wreck",
+      "priority": "P1",
+      "source_group": "RUPTURE",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Cùng template với Wreck Isle, chỉ có vị trí prop khác.",
+      "change_required": "Dáng tàu/độ hỏng khác Wreck Isle, va đập sóng lộ đá, xác tàu tản mảnh theo bờ.",
+      "pass_criterion": "Hai vụ đắm không thể hoán đổi ảnh mà không ai nhận ra."
+    },
+    {
+      "id": "po_ironharbor",
+      "name": "Ironholm Harbor",
+      "priority": "P1",
+      "source_group": "C02",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SCREENSHOT",
+      "problem": "Cảng quặng cần mật độ kết cấu công nghiệp; bộ cầu sàn dễ thành bản sao C03.",
+      "change_required": "Ưu tiên silhouette cầu trục lớn, kết cấu chịu tải, băng chuyển hàng và bụi quặng; nhất quán với Ironholm Mine/Depot.",
+      "pass_criterion": "Cảng quặng nhìn từ 1 màn hình đã khác cảng thương mại."
+    },
+    {
+      "id": "po_ironmine",
+      "name": "Ironholm Mine",
+      "priority": "P1",
+      "source_group": "FLAGSHIP",
+      "family_is_canonical": true,
+      "levels": null,
+      "source_rooms": null,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Mốc chuẩn công nghiệp–địa chất; nhiều mỏ F03/REST48 có nguy cơ trùng ký hiệu công nghiệp nhưng yếu hơn địa hình.",
+      "change_required": "Tái dùng quy tắc đá cắt, chống đỡ, bụi, ánh sáng và độ nguy hiểm có căn cứ; không sao chép nguyên bố cục mine.",
+      "pass_criterion": "Nhìn đường địa chất và công trình mỏ liên hệ thật, không thành kho hàng."
+    },
+    {
+      "id": "po_ironwh",
+      "name": "Ironholm Depot",
+      "priority": "P1",
+      "source_group": "UTILITY",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Depot nằm trong UTILITY generic kho hồ sơ, không tương thích tuyến quặng Ironholm.",
+      "change_required": "Dựng phụ kho phân loại theo kích cỡ bao/quặng, ô cân hàng và hướng xe tới cảng/mỏ.",
+      "pass_criterion": "Depot là mắt xích giữa Mine và Harbor, không phòng giấy tách biệt."
+    },
+    {
+      "id": "po_rc_meridian",
+      "name": "Meridian Archive Cache",
+      "priority": "P2",
+      "source_group": "UTILITY",
+      "family_is_canonical": false,
+      "levels": [
+        -1,
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Cache nhỏ dùng utility generic; không cần thêm tầng phụ nếu chỉ để tăng độ sâu.",
+      "change_required": "Gắn hốc hồ sơ/giá lưu thực sự vào khu Meridian, dấu niêm phong/môi trường phù hợp.",
+      "pass_criterion": "Nhìn ra phần bí mật tự nhiên của trạm nghiên cứu; không hứa hẹn loot chưa có."
+    },
+    {
+      "id": "po_rc_ironvein",
+      "name": "Foreman's Strongbox",
+      "priority": "P2",
+      "source_group": "UTILITY",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Strongbox hiện là annex nhỏ copy utility; thiếu mối quan hệ với Foreman của Ironvein.",
+      "change_required": "Gắn vào lối mỏ/điểm kiểm kho, giữ nhỏ, rõ thẩm quyền chủ quản.",
+      "pass_criterion": "Có lý do đặt két tại đó, không phải một căn nhà chứa két rải bản đồ."
+    },
+    {
+      "id": "po_rc_kestrel",
+      "name": "Kestrel Tower Safe",
+      "priority": "P2",
+      "source_group": "UTILITY",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Safe sử dụng cùng mẫu utility, trong khi trạm sóng có ngôn ngữ máy và ống dây riêng.",
+      "change_required": "Nhỏ gọn trong trạm relay, vỏ máy/ắc quy và cửa bảo trì, không thành tòa nhà thứ hai.",
+      "pass_criterion": "Không nhầm cache với merchant stall hoặc phòng ngủ."
+    },
+    {
+      "id": "po_rc_dam",
+      "name": "Falls Dam Vault",
+      "priority": "P1",
+      "source_group": "UTILITY",
+      "family_is_canonical": false,
+      "levels": [
+        -1,
+        0
+      ],
+      "source_rooms": 4,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh thật: một nhà hộp lớn trên nền trắng bên sân đất; concept dry dam vault chưa nối vật lý với đập.",
+      "change_required": "Hộp khóa nằm chìm vào kết cấu đập, đường ống/van hoặc hộp cơ khí, lối bảo trì men bờ.",
+      "pass_criterion": "Người chơi thấy đây là một ngách của đập, không một kho nằm cạnh."
+    },
+    {
+      "id": "po_rc_sandgate",
+      "name": "Sandgate Customs Strongbox",
+      "priority": "P2",
+      "source_group": "UTILITY",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Strongbox customs không có gameplay, rủi ro tạo dấu chức năng thương mại giả.",
+      "change_required": "Tích hợp vào quầy giấy tờ Sandgate, cửa niêm phong và ký hiệu hành chính, giữ lối đi.",
+      "pass_criterion": "Không hứa sẽ mở khóa/trade nếu hệ Gameplay chưa kết nối."
+    },
+    {
+      "id": "po_rc_salt",
+      "name": "Saltwick Harbor Safe",
+      "priority": "P2",
+      "source_group": "UTILITY",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Kho safe tại Saltwick dễ trùng toàn bộ utility generic.",
+      "change_required": "Mài mòn muối, sổ sách, vật liệu cửa chống ẩm và vị trí liền cảng; không tạo kho vô cớ.",
+      "pass_criterion": "Nhìn biết đây là cache của cảng muối."
+    },
+    {
+      "id": "po_vend_gulf",
+      "name": "Gulfhead Trading House [ĐỀ XUẤT]",
+      "priority": "P2",
+      "source_group": "SERVICE",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "ID đề xuất, source chỉ tạo shell và marker, chưa có trade.",
+      "change_required": "Giữ quầy như dịch vụ môi trường, tránh HUD bán hàng giả; thống nhất kiến trúc khu thương mại Gulfhead.",
+      "pass_criterion": "Không gây hiểu lầm rằng có thể giao dịch khi chưa được tích hợp."
+    },
+    {
+      "id": "po_vend_strait",
+      "name": "Strait Landing Counter [ĐỀ XUẤT]",
+      "priority": "P2",
+      "source_group": "SERVICE",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "ID đề xuất; quầy cạnh Strait có nguy cơ là một tòa nhà con bê tông lặp mẫu.",
+      "change_required": "Chuyển thành quầy dân dã sát đường, mái che thấp, luồng người khỏi xung đột với hàng hóa.",
+      "pass_criterion": "Đọc là quầy chờ/tín hiệu, không làm người chơi tưởng có shop."
+    },
+    {
+      "id": "po_evac_west",
+      "name": "Westmouth Evac Pier",
+      "priority": "P2",
+      "source_group": "SERVICE",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Evac chỉ có vỏ; không được vẽ tàu cứu hộ như tính năng hoạt động.",
+      "change_required": "Biển tập kết, hướng thoát tới mép nước, chỗ xếp hàng có mái, nằm trong logic Westmouth.",
+      "pass_criterion": "Người chơi hiểu nơi tập kết nhưng không bị hứa transport giả."
+    },
+    {
+      "id": "po_evac_south",
+      "name": "Southfoot Evac Beach",
+      "priority": "P2",
+      "source_group": "SERVICE",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SOURCE/BASELINE",
+      "problem": "Evac biển không nên dựng nhà đón khách giống trong thành phố.",
+      "change_required": "Vệt bãi cát an toàn, cọc tín hiệu, bậc xuống bờ rõ ràng, mái tránh gió thấp.",
+      "pass_criterion": "Không chặn đường bờ, không có boat spawning giả."
+    },
+    {
+      "id": "po_evac_hook",
+      "name": "Hook Evac Point",
+      "priority": "P2",
+      "source_group": "SERVICE",
+      "family_is_canonical": false,
+      "levels": [
+        0
+      ],
+      "source_rooms": 3,
+      "evidence": "SCREENSHOT",
+      "problem": "Ảnh thật: nhà hộp và sân đường nâu, thiếu cảm giác sân tập kết của cư dân Hook.",
+      "change_required": "Gắn với đường làng, dấu vết chờ/đồ cấp cứu, bảng chỉ hướng, giữ diện tích nhỏ.",
+      "pass_criterion": "Một điểm sơ tán dân cư, không thành chòi canh vô danh."
+    }
+  ]
+}

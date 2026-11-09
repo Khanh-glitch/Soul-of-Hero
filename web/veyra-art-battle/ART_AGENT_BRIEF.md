@@ -1,0 +1,3 @@
+# Arena AI Battle — simple art assignment
+
+Study the real Soul of Hero pixel-art style and the branch's 81-POI architecture and asset audit. Restore the original C03 Breakthrough source before claiming the whole game works. Redesign poor procedural sprites, terrain/decks, roofs and environment compositions to match approved SOH art, especially F03. Protect all 81 canonical POI IDs, exploration routes, floors, doors, collision and GOLD geography. Work only on this isolated branch, build a playable browser game, inspect in Chromium at 1×, show authentic before/after screenshots, test representative places and hand back commit plus runnable ZIP. Do not merge to production or claim final visual acceptance without creator review.

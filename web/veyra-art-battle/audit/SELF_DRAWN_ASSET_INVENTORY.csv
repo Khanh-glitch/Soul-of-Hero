@@ -1,0 +1,107 @@
+<PARSED TEXT FOR SHEET: 1 / 1 TABS
+TAB NAME: VEYRA_SELF_DRAWN_ASSET_INVENTORY.csv>
+index,batch,key,description,width,height,status,source,verification,plan_placement
+0,C03,rope_coil,Cuộn dây thừng,19,13,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+1,C03,cargo_hoist,Palăng / khung nâng hàng,28,35,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+2,C03,cargo_crane,Cần cẩu hàng,34,35,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+3,C03,tide_marker,Cọc thước đo thủy triều,14,26,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+4,C03,signal_flag,Cờ tín hiệu,13,28,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+5,C03,ticket_board,Bảng thông tin / vé,17,18,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+6,C03,gear_rack,Giá treo dụng cụ,22,20,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+7,C03,wicker_trap,Bẫy/giỏ đan,18,13,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+8,C03,fish_drying_rack,Giàn phơi cá,26,21,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+9,C03,oar_stack,Bó mái chèo,22,17,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+10,C03,boat_ribs,Sườn thuyền dang dở,28,19,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+11,C03,reed_bundle,Bó lau sậy,15,23,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+12,C03,windbreak,Tấm chắn gió,22,16,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+13,C03,quay_sign,Bảng hướng dẫn bến,27,29,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+14,C03,bridge_post,Trụ gỗ đỡ cầu,17,30,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+15,C03,load_pulley,Ròng rọc nâng hàng,35,46,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+16,C03,lift_chain,Xích nâng hàng,18,35,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+17,C03,wind_vane,Cánh gió báo hướng,27,37,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+18,C03,pier_lantern,Đèn bến,23,34,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+19,C03,reed_screen,Vách chắn lau sậy,35,28,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+20,C03,net_canopy,Giàn mái lưới,46,30,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+21,C03,storm_shutter,Cửa/tấm chắn bão,28,25,Cần kiểm bằng mắt,Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có,"Lịch sử code C03, chưa kiểm lại byte ZIP",Chưa kiểm được trực tiếp
+22,C04,c04_quay_sign,Biển chỉ dẫn cầu tàu,26,29,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+23,C04,c04_rope_pulley,Palăng dây,35,43,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+24,C04,c04_bollard,Trụ neo tàu,17,26,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+25,C04,c04_lamp,Đèn bến,22,37,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+26,C04,c04_signal,Cờ/cột tín hiệu,30,39,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+27,C04,c04_tide_gate,Cửa cống thủy triều,26,28,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+28,C04,c04_torn_notice,Bảng thông báo rách,23,27,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+29,C04,c04_splinter_pile,Đống gỗ gãy,35,20,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+30,C04,c04_broken_post,Cọc cầu gãy,24,33,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+31,C04,c04_warning,Biển cảnh báo,23,29,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+32,C04,c04_crow,Chim quạ,27,16,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+33,C04,c04_algae_sluice,Rãnh cống rong rêu,24,18,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+34,C04,c04_tern,Chim nhàn biển,25,18,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+35,C04,c04_feather_basket,Giỏ lông vũ,21,17,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+36,C04,c04_reed_screen,Vách lau sậy,35,28,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+37,C04,fish_drying_rack,Giàn phơi cá (vẽ lại trùng tên C03),29,24,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+38,C04,rope_coil,Cuộn dây (vẽ lại trùng tên C03),18,14,Cần duyệt mỹ thuật,VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+39,C01,c01_city_banner,Cờ hiệu thành phố,25,55,Cần duyệt mỹ thuật,VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+40,C01,c01_arched_gate,Cổng vòm,57,49,Cần duyệt mỹ thuật,VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+41,C01,c01_canopy_market,Quầy chợ mái bạt,64,38,Cần duyệt mỹ thuật,VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+42,C01,c01_cargo_hook,Cần móc/nâng hàng,41,58,Cần duyệt mỹ thuật,VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+43,C01,c01_quay_lamp,Đèn bến đô thị,26,42,Cần duyệt mỹ thuật,VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+44,C01,c01_mooring,Trụ buộc tàu,23,30,Cần duyệt mỹ thuật,VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+45,C01,c01_rope_cart,Xe chở dây thừng,44,29,Cần duyệt mỹ thuật,VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+46,C01,c01_white_salt_pan,Bồn/sân muối trắng,50,31,Cần duyệt mỹ thuật,VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+47,C01,c01_brine_pipe,Ống dẫn nước muối,37,39,Cần duyệt mỹ thuật,VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+48,C01,c01_roof_dormer,Cửa sổ nhô trên mái,52,34,Cần duyệt mỹ thuật,VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+49,C02,c02_ore_tipple,Tháp đổ quặng,70,67,Cần duyệt mỹ thuật,VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+50,C02,c02_rail_wagon,Toa xe quặng,58,37,Cần duyệt mỹ thuật,VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+51,C02,c02_chain_gantry,Giàn cẩu xích,78,79,Cần duyệt mỹ thuật,VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+52,C02,c02_industrial_chimney,Ống khói công nghiệp,42,90,Cần duyệt mỹ thuật,VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+53,C02,c02_steel_truss,Khung giàn thép,77,37,Cần duyệt mỹ thuật,VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+54,C02,c02_ore_bins,Phễu chứa quặng,59,41,Cần duyệt mỹ thuật,VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+55,C02,c02_warning_lamp,Đèn cảnh báo,29,42,Cần duyệt mỹ thuật,VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+56,C02,c02_heat_grate,Vỉ sàn nhiệt,45,29,Cần duyệt mỹ thuật,VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+57,C02,c02_tide_gate,Cửa điều tiết triều,69,58,Cần duyệt mỹ thuật,VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+58,C02,c02_counterweight,Khối đối trọng,50,63,Cần duyệt mỹ thuật,VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+59,F03 Remake,f03_turbine,Tuabin,41,37,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+60,F03 Remake,f03_waterwheel,Bánh xe nước,43,45,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+61,F03 Remake,f03_steel_gate,Cửa chặn thép,31,31,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+62,F03 Remake,f03_pipe_bundle,Cụm ống dẫn,48,26,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+63,F03 Remake,f03_rust_pipe,Ống gỉ,38,19,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+64,F03 Remake,f03_valve,Van điều khiển,25,32,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+65,F03 Remake,f03_gauge_panel,Bảng đồng hồ,26,30,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+66,F03 Remake,f03_log_cradle,Giá gỗ tròn,55,30,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+67,F03 Remake,f03_timber_pile,Đống gỗ xếp,49,33,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+68,F03 Remake,f03_sawframe,Khung máy cưa,57,43,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+69,F03 Remake,f03_sawdust,Đống mùn cưa,35,20,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+70,F03 Remake,f03_chain_rail,Ray/xích tải,58,27,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+71,F03 Remake,f03_ore_ramp,Máng/quai nạp quặng,50,31,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+72,F03 Remake,f03_spoil_heap,Đống đất đá thải,48,29,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+73,F03 Remake,f03_ore_seam,Mạch quặng lộ,38,25,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+74,F03 Remake,f03_glass_spoil,Đống xỉ/thủy tinh quặng,39,28,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+75,F03 Remake,f03_crusher,Máy nghiền,52,50,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+76,F03 Remake,f03_screen,Sàng lọc quặng,43,32,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+77,F03 Remake,f03_crane,Cẩu công nghiệp,58,70,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+78,F03 Remake,f03_kiln_vat,Bể/lò nung,50,53,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+79,F03 Remake,f03_charcoal_rick,Ụ than gỗ,40,28,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+80,F03 Remake,f03_condenser,Bình ngưng,55,48,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+81,F03 Remake,f03_chimney,Ống khói,34,80,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+82,F03 Remake,f03_vent_pipe,Ống thông khí,30,52,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+83,F03 Remake,f03_slag_pool,Bể xỉ nóng,44,28,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+84,F03 Remake,f03_silo,Tháp silo,50,78,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+85,F03 Remake,f03_filter_tank,Bồn lọc,56,41,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+86,F03 Remake,f03_geo_manifold,Cụm ống địa nhiệt,61,39,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Có tên trong sơ đồ
+87,F03 Remake,f03_signal_lamp,Đèn chỉ báo,21,37,F03 remake: thay asset (user reject),VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Không tìm thấy tên trực tiếp trong sơ đồ
+88,F03 đời đầu (đã thay),f03_turbine,Tuabin,48,43,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+89,F03 đời đầu (đã thay),f03_pipe_bundle,Cụm ống dẫn,48,27,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+90,F03 đời đầu (đã thay),f03_valve,Van điều khiển,26,37,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+91,F03 đời đầu (đã thay),f03_log_cradle,Giá gỗ tròn,57,30,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+92,F03 đời đầu (đã thay),f03_sawframe,Khung máy cưa,55,44,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+93,F03 đời đầu (đã thay),f03_chain_rail,Ray/xích tải,61,29,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+94,F03 đời đầu (đã thay),f03_ore_ramp,Máng/quai nạp quặng,48,28,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+95,F03 đời đầu (đã thay),f03_crusher,Máy nghiền,56,55,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+96,F03 đời đầu (đã thay),f03_crane,Cẩu công nghiệp,62,69,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+97,F03 đời đầu (đã thay),f03_kiln_vat,Bể/lò nung,49,49,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+98,F03 đời đầu (đã thay),f03_condenser,Bình ngưng,54,48,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+99,F03 đời đầu (đã thay),f03_chimney,Ống khói,37,82,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+100,F03 đời đầu (đã thay),f03_silo,Tháp silo,49,75,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+101,F03 đời đầu (đã thay),f03_filter_tank,Bồn lọc,57,41,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+102,F03 đời đầu (đã thay),f03_geo_manifold,Cụm ống địa nhiệt,64,39,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy
+103,F03 đời đầu (đã thay),f03_signal_lamp,Đèn chỉ báo,21,39,Không dùng làm chuẩn; đã bị remake thay thế,VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts,Đã kiểm byte source ZIP,Legacy

@@ -1,0 +1,1239 @@
+{
+  "metadata": {
+    "scope": "Asset do assistant thêm khi xây VEYRA C03/C04/C01/C02/F03/REST48, không gồm asset đã tồn tại trong ZIP (11) trước lượt này",
+    "new_sprite_definitions": 88,
+    "unique_keys": 86,
+    "duplicate_keys": [
+      "fish_drying_rack",
+      "rope_coil"
+    ],
+    "new_tile_painters": 5,
+    "superseded_f03_sprite_definitions": 16,
+    "superseded_f03_tile_painters": 1,
+    "rest48_handdrawn_sprites": 0
+  },
+  "summary": [
+    {
+      "batch": "C03",
+      "sprites": 22,
+      "tile_painter": 1
+    },
+    {
+      "batch": "C04",
+      "sprites": 17,
+      "tile_painter": 1
+    },
+    {
+      "batch": "C01",
+      "sprites": 10,
+      "tile_painter": 1
+    },
+    {
+      "batch": "C02",
+      "sprites": 10,
+      "tile_painter": 1
+    },
+    {
+      "batch": "F03 Remake",
+      "sprites": 29,
+      "tile_painter": 1
+    },
+    {
+      "batch": "REST48",
+      "sprites": 0,
+      "tile_painter": 0
+    }
+  ],
+  "sprites": [
+    {
+      "batch": "C03",
+      "key": "rope_coil",
+      "description": "Cuộn dây thừng",
+      "width": 19,
+      "height": 13,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "cargo_hoist",
+      "description": "Palăng / khung nâng hàng",
+      "width": 28,
+      "height": 35,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "cargo_crane",
+      "description": "Cần cẩu hàng",
+      "width": 34,
+      "height": 35,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "tide_marker",
+      "description": "Cọc thước đo thủy triều",
+      "width": 14,
+      "height": 26,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "signal_flag",
+      "description": "Cờ tín hiệu",
+      "width": 13,
+      "height": 28,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "ticket_board",
+      "description": "Bảng thông tin / vé",
+      "width": 17,
+      "height": 18,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "gear_rack",
+      "description": "Giá treo dụng cụ",
+      "width": 22,
+      "height": 20,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "wicker_trap",
+      "description": "Bẫy/giỏ đan",
+      "width": 18,
+      "height": 13,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "fish_drying_rack",
+      "description": "Giàn phơi cá",
+      "width": 26,
+      "height": 21,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "oar_stack",
+      "description": "Bó mái chèo",
+      "width": 22,
+      "height": 17,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "boat_ribs",
+      "description": "Sườn thuyền dang dở",
+      "width": 28,
+      "height": 19,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "reed_bundle",
+      "description": "Bó lau sậy",
+      "width": 15,
+      "height": 23,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "windbreak",
+      "description": "Tấm chắn gió",
+      "width": 22,
+      "height": 16,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "quay_sign",
+      "description": "Bảng hướng dẫn bến",
+      "width": 27,
+      "height": 29,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "bridge_post",
+      "description": "Trụ gỗ đỡ cầu",
+      "width": 17,
+      "height": 30,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "load_pulley",
+      "description": "Ròng rọc nâng hàng",
+      "width": 35,
+      "height": 46,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "lift_chain",
+      "description": "Xích nâng hàng",
+      "width": 18,
+      "height": 35,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "wind_vane",
+      "description": "Cánh gió báo hướng",
+      "width": 27,
+      "height": 37,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "pier_lantern",
+      "description": "Đèn bến",
+      "width": 23,
+      "height": 34,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "reed_screen",
+      "description": "Vách chắn lau sậy",
+      "width": 35,
+      "height": 28,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "net_canopy",
+      "description": "Giàn mái lưới",
+      "width": 46,
+      "height": 30,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C03",
+      "key": "storm_shutter",
+      "description": "Cửa/tấm chắn bão",
+      "width": 28,
+      "height": 25,
+      "status": "Cần kiểm bằng mắt",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có",
+      "verification": "Lịch sử code C03, chưa kiểm lại byte ZIP",
+      "plan_placement": "Chưa kiểm được trực tiếp"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_quay_sign",
+      "description": "Biển chỉ dẫn cầu tàu",
+      "width": 26,
+      "height": 29,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_rope_pulley",
+      "description": "Palăng dây",
+      "width": 35,
+      "height": 43,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_bollard",
+      "description": "Trụ neo tàu",
+      "width": 17,
+      "height": 26,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_lamp",
+      "description": "Đèn bến",
+      "width": 22,
+      "height": 37,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_signal",
+      "description": "Cờ/cột tín hiệu",
+      "width": 30,
+      "height": 39,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_tide_gate",
+      "description": "Cửa cống thủy triều",
+      "width": 26,
+      "height": 28,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_torn_notice",
+      "description": "Bảng thông báo rách",
+      "width": 23,
+      "height": 27,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_splinter_pile",
+      "description": "Đống gỗ gãy",
+      "width": 35,
+      "height": 20,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_broken_post",
+      "description": "Cọc cầu gãy",
+      "width": 24,
+      "height": 33,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_warning",
+      "description": "Biển cảnh báo",
+      "width": 23,
+      "height": 29,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_crow",
+      "description": "Chim quạ",
+      "width": 27,
+      "height": 16,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_algae_sluice",
+      "description": "Rãnh cống rong rêu",
+      "width": 24,
+      "height": 18,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_tern",
+      "description": "Chim nhàn biển",
+      "width": 25,
+      "height": 18,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_feather_basket",
+      "description": "Giỏ lông vũ",
+      "width": 21,
+      "height": 17,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "c04_reed_screen",
+      "description": "Vách lau sậy",
+      "width": 35,
+      "height": 28,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "fish_drying_rack",
+      "description": "Giàn phơi cá (vẽ lại trùng tên C03)",
+      "width": 29,
+      "height": 24,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C04",
+      "key": "rope_coil",
+      "description": "Cuộn dây (vẽ lại trùng tên C03)",
+      "width": 18,
+      "height": 14,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C01",
+      "key": "c01_city_banner",
+      "description": "Cờ hiệu thành phố",
+      "width": 25,
+      "height": 55,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C01",
+      "key": "c01_arched_gate",
+      "description": "Cổng vòm",
+      "width": 57,
+      "height": 49,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C01",
+      "key": "c01_canopy_market",
+      "description": "Quầy chợ mái bạt",
+      "width": 64,
+      "height": 38,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C01",
+      "key": "c01_cargo_hook",
+      "description": "Cần móc/nâng hàng",
+      "width": 41,
+      "height": 58,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C01",
+      "key": "c01_quay_lamp",
+      "description": "Đèn bến đô thị",
+      "width": 26,
+      "height": 42,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C01",
+      "key": "c01_mooring",
+      "description": "Trụ buộc tàu",
+      "width": 23,
+      "height": 30,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C01",
+      "key": "c01_rope_cart",
+      "description": "Xe chở dây thừng",
+      "width": 44,
+      "height": 29,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C01",
+      "key": "c01_white_salt_pan",
+      "description": "Bồn/sân muối trắng",
+      "width": 50,
+      "height": 31,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C01",
+      "key": "c01_brine_pipe",
+      "description": "Ống dẫn nước muối",
+      "width": 37,
+      "height": 39,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C01",
+      "key": "c01_roof_dormer",
+      "description": "Cửa sổ nhô trên mái",
+      "width": 52,
+      "height": 34,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C02",
+      "key": "c02_ore_tipple",
+      "description": "Tháp đổ quặng",
+      "width": 70,
+      "height": 67,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C02",
+      "key": "c02_rail_wagon",
+      "description": "Toa xe quặng",
+      "width": 58,
+      "height": 37,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C02",
+      "key": "c02_chain_gantry",
+      "description": "Giàn cẩu xích",
+      "width": 78,
+      "height": 79,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C02",
+      "key": "c02_industrial_chimney",
+      "description": "Ống khói công nghiệp",
+      "width": 42,
+      "height": 90,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C02",
+      "key": "c02_steel_truss",
+      "description": "Khung giàn thép",
+      "width": 77,
+      "height": 37,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C02",
+      "key": "c02_ore_bins",
+      "description": "Phễu chứa quặng",
+      "width": 59,
+      "height": 41,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C02",
+      "key": "c02_warning_lamp",
+      "description": "Đèn cảnh báo",
+      "width": 29,
+      "height": 42,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C02",
+      "key": "c02_heat_grate",
+      "description": "Vỉ sàn nhiệt",
+      "width": 45,
+      "height": 29,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C02",
+      "key": "c02_tide_gate",
+      "description": "Cửa điều tiết triều",
+      "width": 69,
+      "height": 58,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "C02",
+      "key": "c02_counterweight",
+      "description": "Khối đối trọng",
+      "width": 50,
+      "height": 63,
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_turbine",
+      "description": "Tuabin",
+      "width": 41,
+      "height": 37,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_waterwheel",
+      "description": "Bánh xe nước",
+      "width": 43,
+      "height": 45,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_steel_gate",
+      "description": "Cửa chặn thép",
+      "width": 31,
+      "height": 31,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_pipe_bundle",
+      "description": "Cụm ống dẫn",
+      "width": 48,
+      "height": 26,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_rust_pipe",
+      "description": "Ống gỉ",
+      "width": 38,
+      "height": 19,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_valve",
+      "description": "Van điều khiển",
+      "width": 25,
+      "height": 32,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_gauge_panel",
+      "description": "Bảng đồng hồ",
+      "width": 26,
+      "height": 30,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_log_cradle",
+      "description": "Giá gỗ tròn",
+      "width": 55,
+      "height": 30,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_timber_pile",
+      "description": "Đống gỗ xếp",
+      "width": 49,
+      "height": 33,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_sawframe",
+      "description": "Khung máy cưa",
+      "width": 57,
+      "height": 43,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_sawdust",
+      "description": "Đống mùn cưa",
+      "width": 35,
+      "height": 20,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_chain_rail",
+      "description": "Ray/xích tải",
+      "width": 58,
+      "height": 27,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_ore_ramp",
+      "description": "Máng/quai nạp quặng",
+      "width": 50,
+      "height": 31,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_spoil_heap",
+      "description": "Đống đất đá thải",
+      "width": 48,
+      "height": 29,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_ore_seam",
+      "description": "Mạch quặng lộ",
+      "width": 38,
+      "height": 25,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_glass_spoil",
+      "description": "Đống xỉ/thủy tinh quặng",
+      "width": 39,
+      "height": 28,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_crusher",
+      "description": "Máy nghiền",
+      "width": 52,
+      "height": 50,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_screen",
+      "description": "Sàng lọc quặng",
+      "width": 43,
+      "height": 32,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_crane",
+      "description": "Cẩu công nghiệp",
+      "width": 58,
+      "height": 70,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_kiln_vat",
+      "description": "Bể/lò nung",
+      "width": 50,
+      "height": 53,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_charcoal_rick",
+      "description": "Ụ than gỗ",
+      "width": 40,
+      "height": 28,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_condenser",
+      "description": "Bình ngưng",
+      "width": 55,
+      "height": 48,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_chimney",
+      "description": "Ống khói",
+      "width": 34,
+      "height": 80,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_vent_pipe",
+      "description": "Ống thông khí",
+      "width": 30,
+      "height": 52,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_slag_pool",
+      "description": "Bể xỉ nóng",
+      "width": 44,
+      "height": 28,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_silo",
+      "description": "Tháp silo",
+      "width": 50,
+      "height": 78,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_filter_tank",
+      "description": "Bồn lọc",
+      "width": 56,
+      "height": 41,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_geo_manifold",
+      "description": "Cụm ống địa nhiệt",
+      "width": 61,
+      "height": 39,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Có tên trong sơ đồ"
+    },
+    {
+      "batch": "F03 Remake",
+      "key": "f03_signal_lamp",
+      "description": "Đèn chỉ báo",
+      "width": 21,
+      "height": 37,
+      "status": "F03 remake: thay asset (user reject)",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Không tìm thấy tên trực tiếp trong sơ đồ"
+    }
+  ],
+  "superseded": [
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_turbine",
+      "description": "Tuabin",
+      "width": 48,
+      "height": 43,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_pipe_bundle",
+      "description": "Cụm ống dẫn",
+      "width": 48,
+      "height": 27,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_valve",
+      "description": "Van điều khiển",
+      "width": 26,
+      "height": 37,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_log_cradle",
+      "description": "Giá gỗ tròn",
+      "width": 57,
+      "height": 30,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_sawframe",
+      "description": "Khung máy cưa",
+      "width": 55,
+      "height": 44,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_chain_rail",
+      "description": "Ray/xích tải",
+      "width": 61,
+      "height": 29,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_ore_ramp",
+      "description": "Máng/quai nạp quặng",
+      "width": 48,
+      "height": 28,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_crusher",
+      "description": "Máy nghiền",
+      "width": 56,
+      "height": 55,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_crane",
+      "description": "Cẩu công nghiệp",
+      "width": 62,
+      "height": 69,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_kiln_vat",
+      "description": "Bể/lò nung",
+      "width": 49,
+      "height": 49,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_condenser",
+      "description": "Bình ngưng",
+      "width": 54,
+      "height": 48,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_chimney",
+      "description": "Ống khói",
+      "width": 37,
+      "height": 82,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_silo",
+      "description": "Tháp silo",
+      "width": 49,
+      "height": 75,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_filter_tank",
+      "description": "Bồn lọc",
+      "width": 57,
+      "height": 41,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_geo_manifold",
+      "description": "Cụm ống địa nhiệt",
+      "width": 64,
+      "height": 39,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    },
+    {
+      "batch": "F03 đời đầu (đã thay)",
+      "key": "f03_signal_lamp",
+      "description": "Đèn chỉ báo",
+      "width": 21,
+      "height": 39,
+      "status": "Không dùng làm chuẩn; đã bị remake thay thế",
+      "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts",
+      "verification": "Đã kiểm byte source ZIP",
+      "plan_placement": "Legacy"
+    }
+  ],
+  "tile_painters": [
+    {
+      "batch": "C03",
+      "function": "drawC03DeckTile",
+      "ground": "Sàn ván gỗ, bóng sàn cầu tàu và giàn cao; biến thể Strait/Southfoot/Mere",
+      "status": "Cần duyệt mỹ thuật",
+      "source": "Mã phát triển C03 trong hội thoại trước; ZIP gốc không nằm trong bộ source hiện có"
+    },
+    {
+      "batch": "C04",
+      "function": "drawWaterfrontDeckTile",
+      "ground": "Sàn gỗ/bến hư, dấu nứt/bóng ván; Westbank/Drowned/Tern, edgeMask, tầng cao",
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C04_SOURCE_ADDON.zip > c04-source/src/veyra05/c04-art.ts"
+    },
+    {
+      "batch": "C01",
+      "function": "drawUrbanHarborDeckTile",
+      "ground": "Đá/đường bến đô thị, sàn gỗ và muối; Gulfhead/Westmouth/Saltwick, tầng cao",
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C01_SOURCE_ADDON.zip > c01-source/src/veyra05/c01-art.ts"
+    },
+    {
+      "batch": "C02",
+      "function": "drawIndustrialHarborTile",
+      "ground": "Sàn công nghiệp/kim loại/đường quặng, mảng bóng và viền; Ironholm/Emberport/Sandgate",
+      "status": "Cần duyệt mỹ thuật",
+      "source": "VEYRA_C02_SOURCE_ADDON_FOR_CURRENT.zip > c02-source/src/veyra05/c02-art.ts"
+    },
+    {
+      "batch": "F03 Remake",
+      "function": "drawF03DeckTile",
+      "ground": "Sàn mỏ đá, xưởng gỗ, thủy lực, lò nóng và kỹ thuật; vệt mòn và viền ô 16x16",
+      "status": "Phải thay/thiết kế lại theo nhận xét user",
+      "source": "VEYRA_F03_REMAKE_SOURCE_ADDON.zip > src/veyra05/f03-art.ts"
+    }
+  ],
+  "superseded_tile_painter": {
+    "batch": "F03 đời đầu (đã thay)",
+    "function": "drawF03DeckTile",
+    "ground": "Đời cũ: sàn công nghiệp 16×16 tái sử dụng cùng hình ván, chỉ thay màu",
+    "status": "Đã bị remake thay thế",
+    "source": "VEYRA_F03_SOURCE_ADDON_FOR_CURRENT.zip > src/veyra05/f03-art.ts"
+  }
+}
