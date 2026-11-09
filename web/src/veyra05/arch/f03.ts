@@ -224,8 +224,147 @@ function f03Utility(s:F03Site){const x=s.cx,y=s.cy,i=s.i,p=f03Start(s);
  }
  p.note(x,y,0,'Every route follows the materials or water movement of this particular utility.');
  return p.build();}
+/**
+ * R3 spatial acceptance pilot. These three sites are authored separately instead of
+ * inheriting one F03 family template. Existing POI IDs, geography, stairs API and
+ * gameplay authority remain unchanged. Roads do not enter roofed floor plates;
+ * only deliberately one-cell-deep door thresholds touch a building footprint.
+ *
+ * Discovery grades: Quarry = DEEP, Falls = MEDIUM, Sawmill = COMPACT.
+ */
+function r3FallsPowerhouse(s:F03Site):ArchPlan {
+ const x=s.cx,y=s.cy,p=f03Start(s);
+ // Water first: a dry, narrow, stone service route follows the headrace; not
+ // a gigantic paved courtyard. The turbine hall lies EAST of the walkway.
+ f03Path(p,'headrace_path','Headrace inspection path',0,
+  [[x-13,y-34,6,53],[x-13,y-11,25,5],[x+7,y-15,6,38],
+   [x-12,y+14,31,5],[x+15,y+7,6,15]],'stone');
+ f03Path(p,'falls_walk','Waterfall bypass and downstream return',0,
+  [[x-33,y-18,6,33],[x-33,y-18,22,5],[x-30,y-8,20,6],[x-31,y+10,21,5]],'wood',true);
+ f03Door(p,'intake_shack','Water Intake Gatehouse',[x-38,y-35,16,14],'E','wood','stone');
+ // East doorway at -23,-28. Its apron ends exactly at the road; no stone
+ // traverses the gatehouse's timber roof.
+ f03Path(p,'intake_turn','Gate-control approach',0,
+  [[x-22,y-29,11,5],[x-22,y-24,4,8],[x-28,y-19,9,5]],'stone');
+ f03Door(p,'turbine_hall','Turbine and Rotor House',[x+22,y-12,20,17],'W','tile','stone');
+ f03Path(p,'rotor_access','Turbine hall working threshold',0,
+  [[x+11,y-6,11,5],[x+16,y-6,5,15]],'stone');
+ f03Door(p,'pipe_store','Pressure Pipe and Tool Store',[x+11,y+23,19,11],'N','tin','wood');
+ f03Path(p,'pipe_delivery','Pipe store service spur',0,
+  [[x+17,y+14,6,9]],'stone');
+ // Enclosed lower bearing service; the widened bypass and return pocket give
+ // the player a reason to inspect beyond the immediate vertical ladder.
+ f03Mass(p,'turbine_subfloor','Bearing Chamber and Tailrace Service Passage',-1,
+  [[x+24,y-9,16,14],[x+20,y+1,18,6],[x+19,y+4,7,11]],null,'stone');
+ p.stair(x+29,y-5,0,-1,x+29,y-5,'Turbine bearing access hatch','hatch');
+ p.prop(x+23,y+10,-1,'f03_rust_pipe');
+ p.prop(x+34,y+1,-1,'f03_valve');
+ p.note(x+22,y+10,-1,'The outlet narrows behind the turbine. This lower return tells why the machine house stands here.');
+ // The mezzanine remains inside the engine house; no flying upper plaza.
+ f03Mass(p,'rotor_gallery','Rotor Balancing Mezzanine',1,
+  [[x+24,y-10,16,12]],'wood','wood');
+ p.stair(x+34,y-5,0,1,x+34,y-5,'Internal rotor inspection stair','interior');
+ p.prop(x+28,y-5,1,'f03_gauge_panel');
+ p.prop(x+36,y-1,1,'f03_valve');
+ p.note(x+26,y-8,1,'The upper gauge faces the intake. Read it before going down to the bearing room.');
+ // Machinery belongs at intake, wet works and pipe store, respectively.
+ p.prop(x-28,y-16,0,'f03_steel_gate');
+ p.prop(x-27,y+3,0,'f03_waterwheel');
+ p.prop(x+16,y+1,0,'f03_pipe_bundle');
+ p.prop(x+29,y+1,0,'f03_turbine');
+ p.prop(x+22,y+21,0,'pipes');
+ p.note(x-31,y+10,0,'Below the walkway the falls rejoin the river; an alternate route returns to the same service spine.');
+ return p.build();
+}
+function r3AionSawmill(s:F03Site):ArchPlan {
+ const x=s.cx,y=s.cy,p=f03Start(s);
+ // A compact working POI: two complementary loops, not an oversized maze.
+ // The log stream travels W->E, bypasses the human walkway and reaches
+ // storage only AFTER it has passed the sawhouse.
+ f03Path(p,'log_feed','Incoming log feed carriage',0,
+  [[x-43,y-5,61,7],[x-22,y-5,6,31],[x-22,y+19,46,6],
+   [x+14,y-5,6,27],[x+14,y+12,17,5]],'wood');
+ f03Path(p,'saw_access','Walkway to crosscut room',0,
+  [[x-16,y-15,6,12],[x-27,y-11,11,5],[x-27,y-11,7,14]],'wood',true);
+ f03Door(p,'saw_house','Main Crosscut Sawhouse',[x-25,y-32,22,17],'S','wood','wood');
+ f03Door(p,'feed_shed','Incoming Log Store',[x-40,y+18,16,12],'E','wood','wood');
+ f03Path(p,'feed_shed_access','Materials receiving turn',0,
+  [[x-24,y+19,7,7]],'wood');
+ f03Door(p,'dry_store','Dry Timber Sorting Shed',[x+24,y+19,17,13],'N','wood','wood');
+ f03Path(p,'dry_store_access','Outbound planks and staging',0,
+  [[x+19,y+14,12,5],[x+14,y+11,7,5]],'wood',true);
+ // An alternate narrow walkway for workers avoids the busy log rails.
+ f03Path(p,'inspection_bypass','Saw maintenance return walk',0,
+  [[x-39,y-14,6,20],[x-39,y-14,26,5],[x-36,y+2,16,5]],'wood',true);
+ // Loft is really part of the sawhouse, accessible through its ground floor.
+ f03Mass(p,'saw_attic','Belt Drive Loft',1,
+  [[x-23,y-30,18,13]],'wood','wood');
+ p.stair(x-11,y-21,0,1,x-11,y-21,'Saw belt maintenance ladder','ladder');
+ p.prop(x-13,y-23,1,'f03_chain_rail');
+ p.note(x-18,y-24,1,'The belt runs directly above the crosscut saw; this service loft is a short optional detour.');
+ // Machines and stock are placed on process stations, not at random.
+ p.prop(x-34,y-2,0,'f03_log_cradle');
+ p.prop(x-21,y-2,0,'f03_log_cradle');
+ p.prop(x-7,y-22,0,'f03_sawframe');
+ p.prop(x-7,y-10,0,'f03_sawdust');
+ p.prop(x-37,y+23,0,'f03_timber_pile');
+ p.prop(x+22,y+8,0,'f03_timber_pile');
+ p.prop(x+32,y+24,0,'f03_timber_pile');
+ p.note(x-30,y+5,0,'Raw logs arrive on the western carriage. Workers follow the separate side walk, not the rails.');
+ p.note(x+18,y+24,0,'Cut lumber goes east to the dry sorting shed. This is the outgoing route back to the main yard.');
+ return p.build();
+}
+function r3FractureQuarry(s:F03Site):ArchPlan {
+ const x=s.cx,y=s.cy,p=f03Start(s);
+ // DEEP POI: approach -> branching survey/rim -> descending stepped ore face
+ // -> optional adit -> short high ledge. No harbour-style bridge courtyard.
+ f03Path(p,'entrance_cut','Narrow stone approach at fracture rim',0,
+  [[x-4,y-43,7,49],[x-9,y-6,15,10]],'stone');
+ f03Path(p,'quarry_benches','Rock-cut switchbacks',0,
+  [[x-27,y+1,30,6],[x-27,y+1,7,20],[x-27,y+16,29,6],
+   [x-3,y+16,6,19],[x-3,y+29,28,6],[x+20,y+4,6,31],
+   [x+6,y-9,20,6]],'stone',true);
+ f03Path(p,'rim_return','Survey rim and short sheltered backtrack',0,
+  [[x-33,y-14,32,5],[x-33,y-19,6,11],[x-32,y-10,7,12]],'stone');
+ f03Door(p,'survey_hut','Surveyor Station',[x-41,y-33,18,12],'S','wood','wood');
+ f03Path(p,'survey_threshold','Survey notebook access',0,
+  [[x-33,y-21,6,9],[x-32,y-15,8,5]],'stone');
+ f03Door(p,'cutting_room','Rock Cutting and Screening House',[x+26,y-12,19,15],'W','hull','stone');
+ f03Path(p,'ore_loading','Ore sorting and plant entry',0,
+  [[x+7,y-9,19,6],[x+19,y-10,7,12],[x+11,y+1,12,5]],'stone');
+ // Under-face adit: optional geology branch with a far pocket and a real
+ // return to the original shaft. No disconnected staged "fake tunnel".
+ f03Mass(p,'geology_adit','Under-Face Survey Adit',-1,
+  [[x-25,y+16,33,7],[x-26,y+8,7,17],[x-30,y+9,11,6],
+   [x+1,y+14,9,16]],null,'stone');
+ p.stair(x-1,y+18,0,-1,x-1,y+18,'Descent through extraction face','hatch');
+ p.prop(x-24,y+11,-1,'f03_ore_seam');
+ p.prop(x+5,y+26,-1,'f03_ore_seam');
+ p.note(x-27,y+10,-1,'Survey marks end in a narrow side pocket. The geological seam bends back toward the original shaft.');
+ p.note(x+4,y+27,-1,'The intact vein here explains why the quarry was cut to these lower benches.');
+ // Modest outlook, not a huge bridge; overlooks the actual crusher's lane.
+ f03Path(p,'upper_lip','Short rock ledge above ore screen',1,
+  [[x+20,y-10,6,18],[x+19,y+3,16,5]],'stone',true);
+ p.stair(x+22,y-4,0,1,x+22,y-4,'Climb to broken ledge','exterior');
+ p.prop(x+28,y+5,1,'f03_crane');
+ p.note(x+30,y+5,1,'The upper hoist overlooks the separated rock-cut and loading lane, not a public bridge.');
+ // Ore and spent spoil sit at the excavation edge; crushing is near exit.
+ p.prop(x-25,y+3,0,'f03_ore_seam');
+ p.prop(x-24,y+19,0,'f03_ore_seam');
+ p.prop(x+1,y+31,0,'f03_spoil_heap');
+ p.prop(x+15,y+29,0,'f03_spoil_heap');
+ p.prop(x+10,y-3,0,'f03_crusher');
+ p.prop(x+23,y+9,0,'f03_ore_ramp');
+ p.note(x-18,y+17,0,'Quarry bench two reveals an optional cut under the rock face; the main road continues to the crusher.');
+ p.note(x-31,y-14,0,'The survey shack sits on a real rim trail, separate from loaded ore transport.');
+ return p.build();
+}
+
 function f03WritePlan(id:string):ArchPlan{
  const s=f03Profiles()[id];if(!s)throw Error('Unknown canonical F03 site '+id);
+ if(id==='po_falls')return r3FallsPowerhouse(s);
+ if(id==='po_sawaion')return r3AionSawmill(s);
+ if(id==='po_fracquarry')return r3FractureQuarry(s);
  if(s.group==='WATER')return f03Water(s);
  if(s.group==='TIMBER')return f03Timber(s);
  if(s.group==='QUARRY')return f03Quarry(s);
