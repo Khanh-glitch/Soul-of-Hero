@@ -1,0 +1,544 @@
+{
+  "schema": "soh.creature-ecology-design.preload.git.v2",
+  "as_of": "2026-11-10",
+  "status": "IMPLEMENTATION_AUTHORIZED_NOT_ACCEPTED",
+  "map_authority": {
+    "source_asset": "veyra-world-art-upgrade (4).zip",
+    "source_project": "geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json",
+    "source_status": "GOLD MAP DESIGN - PAPER ONLY - NOT NATIVE PRODUCTION",
+    "authoring_frame_au": {
+      "w": 2000,
+      "h": 1400
+    },
+    "runtime_frame_global_tiles": [
+      4000,
+      2800
+    ],
+    "runtime_window_tile": [
+      200,
+      200
+    ],
+    "au_per_tile": 0.5,
+    "original_poi_count": 81,
+    "original_zone_count": 23,
+    "original_elder_count": 6,
+    "source_zip_must_be_preserved_100_percent": true,
+    "preserve": [
+      "geography + source identities + hashes",
+      "src/veyra05 frame/chunks/window",
+      "src/veyra05/arch all authored POIs",
+      "surface-art/pixel-craft/decor-client",
+      "src/veyra05/living/life.ts wind/sun/water/lava/snow/ash",
+      "runtime sliding, footprint, doorway, camera and save continuity"
+    ]
+  },
+  "creator_2026_11_10": {
+    "mafia": "EXCLUDED",
+    "ordinary_monsters": "exactly 9 initial from 3 packs; optional additions not automatic",
+    "elder": "existing final six Boss Lab, not merged with side boss",
+    "ui_hud": "Gold asset NOT PROVIDED YET; frozen pending future input",
+    "animal_husbandry": "wild 5 species available; livestock system proposal only",
+    "agent_freedom": [
+      "AI microbehaviors",
+      "combat timing and balancing (SOH_PROVISIONAL)",
+      "spawn probability after geometry validity",
+      "FX and missing animations",
+      "loot/useful recipes with physical provenance and custody"
+    ],
+    "agent_not_allowed": [
+      "modify or redraw the final Veyra geography/tileset/decor/environment FX",
+      "replace Veyra runtime with paper map",
+      "invent Elder stones/mandatory boss rewards",
+      "make bosses block non-boss Ragnarok cash/evac",
+      "add mafia",
+      "implement HUD before Gold reference"
+    ]
+  },
+  "assets": [
+    {
+      "id": "VEYRA_FULL",
+      "filename": "veyra-world-art-upgrade (4).zip",
+      "bytes": 4972028,
+      "sha256": "d9d69d18e5db4f2d8075c76af9f4e712042cc078cee7938aeb329c118c2dcda4",
+      "drive_url": "https://drive.google.com/file/d/1BHZJ1MvbiaXX1KaFGDq3pdxMNmhxivY1/view",
+      "access": "DRIVE_MYDRIVE_UPLOADED_VERIFIED",
+      "local_original_available": true
+    },
+    {
+      "id": "ELDER_6",
+      "filename": "six-primordials-boss-lab (9).zip",
+      "bytes": 1553732,
+      "sha256": "74940d11c42fa883101b43a252cb4071955a8995f70a9f2ecd0bdba2f5d6dfe2",
+      "drive_url": "https://drive.google.com/file/d/1kbVEMIgRONwKNavNsv6BOl62upQQA-rF/view",
+      "access": "DRIVE_MYDRIVE_UPLOADED_VERIFIED",
+      "local_original_available": true
+    },
+    {
+      "id": "VAMPIRE_1_3",
+      "filename": "craftpix-net-208004-free-vampire-4-direction-pixel-character-sprite-pack.zip",
+      "bytes": 4165067,
+      "sha256": "15a67afa275dc14b22072071a7dd8c9397a99e8df8cae884ad66b7288b6c9909",
+      "drive_url": "https://drive.google.com/file/d/1R7xtjUNg_fRzfOCDdjYkCZnTFG54YZF9/view",
+      "access": "CREATURE",
+      "local_original_available": true
+    },
+    {
+      "id": "ORC_1_3",
+      "filename": "craftpix-net-363992-free-top-down-orc-game-character-pixel-art.zip",
+      "bytes": 6829119,
+      "sha256": "5a1f8640a355d34c93799abade98112d00e74e183cea8d0bd07e7f51c377b15d",
+      "drive_url": "https://drive.google.com/file/d/1pqKwVsLeL-y6EDw3qqTPA6Mroyg2mCDU/view",
+      "access": "CREATURE",
+      "local_original_available": true
+    },
+    {
+      "id": "SLIME_1_3",
+      "filename": "craftpix-net-788364-free-slime-mobs-pixel-art-top-down-sprite-pack.zip",
+      "bytes": 3159128,
+      "sha256": "91d234d83b88a59b9252842b7dc8b30258ed644403c494bd7a83748d953fb347",
+      "drive_url": "https://drive.google.com/file/d/1reP-N5I_FS2tgHLUyeXt83bg1674bHv8/view",
+      "access": "CREATURE",
+      "local_original_available": true
+    },
+    {
+      "id": "SAMURAI",
+      "filename": "EBros_Boss_Samurai.zip",
+      "bytes": 6131584,
+      "sha256": "276b25b32bae0046223d39775f8be3309745f02ed6fb9613605830a035ddc477",
+      "drive_url": "https://drive.google.com/file/d/1LycUvqYY_0lwUWySu3mz6a8Gnd8W9CYs/view",
+      "access": "BOSS",
+      "local_original_available": true
+    },
+    {
+      "id": "ROCK",
+      "filename": "TopDown_RockBoss_EBrosAssets.zip",
+      "bytes": 810243,
+      "sha256": "66d9a47f1ecef2ef79a096aff191d1db0efc8225030ca425c8677dcb14ca9618",
+      "drive_url": "https://drive.google.com/file/d/1bffc6zdTH_8L6qI5uLtJj3kh_WwYx0m2/view",
+      "access": "BOSS",
+      "local_original_available": true
+    },
+    {
+      "id": "WATER",
+      "filename": "Water Warrior.zip",
+      "bytes": 43132,
+      "sha256": "62bffb05c7f566e7e214da5344f9237d0a515d57fe5fa2de8c8888d1a51cf1fe",
+      "drive_url": "https://drive.google.com/file/d/1NxE840zIgQ3lzgE-YG-0k7i_c3PUNrDb/view",
+      "access": "BOSS_CANDIDATE",
+      "local_original_available": true
+    },
+    {
+      "id": "MAID_IDLE",
+      "filename": "Maid Idle (1).png",
+      "bytes": 9646,
+      "sha256": "d8cabfa78d189cabac5d47f4afbbd5c754ef6e6f4f32220b7adb60db30160d9b",
+      "drive_url": "https://drive.google.com/file/d/1sf4V1LhbexoiAtAfqUPGSdqEbJqPy7Fm/view",
+      "access": "BOSS_CANDIDATE",
+      "local_original_available": true
+    },
+    {
+      "id": "MAID_RUN",
+      "filename": "Maid Run (1).png",
+      "bytes": 29060,
+      "sha256": "cf3b5c3c5add8f33ccca4f514409b885bffccbac881a845d024715c53ac2851d",
+      "drive_url": "https://drive.google.com/file/d/16pmtMYnouHqoizLnB5a5fWmG-BLmbGBl/view",
+      "access": "BOSS_CANDIDATE",
+      "local_original_available": true
+    },
+    {
+      "id": "SCYTHE_CANDIDATE",
+      "filename": "craftpix-net-221601-free-enemy-pixel-pack-for-top-down-defense.zip",
+      "bytes": 958640,
+      "sha256": "6b3a24f645eebd946083bbeaf10eb7f06f70077509dcb62904b854afa0e74d25",
+      "drive_url": "https://drive.google.com/file/d/1M00yeqhMo6fl60g3OjYYBxUwWTGxFSp7/view",
+      "access": "OPTIONAL_ENEMY_PACK_NOT_CONFIRMED_SCYTHE_BOSS",
+      "local_original_available": true
+    },
+    {
+      "id": "SWORDSMAN_RESERVE",
+      "filename": "craftpix-net-180537-free-swordsman-1-3-level-pixel-top-down-sprite-character.zip",
+      "bytes": 4317041,
+      "sha256": "7cefa8ddb129c799c8c31965b367056545334e349cd343f13f3b292ff33d8fe4",
+      "drive_url": "https://drive.google.com/file/d/1w2-KbWydIKlcn7AprGYKtoqXQSuCA7J_/view",
+      "access": "RESERVE_ONLY",
+      "local_original_available": true
+    },
+    {
+      "id": "WILDLIFE_5",
+      "filename": "craftpix-net-789196-free-top-down-hunt-animals-pixel-sprite-pack.zip",
+      "bytes": 1842015,
+      "sha256": "02737af10e371b9c1d3e58e790498d07272a326d2daafe0cf6e8ebd939ab0e2c",
+      "drive_url": "https://drive.google.com/file/d/13cckJXRa-S1upzJFA99tTSwTBg-xwhw-/view",
+      "access": "WILDLIFE",
+      "local_original_available": true
+    }
+  ],
+  "creatures": [
+    {
+      "asset_id": "VAMPIRE_1",
+      "fantasy_name": "Dusk Stray / Kẻ săn bóng rừng",
+      "anchor_poi_id": "po_ranger",
+      "anchor_poi_name": "Ranger Hut",
+      "anchor_au": [
+        800,
+        760
+      ],
+      "zone_id": "bz_elder_clear",
+      "zone_name": "Hollow Oaks Clearing",
+      "role": "fast melee / stalker",
+      "positioning": "Hollow Oaks Clearing, tuyến rừng quanh Ranger Hut; trú ban ngày dưới mái/độ che, đi săn lúc chạng vạng",
+      "combat_identity": "Dò âm thanh và tầm nhìn, lao ngắn rồi hồi sức; dao đầu game vẫn có đường tự vệ",
+      "ecological_logic": "Không xuất hiện sát điểm spawn; ánh sáng/mái che ảnh hưởng phát hiện bằng state thật",
+      "agent_creative_scope": "Speed/cost/AI senses/drops/animations/VFX",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    },
+    {
+      "asset_id": "VAMPIRE_2",
+      "fantasy_name": "Blood Archivist / Giám thư huyết",
+      "anchor_poi_id": "po_academy",
+      "anchor_poi_name": "Argus Academy",
+      "anchor_au": [
+        936,
+        262
+      ],
+      "zone_id": "bz_argus",
+      "zone_name": "Argus Valley Pasture",
+      "role": "control / midrange elite",
+      "positioning": "Argus Academy: library stacks và tuyến sân sau, không khóa thư viện hoặc lối đi của người chơi",
+      "combat_identity": "Cho dấu hiệu triệu hồi quầng trước khi gây khống chế ngắn; không xuyên tường",
+      "ecological_logic": "Lãnh thổ bên trong công trình, theo tuyến hành lang mở thật; nghỉ trong phòng tối",
+      "agent_creative_scope": "Telegraph/cooldown/status/loot; no guaranteed Core",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    },
+    {
+      "asset_id": "VAMPIRE_3",
+      "fantasy_name": "Crimson Warden / Huyết vệ",
+      "anchor_poi_id": "po_tombs",
+      "anchor_poi_name": "Dune Tombs",
+      "anchor_au": [
+        520,
+        1086
+      ],
+      "zone_id": "bz_dune",
+      "zone_name": "Dune Rock Outcrop",
+      "role": "heavy guard / side-crypt danger",
+      "positioning": "Dune Tombs: nhánh hầm mộ bên cạnh, không chắn Necropolis hay đường sơ tán",
+      "combat_identity": "Giáp cao, nhịp combo chậm, tấn công rõ hình nón; vùng nắng ngoài trời giảm ưu thế",
+      "ecological_logic": "Chỉ đi ra ngoài vào tối hoặc nơi có bóng che, không biến mất bằng teleport",
+      "agent_creative_scope": "Combo/armor/weak points/reward; no Elder stone",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    },
+    {
+      "asset_id": "ORC_1",
+      "fantasy_name": "Scrap Gnawer / Orc nhặt phế",
+      "anchor_poi_id": "po_freightyard",
+      "anchor_poi_name": "Shattered Freight Yard",
+      "anchor_au": [
+        690,
+        500
+      ],
+      "zone_id": "bz_typhon_t",
+      "zone_name": "Typhon Terrace",
+      "role": "common opportunistic scavenger",
+      "positioning": "Shattered Freight Yard: đống phế liệu và rìa tuyến hàng, không chiếm toàn bộ đường chính",
+      "combat_identity": "Ra đòn dao ngắn, có thể lùi về vật che; loot vật tư thấp có source hợp lệ",
+      "ecological_logic": "Lượm/giữ nguồn trong lãnh thổ nhỏ; tuần tra dựa trên vật thể/đường",
+      "agent_creative_scope": "RNG/carry/morale/cost",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    },
+    {
+      "asset_id": "ORC_2",
+      "fantasy_name": "Bridge Raider / Kẻ cướp cầu gãy",
+      "anchor_poi_id": "po_viaduct",
+      "anchor_poi_name": "Crushed Viaduct",
+      "anchor_au": [
+        655,
+        448
+      ],
+      "zone_id": "bz_typhon_t",
+      "zone_name": "Typhon Terrace",
+      "role": "reach / skirmisher",
+      "positioning": "Crushed Viaduct: chân cầu và các lối vòng, tuyệt đối không khóa đường bắt buộc",
+      "combat_identity": "Đánh cán dài có tiền động tác, phối hợp nếu Orc1 gần đó nhưng không xuyên vách",
+      "ecological_logic": "Quan sát tuyến vận chuyển thật, mất mục tiêu khi không thấy",
+      "agent_creative_scope": "Reach/formation/reaction/loot",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    },
+    {
+      "asset_id": "ORC_3",
+      "fantasy_name": "Ironvein Marauder / Orc chiến đoàn mỏ",
+      "anchor_poi_id": "po_ironvein",
+      "anchor_poi_name": "Ironvein Mine",
+      "anchor_au": [
+        1205,
+        655
+      ],
+      "zone_id": "bz_ridge",
+      "zone_name": "Ironvein Ridge Ledge",
+      "role": "armored group anchor",
+      "positioning": "Ironvein Mine ngoại vi và các bãi đất bên sườn Ironvein Ridge, không chặn cổng mỏ vật lý",
+      "combat_identity": "Bảo vệ đồng bọn/áp lực góc, mạnh hơn Orc1; vẫn quái thường/elite, không boss thưởng hiếm",
+      "ecological_logic": "Gắn khu đào/đống hàng, di chuyển ra theo đường hợp lệ; không GPS nhà",
+      "agent_creative_scope": "Morale/weapon pattern/territory/rare-but-not-unique drops",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    },
+    {
+      "asset_id": "SLIME_1",
+      "fantasy_name": "Lake Droplet / Gel nước",
+      "anchor_poi_id": "po_pumphouse",
+      "anchor_poi_name": "Greywater Pumphouse",
+      "anchor_au": [
+        850,
+        556
+      ],
+      "zone_id": "bz_greywater",
+      "zone_name": "Greywater Lakeshore Terrace",
+      "role": "starter slow blob",
+      "positioning": "Greywater Pumphouse: bờ bùn thoáng ngoài trạm; giữ an toàn spawn Greywater South Shore",
+      "combat_identity": "Nảy/ép thân, va chạm báo trước, hao dao thấp; tránh giả sát thương tiếp xúc liên tục",
+      "ecological_logic": "Tập trung nơi ẩm và nước nông đi được, không spawn dưới hồ sâu",
+      "agent_creative_scope": "Speed/respawn/drop gel useful",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    },
+    {
+      "asset_id": "SLIME_2",
+      "fantasy_name": "Reagent Ooze / Dịch thuốc thử",
+      "anchor_poi_id": "po_oldpump",
+      "anchor_poi_name": "Old Pumping Plant",
+      "anchor_au": [
+        850,
+        985
+      ],
+      "zone_id": "bz_gulfwest",
+      "zone_name": "Gulf West Bank Flats",
+      "role": "poison/slow area controller",
+      "positioning": "Old Pumping Plant: rãnh thoát/lắng phía ngoài và phòng máy có đường rút",
+      "combat_identity": "Để vệt độc hoặc dính có tuổi thọ hữu hạn, khác rõ màu nước tự nhiên; không ghi độc bằng shader suông",
+      "ecological_logic": "Gắn nguồn chất thải/độ ẩm thực, không tự sinh trong nhà người chơi",
+      "agent_creative_scope": "Residue duration/status/clearance/drops",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    },
+    {
+      "asset_id": "SLIME_3",
+      "fantasy_name": "Cinder Core / Gel tro nóng",
+      "anchor_poi_id": "po_sulfur",
+      "anchor_poi_name": "Sulfur Works",
+      "anchor_au": [
+        1768,
+        882
+      ],
+      "zone_id": "bz_cinder",
+      "zone_name": "Cinder Landing Shelf",
+      "role": "heat hazard",
+      "positioning": "Sulfur Works, Cinder Isle: miệng thông hơi và rìa đá lưu huỳnh",
+      "combat_identity": "Đập đất tạo vùng nóng nhỏ có cảnh báo và thoát được, không thiêu rụi toàn đảo",
+      "ecological_logic": "Gắn địa nhiệt, có khác biệt giữa mặt nóng/đường tránh; không chặn Cinder Camp",
+      "agent_creative_scope": "Thermal vs fire status/safe lanes/loot sulfur",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    }
+  ],
+  "bosses": [
+    {
+      "asset_id": "ROCK",
+      "fantasy_name": "Greyback Shaleheart / Tâm đá mỏ",
+      "anchor_poi_id": "po_greyquarry",
+      "anchor_poi_name": "Greyback Quarry",
+      "anchor_au": [
+        506,
+        652
+      ],
+      "zone_id": "bz_greyback",
+      "zone_name": "Greyback Foothill Shelf",
+      "role": "optional quarry field boss",
+      "positioning": "Greyback Quarry: hố khai thác sâu hoặc sân phụ hiện có, giữ mỏ thường và đường lui mở",
+      "combat_identity": "Swipe ngang/giậm đất rung có vùng cảnh báo, đập vào đá/chướng ngại hợp lệ",
+      "ecological_logic": "Gắn đá nứt và thao tác đào mỏ; không spawn bất ngờ trên tuyến nhà đầu game",
+      "agent_creative_scope": "Death/hurt animations not in zip; agent authors in style; drops unique-run not Elder",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    },
+    {
+      "asset_id": "SAMURAI",
+      "fantasy_name": "Oathless Ronin / Kiếm sĩ thất thệ",
+      "anchor_poi_id": "po_cairns",
+      "anchor_poi_name": "Sunken Cairns",
+      "anchor_au": [
+        470,
+        990
+      ],
+      "zone_id": "bz_dune",
+      "zone_name": "Dune Rock Outcrop",
+      "role": "optional duel boss",
+      "positioning": "Sunken Cairns, nhánh phế tích cạnh Dune Tombs; không chắn hành trình Ragnarok no-Elder",
+      "combat_identity": "Melee + ranged có animation gốc; pattern phản đòn, nhịp rõ; không auto-teleport",
+      "ecological_logic": "Một duelist trấn giữ ký ức/phế tích, không phải Elder hoặc mafia",
+      "agent_creative_scope": "Arena micro-layout within existing place, combo/duel reward",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    },
+    {
+      "asset_id": "WATER",
+      "fantasy_name": "Saltwick Tidemarshal / Hộ vệ thủy triều",
+      "anchor_poi_id": "po_saltlight",
+      "anchor_poi_name": "Saltwick Light",
+      "anchor_au": [
+        1732,
+        262
+      ],
+      "zone_id": "bz_salt",
+      "zone_name": "Saltwick Flats",
+      "role": "optional coastal boss candidate",
+      "positioning": "Saltwick Light: bãi đá/bờ triều ngoài tháp; không đứng lên lối đến Saltwick Harbor Safe",
+      "combat_identity": "Đòn thương có vùng theo hướng, cú đẩy gió/nước bám luật nước; không đánh từ dưới nước sâu bất khả né",
+      "ecological_logic": "Tương tác nước dâng/tuyến bờ; không spawn trên boat path",
+      "agent_creative_scope": "Source one sheet only: evaluate missing animation data, author if needed",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    },
+    {
+      "asset_id": "MAID_IDLE",
+      "fantasy_name": "Pale Custodian / Hầu gái lưu ảnh",
+      "anchor_poi_id": "po_academy",
+      "anchor_poi_name": "Argus Academy",
+      "anchor_au": [
+        936,
+        262
+      ],
+      "zone_id": "bz_argus",
+      "zone_name": "Argus Valley Pasture",
+      "role": "optional haunting side boss candidate",
+      "positioning": "Argus Academy: sealed archive/service corridor dưới Great Hall, tiếp cận qua cửa/hatch thật; để phần ngoại vi tự do",
+      "combat_identity": "Một người phục vụ dị thường tuần tra theo lịch, phản ứng âm thanh/ánh sáng; cảnh báo vật lý trước tấn công, không hitbox giả",
+      "ecological_logic": "Giải thích qua tàn tích học viện, không phải dân cư thường hoặc quái ngoài đồng",
+      "agent_creative_scope": "Only Idle/Run present. Full combat/hurt/death animation & encounter must be created or demoted to noncombat NPC",
+      "policy": "DESIGN_CANDIDATE_NOT_AUTHORED_SPAWN_TILE; find valid walkable, unoccupied, accessible local habitat cells with real collision / line of sight"
+    }
+  ],
+  "wildlife_candidates": [
+    {
+      "species": "Boar",
+      "areas": [
+        "bz_greyback",
+        "bz_westwood"
+      ],
+      "suitable": "wild hunt / possible capture later"
+    },
+    {
+      "species": "Deer",
+      "areas": [
+        "bz_silver",
+        "bz_hook"
+      ],
+      "suitable": "wild hunt / domestication needs measured constraints"
+    },
+    {
+      "species": "Hare",
+      "areas": [
+        "bz_greywater",
+        "bz_westwood"
+      ],
+      "suitable": "small wild animal"
+    },
+    {
+      "species": "Black grouse",
+      "areas": [
+        "bz_forest_n",
+        "bz_hook"
+      ],
+      "suitable": "wild bird, not automatically a domestic hen"
+    },
+    {
+      "species": "Fox",
+      "areas": [
+        "bz_westwood",
+        "bz_forest_n"
+      ],
+      "suitable": "wild predator, not automatic livestock"
+    }
+  ],
+  "gates": [
+    "exact final map source ZIP hash",
+    "visual parity complete map at multiple zones and 1x 640x360",
+    "all site placements validated by actual collision and walkable tiles; no arbitrary coords",
+    "six Elder original sites intact and optional",
+    "D061 trace-only house discovery",
+    "full unique source/death/drop/save/reload/offline identity",
+    "Current Creator authorized implementation on 2026-11-10; HUD Gold remains separate and is not a blocker",
+    "No self-merge; evidence-based integration review before acceptance"
+  ],
+  "not_yet_verified": {
+    "scythe_boss": "No independently verified scythe-wielder boss asset in scanned pack. Enemy pack candidate seems polearm/rider, not guaranteed scythe. Do not claim fifth boss or design a permanent site until proper source confirmed.",
+    "maid": "Maid has Idle/Run only; image may imply curved weapons but not enough evidence to identify exact weapon; no Attack/Hurt/Death",
+    "water": "Single sprite sheet plus ASEPRITE; not confirmed full combat animation",
+    "rock": "No distinct death or hurt sheet."
+  },
+  "boss_count_art_confirmed_or_candidate": 4,
+  "elder_fixed_positions": [
+    {
+      "id": "el_surtur",
+      "domain": "Reality",
+      "site_id": "po_surtur",
+      "site_name": "Foundry of the First Fire",
+      "au": [
+        1694,
+        826
+      ]
+    },
+    {
+      "id": "el_typhon",
+      "domain": "Power",
+      "site_id": "po_typhon",
+      "site_name": "Typhon's Fracture",
+      "au": [
+        556,
+        352
+      ]
+    },
+    {
+      "id": "el_aion",
+      "domain": "Time",
+      "site_id": "po_elderwood",
+      "site_name": "Heart of the Elderwood",
+      "au": [
+        868,
+        712
+      ]
+    },
+    {
+      "id": "el_atlas",
+      "domain": "Space",
+      "site_id": "po_gate",
+      "site_name": "Threshold Gate",
+      "au": [
+        168,
+        512
+      ]
+    },
+    {
+      "id": "el_argus",
+      "domain": "Mind",
+      "site_id": "po_hall_eyes",
+      "site_name": "Hall of Eyes",
+      "au": [
+        992,
+        212
+      ]
+    },
+    {
+      "id": "el_anubis",
+      "domain": "Soul",
+      "site_id": "po_necropolis",
+      "site_name": "Necropolis of the Hollow Sun",
+      "au": [
+        604,
+        1042
+      ]
+    }
+  ],
+  "source_delivery": {
+    "kind": "google_drive_full_execution_bundle",
+    "url": "https://drive.google.com/file/d/1m8YuSXO3U9ALxzQLg8iya1r_EEEUhKNu/view",
+    "file_name": "SOH_VEYRA_FULL_EXECUTION_PRELOAD_V2_20261110.zip",
+    "sha256": "c2d7ba77a19238d9df627e63cd61e99eca173f91642e92410fc3bea15d4f68b5",
+    "bytes": 35907353,
+    "readable_without_chat_attachment": true,
+    "drive_authentication_may_be_required": true
+  }
+}
