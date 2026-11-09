@@ -50,3 +50,8 @@ GitHub workspace branch: `game/veyra-81-poi-art-battle-20261109` of `Khanh-glitc
 ## Source registry and renderer handoff
 
 The isolated branch now also registers **81 authored canonical POI IDs** through `web/src/veyra05/arch/sites.ts` and connects the C01/C02/C04/F03/Elder sprites through `web/src/veyra05/decor-client.ts` and `elder-art.ts`. TypeScript architecture registry check: 81 unique IDs, zero missing, zero `compilePlan` issues. The full branch Vite build remains **UNVERIFIED** here because upstream Vite/@noble modules and geography `?raw` imports were not installed. The browser standalone distributed in the ChatGPT R5 ZIP is the verified playable candidate, not this branch's built output.
+
+
+## Follow-up: six Elder lair topology source patch (after frozen ZIP R5)
+
+The current GitHub branch now contains a source-only Elder lair revision in `web/src/veyra05/arch/rest48.ts`: five underground enclosed boss-symbol cores and Typhon's physically walled roofless pressure rift, all accessed through longer staggered routes. See [ELDER_LAIR_R5_SOURCE_PATCH.md](ELDER_LAIR_R5_SOURCE_PATCH.md). This does **not** modify or recertify the earlier standalone R5 ZIP/manifest. A new browser build and actual scene screenshots are required before any playable/visual acceptance claim for this revision.

@@ -213,6 +213,13 @@ function elderNote(p:Plan,x:number,y:number,z:Level,text:string){p.note(x,y,z,te
 function elderStage(p:Plan,id:string,label:string,lv:Level,rects:Rect[],mat:Mat='stone'){
   open(p,id,label,lv,rects,mat,lv>0);
 }
+/** A real walled, roofless cavern/crypt rather than an open paved stage.
+ * This authors collision in compilePlan; existing stairs retain floor ownership.
+ * No boss actor/combat/hazard is created by the art patch. */
+function elderLair(p:Plan,id:string,label:string,lv:Level,rects:Rect[],mat:Mat='stone'){
+  p.structure(id,label,lv,{mat,roof:null});
+  p.room(id,label,lv,id,rects);
+}
 
 function aionSanctuary(s:RestSite):ArchPlan{
   const x=s.cx,y=s.cy,p=plan(s,46);
@@ -224,9 +231,16 @@ function aionSanctuary(s:RestSite):ArchPlan{
   elderStage(p,'heart','Aion / The Elderwood Heart — open combat clearing',0,
     [[x-10,y-8,20,16],[x-8,y-12,16,24],[x-6,y-15,12,30]],'stone');
   // Underground root chambers sit under the core; exit is the SAME hatch.
-  elderStage(p,'roots_below','The hollow roots and time-worn chamber',-1,
-    [[x-12,y-12,24,9],[x-8,y-4,16,13],[x-13,y+4,26,9],[x-5,y-19,10,10]],'wood');
-  p.stair(x-8,y+5,0,-1,x-8,y+5,'Root descent and return','hatch');
+  // Descend from the outer ring into a long offset root tunnel. Two single-cell
+  // apertures prevent the encounter from being visible at the hatch.
+  elderLair(p,'roots_below','Aion / The Buried Heart of Time',-1,
+    [[x-5,y-20,11,19],[x-12,y-3,25,8],[x-7,y+4,15,15],
+     [x-12,y+5,8,5],[x+5,y+5,8,5]],'wood');
+  p.stair(x,y-15,0,-1,x,y-15,'Timeworn root descent and return','hatch');
+  p.partition(x-4,y-8,x+4,y-8,-1);
+  p.door(x-3,y-8,-1,'roots_below','First root pinch','arch');
+  p.partition(x-6,y+4,x+6,y+4,-1);
+  p.door(x+3,y+4,-1,'roots_below','Inner root knot','arch');
   elderStage(p,'low_branches','Forked bough walkway above the Heart',1,
     [[x-13,y-11,9,21],[x-4,y-10,17,6],[x+5,y-10,9,19],[x-5,y+4,19,6]],'wood');
   p.stair(x+10,y+7,0,1,x+10,y+7,'Bough ladder and return','ladder');
@@ -234,10 +248,11 @@ function aionSanctuary(s:RestSite):ArchPlan{
   p.stair(x+9,y-7,1,2,x+9,y-7,'Crown ladder and return','ladder');
   props(p,0,'tree_stump',[[x-14,y-13],[x+13,y-13],[x-14,y+11],[x+13,y+11]]);
   props(p,0,'lantern',[[x-9,y+9],[x+9,y+9]]);
-  p.prop(x,y+7,0,'elder_aion_root');props(p,0,'elder_aion_rune',[[x-12,y+8],[x+12,y+8],[x-12,y-12],[x+12,y-12]]);
+  // The monumental Heart belongs BELOW the root maze, not in the daylight clearing.
+  p.prop(x,y+12,-1,'elder_aion_root');props(p,0,'elder_aion_rune',[[x-12,y+8],[x+12,y+8],[x-12,y-12],[x+12,y-12]]);
   p.prop(x,y,0,'sundial');p.prop(x+6,y-7,1,'lookout');
   elderNote(p,x,y+5,0,'AION — The Heart. Roots turn back on themselves; the outer forest remains usable. Encounter behavior belongs to the boss runtime.');
-  elderNote(p,x,y-8,-1,'Hollow roots: follow the central shaft back to the surface; no time skip or real-time clock alteration.');
+  elderNote(p,x,y+15,-1,'AION CORE — enclosed root heart after two offset apertures; return by the same root stair. No time manipulation is implemented.');
   return p.build();
 }
 function anubisNecropolis(s:RestSite):ArchPlan{
@@ -252,9 +267,16 @@ function anubisNecropolis(s:RestSite):ArchPlan{
     [[x-14,y-14,29,28],[x-10,y-20,21,40]],'stone');
   hut(p,'west_tomb','Sepulchre of the Forgotten Names',[x-34,y-34,19,14],'S','tile','stone');
   hut(p,'east_tomb','Guardian Sarcophagus Chapel',[x+16,y-34,19,14],'S','tile','stone');
-  elderStage(p,'crypt_descent','Underground Hall of Returning Souls',-1,
-    [[x-12,y-12,25,13],[x-6,y-21,13,14],[x-23,y-5,19,9],[x+5,y-5,19,9],[x-10,y+1,21,19]],'stone');
-  p.stair(x,y-5,0,-1,x,y-5,'Central ossuary stairs and return','hatch');
+  // Processional tombs are the entrance facade; the actual judgement chamber
+  // is underground behind a staggered antechamber and a narrow doorway.
+  elderLair(p,'crypt_descent','Anubis / Inner Judgement Crypt',-1,
+    [[x-4,y-24,9,18],[x-11,y-9,23,8],[x-7,y-2,15,20],
+     [x-12,y+7,7,7],[x+6,y+7,7,7]],'stone');
+  p.stair(x,y-18,0,-1,x,y-18,'Hidden ossuary descent and return','hatch');
+  p.partition(x-3,y-10,x+3,y-10,-1);
+  p.door(x+2,y-10,-1,'crypt_descent','Weighing passage','arch');
+  p.partition(x-6,y+2,x+6,y+2,-1);
+  p.door(x-2,y+2,-1,'crypt_descent','Inner judgement threshold','arch');
   elderStage(p,'obelisk_walk','Elevated tomb-court circumambulation',1,
     [[x-21,y-22,12,34],[x+11,y-22,12,34],[x-20,y-24,43,6],[x-20,y+8,43,6]],'stone');
   p.stair(x+15,y+9,0,1,x+15,y+9,'Guardian terrace ladder','exterior');
@@ -263,8 +285,9 @@ function anubisNecropolis(s:RestSite):ArchPlan{
   props(p,0,'bones',[[x-17,y-8],[x+18,y-8],[x-16,y+14],[x+17,y+14]]);
   props(p,0,'lantern',[[x-9,y+13],[x+10,y+13],[x-8,y-13],[x+8,y-13]]);
   props(p,0,'elder_anubis_pylon',[[x-13,y+8],[x+13,y+8],[x-25,y-16],[x+25,y-16]]);
-  p.prop(x,y+7,0,'elder_anubis_sarc');p.prop(x,y,0,'sundial');p.prop(x-12,y-7,-1,'bones');
-  elderNote(p,x,y+3,0,'ANUBIS — Hollow Sun. Three monumental moments: pilgrimage, judgement court, ossuary. The arena is an encounter location, not a death-storage or loot duplication rule.');
+  p.prop(x,y+12,-1,'elder_anubis_sarc');p.prop(x,y,0,'sundial');p.prop(x-5,y+8,-1,'bones');
+  elderNote(p,x,y+3,0,'ANUBIS — Hollow Sun. The two outer tombs are not the boss room: descend into the sealed judgement crypt. No combat or loot authority is authored.');
+  elderNote(p,x,y+15,-1,'ANUBIS CORE — confined judgement chamber behind two offset crypt thresholds.');
   return p.build();
 }
 function argusHall(s:RestSite):ArchPlan{
@@ -279,9 +302,16 @@ function argusHall(s:RestSite):ArchPlan{
     [[x-15,y-13,30,26],[x-11,y-18,22,36]],'stone');
   hut(p,'left_scriptorium','West Archive of Mirrors',[x-31,y-36,20,13],'S','tile','stone');
   hut(p,'right_scriptorium','East Archive of Mirrors',[x+12,y-36,20,13],'S','tile','stone');
-  elderStage(p,'blind_archive','The Sealed Observation Library',-1,
-    [[x-13,y-12,27,11],[x-6,y-21,13,14],[x-16,y-3,33,10],[x-7,y+5,15,10]],'stone');
-  p.stair(x-4,y-2,0,-1,x-4,y-2,'Mirror archive stairs and return','hatch');
+  // The courtyard's eye is a lure. The true chamber is a concealed archive
+  // below it, with staggered sightlines and no straight run to the core.
+  elderLair(p,'blind_archive','Argus / The Closed Mind Observatory',-1,
+    [[x-4,y-22,9,16],[x-12,y-9,25,8],[x-7,y-2,15,20],
+     [x-16,y+6,11,7],[x+6,y+6,11,7]],'stone');
+  p.stair(x,y-16,0,-1,x,y-16,'Blind archive descent and return','hatch');
+  p.partition(x-3,y-10,x+3,y-10,-1);
+  p.door(x-2,y-10,-1,'blind_archive','First observation aperture','arch');
+  p.partition(x-6,y+2,x+6,y+2,-1);
+  p.door(x+2,y+2,-1,'blind_archive','Inner eye aperture','arch');
   elderStage(p,'watchers','Elevated Eyes of the Watchers',1,
     [[x-22,y-22,12,36],[x+11,y-22,12,36],[x-21,y-25,44,7],[x-21,y+8,44,8]],'stone');
   p.stair(x+16,y+11,0,1,x+16,y+11,'Watchers gallery','exterior');
@@ -291,8 +321,9 @@ function argusHall(s:RestSite):ArchPlan{
   props(p,0,'sundial',[[x,y],[x-15,y-17],[x+16,y-17]]);
   props(p,1,'telescope',[[x-16,y-10],[x+17,y-10]]);
   props(p,0,'lantern',[[x-11,y+16],[x+12,y+16]]);
-  p.prop(x,y+8,0,'elder_argus_eye');props(p,0,'elder_argus_pillar',[[x-15,y+8],[x+16,y+8],[x-20,y-14],[x+20,y-14]]);
-  elderNote(p,x,y+4,0,'ARGUS — The Hall of Eyes. Sight lines, occlusion and watch galleries distinguish this from the nearby Academy. No surveillance of player houses.');
+  p.prop(x,y+12,-1,'elder_argus_eye');props(p,0,'elder_argus_pillar',[[x-15,y+8],[x+16,y+8],[x-20,y-14],[x+20,y-14]]);
+  elderNote(p,x,y+4,0,'ARGUS — The Hall of Eyes. The visible oculus is a decoy; descend into the closed observation core.');
+  elderNote(p,x,y+15,-1,'ARGUS CORE — staggered occlusion and narrow intellectual observatory, not a free panoramic courtyard.');
   return p.build();
 }
 function atlasThreshold(s:RestSite):ArchPlan{
@@ -308,9 +339,16 @@ function atlasThreshold(s:RestSite):ArchPlan{
   // A pair of huge, occupiable plinths reads as an arch without faking portals.
   hut(p,'west_plinth','Western Gate Anchor',[x-40,y-32,18,15],'S','tile','stone');
   hut(p,'east_plinth','Eastern Gate Anchor',[x+23,y-32,18,15],'S','tile','stone');
-  elderStage(p,'anchor_vault','Anchor Vault Beneath the Threshold',-1,
-    [[x-8,y-11,17,28],[x-17,y-5,34,10],[x-5,y-19,11,10]],'stone');
-  p.stair(x-3,y+7,0,-1,x-3,y+7,'Anchor vault stair and return','hatch');
+  // The exposed gate is only a wayfinder. The spatial encounter lies in a
+  // drowned-looking dry vault; GOLD water is not converted into walkable land.
+  elderLair(p,'anchor_vault','Atlas / Folded Subspace Vault',-1,
+    [[x-4,y-21,9,18],[x-12,y-6,25,8],[x-8,y+1,17,19],
+     [x-15,y+8,9,7],[x+7,y+8,9,7]],'stone');
+  p.stair(x,y-17,0,-1,x,y-17,'Subspace vault descent and return','hatch');
+  p.partition(x-3,y-8,x+3,y-8,-1);
+  p.door(x+2,y-8,-1,'anchor_vault','Bent approach aperture','arch');
+  p.partition(x-7,y+2,x+7,y+2,-1);
+  p.door(x-2,y+2,-1,'anchor_vault','Folded vault aperture','arch');
   elderStage(p,'arch_span','The Suspended Arch Span',1,
     [[x-22,y-21,12,33],[x+10,y-21,12,33],[x-22,y-25,44,7],[x-22,y+6,44,8]],'stone');
   p.stair(x+17,y+8,0,1,x+17,y+8,'Gate span tower stair','exterior');
@@ -320,9 +358,11 @@ function atlasThreshold(s:RestSite):ArchPlan{
   props(p,0,'rubble',[[x-22,y-15],[x+24,y-14],[x-21,y+16],[x+22,y+16]]);
   props(p,0,'lantern',[[x-11,y+4],[x+12,y+4]]);
   elderPath(p,'wing_links','Gate-anchor buttress approaches',0,[[x-29,y-17,19,6],[x+14,y-17,22,6],[x-27,y-13,10,19],[x+19,y-13,10,19]],'stone');
-  p.prop(x,y+8,0,'elder_atlas_gate');props(p,0,'elder_atlas_anchor',[[x-18,y+8],[x+18,y+8],[x-14,y-12],[x+14,y-12]]);
+  p.prop(x,y+13,-1,'elder_atlas_gate');props(p,0,'elder_atlas_anchor',[[x-18,y+8],[x+18,y+8],[x-14,y-12],[x+14,y-12]]);
+  props(p,-1,'elder_blue_rune',[[x-6,y+9],[x+6,y+9]]);
   p.prop(x,y,0,'sundial');p.prop(x,y-13,2,'lookout');
-  elderNote(p,x,y+3,0,'ATLAS — Gate of Space. Enter and leave by the grounded causeway; the portal is an architectural motif, NOT working free teleport or a cross-gate fast-travel service.');
+  elderNote(p,x,y+3,0,'ATLAS — Gate of Space. This exposed gate is a landmark; the confined encounter is in the folded vault below. It is NOT a functioning teleport.');
+  elderNote(p,x,y+16,-1,'ATLAS CORE — dry submerged-style subspace chamber with mirrored markers, no fabricated underwater traversal.');
   return p.build();
 }
 function surturFirstFire(s:RestSite):ArchPlan{
@@ -337,9 +377,16 @@ function surturFirstFire(s:RestSite):ArchPlan{
     [[x-13,y-13,27,27],[x-9,y-19,19,39]],'stone');
   hut(p,'slag_shrine','Basalt Archive of the First Spark',[x-39,y-36,19,15],'S','tin','stone');
   hut(p,'cinder_shrine','The Broken Crucible Reliquary',[x+21,y-36,19,15],'S','tin','stone');
-  elderStage(p,'below_embers','The Fire-Root Crucible, undercroft',-1,
-    [[x-11,y-14,23,20],[x-19,y-5,39,10],[x-7,y+4,15,14]],'stone');
-  p.stair(x,y+5,0,-1,x,y+5,'Fire-root descent and return','hatch');
+  // The outdoor forge is the warning; Surtur's core is down the throat
+  // of a constrained basalt furnace with two offset heat-gate apertures.
+  elderLair(p,'below_embers','Surtur / The Volcano Heart-Furnace',-1,
+    [[x-4,y-23,9,18],[x-12,y-8,25,9],[x-8,y,17,19],
+     [x-14,y+6,8,8],[x+7,y+6,8,8]],'stone');
+  p.stair(x,y-18,0,-1,x,y-18,'Volcanic furnace descent and return','hatch');
+  p.partition(x-3,y-10,x+3,y-10,-1);
+  p.door(x+2,y-10,-1,'below_embers','Fire-mouth aperture','arch');
+  p.partition(x-7,y+2,x+7,y+2,-1);
+  p.door(x-3,y+2,-1,'below_embers','Crucible throat','arch');
   elderStage(p,'chimney_rim','Upper Rim of the Primordial Forge',1,
     [[x-21,y-22,12,36],[x+10,y-22,12,36],[x-20,y-25,43,8],[x-20,y+8,43,8]],'stone');
   p.stair(x+16,y+9,0,1,x+16,y+9,'Climb the basalt forge','exterior');
@@ -349,9 +396,10 @@ function surturFirstFire(s:RestSite):ArchPlan{
   props(p,0,'coal_pile',[[x-23,y-13],[x+23,y-13],[x-23,y+9],[x+23,y+9]]);
   props(p,0,'rubble',[[x-16,y-24],[x+16,y-24]]);
   elderPath(p,'forge_access_spur','Basalt furnace access and return',0,[[x+9,y+4,16,11]],'stone');
-  p.prop(x,y+8,0,'elder_surtur_forge');props(p,0,'elder_surtur_spire',[[x-15,y+8],[x+15,y+8],[x-24,y-13],[x+24,y-13]]);
-  p.prop(x,y,0,'hearth');p.prop(x-4,y-8,-1,'hearth');p.prop(x+12,y-14,1,'lookout');
-  elderNote(p,x,y+4,0,'SURTUR — The First Fire. Ceremonial volcanic architecture, not a normal slagworks. No automatic house-burning or independent hazard systems.');
+  p.prop(x,y+12,-1,'elder_surtur_forge');props(p,0,'elder_surtur_spire',[[x-15,y+8],[x+15,y+8],[x-24,y-13],[x+24,y-13]]);
+  p.prop(x,y,0,'hearth');p.prop(x+5,y+7,-1,'hearth');p.prop(x+12,y-14,1,'lookout');
+  elderNote(p,x,y+4,0,'SURTUR — The First Fire. The ground forge is an approach; descend into the volcanic heart-furnace.');
+  elderNote(p,x,y+15,-1,'SURTUR CORE — confined stone crucible with two offset thresholds. No invented burning damage or hazards.');
   return p.build();
 }
 function typhonFracture(s:RestSite):ArchPlan{
@@ -363,10 +411,17 @@ function typhonFracture(s:RestSite):ArchPlan{
     [[x-30,y-23,8,41],[x-30,y-26,22,7],[x-16,y-21,8,23],[x-19,y-2,17,7]],'stone');
   elderPath(p,'eastern_rim','The sheared eastern escarpment',0,
     [[x+22,y-24,8,43],[x+8,y-27,22,7],[x+10,y-22,8,25],[x+2,y-3,20,7],[x+15,y+12,16,7]],'stone');
-  elderStage(p,'power_heart','TYPHON / Storm-Pressure Eye of the Rift',0,
-    [[x-11,y-12,23,24],[x-7,y-17,15,34]],'stone');
+  // Unlike the other five, Typhon fights in a roofless BUT physically enclosed
+  // pressure cleft: canyon walls, one southern slit, and staggered bottlenecks.
+  elderLair(p,'power_heart','Typhon / Ice-Scar Pressure Cleft',0,
+    [[x-7,y-19,15,37],[x-12,y-5,25,11],[x-10,y+7,21,11]],'stone');
+  p.door(x,y+17,0,'power_heart','Southern pressure slit','arch');
+  p.partition(x-6,y+3,x+6,y+3,0);
+  p.door(x+2,y+3,0,'power_heart','First ice-pressure notch','arch');
+  p.partition(x-6,y-9,x+6,y-9,0);
+  p.door(x-2,y-9,0,'power_heart','Inner rift notch','arch');
   // Subsurface and high ledges are optional but connected to the return route.
-  elderStage(p,'cleft_below','The Under-Cleft Resonance Chamber',-1,
+  elderLair(p,'cleft_below','Typhon / Sealed Under-Cleft',-1,
     [[x-13,y-10,26,10],[x-7,y-19,15,16],[x-7,y-2,15,19]],'stone');
   p.stair(x+5,y+8,0,-1,x+5,y+8,'Cleft descent and return','hatch');
   elderStage(p,'surviving_span','Broken Skybridge Above the Rift',1,
@@ -376,8 +431,9 @@ function typhonFracture(s:RestSite):ArchPlan{
   p.stair(x+16,y-13,1,2,x+16,y-13,'Rift lookout and return','ladder');
   props(p,0,'rubble',[[x-27,y-17],[x+26,y-16],[x-22,y+10],[x+24,y+11]]);
   props(p,1,'lookout',[[x-15,y-17],[x+16,y-17]]);
-  p.prop(x,y+8,0,'elder_typhon_shard');props(p,0,'elder_typhon_pillar',[[x-13,y+8],[x+13,y+8],[x-20,y-15],[x+20,y-15]]);p.prop(x,y+8,0,'elder_blue_rune');
-  elderNote(p,x,y+4,0,'TYPHON — The Fracture. Traverse alternate canyon rims to the central eye, retain the Falls Road escape. No bridge deletion or pressure-wave combat is authored here.');
+  p.prop(x,y-14,0,'elder_typhon_shard');props(p,0,'elder_typhon_pillar',[[x-13,y+8],[x+13,y+8],[x-20,y-15],[x+20,y-15]]);p.prop(x,y-11,0,'elder_blue_rune');
+  elderNote(p,x,y+20,0,'TYPHON — The Fracture. Approach from Falls Road through the southern canyon slit, then two offset pressure notches; return remains open.');
+  elderNote(p,x,y-16,0,'TYPHON CORE — roofless but walled ice-scarred rift; no implemented ice damage or pressure-wave combat.');
   return p.build();
 }
 function makeElderBossPlan(s:RestSite):ArchPlan{
