@@ -1,0 +1,491 @@
+{
+  "origin": "81 unchanged canonical GOLD POIs; only remaining 48 are enhanced",
+  "taxonomy": "WORKING families, NOT approved 26-triad master taxonomy",
+  "proposedVendorNoGameplay": [
+    "po_vend_gulf",
+    "po_vend_strait"
+  ],
+  "assetNote": "F03 new artwork rejected by creator for ugliness and pixel-art mismatch; no new visual sprites in REST48; other visual agent to replace F03 art later",
+  "rest": [
+    {
+      "id": "po_observatory",
+      "name": "Argus Observatory",
+      "cx": 1916,
+      "cy": 340,
+      "family": "ARCHIVE",
+      "index": 0,
+      "concept": "Sun dialcourt, side instrument gallery and a staggered telescope ascent",
+      "minor": false
+    },
+    {
+      "id": "po_archive",
+      "name": "Argus Archive Vaults",
+      "cx": 2036,
+      "cy": 452,
+      "family": "ARCHIVE",
+      "index": 1,
+      "concept": "Vault anteroom, cataloguing wing and buried restricted stacks",
+      "minor": false
+    },
+    {
+      "id": "po_hall_eyes",
+      "name": "Hall of Eyes",
+      "cx": 1984,
+      "cy": 424,
+      "family": "ARCHIVE",
+      "index": 2,
+      "concept": "Asymmetric ritual hall with interior colonnade and a single raised dais",
+      "minor": false
+    },
+    {
+      "id": "po_lantern",
+      "name": "Lantern Light",
+      "cx": 2100,
+      "cy": 304,
+      "family": "ARCHIVE",
+      "index": 3,
+      "concept": "A narrow keeper tower on a wind-facing approach, not a port warehouse",
+      "minor": false
+    },
+    {
+      "id": "po_lanternstn",
+      "name": "Lantern Cove Station",
+      "cx": 2154,
+      "cy": 624,
+      "family": "ARCHIVE",
+      "index": 4,
+      "concept": "Radio-booth and signal maintenance path near the cove road",
+      "minor": false
+    },
+    {
+      "id": "po_kestrel",
+      "name": "Kestrel Radio Tower",
+      "cx": 1400,
+      "cy": 600,
+      "family": "SIGNAL",
+      "index": 5,
+      "concept": "Radio mast anchored by a short equipment bunker and service stair",
+      "minor": false
+    },
+    {
+      "id": "po_typhon",
+      "name": "Typhon's Fracture",
+      "cx": 1112,
+      "cy": 704,
+      "family": "RUPTURE",
+      "index": 6,
+      "concept": "Broken rock fissure with zigzag inspection path and a cut-through cleft",
+      "minor": false
+    },
+    {
+      "id": "po_viaduct",
+      "name": "Crushed Viaduct",
+      "cx": 1310,
+      "cy": 896,
+      "family": "RUPTURE",
+      "index": 7,
+      "concept": "Interrupted stone bridge, side ramp and narrow surviving abutment",
+      "minor": false
+    },
+    {
+      "id": "po_freightyard",
+      "name": "Shattered Freight Yard",
+      "cx": 1380,
+      "cy": 1000,
+      "family": "RUPTURE",
+      "index": 8,
+      "concept": "Stranded wagons and parallel freight platforms amid collapsed rail",
+      "minor": false
+    },
+    {
+      "id": "po_confluence",
+      "name": "Confluence Waystation",
+      "cx": 1836,
+      "cy": 1336,
+      "family": "WAY",
+      "index": 9,
+      "concept": "Riverside fork with sheltered wayfinding court and narrow rest house",
+      "minor": false
+    },
+    {
+      "id": "po_ranger",
+      "name": "Ranger Hut",
+      "cx": 1600,
+      "cy": 1520,
+      "family": "WILD",
+      "index": 10,
+      "concept": "Small forest hut with raised lookout deck and concealed path to trees",
+      "minor": false
+    },
+    {
+      "id": "po_glade",
+      "name": "Mosslight Glade",
+      "cx": 1564,
+      "cy": 1410,
+      "family": "WILD",
+      "index": 11,
+      "concept": "Open woodland crescent with its only enclosed structure off-center",
+      "minor": false
+    },
+    {
+      "id": "po_sapgrove",
+      "name": "Sap Grove",
+      "cx": 1920,
+      "cy": 1280,
+      "family": "WILD",
+      "index": 12,
+      "concept": "Working grove, winding sap-tap trail and lean-to rather than a fort",
+      "minor": false
+    },
+    {
+      "id": "po_elderwood",
+      "name": "Heart of the Elderwood",
+      "cx": 1736,
+      "cy": 1424,
+      "family": "WILD",
+      "index": 13,
+      "concept": "Circular ancient tree sanctuary with low branch crossing",
+      "minor": false
+    },
+    {
+      "id": "po_meridian",
+      "name": "Meridian Research Station",
+      "cx": 2240,
+      "cy": 1380,
+      "family": "WILD",
+      "index": 14,
+      "concept": "Research annex with observation cell and tucked field storeroom",
+      "minor": false
+    },
+    {
+      "id": "po_ironvein",
+      "name": "Ironvein Mine",
+      "cx": 2410,
+      "cy": 1310,
+      "family": "WILD",
+      "index": 15,
+      "concept": "Sloped iron-adit entrance and ore-sorting niche, not a cargo port",
+      "minor": false
+    },
+    {
+      "id": "po_ridgestop",
+      "name": "Ridge Pass Station",
+      "cx": 2356,
+      "cy": 1156,
+      "family": "WAY",
+      "index": 16,
+      "concept": "Wind-cut mountain stop with a short sheltered lookout",
+      "minor": false
+    },
+    {
+      "id": "po_rapids",
+      "name": "Rapids Portage Hut",
+      "cx": 2300,
+      "cy": 924,
+      "family": "WAY",
+      "index": 17,
+      "concept": "Portage path with an elongated canoe shed and dry cargo platform",
+      "minor": false
+    },
+    {
+      "id": "po_westwood",
+      "name": "Westwood Hamlet",
+      "cx": 848,
+      "cy": 1484,
+      "family": "WAY",
+      "index": 18,
+      "concept": "Two small cottages on a woodland lane with a shared work court",
+      "minor": false
+    },
+    {
+      "id": "po_fishcamp",
+      "name": "Fish Camp",
+      "cx": 704,
+      "cy": 1692,
+      "family": "WILD",
+      "index": 19,
+      "concept": "Narrow fish-drying line, net-house and open sandy clearing",
+      "minor": false
+    },
+    {
+      "id": "po_necropolis",
+      "name": "Necropolis of the Hollow Sun",
+      "cx": 1208,
+      "cy": 2084,
+      "family": "CRYPT",
+      "index": 20,
+      "concept": "Funerary processional entry, split tomb cluster and a lower ossuary",
+      "minor": false
+    },
+    {
+      "id": "po_tombs",
+      "name": "Dune Tombs",
+      "cx": 1040,
+      "cy": 2172,
+      "family": "CRYPT",
+      "index": 21,
+      "concept": "Low sandstone tomb entrance and two connected hidden burial rooms",
+      "minor": false
+    },
+    {
+      "id": "po_cairns",
+      "name": "Sunken Cairns",
+      "cx": 940,
+      "cy": 1980,
+      "family": "CRYPT",
+      "index": 22,
+      "concept": "Scattered prehistoric cairn ring and a single accessible stone crypt",
+      "minor": false
+    },
+    {
+      "id": "po_bonestop",
+      "name": "Bone Road Waystation",
+      "cx": 1504,
+      "cy": 1950,
+      "family": "WAY",
+      "index": 23,
+      "concept": "Road rest beside old bones, with a roofed shelter and broken marker",
+      "minor": false
+    },
+    {
+      "id": "po_gate",
+      "name": "Threshold Gate",
+      "cx": 336,
+      "cy": 1024,
+      "family": "WAY",
+      "index": 24,
+      "concept": "Gate court, offset watch shelter and a small elevated sentry platform",
+      "minor": false
+    },
+    {
+      "id": "po_beacon",
+      "name": "Beacon Rock Light",
+      "cx": 536,
+      "cy": 1312,
+      "family": "SIGNAL",
+      "index": 25,
+      "concept": "Working sea-cliff beacon with its existing helicopter reservation untouched",
+      "minor": false
+    },
+    {
+      "id": "po_wreck",
+      "name": "Wreck Isle Salvage",
+      "cx": 368,
+      "cy": 1744,
+      "family": "RUPTURE",
+      "index": 26,
+      "concept": "A grounded shipwreck salvage walk with two discrete shelter huts",
+      "minor": false
+    },
+    {
+      "id": "po_tidecamp",
+      "name": "Tidepool Fishing Camp",
+      "cx": 340,
+      "cy": 1096,
+      "family": "COAST",
+      "index": 27,
+      "concept": "Tidepool fishing shelter and open low-tide processing trail",
+      "minor": false
+    },
+    {
+      "id": "po_gullnest",
+      "name": "Seabird Nesting Cliffs",
+      "cx": 3744,
+      "cy": 856,
+      "family": "COAST",
+      "index": 28,
+      "concept": "Cliff-nesting watch path with a low observation shelter",
+      "minor": false
+    },
+    {
+      "id": "po_netcamp",
+      "name": "Gull Net Camp",
+      "cx": 280,
+      "cy": 1696,
+      "family": "COAST",
+      "index": 29,
+      "concept": "Fishnet drying camp with a compact loft and open shore-work yard",
+      "minor": false
+    },
+    {
+      "id": "po_emberwatch",
+      "name": "Ember Watch",
+      "cx": 3240,
+      "cy": 1492,
+      "family": "SIGNAL",
+      "index": 30,
+      "concept": "Highland fire observation with exterior lookout and supply shelter",
+      "minor": false
+    },
+    {
+      "id": "po_surtur",
+      "name": "Foundry of the First Fire",
+      "cx": 3388,
+      "cy": 1652,
+      "family": "CRYPT",
+      "index": 31,
+      "concept": "Ancient fire dais and a shallow ash-buried shrine, no industry bridge",
+      "minor": false
+    },
+    {
+      "id": "po_saltpans",
+      "name": "Salt Pans",
+      "cx": 3280,
+      "cy": 644,
+      "family": "COAST",
+      "index": 32,
+      "concept": "Flat segmented salt evaporation pans with small pump hut",
+      "minor": false
+    },
+    {
+      "id": "po_saltlight",
+      "name": "Saltwick Light",
+      "cx": 3464,
+      "cy": 524,
+      "family": "SIGNAL",
+      "index": 33,
+      "concept": "Narrow coastal marker tower with service cells",
+      "minor": false
+    },
+    {
+      "id": "po_racks",
+      "name": "Kelp Racks",
+      "cx": 3380,
+      "cy": 708,
+      "family": "COAST",
+      "index": 34,
+      "concept": "Long kelp-drying rows and tool shelter, not a pier warehouse",
+      "minor": false
+    },
+    {
+      "id": "po_gullwreck",
+      "name": "Gull Isle Wreck",
+      "cx": 3772,
+      "cy": 892,
+      "family": "RUPTURE",
+      "index": 35,
+      "concept": "Wave-swept scattered wreck salvage with a short safe shore route",
+      "minor": false
+    },
+    {
+      "id": "po_ironwh",
+      "name": "Ironholm Depot",
+      "cx": 2472,
+      "cy": 2580,
+      "family": "UTILITY",
+      "index": 36,
+      "concept": "Compact ore depot annex and a covered side loading platform",
+      "minor": false
+    },
+    {
+      "id": "po_rc_meridian",
+      "name": "Meridian Archive Cache",
+      "cx": 2276,
+      "cy": 1336,
+      "family": "UTILITY",
+      "index": 37,
+      "concept": "Concealed archive niche adjacent to Meridian facilities",
+      "minor": true
+    },
+    {
+      "id": "po_rc_ironvein",
+      "name": "Foreman's Strongbox",
+      "cx": 2444,
+      "cy": 1352,
+      "family": "UTILITY",
+      "index": 38,
+      "concept": "Small foreman lockbox alcove near the iron adit",
+      "minor": true
+    },
+    {
+      "id": "po_rc_kestrel",
+      "name": "Kestrel Tower Safe",
+      "cx": 1416,
+      "cy": 636,
+      "family": "UTILITY",
+      "index": 39,
+      "concept": "Short radio-service crawl and equipment safe",
+      "minor": true
+    },
+    {
+      "id": "po_rc_dam",
+      "name": "Falls Dam Vault",
+      "cx": 1508,
+      "cy": 908,
+      "family": "UTILITY",
+      "index": 40,
+      "concept": "Dry dam maintenance vault with one keyed-looking metal door art only",
+      "minor": true
+    },
+    {
+      "id": "po_rc_sandgate",
+      "name": "Sandgate Customs Strongbox",
+      "cx": 1436,
+      "cy": 2212,
+      "family": "UTILITY",
+      "index": 41,
+      "concept": "Customs documents strongroom, no functional trading system",
+      "minor": true
+    },
+    {
+      "id": "po_rc_salt",
+      "name": "Saltwick Harbor Safe",
+      "cx": 3120,
+      "cy": 644,
+      "family": "UTILITY",
+      "index": 42,
+      "concept": "Saltwick record safe inside a small detached annex",
+      "minor": true
+    },
+    {
+      "id": "po_vend_gulf",
+      "name": "Gulfhead Trading House [ĐỀ XUẤT]",
+      "cx": 2132,
+      "cy": 1788,
+      "family": "SERVICE",
+      "index": 43,
+      "concept": "Proposed trading counter space, architectural only; no trade behavior",
+      "minor": true
+    },
+    {
+      "id": "po_vend_strait",
+      "name": "Strait Landing Counter [ĐỀ XUẤT]",
+      "cx": 2572,
+      "cy": 1000,
+      "family": "SERVICE",
+      "index": 44,
+      "concept": "Proposed roadside counter, architectural only; no trade behavior",
+      "minor": true
+    },
+    {
+      "id": "po_evac_west",
+      "name": "Westmouth Evac Pier",
+      "cx": 684,
+      "cy": 1160,
+      "family": "SERVICE",
+      "index": 45,
+      "concept": "Westmouth evacuation assembly shelter, no boat spawning",
+      "minor": true
+    },
+    {
+      "id": "po_evac_south",
+      "name": "Southfoot Evac Beach",
+      "cx": 2356,
+      "cy": 2180,
+      "family": "SERVICE",
+      "index": 46,
+      "concept": "Southfoot evacuation beach marker, no transport activation",
+      "minor": true
+    },
+    {
+      "id": "po_evac_hook",
+      "name": "Hook Evac Point",
+      "cx": 2784,
+      "cy": 748,
+      "family": "SERVICE",
+      "index": 47,
+      "concept": "Hook evacuation assembly marker and small supply shed only",
+      "minor": true
+    }
+  ]
+}
