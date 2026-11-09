@@ -11,6 +11,7 @@ import { creatorLootV1 } from './creator-loot';
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
+import { richIronChance } from './catalog';
 import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -873,7 +874,7 @@ export function award(gs: GameState, key: string, now: number) {
 }
 
 // ---------------- combat / harvesting shared hit rules (C05) ----------------
-export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial<Record<string, number>>, now: number, fromX: number, fromY: number): { result: 'yield' | 'nopower' | 'empty' | 'none'; key?: string; got?: number; mat?: string; depleted?: boolean } {
+export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial<Record<string, number>>, now: number, fromX: number, fromY: number, opts?: { richIron?: boolean }): { result: 'yield' | 'nopower' | 'empty' | 'none'; key?: string; got?: number; mat?: string; depleted?: boolean } {
   const r = gs.run!; const s = sourceAt(r, tx, ty, now); if (!s) return { result: 'none' };
   if (s.stock <= 0) return { result: 'empty', key: s.key, mat: s.def.mat };
   const p = power[s.def.mat] || 0; if (p <= 0) return { result: 'nopower', key: s.key, mat: s.def.mat };
@@ -885,6 +886,8 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
   for (let u = 0; u < units; u++) {
     st.stock--; for (const [k, q] of s.def.yields) { spawnDrop(r, k, q, cx + ox, cy + oy, now); got += q; }
     for (const [k, ch] of (s.key === 'wreck' ? wreckBonuses(r) : s.def.bonus || [])) if (rngNext(r) < ch) { const drop=spawnDrop(r, k, 1, cx + ox, cy + oy, now); if(k==='damaged_drive')receipt(r,now,'harvest.component',`${s.key}@${tx},${ty}:${C(r,drop.c!).slots[0]!.uid}`); }
+    // R8C: a player swing with an iron-class pick can also free high-grade ore from an iron vein (finite, one drop per unit, same RNG stream).
+    if (opts?.richIron && s.key === 'iron') { const rate = richIronChance(power.ore || 0); if (rate > 0 && rngNext(r) < rate) spawnDrop(r, 'rich_iron_ore', 1, cx + ox, cy + oy, now); }
     // SOH_NEW_TUNED v1: only modern source layouts yield this additional,
     // finite wreck salvage; never modify legacy tables or invent new Map cells.
     if (s.key==='wreck' && r.sourceLayoutVersion===3 && rngNext(r)<SALVAGED_OIL_WRECK_CHANCE) spawnDrop(r,'salvaged_oil',1,cx+ox,cy+oy,now);

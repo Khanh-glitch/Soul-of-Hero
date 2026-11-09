@@ -451,7 +451,7 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
   }
   best ||= exhausted;
   if (best) {
-    const res = harvestHit(gs, best.tx, best.ty, d.power || {}, now, p.x, p.y);
+    const res = harvestHit(gs, best.tx, best.ty, d.power || {}, now, p.x, p.y, { richIron: true });
     const x = best.tx * TILE + 8, y = best.ty * TILE + 8;
     const ignited = s?.key === 'torch' && ignite(gs, best.tx, best.ty, now);
     if (res.result === 'yield') { fx('chip', { x, y, mat: res.mat, key: res.key, depleted: res.depleted }); hitAny = true; if (res.depleted) fx('fell', { x, y, key: res.key }); }

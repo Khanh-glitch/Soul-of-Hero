@@ -63,6 +63,8 @@ export const ITEMS: Record<string, ItemDef> = {
   stone: I({ name: 'Stone', cat: 'res', icon: 'stone', c1: '#7d8088', c2: '#b9bcc4', w: 1.2, max: 60, desc: 'Rough stone. Foundations, furnaces, tools.' }),
   fiber: I({ name: 'Plant Fiber', cat: 'res', icon: 'fiber', c1: '#5d8a3a', c2: '#a5d65e', w: 0.2, max: 80, desc: 'Grass and reed fiber. Rope, thatch, bandages.', fuel: 4 }),
   iron_ore: I({ name: 'Iron Ore', cat: 'res', icon: 'ore', c1: '#6b5a52', c2: '#d08a5a', w: 2, max: 40, desc: 'Smelt in a fueled furnace.' }),
+  // SOH_PROVISIONAL (R8C): high-grade ore from an iron vein, only with an iron-class pick. Smelts to two refined ingots with one coal.
+  rich_iron_ore: I({ name: 'Rich Iron Ore', cat: 'res', icon: 'ore', c1: '#4f4560', c2: '#f0c040', w: 2, max: 40, desc: 'High-grade ore from an iron vein. One of these with one coal makes two refined ingots.' }),
   coal: I({ name: 'Coal', cat: 'res', icon: 'ore', c1: '#25252c', c2: '#55556a', w: 1, max: 40, desc: 'Dense fuel. Burns long.', fuel: 80 }),
   charcoal: I({ name: 'Charcoal', cat: 'res', icon: 'ore', c1: '#2b2420', c2: '#6e5a4c', w: 0.5, max: 60, desc: 'Fuel made from burnt wood.', fuel: 55 }),
   crystal: I({ name: 'Frost Crystal', cat: 'res', icon: 'gem', c1: '#4fa6d8', c2: '#c8f0ff', w: 0.5, max: 30, desc: 'Cold-grown crystal from the north. Core synthesis.' }),
@@ -281,6 +283,7 @@ export const RECIPES: Record<string, Recipe> = {
   stew: { out: 'stew', qty: 1, ins: [['crop', 2], ['meat', 1], ['herb', 1]], station: 'campfire', secs: 14, tier: 1 },
   iron_ingot: { out: 'iron_ingot', qty: 1, ins: [['iron_ore', 1]], station: 'furnace', secs: 10, base: true, tier: 0 },
   refined_iron_ingot: { out: 'refined_iron_ingot', qty: 2, ins: [['iron_ingot', 3], ['coal', 1]], station: 'furnace', secs: 20, base: true, tier: 1 },
+  refined_iron_rich: { out: 'refined_iron_ingot', qty: 2, ins: [['rich_iron_ore', 1], ['coal', 1]], station: 'furnace', secs: 14, base: true, tier: 1 },
   scrap_ingot: { out: 'iron_ingot', qty: 1, ins: [['scrap', 3]], station: 'furnace', secs: 12, base: true, tier: 0 },
   brick: { out: 'brick', qty: 2, ins: [['stone', 3]], station: 'furnace', secs: 10, tier: 1 },
   shell_glass: { out: 'glass', qty: 1, ins: [['stone', 2], ['shell', 2]], station: 'furnace', secs: 16, base: true, tier: 1 },
@@ -358,6 +361,11 @@ export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', '
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit
+/** SOH_PROVISIONAL (R8C): per stock unit of an iron vein. Iron-class pick (ore power 5) 12%; salvager (ore 8) 20%.
+ *  Expected rich ore per 5-stock vein: 0.6 (iron pick), 1.0 (salvager). Last Island v5 records ~2 rare per ~272 iron (0.7%) as one
+ *  observation with unknown scope, so this is a scale difference, not a copy. Stone picks (ore 2) get nothing. */
+export const RICH_IRON_CHANCE = { ironPick: 0.12, salvager: 0.20 } as const;
+export function richIronChance(orePower: number): number { return orePower >= 8 ? RICH_IRON_CHANCE.salvager : orePower >= 5 ? RICH_IRON_CHANCE.ironPick : 0; }
 // SOH_NEW_TUNED v1. One-way, finite run-local stock; no automatic restock or resale.
 export const VENDOR_SPARES: Record<string, {price:number; qty:number; stock:number}> = {
   iron_ore:{price:3,qty:2,stock:5}, coal:{price:3,qty:2,stock:4}, glass:{price:4,qty:1,stock:3}, salvaged_oil:{price:5,qty:1,stock:4},
