@@ -58,6 +58,8 @@ export const ITEMS: Record<string, ItemDef> = {
   fuel_briquette: I({ name: 'Packed Fuel Briquette', cat: 'res', icon: 'briquette', c1: '#363038', c2: '#a18f72', w: 0.35, max: 30, desc: 'Compact portable fuel: 90 seconds of burn. Packing sacrifices some charcoal energy.', fuel: 90 }),
   // resources
   wood: I({ name: 'Wood', cat: 'res', icon: 'log', c1: '#8a5a32', c2: '#c9935a', w: 1, max: 60, desc: 'Split timber. Fuel, tools, walls.', fuel: 20 }),
+  // SOH_PROVISIONAL (K4 gỗ→ván): no Last Island plank figure exists in Atlas v1–v11; 2 wood -> 1 plank at a workbench.
+  plank: I({ name: 'Plank', cat: 'res', icon: 'plank', c1: '#b98a52', c2: '#e0b878', w: 1, max: 60, desc: 'Sawn board. Stronger walls per wood than log walls.' }),
   stone: I({ name: 'Stone', cat: 'res', icon: 'stone', c1: '#7d8088', c2: '#b9bcc4', w: 1.2, max: 60, desc: 'Rough stone. Foundations, furnaces, tools.' }),
   fiber: I({ name: 'Plant Fiber', cat: 'res', icon: 'fiber', c1: '#5d8a3a', c2: '#a5d65e', w: 0.2, max: 80, desc: 'Grass and reed fiber. Rope, thatch, bandages.', fuel: 4 }),
   iron_ore: I({ name: 'Iron Ore', cat: 'res', icon: 'ore', c1: '#6b5a52', c2: '#d08a5a', w: 2, max: 40, desc: 'Smelt in a fueled furnace.' }),
@@ -287,6 +289,7 @@ export const RECIPES: Record<string, Recipe> = {
   cloth: { out: 'cloth', qty: 1, ins: [['fiber', 6]], station: 'workbench', secs: 8, base: true, tier: 0 },
   arrow: { out: 'arrow', qty: 6, ins: [['wood', 1], ['stone', 1], ['fiber', 1]], station: 'workbench', secs: 5, tier: 1 },
   bow: { out: 'bow', qty: 1, ins: [['wood', 5], ['rope', 3]], station: 'workbench', secs: 12, tier: 1 },
+  plank: { out: 'plank', qty: 1, ins: [['wood', 2]], station: 'workbench', secs: 6, base: true, tier: 1 },
   iron_axe: { out: 'iron_axe', qty: 1, ins: [['iron_ingot', 3], ['wood', 2], ['leather', 1]], station: 'workbench', secs: 15, base: true, tier: 1 },
   iron_pick: { out: 'iron_pick', qty: 1, ins: [['iron_ingot', 3], ['wood', 2], ['leather', 1]], station: 'workbench', secs: 15, base: true, tier: 1 },
   iron_sword: { out: 'iron_sword', qty: 1, ins: [['iron_ingot', 5], ['leather', 1]], station: 'workbench', secs: 18, tier: 2 },
@@ -317,6 +320,7 @@ export const STRUCTS: Record<string, StructDef> = {
   floor_wood: { name: 'Wood Floor', cost: [['wood', 4]], hp: 120, need: 'any', block: false, layer: 'floor', desc: 'Foundation tile. Roofs need it.' },
   floor_stone: { name: 'Stone Floor', cost: [['stone', 6]], hp: 260, need: 'any', block: false, layer: 'floor', desc: 'Sturdy foundation.' },
   wall_wood: { name: 'Wood Wall', cost: [['wood', 5]], hp: 160, need: 'any', block: true, layer: 'wall', desc: 'Blocks movement and paths.' },
+  wall_plank: { name: 'Plank Wall', cost: [['plank', 3]], hp: 240, need: 'any', block: true, layer: 'wall', desc: 'Sawn boards: 240 HP for 6 wood, against 160 HP for 5 wood in a log wall.' },
   wall_stone: { name: 'Stone Wall', cost: [['stone', 8], ['wood', 1]], hp: 380, need: 'any', block: true, layer: 'wall', desc: 'Heavy wall.' },
   wall_brick: { name: 'Brick Wall', cost: [['brick', 6]], hp: 600, need: 'any', block: true, layer: 'wall', desc: 'Fired brick. Strongest wall.' },
   door_wood: { name: 'Wood Door', cost: [['wood', 6], ['rope', 1]], hp: 140, need: 'any', block: true, layer: 'wall', desc: 'E to open/close. Creatures cannot open doors.' },
@@ -350,7 +354,7 @@ export const STRUCTS: Record<string, StructDef> = {
 };
 /** Full target materials are paid again; condition is preserved, never a free repair. */
 export const STRUCTURE_UPGRADES: Record<string, string> = { floor_wood: 'floor_stone', wall_wood: 'wall_stone', wall_stone: 'wall_brick', door_wood: 'door_iron', roof_thatch: 'roof_tile', chest_small: 'chest_large' };
-export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'door_powered', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
+export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_plank', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'door_powered', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit
