@@ -7,7 +7,7 @@ import json
 import os
 from pathlib import Path
 import re
-import shutil
+import subprocess
 import stat
 import tempfile
 import zipfile
@@ -41,6 +41,9 @@ def main():
         ap.error("Run from Soul-of-Hero repository root on the R12-based UI/UX branch")
     if (root / DEST).exists():
         ap.error(f"Destination exists: {DEST}. Do not overwrite an already-imported candidate.")
+    current = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True, check=True).stdout.strip()
+    if current != BRANCH:
+        ap.error(f"Expected branch {BRANCH}; current branch {current}")
     parent = root / DEST.parent
     parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(archive) as z:
@@ -57,7 +60,7 @@ def main():
                 path = Path(name)
                 if name.startswith("/") or ".." in path.parts or "\\" in name:
                     ap.error(f"Unsafe ZIP path: {name!r}")
-                if (entry.external_attr >> 16) & stat.S_IFMT == stat.S_IFLNK:
+                if stat.S_IFMT(entry.external_attr >> 16) == stat.S_IFLNK:
                     ap.error(f"Unsafe symlink: {name!r}")
                 if entry.is_dir() or name == "docs/bible.md" or name.startswith("evidence/"):
                     continue
