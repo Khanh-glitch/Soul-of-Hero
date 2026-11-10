@@ -33,6 +33,9 @@ import { ReturnChronicle, ReturnDigest } from './ReturnChronicle';
 import './gold-return-original.css';
 import { SurvivorScreen } from './SurvivorScreen';
 import { Gold3WayfinderHost } from './GoldWayfinderAdapter';
+import { PersistentProblems } from './PersistentProblems';
+import { derivePersistentWarnings } from '../game/gold-attention';
+import './gold-persistent-original.css';
 import { Vitals, WorldClock, UrgentAlerts, Hotbar } from './hud';
 import { BUILD_KIT, BuildBar, type BuildTool } from './BuildBar';
 import './gold-buildbar-original.css';
@@ -318,6 +321,9 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       <div className="gold-hud absolute" style={{left:4,top:91,pointerEvents:'none'}}>
         <UrgentAlerts r={r} cold={p.warmth<20}/>
       </div>
+      {!panel && !p.dead && <div className="gold-hud absolute" style={{left:4,top:125,zIndex:16,maxWidth:155}} onMouseDown={e=>e.stopPropagation()}>
+        <PersistentProblems warnings={derivePersistentWarnings(r,now)} compact={!!engaged || p.hp < BAL.player.maxHp * 0.25} onInspectMap={()=>setPanel({kind:'map'})}/>
+      </div>}
       {Object.values(r.entities).filter(e=>e.kind==='airdrop'&&e.airdrop).map(e=>{ const v=airdropView(e.airdrop!,e.tx!,e.ty!,now,C(r,e.c!).slots.filter(Boolean).length); const col=v.key==='locked'?'#ffb0a0':v.takeable?'#9ae0a0':'#ffd98a'; return <div key={e.id} data-testid="airdrop-banner" data-phase={v.key} className="panel absolute" style={{left:165,top:5,padding:'2px 6px',fontSize:11,lineHeight:1.1,color:col,pointerEvents:'none',maxWidth:340}}><b>{v.label}</b> <span style={{color:'#d8cce4'}}>· {v.detail}</span></div>; })}
       {!panel && <HomeStatusCard r={r} px={p.x} py={p.y} />}
       <ThermalStatusCard r={r} now={now} hidden={!!panel} />
