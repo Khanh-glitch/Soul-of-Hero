@@ -58,11 +58,38 @@ async function check(viewport){
  if(box.bodyScroll)throw Error(tag+' browser document scrollbar remains');
  if(box.gridSlots!==24)throw Error(tag+' slots missing: '+box.gridSlots);
  if(box.scrollHeight>box.clientHeight+4)throw Error(tag+' Inventory content clipped by '+(box.scrollHeight-box.clientHeight)+'px: '+JSON.stringify(box));
+ // Visual acceptance checks: not merely absence of scrollbars. Compact layout must
+ // give the 24 items a usable native-pixel footprint and the inspector a real home.
+ if(width<=700){
+   const visual=await pane.evaluate(e=>{
+     const box=x=>x?.getBoundingClientRect().toJSON();
+     return {slot:box(e.querySelector('.dgrid .dslot')),avatar:box(e.querySelector('.sv-char')),
+       grid:box(e.querySelector('.dgrid')),inspector:box(e.querySelector('.iteminfo')),
+       pack:box(e),scrollWidth:e.scrollWidth,clientWidth:e.clientWidth};
+   });
+   report.inventory[tag].visual=visual;
+   if(visual.slot.width<40||visual.avatar.height<170)throw Error(tag+' compact Inventory still squeezed '+JSON.stringify(visual));
+   if(visual.inspector.width<width*.72)throw Error(tag+' compact item inspector wasted horizontal space '+JSON.stringify(visual));
+   if(visual.scrollWidth>visual.clientWidth+2)throw Error(tag+' compact pack horizontally clipped '+JSON.stringify(visual));
+   if(visual.inspector.bottom>visual.pack.bottom+1)throw Error(tag+' compact inspector cut off '+JSON.stringify(visual));
+ }
  await shot('05-inventory');
  if(width<=700){
-  await page.locator('.sv-compact-nav button').nth(1).click();await page.waitForTimeout(200);
-  if(!await page.locator('.sv-right').isVisible())throw Error('Work tab failed');
-  await shot('06-work');
+   await page.locator('.sv-left .dgrid .dslot').first().click();await page.waitForTimeout(220);
+   const selected=await pane.evaluate(e=>({
+     item:e.querySelector('.iteminfo')?.getBoundingClientRect().toJSON(),
+     pane:e.getBoundingClientRect().toJSON(),
+     buttons:[...e.querySelectorAll('.sv-itemacts button')].map(b=>b.textContent?.trim()),
+     clipped:e.scrollHeight>e.clientHeight+3
+   }));
+   report.inventory[tag].selected=selected;
+   if(selected.clipped||!selected.item||selected.item.bottom>selected.pane.bottom+1||selected.buttons.length<2)
+     throw Error(tag+' selected-item inspector/actions clipped or missing '+JSON.stringify(selected));
+   await shot('06-inventory-selected');
+   await page.keyboard.press('Escape');await page.waitForTimeout(80);
+   await page.locator('.sv-compact-nav button').nth(1).click();await page.waitForTimeout(200);
+   if(!await page.locator('.sv-right').isVisible())throw Error('Work tab failed');
+   await shot('07-work');
  }
  await ctx.close();
 }
