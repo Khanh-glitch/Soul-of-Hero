@@ -29,7 +29,7 @@ for (const [w, h, tag] of [[640, 360, '640'], [1280, 720, '1280']]) {
   await page.locator('.sv-cat', { hasText: 'Stations' }).click(); await page.waitForTimeout(200); await shot('05-survivor-stations');
   await page.locator('.sv-cat', { hasText: 'All' }).click(); await page.waitForTimeout(150);
   // craft something cheap by hand (real dispatch) → expect FEED line, not centre plaque
-  await page.getByRole('button', { name: /ready/ }).click(); await page.waitForTimeout(150);
+  await page.locator('.sv-filter button').click(); await page.waitForTimeout(150);
   const hand = page.locator('.sv-tile.ok').first(); if (await hand.count()) { await hand.click(); await page.waitForTimeout(100); }
   const go = page.locator('.sv-go'); const goTxt = await go.textContent(); if (await go.isEnabled()) { await go.click(); log.push(`[${tag}] crafted via '${goTxt}'`); }
   await page.waitForTimeout(150); await page.keyboard.press('Escape'); await page.waitForTimeout(500); await shot('06-feed-after-craft');

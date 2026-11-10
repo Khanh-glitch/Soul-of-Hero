@@ -51,7 +51,6 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Real browser input and native screenshot matrix 640x360 + 1280x720
         id: browser
-        continue-on-error: true
         run: |
           node tools/shot-wave4.mjs
           node --input-type=module <<'NODE'
