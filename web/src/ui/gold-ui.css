@@ -102,3 +102,30 @@
 .gold-skillbook .bar { border-color:#3b2d27; box-shadow:0 0 0 1px #816044; }
 .gold-skillbook .scroll { scrollbar-width:thin; scrollbar-color:#96724f #211920; }
 .gold-fieldchart .btn.gold, .gold-surface .btn.gold { box-shadow:inset 0 1px 0 #ffe3a0,inset 0 -1px #4a2a17; }
+
+
+/* Receipt-originated, attention-ranked feedback; no fake gameplay rewards. */
+.gold-feedback { position:absolute; left:115px; top:83px; width:410px; z-index:23; pointer-events:none;
+  display:flex; align-items:center; gap:12px; box-sizing:border-box; padding:9px 16px;
+  background:linear-gradient(100deg,#1b1422ec,#302130f3,#1b1422ec);
+  border-top:2px solid #c49a57; border-bottom:2px solid #c49a57;
+  box-shadow:0 0 22px #09040eb0,inset 0 0 0 1px #5d463e;
+  animation:gold-reveal .34s ease-out both; }
+.gold-feedback__crest { font-size:26px; color:#e5c47f; text-shadow:0 0 12px #e7a65570; }
+.gold-feedback__copy { flex:1; min-width:0; }
+.gold-feedback__eyebrow { color:#b89b7a; font-size:9px; letter-spacing:1.4px; }
+.gold-feedback__title { color:#ffe6ac; font-family:'Pixelify Sans',monospace; font-size:15px; text-shadow:2px 2px #2a1421; }
+.gold-feedback__detail { color:#dac7a7; font-size:11px; line-height:1.1; margin-top:3px; }
+.gold-feedback--l3 { top:75px; left:173px; width:294px; border-color:#8b9f79; padding:5px 9px; }
+.gold-feedback--l3 .gold-feedback__crest { font-size:15px; }
+.gold-feedback--l3 .gold-feedback__title { font-size:11px; }
+.gold-feedback--l2 { top:69px; left:204px; width:232px; border-width:1px; padding:4px 6px; }
+.gold-feedback--l2 .gold-feedback__crest { font-size:12px; }
+.gold-feedback--l2 .gold-feedback__title { font-size:10px; }
+.gold-feedback--combat { top:36px; left:222px; width:212px; min-height:25px; padding:3px 6px;
+  border-width:1px; background:#221b26e6; }
+.gold-feedback--combat .gold-feedback__crest { font-size:12px; }
+.gold-feedback--combat .gold-feedback__title { font-size:9px; }
+.gold-feedback--combat .gold-feedback__eyebrow { font-size:7px; }
+@keyframes gold-reveal { from {opacity:0;transform:translateY(8px) scale(.985)} to{opacity:1;transform:none} }
+@media (prefers-reduced-motion:reduce) { .gold-feedback { animation:none; } }
