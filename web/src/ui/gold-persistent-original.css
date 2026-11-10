@@ -1,0 +1,9 @@
+/* Exact Creator Gold (3) persistent-problem CSS source declarations. */
+.persistent-rail { display: flex; flex-direction: column; gap: 3px; width: 148px; margin-top: 2px; }
+.persistent-chip { display: flex; align-items: flex-start; gap: 4px; padding: 3px 5px; background: linear-gradient(180deg, rgba(32,16,14,.94), rgba(14,8,8,.94)); cursor: default; }
+.persistent-chip[data-warning-kind="death_bag"] { cursor: pointer; }
+.persistent-chip__copy { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.persistent-chip__copy b { font: 700 8px 'Pixelify Sans', monospace; letter-spacing: .3px; }
+.persistent-chip__copy span { font: 8px 'Pixelify Sans', monospace; color: #e8d2c6; }
+.persistent-chip__copy small { font: 8px 'Pixelify Sans', monospace; color: var(--brassLit); }
+

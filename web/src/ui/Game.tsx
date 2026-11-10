@@ -29,6 +29,20 @@ import { HomeStatusCard } from './HomeStatus';
 import { ThermalStatusCard } from './ThermalStatus';
 import type { OfflineReturnV1 } from '../game/return-report';
 import { RestPanel } from './RestPanel';
+import { ReturnChronicle, ReturnDigest } from './ReturnChronicle';
+import './gold-return-original.css';
+import { SurvivorScreen } from './SurvivorScreen';
+import { GoldSourceSurface } from './GoldSourceSurface';
+import { Gold3WayfinderHost } from './GoldWayfinderAdapter';
+import { PersistentProblems } from './PersistentProblems';
+import { derivePersistentWarnings } from '../game/gold-attention';
+import './gold-persistent-original.css';
+import { Vitals, WorldClock, UrgentAlerts, Hotbar } from './hud';
+import { BUILD_KIT, BuildBar, type BuildTool } from './BuildBar';
+// Full Gold2 HUD/BuildBar styles are isolated within GoldSourceSurface.
+// Full Gold2 HUD/BuildBar styles are isolated within GoldSourceSurface.
+import './gold-wayfinder-original.css';
+// Gold Survivor CSS is now sourced in full from immutable Gold (2) inside GoldSourceSurface.
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 
 export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: GameState; report: { lines: string[]; report: OfflineReturnV1 | null } | null; onExit: () => void; onRunEnd: () => void; onInspect?: () => void }) {
@@ -36,6 +50,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
   const [, setFrame] = useState(0); const rerender = useCallback(() => setFrame(f => f + 1), []);
   const [panel, setPanel] = useState<PanelState | null>(report && (report.lines.length || (report.report && !report.report.away.quiet)) ? { kind: 'report', lines: report.lines, report: report.report } : null);
   const [sel, setSel] = useState<{ c: string; slot: number } | null>(null);
+  const [showReturnDigest,setShowReturnDigest] = useState(!!report?.report?.away?.quiet && !report.lines.length);
   const [buildType, setBuildType] = useState<string | null>(null); const [reclaim, setReclaim] = useState(false); const [repairMode, setRepairMode] = useState(false); const [upgradeMode, setUpgradeMode] = useState(false);
   const [editLayer, setEditLayer] = useState('auto');
   const [toasts, setToasts] = useState<{ id: number; text: string; tone?: string; t: number }[]>([]);
@@ -161,7 +176,10 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         case 'KeyF': { if(r.player.vehicle){act('vehicleExit',{});break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current || r.layoutId?.startsWith('veyra05-')) { const c=!target.current && Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else interact(); } else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
         case 'KeyI': toggle('inv'); break; case 'KeyC': toggle('craft'); break; case 'KeyM': toggle('map'); break;
         case 'F9': if (onInspect && ((gs as any).__ephemeralInspect || r.qaUsed)) { e.preventDefault(); onInspect(); } break;
-        case 'KeyB': setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); toggle('build'); break;
+        case 'KeyB':
+          if(buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current){setBuildType(null);setReclaim(false);setRepairMode(false);setUpgradeMode(false);}
+          else {setPanel(null);setBuildType('wall_wood');setReclaim(false);setRepairMode(false);setUpgradeMode(false);}
+          break;
         case 'KeyG': setEditLayer(v => { const a=['auto','wall','obj','roof','floor']; return a[(a.indexOf(v)+1)%a.length]; }); break;
         case 'KeyU': setPanel(null); setUpgradeMode(v => !v); setBuildType(null); setReclaim(false); setRepairMode(false); break;
         case 'KeyX': setPanel(null); setUpgradeMode(false); setReclaim(v => !v); setBuildType(null); setRepairMode(false); break;
@@ -169,7 +187,12 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         case 'KeyT': { const anim = findNearAnimal(r); if (anim && !panelRef.current) act('husbandry', { cid: anim.id, op: e.shiftKey ? 'butcher' : anim.husbandry?.tamed ? 'lead' : 'tame' }); break; }
         case 'KeyR': { const selected=activeStack(r); if(selected && ITEMS[selected.key]?.creatorCore && !panelRef.current){act('loadCore',{slot:r.player.active,uid:selected.uid,mode:e.altKey?'signature':e.shiftKey?'refined':'basic'});break;} const t = Object.values(r.entities).find(x => x.type === 'research' && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 3 * TILE && clearWallLine(r, r.player, x)); if (t) setPanel({ kind: 'container', eid: t.id }); else toast('Research needs a Research Table within reach.'); break; }
         case 'Escape': if(coreAimRef.current || (r.player.action?.kind==='cast' && !r.player.action.done)){coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel=true;break;} if (buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) { setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); } else if (panelRef.current) setPanel(null); else setPanel({ kind: 'menu' }); setSel(null); break;
-        default: if (/^Digit[1-8]$/.test(e.code)) { r.player.active = +e.code.slice(5) - 1; rerender(); }
+        default:
+          if((buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) && /^Digit[0-9]$/.test(e.code)){
+            const n=Number(e.code.slice(5)); const target=BUILD_KIT[n===0?9:n-1];
+            if(target){setBuildType(target);setReclaim(false);setRepairMode(false);setUpgradeMode(false);}
+            e.preventDefault();
+          } else if (/^Digit[1-8]$/.test(e.code)) { r.player.active = +e.code.slice(5) - 1; rerender(); }
       }
     };
     const up = (e: KeyboardEvent) => { if (keyMap[e.code]) (inp.current as any)[keyMap[e.code]] = false; const a=coreAimRef.current;if(a && a.code===e.code){coreAimRef.current=null;setCoreAim(null);const selected=gs.run && activeStack(gs.run);if(!panelRef.current && selected?.uid===a.uid && gs.run && !gs.run.player.dead){const vx=Math.round(cam.x),vy=Math.round(cam.y),spirit=selected.key==='core_demon' && a.mode==='signature';const dest=spiritTarget.current;if(spirit && (!dest||dest.uid!==a.uid)){toast('Open M and select explored safe ground first.');return;}inp.current.skill=a.mode;inp.current.skillAim={uid:a.uid,slot:gs.run.player.active,mx:spirit?dest!.x:mouse.current.x+vx,my:spirit?dest!.y:mouse.current.y+vy,viewX:vx,viewY:vy};}} };
@@ -280,25 +303,30 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
   const layers=['wall','obj','roof','floor']; const hover=entsAt(r,hoverX,hoverY).filter(e=>e.kind==='struct'&&(editLayer==='auto'||STRUCTS[e.type!].layer===editLayer)&&(!upgradeMode||!!STRUCTURE_UPGRADES[e.type!])).sort((a,b)=>layers.indexOf(STRUCTS[a.type!].layer)-layers.indexOf(STRUCTS[b.type!].layer))[0];
   const placementReason=buildType?buildReason(gs,buildType,hoverX,hoverY):null;
   const heldCash = countItem(r, 'inv', 'rcash'); const surf = SPEED_KEY[effTile(r, Math.floor(p.x / 16), Math.floor(p.y / 16))] || '';
+  const buildingTool:BuildTool|null = upgradeMode?'upgrade':repairMode?'repair':reclaim?'reclaim':buildType&&(BUILD_KIT as readonly string[]).includes(buildType)?buildType as BuildTool:null;
+  const selectBuildTool=(tool:BuildTool)=>{
+    setUpgradeMode(tool==='upgrade');setRepairMode(tool==='repair');setReclaim(tool==='reclaim');
+    setBuildType(tool==='upgrade'||tool==='repair'||tool==='reclaim'?null:tool);
+  };
 
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
     <div ref={stageRef} className="stage" style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})` }}>
       <canvas ref={cvRef} width={VIEW_W} height={VIEW_H} style={{ width: VIEW_W, height: VIEW_H }} />
-      {/* top-left vitals */}
-      <div className="panel absolute" style={{ left: 4, top: 4, padding: '3px 5px', fontSize: 10, lineHeight: 1 }} onMouseDown={e => e.stopPropagation()}>
-        {[['HP', p.hp, BAL.player.maxHp, '#e0483a'], ['ST', p.stamina, BAL.player.maxStamina, '#d8d050'], ['FD', p.hunger, 100, '#e09040'], ['H₂O', p.thirst, 100, '#4aa0e0'], ['WRM', p.warmth, 100, '#f0b0a0']].map(([l, v, m, c]) => <div key={l as string} className="flex items-center gap-1" style={{ marginBottom: 2 }}><span style={{ width: 18, color: '#b8a8c8' }}>{l}</span><Bar v={v as number} max={m as number} col={c as string} w={l === 'HP' ? 74 : 58} /><span style={{ width: 16, textAlign: 'right', color: (v as number) < (m as number) * 0.25 ? '#ff7a6a' : '#e8dcc8' }}>{Math.round(v as number)}</span></div>)}
-        {p.rad > 1 && <div className="flex items-center gap-1"><span style={{ width: 18, color: '#b0e040' }}>RAD</span><Bar v={p.rad} max={100} col="#a0d030" w={58} /><span>{Math.round(p.rad)}</span></div>}
-        <div style={{ color: p.sheltered ? '#9ae0a0' : '#8a7a9a', marginTop: 1 }}>{p.sheltered ? '⌂ sheltered' : zone} {surf && <span style={{ color: '#6a5a7a' }}>· {surf}</span>}</div>
-        {isVeyra05 && (() => { const [ax, ay] = playerGlobalAu(r); return <div style={{ color: '#7a8ea8', marginTop: 1, fontSize: 9 }}>AU {ax.toFixed(0)},{ay.toFixed(0)} · F{activeFloor(r)}</div>; })()}
-      </div>
-      {/* top-right clocks */}
-      <div className="panel absolute" style={{ right: 4, top: 4, padding: '3px 6px', fontSize: 10, lineHeight: 1.05, textAlign: 'right', minWidth: 120 }} onMouseDown={e => e.stopPropagation()}>
-        <div><span className="tag" style={{ color: ph === 'calm' ? '#9ae0a0' : ph === 'danger' ? '#ff9a5a' : '#ff4a3a' }}>{ph === 'calm' ? 'CALM' : ph === 'danger' ? 'RAGNAROK' : 'AWAKENING'}</span> <span style={{ color: '#ffd98a' }}>Day {day}/14</span></div>
-        <div style={{ color: '#cfc2dc' }}>run {Math.floor(hrs)}h{String(Math.floor((hrs % 1) * 60)).padStart(2, '0')}m / {BAL.run.maxRunHours}h <span style={{ color: '#7a6a8a' }}>{r.qaUsed ? 'QA·' : ''}LOCAL</span></div>
-        <div>{dtm > 0.25 && dtm < 0.75 ? '☼' : '☾'} {clock} · {WICON[w]} {w} <span style={{ color: '#7a6a8a' }}>→ {WICON[next]}</span></div>
-        <div style={{ color: '#9ae0ff' }}>secured {gs.profile.securedCash}{heldCash ? <span style={{ color: '#ffe27a' }}> · carried {heldCash}</span> : null}</div>
-        {ph === 'calm' && hrs > 230 && <div style={{ color: '#ff9a5a' }}>Ragnarok in {(264 - hrs).toFixed(1)}h</div>}
-      </div>
+      {/* Entire Gold2 HUD now inherits original component/theme CSS without R12 overrides. */}
+      <GoldSourceSurface zIndex={20} passive testId="gold-hud-source">
+        <div className="gold-hud absolute" style={{left:4,top:4,pointerEvents:'auto'}} onMouseDown={e=>e.stopPropagation()}>
+          <Vitals r={r} now={now} zoneOverride={zone}/>
+        </div>
+        <div className="gold-hud absolute" style={{right:4,top:4,pointerEvents:'auto'}} onMouseDown={e=>e.stopPropagation()}>
+          <WorldClock r={r} now={now} secured={gs.profile.securedCash}/>
+        </div>
+        <div className="gold-hud absolute" style={{left:4,top:91,pointerEvents:'none'}}>
+          <UrgentAlerts r={r} cold={p.warmth<20}/>
+        </div>
+      </GoldSourceSurface>
+      {!panel && !p.dead && <div className="gold-hud absolute" style={{left:4,top:125,zIndex:16,maxWidth:155}} onMouseDown={e=>e.stopPropagation()}>
+        <PersistentProblems warnings={derivePersistentWarnings(r,now)} compact={!!engaged || p.hp < BAL.player.maxHp * 0.25} onInspectMap={()=>setPanel({kind:'map'})}/>
+      </div>}
       {Object.values(r.entities).filter(e=>e.kind==='airdrop'&&e.airdrop).map(e=>{ const v=airdropView(e.airdrop!,e.tx!,e.ty!,now,C(r,e.c!).slots.filter(Boolean).length); const col=v.key==='locked'?'#ffb0a0':v.takeable?'#9ae0a0':'#ffd98a'; return <div key={e.id} data-testid="airdrop-banner" data-phase={v.key} className="panel absolute" style={{left:165,top:5,padding:'2px 6px',fontSize:11,lineHeight:1.1,color:col,pointerEvents:'none',maxWidth:340}}><b>{v.label}</b> <span style={{color:'#d8cce4'}}>· {v.detail}</span></div>; })}
       {!panel && <HomeStatusCard r={r} px={p.x} py={p.y} />}
       <ThermalStatusCard r={r} now={now} hidden={!!panel} />
@@ -313,10 +341,15 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       {coreAim && ['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature' && <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><rect x="2" y="2" width={VIEW_W-4} height={VIEW_H-4} fill="none" stroke="#ffd98a" strokeDasharray="4 3"/></svg>}
       {coreAim && !(activeStack(r)?.key==='core_demon' && coreAim.mode==='signature') && !(['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature') && (()=>{const px=p.x-Math.round(cam.x),py=p.y-Math.round(cam.y),len=rayLen(r,p.x,p.y,p.aim,['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'')?Math.min(activeStack(r)?.key==='core_meteor'?180:157,Math.hypot(mouse.current.x+Math.round(cam.x)-p.x,mouse.current.y+Math.round(cam.y)-p.y)):coreAim.mode==='refined'?120:195);return <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><line x1={px} y1={py} x2={px+Math.cos(p.aim)*len} y2={py+Math.sin(p.aim)*len} stroke="#ffd98a" strokeWidth="1" strokeDasharray="4 3"/><circle cx={px+Math.cos(p.aim)*len} cy={py+Math.sin(p.aim)*len} r="4" fill="none" stroke="#ffd98a"/></svg>;})()}
       {coreAim && <div className="panel absolute" style={{left:220,top:38,padding:'2px 6px',fontSize:10,pointerEvents:'none'}}> {activeStack(r)?.key==='core_meteor' ? (coreAim.mode==='refined'?'Q: targeted meteor':'E: ten meteors in view') : activeStack(r)?.key==='core_dragon' ? (coreAim.mode==='refined'?'Q: fire tornado':'E: collect visible eligible foes') : activeStack(r)?.key==='core_demon' ? (coreAim.mode==='refined'?'Q: stationary beam':spiritTarget.current?.uid===activeStack(r)?.uid?'E: selected map destination':'E: select destination on M map') : activeStack(r)?.key==='core_mjolnir' ? (coreAim.mode==='refined'?'Q: five lightning strikes':'E: electrical attraction') : activeStack(r)?.key==='core_earthmother' ? (coreAim.mode==='refined'?'Q: ten trees on open ground':'E: binding roots and grass') : activeStack(r)?.key==='core_elsa' ? (coreAim.mode==='refined'?'Q: one-second ice ward':'E: freeze visible terrain') : (coreAim.mode==='refined'?'Q: timed bomb · release to throw':'E: burning projectile · release to cast')} · RMB/Esc cancel</div>}
+      {/* Gold (3) original adaptive Wayfinder UI; view model reads only actual R12 state. */}
+      {!panel && !p.dead && <Gold3WayfinderHost api={api} now={now} combatStealth={!!engaged || !!buildingTool || p.hp < BAL.player.maxHp * 0.25} contextForceExpand={false} />}
+      {showReturnDigest && report?.report && !panel && <div className="absolute" style={{right:4,top:74,zIndex:25}} onMouseDown={e=>e.stopPropagation()}>
+        <ReturnDigest report={report.report} onExpand={()=>{setShowReturnDigest(false);setPanel({kind:'report',lines:report.lines,report:report.report});}} onDismiss={()=>setShowReturnDigest(false)} />
+      </div>}
       {/* interaction prompt */}
       {(tgt || nearStair || nearAnimal) && ts && !panel && <div className="absolute" style={{ left: Math.round(ts.x), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', fontSize: 10, background: '#120c18e0', border: '1px solid #5a4a6a', padding: '0 4px', whiteSpace: 'nowrap', pointerEvents: 'none' }}><span style={{ color: '#ffe27a' }}>{bike ? '[F]' : tgt || nearStair ? '[F/E]' : '[T/E]'}</span> {tgt ? tgt.label : nearStair ? nearStair.stair.label : (() => { const sexSym = (nearAnimal!.husbandry?.sex ?? deterministicAnimalSex(nearAnimal!.id)) === 'f' ? '♀' : '♂'; const spName = CREATURES[nearAnimal!.type]?.name || nearAnimal!.type; return nearAnimal!.husbandry?.tamed ? `${nearAnimal!.husbandry.following ? 'Release' : 'Lead'} ${sexSym} ${nearAnimal!.husbandry.stage === 'juvenile' ? 'Juvenile ' : ''}${spName} (${nearAnimal!.husbandry.penned ? 'Penned' : 'Open'} · FD ${Math.round(nearAnimal!.husbandry.hunger)}%) · [Shift+T] Butcher` : `Feed ${spName} (${sexSym})`; })()}{targetHp && <span style={{ color: '#ffb66a' }}>{targetHp}</span>}</div>}
       {/* build helper */}
-      {(buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 34, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {STRUCTS[buildType].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||(buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:'Placement allowed · unprotected, decays in ~2h')} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
+      {(buildType || reclaim || repairMode || upgradeMode) && !buildingTool && <div data-testid="legacy-build-helper" className="panel absolute" style={{ left: 145, bottom: 34, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {STRUCTS[buildType].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||(buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:'Placement allowed · unprotected, decays in ~2h')} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
       {/* cargo */}
       {bike?.vehicle && <div className="panel absolute" style={{left:4,bottom:30,padding:'2px 5px',fontSize:10}}>Motorbike {bike.vehicle.fuel<=0?'· NO FUEL ':!bike.hp?'· BROKEN ':''}· fuel {bike.vehicle.fuel.toFixed(1)}/{BAL.motorbike.tank} · HP {Math.ceil(bike.hp||0)} · cargo {cartWeight(r,bike.c!).toFixed(1)}/{BAL.motorbike.maxWeight} kg · [F] exit</div>}
       {cart && <div className="panel absolute" style={{ left: 4, bottom: 30, padding: '2px 5px', fontSize: 10 }}>🛒 Cart {cartWeight(r, cart.c!).toFixed(0)}/{cartLimit(cart)} kg · {(() => { const t = effTile(r, Math.floor(cart.x / 16), Math.floor(cart.y / 16)); const k = SPEED_KEY[t]; return k === 'road' || k === 'bridge' || k === 'floor' ? <span style={{ color: '#9ae0a0' }}>on road ×{BAL.cart.speedOnRoad}</span> : ['forest', 'marsh', 'hill', 'snow'].includes(k) ? <span style={{ color: '#ff9a7a' }}>rough ×{BAL.cart.speedRough}</span> : <span style={{ color: '#ffd98a' }}>off-road ×{BAL.cart.speedOffRoad}</span>; })()} · [F] release</div>}
@@ -324,15 +357,19 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       <div className="absolute" style={{ left: 4, bottom: cart ? 46 : 30, width: 230, fontSize: 10, lineHeight: 1.05, pointerEvents: 'none' }}>{r.log.slice(-4).map((l, i) => { const age = now - l.t; if (age > 14000) return null; return <div key={i} style={{ opacity: Math.max(0, 1 - age / 14000), color: l.tone === 'gold' ? '#ffe27a' : l.tone === 'red' ? '#ff8a7a' : l.tone === 'blue' ? '#9ae0ff' : '#e0d4c4', textShadow: '1px 1px 0 #000' }}>{l.msg}</div>; })}</div>
       {/* toasts */}
       <div className="absolute" style={{ left: 0, right: 0, bottom: 56, textAlign: 'center', pointerEvents: 'none' }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className="fadein" style={{ display: 'inline-block', margin: '1px auto', fontSize: 11, padding: '1px 6px', background: '#120c18d8', border: `1px solid ${t.tone === 'bad' ? '#8a3a2a' : t.tone === 'ok' ? '#3a7a3a' : '#5a4a6a'}`, color: t.tone === 'bad' ? '#ffb0a0' : '#f0e4d0' }}>{t.text}<br /></div>)}</div>
-      {/* quickbar */}
-      <div className="panel absolute flex gap-0.5" style={{ left: '50%', transform: 'translateX(-50%)', bottom: 4, padding: 3 }} onMouseDown={e => e.stopPropagation()}>
-        {C(r, 'inv').slots.slice(0, 8).map((s, i) => <Slot key={i} s={s} active={i === p.active} hotkey={String(i + 1)} onClick={() => { p.active = i; rerender(); }} onContext={() => act('useItem', { slot: i })} />)}
-        <div style={{ fontSize: 9, width: 74, lineHeight: 1, marginLeft: 3, color: '#cfc2dc', alignSelf: 'center' }}>{(() => { const s = activeStack(r); if (!s) return 'Fists'; const d = ITEMS[s.key]; return <><span style={{ color: '#ffe0a0' }}>{d.name}</span><br />{d.creatorCore && s.reserves ? `B${s.reserves.basic} Q${s.reserves.refined} E${s.reserves.signature} · R/Shift/Alt reload` : d.core ? `${s.charge}/${d.charge} charges · LMB cast, RMB cancel` : d.food ? 'LMB eat/drink' : d.dmg ? `dmg ${d.dmg}${d.power ? ' · tool' : ''}` : d.place ? 'LMB to place' : d.cat === 'bp' ? 'LMB learn' : ''}</>; })()}</div>
-      </div>
+      {/* Source-authored full Gold2 HUD/BuildBar CSS, separate from R12's legacy panel cascade. */}
+      <GoldSourceSurface zIndex={20} passive testId="gold-hotbar-source">
+        {!buildingTool && <div className="gold-hud absolute" style={{left:'50%',transform:'translateX(-50%)',bottom:4,pointerEvents:'auto'}} onMouseDown={e=>e.stopPropagation()}>
+          <Hotbar r={r} onPick={i=>{r.player.active=i;rerender();}} onUse={i=>act('useItem',{slot:i})} onOpenPack={()=>setPanel({kind:'inv'})}/>
+        </div>}
+        {buildingTool && <div className="gold-hud absolute" style={{left:'50%',transform:'translateX(-50%)',bottom:4,zIndex:18,pointerEvents:'auto'}} onMouseDown={e=>e.stopPropagation()}>
+          <BuildBar gs={gs} tool={buildingTool} onPick={selectBuildTool} hoverX={hoverX} hoverY={hoverY}/>
+        </div>}
+      </GoldSourceSurface>
       {/* panels */}
-      {panel?.kind === 'inv' && <InventoryPanel api={api} />}
+      {panel?.kind === 'inv' && <GoldSourceSurface><SurvivorScreen key="pack" api={api} initialView="pack" /></GoldSourceSurface>}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
-      {panel?.kind === 'craft' && <CraftPanel api={api} focusRecipe={panel.recipe} />}
+      {panel?.kind === 'craft' && <GoldSourceSurface><SurvivorScreen key="work" api={api} initialView="work" focusRecipe={panel.recipe} /></GoldSourceSurface>}
       {panel?.kind === 'build' && <BuildPanel api={api} />}
       {panel?.kind === 'map' && <MapPanel api={api} teleportTarget={spiritTarget.current?.uid===activeStack(r)?.uid?spiritTarget.current:null} onTeleportSelect={activeStack(r)?.key==='core_demon' ? (x,y)=>{const reason=spiritDestination(r,x,y);if(reason){toast(reason,'bad');return;}spiritTarget.current={uid:activeStack(r)!.uid,x,y};toast('Destination set. Close the map, then hold and release E.','ok');} : undefined} />}
       {panel?.kind === 'skills' && <SkillsPanel api={api} />}
@@ -341,7 +378,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       {panel?.kind === 'escrow' && panel.eid && <EscrowPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'rest' && panel.eid && <RestPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'evac' && panel.eid && <EvacPanel api={api} eid={panel.eid} />}
-      {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} report={panel.report ?? null} />}
+      {panel?.kind === 'report' && <ReturnChronicle api={api} lines={panel.lines || []} report={panel.report ?? null} />}
       {p.dead && <div className="absolute inset-0 flex flex-col items-center justify-center fadein" style={{ background: 'radial-gradient(#3a0a0aa0, #000c)' }} onMouseDown={e => e.stopPropagation()}>
         <div className="title-font" style={{ fontSize: 26, color: '#ff8a6a', textShadow: '2px 2px 0 #000' }}>You have fallen</div>
         <div style={{ fontSize: 12, color: '#e0d0c0', maxWidth: 320, textAlign: 'center' }}>Death does not end the run. Everything you carried lies in a bag where you fell — go back for it. {Object.values(r.entities).some(e => e.type === 'bed_straw') ? 'You will wake at your bed.' : 'With no bed, you wake at a landing site.'}</div>

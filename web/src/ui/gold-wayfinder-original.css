@@ -1,0 +1,57 @@
+/* Gold (3) exact CSS selectors for authored Wayfinder, with local Gold palette. */
+.wayfinder, .wayfinder-tucked { --ink:#0a0c0f; --iron:#14181d; --steel:#1e252c; --edge:#39464f; --edgeLit:#5d707c; --brass:#c8963c; --brassLit:#f4d089; --paper:#e9dfc6; --muted:#8fa0a8; --good:#7fc25a; --warn:#e8b23c; --bad:#e2543c; --info:#5fc8e0; --food:#dd9a3c; --hud-op:.86; }
+@keyframes pulse { 50% { opacity: .5; } }
+.plate {
+  background: linear-gradient(180deg, rgba(20,24,29,var(--hud-op)), rgba(8,11,14,var(--hud-op)));
+  border: 1px solid #05070a;
+  box-shadow: inset 0 0 0 1px rgba(57,70,79,.75), inset 0 1px 0 rgba(93,112,124,.4), 0 2px 0 #04060a;
+}
+@keyframes critpulse { 50% { box-shadow: inset 0 0 0 1px var(--bad), 0 0 6px rgba(226,84,60,.6); } }
+.lamp { width: 6px; height: 6px; flex: none; box-shadow: 0 0 5px currentColor, inset 0 0 0 1px rgba(0,0,0,.6); background: currentColor; }
+.lamp.round { border-radius: 50%; }
+.lamp.diamond { transform: rotate(45deg); }
+.craft .railbtn .lamp { position: absolute; right: 2px; bottom: 2px; width: 4px; height: 4px; }
+@media (prefers-reduced-motion: reduce) {
+.field-map *, .return-report *, .field-note-card *, .return-digest *, .sv *, .xp-combat-alert,
+  .wayfinder *, .codex-panel *, .xp-stamp, .xp-ceremony--epic, .xp-world-ring, .world-wayfinder {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+.wayfinder-tucked { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; font: 8px "Pixelify Sans", monospace; color: var(--paper); cursor: pointer; background: linear-gradient(180deg, rgba(20,24,29,.9), rgba(8,11,14,.9)); }
+.wayfinder-tucked:hover { color: var(--brassLit); border-color: var(--brass); }
+.wayfinder { --wf-accent: var(--brassLit); position: relative; width: 176px; padding: 5px 6px; display: flex; flex-direction: column; gap: 3px; background: linear-gradient(160deg, rgba(24,33,38,.94), rgba(10,16,20,.94)); border-color: color-mix(in srgb, var(--wf-accent) 45%, #05070a); }
+.wayfinder--expanded { width: 196px; }
+.wayfinder--done { border-color: var(--good); box-shadow: inset 0 0 0 1px var(--good), 0 0 12px rgba(127,194,90,.4); }
+.wayfinder--stealth { width: auto; max-width: 158px; flex-direction: row; align-items: center; gap: 4px; padding: 2px 6px; font: 8px "Pixelify Sans", monospace; opacity: .88; }
+.wayfinder__stealth-title { color: var(--paper); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 96px; }
+.wayfinder__head { display: flex; align-items: center; gap: 3px; }
+.wayfinder__kind { font: 700 7px "Pixelify Sans", monospace; letter-spacing: .6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wayfinder__frac { margin-left: auto; font: 700 8px "Pixelify Sans", monospace; color: var(--paper); }
+.wayfinder__iconbtn { background: transparent; border: 1px solid rgba(93,112,124,.45); color: var(--muted); font: 700 8px "Pixelify Sans", monospace; width: 13px; height: 13px; line-height: 10px; padding: 0; cursor: pointer; }
+.wayfinder__iconbtn:hover { color: var(--brassLit); border-color: var(--brassLit); }
+.wayfinder__main { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+.wayfinder__ico { width: 20px; height: 20px; display: grid; place-items: center; background: #060a0e; border: 1px solid rgba(93,112,124,.55); flex: none; }
+.wayfinder__titles { min-width: 0; flex: 1; line-height: 1.1; }
+.wayfinder__title { font: 700 10px "Pixelify Sans", monospace; color: #f6e7c4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wayfinder__bearing { font: 8px "Pixelify Sans", monospace; color: var(--info); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.wayfinder__sub { font: 8px "Pixelify Sans", monospace; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.wayfinder__track { height: 3px; background: #05070a; box-shadow: inset 0 0 0 1px rgba(57,70,79,.85); overflow: hidden; }
+.wayfinder__track > i { display: block; height: 100%; transition: width 220ms ease-out; }
+.wayfinder__detail { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid rgba(57,70,79,.65); padding-top: 3px; }
+.wayfinder__blocker { font: 8px "Pixelify Sans", monospace; color: #ffb99d; background: rgba(56,22,16,.75); border-left: 2px solid var(--bad); padding: 2px 4px; line-height: 1.25; }
+.wayfinder__next { font: 8px "Pixelify Sans", monospace; color: #d9e4de; line-height: 1.25; }
+.wayfinder__actions { display: flex; gap: 4px; flex-wrap: wrap; }
+.wayfinder__switch { margin-top: 3px; border-top: 1px solid var(--edge); padding-top: 3px; display: flex; flex-direction: column; gap: 2px; max-height: 132px; overflow-y: auto; }
+.wayfinder__switch-h { display: flex; align-items: center; justify-content: space-between; font: 700 8px "Pixelify Sans", monospace; color: var(--brassLit); margin-bottom: 1px; }
+.wayfinder__opt { display: flex; align-items: center; gap: 4px; background: rgba(6,10,14,.65); border: 1px solid rgba(57,70,79,.55); padding: 2px 4px; cursor: pointer; text-align: left; font: 8px "Pixelify Sans", monospace; color: var(--paper); }
+.wayfinder__opt:hover { border-color: var(--brassLit); }
+.wayfinder__opt.on { border-color: var(--brassLit); background: rgba(54,40,14,.55); }
+.wayfinder__opt-t { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.world-wayfinder { position: absolute; width: 18px; height: 18px; transform: translate(-50%, -50%); pointer-events: none; z-index: 12; animation: ww-bob 1.5s ease-in-out infinite; }
+.world-wayfinder .ww-c { position: absolute; width: 4px; height: 4px; border: 1px solid var(--brassLit); }
+.world-wayfinder .ww-c--tl { left: 0; top: 0; border-right: 0; border-bottom: 0; }
+.world-wayfinder .ww-c--tr { right: 0; top: 0; border-left: 0; border-bottom: 0; }
+.world-wayfinder .ww-c--bl { left: 0; bottom: 0; border-right: 0; border-top: 0; }
+.world-wayfinder .ww-c--br { right: 0; bottom: 0; border-left: 0; border-top: 0; }
+.world-wayfinder__tag { position: absolute; left: 50%; top: -11px; transform: translateX(-50%); background: rgba(8,12,16,.88); border: 1px solid rgba(244,208,137,.55); color: var(--brassLit); font: 700 7px "Pixelify Sans", monospace; padding: 0 3px; white-space: nowrap; }

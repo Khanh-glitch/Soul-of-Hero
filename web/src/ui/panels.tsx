@@ -19,6 +19,8 @@ const bundleLabel = (rc: { out: string; qty: number; outs?: [string, number][] }
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
 import { Panel, Slot, Icon, Cost, type Api } from './common';
+import { StationConsole } from './StationConsole';
+import './gold-station-original.css';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { windowOrigin, playerGlobalAu } from '../veyra05/continuity';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
@@ -62,7 +64,7 @@ function Grid({ api, cid, cols = 8, quickTo, hotRow = false }: { api: Api; cid: 
     {c.slots.map((s, i) => <Slot key={i} s={s} sel={api.sel?.c === cid && api.sel.slot === i} active={hotRow && i === api.gs.run!.player.active} hotkey={hotRow && i < 8 ? String(i + 1) : undefined} onClick={e => slotClick(api, cid, i, e, quickTo)} onContext={() => slotContext(api, cid, i, quickTo)} />)}
   </div>;
 }
-function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
+export function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
   if (!s) return <div style={{ fontSize: 10, color: '#8a7a9a', minHeight: 34 }}>Click to pick up · click again to place/swap · right-click to use/equip · Shift-click to quick-transfer.</div>;
   const d = ITEMS[s.key];
   const stats: string[] = []; if (d.dmg) stats.push(`DMG ${d.dmg}`); if (d.reach) stats.push(`Reach ${d.reach}`); if (d.power) stats.push('Work: ' + Object.entries(d.power).map(([m, p]) => `${m} ${p}`).join(' ')); if (d.armor) stats.push(`Armor ${Math.round(d.armor * 100)}%`); if (d.cold) stats.push(`Warmth +${d.cold}`); if (d.carryBonus) stats.push(`Carry +${d.carryBonus}kg`); if (d.fuel) stats.push(`Fuel ${d.fuel}s`); if (d.food) stats.push(Object.entries(d.food).map(([k, v]) => `${k} ${v! > 0 ? '+' : ''}${v}`).join(' ')); stats.push(`${d.w}kg`);
@@ -138,6 +140,8 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; if (!e) return null;
   if (e.parcel) return <ParcelPanel api={api} eid={eid} />;
   const st = e.station; const kind = e.type ? STRUCTS[e.type]?.station : null;
+  // Gold2 original station and research UI; all actions still use R12 engine intents.
+  if (st && kind && e.kind !== 'recycler') return <StationConsole api={api} eid={eid} />;
   const lootSite=e.kind==='loot' && r.lootEcology ? getWorld(r.layoutId||'shipping').statics.find(s=>s.kind==='loot' && s.tx===e.tx && s.ty===e.ty) : undefined;
   const lootKind=lootSite ? lootClass(lootSite) : null;
   const poiId=e.poi==='factory_vault'?'factory':e.poi==='light_top'?'light':e.poi;
