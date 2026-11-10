@@ -9,7 +9,7 @@ const NOW = 1_762_800_000_000;
 function run(overrides: Partial<RunState> = {}): RunState {
   return {
     startedAt: NOW - 7 * 3_600_000,
-    player: {skills:{combat:2}} as RunState['player'],
+    player: {skills:{combat:2}} as unknown as RunState['player'],
     qaOffset: 0,
     poiSeen: ['po_ruinedkeep', 'po_cairns'],
     sideBossDefeated: { boss_ronin: NOW - 12_000 },
@@ -37,7 +37,7 @@ describe('Gold Waymark adapter on authoritative SOH R12 world', () => {
   it('does not spoof map knowledge, boss victories or offline progress', () => {
     const goals = goldGoals(run({
       poiSeen: [], receipts: [], sideBossDefeated: {}, elderStones: [],
-      knowledge: { recipes: [], studied: [] }, entities: {}, player: {skills:{combat:0}} as RunState['player'],
+      knowledge: { recipes: [], studied: [] }, entities: {}, player: {skills:{combat:0}} as unknown as RunState['player'],
     }), NOW);
     for (const id of ['explore', 'craft', 'hunt', 'guardians', 'stones', 'shelter']) {
       expect(goals.find(g => g.id === id)?.progress).toBe(0);
