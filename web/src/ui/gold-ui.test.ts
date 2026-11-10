@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { RunState } from '../game/core';
 import { goldGoals } from './GoldJourney';
+import { cueFromReceipt } from './GoldFeedback';
 
 const NOW = 1_762_800_000_000;
 function run(overrides: Partial<RunState> = {}): RunState {
@@ -38,6 +39,14 @@ describe('Gold Waymark adapter on authoritative SOH R12 world', () => {
     for (const id of ['explore', 'craft', 'hunt', 'guardians', 'stones', 'shelter']) {
       expect(goals.find(g => g.id === id)?.progress).toBe(0);
     }
+  });
+  it('honors committed event priority without inventing a stone pickup or reward', () => {
+    const elder = cueFromReceipt({id:'r3',seq:3,at:NOW,kind:'elder.defeat',detail:'surtur'});
+    expect(elder?.level).toBe(5);
+    expect(elder?.detail).toContain('must still be claimed');
+    const sideboss = cueFromReceipt({id:'r4',seq:4,at:NOW,kind:'boss.defeat',detail:'boss_ronin'});
+    expect(sideboss?.level).toBe(4);
+    expect(cueFromReceipt({id:'r5',seq:5,at:NOW,kind:'harvest',detail:'oak'})).toBeNull();
   });
   it('does not grant, consume or mint a gameplay item from UI-only tracking', () => {
     const r = run();
