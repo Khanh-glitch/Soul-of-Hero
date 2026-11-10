@@ -1,0 +1,97 @@
+name: UIUX Wave4 isolated candidate
+on:
+  push:
+    branches:
+      - uiux/visual-overhaul-wave4-20261110
+    paths:
+      - 'web/uiux/visual-overhaul/**'
+      - '.github/workflows/uiux-wave4.yml'
+  workflow_dispatch:
+
+jobs:
+  candidate-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: web/uiux/visual-overhaul
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require actual imported source
+        shell: bash
+        run: |
+          test -f package.json || { echo "::error::Creator ZIP source is NOT YET IMPORTED."; exit 1; }
+          test -f src/ui/Game.tsx
+          test -f src/ui/SurvivorScreen.tsx
+          test -f src/ui/BuildBar.tsx
+          test -f src/ui/dragSlots.tsx
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/uiux/visual-overhaul/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Asset fidelity
+        run: npm run verify:assets
+      - name: Static typecheck
+        run: npm run typecheck
+      - name: Strict full source regression suite (do not conceal failures)
+        id: full_tests
+        continue-on-error: true
+        run: npm test
+      - name: Production build despite fixture regression failures
+        id: build
+        run: npm run build
+      - name: Verify standalone output
+        run: |
+          test -f dist/index.html
+          test "$(grep -o 'data:image/png;base64,' dist/index.html | wc -l)" -ge 54
+      - name: Publish runnable UIUX candidate HTML from exact source SHA
+        uses: actions/upload-artifact@v4
+        if: ${{ steps.build.outcome == 'success' }}
+        with:
+          name: uiux-wave4-standalone-${{ github.sha }}
+          path: web/uiux/visual-overhaul/dist/index.html
+          if-no-files-found: error
+          retention-days: 30
+      - name: Chromium browser dependencies
+        run: npx playwright install --with-deps chromium
+      - name: Real browser input and native screenshot matrix 640x360 + 1280x720
+        id: browser
+        run: |
+          node tools/shot-wave4.mjs
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const dir='evidence/wave4';
+          const r=JSON.parse(fs.readFileSync(dir+'/run-log.json','utf8'));
+          const shots=fs.readdirSync(dir).filter(x=>x.endsWith('.png'));
+          const fail=[];
+          if(r.errors.length)fail.push('console/page errors: '+r.errors.join(' | '));
+          if(shots.length!==18)fail.push('expected 18 native screenshots, got '+shots.length);
+          for(const w of ['640','1280']){
+            if(!r.log.some(x=>x.includes('['+w+'] drag:')&&x.includes("hotbar6 now 'Hunting Bow'")))fail.push(w+' drag destination mismatched');
+            if(!r.log.some(x=>x.includes('['+w+'] hover+8:')&&x.includes("slot7 'Salvager Pick'")))fail.push(w+' hotbar shortcut mismatched');
+          }
+          console.log(JSON.stringify({shots:shots.length,steps:r.log,errors:r.errors,fail},null,2));
+          if(fail.length)process.exit(1);
+          NODE
+      - name: Upload QA browser screenshots, receipts and diagnostic logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: uiux-wave4-browser-${{ github.sha }}
+          path: |
+            web/uiux/visual-overhaul/evidence/wave4/**
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Enforce honest full-regression and browser acceptance
+        if: always()
+        shell: bash
+        run: |
+          echo "Full source regression outcome: ${{ steps.full_tests.outcome }}"
+          echo "Production build outcome: ${{ steps.build.outcome }}"
+          echo "Browser evidence outcome: ${{ steps.browser.outcome }}"
+          test "${{ steps.full_tests.outcome }}" = success || { echo "::error::Full source regression suite failed (historical Gameplay fixture divergence). Keep PR blocked."; exit 1; }
+          test "${{ steps.build.outcome }}" = success || { echo "::error::Production build failed."; exit 1; }
+          test "${{ steps.browser.outcome }}" = success || { echo "::error::Browser QA failed."; exit 1; }

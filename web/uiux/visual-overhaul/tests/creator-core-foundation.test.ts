@@ -1,0 +1,65 @@
+import { afterEach, describe, expect, it } from 'vitest';
+import { TILE, WW, T as Tile, type GameState, type Stack } from '../src/game/core';
+import { addItem, C, countItem, dispatch, newGame, mkCreature, blockGrid } from '../src/game/engine';
+import { HAZ, PROJ, tick, hurtPlayer, syncWorld, type Input } from '../src/game/sim';
+import { serializeSnapshot, validate } from '../src/game/persist';
+import { getWorld, setActiveLayout } from '../src/game/world';
+const T=Date.UTC(2026,10,4);let n=0;const cmd=(g:GameState,type:string,p:object={},id=`cc-${++n}`)=>dispatch(g,{id,type,...p},T+10);
+function setup(){setActiveLayout('shipping_fresh');const g=newGame();expect(cmd(g,'startRun',{character:'female',seed:33}).ok).toBe(true);const r=g.run!;r.creatures=[];expect(addItem(r,'inv','core_blast',1)).toBe(0);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_blast'),core=C(r,'inv').slots[slot]!;r.player.active=slot;for(const [k,v] of [['energy_basic',10],['energy_refined',8],['essence_fire',3]] as [string,number][])expect(addItem(r,'inv',k,v)).toBe(0);return {g,r,core,slot};}
+const snapshot=(g:GameState)=>JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
+const input=(g:GameState,extra:Partial<Input>={}):Input=>({up:false,down:false,left:false,right:false,mx:g.run!.player.x+80,my:g.run!.player.y,attack:false,attackPressed:false,roll:false,cancel:false,...extra});
+function frames(g:GameState,start:number,count:number,first:Partial<Input>={}){for(let i=0;i<count;i++)tick(g,input(g,i===0?first:{}),50,start+i*50);}
+afterEach(()=>setActiveLayout('shipping'));
+describe('Creator Core physical reserves foundation',()=>{
+ it('loads each reserve atomically from the right carried materials and survives save; replay and stale UID cannot mint',()=>{const {g,r,core,slot}=setup();const oldUid=core.uid;expect(cmd(g,'loadCore',{slot,uid:oldUid,mode:'basic'},'load-basic').ok).toBe(true);expect(core.reserves?.basic).toBe(10);expect(countItem(r,'inv','energy_basic')).toBe(0);expect(cmd(g,'loadCore',{slot,uid:oldUid,mode:'basic'},'load-basic')).toMatchObject({ok:false,dup:true});expect(cmd(g,'loadCore',{slot,uid:'stale',mode:'refined'}).ok).toBe(false);expect(cmd(g,'loadCore',{slot,uid:oldUid,mode:'signature'}).ok).toBe(true);expect(core.reserves?.signature).toBe(3);expect(countItem(r,'inv','energy_refined')).toBe(5);expect(countItem(r,'inv','essence_fire')).toBe(0);expect(cmd(g,'loadCore',{slot,uid:oldUid,mode:'refined'}).ok).toBe(true);expect(core.reserves?.refined).toBe(5);const restored=snapshot(g);expect(validate(restored)).toBeTruthy();expect(C(restored.run!,'inv').slots[slot]).toMatchObject({uid:oldUid,reserves:{basic:10,refined:5,signature:3}});const forged=snapshot(g);(C(forged.run!,'inv').slots[slot] as Stack).reserves!.signature=5;expect(validate(forged)).toBeNull();});
+ it('commits primary once and cancellation or replacing UID during windup spends nothing',()=>{const {g,r,core,slot}=setup();expect(cmd(g,'loadCore',{slot,uid:core.uid,mode:'basic'}).ok).toBe(true);expect(cmd(g,'loadCore',{slot,uid:core.uid,mode:'refined'}).ok).toBe(true);frames(g,T+100,4,{attack:true,attackPressed:true});expect(core.reserves!.basic).toBe(9);expect(r.receipts.filter(x=>x.kind==='core.commit')).toHaveLength(1);frames(g,T+400,1,{skill:'refined'});expect(r.player.action?.mode).toBe('refined');frames(g,T+450,1,{cancel:true});expect(core.reserves!.refined).toBe(8);frames(g,T+550,1,{skill:'refined'});const other=slot===7?6:slot+1;expect(C(r,'inv').slots[other]).toBeNull();C(r,'inv').slots[other]=core;C(r,'inv').slots[slot]=null;frames(g,T+600,8);expect(core.reserves!.refined).toBe(8);expect(r.receipts.filter(x=>x.kind==='core.commit')).toHaveLength(1);});
+ it('creates a timed bomb with seeded traveling fragments and a burning signature projectile',()=>{const {g,r,core,slot}=setup();cmd(g,'loadCore',{slot,uid:core.uid,mode:'signature'});cmd(g,'loadCore',{slot,uid:core.uid,mode:'refined'});frames(g,T+100,8,{skill:'refined'});expect(core.reserves!.refined).toBe(4);expect(PROJ.some(p=>p.kind==='blast_bomb')).toBe(true);frames(g,T+500,28);expect(PROJ.filter(p=>p.kind==='blast_round').length).toBeGreaterThan(0);frames(g,T+2000,8,{skill:'signature'});expect(core.reserves!.signature).toBe(2);expect(PROJ.some(p=>p.kind==='blast_signature')).toBe(true);frames(g,T+2400,5);expect(HAZ.some(h=>h.owner==='player'&&h.kind==='pool'&&h.style==='burn')).toBe(true);expect(validate(snapshot(g))).toBeTruthy();});
+ it('Meteor Signature schedules exactly ten seeded impacts inside the cast-time viewport and preserves them across save',()=>{
+   const {g,r}=setup();expect(addItem(r,'inv','core_meteor',1)).toBe(0);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_meteor'),meteor=C(r,'inv').slots[slot]!;r.player.active=slot;
+   expect(cmd(g,'loadCore',{slot,uid:meteor.uid,mode:'signature'}).ok).toBe(true);const base=snapshot(g), left=snapshot(base),right=snapshot(base);
+   for(const game of [left,right])for(let i=0;i<6;i++)tick(game,input(game,{viewX:300,viewY:400,...(i===0?{skill:'signature' as const}:{})}),50,T+100+i*50);
+   const impacts=(x:GameState)=>x.run!.combat!.hazards.filter(h=>h.style==='meteor').map(h=>({x:h.x,y:h.y,tell:h.tell}));
+   const a=impacts(left),b=impacts(right);expect(a).toHaveLength(10);expect(a).toEqual(b);expect(a.every(p=>p.x>=300&&p.x<940&&p.y>=400&&p.y<760)).toBe(true);expect(new Set(a.map(p=>p.tell)).size).toBe(10);expect(C(left.run!,'inv').slots[slot]!.reserves!.signature).toBe(2);expect(validate(snapshot(left))).toBeTruthy();
+ });
+
+ it('Dragon impact conserves exactly twenty percent of included enemies remaining HP',()=>{
+   const {g,r}=setup();expect(addItem(r,'inv','core_dragon',1)).toBe(0);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_dragon'),dragon=C(r,'inv').slots[slot]!;r.player.active=slot;
+   expect(cmd(g,'loadCore',{slot,uid:dragon.uid,mode:'signature'}).ok).toBe(true);
+   const grid=blockGrid(r);let pos=0;outer:for(let y=20;y<180;y++)for(let x=20;x<175;x++)if([0,1,2,3].every(dx=>grid[y*WW+x+dx]===0)){pos=y*WW+x;break outer;}expect(pos).toBeGreaterThan(0);r.player.x=(pos%WW)*TILE+8;r.player.y=Math.floor(pos/WW)*TILE+8;
+   const m1=mkCreature(r,'boar',r.player.x+16,r.player.y,40),m2=mkCreature(r,'boar',r.player.x+40,r.player.y,25);r.creatures=[m1,m2];
+   const vx=Math.max(0,r.player.x-320),vy=Math.max(0,r.player.y-180);for(let i=0;i<6;i++)tick(g,input(g,{viewX:vx,viewY:vy,...(i===0?{skill:'signature' as const}:{})}),50,T+100+i*50);
+   expect(r.dragonDive?.ids).toHaveLength(2);let t=T+400;while(r.dragonDive && !(r.dragonDive.phase==='dive' && r.dragonDive.left<=50)){tick(g,input(g),50,t);t+=50;expect(t).toBeLessThan(T+10000);}expect(r.receipts.filter(x=>x.kind==='core.dragon.first')).toHaveLength(2);const before=m1.hp+m2.hp;tick(g,input(g),50,t);expect(r.dragonDive).toBeUndefined();expect((before-(m1.hp+m2.hp))).toBeCloseTo(before*0.2,8);const line=r.receipts.find(x=>x.kind==='core.dragon.impact')!.detail.split(':');expect(Number(line[0])).toBe(2);expect(Number(line[2])).toBeCloseTo(Number(line[1])*0.2,8);expect(validate(snapshot(g))).toBeTruthy();
+ });
+
+ it('Elsa self-freeze grants exactly one second of invulnerability and freezes nearby enemies longer',()=>{
+  const {g,r}=setup();addItem(r,'inv','core_elsa',1);addItem(r,'inv','energy_refined',2);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_elsa'),elsa=C(r,'inv').slots[slot]!;r.player.active=slot;cmd(g,'loadCore',{slot,uid:elsa.uid,mode:'refined'});const enemy=mkCreature(r,'boar',r.player.x+12,r.player.y,40);r.creatures=[enemy];
+  frames(g,T+100,6,{skill:'refined'});const until=r.player.iceUntil!;expect(until).toBeGreaterThan(T+100);const hp=r.player.hp;expect(hurtPlayer(g,10,r.player.x,r.player.y,'test',until-1)).toBe(false);expect(r.player.hp).toBe(hp);frames(g,T+400,1);expect(enemy.frozenUntil).toBeGreaterThan(until);expect(hurtPlayer(g,10,r.player.x,r.player.y,'test',until)).toBe(true);expect(r.player.hp).toBeLessThan(hp);expect(validate(snapshot(g))).toBeTruthy();
+ });
+ it('Elsa signature freezes only cast-time visible water and thaws through the run clock',()=>{
+  const {g,r}=setup();addItem(r,'inv','core_elsa',1);addItem(r,'inv','essence_water',1);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_elsa'),elsa=C(r,'inv').slots[slot]!;r.player.active=slot;expect(cmd(g,'loadCore',{slot,uid:elsa.uid,mode:'signature'}).ok).toBe(true);
+  const w=getWorld();const i=w.tiles.findIndex(t=>[Tile.DEEP,Tile.SHALLOW,Tile.RIVER].includes(t));expect(i).toBeGreaterThanOrEqual(0);const x=i%WW,y=Math.floor(i/WW),vx=Math.max(0,Math.min(WW*TILE-640,x*TILE-80)),vy=Math.max(0,Math.min(WW*TILE-360,y*TILE-80));for(let j=0;j<6;j++)tick(g,input(g,{viewX:vx,viewY:vy,...(j===0?{skill:'signature' as const}:{})}),50,T+100+j*50);
+  expect(r.terrain[i]?.t).toBe(Tile.ICE);expect(validate(snapshot(g))).toBeTruthy();const outside=Object.keys(r.terrain).map(Number).filter(j=>{const tx=(j%WW)*TILE,ty=Math.floor(j/WW)*TILE;return tx+TILE<=vx||tx>=vx+640||ty+TILE<=vy||ty>=vy+360});expect(outside).toHaveLength(0);syncWorld(g,T+100000);expect(r.terrain[i]).toBeUndefined();
+ });
+
+ it('locks the release viewport and target across later camera motion, and cancels if the equipped slot changes',()=>{
+  const {g,r}=setup();addItem(r,'inv','core_meteor',1);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_meteor'),core=C(r,'inv').slots[slot]!;r.player.active=slot;cmd(g,'loadCore',{slot,uid:core.uid,mode:'signature'});
+  const lock={uid:core.uid,slot,mx:420,my:420,viewX:300,viewY:400};tick(g,input(g,{skill:'signature',skillAim:lock,viewX:900,viewY:900}),50,T+100);
+  for(let i=1;i<6;i++)tick(g,input(g,{mx:2000,my:2000,viewX:900,viewY:900}),50,T+100+i*50);
+  const hits=r.combat!.hazards.filter(h=>h.style==='meteor');expect(hits).toHaveLength(10);expect(hits.every(h=>h.x>=300&&h.x<940&&h.y>=400&&h.y<760)).toBe(true);
+  frames(g,T+500,4);tick(g,input(g,{skill:'signature',skillAim:lock}),50,T+700);r.player.active=0;frames(g,T+750,6);expect(core.reserves!.signature).toBe(2);expect(r.receipts.filter(x=>x.kind==='core.commit')).toHaveLength(1);
+ });
+
+ it('Dragon traversal survives reload and target death without replaying its first hits',()=>{
+  const {g,r}=setup();addItem(r,'inv','core_dragon',1);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_dragon'),core=C(r,'inv').slots[slot]!;r.player.active=slot;cmd(g,'loadCore',{slot,uid:core.uid,mode:'signature'});
+  const grid=blockGrid(r);let pos=0;outer:for(let y=20;y<180;y++)for(let x=20;x<175;x++)if([0,1,2,3,4,5].every(dx=>grid[y*WW+x+dx]===0)){pos=y*WW+x;break outer;}r.player.x=(pos%WW)*TILE+8;r.player.y=Math.floor(pos/WW)*TILE+8;
+  const one=mkCreature(r,'boar',r.player.x+16,r.player.y,5),two=mkCreature(r,'boar',r.player.x+64,r.player.y,100);one.frozenUntil=two.frozenUntil=T+20000;r.creatures=[one,two];const viewX=r.player.x-100,viewY=r.player.y-100;
+  for(let i=0;i<8;i++)tick(g,input(g,{viewX,viewY,...(i===0?{skill:'signature' as const}:{})}),50,T+100+i*50);
+  expect(one.state).toBe('dead');expect(r.receipts.filter(x=>x.kind==='core.dragon.first'&&x.detail===one.id)).toHaveLength(1);const resumed=snapshot(g);expect(validate(resumed)).toBeTruthy();
+  let at=T+500;for(let i=0;i<80&&resumed.run!.dragonDive;i++){tick(resumed,input(resumed),50,at);at+=50;expect(validate(snapshot(resumed))).toBeTruthy();}
+  const rr=resumed.run!;expect(rr.dragonDive).toBeUndefined();expect(rr.receipts.filter(x=>x.kind==='core.dragon.first'&&x.detail===one.id)).toHaveLength(1);expect(rr.receipts.filter(x=>x.kind==='core.dragon.first'&&x.detail===two.id)).toHaveLength(1);expect(rr.receipts.filter(x=>x.kind==='core.dragon.impact')).toHaveLength(1);
+ });
+ it('Dragon zero-target cast resolves without inventing targets or a second impact',()=>{
+  const {g,r}=setup();addItem(r,'inv','core_dragon',1);const slot=C(r,'inv').slots.findIndex(s=>s?.key==='core_dragon'),core=C(r,'inv').slots[slot]!;r.player.active=slot;cmd(g,'loadCore',{slot,uid:core.uid,mode:'signature'});frames(g,T+100,10,{skill:'signature'});expect(r.dragonDive).toBeUndefined();expect(r.receipts.filter(x=>x.kind==='core.dragon.first'||x.kind==='core.dragon.impact')).toHaveLength(0);expect(core.reserves!.signature).toBe(2);
+ });
+
+});
