@@ -27,11 +27,18 @@ jobs:
       - run: npx --no-install vitest run src/ui/gold-ui.test.ts
       - run: npx --no-install vitest run --testTimeout=240000 --maxWorkers=2
       - run: npm run build
-      - name: Upload playable SOH Veyra Gold singlefile
+      - name: Verify real creature atlases accompany singlefile
+        run: |
+          test -s dist/index.html
+          test -d dist/sprites/creatures
+          count=$(find dist/sprites/creatures -type f -name '*.png' | wc -l)
+          echo "Bundled creature sprite atlases: $count"
+          test "$count" -ge 18
+      - name: Upload playable Veyra Gold site INCLUDING runtime PNGs
         uses: actions/upload-artifact@v4
         with:
-          name: soh-veyra-gold-playable-${{ github.sha }}
-          path: web/dist/index.html
+          name: soh-veyra-gold-site-${{ github.sha }}
+          path: web/dist/
           if-no-files-found: error
   composed-browser:
     # Playwright 1.55 supports Ubuntu 24.04; ubuntu-latest currently routes to 26.04.
