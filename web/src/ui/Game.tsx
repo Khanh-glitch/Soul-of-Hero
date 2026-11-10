@@ -29,6 +29,8 @@ import { HomeStatusCard } from './HomeStatus';
 import { ThermalStatusCard } from './ThermalStatus';
 import type { OfflineReturnV1 } from '../game/return-report';
 import { RestPanel } from './RestPanel';
+import { ReturnChronicle, ReturnDigest } from './ReturnChronicle';
+import './gold-return-original.css';
 import { SurvivorScreen } from './SurvivorScreen';
 import { Gold3WayfinderHost } from './GoldWayfinderAdapter';
 import { Vitals, WorldClock, UrgentAlerts, Hotbar } from './hud';
@@ -44,6 +46,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
   const [, setFrame] = useState(0); const rerender = useCallback(() => setFrame(f => f + 1), []);
   const [panel, setPanel] = useState<PanelState | null>(report && (report.lines.length || (report.report && !report.report.away.quiet)) ? { kind: 'report', lines: report.lines, report: report.report } : null);
   const [sel, setSel] = useState<{ c: string; slot: number } | null>(null);
+  const [showReturnDigest,setShowReturnDigest] = useState(!!report?.report?.away?.quiet && !report.lines.length);
   const [buildType, setBuildType] = useState<string | null>(null); const [reclaim, setReclaim] = useState(false); const [repairMode, setRepairMode] = useState(false); const [upgradeMode, setUpgradeMode] = useState(false);
   const [editLayer, setEditLayer] = useState('auto');
   const [toasts, setToasts] = useState<{ id: number; text: string; tone?: string; t: number }[]>([]);
@@ -331,6 +334,9 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       {coreAim && <div className="panel absolute" style={{left:220,top:38,padding:'2px 6px',fontSize:10,pointerEvents:'none'}}> {activeStack(r)?.key==='core_meteor' ? (coreAim.mode==='refined'?'Q: targeted meteor':'E: ten meteors in view') : activeStack(r)?.key==='core_dragon' ? (coreAim.mode==='refined'?'Q: fire tornado':'E: collect visible eligible foes') : activeStack(r)?.key==='core_demon' ? (coreAim.mode==='refined'?'Q: stationary beam':spiritTarget.current?.uid===activeStack(r)?.uid?'E: selected map destination':'E: select destination on M map') : activeStack(r)?.key==='core_mjolnir' ? (coreAim.mode==='refined'?'Q: five lightning strikes':'E: electrical attraction') : activeStack(r)?.key==='core_earthmother' ? (coreAim.mode==='refined'?'Q: ten trees on open ground':'E: binding roots and grass') : activeStack(r)?.key==='core_elsa' ? (coreAim.mode==='refined'?'Q: one-second ice ward':'E: freeze visible terrain') : (coreAim.mode==='refined'?'Q: timed bomb · release to throw':'E: burning projectile · release to cast')} · RMB/Esc cancel</div>}
       {/* Gold (3) original adaptive Wayfinder UI; view model reads only actual R12 state. */}
       {!panel && !p.dead && <Gold3WayfinderHost api={api} now={now} combatStealth={!!engaged || p.hp < BAL.player.maxHp * 0.25} contextForceExpand={!!buildType || !!reclaim || !!repairMode || !!upgradeMode} />}
+      {showReturnDigest && report?.report && !panel && <div className="absolute" style={{right:4,top:74,zIndex:25}} onMouseDown={e=>e.stopPropagation()}>
+        <ReturnDigest report={report.report} onExpand={()=>{setShowReturnDigest(false);setPanel({kind:'report',lines:report.lines,report:report.report});}} onDismiss={()=>setShowReturnDigest(false)} />
+      </div>}
       {/* interaction prompt */}
       {(tgt || nearStair || nearAnimal) && ts && !panel && <div className="absolute" style={{ left: Math.round(ts.x), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', fontSize: 10, background: '#120c18e0', border: '1px solid #5a4a6a', padding: '0 4px', whiteSpace: 'nowrap', pointerEvents: 'none' }}><span style={{ color: '#ffe27a' }}>{bike ? '[F]' : tgt || nearStair ? '[F/E]' : '[T/E]'}</span> {tgt ? tgt.label : nearStair ? nearStair.stair.label : (() => { const sexSym = (nearAnimal!.husbandry?.sex ?? deterministicAnimalSex(nearAnimal!.id)) === 'f' ? '♀' : '♂'; const spName = CREATURES[nearAnimal!.type]?.name || nearAnimal!.type; return nearAnimal!.husbandry?.tamed ? `${nearAnimal!.husbandry.following ? 'Release' : 'Lead'} ${sexSym} ${nearAnimal!.husbandry.stage === 'juvenile' ? 'Juvenile ' : ''}${spName} (${nearAnimal!.husbandry.penned ? 'Penned' : 'Open'} · FD ${Math.round(nearAnimal!.husbandry.hunger)}%) · [Shift+T] Butcher` : `Feed ${spName} (${sexSym})`; })()}{targetHp && <span style={{ color: '#ffb66a' }}>{targetHp}</span>}</div>}
       {/* build helper */}
@@ -361,7 +367,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       {panel?.kind === 'escrow' && panel.eid && <EscrowPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'rest' && panel.eid && <RestPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'evac' && panel.eid && <EvacPanel api={api} eid={panel.eid} />}
-      {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} report={panel.report ?? null} />}
+      {panel?.kind === 'report' && <ReturnChronicle api={api} lines={panel.lines || []} report={panel.report ?? null} />}
       {p.dead && <div className="absolute inset-0 flex flex-col items-center justify-center fadein" style={{ background: 'radial-gradient(#3a0a0aa0, #000c)' }} onMouseDown={e => e.stopPropagation()}>
         <div className="title-font" style={{ fontSize: 26, color: '#ff8a6a', textShadow: '2px 2px 0 #000' }}>You have fallen</div>
         <div style={{ fontSize: 12, color: '#e0d0c0', maxWidth: 320, textAlign: 'center' }}>Death does not end the run. Everything you carried lies in a bag where you fell — go back for it. {Object.values(r.entities).some(e => e.type === 'bed_straw') ? 'You will wake at your bed.' : 'With no bed, you wake at a landing site.'}</div>
