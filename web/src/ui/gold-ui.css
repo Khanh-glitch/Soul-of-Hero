@@ -64,10 +64,10 @@
 .gold-inventory .gold-inv-gear .slot img { width:23px!important; height:23px!important; }
 .gold-inventory .gold-inv-facts { font-size:10px; line-height:1.15; padding-top:3px; }
 .gold-inventory .gold-inv-grid-title { font-family:'Pixelify Sans',monospace; color:#eccf8a; font-size:10px; }
-.gold-inventory .gold-inv-grid { display:grid; grid-template-columns:repeat(8,36px); grid-auto-rows:36px; gap:3px;
+.gold-inventory .gold-inv-grid { display:grid; grid-template-columns:repeat(8,42px); grid-auto-rows:42px; gap:3px;
   margin-top:5px; max-height:152px; overflow:auto; scrollbar-width:thin; scrollbar-color:#765b47 transparent; }
-.gold-inventory .gold-inv-grid .slot { width:36px; height:36px; border-color:#544250; box-sizing:border-box; }
-.gold-inventory .gold-inv-grid .slot img { width:27px!important; height:27px!important; left:4px!important; top:3px!important; }
+.gold-inventory .gold-inv-grid .slot { width:42px; height:42px; border-color:#544250; box-sizing:border-box; }
+.gold-inventory .gold-inv-grid .slot img { width:32px!important; height:32px!important; left:4px!important; top:3px!important; }
 .gold-inventory .gold-inv-grid .slot.active { border-color:#f5bb5b; }
 .gold-inventory .gold-inv-grid .slot.sel { border-color:#e4d28b; }
 .gold-inventory .gold-inv-grid-label { display:flex; justify-content:space-between; font-size:9px; color:#a58e83; }
