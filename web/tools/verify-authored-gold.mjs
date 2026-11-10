@@ -31,6 +31,29 @@ try{
   await page.keyboard.press('i');
   await page.locator('.sv').waitFor({timeout:8000});
   await page.waitForTimeout(320);
+  // Full original Gold2 CSS must be mounted as a single isolated design system,
+  // not a hand-selected subset of .sv styles mixed with R12 global controls.
+  const sourceGold=await page.locator('[data-testid="gold-source-surface"]').evaluate(host=>{
+    const shadow=host.shadowRoot;
+    const css=shadow?.querySelector('style')?.textContent||'';
+    const portrait=shadow?.querySelector('.sv-portrait');
+    const svLeft=shadow?.querySelector('.sv-left');
+    const panel=shadow?.querySelector('.sv');
+    return {isolated:!!shadow,styleBytes:css.length,hasOriginalPanel:css.includes('.panel {'),
+      hasOriginalMobile:css.includes('@media (max-width: 700px)'),
+      portraitWidth:portrait?parseFloat(getComputedStyle(portrait).width):0,
+      leftDisplay:svLeft?getComputedStyle(svLeft).display:'missing',
+      panelBackground:panel?getComputedStyle(panel).backgroundImage:'missing'};
+  });
+  if(!sourceGold.isolated||sourceGold.styleBytes<70000||!sourceGold.hasOriginalPanel||!sourceGold.hasOriginalMobile){
+    throw new Error('Gold2 full original stylesheet not isolated: '+JSON.stringify(sourceGold));
+  }
+  const expectedPortraitWidth=width===640?74:52;
+  const expectedLeftDisplay=width===640?'grid':'flex';
+  if(sourceGold.portraitWidth!==expectedPortraitWidth||sourceGold.leftDisplay!==expectedLeftDisplay){
+    throw new Error('Gold2 media/source geometry diverged: '+JSON.stringify(sourceGold));
+  }
+  pass(width+' Gold source CSS isolated',sourceGold);
   const controls=await page.locator('.sv-compact-nav button').count();
   const hot=await page.locator('.dgrid-tier--hot .dslot').count();
   const pack=await page.locator('.dgrid-tier--pack .dslot').count();
@@ -67,7 +90,15 @@ try{
   pass(width+' real custody drag',{forward:'hotbar→backpack',reverse:'backpack→hotbar'});
   await page.getByRole('button',{name:'Turn character right'}).click();
   await shot('pack-turned');
-  await page.locator('.sv-compact-nav button').nth(1).click();
+  if(width===640) {
+    await page.locator('.sv-compact-nav button').nth(1).click();
+  } else {
+    // Original Gold2 at a >=701px CSS viewport shows both columns, and
+    // the compact navigation is intentionally hidden. Open WORK via the
+    // native game shortcut instead of clicking a hidden control.
+    await page.keyboard.press('i');
+    await page.keyboard.press('c');
+  }
   await page.locator('.sv-right').waitFor({timeout:8000});
   if(await page.locator('.sv-cats button').count()!==8)throw new Error('Gold WORK missing original categories');
   pass(width+' Gold WORK',{categories:8,recipeTiles:await page.locator('.sv-tile').count()});
