@@ -5,7 +5,7 @@ import { LOOT_B05_TOOLBOX_GRADE } from '../src/game/loot-ecology';
 // B05 eligibility, stock classes, probabilities, stock clocks and integer batch routes are modelled explicitly (MEC-01 R2 D);
 // player travel is not modelled in Web. Unknown values are written as ORIGINAL_UNKNOWN (never guessed). Writes web/reports/mec01-five-chain-benchmark.{json,md}.
 import {describe,it,expect} from 'vitest';
-import {writeFileSync} from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import {join} from 'node:path';
 import {RECIPES,ITEMS,SOURCES,STRUCTS} from '../src/game/catalog';
 import {getWorld,setActiveLayout} from '../src/game/world';

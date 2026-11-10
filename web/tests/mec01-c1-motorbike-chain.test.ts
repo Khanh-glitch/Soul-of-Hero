@@ -19,7 +19,8 @@
 // TIMING SCOPE: crafting/research seconds come from stepStations with the catalog recipe times — real paid queue semantics,
 // SIM_FIXTURE_MEASUREMENT, not human reaction time.
 import { describe, it, expect } from 'vitest';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import { type GameState, type RunState, TILE, WW } from '../src/game/core';
 import { RECIPES } from '../src/game/catalog';
 import { addItem, countItem, dispatch, markDirty, newGame, stepStations, buildReason } from '../src/game/engine';

@@ -1,0 +1,38 @@
+<PARSED TEXT FOR SHEET: 1 / 1 TABS
+TAB NAME: v11__10_CONVERSATION_36_DECISIONS_FROM_v10.csv>index,id,scope,authority,decision_or_fact,status,provenance,constraint
+0,H01,LI_RESEARCH,Creator,"Research Last Island as an independent game first, not casually compare SOH",CREATOR_LOCKED,Earlier phase of this conversation,Reference research separate until comparison request
+1,H02,LI_REFERENCE,Assistant research,"v1→v4 / Master Atlas v5 with 51 recipe records, 82 loot edges, 19 POI links, trade/harvest/furnace facts",SOURCE_REPORTED_NOT_RETRIEVED,Earlier assistant deliverables and session summary,Recover original v5 bytes; do not reconstruct fake 405 source rows
+2,H03,SOH_COMPARISON,Creator,Perform detailed 1:1 comparison including decisions requiring approval and an Agent-ready one-shot,CREATOR_LOCKED,User request before v6,Prompt without source/owner checks is not sufficient
+3,H04,DEPTH,Creator,Do not learn halfway: item needs world source/art/craft/register/use/save/proof,CREATOR_LOCKED,User warning about half-hearted learning,Unit of closure is a complete physical causal chain
+4,H05,AUDIT_V6,Assistant audit,18 systems/405 reference rows/104 acceptance gates produced in previous session,SOURCE_REPORTED_NOT_RETRIEVED,Prior v6 report,Recover exact ZIP; current file paths are not proof
+5,H06,D01,Creator,Core = Last Island firearm role; do NOT add guns as a separate parallel progression,CREATOR_LOCKED,"User ""D01: Core SOH = Súng Last Island""",Reject previous assistant gun branch proposal
+6,H07,D02,Creator,"Powered vehicles, oil and energy industry are approved in principle",CREATOR_APPROVED_PRINCIPLE,"User ""D02-D05 đồng ý""",Requires real Map clearance and economic sinks
+7,H08,D03,Creator,Workbench Lv3 approved; no automatic Tier3 Core/Chitin Lv3 station dependency,CREATOR_APPROVED_PRINCIPLE,D02–D05 agreement + clarification,Knowledge tier differs from physical station level
+8,H09,D04_LOOT,Creator,World loot one-way; partial remains; fully emptied despawns; ordinary source respawns later,CREATOR_LOCKED,User first-person gameplay observation,Player-created storage remains depositable; no deposit to world loot
+9,H10,D05,Creator,"Run-local Spares trader approved, independent of Ragnarok cash",CREATOR_APPROVED_PRINCIPLE,"User ""D02-D05 đồng ý""","Stock, prices, placement, sink/anti-arbitrage need modeling"
+10,H11,D06,Creator,"Meaningful upkeep with material reserve, scale and offline pressure approved",CREATOR_APPROVED_PRINCIPLE,Creator revised discussion,Avoid arbitrary raids and blind punitive loss
+11,H12,VILLAGERS,Creator,Villagers may later help with upkeep and chores but full NPC mechanics undecided,CREATOR_APPROVED_FUTURE_DIRECTION,User mentions villagers are still open,Reserve interface only; do not invent staffing AI
+12,H13,CORE_MODEL,Creator,"Core is complete lasting weapon with primary + two techniques, distinct economic layers",CREATOR_LOCKED,Discussion of 1 skill vs tiers,Gold available as preloaded charge; no three flat damage buttons
+13,H14,FOUR_FAMILIES,Creator,"Nature/Forest, Fire, Water, Spirit are four families; no hierarchy of base power",CREATOR_LOCKED,Creator element list,"Nature includes earth, electricity; Water includes ice"
+14,H15,SIX_SKUS,Creator,"2 common energy resources + 4 elemental catalysts; 3 action grades, not 12 ammo SKUs",CREATOR_APPROVED_PRINCIPLE,User approves six-material model,"LMB low access, Q refined, E refined+essence"
+15,H16,NO_STARTER_GATE,Creator+Bible,No hazardous Elder biome required to power ordinary attacks,CREATOR_APPROVED_PRINCIPLE,Creator concern about ammo access and confirmed answer,World POI rare sources are bonus routes
+16,H17,RARE_CORE,Creator+Bible,"Core strong/rare must be immediately usable when found, like valuable firearm with initial ammo",CREATOR_LOCKED,Gun-to-Core acceptance,"Preloaded Gold charges, exact legacy counts migrated"
+17,H18,RARITY_1,Creator,"Fire F01 common, F02 rare, F03 top-tier",CREATOR_LOCKED,Creator 7-core list,Rarity not an element strength hierarchy
+18,H19,RARITY_2,Creator,"Nature N01 common, N02 rare; Water W01 rare; Spirit S01 rare",CREATOR_LOCKED,Creator 7-core list,"World distribution to be balanced, not assumed"
+19,H20,CORE_21,Creator,Seven Cores × LMB/Q/E (21 action specs); nested effects much larger,CREATOR_LOCKED,Creator detailed seven-core input,Do not count FX by button
+20,H21,DRAGON,Creator,Fire Dragon E hit2 = 20% of sum of remaining HP of all included enemies,CREATOR_LOCKED_FORMULA,Creator exact wording,Target census/allocation/mitigation need transparent signoff
+21,H22,TREES,Creator,N01 Q summons 10 real trees trapping target; after 3s trees become collectible wood,CREATOR_LOCKED,Creator exact skill,Must conserve source→wood without duplication
+22,H23,FREEZE,Creator,"W01 E freezes full screen, including opponents and actual terrain",CREATOR_LOCKED,Creator exact skill,"Snapshot world rectangle at cast, no camera-follow exploit"
+23,H24,SPIRIT,Creator,S01 E disappears then teleports to chosen map destination,CREATOR_LOCKED,Creator exact skill,Movement cannot ignore locked POI/collision
+24,H25,METEOR,Creator,F02 E 10 meteors randomly staggered across entire screen,CREATOR_LOCKED,Creator exact skill,Each meteor has deterministic per-cast RNG and unique impact
+25,H26,CONTROLS,Creator,LMB primary; probably Q and E for skills; hold Q to preview target,CREATOR_PROPOSED_DIRECTION,"User ""có lẽ phải bổ sung nút ...""",Controls conflict with E=interact; needs safe resolution
+26,H27,AVFX_244_20,Creator,"VFX branch is arena/3337c864..., contains PixelFX 244 and 20 ARCANA, use latest",CREATOR_SOURCE_CORRECTION,User corrects prior PR28/30 misread,Do not claim current VFX unfinished from old PRs
+27,H28,MULTILAYER,Creator,"FX involves world, enemies, aftermath, drops, not just 21 FX",CREATOR_LOCKED,User correction after 21 count,"Event graph and 13-layer QA, source pixel scale"
+28,H29,NO_DOUBLE_BIBLE,Creator project instruction,Do not leave conflicting old/new gameplay contracts equally authoritative,CREATOR_PROJECT_LOCKED,Earlier SOH discussions,One current source; immutable source archives only
+29,H30,QA,Creator,"CI/headless pass does not imply playable, beautiful, deep; actual cross-owner handoff mandatory",CREATOR_PROJECT_LOCKED,Earlier acceptance/control tower conversation,"World screenshot, natural input, economics, offline, 14-day closure"
+30,H31,OFFLINE,Creator,Time always advances online/offline; trace-grounded monster home approach,CREATOR_LOCKED,User earlier long-run progression decision,Upkeep/offline must be causally simulated
+31,H32,RUN,Bible,"336 real-time hours, last 72 Ragnarok, finite legal escrow cash cross-run only",BIBLE_LOCKED,web/ref/bible.md §0.2/K8,No change from new industry
+32,H33,MAP,Creator+Repo,Map owns geography; Gameplay owns source and interactions; avoid stale map snapshots,OWNERSHIP_LOCKED,Map agent earlier handoff,Current Map branch refresh needed before integration
+33,H34,OLD4,Creator,"Can replace four old Core only if suitable; preserve UID, Gold, mastery, save",CREATOR_CONDITIONAL_PERMISSION,"""bạn có thể thay 4 core ... nếu thấy hợp""",Implement deliberate migration not delete/rename
+34,H35,MODULES,Assistant study,Scopes/stock/silencers/mags translated to Core modules with real effects,ENGINEERING_CANDIDATE,LI Guns v7 (not explicit Creator signoff),Not auto mandatory to deliver all seven module types
+35,H36,HIST_SOURCE,Current audit,v5/v6 exact ZIPs missing from current runtime; v7/v8/v9 verified,SOURCE_CUSTODY_GAP,2026-11-04 current container and Files search,HOLD claim of full research provenance

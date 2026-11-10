@@ -1,0 +1,24 @@
+<PARSED TEXT FOR SHEET: 1 / 1 TABS
+TAB NAME: v11__05_CORE_CHASSIS_AND_21_OVERLAYS.csv>index,rule_id,title,contract,source,negative,owner,phase,authority,status,evidence_sha
+0,CORE-X01,Core chassis UID,"Per-core instance UID, rarity, quality and persistent loaded reserve",old 4 item keys + new 7,no duplicate in transfer/death/migrate,Gameplay,V1,DESIGN_CONTRACT,NOT_RUN,NONE
+1,CORE-X02,Four families,"Nature, Fire, Water, Spirit classify energy compatibility not deterministic power order",Core family type,strong core can consume basic energy,Gameplay + Economy,V1,DESIGN_CONTRACT,NOT_RUN,NONE
+2,CORE-X03,Three actions,"LMB basic, hold Q refined, hold E Gold (release commits)",input state + inventory,no 21=21 visual claim,Gameplay + AVFX,V1/V2,DESIGN_CONTRACT,NOT_RUN,NONE
+3,CORE-X04,Q/E aim state,"Hold shows valid target geometry, release commits, RMB/Escape cancels",keyboard/mouse state machine,no stale charge loss,Gameplay + UI,V1,DESIGN_CONTRACT,NOT_RUN,NONE
+4,CORE-X05,Interaction key conflict,"Move E-interact to contextual F with cart and research interactions preserved, pending UX validation","Game.tsx E,F,R",no action lost,Gameplay + UI,V1,DESIGN_CONTRACT,NOT_RUN,NONE
+5,CORE-X06,Research key remapping,"R reload chosen, station research via F by default pending human test",Game.tsx KeyR,no inaccessible Research Table,Gameplay + UI,V1,DESIGN_CONTRACT,NOT_RUN,NONE
+6,CORE-X07,Energy six SKU,"Basic, Refined + four essences; no twelve elemental-ammo stacks",physical inventories,correct cost by action,Economy + Gameplay,V1/V3,DESIGN_CONTRACT,NOT_RUN,NONE
+7,CORE-X08,Typed magazines,Loaded basic/refined/Gold reserves belong to individual Core UID,six physical input items,1 debit per successful action,Gameplay + Economy,V1,DESIGN_CONTRACT,NOT_RUN,NONE
+8,CORE-X09,Inherited Gold,Found Core arrives with valid Gold reserve and immediately works,loot Core UID,no forced pre-study,Gameplay,V2,DESIGN_CONTRACT,NOT_RUN,NONE
+9,CORE-X10,Gold FX provenance,"Bind actual ARCANA/PixelFX IDs by trajectory, timeline, scale and palette",AVFX source @ 3158f0c4,visual action authentic,AVFX + Gameplay,V2-V7,DESIGN_CONTRACT,NOT_RUN,NONE
+10,CORE-X11,Modules and sockets,Attachments affect actual aim/range/stability/magazine/suppression with compatibility; candidate not Creator-locked,module+Core slot,no useless stat-only attachment,Gameplay + AVFX + Economy,POST_CORE_PILOT,DESIGN_CONTRACT,NOT_RUN,NONE
+11,CORE-X12,Core upgrade tier,Physical module/stability upgrades not blindly tied to recipe.tier,Core Body + station,old Tier3 stationLv1 retained,Gameplay + Economy,POST_CORE_PILOT,DESIGN_CONTRACT,NOT_RUN,NONE
+12,CORE-X13,Primary/Gold energy economy,Common basic output early; refined industry mid; essences late but not boss-locked,source graph + station,all families viable early,Economy + Map,V2/V3,DESIGN_CONTRACT,NOT_RUN,NONE
+13,CORE-X14,Distinct Core feel,"Cadence, mobility, precision, sweep, bounce, recoil and range differ by chassis",7 Core action profiles,felt comparison with players,Gameplay + QA,V2-V7,DESIGN_CONTRACT,NOT_RUN,NONE
+14,CORE-X15,World material effects,"Fire burns flammable, frost freezes water, storm rainy, quake damages stone only lawfully",material classifier,visual world true to gameplay,Gameplay + Map + AVFX,V2-V7,DESIGN_CONTRACT,NOT_RUN,NONE
+15,CORE-X16,Gold source identity,Old 4 Gold original effects preserved and correctly migrated,old Core UID/source Gold ID,no replacement without validated mapping,Gameplay + AVFX,V1/V9,DESIGN_CONTRACT,NOT_RUN,NONE
+16,CORE-X17,Multi-child events,One cast can generate 10 meteor IDs/10 tree IDs/fragment and damage event IDs,cast deterministic seed,replay/OUT deterministic,Gameplay + AVFX,V2-V7,DESIGN_CONTRACT,NOT_RUN,NONE
+17,CORE-X18,Dragon 20% identity,Second impact equals 20% of sum remaining HP of eligible group; no silent boss cap,snapshot remaining HP,approved allocation needed,Gameplay + Creator,V5,DESIGN_CONTRACT,NOT_RUN,NONE
+18,CORE-X19,Magic creates resources safely,Ten physical trees become exactly-once wood after 3s with bounded anti-free-energy,source ownership receipts,no infinite wood/energy loop,Gameplay + Economy,V6,DESIGN_CONTRACT,NOT_RUN,NONE
+19,CORE-X20,Full-screen Elsa boundary,Store viewport rect at commit; terrain+quái freeze/thaw deterministically,world coordinates,no camera-panning freeze extension,Gameplay + Map,V7,DESIGN_CONTRACT,NOT_RUN,NONE
+20,CORE-X21,Blink access security,Teleport only to valid reachable/approved place; no through-room exploit,world solid/door/POI permissions,no gate bypass,Gameplay + Map,V7,DESIGN_CONTRACT,NOT_RUN,NONE
+21,CORE-X22,Player-side visual evidence,Every action tests anticipation/flight/hit/AI/ground/residue/out/day-night,FX cue graph,no static VFX one-sheet,AVFX + QA,V2-V7,DESIGN_CONTRACT,NOT_RUN,NONE

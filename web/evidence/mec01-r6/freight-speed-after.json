@@ -1,0 +1,95 @@
+{
+ "sha": "97c5c01",
+ "roadTiles": 28,
+ "leg": 416,
+ "rows": {
+  "walk_empty": {
+   "carriedKg": 1.4,
+   "seconds": 9.05,
+   "outTiles": 26,
+   "pathPx": 834,
+   "returnedToStart": true,
+   "avgPxPerSec": 92.2,
+   "fuelUsed": 0,
+   "wearHp": 0,
+   "turnAt": {
+    "x": 2331,
+    "y": 1752
+   }
+  },
+  "walk_loaded": {
+   "carriedKg": 41.4,
+   "seconds": 9.05,
+   "outTiles": 26,
+   "pathPx": 834,
+   "returnedToStart": true,
+   "avgPxPerSec": 92.2,
+   "fuelUsed": 0,
+   "wearHp": 0,
+   "turnAt": {
+    "x": 2331,
+    "y": 1752
+   }
+  },
+  "cart_empty": {
+   "cartKg": 0,
+   "seconds": 9.15,
+   "outTiles": 26,
+   "pathPx": 835,
+   "returnedToStart": true,
+   "avgPxPerSec": 91.3,
+   "fuelUsed": 0,
+   "wearHp": 0,
+   "turnAt": {
+    "x": 2331,
+    "y": 1752
+   }
+  },
+  "cart_loaded": {
+   "cartKg": 40,
+   "seconds": 9.85,
+   "outTiles": 26,
+   "pathPx": 834,
+   "returnedToStart": true,
+   "avgPxPerSec": 84.7,
+   "fuelUsed": 0,
+   "wearHp": 0,
+   "turnAt": {
+    "x": 2331,
+    "y": 1752
+   }
+  },
+  "bike_empty": {
+   "cargoKg": 0,
+   "maxKg": 80,
+   "fuelBefore": 300,
+   "seconds": 2.2,
+   "outTiles": 26,
+   "pathPx": 858,
+   "returnedToStart": true,
+   "avgPxPerSec": 390,
+   "fuelUsed": 42.9,
+   "wearHp": 1.72,
+   "turnAt": {
+    "x": 2341,
+    "y": 1752
+   }
+  },
+  "bike_loaded": {
+   "cargoKg": 40,
+   "maxKg": 80,
+   "fuelBefore": 300,
+   "seconds": 2.6,
+   "outTiles": 26,
+   "pathPx": 837,
+   "returnedToStart": true,
+   "avgPxPerSec": 321.8,
+   "fuelUsed": 52.28,
+   "wearHp": 2.09,
+   "turnAt": {
+    "x": 2330,
+    "y": 1752
+   }
+  }
+ }
+}

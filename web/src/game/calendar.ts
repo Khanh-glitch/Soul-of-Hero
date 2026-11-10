@@ -126,7 +126,7 @@ export function seasonTransitionsBetween(r: Pick<RunState, 'startedAt' | 'qaOffs
   return out;
 }
 
-/** Typed event contract for other owners (A0/A3/Map/UI/AVFX). Presentation may
+/** Typed event contract for integrated runtime consumers (save/economy/map/UI/Gold VFX). Presentation may
  * render these; nothing may mint currency, items or enemies from them. */
 export interface CalendarEventV1 {
   version: typeof CALENDAR_VERSION;
@@ -343,9 +343,9 @@ export function calendarView(r: Pick<RunState, 'startedAt' | 'qaOffset'>, at: nu
   };
 }
 
-// --------------------------------------------- cross-owner typed contracts
-/** A0 (native SaveService / authoritative clock) obligations. This Web module
- * already satisfies the Web half; A0 must mirror the SAME formula and the SAME
+// --------------------------------------------- cross-system typed contracts
+/** Native SaveService / authoritative clock compatibility obligations. This Web module
+ * already satisfies the Web half; native runtime must mirror the SAME formula and the SAME
  * single-clock rule rather than introduce a second season timer. */
 export interface CalendarClockContractV1 {
   version: typeof CALENDAR_VERSION;
@@ -362,11 +362,11 @@ export interface CalendarClockContractV1 {
   persistencePolicy: 'derived-from-clock; ledger is observation-only; corrupt/absent records rebuilt without grant or reset';
 }
 
-/** A3 (canonical economic source/cost authority) obligations: this module only
+/** Canonical economic source/cost interface obligations: this module only
  * REPORTS seasonal physical conditions. It never sets a price, a recipe or a yield. */
 export interface CalendarEconomyContractV1 {
   version: typeof CALENDAR_VERSION;
-  /** What A3 may consume from the calendar without re-deriving climate. */
+  /** What the economy module may consume from the calendar without re-deriving climate. */
   provides: ('season' | 'phaseIndex' | 'year' | 'phaseRemainingMs' | 'cropSeasonFactor' | 'evaporationMultiplier' | 'catchMultiplier' | 'thirstMultiplier' | 'coldPoints')[];
   /** Seasonal multipliers remain TUNABLE_BALANCE, not source prices. */
   values: 'SOH_PROVISIONAL / TUNABLE_BALANCE only';
@@ -374,7 +374,7 @@ export interface CalendarEconomyContractV1 {
   forbidden: string[];
 }
 
-/** Map / Veyra owner obligations: the Map stays the only climate authority. */
+/** Map / Veyra climate data contract: authored geometry stays the physical climate authority. */
 export interface CalendarMapContractV1 {
   version: typeof CALENDAR_VERSION;
   /** Read-only Map fields this module consumes; it never writes them. */
@@ -400,7 +400,7 @@ export const CALENDAR_ECONOMY_CONTRACT: CalendarEconomyContractV1 = {
   provides: ['season', 'phaseIndex', 'year', 'phaseRemainingMs', 'cropSeasonFactor', 'evaporationMultiplier', 'catchMultiplier', 'thirstMultiplier', 'coldPoints'],
   values: 'SOH_PROVISIONAL / TUNABLE_BALANCE only',
   forbidden: [
-    'seasonal market prices or sale multipliers (A3 owns source/cost authority)',
+    'seasonal market prices or sale multipliers (source/cost authority is outside calendar)',
     'free seasonal stock, seeds, fuel or currency at a season boundary',
     'automatic replanting without funded seeds, water and station ownership',
   ],

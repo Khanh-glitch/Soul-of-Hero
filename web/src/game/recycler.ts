@@ -15,7 +15,7 @@ const COMPONENT_RULES = {
   'X:pipe-v1': { key: 'metal_pipe', seconds: 10, outputs: [['refined_iron_ingot', 1]] as Output[] },
   // X:pipe-v2 (A2, new jobs): pipe -> 1 refined + 1 Mechanical Parts. Craft = 2 refined + 1 MP (>= 3.83 ingot-eq); return >= 2.33 ingot-eq.
   'X:pipe-v2': { key: 'metal_pipe', seconds: 12, outputs: [['refined_iron_ingot', 1], ['mechanical_parts', 1]] as Output[] },
-  // X:gear-v1 (A1): gear -> 2 MP + 1 ingot. Craft = 2 ingot + 2 MP + 1 fastener (~4.11 ingot-eq); return ~2.67 ingot-eq.
+  // X:gear-v1 (historical gear experiment): gear -> 2 MP + 1 ingot. Craft = 2 ingot + 2 MP + 1 fastener (~4.11 ingot-eq); return ~2.67 ingot-eq.
   'X:gear-v1': { key: 'mechanical_gear', seconds: 15, outputs: [['mechanical_parts', 2], ['iron_ingot', 1]] as Output[] },
   // X:blade-v1 (A2): blade -> 2 ingot + 1 MP. Craft = 4 ingot + 1 MP (~4.83 ingot-eq); return ~2.83 ingot-eq.
   'X:blade-v1': { key: 'metal_blade', seconds: 14, outputs: [['iron_ingot', 2], ['mechanical_parts', 1]] as Output[] },

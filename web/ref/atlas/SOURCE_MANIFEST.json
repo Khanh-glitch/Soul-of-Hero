@@ -1,0 +1,24 @@
+{
+  "archive_name": "atlas.zip",
+  "archive_size_bytes": 1489422,
+  "archive_sha256": "8b4fdedaa9397baaa1bcb8ba58d5c95ca2e7cbdd679963c6d4177fc9ab861e98",
+  "base64_encoding": "ASCII RFC4648 no whitespace",
+  "recovery_order": [
+    "atlas.zip.b64.part001.txt",
+    "atlas.zip.b64.part002.txt",
+    "atlas.zip.b64.part003.txt",
+    "atlas.zip.b64.part004.txt",
+    "atlas.zip.b64.part005.txt",
+    "atlas.zip.b64.part006.txt",
+    "atlas.zip.b64.part007.txt",
+    "atlas.zip.b64.part008.txt",
+    "atlas.zip.b64.part009.txt",
+    "atlas.zip.b64.part010.txt",
+    "atlas.zip.b64.part011.txt",
+    "atlas.zip.b64.part012.txt",
+    "atlas.zip.b64.part013.txt"
+  ],
+  "base64_chunk_chars": 163840,
+  "part_count": 13,
+  "reference_policy": "Exact original source; reconstructed bytes validated locally"
+}

@@ -1,0 +1,16 @@
+import chromium from '@sparticuz/chromium';
+import puppeteer from 'puppeteer-core';
+const url = process.argv[2] || 'http://127.0.0.1:8790/index.html';
+const out = process.argv[3] || '/home/user/tools-r5/smoke.png';
+const browser = await puppeteer.launch({ executablePath: await chromium.executablePath(), headless: 'shell', args: chromium.args, defaultViewport: { width: 640, height: 360 }, timeout: 120000 });
+const page = await browser.newPage();
+const errs = [];
+page.on('pageerror', e => errs.push('pageerror:' + String(e)));
+page.on('console', m => { if (m.type() === 'error') errs.push('console:' + m.text().slice(0, 200)); });
+await page.goto(url, { waitUntil: 'load', timeout: 120000 });
+await new Promise(r => setTimeout(r, 6000));
+await page.screenshot({ path: out });
+console.log('TITLE', await page.title());
+console.log('BODY', (await page.evaluate(() => document.body.innerText)).slice(0, 300).replace(/\n/g, ' | '));
+console.log('ERRS', JSON.stringify(errs.slice(0, 5)));
+await browser.close();

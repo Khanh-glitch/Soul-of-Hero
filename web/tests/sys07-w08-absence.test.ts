@@ -6,7 +6,8 @@ import {TILE,T,WW,HOUR,BAL} from '../src/game/core';
 import {newGame,dispatch,addItem,countItem,markDirty,claimAt,territoryForecast} from '../src/game/engine';
 import {getWorld} from '../src/game/world';
 import {settle} from '../src/game/sim';
-import {writeFileSync,mkdirSync} from 'node:fs';
+import { mkdirSync } from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import {resolve} from 'node:path';
 
 const T0=Date.UTC(2026,0,1);let serial=0;

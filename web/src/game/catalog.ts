@@ -58,9 +58,13 @@ export const ITEMS: Record<string, ItemDef> = {
   fuel_briquette: I({ name: 'Packed Fuel Briquette', cat: 'res', icon: 'briquette', c1: '#363038', c2: '#a18f72', w: 0.35, max: 30, desc: 'Compact portable fuel: 90 seconds of burn. Packing sacrifices some charcoal energy.', fuel: 90 }),
   // resources
   wood: I({ name: 'Wood', cat: 'res', icon: 'log', c1: '#8a5a32', c2: '#c9935a', w: 1, max: 60, desc: 'Split timber. Fuel, tools, walls.', fuel: 20 }),
+  // SOH_PROVISIONAL (K4 gỗ→ván): no Last Island plank figure exists in Atlas v1–v11; 2 wood -> 1 plank at a workbench.
+  plank: I({ name: 'Plank', cat: 'res', icon: 'plank', c1: '#b98a52', c2: '#e0b878', w: 1, max: 60, desc: 'Sawn board. Stronger walls per wood than log walls.' }),
   stone: I({ name: 'Stone', cat: 'res', icon: 'stone', c1: '#7d8088', c2: '#b9bcc4', w: 1.2, max: 60, desc: 'Rough stone. Foundations, furnaces, tools.' }),
   fiber: I({ name: 'Plant Fiber', cat: 'res', icon: 'fiber', c1: '#5d8a3a', c2: '#a5d65e', w: 0.2, max: 80, desc: 'Grass and reed fiber. Rope, thatch, bandages.', fuel: 4 }),
   iron_ore: I({ name: 'Iron Ore', cat: 'res', icon: 'ore', c1: '#6b5a52', c2: '#d08a5a', w: 2, max: 40, desc: 'Smelt in a fueled furnace.' }),
+  // SOH_PROVISIONAL (R8C): high-grade ore from an iron vein, only with an iron-class pick. Smelts to two refined ingots with one coal.
+  rich_iron_ore: I({ name: 'Rich Iron Ore', cat: 'res', icon: 'rich_ore', c1: '#4f4560', c2: '#f0c040', w: 2, max: 40, desc: 'High-grade ore from an iron vein. One of these with one coal makes two refined ingots.' }),
   coal: I({ name: 'Coal', cat: 'res', icon: 'ore', c1: '#25252c', c2: '#55556a', w: 1, max: 40, desc: 'Dense fuel. Burns long.', fuel: 80 }),
   charcoal: I({ name: 'Charcoal', cat: 'res', icon: 'ore', c1: '#2b2420', c2: '#6e5a4c', w: 0.5, max: 60, desc: 'Fuel made from burnt wood.', fuel: 55 }),
   crystal: I({ name: 'Frost Crystal', cat: 'res', icon: 'gem', c1: '#4fa6d8', c2: '#c8f0ff', w: 0.5, max: 30, desc: 'Cold-grown crystal from the north. Core synthesis.' }),
@@ -151,7 +155,12 @@ export const ITEMS: Record<string, ItemDef> = {
 };
 
 // ---------- Sources (K3) ----------
-export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; block: boolean; regrow?: number; art: string; tall?: boolean; placement?: SourcePlacementRule[] }
+/** R8D: a source's typed extraction-quality contract. Only a capability the caller names may use it; the caller never supplies rates. */
+export type ExtractionCapability = 'playerTool' | 'environment';
+export interface QualityBonus { capability: 'playerTool'; power: Mat; tiers: { minPower: number; item: string; chance: number }[] }
+/** R9: renewable wild plants only. `regrowClass` picks the seasonal growth table (crop or herb). */
+export type RegrowClass = 'crop' | 'herb';
+export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; qualityBonus?: QualityBonus; block: boolean; regrow?: number; regrowClass?: RegrowClass; art: string; tall?: boolean; placement?: SourcePlacementRule[] }
 export const SOURCES: Record<string, SourceDef> = {
   oak: { name: 'Oak', mat: 'wood', hp: 18, stock: 6, yields: [['wood', 1]], bonus: [['seed', 0.25]], block: true, art: 'oak', tall: true },
   pine: { name: 'Pine', mat: 'wood', hp: 16, stock: 5, yields: [['wood', 1]], block: true, art: 'pine', tall: true },
@@ -160,16 +169,17 @@ export const SOURCES: Record<string, SourceDef> = {
   willow: { name: 'Mire Willow', mat: 'wood', hp: 14, stock: 4, yields: [['wood', 1]], bonus: [['fiber', 0.4]], block: true, art: 'willow', tall: true },
   deadtree: { name: 'Charred Tree', mat: 'wood', hp: 8, stock: 3, yields: [['charcoal', 1]], block: true, art: 'dead', tall: true },
   rock: { name: 'Boulder', mat: 'stone', hp: 18, stock: 6, yields: [['stone', 1]], block: true, art: 'rock' },
-  iron: { name: 'Iron Vein', mat: 'ore', hp: 24, stock: 5, yields: [['iron_ore', 1]], bonus: [['stone', 0.5]], block: true, art: 'iron' },
+  // R8D: per stock unit taken by a player swing. Iron pick (ore power 5) 8%; salvager (ore 8) 12%; stone pick (2) none.
+  iron: { name: 'Iron Vein', mat: 'ore', hp: 24, stock: 5, yields: [['iron_ore', 1]], bonus: [['stone', 0.5]], qualityBonus: { capability: 'playerTool', power: 'ore', tiers: [{ minPower: 5, item: 'rich_iron_ore', chance: 0.08 }, { minPower: 8, item: 'rich_iron_ore', chance: 0.12 }] }, block: true, art: 'iron' },
   coalv: { name: 'Coal Seam', mat: 'ore', hp: 20, stock: 5, yields: [['coal', 1]], block: true, art: 'coal' },
   crystal: { name: 'Frost Crystal', mat: 'ore', hp: 20, stock: 3, yields: [['crystal', 1]], block: true, art: 'crystal' },
   salt_shale: { name: 'Salt Shale', mat: 'ore', hp: 12, stock: 4, yields: [['raw_salt', 1]], block: true, art: 'crystal', placement: [{ terrain: 'sand', chance: 0.24 }] },
   sulfur: { name: 'Sulfur Vent', mat: 'ore', hp: 14, stock: 3, yields: [['sulfur', 1]], block: true, art: 'sulfur' },
-  bush: { name: 'Berry Bush', mat: 'plant', hp: 6, stock: 3, yields: [['berries', 1]], bonus: [['seed', 0.3]], block: false, regrow: 420, art: 'bush' },
-  grass: { name: 'Tall Grass', mat: 'plant', hp: 3, stock: 2, yields: [['fiber', 1]], block: false, regrow: 300, art: 'grass' },
-  reed: { name: 'Reeds', mat: 'plant', hp: 4, stock: 3, yields: [['fiber', 1]], block: false, regrow: 360, art: 'reed' },
-  herb: { name: 'Bitterleaf', mat: 'plant', hp: 3, stock: 2, yields: [['herb', 1]], block: false, regrow: 600, art: 'herb' },
-  mushroom: { name: 'Marsh Caps', mat: 'plant', hp: 3, stock: 2, yields: [['mushroom', 1]], block: false, regrow: 600, art: 'mush' },
+  bush: { name: 'Berry Bush', mat: 'plant', hp: 6, stock: 3, yields: [['berries', 1]], bonus: [['seed', 0.3]], block: false, regrow: 420, regrowClass: 'crop', art: 'bush' },
+  grass: { name: 'Tall Grass', mat: 'plant', hp: 3, stock: 2, yields: [['fiber', 1]], block: false, regrow: 300, regrowClass: 'crop', art: 'grass' },
+  reed: { name: 'Reeds', mat: 'plant', hp: 4, stock: 3, yields: [['fiber', 1]], block: false, regrow: 360, regrowClass: 'crop', art: 'reed' },
+  herb: { name: 'Bitterleaf', mat: 'plant', hp: 3, stock: 2, yields: [['herb', 1]], block: false, regrow: 600, regrowClass: 'herb', art: 'herb' },
+  mushroom: { name: 'Marsh Caps', mat: 'plant', hp: 3, stock: 2, yields: [['mushroom', 1]], block: false, regrow: 600, regrowClass: 'herb', art: 'mush' },
   scrap: { name: 'Roadside Scrap', mat: 'scrap', hp: 8, stock: 4, yields: [['scrap', 1]], bonus: [['spares', 0.55]], block: false, art: 'scrap' },
   wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.3], ['damaged_drive', 0.2], ['fuel_can', 0.06], ['mechanical_parts', 0.08], ['fasteners', 0.12], ['field_repair_kit', 0.04]], block: true, art: 'wreck' },
 };
@@ -279,6 +289,7 @@ export const RECIPES: Record<string, Recipe> = {
   stew: { out: 'stew', qty: 1, ins: [['crop', 2], ['meat', 1], ['herb', 1]], station: 'campfire', secs: 14, tier: 1 },
   iron_ingot: { out: 'iron_ingot', qty: 1, ins: [['iron_ore', 1]], station: 'furnace', secs: 10, base: true, tier: 0 },
   refined_iron_ingot: { out: 'refined_iron_ingot', qty: 2, ins: [['iron_ingot', 3], ['coal', 1]], station: 'furnace', secs: 20, base: true, tier: 1 },
+  refined_iron_rich: { out: 'refined_iron_ingot', qty: 2, ins: [['rich_iron_ore', 1], ['coal', 1]], station: 'furnace', secs: 14, base: true, tier: 1 },
   scrap_ingot: { out: 'iron_ingot', qty: 1, ins: [['scrap', 3]], station: 'furnace', secs: 12, base: true, tier: 0 },
   brick: { out: 'brick', qty: 2, ins: [['stone', 3]], station: 'furnace', secs: 10, tier: 1 },
   shell_glass: { out: 'glass', qty: 1, ins: [['stone', 2], ['shell', 2]], station: 'furnace', secs: 16, base: true, tier: 1 },
@@ -287,6 +298,7 @@ export const RECIPES: Record<string, Recipe> = {
   cloth: { out: 'cloth', qty: 1, ins: [['fiber', 6]], station: 'workbench', secs: 8, base: true, tier: 0 },
   arrow: { out: 'arrow', qty: 6, ins: [['wood', 1], ['stone', 1], ['fiber', 1]], station: 'workbench', secs: 5, tier: 1 },
   bow: { out: 'bow', qty: 1, ins: [['wood', 5], ['rope', 3]], station: 'workbench', secs: 12, tier: 1 },
+  plank: { out: 'plank', qty: 1, ins: [['wood', 2]], station: 'workbench', secs: 6, base: true, tier: 1 },
   iron_axe: { out: 'iron_axe', qty: 1, ins: [['iron_ingot', 3], ['wood', 2], ['leather', 1]], station: 'workbench', secs: 15, base: true, tier: 1 },
   iron_pick: { out: 'iron_pick', qty: 1, ins: [['iron_ingot', 3], ['wood', 2], ['leather', 1]], station: 'workbench', secs: 15, base: true, tier: 1 },
   iron_sword: { out: 'iron_sword', qty: 1, ins: [['iron_ingot', 5], ['leather', 1]], station: 'workbench', secs: 18, tier: 2 },
@@ -317,6 +329,7 @@ export const STRUCTS: Record<string, StructDef> = {
   floor_wood: { name: 'Wood Floor', cost: [['wood', 4]], hp: 120, need: 'any', block: false, layer: 'floor', desc: 'Foundation tile. Roofs need it.' },
   floor_stone: { name: 'Stone Floor', cost: [['stone', 6]], hp: 260, need: 'any', block: false, layer: 'floor', desc: 'Sturdy foundation.' },
   wall_wood: { name: 'Wood Wall', cost: [['wood', 5]], hp: 160, need: 'any', block: true, layer: 'wall', desc: 'Blocks movement and paths.' },
+  wall_plank: { name: 'Plank Wall', cost: [['plank', 3]], hp: 240, need: 'any', block: true, layer: 'wall', desc: 'Sawn boards: 240 HP for 6 wood, against 160 HP for 5 wood in a log wall.' },
   wall_stone: { name: 'Stone Wall', cost: [['stone', 8], ['wood', 1]], hp: 380, need: 'any', block: true, layer: 'wall', desc: 'Heavy wall.' },
   wall_brick: { name: 'Brick Wall', cost: [['brick', 6]], hp: 600, need: 'any', block: true, layer: 'wall', desc: 'Fired brick. Strongest wall.' },
   door_wood: { name: 'Wood Door', cost: [['wood', 6], ['rope', 1]], hp: 140, need: 'any', block: true, layer: 'wall', desc: 'E to open/close. Creatures cannot open doors.' },
@@ -350,10 +363,19 @@ export const STRUCTS: Record<string, StructDef> = {
 };
 /** Full target materials are paid again; condition is preserved, never a free repair. */
 export const STRUCTURE_UPGRADES: Record<string, string> = { floor_wood: 'floor_stone', wall_wood: 'wall_stone', wall_stone: 'wall_brick', door_wood: 'door_iron', roof_thatch: 'roof_tile', chest_small: 'chest_large' };
-export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'door_powered', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
+export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_plank', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'door_powered', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit
+/** R8D: the highest tier whose minPower the caller's tool reaches, if the source grants that capability. No tier -> no roll.
+ *  Expected extra per 5-unit iron vein: 0.4 rich (iron pick, +24% iron-equivalent on the vein), 0.6 rich (salvager, +36%).
+ *  Last Island v5 D03: one observation (~2 rare per ~272 iron, scope unknown); SOH_PROVISIONAL, not copied. */
+export function qualityTierFor(src: SourceDef, power: Partial<Record<string, number>>, capability: ExtractionCapability): { item: string; chance: number } | null {
+  const q = src.qualityBonus; if (!q || capability !== q.capability) return null;
+  const p = power[q.power] || 0; let best: { item: string; chance: number; minPower: number } | null = null;
+  for (const t of q.tiers) if (p >= t.minPower && (!best || t.minPower > best.minPower)) best = t;
+  return best ? { item: best.item, chance: best.chance } : null;
+}
 // SOH_NEW_TUNED v1. One-way, finite run-local stock; no automatic restock or resale.
 export const VENDOR_SPARES: Record<string, {price:number; qty:number; stock:number}> = {
   iron_ore:{price:3,qty:2,stock:5}, coal:{price:3,qty:2,stock:4}, glass:{price:4,qty:1,stock:3}, salvaged_oil:{price:5,qty:1,stock:4},
@@ -386,6 +408,18 @@ export function validateGameplayCatalog(catalog: GameplayCatalogData = { items: 
   for (const [id, source] of Object.entries(sources)) {
     if (!source.name || !source.mat || source.hp <= 0 || source.stock <= 0 || !source.yields.length) errors.push(`source ${id}: invalid physical source definition`);
     for (const [item, qty] of [...source.yields, ...(source.bonus || [])]) if (!items[item] || !Number.isFinite(qty) || qty <= 0) errors.push(`source ${id}: invalid yield ${item} x${qty}`);
+    // R9: only wild plants renew. Finite industrial, wreck, iron, rare and cash sources may never carry a regrow timer.
+    if (source.regrow !== undefined) {
+      if (source.mat !== 'plant') errors.push(`source ${id}: only wild plants may regrow (finite ${source.mat} source)`);
+      if (!source.regrowClass) errors.push(`source ${id}: regrow needs a regrowClass (crop|herb)`);
+      if (!(source.regrow > 0)) errors.push(`source ${id}: regrow must be a positive number of seconds`);
+    } else if (source.regrowClass) errors.push(`source ${id}: regrowClass without regrow`);
+    if (source.qualityBonus) {
+      const q = source.qualityBonus; const mins = q.tiers.map(t => t.minPower);
+      if (q.capability !== 'playerTool' || q.power !== source.mat) errors.push(`source ${id}: quality contract must name the playerTool capability and the source material`);
+      if (new Set(mins).size !== mins.length || mins.some(m => !Number.isFinite(m) || m <= 0)) errors.push(`source ${id}: quality tiers need distinct positive thresholds`);
+      for (const t of q.tiers) if (!items[t.item] || !(t.chance > 0 && t.chance < 1)) errors.push(`source ${id}: invalid quality tier ${t.item} ${t.chance}`);
+    }
     for (const rule of source.placement || []) {
       if (!validTerrains.has(rule.terrain) || !Number.isFinite(rule.chance) || rule.chance <= 0 || rule.chance > 1) errors.push(`source ${id}: invalid placement rule ${rule.terrain}/${rule.chance}`);
       const previous = placementOwners.get(rule.terrain);

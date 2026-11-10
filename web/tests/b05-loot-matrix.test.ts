@@ -2,7 +2,8 @@
 // Writes evidence/b05-loot/matrix.json. Asserts: deterministic rolls, legacy b01 saves keep their grammar, every item the
 // loot can emit has at least one real consumer (no orphan), and no Fuel Canister / crude / cash comes from a container.
 import { describe, it, expect } from 'vitest';
-import { writeFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import { stationBurnable } from '../src/game/catalog';
 import { RECIPES, STRUCTS, ITEMS } from '../src/game/catalog';
 import { LOOT_CLASSES, LOOT_B04_ROLES, LOOT_B01_ROLES, LOOT_GRAMMAR_CURRENT, LOOT_GRAMMAR_VERSION, lootClass, lootGrammarRoll, lootRoll } from '../src/game/loot-ecology';

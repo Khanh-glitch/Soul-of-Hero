@@ -159,7 +159,7 @@ export interface RunState {
   /** Domain marker: set ONLY by the test-only fixture registrar. A run without it cannot hold or validate oil sources.
    *  Future production sources must bind to a versioned Map site + map revision (authority not yet defined). */
   oilTestFixture?: true;
-  sources: Record<number, { stock: number; hp: number; regrowAt?: number; burnt?: boolean; fire?: number; fireSpreadAt?: number; fireDepth?: number }>; // K3 deltas over base world
+  sources: Record<number, { stock: number; hp: number; regrowAt?: number; regrowFrom?: number; regrowAcc?: number; regrowDoneAt?: number; burnt?: boolean; fire?: number; fireSpreadAt?: number; fireDepth?: number }>; // K3 deltas over base world
   /** Authored public loot sites emptied in this run (tile index). Absent on older saves. */
   depletedLootSites?: number[];
   /** Absolute due times for renewable authored loot; absent W00 entries migrate conservatively. */
@@ -173,7 +173,7 @@ export interface RunState {
   poiAccessDigest?: string;
   natureTrees?: {tx:number;ty:number;until:number}[];
   spiritTransit?: { x:number; y:number; arriveAt:number; uid:string };
-  terrain: Record<number, { t: number; until?: number }>; // K2 terrain mutations (burns, ice)
+  terrain: Record<number, { t: number; until?: number; untilAt?: number }>; // K2 terrain mutations (burns, ice)
   entities: Record<string, Entity>;
   custody: Record<string, Container>;
   knowledge: { recipes: string[]; studied: string[] };

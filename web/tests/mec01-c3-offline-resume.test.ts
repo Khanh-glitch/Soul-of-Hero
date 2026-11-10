@@ -10,7 +10,8 @@
 // SIM_FIXTURE_MEASUREMENT - the seconds come from the engine's station clock, not a human.
 import { describe, it, expect, afterEach } from 'vitest';
 import { execFileSync } from 'node:child_process';
-import { readFileSync, writeFileSync, existsSync, rmSync, mkdirSync } from 'node:fs';
+import { readFileSync, existsSync, rmSync, mkdirSync } from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { type GameState, TILE, WW, type RunState } from '../src/game/core';

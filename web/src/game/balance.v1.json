@@ -1,7 +1,7 @@
 {
   "_meta": {
     "version": 1,
-    "status_legend": "LOCKED_CANON = Bible [CH\u1ed0T] law; TUNABLE_BALANCE = editable number; PROPOSED_MECHANISM = reversible design choice ([\u0110\u1ec0 XU\u1ea4T])",
+    "status_legend": "LOCKED_CANON = Bible [CHỐT] law; TUNABLE_BALANCE = editable number; PROPOSED_MECHANISM = reversible design choice ([ĐỀ XUẤT])",
     "note": "All numbers here are TUNABLE_BALANCE unless marked. Edit and rebuild."
   },
   "run": {
@@ -176,6 +176,7 @@
     "upkeepFractionPerDay": 0.25,
     "materials": [
       "wood",
+      "plank",
       "stone",
       "fiber",
       "rope",
@@ -346,19 +347,19 @@
     "teleportMs": 600
   },
   "motorbike": {
-    "_status": "SOH_PROVISIONAL v1; ORIGINAL_UNKNOWN handling/fuel/wear/capacity",
+    "_status": "SOH_PROVISIONAL v3 (MEC-01 R7): wearPerPixel 0.002->0.008 so one full 300-unit tank of 40-kg freight costs ~48 of 200 HP (was ~12; wear never bit within a tank). Repair stays 50 HP per 1 MP + 1 fastener, so maintenance is about one part-set per tank. v2 (MEC-01 R6): roadSpeed 125->390 so a 40-ingot load on road is ~3.5x loaded walking (measured 92.2 px/s); fuel and wear per pixel unchanged, so speed buys time, not free fuel. ORIGINAL_UNKNOWN handling/fuel/wear/capacity",
     "slots": 12,
     "maxWeight": 80,
     "maxHp": 200,
     "tank": 300,
     "canFuel": 100,
-    "roadSpeed": 125,
+    "roadSpeed": 390,
     "groundSpeed": 52,
     "roughSpeed": 35,
     "fuelPerPixel": 0.05,
     "roughFuelMultiplier": 1.5,
     "loadFuelMultiplier": 0.5,
-    "wearPerPixel": 0.002,
+    "wearPerPixel": 0.008,
     "maxSlope": 0.6,
     "radius": 6,
     "repairHp": 50
@@ -1120,14 +1121,14 @@
     "maxSourceStock": 200
   },
   "calendar": {
-    "_status": "LOCKED_CANON scope / TUNABLE_BALANCE numbers. Bible \u00a70.1c D-FINAL-02 (CREATOR_LOCKED 2026-11-08): a run is 336 real hours and contains about two in-world years as two Spring->Summer->Autumn->Winter cycles == eight consecutive seasons. The eight equal phases below are the NOMINAL implementation parameter (42 h/season); only the phase LENGTH is provisional. 336 h, the final 72 h Ragnarok window and the season order are fixed and are not tunable here.",
+    "_status": "LOCKED_CANON scope / TUNABLE_BALANCE numbers. Bible §0.1c D-FINAL-02 (CREATOR_LOCKED 2026-11-08): a run is 336 real hours and contains about two in-world years as two Spring->Summer->Autumn->Winter cycles == eight consecutive seasons. The eight equal phases below are the NOMINAL implementation parameter (42 h/season); only the phase LENGTH is provisional. 336 h, the final 72 h Ragnarok window and the season order are fixed and are not tunable here.",
     "version": "world_calendar_v1",
     "phaseHours": 42,
     "years": 2,
     "_phaseHoursNote": "SOH_PROVISIONAL nominal parameter = maxRunHours / (years x 4). Tunable only against evidence and only inside the fixed 336 h / 72 h run clock."
   },
   "seasonClimateV1": {
-    "_status": "SOH_PROVISIONAL / TUNABLE_BALANCE. Climate AMPLITUDE per region is still [C\u1ea6N \u0110O] per Bible \u00a70.1c; these are bounded global deviations applied to Map-owned temperature/moisture, never new geography. Spring is the neutral reference season (offset 0) so the measured comfortV1 and garden baselines keep their calibration.",
+    "_status": "SOH_PROVISIONAL / TUNABLE_BALANCE. Climate AMPLITUDE per region is still [CẦN ĐO] per Bible §0.1c; these are bounded global deviations applied to Map-owned temperature/moisture, never new geography. Spring is the neutral reference season (offset 0) so the measured comfortV1 and garden baselines keep their calibration.",
     "version": "seasonal-climate-v1",
     "temperatureOffset": {
       "spring": 0,
@@ -1176,6 +1177,23 @@
     "traces": {
       "_status": "snowfall uses the existing BAL.traces.snowfallSnowMult magnitude: fresh snow buries a print on bare ground faster than rain washes it (rainDecayMult 4), and a print cut into snow/ice divides by snowfallSnowMult so it survives longer",
       "snowfallDecayMult": 6
+    }
+  },
+  "wildRegrowth": {
+    "_status": "SOH_PROVISIONAL (R9). LI original wild-plant regrow intervals are ORIGINAL_UNKNOWN (LEGACY-U05). Base seconds stay the catalog values and are exact at neutral conditions (spring, temperate tile = rate 1). Season and local temperature only scale the rate; weather never enters, so regrowth cannot be farmed by waiting for rain.",
+    "minRate": 0.5,
+    "climateFloor": 0.15,
+    "coldSlope": 4,
+    "heatSlope": 3,
+    "temperatureBand": {
+      "crop": {
+        "low": 0.22,
+        "high": 0.82
+      },
+      "herb": {
+        "low": 0.34,
+        "high": 0.78
+      }
     }
   }
 }

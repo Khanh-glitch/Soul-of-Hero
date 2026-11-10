@@ -107,6 +107,8 @@ const PARTS: Part[] = []; const ARCS: Part[] = []; const TEXTS: Part[] = [];
 const shakeT = new Map<number, number>();
 const add = (p: Partial<Part>) => { if (PARTS.length < 900) PARTS.push({ x: 0, y: 0, vx: 0, vy: 0, life: 0, max: 400, col: '#fff', s: 1, g: 0, ...p } as Part); };
 const burst = (x: number, y: number, n: number, cols: string[], sp = 60, g = 120, life = 450, s = 1) => { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = sp * (0.3 + Math.random()); add({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - sp * 0.5, col: cols[i % cols.length], max: life * (0.6 + Math.random() * 0.6), g, s }); } };
+/** R8D: gold flecks for a rare ore strike, distinct from ordinary ore dust. */
+const RICH_CHIP = ['#f0c040', '#fff3b0', '#4f4560'];
 const MATC: Record<string, string[]> = { wood: ['#c9935a', '#8a5a32', '#e0b070', '#6aa84a'], stone: ['#b9bcc4', '#7d8088', '#ffffff'], ore: ['#d08a5a', '#7d8088', '#ffe0a0'], plant: ['#8ac25a', '#5a9a3c', '#e05a7a'], scrap: ['#c0a07a', '#ffd070', '#6f7378', '#ffffff'] };
 const SURFC: Record<number, string[]> = { [T.SNOW]: ['#ffffff', '#c8d8e8'], [T.SAND]: ['#e8d8a0', '#c4aa74'], [T.MARSH]: ['#4a3e2a', '#3a5a5a'], [T.SHALLOW]: ['#a0d0ff', '#ffffff'], [T.RIVER]: ['#a0d0ff', '#ffffff'], [T.ASH]: ['#6a5a5a', '#3a3236'], [T.ROAD]: ['#b89470', '#9a7a58'] };
 export let shake = 0; export let flash = 0; export const banners: { text: string; sub: string; t: number }[] = [];
@@ -118,7 +120,7 @@ export function consumeFX(onFx: (e: any) => void) {
     const e = FX.shift(); onFx(e);
     switch (e.type) {
       case 'slash': ARCS.push({ x: e.x, y: e.y, a: e.a, reach: e.reach, arc: e.arc, life: 0, max: 150, key: e.key } as Part); break;
-      case 'chip': burst(e.x, e.y - 6, e.depleted ? 14 : 7, MATC[e.mat] || MATC.wood, 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
+      case 'chip': burst(e.x, e.y - 6, e.depleted ? 14 : 7, e.rich ? RICH_CHIP : (MATC[e.mat] || MATC.wood), 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
       case 'fell': burst(e.x, e.y - 14, 16, ['#6aa84a', '#3f7a32', '#c9935a'], 70, 60, 900); break;
       case 'clank': burst(e.x, e.y - 6, e.soft ? 2 : 5, ['#ffffff', '#ffe070'], 80, 200, 220); break;
       case 'turretshot': burst(e.x, e.y - 4, 7, ['#fff6b5', '#ffc653', '#ffffff'], 50, 100, 350); break;

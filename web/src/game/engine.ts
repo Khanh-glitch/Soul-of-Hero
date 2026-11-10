@@ -11,6 +11,7 @@ import { creatorLootV1 } from './creator-loot';
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
+import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
 import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -54,16 +55,39 @@ export function weatherSlot(seed: number, slot: number, season: Season = 'spring
   for (const k of keys) { x -= w[k]; if (x < 0) return k; } return 'clear';
 }
 export const isWet = (w: Weather) => w === 'rain' || w === 'storm';
-/** Coarse outlook from the current global weather schedule, not a geographic climate model. */
+/** K2 exit outlook. Bible: "dự báo chứ không toàn tri" — the outlook never reads the realized weather beyond its exact
+ * horizon. The first `forecastSlots` weather slots (the slot containing `now` onward) are the exact current schedule;
+ * every later instant is a SEASONAL PROBABILITY: the wet share of the season weights that apply at that instant. So the
+ * far-horizon number depends only on the calendar, not on the seed's realized weather, and it is labelled as such. */
 export function wetOutlook(r: RunState, now: number) {
   const end = Math.min(now + 24 * HOUR, r.startedAt - r.qaOffset + BAL.run.maxRunHours * HOUR);
-  const slotMs = BAL.weather.slotMinutes * 60000; let t = now, wet = 0;
+  const slotMs = BAL.weather.slotMinutes * 60000, origin = r.startedAt - r.qaOffset;
+  const slotEnd = (t: number) => origin + (Math.floor(runElapsedMs(r, t) / slotMs) + 1) * slotMs;
+  const exactEnd = Math.min(end, slotEnd(now) + (Math.max(1, BAL.weather.forecastSlots ?? 1) - 1) * slotMs);
+  let t = now, exactWet = 0, exactHours = 0, seasonalWet = 0;
   while (t < end) {
-    const boundary = r.startedAt - r.qaOffset + (Math.floor(runElapsedMs(r, t) / slotMs) + 1) * slotMs;
-    const next = Math.min(end, boundary); if (next <= t) break;
-    if (isWet(weatherAt(r, t))) wet += next - t; t = next;
+    const next = Math.min(end, slotEnd(t)); if (!(next > t)) break;
+    if (t < exactEnd) {
+      const seg = Math.min(next, exactEnd) - t;
+      exactHours += seg; if (isWet(weatherAt(r, t))) exactWet += seg;
+    }
+    if (next > exactEnd) {
+      const from = Math.max(t, exactEnd), len = next - from;
+      if (len > 0) {
+        const w = seasonWeatherWeights(calendarAt(r, from).season);
+        const total = Object.values(w).reduce((a, b) => a + b, 0);
+        seasonalWet += len * ((w.rain + w.storm) / total);
+      }
+    }
+    t = next;
   }
-  return { hours: Math.max(0, end - now) / HOUR, wetHours: wet / HOUR };
+  return {
+    hours: Math.max(0, end - now) / HOUR,
+    wetHours: (exactWet + seasonalWet) / HOUR,
+    exactHours: exactHours / HOUR, exactWetHours: exactWet / HOUR,
+    seasonalWetHours: seasonalWet / HOUR,
+    reliability: 'exact-near-term+seasonal-probability' as const,
+  };
 }
 
 // ---------------- CAL-01 calendar read model for other owners ----------------
@@ -105,6 +129,16 @@ export function chooseLegalSpawn(r:RunState): {tx:number;ty:number;name:string}|
   for(let k=0;k<count;k++){const i=(start+k*stride)%count,tx=3+i%(WW-6),ty=3+Math.floor(i/(WW-6));if(eligible(tx,ty))return{tx,ty,name:w.veyra?(w.zoneNames?.[0]||'Veyra region'):'the island'};}return null;
 }
 
+// Run ids must be unique per run: seed alone repeats across runs with the same seed, which made
+// profile history and achievement attribution ambiguous. Older saves keep their stored id untouched.
+function runIdFor(gs: GameState, seed: number, now: number): string {
+  const base = 'run_' + seed.toString(36) + '_' + Math.floor(now).toString(36);
+  const used = new Set((gs.profile.history || []).map((h: any) => h.runId));
+  let id = base, k = 1;
+  while (used.has(id)) id = base + '_' + (k++).toString(36);
+  return id;
+}
+
 export function startRun(gs: GameState, character: 'male' | 'female', now: number, region: number | null = null, seedOverride?: number): Result {
   if (gs.run && !gs.run.ended) return { ok: false, reason: 'A run is already active.' };
   if(getActiveLayout()==='shipping')setActiveLayout('shipping_fresh');
@@ -115,7 +149,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   const w = getWorld();
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
   const r: RunState = {
-    id: 'run_' + seed.toString(36), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: 0, ended: null,
+    id: runIdFor(gs, seed, now), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: 0, ended: null,
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Array.from(new Set([...Object.keys(RECIPES).filter(k => RECIPES[k].base), ...ALWAYS_KNOWN_RECIPES])), studied: [] },
     traces: [], discovered: [], poiSeen: [], intel: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
@@ -214,6 +248,70 @@ export function pushLog(r: RunState, now: number, msg: string, tone?: string) { 
 export function effTile(r: RunState, tx: number, ty: number) {
   const m = r.terrain[ty * WW + tx]; if (m && (!m.until || m.until > r.clock.simMs)) return m.t; return tileAt(getWorld(), tx, ty);
 }
+/** R10: ONE soil-fertility authority for gardens and wild plants. Biome substrate + moisture band + slope, clamped [0.3,1].
+ *  Gardens pass their cold-frame bonus; wild plants pass 0. Numbers are the former gardenEnvironment values. */
+export function soilFertility(biome: string, moisture: number, slope: number, frameBonus = 0): number {
+  const ground: Record<string, number> = { snow: 0.65, sand: 0.8, ash: 0.55, toxic: 0.4, hill: 0.8, marsh: 0.8 };
+  return Math.min(1, Math.max(0.3, (ground[biome] ?? 1) + frameBonus - (moisture < 0.3 || moisture > 0.75 ? 0.1 : 0) - Math.min(0.2, slope * 0.3)));
+}
+/** R10: terrain state of tile index i at an ABSOLUTE instant. Timed entries carry `untilAt`; legacy entries use `until`. */
+export function terrainAtAbs(r: RunState, i: number, at: number): number {
+  const m = r.terrain[i];
+  if (m && (m.untilAt !== undefined ? m.untilAt > at : (!m.until || m.until > r.clock.simMs))) return m.t;
+  return tileAt(getWorld(), i % WW, Math.floor(i / WW));
+}
+/** R10 PHYSICAL SUPPRESSION (hard stop, distinct from slow factors): frozen, walled, molten or burnt ground cannot re-establish. */
+export function regrowSuppressed(r: RunState, tx: number, ty: number, at: number): boolean {
+  const t = terrainAtAbs(r, ty * WW + tx, at);
+  return t === T.ICE || t === T.PWALL || t === T.LAVA || t === T.BURNT;
+}
+/** R10: accrue a depleted source's regrowth up to `now` BEFORE any terrain write on its tile, so a new terrain state never
+ *  applies to time that happened earlier. Idempotent: sourceAt already advances and gates on the current state. */
+export function settleRegrowthAt(r: RunState, tx: number, ty: number, now: number) {
+  const st = r.sources[ty * WW + tx];
+  if (!st || st.stock > 0) return;
+  if (st.regrowFrom === undefined && st.regrowAt === undefined && st.regrowDoneAt === undefined) return;
+  sourceAt(r, tx, ty, now);
+}
+/** R9/R10: wild regrowth rate at a tile and instant. Suppression -> 0. Otherwise max(minRate, seasonal climate x crop/herb
+ *  season factor) x shared soil fertility at the SEASONAL local moisture (wild plants feel drought; gardens are watered).
+ *  Weather is not an input. Bounded [0.15, 2]. */
+export function wildRegrowRate(r: RunState, tx: number, ty: number, def: SourceDef, at: number): number {
+  const cls = def.regrowClass; if (!cls) return 0;
+  if (regrowSuppressed(r, tx, ty, at)) return 0;
+  const cfg = BAL.wildRegrowth, band = cfg.temperatureBand[cls];
+  const local = climateAt(r, tx, ty, at, 'clear'), t = local.temperature;
+  const climate = Math.max(cfg.climateFloor, Math.min(1, t < band.low ? 1 - (band.low - t) * cfg.coldSlope : t > band.high ? 1 - (t - band.high) * cfg.heatSlope : 1));
+  const m = getWorld().economyMap, i = ty * WW + tx;
+  const soil = soilFertility(m.biome[i], local.moisture, m.slope[i], 0);
+  return Math.max(cfg.minRate, climate * cropSeasonFactor(local.season, cls)) * soil;
+}
+/** R9: a regrowing site is physically free only when no entity stands on the tile (structures, doors, loot, machines...). */
+function regrowSiteFree(r: RunState, tx: number, ty: number) { return entsAt(r, tx, ty).length === 0; }
+/** R9: integrate the growth rate piecewise over season boundaries from `st.regrowFrom` to `now`. Exact because the rate is
+ *  constant inside one phase. Idempotent and additive: any number or pattern of reads gives the same completion instant. */
+function advanceRegrowth(r: RunState, st: { regrowFrom?: number; regrowAcc?: number; regrowDoneAt?: number }, def: SourceDef, tx: number, ty: number, now: number) {
+  if (st.regrowDoneAt !== undefined || st.regrowFrom === undefined || !(now > st.regrowFrom)) return;
+  const need = def.regrow! * 1000; let acc = st.regrowAcc ?? 0, t = st.regrowFrom;
+  const tm = r.terrain[ty * WW + tx];
+  const termCut = tm && tm.untilAt !== undefined && tm.untilAt > st.regrowFrom && tm.untilAt < now ? [tm.untilAt] : [];
+  const cuts = [...seasonTransitionsBetween(r, st.regrowFrom, now).map(x => x.at), ...termCut].sort((a, b) => a - b);
+  for (const b of [...cuts, now]) {
+    if (!(b > t)) continue;
+    const rate = wildRegrowRate(r, tx, ty, def, t), gain = rate * (b - t);
+    if (rate > 0 && acc + gain >= need) { st.regrowDoneAt = t + (need - acc) / rate; st.regrowAcc = need; st.regrowFrom = now; return; }
+    acc += gain; t = b;
+  }
+  st.regrowAcc = acc; st.regrowFrom = now;
+}
+/** R9: the player-facing note for an exhausted source (pixel-free text, same toast channel). */
+export function regrowNote(r: RunState, tx: number, ty: number, now: number): string | null {
+  const s = sourceAt(r, tx, ty, now); if (!s || !s.def.regrow || s.stock > 0) return null;
+  if (!regrowSiteFree(r, tx, ty)) return 'Exhausted — it can regrow once the tile is clear again.';
+  if (regrowSuppressed(r, tx, ty, now)) return 'Exhausted — frozen or scorched ground; it can regrow once the ground recovers.';
+  const rate = wildRegrowRate(r, tx, ty, s.def, now);
+  return rate < 0.9 ? 'Exhausted — growth is slowed by the season here.' : rate > 1.05 ? 'Exhausted — growth is quick this season.' : 'Exhausted — this plant can regrow.';
+}
 export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
   if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return null;
   const i = ty * WW + tx; const w = getWorld();
@@ -223,7 +321,19 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
   if (st?.burnt) key = 'deadtree';
   const def = SOURCES[key];
   let stock = st ? st.stock : def.stock, hp = st ? st.hp : def.hp;
-  if (st && stock <= 0 && st.regrowAt && now !== undefined && now >= st.regrowAt) { st.stock = def.stock; st.hp = def.hp; delete st.regrowAt; stock = def.stock; hp = def.hp; }
+  // R9 lifecycle: only renewable wild plants regrow. A pre-R9 fixed timer (regrowAt, no regrowFrom) is honoured as saved.
+  // Completion needs the tile clear: a structure over a dormant plant delays its emergence; it never refills under the building.
+  if (st && stock <= 0 && def.regrow && now !== undefined) {
+    if (st.regrowFrom === undefined && st.regrowAt !== undefined) {
+      if (now >= st.regrowAt && regrowSiteFree(r, tx, ty) && !regrowSuppressed(r, tx, ty, now)) { st.stock = def.stock; st.hp = def.hp; delete st.regrowAt; }
+    } else if (st.regrowFrom !== undefined) {
+      advanceRegrowth(r, st, def, tx, ty, now);
+      if (st.regrowDoneAt !== undefined && now >= st.regrowDoneAt && regrowSiteFree(r, tx, ty) && !regrowSuppressed(r, tx, ty, now)) {
+        st.stock = def.stock; st.hp = def.hp; delete st.regrowAt; delete st.regrowFrom; delete st.regrowAcc; delete st.regrowDoneAt;
+      }
+    }
+    if (st.stock !== stock) { stock = st.stock; hp = st.hp; }
+  }
   return { i, key, def, stock, hp, st, fire: (st as any)?.fire as number | undefined };
 }
 // collision cache — rebuilt when structures/sources/terrain change
@@ -863,27 +973,31 @@ export function award(gs: GameState, key: string, now: number) {
 }
 
 // ---------------- combat / harvesting shared hit rules (C05) ----------------
-export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial<Record<string, number>>, now: number, fromX: number, fromY: number): { result: 'yield' | 'nopower' | 'empty' | 'none'; key?: string; got?: number; mat?: string; depleted?: boolean } {
+export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial<Record<string, number>>, now: number, fromX: number, fromY: number, opts?: { extraction?: ExtractionCapability }): { result: 'yield' | 'nopower' | 'empty' | 'none'; key?: string; got?: number; mat?: string; depleted?: boolean; quality?: number } {
   const r = gs.run!; const s = sourceAt(r, tx, ty, now); if (!s) return { result: 'none' };
   if (s.stock <= 0) return { result: 'empty', key: s.key, mat: s.def.mat };
   const p = power[s.def.mat] || 0; if (p <= 0) return { result: 'nopower', key: s.key, mat: s.def.mat };
   const st = r.sources[s.i] || (r.sources[s.i] = { stock: s.stock, hp: s.hp, burnt: s.st?.burnt });
   const per = s.def.hp / s.def.stock; const before = Math.ceil(st.hp / per - 1e-9);
   st.hp = Math.max(0, st.hp - p); const after = Math.ceil(st.hp / per - 1e-9); let units = Math.min(st.stock, before - after);
-  let got = 0; const cx = tx * TILE + 8, cy = ty * TILE + 8;
+  let got = 0, richGot = 0; const cx = tx * TILE + 8, cy = ty * TILE + 8;
   const ox = (fromX - cx) * 0.3, oy = (fromY - cy) * 0.3;
   for (let u = 0; u < units; u++) {
     st.stock--; for (const [k, q] of s.def.yields) { spawnDrop(r, k, q, cx + ox, cy + oy, now); got += q; }
     for (const [k, ch] of (s.key === 'wreck' ? wreckBonuses(r) : s.def.bonus || [])) if (rngNext(r) < ch) { const drop=spawnDrop(r, k, 1, cx + ox, cy + oy, now); if(k==='damaged_drive')receipt(r,now,'harvest.component',`${s.key}@${tx},${ty}:${C(r,drop.c!).slots[0]!.uid}`); }
+    // R8C: a player swing with an iron-class pick can also free high-grade ore from an iron vein (finite, one drop per unit, same RNG stream).
+    // R8D: typed quality contract. One roll per unit only if the source grants this capability to the caller and the tool reaches a tier.
+    const quality = opts?.extraction ? qualityTierFor(s.def, power, opts.extraction) : null;
+    if (quality && rngNext(r) < quality.chance) { spawnDrop(r, quality.item, 1, cx + ox, cy + oy, now); richGot++; }
     // SOH_NEW_TUNED v1: only modern source layouts yield this additional,
     // finite wreck salvage; never modify legacy tables or invent new Map cells.
     if (s.key==='wreck' && r.sourceLayoutVersion===3 && rngNext(r)<SALVAGED_OIL_WRECK_CHANCE) spawnDrop(r,'salvaged_oil',1,cx+ox,cy+oy,now);
   }
   r.player.skills.gather += units;
   const depleted = st.stock <= 0;
-  if (depleted) { if (st.fire) { st.fire = 0; delete st.fireSpreadAt; delete st.fireDepth; } if (s.def.regrow) st.regrowAt = now + s.def.regrow * 1000; markDirty(); }
+  if (depleted) { if (st.fire) { st.fire = 0; delete st.fireSpreadAt; delete st.fireDepth; } if (s.def.regrow) { st.regrowFrom = now; st.regrowAcc = 0; delete st.regrowDoneAt; delete st.regrowAt; } markDirty(); }
   if (units) receipt(r, now, 'harvest', `${s.key}@${tx},${ty} -${units}`);
-  return { result: 'yield', key: s.key, got, mat: s.def.mat, depleted };
+  return { result: 'yield', key: s.key, got, mat: s.def.mat, depleted, quality: richGot };
 }
 
 export function killCreature(gs: GameState, m: Creature, now: number) {
@@ -1779,7 +1893,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e=r.entities[it.eid];if(!e||e.kind!=='struct'||e.type!=='garden'||!e.garden||!owned(e)||!near(r,e,2.2)||!clearInteraction(r,e))return fail('Use your garden within reach.');
       const i=e.ty!*WW+e.tx!,ground=r.terrain[i];if(!ground||ground.t!==T.BURNT||ground.until)return fail('This soil is not scorched.');
       if(!hasAll(r,'inv',[['fiber',2],['herb',1]]))return fail('Needs 2 fiber and 1 Bitterleaf.');
-      removeItem(r,'inv','fiber',2);removeItem(r,'inv','herb',1);delete r.terrain[i];markDirty();return ok('garden.restore',e.id,'Scorched soil restored with fiber and Bitterleaf.');
+      removeItem(r,'inv','fiber',2);removeItem(r,'inv','herb',1);settleRegrowthAt(r,e.tx!,e.ty!,now);delete r.terrain[i];markDirty();return ok('garden.restore',e.id,'Scorched soil restored with fiber and Bitterleaf.');
     }
     case 'gardenFrame': {
       const e=r.entities[it.eid];if(!e || e.kind!=='struct' || e.type!=='garden' || !e.garden || !owned(e) || !near(r,e,2.2) || !clearInteraction(r,e)) return fail('Use your garden within reach.');
@@ -2036,8 +2150,7 @@ export function gardenEnvironment(r:RunState,e:Entity,wet:boolean,crop:'crop'|'h
   const temperature=Math.min(1,Math.max(0,seasonTemperature+(frame&&seasonTemperature<0.4?BAL.garden.coldFrameWarming:0)-(wet&&!frame&&!isRoofed(r,e)?BAL.garden.wetCooling:0)));
   const low=crop==='herb'?0.34:0.22,high=crop==='herb'?0.78:0.82;
   const climate=Math.max(0.15,Math.min(1,temperature<low?1-(low-temperature)*4:temperature>high?1-(temperature-high)*3:1));
-  const ground:Record<string,number>={snow:0.65,sand:0.8,ash:0.55,toxic:0.4,hill:0.8,marsh:0.8};
-  const fertility=Math.min(1,Math.max(0.3,(ground[biome]??1)+(frame?BAL.garden.coldFrameSoilBonus:0)-(mapMoisture<0.3||mapMoisture>0.75?0.1:0)-Math.min(0.2,slope*0.3)));
+  const fertility=soilFertility(biome,mapMoisture,slope,frame?BAL.garden.coldFrameSoilBonus:0);
   const scorched=effTile(r,x,y)===T.BURNT;
   // Per-crop seasonal suitability: the same plot is a better Sunroot or Bitterleaf
   // investment depending on the season (competing outputs, SYS15-C10).

@@ -24,7 +24,8 @@
 //   This file proves source->container->route->container->destination custody with real UIDs on real map geometry;
 //   it is not a claim of human driving skill, balance enjoyment or NATURAL_INPUT play.
 import { describe, it, expect, afterEach } from 'vitest';
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
+import { writeFileSync } from './_evidenceFs';
 import { BAL, TILE, WW, WH, T, type Entity, type GameState, type Stack } from '../src/game/core';
 import { addItem, C, dispatch, newGame, cartWeight, invWeight, carryLimit, buildReason, removeItem } from '../src/game/engine';
 import { getWorld, setActiveLayout } from '../src/game/world';
@@ -306,8 +307,11 @@ function haul(mode: 'walk' | 'cart' | 'bike', far = false): ModeResult {
     // inside the corridor cell, which the bike's axis-priority steering preserves by construction.
     if (d < 1.5 || passed) { cp++; continue; }
     const inp = input(dx, dy, dx / d, dy / d, p.x + dx, p.y + dy, legHoriz) as any;
-    tick(g, inp, 50, t);
-    t += 50; ticks++;
+    // Bike steps at a 60 fps frame (16 ms): at the R6 road speed a 50 ms step moves ~20 px, past a 16 px corridor cell.
+    // Walkers and carts keep the 50 ms step. Time is still ticks x dt.
+    const dtMs = mode === 'bike' ? 16 : 50;
+    tick(g, inp, dtMs, t);
+    t += dtMs; ticks++;
     const nowP = posOf();
     if (Math.hypot(nowP.x - lastPos.x, nowP.y - lastPos.y) < 0.25) stuck++; else stuck = 0;
     if (stuck > 400) break;
@@ -323,7 +327,7 @@ function haul(mode: 'walk' | 'cart' | 'bike', far = false): ModeResult {
   const endPos = posOf();
   const goalDist = Math.hypot(endPos.x - (depot.x * TILE + 8), endPos.y - (depot.y * TILE + 8));
   expect(goalDist).toBeLessThan(4 * TILE);
-  const seconds = ticks * 0.05;
+  const seconds = ticks * (mode === 'bike' ? 0.016 : 0.05);
   // ---- exit + unload into the depot chest by real actions ----
   let exitReceipt: string | undefined;
   if (vehicle) { const res = act(g, 'vehicleExit', {}, t); expect(res.ok).toBe(true); exitReceipt = (res as any).receipt ? `${(res as any).receipt}` : undefined; }
