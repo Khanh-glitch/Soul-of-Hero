@@ -34,6 +34,8 @@ async function check(viewport){
  if(!await switchBtn.isVisible())throw Error(tag+' quick switch missing');
  await switchBtn.click();await page.waitForTimeout(160);
  if(!await page.locator('.wm__switch').isVisible())throw Error(tag+' no in-world goal switcher');
+ const popup=await page.locator('.wm__switch').boundingBox();
+ if(!popup || popup.x < 0 || popup.y < 0 || popup.x+popup.width > width+1 || popup.y+popup.height > height+1)throw Error(tag+' goal switcher clipped: '+JSON.stringify(popup));
  const options=await page.locator('.wm__switch-row').count();if(options<2)throw Error(tag+' expected multiple real goals');
  await shot('04-quick-switch');
  await page.locator('.wm__switch-row').nth(1).click();await page.waitForTimeout(220);
