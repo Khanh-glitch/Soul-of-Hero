@@ -86,7 +86,6 @@ async function check(viewport){
    if(selected.clipped||!selected.item||selected.item.bottom>selected.pane.bottom+1||selected.buttons.length<2)
      throw Error(tag+' selected-item inspector/actions clipped or missing '+JSON.stringify(selected));
    await shot('06-inventory-selected');
-   await page.keyboard.press('Escape');await page.waitForTimeout(80);
    await page.locator('.sv-compact-nav button').nth(1).click();await page.waitForTimeout(200);
    if(!await page.locator('.sv-right').isVisible())throw Error('Work tab failed');
    await shot('07-work');
