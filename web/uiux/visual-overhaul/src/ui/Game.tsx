@@ -21,25 +21,27 @@ import { getWorld, ZONES } from '../game/world';
 import { sfx, setAmbience, initAudio, setVolume } from '../game/audio';
 import { save, saveSync, saveDetailed, lastSaveOutcome } from '../game/persist';
 import { Slot, Bar, Icon, mkIntent, type Api, type PanelState } from './common';
-import { Vitals, WorldClock, Hotbar, RigStatus, ThreatBar, PresentationPanel, useVisualPrefs, Glyph } from './hud';
+import { Vitals, UrgentAlerts, WorldClock, Hotbar, RigStatus, ThreatBar, PresentationPanel, useVisualPrefs, Glyph } from './hud';
 import { setListener, setEnvironment, machineState, setMood, tickMusic, stopAllMachines } from '../game/audio';
 import { getPrefs, setPrefs, applyCssTheme } from '../visual/direction';
 import { HomeStatusCard } from './HomeStatus';
 import { thermalStatusView } from '../game/thermal';
 import { nearestHomeStructure, homeStatus } from '../game/engine';
 import { ThermalStatusCard, thermalEnvNow } from './ThermalStatus';
-import type { OfflineReturnV1 } from '../game/return-report';
+import { classifyOfflineReturn, readReturnHistory, recordReturnHistory, settleWithReturn, type OfflineReturnV1, type StoredReturnEntry } from '../game/return-report';
+import { evaluateFieldNotes, readFieldNoteStore, writeFieldNoteStore, type FieldNoteStore } from '../game/field-notes';
+import { FieldNoteCard, FieldNotesPanel } from './FieldNotes';
+import { ReturnDigest } from './ReturnChronicle';
 import { RestPanel } from './RestPanel';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 import { deriveCues } from '../game/presentation-cues';
 import { experienceForPhase, experienceFromCue, stagedExperience, type ExperienceEvent } from '../game/experience';
 import { triggerQaEvent, qaCycleBikeState, type QaPresetId } from '../game/qa-sandbox';
-import { settleWithReturn } from '../game/return-report';
 import { ElderBossHUD, RagnarokStrip, CoreReserveStrip, AirdropCard, DeathRecoveryOverlay, QaSandboxDrawer } from './EventExperiences';
 import { ExperienceStage, FieldPickupLayer, EventFeed, type FieldPickup, type FeedLine } from './ExperienceStage';
 import { SurvivorScreen } from './SurvivorScreen';
 import { BuildBar, BUILD_KIT, type BuildTool } from './BuildBar';
-import { getHoverSlot, DragGhost } from './dragSlots';
+import { clearSlotInteraction, getHoverSlot, getKeyboardPick, DragGhost } from './dragSlots';
 
 export default function Game({
   gs,
@@ -64,7 +66,13 @@ export default function Game({
   useEffect(() => { applyCssTheme(); setVolume(gs.profile.settings.volume, gs.profile.settings.muted || getPrefs().muted); }, [gs, vp.muted]);
   const cvRef = useRef<HTMLCanvasElement>(null); const stageRef = useRef<HTMLDivElement>(null);
   const [, setFrame] = useState(0); const rerender = useCallback(() => setFrame(f => f + 1), []);
-  const [panel, setPanel] = useState<PanelState | null>(report && (report.lines.length || (report.report && !report.report.away.quiet)) ? { kind: 'report', lines: report.lines, report: report.report } : null);
+  const initialSeverity = report?.report ? classifyOfflineReturn(report.report) : null;
+  const openFullInitial = !!(report && (initialSeverity ? initialSeverity !== 'minimal' : report.lines.length > 0));
+  const [panel, setPanel] = useState<PanelState | null>(openFullInitial ? { kind: 'report', lines: report!.lines, report: report!.report } : null);
+  const [returnDigest, setReturnDigest] = useState<OfflineReturnV1 | null>(!openFullInitial && report?.report ? report.report : null);
+  const [returnHistory, setReturnHistory] = useState<StoredReturnEntry[]>(() => gs.run ? (report?.report ? recordReturnHistory(gs.run, qaMode, report.report) : readReturnHistory(gs.run, qaMode)) : []);
+  const [fieldNoteStore, setFieldNoteStore] = useState<FieldNoteStore>(() => gs.run ? readFieldNoteStore(gs.run, qaMode) : { dismissed: [], resolved: [], triggered: [], muted: false });
+  const fieldActionsRef = useRef<Set<string>>(new Set());
   const [sel, setSel] = useState<{ c: string; slot: number } | null>(null);
   const [buildType, setBuildType] = useState<string | null>(null); const [reclaim, setReclaim] = useState(false); const [repairMode, setRepairMode] = useState(false); const [upgradeMode, setUpgradeMode] = useState(false);
   const [editLayer, setEditLayer] = useState('auto');
@@ -86,13 +94,19 @@ export default function Game({
   const [bikeDemoState, setBikeDemoState] = useState<string | null>(null);
   useEffect(() => {
     setBanner(null);
-    setPanel(report && (report.lines.length || (report.report && !report.report.away.quiet)) ? { kind: 'report', lines: report.lines, report: report.report } : null);
+    const sev = report?.report ? classifyOfflineReturn(report.report) : null;
+    const full = !!(report && (sev ? sev !== 'minimal' : report.lines.length > 0));
+    setPanel(full ? { kind: 'report', lines: report!.lines, report: report!.report } : null);
+    setReturnDigest(!full && report?.report ? report.report : null);
+    setReturnHistory(gs.run ? (report?.report ? recordReturnHistory(gs.run, qaMode, report.report) : readReturnHistory(gs.run, qaMode)) : []);
+    setFieldNoteStore(gs.run ? readFieldNoteStore(gs.run, qaMode) : { dismissed: [], resolved: [], triggered: [], muted: false });
+    fieldActionsRef.current.clear();
     setExperiences([]); setFieldPickups([]);
     lastCueSeq.current = gs.run?.receipts.at(-1)?.seq ?? 0;
     seenCores.current = new Set(gs.run ? C(gs.run, 'inv').slots.filter(s => s && ITEMS[s.key]?.creatorCore).map(s => s!.uid) : []);
     phaseWatch.current = gs.run ? { runId: gs.run.id, phase: phaseOf(gs.run, Date.now()) } : null;
     feedbackSeen.current.clear(); fieldMerge.current.clear();
-  }, [gs, initialBanner, report]);
+  }, [gs, initialBanner, report, qaMode]);
   const inp = useRef<Input>({ up: false, down: false, left: false, right: false, mx: 0, my: 0, attack: false, attackPressed: false, roll: false, cancel: false });
   const [coreAim, setCoreAim] = useState<null | { mode: 'refined' | 'signature'; uid: string; code: string }>(null);
   const spiritTarget=useRef<null | {uid:string;x:number;y:number}>(null);
@@ -124,9 +138,9 @@ export default function Game({
       return;
     }
     setExperiences(current => [...current.filter(v => v.id !== event.id), event].sort((a, b) => b.priority - a.priority).slice(0, 4));
-    // Age out even while a full-screen surface temporarily hides the theatre;
-    // a craft or boss cue must not reappear minutes later when the map closes.
-    window.setTimeout(() => setExperiences(current => current.filter(v => v.id !== event.id)), event.duration + 150);
+    // Let ExperienceStage drive active display timing so queued plaques aren't evicted before being seen;
+    // prune only genuinely stale unshown items after 30s.
+    window.setTimeout(() => setExperiences(current => current.filter(v => v.id !== event.id)), 30000);
   }, []);
   useEffect(() => { const t = window.setInterval(() => { const n = Date.now(); setFeed(cur => cur.some(l => n - l.at > 4200) ? cur.filter(l => n - l.at <= 4200) : cur); }, 500); return () => window.clearInterval(t); }, []);
   const applyTool = useCallback((t: BuildTool) => {
@@ -242,21 +256,24 @@ export default function Game({
           break;
         }
         case 'KeyF': { if (panelRef.current) break; if(r.player.vehicle){act('vehicleExit',{});break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current) interact(); else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
-        case 'KeyI': case 'KeyC': if (buildModeRef.current) exitBuild(); toggle(e.code === 'KeyC' ? 'craft' : 'inv'); break; case 'KeyM': toggle('map'); break;
+        case 'KeyI': case 'KeyC': if (buildModeRef.current) exitBuild(); fieldActionsRef.current.add('survivor'); toggle(e.code === 'KeyC' ? 'craft' : 'inv'); break;
+        case 'KeyM': toggle('map'); break;
+        case 'KeyN': toggle('notes'); break;
         case 'KeyB': if (buildModeRef.current) exitBuild(); else enterBuild(); break;
         case 'KeyG': setEditLayer(v => { const a=['auto','wall','obj','roof','floor']; return a[(a.indexOf(v)+1)%a.length]; }); break;
         case 'KeyU': enterBuild('upgrade'); break;
         case 'KeyX': enterBuild('reclaim'); break;
         case 'KeyV': enterBuild('repair'); break;
         case 'KeyR': { const selected=activeStack(r); if(selected && ITEMS[selected.key]?.creatorCore && !panelRef.current){act('loadCore',{slot:r.player.active,uid:selected.uid,mode:e.altKey?'signature':e.shiftKey?'refined':'basic'});break;} const t = Object.values(r.entities).find(x => x.type === 'research' && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 3 * TILE && clearWallLine(r, r.player, x)); if (t) setPanel({ kind: 'container', eid: t.id }); else toast('Research needs a Research Table within reach.'); break; }
-        case 'Escape': if (buildModeRef.current) { exitBuild(); break; } if(coreAimRef.current || (r.player.action?.kind==='cast' && !r.player.action.done)){coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel=true;break;} if (buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) { setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); } else if (panelRef.current) setPanel(null); else setPanel({ kind: 'menu' }); setSel(null); break;
+        case 'Escape': if (buildModeRef.current) { exitBuild(); break; } if(coreAimRef.current || (r.player.action?.kind==='cast' && !r.player.action.done)){coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel=true;break;} if (panelRef.current && getKeyboardPick()) { clearSlotInteraction(); setSel(null); break; } if (buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) { setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); } else if (panelRef.current) setPanel(null); else setPanel({ kind: 'menu' }); setSel(null); break;
         default: {
           const dm = e.code.match(/^Digit(\d)$/); if (!dm) break;
           const n = +dm[1];
           if (buildModeRef.current) { const i = n === 0 ? 9 : n - 1; if (BUILD_KIT[i]) applyTool(BUILD_KIT[i]); break; }
           if (n < 1 || n > 8) break;
-          // Hover a slot in any open container and press 1-8: that stack goes onto the hotbar slot (engine move/swap).
-          const hv = getHoverSlot();
+          // Hover (or keyboard-focus) a slot in any open container and press 1-8: move/swap onto that quickbar slot.
+          const focusedEl = !getHoverSlot() && document.activeElement instanceof HTMLElement ? document.activeElement.closest('[data-dslot]') as HTMLElement | null : null;
+          const hv = getHoverSlot() ?? (focusedEl?.dataset.c ? { c: focusedEl.dataset.c, slot: Number(focusedEl.dataset.s) } : null);
           if (panelRef.current && hv && !(hv.c === 'inv' && hv.slot === n - 1)) { act('move', { from: hv.c, fs: hv.slot, to: 'inv', ts: n - 1 }); break; }
           if (!panelRef.current) { r.player.active = n - 1; rerender(); }
         }
@@ -331,7 +348,7 @@ export default function Game({
       }
       target.current = findInteract(gs, now);
       pfx.update(simDt,now);pfx.tickStats(dt);
-      consumeFX(e => { pfxFromSimEvent(e); sfx(e); if(e.type==='spiritDepart'){spiritTarget.current=null;setToasts(t=>t.filter(v=>!v.text.startsWith('Destination set.')));toast('Departed. The cart stays behind.');} else if(e.type==='spiritArrive'){setToasts(t=>t.filter(v=>!v.text.startsWith('Destination set.')&&!v.text.startsWith('Departed.')));toast('Arrived — Signature charge spent.','ok');scheduleSave();} else if (e.type === 'toast') toast(e.text); else if (e.type === 'hitstop') hitstop.current = Math.max(hitstop.current, e.ms); else if (e.type === 'banner') setBanner({ text: e.text, sub: e.sub, id: now }); else if (e.type === 'discover') setBanner({ text: e.name, sub: 'Discovered', id: now }); else if (e.type === 'region') setBanner(b => (b && now - b.id < 2500 ? b : { text: e.name, id: now })); else if (e.type === 'pickup' || e.type === 'struct.destroyed') scheduleSave(); });
+      consumeFX(e => { pfxFromSimEvent(e); sfx(e); if(e.type==='spiritDepart'){spiritTarget.current=null;setToasts(t=>t.filter(v=>!v.text.startsWith('Destination set.')));toast('Departed. The cart stays behind.');} else if(e.type==='spiritArrive'){setToasts(t=>t.filter(v=>!v.text.startsWith('Destination set.')&&!v.text.startsWith('Departed.')));toast('Arrived — Signature charge spent.','ok');scheduleSave();} else if (e.type === 'toast') toast(e.text); else if (e.type === 'hitstop') hitstop.current = Math.max(hitstop.current, e.ms); else if (e.type === 'banner') setBanner({ text: e.text, sub: e.sub, id: now }); else if (e.type === 'discover') setBanner({ text: e.name, sub: 'Discovered', id: now }); else if (e.type === 'region') setBanner(b => (b && now - b.id < 2500 ? b : { text: e.name, id: now })); else if (e.type === 'pickup') { fieldActionsRef.current.add('harvested'); scheduleSave(); } else if (e.type === 'struct.destroyed') scheduleSave(); });
       draw(g, gs, now, dt, { buildType: buildRef.current, reclaim: reclaimRef.current || repairRef.current || upgradeRef.current, mouseX: i.mx, mouseY: i.my, target: target.current, time: t, working: panelRef.current?.kind === 'container' });
       // close container panels when walking away
       const P = panelRef.current; if (P?.eid && gs.run.entities[P.eid]) { const e = gs.run.entities[P.eid]; if ((Math.hypot(e.x - gs.run.player.x, e.y - gs.run.player.y) > 3.4 * TILE || (e.kind === 'struct' && !clearWallLine(gs.run, gs.run.player, e)))) setPanel(null); } else if (P?.eid && !gs.run.entities[P.eid]) setPanel(null);
@@ -448,12 +465,22 @@ export default function Game({
   const simulateQaOffline = useCallback(() => {
     if (!qaMode || !gs.run) { toast('Offline replay is available only in the isolated QA session.', 'bad'); return; }
     const r = gs.run; const now = Date.now();
-    // QA supplies a deterministic absence interval; all resulting events and output still come from settle().
-    r.clock.lastSimAt = Math.max(r.startedAt - r.qaOffset, now - 6.5 * HOUR);
+    // Advance QA run clock cleanly by 6.5h and align lastSimAt so settle() executes the real 6.5h absence window.
+    r.qaOffset += 6.5 * HOUR;
+    r.qaUsed = true;
+    r.clock.lastSimAt = now - 6.5 * HOUR;
     const result = settleWithReturn(gs, now);
     lastCueSeq.current = r.receipts.at(-1)?.seq ?? lastCueSeq.current;
-    setPanel({ kind: 'report', lines: result.lines, report: result.report });
-    setQaOpen(true);
+    if (result.report) setReturnHistory(recordReturnHistory(r, qaMode, result.report));
+    const sev = result.report ? classifyOfflineReturn(result.report) : 'notable';
+    if (sev === 'minimal' && result.report) {
+      setReturnDigest(result.report);
+      setPanel(null);
+    } else {
+      setReturnDigest(null);
+      setPanel({ kind: 'report', lines: result.lines, report: result.report });
+    }
+    setQaOpen(false);
     rerender();
   }, [gs, qaMode, toast, rerender]);
 
@@ -487,75 +514,120 @@ export default function Game({
   //  · a docked panel (station, chest, vendor…) owns its side: context cards there are withdrawn;
   //  · combat (Elder in range, Core aim) withdraws comfort cards and the airdrop strip, keeps vitals + boss bar;
   //  · at most ONE context card (heat OR home) is shown, chosen by urgency; build mode prefers home.
-  const fullScreen = panel?.kind === 'inv' || panel?.kind === 'craft' || panel?.kind === 'report' || panel?.kind === 'map';
+  const fullScreen = panel?.kind === 'inv' || panel?.kind === 'craft' || panel?.kind === 'report' || panel?.kind === 'map' || panel?.kind === 'notes';
   const combatFocus = !!engaged || !!coreAim;
   const thermal = thermalStatusView(r, thermalEnvNow(r, now), p.warmth);
   const heatUrgent = thermal.cold || thermal.warmth < thermal.coldThreshold + 12 || (thermal.warmth < 70 && thermal.heaters.some(h => h.status === 'out_of_fuel' || h.status === 'blocked_by_wall'));
   const nearHome = !!nearestHomeStructure(r, Math.floor(p.x / 16), Math.floor(p.y / 16), 6);
-  // Home card earns its place only when something needs the player: unfunded, uncovered or damaged.
   const homeAtRisk = nearHome && (() => { const n = nearestHomeStructure(r, Math.floor(p.x / 16), Math.floor(p.y / 16), 6)!; const st = homeStatus(r).structures.find(x => x.id === n.id); return !!st && (st.state !== 'funded' || st.damaged); })();
   const contextCard: 'heat' | 'home' | null = panel || combatFocus || p.dead || qaOpen ? null
     : buildMode ? (nearHome ? 'home' : null)
       : heatUrgent ? 'heat' : nearHome && (homeAtRisk) ? 'home' : null;
   const rigBottom = bike || cart ? 74 : 32;
+  const fieldEval = evaluateFieldNotes(r, now, fieldActionsRef.current, fieldNoteStore);
+  useEffect(() => {
+    if (fieldEval.nextStore !== fieldNoteStore) {
+      setFieldNoteStore(writeFieldNoteStore(r, qaMode, fieldEval.nextStore));
+    }
+  }, [fieldEval.nextStore, fieldNoteStore, r, qaMode]);
+  const updateFieldStore = (patch: Partial<FieldNoteStore>) => {
+    setFieldNoteStore(cur => writeFieldNoteStore(r, qaMode, { ...cur, ...patch }));
+  };
+  const criticalEdge = !p.dead && !fullScreen && (p.hp < 25 || thermal.cold);
 
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
     <div ref={stageRef} className="stage" style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})` }}>
       <canvas ref={cvRef} width={VIEW_W} height={VIEW_H} style={{ width: VIEW_W, height: VIEW_H }} />
-      {/* VISUAL ARENA: instrument cluster — combat vitals large, needs compact,
-          every value on screen, icon + number so colour is never the only cue. */}
-      <div className="hud" style={{ left: 4, top: 4 }} onMouseDown={e => e.stopPropagation()}>
+      {criticalEdge && <div className={`danger-vignette ${vp.reduceFlash ? 'soft' : ''}`} aria-hidden="true" />}
+
+      {/* TOP-LEFT COLUMN: Vitals + Urgent Danger Rail + Thermal Context Card */}
+      <div className="hud hud-col hud-col--left" style={{ left: 4, top: 4 }} onMouseDown={e => e.stopPropagation()}>
         <Vitals r={r} now={now} />
+        {!fullScreen && <UrgentAlerts r={r} cold={thermal.cold} />}
+        {contextCard === 'heat' && <ThermalStatusCard r={r} now={now} inline />}
       </div>
-      <div className="hud" style={{ right: 4, top: 4, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 3 }} onMouseDown={e => e.stopPropagation()}>
+
+      {/* TOP-RIGHT COLUMN: Clock + Quick Controls + Ragnarok + Digest / Home / Field Notes */}
+      <div className="hud hud-col hud-col--right" style={{ right: 4, top: 4 }} onMouseDown={e => e.stopPropagation()}>
         <WorldClock r={r} now={now} secured={gs.profile.securedCash} />
-        <div style={{ display: 'flex', gap: 3 }}>
+        <div style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
           {ph === 'calm' && hrs > 230 && <span className="chip pulse" style={{ color: 'var(--warn)' }}>RAGNAROK IN {(264 - hrs).toFixed(1)}h</span>}
           {qaMode && <button className={`btn sm ${qaOpen ? 'gold' : ''}`} title="Visual Experience QA Lab [F9]" onClick={() => setQaOpen(v => !v)}>QA [F9]</button>}
+          <button className={`btn sm ${panel?.kind === 'notes' ? 'gold' : ''}`} title="Contextual Field Notes & Reference [N]" onClick={() => setPanel(pp => pp?.kind === 'notes' ? null : { kind: 'notes' })}>Notes [N]</button>
+          {returnHistory.length > 0 && <button className="btn sm" title="Review offline return chronicle" onClick={() => { setReturnDigest(null); setPanel(pp => pp?.kind === 'report' ? null : { kind: 'report', lines: [], report: returnHistory[0].report }); }}>Return</button>}
           <button className="btn sm" title="Mute everything" onClick={() => { const m = !getPrefs().muted; setPrefs({ muted: m }); setVolume(gs.profile.settings.volume, m || gs.profile.settings.muted); }}
-            style={{ color: vp.muted ? 'var(--bad)' : 'var(--muted)' }}>{vp.muted ? 'SOUND OFF' : 'SOUND ON'}</button>
-          <button className="btn sm" title="Presentation, mixer and accessibility" onClick={() => setPanel(pp => pp?.kind === 'menu' ? null : { kind: 'menu' })}>☰</button>
+            style={{ color: vp.muted ? 'var(--bad)' : 'var(--muted)' }}>{vp.muted ? 'OFF' : 'SFX'}</button>
+          <button className="btn sm" title="Menu, offline forecast & presentation [Esc]" onClick={() => setPanel(pp => pp?.kind === 'menu' ? null : { kind: 'menu' })}>☰</button>
         </div>
         {!panel && !combatFocus && <RagnarokStrip r={r} now={now} secured={gs.profile.securedCash} />}
+        {!panel && !qaOpen && returnDigest && <ReturnDigest report={returnDigest} onExpand={() => { setPanel({ kind: 'report', lines: [], report: returnDigest }); setReturnDigest(null); }} onDismiss={() => setReturnDigest(null)} />}
+        {contextCard === 'home' && <HomeStatusCard r={r} px={p.x} py={p.y} inline />}
+        {!panel && !buildMode && !combatFocus && !qaOpen && !returnDigest && contextCard !== 'home' && fieldEval.active && (
+          <FieldNoteCard
+            note={fieldEval.active}
+            onDismiss={id => updateFieldStore({ dismissed: [...fieldNoteStore.dismissed, id] })}
+            onOpenJournal={() => setPanel({ kind: 'notes' })}
+            onMute={() => updateFieldStore({ muted: true })}
+            onAction={['death_bag', 'spirit_blink', 'pack_and_craft', 'worn_tool', 'hunger_thirst'].includes(fieldEval.active.id)
+              ? () => setPanel({ kind: ['death_bag', 'spirit_blink'].includes(fieldEval.active!.id) ? 'map' : 'inv' })
+              : undefined}
+          />
+        )}
       </div>
-      {/* Top-centre stack: Elder Boss Encounter HUD + Airdrop Beacon */}
-      <div className="hud" style={{ left: '50%', transform: 'translateX(-50%)', top: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, pointerEvents: 'none' }}>
+
+      {/* TOP-CENTER UNIFIED ATTENTION STACK: Elder Boss -> Airdrop -> Core Aim -> Stage Plaques */}
+      <div className="hud hud-col hud-col--center" style={{ left: '50%', transform: 'translateX(-50%)', top: 4, pointerEvents: 'none' }}>
         {engaged && <ElderBossHUD m={engaged} />}
         {!engaged && !fullScreen && Object.values(r.entities).filter(e => e.kind === 'airdrop' && e.airdrop).map(e => <AirdropCard key={e.id} e={e} now={now} stacks={e.c ? C(r, e.c).slots.filter(Boolean).length : 0} />)}
+        {coreAim && <div className="plate core-aim-chip">
+          {activeStack(r)?.key==='core_meteor' ? (coreAim.mode==='refined'?'Q: targeted meteor':'E: ten meteors in view') : activeStack(r)?.key==='core_dragon' ? (coreAim.mode==='refined'?'Q: fire tornado':'E: collect visible eligible foes') : activeStack(r)?.key==='core_demon' ? (coreAim.mode==='refined'?'Q: stationary beam':spiritTarget.current?.uid===activeStack(r)?.uid?'E: selected map destination':'E: select destination on M map') : activeStack(r)?.key==='core_mjolnir' ? (coreAim.mode==='refined'?'Q: five lightning strikes':'E: electrical attraction') : activeStack(r)?.key==='core_earthmother' ? (coreAim.mode==='refined'?'Q: ten trees on open ground':'E: binding roots and grass') : activeStack(r)?.key==='core_elsa' ? (coreAim.mode==='refined'?'Q: one-second ice ward':'E: freeze visible terrain') : (coreAim.mode==='refined'?'Q: timed bomb · release to throw':'E: burning projectile · release to cast')} · RMB/Esc cancel
+        </div>}
+        {!fullScreen && !p.dead && <ExperienceStage events={experiences} onDismiss={dismissExperience} combatFocus={combatFocus || p.hp < 35} inline />}
+        {banner && !experiences.length && !fullScreen && <div key={banner.id} className="banner" style={{ textAlign: 'center', pointerEvents: 'none', marginTop: 4 }} onAnimationEnd={() => setBanner(null)}><div className="title-font" style={{ fontSize: 18, color: '#ffe8b0', textShadow: '2px 2px 0 #2a1006, 0 0 8px #ff9a3a' }}>{banner.text}</div>{banner.sub && <div style={{ fontSize: 11, color: '#e0d0f0', textShadow: '1px 1px 0 #000' }}>{banner.sub}</div>}</div>}
       </div>
-      {contextCard === 'home' && <HomeStatusCard r={r} px={p.x} py={p.y} />}
-      {contextCard === 'heat' && <ThermalStatusCard r={r} now={now} />}
+
       <FieldPickupLayer items={fieldPickups} camX={Math.round(cam.x)} camY={Math.round(cam.y)} />
-      {!fullScreen && !p.dead && <ExperienceStage events={experiences} onDismiss={dismissExperience} />}
-      {banner && !experiences.length && <div key={banner.id} className="absolute banner" style={{ left: 0, right: 0, top: 70, textAlign: 'center', pointerEvents: 'none' }} onAnimationEnd={() => setBanner(null)}><div className="title-font" style={{ fontSize: 22, color: '#ffe8b0', textShadow: '2px 2px 0 #2a1006, 0 0 8px #ff9a3a' }}>{banner.text}</div>{banner.sub && <div style={{ fontSize: 12, color: '#e0d0f0', textShadow: '1px 1px 0 #000' }}>{banner.sub}</div>}</div>}
       {coreAim && ['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature' && <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><rect x="2" y="2" width={VIEW_W-4} height={VIEW_H-4} fill="none" stroke="#ffd98a" strokeDasharray="4 3"/></svg>}
       {coreAim && !(activeStack(r)?.key==='core_demon' && coreAim.mode==='signature') && !(['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature') && (()=>{const px=p.x-Math.round(cam.x),py=p.y-Math.round(cam.y),len=rayLen(r,p.x,p.y,p.aim,['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'')?Math.min(activeStack(r)?.key==='core_meteor'?180:157,Math.hypot(mouse.current.x+Math.round(cam.x)-p.x,mouse.current.y+Math.round(cam.y)-p.y)):coreAim.mode==='refined'?120:195);return <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><line x1={px} y1={py} x2={px+Math.cos(p.aim)*len} y2={py+Math.sin(p.aim)*len} stroke="#ffd98a" strokeWidth="1" strokeDasharray="4 3"/><circle cx={px+Math.cos(p.aim)*len} cy={py+Math.sin(p.aim)*len} r="4" fill="none" stroke="#ffd98a"/></svg>;})()}
-      {coreAim && <div className="panel absolute" style={{left:220,top:38,padding:'2px 6px',fontSize:10,pointerEvents:'none'}}> {activeStack(r)?.key==='core_meteor' ? (coreAim.mode==='refined'?'Q: targeted meteor':'E: ten meteors in view') : activeStack(r)?.key==='core_dragon' ? (coreAim.mode==='refined'?'Q: fire tornado':'E: collect visible eligible foes') : activeStack(r)?.key==='core_demon' ? (coreAim.mode==='refined'?'Q: stationary beam':spiritTarget.current?.uid===activeStack(r)?.uid?'E: selected map destination':'E: select destination on M map') : activeStack(r)?.key==='core_mjolnir' ? (coreAim.mode==='refined'?'Q: five lightning strikes':'E: electrical attraction') : activeStack(r)?.key==='core_earthmother' ? (coreAim.mode==='refined'?'Q: ten trees on open ground':'E: binding roots and grass') : activeStack(r)?.key==='core_elsa' ? (coreAim.mode==='refined'?'Q: one-second ice ward':'E: freeze visible terrain') : (coreAim.mode==='refined'?'Q: timed bomb · release to throw':'E: burning projectile · release to cast')} · RMB/Esc cancel</div>}
+
       {/* interaction prompt */}
       {tgt && ts && !panel && !buildMode && <div className="prompt absolute" style={{ left: Math.max(60, Math.min(VIEW_W - 60, Math.round(ts.x))), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', pointerEvents: 'none' }}>
         <span className="key">{bike ? 'F' : 'E'}</span>{tgt.label}{targetHp && <span style={{ color: 'var(--warn)' }}>{targetHp}</span>}
       </div>}
+
       {/* build helper */}
-      {!buildMode && (buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 34, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {STRUCTS[buildType].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||(buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:'Placement allowed · unprotected, decays in ~2h')} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
-      {/* cargo */}
-      {(bike || cart) && !fullScreen && <div className="hud" style={{ left: 4, bottom: 30 }} onMouseDown={e => e.stopPropagation()}><RigStatus r={r} /></div>}
-      {/* log: two short lines, fast fade — important things go through the event stage */}
+      {!buildMode && (buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 38, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {STRUCTS[buildType].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||(buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:'Placement allowed · unprotected, decays in ~2h')} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
+
+      {/* cargo + bottom-left event feed */}
+      {(bike || cart) && !fullScreen && <div className="hud" style={{ left: 4, bottom: 32 }} onMouseDown={e => e.stopPropagation()}><RigStatus r={r} /></div>}
       {!fullScreen && !qaOpen && <EventFeed lines={feed} bottom={rigBottom} />}
-      {!panel && !feed.length && <div className="absolute" style={{ left: 4, bottom: rigBottom, width: 220, pointerEvents: 'none' }}>{r.log.slice(-2).map((l, i) => { const age = now - l.t; if (age > 8000) return null; return <div key={i} className="logline" style={{ opacity: Math.max(0, 1 - age / 8000), color: l.tone === 'gold' ? 'var(--brassLit)' : l.tone === 'red' ? 'var(--bad)' : l.tone === 'blue' ? 'var(--info)' : 'var(--paper)' }}>{l.msg.length > 64 ? l.msg.slice(0, 62) + '…' : l.msg}</div>; })}</div>}
-      {/* toasts: icon pill, one line */}
-      <div className="absolute toast-rail" style={{ left: 0, right: 0, ...(fullScreen ? { top: 26 } : { bottom: buildMode ? 66 : 58 }), pointerEvents: 'none', zIndex: 60 }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className={`toast toastin ${t.tone === 'bad' ? 'bad' : t.tone === 'ok' ? 'ok' : ''}`}><span className="toast__mark">{t.tone === 'bad' ? '✕' : t.tone === 'ok' ? '✓' : '•'}</span><span>{t.text.length > 58 ? t.text.slice(0, 56) + '…' : t.text}</span></div>)}</div>
-      {/* quickbar + live Creator Core mode/reserve strip */}
-      <div className="hud" style={{ left: '50%', transform: 'translateX(-50%)', bottom: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }} onMouseDown={e => e.stopPropagation()}>
+      {!panel && !feed.length && <div className="absolute log-fallback" style={{ left: 4, bottom: rigBottom }}>{r.log.slice(-2).map((l, i) => { const age = now - l.t; if (age > 7500) return null; return <div key={i} className="logline" style={{ opacity: Math.max(0, 1 - age / 7500), color: l.tone === 'gold' ? 'var(--brassLit)' : l.tone === 'red' ? 'var(--bad)' : l.tone === 'blue' ? 'var(--info)' : 'var(--paper)' }}>{l.msg}</div>; })}</div>}
+
+      {/* full-screen toast rail (when a modal covers the bottom hotbar) */}
+      {fullScreen && <div className="absolute toast-rail" style={{ left: 0, right: 0, top: 26, pointerEvents: 'none', zIndex: 60 }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className={`toast toastin ${t.tone === 'bad' ? 'bad' : t.tone === 'ok' ? 'ok' : ''}`}><span className="toast__mark">{t.tone === 'bad' ? '✕' : t.tone === 'ok' ? '✓' : '•'}</span><span>{t.text}</span></div>)}</div>}
+
+      {/* BOTTOM-CENTER STACK: Toasts -> Core Reserve Strip -> Quickbar / BuildBar */}
+      <div className="hud" style={{ left: '50%', transform: 'translateX(-50%)', bottom: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, zIndex: 25 }} onMouseDown={e => e.stopPropagation()}>
+        {!fullScreen && !!toasts.filter(t => now - t.t < 3200).length && <div className="toast-rail" style={{ pointerEvents: 'none' }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className={`toast toastin ${t.tone === 'bad' ? 'bad' : t.tone === 'ok' ? 'ok' : ''}`}><span className="toast__mark">{t.tone === 'bad' ? '✕' : t.tone === 'ok' ? '✓' : '•'}</span><span>{t.text}</span></div>)}</div>}
         {!buildMode && !panel && coreAim && <CoreReserveStrip r={r} />}
         {buildMode ? <BuildBar gs={gs} tool={buildTool} onPick={applyTool} hoverX={hoverX} hoverY={hoverY} />
-          : !panel && <Hotbar r={r} onPick={i => { p.active = i; sfx({ type: 'ui' }); rerender(); }} onUse={i => act('useItem', { slot: i })} />}
+          : !panel && <Hotbar r={r} onPick={i => { p.active = i; sfx({ type: 'ui' }); rerender(); }} onUse={i => act('useItem', { slot: i })} onOpenPack={() => { fieldActionsRef.current.add('survivor'); setPanel({ kind: 'inv' }); sfx({ type: 'ui' }); }} />}
       </div>
+
       {/* panels */}
       {(panel?.kind === 'inv' || panel?.kind === 'craft') && <SurvivorScreen api={api} initial="all" focusRecipe={panel.recipe} />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'map' && <MapPanel api={api} qaSession={qaMode} teleportTarget={spiritTarget.current?.uid===activeStack(r)?.uid?spiritTarget.current:null} onTeleportSelect={activeStack(r)?.key==='core_demon' ? (x,y)=>{const reason=spiritDestination(r,x,y);if(reason){toast(reason,'bad');return;}spiritTarget.current={uid:activeStack(r)!.uid,x,y};toast('Destination set. Close the map, then hold and release E.','ok');} : undefined} />}
+      {panel?.kind === 'notes' && <FieldNotesPanel
+        matching={fieldEval.matching}
+        store={fieldNoteStore}
+        onDismiss={id => updateFieldStore({ dismissed: [...fieldNoteStore.dismissed, id] })}
+        onRestore={id => updateFieldStore({ dismissed: fieldNoteStore.dismissed.filter(x => x !== id) })}
+        onToggleMute={() => updateFieldStore({ muted: !fieldNoteStore.muted })}
+        onClose={() => setPanel(null)}
+      />}
       {panel?.kind === 'skills' && <SkillsPanel api={api} />}
-      {panel?.kind === 'menu' && <MenuPanel api={api} qaMode={qaMode} onSave={() => qaMode ? Promise.resolve(false) : save(gs)} onQuit={async () => { if (qaMode) { onExit(); return; } if (await save(gs)) onExit(); else toast('Save failed; staying in the run.', 'bad'); }} />}
+      {panel?.kind === 'menu' && <MenuPanel api={api} qaMode={qaMode} returnHistory={returnHistory} onSave={() => qaMode ? Promise.resolve(false) : save(gs)} onQuit={async () => { if (qaMode) { onExit(); return; } if (await save(gs)) onExit(); else toast('Save failed; staying in the run.', 'bad'); }} />}
       {panel?.kind === 'menu' && <div className="panel absolute fadein scroll" style={{ left: 6, top: 34, width: 198, maxHeight: 306, overflowY: 'auto', padding: 6 }} onMouseDown={e => e.stopPropagation()}>
         <div className="panel-h" style={{ marginBottom: 4 }}>Presentation</div>
         <PresentationPanel />
@@ -564,7 +636,7 @@ export default function Game({
       {panel?.kind === 'escrow' && panel.eid && <EscrowPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'rest' && panel.eid && <RestPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'evac' && panel.eid && <EvacPanel api={api} eid={panel.eid} />}
-      {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} report={panel.report ?? null} />}
+      {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} report={panel.report ?? null} history={returnHistory} />}
       <DragGhost />
       {p.dead && <DeathRecoveryOverlay gs={gs} onRespawn={() => act('respawn')} />}
       {qaOpen && !p.dead && !panel && <QaSandboxDrawer
@@ -589,14 +661,6 @@ export default function Game({
         bikeDemoState={bikeDemoState}
         onClose={() => setQaOpen(false)}
       />}
-      {!panel && !buildMode && !feed.length && !contextCard && hrs < 0.08 && !r.qaUsed && !qaOpen && <div className="plate absolute fadein" style={{ right: 4, top: 78, width: 148, padding: '4px 6px', pointerEvents: 'none' }}>
-        <div className="console-h" style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Glyph k="eye" c="var(--brass)" s={7} />Field notes</div>
-        {[['WASD', 'move'], ['LMB', 'swing / use'], ['E · F', 'interact'], ['Space', 'dodge roll'], ['I C B M', 'panels'], ['Esc', 'menu']].map(([k, v]) =>
-          <div key={k} className="lbl" style={{ fontSize: 8, display: 'flex', gap: 4, marginTop: 1 }}>
-            <span style={{ color: 'var(--brassLit)', width: 42 }}>{k}</span><span style={{ color: 'var(--muted)' }}>{v}</span>
-          </div>)}
-        <div className="lbl" style={{ fontSize: 8, color: 'var(--paper)', marginTop: 3 }}>No quests. Choose your own way.</div>
-      </div>}
     </div>
     {import.meta.env.VITE_FX_TEST === '1' && <SpiritVfxEditor gs={gs} top={off.y + Math.round(62 * scale) + 4} right={Math.max(0, window.innerWidth - off.x - VIEW_W * scale) + 8} viewport={{left:off.x,top:off.y,scale,width:VIEW_W,height:VIEW_H}} />}
   </div>;

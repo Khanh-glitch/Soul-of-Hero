@@ -1,0 +1,15 @@
+{
+  "log": [
+    "[640] compact Pack visible, Work hidden",
+    "[640] drag: src 'Hunting Bow' -> hotbar6 now 'Hunting Bow' (was 'Hơi thở đất mẹ')",
+    "[640] hover+8: 'Salvager Pick' -> slot7 'Salvager Pick'",
+    "[640] compact Work visible, Pack hidden",
+    "[640] no craft dispatch; QA fixture has no eligible recipe after Work now filter",
+    "[640] feed lines: 2 · centre plaques: 0",
+    "[1280] drag: src 'Hunting Bow' -> hotbar6 now 'Hunting Bow' (was 'Hơi thở đất mẹ')",
+    "[1280] hover+8: 'Salvager Pick' -> slot7 'Salvager Pick'",
+    "[1280] no craft dispatch; QA fixture has no eligible recipe after Work now filter",
+    "[1280] feed lines: 2 · centre plaques: 0"
+  ],
+  "errors": []
+}

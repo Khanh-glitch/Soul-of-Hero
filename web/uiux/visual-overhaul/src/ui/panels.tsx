@@ -5,7 +5,8 @@ import type { RunState } from '../game/core';
 import { anyAuthorizedOilSource, owned, clearInteraction } from '../game/engine';
 import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
 import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
-import type { OfflineReturnV1, ReturnSectionId, ReturnTone } from '../game/return-report';
+import type { OfflineReturnV1, StoredReturnEntry } from '../game/return-report';
+import { ReturnChronicle } from './ReturnChronicle';
 import { CabinetReadout } from './HomeStatus';
 import { StationConsole } from './StationConsole';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
@@ -471,11 +472,17 @@ export function SkillsPanel({ api }: { api: Api }) {
     </div></Panel>;
 }
 
-export function MenuPanel({ api, onQuit, onSave, qaMode = false }: { api: Api; onQuit: () => void; onSave: () => Promise<boolean>; qaMode?: boolean }) {
+export function MenuPanel({ api, onQuit, onSave, qaMode = false, returnHistory = [] }: { api: Api; onQuit: () => void; onSave: () => Promise<boolean>; qaMode?: boolean; returnHistory?: StoredReturnEntry[] }) {
   const [confirm, setConfirm] = useState(false); const pf = api.gs.profile; const r = api.gs.run!; const outlook = wetOutlook(r, api.now()); const survival = offlineSurvivalEstimate(r); const cabinets=Object.values(r.entities).filter(e=>e.type==='claim'&&(e.owner===undefined||e.owner==='player'));
   // VISUAL ARENA: shifted right so the Presentation console docks beside it at 640x360 without overlap.
   return <Panel title="Menu — world time continues" style={{ left: 210, top: 34, width: 424, maxHeight: 300, overflowY: 'auto' }} onClose={() => api.open(null)} className="scroll">
-    <div className="flex flex-wrap gap-1"><button className="btn gold" onClick={() => api.open(null)}>Resume</button>{!qaMode && <button className="btn" onClick={async () => { const ok = await onSave(); api.toast(ok ? 'Saved locally.' : 'Save failed. Your changes are not confirmed on disk.'); }}>Save now</button>}<button className="btn" onClick={onQuit}>{qaMode ? 'Leave QA to title' : 'Save & quit to title'}</button></div>
+    <div className="flex flex-wrap gap-1">
+      <button className="btn gold" onClick={() => api.open(null)}>Resume</button>
+      {!qaMode && <button className="btn" onClick={async () => { const ok = await onSave(); api.toast(ok ? 'Saved locally.' : 'Save failed. Your changes are not confirmed on disk.'); }}>Save now</button>}
+      <button className="btn" onClick={() => api.open({ kind: 'notes' })}>Field Notes [N]</button>
+      {returnHistory.length > 0 && <button className="btn" onClick={() => api.open({ kind: 'report', lines: [], report: returnHistory[0].report })}>Return Log ({returnHistory.length})</button>}
+      <button className="btn" onClick={onQuit}>{qaMode ? 'Leave QA to title' : 'Save & quit to title'}</button>
+    </div>
     {qaMode && <div className="console-col" style={{ marginTop: 4, color: 'var(--warn)', fontSize: 9 }}>ISOLATED QA SESSION · autosave, manual save and browser-exit writes are disabled. Your production save is untouched.</div>}
     <div style={{ fontSize: 10, marginTop: 5, color: '#e6d9bc', lineHeight: 1.2 }}>
       <b>Before you leave</b> · {isSheltered(r, r.player.x, r.player.y) ? 'Sheltered here' : 'Not sheltered here'} · Weather: {weatherAt(r, api.now())}.<br />
@@ -615,64 +622,7 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
   </Panel>;
 }
 
-const RETURN_TABS: { id: ReturnSectionId; label: string }[] = [
-  { id: 'body', label: 'Body' }, { id: 'home', label: 'Home' }, { id: 'production', label: 'Work' }, { id: 'loss', label: 'Loss' }, { id: 'world', label: 'World' },
-];
-const RETURN_TONE: Record<ReturnTone, string> = { ok: 'var(--good)', gold: 'var(--brassLit)', warn: 'var(--warn)', bad: 'var(--bad)', muted: 'var(--paper)' };
-
 /** Grouped 640x360 Offline Return Chronicle (typed OfflineReturnV1). */
-export function ReportPanel({ api, lines, report }: { api: Api; lines: string[]; report?: OfflineReturnV1 | null }) {
-  const [tab, setTab] = useState<ReturnSectionId>(() => {
-    if (!report) return 'body';
-    if (report.sections.loss.length) return 'loss';
-    if (report.sections.production.length) return 'production';
-    if (report.sections.home.length) return 'home';
-    return 'body';
-  });
-  if (!report) return <Panel title="Expedition Return Chronicle" style={{ left: 120, top: 40, width: 400, boxSizing: 'border-box' }} onClose={() => api.open(null)}>
-    <div className="scroll" style={{ maxHeight: 220, overflowY: 'auto' }}>{lines.map((l, i) => <div key={i} style={{ fontSize: 13, lineHeight: 1.3, color: i ? '#d8cce4' : '#ffd98a', marginBottom: 4 }}>• {l}</div>)}</div>
-    <button className="btn gold" style={{ marginTop: 6, fontSize: 13 }} onClick={() => api.open(null)}>Continue</button>
-  </Panel>;
-  const rows = report.sections[tab];
-  const counts = Object.fromEntries(RETURN_TABS.map(t => [t.id, report.sections[t.id].length])) as Record<ReturnSectionId, number>;
-  const posCount = Object.values(report.sections).flat().filter(x => x.tone === 'ok' || x.tone === 'gold').length;
-  const alertCount = Object.values(report.sections).flat().filter(x => x.tone === 'warn' || x.tone === 'bad').length;
-
-  return <Panel title={<span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-    Expedition Return Chronicle
-    <span className="chip" style={{ color: 'var(--good)' }}>+{posCount} GAINED / DONE</span>
-    {alertCount > 0 && <span className="chip" style={{ color: 'var(--warn)' }}>{alertCount} ATTENTION</span>}
-  </span>} className="return-report" style={{ left: 0, top: 0, width: 640, height: 360, boxSizing: 'border-box', padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 5, overflow: 'hidden' }} onClose={() => api.open(null)}>
-    <div style={{ fontSize: 13, color: 'var(--brassLit)', lineHeight: 1.2 }}>{report.summary}</div>
-    <div style={{ display: 'flex', gap: 4 }}>
-      {RETURN_TABS.map(t => {
-        const hasWarn = report.sections[t.id].some(x => x.tone === 'bad' || x.tone === 'warn');
-        return <button key={t.id} className={`btn ${tab === t.id ? 'gold' : 'ghost'}`} style={{ fontSize: 11, padding: '4px 0', flex: 1, whiteSpace: 'nowrap', borderColor: hasWarn && tab !== t.id ? 'var(--warn)' : undefined }} onClick={() => setTab(t.id)}>
-          {t.label} ({counts[t.id]})
-        </button>;
-      })}
-    </div>
-    <div className="scroll console-col" style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '6px 8px' }}>
-      {rows.length === 0 && <div style={{ fontSize: 12, color: 'var(--muted)' }}>Nothing recorded in this category during your absence.</div>}
-      {rows.map(row => <div key={row.id} style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginBottom: 6, fontSize: 12, lineHeight: 1.3, color: RETURN_TONE[row.tone] }}>
-        <span className="chip" title={row.source === 'event' ? 'Timed event from this absence' : 'Current state read at Continue'} style={{ flex: '0 0 auto', marginTop: 1, color: row.source === 'event' ? 'var(--brassLit)' : 'var(--info)' }}>
-          {row.source === 'event' ? 'EVENT' : 'NOW'}
-        </span>
-        <span>
-          {row.text}
-          {row.where && !row.text.includes(`${row.where.tx},${row.where.ty}`) && (
-            <span style={{ color: 'var(--muted)' }}> · {row.where.name} ({row.where.tx},{row.where.ty})</span>
-          )}
-        </span>
-      </div>)}
-    </div>
-    <div className="console-col" style={{ padding: '4px 6px', fontSize: 11, color: 'var(--paper)' }}>
-      <b style={{ color: 'var(--brassLit)' }}>Recommended Next: </b>
-      {report.next.length ? report.next.slice(0, 2).join(' ') : 'All systems steady — choose your own objective.'}
-    </div>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-      <span style={{ fontSize: 10, color: 'var(--muted)' }}>EVENT = timed receipt · NOW = live reading at Continue · Walk to a site to collect or repair.</span>
-      <button className="btn gold" style={{ fontSize: 12, flex: '0 0 auto' }} onClick={() => api.open(null)}>Enter the Island</button>
-    </div>
-  </Panel>;
+export function ReportPanel({ api, lines, report, history = [] }: { api: Api; lines: string[]; report?: OfflineReturnV1 | null; history?: StoredReturnEntry[] }) {
+  return <ReturnChronicle api={api} lines={lines} report={report} history={history} />;
 }

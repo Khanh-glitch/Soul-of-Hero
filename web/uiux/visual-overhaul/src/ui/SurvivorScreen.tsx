@@ -7,7 +7,7 @@ import { getArt } from '../game/art';
 import { drawAdventurer } from '../game/avatar-presentation';
 import { Icon, iconUrl, type Api } from './common';
 import { Glyph } from './hud';
-import { DSlot, DGrid } from './dragSlots';
+import { DSlot, DGrid, KeyboardMoveBanner } from './dragSlots';
 import { ItemInfo } from './panels';
 
 // ============================================================================
@@ -130,14 +130,18 @@ export function SurvivorScreen({ api, initial = 'all', focusRecipe }: { api: Api
             </div>
           </div>
         </div>
-        <div className="sv-packlabel"><span>PACK</span><small>{C(r, 'inv').slots.filter(Boolean).length}/{C(r, 'inv').slots.length}</small><button className="btn ghost sm" onClick={() => api.act('sort', { c: 'inv' })}>Sort</button></div>
+        <div className="sv-packlabel"><span>INVENTORY</span><small>{C(r, 'inv').slots.filter(Boolean).length}/{C(r, 'inv').slots.length}</small><button className="btn ghost sm" title="Sort Backpack slots 9–24 while keeping Quickbar 1–8 protected" onClick={() => api.act('sort', { c: 'inv' })}>Sort Pack</button></div>
+        <KeyboardMoveBanner />
         <DGrid api={api} cid="inv" cols={8} hotRow size={28} />
         <ItemInfo s={selStack} known={r.knowledge.recipes} />
         {selStack && api.sel && <div className="sv-itemacts">
-          <button className="btn sm" onClick={() => { api.act('useItem', { c: api.sel!.c, slot: api.sel!.slot }); }}>Use</button>
+          {api.sel.c === 'eq'
+            ? <button className="btn sm" onClick={() => { api.act('move', { from: 'eq', fs: api.sel!.slot, to: 'inv' }); api.setSel(null); }}>Unequip</button>
+            : <button className="btn sm" onClick={() => { api.act('useItem', { c: api.sel!.c, slot: api.sel!.slot }); }}>{ITEMS[selStack.key]?.slot ? 'Equip' : 'Use'}</button>}
           <button className="btn sm" disabled={selStack.qty < 2} onClick={() => api.act('split', { c: api.sel!.c, slot: api.sel!.slot })}>Split</button>
           <button className="btn sm" onClick={() => { api.act('drop', { c: api.sel!.c, slot: api.sel!.slot }); api.setSel(null); }}>Drop</button>
           {api.sel.c === 'inv' && ITEMS[selStack.key].repair && selStack.dur !== undefined && selStack.dur < (ITEMS[selStack.key].dur || 0) && <button className="btn sm gold" disabled={!C(r, 'inv').slots.some(s => s?.key === 'field_repair_kit')} onClick={() => { const kitSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'field_repair_kit'); const kit = C(r, 'inv').slots[kitSlot]; if (kit) api.act('fieldRepair', { slot: api.sel!.slot, uid: selStack.uid, kitSlot, kitUid: kit.uid }); }}><Icon k="field_repair_kit" size={9} /> Repair +{BAL.player.fieldRepairDurability}</button>}
+          {api.sel.c === 'inv' && api.sel.slot >= 8 && <span className="sv-itemacts__hint">Hover + <span className="key">1-8</span> quickbar</span>}
         </div>}
       </section>
 
