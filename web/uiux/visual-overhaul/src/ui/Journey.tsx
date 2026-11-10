@@ -182,7 +182,7 @@ function Timeline({ entries, runId }: { entries: ChronicleEntry[]; runId?: strin
 function RelicGallery({ entries }: { entries: ChronicleEntry[] }) {
   const knownCores = new Map<string, ChronicleEntry>();
   for (const e of entries) if (e.kind === 'relic' && e.icon && ITEMS[e.icon]?.creatorCore) knownCores.set(e.icon, e);
-  const defeated = entries.filter(e => e.kind === 'elder');
+  const defeated = [...new Map(entries.filter(e => e.kind === 'elder').map(e => [e.title, e])).values()];
   return <div className="relic-gallery">
     <div className="relic-gallery__title">RECOVERED CREATOR CORES <small>{knownCores.size} known</small></div>
     <div className="relic-gallery__slots">{[...knownCores].map(([key, e]) => <div key={key} className="relic-gallery__slot known" title={e.title}>
