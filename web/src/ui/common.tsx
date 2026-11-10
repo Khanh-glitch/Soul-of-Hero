@@ -20,7 +20,7 @@ export interface Api {
 export type PanelState = { kind: 'inv' | 'craft' | 'build' | 'map' | 'skills' | 'rest' | 'menu' | 'container' | 'vendor' | 'escrow' | 'evac' | 'report' | 'research'; eid?: string; recipe?: string; lines?: string[]; report?: import('../game/return-report').OfflineReturnV1 | null };
 export const mkIntent = (type: string, p: Record<string, any> = {}): Intent => ({ id: `${type}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`, type, ...p });
 
-export function Slot({ s, sel, active, onClick, onContext, hotkey, title }: { s: Stack | null; sel?: boolean; active?: boolean; onClick?: (e: React.MouseEvent) => void; onContext?: (e: React.MouseEvent) => void; hotkey?: string; title?: string }) {
+export function Slot({ s, sel, active, onClick, onContext, hotkey, title, slotIndex }: { s: Stack | null; sel?: boolean; active?: boolean; onClick?: (e: React.MouseEvent) => void; onContext?: (e: React.MouseEvent) => void; hotkey?: string; title?: string; slotIndex?: number }) {
   const d = s ? ITEMS[s.key] : null;
   return <div className={`slot ${sel ? 'sel' : ''} ${active ? 'active' : ''}`} onMouseDown={e => { if (e.button === 0) onClick?.(e); }} onContextMenu={e => { e.preventDefault(); onContext?.(e); }} title={title ?? (d ? `${d.name}${s!.meta ? ' — ' + s!.meta : ''}` : '')}>
     {hotkey && <span className="k">{hotkey}</span>}
