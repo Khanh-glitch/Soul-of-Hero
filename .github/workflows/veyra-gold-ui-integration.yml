@@ -27,6 +27,12 @@ jobs:
       - run: npx --no-install vitest run src/ui/gold-ui.test.ts
       - run: npx --no-install vitest run --testTimeout=240000 --maxWorkers=2
       - run: npm run build
+      - name: Upload playable SOH Veyra Gold singlefile
+        uses: actions/upload-artifact@v4
+        with:
+          name: soh-veyra-gold-playable-${{ github.sha }}
+          path: web/dist/index.html
+          if-no-files-found: error
   composed-browser:
     # Playwright 1.55 supports Ubuntu 24.04; ubuntu-latest currently routes to 26.04.
     runs-on: ubuntu-24.04
