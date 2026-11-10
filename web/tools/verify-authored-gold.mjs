@@ -39,6 +39,32 @@ try{
   if(controls!==2||hot!==8||pack!==16||equipped!==3||doll!==1)throw new Error('Gold source layout missing: '+JSON.stringify({controls,hot,pack,equipped,doll}));
   pass(width+' Gold PACK',{controls,hot,pack,equipped,doll});
   await shot('pack');
+  // TRUE pointer-driven R12 custody move from protected hotbar into backpack,
+  // then reverse. This exercises the original Gold2 dragSlots handlers; no QA
+  // mutation, cheat inventory or click-to-click substitution.
+  const from = page.locator('[data-dslot][data-c="inv"][data-s="0"]');
+  const into = page.locator('[data-dslot][data-c="inv"][data-s="8"]');
+  const originalLabel = await from.getAttribute('aria-label');
+  if (!originalLabel || originalLabel.includes('empty')) throw new Error('Starter hotbar slot 0 missing physical item');
+  const drag = async (src,dst) => {
+    const a=await src.boundingBox(),b=await dst.boundingBox();
+    if(!a||!b)throw new Error('Drag source/target invisible');
+    await page.mouse.move(a.x+a.width/2,a.y+a.height/2);
+    await page.mouse.down();
+    await page.mouse.move(b.x+b.width/2,b.y+b.height/2,{steps:9});
+    await page.mouse.up();
+    await page.waitForTimeout(200);
+  };
+  await drag(from,into);
+  if (!(await from.getAttribute('aria-label'))?.includes('empty') || (await into.getAttribute('aria-label'))?.includes('empty')) {
+    throw new Error('Original Gold2 drag did not move real item custody from hotbar to backpack');
+  }
+  await shot('drag-hotbar-to-backpack');
+  await drag(into,from);
+  if ((await from.getAttribute('aria-label'))?.includes('empty') || !(await into.getAttribute('aria-label'))?.includes('empty')) {
+    throw new Error('Gold2 drag reverse failed to restore original item in hotbar');
+  }
+  pass(width+' real custody drag',{forward:'hotbar→backpack',reverse:'backpack→hotbar'});
   await page.getByRole('button',{name:'Turn character right'}).click();
   await shot('pack-turned');
   await page.locator('.sv-compact-nav button').nth(1).click();
@@ -57,6 +83,14 @@ try{
   await page.locator('.panel-h').filter({hasText:/Map/}).first().waitFor({timeout:8000});
   pass(width+' safe Map',{map:'M opens native map'});
   await shot('map');
+  await page.keyboard.press('m');
+  await page.keyboard.press('b');
+  await page.locator('.buildbar').waitFor({timeout:8000});
+  const buildButtons=await page.locator('.bslot').count();
+  if(buildButtons<8)throw new Error('Source-authored Gold2 BuildBar lost tools: '+buildButtons);
+  pass(width+' authored BuildBar',{tools:buildButtons});
+  await shot('buildbar');
+  await page.keyboard.press('b');
   await page.close();
  }
  if(report.errors.length)throw new Error(report.errors.join(' | '));
