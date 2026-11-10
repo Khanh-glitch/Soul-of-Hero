@@ -37,7 +37,6 @@ jobs:
           test -d dist/sprites/creatures
           test $(find dist/sprites/creatures -name '*.png' | wc -l) -ge 18
   visual-gates:
-    needs: typecheck-build
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     defaults:
