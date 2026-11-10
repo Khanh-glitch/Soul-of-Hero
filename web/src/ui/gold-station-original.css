@@ -1,0 +1,49 @@
+/* Exact selected Gold (2) author CSS for Station Console / Service. */
+.console-col { background: rgba(5,7,10,.5); box-shadow: inset 0 0 0 1px rgba(57,70,79,.55); padding: 4px; }
+.console-h { font-family: 'Pixelify Sans', monospace; font-size: 8px; letter-spacing: .8px; color: var(--muted); text-transform: uppercase; margin-bottom: 3px; }
+.recipe-row { display: flex; align-items: center; gap: 4px; padding: 2px 3px; cursor: pointer; border-left: 2px solid transparent; }
+.recipe-row:hover { background: rgba(200,150,60,.1); }
+.recipe-row.on { background: rgba(200,150,60,.16); border-left-color: var(--brass); }
+.recipe-row.no { opacity: .55; }
+.chip { font-family: 'Pixelify Sans', monospace; font-size: 8px; padding: 1px 4px; box-shadow: inset 0 0 0 1px currentColor; }
+.flow-arrow { color: var(--brass); font-size: 12px; line-height: 1; }
+.job { position: relative; overflow: hidden; }
+.job .prog { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, rgba(95,200,224,.28), rgba(95,200,224,.12)); }
+.lamp { width: 6px; height: 6px; flex: none; box-shadow: 0 0 5px currentColor, inset 0 0 0 1px rgba(0,0,0,.6); background: currentColor; }
+.lamp.round { border-radius: 50%; }
+.lamp.diamond { transform: rotate(45deg); }
+.station-console { --station-accent: var(--food); background: linear-gradient(160deg, #253038, #121c20 34%, #0a1217); }
+.station-console--research { --station-accent: #7fd1dc; background: linear-gradient(160deg, #26363d, #13272a 34%, #0a151b); }
+.station-console--furnace, .station-console--campfire { --station-accent: #f4ae6c; background: linear-gradient(160deg, #332c26, #241b17 34%, #101214); }
+.station-console--refinery, .station-console--oil_pump { --station-accent: #6bc3bb; background: linear-gradient(160deg, #233836, #122825 34%, #0b1719); }
+.station-console .panel-h { color: var(--station-accent); }
+.station-console .console-h { font-size: 9px; color: color-mix(in srgb, var(--station-accent) 65%, var(--paper)); }
+.station-console .recipe-row { min-height: 17px; }
+.station-console .recipe-row.wait { border-left: 2px solid var(--warn); }
+.station-console .recipe-row.no { opacity: .75; }
+.station-readiness-mark { font: 10px 'Pixelify Sans', monospace; width: 10px; text-align: center; }
+.station-action { display: flex; flex-wrap: wrap; gap: 3px 5px; align-items: baseline; margin-top: 3px; font: 9px 'Pixelify Sans', monospace; color: var(--warn); line-height: 1.2; }
+.station-action b { color: var(--paper); }.station-action span { color: var(--muted); }
+.station-action.blocked b { color: var(--bad); }.station-action.waiting b { color: var(--warn); }.station-action.ready b { color: var(--good); }
+.station-service-tabs { display: flex; gap: 3px; margin: 1px 0 4px; }
+.station-service-tabs .btn { flex: 1; font-size: 9px; }
+.station-service { min-height: 0; max-height: 177px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+.service-line { border-left: 2px solid var(--station-accent, var(--brass)); background: #08101588; padding: 4px 5px; display: flex; flex-direction: column; gap: 3px; }
+.service-heading { display: flex; align-items: center; gap: 5px; font: 9px 'Pixelify Sans', monospace; color: var(--paper); }
+.service-heading b { flex: 1; }.service-heading span { color: var(--muted); }
+.service-cost { display: flex; flex-wrap: wrap; gap: 3px; }
+.service-cost > span { display: inline-flex; align-items: center; gap: 2px; padding: 1px 3px; background: #050a0d; border: 1px solid #46575d; font: 8px 'Pixelify Sans', monospace; }
+.service-cost > span.ok { color: var(--good); }.service-cost > span.no { color: var(--bad); border-color: var(--bad); }
+.service-cost small { font-size: 7px; color: var(--muted); }
+.service-line > .btn { align-self: flex-start; }
+.service-hint { color: var(--warn); font: 8px 'Pixelify Sans', monospace; line-height: 1.25; }
+.service-hint.good { color: var(--good); }
+.service-input { display: flex; gap: 5px; align-items: center; font: 9px 'Pixelify Sans', monospace; color: var(--paper); }
+.service-input select { width: 132px; }
+.service-gear { border-top: 1px solid #3e5053; padding-top: 3px; }
+.service-gear__name, .service-gear__actions { display: flex; align-items: center; gap: 3px; font: 9px 'Pixelify Sans', monospace; }
+.service-gear__name span { flex: 1; }.service-gear__name b { font-weight: 400; }
+.service-gear__actions { flex-wrap: wrap; padding-top: 2px; }
+.service-yield { display: inline-flex; flex: 1; gap: 4px; color: var(--brassLit); }
+.service-yield span { display: inline-flex; align-items: center; gap: 1px; }
+
