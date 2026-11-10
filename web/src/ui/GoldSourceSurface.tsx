@@ -18,7 +18,7 @@ const goldStyles = originalGoldStylesheet
   .replace(/^\s*@import\s+["'][^"']+["'];\s*$/gm, '')
   .replace(/:root\s*\{/, ':host {');
 
-export function GoldSourceSurface({ children }: { children: ReactNode }) {
+export function GoldSourceSurface({ children, zIndex = 45, passive = false, testId = 'gold-source-surface' }: { children: ReactNode; zIndex?: number; passive?: boolean; testId?: string }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [portalMount, setPortalMount] = useState<HTMLDivElement | null>(null);
 
@@ -32,7 +32,7 @@ export function GoldSourceSurface({ children }: { children: ReactNode }) {
 
     const mount = document.createElement('div');
     mount.className = 'gold-source-mount';
-    mount.style.cssText = 'position:absolute;inset:0;pointer-events:auto';
+    mount.style.cssText = `position:absolute;inset:0;pointer-events:${passive ? 'none' : 'auto'}`;
     root.appendChild(mount);
     setPortalMount(mount);
 
@@ -41,17 +41,17 @@ export function GoldSourceSurface({ children }: { children: ReactNode }) {
       mount.remove();
       style.remove();
     };
-  }, []);
+  }, [passive]);
 
   return (
     <div
       ref={hostRef}
-      data-testid="gold-source-surface"
+      data-testid={testId}
       aria-label="Gold original authored interface"
       style={{
         position: 'absolute',
         inset: 0,
-        zIndex: 45,
+        zIndex,
         pointerEvents: 'none',
         fontFamily: "'VT323', monospace",
         color: '#e9dfc6',
