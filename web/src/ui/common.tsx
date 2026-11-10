@@ -34,8 +34,8 @@ export function Slot({ s, sel, active, onClick, onContext, hotkey, title, slotIn
     {s && s.dur !== undefined && d?.dur && <span className="dur"><i style={{ width: `${(s.dur / d.dur) * 100}%`, background: s.dur / d.dur < 0.25 ? '#ff5a3a' : '#7aff6a' }} /></span>}
   </div>;
 }
-export function Panel({ title, children, style, onClose, className = '' }: { title: React.ReactNode; children: React.ReactNode; style?: React.CSSProperties; onClose?: () => void; className?: string }) {
-  return <div className={`panel absolute fadein ${className}`} style={{ padding: 6, ...style }} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
+export function Panel({ title, children, style, onClose, className = '', testId }: { title: React.ReactNode; children: React.ReactNode; style?: React.CSSProperties; onClose?: () => void; className?: string; testId?: string }) {
+  return <div data-testid={testId} className={`panel absolute fadein ${className}`} style={{ padding: 6, ...style }} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
     <div className="flex items-center justify-between" style={{ marginBottom: 4 }}><div className="panel-h">{title}</div>{onClose && <button className="btn ghost" style={{ padding: '0 4px', fontSize: 11 }} onClick={onClose}>✕</button>}</div>
     {children}
   </div>;
