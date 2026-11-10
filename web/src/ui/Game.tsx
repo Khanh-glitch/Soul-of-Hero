@@ -32,6 +32,8 @@ import { RestPanel } from './RestPanel';
 import { SurvivorScreen } from './SurvivorScreen';
 import { Gold3WayfinderHost } from './GoldWayfinderAdapter';
 import { Vitals, WorldClock, UrgentAlerts, Hotbar } from './hud';
+import { BUILD_KIT, BuildBar, type BuildTool } from './BuildBar';
+import './gold-buildbar-original.css';
 import './gold-hud-original.css';
 import './gold-wayfinder-original.css';
 import './gold-survivor-original.css';
@@ -167,7 +169,10 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         case 'KeyF': { if(r.player.vehicle){act('vehicleExit',{});break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current || r.layoutId?.startsWith('veyra05-')) { const c=!target.current && Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else interact(); } else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
         case 'KeyI': toggle('inv'); break; case 'KeyC': toggle('craft'); break; case 'KeyM': toggle('map'); break;
         case 'F9': if (onInspect && ((gs as any).__ephemeralInspect || r.qaUsed)) { e.preventDefault(); onInspect(); } break;
-        case 'KeyB': setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); toggle('build'); break;
+        case 'KeyB':
+          if(buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current){setBuildType(null);setReclaim(false);setRepairMode(false);setUpgradeMode(false);}
+          else {setPanel(null);setBuildType('wall_wood');setReclaim(false);setRepairMode(false);setUpgradeMode(false);}
+          break;
         case 'KeyG': setEditLayer(v => { const a=['auto','wall','obj','roof','floor']; return a[(a.indexOf(v)+1)%a.length]; }); break;
         case 'KeyU': setPanel(null); setUpgradeMode(v => !v); setBuildType(null); setReclaim(false); setRepairMode(false); break;
         case 'KeyX': setPanel(null); setUpgradeMode(false); setReclaim(v => !v); setBuildType(null); setRepairMode(false); break;
@@ -175,7 +180,12 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         case 'KeyT': { const anim = findNearAnimal(r); if (anim && !panelRef.current) act('husbandry', { cid: anim.id, op: e.shiftKey ? 'butcher' : anim.husbandry?.tamed ? 'lead' : 'tame' }); break; }
         case 'KeyR': { const selected=activeStack(r); if(selected && ITEMS[selected.key]?.creatorCore && !panelRef.current){act('loadCore',{slot:r.player.active,uid:selected.uid,mode:e.altKey?'signature':e.shiftKey?'refined':'basic'});break;} const t = Object.values(r.entities).find(x => x.type === 'research' && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 3 * TILE && clearWallLine(r, r.player, x)); if (t) setPanel({ kind: 'container', eid: t.id }); else toast('Research needs a Research Table within reach.'); break; }
         case 'Escape': if(coreAimRef.current || (r.player.action?.kind==='cast' && !r.player.action.done)){coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel=true;break;} if (buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) { setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); } else if (panelRef.current) setPanel(null); else setPanel({ kind: 'menu' }); setSel(null); break;
-        default: if (/^Digit[1-8]$/.test(e.code)) { r.player.active = +e.code.slice(5) - 1; rerender(); }
+        default:
+          if((buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) && /^Digit[0-9]$/.test(e.code)){
+            const n=Number(e.code.slice(5)); const target=BUILD_KIT[n===0?9:n-1];
+            if(target){setBuildType(target);setReclaim(false);setRepairMode(false);setUpgradeMode(false);}
+            e.preventDefault();
+          } else if (/^Digit[1-8]$/.test(e.code)) { r.player.active = +e.code.slice(5) - 1; rerender(); }
       }
     };
     const up = (e: KeyboardEvent) => { if (keyMap[e.code]) (inp.current as any)[keyMap[e.code]] = false; const a=coreAimRef.current;if(a && a.code===e.code){coreAimRef.current=null;setCoreAim(null);const selected=gs.run && activeStack(gs.run);if(!panelRef.current && selected?.uid===a.uid && gs.run && !gs.run.player.dead){const vx=Math.round(cam.x),vy=Math.round(cam.y),spirit=selected.key==='core_demon' && a.mode==='signature';const dest=spiritTarget.current;if(spirit && (!dest||dest.uid!==a.uid)){toast('Open M and select explored safe ground first.');return;}inp.current.skill=a.mode;inp.current.skillAim={uid:a.uid,slot:gs.run.player.active,mx:spirit?dest!.x:mouse.current.x+vx,my:spirit?dest!.y:mouse.current.y+vy,viewX:vx,viewY:vy};}} };
@@ -286,6 +296,11 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
   const layers=['wall','obj','roof','floor']; const hover=entsAt(r,hoverX,hoverY).filter(e=>e.kind==='struct'&&(editLayer==='auto'||STRUCTS[e.type!].layer===editLayer)&&(!upgradeMode||!!STRUCTURE_UPGRADES[e.type!])).sort((a,b)=>layers.indexOf(STRUCTS[a.type!].layer)-layers.indexOf(STRUCTS[b.type!].layer))[0];
   const placementReason=buildType?buildReason(gs,buildType,hoverX,hoverY):null;
   const heldCash = countItem(r, 'inv', 'rcash'); const surf = SPEED_KEY[effTile(r, Math.floor(p.x / 16), Math.floor(p.y / 16))] || '';
+  const buildingTool:BuildTool|null = upgradeMode?'upgrade':repairMode?'repair':reclaim?'reclaim':buildType&&(BUILD_KIT as readonly string[]).includes(buildType)?buildType as BuildTool:null;
+  const selectBuildTool=(tool:BuildTool)=>{
+    setUpgradeMode(tool==='upgrade');setRepairMode(tool==='repair');setReclaim(tool==='reclaim');
+    setBuildType(tool==='upgrade'||tool==='repair'||tool==='reclaim'?null:tool);
+  };
 
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
     <div ref={stageRef} className="stage" style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})` }}>
@@ -328,9 +343,12 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       {/* toasts */}
       <div className="absolute" style={{ left: 0, right: 0, bottom: 56, textAlign: 'center', pointerEvents: 'none' }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className="fadein" style={{ display: 'inline-block', margin: '1px auto', fontSize: 11, padding: '1px 6px', background: '#120c18d8', border: `1px solid ${t.tone === 'bad' ? '#8a3a2a' : t.tone === 'ok' ? '#3a7a3a' : '#5a4a6a'}`, color: t.tone === 'bad' ? '#ffb0a0' : '#f0e4d0' }}>{t.text}<br /></div>)}</div>
       {/* Source-authored protected eight-slot Gold2 hotbar. */}
-      <div className="gold-hud absolute" style={{left:'50%',transform:'translateX(-50%)',bottom:4}} onMouseDown={e=>e.stopPropagation()}>
+      {!buildingTool && <div className="gold-hud absolute" style={{left:'50%',transform:'translateX(-50%)',bottom:4}} onMouseDown={e=>e.stopPropagation()}>
         <Hotbar r={r} onPick={i=>{r.player.active=i;rerender();}} onUse={i=>act('useItem',{slot:i})} onOpenPack={()=>setPanel({kind:'inv'})}/>
-      </div>
+      </div>}
+      {buildingTool && <div className="gold-hud absolute" style={{left:'50%',transform:'translateX(-50%)',bottom:4,zIndex:18}} onMouseDown={e=>e.stopPropagation()}>
+        <BuildBar gs={gs} tool={buildingTool} onPick={selectBuildTool} hoverX={hoverX} hoverY={hoverY}/>
+      </div>}
       {/* panels */}
       {panel?.kind === 'inv' && <SurvivorScreen key="pack" api={api} initialView="pack" />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
