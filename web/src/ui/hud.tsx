@@ -80,7 +80,7 @@ export function UrgentAlerts({ r, cold }: { r: RunState; cold: boolean }) {
   </div>;
 }
 
-export function Vitals({ r, now }: { r: RunState; now: number }) {
+export function Vitals({ r, now, zoneOverride }: { r: RunState; now: number; zoneOverride?: string }) {
   const p = r.player;
   const hpGhost = useRef(1); const [ghost, setGhost] = useState(1);
   useEffect(() => {
@@ -88,7 +88,7 @@ export function Vitals({ r, now }: { r: RunState; now: number }) {
     if (f < hpGhost.current) { setGhost(hpGhost.current); const t = setTimeout(() => { hpGhost.current = f; setGhost(f); }, 420); return () => clearTimeout(t); }
     hpGhost.current = f; setGhost(f);
   }, [p.hp]);
-  const zone = (getWorld().zoneNames || ZONES)[getWorld().zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]];
+  const zone = zoneOverride ?? (getWorld().zoneNames || ZONES)[getWorld().zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]];
   const surf = SPEED_KEY[effTile(r, Math.floor(p.x / 16), Math.floor(p.y / 16))] || '';
   const w = invWeight(r), lim = carryLimit(r); const over = w > lim;
   void now;
