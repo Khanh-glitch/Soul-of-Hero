@@ -178,3 +178,21 @@
 .gold-work__feedback { color:#a9d999; font-size:9px; padding-top:2px; }
 .gold-work__foot { min-height:11px; color:#ac927a; text-align:center; font-size:8px; padding-top:2px; }
 .gold-work__empty { grid-column:1/-1; color:#b49d91; font-size:11px; }
+
+
+/* Ledger folios: field knowledge, bounded receipts, earned legacy; no leaked POI data. */
+.gold-ledger__folio-tabs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:2px; margin-bottom:6px; height:23px; }
+.gold-ledger__folio-tabs button { color:#755442; background:#c1aa83; border:1px solid #9f8765; font:9px 'Pixelify Sans',monospace; cursor:pointer; }
+.gold-ledger__folio-tabs button.on { background:#78543c; color:#f4deb1; border-color:#765037; }
+.gold-ledger__places { height:51px; overflow:auto; display:flex; flex-wrap:wrap; align-content:flex-start; gap:3px; margin-top:4px; font-size:9px; scrollbar-width:thin; scrollbar-color:#ae9674 transparent; }
+.gold-ledger__places>span { background:#b9a17d; padding:1px 4px; border:1px solid #ac916e; }
+.gold-ledger__place-list { display:flex; gap:2px; margin:5px 0; white-space:nowrap; overflow-x:auto; scrollbar-width:thin; }
+.gold-ledger__place-list button { background:#bba582; color:#684b39; border:1px solid #ad9274; font:9px 'VT323',monospace; padding:2px 5px; cursor:pointer; }
+.gold-ledger__place-list button.on { background:#76543d; color:#ffe2ab; }
+.gold-ledger__intel { font-size:10px; line-height:1.1; max-height:74px; overflow:auto; scrollbar-width:thin; }
+.gold-ledger__intel>div { padding:2px 0; border-bottom:1px solid #c9b99a; }
+.gold-ledger__intel small { display:block; color:#82634d; }
+.gold-ledger__hint { margin:6px 0; font-size:10px; line-height:1.15; color:#866b55; }
+.gold-ledger__chronicle--full { height:185px; padding-top:3px; }
+.gold-ledger__achievements { display:flex; flex-direction:column; gap:3px; max-height:95px; overflow:auto; font-size:11px; margin:5px 0; }
+.gold-ledger__achievements span { border-bottom:1px solid #bcaa88; padding:2px; color:#6b4434; }
