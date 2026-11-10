@@ -895,3 +895,18 @@ div.map-row--mark { flex-direction: row; align-items: center; padding: 0; }
 @media (prefers-reduced-motion: reduce) {
   .field-map *, .return-report *, .field-note-card *, .return-digest *, .sv *, .xp-combat-alert { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* A × B fusion: Survivor always fits all 24 item slots without web-native rails.
+   Only the recipe catalog is wheel-scrollable when genuinely necessary; its
+   scrollbar is visually suppressed. No nested inventory/item-description rail. */
+.sv-left { overflow: clip; min-height: 0; }
+.sv-left > .iteminfo { overflow: clip; min-height: 0; }
+.sv, .sv-body, .sv-left, .sv-right { overscroll-behavior: contain; }
+.sv-tiles { scrollbar-width: none; -ms-overflow-style: none; }
+.sv-tiles::-webkit-scrollbar { display: none; }
+@media (max-width: 700px) {
+  .sv-left { overflow: clip; grid-template-rows: auto auto minmax(0,1fr) auto auto; row-gap: 2px; }
+  .sv-left > .iteminfo { overflow: clip; }
+  .sv-left .sv-char { min-height: 0; }
+  .sv-left .dgrid { min-height: 0; }
+}
