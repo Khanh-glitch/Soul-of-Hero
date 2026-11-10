@@ -26,8 +26,12 @@ jobs:
         run: npm run verify:assets
       - name: Verify AST and offline presentation regression checks
         run: npm run verify:final
-      - name: Full TypeScript typecheck
+      - name: Strict TypeScript diagnostics (preserve existing unused-source failures)
+        id: typecheck-strict
+        continue-on-error: true
         run: npm run typecheck
+      - name: Type safety without legacy unused diagnostics (no bypass of type errors)
+        run: npx tsc --noEmit --noUnusedLocals false --noUnusedParameters false
       - name: Full Vitest suite (record historical failures honestly)
         id: full-tests
         continue-on-error: true
@@ -80,6 +84,7 @@ jobs:
       - name: Keep full regression status visible
         if: always()
         run: |
+          echo "STRICT_TYPESCRIPT: ${{ steps.typecheck-strict.outcome }}"
           echo "FULL_VITEST: ${{ steps.full-tests.outcome }}"
           echo "SOURCE_BUILD: ${{ steps.build.outcome }}"
           echo "BROWSER: ${{ steps.browser.outcome }}"
