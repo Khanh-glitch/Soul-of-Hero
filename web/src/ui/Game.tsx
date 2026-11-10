@@ -29,6 +29,7 @@ import { HomeStatusCard } from './HomeStatus';
 import { ThermalStatusCard } from './ThermalStatus';
 import type { OfflineReturnV1 } from '../game/return-report';
 import { RestPanel } from './RestPanel';
+import { GoldWaymark, GoldLedger, goldGoals } from './GoldJourney';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 
 export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: GameState; report: { lines: string[]; report: OfflineReturnV1 | null } | null; onExit: () => void; onRunEnd: () => void; onInspect?: () => void }) {
@@ -36,6 +37,8 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
   const [, setFrame] = useState(0); const rerender = useCallback(() => setFrame(f => f + 1), []);
   const [panel, setPanel] = useState<PanelState | null>(report && (report.lines.length || (report.report && !report.report.away.quiet)) ? { kind: 'report', lines: report.lines, report: report.report } : null);
   const [sel, setSel] = useState<{ c: string; slot: number } | null>(null);
+  // Presentation-only, optional Waymark selection; never writes to economy receipts or changes progression.
+  const [trackedGoal, setTrackedGoal] = useState('auto');
   const [buildType, setBuildType] = useState<string | null>(null); const [reclaim, setReclaim] = useState(false); const [repairMode, setRepairMode] = useState(false); const [upgradeMode, setUpgradeMode] = useState(false);
   const [editLayer, setEditLayer] = useState('auto');
   const [toasts, setToasts] = useState<{ id: number; text: string; tone?: string; t: number }[]>([]);
@@ -160,6 +163,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         }
         case 'KeyF': { if(r.player.vehicle){act('vehicleExit',{});break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current || r.layoutId?.startsWith('veyra05-')) { const c=!target.current && Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else interact(); } else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
         case 'KeyI': toggle('inv'); break; case 'KeyC': toggle('craft'); break; case 'KeyM': toggle('map'); break;
+        case 'KeyJ': toggle('journey'); break;
         case 'F9': if (onInspect && ((gs as any).__ephemeralInspect || r.qaUsed)) { e.preventDefault(); onInspect(); } break;
         case 'KeyB': setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); toggle('build'); break;
         case 'KeyG': setEditLayer(v => { const a=['auto','wall','obj','roof','floor']; return a[(a.indexOf(v)+1)%a.length]; }); break;
@@ -280,6 +284,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
   const layers=['wall','obj','roof','floor']; const hover=entsAt(r,hoverX,hoverY).filter(e=>e.kind==='struct'&&(editLayer==='auto'||STRUCTS[e.type!].layer===editLayer)&&(!upgradeMode||!!STRUCTURE_UPGRADES[e.type!])).sort((a,b)=>layers.indexOf(STRUCTS[a.type!].layer)-layers.indexOf(STRUCTS[b.type!].layer))[0];
   const placementReason=buildType?buildReason(gs,buildType,hoverX,hoverY):null;
   const heldCash = countItem(r, 'inv', 'rcash'); const surf = SPEED_KEY[effTile(r, Math.floor(p.x / 16), Math.floor(p.y / 16))] || '';
+  const journeyGoals = goldGoals(r, now);
 
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
     <div ref={stageRef} className="stage" style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})` }}>
@@ -291,6 +296,8 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         <div style={{ color: p.sheltered ? '#9ae0a0' : '#8a7a9a', marginTop: 1 }}>{p.sheltered ? '⌂ sheltered' : zone} {surf && <span style={{ color: '#6a5a7a' }}>· {surf}</span>}</div>
         {isVeyra05 && (() => { const [ax, ay] = playerGlobalAu(r); return <div style={{ color: '#7a8ea8', marginTop: 1, fontSize: 9 }}>AU {ax.toFixed(0)},{ay.toFixed(0)} · F{activeFloor(r)}</div>; })()}
       </div>
+      {/* Gold Waymark from PR #52 visual grammar. Read-only, optional; collapses during boss combat. */}
+      {!panel && <GoldWaymark goals={journeyGoals} selected={trackedGoal} onSelect={setTrackedGoal} onLedger={() => { setSel(null); setPanel({ kind: 'journey' }); }} danger={!!engaged || p.hp < BAL.player.maxHp * 0.25} />}
       {/* top-right clocks */}
       <div className="panel absolute" style={{ right: 4, top: 4, padding: '3px 6px', fontSize: 10, lineHeight: 1.05, textAlign: 'right', minWidth: 120 }} onMouseDown={e => e.stopPropagation()}>
         <div><span className="tag" style={{ color: ph === 'calm' ? '#9ae0a0' : ph === 'danger' ? '#ff9a5a' : '#ff4a3a' }}>{ph === 'calm' ? 'CALM' : ph === 'danger' ? 'RAGNAROK' : 'AWAKENING'}</span> <span style={{ color: '#ffd98a' }}>Day {day}/14</span></div>
@@ -329,6 +336,8 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         {C(r, 'inv').slots.slice(0, 8).map((s, i) => <Slot key={i} s={s} active={i === p.active} hotkey={String(i + 1)} onClick={() => { p.active = i; rerender(); }} onContext={() => act('useItem', { slot: i })} />)}
         <div style={{ fontSize: 9, width: 74, lineHeight: 1, marginLeft: 3, color: '#cfc2dc', alignSelf: 'center' }}>{(() => { const s = activeStack(r); if (!s) return 'Fists'; const d = ITEMS[s.key]; return <><span style={{ color: '#ffe0a0' }}>{d.name}</span><br />{d.creatorCore && s.reserves ? `B${s.reserves.basic} Q${s.reserves.refined} E${s.reserves.signature} · R/Shift/Alt reload` : d.core ? `${s.charge}/${d.charge} charges · LMB cast, RMB cancel` : d.food ? 'LMB eat/drink' : d.dmg ? `dmg ${d.dmg}${d.power ? ' · tool' : ''}` : d.place ? 'LMB to place' : d.cat === 'bp' ? 'LMB learn' : ''}</>; })()}</div>
       </div>
+      {/* gold panels and original functional R12 panels */}
+      {panel?.kind === 'journey' && <GoldLedger r={r} now={now} goals={journeyGoals} selected={trackedGoal} onSelect={setTrackedGoal} onClose={() => setPanel(null)} />}
       {/* panels */}
       {panel?.kind === 'inv' && <InventoryPanel api={api} />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
