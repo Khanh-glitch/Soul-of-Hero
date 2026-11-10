@@ -41,7 +41,7 @@ try{
   await shot('pack');
   await page.getByRole('button',{name:'Turn character right'}).click();
   await shot('pack-turned');
-  await page.getByRole('button',{name:/WORK Recipes/}).click();
+  await page.locator('.sv-compact-nav button').nth(1).click();
   await page.locator('.sv-right').waitFor({timeout:8000});
   if(await page.locator('.sv-cats button').count()!==8)throw new Error('Gold WORK missing original categories');
   pass(width+' Gold WORK',{categories:8,recipeTiles:await page.locator('.sv-tile').count()});
