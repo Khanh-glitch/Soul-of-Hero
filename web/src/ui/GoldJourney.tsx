@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { RunState, Receipt } from '../game/core';
+import type { RunState } from '../game/core';
 import { PRIMORDIAL_ELDERS, ALWAYS_KNOWN_RECIPES, RECIPES, ACHIEVEMENTS, ITEMS } from '../game/catalog';
 import { Icon } from './common';
 import { runHours } from '../game/engine';
@@ -17,11 +17,8 @@ export interface FieldGoal {
   progress: number; target: number; why: string;
 }
 const bounded = (n: number, max: number) => Math.min(Math.max(0, n), max);
-const eventCount = (receipts: readonly Receipt[], prefix: string) =>
-  receipts.filter(x => x.kind === prefix || x.kind.startsWith(prefix + '.')).length;
 
 export function goldGoals(r: RunState, now: number): FieldGoal[] {
-  const receipts = r.receipts;
   const allEntities = { ...(r.veyraOffscreenEntities || {}), ...r.entities };
   const structures = Object.values(allEntities).filter(e => e.kind === 'struct');
   const slainBosses = Object.keys(r.sideBossDefeated || {}).length;
@@ -40,8 +37,8 @@ export function goldGoals(r: RunState, now: number): FieldGoal[] {
       detail: 'Remain alive until twenty-four real hours have elapsed.', why: 'The world clock continues even while you are away.',
       icon: 'wood', progress: bounded(Math.floor(runHours(r, now)), 24), target: 24 },
     { id: 'hunt', title: 'Face the wilderness', category: 'HUNT',
-      detail: 'Observe creature defeat receipts from your recent journey.', why: 'Only recorded defeats count; this does not create loot.',
-      icon: 'leather', progress: bounded(eventCount(receipts, 'creature.kill'), 3), target: 3 },
+      detail: 'Defeat three threats in actual combat.', why: 'The existing permanent Combat XP tally advances by two per defeated creature. No UI loot or rewards.',
+      icon: 'leather', progress: bounded(Math.floor(r.player.skills.combat / 2), 3), target: 3 },
     { id: 'guardians', title: 'Challenge an optional guardian', category: 'BOSS',
       detail: 'Defeat a regional side boss, if you choose.', why: 'These encounters are optional and do not replace non-boss survival.',
       icon: 'relic', progress: bounded(slainBosses, 1), target: 1 },
