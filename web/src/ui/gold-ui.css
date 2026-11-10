@@ -1,0 +1,81 @@
+/* R12 / Veyra Gold UI integration. Authored for the 640x360 game stage.
+   Reinterprets the Waymark/Ledger and compact inventory art direction from UIUX PR #52.
+   Presentation only: all actions remain R12's existing engine intents. */
+.gold-waymark { position:absolute; left: 166px; top: 31px; width: 288px; min-height: 28px;
+  z-index:12; box-sizing:border-box; display:flex; align-items:center; gap:5px; padding:3px 5px;
+  color:#f1dfb9; background:linear-gradient(100deg,#241c27f4,#15121edb);
+  border:1px solid #8e6d45; box-shadow:inset 0 0 0 1px #41303b,0 2px 5px #09060ba6;
+  font-size:10px; pointer-events:auto; }
+.gold-waymark--danger { width:28px; height:28px; left:163px; top:34px; padding:2px; background:#251926ec; }
+.gold-waymark__mark { position:relative; flex:0 0 23px; height:23px; background:none; border:0; color:#f0dbad; padding:0; cursor:pointer; }
+.gold-waymark__ring { position:absolute; inset:0; border-radius:50%; border:1px solid #b28f5a; }
+.gold-waymark__ring:after { content:''; position:absolute; inset:3px; background:#201924; border-radius:50%; }
+.gold-waymark__mark .px { position:relative; margin:auto; z-index:1; }
+.gold-waymark__body { flex:1; min-width:0; line-height:1; }
+.gold-waymark__eyebrow { font-size:8px; letter-spacing:1px; color:#b89b78; }
+.gold-waymark__title { font-family:'Pixelify Sans','VT323',monospace; font-size:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#f2d996; }
+.gold-waymark__progress { margin-top:3px; background:#211c29; height:3px; border:1px solid #40313a; }
+.gold-waymark__progress>i { display:block; height:100%; background:linear-gradient(90deg,#9b723e,#f1d18a); }
+.gold-waymark__controls { display:flex; gap:2px; align-self:stretch; align-items:center; }
+.gold-waymark__controls select { background:#29212d; color:#e8d5ba; border:1px solid #634a4a; width:28px; height:22px; font-size:8px; cursor:pointer; }
+.gold-waymark__controls button { background:#392834; color:#f3d9ab; border:1px solid #715448; height:22px; cursor:pointer; }
+.gold-ledger { left:10px; top:19px; width:620px; height:325px; z-index:28; padding:6px; box-sizing:border-box;
+  background:linear-gradient(145deg,#2b2029,#17121b 70%); color:#f0ddba; border-color:#987850; }
+.gold-ledger__head { height:23px; display:flex; justify-content:space-between; align-items:center;
+  font-family:'Pixelify Sans','VT323',monospace; font-size:12px; letter-spacing:.7px; color:#e9c887; border-bottom:1px solid #71533e; }
+.gold-ledger__head small { font-family:'VT323',monospace; font-size:9px; color:#9b8b8a; }
+.gold-ledger__pages { display:grid; grid-template-columns: 1fr 1fr; gap:8px; height:269px; min-height:0; margin-top:5px; }
+.gold-ledger__page { overflow:hidden; padding:7px; box-sizing:border-box; background:#d4bf92;
+  color:#3c2a2a; border:2px solid #8b7155; box-shadow:inset 0 0 0 2px #b09a74; }
+.gold-ledger__page--right { background:#d9c7a5; }
+.gold-ledger__kicker { font-family:'Pixelify Sans',monospace; font-size:10px; color:#6b3f30; border-bottom:1px solid #ad9776; padding-bottom:2px; }
+.gold-ledger__intro { font-size:10px; line-height:1.1; margin:6px 1px; }
+.gold-ledger__goals { overflow-y:auto; height:201px; scrollbar-width:thin; scrollbar-color:#987a54 transparent; }
+.gold-ledger__goal { display:flex; align-items:center; gap:5px; width:100%; min-height:27px; text-align:left; cursor:pointer;
+  color:#48322c; background:transparent; border:0; border-bottom:1px solid #baa780; font-family:'VT323',monospace; padding:2px 3px; }
+.gold-ledger__goal:hover,.gold-ledger__goal--on { background:#bda77f; }
+.gold-ledger__goal>span:nth-child(2) { display:flex; flex:1; min-width:0; flex-direction:column; }
+.gold-ledger__goal strong { font-size:11px; font-weight:normal; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.gold-ledger__goal small { font-size:9px; color:#83674f; }
+.gold-ledger__stones { display:flex; justify-content:space-around; gap:3px; padding:6px 3px; }
+.gold-ledger__stone { display:grid; place-items:center; width:35px; height:32px; background:#a48a70; border:1px solid #8d785f; color:#e0d1b4; opacity:.54; }
+.gold-ledger__stone.got { background:#543d31; border-color:#a4753d; opacity:1; }
+.gold-ledger__stone small { font-size:7px; color:#dec8a8; }
+.gold-ledger__facts { display:flex; justify-content:space-between; gap:3px; font-size:9px; }
+.gold-ledger__facts span { border:1px solid #ad9377; padding:2px 4px; display:flex; flex-direction:column; }
+.gold-ledger__facts b { font-size:13px; color:#543c2c; }
+.gold-ledger__chronicle { overflow-y:auto; height:99px; font-size:10px; scrollbar-width:thin; scrollbar-color:#977955 transparent; }
+.gold-ledger__event { display:flex; flex-direction:column; border-bottom:1px solid #bcaa8b; margin-bottom:2px; }
+.gold-ledger__event span { color:#6c4737; }
+.gold-ledger__event small { color:#4f423a; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.gold-ledger__empty { color:#806d5b; padding:7px; }
+.gold-ledger__foot { text-align:center; font-size:8px; color:#bc9c71; margin-top:3px; }
+
+/* PR #52's 640x360 compact 24-slot pack, adapted to the authoritative R12 custody. */
+.gold-inventory { border-color:#b58a49; background:linear-gradient(145deg,#261e29,#120e17); box-sizing:border-box; }
+.gold-inventory .gold-inv-body { display:grid; grid-template-columns:205px 1fr; gap:10px; }
+.gold-inventory .gold-inv-hero { padding:7px; height:166px; box-sizing:border-box;
+  background:linear-gradient(120deg,#17131c,#241a25); border:1px solid #5c473b; }
+.gold-inventory .gold-inv-portrait { width:52px; height:82px; margin:5px auto 4px; border:1px solid #99784d;
+  box-shadow:inset 0 0 0 2px #332731; display:flex; align-items:center; justify-content:center;
+  background:repeating-linear-gradient(45deg,#302638,#302638 3px,#27202c 3px,#27202c 6px); color:#e6ce9e; }
+.gold-inventory .gold-inv-gear { display:flex; gap:7px; justify-content:center; align-items:center; margin-top:4px; }
+.gold-inventory .gold-inv-gear .slot { width:29px; height:29px; }
+.gold-inventory .gold-inv-gear .slot img { width:23px!important; height:23px!important; }
+.gold-inventory .gold-inv-facts { font-size:10px; line-height:1.15; padding-top:3px; }
+.gold-inventory .gold-inv-grid-title { font-family:'Pixelify Sans',monospace; color:#eccf8a; font-size:10px; }
+.gold-inventory .gold-inv-grid { display:grid; grid-template-columns:repeat(8,36px); grid-auto-rows:36px; gap:3px;
+  margin-top:5px; max-height:152px; overflow:auto; scrollbar-width:thin; scrollbar-color:#765b47 transparent; }
+.gold-inventory .gold-inv-grid .slot { width:36px; height:36px; border-color:#544250; box-sizing:border-box; }
+.gold-inventory .gold-inv-grid .slot img { width:27px!important; height:27px!important; left:4px!important; top:3px!important; }
+.gold-inventory .gold-inv-grid .slot.active { border-color:#f5bb5b; }
+.gold-inventory .gold-inv-grid .slot.sel { border-color:#e4d28b; }
+.gold-inventory .gold-inv-grid-label { display:flex; justify-content:space-between; font-size:9px; color:#a58e83; }
+.gold-inventory .gold-inv-inspector { margin-top:7px; border-top:1px solid #8f7150; height:62px; padding-top:4px;
+  display:flex; gap:8px; }
+.gold-inventory .gold-inv-inspector-info { flex:1; overflow:auto; font-size:10px; scrollbar-width:thin; min-width:0; }
+.gold-inventory .gold-inv-actions { width:163px; flex-shrink:0; display:grid; grid-template-columns:1fr 1fr; align-content:start; gap:3px; }
+.gold-inventory .gold-inv-actions button { font-size:10px; }
+@media (prefers-reduced-motion: reduce) {
+  .gold-waymark *, .gold-ledger *, .gold-inventory * { animation:none!important; transition:none!important; }
+}
