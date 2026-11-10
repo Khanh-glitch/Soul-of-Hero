@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import type { RunState, Receipt } from '../game/core';
-import { PRIMORDIAL_ELDERS, ALWAYS_KNOWN_RECIPES, RECIPES } from '../game/catalog';
+import { PRIMORDIAL_ELDERS, ALWAYS_KNOWN_RECIPES, RECIPES, ACHIEVEMENTS, ITEMS } from '../game/catalog';
 import { Icon } from './common';
 import { runHours } from '../game/engine';
+import { expeditionNotes } from '../game/expedition-intel';
+import { POIS } from '../veyra05/reader';
 import './gold-ui.css';
 
 /**
@@ -78,7 +81,12 @@ export function GoldLedger({ r, now, goals, selected, onSelect, onClose }: {
   r: RunState; now: number; goals: FieldGoal[]; selected: string;
   onSelect: (id: string) => void; onClose: () => void;
 }) {
-  const recent = r.receipts.slice(-24).reverse();
+  const [rightTab,setRightTab] = useState<'field'|'chronicle'|'legacy'>('field');
+  const [focusPlace,setFocusPlace] = useState<string|null>(null);
+  const notes = expeditionNotes(r);
+  const knownPlaces = POIS.filter(p => r.poiSeen.includes(p.id));
+  const activeNote = notes.find(n=>n.place===focusPlace) ?? notes[0];
+  const recent = r.receipts.slice(-50).reverse();
   const stoneKeys = Object.values(PRIMORDIAL_ELDERS).map(e => e.stone);
   const [primary, ...secondary] = [goals.find(g => g.id === selected) ?? goals.find(g => g.progress < g.target) ?? goals[0], ...goals.filter(g => g.id !== selected)].filter(Boolean) as FieldGoal[];
   return <section className="panel absolute gold-ledger" role="dialog" aria-label="Expedition Ledger" onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
@@ -95,13 +103,46 @@ export function GoldLedger({ r, now, goals, selected, onSelect, onClose }: {
         </div>
       </div>
       <div className="gold-ledger__page gold-ledger__page--right">
-        <div className="gold-ledger__kicker">FIELD NOTES · WHAT THE WORLD KNOWS</div>
-        <div className="gold-ledger__stones" title="Undiscovered stones stay unknown">{stoneKeys.map((stone,i) => <span key={stone} className={r.elderStones.includes(stone) ? 'gold-ledger__stone got' : 'gold-ledger__stone'}>{r.elderStones.includes(stone) ? <Icon k={stone} size={16} /> : '✧'}<small>{i + 1}</small></span>)}</div>
-        <div className="gold-ledger__facts"><span>Places discovered <b>{r.poiSeen.length}</b></span><span>Known recipes <b>{r.knowledge.recipes.length}</b></span><span>Lifetime of this run <b>{Math.floor(runHours(r, now))}h</b></span></div>
-        <div className="gold-ledger__kicker" style={{ marginTop: 8 }}>CHRONICLE · COMMITTED EVENTS (RECENT)</div>
-        <div className="gold-ledger__chronicle" aria-label="Recent committed game receipts">
-          {recent.length ? recent.map(e => <div key={e.id} className="gold-ledger__event"><span>#{e.seq} · {e.kind}</span><small>{e.detail}</small></div>) : <div className="gold-ledger__empty">Your journey has only just begun.</div>}
+        <div className="gold-ledger__folio-tabs" role="tablist" aria-label="Expedition Ledger folios">
+          <button role="tab" aria-selected={rightTab==='field'} className={rightTab==='field'?'on':''} onClick={()=>setRightTab('field')}>FIELD NOTES</button>
+          <button role="tab" aria-selected={rightTab==='chronicle'} className={rightTab==='chronicle'?'on':''} onClick={()=>setRightTab('chronicle')}>CHRONICLE</button>
+          <button role="tab" aria-selected={rightTab==='legacy'} className={rightTab==='legacy'?'on':''} onClick={()=>setRightTab('legacy')}>LEGACY</button>
         </div>
+        {rightTab==='field' && <>
+          <div className="gold-ledger__kicker">YOUR DISCOVERIES · NO UNSEEN INTEL</div>
+          <div className="gold-ledger__facts"><span>Places <b>{r.poiSeen.length}</b></span><span>Gate notes <b>{notes.length}</b></span><span>Run clock <b>{Math.floor(runHours(r,now))}h</b></span></div>
+          <div className="gold-ledger__places" aria-label="Discovered Veyra landmarks">
+            {knownPlaces.length ? knownPlaces.slice(0,32).map(p=><span key={p.id}>{p.name}</span>) : <span>Explore Veyra to record your first landmark.</span>}
+          </div>
+          <div className="gold-ledger__kicker" style={{marginTop:5}}>OBSERVED GATES & BLUEPRINTS</div>
+          {notes.length ? <div className="gold-ledger__place-list">
+            {notes.map(n=><button key={n.place} onClick={()=>setFocusPlace(n.place)} className={activeNote?.place===n.place?'on':''}>{n.name}</button>)}
+          </div> : <p className="gold-ledger__hint">Only gates, blueprints and sites physically inspected by your adventurer appear here.</p>}
+          {activeNote && <div className="gold-ledger__intel">
+            {activeNote.gates.map((g,i)=><div key={'gate'+i}><b>{g.requirement==='power'?'Generator gate':'Keycard gate'}</b> · <span style={{color:g.carried?'#345c35':'#8c483b'}}>{g.carried?'Carried':'Not carried'}</span> · {ITEMS[g.item]?.name} {g.have}/{g.need}
+              {g.craft&&<small>Known craft: {g.craft.stationName} L{g.craft.level} · {g.craft.missing.length?'missing materials':'ingredients carried'}</small>}
+              {!g.craft&&g.seenIn.length>0&&<small>Seen previously: {g.seenIn.join(', ')} · current stock unknown</small>}
+            </div>)}
+            {activeNote.blueprints.map(b=><div key={b.recipe}><b>Blueprint</b> · {b.name} · {b.state}</div>)}
+          </div>}
+        </>}
+        {rightTab==='chronicle' && <>
+          <div className="gold-ledger__kicker">COMMITTED EVENTS · LATEST {recent.length} ONLY</div>
+          <p className="gold-ledger__hint">The run keeps a bounded receipt window. This is recent history, not a complete lifetime transaction ledger.</p>
+          <div className="gold-ledger__chronicle gold-ledger__chronicle--full" aria-label="Recent committed game receipts">
+            {recent.length ? recent.map(e=><div key={e.id} className="gold-ledger__event"><span>#{e.seq} · {e.kind}</span><small>{e.detail}</small></div>) : <div className="gold-ledger__empty">No committed world events yet.</div>}
+          </div>
+        </>}
+        {rightTab==='legacy' && <>
+          <div className="gold-ledger__kicker">PRIMORDIAL STONES · OPTIONAL ENDING</div>
+          <div className="gold-ledger__stones" title="Unclaimed stones remain unidentified">{stoneKeys.map((stone,i)=><span key={stone} className={r.elderStones.includes(stone) ? 'gold-ledger__stone got' : 'gold-ledger__stone'}>{r.elderStones.includes(stone)?<Icon k={stone} size={16}/>:'✧'}<small>{i+1}</small></span>)}</div>
+          <div className="gold-ledger__kicker">REAL RUN ACHIEVEMENTS · {r.achievements.length}</div>
+          <div className="gold-ledger__achievements">
+            {r.achievements.length ? r.achievements.map(k=><span key={k}>✦ {ACHIEVEMENTS[k]?.name||k}</span>) : <span>No achievements recorded in this run yet.</span>}
+          </div>
+          <div className="gold-ledger__kicker" style={{marginTop:7}}>KNOWN RECIPES</div>
+          <p className="gold-ledger__hint">Known: {r.knowledge.recipes.length} · Learned beyond base: {r.knowledge.recipes.filter(k=>!RECIPES[k]?.base&&!ALWAYS_KNOWN_RECIPES.includes(k)).length}. Neither the Ledger nor the Waymark grants items.</p>
+        </>}
       </div>
     </div>
     <div className="gold-ledger__foot">Observed gameplay data only · This page never mints rewards or reveals undiscovered map locations.</div>
