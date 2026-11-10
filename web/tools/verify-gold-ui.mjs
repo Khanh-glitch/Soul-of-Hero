@@ -42,7 +42,7 @@ try {
     await shot('game');
     await page.keyboard.press('i');
     await page.locator('.gold-inventory').waitFor({timeout:10000});
-    const inv=await page.locator('.gold-inv-grid').evaluate(el=>({count:el.querySelectorAll('.slot').length,clientHeight:el.clientHeight,scrollHeight:el.scrollHeight,gridWidth:Math.round(el.getBoundingClientRect().width),slotWidth:Math.round(el.querySelector('.slot')?.getBoundingClientRect().width||0)}));
+    const inv=await page.locator('.gold-inv-grid').evaluate(el=>({count:el.querySelectorAll('.slot').length,clientHeight:el.clientHeight,scrollHeight:el.scrollHeight,gridWidth:Math.round(el.getBoundingClientRect().width),slotWidth:parseFloat(getComputedStyle(el.querySelector('.slot')).width||'0')}));
     report.inventory[width]=inv;
     if(inv.count!==24)throw new Error('Inventory expected 24 authentic slots, got '+inv.count);
     if(inv.clientHeight<inv.scrollHeight)throw new Error('Inventory scroll overflow at '+width+': '+JSON.stringify(inv));
