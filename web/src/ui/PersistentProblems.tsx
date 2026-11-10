@@ -1,4 +1,4 @@
-import type { PersistentWarning } from '../game/attention';
+import type { PersistentWarning } from '../game/gold-attention';
 import { Glyph } from './hud';
 
 /**
