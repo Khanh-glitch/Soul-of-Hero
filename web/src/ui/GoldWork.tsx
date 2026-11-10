@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ITEMS, RECIPES, STRUCTS, isRecipeKnown, stationBurnable } from '../game/catalog';
 import { TILE, type RunState } from '../game/core';
 import { C, countItem, spaceFor } from '../game/engine';
@@ -46,7 +46,9 @@ export function GoldWork({ api }: { api: Api }) {
   const [selection,setSelection] = useState<RecipeKey | null>(null);
   const [message,setMessage] = useState('');
   const r = api.gs.run!;
-  const visible = useMemo(() => knownGoldRecipes(r.knowledge.recipes,category,search),[r.knowledge.recipes,category,search]);
+  // R12 mutates the known-recipe array in place on committed discoveries. Derive
+  // on every UI render instead of memoizing by its stable reference.
+  const visible = knownGoldRecipes(r.knowledge.recipes,category,search);
   const selected = selection && visible.includes(selection) ? selection : (visible[0] ?? null);
   const rc = selected ? RECIPES[selected] : null;
   const item = rc && ITEMS[rc.out];
