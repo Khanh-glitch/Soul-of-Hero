@@ -53,6 +53,7 @@ try {
     await shot('game');
     await page.keyboard.press('i');
     await page.locator('.gold-inventory').waitFor({timeout:10000});
+    await page.waitForTimeout(400); // Capture after panel entrance animation, not a transparent in-between frame.
     const inv=await page.locator('.gold-inv-grid').evaluate(el=>({count:el.querySelectorAll('.slot').length,clientHeight:el.clientHeight,scrollHeight:el.scrollHeight,gridWidth:Math.round(el.getBoundingClientRect().width),slotWidth:parseFloat(getComputedStyle(el.querySelector('.slot')).width||'0')}));
     report.inventory[width]=inv;
     if(inv.count!==24)throw new Error('Inventory expected 24 authentic slots, got '+inv.count);
@@ -62,6 +63,7 @@ try {
     await page.keyboard.press('i');
     await page.keyboard.press('j');
     await page.getByRole('dialog',{name:'Expedition Ledger'}).waitFor({timeout:10000});
+    await page.waitForTimeout(400);
     const goals=await page.locator('.gold-ledger__goal').count();
     if(goals!==7)throw new Error('Ledger expected seven optional goals, got '+goals);
     report.journey[width]={...report.journey[width],goals,sourceReal:await page.locator('.gold-ledger__chronicle').count()};
@@ -71,6 +73,7 @@ try {
     const map=await page.locator('.panel-h').filter({hasText:/Map/}).count();
     report.map[width]={mapPanelHeadings:map};
     if(!map)throw new Error('M did not open real World Map');
+    await page.waitForTimeout(400);
     await shot('map');
     await page.close();
   }
