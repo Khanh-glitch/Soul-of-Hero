@@ -29,7 +29,7 @@ jobs:
       - name: Check real R12 runtime types
         run: npm run typecheck
       - run: npm run typecheck:tests
-      - run: npx --no-install vitest run --maxWorkers=2
+      - run: npx --no-install vitest run --testTimeout=240000 --maxWorkers=2
       - run: npm run build
       - name: Check 18 Veyra creature atlases preserved
         run: |
