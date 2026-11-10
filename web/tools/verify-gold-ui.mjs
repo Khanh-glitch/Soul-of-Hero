@@ -60,6 +60,20 @@ try {
     if(inv.clientHeight<inv.scrollHeight)throw new Error('Inventory scroll overflow at '+width+': '+JSON.stringify(inv));
     if(inv.slotWidth!==42)throw new Error('Slot not 42px at '+width+': '+JSON.stringify(inv));
     await shot('inventory');
+    // Gold WORK is no longer an unconnected showcase. It reads the real known
+    // recipes and checks actual R12 station/material gates; no reward injection.
+    await page.getByRole('tab',{name:/WORK/}).click();
+    await page.getByTestId('gold-work').waitFor({timeout:10000});
+    const workCount=await page.locator('.gold-work__recipe').count();
+    if(workCount<1)throw new Error('Gold WORK shows no real known recipes');
+    const detail=await page.locator('.gold-work__detail').innerText();
+    if(!detail.trim())throw new Error('Gold WORK missing recipe detail');
+    await page.waitForTimeout(350);
+    report.inventory[width].workRecipes=workCount;
+    report.inventory[width].workHasDetail=detail.trim().length>10;
+    await shot('work');
+    await page.getByRole('tab',{name:/PACK/}).click();
+    if(await page.locator('.gold-inv-grid .slot').count()!==24)throw new Error('Pack cells missing after WORK → PACK');
     await page.keyboard.press('i');
     await page.keyboard.press('j');
     await page.getByRole('dialog',{name:'Expedition Ledger'}).waitFor({timeout:10000});
