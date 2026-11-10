@@ -2,13 +2,19 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 
 // Tests the real main Veyra runtime, not the Gold donor demo.
 // Evidence uses identical native 640x360 stage and a 1280x720 integer-scaled window.
 const cwd = process.cwd();
+const sourceGoldBytes = fs.readFileSync(path.join(cwd,'gold-authority/v2/src/index.css'));
+const sourceGoldHash = createHash('sha256').update(sourceGoldBytes).digest('hex');
+if(sourceGoldHash!=='2fb784fab321f76c2e764fe9ffa72b8b47f87f7190d39ad21150c377e425257b'){
+  throw new Error('Creator Gold (2) exact full CSS source mutated; visual authority invalid: '+sourceGoldHash);
+}
 const dir = path.join(cwd,'evidence','gold-authored');
 fs.mkdirSync(dir,{recursive:true});
-const server = spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5173','--strictPort'],{cwd,stdio:'pipe'});
+const server = spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5173','--strictPort'],{cwd,stdio:'pipe',env:{...process.env,VITE_SOH_QA:'1'}});
 let serverLog = '';
 server.stdout.on('data',c=>{serverLog+=c.toString()}); server.stderr.on('data',c=>{serverLog+=c.toString()});
 let browser; const report={sha:process.env.GITHUB_SHA||null,screens:[],tests:[],errors:[]};
@@ -122,6 +128,15 @@ try{
   pass(width+' authored BuildBar',{tools:buildButtons});
   await shot('buildbar');
   await page.keyboard.press('b');
+  // Reference-geometry evidence with a physically authored QA full-pack state,
+  // never a reward or production-game cheat. This remains test-only because
+  // VITE_SOH_QA=1 only runs under this isolated Playwright server.
+  const advancedPack=await page.evaluate(()=>window.__sohQA?.preparePack?.());
+  if(!advancedPack)throw new Error('Disclosed test-only full-pack fixture unavailable');
+  await page.keyboard.press('i');
+  await page.locator('.sv').waitFor({timeout:8000});
+  await shot('pack-populated');
+  pass(width+' populated source Gold screenshot',{fixture:advancedPack});
   await page.close();
  }
  if(report.errors.length)throw new Error(report.errors.join(' | '));
