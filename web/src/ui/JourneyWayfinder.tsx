@@ -166,7 +166,7 @@ export function JourneyWayfinder({
               </button>
             )}
             <button type="button" className="btn sm ghost" onClick={onOpenCodex}>
-              Codex [N]
+              Skills [Tab]
             </button>
           </div>
         </div>
