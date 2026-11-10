@@ -20,6 +20,7 @@ import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
 import { Panel, Slot, Icon, Cost, type Api } from './common';
 import { AdventurerPortrait } from './AdventurerPortrait';
+import { GoldWork } from './GoldWork';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { windowOrigin, playerGlobalAu } from '../veyra05/continuity';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
@@ -104,6 +105,7 @@ function InventoryClassicPanel({ api, quickTo, x = 404, top = 54, onClose, backT
  * When docked into another container, retain the two-panel compact transfer UX.
  */
 export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backToContainer = false }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void; backToContainer?: boolean }) {
+  const [goldTab,setGoldTab] = useState<'pack'|'work'>('pack');
   if (backToContainer || quickTo || x !== 404 || top !== 54) {
     return <InventoryClassicPanel api={api} quickTo={quickTo} x={x} top={top} onClose={onClose} backToContainer={backToContainer} />;
   }
@@ -114,7 +116,12 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
   const weight = invWeight(r), limit = carryLimit(r);
   let armor = 0, warmth = 0;
   for (const s of eq.slots) if (s) { armor += ITEMS[s.key]?.armor || 0; warmth += ITEMS[s.key]?.cold || 0; }
-  return <Panel title="EXPEDITION PACK · WAYMARK GOLD" className="gold-inventory" style={{left:6, top:57, width:628, height:297}} onClose={onClose ?? (() => api.open(null))}>
+  return <Panel title="SURVIVOR · GOLD FIELD KIT" className="gold-inventory" style={{left:6, top:57, width:628, height:297}} onClose={onClose ?? (() => api.open(null))}>
+    <div className="gold-inv-tabs" role="tablist" aria-label="Survivor inventory and work">
+      <button type="button" role="tab" aria-selected={goldTab==='pack'} className={goldTab==='pack'?'on':''} onClick={()=>setGoldTab('pack')}>PACK <span>Gear · inventory</span></button>
+      <button type="button" role="tab" aria-selected={goldTab==='work'} className={goldTab==='work'?'on':''} onClick={()=>setGoldTab('work')}>WORK <span>Recipes · stations</span></button>
+    </div>
+    {goldTab === 'work' ? <GoldWork api={api} /> : <>
     <div className="gold-inv-body">
       <div className="gold-inv-hero">
         <div className="gold-inv-grid-title">ADVENTURER</div>
@@ -140,6 +147,7 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
         <button className="btn" onClick={() => api.act('sort', { c: 'inv' })}>Sort</button>
       </div>
     </div>
+    </>}
   </Panel>;
 }
 
