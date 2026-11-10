@@ -47,6 +47,14 @@ jobs:
         run: |
           test -f dist/index.html
           test "$(grep -o 'data:image/png;base64,' dist/index.html | wc -l)" -ge 54
+      - name: Publish runnable UIUX candidate HTML from exact source SHA
+        uses: actions/upload-artifact@v4
+        if: ${{ steps.build.outcome == 'success' }}
+        with:
+          name: uiux-wave4-standalone-${{ github.sha }}
+          path: web/uiux/visual-overhaul/dist/index.html
+          if-no-files-found: error
+          retention-days: 30
       - name: Chromium browser dependencies
         run: npx playwright install --with-deps chromium
       - name: Real browser input and native screenshot matrix 640x360 + 1280x720
