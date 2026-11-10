@@ -19,6 +19,7 @@ const bundleLabel = (rc: { out: string; qty: number; outs?: [string, number][] }
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
 import { Panel, Slot, Icon, Cost, type Api } from './common';
+import { AdventurerPortrait } from './AdventurerPortrait';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { windowOrigin, playerGlobalAu } from '../veyra05/continuity';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
@@ -113,11 +114,11 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
   const weight = invWeight(r), limit = carryLimit(r);
   let armor = 0, warmth = 0;
   for (const s of eq.slots) if (s) { armor += ITEMS[s.key]?.armor || 0; warmth += ITEMS[s.key]?.cold || 0; }
-  return <Panel title="EXPEDITION PACK · WAYMARK GOLD" className="gold-inventory" style={{left:12, top:17, width:616, height:326}} onClose={onClose ?? (() => api.open(null))}>
+  return <Panel title="EXPEDITION PACK · WAYMARK GOLD" className="gold-inventory" style={{left:6, top:57, width:628, height:297}} onClose={onClose ?? (() => api.open(null))}>
     <div className="gold-inv-body">
       <div className="gold-inv-hero">
         <div className="gold-inv-grid-title">ADVENTURER</div>
-        <div className="gold-inv-portrait" aria-label="Equipment silhouette"><Icon k="armor" size={38}/></div>
+        <div className="gold-inv-portrait"><AdventurerPortrait female={r.character === "female"} /></div>
         <div className="gold-inv-gear">{['HEAD','BODY','BACK'].map((sl, i) => <div key={sl} style={{ textAlign:'center',fontSize:8,color:'#b7a186' }}><Slot s={eq.slots[i]} sel={api.sel?.c === 'eq' && api.sel.slot === i} onClick={e => slotClick(api, 'eq', i, e)} onContext={() => slotContext(api, 'eq', i)} /><span>{sl}</span></div>)}</div>
       </div>
       <div>
