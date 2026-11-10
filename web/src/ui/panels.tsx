@@ -19,6 +19,8 @@ const bundleLabel = (rc: { out: string; qty: number; outs?: [string, number][] }
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
 import { Panel, Slot, Icon, Cost, type Api } from './common';
+import { StationConsole } from './StationConsole';
+import './gold-station-original.css';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { windowOrigin, playerGlobalAu } from '../veyra05/continuity';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
@@ -138,6 +140,8 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; if (!e) return null;
   if (e.parcel) return <ParcelPanel api={api} eid={eid} />;
   const st = e.station; const kind = e.type ? STRUCTS[e.type]?.station : null;
+  // Gold2 original station and research UI; all actions still use R12 engine intents.
+  if (st && kind && e.kind !== 'recycler') return <StationConsole api={api} eid={eid} />;
   const lootSite=e.kind==='loot' && r.lootEcology ? getWorld(r.layoutId||'shipping').statics.find(s=>s.kind==='loot' && s.tx===e.tx && s.ty===e.ty) : undefined;
   const lootKind=lootSite ? lootClass(lootSite) : null;
   const poiId=e.poi==='factory_vault'?'factory':e.poi==='light_top'?'light':e.poi;
