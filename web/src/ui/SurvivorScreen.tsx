@@ -60,14 +60,14 @@ function Doll({ r }: { r: RunState }) {
   </div>;
 }
 
-export function SurvivorScreen({ api, initial = 'all', focusRecipe }: { api: Api; initial?: Cat; focusRecipe?: string }) {
+export function SurvivorScreen({ api, initial = 'all', focusRecipe, initialView = 'pack' }: { api: Api; initial?: Cat; focusRecipe?: string; initialView?: 'pack' | 'work' }) {
   const r = api.gs.run!;
   const [cat, setCat] = useState<Cat>(initial);
   const [pick, setPick] = useState<string | null>(focusRecipe && RECIPES[focusRecipe] ? focusRecipe : null);
   // A 640x360 game viewport cannot present pack and crafting side-by-side legibly.
   // Both panes stay mounted; compact presentation exposes one at a time.
   // Wider screens retain both panes and original gameplay/custody behavior.
-  const [compactView, setCompactView] = useState<'pack' | 'work'>(focusRecipe ? 'work' : 'pack');
+  const [compactView, setCompactView] = useState<'pack' | 'work'>(focusRecipe ? 'work' : initialView);
   const [onlyReady, setOnlyReady] = useState(false);
   const [q, setQ] = useState('');
   useEffect(() => { if (focusRecipe && RECIPES[focusRecipe]) { setCat('all'); setQ(''); setOnlyReady(false); setPick(focusRecipe); setCompactView('work'); } }, [focusRecipe]);
