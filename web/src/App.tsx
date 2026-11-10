@@ -73,9 +73,9 @@ export default function App() {
     ? <Title gs={savedGs} note={note} summary={summary} clearSummary={() => setSummary(null)}
         onInspect={openInspector}
         onContinue={() => { initAudio(); const rep = settleWithReturn(savedGs, Date.now()); save(savedGs); if (!savedGs.run) { setSummary(savedGs.profile.history[0]); return; } setReport(rep.lines.length || (rep.report && !rep.report.away.quiet) ? rep : null); enter(); }}
-        onStart={(c, region) => {
+        onStart={(c, region, layoutId) => {
           initAudio();
-          setActiveLayout(U05_WORLD_LAYOUT_ID);
+          setActiveLayout(layoutId || U05_WORLD_LAYOUT_ID);
           const res = dispatch(savedGs, mkIntent('startRun', { character: c, region }), Date.now());
           if (res.ok) {
             if (import.meta.env.VITE_FX_TEST === '1' && savedGs.run) {

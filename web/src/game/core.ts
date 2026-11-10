@@ -79,6 +79,14 @@ export interface Creature {
   /** Last justified physical checkpoint after offline activity was deferred. */
   offlineUnresolvedAt?: number;
   path: number[] | null; pathT: number; cd: number; kbx: number; kby: number; flash: number;
+  animTime?: number; animClip?: 'idle' | 'walk' | 'run' | 'attack' | 'attack2' | 'hurt' | 'death';
+  hurtUntil?: number; deadAt?: number; leashPx?: number; floor?: -1 | 0 | 1 | 2;
+  sideBoss?: { key: string; phase: number; moveIdx: number; leashPx: number };
+  husbandry?: {
+    tamed: boolean; following: boolean; penned?: boolean;
+    stage: 'juvenile' | 'adult'; hunger: number; hydration: number;
+    growth: number; breedProgress: number; produceProgress: number; sex?: 'f' | 'm';
+  };
   elder?: { key: string; awake: boolean; phase: number; pattern: number; special: number; shield?: number; submerged?: boolean };
   patternKey?: string; atk?: any; slow?: number; signatureBurnNext?: number; tornadoNext?: number; frozenUntil?: number; rootedUntil?:number; rootHitNext?:number; beamHitNext?:number;
 }
@@ -161,6 +169,10 @@ export interface RunState {
   veyraGlobalDiscovered?: Record<string, number>;
   veyraGlobalDepletedLoot?: Record<string, number>;
   veyraOffscreenEntities?: Record<string, Entity>;
+  veyraOffscreenCreatures?: Record<string, Creature>;
+  veyraSpawnedHabitats?: Record<string, number>;
+  sideBossDefeated?: Record<string, number>;
+  elderSchemaVersion?: 1 | 2;
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
   /** B05-R: oil sources keyed `oil:tx:ty`. Only a labelled test fixture authority exists today; production Map oil sites are NOT authorized (see balance oilPumpV1). */

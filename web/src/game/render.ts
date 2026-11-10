@@ -2,7 +2,10 @@ import * as pfx from './pixelfx';
 import * as comp from './compositor';
 // Canvas 2D renderer — draws authoritative state + observed effects. Never mutates game state.
 import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
-import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
+import { STRUCTS, ELDERS, PRIMORDIAL_ELDERS, lookupElderDef, CREATURES, ITEMS } from './catalog';
+import { hasCreatureAtlas, preloadCreatureAtlases, drawCreatureAtlasSprite } from './creature-sprites';
+import { isCreatureRenderedByPrimordialRig, renderPrimordialOverlay } from './primordials/host-bridge';
+import { getFrame as getPrimordialRasterFrame, frameRGBA } from './primordials/art/sprites';
 import { getWorld, getActiveLayout, SRC_KEYS, fbm } from './world';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
@@ -27,6 +30,28 @@ import { FX, PROJ, HAZ, activeStack } from './sim';
 import { getArt, pixelText, mk, type Sprite } from './art';
 
 const CH = 16; const chunkCache = new Map<number, HTMLCanvasElement>();
+let creatureAtlasesBooted = false;
+const primordialStandbyCache = new Map<string, HTMLCanvasElement>();
+function getPrimordialStandbySprite(key: string, awake: boolean, dead: boolean, frameIdx: number): HTMLCanvasElement | null {
+  const form = awake ? 'ultimate' : 'mini';
+  const clip = dead ? 'death' : 'idle';
+  const k = `${key}:${form}:${clip}:${frameIdx}`;
+  const hit = primordialStandbyCache.get(k);
+  if (hit) return hit;
+  try {
+    const rf = getPrimordialRasterFrame(key as any, form, clip, 'down', frameIdx);
+    const cv = document.createElement('canvas');
+    cv.width = rf.w; cv.height = rf.h;
+    const ctx = cv.getContext('2d')!;
+    const img = ctx.createImageData(rf.w, rf.h);
+    img.data.set(frameRGBA(rf));
+    ctx.putImageData(img, 0, 0);
+    primordialStandbyCache.set(k, cv);
+    return cv;
+  } catch {
+    return null;
+  }
+}
 let terrSig = ''; let terrSigT = 0; let lastRunId = '';
 // ---------- terrain palette ----------
 type RGB = [number, number, number];
@@ -204,6 +229,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   shake = Math.max(0, shake - dtMs * 0.02); const sx = shake > 0.3 ? Math.round((Math.random() - 0.5) * shake) : 0, sy = shake > 0.3 ? Math.round((Math.random() - 0.5) * shake) : 0;
   const cx = Math.round(cam.x) + sx, cy = Math.round(cam.y) + sy;
   g.save(); g.translate(-cx, -cy);
+  if (!creatureAtlasesBooted && typeof Image !== 'undefined') { creatureAtlasesBooted = true; preloadCreatureAtlases(); }
   life.setRun(r); life.beginFrame(r, now, time, cx, cy, dtMs); upgradeLivingArt(A);
   // terrain chunks
   const c0 = Math.floor(cx / (CH * TILE)), c1 = Math.floor((cx + VIEW_W) / (CH * TILE)), r0 = Math.floor(cy / (CH * TILE)), r1 = Math.floor((cy + VIEW_H) / (CH * TILE));
@@ -288,6 +314,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     else { g.strokeStyle = '#ffb040'; g.setLineDash([2, 2]); g.strokeRect(tx * 16 + 0.5, ty * 16 + 0.5, 15, 15); g.setLineDash([]); } }
   if (o.target) { const bob = Math.round(Math.sin(time / 160) * 1.5); g.fillStyle = '#ffe27a'; const X = Math.round(o.target.x), Y = Math.round(o.target.y) - 20 + bob; g.fillRect(X - 2, Y, 5, 1); g.fillRect(X - 1, Y + 1, 3, 1); g.fillRect(X, Y + 2, 1, 1); }
   g.restore();
+  renderPrimordialOverlay(g, r, cx, cy);
   comp.drawAuras(g,{x:cx,y:cy});comp.drawWarpPass(g,{x:cx,y:cy},now);comp.drawScreen(g);
   // weather & light (screen space)
   life.heatShimmer(g);
@@ -422,7 +449,26 @@ function drawFlame(g: CanvasRenderingContext2D, x: number, y: number, time: numb
 function drawCreature(g: CanvasRenderingContext2D, r: RunState, m: Creature, time: number, now: number) {
   const A = getArt(); const X = Math.round(m.x), Y = Math.round(m.y);
   if (m.elder) {
-    const d = ELDERS[m.elder.key]; const set = A.elder[m.elder.key]; const aw = m.elder.awake;
+    if (isCreatureRenderedByPrimordialRig(r, m)) {
+      if ((m.rootedUntil||0)>now) g.drawImage(A.st.rootwall, X - 8, Y - 7);
+      if ((m.frozenUntil||0)>now) { g.save(); g.globalAlpha = 0.7; g.drawImage(A.st.icepillar, X - 8, Y - 18); g.restore(); }
+      return;
+    }
+    if (PRIMORDIAL_ELDERS[m.elder.key]) {
+      const pd = PRIMORDIAL_ELDERS[m.elder.key];
+      const fIdx = m.state === 'dead' ? Math.min(3, Math.floor(m.t / 320)) : (Math.floor(time / 420) % 2);
+      const spr = getPrimordialStandbySprite(m.elder.key, m.elder.awake, m.state === 'dead', fIdx);
+      if (spr) {
+        shadow(g, X, Y + 5, pd.r + 3);
+        g.save();
+        if (m.state === 'dead') g.globalAlpha = Math.max(0, 1 - m.t / 1800);
+        g.drawImage(spr, Math.round(X - spr.width / 2), Math.round(Y + 6 - spr.height));
+        g.restore();
+      }
+      if (m.state === 'sleep') { const z = Math.floor(time / 700) % 3; g.fillStyle = '#c0d0ff'; g.fillRect(X + 10 + z * 3, Y - 40 - z * 4, 3, 1); g.fillRect(X + 12 + z * 3, Y - 39 - z * 4, 1, 1); g.fillRect(X + 10 + z * 3, Y - 38 - z * 4, 3, 1); }
+      return;
+    }
+    const d = ELDERS[m.elder.key]; const set = A.elder[m.elder.key]; if (!d || !set) return; const aw = m.elder.awake;
     if (m.state === 'dead') { if (m.t < 1500) { g.globalAlpha = 1 - m.t / 1500; g.drawImage(set.lidle[0], X - 24, Y - 40); g.globalAlpha = 1; } return; }
     if (m.elder.submerged) { for (let i = 0; i < 3; i++) pixCircle(g, X, Y, 6 + ((time / 60 + i * 8) % 22), 'rgba(200,220,240,0.6)', 2); return; }
     let spr = m.state === 'sleep' ? set.sleep[0] : m.state === 'tell' ? set[(aw ? 'a' : 'l') + 'tell'][0] : set[(aw ? 'a' : 'l') + 'idle'][Math.floor(time / 380) % 2];
@@ -432,11 +478,38 @@ function drawCreature(g: CanvasRenderingContext2D, r: RunState, m: Creature, tim
     if (aw && Math.random() < 0.4) add({ x: X + (Math.random() - 0.5) * 36, y: Y - Math.random() * 30, vx: 0, vy: -14, col: d.color, max: 800, s: 1, g: -6 });
     if (m.atk?.vuln > 0) { pixCircle(g, X, Y - 16, 22 + Math.sin(time / 80) * 2, '#ffe070', 2); }
     if ((m.rootedUntil||0)>now) g.drawImage(A.st.rootwall,X-8,Y-7);
-  if ((m.frozenUntil||0)>now) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-18);g.restore();}
+    if ((m.frozenUntil||0)>now) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-18);g.restore();}
     if (m.state === 'sleep') { const z = Math.floor(time / 700) % 3; g.fillStyle = '#c0d0ff'; g.fillRect(X + 10 + z * 3, Y - 40 - z * 4, 3, 1); g.fillRect(X + 12 + z * 3, Y - 39 - z * 4, 1, 1); g.fillRect(X + 10 + z * 3, Y - 38 - z * 4, 3, 1); }
     return;
   }
-  const set = A.cre[m.type]; if (!set) return; const d = CREATURES[m.type];
+  const d = CREATURES[m.type]; if (!d) return;
+  if (hasCreatureAtlas(m.type) && (!A.cre[m.type] || (r.layoutId && isVeyra05Layout(r.layoutId)))) {
+    shadow(g, X, Y + 3, Math.max(4, Math.round(d.r * (m.husbandry?.stage === 'juvenile' ? 0.65 : 0.9))));
+    const jx = m.state === 'tell' ? Math.round(Math.sin(time / 25)) : 0;
+    const drawn = drawCreatureAtlasSprite(g, m, X + jx, Y, r.clock.simMs / 1000);
+    if (!drawn) {
+      // Streaming fallback on very first network frame before PNG decodes
+      g.fillStyle = (d as any).color || '#8a7a6a';
+      g.beginPath(); g.arc(X, Y - 6, d.r, 0, Math.PI * 2); g.fill();
+    }
+    if ((m.rootedUntil||0)>now) g.drawImage(A.st.rootwall, X - 8, Y - 7);
+    if ((m.frozenUntil||0)>now) { g.save(); g.globalAlpha = 0.7; g.drawImage(A.st.icepillar, X - 8, Y - 14); g.restore(); }
+    if (m.knows?.kind === 'stimulus' && m.state !== 'dead' && clearPhysicalLine(r, r.player, m, true, true)) pixelText(g, '?', X - 2, Y - 25, '#ffe59a');
+    if (m.state === 'tell' && (d.style === 'charge' || d.style === 'sideboss_maid' || d.style === 'sideboss_ronin')) pixLine(g, X, Y, X + Math.cos(m.angle) * 68, Y + Math.sin(m.angle) * 68, 'rgba(255,90,60,0.4)');
+    if (m.atk?.vuln > 0 && m.state !== 'dead') pixCircle(g, X, Y - 10, 15 + Math.sin(time / 80) * 1.5, '#ffe070', 2);
+    if (m.husbandry?.tamed && m.state !== 'dead') {
+      // Subtle tamed collar pip (green when penned/fed, cyan when following, red when hungry/thirsty)
+      const col = (m.husbandry.hunger <= 10 || m.husbandry.hydration <= 10) ? '#ff5a4a' : m.husbandry.following ? '#66e0ff' : m.husbandry.penned ? '#8cff7a' : '#ffd25a';
+      g.fillStyle = '#140c14'; g.fillRect(X - 2, Y - 19, 5, 3);
+      g.fillStyle = col; g.fillRect(X - 1, Y - 18, 3, 1);
+    }
+    if (m.hp < m.maxHp && m.state !== 'dead' && !m.sideBoss) {
+      g.fillStyle = '#140c14'; g.fillRect(X - 7, Y - 22, 14, 3);
+      g.fillStyle = '#e04a3a'; g.fillRect(X - 6, Y - 21, Math.max(0, Math.round(12 * m.hp / m.maxHp)), 1);
+    }
+    return;
+  }
+  const set = A.cre[m.type]; if (!set) return;
   if (m.atk?.burrow) { g.fillStyle = '#5a4a3a'; g.fillRect(X - 4, Y + 2, 8, 2); g.fillStyle = '#7a6a50'; g.fillRect(X - 3, Y + 1, 6, 1); if (Math.random() < 0.5) add({ x: X, y: Y + 2, vx: (Math.random() - 0.5) * 30, vy: -20, col: '#6a5a4a', max: 300, s: 1, g: 100 }); return; }
   let spr: Sprite; let a = 1;
   if (m.state === 'dead') { spr = set.walk[0]; a = Math.max(0, 1 - m.t / 1600); }

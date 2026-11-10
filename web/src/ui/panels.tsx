@@ -323,7 +323,7 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
 export const BUILD_GROUPS: Record<string,string[]> = {
   Shell:['claim','floor_wood','floor_stone','wall_wood','wall_plank','wall_stone','wall_brick','door_wood','door_iron','roof_thatch','roof_tile'],
   Home:['bed_straw','chest_small','chest_large','escrow'],
-  Work:['campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','farm_controller'],
+  Work:['campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','feed_trough','farm_controller'],
   Defense:['base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','door_powered','arrow_turret','spikes','barricade','torch_post'],
 };
 /** Oil Pump is locked until the run holds an authorized source with stock; the reason is shown on the entry. */

@@ -4,7 +4,8 @@ import * as pfx from '../game/pixelfx';
 import { pfxFromSimEvent } from '../game/pixelfxMap';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { BAL, TILE, WW, VIEW_W, VIEW_H, HOUR, type GameState } from '../game/core';
-import { ITEMS, STRUCTS, ELDERS, CREATURES, STRUCTURE_UPGRADES } from '../game/catalog';
+import { ITEMS, STRUCTS, ELDERS, lookupElderDef, CREATURES, STRUCTURE_UPGRADES } from '../game/catalog';
+import { TAMING_SPECIES } from '../game/husbandry';
 import { dispatch, markDirty, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, cartLimit, effTile, isRagnarok, buildReason, clearWallLine, claimAt, territoryForecast } from '../game/engine';
 import { tick, syncWorld, findInteract, activeStack, SPEED_KEY, rayLen, spiritDestination, type Input, type Interact } from '../game/sim';
 import { draw, consumeFX, cam, resetRenderCaches } from '../game/render';
@@ -72,6 +73,19 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
   useEffect(() => { const fit = () => { const W = window.innerWidth, H = window.innerHeight; let s = Math.floor(Math.min(W / VIEW_W, H / VIEW_H)); if (s < 1) s = Math.min(W / VIEW_W, H / VIEW_H); setScale(s); setOff({ x: Math.floor((W - VIEW_W * s) / 2), y: Math.floor((H - VIEW_H * s) / 2) }); }; fit(); window.addEventListener('resize', fit); return () => window.removeEventListener('resize', fit); }, []);
   const scaleRef = useRef(scale); scaleRef.current = scale; const offRef = useRef(off); offRef.current = off;
 
+  const findNearAnimal = (r: NonNullable<GameState['run']>) => {
+    if (r.player.dead) return null;
+    let best: typeof r.creatures[number] | null = null;
+    let bestD = 2.8 * TILE;
+    for (const m of r.creatures) {
+      if (m.state === 'dead' || ((m as any).floor ?? 0) !== activeFloor(r)) continue;
+      if (!m.husbandry?.tamed && !TAMING_SPECIES[m.type]) continue;
+      const d = Math.hypot(m.x - r.player.x, m.y - r.player.y);
+      if (d < bestD) { bestD = d; best = m; }
+    }
+    return best;
+  };
+
   const interact = () => {
     const r = gs.run; if (!r) return;
     if (r.layoutId?.startsWith('veyra05-') && !r.player.dead && !panelRef.current) {
@@ -89,7 +103,14 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         }
       }
     }
-    const t = target.current; if (!t) return;
+    const t = target.current;
+    if (!t) {
+      const anim = findNearAnimal(r);
+      if (anim) {
+        act('husbandry', { cid: anim.id, op: anim.husbandry?.tamed ? 'lead' : 'tame' });
+      }
+      return;
+    }
     const e = t.eid ? r.entities[t.eid] : null;
     switch (t.kind) {
       case 'fire': act('douseTree', { tx: Math.floor(t.x/16), ty: Math.floor(t.y/16) }); return;
@@ -144,6 +165,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         case 'KeyU': setPanel(null); setUpgradeMode(v => !v); setBuildType(null); setReclaim(false); setRepairMode(false); break;
         case 'KeyX': setPanel(null); setUpgradeMode(false); setReclaim(v => !v); setBuildType(null); setRepairMode(false); break;
         case 'KeyV': setPanel(null); setUpgradeMode(false); setRepairMode(v => !v); setBuildType(null); setReclaim(false); break;
+        case 'KeyT': { const anim = findNearAnimal(r); if (anim && !panelRef.current) act('husbandry', { cid: anim.id, op: e.shiftKey ? 'butcher' : anim.husbandry?.tamed ? 'lead' : 'tame' }); break; }
         case 'KeyR': { const selected=activeStack(r); if(selected && ITEMS[selected.key]?.creatorCore && !panelRef.current){act('loadCore',{slot:r.player.active,uid:selected.uid,mode:e.altKey?'signature':e.shiftKey?'refined':'basic'});break;} const t = Object.values(r.entities).find(x => x.type === 'research' && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 3 * TILE && clearWallLine(r, r.player, x)); if (t) setPanel({ kind: 'container', eid: t.id }); else toast('Research needs a Research Table within reach.'); break; }
         case 'Escape': if(coreAimRef.current || (r.player.action?.kind==='cast' && !r.player.action.done)){coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel=true;break;} if (buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) { setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); } else if (panelRef.current) setPanel(null); else setPanel({ kind: 'menu' }); setSel(null); break;
         default: if (/^Digit[1-8]$/.test(e.code)) { r.player.active = +e.code.slice(5) - 1; rerender(); }
@@ -229,7 +251,12 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;
   const w = weatherAt(r, now); const slot = Math.floor((now - r.startedAt + r.qaOffset) / (BAL.weather.slotMinutes * 60000)); const next = weatherSlot(r.seed, slot + 1);
   const WICON: Record<string, string> = { clear: '☀', cloudy: '☁', rain: '☂', storm: '⚡', fog: '≋' };
-  const engaged = r.creatures.find(m => m.elder && ((m as any).floor ?? 0) === activeFloor(r) && m.state !== 'sleep' && m.state !== 'dead' && Math.hypot(m.x - p.x, m.y - p.y) < 240);
+  const engaged = r.creatures.find(m =>
+    ((m as any).floor ?? 0) === activeFloor(r) &&
+    m.state !== 'sleep' && m.state !== 'dead' &&
+    Math.hypot(m.x - p.x, m.y - p.y) < 260 &&
+    (m.elder || (m.sideBoss && (m.knows?.kind === 'sight' || m.hp < m.maxHp)))
+  );
   const cart = p.pulling ? r.entities[p.pulling] : null;
   const bike=p.vehicle ? r.entities[p.vehicle] : null;
   const isVeyra05 = !!r.layoutId?.startsWith('veyra05-');
@@ -243,9 +270,10 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
     }
     return null;
   })();
+  const nearAnimal = findNearAnimal(r);
   const tgt = target.current; const targetEntity = tgt?.eid ? r.entities[tgt.eid] : undefined;
   const targetHp = targetEntity?.kind === 'struct' && targetEntity.hp !== undefined && targetEntity.maxHp !== undefined && targetEntity.hp < targetEntity.maxHp ? ` · HP ${Math.ceil(targetEntity.hp)}/${targetEntity.maxHp}` : '';
-  const ts = tgt ? { x: tgt.x - Math.round(cam.x), y: tgt.y - Math.round(cam.y) } : nearStair ? { x: nearStair.x - Math.round(cam.x), y: nearStair.y - Math.round(cam.y) } : null;
+  const ts = tgt ? { x: tgt.x - Math.round(cam.x), y: tgt.y - Math.round(cam.y) } : nearStair ? { x: nearStair.x - Math.round(cam.x), y: nearStair.y - Math.round(cam.y) } : nearAnimal ? { x: nearAnimal.x - Math.round(cam.x), y: nearAnimal.y - Math.round(cam.y) } : null;
   const zone = veyraWw && activeFloor(r) !== 0 ? storeyLabel(veyraWw.floors, r) : (getWorld().zoneNames || ZONES)[getWorld().zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]];
   const hoverX=Math.floor((mouse.current.x+Math.round(cam.x))/TILE), hoverY=Math.floor((mouse.current.y+Math.round(cam.y))/TILE);
   const layers=['wall','obj','roof','floor']; const hover=entsAt(r,hoverX,hoverY).filter(e=>e.kind==='struct'&&(editLayer==='auto'||STRUCTS[e.type!].layer===editLayer)&&(!upgradeMode||!!STRUCTURE_UPGRADES[e.type!])).sort((a,b)=>layers.indexOf(STRUCTS[a.type!].layer)-layers.indexOf(STRUCTS[b.type!].layer))[0];
@@ -273,13 +301,19 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       {Object.values(r.entities).filter(e=>e.kind==='airdrop'&&e.airdrop).map(e=>{ const v=airdropView(e.airdrop!,e.tx!,e.ty!,now,C(r,e.c!).slots.filter(Boolean).length); const col=v.key==='locked'?'#ffb0a0':v.takeable?'#9ae0a0':'#ffd98a'; return <div key={e.id} data-testid="airdrop-banner" data-phase={v.key} className="panel absolute" style={{left:165,top:5,padding:'2px 6px',fontSize:11,lineHeight:1.1,color:col,pointerEvents:'none',maxWidth:340}}><b>{v.label}</b> <span style={{color:'#d8cce4'}}>· {v.detail}</span></div>; })}
       {!panel && <HomeStatusCard r={r} px={p.x} py={p.y} />}
       <ThermalStatusCard r={r} now={now} hidden={!!panel} />
-      {engaged && (() => { const d = ELDERS[engaged.elder!.key]; return <div className="absolute" style={{ left: 170, top: 6, width: 300, textAlign: 'center' }}><div className="title-font" style={{ fontSize: 10, color: d.color, textShadow: '1px 1px 0 #000' }}>{d.name} <span style={{ color: '#cfc2dc', fontSize: 9 }}>— {engaged.elder!.awake ? 'awakened' : 'latent'}</span></div><div className="bar" style={{ width: 300, height: 6 }}><i style={{ width: `${(engaged.hp / engaged.maxHp) * 100}%`, background: `linear-gradient(${d.color}, #8a2a1a)` }} /></div></div>; })()}
+      {engaged && (() => {
+        const d = engaged.elder ? lookupElderDef(engaged.elder.key) : CREATURES[engaged.type];
+        if (!d) return null;
+        const barCol = (d as any).color || '#f0a060';
+        const subtitle = engaged.elder ? (engaged.elder.awake ? 'awakened' : 'latent') : 'regional guardian';
+        return <div className="absolute" style={{ left: 170, top: 6, width: 300, textAlign: 'center' }}><div className="title-font" style={{ fontSize: 10, color: barCol, textShadow: '1px 1px 0 #000' }}>{d.name} <span style={{ color: '#cfc2dc', fontSize: 9 }}>— {subtitle}</span></div><div className="bar" style={{ width: 300, height: 6 }}><i style={{ width: `${Math.max(0, Math.min(100, (engaged.hp / engaged.maxHp) * 100))}%`, background: `linear-gradient(${barCol}, #8a2a1a)` }} /></div></div>;
+      })()}
       {banner && <div key={banner.id} className="absolute banner" style={{ left: 0, right: 0, top: 70, textAlign: 'center', pointerEvents: 'none' }} onAnimationEnd={() => setBanner(null)}><div className="title-font" style={{ fontSize: 22, color: '#ffe8b0', textShadow: '2px 2px 0 #2a1006, 0 0 8px #ff9a3a' }}>{banner.text}</div>{banner.sub && <div style={{ fontSize: 12, color: '#e0d0f0', textShadow: '1px 1px 0 #000' }}>{banner.sub}</div>}</div>}
       {coreAim && ['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature' && <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><rect x="2" y="2" width={VIEW_W-4} height={VIEW_H-4} fill="none" stroke="#ffd98a" strokeDasharray="4 3"/></svg>}
       {coreAim && !(activeStack(r)?.key==='core_demon' && coreAim.mode==='signature') && !(['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature') && (()=>{const px=p.x-Math.round(cam.x),py=p.y-Math.round(cam.y),len=rayLen(r,p.x,p.y,p.aim,['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'')?Math.min(activeStack(r)?.key==='core_meteor'?180:157,Math.hypot(mouse.current.x+Math.round(cam.x)-p.x,mouse.current.y+Math.round(cam.y)-p.y)):coreAim.mode==='refined'?120:195);return <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><line x1={px} y1={py} x2={px+Math.cos(p.aim)*len} y2={py+Math.sin(p.aim)*len} stroke="#ffd98a" strokeWidth="1" strokeDasharray="4 3"/><circle cx={px+Math.cos(p.aim)*len} cy={py+Math.sin(p.aim)*len} r="4" fill="none" stroke="#ffd98a"/></svg>;})()}
       {coreAim && <div className="panel absolute" style={{left:220,top:38,padding:'2px 6px',fontSize:10,pointerEvents:'none'}}> {activeStack(r)?.key==='core_meteor' ? (coreAim.mode==='refined'?'Q: targeted meteor':'E: ten meteors in view') : activeStack(r)?.key==='core_dragon' ? (coreAim.mode==='refined'?'Q: fire tornado':'E: collect visible eligible foes') : activeStack(r)?.key==='core_demon' ? (coreAim.mode==='refined'?'Q: stationary beam':spiritTarget.current?.uid===activeStack(r)?.uid?'E: selected map destination':'E: select destination on M map') : activeStack(r)?.key==='core_mjolnir' ? (coreAim.mode==='refined'?'Q: five lightning strikes':'E: electrical attraction') : activeStack(r)?.key==='core_earthmother' ? (coreAim.mode==='refined'?'Q: ten trees on open ground':'E: binding roots and grass') : activeStack(r)?.key==='core_elsa' ? (coreAim.mode==='refined'?'Q: one-second ice ward':'E: freeze visible terrain') : (coreAim.mode==='refined'?'Q: timed bomb · release to throw':'E: burning projectile · release to cast')} · RMB/Esc cancel</div>}
       {/* interaction prompt */}
-      {(tgt || nearStair) && ts && !panel && <div className="absolute" style={{ left: Math.round(ts.x), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', fontSize: 10, background: '#120c18e0', border: '1px solid #5a4a6a', padding: '0 4px', whiteSpace: 'nowrap', pointerEvents: 'none' }}><span style={{ color: '#ffe27a' }}>{bike ? '[F]' : '[F/E]'}</span> {tgt ? tgt.label : nearStair!.stair.label}{targetHp && <span style={{ color: '#ffb66a' }}>{targetHp}</span>}</div>}
+      {(tgt || nearStair || nearAnimal) && ts && !panel && <div className="absolute" style={{ left: Math.round(ts.x), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', fontSize: 10, background: '#120c18e0', border: '1px solid #5a4a6a', padding: '0 4px', whiteSpace: 'nowrap', pointerEvents: 'none' }}><span style={{ color: '#ffe27a' }}>{bike ? '[F]' : tgt || nearStair ? '[F/E]' : '[T/E]'}</span> {tgt ? tgt.label : nearStair ? nearStair.stair.label : nearAnimal!.husbandry?.tamed ? `${nearAnimal!.husbandry.following ? 'Release' : 'Lead'} ${CREATURES[nearAnimal!.type]?.name || nearAnimal!.type} · [Shift+T] Butcher` : `Feed ${CREATURES[nearAnimal!.type]?.name || nearAnimal!.type}`}{targetHp && <span style={{ color: '#ffb66a' }}>{targetHp}</span>}</div>}
       {/* build helper */}
       {(buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 34, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {STRUCTS[buildType].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||(buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:'Placement allowed · unprotected, decays in ~2h')} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
       {/* cargo */}

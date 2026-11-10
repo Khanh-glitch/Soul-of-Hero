@@ -25,6 +25,8 @@ import {
   instantiateVeyraStatic, syncDepletedLootToGlobal, projectDepletedLootFromGlobal,
 } from './floors';
 import { getWindowWorld, resetWindowToGround } from './window';
+import { syncVeyraEcosystemActors } from './ecosystem';
+import { cleanupPrimordialBoss } from '../game/primordials/host-bridge';
 
 const EDGE_MARGIN = 24; // tiles from local window edge before sliding
 const SLIDE_STEP = 64;  // 2 chunks (32 AU), leaving 136 tiles of overlap
@@ -150,18 +152,8 @@ export function shiftVeyraWindowBy(
     .map(tr => ({ ...tr, x: tr.x - pxShift, y: tr.y - pyShift }))
     .filter(tr => tr.x >= 0 && tr.y >= 0 && tr.x < WW * TILE && tr.y < WH * TILE);
 
-  r.creatures = r.creatures
-    .map(m => ({
-      ...m,
-      x: m.x - pxShift,
-      y: m.y - pyShift,
-      homeX: m.homeX - pxShift,
-      homeY: m.homeY - pyShift,
-      tx: m.tx - dx,
-      ty: m.ty - dy,
-      path: null,
-    }))
-    .filter(m => m.x >= -12 * TILE && m.y >= -12 * TILE && m.x < (WW + 12) * TILE && m.y < (WH + 12) * TILE);
+  // Clean up any ephemeral Primordial combat entities before shifting world coordinates
+  cleanupPrimordialBoss(r, undefined, 'window shift');
 
   // Entities: remove old ground POI doors; shift or archive non-door entities; restore re-entering entities
   const offscreen = (r.veyraOffscreenEntities ??= {});
@@ -259,8 +251,9 @@ export function shiftVeyraWindowBy(
     }
   }
 
-  // 4b. VEYRA05: reinstall the active storey of the new window
+  // 4b. VEYRA05: reinstall the active storey of the new window & archive/restore/seed global ecosystem actors
   syncFloor(gs, nww, nww.floors, markDirtyFn);
+  syncVeyraEcosystemActors(r, nww, ox, oy, newOx, newOy);
   // 5. Mark collision dirty & shift camera seamlessly
   markDirtyFn();
   for (const fn of shiftListeners) fn(dx, dy);

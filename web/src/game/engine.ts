@@ -12,7 +12,7 @@ import { creatorLootV1 } from './creator-loot';
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
-import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
+import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -21,6 +21,9 @@ import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from '../veyra05/scenes';
 import { getWindowWorld, resetWindowToGround } from '../veyra05/window';
 import { activeFloor, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
 import { windowOrigin } from '../veyra05/continuity';
+import { syncVeyraEcosystemActors } from '../veyra05/ecosystem';
+import { cleanupPrimordialBoss } from './primordials/host-bridge';
+import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, inspectPenAt } from './husbandry';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
 
@@ -243,10 +246,20 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   }
   r.wreckEconomy = wreckEconomy(r);
   // creatures (deterministic per run seed) + elders
-  for (let k = 0; k < 900 && r.creatures.length < 150; k++) trySpawnCreature(r, now, sp.tx * TILE, sp.ty * TILE, 16);
-  for (const p of w.elders) {
-    const d = ELDERS[p.id];
-    r.creatures.push(mkCreature(r, 'elder_' + p.id, p.tx * TILE + 8, p.ty * TILE + 8, d.hpLatent, { key: p.id, awake: false, phase: 0, pattern: 0, special: 0 }));
+  if (r.layoutId && isVeyra05Layout(r.layoutId)) {
+    r.elderSchemaVersion = 2;
+    r.veyraOffscreenCreatures = {};
+    r.veyraSpawnedHabitats = {};
+    r.sideBossDefeated = {};
+    const [ox, oy] = windowOrigin(r);
+    const vww = getWindowWorld(r.layoutId);
+    syncVeyraEcosystemActors(r, vww, ox, oy, ox, oy);
+  } else {
+    for (let k = 0; k < 900 && r.creatures.length < 150; k++) trySpawnCreature(r, now, sp.tx * TILE, sp.ty * TILE, 16);
+    for (const p of w.elders) {
+      const d = ELDERS[p.id];
+      r.creatures.push(mkCreature(r, 'elder_' + p.id, p.tx * TILE + 8, p.ty * TILE + 8, d.hpLatent, { key: p.id, awake: false, phase: 0, pattern: 0, special: 0 }));
+    }
   }
   gs.run = r; markDirty(); gs.revision++;
   pushLog(r, now, `You wash up near ${sp.name}. No one is coming to tell you what to do.`, 'gold');
@@ -256,17 +269,35 @@ export function mkCreature(r: RunState, type: string, x: number, y: number, hp: 
   return { id: uid(r, 'm'), type, x, y, hp, maxHp: hp, homeX: x, homeY: y, state: elder ? 'sleep' : 'wander', t: 0, tx: x, ty: y, angle: 0, dir: 0, knows: null, path: null, pathT: 0, cd: 0, kbx: 0, kby: 0, flash: 0, elder };
 }
 const BIOME_CREATURE: Record<number, string[]> = { [T.FOREST]: ['wolf', 'boar'], [T.GRASS]: ['boar'], [T.MEADOW]: ['boar'], [T.MARSH]: ['toad'], [T.TOXIC]: ['crawler'], [T.ASH]: ['beetle'], [T.SAND]: ['crab'], [T.SNOW]: ['wolf'], [T.HILL]: ['wolf'] };
+const VEYRA_BIOME_CREATURE: Record<number, string[]> = {
+  [T.FOREST]: ['vampire_1', 'boar', 'deer', 'fox'],
+  [T.GRASS]: ['boar', 'hare', 'grouse', 'deer'],
+  [T.MEADOW]: ['deer', 'hare', 'grouse', 'boar'],
+  [T.MARSH]: ['slime_1', 'slime_2', 'grouse'],
+  [T.TOXIC]: ['slime_2', 'vampire_2'],
+  [T.ASH]: ['slime_3', 'orc_2'],
+  [T.SAND]: ['orc_1', 'slime_1'],
+  [T.SNOW]: ['vampire_3', 'orc_3'],
+  [T.HILL]: ['orc_2', 'orc_3', 'deer'],
+};
 export function trySpawnCreature(r: RunState, _now: number, avoidX: number, avoidY: number, avoidTiles: number) {
+  const isVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
+  if (isVeyra && activeFloor(r) !== 0) return false;
   const w = getWorld();
   const tx = 3 + Math.floor(rngNext(r) * (WW - 6)), ty = 3 + Math.floor(rngNext(r) * (WH - 6));
-  const t = effTile(r, tx, ty); const opts = BIOME_CREATURE[t]; if (!opts) return false;
+  const t = effTile(r, tx, ty);
+  const opts = (isVeyra ? VEYRA_BIOME_CREATURE : BIOME_CREATURE)[t];
+  if (!opts) return false;
   if (Math.hypot(tx * TILE - avoidX, ty * TILE - avoidY) < avoidTiles * TILE) return false;
   for (const s of w.starts) if (Math.hypot(s.tx - tx, s.ty - ty) < 12) return false;
   if (blockedAt(r, tx, ty)) return false;
   for (const e of Object.values(r.entities)) if (e.kind === 'struct' && e.type === 'claim' && Math.hypot(e.tx! - tx, e.ty! - ty) < BAL.economy.claimSpawnExclusionTiles) return false;
   const type = opts[Math.floor(rngNext(r) * opts.length)];
   const d = CREATURES[type];
-  r.creatures.push(mkCreature(r, type, tx * TILE + 8, ty * TILE + 8, d.hp));
+  if (!d) return false;
+  const cr = mkCreature(r, type, tx * TILE + 8, ty * TILE + 8, d.hp);
+  if (isVeyra) cr.floor = 0;
+  r.creatures.push(cr);
   return true;
 }
 
@@ -1051,14 +1082,36 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
 }
 
 export function killCreature(gs: GameState, m: Creature, now: number) {
-  const r = gs.run!; m.state = 'dead'; m.t = 0;
+  const r = gs.run!; m.state = 'dead'; m.t = 0; m.deadAt = r.clock.simMs / 1000;
   if (m.elder) {
-    const d = ELDERS[m.elder.key]; spawnDrop(r, d.stone, 1, m.x, m.y, now);
+    const d = lookupElderDef(m.elder.key);
+    cleanupPrimordialBoss(r, m.id, 'defeat');
+    if (!d) return;
+    spawnDrop(r, d.stone, 1, m.x, m.y, now);
     spawnDrop(r, 'spares', 6, m.x, m.y, now); spawnDrop(r, 'crystal', 2, m.x, m.y, now);
     receipt(r, now, 'elder.defeat', m.elder.key); pushLog(r, now, `${d.name} falls. Its stone lies in the dust.`, 'gold'); award(gs, 'elder_1', now);
   } else {
     const d = CREATURES[m.type]; if (!d) return;
-    for (const [k, q, ch] of d.drops) if (rngNext(r) < ch) spawnDrop(r, k, q, m.x, m.y, now);
+    const rag = isRagnarok(r, now);
+    if (m.sideBoss) {
+      const defMap = (r.sideBossDefeated ??= {});
+      const alreadyDefeated = (defMap[m.sideBoss.key] || 0) > 0;
+      defMap[m.sideBoss.key] = (defMap[m.sideBoss.key] || 0) + 1;
+      if (d.uniqueDrop && !alreadyDefeated) {
+        spawnDrop(r, d.uniqueDrop, 1, m.x, m.y, now);
+      }
+      for (const [k, q, ch] of d.drops) {
+        if (k === 'cash' && rag) continue;
+        if (rngNext(r) < ch) spawnDrop(r, k, q, m.x, m.y, now);
+      }
+      receipt(r, now, 'boss.defeat', m.sideBoss.key);
+      pushLog(r, now, `${d.name} has been slain.`, 'gold');
+    } else {
+      for (const [k, q, ch] of d.drops) {
+        if (k === 'cash' && rag) continue;
+        if (rngNext(r) < ch) spawnDrop(r, k, q, m.x, m.y, now);
+      }
+    }
     r.player.skills.combat += 2;
   }
 }
@@ -1221,7 +1274,17 @@ export function endRun(gs: GameState, ending: 'evacuated' | 'abandoned' | 'expir
   markDirty(); gs.revision++;
   return { ok: true, receipt: `end:${r.id}` };
 }
-export function countStones(r: RunState) { const keys = Object.values(ELDERS).map(e => e.stone); let n = 0; for (const c of Object.values(r.custody)) for (const s of c.slots) if (s && keys.includes(s.key)) n++; return n; }
+export function countStones(r: RunState) {
+  const seen = new Set<string>();
+  for (const c of Object.values(r.custody)) {
+    for (const s of c.slots) {
+      if (!s) continue;
+      const dom = elderStoneDomain(s.key);
+      if (dom) seen.add(dom);
+    }
+  }
+  return seen.size;
+}
 
 // ---------------- build validation (C07) ----------------
 
@@ -1352,6 +1415,69 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'respawn': return respawn(gs, now);
     case 'restStart': return startRest(gs, it, now);
     case 'restCancel': { if (!r.rest) return { ok: false, reason: 'You are not resting.' }; endRest(r, now, 'woke by choice'); return { ok: true, receipt: receipt(r, now, 'rest.cancel', it.id), msg: 'You wake up.' }; }
+    case 'husbandry': {
+      if (p.dead) return fail('You are dead.');
+      const m = r.creatures.find(c => c.id === it.cid && c.state !== 'dead' && ((c as any).floor ?? 0) === activeFloor(r));
+      if (!m) return fail('Animal is not here.');
+      if (dist(p.x, p.y, m.x, m.y) > 3.2 * TILE) return fail('Move closer to the animal.');
+      const op = it.op as string;
+      if (op === 'tame') {
+        const spec = TAMING_SPECIES[m.type];
+        if (!spec) return fail('That creature cannot be tamed.');
+        if (m.husbandry?.tamed) return fail('Already tamed.');
+        const feedKey = spec.preferredFoods.find((k: string) => countItem(r, 'inv', k) > 0);
+        if (!feedKey) return fail(`Needs ${spec.preferredFoods.map((k: string) => ITEMS[k]?.name || k).join(' or ')}.`);
+        removeItem(r, 'inv', feedKey, 1);
+        const prevProg = typeof m.atk?.tameProg === 'number' ? m.atk.tameProg : 0;
+        const nextProg = Math.min(1, prevProg + 1 / Math.max(1, spec.feedingsToTame));
+        m.knows = null;
+        m.state = 'idle';
+        if (nextProg >= 0.999) {
+          if (m.atk) delete m.atk.tameProg;
+          m.husbandry = createTamedState(rngNext(r) < 0.5 ? 'f' : 'm');
+          pushLog(r, now, `Tamed ${CREATURES[m.type]?.name || m.type}! Use a Lead Rope to bring it to an enclosed pen.`, 'gold');
+          return ok('husbandry.tame', `${m.id}:tamed:${feedKey}`, `Tamed ${CREATURES[m.type]?.name || m.type}!`);
+        }
+        m.atk = { ...(m.atk || {}), tameProg: nextProg };
+        return ok('husbandry.feed', `${m.id}:${Math.round(nextProg * 100)}:${feedKey}`, `Fed ${CREATURES[m.type]?.name || m.type} (${Math.round(nextProg * 100)}%).`);
+      }
+      if (!m.husbandry?.tamed) return fail('Tame the animal first.');
+      if (op === 'lead') {
+        if (!m.husbandry.following && countItem(r, 'inv', 'lead_rope') < 1) {
+          return fail('Craft or hold a Lead Rope in your inventory to lead livestock.');
+        }
+        m.husbandry.following = !m.husbandry.following;
+        if (m.husbandry.following) {
+          m.husbandry.penned = false;
+          return ok('husbandry.lead', `${m.id}:follow`, `${CREATURES[m.type]?.name || m.type} is following you.`);
+        }
+        const pen = inspectPenAt(r, Math.floor(m.x / TILE), Math.floor(m.y / TILE));
+        m.husbandry.penned = pen.enclosed;
+        m.homeX = m.x; m.homeY = m.y;
+        if (pen.enclosed) {
+          return ok('husbandry.release', `${m.id}:penned`, `Released into enclosed pen (${pen.tiles.size} tiles).`);
+        }
+        return ok('husbandry.release', `${m.id}:open`, 'Released outside an enclosed pen — build walls/fences and a closed gate to secure it!');
+      }
+      if (op === 'release') {
+        m.husbandry.following = false;
+        const pen = inspectPenAt(r, Math.floor(m.x / TILE), Math.floor(m.y / TILE));
+        m.husbandry.penned = pen.enclosed;
+        m.homeX = m.x; m.homeY = m.y;
+        if (pen.enclosed) {
+          return ok('husbandry.release', `${m.id}:penned`, `Penned safely (${pen.tiles.size} tiles).`);
+        }
+        return ok('husbandry.release', `${m.id}:open`, 'Area is not enclosed — animal may wander off!');
+      }
+      if (op === 'butcher') {
+        const tbl = BUTCHER_YIELDS[m.type];
+        const drops: [string, number][] = tbl ? (m.husbandry.stage === 'juvenile' ? tbl.juvenile : tbl.adult) : [['meat', 2]];
+        m.state = 'dead'; m.hp = 0; m.t = 0; m.deadAt = r.clock.simMs / 1000;
+        for (const [k, q] of drops) spawnDrop(r, k, q, m.x, m.y, now);
+        return ok('husbandry.butcher', `${m.id}:${drops.map(([k, q]: [string, number]) => `${k}x${q}`).join(',')}`, `Butchered ${CREATURES[m.type]?.name || m.type}.`);
+      }
+      return fail('Unknown husbandry action.');
+    }
     case 'loadCore': {
       if (!Number.isInteger(it.slot) || it.slot < 0 || it.slot >= 8 || !['basic','refined','signature'].includes(it.mode)) return fail('Invalid Core reload.');
       if (p.action) return fail('Finish your current action first.');

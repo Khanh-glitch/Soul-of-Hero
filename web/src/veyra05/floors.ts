@@ -22,6 +22,8 @@ import { compilePlan, roomAt, type ArchPlan, type CompiledPlan, type CompiledRoo
 import { AUTHORED_SITES } from './arch/sites';
 import { detailInteriors } from './arch/interior';
 import type { WindowWorld } from './window';
+import { syncVeyraEcosystemActors } from './ecosystem';
+import { cleanupPrimordialBoss } from '../game/primordials/host-bridge';
 
 const N = WW * WH;
 const cache = new Map<string, CompiledPlan>();
@@ -422,6 +424,8 @@ export function applyFloor(gs: GameState, ww: WindowWorld, stack: FloorStack, le
     r.entities[e.id] = e;
   }
   if (moveTo) { r.player.x = moveTo[0] * TILE + 8; r.player.y = moveTo[1] * TILE + 8; }
+  cleanupPrimordialBoss(r, undefined, 'floor transition');
+  syncVeyraEcosystemActors(r, ww, ox, oy, ox, oy);
   markDirtyFn?.();
   return true;
 }

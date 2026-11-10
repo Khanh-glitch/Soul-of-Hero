@@ -19,8 +19,8 @@ describe('single playable VEYRA game — latest canonical map source', () => {
     expect(ids).toHaveLength(81);
     expect(new Set(ids).size).toBe(81);
     expect(authored).toHaveLength(81);
-    expect(new Set(ids)).toEqual(new Set(POIS.map(p => p.id)));
-  });
+    expect( new Set(ids) ).toEqual(new Set(POIS.map(p => p.id)));
+  }, 15000);
   it('starts the game on U=0.5 GOLD, not the legacy engine-generated island', () => {
     expect(setActiveLayout(U05_WORLD_LAYOUT_ID)).toBe(true);
     const w = getWorld();

@@ -39,14 +39,23 @@ function HeroPreview({ female, active }: { female: boolean; active: boolean }) {
   return <canvas ref={ref} width={64} height={96} style={{ width: 52, height: 78 }} />;
 }
 
-export default function Title({ gs, onContinue, onStart, onInspect, note, summary, clearSummary }: { gs: GameState; onContinue: () => void; onStart: (c: 'male' | 'female', region: number | null) => void; onInspect?: () => void; note?: string; summary: GameState['profile']['history'][number] | null; clearSummary: () => void }) {
+const CLASSIC_REGIONS = [
+  { id: 0, label: 'South Cove' },
+  { id: 1, label: 'East Meadow' },
+  { id: 2, label: 'West Shore' },
+  { id: 3, label: 'North Bay' },
+] as const;
+
+export default function Title({ gs, onContinue, onStart, onInspect, note, summary, clearSummary }: { gs: GameState; onContinue: () => void; onStart: (c: 'male' | 'female', region: number | null, layoutId?: string) => void; onInspect?: () => void; note?: string; summary: GameState['profile']['history'][number] | null; clearSummary: () => void }) {
   const s = useScale(); const [mode, setMode] = useState<'menu' | 'select' | 'history'>('menu'); const [hero, setHero] = useState<'male' | 'female'>('female'); const [region, setRegion] = useState<number | null>(null);
-  useEffect(() => { if (!gs.run) { setActiveLayout(U05_WORLD_LAYOUT_ID); resetRenderCaches(); } }, [gs.run]);
+  const [selectedLayout, setSelectedLayout] = useState<string>(U05_WORLD_LAYOUT_ID);
+  useEffect(() => { if (!gs.run) { setActiveLayout(selectedLayout); resetRenderCaches(); } }, [gs.run, selectedLayout]);
   const pf = gs.profile; const run = gs.run;
   const click = () => { initAudio(); sfx({ type: 'ui' }); };
+  const activeRegions = selectedLayout === U05_WORLD_LAYOUT_ID ? VEYRA_REGIONS : CLASSIC_REGIONS;
   return <div style={{ position: 'fixed', inset: 0, background: '#05040a' }}>
     <div className="stage" style={{ transform: `translate(${s.x}px, ${s.y}px) scale(${s.k})` }}>
-      <Backdrop layout={U05_WORLD_LAYOUT_ID} />
+      <Backdrop layout={selectedLayout} />
       {summary ? <div className="panel absolute fadein" style={{ left: 150, top: 60, width: 340, padding: 10 }}>
         <div className="title-font" style={{ fontSize: 20, color: summary.ending === 'evacuated' ? '#9ae0ff' : summary.ending === 'expired' ? '#ff9a5a' : '#cfc2dc' }}>{summary.ending === 'evacuated' ? 'Evacuated' : summary.ending === 'expired' ? 'Consumed by Ragnarok' : 'Run abandoned'}</div>
         <div style={{ fontSize: 12, lineHeight: 1.2, marginTop: 4 }}>Score {summary.score} · Deposited {summary.deposited} · Elder stones {summary.stones}/6 {summary.qa && <span className="tag" style={{ color: '#ff9a7a' }}>QA</span>} <span className="tag" style={{ color: '#ff9a7a' }}>{summary.verified}</span></div>
@@ -54,11 +63,11 @@ export default function Title({ gs, onContinue, onStart, onInspect, note, summar
         <div style={{ fontSize: 11, marginTop: 3 }}>{summary.achievements.map(a => <span key={a} style={{ marginRight: 6, color: '#ffe27a' }}>★ {ACHIEVEMENTS[a]?.name}</span>)}</div>
         <button className="btn gold" style={{ marginTop: 8 }} onClick={() => { click(); clearSummary(); }}>Return</button>
       </div> : <>
-        <div className="absolute" style={{ left: 0, right: 0, top: 18, textAlign: 'center' }}>
+        {mode !== 'select' && <div className="absolute" style={{ left: 0, right: 0, top: 18, textAlign: 'center' }}>
           {import.meta.env.VITE_FX_TEST === '1' && <div style={{ color: '#ffdf7b', fontSize: 12 }}>VFX TEST — 10 mỗi Core, đầy năng lượng · lưu riêng</div>}
           <div className="title-font" style={{ fontSize: 44, fontWeight: 700, color: '#ffe8b0', letterSpacing: 3, textShadow: '0 3px 0 #6a2a0a, 0 5px 0 #2a0a04, 0 0 18px #ff7a2a' }}>SOUL OF HERO</div>
           <div style={{ fontSize: 13, color: '#e0c8a8', marginTop: -2, textShadow: '1px 1px 0 #000' }}>fourteen days · one island · the end of the world</div>
-        </div>
+        </div>}
         {mode === 'menu' && <div className="absolute flex flex-col gap-2 items-center fadein" style={{ left: 0, right: 0, top: 150 }}>
           {run && <button className="btn gold" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); onContinue(); }}>Continue — {run.character === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</button>}
           <button className="btn" style={{ fontSize: 16, width: 180 }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={() => { click(); setActiveLayout(U05_WORLD_LAYOUT_ID); resetRenderCaches(); setMode('select'); }}>New run</button>
@@ -73,18 +82,24 @@ export default function Title({ gs, onContinue, onStart, onInspect, note, summar
           <div className="flex gap-2">{(['female', 'male'] as const).map(h => <button key={h} className={`btn ${hero === h ? 'gold' : 'ghost'}`} style={{ flex: 1, padding: 4, textAlign: 'left' }} onClick={() => { click(); setHero(h); }}>
             <div className="flex items-center gap-2"><HeroPreview female={h === 'female'} active={hero === h} /><div style={{ fontSize: 11, lineHeight: 1.15 }}><div className="title-font" style={{ fontSize: 13 }}>{h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</div><div>Survival knife, a half-full flask, a few berries. No Core, no map, no orders.</div></div></div></button>)}</div>
           <div style={{ fontSize: 11, marginTop: 6, color: '#ffd98a' }}>World</div>
-          <div style={{ fontSize: 10, color: '#e8dcc8', marginTop: 1 }}>
-            <b style={{ color: '#ffe27a' }}>VEYRA · Unified World</b> · 3200×2400 tiles (1 tile = 0.5 AU) · all 81 canonical POIs, roads, rivers and 6 Elder sanctuaries connected without borders.
+          <div className="flex gap-1" style={{ marginTop: 2 }}>
+            <button className={`btn ${selectedLayout === U05_WORLD_LAYOUT_ID ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setSelectedLayout(U05_WORLD_LAYOUT_ID); setRegion(null); }}>VEYRA · Unified World</button>
+            <button className={`btn ${selectedLayout === 'shipping' ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setSelectedLayout('shipping'); setRegion(null); }}>Classic Island (R12)</button>
+          </div>
+          <div style={{ fontSize: 10, color: '#e8dcc8', marginTop: 2 }}>
+            {selectedLayout === U05_WORLD_LAYOUT_ID
+              ? <><b style={{ color: '#ffe27a' }}>VEYRA · Unified World</b> · 4000×2800 tiles (1 tile = 0.5 AU) · 81 POIs, livestock husbandry, 4 side bosses &amp; 6 Primordials.</>
+              : <><b style={{ color: '#9ae0ff' }}>Classic Island (R12)</b> · 200×200 tiles · classic 6-Elder island &amp; R12 industrial baseline.</>}
           </div>
           <div style={{ fontSize: 11, marginTop: 5, color: '#ffd98a' }}>Landing region</div>
           <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}>
             <button className={`btn ${region === null ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setRegion(null); }}>Random safe region</button>
-            {VEYRA_REGIONS.map(rg => <button key={rg.id} className={`btn ${region === rg.id ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setRegion(rg.id); }}>{rg.label}</button>)}
+            {activeRegions.map(rg => <button key={rg.id} className={`btn ${region === rg.id ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setRegion(rg.id); }}>{rg.label}</button>)}
           </div>
           <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 20, marginTop: 3 }}>
-            {region === null ? 'Seeded safe landing across the four coastal/lakeside Veyra regions. No starter shelter.' : `Seeded safe landing in ${VEYRA_REGIONS[region].label}. Reachable wood, stone, food and fresh water.`}
+            {region === null ? 'Seeded safe landing across the four coastal/lakeside regions. No starter shelter.' : `Seeded safe landing in ${activeRegions[region]?.label}. Reachable wood, stone, food and fresh water.`}
           </div>
-          <div className="flex justify-between items-center" style={{ marginTop: 6 }}><button className="btn ghost" onClick={() => setMode('menu')}>Back</button><button className="btn gold" style={{ fontSize: 16, padding: '4px 16px' }} onClick={() => { click(); onStart(hero, region); }}>Begin the 14 days</button></div>
+          <div className="flex justify-between items-center" style={{ marginTop: 6 }}><button className="btn ghost" onClick={() => setMode('menu')}>Back</button><button className="btn gold" style={{ fontSize: 16, padding: '4px 16px' }} onClick={() => { click(); onStart(hero, region, selectedLayout); }}>Begin the 14 days</button></div>
         </div>}
         {mode === 'history' && <div className="panel absolute fadein" style={{ left: 100, top: 96, width: 440, padding: 8 }}>
           <div className="panel-h">Profile <span className="tag" style={{ color: '#ff9a7a', marginLeft: 4 }}>LOCAL/UNVERIFIED — browser-stored, not a global leaderboard</span></div>
