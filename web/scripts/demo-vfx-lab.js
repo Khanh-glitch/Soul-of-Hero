@@ -67,6 +67,12 @@
     }
     function castNow(id, over) {
       var a = anchorPos();
+      // ARCANA20 fusion skills: play the live compositor preview at the anchor
+      if (id && id.indexOf('arcana20:') === 0) {
+        var idx = +id.split('|')[0].split(':')[1];
+        if (window.__arcanaLab) window.__arcanaLab.cast(idx, a.x, a.y, 'lead');
+        return;
+      }
       var o = Object.assign({
         x: a.x + (S.offX || 0), y: a.y + (S.offY || 0),
         family: S.family, scale: S.scale, angle: (S.angle || 0) * Math.PI / 180,
@@ -122,12 +128,23 @@
     window.__PFX244_MANIFEST__.effects.forEach(function (e) { var c = e.id.split('/')[0]; (cats[c] = cats[c] || []).push(e.id); });
     var catSel = $('#cat', panel);
     var PILOT20 = ['ice/ice-lance','arcane/arcane-orb','shadow/black-hole','fire/fireball','nature/quake','lightning/chain-lightning','ice/frost-nova','moves/ice-lance-throw','impacts/impact-frame','arcane/spell-charge','explosions/small-explosion'];
-    catSel.appendChild(el('option', '', '★ arcana20 pilot (' + PILOT20.length + ')'));
+    // ARCANA20: the 20 fusion skills with LIVE in-game preview via the arcanaLab compositor client
+    var LAB20 = (window.__arcanaLab && window.__arcanaLab.catalog) ? window.__arcanaLab.catalog : [];
+    catSel.appendChild(el('option', '', '★ arcana20 ×20 skills live (' + LAB20.length + ')'));
+    catSel.appendChild(el('option', '', '★ arcana20 pilot PNGs (' + PILOT20.length + ')'));
     Object.keys(cats).sort().forEach(function (c) { catSel.appendChild(el('option', '', c + ' (' + cats[c].length + ')')); });
     function renderList() {
       var q = ($('#q', panel).value || '').toLowerCase();
-      var c = catSel.value.split(' ')[0];
-      var ids = (c === '★' ? PILOT20 : (cats[c] || [])).filter(function (id) { return !q || id.includes(q); });
+      var c = catSel.value;
+      var ids;
+      if (c.indexOf('×20') >= 0) {
+        ids = LAB20.filter(function (s) { return !q || (s.name + ' ' + s.school + ' ' + s.id).toLowerCase().includes(q); })
+          .map(function (s) { return 'arcana20:' + s.index + '|' + s.name + '|' + s.school; });
+      } else if (c.indexOf('pilot') >= 0) {
+        ids = PILOT20.filter(function (id) { return !q || id.includes(q); });
+      } else {
+        ids = (cats[c.split(' ')[0]] || []).filter(function (id) { return !q || id.includes(q); });
+      }
       var list = $('#list', panel); list.innerHTML = '';
       ids.slice(0, 60).forEach(function (id) {
         var b = el('div', 'padding:1px 4px;cursor:pointer;border-radius:3px;' + (sel === id ? 'background:#4a3a6a' : ''), id);
