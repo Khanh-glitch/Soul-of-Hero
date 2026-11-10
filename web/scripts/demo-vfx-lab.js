@@ -121,11 +121,13 @@
     var cats = {};
     window.__PFX244_MANIFEST__.effects.forEach(function (e) { var c = e.id.split('/')[0]; (cats[c] = cats[c] || []).push(e.id); });
     var catSel = $('#cat', panel);
+    var PILOT20 = ['ice/ice-lance','arcane/arcane-orb','shadow/black-hole','fire/fireball','nature/quake','lightning/chain-lightning','ice/frost-nova','moves/ice-lance-throw','impacts/impact-frame','arcane/spell-charge','explosions/small-explosion'];
+    catSel.appendChild(el('option', '', '★ arcana20 pilot (' + PILOT20.length + ')'));
     Object.keys(cats).sort().forEach(function (c) { catSel.appendChild(el('option', '', c + ' (' + cats[c].length + ')')); });
     function renderList() {
       var q = ($('#q', panel).value || '').toLowerCase();
       var c = catSel.value.split(' ')[0];
-      var ids = (cats[c] || []).filter(function (id) { return !q || id.includes(q); });
+      var ids = (c === '★' ? PILOT20 : (cats[c] || [])).filter(function (id) { return !q || id.includes(q); });
       var list = $('#list', panel); list.innerHTML = '';
       ids.slice(0, 60).forEach(function (id) {
         var b = el('div', 'padding:1px 4px;cursor:pointer;border-radius:3px;' + (sel === id ? 'background:#4a3a6a' : ''), id);

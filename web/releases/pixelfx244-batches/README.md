@@ -29,3 +29,11 @@ See BATCHES-MANIFEST.json for per-batch effect lists, sizes and sha256.
 - Batch nào cũng tái tạo được từ source: `intake.mjs` (upstream pinned a841596...) rồi
   `export-pixelfx244-batches.mjs` — xem `BATCHES-MANIFEST.json` để biết zip nào chứa effect id nào,
   kèm sha256 để verify.
+
+## arcana20 (pilot-selected) — đã hợp nhất vào kho chung
+`arcana20.zip` trong thư mục này chứa 11 hiệu ứng được chọn trong ARCANA20 (pilot set của game:
+ice-lance, arcane-orb, black-hole, fireball, quake, chain-lightning, frost-nova, ice-lance-throw,
+impact-frame, spell-charge, small-explosion) ở **full-res byte-identical với chính asset PNG
+đang nhúng trong game** (`web/src/game/pixelfx/pilot-assets`, kiểm chứng sha256 32/32 file).
+Tất cả id này đã có sẵn trong 244 pack (cùng nguồn upstream), nên VFX Lab có thêm bộ lọc
+"★ arcana20 pilot" ở đầu dropdown category. Tái tạo: `node tools/pixelfx_foundry/merge-arcana20.mjs --pack <pack>`.

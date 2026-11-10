@@ -1,7 +1,7 @@
 {
  "note": "Per-category batches of the 244-effect PixelFX pack at 100% original resolution (upstream-rendered PNGs, PARITY_PASS). Zips are release assets on tag pixelfx244-test-v2, not git-tracked (too large). Each zip contains index.json (category-scoped manifest) + assets/<category>/<effect>/ original combined-*.png and light-*.png. The single-file HTML (SOH-PIXELF-244-TEST.html) re-encodes to WebP k=0.5 to fit GitHub 100MB raw limit — use these batches when importing individual effects and sharpness must be preserved.",
- "totalEffects": 244,
- "totalCategories": 21,
+ "totalEffects": 488,
+ "totalCategories": 22,
  "totalPngBytes": 318390866,
  "totalZipBytes": 312798265,
  "batches": [
@@ -499,6 +499,29 @@
     "weather/shooting-stars",
     "weather/snow",
     "weather/storm"
+   ]
+  },
+  {
+   "category": "arcana20",
+   "zip": "arcana20.zip",
+   "effects": 11,
+   "pngFiles": 32,
+   "zipBytes": 9620287,
+   "sha256": "61dfc5117e096e05257b776271f19e54026b0dfae1b5884d1f54f954133802ed",
+   "note": "ARCANA20 pilot-selected effects — full-res, byte-identical to the game-embedded pilot assets; ids all exist inside the 244 pack too",
+   "download": "https://github.com/Khanh-glitch/Soul-of-Hero/releases/download/pixelfx244-test-v2/arcana20.zip",
+   "effectIds": [
+    "ice/ice-lance",
+    "arcane/arcane-orb",
+    "shadow/black-hole",
+    "fire/fireball",
+    "nature/quake",
+    "lightning/chain-lightning",
+    "ice/frost-nova",
+    "moves/ice-lance-throw",
+    "impacts/impact-frame",
+    "arcane/spell-charge",
+    "explosions/small-explosion"
    ]
   }
  ]
