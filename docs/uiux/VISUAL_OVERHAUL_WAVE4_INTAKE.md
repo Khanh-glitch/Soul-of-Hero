@@ -75,3 +75,32 @@ The dedicated CI workflow checks the imported subtree once it exists. Before imp
 - Low-saturation pixel-art palette and gold interaction emphasis are internally coherent. The test is an isolated furnished QA sandbox, not native Godot, production R12 gameplay, full map nor Creator review.
 - **Decision:** Source custody PASS; isolated real-browser interaction/screenshot matrix PASS; visual quality PARTIAL (640 readability and user review outstanding); full legacy game regression FAIL; production integration NOT TESTED. Keep PR #49 Draft, do not merge.
 
+
+
+## Wave 4 compact visual correction — exact-SHA handoff (10 Nov 2026)
+
+**Branch:** `uiux/visual-overhaul-wave4-20261110`
+**Source/UI revision:** `48945c09a9699486637f63294dcb8d89363c7d76` (Survivor JSX, responsive CSS, Chromium controls).
+**Standalone delivery revision:** `8b4dc2dd3a31ff4fac673db1303aee1ef730e1f0` (adds reproducible build artifact).
+
+### Actual CI evidence — latest tested commit
+- Run: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/42744799103
+- Runnable single-file artifact: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/42744799103/artifacts/13730972320
+- Chromium screenshot artifact: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/42744799103/artifacts/13731366561
+- Standalone `dist/index.html` SHA256: `87ab5194bd75283e3e1177b40fe74b4ca29b555978b003800af7981a5358859f` (30,539,960 bytes; independently extracted and verified).
+- npm ci, 54/54 PixelFX, TypeScript, Vite singlefile build and output presence: **PASS**.
+- Real Chromium matrix: **18/18** screenshots, nine 640×360 and nine 1280×720, actual keyboard/pointer actions, **0** JS/page errors; exact artifact independently unpacked and filenames/dimensions/interaction receipts verified.
+- **640 compact**: Pack visible / Work hidden by default; drag Hunting Bow to hotbar and hover+8 Salvager Pick verified; Work tab reveals crafting/stations without side-by-side crowding. Authored 640 screenshots inspected directly.
+- **1280**: Pack and Work both visible, compact tabs hidden; existing split-pane layout retained. Native screenshot matrices remain valid.
+- **CRAFT NOT PROVEN**: test preset lacked a legal craft after `work now`; no craft intent committed. Feed counts can include non-craft world events. Do not infer crafting success from feed or screenshot title.
+- **Whole workflow FAIL**: 15 historical/source regression assertions remain failing (616 PASS / 631 tested). Distinguish this from successful UI build and browser matrix.
+
+### Regression ownership / no greenwashing
+- Missing historical geography fixture `geography/veyra-lr01/world_lab/lr01/output/poi_layouts.v1.json`, Stage1 payload revision mismatch; check provenance and R12 map contract, do not fabricate originals.
+- Missing `evidence/b05-freight/freight-compare.json`; do not invent a performance receipt.
+- Stale recycler/loot schema expectations (`b04-v1` vs `b05-v1`, `X:recover-v2` vs `v3`, `X:pipe-v1` vs `v2`) and output/UID assertions require source-level gameplay review.
+- Power/circuit/stimulus cases require actual simulator correction or explicit historical split, not UI CSS or assertion weakening.
+- PR stays **DRAFT / UNMERGED**, not production gameplay acceptance. UI candidate source/presentation passed isolated browser, but R12 integration and natural play/craft, full regression, native Godot, accessibility and Creator review remain separate open gates.
+
+### Next controlled action
+In a separate scoped integration proposal, compare `web/uiux/visual-overhaul/src/ui/{SurvivorScreen.tsx,hud.tsx,BuildBar.tsx,dragSlots.tsx}` against current R12 `web/src/ui`. Bring over selected presentation components **only after** contract mapping; no direct overwrite of game/engine/world/save/economy. Test 640×360 and 1280×720 on the R12 composed runtime with real crafting and inventory custody before promote.
