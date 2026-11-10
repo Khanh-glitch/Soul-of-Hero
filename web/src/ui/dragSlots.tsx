@@ -74,6 +74,25 @@ function stagePoint(cx: number, cy: number) {
   return { x: (cx - r.left) / k, y: (cy - r.top) / k };
 }
 
+/** Original Gold2 drag target lookup, made Shadow DOM-aware at the R12 seam.
+ * PointerEvent.composedPath() exposes the actual slot across the Gold visual
+ * boundary; the document-level hit test alone sees only the shadow host. */
+function goldDropSlotAtPointer(ev: PointerEvent): HTMLElement | null {
+  for (const node of ev.composedPath()) {
+    if (node instanceof Element) {
+      const slot = node.closest('[data-dslot]');
+      if (slot) return slot as HTMLElement;
+    }
+  }
+  let hit: Element | null = document.elementFromPoint(ev.clientX, ev.clientY);
+  for (let depth = 0; hit && depth < 6; depth++) {
+    const deeper = (hit as HTMLElement).shadowRoot?.elementFromPoint(ev.clientX, ev.clientY);
+    if (!deeper || deeper === hit) break;
+    hit = deeper;
+  }
+  return hit?.closest('[data-dslot]') as HTMLElement | null;
+}
+
 export function DSlot({ api, cid, slot, s, hotkey, active, quickTo, size = 22, accent }: { api: Api; cid: string; slot: number; s: Stack | null; hotkey?: string; active?: boolean; quickTo?: string; size?: number; accent?: boolean }) {
   useSlotStore();
   const d = s ? ITEMS[s.key] : null;
@@ -127,7 +146,7 @@ export function DSlot({ api, cid, slot, s, hotkey, active, quickTo, size = 22, a
     const up = (ev: PointerEvent) => {
       if (finished) return; finished = true;
       if (!started) { api.setSel(sel ? null : { c: cid, slot }); api.sfx('ui'); cleanup(); return; }
-      const el = (document.elementFromPoint(ev.clientX, ev.clientY) as HTMLElement | null)?.closest('[data-dslot]') as HTMLElement | null;
+      const el = goldDropSlotAtPointer(ev);
       if (el && api.gs.run?.custody[cid]?.slots[slot]?.uid === s.uid) {
         const [tc, ts] = [el.dataset.c!, Number(el.dataset.s)];
         if (!(tc === cid && ts === slot)) { const res = api.act('move', { from: cid, fs: slot, to: tc, ts }); if (res.ok) { api.setSel({ c: tc, slot: ts }); } }
