@@ -290,3 +290,13 @@
 .relic-gallery__slot.locked { opacity: .45; filter: sepia(.9); }
 .relic-gallery__slot .relic-gallery__mystery { font: 18px 'VT323', monospace; }
 .relic-gallery__unknown { grid-column: 1/-1; font: 11px 'VT323', monospace; color: #75543d; padding: 9px; text-align: center; }
+
+/* QA refinement: all available goals in view, never a clipped browser dropdown. */
+.wm__switch { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 2px; width: 224px; max-height: none; padding: 4px; }
+.wm__switch-title, .wm__switch-journal { grid-column: 1 / -1; }
+.wm__switch-title { min-height: 14px; padding: 0 2px 1px; }
+.wm__switch-row { min-height: 22px; padding: 2px 2px; gap: 3px; border: 1px solid rgba(94,70,43,.35); }
+.wm__switch-row img { width: 11px; height: 11px; flex: none; }
+.wm__switch-row small { font-size: 8px; line-height: 9px; white-space: nowrap; }
+.wm__switch-row b { font-size: 7px; line-height: 8px; }
+.wm__switch-journal { margin: 0; padding: 2px; }
