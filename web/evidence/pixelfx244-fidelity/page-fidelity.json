@@ -1,0 +1,1536 @@
+{
+ "report": {
+  "pagesCompared": 732,
+  "effectsCompared": 244,
+  "overallMeanAbsDiffPerChannel": 19.585,
+  "worst15": [
+   {
+    "id": "critters/fish-school",
+    "mean": 60.318
+   },
+   {
+    "id": "status/haste",
+    "mean": 59.383
+   },
+   {
+    "id": "nature/leaf-storm",
+    "mean": 57.297
+   },
+   {
+    "id": "scifi/energy-core",
+    "mean": 53.436
+   },
+   {
+    "id": "fire/fire-breath",
+    "mean": 48.491
+   },
+   {
+    "id": "critters/slime",
+    "mean": 47.909
+   },
+   {
+    "id": "critters/jellyfish",
+    "mean": 46.721
+   },
+   {
+    "id": "shadow/black-hole",
+    "mean": 46.401
+   },
+   {
+    "id": "impacts/impact-frame",
+    "mean": 45.357
+   },
+   {
+    "id": "transitions/blinds",
+    "mean": 44.344
+   },
+   {
+    "id": "lightning/plasma-ball",
+    "mean": 44.343
+   },
+   {
+    "id": "pickups/potion",
+    "mean": 43.714
+   },
+   {
+    "id": "water/water-orb",
+    "mean": 43.107
+   },
+   {
+    "id": "ui/combo-counter",
+    "mean": 43.006
+   },
+   {
+    "id": "scifi/laser-grid",
+    "mean": 42.638
+   }
+  ],
+  "missing": []
+ },
+ "perEffect": [
+  {
+   "id": "arcane/arcane-beam",
+   "pages": 2,
+   "meanAbsDiff": 24.738,
+   "maxDiff": 768
+  },
+  {
+   "id": "arcane/arcane-missiles",
+   "pages": 2,
+   "meanAbsDiff": 13.876,
+   "maxDiff": 801
+  },
+  {
+   "id": "arcane/arcane-orb",
+   "pages": 2,
+   "meanAbsDiff": 36.921,
+   "maxDiff": 639
+  },
+  {
+   "id": "arcane/blink-in",
+   "pages": 2,
+   "meanAbsDiff": 14.634,
+   "maxDiff": 852
+  },
+  {
+   "id": "arcane/blink-out",
+   "pages": 2,
+   "meanAbsDiff": 15.296,
+   "maxDiff": 857
+  },
+  {
+   "id": "arcane/magic-circle-cast",
+   "pages": 4,
+   "meanAbsDiff": 10.553,
+   "maxDiff": 984
+  },
+  {
+   "id": "arcane/mana-burst",
+   "pages": 2,
+   "meanAbsDiff": 15.766,
+   "maxDiff": 844
+  },
+  {
+   "id": "arcane/portal",
+   "pages": 2,
+   "meanAbsDiff": 41.536,
+   "maxDiff": 639
+  },
+  {
+   "id": "arcane/rune-circle",
+   "pages": 2,
+   "meanAbsDiff": 38.929,
+   "maxDiff": 777
+  },
+  {
+   "id": "arcane/spell-charge",
+   "pages": 2,
+   "meanAbsDiff": 34.442,
+   "maxDiff": 769
+  },
+  {
+   "id": "arcane/star-fall",
+   "pages": 2,
+   "meanAbsDiff": 14.282,
+   "maxDiff": 779
+  },
+  {
+   "id": "arcane/time-stop",
+   "pages": 2,
+   "meanAbsDiff": 28.242,
+   "maxDiff": 917
+  },
+  {
+   "id": "critters/bat",
+   "pages": 2,
+   "meanAbsDiff": 13.12,
+   "maxDiff": 769
+  },
+  {
+   "id": "critters/bird",
+   "pages": 2,
+   "meanAbsDiff": 9.718,
+   "maxDiff": 825
+  },
+  {
+   "id": "critters/butterfly",
+   "pages": 2,
+   "meanAbsDiff": 28.871,
+   "maxDiff": 766
+  },
+  {
+   "id": "critters/eyeball",
+   "pages": 2,
+   "meanAbsDiff": 41.98,
+   "maxDiff": 510
+  },
+  {
+   "id": "critters/fish-school",
+   "pages": 2,
+   "meanAbsDiff": 60.318,
+   "maxDiff": 766
+  },
+  {
+   "id": "critters/flying-skull",
+   "pages": 2,
+   "meanAbsDiff": 36.727,
+   "maxDiff": 511
+  },
+  {
+   "id": "critters/frog",
+   "pages": 2,
+   "meanAbsDiff": 3.745,
+   "maxDiff": 769
+  },
+  {
+   "id": "critters/ghost",
+   "pages": 2,
+   "meanAbsDiff": 42.125,
+   "maxDiff": 766
+  },
+  {
+   "id": "critters/jellyfish",
+   "pages": 2,
+   "meanAbsDiff": 46.721,
+   "maxDiff": 766
+  },
+  {
+   "id": "critters/slime",
+   "pages": 2,
+   "meanAbsDiff": 47.909,
+   "maxDiff": 511
+  },
+  {
+   "id": "critters/snake",
+   "pages": 2,
+   "meanAbsDiff": 9.209,
+   "maxDiff": 687
+  },
+  {
+   "id": "critters/wisp",
+   "pages": 2,
+   "meanAbsDiff": 26.078,
+   "maxDiff": 767
+  },
+  {
+   "id": "explosions/barrel-explosion",
+   "pages": 8,
+   "meanAbsDiff": 4.863,
+   "maxDiff": 809
+  },
+  {
+   "id": "explosions/big-explosion",
+   "pages": 16,
+   "meanAbsDiff": 7.116,
+   "maxDiff": 771
+  },
+  {
+   "id": "explosions/cartoon-pow",
+   "pages": 2,
+   "meanAbsDiff": 30.83,
+   "maxDiff": 885
+  },
+  {
+   "id": "explosions/dirt-explosion",
+   "pages": 4,
+   "meanAbsDiff": 4.88,
+   "maxDiff": 705
+  },
+  {
+   "id": "explosions/firework-burst",
+   "pages": 4,
+   "meanAbsDiff": 12.273,
+   "maxDiff": 862
+  },
+  {
+   "id": "explosions/firework-rocket",
+   "pages": 8,
+   "meanAbsDiff": 4.744,
+   "maxDiff": 833
+  },
+  {
+   "id": "explosions/grenade",
+   "pages": 6,
+   "meanAbsDiff": 1.973,
+   "maxDiff": 845
+  },
+  {
+   "id": "explosions/implosion",
+   "pages": 2,
+   "meanAbsDiff": 15.108,
+   "maxDiff": 806
+  },
+  {
+   "id": "explosions/nuke",
+   "pages": 20,
+   "meanAbsDiff": 7.57,
+   "maxDiff": 917
+  },
+  {
+   "id": "explosions/plasma-explosion",
+   "pages": 2,
+   "meanAbsDiff": 12.819,
+   "maxDiff": 787
+  },
+  {
+   "id": "explosions/small-explosion",
+   "pages": 8,
+   "meanAbsDiff": 2.527,
+   "maxDiff": 793
+  },
+  {
+   "id": "explosions/smoke-bomb",
+   "pages": 4,
+   "meanAbsDiff": 2.813,
+   "maxDiff": 767
+  },
+  {
+   "id": "fire/brazier",
+   "pages": 2,
+   "meanAbsDiff": 41.876,
+   "maxDiff": 766
+  },
+  {
+   "id": "fire/campfire",
+   "pages": 2,
+   "meanAbsDiff": 30.553,
+   "maxDiff": 766
+  },
+  {
+   "id": "fire/candle",
+   "pages": 2,
+   "meanAbsDiff": 36.116,
+   "maxDiff": 766
+  },
+  {
+   "id": "fire/fire-breath",
+   "pages": 2,
+   "meanAbsDiff": 48.491,
+   "maxDiff": 766
+  },
+  {
+   "id": "fire/fire-ring",
+   "pages": 2,
+   "meanAbsDiff": 19.347,
+   "maxDiff": 766
+  },
+  {
+   "id": "fire/fire-tornado",
+   "pages": 2,
+   "meanAbsDiff": 37.012,
+   "maxDiff": 766
+  },
+  {
+   "id": "fire/fireball",
+   "pages": 2,
+   "meanAbsDiff": 25.583,
+   "maxDiff": 766
+  },
+  {
+   "id": "fire/flame-pillar",
+   "pages": 4,
+   "meanAbsDiff": 10.598,
+   "maxDiff": 785
+  },
+  {
+   "id": "fire/flamethrower",
+   "pages": 2,
+   "meanAbsDiff": 25.504,
+   "maxDiff": 766
+  },
+  {
+   "id": "fire/meteor",
+   "pages": 6,
+   "meanAbsDiff": 5.923,
+   "maxDiff": 787
+  },
+  {
+   "id": "fire/spirit-flame",
+   "pages": 2,
+   "meanAbsDiff": 40.347,
+   "maxDiff": 766
+  },
+  {
+   "id": "fire/torch",
+   "pages": 2,
+   "meanAbsDiff": 34.705,
+   "maxDiff": 766
+  },
+  {
+   "id": "holy/blessing",
+   "pages": 2,
+   "meanAbsDiff": 20.181,
+   "maxDiff": 769
+  },
+  {
+   "id": "holy/divine-shield",
+   "pages": 2,
+   "meanAbsDiff": 23.773,
+   "maxDiff": 767
+  },
+  {
+   "id": "holy/feather-burst",
+   "pages": 2,
+   "meanAbsDiff": 18.235,
+   "maxDiff": 812
+  },
+  {
+   "id": "holy/halo",
+   "pages": 2,
+   "meanAbsDiff": 16.108,
+   "maxDiff": 787
+  },
+  {
+   "id": "holy/heal-aoe",
+   "pages": 2,
+   "meanAbsDiff": 11.835,
+   "maxDiff": 879
+  },
+  {
+   "id": "holy/heal",
+   "pages": 2,
+   "meanAbsDiff": 16.489,
+   "maxDiff": 840
+  },
+  {
+   "id": "holy/holy-pillar",
+   "pages": 4,
+   "meanAbsDiff": 17.484,
+   "maxDiff": 866
+  },
+  {
+   "id": "holy/resurrection",
+   "pages": 4,
+   "meanAbsDiff": 11.805,
+   "maxDiff": 843
+  },
+  {
+   "id": "holy/smite",
+   "pages": 2,
+   "meanAbsDiff": 7.314,
+   "maxDiff": 898
+  },
+  {
+   "id": "holy/sunburst",
+   "pages": 2,
+   "meanAbsDiff": 39.63,
+   "maxDiff": 766
+  },
+  {
+   "id": "ice/blizzard-vortex",
+   "pages": 2,
+   "meanAbsDiff": 32.44,
+   "maxDiff": 884
+  },
+  {
+   "id": "ice/freeze",
+   "pages": 2,
+   "meanAbsDiff": 17.936,
+   "maxDiff": 923
+  },
+  {
+   "id": "ice/frost-breath",
+   "pages": 2,
+   "meanAbsDiff": 20.05,
+   "maxDiff": 766
+  },
+  {
+   "id": "ice/frost-nova",
+   "pages": 4,
+   "meanAbsDiff": 12.729,
+   "maxDiff": 922
+  },
+  {
+   "id": "ice/ice-crystal",
+   "pages": 2,
+   "meanAbsDiff": 22.729,
+   "maxDiff": 766
+  },
+  {
+   "id": "ice/ice-lance",
+   "pages": 2,
+   "meanAbsDiff": 20.257,
+   "maxDiff": 785
+  },
+  {
+   "id": "ice/ice-shatter",
+   "pages": 2,
+   "meanAbsDiff": 13.804,
+   "maxDiff": 913
+  },
+  {
+   "id": "ice/ice-spikes",
+   "pages": 2,
+   "meanAbsDiff": 25.546,
+   "maxDiff": 880
+  },
+  {
+   "id": "ice/icicle-fall",
+   "pages": 2,
+   "meanAbsDiff": 13.853,
+   "maxDiff": 904
+  },
+  {
+   "id": "ice/snowflake-burst",
+   "pages": 2,
+   "meanAbsDiff": 22.228,
+   "maxDiff": 770
+  },
+  {
+   "id": "impacts/blunt-hit",
+   "pages": 2,
+   "meanAbsDiff": 15.014,
+   "maxDiff": 767
+  },
+  {
+   "id": "impacts/bullet-impact",
+   "pages": 2,
+   "meanAbsDiff": 3.403,
+   "maxDiff": 861
+  },
+  {
+   "id": "impacts/crit-hit",
+   "pages": 2,
+   "meanAbsDiff": 9.575,
+   "maxDiff": 821
+  },
+  {
+   "id": "impacts/ground-slam",
+   "pages": 4,
+   "meanAbsDiff": 6.105,
+   "maxDiff": 815
+  },
+  {
+   "id": "impacts/heavy-landing",
+   "pages": 2,
+   "meanAbsDiff": 7.933,
+   "maxDiff": 868
+  },
+  {
+   "id": "impacts/hit-flash",
+   "pages": 2,
+   "meanAbsDiff": 10.35,
+   "maxDiff": 860
+  },
+  {
+   "id": "impacts/hit-spark",
+   "pages": 2,
+   "meanAbsDiff": 5.518,
+   "maxDiff": 886
+  },
+  {
+   "id": "impacts/impact-frame",
+   "pages": 2,
+   "meanAbsDiff": 45.357,
+   "maxDiff": 984
+  },
+  {
+   "id": "impacts/parry",
+   "pages": 2,
+   "meanAbsDiff": 7.491,
+   "maxDiff": 777
+  },
+  {
+   "id": "impacts/ricochet",
+   "pages": 2,
+   "meanAbsDiff": 4.031,
+   "maxDiff": 884
+  },
+  {
+   "id": "impacts/shield-block",
+   "pages": 2,
+   "meanAbsDiff": 17.285,
+   "maxDiff": 770
+  },
+  {
+   "id": "lightning/ball-lightning",
+   "pages": 2,
+   "meanAbsDiff": 17.992,
+   "maxDiff": 769
+  },
+  {
+   "id": "lightning/chain-lightning",
+   "pages": 2,
+   "meanAbsDiff": 10.759,
+   "maxDiff": 769
+  },
+  {
+   "id": "lightning/charge-up",
+   "pages": 4,
+   "meanAbsDiff": 4.259,
+   "maxDiff": 837
+  },
+  {
+   "id": "lightning/electrified",
+   "pages": 2,
+   "meanAbsDiff": 15.776,
+   "maxDiff": 778
+  },
+  {
+   "id": "lightning/lightning-strike",
+   "pages": 4,
+   "meanAbsDiff": 8.634,
+   "maxDiff": 893
+  },
+  {
+   "id": "lightning/plasma-ball",
+   "pages": 2,
+   "meanAbsDiff": 44.343,
+   "maxDiff": 568
+  },
+  {
+   "id": "lightning/spark-arc",
+   "pages": 2,
+   "meanAbsDiff": 27.459,
+   "maxDiff": 833
+  },
+  {
+   "id": "lightning/storm-cloud",
+   "pages": 2,
+   "meanAbsDiff": 25.132,
+   "maxDiff": 796
+  },
+  {
+   "id": "lightning/tesla-coil",
+   "pages": 2,
+   "meanAbsDiff": 20.774,
+   "maxDiff": 880
+  },
+  {
+   "id": "lightning/thunderclap",
+   "pages": 2,
+   "meanAbsDiff": 7.881,
+   "maxDiff": 854
+  },
+  {
+   "id": "lightning/zap-hit",
+   "pages": 2,
+   "meanAbsDiff": 13.027,
+   "maxDiff": 810
+  },
+  {
+   "id": "melee/claw-swipe",
+   "pages": 2,
+   "meanAbsDiff": 5.27,
+   "maxDiff": 640
+  },
+  {
+   "id": "melee/dagger-flurry",
+   "pages": 2,
+   "meanAbsDiff": 11.121,
+   "maxDiff": 778
+  },
+  {
+   "id": "melee/double-slash",
+   "pages": 2,
+   "meanAbsDiff": 7.801,
+   "maxDiff": 796
+  },
+  {
+   "id": "melee/hammer-smash",
+   "pages": 2,
+   "meanAbsDiff": 10.457,
+   "maxDiff": 860
+  },
+  {
+   "id": "melee/heavy-cleave",
+   "pages": 2,
+   "meanAbsDiff": 9.684,
+   "maxDiff": 768
+  },
+  {
+   "id": "melee/scythe-reap",
+   "pages": 2,
+   "meanAbsDiff": 7.455,
+   "maxDiff": 817
+  },
+  {
+   "id": "melee/spear-sweep",
+   "pages": 2,
+   "meanAbsDiff": 6.876,
+   "maxDiff": 766
+  },
+  {
+   "id": "melee/spin-slash",
+   "pages": 2,
+   "meanAbsDiff": 15.171,
+   "maxDiff": 777
+  },
+  {
+   "id": "melee/sword-slash",
+   "pages": 2,
+   "meanAbsDiff": 10.895,
+   "maxDiff": 778
+  },
+  {
+   "id": "melee/thrust",
+   "pages": 2,
+   "meanAbsDiff": 7.27,
+   "maxDiff": 857
+  },
+  {
+   "id": "melee/uppercut",
+   "pages": 2,
+   "meanAbsDiff": 9.051,
+   "maxDiff": 771
+  },
+  {
+   "id": "melee/whip-crack",
+   "pages": 2,
+   "meanAbsDiff": 7.186,
+   "maxDiff": 857
+  },
+  {
+   "id": "moves/arrow-shot",
+   "pages": 2,
+   "meanAbsDiff": 1.752,
+   "maxDiff": 872
+  },
+  {
+   "id": "moves/dash-strike",
+   "pages": 4,
+   "meanAbsDiff": 1.494,
+   "maxDiff": 848
+  },
+  {
+   "id": "moves/earth-stomp",
+   "pages": 4,
+   "meanAbsDiff": 3.26,
+   "maxDiff": 880
+  },
+  {
+   "id": "moves/fireball-throw",
+   "pages": 12,
+   "meanAbsDiff": 2.315,
+   "maxDiff": 811
+  },
+  {
+   "id": "moves/ground-pound",
+   "pages": 4,
+   "meanAbsDiff": 5.625,
+   "maxDiff": 822
+  },
+  {
+   "id": "moves/holy-smite",
+   "pages": 2,
+   "meanAbsDiff": 6.502,
+   "maxDiff": 879
+  },
+  {
+   "id": "moves/ice-lance-throw",
+   "pages": 4,
+   "meanAbsDiff": 7.384,
+   "maxDiff": 780
+  },
+  {
+   "id": "moves/lightning-call",
+   "pages": 4,
+   "meanAbsDiff": 7.704,
+   "maxDiff": 816
+  },
+  {
+   "id": "moves/meteor-call",
+   "pages": 10,
+   "meanAbsDiff": 7.259,
+   "maxDiff": 950
+  },
+  {
+   "id": "moves/pistol-shots",
+   "pages": 2,
+   "meanAbsDiff": 5.28,
+   "maxDiff": 866
+  },
+  {
+   "id": "moves/rocket-launcher",
+   "pages": 14,
+   "meanAbsDiff": 1.964,
+   "maxDiff": 833
+  },
+  {
+   "id": "moves/sword-combo",
+   "pages": 2,
+   "meanAbsDiff": 6.72,
+   "maxDiff": 796
+  },
+  {
+   "id": "nature/acid-splash",
+   "pages": 2,
+   "meanAbsDiff": 13.367,
+   "maxDiff": 808
+  },
+  {
+   "id": "nature/boulder",
+   "pages": 2,
+   "meanAbsDiff": 7.08,
+   "maxDiff": 848
+  },
+  {
+   "id": "nature/earth-spike",
+   "pages": 4,
+   "meanAbsDiff": 3.817,
+   "maxDiff": 859
+  },
+  {
+   "id": "nature/healing-bloom",
+   "pages": 2,
+   "meanAbsDiff": 16.618,
+   "maxDiff": 793
+  },
+  {
+   "id": "nature/leaf-storm",
+   "pages": 2,
+   "meanAbsDiff": 57.297,
+   "maxDiff": 829
+  },
+  {
+   "id": "nature/poison-cloud",
+   "pages": 2,
+   "meanAbsDiff": 37.018,
+   "maxDiff": 640
+  },
+  {
+   "id": "nature/quake",
+   "pages": 2,
+   "meanAbsDiff": 12.37,
+   "maxDiff": 818
+  },
+  {
+   "id": "nature/root-snare",
+   "pages": 2,
+   "meanAbsDiff": 10.834,
+   "maxDiff": 766
+  },
+  {
+   "id": "nature/spore-burst",
+   "pages": 2,
+   "meanAbsDiff": 10.728,
+   "maxDiff": 812
+  },
+  {
+   "id": "nature/thorns",
+   "pages": 2,
+   "meanAbsDiff": 14.802,
+   "maxDiff": 793
+  },
+  {
+   "id": "nature/tornado",
+   "pages": 2,
+   "meanAbsDiff": 22.239,
+   "maxDiff": 827
+  },
+  {
+   "id": "nature/toxic-puddle",
+   "pages": 2,
+   "meanAbsDiff": 19.168,
+   "maxDiff": 766
+  },
+  {
+   "id": "nature/vine-whip",
+   "pages": 2,
+   "meanAbsDiff": 6.125,
+   "maxDiff": 841
+  },
+  {
+   "id": "pickups/chest-open",
+   "pages": 2,
+   "meanAbsDiff": 15.404,
+   "maxDiff": 820
+  },
+  {
+   "id": "pickups/coin-spin",
+   "pages": 2,
+   "meanAbsDiff": 16.877,
+   "maxDiff": 766
+  },
+  {
+   "id": "pickups/collect-burst",
+   "pages": 2,
+   "meanAbsDiff": 7.806,
+   "maxDiff": 793
+  },
+  {
+   "id": "pickups/crystal-shard",
+   "pages": 2,
+   "meanAbsDiff": 31.749,
+   "maxDiff": 594
+  },
+  {
+   "id": "pickups/gem-spin",
+   "pages": 2,
+   "meanAbsDiff": 18.14,
+   "maxDiff": 766
+  },
+  {
+   "id": "pickups/heart-pickup",
+   "pages": 2,
+   "meanAbsDiff": 30.843,
+   "maxDiff": 578
+  },
+  {
+   "id": "pickups/key-glint",
+   "pages": 2,
+   "meanAbsDiff": 26.831,
+   "maxDiff": 873
+  },
+  {
+   "id": "pickups/loot-beam",
+   "pages": 2,
+   "meanAbsDiff": 26.42,
+   "maxDiff": 821
+  },
+  {
+   "id": "pickups/potion",
+   "pages": 2,
+   "meanAbsDiff": 43.714,
+   "maxDiff": 768
+  },
+  {
+   "id": "pickups/power-star",
+   "pages": 2,
+   "meanAbsDiff": 17.025,
+   "maxDiff": 800
+  },
+  {
+   "id": "pickups/xp-orb",
+   "pages": 2,
+   "meanAbsDiff": 20.355,
+   "maxDiff": 765
+  },
+  {
+   "id": "projectiles/arrow",
+   "pages": 2,
+   "meanAbsDiff": 24.46,
+   "maxDiff": 864
+  },
+  {
+   "id": "projectiles/bullet-tracer",
+   "pages": 2,
+   "meanAbsDiff": 19.523,
+   "maxDiff": 766
+  },
+  {
+   "id": "projectiles/cannonball",
+   "pages": 2,
+   "meanAbsDiff": 7.574,
+   "maxDiff": 781
+  },
+  {
+   "id": "projectiles/energy-disc",
+   "pages": 2,
+   "meanAbsDiff": 28.285,
+   "maxDiff": 825
+  },
+  {
+   "id": "projectiles/flare",
+   "pages": 4,
+   "meanAbsDiff": 7.711,
+   "maxDiff": 856
+  },
+  {
+   "id": "projectiles/homing-missile",
+   "pages": 4,
+   "meanAbsDiff": 3.403,
+   "maxDiff": 792
+  },
+  {
+   "id": "projectiles/laser-bolt",
+   "pages": 2,
+   "meanAbsDiff": 23.066,
+   "maxDiff": 555
+  },
+  {
+   "id": "projectiles/magic-missile",
+   "pages": 2,
+   "meanAbsDiff": 5.381,
+   "maxDiff": 795
+  },
+  {
+   "id": "projectiles/muzzle-pistol",
+   "pages": 2,
+   "meanAbsDiff": 5.28,
+   "maxDiff": 768
+  },
+  {
+   "id": "projectiles/muzzle-shotgun",
+   "pages": 2,
+   "meanAbsDiff": 6.006,
+   "maxDiff": 778
+  },
+  {
+   "id": "projectiles/muzzle-smg",
+   "pages": 2,
+   "meanAbsDiff": 17.796,
+   "maxDiff": 766
+  },
+  {
+   "id": "projectiles/plasma-shot",
+   "pages": 2,
+   "meanAbsDiff": 20.313,
+   "maxDiff": 766
+  },
+  {
+   "id": "projectiles/rocket",
+   "pages": 2,
+   "meanAbsDiff": 19.737,
+   "maxDiff": 772
+  },
+  {
+   "id": "scifi/emp-blast",
+   "pages": 2,
+   "meanAbsDiff": 15.92,
+   "maxDiff": 893
+  },
+  {
+   "id": "scifi/energy-core",
+   "pages": 2,
+   "meanAbsDiff": 53.436,
+   "maxDiff": 787
+  },
+  {
+   "id": "scifi/force-field",
+   "pages": 2,
+   "meanAbsDiff": 31.749,
+   "maxDiff": 767
+  },
+  {
+   "id": "scifi/glitch",
+   "pages": 2,
+   "meanAbsDiff": 13.912,
+   "maxDiff": 829
+  },
+  {
+   "id": "scifi/hologram",
+   "pages": 2,
+   "meanAbsDiff": 27.301,
+   "maxDiff": 766
+  },
+  {
+   "id": "scifi/jetpack",
+   "pages": 2,
+   "meanAbsDiff": 24.823,
+   "maxDiff": 766
+  },
+  {
+   "id": "scifi/laser-grid",
+   "pages": 2,
+   "meanAbsDiff": 42.638,
+   "maxDiff": 713
+  },
+  {
+   "id": "scifi/scanner",
+   "pages": 2,
+   "meanAbsDiff": 22.166,
+   "maxDiff": 915
+  },
+  {
+   "id": "scifi/teleporter-pad",
+   "pages": 2,
+   "meanAbsDiff": 32.99,
+   "maxDiff": 829
+  },
+  {
+   "id": "scifi/tractor-beam",
+   "pages": 2,
+   "meanAbsDiff": 28.786,
+   "maxDiff": 766
+  },
+  {
+   "id": "scifi/warp-in",
+   "pages": 2,
+   "meanAbsDiff": 17.131,
+   "maxDiff": 879
+  },
+  {
+   "id": "scifi/warp-out",
+   "pages": 2,
+   "meanAbsDiff": 13.199,
+   "maxDiff": 870
+  },
+  {
+   "id": "shadow/black-hole",
+   "pages": 2,
+   "meanAbsDiff": 46.401,
+   "maxDiff": 807
+  },
+  {
+   "id": "shadow/curse",
+   "pages": 2,
+   "meanAbsDiff": 17.232,
+   "maxDiff": 836
+  },
+  {
+   "id": "shadow/dark-explosion",
+   "pages": 6,
+   "meanAbsDiff": 8.573,
+   "maxDiff": 905
+  },
+  {
+   "id": "shadow/eclipse",
+   "pages": 2,
+   "meanAbsDiff": 38.428,
+   "maxDiff": 882
+  },
+  {
+   "id": "shadow/grasping-hands",
+   "pages": 2,
+   "meanAbsDiff": 22.611,
+   "maxDiff": 525
+  },
+  {
+   "id": "shadow/hex-sigil",
+   "pages": 2,
+   "meanAbsDiff": 20.641,
+   "maxDiff": 909
+  },
+  {
+   "id": "shadow/life-steal",
+   "pages": 2,
+   "meanAbsDiff": 7.976,
+   "maxDiff": 766
+  },
+  {
+   "id": "shadow/necro-skulls",
+   "pages": 2,
+   "meanAbsDiff": 29.724,
+   "maxDiff": 766
+  },
+  {
+   "id": "shadow/shadow-flames",
+   "pages": 2,
+   "meanAbsDiff": 30.166,
+   "maxDiff": 683
+  },
+  {
+   "id": "shadow/shadow-tendrils",
+   "pages": 2,
+   "meanAbsDiff": 26.26,
+   "maxDiff": 512
+  },
+  {
+   "id": "shadow/soul-drain",
+   "pages": 2,
+   "meanAbsDiff": 23.955,
+   "maxDiff": 840
+  },
+  {
+   "id": "shadow/void-orb",
+   "pages": 2,
+   "meanAbsDiff": 27.07,
+   "maxDiff": 802
+  },
+  {
+   "id": "spawn/coin-drop",
+   "pages": 2,
+   "meanAbsDiff": 8.3,
+   "maxDiff": 778
+  },
+  {
+   "id": "spawn/disintegrate",
+   "pages": 2,
+   "meanAbsDiff": 12.783,
+   "maxDiff": 860
+  },
+  {
+   "id": "spawn/dissolve-burn",
+   "pages": 2,
+   "meanAbsDiff": 16.241,
+   "maxDiff": 766
+  },
+  {
+   "id": "spawn/egg-hatch",
+   "pages": 2,
+   "meanAbsDiff": 9.712,
+   "maxDiff": 924
+  },
+  {
+   "id": "spawn/poof",
+   "pages": 2,
+   "meanAbsDiff": 12.571,
+   "maxDiff": 818
+  },
+  {
+   "id": "spawn/respawn-beam",
+   "pages": 2,
+   "meanAbsDiff": 16.726,
+   "maxDiff": 865
+  },
+  {
+   "id": "spawn/shatter-death",
+   "pages": 2,
+   "meanAbsDiff": 14.439,
+   "maxDiff": 911
+  },
+  {
+   "id": "spawn/soul-rise",
+   "pages": 2,
+   "meanAbsDiff": 16.302,
+   "maxDiff": 858
+  },
+  {
+   "id": "spawn/spawn-portal",
+   "pages": 2,
+   "meanAbsDiff": 13.703,
+   "maxDiff": 887
+  },
+  {
+   "id": "spawn/summon-rise",
+   "pages": 2,
+   "meanAbsDiff": 24.179,
+   "maxDiff": 766
+  },
+  {
+   "id": "status/bleeding",
+   "pages": 2,
+   "meanAbsDiff": 8.099,
+   "maxDiff": 598
+  },
+  {
+   "id": "status/burning",
+   "pages": 2,
+   "meanAbsDiff": 12.633,
+   "maxDiff": 766
+  },
+  {
+   "id": "status/charmed",
+   "pages": 2,
+   "meanAbsDiff": 28.096,
+   "maxDiff": 779
+  },
+  {
+   "id": "status/confused",
+   "pages": 2,
+   "meanAbsDiff": 16.663,
+   "maxDiff": 766
+  },
+  {
+   "id": "status/cursed",
+   "pages": 2,
+   "meanAbsDiff": 26.114,
+   "maxDiff": 728
+  },
+  {
+   "id": "status/frozen",
+   "pages": 2,
+   "meanAbsDiff": 33.215,
+   "maxDiff": 836
+  },
+  {
+   "id": "status/haste",
+   "pages": 2,
+   "meanAbsDiff": 59.383,
+   "maxDiff": 778
+  },
+  {
+   "id": "status/petrified",
+   "pages": 2,
+   "meanAbsDiff": 11.627,
+   "maxDiff": 920
+  },
+  {
+   "id": "status/poisoned",
+   "pages": 2,
+   "meanAbsDiff": 34.087,
+   "maxDiff": 683
+  },
+  {
+   "id": "status/rage",
+   "pages": 2,
+   "meanAbsDiff": 19.349,
+   "maxDiff": 774
+  },
+  {
+   "id": "status/sleep",
+   "pages": 2,
+   "meanAbsDiff": 30.855,
+   "maxDiff": 793
+  },
+  {
+   "id": "status/slowed",
+   "pages": 2,
+   "meanAbsDiff": 38.897,
+   "maxDiff": 767
+  },
+  {
+   "id": "status/stunned",
+   "pages": 2,
+   "meanAbsDiff": 35.244,
+   "maxDiff": 766
+  },
+  {
+   "id": "transitions/blinds",
+   "pages": 2,
+   "meanAbsDiff": 44.344,
+   "maxDiff": 857
+  },
+  {
+   "id": "transitions/burn-away",
+   "pages": 4,
+   "meanAbsDiff": 14.932,
+   "maxDiff": 768
+  },
+  {
+   "id": "transitions/crt-off",
+   "pages": 2,
+   "meanAbsDiff": 20.388,
+   "maxDiff": 890
+  },
+  {
+   "id": "transitions/diamond-wipe",
+   "pages": 2,
+   "meanAbsDiff": 17.338,
+   "maxDiff": 828
+  },
+  {
+   "id": "transitions/glitch-wipe",
+   "pages": 2,
+   "meanAbsDiff": 10.067,
+   "maxDiff": 892
+  },
+  {
+   "id": "transitions/iris",
+   "pages": 4,
+   "meanAbsDiff": 3.62,
+   "maxDiff": 828
+  },
+  {
+   "id": "transitions/pixel-dissolve",
+   "pages": 4,
+   "meanAbsDiff": 13.28,
+   "maxDiff": 876
+  },
+  {
+   "id": "transitions/shatter-wipe",
+   "pages": 4,
+   "meanAbsDiff": 15.296,
+   "maxDiff": 902
+  },
+  {
+   "id": "transitions/slash-wipe",
+   "pages": 2,
+   "meanAbsDiff": 7.943,
+   "maxDiff": 828
+  },
+  {
+   "id": "transitions/star-iris",
+   "pages": 4,
+   "meanAbsDiff": 3.311,
+   "maxDiff": 783
+  },
+  {
+   "id": "ui/achievement",
+   "pages": 2,
+   "meanAbsDiff": 19.342,
+   "maxDiff": 921
+  },
+  {
+   "id": "ui/coin-collect",
+   "pages": 2,
+   "meanAbsDiff": 11.284,
+   "maxDiff": 867
+  },
+  {
+   "id": "ui/combo-counter",
+   "pages": 2,
+   "meanAbsDiff": 43.006,
+   "maxDiff": 884
+  },
+  {
+   "id": "ui/confetti",
+   "pages": 2,
+   "meanAbsDiff": 14.597,
+   "maxDiff": 863
+  },
+  {
+   "id": "ui/countdown",
+   "pages": 2,
+   "meanAbsDiff": 27.513,
+   "maxDiff": 920
+  },
+  {
+   "id": "ui/crit-number",
+   "pages": 2,
+   "meanAbsDiff": 27.404,
+   "maxDiff": 860
+  },
+  {
+   "id": "ui/damage-number",
+   "pages": 2,
+   "meanAbsDiff": 14.25,
+   "maxDiff": 845
+  },
+  {
+   "id": "ui/exclamation",
+   "pages": 2,
+   "meanAbsDiff": 11.756,
+   "maxDiff": 823
+  },
+  {
+   "id": "ui/health-bar-hit",
+   "pages": 2,
+   "meanAbsDiff": 20.981,
+   "maxDiff": 828
+  },
+  {
+   "id": "ui/heart-lost",
+   "pages": 2,
+   "meanAbsDiff": 11.445,
+   "maxDiff": 793
+  },
+  {
+   "id": "ui/level-up",
+   "pages": 2,
+   "meanAbsDiff": 24.904,
+   "maxDiff": 863
+  },
+  {
+   "id": "ui/quest-complete",
+   "pages": 2,
+   "meanAbsDiff": 32.013,
+   "maxDiff": 769
+  },
+  {
+   "id": "water/bubbles",
+   "pages": 2,
+   "meanAbsDiff": 22.023,
+   "maxDiff": 768
+  },
+  {
+   "id": "water/drip",
+   "pages": 2,
+   "meanAbsDiff": 19.93,
+   "maxDiff": 638
+  },
+  {
+   "id": "water/fountain",
+   "pages": 2,
+   "meanAbsDiff": 32.301,
+   "maxDiff": 773
+  },
+  {
+   "id": "water/geyser",
+   "pages": 4,
+   "meanAbsDiff": 11.38,
+   "maxDiff": 836
+  },
+  {
+   "id": "water/rain-splash",
+   "pages": 2,
+   "meanAbsDiff": 23.837,
+   "maxDiff": 803
+  },
+  {
+   "id": "water/ripples",
+   "pages": 2,
+   "meanAbsDiff": 39.842,
+   "maxDiff": 639
+  },
+  {
+   "id": "water/splash",
+   "pages": 2,
+   "meanAbsDiff": 19.874,
+   "maxDiff": 780
+  },
+  {
+   "id": "water/water-jet",
+   "pages": 2,
+   "meanAbsDiff": 24.308,
+   "maxDiff": 803
+  },
+  {
+   "id": "water/water-orb",
+   "pages": 2,
+   "meanAbsDiff": 43.107,
+   "maxDiff": 766
+  },
+  {
+   "id": "water/waterfall",
+   "pages": 2,
+   "meanAbsDiff": 28.408,
+   "maxDiff": 805
+  },
+  {
+   "id": "water/wave-crash",
+   "pages": 2,
+   "meanAbsDiff": 14.778,
+   "maxDiff": 876
+  },
+  {
+   "id": "water/whirlpool",
+   "pages": 2,
+   "meanAbsDiff": 41.41,
+   "maxDiff": 639
+  },
+  {
+   "id": "weather/aurora",
+   "pages": 12,
+   "meanAbsDiff": 38.601,
+   "maxDiff": 801
+  },
+  {
+   "id": "weather/blizzard",
+   "pages": 8,
+   "meanAbsDiff": 21.172,
+   "maxDiff": 560
+  },
+  {
+   "id": "weather/cherry-blossoms",
+   "pages": 10,
+   "meanAbsDiff": 15.396,
+   "maxDiff": 705
+  },
+  {
+   "id": "weather/clouds",
+   "pages": 12,
+   "meanAbsDiff": 38.181,
+   "maxDiff": 815
+  },
+  {
+   "id": "weather/falling-leaves",
+   "pages": 10,
+   "meanAbsDiff": 11.861,
+   "maxDiff": 617
+  },
+  {
+   "id": "weather/fireflies",
+   "pages": 12,
+   "meanAbsDiff": 7.784,
+   "maxDiff": 617
+  },
+  {
+   "id": "weather/fog",
+   "pages": 12,
+   "meanAbsDiff": 13.08,
+   "maxDiff": 572
+  },
+  {
+   "id": "weather/god-rays",
+   "pages": 10,
+   "meanAbsDiff": 19.91,
+   "maxDiff": 574
+  },
+  {
+   "id": "weather/rain",
+   "pages": 8,
+   "meanAbsDiff": 16.563,
+   "maxDiff": 629
+  },
+  {
+   "id": "weather/shooting-stars",
+   "pages": 10,
+   "meanAbsDiff": 39.531,
+   "maxDiff": 813
+  },
+  {
+   "id": "weather/snow",
+   "pages": 12,
+   "meanAbsDiff": 16.579,
+   "maxDiff": 656
+  },
+  {
+   "id": "weather/storm",
+   "pages": 10,
+   "meanAbsDiff": 15.022,
+   "maxDiff": 690
+  }
+ ]
+}

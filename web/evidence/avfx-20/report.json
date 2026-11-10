@@ -1,0 +1,197 @@
+{
+  "errors": [],
+  "softwareGL": true,
+  "webgl2Probe": {
+    "webgl2": false,
+    "presenterMode": "2d-fallback"
+  },
+  "semanticBridge": "source Frame + donor spell, CPU composite, real world base",
+  "gallery": [
+    {
+      "id": 1,
+      "name": "Cinder Crown",
+      "status": "FUSION_PREVIEW",
+      "lead": "A+C",
+      "rendered": "A"
+    },
+    {
+      "id": 2,
+      "name": "Furnace Wyrm",
+      "status": "SOURCE_PREVIEW",
+      "lead": "B",
+      "rendered": "B"
+    },
+    {
+      "id": 3,
+      "name": "Meteor Loom",
+      "status": "SOURCE_PREVIEW",
+      "lead": "B",
+      "rendered": "B"
+    },
+    {
+      "id": 4,
+      "name": "Ashen Guillotine",
+      "status": "REDESIGN_STUDY",
+      "lead": "NEW",
+      "rendered": "REDESIGN (new authored)"
+    },
+    {
+      "id": 5,
+      "name": "Abyssal Bloom",
+      "status": "FUSION_PREVIEW",
+      "lead": "A+C",
+      "rendered": "A"
+    },
+    {
+      "id": 6,
+      "name": "Riptide Calligraphy",
+      "status": "REDESIGN_STUDY",
+      "lead": "NEW",
+      "rendered": "REDESIGN (new authored)"
+    },
+    {
+      "id": 7,
+      "name": "Mirrorfrost Basilica",
+      "status": "SOURCE_PREVIEW",
+      "lead": "C",
+      "rendered": "C"
+    },
+    {
+      "id": 8,
+      "name": "Undertow Maw",
+      "status": "SOURCE_PREVIEW",
+      "lead": "B",
+      "rendered": "B"
+    },
+    {
+      "id": 9,
+      "name": "Chain Verdict",
+      "status": "FUSION_PREVIEW",
+      "lead": "A+B+C",
+      "rendered": "A"
+    },
+    {
+      "id": 10,
+      "name": "Thunderloom",
+      "status": "SOURCE_PREVIEW",
+      "lead": "C",
+      "rendered": "C"
+    },
+    {
+      "id": 11,
+      "name": "Volt Carousel",
+      "status": "FUSION_PREVIEW",
+      "lead": "A(+C#9)",
+      "rendered": "A"
+    },
+    {
+      "id": 12,
+      "name": "Skybreaker Script",
+      "status": "REDESIGN_STUDY",
+      "lead": "NEW",
+      "rendered": "REDESIGN (new authored)"
+    },
+    {
+      "id": 13,
+      "name": "Rootwake",
+      "status": "REDESIGN_STUDY",
+      "lead": "NEW",
+      "rendered": "REDESIGN (new authored)"
+    },
+    {
+      "id": 14,
+      "name": "Spore Nebula",
+      "status": "REDESIGN_STUDY",
+      "lead": "NEW",
+      "rendered": "REDESIGN (new authored)"
+    },
+    {
+      "id": 15,
+      "name": "Thorn Opera",
+      "status": "SOURCE_PREVIEW",
+      "lead": "C",
+      "rendered": "C"
+    },
+    {
+      "id": 16,
+      "name": "Worldseed",
+      "status": "FUSION_PREVIEW",
+      "lead": "A+C",
+      "rendered": "A"
+    },
+    {
+      "id": 17,
+      "name": "Event Horizon",
+      "status": "SOURCE_PREVIEW",
+      "lead": "C",
+      "rendered": "C"
+    },
+    {
+      "id": 18,
+      "name": "Chronoshard",
+      "status": "REDESIGN_STUDY",
+      "lead": "NEW",
+      "rendered": "REDESIGN (new authored)"
+    },
+    {
+      "id": 19,
+      "name": "Constellation Engine",
+      "status": "SOURCE_PREVIEW",
+      "lead": "D",
+      "rendered": "D (D19 bridge)"
+    },
+    {
+      "id": 20,
+      "name": "Reality Ripper",
+      "status": "FUSION_PREVIEW",
+      "lead": "A+C",
+      "rendered": "A+C (semantic bridge)"
+    }
+  ],
+  "phase3": {
+    "11-lead": "A",
+    "11-study": "C (study)",
+    "11-fusion": "A#11+C#9 (recipe)",
+    "phases": [
+      "1.0 lead/fusion",
+      "3.0 lead/fusion",
+      "5.3 lead/fusion"
+    ]
+  },
+  "galleryCount": 20,
+  "referenceMaster": "reference-arcana20-visual-master.html cast 20 (creator_approved)",
+  "replay": {
+    "done": true
+  },
+  "playback": {
+    "frames": [
+      [
+        "rift@t0.5"
+      ],
+      [
+        "rift@t1.0"
+      ],
+      [
+        "rift@t1.5"
+      ],
+      [
+        "rift@t2.0"
+      ],
+      [
+        "rift@t2.5"
+      ]
+    ],
+    "mode": "2d-fallback"
+  },
+  "metrics": {
+    "mode": "2d-fallback",
+    "worldUploads": 0,
+    "layerUploads": 0,
+    "gpuPasses": 0,
+    "postCalls": 5519,
+    "glError": 0,
+    "firstGlError": null,
+    "errHistory": [],
+    "fbo": ""
+  }
+}

@@ -1,0 +1,11 @@
+
+# Full PixelFX atlas pack (414MB) — rebuilt via documented Foundry command, never committed
+pixelfx-assets/assets/
+# QA screenshots
+qa-shots/
+qa-pixelfx-shots/
+node_modules/
+dist/
+pixelfx-assets/assets
+evidence/
+sparticuz-chromium-*.tgz

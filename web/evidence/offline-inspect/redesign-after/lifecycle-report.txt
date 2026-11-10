@@ -1,0 +1,6 @@
+#4 dur=7.2 phases=a6cda4a2bdf7,bee8ff85aaba,9dcc9979d8cc backward==mid:true OUT==baseline:true
+#6 dur=7.6 phases=792fce84c594,c3a965537593,9dcc9979d8cc backward==mid:true OUT==baseline:true
+#12 dur=8.8 phases=df39016eb27f,e800816fce12,9dcc9979d8cc backward==mid:true OUT==baseline:true
+#13 dur=7.4 phases=ccece23a8feb,a4d5a424d8a8,9dcc9979d8cc backward==mid:true OUT==baseline:true
+#14 dur=8 phases=edabf7652155,6bdfd283afbd,9dcc9979d8cc backward==mid:true OUT==baseline:true
+#18 dur=8.2 phases=7dc89bed8c8b,b91d903b39d8,9dcc9979d8cc backward==mid:true OUT==baseline:true
