@@ -171,7 +171,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
           break;
         }
         case 'KeyF': { if(r.player.vehicle){act('vehicleExit',{});break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current || r.layoutId?.startsWith('veyra05-')) { const c=!target.current && Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else interact(); } else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
-        case 'KeyI': toggle('inv'); break; case 'KeyC': toggle('craft'); break; case 'KeyM': toggle('map'); break;
+        case 'KeyI': toggle('inv'); break; case 'KeyC': toggle('work'); break; case 'KeyM': toggle('map'); break;
         case 'KeyJ': toggle('journey'); break;
         case 'F9': if (onInspect && ((gs as any).__ephemeralInspect || r.qaUsed)) { e.preventDefault(); onInspect(); } break;
         case 'KeyB': setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); toggle('build'); break;
@@ -349,7 +349,8 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       {/* gold panels and original functional R12 panels */}
       {panel?.kind === 'journey' && <GoldLedger r={r} now={now} goals={journeyGoals} selected={trackedGoal} onSelect={chooseTrackedGoal} onClose={() => setPanel(null)} />}
       {/* panels */}
-      {panel?.kind === 'inv' && <InventoryPanel api={api} />}
+      {panel?.kind === 'inv' && <InventoryPanel key="pack" api={api} initialTab="pack" />}
+      {panel?.kind === 'work' && <InventoryPanel key="work" api={api} initialTab="work" />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'craft' && <CraftPanel api={api} focusRecipe={panel.recipe} />}
       {panel?.kind === 'build' && <BuildPanel api={api} />}
