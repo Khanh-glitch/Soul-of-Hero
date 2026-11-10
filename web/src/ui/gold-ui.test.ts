@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import type { RunState } from '../game/core';
 import { goldGoals } from './GoldJourney';
 import { cueFromReceipt } from './GoldFeedback';
+import { RECIPES, ALWAYS_KNOWN_RECIPES } from '../game/catalog';
+import { knownGoldRecipes, workCategory, GOLD_WORK_CATEGORIES } from './GoldWork';
 
 const NOW = 1_762_800_000_000;
 function run(overrides: Partial<RunState> = {}): RunState {
@@ -27,7 +29,7 @@ describe('Gold Waymark adapter on authoritative SOH R12 world', () => {
     const goals = goldGoals(r, NOW);
     expect(goals.map(g => g.id)).toEqual(['explore','shelter','craft','endure','hunt','guardians','stones']);
     expect(Object.fromEntries(goals.map(g => [g.id, g.progress]))).toMatchObject({
-      explore: 2, shelter: 1, craft: 3, endure: 7, hunt: 1, guardians: 1, stones: 1,
+      explore: 2, shelter: 1, craft: 0, endure: 7, hunt: 1, guardians: 1, stones: 1,
     });
     expect(JSON.stringify(r)).toBe(original);
   });
@@ -47,6 +49,22 @@ describe('Gold Waymark adapter on authoritative SOH R12 world', () => {
     const sideboss = cueFromReceipt({id:'r4',seq:4,at:NOW,kind:'boss.defeat',detail:'boss_ronin'});
     expect(sideboss?.level).toBe(4);
     expect(cueFromReceipt({id:'r5',seq:5,at:NOW,kind:'harvest',detail:'oak'})).toBeNull();
+  });
+  it('excludes ALL baseline recipes and admits genuinely learned non-base recipes', () => {
+    const base = Object.keys(RECIPES).filter(k => RECIPES[k].base || ALWAYS_KNOWN_RECIPES.includes(k));
+    const studied = Object.keys(RECIPES).filter(k => !RECIPES[k].base && !ALWAYS_KNOWN_RECIPES.includes(k)).slice(0,2);
+    expect(goldGoals(run({knowledge:{recipes:base,studied:[]}}),NOW).find(g=>g.id==='craft')?.progress).toBe(0);
+    expect(goldGoals(run({knowledge:{recipes:[...base,...studied],studied:[]}}),NOW).find(g=>g.id==='craft')?.progress).toBe(studied.length);
+  });
+  it('WORK never lists undiscovered recipes, and category filters do not invent any', () => {
+    expect(knownGoldRecipes([], 'All')).toEqual([]);
+    const known = Object.keys(RECIPES).filter(k=>!!RECIPES[k]).slice(0,9);
+    const list = knownGoldRecipes(known,'All');
+    expect(list.every(k=>known.includes(k))).toBe(true);
+    expect(list.length).toBeGreaterThan(0);
+    for (const category of GOLD_WORK_CATEGORIES.filter(k=>k!=='All')) {
+      expect(knownGoldRecipes(known,category).every(k=>workCategory(k)===category)).toBe(true);
+    }
   });
   it('does not grant, consume or mint a gameplay item from UI-only tracking', () => {
     const r = run();
