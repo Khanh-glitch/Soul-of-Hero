@@ -4,8 +4,11 @@ import { getArt } from '../game/art';
 import type { Stack, GameState } from '../game/core';
 import type { Intent, Result } from '../game/engine';
 
+// Explicit diagnostic glyph for a missing source icon (never an empty img src or a
+// fabricated replacement asset). Exact Creator Gold image must still be sourced.
+const MISSING_ICON_GLYPH = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"%3E%3Crect x="2" y="2" width="12" height="12" fill="%23131d26" stroke="%23c99753"/%3E%3Ctext x="8" y="12" text-anchor="middle" font-family="monospace" font-size="11" fill="%23eac88d"%3E%3F%3C/text%3E%3C/svg%3E';
 let iconUrls: Record<string, string> | null = null;
-export function iconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || ''; }
+export function iconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || MISSING_ICON_GLYPH; }
 export function Icon({ k, size = 16, style }: { k: string; size?: number; style?: React.CSSProperties }) { return <img className="px" src={iconUrl(k)} width={size} height={size} style={{ width: size, height: size, ...style }} draggable={false} alt="" />; }
 
 export interface Api {
