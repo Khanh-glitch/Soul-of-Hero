@@ -136,6 +136,8 @@ export interface RunRecord {
 export interface Profile {
   securedCash: number; achievements: Record<string, { at: number; score: number; runId: string }>;
   history: RunRecord[]; settings: { volume: number; muted: boolean }; profileReceipts: string[];
+  /** Journey snapshot travels with profile/run saves, unlike a detached localStorage record. */
+  journey?: unknown;
 }
 /** Physically supplied bed rest (SOH_PROVISIONAL). Reserve stacks are real custody, not copies. */
 export interface RestState { version: 'rest-v1'; bedId: string; chestId: string; reserveId: string; startedAt: number; targetAt: number; eatenHunger: number; drunkThirst: number; }

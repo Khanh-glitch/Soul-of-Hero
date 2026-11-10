@@ -1,3 +1,4 @@
+import './journey.css';
 import { airdropView } from '../game/airdrop';
 import SpiritVfxEditor from './SpiritVfxEditor';
 import * as pfx from '../game/pixelfx';
@@ -42,6 +43,10 @@ import { ExperienceStage, FieldPickupLayer, EventFeed, type FieldPickup, type Fe
 import { SurvivorScreen } from './SurvivorScreen';
 import { BuildBar, BUILD_KIT, type BuildTool } from './BuildBar';
 import { clearSlotInteraction, getHoverSlot, getKeyboardPick, DragGhost } from './dragSlots';
+import { loadJourney, flushJourney, ingestJourney, resolveTrack, rerollDaily, recordWorldMoment, markChronicleSeen, lessonState, FIELDCRAFT, DAILY_BY_ID, currentStep, lessonComplete, type JourneyStore, type JourneyEvent, type TrackRef } from '../game/journey';
+import { directCues, standingIssues, ragnarokCinematic, eldersWakeCinematic, type Flare, type Cinematic, type Issue } from '../game/attention';
+import { Waymark, WorldBeacon, FlareLayer, CinematicLayer, IssueRail, findAnchor, type WaymarkMode } from './Waymark';
+import { JourneyLedger } from './Journey';
 
 export default function Game({
   gs,
@@ -90,6 +95,49 @@ export default function Game({
   const seenCores = useRef<Set<string>>(new Set());
   const lastCueSeq = useRef<number>(gs.run?.receipts.at(-1)?.seq ?? 0);
   const phaseWatch = useRef<{ runId: string; phase: string } | null>(null);
+  // ---------------- JOURNEY + ATTENTION state ----------------
+  const [journey, setJourneyState] = useState<JourneyStore>(() => loadJourney(gs, qaMode));
+  const journeyRef = useRef(journey); journeyRef.current = journey;
+  const setJourney = useCallback((next: JourneyStore) => { journeyRef.current = next; setJourneyState(next); flushJourney(gs, qaMode, next); }, [gs, qaMode]);
+  const [stamps, setStamps] = useState<JourneyEvent[]>([]);
+  const [flares, setFlares] = useState<Flare[]>([]);
+  const heldFlares = useRef<Omit<Flare, 'born'>[]>([]);
+  const [cines, setCines] = useState<Cinematic[]>([]);
+  const [peek, setPeek] = useState(false);
+  const [issues, setIssues] = useState<Issue[]>([]);
+  const [snoozed, setSnoozed] = useState<Record<string, string>>({});
+  const anchorCache = useRef<{ t: number; key: string; v: { x: number; y: number; label: string } | null }>({ t: 0, key: '', v: null });
+  const journeyAcc = useRef(0);
+  const runJourney = useCallback((now: number) => {
+    const res = ingestJourney(journeyRef.current, gs, now);
+    if (!res.changed) return;
+    setJourney(res.store);
+    const big = res.events.filter(e => e.level >= 2);
+    const away = big.filter(e => e.away);
+    const live = big.filter(e => !e.away);
+    // Offline/absent completions are grouped into ONE quiet record instead of a parade.
+    if (away.length > 1) live.push({ id: `away:${now}`, level: 2, kind: 'step', title: `${away.length} records while away`, detail: 'Written in your Journey ledger [J]', icon: 'blueprint', away: true });
+    else live.push(...away);
+    if (live.length) setStamps(cur => [...cur, ...live.filter(e => !cur.some(c => c.id === e.id))].slice(-6));
+    if (!big.length && res.events.some(e => e.kind === 'progress')) sfx({ type: 'jtick' });
+  }, [gs, setJourney]);
+  const flushJourneyNow = useCallback(() => { if (!qaMode) flushJourney(gs, false, journeyRef.current); }, [gs, qaMode]);
+  const stampsRef = useRef(stamps); stampsRef.current = stamps;
+  const cinesRef = useRef(cines); cinesRef.current = cines;
+  const gateRef = useRef({ stamp: false, flare: false, cine: false });
+  const shownRef = useRef<{ stamp: { id: string; t: number } | null; cine: string | null }>({ stamp: null, cine: null });
+  // Deferral clock: moments wait while combat / full-screen / death own the screen; sound plays when the visual does.
+  useEffect(() => { const t = window.setInterval(() => {
+    const n = Date.now(); const g = gateRef.current; const sh = shownRef.current;
+    const head = stampsRef.current[0];
+    if (head && g.stamp) {
+      if (!sh.stamp || sh.stamp.id !== head.id) { sh.stamp = { id: head.id, t: n }; sfx({ type: head.kind === 'milestone' ? 'jmilestone' : 'jstamp' }); }
+      else if (n - sh.stamp.t > (head.kind === 'milestone' ? 3600 : 2700)) { sh.stamp = null; setStamps(cur => cur.filter(x => x.id !== head.id)); }
+    }
+    if (g.flare && heldFlares.current.length) { const next = heldFlares.current.splice(0, 2).map(f => ({ ...f, born: n })); setFlares(cur => [...cur, ...next].slice(-3)); sfx({ type: 'jcapability' }); }
+    setFlares(cur => cur.some(f => n - f.born > 3700) ? cur.filter(f => n - f.born <= 3700) : cur);
+    const c0 = cinesRef.current[0]; if (c0 && g.cine && sh.cine !== c0.id) { sh.cine = c0.id; sfx({ type: 'jepic' }); }
+  }, 200); return () => window.clearInterval(t); }, []);
   const [qaOpen, setQaOpen] = useState<boolean>(qaMode);
   const [bikeDemoState, setBikeDemoState] = useState<string | null>(null);
   useEffect(() => {
@@ -106,6 +154,8 @@ export default function Game({
     seenCores.current = new Set(gs.run ? C(gs.run, 'inv').slots.filter(s => s && ITEMS[s.key]?.creatorCore).map(s => s!.uid) : []);
     phaseWatch.current = gs.run ? { runId: gs.run.id, phase: phaseOf(gs.run, Date.now()) } : null;
     feedbackSeen.current.clear(); fieldMerge.current.clear();
+    { const j = loadJourney(gs, qaMode); journeyRef.current = j; setJourneyState(j); }
+    setStamps([]); setFlares([]); setCines([]); heldFlares.current = []; setPeek(false);
   }, [gs, initialBanner, report, qaMode]);
   const inp = useRef<Input>({ up: false, down: false, left: false, right: false, mx: 0, my: 0, attack: false, attackPressed: false, roll: false, cancel: false });
   const [coreAim, setCoreAim] = useState<null | { mode: 'refined' | 'signature'; uid: string; code: string }>(null);
@@ -118,6 +168,7 @@ export default function Game({
   const scheduleSave = () => { if (qaMode) return; clearTimeout(saveT.current); saveT.current = setTimeout(() => { void saveDetailed(gs).then(reportSave); }, 250); };
   const reportSave = (o: { ok: boolean; category: string; idbStatus: string }) => {
     if (qaMode) return;
+    if (o.ok) flushJourneyNow();
     const text = !o.ok ? SAVE_TOAST[o.category] ?? SAVE_TOAST['serialize-error'] : o.idbStatus === 'idb-init' || o.idbStatus === 'idb-transaction' ? 'Saved to this browser; the backup database write failed.' : '';
     if (text) toast(text, 'bad');
   };
@@ -140,7 +191,7 @@ export default function Game({
     setExperiences(current => [...current.filter(v => v.id !== event.id), event].sort((a, b) => b.priority - a.priority).slice(0, 4));
     // Let ExperienceStage drive active display timing so queued plaques aren't evicted before being seen;
     // prune only genuinely stale unshown items after 30s.
-    window.setTimeout(() => setExperiences(current => current.filter(v => v.id !== event.id)), 30000);
+    window.setTimeout(() => setExperiences(current => current.filter(v => v.id !== event.id)), 90000);
   }, []);
   useEffect(() => { const t = window.setInterval(() => { const n = Date.now(); setFeed(cur => cur.some(l => n - l.at > 4200) ? cur.filter(l => n - l.at <= 4200) : cur); }, 500); return () => window.clearInterval(t); }, []);
   const applyTool = useCallback((t: BuildTool) => {
@@ -259,6 +310,8 @@ export default function Game({
         case 'KeyI': case 'KeyC': if (buildModeRef.current) exitBuild(); fieldActionsRef.current.add('survivor'); toggle(e.code === 'KeyC' ? 'craft' : 'inv'); break;
         case 'KeyM': toggle('map'); break;
         case 'KeyN': toggle('notes'); break;
+        case 'KeyJ': toggle('journey'); break;
+        case 'KeyT': setPeek(v => !v); sfx({ type: 'ui' }); break;
         case 'KeyB': if (buildModeRef.current) exitBuild(); else enterBuild(); break;
         case 'KeyG': setEditLayer(v => { const a=['auto','wall','obj','roof','floor']; return a[(a.indexOf(v)+1)%a.length]; }); break;
         case 'KeyU': enterBuild('upgrade'); break;
@@ -282,7 +335,7 @@ export default function Game({
     const up = (e: KeyboardEvent) => { if (keyMap[e.code]) (inp.current as any)[keyMap[e.code]] = false; const a=coreAimRef.current;if(a && a.code===e.code){coreAimRef.current=null;setCoreAim(null);const selected=gs.run && activeStack(gs.run);if(!panelRef.current && selected?.uid===a.uid && gs.run && !gs.run.player.dead){const vx=Math.round(cam.x),vy=Math.round(cam.y),spirit=selected.key==='core_demon' && a.mode==='signature';const dest=spiritTarget.current;if(spirit && (!dest||dest.uid!==a.uid)){toast('Open M and select explored safe ground first.');return;}inp.current.skill=a.mode;inp.current.skillAim={uid:a.uid,slot:gs.run.player.active,mx:spirit?dest!.x:mouse.current.x+vx,my:spirit?dest!.y:mouse.current.y+vy,viewX:vx,viewY:vy};}} };
     const blur = () => { const i = inp.current; i.up = i.down = i.left = i.right = i.attack = false; i.skill=undefined;i.cancel=true;coreAimRef.current=null;setCoreAim(null); };
     const wheel = (e: WheelEvent) => { const r = gs.run; if (!r || panelRef.current) return; if (buildModeRef.current) { setBuildTool(t => { const all: BuildTool[] = [...BUILD_KIT, 'upgrade', 'repair', 'reclaim']; const nx = all[(all.indexOf(t) + (e.deltaY > 0 ? 1 : all.length - 1)) % all.length]; applyTool(nx); return nx; }); return; } r.player.active = (r.player.active + (e.deltaY > 0 ? 1 : 7)) % 8; rerender(); };
-    const vis = () => { if (document.hidden) { if (!qaMode) { saveSync(gs); save(gs); } blur(); } };
+    const vis = () => { if (document.hidden) { if (!qaMode) { if (saveSync(gs)) flushJourney(gs, false, journeyRef.current); void save(gs); } blur(); } };
     window.addEventListener('keydown', down); window.addEventListener('keyup', up); window.addEventListener('blur', blur); window.addEventListener('wheel', wheel, { passive: true }); document.addEventListener('visibilitychange', vis); window.addEventListener('beforeunload', vis as any);
     return () => { window.removeEventListener('keydown', down); window.removeEventListener('keyup', up); window.removeEventListener('blur', blur); window.removeEventListener('wheel', wheel); document.removeEventListener('visibilitychange', vis); window.removeEventListener('beforeunload', vis as any); };
   }, [gs]);
@@ -310,8 +363,9 @@ export default function Game({
       if (!phaseWatch.current || phaseWatch.current.runId !== gs.run.id) phaseWatch.current = { runId: gs.run.id, phase: phaseAfter };
       else if (phaseWatch.current.phase !== phaseAfter) {
         phaseWatch.current.phase = phaseAfter;
-        const event = experienceForPhase(phaseAfter, gs.run.id, now);
-        if (event) { present(event); sfx({ type: 'banner' }); }
+        const cine = phaseAfter === 'danger' ? ragnarokCinematic(gs.run.id) : phaseAfter === 'awakening' ? eldersWakeCinematic(gs.run.id) : null;
+        if (cine) { setCines(c => c.some(x => x.id === cine.id) ? c : [...c, cine]); setJourney(recordWorldMoment(journeyRef.current, gs.run.id, phaseAfter, cine.title, cine.detail, now)); }
+        else { const event = experienceForPhase(phaseAfter, gs.run.id, now); if (event) { present(event); sfx({ type: 'banner' }); } }
       }
       // Death transfers the entire pack to a physical bag. Persist that custody
       // transition immediately instead of leaving a five-second rollback window.
@@ -326,24 +380,31 @@ export default function Game({
       const cues = deriveCues(gs.run.receipts, lastCueSeq.current);
       if (cues.length) {
         lastCueSeq.current = gs.run.receipts.at(-1)?.seq ?? lastCueSeq.current;
+        // ATTENTION: fold one receipt batch into proportional feedback (L3 flares, L5 cinematics) before the feed sees it.
+        const runNow = gs.run;
+        const dir = directCues(cues, runNow, type => Object.values(runNow.entities).filter(e => e.kind === 'struct' && e.type === type && (!e.owner || e.owner === 'player')).length <= 1);
+        for (const c of dir.cinematics) setCines(cur => cur.some(x => x.id === c.id) ? cur : [...cur, c]);
+        if (dir.flares.length) heldFlares.current.push(...dir.flares);
         for (const cue of cues) {
-          const event = experienceFromCue(cue, gs.run);
+          const event = dir.absorb.has(cue.receiptId) ? null : experienceFromCue(cue, gs.run);
           if (event) present(event);
           if (cue.kind === 'station_job_done' || cue.kind === 'hand_craft' || cue.kind === 'recycle_finished' || cue.kind === 'oil_extracted') { sfx({ type: 'craft' }); }
           else if (cue.kind === 'station_state_changed' && cue.detail.includes('fuel_out')) { sfx({ type: 'machineOff' }); }
           else if (cue.kind === 'heat_out') { sfx({ type: 'machineOff' }); }
           else if (cue.kind === 'tool_broke') { sfx({ type: 'break' }); }
-          else if (cue.kind === 'elder_defeated') { sfx({ type: 'rare' }); }
+          else if (cue.kind === 'elder_defeated') { /* the L5 cinematic owns this sound */ }
           else if (cue.kind === 'airdrop_landed') { sfx({ type: 'airdropImpact' }); }
           else if (cue.kind === 'cash_secured') { sfx({ type: 'coin' }); }
         }
       }
+      // JOURNEY: receipt-cursor ingestion (immediately after new receipts, otherwise ~2.5 Hz for observed discoveries).
+      journeyAcc.current += dt; if (cues.length || journeyAcc.current > 400) { journeyAcc.current = 0; runJourney(now); }
       // Cores are special only when their UID enters custody during this session; loading a save or QA preset is not a discovery.
       for (const sl of C(gs.run, 'inv').slots) {
         if (sl && ITEMS[sl.key]?.creatorCore && !seenCores.current.has(sl.uid)) {
           seenCores.current.add(sl.uid);
           present({ id: `core:${sl.uid}`, kind: 'relic', priority: 96, title: 'CREATOR CORE RECOVERED', detail: `${ITEMS[sl.key].name} · all three reserves remain physical. Equip it, inspect its signature, or save the charge.`, icon: sl.key, accent: ITEMS[sl.key].essence === 'fire' ? '#ff8a3a' : ITEMS[sl.key].essence === 'water' ? '#7fd8ff' : ITEMS[sl.key].essence === 'spirit' ? '#d99bff' : '#91d66d', duration: 5200, source: 'engine', tier: 'stage' });
-          sfx({ type: 'rare' });
+          sfx({ type: 'jrelic' });
         }
       }
       target.current = findInteract(gs, now);
@@ -358,7 +419,7 @@ export default function Game({
       uiAcc += dt; if (uiAcc > 100) { uiAcc = 0; rerender(); tickMusic(now); }
       saveAcc += dt; if (saveAcc > 5000) { saveAcc = 0; if (!qaMode) void saveDetailed(gs).then(reportSave); }
       ambAcc += dt; if (ambAcc > 1000) {
-        ambAcc = 0; const rr = gs.run; const pp = rr.player;
+        ambAcc = 0; const rr = gs.run; const pp = rr.player; setIssues(standingIssues(rr));
         const w = weatherAt(rr, now); const idx = Math.floor(pp.y / 16) * WW + Math.floor(pp.x / 16);
         const z = getWorld().zone[idx] ?? 0; const world = getWorld();
         const rain = w === 'storm' ? 1 : w === 'rain' ? 0.6 : 0;
@@ -492,6 +553,7 @@ export default function Game({
     act: (type: string, payload: Record<string, any> = {}) => act(type, payload),
     preparePack: () => qaPrepareFullPack(gs.run!), fillPack: () => qaFillPack(gs.run!), setSecuredCash: (n: number) => qaSetSecuredCash(gs, n),
   };
+  (window as any).__sohJourney = () => journeyRef.current; // read-only QA view, no authority
   const r = gs.run; if (!r) return <div className="stage" />;
   const p = r.player; const now = Date.now(); const ph = phaseOf(r, now); const hrs = runHours(r, now); const day = Math.floor(hrs / 24) + 1;
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;
@@ -514,7 +576,7 @@ export default function Game({
   //  · a docked panel (station, chest, vendor…) owns its side: context cards there are withdrawn;
   //  · combat (Elder in range, Core aim) withdraws comfort cards and the airdrop strip, keeps vitals + boss bar;
   //  · at most ONE context card (heat OR home) is shown, chosen by urgency; build mode prefers home.
-  const fullScreen = panel?.kind === 'inv' || panel?.kind === 'craft' || panel?.kind === 'report' || panel?.kind === 'map' || panel?.kind === 'notes';
+  const fullScreen = panel?.kind === 'inv' || panel?.kind === 'craft' || panel?.kind === 'report' || panel?.kind === 'map' || panel?.kind === 'notes' || panel?.kind === 'journey';
   const combatFocus = !!engaged || !!coreAim;
   const thermal = thermalStatusView(r, thermalEnvNow(r, now), p.warmth);
   const heatUrgent = thermal.cold || thermal.warmth < thermal.coldThreshold + 12 || (thermal.warmth < 70 && thermal.heaters.some(h => h.status === 'out_of_fuel' || h.status === 'blocked_by_wall'));
@@ -534,6 +596,54 @@ export default function Game({
     setFieldNoteStore(cur => writeFieldNoteStore(r, qaMode, { ...cur, ...patch }));
   };
   const criticalEdge = !p.dead && !fullScreen && (p.hp < 25 || thermal.cold);
+  // ---------------- JOURNEY / ATTENTION view model ----------------
+  const trackView = resolveTrack(journey, hrs);
+  const wmVisible = !fullScreen && !p.dead && !qaOpen;
+  const calmish = !combatFocus && p.hp >= 35;
+  gateRef.current = { stamp: wmVisible && !panel && calmish, flare: !fullScreen && !combatFocus && !p.dead, cine: !fullScreen && !p.dead };
+  const activeStamp = gateRef.current.stamp ? stamps[0] ?? null : null;
+  const anchorKey = trackView?.anchor && !trackView.done ? JSON.stringify(trackView.anchor) : '';
+  if (anchorKey && (anchorCache.current.key !== anchorKey || now - anchorCache.current.t > 500)) anchorCache.current = { t: now, key: anchorKey, v: findAnchor(r, trackView!.anchor, now) };
+  const anchor = anchorKey ? anchorCache.current.v : null;
+  const nearAnchor = !!anchor && trackView?.anchor?.kind === 'struct' && Math.hypot(anchor.x - p.x, anchor.y - p.y) < 5 * TILE;
+  const wmMode: WaymarkMode = !calmish ? 'glyph' : peek || nearAnchor || (buildMode && !!trackView?.focus?.includes('build')) ? 'open' : 'compact';
+  const blocked = trackView?.anchor?.kind === 'struct' && !anchor && !trackView.done ? `Needs your own ${STRUCTS[trackView.anchor.types[0]]?.name ?? 'station'} first — Build [B].` : null;
+  const shownIssues = issues.filter(i => snoozed[i.id] !== i.sig);
+  const unseenCount = journey.chronicle.filter(c => !c.seen).length;
+  const track = (t: TrackRef | 'auto') => {
+    setJourney({ ...journeyRef.current, tracked: t === 'auto' ? null : t, trackQuiet: t === 'auto' ? false : !t });
+    sfx({ type: 'ui' });
+  };
+  const quickGoals = [
+    ...FIELDCRAFT.filter(l => !lessonComplete(journey, l)).map(l => {
+      const step = currentStep(journey, l);
+      return { ref: { type: 'lesson' as const, id: l.id }, title: l.title, detail: step?.title ?? 'Mastered', icon: l.icon };
+    }),
+    ...(journey.daily?.objectives.filter(o => !o.done).map(o => ({
+      ref: { type: 'daily' as const, id: o.id }, title: DAILY_BY_ID[o.id]?.title ?? o.id,
+      detail: `${o.progress}/${DAILY_BY_ID[o.id]?.target ?? 1} · ${DAILY_BY_ID[o.id]?.points ?? 0} pts`,
+      icon: DAILY_BY_ID[o.id]?.icon ?? 'gear',
+    })) ?? []),
+  ];
+  const openTrackedAction = () => {
+    const f = trackView?.focus ?? [];
+    if (f.includes('build') || trackView?.ref.type === 'lesson' && trackView.ref.id === 'shelter') { enterBuild(); return; }
+    if (f.includes('craft') || trackView?.ref.type === 'daily' && DAILY_BY_ID[trackView.ref.id]?.cat === 'craft') {
+      setPanel({ kind: 'craft' }); return;
+    }
+    if (f.includes('station') && anchor) {
+      // The player must walk to the real machine; we only point to the known location.
+      setPanel({ kind: 'map' }); return;
+    }
+    if (f.includes('explore') || trackView?.anchor || trackView?.ref.type === 'daily' && ['explore','gather'].includes(DAILY_BY_ID[trackView.ref.id]?.cat ?? '')) {
+      setPanel({ kind: 'map' }); return;
+    }
+    setPanel({ kind: 'journey' });
+  };
+  const showBeacon = wmVisible && !panel && calmish && !!trackView && !trackView.done; // world-space guidance never collides with the HUD stamp
+  const cine0 = cines[0] ?? null;
+  // A suggestion that has actually been displayed counts as "seen" (never as progress).
+  useEffect(() => { if (trackView?.ref.type === 'lesson' && lessonState(journeyRef.current, trackView.ref.id).status === 'unseen') { const id = trackView.ref.id; setJourney({ ...journeyRef.current, lessons: { ...journeyRef.current.lessons, [id]: { ...lessonState(journeyRef.current, id), status: 'seen' } } }); } }, [trackView?.ref.id]);
 
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
     <div ref={stageRef} className="stage" style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})` }}>
@@ -544,6 +654,7 @@ export default function Game({
       <div className="hud hud-col hud-col--left" style={{ left: 4, top: 4 }} onMouseDown={e => e.stopPropagation()}>
         <Vitals r={r} now={now} />
         {!fullScreen && <UrgentAlerts r={r} cold={thermal.cold} />}
+        {!fullScreen && !p.dead && <IssueRail issues={shownIssues} px={p.x} py={p.y} compact={combatFocus} onSnooze={i => setSnoozed(sn => ({ ...sn, [i.id]: i.sig }))} />}
         {contextCard === 'heat' && <ThermalStatusCard r={r} now={now} inline />}
       </div>
 
@@ -553,6 +664,7 @@ export default function Game({
         <div style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
           {ph === 'calm' && hrs > 230 && <span className="chip pulse" style={{ color: 'var(--warn)' }}>RAGNAROK IN {(264 - hrs).toFixed(1)}h</span>}
           {qaMode && <button className={`btn sm ${qaOpen ? 'gold' : ''}`} title="Visual Experience QA Lab [F9]" onClick={() => setQaOpen(v => !v)}>QA [F9]</button>}
+          <button className={`btn sm jbtn ${panel?.kind === 'journey' ? 'gold' : ''}`} title="Journey ledger: Fieldcraft, Waypoints, Chronicle [J]" onClick={() => setPanel(pp => pp?.kind === 'journey' ? null : { kind: 'journey' })}>Journey [J]{unseenCount > 0 && <i>{unseenCount}</i>}</button>
           <button className={`btn sm ${panel?.kind === 'notes' ? 'gold' : ''}`} title="Contextual Field Notes & Reference [N]" onClick={() => setPanel(pp => pp?.kind === 'notes' ? null : { kind: 'notes' })}>Notes [N]</button>
           {returnHistory.length > 0 && <button className="btn sm" title="Review offline return chronicle" onClick={() => { setReturnDigest(null); setPanel(pp => pp?.kind === 'report' ? null : { kind: 'report', lines: [], report: returnHistory[0].report }); }}>Return</button>}
           <button className="btn sm" title="Mute everything" onClick={() => { const m = !getPrefs().muted; setPrefs({ muted: m }); setVolume(gs.profile.settings.volume, m || gs.profile.settings.muted); }}
@@ -562,7 +674,8 @@ export default function Game({
         {!panel && !combatFocus && <RagnarokStrip r={r} now={now} secured={gs.profile.securedCash} />}
         {!panel && !qaOpen && returnDigest && <ReturnDigest report={returnDigest} onExpand={() => { setPanel({ kind: 'report', lines: [], report: returnDigest }); setReturnDigest(null); }} onDismiss={() => setReturnDigest(null)} />}
         {contextCard === 'home' && <HomeStatusCard r={r} px={p.x} py={p.y} inline />}
-        {!panel && !buildMode && !combatFocus && !qaOpen && !returnDigest && contextCard !== 'home' && fieldEval.active && (
+        {wmVisible && !panel && <Waymark view={trackView} mode={wmMode} store={journey} stamp={activeStamp} blocked={blocked} onToggle={() => setPeek(v => !v)} onUntrack={() => track(null)} onQuickTrack={track} quickGoals={quickGoals} onAction={openTrackedAction} onOpenJournal={() => setPanel({ kind: 'journey' })} />}
+        {!panel && !buildMode && !combatFocus && !qaOpen && !returnDigest && contextCard !== 'home' && fieldEval.active && !activeStamp && wmMode !== 'open' && !(trackView && ['first_landfall', 'pack_and_craft'].includes(fieldEval.active.id)) && (
           <FieldNoteCard
             note={fieldEval.active}
             onDismiss={id => updateFieldStore({ dismissed: [...fieldNoteStore.dismissed, id] })}
@@ -582,11 +695,15 @@ export default function Game({
         {coreAim && <div className="plate core-aim-chip">
           {activeStack(r)?.key==='core_meteor' ? (coreAim.mode==='refined'?'Q: targeted meteor':'E: ten meteors in view') : activeStack(r)?.key==='core_dragon' ? (coreAim.mode==='refined'?'Q: fire tornado':'E: collect visible eligible foes') : activeStack(r)?.key==='core_demon' ? (coreAim.mode==='refined'?'Q: stationary beam':spiritTarget.current?.uid===activeStack(r)?.uid?'E: selected map destination':'E: select destination on M map') : activeStack(r)?.key==='core_mjolnir' ? (coreAim.mode==='refined'?'Q: five lightning strikes':'E: electrical attraction') : activeStack(r)?.key==='core_earthmother' ? (coreAim.mode==='refined'?'Q: ten trees on open ground':'E: binding roots and grass') : activeStack(r)?.key==='core_elsa' ? (coreAim.mode==='refined'?'Q: one-second ice ward':'E: freeze visible terrain') : (coreAim.mode==='refined'?'Q: timed bomb · release to throw':'E: burning projectile · release to cast')} · RMB/Esc cancel
         </div>}
-        {!fullScreen && !p.dead && <ExperienceStage events={experiences} onDismiss={dismissExperience} combatFocus={combatFocus || p.hp < 35} inline />}
+        {cine0 && combatFocus && gateRef.current.cine && <CinematicLayer c={cine0} compact reduceMotion={vp.reduceFlash} onDone={() => setCines(c => c.slice(1))} />}
+        {!fullScreen && !p.dead && !cine0 && !(combatFocus && experiences[0] && experiences[0].kind !== 'world' && experiences[0].kind !== 'warning') && <ExperienceStage events={experiences} onDismiss={dismissExperience} combatFocus={combatFocus || p.hp < 35} inline />}
         {banner && !experiences.length && !fullScreen && <div key={banner.id} className="banner" style={{ textAlign: 'center', pointerEvents: 'none', marginTop: 4 }} onAnimationEnd={() => setBanner(null)}><div className="title-font" style={{ fontSize: 18, color: '#ffe8b0', textShadow: '2px 2px 0 #2a1006, 0 0 8px #ff9a3a' }}>{banner.text}</div>{banner.sub && <div style={{ fontSize: 11, color: '#e0d0f0', textShadow: '1px 1px 0 #000' }}>{banner.sub}</div>}</div>}
       </div>
 
       <FieldPickupLayer items={fieldPickups} camX={Math.round(cam.x)} camY={Math.round(cam.y)} />
+      {showBeacon && <WorldBeacon target={anchor} camX={Math.round(cam.x)} camY={Math.round(cam.y)} icon={trackView!.icon} />}
+      <FlareLayer flares={flares} camX={Math.round(cam.x)} camY={Math.round(cam.y)} />
+      {cine0 && !combatFocus && gateRef.current.cine && <CinematicLayer c={cine0} compact={false} reduceMotion={vp.reduceFlash} onDone={() => setCines(c => c.slice(1))} />}
       {coreAim && ['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature' && <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><rect x="2" y="2" width={VIEW_W-4} height={VIEW_H-4} fill="none" stroke="#ffd98a" strokeDasharray="4 3"/></svg>}
       {coreAim && !(activeStack(r)?.key==='core_demon' && coreAim.mode==='signature') && !(['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature') && (()=>{const px=p.x-Math.round(cam.x),py=p.y-Math.round(cam.y),len=rayLen(r,p.x,p.y,p.aim,['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'')?Math.min(activeStack(r)?.key==='core_meteor'?180:157,Math.hypot(mouse.current.x+Math.round(cam.x)-p.x,mouse.current.y+Math.round(cam.y)-p.y)):coreAim.mode==='refined'?120:195);return <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><line x1={px} y1={py} x2={px+Math.cos(p.aim)*len} y2={py+Math.sin(p.aim)*len} stroke="#ffd98a" strokeWidth="1" strokeDasharray="4 3"/><circle cx={px+Math.cos(p.aim)*len} cy={py+Math.sin(p.aim)*len} r="4" fill="none" stroke="#ffd98a"/></svg>;})()}
 
@@ -616,6 +733,10 @@ export default function Game({
 
       {/* panels */}
       {(panel?.kind === 'inv' || panel?.kind === 'craft') && <SurvivorScreen api={api} initial="all" focusRecipe={panel.recipe} />}
+      {trackView && !p.dead && ((panel?.kind === 'inv' || panel?.kind === 'craft') && (trackView.focus?.includes('craft') || trackView.ref.type === 'daily' && ['craft','produce'].includes(DAILY_BY_ID[trackView.ref.id]?.cat ?? '')) || panel?.kind === 'map' && (trackView.focus?.includes('explore') || trackView.ref.type === 'daily' && ['explore','gather'].includes(DAILY_BY_ID[trackView.ref.id]?.cat ?? ''))) && <div className="journey-context-peek" role="status" title={trackView.how} onMouseDown={e => e.stopPropagation()}>
+        <span className="journey-context-peek__dot"/><b>{trackView.title}</b><em>{trackView.progress}/{trackView.target}</em>
+        <button onClick={() => setPanel({ kind: 'journey' })} title="See the whole journey">❖</button>
+      </div>}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'map' && <MapPanel api={api} qaSession={qaMode} teleportTarget={spiritTarget.current?.uid===activeStack(r)?.uid?spiritTarget.current:null} onTeleportSelect={activeStack(r)?.key==='core_demon' ? (x,y)=>{const reason=spiritDestination(r,x,y);if(reason){toast(reason,'bad');return;}spiritTarget.current={uid:activeStack(r)!.uid,x,y};toast('Destination set. Close the map, then hold and release E.','ok');} : undefined} />}
       {panel?.kind === 'notes' && <FieldNotesPanel
@@ -626,6 +747,12 @@ export default function Game({
         onToggleMute={() => updateFieldStore({ muted: !fieldNoteStore.muted })}
         onClose={() => setPanel(null)}
       />}
+      {panel?.kind === 'journey' && <JourneyLedger gs={gs} store={journey} now={now}
+        onTrack={t => track(t)}
+        onLesson={(id, st) => setJourney({ ...journeyRef.current, lessons: { ...journeyRef.current.lessons, [id]: { ...lessonState(journeyRef.current, id), status: st } } })}
+        onReroll={id => setJourney(rerollDaily(journeyRef.current, id, r))}
+        onSeen={() => setJourney(markChronicleSeen(journeyRef.current))}
+        onClose={() => setPanel(null)} onOpenNotes={() => setPanel({ kind: 'notes' })} />}
       {panel?.kind === 'skills' && <SkillsPanel api={api} />}
       {panel?.kind === 'menu' && <MenuPanel api={api} qaMode={qaMode} returnHistory={returnHistory} onSave={() => qaMode ? Promise.resolve(false) : save(gs)} onQuit={async () => { if (qaMode) { onExit(); return; } if (await save(gs)) onExit(); else toast('Save failed; staying in the run.', 'bad'); }} />}
       {panel?.kind === 'menu' && <div className="panel absolute fadein scroll" style={{ left: 6, top: 34, width: 198, maxHeight: 306, overflowY: 'auto', padding: 6 }} onMouseDown={e => e.stopPropagation()}>

@@ -350,6 +350,13 @@ export function sfx(e: any) {
     case 'discover': tone(523, 523, 0.18, 'triangle', 0.075, U); tone(659, 659, 0.18, 'triangle', 0.075, U, 0.13); tone(784, 784, 0.34, 'triangle', 0.08, U, 0.26); tone(1046, 1046, 0.5, 'sine', 0.04, U, 0.4); break;
     case 'banner': tone(196, 196, 0.65, 'triangle', 0.1, U); tone(147, 147, 0.85, 'triangle', 0.085, U, 0.26); break;
     case 'rare': tone(392, 392, 0.2, 'sine', 0.07, U); tone(587, 587, 0.24, 'sine', 0.06, U, 0.14); tone(784, 784, 0.6, 'triangle', 0.07, U, 0.3); noise(0.7, 5000, 0.025, U, 'highpass', 0.3, 1); break;
+    // ---- Journey feedback ladder (L1 tick → L5 epic). Each rung is audibly bigger than the last.
+    case 'jtick': tone(1500, 1500, 0.018, 'square', 0.018, U); break;
+    case 'jstamp': noise(0.05, 900, 0.09, U, 'lowpass'); tone(220, 180, 0.08, 'triangle', 0.08, U); tone(988, 988, 0.22, 'sine', 0.045, U, 0.12); tone(1318, 1318, 0.3, 'sine', 0.03, U, 0.2); break;
+    case 'jmilestone': tone(659, 659, 0.5, 'sine', 0.06, U); tone(988, 988, 0.6, 'sine', 0.045, U, 0.09); tone(1318, 1318, 0.9, 'triangle', 0.035, U, 0.18); noise(0.6, 6000, 0.012, U, 'highpass', 0.15, 1); break;
+    case 'jcapability': tone(392, 392, 0.09, 'square', 0.045, U); tone(523, 523, 0.09, 'square', 0.045, U, 0.08); tone(784, 784, 0.28, 'square', 0.05, U, 0.16); tone(196, 196, 0.4, 'triangle', 0.05, U, 0.16); break;
+    case 'jrelic': tone(311, 311, 0.6, 'sine', 0.06, U); tone(466, 466, 0.7, 'sine', 0.05, U, 0.18); tone(698, 698, 0.9, 'triangle', 0.06, U, 0.36); tone(1396, 1396, 1.2, 'sine', 0.02, U, 0.5); noise(1.2, 7000, 0.02, U, 'highpass', 0.4, 1); break;
+    case 'jepic': noise(0.9, 140, 0.22, U, 'lowpass', 0, 1, 0, true); tone(65, 49, 1.4, 'sine', 0.2, U); tone(131, 131, 1.6, 'sawtooth', 0.04, U, 0.5); tone(196, 196, 1.6, 'triangle', 0.06, U, 0.5); tone(262, 262, 1.8, 'triangle', 0.06, U, 0.9); tone(392, 392, 2.2, 'sine', 0.05, U, 1.3); break;
     case 'death': tone(220, 55, 1.4, 'sawtooth', 0.12, C); tone(110, 40, 1.8, 'sine', 0.1, C, 0.1); noise(1.2, 260, 0.07, C, 'lowpass', 0, 1, 0, true); break;
     default: break;
   }

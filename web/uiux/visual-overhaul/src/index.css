@@ -895,3 +895,85 @@ div.map-row--mark { flex-direction: row; align-items: center; padding: 0; }
 @media (prefers-reduced-motion: reduce) {
   .field-map *, .return-report *, .field-note-card *, .return-digest *, .sv *, .xp-combat-alert { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* A × B fusion: Survivor always fits all 24 item slots without web-native rails.
+   Only the recipe catalog is wheel-scrollable when genuinely necessary; its
+   scrollbar is visually suppressed. No nested inventory/item-description rail. */
+.sv-left { overflow: clip; min-height: 0; }
+.sv-left > .iteminfo { overflow: clip; min-height: 0; }
+.sv, .sv-body, .sv-left, .sv-right { overscroll-behavior: contain; }
+.sv-tiles { scrollbar-width: none; -ms-overflow-style: none; }
+.sv-tiles::-webkit-scrollbar { display: none; }
+@media (max-width: 700px) {
+  .sv-left { overflow: clip; grid-template-rows: auto auto minmax(0,1fr) auto auto; row-gap: 2px; }
+  .sv-left > .iteminfo { overflow: clip; }
+  .sv-left .sv-char { min-height: 0; }
+  .sv-left .dgrid { min-height: 0; }
+}
+
+/* Compact Survivor: reorganize information by usage instead of shrinking the desktop layout. */
+@media (max-width: 700px) {
+  .sv { padding: 5px 6px 6px; }
+  .sv-top { height: 18px; margin-bottom: 3px; }
+  .sv-title { font-size: 12px; letter-spacing: 2px; }
+  .sv-compact-nav { height: 26px; margin-bottom: 5px; }
+  .sv-compact-nav button { font-size: 12px; text-align: center; }
+  .sv-left {
+    display: grid;
+    grid-template-columns: 205px minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+    gap: 5px 9px;
+    align-items: stretch;
+    padding: 8px;
+    overflow: clip;
+    background: linear-gradient(165deg, rgba(14,23,28,.93), rgba(5,10,13,.93));
+  }
+  .sv-char {
+    grid-column: 1;
+    grid-row: 1/3;
+    padding: 9px 5px;
+    min-height: 172px;
+    align-self: stretch;
+    align-items: center;
+    gap: 5px;
+    background: radial-gradient(circle at 40% 35%, rgba(75,76,60,.15), transparent 76%), rgba(4,8,11,.5);
+    border: 1px solid rgba(94,106,108,.48);
+  }
+  .sv-eq { gap: 6px; }
+  .sv-eqcell .dslot { width: 34px !important; height: 34px !important; }
+  .sv-eqcell .dslot img { width: 26px !important; height: 26px !important; }
+  .sv-portrait { width: 87px; height: 145px; }
+  .sv-doll { width: 80px; height: 120px; }
+  .sv-portrait-turn { height: 16px; font-size: 9px; }
+  .sv-stats { gap: 8px; min-width: 0; }
+  .sv-left .stat, .sv-left .sv-load { font-size: 10px; }
+  .sv-load .track { min-width: 17px; }
+  .sv-packlabel { grid-column:2; grid-row:1; padding: 0 3px; min-height: 18px; font-size: 11px; }
+  .sv-packlabel small { font-size: 10px; }
+  .sv-left > .dgrid { grid-column:2; grid-row:2; align-self:start; width:100%; gap:6px; }
+  .sv-left .dgrid--tiered { gap: 6px; }
+  .sv-left .dgrid-tier { padding: 5px; }
+  .sv-left .dgrid-tier__head { font-size: 9px; margin-bottom: 4px; letter-spacing: .65px; }
+  .sv-left .dgrid-tier__head small { font-size: 8px; }
+  .sv-left .dgrid-row { grid-template-columns: repeat(8, 42px) !important; gap:3px; }
+  .sv-left .dgrid .dslot { width:42px !important; height:42px !important; }
+  .sv-left .dgrid .dslot img { width:30px !important; height:30px !important; }
+  .sv-left .dgrid .dslot .dslot__key { font-size:8px; }
+  .sv-left .dgrid .dslot .dslot__qty { font-size:9px; }
+  .sv-left > .iteminfo { grid-column:1/-1; grid-row:3; align-self:end; padding:7px 10px; min-height:52px; margin:0; overflow:clip; font-size:9px; border-left:2px solid rgba(207,170,96,.65); }
+  .sv-left > .iteminfo--empty { justify-content:center; gap:8px; }
+  .sv-left > .iteminfo--empty::before { content:'INSPECT ITEM'; display:inline-block; font:700 10px 'Pixelify Sans',monospace; letter-spacing:.7px; color:var(--brassLit); margin-right:auto; }
+  .sv-left > .kbd-move-bar { grid-column:1/-1; grid-row:4; }
+  .sv-left > .sv-itemacts { grid-column:1/-1; grid-row:5; }
+  .sv-left:has(> .sv-itemacts) { gap:3px 9px; }
+  .sv-left:has(> .sv-itemacts) .sv-char { min-height: 145px; padding-top:3px; padding-bottom:3px; }
+  .sv-left:has(> .sv-itemacts) .sv-doll { width:70px; height:105px; }
+  .sv-left:has(> .sv-itemacts) .sv-portrait { width:74px; height:125px; }
+  .sv-left:has(> .sv-itemacts) .dgrid-row { grid-template-columns:repeat(8, 38px) !important; }
+  .sv-left:has(> .sv-itemacts) .dgrid .dslot { width:38px !important; height:38px !important; }
+  .sv-left:has(> .sv-itemacts) .dgrid .dslot img { width:27px !important; height:27px !important; }
+  .sv-left:has(> .sv-itemacts) .dgrid-tier { padding:3px; }
+  .sv-left:has(> .sv-itemacts) .dgrid--tiered { gap:3px; }
+  .sv-left:has(> .sv-itemacts) > .iteminfo { min-height: 42px; padding:4px 7px; }
+  .sv-left:has(> .sv-itemacts) .iteminfo__ico { width:25px; height:25px; }
+}

@@ -814,6 +814,8 @@ export function killCreature(gs: GameState, m: Creature, now: number) {
     receipt(r, now, 'elder.defeat', m.elder.key); pushLog(r, now, `${d.name} falls. Its stone lies in the dust.`, 'gold'); award(gs, 'elder_1', now);
   } else {
     const d = CREATURES[m.type]; if (!d) return;
+    // Journey: additive audit receipt only (no outcome change) so combat progress is receipt-backed.
+    receipt(r, now, 'creature.kill', `${m.type}:${m.id}`);
     for (const [k, q, ch] of d.drops) if (rngNext(r) < ch) spawnDrop(r, k, q, m.x, m.y, now);
     r.player.skills.combat += 2;
   }
