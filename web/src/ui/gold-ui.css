@@ -54,9 +54,9 @@
 /* PR #52's 640x360 compact 24-slot pack, adapted to the authoritative R12 custody. */
 .gold-inventory { border-color:#b58a49; background:linear-gradient(145deg,#261e29,#120e17); box-sizing:border-box; }
 .gold-inventory .gold-inv-body { display:grid; grid-template-columns:205px 1fr; gap:10px; }
-.gold-inventory .gold-inv-hero { padding:7px; height:166px; box-sizing:border-box;
+.gold-inventory .gold-inv-hero { padding:7px; height:200px; box-sizing:border-box;
   background:linear-gradient(120deg,#17131c,#241a25); border:1px solid #5c473b; }
-.gold-inventory .gold-inv-portrait { width:52px; height:82px; margin:5px auto 4px; border:1px solid #99784d;
+.gold-inventory .gold-inv-portrait { width:84px; height:120px; margin:4px auto 5px; border:1px solid #99784d;
   box-shadow:inset 0 0 0 2px #332731; display:flex; align-items:center; justify-content:center;
   background:repeating-linear-gradient(45deg,#302638,#302638 3px,#27202c 3px,#27202c 6px); color:#e6ce9e; }
 .gold-inventory .gold-inv-gear { display:flex; gap:7px; justify-content:center; align-items:center; margin-top:4px; }
@@ -71,7 +71,7 @@
 .gold-inventory .gold-inv-grid .slot.active { border-color:#f5bb5b; }
 .gold-inventory .gold-inv-grid .slot.sel { border-color:#e4d28b; }
 .gold-inventory .gold-inv-grid-label { display:flex; justify-content:space-between; font-size:9px; color:#a58e83; }
-.gold-inventory .gold-inv-inspector { margin-top:7px; border-top:1px solid #8f7150; height:62px; padding-top:4px;
+.gold-inventory .gold-inv-inspector { margin-top:4px; border-top:1px solid #8f7150; height:52px; padding-top:4px;
   display:flex; gap:8px; }
 .gold-inventory .gold-inv-inspector-info { flex:1; overflow:auto; font-size:10px; scrollbar-width:thin; min-width:0; }
 .gold-inventory .gold-inv-actions { width:163px; flex-shrink:0; display:grid; grid-template-columns:1fr 1fr; align-content:start; gap:3px; }
@@ -129,3 +129,5 @@
 .gold-feedback--combat .gold-feedback__eyebrow { font-size:7px; }
 @keyframes gold-reveal { from {opacity:0;transform:translateY(8px) scale(.985)} to{opacity:1;transform:none} }
 @media (prefers-reduced-motion:reduce) { .gold-feedback { animation:none; } }
+
+.gold-inv-hero-canvas { display:block; width:78px; height:116px; margin:auto; image-rendering:pixelated; image-rendering:crisp-edges; }
