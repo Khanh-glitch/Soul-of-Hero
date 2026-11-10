@@ -194,7 +194,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const compact = !!e.farm || !!e.garden || !!e.basePower || !!e.turret || e.type==='claim';
   if (compact && inventoryOnly) return <InventoryPanel api={api} quickTo={quickTo} x={168} top={54} backToContainer onClose={()=>{api.setSel(null);setInventoryOnly(false);}} />;
   return <>
-    <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className="scroll">
+    <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className="scroll gold-surface">
       <div className="scroll" style={{ maxHeight: 250, overflowY: 'auto', overflowX: 'hidden' }}>
         {e.kind === 'vehicle' && e.vehicle && (() => { const broken = (e.hp ?? 0) <= 0, dry = (e.vehicle.fuel ?? 0) <= 0, cargoN = C(r, e.c!).slots.filter(Boolean).length;
             const status = broken ? 'Breakdown: condition 0. Repair on foot (1 Part + 1 Fastener).' : dry ? 'Out of fuel. Add 1 Fuel Canister on foot.' : 'Running.';
@@ -366,7 +366,7 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
   const fuelNeeded = rc?.station === 'campfire' || rc?.station === 'furnace' || rc?.station === 'refinery';
   const fuelReady = !fuelNeeded || !!st && (st.station!.burn > 0 || C(r, st.station!.fuelC).slots.some(s => s && stationBurnable(s.key)));   // one policy: stationBurnable
   const outputReady = !rc?.station || !st || (rc.outs ? recoveryFits(C(r, st.station!.outC), rc.outs) : spaceFor(r, st.station!.outC, rc.out) >= rc.qty);
-  return <Panel title="Crafting" style={{ left: 8, top: 34, width: 302, height: 306 }} onClose={() => api.open(null)}>
+  return <Panel title="Crafting" className="gold-surface" style={{ left: 8, top: 34, width: 302, height: 306 }} onClose={() => api.open(null)}>
     <div className="flex gap-1" style={{ marginBottom: 4 }}><button className="btn" onClick={() => setInventory(true)}>Inventory</button>{selectedRecipe && <button className="btn" onClick={() => setSelectedRecipe(null)}>Close details</button>}<span style={{ fontSize: 10, color: '#b7a8bf', alignSelf: 'center' }}>{Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).length} learned</span></div>
     {rc && selectedRecipe ? <div className="scroll" style={{ maxHeight: 245, overflowY: 'auto', fontSize: 11 }}>
       <div className="flex items-center gap-1"><Icon k={rc.out} size={20} /><b style={{ color: '#ffd98a' }}>{rc.outs ? bundleLabel(rc) : `${ITEMS[rc.out].name} ×${rc.qty}`}</b><span> · learned</span></div>
@@ -403,7 +403,7 @@ export function BuildPanel({ api }: { api: Api }) {
   const [category,setCategory]=useState('Shell'); const [query,setQuery]=useState('');
   const groups = BUILD_GROUPS;
   const keys=BUILD_ORDER.filter(k=>query.trim() ? STRUCTS[k].name.toLowerCase().includes(query.trim().toLowerCase()) : groups[category].includes(k));
-  return <Panel title="Build · choose a structure" style={{ left: 20, top: 30, width: 390, maxHeight: 300 }} onClose={() => api.open(null)}>
+  return <Panel title="Build · choose a structure" className="gold-surface" style={{ left: 20, top: 30, width: 390, maxHeight: 300 }} onClose={() => api.open(null)}>
     {!owned && <div style={{ fontSize: 11, color: '#ffd98a' }}>Build anywhere legal; unfunded structures decay. Place a cabinet on your foundation to maintain them.</div>}
     <div className="flex gap-1" style={{marginBottom:4}}>{Object.keys(groups).map(k=><button key={k} className={`btn ${category===k&&!query?'gold':''}`} onClick={()=>{setCategory(k);setQuery('')}}>{k}</button>)}</div>
     <label style={{fontSize:11}}>Find <input aria-label="Find structure" value={query} onChange={e=>setQuery(e.target.value)} style={{width:135,color:'#fff',background:'#21182a',border:'1px solid #6c5770'}} /></label>
@@ -562,7 +562,7 @@ export function MapPanel({ api, onTeleportSelect, teleportTarget }: { api: Api; 
     : 0;
   const seenContinentPois = isVeyra ? POIS.filter(po => r.poiSeen.includes(po.id)) : [];
 
-  return <Panel title={`${isVeyra ? (effectiveMode === 'continent' ? 'Map · Veyra Continent (Fog of War)' : 'Map · Active Sector (200×200)') : 'Map of the island'} — ${(w.zoneNames || ZONES)[w.zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]]}`} style={{ left: 112, top: 22, width: 448 }} onClose={() => api.open(null)}>
+  return <Panel title={`${isVeyra ? (effectiveMode === 'continent' ? 'Map · Veyra Continent (Fog of War)' : 'Map · Active Sector (200×200)') : 'Map of the island'} — ${(w.zoneNames || ZONES)[w.zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]]}`} className="gold-fieldchart" style={{ left: 112, top: 22, width: 448 }} onClose={() => api.open(null)}>
     <div className="flex gap-2">
       <div style={{ width: 260 }}>
         {isVeyra && <div className="flex justify-between items-center" style={{ marginBottom: 3, fontSize: 9 }}>
@@ -614,7 +614,7 @@ export function SkillsPanel({ api }: { api: Api }) {
   const isVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
   const elderDefs = isVeyra ? Object.values(PRIMORDIAL_ELDERS) : Object.values(ELDERS);
   const labels: Record<string, string> = { gather: 'Gathering', combat: 'Combat (+0.2% dmg/xp)', craft: 'Crafting', survival: 'Survival' };
-  return <Panel title="Adventurer — skills, knowledge, stones" style={{ left: 120, top: 34, width: 400 }} onClose={() => api.open(null)}>
+  return <Panel title="Adventurer — skills, knowledge, stones" className="gold-skillbook" style={{ left: 120, top: 34, width: 400 }} onClose={() => api.open(null)}>
     <div className="flex gap-3" style={{ fontSize: 10 }}>
       <div style={{ width: 170 }}>{Object.entries(r.player.skills).map(([k, xp]) => <div key={k} style={{ marginBottom: 3 }}><div className="flex justify-between"><span>{labels[k]}</span><span style={{ color: '#ffd98a' }}>Lv {lvl(xp)}</span></div><div className="bar" style={{ width: 160 }}><i style={{ width: `${((Math.sqrt(xp / 3) % 1) * 100)}%`, background: '#9ad0ff' }} /></div></div>)}
         <div style={{ color: '#ffd98a', marginTop: 6 }}>{isVeyra ? 'Primordial stones (optional)' : 'Elder stones (optional)'}</div>
@@ -645,7 +645,7 @@ export function MenuPanel({ api, onQuit, onSave }: { api: Api; onQuit: () => voi
   const d = departureReadiness(r, now);
   const cabinets = d.home.cabinets;
   const fmtOpt = (h: number | null) => (h === null ? '—' : fmtH(h));
-  return <Panel title="Menu — world time continues" style={{ left: 8, top: 8, width: 624, maxHeight: 344, display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClose={() => api.open(null)}>
+  return <Panel title="Menu — world time continues" className="gold-surface" style={{ left: 8, top: 8, width: 624, maxHeight: 344, display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClose={() => api.open(null)}>
     <div className="flex flex-wrap gap-1 items-center" data-testid="menu-actions" style={{ flex: '0 0 auto' }}>
       <button className="btn gold" onClick={() => api.open(null)}>Resume</button>
       <button className="btn" onClick={async () => { const ok = await onSave(); const text = ok ? 'Saved locally.' : 'Save failed. Your changes are not confirmed on disk.'; setSaveNote({ ok, text }); api.toast(text); }}>Save now</button>
