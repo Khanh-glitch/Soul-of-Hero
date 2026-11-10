@@ -32,6 +32,7 @@ import { RestPanel } from './RestPanel';
 import { ReturnChronicle, ReturnDigest } from './ReturnChronicle';
 import './gold-return-original.css';
 import { SurvivorScreen } from './SurvivorScreen';
+import { GoldSourceSurface } from './GoldSourceSurface';
 import { Gold3WayfinderHost } from './GoldWayfinderAdapter';
 import { PersistentProblems } from './PersistentProblems';
 import { derivePersistentWarnings } from '../game/gold-attention';
@@ -41,7 +42,7 @@ import { BUILD_KIT, BuildBar, type BuildTool } from './BuildBar';
 import './gold-buildbar-original.css';
 import './gold-hud-original.css';
 import './gold-wayfinder-original.css';
-import './gold-survivor-original.css';
+// Gold Survivor CSS is now sourced in full from immutable Gold (2) inside GoldSourceSurface.
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 
 export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: GameState; report: { lines: string[]; report: OfflineReturnV1 | null } | null; onExit: () => void; onRunEnd: () => void; onInspect?: () => void }) {
@@ -362,9 +363,9 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         <BuildBar gs={gs} tool={buildingTool} onPick={selectBuildTool} hoverX={hoverX} hoverY={hoverY}/>
       </div>}
       {/* panels */}
-      {panel?.kind === 'inv' && <SurvivorScreen key="pack" api={api} initialView="pack" />}
+      {panel?.kind === 'inv' && <GoldSourceSurface><SurvivorScreen key="pack" api={api} initialView="pack" /></GoldSourceSurface>}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
-      {panel?.kind === 'craft' && <SurvivorScreen key="work" api={api} initialView="work" focusRecipe={panel.recipe} />}
+      {panel?.kind === 'craft' && <GoldSourceSurface><SurvivorScreen key="work" api={api} initialView="work" focusRecipe={panel.recipe} /></GoldSourceSurface>}
       {panel?.kind === 'build' && <BuildPanel api={api} />}
       {panel?.kind === 'map' && <MapPanel api={api} teleportTarget={spiritTarget.current?.uid===activeStack(r)?.uid?spiritTarget.current:null} onTeleportSelect={activeStack(r)?.key==='core_demon' ? (x,y)=>{const reason=spiritDestination(r,x,y);if(reason){toast(reason,'bad');return;}spiritTarget.current={uid:activeStack(r)!.uid,x,y};toast('Destination set. Close the map, then hold and release E.','ok');} : undefined} />}
       {panel?.kind === 'skills' && <SkillsPanel api={api} />}
