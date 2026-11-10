@@ -125,6 +125,7 @@ try{
   await page.locator('.buildbar').waitFor({timeout:8000});
   const buildButtons=await page.locator('.bslot').count();
   if(buildButtons<8)throw new Error('Source-authored Gold2 BuildBar lost tools: '+buildButtons);
+  if(await page.getByTestId('legacy-build-helper').count()) throw new Error('Duplicate R12 build status overlaps Gold2 BuildBar');
   pass(width+' authored BuildBar',{tools:buildButtons});
   await shot('buildbar');
   await page.keyboard.press('b');
