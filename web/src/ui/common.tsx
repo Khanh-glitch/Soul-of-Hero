@@ -23,7 +23,7 @@ export interface Api {
   setBuild: (t: string | null) => void; buildType: string | null; reclaim: boolean; setReclaim: (b: boolean) => void; repairMode: boolean; setRepairMode: (b: boolean) => void; setUpgradeMode: (b: boolean) => void;
   sfx: (t: string) => void; rerender: () => void;
 }
-export type PanelState = { kind: 'inv' | 'craft' | 'build' | 'map' | 'skills' | 'rest' | 'menu' | 'container' | 'vendor' | 'escrow' | 'evac' | 'report' | 'research' | 'journey'; eid?: string; recipe?: string; lines?: string[]; report?: import('../game/return-report').OfflineReturnV1 | null };
+export type PanelState = { kind: 'inv' | 'work' | 'craft' | 'build' | 'map' | 'skills' | 'rest' | 'menu' | 'container' | 'vendor' | 'escrow' | 'evac' | 'report' | 'research' | 'journey'; eid?: string; recipe?: string; lines?: string[]; report?: import('../game/return-report').OfflineReturnV1 | null };
 export const mkIntent = (type: string, p: Record<string, any> = {}): Intent => ({ id: `${type}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`, type, ...p });
 
 export function Slot({ s, sel, active, onClick, onContext, hotkey, title }: { s: Stack | null; sel?: boolean; active?: boolean; onClick?: (e: React.MouseEvent) => void; onContext?: (e: React.MouseEvent) => void; hotkey?: string; title?: string }) {
