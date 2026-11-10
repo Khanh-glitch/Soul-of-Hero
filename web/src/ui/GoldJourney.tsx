@@ -1,5 +1,5 @@
 import type { RunState, Receipt } from '../game/core';
-import { PRIMORDIAL_ELDERS, ALWAYS_KNOWN_RECIPES } from '../game/catalog';
+import { PRIMORDIAL_ELDERS, ALWAYS_KNOWN_RECIPES, RECIPES } from '../game/catalog';
 import { Icon } from './common';
 import { runHours } from '../game/engine';
 import './gold-ui.css';
@@ -32,7 +32,7 @@ export function goldGoals(r: RunState, now: number): FieldGoal[] {
       icon: 'st:claim', progress: structures.some(e => e.type === 'claim') ? 1 : 0, target: 1 },
     { id: 'craft', title: 'Expand your craft', category: 'CRAFT',
       detail: 'Acquire five recipes beyond those known from the start.', why: 'Crafting changes what you can make and how far you can travel.',
-      icon: 'blueprint', progress: bounded(r.knowledge.recipes.filter(key => !ALWAYS_KNOWN_RECIPES.includes(key)).length, 5), target: 5 },
+      icon: 'blueprint', progress: bounded(r.knowledge.recipes.filter(key => !RECIPES[key]?.base && !ALWAYS_KNOWN_RECIPES.includes(key)).length, 5), target: 5 },
     { id: 'endure', title: 'Survive the first day', category: 'ENDURE',
       detail: 'Remain alive until twenty-four real hours have elapsed.', why: 'The world clock continues even while you are away.',
       icon: 'wood', progress: bounded(Math.floor(runHours(r, now)), 24), target: 24 },
