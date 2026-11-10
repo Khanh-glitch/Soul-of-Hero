@@ -131,3 +131,12 @@
 @media (prefers-reduced-motion:reduce) { .gold-feedback { animation:none; } }
 
 .gold-inv-hero-canvas { display:block; width:78px; height:116px; margin:auto; image-rendering:pixelated; image-rendering:crisp-edges; }
+
+/* R12 Gold HUD emphasis; preserves real health, time and boss authority. */
+.gold-hud-vitals,.gold-hud-clock { border-color:#97724a; background:linear-gradient(150deg,#1b1725f5,#17121fea); box-shadow:inset 0 0 0 1px #78634b,inset 0 0 0 2px #2c2530,0 2px 2px #08040acc; }
+.gold-hud-vitals .bar,.gold-hud-clock .bar { border-color:#29202a; box-shadow:0 0 0 1px #79634d; }
+.gold-boss-hud { pointer-events:none; text-shadow:1px 1px #08040d,0 0 6px #2b0c0c; }
+.gold-boss-hud .bar { height:7px; border-color:#140e12; box-shadow:0 0 0 1px #936b43,0 2px 0 #08060a; }
+.gold-boss-hud .title-font { font-size:11px!important; letter-spacing:.4px; }
+.gold-quickbar { border-color:#a7834f; background:linear-gradient(#2b222d,#15111c); box-shadow:inset 0 0 0 1px #7a5c48,inset 0 0 0 2px #352830,0 2px 5px #05030c; }
+.gold-quickbar .slot.active { border-color:#f9ce70; box-shadow:inset 0 0 0 1px #f8c66a,0 0 5px #e9ac5566; }
