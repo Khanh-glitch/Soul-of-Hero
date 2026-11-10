@@ -130,14 +130,14 @@
     var PILOT20 = ['ice/ice-lance','arcane/arcane-orb','shadow/black-hole','fire/fireball','nature/quake','lightning/chain-lightning','ice/frost-nova','moves/ice-lance-throw','impacts/impact-frame','arcane/spell-charge','explosions/small-explosion'];
     // ARCANA20: the 20 fusion skills with LIVE in-game preview via the arcanaLab compositor client
     var LAB20 = (window.__arcanaLab && window.__arcanaLab.catalog) ? window.__arcanaLab.catalog : [];
-    catSel.appendChild(el('option', '', '★ arcana20 ×20 skills live (' + LAB20.length + ')'));
+    catSel.appendChild(el('option', '', '★ arcana20 ×20 (prototype — có thể nhiễu, KHÔNG phải VFX trong kho) (' + LAB20.length + ')'));
     catSel.appendChild(el('option', '', '★ arcana20 pilot PNGs (' + PILOT20.length + ')'));
     Object.keys(cats).sort().forEach(function (c) { catSel.appendChild(el('option', '', c + ' (' + cats[c].length + ')')); });
     function renderList() {
       var q = ($('#q', panel).value || '').toLowerCase();
       var c = catSel.value;
       var ids;
-      if (c.indexOf('×20') >= 0) {
+      if (c.indexOf('×20') >= 0 || c.indexOf('prototype') >= 0) {
         ids = LAB20.filter(function (s) { return !q || (s.name + ' ' + s.school + ' ' + s.id).toLowerCase().includes(q); })
           .map(function (s) { return 'arcana20:' + s.index + '|' + s.name + '|' + s.school; });
       } else if (c.indexOf('pilot') >= 0) {
