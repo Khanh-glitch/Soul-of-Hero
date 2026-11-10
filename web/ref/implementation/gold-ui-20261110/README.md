@@ -12,8 +12,15 @@
 5. \`web/src/game/core.ts\` and \`persist.ts\`: additive \`uiWaymark\` preference on the **existing** run snapshot and bounded validation, not a second saved progression system.
 6. \`web/src/ui/gold-ui.test.ts\` / \`web/tools/verify-gold-ui.mjs\` and \`.github/workflows/veyra-gold-ui-integration.yml\`: source/negative tests, real 640x360 and 1280x720 Chromium input smoke with save/restart, full R12 regression/build; UI evidence saved in Actions artifacts.
 
+## Phase 2 completed on this integration branch
+- Gold **PACK/WORK** Survivor tabbed surface now uses `GoldWork.tsx`: known recipes from actual R12 knowledge, 8 categories, text search, ingredient UID/custody counts, nearby station/level/queue/fuel/output-space hints and `dispatch('craft')` (no independent job economy). PACK keeps original 24 slots and real gear.
+- `C` directly opens the Gold WORK tab; `I` opens Gold PACK, with in-panel PACK ↔ WORK navigation. Deep-linked native `CraftPanel` remains valid for Map / gated blueprints.
+- Expedition Ledger right page has three clickable folios: observed-only FIELD NOTES (real `expeditionNotes` + discovered Veyra POIs), bounded recent receipt CHRONICLE, and EARNED LEGACY (stones/achievements). No locked POI or unrevealed stock spoilers.
+- Work progress excludes **all** default `RECIPES[k].base` plus ALWAYS_KNOWN_RECIPES from new-recipe advancement; a fresh run no longer completes the milestone by holding starter recipes.
+- Composed browser now exercises WORK and its details plus all three folios, and the C/I shortcuts at both 640×360 and 1280×720, alongside save/restart.
+
 ## Still NOT done (do not claim full Gold acceptance)
-- Full source-fidelity migration of PR #50/#52 Gold HUD, entire Craft/Work/Build/Station panels, Field Chart wheel zoom and Field Notes, refined Offline Return severity and urgent Issues, full attention hierarchy/audio/visual flourishes, and all 54 verified PixelFX assets in real Veyra UI where they are not already present. Current map/skills/craft/build have new Gold **skin**, not exhaustive interaction parity.
+- Full source-fidelity migration of PR #50/#52 Gold HUD, richer Build/Station panels, Field Chart wheel zoom, refined Offline Return severity and urgent Issues, full attention hierarchy/audio/visual flourishes, and the 54 verified PixelFX assets in real Veyra UI where they are not already present. Work has real gameplay integration, but original Craft/Build/Map/Skills/Menu still have partial Gold styling rather than complete interaction redesign.
 - PR #52's full *optional* Fieldcraft/Day Waypoints / Chronicle progression is not imported. Avoid replacing free survival with mandatory quests, new economic rewards, replayable marks or divergent saves. If adapted, bind only authoritative receipts and persisted knowledge, with anti-replay, missing-day, rollback and offline rules.
 - Source screenshot comparisons, 640px body-scroll/no clip and 1280px scaling, mouse/keyboard and all gameplay panels, sideboss/Elder 48-skill telegraph compatibility, full save/restart, performative feeling of the interface.
 - Final 4 sideboss + 7 Creator Core VFX ZIP is not provided yet and belongs to a separate art/combat integration after the UI is coherent.
