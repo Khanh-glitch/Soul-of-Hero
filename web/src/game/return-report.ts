@@ -30,6 +30,21 @@ export interface OfflineReturnV1 {
   receiptCount: number;
 }
 
+/** Presentation-only severity of an existing, source-backed offline settlement. */
+export type ReturnSeverity = 'minimal' | 'notable' | 'critical';
+export function classifyOfflineReturn(report: OfflineReturnV1): ReturnSeverity {
+  if (report.away.expired) return 'critical';
+  const hasCriticalBody = report.sections.body.some(r => r.tone === 'bad');
+  const hasLoss = report.sections.loss.some(r => r.tone === 'bad');
+  const hasSevereHome = report.sections.home.some(r => r.source === 'event' && r.tone === 'bad') || report.sections.home.some(r => r.id.startsWith('hp:') && r.tone === 'bad');
+  if (hasCriticalBody || hasLoss || hasSevereHome) return 'critical';
+  const observedRisk = report.sections.body.some(r => r.id.startsWith('shift:') && r.tone === 'warn');
+  const materialLoss = report.sections.loss.some(r => r.tone === 'warn');
+  if (report.receiptCount >= 2 || observedRisk || materialLoss) return 'notable';
+  return 'minimal';
+}
+export interface StoredReturnEntry { id: string; recordedAt: number; severity: ReturnSeverity; report: OfflineReturnV1 }
+
 interface Snap {
   at: number;
   player: { hp: number; hunger: number; thirst: number; warmth: number; sheltered: boolean; dead: boolean; food: number };
