@@ -733,7 +733,7 @@ export default function Game({
 
       {/* panels */}
       {(panel?.kind === 'inv' || panel?.kind === 'craft') && <SurvivorScreen api={api} initial="all" focusRecipe={panel.recipe} />}
-      {trackView && !p.dead && (panel?.kind === 'inv' || panel?.kind === 'craft' || panel?.kind === 'map') && <div className="journey-context-peek" role="status" title={trackView.how} onMouseDown={e => e.stopPropagation()}>
+      {trackView && !p.dead && ((panel?.kind === 'inv' || panel?.kind === 'craft') && (trackView.focus?.includes('craft') || trackView.ref.type === 'daily' && ['craft','produce'].includes(DAILY_BY_ID[trackView.ref.id]?.cat ?? '')) || panel?.kind === 'map' && (trackView.focus?.includes('explore') || trackView.ref.type === 'daily' && ['explore','gather'].includes(DAILY_BY_ID[trackView.ref.id]?.cat ?? ''))) && <div className="journey-context-peek" role="status" title={trackView.how} onMouseDown={e => e.stopPropagation()}>
         <span className="journey-context-peek__dot"/><b>{trackView.title}</b><em>{trackView.progress}/{trackView.target}</em>
         <button onClick={() => setPanel({ kind: 'journey' })} title="See the whole journey">❖</button>
       </div>}
