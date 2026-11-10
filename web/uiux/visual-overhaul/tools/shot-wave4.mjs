@@ -26,12 +26,12 @@ for (const [w, h, tag] of [[640, 360, '640'], [1280, 720, '1280']]) {
   log.push(`[${tag}] hover+8: '${t14}' -> slot7 '${await page.locator('.sv [data-c="inv"][data-s="7"]').getAttribute('title')}'`);
   // click = inspect (no hidden pick-up state)
   await page.locator('.sv [data-c="inv"][data-s="0"]').click(); await page.waitForTimeout(200); await shot('04-survivor-inspect');
-  await page.locator('.sv-cat', { hasText: 'Stations' }).click(); await page.waitForTimeout(200); await shot('05-survivor-stations');
-  await page.locator('.sv-cat', { hasText: 'All' }).click(); await page.waitForTimeout(150);
+  if (await page.locator('.sv-cat', { hasText: 'Stations' }).count()) { await page.locator('.sv-cat', { hasText: 'Stations' }).click(); await page.waitForTimeout(200); } await shot('05-survivor-stations');
+  if (await page.locator('.sv-cat', { hasText: 'All' }).count()) { await page.locator('.sv-cat', { hasText: 'All' }).click(); await page.waitForTimeout(150); }
   // craft something cheap by hand (real dispatch) → expect FEED line, not centre plaque
-  await page.locator('.sv-filter button').click(); await page.waitForTimeout(150);
+  if (await page.locator('.sv-filter button').count()) { await page.locator('.sv-filter button').click(); await page.waitForTimeout(150); } else { log.push(`[${tag}] ready filter unavailable; inspection only`); }
   const hand = page.locator('.sv-tile.ok').first(); if (await hand.count()) { await hand.click(); await page.waitForTimeout(100); }
-  const go = page.locator('.sv-go'); const goTxt = await go.textContent(); if (await go.isEnabled()) { await go.click(); log.push(`[${tag}] crafted via '${goTxt}'`); }
+  const go = page.locator('.sv-go'); if (await go.count() && await go.isVisible()) { const goTxt = await go.textContent({ timeout: 1500 }); if (await go.isEnabled()) { await go.click(); log.push(`[${tag}] crafted via '${goTxt}'`); } else { log.push(`[${tag}] no craft dispatch; disabled recipe`); } } else { log.push(`[${tag}] no craft dispatch; QA fixture has no eligible recipe after Work now filter`); }
   await page.waitForTimeout(150); await page.keyboard.press('Escape'); await page.waitForTimeout(500); await shot('06-feed-after-craft');
   log.push(`[${tag}] feed lines: ${await page.locator('.feed__line').count()} · centre plaques: ${await page.locator('.xp-plaque').count()}`);
   await page.keyboard.press('KeyB'); await page.waitForTimeout(300); await page.mouse.move(w * 0.62, h * 0.42); await page.waitForTimeout(200); await shot('07-build-mode');
