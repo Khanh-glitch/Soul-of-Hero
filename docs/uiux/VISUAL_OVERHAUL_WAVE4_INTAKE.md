@@ -56,9 +56,22 @@ The dedicated CI workflow checks the imported subtree once it exists. Before imp
 - Save isolation, item UID, replay, offline chronology, persistence and economy regression gates on any subsequent **integration** PR
 
 ## Exact GitHub source intake and browser evidence — 10 November 2026
-- Source commit: `6a8b9bfcbd103b198e93c64e5f2d0243bb2ce547` (247/247 tree entries, per-file Git object IDs match).
-- GitHub strict CI: on source commit `42739569924`, `npm ci`, 54/54 PixelFX, and TypeScript PASS; full Vitest suite **15 failures / 631 tests**, 616 passed. 11 test files failed out of 85. Baseline issues include missing ZIP-excluded Veyra Stage1 79-payload source, older fixture revisions (B05/Recycler) and gameplay behavior mismatches. These failures remain visible and blocking. Do not fake green by weakening assertions.
-- CI visual runner is now installed at `.github/workflows/uiux-wave4.yml`; it builds despite independently recorded full-suite failures, captures a real 640×360 and 1280×720 Chromium matrix, and uploads screenshots and real-input logs.
-- Independent local browser proof from the exact Creator standalone ZIP: Chromium QA full-gear play, successful real drag Hunting Bow → hotbar slot 7 and hover+8 Salvager Pick → hotbar slot 8; Survivor/gameplay screenshots on both 1280×720 and 640×360; zero browser console/page errors across the completed route. 640×360 button-bounds check observed zero out-of-frame buttons. 640×360 build-mode test did **not** complete in the local run and is not reported PASS.
-- Visual critique: 1280×720 game HUD/panels are separated, with world legibility and material icons; 640×360 inventory panels fit within viewport but very small text and icons are an accessibility/legibility concern. QA staged presentation is not production composition. No independent Creator/human approval or Gameplay R12 integration claim.
-- **Status:** Source intake PASS. Visual browser QA PARTIAL (CI matrix awaiting exact-SHA evidence). Full gameplay regression FAIL. No merge into Gameplay R12/main without resolving scope/fixtures and visual review.
+
+### Verified source custody
+- Original source commit: `6a8b9bfcbd103b198e93c64e5f2d0243bb2ce547` (247/247 Git tree entries matched; 193 source/text and 54 original PNG blobs).
+- CI source checkpoint: `650653181e294f1a3588da4f20219dcc2686a3c7`. No modification to gameplay R12, save, economy or UID authority.
+
+### GitHub Actions on exact source SHA
+- CI run: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/42742397177
+- Native Chromium artifact: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/42742397177/artifacts/13729788227
+- npm ci **PASS**; PixelFX 54/54 **PASS**; TypeScript **PASS**; Vite singlefile production build **PASS**; output check **PASS**; Chromium Ubuntu24.04 dependencies **PASS**.
+- **BROWSER QA PASS:** Chromium 18/18 native PNGs, nine at 640×360 and nine at 1280×720. Independently downloaded artifact and verified all filename slots, dimensions, zero browser/page console errors, real item drag Hunting Bow → hotbar 7 and hover + 8 Salvager Pick → hotbar 8 at both resolutions. Captures include normal play, Survivor, dragging, inspecting, stations, craft-attempt state, build mode, build tool upgrade and build exit.
+- **CRAFT NOT COMPLETED:** the selected sandbox has no eligible recipe in Work now, so `.sv-go` does not exist. Logged accurately, no fake craft, feed=0; separate natural craft test remains required.
+- **FULL GAME REGRESSION FAIL:** 616/631 Vitest PASS, 15 FAIL across 11 files out of 85. Missing Stage1 geography payloads, B05/recycler version fixture changes and gameplay behavior differences are still open; overall CI intentionally remains FAIL. Do not weaken these tests or label total CI green.
+
+### Independent visual evaluation (actual Chromium images)
+- **1280×720:** HUD roles (survival top-left, time/weather top-right, hotbar bottom, home right) remain separated, no large outer-frame clipping in representative frames. Survivor split between inventory and craft is coherent; build mode displays a material/action affordance with explicit rejection reason.
+- **640×360:** no major outer-frame clipping in tested screenshots, but inventory/craft text, item icons and action targets are very small and crowded. This is a visual/accessibility quality problem, not a passing final small-screen UX.
+- Low-saturation pixel-art palette and gold interaction emphasis are internally coherent. The test is an isolated furnished QA sandbox, not native Godot, production R12 gameplay, full map nor Creator review.
+- **Decision:** Source custody PASS; isolated real-browser interaction/screenshot matrix PASS; visual quality PARTIAL (640 readability and user review outstanding); full legacy game regression FAIL; production integration NOT TESTED. Keep PR #49 Draft, do not merge.
+
