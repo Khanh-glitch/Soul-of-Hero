@@ -2,9 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import { VIEW_W, VIEW_H, type GameState } from '../game/core';
 import { getArt } from '../game/art';
 import { getMapCanvas, resetRenderCaches } from '../game/render';
-import { getWorld, getActiveLayout, setActiveLayout, listLayouts, mapPackageErrors } from '../game/world';
+import { setActiveLayout } from '../game/world';
+import { U05_WORLD_LAYOUT_ID } from '../veyra05/scenes';
 import { ACHIEVEMENTS } from '../game/catalog';
 import { initAudio, sfx } from '../game/audio';
+
+const VEYRA_REGIONS = [
+  { id: 0, label: 'Westmouth Shore' },
+  { id: 1, label: 'Greywater South Shore' },
+  { id: 2, label: 'Hook Meadow' },
+  { id: 3, label: 'Gulf West Bank' },
+] as const;
 
 function useScale() {
   const [s, setS] = useState({ k: 1, x: 0, y: 0 });
@@ -31,15 +39,14 @@ function HeroPreview({ female, active }: { female: boolean; active: boolean }) {
   return <canvas ref={ref} width={64} height={96} style={{ width: 52, height: 78 }} />;
 }
 
-export default function Title({ gs, onContinue, onStart, note, summary, clearSummary }: { gs: GameState; onContinue: () => void; onStart: (c: 'male' | 'female', region: number | null) => void; note?: string; summary: GameState['profile']['history'][number] | null; clearSummary: () => void }) {
-  const s = useScale(); const [mode, setMode] = useState<'menu' | 'select' | 'history'>('menu'); const [hero, setHero] = useState<'male' | 'female'>('female'); const [region, setRegion] = useState<number | null>(null); const [layout, setLayout] = useState(getActiveLayout());
-  const chooseLayout = (id: string) => { if (setActiveLayout(id)) { resetRenderCaches(); setLayout(id); } };
+export default function Title({ gs, onContinue, onStart, onInspect, note, summary, clearSummary }: { gs: GameState; onContinue: () => void; onStart: (c: 'male' | 'female', region: number | null) => void; onInspect?: () => void; note?: string; summary: GameState['profile']['history'][number] | null; clearSummary: () => void }) {
+  const s = useScale(); const [mode, setMode] = useState<'menu' | 'select' | 'history'>('menu'); const [hero, setHero] = useState<'male' | 'female'>('female'); const [region, setRegion] = useState<number | null>(null);
+  useEffect(() => { if (!gs.run) { setActiveLayout(U05_WORLD_LAYOUT_ID); resetRenderCaches(); } }, [gs.run]);
   const pf = gs.profile; const run = gs.run;
-  const isVeyra = !!getWorld().veyra;
   const click = () => { initAudio(); sfx({ type: 'ui' }); };
   return <div style={{ position: 'fixed', inset: 0, background: '#05040a' }}>
     <div className="stage" style={{ transform: `translate(${s.x}px, ${s.y}px) scale(${s.k})` }}>
-      <Backdrop layout={layout} />
+      <Backdrop layout={U05_WORLD_LAYOUT_ID} />
       {summary ? <div className="panel absolute fadein" style={{ left: 150, top: 60, width: 340, padding: 10 }}>
         <div className="title-font" style={{ fontSize: 20, color: summary.ending === 'evacuated' ? '#9ae0ff' : summary.ending === 'expired' ? '#ff9a5a' : '#cfc2dc' }}>{summary.ending === 'evacuated' ? 'Evacuated' : summary.ending === 'expired' ? 'Consumed by Ragnarok' : 'Run abandoned'}</div>
         <div style={{ fontSize: 12, lineHeight: 1.2, marginTop: 4 }}>Score {summary.score} · Deposited {summary.deposited} · Elder stones {summary.stones}/6 {summary.qa && <span className="tag" style={{ color: '#ff9a7a' }}>QA</span>} <span className="tag" style={{ color: '#ff9a7a' }}>{summary.verified}</span></div>
@@ -48,30 +55,36 @@ export default function Title({ gs, onContinue, onStart, note, summary, clearSum
         <button className="btn gold" style={{ marginTop: 8 }} onClick={() => { click(); clearSummary(); }}>Return</button>
       </div> : <>
         <div className="absolute" style={{ left: 0, right: 0, top: 18, textAlign: 'center' }}>
-          {import.meta.env.VITE_FX_TEST === '1' && <div style={{color:'#ffdf7b',fontSize:12}}>VFX TEST — 10 mỗi Core, đầy năng lượng · lưu riêng</div>}<div className="title-font" style={{ fontSize: 44, fontWeight: 700, color: '#ffe8b0', letterSpacing: 3, textShadow: '0 3px 0 #6a2a0a, 0 5px 0 #2a0a04, 0 0 18px #ff7a2a' }}>SOUL OF HERO</div>
+          {import.meta.env.VITE_FX_TEST === '1' && <div style={{ color: '#ffdf7b', fontSize: 12 }}>VFX TEST — 10 mỗi Core, đầy năng lượng · lưu riêng</div>}
+          <div className="title-font" style={{ fontSize: 44, fontWeight: 700, color: '#ffe8b0', letterSpacing: 3, textShadow: '0 3px 0 #6a2a0a, 0 5px 0 #2a0a04, 0 0 18px #ff7a2a' }}>SOUL OF HERO</div>
           <div style={{ fontSize: 13, color: '#e0c8a8', marginTop: -2, textShadow: '1px 1px 0 #000' }}>fourteen days · one island · the end of the world</div>
         </div>
         {mode === 'menu' && <div className="absolute flex flex-col gap-2 items-center fadein" style={{ left: 0, right: 0, top: 150 }}>
           {run && <button className="btn gold" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); onContinue(); }}>Continue — {run.character === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</button>}
-          <button className="btn" style={{ fontSize: 16, width: 180 }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={() => { click(); if (layout === 'shipping' || layout === 'dev_delta') chooseLayout(layout + '_fresh'); else if (layout === 'veyra-greywater-u16' || layout === 'veyra-greywater-u20') chooseLayout(layout.replace('greywater-', 'greywater-lr02-')); else if (layout === 'veyra-oasis-u20') chooseLayout('veyra-oasis-lr02-u20'); setMode('select'); }}>New run</button>
+          <button className="btn" style={{ fontSize: 16, width: 180 }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={() => { click(); setActiveLayout(U05_WORLD_LAYOUT_ID); resetRenderCaches(); setMode('select'); }}>New run</button>
           <button className="btn" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); setMode('history'); }}>Profile & history</button>
+          {onInspect && <button className="btn ghost" style={{ fontSize: 11, width: 180, color: '#9ae0ff' }} onClick={() => { click(); onInspect(); }}>World Map · 81 POIs</button>}
           <div style={{ fontSize: 11, color: '#cfc2dc', marginTop: 6, textShadow: '1px 1px 0 #000' }}>Secured Ragnarok cash: <b style={{ color: '#9ae0ff' }}>{pf.securedCash}</b> · Runs: {pf.history.length}</div>
           {note && <div style={{ fontSize: 10, color: '#ffb08a', maxWidth: 380, textAlign: 'center' }}>{note}</div>}
-          <div style={{ fontSize: 9, color: '#7a6a8a', position: 'absolute', top: 186 }}>Offline · single-player · saves locally in this browser (LOCAL/UNVERIFIED)</div>
+          <div style={{ fontSize: 9, color: '#7a6a8a', position: 'absolute', top: 196 }}>Offline · single-player · saves locally in this browser (LOCAL/UNVERIFIED)</div>
         </div>}
         {mode === 'select' && <div className="panel absolute fadein" style={{ left: 90, top: 26, width: 460, padding: 8 }}>
           <div className="panel-h" style={{ marginBottom: 4 }}>Choose your Adventurer</div>
           <div className="flex gap-2">{(['female', 'male'] as const).map(h => <button key={h} className={`btn ${hero === h ? 'gold' : 'ghost'}`} style={{ flex: 1, padding: 4, textAlign: 'left' }} onClick={() => { click(); setHero(h); }}>
             <div className="flex items-center gap-2"><HeroPreview female={h === 'female'} active={hero === h} /><div style={{ fontSize: 11, lineHeight: 1.15 }}><div className="title-font" style={{ fontSize: 13 }}>{h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</div><div>Survival knife, a half-full flask, a few berries. No Core, no map, no orders.</div></div></div></button>)}</div>
-          <div style={{ fontSize: 11, marginTop: 5, color: '#ffd98a' }}>Map layout</div>
-          <div className="flex flex-wrap gap-1" style={{ marginTop: 2, maxHeight: 50, overflowY: 'auto' }}>
-            {listLayouts().map(m => <button key={m.id} data-testid={`layout-${m.id.replace('_','-')}`} className={`btn ${layout === m.id ? 'gold' : 'ghost'}`} onClick={() => { chooseLayout(m.id); setRegion(null); }}>{m.title}</button>)}
+          <div style={{ fontSize: 11, marginTop: 6, color: '#ffd98a' }}>World</div>
+          <div style={{ fontSize: 10, color: '#e8dcc8', marginTop: 1 }}>
+            <b style={{ color: '#ffe27a' }}>VEYRA · Unified World</b> · 3200×2400 tiles (1 tile = 0.5 AU) · all 81 canonical POIs, roads, rivers and 6 Elder sanctuaries connected without borders.
           </div>
-          <div style={{ fontSize: 9, color: '#cfc2dc', marginTop: 1 }}>{listLayouts().find(m => m.id === layout)?.description}{mapPackageErrors().length > 0 && ` · ${mapPackageErrors().length} invalid map package(s): ${mapPackageErrors().join('; ')}`}</div>
-          <div style={{ fontSize: 11, marginTop: 4, color: '#ffd98a' }}>Landing</div>
-          <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}><button className="btn gold" onClick={() => setRegion(null)}>Seeded safe region</button></div>
-          <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 24, marginTop: 2 }}>{isVeyra ? 'Seeded legal location in this bounded Veyra region. No starter shelter.' : 'Seeded safe location; no starter compound or crate.'}</div>
-          <div className="flex justify-between items-center" style={{ marginTop: 4 }}><button className="btn ghost" onClick={() => setMode('menu')}>Back</button><button className="btn gold" style={{ fontSize: 16, padding: '4px 16px' }} onClick={() => { click(); onStart(hero, region); }}>Begin the 14 days</button></div>
+          <div style={{ fontSize: 11, marginTop: 5, color: '#ffd98a' }}>Landing region</div>
+          <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}>
+            <button className={`btn ${region === null ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setRegion(null); }}>Random safe region</button>
+            {VEYRA_REGIONS.map(rg => <button key={rg.id} className={`btn ${region === rg.id ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setRegion(rg.id); }}>{rg.label}</button>)}
+          </div>
+          <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 20, marginTop: 3 }}>
+            {region === null ? 'Seeded safe landing across the four coastal/lakeside Veyra regions. No starter shelter.' : `Seeded safe landing in ${VEYRA_REGIONS[region].label}. Reachable wood, stone, food and fresh water.`}
+          </div>
+          <div className="flex justify-between items-center" style={{ marginTop: 6 }}><button className="btn ghost" onClick={() => setMode('menu')}>Back</button><button className="btn gold" style={{ fontSize: 16, padding: '4px 16px' }} onClick={() => { click(); onStart(hero, region); }}>Begin the 14 days</button></div>
         </div>}
         {mode === 'history' && <div className="panel absolute fadein" style={{ left: 100, top: 96, width: 440, padding: 8 }}>
           <div className="panel-h">Profile <span className="tag" style={{ color: '#ff9a7a', marginLeft: 4 }}>LOCAL/UNVERIFIED — browser-stored, not a global leaderboard</span></div>

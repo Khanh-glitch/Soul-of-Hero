@@ -5,9 +5,12 @@ import { pfxFromSimEvent } from '../game/pixelfxMap';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { BAL, TILE, WW, VIEW_W, VIEW_H, HOUR, type GameState } from '../game/core';
 import { ITEMS, STRUCTS, ELDERS, CREATURES, STRUCTURE_UPGRADES } from '../game/catalog';
-import { dispatch, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, cartLimit, effTile, isRagnarok, buildReason, clearWallLine, claimAt, territoryForecast } from '../game/engine';
+import { dispatch, markDirty, phaseOf, runHours, dayTime, weatherAt, weatherSlot, countItem, C, entsAt, cartWeight, cartLimit, effTile, isRagnarok, buildReason, clearWallLine, claimAt, territoryForecast } from '../game/engine';
 import { tick, syncWorld, findInteract, activeStack, SPEED_KEY, rayLen, spiritDestination, type Input, type Interact } from '../game/sim';
-import { draw, consumeFX, cam } from '../game/render';
+import { draw, consumeFX, cam, resetRenderCaches } from '../game/render';
+import { getWindowWorld } from '../veyra05/window';
+import { activeFloor, stairAt, applyFloor, storeyLabel } from '../veyra05/floors';
+import { windowOrigin, playerGlobalAu } from '../veyra05/continuity';
 import { qaFillPack, qaPrepareFullPack, qaSetSecuredCash } from '../game/qa-fixtures';
 const SAVE_TOAST: Record<string, string> = {
   'invalid-state': 'Save refused: the game state failed an integrity check. Your last good save is kept.',
@@ -27,7 +30,7 @@ import type { OfflineReturnV1 } from '../game/return-report';
 import { RestPanel } from './RestPanel';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 
-export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; report: { lines: string[]; report: OfflineReturnV1 | null } | null; onExit: () => void; onRunEnd: () => void }) {
+export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: GameState; report: { lines: string[]; report: OfflineReturnV1 | null } | null; onExit: () => void; onRunEnd: () => void; onInspect?: () => void }) {
   const cvRef = useRef<HTMLCanvasElement>(null); const stageRef = useRef<HTMLDivElement>(null);
   const [, setFrame] = useState(0); const rerender = useCallback(() => setFrame(f => f + 1), []);
   const [panel, setPanel] = useState<PanelState | null>(report && (report.lines.length || (report.report && !report.report.away.quiet)) ? { kind: 'report', lines: report.lines, report: report.report } : null);
@@ -70,7 +73,23 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const scaleRef = useRef(scale); scaleRef.current = scale; const offRef = useRef(off); offRef.current = off;
 
   const interact = () => {
-    const r = gs.run; if (!r) return; const t = target.current; if (!t) return;
+    const r = gs.run; if (!r) return;
+    if (r.layoutId?.startsWith('veyra05-') && !r.player.dead && !panelRef.current) {
+      const ww = getWindowWorld(r.layoutId);
+      const tx = Math.floor(r.player.x / TILE), ty = Math.floor(r.player.y / TILE);
+      const [ox, oy] = windowOrigin(r);
+      for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const s = stairAt(ww.floors, r, tx + dx, ty + dy);
+        if (!s) continue;
+        const level = s.from === activeFloor(r) ? s.to : s.from;
+        const landing = level === s.to ? [s.tx - ox, s.ty - oy] : [s.x - ox, s.y - oy];
+        if (applyFloor(gs, ww, ww.floors, level, landing as [number, number], markDirty)) {
+          resetRenderCaches(); cam.init = false; scheduleSave(); toast('Entered ' + s.label + ' · floor ' + level, 'ok'); rerender();
+          return;
+        }
+      }
+    }
+    const t = target.current; if (!t) return;
     const e = t.eid ? r.entities[t.eid] : null;
     switch (t.kind) {
       case 'fire': act('douseTree', { tx: Math.floor(t.x/16), ty: Math.floor(t.y/16) }); return;
@@ -118,8 +137,8 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
           else if(e.code==='KeyE' && !ITEMS[s?.key||'']?.creatorCore && !panelRef.current) interact();
           break;
         }
-        case 'KeyF': { if(r.player.vehicle){act('vehicleExit',{});break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current) interact(); else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
-        case 'KeyI': toggle('inv'); break; case 'KeyC': toggle('craft'); break; case 'KeyM': toggle('map'); break;
+        case 'KeyF': { if(r.player.vehicle){act('vehicleExit',{});break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current || r.layoutId?.startsWith('veyra05-')) { const c=!target.current && Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else interact(); } else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
+        case 'KeyI': toggle('inv'); break; case 'KeyC': toggle('craft'); break; case 'KeyM': if(r.layoutId?.startsWith('veyra05-') && activeStack(r)?.key!=='core_demon' && onInspect) onInspect(); else toggle('map'); break;
         case 'KeyB': setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); toggle('build'); break;
         case 'KeyG': setEditLayer(v => { const a=['auto','wall','obj','roof','floor']; return a[(a.indexOf(v)+1)%a.length]; }); break;
         case 'KeyU': setPanel(null); setUpgradeMode(v => !v); setBuildType(null); setReclaim(false); setRepairMode(false); break;
@@ -210,13 +229,24 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;
   const w = weatherAt(r, now); const slot = Math.floor((now - r.startedAt + r.qaOffset) / (BAL.weather.slotMinutes * 60000)); const next = weatherSlot(r.seed, slot + 1);
   const WICON: Record<string, string> = { clear: '☀', cloudy: '☁', rain: '☂', storm: '⚡', fog: '≋' };
-  const engaged = r.creatures.find(m => m.elder && m.state !== 'sleep' && m.state !== 'dead' && Math.hypot(m.x - p.x, m.y - p.y) < 240);
+  const engaged = r.creatures.find(m => m.elder && ((m as any).floor ?? 0) === activeFloor(r) && m.state !== 'sleep' && m.state !== 'dead' && Math.hypot(m.x - p.x, m.y - p.y) < 240);
   const cart = p.pulling ? r.entities[p.pulling] : null;
   const bike=p.vehicle ? r.entities[p.vehicle] : null;
+  const isVeyra05 = !!r.layoutId?.startsWith('veyra05-');
+  const veyraWw = isVeyra05 ? getWindowWorld(r.layoutId!) : null;
+  const nearStair = (() => {
+    if (!veyraWw || p.dead) return null;
+    const tx = Math.floor(p.x / TILE), ty = Math.floor(p.y / TILE);
+    for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const s = stairAt(veyraWw.floors, r, tx + dx, ty + dy);
+      if (s) return { stair: s, x: (tx + dx) * TILE + 8, y: (ty + dy) * TILE + 8 };
+    }
+    return null;
+  })();
   const tgt = target.current; const targetEntity = tgt?.eid ? r.entities[tgt.eid] : undefined;
   const targetHp = targetEntity?.kind === 'struct' && targetEntity.hp !== undefined && targetEntity.maxHp !== undefined && targetEntity.hp < targetEntity.maxHp ? ` · HP ${Math.ceil(targetEntity.hp)}/${targetEntity.maxHp}` : '';
-  const ts = tgt ? { x: tgt.x - Math.round(cam.x), y: tgt.y - Math.round(cam.y) } : null;
-  const zone = (getWorld().zoneNames || ZONES)[getWorld().zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]];
+  const ts = tgt ? { x: tgt.x - Math.round(cam.x), y: tgt.y - Math.round(cam.y) } : nearStair ? { x: nearStair.x - Math.round(cam.x), y: nearStair.y - Math.round(cam.y) } : null;
+  const zone = veyraWw && activeFloor(r) !== 0 ? storeyLabel(veyraWw.floors, r) : (getWorld().zoneNames || ZONES)[getWorld().zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]];
   const hoverX=Math.floor((mouse.current.x+Math.round(cam.x))/TILE), hoverY=Math.floor((mouse.current.y+Math.round(cam.y))/TILE);
   const layers=['wall','obj','roof','floor']; const hover=entsAt(r,hoverX,hoverY).filter(e=>e.kind==='struct'&&(editLayer==='auto'||STRUCTS[e.type!].layer===editLayer)&&(!upgradeMode||!!STRUCTURE_UPGRADES[e.type!])).sort((a,b)=>layers.indexOf(STRUCTS[a.type!].layer)-layers.indexOf(STRUCTS[b.type!].layer))[0];
   const placementReason=buildType?buildReason(gs,buildType,hoverX,hoverY):null;
@@ -230,6 +260,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
         {[['HP', p.hp, BAL.player.maxHp, '#e0483a'], ['ST', p.stamina, BAL.player.maxStamina, '#d8d050'], ['FD', p.hunger, 100, '#e09040'], ['H₂O', p.thirst, 100, '#4aa0e0'], ['WRM', p.warmth, 100, '#f0b0a0']].map(([l, v, m, c]) => <div key={l as string} className="flex items-center gap-1" style={{ marginBottom: 2 }}><span style={{ width: 18, color: '#b8a8c8' }}>{l}</span><Bar v={v as number} max={m as number} col={c as string} w={l === 'HP' ? 74 : 58} /><span style={{ width: 16, textAlign: 'right', color: (v as number) < (m as number) * 0.25 ? '#ff7a6a' : '#e8dcc8' }}>{Math.round(v as number)}</span></div>)}
         {p.rad > 1 && <div className="flex items-center gap-1"><span style={{ width: 18, color: '#b0e040' }}>RAD</span><Bar v={p.rad} max={100} col="#a0d030" w={58} /><span>{Math.round(p.rad)}</span></div>}
         <div style={{ color: p.sheltered ? '#9ae0a0' : '#8a7a9a', marginTop: 1 }}>{p.sheltered ? '⌂ sheltered' : zone} {surf && <span style={{ color: '#6a5a7a' }}>· {surf}</span>}</div>
+        {isVeyra05 && (() => { const [ax, ay] = playerGlobalAu(r); return <div style={{ color: '#7a8ea8', marginTop: 1, fontSize: 9 }}>AU {ax.toFixed(0)},{ay.toFixed(0)} · F{activeFloor(r)}</div>; })()}
       </div>
       {/* top-right clocks */}
       <div className="panel absolute" style={{ right: 4, top: 4, padding: '3px 6px', fontSize: 10, lineHeight: 1.05, textAlign: 'right', minWidth: 120 }} onMouseDown={e => e.stopPropagation()}>
@@ -248,7 +279,7 @@ export default function Game({ gs, report, onExit, onRunEnd }: { gs: GameState; 
       {coreAim && !(activeStack(r)?.key==='core_demon' && coreAim.mode==='signature') && !(['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature') && (()=>{const px=p.x-Math.round(cam.x),py=p.y-Math.round(cam.y),len=rayLen(r,p.x,p.y,p.aim,['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'')?Math.min(activeStack(r)?.key==='core_meteor'?180:157,Math.hypot(mouse.current.x+Math.round(cam.x)-p.x,mouse.current.y+Math.round(cam.y)-p.y)):coreAim.mode==='refined'?120:195);return <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><line x1={px} y1={py} x2={px+Math.cos(p.aim)*len} y2={py+Math.sin(p.aim)*len} stroke="#ffd98a" strokeWidth="1" strokeDasharray="4 3"/><circle cx={px+Math.cos(p.aim)*len} cy={py+Math.sin(p.aim)*len} r="4" fill="none" stroke="#ffd98a"/></svg>;})()}
       {coreAim && <div className="panel absolute" style={{left:220,top:38,padding:'2px 6px',fontSize:10,pointerEvents:'none'}}> {activeStack(r)?.key==='core_meteor' ? (coreAim.mode==='refined'?'Q: targeted meteor':'E: ten meteors in view') : activeStack(r)?.key==='core_dragon' ? (coreAim.mode==='refined'?'Q: fire tornado':'E: collect visible eligible foes') : activeStack(r)?.key==='core_demon' ? (coreAim.mode==='refined'?'Q: stationary beam':spiritTarget.current?.uid===activeStack(r)?.uid?'E: selected map destination':'E: select destination on M map') : activeStack(r)?.key==='core_mjolnir' ? (coreAim.mode==='refined'?'Q: five lightning strikes':'E: electrical attraction') : activeStack(r)?.key==='core_earthmother' ? (coreAim.mode==='refined'?'Q: ten trees on open ground':'E: binding roots and grass') : activeStack(r)?.key==='core_elsa' ? (coreAim.mode==='refined'?'Q: one-second ice ward':'E: freeze visible terrain') : (coreAim.mode==='refined'?'Q: timed bomb · release to throw':'E: burning projectile · release to cast')} · RMB/Esc cancel</div>}
       {/* interaction prompt */}
-      {tgt && ts && !panel && <div className="absolute" style={{ left: Math.round(ts.x), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', fontSize: 10, background: '#120c18e0', border: '1px solid #5a4a6a', padding: '0 4px', whiteSpace: 'nowrap', pointerEvents: 'none' }}><span style={{ color: '#ffe27a' }}>{bike ? '[F]' : '[F/E]'}</span> {tgt.label}{targetHp && <span style={{ color: '#ffb66a' }}>{targetHp}</span>}</div>}
+      {(tgt || nearStair) && ts && !panel && <div className="absolute" style={{ left: Math.round(ts.x), top: Math.round(ts.y) - 34, transform: 'translateX(-50%)', fontSize: 10, background: '#120c18e0', border: '1px solid #5a4a6a', padding: '0 4px', whiteSpace: 'nowrap', pointerEvents: 'none' }}><span style={{ color: '#ffe27a' }}>{bike ? '[F]' : '[F/E]'}</span> {tgt ? tgt.label : nearStair!.stair.label}{targetHp && <span style={{ color: '#ffb66a' }}>{targetHp}</span>}</div>}
       {/* build helper */}
       {(buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 34, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {STRUCTS[buildType].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||(buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:'Placement allowed · unprotected, decays in ~2h')} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
       {/* cargo */}

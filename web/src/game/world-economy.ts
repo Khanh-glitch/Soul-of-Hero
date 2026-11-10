@@ -7,6 +7,7 @@ import { SOURCES } from './catalog';
 export type Biome = 'water'|'sand'|'grass'|'meadow'|'forest'|'marsh'|'hill'|'snow'|'ash'|'toxic'|'road'|'floor'|'wall'|'lava';
 export interface EconomyMap {
   id: string; revision: number; seed: number; width: number; height: number; tileSize: number;
+  origin?: { x: number; y: number };
   biome: readonly Biome[]; elevation: ArrayLike<number>; slope: ArrayLike<number>; moisture: ArrayLike<number>;
   temperature: ArrayLike<number>; freshwater: ArrayLike<number>; coast: ArrayLike<number>;
   walkable: ArrayLike<number>; buildable: ArrayLike<number>; cargoPassable: ArrayLike<number>;
@@ -70,13 +71,15 @@ export function compileEconomy(m: EconomyMap): EconomyPlacement {
     if(roadDist>=2&&roadDist<=3){rates.scrap=.075;rates.wreck=.015;}
     if(m.industrial[i]){rates.scrap=(rates.scrap||0)+.035;rates.wreck=(rates.wreck||0)+.012;}
     let choice:string|null=null,best=Infinity;
-    for(const [key,p] of Object.entries(rates)){ const u=Math.max(hash2(x,y,salt ^ stableHash(key)),1e-9);const score=-Math.log(u)/p;if(score<best){best=score;choice=key;} }
+    const gx=x+(m.origin?.x??0),gy=y+(m.origin?.y??0);
+    for(const [key,p] of Object.entries(rates)){ const u=Math.max(hash2(gx,gy,salt ^ stableHash(key)),1e-9);const score=-Math.log(u)/p;if(score<best){best=score;choice=key;} }
     if(best<1) out[i]=choice;
   }
   // Blockers compete using a separate spatial priority, not scan order. This
   // prevents touching solid nodes from forming artificial one-tile walls.
   const blockers:number[]=[];for(let i=0;i<n;i++)if(out[i]&&SOURCES[out[i]!]?.block)blockers.push(i);
-  blockers.sort((a,b)=>hash2(a%m.width,Math.floor(a/m.width),salt ^ 0x275e)-hash2(b%m.width,Math.floor(b/m.width),salt ^ 0x275e)||a-b);
+  const ox=m.origin?.x??0,oy=m.origin?.y??0;
+  blockers.sort((a,b)=>hash2(ox+(a%m.width),oy+Math.floor(a/m.width),salt ^ 0x275e)-hash2(ox+(b%m.width),oy+Math.floor(b/m.width),salt ^ 0x275e)||a-b);
   const accepted=new Uint8Array(n);for(const i of blockers){const x=i%m.width,y=Math.floor(i/m.width);if(OFFSETS.some(([dx,dy])=>accepted[(y+dy)*m.width+x+dx]))out[i]=null;else accepted[i]=1;}
   // Remove candidates which became physically isolated by the combined source
   // layout. Never synthesize a fallback source or alter map geometry.

@@ -147,11 +147,20 @@ export interface RunState {
   /** Run-pinned additive source overlay; absent legacy runs keep v1 placements. */
   sourceLayoutVersion?: 2 | 3;
   /** Source map identity is mandatory for v3; older runs retain their own layout. */
-  sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string; veyra?: {sourceCommit:string;sourceDigest:string;originAu:[number,number];unitsPerTile:1.6|2;frameAu:[number,number];projection:'cell-centre-v1'} };
+  sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string; veyra?: import('./veyra/projection').VeyraViewIdentity };
   /** Additive, pinned when a run is created or first resumed/saved. */
   airdrops?: {version:'airdrop-v1'; mapDigest:string; seed:number; runId:string; startedAt:number; nextIndex:number};
   wreckEconomy?: 'direct-v1' | 'recycler-v1';
   spawnChoice?: { x:number; y:number; contract:'seeded-geographic-v1' };
+  /** Veyra U=0.5 multi-storey & seamless window continuity ledgers (additive, absent on non-Veyra runs). */
+  veyraFloor?: -1 | 0 | 1 | 2;
+  veyraFloorState?: Record<number, { sources: Record<number, any>; doors: Record<string, boolean>; depletedLootSites?: number[]; lootRespawnAt?: Record<number, number> }>;
+  veyraGlobalSources?: Record<number, RunState['sources'][number]>;
+  veyraGlobalTerrain?: Record<number, RunState['terrain'][number] & { by?: string }>;
+  veyraGlobalDoors?: Record<number, boolean>;
+  veyraGlobalDiscovered?: Record<string, number>;
+  veyraGlobalDepletedLoot?: Record<string, number>;
+  veyraOffscreenEntities?: Record<string, Entity>;
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
   /** B05-R: oil sources keyed `oil:tx:ty`. Only a labelled test fixture authority exists today; production Map oil sites are NOT authorized (see balance oilPumpV1). */

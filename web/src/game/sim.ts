@@ -10,6 +10,9 @@ import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInR
 import { calendarAt, climateAt, calendarEventV1, phaseBoundaryAt, seasonTransitionsBetween, normalizeCalendarLedger, type Season, type PrecipWeather } from './calendar';
 import { ITEMS, CREATURES, ELDERS, STRUCTS, SOURCES, stationBurnable } from './catalog';
 import { getWorld } from './world';
+import { maybeSlideVeyraWindow } from '../veyra05/continuity';
+import { activeFloor, onActiveFloor } from '../veyra05/floors';
+import { isVeyra05Layout } from '../veyra05/scenes';
 import { regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -84,8 +87,8 @@ export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number,
   return true;
 }
 function damageCreature(gs: GameState, m: Creature, dmg: number, a: number, now: number, kb = 130) {
-  if (m.state === 'dead' || m.elder?.submerged || m.atk?.burrow) return false;
   const r = gs.run!;
+  if (m.state === 'dead' || m.elder?.submerged || m.atk?.burrow || ((m as any).floor ?? 0) !== activeFloor(r)) return false;
   if (m.type === 'crab' && m.atk?.tuck > 0) dmg *= 0.25;
   if (m.elder && m.atk?.vuln > 0) dmg *= 2;
   dmg = Math.round(dmg * (1 + r.player.skills.combat * 0.002));
@@ -435,7 +438,7 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
   emitCombatSound(r, now, 'melee', p.x, p.y);
   fx('slash', { x: p.x, y: p.y - 2, a, reach: R, arc: A, key: s?.key || 'fists' });
   for (const m of r.creatures) {
-    if (m.state === 'dead') continue; const dd = dist(p.x, p.y, m.x, m.y) - (m.elder ? ELDERS[m.elder.key].r : CREATURES[m.type]?.r || 6);
+    if (m.state === 'dead' || ((m as any).floor ?? 0) !== activeFloor(r)) continue; const dd = dist(p.x, p.y, m.x, m.y) - (m.elder ? ELDERS[m.elder.key].r : CREATURES[m.type]?.r || 6);
     if (dd > R) continue; const ang = Math.atan2(m.y - p.y, m.x - p.x); if (dd > 6 && Math.abs(angDiff(ang, a)) > A / 2 + 0.15) continue;
     if (!los(r, p.x, p.y, m.x, m.y)) continue;
     if (damageCreature(gs, m, d.dmg, a, now)) hitAny = true;
@@ -640,6 +643,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
   const g = blockGrid(r);
   for (let i = r.creatures.length - 1; i >= 0; i--) {
     const m = r.creatures[i];
+    if (((m as any).floor ?? 0) !== activeFloor(r)) continue;
     if (m.state === 'dead') { m.t += dtMs; if (!m.elder && m.t > 1600) r.creatures.splice(i, 1); continue; }
     if ((m.frozenUntil||0)>now || (m.rootedUntil||0)>now) continue;
     const dp = dist(m.x, m.y, p.x, p.y); if (dp > ACT) { if (m.offlineUnresolvedAt === undefined && (m.knows?.kind === 'trace' || (!m.knows && encounteredTrace(r, m, now)))) { if (traceOnly(gs, m, dtMs, now) === 'defer') m.offlineUnresolvedAt = now - dtMs; } continue; }
@@ -840,7 +844,7 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
       if (b === 1 || b === 2 || b === 3 || b === 5 || !clearPhysicalLine(r, pr, { x, y }, true)) { blocked = true; break; }
       if (pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado') {
         for (const m of r.creatures) {
-          if (m.state === 'dead') continue;
+          if (m.state === 'dead' || ((m as any).floor ?? 0) !== activeFloor(r)) continue;
           const rr = m.elder ? ELDERS[m.elder.key].r : 6;
           if (Math.hypot(x - m.x, y - m.y) < rr + pr.r) {
             dead = true;
@@ -1116,6 +1120,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   const slot = Math.floor((now - r.startedAt + r.qaOffset) / (BAL.weather.slotMinutes * 60000));
   if (slot !== r.clock.weatherSlot) { r.clock.weatherSlot = slot; fx('weather', { w: weather }); }
   tickPlayer(gs, inp, dtMs, now);
+  if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
   tickCreatures(gs, dtMs, now);
   tickDragonDive(gs, dtMs, now);
   tickTurrets(gs, dtMs, now);
@@ -1126,7 +1131,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   // drops: physics + magnet + auto pickup through the dispatcher
   const p = r.player;
   for (const e of Object.values(r.entities)) {
-    if (e.kind !== 'drop') continue;
+    if (e.kind !== 'drop' || !onActiveFloor(r, e)) continue;
     if (e.vx || e.vy) { e.x += e.vx! * dtMs / 1000; e.y += e.vy! * dtMs / 1000; e.vx! *= 0.88; e.vy! *= 0.88; if (Math.abs(e.vx!) + Math.abs(e.vy!) < 2) { e.vx = 0; e.vy = 0; } }
     if (p.dead) continue; const d = dist(e.x, e.y, p.x, p.y); const age = now - (e.born || 0);
     if (age > 380 && d < 30) { const s = C(r, e.c!)?.slots[0]; if (!s) continue; const full = ITEMS[s.key].max > 1 && !s.meta ? false : !C(r, 'inv').slots.includes(null);
@@ -1136,7 +1141,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   // bag recovery achievement
   // legal renewing population
   r.clock.respawnAcc += dtMs;
-  if (r.clock.respawnAcc > BAL.ai.respawnIntervalSec * 1000) { r.clock.respawnAcc = 0; const alive = r.creatures.filter(c => !c.elder && c.state !== 'dead').length; const cap = 150 * (isRagnarok(r, now) ? BAL.ai.ragnarokCapMult : 1); for (let k = 0; k < 40 && alive + k < cap; k++) trySpawnCreature(r, now, p.x, p.y, 25); }
+  if (r.clock.respawnAcc > BAL.ai.respawnIntervalSec * 1000) { r.clock.respawnAcc = 0; if (activeFloor(r) === 0) { const alive = r.creatures.filter(c => !c.elder && c.state !== 'dead' && ((c as any).floor ?? 0) === 0).length; const cap = 150 * (isRagnarok(r, now) ? BAL.ai.ragnarokCapMult : 1); for (let k = 0; k < 40 && alive + k < cap; k++) trySpawnCreature(r, now, p.x, p.y, 25); } }
   // storm lightning strikes (committed cause → real fire)
   if (weather === 'storm') { lightningAcc += dtMs; if (lightningAcc > 14000) { lightningAcc = 0; const tx = tileOf(p.x) + Math.floor((rngNext(r) - 0.5) * 30), ty = tileOf(p.y) + Math.floor((rngNext(r) - 0.5) * 20); fx('lightning', { x: tx * TILE + 8, y: ty * TILE + 8 }); const s = sourceAt(r, tx, ty, now); if (s && s.def.tall) { const st = r.sources[s.i] || (r.sources[s.i] = { stock: s.stock, hp: s.hp }); (st as any).fire = r.clock.simMs + 6000; } } }
   // discovery & region
@@ -1147,7 +1152,8 @@ function discover(gs: GameState, now: number) {
   const cx = tileOf(p.x) >> 2, cy = tileOf(p.y) >> 2; for (let y = cy - 4; y <= cy + 4; y++) for (let x = cx - 5; x <= cx + 5; x++) if (x >= 0 && y >= 0 && x < 50 && y < 50) r.discovered[y * 50 + x] = 1;
   const zi = w.zone[tileOf(p.y) * WW + tileOf(p.x)]; const ZN = ['Heartland', 'Meadow Bay', "Fisher's Point", 'Pinewatch', 'Eastcove', 'Frostcrown Peaks', 'Caldera Wastes', 'Dead Foundry', 'Drowned Fen', 'Oldgrowth', 'Lighthouse Spit', 'Harbor Reach', 'Serpent Strand', 'Wreck Coast', 'Old Mill', 'The Sea'];
   const regionName=(w.zoneNames || ZN)[zi]; if (regionName !== p.regionName) { p.regionName = regionName; fx('region', { name: regionName }); }
-  for (const pl of w.places) if (!r.poiSeen.includes(pl.id) && Math.hypot(pl.tx * TILE - p.x, pl.ty * TILE - p.y) < 13 * TILE) { r.poiSeen.push(pl.id); pushLog(r, now, `Discovered: ${pl.name}`, 'gold'); fx('discover', { name: pl.name }); }
+  const poiRad = isVeyra05Layout(r.layoutId || '') ? 26 * TILE : 13 * TILE;
+  for (const pl of w.places) if (!r.poiSeen.includes(pl.id) && Math.hypot(pl.tx * TILE - p.x, pl.ty * TILE - p.y) < poiRad) { r.poiSeen.push(pl.id); pushLog(r, now, `Discovered: ${pl.name}`, 'gold'); fx('discover', { name: pl.name }); }
   // stones
   r.elderStones = []; for (const s of C(r, 'inv').slots) if (s && s.key.startsWith('stone_')) r.elderStones.push(s.key);
   void countStones;
@@ -1380,7 +1386,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
   const r = gs.run!; const p = r.player; if (p.dead) return null; let best: Interact | null = null; let bd = 30;
   const fx0 = p.x + Math.cos(p.aim) * 6, fy0 = p.y + Math.sin(p.aim) * 6;
   for (const e of Object.values(r.entities)) {
-    if (e.kind === 'drop') continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
+    if (e.kind === 'drop' || !onActiveFloor(r, e)) continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
     let label = ''; let kind = e.kind as string;
     if (e.kind === 'bag') { if (!C(r,e.c!).slots.some(Boolean) && !e.legacyJobs?.queue.length) continue; label = `Open ${e.label || 'bag'}`; }
     else if (e.kind === 'airdrop') { if(!e.airdrop || ['signal','descending'].includes(e.airdrop.phase))continue; const v=airdropView(e.airdrop,e.tx!,e.ty!,now,C(r,e.c!).slots.filter(Boolean).length); label = v.key==='locked' ? `Airdrop locked · opens in ${v.lockedRemainS}s` : v.key==='emptied' ? 'Airdrop empty' : v.key==='partial' ? 'Airdrop partly claimed · take only' : v.key==='expiring' ? `Airdrop expiring · take only` : 'Search airdrop · take only'; }
