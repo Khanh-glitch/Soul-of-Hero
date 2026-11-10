@@ -126,7 +126,7 @@ export function ternHutPier(){
  deck(b,'tern_perch','Narrow Tern Perch',[[3706,912,5,8],[3703,909,7,5],[3700,912,8,4]],2);
  b.stair(3700,915,1,2,3702,914,'Tern Perch Rope Ladder','ladder');
  props(b,'c04_tern',[[3707,911,2],[3705,910,2],[3687,894,1],[3678,881,0]]);
- props(b,'c04_reed_screen',[[3701,921,0],[3707,927,1],[3688,902,0]]);
+ props(b,'c04_reed_screen',[[3712,932,0],[3707,927,1],[3688,902,0]]);
  props(b,'c04_lamp',[[3716,935,0],[3687,895,0]]);
  props(b,'c04_bollard',[[3676,879,0],[3675,890,0]]);
  b.note(3714,936,0,'The low path to the pier is sheltered. The high route passes the nesting cliff, then descends near the far quay.');

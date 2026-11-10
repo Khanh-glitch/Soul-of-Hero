@@ -173,6 +173,8 @@ export class World {
   adapterHooks = true; hazardCap = 60; flash = 0; flashEl: El = 'fire';
   impactPulses: { x: number; y: number; t: number; life: number; r: number; el: El; strength: number }[] = [];
   impactFrame: { t: number; el: El; x: number; y: number } = { t: -9, el: 'fire', x: 0, y: 0 };
+  /** Optional structural-wall occlusion predicate (returns true when a solid wall/closed door blocks a -> b). */
+  wallRaycast?: (a: V, b: V) => boolean;
   hooks: { phase?: (c: SkillCtx, tag: string) => void; hit?: (w: World, src: Actor, tg: Actor, dmg: number, o: HitOpts) => void; spawnBoss?: (w: World, b: Actor) => void } = {}; stats = { hitTests: 0, peakEnts: 0 };
   constructor(o: WorldOpts) { this.seed = o.seed; this.rng = mulberry(o.seed); this.map = o.adapter; this.difficulty = o.difficulty; this.quality = o.quality; }
   actor(id: number) { return this.actors.find((a) => a.id === id) || null; }
@@ -197,7 +199,13 @@ export class World {
   }
   hitEnemies(src: Actor, att: AttackInst, s: Shape, o: HitOpts): Actor[] {
     const out: Actor[] = [];
-    for (const tg of this.enemiesOf(src)) { this.stats.hitTests++; if (hitTest(s, tg.pos, tg.r) && this.applyHit(src, att, tg, o)) out.push(tg); }
+    const origin = s.k === 'capsule' ? v(s.x1, s.y1) : v(s.x, s.y);
+    for (const tg of this.enemiesOf(src)) {
+      this.stats.hitTests++;
+      if (!hitTest(s, tg.pos, tg.r)) continue;
+      if (this.wallRaycast && this.wallRaycast(origin, tg.pos)) continue;
+      if (this.applyHit(src, att, tg, o)) out.push(tg);
+    }
     if (out.length && this.adapterHooks && this.map.onAreaDamage) this.map.onAreaDamage(s, o.dmg);
     return out;
   }

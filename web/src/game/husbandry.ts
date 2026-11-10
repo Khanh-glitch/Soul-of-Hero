@@ -17,12 +17,29 @@ export const FEED_NUTRITION: Record<string, number> = {
  *  ONLY by fed, hydrated adult livestock inside a closed pen.
  *  Anatomical carcass parts (`hide`, `boar_tusk`, `meat`) NEVER drop passively into troughs — they require
  *  breeding & physical butchery (`BUTCHER_YIELDS`). */
-export const HUSBANDRY_YIELDS: Record<string, { primary: [string, number]; secondary?: [string, number]; cycleHours: number }> = {
-  grouse: { primary: ['grouse_egg', 1], secondary: ['feather', 2], cycleHours: 4.0 },
+export const HUSBANDRY_YIELDS: Record<
+  string,
+  { primary: [string, number]; secondary?: [string, number]; cycleHours: number; femaleOnlyPrimary?: boolean }
+> = {
+  grouse: { primary: ['grouse_egg', 1], secondary: ['feather', 2], cycleHours: 4.0, femaleOnlyPrimary: true },
   hare: { primary: ['fur', 1], cycleHours: 4.5 }, // Natural winter/seasonal coat molt
   boar: { primary: ['mushroom', 2], cycleHours: 5.0 }, // Rooted earth truffles in pen soil
   deer: { primary: ['fiber', 2], secondary: ['herb', 1], cycleHours: 5.5 }, // Shed winter undercoat tuft & cud forage
 };
+
+/** Sex-aware renewable pen yield resolver: only adult female ('f') grouse lay `grouse_egg`; adult male ('m') grouse molt `feather` only. */
+export function resolveHusbandryYield(
+  species: string,
+  sex: 'f' | 'm',
+): { primary: [string, number]; secondary?: [string, number]; cycleHours: number } | null {
+  const spec = HUSBANDRY_YIELDS[species];
+  if (!spec) return null;
+  if (spec.femaleOnlyPrimary && sex !== 'f') {
+    if (!spec.secondary) return null;
+    return { primary: spec.secondary, cycleHours: spec.cycleHours };
+  }
+  return spec;
+}
 
 /** SOH_PROVISIONAL: Physical carcass yields when harvesting/butchering a tamed animal with a bladed tool.
  *  Breeding a male + female pair and harvesting surplus adults is the sustainable ranching loop for meat, hide, and tusks. */
@@ -462,7 +479,8 @@ export function stepHusbandry(gs: GameState, dtSec: number, _now: number, isRain
       }
 
       // 3. Adult renewable biological yield into trough (requires sustained feed & water >= 35 and trough space)
-      const yieldSpec = HUSBANDRY_YIELDS[m.type];
+      const sex = ensureAnimalSex(m, r.seed);
+      const yieldSpec = resolveHusbandryYield(m.type, sex);
       if (yieldSpec && h.hunger >= 35 && h.hydration >= 35 && pen.troughs.length > 0) {
         h.produceProgress += dtHours / yieldSpec.cycleHours;
         while (h.produceProgress >= 1) {

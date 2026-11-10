@@ -1120,13 +1120,30 @@ export function killCreature(gs: GameState, m: Creature, now: number) {
       receipt(r, now, 'boss.defeat', m.sideBoss.key);
       pushLog(r, now, `${d.name} has been slain.`, 'gold');
     } else {
+      if (r.veyraAmbientWounds) {
+        delete r.veyraAmbientWounds[m.id];
+        if (!Object.keys(r.veyraAmbientWounds).length) delete r.veyraAmbientWounds;
+      }
       if (m.id.startsWith('vy:') && !m.husbandry?.tamed) {
         const cdMap = (r.veyraEcologyCooldowns ??= {});
         const hours = m.id.startsWith('vy:wild:') ? 6 : 8;
         cdMap[m.id] = now + hours * HOUR;
+        const cdKeys = Object.keys(cdMap);
+        if (cdKeys.length > 1024) {
+          cdKeys.sort((a, b) => cdMap[a] - cdMap[b]);
+          for (let ci = 0; ci < cdKeys.length - 1024; ci++) delete cdMap[cdKeys[ci]];
+        }
       }
+      const grouseSex =
+        m.type === 'grouse'
+          ? m.husbandry?.sex ??
+            ((m as any).sex === 'm' || (m as any).sex === 'f'
+              ? (m as any).sex
+              : deterministicAnimalSex(m.id, r.seed))
+          : null;
       for (const [k, q, ch] of d.drops) {
         if (k === 'cash' && rag) continue;
+        if (k === 'grouse_egg' && grouseSex === 'm') continue;
         if (rngNext(r) < ch) spawnDrop(r, k, q, m.x, m.y, now);
       }
     }
@@ -1385,6 +1402,16 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
     // site remains recorded even after the physical entity and container disappear.
     const source = it.type === 'move' ? it.from : (it.type === 'drop' || it.type === 'useItem') ? it.c : undefined;
     if (typeof source === 'string') { retireEmptyLoot(r, source, now); const e=Object.values(r.entities).find(e=>e.kind==='airdrop'&&e.c===source);if(e){if(!C(r,source).slots.some(Boolean)){receipt(r,now,'airdrop.empty',String(e.airdrop!.index));removeEntity(r,e);}else if(e.airdrop!.phase==='open'){e.airdrop!.phase='partial';receipt(r,now,'airdrop.partial',String(e.airdrop!.index));}} }
+    // Keep elderStones synchronized immediately across every committed inventory mutation (pickup/move/drop/takeAll),
+    // never lagging behind the 500ms discovery pulse.
+    if (gs.run === r && r.custody['inv']) {
+      r.elderStones = [];
+      for (const s of r.custody['inv'].slots) {
+        if (s && ITEMS[s.key]?.cat === 'stone' && !r.elderStones.includes(s.key)) {
+          r.elderStones.push(s.key);
+        }
+      }
+    }
     // The receipt ring is intentionally bounded for UI/history, but irreversible command
     // identity is durable run state and must never be evicted: an old replay is still a replay.
     r.seenIntents.push(it.id);

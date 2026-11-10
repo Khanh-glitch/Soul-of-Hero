@@ -174,6 +174,31 @@ export function validate(raw: any): GameState | null {
       if (!validCreatureRecord(cm) || cm.id !== cid || liveCreatureIds.has(cid)) return null;
     }
   }
+  if (r.veyraAmbientWounds !== undefined) {
+    if (!veyraWw || !obj(r.veyraAmbientWounds) || Object.keys(r.veyraAmbientWounds).length > 512) return null;
+    const liveOrOffIds = new Set<string>([
+      ...r.creatures.map((m: any) => m.id),
+      ...Object.keys(r.veyraOffscreenCreatures ?? {}),
+    ]);
+    for (const [wid, ws] of Object.entries(r.veyraAmbientWounds) as [string, any][]) {
+      if (
+        liveOrOffIds.has(wid) ||
+        !obj(ws) ||
+        typeof ws.type !== 'string' ||
+        !CREATURES[ws.type] ||
+        !finite(ws.gx) ||
+        !finite(ws.gy) ||
+        !integer(ws.floor) ||
+        !finite(ws.hp) ||
+        !finite(ws.maxHp) ||
+        ws.hp <= 0 ||
+        ws.hp >= ws.maxHp ||
+        (ws.leashPx !== undefined && !finite(ws.leashPx))
+      ) {
+        return null;
+      }
+    }
+  }
   if (r.veyraSpawnedHabitats !== undefined && (!veyraWw || !obj(r.veyraSpawnedHabitats) || Object.values(r.veyraSpawnedHabitats).some(v => !integer(v)))) return null;
   if (r.veyraEcologyCooldowns !== undefined && (!veyraWw || !obj(r.veyraEcologyCooldowns) || Object.values(r.veyraEcologyCooldowns).some(v => !finite(v) || (v as number) < 0))) return null;
   if (r.sideBossDefeated !== undefined && (!veyraWw || !obj(r.sideBossDefeated) || Object.values(r.sideBossDefeated).some(v => !integer(v)))) return null;

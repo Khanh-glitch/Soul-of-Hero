@@ -16,7 +16,16 @@ import { isVeyra05Layout } from './scenes';
 import { getWindowWorld } from './window';
 import { cellAtGlobal } from './chunks';
 import { decorKit } from './art-nature';
-import { activeFloor } from './floors';
+import { activeFloor, isSolidVeyraProp, getSolidPropFootprint, type FloorLayer } from './floors';
+
+function isSolidFootprintPlaced(layer: FloorLayer | undefined, tx: number, ty: number, kind: string): boolean {
+  if (!layer) return false;
+  const fp = getSolidPropFootprint(kind);
+  return fp.length > 0 && fp.every(([dx, dy]) => {
+    const fx = tx + dx, fy = ty + dy;
+    return fx >= 0 && fx < WW && fy >= 0 && fy < WH && layer.solidProps[fy * WW + fx] === 1;
+  });
+}
 import {makeWaterfrontSprites,drawWaterfrontDeckTile} from './c04-art';
 import {makeIndustrialHarborSprites,drawIndustrialHarborTile} from './c02-art';
 import {makeF03Sprites,drawF03DeckTile} from './f03-art';
@@ -84,7 +93,23 @@ function landmarkSprites(): Record<string, Sprite> {
   const barrel_stack = px(18, 16, g => { for (const [x, y] of [[1, 6], [9, 6], [5, 0]]) { g.fillStyle = '#7a5230'; g.fillRect(x, y, 8, 10); g.fillStyle = '#9a6a3e'; g.fillRect(x + 1, y + 1, 6, 8); g.fillStyle = '#4a3020'; g.fillRect(x, y + 3, 8, 1); g.fillRect(x, y + 7, 8, 1); } });
   const crate_stack = px(18, 16, g => { for (const [x, y] of [[1, 6], [9, 7], [4, 0]]) { g.fillStyle = '#8a5e36'; g.fillRect(x, y, 8, 8); g.fillStyle = '#b0804a'; g.fillRect(x + 1, y + 1, 6, 6); g.fillStyle = '#5a3a22'; g.fillRect(x, y + 4, 8, 1); } });
   const hearth = px(20, 16, g => { g.fillStyle = '#6e6a66'; g.fillRect(1, 4, 18, 11); g.fillStyle = '#3a3634'; g.fillRect(4, 7, 12, 8); g.fillStyle = '#ff7a2a'; g.fillRect(6, 11, 8, 3); g.fillStyle = '#ffd070'; g.fillRect(8, 12, 4, 2); });
-  const furnace_big = px(24, 26, g => { g.fillStyle = '#4a4048'; g.fillRect(2, 2, 20, 23); g.fillStyle = '#6a5e66'; g.fillRect(4, 4, 16, 18); g.fillStyle = '#2a1a14'; g.fillRect(7, 12, 10, 9); g.fillStyle = '#ff6a1e'; g.fillRect(8, 15, 8, 6); g.fillStyle = '#ffe070'; g.fillRect(10, 18, 4, 3); g.fillStyle = '#3a3e46'; g.fillRect(9, 0, 6, 3); });
+  const furnace_big = px(42, 36, g => {
+    g.fillStyle = '#2a222a'; g.fillRect(3, 5, 36, 30);
+    g.fillStyle = '#4e444c'; g.fillRect(4, 6, 34, 28);
+    g.fillStyle = '#6c6068'; g.fillRect(5, 7, 32, 3);
+    for (let y = 12; y < 32; y += 5) { g.fillStyle = '#3a3238'; g.fillRect(5, y, 32, 1); }
+    // Iron buckstay straps & rivets
+    g.fillStyle = '#363b44'; g.fillRect(7, 6, 3, 28); g.fillRect(32, 6, 3, 28);
+    g.fillStyle = '#707a88'; g.fillRect(8, 7, 1, 26); g.fillRect(33, 7, 1, 26);
+    // Twin flue stacks
+    g.fillStyle = '#3a3e46'; g.fillRect(11, 0, 7, 6); g.fillRect(24, 0, 7, 6);
+    g.fillStyle = '#646c78'; g.fillRect(12, 0, 5, 2); g.fillRect(25, 0, 5, 2);
+    // Glowing arched firebox throat
+    g.fillStyle = '#221410'; g.fillRect(13, 18, 16, 14);
+    g.fillStyle = '#ff6a1e'; g.fillRect(15, 21, 12, 10);
+    g.fillStyle = '#ffb84a'; g.fillRect(17, 24, 8, 7);
+    g.fillStyle = '#fff0a0'; g.fillRect(19, 27, 4, 4);
+  });
   const anvil = px(16, 12, g => { g.fillStyle = '#3a3e46'; g.fillRect(2, 3, 12, 4); g.fillRect(6, 7, 4, 4); g.fillStyle = '#6a7280'; g.fillRect(2, 3, 12, 1); g.fillRect(1, 4, 3, 2); });
   const desk = px(18, 14, g => { g.fillStyle = '#6a4426'; g.fillRect(1, 4, 16, 7); g.fillStyle = '#8a5e36'; g.fillRect(1, 4, 16, 2); g.fillStyle = '#e8e0c8'; g.fillRect(4, 2, 6, 3); });
   const safe = px(14, 16, g => { g.fillStyle = '#2e3238'; g.fillRect(1, 1, 12, 14); g.fillStyle = '#4a5058'; g.fillRect(2, 2, 10, 12); g.fillStyle = '#c8a060'; g.fillRect(6, 7, 3, 3); });
@@ -101,9 +126,35 @@ function landmarkSprites(): Record<string, Sprite> {
   const water_pool = px(20, 12, g => { g.fillStyle = '#24506e'; g.beginPath(); g.ellipse(10, 6, 9, 5, 0, 0, 6.3); g.fill(); g.fillStyle = '#4a90c0'; g.fillRect(5, 4, 6, 1); g.fillRect(11, 7, 4, 1); });
   const smoke_rack = px(18, 18, g => { g.fillStyle = '#6a4426'; g.fillRect(1, 2, 16, 2); g.fillStyle = '#8a5e36'; for (let x = 3; x < 16; x += 4) { g.fillRect(x, 4, 1, 6); g.fillStyle = '#a06a4a'; g.fillRect(x - 1, 9, 3, 5); g.fillStyle = '#8a5e36'; } });
   const net_rack = px(18, 16, g => { g.fillStyle = '#6a4426'; g.fillRect(1, 1, 2, 14); g.fillRect(15, 1, 2, 14); g.fillStyle = '#8a9a7a'; for (let x = 3; x < 15; x += 3) for (let y = 2; y < 14; y += 3) g.fillRect(x, y, 2, 1); });
-  const boat_hull = px(26, 16, g => { g.fillStyle = '#5a3e2a'; g.beginPath(); g.moveTo(1, 8); g.quadraticCurveTo(13, 18, 25, 8); g.lineTo(23, 5); g.quadraticCurveTo(13, 12, 3, 5); g.closePath(); g.fill(); g.fillStyle = '#7a5a3a'; g.fillRect(6, 6, 14, 2); });
+  const boat_hull = px(42, 18, g => {
+    // Timber cradle blocks
+    g.fillStyle = '#422c1c'; g.fillRect(9, 14, 5, 3); g.fillRect(28, 14, 5, 3);
+    // Clinker oak hull & keel
+    g.fillStyle = '#4e3422';
+    g.beginPath(); g.moveTo(2, 8); g.quadraticCurveTo(21, 18, 40, 8); g.lineTo(37, 4); g.quadraticCurveTo(21, 12, 5, 4); g.closePath(); g.fill();
+    g.fillStyle = '#7c5838';
+    g.beginPath(); g.moveTo(4, 6); g.quadraticCurveTo(21, 13, 38, 6); g.lineTo(36, 4); g.quadraticCurveTo(21, 10, 6, 4); g.closePath(); g.fill();
+    // Thwart benches & ribs
+    g.fillStyle = '#9c744a'; g.fillRect(12, 6, 3, 5); g.fillRect(20, 7, 3, 5); g.fillRect(28, 6, 3, 5);
+    g.fillStyle = '#b88e5e'; g.fillRect(6, 4, 30, 1);
+  });
   const grain_sack = px(16, 14, g => { g.fillStyle = '#c8a878'; g.fillRect(2, 4, 12, 9); g.fillStyle = '#e0c898'; g.fillRect(3, 5, 10, 4); g.fillStyle = '#8a7048'; g.fillRect(5, 2, 6, 3); });
-  const market_stall = px(24, 20, g => { g.fillStyle = '#8a5e36'; g.fillRect(1, 10, 22, 6); g.fillStyle = '#6a4426'; g.fillRect(2, 16, 2, 4); g.fillRect(20, 16, 2, 4); for (let i = 0; i < 6; i++) { g.fillStyle = i % 2 ? '#c85a4a' : '#e8dcc0'; g.fillRect(1 + i * 4, 4, 4, 6); } g.fillStyle = '#c8a060'; g.fillRect(4, 11, 4, 3); g.fillStyle = '#7a9a4a'; g.fillRect(12, 11, 5, 3); });
+  const market_stall = px(42, 24, g => {
+    // Timber posts & counter spanning 3 tiles
+    g.fillStyle = '#5a3a22'; g.fillRect(3, 8, 3, 15); g.fillRect(36, 8, 3, 15);
+    g.fillStyle = '#8a5e36'; g.fillRect(3, 13, 36, 6);
+    g.fillStyle = '#b0804a'; g.fillRect(3, 13, 36, 2);
+    // Striped canvas awning
+    for (let i = 0; i < 9; i++) {
+      g.fillStyle = i % 2 ? '#c85a4a' : '#e8dcc0';
+      g.fillRect(3 + i * 4, 3, 4, 7);
+    }
+    g.fillStyle = '#6a2e26'; g.fillRect(3, 10, 36, 1);
+    // Displayed crates, produce & brass scale
+    g.fillStyle = '#c8a060'; g.fillRect(8, 11, 6, 3);
+    g.fillStyle = '#7a9a4a'; g.fillRect(17, 11, 7, 3);
+    g.fillStyle = '#b85a48'; g.fillRect(27, 11, 6, 3);
+  });
   const lookout = px(16, 18, g => { g.fillStyle = '#6a4426'; g.fillRect(2, 14, 12, 3); g.fillStyle = '#8a5e36'; g.fillRect(3, 4, 2, 10); g.fillRect(11, 4, 2, 10); g.fillStyle = '#c8a060'; g.fillRect(2, 2, 12, 3); });
   const banner = px(12, 24, g => { g.fillStyle = '#5a3a22'; g.fillRect(5, 0, 2, 24); g.fillStyle = '#7a3a8a'; g.fillRect(1, 2, 10, 13); g.fillStyle = '#c8a0ff'; g.fillRect(4, 6, 4, 4); });
   const lectern = px(14, 18, g => { g.fillStyle = '#6a4426'; g.fillRect(5, 6, 4, 11); g.fillStyle = '#8a5e36'; g.fillRect(1, 2, 12, 5); g.fillStyle = '#e8e0c8'; g.fillRect(3, 3, 8, 3); });
@@ -236,6 +287,7 @@ function items(g: CanvasRenderingContext2D): comp.DepthItem[] {
     }
     for (const p of layer.props) {
       if (p.x < vx0 || p.x > vx1 || p.y < vy0 || p.y > vy1) continue;
+      if (isSolidVeyraProp(p.kind) && !isSolidFootprintPlaced(layer, p.x, p.y, p.kind)) continue;
       const spr = lmSprites[p.kind]; if (!spr) continue;
       const X = p.x * TILE + 8 - (spr.width >> 1), Y = p.y * TILE + 15 - spr.height;
       const decal = p.kind === 'rug' || p.kind === 'floor_wear' || p.kind === 'pier_shadow';
@@ -259,6 +311,7 @@ function items(g: CanvasRenderingContext2D): comp.DepthItem[] {
     if (lm.tx < vx0 || lm.tx > vx1 || lm.ty < vy0 || lm.ty > vy1) continue;
     const i = lm.ty * WW + lm.tx;
     if (occupied.has(i) || w.sourceV3[i]) continue;
+    if (isSolidVeyraProp(lm.kind) && !isSolidFootprintPlaced(layer, lm.tx, lm.ty, lm.kind)) continue;
     const spr = lmSprites[lm.kind];
     if (!spr) continue;
     const X = lm.tx * TILE + 8 - Math.floor(spr.width / 2);

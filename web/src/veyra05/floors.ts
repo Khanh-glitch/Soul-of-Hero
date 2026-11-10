@@ -50,40 +50,121 @@ export interface FloorLayer {
 /** Explicit non-solid ground decals, flat floor clutter, overhead hangings, and stair/ramp overlays. */
 export const VEYRA_NON_SOLID_PROP_KINDS: ReadonlySet<string> = new Set([
   'rug', 'floor_wear', 'pier_shadow', 'bones', 'rubble', 'water_pool',
-  'chain_hoist', 'banner', 'stair_up', 'stair_down',
-  'c02_heat_grate', 'c04_algae_sluice', 'c04_torn_notice', 'c04_tide_gate', 'signal_flag',
-  'f03_gauge_panel', 'f03_glass_spoil', 'f03_ore_ramp', 'f03_sawdust', 'f03_steel_gate',
+  'chain_hoist', 'banner', 'stair_up', 'stair_down', 'lookout', 'screen_mesh',
+  'c01_city_banner', 'c01_cargo_hook', 'c01_white_salt_pan', 'c01_roof_dormer',
+  'c02_chain_gantry', 'c02_steel_truss', 'c02_heat_grate', 'c02_tide_gate',
+  'c04_rope_pulley', 'c04_signal', 'c04_tide_gate', 'c04_torn_notice',
+  'c04_splinter_pile', 'c04_crow', 'c04_algae_sluice', 'c04_tern', 'signal_flag',
+  'f03_gauge_panel', 'f03_glass_spoil', 'f03_ore_ramp', 'f03_sawdust',
+  'f03_steel_gate', 'f03_chain_rail', 'f03_slag_pool',
   'elder_blue_rune',
 ]);
 
 /** Explicit solid physical props (furniture, masonry wells, industrial machinery, stacks, carts & sanctuary monoliths). */
 export const VEYRA_SOLID_PROP_KINDS: ReadonlySet<string> = new Set([
-  'well', 'sundial', 'lantern', 'bench', 'bollard', 'market_stall', 'lookout', 'c04_quay_sign',
+  'well', 'sundial', 'lantern', 'bench', 'bollard', 'market_stall', 'tree_stump', 'c04_quay_sign',
   'bed', 'table', 'shelf', 'bookshelf', 'desk', 'safe', 'hearth', 'lectern', 'orrery', 'telescope', 'map_table',
   'barrel_stack', 'crate_stack', 'grain_sack', 'smoke_rack', 'net_rack', 'fish_drying_rack', 'gear_rack', 'rope_coil',
-  'c04_feather_basket', 'boat_hull', 'cart_broken', 'ore_cart',
-  'forge', 'furnace_big', 'anvil', 'coal_pile', 'ore_pile', 'ingot_stack', 'pipes', 'crane_controls', 'screen_mesh', 'pump',
-  'c02_counterweight',
-  'f03_chain_rail', 'f03_charcoal_rick', 'f03_chimney', 'f03_condenser', 'f03_crane', 'f03_crusher', 'f03_filter_tank',
-  'f03_kiln_vat', 'f03_log_cradle', 'f03_ore_seam', 'f03_pipe_bundle', 'f03_rust_pipe', 'f03_sawframe', 'f03_screen',
-  'f03_slag_pool', 'f03_spoil_heap', 'f03_timber_pile', 'f03_turbine', 'f03_valve', 'f03_vent_pipe', 'f03_waterwheel',
-  'elder_surtur_forge', 'elder_typhon_shard', 'elder_aion_root', 'elder_atlas_gate', 'elder_argus_eye', 'elder_anubis_sarc', 'elder_anubis_pylon',
+  'c04_feather_basket', 'c04_bollard', 'c04_lamp', 'c04_broken_post', 'c04_warning', 'c04_reed_screen',
+  'boat_hull', 'cart_broken', 'ore_cart',
+  'forge', 'furnace_big', 'anvil', 'coal_pile', 'ore_pile', 'ingot_stack', 'pipes', 'crane_controls', 'pump',
+  'c01_arched_gate', 'c01_canopy_market', 'c01_quay_lamp', 'c01_mooring', 'c01_rope_cart', 'c01_brine_pipe',
+  'c02_ore_tipple', 'c02_rail_wagon', 'c02_industrial_chimney', 'c02_ore_bins', 'c02_warning_lamp', 'c02_counterweight',
+  'f03_charcoal_rick', 'f03_chimney', 'f03_condenser', 'f03_crane', 'f03_crusher', 'f03_filter_tank',
+  'f03_geo_manifold', 'f03_kiln_vat', 'f03_log_cradle', 'f03_ore_seam', 'f03_pipe_bundle', 'f03_rust_pipe',
+  'f03_sawframe', 'f03_screen', 'f03_signal_lamp', 'f03_silo', 'f03_spoil_heap', 'f03_timber_pile',
+  'f03_turbine', 'f03_valve', 'f03_vent_pipe', 'f03_waterwheel',
+  'elder_surtur_forge', 'elder_surtur_spire', 'elder_typhon_shard', 'elder_typhon_pillar',
+  'elder_aion_root', 'elder_aion_rune', 'elder_atlas_gate', 'elder_atlas_anchor',
+  'elder_argus_eye', 'elder_argus_pillar', 'elder_anubis_sarc', 'elder_anubis_pylon',
 ]);
+
+const fpRect = (x0: number, x1: number, y0: number, y1: number): readonly [number, number][] => {
+  const out: [number, number][] = [];
+  for (let dy = y0; dy <= y1; dy++) for (let dx = x0; dx <= x1; dx++) out.push([dx, dy]);
+  return out;
+};
+const FP_1X1: readonly [number, number][] = [[0, 0]];
+
+/** Authoritative physical tile footprints (`[dx, dy]` relative to prop anchor `(p.x, p.y)`) matching `decor-client` sprite bases (`X = tx*16 + 8 - (w>>1), Y = ty*16 + 15 - h`). */
+export const VEYRA_PROP_SOLID_FOOTPRINTS: Readonly<Record<string, readonly [number, number][]>> = {
+  // 7×2 monumental gate pedestal (124×135 px)
+  elder_atlas_gate: fpRect(-3, 3, -1, 0),
+  // 5×2 Primordial sanctuary monolith cores (102–112 px wide)
+  elder_aion_root: fpRect(-2, 2, -1, 0),
+  elder_surtur_forge: fpRect(-2, 2, -1, 0),
+  elder_typhon_shard: fpRect(-2, 2, -1, 0),
+  elder_argus_eye: fpRect(-2, 2, -1, 0),
+  // 3×2 deep masonry / tank / sarcophagus bases (42–60 px wide × deep base)
+  elder_anubis_pylon: fpRect(-1, 1, -1, 0),
+  elder_anubis_sarc: fpRect(-1, 1, -1, 0),
+  furnace_big: fpRect(-1, 1, -1, 0),
+  f03_crusher: fpRect(-1, 1, -1, 0),
+  f03_kiln_vat: fpRect(-1, 1, -1, 0),
+  f03_condenser: fpRect(-1, 1, -1, 0),
+  f03_silo: fpRect(-1, 1, -1, 0),
+  f03_filter_tank: fpRect(-1, 1, -1, 0),
+  // Split stone arch piers with walkable central archway (58×48 px)
+  c01_arched_gate: [[-1, 0], [1, 0]],
+  // 3×1 wide hulls, stalls, sanctuary pillars & industrial machinery (36–68 px wide)
+  elder_aion_rune: fpRect(-1, 1, 0, 0),
+  elder_argus_pillar: fpRect(-1, 1, 0, 0),
+  elder_atlas_anchor: fpRect(-1, 1, 0, 0),
+  elder_surtur_spire: fpRect(-1, 1, 0, 0),
+  elder_typhon_pillar: fpRect(-1, 1, 0, 0),
+  boat_hull: fpRect(-1, 1, 0, 0),
+  market_stall: fpRect(-1, 1, 0, 0),
+  c01_canopy_market: fpRect(-1, 1, 0, 0),
+  c01_rope_cart: fpRect(-1, 1, 0, 0),
+  c01_brine_pipe: fpRect(-1, 1, 0, 0),
+  c02_ore_tipple: fpRect(-1, 1, 0, 0),
+  c02_rail_wagon: fpRect(-1, 1, 0, 0),
+  c02_industrial_chimney: fpRect(-1, 1, 0, 0),
+  c02_ore_bins: fpRect(-1, 1, 0, 0),
+  c02_counterweight: fpRect(-1, 1, 0, 0),
+  c04_reed_screen: fpRect(-1, 1, 0, 0),
+  fish_drying_rack: fpRect(-1, 1, 0, 0),
+  f03_turbine: fpRect(-1, 1, 0, 0),
+  f03_waterwheel: fpRect(-1, 1, 0, 0),
+  f03_pipe_bundle: fpRect(-1, 1, 0, 0),
+  f03_rust_pipe: fpRect(-1, 1, 0, 0),
+  f03_log_cradle: fpRect(-1, 1, 0, 0),
+  f03_timber_pile: fpRect(-1, 1, 0, 0),
+  f03_sawframe: fpRect(-1, 1, 0, 0),
+  f03_spoil_heap: fpRect(-1, 1, 0, 0),
+  f03_ore_seam: fpRect(-1, 1, 0, 0),
+  f03_screen: fpRect(-1, 1, 0, 0),
+  f03_crane: fpRect(-1, 1, 0, 0),
+  f03_charcoal_rick: fpRect(-1, 1, 0, 0),
+  f03_chimney: fpRect(-1, 1, 0, 0),
+  f03_geo_manifold: fpRect(-1, 1, 0, 0),
+};
 
 export const isSolidVeyraProp = (kind: string): boolean =>
   VEYRA_SOLID_PROP_KINDS.has(kind) && !VEYRA_NON_SOLID_PROP_KINDS.has(kind);
 
-function computeLayerSolidProps(
-  layer: FloorLayer,
-  ox: number,
-  oy: number,
-  landmarks: readonly { tx: number; ty: number; kind: string }[],
-): Uint8Array {
+export const getSolidPropFootprint = (kind: string): readonly [number, number][] =>
+  isSolidVeyraProp(kind) ? (VEYRA_PROP_SOLID_FOOTPRINTS[kind] ?? FP_1X1) : [];
+
+export interface LayerPlacementContext {
+  solid: Uint8Array;
+  doorCells: Set<number>;
+  protectedThreshold: Set<number>;
+  exactStaticOrStair: Set<number>;
+  isPassable: (tx: number, ty: number) => boolean;
+  canPlaceProceduralSolidProp: (x: number, y: number, kind: string) => boolean;
+  stampProceduralSolidProp: (x: number, y: number, kind: string) => boolean;
+}
+
+function buildLayerPlacementContext(layer: FloorLayer, ox: number, oy: number): LayerPlacementContext {
   const solid = new Uint8Array(N);
   const doorCells = new Set<number>();
   const protectedThreshold = new Set<number>();
+  const exactStaticOrStair = new Set<number>();
+
   for (const s of layer.statics) {
     const si = s.ty * WW + s.tx;
+    exactStaticOrStair.add(si);
     protectedThreshold.add(si);
     if (s.kind === 'door') {
       doorCells.add(si);
@@ -97,7 +178,9 @@ function computeLayerSolidProps(
     const here = st.from === layer.level ? [st.x - ox, st.y - oy] : [st.tx - ox, st.ty - oy];
     const sx = here[0], sy = here[1];
     if (sx < 0 || sy < 0 || sx >= WW || sy >= WH) continue;
-    protectedThreshold.add(sy * WW + sx);
+    const si = sy * WW + sx;
+    exactStaticOrStair.add(si);
+    protectedThreshold.add(si);
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
       const nx = sx + dx, ny = sy + dy;
       if (nx >= 0 && ny >= 0 && nx < WW && ny < WH) protectedThreshold.add(ny * WW + nx);
@@ -110,61 +193,108 @@ function computeLayerSolidProps(
     if (solid[i]) return false;
     if (doorCells.has(i)) return true;
     const t = layer.tiles[i];
-    if (t === T.DEEP || t === T.CLIFF || t === T.PWALL || t === T.LAVA) return false;
+    if (t === T.DEEP || t === T.RIVER || t === T.CLIFF || t === T.PWALL || t === T.LAVA) return false;
     return layer.walkable[i] === 1;
   };
 
-  // Inductive connectivity guard: blocking (cx, cy) is allowed iff all its passable 4-neighbors remain mutually connected within radius 6.
-  const wouldSeverPassability = (cx: number, cy: number): boolean => {
-    const nbrs: [number, number][] = [];
-    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-      const nx = cx + dx, ny = cy + dy;
-      if (isPassable(nx, ny)) nbrs.push([nx, ny]);
+  // Authoritative authored props (`L.props`) stamp their FULL multi-tile footprint onto every walkable floor cell first.
+  for (const p of layer.props) {
+    const fp = getSolidPropFootprint(p.kind);
+    if (!fp.length) continue;
+    for (const [dx, dy] of fp) {
+      const cx = p.x + dx, cy = p.y + dy;
+      if (cx <= 0 || cy <= 0 || cx >= WW - 1 || cy >= WH - 1) continue;
+      const i = cy * WW + cx;
+      if (exactStaticOrStair.has(i) || layer.sources[i]) continue;
+      if (!isPassable(cx, cy)) continue;
+      solid[i] = 1;
     }
-    if (nbrs.length <= 1) return false;
-    const R = 6;
-    const minX = Math.max(0, cx - R), maxX = Math.min(WW - 1, cx + R);
-    const minY = Math.max(0, cy - R), maxY = Math.min(WH - 1, cy + R);
+  }
+
+  const wouldSeverFootprint = (cells: readonly [number, number][]): boolean => {
+    let minFx = WW, maxFx = 0, minFy = WH, maxFy = 0;
+    for (const [cx, cy] of cells) {
+      solid[cy * WW + cx] = 1;
+      if (cx < minFx) minFx = cx;
+      if (cx > maxFx) maxFx = cx;
+      if (cy < minFy) minFy = cy;
+      if (cy > maxFy) maxFy = cy;
+    }
+    const border: [number, number][] = [];
+    for (let y = minFy - 1; y <= maxFy + 1; y++) {
+      for (let x = minFx - 1; x <= maxFx + 1; x++) {
+        if ((x === minFx - 1 || x === maxFx + 1 || y === minFy - 1 || y === maxFy + 1) && isPassable(x, y)) {
+          border.push([x, y]);
+        }
+      }
+    }
+    if (border.length <= 1) {
+      for (const [cx, cy] of cells) solid[cy * WW + cx] = 0;
+      return false;
+    }
+    const pad = 8;
+    const minX = Math.max(0, minFx - pad), maxX = Math.min(WW - 1, maxFx + pad);
+    const minY = Math.max(0, minFy - pad), maxY = Math.min(WH - 1, maxFy + pad);
     const wSpan = maxX - minX + 1, hSpan = maxY - minY + 1;
     const seen = new Uint8Array(wSpan * hSpan);
     const qx = new Int16Array(wSpan * hSpan);
     const qy = new Int16Array(wSpan * hSpan);
     let head = 0, tail = 0;
-    qx[tail] = nbrs[0][0]; qy[tail] = nbrs[0][1]; tail++;
-    seen[(nbrs[0][1] - minY) * wSpan + (nbrs[0][0] - minX)] = 1;
+    qx[tail] = border[0][0]; qy[tail] = border[0][1]; tail++;
+    seen[(border[0][1] - minY) * wSpan + (border[0][0] - minX)] = 1;
     let reached = 1;
     while (head < tail) {
       const x = qx[head], y = qy[head]; head++;
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
         const nx = x + dx, ny = y + dy;
         if (nx < minX || nx > maxX || ny < minY || ny > maxY) continue;
-        if (nx === cx && ny === cy) continue;
         const si = (ny - minY) * wSpan + (nx - minX);
         if (seen[si] || !isPassable(nx, ny)) continue;
         seen[si] = 1;
         qx[tail] = nx; qy[tail] = ny; tail++;
-        for (let k = 1; k < nbrs.length; k++) if (nbrs[k][0] === nx && nbrs[k][1] === ny) reached++;
-        if (reached >= nbrs.length) return false;
       }
     }
-    return reached < nbrs.length;
+    reached = 0;
+    for (const [bx, by] of border) {
+      if (seen[(by - minY) * wSpan + (bx - minX)]) reached++;
+    }
+    for (const [cx, cy] of cells) solid[cy * WW + cx] = 0;
+    return reached < border.length;
   };
 
-  const tryMarkSolid = (x: number, y: number, kind: string) => {
-    if (x <= 0 || y <= 0 || x >= WW - 1 || y >= WH - 1) return;
-    if (!isSolidVeyraProp(kind)) return;
-    const i = y * WW + x;
-    if (solid[i] || protectedThreshold.has(i) || layer.sources[i]) return;
-    if (!isPassable(x, y)) return;
-    if (wouldSeverPassability(x, y)) return;
-    solid[i] = 1;
+  const canPlaceProceduralSolidProp = (x: number, y: number, kind: string): boolean => {
+    const fp = getSolidPropFootprint(kind);
+    if (!fp.length) return true;
+    const cells: [number, number][] = [];
+    for (const [dx, dy] of fp) {
+      const cx = x + dx, cy = y + dy;
+      if (cx <= 1 || cy <= 1 || cx >= WW - 2 || cy >= WH - 2) return false;
+      const i = cy * WW + cx;
+      if (solid[i] || protectedThreshold.has(i) || layer.sources[i] || !isPassable(cx, cy)) return false;
+      cells.push([cx, cy]);
+    }
+    return !wouldSeverFootprint(cells);
   };
 
-  for (const p of layer.props) tryMarkSolid(p.x, p.y, p.kind);
-  if (layer.level === 0) {
-    for (const lm of landmarks) tryMarkSolid(lm.tx, lm.ty, lm.kind);
-  }
-  return solid;
+  const stampProceduralSolidProp = (x: number, y: number, kind: string): boolean => {
+    const fp = getSolidPropFootprint(kind);
+    if (!fp.length) return true;
+    if (!canPlaceProceduralSolidProp(x, y, kind)) return false;
+    for (const [dx, dy] of fp) {
+      solid[(y + dy) * WW + (x + dx)] = 1;
+    }
+    return true;
+  };
+
+  return {
+    solid,
+    doorCells,
+    protectedThreshold,
+    exactStaticOrStair,
+    isPassable,
+    canPlaceProceduralSolidProp,
+    stampProceduralSolidProp,
+  };
 }
 export interface FloorStack { levels: Level[]; layers: Map<Level, FloorLayer>; pois: string[]; ground: FloorLayer }
 
@@ -222,7 +352,15 @@ function globalExtraStatics(c: CompiledPlan): GlobalExtraStatic[] {
   for (const d of L0.doors) markNear(d.x, d.y, 1);
   for (const s of L0.stairs) { markNear(s.x, s.y, 1); markNear(s.tx, s.ty, 1); }
   for (const l of L0.loot) markNear(l.x, l.y, 0);
-  const propsAt = new Set<number>(L0.props.map(p => p.y * FRAME_W + p.x));
+  const propsAt = new Set<number>();
+  for (const p of L0.props) {
+    const fp = getSolidPropFootprint(p.kind);
+    if (fp.length) {
+      for (const [dx, dy] of fp) propsAt.add((p.y + dy) * FRAME_W + (p.x + dx));
+    } else {
+      propsAt.add(p.y * FRAME_W + p.x);
+    }
+  }
 
   const pickCell = (preferOpen: boolean): [number, number] | null => {
     const orderedRooms = [...L0.rooms].sort((a, b) => (preferOpen ? (a.roof ? 1 : 0) - (b.roof ? 1 : 0) : (b.roof ? 1 : 0) - (a.roof ? 1 : 0)));
@@ -393,8 +531,14 @@ export function buildFloorStack(ww: WindowWorld): FloorStack {
       }
     }
     const built: FloorLayer = { level: lv, tiles, zone, walkable, protectedCells: prot, buildable: build, solidProps: new Uint8Array(N), sources, buildings, statics, lootStatics, rooms, stairs, props, notes, plan: plans[0]?.plan ?? null };
-    if (plans.length) detailInteriors(built);
-    built.solidProps = computeLayerSolidProps(built, win.originTx, win.originTy, ww.landmarks);
+    const ctx = buildLayerPlacementContext(built, win.originTx, win.originTy);
+    if (plans.length) detailInteriors(built, ctx);
+    if (lv === 0) {
+      for (const lm of ww.landmarks) {
+        ctx.stampProceduralSolidProp(lm.tx, lm.ty, lm.kind);
+      }
+    }
+    built.solidProps = ctx.solid;
     layers.set(lv, built);
   }
   return { levels, layers, pois: plans.map(p => p.plan.poi), ground: layers.get(0)! };

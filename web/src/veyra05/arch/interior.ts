@@ -13,7 +13,7 @@
  * is placed, and a flood-fill check rejects any partition that would cut a room.
  */
 import { T, WW, WH } from '../../game/core';
-import type { FloorLayer } from '../floors';
+import { getSolidPropFootprint, type FloorLayer, type LayerPlacementContext } from '../floors';
 
 const KEY = (x: number, y: number) => y * WW + x;
 const hash = (x: number, y: number, s = 0) => { let h = (x * 374761393 + y * 668265263 + s * 2246822519) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16; return (h >>> 0) / 4294967296; };
@@ -47,15 +47,47 @@ function reachable(tiles: Uint8Array, from: number, to: number): boolean {
   return false;
 }
 
-export function detailInteriors(layer: FloorLayer) {
-  const tiles = layer.tiles, walk = layer.walkable;
+export function detailInteriors(layer: FloorLayer, placement?: LayerPlacementContext) {
+  const tiles = layer.tiles;
   const protectedCells = new Set<number>();
-  const anchors: number[] = [];
-  const guard = (x: number, y: number) => { for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) protectedCells.add(KEY(x + dx, y + dy)); };
-  for (const s of layer.statics) { guard(s.tx, s.ty); anchors.push(KEY(s.tx, s.ty)); }
-  for (const p of layer.props) protectedCells.add(KEY(p.x, p.y));
-  const ox = 0, oy = 0;
+  const guard = (x: number, y: number) => {
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        if (x + dx >= 0 && y + dy >= 0 && x + dx < WW && y + dy < WH) {
+          protectedCells.add(KEY(x + dx, y + dy));
+        }
+      }
+    }
+  };
+  for (const s of layer.statics) guard(s.tx, s.ty);
+  for (const p of layer.props) {
+    const fp = getSolidPropFootprint(p.kind);
+    if (fp.length) {
+      for (const [dx, dy] of fp) {
+        if (p.x + dx >= 0 && p.y + dy >= 0 && p.x + dx < WW && p.y + dy < WH) {
+          protectedCells.add(KEY(p.x + dx, p.y + dy));
+        }
+      }
+    } else {
+      protectedCells.add(KEY(p.x, p.y));
+    }
+  }
   for (const st of layer.stairs) { guard(st.x, st.y); guard(st.tx, st.ty); }
+
+  const canPlaceInRoom = (inside: (x: number, y: number) => boolean, x: number, y: number, kind: string): boolean => {
+    const fp = getSolidPropFootprint(kind);
+    const cells = fp.length ? fp : ([[0, 0]] as const);
+    for (const [dx, dy] of cells) {
+      const cx = x + dx, cy = y + dy;
+      if (cx <= 0 || cy <= 0 || cx >= WW - 1 || cy >= WH - 1) return false;
+      const i = KEY(cx, cy);
+      if (!inside(cx, cy) || tiles[i] !== T.FLOOR || protectedCells.has(i)) return false;
+    }
+    if (placement && !placement.stampProceduralSolidProp(x, y, kind)) return false;
+    for (const [dx, dy] of cells) protectedCells.add(KEY(x + dx, y + dy));
+    return true;
+  };
+
   for (const r of layer.rooms) {
     if (r.open) continue;
     if (/catwalk|bridge|conveyor|roof deck|lane|avenue|green|quad|forecourt|yard|spur/i.test(r.name)) continue;
@@ -63,24 +95,31 @@ export function detailInteriors(layer: FloorLayer) {
     for (const [rx, ry, rw, rh] of r.rects) {
       if (rw < 5 || rh < 5) continue;
       const inside = (x: number, y: number) => r.rects.some(([a, b, w, h]) => x >= a && x < a + w && y >= b && y < b + h);
-      const free = (x: number, y: number) => { const i = KEY(x, y); return inside(x, y) && tiles[i] === T.FLOOR && !protectedCells.has(i); };
 
       // ── furnishing hugs the walls, leaving the middle of the room walkable
       let n = 0;
       for (let y = ry + 1; y < ry + rh - 1 && n < 14; y++) for (let x = rx + 1; x < rx + rw - 1 && n < 14; x++) {
         const againstWall = !inside(x - 1, y) || !inside(x + 1, y) || !inside(x, y - 1) || !inside(x, y + 1)
           || tiles[KEY(x - 1, y)] === T.PWALL || tiles[KEY(x + 1, y)] === T.PWALL || tiles[KEY(x, y - 1)] === T.PWALL;
-        if (!againstWall || !free(x, y)) continue;
+        if (!againstWall) continue;
         if (r.name.match(/catwalk|bridge|conveyor|deck|lane|avenue|green|yard|forecourt|quad/i)) continue;
         if (hash(x, y, 7) > 0.55) continue;
         if (protectedCells.has(KEY(x + 1, y)) && protectedCells.has(KEY(x - 1, y))) continue;
         const kind = prog.wall[Math.floor(hash(x, y, 11) * prog.wall.length)];
-        layer.props.push({ x, y, kind }); protectedCells.add(KEY(x, y)); n++;
+        if (canPlaceInRoom(inside, x, y, kind)) {
+          layer.props.push({ x, y, kind });
+          n++;
+        }
       }
-      // one centre-piece for the larger rooms
+      // one centre-piece for the larger rooms (falls back to 1x1 table/crate if a 3x1 centerpiece cannot fit without severing routes)
       if (rw * rh >= 90) {
         const cx = rx + (rw >> 1), cy = ry + (rh >> 1);
-        if (free(cx, cy)) { layer.props.push({ x: cx, y: cy, kind: prog.centre[Math.floor(hash(cx, cy, 13) * prog.centre.length)] }); protectedCells.add(KEY(cx, cy)); }
+        const primaryKind = prog.centre[Math.floor(hash(cx, cy, 13) * prog.centre.length)];
+        if (canPlaceInRoom(inside, cx, cy, primaryKind)) {
+          layer.props.push({ x: cx, y: cy, kind: primaryKind });
+        } else if (primaryKind !== 'table' && canPlaceInRoom(inside, cx, cy, 'table')) {
+          layer.props.push({ x: cx, y: cy, kind: 'table' });
+        }
       }
       // floor wear / rugs so the plate is not a uniform grid
       for (let y = ry + 1; y < ry + rh - 1; y++) for (let x = rx + 1; x < rx + rw - 1; x++) {
@@ -91,5 +130,4 @@ export function detailInteriors(layer: FloorLayer) {
       }
     }
   }
-  void ox; void oy;
 }

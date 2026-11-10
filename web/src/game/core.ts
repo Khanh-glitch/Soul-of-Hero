@@ -65,6 +65,16 @@ export interface Player {
   regionName: string; sheltered: boolean;
 }
 
+export interface AmbientWoundStub {
+  type: string;
+  gx: number;
+  gy: number;
+  floor: number;
+  hp: number;
+  maxHp: number;
+  leashPx?: number;
+}
+
 export interface Creature {
   id: string; type: string; x: number; y: number; hp: number; maxHp: number;
   homeX: number; homeY: number; state: 'idle' | 'wander' | 'chase' | 'track' | 'tell' | 'attack' | 'recover' | 'flee' | 'sleep' | 'dead';
@@ -170,6 +180,8 @@ export interface RunState {
   veyraGlobalDepletedLoot?: Record<string, number>;
   veyraOffscreenEntities?: Record<string, Entity>;
   veyraOffscreenCreatures?: Record<string, Creature>;
+  /** Compact bounded wound stubs (`<= 512`) for injured ambient creatures evicted past `MAX_OFFSCREEN_AMBIENT = 96` so revisits never resurrect full-HP actors. */
+  veyraAmbientWounds?: Record<string, AmbientWoundStub>;
   veyraSpawnedHabitats?: Record<string, number>;
   veyraEcologyCooldowns?: Record<string, number>;
   sideBossDefeated?: Record<string, number>;

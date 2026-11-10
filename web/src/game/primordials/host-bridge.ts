@@ -1,6 +1,6 @@
-import { VIEW_W, VIEW_H, WW, WH, TILE, dirFromAngle, clamp, type Creature, type GameState, type RunState } from '../core';
+import { VIEW_W, VIEW_H, WW, WH, TILE, angDiff, dirFromAngle, clamp, type Creature, type GameState, type RunState } from '../core';
 import { PRIMORDIAL_ELDERS } from '../catalog';
-import { World, v, dist, type Actor, type MapAdapter, type Shape } from './game/core';
+import { World, v, dist, segDist, norm, sub, add, mul, type Actor, type MapAdapter, type Shape } from './game/core';
 import { spawnBoss, spawnPlayer, stepWorld } from './game/sim';
 import { installFx } from './game/fx';
 import { SIGNATURE, skillsFor } from './game/registry';
@@ -85,11 +85,25 @@ function createHostMapAdapter(r: RunState, isBlockedTile: (r: RunState, tx: numb
 function getOrCreateSession(
   r: RunState,
   isBlockedTile: (r: RunState, tx: number, ty: number) => boolean,
+  isWallBlockedTile?: (r: RunState, tx: number, ty: number) => boolean,
 ): PrimordialHostSession {
   let s = sessions.get(r);
   if (s) return s;
   const adapter = createHostMapAdapter(r, isBlockedTile);
   const world = new World({ seed: (r.seed ^ 0x6b9d15) >>> 0, adapter, difficulty: 1, quality: 'maximum_vfx' });
+  const wallCheck = isWallBlockedTile ?? isBlockedTile;
+  world.wallRaycast = (a, b) => {
+    const d = Math.hypot(b.x - a.x, b.y - a.y);
+    const steps = Math.max(1, Math.ceil(d / 6));
+    for (let i = 1; i < steps; i++) {
+      const px = a.x + ((b.x - a.x) * i) / steps;
+      const py = a.y + ((b.y - a.y) * i) / steps;
+      const tx = Math.floor(px / TILE);
+      const ty = Math.floor(py / TILE);
+      if (tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1 || wallCheck(r, tx, ty)) return true;
+    }
+    return false;
+  };
   installFx(world);
   const playerActor = spawnPlayer(world, { x: r.player.x, y: r.player.y }, 'keyboard', 'adventurer');
   playerActor.hp = 1000;
@@ -147,6 +161,7 @@ export function stepPrimordialHost(
   now: number,
   deps: {
     isBlockedTile: (r: RunState, tx: number, ty: number) => boolean;
+    isWallBlockedTile?: (r: RunState, tx: number, ty: number) => boolean;
     /** True ONLY at Day 14 Elder Awakening (`phaseOf(r, now) === 'awakening'`, >= 312h), NEVER at 264h danger! */
     isAwakening: boolean;
     hurtPlayer: (gs: GameState, amount: number, now: number, cause: string) => void;
@@ -169,7 +184,7 @@ export function stepPrimordialHost(
     return;
   }
 
-  const sess = getOrCreateSession(r, deps.isBlockedTile);
+  const sess = getOrCreateSession(r, deps.isBlockedTile, deps.isWallBlockedTile);
   const { world, playerActor, mounted } = sess;
 
   // Unmount any creature no longer live in `r.creatures` (e.g. died, despawned, or shifted off-window/floor)
@@ -196,7 +211,11 @@ export function stepPrimordialHost(
   for (const m of candidates) {
     const key = m.elder!.key as BossId;
     const dPlayer = Math.hypot(m.x - r.player.x, m.y - r.player.y);
-    if (!mounted.has(m.id) && dPlayer > 440 && m.state === 'sleep') continue;
+    if (!mounted.has(m.id) && m.state === 'sleep') {
+      if (dPlayer > 400) continue;
+      // Do not wake a dormant sanctuary boss across sealed antechamber partition walls / closed doors
+      if (m.hp >= m.maxHp && world.wallRaycast?.(v(m.x, m.y), v(r.player.x, r.player.y))) continue;
+    }
 
     const wantForm: Form = deps.isAwakening || m.elder!.awake ? 'ultimate' : 'mini';
     const pDef = PRIMORDIAL_ELDERS[key];
@@ -217,7 +236,11 @@ export function stepPrimordialHost(
         m.maxHp = pDef.hpAwake;
         m.hp = Math.max(1, Math.round(pDef.hpAwake * ratio));
       }
-      const b = spawnBoss(world, key, wantForm, { x: m.x, y: m.y }, true);
+      const bossRad = wantForm === 'ultimate' ? 26 : 12;
+      const validPos = world.map.queryValidPosition(v(m.x, m.y), bossRad) ?? v(m.x, m.y);
+      m.x = validPos.x;
+      m.y = validPos.y;
+      const b = spawnBoss(world, key, wantForm, { x: validPos.x, y: validPos.y }, true);
       b.maxHp = m.maxHp;
       b.hp = clamp(m.hp, 1, m.maxHp);
       mounted.set(m.id, {
@@ -319,21 +342,132 @@ export function stepPrimordialHost(
   }
 }
 
-/** Allow SOH melee swings, arrows, and Creator Cores to hit summoned Primordial minions (Anubis wraiths, Typhon brood). */
-export function damagePrimordialSummons(r: RunState, x: number, y: number, radius: number, dmg: number): number {
+export interface SummonHitResult {
+  id: number;
+  x: number;
+  y: number;
+  dmg: number;
+  killed: boolean;
+}
+
+/** Directional melee swing vs Primordial summons: requires true weapon reach, strict swing-cone arc (never behind player), and clear wall/obstacle line of sight. */
+export function damagePrimordialSummonsMelee(
+  r: RunState,
+  px: number,
+  py: number,
+  aimAngle: number,
+  reach: number,
+  arc: number,
+  dmg: number,
+  hasLineOfSight: (x0: number, y0: number, x1: number, y1: number) => boolean,
+  knockback = 120,
+): SummonHitResult[] {
   const sess = sessions.get(r);
-  if (!sess) return 0;
-  let hits = 0;
+  if (!sess || dmg <= 0) return [];
+  const out: SummonHitResult[] = [];
   for (const a of sess.world.actors) {
     if (!a.alive || a.kind !== 'summon') continue;
-    if (dist(a.pos, v(x, y)) <= radius + a.r) {
-      a.hp -= dmg;
-      a.lastHurt = sess.world.t;
-      hits++;
-      if (a.hp <= 0) sess.world.kill(a);
+    const dx = a.pos.x - px;
+    const dy = a.pos.y - py;
+    const dCenter = Math.hypot(dx, dy);
+    if (dCenter - a.r > reach) continue;
+    if (dCenter > 0.5) {
+      const ang = Math.atan2(dy, dx);
+      if (Math.abs(angDiff(ang, aimAngle)) > arc / 2 + 0.15) continue;
+    }
+    if (!hasLineOfSight(px, py, a.pos.x, a.pos.y)) continue;
+    a.hp -= dmg;
+    a.lastHurt = sess.world.t;
+    if (knockback > 0) {
+      const kd = dCenter > 0.5 ? norm(v(dx, dy)) : v(Math.cos(aimAngle), Math.sin(aimAngle));
+      a.kb = add(a.kb, mul(kd, knockback));
+    }
+    const killed = a.hp <= 0;
+    if (killed) sess.world.kill(a);
+    out.push({ id: a.id, x: a.pos.x, y: a.pos.y, dmg, killed });
+  }
+  return out;
+}
+
+/** Swept projectile segment vs Primordial summons: hits the nearest summon on the substep segment only when physical line of sight is clear. */
+export function damagePrimordialSummonsProjectile(
+  r: RunState,
+  x0: number,
+  y0: number,
+  x1: number,
+  y1: number,
+  projRadius: number,
+  dmg: number,
+  hasLineOfSight: (ax: number, ay: number, bx: number, by: number) => boolean,
+  knockback = 80,
+): SummonHitResult | null {
+  const sess = sessions.get(r);
+  if (!sess || dmg <= 0) return null;
+  let best: Actor | null = null;
+  let bestD = Infinity;
+  const p0 = v(x0, y0);
+  const p1 = v(x1, y1);
+  for (const a of sess.world.actors) {
+    if (!a.alive || a.kind !== 'summon') continue;
+    if (segDist(a.pos, p0, p1) > projRadius + a.r) continue;
+    if (!hasLineOfSight(x0, y0, a.pos.x, a.pos.y)) continue;
+    const d = dist(p0, a.pos);
+    if (d < bestD) {
+      bestD = d;
+      best = a;
     }
   }
-  return hits;
+  if (!best) return null;
+  best.hp -= dmg;
+  best.lastHurt = sess.world.t;
+  if (knockback > 0) {
+    const kd = norm(sub(p1, p0));
+    best.kb = add(best.kb, mul(kd, knockback));
+  }
+  const killed = best.hp <= 0;
+  if (killed) sess.world.kill(best);
+  return { id: best.id, x: best.pos.x, y: best.pos.y, dmg, killed };
+}
+
+/** AoE / hazard damage vs Primordial summons: hits inside shape/radius ONLY when structural walls/closed doors do not occlude `origin -> summon`. */
+export function damagePrimordialSummonsAoE(
+  r: RunState,
+  ox: number,
+  oy: number,
+  radius: number,
+  dmg: number,
+  hasLineOfSight?: (ax: number, ay: number, bx: number, by: number) => boolean,
+  inShape?: (sx: number, sy: number, sr: number) => boolean,
+): SummonHitResult[] {
+  const sess = sessions.get(r);
+  if (!sess || dmg <= 0) return [];
+  const out: SummonHitResult[] = [];
+  const checkLos =
+    hasLineOfSight ??
+    ((ax: number, ay: number, bx: number, by: number) => !(sess.world.wallRaycast?.(v(ax, ay), v(bx, by)) ?? sess.world.map.raycast(v(ax, ay), v(bx, by)).hit));
+  for (const a of sess.world.actors) {
+    if (!a.alive || a.kind !== 'summon') continue;
+    if (inShape ? !inShape(a.pos.x, a.pos.y, a.r) : dist(a.pos, v(ox, oy)) > radius + a.r) continue;
+    if (!checkLos(ox, oy, a.pos.x, a.pos.y)) continue;
+    a.hp -= dmg;
+    a.lastHurt = sess.world.t;
+    const killed = a.hp <= 0;
+    if (killed) sess.world.kill(a);
+    out.push({ id: a.id, x: a.pos.x, y: a.pos.y, dmg, killed });
+  }
+  return out;
+}
+
+/** Backward-compatible radial AoE helper (enforces wall occlusion from `x, y`). */
+export function damagePrimordialSummons(
+  r: RunState,
+  x: number,
+  y: number,
+  radius: number,
+  dmg: number,
+  hasLineOfSight?: (ax: number, ay: number, bx: number, by: number) => boolean,
+): number {
+  return damagePrimordialSummonsAoE(r, x, y, radius, dmg, hasLineOfSight).length;
 }
 
 export function isCreatureRenderedByPrimordialRig(r: RunState, m: Creature): boolean {

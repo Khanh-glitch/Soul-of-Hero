@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { TILE, WW, WH, HOUR, T, type Creature } from '../game/core';
+import { TILE, WW, WH, HOUR, T, clamp, type Creature } from '../game/core';
 import {
   ALWAYS_KNOWN_RECIPES,
   PRIMORDIAL_ELDERS,
@@ -15,6 +15,7 @@ import {
   markDirty,
   mkStack,
   C,
+  countItem,
   phaseOf,
   blockGrid,
   killCreature,
@@ -435,7 +436,7 @@ describe('Veyra Audit Closure & Cross-System Guarantees (#48)', () => {
     expect(r.creatures.filter(m => m.type === 'grouse').length).toBeGreaterThanOrEqual(3);
   }, 25_000);
 
-  it('P1-6: executes real authored sanctuary fights for all 6 Primordials, hits summons via projectiles/AoE, and keeps stone_axe out of elderStones', () => {
+  it('P1-6: executes real authored sanctuary fights for all 6 Primordials to natural defeat via real input, hits summons, and keeps stone_axe out of elderStones', () => {
     const stairEntryAu: Record<string, [number, number]> = {
       surtur: [1694, 817],
       typhon: [556, 345],
@@ -458,46 +459,108 @@ describe('Veyra Audit Closure & Cross-System Guarantees (#48)', () => {
         syncVeyraEcosystemActors(r, ww);
       }
 
+      // Open sanctuary partition doors so player has genuine chamber access and clear LOS
+      for (const e of Object.values(r.entities)) {
+        if (e.kind === 'door' && ((e as any).floor ?? 0) === sanct.floor) e.open = true;
+      }
+      markDirty();
+
       const boss = r.creatures.find(m => m.elder?.key === sanct.key)!;
       expect(boss, `Sanctuary ${sanct.poiId} F${sanct.floor} must materialize ${sanct.key}`).toBeDefined();
       const btx = Math.floor(boss.x / TILE), bty = Math.floor(boss.y / TILE);
       expect(blockGrid(r)[bty * WW + btx]).toBe(0);
 
-      // Step real sanctuary fight for 40 frames (2s) with real blockGrid
-      r.player.x = boss.x + 28;
-      r.player.y = boss.y;
-      let now = r.clock.lastSimAt;
-      for (let f = 0; f < 40; f++) {
-        now += 50;
-        r.player.hp = 100;
-        stepPrimordialHost(gs, 0.05, now, {
-          isBlockedTile: (r0, tx0, ty0) => blockGrid(r0)[ty0 * WW + tx0] !== 0,
-          isAwakening: false,
-          hurtPlayer: () => {},
-          killCreature,
-        });
-      }
-      const sess = inspectPrimordialHostSession(r);
-      expect(sess?.mounted.has(boss.id)).toBe(true);
-      expect(damagePrimordialSummons(r, boss.x, boss.y, 48, 25)).toBeGreaterThanOrEqual(0);
+      // Equip real melee weapon + bow + arrows + cooked food + stone_axe (to verify stone_axe never pollutes elderStones)
+      C(r, 'inv').slots[0] = mkStack(r, 'ronin_nodachi', 1);
+      C(r, 'inv').slots[1] = mkStack(r, 'bow', 1);
+      C(r, 'inv').slots[2] = mkStack(r, 'arrow', 120);
+      C(r, 'inv').slots[3] = mkStack(r, 'cooked_meat', 20);
+      C(r, 'inv').slots[4] = mkStack(r, 'stone_axe', 1);
+      r.player.active = 0;
 
-      // Put a stone_axe in slot 0 and Primordial stone in slot 1 -> only real stone_* enters r.elderStones!
-      C(r, 'inv').slots[0] = mkStack(r, 'stone_axe', 1);
-      C(r, 'inv').slots[1] = mkStack(r, PRIMORDIAL_ELDERS[sanct.key].stone, 1);
-      for (let dTick = 0; dTick < 12; dTick++) {
+      // Place player on a valid walkable chamber tile near the boss
+      const g = blockGrid(r);
+      let startPlaced = false;
+      for (const [dx, dy] of [[0, -2], [2, 0], [-2, 0], [0, 2]] as const) {
+        const tx = clamp(btx + dx, 4, WW - 5), ty = clamp(bty + dy, 4, WH - 5);
+        if (g[ty * WW + tx] === 0) {
+          r.player.x = tx * TILE + 8;
+          r.player.y = ty * TILE + 8;
+          startPlaced = true;
+          break;
+        }
+      }
+      expect(startPlaced).toBe(true);
+
+      let now = r.clock.lastSimAt;
+      let mountedSeen = false;
+      let swings = 0;
+      for (let step = 0; step < 900 && boss.state !== 'dead' && !r.player.dead; step++) {
         now += 50;
-        r.player.hp = 100;
+        if (r.player.hp < 55 && countItem(r, 'inv', 'cooked_meat') > 0) {
+          dispatch(gs, { id: `p16_eat_${sanct.key}_${step}`, type: 'useSlot', slot: 3 }, now);
+        }
+        r.player.hunger = Math.max(r.player.hunger, 65);
+        r.player.thirst = Math.max(r.player.thirst, 65);
+        r.player.warmth = Math.max(r.player.warmth, 65);
+
+        const sess = inspectPrimordialHostSession(r);
+        if (sess?.mounted.has(boss.id)) mountedSeen = true;
+
+        const dBoss = Math.hypot(boss.x - r.player.x, boss.y - r.player.y);
+        const angToBoss = Math.atan2(boss.y - r.player.y, boss.x - r.player.x);
+        const wantMove = dBoss > 26;
+        const dodge = step % 19 === 0;
+        const doSwing = dBoss <= 34 && step % 5 === 0;
+        if (doSwing) swings++;
+        r.player.active = dBoss > 42 && countItem(r, 'inv', 'arrow') > 0 ? 1 : 0;
+
+        tick(
+          gs,
+          {
+            ...IDLE_INPUT,
+            left: wantMove && Math.cos(angToBoss) < -0.25,
+            right: wantMove && Math.cos(angToBoss) > 0.25,
+            up: wantMove && Math.sin(angToBoss) < -0.25,
+            down: wantMove && Math.sin(angToBoss) > 0.25,
+            roll: dodge,
+            attack: doSwing || (r.player.active === 1 && step % 7 === 0),
+            attackPressed: doSwing || (r.player.active === 1 && step % 7 === 0),
+            mx: boss.x,
+            my: boss.y,
+          },
+          50,
+          now,
+        );
+      }
+
+      expect(mountedSeen, `${sanct.key} must mount in live PrimordialHostSession`).toBe(true);
+      expect(swings).toBeGreaterThan(0);
+      expect(r.player.dead).toBe(false);
+      expect(boss.state, `${sanct.key} must be defeated naturally via real combat ticks`).toBe('dead');
+      expect(inspectPrimordialHostSession(r)?.mounted.size ?? 0).toBe(0);
+
+      // Walk onto dropped Primordial stone to pick it up naturally (if not already vacuumed on kill frame)
+      const stoneKey = PRIMORDIAL_ELDERS[sanct.key].stone;
+      if (countItem(r, 'inv', stoneKey) === 0) {
+        const dropEnt = Object.values(r.entities).find(
+          e => e.kind === 'drop' && C(r, e.c!)?.slots[0]?.key === stoneKey,
+        );
+        expect(dropEnt, `${sanct.key} natural defeat must spawn ${stoneKey} drop`).toBeDefined();
+        r.player.x = dropEnt!.x;
+        r.player.y = dropEnt!.y;
+      }
+      for (let pTick = 0; pTick < 14; pTick++) {
+        now += 50;
         tick(gs, { ...IDLE_INPUT, mx: r.player.x, my: r.player.y }, 50, now);
       }
-      expect(r.elderStones).toEqual([PRIMORDIAL_ELDERS[sanct.key].stone]);
+      expect(countItem(r, 'inv', stoneKey)).toBe(1);
+      expect(r.elderStones).toEqual([stoneKey]);
       expect(r.elderStones).not.toContain('stone_axe');
-
-      killCreature(gs, boss, now);
-      expect(inspectPrimordialHostSession(r)?.mounted.size ?? 0).toBe(0);
     }
-  }, 25_000);
+  }, 45_000);
 
-  it('P1-7 & P1-8: places Pale Custodian in po_academy Sealed Archive (F-1) and runs 3-move kits + Phase-2 <55% HP + vuln punish across all 4 Side Bosses', () => {
+  it('P1-7 & P1-8: places Pale Custodian in po_academy Sealed Archive (F-1) and defeats all 4 Side Bosses via natural combat through Phase-2 <55% HP + 3-move kits + vuln punish', () => {
     const custSpec = VEYRA_SIDE_BOSS_SITES.find(s => s.species === 'boss_custodian')!;
     expect(custSpec.poiId).toBe('po_academy');
     expect(custSpec.floor).toBe(-1);
@@ -518,7 +581,7 @@ describe('Veyra Audit Closure & Cross-System Guarantees (#48)', () => {
     expect((custodian as any).floor).toBe(-1);
     expect(blockGrid(rAcad)[Math.floor(custodian.y / TILE) * WW + Math.floor(custodian.x / TILE)]).toBe(0);
 
-    // Exercise Phase 0 -> Phase 2 (<55% HP) + Move 2 + vuln punish window across all 4 Side Bosses
+    // Fight all 4 Side Bosses naturally from 100% HP -> <55% Phase 2 -> Move 2 + vuln -> 0 HP defeat (zero direct HP edits)
     for (const sb of VEYRA_SIDE_BOSS_SITES) {
       const entryAu: [number, number] = sb.species === 'boss_custodian' ? [921, 259] : sb.au;
       const gs = startVeyraAtAu(entryAu[0], entryAu[1], 7700 + sb.species.charCodeAt(5));
@@ -531,43 +594,90 @@ describe('Veyra Audit Closure & Cross-System Guarantees (#48)', () => {
       } else {
         syncVeyraEcosystemActors(r, ww);
       }
+      for (const e of Object.values(r.entities)) {
+        if (e.kind === 'door' && ((e as any).floor ?? 0) === sb.floor) e.open = true;
+      }
+      markDirty();
+
       const boss = r.creatures.find(m => m.type === sb.species)!;
       expect(boss).toBeDefined();
+      expect(boss.hp).toBe(boss.maxHp);
       expect(boss.sideBoss!.phase).toBe(0);
 
-      // Put player in range on an open adjacent floor cell and hit boss below 55% HP to trigger Phase 2
-      C(r, 'inv').slots[0] = mkStack(r, 'ronin_nodachi', 1);
+      // Use reinforced_spear first so Phase 2 has plenty of combat frames to showcase Move 2 + vuln before natural kill!
+      C(r, 'inv').slots[0] = mkStack(r, 'reinforced_spear', 1);
+      C(r, 'inv').slots[1] = mkStack(r, 'ronin_nodachi', 1);
+      C(r, 'inv').slots[2] = mkStack(r, 'cooked_meat', 20);
       r.player.active = 0;
-      boss.hp = Math.round(boss.maxHp * 0.56);
-      r.player.x = boss.x;
-      r.player.y = boss.y;
 
-      let now = r.clock.lastSimAt + 50;
-      tick(gs, { ...IDLE_INPUT, attack: true, attackPressed: true, mx: boss.x + 8, my: boss.y }, 50, now);
-      for (let k = 0; k < 8; k++) {
-        now += 50;
-        tick(gs, { ...IDLE_INPUT, mx: boss.x + 8, my: boss.y }, 50, now);
+      const g = blockGrid(r);
+      const btx = Math.floor(boss.x / TILE), bty = Math.floor(boss.y / TILE);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [0, 0]] as const) {
+        const tx = clamp(btx + dx, 4, WW - 5), ty = clamp(bty + dy, 4, WH - 5);
+        if (g[ty * WW + tx] === 0) {
+          r.player.x = tx * TILE + 8;
+          r.player.y = ty * TILE + 8;
+          break;
+        }
       }
-      expect(boss.sideBoss!.phase).toBe(1);
 
-      // Run combat frames in Phase 2 to observe Move 2 & vuln punish window
+      let now = r.clock.lastSimAt;
       const seenMoves = new Set<number>();
+      let sawPhase2 = false;
       let sawVuln = false;
       PROJ.length = 0;
       HAZ.length = 0;
-      for (let f = 0; f < 180; f++) {
+
+      for (let f = 0; f < 900 && boss.state !== 'dead' && !r.player.dead; f++) {
         now += 50;
-        r.player.hp = 100;
-        r.player.x = boss.x;
-        r.player.y = boss.y;
-        tick(gs, { ...IDLE_INPUT, mx: boss.x, my: boss.y }, 50, now);
+        if (r.player.hp < 55 && countItem(r, 'inv', 'cooked_meat') > 0) {
+          dispatch(gs, { id: `p17_eat_${sb.species}_${f}`, type: 'useSlot', slot: 2 }, now);
+        }
+        r.player.hunger = Math.max(r.player.hunger, 65);
+        r.player.thirst = Math.max(r.player.thirst, 65);
+        r.player.warmth = Math.max(r.player.warmth, 65);
+
+        if (boss.sideBoss!.phase >= 1) sawPhase2 = true;
         if (boss.atk?.move !== undefined) seenMoves.add(boss.atk.move);
         if ((boss.atk?.vuln ?? 0) > 0) sawVuln = true;
+
+        // Hold back finish until Phase 2 has exhibited Move 2 & vuln punish window, then finish naturally with nodachi!
+        const readyToFinish = sawPhase2 && seenMoves.has(2) && sawVuln;
+        const holdAttack = sawPhase2 && !readyToFinish && boss.hp < boss.maxHp * 0.32;
+        if (readyToFinish) r.player.active = 1;
+
+        const dBoss = Math.hypot(boss.x - r.player.x, boss.y - r.player.y);
+        const ang = Math.atan2(boss.y - r.player.y, boss.x - r.player.x);
+        const moveCloser = dBoss > 22;
+        const doSwing = !holdAttack && dBoss <= 32 && f % 7 === 0;
+
+        tick(
+          gs,
+          {
+            ...IDLE_INPUT,
+            left: moveCloser && Math.cos(ang) < -0.25,
+            right: moveCloser && Math.cos(ang) > 0.25,
+            up: moveCloser && Math.sin(ang) < -0.25,
+            down: moveCloser && Math.sin(ang) > 0.25,
+            roll: holdAttack && f % 16 === 0,
+            attack: doSwing,
+            attackPressed: doSwing,
+            mx: boss.x,
+            my: boss.y,
+          },
+          50,
+          now,
+        );
       }
-      expect(seenMoves.has(2), `${sb.species} Phase 2 must unlock Move 2`).toBe(true);
+
+      expect(r.player.dead).toBe(false);
+      expect(sawPhase2, `${sb.species} must transition naturally to Phase 2 (<55% HP)`).toBe(true);
+      expect(seenMoves.has(2), `${sb.species} Phase 2 must execute Move 2`).toBe(true);
       expect(sawVuln, `${sb.species} must expose a post-heavy vuln punish window`).toBe(true);
+      expect(boss.state, `${sb.species} must be slain naturally via real combat`).toBe('dead');
+      expect(r.sideBossDefeated?.[sb.species]).toBe(1);
     }
-  }, 25_000);
+  }, 45_000);
 
   it('P1-9..12: verifies subterranean cave darkness, orc pack rally, habitat kill cooldowns, offscreen cap <=96, motorbike geometry, and KeyM/MapPanel/SkillsPanel contracts', () => {
     const gs = startVeyraAtAu(921, 259, 7808);

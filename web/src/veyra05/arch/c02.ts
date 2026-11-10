@@ -124,7 +124,7 @@ export function emberIndustrialHarbor():ArchPlan {
  p.door(2510,1658,2,'chimney_watch','Stack western inspection hatch','arch');
  p.door(2522,1665,2,'chimney_watch','Stack eastern platform door','arch');
  p.stair(2511,1657,1,2,2511,1657,'Upper stack ladder','ladder');
- details(p,'c02_industrial_chimney',[[2493,1646,0],[2512,1660,0],[2518,1638,0]]);
+ details(p,'c02_industrial_chimney',[[2486,1644,0],[2512,1660,0],[2518,1638,0]]);
  details(p,'c02_heat_grate',[[2478,1672,0],[2494,1669,0],[2515,1691,0]]);
  details(p,'c02_rail_wagon',[[2507,1681,0],[2522,1685,0]]);
  details(p,'c02_chain_gantry',[[2528,1699,0],[2527,1694,1]]);
@@ -182,7 +182,7 @@ export function sandgateIndustrialHarbor():ArchPlan {
  p.door(1403,2245,2,'dike_watch','Dike eastern inspection passage','arch');
  p.door(1398,2247,2,'dike_watch','West canal watch hatch','arch');
  p.stair(1396,2243,1,2,1396,2243,'Gate watch ladder','ladder');
- details(p,'c02_counterweight',[[1399,2243,0],[1397,2241,1],[1396,2241,2]]);
+ details(p,'c02_counterweight',[[1399,2243,0],[1397,2241,1],[1398,2241,2]]);
  details(p,'c02_tide_gate',[[1394,2263,0],[1388,2287,0],[1398,2248,2]]);
  details(p,'c02_chain_gantry',[[1427,2236,1],[1407,2262,1]]);
  details(p,'c02_rail_wagon',[[1416,2263,0],[1423,2245,0]]);

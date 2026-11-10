@@ -210,6 +210,7 @@ export function syncVeyraEcosystemActors(
   const newOy = inNewOy ?? curOy;
   const curFloor = activeFloor(r);
   const off = (r.veyraOffscreenCreatures ??= {});
+  const wounds = (r.veyraAmbientWounds ??= {});
   const spawned = (r.veyraSpawnedHabitats ??= {});
   const cooldowns = (r.veyraEcologyCooldowns ??= {});
   const defeatedBosses = (r.sideBossDefeated ??= {});
@@ -327,7 +328,40 @@ export function syncVeyraEcosystemActors(
     }
   }
 
+  // Keep wounds ledger disjoint from live + full-record offscreen actors first
+  for (const m of kept) delete wounds[m.id];
+  for (const id of Object.keys(off)) delete wounds[id];
+
+  // Rehydrate any evicted wounded stubs whose global position just re-entered `[newOx, newOy, curFloor]`
+  for (const [wid, ws] of Object.entries(wounds)) {
+    if ((ws.floor as Level) !== curFloor) continue;
+    const lxPx = ws.gx - newOx * TILE;
+    const lyPx = ws.gy - newOy * TILE;
+    if (lxPx >= TILE * 2 && lyPx >= TILE * 2 && lxPx < (WW - 2) * TILE && lyPx < (WH - 2) * TILE) {
+      if (!liveIds.has(wid)) {
+        const lTileX = clamp(Math.floor(lxPx / TILE), 2, WW - 3);
+        const lTileY = clamp(Math.floor(lyPx / TILE), 2, WH - 3);
+        const actor = makeVeyraActor(wid, ws.type, lTileX, lTileY, curFloor, undefined, {
+          x: lxPx,
+          y: lyPx,
+          homeX: lxPx,
+          homeY: lyPx,
+          tx: lxPx,
+          ty: lyPx,
+          maxHp: ws.maxHp,
+          hp: clamp(Math.round(ws.hp), 1, Math.max(1, ws.maxHp - 1)),
+          ...(ws.leashPx !== undefined ? { leashPx: ws.leashPx } : {}),
+        });
+        kept.push(actor);
+        liveIds.add(wid);
+      }
+      delete wounds[wid];
+    }
+  }
+
   const MAX_OFFSCREEN_AMBIENT = 96;
+  const MAX_AMBIENT_WOUNDS = 512;
+  const MAX_ECOLOGY_COOLDOWNS = 1024;
   const ambientOffIds = Object.keys(off).filter(id => {
     const m = off[id];
     return !m.husbandry?.tamed && !m.elder && !m.sideBoss;
@@ -342,13 +376,49 @@ export function syncVeyraEcosystemActors(
       return db - da;
     });
     for (let i = 0; i < ambientOffIds.length - MAX_OFFSCREEN_AMBIENT; i++) {
-      delete off[ambientOffIds[i]];
+      const evId = ambientOffIds[i];
+      const ev = off[evId];
+      if (ev && ev.hp > 0 && ev.hp < ev.maxHp) {
+        wounds[evId] = {
+          type: ev.type,
+          gx: Math.round(ev.x),
+          gy: Math.round(ev.y),
+          floor: ev.floor ?? 0,
+          hp: Math.max(1, Math.min(ev.maxHp - 1, Math.round(ev.hp))),
+          maxHp: ev.maxHp,
+          ...(ev.leashPx !== undefined ? { leashPx: ev.leashPx } : {}),
+        };
+      }
+      delete off[evId];
+    }
+  }
+
+  // Enforce strict upper bound on compact wound stubs (`<= 512`): overflow converts to respawn cooldown so full-HP resurrection never happens
+  const woundIds = Object.keys(wounds);
+  if (woundIds.length > MAX_AMBIENT_WOUNDS) {
+    woundIds.sort((a, b) => {
+      const wa = wounds[a], wb = wounds[b];
+      const da = Math.hypot(wa.gx / TILE - winCenterGx, wa.gy / TILE - winCenterGy);
+      const db = Math.hypot(wb.gx / TILE - winCenterGx, wb.gy / TILE - winCenterGy);
+      return db - da;
+    });
+    for (let i = 0; i < woundIds.length - MAX_AMBIENT_WOUNDS; i++) {
+      const oldWoundId = woundIds[i];
+      delete wounds[oldWoundId];
+      cooldowns[oldWoundId] = now + 8 * 3600_000;
+    }
+  }
+  const cdIds = Object.keys(cooldowns);
+  if (cdIds.length > MAX_ECOLOGY_COOLDOWNS) {
+    cdIds.sort((a, b) => cooldowns[a] - cooldowns[b]);
+    for (let i = 0; i < cdIds.length - MAX_ECOLOGY_COOLDOWNS; i++) {
+      delete cooldowns[cdIds[i]];
     }
   }
 
   r.creatures = kept;
 
-  const hasActorAnywhere = (id: string) => liveIds.has(id) || !!off[id];
+  const hasActorAnywhere = (id: string) => liveIds.has(id) || !!off[id] || !!wounds[id];
   const isOnCooldown = (id: string) => (cooldowns[id] ?? 0) > now;
 
   // 3. Seed Canonical 9 Ordinary Creature Habitat Anchors (ground floor 0)
@@ -475,7 +545,11 @@ export function syncVeyraEcosystemActors(
     if (lx < 4 || ly < 4 || lx >= WW - 4 || ly >= WH - 4) continue;
     const eid = `vy:elder:${ps.key}`;
     if (hasActorAnywhere(eid)) continue;
-    const pos = sampleWalkableLocalTile(ww, r, curFloor, lx, ly, 6, r.seed + loc.gx, 0) ?? [lx, ly];
+    const targetLy = clamp(ps.key === 'typhon' ? ly + 3 : ly - 4, 4, WH - 5);
+    const pos =
+      sampleWalkableLocalTile(ww, r, curFloor, lx, targetLy, 8, r.seed + loc.gx, 0) ??
+      sampleWalkableLocalTile(ww, r, curFloor, lx, ly, 8, r.seed + loc.gx, 0) ??
+      [lx, targetLy];
     const pDef = PRIMORDIAL_ELDERS[ps.key];
     const initHp = isDay14Awakening ? pDef.hpAwake : pDef.hpLatent;
     const actor = makeVeyraActor(eid, `elder_${ps.key}`, pos[0], pos[1], curFloor, 30, {
@@ -487,6 +561,7 @@ export function syncVeyraEcosystemActors(
   }
 
   if (!Object.keys(off).length) delete r.veyraOffscreenCreatures;
+  if (!Object.keys(wounds).length) delete r.veyraAmbientWounds;
   if (!Object.keys(cooldowns).length) delete r.veyraEcologyCooldowns;
 }
 

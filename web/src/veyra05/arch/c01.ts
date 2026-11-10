@@ -150,7 +150,7 @@ export function westmouthHarbor():ArchPlan{
  p.door(695,1129,2,'pilot_tower','Pilot Rooftop West Arch','arch');
  p.door(702,1133,2,'pilot_tower','Pilot Rooftop East Arch','arch');
  p.stair(699,1132,1,2,699,1132,'Pilot Flag Ladder','ladder');
- props(p,'c01_arched_gate',[[698,1115,0],[664,1118,0],[725,1101,0]]);
+ props(p,'c01_arched_gate',[[698,1115,0],[664,1118,0],[720,1101,0]]);
  props(p,'c01_canopy_market',[[690,1083,0],[706,1081,0],[688,1113,0]]);
  props(p,'c01_city_banner',[[735,1102,2],[697,1132,2],[703,1088,1]]);
  props(p,'c01_mooring',[[641,1117,0],[636,1132,0],[638,1098,0]]);
