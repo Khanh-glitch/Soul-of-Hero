@@ -97,6 +97,16 @@ try {
     if(!map)throw new Error('M did not open real World Map');
     await page.waitForTimeout(400);
     await shot('map');
+    await page.keyboard.press('m');
+    await page.keyboard.press('c');
+    await page.getByTestId('gold-work').waitFor({timeout:10000});
+    const cWork=await page.getByRole('tab',{name:/WORK/}).getAttribute('aria-selected');
+    if(cWork!=='true')throw new Error('C did not open the unified Gold WORK tab');
+    report.inventory[width].cShortcutWork=cWork==='true';
+    await shot('shortcut-work');
+    await page.keyboard.press('i');
+    await page.locator('.gold-inv-grid .slot').first().waitFor({timeout:10000});
+    report.inventory[width].iShortcutPack=true;
     await page.close();
   }
   if(report.errors.length)throw new Error('Browser JS errors: '+report.errors.join(' | '));
