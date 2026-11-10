@@ -39,7 +39,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
   const [panel, setPanel] = useState<PanelState | null>(report && (report.lines.length || (report.report && !report.report.away.quiet)) ? { kind: 'report', lines: report.lines, report: report.report } : null);
   const [sel, setSel] = useState<{ c: string; slot: number } | null>(null);
   // Presentation-only, optional Waymark selection; never writes to economy receipts or changes progression.
-  const [trackedGoal, setTrackedGoal] = useState('auto');
+  const [trackedGoal, setTrackedGoal] = useState(gs.run?.uiWaymark?.selected ?? 'auto');
   const [buildType, setBuildType] = useState<string | null>(null); const [reclaim, setReclaim] = useState(false); const [repairMode, setRepairMode] = useState(false); const [upgradeMode, setUpgradeMode] = useState(false);
   const [editLayer, setEditLayer] = useState('auto');
   const [toasts, setToasts] = useState<{ id: number; text: string; tone?: string; t: number }[]>([]);
@@ -55,6 +55,14 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
   const reportSave = (o: { ok: boolean; category: string; idbStatus: string }) => {
     const text = !o.ok ? SAVE_TOAST[o.category] ?? SAVE_TOAST['serialize-error'] : o.idbStatus === 'idb-init' || o.idbStatus === 'idb-transaction' ? 'Saved to this browser; the backup database write failed.' : '';
     if (text) toast(text, 'bad');
+  };
+  const chooseTrackedGoal = (id: string) => {
+    if (!['auto','explore','shelter','craft','endure','hunt','guardians','stones'].includes(id)) return;
+    setTrackedGoal(id);
+    if (gs.run && !(gs as any).__ephemeralInspect) {
+      gs.run.uiWaymark = { version: 'waymark-ui-v1', selected: id };
+      scheduleSave();
+    }
   };
   const toast = useCallback((text: string, tone?: string) => { if (!text) return; const k = text; const n = Date.now(); if (toastKeys.current[k] && n - toastKeys.current[k] < 2500) return; toastKeys.current[k] = n; const id = n + Math.random(); setToasts(t => [...t.slice(-3), { id, text, tone, t: n }]); setTimeout(() => setToasts(t => t.filter(v => v.id !== id)), 3300); }, []);
   const act = useCallback((type: string, payload: Record<string, any> = {}) => {
@@ -298,7 +306,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         {isVeyra05 && (() => { const [ax, ay] = playerGlobalAu(r); return <div style={{ color: '#7a8ea8', marginTop: 1, fontSize: 9 }}>AU {ax.toFixed(0)},{ay.toFixed(0)} · F{activeFloor(r)}</div>; })()}
       </div>
       {/* Gold Waymark from PR #52 visual grammar. Read-only, optional; collapses during boss combat. */}
-      {!panel && <GoldWaymark goals={journeyGoals} selected={trackedGoal} onSelect={setTrackedGoal} onLedger={() => { setSel(null); setPanel({ kind: 'journey' }); }} danger={!!engaged || p.hp < BAL.player.maxHp * 0.25} />}
+      {!panel && <GoldWaymark goals={journeyGoals} selected={trackedGoal} onSelect={chooseTrackedGoal} onLedger={() => { setSel(null); setPanel({ kind: 'journey' }); }} danger={!!engaged || p.hp < BAL.player.maxHp * 0.25} />}
       <GoldFeedback run={r} danger={!!engaged || p.hp < BAL.player.maxHp * 0.25} hidden={!!panel} />
       {/* top-right clocks */}
       <div className="panel absolute" style={{ right: 4, top: 4, padding: '3px 6px', fontSize: 10, lineHeight: 1.05, textAlign: 'right', minWidth: 120 }} onMouseDown={e => e.stopPropagation()}>
@@ -339,7 +347,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         <div style={{ fontSize: 9, width: 74, lineHeight: 1, marginLeft: 3, color: '#cfc2dc', alignSelf: 'center' }}>{(() => { const s = activeStack(r); if (!s) return 'Fists'; const d = ITEMS[s.key]; return <><span style={{ color: '#ffe0a0' }}>{d.name}</span><br />{d.creatorCore && s.reserves ? `B${s.reserves.basic} Q${s.reserves.refined} E${s.reserves.signature} · R/Shift/Alt reload` : d.core ? `${s.charge}/${d.charge} charges · LMB cast, RMB cancel` : d.food ? 'LMB eat/drink' : d.dmg ? `dmg ${d.dmg}${d.power ? ' · tool' : ''}` : d.place ? 'LMB to place' : d.cat === 'bp' ? 'LMB learn' : ''}</>; })()}</div>
       </div>
       {/* gold panels and original functional R12 panels */}
-      {panel?.kind === 'journey' && <GoldLedger r={r} now={now} goals={journeyGoals} selected={trackedGoal} onSelect={setTrackedGoal} onClose={() => setPanel(null)} />}
+      {panel?.kind === 'journey' && <GoldLedger r={r} now={now} goals={journeyGoals} selected={trackedGoal} onSelect={chooseTrackedGoal} onClose={() => setPanel(null)} />}
       {/* panels */}
       {panel?.kind === 'inv' && <InventoryPanel api={api} />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
