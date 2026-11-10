@@ -1,0 +1,14 @@
+import {describe,it,expect} from 'vitest';
+import {HOUR,TILE,T,WW} from '../src/game/core';
+import {newGame,dispatch,markDirty,offlineSurvivalEstimate,weatherAt,isWet} from '../src/game/engine';
+import {settle} from '../src/game/sim';
+import {getWorld} from '../src/game/world';
+const T0=Date.UTC(2026,0,1);let id=0;
+function fresh(){const gs=newGame();expect(dispatch(gs,{id:'survival'+ ++id,type:'startRun',character:'female',seed:456},T0).ok).toBe(true);gs.run!.creatures=[];return gs;}
+describe('offline preparation (fixtures, real elapsed timestamps)',()=>{
+ it('uses 100 hunger per 24 hours and provisional 1.5x thirst together, without free supplies',()=>{const gs=fresh(),r=gs.run!;r.player.hunger=100;r.player.thirst=100;r.player.hp=100;const forecast=offlineSurvivalEstimate(r);expect(forecast.hungerHours).toBeCloseTo(24);expect(forecast.thirstHours).toBeCloseTo(16);const lines=settle(gs,T0+12*HOUR);expect(r.player.hunger).toBeCloseTo(50,4);expect(r.player.thirst).toBeCloseTo(25,4);expect(r.player.hp).toBe(100);expect(lines.join(' ')).toContain('Thirst 100 → 25');});
+ it('matches long and partitioned settlement and does not replay time',()=>{const a=fresh(),r=a.run!;r.player.hunger=100;r.player.thirst=100;const b=structuredClone(a);settle(a,T0+12*HOUR,true);for(let t=HOUR;t<=12*HOUR;t+=HOUR)settle(b,T0+t,true);expect(b.run!.player.hunger).toBeCloseTo(r.player.hunger,5);expect(b.run!.player.thirst).toBeCloseTo(r.player.thirst,5);const before=r.player.thirst;settle(a,T0+12*HOUR,true);expect(r.player.thirst).toBe(before);});
+ it('shelter cannot stop thirst death even when hunger is already empty',()=>{const gs=fresh(),r=gs.run!,b=getWorld().buildings.find(b=>b.id==='b_tp')!;for(let y=b.y;y<b.y+b.h;y++)for(let x=b.x;x<b.x+b.w;x++)if(x===b.x||y===b.y||x===b.x+b.w-1||y===b.y+b.h-1)r.terrain[y*WW+x]={t:T.PWALL};markDirty();r.player.x=(b.x+2)*TILE+8;r.player.y=(b.y+2)*TILE+8;r.player.hp=1;r.player.hunger=0;r.player.thirst=1;expect(offlineSurvivalEstimate(r).sheltered).toBe(true);const forecast=offlineSurvivalEstimate(r);settle(gs,T0+(forecast.survivalHours+0.1)*HOUR);expect(r.player.dead).toBe(true);});
+ it('does not let hunger shelter protection cancel an already burning nearby source',()=>{const gs=fresh(),r=gs.run!,b=getWorld().buildings.find(b=>b.id==='b_tp')!;for(let y=b.y;y<b.y+b.h;y++)for(let x=b.x;x<b.x+b.w;x++)if(x===b.x||y===b.y||x===b.x+b.w-1||y===b.y+b.h-1)r.terrain[y*WW+x]={t:T.PWALL};markDirty();r.player.x=(b.x+2)*TILE+8;r.player.y=(b.y+2)*TILE+8;r.player.hp=1;r.player.hunger=0;r.player.thirst=100;for(let seed=0;seed<1000;seed++){r.seed=seed;if(!isWet(weatherAt(r,T0)))break;}const i=(b.y+2)*WW+b.x+2;r.sources[i]={stock:1,hp:1,fire:r.clock.simMs+6000};expect(offlineSurvivalEstimate(r).sheltered).toBe(true);settle(gs,T0+1000);expect(r.player.dead).toBe(true);});
+
+});
