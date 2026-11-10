@@ -104,8 +104,8 @@ function InventoryClassicPanel({ api, quickTo, x = 404, top = 54, onClose, backT
  * All game mutations go through the original slotClick/slotContext + dispatch intents.
  * When docked into another container, retain the two-panel compact transfer UX.
  */
-export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backToContainer = false }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void; backToContainer?: boolean }) {
-  const [goldTab,setGoldTab] = useState<'pack'|'work'>('pack');
+export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backToContainer = false, initialTab = 'pack' }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void; backToContainer?: boolean; initialTab?: 'pack' | 'work' }) {
+  const [goldTab,setGoldTab] = useState<'pack'|'work'>(initialTab);
   if (backToContainer || quickTo || x !== 404 || top !== 54) {
     return <InventoryClassicPanel api={api} quickTo={quickTo} x={x} top={top} onClose={onClose} backToContainer={backToContainer} />;
   }
