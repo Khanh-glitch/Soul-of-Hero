@@ -12,7 +12,17 @@ for (const [w, h, tag] of [[640, 360, '640'], [1280, 720, '1280']]) {
   await page.getByRole('button', { name: /Full-Gear QA Sandbox/i }).click(); await page.waitForTimeout(200);
   await page.locator('.dirbtn', { hasText: 'Full-Gear World' }).first().click(); await page.getByRole('button', { name: /Launch QA Sandbox/i }).click();
   await page.waitForTimeout(900); await page.keyboard.press('F9'); await page.waitForTimeout(3500); await shot('01-normal-play');
-  await page.keyboard.press('KeyI'); await page.waitForTimeout(400); await shot('02-survivor-screen');
+  await page.keyboard.press('KeyI'); await page.waitForTimeout(400);
+  const compact = w <= 700;
+  if (compact) {
+    if (!await page.locator('.sv-compact-nav button').first().isVisible()) throw Error('Compact Pack/Work navigation missing');
+    if (!await page.locator('.sv-left').isVisible() || await page.locator('.sv-right').isVisible()) throw Error('Compact default Pack mode is not isolated');
+    log.push(`[${tag}] compact Pack visible, Work hidden`);
+  } else {
+    if (await page.locator('.sv-compact-nav').isVisible()) throw Error('Compact tabs leaked into 1280px presentation');
+    if (!await page.locator('.sv-left').isVisible() || !await page.locator('.sv-right').isVisible()) throw Error('Desktop dual panel missing');
+  }
+  await shot('02-survivor-screen');
   // real drag: pack slot 12 -> hotbar slot 7 (index 6)
   const src = page.locator('.sv [data-c="inv"][data-s="12"]'), dst = page.locator('.sv [data-c="inv"][data-s="6"]');
   const a = await src.boundingBox(), b = await dst.boundingBox();
@@ -26,6 +36,11 @@ for (const [w, h, tag] of [[640, 360, '640'], [1280, 720, '1280']]) {
   log.push(`[${tag}] hover+8: '${t14}' -> slot7 '${await page.locator('.sv [data-c="inv"][data-s="7"]').getAttribute('title')}'`);
   // click = inspect (no hidden pick-up state)
   await page.locator('.sv [data-c="inv"][data-s="0"]').click(); await page.waitForTimeout(200); await shot('04-survivor-inspect');
+  if (compact) {
+    await page.locator('.sv-compact-nav button').nth(1).click();
+    if (await page.locator('.sv-left').isVisible() || !await page.locator('.sv-right').isVisible()) throw Error('Compact Work navigation failed');
+    log.push(`[${tag}] compact Work visible, Pack hidden`);
+  }
   if (await page.locator('.sv-cat', { hasText: 'Stations' }).count()) { await page.locator('.sv-cat', { hasText: 'Stations' }).click(); await page.waitForTimeout(200); } await shot('05-survivor-stations');
   if (await page.locator('.sv-cat', { hasText: 'All' }).count()) { await page.locator('.sv-cat', { hasText: 'All' }).click(); await page.waitForTimeout(150); }
   // craft something cheap by hand (real dispatch) → expect FEED line, not centre plaque
