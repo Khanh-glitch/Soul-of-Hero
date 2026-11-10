@@ -5,9 +5,9 @@
 **Creator ZIP:** `soul-of-heroes-visual-overhaul (10).zip`  
 **ZIP SHA-256:** `9a1f0b3ddfe456ac67c7a5ce595dac94c7015305f51f5a6b7690f2a143a32237`
 
-## Import safely (one-time)
+## Reproducible import from Creator ZIP (optional historical fallback; do not rerun on current branch)
 
-The ZIP is attached to the creator's ChatGPT message and is **not yet in GitHub**. The repository does not receive chat attachment bytes automatically. This branch contains a reproducible import program instead of an empty claim that the ZIP is committed.
+The complete ZIP-derived source is **now committed to GitHub** on this branch: 247 files (193 text/source and 54 PixelFX PNGs) in commit `6a8b9bfcbd103b198e93c64e5f2d0243bb2ce547`. All 247 Git blob SHA values were checked against the source transport manifest before moving the branch ref. The importer remains a reproducibility/forensic fallback and must not be rerun over an existing subtree.
 
 1. Download the *exact* ZIP from this conversation.
 2. Checkout this UI/UX branch in a local Git clone.
@@ -55,4 +55,10 @@ The dedicated CI workflow checks the imported subtree once it exists. Before imp
 - Render/UX observations against the actual Gameplay R12 build, not QA staged samples alone
 - Save isolation, item UID, replay, offline chronology, persistence and economy regression gates on any subsequent **integration** PR
 
-**Status:** branch and importer committed; source ZIP not yet committed; no current cross-runtime, visual or human acceptance. No merge into gameplay or main is authorized by this setup.
+## Exact GitHub source intake and browser evidence — 10 November 2026
+- Source commit: `6a8b9bfcbd103b198e93c64e5f2d0243bb2ce547` (247/247 tree entries, per-file Git object IDs match).
+- GitHub strict CI: on source commit `42739569924`, `npm ci`, 54/54 PixelFX, and TypeScript PASS; full Vitest suite **15 failures / 631 tests**, 616 passed. 11 test files failed out of 85. Baseline issues include missing ZIP-excluded Veyra Stage1 79-payload source, older fixture revisions (B05/Recycler) and gameplay behavior mismatches. These failures remain visible and blocking. Do not fake green by weakening assertions.
+- CI visual runner is now installed at `.github/workflows/uiux-wave4.yml`; it builds despite independently recorded full-suite failures, captures a real 640×360 and 1280×720 Chromium matrix, and uploads screenshots and real-input logs.
+- Independent local browser proof from the exact Creator standalone ZIP: Chromium QA full-gear play, successful real drag Hunting Bow → hotbar slot 7 and hover+8 Salvager Pick → hotbar slot 8; Survivor/gameplay screenshots on both 1280×720 and 640×360; zero browser console/page errors across the completed route. 640×360 button-bounds check observed zero out-of-frame buttons. 640×360 build-mode test did **not** complete in the local run and is not reported PASS.
+- Visual critique: 1280×720 game HUD/panels are separated, with world legibility and material icons; 640×360 inventory panels fit within viewport but very small text and icons are an accessibility/legibility concern. QA staged presentation is not production composition. No independent Creator/human approval or Gameplay R12 integration claim.
+- **Status:** Source intake PASS. Visual browser QA PARTIAL (CI matrix awaiting exact-SHA evidence). Full gameplay regression FAIL. No merge into Gameplay R12/main without resolving scope/fixtures and visual review.
