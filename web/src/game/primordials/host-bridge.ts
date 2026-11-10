@@ -103,7 +103,11 @@ function getOrCreateSession(
 export function cleanupPrimordialBoss(r: RunState | null | undefined, creatureId?: string, reason = 'host unload'): void {
   if (!r) return;
   const s = sessions.get(r);
-  if (!s) return;
+  if (!s) {
+    delete r.player?.primordialSlowMul;
+    delete r.player?.primordialSlowUntil;
+    return;
+  }
   if (creatureId) {
     const mb = s.mounted.get(creatureId);
     if (mb) {
@@ -114,6 +118,10 @@ export function cleanupPrimordialBoss(r: RunState | null | undefined, creatureId
       s.world.actors = s.world.actors.filter(a => a.id !== mb.actorId && a.summon?.owner !== mb.actorId);
       s.mounted.delete(creatureId);
     }
+    if (s.mounted.size === 0) {
+      delete r.player?.primordialSlowMul;
+      delete r.player?.primordialSlowUntil;
+    }
     return;
   }
   for (const mb of s.mounted.values()) {
@@ -121,7 +129,15 @@ export function cleanupPrimordialBoss(r: RunState | null | undefined, creatureId
     if (actor?.boss?.runner) actor.boss.runner.cancel();
     s.world.cleanupOwner(mb.actorId, reason);
   }
+  delete r.player?.primordialSlowMul;
+  delete r.player?.primordialSlowUntil;
   sessions.delete(r);
+}
+
+/** Read-only / test inspection of the live Primordial host session bound to a real RunState. */
+export function inspectPrimordialHostSession(r: RunState | null | undefined) {
+  if (!r) return null;
+  return sessions.get(r) ?? null;
 }
 
 /** Step any nearby or active Primordial Elders on the current floor using the 48-skill ELDER_6 combat engine. */
@@ -131,7 +147,8 @@ export function stepPrimordialHost(
   now: number,
   deps: {
     isBlockedTile: (r: RunState, tx: number, ty: number) => boolean;
-    isRagnarok: boolean;
+    /** True ONLY at Day 14 Elder Awakening (`phaseOf(r, now) === 'awakening'`, >= 312h), NEVER at 264h danger! */
+    isAwakening: boolean;
     hurtPlayer: (gs: GameState, amount: number, now: number, cause: string) => void;
     killCreature: (gs: GameState, m: Creature, now: number) => void;
   },
@@ -181,22 +198,24 @@ export function stepPrimordialHost(
     const dPlayer = Math.hypot(m.x - r.player.x, m.y - r.player.y);
     if (!mounted.has(m.id) && dPlayer > 440 && m.state === 'sleep') continue;
 
-    const wantForm: Form = deps.isRagnarok || m.elder!.awake ? 'ultimate' : 'mini';
+    const wantForm: Form = deps.isAwakening || m.elder!.awake ? 'ultimate' : 'mini';
     const pDef = PRIMORDIAL_ELDERS[key];
     const cur = mounted.get(m.id);
 
     if (cur && cur.form !== wantForm) {
+      const ratio = m.maxHp > 0 ? clamp(m.hp / m.maxHp, 0.05, 1) : 1;
       cleanupPrimordialBoss(r, m.id, 'ragnarok form awakening');
       m.elder!.awake = true;
       m.maxHp = pDef.hpAwake;
-      m.hp = Math.max(m.hp, pDef.hpAwake);
+      m.hp = Math.max(1, Math.round(pDef.hpAwake * ratio));
     }
 
     if (!mounted.has(m.id)) {
       if (wantForm === 'ultimate' && !m.elder!.awake) {
+        const ratio = m.maxHp > 0 ? clamp(m.hp / m.maxHp, 0.05, 1) : 1;
         m.elder!.awake = true;
         m.maxHp = pDef.hpAwake;
-        m.hp = pDef.hpAwake;
+        m.hp = Math.max(1, Math.round(pDef.hpAwake * ratio));
       }
       const b = spawnBoss(world, key, wantForm, { x: m.x, y: m.y }, true);
       b.maxHp = m.maxHp;
@@ -285,10 +304,17 @@ export function stepPrimordialHost(
       deps.hurtPlayer(gs, Math.max(1, Math.round(dmgTaken * 0.85)), now, causeName);
     }
 
-    // Local time/chill slow on player only — NEVER touches the 336h UTC run clock!
+    // Local time/chill slow on player BEFORE next tick's moveBody — NEVER touches the 336h UTC run clock!
     if (playerActor.slowUntil > world.t && playerActor.slowMul < 1) {
-      r.player.vx *= playerActor.slowMul;
-      r.player.vy *= playerActor.slowMul;
+      const mul = clamp(playerActor.slowMul, 0.35, 1);
+      const remMs = Math.min(3000, Math.max(120, Math.round((playerActor.slowUntil - world.t) * 1000)));
+      r.player.primordialSlowMul = mul;
+      r.player.primordialSlowUntil = now + remMs;
+      r.player.vx *= mul;
+      r.player.vy *= mul;
+    } else if (r.player.primordialSlowUntil !== undefined && now >= r.player.primordialSlowUntil) {
+      delete r.player.primordialSlowMul;
+      delete r.player.primordialSlowUntil;
     }
   }
 }

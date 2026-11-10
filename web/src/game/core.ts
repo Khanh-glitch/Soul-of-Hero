@@ -59,7 +59,7 @@ export interface Player {
   hp: number; stamina: number; hunger: number; thirst: number; warmth: number; rad: number;
   active: number; // quickbar index 0..7
   action: null | { kind: 'swing' | 'cast' | 'roll' | 'hurt'; t: number; dur: number; contact?: number; done?: boolean; angle: number; slot?: number; coreUid?: string; mode?: 'basic' | 'refined' | 'signature'; targetX?: number; targetY?: number; viewX?: number; viewY?: number };
-  invuln: number; iceUntil?: number; channelUntil?:number; dead: boolean; deadT: number; pulling: string | null; vehicle?: string;
+  invuln: number; iceUntil?: number; channelUntil?:number; primordialSlowMul?: number; primordialSlowUntil?: number; dead: boolean; deadT: number; pulling: string | null; vehicle?: string;
   skills: Record<string, number>; // xp
   stepAcc: number; lastTraceX: number; lastTraceY: number;
   regionName: string; sheltered: boolean;
@@ -80,7 +80,7 @@ export interface Creature {
   offlineUnresolvedAt?: number;
   path: number[] | null; pathT: number; cd: number; kbx: number; kby: number; flash: number;
   animTime?: number; animClip?: 'idle' | 'walk' | 'run' | 'attack' | 'attack2' | 'hurt' | 'death';
-  hurtUntil?: number; deadAt?: number; leashPx?: number; floor?: -1 | 0 | 1 | 2;
+  hurtUntil?: number; deadAt?: number; leashPx?: number; floor?: -1 | 0 | 1 | 2; ephemeral?: boolean;
   sideBoss?: { key: string; phase: number; moveIdx: number; leashPx: number };
   husbandry?: {
     tamed: boolean; following: boolean; penned?: boolean;
@@ -171,6 +171,7 @@ export interface RunState {
   veyraOffscreenEntities?: Record<string, Entity>;
   veyraOffscreenCreatures?: Record<string, Creature>;
   veyraSpawnedHabitats?: Record<string, number>;
+  veyraEcologyCooldowns?: Record<string, number>;
   sideBossDefeated?: Record<string, number>;
   elderSchemaVersion?: 1 | 2;
   spawnRegion: number; ended: null | string;

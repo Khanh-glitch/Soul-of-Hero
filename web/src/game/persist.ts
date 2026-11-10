@@ -76,7 +76,7 @@ export function validate(raw: any): GameState | null {
     if (!world.veyra && m.veyra!==undefined) return null;
   } else if (baseline[layout] !== fingerprint) return null;
   if (r.sourceLayoutVersion !== 3 && r.sourceMap !== undefined) return null;
-  if ((r.player.iceUntil !== undefined && !finite(r.player.iceUntil)) || (r.player.channelUntil !== undefined && !finite(r.player.channelUntil)) || !['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;
+  if ((r.player.iceUntil !== undefined && !finite(r.player.iceUntil)) || (r.player.channelUntil !== undefined && !finite(r.player.channelUntil)) || (r.player.primordialSlowMul !== undefined && (!finite(r.player.primordialSlowMul) || r.player.primordialSlowMul <= 0 || r.player.primordialSlowMul > 1)) || (r.player.primordialSlowUntil !== undefined && !finite(r.player.primordialSlowUntil)) || !['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;
   if (r.clock.defenseFrames !== undefined && (!Number.isInteger(r.clock.defenseFrames) || r.clock.defenseFrames < 0 || r.clock.defenseFrames > 14400)) return null;
   if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) for (const k of ALWAYS_KNOWN_RECIPES) if (!r.knowledge.recipes.includes(k)) r.knowledge.recipes.push(k); // B01-D: single knowledge authority migration (idempotent)
   if (r.intel !== undefined && !validIntel(r.intel)) return null;
@@ -156,6 +156,7 @@ export function validate(raw: any): GameState | null {
     finite(m.x) && finite(m.y) && finite(m.hp) && finite(m.maxHp) &&
     (m.floor === undefined || [-1, 0, 1, 2].includes(m.floor)) &&
     (m.deadAt === undefined || finite(m.deadAt)) &&
+    (m.ephemeral === undefined || typeof m.ephemeral === 'boolean') &&
     (m.sideBoss === undefined || (obj(m.sideBoss) && typeof m.sideBoss.key === 'string' && integer(m.sideBoss.phase) && integer(m.sideBoss.moveIdx) && m.sideBoss.moveIdx >= 0 && finite(m.sideBoss.leashPx))) &&
     (m.husbandry === undefined || validHusbandry(m.husbandry)) &&
     (m.offlineUnresolvedAt === undefined || finite(m.offlineUnresolvedAt)) &&
@@ -174,6 +175,7 @@ export function validate(raw: any): GameState | null {
     }
   }
   if (r.veyraSpawnedHabitats !== undefined && (!veyraWw || !obj(r.veyraSpawnedHabitats) || Object.values(r.veyraSpawnedHabitats).some(v => !integer(v)))) return null;
+  if (r.veyraEcologyCooldowns !== undefined && (!veyraWw || !obj(r.veyraEcologyCooldowns) || Object.values(r.veyraEcologyCooldowns).some(v => !finite(v) || (v as number) < 0))) return null;
   if (r.sideBossDefeated !== undefined && (!veyraWw || !obj(r.sideBossDefeated) || Object.values(r.sideBossDefeated).some(v => !integer(v)))) return null;
   // Only the supported landing impulse may introduce new non-player knowledge.
   const stimulusId=(id:any,index:any)=>typeof id==='string'&&integer(index)&&index<(r.airdrops?.nextIndex??0)&&new RegExp(`^airdrop:${index}:e[0-9a-z]+$`).test(id)&&beforeNext(id.split(':')[2],/^e([a-z0-9]+)$/);
@@ -488,6 +490,31 @@ export async function load(): Promise<LoadResult> {
     setActiveLayout(r.layoutId);
     const ww = getWindowWorld(r.layoutId);
     syncFloor(m.gs!, ww, ww.floors, markDirty);
+    const nudgeOffSolidProp = (actor: { x: number; y: number }, fl: number) => {
+      const layer = ww.floors.layers.get(fl as -1 | 0 | 1 | 2) ?? ww.floors.ground;
+      const tx0 = Math.floor(actor.x / TILE), ty0 = Math.floor(actor.y / TILE);
+      if (tx0 < 1 || ty0 < 1 || tx0 >= WW - 1 || ty0 >= WH - 1) return;
+      if (!layer.solidProps?.[ty0 * WW + tx0]) return;
+      for (let rad = 1; rad <= 5; rad++) {
+        for (let dy = -rad; dy <= rad; dy++) {
+          for (let dx = -rad; dx <= rad; dx++) {
+            if (Math.max(Math.abs(dx), Math.abs(dy)) !== rad) continue;
+            const nx = tx0 + dx, ny = ty0 + dy;
+            if (nx < 1 || ny < 1 || nx >= WW - 1 || ny >= WH - 1) continue;
+            const ni = ny * WW + nx;
+            if (layer.walkable[ni] && !layer.solidProps?.[ni] && !layer.sources[ni]) {
+              actor.x = nx * TILE + 8;
+              actor.y = ny * TILE + 8;
+              return;
+            }
+          }
+        }
+      }
+    };
+    if (!r.player.vehicle) nudgeOffSolidProp(r.player, activeFloor(r));
+    for (const cm of r.creatures) {
+      if (cm.state !== 'dead') nudgeOffSolidProp(cm, (cm as any).floor ?? 0);
+    }
   }
   const legacy = r && Object.values(r.entities).some(e => e.station?.queue.some(j => j.reserved === undefined) || e.legacyJobs?.queue.length);
   const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : ''].filter(Boolean);

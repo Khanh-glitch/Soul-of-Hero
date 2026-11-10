@@ -486,7 +486,7 @@ describe('Phase C/D/E/F — Veyra Full Creature, Husbandry, Side-Boss & 6-Primor
     for (let i = 0; i < 60; i++) {
       stepPrimordialHost(gs, 0.05, T0 + i * 50, {
         isBlockedTile: () => false,
-        isRagnarok: false,
+        isAwakening: false,
         hurtPlayer: () => {},
         killCreature,
       });

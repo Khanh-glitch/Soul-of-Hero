@@ -364,6 +364,7 @@ export const RECIPES: Record<string, Recipe> = {
   bandage: { out: 'bandage', qty: 1, ins: [['fiber', 4]], station: null, secs: 1, base: true, tier: 0 },
   water_flask: { out: 'water_flask', qty: 1, ins: [['hide', 2], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
   root_broth: { out: 'root_broth', qty: 1, ins: [['crop', 2], ['herb', 1]], station: 'campfire', secs: 12, base: true, tier: 1 },
+  poached_eggs: { out: 'root_broth', qty: 1, alias: 'Root Broth (grouse eggs)', ins: [['grouse_egg', 2], ['herb', 1]], station: 'campfire', secs: 8, base: true, tier: 0 },
   herb_roast: { out: 'herb_roast', qty: 1, ins: [['meat', 1], ['herb', 1]], station: 'campfire', secs: 10, base: true, tier: 0 },
   cooked_meat: { out: 'cooked_meat', qty: 1, ins: [['meat', 1]], station: 'campfire', secs: 8, base: true, tier: 0 },
   salted_meat: { out: 'salted_meat', qty: 1, ins: [['meat', 1], ['raw_salt', 1]], station: 'campfire', secs: 10, base: true, tier: 0 },

@@ -1,5 +1,5 @@
 import { BAL, T, TILE, WW, WH, hash2, clamp, type Creature, type RunState } from '../game/core';
-import { CREATURES, PRIMORDIAL_ELDERS, PRIMORDIAL_TO_LEGACY_DOMAIN, ELDERS } from '../game/catalog';
+import { CREATURES, SOURCES, PRIMORDIAL_ELDERS, PRIMORDIAL_TO_LEGACY_DOMAIN, ELDERS } from '../game/catalog';
 import { U, FRAME_W, FRAME_H, auToTile } from './frame';
 import { activeFloor, authoredPlan, type Level } from './floors';
 import type { WindowWorld } from './window';
@@ -31,15 +31,18 @@ export interface SideBossSiteSpec {
   poiId: string;
   name: string;
   au: [number, number];
+  floor: Level;
   leashTiles: number;
 }
 
-/** 4 Optional Side Boss sites — optional arenas with open retreat routes and run-local defeat receipts. */
+/** 4 Optional Side Boss sites — optional arenas with open retreat routes and run-local defeat receipts.
+ *  Pale Custodian (`boss_custodian`) resides on Argus Academy's authored subterranean Sealed Archive (`floor: -1`),
+ *  reachable via both Archive Stair (1842,518) and Service Hatch (1838,534 -> 1838,528). */
 export const VEYRA_SIDE_BOSS_SITES: readonly SideBossSiteSpec[] = [
-  { species: 'boss_greyback', poiId: 'po_greyquarry', name: 'Greyback Shaleheart', au: [506, 652], leashTiles: 22 },
-  { species: 'boss_ronin', poiId: 'po_cairns', name: 'Oathless Ronin', au: [470, 990], leashTiles: 22 },
-  { species: 'boss_tidemarshal', poiId: 'po_saltlight', name: 'Saltwick Tidemarshal', au: [1732, 262], leashTiles: 22 },
-  { species: 'boss_custodian', poiId: 'po_academy', name: 'Pale Custodian', au: [944, 268], leashTiles: 22 },
+  { species: 'boss_greyback', poiId: 'po_greyquarry', name: 'Greyback Shaleheart', au: [506, 652], floor: 0, leashTiles: 22 },
+  { species: 'boss_ronin', poiId: 'po_cairns', name: 'Oathless Ronin', au: [470, 990], floor: 0, leashTiles: 22 },
+  { species: 'boss_tidemarshal', poiId: 'po_saltlight', name: 'Saltwick Tidemarshal', au: [1732, 262], floor: 0, leashTiles: 22 },
+  { species: 'boss_custodian', poiId: 'po_academy', name: 'Pale Custodian', au: [926, 260], floor: -1, leashTiles: 18 },
 ];
 
 export interface PrimordialSiteSpec {
@@ -106,16 +109,24 @@ function sampleWalkableLocalTile(
   // Starter spawn global tile (so initial spawn clearance is respected)
   const spChoice = r.spawnChoice;
 
-  for (let attempt = 0; attempt < 48; attempt++) {
-    const rad = attempt === 0 ? 0 : Math.min(maxRadius, 2 + Math.floor((attempt / 48) * maxRadius));
-    const ang = hash2(attempt * 17 + 3, level + 11, seed) * Math.PI * 2;
+  for (let attempt = 0; attempt < 64; attempt++) {
+    const rad =
+      attempt === 0
+        ? 0
+        : attempt <= 8
+          ? 1 + ((attempt - 1) >> 2)
+          : Math.min(maxRadius, 2 + Math.floor((attempt / 64) * maxRadius));
+    const ang = attempt <= 8 ? ((attempt - 1) * Math.PI) / 4 : hash2(attempt * 17 + 3, level + 11, seed) * Math.PI * 2;
     const lx = Math.round(targetLx + Math.cos(ang) * rad);
     const ly = Math.round(targetLy + Math.sin(ang) * rad);
     if (lx < 3 || ly < 3 || lx >= WW - 3 || ly >= WH - 3) continue;
     const li = ly * WW + lx;
-    if (!layer.walkable[li]) continue;
+    if (!layer.walkable[li] || layer.solidProps[li]) continue;
+    const srcKey = layer.sources[li];
+    if (srcKey && SOURCES[srcKey]?.block) continue;
     const t = layer.tiles[li];
     if (t === T.DEEP || t === T.RIVER || t === T.LAVA || t === T.PWALL || t === T.CLIFF) continue;
+    if (layer.statics.some(s => s.tx === lx && s.ty === ly && s.kind !== 'door')) continue;
 
     if (avoidPlayerSafeTiles > 0 && spChoice && level === 0) {
       // Only avoid initial spawn if we haven't shifted away or compare in local space when close
@@ -187,19 +198,44 @@ function makeVeyraActor(
 export function syncVeyraEcosystemActors(
   r: RunState,
   ww: WindowWorld,
-  oldOx: number,
-  oldOy: number,
-  newOx: number,
-  newOy: number,
+  inOldOx?: number,
+  inOldOy?: number,
+  inNewOx?: number,
+  inNewOy?: number,
 ): void {
+  const [curOx, curOy] = windowOriginTiles(r);
+  const oldOx = inOldOx ?? curOx;
+  const oldOy = inOldOy ?? curOy;
+  const newOx = inNewOx ?? curOx;
+  const newOy = inNewOy ?? curOy;
   const curFloor = activeFloor(r);
   const off = (r.veyraOffscreenCreatures ??= {});
   const spawned = (r.veyraSpawnedHabitats ??= {});
+  const cooldowns = (r.veyraEcologyCooldowns ??= {});
   const defeatedBosses = (r.sideBossDefeated ??= {});
   r.elderSchemaVersion = 2;
 
+  const now = r.clock.lastSimAt || r.startedAt;
+  for (const [cid, due] of Object.entries(cooldowns)) {
+    if (!(due > now)) delete cooldowns[cid];
+  }
+  for (const sk of Object.keys(spawned)) {
+    if (sk.startsWith('cell:')) delete spawned[sk];
+  }
+
   const pxShift = (newOx - oldOx) * TILE;
   const pyShift = (newOy - oldOy) * TILE;
+  const winCenterGx = newOx + WW / 2;
+  const winCenterGy = newOy + WH / 2;
+
+  const isPersistentOffscreenActor = (m: Creature, gxPx: number, gyPx: number): boolean => {
+    if (m.husbandry?.tamed || m.elder || m.sideBoss) return true;
+    if (m.ephemeral) return m.hp < m.maxHp;
+    if (m.hp < m.maxHp || m.knows?.kind === 'sight') return true;
+    const distTiles = Math.hypot(gxPx / TILE - winCenterGx, gyPx / TILE - winCenterGy);
+    if ((m.id.startsWith('vy:wild:') || m.id.startsWith('vy:roam:')) && distTiles > 260) return false;
+    return distTiles <= 360;
+  };
 
   // 1. Shift or archive currently active creatures
   const kept: Creature[] = [];
@@ -240,11 +276,17 @@ export function syncVeyraEcosystemActors(
       m.path = null;
       kept.push(m);
     } else {
+      const gxPx = oldOx * TILE + m.x;
+      const gyPx = oldOy * TILE + m.y;
+      if (!isPersistentOffscreenActor(m, gxPx, gyPx)) {
+        delete off[m.id];
+        continue;
+      }
       // Store in global world pixel coordinates!
       off[m.id] = {
         ...m,
-        x: oldOx * TILE + m.x,
-        y: oldOy * TILE + m.y,
+        x: gxPx,
+        y: gyPx,
         homeX: oldOx * TILE + m.homeX,
         homeY: oldOy * TILE + m.homeY,
         tx: oldOx * TILE + (m.tx ?? m.x),
@@ -259,70 +301,80 @@ export function syncVeyraEcosystemActors(
   const liveIds = new Set(kept.map(m => m.id));
   for (const [id, om] of Object.entries(off)) {
     const mFloor = (om.floor ?? 0) as Level;
-    if (mFloor !== curFloor) continue;
-    const lx = om.x - newOx * TILE;
-    const ly = om.y - newOy * TILE;
-    if (lx >= TILE * 2 && ly >= TILE * 2 && lx < (WW - 2) * TILE && ly < (WH - 2) * TILE) {
-      if (!liveIds.has(id)) {
-        kept.push({
-          ...om,
-          x: lx,
-          y: ly,
-          homeX: om.homeX - newOx * TILE,
-          homeY: om.homeY - newOy * TILE,
-          tx: (om.tx ?? om.x) - newOx * TILE,
-          ty: (om.ty ?? om.y) - newOy * TILE,
-          path: null,
-        });
-        liveIds.add(id);
+    if (mFloor === curFloor) {
+      const lx = om.x - newOx * TILE;
+      const ly = om.y - newOy * TILE;
+      if (lx >= TILE * 2 && ly >= TILE * 2 && lx < (WW - 2) * TILE && ly < (WH - 2) * TILE) {
+        if (!liveIds.has(id)) {
+          kept.push({
+            ...om,
+            x: lx,
+            y: ly,
+            homeX: om.homeX - newOx * TILE,
+            homeY: om.homeY - newOy * TILE,
+            tx: (om.tx ?? om.x) - newOx * TILE,
+            ty: (om.ty ?? om.y) - newOy * TILE,
+            path: null,
+          });
+          liveIds.add(id);
+        }
+        delete off[id];
+        continue;
       }
+    }
+    if (!isPersistentOffscreenActor(om, om.x, om.y)) {
       delete off[id];
+    }
+  }
+
+  const MAX_OFFSCREEN_AMBIENT = 96;
+  const ambientOffIds = Object.keys(off).filter(id => {
+    const m = off[id];
+    return !m.husbandry?.tamed && !m.elder && !m.sideBoss;
+  });
+  if (ambientOffIds.length > MAX_OFFSCREEN_AMBIENT) {
+    ambientOffIds.sort((a, b) => {
+      const ma = off[a], mb = off[b];
+      const wa = ma.hp < ma.maxHp ? 1 : 0, wb = mb.hp < mb.maxHp ? 1 : 0;
+      if (wa !== wb) return wa - wb;
+      const da = Math.hypot(ma.x / TILE - winCenterGx, ma.y / TILE - winCenterGy);
+      const db = Math.hypot(mb.x / TILE - winCenterGx, mb.y / TILE - winCenterGy);
+      return db - da;
+    });
+    for (let i = 0; i < ambientOffIds.length - MAX_OFFSCREEN_AMBIENT; i++) {
+      delete off[ambientOffIds[i]];
     }
   }
 
   r.creatures = kept;
 
   const hasActorAnywhere = (id: string) => liveIds.has(id) || !!off[id];
+  const isOnCooldown = (id: string) => (cooldowns[id] ?? 0) > now;
 
   // 3. Seed Canonical 9 Ordinary Creature Habitat Anchors (ground floor 0)
+  // Never mark a habitat seeded before confirming valid walkable placement (`placed > 0`)
   if (curFloor === 0) {
     for (const hab of ORDINARY_CREATURE_HABITATS) {
       const [gx, gy] = auToTile(hab.au[0], hab.au[1]);
       const lx = gx - newOx;
       const ly = gy - newOy;
-      if (lx < 6 || ly < 6 || lx >= WW - 6 || ly >= WH - 6) continue;
+      if (lx < 4 || ly < 4 || lx >= WW - 4 || ly >= WH - 4) continue;
       const habKey = `hab:${hab.species}:${hab.poiId}`;
-      if (spawned[habKey]) continue;
-      spawned[habKey] = 1;
+      let placed = 0;
       for (let i = 0; i < hab.count; i++) {
         const actorId = `vy:ord:${hab.species}:${hab.poiId}:${i}`;
-        if (hasActorAnywhere(actorId)) continue;
-        const pos = sampleWalkableLocalTile(ww, r, 0, lx, ly, hab.spreadTiles, r.seed + i * 97 + gx, 16);
+        if (hasActorAnywhere(actorId) || isOnCooldown(actorId)) {
+          placed++;
+          continue;
+        }
+        const pos = sampleWalkableLocalTile(ww, r, 0, lx, ly, Math.max(hab.spreadTiles, 20), r.seed + i * 97 + gx, 16);
         if (!pos) continue;
         const actor = makeVeyraActor(actorId, hab.species, pos[0], pos[1], 0, hab.leashTiles);
         r.creatures.push(actor);
         liveIds.add(actorId);
+        placed++;
       }
-    }
-
-    // 4. Seed 4 Optional Side Bosses (ground floor 0; suppressed permanently once defeated in this run)
-    for (const sb of VEYRA_SIDE_BOSS_SITES) {
-      if (defeatedBosses[sb.species]) continue;
-      const [gx, gy] = auToTile(sb.au[0], sb.au[1]);
-      const lx = gx - newOx;
-      const ly = gy - newOy;
-      if (lx < 6 || ly < 6 || lx >= WW - 6 || ly >= WH - 6) continue;
-      const actorId = `vy:boss:${sb.species}`;
-      if (hasActorAnywhere(actorId)) continue;
-      const pos = sampleWalkableLocalTile(ww, r, 0, lx, ly, 10, r.seed + gx * 13, 14);
-      if (!pos) continue;
-      const def = CREATURES[sb.species];
-      const actor = makeVeyraActor(actorId, sb.species, pos[0], pos[1], 0, sb.leashTiles, {
-        maxHp: def.hp,
-        sideBoss: { key: sb.species, phase: 0, moveIdx: 0, leashPx: sb.leashTiles * TILE },
-      });
-      r.creatures.push(actor);
-      liveIds.add(actorId);
+      if (placed > 0) spawned[habKey] = 1;
     }
 
     // 5. Seed Regional Biome Cells (50×50 world-tile grid): 5 Living Wildlife Species + wilderness ordinary encounters
@@ -338,12 +390,9 @@ export function syncVeyraEcosystemActors(
         const gyCenter = cy * cellSize + 25;
         const lxCenter = gxCenter - newOx;
         const lyCenter = gyCenter - newOy;
-        if (lxCenter < 8 || lyCenter < 8 || lxCenter >= WW - 8 || lyCenter >= WH - 8) continue;
-        const cellKey = `cell:${cx}:${cy}`;
-        if (spawned[cellKey]) continue;
-        spawned[cellKey] = 1;
+        if (lxCenter < 6 || lyCenter < 6 || lxCenter >= WW - 6 || lyCenter >= WH - 6) continue;
 
-        const pos = sampleWalkableLocalTile(ww, r, 0, lxCenter, lyCenter, 18, r.seed + cx * 313 + cy * 977, 16);
+        const pos = sampleWalkableLocalTile(ww, r, 0, lxCenter, lyCenter, 20, r.seed + cx * 313 + cy * 977, 16);
         if (!pos) continue;
         const tile = ww.floors.ground.tiles[pos[1] * WW + pos[0]];
 
@@ -357,33 +406,32 @@ export function syncVeyraEcosystemActors(
 
         if (wildPool) {
           for (let wi = 0; wi < 2; wi++) {
-            const wPos = wi === 0 ? pos : sampleWalkableLocalTile(ww, r, 0, pos[0], pos[1], 10, r.seed + cx * 71 + cy * 53 + wi, 15);
+            const wid = `vy:wild:${cx}:${cy}:${wi}`;
+            if (hasActorAnywhere(wid) || isOnCooldown(wid)) continue;
+            const wPos = wi === 0 ? pos : sampleWalkableLocalTile(ww, r, 0, pos[0], pos[1], 12, r.seed + cx * 71 + cy * 53 + wi, 15);
             if (!wPos) continue;
             const pick = wildPool[Math.floor(hash2(cx + wi * 7, cy * 13, r.seed) * wildPool.length) % wildPool.length];
-            const wid = `vy:wild:${cx}:${cy}:${wi}`;
-            if (!hasActorAnywhere(wid)) {
-              r.creatures.push(makeVeyraActor(wid, pick, wPos[0], wPos[1], 0, 28));
-              liveIds.add(wid);
-            }
+            r.creatures.push(makeVeyraActor(wid, pick, wPos[0], wPos[1], 0, 28));
+            liveIds.add(wid);
           }
         }
 
         // Light wilderness ordinary encounter outside 26-tile starter safety radius
         const roll = hash2(cx * 19, cy * 29, r.seed ^ 0x55aa);
         if (roll < 0.55) {
-          const hPos = sampleWalkableLocalTile(ww, r, 0, pos[0], pos[1], 14, r.seed + cx * 151 + cy * 211, 26);
-          if (hPos) {
-            const ht = ww.floors.ground.tiles[hPos[1] * WW + hPos[0]];
-            let hSpecies: string | null = null;
-            if (ht === T.ASH) hSpecies = 'slime_3';
-            else if (ht === T.TOXIC) hSpecies = 'slime_2';
-            else if (ht === T.MARSH) hSpecies = roll < 0.3 ? 'slime_1' : 'slime_2';
-            else if (ht === T.HILL) hSpecies = roll < 0.3 ? 'orc_3' : 'orc_2';
-            else if (ht === T.FOREST) hSpecies = roll < 0.3 ? 'vampire_1' : 'orc_1';
-            else if (ht === T.SNOW) hSpecies = 'vampire_2';
-            if (hSpecies) {
-              const hid = `vy:roam:${cx}:${cy}`;
-              if (!hasActorAnywhere(hid)) {
+          const hid = `vy:roam:${cx}:${cy}`;
+          if (!hasActorAnywhere(hid) && !isOnCooldown(hid)) {
+            const hPos = sampleWalkableLocalTile(ww, r, 0, pos[0], pos[1], 14, r.seed + cx * 151 + cy * 211, 26);
+            if (hPos) {
+              const ht = ww.floors.ground.tiles[hPos[1] * WW + hPos[0]];
+              let hSpecies: string | null = null;
+              if (ht === T.ASH) hSpecies = 'slime_3';
+              else if (ht === T.TOXIC) hSpecies = 'slime_2';
+              else if (ht === T.MARSH) hSpecies = roll < 0.3 ? 'slime_1' : 'slime_2';
+              else if (ht === T.HILL) hSpecies = roll < 0.3 ? 'orc_3' : 'orc_2';
+              else if (ht === T.FOREST) hSpecies = roll < 0.3 ? 'vampire_1' : 'orc_1';
+              else if (ht === T.SNOW) hSpecies = 'vampire_2';
+              if (hSpecies) {
                 const leash = CREATURES[hSpecies]?.leashTiles ?? 22;
                 r.creatures.push(makeVeyraActor(hid, hSpecies, hPos[0], hPos[1], 0, leash));
                 liveIds.add(hid);
@@ -395,7 +443,29 @@ export function syncVeyraEcosystemActors(
     }
   }
 
+  // 4. Seed 4 Optional Side Bosses on their authored floor (`0` outdoors or `-1` Argus Academy Sealed Archive); suppressed once defeated
+  for (const sb of VEYRA_SIDE_BOSS_SITES) {
+    if (sb.floor !== curFloor) continue;
+    if (defeatedBosses[sb.species]) continue;
+    const [gx, gy] = auToTile(sb.au[0], sb.au[1]);
+    const lx = gx - newOx;
+    const ly = gy - newOy;
+    if (lx < 4 || ly < 4 || lx >= WW - 4 || ly >= WH - 4) continue;
+    const actorId = `vy:boss:${sb.species}`;
+    if (hasActorAnywhere(actorId)) continue;
+    const pos = sampleWalkableLocalTile(ww, r, curFloor, lx, ly, 16, r.seed + gx * 13, r.qaUsed ? 0 : 8);
+    if (!pos) continue;
+    const def = CREATURES[sb.species];
+    const actor = makeVeyraActor(actorId, sb.species, pos[0], pos[1], curFloor, sb.leashTiles, {
+      maxHp: def.hp,
+      sideBoss: { key: sb.species, phase: 0, moveIdx: 0, leashPx: sb.leashTiles * TILE },
+    });
+    r.creatures.push(actor);
+    liveIds.add(actorId);
+  }
+
   // 6. Seed the 6 Primordials on their exact authored sanctuary floors (`-1` or `0`)!
+  const isDay14Awakening = (now - (r.startedAt - r.qaOffset)) >= BAL.run.elderAwakenHour * 3600_000;
   for (const ps of VEYRA_PRIMORDIAL_SITES) {
     if (isElderAlreadyDefeated(r, ps.key)) continue;
     const loc = resolvePrimordialGlobalTile(ps);
@@ -407,15 +477,17 @@ export function syncVeyraEcosystemActors(
     if (hasActorAnywhere(eid)) continue;
     const pos = sampleWalkableLocalTile(ww, r, curFloor, lx, ly, 6, r.seed + loc.gx, 0) ?? [lx, ly];
     const pDef = PRIMORDIAL_ELDERS[ps.key];
+    const initHp = isDay14Awakening ? pDef.hpAwake : pDef.hpLatent;
     const actor = makeVeyraActor(eid, `elder_${ps.key}`, pos[0], pos[1], curFloor, 30, {
-      maxHp: pDef.hpLatent,
-      elder: { key: ps.key, awake: false, phase: 0, pattern: 0, special: 0 },
+      maxHp: initHp,
+      elder: { key: ps.key, awake: isDay14Awakening, phase: 0, pattern: 0, special: 0 },
     });
     r.creatures.push(actor);
     liveIds.add(eid);
   }
 
   if (!Object.keys(off).length) delete r.veyraOffscreenCreatures;
+  if (!Object.keys(cooldowns).length) delete r.veyraEcologyCooldowns;
 }
 
 /** Deterministic day/night & weather behavior modifiers for ordinary creatures & nocturnal predators. */

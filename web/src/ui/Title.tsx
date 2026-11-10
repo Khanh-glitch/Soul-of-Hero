@@ -72,7 +72,7 @@ export default function Title({ gs, onContinue, onStart, onInspect, note, summar
           {run && <button className="btn gold" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); onContinue(); }}>Continue — {run.character === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</button>}
           <button className="btn" style={{ fontSize: 16, width: 180 }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={() => { click(); setActiveLayout(U05_WORLD_LAYOUT_ID); resetRenderCaches(); setMode('select'); }}>New run</button>
           <button className="btn" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); setMode('history'); }}>Profile & history</button>
-          {onInspect && <button className="btn ghost" style={{ fontSize: 11, width: 180, color: '#9ae0ff' }} onClick={() => { click(); onInspect(); }}>World Map · 81 POIs</button>}
+          {onInspect && <button className="btn ghost" style={{ fontSize: 11, width: 180, color: '#9ae0ff' }} onClick={() => { click(); onInspect(); }}>Creator Inspector · 81 POIs</button>}
           <div style={{ fontSize: 11, color: '#cfc2dc', marginTop: 6, textShadow: '1px 1px 0 #000' }}>Secured Ragnarok cash: <b style={{ color: '#9ae0ff' }}>{pf.securedCash}</b> · Runs: {pf.history.length}</div>
           {note && <div style={{ fontSize: 10, color: '#ffb08a', maxWidth: 380, textAlign: 'center' }}>{note}</div>}
           <div style={{ fontSize: 9, color: '#7a6a8a', position: 'absolute', top: 196 }}>Offline · single-player · saves locally in this browser (LOCAL/UNVERIFIED)</div>

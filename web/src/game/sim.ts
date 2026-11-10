@@ -93,14 +93,26 @@ function damageCreature(gs: GameState, m: Creature, dmg: number, a: number, now:
   const r = gs.run!;
   if (m.state === 'dead' || m.elder?.submerged || m.atk?.burrow || ((m as any).floor ?? 0) !== activeFloor(r)) return false;
   if (m.type === 'crab' && m.atk?.tuck > 0) dmg *= 0.25;
+  if (m.type === 'boss_greyback' && !(m.atk?.vuln > 0)) dmg *= 0.78;
   if (m.elder && m.atk?.vuln > 0) dmg *= 2;
+  else if (m.sideBoss && m.atk?.vuln > 0) dmg *= 1.55;
   dmg = Math.round(dmg * (1 + r.player.skills.combat * 0.002));
-  m.hp -= dmg; m.flash = 120; const kbm = m.elder ? 0.12 : 1; m.kbx += Math.cos(a) * kb * kbm; m.kby += Math.sin(a) * kb * kbm;
+  m.hp -= dmg; m.flash = 120; const kbm = m.elder ? 0.12 : m.sideBoss ? 0.25 : 1; m.kbx += Math.cos(a) * kb * kbm; m.kby += Math.sin(a) * kb * kbm;
   (m as any).prov = true; // Damage alone does not reveal a remote player's location.
   if (m.type === 'crab') m.atk = { ...(m.atk || {}), tuck: 900 };
+  if (m.sideBoss && m.hp > 0 && m.sideBoss.phase === 0 && m.hp <= m.maxHp * 0.55) {
+    m.sideBoss.phase = 1;
+    const phaseText =
+      m.type === 'boss_greyback' ? 'Greyback Shaleheart cracks its shale mantle — tectonic shockwaves!'
+      : m.type === 'boss_ronin' ? 'Oathless Ronin enters the second stance — severing wind blades!'
+      : m.type === 'boss_tidemarshal' ? 'Saltwick Tidemarshal calls the maelstrom surge!'
+      : 'Pale Custodian unseals the ward lantern!';
+    fx('toast', { text: phaseText, key: `sb_p2_${m.id}` });
+    fx('shake', { m: 3 });
+  }
   if (m.elder && m.state === 'sleep') wakeElder(gs, m, now);
-  fx('mhit', { x: m.x, y: m.y, n: dmg, a, big: !!m.elder }); fx('hitstop', { ms: m.elder ? 70 : 55 });
-  if (m.hp <= 0) { killCreature(gs, m, now); fx('mdeath', { x: m.x, y: m.y, type: m.type }); fx('shake', { m: m.elder ? 6 : 2 }); }
+  fx('mhit', { x: m.x, y: m.y, n: dmg, a, big: !!(m.elder || m.sideBoss) }); fx('hitstop', { ms: m.elder || m.sideBoss ? 70 : 55 });
+  if (m.hp <= 0) { killCreature(gs, m, now); fx('mdeath', { x: m.x, y: m.y, type: m.type }); fx('shake', { m: m.elder ? 6 : m.sideBoss ? 4 : 2 }); }
   return true;
 }
 function wakeElder(gs: GameState, m: Creature, now: number) {
@@ -357,7 +369,17 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   if ((p.iceUntil||0)>now || (p.channelUntil||0)>now || r.spiritTransit) speedMul=0;
   let sp = B.speed * (BAL.terrainSpeed[SPEED_KEY[t]] ?? 1) * speedMul;
   const w = invWeight(r), limit = carryLimit(r), personalLoad = w > limit ? Math.max(0.35, 1 - (w - limit) / limit) : 1;
-  let condition = 1; if (slowTimer > 0) { condition *= 0.5; slowTimer -= dtMs; } if (rootTimer > 0) { condition *= 0.15; rootTimer -= dtMs; }
+  let condition = 1;
+  if (slowTimer > 0) { condition *= 0.5; slowTimer -= dtMs; }
+  if (rootTimer > 0) { condition *= 0.15; rootTimer -= dtMs; }
+  if (p.primordialSlowUntil !== undefined) {
+    if (now < p.primordialSlowUntil && p.primordialSlowMul !== undefined) {
+      condition *= clamp(p.primordialSlowMul, 0.35, 1);
+    } else {
+      delete p.primordialSlowUntil;
+      delete p.primordialSlowMul;
+    }
+  }
   sp *= personalLoad * condition;
   let cart: Entity | null = p.pulling ? r.entities[p.pulling] : null; if (p.pulling && !cart) p.pulling = null;
   if (cart) { const ct = effTile(r, tileOf(cart.x), tileOf(cart.y)); const road = ct === T.ROAD || ct === T.BRIDGE || ct === T.FLOOR; const rough = ct === T.FOREST || ct === T.MARSH || ct === T.HILL || ct === T.SNOW;
@@ -375,7 +397,11 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
       const protectedPart=Math.min(step,lubeLeft); wearTotal+=protectedPart*lubeReduced+(step-protectedPart)*baseWear; lubeLeft-=protectedPart;}
     const travelled=dist(ox,oy,bike.x,bike.y);if(travelled>0){bike.vehicle.fuel=Math.max(0,bike.vehicle.fuel-travelled*rate);if(bike.vehicle.fuel<1e-9)bike.vehicle.fuel=0; /* float residue: an empty tank is exactly empty */bike.vehicle.odometer+=travelled;bike.hp=Math.max(0,(bike.hp||0)-wearTotal);bike.deployed.dur=bike.hp;bike.vehicle.angle=Math.atan2(my,mx); if((bike.vehicle.lube||0)>0) bike.vehicle.lube=lubeLeft;}
     p.x=bike.x;p.y=bike.y; if(ml)p.aim=bike.vehicle.angle;
-  } else if (p.action?.kind === 'roll') { const ra = p.action.angle; moveBody(r, p, Math.cos(ra) * B.rollSpeed * dt, Math.sin(ra) * B.rollSpeed * dt, 4, 'player'); }
+  } else if (p.action?.kind === 'roll') {
+    const ra = p.action.angle;
+    const rollSlow = p.primordialSlowUntil !== undefined && now < p.primordialSlowUntil && p.primordialSlowMul !== undefined ? clamp(p.primordialSlowMul, 0.55, 1) : 1;
+    moveBody(r, p, Math.cos(ra) * B.rollSpeed * rollSlow * dt, Math.sin(ra) * B.rollSpeed * rollSlow * dt, 4, 'player');
+  }
   else if (ml) { moveBody(r, p, mx * sp * dt, my * sp * dt, 4, 'player'); p.stepAcc += sp * dt; if (p.stepAcc > 13) { p.stepAcc = 0; fx('step', { x: p.x, y: p.y + 6, t }); } }
   const movedX = p.x, movedY = p.y;
   p.vx = ml ? mx * sp : 0; p.vy = ml ? my * sp : 0;
@@ -643,7 +669,8 @@ function traceOnly(gs: GameState, m: Creature, dtMs: number, now: number): 'adva
 
 function tickCreatures(gs: GameState, dtMs: number, now: number) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const ACT = BAL.ai.activeRadiusTiles * TILE;
-  const night = darkness(r, now) > 0.45; const rag = isRagnarok(r, now); const w = weatherAt(r, now);
+  const effDarkness = activeFloor(r) < 0 ? 1 : darkness(r, now);
+  const night = effDarkness > 0.45; const rag = isRagnarok(r, now); const w = weatherAt(r, now);
   const g = blockGrid(r);
   for (let i = r.creatures.length - 1; i >= 0; i--) {
     const m = r.creatures[i];
@@ -659,7 +686,8 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
     if (m.elder) { tickElder(gs, m, dtMs, now, dp); continue; }
     const d = CREATURES[m.type]; if (!d) continue;
     const isVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
-    const env = isVeyra ? computeCreatureEnvFactors(m.type, 1 - darkness(r, now), w) : { sightMul: 1, speedMul: 1 };
+    const effSunLevel = 1 - effDarkness;
+    const env = isVeyra ? computeCreatureEnvFactors(m.type, effSunLevel, w) : { sightMul: 1, speedMul: 1 };
     const leashPx = m.sideBoss?.leashPx ?? m.leashPx ?? ((d.leashTiles ?? 22) * TILE);
     const spd = d.speed * env.speedMul * (rag && !m.husbandry?.tamed ? 1.2 : 1) * (m.slow ? 0.45 : 1);
     // spike traps
@@ -739,16 +767,60 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
     const aggro = !passiveWild && (d.aggro || rag || (m as any).prov || (night && m.type === 'boar'));
     // sensing
     const sight = (night ? BAL.ai.sightNight : BAL.ai.sightDay) * (d.sight / 100) * env.sightMul * (w === 'fog' ? 0.6 : 1) * (p.sheltered ? 0.5 : 1);
+    const hadSight = m.knows?.kind === 'sight';
     const seesPlayer = observePlayer(r, m, now, sight, aggro || passiveWild);
-    if (passiveWild && seesPlayer && dp < 68) {
+
+    // Nocturnal roost/wake cycle on Veyra: cave/night darkness (effSunLevel <= 0.45) or provocation wakes sleeping nocturnal creatures; bright surface sun roosts unprovoked vampires.
+    if (isVeyra && d.night) {
+      if (m.state === 'sleep' && (effSunLevel <= 0.45 || (m as any).prov || seesPlayer)) {
+        m.state = seesPlayer ? 'chase' : 'idle';
+        m.t = 0;
+      } else if (m.type.startsWith('vampire_') && effSunLevel > 0.65 && !m.knows && !(m as any).prov && m.state !== 'sleep') {
+        m.state = 'sleep';
+        m.t = 0;
+      }
+    }
+
+    // Orc pack rally: when an Orc freshly spots the player, nearby same-storey Orcs within earshot rally!
+    if (seesPlayer && !hadSight && m.type.startsWith('orc_')) {
+      for (const ally of r.creatures) {
+        if (ally === m || ally.state === 'dead' || !ally.type.startsWith('orc_') || ((ally as any).floor ?? 0) !== activeFloor(r)) continue;
+        if (!ally.knows && dist(m.x, m.y, ally.x, ally.y) < 76 && clearPhysicalLine(r, m, ally, false, true)) {
+          ally.knows = { kind: 'sight', x: p.x, y: p.y, at: now };
+          ally.state = 'chase';
+          fx('tell', { x: ally.x, y: ally.y - 10, style: CREATURES[ally.type]?.style });
+        }
+      }
+    }
+
+    if (passiveWild && seesPlayer && dp < 72) {
       m.knows = null;
+      const wasFleeing = m.state === 'flee';
       m.state = 'flee';
-      m.tx = m.x + (m.x - p.x) * 1.5;
-      m.ty = m.y + (m.y - p.y) * 1.5;
-      steer(gs, m, m.tx, m.ty, spd * 1.15, dt, now);
+      if (!wasFleeing) m.t = 0;
+      const baseAway = Math.atan2(m.y - p.y, m.x - p.x);
+      // Hares dart in quick zig-zags; grouse burst with a fast wing-flush; deer bound steadily away
+      const zig = m.type === 'hare' ? (((Math.floor(now / 260) + m.id.charCodeAt(0)) % 2 === 0 ? 1 : -1) * 0.62) : 0;
+      const fleeAng = baseAway + zig;
+      m.tx = m.x + Math.cos(fleeAng) * 56;
+      m.ty = m.y + Math.sin(fleeAng) * 56;
+      const burstMul = m.type === 'grouse' && m.t < 480 ? 1.34 : 1.16;
+      steer(gs, m, m.tx, m.ty, spd * burstMul, dt, now);
       continue;
     }
     if (m.state === 'flee') m.state = 'wander';
+
+    // Territorial daytime boar warning snort when crowded too closely before charging
+    if (m.type === 'boar' && !night && !(m as any).prov && seesPlayer && dp < 34) {
+      const warnSince = typeof m.atk?.boarWarnAt === 'number' ? m.atk.boarWarnAt : 0;
+      if (!warnSince || now - warnSince > 4000) {
+        m.atk = { ...(m.atk || {}), boarWarnAt: now };
+        fx('tell', { x: m.x, y: m.y - 10, style: 'charge' });
+      } else if (now - warnSince > 1150) {
+        (m as any).prov = true;
+        m.knows = { kind: 'sight', x: p.x, y: p.y, at: now };
+      }
+    }
 
     if (!seesPlayer && aggro && (!m.knows || m.knows.kind==='stimulus') && ['idle', 'wander', 'track', 'chase'].includes(m.state) && (m.t % 500) < dtMs) {
       // Independent encounter: live, identified mark in circular range and line of sight.
@@ -779,9 +851,10 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
               m.state = 'tell'; m.t = 0; m.animTime = 0;
               m.angle = Math.atan2(p.y - m.y, p.x - m.x);
               if (m.sideBoss) {
-                const mv = m.sideBoss.moveIdx % 2;
+                const movePool = m.sideBoss.phase >= 1 ? 3 : 2;
+                const mv = m.sideBoss.moveIdx % movePool;
                 m.sideBoss.moveIdx++;
-                m.animClip = mv === 1 ? 'attack2' : 'attack';
+                m.animClip = mv === 0 ? 'attack' : 'attack2';
                 m.atk = { ...(m.atk || {}), move: mv, target: { x: p.x, y: p.y } };
               } else {
                 m.animClip = 'attack';
@@ -818,35 +891,76 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
       case 'tell': {
         // Telegraph angle remains locked at the observed target.
         if (d.style === 'burrow' && !m.atk?.burrow) { m.atk = { ...(m.atk || {}), burrow: true, bt: 0, target: m.atk?.target || (m.knows?.kind === 'sight' ? { x: m.knows.x, y: m.knows.y } : { x: m.x, y: m.y }) }; }
-        const tellDur = m.sideBoss && m.atk?.move === 1 ? Math.round(d.tell * 1.18) : d.tell;
+        const tellDur =
+          m.sideBoss && m.atk?.move === 2 ? Math.round(d.tell * 1.24)
+          : m.sideBoss && m.atk?.move === 1 ? Math.round(d.tell * 1.15)
+          : d.tell;
         if (m.t >= tellDur) {
           m.state = 'attack'; m.t = 0; m.atk = { ...(m.atk || {}), hit: false };
           if (d.style === 'shoot' || d.style === 'spit_hop') { PROJ.push({ x: m.x, y: m.y - 4, vx: Math.cos(m.angle) * 145, vy: Math.sin(m.angle) * 145, life: 1.5, dmg: d.dmg, from: 'enemy', kind: 'bolt', r: 3 }); fx('zap', { x: m.x, y: m.y }); }
           if (d.style === 'acid_pool') { const tx0 = m.atk.target?.x ?? p.x, ty0 = m.atk.target?.y ?? p.y; HAZ.push({ kind: 'pool', x: tx0, y: ty0, r: 16, t: 0, tell: 620, dur: 2200, dmg: d.dmg, style: 'bog', owner: m.id }); }
-          if (d.style === 'ember_burst') { const tx0 = m.atk.target?.x ?? p.x, ty0 = m.atk.target?.y ?? p.y; HAZ.push({ kind: 'circle', x: tx0, y: ty0, r: 20, t: 0, tell: 640, dur: 220, dmg: d.dmg, style: 'magma', owner: m.id }); }
+          if (d.style === 'ember_burst') { const tx0 = m.atk.target?.x ?? p.x, ty0 = m.atk.target?.y ?? p.y; HAZ.push({ kind: 'circle', x: tx0, y: ty0, r: 20, t: 0, tell: 640, dur: 220, dmg: d.dmg, style: 'magma', effect: 'ignite', owner: m.id }); ignite(gs, tileOf(tx0), tileOf(ty0), now); }
           if (d.style === 'tongue') fx('tongue', { x: m.x, y: m.y, a: m.angle });
           if (d.style === 'burrow') { HAZ.push({ kind: 'circle', x: m.atk.target.x, y: m.atk.target.y, r: 18, t: 0, tell: 800, dur: 120, dmg: d.dmg, style: 'erupt', owner: m.id }); }
-          // Side boss Move 2 / hazard launches at tell completion
-          if (d.style === 'sideboss_ronin' && m.atk.move === 1) {
-            HAZ.push({ kind: 'sweep', x: m.x, y: m.y, a0: m.angle - 1.1, a1: m.angle + 1.1, len: 54, w: 14, t: 0, tell: 540, dur: 260, dmg: d.dmg, style: 'slash', owner: m.id });
-          } else if (d.style === 'sideboss_rock' && m.atk.move === 1) {
-            HAZ.push({ kind: 'line', x: m.x, y: m.y, angle: m.angle, len: 120, w: 18, t: 0, tell: 680, dur: 220, dmg: d.dmg, style: 'quake', effect: 'knock', owner: m.id });
-          } else if (d.style === 'sideboss_maid' && m.atk.move === 1) {
-            for (let k = -1; k <= 1; k++) {
-              const aa = m.angle + k * 0.26;
-              PROJ.push({ x: m.x, y: m.y - 6, vx: Math.cos(aa) * 165, vy: Math.sin(aa) * 165, life: 1.5, dmg: Math.round(d.dmg * 0.8), from: 'enemy', kind: 'shard', r: 4 });
+          // Side boss Move 1 & Phase-2 Move 2 hazard/projectile choreography
+          if (d.style === 'sideboss_ronin') {
+            if (m.atk.move === 1) {
+              HAZ.push({ kind: 'sweep', x: m.x, y: m.y, a0: m.angle - 1.15, a1: m.angle + 1.15, len: 56, w: 14, t: 0, tell: 520, dur: 260, dmg: d.dmg, style: 'slash', owner: m.id });
+            } else if (m.atk.move === 2) {
+              for (let k = -1; k <= 1; k++) {
+                const aa = m.angle + k * 0.2;
+                PROJ.push({ x: m.x, y: m.y - 6, vx: Math.cos(aa) * 182, vy: Math.sin(aa) * 182, life: 1.4, dmg: Math.round(d.dmg * 0.8), from: 'enemy', kind: 'shard', r: 4 });
+              }
+              m.atk.vuln = 900;
+              fx('slash', { x: m.x, y: m.y - 2, a: m.angle, reach: 34, arc: 1.6, key: 'ronin_nodachi' });
             }
-            fx('zap', { x: m.x, y: m.y });
+          } else if (d.style === 'sideboss_rock') {
+            if (m.atk.move === 1) {
+              HAZ.push({ kind: 'line', x: m.x, y: m.y, angle: m.angle, len: 124, w: 18, t: 0, tell: 680, dur: 220, dmg: d.dmg, style: 'quake', effect: 'knock', owner: m.id });
+            } else if (m.atk.move === 2) {
+              HAZ.push({ kind: 'ring', x: m.x, y: m.y, r: 84, t: 0, tell: 760, dur: 620, dmg: d.dmg, style: 'quake', effect: 'knock', owner: m.id });
+              for (let k = 0; k < 3; k++) {
+                const ang = m.angle + (k - 1) * 1.05;
+                HAZ.push({ kind: 'circle', x: m.x + Math.cos(ang) * 52, y: m.y + Math.sin(ang) * 52, r: 15, t: 0, tell: 820 + k * 90, dur: 160, dmg: Math.round(d.dmg * 0.85), style: 'erupt', owner: m.id });
+              }
+              m.atk.vuln = 1250;
+              fx('shake', { m: 3 });
+            }
+          } else if (d.style === 'sideboss_maid') {
+            if (m.atk.move === 1) {
+              const fanCount = m.sideBoss && m.sideBoss.phase >= 1 ? 2 : 1;
+              for (let k = -fanCount; k <= fanCount; k++) {
+                const aa = m.angle + k * 0.22;
+                PROJ.push({ x: m.x, y: m.y - 6, vx: Math.cos(aa) * 165, vy: Math.sin(aa) * 165, life: 1.5, dmg: Math.round(d.dmg * 0.8), from: 'enemy', kind: 'shard', r: 4 });
+              }
+              fx('zap', { x: m.x, y: m.y });
+            } else if (m.atk.move === 2) {
+              // Ward blink to an adjacent open archive tile + expanding lantern ring
+              for (let stepTry = 0; stepTry < 6; stepTry++) {
+                const ba = m.angle + Math.PI * 0.65 + stepTry * 0.9;
+                const bx = m.x + Math.cos(ba) * 32, by = m.y + Math.sin(ba) * 32;
+                const btx = tileOf(bx), bty = tileOf(by);
+                if (btx > 2 && bty > 2 && btx < WW - 3 && bty < WH - 3 && g[bty * WW + btx] === 0 && dist(bx, by, m.homeX, m.homeY) < leashPx) {
+                  m.x = bx; m.y = by; break;
+                }
+              }
+              HAZ.push({ kind: 'ring', x: m.x, y: m.y, r: 74, t: 0, tell: 720, dur: 580, dmg: Math.round(d.dmg * 0.9), style: 'beam', owner: m.id });
+              m.atk.vuln = 1000;
+              fx('zap', { x: m.x, y: m.y });
+            }
           } else if (d.style === 'sideboss_water') {
             if (m.atk.move === 0) {
-              HAZ.push({ kind: 'wave', x: m.x, y: m.y, angle: m.angle, len: 54, w: 14, t: 0, tell: 520, dur: 900, dmg: d.dmg, style: 'tide', effect: 'knock', owner: m.id });
-            } else {
+              HAZ.push({ kind: 'wave', x: m.x, y: m.y, angle: m.angle, len: 58, w: 14, t: 0, tell: 520, dur: 900, dmg: d.dmg, style: 'tide', effect: 'knock', owner: m.id });
+            } else if (m.atk.move === 1) {
               const tx0 = m.atk.target?.x ?? p.x, ty0 = m.atk.target?.y ?? p.y;
               HAZ.push({ kind: 'circle', x: tx0, y: ty0, r: 24, t: 0, tell: 700, dur: 1100, dmg: Math.round(d.dmg * 0.7), style: 'tide', effect: 'slow', owner: m.id });
               for (let k = -1; k <= 1; k += 2) {
                 const aa = m.angle + k * 0.22;
                 PROJ.push({ x: m.x, y: m.y - 6, vx: Math.cos(aa) * 145, vy: Math.sin(aa) * 145, life: 1.6, dmg: Math.round(d.dmg * 0.75), from: 'enemy', kind: 'bolt', r: 4 });
               }
+            } else if (m.atk.move === 2) {
+              HAZ.push({ kind: 'ring', x: m.x, y: m.y, r: 80, t: 0, tell: 720, dur: 620, dmg: Math.round(d.dmg * 0.85), style: 'tide', effect: 'slow', owner: m.id });
+              m.atk.vuln = 950;
             }
           }
         }
@@ -854,15 +968,18 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
       }
       case 'attack': {
         const st = d.style;
-        if (st === 'charge' || st === 'lunge' || st === 'slash_step' || (st === 'sideboss_maid' && m.atk?.move === 0) || (st === 'sideboss_ronin' && m.atk?.move === 0)) {
-          const dur = st === 'charge' ? 560 : (st === 'sideboss_maid' || st === 'sideboss_ronin') ? 300 : 230;
-          const s2 = st === 'charge' ? 215 : (st === 'sideboss_maid' || st === 'sideboss_ronin') ? 235 : 245;
+        if (st === 'charge' || st === 'lunge' || st === 'slash_step' || (st === 'sideboss_maid' && m.atk?.move === 0) || (st === 'sideboss_ronin' && m.atk?.move === 0) || (st === 'sideboss_water' && m.atk?.move === 2)) {
+          const dur = st === 'charge' ? 560 : (st === 'sideboss_maid' || st === 'sideboss_ronin' || st === 'sideboss_water') ? 300 : 230;
+          const s2 = st === 'charge' ? 215 : (st === 'sideboss_maid' || st === 'sideboss_ronin' || st === 'sideboss_water') ? 235 : 245;
           const blocked = moveBody(r, m, Math.cos(m.angle) * s2 * dt, Math.sin(m.angle) * s2 * dt, 4, 'creature');
           if (!m.atk.hit && dist(m.x, m.y, p.x, p.y) < d.r + 8 && los(r, m.x, m.y, p.x, p.y)) { m.atk.hit = true; hurtPlayer(gs, d.dmg, m.x, m.y, d.name, now, 200); }
           if (blocked && st === 'charge') { const tx = tileOf(m.x + Math.cos(m.angle) * 9), ty = tileOf(m.y + Math.sin(m.angle) * 9); const src = sourceAt(r, tx, ty, now);
             if (src && blockGrid(r)[ty * WW + tx] === 2 && src.def.mat === 'wood' && src.stock > 0) { harvestHit(gs, tx, ty, { wood: 4 }, now, m.x, m.y); fx('chip', { x: tx * TILE + 8, y: ty * TILE + 8, mat: 'wood' }); }
             bashAhead(gs, m, m.angle, now); m.state = 'recover'; m.t = -900; fx('stun', { x: m.x, y: m.y - 10 }); fx('shake', { m: 2 }); break; }
-          if (m.t >= dur) { m.state = 'recover'; m.t = 0; }
+          if (m.t >= dur) {
+            if (st === 'sideboss_ronin' && m.atk?.move === 0) m.atk.vuln = 850;
+            m.state = 'recover'; m.t = 0;
+          }
         } else if (st === 'tongue') {
           if (!m.atk.hit && m.t > 60) { const len = 84; const px = p.x - m.x, py = p.y - m.y; const along = px * Math.cos(m.angle) + py * Math.sin(m.angle); const perp = Math.abs(-px * Math.sin(m.angle) + py * Math.cos(m.angle));
             if (along > 0 && along < len && perp < 8 && los(r, m.x, m.y, p.x, p.y)) { m.atk.hit = true; if (hurtPlayer(gs, d.dmg, m.x, m.y, d.name, now, 0)) { const a = Math.atan2(m.y - p.y, m.x - p.x); moveBody(r, p, Math.cos(a) * 26, Math.sin(a) * 26, 4, 'player'); } } }
@@ -884,8 +1001,8 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
         } else if (st === 'sideboss_rock' && m.atk?.move === 0) {
           if (!m.atk.hit && m.t > 70) {
             m.atk.hit = true;
-            m.atk.vuln = 900;
-            if (dist(m.x, m.y, p.x, p.y) < 36 && los(r, m.x, m.y, p.x, p.y)) {
+            m.atk.vuln = 1350;
+            if (dist(m.x, m.y, p.x, p.y) < 38 && los(r, m.x, m.y, p.x, p.y)) {
               hurtPlayer(gs, d.dmg, m.x, m.y, d.name, now, 260);
             }
             fx('shake', { m: 3 });
@@ -894,15 +1011,16 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
         } else { if (m.t > 300) { m.state = 'recover'; m.t = 0; } }
         break;
       }
-      case 'recover': if (m.t > (m.sideBoss ? 780 : 650)) { m.state = 'chase'; m.cd = (m.sideBoss ? 650 : 500) + rngNext(r) * 700; m.t = 0; } break;
+      case 'recover': if (m.t > (m.sideBoss ? (m.sideBoss.phase >= 1 ? 640 : 780) : 650)) { m.state = 'chase'; m.cd = (m.sideBoss ? (m.sideBoss.phase >= 1 ? 520 : 650) : 500) + rngNext(r) * 700; m.t = 0; } break;
       case 'sleep': break;
     }
   }
   // Step active Primordial Elders in live / interactive simulation (never during offline settle)
+  // P0-1 Law: Elders awaken ONLY at Day 14 (`phaseOf(r, now) === 'awakening'`, >= 312h), NEVER at 264h danger!
   if (!offlineQuiet && r.layoutId && isVeyra05Layout(r.layoutId)) {
     stepPrimordialHost(gs, dt, now, {
       isBlockedTile: (r0, tx0, ty0) => blockGrid(r0)[ty0 * WW + tx0] !== 0,
-      isRagnarok: rag,
+      isAwakening: phaseOf(r, now) === 'awakening',
       hurtPlayer: (gs0, amount, now0, cause) => {
         hurtPlayer(gs0, amount, p.x - Math.cos(p.aim) * 10, p.y - Math.sin(p.aim) * 10, cause, now0, 110);
       },
@@ -912,19 +1030,40 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
 }
 
 // ---------- Elders ----------
+function awakenEldersAtDay14(r: RunState, now: number): void {
+  if (phaseOf(r, now) !== 'awakening') return;
+  const awakenOne = (m: Creature, announce: boolean) => {
+    if (!m.elder || m.elder.awake || m.state === 'dead') return;
+    const def = lookupElderDef(m.elder.key);
+    if (!def) return;
+    const f = m.maxHp > 0 ? clamp(m.hp / m.maxHp, 0.05, 1) : 1;
+    m.elder.awake = true;
+    m.maxHp = def.hpAwake;
+    m.hp = Math.max(1, Math.round(def.hpAwake * f));
+    if (announce) {
+      fx('banner', { text: `${def.name} AWAKENS`, sub: def.region });
+      pushLog(r, now, `Day 14: ${def.name} has awakened in ${def.region}.`, 'red');
+    }
+  };
+  for (let i = 0; i < r.creatures.length; i++) awakenOne(r.creatures[i], true);
+  if (r.veyraOffscreenCreatures) {
+    for (const k in r.veyraOffscreenCreatures) awakenOne(r.veyraOffscreenCreatures[k], false);
+  }
+}
+
 function tickElder(gs: GameState, m: Creature, dtMs: number, now: number, dp: number) {
   const r = gs.run!; const p = r.player; const e = m.elder!;
   // Primordial Elders on Veyra are stepped via ELDER_6 host-bridge in tickCreatures
   if (PRIMORDIAL_ELDERS[e.key]) {
     const pDef = PRIMORDIAL_ELDERS[e.key];
-    const awakePhase = isRagnarok(r, now);
+    const awakePhase = phaseOf(r, now) === 'awakening';
     if (awakePhase && !e.awake) {
       e.awake = true;
-      const f = m.maxHp > 0 ? m.hp / m.maxHp : 1;
+      const f = m.maxHp > 0 ? clamp(m.hp / m.maxHp, 0.05, 1) : 1;
       m.maxHp = pDef.hpAwake;
       m.hp = Math.max(1, Math.round(pDef.hpAwake * f));
       fx('banner', { text: `${pDef.name} AWAKENS`, sub: pDef.region });
-      pushLog(r, now, `${pDef.name} has awakened in ${pDef.region}.`, 'red');
+      pushLog(r, now, `Day 14: ${pDef.name} has awakened in ${pDef.region}.`, 'red');
     }
     if (m.state === 'sleep' && observePlayer(r, m, now, e.awake ? 150 : 95, true)) {
       wakeElder(gs, m, now);
@@ -1016,7 +1155,7 @@ function tickTurrets(gs: GameState, dtMs: number, now: number) {
 function blockedAtTurret(r: RunState,x:number,y:number) { const b=blockGrid(r)[tileOf(y)*WW+tileOf(x)]; return b===1||b===2||b===3||b===5; }
 
 // ---------- projectiles & hazards ----------
-function impactRock(gs:GameState,pr:Proj,now:number){if((pr as any).exploded)return;(pr as any).exploded=true;const r=gs.run!;for(const m of r.creatures)if(m.state!=='dead'&&dist(m.x,m.y,pr.x,pr.y)<BAL.creatorCoreEarthmother.rockRadius&&clearPhysicalLine(r,pr,m,true))damageCreature(gs,m,pr.dmg,Math.atan2(m.y-pr.y,m.x-pr.x),now,190);fx('chip',{x:pr.x,y:pr.y,mat:'stone'});}
+function impactRock(gs:GameState,pr:Proj,now:number){if((pr as any).exploded)return;(pr as any).exploded=true;const r=gs.run!;for(const m of r.creatures)if(m.state!=='dead'&&dist(m.x,m.y,pr.x,pr.y)<BAL.creatorCoreEarthmother.rockRadius&&clearPhysicalLine(r,pr,m,true))damageCreature(gs,m,pr.dmg,Math.atan2(m.y-pr.y,m.x-pr.x),now,190);damagePrimordialSummons(r,pr.x,pr.y,BAL.creatorCoreEarthmother.rockRadius,pr.dmg);fx('chip',{x:pr.x,y:pr.y,mat:'stone'});}
 function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?: boolean }) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const g = blockGrid(r);
   for (let i = PROJ.length - 1; i >= 0; i--) {
@@ -1054,7 +1193,8 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
         }
         if (!dead && damagePrimordialSummons(r, x, y, pr.r + 6, pr.dmg) > 0) {
           dead = true;
-          if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now);
+          if (pr.kind === 'nature_rock') impactRock(gs, pr, now);
+          else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now);
         }
         if (dead) break;
       }
@@ -1105,7 +1245,7 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
     else if(h.owner==='player' && h.effect==='mjolnirPull'){for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){const a=Math.atan2(h.y-m.y,h.x-m.x),step=Math.min(dist(h.x,h.y,m.x,m.y),BAL.creatorCoreMjolnir.attractSpeed*dtMs/1000*(m.elder?0.15:1));moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}}
     else if(h.owner==='player' && h.effect==='natureRoot'){for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){m.rootedUntil=Math.max(m.rootedUntil||0,Math.min(now+150,now+Math.max(0,h.tell+h.dur-h.t)));if(now >= (m.rootHitNext||0)){m.rootHitNext=now+BAL.creatorCoreEarthmother.rootTickMs;damageCreature(gs,m,h.dmg,0,now,0);}}}
     else if (h.owner === 'player' && h.kind === 'pool' && h.style === 'burn') { h.tickAcc=(h.tickAcc||0)-dtMs; if(h.tickAcc<=0){h.tickAcc=500;for(const m of r.creatures)if(m.state!=='dead'&&inHaz(h,m.x,m.y)&&now >= (m.signatureBurnNext||0)){m.signatureBurnNext=now+500;damageCreature(gs,m,h.dmg,Math.atan2(m.y-h.y,m.x-h.x),now,10);}} }
-    else if (h.owner === 'player') { if (first || h.kind === 'ring') for (const m of r.creatures) { if (m.state === 'dead' || (h as any)['h_' + m.id]) continue; if (inHaz(h, m.x, m.y)) { (h as any)['h_' + m.id] = 1; damageCreature(gs, m, h.dmg * (h.effect==='mjolnirStrike' && (isWet(weatherAt(r,now)) || [T.SHALLOW,T.RIVER].includes(effTile(r,tileOf(m.x),tileOf(m.y)))) ? BAL.creatorCoreMjolnir.wetMultiplier : 1), Math.atan2(m.y - h.y, m.x - h.x), now, 90); if (h.effect === 'slowm') m.slow = 3000; } } }
+    else if (h.owner === 'player') { if (first && (h.kind === 'circle' || h.kind === 'ring') && h.r) damagePrimordialSummons(r, h.x, h.y, h.r, h.dmg); if (first || h.kind === 'ring') for (const m of r.creatures) { if (m.state === 'dead' || (h as any)['h_' + m.id]) continue; if (inHaz(h, m.x, m.y)) { (h as any)['h_' + m.id] = 1; damageCreature(gs, m, h.dmg * (h.effect==='mjolnirStrike' && (isWet(weatherAt(r,now)) || [T.SHALLOW,T.RIVER].includes(effTile(r,tileOf(m.x),tileOf(m.y)))) ? BAL.creatorCoreMjolnir.wetMultiplier : 1), Math.atan2(m.y - h.y, m.x - h.x), now, 90); if (h.effect === 'slowm') m.slow = 3000; } } }
     else {
       const dot = h.kind === 'pool' || h.effect === 'dot' || h.kind === 'sweep' || h.style === 'burn';
       if (dot) { h.tickAcc = (h.tickAcc || 0) - dtMs; if (h.tickAcc <= 0 && inHaz(h, p.x, p.y)) { h.tickAcc = h.kind === 'pool' ? 500 : 220; hurtPlayer(gs, h.kind === 'pool' ? 5 : h.dmg * 0.45, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, 30); if (h.kind === 'pool') p.rad = Math.min(100, p.rad + 4); } }
@@ -1238,6 +1378,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     r.clock.simMs += dt; t += dt;
     syncPoi(t); syncHome(t);
     commitSeasonBoundaries(r, t - dt, t);
+    awakenEldersAtDay14(r, t);
     // Offline time cannot confirm a fresh sighting or retain an expired mark.
     // Keep committed tells/attacks intact; they resume, not resolve speculatively.
     if (!visual) {
@@ -1359,7 +1500,7 @@ function discover(gs: GameState, now: number) {
   const poiRad = isVeyra05Layout(r.layoutId || '') ? 26 * TILE : 13 * TILE;
   for (const pl of w.places) if (!r.poiSeen.includes(pl.id) && Math.hypot(pl.tx * TILE - p.x, pl.ty * TILE - p.y) < poiRad) { r.poiSeen.push(pl.id); pushLog(r, now, `Discovered: ${pl.name}`, 'gold'); fx('discover', { name: pl.name }); }
   // stones
-  r.elderStones = []; for (const s of C(r, 'inv').slots) if (s && s.key.startsWith('stone_')) r.elderStones.push(s.key);
+  r.elderStones = []; for (const s of C(r, 'inv').slots) if (s && ITEMS[s.key]?.cat === 'stone' && !r.elderStones.includes(s.key)) r.elderStones.push(s.key);
   void countStones;
 }
 

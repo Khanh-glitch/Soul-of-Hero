@@ -23,7 +23,7 @@ import { activeFloor, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05
 import { windowOrigin } from '../veyra05/continuity';
 import { syncVeyraEcosystemActors } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
-import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, inspectPenAt } from './husbandry';
+import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
 
@@ -189,7 +189,8 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
           const tx = inspectAt.tx + dx, ty = inspectAt.ty + dy;
           if (tx <= 2 || ty <= 2 || tx >= WW - 3 || ty >= WH - 3) continue;
           const i = ty * WW + tx;
-          if (w.economyMap.walkable[i] && ![T.DEEP, T.SHALLOW, T.RIVER, T.CLIFF, T.PWALL, T.LAVA].includes(w.tiles[i])) {
+          const veyraSolid = isVeyra05Layout(getActiveLayout()) ? getWindowWorld(getActiveLayout()).floors.ground.solidProps[i] : 0;
+          if (!veyraSolid && w.economyMap.walkable[i] && ![T.DEEP, T.SHALLOW, T.RIVER, T.CLIFF, T.PWALL, T.LAVA].includes(w.tiles[i])) {
             inspectTile = { tx, ty, name: 'Creator Inspection (QA only)' };
             break;
           }
@@ -282,7 +283,11 @@ const VEYRA_BIOME_CREATURE: Record<number, string[]> = {
 };
 export function trySpawnCreature(r: RunState, _now: number, avoidX: number, avoidY: number, avoidTiles: number) {
   const isVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
-  if (isVeyra && activeFloor(r) !== 0) return false;
+  if (isVeyra) {
+    if (activeFloor(r) !== 0) return false;
+    const activeWild = r.creatures.filter(m => m.state !== 'dead' && !m.elder && !m.sideBoss && !m.husbandry?.tamed).length;
+    if (activeWild >= 28) return false;
+  }
   const w = getWorld();
   const tx = 3 + Math.floor(rngNext(r) * (WW - 6)), ty = 3 + Math.floor(rngNext(r) * (WH - 6));
   const t = effTile(r, tx, ty);
@@ -296,7 +301,10 @@ export function trySpawnCreature(r: RunState, _now: number, avoidX: number, avoi
   const d = CREATURES[type];
   if (!d) return false;
   const cr = mkCreature(r, type, tx * TILE + 8, ty * TILE + 8, d.hp);
-  if (isVeyra) cr.floor = 0;
+  if (isVeyra) {
+    cr.floor = 0;
+    cr.ephemeral = true;
+  }
   r.creatures.push(cr);
   return true;
 }
@@ -417,6 +425,11 @@ function cellClass(r: RunState | null, tx: number, ty: number) {
   const w = getWorld(); const i = ty * WW + tx; const t = r ? effTile(r, tx, ty) : w.tiles[i]; let c = tileClass(t);
   if (c === 0 && !(t === T.ICE && [T.DEEP,T.SHALLOW,T.RIVER].includes(w.tiles[i])) && (w.packageContract || w.enforceMasks) && !w.economyMap.walkable[i] && !w.statics.some(s => s.kind === 'door' && s.tx === tx && s.ty === ty)) c = 1;
   if (c === 0) { if (r) { const s = sourceAt(r, tx, ty); if (s && s.def.block && (s.stock > 0 || s.key === 'wreck')) c = 2; } else if (w.src[i] >= 0 && SOURCES[SRC_KEYS[w.src[i]]].block) c = 2; }
+  if (c === 0 && r?.layoutId && isVeyra05Layout(r.layoutId)) {
+    const ww = getWindowWorld(r.layoutId);
+    const layer = ww.floors.layers.get(activeFloor(r)) ?? ww.floors.ground;
+    if (layer.solidProps[i]) c = 2;
+  }
   return c;
 }
 export function blockGrid(r: RunState) {
@@ -1107,6 +1120,11 @@ export function killCreature(gs: GameState, m: Creature, now: number) {
       receipt(r, now, 'boss.defeat', m.sideBoss.key);
       pushLog(r, now, `${d.name} has been slain.`, 'gold');
     } else {
+      if (m.id.startsWith('vy:') && !m.husbandry?.tamed) {
+        const cdMap = (r.veyraEcologyCooldowns ??= {});
+        const hours = m.id.startsWith('vy:wild:') ? 6 : 8;
+        cdMap[m.id] = now + hours * HOUR;
+      }
       for (const [k, q, ch] of d.drops) {
         if (k === 'cash' && rag) continue;
         if (rngNext(r) < ch) spawnDrop(r, k, q, m.x, m.y, now);
@@ -1434,9 +1452,11 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         m.state = 'idle';
         if (nextProg >= 0.999) {
           if (m.atk) delete m.atk.tameProg;
-          m.husbandry = createTamedState(rngNext(r) < 0.5 ? 'f' : 'm');
-          pushLog(r, now, `Tamed ${CREATURES[m.type]?.name || m.type}! Use a Lead Rope to bring it to an enclosed pen.`, 'gold');
-          return ok('husbandry.tame', `${m.id}:tamed:${feedKey}`, `Tamed ${CREATURES[m.type]?.name || m.type}!`);
+          const sex = m.husbandry?.sex ?? deterministicAnimalSex(m.id, r.seed);
+          m.husbandry = createTamedState(sex, m.id, r.seed);
+          const sexSym = sex === 'f' ? '♀' : '♂';
+          pushLog(r, now, `Tamed ${CREATURES[m.type]?.name || m.type} ${sexSym}! Use a Taming Lead to bring a ♀+♂ pair to an enclosed pen.`, 'gold');
+          return ok('husbandry.tame', `${m.id}:tamed:${sex}:${feedKey}`, `Tamed ${CREATURES[m.type]?.name || m.type} ${sexSym}!`);
         }
         m.atk = { ...(m.atk || {}), tameProg: nextProg };
         return ok('husbandry.feed', `${m.id}:${Math.round(nextProg * 100)}:${feedKey}`, `Fed ${CREATURES[m.type]?.name || m.type} (${Math.round(nextProg * 100)}%).`);
@@ -2312,6 +2332,17 @@ export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean, at
       g.water = Math.min(3, g.water + incoming * (dtMs - growing));
     }
     if (e.type === 'barrel' && rain) e.water = Math.min(12, (e.water || 0) + dtMs / 20000);
+  }
+  if (wet && r.veyraOffscreenEntities) {
+    let checkedSeason = false;
+    let isWinter = false;
+    for (const k in r.veyraOffscreenEntities) {
+      const oe = r.veyraOffscreenEntities[k];
+      if (oe && oe.type === 'barrel' && ((oe as any).floor ?? 0) === 0) {
+        if (!checkedSeason) { checkedSeason = true; isWinter = calendarAt(r, at).season === 'winter'; }
+        if (!isWinter) oe.water = Math.min(12, (oe.water || 0) + dtMs / 20000);
+      }
+    }
   }
 }
 /** Local normalized climate/soil inputs are Map-owned. CAL-01 adds the seasonal

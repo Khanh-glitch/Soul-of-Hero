@@ -291,6 +291,8 @@ function findWalkWaypoints(targetGlobalTx: number, targetGlobalTy: number): [num
   const sx = Math.floor(r.player.x / TILE), sy = Math.floor(r.player.y / TILE);
   const gx = Math.max(2, Math.min(WW - 3, targetGlobalTx - ox));
   const gy = Math.max(2, Math.min(WH - 3, targetGlobalTy - oy));
+  const ww = getWindowWorld(r.layoutId || 'shipping');
+  const activeLayer = ww.floors.layers.get(activeFloor(r));
   const doorTiles = new Set<number>();
   for (const e2 of Object.values(r.entities)) if (e2.kind === 'door' && e2.tx !== undefined && e2.ty !== undefined && (((e2 as any).floor ?? 0) === ((r as any).veyraFloor ?? 0))) doorTiles.add(e2.ty * WW + e2.tx);
   for (const st of w.statics) if (st.kind === 'door') doorTiles.add(st.ty * WW + st.tx);
@@ -298,6 +300,7 @@ function findWalkWaypoints(targetGlobalTx: number, targetGlobalTy: number): [num
     const i = ty * WW + tx, t = w.tiles[i];
     if (doorTiles.has(i)) return false;
     if (t === T.DEEP || t === T.SHALLOW || t === T.RIVER || t === T.CLIFF || t === T.PWALL || t === T.LAVA) return true;
+    if (activeLayer?.solidProps[i]) return true;
     if (w.sourceV3[i] && ['oak','pine','snowpine','palm','willow','deadtree','rock','iron','coalv','crystal','salt_shale','sulfur'].includes(w.sourceV3[i]!)) return true;
     return false;
   };
