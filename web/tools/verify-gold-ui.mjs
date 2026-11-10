@@ -39,6 +39,17 @@ try {
     await page.waitForTimeout(700);
     const prefix=width+'-';
     const shot=async label=>{const name=prefix+label+'.png';await page.screenshot({path:path.join(output,name)});report.screens.push(name)};
+    // A real UI preference must survive the same R12 save/restart as the game,
+    // without fabricating a daily reward or a new profile authority.
+    await page.locator('.gold-waymark select').selectOption('explore');
+    await page.waitForTimeout(1800);
+    await page.reload({waitUntil:'networkidle',timeout:60000});
+    await page.getByRole('button',{name:/Continue/}).waitFor({timeout:30000});
+    await page.getByRole('button',{name:/Continue/}).click();
+    await page.locator('.gold-waymark select').waitFor({timeout:10000});
+    const restored=await page.locator('.gold-waymark select').inputValue();
+    if(restored!=='explore')throw new Error('Gold Waymark tracked goal not restored from R12 save: '+restored);
+    report.journey[width]={restored};
     await shot('game');
     await page.keyboard.press('i');
     await page.locator('.gold-inventory').waitFor({timeout:10000});
@@ -53,7 +64,7 @@ try {
     await page.getByRole('dialog',{name:'Expedition Ledger'}).waitFor({timeout:10000});
     const goals=await page.locator('.gold-ledger__goal').count();
     if(goals!==7)throw new Error('Ledger expected seven optional goals, got '+goals);
-    report.journey[width]={goals,sourceReal:await page.locator('.gold-ledger__chronicle').count()};
+    report.journey[width]={...report.journey[width],goals,sourceReal:await page.locator('.gold-ledger__chronicle').count()};
     await shot('ledger');
     await page.keyboard.press('j');
     await page.keyboard.press('m');
