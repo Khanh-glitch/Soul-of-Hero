@@ -76,7 +76,7 @@ function KnownUses({ item, known }: { item: string; known: string[] }) {
   return <details><summary style={{ cursor: 'pointer', color: '#ffd98a' }}>Known uses ({uses.length})</summary><div style={{ maxHeight: 36, overflowY: 'auto', color: '#cfc2dc' }}>{uses.join(' · ')}</div></details>;
 }
 
-export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backToContainer = false }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void; backToContainer?: boolean }) {
+function InventoryClassicPanel({ api, quickTo, x = 404, top = 54, onClose, backToContainer = false }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void; backToContainer?: boolean }) {
   const r = api.gs.run!; const sel = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null; const w = invWeight(r); const limit = carryLimit(r);
   let armor = 0, warm = 0; for (const s of C(r, 'eq').slots) if (s) { armor += ITEMS[s.key].armor || 0; warm += ITEMS[s.key].cold || 0; }
   return <Panel title={backToContainer ? "Inventory · X returns" : "Inventory"} style={{ left: x, top, width: 196 }} onClose={onClose ?? (() => api.open(null))}>
@@ -92,6 +92,52 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
       <button className="btn" disabled={!sel || sel.qty < 2} onClick={() => api.sel && api.act('split', { c: api.sel.c, slot: api.sel.slot })}>Split</button>
       <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('drop', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Drop</button>
       <button className="btn" onClick={() => api.act('sort', { c: 'inv' })}>Sort</button>
+    </div>
+  </Panel>;
+}
+
+
+/**
+ * Real R12 custody, Gold-style 24-slot composition (from PR #52 design).
+ * All game mutations go through the original slotClick/slotContext + dispatch intents.
+ * When docked into another container, retain the two-panel compact transfer UX.
+ */
+export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backToContainer = false }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void; backToContainer?: boolean }) {
+  if (backToContainer || quickTo || x !== 404 || top !== 54) {
+    return <InventoryClassicPanel api={api} quickTo={quickTo} x={x} top={top} onClose={onClose} backToContainer={backToContainer} />;
+  }
+  const r = api.gs.run!;
+  const inv = C(r, 'inv');
+  const eq = C(r, 'eq');
+  const sel = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null;
+  const weight = invWeight(r), limit = carryLimit(r);
+  let armor = 0, warmth = 0;
+  for (const s of eq.slots) if (s) { armor += ITEMS[s.key]?.armor || 0; warmth += ITEMS[s.key]?.cold || 0; }
+  return <Panel title="EXPEDITION PACK · WAYMARK GOLD" className="gold-inventory" style={{left:12, top:17, width:616, height:326}} onClose={onClose ?? (() => api.open(null))}>
+    <div className="gold-inv-body">
+      <div className="gold-inv-hero">
+        <div className="gold-inv-grid-title">ADVENTURER</div>
+        <div className="gold-inv-portrait" aria-label="Equipment silhouette"><Icon k="armor" size={38}/></div>
+        <div className="gold-inv-gear">{['HEAD','BODY','BACK'].map((sl, i) => <div key={sl} style={{ textAlign:'center',fontSize:8,color:'#b7a186' }}><Slot s={eq.slots[i]} sel={api.sel?.c === 'eq' && api.sel.slot === i} onClick={e => slotClick(api, 'eq', i, e)} onContext={() => slotContext(api, 'eq', i)} /><span>{sl}</span></div>)}</div>
+      </div>
+      <div>
+        <div className="gold-inv-grid-label"><span className="gold-inv-grid-title">FIELD KIT · 1–8 QUICKBAR / BACKPACK</span><span>{inv.slots.filter(Boolean).length}/{inv.slots.length}</span></div>
+        <div className="gold-inv-grid" data-testid="gold-inventory-grid" role="group" aria-label="Real game inventory">
+          {inv.slots.map((stack, i) => <Slot key={i} s={stack} sel={api.sel?.c === 'inv' && api.sel.slot === i} active={i === r.player.active && i < 8} hotkey={i < 8 ? String(i + 1) : undefined} onClick={e => slotClick(api, 'inv', i, e)} onContext={() => slotContext(api, 'inv', i)} />)}
+        </div>
+        <div className="gold-inv-facts"><span style={{color:weight>limit?'#ff8a7a':'#cfc2dc'}}>LOAD {weight.toFixed(1)}/{limit}kg {weight > limit ? '· OVERLOADED' : ''}</span><div>ARMOR {Math.round(armor * 100)}% · WARMTH +{warmth}</div><div style={{color:'#eccf8a'}}>CARRIED {countItem(r,'inv','rcash')} · SECURED {api.gs.profile.securedCash}</div></div>
+      </div>
+    </div>
+    <div className="gold-inv-inspector">
+      <div className="gold-inv-inspector-info"><ItemInfo s={sel} known={r.knowledge.recipes} />
+        {sel && api.sel?.c === 'inv' && ITEMS[sel.key].repair && sel.dur !== undefined && sel.dur < ITEMS[sel.key].dur! && <button className="btn" onClick={() => { const k = inv.slots.findIndex(s => s?.key === 'field_repair_kit'); if (k < 0 || !api.sel) return; const kit = inv.slots[k]; if (kit) api.act('fieldRepair', { slot: api.sel.slot, uid: sel.uid, kitSlot: k, kitUid: kit.uid }); }}>Field repair · 1 kit</button>}
+      </div>
+      <div className="gold-inv-actions">
+        <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('useItem', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Use</button>
+        <button className="btn" disabled={!sel || sel.qty < 2} onClick={() => api.sel && api.act('split', { c: api.sel.c, slot: api.sel.slot })}>Split</button>
+        <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('drop', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Drop</button>
+        <button className="btn" onClick={() => api.act('sort', { c: 'inv' })}>Sort</button>
+      </div>
     </div>
   </Panel>;
 }
