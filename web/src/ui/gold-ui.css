@@ -140,3 +140,41 @@
 .gold-boss-hud .title-font { font-size:11px!important; letter-spacing:.4px; }
 .gold-quickbar { border-color:#a7834f; background:linear-gradient(#2b222d,#15111c); box-shadow:inset 0 0 0 1px #7a5c48,inset 0 0 0 2px #352830,0 2px 5px #05030c; }
 .gold-quickbar .slot.active { border-color:#f9ce70; box-shadow:inset 0 0 0 1px #f8c66a,0 0 5px #e9ac5566; }
+
+
+/* PACK ⇄ WORK tabs; exact R12 craft engine in Gold Work, source-directed by PR #52. */
+.gold-inv-tabs { display:grid; grid-template-columns:1fr 1fr; height:22px; margin:-2px 0 3px; gap:3px; }
+.gold-inv-tabs button { font-family:'Pixelify Sans','VT323',monospace; font-size:10px; color:#b8adad; border:1px solid #594656; background:#17131b; cursor:pointer; }
+.gold-inv-tabs button.on { color:#f1d39b; border-color:#c69b54; background:#413020; }
+.gold-inv-tabs span { font-family:'VT323',monospace; font-size:9px; color:#a49ba5; margin-left:8px; }
+.gold-inventory .gold-inv-hero { height:178px; }
+.gold-inventory .gold-inv-portrait { height:97px; width:77px; }
+.gold-inv-hero-canvas { width:62px; height:92px; }
+.gold-work { height:241px; font-size:10px; color:#dfd1bc; display:flex; flex-direction:column; }
+.gold-work__head { display:flex; align-items:center; justify-content:space-between; gap:7px; height:21px; min-height:21px; color:#d3bd9b; }
+.gold-work__head strong { font-family:'Pixelify Sans',monospace; font-size:10px; color:#f1d59e; }
+.gold-work__head input { background:#100e16; border:1px solid #685143; color:#e5d7c6; width:102px; height:16px; font:10px 'VT323',monospace; }
+.gold-work__categories { display:grid; grid-template-columns:repeat(8,minmax(0,1fr)); gap:2px; margin:3px 0; height:26px; min-height:26px; }
+.gold-work__categories button { font:9px 'VT323',monospace; color:#bdb2b7; background:#1a1921; border:1px solid #4c3c45; cursor:pointer; padding:1px; }
+.gold-work__categories button.on { color:#f4d98f; background:#483222; border-color:#bc8c50; }
+.gold-work__body { display:grid; grid-template-columns: minmax(0,1.16fr) minmax(0,1fr); gap:8px; flex:1; min-height:0; }
+.gold-work__grid { border:1px solid #584a4a; background:#121019; display:grid; grid-template-columns:repeat(7,36px); grid-auto-rows:35px; align-content:start; gap:3px; padding:5px; overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; scrollbar-color:#725a4c transparent; }
+.gold-work__recipe { width:36px; height:35px; position:relative; display:flex; align-items:center; justify-content:center; border:1px solid #4f424f; color:#ffe6be; background:#201923; cursor:pointer; }
+.gold-work__recipe.selected { border:2px solid #e7b65f; background:#403025; }
+.gold-work__recipe:focus-visible,.gold-work__categories button:focus-visible { outline:1px solid #fff0bb; outline-offset:-1px; }
+.gold-work__recipe span { position:absolute; right:1px; bottom:0; font:8px 'VT323',monospace; color:#f1d2a1; background:#19121c; }
+.gold-work__recipe i { position:absolute; top:-2px; right:1px; font-size:9px; font-style:normal; color:#ef927a; }
+.gold-work__detail { border:1px solid #665047; background:#18151c; padding:6px; display:flex; flex-direction:column; overflow:hidden; font-size:10px; }
+.gold-work__selected { display:flex; gap:7px; align-items:center; }
+.gold-work__selected strong { color:#f2d394; display:block; font-size:12px; }
+.gold-work__selected small { color:#b8a8a2; display:block; }
+.gold-work__desc { color:#c4b9b7; line-height:1.1; margin:4px 0; max-height:28px; overflow:hidden; }
+.gold-work__costs { display:flex; flex-wrap:wrap; align-content:flex-start; gap:2px; max-height:48px; overflow:auto; }
+.gold-work__costs>span { display:flex; align-items:center; gap:1px; border:1px solid #514052; padding:1px 3px; }
+.gold-work__costs>.ready { color:#a9d99c; } .gold-work__costs>.missing { color:#f38c80; }
+.gold-work__status { font-size:9px; color:#e6c693; margin-top:auto; line-height:1.1; }
+.gold-work__buttons { margin-top:4px; display:flex; gap:4px; }
+.gold-work__buttons .btn { font-size:10px; }
+.gold-work__feedback { color:#a9d999; font-size:9px; padding-top:2px; }
+.gold-work__foot { min-height:11px; color:#ac927a; text-align:center; font-size:8px; padding-top:2px; }
+.gold-work__empty { grid-column:1/-1; color:#b49d91; font-size:11px; }
