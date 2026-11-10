@@ -232,6 +232,8 @@ export interface RunState {
    * Absent on pre-season saves, which are reconstructed from the run clock. */
   calendar?: import('./calendar').CalendarLedgerV1;
   rng: number; nextId: number;
+  /** Presentation-only Waymark choice; never progression authority or reward receipt. */
+  uiWaymark?: { version: 'waymark-ui-v1'; selected: string };
   receipts: Receipt[]; seenIntents: string[]; seq: number;
   vendorStock: Record<string, number>;
   log: { t: number; msg: string; tone?: string }[];
