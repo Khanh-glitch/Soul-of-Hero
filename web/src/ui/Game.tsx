@@ -39,8 +39,8 @@ import { derivePersistentWarnings } from '../game/gold-attention';
 import './gold-persistent-original.css';
 import { Vitals, WorldClock, UrgentAlerts, Hotbar } from './hud';
 import { BUILD_KIT, BuildBar, type BuildTool } from './BuildBar';
-import './gold-buildbar-original.css';
-import './gold-hud-original.css';
+// Full Gold2 HUD/BuildBar styles are isolated within GoldSourceSurface.
+// Full Gold2 HUD/BuildBar styles are isolated within GoldSourceSurface.
 import './gold-wayfinder-original.css';
 // Gold Survivor CSS is now sourced in full from immutable Gold (2) inside GoldSourceSurface.
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
@@ -312,16 +312,18 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
     <div ref={stageRef} className="stage" style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})` }}>
       <canvas ref={cvRef} width={VIEW_W} height={VIEW_H} style={{ width: VIEW_W, height: VIEW_H }} />
-      {/* Source-authored Gold2 HUD components; all values from authoritative R12 state. */}
-      <div className="gold-hud absolute" style={{left:4,top:4}} onMouseDown={e=>e.stopPropagation()}>
-        <Vitals r={r} now={now} zoneOverride={zone}/>
-      </div>
-      <div className="gold-hud absolute" style={{right:4,top:4}} onMouseDown={e=>e.stopPropagation()}>
-        <WorldClock r={r} now={now} secured={gs.profile.securedCash}/>
-      </div>
-      <div className="gold-hud absolute" style={{left:4,top:91,pointerEvents:'none'}}>
-        <UrgentAlerts r={r} cold={p.warmth<20}/>
-      </div>
+      {/* Entire Gold2 HUD now inherits original component/theme CSS without R12 overrides. */}
+      <GoldSourceSurface zIndex={20} passive testId="gold-hud-source">
+        <div className="gold-hud absolute" style={{left:4,top:4,pointerEvents:'auto'}} onMouseDown={e=>e.stopPropagation()}>
+          <Vitals r={r} now={now} zoneOverride={zone}/>
+        </div>
+        <div className="gold-hud absolute" style={{right:4,top:4,pointerEvents:'auto'}} onMouseDown={e=>e.stopPropagation()}>
+          <WorldClock r={r} now={now} secured={gs.profile.securedCash}/>
+        </div>
+        <div className="gold-hud absolute" style={{left:4,top:91,pointerEvents:'none'}}>
+          <UrgentAlerts r={r} cold={p.warmth<20}/>
+        </div>
+      </GoldSourceSurface>
       {!panel && !p.dead && <div className="gold-hud absolute" style={{left:4,top:125,zIndex:16,maxWidth:155}} onMouseDown={e=>e.stopPropagation()}>
         <PersistentProblems warnings={derivePersistentWarnings(r,now)} compact={!!engaged || p.hp < BAL.player.maxHp * 0.25} onInspectMap={()=>setPanel({kind:'map'})}/>
       </div>}
@@ -355,13 +357,15 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       <div className="absolute" style={{ left: 4, bottom: cart ? 46 : 30, width: 230, fontSize: 10, lineHeight: 1.05, pointerEvents: 'none' }}>{r.log.slice(-4).map((l, i) => { const age = now - l.t; if (age > 14000) return null; return <div key={i} style={{ opacity: Math.max(0, 1 - age / 14000), color: l.tone === 'gold' ? '#ffe27a' : l.tone === 'red' ? '#ff8a7a' : l.tone === 'blue' ? '#9ae0ff' : '#e0d4c4', textShadow: '1px 1px 0 #000' }}>{l.msg}</div>; })}</div>
       {/* toasts */}
       <div className="absolute" style={{ left: 0, right: 0, bottom: 56, textAlign: 'center', pointerEvents: 'none' }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className="fadein" style={{ display: 'inline-block', margin: '1px auto', fontSize: 11, padding: '1px 6px', background: '#120c18d8', border: `1px solid ${t.tone === 'bad' ? '#8a3a2a' : t.tone === 'ok' ? '#3a7a3a' : '#5a4a6a'}`, color: t.tone === 'bad' ? '#ffb0a0' : '#f0e4d0' }}>{t.text}<br /></div>)}</div>
-      {/* Source-authored protected eight-slot Gold2 hotbar. */}
-      {!buildingTool && <div className="gold-hud absolute" style={{left:'50%',transform:'translateX(-50%)',bottom:4}} onMouseDown={e=>e.stopPropagation()}>
-        <Hotbar r={r} onPick={i=>{r.player.active=i;rerender();}} onUse={i=>act('useItem',{slot:i})} onOpenPack={()=>setPanel({kind:'inv'})}/>
-      </div>}
-      {buildingTool && <div className="gold-hud absolute" style={{left:'50%',transform:'translateX(-50%)',bottom:4,zIndex:18}} onMouseDown={e=>e.stopPropagation()}>
-        <BuildBar gs={gs} tool={buildingTool} onPick={selectBuildTool} hoverX={hoverX} hoverY={hoverY}/>
-      </div>}
+      {/* Source-authored full Gold2 HUD/BuildBar CSS, separate from R12's legacy panel cascade. */}
+      <GoldSourceSurface zIndex={20} passive testId="gold-hotbar-source">
+        {!buildingTool && <div className="gold-hud absolute" style={{left:'50%',transform:'translateX(-50%)',bottom:4,pointerEvents:'auto'}} onMouseDown={e=>e.stopPropagation()}>
+          <Hotbar r={r} onPick={i=>{r.player.active=i;rerender();}} onUse={i=>act('useItem',{slot:i})} onOpenPack={()=>setPanel({kind:'inv'})}/>
+        </div>}
+        {buildingTool && <div className="gold-hud absolute" style={{left:'50%',transform:'translateX(-50%)',bottom:4,zIndex:18,pointerEvents:'auto'}} onMouseDown={e=>e.stopPropagation()}>
+          <BuildBar gs={gs} tool={buildingTool} onPick={selectBuildTool} hoverX={hoverX} hoverY={hoverY}/>
+        </div>}
+      </GoldSourceSurface>
       {/* panels */}
       {panel?.kind === 'inv' && <GoldSourceSurface><SurvivorScreen key="pack" api={api} initialView="pack" /></GoldSourceSurface>}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
