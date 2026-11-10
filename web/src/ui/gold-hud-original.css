@@ -1,0 +1,76 @@
+/* Gold (2) HUD author CSS declarations; scoped to Gold HUD wrappers only. */
+.gold-hud { --ink:#0a0c0f; --iron:#14181d; --steel:#1e252c; --edge:#39464f; --edgeLit:#5d707c; --brass:#c8963c; --brassLit:#f4d089; --paper:#e9dfc6; --muted:#8fa0a8; --hp:#d8402f; --stam:#a8c247; --food:#dd9a3c; --water:#3f9fd0; --warm:#e0705a; --good:#7fc25a; --warn:#e8b23c; --bad:#e2543c; --info:#5fc8e0; --hud-op:.86; }
+.gold-hud .lbl { font-family: "Pixelify Sans", monospace; letter-spacing: .3px; }
+.gold-hud .rule { height: 1px; background: linear-gradient(90deg, transparent, var(--edge), transparent); }
+@keyframes  pulse  { 50% { opacity: .5; } }
+.gold-hud .plate {
+  background: linear-gradient(180deg, rgba(20,24,29,var(--hud-op)), rgba(8,11,14,var(--hud-op)));
+  border: 1px solid #05070a;
+  box-shadow: inset 0 0 0 1px rgba(57,70,79,.75), inset 0 1px 0 rgba(93,112,124,.4), 0 2px 0 #04060a;
+}
+.gold-hud .gauge { display: flex; align-items: center; gap: 3px; height: 9px; }
+.gold-hud .gauge .glyph { width: 9px; height: 9px; flex: none; image-rendering: pixelated; }
+.gold-hud .gauge .track {
+  position: relative; height: 6px; background: #05070a; overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(57,70,79,.9);
+}
+.gold-hud .gauge .fill { position: absolute; inset: 0 auto 0 0; transition: width 140ms linear; }
+.gold-hud .gauge .seg {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0 5px, rgba(0,0,0,.55) 5px 6px);
+}
+.gold-hud .gauge .ghost { position: absolute; inset: 0 auto 0 0; background: rgba(255,255,255,.28); transition: width 520ms ease-out 120ms; }
+.gold-hud .gauge .num { font-family: "Pixelify Sans", monospace; font-size: 8px; width: 17px; text-align: right; color: var(--paper); }
+.gold-hud .gauge.crit .num { color: #ff9a80; }
+.gold-hud .gauge.crit .track { animation: critpulse 900ms ease-in-out infinite; }
+@keyframes  critpulse  { 50% { box-shadow: inset 0 0 0 1px var(--bad), 0 0 6px rgba(226,84,60,.6); } }
+.gold-hud .hotbar { display: flex; gap: 4px; padding: 3px 5px; }
+.gold-hud .hotbar__slots { display: flex; gap: 2px; align-items: flex-end; }
+.gold-hud .hotbar__divider { width: 1px; height: 22px; background: var(--edge); margin: 0 1px; }
+.gold-hud .hotbar__info { width: 122px; line-height: 1.15; min-width: 0; }
+.gold-hud .hotbar__packbtn { display: inline-flex; align-items: center; gap: 1px; height: 22px; padding: 0 4px !important; font-size: 8px !important; }
+.gold-hud .hotbar .slot { width: 23px; height: 23px; transition: transform var(--t-fast) linear, box-shadow var(--t-fast) linear, border-color var(--t-fast) linear; }
+.gold-hud .hotbar .slot.active { transform: translateY(-3px); border-color: var(--brassLit); box-shadow: inset 0 0 0 1px var(--brassLit), 0 3px 0 #04060a, 0 0 10px rgba(244,208,137,.42); background: linear-gradient(180deg, #342810, #1a1308); }
+.gold-hud .hotbar .slot.active .k { color: var(--brassLit); font-weight: 700; }
+.gold-hud .hotbar .slot.depleted { box-shadow: inset 0 0 0 1px rgba(226,84,60,.6); }
+.gold-hud .core-readout { display: flex; align-items: center; gap: 2px; margin-top: 2px; }
+.gold-hud .core-readout > span { flex: 1; display: inline-flex; align-items: center; gap: 1px; min-width: 0; font: 8px "Pixelify Sans", monospace; }
+.gold-hud .core-readout > span.empty { opacity: .68; }
+.gold-hud .core-readout b { color: currentColor; font-weight: 700; }
+.gold-hud .core-readout i { flex: 1; height: 3px; background: #080c10; box-shadow: inset 0 0 0 1px #3c4a50; }
+.gold-hud .core-readout em { display: block; height: 100%; }
+.gold-hud .core-readout strong { color: currentColor; font-weight: 400; }
+.gold-hud .chip { font-family: "Pixelify Sans", monospace; font-size: 8px; padding: 1px 4px; box-shadow: inset 0 0 0 1px currentColor; }
+.gold-hud .lamp { width: 6px; height: 6px; flex: none; box-shadow: 0 0 5px currentColor, inset 0 0 0 1px rgba(0,0,0,.6); background: currentColor; }
+.gold-hud .lamp.round { border-radius: 50%; }
+.gold-hud .lamp.diamond { transform: rotate(45deg); }
+.gold-hud .key { display: inline-block; min-width: 11px; text-align: center; margin-right: 3px; background: linear-gradient(180deg, var(--brassLit), var(--brass)); color: #1a1206; padding: 0 2px; font-weight: 700; font-family: "Pixelify Sans", monospace; font-size: 8px; box-shadow: 0 1px 0 #4a3208; }
+.gold-hud .stat { display: inline-flex; align-items: center; gap: 3px; font-family: "Pixelify Sans", monospace; font-size: 9px; color: var(--paper); padding: 1px 4px 1px 3px; background: rgba(5,7,10,.55); box-shadow: inset 0 0 0 1px rgba(57,70,79,.6); white-space: nowrap; }
+.gold-hud .stat .sep { display: inline-block; width: 1px; height: 8px; background: var(--edge); margin: 0 2px; }
+.gold-hud .station-console { --station-accent: var(--food); background: linear-gradient(160deg, #253038, #121c20 34%, #0a1217); }
+.gold-hud .station-console--research { --station-accent: #7fd1dc; background: linear-gradient(160deg, #26363d, #13272a 34%, #0a151b); }
+.gold-hud .station-console--furnace, .gold-hud .station-console--campfire { --station-accent: #f4ae6c; background: linear-gradient(160deg, #332c26, #241b17 34%, #101214); }
+.gold-hud .station-console--refinery, .gold-hud .station-console--oil_pump { --station-accent: #6bc3bb; background: linear-gradient(160deg, #233836, #122825 34%, #0b1719); }
+.gold-hud .station-console .panel-h { color: var(--station-accent); }
+.gold-hud .station-console .console-h { font-size: 9px; color: color-mix(in srgb, var(--station-accent) 65%, var(--paper)); }
+.gold-hud .station-console .recipe-row { min-height: 17px; }
+.gold-hud .station-console .recipe-row.wait { border-left: 2px solid var(--warn); }
+.gold-hud .station-console .recipe-row.no { opacity: .75; }
+.gold-hud .station-readiness-mark { font: 10px "Pixelify Sans", monospace; width: 10px; text-align: center; }
+.gold-hud .station-action { display: flex; flex-wrap: wrap; gap: 3px 5px; align-items: baseline; margin-top: 3px; font: 9px "Pixelify Sans", monospace; color: var(--warn); line-height: 1.2; }
+.gold-hud .station-action b { color: var(--paper); }
+.gold-hud .station-action span { color: var(--muted); }
+.gold-hud .station-action.blocked b { color: var(--bad); }
+.gold-hud .station-action.waiting b { color: var(--warn); }
+.gold-hud .station-action.ready b { color: var(--good); }
+.gold-hud .station-service-tabs { display: flex; gap: 3px; margin: 1px 0 4px; }
+.gold-hud .station-service-tabs .btn { flex: 1; font-size: 9px; }
+.gold-hud .station-service { min-height: 0; max-height: 177px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+.gold-hud .hud-col { display: flex; flex-direction: column; gap: 3px; pointer-events: none; }
+.gold-hud .hud-col > * { pointer-events: auto; }
+.gold-hud .hud-col--left { align-items: flex-start; }
+.gold-hud .hud-col--right { align-items: flex-end; }
+.gold-hud .hud-col--center { align-items: center; max-width: 340px; }
+.gold-hud .urgent-rail { display: flex; flex-direction: column; gap: 2px; }
+.gold-hud .urgent-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; font: 8px "Pixelify Sans", monospace; background: linear-gradient(180deg, rgba(36,14,12,.92), rgba(14,8,8,.92)); }
+.gold-hud .urgent-chip span { color: var(--paper); opacity: .9; }
