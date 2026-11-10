@@ -33,3 +33,14 @@ jobs:
         run: npx --no-install vitest run --testTimeout=240000 --maxWorkers=2
       - name: Production singlefile
         run: npm run build
+      - name: Install Chromium for composed UI verification
+        run: npx --no-install playwright install --with-deps chromium
+      - name: Verify actual Veyra UI with keyboard at 640x360 and 1280x720
+        run: node tools/verify-gold-ui.mjs
+      - name: Upload genuine Gold UI screenshots and metrics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-ui-composed-${{ github.sha }}
+          path: web/evidence/gold-ui-composed/
+          if-no-files-found: warn
