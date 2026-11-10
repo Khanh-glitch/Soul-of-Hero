@@ -79,3 +79,26 @@
 @media (prefers-reduced-motion: reduce) {
   .gold-waymark *, .gold-ledger *, .gold-inventory * { animation:none!important; transition:none!important; }
 }
+
+
+/* Unified readable panels. Only presentation changes; all existing engine operations remain. */
+.gold-surface, .gold-fieldchart, .gold-skillbook {
+  background:linear-gradient(145deg,#2d2228,#19141e 75%);
+  box-shadow:inset 0 0 0 1px #7a5d44,inset 0 0 0 2px #392c32,0 3px 0 #070408;
+  border-color:#b38a52;
+}
+.gold-surface .panel-h, .gold-fieldchart .panel-h, .gold-skillbook .panel-h {
+  color:#f6db9d; text-shadow:1px 1px #342015;
+}
+.gold-surface button:focus-visible, .gold-fieldchart button:focus-visible,
+.gold-skillbook button:focus-visible, .gold-inventory button:focus-visible, .gold-ledger button:focus-visible {
+  outline:1px solid #fff1bd; outline-offset:1px;
+}
+.gold-fieldchart canvas {
+  image-rendering:pixelated; border:2px solid #9b7849;
+  box-shadow:0 0 0 1px #251a20, inset 0 0 0 1px #d4ac6b;
+  max-width:100%;
+}
+.gold-skillbook .bar { border-color:#3b2d27; box-shadow:0 0 0 1px #816044; }
+.gold-skillbook .scroll { scrollbar-width:thin; scrollbar-color:#96724f #211920; }
+.gold-fieldchart .btn.gold, .gold-surface .btn.gold { box-shadow:inset 0 1px 0 #ffe3a0,inset 0 -1px #4a2a17; }
