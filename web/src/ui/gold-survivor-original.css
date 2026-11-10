@@ -113,7 +113,8 @@
 .sv-readiness--waiting b { color: var(--warn); }
 .sv-readiness--blocked b { color: var(--bad); }
 .sv-compact-nav { display: none; }
-@media (max-width: 700px){
+/* Adaptation only: runtime stage is ALWAYS logical 640x360 even when browser CSS viewport is 1280x720, so use source Gold2 compact presentation at both scales. Every declaration below is unchanged. */
+
 .sv { padding: 5px 6px 6px; }
 .sv-top { margin-bottom: 3px; }
 .sv-hint { display: none; }
@@ -162,7 +163,7 @@
 .sv-ddesc { font-size: 10px; }
 .sv-readiness { font-size: 10px; }
 .sv-dhead b { font-size: 12px; }
-}
+
 .dgrid-tier { background: #0a1319; padding: 4px; }
 .dgrid-tier--hot { background: linear-gradient(180deg,#30291e,#101719 64%); border-color: #a98b55; box-shadow: inset 0 0 0 1px #8c7449; }
 .dgrid-tier__head { font-size: 9px; letter-spacing: .4px; margin-bottom: 4px; }
