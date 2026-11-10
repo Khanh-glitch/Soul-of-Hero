@@ -1,0 +1,35 @@
+name: SOH Veyra Gold UI integration
+on:
+  pull_request:
+    paths:
+      - 'web/src/ui/**'
+      - '.github/workflows/veyra-gold-ui-integration.yml'
+  push:
+    branches:
+      - integration/veyra-gold-uiux-20261110
+jobs:
+  web-integration:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+      - name: Install exact locked dependencies
+        run: npm ci
+      - name: TypeScript runtime
+        run: npm run typecheck
+      - name: TypeScript test code
+        run: npm run typecheck:tests
+      - name: Focused Gold UI adapter tests
+        run: npx --no-install vitest run src/ui/gold-ui.test.ts
+      - name: Existing Web gameplay regression
+        run: npx --no-install vitest run --testTimeout=240000 --maxWorkers=2
+      - name: Production singlefile
+        run: npm run build
