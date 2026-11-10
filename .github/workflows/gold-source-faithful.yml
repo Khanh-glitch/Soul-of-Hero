@@ -1,0 +1,62 @@
+name: Authored Gold 2+3 Veyra integration
+on:
+  push:
+    branches:
+      - integration/gold-source-faithful-2plus3-20261110
+  pull_request:
+    paths:
+      - 'web/src/ui/**'
+      - 'web/src/game/action-readiness.ts'
+      - 'web/src/game/avatar-presentation.ts'
+      - 'web/src/visual/**'
+      - 'web/tools/verify-authored-gold.mjs'
+      - '.github/workflows/gold-source-faithful.yml'
+jobs:
+  typecheck-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - name: Check real R12 runtime types
+        run: npm run typecheck
+      - run: npm run typecheck:tests
+      - run: npx --no-install vitest run --maxWorkers=2
+      - run: npm run build
+      - name: Check 18 Veyra creature atlases preserved
+        run: |
+          test -s dist/index.html
+          test -d dist/sprites/creatures
+          test $(find dist/sprites/creatures -name '*.png' | wc -l) -ge 18
+  visual-gates:
+    needs: typecheck-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npx --no-install playwright install --with-deps chromium
+      - run: node tools/verify-authored-gold.mjs
+      - name: Upload exact-screen Gold source evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-authored-v2-qa-${{ github.sha }}
+          path: web/evidence/gold-authored/
+          if-no-files-found: warn
