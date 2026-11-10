@@ -299,7 +299,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
     <div ref={stageRef} className="stage" style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})` }}>
       <canvas ref={cvRef} width={VIEW_W} height={VIEW_H} style={{ width: VIEW_W, height: VIEW_H }} />
       {/* top-left vitals */}
-      <div className="panel absolute" style={{ left: 4, top: 4, padding: '3px 5px', fontSize: 10, lineHeight: 1 }} onMouseDown={e => e.stopPropagation()}>
+      <div className="panel absolute gold-hud-vitals" style={{ left: 4, top: 4, padding: '3px 5px', fontSize: 10, lineHeight: 1 }} onMouseDown={e => e.stopPropagation()}>
         {[['HP', p.hp, BAL.player.maxHp, '#e0483a'], ['ST', p.stamina, BAL.player.maxStamina, '#d8d050'], ['FD', p.hunger, 100, '#e09040'], ['H₂O', p.thirst, 100, '#4aa0e0'], ['WRM', p.warmth, 100, '#f0b0a0']].map(([l, v, m, c]) => <div key={l as string} className="flex items-center gap-1" style={{ marginBottom: 2 }}><span style={{ width: 18, color: '#b8a8c8' }}>{l}</span><Bar v={v as number} max={m as number} col={c as string} w={l === 'HP' ? 74 : 58} /><span style={{ width: 16, textAlign: 'right', color: (v as number) < (m as number) * 0.25 ? '#ff7a6a' : '#e8dcc8' }}>{Math.round(v as number)}</span></div>)}
         {p.rad > 1 && <div className="flex items-center gap-1"><span style={{ width: 18, color: '#b0e040' }}>RAD</span><Bar v={p.rad} max={100} col="#a0d030" w={58} /><span>{Math.round(p.rad)}</span></div>}
         <div style={{ color: p.sheltered ? '#9ae0a0' : '#8a7a9a', marginTop: 1 }}>{p.sheltered ? '⌂ sheltered' : zone} {surf && <span style={{ color: '#6a5a7a' }}>· {surf}</span>}</div>
@@ -309,7 +309,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       {!panel && <GoldWaymark goals={journeyGoals} selected={trackedGoal} onSelect={chooseTrackedGoal} onLedger={() => { setSel(null); setPanel({ kind: 'journey' }); }} danger={!!engaged || p.hp < BAL.player.maxHp * 0.25} />}
       <GoldFeedback run={r} danger={!!engaged || p.hp < BAL.player.maxHp * 0.25} hidden={!!panel} />
       {/* top-right clocks */}
-      <div className="panel absolute" style={{ right: 4, top: 4, padding: '3px 6px', fontSize: 10, lineHeight: 1.05, textAlign: 'right', minWidth: 120 }} onMouseDown={e => e.stopPropagation()}>
+      <div className="panel absolute gold-hud-clock" style={{ right: 4, top: 4, padding: '3px 6px', fontSize: 10, lineHeight: 1.05, textAlign: 'right', minWidth: 120 }} onMouseDown={e => e.stopPropagation()}>
         <div><span className="tag" style={{ color: ph === 'calm' ? '#9ae0a0' : ph === 'danger' ? '#ff9a5a' : '#ff4a3a' }}>{ph === 'calm' ? 'CALM' : ph === 'danger' ? 'RAGNAROK' : 'AWAKENING'}</span> <span style={{ color: '#ffd98a' }}>Day {day}/14</span></div>
         <div style={{ color: '#cfc2dc' }}>run {Math.floor(hrs)}h{String(Math.floor((hrs % 1) * 60)).padStart(2, '0')}m / {BAL.run.maxRunHours}h <span style={{ color: '#7a6a8a' }}>{r.qaUsed ? 'QA·' : ''}LOCAL</span></div>
         <div>{dtm > 0.25 && dtm < 0.75 ? '☼' : '☾'} {clock} · {WICON[w]} {w} <span style={{ color: '#7a6a8a' }}>→ {WICON[next]}</span></div>
@@ -324,7 +324,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         if (!d) return null;
         const barCol = (d as any).color || '#f0a060';
         const subtitle = engaged.elder ? (engaged.elder.awake ? 'awakened' : 'latent') : 'regional guardian';
-        return <div className="absolute" style={{ left: 170, top: 6, width: 300, textAlign: 'center' }}><div className="title-font" style={{ fontSize: 10, color: barCol, textShadow: '1px 1px 0 #000' }}>{d.name} <span style={{ color: '#cfc2dc', fontSize: 9 }}>— {subtitle}</span></div><div className="bar" style={{ width: 300, height: 6 }}><i style={{ width: `${Math.max(0, Math.min(100, (engaged.hp / engaged.maxHp) * 100))}%`, background: `linear-gradient(${barCol}, #8a2a1a)` }} /></div></div>;
+        return <div className="absolute gold-boss-hud" style={{ left: 170, top: 6, width: 300, textAlign: 'center' }}><div className="title-font" style={{ fontSize: 10, color: barCol, textShadow: '1px 1px 0 #000' }}>{d.name} <span style={{ color: '#cfc2dc', fontSize: 9 }}>— {subtitle}</span></div><div className="bar" style={{ width: 300, height: 6 }}><i style={{ width: `${Math.max(0, Math.min(100, (engaged.hp / engaged.maxHp) * 100))}%`, background: `linear-gradient(${barCol}, #8a2a1a)` }} /></div></div>;
       })()}
       {banner && <div key={banner.id} className="absolute banner" style={{ left: 0, right: 0, top: 70, textAlign: 'center', pointerEvents: 'none' }} onAnimationEnd={() => setBanner(null)}><div className="title-font" style={{ fontSize: 22, color: '#ffe8b0', textShadow: '2px 2px 0 #2a1006, 0 0 8px #ff9a3a' }}>{banner.text}</div>{banner.sub && <div style={{ fontSize: 12, color: '#e0d0f0', textShadow: '1px 1px 0 #000' }}>{banner.sub}</div>}</div>}
       {coreAim && ['core_meteor','core_dragon','core_elsa'].includes(activeStack(r)?.key||'') && coreAim.mode==='signature' && <svg className="absolute" width={VIEW_W} height={VIEW_H} style={{left:0,top:0,pointerEvents:'none'}}><rect x="2" y="2" width={VIEW_W-4} height={VIEW_H-4} fill="none" stroke="#ffd98a" strokeDasharray="4 3"/></svg>}
@@ -342,7 +342,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       {/* toasts */}
       <div className="absolute" style={{ left: 0, right: 0, bottom: 56, textAlign: 'center', pointerEvents: 'none' }}>{toasts.filter(t => now - t.t < 3200).map(t => <div key={t.id} className="fadein" style={{ display: 'inline-block', margin: '1px auto', fontSize: 11, padding: '1px 6px', background: '#120c18d8', border: `1px solid ${t.tone === 'bad' ? '#8a3a2a' : t.tone === 'ok' ? '#3a7a3a' : '#5a4a6a'}`, color: t.tone === 'bad' ? '#ffb0a0' : '#f0e4d0' }}>{t.text}<br /></div>)}</div>
       {/* quickbar */}
-      <div className="panel absolute flex gap-0.5" style={{ left: '50%', transform: 'translateX(-50%)', bottom: 4, padding: 3 }} onMouseDown={e => e.stopPropagation()}>
+      <div className="panel absolute flex gap-0.5 gold-quickbar" style={{ left: '50%', transform: 'translateX(-50%)', bottom: 4, padding: 3 }} onMouseDown={e => e.stopPropagation()}>
         {C(r, 'inv').slots.slice(0, 8).map((s, i) => <Slot key={i} s={s} active={i === p.active} hotkey={String(i + 1)} onClick={() => { p.active = i; rerender(); }} onContext={() => act('useItem', { slot: i })} />)}
         <div style={{ fontSize: 9, width: 74, lineHeight: 1, marginLeft: 3, color: '#cfc2dc', alignSelf: 'center' }}>{(() => { const s = activeStack(r); if (!s) return 'Fists'; const d = ITEMS[s.key]; return <><span style={{ color: '#ffe0a0' }}>{d.name}</span><br />{d.creatorCore && s.reserves ? `B${s.reserves.basic} Q${s.reserves.refined} E${s.reserves.signature} · R/Shift/Alt reload` : d.core ? `${s.charge}/${d.charge} charges · LMB cast, RMB cancel` : d.food ? 'LMB eat/drink' : d.dmg ? `dmg ${d.dmg}${d.power ? ' · tool' : ''}` : d.place ? 'LMB to place' : d.cat === 'bp' ? 'LMB learn' : ''}</>; })()}</div>
       </div>
