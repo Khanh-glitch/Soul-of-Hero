@@ -30,6 +30,7 @@ import { ThermalStatusCard } from './ThermalStatus';
 import type { OfflineReturnV1 } from '../game/return-report';
 import { RestPanel } from './RestPanel';
 import { GoldWaymark, GoldLedger, goldGoals } from './GoldJourney';
+import { GoldFeedback } from './GoldFeedback';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 
 export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: GameState; report: { lines: string[]; report: OfflineReturnV1 | null } | null; onExit: () => void; onRunEnd: () => void; onInspect?: () => void }) {
@@ -298,6 +299,7 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
       </div>
       {/* Gold Waymark from PR #52 visual grammar. Read-only, optional; collapses during boss combat. */}
       {!panel && <GoldWaymark goals={journeyGoals} selected={trackedGoal} onSelect={setTrackedGoal} onLedger={() => { setSel(null); setPanel({ kind: 'journey' }); }} danger={!!engaged || p.hp < BAL.player.maxHp * 0.25} />}
+      <GoldFeedback run={r} danger={!!engaged || p.hp < BAL.player.maxHp * 0.25} hidden={!!panel} />
       {/* top-right clocks */}
       <div className="panel absolute" style={{ right: 4, top: 4, padding: '3px 6px', fontSize: 10, lineHeight: 1.05, textAlign: 'right', minWidth: 120 }} onMouseDown={e => e.stopPropagation()}>
         <div><span className="tag" style={{ color: ph === 'calm' ? '#9ae0a0' : ph === 'danger' ? '#ff9a5a' : '#ff4a3a' }}>{ph === 'calm' ? 'CALM' : ph === 'danger' ? 'RAGNAROK' : 'AWAKENING'}</span> <span style={{ color: '#ffd98a' }}>Day {day}/14</span></div>
