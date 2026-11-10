@@ -64,9 +64,13 @@ export function SurvivorScreen({ api, initial = 'all', focusRecipe }: { api: Api
   const r = api.gs.run!;
   const [cat, setCat] = useState<Cat>(initial);
   const [pick, setPick] = useState<string | null>(focusRecipe && RECIPES[focusRecipe] ? focusRecipe : null);
+  // A 640x360 game viewport cannot present pack and crafting side-by-side legibly.
+  // Both panes stay mounted; compact presentation exposes one at a time.
+  // Wider screens retain both panes and original gameplay/custody behavior.
+  const [compactView, setCompactView] = useState<'pack' | 'work'>(focusRecipe ? 'work' : 'pack');
   const [onlyReady, setOnlyReady] = useState(false);
   const [q, setQ] = useState('');
-  useEffect(() => { if (focusRecipe && RECIPES[focusRecipe]) { setCat('all'); setQ(''); setOnlyReady(false); setPick(focusRecipe); } }, [focusRecipe]);
+  useEffect(() => { if (focusRecipe && RECIPES[focusRecipe]) { setCat('all'); setQ(''); setOnlyReady(false); setPick(focusRecipe); setCompactView('work'); } }, [focusRecipe]);
   const have = (k: string) => countItem(r, 'inv', k);
   const isStructCat = cat === 'stations' || cat === 'devices';
 
@@ -90,11 +94,19 @@ export function SurvivorScreen({ api, initial = 'all', focusRecipe }: { api: Api
   const selStack = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null;
   const EQ_GHOST = ['scrap_helm', 'leather_armor', 'fur_cloak'];
 
-  return <div className="sv" onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
+  return <div className="sv" data-compact-view={compactView} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
     <div className="sv-top">
       <div className="sv-title">SURVIVOR</div>
       <span className="sv-hint"><span className="key">drag</span>move <span className="key">Enter</span>pick/place <span className="key">Esc</span>cancel <span className="key">1-8</span>hotbar</span>
       <button className="btn ghost sm sv-x" onClick={() => api.open(null)}>✕ <span className="key" style={{ marginLeft: 3 }}>Esc</span></button>
+    </div>
+    <div className="sv-compact-nav" role="group" aria-label="Survivor view">
+      <button type="button" className={compactView === 'pack' ? 'active' : ''} aria-pressed={compactView === 'pack'} onClick={() => setCompactView('pack')}>
+        PACK <span>Gear · inventory</span>
+      </button>
+      <button type="button" className={compactView === 'work' ? 'active' : ''} aria-pressed={compactView === 'work'} onClick={() => setCompactView('work')}>
+        WORK <span>Recipes · stations</span>
+      </button>
     </div>
     <div className="sv-body">
       {/* ================= LEFT: body + pack ================= */}
