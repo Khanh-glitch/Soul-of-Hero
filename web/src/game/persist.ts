@@ -57,6 +57,8 @@ export function validate(raw: any): GameState | null {
   if (raw.run === null) return raw as GameState;
   const r = raw.run;
   if (!obj(r) || typeof r.id !== 'string' || !r.id || !integer(r.nextId) || r.nextId < 1 || !finite(r.startedAt) || !finite(r.qaOffset) || !integer(r.seed) || !integer(r.rng) || !integer(r.seq) || !obj(r.player) || !obj(r.custody) || !obj(r.entities) || !obj(r.clock)) return null;
+  // Optional Gold presentation preference: save/restore is run-local, never economy authority.
+  if (r.uiWaymark !== undefined && (!obj(r.uiWaymark) || r.uiWaymark.version !== 'waymark-ui-v1' || typeof r.uiWaymark.selected !== 'string' || !['auto','explore','shelter','craft','endure','hunt','guardians','stones'].includes(r.uiWaymark.selected))) return null;
   if (r.sourceLayoutVersion !== undefined && r.sourceLayoutVersion !== 2 && r.sourceLayoutVersion !== 3) return null;
   const layout = r.layoutId || 'shipping'; if (typeof layout !== 'string' || !hasLayout(layout)) return null;
   const world = getWorld(layout), fingerprint = mapDigest(world);
