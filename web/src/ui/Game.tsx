@@ -29,6 +29,8 @@ import { HomeStatusCard } from './HomeStatus';
 import { ThermalStatusCard } from './ThermalStatus';
 import type { OfflineReturnV1 } from '../game/return-report';
 import { RestPanel } from './RestPanel';
+import { SurvivorScreen } from './SurvivorScreen';
+import './gold-survivor-original.css';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 
 export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: GameState; report: { lines: string[]; report: OfflineReturnV1 | null } | null; onExit: () => void; onRunEnd: () => void; onInspect?: () => void }) {
@@ -330,9 +332,9 @@ export default function Game({ gs, report, onExit, onRunEnd, onInspect }: { gs: 
         <div style={{ fontSize: 9, width: 74, lineHeight: 1, marginLeft: 3, color: '#cfc2dc', alignSelf: 'center' }}>{(() => { const s = activeStack(r); if (!s) return 'Fists'; const d = ITEMS[s.key]; return <><span style={{ color: '#ffe0a0' }}>{d.name}</span><br />{d.creatorCore && s.reserves ? `B${s.reserves.basic} Q${s.reserves.refined} E${s.reserves.signature} · R/Shift/Alt reload` : d.core ? `${s.charge}/${d.charge} charges · LMB cast, RMB cancel` : d.food ? 'LMB eat/drink' : d.dmg ? `dmg ${d.dmg}${d.power ? ' · tool' : ''}` : d.place ? 'LMB to place' : d.cat === 'bp' ? 'LMB learn' : ''}</>; })()}</div>
       </div>
       {/* panels */}
-      {panel?.kind === 'inv' && <InventoryPanel api={api} />}
+      {panel?.kind === 'inv' && <SurvivorScreen key="pack" api={api} initialView="pack" />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
-      {panel?.kind === 'craft' && <CraftPanel api={api} focusRecipe={panel.recipe} />}
+      {panel?.kind === 'craft' && <SurvivorScreen key="work" api={api} initialView="work" focusRecipe={panel.recipe} />}
       {panel?.kind === 'build' && <BuildPanel api={api} />}
       {panel?.kind === 'map' && <MapPanel api={api} teleportTarget={spiritTarget.current?.uid===activeStack(r)?.uid?spiritTarget.current:null} onTeleportSelect={activeStack(r)?.key==='core_demon' ? (x,y)=>{const reason=spiritDestination(r,x,y);if(reason){toast(reason,'bad');return;}spiritTarget.current={uid:activeStack(r)!.uid,x,y};toast('Destination set. Close the map, then hold and release E.','ok');} : undefined} />}
       {panel?.kind === 'skills' && <SkillsPanel api={api} />}
