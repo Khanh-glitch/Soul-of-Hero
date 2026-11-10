@@ -1,0 +1,79 @@
+name: SOH UIUX A-B Fusion - playable QA
+on:
+  push:
+    branches: [uiux/waymark-a-b-fusion-20261110]
+    paths:
+      - 'web/uiux/visual-overhaul/**'
+      - '.github/workflows/uiux-a-b-fusion.yml'
+  workflow_dispatch:
+jobs:
+  integrated-candidate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: web/uiux/visual-overhaul
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/uiux/visual-overhaul/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Verify A baseline + B selective integration + 54 original assets
+        run: |
+          npm run verify:fusion
+          npm run verify:assets
+      - name: Semantic TypeScript
+        id: ts
+        run: npm run typecheck
+      - name: Fusion journey score and save regression
+        id: journey
+        run: npm run test:journey
+      - name: Whole-suite historical regression (honest reporting)
+        id: legacy
+        continue-on-error: true
+        run: npm test
+      - name: Build exact source standalone
+        id: build
+        run: npm run build
+      - name: Verify single HTML
+        run: |
+          test -s dist/index.html
+          sha256sum dist/index.html | tee fusion-build-sha256.txt
+      - name: Publish playable HTML
+        uses: actions/upload-artifact@v4
+        if: ${{ steps.build.outcome == 'success' }}
+        with:
+          name: soh-uiux-ab-fusion-playable-${{ github.sha }}
+          path: web/uiux/visual-overhaul/dist/index.html
+          retention-days: 30
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Real 640x360 + 1280x720 Waymark and Inventory acceptance
+        id: browser
+        run: node tools/shot-fusion.mjs
+      - name: Publish Chromium screenshots + scrollbar metrics
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: soh-uiux-ab-fusion-browser-${{ github.sha }}
+          path: web/uiux/visual-overhaul/evidence/fusion/**
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Enforce no false green on historical failures
+        if: always()
+        shell: bash
+        run: |
+          echo "TYPESCRIPT: ${{ steps.ts.outcome }}"
+          echo "FUSION_TESTS: ${{ steps.journey.outcome }}"
+          echo "BUILD: ${{ steps.build.outcome }}"
+          echo "BROWSER: ${{ steps.browser.outcome }}"
+          echo "HISTORICAL_SUITE: ${{ steps.legacy.outcome }}"
+          test "${{ steps.ts.outcome }}" = success
+          test "${{ steps.journey.outcome }}" = success
+          test "${{ steps.build.outcome }}" = success
+          test "${{ steps.browser.outcome }}" = success
+          test "${{ steps.legacy.outcome }}" = success || { echo "::error::Full historical suite still fails; no gameplay merge"; exit 1; }
