@@ -26,7 +26,7 @@ function stockList(stock: Record<string, number>, empty = 'none') {
 }
 
 /** Top-right contextual card shown only near owned structures. Never a permanent dashboard. */
-export function HomeStatusCard({ r, px, py, hidden }: { r: RunState; px: number; py: number; hidden?: boolean }) {
+export function HomeStatusCard({ r, px, py, hidden, inline = false }: { r: RunState; px: number; py: number; hidden?: boolean; inline?: boolean }) {
   if (hidden) return null;
   const tx = Math.floor(px / 16), ty = Math.floor(py / 16);
   const near = nearestHomeStructure(r, tx, ty, 6);
@@ -46,7 +46,7 @@ export function HomeStatusCard({ r, px, py, hidden }: { r: RunState; px: number;
   const hours = cab?.funded && cab.state !== 'idle' ? hoursLabel(cab.hours) : s.hoursToCollapse !== null && s.hoursToCollapse !== undefined ? hoursLabel(s.hoursToCollapse) : null;
   void headline; void CABINET_STATE_LABEL;
   return (
-    <div className="plate absolute homecard" data-testid="home-status" data-state={s.state} style={{ right: 4, top: 132, width: 150, padding: '3px 5px', pointerEvents: 'none' }} title={headline}>
+    <div className={`plate homecard ${inline ? '' : 'absolute'}`} data-testid="home-status" data-state={s.state} style={inline ? { width: 150, padding: '3px 5px', pointerEvents: 'none' } : { right: 4, top: 132, width: 150, padding: '3px 5px', pointerEvents: 'none' }} title={headline}>
       <div className="homecard__row">
         <Glyph k="home" c={protectedOk ? 'var(--good)' : 'var(--warn)'} s={8} />
         <b className="homecard__name">{s.name}</b>

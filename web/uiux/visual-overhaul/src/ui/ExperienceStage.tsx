@@ -7,8 +7,18 @@ const EYEBROW: Record<ExperienceEvent['kind'], string> = {
   world: '', warning: 'ATTENTION', ledger: 'CUSTODY', milestone: 'MILESTONE', ceremony: 'UPGRADE',
 };
 
-/** Centre theatre for STAGE and CEREMONY tiers only. One at a time, never blocks input. */
-export function ExperienceStage({ events, onDismiss }: { events: ExperienceEvent[]; onDismiss: (id: string) => void }) {
+/** Centre theatre for STAGE and CEREMONY tiers only. One at a time, never blocks input or overlaps Boss HUD. */
+export function ExperienceStage({
+  events,
+  onDismiss,
+  combatFocus = false,
+  inline = false,
+}: {
+  events: ExperienceEvent[];
+  onDismiss: (id: string) => void;
+  combatFocus?: boolean;
+  inline?: boolean;
+}) {
   const active = events[0];
   useEffect(() => {
     if (!active) return;
@@ -16,15 +26,20 @@ export function ExperienceStage({ events, onDismiss }: { events: ExperienceEvent
     return () => window.clearTimeout(t);
   }, [active?.id, active?.duration, onDismiss]);
   if (!active) return null;
+  const queued = events.length - 1;
   const style = { '--accent': active.accent || '#e6b45d', '--life': `${active.duration}ms` } as React.CSSProperties;
 
-  if (active.kind === 'world') return <div className="xp-stage" key={active.id} style={style} role="status" aria-live="polite">
+  if (active.kind === 'world' && combatFocus) return <div className="xp-combat-alert" key={active.id} style={style} role="status" aria-live="assertive">
+    <b>{active.title}</b><span>{active.detail}</span>
+  </div>;
+
+  if (active.kind === 'world') return <div className={`xp-stage ${inline ? 'xp-stage--inline' : ''}`} key={active.id} style={style} role="status" aria-live="polite">
     <div className="xp-world"><i className="xp-world__rule" /><div className="xp-world__title">{active.title}</div>{active.detail && <div className="xp-world__detail">{active.detail}</div>}<i className="xp-world__rule xp-world__rule--b" /></div>
   </div>;
 
-  if (active.tier === 'ceremony') return <>
+  if (active.tier === 'ceremony' && !combatFocus) return <>
     <div className="xp-dim" key={`dim-${active.id}`} style={style} />
-    <div className="xp-stage xp-stage--mid" key={active.id} style={style} role="status" aria-live="polite">
+    <div className={`xp-stage ${inline ? 'xp-stage--inline' : 'xp-stage--mid'}`} key={active.id} style={style} role="status" aria-live="polite">
       <div className="xp-ceremony">
         <svg className="xp-gear xp-gear--big" viewBox="0 0 32 32" shapeRendering="crispEdges" aria-hidden><Gear /></svg>
         <svg className="xp-gear xp-gear--small" viewBox="0 0 32 32" shapeRendering="crispEdges" aria-hidden><Gear /></svg>
@@ -36,14 +51,19 @@ export function ExperienceStage({ events, onDismiss }: { events: ExperienceEvent
     </div>
   </>;
 
-  const hero = active.kind === 'boss' || active.kind === 'relic';
+  const hero = active.kind === 'boss' || active.kind === 'relic' || active.kind === 'milestone';
   const chips = active.icons && active.icons.length > 1 ? active.icons : null;
-  return <div className="xp-stage" key={active.id} style={style} role="status" aria-live="polite">
+  return <div className={`xp-stage ${inline ? 'xp-stage--inline' : ''}`} key={active.id} style={style} role="status" aria-live="polite">
     <div className={`xp-plaque xp-plaque--${active.kind} ${hero ? 'xp-plaque--hero' : ''}`}>
       <i className="xp-plaque__wing xp-plaque__wing--l" />
-      {active.icon && <div className="xp-plaque__sigil"><i className="xp-plaque__ring" /><Icon k={active.icon} size={hero ? 32 : 20} /></div>}
+      {active.icon && <div className="xp-plaque__sigil"><i className="xp-plaque__ring" /><Icon k={active.icon} size={hero ? 28 : 20} /></div>}
       <div className="xp-plaque__copy">
-        {(EYEBROW[active.kind] || active.source === 'staged') && <div className="xp-plaque__eyebrow">{active.source === 'staged' ? 'STAGED PREVIEW' : EYEBROW[active.kind]}</div>}
+        {(EYEBROW[active.kind] || active.source === 'staged') && (
+          <div className="xp-plaque__eyebrow">
+            {active.source === 'staged' ? 'STAGED PREVIEW' : EYEBROW[active.kind]}
+            {queued > 0 && <span className="xp-plaque__queue">+{queued}</span>}
+          </div>
+        )}
         <div className="xp-plaque__title">{active.title}</div>
         {chips ? <div className="xp-plaque__chips">{chips.map(c => <span key={c.key} className="xp-chip"><Icon k={c.key} size={12} />{c.qty ? `×${c.qty}` : ''}</span>)}</div>
           : active.detail ? <div className="xp-plaque__detail">{active.detail}</div> : null}

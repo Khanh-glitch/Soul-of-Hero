@@ -1,0 +1,403 @@
+{
+ "note": "SOH_PROVISIONAL. BOUNDED SYNTHETIC SAMPLE: 64 cycles x 4 synthetic site classes from lootRoll (w06 fixed/option + b04-v1 role pool). This is NOT whole-map drop-rate proof. Consumers: recipe inputs, structure costs, direct engine actions (verified against engine.ts source in the test).",
+ "classes": [
+  {
+   "cls": "toolbox",
+   "resolvedClass": "toolbox",
+   "w06Fixed": [
+    "spares",
+    2
+   ],
+   "w06Options": [
+    [
+     "fasteners",
+     2
+    ],
+    [
+     "field_repair_kit",
+     1
+    ]
+   ],
+   "b04Role": {
+    "role": "metal",
+    "grade": "mid",
+    "fixed": [
+     [
+      "refined_iron_ingot",
+      1
+     ]
+    ],
+    "pool": [
+     [
+      "mechanical_gear",
+      1
+     ],
+     [
+      "metal_pipe",
+      1
+     ],
+     [
+      "iron_plate",
+      1
+     ]
+    ]
+   },
+   "b01Role": [],
+   "emittedB04Over64Cycles": [
+    "fasteners",
+    "field_repair_kit",
+    "iron_plate",
+    "mechanical_gear",
+    "metal_pipe",
+    "refined_iron_ingot",
+    "spares"
+   ]
+  },
+  {
+   "cls": "supply",
+   "resolvedClass": "supply",
+   "w06Fixed": [
+    "bandage",
+    1
+   ],
+   "w06Options": [
+    [
+     "berries",
+     2
+    ],
+    [
+     "herb",
+     2
+    ]
+   ],
+   "b04Role": {
+    "role": "food",
+    "grade": "low",
+    "fixed": [],
+    "pool": [
+     [
+      "berries",
+      1
+     ],
+     [
+      "mushroom",
+      1
+     ],
+     [
+      "herb",
+      1
+     ]
+    ]
+   },
+   "b01Role": [
+    [
+     "berries",
+     1
+    ],
+    [
+     "mushroom",
+     1
+    ],
+    [
+     "herb",
+     1
+    ]
+   ],
+   "emittedB04Over64Cycles": [
+    "bandage",
+    "berries",
+    "herb",
+    "mushroom"
+   ]
+  },
+  {
+   "cls": "military",
+   "resolvedClass": "military",
+   "w06Fixed": [
+    "energy_basic",
+    4
+   ],
+   "w06Options": [
+    [
+     "arrow",
+     4
+    ],
+    [
+     "spares",
+     2
+    ]
+   ],
+   "b04Role": {
+    "role": "medical",
+    "grade": "mid",
+    "fixed": [],
+    "pool": [
+     [
+      "bandage",
+      1
+     ],
+     [
+      "herb",
+      1
+     ],
+     [
+      "arrow",
+      4
+     ]
+    ]
+   },
+   "b01Role": [
+    [
+     "bandage",
+     1
+    ],
+    [
+     "herb",
+     1
+    ]
+   ],
+   "emittedB04Over64Cycles": [
+    "arrow",
+    "bandage",
+    "energy_basic",
+    "herb",
+    "spares"
+   ]
+  },
+  {
+   "cls": "advanced",
+   "resolvedClass": "advanced",
+   "w06Fixed": [
+    "energy_refined",
+    1
+   ],
+   "w06Options": [
+    [
+     "mechanical_parts",
+     1
+    ],
+    [
+     "spares",
+     2
+    ]
+   ],
+   "b04Role": {
+    "role": "medical_high",
+    "grade": "high",
+    "fixed": [
+     [
+      "medkit",
+      1
+     ],
+     [
+      "refined_iron_ingot",
+      2
+     ]
+    ],
+    "pool": [
+     [
+      "metal_blade",
+      1
+     ],
+     [
+      "mechanical_gear",
+      1
+     ],
+     [
+      "metal_pipe",
+      1
+     ]
+    ]
+   },
+   "b01Role": [],
+   "emittedB04Over64Cycles": [
+    "energy_refined",
+    "mechanical_gear",
+    "mechanical_parts",
+    "medkit",
+    "metal_blade",
+    "metal_pipe",
+    "refined_iron_ingot",
+    "spares"
+   ]
+  }
+ ],
+ "materials": [
+  {
+   "item": "metal_pipe",
+   "name": "Metal Pipe",
+   "consumers": [
+    "recipe:iron_plate",
+    "recipe:vehicle_frame_piped"
+   ],
+   "lootSources": [
+    "toolbox",
+    "advanced"
+   ]
+  },
+  {
+   "item": "iron_plate",
+   "name": "Iron Plate",
+   "consumers": [
+    "action:repairStructure material=iron_plate (engine.ts)"
+   ],
+   "lootSources": [
+    "toolbox"
+   ]
+  },
+  {
+   "item": "mechanical_gear",
+   "name": "Mechanical Gear",
+   "consumers": [
+    "recipe:industrial_pick_geared",
+    "recipe:vehicle_drive_geared",
+    "build:ir_sensor",
+    "build:bear_trap"
+   ],
+   "lootSources": [
+    "toolbox",
+    "advanced"
+   ]
+  },
+  {
+   "item": "refined_iron_ingot",
+   "name": "Refined Iron Ingot",
+   "consumers": [
+    "recipe:metal_pipe",
+    "recipe:iron_plate"
+   ],
+   "lootSources": [
+    "toolbox",
+    "advanced"
+   ]
+  },
+  {
+   "item": "mechanical_parts",
+   "name": "Mechanical Parts",
+   "consumers": [
+    "recipe:vehicle_frame",
+    "recipe:vehicle_drive",
+    "recipe:core_mjolnir",
+    "recipe:industrial_pick",
+    "recipe:industrial_axe",
+    "recipe:reinforced_spear",
+    "recipe:metal_pipe",
+    "recipe:metal_blade",
+    "recipe:mechanical_gear",
+    "recipe:iron_plate",
+    "recipe:vehicle_frame_piped",
+    "build:oil_pump",
+    "build:refinery",
+    "build:farm_controller",
+    "build:base_generator",
+    "build:pressure_switch",
+    "build:door_powered",
+    "build:arrow_turret"
+   ],
+   "lootSources": [
+    "advanced"
+   ]
+  },
+  {
+   "item": "spares",
+   "name": "Spares",
+   "consumers": [
+    "recipe:vehicle_frame",
+    "recipe:vehicle_drive",
+    "recipe:core_blast",
+    "recipe:core_earthmother",
+    "recipe:core_mjolnir",
+    "recipe:core_demon",
+    "recipe:core_meteor",
+    "recipe:core_dragon",
+    "recipe:core_elsa",
+    "recipe:industrial_pick",
+    "recipe:industrial_axe",
+    "recipe:vehicle_frame_piped",
+    "recipe:industrial_pick_geared",
+    "recipe:vehicle_drive_geared",
+    "recipe:gas_mask",
+    "recipe:core_fire",
+    "recipe:core_earth",
+    "recipe:core_storm",
+    "recipe:core_frost",
+    "build:oil_pump",
+    "build:refinery",
+    "build:research",
+    "build:farm_controller",
+    "build:base_generator",
+    "build:power_switch",
+    "build:door_powered"
+   ],
+   "lootSources": [
+    "toolbox",
+    "military",
+    "advanced"
+   ]
+  },
+  {
+   "item": "salvaged_oil",
+   "name": "Salvaged Oil",
+   "consumers": [
+    "recipe:refine_salvaged_oil",
+    "recipe:refinery_fuel",
+    "recipe:refinery_fuel_batch",
+    "recipe:refinery_industrial",
+    "recipe:refinery_lubricant"
+   ],
+   "lootSources": []
+  },
+  {
+   "item": "crude_petroleum",
+   "name": "Crude Petroleum",
+   "consumers": [
+    "recipe:refinery_crude"
+   ],
+   "lootSources": []
+  },
+  {
+   "item": "fuel_can",
+   "name": "Fuel Canister",
+   "consumers": [
+    "action:vehicle.refuel motorbike tank (engine.ts ~1373)",
+    "action:base generator burns a fuel item from its container, incl. Fuel Canister (engine.ts ~533, advanceWorld)",
+    "action:authorized POI generator fuelled by one canister (engine.ts ~1541)"
+   ],
+   "lootSources": []
+  },
+  {
+   "item": "metal_blade",
+   "name": "Metal Blade",
+   "consumers": [
+    "recipe:iron_sword_blade",
+    "recipe:reinforced_spear_blade"
+   ],
+   "lootSources": [
+    "advanced"
+   ]
+  },
+  {
+   "item": "fasteners",
+   "name": "Forged Fasteners",
+   "consumers": [
+    "recipe:vehicle_drive",
+    "recipe:motorbike_kit",
+    "recipe:field_repair_kit",
+    "recipe:trail_pack",
+    "recipe:trail_canteen",
+    "recipe:mechanical_gear",
+    "recipe:vehicle_drive_geared",
+    "build:farm_controller",
+    "build:power_switch",
+    "build:pressure_switch",
+    "build:ir_sensor",
+    "build:door_powered",
+    "build:arrow_turret",
+    "build:bear_trap"
+   ],
+   "lootSources": [
+    "toolbox"
+   ]
+  }
+ ]
+}

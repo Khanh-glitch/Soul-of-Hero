@@ -1,0 +1,109 @@
+name: SOH UIUX Final Source + Browser
+on:
+  push:
+    branches: [uiux/final-experience-correction-20261110]
+    paths:
+      - 'web/uiux/visual-overhaul/**'
+      - '.github/workflows/uiux-final-review.yml'
+  workflow_dispatch:
+jobs:
+  final-candidate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: web/uiux/visual-overhaul
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/uiux/visual-overhaul/package-lock.json
+      - name: Install exact dependencies
+        run: npm ci
+      - name: Verify 54 PixelFX asset hashes and import paths
+        run: npm run verify:assets
+      - name: Verify AST and offline presentation regression checks
+        run: npm run verify:final
+      - name: Strict TypeScript diagnostics (preserve existing unused-source failures)
+        id: typecheck-strict
+        continue-on-error: true
+        run: npm run typecheck
+      - name: Type safety without legacy unused diagnostics (no bypass of type errors)
+        run: npx tsc --noEmit --noUnusedLocals false --noUnusedParameters false
+      - name: Full Vitest suite (record historical failures honestly)
+        id: full-tests
+        continue-on-error: true
+        run: npm test
+      - name: Build true source-derived standalone HTML
+        id: build
+        run: npm run build
+      - name: Check standalone output
+        run: |
+          test -s dist/index.html
+          sha256sum dist/index.html | tee evidence/final-build-sha256.txt
+      - name: Publish standalone playable HTML
+        uses: actions/upload-artifact@v4
+        if: ${{ always() && steps.build.outcome == 'success' }}
+        with:
+          name: soh-uiux-final-html-${{ github.sha }}
+          path: web/uiux/visual-overhaul/dist/index.html
+          if-no-files-found: error
+          retention-days: 30
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Capture real browser UX at 640 and 1280
+        id: browser
+        run: node tools/shot-wave4.mjs
+      - name: Independently verify screenshots and console receipts
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const d='evidence/wave4';
+          const x=JSON.parse(fs.readFileSync(d+'/run-log.json','utf8'));
+          const shots=fs.readdirSync(d).filter(f=>/^(640|1280)-.*\.png$/.test(f));
+          console.log(JSON.stringify({shots:shots.length,log:x.log,errors:x.errors},null,2));
+          if(shots.length!==18 || x.errors.length) process.exit(1);
+          for(const w of ['640','1280']){
+            if(!x.log.some(s=>s.includes('['+w+'] drag:') && s.includes("hotbar6 now 'Hunting Bow'")))process.exit(2);
+            if(!x.log.some(s=>s.includes('['+w+'] hover+8:') && s.includes("slot7 'Salvager Pick'")))process.exit(3);
+          }
+          NODE
+      - name: Validate actual Field Chart/Notes on desktop and native screen
+        id: system-browser
+        run: |
+          node tools/shot-final-pillars.mjs
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const d='evidence/final-pillars';
+          const data=JSON.parse(fs.readFileSync(d+'/run-log.json','utf8'));
+          const files=fs.readdirSync(d).filter(x=>x.endsWith('.png'));
+          if(files.length!==8||data.errors.length)process.exit(1);
+          for(const w of ['640','1280']){
+            if(!data.log.some(x=>x.startsWith(w+' field chart actual wheel zoom')))process.exit(2);
+            if(!data.log.some(x=>x.startsWith(w+' contextual Notes journal')))process.exit(3);
+          }
+          NODE
+      - name: Publish browser evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: soh-uiux-final-browser-${{ github.sha }}
+          path: |
+            web/uiux/visual-overhaul/evidence/wave4/*.png
+            web/uiux/visual-overhaul/evidence/final-pillars/*.png
+            web/uiux/visual-overhaul/evidence/final-pillars/run-log.json
+            web/uiux/visual-overhaul/evidence/wave4/run-log.json
+            web/uiux/visual-overhaul/evidence/final-build-sha256.txt
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Keep full regression status visible
+        if: always()
+        run: |
+          echo "STRICT_TYPESCRIPT: ${{ steps.typecheck-strict.outcome }}"
+          echo "FULL_VITEST: ${{ steps.full-tests.outcome }}"
+          echo "SOURCE_BUILD: ${{ steps.build.outcome }}"
+          echo "BROWSER: ${{ steps.browser.outcome }}"
+          echo "MAP_NOTES_BROWSER: ${{ steps.system-browser.outcome }}"
+          test "${{ steps.full-tests.outcome }}" = success || { echo "::error::Full Vitest suite has unresolved failing assertions"; exit 1; }

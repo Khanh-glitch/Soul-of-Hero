@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ITEMS } from '../game/catalog';
-import { C } from '../game/engine';
-import type { Stack } from '../game/core';
+import { ITEMS, stationBurnable } from '../game/catalog';
+import { BAL, type RunState, type Stack, type Container } from '../game/core';
+import { C, cartWeight, isStationFuel } from '../game/engine';
 import { Icon, type Api } from './common';
 
 // ============================================================================
@@ -15,11 +15,58 @@ import { Icon, type Api } from './common';
 // Every outcome is still decided by dispatch; this file only routes intents.
 // ============================================================================
 type Ref = { c: string; slot: number };
-const store: { drag: (Ref & { key: string; qty: number; uid: string }) | null; keyboardPick: (Ref & { uid: string }) | null; hover: Ref | null; x: number; y: number; subs: Set<() => void> } = { drag: null, keyboardPick: null, hover: null, x: 0, y: 0, subs: new Set() };
+const store: { drag: (Ref & { key: string; qty: number; uid: string }) | null; keyboardPick: (Ref & { key: string; uid: string }) | null; hover: Ref | null; x: number; y: number; subs: Set<() => void> } = { drag: null, keyboardPick: null, hover: null, x: 0, y: 0, subs: new Set() };
 const emit = () => store.subs.forEach(f => f());
 export const getHoverSlot = () => store.hover;
+export const getKeyboardPick = () => store.keyboardPick;
 export const isDragging = () => !!store.drag;
 export function clearSlotInteraction() { store.drag = null; store.keyboardPick = null; store.hover = null; emit(); }
+
+function useSlotStore() {
+  const [, f] = useState(0);
+  useEffect(() => { const s = () => f(v => v + 1); store.subs.add(s); return () => { store.subs.delete(s); }; }, []);
+}
+
+const EQ_SLOTS = ['head', 'body', 'back'] as const;
+function acceptsUI(r: RunState, c: Container, slot: number, s: Stack): boolean {
+  if (['loot', 'cash', 'out'].includes(c.kind)) return false;
+  if (isStationFuel(r, c.id)) return stationBurnable(s.key);
+  if (c.kind === 'fuel') return !!ITEMS[s.key]?.fuel;
+  if (c.kind === 'eq') return ITEMS[s.key]?.slot === EQ_SLOTS[slot];
+  return true;
+}
+function mergeableUI(a: Stack, b: Stack): boolean {
+  return a.key === b.key && ITEMS[a.key].max > 1 && a.meta === b.meta && a.dur === b.dur && a.charge === b.charge && !a.reserves && !b.reserves;
+}
+
+/** Read-only mirror of engine `move` validation for live drop-target feedback. */
+export function canDropInSlot(r: RunState, fromCid: string, fromSlot: number, toCid: string, toSlot: number): { valid: boolean; reason?: string } {
+  if (fromCid === toCid && fromSlot === toSlot) return { valid: false };
+  const from = C(r, fromCid), to = C(r, toCid);
+  if (!from || !to) return { valid: false };
+  const s = from.slots[fromSlot];
+  if (!s) return { valid: false };
+  if (['loot', 'cash', 'out'].includes(to.kind)) return { valid: false, reason: 'Read-only slot' };
+  if (isStationFuel(r, to.id) && !stationBurnable(s.key)) return { valid: false, reason: 'Station fuel only' };
+  if (to.kind === 'fuel' && !ITEMS[s.key]?.fuel) return { valid: false, reason: 'Fuel items only' };
+  if (to.kind === 'eq' && ITEMS[s.key]?.slot !== EQ_SLOTS[toSlot]) return { valid: false, reason: `Needs ${EQ_SLOTS[toSlot]} gear` };
+  const tgt = to.slots[toSlot];
+  if (tgt) {
+    if (mergeableUI(tgt, s)) {
+      if (tgt.qty >= ITEMS[s.key].max) return { valid: false, reason: 'Stack full' };
+    } else if (!acceptsUI(r, from, fromSlot, tgt)) {
+      return { valid: false, reason: 'Cannot swap into source slot' };
+    }
+  }
+  if (to.kind === 'vehicle' && from !== to) {
+    const swap = tgt && !mergeableUI(tgt, s) ? ITEMS[tgt.key].w * tgt.qty : 0;
+    if (cartWeight(r, to.id) + ITEMS[s.key].w * s.qty - swap > BAL.motorbike.maxWeight + 1e-9) return { valid: false, reason: 'Vehicle overweight' };
+  }
+  if (from.kind === 'vehicle' && from !== to && tgt && !mergeableUI(tgt, s)) {
+    if (cartWeight(r, from.id) - ITEMS[s.key].w * s.qty + ITEMS[tgt.key].w * tgt.qty > BAL.motorbike.maxWeight + 1e-9) return { valid: false, reason: 'Vehicle overweight' };
+  }
+  return { valid: true };
+}
 
 function stagePoint(cx: number, cy: number) {
   const st = document.querySelector('.stage') as HTMLElement | null; if (!st) return { x: cx, y: cy };
@@ -28,9 +75,16 @@ function stagePoint(cx: number, cy: number) {
 }
 
 export function DSlot({ api, cid, slot, s, hotkey, active, quickTo, size = 22, accent }: { api: Api; cid: string; slot: number; s: Stack | null; hotkey?: string; active?: boolean; quickTo?: string; size?: number; accent?: boolean }) {
+  useSlotStore();
   const d = s ? ITEMS[s.key] : null;
   const sel = api.sel?.c === cid && api.sel.slot === slot;
   const dragging = store.drag?.c === cid && store.drag.slot === slot;
+  const kbdPicked = store.keyboardPick?.c === cid && store.keyboardPick.slot === slot;
+  const moving = store.drag || store.keyboardPick;
+  const isSource = moving?.c === cid && moving.slot === slot;
+  const dropCheck = moving && !isSource && api.gs.run ? canDropInSlot(api.gs.run, moving.c, moving.slot, cid, slot) : null;
+  const isHover = store.hover?.c === cid && store.hover.slot === slot;
+  const dropCls = dropCheck ? (dropCheck.valid ? (isHover ? 'drop-ok drop-hover' : 'drop-ok') : (isHover ? 'drop-bad drop-hover-bad' : 'drop-bad')) : '';
   const quick = () => {
     if (!s) return;
     const to = cid === 'inv' ? quickTo : 'inv';
@@ -104,7 +158,7 @@ export function DSlot({ api, cid, slot, s, hotkey, active, quickTo, size = 22, a
         const result = api.act('move', { from: held.c, fs: held.slot, to: cid, ts: slot });
         api.setSel(result.ok ? { c: cid, slot } : null);
       } else api.setSel(null);
-    } else if (s) { store.keyboardPick = { c: cid, slot, uid: s.uid }; api.setSel({ c: cid, slot }); api.sfx('ui'); }
+    } else if (s) { store.keyboardPick = { c: cid, slot, key: s.key, uid: s.uid }; api.setSel({ c: cid, slot }); api.sfx('ui'); }
     emit();
   };
   const onDouble = () => {
@@ -119,13 +173,20 @@ export function DSlot({ api, cid, slot, s, hotkey, active, quickTo, size = 22, a
     else api.act('move', { from: cid, fs: slot, to: 'inv' });
   };
   const durF = s && s.dur !== undefined && d?.dur ? s.dur / d.dur : null;
-  return <div className={`dslot ${sel ? 'sel' : ''} ${active ? 'active' : ''} ${accent ? 'accent' : ''} ${dragging ? 'lifted' : ''} ${s ? '' : 'empty'}`}
-    data-dslot="1" data-c={cid} data-s={slot} style={{ width: size, height: size }}
-    role="button" tabIndex={0} aria-pressed={sel} aria-label={`Slot ${slot + 1}${hotkey ? `, hotbar ${hotkey}` : ''}: ${d ? `${d.name}, ${s!.qty} carried` : 'empty'}. Enter picks or places; Escape cancels.`}
+  const titleText = dropCheck && !dropCheck.valid && dropCheck.reason
+    ? `${dropCheck.reason}${d ? ` · ${d.name}` : ''}`
+    : d ? `${d.name}${s!.qty > 1 ? ` ×${s!.qty}` : ''}` : '';
+  return <div className={`dslot ${sel ? 'sel' : ''} ${active ? 'active' : ''} ${accent ? 'accent' : ''} ${dragging ? 'lifted' : ''} ${kbdPicked ? 'kbd-picked' : ''} ${dropCls} ${s ? '' : 'empty'}`}
+    data-dslot="1" data-c={cid} data-s={slot} data-drop={dropCheck ? (dropCheck.valid ? 'ok' : 'bad') : undefined} style={{ width: size, height: size }}
+    role="button" tabIndex={0} aria-pressed={sel} aria-label={`Slot ${slot + 1}${hotkey ? `, hotbar ${hotkey}` : ''}: ${d ? `${d.name}, ${s!.qty} carried` : 'empty'}.${active ? ' Active in hand.' : ''}${kbdPicked ? ' Picked up for keyboard move.' : ''} Enter picks or places; Escape cancels.`}
     onPointerDown={onDown} onKeyDown={onKeyDown} onDoubleClick={onDouble} onContextMenu={onContext}
-    onPointerEnter={() => { store.hover = { c: cid, slot }; }} onPointerLeave={() => { if (store.hover?.c === cid && store.hover.slot === slot) store.hover = null; }}
-    title={d ? `${d.name}${s!.qty > 1 ? ` ×${s!.qty}` : ''}` : ''}>
+    onPointerEnter={() => { store.hover = { c: cid, slot }; if (store.drag || store.keyboardPick) emit(); }}
+    onPointerLeave={() => { if (store.hover?.c === cid && store.hover.slot === slot) { store.hover = null; if (store.drag || store.keyboardPick) emit(); } }}
+    onFocus={() => { if (store.keyboardPick) { store.hover = { c: cid, slot }; emit(); } }}
+    title={titleText}>
     {hotkey && <span className="dslot__key">{hotkey}</span>}
+    {active && <span className="dslot__active-pip" aria-hidden="true" />}
+    {kbdPicked && <span className="dslot__hold">MOVE</span>}
     {s && <Icon k={s.key} size={size - 6} />}
     {s && s.qty > 1 && <span className="dslot__qty">{s.qty}</span>}
     {s && d?.charge && s.charge !== undefined && <span className="dslot__qty" style={{ color: s.charge ? 'var(--info)' : 'var(--bad)' }}>{s.charge}⚡</span>}
@@ -134,18 +195,53 @@ export function DSlot({ api, cid, slot, s, hotkey, active, quickTo, size = 22, a
   </div>;
 }
 
-/** Floating icon that follows the pointer while dragging; mount once per screen. */
+/** Floating icon + item label that follows the pointer while dragging; mount once per screen. */
 export function DragGhost() {
-  const [, f] = useState(0);
-  useEffect(() => { const s = () => f(v => v + 1); store.subs.add(s); return () => { store.subs.delete(s); }; }, []);
+  useSlotStore();
   if (!store.drag) return null;
-  return <div className="drag-ghost" style={{ left: store.x - 10, top: store.y - 10 }}><Icon k={store.drag.key} size={18} />{store.drag.qty > 1 && <b>{store.drag.qty}</b>}</div>;
+  const nm = ITEMS[store.drag.key]?.name ?? store.drag.key;
+  return <div className="drag-ghost" style={{ left: store.x - 10, top: store.y - 10 }}>
+    <Icon k={store.drag.key} size={18} />
+    {store.drag.qty > 1 && <b>{store.drag.qty}</b>}
+    <span className="drag-ghost__lbl">{nm}</span>
+  </div>;
 }
 
-/** Grid of DSlots for any container. */
+/** Status banner shown when an item is lifted via keyboard Enter/Space. */
+export function KeyboardMoveBanner() {
+  useSlotStore();
+  if (!store.keyboardPick) return null;
+  const nm = ITEMS[store.keyboardPick.key]?.name ?? store.keyboardPick.key;
+  return <div className="kbd-move-bar" role="status">
+    <Icon k={store.keyboardPick.key} size={11} />
+    <span>Moving <b>{nm}</b> · Arrows + <span className="key">Enter</span> place · <span className="key">Esc</span> cancel</span>
+  </div>;
+}
+
+/** Grid of DSlots for any container. When `hotRow` is true, renders a protected Quickbar (1-8) shelf above Backpack. */
 export function DGrid({ api, cid, cols = 8, quickTo, hotRow = false, size = 22 }: { api: Api; cid: string; cols?: number; quickTo?: string; hotRow?: boolean; size?: number }) {
   useEffect(() => () => clearSlotInteraction(), []);
   const c = C(api.gs.run!, cid); if (!c) return null;
+  if (hotRow && c.slots.length > 8) {
+    const hot = c.slots.slice(0, 8), pack = c.slots.slice(8);
+    return <div className="dgrid dgrid--tiered" data-cols={cols}>
+      <div className="dgrid-tier dgrid-tier--hot">
+        <div className="dgrid-tier__head">
+          <span>QUICKBAR · 1–8</span>
+          <small title="Sort organizes Backpack slots 9–24 while keeping your Quickbar intact">PROTECTED</small>
+        </div>
+        <div className="dgrid-row" style={{ gridTemplateColumns: `repeat(${cols}, ${size}px)` }}>
+          {hot.map((s, i) => <DSlot key={i} api={api} cid={cid} slot={i} s={s} size={size} quickTo={quickTo} hotkey={String(i + 1)} accent active={i === api.gs.run!.player.active} />)}
+        </div>
+      </div>
+      <div className="dgrid-tier dgrid-tier--pack">
+        <div className="dgrid-tier__head"><span>BACKPACK · {pack.filter(Boolean).length}/{pack.length}</span></div>
+        <div className="dgrid-row" style={{ gridTemplateColumns: `repeat(${cols}, ${size}px)` }}>
+          {pack.map((s, j) => { const i = j + 8; return <DSlot key={i} api={api} cid={cid} slot={i} s={s} size={size} quickTo={quickTo} />; })}
+        </div>
+      </div>
+    </div>;
+  }
   return <div className="dgrid" data-cols={cols} style={{ gridTemplateColumns: `repeat(${cols}, ${size}px)` }}>
     {c.slots.map((s, i) => <DSlot key={i} api={api} cid={cid} slot={i} s={s} size={size} quickTo={quickTo} hotkey={hotRow && i < 8 ? String(i + 1) : undefined} accent={hotRow && i < 8} active={hotRow && i === api.gs.run!.player.active} />)}
   </div>;

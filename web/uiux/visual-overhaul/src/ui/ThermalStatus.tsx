@@ -15,7 +15,7 @@ export function thermalEnvNow(r: RunState, now: number) {
 }
 
 /** Compact heat card: one gauge with the thermal target as a tick, then glyph lamps. No sentences. */
-export function ThermalStatusCard({ r, now, hidden }: { r: RunState; now: number; hidden?: boolean }) {
+export function ThermalStatusCard({ r, now, hidden, inline = false }: { r: RunState; now: number; hidden?: boolean; inline?: boolean }) {
   if (hidden || r.player.dead) return null;
   const v = thermalStatusView(r, thermalEnvNow(r, now), r.player.warmth);
   const show = v.cold || v.heaters.length > 0 || v.warmth < v.coldThreshold + 20;
@@ -24,7 +24,7 @@ export function ThermalStatusCard({ r, now, hidden }: { r: RunState; now: number
   const tone = v.cold ? 'var(--bad)' : 'var(--warm)';
   const HEAT: Record<HeaterRow['status'], { c: string; t: string }> = { burning: { c: 'var(--good)', t: 'burning' }, out_of_fuel: { c: 'var(--bad)', t: 'out of fuel' }, idle_furnace: { c: 'var(--warn)', t: 'idle' }, blocked_by_wall: { c: 'var(--bad)', t: 'blocked by wall' } };
   return (
-    <div className="plate absolute heatcard" data-testid="thermal-status" data-cold={v.cold ? '1' : '0'} style={{ left: 4, top: 88, width: 150, padding: '3px 5px', pointerEvents: 'none' }}>
+    <div className={`plate heatcard ${inline ? '' : 'absolute'}`} data-testid="thermal-status" data-cold={v.cold ? '1' : '0'} style={inline ? { width: 150, padding: '3px 5px', pointerEvents: 'none' } : { left: 4, top: 88, width: 150, padding: '3px 5px', pointerEvents: 'none' }}>
       <div className="heatcard__row">
         <Glyph k="wr" c={tone} s={9} />
         <div className="heatcard__track" title={`Warmth ${pct} · target ${Math.round(v.target)}`}>

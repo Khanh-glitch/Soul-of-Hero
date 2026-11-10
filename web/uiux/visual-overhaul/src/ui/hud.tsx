@@ -58,6 +58,28 @@ function Gauge({ k, v, max, col, w, big, ghost }: { k: string; v: number; max: n
 }
 
 /** Left cluster: combat vitals large, survival needs compact but never hidden. */
+export function UrgentAlerts({ r, cold }: { r: RunState; cold: boolean }) {
+  const p = r.player;
+  if (p.dead) return null;
+  const alerts: { id: string; glyph: string; label: string; fix: string; col: string }[] = [];
+  if (p.hp < 28) alerts.push({ id: 'hp', glyph: 'hp', label: 'LOW HP', fix: 'heal / retreat', col: 'var(--bad)' });
+  if (cold) alerts.push({ id: 'cold', glyph: 'wr', label: 'FREEZING', fix: 'fire / shelter', col: '#ff8a66' });
+  if (p.thirst < 18) alerts.push({ id: 'h2o', glyph: 'h2o', label: 'DEHYDRATED', fix: 'drink [E / 1-8]', col: 'var(--info)' });
+  if (p.hunger < 18) alerts.push({ id: 'fd', glyph: 'fd', label: 'STARVING', fix: 'eat food', col: 'var(--food)' });
+  if (p.rad >= 25) alerts.push({ id: 'rad', glyph: 'rad', label: 'RADIATION', fix: 'leave ash / mask', col: '#a8d040' });
+  if (!alerts.length) return null;
+  return <div className="urgent-rail" data-testid="urgent-alerts" role="status" aria-live="polite">
+    {alerts.slice(0, 3).map(a => (
+      <div key={a.id} className="plate urgent-chip fadein" style={{ borderColor: a.col }}>
+        <span className="lamp diamond pulse" style={{ color: a.col }} />
+        <Glyph k={a.glyph} c={a.col} s={7} />
+        <b style={{ color: a.col }}>{a.label}</b>
+        <span>{a.fix}</span>
+      </div>
+    ))}
+  </div>;
+}
+
 export function Vitals({ r, now }: { r: RunState; now: number }) {
   const p = r.player;
   const hpGhost = useRef(1); const [ghost, setGhost] = useState(1);
@@ -150,13 +172,21 @@ export function WorldClock({ r, now, secured }: { r: RunState; now: number; secu
 // ---------------------------------------------------------------------------
 // hotbar + held-item card: what it is, what it does, what it costs to use
 // ---------------------------------------------------------------------------
-export function Hotbar({ r, onPick, onUse }: { r: RunState; onPick: (i: number) => void; onUse: (i: number) => void }) {
+export function Hotbar({ r, onPick, onUse, onOpenPack }: { r: RunState; onPick: (i: number) => void; onUse: (i: number) => void; onOpenPack?: () => void }) {
   const p = r.player; const s = activeStack(r);
-  return <div className="plate hotbar" style={{ alignItems: 'flex-end' }}>
-    {C(r, 'inv').slots.slice(0, 8).map((sl, i) => <Slot key={i} s={sl} active={i === p.active} hotkey={String(i + 1)} onClick={() => onPick(i)} onContext={() => onUse(i)} />)}
-    <div style={{ width: 115, marginLeft: 4, alignSelf: 'center', lineHeight: 1.15 }}>
+  const packUsed = C(r, 'inv').slots.filter(Boolean).length;
+  const packCap = C(r, 'inv').slots.length;
+  return <div className="plate hotbar" style={{ alignItems: 'center' }} data-testid="hud-hotbar">
+    <div className="hotbar__slots">
+      {C(r, 'inv').slots.slice(0, 8).map((sl, i) => <Slot key={i} slotIndex={i} s={sl} active={i === p.active} hotkey={String(i + 1)} onClick={() => onPick(i)} onContext={() => onUse(i)} />)}
+    </div>
+    <div className="hotbar__divider" />
+    <div className="hotbar__info">
       <HeldInfo s={s} r={r} />
     </div>
+    {onOpenPack && <button className="btn ghost sm hotbar__packbtn" title={`Open Pack & Crafting [I] (${packUsed}/${packCap} slots)`} onClick={onOpenPack}>
+      <span className="key" style={{ marginRight: 2 }}>I</span>{packUsed}/{packCap}
+    </button>}
   </div>;
 }
 function HeldInfo({ s, r }: { s: Stack | null; r: RunState }) {
@@ -164,16 +194,19 @@ function HeldInfo({ s, r }: { s: Stack | null; r: RunState }) {
   const d = ITEMS[s.key];
   const core = d.creatorCore;
   return <>
-    <div className="lbl" style={{ fontSize: 9, color: 'var(--brassLit)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.name}</div>
+    <div className="lbl" style={{ fontSize: 9, color: 'var(--brassLit)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      {d.name}{s.qty > 1 ? ` ×${s.qty}` : ''}
+    </div>
     {core && s.reserves ? <div className="core-readout" role="group" aria-label={`Core reserves: basic ${s.reserves.basic} of 40, refined ${s.reserves.refined} of 12, signature ${s.reserves.signature} of 4`}>
       {([['B', s.reserves.basic, 40, 'Basic · LMB · R loads', 'var(--paper)'], ['Q', s.reserves.refined, 12, 'Refined · hold Q · Shift+R loads', 'var(--info)'], ['E', s.reserves.signature, 4, 'Signature · hold E · Alt+R loads', 'var(--brassLit)']] as const).map(([key, value, cap, title, color]) =>
         <span key={key} className={value === 0 ? 'empty' : ''} title={`${title}: ${value}/${cap}`} style={{ color }}><b>{key}</b><i><em style={{ width: `${100 * value / cap}%`, background: value > 0 ? color : 'var(--bad)' }} /></i><strong>{value}</strong></span>)}
     </div>
-      : d.core ? <div className="lbl" style={{ fontSize: 8, color: s.charge ? 'var(--info)' : 'var(--bad)' }}>{s.charge}/{d.charge} charges · LMB cast</div>
-        : d.food ? <div className="lbl" style={{ fontSize: 8, color: 'var(--good)' }}>LMB consume</div>
-          : d.dmg ? <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>dmg {d.dmg}{d.power ? ' · tool' : ''}{s.dur !== undefined && d.dur ? ` · ${Math.round((s.dur / d.dur) * 100)}%` : ''}</div>
-            : d.place ? <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>LMB place</div>
-              : <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>{d.cat}</div>}
+      : d.core ? <div className="lbl" style={{ fontSize: 8, color: s.charge ? 'var(--info)' : 'var(--bad)' }}>{s.charge}/{d.charge}⚡ · LMB cast</div>
+        : d.food ? <div className="lbl" style={{ fontSize: 8, color: 'var(--good)' }}>LMB / RMB consume</div>
+          : d.slot ? <div className="lbl" style={{ fontSize: 8, color: 'var(--info)' }}>RMB equip ({d.slot})</div>
+            : d.dmg ? <div className="lbl" style={{ fontSize: 8, color: s.dur === 0 ? 'var(--bad)' : 'var(--muted)' }}>dmg {d.dmg}{d.power ? ' · tool' : ''}{s.dur !== undefined && d.dur ? ` · ${s.dur === 0 ? 'BROKEN' : `${Math.round((s.dur / d.dur) * 100)}%`}` : ''}</div>
+              : d.place ? <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>LMB place</div>
+                : <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>{d.cat}</div>}
     {core && s.reserves && s.reserves.basic + s.reserves.refined + s.reserves.signature === 0 && <div className="lbl" style={{ fontSize: 8, color: 'var(--bad)' }}>EMPTY · R / Shift+R / Alt+R</div>}
     {void r}
   </>;
