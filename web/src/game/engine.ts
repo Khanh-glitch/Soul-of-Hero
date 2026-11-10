@@ -12,10 +12,18 @@ import { creatorLootV1 } from './creator-loot';
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
-import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
-import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';import { sourceDigest } from './world-economy';
+import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
+import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';
+import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
 import { mapDigest } from './map-package';
+import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from '../veyra05/scenes';
+import { getWindowWorld, resetWindowToGround } from '../veyra05/window';
+import { activeFloor, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
+import { windowOrigin } from '../veyra05/continuity';
+import { syncVeyraEcosystemActors } from '../veyra05/ecosystem';
+import { cleanupPrimordialBoss } from './primordials/host-bridge';
+import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
 
@@ -139,17 +147,30 @@ function runIdFor(gs: GameState, seed: number, now: number): string {
   return id;
 }
 
-export function startRun(gs: GameState, character: 'male' | 'female', now: number, region: number | null = null, seedOverride?: number): Result {
+export const VEYRA_SPAWN_LAYOUTS = ['veyra05-westmouth', U05_WORLD_LAYOUT_ID, 'veyra05-hook', 'veyra05-gulf'] as const;
+
+export function startRun(gs: GameState, character: 'male' | 'female', now: number, region: number | null = null, seedOverride?: number, inspectAt?: { tx: number; ty: number }): Result {
   if (gs.run && !gs.run.ended) return { ok: false, reason: 'A run is already active.' };
   if(getActiveLayout()==='shipping')setActiveLayout('shipping_fresh');
   if(getActiveLayout()==='dev_delta')setActiveLayout('dev_delta_fresh');
   if(getActiveLayout()==='veyra-greywater-u16')setActiveLayout('veyra-greywater-lr02-u16');
   if(getActiveLayout()==='veyra-greywater-u20')setActiveLayout('veyra-greywater-lr02-u20');
   if(getActiveLayout()==='veyra-oasis-u20')setActiveLayout('veyra-oasis-lr02-u20');
-  const w = getWorld();
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
+  let chosenVeyraReg = 0;
+  if (getActiveLayout() === U05_WORLD_LAYOUT_ID && !inspectAt) {
+    chosenVeyraReg = (region !== null && Number.isInteger(region) && region >= 0 && region < VEYRA_SPAWN_LAYOUTS.length)
+      ? region
+      : (seed >>> 0) % VEYRA_SPAWN_LAYOUTS.length;
+    setActiveLayout(VEYRA_SPAWN_LAYOUTS[chosenVeyraReg]);
+  } else if (isVeyra05Layout(getActiveLayout())) {
+    const idx = (VEYRA_SPAWN_LAYOUTS as readonly string[]).indexOf(getActiveLayout());
+    if (idx >= 0) chosenVeyraReg = idx;
+  }
+  if (isVeyra05Layout(getActiveLayout())) resetWindowToGround(getWindowWorld(getActiveLayout()));
+  const w = getWorld();
   const r: RunState = {
-    id: runIdFor(gs, seed, now), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: 0, ended: null,
+    id: runIdFor(gs, seed, now), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: chosenVeyraReg, ended: null,
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Array.from(new Set([...Object.keys(RECIPES).filter(k => RECIPES[k].base), ...ALWAYS_KNOWN_RECIPES])), studied: [] },
     traces: [], discovered: [], poiSeen: [], intel: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
@@ -159,7 +180,29 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   r.poiAccessVersion='poi-access-v1';
   r.poiAccessDigest=poiContractDigest(w);
   if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') { r.creatorLootV1=true; r.lootEcology={version:LOOT_ECOLOGY_VERSION,cycles:{},grammar:LOOT_GRAMMAR_CURRENT}; }
-  const reg = 0; r.spawnRegion = reg; const sp = chooseLegalSpawn(r); if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'}; r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
+  let inspectTile: { tx: number; ty: number; name: string } | null = null;
+  if (inspectAt && Number.isInteger(inspectAt.tx) && Number.isInteger(inspectAt.ty)) {
+    for (let radius = 0; radius <= 20 && !inspectTile; radius++) {
+      for (let dy = -radius; dy <= radius && !inspectTile; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== radius) continue;
+          const tx = inspectAt.tx + dx, ty = inspectAt.ty + dy;
+          if (tx <= 2 || ty <= 2 || tx >= WW - 3 || ty >= WH - 3) continue;
+          const i = ty * WW + tx;
+          const veyraSolid = isVeyra05Layout(getActiveLayout()) ? getWindowWorld(getActiveLayout()).floors.ground.solidProps[i] : 0;
+          if (!veyraSolid && w.economyMap.walkable[i] && ![T.DEEP, T.SHALLOW, T.RIVER, T.CLIFF, T.PWALL, T.LAVA].includes(w.tiles[i])) {
+            inspectTile = { tx, ty, name: 'Creator Inspection (QA only)' };
+            break;
+          }
+        }
+      }
+    }
+  }
+  if (inspectAt && !inspectTile) return { ok: false, reason: 'Creator inspection landing is blocked by actual map collision.' };
+  const sp = inspectTile ?? chooseLegalSpawn(r);
+  if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'};
+  if(inspectAt) r.qaUsed = true;
+  r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
   r.custody.eq = { id: 'eq', kind: 'eq', slots: [null, null, null] };
   r.custody.inv.slots[0] = mkStack(r, 'knife', 1);
@@ -204,10 +247,20 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   }
   r.wreckEconomy = wreckEconomy(r);
   // creatures (deterministic per run seed) + elders
-  for (let k = 0; k < 900 && r.creatures.length < 150; k++) trySpawnCreature(r, now, sp.tx * TILE, sp.ty * TILE, 16);
-  for (const p of w.elders) {
-    const d = ELDERS[p.id];
-    r.creatures.push(mkCreature(r, 'elder_' + p.id, p.tx * TILE + 8, p.ty * TILE + 8, d.hpLatent, { key: p.id, awake: false, phase: 0, pattern: 0, special: 0 }));
+  if (r.layoutId && isVeyra05Layout(r.layoutId)) {
+    r.elderSchemaVersion = 2;
+    r.veyraOffscreenCreatures = {};
+    r.veyraSpawnedHabitats = {};
+    r.sideBossDefeated = {};
+    const [ox, oy] = windowOrigin(r);
+    const vww = getWindowWorld(r.layoutId);
+    syncVeyraEcosystemActors(r, vww, ox, oy, ox, oy);
+  } else {
+    for (let k = 0; k < 900 && r.creatures.length < 150; k++) trySpawnCreature(r, now, sp.tx * TILE, sp.ty * TILE, 16);
+    for (const p of w.elders) {
+      const d = ELDERS[p.id];
+      r.creatures.push(mkCreature(r, 'elder_' + p.id, p.tx * TILE + 8, p.ty * TILE + 8, d.hpLatent, { key: p.id, awake: false, phase: 0, pattern: 0, special: 0 }));
+    }
   }
   gs.run = r; markDirty(); gs.revision++;
   pushLog(r, now, `You wash up near ${sp.name}. No one is coming to tell you what to do.`, 'gold');
@@ -217,17 +270,42 @@ export function mkCreature(r: RunState, type: string, x: number, y: number, hp: 
   return { id: uid(r, 'm'), type, x, y, hp, maxHp: hp, homeX: x, homeY: y, state: elder ? 'sleep' : 'wander', t: 0, tx: x, ty: y, angle: 0, dir: 0, knows: null, path: null, pathT: 0, cd: 0, kbx: 0, kby: 0, flash: 0, elder };
 }
 const BIOME_CREATURE: Record<number, string[]> = { [T.FOREST]: ['wolf', 'boar'], [T.GRASS]: ['boar'], [T.MEADOW]: ['boar'], [T.MARSH]: ['toad'], [T.TOXIC]: ['crawler'], [T.ASH]: ['beetle'], [T.SAND]: ['crab'], [T.SNOW]: ['wolf'], [T.HILL]: ['wolf'] };
+const VEYRA_BIOME_CREATURE: Record<number, string[]> = {
+  [T.FOREST]: ['vampire_1', 'boar', 'deer', 'fox'],
+  [T.GRASS]: ['boar', 'hare', 'grouse', 'deer'],
+  [T.MEADOW]: ['deer', 'hare', 'grouse', 'boar'],
+  [T.MARSH]: ['slime_1', 'slime_2', 'grouse'],
+  [T.TOXIC]: ['slime_2', 'vampire_2'],
+  [T.ASH]: ['slime_3', 'orc_2'],
+  [T.SAND]: ['orc_1', 'slime_1'],
+  [T.SNOW]: ['vampire_3', 'orc_3'],
+  [T.HILL]: ['orc_2', 'orc_3', 'deer'],
+};
 export function trySpawnCreature(r: RunState, _now: number, avoidX: number, avoidY: number, avoidTiles: number) {
+  const isVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
+  if (isVeyra) {
+    if (activeFloor(r) !== 0) return false;
+    const activeWild = r.creatures.filter(m => m.state !== 'dead' && !m.elder && !m.sideBoss && !m.husbandry?.tamed).length;
+    if (activeWild >= 28) return false;
+  }
   const w = getWorld();
   const tx = 3 + Math.floor(rngNext(r) * (WW - 6)), ty = 3 + Math.floor(rngNext(r) * (WH - 6));
-  const t = effTile(r, tx, ty); const opts = BIOME_CREATURE[t]; if (!opts) return false;
+  const t = effTile(r, tx, ty);
+  const opts = (isVeyra ? VEYRA_BIOME_CREATURE : BIOME_CREATURE)[t];
+  if (!opts) return false;
   if (Math.hypot(tx * TILE - avoidX, ty * TILE - avoidY) < avoidTiles * TILE) return false;
   for (const s of w.starts) if (Math.hypot(s.tx - tx, s.ty - ty) < 12) return false;
   if (blockedAt(r, tx, ty)) return false;
   for (const e of Object.values(r.entities)) if (e.kind === 'struct' && e.type === 'claim' && Math.hypot(e.tx! - tx, e.ty! - ty) < BAL.economy.claimSpawnExclusionTiles) return false;
   const type = opts[Math.floor(rngNext(r) * opts.length)];
   const d = CREATURES[type];
-  r.creatures.push(mkCreature(r, type, tx * TILE + 8, ty * TILE + 8, d.hp));
+  if (!d) return false;
+  const cr = mkCreature(r, type, tx * TILE + 8, ty * TILE + 8, d.hp);
+  if (isVeyra) {
+    cr.floor = 0;
+    cr.ephemeral = true;
+  }
+  r.creatures.push(cr);
   return true;
 }
 
@@ -338,7 +416,7 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
 }
 // collision cache — rebuilt when structures/sources/terrain change
 // B04-P4: keyed by the RunState object itself (not run.id), like entsAt: a copied run with the same id must never reuse another copy's collision grid.
-let blockCache: { run: RunState; layout: string; sourceVersion: number; arr: Uint8Array } | null = null; let blockDirty = true;
+let blockCache: { run: RunState; layout: string; sourceVersion: number; floor: number; arr: Uint8Array } | null = null; let blockDirty = true;
 export function markDirty() { blockDirty = true; tileIndex = null; roomCache = null; }
 /** 0 free, 1 terrain wall, 2 source, 3 structure, 4 shallow/river (wade), 5 lava */
 let baseGrid: Uint8Array | null = null; let baseGridLayout = '';
@@ -347,11 +425,16 @@ function cellClass(r: RunState | null, tx: number, ty: number) {
   const w = getWorld(); const i = ty * WW + tx; const t = r ? effTile(r, tx, ty) : w.tiles[i]; let c = tileClass(t);
   if (c === 0 && !(t === T.ICE && [T.DEEP,T.SHALLOW,T.RIVER].includes(w.tiles[i])) && (w.packageContract || w.enforceMasks) && !w.economyMap.walkable[i] && !w.statics.some(s => s.kind === 'door' && s.tx === tx && s.ty === ty)) c = 1;
   if (c === 0) { if (r) { const s = sourceAt(r, tx, ty); if (s && s.def.block && (s.stock > 0 || s.key === 'wreck')) c = 2; } else if (w.src[i] >= 0 && SOURCES[SRC_KEYS[w.src[i]]].block) c = 2; }
+  if ((c === 0 || c === 4) && r?.layoutId && isVeyra05Layout(r.layoutId)) {
+    const ww = getWindowWorld(r.layoutId);
+    const layer = ww.floors.layers.get(activeFloor(r)) ?? ww.floors.ground;
+    if (layer.solidProps[i]) c = 2;
+  }
   return c;
 }
 export function blockGrid(r: RunState) {
-  const layout = getActiveLayout();
-  if (blockCache && blockCache.run === r && blockCache.layout === layout && blockCache.sourceVersion === (r.sourceLayoutVersion ?? 1) && !blockDirty) return blockCache.arr;
+  const layout = getActiveLayout(), fl = activeFloor(r);
+  if (blockCache && blockCache.run === r && blockCache.layout === layout && blockCache.sourceVersion === (r.sourceLayoutVersion ?? 1) && blockCache.floor === fl && !blockDirty) return blockCache.arr;
   if (!baseGrid || baseGridLayout !== layout) { baseGrid = new Uint8Array(WW * WH); for (let i = 0; i < WW * WH; i++) baseGrid[i] = cellClass(null, i % WW, (i / WW) | 0); baseGridLayout = layout; }
   const arr = r.sourceLayoutVersion === 3 ? new Uint8Array(WW * WH) : baseGrid.slice();
   if (r.sourceLayoutVersion === 3) { for (let i = 0; i < arr.length; i++) arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
@@ -360,18 +443,19 @@ export function blockGrid(r: RunState) {
   for (const k in r.sources) { const i = +k; arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const tree of r.natureTrees || []) arr[tree.ty * WW + tree.tx] = 2;
   for (const e of Object.values(r.entities)) {
-    if (e.tx === undefined) continue; const i = e.ty! * WW + e.tx;
+    if (!onActiveFloor(r, e) || e.tx === undefined) continue; const i = e.ty! * WW + e.tx;
     if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.block && !(e.type!.startsWith('door') && e.open)) arr[i] = 3; }
     else if (e.kind === 'door') { if (!e.open) arr[i] = 3; else if (!r.terrain[i] && getWorld().tiles[i]===T.PWALL && getWorld().statics.some(s=>s.kind==='door'&&s.tx===e.tx&&s.ty===e.ty)) arr[i]=0; }
     else if (e.kind === 'airdrop' && (e.airdrop?.phase==='locked'||e.airdrop?.phase==='open'||e.airdrop?.phase==='partial')) arr[i] = 3;
     else if (e.kind === 'loot' || e.kind === 'cash' || e.kind === 'vendor' || e.kind === 'gen' || e.kind === 'evac' || e.kind === 'recycler') arr[i] = 3;
   }
-  blockCache = { run: r, layout, sourceVersion: r.sourceLayoutVersion ?? 1, arr }; blockDirty = false; return arr;
+  blockCache = { run: r, layout, sourceVersion: r.sourceLayoutVersion ?? 1, floor: fl, arr }; blockDirty = false; return arr;
 }
 export function blockedAt(r: RunState, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return true; const b = blockGrid(r)[ty * WW + tx]; return b === 1 || b === 2 || b === 3 || b === 5; }
-let tileIndex: Map<number, Entity[]> | null = null; let tileIndexRun: RunState | null = null;
+let tileIndex: Map<number, Entity[]> | null = null; let tileIndexRun: RunState | null = null; let tileIndexFloor = 0;
 export function entsAt(r: RunState, tx: number, ty: number): Entity[] {
-  if (!tileIndex || tileIndexRun !== r) { tileIndex = new Map(); tileIndexRun = r; /* keyed by run object: a copied run with the same id must never reuse another copy's entities */ for (const e of Object.values(r.entities)) if (e.tx !== undefined && e.kind !== 'drop' && e.kind !== 'bag' && e.kind !== 'cart') { const i = e.ty! * WW + e.tx; const l = tileIndex.get(i); if (l) l.push(e); else tileIndex.set(i, [e]); } }
+  const fl = activeFloor(r);
+  if (!tileIndex || tileIndexRun !== r || tileIndexFloor !== fl) { tileIndex = new Map(); tileIndexRun = r; tileIndexFloor = fl; /* keyed by run object + active floor */ for (const e of Object.values(r.entities)) if (onActiveFloor(r, e) && e.tx !== undefined && e.kind !== 'drop' && e.kind !== 'bag' && e.kind !== 'cart') { const i = e.ty! * WW + e.tx; const l = tileIndex.get(i); if (l) l.push(e); else tileIndex.set(i, [e]); } }
   return tileIndex.get(ty * WW + tx) || [];
 }
 /** Authoritative SOH coverage: nearest valid owned cabinet, stable ID tie-break. */
@@ -806,16 +890,16 @@ export function spawnDrop(r: RunState, key: string, qty: number, x: number, y: n
   if (qty > max) { const first = spawnDrop(r, key, max, x, y, now, tmpl, burst); spawnDrop(r, key, qty - max, x, y, now, tmpl, burst); return first; }
   const c = mkContainer(r, 'drop', 1); const s = mkStack(r, key, qty, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[0] = s;
   const a = rngNext(r) * Math.PI * 2, sp = burst ? 30 + rngNext(r) * 40 : 0;
-  const e: Entity = { id: uid(r, 'd'), kind: 'drop', x, y, c: c.id, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, born: now }; r.entities[e.id] = e; return e;
+  const e: Entity = { id: uid(r, 'd'), kind: 'drop', x, y, c: c.id, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, born: now }; if (r.veyraFloor) (e as any).floor = r.veyraFloor; r.entities[e.id] = e; return e;
 }
-function dropStackEntity(r: RunState, s: Stack, x: number, y: number, now: number) { const c = mkContainer(r, 'drop', 1); c.slots[0] = s; const e: Entity = { id: uid(r, 'd'), kind: 'drop', x, y, c: c.id, vx: 0, vy: 0, born: now }; r.entities[e.id] = e; return e; }
+function dropStackEntity(r: RunState, s: Stack, x: number, y: number, now: number) { const c = mkContainer(r, 'drop', 1); c.slots[0] = s; const e: Entity = { id: uid(r, 'd'), kind: 'drop', x, y, c: c.id, vx: 0, vy: 0, born: now }; if (r.veyraFloor) (e as any).floor = r.veyraFloor; r.entities[e.id] = e; return e; }
 function giveOrDrop(r: RunState, key: string, qty: number, now: number, tmpl?: Partial<Stack>) { const left = addItem(r, 'inv', key, qty, tmpl); if (left > 0) spawnDrop(r, key, left, r.player.x, r.player.y, now, tmpl); }
 /** Move an entire container's contents into a physical bag at (x,y) — used for death/reclaim/destroyed chests. No deletion, no duplication. */
 export function bagContainers(r: RunState, cids: string[], x: number, y: number, now: number, label: string, extra: Stack[] = [], legacyJobs?: Entity['legacyJobs'], force = false) {
   const stacks: Stack[] = [...extra]; for (const cid of cids) { const c = C(r, cid); if (!c) continue; for (let i = 0; i < c.slots.length; i++) if (c.slots[i]) { stacks.push(c.slots[i]!); c.slots[i] = null; } }
   if (!stacks.length && !legacyJobs?.queue.length && !force) return null;
   const bag = mkContainer(r, 'bag', Math.max(8, stacks.length)); stacks.forEach((s, i) => (bag.slots[i] = s));
-  const e: Entity = { id: uid(r, 'b'), kind: 'bag', x, y, c: bag.id, label, born: now, legacyJobs }; r.entities[e.id] = e; return e;
+  const e: Entity = { id: uid(r, 'b'), kind: 'bag', x, y, c: bag.id, label, born: now, legacyJobs }; if (r.veyraFloor) (e as any).floor = r.veyraFloor; r.entities[e.id] = e; return e;
 }
 /** Station-owned reservations and contents leave together on reclaim or destruction. */
 export function bagStation(r: RunState, e: Entity, now: number, label: string) {
@@ -909,14 +993,19 @@ export function lootCooldown(site: StaticEnt, r?:RunState): number {
 export function renewableStock(r:RunState,site:StaticEnt,cycle:number):[string,number][] {return [...renewableLoot(site),...lootRoll(r,site,cycle)];}
 /** Retire an authored public loot instance only after an actual final withdrawal. */
 function retireEmptyLoot(r: RunState, cid: string, now: number) {
-  const e = Object.values(r.entities).find(v => v.kind === 'loot' && v.c === cid);
+  const e = Object.values(r.entities).find(v => v.kind === 'loot' && v.c === cid && onActiveFloor(r, v));
   const c = r.custody[cid];
   if (!e || !c || c.slots.some(Boolean) || !Number.isInteger(e.tx) || !Number.isInteger(e.ty)) return;
-  const site = getWorld(r.layoutId || 'shipping').statics.find(s => s.kind === 'loot' && s.tx === e.tx && s.ty === e.ty);
+  const w = getWorld(r.layoutId || 'shipping');
+  const site = w.statics.find(s => s.kind === 'loot' && s.tx === e.tx && s.ty === e.ty);
   if (!site) return;
   const index = e.ty! * WW + e.tx!;
   (r.depletedLootSites ??= []).push(index);
   if (renewableStock(r,site,(r.lootEcology?.cycles[index]||0)+1).length) (r.lootRespawnAt ??= {})[index] = now + lootCooldown(site,r);
+  if (r.layoutId && isVeyra05Layout(r.layoutId)) {
+    const [ox, oy] = windowOrigin(r);
+    syncDepletedLootToGlobal(r, ox, oy, activeFloor(r), w.statics);
+  }
   removeEntity(r, e);
   receipt(r, now, 'loot.depleted', `${index}:${e.id}`);
 }
@@ -947,11 +1036,16 @@ export function stepLootRespawn(r: RunState, now: number) {
     if (Object.values(r.entities).some(e => e.tx === site.tx && e.ty === site.ty && ['loot','struct','door','gen','recycler'].includes(e.kind))) continue;
     const e: Entity = { id: uid(r, 'e'), kind: 'loot', x: site.tx * TILE + 8, y: site.ty * TILE + 8, tx: site.tx, ty: site.ty, poi: site.poi, label: site.label };
     const c = mkContainer(r, 'loot', lootSlots(r)); e.c = c.id;
+    if (r.veyraFloor) (e as any).floor = r.veyraFloor;
     stock.forEach(([key, qty], i) => { c.slots[i] = mkStack(r, key, qty); if(r.lootEcology && lootClass(site)) receipt(r,now,'loot.roll',`${lootSourceId(r,site)}:${LOOT_ECOLOGY_VERSION}:cycle${cycle}:slot${i}:${key}x${qty}:${c.slots[i]!.uid}`); });
     if(r.lootEcology && lootClass(site))r.lootEcology.cycles[lootSiteIndex(site)]=cycle;
     r.entities[e.id] = e; delete timers[index];
     if(r.creatorLootV1 && !(r.renewedLootSites||[]).includes(index)) (r.renewedLootSites ??= []).push(index);
     r.depletedLootSites = r.depletedLootSites.filter(i => i !== index);
+    if (r.layoutId && isVeyra05Layout(r.layoutId)) {
+      const [ox, oy] = windowOrigin(r);
+      syncDepletedLootToGlobal(r, ox, oy, activeFloor(r), world.statics);
+    }
     markDirty(); receipt(r, now, 'loot.respawn', `${index}:${e.id}`);
   }
 }
@@ -1001,14 +1095,58 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
 }
 
 export function killCreature(gs: GameState, m: Creature, now: number) {
-  const r = gs.run!; m.state = 'dead'; m.t = 0;
+  const r = gs.run!; m.state = 'dead'; m.t = 0; m.deadAt = r.clock.simMs / 1000;
   if (m.elder) {
-    const d = ELDERS[m.elder.key]; spawnDrop(r, d.stone, 1, m.x, m.y, now);
+    const d = lookupElderDef(m.elder.key);
+    cleanupPrimordialBoss(r, m.id, 'defeat');
+    if (!d) return;
+    spawnDrop(r, d.stone, 1, m.x, m.y, now);
     spawnDrop(r, 'spares', 6, m.x, m.y, now); spawnDrop(r, 'crystal', 2, m.x, m.y, now);
     receipt(r, now, 'elder.defeat', m.elder.key); pushLog(r, now, `${d.name} falls. Its stone lies in the dust.`, 'gold'); award(gs, 'elder_1', now);
   } else {
     const d = CREATURES[m.type]; if (!d) return;
-    for (const [k, q, ch] of d.drops) if (rngNext(r) < ch) spawnDrop(r, k, q, m.x, m.y, now);
+    const rag = isRagnarok(r, now);
+    if (m.sideBoss) {
+      const defMap = (r.sideBossDefeated ??= {});
+      const alreadyDefeated = (defMap[m.sideBoss.key] || 0) > 0;
+      defMap[m.sideBoss.key] = (defMap[m.sideBoss.key] || 0) + 1;
+      if (d.uniqueDrop && !alreadyDefeated) {
+        spawnDrop(r, d.uniqueDrop, 1, m.x, m.y, now);
+      }
+      for (const [k, q, ch] of d.drops) {
+        if (k === 'cash' && rag) continue;
+        if (rngNext(r) < ch) spawnDrop(r, k, q, m.x, m.y, now);
+      }
+      receipt(r, now, 'boss.defeat', m.sideBoss.key);
+      pushLog(r, now, `${d.name} has been slain.`, 'gold');
+    } else {
+      if (r.veyraAmbientWounds) {
+        delete r.veyraAmbientWounds[m.id];
+        if (!Object.keys(r.veyraAmbientWounds).length) delete r.veyraAmbientWounds;
+      }
+      if (m.id.startsWith('vy:') && !m.husbandry?.tamed) {
+        const cdMap = (r.veyraEcologyCooldowns ??= {});
+        const hours = m.id.startsWith('vy:wild:') ? 6 : 8;
+        cdMap[m.id] = now + hours * HOUR;
+        const cdKeys = Object.keys(cdMap);
+        if (cdKeys.length > 1024) {
+          cdKeys.sort((a, b) => cdMap[a] - cdMap[b]);
+          for (let ci = 0; ci < cdKeys.length - 1024; ci++) delete cdMap[cdKeys[ci]];
+        }
+      }
+      const grouseSex =
+        m.type === 'grouse'
+          ? m.husbandry?.sex ??
+            ((m as any).sex === 'm' || (m as any).sex === 'f'
+              ? (m as any).sex
+              : deterministicAnimalSex(m.id, r.seed))
+          : null;
+      for (const [k, q, ch] of d.drops) {
+        if (k === 'cash' && rag) continue;
+        if (k === 'grouse_egg' && grouseSex === 'm') continue;
+        if (rngNext(r) < ch) spawnDrop(r, k, q, m.x, m.y, now);
+      }
+    }
     r.player.skills.combat += 2;
   }
 }
@@ -1171,7 +1309,17 @@ export function endRun(gs: GameState, ending: 'evacuated' | 'abandoned' | 'expir
   markDirty(); gs.revision++;
   return { ok: true, receipt: `end:${r.id}` };
 }
-export function countStones(r: RunState) { const keys = Object.values(ELDERS).map(e => e.stone); let n = 0; for (const c of Object.values(r.custody)) for (const s of c.slots) if (s && keys.includes(s.key)) n++; return n; }
+export function countStones(r: RunState) {
+  const seen = new Set<string>();
+  for (const c of Object.values(r.custody)) {
+    for (const s of c.slots) {
+      if (!s) continue;
+      const dom = elderStoneDomain(s.key);
+      if (dom) seen.add(dom);
+    }
+  }
+  return seen.size;
+}
 
 // ---------------- build validation (C07) ----------------
 
@@ -1254,6 +1402,16 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
     // site remains recorded even after the physical entity and container disappear.
     const source = it.type === 'move' ? it.from : (it.type === 'drop' || it.type === 'useItem') ? it.c : undefined;
     if (typeof source === 'string') { retireEmptyLoot(r, source, now); const e=Object.values(r.entities).find(e=>e.kind==='airdrop'&&e.c===source);if(e){if(!C(r,source).slots.some(Boolean)){receipt(r,now,'airdrop.empty',String(e.airdrop!.index));removeEntity(r,e);}else if(e.airdrop!.phase==='open'){e.airdrop!.phase='partial';receipt(r,now,'airdrop.partial',String(e.airdrop!.index));}} }
+    // Keep elderStones synchronized immediately across every committed inventory mutation (pickup/move/drop/takeAll),
+    // never lagging behind the 500ms discovery pulse.
+    if (gs.run === r && r.custody['inv']) {
+      r.elderStones = [];
+      for (const s of r.custody['inv'].slots) {
+        if (s && ITEMS[s.key]?.cat === 'stone' && !r.elderStones.includes(s.key)) {
+          r.elderStones.push(s.key);
+        }
+      }
+    }
     // The receipt ring is intentionally bounded for UI/history, but irreversible command
     // identity is durable run state and must never be evicted: an old replay is still a replay.
     r.seenIntents.push(it.id);
@@ -1263,7 +1421,7 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
   return res;
 }
 const fail = (reason: string): Result => ({ ok: false, reason });
-function near(r: RunState, e: { x: number; y: number }, tiles = 2.2) { return dist(r.player.x, r.player.y, e.x, e.y) <= tiles * TILE && clearWallLine(r, r.player, e); }
+function near(r: RunState, e: { x: number; y: number }, tiles = 2.2) { return onActiveFloor(r, e as Entity) && dist(r.player.x, r.player.y, e.x, e.y) <= tiles * TILE && clearWallLine(r, r.player, e); }
 /** Grid traversal visits every crossed cell, including both sides of a corner.
  * Interaction targets may themselves occupy a blocking cell; intervening cells never may. */
 export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: { x: number; y: number }, blockTrees = true, excludeEnd = false, wallsOnly = false): boolean {
@@ -1302,6 +1460,71 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'respawn': return respawn(gs, now);
     case 'restStart': return startRest(gs, it, now);
     case 'restCancel': { if (!r.rest) return { ok: false, reason: 'You are not resting.' }; endRest(r, now, 'woke by choice'); return { ok: true, receipt: receipt(r, now, 'rest.cancel', it.id), msg: 'You wake up.' }; }
+    case 'husbandry': {
+      if (p.dead) return fail('You are dead.');
+      const m = r.creatures.find(c => c.id === it.cid && c.state !== 'dead' && ((c as any).floor ?? 0) === activeFloor(r));
+      if (!m) return fail('Animal is not here.');
+      if (dist(p.x, p.y, m.x, m.y) > 3.2 * TILE) return fail('Move closer to the animal.');
+      const op = it.op as string;
+      if (op === 'tame') {
+        const spec = TAMING_SPECIES[m.type];
+        if (!spec) return fail('That creature cannot be tamed.');
+        if (m.husbandry?.tamed) return fail('Already tamed.');
+        const feedKey = spec.preferredFoods.find((k: string) => countItem(r, 'inv', k) > 0);
+        if (!feedKey) return fail(`Needs ${spec.preferredFoods.map((k: string) => ITEMS[k]?.name || k).join(' or ')}.`);
+        removeItem(r, 'inv', feedKey, 1);
+        const prevProg = typeof m.atk?.tameProg === 'number' ? m.atk.tameProg : 0;
+        const nextProg = Math.min(1, prevProg + 1 / Math.max(1, spec.feedingsToTame));
+        m.knows = null;
+        m.state = 'idle';
+        if (nextProg >= 0.999) {
+          if (m.atk) delete m.atk.tameProg;
+          const sex = m.husbandry?.sex ?? deterministicAnimalSex(m.id, r.seed);
+          m.husbandry = createTamedState(sex, m.id, r.seed);
+          const sexSym = sex === 'f' ? '♀' : '♂';
+          pushLog(r, now, `Tamed ${CREATURES[m.type]?.name || m.type} ${sexSym}! Use a Taming Lead to bring a ♀+♂ pair to an enclosed pen.`, 'gold');
+          return ok('husbandry.tame', `${m.id}:tamed:${sex}:${feedKey}`, `Tamed ${CREATURES[m.type]?.name || m.type} ${sexSym}!`);
+        }
+        m.atk = { ...(m.atk || {}), tameProg: nextProg };
+        return ok('husbandry.feed', `${m.id}:${Math.round(nextProg * 100)}:${feedKey}`, `Fed ${CREATURES[m.type]?.name || m.type} (${Math.round(nextProg * 100)}%).`);
+      }
+      if (!m.husbandry?.tamed) return fail('Tame the animal first.');
+      if (op === 'lead') {
+        if (!m.husbandry.following && countItem(r, 'inv', 'lead_rope') < 1) {
+          return fail('Craft or hold a Lead Rope in your inventory to lead livestock.');
+        }
+        m.husbandry.following = !m.husbandry.following;
+        if (m.husbandry.following) {
+          m.husbandry.penned = false;
+          return ok('husbandry.lead', `${m.id}:follow`, `${CREATURES[m.type]?.name || m.type} is following you.`);
+        }
+        const pen = inspectPenAt(r, Math.floor(m.x / TILE), Math.floor(m.y / TILE));
+        m.husbandry.penned = pen.enclosed;
+        m.homeX = m.x; m.homeY = m.y;
+        if (pen.enclosed) {
+          return ok('husbandry.release', `${m.id}:penned`, `Released into enclosed pen (${pen.tiles.size} tiles).`);
+        }
+        return ok('husbandry.release', `${m.id}:open`, 'Released outside an enclosed pen — build walls/fences and a closed gate to secure it!');
+      }
+      if (op === 'release') {
+        m.husbandry.following = false;
+        const pen = inspectPenAt(r, Math.floor(m.x / TILE), Math.floor(m.y / TILE));
+        m.husbandry.penned = pen.enclosed;
+        m.homeX = m.x; m.homeY = m.y;
+        if (pen.enclosed) {
+          return ok('husbandry.release', `${m.id}:penned`, `Penned safely (${pen.tiles.size} tiles).`);
+        }
+        return ok('husbandry.release', `${m.id}:open`, 'Area is not enclosed — animal may wander off!');
+      }
+      if (op === 'butcher') {
+        const tbl = BUTCHER_YIELDS[m.type];
+        const drops: [string, number][] = tbl ? (m.husbandry.stage === 'juvenile' ? tbl.juvenile : tbl.adult) : [['meat', 2]];
+        m.state = 'dead'; m.hp = 0; m.t = 0; m.deadAt = r.clock.simMs / 1000;
+        for (const [k, q] of drops) spawnDrop(r, k, q, m.x, m.y, now);
+        return ok('husbandry.butcher', `${m.id}:${drops.map(([k, q]: [string, number]) => `${k}x${q}`).join(',')}`, `Butchered ${CREATURES[m.type]?.name || m.type}.`);
+      }
+      return fail('Unknown husbandry action.');
+    }
     case 'loadCore': {
       if (!Number.isInteger(it.slot) || it.slot < 0 || it.slot >= 8 || !['basic','refined','signature'].includes(it.mode)) return fail('Invalid Core reload.');
       if (p.action) return fail('Finish your current action first.');
@@ -1571,6 +1794,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (it.struct === 'barrel') e.water = 0;
       if (it.struct.startsWith('door')) e.open = false;
       const cl = claimAt(r, it.tx, it.ty); if (cl) e.claim = cl.id;
+      if (r.veyraFloor) (e as any).floor = r.veyraFloor;
       r.entities[e.id] = e; markDirty(); if(it.struct==='claim')refreshTerritoryLinks(r);
       if ((it.struct === 'bed_straw' || it.struct.startsWith('roof')) && homeComplete(r)) award(gs, 'first_home', now);
       return ok('build', `${it.struct}@${it.tx},${it.ty}`);
@@ -1583,7 +1807,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if(!vehicleClear(r,it.x,it.y,undefined,'parking')||!vehicleExitPoint(r,it.x,it.y))return fail('Motorbike needs clear dry ground and a safe exit.');
       const deployed=inv.slots[idx]!;if(!Number.isFinite(deployed.dur)||deployed.dur!<=0||deployed.dur!>BAL.motorbike.maxHp)return fail('Packed motorbike condition is invalid or broken.');
       const c=mkContainer(r,'vehicle',BAL.motorbike.slots);inv.slots[idx]=null;
-      const e:Entity={id:uid(r,'e'),kind:'vehicle',x:it.x,y:it.y,c:c.id,hp:deployed.dur,maxHp:BAL.motorbike.maxHp,deployed,vehicle:{fuel:0,angle:p.aim,odometer:0,geometry:'vehicle-geometry-v1'}};r.entities[e.id]=e;
+      const e:Entity={id:uid(r,'e'),kind:'vehicle',x:it.x,y:it.y,c:c.id,hp:deployed.dur,maxHp:BAL.motorbike.maxHp,deployed,vehicle:{fuel:0,angle:p.aim,odometer:0,geometry:'vehicle-geometry-v1'}};if(r.veyraFloor)(e as any).floor=r.veyraFloor;r.entities[e.id]=e;
       return ok('vehicle.deploy',`${deployed.uid}:${e.id}@${Math.round(e.x)},${Math.round(e.y)}`,'Motorbike deployed. Add fuel and drive.');
     }
     case 'vehicleMount': {
@@ -1639,7 +1863,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if(existing){ const free=C(r,existing.c!).slots.filter(sl=>!sl).length; if(free<picks.length) return fail('This motorbike bag is full. Take items out first; nothing was moved.'); }
       let bag:Entity;
       if(existing) bag=existing;
-      else { const cont=mkContainer(r,'bag',Math.max(8,picks.length)); bag={id:uid(r,'b'),kind:'bag',x:spot.x,y:spot.y,c:cont.id,label:'Motorbike cargo',born:now,vehicleSource:src}; r.entities[bag.id]=bag; }
+      else { const cont=mkContainer(r,'bag',Math.max(8,picks.length)); bag={id:uid(r,'b'),kind:'bag',x:spot.x,y:spot.y,c:cont.id,label:'Motorbike cargo',born:now,vehicleSource:src}; if(r.veyraFloor)(bag as any).floor=r.veyraFloor; r.entities[bag.id]=bag; }
       const bc=C(r,bag.c!); const moved:string[]=[];
       for(const i of picks){ const stack=cargo.slots[i]!; cargo.slots[i]=null; const slot=bc.slots.findIndex(sl=>!sl); bc.slots[slot]=stack; moved.push(stack.uid); }
       return ok('vehicle.unload',`${e.deployed.uid}:${bag.id}:${moved.join(',')}`,`Moved ${moved.length} stack${moved.length===1?'':'s'} from the motorbike into a ground bag beside it.`);
@@ -1659,7 +1883,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const tx = Math.floor(it.x / TILE), ty = Math.floor(it.y / TILE); if (blockedAt(r, tx, ty) || [T.SHALLOW, T.RIVER].includes(effTile(r, tx, ty))) return fail('Cart needs open dry ground.');
       if (dist(p.x, p.y, it.x, it.y) > 3 * TILE) return fail('Too far.');
       const deployed = C(r, 'inv').slots[idx]!; C(r, 'inv').slots[idx] = null; const c = mkContainer(r, 'cart', deployed.upgrade === 'freight' ? BAL.cart.freightSlots : BAL.cart.slots);
-      const e: Entity = { id: uid(r, 'cart'), kind: 'cart', x: it.x, y: it.y, c: c.id, hp: 200, maxHp: 200, deployed }; r.entities[e.id] = e; award(gs, 'cart', now); return ok('cart.place', e.id);
+      const e: Entity = { id: uid(r, 'cart'), kind: 'cart', x: it.x, y: it.y, c: c.id, hp: 200, maxHp: 200, deployed }; if (r.veyraFloor) (e as any).floor = r.veyraFloor; r.entities[e.id] = e; award(gs, 'cart', now); return ok('cart.place', e.id);
     }
     case 'upgradeCart': {
       const e = r.entities[it.eid];
@@ -1950,6 +2174,7 @@ function accepts(c: Container, slot: number, s: Stack) {
 function spawnParcel(r: RunState, x: number, y: number, now: number, item: string, purchaseId: string): Entity {
   const bag = mkContainer(r, 'bag', 1); bag.slots[0] = mkStack(r, item, 1);
   const e: Entity = { id: uid(r, 'b'), kind: 'bag', x: x + 14, y: y + 14, c: bag.id, label: `Parcel · ${ITEMS[item].name}`, born: now, parcel: { purchaseId, item } };
+  if (r.veyraFloor) (e as any).floor = r.veyraFloor;
   r.entities[e.id] = e; return e;
 }
 function pruneEmptyBag(r: RunState, cid: string) {
@@ -1959,7 +2184,7 @@ function pruneEmptyBag(r: RunState, cid: string) {
 }
 function canAccess(r: RunState, cid: string) {
   if (cid === 'inv' || cid === 'eq') return true;
-  for (const e of Object.values(r.entities)) if ((e.kind!=='airdrop'||e.airdrop?.phase==='open'||e.airdrop?.phase==='partial') && (e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) && (owned(e) || e.kind==='recycler')) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE && (e.kind==='recycler'||e.kind==='airdrop'?clearInteraction(r,e):clearWallLine(r,r.player,e));
+  for (const e of Object.values(r.entities)) if (onActiveFloor(r, e) && (e.kind!=='airdrop'||e.airdrop?.phase==='open'||e.airdrop?.phase==='partial') && (e.c === cid || e.station?.fuelC === cid || e.station?.outC === cid) && (owned(e) || e.kind==='recycler')) return dist(r.player.x, r.player.y, e.x, e.y) <= 2.8 * TILE && (e.kind==='recycler'||e.kind==='airdrop'?clearInteraction(r,e):clearWallLine(r,r.player,e));
   return false;
 }
 export function homeComplete(r: RunState) {
@@ -2134,6 +2359,17 @@ export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean, at
       g.water = Math.min(3, g.water + incoming * (dtMs - growing));
     }
     if (e.type === 'barrel' && rain) e.water = Math.min(12, (e.water || 0) + dtMs / 20000);
+  }
+  if (wet && r.veyraOffscreenEntities) {
+    let checkedSeason = false;
+    let isWinter = false;
+    for (const k in r.veyraOffscreenEntities) {
+      const oe = r.veyraOffscreenEntities[k];
+      if (oe && oe.type === 'barrel' && ((oe as any).floor ?? 0) === 0) {
+        if (!checkedSeason) { checkedSeason = true; isWinter = calendarAt(r, at).season === 'winter'; }
+        if (!isWinter) oe.water = Math.min(12, (oe.water || 0) + dtMs / 20000);
+      }
+    }
   }
 }
 /** Local normalized climate/soil inputs are Map-owned. CAL-01 adds the seasonal

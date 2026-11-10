@@ -22,3 +22,6 @@
 Các phân vai nhiều agent, work order, PR handoff, cập nhật trạng thái và kế hoạch triển khai cũ bị vô hiệu. Không lấy chúng làm blocker. Không dùng `docs/` cũ để suy ra luật cuối hay chủ sở hữu mới. Nguồn Atlas nguyên bản vẫn được giữ **chỉ để kiểm chứng lịch sử**, dù nó chứa bảng owner theo bối cảnh thời đó.
 
 **Baseline:** `830cb3e7c96ad8057e02d664ce02c52ca3046082`. Bản thử WEC/V3 trước rollback được bảo quản ở `archive/pr47-wec-v3-c872402-20261110`; không đem logic đó vào code mới trước khi nghiệm thu riêng.
+
+## Current authorized integration packet (10/11/2026)
+The Creator authorized a single Gameplay Agent to integrate the **complete final Veyra map**, 9 creatures, 4 side bosses, 6 Primordial Elders and husbandry. The **Git-only standalone task and Drive asset preload links** are at [implementation/veyra-creature-20261110/README.md](implementation/veyra-creature-20261110/README.md). **No chat attachment is required; Gold UI/UX/HUD is out of scope until separately provided.** This packet is a task, not a second gameplay Bible, and no production code changes or test acceptance are implied by its publication.

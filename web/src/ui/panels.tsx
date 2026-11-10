@@ -3,8 +3,8 @@ import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { RunState } from '../game/core';
 import { anyAuthorizedOilSource, owned, clearInteraction } from '../game/engine';
-import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
-import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
+import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
+import { BAL, TILE, WW, WH, T, type Stack, type Entity } from '../game/core';
 import type { OfflineReturnV1, ReturnSectionId, ReturnTone } from '../game/return-report';
 import { CabinetReadout, CABINET_STATE_LABEL, hoursLabel } from './HomeStatus';
 import { heaterLine } from './ThermalStatus';
@@ -19,6 +19,30 @@ const bundleLabel = (rc: { out: string; qty: number; outs?: [string, number][] }
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
 import { Panel, Slot, Icon, Cost, type Api } from './common';
+import { isVeyra05Layout } from '../veyra05/scenes';
+import { windowOrigin, playerGlobalAu } from '../veyra05/continuity';
+import { activeFloor, onActiveFloor } from '../veyra05/floors';
+import { POIS, sampleTile } from '../veyra05/reader';
+import { FRAME_W, FRAME_H } from '../veyra05/frame';
+
+const continentCellColorCache = new Map<string, string>();
+const PRIMORDIAL_POI_IDS = new Set(['po_surtur', 'po_typhon', 'po_elderwood', 'po_gate', 'po_hall_eyes', 'po_necropolis']);
+function veyraContinentTileColor(t: number): string {
+  switch (t) {
+    case T.DEEP: return '#14243a';
+    case T.SHALLOW: case T.RIVER: return '#265c84';
+    case T.SAND: return '#b8a26e';
+    case T.GRASS: case T.MEADOW: return '#426e3c';
+    case T.FOREST: return '#284a2a';
+    case T.MARSH: return '#3a5442';
+    case T.HILL: case T.CLIFF: return '#68625c';
+    case T.SNOW: return '#cad8e4';
+    case T.ASH: return '#4e3c38';
+    case T.TOXIC: return '#5a6e2e';
+    case T.ROAD: case T.FLOOR: return '#9a8462';
+    default: return '#426e3c';
+  }
+}
 
 const have = (api: Api) => (k: string) => countItem(api.gs.run!, 'inv', k);
 function slotClick(api: Api, c: string, i: number, e: React.MouseEvent, quickTo?: string) {
@@ -323,7 +347,7 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
 export const BUILD_GROUPS: Record<string,string[]> = {
   Shell:['claim','floor_wood','floor_stone','wall_wood','wall_plank','wall_stone','wall_brick','door_wood','door_iron','roof_thatch','roof_tile'],
   Home:['bed_straw','chest_small','chest_large','escrow'],
-  Work:['campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','farm_controller'],
+  Work:['campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','feed_trough','farm_controller'],
   Defense:['base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','door_powered','arrow_turret','spikes','barricade','torch_post'],
 };
 /** Oil Pump is locked until the run holds an authorized source with stock; the reason is shown on the entry. */
@@ -375,34 +399,180 @@ function ExpeditionIntel({ api, r }: { api: Api; r: RunState }) {
 }
 
 export function MapPanel({ api, onTeleportSelect, teleportTarget }: { api: Api; onTeleportSelect?: (x:number,y:number)=>void; teleportTarget?: {x:number;y:number} | null }) {
-  const ref = useRef<HTMLCanvasElement>(null); const r = api.gs.run!; const w = getWorld();
-  useEffect(() => { const c = ref.current!; const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; g.drawImage(getMapCanvas(r), 0, 0);
-    const disc = r.discovered; g.fillStyle = 'rgba(12,10,20,0.86)'; for (let y = 0; y < 50; y++) for (let x = 0; x < 50; x++) if (!disc[y * 50 + x]) g.fillRect(x * 4, y * 4, 4, 4);
-    const dot = (x: number, y: number, col: string, s = 3) => { g.fillStyle = '#000'; g.fillRect(x - 1 - (s >> 1), y - 1 - (s >> 1), s + 2, s + 2); g.fillStyle = col; g.fillRect(x - (s >> 1), y - (s >> 1), s, s); };
-    for (const p of w.places) if (r.poiSeen.includes(p.id)) dot(p.tx, p.ty, p.kind === 'elder' ? '#ff4a3a' : p.kind === 'evac' ? '#5af0ff' : p.kind === 'start' ? '#a0e070' : '#ffd040');
-    for (const e of Object.values(r.entities)) { if (e.type === 'claim') dot(e.tx!, e.ty!, '#ff9a3a', 4); if (e.kind === 'bag') dot(e.x / 16, e.y / 16, '#ffffff'); if (e.kind === 'cart') dot(e.x / 16, e.y / 16, '#c9935a'); }
-    const p = r.player; dot(p.x / 16, p.y / 16, Math.floor(Date.now() / 300) % 2 ? '#ffffff' : '#ff4a8a', 3);if(teleportTarget)dot(teleportTarget.x/TILE,teleportTarget.y/TILE,'#d79cff',5);
+  const ref = useRef<HTMLCanvasElement>(null);
+  const r = api.gs.run!;
+  const w = getWorld();
+  const isVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
+  const [mapMode, setMapMode] = useState<'continent' | 'local'>(onTeleportSelect ? 'local' : isVeyra ? 'continent' : 'local');
+  useEffect(() => {
+    if (onTeleportSelect) setMapMode('local');
+  }, [Boolean(onTeleportSelect)]);
+
+  const effectiveMode = isVeyra ? mapMode : 'local';
+  const cw = effectiveMode === 'continent' ? 250 : 200;
+  const ch = effectiveMode === 'continent' ? 175 : 200;
+
+  useEffect(() => {
+    const c = ref.current;
+    if (!c) return;
+    const g = c.getContext('2d')!;
+    g.imageSmoothingEnabled = false;
+    const dot = (x: number, y: number, col: string, s = 3) => {
+      const rx = Math.round(x), ry = Math.round(y);
+      g.fillStyle = '#000';
+      g.fillRect(rx - 1 - (s >> 1), ry - 1 - (s >> 1), s + 2, s + 2);
+      g.fillStyle = col;
+      g.fillRect(rx - (s >> 1), ry - (s >> 1), s, s);
+    };
+
+    if (effectiveMode === 'continent') {
+      g.fillStyle = '#0c0a14';
+      g.fillRect(0, 0, cw, ch);
+      g.strokeStyle = '#1b1628';
+      g.lineWidth = 1;
+      for (let gx = 25; gx < cw; gx += 25) { g.beginPath(); g.moveTo(gx + 0.5, 0); g.lineTo(gx + 0.5, ch); g.stroke(); }
+      for (let gy = 25; gy < ch; gy += 25) { g.beginPath(); g.moveTo(0, gy + 0.5); g.lineTo(cw, gy + 0.5); g.stroke(); }
+
+      const [ox, oy] = windowOrigin(r);
+      const discKeys = new Set<string>(r.veyraGlobalDiscovered ? Object.keys(r.veyraGlobalDiscovered) : []);
+      for (let cy4 = 0; cy4 < 50; cy4++) {
+        for (let cx4 = 0; cx4 < 50; cx4++) {
+          if (r.discovered[cy4 * 50 + x4Idx(cx4)]) discKeys.add(`${(ox >> 2) + cx4}:${(oy >> 2) + cy4}`);
+        }
+      }
+      for (const k of discKeys) {
+        const sep = k.indexOf(':');
+        if (sep < 0) continue;
+        const cx4 = Number(k.slice(0, sep)), cy4 = Number(k.slice(sep + 1));
+        if (!Number.isFinite(cx4) || !Number.isFinite(cy4)) continue;
+        let col = continentCellColorCache.get(k);
+        if (!col) {
+          const tx = Math.min(FRAME_W - 1, Math.max(0, cx4 * 4 + 2));
+          const ty = Math.min(FRAME_H - 1, Math.max(0, cy4 * 4 + 2));
+          col = veyraContinentTileColor(sampleTile(tx, ty).tile);
+          if (continentCellColorCache.size > 24000) continentCellColorCache.clear();
+          continentCellColorCache.set(k, col);
+        }
+        g.fillStyle = col;
+        g.fillRect(cx4 >> 2, cy4 >> 2, 1, 1);
+      }
+
+      // Active 200x200 window frame
+      g.strokeStyle = 'rgba(255, 217, 138, 0.55)';
+      g.strokeRect(Math.round(ox / 16) + 0.5, Math.round(oy / 16) + 0.5, Math.round(WW / 16), Math.round(WH / 16));
+
+      // Discovered continent POIs
+      for (const po of POIS) {
+        if (!r.poiSeen.includes(po.id)) continue;
+        const px = po.at[0] / 8, py = po.at[1] / 8;
+        const pCol = PRIMORDIAL_POI_IDS.has(po.id) ? '#ff4a3a' : po.arche === 'port' || po.arche === 'heli' ? '#5af0ff' : '#ffd040';
+        dot(px, py, pCol, 3);
+      }
+
+      // Active + offscreen player claims, bags, carts, vehicles
+      for (const e of Object.values(r.entities)) {
+        if (e.type === 'claim') dot((ox + e.tx!) / 16, (oy + e.ty!) / 16, '#ff9a3a', 4);
+        if (e.kind === 'bag') dot((ox + e.x / TILE) / 16, (oy + e.y / TILE) / 16, '#ffffff', 3);
+        if (e.kind === 'cart' || e.kind === 'vehicle') dot((ox + e.x / TILE) / 16, (oy + e.y / TILE) / 16, '#c9935a', 3);
+      }
+      if (r.veyraOffscreenEntities) {
+        for (const oe of Object.values(r.veyraOffscreenEntities)) {
+          const gtx = oe.tx !== undefined ? oe.tx : oe.x / TILE;
+          const gty = oe.ty !== undefined ? oe.ty : oe.y / TILE;
+          if (oe.type === 'claim') dot(gtx / 16, gty / 16, '#ff9a3a', 4);
+          if (oe.kind === 'bag') dot(gtx / 16, gty / 16, '#ffffff', 3);
+          if (oe.kind === 'cart' || oe.kind === 'vehicle') dot(gtx / 16, gty / 16, '#c9935a', 3);
+        }
+      }
+
+      const p = r.player;
+      dot((ox + p.x / TILE) / 16, (oy + p.y / TILE) / 16, Math.floor(Date.now() / 300) % 2 ? '#ffffff' : '#ff4a8a', 3);
+      return;
+    }
+
+    g.drawImage(getMapCanvas(r), 0, 0);
+    const disc = r.discovered;
+    g.fillStyle = 'rgba(12,10,20,0.86)';
+    for (let y = 0; y < 50; y++) for (let x = 0; x < 50; x++) if (!disc[y * 50 + x]) g.fillRect(x * 4, y * 4, 4, 4);
+    for (const pl of w.places) if (r.poiSeen.includes(pl.id)) dot(pl.tx, pl.ty, pl.kind === 'elder' ? '#ff4a3a' : pl.kind === 'evac' ? '#5af0ff' : pl.kind === 'start' ? '#a0e070' : '#ffd040');
+    for (const e of Object.values(r.entities)) {
+      if (isVeyra && !onActiveFloor(r, e)) continue;
+      if (e.type === 'claim') dot(e.tx!, e.ty!, '#ff9a3a', 4);
+      if (e.kind === 'bag') dot(e.x / 16, e.y / 16, '#ffffff');
+      if (e.kind === 'cart' || e.kind === 'vehicle') dot(e.x / 16, e.y / 16, '#c9935a');
+    }
+    const p = r.player;
+    dot(p.x / 16, p.y / 16, Math.floor(Date.now() / 300) % 2 ? '#ffffff' : '#ff4a8a', 3);
+    if (teleportTarget) dot(teleportTarget.x / TILE, teleportTarget.y / TILE, '#d79cff', 5);
   });
-  const p = r.player; const h = runHours(r, api.now());
-  return <Panel title={`${w.veyra ? 'Map · bounded view' : 'Map of the island'} — ${(w.zoneNames || ZONES)[w.zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]]}`} style={{ left: 120, top: 26, width: 440 }} onClose={() => api.open(null)}>
-    <div className="flex gap-2"><canvas ref={ref} width={200} height={200} style={{ width: 260, height: 260, border: '1px solid #3a2e46', cursor:onTeleportSelect?'crosshair':'default' }} onClick={onTeleportSelect ? e=>{const rect=e.currentTarget.getBoundingClientRect(),x=Math.floor((e.clientX-rect.left)/rect.width*200),y=Math.floor((e.clientY-rect.top)/rect.height*200);onTeleportSelect(x*TILE+8,y*TILE+8);} : undefined} />
-      <div style={{ fontSize: 10, lineHeight: 1.15, width: 165 }}>
-        {onTeleportSelect && <div style={{color:'#e2bfff',fontSize:11,lineHeight:1.2,marginBottom:5}}>Lõi quỷ<br/>Click explored safe ground.<br/>Close map; hold and release E.<br/>Purple marks destination. Cart stays behind.</div>}<div style={{ color: '#ffd98a' }}>Discovered</div>{w.places.filter(pl => r.poiSeen.includes(pl.id)).map(pl => <div key={pl.id} style={{ color: pl.kind === 'elder' ? '#ff8a7a' : pl.kind === 'evac' ? '#5af0ff' : '#e0d0b0' }}>• {pl.name}</div>)}
-        {r.poiSeen.length === 0 && <div style={{ color: '#8a7a9a' }}>Nothing yet — explore.</div>}
+
+  const p = r.player;
+  const h = runHours(r, api.now());
+  const fl = isVeyra ? activeFloor(r) : 0;
+  const floorTag = fl < 0 ? `B${Math.abs(fl)} Sublevel` : fl === 0 ? 'F1 Ground' : `F${fl + 1} Upper`;
+  const [ax, ay] = isVeyra ? playerGlobalAu(r) : [0, 0];
+  const offscreenCount = r.veyraOffscreenEntities
+    ? Object.values(r.veyraOffscreenEntities).filter(oe => oe.type === 'claim' || oe.kind === 'bag' || oe.kind === 'cart' || oe.kind === 'vehicle').length
+    : 0;
+  const seenContinentPois = isVeyra ? POIS.filter(po => r.poiSeen.includes(po.id)) : [];
+
+  return <Panel title={`${isVeyra ? (effectiveMode === 'continent' ? 'Map · Veyra Continent (Fog of War)' : 'Map · Active Sector (200×200)') : 'Map of the island'} — ${(w.zoneNames || ZONES)[w.zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]]}`} style={{ left: 112, top: 22, width: 448 }} onClose={() => api.open(null)}>
+    <div className="flex gap-2">
+      <div style={{ width: 260 }}>
+        {isVeyra && <div className="flex justify-between items-center" style={{ marginBottom: 3, fontSize: 9 }}>
+          <div className="flex gap-1">
+            <button data-testid="map-mode-continent" className={`btn ${effectiveMode === 'continent' ? 'gold' : 'ghost'}`} style={{ fontSize: 9, padding: '1px 5px' }} onClick={() => setMapMode('continent')}>Continent · Fog</button>
+            <button data-testid="map-mode-local" className={`btn ${effectiveMode === 'local' ? 'gold' : 'ghost'}`} style={{ fontSize: 9, padding: '1px 5px' }} onClick={() => setMapMode('local')}>Local Sector</button>
+          </div>
+          <span style={{ color: '#9ae0ff' }}>AU {ax.toFixed(0)},{ay.toFixed(0)} · {floorTag}</span>
+        </div>}
+        <div style={{ width: 260, height: isVeyra ? 236 : 260, background: '#0c0a14', border: '1px solid #3a2e46', display: 'grid', placeItems: 'center' }}>
+          <canvas
+            ref={ref}
+            width={cw}
+            height={ch}
+            style={{ width: 260, height: effectiveMode === 'continent' ? 182 : (isVeyra ? 234 : 260), cursor: effectiveMode === 'local' && onTeleportSelect ? 'crosshair' : 'default' }}
+            onClick={effectiveMode === 'local' && onTeleportSelect ? e => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = Math.floor((e.clientX - rect.left) / rect.width * 200);
+              const y = Math.floor((e.clientY - rect.top) / rect.height * 200);
+              onTeleportSelect(x * TILE + 8, y * TILE + 8);
+            } : undefined}
+          />
+        </div>
+      </div>
+      <div style={{ fontSize: 10, lineHeight: 1.15, width: 170 }}>
+        {onTeleportSelect && <div style={{ color: '#e2bfff', fontSize: 10, lineHeight: 1.15, marginBottom: 4 }}>Lõi quỷ (Local Sector)<br />Click explored safe ground.<br />Close map; hold &amp; release E.<br />Purple marks destination.</div>}
+        <div style={{ color: '#ffd98a' }}>Discovered ({isVeyra ? seenContinentPois.length : w.places.filter(pl => r.poiSeen.includes(pl.id)).length})</div>
+        <div className="scroll" style={{ maxHeight: 92, overflowY: 'auto' }}>
+          {isVeyra
+            ? seenContinentPois.map(po => <div key={po.id} style={{ color: PRIMORDIAL_POI_IDS.has(po.id) ? '#ff8a7a' : '#e0d0b0' }}>• {po.name} <span style={{ color: '#7a6a8a', fontSize: 9 }}>({po.at[0]},{po.at[1]})</span></div>)
+            : w.places.filter(pl => r.poiSeen.includes(pl.id)).map(pl => <div key={pl.id} style={{ color: pl.kind === 'elder' ? '#ff8a7a' : pl.kind === 'evac' ? '#5af0ff' : '#e0d0b0' }}>• {pl.name}</div>)}
+          {r.poiSeen.length === 0 && <div style={{ color: '#8a7a9a' }}>Nothing yet — explore.</div>}
+        </div>
+        {isVeyra && offscreenCount > 0 && <div style={{ color: '#9ae0ff', fontSize: 9, marginTop: 2 }}>Offscreen markers: {offscreenCount} (shown on Continent)</div>}
         <ExpeditionIntel api={api} r={r} />
-        <div style={{ color: '#ffd98a', marginTop: 4 }}>Legend</div><div><span style={{ color: '#ffd040' }}>■</span> landmark <span style={{ color: '#ff4a3a' }}>■</span> elder</div><div><span style={{ color: '#ff9a3a' }}>■</span> your claim <span style={{ color: '#fff' }}>■</span> bag</div><div><span style={{ color: '#5af0ff' }}>■</span> evacuation</div>
+        <div style={{ color: '#ffd98a', marginTop: 4 }}>Legend</div>
+        <div><span style={{ color: '#ffd040' }}>■</span> landmark <span style={{ color: '#ff4a3a' }}>■</span> {isVeyra ? 'sanctum' : 'elder'}</div>
+        <div><span style={{ color: '#ff9a3a' }}>■</span> your claim <span style={{ color: '#fff' }}>■</span> bag</div>
+        <div><span style={{ color: '#5af0ff' }}>■</span> evacuation {isVeyra && <><span style={{ color: '#ffd98a88' }}>□</span> sector</>}</div>
         <div style={{ color: '#8a7a9a', marginTop: 4 }}>Run hour {h.toFixed(1)} / {BAL.run.maxRunHours} · {phaseOf(r, api.now()).toUpperCase()}</div>
-      </div></div></Panel>;
+      </div>
+    </div>
+  </Panel>;
 }
+function x4Idx(cx4: number) { return cx4; }
 
 export function SkillsPanel({ api }: { api: Api }) {
   const r = api.gs.run!; const lvl = (xp: number) => Math.floor(Math.sqrt(xp / 3));
+  const isVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
+  const elderDefs = isVeyra ? Object.values(PRIMORDIAL_ELDERS) : Object.values(ELDERS);
   const labels: Record<string, string> = { gather: 'Gathering', combat: 'Combat (+0.2% dmg/xp)', craft: 'Crafting', survival: 'Survival' };
   return <Panel title="Adventurer — skills, knowledge, stones" style={{ left: 120, top: 34, width: 400 }} onClose={() => api.open(null)}>
     <div className="flex gap-3" style={{ fontSize: 10 }}>
       <div style={{ width: 170 }}>{Object.entries(r.player.skills).map(([k, xp]) => <div key={k} style={{ marginBottom: 3 }}><div className="flex justify-between"><span>{labels[k]}</span><span style={{ color: '#ffd98a' }}>Lv {lvl(xp)}</span></div><div className="bar" style={{ width: 160 }}><i style={{ width: `${((Math.sqrt(xp / 3) % 1) * 100)}%`, background: '#9ad0ff' }} /></div></div>)}
-        <div style={{ color: '#ffd98a', marginTop: 6 }}>Elder stones (optional)</div>
-        <div className="flex gap-1" style={{ marginTop: 2 }}>{Object.values(ELDERS).map(e => <div key={e.stone} title={e.name} style={{ opacity: r.elderStones.includes(e.stone) ? 1 : 0.25 }}><Icon k={e.stone} /></div>)}</div>
+        <div style={{ color: '#ffd98a', marginTop: 6 }}>{isVeyra ? 'Primordial stones (optional)' : 'Elder stones (optional)'}</div>
+        <div className="flex gap-1" style={{ marginTop: 2 }}>{elderDefs.map(e => <div key={e.stone} title={`${e.name} — ${e.region}`} style={{ opacity: r.elderStones.includes(e.stone) ? 1 : 0.25 }}><Icon k={e.stone} /></div>)}</div>
         <div style={{ color: '#8a7a9a' }}>{r.elderStones.length}/6 — six stones + evacuation = exceptional ending.</div>
         <div style={{ color: '#ffd98a', marginTop: 6 }}>Run achievements · {r.score} local score</div>{r.achievements.map(a => <div key={a}>★ {ACHIEVEMENTS[a].name} <span style={{ color: '#8a7a9a' }}>+{ACHIEVEMENTS[a].score}</span></div>)}
         <div style={{ color: '#ff9a7a', fontSize: 9 }}>LOCAL/UNVERIFIED — never converts into cash.</div>

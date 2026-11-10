@@ -1,0 +1,1302 @@
+{
+  "generatedAt": "2026-11-10T00:00:00Z",
+  "atlases": {
+    "vampire_1": {
+      "atlasFile": "vampire_1.png",
+      "width": 768,
+      "height": 1536,
+      "cellW": 64,
+      "cellH": 64,
+      "bytes": 224114,
+      "sha256": "ddbaf7e4f81de9184d21686612ef5a62a7fd585bf137ceb7e78949652e542d38",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 4,
+          "fps": 7,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 8,
+          "fps": 13,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 12,
+          "fps": 15,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 11,
+          "fps": 12,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Vampires1_Idle_without_shadow.png",
+          "sha256": "50fc4466f206cfed6245ee8e329cee83d8512ee34ec324294b219d264062ada3"
+        },
+        {
+          "clip": "walk",
+          "file": "Vampires1_Walk_without_shadow.png",
+          "sha256": "4b4023a573afb7c07f9daa154bd68633e7e077cb0514c8c5de8dad8cd250a60b"
+        },
+        {
+          "clip": "run",
+          "file": "Vampires1_Run_without_shadow.png",
+          "sha256": "b894b7f07181d3a4c370f331236ecb1c9a4557040f890b3c3c4636559cd0af4b"
+        },
+        {
+          "clip": "attack",
+          "file": "Vampires1_Attack_without_shadow.png",
+          "sha256": "ba9994ab5e5f1eb71bc092af9eadaa4c510a93ba34cdd613aad7665e9c0c4262"
+        },
+        {
+          "clip": "hurt",
+          "file": "Vampires1_Hurt_without_shadow.png",
+          "sha256": "efd13cfce2f0019118ba66e7f7dbef8310b63b9a528ac808d1cfdb502264823a"
+        },
+        {
+          "clip": "death",
+          "file": "Vampires1_Death_without_shadow.png",
+          "sha256": "00ef5e5bef9346df947e9d5ef7c5d0c6ffce67435ece0a423dc8f83afa309b3b"
+        }
+      ]
+    },
+    "orc_1": {
+      "atlasFile": "orc_1.png",
+      "width": 512,
+      "height": 1536,
+      "cellW": 64,
+      "cellH": 64,
+      "bytes": 192178,
+      "sha256": "892759619dab96f166197a8a5aa2fa54361cf496645dffeeb35b5791445ce2ab",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 4,
+          "fps": 7,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 8,
+          "fps": 13,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 8,
+          "fps": 14,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 6,
+          "fps": 13,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 8,
+          "fps": 11,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "orc1_idle_without_shadow.png",
+          "sha256": "23c09e446dea29897f85962e95a1640b0fb09ec7ca033c4354788bc44ae0f245"
+        },
+        {
+          "clip": "walk",
+          "file": "orc1_walk_without_shadow.png",
+          "sha256": "dd32beaaa53fbb16045b71fd93789e526ee01204dcfab9fe71fccbc525742557"
+        },
+        {
+          "clip": "run",
+          "file": "orc1_run_without_shadow.png",
+          "sha256": "405ab947c05c7f3ae9810b6737e99cd4283e50baf50a0111300ebd4c0858dd67"
+        },
+        {
+          "clip": "attack",
+          "file": "orc1_attack_without_shadow.png",
+          "sha256": "6cdb9c9d2852bfa311adb316d17ab3d212a33be9ee40418b02506191303b51bf"
+        },
+        {
+          "clip": "hurt",
+          "file": "orc1_hurt_without_shadow.png",
+          "sha256": "8eb3fae1d8d73e3cfd7364307bb2e1e251c048d195561993191aeaa03edac2d8"
+        },
+        {
+          "clip": "death",
+          "file": "orc1_death_without_shadow.png",
+          "sha256": "3ec59f9bc14a37cb27a8120c344558f3db77623539f46828816ef0c08840d60d"
+        }
+      ]
+    },
+    "slime_1": {
+      "atlasFile": "slime_1.png",
+      "width": 640,
+      "height": 1536,
+      "cellW": 64,
+      "cellH": 64,
+      "bytes": 98250,
+      "sha256": "cd4c298cdd5d2774fc2677aef163811d51fbd4420cb82e60fb26ac786f3ed7d9",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 6,
+          "fps": 8,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 8,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 8,
+          "fps": 13,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 10,
+          "fps": 14,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 5,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 10,
+          "fps": 12,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Slime1_Idle_without_shadow.png",
+          "sha256": "ea072bb3d91e70fe7fb7b2e151f0c901ffaefaf5ee86b9c9a100dd7845fb18e9"
+        },
+        {
+          "clip": "walk",
+          "file": "Slime1_Walk_without_shadow.png",
+          "sha256": "9abd7c14ea5daf81d486ac31a888a60a6f2b52668787ec2801d42bdc30cc2c02"
+        },
+        {
+          "clip": "run",
+          "file": "Slime1_Run_without_shadow.png",
+          "sha256": "23ab4022eed5127e1124bf91555c8c5106bebd2083c3895bc66c1ea480cfd014"
+        },
+        {
+          "clip": "attack",
+          "file": "Slime1_Attack_without_shadow.png",
+          "sha256": "9109a9768a51b62bcd037a24ab49b3f8c8da5ec8d211ddd783f7c8621dc01f31"
+        },
+        {
+          "clip": "hurt",
+          "file": "Slime1_Hurt_without_shadow.png",
+          "sha256": "268327dc54fabb3df7ea4de5abcaf5b947f05998a4c58d53275c9ca3fb20717c"
+        },
+        {
+          "clip": "death",
+          "file": "Slime1_Death_without_shadow.png",
+          "sha256": "219b0f75c1c51262c9c5ed2a4723f74a3b1453fe274052c616d53f3d943363b3"
+        }
+      ]
+    },
+    "vampire_2": {
+      "atlasFile": "vampire_2.png",
+      "width": 768,
+      "height": 1536,
+      "cellW": 64,
+      "cellH": 64,
+      "bytes": 282211,
+      "sha256": "c20cc23b3c4f205345e9585873e8b583610c46aed33834081117d8772a516de0",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 4,
+          "fps": 7,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 8,
+          "fps": 13,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 12,
+          "fps": 15,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 11,
+          "fps": 12,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Vampires2_Idle_without_shadow.png",
+          "sha256": "b5c69a4ccc8a89c737c4af47a9336fa9506ad3477f093e60e3213aac51d17f64"
+        },
+        {
+          "clip": "walk",
+          "file": "Vampires2_Walk_without_shadow.png",
+          "sha256": "8a2b87e5c7859f33177c411e6434a687014f352694d2a6cec8fc90536e90c6f0"
+        },
+        {
+          "clip": "run",
+          "file": "Vampires2_Run_without_shadow.png",
+          "sha256": "2a9784f48dacf96c1884dcc534efc73f851e716bfd7e8da32e761e2711c58d7b"
+        },
+        {
+          "clip": "attack",
+          "file": "Vampires2_Attack_without_shadow.png",
+          "sha256": "f0617ed0d1d6d176f73281968372c734f84287a25aba2ea7553655ba0fe7c200"
+        },
+        {
+          "clip": "hurt",
+          "file": "Vampires2_Hurt_without_shadow.png",
+          "sha256": "46aad321db29ea8b107823f9bffd4f59207235f607d0e217e759716e0b16f7af"
+        },
+        {
+          "clip": "death",
+          "file": "Vampires2_Death_without_shadow.png",
+          "sha256": "ca69d3d5e5b866ffd872e81d3172872a6cd2cfdfa78174ec38430f72637acd86"
+        }
+      ]
+    },
+    "orc_2": {
+      "atlasFile": "orc_2.png",
+      "width": 512,
+      "height": 1536,
+      "cellW": 64,
+      "cellH": 64,
+      "bytes": 240447,
+      "sha256": "6c8ade510ef077d0122e4a49d84ed01f75cd3d72ef5e698af4da1f4b6d60495f",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 4,
+          "fps": 7,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 8,
+          "fps": 13,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 8,
+          "fps": 14,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 6,
+          "fps": 13,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 8,
+          "fps": 11,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "orc2_idle_without_shadow.png",
+          "sha256": "f9f154bea83a16c88f86441cd3fa600922c6ae46e4660823ce07c7a3dad957ca"
+        },
+        {
+          "clip": "walk",
+          "file": "orc2_walk_without_shadow.png",
+          "sha256": "58d90ad40b5205e4d81e60424137bd0d3b1ac38293c0c4192c2775da48aa62c7"
+        },
+        {
+          "clip": "run",
+          "file": "orc2_run_without_shadow.png",
+          "sha256": "5af50ed133ce3ef02353cc73bd2a168c2bae46d6143ee1693545921b37797448"
+        },
+        {
+          "clip": "attack",
+          "file": "orc2_attack_without_shadow.png",
+          "sha256": "1377be0b429cbad9588f29226482cfcabcd9bc4495c225a3fc85b9c878410b05"
+        },
+        {
+          "clip": "hurt",
+          "file": "orc2_hurt_without_shadow.png",
+          "sha256": "6d1366e57416930706ba8714eae3310910f761acd83fda6df33eedbec39bfbea"
+        },
+        {
+          "clip": "death",
+          "file": "orc2_death_without_shadow.png",
+          "sha256": "c5d9ab166d04f63a206f7b59cde0bfc84974ce8f727e5b8fa0481fc6a142d4db"
+        }
+      ]
+    },
+    "slime_2": {
+      "atlasFile": "slime_2.png",
+      "width": 704,
+      "height": 1536,
+      "cellW": 64,
+      "cellH": 64,
+      "bytes": 152862,
+      "sha256": "e41d1e124c8237c88351475dd829c45fe3e52fbba3e0cfc0f9a72f602d21ccd1",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 6,
+          "fps": 8,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 8,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 8,
+          "fps": 13,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 11,
+          "fps": 14,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 5,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 10,
+          "fps": 12,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Slime2_Idle_without_shadow.png",
+          "sha256": "0e7454a1a177a9c6363540a4e30b0933c2307a17af352bc897f44b6be9805809"
+        },
+        {
+          "clip": "walk",
+          "file": "Slime2_Walk_without_shadow.png",
+          "sha256": "b377f48638b4bba95a1eb7050bd634c4068e2ad5040232e5da65a08679ab6756"
+        },
+        {
+          "clip": "run",
+          "file": "Slime2_Run_without_shadow.png",
+          "sha256": "f39296b70a8dfbffeb1bca3dceb8f271bd7fdfe86c125105e7145bb4da92829f"
+        },
+        {
+          "clip": "attack",
+          "file": "Slime2_Attack_without_shadow.png",
+          "sha256": "99c809d8681417108db7208bd41a4622ca267c8e4157a6485e7b71594bead9bb"
+        },
+        {
+          "clip": "hurt",
+          "file": "Slime2_Hurt_without_shadow.png",
+          "sha256": "225f5b885b9f29ae824536ee360ebaebb459f9123397c873fdcf98f47d18ec9c"
+        },
+        {
+          "clip": "death",
+          "file": "Slime2_Death_without_shadow.png",
+          "sha256": "de93d86d54b895443aa7ad74ad0ca0e9cc682c8503b3f2e9d33e6acdf9521e15"
+        }
+      ]
+    },
+    "vampire_3": {
+      "atlasFile": "vampire_3.png",
+      "width": 768,
+      "height": 1536,
+      "cellW": 64,
+      "cellH": 64,
+      "bytes": 309949,
+      "sha256": "8a13efb5188869a5c810e6471fc90d1865badb2bc56edb777a2a1058d7f5fc91",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 4,
+          "fps": 7,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 8,
+          "fps": 13,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 12,
+          "fps": 15,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 11,
+          "fps": 12,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Vampires3_Idle_without_shadow.png",
+          "sha256": "5c1253d77f8c8960a30c2be49ce23d0d938c15171cdb08b6744dfeafa7f4262d"
+        },
+        {
+          "clip": "walk",
+          "file": "Vampires3_Walk_without_shadow.png",
+          "sha256": "1ae821b5e965d036bd113e4547bf18165fac4609a3c1c1890b49b6269e7e96e0"
+        },
+        {
+          "clip": "run",
+          "file": "Vampires3_Run_without_shadow.png",
+          "sha256": "bceb50b5117c7db912e4d99be6aead5418efe9336ee9a1618a03b512caabbf56"
+        },
+        {
+          "clip": "attack",
+          "file": "Vampires3_Attack_without_shadow.png",
+          "sha256": "5c300ca3f0bccd16bf5c3b844c7f06032e7d3195883d0348652d2f4d432a801c"
+        },
+        {
+          "clip": "hurt",
+          "file": "Vampires3_Hurt_without_shadow.png",
+          "sha256": "8bd13e8b2bd9e317df4aad0898e3a169a11151880fa0fb4d645cafcbd227ed02"
+        },
+        {
+          "clip": "death",
+          "file": "Vampires3_Death_without_shadow.png",
+          "sha256": "ab2dd786224af982607da2e2b88c4960d1fde9b699033df91574a9a2b54e3152"
+        }
+      ]
+    },
+    "orc_3": {
+      "atlasFile": "orc_3.png",
+      "width": 512,
+      "height": 1536,
+      "cellW": 64,
+      "cellH": 64,
+      "bytes": 282079,
+      "sha256": "25658a9c4c81b6dd0498249308f3ac2986a6f1cef81bec983372ba3ca3c0ebdf",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 4,
+          "fps": 7,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 8,
+          "fps": 13,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 8,
+          "fps": 14,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 6,
+          "fps": 13,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 8,
+          "fps": 11,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "orc3_idle_without_shadow.png",
+          "sha256": "b859ce5c8c0083b206b00d38816faa7254ce15ad85a0525e9441856d02a124f7"
+        },
+        {
+          "clip": "walk",
+          "file": "orc3_walk_without_shadow.png",
+          "sha256": "880b845dce798b3e008f3a984c7d6f17f9a23ac9594662323fbc0718468a268d"
+        },
+        {
+          "clip": "run",
+          "file": "orc3_run_without_shadow.png",
+          "sha256": "9b059857acda80b873ebf12c09150b2f1fd50d18939f4de9c098c9bc0f1d7b32"
+        },
+        {
+          "clip": "attack",
+          "file": "orc3_attack_without_shadow.png",
+          "sha256": "df6bc517055f6a55f1a97ce6e320493382a3b8ee2e0a3a3c0bd8c1a7467e9ff1"
+        },
+        {
+          "clip": "hurt",
+          "file": "orc3_hurt_without_shadow.png",
+          "sha256": "be86368fa1bbff4eaf80f9ef542a362d7b0dc5ea4dad323e6d9e9ad18467af69"
+        },
+        {
+          "clip": "death",
+          "file": "orc3_death_without_shadow.png",
+          "sha256": "72a57e6f0dab01d99caeb13f0f0254c296a725fcb590ee85a5628b9c4a3348c4"
+        }
+      ]
+    },
+    "slime_3": {
+      "atlasFile": "slime_3.png",
+      "width": 640,
+      "height": 1536,
+      "cellW": 64,
+      "cellH": 64,
+      "bytes": 170499,
+      "sha256": "e53713c8beb7833bb0788f1a607c9e1ab4ad94be95b1a456aa953afade974a94",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 6,
+          "fps": 8,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 8,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 8,
+          "fps": 13,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 9,
+          "fps": 14,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 5,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 10,
+          "fps": 12,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Slime3_Idle_without_shadow.png",
+          "sha256": "16d24de627d8362e37dada99c0493c8469e2107b277d826afc1bac6b9918be2d"
+        },
+        {
+          "clip": "walk",
+          "file": "Slime3_Walk_without_shadow.png",
+          "sha256": "4283ef1d59b7485b3de8b6944c45016dac7534c7cbff950dceceab52b8f639e5"
+        },
+        {
+          "clip": "run",
+          "file": "Slime3_Run_without_shadow.png",
+          "sha256": "2e213892eafc54f98fd261c1569a63fb50391a5e25facca39c270870a82e1e81"
+        },
+        {
+          "clip": "attack",
+          "file": "Slime3_Attack_without_shadow.png",
+          "sha256": "09de3757e3f8b5e10e13067ae11e4799b5996f4e0a314f7fce7ee3b070f552fb"
+        },
+        {
+          "clip": "hurt",
+          "file": "Slime3_Hurt_without_shadow.png",
+          "sha256": "e0dde18f4946628814e4ea25ad8372285dcca66124e43baccf3e1caa7d08e665"
+        },
+        {
+          "clip": "death",
+          "file": "Slime3_Death_without_shadow.png",
+          "sha256": "518300eca13797e2990e77977e3b8d50677d4dfc4a7ab1c69503a72562069b64"
+        }
+      ]
+    },
+    "wildlife_boar": {
+      "atlasFile": "wildlife_boar.png",
+      "width": 192,
+      "height": 768,
+      "cellW": 32,
+      "cellH": 32,
+      "bytes": 80544,
+      "sha256": "43d91b20f7ae82f49fffdd992dbf0997823d38f1a19d48301beea137b4c3a632",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 4,
+          "fps": 6,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 5,
+          "fps": 13,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 5,
+          "fps": 13,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 6,
+          "fps": 10,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Boar_Idle.png",
+          "sha256": "093cd851b4ef147e93d87756b1fb00a9ace7422416ce208066d5215fce842b36"
+        },
+        {
+          "clip": "walk",
+          "file": "Boar_Walk.png",
+          "sha256": "dd8fdfdbb37fcb8f8e4c6434f28e7bcaa0c5db690f3f6a325125728a07fa2af5"
+        },
+        {
+          "clip": "run",
+          "file": "Boar_Run.png",
+          "sha256": "95d679343c62ef536310149410251d0d081bc2c4b15a1a2e3e9e32f39d60f6f6"
+        },
+        {
+          "clip": "attack",
+          "file": "Boar_Attack.png",
+          "sha256": "0171a112ebac6d64945945b7333aab343dc61feacba6cea9cdacb13131a5a446"
+        },
+        {
+          "clip": "hurt",
+          "file": "Boar_Hurt.png",
+          "sha256": "eba2f0c96e453b303c00fd41d85f87a90b75d4d9e94d1a8c2ad849bc2482c82e"
+        },
+        {
+          "clip": "death",
+          "file": "Boar_Death.png",
+          "sha256": "ca405e5e9d8abc74228858bd7cce45b266190246fb58a1b06876f7dbf309ed3c"
+        }
+      ]
+    },
+    "wildlife_deer": {
+      "atlasFile": "wildlife_deer.png",
+      "width": 224,
+      "height": 640,
+      "cellW": 32,
+      "cellH": 32,
+      "bytes": 71355,
+      "sha256": "db4368c6844b6ec95430e6095623b624d993b98fdc851b1cd8f6a3d6da22668c",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 4,
+          "fps": 6,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 6,
+          "fps": 14,
+          "loop": true
+        },
+        "hurt": {
+          "yRow": 12,
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 16,
+          "frames": 7,
+          "fps": 10,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Deer_Idle.png",
+          "sha256": "5d75c74f4978950e1dbe77d90e00006e3b4321b2d90bf6288b52f24e929521e9"
+        },
+        {
+          "clip": "walk",
+          "file": "Deer_Walk.png",
+          "sha256": "c9e0b089c4d1ed963ec5eef4ad7266478a625188dfb055ce8a0531ace530081b"
+        },
+        {
+          "clip": "run",
+          "file": "Deer_Run.png",
+          "sha256": "008b0305090d734a6659844e7276df88954f400756acbd2a5bd6c43192f8c3b2"
+        },
+        {
+          "clip": "hurt",
+          "file": "Deer_Hurt.png",
+          "sha256": "26b199ba02d51bdf55202c5b233f412a03774cec0430b22dd00756ebb7b99132"
+        },
+        {
+          "clip": "death",
+          "file": "Deer_Death.png",
+          "sha256": "b6da198380e93b5714e967a876e08740e340ea4a6a56304f5d03ec1f45d85190"
+        }
+      ]
+    },
+    "wildlife_hare": {
+      "atlasFile": "wildlife_hare.png",
+      "width": 192,
+      "height": 640,
+      "cellW": 32,
+      "cellH": 32,
+      "bytes": 53549,
+      "sha256": "940849a6d4cab23aabc9ed3216e6069b832d5bfd16e377cfd547495acdde083e",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 4,
+          "fps": 7,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 5,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 6,
+          "fps": 15,
+          "loop": true
+        },
+        "hurt": {
+          "yRow": 12,
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 16,
+          "frames": 6,
+          "fps": 10,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Hare_Idle.png",
+          "sha256": "5ccdd0c755362d92b27625de53f147bb140bc15952e54565c7370a283e5775df"
+        },
+        {
+          "clip": "walk",
+          "file": "Hare_Walk.png",
+          "sha256": "4b9529582349386376781b92ce72f2c0fcd4eb64eaba555f2e141c6feb4f15a1"
+        },
+        {
+          "clip": "run",
+          "file": "Hare_Run.png",
+          "sha256": "bcf25682da19536a3f8ce3bab369e38d71f13abcfc3c48a98a34ba08302a0e2a"
+        },
+        {
+          "clip": "hurt",
+          "file": "Hare_Hurt.png",
+          "sha256": "a857ab80aad68e7992753a871aec2d9880017d89489a0f8afe065b0a6edcece0"
+        },
+        {
+          "clip": "death",
+          "file": "Hare_Death.png",
+          "sha256": "4847483a7879d1e9f49fa9c2275308b821268d99c4bb06dac67d6fedaf89c85b"
+        }
+      ]
+    },
+    "wildlife_grouse": {
+      "atlasFile": "wildlife_grouse.png",
+      "width": 192,
+      "height": 640,
+      "cellW": 32,
+      "cellH": 32,
+      "bytes": 72122,
+      "sha256": "1a53df3ddec0bfda18becaf8526afa987db853b81116f41e1a6c5fa4aaf4f259",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 4,
+          "fps": 6,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 6,
+          "fps": 14,
+          "loop": true
+        },
+        "hurt": {
+          "yRow": 12,
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 16,
+          "frames": 6,
+          "fps": 10,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Black_grouse_Idle.png",
+          "sha256": "baebc86305a208af1b5b0d2287291e68dff78c375e069c81ed3cfe5fe018234a"
+        },
+        {
+          "clip": "walk",
+          "file": "Black_grouse_Walk.png",
+          "sha256": "6dbb36a8d47119b2f63160a14298b2e33ce041e27d835ae97ea0f99dabf70da5"
+        },
+        {
+          "clip": "run",
+          "file": "Black_grouse_Flight.png",
+          "sha256": "a087ab66e51f7013ee25830dd7b6abfe498b4d3a25f8d63720dcfe8d7fff3ae3"
+        },
+        {
+          "clip": "hurt",
+          "file": "Black_grouse_Hurt.png",
+          "sha256": "8eb6b001f0405ef408339c1898ccdf77044548f484137115b6bb0b85e509de91"
+        },
+        {
+          "clip": "death",
+          "file": "Black_grouse_Death.png",
+          "sha256": "e10980939daf85af0c454e22dc9e8a3b9a34b9b7f7f8aecedb42db9da4d42c82"
+        }
+      ]
+    },
+    "wildlife_fox": {
+      "atlasFile": "wildlife_fox.png",
+      "width": 192,
+      "height": 768,
+      "cellW": 32,
+      "cellH": 32,
+      "bytes": 86018,
+      "sha256": "6878ebab52e3970921739b5b0eabdbf4c6b4e33133d071591578a29d58320b90",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 4,
+          "fps": 7,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 6,
+          "fps": 10,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 6,
+          "fps": 14,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 6,
+          "fps": 15,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 6,
+          "fps": 10,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Fox_Idle.png",
+          "sha256": "0df79178b11714120e7cb6d1c4bf55f4c355ac66befe5efe1d1820ec9e22ffe4"
+        },
+        {
+          "clip": "walk",
+          "file": "Fox_walk.png",
+          "sha256": "ef5a01fc0eb5c40b1eccecfaa9ddadbdaaab19a7a7f686c34ab1670e5fd9be7d"
+        },
+        {
+          "clip": "run",
+          "file": "Fox_Run.png",
+          "sha256": "f9d92e80367799fda6c13dbff02173555a6063fcd6160644a809ddbb87b3f584"
+        },
+        {
+          "clip": "attack",
+          "file": "Fox_Run.png",
+          "sha256": "f9d92e80367799fda6c13dbff02173555a6063fcd6160644a809ddbb87b3f584"
+        },
+        {
+          "clip": "hurt",
+          "file": "Fox_Hurt.png",
+          "sha256": "60ee997a94777569d4c78db5d97c0ecc8744dcb9168232e57fab8b92b38ae511"
+        },
+        {
+          "clip": "death",
+          "file": "Fox_Death.png",
+          "sha256": "ac993bc508ec2f69629ff2ba89ee44b1c0a1b2a1e05924b94bb6b22cdd9882e8"
+        }
+      ]
+    },
+    "boss_rock": {
+      "atlasFile": "boss_rock.png",
+      "width": 832,
+      "height": 1536,
+      "cellW": 64,
+      "cellH": 64,
+      "bytes": 504405,
+      "sha256": "91162d43c1c6e78104c089e275a3f0d342183b591a31ed02026144577e8327c2",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 7,
+          "fps": 8,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 10,
+          "fps": 11,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 8,
+          "frames": 10,
+          "fps": 13,
+          "loop": false
+        },
+        "attack2": {
+          "yRow": 12,
+          "frames": 13,
+          "fps": 13,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 8,
+          "fps": 10,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "BossEnemy_idle.png",
+          "sha256": "67111df76f65c5c6ca66ed2ab878e8cf4a2202d469d36ea4147b519998f2a59e"
+        },
+        {
+          "clip": "walk",
+          "file": "BossEnemy_walk.png",
+          "sha256": "fcbac3af797d391e8f936ad419099035c6aca0952eb5e62af9c5dd73a554b606"
+        },
+        {
+          "clip": "attack",
+          "file": "BossEnemy_swipe.png",
+          "sha256": "d7f9c79e74c14b2bb299088c687194151d1a93ee95183471a8f0557ef62aac5a"
+        },
+        {
+          "clip": "attack2",
+          "file": "BossEnemy_stomp.png",
+          "sha256": "5e082a833eb97a34b191e82b1fba5f176eac60feb150e96743a0d5f227f56eaf"
+        }
+      ]
+    },
+    "boss_water": {
+      "atlasFile": "boss_water.png",
+      "width": 288,
+      "height": 720,
+      "cellW": 48,
+      "cellH": 48,
+      "bytes": 60786,
+      "sha256": "b7ec6f03ee6e2553da89464a63c73831212d664eca2840c77352634fae5a7fb2",
+      "layout": "3dir_mirror_left",
+      "sources": [
+        {
+          "clip": "all_15_aseprite_tags",
+          "file": "Water Warrior Sprite Sheet.png",
+          "sha256": "e2524f39cf17771d0d02902047677de4603fa883b09966402d3a1aace764e7b5"
+        }
+      ]
+    },
+    "boss_maid": {
+      "atlasFile": "boss_maid.png",
+      "width": 960,
+      "height": 2304,
+      "cellW": 96,
+      "cellH": 96,
+      "bytes": 209454,
+      "sha256": "4d91ddeaa2e18c7faf1b6be8dd0881282c2966719b39d2a88ea2cd945eb18771",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 5,
+          "fps": 7,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 10,
+          "fps": 12,
+          "loop": true
+        },
+        "run": {
+          "yRow": 8,
+          "frames": 10,
+          "fps": 15,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 12,
+          "frames": 8,
+          "fps": 14,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 8,
+          "fps": 10,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "idle",
+          "file": "Maid Idle (1).png",
+          "sha256": "d8cabfa78d189cabac5d47f4afbbd5c754ef6e6f4f32220b7adb60db30160d9b"
+        },
+        {
+          "clip": "walk",
+          "file": "Maid Run (1).png",
+          "sha256": "cf3b5c3c5add8f33ccca4f514409b885bffccbac881a845d024715c53ac2851d"
+        },
+        {
+          "clip": "run",
+          "file": "Maid Run (1).png",
+          "sha256": "cf3b5c3c5add8f33ccca4f514409b885bffccbac881a845d024715c53ac2851d"
+        }
+      ]
+    },
+    "boss_samurai": {
+      "atlasFile": "boss_samurai.png",
+      "width": 1152,
+      "height": 2304,
+      "cellW": 96,
+      "cellH": 96,
+      "bytes": 553499,
+      "sha256": "e0d5ebd875c9369024d5e48a3672640ea2dfae1723f0c11beeea44639f457fb6",
+      "clips": {
+        "idle": {
+          "yRow": 0,
+          "frames": 8,
+          "fps": 8,
+          "loop": true
+        },
+        "walk": {
+          "yRow": 4,
+          "frames": 12,
+          "fps": 12,
+          "loop": true
+        },
+        "attack": {
+          "yRow": 8,
+          "frames": 12,
+          "fps": 15,
+          "loop": false
+        },
+        "attack2": {
+          "yRow": 12,
+          "frames": 12,
+          "fps": 14,
+          "loop": false
+        },
+        "hurt": {
+          "yRow": 16,
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "death": {
+          "yRow": 20,
+          "frames": 12,
+          "fps": 11,
+          "loop": false
+        }
+      },
+      "sources": [
+        {
+          "clip": "intro",
+          "file": "Boss_Samurai_Intro.png",
+          "sha256": "57b419e87e74c9b651274d057762474f561ba2df5857dc2081f3a319c7fc3a75"
+        },
+        {
+          "clip": "walk",
+          "file": "Boss_Samurai_Walk.png",
+          "sha256": "20de7a288d5f9a30440c3c597efadbb20d976c0fc405124c5c0686e8ee61b69e"
+        },
+        {
+          "clip": "attack",
+          "file": "Boss_Samurai_MeleeAttack.png",
+          "sha256": "5411a71537d32b29448753fc004953d1eb26f25bd2cd79bb9bdfd824bdc35f8b"
+        },
+        {
+          "clip": "attack2",
+          "file": "Boss_Samurai_RangedAttack.png",
+          "sha256": "35144041bd63f42a23082f134cf2f62538e5ba845c48ea012e6bddc9c4139186"
+        },
+        {
+          "clip": "death",
+          "file": "Boss_Samurai_Death.png",
+          "sha256": "ff3dbdc76bd17119ae03ff16429ce0c36f0735bf4ba0de81b7cda2f4bafb90be"
+        }
+      ]
+    }
+  }
+}

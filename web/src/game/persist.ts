@@ -9,13 +9,16 @@ import { validIntel } from './expedition-intel';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
-import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, VENDOR_SPARES, VENDOR_SECURED } from './catalog';
-import { newGame, renewableLoot } from './engine';
+import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED } from './catalog';
+import { newGame, renewableLoot, markDirty } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
-import { getWorld, hasLayout, webRecyclerSite } from './world';
+import { getWorld, hasLayout, setActiveLayout, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
 import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
+import { isVeyra05Layout } from '../veyra05/scenes';
+import { getWindowWorld } from '../veyra05/window';
+import { activeFloor, onActiveFloor, syncFloor } from '../veyra05/floors';
 
 const testMode = import.meta.env.VITE_FX_TEST === '1';
 const DB = testMode ? 'soul-of-hero-vfx-test' : 'soul-of-hero', STORE = 'kv', KEY = 'state', LS = (testMode ? 'soh.vfx-test.v' : 'soh.state.v') + SAVE_VERSION;
@@ -60,15 +63,20 @@ export function validate(raw: any): GameState | null {
   // Snapshots written before mapDigest existed are accepted only against the
   // exact built-in geometry which shipped with PR #44, never an imported map.
   const baseline: Record<string,string> = { shipping:'f773dae0', dev_delta:'74b3ed67' };
+  const veyraWw = isVeyra05Layout(layout) ? getWindowWorld(layout) : null;
+  const veyraActiveLayer = veyraWw ? (veyraWw.floors.layers.get(activeFloor(r)) ?? veyraWw.floors.ground) : null;
+  const expectedSourceDigest = veyraWw ? sourceDigest(veyraWw.floors.ground.sources) : sourceDigest(world.sourceV3);
+  const activeSources = veyraActiveLayer ? veyraActiveLayer.sources : world.sourceV3;
+  const activeStatics = veyraActiveLayer ? veyraActiveLayer.statics : world.statics;
   if (r.sourceLayoutVersion === 3) {
-    const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || m.rules !== 3 || m.seed !== world.economyMap.seed || m.digest !== sourceDigest(world.sourceV3)) return null;
+    const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || m.rules !== 3 || m.seed !== world.economyMap.seed || m.digest !== expectedSourceDigest) return null;
     if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) return null;
     if (world.veyra && JSON.stringify(m.veyra)!==JSON.stringify(world.veyra)) return null;
     if (world.randomSpawn && (!obj(r.spawnChoice) || r.spawnChoice.contract!=='seeded-geographic-v1' || !Number.isInteger(r.spawnChoice.x) || !Number.isInteger(r.spawnChoice.y) || r.spawnChoice.x<1 || r.spawnChoice.y<1 || r.spawnChoice.x>=199 || r.spawnChoice.y>=199)) return null;
     if (!world.veyra && m.veyra!==undefined) return null;
   } else if (baseline[layout] !== fingerprint) return null;
   if (r.sourceLayoutVersion !== 3 && r.sourceMap !== undefined) return null;
-  if ((r.player.iceUntil !== undefined && !finite(r.player.iceUntil)) || (r.player.channelUntil !== undefined && !finite(r.player.channelUntil)) || !['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;
+  if ((r.player.iceUntil !== undefined && !finite(r.player.iceUntil)) || (r.player.channelUntil !== undefined && !finite(r.player.channelUntil)) || (r.player.primordialSlowMul !== undefined && (!finite(r.player.primordialSlowMul) || r.player.primordialSlowMul <= 0 || r.player.primordialSlowMul > 1)) || (r.player.primordialSlowUntil !== undefined && !finite(r.player.primordialSlowUntil)) || !['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;
   if (r.clock.defenseFrames !== undefined && (!Number.isInteger(r.clock.defenseFrames) || r.clock.defenseFrames < 0 || r.clock.defenseFrames > 14400)) return null;
   if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) for (const k of ALWAYS_KNOWN_RECIPES) if (!r.knowledge.recipes.includes(k)) r.knowledge.recipes.push(k); // B01-D: single knowledge authority migration (idempotent)
   if (r.intel !== undefined && !validIntel(r.intel)) return null;
@@ -79,17 +87,121 @@ export function validate(raw: any): GameState | null {
     const c = r.combat;
     if (!obj(c) || !Array.isArray(c.projectiles) || !Array.isArray(c.hazards) || c.projectiles.length > 5000 || c.hazards.length > 5000) return null;
     if (c.projectiles.some((q: any) => !obj(q) || !['x','y','vx','vy','life','dmg','r'].every(k => finite(q[k])) || !['player','enemy'].includes(q.from) || typeof q.kind !== 'string' || (q.delay !== undefined && !finite(q.delay)) || (q.homing !== undefined && !finite(q.homing)))) return null;
-    if (c.hazards.some((h: any) => !obj(h) || !['circle','line','ring','wave','sweep','pool'].includes(h.kind) || !['x','y','t','tell','dur','dmg'].every(k => finite(h[k])) || typeof h.style !== 'string' || (h.elder !== undefined && !has(ELDERS, h.elder)) || ['r','angle','len','w','tickAcc','a0','a1','expiresSimMs'].some(k => h[k] !== undefined && !finite(h[k])))) return null;
+    if (c.hazards.some((h: any) => !obj(h) || !['circle','line','ring','wave','sweep','pool'].includes(h.kind) || !['x','y','t','tell','dur','dmg'].every(k => finite(h[k])) || typeof h.style !== 'string' || (h.elder !== undefined && !lookupElderDef(h.elder)) || ['r','angle','len','w','tickAcc','a0','a1','expiresSimMs'].some(k => h[k] !== undefined && !finite(h[k])))) return null;
   }
   if (r.sourceLayoutVersion === 3) for (const [key, st] of Object.entries(r.sources) as [string, any][]) {
-    const i=Number(key); if (!Number.isInteger(i) || String(i)!==key || i<0 || i>=world.sourceV3.length || !world.sourceV3[i] || !obj(st)) return null;
-    const def=SOURCES[st.burnt ? 'deadtree' : world.sourceV3[i]!];
+    const i=Number(key); if (!Number.isInteger(i) || String(i)!==key || i<0 || i>=activeSources.length || !activeSources[i] || !obj(st)) return null;
+    const def=SOURCES[st.burnt ? 'deadtree' : activeSources[i]!];
     if (!def || !finite(st.stock) || !Number.isInteger(st.stock) || st.stock<0 || st.stock>def.stock || !finite(st.hp) || st.hp<0 || st.hp>def.hp || (st.burnt!==undefined && typeof st.burnt!=='boolean') || (st.regrowAt!==undefined && (!finite(st.regrowAt)||st.regrowAt<0)) || ((st.regrowFrom!==undefined || st.regrowAcc!==undefined || st.regrowDoneAt!==undefined) && (!def.regrow || (st.regrowFrom!==undefined && (!finite(st.regrowFrom)||st.regrowFrom<0)) || (st.regrowAcc!==undefined && (!finite(st.regrowAcc)||st.regrowAcc<0)) || (st.regrowDoneAt!==undefined && !finite(st.regrowDoneAt)))) || (st.fire!==undefined && (!finite(st.fire)||st.fire<0)) || (st.fireSpreadAt!==undefined && (!finite(st.fireSpreadAt)||st.fireSpreadAt<0 || !st.fire || st.fireSpreadAt>st.fire)) || (st.fireDepth!==undefined && (!Number.isInteger(st.fireDepth)||st.fireDepth<0||st.fireDepth>BAL.fire.maxSpreadDepth))) return null;
   }
   if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || (r.custody.inv.slots?.length !== 24 && !(testMode && r.qaUsed === true && r.custody.inv.slots?.length === 128)) || r.custody.eq.slots?.length !== 3) return null;
   if (!Number.isInteger(r.player.active) || r.player.active < 0 || r.player.active > 7 || !['vx','vy','dir','aim','invuln','deadT','stepAcc','lastTraceX','lastTraceY'].every(k => finite(r.player[k])) || !['gather','combat','craft','survival'].every(k => finite(r.player.skills[k]))) return null;
   const beforeNext = (id: string, re: RegExp) => { const m = re.exec(id); return !m || parseInt(m[1], 36) < r.nextId; };
-  if (r.creatures.some((m: any) => !obj(m) || typeof m.id !== 'string' || !beforeNext(m.id, /^m([a-z0-9]+)$/) || typeof m.type !== 'string' || typeof m.state !== 'string' || !finite(m.x) || !finite(m.y) || !finite(m.hp) || (m.offlineUnresolvedAt !== undefined && !finite(m.offlineUnresolvedAt)) || (m.signatureBurnNext !== undefined && !finite(m.signatureBurnNext)) || (m.tornadoNext !== undefined && !finite(m.tornadoNext)) || (m.frozenUntil !== undefined && !finite(m.frozenUntil)) || (m.rootedUntil !== undefined && !finite(m.rootedUntil)) || (m.rootHitNext !== undefined && !finite(m.rootHitNext)) || (m.beamHitNext !== undefined && !finite(m.beamHitNext)))) return null;
+  // Versioned Elder schema validation & deterministic v1 -> v2 migration on Veyra saves (fails closed on unknown schema version or unknown Elder key).
+  if (r.elderSchemaVersion !== undefined && r.elderSchemaVersion !== 1 && r.elderSchemaVersion !== 2) return null;
+  if (veyraWw && r.elderSchemaVersion === 1) {
+    const migrateElderActor = (m: any) => {
+      if (!obj(m) || !obj(m.elder) || typeof m.elder.key !== 'string') return true;
+      if (PRIMORDIAL_ELDERS[m.elder.key]) return true;
+      const mapped = LEGACY_TO_PRIMORDIAL_ELDER[m.elder.key];
+      if (!mapped) return false;
+      const pDef = PRIMORDIAL_ELDERS[mapped];
+      const oldMax = finite(m.maxHp) && m.maxHp > 0 ? m.maxHp : 1;
+      const newMax = m.elder.awake ? pDef.hpAwake : pDef.hpLatent;
+      m.elder.key = mapped;
+      m.type = 'elder_' + mapped;
+      m.maxHp = newMax;
+      m.hp = Math.min(newMax, Math.max(0, Math.round(m.hp * (newMax / oldMax))));
+      return true;
+    };
+    for (const m of r.creatures) if (!migrateElderActor(m)) return null;
+    if (obj(r.veyraOffscreenCreatures)) for (const m of Object.values(r.veyraOffscreenCreatures)) if (!migrateElderActor(m)) return null;
+    for (const c of Object.values(r.custody) as any[]) {
+      if (!Array.isArray(c?.slots)) continue;
+      for (const s of c.slots) {
+        if (!s || typeof s.key !== 'string' || !s.key.startsWith('stone_')) continue;
+        const legacyDomain = s.key.slice(6);
+        const mapped = LEGACY_TO_PRIMORDIAL_ELDER[legacyDomain];
+        if (mapped) s.key = PRIMORDIAL_ELDERS[mapped].stone;
+      }
+    }
+    r.elderStones = r.elderStones.map((sk: string) => {
+      const legacyDomain = sk.startsWith('stone_') ? sk.slice(6) : sk;
+      const mapped = LEGACY_TO_PRIMORDIAL_ELDER[legacyDomain];
+      return mapped ? PRIMORDIAL_ELDERS[mapped].stone : sk;
+    });
+    r.elderSchemaVersion = 2;
+  }
+  const validHusbandry = (h: any) =>
+    obj(h) &&
+    typeof h.tamed === 'boolean' &&
+    typeof h.following === 'boolean' &&
+    (h.penned === undefined || typeof h.penned === 'boolean') &&
+    (h.stage === 'juvenile' || h.stage === 'adult') &&
+    finite(h.hunger) && h.hunger >= 0 && h.hunger <= 100 + 1e-6 &&
+    finite(h.hydration) && h.hydration >= 0 && h.hydration <= 100 + 1e-6 &&
+    finite(h.growth) && h.growth >= 0 && h.growth <= 1 + 1e-6 &&
+    finite(h.breedProgress) && h.breedProgress >= 0 &&
+    finite(h.produceProgress) && h.produceProgress >= 0 &&
+    (h.sex === undefined || h.sex === 'f' || h.sex === 'm');
+  const validCreatureRecord = (m: any) =>
+    obj(m) &&
+    typeof m.id === 'string' && m.id.length > 0 &&
+    beforeNext(m.id, /^m([a-z0-9]+)$/) &&
+    typeof m.type === 'string' &&
+    (m.elder !== undefined
+      ? (obj(m.elder) && typeof m.elder.key === 'string' && !!lookupElderDef(m.elder.key) && typeof m.elder.awake === 'boolean')
+      : has(CREATURES, m.type)) &&
+    typeof m.state === 'string' &&
+    finite(m.x) && finite(m.y) && finite(m.hp) && finite(m.maxHp) &&
+    (m.floor === undefined || [-1, 0, 1, 2].includes(m.floor)) &&
+    (m.deadAt === undefined || finite(m.deadAt)) &&
+    (m.ephemeral === undefined || typeof m.ephemeral === 'boolean') &&
+    (m.sideBoss === undefined || (obj(m.sideBoss) && typeof m.sideBoss.key === 'string' && integer(m.sideBoss.phase) && integer(m.sideBoss.moveIdx) && m.sideBoss.moveIdx >= 0 && finite(m.sideBoss.leashPx))) &&
+    (m.husbandry === undefined || validHusbandry(m.husbandry)) &&
+    (m.offlineUnresolvedAt === undefined || finite(m.offlineUnresolvedAt)) &&
+    (m.signatureBurnNext === undefined || finite(m.signatureBurnNext)) &&
+    (m.tornadoNext === undefined || finite(m.tornadoNext)) &&
+    (m.frozenUntil === undefined || finite(m.frozenUntil)) &&
+    (m.rootedUntil === undefined || finite(m.rootedUntil)) &&
+    (m.rootHitNext === undefined || finite(m.rootHitNext)) &&
+    (m.beamHitNext === undefined || finite(m.beamHitNext));
+  if (r.creatures.some((m: any) => !validCreatureRecord(m))) return null;
+  if (r.veyraOffscreenCreatures !== undefined) {
+    if (!veyraWw || !obj(r.veyraOffscreenCreatures)) return null;
+    const liveCreatureIds = new Set(r.creatures.map((m: any) => m.id));
+    for (const [cid, cm] of Object.entries(r.veyraOffscreenCreatures) as [string, any][]) {
+      if (!validCreatureRecord(cm) || cm.id !== cid || liveCreatureIds.has(cid)) return null;
+    }
+  }
+  if (r.veyraAmbientWounds !== undefined) {
+    if (!veyraWw || !obj(r.veyraAmbientWounds) || Object.keys(r.veyraAmbientWounds).length > 512) return null;
+    const liveOrOffIds = new Set<string>([
+      ...r.creatures.map((m: any) => m.id),
+      ...Object.keys(r.veyraOffscreenCreatures ?? {}),
+    ]);
+    for (const [wid, ws] of Object.entries(r.veyraAmbientWounds) as [string, any][]) {
+      if (
+        liveOrOffIds.has(wid) ||
+        !obj(ws) ||
+        typeof ws.type !== 'string' ||
+        !CREATURES[ws.type] ||
+        !finite(ws.gx) ||
+        !finite(ws.gy) ||
+        !integer(ws.floor) ||
+        !finite(ws.hp) ||
+        !finite(ws.maxHp) ||
+        ws.hp <= 0 ||
+        ws.hp >= ws.maxHp ||
+        (ws.leashPx !== undefined && !finite(ws.leashPx))
+      ) {
+        return null;
+      }
+    }
+  }
+  if (r.veyraSpawnedHabitats !== undefined && (!veyraWw || !obj(r.veyraSpawnedHabitats) || Object.values(r.veyraSpawnedHabitats).some(v => !integer(v)))) return null;
+  if (r.veyraEcologyCooldowns !== undefined && (!veyraWw || !obj(r.veyraEcologyCooldowns) || Object.values(r.veyraEcologyCooldowns).some(v => !finite(v) || (v as number) < 0))) return null;
+  if (r.sideBossDefeated !== undefined && (!veyraWw || !obj(r.sideBossDefeated) || Object.values(r.sideBossDefeated).some(v => !integer(v)))) return null;
   // Only the supported landing impulse may introduce new non-player knowledge.
   const stimulusId=(id:any,index:any)=>typeof id==='string'&&integer(index)&&index<(r.airdrops?.nextIndex??0)&&new RegExp(`^airdrop:${index}:e[0-9a-z]+$`).test(id)&&beforeNext(id.split(':')[2],/^e([a-z0-9]+)$/);
   const stimulusCoordinates=(x:any,y:any)=>finite(x)&&finite(y)&&Number.isInteger((x-8)/TILE)&&Number.isInteger((y-8)/TILE)&&airdropStaticEligible(world,(x-8)/TILE,(y-8)/TILE);
@@ -253,15 +365,27 @@ export function validate(raw: any): GameState | null {
   if (r.wreckEconomy === 'recycler-v1' && !hasAuthorizedRecycler(r)) return null;
   // A retired site must be a real authored public loot site and cannot also
   // have a live instance. Absence of this additive ledger preserves old saves.
-  const lootSites = new Set(world.statics.filter(s => s.kind === 'loot').map(s => s.ty * WW + s.tx));
+  if (r.veyraOffscreenEntities !== undefined) {
+    if (!veyraWw || !obj(r.veyraOffscreenEntities)) return null;
+    for (const [oid, oe] of Object.entries(r.veyraOffscreenEntities) as [string, any][]) {
+      if (!obj(oe) || oe.id !== oid || r.entities[oid] || !beforeNext(oid, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof oe.kind !== 'string' || !finite(oe.x) || !finite(oe.y)) return null;
+      const orefs = [oe.c, oe.station?.fuelC, oe.station?.outC].filter((v: any) => v !== undefined);
+      for (const cid of orefs) {
+        if (typeof cid !== 'string' || !r.custody[cid] || ownedContainers.has(cid)) return null;
+        ownedContainers.add(cid);
+      }
+    }
+  }
+  const activeEnts = veyraWw ? (Object.values(r.entities) as any[]).filter(e => onActiveFloor(r, e)) : (Object.values(r.entities) as any[]);
+  const lootSites = new Set(activeStatics.filter(s => s.kind === 'loot').map(s => s.ty * WW + s.tx));
   if (r.depletedLootSites !== undefined && (!Array.isArray(r.depletedLootSites) || r.depletedLootSites.some((i: any) => !integer(i) || !lootSites.has(i)) || new Set(r.depletedLootSites).size !== r.depletedLootSites.length)) return null;
   if (r.creatorLootV1 !== undefined && (r.creatorLootV1 !== true || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId) || r.sourceLayoutVersion!==3)) return null;
   if (r.renewedLootSites !== undefined && (!r.creatorLootV1 || !Array.isArray(r.renewedLootSites) || new Set(r.renewedLootSites).size!==r.renewedLootSites.length || r.renewedLootSites.some((i:any)=>!integer(i)||!lootSites.has(i)))) return null;
   if(r.poiAccessVersion!==undefined && r.poiAccessVersion!=='poi-access-v1')return null;
   if(r.poiAccessDigest!==undefined && (typeof r.poiAccessDigest!=='string'||r.poiAccessDigest!==poiContractDigest(world)))return null;
   if(r.poiAccessVersion==='poi-access-v1'&&world.poiAccess&&!r.poiAccessDigest)return null;
-  if(r.poiAccessVersion==='poi-access-v1'){for(const s of world.statics.filter(s=>s.kind==='door'||s.kind==='gen')){const found=(Object.values(r.entities) as any[]).filter(e=>e.kind===s.kind&&e.tx===s.tx&&e.ty===s.ty);if(found.length!==1||found[0].x!==s.tx*TILE+TILE/2||found[0].y!==s.ty*TILE+TILE/2||(s.kind==='door'&&found[0].locked!==s.locked))return null;}}
-  if(r.poiAccessVersion==='poi-access-v1'&&world.poiAccess){for(const d of world.poiAccess.doors){const doors=(Object.values(r.entities) as any[]).filter(e=>e.kind==='door'&&e.tx===d.tx&&e.ty===d.ty);if(doors.length!==1||doors[0].locked!==d.requirement)return null;if(d.generator&&(Object.values(r.entities) as any[]).filter(e=>e.kind==='gen'&&e.tx===d.generator!.tx&&e.ty===d.generator!.ty).length!==1)return null;}}
+  if(r.poiAccessVersion==='poi-access-v1'){for(const s of activeStatics.filter(s=>s.kind==='door'||s.kind==='gen')){const found=activeEnts.filter(e=>e.kind===s.kind&&e.tx===s.tx&&e.ty===s.ty);if(found.length!==1||found[0].x!==s.tx*TILE+TILE/2||found[0].y!==s.ty*TILE+TILE/2||(s.kind==='door'&&found[0].locked!==s.locked))return null;}}
+  if(r.poiAccessVersion==='poi-access-v1'&&world.poiAccess){for(const d of world.poiAccess.doors){const doors=activeEnts.filter(e=>e.kind==='door'&&e.tx===d.tx&&e.ty===d.ty);if(doors.length!==1||doors[0].locked!==d.requirement)return null;if(d.generator&&activeEnts.filter(e=>e.kind==='gen'&&e.tx===d.generator!.tx&&e.ty===d.generator!.ty).length!==1)return null;}}
   if (r.lootEcology !== undefined) {
     const policy=r.lootEcology;
     if(!obj(policy) || policy.version!==LOOT_ECOLOGY_VERSION || !obj(policy.cycles) || (policy.grammar!==undefined && !isKnownLootGrammar(policy.grammar)) || !r.creatorLootV1 || !['shipping_fresh','dev_delta_fresh'].includes(r.layoutId))return null;
@@ -269,10 +393,10 @@ export function validate(raw: any): GameState | null {
     if (policy.grammar===LOOT_GRAMMAR_CURRENT ? !validLootSourceContract(policy.sourceContract) : policy.sourceContract!==undefined) return null;
     for(const [key,value] of Object.entries(policy.cycles)) {
       if(!/^(0|[1-9][0-9]*)$/.test(key) || !Number.isSafeInteger(value) || (value as number)<1) return null;
-      const site=world.statics.find(s=>s.kind==='loot' && lootSiteIndex(s)===Number(key));
+      const site=activeStatics.find(s=>s.kind==='loot' && lootSiteIndex(s)===Number(key));
       if(!site || !lootClass(site) || !r.renewedLootSites?.includes(Number(key)))return null;
     }
-    for(const site of world.statics.filter(s=>lootClass(s))) {
+    for(const site of activeStatics.filter(s=>lootClass(s))) {
       const index=lootSiteIndex(site);
       if(!!policy.cycles[index] !== !!r.renewedLootSites?.includes(index))return null;
     }
@@ -281,12 +405,12 @@ export function validate(raw: any): GameState | null {
   if (r.rest !== undefined && (!obj(r.rest) || r.rest.version !== 'rest-v1' || typeof r.rest.bedId !== 'string' || typeof r.rest.chestId !== 'string' || typeof r.rest.reserveId !== 'string' || !obj(r.custody[r.rest.reserveId]) || r.custody[r.rest.reserveId].kind !== 'rest' || !finite(r.rest.startedAt) || !finite(r.rest.targetAt) || r.rest.targetAt < r.rest.startedAt || !finite(r.rest.eatenHunger) || !finite(r.rest.drunkThirst))) return null;
   if (r.rest !== undefined) { if (ownedContainers.has(r.rest.reserveId)) return null; ownedContainers.add(r.rest.reserveId); }
   if (r.lootRespawnAt !== undefined && (!obj(r.lootRespawnAt) || Object.entries(r.lootRespawnAt).some(([key, value]) => !/^(0|[1-9][0-9]*)$/.test(key) || !depleted.has(Number(key)) || !finite(value) || (value as number) < r.startedAt))) return null;
-  if ((Object.values(r.entities) as any[]).some(e => e.kind === 'loot' && depleted.has(e.ty * WW + e.tx))) return null;
+  if (activeEnts.some(e => e.kind === 'loot' && depleted.has(e.ty * WW + e.tx))) return null;
   // New identity-pinned runs retain finite, map-authored cash and loot custody.
   // Older runs are not rewritten or guessed: their legacy history is preserved.
   if (r.sourceLayoutVersion === 3 && r.sourceMap?.mapDigest) {
-    for (const site of world.statics.filter(s => s.kind === 'cash' || s.kind === 'loot')) {
-      const matches=(Object.values(r.entities) as any[]).filter(e=>e.kind===site.kind && e.tx===site.tx && e.ty===site.ty);
+    for (const site of activeStatics.filter(s => s.kind === 'cash' || s.kind === 'loot')) {
+      const matches=activeEnts.filter(e=>e.kind===site.kind && e.tx===site.tx && e.ty===site.ty);
       if (site.kind === 'loot' && depleted.has(site.ty * WW + site.tx)) { if (matches.length) return null; continue; }
       if (matches.length!==1) return null;
       const ent=matches[0], slots=r.custody[ent.c]?.slots; if (!Array.isArray(slots)) return null;
@@ -387,6 +511,36 @@ export async function load(): Promise<LoadResult> {
   }
   const m = migrate(selected.gs); const r = m.gs?.run;
   if (r && !r.wreckEconomy) r.wreckEconomy = wreckEconomy(r);
+  if (r?.layoutId && isVeyra05Layout(r.layoutId)) {
+    setActiveLayout(r.layoutId);
+    const ww = getWindowWorld(r.layoutId);
+    syncFloor(m.gs!, ww, ww.floors, markDirty);
+    const nudgeOffSolidProp = (actor: { x: number; y: number }, fl: number) => {
+      const layer = ww.floors.layers.get(fl as -1 | 0 | 1 | 2) ?? ww.floors.ground;
+      const tx0 = Math.floor(actor.x / TILE), ty0 = Math.floor(actor.y / TILE);
+      if (tx0 < 1 || ty0 < 1 || tx0 >= WW - 1 || ty0 >= WH - 1) return;
+      if (!layer.solidProps?.[ty0 * WW + tx0]) return;
+      for (let rad = 1; rad <= 5; rad++) {
+        for (let dy = -rad; dy <= rad; dy++) {
+          for (let dx = -rad; dx <= rad; dx++) {
+            if (Math.max(Math.abs(dx), Math.abs(dy)) !== rad) continue;
+            const nx = tx0 + dx, ny = ty0 + dy;
+            if (nx < 1 || ny < 1 || nx >= WW - 1 || ny >= WH - 1) continue;
+            const ni = ny * WW + nx;
+            if (layer.walkable[ni] && !layer.solidProps?.[ni] && !layer.sources[ni]) {
+              actor.x = nx * TILE + 8;
+              actor.y = ny * TILE + 8;
+              return;
+            }
+          }
+        }
+      }
+    };
+    if (!r.player.vehicle) nudgeOffSolidProp(r.player, activeFloor(r));
+    for (const cm of r.creatures) {
+      if (cm.state !== 'dead') nudgeOffSolidProp(cm, (cm as any).floor ?? 0);
+    }
+  }
   const legacy = r && Object.values(r.entities).some(e => e.station?.queue.some(j => j.reserved === undefined) || e.legacyJobs?.queue.length);
   const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : ''].filter(Boolean);
   return { gs: m.gs, note: notes.join(' ') || undefined };
@@ -420,6 +574,9 @@ export function diagnoseInvalidState(gs: GameState): string {
  * overwrites the last valid snapshot. localStorage and IndexedDB are both written; the save succeeds if either holds the snapshot.
  */
 export async function saveDetailed(gs: GameState): Promise<SaveOutcome> {
+  if ((gs as any).__ephemeralInspect) {
+    return { ok: true, category: 'ok', revision: gs.revision, localStatus: 'skipped', idbStatus: 'skipped' };
+  }
   const record = (o: SaveOutcome): SaveOutcome => {
     lastOutcome = o;
     const key = o.ok ? (o.idbStatus === 'ok' || o.idbStatus === 'skipped' ? '' : `ok:${o.idbStatus}`) : o.category;
@@ -449,5 +606,5 @@ export async function saveDetailed(gs: GameState): Promise<SaveOutcome> {
   return record({ ok: false, category, revision: null, localStatus, idbStatus });
 }
 export async function save(gs: GameState): Promise<boolean> { return (await saveDetailed(gs)).ok; }
-export function saveSync(gs: GameState): boolean { try { if (!localReadable) return false; localStorage.setItem(LS, serializeSnapshot(gs)); return true; } catch { return false; } }
+export function saveSync(gs: GameState): boolean { if ((gs as any).__ephemeralInspect) return true; try { if (!localReadable) return false; localStorage.setItem(LS, serializeSnapshot(gs)); return true; } catch { return false; } }
 export async function wipeAll() { try { localStorage.removeItem(LS); } catch { /* */ } const d = await db(); if (d) await new Promise<void>(res => { const tx = d.transaction(STORE, 'readwrite'); tx.objectStore(STORE).delete(KEY); tx.oncomplete = () => res(); tx.onerror = () => res(); }); }

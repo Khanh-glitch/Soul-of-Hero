@@ -10,6 +10,8 @@ import { deriveAccessCorridors, type AccessCorridors } from './access-corridors'
 import { projectVeyra, VEYRA_LAYOUTS, type VeyraViewIdentity } from './veyra/projection';
 import { WMP04R1_SCENES, type Wmp04Scene } from './veyra/wmp04r1';
 import { instantiateMapPackage, validateRuntimeMapPackage, type RuntimeMapPackage } from './map-package';
+import { U05_WORLD_LAYOUT_ID, isVeyra05Layout, windowForLayout } from '../veyra05/scenes';
+import { getWindowWorld } from '../veyra05/window';
 
 // Frozen legacy encoding: never derive persisted tile values from object insertion order.
 export const SRC_KEYS = ['oak','pine','snowpine','palm','willow','deadtree','rock','iron','coalv','crystal','salt_shale','sulfur','bush','grass','reed','herb','mushroom','scrap','wreck'];
@@ -82,14 +84,22 @@ for (const [path, value] of Object.entries(import.meta.glob('../map-packages/*.j
   const errors = installMapPackage(value); if (errors.length) packageErrors.push(`${path}: ${errors.join('; ')}`);
 }
 export function mapPackageErrors() { return [...packageErrors]; }
-export function listLayouts() { return [{id:'shipping_fresh', title:'Shipping Island', description:'Original sandbox, without fixed spawn compounds.'}, ...WMP04R1_SCENES.filter(s=>s.originAu).map(s=>({id:s.id,title:`WMP04 · ${s.short}`,description:`${s.description} Diagnostic scale; POIs, loot and full access not integrated.`})),{id:'veyra-greywater-lr02-u16',title:'Veyra · Greywater U=1.6',description:'LR02 proposed walls, static openings and eligible area; diagnostic scale.'},{id:'veyra-greywater-lr02-u20',title:'Veyra · Greywater U=2.0',description:'LR02 proposed geometry; same origin; no scale approval.'},{id:'veyra-oasis-lr02-u20',title:'Veyra · Oasis U=2.0',description:'Map M2 eligibility; separate bounded diagnostic view; no window transitions.'},{id:'dev_delta_fresh',title:'Delta Ridge · Dev',description:'Development sandbox without fixed spawn compounds.'}, ...[...external.entries()].map(([id,p])=>({id,title:`${p.title} · r${p.revision}`,description:p.description}))]; }
+export function listLayouts() {
+  return [
+    { id: U05_WORLD_LAYOUT_ID, title: 'VEYRA · Unified World · 81 canonical POIs', description: 'Whole VEYRA world at U=0.5 (1 tile = 0.5 AU, 3200×2400 tiles). All 81 POIs, roads, rivers and biomes connected without world borders.' },
+    ...[...external.entries()].map(([id, p]) => ({ id, title: `${p.title} · r${p.revision}`, description: p.description })),
+  ];
+}
 export function getActiveLayout(): string { return activeLayout; }
 export function setActiveLayout(id: string): boolean {
-  if (id !== 'shipping' && id !== 'dev_delta' && id !== 'shipping_fresh' && id !== 'dev_delta_fresh' && !VEYRA_LAYOUTS.includes(id as any) && !external.has(id)) return false;
+  if (!hasLayout(id)) return false;
   activeLayout = id; return true;
 }
-export function hasLayout(id: string): boolean { return id === 'shipping' || id === 'dev_delta' || id === 'shipping_fresh' || id === 'dev_delta_fresh' || VEYRA_LAYOUTS.includes(id as any) || external.has(id); }
+export function hasLayout(id: string): boolean {
+  return (isVeyra05Layout(id) && !!windowForLayout(id)) || id === 'shipping' || id === 'dev_delta' || id === 'shipping_fresh' || id === 'dev_delta_fresh' || VEYRA_LAYOUTS.includes(id as any) || external.has(id);
+}
 export function getWorld(layout: string = activeLayout): World {
+  if (isVeyra05Layout(layout) && windowForLayout(layout)) return getWindowWorld(layout).world;
   let world = cached.get(layout);
   if (!world) { const p=external.get(layout); if (p) world=instantiateMapPackage(p); else if (VEYRA_LAYOUTS.includes(layout as any)) world=projectVeyra(layout); else if (layout === 'shipping_fresh' || layout === 'dev_delta_fresh') world=genWorld(layout === 'shipping_fresh' ? 'shipping' : 'dev_delta',true); else if (layout === 'shipping' || layout === 'dev_delta') world=genWorld(layout); else throw new Error(`Map package ${layout} is not installed`); if (!world.packageContract && !world.veyra) world.accessCorridors=deriveAccessCorridors(world); cached.set(layout, world); }
   return world;

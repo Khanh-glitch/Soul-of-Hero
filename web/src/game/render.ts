@@ -2,8 +2,18 @@ import * as pfx from './pixelfx';
 import * as comp from './compositor';
 // Canvas 2D renderer — draws authoritative state + observed effects. Never mutates game state.
 import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
-import { STRUCTS, ELDERS, CREATURES, ITEMS } from './catalog';
-import { getWorld, SRC_KEYS, fbm } from './world';
+import { STRUCTS, ELDERS, PRIMORDIAL_ELDERS, lookupElderDef, CREATURES, ITEMS } from './catalog';
+import { hasCreatureAtlas, preloadCreatureAtlases, drawCreatureAtlasSprite } from './creature-sprites';
+import { isCreatureRenderedByPrimordialRig, renderPrimordialOverlay } from './primordials/host-bridge';
+import { getFrame as getPrimordialRasterFrame, frameRGBA } from './primordials/art/sprites';
+import { getWorld, getActiveLayout, SRC_KEYS, fbm } from './world';
+import { isVeyra05Layout } from '../veyra05/scenes';
+import { activeFloor, onActiveFloor } from '../veyra05/floors';
+import { observeVeyraDecor } from '../veyra05/decor-client';
+import { drawArchitecturalBuilding } from '../veyra05/building-art';
+import { onVeyraWindowShift } from '../veyra05/continuity';
+import * as life from '../veyra05/living/life';
+import { oakArt, pineArt, palmArt, willowArt, rockArt, bushArt, type TreeArt } from '../veyra05/living/flora';
 import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
 import { airdropView } from './airdrop';
 import { lootSpriteKey } from './loot-ecology';
@@ -20,6 +30,28 @@ import { FX, PROJ, HAZ, activeStack } from './sim';
 import { getArt, pixelText, mk, type Sprite } from './art';
 
 const CH = 16; const chunkCache = new Map<number, HTMLCanvasElement>();
+let creatureAtlasesBooted = false;
+const primordialStandbyCache = new Map<string, HTMLCanvasElement>();
+function getPrimordialStandbySprite(key: string, awake: boolean, dead: boolean, frameIdx: number): HTMLCanvasElement | null {
+  const form = awake ? 'ultimate' : 'mini';
+  const clip = dead ? 'death' : 'idle';
+  const k = `${key}:${form}:${clip}:${frameIdx}`;
+  const hit = primordialStandbyCache.get(k);
+  if (hit) return hit;
+  try {
+    const rf = getPrimordialRasterFrame(key as any, form, clip, 'down', frameIdx);
+    const cv = document.createElement('canvas');
+    cv.width = rf.w; cv.height = rf.h;
+    const ctx = cv.getContext('2d')!;
+    const img = ctx.createImageData(rf.w, rf.h);
+    img.data.set(frameRGBA(rf));
+    ctx.putImageData(img, 0, 0);
+    primordialStandbyCache.set(k, cv);
+    return cv;
+  } catch {
+    return null;
+  }
+}
 let terrSig = ''; let terrSigT = 0; let lastRunId = '';
 // ---------- terrain palette ----------
 type RGB = [number, number, number];
@@ -42,14 +74,14 @@ function texel(t: number, wx: number, wy: number, tx: number, ty: number, r: Run
   const p = PAL[t] || PAL[T.GRASS]; const h = hash2(wx, wy, t * 13 + 1); const m = fbm(wx / 48, wy / 48, 7 + t, 2);
   let c = m > 0.5 ? p[1] : p[0];
   switch (t) {
-    case T.GRASS: case T.MEADOW: case T.FOREST: { const hb = hash2(wx, wy >> 1, t); if (hb < 0.11) c = p[2]; else if (hb > 0.94) c = p[3]; if (hash2(wx >> 1, wy >> 1, t + 9) > (t === T.MEADOW ? 0.988 : 0.996)) c = p[4]; if (t === T.FOREST && m < 0.36 && h < 0.3) c = p[4]; break; }
+    case T.GRASS: case T.MEADOW: case T.FOREST: { const hb = hash2(wx, wy >> 1, t); if (hb < 0.11) c = p[2]; else if (hb > 0.94) c = p[3]; { const patch = fbm(wx / 22, wy / 22, 41 + t, 2); if (patch > 0.6) c = [c[0] + 10, c[1] + 12, c[2] + 2]; else if (patch < 0.36) c = [c[0] - 10, c[1] - 8, c[2] - 2]; const bk = (wy + ((hash2(wx, 3, 5) * 4) | 0)) & 3; if (hash2(wx, (wy + ((hash2(wx, 3, 5) * 4) | 0)) >> 2, 31 + t) > 0.78) { if (bk === 0) c = p[3]; else if (bk === 3) c = p[2]; } } if (hash2(wx >> 1, wy >> 1, t + 9) > (t === T.MEADOW ? 0.988 : 0.996)) c = p[4]; if (t === T.FOREST && m < 0.36 && h < 0.3) c = p[4]; break; }
     case T.SAND: { if (h < 0.08) c = p[2]; else if (h > 0.96) c = p[3]; if (ctx.sea <= 1) c = [c[0] - 22, c[1] - 24, c[2] - 20]; if (hash2(wx >> 1, wy >> 1, 3) > 0.997) c = p[4]; break; }
     case T.SNOW: if (h < 0.06) c = p[2]; else if (h > 0.985) c = p[3]; if (m < 0.42 && hash2(wx, wy >> 1, 5) < 0.18) c = p[4]; break;
     case T.HILL: if (h < 0.1) c = p[2]; else if (h > 0.93) c = p[3]; if (hash2(wx >> 1, wy >> 1, 4) > 0.985) c = p[4]; break;
     case T.MARSH: { if (m < 0.38) c = p[4]; if (h < 0.1) c = p[2]; if (fbm(wx / 14, wy / 14, 99, 2) > 0.66) c = H('#3a5a5a'); break; }
     case T.ASH: if (h < 0.1) c = p[2]; else if (h > 0.95) c = p[3]; if (hash2(wx, wy, 11) > 0.996) c = p[4]; break;
     case T.TOXIC: { if (h < 0.1) c = p[2]; if (fbm(wx / 16, wy / 16, 55, 2) > 0.68) c = p[4]; if (hash2(wx, wy >> 2, 2) > 0.985) c = p[2]; break; }
-    case T.ROAD: { if (h < 0.12) c = p[2]; else if (h > 0.95) c = p[3]; if (hash2(wx >> 1, wy >> 1, 6) > 0.98) c = p[4]; const lx = wx % 16, ly = wy % 16; if ((ctx.n !== T.ROAD && ctx.n !== T.BRIDGE && ly < 1) || (ctx.s !== T.ROAD && ctx.s !== T.BRIDGE && ly > 14) || (ctx.w !== T.ROAD && ctx.w !== T.BRIDGE && lx < 1) || (ctx.e !== T.ROAD && ctx.e !== T.BRIDGE && lx > 14)) c = p[2]; break; }
+    case T.ROAD: { if (h < 0.12) c = p[2]; else if (h > 0.95) c = p[3]; { const pb = hash2(wx >> 1, wy >> 1, 12); if (pb > 0.975) c = (wx & 1) === 0 && (wy & 1) === 0 ? p[3] : (wx & 1) && (wy & 1) ? p[2] : [c[0] + 12, c[1] + 10, c[2] + 8]; const rut = fbm(wx / 30, wy / 30, 17, 2); if (rut > 0.63) c = [c[0] - 12, c[1] - 12, c[2] - 10]; } if (hash2(wx >> 1, wy >> 1, 6) > 0.98) c = p[4]; const lx = wx % 16, ly = wy % 16; if ((ctx.n !== T.ROAD && ctx.n !== T.BRIDGE && ly < 1) || (ctx.s !== T.ROAD && ctx.s !== T.BRIDGE && ly > 14) || (ctx.w !== T.ROAD && ctx.w !== T.BRIDGE && lx < 1) || (ctx.e !== T.ROAD && ctx.e !== T.BRIDGE && lx > 14)) c = p[2]; break; }
     case T.BRIDGE: { const horiz = (ctx.e === T.BRIDGE || ctx.e === T.ROAD || ctx.w === T.BRIDGE || ctx.w === T.ROAD) && !(ctx.n === T.BRIDGE || ctx.s === T.BRIDGE); const a = horiz ? wx % 16 : wy % 16, b = horiz ? wy % 16 : wx % 16;
       c = (a % 4 === 3) ? p[2] : (Math.floor(a / 4) % 2 ? p[0] : p[1]); if (h > 0.95) c = p[3];
       const sideA = horiz ? ctx.n : ctx.w, sideB = horiz ? ctx.s : ctx.e; if ((b < 2 && water(sideA)) || (b > 13 && water(sideB))) c = b === 0 || b === 15 ? p[4] : p[3]; break; }
@@ -70,15 +102,18 @@ function renderChunk(r: RunState, cx: number, cy: number) {
   const cv = document.createElement('canvas'); cv.width = CH * TILE; cv.height = CH * TILE; const g = cv.getContext('2d')!;
   const img = g.createImageData(cv.width, cv.height); const buf = new Uint32Array(img.data.buffer); const w = getWorld();
   const tt = (x: number, y: number) => { if(x<0||y<0||x>=WW||y>=WH)return T.DEEP;const t=effTile(r,x,y);return t===T.PWALL&&!r.terrain[y*WW+x]&&w.statics.some(s=>s.kind==='door'&&s.tx===x&&s.ty===y)?T.FLOOR:t; };
+  const ctxD = (x: number, y: number) => tt(x, y);
   for (let j = 0; j < CH; j++) for (let i = 0; i < CH; i++) {
     const tx = cx * CH + i, ty = cy * CH + j; const t = tt(tx, ty);
     const ctx = { n: tt(tx, ty - 1), s: tt(tx, ty + 1), e: tt(tx + 1, ty), w: tt(tx - 1, ty), zone: w.zone[ty * WW + tx] ?? 0, sea: w.seaDist[ty * WW + tx] ?? 9 };
     const pr = PRIO[t] ?? 0; const nb: [number, number][] = [[ctx.w, 0], [ctx.e, 1], [ctx.n, 2], [ctx.s, 3]];
     const tallN = ctx.n === T.CLIFF || ctx.n === T.PWALL;
+    const cNW = ctxD(tx - 1, ty - 1), cNE = ctxD(tx + 1, ty - 1), cSW = ctxD(tx - 1, ty + 1), cSE = ctxD(tx + 1, ty + 1);
     for (let py = 0; py < 16; py++) for (let px = 0; px < 16; px++) {
       const wx = tx * 16 + px, wy = ty * 16 + py; let use = t, uc = ctx;
-      if (pr >= 0) { const ds = [px, 15 - px, py, 15 - py]; let bd = 5;
-        for (const [nt, k] of nb) { const np = PRIO[nt] ?? -1; if (np > pr && ds[k] < 4 && ds[k] < bd) { const f = (1 - ds[k] / 4) * 0.9 - (nt === T.ROAD ? 0.35 : 0); if (hash2(wx, wy, 77 + nt) < f) { use = nt; bd = ds[k]; } } }
+      if (pr >= 0) { const ds = [px, 15 - px, py, 15 - py]; let bd = 99; const warp = (fbm(wx / 7, wy / 7, 913, 2) - 0.5) * 9 + (hash2(wx, wy, 5) - 0.5) * 1.5;
+        for (const [nt, k] of nb) { const np = PRIO[nt] ?? -1; if (np <= pr) continue; const reach = nt === T.ROAD ? 3.5 : 6; const d = ds[k] + warp * (nt === T.ROAD ? 0.55 : 1); if (d < reach && d < bd) { use = nt; bd = d; } }
+        for (const [cnt, ax, ay] of [[cNW, px, py], [cNE, 15 - px, py], [cSW, px, 15 - py], [cSE, 15 - px, 15 - py]] as [number, number, number][]) { const np = PRIO[cnt] ?? -1; if (np <= pr || cnt === T.ROAD) continue; const d = Math.hypot(ax, ay) + warp; if (d < 6 && d < bd) { use = cnt; bd = d; } }
         if (use !== t) uc = { ...ctx, n: use, s: use, e: use, w: use };
       }
       let c = texel(use, wx, wy, tx, ty, r, uc);
@@ -99,7 +134,7 @@ function syncTerrain(r: RunState, now: number) {
     for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) chunkCache.delete((((ty + dy) / CH) | 0) * 100 + (((tx + dx) / CH) | 0)); }
   terrSig = sig;
 }
-export function resetRenderCaches() { chunkCache.clear(); lastRunId = ''; mapCanvas = null; }
+export function resetRenderCaches() { life.resetLife(); chunkCache.clear(); lastRunId = ''; mapCanvas = null; }
 
 // ---------- particles ----------
 interface Part { x: number; y: number; vx: number; vy: number; life: number; max: number; col: string; s: number; g: number; kind?: string; text?: string; a?: number; reach?: number; arc?: number; x1?: number; y1?: number; key?: string; z?: number }
@@ -168,10 +203,16 @@ function pixLine(g: CanvasRenderingContext2D, x0: number, y0: number, x1: number
 
 // ---------- camera ----------
 export const cam = { x: 0, y: 0, init: false };
-let mapCanvas: HTMLCanvasElement | null = null; let mapSourceVersion = 0;
+onVeyraWindowShift((dx,dy) => {
+  cam.x -= dx * TILE; cam.y -= dy * TILE;
+  resetRenderCaches();
+});
+let mapCanvas: HTMLCanvasElement | null = null; let mapCacheKey = '';
 export function getMapCanvas(run?: RunState) {
   const version = run?.sourceLayoutVersion ?? 1;
-  if (mapCanvas && mapSourceVersion === version) return mapCanvas; mapSourceVersion = version; const w = getWorld(); mapCanvas = document.createElement('canvas'); mapCanvas.width = WW; mapCanvas.height = WH; const g = mapCanvas.getContext('2d')!; const img = g.createImageData(WW, WH);
+  const key = `${run?.layoutId || getActiveLayout()}:${version}:${run ? activeFloor(run) : 0}`;
+  if (mapCanvas && mapCacheKey === key) return mapCanvas;
+  mapCacheKey = key; const w = getWorld(); mapCanvas = document.createElement('canvas'); mapCanvas.width = WW; mapCanvas.height = WH; const g = mapCanvas.getContext('2d')!; const img = g.createImageData(WW, WH);
   for (let i = 0; i < WW * WH; i++) { const t = w.tiles[i]; let c = (PAL[t] || PAL[T.GRASS])[0]; const source = version === 3 ? w.sourceV3[i] : w.src[i] >= 0 ? SRC_KEYS[w.src[i]] : version === 2 && w.sourceOverlayV2[i] >= 0 ? SRC_KEYS[w.sourceOverlayV2[i]] : null; if (source && ['oak', 'pine', 'snowpine', 'palm', 'willow'].includes(source)) c = [c[0] * 0.75, c[1] * 0.8, c[2] * 0.75]; img.data.set([c[0], c[1], c[2], 255], i * 4); }
   g.putImageData(img, 0, 0); return mapCanvas;
 }
@@ -180,6 +221,7 @@ export interface RenderOpts { buildType: string | null; reclaim: boolean; mouseX
 // ---------- main draw ----------
 export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dtMs: number, o: RenderOpts) {
   const r = gs.run!; const A = getArt(); const w = getWorld(); const p = r.player; const time = o.time;
+  observeVeyraDecor(gs);
   syncTerrain(r, now);
   // camera
   const tx0 = clamp(p.x - VIEW_W / 2, 0, WW * TILE - VIEW_W), ty0 = clamp(p.y - VIEW_H / 2 - 6, 0, WH * TILE - VIEW_H);
@@ -187,28 +229,26 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   shake = Math.max(0, shake - dtMs * 0.02); const sx = shake > 0.3 ? Math.round((Math.random() - 0.5) * shake) : 0, sy = shake > 0.3 ? Math.round((Math.random() - 0.5) * shake) : 0;
   const cx = Math.round(cam.x) + sx, cy = Math.round(cam.y) + sy;
   g.save(); g.translate(-cx, -cy);
+  if (!creatureAtlasesBooted && typeof Image !== 'undefined') { creatureAtlasesBooted = true; preloadCreatureAtlases(); }
+  life.setRun(r); life.beginFrame(r, now, time, cx, cy, dtMs); upgradeLivingArt(A);
   // terrain chunks
   const c0 = Math.floor(cx / (CH * TILE)), c1 = Math.floor((cx + VIEW_W) / (CH * TILE)), r0 = Math.floor(cy / (CH * TILE)), r1 = Math.floor((cy + VIEW_H) / (CH * TILE));
   for (let j = r0; j <= r1; j++) for (let i = c0; i <= c1; i++) if (i >= 0 && j >= 0 && i < Math.ceil(WW / CH) && j < Math.ceil(WH / CH)) g.drawImage(getChunk(r, i, j), i * CH * TILE, j * CH * TILE);
   const vx0 = Math.max(0, Math.floor(cx / TILE) - 1), vx1 = Math.min(WW - 1, Math.floor((cx + VIEW_W) / TILE) + 1), vy0 = Math.max(0, Math.floor(cy / TILE) - 1), vy1 = Math.min(WH - 1, Math.floor((cy + VIEW_H) / TILE) + 3);
-  // animated water / lava
+  // living ground: water bodies, lava flow, marsh, snow/ice, ash — each with its own cause and rhythm
   for (let ty = vy0; ty <= vy1; ty++) for (let tx = vx0; tx <= vx1; tx++) {
-    const t = effTile(r, tx, ty); const X = tx * 16, Y = ty * 16;
-    if (water(t)) {
-      const ph = Math.floor(time / 420); for (let k = 0; k < 2; k++) { const hx = hash2(tx * 3 + k, ty, ph), hy = hash2(tx, ty * 3 + k, ph + 1); if (hash2(tx, ty, ph + k) > 0.55) { g.fillStyle = 'rgba(220,240,255,0.7)'; g.fillRect(X + (hx * 14 | 0), Y + (hy * 15 | 0), 2, 1); } }
-      const land = (dx: number, dy: number) => { const n = effTile(r, tx + dx, ty + dy); return !water(n) && n !== T.ICE; };
-      const wave = Math.sin(time / 520 + tx * 0.7 + ty * 0.3); const off = Math.round(1.5 + wave * 1.5);
-      g.fillStyle = 'rgba(235,248,255,0.85)';
-      for (let k = 0; k < 16; k++) { if (hash2(tx * 16 + k, ty, Math.floor(time / 900)) < 0.25) continue;
-        if (land(0, -1)) g.fillRect(X + k, Y + off, 1, 1); if (land(0, 1)) g.fillRect(X + k, Y + 15 - off, 1, 1); if (land(-1, 0)) g.fillRect(X + off, Y + k, 1, 1); if (land(1, 0)) g.fillRect(X + 15 - off, Y + k, 1, 1); }
-    } else if (t === T.LAVA) { const pulse = 0.12 + Math.sin(time / 400 + tx + ty) * 0.08; g.fillStyle = `rgba(255,190,60,${pulse})`; g.fillRect(X, Y, 16, 16); if (hash2(tx, ty, Math.floor(time / 300)) > 0.8) { g.fillStyle = '#fff0a0'; g.fillRect(X + (hash2(tx, ty, 1) * 14 | 0), Y + (hash2(ty, tx, 2) * 14 | 0), 1, 1); } }
+    const t = effTile(r, tx, ty);
+    if (water(t)) life.drawWaterTile(g, r, tx, ty, t);
+    else if (t === T.LAVA) life.drawLavaTile(g, r, tx, ty);
+    else if (t === T.MARSH || t === T.SNOW || t === T.ICE || t === T.ASH || t === T.BURNT) life.drawGroundTile(g, tx, ty, t);
   }
+  if (isVeyra05Layout(r.layoutId || '')) { life.drawElderGround(g, r, vx0, vx1, vy0, vy1); life.drawUnderground(g, r, vx0, vx1, vy0, vy1); }
   // footprints
   for (const tr of r.traces) { if (tr.x < cx - 4 || tr.x > cx + VIEW_W + 4 || tr.y < cy - 4 || tr.y > cy + VIEW_H + 4) continue; const a = clamp(tr.life / 60000, 0.12, 0.6);
     const col = tr.s === T.SNOW ? `rgba(65,85,120,${a + 0.25})` : tr.s === T.SAND ? `rgba(150,120,80,${a})` : tr.s === T.MARSH ? `rgba(30,30,20,${a + 0.1})` : tr.s === T.ASH ? `rgba(20,16,18,${a})` : tr.s === T.ROAD ? `rgba(90,60,40,${a * 0.7})` : `rgba(30,60,25,${a * 0.8})`;
     g.fillStyle = col; const px = Math.round(tr.x + Math.cos(tr.a + Math.PI / 2) * 1.5 * ((tr.t / 100) % 2 > 1 ? 1 : -1)), py = Math.round(tr.y); g.fillRect(px, py, 4, 2); g.fillRect(px + 1, py - 2, 2, 2); }
   // ground layer structures
-  const ents = Object.values(r.entities);
+  const ents = Object.values(r.entities).filter(e => onActiveFloor(r, e));
   // Coverage is world geometry, not part of the culled cabinet sprite. Canvas clips it to the viewport.
   if (o.buildType || o.reclaim) {
     const R=BAL.economy.claimRadius*TILE;
@@ -230,11 +270,11 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   // y-sorted drawables
   const list: { y: number; f: () => void }[] = [];
   for (let ty = vy0; ty <= vy1 + 1 && ty < WH; ty++) for (let tx = vx0; tx <= vx1; tx++) {
-    const s = sourceAt(r, tx, ty, now); if (!s) continue; if (s.stock <= 0 && entsAt(r, tx, ty).length) continue; list.push({ y: ty * 16 + 14, f: () => drawSource(g, r, s, tx, ty, time, p) });
+    const s = sourceAt(r, tx, ty, now); if (!s) continue; if (life.undergroundHides(r, tx * 16 + 8, ty * 16 + 8)) continue; if (s.stock <= 0 && entsAt(r, tx, ty).length) continue; list.push({ y: ty * 16 + 14, f: () => drawSource(g, r, s, tx, ty, time, p) });
   }
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
-  for(const q of r.natureTrees||[]){const x=q.tx*TILE,y=q.ty*TILE;if(x>=cx-32&&x<cx+VIEW_W+32&&y>=cy-32&&y<cy+VIEW_H+32)list.push({y:y+14,f:()=>g.drawImage(A.src.oak[(q.tx+q.ty)%A.src.oak.length],x-4,y-16)});}
-  for (const m of r.creatures) { if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, r, m, time, now) }); }
+  for(const q of r.natureTrees||[]){const x=q.tx*TILE,y=q.ty*TILE;if(!life.undergroundHides(r,x+8,y+8)&&x>=cx-32&&x<cx+VIEW_W+32&&y>=cy-32&&y<cy+VIEW_H+32)list.push({y:y+14,f:()=>{const ta=LIVING_TREES.oak[(q.tx+q.ty)%LIVING_TREES.oak.length];life.drawLivingTree(g,ta,x+8,y+16,q.tx*7+q.ty,1,false);}});}
+  for (const m of r.creatures) { if (((m as any).floor ?? 0) !== activeFloor(r)) continue; if (life.undergroundHides(r, m.x, m.y)) continue; if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, r, m, time, now) }); }
   // While mounted the rider is composited onto the bike sprite (vehicle case); skip the standalone player to avoid a double draw.
   if(!r.spiritTransit && r.player.vehicle == null)list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time) });
   const dragon=r.dragonDive;if(dragon?.phase && dragon.dragonX!==undefined && dragon.dragonY!==undefined) list.push({y:dragon.dragonY+4,f:()=>{const x=dragon.dragonX!,y=dragon.dragonY!;g.save();g.translate(x,y);g.fillStyle='#70241e';g.beginPath();g.moveTo(-19,-12);g.lineTo(-7,-22);g.lineTo(0,-14);g.lineTo(10,-21);g.lineTo(18,-10);g.lineTo(7,-12);g.lineTo(3,-3);g.lineTo(-5,-3);g.lineTo(-9,-11);g.closePath();g.fill();g.fillStyle='#ff8c2b';g.fillRect(-7,-14,14,6);g.fillStyle='#ffe6a0';g.fillRect(3,-13,2,2);g.restore();}});
@@ -245,24 +285,39 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   for (const k in r.terrain) { const m: any = r.terrain[+k]; if (!m.until || m.t !== T.PWALL) continue; const i = +k; const X = (i % WW) * 16, Y = ((i / WW) | 0) * 16; if (X < cx - 20 || X > cx + VIEW_W || Y < cy - 30 || Y > cy + VIEW_H) continue; g.drawImage(m.by === 'grove' ? A.st.rootwall : A.st.icepillar, X, Y - 8); }
   // projectiles
   for (const pr of PROJ) { if (pr.delay && pr.delay > 0) continue; const visual=pr.kind==='spirit_ray'?'arcane/arcane-orb':pr.kind==='fireball'?'fire/fireball':pr.kind==='fire_tornado'?'fire/fire-tornado':pr.kind==='elsa_shard'?'ice/ice-lance':null; if(!visual || !pfx.ready(visual))drawProj(g, pr, time); }
-  // roofs
+  // roofs — existing game geometry with VEYRA's already authored 2.5D painter.
   const room = roofRoom(r, p.x, p.y);
-  for (const b of w.buildings) { if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue;
-    const spr = A.st['roof_' + b.roof] || A.st.roof_wood;
-    for (let y = 0; y < b.h; y++) for (let x = 0; x < b.w; x++) { g.globalAlpha = room.cells.has((b.y + y) * WW + b.x + x) ? 0.12 : 1; g.drawImage(spr, (b.x + x) * 16, (b.y + y) * 16 - 10); }
-    g.globalAlpha = 1;
+  const isCanonicalVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
+  const doorSet = isCanonicalVeyra
+    ? new Set(w.statics.filter(q => q.kind === 'door').map(q => q.ty * WW + q.tx))
+    : null;
+  for (const b of w.buildings) {
+    if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue;
+    if (isCanonicalVeyra) {
+      drawArchitecturalBuilding({g,b,art:A,roomCells:room.cells,darknessAlpha:darkness(r,now),stoneZone:w.zone,doorSet:doorSet!});
+    } else {
+      const spr = A.st['roof_' + b.roof] || A.st.roof_wood;
+      for (let y = 0; y < b.h; y++) for (let x = 0; x < b.w; x++) {
+        g.globalAlpha = room.cells.has((b.y + y) * WW + b.x + x) ? 0.12 : 1;
+        g.drawImage(spr, (b.x + x) * 16, (b.y + y) * 16 - 10);
+      }
+      g.globalAlpha = 1;
+    }
   }
   for (const e of ents) { if (e.kind !== 'struct' || STRUCTS[e.type!].layer !== 'roof') continue; if (e.x < cx - 20 || e.x > cx + VIEW_W + 20 || e.y < cy - 20 || e.y > cy + VIEW_H + 30) continue; g.globalAlpha = room.cells.has(e.ty! * WW + e.tx!) ? 0.15 : 1; g.drawImage(A.st[e.type!], e.x - 8, e.y - 18); if (!entsAt(r, e.tx!, e.ty! + 1).some(o => o.kind === 'struct' && STRUCTS[o.type!].layer === 'roof')) { g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(e.x - 8, e.y - 3, 16, 2); } g.globalAlpha = 1; }
   // particles & arcs
   drawFx(g, dtMs, time);
+  life.drawAir(g);
   // build ghost / target
   if (o.buildType || o.reclaim) { const tx = Math.floor(o.mouseX / 16), ty = Math.floor(o.mouseY / 16);
     if (o.buildType) { const why = buildReason(gs, o.buildType, tx, ty); const spr = o.buildType === 'farm_controller' ? A.st.gen : A.st[o.buildType]; g.globalAlpha = 0.65; if (spr) g.drawImage(spr, tx * 16 + 8 - spr.width / 2, ty * 16 + 16 - spr.height + (STRUCTS[o.buildType].layer === 'roof' ? -2 : 0)); g.globalAlpha = 1; g.strokeStyle = why ? '#ff4a3a' : '#7aff6a'; g.lineWidth = 1; g.strokeRect(tx * 16 + 0.5, ty * 16 + 0.5, 15, 15); }
     else { g.strokeStyle = '#ffb040'; g.setLineDash([2, 2]); g.strokeRect(tx * 16 + 0.5, ty * 16 + 0.5, 15, 15); g.setLineDash([]); } }
   if (o.target) { const bob = Math.round(Math.sin(time / 160) * 1.5); g.fillStyle = '#ffe27a'; const X = Math.round(o.target.x), Y = Math.round(o.target.y) - 20 + bob; g.fillRect(X - 2, Y, 5, 1); g.fillRect(X - 1, Y + 1, 3, 1); g.fillRect(X, Y + 2, 1, 1); }
   g.restore();
+  renderPrimordialOverlay(g, r, cx, cy);
   comp.drawAuras(g,{x:cx,y:cy});comp.drawWarpPass(g,{x:cx,y:cy},now);comp.drawScreen(g);
   // weather & light (screen space)
+  life.heatShimmer(g);
   drawWeather(g, r, now, time, cx, cy);
   drawLight(g, r, now, time, cx, cy, ents);
   comp.drawPostNight(g,{x:cx,y:cy},Math.min(0.85,darkness(r,now)+(weatherAt(r,now)==='storm'?0.15:0)));
@@ -277,10 +332,12 @@ function drawSource(g: CanvasRenderingContext2D, r: RunState, s: NonNullable<Ret
   const art = s.def.art; const tall = s.def.tall;
   if (tall) {
     if (depleted) { g.drawImage(A.src.stump[0], X, Y); return; }
-    const arr = A.src[art]; const spr = arr[v % arr.length]; shadow(g, X + 8, Y + 14, 8);
+    const burning = !!(s.fire && s.fire > r.clock.simMs);
+    const living = LIVING_TREES[art];
     const ox = X + 8 - 12 + jx + ((hash2(tx, ty, 9) * 3) | 0) - 1, oy = Y + 16 - 32;
-    const covers = p.x > ox + 2 && p.x < ox + 22 && p.y > oy + 2 && p.y < Y + 6 && p.y < Y + 12;
-    if (covers) g.globalAlpha = 0.5; g.drawImage(spr, ox, oy); g.globalAlpha = 1;
+    const covers = p.x > ox - 2 && p.x < ox + 26 && p.y > Y - 26 && p.y < Y + 6;
+    if (living) { const ta = living[v % living.length]; shadow(g, X + 8, Y + 14, 5); life.drawLivingTree(g, ta, X + 8 + jx + ((hash2(tx, ty, 9) * 3) | 0) - 1, Y + 16, tx * 13 + ty * 7, covers ? 0.5 : 1, burning); }
+    else { const arr = A.src[art]; const spr = arr[v % arr.length]; shadow(g, X + 8, Y + 14, 8); if (covers) g.globalAlpha = 0.5; g.drawImage(spr, ox, oy); g.globalAlpha = 1; }
     if (s.fire && s.fire > r.clock.simMs) { for (let i = 0; i < 3; i++) { const fx0 = ox + 6 + hash2(i, Math.floor(time / 90), tx) * 12, fy0 = oy + 6 + hash2(i, Math.floor(time / 90), ty) * 16; g.fillStyle = i % 2 ? '#ffb040' : '#ff6a1e'; g.fillRect(fx0 | 0, fy0 | 0, 2, 3); g.fillStyle = '#fff0a0'; g.fillRect(fx0 | 0, (fy0 | 0) + 1, 1, 1); } if (Math.random() < 0.3) add({ x: ox + 12, y: oy + 8, vx: (Math.random() - 0.5) * 10, vy: -20, col: '#5a4a4a', max: 1200, s: 2, g: -5 }); }
     return;
   }
@@ -392,7 +449,26 @@ function drawFlame(g: CanvasRenderingContext2D, x: number, y: number, time: numb
 function drawCreature(g: CanvasRenderingContext2D, r: RunState, m: Creature, time: number, now: number) {
   const A = getArt(); const X = Math.round(m.x), Y = Math.round(m.y);
   if (m.elder) {
-    const d = ELDERS[m.elder.key]; const set = A.elder[m.elder.key]; const aw = m.elder.awake;
+    if (isCreatureRenderedByPrimordialRig(r, m)) {
+      if ((m.rootedUntil||0)>now) g.drawImage(A.st.rootwall, X - 8, Y - 7);
+      if ((m.frozenUntil||0)>now) { g.save(); g.globalAlpha = 0.7; g.drawImage(A.st.icepillar, X - 8, Y - 18); g.restore(); }
+      return;
+    }
+    if (PRIMORDIAL_ELDERS[m.elder.key]) {
+      const pd = PRIMORDIAL_ELDERS[m.elder.key];
+      const fIdx = m.state === 'dead' ? Math.min(3, Math.floor(m.t / 320)) : (Math.floor(time / 420) % 2);
+      const spr = getPrimordialStandbySprite(m.elder.key, m.elder.awake, m.state === 'dead', fIdx);
+      if (spr) {
+        shadow(g, X, Y + 5, pd.r + 3);
+        g.save();
+        if (m.state === 'dead') g.globalAlpha = Math.max(0, 1 - m.t / 1800);
+        g.drawImage(spr, Math.round(X - spr.width / 2), Math.round(Y + 6 - spr.height));
+        g.restore();
+      }
+      if (m.state === 'sleep') { const z = Math.floor(time / 700) % 3; g.fillStyle = '#c0d0ff'; g.fillRect(X + 10 + z * 3, Y - 40 - z * 4, 3, 1); g.fillRect(X + 12 + z * 3, Y - 39 - z * 4, 1, 1); g.fillRect(X + 10 + z * 3, Y - 38 - z * 4, 3, 1); }
+      return;
+    }
+    const d = ELDERS[m.elder.key]; const set = A.elder[m.elder.key]; if (!d || !set) return; const aw = m.elder.awake;
     if (m.state === 'dead') { if (m.t < 1500) { g.globalAlpha = 1 - m.t / 1500; g.drawImage(set.lidle[0], X - 24, Y - 40); g.globalAlpha = 1; } return; }
     if (m.elder.submerged) { for (let i = 0; i < 3; i++) pixCircle(g, X, Y, 6 + ((time / 60 + i * 8) % 22), 'rgba(200,220,240,0.6)', 2); return; }
     let spr = m.state === 'sleep' ? set.sleep[0] : m.state === 'tell' ? set[(aw ? 'a' : 'l') + 'tell'][0] : set[(aw ? 'a' : 'l') + 'idle'][Math.floor(time / 380) % 2];
@@ -402,11 +478,38 @@ function drawCreature(g: CanvasRenderingContext2D, r: RunState, m: Creature, tim
     if (aw && Math.random() < 0.4) add({ x: X + (Math.random() - 0.5) * 36, y: Y - Math.random() * 30, vx: 0, vy: -14, col: d.color, max: 800, s: 1, g: -6 });
     if (m.atk?.vuln > 0) { pixCircle(g, X, Y - 16, 22 + Math.sin(time / 80) * 2, '#ffe070', 2); }
     if ((m.rootedUntil||0)>now) g.drawImage(A.st.rootwall,X-8,Y-7);
-  if ((m.frozenUntil||0)>now) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-18);g.restore();}
+    if ((m.frozenUntil||0)>now) {g.save();g.globalAlpha=0.7;g.drawImage(A.st.icepillar,X-8,Y-18);g.restore();}
     if (m.state === 'sleep') { const z = Math.floor(time / 700) % 3; g.fillStyle = '#c0d0ff'; g.fillRect(X + 10 + z * 3, Y - 40 - z * 4, 3, 1); g.fillRect(X + 12 + z * 3, Y - 39 - z * 4, 1, 1); g.fillRect(X + 10 + z * 3, Y - 38 - z * 4, 3, 1); }
     return;
   }
-  const set = A.cre[m.type]; if (!set) return; const d = CREATURES[m.type];
+  const d = CREATURES[m.type]; if (!d) return;
+  if (hasCreatureAtlas(m.type) && (!A.cre[m.type] || (r.layoutId && isVeyra05Layout(r.layoutId)))) {
+    shadow(g, X, Y + 3, Math.max(4, Math.round(d.r * (m.husbandry?.stage === 'juvenile' ? 0.65 : 0.9))));
+    const jx = m.state === 'tell' ? Math.round(Math.sin(time / 25)) : 0;
+    const drawn = drawCreatureAtlasSprite(g, m, X + jx, Y, r.clock.simMs / 1000);
+    if (!drawn) {
+      // Streaming fallback on very first network frame before PNG decodes
+      g.fillStyle = (d as any).color || '#8a7a6a';
+      g.beginPath(); g.arc(X, Y - 6, d.r, 0, Math.PI * 2); g.fill();
+    }
+    if ((m.rootedUntil||0)>now) g.drawImage(A.st.rootwall, X - 8, Y - 7);
+    if ((m.frozenUntil||0)>now) { g.save(); g.globalAlpha = 0.7; g.drawImage(A.st.icepillar, X - 8, Y - 14); g.restore(); }
+    if (m.knows?.kind === 'stimulus' && m.state !== 'dead' && clearPhysicalLine(r, r.player, m, true, true)) pixelText(g, '?', X - 2, Y - 25, '#ffe59a');
+    if (m.state === 'tell' && (d.style === 'charge' || d.style === 'sideboss_maid' || d.style === 'sideboss_ronin')) pixLine(g, X, Y, X + Math.cos(m.angle) * 68, Y + Math.sin(m.angle) * 68, 'rgba(255,90,60,0.4)');
+    if (m.atk?.vuln > 0 && m.state !== 'dead') pixCircle(g, X, Y - 10, 15 + Math.sin(time / 80) * 1.5, '#ffe070', 2);
+    if (m.husbandry?.tamed && m.state !== 'dead') {
+      // Subtle tamed collar pip (green when penned/fed, cyan when following, red when hungry/thirsty)
+      const col = (m.husbandry.hunger <= 10 || m.husbandry.hydration <= 10) ? '#ff5a4a' : m.husbandry.following ? '#66e0ff' : m.husbandry.penned ? '#8cff7a' : '#ffd25a';
+      g.fillStyle = '#140c14'; g.fillRect(X - 2, Y - 19, 5, 3);
+      g.fillStyle = col; g.fillRect(X - 1, Y - 18, 3, 1);
+    }
+    if (m.hp < m.maxHp && m.state !== 'dead' && !m.sideBoss) {
+      g.fillStyle = '#140c14'; g.fillRect(X - 7, Y - 22, 14, 3);
+      g.fillStyle = '#e04a3a'; g.fillRect(X - 6, Y - 21, Math.max(0, Math.round(12 * m.hp / m.maxHp)), 1);
+    }
+    return;
+  }
+  const set = A.cre[m.type]; if (!set) return;
   if (m.atk?.burrow) { g.fillStyle = '#5a4a3a'; g.fillRect(X - 4, Y + 2, 8, 2); g.fillStyle = '#7a6a50'; g.fillRect(X - 3, Y + 1, 6, 1); if (Math.random() < 0.5) add({ x: X, y: Y + 2, vx: (Math.random() - 0.5) * 30, vy: -20, col: '#6a5a4a', max: 300, s: 1, g: 100 }); return; }
   let spr: Sprite; let a = 1;
   if (m.state === 'dead') { spr = set.walk[0]; a = Math.max(0, 1 - m.t / 1600); }
@@ -530,7 +633,20 @@ function drawLight(g: CanvasRenderingContext2D, r: RunState, now: number, time: 
   for (const k in r.sources) { const st: any = r.sources[+k]; if (st.fire && st.fire > r.clock.simMs) { const i = +k; lights.push([(i % WW) * 16 + 8, ((i / WW) | 0) * 16, 60, '#ff7a2a']); } }
   const tx0 = Math.floor(cx / 16), ty0 = Math.floor(cy / 16); for (let ty = ty0; ty < ty0 + 24; ty += 2) for (let tx = tx0; tx < tx0 + 41; tx += 2) if (effTile(r, tx, ty) === T.LAVA) lights.push([tx * 16 + 8, ty * 16 + 8, 34, '#ff6a1e']);
   l.globalCompositeOperation = 'destination-out';
-  for (const [x, y, rad] of lights) { const X = x - cx, Y = y - cy; for (let k = 0; k < 4; k++) { l.fillStyle = `rgba(0,0,0,${0.32 + k * 0.17})`; l.beginPath(); l.arc(Math.round(X), Math.round(Y), Math.round(rad * (1 - k * 0.2)), 0, Math.PI * 2); l.fill(); } }
+  for (const lt of life.sceneLights) lights.push(lt);
+  for (const [x, y, rad] of lights) { const X = x - cx, Y = y - cy; const poly = rad > 20 ? life.lightPolygon(r, x, y, rad) : null; l.save(); if (poly) life.clipTo(l, poly, cx, cy); for (let k = 0; k < 4; k++) { l.fillStyle = `rgba(0,0,0,${0.32 + k * 0.17})`; l.beginPath(); l.arc(Math.round(X), Math.round(Y), Math.round(rad * (1 - k * 0.2)), 0, Math.PI * 2); l.fill(); } l.restore(); }
   g.drawImage(lightCv, 0, 0);
-  g.globalCompositeOperation = 'lighter'; for (const [x, y, rad, col] of lights) { if (!col) continue; g.fillStyle = col; g.globalAlpha = 0.07 * dark * 1.5; g.beginPath(); g.arc(Math.round(x - cx), Math.round(y - cy), rad * 0.7, 0, Math.PI * 2); g.fill(); } g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  g.globalCompositeOperation = 'lighter'; for (const [x, y, rad, col] of lights) { if (!col) continue; g.save(); if (rad > 20) life.clipTo(g, life.lightPolygon(r, x, y, rad), cx, cy); g.fillStyle = col; g.globalAlpha = 0.07 * dark * 1.5; g.beginPath(); g.arc(Math.round(x - cx), Math.round(y - cy), rad * 0.7, 0, Math.PI * 2); g.fill(); g.restore(); } g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+}
+
+// ---------- VEYRA living art (redrawn flora & rocks; see src/veyra05/living) ----------
+const LIVING_TREES: Record<string, TreeArt[]> = {};
+let livingArtDone = false;
+function upgradeLivingArt(A: ReturnType<typeof getArt>) {
+  if (livingArtDone) return; livingArtDone = true;
+  LIVING_TREES.oak = [0, 1, 2].map(v => oakArt(v)); LIVING_TREES.pine = [0, 1].map(v => pineArt(v, false)); LIVING_TREES.snowpine = [0, 1].map(v => pineArt(v, true));
+  LIVING_TREES.palm = [0, 1].map(v => palmArt(v)); LIVING_TREES.willow = [0, 1].map(v => willowArt(v));
+  if (A.src.rock) A.src.rock = A.src.rock.map((_: Sprite, i: number) => rockArt(i, true));
+  if (A.src.bush) A.src.bush = A.src.bush.map((_: Sprite, i: number) => bushArt(i, true));
+  if (A.src.bush_empty) A.src.bush_empty = A.src.bush_empty.map((_: Sprite, i: number) => bushArt(i + 3, false));
 }

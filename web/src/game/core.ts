@@ -59,10 +59,20 @@ export interface Player {
   hp: number; stamina: number; hunger: number; thirst: number; warmth: number; rad: number;
   active: number; // quickbar index 0..7
   action: null | { kind: 'swing' | 'cast' | 'roll' | 'hurt'; t: number; dur: number; contact?: number; done?: boolean; angle: number; slot?: number; coreUid?: string; mode?: 'basic' | 'refined' | 'signature'; targetX?: number; targetY?: number; viewX?: number; viewY?: number };
-  invuln: number; iceUntil?: number; channelUntil?:number; dead: boolean; deadT: number; pulling: string | null; vehicle?: string;
+  invuln: number; iceUntil?: number; channelUntil?:number; primordialSlowMul?: number; primordialSlowUntil?: number; dead: boolean; deadT: number; pulling: string | null; vehicle?: string;
   skills: Record<string, number>; // xp
   stepAcc: number; lastTraceX: number; lastTraceY: number;
   regionName: string; sheltered: boolean;
+}
+
+export interface AmbientWoundStub {
+  type: string;
+  gx: number;
+  gy: number;
+  floor: number;
+  hp: number;
+  maxHp: number;
+  leashPx?: number;
 }
 
 export interface Creature {
@@ -79,6 +89,14 @@ export interface Creature {
   /** Last justified physical checkpoint after offline activity was deferred. */
   offlineUnresolvedAt?: number;
   path: number[] | null; pathT: number; cd: number; kbx: number; kby: number; flash: number;
+  animTime?: number; animClip?: 'idle' | 'walk' | 'run' | 'attack' | 'attack2' | 'hurt' | 'death';
+  hurtUntil?: number; deadAt?: number; leashPx?: number; floor?: -1 | 0 | 1 | 2; ephemeral?: boolean;
+  sideBoss?: { key: string; phase: number; moveIdx: number; leashPx: number };
+  husbandry?: {
+    tamed: boolean; following: boolean; penned?: boolean;
+    stage: 'juvenile' | 'adult'; hunger: number; hydration: number;
+    growth: number; breedProgress: number; produceProgress: number; sex?: 'f' | 'm';
+  };
   elder?: { key: string; awake: boolean; phase: number; pattern: number; special: number; shield?: number; submerged?: boolean };
   patternKey?: string; atk?: any; slow?: number; signatureBurnNext?: number; tornadoNext?: number; frozenUntil?: number; rootedUntil?:number; rootHitNext?:number; beamHitNext?:number;
 }
@@ -147,11 +165,27 @@ export interface RunState {
   /** Run-pinned additive source overlay; absent legacy runs keep v1 placements. */
   sourceLayoutVersion?: 2 | 3;
   /** Source map identity is mandatory for v3; older runs retain their own layout. */
-  sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string; veyra?: {sourceCommit:string;sourceDigest:string;originAu:[number,number];unitsPerTile:1.6|2;frameAu:[number,number];projection:'cell-centre-v1'} };
+  sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string; veyra?: import('./veyra/projection').VeyraViewIdentity };
   /** Additive, pinned when a run is created or first resumed/saved. */
   airdrops?: {version:'airdrop-v1'; mapDigest:string; seed:number; runId:string; startedAt:number; nextIndex:number};
   wreckEconomy?: 'direct-v1' | 'recycler-v1';
   spawnChoice?: { x:number; y:number; contract:'seeded-geographic-v1' };
+  /** Veyra U=0.5 multi-storey & seamless window continuity ledgers (additive, absent on non-Veyra runs). */
+  veyraFloor?: -1 | 0 | 1 | 2;
+  veyraFloorState?: Record<number, { sources: Record<number, any>; doors: Record<string, boolean>; depletedLootSites?: number[]; lootRespawnAt?: Record<number, number> }>;
+  veyraGlobalSources?: Record<number, RunState['sources'][number]>;
+  veyraGlobalTerrain?: Record<number, RunState['terrain'][number] & { by?: string }>;
+  veyraGlobalDoors?: Record<number, boolean>;
+  veyraGlobalDiscovered?: Record<string, number>;
+  veyraGlobalDepletedLoot?: Record<string, number>;
+  veyraOffscreenEntities?: Record<string, Entity>;
+  veyraOffscreenCreatures?: Record<string, Creature>;
+  /** Compact bounded wound stubs (`<= 512`) for injured ambient creatures evicted past `MAX_OFFSCREEN_AMBIENT = 96` so revisits never resurrect full-HP actors. */
+  veyraAmbientWounds?: Record<string, AmbientWoundStub>;
+  veyraSpawnedHabitats?: Record<string, number>;
+  veyraEcologyCooldowns?: Record<string, number>;
+  sideBossDefeated?: Record<string, number>;
+  elderSchemaVersion?: 1 | 2;
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
   /** B05-R: oil sources keyed `oil:tx:ty`. Only a labelled test fixture authority exists today; production Map oil sites are NOT authorized (see balance oilPumpV1). */

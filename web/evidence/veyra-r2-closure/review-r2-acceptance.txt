@@ -1,0 +1,17 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ src/veyra05/review-r2-acceptance.test.ts (7 tests) 124392ms
+     ✓ P0-1: enforces directional arc, weapon reach, and wall/prop LOS on summon combat plus sanctuary wall occlusion on boss wake & hitEnemies  1147ms
+     ✓ P0-2: guarantees full-footprint multi-tile prop solidity, zero ghost props across all 81 POIs × 4 storeys, and physical player/creature/motorbike wing collision  40360ms
+     ✓ P1-3: enforces sex-specific grouse egg laying across live pens, offscreen window shifts, breeding, and wild drops  3268ms
+     ✓ P1-4: defeats all 6 Primordials in BOTH Latent & Awakened forms (12 sanctuary fights), executes all 48 skills, and defeats all 4 Side Bosses via pure real-input combat  6829ms
+     ✓ P1-5: preserves >96 (135) wounded offscreen ambient creatures across out-and-back window streaming + save/reload without full-HP duplication, and holds 8h/24h/48h/336h endurance bounds  7357ms
+     ✓ R2-CLOSURE-1: proves 100% source-vs-runtime authored Veyra art preservation (680/680 POI props, 116/116 sprites, 0 blocked doors/stairs) and giant 3x2/5x2/7x2 collision + LOS  36608ms
+     ✓ R2-CLOSURE-2: executes all 48 Primordial signature skills mounted inside real SOH sanctuaries verifying tell, hitbox, dodge, wall, damage, cleanup, and visual frame  28819ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  11:03:30
+   Duration  127.42s (transform 2.44s, setup 0ms, import 2.91s, tests 124.39s, environment 0ms)
+

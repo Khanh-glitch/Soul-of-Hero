@@ -1,0 +1,726 @@
+{
+  "as_of": "2026-11-10",
+  "method": "original zip member full extraction + Pillow PNG verify, not regenerated",
+  "entries": [
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires3/Without_shadow/Vampires3_Run_without_shadow.png",
+      "sha256": "bceb50b5117c7db912e4d99be6aead5418efe9336ee9a1618a03b512caabbf56",
+      "bytes": 20489,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires3/Without_shadow/Vampires3_Run_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires3/Without_shadow/Vampires3_Idle_without_shadow.png",
+      "sha256": "5c1253d77f8c8960a30c2be49ce23d0d938c15171cdb08b6744dfeafa7f4262d",
+      "bytes": 9446,
+      "dimensions": [
+        256,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires3/Without_shadow/Vampires3_Idle_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires3/Without_shadow/Vampires3_Death_without_shadow.png",
+      "sha256": "ab2dd786224af982607da2e2b88c4960d1fde9b699033df91574a9a2b54e3152",
+      "bytes": 33905,
+      "dimensions": [
+        704,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires3/Without_shadow/Vampires3_Death_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires3/Without_shadow/Vampires3_Walk_without_shadow.png",
+      "sha256": "1ae821b5e965d036bd113e4547bf18165fac4609a3c1c1890b49b6269e7e96e0",
+      "bytes": 12357,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires3/Without_shadow/Vampires3_Walk_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires3/Without_shadow/Vampires3_Hurt_without_shadow.png",
+      "sha256": "8bd13e8b2bd9e317df4aad0898e3a169a11151880fa0fb4d645cafcbd227ed02",
+      "bytes": 14225,
+      "dimensions": [
+        256,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires3/Without_shadow/Vampires3_Hurt_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires3/Without_shadow/Vampires3_Attack_without_shadow.png",
+      "sha256": "5c300ca3f0bccd16bf5c3b844c7f06032e7d3195883d0348652d2f4d432a801c",
+      "bytes": 33971,
+      "dimensions": [
+        768,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires3/Without_shadow/Vampires3_Attack_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires2/Without_shadow/Vampires2_Attack_without_shadow.png",
+      "sha256": "f0617ed0d1d6d176f73281968372c734f84287a25aba2ea7553655ba0fe7c200",
+      "bytes": 33938,
+      "dimensions": [
+        768,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires2/Without_shadow/Vampires2_Attack_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires2/Without_shadow/Vampires2_Walk_without_shadow.png",
+      "sha256": "8a2b87e5c7859f33177c411e6434a687014f352694d2a6cec8fc90536e90c6f0",
+      "bytes": 11699,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires2/Without_shadow/Vampires2_Walk_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires2/Without_shadow/Vampires2_Hurt_without_shadow.png",
+      "sha256": "46aad321db29ea8b107823f9bffd4f59207235f607d0e217e759716e0b16f7af",
+      "bytes": 13280,
+      "dimensions": [
+        256,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires2/Without_shadow/Vampires2_Hurt_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires2/Without_shadow/Vampires2_Run_without_shadow.png",
+      "sha256": "2a9784f48dacf96c1884dcc534efc73f851e716bfd7e8da32e761e2711c58d7b",
+      "bytes": 19168,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires2/Without_shadow/Vampires2_Run_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires2/Without_shadow/Vampires2_Death_without_shadow.png",
+      "sha256": "ca69d3d5e5b866ffd872e81d3172872a6cd2cfdfa78174ec38430f72637acd86",
+      "bytes": 32390,
+      "dimensions": [
+        704,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires2/Without_shadow/Vampires2_Death_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires2/Without_shadow/Vampires2_Idle_without_shadow.png",
+      "sha256": "b5c69a4ccc8a89c737c4af47a9336fa9506ad3477f093e60e3213aac51d17f64",
+      "bytes": 8977,
+      "dimensions": [
+        256,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires2/Without_shadow/Vampires2_Idle_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires1/Without_shadow/Vampires1_Hurt_without_shadow.png",
+      "sha256": "efd13cfce2f0019118ba66e7f7dbef8310b63b9a528ac808d1cfdb502264823a",
+      "bytes": 10564,
+      "dimensions": [
+        256,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires1/Without_shadow/Vampires1_Hurt_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires1/Without_shadow/Vampires1_Death_without_shadow.png",
+      "sha256": "00ef5e5bef9346df947e9d5ef7c5d0c6ffce67435ece0a423dc8f83afa309b3b",
+      "bytes": 28501,
+      "dimensions": [
+        704,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires1/Without_shadow/Vampires1_Death_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires1/Without_shadow/Vampires1_Walk_without_shadow.png",
+      "sha256": "4b4023a573afb7c07f9daa154bd68633e7e077cb0514c8c5de8dad8cd250a60b",
+      "bytes": 10175,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires1/Without_shadow/Vampires1_Walk_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires1/Without_shadow/Vampires1_Run_without_shadow.png",
+      "sha256": "b894b7f07181d3a4c370f331236ecb1c9a4557040f890b3c3c4636559cd0af4b",
+      "bytes": 14802,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires1/Without_shadow/Vampires1_Run_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires1/Without_shadow/Vampires1_Idle_without_shadow.png",
+      "sha256": "50fc4466f206cfed6245ee8e329cee83d8512ee34ec324294b219d264062ada3",
+      "bytes": 7030,
+      "dimensions": [
+        256,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires1/Without_shadow/Vampires1_Idle_without_shadow.png"
+    },
+    {
+      "archive_id": "VAMPIRE_1_3",
+      "source_member": "PNG/Vampires1/Without_shadow/Vampires1_Attack_without_shadow.png",
+      "sha256": "ba9994ab5e5f1eb71bc092af9eadaa4c510a93ba34cdd613aad7665e9c0c4262",
+      "bytes": 29075,
+      "dimensions": [
+        768,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/VAMPIRE_1_3/PNG/Vampires1/Without_shadow/Vampires1_Attack_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc3/Without_shadow/orc3_idle_without_shadow.png",
+      "sha256": "b859ce5c8c0083b206b00d38816faa7254ce15ad85a0525e9441856d02a124f7",
+      "bytes": 10037,
+      "dimensions": [
+        256,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc3/Without_shadow/orc3_idle_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc3/Without_shadow/orc3_death_without_shadow.png",
+      "sha256": "72a57e6f0dab01d99caeb13f0f0254c296a725fcb590ee85a5628b9c4a3348c4",
+      "bytes": 27853,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc3/Without_shadow/orc3_death_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc3/Without_shadow/orc3_run_without_shadow.png",
+      "sha256": "9b059857acda80b873ebf12c09150b2f1fd50d18939f4de9c098c9bc0f1d7b32",
+      "bytes": 21409,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc3/Without_shadow/orc3_run_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc3/Without_shadow/orc3_run_attack_without_shadow.png",
+      "sha256": "cf3e464a7c38b3e9b395d6849c6fafd3280950d9d908a584b76a57e6ede8495d",
+      "bytes": 28558,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc3/Without_shadow/orc3_run_attack_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc3/Without_shadow/orc3_hurt_without_shadow.png",
+      "sha256": "be86368fa1bbff4eaf80f9ef542a362d7b0dc5ea4dad323e6d9e9ad18467af69",
+      "bytes": 20596,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc3/Without_shadow/orc3_hurt_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc3/Without_shadow/orc3_walk_attack_without_shadow.png",
+      "sha256": "2b7a82a370c679cb434af10454f5c017cafbf9f3fa301a5778d8a93f9a064491",
+      "bytes": 23085,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc3/Without_shadow/orc3_walk_attack_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc3/Without_shadow/orc3_attack_without_shadow.png",
+      "sha256": "df6bc517055f6a55f1a97ce6e320493382a3b8ee2e0a3a3c0bd8c1a7467e9ff1",
+      "bytes": 28392,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc3/Without_shadow/orc3_attack_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc3/Without_shadow/orc3_walk_without_shadow.png",
+      "sha256": "880b845dce798b3e008f3a984c7d6f17f9a23ac9594662323fbc0718468a268d",
+      "bytes": 14459,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc3/Without_shadow/orc3_walk_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc2/Without_shadow/orc2_hurt_without_shadow.png",
+      "sha256": "6d1366e57416930706ba8714eae3310910f761acd83fda6df33eedbec39bfbea",
+      "bytes": 16957,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc2/Without_shadow/orc2_hurt_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc2/Without_shadow/orc2_run_without_shadow.png",
+      "sha256": "5af50ed133ce3ef02353cc73bd2a168c2bae46d6143ee1693545921b37797448",
+      "bytes": 15971,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc2/Without_shadow/orc2_run_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc2/Without_shadow/orc2_attack_without_shadow.png",
+      "sha256": "1377be0b429cbad9588f29226482cfcabcd9bc4495c225a3fc85b9c878410b05",
+      "bytes": 23347,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc2/Without_shadow/orc2_attack_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc2/Without_shadow/orc2_death_without_shadow.png",
+      "sha256": "c5d9ab166d04f63a206f7b59cde0bfc84974ce8f727e5b8fa0481fc6a142d4db",
+      "bytes": 21800,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc2/Without_shadow/orc2_death_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc2/Without_shadow/orc2_walk_without_shadow.png",
+      "sha256": "58d90ad40b5205e4d81e60424137bd0d3b1ac38293c0c4192c2775da48aa62c7",
+      "bytes": 11959,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc2/Without_shadow/orc2_walk_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc2/Without_shadow/orc2_idle_without_shadow.png",
+      "sha256": "f9f154bea83a16c88f86441cd3fa600922c6ae46e4660823ce07c7a3dad957ca",
+      "bytes": 9103,
+      "dimensions": [
+        256,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc2/Without_shadow/orc2_idle_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc2/Without_shadow/orc2_run_attack_without_shadow.png",
+      "sha256": "2be0a2569f8046c778800cbaa6cf95a2893a0e44e72a986ac845c6ce11e2e362",
+      "bytes": 23417,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc2/Without_shadow/orc2_run_attack_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc2/Without_shadow/orc2_walk_attack_without_shadow.png",
+      "sha256": "da09db7c6d1e3d398854671d6db4b7d51805c1a57f01d54d0d36bf0444521c22",
+      "bytes": 18721,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc2/Without_shadow/orc2_walk_attack_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc1/Without_shadow/orc1_run_without_shadow.png",
+      "sha256": "405ab947c05c7f3ae9810b6737e99cd4283e50baf50a0111300ebd4c0858dd67",
+      "bytes": 11765,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc1/Without_shadow/orc1_run_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc1/Without_shadow/orc1_walk_without_shadow.png",
+      "sha256": "dd32beaaa53fbb16045b71fd93789e526ee01204dcfab9fe71fccbc525742557",
+      "bytes": 9142,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc1/Without_shadow/orc1_walk_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc1/Without_shadow/orc1_run_attack_front_without_shadow.png",
+      "sha256": "1be3ec3279c0cc2dee8ace5bcce8a6c06db1c43a260234190eff4cc62fd27d5d",
+      "bytes": 17746,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc1/Without_shadow/orc1_run_attack_front_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc1/Without_shadow/orc1_walk_attack_front _without_shadow.png",
+      "sha256": "1ec90de6151eae36b35b4513b88eecfeac69b6dcaaea686fa60b56db5c4bddbc",
+      "bytes": 14283,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc1/Without_shadow/orc1_walk_attack_front _without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc1/Without_shadow/orc1_hurt_without_shadow.png",
+      "sha256": "8eb3fae1d8d73e3cfd7364307bb2e1e251c048d195561993191aeaa03edac2d8",
+      "bytes": 11906,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc1/Without_shadow/orc1_hurt_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc1/Without_shadow/orc1_attack_without_shadow.png",
+      "sha256": "6cdb9c9d2852bfa311adb316d17ab3d212a33be9ee40418b02506191303b51bf",
+      "bytes": 17793,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc1/Without_shadow/orc1_attack_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc1/Without_shadow/orc1_idle_without_shadow.png",
+      "sha256": "23c09e446dea29897f85962e95a1640b0fb09ec7ca033c4354788bc44ae0f245",
+      "bytes": 7084,
+      "dimensions": [
+        256,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc1/Without_shadow/orc1_idle_without_shadow.png"
+    },
+    {
+      "archive_id": "ORC_1_3",
+      "source_member": "PNG/Orc1/Without_shadow/orc1_death_without_shadow.png",
+      "sha256": "3ec59f9bc14a37cb27a8120c344558f3db77623539f46828816ef0c08840d60d",
+      "bytes": 14645,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/ORC_1_3/PNG/Orc1/Without_shadow/orc1_death_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime1/Without_shadow/Slime1_Death_without_shadow.png",
+      "sha256": "219b0f75c1c51262c9c5ed2a4723f74a3b1453fe274052c616d53f3d943363b3",
+      "bytes": 10864,
+      "dimensions": [
+        640,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime1/Without_shadow/Slime1_Death_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime1/Without_shadow/Slime1_Attack_without_shadow.png",
+      "sha256": "9109a9768a51b62bcd037a24ab49b3f8c8da5ec8d211ddd783f7c8621dc01f31",
+      "bytes": 11719,
+      "dimensions": [
+        640,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime1/Without_shadow/Slime1_Attack_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime1/Without_shadow/Slime1_Hurt_without_shadow.png",
+      "sha256": "268327dc54fabb3df7ea4de5abcaf5b947f05998a4c58d53275c9ca3fb20717c",
+      "bytes": 6490,
+      "dimensions": [
+        320,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime1/Without_shadow/Slime1_Hurt_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime1/Without_shadow/Slime1_Walk_without_shadow.png",
+      "sha256": "9abd7c14ea5daf81d486ac31a888a60a6f2b52668787ec2801d42bdc30cc2c02",
+      "bytes": 6768,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime1/Without_shadow/Slime1_Walk_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime1/Without_shadow/Slime1_Idle_without_shadow.png",
+      "sha256": "ea072bb3d91e70fe7fb7b2e151f0c901ffaefaf5ee86b9c9a100dd7845fb18e9",
+      "bytes": 4750,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime1/Without_shadow/Slime1_Idle_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime1/Without_shadow/Slime1_Run_without_shadow.png",
+      "sha256": "23ab4022eed5127e1124bf91555c8c5106bebd2083c3895bc66c1ea480cfd014",
+      "bytes": 7599,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime1/Without_shadow/Slime1_Run_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime3/Without_shadow/Slime3_Attack_without_shadow.png",
+      "sha256": "09de3757e3f8b5e10e13067ae11e4799b5996f4e0a314f7fce7ee3b070f552fb",
+      "bytes": 34072,
+      "dimensions": [
+        576,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime3/Without_shadow/Slime3_Attack_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime3/Without_shadow/Slime3_Idle_without_shadow.png",
+      "sha256": "16d24de627d8362e37dada99c0493c8469e2107b277d826afc1bac6b9918be2d",
+      "bytes": 9942,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime3/Without_shadow/Slime3_Idle_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime3/Without_shadow/Slime3_Walk_without_shadow.png",
+      "sha256": "4283ef1d59b7485b3de8b6944c45016dac7534c7cbff950dceceab52b8f639e5",
+      "bytes": 13021,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime3/Without_shadow/Slime3_Walk_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime3/Without_shadow/Slime3_Death_without_shadow.png",
+      "sha256": "518300eca13797e2990e77977e3b8d50677d4dfc4a7ab1c69503a72562069b64",
+      "bytes": 17297,
+      "dimensions": [
+        640,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime3/Without_shadow/Slime3_Death_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime3/Without_shadow/Slime3_Run_without_shadow.png",
+      "sha256": "2e213892eafc54f98fd261c1569a63fb50391a5e25facca39c270870a82e1e81",
+      "bytes": 14346,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime3/Without_shadow/Slime3_Run_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime3/Without_shadow/Slime3_Hurt_without_shadow.png",
+      "sha256": "e0dde18f4946628814e4ea25ad8372285dcca66124e43baccf3e1caa7d08e665",
+      "bytes": 10847,
+      "dimensions": [
+        320,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime3/Without_shadow/Slime3_Hurt_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime2/Without_shadow/Slime2_Walk_without_shadow.png",
+      "sha256": "b377f48638b4bba95a1eb7050bd634c4068e2ad5040232e5da65a08679ab6756",
+      "bytes": 10886,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime2/Without_shadow/Slime2_Walk_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime2/Without_shadow/Slime2_Hurt_without_shadow.png",
+      "sha256": "225f5b885b9f29ae824536ee360ebaebb459f9123397c873fdcf98f47d18ec9c",
+      "bytes": 10172,
+      "dimensions": [
+        320,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime2/Without_shadow/Slime2_Hurt_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime2/Without_shadow/Slime2_Run_without_shadow.png",
+      "sha256": "f39296b70a8dfbffeb1bca3dceb8f271bd7fdfe86c125105e7145bb4da92829f",
+      "bytes": 11843,
+      "dimensions": [
+        512,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime2/Without_shadow/Slime2_Run_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime2/Without_shadow/Slime2_Attack_without_shadow.png",
+      "sha256": "99c809d8681417108db7208bd41a4622ca267c8e4157a6485e7b71594bead9bb",
+      "bytes": 16669,
+      "dimensions": [
+        704,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime2/Without_shadow/Slime2_Attack_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime2/Without_shadow/Slime2_Death_without_shadow.png",
+      "sha256": "de93d86d54b895443aa7ad74ad0ca0e9cc682c8503b3f2e9d33e6acdf9521e15",
+      "bytes": 17763,
+      "dimensions": [
+        640,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime2/Without_shadow/Slime2_Death_without_shadow.png"
+    },
+    {
+      "archive_id": "SLIME_1_3",
+      "source_member": "PNG/Slime2/Without_shadow/Slime2_Idle_without_shadow.png",
+      "sha256": "0e7454a1a177a9c6363540a4e30b0933c2307a17af352bc897f44b6be9805809",
+      "bytes": 7320,
+      "dimensions": [
+        384,
+        256
+      ],
+      "format": "PNG",
+      "preload_path": "02_VERIFIED_SPRITES/SLIME_1_3/PNG/Slime2/Without_shadow/Slime2_Idle_without_shadow.png"
+    }
+  ]
+}

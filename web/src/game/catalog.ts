@@ -152,6 +152,23 @@ export const ITEMS: Record<string, ItemDef> = {
   stone_grove: I({ name: 'Stone of Roots', cat: 'stone', icon: 'relic', c1: '#2a6a2a', c2: '#a0e070', w: 1, max: 1, desc: 'Taken from the Elder Treant.' }),
   stone_tide: I({ name: 'Stone of Tides', cat: 'stone', icon: 'relic', c1: '#1e5a9a', c2: '#80e0ff', w: 1, max: 1, desc: 'Taken from the Tide Serpent.' }),
   stone_rust: I({ name: 'Stone of Rust', cat: 'stone', icon: 'relic', c1: '#8a4a1e', c2: '#f0a050', w: 1, max: 1, desc: 'Taken from the Rust Colossus.' }),
+  // Six Primordial Elder stones (Veyra elderSchemaVersion=2; unique per run, canonical 6-domain bijection)
+  stone_surtur: I({ name: 'Stone of Surtur', cat: 'stone', icon: 'relic', c1: '#d8421e', c2: '#ffd470', w: 1, max: 1, desc: 'Primordial cinder-heart claimed from Surtur in the Volcanic Core.' }),
+  stone_typhon: I({ name: 'Stone of Typhon', cat: 'stone', icon: 'relic', c1: '#6a48b8', c2: '#d6b8ff', w: 1, max: 1, desc: 'Primordial storm-eye claimed from Typhon at the Tempest Lair.' }),
+  stone_aion: I({ name: 'Stone of Aion', cat: 'stone', icon: 'relic', c1: '#c89a38', c2: '#fff2b2', w: 1, max: 1, desc: 'Primordial hourglass-seed claimed from Aion in the Elderwood.' }),
+  stone_atlas: I({ name: 'Stone of Atlas', cat: 'stone', icon: 'relic', c1: '#5a7690', c2: '#d8ecff', w: 1, max: 1, desc: 'Primordial keystone claimed from Atlas at the Gate of Pillars.' }),
+  stone_argus: I({ name: 'Stone of Argus', cat: 'stone', icon: 'relic', c1: '#2e9ab8', c2: '#c8ffff', w: 1, max: 1, desc: 'Primordial panopticon lens claimed from Argus in the Hall of Eyes.' }),
+  stone_anubis: I({ name: 'Stone of Anubis', cat: 'stone', icon: 'relic', c1: '#8e6a24', c2: '#ffe49a', w: 1, max: 1, desc: 'Primordial scale-seal claimed from Anubis in the Necropolis.' }),
+  // SOH_PROVISIONAL: Wildlife & Husbandry items (strictly run-local)
+  lead_rope: I({ name: 'Taming Lead', cat: 'tool', icon: 'rope', c1: '#b89456', c2: '#f0dcb0', w: 0.35, max: 5, desc: 'SOH_PROVISIONAL: Calm and lead a tamable wild animal (Boar, Deer, Hare, or Black Grouse) into an enclosed pen.' }),
+  animal_feed: I({ name: 'Fodder Bundle', cat: 'res', icon: 'fiber', c1: '#8e8a3a', c2: '#e2d878', w: 0.25, max: 40, desc: 'SOH_PROVISIONAL: Bundled fiber and seeds for penned livestock in a Feed & Water Trough.' }),
+  feather: I({ name: 'Grouse Feather', cat: 'res', icon: 'fiber', c1: '#3a3848', c2: '#c8c4d8', w: 0.03, max: 60, desc: 'SOH_PROVISIONAL: Flight feather shed by Black Grouse; improves arrow fletching.' }),
+  grouse_egg: I({ name: 'Grouse Egg', cat: 'food', icon: 'berry', c1: '#b8a888', c2: '#f4efe2', w: 0.12, max: 20, desc: 'SOH_PROVISIONAL: Nutritious speckled egg laid by fed penned Black Grouse.', food: { hunger: 16, thirst: 4, hp: 4 } }),
+  // SOH_PROVISIONAL: Unique run-local optional Side Boss rewards (max 1 per run per boss; zero Ragnarok cash)
+  relic_shaleheart: I({ name: 'Shaleheart Coreplate', cat: 'armor', icon: 'armor', c1: '#5a5248', c2: '#7ef2ff', w: 3.2, max: 1, slot: 'body', armor: 0.38, cold: 6, desc: 'SOH_PROVISIONAL: Run-local crystal-veined quarry carapace taken from Greyback Shaleheart (-38% damage).' }),
+  ronin_nodachi: I({ name: 'Oathless Nodachi', cat: 'weapon', icon: 'sword', c1: '#dfe6f2', c2: '#b0326a', w: 1.8, max: 1, dmg: 31, reach: 34, arc: 1.85, swing: 340, dur: 420, power: { plant: 2 }, repair: { station: 'workbench', cost: [['refined_iron_ingot', 1], ['leather', 1]] }, desc: 'SOH_PROVISIONAL: Run-local long-bladed nodachi claimed from the Oathless Ronin.' }),
+  tidemarshal_trident: I({ name: 'Saltwick Trident', cat: 'weapon', icon: 'spear', c1: '#4aa8d8', c2: '#d8f8ff', w: 1.9, max: 1, dmg: 28, reach: 38, arc: 0.78, swing: 360, dur: 400, power: { plant: 2 }, repair: { station: 'workbench', cost: [['iron_ingot', 2], ['raw_salt', 2]] }, desc: 'SOH_PROVISIONAL: Run-local brine-tempered polearm of the Saltwick Tidemarshal.' }),
+  custodian_lantern: I({ name: 'Archive Lantern', cat: 'tool', icon: 'torch', c1: '#8e96d8', c2: '#eef2ff', w: 0.6, max: 1, dmg: 12, reach: 20, arc: 1.3, swing: 320, dur: 480, light: 125, repair: { station: 'workbench', cost: [['glass', 1], ['spares', 1]] }, desc: 'SOH_PROVISIONAL: Run-local silver-violet ward lantern of the Pale Custodian. Steady wide light.' }),
 };
 
 // ---------- Sources (K3) ----------
@@ -185,14 +202,37 @@ export const SOURCES: Record<string, SourceDef> = {
 };
 
 // ---------- Creatures (K5) ----------
-export interface CreatureDef { name: string; hp: number; dmg: number; speed: number; r: number; sight: number; drops: [string, number, number][]; biome: string; style: string; tell: number; aggro: boolean; night?: boolean }
+export interface CreatureDef { name: string; hp: number; dmg: number; speed: number; r: number; sight: number; drops: [string, number, number][]; biome: string; style: string; tell: number; aggro: boolean; night?: boolean; leashTiles?: number; uniqueDrop?: string; tamable?: boolean }
 export const CREATURES: Record<string, CreatureDef> = {
-  boar: { name: 'Bristleback Boar', hp: 40, dmg: 13, speed: 46, r: 6, sight: 90, drops: [['meat', 2, 1], ['hide', 1, 1], ['boar_tusk', 1, 0.3]], biome: 'meadow', style: 'charge', tell: 650, aggro: false },
+  boar: { name: 'Bristleback Boar', hp: 40, dmg: 13, speed: 46, r: 6, sight: 90, drops: [['meat', 2, 1], ['hide', 1, 1], ['boar_tusk', 1, 0.3]], biome: 'meadow', style: 'charge', tell: 650, aggro: false, tamable: true },
   wolf: { name: 'Greyfang Wolf', hp: 30, dmg: 9, speed: 74, r: 6, sight: 120, drops: [['meat', 1, 1], ['fur', 2, 1], ['wolf_fang', 1, 0.4]], biome: 'forest', style: 'lunge', tell: 380, aggro: true },
   toad: { name: 'Mire Toad', hp: 30, dmg: 10, speed: 30, r: 6, sight: 90, drops: [['gland', 1, 1], ['meat', 1, 0.6]], biome: 'marsh', style: 'tongue', tell: 700, aggro: true },
   crawler: { name: 'Scrap Crawler', hp: 44, dmg: 8, speed: 40, r: 6, sight: 130, drops: [['spares', 2, 1], ['scrap', 2, 1], ['crawler_optic', 1, 0.35]], biome: 'toxic', style: 'shoot', tell: 600, aggro: true },
   beetle: { name: 'Cinder Beetle', hp: 52, dmg: 15, speed: 36, r: 7, sight: 100, drops: [['chitin', 2, 1], ['sulfur', 1, 0.6], ['beetle_horn', 1, 0.3]], biome: 'ash', style: 'burrow', tell: 900, aggro: true },
   crab: { name: 'Shore Crab', hp: 24, dmg: 7, speed: 42, r: 5, sight: 70, drops: [['shell', 1, 1], ['meat', 1, 0.8]], biome: 'sand', style: 'pinch', tell: 420, aggro: false },
+
+  // SOH_PROVISIONAL: 9 Veyra Ordinary Creatures (verified recovery sprites; knife-defensible telegraphs; zero rcash)
+  vampire_1: { name: 'Dusk Stray', hp: 38, dmg: 11, speed: 60, r: 6, sight: 115, drops: [['cloth', 1, 0.85], ['herb', 1, 0.65], ['hide', 1, 0.5]], biome: 'forest', style: 'lunge', tell: 440, aggro: true, night: true, leashTiles: 24 },
+  vampire_2: { name: 'Blood Archivist', hp: 52, dmg: 14, speed: 56, r: 6, sight: 125, drops: [['cloth', 2, 0.9], ['herb', 2, 0.7], ['crystal', 1, 0.45]], biome: 'ruin', style: 'slash_step', tell: 480, aggro: true, night: true, leashTiles: 26 },
+  vampire_3: { name: 'Crimson Warden', hp: 74, dmg: 18, speed: 52, r: 7, sight: 135, drops: [['crystal', 1, 0.85], ['cloth', 2, 0.8], ['iron_ingot', 1, 0.45], ['essence_spirit', 1, 0.35]], biome: 'crypt', style: 'cleave', tell: 560, aggro: true, night: true, leashTiles: 28 },
+  orc_1: { name: 'Scrap Gnawer', hp: 42, dmg: 12, speed: 54, r: 6, sight: 105, drops: [['scrap', 2, 0.9], ['fiber', 2, 0.7], ['meat', 1, 0.5]], biome: 'scrap', style: 'lunge', tell: 440, aggro: true, leashTiles: 22 },
+  orc_2: { name: 'Bridge Raider', hp: 58, dmg: 15, speed: 56, r: 7, sight: 120, drops: [['scrap', 2, 0.9], ['plank', 1, 0.6], ['hide', 1, 0.65], ['iron_ore', 1, 0.45]], biome: 'road', style: 'charge', tell: 500, aggro: true, leashTiles: 26 },
+  orc_3: { name: 'Ironvein Marauder', hp: 82, dmg: 19, speed: 48, r: 8, sight: 120, drops: [['iron_ore', 2, 0.9], ['coal', 1, 0.7], ['scrap', 2, 0.75], ['fasteners', 1, 0.4]], biome: 'quarry', style: 'slam', tell: 600, aggro: true, leashTiles: 26 },
+  slime_1: { name: 'Lake Droplet', hp: 28, dmg: 8, speed: 44, r: 6, sight: 76, drops: [['herb', 1, 0.8], ['berries', 2, 0.6], ['raw_salt', 1, 0.45]], biome: 'lake', style: 'spit_hop', tell: 460, aggro: true, leashTiles: 18 },
+  slime_2: { name: 'Reagent Ooze', hp: 46, dmg: 12, speed: 46, r: 7, sight: 96, drops: [['gland', 1, 0.85], ['sulfur', 1, 0.65], ['herb', 1, 0.6]], biome: 'marsh', style: 'acid_pool', tell: 500, aggro: true, leashTiles: 20 },
+  slime_3: { name: 'Cinder Core', hp: 64, dmg: 16, speed: 44, r: 7, sight: 106, drops: [['sulfur', 2, 0.9], ['coal', 2, 0.8], ['essence_fire', 1, 0.35]], biome: 'ash', style: 'ember_burst', tell: 580, aggro: true, leashTiles: 22 },
+
+  // SOH_PROVISIONAL: 5 Veyra Living Wildlife Species (boar above + deer, hare, grouse, fox)
+  deer: { name: 'Meadow Deer', hp: 32, dmg: 6, speed: 68, r: 6, sight: 110, drops: [['meat', 2, 1], ['hide', 2, 1]], biome: 'meadow', style: 'graze_flee', tell: 500, aggro: false, tamable: true },
+  hare: { name: 'Brush Hare', hp: 14, dmg: 3, speed: 76, r: 4, sight: 95, drops: [['meat', 1, 1], ['fur', 1, 0.7]], biome: 'meadow', style: 'graze_flee', tell: 450, aggro: false, tamable: true },
+  grouse: { name: 'Black Grouse', hp: 16, dmg: 4, speed: 70, r: 4, sight: 92, drops: [['meat', 1, 1], ['feather', 2, 1], ['grouse_egg', 1, 0.4]], biome: 'marsh', style: 'flush_flee', tell: 450, aggro: false, tamable: true },
+  fox: { name: 'Red Fox', hp: 26, dmg: 9, speed: 72, r: 5, sight: 115, drops: [['fur', 1, 1], ['meat', 1, 0.8]], biome: 'forest', style: 'stalk', tell: 400, aggro: false, night: true, leashTiles: 28 },
+
+  // SOH_PROVISIONAL: 4 Optional Side Bosses (retreat-capable optional sites; run-local unique reward gated once per run)
+  boss_greyback: { name: 'Greyback Shaleheart', hp: 260, dmg: 22, speed: 34, r: 12, sight: 150, drops: [['stone', 6, 1], ['rich_iron_ore', 2, 1], ['crystal', 2, 1]], uniqueDrop: 'relic_shaleheart', biome: 'quarry', style: 'sideboss_rock', tell: 680, aggro: true, leashTiles: 22 },
+  boss_ronin: { name: 'Oathless Ronin', hp: 220, dmg: 24, speed: 60, r: 10, sight: 165, drops: [['refined_iron_ingot', 2, 1], ['cloth', 3, 1], ['spares', 4, 1]], uniqueDrop: 'ronin_nodachi', biome: 'cairns', style: 'sideboss_ronin', tell: 640, aggro: true, leashTiles: 22 },
+  boss_tidemarshal: { name: 'Saltwick Tidemarshal', hp: 235, dmg: 20, speed: 50, r: 10, sight: 155, drops: [['raw_salt', 4, 1], ['shell', 4, 1], ['essence_water', 2, 1]], uniqueDrop: 'tidemarshal_trident', biome: 'coast', style: 'sideboss_water', tell: 600, aggro: true, leashTiles: 22 },
+  boss_custodian: { name: 'Pale Custodian', hp: 210, dmg: 21, speed: 56, r: 9, sight: 155, drops: [['cloth', 4, 1], ['spares', 4, 1], ['essence_spirit', 2, 1]], uniqueDrop: 'custodian_lantern', biome: 'academy', style: 'sideboss_maid', tell: 620, aggro: true, leashTiles: 22 },
 };
 
 // ---------- Elders (six, optional, geographically distinct) ----------
@@ -205,6 +245,45 @@ export const ELDERS: Record<string, ElderDef> = {
   tide: { name: 'Tide Serpent', title: 'Elder of the Breaking Shore', hpLatent: 300, hpAwake: 580, stone: 'stone_tide', r: 13, size: 40, color: '#5ac8f0', region: 'Serpent Strand', dmg: 18, speed: 50, patterns: ['spit', 'wave'], awakePatterns: ['spit', 'wave', 'dive', 'whirl'] },
   rust: { name: 'Rust Colossus', title: 'Elder of the Dead Foundry', hpLatent: 400, hpAwake: 720, stone: 'stone_rust', r: 15, size: 44, color: '#f0a050', region: 'Dead Foundry', dmg: 20, speed: 22, patterns: ['beam', 'mines'], awakePatterns: ['beam', 'mines', 'beamSweep', 'overload'] },
 };
+
+/** Six Primordials for Veyra runs (`elderSchemaVersion = 2`), mapped 1:1 to the 6 canonical Elder domains. */
+export const PRIMORDIAL_ELDERS: Record<string, ElderDef> = {
+  surtur: { name: 'Surtur', title: 'The World-Burner', hpLatent: 420, hpAwake: 780, stone: 'stone_surtur', r: 18, size: 52, color: '#ff6a2a', region: 'Volcanic Core', dmg: 22, speed: 34, patterns: ['surtur_m_s1', 'surtur_m_s2', 'surtur_m_s3', 'surtur_m_ult'], awakePatterns: ['surtur_u_s1', 'surtur_u_s2', 'surtur_u_s3', 'surtur_u_ult'] },
+  typhon: { name: 'Typhon', title: 'Father of All Monsters', hpLatent: 400, hpAwake: 740, stone: 'stone_typhon', r: 17, size: 50, color: '#9c72ff', region: 'Tempest Lair', dmg: 20, speed: 38, patterns: ['typhon_m_s1', 'typhon_m_s2', 'typhon_m_s3', 'typhon_m_ult'], awakePatterns: ['typhon_u_s1', 'typhon_u_s2', 'typhon_u_s3', 'typhon_u_ult'] },
+  aion: { name: 'Aion', title: 'The Unmoving Clock', hpLatent: 360, hpAwake: 680, stone: 'stone_aion', r: 16, size: 48, color: '#ffd86a', region: 'Elderwood Sanctum', dmg: 18, speed: 36, patterns: ['aion_m_s1', 'aion_m_s2', 'aion_m_s3', 'aion_m_ult'], awakePatterns: ['aion_u_s1', 'aion_u_s2', 'aion_u_s3', 'aion_u_ult'] },
+  atlas: { name: 'Atlas', title: 'Bearer of the Sky-Weight', hpLatent: 450, hpAwake: 820, stone: 'stone_atlas', r: 18, size: 52, color: '#8ac4f0', region: 'Gate of Pillars', dmg: 22, speed: 28, patterns: ['atlas_m_s1', 'atlas_m_s2', 'atlas_m_s3', 'atlas_m_ult'], awakePatterns: ['atlas_u_s1', 'atlas_u_s2', 'atlas_u_s3', 'atlas_u_ult'] },
+  argus: { name: 'Argus Panoptes', title: 'The All-Seeing', hpLatent: 350, hpAwake: 660, stone: 'stone_argus', r: 16, size: 48, color: '#5ef0ff', region: 'Hall of Eyes', dmg: 18, speed: 36, patterns: ['argus_m_s1', 'argus_m_s2', 'argus_m_s3', 'argus_m_ult'], awakePatterns: ['argus_u_s1', 'argus_u_s2', 'argus_u_s3', 'argus_u_ult'] },
+  anubis: { name: 'Anubis', title: 'Judge of the Feather', hpLatent: 380, hpAwake: 710, stone: 'stone_anubis', r: 16, size: 48, color: '#f0c45a', region: 'The Necropolis', dmg: 20, speed: 38, patterns: ['anubis_m_s1', 'anubis_m_s2', 'anubis_m_s3', 'anubis_m_ult'], awakePatterns: ['anubis_u_s1', 'anubis_u_s2', 'anubis_u_s3', 'anubis_u_ult'] },
+};
+
+export const LEGACY_TO_PRIMORDIAL_ELDER: Record<string, string> = {
+  magma: 'surtur',
+  rust: 'typhon',
+  grove: 'aion',
+  tide: 'atlas',
+  frost: 'argus',
+  bog: 'anubis',
+};
+
+export const PRIMORDIAL_TO_LEGACY_DOMAIN: Record<string, string> = {
+  surtur: 'magma',
+  typhon: 'rust',
+  aion: 'grove',
+  atlas: 'tide',
+  argus: 'frost',
+  anubis: 'bog',
+};
+
+export function lookupElderDef(key: string): ElderDef | undefined {
+  return ELDERS[key] ?? PRIMORDIAL_ELDERS[key];
+}
+
+/** Maps any legacy (`stone_frost`) or Primordial (`stone_argus`) Elder stone item key to its canonical 6-slot domain. */
+export function elderStoneDomain(itemKey: string): string | null {
+  for (const [k, d] of Object.entries(ELDERS)) if (d.stone === itemKey) return k;
+  for (const [k, d] of Object.entries(PRIMORDIAL_ELDERS)) if (d.stone === itemKey) return PRIMORDIAL_TO_LEGACY_DOMAIN[k] ?? k;
+  return null;
+}
 
 // Knowledge and equipment are independent: tier never implies a station upgrade.
 export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
@@ -275,6 +354,9 @@ export const RECIPES: Record<string, Recipe> = {
   industrial_pick_geared: { out: 'industrial_pick', qty: 1, alias: 'Salvager Pick (geared)', ins: [['iron_pick', 1], ['mechanical_gear', 1], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, base: true, tier: 2 },
   vehicle_drive_geared: { out: 'vehicle_drive', qty: 1, alias: 'Motor Drive (geared)', ins: [['mechanical_gear', 1], ['iron_ingot', 1], ['fasteners', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
   rope: { out: 'rope', qty: 1, ins: [['fiber', 3]], station: null, secs: 1, base: true, tier: 0 },
+  lead_rope: { out: 'lead_rope', qty: 1, ins: [['rope', 2], ['berries', 2]], station: null, secs: 2, base: true, tier: 0 },
+  animal_feed: { out: 'animal_feed', qty: 3, ins: [['fiber', 3], ['seed', 1]], station: null, secs: 2, base: true, tier: 0 },
+  arrow_fletched: { out: 'arrow', qty: 8, alias: 'Arrow (fletched)', ins: [['wood', 1], ['stone', 1], ['feather', 1]], station: 'workbench', secs: 4, base: true, tier: 1 },
   torch: { out: 'torch', qty: 1, ins: [['wood', 1], ['fiber', 2]], station: null, secs: 1, base: true, tier: 0 },
   stone_axe: { out: 'stone_axe', qty: 1, ins: [['wood', 3], ['stone', 3], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
   stone_pick: { out: 'stone_pick', qty: 1, ins: [['wood', 3], ['stone', 4], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
@@ -282,6 +364,7 @@ export const RECIPES: Record<string, Recipe> = {
   bandage: { out: 'bandage', qty: 1, ins: [['fiber', 4]], station: null, secs: 1, base: true, tier: 0 },
   water_flask: { out: 'water_flask', qty: 1, ins: [['hide', 2], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
   root_broth: { out: 'root_broth', qty: 1, ins: [['crop', 2], ['herb', 1]], station: 'campfire', secs: 12, base: true, tier: 1 },
+  poached_eggs: { out: 'root_broth', qty: 1, alias: 'Root Broth (grouse eggs)', ins: [['grouse_egg', 2], ['herb', 1]], station: 'campfire', secs: 8, base: true, tier: 0 },
   herb_roast: { out: 'herb_roast', qty: 1, ins: [['meat', 1], ['herb', 1]], station: 'campfire', secs: 10, base: true, tier: 0 },
   cooked_meat: { out: 'cooked_meat', qty: 1, ins: [['meat', 1]], station: 'campfire', secs: 8, base: true, tier: 0 },
   salted_meat: { out: 'salted_meat', qty: 1, ins: [['meat', 1], ['raw_salt', 1]], station: 'campfire', secs: 10, base: true, tier: 0 },
@@ -348,6 +431,7 @@ export const STRUCTS: Record<string, StructDef> = {
   garden: { name: 'Garden Plot', cost: [['wood', 4], ['fiber', 4]], hp: 60, need: 'any', block: false, layer: 'obj', desc: 'Plant seeds; grows only while watered (rain counts).' },
   farm_controller: { name: 'Garden Tender', cost: [['wood', 12], ['iron_ingot', 2], ['mechanical_parts', 3], ['fasteners', 3], ['spares', 2]], hp: 140, need: 'any', block: true, layer: 'obj', slots: 3, desc: 'Optional fuelled garden machinery. Link one nearby plot, barrel and chest; needs an improved workbench to build.' },
   barrel: { name: 'Rain Barrel', cost: [['wood', 8], ['rope', 1]], hp: 80, need: 'any', block: true, layer: 'obj', desc: 'Collects rainwater; refill flasks.' },
+  feed_trough: { name: 'Feed & Water Trough', cost: [['wood', 6], ['stone', 2], ['rope', 1]], hp: 110, need: 'any', block: true, layer: 'obj', slots: 6, desc: 'SOH_PROVISIONAL: 6-slot livestock trough. Stock fodder/crops/berries and filled water flasks (or rain/barrel) inside an enclosed pen.' },
   base_generator: { name: 'Field Generator', cost: [['iron_ingot', 3], ['mechanical_parts', 3], ['spares', 4], ['wood', 6]], hp: 180, need: 'any', block: true, layer: 'obj', slots: 3, desc: 'Fuel one connected load; reinforce for two. New generators require paid physical cable.' },
   power_cable: { name:'Power Cable', cost:BAL.homeCircuit.cableCost, hp:BAL.homeCircuit.cableHp, need:'any', block:false, layer:'obj', desc:'One paid cable tile. Orthogonal connections only; dry ground, no walls.' },
   power_switch: { name:'Power Switch', cost:BAL.homeCircuit.switchCost, hp:BAL.homeCircuit.switchHp, need:'any', block:false, layer:'obj', desc:'E toggles this physical branch on or off.' },
@@ -363,7 +447,7 @@ export const STRUCTS: Record<string, StructDef> = {
 };
 /** Full target materials are paid again; condition is preserved, never a free repair. */
 export const STRUCTURE_UPGRADES: Record<string, string> = { floor_wood: 'floor_stone', wall_wood: 'wall_stone', wall_stone: 'wall_brick', door_wood: 'door_iron', roof_thatch: 'roof_tile', chest_small: 'chest_large' };
-export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_plank', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'door_powered', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
+export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_plank', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'feed_trough', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'door_powered', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit
