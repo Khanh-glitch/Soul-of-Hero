@@ -2,6 +2,7 @@
 
 - **Branch:** `arena/66b6e01d-soul-of-hero` (Draft PR #51 stacked onto `arena/d968af95-soul-of-hero`, Creator baseline `2d439ca`)
 - **Pre-Fix Baseline Commit:** `57f8ddd0000abd81569acde198cee393b26c453a`
+- **Code Closure Commit:** `1b313a7409327b4a15bc0ccdbddbda795f315ce2`
 - **Viewport & Scale:** `640×360 @ 1×` (`deviceScaleFactor: 1`), captured against the live Vite dev server via real Chromium DOM keyboard/mouse input (`WASD`, `Space` dodge-roll, `Digit1` hotbar select, mouse aim + LMB swing, `KeyE` item pickup, quickbar right-click `Field Medkit`). Zero combat/HP/kill state injection.
 
 ---
@@ -76,10 +77,10 @@
 ---
 
 ## 4. Verification Logs & SHA256 Manifest
-- `tsc-noemit.log` — `tsc --noEmit -p .` & `tsc --noEmit -p tsconfig.test.json` (`0` errors)
-- `vite-build.log` — `vite build` singlefile production bundle (`dist/index.html`, `0` errors)
-- `review-r2-acceptance.log` — `src/veyra05/review-r2-acceptance.test.ts` (`7 / 7` passed)
-- `vitest-full.log` — Full repository Vitest run (`129 passed | 1 skipped (130)` files, `924 passed | 1 skipped (925)` tests, `0` failures)
+- `tsc-noemit.txt` — `tsc --noEmit -p .` & `tsc --noEmit -p tsconfig.test.json` (`0` errors)
+- `vite-build.txt` — `vite build` singlefile production bundle (`dist/index.html`, `0` errors)
+- `review-r2-acceptance.txt` — `src/veyra05/review-r2-acceptance.test.ts` (`7 / 7` passed)
+- `vitest-full.txt` — Full repository Vitest run (`129 passed | 1 skipped (130)` files, `924 passed | 1 skipped (925)` tests, `0` failures)
 
 ```text
 c937ae78f4907e8d469781b156b71c9f39f9df3afe79c154dc9d4f672dfa5263  HOST_48_SKILL_MATRIX.json
@@ -104,7 +105,7 @@ f7a22be1edba57a5888bd0c1adc9a7fc419a0fbf4964e96e16c17d50ca6cbe96  elder-typhon-k
 cdb3ea577c61a51079f2274fc0c65cc025170296957850b49fabb75a5cd873ad  prop-1-silo-3x2-wing-collision-640x360.png
 2090fdd6e4a873db531b5b5fe6ce7ffcccf60700b5d09a8d03e07e22ad4827a0  prop-2-typhon-5x2-wing-collision-640x360.png
 cab4e263cf107ab5c12c7b7ea0542edacede20c31d7e1cde29327f9da50732d2  prop-3-atlas-7x2-wing-collision-640x360.png
-b97ec36a94476a8687280d6150d0499b13275eae58fb2df2a65bff3599c44a9d  review-r2-acceptance.log
+b97ec36a94476a8687280d6150d0499b13275eae58fb2df2a65bff3599c44a9d  review-r2-acceptance.txt
 9cdf8b6f07bfedbf25735b61e05bb9fb43801306d59433d79dd6d90c64955f3a  sb-custodian-combat-640x360.png
 930c61fe1cb492486a0de6dbf5e01df6b8bb3cb3c70dd8bf5ef643e195aa5fb0  sb-custodian-kill-640x360.png
 7e117f4121b4b6045db00b7ecd5a17bafcc0bd97c45c8e305929a41521094bdd  sb-greyback-combat-640x360.png
@@ -113,7 +114,7 @@ b97ec36a94476a8687280d6150d0499b13275eae58fb2df2a65bff3599c44a9d  review-r2-acce
 28f049a2640671d9f0d0db509f81950545910d83344ff0dfd6fd3ff66e83fb81  sb-ronin-kill-640x360.png
 0ece3097450f9c95daa99e183c3c5f817d650284e5b9f1b605fd09b22c07ef8c  sb-tidemarshal-combat-640x360.png
 7693fb4509dd251f4945117d075a1b15f35186edad56e4cddce89511f1a7588b  sb-tidemarshal-kill-640x360.png
-90aece4e427e319c804c5dddff34d9de6ffc961044e6724f475dbbfc9be233da  tsc-noemit.log
-2c94eab4b8100d4f384e6c60e5524f37c0f19647fa38bdbc4dc0c086ea7dc2a9  vite-build.log
-819f420781aa27e9e78ec2edcd0397d1dcdb4288271c89212d52b66bb526a033  vitest-full.log
+90aece4e427e319c804c5dddff34d9de6ffc961044e6724f475dbbfc9be233da  tsc-noemit.txt
+2c94eab4b8100d4f384e6c60e5524f37c0f19647fa38bdbc4dc0c086ea7dc2a9  vite-build.txt
+819f420781aa27e9e78ec2edcd0397d1dcdb4288271c89212d52b66bb526a033  vitest-full.txt
 ```

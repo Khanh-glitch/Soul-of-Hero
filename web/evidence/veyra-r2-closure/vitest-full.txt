@@ -1,0 +1,436 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ src/veyra05/review-r2-acceptance.test.ts (7 tests) 130167ms
+     ✓ P0-1: enforces directional arc, weapon reach, and wall/prop LOS on summon combat plus sanctuary wall occlusion on boss wake & hitEnemies  1100ms
+     ✓ P0-2: guarantees full-footprint multi-tile prop solidity, zero ghost props across all 81 POIs × 4 storeys, and physical player/creature/motorbike wing collision  41322ms
+     ✓ P1-3: enforces sex-specific grouse egg laying across live pens, offscreen window shifts, breeding, and wild drops  3154ms
+     ✓ P1-4: defeats all 6 Primordials in BOTH Latent & Awakened forms (12 sanctuary fights), executes all 48 skills, and defeats all 4 Side Bosses via pure real-input combat  7369ms
+     ✓ P1-5: preserves >96 (135) wounded offscreen ambient creatures across out-and-back window streaming + save/reload without full-HP duplication, and holds 8h/24h/48h/336h endurance bounds  7605ms
+     ✓ R2-CLOSURE-1: proves 100% source-vs-runtime authored Veyra art preservation (680/680 POI props, 116/116 sprites, 0 blocked doors/stairs) and giant 3x2/5x2/7x2 collision + LOS  39587ms
+     ✓ R2-CLOSURE-2: executes all 48 Primordial signature skills mounted inside real SOH sanctuaries verifying tell, hitbox, dodge, wall, damage, cleanup, and visual frame  30026ms
+ ✓ src/veyra05/audit-closure.test.ts (7 tests) 14649ms
+     ✓ P0-1: enforces strict Day-14 (>=312h) Primordial awakening across live tick, settle, sanctuary entry, and proportional HP form-shift  1487ms
+     ✓ P0-2: applies Primordial slow multiplier to real player tick movement, persists cleanly, and clears on expiry/cleanup without UTC drift  806ms
+     ✓ P0-3: enforces solid interior/exterior furniture collision without altering ground mapDigest or trapping doors/stairs  794ms
+     ✓ P0-4 & P1-5: enforces biologically grounded yields, opposite-sex (♀+♂) breeding, and full offscreen pen parity across window shifts  2591ms
+     ✓ P1-6: executes real authored sanctuary fights for all 6 Primordials to natural defeat via real input, hits summons, and keeps stone_axe out of elderStones  3649ms
+     ✓ P1-7 & P1-8: places Pale Custodian in po_academy Sealed Archive (F-1) and defeats all 4 Side Bosses via natural combat through Phase-2 <55% HP + 3-move kits + vuln punish  2189ms
+     ✓ P1-9..12: verifies subterranean cave darkness, orc pack rally, habitat kill cooldowns, offscreen cap <=96, motorbike geometry, and KeyM/MapPanel/SkillsPanel contracts  3131ms
+ ✓ tests/b03-hunger-shelter.test.ts (4 tests) 14961ms
+     ✓ online: sheltered, hunger 0, thirst fine, cold safe -> hunger drains but cannot kill; HP floor 1  5523ms
+     ✓ online: thirst still kills while sheltered (cause not suspended)  1259ms
+     ✓ online and offline agree on the hunger-only floor (both reach exactly 1 HP and stay alive)  3716ms
+     ✓ save and resume keeps the floor and does not double-drain  4460ms
+ ✓ tests/mec01-r51-corrective.test.ts (14 tests) 13871ms
+     ✓ [PROCESS] an in-flight bow arrow persisted at logout steps during settlement — exactly one impact  1662ms
+     ✓ [PROCESS] an arrow mid-flight at the settle endpoint survives Continue and lands exactly once later  941ms
+     ✓ [FIXTURE] a hostile hazard in flight at logout dissipates; the player’s own hazard persists untouched  950ms
+     ✓ continuous 20 minutes vs split vs separately reloaded — identical budget, shots, and fallout at the cap  8688ms
+ ✓ tests/cal01-world-calendar.test.ts (29 tests) 12885ms
+     ✓ identifies the full eight-phase vector at 0/42/84/126/168/210/252/294/336 h  804ms
+     ✓ one long absence, four partitions and a save/reload between them agree on the season timeline  3839ms
+     ✓ a long absence is settled in bounded chronological slices, not a 336 h frame replay  2125ms
+     ✓ never repeats a season event on a repeated Continue or a reload at the same instant  709ms
+     ✓ a season change alone never gives a creature knowledge of the player or the home  918ms
+     ✓ offline winter: the framed plot really produces where the exposed plot is stalled, with no free output  411ms
+     ✓ the Garden Tender keeps its receipts single-shot across a season boundary (no duplicate harvest)  608ms
+     ✓ a season boundary grants nothing: no items, cash, score or achievement  2173ms
+     ✓ keeps the fixed run expiry boundary while the season wraps (no season-driven death or reset)  353ms
+ ✓ tests/sys07-w08-absence.test.ts (1 test) 7688ms
+     ✓ current provisional tuning: 8/24/48/72h outcomes are measured and cabinet coverage is real  7685ms
+ ✓ src/veyra05/phase-b-contracts.test.ts (4 tests) 7970ms
+     ✓ spawns legally across all 4 canonical Veyra regions and validates snapshots  3130ms
+     ✓ keeps cold reload on floor -1 valid even when world cache starts on ground floor 0  601ms
+     ✓ preserves offscreen container custody and depleted POI loot across window slides without duplication  690ms
+     ✓ exposes canonical Ragnarok caches, Chest Vendors, and Evacuation Beacons on walkable floor tiles  3546ms
+ ✓ src/veyra05/integrated-world.test.ts (4 tests) 7933ms
+     ✓ the SAME runtime source/overview contains all 81 canonical authored POIs  3871ms
+     ✓ starts the game on U=0.5 GOLD, not the legacy engine-generated island  660ms
+     ✓ six lairs are discoverable through the SAME game world window loader  3398ms
+stderr | tests/b1-storage.test.ts > selects latest local snapshot after an interrupted IDB write, quarantines corrupt bytes, and reports dual-write failure
+[save] idb-transaction
+
+stderr | tests/b1-storage.test.ts > uses readable local fallback if IDB read fails, without writing the unreadable store
+[save] ok:idb-init
+
+stderr | tests/b1-storage.test.ts > continues from local storage when IndexedDB cannot open, leaving its contents untouched
+[save] ok:idb-init
+
+ ✓ tests/b1-storage.test.ts (10 tests) 7137ms
+   ✓ selects latest local snapshot after an interrupted IDB write, quarantines corrupt bytes, and reports dual-write failure  819ms
+   ✓ continues an actual original save with its profile, inventory and queued job intact through autosave and catch-up  820ms
+   ✓ continues a real same-revision legacy pair, preserving the alternative (later is local: true)  771ms
+   ✓ continues a real same-revision legacy pair, preserving the alternative (later is local: false)  777ms
+   ✓ uses readable local fallback if IDB read fails, without writing the unreadable store  837ms
+   ✓ continues from local storage when IndexedDB cannot open, leaving its contents untouched  803ms
+   ✓ uses readable IDB if local storage cannot be read, without touching local storage  743ms
+   ✓ leaves genuinely ambiguous same-time copies untouched and starts new only when both stores are empty  735ms
+   ✓ does not overwrite the alternate legacy copy when preservation fails  758ms
+ ✓ tests/b2-chronology.test.ts (24 tests) 7372ms
+     ✓ limits dry crop growth to the time covered by available water  816ms
+     ✓ stops production exactly at expiry even if Continue happens later  437ms
+     ✓ processes the maximum run duration in bounded minute/event steps, not frame replay  2255ms
+     ✓ a throttled frame crossing expiry cannot advance a job beyond it  380ms
+     ✓ finishes work exactly at expiry before the run-local wipe, never after it  377ms
+     ✓ rejects an engine transaction at expiry before the next settlement frame  2256ms
+ ✓ tests/home-production.test.ts (12 tests) 6422ms
+     ✓ pays real build and upgrade materials and consumes connected inputs into an atomic harvest/replant  940ms
+     ✓ offline matches many online intervals, preserves saved progress and does not repeat at same time  1170ms
+     ✓ expires with the run and does not promote machine stock to profile  3201ms
+ ✓ tests/b03-return.test.ts (9 tests) 5386ms
+     ✓ groups real production receipts with their supporting receipt ids and physical location  1241ms
+     ✓ the legacy string route is still produced for old callers, and an expired run is reported as ended  3256ms
+ ✓ tests/mec01-c3-offline-resume.test.ts (1 test) 5851ms
+     ✓ produces and retrieves exactly the queued outputs after a restart-like process boundary  5850ms
+ ✓ src/veyra05/ecosystem-full.test.ts (7 tests) 5610ms
+     ✓ verifies ordinary creature env modifiers, leash reset, and D061 non-targeting of unprovoked structures  1354ms
+     ✓ executes 4 optional side bosses with alternating 2-move choreography, unique-once drops, and zero Ragnarok cash  491ms
+     ✓ proves taming, leading across windows, pen containment, fox physical pen-blocking, and 8h/24h/48h offline settle  1568ms
+     ✓ executes all 48/48 Primordial signature skills (6 Elders × 2 forms × 4 skills) cleanly with zero orphan entities or UTC clock drift  982ms
+     ✓ enforces 6-stone bijection, window-shift offscreen creature continuity, save round-trip, and v1->v2 Elder migration  1130ms
+ ✓ tests/s12-airdrop.test.ts (11 tests) 5126ms
+     ✓ has deterministic finite timing, authored safe reachable sites and bounded rewards  910ms
+     ✓ does not enable imported maps and retains legacy saves without retroactive drops  1044ms
+     ✓ runs all fourteen finite signals before the 336-hour wipe  2427ms
+ ✓ tests/territory-cabinet.test.ts (9 tests) 5212ms
+     ✓ builds foundation first, then a 24-slot supported cabinet; explicit repair spends physical stock  889ms
+     ✓ upkeep arithmetic remains deterministic across partitions  485ms
+     ✓ accounts for 335 hours against the 336-hour run clock without fractional physical items  3131ms
+ ✓ tests/rest-supply.test.ts (14 tests) 4959ms
+     ✓ starts from a real bed intent and moves the exact chosen UIDs into locked reserve custody  1110ms
+     ✓ a legitimate 8 h interval consumes real food and flask charge at the trigger and wakes exactly on time  455ms
+     ✓ shared online/offline chronology: a partitioned settle equals one long settle, and hunger is never frozen  469ms
+     ✓ save and reload mid-rest keeps the same reserve custody, charge, and resumes to the same wake  431ms
+     ✓ destroying the bed ends rest and returns every reserved UID; losing the chest sends them to a bag at the bed  586ms
+     ✓ the forecast is the same arithmetic the simulator uses: food-limited rest wakes when food runs out  398ms
+     ✓ an 8 h unheated rest in a frigid site ends in exposure death at a real time, with every reserve UID restored  346ms
+stdout | tests/m-core-03r-economy.test.ts > run-pinned wreck economy > Veyra keeps old direct policy whether or not a projected window has wrecks
+veyra-greywater-lr02-u16 actual wreck sources 24
+veyra-greywater-lr02-u16 controlled finite harvest {"units":240,"spares":172,"drives":0,"scrap":240}
+veyra-greywater-lr02-u20 actual wreck sources 19
+veyra-greywater-lr02-u20 controlled finite harvest {"units":240,"spares":172,"drives":0,"scrap":240}
+veyra-oasis-lr02-u20 actual wreck sources 14
+veyra-oasis-lr02-u20 controlled finite harvest {"units":240,"spares":172,"drives":0,"scrap":240}
+
+stdout | tests/m-core-03r-economy.test.ts > run-pinned wreck economy > measures real harvest rolls on independent cloned finite scenarios without duplicate yields
+controlled 400 fresh finite scenarios {"split":{"units":3200,"spares":947,"drives":676,"scrap":3200},"direct":{"units":3200,"spares":2239,"drives":0,"scrap":3200}}
+
+ ✓ tests/m-core-03r-economy.test.ts (6 tests) 4322ms
+     ✓ pins split only for actual authorized accessible fresh shipping and dev machines  1495ms
+     ✓ pins actual historical shipping and Veyra saves to direct without changing their physical history  965ms
+     ✓ Veyra keeps old direct policy whether or not a projected window has wrecks  1310ms
+     ✓ measures real harvest rolls on independent cloned finite scenarios without duplicate yields  465ms
+ ✓ tests/b2-perception.test.ts (37 tests) 4447ms
+     ✓ emits only after collision-resolved movement, including rolls, not repeated wall-running  900ms
+     ✓ survives serialization with ids and resumes without fabricating links for old saves  743ms
+     ✓ retains physical impact in the report even when the run expires  490ms
+ ✓ tests/soh.test.ts (22 tests) 4185ms
+     ✓ island is 200x200 with four distinct safe, mutually reachable starts and six elder sites  1423ms
+     ✓ validates both authored layouts, stable geography, and the shared multi-stage relay  1086ms
+     ✓ the starting knife can bootstrap finite stone without yielding ore or duplicating stock  402ms
+     ✓ sheltered player cannot die from hunger alone offline; unsheltered can and leaves one bag  311ms
+ ✓ tests/mec01-r12-departure.test.ts (21 tests) 4492ms
+     ✓ repeated views and forecasts do not mutate the run (no state, grants or claims)  972ms
+     ✓ dry window: forecast warmth equals settle() warmth at 5/15/30/60 min  476ms
+     ✓ cold crossing time agrees with settle(): settle is warm just before the forecast crossing and cold just after  367ms
+     ✓ season transition: a forecast window crossing the phase boundary agrees with settle()  945ms
+     ✓ writes the before/after table of the J10 fields for each cause  505ms
+ ✓ tests/lr02-shipping-access.test.ts (3 tests) 3716ms
+     ✓ preserves actual historical shipping snapshot and geometry, while new shipping/dev runs have no fixed starters  3157ms
+     ✓ uses a paid owned bed without spawning inside an adjacent wall; death custody remains singular  465ms
+stdout | tests/mec01-c2-delivery.test.ts > MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes > delivers the full crate to the SAME far depot in all three modes (long corridor route class)
+[C2 far corridor] {"depot":{"x":104,"y":122},"distTiles":49.8,"walkSeconds":12.65,"cartSeconds":14.15,"bikeSeconds":9.18,"bikeFuel":72.25,"bikeWearHp":11.56,"bikeFasterThanFoot":true,"bikeFasterThanCart":true}
+
+stderr | tests/mec01-c2-delivery.test.ts > MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes > delivers the full crate to the SAME far depot in all three modes (long corridor route class)
+[C2 far] masked candidates=662 road-adjacent=2 farthestMasked=113,180 d=85.4
+[C2 far] masked candidates=662 road-adjacent=2 farthestMasked=113,180 d=85.4
+[C2 far] masked candidates=662 road-adjacent=2 farthestMasked=113,180 d=85.4
+
+ ✓ tests/mec01-c2-delivery.test.ts (6 tests) 3663ms
+     ✓ delivers the full crate by walking (inventory carry)  1300ms
+     ✓ delivers the full crate by hand cart on the same route class  541ms
+     ✓ delivers the full crate by motorbike with measured fuel and wear  706ms
+     ✓ delivers the full crate to the SAME far depot in all three modes (long corridor route class)  1114ms
+ ✓ tests/mec01-r5-offline-defense.test.ts (15 tests) 3707ms
+     ✓ [NATURAL] real footsteps emit a connected trail into the homestead — before any settlement  1087ms
+     ✓ [NATURAL] the same lawful outcome offline and live-online: bashes happen, prov precedes fire, arrows are spent in both  360ms
+ ✓ tests/map-package.test.ts (5 tests) 2873ms
+     ✓ rejects malformed or unsupported inputs with diagnostics  844ms
+     ✓ installs a valid descriptor, instantiates it in the game, and pins geometry and source custody  744ms
+     ✓ retains separate immutable revisions under the same map id  746ms
+     ✓ honors an authored cargo restriction during real loaded-cart collision  483ms
+ ✓ tests/mec01-r6-homecoming.test.ts (1 test) 2705ms
+     ✓ offline turret kill → physical drops → new process Continue → real movement + pickup → exactly-once custody  2703ms
+ ✓ tests/mec01-r2-c1-motorbike-chain.test.ts (1 test) 2549ms
+     ✓ chain: gear and drive, frame, L3 bench, Motorbike Kit, place, refuel, mount, carry 40 ingots, deliver to a chest  2548ms
+ ✓ tests/loot-ecology.test.ts (8 tests) 2401ms
+     ✓ classifies only authored sites, preserves authored/unique stock, and bounds all generated slots in both fresh layouts  1365ms
+     ✓ has bounded repeatable stock, distinct physical UIDs, no partial refill, and exact class cooldowns across cycles  309ms
+     ✓ old runs keep their old stock and cooldown without an ecology pin  515ms
+ ✓ tests/veyra-runtime.test.ts (4 tests) 2625ms
+     ✓ veyra-greywater-lr02-u16: source projection, diverse deterministic seeded spawns and save identity  816ms
+     ✓ veyra-greywater-lr02-u20: source projection, diverse deterministic seeded spawns and save identity  710ms
+     ✓ retains its own pinned origin, biome diversity and save identity  1043ms
+ ✓ tests/mec01-gear-decision-network.test.ts (5 tests) 2422ms
+     ✓ branch C (recycle) is real (FIXTURE_INTENT): one gear UID is consumed, the recycler works for real time, and two parts + one ingot come out  833ms
+     ✓ branch A (drive) and branch B (geared Salvager Pick) both need the real L2 bench, and cost different things  1473ms
+ ✓ tests/loot-respawn.test.ts (3 tests) 2260ms
+     ✓ preserves partial contents indefinitely; final withdrawal starts the exact typed cooldown  795ms
+     ✓ settles online/offline to one fresh, authenticated instance; never duplicates and never recreates blueprint or cash  621ms
+     ✓ migrates W00 timerless saves conservatively and rejects orphan and malformed timers  842ms
+ ✓ tests/logistics-garden.test.ts (9 tests) 2235ms
+     ✓ pays for one upgrade at an owned level-2 bench; preserves cargo, UID and upgrade through pack, save and redeploy  787ms
+     ✓ adds palms only to previously empty tiles on run-pinned v2; legacy source depletion and burns are unchanged  1029ms
+ ✓ tests/b02-ir-sensor.test.ts (12 tests) 2364ms
+     ✓ costs real parts (mechanical gear, iron, fasteners), is owned, and build is refused without the parts  835ms
+     ✓ offline settle with the sensor enabled and a target absent is deterministic and burns the same fuel as direct  450ms
+ ✓ tests/veyra-lr02-patch.test.ts (5 tests) 2085ms
+     ✓ veyra-greywater-lr02-u16: authentic area membership, physical collision entry and save identity  752ms
+     ✓ veyra-greywater-lr02-u20: authentic area membership, physical collision entry and save identity  609ms
+     ✓ routes newly started runs from historic active layouts into LR02 while retaining old snapshot validation  369ms
+     ✓ keeps both prior LR01 runtime fingerprints unchanged for saved runs  346ms
+ ✓ tests/wmp04r1-current.test.ts (2 tests) 2008ms
+     ✓ verifies all seven pinned rasters, current source compilation and conservative water collision  1881ms
+ ✓ tests/s06-circuits.test.ts (11 tests) 1928ms
+     ✓ uses build custody, distinct UIDs, real switch/plate and no diagonal or consumer bridging  826ms
+ ✓ tests/poi-access-s05.test.ts (7 tests) 2126ms
+     ✓ takes the real Watchtower card, spends exactly one charge and crosses the Foundry doorway, then uses the interior exit  822ms
+     ✓ grandfathers a real old save and does not upgrade uncharged legacy cards  629ms
+     ✓ does not infer circuits for Veyra and does not debit fuel  410ms
+ ✓ src/veyra05/integrated-lifecycle.test.ts (2 tests) 2107ms
+     ✓ new run stays save-valid before/after a real world window shift  1489ms
+     ✓ actual six-Elder floor switching remains save valid through a real stair  617ms
+ ✓ tests/motorbike.test.ts (9 tests) 2057ms
+     ✓ uses paid research and timed workbench reservations to assemble exactly one deployable unit  741ms
+     ✓ replays actual wreck salvage through a funded furnace into the same canister used by a vehicle  398ms
+     ✓ rejects deployment on uncontracted Veyra and failed/replayed transactions without a debit  438ms
+ ✓ tests/mec01-r8e-plank-upkeep.test.ts (6 tests) 2035ms
+     ✓ a wall_plank contributes 0.75 plank per day to its cabinet (3 x 25%), as wood walls contribute their wood  800ms
+     ✓ settled upkeep debits real planks, with fractional credit: removed - credit = 0.75 x days, never more  961ms
+ ✓ tests/mec01-r4-offline-defense.test.ts (9 tests) 1863ms
+     ✓ an idle boar and wolf with zero traces anywhere in the world do nothing to anything  822ms
+     ✓ the same geometry with a lunge-style predator never reaches a swing — the bash gate is style-denied  522ms
+ ✓ tests/b03-production.test.ts (7 tests) 1727ms
+     ✓ an unattended ripe plot is never auto-harvested offline or online  861ms
+     ✓ one 30-minute settle and thirty 1-minute settles produce the same tender state, stock and receipts  391ms
+ ✓ tests/mec01-c1-motorbike-chain.test.ts (2 tests) 1741ms
+     ✓ walks the whole paid chain with real intents, preserves UIDs through save/reload, and keeps survival kit-free of it  1703ms
+ ✓ tests/progression.test.ts (10 tests) 1591ms
+     ✓ definitions, source placement and bounded supply connect the proposed chain  601ms
+     ✓ repair keeps the physical UID, consumes exactly its typed cost and rejects replay/full repair  619ms
+ ✓ tests/economy-network.test.ts (10 tests) 1783ms
+     ✓ adds finite physical found parts and shore shell furnace alternative without a boss prerequisite  647ms
+     ✓ wrecks produce rare physical parts only while finite source stock is harvested  746ms
+ ✓ tests/world-economy-runtime.test.ts (5 tests) 1702ms
+     ✓ compiles shipping deterministically, with accessible starts and no protected or inaccessible placement  1541ms
+ ✓ tests/s08-world-stimulus.test.ts (10 tests) 1640ms
+     ✓ creates one source-local finite landing impulse, never on an aborted landing  863ms
+ ✓ tests/b03-thermal.test.ts (9 tests) 1849ms
+     ✓ snow cold alone gives base 19; a burning campfire in line of sight adds 13.5 (0.75 per score)  857ms
+ ✓ tests/cal011-forecast.test.ts (5 tests) 1816ms
+     ✓ BEFORE/AFTER: the neutral season is unchanged, a hot summer cell is no longer overstated  857ms
+     ✓ C3 NEGATIVE: near expiry the run ends without either meter emptying, and no field claims depletion at expiry  401ms
+stderr | tests/b1-integrity.test.ts > B1 snapshots and recovery > quarantines a corrupt copy before selecting a valid one and never overwrites a sole bad copy
+[save] ok:idb-init
+
+ ✓ tests/b1-integrity.test.ts (16 tests) 1378ms
+     ✓ reclaim preserves paid inputs and filled output exactly without partial-refund duplication  751ms
+ ✓ tests/b01-industrial-loot.test.ts (33 tests) 1629ms
+     ✓ fresh runs carry the current grammar (MEC-01 A: b05-v1); pre-B01 saves (no field) keep only the W06 pair  709ms
+ ✓ tests/w08r-combat-provenance.test.ts (14 tests) 1542ms
+     ✓ receipt id, sequence, detail, stimulus sourceId and eventIndex agree exactly, across a snapshot  837ms
+ ✓ tests/mec01-a2-pipe-blade.test.ts (9 tests) 1741ms
+     ✓ three different Pipe consequences with real crafts/recycling: plate sink, piped frame sink, or recover to refined+MP  1581ms
+ ✓ tests/s10-oil-refinery.test.ts (19 tests) 1628ms
+     ✓ builds the refinery on valid terrain with a level-2 Workbench and NO territory cabinet (K6)  831ms
+ ✓ tests/creator-core-foundation.test.ts (10 tests) 1538ms
+     ✓ loads each reserve atomically from the right carried materials and survives save; replay and stale UID cannot mint  821ms
+ ✓ tests/emergent-fire.test.ts (9 tests) 1561ms
+     ✓ spreads to an adjacent living tree at the same causal time offline and across online intervals  851ms
+ ✓ tests/b04-p3-world.test.ts (16 tests) 1685ms
+     ✓ signal broadcasts only the sector: no landing coordinates, bounded touchdown countdown  862ms
+ ✓ tests/w08-combat-sound.test.ts (9 tests) 1408ms
+     ✓ a committed bow release emits exactly one ranged source at the release point  789ms
+ ✓ tests/public-loot-lifecycle.test.ts (5 tests) 1671ms
+     ✓ rejects deposit, auto-merge and swap without mutation; partial withdrawal persists with remaining original UIDs  828ms
+     ✓ preserves a real historical Shipping save with and without the old map digest while retiring its own authored starter crate  634ms
+ ✓ tests/spirit-core.test.ts (14 tests) 1561ms
+     ✓ rejects undiscovered or blocked destinations before spending a reserve  889ms
+ ✓ tests/b04-p4-world.test.ts (7 tests) 1560ms
+     ✓ a copied run with the same id never reuses the other copy collision grid; restoring A restores A  974ms
+ ✓ tests/offline-preparation.test.ts (4 tests) 1333ms
+     ✓ uses 100 hunger per 24 hours and provisional 1.5x thirst together, without free supplies  1000ms
+ ✓ tests/w08-home-status.test.ts (6 tests) 1534ms
+     ✓ an unfunded cabinet covers structures, funding changes state to funded, and protection does not heal damage  995ms
+ ✓ tests/b05-oil-pump.test.ts (19 tests) 1469ms
+     ✓ a pump with no authorized source cannot be built (Map placement pending)  863ms
+ ✓ tests/w07-power-offline-parity.test.ts (4 tests) 1504ms
+     ✓ same armed-turret state: fuel and allocation after 25 s match between 1 s online steps and one offline settlement  1230ms
+ ✓ tests/b05-freight-compare.test.ts (1 test) 1380ms
+     ✓ walking, hand cart and motorbike are distinguished by measured speed, capacity, fuel and wear  1379ms
+ ✓ tests/b02-bear-trap.test.ts (8 tests) 1127ms
+     ✓ costs gear, ingots and fasteners; placed unarmed, so a creature stepping on it is not hit  760ms
+ ✓ tests/production-network.test.ts (10 tests) 1229ms
+     ✓ learns fasteners from an actually consumed specimen, then produces a paid multi-use batch  793ms
+ ✓ tests/b04-vehicle-unload.test.ts (16 tests) 1257ms
+     ✓ a broken motorbike moves its real cargo stacks (same UIDs, qty, dur) into ONE bag at its tile; nothing copied  786ms
+stdout | tests/mec01-r6-freight-speed.test.ts > MEC-01 R6 P0 freight speed (same road, same 40-ingot load) > walking empty and loaded, cart empty and loaded, motorbike empty and loaded
+R6ROWS {"walk_empty":{"carriedKg":1.4,"seconds":9.05,"outTiles":26,"pathPx":834,"returnedToStart":true,"avgPxPerSec":92.2,"fuelUsed":0,"wearHp":0,"turnAt":{"x":2331,"y":1752}},"walk_loaded":{"carriedKg":41.4,"seconds":9.05,"outTiles":26,"pathPx":834,"returnedToStart":true,"avgPxPerSec":92.2,"fuelUsed":0,"wearHp":0,"turnAt":{"x":2331,"y":1752}},"cart_empty":{"cartKg":0,"seconds":9.15,"outTiles":26,"pathPx":835,"returnedToStart":true,"avgPxPerSec":91.3,"fuelUsed":0,"wearHp":0,"turnAt":{"x":2331,"y":1752}},"cart_loaded":{"cartKg":40,"seconds":9.85,"outTiles":26,"pathPx":834,"returnedToStart":true,"avgPxPerSec":84.7,"fuelUsed":0,"wearHp":0,"turnAt":{"x":2331,"y":1752}},"bike_empty":{"cargoKg":0,"maxKg":80,"fuelBefore":300,"seconds":2.2,"outTiles":26,"pathPx":858,"returnedToStart":true,"avgPxPerSec":390,"fuelUsed":42.9,"wearHp":6.86,"turnAt":{"x":2341,"y":1752}},"bike_loaded":{"cargoKg":40,"maxKg":80,"fuelBefore":300,"seconds":2.6,"outTiles":26,"pathPx":837,"returnedToStart":true,"avgPxPerSec":321.8,"fuelUsed":52.28,"wearHp":8.37,"turnAt":{"x":2330,"y":1752}}}
+
+ ✓ tests/mec01-r6-freight-speed.test.ts (1 test) 1419ms
+     ✓ walking empty and loaded, cart empty and loaded, motorbike empty and loaded  1417ms
+ ✓ tests/mec01-loot-source-contract.test.ts (16 tests) 1192ms
+     ✓ each spec signature matches exactly one authored shipping cache  678ms
+ ✓ tests/w09-core-signature-sound.test.ts (5 tests) 1317ms
+     ✓ a committed signature commits once, costs one reserve charge, and emits at the pull point at commit time  895ms
+ ✓ tests/mec01-r4-score-once.test.ts (7 tests) 1261ms
+     ✓ each C20-relevant key is credited at most once per run, even on direct double-award  852ms
+ ✓ tests/industrial-power.test.ts (5 tests) 1091ms
+     ✓ charges a paid module once, allocates one load by priority and rejects replay  794ms
+ ✓ tests/k6-power.test.ts (5 tests) 1238ms
+     ✓ consumes fuel and ammunition for a visible real creature; survives save/reload  891ms
+ ✓ tests/w08-survival-unprovisioned.test.ts (1 test) 1154ms
+     ✓ a player with no food or water dies offline with inventory in a real bag, and respawn does not return the bag contents  1153ms
+ ✓ tests/mec01-b-consumer-choice.test.ts (8 tests) 1145ms
+     ✓ reads the spec directly: factory high/open/renewable/24h/cap3 vs tp mid/open/renewable/24h/cap2 vs vault high/poi-door/finite/48h/cap2  707ms
+ ✓ tests/poi-route-physical.test.ts (2 tests) 1082ms
+     ✓ rejects vault transfers through a closed wall even when within interaction radius  724ms
+     ✓ walks exterior to finite access items, keycard, powered door, vault and retreats  356ms
+ ✓ tests/creator-core-acquisition.test.ts (2 tests) 1128ms
+     ✓ places one initially charged rare body into each existing site and does not grant their recipes  763ms
+     ✓ withdraws the UID once, and ordinary replacement cannot respawn the unique body  363ms
+ ✓ tests/v17-core-contract.test.ts (2 tests) 1052ms
+     ✓ binds each guaranteed body to one real authored Shipping crate and its runtime recipe  729ms
+     ✓ does not advertise invented WMP site identities or unique rewards  321ms
+ ✓ tests/b05-vendor-freight.test.ts (6 tests) 1195ms
+     ✓ pays once, debits stock once, and places one physical parcel with a real UID at the trader  931ms
+ ✓ tests/mec01-r8c-rich-iron.test.ts (7 tests) 984ms
+     ✓ a generic harvest call with no extraction capability never yields rich ore, even with a top-tier ore power  732ms
+stdout | tests/mec01-r11-terrain-expiry-order.test.ts > R11 P0: frozen hour must not count as growth > offline jump across thaw with terrain auto-cleanup must match the reference
+[R11 P0 offline] cleaned=true expected=4026.589190673828s minus=0 plus=3
+
+ ✓ tests/mec01-r11-terrain-expiry-order.test.ts (6 tests) 1175ms
+     ✓ reference (read before thaw) is correct  855ms
+ ✓ tests/home-sites-physical.test.ts (1 test) 1103ms
+     ✓ reaches and claims three distinct clear sites, then places owned storage  1102ms
+ ✓ tests/m-core-03.test.ts (6 tests) 1076ms
+     ✓ keeps stock finite, budget bounded, and no recipe may manufacture the input  827ms
+ ✓ tests/k6-spatial.test.ts (8 tests) 1111ms
+     ✓ TIME-CONTROLLED FIXTURE: collapse opens a shelter and removes hunger-only protection  837ms
+ ✓ tests/sys03-recycler.test.ts (8 tests) 1179ms
+     ✓ uses explicit per-item condition tiers, not generic high-value recycling  892ms
+stderr | tests/b05-save-diagnostics.test.ts > P0-A legal full-pack fixture > a valid full-pack save is written and reads back exactly
+[save] ok:idb-init
+
+stderr | tests/b05-save-diagnostics.test.ts > P0-A deliberately invalid over-max fixture (must be rejected before any write) > stone at qty 99 is rejected, classified by invariant only, and the previous valid save is untouched
+[save] invalid-state
+
+stderr | tests/b05-save-diagnostics.test.ts > P0-C bounded save diagnostics > localStorage write failure is classified as local-write (not a generic failure)
+[save] idb-init
+
+ ✓ tests/b05-save-diagnostics.test.ts (6 tests) 1048ms
+     ✓ fills all 24 pack slots with stacks that respect ITEMS[key].max and unique UIDs; validate and serialize pass  862ms
+ ✓ tests/mec01-r9-wild-regrowth.test.ts (11 tests) 1278ms
+     ✓ boundary: a depleted bush is still empty just before its season-scaled cooldown and full just after  907ms
+ ✓ tests/b05r-oil-ui.test.tsx (6 tests) 938ms
+     ✓ is locked with no authorized source, and unlocked once a test-fixture source has stock  804ms
+stdout | tests/mec01-r10-soil-regrowth.test.ts > R10 two substrate states on the same plant > fertile ground regrows faster than poor ground for the same bush and season; both complete (no permanent loss)
+[R10 MEASURE] same bush, neutral season: fertile soil=1.000 rate=1.0000 | poor soil=0.977 rate=0.9765 | cooldown fertile=420s poor=430s
+
+stdout | tests/mec01-r10-soil-regrowth.test.ts > R10 rate bounds and output comparison > drought/poor soil vs fertile: output per day for one bush, two meaningful comparisons, nothing minted
+[R10 MEASURE] output/day bush: fertile(soil 1.00)=617.14 | poor(soil 0.98)=603.78 berries/day, stock per cycle 3
+
+stdout | tests/mec01-r10-soil-regrowth.test.ts > R10 starter not starved > median renewable wild rate stays usable in every season on the fixed Map (ground does not zero the starter economy)
+[R10 MEASURE] starter median renewable rate phase 0 spring: 1.000 (n=1533)
+[R10 MEASURE] starter median renewable rate phase 1 summer: 1.016 (n=1533)
+[R10 MEASURE] starter median renewable rate phase 2 autumn: 0.900 (n=1533)
+[R10 MEASURE] starter median renewable rate phase 3 winter: 0.550 (n=1533)
+
+stdout | tests/mec01-r10-soil-regrowth.test.ts > R10 measured comparison by season (fertile vs drought/poor ground) > MEASURE: per-season bush output/day, top vs bottom soil quartile, and a summer drought check
+[R10 MEASURE] per-season output/day (bush, n=438, quartile=109)
+phase 0 spring: top-soil quartile 617.1 berries/day | bottom-soil quartile 612.0 | ratio 0.992
+phase 1 summer: top-soil quartile 638.7 berries/day | bottom-soil quartile 633.5 | ratio 0.992
+phase 2 autumn: top-soil quartile 555.4 berries/day | bottom-soil quartile 550.7 | ratio 0.992
+phase 3 winter: top-soil quartile 339.4 berries/day | bottom-soil quartile 307.5 | ratio 0.906
+
+ ✓ tests/mec01-r10-soil-regrowth.test.ts (12 tests) 1083ms
+     ✓ fertile ground regrows faster than poor ground for the same bush and season; both complete (no permanent loss)  759ms
+ ✓ tests/mec01-f3-joined.test.ts (1 test) 915ms
+     ✓ carries the real deposit receipt through evacuation and reload into run 2 with zero run-local cash  914ms
+ ✓ tests/b05-station-fuel-policy.test.ts (6 tests) 999ms
+     ✓ a station refuses a Fuel Canister deposit with a reason and consumes nothing  837ms
+stdout | tests/spirit-balance-probe.test.ts > Spirit comparative controlled live-AI probe (not player balance acceptance) > records equal three-second windows against one and three wolves
+SOH_V16_SPIRIT_COMBAT_PROBE [{"mode":"ray","count":1,"playerHp":100,"enemyHp":[-12],"spent":15,"commits":15},{"mode":"beam","count":1,"playerHp":91.19600000000024,"enemyHp":[80],"spent":1,"commits":1},{"mode":"ray","count":3,"playerHp":82.18800000000023,"enemyHp":[20,36,52],"spent":14,"commits":14},{"mode":"beam","count":3,"playerHp":73.19600000000024,"enemyHp":[80,80,80],"spent":1,"commits":1}]
+
+ ✓ tests/spirit-balance-probe.test.ts (1 test) 1074ms
+     ✓ records equal three-second windows against one and three wolves  1072ms
+ ✓ tests/b05-parcel-persistence.test.ts (7 tests) 1156ms
+     ✓ a normal outstanding parcel validates, and so does a save made mid-purchase-to-collection  888ms
+stdout | tests/mec01-r11-weather-outlook.test.ts > R11 exit weather outlook (K2 honesty) > BEFORE/AFTER: the 24h outlook does not depend on the realized weather beyond the exact horizon
+[R11 outlook] seed310 {"hours":24,"wetHours":6.814285714285696,"exactHours":0.15,"exactWetHours":0,"seasonalWetHours":6.814285714285696,"reliability":"exact-near-term+seasonal-probability"} | seed311 {"hours":24,"wetHours":6.814285714285696,"exactHours":0.15,"exactWetHours":0,"seasonalWetHours":6.814285714285696,"reliability":"exact-near-term+seasonal-probability"}
+
+ ✓ tests/mec01-r11-weather-outlook.test.ts (4 tests) 894ms
+     ✓ BEFORE/AFTER: the 24h outlook does not depend on the realized weather beyond the exact horizon  816ms
+ ✓ tests/mec01-foundry-drive-chain.test.ts (4 tests) 1061ms
+     ✓ the authored cache is physically reachable from spawn, the contract is valid, and the gear comes from it at cycle 0  858ms
+ ✓ tests/escrow-route-physical.test.ts (1 test) 971ms
+     ✓ walks using collision-resolved ticks, opens any unlocked doors, purchases, builds and deposits  970ms
+ ✓ tests/b05-parcel-panel.test.tsx (4 tests) 914ms
+     ✓ shows the paid good and the purchase identity, with no cart option when no cart is in reach  792ms
+ ✓ tests/c3-poi-power-feedback.test.ts (3 tests) 862ms
+     ✓ empty generator: refused with the add-can reason; the locked door and the pack are unchanged  783ms
+ ✓ tests/earthmother-core.test.ts (2 tests) 1100ms
+     ✓ places ten physical blockers for exactly three seconds, then produces ten collectible wood once, including offline  1022ms
+ ✓ tests/mec01-f3-evac-reset.test.ts (2 tests) 979ms
+   ✓ evacuate keeps profile securedCash, resets run-local physical cash and learned recipes  952ms
+ ✓ tests/home-ecology.test.ts (3 tests) 1081ms
+     ✓ distinguishes actual snowy and temperate cells without modifying source geography  933ms
+ ✓ tests/mec01-r8b-plank.test.ts (3 tests) 970ms
+     ✓ two wood make one plank at the bench, after 6 real seconds; too little wood is refused with no change  829ms
+ ✓ tests/mec01-r7-wear-maintenance.test.ts (1 test) 978ms
+     ✓ one full tank of loaded freight costs a real share of hull HP, and repair takes exactly one part-set  976ms
+ ✓ tests/v17-spares-market.test.ts (2 tests) 1003ms
+     ✓ requires the real trader and physical Spares, spends bounded stock exactly once, survives reload, and cannot buy or resell arbitrary items  950ms
+ ✓ tests/mec01-runid-unique.test.ts (2 tests) 972ms
+   ✓ two runs with the same seed get distinct ids and both survive in history  911ms
+ ✓ tests/b05-recycler-reload.test.ts (1 test) 798ms
+     ✓ completes once after reload, returns one ingot, and the reserved pipe UID is preserved in the saved job  796ms
+ ✓ tests/gp10r-expedition-intel.test.ts (5 tests) 1068ms
+     ✓ observeGate is a separate committed observation: a denied door does not unlock and records nothing itself  913ms
+ ✓ tests/b05-freight-crude.test.ts (1 test) 1038ms
+     ✓ moves four crude UID-stacks through the existing custody and produces one Fuel Canister, with no duplication  1037ms
+ ✓ tests/mec01-r3-causal-integrity.test.ts (3 tests) 1002ms
+     ✓ two L2 workbenches race a single found Mechanical Gear; the loser is refused before any reservation, and the gear exists exactly once afterwards  877ms
+ ✓ tests/w07r-refinery-chronology.test.ts (2 tests) 986ms
+     ✓ a funded industrial batch with finite wood fuel gives identical fuel, output and job state  913ms
+ ✓ tests/mjolnir-core.test.ts (2 tests) 1035ms
+     ✓ commits exactly five successive physical strikes with separate timed damage  932ms
+ ✓ tests/claim-reserve.test.ts (1 test) 805ms
+     ✓ grandfathers a bare totem, creates empty cabinet storage, and leaves the old chest and its UIDs alone  803ms
+ ✓ tests/v17-oil-chain.test.ts (1 test) 1056ms
+     ✓ harvests finite physical wrecks, studies oil, refines with fuel, and opens the actual lighthouse generator  1055ms
+ ✓ tests/mec01-r61-uid-custody.test.ts (4 tests) 983ms
+     ✓ whole stackable stack into an empty slot keeps its UID — never re-minted  859ms
+ ✓ tests/b02-card-class.test.ts (2 tests) 832ms
+     ✓ the real vault door: a green-tagged card is refused, the vault card opens and reports its real class  784ms
+ ✓ tests/mec01-five-chain-benchmark.test.ts (1 test) 630ms
+     ✓ builds the benchmark, writes JSON and Markdown, and every LI figure carries version/mode/confidence  628ms
+ ✓ tests/veyra-intake.test.ts (3 tests) 166ms
+ ✓ tests/world-economy.test.ts (6 tests) 160ms
+ ✓ src/veyra05/arch/elder-lairs.test.ts (6 tests) 63ms
+ ✓ tests/b04-p4-loot.test.ts (7 tests) 49ms
+ ✓ tests/b05-loot-matrix.test.ts (7 tests) 43ms
+ ✓ tests/mec01-industrial-graph.test.ts (11 tests) 10ms
+ ✓ tests/b06-presentation-cues.test.ts (4 tests) 8ms
+ ✓ tests/b06-world-window.test.ts (8 tests) 7ms
+ ✓ tests/technology-semantics.test.ts (1 test) 4ms
+ ✓ tests/spirit-vfx-editor.test.ts (2 tests) 3ms
+ ✓ tests/b05-industrial-art.test.ts (6 tests) 5ms
+ ↓ tests/mec01-c3-offline-child.test.ts (1 test | 1 skipped)
+
+ Test Files  129 passed | 1 skipped (130)
+      Tests  924 passed | 1 skipped (925)
+   Start at  11:06:36
+   Duration  497.04s (transform 5.87s, setup 0ms, import 57.43s, tests 425.88s, environment 10ms)
+
