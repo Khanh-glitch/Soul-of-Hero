@@ -1,5 +1,7 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { BAL, TILE, WW, WH, HOUR, T, clamp, type Creature, type AmbientWoundStub } from '../game/core';
+import { BAL, TILE, WW, WH, HOUR, T, VIEW_W, VIEW_H, clamp, type Creature, type AmbientWoundStub } from '../game/core';
 import { PRIMORDIAL_ELDERS, CREATURES, ITEMS } from '../game/catalog';
 import {
   newGame,
@@ -12,20 +14,26 @@ import {
   blockGrid,
   stepGardensBarrels,
 } from '../game/engine';
-import { tick, settle, PROJ, HAZ, type Input } from '../game/sim';
+import { tick, settle, rayLen, PROJ, HAZ, type Input } from '../game/sim';
 import { serializeSnapshot, selectSnapshots } from '../game/persist';
-import { setActiveLayout } from '../game/world';
+import { setActiveLayout, getWorld } from '../game/world';
 import { U05_WORLD_LAYOUT_ID, layoutIdAt } from './scenes';
 import { getWindowWorld } from './window';
 import {
   applyFloor,
   activeFloor,
+  authoredPlan,
+  authoredPoiIds,
+  isSolidVeyraProp,
   VEYRA_SOLID_PROP_KINDS,
   VEYRA_NON_SOLID_PROP_KINDS,
   VEYRA_PROP_SOLID_FOOTPRINTS,
   getSolidPropFootprint,
   type FloorLayer,
+  type Level,
 } from './floors';
+import { hasLandmarkSprite, isSolidFootprintPlaced } from './decor-client';
+import { sampleTile } from './reader';
 import { shiftVeyraWindowBy, windowOrigin } from './continuity';
 import { auToTile, windowAround } from './frame';
 import { getAllPoiLayouts } from './poi-kit';
@@ -35,11 +43,12 @@ import {
   VEYRA_PRIMORDIAL_SITES,
 } from './ecosystem';
 import { resolveHusbandryYield, inspectPenAt, stepHusbandry, deterministicAnimalSex } from '../game/husbandry';
-import { inspectPrimordialHostSession } from '../game/primordials/host-bridge';
+import { inspectPrimordialHostSession, cleanupPrimordialBoss } from '../game/primordials/host-bridge';
 import { World, v } from '../game/primordials/game/core';
 import { spawnBoss, spawnPlayer, startSkill, stepWorld } from '../game/primordials/game/sim';
 import { SIGNATURE } from '../game/primordials/game/registry';
 import { BOSS_IDS } from '../game/primordials/art/clips';
+import { FB, renderWorld, type RenderOpts } from '../game/primordials/render/frame';
 
 const SANCTUARY_ENTRY_AU: Record<(typeof VEYRA_PRIMORDIAL_SITES)[number]['key'], [number, number]> = {
   surtur: [1694, 817],
@@ -1309,4 +1318,690 @@ describe('Review Round 2 Acceptance — Negative-First & Zero-Shortcut Guarantee
       }
     }
   }, 90_000);
+
+  it('R2-CLOSURE-1: proves 100% source-vs-runtime authored Veyra art preservation (680/680 POI props, 116/116 sprites, 0 blocked doors/stairs) and giant 3x2/5x2/7x2 collision + LOS', () => {
+    if (typeof (globalThis as any).document === 'undefined') {
+      const noopCtx = new Proxy(
+        {
+          fillStyle: '#000',
+          strokeStyle: '#000',
+          lineWidth: 1,
+          globalAlpha: 1,
+          getImageData: (_x: number, _y: number, w: number, h: number) => ({
+            data: new Uint8ClampedArray(w * h * 4),
+            width: w,
+            height: h,
+          }),
+          createImageData: (w: number, h: number) => ({
+            data: new Uint8ClampedArray(w * h * 4),
+            width: w,
+            height: h,
+          }),
+          putImageData: () => {},
+          createLinearGradient: () => ({ addColorStop: () => {} }),
+          createRadialGradient: () => ({ addColorStop: () => {} }),
+        },
+        { get: (t, p) => (p in t ? (t as any)[p] : () => {}) },
+      );
+      (globalThis as any).document = {
+        createElement: () => ({ width: 16, height: 16, getContext: () => noopCtx }),
+      };
+    }
+
+    const plans = authoredPoiIds().map(id => authoredPlan(id)!);
+    expect(plans.length).toBe(81);
+
+    const isCreatorDry = (gx: number, gy: number): boolean => {
+      const s = sampleTile(gx, gy);
+      return s.land && !s.river && !s.lake;
+    };
+
+    let totalRawArchPlanProps = 0;
+    let totalCreatorDryAuthoredProps = 0;
+    let totalRenderedAuthoredProps = 0;
+    let totalSkippedAuthoredProps = 0;
+    let totalLayerPropsAcrossWindows = 0;
+    let totalSkippedLayerPropsAcrossWindows = 0;
+
+    const byFloor: Record<string, { rawSource: number; creatorDrySource: number; runtimeRendered: number; skipped: number }> = {};
+    const byKind: Record<string, { creatorDrySource: number; runtimeRendered: number; runtimeSolidFootprintCells: number; hasSprite: boolean; skipped: number }> = {};
+    const byPoi: Record<string, { name: string; rawSource: number; creatorDrySource: number; runtimeRendered: number; skipped: number }> = {};
+
+    for (const lv of [-1, 0, 1, 2] as Level[]) {
+      byFloor[String(lv)] = { rawSource: 0, creatorDrySource: 0, runtimeRendered: 0, skipped: 0 };
+    }
+
+    for (const plan of plans) {
+      const poiId = plan.plan.poi;
+      byPoi[poiId] = { name: plan.plan.title, rawSource: 0, creatorDrySource: 0, runtimeRendered: 0, skipped: 0 };
+
+      const [bx, by, bw, bh] = plan.plan.bounds;
+      const cx = Math.round(bx + bw / 2);
+      const cy = Math.round(by + bh / 2);
+      const win = windowAround(cx, cy);
+      const lid = layoutIdAt(win.originTx, win.originTy);
+      const ww = getWindowWorld(lid);
+      const w = getWorld(lid);
+
+      for (const lv of ww.floors.levels) {
+        const layer = ww.floors.layers.get(lv)!;
+        expect(layer).toBeTruthy();
+
+        // Verify zero solid props block any stair endpoint or door tile on this storey
+        for (const st of layer.stairs) {
+          const sx = (st.from === lv ? st.x : st.tx) - win.originTx;
+          const sy = (st.from === lv ? st.y : st.ty) - win.originTy;
+          if (sx >= 0 && sy >= 0 && sx < WW && sy < WH) {
+            expect(layer.solidProps[sy * WW + sx], `stair blocked at ${poiId} F${lv} (${sx},${sy})`).toBe(0);
+          }
+        }
+        for (const s of layer.statics) {
+          if (s.kind === 'door') {
+            expect(layer.solidProps[s.ty * WW + s.tx], `door blocked at ${poiId} F${lv} (${s.tx},${s.ty})`).toBe(0);
+          }
+        }
+
+        for (const lp of layer.props) {
+          totalLayerPropsAcrossWindows++;
+          expect(hasLandmarkSprite(lp.kind), `missing sprite for ${lp.kind}`).toBe(true);
+          if (isSolidVeyraProp(lp.kind) && !isSolidFootprintPlaced(layer, lp.x, lp.y, lp.kind)) {
+            totalSkippedLayerPropsAcrossWindows++;
+          }
+        }
+
+        if (lv === 0) {
+          for (const lm of ww.landmarks) {
+            expect(hasLandmarkSprite(lm.kind)).toBe(true);
+            expect(Boolean(w.sourceV3[lm.ty * WW + lm.tx])).toBe(false);
+            if (isSolidVeyraProp(lm.kind)) {
+              expect(isSolidFootprintPlaced(layer, lm.tx, lm.ty, lm.kind)).toBe(true);
+            }
+          }
+        }
+
+        const L = plan.levels.get(lv);
+        if (!L) continue;
+        for (const p of L.props) {
+          totalRawArchPlanProps++;
+          byFloor[String(lv)].rawSource++;
+          byPoi[poiId].rawSource++;
+          if (!isCreatorDry(p.x, p.y)) continue;
+
+          totalCreatorDryAuthoredProps++;
+          byFloor[String(lv)].creatorDrySource++;
+          byPoi[poiId].creatorDrySource++;
+          const sprOk = hasLandmarkSprite(p.kind);
+          byKind[p.kind] ??= { creatorDrySource: 0, runtimeRendered: 0, runtimeSolidFootprintCells: 0, hasSprite: sprOk, skipped: 0 };
+          byKind[p.kind].creatorDrySource++;
+          expect(sprOk, `missing landmark sprite for ${p.kind}`).toBe(true);
+
+          const lx = p.x - win.originTx;
+          const ly = p.y - win.originTy;
+          const inLayerProps = layer.props.some(q => q.x === lx && q.y === ly && q.kind === p.kind);
+          const solidOk = !isSolidVeyraProp(p.kind) || isSolidFootprintPlaced(layer, lx, ly, p.kind);
+
+          if (inLayerProps && solidOk && sprOk) {
+            totalRenderedAuthoredProps++;
+            byFloor[String(lv)].runtimeRendered++;
+            byPoi[poiId].runtimeRendered++;
+            byKind[p.kind].runtimeRendered++;
+            if (isSolidVeyraProp(p.kind)) {
+              byKind[p.kind].runtimeSolidFootprintCells += getSolidPropFootprint(p.kind).length;
+            }
+          } else {
+            totalSkippedAuthoredProps++;
+            byFloor[String(lv)].skipped++;
+            byPoi[poiId].skipped++;
+            byKind[p.kind].skipped++;
+          }
+        }
+      }
+    }
+
+    expect(totalCreatorDryAuthoredProps).toBe(680);
+    expect(totalRenderedAuthoredProps).toBe(680);
+    expect(totalSkippedAuthoredProps).toBe(0);
+    expect(totalLayerPropsAcrossWindows).toBeGreaterThan(13000);
+    expect(totalSkippedLayerPropsAcrossWindows).toBe(0);
+
+    const evidenceDir = path.resolve(process.cwd(), 'evidence/veyra-r2-closure');
+    fs.mkdirSync(evidenceDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(evidenceDir, 'MAP_PROP_COMPLETENESS_TALLY.json'),
+      JSON.stringify(
+        {
+          summary: {
+            poisAudited: plans.length,
+            floorsPerPoi: [-1, 0, 1, 2],
+            distinctAuthoredPropKinds: Object.keys(byKind).length,
+            allSpritesPresent: Object.values(byKind).every(k => k.hasSprite),
+            totalRawArchPlanProps,
+            waterClippedByCreatorDryRule: totalRawArchPlanProps - totalCreatorDryAuthoredProps,
+            totalCreatorDryAuthoredProps,
+            totalRenderedAuthoredProps,
+            totalSkippedAuthoredProps,
+            renderPreservationRate: '100.00% (680 / 680)',
+            totalLayerPropsAcrossWindows,
+            totalSkippedLayerPropsAcrossWindows,
+            windowLayerPreservationRate: `100.00% (${totalLayerPropsAcrossWindows} / ${totalLayerPropsAcrossWindows})`,
+          },
+          byFloor,
+          byKind,
+          byPoi,
+        },
+        null,
+        2,
+      ),
+    );
+
+    // Giant 3x2, 5x2, and 7x2 footprint verification: player, creature, motorbike, rayLen sightline, and hostile projectile!
+    const giantCases: { label: string; poiId: string; kind: string; lv: Level; halfW: number }[] = [
+      { label: '3x2 f03_silo', poiId: 'po_siloc', kind: 'f03_silo', lv: 0, halfW: 1 },
+      { label: '5x2 elder_typhon_shard', poiId: 'po_typhon', kind: 'elder_typhon_shard', lv: 0, halfW: 2 },
+      { label: '7x2 elder_atlas_gate', poiId: 'po_gate', kind: 'elder_atlas_gate', lv: -1, halfW: 3 },
+    ];
+
+    for (const gc of giantCases) {
+      const plan = plans.find(p => p.plan.poi === gc.poiId)!;
+      const propGlobal = plan.levels.get(gc.lv)!.props.find(p => p.kind === gc.kind)!;
+      expect(propGlobal, `missing ${gc.label}`).toBeTruthy();
+
+      const win = windowAround(propGlobal.x, propGlobal.y);
+      const lid = layoutIdAt(win.originTx, win.originTy);
+      setActiveLayout(lid);
+      const ww = getWindowWorld(lid);
+      const gs = newGame();
+      const t0 = 1_760_000_000_000;
+      const ax = propGlobal.x - win.originTx;
+      const ay = propGlobal.y - win.originTy;
+      const res = startRun(gs, 'female', t0, null, 9100 + gc.halfW, { tx: clamp(ax, 10, WW - 11), ty: clamp(ay + 3, 10, WH - 11) });
+      expect(res.ok).toBe(true);
+      const r = gs.run!;
+      if (gc.lv !== 0) {
+        expect(applyFloor(gs, ww, ww.floors, gc.lv, [ax, ay + 3], markDirty)).toBe(true);
+      }
+      // Clear surrounding test apron tiles directly south & north of the outer wing, and channel (wingTx±1, ay-2) so wolf AI pushes straight south against the outer wing (wingTx, ay-1)
+      const wWorld = getWorld(lid);
+      const wingTx = ax + gc.halfW;
+      const savedTiles = new Map<number, [number, number]>();
+      for (const [tx, ty, tileVal, walkVal] of [
+        [wingTx, ay - 2, T.FLOOR, 1],
+        [wingTx, ay + 1, T.FLOOR, 1],
+        [wingTx, ay + 2, T.FLOOR, 1],
+        [wingTx - 1, ay - 2, T.PWALL, 0],
+        [wingTx + 1, ay - 2, T.PWALL, 0],
+        [wingTx + 1, ay - 1, T.PWALL, 0],
+      ] as const) {
+        const idx = ty * WW + tx;
+        if (!savedTiles.has(idx)) {
+          savedTiles.set(idx, [wWorld.tiles[idx], (wWorld.economyMap.walkable as Uint8Array)[idx]]);
+        }
+        wWorld.tiles[idx] = tileVal;
+        (wWorld.economyMap.walkable as Uint8Array)[idx] = walkVal;
+        delete r.sources[idx];
+      }
+      r.creatures = [];
+      markDirty();
+
+      const bg = blockGrid(r);
+      for (let dy = -1; dy <= 0; dy++) {
+        for (let dx = -gc.halfW; dx <= gc.halfW; dx++) {
+          expect(bg[(ay + dy) * WW + (ax + dx)], `${gc.label} cell (${dx},${dy}) must be solid c=2`).toBe(2);
+        }
+      }
+
+      let now = r.clock.lastSimAt;
+      const southY = (ay + 1) * TILE + 10;
+      const northY = (ay - 2) * TILE + 6;
+      const wingCenterX = wingTx * TILE + 8;
+
+      // 1) Player walking north into outer wing cell (+halfW, 0) is physically blocked south of the footprint
+      r.player.vehicle = undefined;
+      r.player.x = wingCenterX;
+      r.player.y = southY;
+      for (let s = 0; s < 14; s++) {
+        now += 50;
+        tick(gs, { ...IDLE_INPUT, up: true }, 50, now);
+      }
+      expect(Math.floor(r.player.y / TILE), `${gc.label} player blocked by outer wing`).toBeGreaterThanOrEqual(ay + 1);
+
+      // 2) Hostile creature chasing south into outer wing cell (+halfW, -1) is physically blocked north of the footprint
+      const wolf: Creature = {
+        id: `test_wolf_${gc.kind}`,
+        type: 'wolf',
+        x: wingCenterX,
+        y: northY,
+        vx: 0,
+        vy: 0,
+        hp: 40,
+        maxHp: 40,
+        state: 'chase',
+        dir: 'down',
+        t: 0,
+        cd: 0,
+        homeX: wingCenterX,
+        homeY: northY,
+        knows: { kind: 'sight', x: wingCenterX, y: southY, at: now },
+        floor: gc.lv,
+      } as any;
+      r.creatures.push(wolf);
+      for (let s = 0; s < 14; s++) {
+        now += 50;
+        tick(gs, IDLE_INPUT, 50, now);
+      }
+      expect(Math.floor(wolf.y / TILE), `${gc.label} creature blocked by outer wing`).toBeLessThanOrEqual(ay - 2);
+      r.creatures = [];
+
+      // 3) Motorbike driving north into outer wing cell (+halfW, 0) is physically blocked south of the footprint
+      const bikeId = `bike_${gc.kind}`;
+      r.entities[bikeId] = {
+        id: bikeId,
+        kind: 'vehicle',
+        x: wingCenterX,
+        y: southY + 4,
+        hp: 120,
+        maxHp: 120,
+        fuel: 80,
+        floor: gc.lv,
+      } as any;
+      r.player.vehicle = bikeId;
+      r.player.x = wingCenterX;
+      r.player.y = southY + 4;
+      for (let s = 0; s < 14; s++) {
+        now += 50;
+        tick(gs, { ...IDLE_INPUT, up: true }, 50, now);
+      }
+      expect(Math.floor(r.player.y / TILE), `${gc.label} motorbike blocked by outer wing`).toBeGreaterThanOrEqual(ay + 1);
+      r.player.vehicle = undefined;
+      delete r.entities[bikeId];
+
+      // 4) Sightline (rayLen) & hostile projectile fired south across outer wing cell (+halfW, -1..0) terminate on the wing!
+      const sightDist = rayLen(r, wingCenterX, northY, Math.PI / 2, 96);
+      expect(sightDist, `${gc.label} outer wing blocks rayLen sightline`).toBeLessThan(southY - northY);
+
+      r.player.x = wingCenterX;
+      r.player.y = southY;
+      r.player.hp = 100;
+      PROJ.length = 0;
+      PROJ.push({
+        id: `proj_${gc.kind}`,
+        owner: 'enemy',
+        x: wingCenterX,
+        y: northY,
+        vx: 0,
+        vy: 240,
+        dmg: 25,
+        ttl: 1.0,
+        kind: 'bolt',
+        cause: 'Wing LOS Probe',
+      } as any);
+      for (let s = 0; s < 12; s++) {
+        now += 50;
+        tick(gs, IDLE_INPUT, 50, now);
+      }
+      expect(r.player.hp, `${gc.label} outer wing blocks hostile projectile`).toBe(100);
+      PROJ.length = 0;
+
+      // Restore cached window tiles cleanly
+      for (const [idx, [tOrig, wOrig]] of savedTiles.entries()) {
+        wWorld.tiles[idx] = tOrig;
+        (wWorld.economyMap.walkable as Uint8Array)[idx] = wOrig;
+      }
+      markDirty();
+    }
+  }, 120_000);
+
+  it('R2-CLOSURE-2: executes all 48 Primordial signature skills mounted inside real SOH sanctuaries verifying tell, hitbox, dodge, wall, damage, cleanup, and visual frame', () => {
+    const fb = new FB(VIEW_W, VIEW_H);
+    const overlayOpts: RenderOpts = {
+      floor: 'dark',
+      transparentBg: true,
+      hidePlayerProxy: true,
+      layers: { ground: true, hazards: true, actors: true, fx: true },
+      hitboxes: false,
+      heatmap: false,
+      silhouette: false,
+      noVfx: false,
+      warnings: true,
+      shake: 0.65,
+    };
+
+    const findOpenSanctuarySpan = (r: any, nearTx: number, nearTy: number): [number, number] => {
+      const bg = blockGrid(r);
+      for (const radTiles of [3, 2, 1]) {
+        for (let searchR = 0; searchR <= 16; searchR++) {
+          for (let dy = -searchR; dy <= searchR; dy++) {
+            for (let dx = -searchR; dx <= searchR; dx++) {
+              if (Math.max(Math.abs(dx), Math.abs(dy)) !== searchR) continue;
+              const cx = nearTx + dx;
+              const cy = nearTy + dy;
+              if (cx < radTiles + 3 || cy < radTiles + 3 || cx >= WW - radTiles - 3 || cy >= WH - radTiles - 3) continue;
+              let ok = true;
+              for (let oy = -radTiles; oy <= radTiles && ok; oy++) {
+                for (let ox = -radTiles; ox <= radTiles; ox++) {
+                  if (bg[(cy + oy) * WW + (cx + ox)] !== 0) {
+                    ok = false;
+                    break;
+                  }
+                }
+              }
+              if (ok) return [cx, cy];
+            }
+          }
+        }
+      }
+      return [nearTx, nearTy];
+    };
+
+    const mountSanctuaryBoss = (key: (typeof VEYRA_PRIMORDIAL_SITES)[number]['key'], awakened: boolean, seed: number) => {
+      const sanct = VEYRA_PRIMORDIAL_SITES.find(s => s.key === key)!;
+      const entryAu = SANCTUARY_ENTRY_AU[key];
+      const gs = startVeyraAtAu(entryAu[0], entryAu[1], seed);
+      const r = gs.run!;
+      if (awakened) {
+        r.qaOffset = 313 * HOUR;
+        r.clock.simMs = 313 * HOUR;
+      }
+      const ww = getWindowWorld(r.layoutId!);
+      if (sanct.floor !== 0) {
+        const [ox, oy] = windowOrigin(r);
+        const [gx, gy] = auToTile(entryAu[0], entryAu[1]);
+        expect(applyFloor(gs, ww, ww.floors, sanct.floor, [gx - ox, gy - oy], markDirty)).toBe(true);
+      } else {
+        syncVeyraEcosystemActors(r, ww);
+      }
+      for (const e of Object.values(r.entities)) {
+        if (e.kind === 'door' && ((e as any).floor ?? 0) === sanct.floor) e.open = true;
+      }
+      markDirty();
+
+      const boss = r.creatures.find(m => m.elder?.key === key)!;
+      expect(boss).toBeTruthy();
+      const [acx, acy] = findOpenSanctuarySpan(r, Math.floor(boss.x / TILE), Math.floor(boss.y / TILE));
+      boss.x = acx * TILE + 8;
+      boss.y = acy * TILE + 8;
+      boss.homeX = boss.x;
+      boss.homeY = boss.y;
+      r.player.x = acx * TILE + 8;
+      r.player.y = (acy + 2) * TILE + 8;
+
+      let now = r.clock.lastSimAt + 50;
+      tick(gs, IDLE_INPUT, 50, now);
+      const sess = inspectPrimordialHostSession(r)!;
+      expect(sess).toBeTruthy();
+      const mb = Array.from(sess.mounted.values())[0]!;
+      expect(mb).toBeTruthy();
+      const bActor = sess.world.actor(mb.actorId)!;
+      bActor.pos.x = boss.x;
+      bActor.pos.y = boss.y;
+      bActor.boss!.autonomous = false;
+      bActor.boss!.spawnUntil = 0;
+      bActor.boss!.recoverUntil = 0;
+      return { gs, r, sanct, boss, sess, bActor, now, acx, acy };
+    };
+
+    const placeTargetUnobstructed = (h: ReturnType<typeof mountSanctuaryBoss>, wantDist: number) => {
+      for (const dTry of [wantDist, 32, 42, 24]) {
+        for (const deg of [90, 0, -90, 180, 45, 135, -45, -135]) {
+          const rad = (deg * Math.PI) / 180;
+          const px = h.bActor.pos.x + Math.cos(rad) * dTry;
+          const py = h.bActor.pos.y + Math.sin(rad) * dTry;
+          if (
+            h.sess.world.map.queryValidPosition({ x: px, y: py }, 6) &&
+            !h.sess.world.map.raycast(h.bActor.pos, { x: px, y: py }).hit &&
+            !h.sess.world.wallRaycast!(h.bActor.pos, { x: px, y: py })
+          ) {
+            h.r.player.x = px;
+            h.r.player.y = py;
+            h.sess.playerActor.pos.x = px;
+            h.sess.playerActor.pos.y = py;
+            return;
+          }
+        }
+      }
+    };
+
+    const matrixRows: any[] = [];
+    let skillOrdinal = 0;
+
+    for (const sanct of VEYRA_PRIMORDIAL_SITES) {
+      for (const awakened of [false, true]) {
+        const form = awakened ? 'ultimate' : 'mini';
+        const skills = SIGNATURE[sanct.key][form];
+        expect(skills.length).toBe(4);
+
+        for (const sk of skills) {
+          skillOrdinal++;
+          const optDist = sk.id === 'furnace_trap' ? 24 : clamp((sk.range[0] + sk.range[1]) * 0.35, 24, 48);
+
+          // 1) Open sanctuary floor: verify tell -> hitbox -> real SOH damage -> visual frame -> cleanup
+          const hOpen = mountSanctuaryBoss(sanct.key, awakened, 12_000 + skillOrdinal);
+          placeTargetUnobstructed(hOpen, optDist);
+          hOpen.r.player.hp = 100;
+          hOpen.bActor.boss!.target = hOpen.sess.playerActor.id;
+          hOpen.bActor.boss!.mem.nextTgt = hOpen.sess.world.t + 12;
+          hOpen.bActor.boss!.forced = sk.id;
+
+          let openDmg = 0;
+          const phases: string[] = [];
+          let hitboxEmitted = false;
+          let maxNonZeroPixels = 0;
+          let maxDistinctColors = 0;
+          let started = false;
+          let ended = false;
+
+          for (let step = 0; step < 150; step++) {
+            const hpBefore = hOpen.r.player.hp;
+            hOpen.now += 50;
+            hOpen.r.player.hunger = 100;
+            hOpen.r.player.thirst = 100;
+            hOpen.r.player.warmth = 100;
+            tick(hOpen.gs, IDLE_INPUT, 50, hOpen.now);
+            if (hOpen.r.player.hp < hpBefore) {
+              openDmg += hpBefore - hOpen.r.player.hp;
+              hOpen.r.player.hp = 100;
+              hOpen.r.player.dead = false;
+            }
+            const runner = hOpen.bActor.boss!.runner;
+            if (runner && runner.skill.id === sk.id) {
+              started = true;
+              for (const ph of runner.phases) {
+                if (!phases.includes(ph.tag)) phases.push(ph.tag);
+              }
+            } else if (started && !runner) {
+              ended = true;
+            }
+            if (
+              hOpen.sess.world.ents.some(e => !e.dead && e.lethal) ||
+              hOpen.sess.world.actors.some(a => a.alive && a.kind === 'summon') ||
+              hOpen.sess.world.events.some(ev => ev.skill === sk.id && ev.type === 'hit')
+            ) {
+              hitboxEmitted = true;
+            }
+            if (step % 4 === 0 && ((started && !ended) || hOpen.sess.world.ents.length > 0)) {
+              renderWorld(
+                fb,
+                hOpen.sess.world,
+                Math.round(hOpen.bActor.pos.x - VIEW_W / 2),
+                Math.round(hOpen.bActor.pos.y - VIEW_H / 2),
+                overlayOpts,
+              );
+              let sampledNonZero = 0;
+              const cols = new Set<number>();
+              const d = fb.data;
+              for (let i = 0; i < d.length; i += 16) {
+                if (d[i + 3] > 0) {
+                  sampledNonZero++;
+                  cols.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
+                }
+              }
+              if (sampledNonZero * 4 > maxNonZeroPixels) {
+                maxNonZeroPixels = sampledNonZero * 4;
+                maxDistinctColors = cols.size;
+              }
+            }
+            if (
+              ended &&
+              !hOpen.sess.world.ents.some(e => !e.dead && e.lethal) &&
+              !hOpen.sess.world.actors.some(a => a.alive && a.kind === 'summon')
+            ) {
+              break;
+            }
+          }
+
+          cleanupPrimordialBoss(hOpen.r, hOpen.boss.id, 'r2 matrix cleanup');
+          const cleanAfter =
+            !hOpen.sess.world.ents.some(e => !e.dead && e.owner === hOpen.bActor.id && (e.lethal || e.policy === 'owned')) &&
+            !hOpen.sess.world.actors.some(a => a.alive && a.summon?.owner === hOpen.bActor.id);
+
+          // 2) Real SOH player roll + lateral WASD evasion
+          const hDodge = mountSanctuaryBoss(sanct.key, awakened, 12_000 + skillOrdinal);
+          placeTargetUnobstructed(hDodge, optDist);
+          hDodge.r.player.hp = 100;
+          hDodge.bActor.boss!.target = hDodge.sess.playerActor.id;
+          hDodge.bActor.boss!.mem.nextTgt = hDodge.sess.world.t + 12;
+          hDodge.bActor.boss!.forced = sk.id;
+
+          let dodgeDmg = 0;
+          let dodgeStarted = false;
+          let dodgeEnded = false;
+          for (let step = 0; step < 150; step++) {
+            const hpBefore = hDodge.r.player.hp;
+            hDodge.now += 50;
+            hDodge.r.player.hunger = 100;
+            hDodge.r.player.thirst = 100;
+            hDodge.r.player.warmth = 100;
+            hDodge.r.player.stamina = 100;
+            tick(hDodge.gs, { ...IDLE_INPUT, right: true, down: true, roll: step % 8 === 2 }, 50, hDodge.now);
+            if (hDodge.r.player.hp < hpBefore) {
+              dodgeDmg += hpBefore - hDodge.r.player.hp;
+              hDodge.r.player.hp = 100;
+              hDodge.r.player.dead = false;
+            }
+            const runner = hDodge.bActor.boss!.runner;
+            if (runner && runner.skill.id === sk.id) dodgeStarted = true;
+            else if (dodgeStarted && !runner) dodgeEnded = true;
+            if (
+              dodgeEnded &&
+              !hDodge.sess.world.ents.some(e => !e.dead && e.lethal) &&
+              !hDodge.sess.world.actors.some(a => a.alive && a.kind === 'summon')
+            ) {
+              break;
+            }
+          }
+          cleanupPrimordialBoss(hDodge.r, hDodge.boss.id, 'r2 matrix dodge cleanup');
+
+          // 3) Solid sanctuary T.PWALL partition between boss and player -> 0 damage leak
+          const hWall = mountSanctuaryBoss(sanct.key, awakened, 12_000 + skillOrdinal);
+          const wWorld = getWorld(hWall.r.layoutId!);
+          const wallY = hWall.acy + 1;
+          for (let wx = hWall.acx - 8; wx <= hWall.acx + 8; wx++) {
+            if (wx > 1 && wx < WW - 2 && wallY > 1 && wallY < WH - 2) {
+              wWorld.tiles[wallY * WW + wx] = T.PWALL;
+              (wWorld.economyMap.walkable as Uint8Array)[wallY * WW + wx] = 0;
+            }
+          }
+          markDirty();
+          hWall.r.player.x = hWall.acx * TILE + 8;
+          hWall.r.player.y = (hWall.acy + 3) * TILE + 8;
+          hWall.r.player.hp = 100;
+          hWall.bActor.pos.x = hWall.acx * TILE + 8;
+          hWall.bActor.pos.y = (hWall.acy - 1) * TILE + 8;
+          hWall.bActor.boss!.target = hWall.sess.playerActor.id;
+          hWall.bActor.boss!.mem.nextTgt = hWall.sess.world.t + 12;
+          hWall.bActor.boss!.forced = sk.id;
+
+          let wallDmg = 0;
+          let wallStarted = false;
+          let wallEnded = false;
+          for (let step = 0; step < 120; step++) {
+            const hpBefore = hWall.r.player.hp;
+            hWall.now += 50;
+            hWall.r.player.hunger = 100;
+            hWall.r.player.thirst = 100;
+            hWall.r.player.warmth = 100;
+            tick(hWall.gs, IDLE_INPUT, 50, hWall.now);
+            if (hWall.r.player.hp < hpBefore) {
+              wallDmg += hpBefore - hWall.r.player.hp;
+              hWall.r.player.hp = 100;
+              hWall.r.player.dead = false;
+            }
+            const runner = hWall.bActor.boss!.runner;
+            if (runner && runner.skill.id === sk.id) wallStarted = true;
+            else if (wallStarted && !runner) wallEnded = true;
+            if (
+              wallEnded &&
+              !hWall.sess.world.ents.some(e => !e.dead && e.lethal) &&
+              !hWall.sess.world.actors.some(a => a.alive && a.kind === 'summon')
+            ) {
+              break;
+            }
+          }
+          const curWw = getWindowWorld(hWall.r.layoutId!);
+          const curLayer = curWw.floors.layers.get(sanct.floor)!;
+          wWorld.tiles.set(curLayer.tiles);
+          (wWorld.economyMap.walkable as Uint8Array).set(curLayer.walkable);
+          markDirty();
+          cleanupPrimordialBoss(hWall.r, hWall.boss.id, 'r2 matrix wall cleanup');
+
+          expect(phases, `${sanct.key}:${form}:${sk.id} tell/active phases`).toContain('OPEN');
+          expect(phases, `${sanct.key}:${form}:${sk.id} active phase`).toContain('ACTIVE');
+          expect(hitboxEmitted, `${sanct.key}:${form}:${sk.id} hitbox emitted`).toBe(true);
+          expect(openDmg, `${sanct.key}:${form}:${sk.id} open sanctuary damage`).toBeGreaterThan(0);
+          expect(dodgeDmg, `${sanct.key}:${form}:${sk.id} real roll+WASD dodge reduces damage`).toBeLessThan(openDmg);
+          expect(wallDmg, `${sanct.key}:${form}:${sk.id} solid T.PWALL blocks 100% of damage`).toBe(0);
+          expect(cleanAfter, `${sanct.key}:${form}:${sk.id} cleanup removes owned hazards/summons`).toBe(true);
+          expect(maxNonZeroPixels, `${sanct.key}:${form}:${sk.id} visual frame non-zero pixels`).toBeGreaterThan(1000);
+          expect(maxDistinctColors, `${sanct.key}:${form}:${sk.id} visual frame palette richness`).toBeGreaterThanOrEqual(20);
+
+          matrixRows.push({
+            ordinal: skillOrdinal,
+            boss: sanct.key,
+            sanctuaryPoi: sanct.poiId,
+            sanctuaryFloor: sanct.floor,
+            form,
+            skillId: sk.id,
+            skillName: sk.name,
+            tellPhases: phases,
+            hitboxEmitted,
+            openSanctuaryDamage: +openDmg.toFixed(1),
+            dodgeRollDamage: +dodgeDmg.toFixed(1),
+            wallOccludedDamage: +wallDmg.toFixed(1),
+            cleanupZeroLeak: cleanAfter,
+            visualFrameNonZeroPixels: maxNonZeroPixels,
+            visualFrameDistinctColors: maxDistinctColors,
+            pass: true,
+          });
+        }
+      }
+    }
+
+    expect(matrixRows.length).toBe(48);
+    expect(matrixRows.every(r => r.pass)).toBe(true);
+
+    const evidenceDir = path.resolve(process.cwd(), 'evidence/veyra-r2-closure');
+    fs.mkdirSync(evidenceDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(evidenceDir, 'HOST_48_SKILL_MATRIX.json'),
+      JSON.stringify(
+        {
+          summary: {
+            totalSkillsVerifiedOnSohHost: matrixRows.length,
+            elderFamilies: 6,
+            formsPerElder: ['mini', 'ultimate'],
+            allTellVerified: matrixRows.every(r => r.tellPhases.includes('OPEN') && r.tellPhases.includes('ACTIVE')),
+            allHitboxVerified: matrixRows.every(r => r.hitboxEmitted),
+            allOpenDamagePositive: matrixRows.every(r => r.openSanctuaryDamage > 0),
+            allDodgeStrictlyReduced: matrixRows.every(r => r.dodgeRollDamage < r.openSanctuaryDamage),
+            allWallOccludedZeroDamage: matrixRows.every(r => r.wallOccludedDamage === 0),
+            allCleanupZeroLeak: matrixRows.every(r => r.cleanupZeroLeak),
+            allVisualFramesRendered: matrixRows.every(r => r.visualFrameNonZeroPixels > 1000 && r.visualFrameDistinctColors >= 20),
+          },
+          skills: matrixRows,
+        },
+        null,
+        2,
+      ),
+    );
+  }, 180_000);
 });

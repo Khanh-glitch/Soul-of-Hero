@@ -18,7 +18,7 @@ import { cellAtGlobal } from './chunks';
 import { decorKit } from './art-nature';
 import { activeFloor, isSolidVeyraProp, getSolidPropFootprint, type FloorLayer } from './floors';
 
-function isSolidFootprintPlaced(layer: FloorLayer | undefined, tx: number, ty: number, kind: string): boolean {
+export function isSolidFootprintPlaced(layer: FloorLayer | undefined, tx: number, ty: number, kind: string): boolean {
   if (!layer) return false;
   const fp = getSolidPropFootprint(kind);
   return fp.length > 0 && fp.every(([dx, dy]) => {
@@ -167,8 +167,22 @@ function landmarkSprites(): Record<string, Sprite> {
   const rug = px(22, 16, g => { g.fillStyle = '#7a3a4a'; g.fillRect(1, 2, 20, 12); g.fillStyle = '#9a5a5a'; g.fillRect(3, 4, 16, 8); g.fillStyle = '#c8a060'; g.fillRect(5, 6, 12, 4); g.fillStyle = '#5a2a34'; for (let x = 1; x < 21; x += 2) { g.fillRect(x, 1, 1, 1); g.fillRect(x, 14, 1, 1); } });
   const floor_wear = px(16, 16, g => { g.fillStyle = 'rgba(30,22,16,0.20)'; g.fillRect(2, 6, 11, 5); g.fillStyle = 'rgba(255,240,210,0.07)'; g.fillRect(4, 3, 7, 2); }, );
   const pier_shadow = px(16, 12, g => { g.fillStyle = 'rgba(8,6,14,0.35)'; g.beginPath(); g.ellipse(8, 5, 7, 4, 0, 0, 6.3); g.fill(); });
-  LANDMARK_SPRITES = { ...makeElderSprites(mk), ...makeElderSprites2(), ...makeF03Sprites(mk), ...makeIndustrialHarborSprites(mk), ...makeWaterfrontSprites(mk), ...makeUrbanHarborSprites(mk), rug, floor_wear, pier_shadow, well, lantern, sundial, forge, ore_cart, bench, bollard, bed, table, shelf, bookshelf, barrel_stack, crate_stack, hearth, furnace_big, anvil, desk, safe, rubble, bones, pipes, coal_pile, ore_pile, ingot_stack, chain_hoist, crane_controls, screen_mesh, pump, water_pool, smoke_rack, net_rack, boat_hull, grain_sack, market_stall, lookout, banner, lectern, orrery, telescope, map_table, cart_broken, stair_up, stair_down };
+  const tree_stump = px(16, 14, g => {
+    g.fillStyle = '#4a321e'; g.fillRect(2, 6, 12, 6); g.fillRect(1, 10, 3, 3); g.fillRect(12, 10, 3, 3);
+    g.fillStyle = '#6a482c'; g.fillRect(3, 5, 10, 6);
+    g.fillStyle = '#c8a878'; g.fillRect(4, 3, 8, 4);
+    g.fillStyle = '#9a7a4e'; g.fillRect(6, 4, 4, 2);
+  });
+  const signal_flag = px(14, 22, g => {
+    g.fillStyle = '#4a3828'; g.fillRect(3, 1, 2, 20); g.fillRect(1, 19, 6, 2);
+    g.fillStyle = '#d44c3c'; g.fillRect(5, 2, 8, 6);
+    g.fillStyle = '#ffe27a'; g.fillRect(6, 4, 5, 2);
+  });
+  LANDMARK_SPRITES = { ...makeElderSprites(mk), ...makeElderSprites2(), ...makeF03Sprites(mk), ...makeIndustrialHarborSprites(mk), ...makeWaterfrontSprites(mk), ...makeUrbanHarborSprites(mk), rug, floor_wear, pier_shadow, tree_stump, signal_flag, well, lantern, sundial, forge, ore_cart, bench, bollard, bed, table, shelf, bookshelf, barrel_stack, crate_stack, hearth, furnace_big, anvil, desk, safe, rubble, bones, pipes, coal_pile, ore_pile, ingot_stack, chain_hoist, crane_controls, screen_mesh, pump, water_pool, smoke_rack, net_rack, boat_hull, grain_sack, market_stall, lookout, banner, lectern, orrery, telescope, map_table, cart_broken, stair_up, stair_down };
   return LANDMARK_SPRITES;
+}
+export function hasLandmarkSprite(kind: string): boolean {
+  return Boolean(landmarkSprites()[kind]);
 }
 
 const featureCache = new Map<string, Uint8Array>();

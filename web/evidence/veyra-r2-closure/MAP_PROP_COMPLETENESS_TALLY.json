@@ -1,0 +1,1431 @@
+{
+  "summary": {
+    "poisAudited": 81,
+    "floorsPerPoi": [
+      -1,
+      0,
+      1,
+      2
+    ],
+    "distinctAuthoredPropKinds": 116,
+    "allSpritesPresent": true,
+    "totalRawArchPlanProps": 740,
+    "waterClippedByCreatorDryRule": 60,
+    "totalCreatorDryAuthoredProps": 680,
+    "totalRenderedAuthoredProps": 680,
+    "totalSkippedAuthoredProps": 0,
+    "renderPreservationRate": "100.00% (680 / 680)",
+    "totalLayerPropsAcrossWindows": 14340,
+    "totalSkippedLayerPropsAcrossWindows": 0,
+    "windowLayerPreservationRate": "100.00% (14340 / 14340)"
+  },
+  "byFloor": {
+    "0": {
+      "rawSource": 564,
+      "creatorDrySource": 513,
+      "runtimeRendered": 513,
+      "skipped": 0
+    },
+    "1": {
+      "rawSource": 78,
+      "creatorDrySource": 71,
+      "runtimeRendered": 71,
+      "skipped": 0
+    },
+    "2": {
+      "rawSource": 29,
+      "creatorDrySource": 27,
+      "runtimeRendered": 27,
+      "skipped": 0
+    },
+    "-1": {
+      "rawSource": 69,
+      "creatorDrySource": 69,
+      "runtimeRendered": 69,
+      "skipped": 0
+    }
+  },
+  "byKind": {
+    "crate_stack": {
+      "creatorDrySource": 20,
+      "runtimeRendered": 20,
+      "runtimeSolidFootprintCells": 20,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "bones": {
+      "creatorDrySource": 14,
+      "runtimeRendered": 14,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "barrel_stack": {
+      "creatorDrySource": 18,
+      "runtimeRendered": 18,
+      "runtimeSolidFootprintCells": 18,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "smoke_rack": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 3,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "hearth": {
+      "creatorDrySource": 6,
+      "runtimeRendered": 6,
+      "runtimeSolidFootprintCells": 6,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "table": {
+      "creatorDrySource": 14,
+      "runtimeRendered": 14,
+      "runtimeSolidFootprintCells": 14,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "bench": {
+      "creatorDrySource": 41,
+      "runtimeRendered": 41,
+      "runtimeSolidFootprintCells": 41,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "bed": {
+      "creatorDrySource": 20,
+      "runtimeRendered": 20,
+      "runtimeSolidFootprintCells": 20,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "shelf": {
+      "creatorDrySource": 34,
+      "runtimeRendered": 34,
+      "runtimeSolidFootprintCells": 34,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "net_rack": {
+      "creatorDrySource": 21,
+      "runtimeRendered": 21,
+      "runtimeSolidFootprintCells": 21,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "grain_sack": {
+      "creatorDrySource": 12,
+      "runtimeRendered": 12,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "anvil": {
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "runtimeSolidFootprintCells": 5,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "forge": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 3,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "coal_pile": {
+      "creatorDrySource": 11,
+      "runtimeRendered": 11,
+      "runtimeSolidFootprintCells": 11,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "boat_hull": {
+      "creatorDrySource": 6,
+      "runtimeRendered": 6,
+      "runtimeSolidFootprintCells": 18,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "well": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 4,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "market_stall": {
+      "creatorDrySource": 11,
+      "runtimeRendered": 11,
+      "runtimeSolidFootprintCells": 33,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "lantern": {
+      "creatorDrySource": 31,
+      "runtimeRendered": 31,
+      "runtimeSolidFootprintCells": 31,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "lookout": {
+      "creatorDrySource": 14,
+      "runtimeRendered": 14,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "banner": {
+      "creatorDrySource": 7,
+      "runtimeRendered": 7,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "bookshelf": {
+      "creatorDrySource": 7,
+      "runtimeRendered": 7,
+      "runtimeSolidFootprintCells": 7,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "rubble": {
+      "creatorDrySource": 27,
+      "runtimeRendered": 27,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "pipes": {
+      "creatorDrySource": 12,
+      "runtimeRendered": 12,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "lectern": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 1,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "orrery": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 2,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "desk": {
+      "creatorDrySource": 8,
+      "runtimeRendered": 8,
+      "runtimeSolidFootprintCells": 8,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "pump": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 3,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "cart_broken": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 2,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "sundial": {
+      "creatorDrySource": 9,
+      "runtimeRendered": 9,
+      "runtimeSolidFootprintCells": 9,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "map_table": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 2,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "telescope": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 4,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "water_pool": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "furnace_big": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "chain_hoist": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "ingot_stack": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 2,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "screen_mesh": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "ore_pile": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 2,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "ore_cart": {
+      "creatorDrySource": 6,
+      "runtimeRendered": 6,
+      "runtimeSolidFootprintCells": 6,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "crane_controls": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 1,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "safe": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 1,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "rope_coil": {
+      "creatorDrySource": 8,
+      "runtimeRendered": 8,
+      "runtimeSolidFootprintCells": 8,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c04_tide_gate": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c04_quay_sign": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 1,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "fish_drying_rack": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 3,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c04_lamp": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 4,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c04_rope_pulley": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c04_signal": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c04_algae_sluice": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c04_torn_notice": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c04_warning": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 1,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c04_feather_basket": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 2,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c04_reed_screen": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 9,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c04_tern": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c01_city_banner": {
+      "creatorDrySource": 9,
+      "runtimeRendered": 9,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c01_arched_gate": {
+      "creatorDrySource": 6,
+      "runtimeRendered": 6,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c01_canopy_market": {
+      "creatorDrySource": 8,
+      "runtimeRendered": 8,
+      "runtimeSolidFootprintCells": 24,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c01_quay_lamp": {
+      "creatorDrySource": 8,
+      "runtimeRendered": 8,
+      "runtimeSolidFootprintCells": 8,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c01_roof_dormer": {
+      "creatorDrySource": 9,
+      "runtimeRendered": 9,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c01_mooring": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 2,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c01_cargo_hook": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c01_rope_cart": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 9,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c01_white_salt_pan": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c01_brine_pipe": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 9,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "gear_rack": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 1,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c02_rail_wagon": {
+      "creatorDrySource": 6,
+      "runtimeRendered": 6,
+      "runtimeSolidFootprintCells": 18,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c02_industrial_chimney": {
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "runtimeSolidFootprintCells": 15,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c02_ore_bins": {
+      "creatorDrySource": 8,
+      "runtimeRendered": 8,
+      "runtimeSolidFootprintCells": 24,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c02_warning_lamp": {
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "runtimeSolidFootprintCells": 5,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c02_chain_gantry": {
+      "creatorDrySource": 6,
+      "runtimeRendered": 6,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c02_steel_truss": {
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c02_heat_grate": {
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c02_counterweight": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "c02_tide_gate": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_rust_pipe": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_valve": {
+      "creatorDrySource": 6,
+      "runtimeRendered": 6,
+      "runtimeSolidFootprintCells": 6,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_steel_gate": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_waterwheel": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_pipe_bundle": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 9,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_turbine": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 9,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_gauge_panel": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_filter_tank": {
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "runtimeSolidFootprintCells": 30,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_log_cradle": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_sawframe": {
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "runtimeSolidFootprintCells": 6,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_sawdust": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_timber_pile": {
+      "creatorDrySource": 6,
+      "runtimeRendered": 6,
+      "runtimeSolidFootprintCells": 18,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_chain_rail": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_ore_seam": {
+      "creatorDrySource": 11,
+      "runtimeRendered": 11,
+      "runtimeSolidFootprintCells": 33,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_spoil_heap": {
+      "creatorDrySource": 8,
+      "runtimeRendered": 8,
+      "runtimeSolidFootprintCells": 24,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_crusher": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 18,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_ore_ramp": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_crane": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 9,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_screen": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 3,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_glass_spoil": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_kiln_vat": {
+      "creatorDrySource": 9,
+      "runtimeRendered": 9,
+      "runtimeSolidFootprintCells": 54,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_charcoal_rick": {
+      "creatorDrySource": 7,
+      "runtimeRendered": 7,
+      "runtimeSolidFootprintCells": 21,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_chimney": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 9,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_condenser": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 24,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_vent_pipe": {
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "runtimeSolidFootprintCells": 5,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_slag_pool": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_silo": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 18,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "f03_geo_manifold": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 9,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_argus_eye": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 10,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_argus_pillar": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "signal_flag": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_typhon_shard": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 10,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_typhon_pillar": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_blue_rune": {
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "runtimeSolidFootprintCells": 0,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_aion_root": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 10,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "tree_stump": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 4,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_aion_rune": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_anubis_sarc": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 6,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_anubis_pylon": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 24,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_atlas_gate": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 14,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_atlas_anchor": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_surtur_forge": {
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "runtimeSolidFootprintCells": 10,
+      "hasSprite": true,
+      "skipped": 0
+    },
+    "elder_surtur_spire": {
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "runtimeSolidFootprintCells": 12,
+      "hasSprite": true,
+      "skipped": 0
+    }
+  },
+  "byPoi": {
+    "po_greywater": {
+      "name": "Greywater Hamlet",
+      "rawSource": 36,
+      "creatorDrySource": 36,
+      "runtimeRendered": 36,
+      "skipped": 0
+    },
+    "po_academy": {
+      "name": "Argus Academy",
+      "rawSource": 33,
+      "creatorDrySource": 33,
+      "runtimeRendered": 33,
+      "skipped": 0
+    },
+    "po_ironmine": {
+      "name": "Ironholm Foundry",
+      "rawSource": 25,
+      "creatorDrySource": 24,
+      "runtimeRendered": 24,
+      "skipped": 0
+    },
+    "po_hook": {
+      "name": "Hook Village",
+      "rawSource": 33,
+      "creatorDrySource": 33,
+      "runtimeRendered": 33,
+      "skipped": 0
+    },
+    "po_oasis": {
+      "name": "Mirage Camp",
+      "rawSource": 32,
+      "creatorDrySource": 28,
+      "runtimeRendered": 28,
+      "skipped": 0
+    },
+    "po_cindercamp": {
+      "name": "Cinder Camp",
+      "rawSource": 31,
+      "creatorDrySource": 31,
+      "runtimeRendered": 31,
+      "skipped": 0
+    },
+    "po_strait": {
+      "name": "Strait Landing",
+      "rawSource": 5,
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "skipped": 0
+    },
+    "po_mere": {
+      "name": "Hook Mere Pier",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_southfoot": {
+      "name": "Southfoot Landing",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_westbank": {
+      "name": "Westbank Landing",
+      "rawSource": 24,
+      "creatorDrySource": 19,
+      "runtimeRendered": 19,
+      "skipped": 0
+    },
+    "po_dpier": {
+      "name": "Drowned Pier",
+      "rawSource": 21,
+      "creatorDrySource": 10,
+      "runtimeRendered": 10,
+      "skipped": 0
+    },
+    "po_gullpier": {
+      "name": "Tern Hut Pier",
+      "rawSource": 18,
+      "creatorDrySource": 15,
+      "runtimeRendered": 15,
+      "skipped": 0
+    },
+    "po_gulfhead": {
+      "name": "Gulfhead Port Quarter",
+      "rawSource": 25,
+      "creatorDrySource": 21,
+      "runtimeRendered": 21,
+      "skipped": 0
+    },
+    "po_westmouth": {
+      "name": "Westmouth Canal Port",
+      "rawSource": 24,
+      "creatorDrySource": 20,
+      "runtimeRendered": 20,
+      "skipped": 0
+    },
+    "po_saltharbor": {
+      "name": "Saltwick Harbor",
+      "rawSource": 24,
+      "creatorDrySource": 21,
+      "runtimeRendered": 21,
+      "skipped": 0
+    },
+    "po_ironharbor": {
+      "name": "Ironholm Harbor / Ore Quay",
+      "rawSource": 21,
+      "creatorDrySource": 15,
+      "runtimeRendered": 15,
+      "skipped": 0
+    },
+    "po_ember": {
+      "name": "Emberport / Ashworks Quay",
+      "rawSource": 20,
+      "creatorDrySource": 18,
+      "runtimeRendered": 18,
+      "skipped": 0
+    },
+    "po_sandgate": {
+      "name": "Sandgate / Sluice Port",
+      "rawSource": 19,
+      "creatorDrySource": 16,
+      "runtimeRendered": 16,
+      "skipped": 0
+    },
+    "po_falls": {
+      "name": "Falls Powerhouse",
+      "rawSource": 9,
+      "creatorDrySource": 9,
+      "runtimeRendered": 9,
+      "skipped": 0
+    },
+    "po_pumphouse": {
+      "name": "Greywater Pumphouse",
+      "rawSource": 10,
+      "creatorDrySource": 7,
+      "runtimeRendered": 7,
+      "skipped": 0
+    },
+    "po_oldpump": {
+      "name": "Old Pumping Plant",
+      "rawSource": 10,
+      "creatorDrySource": 10,
+      "runtimeRendered": 10,
+      "skipped": 0
+    },
+    "po_sawaion": {
+      "name": "Aion Edge Sawmill",
+      "rawSource": 8,
+      "creatorDrySource": 8,
+      "runtimeRendered": 8,
+      "skipped": 0
+    },
+    "po_mill": {
+      "name": "Mossbrook Mill",
+      "rawSource": 6,
+      "creatorDrySource": 6,
+      "runtimeRendered": 6,
+      "skipped": 0
+    },
+    "po_timberyard": {
+      "name": "Verdant Timberyard",
+      "rawSource": 7,
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "skipped": 0
+    },
+    "po_fracquarry": {
+      "name": "Fracture Quarry",
+      "rawSource": 9,
+      "creatorDrySource": 9,
+      "runtimeRendered": 9,
+      "skipped": 0
+    },
+    "po_greyquarry": {
+      "name": "Greyback Quarry",
+      "rawSource": 12,
+      "creatorDrySource": 12,
+      "runtimeRendered": 12,
+      "skipped": 0
+    },
+    "po_obsq": {
+      "name": "Obsidian Quarry",
+      "rawSource": 12,
+      "creatorDrySource": 12,
+      "runtimeRendered": 12,
+      "skipped": 0
+    },
+    "po_kilns": {
+      "name": "Charcoal Kilns",
+      "rawSource": 10,
+      "creatorDrySource": 10,
+      "runtimeRendered": 10,
+      "skipped": 0
+    },
+    "po_slag": {
+      "name": "Slagworks Foundry",
+      "rawSource": 8,
+      "creatorDrySource": 8,
+      "runtimeRendered": 8,
+      "skipped": 0
+    },
+    "po_sulfur": {
+      "name": "Sulfur Works",
+      "rawSource": 11,
+      "creatorDrySource": 11,
+      "runtimeRendered": 11,
+      "skipped": 0
+    },
+    "po_siloc": {
+      "name": "Grain Silo Complex",
+      "rawSource": 4,
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "skipped": 0
+    },
+    "po_filter": {
+      "name": "Delta Sluice & Filter Station",
+      "rawSource": 5,
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "skipped": 0
+    },
+    "po_geo": {
+      "name": "Geothermal Station",
+      "rawSource": 5,
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "skipped": 0
+    },
+    "po_observatory": {
+      "name": "Argus Observatory",
+      "rawSource": 6,
+      "creatorDrySource": 6,
+      "runtimeRendered": 6,
+      "skipped": 0
+    },
+    "po_archive": {
+      "name": "Argus Archive Vaults",
+      "rawSource": 6,
+      "creatorDrySource": 6,
+      "runtimeRendered": 6,
+      "skipped": 0
+    },
+    "po_hall_eyes": {
+      "name": "Hall of Eyes",
+      "rawSource": 12,
+      "creatorDrySource": 12,
+      "runtimeRendered": 12,
+      "skipped": 0
+    },
+    "po_lantern": {
+      "name": "Lantern Light",
+      "rawSource": 6,
+      "creatorDrySource": 1,
+      "runtimeRendered": 1,
+      "skipped": 0
+    },
+    "po_lanternstn": {
+      "name": "Lantern Cove Station",
+      "rawSource": 4,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    },
+    "po_kestrel": {
+      "name": "Kestrel Radio Tower",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_typhon": {
+      "name": "Typhon's Fracture",
+      "rawSource": 12,
+      "creatorDrySource": 12,
+      "runtimeRendered": 12,
+      "skipped": 0
+    },
+    "po_viaduct": {
+      "name": "Crushed Viaduct",
+      "rawSource": 4,
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "skipped": 0
+    },
+    "po_freightyard": {
+      "name": "Shattered Freight Yard",
+      "rawSource": 4,
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "skipped": 0
+    },
+    "po_confluence": {
+      "name": "Confluence Waystation",
+      "rawSource": 3,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    },
+    "po_ranger": {
+      "name": "Ranger Hut",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_glade": {
+      "name": "Mosslight Glade",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_sapgrove": {
+      "name": "Sap Grove",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_elderwood": {
+      "name": "Heart of the Elderwood",
+      "rawSource": 13,
+      "creatorDrySource": 13,
+      "runtimeRendered": 13,
+      "skipped": 0
+    },
+    "po_meridian": {
+      "name": "Meridian Research Station",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_ironvein": {
+      "name": "Ironvein Mine",
+      "rawSource": 4,
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "skipped": 0
+    },
+    "po_ridgestop": {
+      "name": "Ridge Pass Station",
+      "rawSource": 4,
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "skipped": 0
+    },
+    "po_rapids": {
+      "name": "Rapids Portage Hut",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_westwood": {
+      "name": "Westwood Hamlet",
+      "rawSource": 4,
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "skipped": 0
+    },
+    "po_fishcamp": {
+      "name": "Fish Camp",
+      "rawSource": 4,
+      "creatorDrySource": 4,
+      "runtimeRendered": 4,
+      "skipped": 0
+    },
+    "po_necropolis": {
+      "name": "Necropolis of the Hollow Sun",
+      "rawSource": 15,
+      "creatorDrySource": 15,
+      "runtimeRendered": 15,
+      "skipped": 0
+    },
+    "po_tombs": {
+      "name": "Dune Tombs",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_cairns": {
+      "name": "Sunken Cairns",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_bonestop": {
+      "name": "Bone Road Waystation",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_gate": {
+      "name": "Threshold Gate",
+      "rawSource": 15,
+      "creatorDrySource": 15,
+      "runtimeRendered": 15,
+      "skipped": 0
+    },
+    "po_beacon": {
+      "name": "Beacon Rock Light",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_wreck": {
+      "name": "Wreck Isle Salvage",
+      "rawSource": 5,
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "skipped": 0
+    },
+    "po_tidecamp": {
+      "name": "Tidepool Fishing Camp",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_gullnest": {
+      "name": "Seabird Nesting Cliffs",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_netcamp": {
+      "name": "Gull Net Camp",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_emberwatch": {
+      "name": "Ember Watch",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_surtur": {
+      "name": "Foundry of the First Fire",
+      "rawSource": 14,
+      "creatorDrySource": 14,
+      "runtimeRendered": 14,
+      "skipped": 0
+    },
+    "po_saltpans": {
+      "name": "Salt Pans",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_saltlight": {
+      "name": "Saltwick Light",
+      "rawSource": 2,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    },
+    "po_racks": {
+      "name": "Kelp Racks",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_gullwreck": {
+      "name": "Gull Isle Wreck",
+      "rawSource": 5,
+      "creatorDrySource": 5,
+      "runtimeRendered": 5,
+      "skipped": 0
+    },
+    "po_ironwh": {
+      "name": "Ironholm Depot",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_rc_meridian": {
+      "name": "Meridian Archive Cache",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_rc_ironvein": {
+      "name": "Foreman's Strongbox",
+      "rawSource": 2,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    },
+    "po_rc_kestrel": {
+      "name": "Kestrel Tower Safe",
+      "rawSource": 2,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    },
+    "po_rc_dam": {
+      "name": "Falls Dam Vault",
+      "rawSource": 3,
+      "creatorDrySource": 3,
+      "runtimeRendered": 3,
+      "skipped": 0
+    },
+    "po_rc_sandgate": {
+      "name": "Sandgate Customs Strongbox",
+      "rawSource": 2,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    },
+    "po_rc_salt": {
+      "name": "Saltwick Harbor Safe",
+      "rawSource": 2,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    },
+    "po_vend_gulf": {
+      "name": "Gulfhead Trading House [ĐỀ XUẤT]",
+      "rawSource": 2,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    },
+    "po_vend_strait": {
+      "name": "Strait Landing Counter [ĐỀ XUẤT]",
+      "rawSource": 2,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    },
+    "po_evac_west": {
+      "name": "Westmouth Evac Pier",
+      "rawSource": 2,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    },
+    "po_evac_south": {
+      "name": "Southfoot Evac Beach",
+      "rawSource": 2,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    },
+    "po_evac_hook": {
+      "name": "Hook Evac Point",
+      "rawSource": 2,
+      "creatorDrySource": 2,
+      "runtimeRendered": 2,
+      "skipped": 0
+    }
+  }
+}

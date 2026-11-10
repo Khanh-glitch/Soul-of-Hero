@@ -188,7 +188,7 @@ export function sandgateIndustrialHarbor():ArchPlan {
  details(p,'c02_rail_wagon',[[1416,2263,0],[1423,2245,0]]);
  details(p,'c02_warning_lamp',[[1393,2289,0],[1381,2299,0],[1401,2257,1]]);
  details(p,'c02_steel_truss',[[1429,2256,1],[1391,2246,2]]);
- details(p,'c02_ore_bins',[[1430,2239,0],[1409,2271,0]]);
+ details(p,'c02_ore_bins',[[1432,2239,0],[1409,2271,0]]);
  mark(p,1394,2262,0,'The sluice regulates the river mouth; its underground counterweight can be inspected from two entrances.');
  mark(p,1387,2302,0,'River and seawater stay canonical GOLD cells. Only the dock timber becomes a walkable construction.');
  return p.build();

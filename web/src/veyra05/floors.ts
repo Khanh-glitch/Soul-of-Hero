@@ -197,17 +197,19 @@ function buildLayerPlacementContext(layer: FloorLayer, ox: number, oy: number): 
     return layer.walkable[i] === 1;
   };
 
-  // Authoritative authored props (`L.props`) stamp their FULL multi-tile footprint onto every walkable floor cell first.
+  // Authoritative authored props (`L.props`) stamp their FULL multi-tile footprint atomically across
+  // every non-static, non-stair cell (including cells abutting walls/cliffs/water/natural tufts)
+  // so 0 partial footprints occur and 100% of authored props render with full collision.
   for (const p of layer.props) {
     const fp = getSolidPropFootprint(p.kind);
     if (!fp.length) continue;
-    for (const [dx, dy] of fp) {
+    const blockedByStaticOrStair = fp.some(([dx, dy]) => {
       const cx = p.x + dx, cy = p.y + dy;
-      if (cx <= 0 || cy <= 0 || cx >= WW - 1 || cy >= WH - 1) continue;
-      const i = cy * WW + cx;
-      if (exactStaticOrStair.has(i) || layer.sources[i]) continue;
-      if (!isPassable(cx, cy)) continue;
-      solid[i] = 1;
+      return cx < 0 || cy < 0 || cx >= WW || cy >= WH || exactStaticOrStair.has(cy * WW + cx);
+    });
+    if (blockedByStaticOrStair) continue;
+    for (const [dx, dy] of fp) {
+      solid[(p.y + dy) * WW + (p.x + dx)] = 1;
     }
   }
 

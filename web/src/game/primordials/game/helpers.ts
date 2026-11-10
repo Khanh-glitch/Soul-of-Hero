@@ -1,4 +1,4 @@
-import { SkillCtx, Shape, HitOpts, Cmd, V, v, add, mul, norm, sub, dist, hitTest, fromAng, ang, Ent, World, mkEnt, SkillDef, AIView, SkillGen } from './core';
+import { SkillCtx, Shape, HitOpts, Cmd, V, v, add, mul, norm, sub, dist, segDist, hitTest, fromAng, ang, Ent, World, mkEnt, SkillDef, AIView, SkillGen } from './core';
 import { vFlame, vScorch, vSlash, vZoneCircle, vRock, El, vDot, q, vSmoke, vCrack, vGear, vTwinkle, vImpact, vNova, vShock, vSlashV2, vFlameV2, vDustRing, vSpeedLines, vHitV2, vSlashV3, vBlast, vGroundRing, vMushroom } from '../art/vfx';
 import type { BossId, Form } from '../art/clips';
 
@@ -84,20 +84,36 @@ export function tele(c: SkillCtx, shape: Shape, warn: number, el: El, major = fa
 export interface ProjOpts { pos: V; vel: V; r: number; ttl: number; o: HitOpts; el: El; sprite: (a: number, t: number) => { key: string; make: () => import('../art/raster').Raster }; hops?: number; pierce?: boolean; delay?: number; trail?: boolean; onEnd?: (p: V, hit: boolean) => void; major?: boolean }
 /** real travelling projectile: committed velocity (no homing), obstacle collision, portal hops (capped) */
 export function proj(c: SkillCtx, p: ProjOpts) {
-  let pos = v(p.pos.x, p.pos.y), vel = v(p.vel.x, p.vel.y), hops = 0, lastPortal = -1;
+  let pos = v(p.pos.x, p.pos.y), vel = v(p.vel.x, p.vel.y), hops = 0;
+  const spawnPt = p.hops ? c.w.ents.find((x) => !x.dead && x.kind === 'portal' && x.owner === c.b.id && dist(x.pos, pos) <= ((x.data.r as number) || 12) + 2) : undefined;
+  let lastPortal = spawnPt ? spawnPt.id : -1;
+  if (c.w.wallRaycast && dist(pos, c.b.pos) <= 44 && !c.w.map.queryValidPosition(pos, 2)) {
+    pos = v(c.b.pos.x, c.b.pos.y);
+  } else if (c.w.wallRaycast && c.w.wallRaycast(c.b.pos, pos)) {
+    // Peripheral volley spawns (e.g. Omniscient Judgment / Spearfield horizontal barrage): pull start onto room rim
+    const dirIn = norm(vel);
+    for (let step = 16; step <= 260; step += 12) {
+      const cand = add(pos, mul(dirIn, step));
+      if (!c.w.wallRaycast(c.b.pos, cand) && c.w.map.queryValidPosition(cand, 2)) {
+        pos = cand;
+        break;
+      }
+    }
+  }
   const e = c.spawn({
     kind: 'projectile', pos, life: p.ttl + (p.delay ?? 0), lethal: true, major: p.major,
     update(w, dt) {
       const me = this as Ent;
       if (me.t < (p.delay ?? 0)) return;
       const slowF = (w.ents.find((z) => !z.dead && z.kind === 'timefield' && dist(z.pos, pos) < (z.data.r as number)) ? 0.4 : 1);
+      const prev = v(pos.x, pos.y);
       const np = add(pos, mul(vel, dt * slowF));
       if (w.map.raycast(pos, np).hit) { burst(w, p.el, np.x, np.y, 8, 0.2, false); me.dead = true; p.onEnd?.(np, false); return; }
       pos = np; me.pos = pos;
       // portal transit: entering an owned portal mouth moving inward, exit from linked portal with preserved speed
       if (p.hops) for (const pt of w.ents) {
-        if (pt.dead || pt.kind !== 'portal' || pt.owner !== me.owner || pt.id === lastPortal || !pt.data.armed) continue;
-        if (dist(pt.pos, pos) < (pt.data.r as number) * 0.8) {
+        if (pt.dead || pt.kind !== 'portal' || pt.owner !== me.owner || pt.id === lastPortal || !pt.data.armed || (pt.data.link as number) <= 0) continue;
+        if (segDist(prev, pos, pt.pos) < (pt.data.r as number) * 0.85) {
           const exit = w.ents.find((x) => x.id === pt.data.link && !x.dead && x.data.armed);
           if (!exit) { burst(w, 'space', pos.x, pos.y, 10, 0.25, false); me.dead = true; w.ev({ t: w.t, type: 'portal', note: 'projectile fizzled: exit closed' }); return; }
           if (hops >= p.hops) continue;
@@ -108,7 +124,10 @@ export function proj(c: SkillCtx, p: ProjOpts) {
           break;
         }
       }
-      const hit = w.hitEnemies(w.actor(me.owner)!, me.att!, { k: 'circle', x: pos.x, y: pos.y, r: p.r }, { ...p.o, kbDir: vel });
+      const hitShape: Shape = dist(prev, pos) > 0.5 && lastPortal === -1
+        ? { k: 'capsule', x1: prev.x, y1: prev.y, x2: pos.x, y2: pos.y, r: p.r }
+        : { k: 'circle', x: pos.x, y: pos.y, r: p.r };
+      const hit = w.hitEnemies(w.actor(me.owner)!, me.att!, hitShape, { ...p.o, kbDir: vel });
       if (hit.length && !p.pierce) { burst(w, p.el, pos.x, pos.y, 12, 0.25); me.dead = true; p.onEnd?.(pos, true); }
       if (me.t >= me.life - dt) p.onEnd?.(pos, false);
     },
@@ -119,8 +138,19 @@ export function proj(c: SkillCtx, p: ProjOpts) {
 }
 /** committed beam: capsule hitbox along a locked vector + stamped pixel beam */
 export function beam(c: SkillCtx, from: V, dir: V, length: number, width: number, dur: number, o: HitOpts, el: El, fromFn?: () => V) {
-  const d = norm(dir);
-  const shape = () => { const f = fromFn ? fromFn() : from; const r = c.w.map.raycast(f, add(f, mul(d, length))); return { k: 'capsule' as const, x1: f.x, y1: f.y, x2: r.p.x, y2: r.p.y, r: width / 2 }; };
+  let d = norm(dir);
+  const resolveFrom = () => {
+    const raw = fromFn ? fromFn() : from;
+    if (c.w.wallRaycast && dist(raw, c.b.pos) <= 56 && (c.w.wallRaycast(c.b.pos, raw) || !c.w.map.queryValidPosition(raw, 2))) {
+      return v(c.b.pos.x, c.b.pos.y);
+    }
+    return raw;
+  };
+  const f0 = resolveFrom();
+  if (c.w.wallRaycast && dist(fromFn ? fromFn() : from, f0) > 1 && c.tgt()) {
+    d = norm(sub(c.tpos(), f0));
+  }
+  const shape = () => { const f = resolveFrom(); const r = c.w.map.raycast(f, add(f, mul(d, length))); return { k: 'capsule' as const, x1: f.x, y1: f.y, x2: r.p.x, y2: r.p.y, r: width / 2 }; };
   return c.hitbox(shape, dur, { maxHits: 3, rehit: 0.25, ...o, kbDir: d }, (_t, s) => s.k === 'capsule' ? [{ k: 'beam', x: s.x1, y: s.y1, x2: s.x2, y2: s.y2, w: Math.max(1, Math.round(width / 3)), el, layer: 3 }] : []);
 }
 export function slashLook(el: El, rad: number, a0: number, a1: number, wid: number, at: () => V) {

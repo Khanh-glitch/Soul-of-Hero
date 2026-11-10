@@ -258,7 +258,7 @@ export function ironholmFoundry(): ArchPlan {
   b.structure('office', 'Pay Office', 0, { mat: 'brick', roof: 'tin' });
   b.room('office', 'Pay Office · Clerk’s Floor', 0, 'office', [[2352, 2554, 10, 8]]);
   b.door(2356, 2561, 0, 'office', 'Office Door', 'main');
-  b.prop(2355, 2557, 0, 'desk'); b.prop(2359, 2558, 0, 'shelf');
+  b.prop(2355, 2557, 0, 'desk'); b.prop(2359, 2556, 0, 'shelf');
   b.structure('office_up', 'Pay Office Upper', 1, { mat: 'brick', roof: 'tin' });
   b.room('office_up', 'Foreman’s Office', 1, 'office_up', [[2353, 2555, 8, 6]]);
   b.stair(2359, 2558, 0, 1, 2358, 2556, 'Office Stair', 'interior');
@@ -462,7 +462,7 @@ export function mirageCamp(): ArchPlan {
   b.cache(1354, 1948, 0, 'Merchant’s Counter Box', [['cloth', 3], ['rope', 2], ['fasteners', 3]]);
 
   addDwelling(b, { id: 'date_store', name: 'Date & Grain Store', rect: [1360, 1960, 14, 10], mat: 'wood', roof: 'tin', doorSide: 'W', grounds: 'grounds' });
-  b.prop(1364, 1964, 0, 'grain_sack'); b.prop(1368, 1967, 0, 'barrel_stack'); b.prop(1362, 1967, 0, 'crate_stack');
+  b.prop(1366, 1964, 0, 'grain_sack'); b.prop(1368, 1967, 0, 'barrel_stack'); b.prop(1362, 1967, 0, 'crate_stack');
   b.stair(1364, 1964, 0, -1, 1364, 1964, 'Date Store Hatch', 'hatch');
 
   addDwelling(b, { id: 'shore_house', name: 'Pool-Shore Sleeping House', rect: [1312, 1968, 12, 8], mat: 'wood', roof: 'thatch', doorSide: 'N', grounds: 'grounds' });

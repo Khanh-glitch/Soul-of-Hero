@@ -425,7 +425,7 @@ function cellClass(r: RunState | null, tx: number, ty: number) {
   const w = getWorld(); const i = ty * WW + tx; const t = r ? effTile(r, tx, ty) : w.tiles[i]; let c = tileClass(t);
   if (c === 0 && !(t === T.ICE && [T.DEEP,T.SHALLOW,T.RIVER].includes(w.tiles[i])) && (w.packageContract || w.enforceMasks) && !w.economyMap.walkable[i] && !w.statics.some(s => s.kind === 'door' && s.tx === tx && s.ty === ty)) c = 1;
   if (c === 0) { if (r) { const s = sourceAt(r, tx, ty); if (s && s.def.block && (s.stock > 0 || s.key === 'wreck')) c = 2; } else if (w.src[i] >= 0 && SOURCES[SRC_KEYS[w.src[i]]].block) c = 2; }
-  if (c === 0 && r?.layoutId && isVeyra05Layout(r.layoutId)) {
+  if ((c === 0 || c === 4) && r?.layoutId && isVeyra05Layout(r.layoutId)) {
     const ww = getWindowWorld(r.layoutId);
     const layer = ww.floors.layers.get(activeFloor(r)) ?? ww.floors.ground;
     if (layer.solidProps[i]) c = 2;

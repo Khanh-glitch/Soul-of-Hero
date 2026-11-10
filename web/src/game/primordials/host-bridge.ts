@@ -291,9 +291,13 @@ export function stepPrimordialHost(
     mb.lastSyncedHp = m.hp;
   }
 
-  // Step ELDER_6 simulation
-  world.dt = Math.min(0.05, dtSec);
-  stepWorld(world);
+  // Step ELDER_6 simulation at authored 60 Hz substeps so yield-0 coroutines, fast lances, and portal hops never tunnel
+  const clampedDt = Math.min(0.05, dtSec);
+  const substeps = Math.max(1, Math.min(4, Math.round(clampedDt * 60)));
+  world.dt = clampedDt / substeps;
+  for (let s = 0; s < substeps; s++) {
+    stepWorld(world);
+  }
 
   // Sync PrimordialWorld -> SOH after stepping
   for (const [cid, mb] of mounted.entries()) {

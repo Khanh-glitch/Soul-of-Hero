@@ -361,7 +361,7 @@ function atlasThreshold(s:RestSite):ArchPlan{
   props(p,0,'rubble',[[x-22,y-15],[x+24,y-14],[x-21,y+16],[x+22,y+16]]);
   props(p,0,'lantern',[[x-11,y+4],[x+12,y+4]]);
   elderPath(p,'wing_links','Gate-anchor buttress approaches',0,[[x-29,y-17,19,6],[x+14,y-17,22,6],[x-27,y-13,10,19],[x+19,y-13,10,19]],'stone');
-  p.prop(x,y+13,-1,'elder_atlas_gate');props(p,0,'elder_atlas_anchor',[[x-18,y+8],[x+18,y+8],[x-14,y-12],[x+14,y-12]]);
+  p.prop(x,y+13,-1,'elder_atlas_gate');props(p,0,'elder_atlas_anchor',[[x-18,y+8],[x+19,y+8],[x-14,y-12],[x+14,y-12]]);
   props(p,-1,'elder_blue_rune',[[x-6,y+9],[x+6,y+9]]);
   p.prop(x,y,0,'sundial');p.prop(x,y-13,2,'lookout');
   elderNote(p,x,y+3,0,'ATLAS — Gate of Space. This exposed gate is a landmark; the confined encounter is in the folded vault below. It is NOT a functioning teleport.');

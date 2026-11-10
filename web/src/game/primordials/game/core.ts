@@ -120,10 +120,29 @@ export class Runner {
     while (this.wait <= 1e-9 && !this.done && guard++ < 20) {
       const r = this.gen.next();
       if (r.done) { this.done = true; this.endT = this.ctx.w.t; break; }
-      this.wait += Math.max(r.value as number, 1e-6);
+      const dur = r.value as number;
+      if (dur <= 0) {
+        this.wait = Math.max(0, this.wait) + Math.max(dt, 1 / 60);
+        break;
+      }
+      this.wait += dur;
     }
   }
   cancel() { try { this.gen.return(undefined); } catch { /* noop */ } this.done = true; }
+}
+
+function clipSightToWall(w: World, from: V, to: V): V {
+  if (!w.wallRaycast || !w.wallRaycast(from, to)) return to;
+  const d = dist(from, to);
+  if (d < 4) return v(from.x, from.y);
+  const steps = Math.max(2, Math.ceil(d / 6));
+  let lastClear = v(from.x, from.y);
+  for (let i = 1; i <= steps; i++) {
+    const cand = v(from.x + ((to.x - from.x) * i) / steps, from.y + ((to.y - from.y) * i) / steps);
+    if (w.wallRaycast(from, cand)) break;
+    lastClear = cand;
+  }
+  return lastClear;
 }
 
 export class SkillCtx {
@@ -132,10 +151,27 @@ export class SkillCtx {
   get t() { return this.w.t; }
   get U() { return this.b.boss!.form === 'ultimate'; }
   tgt(): Actor | null { const a = this.w.actor(this.targetId ?? -1); return a && a.alive ? a : null; }
-  tpos(): V { const a = this.tgt(); return a ? v(a.pos.x, a.pos.y) : add(this.b.pos, mul(this.b.facing, 60)); }
-  aim(): V { return norm(sub(this.tpos(), this.b.pos)); }
+  tpos(): V {
+    const a = this.tgt();
+    const raw = a ? v(a.pos.x, a.pos.y) : add(this.b.pos, mul(this.b.facing, 60));
+    return clipSightToWall(this.w, this.b.pos, raw);
+  }
+  aim(): V {
+    const d = sub(this.tpos(), this.b.pos);
+    if (len(d) > 0.5) return norm(d);
+    const a = this.tgt();
+    return a ? norm(sub(a.pos, this.b.pos)) : this.b.facing;
+  }
   /** prediction from PAST samples only (no future input access) */
-  predict(sec: number, maxD = 160): V { const a = this.tgt(); if (!a) return this.tpos(); const vel = avgVel(a); const off = mul(vel, sec); const l = len(off); return add(a.pos, l > maxD ? mul(off, maxD / l) : off); }
+  predict(sec: number, maxD = 160): V {
+    const a = this.tgt();
+    if (!a) return this.tpos();
+    const vel = avgVel(a);
+    const off = mul(vel, sec);
+    const l = len(off);
+    const raw = add(a.pos, l > maxD ? mul(off, maxD / l) : off);
+    return clipSightToWall(this.w, this.b.pos, raw);
+  }
   phase(tag: string) { this.runner.phases.push({ t: +(this.w.t - this.att.t0).toFixed(3), tag }); this.w.ev({ t: this.w.t, type: 'phase', skill: this.skill.id, att: this.att.id, src: this.b.id, note: tag }); this.w.hooks.phase?.(this, tag); }
   anim(name: string) { this.b.anim = name; this.b.animT = 0; this.runner?.animLog.push({ name, t: this.w.t }); }
   face(d: V) { if (len(d) > 0.01) this.b.facing = norm(d); }
@@ -148,7 +184,26 @@ export class SkillCtx {
   shake(a: number) { this.w.addShake(a); }
   rnd() { return this.w.rng(); }
   log(note: string) { this.w.ev({ t: this.w.t, type: 'branch', skill: this.skill.id, att: this.att.id, src: this.b.id, note }); }
-  valid(p: V, r = 10) { return this.w.map.queryValidPosition(p, r); }
+  valid(p: V, r = 10) {
+    if (!this.w.wallRaycast) return this.w.map.queryValidPosition(p, r);
+    const anchor = this.tpos();
+    const okInRoom = (q: V | null): q is V =>
+      !!q && !this.w.wallRaycast!(this.b.pos, q) && !this.w.wallRaycast!(anchor, q) && !this.w.map.raycast(q, anchor).hit;
+    const q0 = this.w.map.queryValidPosition(p, r);
+    if (okInRoom(q0)) return q0;
+    const rel = sub(p, anchor);
+    const rad0 = Math.max(36, len(rel));
+    const baseAng = len(rel) > 1 ? ang(rel) : ang(this.b.facing);
+    for (const frac of [0.82, 0.65, 0.5, 0.36]) {
+      const rr = Math.max(r + 18, rad0 * frac);
+      for (const da of [0, 0.4, -0.4, 0.85, -0.85, 1.35, -1.35, Math.PI]) {
+        const cand = add(anchor, fromAng(baseAng + da, rr));
+        const q = this.w.map.queryValidPosition(cand, r);
+        if (okInRoom(q)) return q;
+      }
+    }
+    return null;
+  }
 }
 function avgVel(a: Actor): V { const h = a.history; if (h.length < 3) return v(0, 0); const n = Math.min(6, h.length - 1); const p0 = h[h.length - 1 - n], p1 = h[h.length - 1]; const dt = p1.t - p0.t || 1; return v((p1.p.x - p0.p.x) / dt, (p1.p.y - p0.p.y) / dt); }
 export { avgVel };
@@ -199,11 +254,17 @@ export class World {
   }
   hitEnemies(src: Actor, att: AttackInst, s: Shape, o: HitOpts): Actor[] {
     const out: Actor[] = [];
-    const origin = s.k === 'capsule' ? v(s.x1, s.y1) : v(s.x, s.y);
+    let origin = s.k === 'capsule' ? v(s.x1, s.y1) : v(s.x, s.y);
+    if (this.wallRaycast && s.k === 'capsule' && this.wallRaycast(src.pos, origin)) {
+      const a = v(s.x1, s.y1), b = v(s.x2, s.y2);
+      const ab = sub(b, a), ap = sub(src.pos, a);
+      const t = Math.max(0, Math.min(1, (ap.x * ab.x + ap.y * ab.y) / (ab.x * ab.x + ab.y * ab.y || 1)));
+      origin = add(a, mul(ab, t));
+    }
     for (const tg of this.enemiesOf(src)) {
       this.stats.hitTests++;
       if (!hitTest(s, tg.pos, tg.r)) continue;
-      if (this.wallRaycast && this.wallRaycast(origin, tg.pos)) continue;
+      if (this.wallRaycast && (this.wallRaycast(origin, tg.pos) || this.wallRaycast(src.pos, origin))) continue;
       if (this.applyHit(src, att, tg, o)) out.push(tg);
     }
     if (out.length && this.adapterHooks && this.map.onAreaDamage) this.map.onAreaDamage(s, o.dmg);
@@ -240,7 +301,7 @@ export class World {
     tg.grabbedBy = src.id; tg.grabUntil = this.t + Math.min(1.2, dur); tg.ccImmuneUntil = this.t + Math.min(1.2, dur) + 2; return true;
   }
   release(tg: Actor) { tg.grabbedBy = null; tg.grabUntil = 0; }
-  pull(tg: Actor, src: V, force: number, dur: number, max: number) { if (tg.ccImmune) return; tg.pulls.push({ src, force, until: this.t + Math.min(dur, 2.5), max }); }
+  pull(tg: Actor, src: V, force: number, dur: number, max: number) { if (tg.ccImmune || (this.wallRaycast && this.wallRaycast(src, tg.pos))) return; tg.pulls.push({ src, force, until: this.t + Math.min(dur, 2.5), max }); }
   kill(a: Actor) {
     a.alive = false; a.hp = 0; a.anim = a.boss ? 'death' : 'death'; a.animT = 0;
     this.ev({ t: this.t, type: 'death', tgt: a.id, note: a.name });
