@@ -82,6 +82,14 @@ try {
     if(goals!==7)throw new Error('Ledger expected seven optional goals, got '+goals);
     report.journey[width]={...report.journey[width],goals,sourceReal:await page.locator('.gold-ledger__chronicle').count()};
     await shot('ledger');
+    await page.getByRole('tab',{name:'CHRONICLE'}).click();
+    await page.locator('.gold-ledger__chronicle--full').waitFor({timeout:10000});
+    report.journey[width].chronicleReceipts=await page.locator('.gold-ledger__chronicle--full .gold-ledger__event').count();
+    await shot('chronicle');
+    await page.getByRole('tab',{name:'LEGACY'}).click();
+    await page.locator('.gold-ledger__achievements').waitFor({timeout:10000});
+    await shot('legacy');
+    await page.getByRole('tab',{name:'FIELD NOTES'}).click();
     await page.keyboard.press('j');
     await page.keyboard.press('m');
     const map=await page.locator('.panel-h').filter({hasText:/Map/}).count();
