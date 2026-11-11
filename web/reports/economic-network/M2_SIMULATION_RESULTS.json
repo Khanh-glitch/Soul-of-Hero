@@ -1,0 +1,6710 @@
+{
+  "meta": {
+    "version": "soh.economic-sim-audit.v1",
+    "generatedAtAuditAnchor": "2026-11-11T00:00:00.000Z",
+    "maxRunHours": 336,
+    "ragnarokFinalHours": 72,
+    "runCountMonteCarlo": 400
+  },
+  "worldEndowments": {
+    "shipping": {
+      "tilesTotal": 40000,
+      "biomes": {
+        "water": 18483,
+        "road": 97,
+        "snow": 2355,
+        "grass": 3861,
+        "wall": 1046,
+        "floor": 282,
+        "hill": 739,
+        "forest": 4977,
+        "sand": 785,
+        "meadow": 4202,
+        "toxic": 863,
+        "ash": 1518,
+        "marsh": 741,
+        "lava": 51
+      },
+      "freshWaterTiles": 1286,
+      "coldTiles": 10000,
+      "sources": {
+        "snowpine": 200,
+        "rock": 295,
+        "crystal": 31,
+        "grass": 895,
+        "scrap": 25,
+        "coalv": 30,
+        "iron": 43,
+        "oak": 932,
+        "herb": 110,
+        "pine": 33,
+        "bush": 438,
+        "salt_shale": 80,
+        "deadtree": 33,
+        "wreck": 10,
+        "palm": 20,
+        "mushroom": 18,
+        "reed": 90,
+        "willow": 33,
+        "sulfur": 35
+      },
+      "sourceYieldTotals": {
+        "snowpine": {
+          "nodes": 200,
+          "stockUnits": 1000,
+          "expectedPrimary": {
+            "wood": 1000
+          },
+          "expectedBonus": {}
+        },
+        "rock": {
+          "nodes": 295,
+          "stockUnits": 1770,
+          "expectedPrimary": {
+            "stone": 1770
+          },
+          "expectedBonus": {}
+        },
+        "crystal": {
+          "nodes": 31,
+          "stockUnits": 93,
+          "expectedPrimary": {
+            "crystal": 93
+          },
+          "expectedBonus": {}
+        },
+        "grass": {
+          "nodes": 895,
+          "stockUnits": 1790,
+          "expectedPrimary": {
+            "fiber": 1790
+          },
+          "expectedBonus": {}
+        },
+        "scrap": {
+          "nodes": 25,
+          "stockUnits": 100,
+          "expectedPrimary": {
+            "scrap": 100
+          },
+          "expectedBonus": {
+            "spares": 55
+          }
+        },
+        "coalv": {
+          "nodes": 30,
+          "stockUnits": 150,
+          "expectedPrimary": {
+            "coal": 150
+          },
+          "expectedBonus": {}
+        },
+        "iron": {
+          "nodes": 43,
+          "stockUnits": 215,
+          "expectedPrimary": {
+            "iron_ore": 215
+          },
+          "expectedBonus": {
+            "stone": 107.5,
+            "rich_iron_ore_ironPick(8%)": 17.2,
+            "rich_iron_ore_salvager(12%)": 25.8
+          }
+        },
+        "oak": {
+          "nodes": 932,
+          "stockUnits": 5592,
+          "expectedPrimary": {
+            "wood": 5592
+          },
+          "expectedBonus": {
+            "seed": 1398
+          }
+        },
+        "herb": {
+          "nodes": 110,
+          "stockUnits": 220,
+          "expectedPrimary": {
+            "herb": 220
+          },
+          "expectedBonus": {}
+        },
+        "pine": {
+          "nodes": 33,
+          "stockUnits": 165,
+          "expectedPrimary": {
+            "wood": 165
+          },
+          "expectedBonus": {}
+        },
+        "bush": {
+          "nodes": 438,
+          "stockUnits": 1314,
+          "expectedPrimary": {
+            "berries": 1314
+          },
+          "expectedBonus": {
+            "seed": 394.2
+          }
+        },
+        "salt_shale": {
+          "nodes": 80,
+          "stockUnits": 320,
+          "expectedPrimary": {
+            "raw_salt": 320
+          },
+          "expectedBonus": {}
+        },
+        "deadtree": {
+          "nodes": 33,
+          "stockUnits": 99,
+          "expectedPrimary": {
+            "charcoal": 99
+          },
+          "expectedBonus": {}
+        },
+        "wreck": {
+          "nodes": 10,
+          "stockUnits": 80,
+          "expectedPrimary": {
+            "scrap": 80
+          },
+          "expectedBonus": {
+            "spares": 24,
+            "damaged_drive": 16,
+            "fuel_can": 4.8,
+            "mechanical_parts": 6.4,
+            "fasteners": 9.6,
+            "field_repair_kit": 3.2,
+            "salvaged_oil": 28
+          }
+        },
+        "palm": {
+          "nodes": 20,
+          "stockUnits": 80,
+          "expectedPrimary": {
+            "wood": 80
+          },
+          "expectedBonus": {
+            "fiber": 40
+          }
+        },
+        "mushroom": {
+          "nodes": 18,
+          "stockUnits": 36,
+          "expectedPrimary": {
+            "mushroom": 36
+          },
+          "expectedBonus": {}
+        },
+        "reed": {
+          "nodes": 90,
+          "stockUnits": 270,
+          "expectedPrimary": {
+            "fiber": 270
+          },
+          "expectedBonus": {}
+        },
+        "willow": {
+          "nodes": 33,
+          "stockUnits": 132,
+          "expectedPrimary": {
+            "wood": 132
+          },
+          "expectedBonus": {
+            "fiber": 52.8
+          }
+        },
+        "sulfur": {
+          "nodes": 35,
+          "stockUnits": 105,
+          "expectedPrimary": {
+            "sulfur": 105
+          },
+          "expectedBonus": {}
+        }
+      },
+      "staticLootContainers": 14,
+      "staticCashContainers": 7,
+      "staticRcashTotal": 325,
+      "keycardDoors": 1,
+      "powerDoors": 1,
+      "staticLootItems": {
+        "rope": 5,
+        "cloth": 5,
+        "wood": 8,
+        "iron_ingot": 5,
+        "seed": 6,
+        "crop": 2,
+        "leather": 2,
+        "core_fire": 1,
+        "spares": 13,
+        "core_dragon": 1,
+        "core_demon": 1,
+        "scrap": 6,
+        "iron_sword": 1,
+        "mechanical_parts": 2,
+        "fasteners": 3,
+        "iron_ore": 4,
+        "coal": 3,
+        "core_storm": 1,
+        "core_meteor": 1,
+        "fuel_can": 2,
+        "core_frost": 1,
+        "core_elsa": 1,
+        "treated_canvas": 2,
+        "keycard": 1,
+        "torch": 2,
+        "core_mjolnir": 1,
+        "medkit": 1,
+        "water_flask": 1
+      },
+      "staticBlueprints": [
+        "arrow",
+        "bow",
+        "brick",
+        "core_earth",
+        "fur_cloak",
+        "gas_mask",
+        "leather_armor",
+        "stew"
+      ],
+      "staticCores": {
+        "core_fire": 1,
+        "core_dragon": 1,
+        "core_demon": 1,
+        "core_storm": 1,
+        "core_meteor": 1,
+        "core_frost": 1,
+        "core_elsa": 1,
+        "core_mjolnir": 1
+      },
+      "initialCreatures": {
+        "toad": 6,
+        "beetle": 13,
+        "boar": 77,
+        "wolf": 45,
+        "crab": 2,
+        "crawler": 7,
+        "elder_frost": 1,
+        "elder_magma": 1,
+        "elder_bog": 1,
+        "elder_grove": 1,
+        "elder_tide": 1,
+        "elder_rust": 1
+      },
+      "missingSources": [],
+      "airdropsMaxEvents": 14
+    },
+    "veyra": {
+      "sceneWindowCount": 12,
+      "sampledTilesTotal": 480000,
+      "aggregateSceneBiomes": {
+        "water": 46330,
+        "forest": 109080,
+        "snow": 50180,
+        "grass": 16897,
+        "road": 15226,
+        "wall": 9694,
+        "meadow": 70591,
+        "floor": 3275,
+        "sand": 38111,
+        "marsh": 31280,
+        "hill": 33655,
+        "ash": 29196,
+        "toxic": 26485
+      },
+      "aggregateSceneSources": {
+        "oak": 14953,
+        "herb": 1636,
+        "rock": 5629,
+        "grass": 11111,
+        "bush": 6624,
+        "scrap": 480,
+        "wreck": 96,
+        "reed": 3188,
+        "willow": 1234,
+        "mushroom": 779,
+        "salt_shale": 215,
+        "palm": 66,
+        "snowpine": 3276,
+        "crystal": 468,
+        "coalv": 741,
+        "iron": 1307,
+        "pine": 1074,
+        "deadtree": 744,
+        "sulfur": 540
+      },
+      "missingSampledSources": [],
+      "sceneSamples": [
+        {
+          "id": "veyra05-greywater",
+          "short": "Greywater Hamlet",
+          "biomes": {
+            "water": 16347,
+            "forest": 14176,
+            "snow": 1753,
+            "grass": 2019,
+            "road": 1596,
+            "wall": 284,
+            "meadow": 3371,
+            "floor": 454
+          },
+          "sources": {
+            "oak": 1794,
+            "herb": 150,
+            "rock": 140,
+            "grass": 819,
+            "bush": 564,
+            "scrap": 40,
+            "wreck": 7
+          },
+          "coldTiles": 2503,
+          "warmSandCoastTiles": 0,
+          "sandCoastTiles": 0,
+          "freshWaterTiles": 16347,
+          "creaturesOnStart": {
+            "slime_1": 4,
+            "deer": 4,
+            "fox": 5,
+            "boar": 4,
+            "vampire_1": 2,
+            "grouse": 1,
+            "orc_1": 1
+          }
+        },
+        {
+          "id": "veyra05-elderwood",
+          "short": "Elderwood Forest",
+          "biomes": {
+            "forest": 28529,
+            "meadow": 5598,
+            "grass": 2865,
+            "road": 846,
+            "water": 1606,
+            "wall": 160,
+            "floor": 396
+          },
+          "sources": {
+            "oak": 3694,
+            "bush": 1015,
+            "grass": 1501,
+            "rock": 272,
+            "herb": 294,
+            "scrap": 8,
+            "wreck": 2
+          },
+          "coldTiles": 0,
+          "warmSandCoastTiles": 0,
+          "sandCoastTiles": 0,
+          "freshWaterTiles": 1606,
+          "creaturesOnStart": {
+            "fox": 5,
+            "boar": 1,
+            "deer": 4,
+            "grouse": 5,
+            "vampire_1": 2,
+            "hare": 1,
+            "orc_1": 1
+          }
+        },
+        {
+          "id": "veyra05-westmouth",
+          "short": "Westmouth Shore",
+          "biomes": {
+            "meadow": 27380,
+            "sand": 3223,
+            "marsh": 2009,
+            "water": 3683,
+            "forest": 1735,
+            "grass": 522,
+            "wall": 72,
+            "floor": 221,
+            "road": 1155
+          },
+          "sources": {
+            "herb": 29,
+            "reed": 14,
+            "willow": 3,
+            "grass": 2669,
+            "rock": 472,
+            "bush": 1340,
+            "oak": 691,
+            "mushroom": 5,
+            "salt_shale": 67,
+            "scrap": 51,
+            "wreck": 11,
+            "palm": 17
+          },
+          "coldTiles": 0,
+          "warmSandCoastTiles": 897,
+          "sandCoastTiles": 897,
+          "freshWaterTiles": 408,
+          "creaturesOnStart": {
+            "hare": 6,
+            "boar": 7,
+            "deer": 5,
+            "grouse": 3,
+            "fox": 1
+          }
+        },
+        {
+          "id": "veyra05-hook",
+          "short": "Hook Peninsula",
+          "biomes": {
+            "marsh": 7496,
+            "forest": 6967,
+            "road": 941,
+            "grass": 236,
+            "wall": 252,
+            "floor": 683,
+            "meadow": 6724,
+            "water": 2813,
+            "snow": 13888
+          },
+          "sources": {
+            "mushroom": 230,
+            "reed": 820,
+            "willow": 321,
+            "oak": 552,
+            "grass": 751,
+            "bush": 441,
+            "wreck": 5,
+            "rock": 490,
+            "herb": 135,
+            "scrap": 25,
+            "snowpine": 1189,
+            "crystal": 163
+          },
+          "coldTiles": 16791,
+          "warmSandCoastTiles": 0,
+          "sandCoastTiles": 0,
+          "freshWaterTiles": 2813,
+          "creaturesOnStart": {
+            "grouse": 4,
+            "boar": 5,
+            "slime_2": 1,
+            "deer": 6,
+            "hare": 3,
+            "fox": 4,
+            "vampire_2": 3
+          }
+        },
+        {
+          "id": "veyra05-gulf",
+          "short": "Gulf West Bank",
+          "biomes": {
+            "hill": 5371,
+            "forest": 2,
+            "meadow": 20210,
+            "road": 1026,
+            "marsh": 8716,
+            "wall": 72,
+            "water": 2974,
+            "sand": 1486,
+            "floor": 143
+          },
+          "sources": {
+            "bush": 1017,
+            "grass": 2066,
+            "rock": 583,
+            "oak": 310,
+            "herb": 68,
+            "reed": 703,
+            "willow": 301,
+            "mushroom": 173,
+            "scrap": 37,
+            "coalv": 75,
+            "wreck": 4,
+            "iron": 195,
+            "salt_shale": 40,
+            "palm": 23
+          },
+          "coldTiles": 0,
+          "warmSandCoastTiles": 420,
+          "sandCoastTiles": 420,
+          "freshWaterTiles": 329,
+          "creaturesOnStart": {
+            "hare": 7,
+            "deer": 10,
+            "boar": 5,
+            "grouse": 5,
+            "slime_2": 1,
+            "orc_3": 1,
+            "fox": 1
+          }
+        },
+        {
+          "id": "veyra05-delta",
+          "short": "Delta Marsh",
+          "biomes": {
+            "water": 4073,
+            "forest": 21267,
+            "grass": 4220,
+            "road": 1681,
+            "marsh": 8759
+          },
+          "sources": {
+            "herb": 425,
+            "bush": 742,
+            "oak": 3531,
+            "grass": 1080,
+            "rock": 217,
+            "scrap": 88,
+            "wreck": 24,
+            "willow": 402,
+            "mushroom": 250,
+            "reed": 1113
+          },
+          "coldTiles": 0,
+          "warmSandCoastTiles": 0,
+          "sandCoastTiles": 0,
+          "freshWaterTiles": 4073,
+          "creaturesOnStart": {
+            "fox": 3,
+            "grouse": 6,
+            "boar": 8,
+            "orc_1": 1,
+            "deer": 5,
+            "vampire_1": 2,
+            "hare": 2,
+            "slime_1": 2,
+            "slime_2": 1
+          }
+        },
+        {
+          "id": "veyra05-greyback",
+          "short": "Greyback Range",
+          "biomes": {
+            "meadow": 5035,
+            "forest": 25802,
+            "hill": 1851,
+            "grass": 5814,
+            "wall": 1028,
+            "road": 385,
+            "floor": 85
+          },
+          "sources": {
+            "oak": 2899,
+            "bush": 1095,
+            "grass": 1604,
+            "rock": 429,
+            "herb": 348,
+            "pine": 1060,
+            "coalv": 28,
+            "iron": 51,
+            "scrap": 1
+          },
+          "coldTiles": 10342,
+          "warmSandCoastTiles": 0,
+          "sandCoastTiles": 0,
+          "freshWaterTiles": 0,
+          "creaturesOnStart": {
+            "boar": 7,
+            "fox": 4,
+            "grouse": 8,
+            "hare": 2,
+            "vampire_1": 2,
+            "deer": 3,
+            "boss_greyback": 1
+          }
+        },
+        {
+          "id": "veyra05-cinder",
+          "short": "Cinder Isle",
+          "biomes": {
+            "ash": 29196,
+            "road": 424,
+            "wall": 6436,
+            "floor": 153,
+            "water": 245,
+            "toxic": 1674,
+            "forest": 546,
+            "hill": 1096,
+            "grass": 178,
+            "meadow": 52
+          },
+          "sources": {
+            "coalv": 264,
+            "deadtree": 313,
+            "rock": 575,
+            "sulfur": 540,
+            "pine": 5,
+            "bush": 6,
+            "grass": 8,
+            "herb": 3,
+            "oak": 8
+          },
+          "coldTiles": 634,
+          "warmSandCoastTiles": 0,
+          "sandCoastTiles": 0,
+          "freshWaterTiles": 245,
+          "creaturesOnStart": {
+            "slime_3": 7
+          }
+        },
+        {
+          "id": "veyra05-argus",
+          "short": "Argus Highlands",
+          "biomes": {
+            "snow": 34539,
+            "road": 2436,
+            "hill": 967,
+            "wall": 1126,
+            "floor": 626,
+            "forest": 266,
+            "water": 40
+          },
+          "sources": {
+            "snowpine": 2087,
+            "crystal": 305,
+            "iron": 49,
+            "rock": 642,
+            "coalv": 12,
+            "scrap": 48,
+            "wreck": 8,
+            "oak": 20,
+            "pine": 9,
+            "bush": 6,
+            "grass": 4,
+            "herb": 1
+          },
+          "coldTiles": 39248,
+          "warmSandCoastTiles": 0,
+          "sandCoastTiles": 0,
+          "freshWaterTiles": 40,
+          "creaturesOnStart": {
+            "vampire_2": 9,
+            "hare": 8,
+            "fox": 7,
+            "deer": 7
+          }
+        },
+        {
+          "id": "veyra05-mirage",
+          "short": "Mirage Dunes",
+          "biomes": {
+            "sand": 30109,
+            "road": 2473,
+            "water": 6863,
+            "wall": 174,
+            "floor": 381
+          },
+          "sources": {
+            "rock": 302,
+            "scrap": 105,
+            "wreck": 24
+          },
+          "coldTiles": 0,
+          "warmSandCoastTiles": 0,
+          "sandCoastTiles": 0,
+          "freshWaterTiles": 6863,
+          "creaturesOnStart": {
+            "boar": 4,
+            "grouse": 4,
+            "deer": 4,
+            "fox": 5,
+            "hare": 7
+          }
+        },
+        {
+          "id": "veyra05-slag",
+          "short": "Slag Flats",
+          "biomes": {
+            "hill": 14245,
+            "toxic": 24811,
+            "road": 870,
+            "wall": 13,
+            "meadow": 27,
+            "water": 11,
+            "sand": 23
+          },
+          "sources": {
+            "iron": 761,
+            "rock": 963,
+            "coalv": 263,
+            "grass": 4,
+            "deadtree": 431,
+            "scrap": 39,
+            "wreck": 5
+          },
+          "coldTiles": 0,
+          "warmSandCoastTiles": 0,
+          "sandCoastTiles": 0,
+          "freshWaterTiles": 0,
+          "creaturesOnStart": {
+            "deer": 8,
+            "slime_2": 7,
+            "orc_2": 1,
+            "hare": 3,
+            "orc_3": 2,
+            "fox": 1
+          }
+        },
+        {
+          "id": "veyra05-saltwick",
+          "short": "Saltwick Isle",
+          "biomes": {
+            "meadow": 2194,
+            "forest": 9790,
+            "grass": 1043,
+            "hill": 10125,
+            "water": 7675,
+            "wall": 77,
+            "road": 1393,
+            "floor": 133,
+            "marsh": 4300,
+            "sand": 3270
+          },
+          "sources": {
+            "grass": 605,
+            "bush": 398,
+            "oak": 1454,
+            "rock": 544,
+            "herb": 183,
+            "coalv": 99,
+            "iron": 251,
+            "scrap": 38,
+            "wreck": 6,
+            "reed": 538,
+            "mushroom": 121,
+            "willow": 207,
+            "salt_shale": 108,
+            "palm": 26
+          },
+          "coldTiles": 0,
+          "warmSandCoastTiles": 1007,
+          "sandCoastTiles": 1007,
+          "freshWaterTiles": 869,
+          "creaturesOnStart": {
+            "hare": 4,
+            "fox": 5,
+            "orc_3": 3,
+            "deer": 7,
+            "grouse": 2,
+            "slime_1": 1,
+            "vampire_1": 1
+          }
+        }
+      ],
+      "totalPois": 81,
+      "authoredLootExpected": 24,
+      "authoredLootMaterialized": 23,
+      "archetypePoisMaterialized": 57,
+      "archetypePoisMissing": [
+        "po_glade"
+      ],
+      "missingTileAnomalies": [
+        "po_glade (arche=grove): zero archetype containers materialized",
+        "po_greywater: expected 7 authored caches, materialized 6"
+      ],
+      "staticLootItems": {
+        "iron_ingot": 18,
+        "spares": 59,
+        "crystal": 3,
+        "fuel_can": 5,
+        "fasteners": 44,
+        "scrap": 84,
+        "cloth": 73,
+        "herb": 28,
+        "rope": 41,
+        "bandage": 37,
+        "torch": 14,
+        "seed": 44,
+        "berries": 32,
+        "mechanical_parts": 16,
+        "arrow": 32,
+        "coal": 41,
+        "field_repair_kit": 6,
+        "iron_ore": 25,
+        "treated_canvas": 7,
+        "meat": 5,
+        "crop": 9,
+        "medkit": 4,
+        "fiber": 4
+      },
+      "staticBlueprints": [
+        "bow",
+        "brick",
+        "fur_cloak",
+        "gas_mask",
+        "leather_armor",
+        "stew"
+      ],
+      "staticCores": {},
+      "staticRcashTotal": 275,
+      "ordinaryHabitats": 9,
+      "sideBossSites": 4,
+      "primordialSites": 6,
+      "veyraPois": [
+        {
+          "id": "po_academy",
+          "name": "Argus Academy",
+          "arche": "research",
+          "authoredLootCount": 5,
+          "containers": [
+            {
+              "floor": -1,
+              "tx": 1864,
+              "ty": 521,
+              "label": "Sealed Vault Crate",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "iron_ingot",
+                  "qty": 3
+                },
+                {
+                  "item": "spares",
+                  "qty": 4
+                },
+                {
+                  "item": "crystal",
+                  "qty": 1
+                }
+              ]
+            },
+            {
+              "floor": 0,
+              "tx": 1843,
+              "ty": 544,
+              "label": "Maintenance Locker",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "fuel_can",
+                  "qty": 1
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 5
+                },
+                {
+                  "item": "scrap",
+                  "qty": 3
+                }
+              ]
+            },
+            {
+              "floor": 1,
+              "tx": 1855,
+              "ty": 505,
+              "label": "Provost’s Cabinet",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 3
+                },
+                {
+                  "item": "herb",
+                  "qty": 3
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 2
+                }
+              ]
+            },
+            {
+              "floor": 1,
+              "tx": 1882,
+              "ty": 508,
+              "label": "Cartographer’s Case",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 2
+                },
+                {
+                  "item": "spares",
+                  "qty": 2
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                }
+              ]
+            },
+            {
+              "floor": 2,
+              "tx": 1897,
+              "ty": 532,
+              "label": "Astronomer’s Lockbox",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "crystal",
+                  "qty": 1
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                },
+                {
+                  "item": "torch",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_archive",
+          "name": "Argus Archive Vaults",
+          "arche": "facility",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2035,
+              "ty": 437,
+              "label": "Argus Archive Vaults Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "seed",
+                  "qty": 4
+                },
+                {
+                  "item": "berries",
+                  "qty": 4
+                },
+                {
+                  "item": "cloth",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_beacon",
+          "name": "Beacon Rock Light",
+          "arche": "observatory",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 523,
+              "ty": 1301,
+              "label": "Beacon Rock Light Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 5
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_bonestop",
+          "name": "Bone Road Waystation",
+          "arche": "roadstop",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1519,
+              "ty": 1933,
+              "label": "Bone Road Waystation Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 4
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "blueprint:leather_armor",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_cairns",
+          "name": "Sunken Cairns",
+          "arche": "ruins",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 939,
+              "ty": 1964,
+              "label": "Sunken Cairns Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "arrow",
+                  "qty": 8
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                },
+                {
+                  "item": "blueprint:bow",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_cindercamp",
+          "name": "Cinder Camp",
+          "arche": "village",
+          "authoredLootCount": 2,
+          "containers": [
+            {
+              "floor": -1,
+              "tx": 3211,
+              "ty": 1752,
+              "label": "Forge Cellar Cache",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "coal",
+                  "qty": 4
+                },
+                {
+                  "item": "iron_ingot",
+                  "qty": 2
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            },
+            {
+              "floor": 0,
+              "tx": 3206,
+              "ty": 1748,
+              "label": "Forge Tool Chest",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "fasteners",
+                  "qty": 4
+                },
+                {
+                  "item": "scrap",
+                  "qty": 3
+                },
+                {
+                  "item": "coal",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_confluence",
+          "name": "Confluence Waystation",
+          "arche": "roadstop",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1851,
+              "ty": 1319,
+              "label": "Confluence Waystation Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 4
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "blueprint:leather_armor",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_dpier",
+          "name": "Drowned Pier",
+          "arche": "pier",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 437,
+              "ty": 1025,
+              "label": "Drowned Pier Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 6
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_elderwood",
+          "name": "Heart of the Elderwood",
+          "arche": "elder_site",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_ember",
+          "name": "Emberport",
+          "arche": "port",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2475,
+              "ty": 1630,
+              "label": "Emberport / Ashworks Quay Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 3
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "blueprint:gas_mask",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_emberwatch",
+          "name": "Ember Watch",
+          "arche": "observatory",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3239,
+              "ty": 1481,
+              "label": "Ember Watch Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 4
+                },
+                {
+                  "item": "field_repair_kit",
+                  "qty": 1
+                },
+                {
+                  "item": "torch",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_evac_hook",
+          "name": "Hook Evac Point",
+          "arche": "evac",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_evac_south",
+          "name": "Southfoot Evac Beach",
+          "arche": "evac",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_evac_west",
+          "name": "Westmouth Evac Pier",
+          "arche": "evac",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_falls",
+          "name": "Falls Powerhouse",
+          "arche": "powerplant",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1414,
+              "ty": 848,
+              "label": "Falls Powerhouse Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "iron_ore",
+                  "qty": 5
+                },
+                {
+                  "item": "coal",
+                  "qty": 4
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_filter",
+          "name": "Delta Sluice & Filter Station",
+          "arche": "filter",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1836,
+              "ty": 1765,
+              "label": "Delta Sluice & Filter Station Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "seed",
+                  "qty": 4
+                },
+                {
+                  "item": "berries",
+                  "qty": 4
+                },
+                {
+                  "item": "cloth",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_fishcamp",
+          "name": "Fish Camp",
+          "arche": "hamlet",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 683,
+              "ty": 1706,
+              "label": "Fish Camp Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 4
+                },
+                {
+                  "item": "spares",
+                  "qty": 3
+                },
+                {
+                  "item": "torch",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_fracquarry",
+          "name": "Fracture Quarry",
+          "arche": "quarry",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1168,
+              "ty": 1023,
+              "label": "Fracture Quarry Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "iron_ore",
+                  "qty": 5
+                },
+                {
+                  "item": "coal",
+                  "qty": 4
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_freightyard",
+          "name": "Shattered Freight Yard",
+          "arche": "ruins",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1404,
+              "ty": 991,
+              "label": "Shattered Freight Yard Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "rope",
+                  "qty": 3
+                },
+                {
+                  "item": "treated_canvas",
+                  "qty": 1
+                },
+                {
+                  "item": "herb",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_gate",
+          "name": "Threshold Gate",
+          "arche": "gate",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_geo",
+          "name": "Geothermal Station",
+          "arche": "powerplant",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3500,
+              "ty": 1810,
+              "label": "Geothermal Station Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 4
+                },
+                {
+                  "item": "field_repair_kit",
+                  "qty": 1
+                },
+                {
+                  "item": "torch",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_glade",
+          "name": "Mosslight Glade",
+          "arche": "grove",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_greyquarry",
+          "name": "Greyback Quarry",
+          "arche": "quarry",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1047,
+              "ty": 1299,
+              "label": "Greyback Quarry Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "seed",
+                  "qty": 4
+                },
+                {
+                  "item": "berries",
+                  "qty": 4
+                },
+                {
+                  "item": "cloth",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_greywater",
+          "name": "Greywater Hamlet",
+          "arche": "village",
+          "authoredLootCount": 7,
+          "containers": [
+            {
+              "floor": -1,
+              "tx": 1646,
+              "ty": 1174,
+              "label": "Smugglers’ Hoard",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 3
+                },
+                {
+                  "item": "iron_ingot",
+                  "qty": 2
+                },
+                {
+                  "item": "fuel_can",
+                  "qty": 1
+                }
+              ]
+            },
+            {
+              "floor": 0,
+              "tx": 1594,
+              "ty": 1194,
+              "label": "Smith’s Chest",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "iron_ingot",
+                  "qty": 2
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 4
+                },
+                {
+                  "item": "scrap",
+                  "qty": 4
+                }
+              ]
+            },
+            {
+              "floor": 0,
+              "tx": 1662,
+              "ty": 1184,
+              "label": "Boat Locker",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "rope",
+                  "qty": 3
+                },
+                {
+                  "item": "treated_canvas",
+                  "qty": 2
+                },
+                {
+                  "item": "meat",
+                  "qty": 1
+                }
+              ]
+            },
+            {
+              "floor": 1,
+              "tx": 1601,
+              "ty": 1170,
+              "label": "Loft Chest",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 3
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "bandage",
+                  "qty": 1
+                }
+              ]
+            },
+            {
+              "floor": 1,
+              "tx": 1662,
+              "ty": 1166,
+              "label": "Loft Strongbox",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "seed",
+                  "qty": 5
+                },
+                {
+                  "item": "crop",
+                  "qty": 3
+                },
+                {
+                  "item": "cloth",
+                  "qty": 2
+                }
+              ]
+            },
+            {
+              "floor": 2,
+              "tx": 1662,
+              "ty": 1168,
+              "label": "Lookout Cache",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "arrow",
+                  "qty": 8
+                },
+                {
+                  "item": "torch",
+                  "qty": 2
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_gulfhead",
+          "name": "Gulfhead",
+          "arche": "port",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2090,
+              "ty": 1727,
+              "label": "Gulfhead Port Quarter Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "herb",
+                  "qty": 4
+                },
+                {
+                  "item": "medkit",
+                  "qty": 1
+                },
+                {
+                  "item": "blueprint:stew",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_gullnest",
+          "name": "Seabird Nesting Cliffs",
+          "arche": "grove",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3760,
+              "ty": 839,
+              "label": "Seabird Nesting Cliffs Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 3
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "blueprint:gas_mask",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_gullpier",
+          "name": "Tern Hut Pier",
+          "arche": "pier",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3727,
+              "ty": 931,
+              "label": "Tern Hut Pier Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "rope",
+                  "qty": 3
+                },
+                {
+                  "item": "treated_canvas",
+                  "qty": 1
+                },
+                {
+                  "item": "herb",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_gullwreck",
+          "name": "Gull Isle Wreck",
+          "arche": "ruins",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3796,
+              "ty": 883,
+              "label": "Gull Isle Wreck Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 5
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_hall_eyes",
+          "name": "Hall of Eyes",
+          "arche": "elder_site",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_hook",
+          "name": "Hook Village",
+          "arche": "village",
+          "authoredLootCount": 4,
+          "containers": [
+            {
+              "floor": -1,
+              "tx": 2640,
+              "ty": 649,
+              "label": "Ice Store Cache",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "meat",
+                  "qty": 3
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "torch",
+                  "qty": 1
+                }
+              ]
+            },
+            {
+              "floor": 0,
+              "tx": 2584,
+              "ty": 644,
+              "label": "Tackle Chest",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "rope",
+                  "qty": 3
+                },
+                {
+                  "item": "fiber",
+                  "qty": 4
+                },
+                {
+                  "item": "meat",
+                  "qty": 1
+                }
+              ]
+            },
+            {
+              "floor": 0,
+              "tx": 2642,
+              "ty": 666,
+              "label": "Boat-Repair Locker",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "treated_canvas",
+                  "qty": 2
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 3
+                }
+              ]
+            },
+            {
+              "floor": 1,
+              "tx": 2620,
+              "ty": 682,
+              "label": "Granary Loft Box",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "seed",
+                  "qty": 4
+                },
+                {
+                  "item": "crop",
+                  "qty": 3
+                },
+                {
+                  "item": "cloth",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_ironharbor",
+          "name": "Ironholm Harbor",
+          "arche": "port",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2244,
+              "ty": 2454,
+              "label": "Ironholm Harbor / Ore Quay Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "iron_ingot",
+                  "qty": 2
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 3
+                },
+                {
+                  "item": "fuel_can",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_ironmine",
+          "name": "Ironholm Mine",
+          "arche": "mine",
+          "authoredLootCount": 4,
+          "containers": [
+            {
+              "floor": -1,
+              "tx": 2403,
+              "ty": 2585,
+              "label": "Drowned Store",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "iron_ore",
+                  "qty": 5
+                },
+                {
+                  "item": "coal",
+                  "qty": 4
+                },
+                {
+                  "item": "field_repair_kit",
+                  "qty": 1
+                }
+              ]
+            },
+            {
+              "floor": 1,
+              "tx": 2404,
+              "ty": 2566,
+              "label": "Crane Cab Locker",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "mechanical_parts",
+                  "qty": 2
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 6
+                },
+                {
+                  "item": "field_repair_kit",
+                  "qty": 1
+                }
+              ]
+            },
+            {
+              "floor": 1,
+              "tx": 2358,
+              "ty": 2559,
+              "label": "Paymaster’s Safe",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 4
+                },
+                {
+                  "item": "iron_ingot",
+                  "qty": 3
+                },
+                {
+                  "item": "blueprint:brick",
+                  "qty": 1
+                }
+              ]
+            },
+            {
+              "floor": 2,
+              "tx": 2372,
+              "ty": 2566,
+              "label": "Head Deck Cache",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "coal",
+                  "qty": 4
+                },
+                {
+                  "item": "crystal",
+                  "qty": 1
+                },
+                {
+                  "item": "torch",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_ironvein",
+          "name": "Ironvein Mine",
+          "arche": "mine",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2426,
+              "ty": 1291,
+              "label": "Ironvein Mine Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "herb",
+                  "qty": 4
+                },
+                {
+                  "item": "medkit",
+                  "qty": 1
+                },
+                {
+                  "item": "blueprint:stew",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_ironwh",
+          "name": "Ironholm Depot",
+          "arche": "warehouse",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2472,
+              "ty": 2572,
+              "label": "Ironholm Depot Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 4
+                },
+                {
+                  "item": "field_repair_kit",
+                  "qty": 1
+                },
+                {
+                  "item": "torch",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_kestrel",
+          "name": "Kestrel Radio Tower",
+          "arche": "facility",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1399,
+              "ty": 589,
+              "label": "Kestrel Radio Tower Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "arrow",
+                  "qty": 8
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                },
+                {
+                  "item": "blueprint:bow",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_kilns",
+          "name": "Charcoal Kilns",
+          "arche": "smelter",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1775,
+              "ty": 1549,
+              "label": "Charcoal Kilns Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "iron_ore",
+                  "qty": 5
+                },
+                {
+                  "item": "coal",
+                  "qty": 4
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_lantern",
+          "name": "Lantern Light",
+          "arche": "observatory",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2094,
+              "ty": 294,
+              "label": "Lantern Light Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 4
+                },
+                {
+                  "item": "field_repair_kit",
+                  "qty": 1
+                },
+                {
+                  "item": "torch",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_lanternstn",
+          "name": "Lantern Cove Station",
+          "arche": "roadstop",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2153,
+              "ty": 609,
+              "label": "Lantern Cove Station Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 4
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "blueprint:leather_armor",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_mere",
+          "name": "Hook Mere Pier",
+          "arche": "pier",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2516,
+              "ty": 723,
+              "label": "Hook Mere Pier Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 5
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_meridian",
+          "name": "Meridian Research Station",
+          "arche": "research",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2256,
+              "ty": 1361,
+              "label": "Meridian Research Station Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "arrow",
+                  "qty": 8
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                },
+                {
+                  "item": "blueprint:bow",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_mill",
+          "name": "Mossbrook Mill",
+          "arche": "mill",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2008,
+              "ty": 1447,
+              "label": "Mossbrook Mill Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "rope",
+                  "qty": 3
+                },
+                {
+                  "item": "treated_canvas",
+                  "qty": 1
+                },
+                {
+                  "item": "herb",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_necropolis",
+          "name": "Necropolis of the Hollow Sun",
+          "arche": "elder_site",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_netcamp",
+          "name": "Gull Net Camp",
+          "arche": "hamlet",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 295,
+              "ty": 1679,
+              "label": "Gull Net Camp Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 3
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "blueprint:gas_mask",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_oasis",
+          "name": "Mirage Camp",
+          "arche": "village",
+          "authoredLootCount": 2,
+          "containers": [
+            {
+              "floor": -1,
+              "tx": 1371,
+              "ty": 1965,
+              "label": "Cool Store Cache",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "crop",
+                  "qty": 3
+                },
+                {
+                  "item": "seed",
+                  "qty": 3
+                },
+                {
+                  "item": "cloth",
+                  "qty": 2
+                }
+              ]
+            },
+            {
+              "floor": 0,
+              "tx": 1354,
+              "ty": 1948,
+              "label": "Merchant’s Counter Box",
+              "kind": "loot",
+              "fromArchetypePreset": false,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 3
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_observatory",
+          "name": "Argus Observatory",
+          "arche": "observatory",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1915,
+              "ty": 325,
+              "label": "Argus Observatory Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 5
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_obsq",
+          "name": "Obsidian Quarry",
+          "arche": "quarry",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3335,
+              "ty": 1547,
+              "label": "Obsidian Quarry Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 4
+                },
+                {
+                  "item": "spares",
+                  "qty": 3
+                },
+                {
+                  "item": "torch",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_oldpump",
+          "name": "Old Pumping Plant",
+          "arche": "facility",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1728,
+              "ty": 1954,
+              "label": "Old Pumping Plant Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "seed",
+                  "qty": 4
+                },
+                {
+                  "item": "berries",
+                  "qty": 4
+                },
+                {
+                  "item": "cloth",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_pumphouse",
+          "name": "Greywater Pumphouse",
+          "arche": "filter",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1740,
+              "ty": 1114,
+              "label": "Greywater Pumphouse Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "iron_ingot",
+                  "qty": 2
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 3
+                },
+                {
+                  "item": "fuel_can",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_racks",
+          "name": "Kelp Racks",
+          "arche": "hamlet",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3395,
+              "ty": 691,
+              "label": "Kelp Racks Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 5
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_ranger",
+          "name": "Ranger Hut",
+          "arche": "hamlet",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1616,
+              "ty": 1501,
+              "label": "Ranger Hut Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 5
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_rapids",
+          "name": "Rapids Portage Hut",
+          "arche": "roadstop",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2315,
+              "ty": 907,
+              "label": "Rapids Portage Hut Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 5
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_rc_dam",
+          "name": "Falls Dam Vault",
+          "arche": "ragnarok_cache",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1507,
+              "ty": 900,
+              "label": "Falls Dam Vault",
+              "kind": "cash",
+              "fromArchetypePreset": false,
+              "cash": 50,
+              "items": []
+            }
+          ]
+        },
+        {
+          "id": "po_rc_ironvein",
+          "name": "Foreman's Strongbox",
+          "arche": "ragnarok_cache",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2444,
+              "ty": 1344,
+              "label": "Foreman's Strongbox",
+              "kind": "cash",
+              "fromArchetypePreset": false,
+              "cash": 45,
+              "items": []
+            }
+          ]
+        },
+        {
+          "id": "po_rc_kestrel",
+          "name": "Kestrel Tower Safe",
+          "arche": "ragnarok_cache",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1416,
+              "ty": 628,
+              "label": "Kestrel Tower Safe",
+              "kind": "cash",
+              "fromArchetypePreset": false,
+              "cash": 40,
+              "items": []
+            }
+          ]
+        },
+        {
+          "id": "po_rc_meridian",
+          "name": "Meridian Archive Cache",
+          "arche": "ragnarok_cache",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2275,
+              "ty": 1328,
+              "label": "Meridian Archive Cache",
+              "kind": "cash",
+              "fromArchetypePreset": false,
+              "cash": 45,
+              "items": []
+            }
+          ]
+        },
+        {
+          "id": "po_rc_salt",
+          "name": "Saltwick Harbor Safe",
+          "arche": "ragnarok_cache",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3120,
+              "ty": 636,
+              "label": "Saltwick Harbor Safe",
+              "kind": "cash",
+              "fromArchetypePreset": false,
+              "cash": 50,
+              "items": []
+            }
+          ]
+        },
+        {
+          "id": "po_rc_sandgate",
+          "name": "Sandgate Customs Strongbox",
+          "arche": "ragnarok_cache",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1436,
+              "ty": 2204,
+              "label": "Sandgate Customs Strongbox",
+              "kind": "cash",
+              "fromArchetypePreset": false,
+              "cash": 45,
+              "items": []
+            }
+          ]
+        },
+        {
+          "id": "po_ridgestop",
+          "name": "Ridge Pass Station",
+          "arche": "roadstop",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2371,
+              "ty": 1139,
+              "label": "Ridge Pass Station Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 3
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "blueprint:gas_mask",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_saltharbor",
+          "name": "Saltwick Harbor",
+          "arche": "port",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3098,
+              "ty": 635,
+              "label": "Saltwick Harbor Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 6
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_saltlight",
+          "name": "Saltwick Light",
+          "arche": "observatory",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3463,
+              "ty": 513,
+              "label": "Saltwick Light Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 3
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "blueprint:gas_mask",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_saltpans",
+          "name": "Salt Pans",
+          "arche": "quarry",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3295,
+              "ty": 627,
+              "label": "Salt Pans Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 4
+                },
+                {
+                  "item": "spares",
+                  "qty": 3
+                },
+                {
+                  "item": "torch",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_sandgate",
+          "name": "Sandgate",
+          "arche": "port",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1414,
+              "ty": 2213,
+              "label": "Sandgate / Sluice Port Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "coal",
+                  "qty": 5
+                },
+                {
+                  "item": "scrap",
+                  "qty": 5
+                },
+                {
+                  "item": "blueprint:fur_cloak",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_sapgrove",
+          "name": "Sap Grove",
+          "arche": "grove",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1936,
+              "ty": 1261,
+              "label": "Sap Grove Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 5
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_sawaion",
+          "name": "Aion Edge Sawmill",
+          "arche": "sawmill",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1482,
+              "ty": 1312,
+              "label": "Aion Edge Sawmill Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "iron_ingot",
+                  "qty": 2
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 3
+                },
+                {
+                  "item": "fuel_can",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_siloc",
+          "name": "Grain Silo Complex",
+          "arche": "warehouse",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2201,
+              "ty": 1501,
+              "label": "Grain Silo Complex Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "seed",
+                  "qty": 4
+                },
+                {
+                  "item": "berries",
+                  "qty": 4
+                },
+                {
+                  "item": "cloth",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_slag",
+          "name": "Slagworks Foundry",
+          "arche": "smelter",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2410,
+              "ty": 1852,
+              "label": "Slagworks Foundry Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "seed",
+                  "qty": 4
+                },
+                {
+                  "item": "berries",
+                  "qty": 4
+                },
+                {
+                  "item": "cloth",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_southfoot",
+          "name": "Southfoot Landing",
+          "arche": "port",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2378,
+              "ty": 2121,
+              "label": "Southfoot Landing Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 4
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "blueprint:leather_armor",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_strait",
+          "name": "Strait Landing",
+          "arche": "port",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2527,
+              "ty": 965,
+              "label": "Strait Landing Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "coal",
+                  "qty": 5
+                },
+                {
+                  "item": "scrap",
+                  "qty": 5
+                },
+                {
+                  "item": "blueprint:fur_cloak",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_sulfur",
+          "name": "Sulfur Works",
+          "arche": "mine",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 3501,
+              "ty": 1755,
+              "label": "Sulfur Works Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "herb",
+                  "qty": 4
+                },
+                {
+                  "item": "medkit",
+                  "qty": 1
+                },
+                {
+                  "item": "blueprint:stew",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_surtur",
+          "name": "Foundry of the First Fire",
+          "arche": "elder_site",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_tidecamp",
+          "name": "Tidepool Fishing Camp",
+          "arche": "hamlet",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 355,
+              "ty": 1079,
+              "label": "Tidepool Fishing Camp Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 6
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_timberyard",
+          "name": "Verdant Timberyard",
+          "arche": "sawmill",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 2042,
+              "ty": 893,
+              "label": "Verdant Timberyard Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "scrap",
+                  "qty": 6
+                },
+                {
+                  "item": "rope",
+                  "qty": 2
+                },
+                {
+                  "item": "bandage",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_tombs",
+          "name": "Dune Tombs",
+          "arche": "tomb",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1039,
+              "ty": 2156,
+              "label": "Dune Tombs Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "seed",
+                  "qty": 4
+                },
+                {
+                  "item": "berries",
+                  "qty": 4
+                },
+                {
+                  "item": "cloth",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_typhon",
+          "name": "Typhon's Fracture",
+          "arche": "elder_site",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_vend_gulf",
+          "name": "Gulfhead Trading House [ĐỀ XUẤT]",
+          "arche": "chest_vendor",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_vend_strait",
+          "name": "Strait Landing Counter [ĐỀ XUẤT]",
+          "arche": "chest_vendor",
+          "authoredLootCount": 0,
+          "containers": []
+        },
+        {
+          "id": "po_viaduct",
+          "name": "Crushed Viaduct",
+          "arche": "ruins",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1334,
+              "ty": 887,
+              "label": "Crushed Viaduct Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "seed",
+                  "qty": 4
+                },
+                {
+                  "item": "berries",
+                  "qty": 4
+                },
+                {
+                  "item": "cloth",
+                  "qty": 3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_westbank",
+          "name": "Westbank Landing",
+          "arche": "pier",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 1827,
+              "ty": 1843,
+              "label": "Westbank Landing Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "spares",
+                  "qty": 3
+                },
+                {
+                  "item": "mechanical_parts",
+                  "qty": 1
+                },
+                {
+                  "item": "blueprint:gas_mask",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_westmouth",
+          "name": "Westmouth",
+          "arche": "port",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 690,
+              "ty": 1071,
+              "label": "Westmouth Canal Port Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "herb",
+                  "qty": 4
+                },
+                {
+                  "item": "medkit",
+                  "qty": 1
+                },
+                {
+                  "item": "blueprint:stew",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_westwood",
+          "name": "Westwood Hamlet",
+          "arche": "hamlet",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 863,
+              "ty": 1467,
+              "label": "Westwood Hamlet Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "cloth",
+                  "qty": 4
+                },
+                {
+                  "item": "spares",
+                  "qty": 3
+                },
+                {
+                  "item": "torch",
+                  "qty": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "po_wreck",
+          "name": "Wreck Isle Salvage",
+          "arche": "ruins",
+          "authoredLootCount": 0,
+          "containers": [
+            {
+              "floor": 0,
+              "tx": 392,
+              "ty": 1735,
+              "label": "Wreck Isle Salvage Cache",
+              "kind": "loot",
+              "fromArchetypePreset": true,
+              "items": [
+                {
+                  "item": "iron_ore",
+                  "qty": 5
+                },
+                {
+                  "item": "coal",
+                  "qty": 4
+                },
+                {
+                  "item": "fasteners",
+                  "qty": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "archetypeSimulations": {
+    "shipping_fresh": {
+      "casualOffline14Day": {
+        "placedStructures": 12,
+        "deathsIn14DaysWithDaily2hPlay": 14,
+        "collapses": 0,
+        "totalUpkeepWood14d": 182,
+        "totalUpkeepStone14d": 14,
+        "finalHp": 0,
+        "finalHunger": 28.69,
+        "finalThirst": 0,
+        "finalPhase": "expired"
+      },
+      "fortifier14Day": {
+        "coveredCount": 12,
+        "dailyUpkeepRates": {
+          "wood": 14.25,
+          "fiber": 5,
+          "stone": 1.25
+        },
+        "cumulative14DayDebits": {
+          "wood": 200,
+          "fiber": 70,
+          "stone": 18
+        },
+        "total14dItemsConsumed": 288
+      },
+      "motorbikeKinematics": {
+        "wreckEconomy": "recycler-v1",
+        "supportsAirdrops": true,
+        "roadSpeedPxPerSec": 390,
+        "pxPerFullTankRoadUnloaded": 6000,
+        "tilesPerFullTankRoadLoaded": 250,
+        "tilesPerCanisterLoadedRoad": 83,
+        "wearPerFullTankLoaded": 32
+      },
+      "researchAndCoreGate": {
+        "totalRecipes": 89,
+        "knownAtStart": 54,
+        "unknownAtStart": 35,
+        "unknownNonCore": 26,
+        "unknownTier3NonCore": [
+          "chitin_armor"
+        ],
+        "unknownCores": [
+          "core_mjolnir",
+          "core_demon",
+          "core_meteor",
+          "core_dragon",
+          "core_elsa",
+          "core_fire",
+          "core_earth",
+          "core_storm",
+          "core_frost"
+        ],
+        "sparesNeededBeforeFirstCoreRandom": 104,
+        "totalRandomResearchSparesAll": 140,
+        "minSparesDirectedPlusRandom": 265
+      },
+      "currencySplit": {
+        "maxVendorSecuredSpendablePerRun": 76,
+        "maxVendorSparesSpendablePerRun": 59,
+        "dailyRequisitionSecuredPerDay": 42,
+        "max14DayRequisitionSecured": 588,
+        "requisitionOverVendorCapRatio": 7.74,
+        "liveProbeDay1": {
+          "date": "2026-11-11",
+          "craftedOk": true,
+          "emberClaimOk": true,
+          "emberMsg": "+5 Secured Cash · 3× Bandage, 3× Roast Meat",
+          "securedAfter": 5
+        }
+      }
+    },
+    "veyra05-world": {
+      "casualOffline14Day": {
+        "placedStructures": 12,
+        "deathsIn14DaysWithDaily2hPlay": 14,
+        "collapses": 0,
+        "totalUpkeepWood14d": 182,
+        "totalUpkeepStone14d": 14,
+        "finalHp": 0,
+        "finalHunger": 28.69,
+        "finalThirst": 0,
+        "finalPhase": "expired"
+      },
+      "fortifier14Day": {
+        "coveredCount": 15,
+        "dailyUpkeepRates": {
+          "wood": 16.75,
+          "fiber": 5,
+          "stone": 1.25,
+          "brick": 1.5,
+          "iron_ingot": 1.5,
+          "mechanical_parts": 0.5,
+          "fasteners": 0.5
+        },
+        "cumulative14DayDebits": {
+          "wood": 235,
+          "fiber": 70,
+          "stone": 18,
+          "brick": 21,
+          "iron_ingot": 21,
+          "mechanical_parts": 7,
+          "fasteners": 7
+        },
+        "total14dItemsConsumed": 379
+      },
+      "motorbikeKinematics": {
+        "wreckEconomy": "direct-v1",
+        "supportsAirdrops": false,
+        "roadSpeedPxPerSec": 390,
+        "pxPerFullTankRoadUnloaded": 6000,
+        "tilesPerFullTankRoadLoaded": 250,
+        "tilesPerCanisterLoadedRoad": 83,
+        "wearPerFullTankLoaded": 32
+      },
+      "researchAndCoreGate": {
+        "totalRecipes": 89,
+        "knownAtStart": 54,
+        "unknownAtStart": 35,
+        "unknownNonCore": 26,
+        "unknownTier3NonCore": [
+          "chitin_armor"
+        ],
+        "unknownCores": [
+          "core_mjolnir",
+          "core_demon",
+          "core_meteor",
+          "core_dragon",
+          "core_elsa",
+          "core_fire",
+          "core_earth",
+          "core_storm",
+          "core_frost"
+        ],
+        "sparesNeededBeforeFirstCoreRandom": 104,
+        "totalRandomResearchSparesAll": 140,
+        "minSparesDirectedPlusRandom": 265
+      },
+      "currencySplit": {
+        "maxVendorSecuredSpendablePerRun": 76,
+        "maxVendorSparesSpendablePerRun": 59,
+        "dailyRequisitionSecuredPerDay": 42,
+        "max14DayRequisitionSecured": 588,
+        "requisitionOverVendorCapRatio": 7.74,
+        "liveProbeDay1": {
+          "date": "2026-11-11",
+          "craftedOk": true,
+          "emberClaimOk": true,
+          "emberMsg": "+5 Secured Cash · 3× Bandage, 3× Roast Meat",
+          "securedAfter": 5
+        }
+      }
+    }
+  },
+  "territoryStressMatrix": [
+    {
+      "preset": "Starter_2x2_Wood",
+      "structureCount": 20,
+      "upkeepMaterialTypes": 4,
+      "cabinet24SlotMaxAutonomousHours": 384,
+      "initialBuildCost": {
+        "wood": 90,
+        "stone": 8,
+        "rope": 1,
+        "fiber": 30
+      },
+      "dailyUpkeepExact": {
+        "wood": 22.5,
+        "stone": 2,
+        "rope": 0.25,
+        "fiber": 7.5
+      },
+      "cumulative14DayExact": {
+        "wood": 315,
+        "stone": 28,
+        "rope": 3.5,
+        "fiber": 105
+      },
+      "actual14DayEngineDebits": {
+        "wood": 315,
+        "stone": 28,
+        "rope": 4,
+        "fiber": 105
+      },
+      "overchargeRoundingCount": 0.5
+    },
+    {
+      "preset": "Standard_4x4_Plank",
+      "structureCount": 56,
+      "upkeepMaterialTypes": 7,
+      "cabinet24SlotMaxAutonomousHours": 97.63,
+      "initialBuildCost": {
+        "wood": 177,
+        "stone": 30,
+        "plank": 42,
+        "rope": 2,
+        "fiber": 90,
+        "iron_ingot": 5,
+        "spares": 6
+      },
+      "dailyUpkeepExact": {
+        "wood": 44.25,
+        "stone": 7.5,
+        "plank": 10.5,
+        "rope": 0.5,
+        "fiber": 22.5,
+        "iron_ingot": 1.25,
+        "spares": 1.5
+      },
+      "cumulative14DayExact": {
+        "wood": 619.5,
+        "stone": 105,
+        "plank": 147,
+        "rope": 7,
+        "fiber": 315,
+        "iron_ingot": 17.5,
+        "spares": 21
+      },
+      "actual14DayEngineDebits": {
+        "wood": 620,
+        "stone": 105,
+        "plank": 147,
+        "rope": 7,
+        "fiber": 315,
+        "iron_ingot": 18,
+        "spares": 21
+      },
+      "overchargeRoundingCount": 1
+    },
+    {
+      "preset": "Stone_Keep_5x5",
+      "structureCount": 86,
+      "upkeepMaterialTypes": 9,
+      "cabinet24SlotMaxAutonomousHours": 33.98,
+      "initialBuildCost": {
+        "wood": 140,
+        "stone": 339,
+        "iron_ingot": 21,
+        "brick": 81,
+        "spares": 11,
+        "mechanical_parts": 3,
+        "glass": 2,
+        "fiber": 16,
+        "rope": 2
+      },
+      "dailyUpkeepExact": {
+        "wood": 35,
+        "stone": 84.75,
+        "iron_ingot": 5.25,
+        "brick": 20.25,
+        "spares": 2.75,
+        "mechanical_parts": 0.75,
+        "glass": 0.5,
+        "fiber": 4,
+        "rope": 0.5
+      },
+      "cumulative14DayExact": {
+        "wood": 490,
+        "stone": 1186.5,
+        "iron_ingot": 73.5,
+        "brick": 283.5,
+        "spares": 38.5,
+        "mechanical_parts": 10.5,
+        "glass": 7,
+        "fiber": 56,
+        "rope": 7
+      },
+      "actual14DayEngineDebits": {
+        "wood": 490,
+        "stone": 1187,
+        "iron_ingot": 74,
+        "brick": 284,
+        "spares": 39,
+        "mechanical_parts": 11,
+        "glass": 7,
+        "fiber": 56,
+        "rope": 7
+      },
+      "overchargeRoundingCount": 2.5
+    },
+    {
+      "preset": "Brick_Citadel_6x6_Armed",
+      "structureCount": 127,
+      "upkeepMaterialTypes": 9,
+      "cabinet24SlotMaxAutonomousHours": 31.22,
+      "initialBuildCost": {
+        "wood": 154,
+        "stone": 261,
+        "brick": 246,
+        "iron_ingot": 53,
+        "mechanical_parts": 24,
+        "fasteners": 25,
+        "spares": 27,
+        "glass": 2,
+        "fiber": 10,
+        "mechanical_gear": 4
+      },
+      "dailyUpkeepExact": {
+        "wood": 38.5,
+        "stone": 65.25,
+        "brick": 61.5,
+        "iron_ingot": 13.25,
+        "mechanical_parts": 6,
+        "fasteners": 6.25,
+        "spares": 6.75,
+        "glass": 0.5,
+        "fiber": 2.5
+      },
+      "cumulative14DayExact": {
+        "wood": 539,
+        "stone": 913.5,
+        "brick": 861,
+        "iron_ingot": 185.5,
+        "mechanical_parts": 84,
+        "fasteners": 87.5,
+        "spares": 94.5,
+        "glass": 7,
+        "fiber": 35
+      },
+      "actual14DayEngineDebits": {
+        "wood": 539,
+        "stone": 914,
+        "brick": 861,
+        "iron_ingot": 186,
+        "mechanical_parts": 84,
+        "fasteners": 88,
+        "spares": 95,
+        "glass": 7,
+        "fiber": 35
+      },
+      "overchargeRoundingCount": 2
+    },
+    {
+      "preset": "Solo_Outpost_Zero_Wood_CabinetOnly_Plus_Stations",
+      "structureCount": 21,
+      "upkeepMaterialTypes": 7,
+      "cabinet24SlotMaxAutonomousHours": 161.5,
+      "initialBuildCost": {
+        "wood": 41,
+        "stone": 107,
+        "iron_ingot": 11,
+        "brick": 18,
+        "mechanical_parts": 6,
+        "spares": 9,
+        "glass": 2
+      },
+      "dailyUpkeepExact": {
+        "wood": 10.25,
+        "stone": 26.75,
+        "iron_ingot": 2.75,
+        "brick": 4.5,
+        "mechanical_parts": 1.5,
+        "spares": 2.25,
+        "glass": 0.5
+      },
+      "cumulative14DayExact": {
+        "wood": 143.5,
+        "stone": 374.5,
+        "iron_ingot": 38.5,
+        "brick": 63,
+        "mechanical_parts": 21,
+        "spares": 31.5,
+        "glass": 7
+      },
+      "actual14DayEngineDebits": {
+        "wood": 144,
+        "stone": 375,
+        "iron_ingot": 39,
+        "brick": 63,
+        "mechanical_parts": 21,
+        "spares": 32,
+        "glass": 7
+      },
+      "overchargeRoundingCount": 2
+    }
+  ],
+  "offlineSettlementMatrix": [
+    {
+      "season": "spring",
+      "calendarSeasonVerified": "spring",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 8,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 50,
+      "endWarmth": 77.28,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "spring",
+      "calendarSeasonVerified": "spring",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 24,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 77.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "spring",
+      "calendarSeasonVerified": "spring",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 72,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 77.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "spring",
+      "calendarSeasonVerified": "spring",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 168,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 77.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "spring",
+      "calendarSeasonVerified": "spring",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 8,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 50,
+      "endWarmth": 83.28,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "spring",
+      "calendarSeasonVerified": "spring",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 24,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "spring",
+      "calendarSeasonVerified": "spring",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 72,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "spring",
+      "calendarSeasonVerified": "spring",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 168,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "spring",
+      "calendarSeasonVerified": "spring",
+      "scenario": "Supplied_Bed_Rest_24h",
+      "offlineHours": 8,
+      "restStarted": true,
+      "restStartMsg": "Resting 8 h.",
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 50,
+      "endWarmth": 83.28,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "spring",
+      "calendarSeasonVerified": "spring",
+      "scenario": "Supplied_Bed_Rest_24h",
+      "offlineHours": 24,
+      "restStarted": true,
+      "restStartMsg": "Resting 24 h.",
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 34,
+      "endThirst": 40,
+      "endWarmth": 56.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "summer",
+      "calendarSeasonVerified": "summer",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 8,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 14.35,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 44.25,
+      "endWarmth": 77.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "summer",
+      "calendarSeasonVerified": "summer",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 24,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 14.35,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 35.25,
+      "endThirst": 0,
+      "endWarmth": 77.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "summer",
+      "calendarSeasonVerified": "summer",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 72,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 14.35,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 35.25,
+      "endThirst": 0,
+      "endWarmth": 77.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "summer",
+      "calendarSeasonVerified": "summer",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 168,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 14.35,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 35.25,
+      "endThirst": 0,
+      "endWarmth": 77.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "summer",
+      "calendarSeasonVerified": "summer",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 8,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 14.35,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 44.25,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "summer",
+      "calendarSeasonVerified": "summer",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 24,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 14.35,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 35.25,
+      "endThirst": 0,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "summer",
+      "calendarSeasonVerified": "summer",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 72,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 14.35,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 35.25,
+      "endThirst": 0,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "summer",
+      "calendarSeasonVerified": "summer",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 168,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 14.35,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 35.25,
+      "endThirst": 0,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "summer",
+      "calendarSeasonVerified": "summer",
+      "scenario": "Supplied_Bed_Rest_24h",
+      "offlineHours": 8,
+      "restStarted": true,
+      "restStartMsg": "Resting 8 h.",
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 14.35,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 44.25,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "summer",
+      "calendarSeasonVerified": "summer",
+      "scenario": "Supplied_Bed_Rest_24h",
+      "offlineHours": 24,
+      "restStarted": true,
+      "restStartMsg": "Resting 24 h.",
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 14.35,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 34,
+      "endThirst": 52.75,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "autumn",
+      "calendarSeasonVerified": "autumn",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 8,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 50,
+      "endWarmth": 50.72,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "autumn",
+      "calendarSeasonVerified": "autumn",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 24,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 50.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "autumn",
+      "calendarSeasonVerified": "autumn",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 72,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 50.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "autumn",
+      "calendarSeasonVerified": "autumn",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 168,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 50.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "autumn",
+      "calendarSeasonVerified": "autumn",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 8,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 50,
+      "endWarmth": 56.72,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "autumn",
+      "calendarSeasonVerified": "autumn",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 24,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 56.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "autumn",
+      "calendarSeasonVerified": "autumn",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 72,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 56.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "autumn",
+      "calendarSeasonVerified": "autumn",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 168,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 56.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "autumn",
+      "calendarSeasonVerified": "autumn",
+      "scenario": "Supplied_Bed_Rest_24h",
+      "offlineHours": 8,
+      "restStarted": true,
+      "restStartMsg": "Resting 8 h.",
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 50,
+      "endWarmth": 56.72,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "autumn",
+      "calendarSeasonVerified": "autumn",
+      "scenario": "Supplied_Bed_Rest_24h",
+      "offlineHours": 24,
+      "restStarted": true,
+      "restStartMsg": "Resting 24 h.",
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 34,
+      "endThirst": 40,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "winter",
+      "calendarSeasonVerified": "winter",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 8,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 50,
+      "endWarmth": 77.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "winter",
+      "calendarSeasonVerified": "winter",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 24,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 50.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "winter",
+      "calendarSeasonVerified": "winter",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 72,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 50.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "winter",
+      "calendarSeasonVerified": "winter",
+      "scenario": "Unsheltered_Open",
+      "offlineHours": 168,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 50.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "winter",
+      "calendarSeasonVerified": "winter",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 8,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 50,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "winter",
+      "calendarSeasonVerified": "winter",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 24,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 56.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "winter",
+      "calendarSeasonVerified": "winter",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 72,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 56.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "winter",
+      "calendarSeasonVerified": "winter",
+      "scenario": "Sheltered_With_Lit_Campfire_10Wood",
+      "offlineHours": 168,
+      "restStarted": null,
+      "restStartMsg": null,
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": false,
+      "endHp": 0,
+      "endHunger": 28.37,
+      "endThirst": 0,
+      "endWarmth": 56.5,
+      "campfireBurnLeftMs": 0,
+      "campfireWoodLeft": 0,
+      "reportLines": []
+    },
+    {
+      "season": "winter",
+      "calendarSeasonVerified": "winter",
+      "scenario": "Supplied_Bed_Rest_24h",
+      "offlineHours": 8,
+      "restStarted": true,
+      "restStartMsg": "Resting 8 h.",
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 66.67,
+      "endThirst": 50,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    },
+    {
+      "season": "winter",
+      "calendarSeasonVerified": "winter",
+      "scenario": "Supplied_Bed_Rest_24h",
+      "offlineHours": 24,
+      "restStarted": true,
+      "restStartMsg": "Resting 24 h.",
+      "estimateHungerHours": 24,
+      "estimateThirstHours": 16,
+      "survived": true,
+      "endHp": 100,
+      "endHunger": 34,
+      "endThirst": 40,
+      "endWarmth": 83.5,
+      "campfireBurnLeftMs": null,
+      "campfireWoodLeft": null,
+      "reportLines": []
+    }
+  ],
+  "fuelAndPowerConservation": {
+    "fuelItems": [
+      {
+        "key": "fuel_briquette",
+        "name": "Packed Fuel Briquette",
+        "fuelSeconds": 90,
+        "stationBurnable": true,
+        "maxStack": 30,
+        "stackFuelSeconds": 2700,
+        "threeSlotGeneratorCapacitySec": 8100,
+        "threeSlotGeneratorAutonomyMinutes": 135
+      },
+      {
+        "key": "wood",
+        "name": "Wood",
+        "fuelSeconds": 20,
+        "stationBurnable": true,
+        "maxStack": 60,
+        "stackFuelSeconds": 1200,
+        "threeSlotGeneratorCapacitySec": 3600,
+        "threeSlotGeneratorAutonomyMinutes": 60
+      },
+      {
+        "key": "fiber",
+        "name": "Plant Fiber",
+        "fuelSeconds": 4,
+        "stationBurnable": true,
+        "maxStack": 80,
+        "stackFuelSeconds": 320,
+        "threeSlotGeneratorCapacitySec": 960,
+        "threeSlotGeneratorAutonomyMinutes": 16
+      },
+      {
+        "key": "coal",
+        "name": "Coal",
+        "fuelSeconds": 80,
+        "stationBurnable": true,
+        "maxStack": 40,
+        "stackFuelSeconds": 3200,
+        "threeSlotGeneratorCapacitySec": 9600,
+        "threeSlotGeneratorAutonomyMinutes": 160
+      },
+      {
+        "key": "charcoal",
+        "name": "Charcoal",
+        "fuelSeconds": 55,
+        "stationBurnable": true,
+        "maxStack": 60,
+        "stackFuelSeconds": 3300,
+        "threeSlotGeneratorCapacitySec": 9900,
+        "threeSlotGeneratorAutonomyMinutes": 165
+      },
+      {
+        "key": "fuel_can",
+        "name": "Fuel Canister",
+        "fuelSeconds": 60,
+        "stationBurnable": false,
+        "maxStack": 5,
+        "stackFuelSeconds": 300,
+        "threeSlotGeneratorCapacitySec": 900,
+        "threeSlotGeneratorAutonomyMinutes": 15
+      }
+    ],
+    "refineryRatios": {
+      "furnace_single": {
+        "oilIn": 3,
+        "glassIn": 1,
+        "fuelCansOut": 1,
+        "lubeOut": 0,
+        "oilPerCan": 3,
+        "generatorSecPerOil": 20
+      },
+      "refinery_single": {
+        "oilIn": 3,
+        "glassIn": 1,
+        "fuelCansOut": 1,
+        "lubeOut": 0,
+        "oilPerCan": 3,
+        "generatorSecPerOil": 20
+      },
+      "refinery_batch": {
+        "oilIn": 5,
+        "glassIn": 1,
+        "fuelCansOut": 2,
+        "lubeOut": 0,
+        "oilPerCan": 2.5,
+        "generatorSecPerOil": 24
+      },
+      "refinery_industrial": {
+        "oilIn": 6,
+        "glassIn": 1,
+        "fuelCansOut": 2,
+        "lubeOut": 1,
+        "oilPerCan": 3,
+        "generatorSecPerOil": 20
+      }
+    },
+    "shippingOilAndFuelBudget": {
+      "wreckStockUnits": 80,
+      "expectedOilFromWrecks": 28,
+      "vendorSalvagedOil": 4,
+      "staticSalvagedOil": 0,
+      "totalSalvagedOilExpected": 32,
+      "directFuelCansFromWrecks": 4.8,
+      "staticFuelCans": 2,
+      "totalFuelCansAssumingBatchRefinery": 19.6,
+      "maxMotorbikeLoadedRoadTilesFromRunOil": 1633
+    },
+    "baseGeneratorDemandVsCapacity": {
+      "poiGeneratorFuelRuntimeSec": 180,
+      "baseGeneratorFuelCanRuntimeSec": 60,
+      "baseGeneratorBriquetteRuntimeSec": 90,
+      "baseGeneratorCoalRuntimeSec": 80,
+      "ratioPoiToBaseGenFuelCan": 3,
+      "demand24hOneLoad": {
+        "fuel_can": 1440,
+        "coal": 1080,
+        "fuel_briquette": 960,
+        "wood": 4320
+      },
+      "demand24hTwoLoads": {
+        "fuel_can": 2880,
+        "coal": 2160
+      },
+      "fuelCansNeededFor14dOneLoad": 20160,
+      "shippingTotalOilDeficitFactorFor1Load14d": 1028.57
+    },
+    "idleFuelLeakProbe": {
+      "campfireIdleWoodBurnedIn10Min": 30,
+      "furnaceIdleWoodBurnedIn10Min": 0,
+      "campfireBurnsIdleForeverWhileLoaded": true
+    }
+  },
+  "husbandryAndGarden14Day": {
+    "husbandry14Day": [
+      {
+        "species": "boar",
+        "penTiles": 16,
+        "penCapacity": 5,
+        "births14d": 3,
+        "endAliveCount": 5,
+        "maxAlive": 5,
+        "feedConsumed14d": 170,
+        "renewableOutputs14d": {},
+        "adultButcherYields": [
+          [
+            "meat",
+            5
+          ],
+          [
+            "hide",
+            2
+          ],
+          [
+            "boar_tusk",
+            2
+          ]
+        ],
+        "tamingSpec": {
+          "preferredFoods": [
+            "animal_feed",
+            "mushroom",
+            "crop",
+            "berries"
+          ],
+          "feedingsToTame": 2
+        }
+      },
+      {
+        "species": "deer",
+        "penTiles": 16,
+        "penCapacity": 5,
+        "births14d": 3,
+        "endAliveCount": 5,
+        "maxAlive": 5,
+        "feedConsumed14d": 205,
+        "renewableOutputs14d": {
+          "fiber": 80
+        },
+        "adultButcherYields": [
+          [
+            "meat",
+            5
+          ],
+          [
+            "hide",
+            3
+          ]
+        ],
+        "tamingSpec": {
+          "preferredFoods": [
+            "animal_feed",
+            "crop",
+            "herb",
+            "berries"
+          ],
+          "feedingsToTame": 2
+        }
+      },
+      {
+        "species": "hare",
+        "penTiles": 16,
+        "penCapacity": 5,
+        "births14d": 3,
+        "endAliveCount": 5,
+        "maxAlive": 5,
+        "feedConsumed14d": 206,
+        "renewableOutputs14d": {
+          "fur": 30
+        },
+        "adultButcherYields": [
+          [
+            "meat",
+            2
+          ],
+          [
+            "fur",
+            2
+          ]
+        ],
+        "tamingSpec": {
+          "preferredFoods": [
+            "animal_feed",
+            "crop",
+            "berries",
+            "herb"
+          ],
+          "feedingsToTame": 1
+        }
+      },
+      {
+        "species": "grouse",
+        "penTiles": 16,
+        "penCapacity": 5,
+        "births14d": 3,
+        "endAliveCount": 5,
+        "maxAlive": 5,
+        "feedConsumed14d": 203,
+        "renewableOutputs14d": {
+          "grouse_egg": 20
+        },
+        "adultButcherYields": [
+          [
+            "meat",
+            2
+          ],
+          [
+            "feather",
+            3
+          ]
+        ],
+        "tamingSpec": {
+          "preferredFoods": [
+            "animal_feed",
+            "seed",
+            "berries"
+          ],
+          "feedingsToTame": 1
+        }
+      }
+    ],
+    "gardenSeasonalGrowth": [
+      {
+        "season": "spring",
+        "crop": "crop",
+        "cropName": "Sunroot",
+        "baseSeconds": 300,
+        "actualSecondsWithDryWaterMaintenance": 291,
+        "outputPerHarvest": [
+          [
+            "crop",
+            3
+          ],
+          [
+            "seed",
+            2
+          ]
+        ]
+      },
+      {
+        "season": "spring",
+        "crop": "herb",
+        "cropName": "Bitterleaf",
+        "baseSeconds": 600,
+        "actualSecondsWithDryWaterMaintenance": 591,
+        "outputPerHarvest": [
+          [
+            "herb",
+            3
+          ],
+          [
+            "seed",
+            1
+          ]
+        ]
+      },
+      {
+        "season": "summer",
+        "crop": "crop",
+        "cropName": "Sunroot",
+        "baseSeconds": 300,
+        "actualSecondsWithDryWaterMaintenance": 261,
+        "outputPerHarvest": [
+          [
+            "crop",
+            3
+          ],
+          [
+            "seed",
+            2
+          ]
+        ]
+      },
+      {
+        "season": "summer",
+        "crop": "herb",
+        "cropName": "Bitterleaf",
+        "baseSeconds": 600,
+        "actualSecondsWithDryWaterMaintenance": 661,
+        "outputPerHarvest": [
+          [
+            "herb",
+            3
+          ],
+          [
+            "seed",
+            1
+          ]
+        ]
+      },
+      {
+        "season": "autumn",
+        "crop": "crop",
+        "cropName": "Sunroot",
+        "baseSeconds": 300,
+        "actualSecondsWithDryWaterMaintenance": 331,
+        "outputPerHarvest": [
+          [
+            "crop",
+            3
+          ],
+          [
+            "seed",
+            2
+          ]
+        ]
+      },
+      {
+        "season": "autumn",
+        "crop": "herb",
+        "cropName": "Bitterleaf",
+        "baseSeconds": 600,
+        "actualSecondsWithDryWaterMaintenance": 571,
+        "outputPerHarvest": [
+          [
+            "herb",
+            3
+          ],
+          [
+            "seed",
+            1
+          ]
+        ]
+      },
+      {
+        "season": "winter",
+        "crop": "crop",
+        "cropName": "Sunroot",
+        "baseSeconds": 300,
+        "actualSecondsWithDryWaterMaintenance": 541,
+        "outputPerHarvest": [
+          [
+            "crop",
+            3
+          ],
+          [
+            "seed",
+            2
+          ]
+        ]
+      },
+      {
+        "season": "winter",
+        "crop": "herb",
+        "cropName": "Bitterleaf",
+        "baseSeconds": 600,
+        "actualSecondsWithDryWaterMaintenance": 741,
+        "outputPerHarvest": [
+          [
+            "herb",
+            3
+          ],
+          [
+            "seed",
+            1
+          ]
+        ]
+      }
+    ],
+    "animalFeedVsRawCrop": {
+      "recipeInputs": [
+        [
+          "fiber",
+          3
+        ],
+        [
+          "seed",
+          1
+        ]
+      ],
+      "recipeOutputQty": 3,
+      "fodderNutritionPerUnit": 38,
+      "totalNutritionPerCraft": 114,
+      "rawFiberNutrition": 0,
+      "rawSeedNutrition": 12,
+      "note": "animal_feed converts 3 fiber (0 livestock value) + 1 seed (12) -> 3x animal_feed (114 nutrition total), a 9.5x nutrition multiplier!"
+    }
+  },
+  "monteCarloRuns": {
+    "shippingN": 200,
+    "veyraN": 200,
+    "shippingDistributions": {
+      "airdropFuelCans": {
+        "n": 200,
+        "min": 0,
+        "p10": 2,
+        "p50": 3,
+        "p90": 6,
+        "max": 8,
+        "mean": 3.59
+      },
+      "airdropEnergyRefined": {
+        "n": 200,
+        "min": 0,
+        "p10": 2,
+        "p50": 8,
+        "p90": 12,
+        "max": 18,
+        "mean": 7.21
+      },
+      "airdropIronIngot": {
+        "n": 200,
+        "min": 0,
+        "p10": 3.8,
+        "p50": 6,
+        "p90": 12,
+        "max": 16,
+        "mean": 6.72
+      },
+      "airdropIronSword": {
+        "n": 200,
+        "min": 0,
+        "p10": 1,
+        "p50": 3,
+        "p90": 6,
+        "max": 9,
+        "mean": 3.45
+      },
+      "wreckSpares": {
+        "n": 200,
+        "min": 14,
+        "p10": 19,
+        "p50": 24,
+        "p90": 30,
+        "max": 37,
+        "mean": 24.24
+      },
+      "wreckSalvagedOil": {
+        "n": 200,
+        "min": 17,
+        "p10": 22,
+        "p50": 28,
+        "p90": 34.1,
+        "max": 43,
+        "mean": 27.96
+      },
+      "wreckDamagedDrives": {
+        "n": 200,
+        "min": 7,
+        "p10": 11,
+        "p50": 16,
+        "p90": 20.1,
+        "max": 28,
+        "mean": 16.14
+      },
+      "wreckDirectFuelCans": {
+        "n": 200,
+        "min": 1,
+        "p10": 2.9,
+        "p50": 5,
+        "p90": 7,
+        "max": 11,
+        "mean": 4.91
+      },
+      "ironVeinRichOre_IronPick": {
+        "n": 200,
+        "min": 2,
+        "p10": 4,
+        "p50": 8,
+        "p90": 12,
+        "max": 17,
+        "mean": 7.95
+      },
+      "ironVeinRichOre_Salvager": {
+        "n": 200,
+        "min": 4,
+        "p10": 8,
+        "p50": 12,
+        "p90": 16,
+        "max": 20,
+        "mean": 12.02
+      },
+      "lootEcologySparesCycle0": {
+        "n": 200,
+        "min": 6,
+        "p10": 10,
+        "p50": 12,
+        "p90": 14.2,
+        "max": 18,
+        "mean": 11.98
+      },
+      "lootEcologyFastenersCycle0": {
+        "n": 200,
+        "min": 0,
+        "p10": 0,
+        "p50": 3,
+        "p90": 6,
+        "max": 6,
+        "mean": 3.04
+      },
+      "lootEcologyFieldRepairCycle0": {
+        "n": 200,
+        "min": 0,
+        "p10": 0,
+        "p50": 1.5,
+        "p90": 3,
+        "max": 3,
+        "mean": 1.48
+      },
+      "randomResearchCostForCore_spares": {
+        "n": 200,
+        "min": 108,
+        "p10": 108,
+        "p50": 108,
+        "p90": 108,
+        "max": 108,
+        "mean": 108
+      },
+      "dailyPointsDay1": {
+        "n": 200,
+        "min": 55,
+        "p10": 55,
+        "p50": 55,
+        "p90": 55,
+        "max": 55,
+        "mean": 55
+      }
+    },
+    "veyraDistributions": {
+      "airdropEvents": {
+        "n": 200,
+        "min": 0,
+        "p10": 0,
+        "p50": 0,
+        "p90": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "wreckSpares80Units": {
+        "n": 200,
+        "min": 45,
+        "p10": 51.9,
+        "p50": 56,
+        "p90": 62,
+        "max": 67,
+        "mean": 56.53
+      },
+      "wreckSalvagedOil80Units": {
+        "n": 200,
+        "min": 17,
+        "p10": 22,
+        "p50": 27,
+        "p90": 33,
+        "max": 41,
+        "mean": 27.51
+      },
+      "wreckDamagedDrives80Units": {
+        "n": 200,
+        "min": 0,
+        "p10": 0,
+        "p50": 0,
+        "p90": 0,
+        "max": 0,
+        "mean": 0
+      },
+      "localSpawnWindowIronNodes": {
+        "n": 200,
+        "min": 0,
+        "p10": 0,
+        "p50": 0,
+        "p90": 195,
+        "max": 195,
+        "mean": 48.75
+      },
+      "localSpawnWindowCrystalNodes": {
+        "n": 200,
+        "min": 0,
+        "p10": 0,
+        "p50": 0,
+        "p90": 163,
+        "max": 163,
+        "mean": 40.75
+      },
+      "localSpawnWindowWreckNodes": {
+        "n": 200,
+        "min": 4,
+        "p10": 4,
+        "p50": 6,
+        "p90": 11,
+        "max": 11,
+        "mean": 6.75
+      },
+      "localSpawnWindowCreatures": {
+        "n": 4,
+        "min": 23,
+        "p10": 23.6,
+        "p50": 27.5,
+        "p90": 31.4,
+        "max": 32,
+        "mean": 27.5
+      }
+    }
+  },
+  "exploitAndParityAudit": {
+    "recyclerProbes": [
+      {
+        "item": "iron_pick",
+        "liveRecipe": "X:recover-v3",
+        "craftIe": 3,
+        "recoveredHighIe": 0.333,
+        "overReturnDetected": false,
+        "rows": [
+          {
+            "tier": "base",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "ieRecovered": 0.333,
+            "ieCraft": 3,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "mid",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "ieRecovered": 1.333,
+            "ieCraft": 3,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "high",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "ieRecovered": 2.333,
+            "ieCraft": 3,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          }
+        ]
+      },
+      {
+        "item": "iron_axe",
+        "liveRecipe": "X:recover-v3",
+        "craftIe": 3,
+        "recoveredHighIe": 0.333,
+        "overReturnDetected": false,
+        "rows": [
+          {
+            "tier": "base",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "ieRecovered": 0.333,
+            "ieCraft": 3,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "mid",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "ieRecovered": 1.333,
+            "ieCraft": 3,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "high",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ],
+              [
+                "mechanical_parts",
+                1
+              ]
+            ],
+            "ieRecovered": 2.167,
+            "ieCraft": 3,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          }
+        ]
+      },
+      {
+        "item": "iron_sword",
+        "liveRecipe": "X:recover-v3",
+        "craftIe": 5,
+        "recoveredHighIe": 0.333,
+        "overReturnDetected": false,
+        "rows": [
+          {
+            "tier": "base",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "ieRecovered": 0.333,
+            "ieCraft": 5,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "mid",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "ieRecovered": 1.333,
+            "ieCraft": 5,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "high",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ],
+              [
+                "leather",
+                1
+              ]
+            ],
+            "ieRecovered": 2.333,
+            "ieCraft": 5,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          }
+        ]
+      },
+      {
+        "item": "industrial_pick",
+        "liveRecipe": "X:recover-v1",
+        "craftIe": 4.667,
+        "recoveredHighIe": 0.333,
+        "overReturnDetected": false,
+        "rows": [
+          {
+            "tier": "base",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "ieRecovered": 0.333,
+            "ieCraft": 4.667,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "mid",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "ieRecovered": 1.333,
+            "ieCraft": 4.667,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "high",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ],
+              [
+                "mechanical_parts",
+                1
+              ]
+            ],
+            "ieRecovered": 2.167,
+            "ieCraft": 4.667,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          }
+        ]
+      },
+      {
+        "item": "industrial_axe",
+        "liveRecipe": "X:recover-v3",
+        "craftIe": 4.667,
+        "recoveredHighIe": 0.333,
+        "overReturnDetected": false,
+        "rows": [
+          {
+            "tier": "base",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "ieRecovered": 0.333,
+            "ieCraft": 4.667,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "mid",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "mechanical_parts",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "ieRecovered": 2.167,
+            "ieCraft": 4.667,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "high",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "mechanical_parts",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ],
+              [
+                "mechanical_parts",
+                1
+              ]
+            ],
+            "ieRecovered": 3,
+            "ieCraft": 4.667,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          }
+        ]
+      },
+      {
+        "item": "reinforced_spear",
+        "liveRecipe": "X:recover-v1",
+        "craftIe": 2.833,
+        "recoveredHighIe": 0.333,
+        "overReturnDetected": false,
+        "rows": [
+          {
+            "tier": "base",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "ieRecovered": 0.333,
+            "ieCraft": 2.833,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "mid",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "ieRecovered": 1.333,
+            "ieCraft": 2.833,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          },
+          {
+            "tier": "high",
+            "cumulativeOutputs": [
+              [
+                "scrap",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ],
+              [
+                "mechanical_parts",
+                1
+              ]
+            ],
+            "ieRecovered": 2.167,
+            "ieCraft": 2.833,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          }
+        ]
+      },
+      {
+        "item": "mechanical_gear",
+        "liveRecipe": "X:gear-v1",
+        "craftIe": 4.111,
+        "recoveredHighIe": 2.667,
+        "overReturnDetected": false,
+        "rows": [
+          {
+            "tier": "single",
+            "cumulativeOutputs": [
+              [
+                "mechanical_parts",
+                2
+              ],
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "ieRecovered": 2.667,
+            "ieCraft": 4.111,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          }
+        ]
+      },
+      {
+        "item": "metal_pipe",
+        "liveRecipe": "X:pipe-v2",
+        "craftIe": 3.833,
+        "recoveredHighIe": 2.333,
+        "overReturnDetected": false,
+        "rows": [
+          {
+            "tier": "single",
+            "cumulativeOutputs": [
+              [
+                "refined_iron_ingot",
+                1
+              ],
+              [
+                "mechanical_parts",
+                1
+              ]
+            ],
+            "ieRecovered": 2.333,
+            "ieCraft": 3.833,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          }
+        ]
+      },
+      {
+        "item": "metal_blade",
+        "liveRecipe": "X:blade-v1",
+        "craftIe": 4.833,
+        "recoveredHighIe": 2.833,
+        "overReturnDetected": false,
+        "rows": [
+          {
+            "tier": "single",
+            "cumulativeOutputs": [
+              [
+                "iron_ingot",
+                2
+              ],
+              [
+                "mechanical_parts",
+                1
+              ]
+            ],
+            "ieRecovered": 2.833,
+            "ieCraft": 4.833,
+            "mintedNonNumeraire": [],
+            "verdict": "OK",
+            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+          }
+        ]
+      }
+    ],
+    "legacyV2Arbitrage": [
+      {
+        "item": "iron_sword",
+        "v2Proof": {
+          "item": "iron_sword",
+          "recipe": "X:recover-v2",
+          "craftRoute": "iron_sword",
+          "craftSeconds": 18,
+          "craftVec": {
+            "iron_ingot": 5,
+            "leather": 1
+          },
+          "rows": [
+            {
+              "tier": "base",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ieRecovered": 0.333,
+              "ieCraft": 5,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "mid",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "metal_blade",
+                  1
+                ]
+              ],
+              "ieRecovered": 6.167,
+              "ieCraft": 5,
+              "mintedNonNumeraire": [],
+              "verdict": "OVER_RETURN",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "high",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "metal_blade",
+                  1
+                ],
+                [
+                  "leather",
+                  1
+                ],
+                [
+                  "metal_blade",
+                  1
+                ]
+              ],
+              "ieRecovered": 11,
+              "ieCraft": 5,
+              "mintedNonNumeraire": [],
+              "verdict": "OVER_RETURN",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            }
+          ]
+        },
+        "v3Proof": {
+          "item": "iron_sword",
+          "recipe": "X:recover-v3",
+          "craftRoute": "iron_sword",
+          "craftSeconds": 18,
+          "craftVec": {
+            "iron_ingot": 5,
+            "leather": 1
+          },
+          "rows": [
+            {
+              "tier": "base",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ieRecovered": 0.333,
+              "ieCraft": 5,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "mid",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ieRecovered": 1.333,
+              "ieCraft": 5,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "high",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "leather",
+                  1
+                ]
+              ],
+              "ieRecovered": 2.333,
+              "ieCraft": 5,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            }
+          ]
+        }
+      },
+      {
+        "item": "iron_pick",
+        "v2Proof": {
+          "item": "iron_pick",
+          "recipe": "X:recover-v2",
+          "craftRoute": "iron_pick",
+          "craftSeconds": 15,
+          "craftVec": {
+            "iron_ingot": 3,
+            "wood": 2,
+            "leather": 1
+          },
+          "rows": [
+            {
+              "tier": "base",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ieRecovered": 0.333,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "mid",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ieRecovered": 1.333,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "high",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "metal_pipe",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ieRecovered": 6.167,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [
+                "coal:+1"
+              ],
+              "verdict": "OVER_RETURN",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            }
+          ]
+        },
+        "v3Proof": {
+          "item": "iron_pick",
+          "recipe": "X:recover-v3",
+          "craftRoute": "iron_pick",
+          "craftSeconds": 15,
+          "craftVec": {
+            "iron_ingot": 3,
+            "wood": 2,
+            "leather": 1
+          },
+          "rows": [
+            {
+              "tier": "base",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ieRecovered": 0.333,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "mid",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ieRecovered": 1.333,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "high",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ieRecovered": 2.333,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            }
+          ]
+        }
+      },
+      {
+        "item": "iron_axe",
+        "v2Proof": {
+          "item": "iron_axe",
+          "recipe": "X:recover-v2",
+          "craftRoute": "iron_axe",
+          "craftSeconds": 15,
+          "craftVec": {
+            "iron_ingot": 3,
+            "wood": 2,
+            "leather": 1
+          },
+          "rows": [
+            {
+              "tier": "base",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ieRecovered": 0.333,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "mid",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ieRecovered": 1.333,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "high",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_plate",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ]
+              ],
+              "ieRecovered": 6,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [
+                "coal:+1"
+              ],
+              "verdict": "OVER_RETURN",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            }
+          ]
+        },
+        "v3Proof": {
+          "item": "iron_axe",
+          "recipe": "X:recover-v3",
+          "craftRoute": "iron_axe",
+          "craftSeconds": 15,
+          "craftVec": {
+            "iron_ingot": 3,
+            "wood": 2,
+            "leather": 1
+          },
+          "rows": [
+            {
+              "tier": "base",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ieRecovered": 0.333,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "mid",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ieRecovered": 1.333,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "high",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ]
+              ],
+              "ieRecovered": 2.167,
+              "ieCraft": 3,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            }
+          ]
+        }
+      },
+      {
+        "item": "industrial_axe",
+        "v2Proof": {
+          "item": "industrial_axe",
+          "recipe": "X:recover-v2",
+          "craftRoute": "industrial_axe",
+          "craftSeconds": 25,
+          "craftVec": {
+            "iron_ingot": 4,
+            "wood": 2,
+            "leather": 1,
+            "scrap": 2,
+            "spares": 2
+          },
+          "rows": [
+            {
+              "tier": "base",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ieRecovered": 0.333,
+              "ieCraft": 4.667,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "mid",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ieRecovered": 2.167,
+              "ieCraft": 4.667,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "high",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "mechanical_gear",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ]
+              ],
+              "ieRecovered": 7.111,
+              "ieCraft": 4.667,
+              "mintedNonNumeraire": [],
+              "verdict": "OVER_RETURN",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            }
+          ]
+        },
+        "v3Proof": {
+          "item": "industrial_axe",
+          "recipe": "X:recover-v3",
+          "craftRoute": "industrial_axe",
+          "craftSeconds": 25,
+          "craftVec": {
+            "iron_ingot": 4,
+            "wood": 2,
+            "leather": 1,
+            "scrap": 2,
+            "spares": 2
+          },
+          "rows": [
+            {
+              "tier": "base",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ]
+              ],
+              "ieRecovered": 0.333,
+              "ieCraft": 4.667,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "mid",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ieRecovered": 2.167,
+              "ieCraft": 4.667,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            },
+            {
+              "tier": "high",
+              "cumulativeOutputs": [
+                [
+                  "scrap",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "mechanical_parts",
+                  1
+                ]
+              ],
+              "ieRecovered": 3,
+              "ieCraft": 4.667,
+              "mintedNonNumeraire": [],
+              "verdict": "OK",
+              "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
+            }
+          ]
+        }
+      }
+    ],
+    "claimMinDistFromPoiProbe": {
+      "claimMinDistFromPoi": 10,
+      "claimInsidePoiAllowed": true,
+      "minPoiClaimDistFound": 9,
+      "testPoiCoords": [
+        100,
+        111
+      ]
+    },
+    "oilPumpOffscreenSkipped": true,
+    "creatorCoreRefinedBudget": {
+      "shipSulfurStock": 105,
+      "shipCrystalStock": 93,
+      "shipMaxEnergyRefinedFromWild": 93,
+      "veyraSampledSulfur": 540,
+      "veyraSampledCrystal": 468
+    },
+    "structConservationIssues": [
+      {
+        "struct": "wall_stone",
+        "material": "wood",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (wood: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "door_wood",
+        "material": "rope",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "research",
+        "material": "iron_ingot",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "barrel",
+        "material": "rope",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "feed_trough",
+        "material": "rope",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "power_cable",
+        "material": "iron_ingot",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "power_cable",
+        "material": "fiber",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (fiber: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "power_switch",
+        "material": "iron_ingot",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "power_switch",
+        "material": "fasteners",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (fasteners: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "power_switch",
+        "material": "spares",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (spares: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "pressure_switch",
+        "material": "iron_ingot",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "pressure_switch",
+        "material": "mechanical_parts",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (mechanical_parts: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "pressure_switch",
+        "material": "fasteners",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (fasteners: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "ir_sensor",
+        "material": "mechanical_gear",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (mechanical_gear: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "ir_sensor",
+        "material": "iron_ingot",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "bear_trap",
+        "material": "mechanical_gear",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (mechanical_gear: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "torch_post",
+        "material": "torch",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (torch: 1/1), whereas reclaim refunds 0."
+      }
+    ],
+    "findings": [
+      {
+        "id": "M2-F01",
+        "severity": "CRITICAL",
+        "category": "VEYRA_PARITY_AND_DEAD_CONTENT",
+        "title": "Legacy Creature Biome Gap Breaks Chitin Armor, Spirit Essence, and Demon Core on Veyra",
+        "codeRefs": [
+          "web/src/game/engine.ts:261-273",
+          "web/src/veyra05/ecosystem.ts",
+          "web/src/game/catalog.ts"
+        ],
+        "evidence": "VEYRA_BIOME_CREATURE omits wolf, toad, crawler, beetle, and crab. In 12 Veyra scene runs, 0 wolf/toad/crawler/beetle/crab spawn. Consequently chitin_armor (needs chitin from beetle), essence_spirit (crawler_optic), core_demon (crawler_optic), and shell_glass (crab shell) lose primary creature drops on Veyra (note: slime_3/vampire_3 supply crystal/essence_spirit partly, but beetle/chitin has ZERO drop path on Veyra).",
+        "verifiedMetrics": {
+          "veyraWildRespawnTable": [
+            "boar",
+            "deer",
+            "hare",
+            "grouse",
+            "fox"
+          ],
+          "missingLegacySpecies": [
+            "wolf",
+            "toad",
+            "crawler",
+            "beetle",
+            "crab"
+          ],
+          "brokenVeyraItems": [
+            "chitin",
+            "chitin_armor",
+            "beetle_horn",
+            "crawler_optic"
+          ]
+        }
+      },
+      {
+        "id": "M2-F02",
+        "severity": "CRITICAL",
+        "category": "VEYRA_WORLD_GEOMETRY_BUG",
+        "title": "po_greywater Tackle Box Collision & po_glade T.ROAD Tile Drop Authored/Archetype Caches",
+        "codeRefs": [
+          "web/src/veyra05/arch/sites.ts:67,110",
+          "web/src/veyra05/arch/rest48.ts:112-118",
+          "web/src/veyra05/arch/plan.ts:133",
+          "web/src/veyra05/floors.ts:375"
+        ],
+        "evidence": "Across all 81 Veyra POIs: 23/24 authored caches materialize (po_greywater Tackle Box lost to Cottage Ladder at 1642,1176) and 57/58 archetype POIs materialize (po_glade uses T.ROAD stone paving, failing pickCell() T.FLOOR check).",
+        "verifiedMetrics": {
+          "authoredMaterialized": 23,
+          "authoredExpected": 24,
+          "archetypeMaterialized": 57,
+          "missingAnomalies": [
+            "po_glade (arche=grove): zero archetype containers materialized",
+            "po_greywater: expected 7 authored caches, materialized 6"
+          ]
+        }
+      },
+      {
+        "id": "M2-F03",
+        "severity": "CRITICAL",
+        "category": "PROGRESSION_AND_PARITY_GAP",
+        "title": "Veyra Lacks Airdrops, Loot Ecology, Recycler, and CreatorLootV1 Core Guarantees",
+        "codeRefs": [
+          "web/src/game/airdrop.ts:7",
+          "web/src/game/engine.ts:199",
+          "web/src/game/world.ts:90",
+          "web/src/game/creator-loot.ts"
+        ],
+        "evidence": "Shipping runs receive 14 airdrops (+28 MP, +28 fasteners, fuel/refined energy), LOOT_GRAMMAR_CURRENT (b05-v1), Foundry Recycler, and 5 guaranteed CREATOR_LOOT_V1 Creator Cores. Veyra gets 0 airdrops, undefined lootEcology, no Recycler, and 0 CREATOR_LOOT_V1 cores.",
+        "verifiedMetrics": {
+          "shippingCores": {
+            "core_fire": 1,
+            "core_dragon": 1,
+            "core_demon": 1,
+            "core_storm": 1,
+            "core_meteor": 1,
+            "core_frost": 1,
+            "core_elsa": 1,
+            "core_mjolnir": 1
+          },
+          "veyraCores": {},
+          "shippingOnlyStaticItems": [
+            "wood",
+            "leather",
+            "core_fire",
+            "core_dragon",
+            "core_demon",
+            "iron_sword",
+            "core_storm",
+            "core_meteor",
+            "core_frost",
+            "core_elsa",
+            "keycard",
+            "core_mjolnir",
+            "water_flask"
+          ]
+        }
+      },
+      {
+        "id": "M2-F04",
+        "severity": "HIGH",
+        "category": "CURRENCY_INFLATION_SINK_FAILURE",
+        "title": "Journey Requisitions Mint 7.7x Entire Run Vendor Cap Off-Map, Bypassing Ragnarok & Escrow",
+        "codeRefs": [
+          "web/src/game/balance.v1.json:journeyRequisitions",
+          "web/src/game/catalog.ts:VENDOR_SECURED",
+          "web/src/game/engine.ts:1941"
+        ],
+        "evidence": "Completing daily waypoints pays +42 securedCash/day = 588 securedCash over 14 days directly to profile, bypassing physical rcash, 72h Ragnarok gating, and the 30 rcash escrow_chest — while VENDOR_SECURED holds only 76 securedCash of total stock per run (Veyra also adds 275 rcash).",
+        "verifiedMetrics": {
+          "maxVendorSecuredSpendablePerRun": 76,
+          "maxVendorSparesSpendablePerRun": 59,
+          "dailyRequisitionSecuredPerDay": 42,
+          "max14DayRequisitionSecured": 588,
+          "requisitionOverVendorCapRatio": 7.74,
+          "liveProbeDay1": {
+            "date": "2026-11-11",
+            "craftedOk": true,
+            "emberClaimOk": true,
+            "emberMsg": "+5 Secured Cash · 3× Bandage, 3× Roast Meat",
+            "securedAfter": 5
+          }
+        }
+      },
+      {
+        "id": "M2-F05",
+        "severity": "HIGH",
+        "category": "ENERGY_ECONOMY_BROKEN",
+        "title": "Base Generator Burns 1 Fuel Canister in 60s (10x Faster Than POI Gen, Worse Than Coal/Briquette)",
+        "codeRefs": [
+          "web/src/game/engine.ts:867-874",
+          "web/src/game/catalog.ts:fuel_can",
+          "web/src/game/balance.v1.json:poiAccess"
+        ],
+        "evidence": "base_generator consumes 1 fuel_can (3 salvaged_oil + 1 glass) in 60s per connected load (15 min full 3-slot capacity), while 1 coal lasts 80s and 1 fuel_briquette lasts 90s. Running 1 turret 24h requires 1,440 fuel_cans (~3,600 salvaged_oil), vs only 32 salvaged_oil available in an entire Shipping run.",
+        "verifiedMetrics": {
+          "poiGeneratorFuelRuntimeSec": 180,
+          "baseGeneratorFuelCanRuntimeSec": 60,
+          "baseGeneratorBriquetteRuntimeSec": 90,
+          "baseGeneratorCoalRuntimeSec": 80,
+          "ratioPoiToBaseGenFuelCan": 3,
+          "demand24hOneLoad": {
+            "fuel_can": 1440,
+            "coal": 1080,
+            "fuel_briquette": 960,
+            "wood": 4320
+          },
+          "demand24hTwoLoads": {
+            "fuel_can": 2880,
+            "coal": 2160
+          },
+          "fuelCansNeededFor14dOneLoad": 20160,
+          "shippingTotalOilDeficitFactorFor1Load14d": 1028.57
+        }
+      },
+      {
+        "id": "M2-F06",
+        "severity": "HIGH",
+        "category": "RESEARCH_BOTTLENECK",
+        "title": "Random Research Excludes All 9 core_* Recipes Until All 26 Non-Core Recipes Are Exhausted",
+        "codeRefs": [
+          "web/src/game/engine.ts:2383",
+          "web/src/game/catalog.ts:permitsDirectedResearch"
+        ],
+        "evidence": "Random research filters pool = unknown.filter(k => !k.startsWith('core_')). Since directed research blocks Tier 3, unlocking Tier-3 core_dragon (or any unfound core on Veyra) via research requires burning 104 spares across 26 non-core recipes first.",
+        "verifiedMetrics": {
+          "totalRecipes": 89,
+          "knownAtStart": 54,
+          "unknownAtStart": 35,
+          "unknownNonCore": 26,
+          "unknownTier3NonCore": [
+            "chitin_armor"
+          ],
+          "unknownCores": [
+            "core_mjolnir",
+            "core_demon",
+            "core_meteor",
+            "core_dragon",
+            "core_elsa",
+            "core_fire",
+            "core_earth",
+            "core_storm",
+            "core_frost"
+          ],
+          "sparesNeededBeforeFirstCoreRandom": 104,
+          "totalRandomResearchSparesAll": 140,
+          "minSparesDirectedPlusRandom": 265
+        }
+      },
+      {
+        "id": "M2-F07",
+        "severity": "HIGH",
+        "category": "UI_WIRING_DEFECT",
+        "title": "Classic BuildPanel Omits ir_sensor and bear_trap From BUILD_ORDER Filter",
+        "codeRefs": [
+          "web/src/game/catalog.ts:450",
+          "web/src/ui/panels.tsx:411,420"
+        ],
+        "evidence": "BUILD_GROUPS.Defense in panels.tsx:411 lists ir_sensor and bear_trap, but panels.tsx:420 filters BUILD_ORDER (catalog.ts:450) which omits both keys. Only SurvivorScreen DEVICE_STRUCTS surfaces them.",
+        "verifiedMetrics": {
+          "inBuildGroupsDefense": [
+            "ir_sensor",
+            "bear_trap"
+          ],
+          "missingFromBuildOrder": [
+            "ir_sensor",
+            "bear_trap"
+          ]
+        }
+      },
+      {
+        "id": "M2-F08",
+        "severity": "HIGH",
+        "category": "UNENFORCED_TERRITORY_RULE",
+        "title": "BAL.economy.claimMinDistFromPoi (10 Tiles) Is Declared in balance.v1.json But Unchecked in buildReason()",
+        "codeRefs": [
+          "web/src/game/balance.v1.json:169",
+          "web/src/game/engine.ts:1428-1458"
+        ],
+        "evidence": "Live buildReason() probe placed floor_wood + Territory Cabinet at dist=9 tiles (< claimMinDistFromPoi=10) from Crossroads Trading Post (100,111) with zero rejection.",
+        "verifiedMetrics": {
+          "claimMinDistFromPoi": 10,
+          "claimInsidePoiAllowed": true,
+          "minPoiClaimDistFound": 9,
+          "testPoiCoords": [
+            100,
+            111
+          ]
+        }
+      },
+      {
+        "id": "M2-F09",
+        "severity": "MEDIUM",
+        "category": "VEYRA_REGIONAL_RESOURCE_SKEW",
+        "title": "Strategic Ores on Veyra Are Hyper-Concentrated into Isolated Windows (0 Iron/Crystal/Sulfur at 3/4 Spawns)",
+        "codeRefs": [
+          "web/src/veyra05/window.ts",
+          "web/src/game/world-economy.ts:68",
+          "web/src/veyra05/scenes.ts"
+        ],
+        "evidence": "Across all 12 Veyra scenes, sulfur spawns in only 1/12 scenes (veyra05-cinder), crystal in only 2/12 (veyra05-hook,veyra05-argus), and iron in 5/12 (veyra05-gulf,veyra05-greyback,veyra05-argus,veyra05-slag,veyra05-saltwick). Standard spawn westmouth/greywater have 0 iron, 0 coal, 0 crystal, 0 sulfur (while palm=66 does spawn on warm coastal code=9 windows).",
+        "verifiedMetrics": {
+          "veyraScenesWithSulfur": [
+            "veyra05-cinder"
+          ],
+          "veyraScenesWithCrystal": [
+            "veyra05-hook",
+            "veyra05-argus"
+          ],
+          "veyraScenesWithIron": [
+            "veyra05-gulf",
+            "veyra05-greyback",
+            "veyra05-argus",
+            "veyra05-slag",
+            "veyra05-saltwick"
+          ],
+          "veyraPalmNodes": 66
+        }
+      },
+      {
+        "id": "M2-F10",
+        "severity": "MEDIUM",
+        "category": "TERRITORY_UPKEEP_SCALING",
+        "title": "Territory Upkeep (25%/day = 350% Over 14 Days) Bills Fractional Rare Parts & Rounds Up Discrete Units",
+        "codeRefs": [
+          "web/src/game/balance.v1.json:territory",
+          "web/src/game/engine.ts:520-620"
+        ],
+        "evidence": "Over a 336h run, a covered base pays 3.5x full build cost in ALL 12 territory materials (including brick, iron_ingot, spares, mechanical_parts, fasteners, glass). Because 24-slot Cabinets share slots across all billed materials, a multi-material citadel runs out of rare-material slots or wood far faster than 336h.",
+        "verifiedMetrics": {
+          "upkeepFractionPerDay": 0.25,
+          "fullRunMultiplier": 3.5
+        }
+      },
+      {
+        "id": "M2-F11",
+        "severity": "MEDIUM",
+        "category": "FUEL_LEAK_AND_UI_COPY",
+        "title": "Campfire Burns Loaded Fuel 24/7 When Idle & Tooltip Claims Stale 2h Decay (Actual 12h)",
+        "codeRefs": [
+          "web/src/game/engine.ts:2461",
+          "web/src/ui/Game.tsx:825",
+          "web/src/game/journey.ts:81",
+          "web/src/game/balance.v1.json:166"
+        ],
+        "evidence": "Live idle probe burned 30 wood in 10 min on an empty campfire queue vs 0 on an empty furnace. Meanwhile Game.tsx:825 & journey.ts:81 still warn \"~2h decay\" after W08 raised unprotectedCollapseHours to 12h.",
+        "verifiedMetrics": {
+          "campfireIdleWood10Min": 30,
+          "furnaceIdleWood10Min": 0,
+          "actualCollapseHours": 12
+        }
+      },
+      {
+        "id": "M2-F12",
+        "severity": "MEDIUM",
+        "category": "DISABLED_SYSTEM_STUB",
+        "title": "Oil Pump & Crude Petroleum Chain Is Permanently Disabled Outside Test Fixtures (TEST_FIXTURE_ONLY)",
+        "codeRefs": [
+          "web/src/game/balance.v1.json:oilPumpV1",
+          "web/src/game/engine.ts:1413-1425,2365"
+        ],
+        "evidence": "oil_pump, pump_crude, crude_petroleum, and refinery_crude are seeded as known recipes/buildables, yet oilPumpV1 disables production placement without an oilTestFixture === true run flag.",
+        "verifiedMetrics": {
+          "testFixtureOnlyRecipes": [
+            "pump_crude",
+            "refinery_crude"
+          ],
+          "disabledInProd": true
+        }
+      },
+      {
+        "id": "M2-F13",
+        "severity": "LOW",
+        "category": "REPAIR_VS_REBUILD_PARITY",
+        "title": "Discrete Ceil(0.25*q) Repair Charges 100% Material Cost on Qty=1 Components While Reclaim Refunds 0",
+        "codeRefs": [
+          "web/src/game/engine.ts:624",
+          "web/src/game/balance.v1.json:economy"
+        ],
+        "evidence": "structureRepairCost uses max(1, ceil(q * 0.25)) per material. On qty=1 costs (e.g. door_wood rope, wall_stone wood, chest_large iron/wood edges), repairing 25% HP charges 100% of that ingredient (17 structure-ingredient pairs affected).",
+        "verifiedMetrics": {
+          "affectedPairsCount": 17,
+          "samplePairs": [
+            {
+              "struct": "wall_stone",
+              "material": "wood",
+              "buildCost": 1,
+              "repairCost25PctHp": 1,
+              "reclaimRefund": 0,
+              "note": "Repairing 25% HP costs 100% of build cost (wood: 1/1), whereas reclaim refunds 0."
+            },
+            {
+              "struct": "door_wood",
+              "material": "rope",
+              "buildCost": 1,
+              "repairCost25PctHp": 1,
+              "reclaimRefund": 0,
+              "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
+            },
+            {
+              "struct": "research",
+              "material": "iron_ingot",
+              "buildCost": 1,
+              "repairCost25PctHp": 1,
+              "reclaimRefund": 0,
+              "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
+            },
+            {
+              "struct": "barrel",
+              "material": "rope",
+              "buildCost": 1,
+              "repairCost25PctHp": 1,
+              "reclaimRefund": 0,
+              "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
+            },
+            {
+              "struct": "feed_trough",
+              "material": "rope",
+              "buildCost": 1,
+              "repairCost25PctHp": 1,
+              "reclaimRefund": 0,
+              "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
+            },
+            {
+              "struct": "power_cable",
+              "material": "iron_ingot",
+              "buildCost": 1,
+              "repairCost25PctHp": 1,
+              "reclaimRefund": 0,
+              "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
+            },
+            {
+              "struct": "power_cable",
+              "material": "fiber",
+              "buildCost": 1,
+              "repairCost25PctHp": 1,
+              "reclaimRefund": 0,
+              "note": "Repairing 25% HP costs 100% of build cost (fiber: 1/1), whereas reclaim refunds 0."
+            },
+            {
+              "struct": "power_switch",
+              "material": "iron_ingot",
+              "buildCost": 1,
+              "repairCost25PctHp": 1,
+              "reclaimRefund": 0,
+              "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
+            }
+          ]
+        }
+      },
+      {
+        "id": "M2-F14",
+        "severity": "INFO",
+        "category": "ANTI_ARBITRAGE_VERIFIED",
+        "title": "Live Recycler v3 & Component v4 Rules Enforce Net-Loss Recovery (Historical v2 Over-Return Closed)",
+        "codeRefs": [
+          "web/src/game/recycler.ts",
+          "web/src/game/industrial-proof.ts"
+        ],
+        "evidence": "All live recycler plans (X:recover-v1, X:recover-v3, X:gear-v1, X:pipe-v2, X:blade-v1) return strictly <= craft input ingot-equivalents. Legacy X:recover-v2 (retained only for pre-patch saved jobs) had OVER_RETURN on iron_sword, iron_pick, iron_axe, industrial_axe.",
+        "verifiedMetrics": {
+          "liveOverReturns": 0,
+          "legacyV2OverReturnsFixedInV3": [
+            "iron_sword",
+            "iron_pick",
+            "iron_axe",
+            "industrial_axe"
+          ]
+        }
+      },
+      {
+        "id": "M2-F15",
+        "severity": "LOW",
+        "category": "VEYRA_OFFSCREEN_SIM_ASYMMETRY",
+        "title": "stepStations Explicitly Skips oil_pump While Off-Window on Veyra (Unlike Smelters/Refineries/Livestock)",
+        "codeRefs": [
+          "web/src/game/engine.ts:2419",
+          "web/src/game/husbandry.ts:337"
+        ],
+        "evidence": "Live Veyra offscreen probe confirmed oil_pump in r.veyraOffscreenEntities produced 0 crude_petroleum over 5s while consuming 0 oil stock (oilPumpOffscreenSkipped=true), whereas furnaces, refineries, gardens, and livestock simulate offscreen.",
+        "verifiedMetrics": {
+          "oilPumpOffscreenSkipped": true
+        }
+      },
+      {
+        "id": "M2-F16",
+        "severity": "MEDIUM",
+        "category": "ENDGAME_AMMO_AND_REFINED_ENERGY_GATE",
+        "title": "Refined Energy (CreatorCore Signature/Refined Ammo) Is Tightly Bottlenecked by Wild Sulfur & Crystal Stocks",
+        "codeRefs": [
+          "web/src/game/catalog.ts:energy_refined",
+          "web/src/game/engine.ts:1645"
+        ],
+        "evidence": "Each energy_refined requires {\"crystal\":1,\"iron_ingot\":1} (out=4). Shipping holds 105 sulfur and 93 crystal total wild units (max 93 refined charges if 100% mined); Veyra sampled 12 windows yielded 540 sulfur nodes and 468 crystal nodes.",
+        "verifiedMetrics": {
+          "energyRefinedInputs": {
+            "crystal": 1,
+            "iron_ingot": 1
+          },
+          "energyRefinedQty": 4,
+          "shipSulfurStock": 105,
+          "shipCrystalStock": 93,
+          "shipMaxEnergyRefinedFromWild": 93,
+          "veyraSampledSulfurNodes": 540,
+          "veyraSampledCrystalNodes": 468
+        }
+      }
+    ]
+  }
+}
