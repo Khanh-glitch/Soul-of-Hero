@@ -12,7 +12,7 @@ import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './c
 import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED } from './catalog';
 import { newGame, renewableLoot, markDirty } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
-import { DAILY_BY_ID, dateKey, isValidDateKey } from './journey';
+import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
 import { getWorld, hasLayout, setActiveLayout, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
@@ -378,6 +378,94 @@ export function validate(raw: any): GameState | null {
         if (typeof cid !== 'string' || !r.custody[cid] || ownedContainers.has(cid)) return null;
         ownedContainers.add(cid);
       }
+    }
+  }
+  if (r.dailyLedger !== undefined) {
+    const dl = r.dailyLedger;
+    if (
+      !obj(dl) ||
+      dl.v !== 1 ||
+      !integer(dl.seed) ||
+      dl.seed !== r.seed ||
+      !integer(dl.lastSeq) ||
+      dl.lastSeq < 0 ||
+      dl.lastSeq > r.seq ||
+      !obj(dl.capabilities) ||
+      !stringArray(dl.capabilities.learnedKeys) ||
+      dl.capabilities.learnedKeys.length > 2 ||
+      new Set(dl.capabilities.learnedKeys).size !== dl.capabilities.learnedKeys.length ||
+      !obj(dl.days) ||
+      Object.keys(dl.days).length > MAX_DAILY_LEDGER_DAYS
+    ) return null;
+    for (const ck of ['recipe1Date', 'recipe2Date', 'anyStructDate', 'bedDate', 'stationDate', 'researchDate'] as const) {
+      const cv = dl.capabilities[ck];
+      if (cv !== undefined && (typeof cv !== 'string' || !isValidDateKey(cv))) return null;
+    }
+    const minValidTime = r.startedAt - Math.max(0, r.qaOffset);
+    for (const [dk, day] of Object.entries(dl.days) as [string, any][]) {
+      if (
+        !isValidDateKey(dk) ||
+        !obj(day) ||
+        day.date !== dk ||
+        !stringArray(day.baseIds) ||
+        day.baseIds.length < 1 ||
+        day.baseIds.length > 4 ||
+        new Set(day.baseIds).size !== day.baseIds.length ||
+        day.baseIds.some((id: string) => !DAILY_BY_ID[id]) ||
+        !Array.isArray(day.objectives) ||
+        day.objectives.length !== day.baseIds.length ||
+        !integer(day.points) ||
+        day.points < 0 ||
+        !stringArray(day.milestones)
+      ) return null;
+      if (day.reroll !== undefined) {
+        const rr = day.reroll;
+        if (
+          !obj(rr) ||
+          typeof rr.from !== 'string' ||
+          !day.baseIds.includes(rr.from) ||
+          typeof rr.to !== 'string' ||
+          !DAILY_BY_ID[rr.to] ||
+          day.baseIds.includes(rr.to) ||
+          rr.from === rr.to ||
+          !finite(rr.at) ||
+          rr.at < r.startedAt ||
+          dateKey(rr.at) !== dk ||
+          !integer(rr.seq) ||
+          rr.seq < 1 ||
+          rr.seq > r.seq ||
+          typeof rr.intentId !== 'string' ||
+          !rr.intentId
+        ) return null;
+      }
+      const expectedIds = day.reroll
+        ? day.baseIds.map((id: string) => (id === day.reroll.from ? day.reroll.to : id))
+        : day.baseIds;
+      let expectedPoints = 0;
+      for (let i = 0; i < day.objectives.length; i++) {
+        const o = day.objectives[i];
+        if (!obj(o) || o.id !== expectedIds[i]) return null;
+        const def = DAILY_BY_ID[o.id];
+        if (
+          !def ||
+          !integer(o.progress) ||
+          o.progress < 0 ||
+          o.progress > def.target ||
+          typeof o.done !== 'boolean' ||
+          o.done !== (o.progress >= def.target) ||
+          (o.doneAt !== undefined && (!finite(o.doneAt) || o.doneAt < minValidTime)) ||
+          !stringArray(o.seen) ||
+          o.seen.length > 40 ||
+          o.seen.some((sk: string) => sk.length > 64)
+        ) return null;
+        if (o.done) expectedPoints += def.points;
+      }
+      if (day.points !== expectedPoints) return null;
+      const expectedMilestones = DAILY_MILESTONES.filter(m => expectedPoints >= m.at).map(m => m.id);
+      if (
+        day.milestones.length !== expectedMilestones.length ||
+        day.milestones.some((m: string, i: number) => m !== expectedMilestones[i])
+      ) return null;
     }
   }
   if (r.dailyRerolls !== undefined) {

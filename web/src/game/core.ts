@@ -155,6 +155,41 @@ export interface DailyRerollRecord {
   intentId: string;
 }
 
+export interface DailyCapabilityDates {
+  learnedKeys: string[];
+  recipe1Date?: string;
+  recipe2Date?: string;
+  anyStructDate?: string;
+  bedDate?: string;
+  stationDate?: string;
+  researchDate?: string;
+}
+
+export interface DailyLedgerObjective {
+  id: string;
+  progress: number;
+  done: boolean;
+  doneAt?: number;
+  seen: string[];
+}
+
+export interface DailyLedgerDay {
+  date: string;
+  baseIds: string[];
+  reroll?: DailyRerollRecord;
+  objectives: DailyLedgerObjective[];
+  points: number;
+  milestones: string[];
+}
+
+export interface DailyLedger {
+  v: 1;
+  seed: number;
+  lastSeq: number;
+  capabilities: DailyCapabilityDates;
+  days: Record<string, DailyLedgerDay>;
+}
+
 export interface RunRecord {
   runId: string; character: string; startedAt: number; endedAt: number; ending: 'evacuated' | 'abandoned' | 'expired';
   score: number; stones: number; deposited: number; achievements: string[]; qa: boolean; verified: 'LOCAL/UNVERIFIED';
@@ -244,6 +279,8 @@ export interface RunState {
   receipts: Receipt[]; seenIntents: string[]; seq: number;
   /** Additive run-authoritative UTC-day-scoped once-per-day daily waypoint rerolls (`YYYY-MM-DD -> DailyRerollRecord`). */
   dailyRerolls?: Record<string, DailyRerollRecord>;
+  /** Additive bounded run-authoritative daily waypoint ledger (pinned slate, progress, reroll cutover, capability dates). */
+  dailyLedger?: DailyLedger;
   vendorStock: Record<string, number>;
   log: { t: number; msg: string; tone?: string }[];
 }

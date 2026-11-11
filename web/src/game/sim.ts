@@ -17,6 +17,7 @@ import { isVeyra05Layout } from '../veyra05/scenes';
 import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
+import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
 import { regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -1519,6 +1520,7 @@ export function syncWorld(gs: GameState, now: number): boolean {
   if (!gs.run || r.clock.lastSimAt < activeStart) return false;
   advanceWorld(gs, r.clock.lastSimAt, now);
   r.clock.lastSimAt = now;
+  syncRunDailyLedger(r, dateKey(now));
   return true;
 }
 
@@ -1621,6 +1623,10 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   // A corrupt/legacy pre-run checkpoint cannot cause more than one run's duration of replay.
   const start = Math.max(r.clock.lastSimAt, expiry - BAL.run.maxRunHours * HOUR);
   const end = Math.min(now, expiry), gap = Math.max(0, end - start);
+  syncRunDailyLedger(r, dateKey(start));
+  const markOffline = interruptTransit && gap > 5000;
+  if (markOffline) beginDailyOfflineSettle();
+  try {
   // R5.1 P1-D committed-projectile policy: hostile instruments aimed at the absent player cannot resolve
   // during settlement, offline or after return. Hostile hazards and hostile in-flight projectiles are
   // discarded (never stepped, never re-armed); the player's own committed instruments persist for online law.
@@ -1815,7 +1821,11 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   if (Math.round(startThirst - p.thirst) > 0) report.push(`Thirst ${Math.round(startThirst)} → ${Math.round(p.thirst)} (shelter does not prevent thirst death).`);
   if (!p.dead && startHp - p.hp >= 1) report.push(`HP ${Math.round(startHp)} → ${Math.round(p.hp)}.`);
   receipt(r, now, 'offline.settle', `${Math.round(gap / 1000)}s`);
+  syncRunDailyLedger(r, dateKey(end));
   return report;
+  } finally {
+    if (markOffline) endDailyOfflineSettle();
+  }
 }
 
 // ---------- interaction finder (for E prompts) ----------

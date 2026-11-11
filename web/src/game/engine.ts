@@ -23,7 +23,11 @@ import { FRAME_W, FRAME_H, globalIndex } from '../veyra05/frame';
 import { getWindowWorld, getWindowWorldForGlobalTile, resetWindowToGround } from '../veyra05/window';
 import { activeFloor, applyFloor, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
 import { windowOrigin } from '../veyra05/continuity';
-import { computeAuthoritativeDailyPoints, dailySaltFor, dateKey, generateDaily, isValidDateKey, measureDailyObjectiveProgress, resolveRerollReplacement } from './journey';
+import {
+  commitDailyLedgerReroll, computeAuthoritativeDailyPoints, dailySaltFor, dateKey,
+  generateDaily, isValidDateKey, MAX_DAILY_LEDGER_DAYS, measureDailyObjectiveProgress,
+  recordDailyReceipt, resolveRerollReplacement, syncRunDailyLedger,
+} from './journey';
 import { syncVeyraEcosystemActors } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
@@ -177,6 +181,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Array.from(new Set([...Object.keys(RECIPES).filter(k => RECIPES[k].base), ...ALWAYS_KNOWN_RECIPES])), studied: [] },
     traces: [], discovered: [], poiSeen: [], intel: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
+    dailyLedger: { v: 1, seed, lastSeq: 0, capabilities: { learnedKeys: [] }, days: {} },
     vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])), ...Object.fromEntries(Object.entries(VENDOR_SPARES).map(([k,v]) => [`spares:${k}`,v.stock])) }, log: [],
   };
   if (supportsAirdrops(r.layoutId!)) r.airdrops={version:'airdrop-v1',mapDigest:r.sourceMap!.mapDigest!,seed:r.seed,runId:r.id,startedAt:r.startedAt,nextIndex:0};
@@ -268,7 +273,9 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   }
   gs.run = r; markDirty(); gs.revision++;
   pushLog(r, now, `You wash up near ${sp.name}. No one is coming to tell you what to do.`, 'gold');
-  return { ok: true, receipt: receipt(r, now, 'run.start', `${character}@${sp.name}`) };
+  const startRc = receipt(r, now, 'run.start', `${character}@${sp.name}`);
+  syncRunDailyLedger(r, dateKey(now));
+  return { ok: true, receipt: startRc };
 }
 export function mkCreature(r: RunState, type: string, x: number, y: number, hp: number, elder?: Creature['elder']): Creature {
   return { id: uid(r, 'm'), type, x, y, hp, maxHp: hp, homeX: x, homeY: y, state: elder ? 'sleep' : 'wander', t: 0, tx: x, ty: y, angle: 0, dir: 0, knows: null, path: null, pathT: 0, cd: 0, kbx: 0, kby: 0, flash: 0, elder };
@@ -320,7 +327,11 @@ let receiptSink: { id: string; at: number; kind: string; detail: string }[] | nu
 export function beginReceiptSink(): void { receiptSink = []; }
 export function endReceiptSink(): { id: string; at: number; kind: string; detail: string }[] { const out = receiptSink ?? []; receiptSink = null; return out; }
 export function receipt(r: RunState, now: number, kind: string, detail: string) {
-  const id = `r${++r.seq}`; r.receipts.push({ id, seq: r.seq, at: now, kind, detail }); if (r.receipts.length > 250) r.receipts.splice(0, r.receipts.length - 250);
+  const id = `r${++r.seq}`;
+  const rc = { id, seq: r.seq, at: now, kind, detail };
+  recordDailyReceipt(r, rc);
+  r.receipts.push(rc);
+  if (r.receipts.length > 250) r.receipts.splice(0, r.receipts.length - 250);
   if (receiptSink) receiptSink.push({ id, at: now, kind, detail });
   return id;
 }
@@ -2123,7 +2134,18 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const next = resolveRerollReplacement(date, salt, baseIds, from, r);
       if (!next) return fail('No eligible replacement waypoint today.');
       const res = ok('journey.reroll', `${date}:${from}->${next.id}`, `Swapped waypoint to ${next.title}.`);
-      (r.dailyRerolls ??= {})[date] = { from, to: next.id, at: now, seq: r.seq, intentId: it.id };
+      const rec = { from, to: next.id, at: now, seq: r.seq, intentId: it.id };
+      const rerolls = (r.dailyRerolls ??= {});
+      rerolls[date] = rec;
+      const rKeys = Object.keys(rerolls);
+      if (rKeys.length > MAX_DAILY_LEDGER_DAYS) {
+        rKeys.sort();
+        while (rKeys.length > MAX_DAILY_LEDGER_DAYS) {
+          const oldest = rKeys.shift()!;
+          if (oldest !== date) delete rerolls[oldest];
+        }
+      }
+      commitDailyLedgerReroll(r, date, rec);
       return res;
     }
     case 'journeyRequisition': {

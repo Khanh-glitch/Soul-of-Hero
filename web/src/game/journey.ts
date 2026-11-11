@@ -15,8 +15,16 @@
 //  · Nothing here grants items or currency. Milestone rewards that would need
 //    economic authority are recorded as PENDING with the exact integration need.
 // ============================================================================
-import { ACHIEVEMENTS, ITEMS, SOURCES, STRUCTS, lookupElderDef } from './catalog';
-import { BAL, type GameState, type RunState } from './core';
+import { ACHIEVEMENTS, ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, SOURCES, STRUCTS, lookupElderDef } from './catalog';
+import {
+  BAL,
+  type DailyCapabilityDates,
+  type DailyLedger,
+  type DailyLedgerDay,
+  type DailyRerollRecord,
+  type GameState,
+  type RunState,
+} from './core';
 import type { Receipt } from './presentation-cues';
 import { POIS } from '../veyra05/reader';
 
@@ -248,32 +256,98 @@ export const dailySaltFor = (r: RunState | null) => (r ? `run:${r.id}:${r.seed}`
 function hash(s: string) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
 function rng(seed: number) { let x = seed || 1; return () => { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; x >>>= 0; return x / 4294967296; }; }
 
-/** Day-invariant capability gate evaluated strictly as of 00:00 UTC of `date` so mid-day builds/research never mutate today's objective slate. */
-function dailyGateAtDayStart(def: DailyDef, r: RunState | null, date: string): boolean {
-  if (!def.gate) return true;
-  if (!r) return false;
-  if (date <= dateKey(r.startedAt)) return false;
-  const hasRunStart = r.receipts.some(rc => rc.kind === 'run.start');
-  if (!hasRunStart) return def.gate(r);
-  const prior = r.receipts.filter(rc => dateKey(rc.at) < date);
-  if (!prior.length) return false;
-  const learnedCount = new Set(
-    prior.filter(rc => rc.kind === 'learn.blueprint' || rc.kind === 'research.specimen').map(rc => rc.detail),
-  ).size;
-  const builtTypes = new Set(
-    prior.filter(rc => rc.kind === 'build').map(rc => rc.detail.split('@')[0]),
-  );
-  if (def.id === 'mend') return learnedCount >= 1;
-  if (def.id === 'hunt5') return learnedCount >= 2;
-  if (def.id === 'fortify') return builtTypes.size > 0;
-  if (def.id === 'rest') return builtTypes.has('bed_straw');
-  if (def.id === 'smelt') return ['furnace', 'workbench', 'campfire', 'recycler', 'refinery'].some(t => builtTypes.has(t));
-  if (def.id === 'knowledge') return builtTypes.has('research');
-  return def.gate(r);
+export const MAX_DAILY_LEDGER_DAYS = 32;
+const MAX_DAILY_SEEN_KEYS = 40;
+const STATION_GATE_TYPES = ['furnace', 'workbench', 'campfire', 'recycler', 'refinery'];
+
+let offlineSettleDepth = 0;
+export function beginDailyOfflineSettle(): void { offlineSettleDepth++; }
+export function endDailyOfflineSettle(): void { offlineSettleDepth = Math.max(0, offlineSettleDepth - 1); }
+
+function recordCapabilityInLedger(caps: DailyCapabilityDates, dKey: string, kind: string, detail: string) {
+  if (!isValidDateKey(dKey)) return;
+  if (kind === 'learn.blueprint' || kind === 'research.specimen') {
+    if (!caps.learnedKeys.includes(detail)) {
+      if (caps.learnedKeys.length < 2) caps.learnedKeys.push(detail);
+      if (!caps.recipe1Date) caps.recipe1Date = dKey;
+      if (caps.learnedKeys.length >= 2 && !caps.recipe2Date) caps.recipe2Date = dKey;
+    }
+  } else if (kind === 'build') {
+    const t = detail.split('@')[0];
+    if (!caps.anyStructDate) caps.anyStructDate = dKey;
+    if (t === 'bed_straw' && !caps.bedDate) caps.bedDate = dKey;
+    if (STATION_GATE_TYPES.includes(t) && !caps.stationDate) caps.stationDate = dKey;
+    if (t === 'research' && !caps.researchDate) caps.researchDate = dKey;
+  }
 }
 
-/** Four objectives from four different categories, capability-gated, with one easy and one demanding. */
-export function generateDaily(date: string, salt: string, r: RunState | null, exclude: string[] = []): string[] {
+function bootstrapLegacyCapabilities(r: RunState, caps: DailyCapabilityDates) {
+  if (r.seq <= 0 || r.receipts.some(rc => rc.kind === 'run.start')) return;
+  const startDay = dateKey(r.startedAt);
+  const survivingLearns = new Set(
+    (r.receipts as Receipt[])
+      .filter(rc => rc.kind === 'learn.blueprint' || rc.kind === 'research.specimen')
+      .map(rc => rc.detail),
+  );
+  const priorLearned = r.knowledge.recipes.filter(
+    k => !RECIPES[k]?.base && !ALWAYS_KNOWN_RECIPES.includes(k) && !survivingLearns.has(k),
+  );
+  for (const k of priorLearned.slice(0, 2)) {
+    recordCapabilityInLedger(caps, startDay, 'learn.blueprint', k);
+  }
+  const survivingBuildCounts = new Map<string, number>();
+  for (const rc of r.receipts as Receipt[]) {
+    if (rc.kind !== 'build') continue;
+    const bt = rc.detail.split('@')[0];
+    survivingBuildCounts.set(bt, (survivingBuildCounts.get(bt) ?? 0) + 1);
+  }
+  const liveTypeCounts = new Map<string, number>();
+  for (const e of [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})]) {
+    if (e.kind === 'struct' && e.type && (!e.owner || e.owner === 'player')) {
+      liveTypeCounts.set(e.type, (liveTypeCounts.get(e.type) ?? 0) + 1);
+    }
+  }
+  for (const [t, n] of liveTypeCounts) {
+    if (n > (survivingBuildCounts.get(t) ?? 0)) {
+      recordCapabilityInLedger(caps, startDay, 'build', t);
+    }
+  }
+}
+
+function ensureDailyLedger(r: RunState): DailyLedger {
+  if (!r.dailyLedger || r.dailyLedger.v !== 1) {
+    const caps: DailyCapabilityDates = { learnedKeys: [] };
+    bootstrapLegacyCapabilities(r, caps);
+    r.dailyLedger = {
+      v: 1,
+      seed: r.seed,
+      lastSeq: 0,
+      capabilities: caps,
+      days: {},
+    };
+  } else if (r.dailyLedger.seed !== r.seed) {
+    r.dailyLedger.seed = r.seed;
+    r.dailyLedger.days = {};
+  }
+  return r.dailyLedger;
+}
+
+/** Day-invariant capability gate evaluated strictly as of 00:00 UTC of `date` from the durable ledger so `run.start` eviction or mid-day builds/research never mutate today's objective slate. */
+function dailyGateAtDayStart(def: DailyDef, r: RunState | null, date: string): boolean {
+  if (!def.gate) return true;
+  if (!r || !isValidDateKey(date)) return false;
+  if (date <= dateKey(r.startedAt)) return false;
+  const caps = ensureDailyLedger(r).capabilities;
+  if (def.id === 'mend') return !!caps.recipe1Date && caps.recipe1Date < date;
+  if (def.id === 'hunt5') return !!caps.recipe2Date && caps.recipe2Date < date;
+  if (def.id === 'fortify') return !!caps.anyStructDate && caps.anyStructDate < date;
+  if (def.id === 'rest') return !!caps.bedDate && caps.bedDate < date;
+  if (def.id === 'smelt') return !!caps.stationDate && caps.stationDate < date;
+  if (def.id === 'knowledge') return !!caps.researchDate && caps.researchDate < date;
+  return false;
+}
+
+function computeDailyBaseIds(date: string, salt: string, r: RunState | null, exclude: string[] = []): string[] {
   const rand = rng(hash(`${date}|${salt}`));
   const pool = DAILY_POOL.filter(d => !exclude.includes(d.id) && dailyGateAtDayStart(d, r, date));
   const cats = [...new Set(pool.map(d => d.cat))].sort(() => rand() - 0.5);
@@ -290,6 +364,16 @@ export function generateDaily(date: string, salt: string, r: RunState | null, ex
   return pick.map(p => p.id);
 }
 
+/** Four objectives from four different categories, capability-gated, with one easy and one demanding. */
+export function generateDaily(date: string, salt: string, r: RunState | null, exclude: string[] = []): string[] {
+  if (r && exclude.length === 0 && salt === dailySaltFor(r)) {
+    syncRunDailyLedger(r);
+    const pinned = r.dailyLedger?.seed === r.seed ? r.dailyLedger.days[date] : undefined;
+    if (pinned) return [...pinned.baseIds];
+  }
+  return computeDailyBaseIds(date, salt, r, exclude);
+}
+
 export function resolveRerollReplacement(date: string, salt: string, taken: string[], objId: string, r: RunState | null): DailyDef | null {
   const cats = new Set(taken.map(id => DAILY_BY_ID[id]?.cat));
   const rand = rng(hash(`${date}|${salt}|reroll`));
@@ -298,10 +382,135 @@ export function resolveRerollReplacement(date: string, salt: string, taken: stri
   return opts[Math.floor(rand() * opts.length)];
 }
 
-/** Measure authoritative progress for a single daily objective on `date` from committed `r.receipts` strictly after `afterSeq`. */
+function recomputeLedgerDayTotals(day: DailyLedgerDay) {
+  let pts = 0;
+  for (const o of day.objectives) {
+    const def = DAILY_BY_ID[o.id];
+    if (!def) continue;
+    o.done = o.progress >= def.target;
+    if (o.done) pts += def.points;
+  }
+  day.points = pts;
+  day.milestones = DAILY_MILESTONES.filter(m => pts >= m.at).map(m => m.id);
+}
+
+function applyRerollCutoverToDay(r: RunState, day: DailyLedgerDay, rec: DailyRerollRecord) {
+  const salt = dailySaltFor(r);
+  if (!day.baseIds.includes(rec.from)) return;
+  if (resolveRerollReplacement(day.date, salt, day.baseIds, rec.from, r)?.id !== rec.to) return;
+  if (day.reroll && day.reroll.from === rec.from && day.reroll.to === rec.to && day.reroll.seq === rec.seq) return;
+  day.reroll = { ...rec };
+  day.objectives = day.baseIds.map(id => {
+    if (id === rec.from) return { id: rec.to, progress: 0, done: false, seen: [] };
+    const existing = day.objectives.find(o => o.id === id);
+    return existing ?? { id, progress: 0, done: false, seen: [] };
+  });
+  recomputeLedgerDayTotals(day);
+}
+
+function ensureDailyLedgerDay(r: RunState, date: string): DailyLedgerDay | null {
+  if (!isValidDateKey(date)) return null;
+  const minDay = dateKey(r.startedAt - Math.max(0, r.qaOffset));
+  if (date < minDay) return null;
+  const ledger = ensureDailyLedger(r);
+  let day = ledger.days[date];
+  if (!day) {
+    const salt = dailySaltFor(r);
+    const baseIds = computeDailyBaseIds(date, salt, r, []);
+    day = {
+      date,
+      baseIds,
+      objectives: baseIds.map(id => ({ id, progress: 0, done: false, seen: [] })),
+      points: 0,
+      milestones: [],
+    };
+    ledger.days[date] = day;
+    const keys = Object.keys(ledger.days);
+    if (keys.length > MAX_DAILY_LEDGER_DAYS) {
+      keys.sort();
+      while (keys.length > MAX_DAILY_LEDGER_DAYS) {
+        const oldest = keys.shift()!;
+        if (oldest !== date) delete ledger.days[oldest];
+      }
+    }
+  }
+  const committed = r.dailyRerolls?.[date];
+  if (committed && !day.reroll) applyRerollCutoverToDay(r, day, committed);
+  return day;
+}
+
+function foldOneReceiptIntoLedger(r: RunState, ledger: DailyLedger, rc: Receipt, offline: boolean) {
+  if (!rc || !Number.isFinite(rc.seq) || rc.seq <= ledger.lastSeq) return;
+  ledger.lastSeq = rc.seq;
+  if (!Number.isFinite(rc.at)) return;
+  const dKey = dateKey(rc.at);
+  const day = ensureDailyLedgerDay(r, dKey);
+  if (dKey >= dateKey(r.startedAt)) {
+    recordCapabilityInLedger(ledger.capabilities, dKey, rc.kind, rc.detail);
+  }
+  if (!day) return;
+  let touched = false;
+  for (const o of day.objectives) {
+    if (o.done) continue;
+    if (day.reroll && o.id === day.reroll.to && rc.seq <= day.reroll.seq) continue;
+    const def = DAILY_BY_ID[o.id];
+    if (!def) continue;
+    if (offline && !def.offlineOk) continue;
+    const seen = new Set(o.seen);
+    const inc = def.count(rc, seen);
+    if (inc <= 0) continue;
+    o.progress = Math.min(def.target, o.progress + inc);
+    o.seen = [...seen].slice(0, MAX_DAILY_SEEN_KEYS);
+    if (o.progress >= def.target) {
+      o.done = true;
+      o.doneAt = rc.at;
+    }
+    touched = true;
+  }
+  if (touched) recomputeLedgerDayTotals(day);
+}
+
+/** Sync any unfolded surviving `r.receipts` into `r.dailyLedger` and optionally pin `ensureDate`. */
+export function syncRunDailyLedger(r: RunState, ensureDate?: string): DailyLedger {
+  const ledger = ensureDailyLedger(r);
+  for (const rc of r.receipts as Receipt[]) {
+    if (rc.seq > ledger.lastSeq) foldOneReceiptIntoLedger(r, ledger, rc, false);
+  }
+  if (ensureDate && isValidDateKey(ensureDate)) ensureDailyLedgerDay(r, ensureDate);
+  return ledger;
+}
+
+/** Called directly from `engine.ts:receipt()` BEFORE/AS the 250-receipt ring buffer evicts old entries. */
+export function recordDailyReceipt(r: RunState, rc: Receipt): void {
+  const ledger = ensureDailyLedger(r);
+  for (const prev of r.receipts as Receipt[]) {
+    if (prev.seq > ledger.lastSeq && prev.seq < rc.seq) {
+      foldOneReceiptIntoLedger(r, ledger, prev, false);
+    }
+  }
+  foldOneReceiptIntoLedger(r, ledger, rc, offlineSettleDepth > 0);
+}
+
+/** Commit an authoritative `journeyReroll` cutover onto `r.dailyLedger.days[date]`. */
+export function commitDailyLedgerReroll(r: RunState, date: string, rec: DailyRerollRecord): void {
+  syncRunDailyLedger(r, date);
+  const day = ensureDailyLedgerDay(r, date);
+  if (!day) return;
+  applyRerollCutoverToDay(r, day, rec);
+}
+
+/** Measure authoritative progress for a single daily objective on `date` from durable `r.dailyLedger` (falling back to surviving `r.receipts` only for custom non-active queries). */
 export function measureDailyObjectiveProgress(r: RunState, date: string, objId: string, afterSeq = 0): number {
   const def = DAILY_BY_ID[objId];
   if (!def || !isValidDateKey(date)) return 0;
+  syncRunDailyLedger(r, date);
+  const day = r.dailyLedger?.days[date];
+  if (day) {
+    const active = day.objectives.find(o => o.id === objId);
+    if (active && (afterSeq === 0 || (day.reroll && day.reroll.to === objId && afterSeq <= day.reroll.seq))) {
+      return active.progress;
+    }
+  }
   const seen = new Set<string>();
   let progress = 0;
   for (const rc of r.receipts as Receipt[]) {
@@ -313,32 +522,34 @@ export function measureDailyObjectiveProgress(r: RunState, date: string, objId: 
   return progress;
 }
 
-/** Recompute authoritative Daily Waypoint points exclusively from committed `r.dailyRerolls` and committed `r.receipts` on `date`. */
+/** Compute authoritative Daily Waypoint points from durable `r.dailyLedger` on `date`. */
 export function computeAuthoritativeDailyPoints(r: RunState, date: string): number {
   if (!isValidDateKey(date)) return 0;
-  const salt = dailySaltFor(r);
-  const baseIds = generateDaily(date, salt, r);
-  const committed = r.dailyRerolls?.[date];
-  const validReroll = committed
-    && baseIds.includes(committed.from)
-    && resolveRerollReplacement(date, salt, baseIds, committed.from, r)?.id === committed.to
-    ? committed
-    : null;
-  const activeIds = validReroll
-    ? baseIds.map(id => (id === validReroll.from ? validReroll.to : id))
-    : baseIds;
-
+  syncRunDailyLedger(r, date);
+  const day = r.dailyLedger?.days[date];
+  if (!day) return 0;
   let points = 0;
-  for (const id of activeIds) {
-    const def = DAILY_BY_ID[id];
-    if (!def) continue;
-    const afterSeq = validReroll && id === validReroll.to ? validReroll.seq : 0;
-    if (measureDailyObjectiveProgress(r, date, id, afterSeq) >= def.target) points += def.points;
+  for (const o of day.objectives) {
+    const def = DAILY_BY_ID[o.id];
+    if (def && o.done && o.progress >= def.target) points += def.points;
   }
   return points;
 }
 
 function newDay(date: string, _s: JourneyStore, r: RunState | null): DailyState {
+  if (r) syncRunDailyLedger(r, date);
+  const authDay = r?.dailyLedger?.days[date];
+  if (authDay) {
+    return {
+      date,
+      runId: r?.id,
+      objectives: authDay.objectives.map(o => ({ id: o.id, progress: 0, done: false, seen: [] })),
+      points: 0,
+      milestones: [],
+      rerolled: !!authDay.reroll,
+      ...(authDay.reroll ? { rerolledFrom: authDay.reroll.from } : {}),
+    };
+  }
   const salt = dailySaltFor(r);
   const baseIds = generateDaily(date, salt, r);
   const committed = r?.dailyRerolls?.[date];
@@ -387,12 +598,17 @@ export function ingestJourney(prev: JourneyStore, gs: GameState, now: number): I
   let s = prev; let changed = false; const events: JourneyEvent[] = [];
   const mut = () => { if (!changed) { s = { ...s, lessons: { ...s.lessons }, cursors: { ...s.cursors }, poiSeen: { ...s.poiSeen }, coreSeen: { ...s.coreSeen }, claimed: [...s.claimed], chronicle: [...s.chronicle], history: [...s.history], pendingRewards: [...s.pendingRewards] }; changed = true; } };
   const today = dateKey(now);
+  syncRunDailyLedger(r, today);
 
   // Day roll-over or run switch on the same day. A clock moved backwards freezes daily progress rather than regenerating.
   if (!s.daily || today > s.daily.date || (today === s.daily.date && s.daily.runId !== r.id)) {
     mut();
     if (s.daily && today > s.daily.date) {
-      s.history = [{ date: s.daily.date, points: s.daily.points, milestones: s.daily.milestones, completed: s.daily.objectives.filter(o => o.done).length }, ...s.history].slice(0, 14);
+      const prevAuth = s.daily.runId === r.id ? r.dailyLedger?.days[s.daily.date] : undefined;
+      const histPts = prevAuth ? prevAuth.points : s.daily.points;
+      const histMilestones = prevAuth ? [...prevAuth.milestones] : s.daily.milestones;
+      const histCompleted = prevAuth ? prevAuth.objectives.filter(o => o.done).length : s.daily.objectives.filter(o => o.done).length;
+      s.history = [{ date: s.daily.date, points: histPts, milestones: histMilestones, completed: histCompleted }, ...s.history].slice(0, 14);
     }
     s.daily = newDay(today, s, r);
     if (s.tracked?.type === 'daily') s.tracked = null;
@@ -429,21 +645,95 @@ export function ingestJourney(prev: JourneyStore, gs: GameState, now: number): I
   const knownCore = new Set(s.coreSeen[r.id] ?? []);
   const inv = r.custody['inv']?.slots ?? [];
   for (const st of inv) if (st && ITEMS[st.key]?.creatorCore && !knownCore.has(st.uid)) batch.push({ id: `core:${st.uid}`, seq: -1, at: now, kind: OBS_CORE, detail: `${st.key}:${st.uid}` });
-  if (!batch.length) return { store: s, events, changed };
-  mut();
 
-  for (const rc of batch) {
-    const away = now - rc.at > 5000;
-    if (rc.kind === OBS_POI) s.poiSeen[r.id] = [...(s.poiSeen[r.id] ?? []), rc.detail];
-    if (rc.kind === OBS_CORE) s.coreSeen[r.id] = [...(s.coreSeen[r.id] ?? []), rc.detail.split(':')[1]];
-    applyFieldcraft(rc, away, false);
-    if (dailyLive && dateKey(rc.at) === today) applyDaily(rc, away);
-    chronicleFrom(rc, away);
+  if (batch.length) {
+    mut();
+    for (const rc of batch) {
+      const away = now - rc.at > 5000;
+      if (rc.kind === OBS_POI) s.poiSeen[r.id] = [...(s.poiSeen[r.id] ?? []), rc.detail];
+      if (rc.kind === OBS_CORE) s.coreSeen[r.id] = [...(s.coreSeen[r.id] ?? []), rc.detail.split(':')[1]];
+      applyFieldcraft(rc, away, false);
+      if (dailyLive && rc.kind !== OBS_POI && dateKey(rc.at) === today) applyDaily(rc, away);
+      chronicleFrom(rc, away);
+    }
+    const maxSeq = batch.reduce((m, rc) => Math.max(m, rc.seq), cursor);
+    s.cursors[r.id] = maxSeq;
   }
-  const maxSeq = batch.reduce((m, rc) => Math.max(m, rc.seq), cursor);
-  s.cursors[r.id] = maxSeq;
+
+  if (dailyLive) reconcileDailyFromLedger();
   void firstSight;
   return { store: s, events, changed };
+
+  function reconcileDailyFromLedger() {
+    const authDay = r!.dailyLedger?.days[today];
+    if (!authDay || !s.daily) return;
+    const d = s.daily;
+    const wantRerolled = !!authDay.reroll;
+    const wantFrom = authDay.reroll?.from;
+    const objsMatch =
+      d.objectives.length === authDay.objectives.length &&
+      d.objectives.every((o, i) => {
+        const ao = authDay.objectives[i];
+        return (
+          o.id === ao.id &&
+          o.progress === ao.progress &&
+          o.done === ao.done &&
+          o.doneAt === ao.doneAt &&
+          o.seen.length === ao.seen.length &&
+          o.seen.every((v, k) => v === ao.seen[k])
+        );
+      });
+    const milestonesMatch =
+      d.milestones.length === authDay.milestones.length &&
+      d.milestones.every((m, i) => m === authDay.milestones[i]);
+    const missingClaimed =
+      authDay.objectives.some(ao => ao.done && !s.claimed.includes(`daily:${r!.id}:${today}:${ao.id}`)) ||
+      DAILY_MILESTONES.some(m => authDay.points >= m.at && !s.claimed.includes(`milestone:${today}:${m.id}`));
+
+    if (
+      d.rerolled === wantRerolled &&
+      d.rerolledFrom === wantFrom &&
+      d.points === authDay.points &&
+      objsMatch &&
+      milestonesMatch &&
+      !missingClaimed
+    ) return;
+
+    mut();
+    if (authDay.reroll && s.tracked?.type === 'daily' && s.tracked.id === authDay.reroll.from) {
+      s.tracked = { type: 'daily', id: authDay.reroll.to };
+    }
+    for (const ao of authDay.objectives) {
+      const cid = `daily:${r!.id}:${today}:${ao.id}`;
+      if (ao.done && !s.claimed.includes(cid)) s.claimed.push(cid);
+    }
+    for (const m of DAILY_MILESTONES) {
+      const mid = `milestone:${today}:${m.id}`;
+      if (authDay.points >= m.at && !s.claimed.includes(mid)) {
+        s.claimed.push(mid);
+        s.marks += m.marks;
+        if (m.pending) s.pendingRewards = [{ id: mid, date: today, milestone: m.name, requirement: m.pending }, ...s.pendingRewards].slice(0, 30);
+        const sp = milestoneRewardSpec(m.id);
+        const doneAt = authDay.objectives.reduce((mx, o) => Math.max(mx, o.doneAt ?? 0), 0) || now;
+        chron({ id: mid, at: doneAt, level: 3, title: `Daily ${m.name}`, detail: `${authDay.points} waypoint points on ${today}${sp ? ` · ${milestoneRewardLabel(m.id)}` : ''}`, icon: 'coal', runId: r!.id, kind: 'daily', away: true });
+      }
+    }
+    s.daily = {
+      date: today,
+      runId: r!.id,
+      objectives: authDay.objectives.map(ao => ({
+        id: ao.id,
+        progress: ao.progress,
+        done: ao.done,
+        ...(ao.doneAt !== undefined ? { doneAt: ao.doneAt } : {}),
+        seen: [...ao.seen],
+      })),
+      points: authDay.points,
+      milestones: [...authDay.milestones],
+      rerolled: wantRerolled,
+      ...(wantFrom ? { rerolledFrom: wantFrom } : {}),
+    };
+  }
 
   function chron(e: ChronicleEntry) {
     if (s.chronicle.some(c => c.id === e.id)) return false;
@@ -489,7 +779,7 @@ export function ingestJourney(prev: JourneyStore, gs: GameState, now: number): I
       const seen = new Set(o.seen);
       const inc = def.count(rc, seen); if (!inc) continue;
       const progress = Math.min(def.target, o.progress + inc);
-      const cid = `daily:${d.date}:${o.id}`;
+      const cid = `daily:${r!.id}:${d.date}:${o.id}`;
       const done = progress >= def.target && !s.claimed.includes(cid);
       if (done) s.claimed.push(cid);
       dd = { ...dd, objectives: dd.objectives.map(x => x.id === o.id ? { ...x, progress, done: x.done || done, doneAt: done ? rc.at : x.doneAt, seen: [...seen].slice(0, 40) } : x) };
