@@ -231,7 +231,7 @@ PR-ECON-01 (Veyra 81-POI Geometry & Creature Drop Parity)
 - **Files Wired into `package.json` CI script:**
   1. `npx vitest run tests/economic-network-m1.test.ts` (graph completeness & 0 dangling/duplicate IDs)
   2. `npx vitest run tests/economic-network-m3.test.ts` (before/after counterfactual checks, `LOCKED_CANON` assertions, recycler `0 OVER_RETURN`, `81/81` POI verification)
-  3. `npx vitest run tests/industrial-proof.test.ts tests/persist.test.ts` (anti-arbitrage + save compatibility)
+  3. `npx vitest run tests/sys03-recycler.test.ts tests/b1-integrity.test.ts tests/b1-storage.test.ts tests/territory-cabinet.test.ts tests/s10-oil-refinery.test.ts tests/s12-airdrop.test.ts` (anti-arbitrage, persistence/storage, territory cabinet, refinery, & airdrop regression suites)
   4. `npm run typecheck && npm run typecheck:tests && npm run build`
 
 ---
