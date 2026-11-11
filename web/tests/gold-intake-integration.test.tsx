@@ -15,7 +15,7 @@ import { CREATURE_ATLAS_SPECS, creatureHeadTopY, hasCreatureAtlas } from '../src
 import { VFX_TEST_KIT } from '../src/game/vfx/testkit';
 import * as vfxDirector from '../src/game/vfx/director';
 import { buildQaSandbox, resetQaSandboxFlags } from '../src/game/qa-sandbox';
-import { ingestJourney, isMilestoneRequisitioned, loadJourney } from '../src/game/journey';
+import { DAILY_BY_ID, dateKey, ingestJourney, isMilestoneRequisitioned, loadJourney } from '../src/game/journey';
 import { deriveCues } from '../src/game/presentation-cues';
 import { FIELD_REFERENCE_GROUPS } from '../src/game/field-notes';
 import { JourneyLedger } from '../src/ui/Journey';
@@ -96,15 +96,37 @@ describe('Stage C: Authoritative Journey Requisitions & Unified Veyra Expedition
     C(r, 'inv').slots = Array(24).fill(null);
     markDirty();
 
-    const date = '2026-11-09';
-    // Below threshold -> rejected
-    const low = dispatch(gs, { id: 'req-low', type: 'journeyRequisition', date, milestone: 'ember', points: 20 }, NOW + 10);
+    const date = dateKey(NOW);
+    // Below threshold -> rejected even if client tries to claim 20 or 999 points
+    const low = dispatch(gs, { id: 'req-low', type: 'journeyRequisition', date, milestone: 'ember', points: 999 }, NOW + 10);
     expect(low.ok).toBe(false);
     expect(gs.profile.securedCash).toBe(0);
 
-    // Valid Ember (25 pts), Hearth (50 pts), and Beacon (75 pts) claims
+    // Earn real authoritative receipts for all 4 generated daily waypoints on `date`
+    const daily = ingestJourney(loadJourney(gs, true), gs, NOW + 12).store.daily!;
+    let stepAt = NOW + 14;
+    for (const obj of daily.objectives) {
+      const def = DAILY_BY_ID[obj.id];
+      if (!def) continue;
+      for (let k = 0; k < def.target; k++) {
+        const seq = ++r.seq;
+        if (obj.id === 'timber') r.receipts.push({ id: `r${seq}`, seq, at: stepAt++, kind: 'harvest', detail: 'oak@10,10 -12' });
+        else if (obj.id === 'quarry') r.receipts.push({ id: `r${seq}`, seq, at: stepAt++, kind: 'harvest', detail: 'rock@11,10 -10' });
+        else if (obj.id === 'forage') r.receipts.push({ id: `r${seq}`, seq, at: stepAt++, kind: 'harvest', detail: 'bush@12,10 -6' });
+        else if (obj.id === 'variety') r.receipts.push({ id: `r${seq}`, seq, at: stepAt++, kind: 'harvest', detail: `${['oak', 'rock', 'bush'][k % 3]}@${10 + k},10 -1` });
+        else if (obj.id === 'handcraft') r.receipts.push({ id: `r${seq}`, seq, at: stepAt++, kind: 'craft.hand', detail: 'rope' });
+        else if (obj.id === 'recipes') r.receipts.push({ id: `r${seq}`, seq, at: stepAt++, kind: 'craft.hand', detail: k % 2 === 0 ? 'rope' : 'torch' });
+        else if (obj.id === 'raise') r.receipts.push({ id: `r${seq}`, seq, at: stepAt++, kind: 'build', detail: `wall_wood@${20 + k},20` });
+        else if (obj.id === 'chart') r.receipts.push({ id: `r${seq}`, seq, at: stepAt++, kind: 'poi.discover', detail: `poi_${k}` });
+        else if (obj.id === 'scavenge') r.receipts.push({ id: `r${seq}`, seq, at: stepAt++, kind: 'intel.loot', detail: `e${k}:place_${k}` });
+        else if (obj.id === 'hydrate') r.receipts.push({ id: `r${seq}`, seq, at: stepAt++, kind: 'drink', detail: '15,15' });
+        else if (obj.id === 'hunt2') r.receipts.push({ id: `r${seq}`, seq, at: stepAt++, kind: 'creature.kill', detail: `wolf:m${k}` });
+      }
+    }
+
+    // Valid Ember (25 pts) and Hearth (50 pts) claims (plus Beacon if today's 4-objective slate totals >= 75)
     const seqBefore = r.receipts.at(-1)?.seq ?? 0;
-    const c1 = dispatch(gs, { id: 'req-ember', type: 'journeyRequisition', date, milestone: 'ember', points: 30 }, NOW + 20);
+    const c1 = dispatch(gs, { id: 'req-ember', type: 'journeyRequisition', date, milestone: 'ember', points: 0 }, NOW + 100);
     expect(c1.ok).toBe(true);
     expect(gs.profile.securedCash).toBe(BAL.journeyRequisitions.ember.securedCash);
     expect(countItem(r, 'inv', 'bandage')).toBe(3);
@@ -112,21 +134,25 @@ describe('Stage C: Authoritative Journey Requisitions & Unified Veyra Expedition
     expect(isMilestoneRequisitioned(gs, date, 'ember')).toBe(true);
 
     // Duplicate claim on the same day -> rejected
-    const dup = dispatch(gs, { id: 'req-ember-dup', type: 'journeyRequisition', date, milestone: 'ember', points: 40 }, NOW + 30);
+    const dup = dispatch(gs, { id: 'req-ember-dup', type: 'journeyRequisition', date, milestone: 'ember', points: 40 }, NOW + 110);
     expect(dup.ok).toBe(false);
     expect(gs.profile.securedCash).toBe(BAL.journeyRequisitions.ember.securedCash);
 
-    // Hearth + Beacon claims
-    expect(dispatch(gs, { id: 'req-hearth', type: 'journeyRequisition', date, milestone: 'hearth', points: 55 }, NOW + 40).ok).toBe(true);
-    expect(dispatch(gs, { id: 'req-beacon', type: 'journeyRequisition', date, milestone: 'beacon', points: 80 }, NOW + 50).ok).toBe(true);
-    expect(gs.profile.securedCash).toBe(
-      BAL.journeyRequisitions.ember.securedCash + BAL.journeyRequisitions.hearth.securedCash + BAL.journeyRequisitions.beacon.securedCash,
-    );
-    expect(countItem(r, 'inv', 'crystal')).toBe(1);
+    // Hearth claim (+ Beacon check against today's exact authoritative total)
+    const totalPts = daily.objectives.reduce((s, o) => s + (DAILY_BY_ID[o.id]?.points ?? 0), 0);
+    expect(dispatch(gs, { id: 'req-hearth', type: 'journeyRequisition', date, milestone: 'hearth', points: 55 }, NOW + 120).ok).toBe(true);
+    const beaconRes = dispatch(gs, { id: 'req-beacon', type: 'journeyRequisition', date, milestone: 'beacon', points: 80 }, NOW + 130);
+    expect(beaconRes.ok).toBe(totalPts >= BAL.journeyRequisitions.beacon.points);
+    const expectedCash =
+      BAL.journeyRequisitions.ember.securedCash +
+      BAL.journeyRequisitions.hearth.securedCash +
+      (beaconRes.ok ? BAL.journeyRequisitions.beacon.securedCash : 0);
+    expect(gs.profile.securedCash).toBe(expectedCash);
+    if (beaconRes.ok) expect(countItem(r, 'inv', 'crystal')).toBe(1);
 
     // B06 presentation cue traced from 'journey.requisition' receipt
     const cues = deriveCues(r.receipts, seqBefore);
-    expect(cues.filter(c => c.cause === 'journey.requisition' && c.kind === 'cash_secured')).toHaveLength(3);
+    expect(cues.filter(c => c.cause === 'journey.requisition' && c.kind === 'cash_secured')).toHaveLength(beaconRes.ok ? 3 : 2);
   });
 
   it('tracks creature.kill receipts in Journey and renders 4-ribbon JourneyLedger + unified Veyra ExpeditionMap', () => {

@@ -126,7 +126,7 @@ export const DAILY_POOL: DailyDef[] = [
   { id: 'mend', cat: 'craft', title: 'Mend worn equipment', target: 1, points: 15, tier: 2, icon: 'mechanical_parts', how: 'Repair an item at a bench or with a kit.', gate: r => r.knowledge.recipes.length > 0, count: rc => rc.kind === 'item.repair' || rc.kind === 'item.fieldRepair' ? 1 : 0 },
   { id: 'raise', cat: 'build', title: 'Raise 5 structures', target: 5, points: 15, tier: 2, icon: 'st:wall_wood', how: 'Each must stand on a new tile.', count: (rc, s) => rc.kind === 'build' ? distinct(s, `tile:${rc.detail.split('@')[1]}`) : 0 },
   { id: 'fortify', cat: 'build', title: 'Fortify 2 structures', target: 2, points: 20, tier: 2, icon: 'st:wall_stone', how: 'Upgrade [U] or repair [V] what you own.', gate: ownsAny, count: rc => ['structure.upgrade', 'structure.repair', 'structure.repair.plate', 'territory.repair.batch'].includes(rc.kind) ? 1 : 0 },
-  { id: 'chart', cat: 'explore', title: 'Discover a new place', target: 1, points: 25, tier: 3, icon: 'spares', how: 'Travel somewhere you have never been.', count: rc => rc.kind === OBS_POI ? 1 : 0 },
+  { id: 'chart', cat: 'explore', title: 'Discover a new place', target: 1, points: 25, tier: 3, icon: 'spares', how: 'Travel somewhere you have never been.', count: (rc, s) => (rc.kind === OBS_POI || rc.kind === 'poi.discover') ? distinct(s, `poi:${rc.detail}`) : 0 },
   { id: 'scavenge', cat: 'explore', title: 'Search 2 loot sites', target: 2, points: 15, tier: 2, icon: 'scrap', how: 'Crates, caches and drops.', count: (rc, s) => rc.kind === 'intel.loot' || rc.kind === 'airdrop.open' ? distinct(s, `loot:${rc.detail.split(':')[0]}`) : 0 },
   { id: 'hydrate', cat: 'survive', title: 'Eat or drink 4 times', target: 4, points: 10, tier: 1, icon: 'berries', how: 'Rivers, flasks, food.', anchor: { kind: 'water' }, count: rc => ['drink', 'drink.flask', 'consume', 'barrel.drink', 'rest.eat', 'rest.drink'].includes(rc.kind) ? 1 : 0 },
   { id: 'rest', cat: 'survive', title: 'Rest through a stretch', target: 1, points: 15, tier: 2, icon: 'st:bed_straw', how: 'Sleep in your own bed.', gate: r => owns(r, ['bed_straw']), anchor: { kind: 'struct', types: ['bed_straw'] }, count: rc => rc.kind === 'rest.end' ? 1 : 0 },
@@ -188,7 +188,7 @@ export const ACH_META: Record<string, { level: FeedbackLevel; icon: string; hint
 // STORE
 // ---------------------------------------------------------------------------
 export interface DailyObjectiveState { id: string; progress: number; done: boolean; doneAt?: number; seen: string[] }
-export interface DailyState { date: string; objectives: DailyObjectiveState[]; points: number; milestones: string[]; rerolled: boolean }
+export interface DailyState { date: string; runId?: string; objectives: DailyObjectiveState[]; points: number; milestones: string[]; rerolled: boolean; rerolledFrom?: string }
 export interface ChronicleEntry { id: string; at: number; level: FeedbackLevel; title: string; detail: string; icon?: string; runId: string; kind: 'achievement' | 'lesson' | 'daily' | 'discovery' | 'relic' | 'elder' | 'world' | 'capability'; away?: boolean; seen?: boolean }
 export type TrackRef = { type: 'lesson'; id: string } | { type: 'daily'; id: string } | null;
 export interface LessonState { status: 'unseen' | 'seen' | 'dismissed'; steps: Record<string, number>; done: string[]; completedAt?: number }
@@ -234,14 +234,47 @@ export function flushJourney(gs: GameState, qa: boolean, s: JourneyStore) {
   try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { /* quota: next save retries */ }
 }
 
-export const dateKey = (t: number) => { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+export const dateKey = (t: number) => {
+  const d = new Date(t);
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+};
+export function isValidDateKey(date: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+  const [y, m, d] = date.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
+}
+export const dailySaltFor = (r: RunState | null) => (r ? `run:${r.id}:${r.seed}` : 'norun');
 function hash(s: string) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
 function rng(seed: number) { let x = seed || 1; return () => { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; x >>>= 0; return x / 4294967296; }; }
+
+/** Day-invariant capability gate evaluated strictly as of 00:00 UTC of `date` so mid-day builds/research never mutate today's objective slate. */
+function dailyGateAtDayStart(def: DailyDef, r: RunState | null, date: string): boolean {
+  if (!def.gate) return true;
+  if (!r) return false;
+  const hasRunStart = r.receipts.some(rc => rc.kind === 'run.start');
+  if (!hasRunStart) return def.gate(r);
+  const prior = r.receipts.filter(rc => dateKey(rc.at) < date);
+  if (!prior.length) return false;
+  const learnedCount = new Set(
+    prior.filter(rc => rc.kind === 'learn.blueprint' || rc.kind === 'research.specimen').map(rc => rc.detail),
+  ).size;
+  const builtTypes = new Set(
+    prior.filter(rc => rc.kind === 'build').map(rc => rc.detail.split('@')[0]),
+  );
+  if (def.id === 'mend') return learnedCount >= 1;
+  if (def.id === 'hunt5') return learnedCount >= 2;
+  if (def.id === 'fortify') return builtTypes.size > 0;
+  if (def.id === 'rest') return builtTypes.has('bed_straw');
+  if (def.id === 'smelt') return ['furnace', 'workbench', 'campfire', 'recycler', 'refinery'].some(t => builtTypes.has(t));
+  if (def.id === 'knowledge') return builtTypes.has('research');
+  return def.gate(r);
+}
 
 /** Four objectives from four different categories, capability-gated, with one easy and one demanding. */
 export function generateDaily(date: string, salt: string, r: RunState | null, exclude: string[] = []): string[] {
   const rand = rng(hash(`${date}|${salt}`));
-  const pool = DAILY_POOL.filter(d => !exclude.includes(d.id) && (!d.gate || (r ? d.gate(r) : false)));
+  const pool = DAILY_POOL.filter(d => !exclude.includes(d.id) && dailyGateAtDayStart(d, r, date));
   const cats = [...new Set(pool.map(d => d.cat))].sort(() => rand() - 0.5);
   const pick: DailyDef[] = [];
   for (const c of cats) {
@@ -256,8 +289,50 @@ export function generateDaily(date: string, salt: string, r: RunState | null, ex
   return pick.map(p => p.id);
 }
 
-function newDay(date: string, s: JourneyStore, r: RunState | null): DailyState {
-  return { date, objectives: generateDaily(date, s.salt, r).map(id => ({ id, progress: 0, done: false, seen: [] })), points: 0, milestones: [], rerolled: false };
+function resolveRerollReplacement(date: string, salt: string, taken: string[], objId: string, r: RunState | null): DailyDef | null {
+  const cats = new Set(taken.map(id => DAILY_BY_ID[id]?.cat));
+  const rand = rng(hash(`${date}|${salt}|reroll`));
+  const opts = DAILY_POOL.filter(p => !taken.includes(p.id) && dailyGateAtDayStart(p, r, date) && (!cats.has(p.cat) || p.cat === DAILY_BY_ID[objId]?.cat));
+  if (!opts.length) return null;
+  return opts[Math.floor(rand() * opts.length)];
+}
+
+/** Recompute authoritative Daily Waypoint points directly from committed `r.receipts` on `date`. */
+export function computeAuthoritativeDailyPoints(r: RunState, date: string, rerolledFrom?: string): number {
+  if (!isValidDateKey(date)) return 0;
+  const salt = dailySaltFor(r);
+  let activeIds = generateDaily(date, salt, r);
+  const dayReceipts = (r.receipts as Receipt[]).filter(rc => dateKey(rc.at) === date);
+
+  const measureProgress = (id: string) => {
+    const def = DAILY_BY_ID[id];
+    if (!def) return 0;
+    const seen = new Set<string>();
+    let progress = 0;
+    for (const rc of dayReceipts) {
+      const inc = def.count(rc, seen);
+      if (inc > 0) progress = Math.min(def.target, progress + inc);
+      if (progress >= def.target) break;
+    }
+    return progress;
+  };
+
+  if (rerolledFrom && activeIds.includes(rerolledFrom) && measureProgress(rerolledFrom) === 0) {
+    const next = resolveRerollReplacement(date, salt, activeIds, rerolledFrom, r);
+    if (next) activeIds = activeIds.map(id => (id === rerolledFrom ? next.id : id));
+  }
+
+  let points = 0;
+  for (const id of activeIds) {
+    const def = DAILY_BY_ID[id];
+    if (def && measureProgress(id) >= def.target) points += def.points;
+  }
+  return points;
+}
+
+function newDay(date: string, _s: JourneyStore, r: RunState | null): DailyState {
+  const salt = dailySaltFor(r);
+  return { date, runId: r?.id, objectives: generateDaily(date, salt, r).map(id => ({ id, progress: 0, done: false, seen: [] })), points: 0, milestones: [], rerolled: false };
 }
 
 /** Swap one untouched objective for another eligible one (once per day). */
@@ -265,13 +340,10 @@ export function rerollDaily(s: JourneyStore, objId: string, r: RunState | null):
   const d = s.daily; if (!d || d.rerolled) return s;
   const o = d.objectives.find(x => x.id === objId); if (!o || o.progress > 0 || o.done) return s;
   const taken = d.objectives.map(x => x.id);
-  const cats = new Set(taken.map(id => DAILY_BY_ID[id]?.cat));
-  const rand = rng(hash(`${d.date}|${s.salt}|reroll`));
-  const opts = DAILY_POOL.filter(p => !taken.includes(p.id) && (!p.gate || (r && p.gate(r))) && (!cats.has(p.cat) || p.cat === DAILY_BY_ID[objId]?.cat));
-  if (!opts.length) return s;
-  const next = opts[Math.floor(rand() * opts.length)];
+  const next = resolveRerollReplacement(d.date, dailySaltFor(r), taken, objId, r);
+  if (!next) return s;
   const tracked = s.tracked?.type === 'daily' && s.tracked.id === objId ? { type: 'daily' as const, id: next.id } : s.tracked;
-  return { ...s, tracked, daily: { ...d, rerolled: true, objectives: d.objectives.map(x => x.id === objId ? { id: next.id, progress: 0, done: false, seen: [] } : x) } };
+  return { ...s, tracked, daily: { ...d, rerolled: true, rerolledFrom: objId, objectives: d.objectives.map(x => x.id === objId ? { id: next.id, progress: 0, done: false, seen: [] } : x) } };
 }
 
 export const lessonState = (s: JourneyStore, id: string): LessonState => s.lessons[id] ?? { status: 'unseen', steps: {}, done: [] };
@@ -292,10 +364,12 @@ export function ingestJourney(prev: JourneyStore, gs: GameState, now: number): I
   const mut = () => { if (!changed) { s = { ...s, lessons: { ...s.lessons }, cursors: { ...s.cursors }, poiSeen: { ...s.poiSeen }, coreSeen: { ...s.coreSeen }, claimed: [...s.claimed], chronicle: [...s.chronicle], history: [...s.history], pendingRewards: [...s.pendingRewards] }; changed = true; } };
   const today = dateKey(now);
 
-  // Day roll-over. A clock moved backwards freezes daily progress rather than regenerating.
-  if (!s.daily || (today > s.daily.date)) {
+  // Day roll-over or run switch on the same day. A clock moved backwards freezes daily progress rather than regenerating.
+  if (!s.daily || today > s.daily.date || (today === s.daily.date && s.daily.runId !== r.id)) {
     mut();
-    if (s.daily) s.history = [{ date: s.daily.date, points: s.daily.points, milestones: s.daily.milestones, completed: s.daily.objectives.filter(o => o.done).length }, ...s.history].slice(0, 14);
+    if (s.daily && today > s.daily.date) {
+      s.history = [{ date: s.daily.date, points: s.daily.points, milestones: s.daily.milestones, completed: s.daily.objectives.filter(o => o.done).length }, ...s.history].slice(0, 14);
+    }
     s.daily = newDay(today, s, r);
     if (s.tracked?.type === 'daily') s.tracked = null;
   }

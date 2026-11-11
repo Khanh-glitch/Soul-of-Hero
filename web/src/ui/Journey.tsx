@@ -17,7 +17,7 @@ export function JourneyLedger({ gs, store, now, initial = 'fieldcraft', onTrack,
   gs: GameState; store: JourneyStore; now: number; initial?: Folio;
   onTrack: (t: TrackRef) => void; onLesson: (id: string, status: 'seen' | 'dismissed') => void; onReroll: (id: string) => void;
   onSeen: () => void; onClose: () => void; onOpenNotes: () => void;
-  onClaimRequisition?: (date: string, milestone: string, points: number) => void;
+  onClaimRequisition?: (date: string, milestone: string, points: number, rerolledFrom?: string) => void;
   onJump?: (target: QuickJumpTarget) => void;
 }) {
   const [folio, setFolio] = useState<Folio>(initial);
@@ -109,7 +109,7 @@ function LessonPage({ store, id, onTrack, onLesson, onOpenReference, onJump }: {
 }
 
 // ---------------- DAILY WAYPOINTS ----------------
-function DailyLeft({ gs, store, onClaimRequisition }: { gs: GameState; store: JourneyStore; onClaimRequisition?: (date: string, milestone: string, points: number) => void }) {
+function DailyLeft({ gs, store, onClaimRequisition }: { gs: GameState; store: JourneyStore; onClaimRequisition?: (date: string, milestone: string, points: number, rerolledFrom?: string) => void }) {
   const d = store.daily; if (!d) return null;
   const streak = streakDays(store);
   return <div className="daily-l">
@@ -129,7 +129,7 @@ function DailyLeft({ gs, store, onClaimRequisition }: { gs: GameState; store: Jo
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 4 }}>
             <b>{m.name} · {m.at} pts</b>
-            {claimed ? <span className="req-badge">✓ Requisitioned</span> : on && onClaimRequisition ? <button className="btn xs gold" onClick={() => onClaimRequisition(d.date, m.id, d.points)}>Claim Supply</button> : null}
+            {claimed ? <span className="req-badge">✓ Requisitioned</span> : on && onClaimRequisition ? <button className="btn xs gold" onClick={() => onClaimRequisition(d.date, m.id, d.points, d.rerolledFrom)}>Claim Supply</button> : null}
           </div>
           <span>+{m.marks} Mark{rewardLine ? ` · ${rewardLine}` : ''}</span>
         </div>
@@ -139,13 +139,13 @@ function DailyLeft({ gs, store, onClaimRequisition }: { gs: GameState; store: Jo
       const h = i === 6 ? { date: d.date, points: d.points, milestones: d.milestones } : store.history[5 - i];
       return <span key={i} className={`week__day m${h?.milestones.length ?? 0}`} title={h ? `${h.date}: ${h.points} pts` : 'no record'}><i />{h ? h.date.slice(8) : '·'}</span>;
     })}</div>
-    <p className="fine">Local midnight reset. Missed days cost nothing; supply requisitions credit your profile &amp; pack.</p>
+    <p className="fine">UTC midnight reset. Missed days cost nothing; supply requisitions credit your profile &amp; pack.</p>
   </div>;
 }
 
 function DailyRight({ store, now, onTrack, onReroll, onJump }: { store: JourneyStore; now: number; onTrack: (t: TrackRef) => void; onReroll: (id: string) => void; onJump?: (t: QuickJumpTarget) => void }) {
   const d = store.daily; if (!d) return null;
-  const end = new Date(now); end.setHours(24, 0, 0, 0); const left = Math.max(0, end.getTime() - now);
+  const end = new Date(now); end.setUTCHours(24, 0, 0, 0); const left = Math.max(0, end.getTime() - now);
   return <div className="daily-r">
     <header className="page__head"><span className="page__kicker">TODAY'S WAYPOINTS</span><span className="fine">{Math.floor(left / 3600000)}h {Math.floor(left / 60000) % 60}m left</span></header>
     {d.objectives.map(o => {

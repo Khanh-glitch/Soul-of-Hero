@@ -173,6 +173,7 @@ export interface RunState {
   /** Veyra U=0.5 multi-storey & seamless window continuity ledgers (additive, absent on non-Veyra runs). */
   veyraFloor?: -1 | 0 | 1 | 2;
   veyraFloorState?: Record<number, { sources: Record<number, any>; doors: Record<string, boolean>; depletedLootSites?: number[]; lootRespawnAt?: Record<number, number> }>;
+  veyraGlobalFloorState?: Record<number, { sources: Record<number, RunState['sources'][number]>; doors: Record<number, boolean> }>;
   veyraGlobalSources?: Record<number, RunState['sources'][number]>;
   veyraGlobalTerrain?: Record<number, RunState['terrain'][number] & { by?: string }>;
   veyraGlobalDoors?: Record<number, boolean>;

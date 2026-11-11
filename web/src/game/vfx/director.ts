@@ -446,9 +446,11 @@ function syncPlayer(r: Any, now: number) {
   if (!d && dive) { S.releaseTag(dive.tag, 200); dive = null; }
   transit = !!r.spiritTransit;
 }
+let lastFloor = 0;
 export function sync(gs: Any, now: number, HAZ: Any[], PROJ: Any[]) {
   const r = gs?.run; if (!r) return;
-  if (r !== lastRun) { reset(); lastRun = r; }
+  const fl = r.veyraFloor ?? 0;
+  if (r !== lastRun || fl !== lastFloor) { reset(); lastRun = r; lastFloor = fl; }
   frame++;
   try {
     syncPlayer(r, now);

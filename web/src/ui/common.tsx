@@ -6,7 +6,11 @@ import type { Intent, Result } from '../game/engine';
 
 let iconUrls: Record<string, string> | null = null;
 export function iconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || ''; }
-export function Icon({ k, size = 16, style }: { k: string; size?: number; style?: React.CSSProperties }) { return <img className="px" src={iconUrl(k)} width={size} height={size} style={{ width: size, height: size, ...style }} draggable={false} alt="" />; }
+export function Icon({ k, size = 16, style }: { k: string; size?: number; style?: React.CSSProperties }) {
+  const src = iconUrl(k);
+  if (!src) return <span className="px" style={{ display: 'inline-block', width: size, height: size, ...style }} aria-hidden="true" />;
+  return <img className="px" src={src} width={size} height={size} style={{ width: size, height: size, ...style }} draggable={false} alt="" />;
+}
 
 export interface Api {
   gs: GameState; now: () => number;

@@ -372,9 +372,9 @@ function renderChart(
     }
   }
 
-  // Death bag
+  // Death bag (draw on local sector only when within the active 200x200 window)
   const death = deathBagView(r);
-  if (death.status === 'present') {
+  if (death.status === 'present' && death.bag.x >= 0 && death.bag.x < WW * TILE && death.bag.y >= 0 && death.bag.y < WH * TILE) {
     drawPin(death.bag.x / TILE, death.bag.y / TILE, '#ff8e7a', 'cross', 4, zoom >= 2 ? 'Death Bag' : undefined);
   }
 
@@ -441,20 +441,20 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
   const w = getWorld(r.layoutId || 'shipping');
   const ref = useRef<HTMLCanvasElement>(null);
   const ptx = Math.floor(r.player.x / TILE), pty = Math.floor(r.player.y / TILE);
-  const bounds = useMemo(() => discoveredBounds(r), [r.discovered]);
-  const initialZoom: ZoomLevel = useMemo(() => {
-    if (isVeyra && !onTeleportSelect) return 0;
-    const span = Math.max(bounds.maxX - bounds.minX, bounds.maxY - bounds.minY);
+  // Compute directly from live run state: r.discovered, r.poiSeen, and r.veyraOffscreenEntities mutate in place.
+  const bounds = discoveredBounds(r);
+  const computeFitZoom = (b: typeof bounds): LocalZoomLevel => {
+    const span = Math.max(b.maxX - b.minX, b.maxY - b.minY);
     return span <= 48 ? 4 : span <= 96 ? 2 : 1;
-  }, [bounds, isVeyra, Boolean(onTeleportSelect)]);
-
-  const [zoom, setZoom] = useState<ZoomLevel>(initialZoom);
+  };
+  const [zoom, setZoom] = useState<ZoomLevel>(() => (isVeyra && !onTeleportSelect ? 0 : computeFitZoom(bounds)));
   useEffect(() => {
     if (onTeleportSelect && zoom === 0) setZoom(1);
   }, [Boolean(onTeleportSelect), zoom]);
-  const [center, setCenter] = useState<{ cx: number; cy: number }>(() =>
-    clampCenter((bounds.minX + bounds.maxX) / 2, (bounds.minY + bounds.maxY) / 2, initialZoom),
-  );
+  const [center, setCenter] = useState<{ cx: number; cy: number }>(() => {
+    const z0: ZoomLevel = isVeyra && !onTeleportSelect ? 0 : computeFitZoom(bounds);
+    return clampCenter((bounds.minX + bounds.maxX) / 2, (bounds.minY + bounds.maxY) / 2, z0);
+  });
   const [marks, setMarks] = useState<FieldMark[]>(() => readFieldMarks(r, qaSession));
   const [kind, setKind] = useState<MarkKind>('return');
   const [mode, setMode] = useState<'inspect' | 'mark'>('inspect');
@@ -470,12 +470,10 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
   const intelByPlace = useMemo(() => new Map(intel.map(n => [n.place, n])), [intel]);
   const death = deathBagView(r);
   const sites = w.places.filter(site => r.poiSeen.includes(site.id) && discoveredCell(r, site.tx, site.ty));
-  const seenContinentPois = useMemo(() => (isVeyra ? POIS.filter(po => r.poiSeen.includes(po.id)) : []), [isVeyra, r.poiSeen]);
-  const offscreenCount = useMemo(() => (
-    isVeyra && r.veyraOffscreenEntities
-      ? Object.values(r.veyraOffscreenEntities).filter(oe => oe.type === 'claim' || oe.kind === 'bag' || oe.kind === 'cart' || oe.kind === 'vehicle').length
-      : 0
-  ), [isVeyra, r.veyraOffscreenEntities]);
+  const seenContinentPois = isVeyra ? POIS.filter(po => r.poiSeen.includes(po.id)) : [];
+  const offscreenCount = isVeyra && r.veyraOffscreenEntities
+    ? Object.values(r.veyraOffscreenEntities).filter(oe => oe.type === 'claim' || oe.kind === 'bag' || oe.kind === 'cart' || oe.kind === 'vehicle').length
+    : 0;
   const ownedCabinets = Object.values(r.entities).filter(e => (!isVeyra || onActiveFloor(r, e)) && e.type === 'claim' && e.tx !== undefined && e.ty !== undefined && discoveredCell(r, e.tx, e.ty));
   const rigs = Object.values(r.entities).filter(e => (!isVeyra || onActiveFloor(r, e)) && (e.kind === 'vehicle' || e.kind === 'cart') && discoveredCell(r, Math.floor(e.x / TILE), Math.floor(e.y / TILE)));
 
@@ -800,12 +798,16 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
         <div className="map-list scroll">
           {(filter === 'all' || filter === 'sites') && <>
             {isVeyra && offscreenCount > 0 && <div className="map-note" style={{ color: '#9ae0ff' }}>Offscreen markers: {offscreenCount} (shown on Cont view)</div>}
-            {death.status === 'present' && (
-              <button className="map-row map-row--bag" onClick={() => inspectTile(Math.floor(death.bag.x / TILE), Math.floor(death.bag.y / TILE), true)}>
-                <b>✕ Your Death Bag</b>
-                <span>{Math.floor(death.bag.x / TILE)},{Math.floor(death.bag.y / TILE)} · {death.stacks.length} stacks · {bearingLabel(Math.floor(death.bag.x / TILE) - ptx, Math.floor(death.bag.y / TILE) - pty)}</span>
-              </button>
-            )}
+            {death.status === 'present' && (() => {
+              const btx = Math.floor(death.bag.x / TILE), bty = Math.floor(death.bag.y / TILE);
+              const offWin = isVeyra && (btx < 0 || btx >= WW || bty < 0 || bty >= WH);
+              return (
+                <button className="map-row map-row--bag" onClick={() => offWin ? changeZoom(0) : inspectTile(btx, bty, true)}>
+                  <b>✕ Your Death Bag{offWin ? ' (distant sector)' : ''}</b>
+                  <span>{offWin ? 'Continent view' : `${btx},${bty}`} · {death.stacks.length} stacks · {bearingLabel(btx - ptx, bty - pty)}</span>
+                </button>
+              );
+            })()}
             {death.status === 'missing' && <div className="map-note">Last death bag is gone. No stock is promised.</div>}
             {ownedCabinets.map(e => {
               const f = territoryForecast(r, e);

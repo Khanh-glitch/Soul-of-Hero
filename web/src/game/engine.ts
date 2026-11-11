@@ -20,8 +20,9 @@ import { wreckBonuses, wreckEconomy } from './wreck-economy';
 import { mapDigest } from './map-package';
 import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from '../veyra05/scenes';
 import { getWindowWorld, resetWindowToGround } from '../veyra05/window';
-import { activeFloor, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
+import { activeFloor, applyFloor, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
 import { windowOrigin } from '../veyra05/continuity';
+import { computeAuthoritativeDailyPoints, dateKey, isValidDateKey } from './journey';
 import { syncVeyraEcosystemActors } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
@@ -124,8 +125,8 @@ export function mkContainer(r: RunState, kind: string, n: number): Container { c
 /** Random eligible cell, using real collision, current hazards and reachable local sources.
  * Compiler reachability anchors and Map sp_* are never player spawn authorities. */
 export function chooseLegalSpawn(r:RunState): {tx:number;ty:number;name:string}|null {
-  const w=getWorld(); markDirty();const grid=blockGrid(r), n=WW*WH;
-  const safe=(x:number,y:number)=>{const i=y*WW+x;return x>2&&y>2&&x<WW-3&&y<WH-3&&grid[i]===0&&w.economyMap.walkable[i]&&![T.TOXIC,T.ASH,T.SNOW].includes(effTile(r,x,y))&&!r.sources[i]?.fire&&!Object.values(r.entities).some(e=>e.type==='spikes'&&e.tx===x&&e.ty===y)&&!r.creatures.some(m=>m.state!=='dead'&&Math.hypot(m.x-(x*TILE+8),m.y-(y*TILE+8))<10*TILE);};
+  const w=getWorld(), fl=activeFloor(r); markDirty();const grid=blockGrid(r), n=WW*WH;
+  const safe=(x:number,y:number)=>{const i=y*WW+x;return x>2&&y>2&&x<WW-3&&y<WH-3&&grid[i]===0&&w.economyMap.walkable[i]&&![T.TOXIC,T.ASH,T.SNOW].includes(effTile(r,x,y))&&!r.sources[i]?.fire&&!Object.values(r.entities).some(e=>onActiveFloor(r,e)&&e.type==='spikes'&&e.tx===x&&e.ty===y)&&!r.creatures.some(m=>m.state!=='dead'&&((m as any).floor??0)===fl&&Math.hypot(m.x-(x*TILE+8),m.y-(y*TILE+8))<10*TILE);};
   const eligible=(tx:number,ty:number)=>{if(w.spawnEligible&&!w.spawnEligible[ty*WW+tx])return false;if(!safe(tx,ty))return false;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(!safe(tx+dx,ty+dy))return false;
     const seen=new Uint8Array(n),q=new Int32Array(n),depth=new Uint8Array(n);let head=0,tail=0;const start=ty*WW+tx;q[tail++]=start;seen[start]=1;let wood=false,stone=false,food=false,water=false,sites=0;
     while(head<tail){const i=q[head++],x=i%WW,y=Math.floor(i/WW);if(w.economyMap.buildable[i]&&!sourceAt(r,x,y))sites++;for(const [dx,dy]of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;const j=ny*WW+nx;if(w.fresh[j])water=true;const src=sourceAt(r,nx,ny);if(src&&src.stock>0&&!src.fire){if(['oak','pine','snowpine','palm','willow'].includes(src.key))wood=true;if(src.key==='rock')stone=true;if(['bush','mushroom'].includes(src.key))food=true;}
@@ -460,17 +461,35 @@ export function entsAt(r: RunState, tx: number, ty: number): Entity[] {
   if (!tileIndex || tileIndexRun !== r || tileIndexFloor !== fl) { tileIndex = new Map(); tileIndexRun = r; tileIndexFloor = fl; /* keyed by run object + active floor */ for (const e of Object.values(r.entities)) if (onActiveFloor(r, e) && e.tx !== undefined && e.kind !== 'drop' && e.kind !== 'bag' && e.kind !== 'cart') { const i = e.ty! * WW + e.tx; const l = tileIndex.get(i); if (l) l.push(e); else tileIndex.set(i, [e]); } }
   return tileIndex.get(ty * WW + tx) || [];
 }
-/** Authoritative SOH coverage: nearest valid owned cabinet, stable ID tie-break. */
-export function cabinetSupported(r: RunState, c: Entity) {
-  return c.type==='claim' && c.kind==='struct' && owned(c) && (c.hp??0)>0 && (c.cabinet?.legacy === true || !c.cabinet || Object.values(r.entities).some(e=>e.kind==='struct' && ['floor_wood','floor_stone'].includes(e.type||'') && owned(e) && (e.hp??0)>0 && e.tx===c.tx && e.ty===c.ty));
+/** Authoritative SOH coverage: nearest valid owned cabinet, stable ID tie-break (unified across Veyra onscreen + offscreen ledgers). */
+function territoryTileCoord(r: RunState, e: Entity, ox: number, oy: number): [number, number] {
+  return r.entities[e.id] === e ? [ox + e.tx!, oy + e.ty!] : [e.tx!, e.ty!];
 }
-function nearestCabinet(cabinets:Entity[],tx:number,ty:number) {
-  let best:Entity|null=null, bestDistance=Infinity;
-  for(const c of cabinets) {const d=Math.hypot(c.tx!-tx,c.ty!-ty);if(d<=BAL.economy.claimRadius+1e-9 && (d<bestDistance || (d===bestDistance && c.id.localeCompare(best!.id)<0))){best=c;bestDistance=d;}}
+export function cabinetSupported(r: RunState, c: Entity) {
+  if (!(c.type === 'claim' && c.kind === 'struct' && owned(c) && (c.hp ?? 0) > 0)) return false;
+  if (c.cabinet?.legacy === true || !c.cabinet) return true;
+  const [ox, oy] = r.layoutId && isVeyra05Layout(r.layoutId) ? windowOrigin(r) : [0, 0];
+  const [cx, cy] = territoryTileCoord(r, c, ox, oy);
+  const cfl = (c as any).floor ?? 0;
+  const all = [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})];
+  return all.some(e => e.kind === 'struct' && ['floor_wood', 'floor_stone'].includes(e.type || '') && owned(e) && (e.hp ?? 0) > 0 && ((e as any).floor ?? 0) === cfl && (() => { const [ex, ey] = territoryTileCoord(r, e, ox, oy); return ex === cx && ey === cy; })());
+}
+function nearestCabinetAtGlobal(r: RunState, cabinets: Entity[], gx: number, gy: number, fl: number, ox: number, oy: number) {
+  let best: Entity | null = null, bestDistance = Infinity;
+  for (const c of cabinets) {
+    if (((c as any).floor ?? 0) !== fl) continue;
+    const [cx, cy] = territoryTileCoord(r, c, ox, oy);
+    const d = Math.hypot(cx - gx, cy - gy);
+    if (d <= BAL.economy.claimRadius + 1e-9 && (d < bestDistance || (d === bestDistance && c.id.localeCompare(best!.id) < 0))) {
+      best = c; bestDistance = d;
+    }
+  }
   return best;
 }
 export function claimAt(r: RunState, tx: number, ty: number) {
-  return nearestCabinet(Object.values(r.entities).filter(e=>cabinetSupported(r,e)),tx,ty);
+  const [ox, oy] = r.layoutId && isVeyra05Layout(r.layoutId) ? windowOrigin(r) : [0, 0];
+  const all = [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})];
+  return nearestCabinetAtGlobal(r, all.filter(e => cabinetSupported(r, e)), ox + tx, oy + ty, activeFloor(r), ox, oy);
 }
 /** Synchronize legacy ownership hints with the same geometric coverage authority. */
 export function refreshTerritoryLinks(r:RunState) {
@@ -480,18 +499,20 @@ export function refreshTerritoryLinks(r:RunState) {
 }
 /** Add empty storage to existing totems without moving a single old stack. */
 export function initializeCabinets(r: RunState) {
-  for (const e of Object.values(r.entities)) if(e.kind==='struct' && e.type==='claim' && !e.cabinet) {
+  for (const e of [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})]) if(e.kind==='struct' && e.type==='claim' && !e.cabinet) {
     if(!e.c) e.c=mkContainer(r,'chest',24).id;
     e.cabinet={credit:{},legacy:true};
   }
 }
 type TerritoryPlan = { structures:Entity[]; cabinets:Entity[]; assigned:Map<string,Entity|null>; forecast:Map<string,{rates:Record<string,number>;hours:number;funded:boolean;count:number}> };
 export function planTerritory(r:RunState):TerritoryPlan {
-  const all=Object.values(r.entities), structures=all.filter(e=>e.kind==='struct'&&owned(e)&&(e.hp??0)>0&&(e.maxHp??0)>0&&e.tx!==undefined&&e.ty!==undefined);
+  const [ox, oy] = r.layoutId && isVeyra05Layout(r.layoutId) ? windowOrigin(r) : [0, 0];
+  const all=[...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})];
+  const structures=all.filter(e=>e.kind==='struct'&&owned(e)&&(e.hp??0)>0&&(e.maxHp??0)>0&&e.tx!==undefined&&e.ty!==undefined);
   const cabinets=structures.filter(e=>cabinetSupported(r,e)), assigned=new Map<string,Entity|null>();
   const forecast=new Map<string,{rates:Record<string,number>;hours:number;funded:boolean;count:number}>();
   for(const c of cabinets)forecast.set(c.id,{rates:{},hours:0,funded:false,count:0});
-  for(const e of structures){const c=nearestCabinet(cabinets,e.tx!,e.ty!);assigned.set(e.id,c);if(!c)continue;const f=forecast.get(c.id)!;f.count++;for(const [key,q] of STRUCTS[e.type!]?.cost||[])if(BAL.territory.materials.includes(key))f.rates[key]=(f.rates[key]||0)+q*BAL.territory.upkeepFractionPerDay/(24*HOUR);}
+  for(const e of structures){const [gx,gy]=territoryTileCoord(r,e,ox,oy);const c=nearestCabinetAtGlobal(r,cabinets,gx,gy,(e as any).floor??0,ox,oy);assigned.set(e.id,c);if(!c)continue;const f=forecast.get(c.id)!;f.count++;for(const [key,q] of STRUCTS[e.type!]?.cost||[])if(BAL.territory.materials.includes(key))f.rates[key]=(f.rates[key]||0)+q*BAL.territory.upkeepFractionPerDay/(24*HOUR);}
   for(const c of cabinets){const f=forecast.get(c.id)!;if(!c.c||!c.cabinet)continue;const entries=Object.entries(f.rates),ms=entries.length?Math.min(...entries.map(([k,rate])=>(countItem(r,c.c!,k)+(c.cabinet!.credit[k]||0))/rate)):Infinity;f.hours=ms/HOUR;f.funded=ms>=0.001;}
   return {structures,cabinets,assigned,forecast};
 }
@@ -544,6 +565,28 @@ export function territoryBoundary(r:RunState,limit:number) {
   for(const e of plan.structures){const c=plan.assigned.get(e.id);if(!c||!plan.forecast.get(c.id)?.funded)dt=Math.min(dt,e.hp!/(e.maxHp!/(BAL.territory[c?'unfundedCollapseHours':'unprotectedCollapseHours']*HOUR)));}
   return dt;
 }
+function destroyOffscreenStructure(r: RunState, e: Entity, now: number) {
+  const off = r.veyraOffscreenEntities;
+  if (!off || off[e.id] !== e || e.kind !== 'struct') return null;
+  const efl = (e as any).floor ?? 0;
+  if (STRUCTS[e.type!]?.layer === 'floor') {
+    for (const other of Object.values(off)) {
+      if (other.id === e.id || other.tx !== e.tx || other.ty !== e.ty || ((other as any).floor ?? 0) !== efl) continue;
+      if (other.type === 'claim' && other.cabinet?.legacy !== true) { destroyOffscreenStructure(r, other, now); receipt(r, now, 'territory.collapse', `${other.id}:lost foundation`); }
+      else if (other.kind === 'struct' && STRUCTS[other.type!]?.layer === 'roof') { destroyOffscreenStructure(r, other, now); receipt(r, now, 'struct.destroyed', `${other.type}:lost support`); }
+    }
+  }
+  const bag = bagStation(r, e, now, 'Wreckage');
+  if (bag && r.entities[bag.id]) {
+    if (efl) (bag as any).floor = efl;
+    off[bag.id] = bag;
+    delete r.entities[bag.id];
+  }
+  delete off[e.id];
+  for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid];
+  if (!Object.keys(off).length) delete r.veyraOffscreenEntities;
+  return bag;
+}
 /** Integrate one bounded interval, debiting whole stacks against fractional prepaid credit. */
 export function stepTerritory(r:RunState,dt:number,now:number,report?:string[]) {
   if(dt<=0)return false; const plan=planTerritory(r);
@@ -558,8 +601,11 @@ export function stepTerritory(r:RunState,dt:number,now:number,report?:string[]) 
   for(const e of plan.structures) {const c=plan.assigned.get(e.id);if(c&&funded.has(c.id))continue;const before=e.hp!;e.hp=Math.max(0,before-e.maxHp!*dt/(BAL.territory[c?'unfundedCollapseHours':'unprotectedCollapseHours']*HOUR));if(e.hp<=1e-7)collapsed.push(e);}
   const reasons=new Map(collapsed.map(e=>[e.id,plan.assigned.get(e.id)?'unfunded upkeep':'no cabinet coverage']));
   const directlyReported=new Set<string>();
-  for(const e of collapsed) if(r.entities[e.id]){directlyReported.add(e.id);const name=STRUCTS[e.type!]?.name||e.type,reason=reasons.get(e.id)!;destroyStructure(r,e,now);receipt(r,now,'territory.collapse',`${e.id}:${name}:${reason}`);if(report)report.push(`${name} collapsed: ${reason}.`);}
-  if(report)for(const e of plan.structures)if(!r.entities[e.id]&&!directlyReported.has(e.id))report.push(`${STRUCTS[e.type!]?.name||e.type} was lost with its foundation.`);
+  for(const e of collapsed) {
+    if(r.entities[e.id]){directlyReported.add(e.id);const name=STRUCTS[e.type!]?.name||e.type,reason=reasons.get(e.id)!;destroyStructure(r,e,now);receipt(r,now,'territory.collapse',`${e.id}:${name}:${reason}`);if(report)report.push(`${name} collapsed: ${reason}.`);}
+    else if(r.veyraOffscreenEntities?.[e.id]){directlyReported.add(e.id);const name=STRUCTS[e.type!]?.name||e.type,reason=reasons.get(e.id)!;destroyOffscreenStructure(r,e,now);receipt(r,now,'territory.collapse',`${e.id}:${name}:${reason}`);if(report)report.push(`${name} collapsed: ${reason}.`);}
+  }
+  if(report)for(const e of plan.structures)if(!r.entities[e.id]&&!r.veyraOffscreenEntities?.[e.id]&&!directlyReported.has(e.id))report.push(`${STRUCTS[e.type!]?.name||e.type} was lost with its foundation.`);
   return collapsed.length>0;
 }
 /** Same materials and HP restored as manual repair; never pays for a destroyed structure. */
@@ -1285,18 +1331,38 @@ export function killPlayer(gs: GameState, now: number, cause: string) {
 }
 export function respawn(gs: GameState, now: number): Result {
   const r = gs.run!; const p = r.player; if (!p.dead) return { ok: false, reason: 'Not dead.' };
+  const isVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
+  const ww = isVeyra ? getWindowWorld(r.layoutId!) : null;
   const beds = Object.values(r.entities).filter(e => e.kind === 'struct' && e.type === 'bed_straw' && owned(e) && (e.hp ?? 0) > 0);
-  // Preserve the bed as the preferred wake point, but never wake inside a
-  // newly placed wall, burning source, live creature, or adjacent trap.
-  markDirty(); const grid=blockGrid(r);
-  const safeBedPoint=(x:number,y:number) => {
-    for(const [dx,dy] of [[-3,-3],[3,-3],[-3,3],[3,3]]) { const tx=Math.floor((x+dx)/TILE),ty=Math.floor((y+dy)/TILE); if(tx<1||ty<1||tx>=WW-1||ty>=WH-1)return false;const i=ty*WW+tx,t=effTile(r,tx,ty);if([1,2,3,5].includes(grid[i])||[T.DEEP,T.LAVA,T.TOXIC].includes(t)||(r.sources[i]?.fire??0)>r.clock.simMs||Object.values(r.entities).some(e=>e.type==='spikes'&&e.tx===tx&&e.ty===ty))return false; }
-    return !r.creatures.some(m=>m.state!=='dead'&&Math.hypot(m.x-x,m.y-y)<12);
+  // Preserve the bed as the preferred wake point, switching to the bed's storey on Veyra so collision & hazards match.
+  const safeBedPoint = (x: number, y: number) => {
+    const w = getWorld(), fl = activeFloor(r), grid = blockGrid(r);
+    for (const [dx, dy] of [[-3, -3], [3, -3], [-3, 3], [3, 3]]) {
+      const tx = Math.floor((x + dx) / TILE), ty = Math.floor((y + dy) / TILE);
+      if (tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1) return false;
+      const i = ty * WW + tx, t = effTile(r, tx, ty);
+      if ([1, 2, 3, 5].includes(grid[i]) || !w.economyMap.walkable[i] || [T.DEEP, T.LAVA, T.TOXIC].includes(t) || (r.sources[i]?.fire ?? 0) > r.clock.simMs || Object.values(r.entities).some(e => onActiveFloor(r, e) && e.type === 'spikes' && e.tx === tx && e.ty === ty)) return false;
+    }
+    return !r.creatures.some(m => m.state !== 'dead' && ((m as any).floor ?? 0) === fl && Math.hypot(m.x - x, m.y - y) < 12);
   };
-  let wake:{x:number;y:number}|undefined;
-  for(const bed of beds){for(const [dx,dy] of [[0,10],[0,0],[0,-16],[16,0],[-16,0],[0,16]]){const candidate={x:bed.x+dx,y:bed.y+dy};if(safeBedPoint(candidate.x,candidate.y)&&clearWallLine(r,bed,candidate)){wake=candidate;break;}}if(wake)break;}
-  if(!wake){const s=chooseLegalSpawn(r);if(!s)return {ok:false,reason:'No safe spawn is currently available.'};wake={x:s.tx*TILE+8,y:s.ty*TILE+8};}
-  const {x,y}=wake;
+  let wake: { x: number; y: number } | undefined;
+  for (const bed of beds) {
+    const bedFl = ((bed as any).floor ?? 0) as -1 | 0 | 1 | 2;
+    if (ww && activeFloor(r) !== bedFl) applyFloor(gs, ww, ww.floors, bedFl, undefined, markDirty);
+    else markDirty();
+    for (const [dx, dy] of [[0, 10], [0, 0], [0, -16], [16, 0], [-16, 0], [0, 16]]) {
+      const candidate = { x: bed.x + dx, y: bed.y + dy };
+      if (safeBedPoint(candidate.x, candidate.y) && clearWallLine(r, bed, candidate)) { wake = candidate; break; }
+    }
+    if (wake) break;
+  }
+  if (!wake) {
+    if (ww && activeFloor(r) !== 0) applyFloor(gs, ww, ww.floors, 0, undefined, markDirty);
+    const s = chooseLegalSpawn(r);
+    if (!s) return { ok: false, reason: 'No safe spawn is currently available.' };
+    wake = { x: s.tx * TILE + 8, y: s.ty * TILE + 8 };
+  }
+  const { x, y } = wake;
   Object.assign(p, { x, y, dead: false, hp: 60, stamina: 60, hunger: Math.max(p.hunger, 40), thirst: Math.max(p.thirst, 40), warmth: 80, rad: Math.min(p.rad, 20), invuln: 2000 });
   return { ok: true, receipt: receipt(r, now, 'respawn', `${Math.round(x)},${Math.round(y)}`) };
 }
@@ -1468,8 +1534,9 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (p.dead) return fail('You are dead.');
       const m = r.creatures.find(c => c.id === it.cid && c.state !== 'dead' && ((c as any).floor ?? 0) === activeFloor(r));
       if (!m) return fail('Animal is not here.');
-      if (dist(p.x, p.y, m.x, m.y) > 3.2 * TILE) return fail('Move closer to the animal.');
       const op = it.op as string;
+      const droppingLead = !!m.husbandry?.following && (op === 'release' || op === 'lead');
+      if (dist(p.x, p.y, m.x, m.y) > 3.2 * TILE || (!droppingLead && !clearWallLine(r, p, m))) return fail('Move closer to the animal.');
       if (op === 'tame') {
         const spec = TAMING_SPECIES[m.type];
         if (!spec) return fail('That creature cannot be tamed.');
@@ -1886,6 +1953,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (!Number.isFinite(it.x) || !Number.isFinite(it.y)) return fail('Invalid location.');
       const tx = Math.floor(it.x / TILE), ty = Math.floor(it.y / TILE); if (blockedAt(r, tx, ty) || [T.SHALLOW, T.RIVER].includes(effTile(r, tx, ty))) return fail('Cart needs open dry ground.');
       if (dist(p.x, p.y, it.x, it.y) > 3 * TILE) return fail('Too far.');
+      if (!clearPhysicalLine(r, p, { x: it.x, y: it.y }, true)) return fail('Blocked by obstacle.');
       const deployed = C(r, 'inv').slots[idx]!; C(r, 'inv').slots[idx] = null; const c = mkContainer(r, 'cart', deployed.upgrade === 'freight' ? BAL.cart.freightSlots : BAL.cart.slots);
       const e: Entity = { id: uid(r, 'cart'), kind: 'cart', x: it.x, y: it.y, c: c.id, hp: 200, maxHp: 200, deployed }; if (r.veyraFloor) (e as any).floor = r.veyraFloor; r.entities[e.id] = e; award(gs, 'cart', now); return ok('cart.place', e.id);
     }
@@ -2042,16 +2110,19 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return ok('escrow.deposit', `${n}`, `Secured ${n} cash to your profile.`);
     }
     case 'journeyRequisition': {
+      if (r.qaUsed) return fail('QA-modified runs cannot claim profile requisitions.');
       const date = typeof it.date === 'string' ? it.date : '';
       const milestone = typeof it.milestone === 'string' ? it.milestone : '';
-      const pts = typeof it.points === 'number' && Number.isFinite(it.points) ? it.points : 0;
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return fail('Invalid requisition date.');
+      if (!isValidDateKey(date)) return fail('Invalid requisition date.');
+      if (!Number.isFinite(now) || now < r.startedAt || date !== dateKey(now)) return fail('Requisitions must match the active UTC day.');
       const table = (BAL as any).journeyRequisitions as Record<string, { points: number; securedCash: number; items: [string, number][] }> | undefined;
       const spec = table && Object.prototype.hasOwnProperty.call(table, milestone) ? table[milestone] : null;
       if (!spec) return fail('Unknown daily milestone.');
-      if (pts < spec.points) return fail(`Needs ${spec.points} waypoint points today.`);
       const prefix = `req:${date}:${milestone}:`;
       if (gs.profile.profileReceipts.some(x => x.startsWith(prefix))) return fail('Milestone supply requisition already claimed today.');
+      const rerolledFrom = typeof it.rerolledFrom === 'string' ? it.rerolledFrom : undefined;
+      const authPts = computeAuthoritativeDailyPoints(r, date, rerolledFrom);
+      if (authPts < spec.points) return fail(`Needs ${spec.points} verified waypoint points today.`);
       if (!Number.isSafeInteger(gs.profile.securedCash + spec.securedCash)) return fail('Cash total exceeds the supported range.');
       gs.profile.securedCash += spec.securedCash;
       gs.profile.profileReceipts.push(`${prefix}${spec.securedCash}`);
@@ -2306,7 +2377,8 @@ function stationState(r: RunState, e: Entity, code: string, at: number) {
 export function stepStations(gs: GameState, dtMs: number, now: number, report?: string[], powered:ReadonlySet<string>=new Set()) {
   const r = gs.run!;
   const note = (message: string) => { if (report && !report.includes(message)) report.push(message); };
-  for (const e of Object.values(r.entities)) {
+  for (const e of [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})]) {
+    if (!r.entities[e.id] && e.type === 'oil_pump') continue;
     const st = e.station; if (!st) continue; const kind = e.kind==='recycler'?'recycler':STRUCTS[e.type!].station!;
     const needsFuel = kind === 'campfire' || kind === 'furnace' || kind === 'refinery' || kind === 'oil_pump';
     let t = dtMs, blocked = false;
@@ -2387,14 +2459,32 @@ export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean, at
     }
     if (e.type === 'barrel' && rain) e.water = Math.min(12, (e.water || 0) + dtMs / 20000);
   }
-  if (wet && r.veyraOffscreenEntities) {
+  if (r.veyraOffscreenEntities) {
     let checkedSeason = false;
-    let isWinter = false;
+    let season: Season = 'spring';
     for (const k in r.veyraOffscreenEntities) {
       const oe = r.veyraOffscreenEntities[k];
-      if (oe && oe.type === 'barrel' && ((oe as any).floor ?? 0) === 0) {
-        if (!checkedSeason) { checkedSeason = true; isWinter = calendarAt(r, at).season === 'winter'; }
-        if (!isWinter) oe.water = Math.min(12, (oe.water || 0) + dtMs / 20000);
+      if (!oe) continue;
+      if (oe.garden) {
+        if (!checkedSeason) { checkedSeason = true; season = calendarAt(r, at).season; }
+        const g = oe.garden;
+        const growSeconds = g.crop === 'herb' ? GARDEN_CROPS.herb.seconds : GARDEN_CROPS.crop.seconds;
+        const rate = g.crop === 'crop' || g.crop === 'herb' ? cropSeasonFactor(season, g.crop) : 1;
+        const roofed = Object.values(r.veyraOffscreenEntities).some(o => o.kind === 'struct' && o.tx === oe.tx && o.ty === oe.ty && ((o as any).floor ?? 0) === ((oe as any).floor ?? 0) && STRUCTS[o.type!]?.shelter);
+        const rain = wet && season !== 'winter' && !roofed && !g.coldFrame;
+        const incoming = rain ? 1 / 60000 : 0;
+        const use = 1 / (G.waterSecondsPerUnit * 1000);
+        let growing = g.crop && g.growth < 1 && rate > 0 ? Math.min(dtMs, (1 - g.growth) * growSeconds * 1000 / rate) : 0;
+        if (use > incoming) growing = Math.min(growing, g.water / (use - incoming));
+        if (growing > 0) {
+          g.growth = Math.min(1, g.growth + growing * rate / (growSeconds * 1000));
+          if (g.growth >= 1 - 1e-12) g.growth = 1;
+          g.water = Math.min(3, Math.max(0, g.water + (incoming - use) * growing));
+        }
+        g.water = Math.min(3, g.water + incoming * (dtMs - growing));
+      } else if (wet && oe.type === 'barrel' && ((oe as any).floor ?? 0) === 0) {
+        if (!checkedSeason) { checkedSeason = true; season = calendarAt(r, at).season; }
+        if (season !== 'winter') oe.water = Math.min(12, (oe.water || 0) + dtMs / 20000);
       }
     }
   }

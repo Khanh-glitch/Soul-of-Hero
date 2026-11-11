@@ -14,7 +14,7 @@ import { dispatch, markDirty, blockGrid as vfxBlockGrid, phaseOf, runHours, dayT
 import { tick, syncWorld, findInteract, activeStack, SPEED_KEY, rayLen, spiritDestination, vfxTestWarp, type Input, type Interact } from '../game/sim';
 import { draw, consumeFX, cam, resetRenderCaches } from '../game/render';
 import { getWindowWorld } from '../veyra05/window';
-import { activeFloor, stairAt, applyFloor, storeyLabel } from '../veyra05/floors';
+import { activeFloor, onActiveFloor, stairAt, applyFloor, storeyLabel } from '../veyra05/floors';
 import { windowOrigin, playerGlobalAu } from '../veyra05/continuity';
 import { qaFillPack, qaPrepareFullPack, qaSetSecuredCash } from '../game/qa-fixtures';
 const SAVE_TOAST: Record<string, string> = {
@@ -268,8 +268,8 @@ export default function Game({
     setSel(null);
     sfx({ type: 'ui' });
   }, [enterBuild, exitBuild]);
-  const claimRequisition = useCallback((date: string, milestone: string, points: number) => {
-    act('journeyRequisition', { date, milestone, points });
+  const claimRequisition = useCallback((date: string, milestone: string, points: number, rerolledFrom?: string) => {
+    act('journeyRequisition', { date, milestone, points, ...(rerolledFrom ? { rerolledFrom } : {}) });
   }, [act]);
 
   // scale stage to fit window smoothly at native resolution ('fit') or strict integer multiples ('integer')
@@ -294,20 +294,21 @@ export default function Game({
       if (m.state === 'dead' || ((m as any).floor ?? 0) !== activeFloor(r)) continue;
       if (!m.husbandry?.tamed && !TAMING_SPECIES[m.type]) continue;
       const d = Math.hypot(m.x - r.player.x, m.y - r.player.y);
-      if (d < bestD) { bestD = d; best = m; }
+      if (d < bestD && (m.husbandry?.following || clearWallLine(r, r.player, m))) { bestD = d; best = m; }
     }
     return best;
   };
 
   const interact = () => {
     const r = gs.run; if (!r) return;
-    if (r.layoutId?.startsWith('veyra05-') && !r.player.dead && !panelRef.current) {
+    if (r.layoutId?.startsWith('veyra05-') && !r.player.dead && !r.player.vehicle && !panelRef.current) {
       const ww = getWindowWorld(r.layoutId);
       const tx = Math.floor(r.player.x / TILE), ty = Math.floor(r.player.y / TILE);
       const [ox, oy] = windowOrigin(r);
       for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) {
-        const s = stairAt(ww.floors, r, tx + dx, ty + dy);
-        if (!s) continue;
+        const stx = tx + dx, sty = ty + dy;
+        const s = stairAt(ww.floors, r, stx, sty);
+        if (!s || !clearWallLine(r, r.player, { x: stx * TILE + 8, y: sty * TILE + 8 })) continue;
         const level = s.from === activeFloor(r) ? s.to : s.from;
         const landing = level === s.to ? [s.tx - ox, s.ty - oy] : [s.x - ox, s.y - oy];
         if (applyFloor(gs, ww, ww.floors, level, landing as [number, number], markDirty)) {
@@ -378,7 +379,7 @@ export default function Game({
           else if(e.code==='KeyE' && !ITEMS[s?.key||'']?.creatorCore && !panelRef.current) interact();
           break;
         }
-        case 'KeyF': { if (panelRef.current) break; if(r.player.vehicle){act('vehicleExit',{});break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current || r.layoutId?.startsWith('veyra05-')) { const c=!target.current && Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else interact(); } else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
+        case 'KeyF': { if (panelRef.current) break; if(r.player.vehicle){act('vehicleExit',{});break;} if(e.shiftKey || r.player.pulling){const c = Object.values(r.entities).find(x => x.kind === 'cart' && onActiveFloor(r, x) && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else if(r.player.pulling) act('grabCart',{eid:r.player.pulling}); else toast('No cart within reach.');} else if(target.current || r.layoutId?.startsWith('veyra05-')) { const c=!target.current && Object.values(r.entities).find(x=>x.kind==='cart' && onActiveFloor(r, x) && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34); if(c) act('grabCart',{eid:c.id}); else interact(); } else {const c=Object.values(r.entities).find(x=>x.kind==='cart' && onActiveFloor(r, x) && Math.hypot(x.x-r.player.x,x.y-r.player.y)<34);if(c)act('grabCart',{eid:c.id});} break; }
         case 'KeyI': case 'KeyC': if (buildModeRef.current) exitBuild(); fieldActionsRef.current.add('survivor'); toggle(e.code === 'KeyC' ? 'craft' : 'inv'); break;
         case 'KeyM': toggle('map'); break;
         case 'KeyN': toggle('notes'); break;
@@ -397,7 +398,7 @@ export default function Game({
         case 'KeyU': enterBuild('upgrade'); break;
         case 'KeyX': enterBuild('reclaim'); break;
         case 'KeyV': enterBuild('repair'); break;
-        case 'KeyR': { const selected=activeStack(r); if(selected && ITEMS[selected.key]?.creatorCore && !panelRef.current){act('loadCore',{slot:r.player.active,uid:selected.uid,mode:e.altKey?'signature':e.shiftKey?'refined':'basic'});break;} const t = Object.values(r.entities).find(x => x.type === 'research' && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 3 * TILE && clearWallLine(r, r.player, x)); if (t) setPanel({ kind: 'container', eid: t.id }); else toast('Research needs a Research Table within reach.'); break; }
+        case 'KeyR': { const selected=activeStack(r); if(selected && ITEMS[selected.key]?.creatorCore && !panelRef.current){act('loadCore',{slot:r.player.active,uid:selected.uid,mode:e.altKey?'signature':e.shiftKey?'refined':'basic'});break;} const t = Object.values(r.entities).find(x => x.type === 'research' && onActiveFloor(r, x) && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 3 * TILE && clearWallLine(r, r.player, x)); if (t) setPanel({ kind: 'container', eid: t.id }); else toast('Research needs a Research Table within reach.'); break; }
         case 'Escape': if (buildModeRef.current) { exitBuild(); break; } if(coreAimRef.current || (r.player.action?.kind==='cast' && !r.player.action.done)){coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel=true;break;} if (panelRef.current && getKeyboardPick()) { clearSlotInteraction(); setSel(null); break; } if (buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) { setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); } else if (panelRef.current) setPanel(null); else setPanel({ kind: 'menu' }); setSel(null); break;
         default: {
           const dm = e.code.match(/^Digit(\d)$/); if (!dm) break;
@@ -679,11 +680,12 @@ export default function Game({
   const isVeyra05 = !!r.layoutId?.startsWith('veyra05-');
   const veyraWw = isVeyra05 ? getWindowWorld(r.layoutId!) : null;
   const nearStair = (() => {
-    if (!veyraWw || p.dead) return null;
+    if (!veyraWw || p.dead || p.vehicle) return null;
     const tx = Math.floor(p.x / TILE), ty = Math.floor(p.y / TILE);
     for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) {
-      const s = stairAt(veyraWw.floors, r, tx + dx, ty + dy);
-      if (s) return { stair: s, x: (tx + dx) * TILE + 8, y: (ty + dy) * TILE + 8 };
+      const stx = tx + dx, sty = ty + dy;
+      const s = stairAt(veyraWw.floors, r, stx, sty);
+      if (s && clearWallLine(r, p, { x: stx * TILE + 8, y: sty * TILE + 8 })) return { stair: s, x: stx * TILE + 8, y: sty * TILE + 8 };
     }
     return null;
   })();

@@ -662,7 +662,14 @@ function archiveFloorState(r: RunState, ww: WindowWorld) {
 /** Install a floor layer into the authoritative world arrays and move the player. */
 export function applyFloor(gs: GameState, ww: WindowWorld, stack: FloorStack, level: Level, moveTo?: [number, number], markDirtyFn?: () => void): boolean {
   const r = gs.run; if (!r) return false;
+  const prevLevel = activeFloor(r);
+  if (r.player.vehicle && (level !== prevLevel || moveTo)) return false;
   const layer = stack.layers.get(level); if (!layer) return false;
+  if (level !== prevLevel) {
+    r.player.pulling = null;
+    if (r.spiritTransit) delete r.spiritTransit;
+    if (r.dragonDive) delete r.dragonDive;
+  }
   archiveFloorState(r, ww);
   const w: World = ww.world;
   w.tiles.set(layer.tiles);

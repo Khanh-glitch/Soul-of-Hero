@@ -1,4 +1,5 @@
-import type { Entity, RunState, Stack } from './core';
+import { TILE, type Entity, type RunState, type Stack } from './core';
+import { windowOrigin } from '../veyra05/continuity';
 
 /** Only the engine's death receipt binds a bag to a death. Never search by distance. */
 export type DeathBagView =
@@ -14,7 +15,16 @@ export function deathBagView(r: RunState): DeathBagView {
   if (!match) return { status: 'unverified', bagId: null, bag: null, stacks: [], cause };
   const id = match[1].trim();
   if (id === 'none') return { status: 'none', bagId: null, bag: null, stacks: [], cause };
-  const bag = r.entities[id];
+  let bag: Entity | undefined = r.entities[id];
+  if (!bag && r.veyraOffscreenEntities?.[id]) {
+    const oe = r.veyraOffscreenEntities[id];
+    const [ox, oy] = windowOrigin(r);
+    bag = {
+      ...oe,
+      x: oe.x - ox * TILE,
+      y: oe.y - oy * TILE,
+    };
+  }
   const container = bag?.c ? r.custody[bag.c] : undefined;
   if (!bag || bag.kind !== 'bag' || bag.parcel || !container || container.kind !== 'bag') {
     return { status: 'missing', bagId: id, bag: null, stacks: [], cause };

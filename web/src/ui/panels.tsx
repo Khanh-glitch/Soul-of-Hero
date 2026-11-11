@@ -106,7 +106,7 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
   const used = C(r, 'inv').slots.filter(Boolean).length, total = C(r, 'inv').slots.length;
   const load = Math.min(1, w / limit);
   const cash = countItem(r, 'inv', 'rcash');
-  const SLOT_G = ['helm', 'armor', 'cloak'];
+  const SLOT_G = ['scrap_helm', 'leather_armor', 'fur_cloak'];
   return <Panel title={backToContainer ? 'Pack · X returns' : 'Pack'} className="inv" style={{ left: x, top, width: 228 }} onClose={onClose ?? (() => api.open(null))}>
     {/* paper doll: equipment slots flank the live character; numbers are chips, not sentences */}
     <div className="doll-row">

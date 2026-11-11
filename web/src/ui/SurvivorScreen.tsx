@@ -21,7 +21,7 @@ import { ItemInfo } from './panels';
 // ============================================================================
 type Cat = 'all' | 'tools' | 'gear' | 'food' | 'mats' | 'cores' | 'stations' | 'devices';
 const CATS: { id: Cat; label: string; icon: string }[] = [
-  { id: 'all', label: 'All', icon: 'gear' }, { id: 'tools', label: 'Tools', icon: 'stone_axe' },
+  { id: 'all', label: 'All', icon: 'mechanical_parts' }, { id: 'tools', label: 'Tools', icon: 'stone_axe' },
   { id: 'gear', label: 'Gear', icon: 'leather_armor' }, { id: 'food', label: 'Food & Med', icon: 'stew' },
   { id: 'mats', label: 'Materials', icon: 'iron_ingot' }, { id: 'cores', label: 'Cores', icon: 'core_blast' },
   { id: 'stations', label: 'Stations', icon: 'st:workbench' }, { id: 'devices', label: 'Devices', icon: 'st:base_generator' },
