@@ -1,0 +1,583 @@
+{
+  "meta": {
+    "version": "soh.economic-rebalance-m3.v1",
+    "m2ReferenceVersion": "soh.economic-sim-audit.v1",
+    "generatedAtAuditAnchor": "2026-11-11T00:00:00.000Z",
+    "monteCarloN": 400
+  },
+  "policyDelta": {
+    "version": "soh.economic-rebalance-m3.v1",
+    "territory": {
+      "upkeepFractionPerDay": 0.1,
+      "cabinetSlots": 32,
+      "exemptPrecisionMats": [
+        "spares",
+        "mechanical_parts",
+        "fasteners",
+        "glass"
+      ],
+      "claimMinDistFromPoiEnforced": 10,
+      "repairCostModel": "fractional-50pct-edge-or-base-tier"
+    },
+    "energyAndFuel": {
+      "baseGeneratorFuelCanSeconds": 360,
+      "zeroLoadPhantomDrainEliminated": true,
+      "campfireIdleAutoPause": true,
+      "crudeBatchRecipe": {
+        "crudeIn": 4,
+        "glassIn": 1,
+        "fuelCansOut": 2,
+        "secs": 16
+      },
+      "mapAuthorizedOilSites": {
+        "shippingPads": 2,
+        "shippingStockPerPad": 120,
+        "veyraPads": 2,
+        "veyraStockPerPad": 150,
+        "offscreenOilPumpStepped": true
+      }
+    },
+    "progressionAndCurrency": {
+      "allowRandomCoreAfterStarterCount": 4,
+      "coreRandomWeight": 0.5,
+      "journeyRequisitionPayouts": {
+        "ember": 1,
+        "hearth": 2,
+        "beacon": 4
+      },
+      "expandedVendorSecuredCap": 160,
+      "crystalStockPerNode": 4,
+      "sulfurStockPerNode": 4,
+      "energyRefinedOutputQty": 5
+    },
+    "veyraParity": {
+      "fixedAuthoredCachesExpected": 24,
+      "fixedArchetypePoisExpected": 58,
+      "staticCoresAdded": [
+        "core_fire",
+        "core_storm",
+        "core_frost",
+        "core_meteor",
+        "core_dragon"
+      ],
+      "addedBlueprints": [
+        "arrow",
+        "core_earth"
+      ],
+      "spawnWindowMinIronNodes": 14,
+      "spawnWindowMinCoalNodes": 8,
+      "airdropAndDriveRecoveryEnabled": true,
+      "nativeDropAdditions": {
+        "slime_3": [
+          [
+            "chitin",
+            1,
+            0.7
+          ],
+          [
+            "beetle_horn",
+            1,
+            0.25
+          ]
+        ],
+        "orc_3": [
+          [
+            "chitin",
+            1,
+            0.5
+          ]
+        ],
+        "vampire_2": [
+          [
+            "crawler_optic",
+            1,
+            0.35
+          ]
+        ],
+        "slime_1": [
+          [
+            "shell",
+            1,
+            0.7
+          ]
+        ],
+        "fox": [
+          [
+            "wolf_fang",
+            1,
+            0.35
+          ]
+        ]
+      }
+    },
+    "uiAndBuildOrder": {
+      "restoredDefenseKeys": [
+        "ir_sensor",
+        "bear_trap"
+      ],
+      "collapseTooltipHours": 12
+    }
+  },
+  "lockedCanonVerification": {
+    "allPassed": true,
+    "checks": [
+      {
+        "invariantId": "LOCKED_CANON_RUN_CLOCK",
+        "rule": "maxRunHours === 336, ragnarokFinalHours === 72, calendar.years === 2 (8 seasons x 42h)",
+        "verified": true,
+        "detail": "run=336h, ragnarok=72h, years=2, phase=42h"
+      },
+      {
+        "invariantId": "LOCKED_CANON_ESCROW_CASH_ONLY",
+        "rule": "Meta profile retains only securedCash/achievements/history; escrow_chest stays cash-only",
+        "verified": true,
+        "detail": "Requisition cap reduced from 588 -> 98, keeping finite rcash/escrow central."
+      },
+      {
+        "invariantId": "LOCKED_CANON_K3_FINITE_NON_RENEWABLE",
+        "rule": "No non-plant source regrows; no fuel_can station burn loop; oil wellheads stay finite",
+        "verified": true,
+        "detail": "Shipping oil pads capped at 2x120 finite units; Veyra oil pads capped at 2x150 finite units."
+      },
+      {
+        "invariantId": "LOCKED_CANON_K4_DIRECTED_RESEARCH_SCOPE",
+        "rule": "Directed research remains restricted to Tier < 3 (Tier 3/Core requires discovery or blueprint/core study)",
+        "verified": true,
+        "detail": "Unlocks core_* in random research after 4 unlocks without weakening directed Tier-3 gate."
+      },
+      {
+        "invariantId": "LOCKED_CANON_K8_ANTI_ARBITRAGE",
+        "rule": "All recycler rules enforce net-loss recovery (0 OVER_RETURN) and zero free fuel minting",
+        "verified": true,
+        "detail": "Verified 0 OVER_RETURN across all 9 live recycler recipes under component & tool proofs."
+      },
+      {
+        "invariantId": "LOCKED_CANON_81_POI_INTEGRITY",
+        "rule": "All 81 Veyra POIs preserved with zero deletions and valid authored/archetype chests",
+        "verified": true,
+        "detail": "Verified 81 POIs across 12 Veyra scenes."
+      }
+    ]
+  },
+  "territoryStressBeforeAfter": [
+    {
+      "preset": "Starter_2x2_Wood",
+      "structureCount": 20,
+      "before": {
+        "upkeepFractionPerDay": 0.25,
+        "cabinetSlots": 24,
+        "upkeepMaterialTypes": 4,
+        "autonomyHours24Slot": 384,
+        "total14dItems": 452,
+        "roundingOverchargeItems": 0.5
+      },
+      "after": {
+        "upkeepFractionPerDay": 0.1,
+        "cabinetSlots": 32,
+        "upkeepMaterialTypes": 4,
+        "autonomyHours32SlotWeighted": 3600,
+        "total14dItems": 182,
+        "deltaPercentConsumption": -59.73,
+        "autonomyMultiplier": 9.38
+      }
+    },
+    {
+      "preset": "Standard_4x4_Plank",
+      "structureCount": 56,
+      "before": {
+        "upkeepFractionPerDay": 0.25,
+        "cabinetSlots": 24,
+        "upkeepMaterialTypes": 7,
+        "autonomyHours24Slot": 97.63,
+        "total14dItems": 1233,
+        "roundingOverchargeItems": 1
+      },
+      "after": {
+        "upkeepFractionPerDay": 0.1,
+        "cabinetSlots": 32,
+        "upkeepMaterialTypes": 6,
+        "autonomyHours32SlotWeighted": 1301.69,
+        "total14dItems": 485,
+        "deltaPercentConsumption": -60.67,
+        "autonomyMultiplier": 13.33
+      }
+    },
+    {
+      "preset": "Stone_Keep_5x5",
+      "structureCount": 86,
+      "before": {
+        "upkeepFractionPerDay": 0.25,
+        "cabinetSlots": 24,
+        "upkeepMaterialTypes": 9,
+        "autonomyHours24Slot": 33.98,
+        "total14dItems": 2155,
+        "roundingOverchargeItems": 2.5
+      },
+      "after": {
+        "upkeepFractionPerDay": 0.1,
+        "cabinetSlots": 32,
+        "upkeepMaterialTypes": 6,
+        "autonomyHours32SlotWeighted": 637.17,
+        "total14dItems": 841,
+        "deltaPercentConsumption": -60.97,
+        "autonomyMultiplier": 18.75
+      }
+    },
+    {
+      "preset": "Brick_Citadel_6x6_Armed",
+      "structureCount": 127,
+      "before": {
+        "upkeepFractionPerDay": 0.25,
+        "cabinetSlots": 24,
+        "upkeepMaterialTypes": 9,
+        "autonomyHours24Slot": 31.22,
+        "total14dItems": 2809,
+        "roundingOverchargeItems": 2
+      },
+      "after": {
+        "upkeepFractionPerDay": 0.1,
+        "cabinetSlots": 32,
+        "upkeepMaterialTypes": 5,
+        "autonomyHours32SlotWeighted": 496.55,
+        "total14dItems": 1016,
+        "deltaPercentConsumption": -63.83,
+        "autonomyMultiplier": 15.9
+      }
+    },
+    {
+      "preset": "Solo_Outpost_Zero_Wood_CabinetOnly_Plus_Stations",
+      "structureCount": 21,
+      "before": {
+        "upkeepFractionPerDay": 0.25,
+        "cabinetSlots": 24,
+        "upkeepMaterialTypes": 7,
+        "autonomyHours24Slot": 161.5,
+        "total14dItems": 681,
+        "roundingOverchargeItems": 2
+      },
+      "after": {
+        "upkeepFractionPerDay": 0.1,
+        "cabinetSlots": 32,
+        "upkeepMaterialTypes": 4,
+        "autonomyHours32SlotWeighted": 2287.85,
+        "total14dItems": 250,
+        "deltaPercentConsumption": -63.29,
+        "autonomyMultiplier": 14.17
+      }
+    }
+  ],
+  "energyAndPowerBeforeAfter": {
+    "before": {
+      "fuelCanRuntimeSec": 60,
+      "idleZeroLoadDrainPer24hCans": 1440,
+      "idleCampfire10MinWoodLoss": 30,
+      "shippingOilPlusCrudeCans": 19.6,
+      "shippingTotalActiveTurretHours": 0.33,
+      "veyraOilPlusCrudeCans": 11,
+      "veyraTotalActiveTurretHours": 0.18,
+      "shipping24hDemandCansOneLoad": 1440,
+      "shipping14dDeficitFactor": 1028.57
+    },
+    "after": {
+      "fuelCanRuntimeSec": 360,
+      "idleZeroLoadDrainPer24hCans": 0,
+      "idleCampfire10MinWoodLoss": 0,
+      "shippingOilPlusCrudeCans": 139.6,
+      "shippingTotalActiveTurretHours": 13.96,
+      "veyraOilPlusCrudeCans": 161,
+      "veyraTotalActiveTurretHours": 16.1,
+      "shipping24hDemandCansOneLoad": 240,
+      "shipping14dDeficitFactor": 24.07,
+      "activeRuntimeGainFactor": 42.3
+    }
+  },
+  "currencyAndResearchBeforeAfter": {
+    "currency": {
+      "before": {
+        "dailyRequisitionSecured": 42,
+        "max14DayRequisitionSecured": 588,
+        "vendorSecuredCap": 76,
+        "requisitionOverVendorCapRatio": 7.74
+      },
+      "after": {
+        "dailyRequisitionSecured": 7,
+        "max14DayRequisitionSecured": 98,
+        "vendorSecuredCap": 160,
+        "requisitionOverVendorCapRatio": 0.61,
+        "ratioReductionFactor": 12.63
+      }
+    },
+    "researchMonteCarloN400": {
+      "before": {
+        "sparesToFirstCoreDist": {
+          "n": 400,
+          "min": 108,
+          "p10": 108,
+          "p50": 108,
+          "p90": 108,
+          "max": 108,
+          "mean": 108
+        },
+        "totalSparesAllRecipesDist": {
+          "n": 400,
+          "min": 140,
+          "p10": 140,
+          "p50": 140,
+          "p90": 140,
+          "max": 140,
+          "mean": 140
+        }
+      },
+      "after": {
+        "sparesToFirstCoreDist": {
+          "n": 400,
+          "min": 20,
+          "p10": 20,
+          "p50": 32,
+          "p90": 60,
+          "max": 84,
+          "mean": 35.89
+        },
+        "totalSparesAllRecipesDist": {
+          "n": 400,
+          "min": 140,
+          "p10": 140,
+          "p50": 140,
+          "p90": 140,
+          "max": 140,
+          "mean": 140
+        }
+      }
+    }
+  },
+  "veyraParityAndMonteCarloN400": {
+    "poiAndItemCoverage": {
+      "before": {
+        "authoredMaterialized": 23,
+        "archetypeMaterialized": 57,
+        "staticCoresOnVeyra": 0,
+        "staticBlueprintsOnVeyra": 6,
+        "missingVeyraRecipes": [
+          "chitin_armor",
+          "essence_spirit",
+          "core_demon"
+        ],
+        "missingVeyraSpecimens": [
+          "beetle_horn",
+          "crawler_optic",
+          "wolf_fang"
+        ]
+      },
+      "after": {
+        "authoredMaterialized": 24,
+        "archetypeMaterialized": 58,
+        "staticCoresOnVeyra": 5,
+        "staticBlueprintsOnVeyra": 8,
+        "missingVeyraRecipes": [],
+        "missingVeyraSpecimens": []
+      }
+    },
+    "veyraLocalSpawnMonteCarloN200": {
+      "before": {
+        "spawnIronNodes": {
+          "n": 200,
+          "min": 0,
+          "p10": 0,
+          "p50": 0,
+          "p90": 195,
+          "max": 195,
+          "mean": 35.1
+        },
+        "wreckDamagedDrives80": {
+          "n": 200,
+          "min": 0,
+          "p10": 0,
+          "p50": 0,
+          "p90": 0,
+          "max": 0,
+          "mean": 0
+        },
+        "airdropEvents": {
+          "n": 200,
+          "min": 0,
+          "p10": 0,
+          "p50": 0,
+          "p90": 0,
+          "max": 0,
+          "mean": 0
+        }
+      },
+      "after": {
+        "spawnIronNodes": {
+          "n": 200,
+          "min": 14,
+          "p10": 14,
+          "p50": 14,
+          "p90": 195,
+          "max": 195,
+          "mean": 46.58
+        },
+        "wreckDamagedDrives80": {
+          "n": 200,
+          "min": 5,
+          "p10": 12,
+          "p50": 16,
+          "p90": 21,
+          "max": 26,
+          "mean": 16.14
+        },
+        "airdropEvents": {
+          "n": 200,
+          "min": 14,
+          "p10": 14,
+          "p50": 14,
+          "p90": 14,
+          "max": 14,
+          "mean": 14
+        }
+      }
+    },
+    "refinedEnergyBudgetBeforeAfter": {
+      "beforeShippingChargesMax": 372,
+      "afterShippingChargesMax": 620,
+      "gainPercent": 66.67
+    }
+  },
+  "exploitAndConservationChecks": {
+    "poiDistanceGuard": {
+      "beforeAllowedAtDist9": true,
+      "afterAllowedAtDist9": false,
+      "enforcedMinDist": 10
+    },
+    "buildOrderParity": {
+      "beforeMissingDefenseKeys": [
+        "ir_sensor",
+        "bear_trap"
+      ],
+      "afterMissingDefenseKeys": []
+    },
+    "repairParity": {
+      "beforeQty1OverchargePairs": 17,
+      "afterQty1OverchargePairs": 0
+    },
+    "recyclerAntiArbitrage": {
+      "probedItems": 9,
+      "overReturnsBefore": 0,
+      "overReturnsAfter": 0
+    }
+  },
+  "findingResolutionMatrix": [
+    {
+      "findingId": "M2-F01",
+      "severity": "CRITICAL",
+      "beforeMetric": "0 beetle/crawler/crab on Veyra (chitin/optic unobtainable)",
+      "afterMetric": "Native slime_3/orc_3/vampire_2/slime_1/fox drops + [T.SAND] crab (0 dead paths)",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F02",
+      "severity": "CRITICAL",
+      "beforeMetric": "23/24 authored, 57/58 archetype (po_greywater & po_glade dropped)",
+      "afterMetric": "24/24 authored, 58/58 archetype (81/81 POIs 100% materialized)",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F03",
+      "severity": "CRITICAL",
+      "beforeMetric": "0 static Cores, 6 BPs, 0 airdrops, 0 damaged_drive on Veyra",
+      "afterMetric": "5 static Cores, 8 BPs, 14 airdrops, 16.14 expected damaged_drive",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F04",
+      "severity": "HIGH",
+      "beforeMetric": "588 securedCash/14d vs 76 vendor cap (7.74x)",
+      "afterMetric": "98 securedCash/14d vs 160 vendor cap (0.61x)",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F05",
+      "severity": "HIGH",
+      "beforeMetric": "fuel_can=60s (1028.57x 14d deficit; phantom idle burn)",
+      "afterMetric": "fuel_can=360s, 0 zero-load drain (42.3x active hours)",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F06",
+      "severity": "HIGH",
+      "beforeMetric": "104 spares mandatory before 1st random Core roll",
+      "afterMetric": "Weighted random Core after 4 unlocks: P50=32 spares",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F07",
+      "severity": "HIGH",
+      "beforeMetric": "2 missing keys (ir_sensor, bear_trap) in BUILD_ORDER",
+      "afterMetric": "0 missing keys in BUILD_ORDER",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F08",
+      "severity": "HIGH",
+      "beforeMetric": "claim allowed at dist=9 < 10",
+      "afterMetric": "Enforced rejection below 10 tiles",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F09",
+      "severity": "MEDIUM",
+      "beforeMetric": "Veyra spawn P50 local iron = 0 nodes (only 5/12 scenes have iron)",
+      "afterMetric": "Veyra spawn P50 local iron = 14 nodes",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F10",
+      "severity": "MEDIUM",
+      "beforeMetric": "Brick Citadel 31.22h autonomy (25%/d, 24 slots, 9 mats)",
+      "afterMetric": "Brick Citadel 496.55h autonomy (10%/d, 32 weighted slots, 5 mats)",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F11",
+      "severity": "MEDIUM",
+      "beforeMetric": "30 wood/10m idle campfire burn + stale \"~2h\" tooltip",
+      "afterMetric": "0 wood/10m unattended idle burn + dynamic 12h tooltip",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F12",
+      "severity": "MEDIUM",
+      "beforeMetric": "oil_pump disabled outside testFixture (0 prod crude)",
+      "afterMetric": "2 Shipping (240 crude) + 2 Veyra (300 crude) map-v1 wellheads",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F13",
+      "severity": "LOW",
+      "beforeMetric": "17 structure-material pairs bill 100% on 25% HP repair",
+      "afterMetric": "0 pairs bill 100% (50%-damage gate or base-tier fallback)",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F14",
+      "severity": "INFO",
+      "beforeMetric": "0 OVER_RETURN across 9 live recycler items",
+      "afterMetric": "0 OVER_RETURN verified post-rebalance",
+      "status": "VERIFIED_INVARIANT"
+    },
+    {
+      "findingId": "M2-F15",
+      "severity": "LOW",
+      "beforeMetric": "oilPumpOffscreenSkipped = true on Veyra",
+      "afterMetric": "oilPumpOffscreenSkipped = false (matches furnace/refinery)",
+      "status": "FIXED_BY_SPEC"
+    },
+    {
+      "findingId": "M2-F16",
+      "severity": "MEDIUM",
+      "beforeMetric": "372 max energy_refined charges from wild crystal",
+      "afterMetric": "620 max charges (+66.67%) + creature crystal drops",
+      "status": "FIXED_BY_SPEC"
+    }
+  ]
+}
