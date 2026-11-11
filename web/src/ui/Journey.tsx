@@ -17,7 +17,7 @@ export function JourneyLedger({ gs, store, now, initial = 'fieldcraft', onTrack,
   gs: GameState; store: JourneyStore; now: number; initial?: Folio;
   onTrack: (t: TrackRef) => void; onLesson: (id: string, status: 'seen' | 'dismissed') => void; onReroll: (id: string) => void;
   onSeen: () => void; onClose: () => void; onOpenNotes: () => void;
-  onClaimRequisition?: (date: string, milestone: string, points: number, rerolledFrom?: string) => void;
+  onClaimRequisition?: (date: string, milestone: string) => void;
   onJump?: (target: QuickJumpTarget) => void;
 }) {
   const [folio, setFolio] = useState<Folio>(initial);
@@ -109,7 +109,7 @@ function LessonPage({ store, id, onTrack, onLesson, onOpenReference, onJump }: {
 }
 
 // ---------------- DAILY WAYPOINTS ----------------
-function DailyLeft({ gs, store, onClaimRequisition }: { gs: GameState; store: JourneyStore; onClaimRequisition?: (date: string, milestone: string, points: number, rerolledFrom?: string) => void }) {
+function DailyLeft({ gs, store, onClaimRequisition }: { gs: GameState; store: JourneyStore; onClaimRequisition?: (date: string, milestone: string) => void }) {
   const d = store.daily; if (!d) return null;
   const streak = streakDays(store);
   return <div className="daily-l">
@@ -129,7 +129,7 @@ function DailyLeft({ gs, store, onClaimRequisition }: { gs: GameState; store: Jo
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 4 }}>
             <b>{m.name} · {m.at} pts</b>
-            {claimed ? <span className="req-badge">✓ Requisitioned</span> : on && onClaimRequisition ? <button className="btn xs gold" onClick={() => onClaimRequisition(d.date, m.id, d.points, d.rerolledFrom)}>Claim Supply</button> : null}
+            {claimed ? <span className="req-badge">✓ Requisitioned</span> : on && onClaimRequisition ? <button className="btn xs gold" onClick={() => onClaimRequisition(d.date, m.id)}>Claim Supply</button> : null}
           </div>
           <span>+{m.marks} Mark{rewardLine ? ` · ${rewardLine}` : ''}</span>
         </div>

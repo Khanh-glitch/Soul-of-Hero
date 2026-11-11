@@ -268,9 +268,15 @@ export default function Game({
     setSel(null);
     sfx({ type: 'ui' });
   }, [enterBuild, exitBuild]);
-  const claimRequisition = useCallback((date: string, milestone: string, points: number, rerolledFrom?: string) => {
-    act('journeyRequisition', { date, milestone, points, ...(rerolledFrom ? { rerolledFrom } : {}) });
+  const claimRequisition = useCallback((date: string, milestone: string) => {
+    act('journeyRequisition', { date, milestone });
   }, [act]);
+  const rerollWaypoint = useCallback((id: string) => {
+    const d = journeyRef.current.daily;
+    if (!d) return;
+    const res = act('journeyReroll', { date: d.date, from: id });
+    if (res.ok) setJourney(rerollDaily(journeyRef.current, id, gs.run));
+  }, [act, gs]);
 
   // scale stage to fit window smoothly at native resolution ('fit') or strict integer multiples ('integer')
   const [scale, setScale] = useState(1); const [off, setOff] = useState({ x: 0, y: 0 });
@@ -848,7 +854,7 @@ export default function Game({
       {panel?.kind === 'journey' && <JourneyLedger gs={gs} store={journey} now={now}
         onTrack={t => track(t)}
         onLesson={(id, st) => setJourney({ ...journeyRef.current, lessons: { ...journeyRef.current.lessons, [id]: { ...lessonState(journeyRef.current, id), status: st } } })}
-        onReroll={id => setJourney(rerollDaily(journeyRef.current, id, r))}
+        onReroll={rerollWaypoint}
         onSeen={() => setJourney(markChronicleSeen(journeyRef.current))}
         onClaimRequisition={!qaMode ? claimRequisition : undefined}
         onJump={handleJump}

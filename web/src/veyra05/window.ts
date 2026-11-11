@@ -24,7 +24,7 @@ import { U, FRAME_AU, FRAME_W, FRAME_H, CHUNK, auToTile, windowOriginAu, type Wi
 import { getChunk, FL, CL, type Chunk } from './chunks';
 import { POIS, GOLD } from './reader';
 import { slicePoisForWindow, getPoiLayout, type PoiLandmarkProp } from './poi-kit';
-import { windowForLayout, U05_WORLD_LAYOUT_ID, type Veyra05Scene } from './scenes';
+import { layoutIdAt, windowForLayout, U05_WORLD_LAYOUT_ID, type Veyra05Scene } from './scenes';
 import { buildFloorStack, type FloorStack } from './floors';
 
 const CODE_BIOME: Biome[] = ['meadow', 'forest', 'forest', 'forest', 'marsh', 'sand', 'hill', 'hill', 'snow', 'ash', 'toxic', 'sand'];
@@ -385,7 +385,16 @@ export function getWindowWorld(layoutId: string): WindowWorld {
   if (!w) {
     w = buildWindowWorld(layoutId);
     cache.set(layoutId, w);
-    if (cache.size > 8) cache.delete(cache.keys().next().value!);
+    if (cache.size > 16) cache.delete(cache.keys().next().value!);
   }
   return w;
+}
+
+/** Resolve a canonical cached `WindowWorld` covering global tile `(gx, gy)` so offscreen
+ *  homesteads read the exact same Map-owned `economyMap`, `floors`, `sources`, and `solidProps`
+ *  as when onscreen, while sharing one cached window per 64-tile region. */
+export function getWindowWorldForGlobalTile(gx: number, gy: number): WindowWorld {
+  const ox = Math.max(0, Math.min(FRAME_W - WW, Math.floor((gx - 68) / 64) * 64));
+  const oy = Math.max(0, Math.min(FRAME_H - WH, Math.floor((gy - 68) / 64) * 64));
+  return getWindowWorld(layoutIdAt(ox, oy));
 }

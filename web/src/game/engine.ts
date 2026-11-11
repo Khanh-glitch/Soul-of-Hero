@@ -19,15 +19,16 @@ import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
 import { mapDigest } from './map-package';
 import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from '../veyra05/scenes';
-import { getWindowWorld, resetWindowToGround } from '../veyra05/window';
+import { FRAME_W, FRAME_H, globalIndex } from '../veyra05/frame';
+import { getWindowWorld, getWindowWorldForGlobalTile, resetWindowToGround } from '../veyra05/window';
 import { activeFloor, applyFloor, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
 import { windowOrigin } from '../veyra05/continuity';
-import { computeAuthoritativeDailyPoints, dateKey, isValidDateKey } from './journey';
+import { computeAuthoritativeDailyPoints, dailySaltFor, dateKey, generateDaily, isValidDateKey, measureDailyObjectiveProgress, resolveRerollReplacement } from './journey';
 import { syncVeyraEcosystemActors } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
-import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
+import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
 
 export type Intent = { id: string; type: string; [k: string]: any };
 export type Result = { ok: true; receipt: string; msg?: string } | { ok: false; reason: string; dup?: boolean };
@@ -2109,6 +2110,22 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       award(gs, 'first_deposit', now);
       return ok('escrow.deposit', `${n}`, `Secured ${n} cash to your profile.`);
     }
+    case 'journeyReroll': {
+      const date = typeof it.date === 'string' ? it.date : '';
+      const from = typeof it.from === 'string' ? it.from : '';
+      if (!isValidDateKey(date)) return fail('Invalid waypoint date.');
+      if (!Number.isFinite(now) || now < r.startedAt || date !== dateKey(now)) return fail('Waypoints can only be swapped on the active UTC day.');
+      if (r.dailyRerolls?.[date]) return fail('Already swapped a waypoint today.');
+      const salt = dailySaltFor(r);
+      const baseIds = generateDaily(date, salt, r);
+      if (!from || !baseIds.includes(from)) return fail('Waypoint is not on today\'s slate.');
+      if (measureDailyObjectiveProgress(r, date, from, 0) > 0) return fail('Cannot swap a waypoint with progress.');
+      const next = resolveRerollReplacement(date, salt, baseIds, from, r);
+      if (!next) return fail('No eligible replacement waypoint today.');
+      const res = ok('journey.reroll', `${date}:${from}->${next.id}`, `Swapped waypoint to ${next.title}.`);
+      (r.dailyRerolls ??= {})[date] = { from, to: next.id, at: now, seq: r.seq, intentId: it.id };
+      return res;
+    }
     case 'journeyRequisition': {
       if (r.qaUsed) return fail('QA-modified runs cannot claim profile requisitions.');
       const date = typeof it.date === 'string' ? it.date : '';
@@ -2120,8 +2137,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (!spec) return fail('Unknown daily milestone.');
       const prefix = `req:${date}:${milestone}:`;
       if (gs.profile.profileReceipts.some(x => x.startsWith(prefix))) return fail('Milestone supply requisition already claimed today.');
-      const rerolledFrom = typeof it.rerolledFrom === 'string' ? it.rerolledFrom : undefined;
-      const authPts = computeAuthoritativeDailyPoints(r, date, rerolledFrom);
+      const authPts = computeAuthoritativeDailyPoints(r, date);
       if (authPts < spec.points) return fail(`Needs ${spec.points} verified waypoint points today.`);
       if (!Number.isSafeInteger(gs.profile.securedCash + spec.securedCash)) return fail('Cash total exceeds the supported range.');
       gs.profile.securedCash += spec.securedCash;
@@ -2441,14 +2457,236 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
     }
   }
 }
+function entityIdSortKey(id: string): number {
+  const m = /^[a-z]+([0-9a-z]+)$/i.exec(id);
+  const n = m ? Number.parseInt(m[1], 36) : NaN;
+  return Number.isFinite(n) ? n : Number.MAX_SAFE_INTEGER;
+}
+
+/** Deterministic deduplicated view across onscreen `r.entities` and Veyra `r.veyraOffscreenEntities`
+ *  so straddled or offscreen structures execute in the exact same order without duplicate processing. */
+function allRunEntities(r: RunState): Entity[] {
+  const off = r.veyraOffscreenEntities;
+  if (!off || !Object.keys(off).length) return Object.values(r.entities);
+  const seen = new Set<string>();
+  const out: Entity[] = [];
+  for (const e of Object.values(r.entities)) { seen.add(e.id); out.push(e); }
+  for (const e of Object.values(off)) { if (e && !seen.has(e.id)) { seen.add(e.id); out.push(e); } }
+  out.sort((a, b) => entityIdSortKey(a.id) - entityIdSortKey(b.id) || a.id.localeCompare(b.id));
+  return out;
+}
+
+function findRunEntity(r: RunState, id: string | undefined): Entity | undefined {
+  if (!id) return undefined;
+  return r.entities[id] ?? r.veyraOffscreenEntities?.[id];
+}
+
+function entityGlobalCoords(r: RunState, e: Entity): { gx: number; gy: number; gtx: number; gty: number; floor: number; onscreen: boolean } {
+  const floor = (e as any).floor ?? 0;
+  const onscreen = r.entities[e.id] === e;
+  if (!r.layoutId || !isVeyra05Layout(r.layoutId)) {
+    const gtx = e.tx ?? Math.floor(e.x / TILE), gty = e.ty ?? Math.floor(e.y / TILE);
+    return { gx: e.x, gy: e.y, gtx, gty, floor, onscreen: true };
+  }
+  if (onscreen) {
+    const [ox, oy] = windowOrigin(r);
+    const ltx = e.tx ?? Math.floor(e.x / TILE), lty = e.ty ?? Math.floor(e.y / TILE);
+    return { gx: ox * TILE + e.x, gy: oy * TILE + e.y, gtx: ox + ltx, gty: oy + lty, floor, onscreen: true };
+  }
+  const gtx = e.tx ?? Math.floor(e.x / TILE), gty = e.ty ?? Math.floor(e.y / TILE);
+  return { gx: e.x, gy: e.y, gtx, gty, floor, onscreen: false };
+}
+
+function isEntityRoofed(r: RunState, e: Entity, entities?: Entity[]): boolean {
+  if (!r.layoutId || !isVeyra05Layout(r.layoutId)) return isRoofed(r, e);
+  const off = r.veyraOffscreenEntities;
+  if ((!off || !Object.keys(off).length) && r.entities[e.id] === e && ((e as any).floor ?? 0) === activeFloor(r)) {
+    return isRoofed(r, e);
+  }
+  const p = entityGlobalCoords(r, e);
+  const list = entities ?? allRunEntities(r);
+  for (const o of list) {
+    if (o.kind !== 'struct' || !STRUCTS[o.type!]?.shelter) continue;
+    const op = entityGlobalCoords(r, o);
+    if (op.floor === p.floor && op.gtx === p.gtx && op.gty === p.gty) return true;
+  }
+  return false;
+}
+
+function resolveGardenMapCell(r: RunState, e: Entity): {
+  cacheKey: string;
+  biome: string;
+  mapTemperature: number;
+  mapMoisture: number;
+  slope: number;
+  baseTile: number;
+  effTileVal: number;
+} {
+  const fl = (e as any).floor ?? 0;
+  const onscreen = r.entities[e.id] === e;
+  if (!r.layoutId || !isVeyra05Layout(r.layoutId)) {
+    const w = getWorld(), m = w.economyMap;
+    const x = clamp(e.tx ?? Math.floor(e.x / TILE), 0, WW - 1), y = clamp(e.ty ?? Math.floor(e.y / TILE), 0, WH - 1), i = y * WW + x;
+    return {
+      cacheKey: `${m.id}#${m.revision}|${i}`,
+      biome: m.biome[i],
+      mapTemperature: m.temperature[i],
+      mapMoisture: m.moisture[i],
+      slope: m.slope[i],
+      baseTile: w.tiles[i],
+      effTileVal: effTile(r, x, y),
+    };
+  }
+  const [ox, oy] = windowOrigin(r);
+  const gtx = onscreen ? ox + (e.tx ?? Math.floor(e.x / TILE)) : (e.tx ?? Math.floor(e.x / TILE));
+  const gty = onscreen ? oy + (e.ty ?? Math.floor(e.y / TILE)) : (e.ty ?? Math.floor(e.y / TILE));
+  const lx = gtx - ox, ly = gty - oy;
+  if (lx >= 0 && lx < WW && ly >= 0 && ly < WH && fl === activeFloor(r)) {
+    if (r.layoutId === getActiveLayout()) {
+      const w = getWorld(), m = w.economyMap, i = ly * WW + lx;
+      return {
+        cacheKey: `veyra-g|${gty * FRAME_W + gtx}`,
+        biome: m.biome[i],
+        mapTemperature: m.temperature[i],
+        mapMoisture: m.moisture[i],
+        slope: m.slope[i],
+        baseTile: w.tiles[i],
+        effTileVal: effTile(r, lx, ly),
+      };
+    }
+    const ww = getWindowWorld(r.layoutId);
+    const m = ww.world.economyMap, i = ly * WW + lx;
+    const layer = fl === 0 ? ww.floors.ground : (ww.floors.layers.get(fl as -1 | 0 | 1 | 2) ?? ww.floors.ground);
+    const baseTile = layer.tiles[i];
+    const tm = r.terrain[i];
+    const effTileVal = tm && (!tm.until || tm.until > r.clock.simMs) ? tm.t : baseTile;
+    return {
+      cacheKey: `veyra-g|${gty * FRAME_W + gtx}`,
+      biome: m.biome[i],
+      mapTemperature: m.temperature[i],
+      mapMoisture: m.moisture[i],
+      slope: m.slope[i],
+      baseTile,
+      effTileVal,
+    };
+  }
+  const cww = getWindowWorldForGlobalTile(gtx, gty);
+  const cx = clamp(gtx - cww.win.originTx, 0, WW - 1), cy = clamp(gty - cww.win.originTy, 0, WH - 1);
+  const ci = cy * WW + cx, m = cww.world.economyMap;
+  const layer = fl === 0 ? cww.floors.ground : (cww.floors.layers.get(fl as -1 | 0 | 1 | 2) ?? cww.floors.ground);
+  const baseTile = layer.tiles[ci];
+  const gi = globalIndex(gtx, gty);
+  const tm = fl === 0 ? r.veyraGlobalTerrain?.[gi] : undefined;
+  const effTileVal = tm && (!tm.until || tm.until > r.clock.simMs) ? tm.t : baseTile;
+  return {
+    cacheKey: `veyra-g|${gi}`,
+    biome: m.biome[ci],
+    mapTemperature: m.temperature[ci],
+    mapMoisture: m.moisture[ci],
+    slope: m.slope[ci],
+    baseTile,
+    effTileVal,
+  };
+}
+
+function globalCellBlockClass(r: RunState, gtx: number, gty: number, fl: number, entities: Entity[]): number {
+  if (!r.layoutId || !isVeyra05Layout(r.layoutId)) {
+    if (gtx < 0 || gty < 0 || gtx >= WW || gty >= WH) return 1;
+    return blockGrid(r)[gty * WW + gtx];
+  }
+  if (gtx < 0 || gty < 0 || gtx >= FRAME_W || gty >= FRAME_H) return 1;
+  const [ox, oy] = windowOrigin(r);
+  const lx = gtx - ox, ly = gty - oy;
+  if (lx >= 0 && lx < WW && ly >= 0 && ly < WH && fl === activeFloor(r) && r.layoutId === getActiveLayout()) {
+    return blockGrid(r)[ly * WW + lx];
+  }
+  const cww = getWindowWorldForGlobalTile(gtx, gty);
+  const cx = gtx - cww.win.originTx, cy = gty - cww.win.originTy;
+  if (cx < 0 || cy < 0 || cx >= WW || cy >= WH) return 1;
+  const ci = cy * WW + cx;
+  const layer = fl === 0 ? cww.floors.ground : cww.floors.layers.get(fl as -1 | 0 | 1 | 2);
+  if (!layer) return 1;
+  const gi = globalIndex(gtx, gty);
+  const tm = fl === 0 ? r.veyraGlobalTerrain?.[gi] : undefined;
+  const baseTile = layer.tiles[ci];
+  const tile = tm && (!tm.until || tm.until > r.clock.simMs) ? tm.t : baseTile;
+  let cls = tileClass(tile);
+  const isAuthoredDoor = layer.statics.some(s => s.kind === 'door' && s.tx === cx && s.ty === cy);
+  if (cls === 0 && !(tile === T.ICE && [T.DEEP, T.SHALLOW, T.RIVER].includes(baseTile)) && !layer.walkable[ci] && !isAuthoredDoor) cls = 1;
+  if (cls === 0) {
+    let srcKey = layer.sources[ci];
+    const sst = fl === 0 ? r.veyraGlobalSources?.[gi] : r.veyraGlobalFloorState?.[fl]?.sources?.[gi];
+    if (srcKey && sst?.burnt) srcKey = 'deadtree';
+    if (srcKey) {
+      const def = SOURCES[srcKey];
+      const stock = sst ? (sst.stock > 0 ? sst.stock : (def.regrow && sst.regrowDoneAt !== undefined && r.clock.lastSimAt >= sst.regrowDoneAt ? def.stock : 0)) : def.stock;
+      if (def?.block && (stock > 0 || srcKey === 'wreck')) cls = 2;
+    }
+  }
+  if ((cls === 0 || cls === 4) && layer.solidProps[ci]) cls = 2;
+  for (const st of layer.statics) {
+    if (st.tx !== cx || st.ty !== cy) continue;
+    if (st.kind === 'door') {
+      const open = fl === 0 ? r.veyraGlobalDoors?.[gi] : r.veyraGlobalFloorState?.[fl]?.doors?.[gi];
+      if (!open) cls = 3;
+      else if (!tm && baseTile === T.PWALL) cls = 0;
+    } else if (st.kind === 'loot') {
+      if (!r.veyraGlobalDepletedLoot?.[`${fl}:${gi}`]) cls = 3;
+    } else if (st.kind === 'cash' || st.kind === 'gen' || st.kind === 'vendor' || st.kind === 'evac') {
+      cls = 3;
+    }
+  }
+  for (const o of entities) {
+    const op = entityGlobalCoords(r, o);
+    if (op.floor !== fl || op.gtx !== gtx || op.gty !== gty) continue;
+    if (o.kind === 'struct') { const sd = STRUCTS[o.type!]; if (sd?.block && !(o.type!.startsWith('door') && o.open)) cls = 3; }
+    else if (o.kind === 'door') { if (!o.open) cls = 3; else if (!tm && baseTile === T.PWALL && isAuthoredDoor) cls = 0; }
+    else if (o.kind === 'airdrop' && (o.airdrop?.phase === 'locked' || o.airdrop?.phase === 'open' || o.airdrop?.phase === 'partial')) cls = 3;
+    else if (o.kind === 'loot' || o.kind === 'cash' || o.kind === 'vendor' || o.kind === 'gen' || o.kind === 'evac' || o.kind === 'recycler') cls = 3;
+  }
+  return cls;
+}
+
+function clearTenderSegment(r: RunState, a: Entity, b: Entity, entities: Entity[]): boolean {
+  const fa = (a as any).floor ?? 0, fb = (b as any).floor ?? 0;
+  if (fa !== fb) return false;
+  if (!r.layoutId || !isVeyra05Layout(r.layoutId)) return clearSegment(r, a, b);
+  if (r.entities[a.id] === a && r.entities[b.id] === b && fa === activeFloor(r) && r.layoutId === getActiveLayout()) {
+    return clearSegment(r, a, b);
+  }
+  const pa = entityGlobalCoords(r, a), pb = entityGlobalCoords(r, b);
+  const sx = Math.floor(pa.gx / TILE), sy = Math.floor(pa.gy / TILE);
+  const ex = Math.floor(pb.gx / TILE), ey = Math.floor(pb.gy / TILE);
+  let x = sx, y = sy;
+  const dx = pb.gx - pa.gx, dy = pb.gy - pa.gy, stepx = Math.sign(dx), stepy = Math.sign(dy);
+  const txStep = dx ? TILE / Math.abs(dx) : Infinity, tyStep = dy ? TILE / Math.abs(dy) : Infinity;
+  let tx = dx ? ((stepx > 0 ? (x + 1) * TILE : x * TILE) - pa.gx) / dx : Infinity;
+  let ty = dy ? ((stepy > 0 ? (y + 1) * TILE : y * TILE) - pa.gy) / dy : Infinity;
+  const clear = (cx: number, cy: number) => {
+    if ((cx === sx && cy === sy) || (cx === ex && cy === ey)) return true;
+    const cls = globalCellBlockClass(r, cx, cy, pa.floor, entities);
+    return cls !== 1 && cls !== 2 && cls !== 3 && cls !== 5;
+  };
+  while (x !== ex || y !== ey) {
+    if (Math.abs(tx - ty) < 1e-10) {
+      if (!clear(x + stepx, y) || !clear(x, y + stepy)) return false;
+      x += stepx; y += stepy; tx += txStep; ty += tyStep;
+    } else if (tx < ty) { x += stepx; tx += txStep; }
+    else { y += stepy; ty += tyStep; }
+    if (!clear(x, y)) return false;
+  }
+  return true;
+}
+
 export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean, at: number = gs.run!.clock.lastSimAt) {
   const r = gs.run!; const G = BAL.garden;
-  for (const e of Object.values(r.entities)) {
+  const entities = allRunEntities(r);
+  for (const e of entities) {
     if (!e.garden && e.type !== 'barrel') continue;
     const env = gardenEnvironment(r, e, wet, e.garden?.crop === 'herb' ? 'herb' : 'crop', at);
     // CAL-01: only LIQUID precipitation is caught; snow lands on top of the plot and
     // does not water it. A cold frame (or a roof) keeps its cover either way.
-    const rain = wet && !isRoofed(r, e) && !e.garden?.coldFrame && env.catch > 0;
+    const rain = wet && !isEntityRoofed(r, e, entities) && !e.garden?.coldFrame && env.catch > 0;
     if (e.garden) {
       const g = e.garden; const growSeconds = g.crop === 'herb' ? GARDEN_CROPS.herb.seconds : GARDEN_CROPS.crop.seconds; const rate = g.crop === 'crop' || g.crop === 'herb' ? env.rate : 1;
       const incoming = rain ? env.catch / 60000 : 0; const use = env.evaporation / (G.waterSecondsPerUnit * 1000);
@@ -2459,67 +2697,63 @@ export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean, at
     }
     if (e.type === 'barrel' && rain) e.water = Math.min(12, (e.water || 0) + dtMs / 20000);
   }
-  if (r.veyraOffscreenEntities) {
-    let checkedSeason = false;
-    let season: Season = 'spring';
-    for (const k in r.veyraOffscreenEntities) {
-      const oe = r.veyraOffscreenEntities[k];
-      if (!oe) continue;
-      if (oe.garden) {
-        if (!checkedSeason) { checkedSeason = true; season = calendarAt(r, at).season; }
-        const g = oe.garden;
-        const growSeconds = g.crop === 'herb' ? GARDEN_CROPS.herb.seconds : GARDEN_CROPS.crop.seconds;
-        const rate = g.crop === 'crop' || g.crop === 'herb' ? cropSeasonFactor(season, g.crop) : 1;
-        const roofed = Object.values(r.veyraOffscreenEntities).some(o => o.kind === 'struct' && o.tx === oe.tx && o.ty === oe.ty && ((o as any).floor ?? 0) === ((oe as any).floor ?? 0) && STRUCTS[o.type!]?.shelter);
-        const rain = wet && season !== 'winter' && !roofed && !g.coldFrame;
-        const incoming = rain ? 1 / 60000 : 0;
-        const use = 1 / (G.waterSecondsPerUnit * 1000);
-        let growing = g.crop && g.growth < 1 && rate > 0 ? Math.min(dtMs, (1 - g.growth) * growSeconds * 1000 / rate) : 0;
-        if (use > incoming) growing = Math.min(growing, g.water / (use - incoming));
-        if (growing > 0) {
-          g.growth = Math.min(1, g.growth + growing * rate / (growSeconds * 1000));
-          if (g.growth >= 1 - 1e-12) g.growth = 1;
-          g.water = Math.min(3, Math.max(0, g.water + (incoming - use) * growing));
-        }
-        g.water = Math.min(3, g.water + incoming * (dtMs - growing));
-      } else if (wet && oe.type === 'barrel' && ((oe as any).floor ?? 0) === 0) {
-        if (!checkedSeason) { checkedSeason = true; season = calendarAt(r, at).season; }
-        if (season !== 'winter') oe.water = Math.min(12, (oe.water || 0) + dtMs / 20000);
-      }
-    }
-  }
 }
 /** Local normalized climate/soil inputs are Map-owned. CAL-01 adds the seasonal
- * DEVIATION to the Map's own temperature/moisture (`climateAt`), never new terrain:
+ * DEVIATION to the Map's own temperature/moisture (`climateAt` / `climateFromCell`), never new terrain:
  * a cold frame stays a real paid structure that protects against the seasonal cold
  * and against rain/snow water, and an exposed plot in a cold/dry season really
  * grows slower. Wet weather still cools uncovered plots at slot boundaries. */
 export function gardenEnvironment(r:RunState,e:Entity,wet:boolean,crop:'crop'|'herb' = e.garden?.crop==='herb'?'herb':'crop', at:number = r.clock.lastSimAt) {
-  const m=getWorld().economyMap, x=e.tx??Math.floor(e.x/TILE), y=e.ty??Math.floor(e.y/TILE), i=y*WW+x;
-  const biome=m.biome[i], mapMoisture=m.moisture[i], slope=m.slope[i], frame=!!e.garden?.coldFrame;
-  const local=climateAt(r,x,y,at,isWet(weatherAt(r,at))?'rain':'clear');
+  const cell = resolveGardenMapCell(r, e);
+  const biome = cell.biome, mapMoisture = cell.mapMoisture, slope = cell.slope, frame = !!e.garden?.coldFrame;
+  const roofed = isEntityRoofed(r, e);
+  const local = climateFromCell(
+    r,
+    { cacheKey: cell.cacheKey, biome, mapTemperature: cell.mapTemperature, mapMoisture, tile: cell.baseTile },
+    at,
+    wet ? 'rain' : 'clear',
+  );
   // The cold frame warms a plot whose local (Map + season) temperature is cold.
   const seasonTemperature=local.temperature;
-  const temperature=Math.min(1,Math.max(0,seasonTemperature+(frame&&seasonTemperature<0.4?BAL.garden.coldFrameWarming:0)-(wet&&!frame&&!isRoofed(r,e)?BAL.garden.wetCooling:0)));
+  const temperature=Math.min(1,Math.max(0,seasonTemperature+(frame&&seasonTemperature<0.4?BAL.garden.coldFrameWarming:0)-(wet&&!frame&&!roofed?BAL.garden.wetCooling:0)));
   const low=crop==='herb'?0.34:0.22,high=crop==='herb'?0.78:0.82;
   const climate=Math.max(0.15,Math.min(1,temperature<low?1-(low-temperature)*4:temperature>high?1-(temperature-high)*3:1));
   const fertility=soilFertility(biome,mapMoisture,slope,frame?BAL.garden.coldFrameSoilBonus:0);
-  const scorched=effTile(r,x,y)===T.BURNT;
+  const scorched=cell.effTileVal===T.BURNT;
   // Per-crop seasonal suitability: the same plot is a better Sunroot or Bitterleaf
   // investment depending on the season (competing outputs, SYS15-C10).
   const seasonal=cropSeasonFactor(local.season,crop);
-  return {rate:climate*fertility*seasonal*(scorched?BAL.garden.scorchedSoilMultiplier:1),temperature,moisture:mapMoisture,biome,frame,scorched,covered:frame||isRoofed(r,e),climate:temperature<low?'cold':temperature>high?'hot':'suitable',season:local.season,seasonal,evaporation:local.evaporationMultiplier,catch:local.catchMultiplier,snowing:local.snowing};
+  return {rate:climate*fertility*seasonal*(scorched?BAL.garden.scorchedSoilMultiplier:1),temperature,moisture:mapMoisture,biome,frame,scorched,covered:frame||roofed,climate:temperature<low?'cold':temperature>high?'hot':'suitable',season:local.season,seasonal,evaporation:local.evaporationMultiplier,catch:local.catchMultiplier,snowing:local.snowing};
 }
 function isRoofed(r: RunState, e: Entity) { return entsAt(r, e.tx!, e.ty!).some(o => o.kind === 'struct' && STRUCTS[o.type!].shelter); }
 
 // Optional, explicit one-plot production network. All resources remain in
 // physical linked structures; no global chest search or login-time grants.
-function tenderLinks(r:RunState,e:Entity) {
+function tenderLinks(r:RunState,e:Entity, entities?: Entity[]) {
   const f=e.farm; if(!f || !owned(e) || (e.hp??0)<=0 || !e.c) return null;
-  const garden=f.gardenId && r.entities[f.gardenId], barrel=f.barrelId && r.entities[f.barrelId], chest=f.chestId && r.entities[f.chestId];
+  const off = r.veyraOffscreenEntities;
+  const hasOff = !!off && Object.keys(off).length > 0;
+  if (!hasOff) {
+    const garden=f.gardenId && r.entities[f.gardenId], barrel=f.barrelId && r.entities[f.barrelId], chest=f.chestId && r.entities[f.chestId];
+    if(!garden || garden.type!=='garden' || !garden.garden || !barrel || barrel.type!=='barrel' || !chest || !['chest_small','chest_large'].includes(chest.type||'') || !chest.c) return null;
+    const all = entities ?? Object.values(r.entities);
+    if(all.some(o=>o.id!==e.id && o.farm && (o.farm.gardenId===garden.id || o.farm.barrelId===barrel.id || o.farm.chestId===chest.id)))return null;
+    if([garden,barrel,chest].some(o=>o.kind!=='struct'||!owned(o)||(o.hp??0)<=0||((o as any).floor??0)!==((e as any).floor??0)||dist(e.x,e.y,o.x,o.y)>BAL.garden.tenderLinkTiles*TILE||!clearSegment(r,e,o)))return null;
+    return {garden,barrel,chest};
+  }
+  const garden=findRunEntity(r, f.gardenId), barrel=findRunEntity(r, f.barrelId), chest=findRunEntity(r, f.chestId);
   if(!garden || garden.type!=='garden' || !garden.garden || !barrel || barrel.type!=='barrel' || !chest || !['chest_small','chest_large'].includes(chest.type||'') || !chest.c) return null;
-  if(Object.values(r.entities).some(o=>o.id!==e.id && o.farm && (o.farm.gardenId===garden.id || o.farm.barrelId===barrel.id || o.farm.chestId===chest.id)))return null;
-  if([garden,barrel,chest].some(o=>o.kind!=='struct'||!owned(o)||(o.hp??0)<=0||dist(e.x,e.y,o.x,o.y)>BAL.garden.tenderLinkTiles*TILE||!clearSegment(r,e,o)))return null;
+  const all = entities ?? allRunEntities(r);
+  if(all.some(o=>o.id!==e.id && o.farm && (o.farm.gardenId===garden.id || o.farm.barrelId===barrel.id || o.farm.chestId===chest.id)))return null;
+  const pe = entityGlobalCoords(r, e);
+  if([garden,barrel,chest].some(o=>{
+    if(o.kind!=='struct'||!owned(o)||(o.hp??0)<=0) return true;
+    const po = entityGlobalCoords(r, o);
+    if(po.floor !== pe.floor) return true;
+    if(dist(pe.gx,pe.gy,po.gx,po.gy)>BAL.garden.tenderLinkTiles*TILE) return true;
+    if(!clearTenderSegment(r, e, o, all)) return true;
+    return false;
+  }))return null;
   return {garden,barrel,chest};
 }
 function tenderEnergyAvailable(r:RunState,e:Entity) { return e.farm!.energy + C(r,e.c!).slots.reduce((v,s)=>v+(s ? (ITEMS[s.key].fuel||0)*1000*s.qty:0),0); }
@@ -2547,8 +2781,8 @@ export function tenderState(r:RunState,e:Entity):TenderState {
   const code = tenderCode(r, e); return { code, label: TENDER_LABEL[code], paused: TENDER_PAUSED.has(code) };
 }
 export function tenderStatus(r:RunState,e:Entity):string { return tenderState(r,e).label; }
-function tenderCode(r:RunState,e:Entity):TenderCode {
-  const f=e.farm;if(!f)return 'stopped';if(!f.enabled)return 'stopped';const links=tenderLinks(r,e);if(!links)return 'unlinked';
+function tenderCode(r:RunState,e:Entity, entities?: Entity[]):TenderCode {
+  const f=e.farm;if(!f)return 'stopped';if(!f.enabled)return 'stopped';const links=tenderLinks(r,e,entities);if(!links)return 'unlinked';
   const {garden,barrel,chest}=links, g=garden.garden!;
   if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])return 'unsupported';
   // Upkeep-decayed structure: an unfunded linked structure that has already lost HP.
@@ -2565,17 +2799,19 @@ function tenderCode(r:RunState,e:Entity):TenderCode {
 /** Transition receipts only on a real state change (never per tick). The last coded state is persisted on the
  * tender, so a reload or a repeated Continue cannot repeat it. The first observation of a tender is silent. */
 export function stepTenderStates(r:RunState,now:number) {
-  for(const e of Object.values(r.entities)){ if(!e.farm) continue;
-    const st=tenderState(r,e), prev=e.farm.lastCode;
-    if(prev===undefined){ e.farm.lastCode=st.code; continue; }
-    if(prev!==st.code){ e.farm.lastCode=st.code; receipt(r,now,'tender.state',`${e.id}:${prev}>${st.code}:${st.paused?'paused':'running'}`); }
+  const entities = allRunEntities(r);
+  for(const e of entities){ if(!e.farm) continue;
+    const code = tenderCode(r, e, entities), paused = TENDER_PAUSED.has(code), prev = e.farm.lastCode;
+    if(prev===undefined){ e.farm.lastCode=code; continue; }
+    if(prev!==code){ e.farm.lastCode=code; receipt(r,now,'tender.state',`${e.id}:${prev}>${code}:${paused?'paused':'running'}`); }
   }
 }
 /** Instantaneous events at the current world timestamp; order is harvest,
  * planting, then irrigation. Fuel is only consumed on an actual operation. */
 export function stepTenders(gs:GameState,now:number) {
   const r=gs.run!;
-  for(const e of Object.values(r.entities)) {const f=e.farm;if(!f?.enabled)continue;const links=tenderLinks(r,e);if(!links)continue;const {garden,barrel,chest}=links,g=garden.garden!,cid=chest.c!;
+  const entities = allRunEntities(r);
+  for(const e of entities) {const f=e.farm;if(!f?.enabled)continue;const links=tenderLinks(r,e,entities);if(!links)continue;const {garden,barrel,chest}=links,g=garden.garden!,cid=chest.c!;
     if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])continue;
     if(g.crop&&g.growth>=1){const rule=GARDEN_CROPS[g.crop as 'crop'|'herb'];if(!rule||!tenderFits(r,cid,rule.output)||!tenderSpend(r,e,BAL.garden.tenderHarvestEnergySeconds*1000))continue;const crop=g.crop;for(const [key,qty] of rule.output)addItem(r,cid,key,qty);g.crop=null;g.growth=0;receipt(r,now,'tender.harvest',`${e.id}:${crop}`);}
     if(!g.crop){const rule=GARDEN_CROPS[f.crop];if(!hasAll(r,cid,rule.inputs)||(g.water<1&&(barrel.water||0)<1)||!tenderSpend(r,e,BAL.garden.tenderPlantEnergySeconds*1000))continue;for(const [key,qty] of rule.inputs)removeItem(r,cid,key,qty);if(g.water<1){barrel.water!-=1;g.water=Math.min(3,g.water+1);}g.crop=f.crop;g.growth=0;receipt(r,now,'tender.plant',`${e.id}:${f.crop}`);}
@@ -2587,12 +2823,13 @@ export function stepTenders(gs:GameState,now:number) {
  * catch as stepGardensBarrels/gardenEnvironment, so a seasonal boundary can never
  * make an offline slice overshoot maturity or under-count water loss. */
 export function tenderBoundary(r:RunState,wet:boolean,limit:number,at:number = r.clock.lastSimAt):number {
-  let dt=limit;for(const e of Object.values(r.entities)){if(!e.farm?.enabled)continue;const l=tenderLinks(r,e);if(!l)continue;
+  const entities = allRunEntities(r);
+  let dt=limit;for(const e of entities){if(!e.farm?.enabled)continue;const l=tenderLinks(r,e,entities);if(!l)continue;
     const g=l.garden.garden!;
     const env=gardenEnvironment(r,l.garden,wet,g.crop==='herb'?'herb':'crop',at);
-    const incoming=wet&&!isRoofed(r,l.garden)&&!g.coldFrame?env.catch/60000:0, use=env.evaporation/(BAL.garden.waterSecondsPerUnit*1000);
+    const incoming=wet&&!isEntityRoofed(r,l.garden,entities)&&!g.coldFrame?env.catch/60000:0, use=env.evaporation/(BAL.garden.waterSecondsPerUnit*1000);
     if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])continue;
     if(g.crop&&g.growth<1&&(g.water>1e-10||incoming>=use)){dt=Math.min(dt,(1-g.growth)*GARDEN_CROPS[g.crop as 'crop'|'herb'].seconds*1000/env.rate);if(use>incoming&&g.water>1e-10)dt=Math.min(dt,g.water/(use-incoming));}
-    if(wet&&!isRoofed(r,l.barrel)&&(l.barrel.water||0)<1&&env.catch>0)dt=Math.min(dt,(1-(l.barrel.water||0))*20000);
+    if(wet&&!isEntityRoofed(r,l.barrel,entities)&&(l.barrel.water||0)<1&&env.catch>0)dt=Math.min(dt,(1-(l.barrel.water||0))*20000);
   }return dt;
 }

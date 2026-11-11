@@ -252,6 +252,7 @@ function rng(seed: number) { let x = seed || 1; return () => { x ^= x << 13; x >
 function dailyGateAtDayStart(def: DailyDef, r: RunState | null, date: string): boolean {
   if (!def.gate) return true;
   if (!r) return false;
+  if (date <= dateKey(r.startedAt)) return false;
   const hasRunStart = r.receipts.some(rc => rc.kind === 'run.start');
   if (!hasRunStart) return def.gate(r);
   const prior = r.receipts.filter(rc => dateKey(rc.at) < date);
@@ -289,7 +290,7 @@ export function generateDaily(date: string, salt: string, r: RunState | null, ex
   return pick.map(p => p.id);
 }
 
-function resolveRerollReplacement(date: string, salt: string, taken: string[], objId: string, r: RunState | null): DailyDef | null {
+export function resolveRerollReplacement(date: string, salt: string, taken: string[], objId: string, r: RunState | null): DailyDef | null {
   const cats = new Set(taken.map(id => DAILY_BY_ID[id]?.cat));
   const rand = rng(hash(`${date}|${salt}|reroll`));
   const opts = DAILY_POOL.filter(p => !taken.includes(p.id) && dailyGateAtDayStart(p, r, date) && (!cats.has(p.cat) || p.cat === DAILY_BY_ID[objId]?.cat));
@@ -297,42 +298,65 @@ function resolveRerollReplacement(date: string, salt: string, taken: string[], o
   return opts[Math.floor(rand() * opts.length)];
 }
 
-/** Recompute authoritative Daily Waypoint points directly from committed `r.receipts` on `date`. */
-export function computeAuthoritativeDailyPoints(r: RunState, date: string, rerolledFrom?: string): number {
+/** Measure authoritative progress for a single daily objective on `date` from committed `r.receipts` strictly after `afterSeq`. */
+export function measureDailyObjectiveProgress(r: RunState, date: string, objId: string, afterSeq = 0): number {
+  const def = DAILY_BY_ID[objId];
+  if (!def || !isValidDateKey(date)) return 0;
+  const seen = new Set<string>();
+  let progress = 0;
+  for (const rc of r.receipts as Receipt[]) {
+    if (rc.seq <= afterSeq || dateKey(rc.at) !== date) continue;
+    const inc = def.count(rc, seen);
+    if (inc > 0) progress = Math.min(def.target, progress + inc);
+    if (progress >= def.target) break;
+  }
+  return progress;
+}
+
+/** Recompute authoritative Daily Waypoint points exclusively from committed `r.dailyRerolls` and committed `r.receipts` on `date`. */
+export function computeAuthoritativeDailyPoints(r: RunState, date: string): number {
   if (!isValidDateKey(date)) return 0;
   const salt = dailySaltFor(r);
-  let activeIds = generateDaily(date, salt, r);
-  const dayReceipts = (r.receipts as Receipt[]).filter(rc => dateKey(rc.at) === date);
-
-  const measureProgress = (id: string) => {
-    const def = DAILY_BY_ID[id];
-    if (!def) return 0;
-    const seen = new Set<string>();
-    let progress = 0;
-    for (const rc of dayReceipts) {
-      const inc = def.count(rc, seen);
-      if (inc > 0) progress = Math.min(def.target, progress + inc);
-      if (progress >= def.target) break;
-    }
-    return progress;
-  };
-
-  if (rerolledFrom && activeIds.includes(rerolledFrom) && measureProgress(rerolledFrom) === 0) {
-    const next = resolveRerollReplacement(date, salt, activeIds, rerolledFrom, r);
-    if (next) activeIds = activeIds.map(id => (id === rerolledFrom ? next.id : id));
-  }
+  const baseIds = generateDaily(date, salt, r);
+  const committed = r.dailyRerolls?.[date];
+  const validReroll = committed
+    && baseIds.includes(committed.from)
+    && resolveRerollReplacement(date, salt, baseIds, committed.from, r)?.id === committed.to
+    ? committed
+    : null;
+  const activeIds = validReroll
+    ? baseIds.map(id => (id === validReroll.from ? validReroll.to : id))
+    : baseIds;
 
   let points = 0;
   for (const id of activeIds) {
     const def = DAILY_BY_ID[id];
-    if (def && measureProgress(id) >= def.target) points += def.points;
+    if (!def) continue;
+    const afterSeq = validReroll && id === validReroll.to ? validReroll.seq : 0;
+    if (measureDailyObjectiveProgress(r, date, id, afterSeq) >= def.target) points += def.points;
   }
   return points;
 }
 
 function newDay(date: string, _s: JourneyStore, r: RunState | null): DailyState {
   const salt = dailySaltFor(r);
-  return { date, runId: r?.id, objectives: generateDaily(date, salt, r).map(id => ({ id, progress: 0, done: false, seen: [] })), points: 0, milestones: [], rerolled: false };
+  const baseIds = generateDaily(date, salt, r);
+  const committed = r?.dailyRerolls?.[date];
+  const validReroll = committed
+    && baseIds.includes(committed.from)
+    && resolveRerollReplacement(date, salt, baseIds, committed.from, r)?.id === committed.to
+    ? committed
+    : null;
+  const ids = validReroll ? baseIds.map(id => (id === validReroll.from ? validReroll.to : id)) : baseIds;
+  return {
+    date,
+    runId: r?.id,
+    objectives: ids.map(id => ({ id, progress: 0, done: false, seen: [] })),
+    points: 0,
+    milestones: [],
+    rerolled: !!validReroll,
+    ...(validReroll ? { rerolledFrom: validReroll.from } : {}),
+  };
 }
 
 /** Swap one untouched objective for another eligible one (once per day). */
@@ -374,6 +398,14 @@ export function ingestJourney(prev: JourneyStore, gs: GameState, now: number): I
     if (s.tracked?.type === 'daily') s.tracked = null;
   }
   const dailyLive = s.daily!.date === today;
+  if (dailyLive && !s.daily!.rerolled && r.dailyRerolls?.[today]) {
+    const swapped = rerollDaily(s, r.dailyRerolls[today].from, r);
+    if (swapped !== s) {
+      mut();
+      s.daily = swapped.daily;
+      s.tracked = swapped.tracked;
+    }
+  }
 
   // First sight of a run: fresh runs replay from the start; resumed runs begin at
   // the current receipt (no retroactive daily credit), but Fieldcraft may learn
@@ -447,9 +479,11 @@ export function ingestJourney(prev: JourneyStore, gs: GameState, now: number): I
 
   function applyDaily(rc: Receipt, away: boolean) {
     const d = s.daily!;
+    const committedReroll = r!.dailyRerolls?.[d.date];
     let dd = d;
     for (const o of d.objectives) {
       if (o.done) continue;
+      if (committedReroll && o.id === committedReroll.to && rc.seq <= committedReroll.seq) continue;
       const def = DAILY_BY_ID[o.id]; if (!def) continue;
       if (away && !def.offlineOk) continue;
       const seen = new Set(o.seen);

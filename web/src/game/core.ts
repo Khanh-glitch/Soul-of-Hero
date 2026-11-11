@@ -147,6 +147,14 @@ export interface TraceWalk { x: number; y: number; at: number; distance: number;
 
 export interface Receipt { id: string; seq: number; at: number; kind: string; detail: string }
 
+export interface DailyRerollRecord {
+  from: string;
+  to: string;
+  at: number;
+  seq: number;
+  intentId: string;
+}
+
 export interface RunRecord {
   runId: string; character: string; startedAt: number; endedAt: number; ending: 'evacuated' | 'abandoned' | 'expired';
   score: number; stones: number; deposited: number; achievements: string[]; qa: boolean; verified: 'LOCAL/UNVERIFIED';
@@ -234,6 +242,8 @@ export interface RunState {
   calendar?: import('./calendar').CalendarLedgerV1;
   rng: number; nextId: number;
   receipts: Receipt[]; seenIntents: string[]; seq: number;
+  /** Additive run-authoritative UTC-day-scoped once-per-day daily waypoint rerolls (`YYYY-MM-DD -> DailyRerollRecord`). */
+  dailyRerolls?: Record<string, DailyRerollRecord>;
   vendorStock: Record<string, number>;
   log: { t: number; msg: string; tone?: string }[];
 }

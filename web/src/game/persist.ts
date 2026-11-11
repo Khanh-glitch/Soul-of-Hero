@@ -12,6 +12,7 @@ import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './c
 import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED } from './catalog';
 import { newGame, renewableLoot, markDirty } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
+import { DAILY_BY_ID, dateKey, isValidDateKey } from './journey';
 import { getWorld, hasLayout, setActiveLayout, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
@@ -369,11 +370,36 @@ export function validate(raw: any): GameState | null {
     if (!veyraWw || !obj(r.veyraOffscreenEntities)) return null;
     for (const [oid, oe] of Object.entries(r.veyraOffscreenEntities) as [string, any][]) {
       if (!obj(oe) || oe.id !== oid || r.entities[oid] || !beforeNext(oid, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof oe.kind !== 'string' || !finite(oe.x) || !finite(oe.y)) return null;
+      if (oe.garden !== undefined && (oe.type !== 'garden' || !obj(oe.garden) || (oe.garden.crop !== null && !['crop', 'herb'].includes(oe.garden.crop)) || !finite(oe.garden.growth) || oe.garden.growth < 0 || oe.garden.growth > 1 || !finite(oe.garden.water) || oe.garden.water < 0 || oe.garden.water > 3 || (oe.garden.coldFrame !== undefined && oe.garden.coldFrame !== true))) return null;
+      if (oe.farm !== undefined && (!obj(oe.farm) || oe.kind !== 'struct' || oe.type !== 'farm_controller' || !oe.c || r.custody[oe.c]?.slots.length !== 3 || typeof oe.farm.enabled !== 'boolean' || !['crop', 'herb'].includes(oe.farm.crop) || !finite(oe.farm.energy) || oe.farm.energy < 0 || oe.farm.energy > 90000 || ['gardenId', 'barrelId', 'chestId'].some(k => oe.farm[k] !== undefined && (typeof oe.farm[k] !== 'string' || !oe.farm[k])) || (oe.farm.lastCode !== undefined && (typeof oe.farm.lastCode !== 'string' || oe.farm.lastCode.length > 24)))) return null;
+      if (oe.type === 'farm_controller' && !oe.farm) return null;
       const orefs = [oe.c, oe.station?.fuelC, oe.station?.outC].filter((v: any) => v !== undefined);
       for (const cid of orefs) {
         if (typeof cid !== 'string' || !r.custody[cid] || ownedContainers.has(cid)) return null;
         ownedContainers.add(cid);
       }
+    }
+  }
+  if (r.dailyRerolls !== undefined) {
+    if (!obj(r.dailyRerolls) || Object.keys(r.dailyRerolls).length > 32) return null;
+    for (const [dk, rec] of Object.entries(r.dailyRerolls) as [string, any][]) {
+      if (
+        !isValidDateKey(dk) ||
+        !obj(rec) ||
+        typeof rec.from !== 'string' ||
+        !DAILY_BY_ID[rec.from] ||
+        typeof rec.to !== 'string' ||
+        !DAILY_BY_ID[rec.to] ||
+        rec.from === rec.to ||
+        !finite(rec.at) ||
+        rec.at < r.startedAt ||
+        dateKey(rec.at) !== dk ||
+        !integer(rec.seq) ||
+        rec.seq < 1 ||
+        rec.seq > r.seq ||
+        typeof rec.intentId !== 'string' ||
+        !rec.intentId
+      ) return null;
     }
   }
   const activeEnts = veyraWw ? (Object.values(r.entities) as any[]).filter(e => onActiveFloor(r, e)) : (Object.values(r.entities) as any[]);
