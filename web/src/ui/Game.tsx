@@ -31,7 +31,7 @@ import { save, saveSync, saveDetailed, lastSaveOutcome } from '../game/persist';
 import { Slot, Bar, Icon, mkIntent, type Api, type PanelState } from './common';
 import { Vitals, UrgentAlerts, WorldClock, Hotbar, RigStatus, ThreatBar, PresentationPanel, useVisualPrefs, Glyph } from './hud';
 import { setListener, setEnvironment, machineState, setMood, tickMusic, stopAllMachines } from '../game/audio';
-import { getPrefs, setPrefs, applyCssTheme } from '../visual/direction';
+import { getPrefs, setPrefs, applyCssTheme, computeStageFit } from '../visual/direction';
 import { HomeStatusCard } from './HomeStatus';
 import { thermalStatusView } from '../game/thermal';
 import { nearestHomeStructure, homeStatus } from '../game/engine';
@@ -272,9 +272,18 @@ export default function Game({
     act('journeyRequisition', { date, milestone, points });
   }, [act]);
 
-  // scale stage to integer multiples (crisp pixels)
+  // scale stage to fit window smoothly at native resolution ('fit') or strict integer multiples ('integer')
   const [scale, setScale] = useState(1); const [off, setOff] = useState({ x: 0, y: 0 });
-  useEffect(() => { const fit = () => { const W = window.innerWidth, H = window.innerHeight; let s = Math.floor(Math.min(W / VIEW_W, H / VIEW_H)); if (s < 1) s = Math.min(W / VIEW_W, H / VIEW_H); setScale(s); setOff({ x: Math.floor((W - VIEW_W * s) / 2), y: Math.floor((H - VIEW_H * s) / 2) }); }; fit(); window.addEventListener('resize', fit); return () => window.removeEventListener('resize', fit); }, []);
+  useEffect(() => {
+    const fit = () => {
+      const f = computeStageFit(window.innerWidth, window.innerHeight, VIEW_W, VIEW_H, vp.stageScale);
+      setScale(f.k);
+      setOff({ x: f.x, y: f.y });
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [vp.stageScale]);
   const scaleRef = useRef(scale); scaleRef.current = scale; const offRef = useRef(off); offRef.current = off;
 
   const findNearAnimal = (r: NonNullable<GameState['run']>) => {
@@ -735,7 +744,7 @@ export default function Game({
 
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>
     <div ref={stageRef} className="stage" style={{ transform: `translate(${off.x}px, ${off.y}px) scale(${scale})` }}>
-      <canvas ref={cvRef} width={VIEW_W} height={VIEW_H} style={{ width: VIEW_W, height: VIEW_H }} />
+      <canvas ref={cvRef} className="px" width={VIEW_W} height={VIEW_H} style={{ width: VIEW_W, height: VIEW_H, imageRendering: 'pixelated' }} />
       {criticalEdge && <div className={`danger-vignette ${vp.reduceFlash ? 'soft' : ''}`} aria-hidden="true" />}
 
       {/* TOP-LEFT COLUMN: Vitals + Urgent Danger Rail + Thermal Context Card */}
@@ -823,7 +832,7 @@ export default function Game({
       </div>
 
       {/* panels */}
-      {(panel?.kind === 'inv' || panel?.kind === 'craft') && <SurvivorScreen api={api} initial="all" focusRecipe={panel.recipe} />}
+      {(panel?.kind === 'inv' || panel?.kind === 'craft') && <SurvivorScreen api={api} initial="all" initialView={panel.kind === 'craft' ? 'work' : 'pack'} focusRecipe={panel.recipe} />}
       {panel?.kind === 'container' && panel.eid && <ContainerPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'map' && <MapPanel api={api} qaSession={qaMode} teleportTarget={spiritTarget.current?.uid===activeStack(r)?.uid?spiritTarget.current:null} onTeleportSelect={activeStack(r)?.key==='core_demon' ? (x,y)=>{const reason=spiritDestination(r,x,y);if(reason){toast(reason,'bad');return;}spiritTarget.current={uid:activeStack(r)!.uid,x,y};toast('Destination set. Close the map, then hold and release E.','ok');} : undefined} />}
       {panel?.kind === 'notes' && <FieldNotesPanel

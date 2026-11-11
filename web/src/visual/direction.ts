@@ -79,19 +79,59 @@ export const CORE_HUES: Record<string, string> = {
 // live selection (presentation preference, persisted outside the game save)
 // ---------------------------------------------------------------------------
 const KEY = 'soh.visual.v1';
+export type UiLayoutPref = 'auto' | 'pc' | 'mobile';
+export type StageScaleMode = 'fit' | 'integer';
+
 export interface VisualPrefs {
   direction: DirectionId;
   grade: number;        // 0..1.5 grade intensity
   shake: number;        // 0..1 camera shake scale
   reduceFlash: boolean; // accessibility: damp full-screen flashes
   highContrastHud: boolean;
+  uiLayout: UiLayoutPref;     // 'auto' -> PC unified 2-column on computers, 2-tab touch layout on phones
+  stageScale: StageScaleMode; // 'fit' -> high-res window fit (default), 'integer' -> strict 1x/2x/3x floor
   music: number; ambience: number; world: number; combat: number; ui: number;
   muted: boolean;
 }
 export const DEFAULT_PREFS: VisualPrefs = {
   direction: DEFAULT_DIRECTION, grade: 1, shake: 1, reduceFlash: false, highContrastHud: false,
+  uiLayout: 'auto', stageScale: 'fit',
   music: 0.5, ambience: 0.65, world: 0.8, combat: 0.9, ui: 0.6, muted: false,
 };
+
+/** Resolve 'pc' (unified 2-column SurvivorScreen) vs 'mobile' (touch-friendly 2-tab PACK/WORK). */
+export function resolveUiLayout(
+  p: Pick<VisualPrefs, 'uiLayout'> = prefs,
+  env?: { coarseOnly?: boolean; userAgent?: string; maxTouchPoints?: number },
+): 'pc' | 'mobile' {
+  if (p.uiLayout === 'pc') return 'pc';
+  if (p.uiLayout === 'mobile') return 'mobile';
+  const coarseOnly = env?.coarseOnly ?? (typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    ? window.matchMedia('(hover: none) and (pointer: coarse)').matches
+    : false);
+  if (coarseOnly) return 'mobile';
+  const ua = env?.userAgent ?? (typeof navigator !== 'undefined' ? navigator.userAgent || '' : '');
+  const touchPts = env?.maxTouchPoints ?? (typeof navigator !== 'undefined' ? navigator.maxTouchPoints || 0 : 0);
+  if (touchPts > 0 && /Android|iPhone|iPad|iPod|Mobile/i.test(ua)) return 'mobile';
+  return 'pc';
+}
+
+/** Compute stage scale & letterbox offset: 'fit' fills window smoothly at native resolution; 'integer' snaps 1x/2x/3x. */
+export function computeStageFit(
+  W: number,
+  H: number,
+  viewW: number,
+  viewH: number,
+  mode: StageScaleMode = prefs.stageScale,
+): { k: number; x: number; y: number } {
+  const raw = Math.min(W / viewW, H / viewH);
+  const k = mode === 'integer' ? (raw >= 1 ? Math.floor(raw) : raw) : raw;
+  return {
+    k,
+    x: Math.floor((W - viewW * k) / 2),
+    y: Math.floor((H - viewH * k) / 2),
+  };
+}
 
 let prefs: VisualPrefs = { ...DEFAULT_PREFS };
 try {
@@ -113,7 +153,7 @@ export function subscribePrefs(f: () => void) { subs.add(f); return () => { subs
 
 /** Push the palette into CSS custom properties so every panel shares one source. */
 export function applyCssTheme() {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined' || !document.documentElement?.style) return;
   const d = dir(); const r = document.documentElement;
   for (const [k, v] of Object.entries(d.ui)) r.style.setProperty(`--${k}`, v);
   r.style.setProperty('--hud-op', prefs.highContrastHud ? '0.97' : '0.86');

@@ -7,6 +7,8 @@ import { U05_WORLD_LAYOUT_ID } from '../veyra05/scenes';
 import { ACHIEVEMENTS } from '../game/catalog';
 import { initAudio, sfx } from '../game/audio';
 import { QA_PRESETS, type QaPresetId } from '../game/qa-sandbox';
+import { computeStageFit } from '../visual/direction';
+import { useVisualPrefs } from './hud';
 
 const VEYRA_REGIONS = [
   { id: 0, label: 'Westmouth Shore' },
@@ -23,8 +25,14 @@ const CLASSIC_REGIONS = [
 ] as const;
 
 function useScale() {
+  const vp = useVisualPrefs();
   const [s, setS] = useState({ k: 1, x: 0, y: 0 });
-  useEffect(() => { const fit = () => { const W = window.innerWidth, H = window.innerHeight; let k = Math.floor(Math.min(W / VIEW_W, H / VIEW_H)); if (k < 1) k = Math.min(W / VIEW_W, H / VIEW_H); setS({ k, x: Math.floor((W - VIEW_W * k) / 2), y: Math.floor((H - VIEW_H * k) / 2) }); }; fit(); window.addEventListener('resize', fit); return () => window.removeEventListener('resize', fit); }, []);
+  useEffect(() => {
+    const fit = () => setS(computeStageFit(window.innerWidth, window.innerHeight, VIEW_W, VIEW_H, vp.stageScale));
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [vp.stageScale]);
   return s;
 }
 function Backdrop({ layout }: { layout: string }) {

@@ -6,7 +6,8 @@ import { craftReadiness, structurePreparation, type CraftReadiness } from '../ga
 import { getArt } from '../game/art';
 import { drawAdventurer } from '../game/avatar-presentation';
 import { Icon, iconUrl, type Api } from './common';
-import { Glyph } from './hud';
+import { Glyph, useVisualPrefs } from './hud';
+import { resolveUiLayout } from '../visual/direction';
 import { DSlot, DGrid, KeyboardMoveBanner } from './dragSlots';
 import { ItemInfo } from './panels';
 
@@ -60,17 +61,44 @@ function Doll({ r }: { r: RunState }) {
   </div>;
 }
 
-export function SurvivorScreen({ api, initial = 'all', focusRecipe }: { api: Api; initial?: Cat; focusRecipe?: string }) {
+export function SurvivorScreen({
+  api,
+  initial = 'all',
+  initialView = 'pack',
+  focusRecipe,
+}: {
+  api: Api;
+  initial?: Cat;
+  initialView?: 'pack' | 'work';
+  focusRecipe?: string;
+}) {
   const r = api.gs.run!;
+  const vp = useVisualPrefs();
+  const [uiLayout, setUiLayout] = useState<'pc' | 'mobile'>(() => resolveUiLayout(vp));
+  useEffect(() => {
+    const sync = () => setUiLayout(resolveUiLayout(vp));
+    sync();
+    const mq = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+      ? window.matchMedia('(hover: none) and (pointer: coarse)')
+      : null;
+    mq?.addEventListener?.('change', sync);
+    window.addEventListener('resize', sync);
+    return () => {
+      mq?.removeEventListener?.('change', sync);
+      window.removeEventListener('resize', sync);
+    };
+  }, [vp, vp.uiLayout]);
   const [cat, setCat] = useState<Cat>(initial);
   const [pick, setPick] = useState<string | null>(focusRecipe && RECIPES[focusRecipe] ? focusRecipe : null);
-  // A 640x360 game viewport cannot present pack and crafting side-by-side legibly.
-  // Both panes stay mounted; compact presentation exposes one at a time.
-  // Wider screens retain both panes and original gameplay/custody behavior.
-  const [compactView, setCompactView] = useState<'pack' | 'work'>(focusRecipe ? 'work' : 'pack');
+  // Desktop ('pc') always presents pack + crafting together in one unified 2-column screen.
+  // Mobile ('mobile') presents a touch-friendly 2-tab PACK / WORK toggle with larger 33px slots.
+  const [compactView, setCompactView] = useState<'pack' | 'work'>(focusRecipe ? 'work' : initialView);
   const [onlyReady, setOnlyReady] = useState(false);
   const [q, setQ] = useState('');
-  useEffect(() => { if (focusRecipe && RECIPES[focusRecipe]) { setCat('all'); setQ(''); setOnlyReady(false); setPick(focusRecipe); setCompactView('work'); } }, [focusRecipe]);
+  useEffect(() => {
+    if (focusRecipe && RECIPES[focusRecipe]) { setCat('all'); setQ(''); setOnlyReady(false); setPick(focusRecipe); setCompactView('work'); }
+    else setCompactView(initialView);
+  }, [focusRecipe, initialView]);
   const have = (k: string) => countItem(r, 'inv', k);
   const isStructCat = cat === 'stations' || cat === 'devices';
 
@@ -94,7 +122,7 @@ export function SurvivorScreen({ api, initial = 'all', focusRecipe }: { api: Api
   const selStack = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null;
   const EQ_GHOST = ['scrap_helm', 'leather_armor', 'fur_cloak'];
 
-  return <div className="sv" data-compact-view={compactView} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
+  return <div className="sv" data-layout={uiLayout} data-compact-view={compactView} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
     <div className="sv-top">
       <div className="sv-title">SURVIVOR</div>
       <span className="sv-hint"><span className="key">drag</span>move <span className="key">Enter</span>pick/place <span className="key">Esc</span>cancel <span className="key">1-8</span>hotbar</span>

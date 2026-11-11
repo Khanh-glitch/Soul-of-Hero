@@ -20,6 +20,8 @@ import { deriveCues } from '../src/game/presentation-cues';
 import { FIELD_REFERENCE_GROUPS } from '../src/game/field-notes';
 import { JourneyLedger } from '../src/ui/Journey';
 import { ExpeditionMap } from '../src/ui/ExpeditionMap';
+import { SurvivorScreen } from '../src/ui/SurvivorScreen';
+import { computeStageFit, resolveUiLayout, setPrefs } from '../src/visual/direction';
 import type { Api } from '../src/ui/common';
 
 const NOW = Date.UTC(2026, 10, 9, 10, 0, 0);
@@ -185,5 +187,22 @@ describe('Stage C: Authoritative Journey Requisitions & Unified Veyra Expedition
     expect(mapHtml).toContain('data-testid="map-mode-continent"');
     expect(mapHtml).toContain('data-testid="map-mode-local"');
     expect(mapHtml).toContain('AU ');
+
+    // Stage D: PC unified 2-column Inventory default vs Mobile 2-tab layout + high-res Fit Window scaling
+    expect(resolveUiLayout({ uiLayout: 'auto' }, { coarseOnly: false, userAgent: 'Mozilla/5.0 Windows NT 10.0', maxTouchPoints: 0 })).toBe('pc');
+    expect(resolveUiLayout({ uiLayout: 'auto' }, { coarseOnly: false, userAgent: 'Mozilla/5.0 Windows NT 10.0', maxTouchPoints: 10 })).toBe('pc'); // touchscreen laptop stays PC
+    expect(resolveUiLayout({ uiLayout: 'auto' }, { coarseOnly: true, userAgent: 'Mozilla/5.0 iPhone', maxTouchPoints: 5 })).toBe('mobile');
+    expect(computeStageFit(1280, 615, 640, 360, 'fit').k).toBeCloseTo(615 / 360, 4);
+    expect(computeStageFit(1280, 615, 640, 360, 'integer').k).toBe(1);
+
+    setPrefs({ uiLayout: 'auto', stageScale: 'fit' });
+    const pcSvHtml = renderToStaticMarkup(<SurvivorScreen api={dummyApi} />);
+    expect(pcSvHtml).toContain('data-layout="pc"');
+
+    setPrefs({ uiLayout: 'mobile' });
+    const mobileSvHtml = renderToStaticMarkup(<SurvivorScreen api={dummyApi} initialView="work" />);
+    expect(mobileSvHtml).toContain('data-layout="mobile"');
+    expect(mobileSvHtml).toContain('data-compact-view="work"');
+    setPrefs({ uiLayout: 'auto' });
   });
 });

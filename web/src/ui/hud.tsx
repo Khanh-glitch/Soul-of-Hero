@@ -296,6 +296,20 @@ export function PresentationPanel() {
     <div className="console-h">Mixer</div>
     <Row label="Music" k="music" /><Row label="Ambience" k="ambience" /><Row label="World" k="world" /><Row label="Combat" k="combat" /><Row label="Interface" k="ui" />
     <div className="rule" style={{ margin: '5px 0' }} />
+    <div className="console-h">Display &amp; Layout</div>
+    <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginBottom: 2 }}>Inventory mode</div>
+    <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', marginBottom: 4 }}>
+      {([['auto', 'Auto (PC/Mobile)'], ['pc', 'PC (2-Col)'], ['mobile', 'Mobile (2-Tab)']] as const).map(([id, lbl]) => (
+        <button key={id} className={`btn sm ${(p.uiLayout ?? 'auto') === id ? 'gold' : ''}`} onClick={() => setPrefs({ uiLayout: id })}>{lbl}</button>
+      ))}
+    </div>
+    <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginBottom: 2 }}>Viewport scale</div>
+    <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', marginBottom: 2 }}>
+      {([['fit', 'Fit Window (High-Res)'], ['integer', 'Integer Pixel (1×/2×)']] as const).map(([id, lbl]) => (
+        <button key={id} className={`btn sm ${(p.stageScale ?? 'fit') === id ? 'gold' : ''}`} onClick={() => setPrefs({ stageScale: id })}>{lbl}</button>
+      ))}
+    </div>
+    <div className="rule" style={{ margin: '5px 0' }} />
     <div className="console-h">Accessibility</div>
     <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
       <button className={`btn sm ${p.reduceFlash ? 'gold' : ''}`} onClick={() => setPrefs({ reduceFlash: !p.reduceFlash })}>Reduce flashes {p.reduceFlash ? 'ON' : 'OFF'}</button>
