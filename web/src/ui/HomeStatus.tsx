@@ -4,6 +4,8 @@ import { ITEMS } from '../game/catalog';
 import { BAL } from '../game/core';
 import type { RunState } from '../game/core';
 import { homeStatus, nearestHomeStructure, claimAt, type HomeCabinetState } from '../game/engine';
+import { Glyph } from './hud';
+import { Icon } from './common';
 
 export const CABINET_STATE_LABEL: Record<HomeCabinetState, string> = {
   idle: 'No structures covered yet',
@@ -24,7 +26,7 @@ function stockList(stock: Record<string, number>, empty = 'none') {
 }
 
 /** Top-right contextual card shown only near owned structures. Never a permanent dashboard. */
-export function HomeStatusCard({ r, px, py, hidden }: { r: RunState; px: number; py: number; hidden?: boolean }) {
+export function HomeStatusCard({ r, px, py, hidden, inline = false }: { r: RunState; px: number; py: number; hidden?: boolean; inline?: boolean }) {
   if (hidden) return null;
   const tx = Math.floor(px / 16), ty = Math.floor(py / 16);
   const near = nearestHomeStructure(r, tx, ty, 6);
@@ -40,22 +42,25 @@ export function HomeStatusCard({ r, px, py, hidden }: { r: RunState; px: number;
       ? `Covered, unfunded · collapses in ${hoursLabel(s.hoursToCollapse)}`
       : s.damaged ? 'Funded · damaged, repair at Cabinet' : 'Funded · protected from decay';
   const pct = Math.max(0, Math.min(100, Math.round((s.hp / s.maxHp) * 100)));
+  const protectedOk = s.state === 'funded';
+  const hours = cab?.funded && cab.state !== 'idle' ? hoursLabel(cab.hours) : s.hoursToCollapse !== null && s.hoursToCollapse !== undefined ? hoursLabel(s.hoursToCollapse) : null;
+  void headline; void CABINET_STATE_LABEL;
   return (
-    <div className="panel absolute" data-testid="home-status" data-state={s.state} style={{ right: 4, top: 96, width: 214, padding: '3px 5px', fontSize: 9, lineHeight: 1.15, pointerEvents: 'none' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 4 }}>
-        <b>{s.name}</b><span style={{ color: '#b8a8c8' }}>HP {Math.ceil(s.hp)}/{s.maxHp}</span>
+    <div className={`plate homecard ${inline ? '' : 'absolute'}`} data-testid="home-status" data-state={s.state} style={inline ? { width: 150, padding: '3px 5px', pointerEvents: 'none' } : { right: 4, top: 132, width: 150, padding: '3px 5px', pointerEvents: 'none' }} title={headline}>
+      <div className="homecard__row">
+        <Glyph k="home" c={protectedOk ? 'var(--good)' : 'var(--warn)'} s={8} />
+        <b className="homecard__name">{s.name}</b>
+        <span className="homecard__hp" style={{ color: pct > 50 ? 'var(--paper)' : pct > 25 ? 'var(--warn)' : 'var(--bad)' }}>{Math.ceil(s.hp)}</span>
       </div>
-      <div style={{ height: 3, background: '#2a1f33', margin: '2px 0' }}><div style={{ width: `${pct}%`, height: 3, background: pct > 50 ? '#7fd08a' : pct > 25 ? '#e8c060' : '#e0604a' }} /></div>
-      <div style={{ color: tone }}>{headline}</div>
-      {cab ? (
-        <div style={{ color: cab.state === 'funded' ? '#9ae0ff' : '#ffae89' }}>
-          Cabinet {cab.tx},{cab.ty} · {CABINET_STATE_LABEL[cab.state]}{cab.funded && cab.state !== 'idle' ? ` · ${hoursLabel(cab.hours)} left` : ''}
-        </div>
-      ) : (
-        <div style={{ color: '#ffae89' }}>{claimAt(r, s.tx, s.ty) ? 'Cabinet in range' : 'Place a Cabinet on this foundation to fund upkeep'}</div>
-      )}
-      {cab && s.damaged && <div style={{ color: '#b8a8c8' }}>Repair needs {s.repairCost.map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ')} in cabinet</div>}
-      {cab && cab.state !== 'funded' && <div style={{ color: '#b8a8c8' }}>Open Cabinet (E) to deposit {Object.keys(cab.per24h).map(k => ITEMS[k].name).join(', ') || 'materials'}</div>}
+      <div className="homecard__track"><i style={{ width: `${pct}%`, background: pct > 50 ? 'var(--good)' : pct > 25 ? 'var(--warn)' : 'var(--bad)' }} /></div>
+      <div className="homecard__lamps">
+        <span className="chip" style={{ color: protectedOk ? 'var(--good)' : s.state === 'unfunded' ? 'var(--warn)' : 'var(--bad)' }} title={headline}>
+          <i className="lamp round" style={{ color: 'currentColor' }} />{protectedOk ? 'PROTECTED' : s.state === 'unfunded' ? 'UNFUNDED' : 'NO CABINET'}{hours ? ` · ${hours}` : ''}
+        </span>
+        {cab && cab.state !== 'funded' && Object.keys(cab.per24h).slice(0, 5).map(k => <span key={k} title={`Deposit ${ITEMS[k].name} in the Cabinet`}><Icon k={k} size={9} /></span>)}
+        {!cab && !claimAt(r, s.tx, s.ty) && <span title="Place a Territory Cabinet on this foundation"><Icon k="st:claim" size={10} /></span>}
+        {cab && s.damaged && <span className="chip" style={{ color: 'var(--warn)' }} title={`Repair: ${s.repairCost.map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ')} in cabinet`}>⚒ {s.repairCost.map(([k, q]) => <span key={k}><Icon k={k} size={8} />{q}</span>)}</span>}
+      </div>
     </div>
   );
 }

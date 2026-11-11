@@ -17,23 +17,34 @@ export interface Api {
   setBuild: (t: string | null) => void; buildType: string | null; reclaim: boolean; setReclaim: (b: boolean) => void; repairMode: boolean; setRepairMode: (b: boolean) => void; setUpgradeMode: (b: boolean) => void;
   sfx: (t: string) => void; rerender: () => void;
 }
-export type PanelState = { kind: 'inv' | 'craft' | 'build' | 'map' | 'skills' | 'rest' | 'menu' | 'container' | 'vendor' | 'escrow' | 'evac' | 'report' | 'research'; eid?: string; recipe?: string; lines?: string[]; report?: import('../game/return-report').OfflineReturnV1 | null };
+export type PanelState = { kind: 'inv' | 'craft' | 'build' | 'map' | 'skills' | 'rest' | 'menu' | 'container' | 'vendor' | 'escrow' | 'evac' | 'report' | 'research' | 'notes' | 'journey'; eid?: string; recipe?: string; lines?: string[]; report?: import('../game/return-report').OfflineReturnV1 | null };
 export const mkIntent = (type: string, p: Record<string, any> = {}): Intent => ({ id: `${type}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`, type, ...p });
 
-export function Slot({ s, sel, active, onClick, onContext, hotkey, title }: { s: Stack | null; sel?: boolean; active?: boolean; onClick?: (e: React.MouseEvent) => void; onContext?: (e: React.MouseEvent) => void; hotkey?: string; title?: string }) {
+export function Slot({ s, sel, active, onClick, onContext, hotkey, title, slotIndex }: { s: Stack | null; sel?: boolean; active?: boolean; onClick?: (e: React.MouseEvent) => void; onContext?: (e: React.MouseEvent) => void; hotkey?: string; title?: string; slotIndex?: number }) {
   const d = s ? ITEMS[s.key] : null;
-  return <div className={`slot ${sel ? 'sel' : ''} ${active ? 'active' : ''}`} onMouseDown={e => { if (e.button === 0) onClick?.(e); }} onContextMenu={e => { e.preventDefault(); onContext?.(e); }} title={title ?? (d ? `${d.name}${s!.meta ? ' — ' + s!.meta : ''}` : '')}>
+  const depleted = s && ((d?.charge && (s.charge ?? 0) <= 0) || (d?.creatorCore && s.reserves && (s.reserves.basic + s.reserves.refined + s.reserves.signature) <= 0) || (s.dur === 0 && d?.repair));
+  return <div className={`slot ${sel ? 'sel' : ''} ${active ? 'active' : ''} ${s ? 'filled' : 'empty'} ${depleted ? 'depleted' : ''}`}
+    data-hotbar-slot={slotIndex}
+    onMouseDown={e => { if (e.button === 0) onClick?.(e); }}
+    onContextMenu={e => { e.preventDefault(); onContext?.(e); }}
+    title={title ?? (d ? `${d.name}${s!.meta ? ' — ' + s!.meta : ''}${s!.qty > 1 ? ` ×${s!.qty}` : ''}` : hotkey ? `Quickbar ${hotkey} (empty)` : '')}>
     {hotkey && <span className="k">{hotkey}</span>}
-    {s && <Icon k={s.key} style={{ position: 'absolute', left: 1, top: 1 }} />}
+    {active && <span className="slot__pip" aria-hidden="true" />}
+    {s && <Icon k={s.key} size={18} style={{ position: 'absolute', left: 2, top: 2 }} />}
     {s && s.dur === 0 && d?.repair && <span className="q" style={{ color: '#ff7a6a' }}>!</span>}
     {s && s.qty > 1 && <span className="q">{s.qty}</span>}
     {s && d?.charge && s.charge !== undefined && <span className="q" style={{ color: s.charge ? '#9ae0ff' : '#ff7a6a' }}>{s.charge}⚡</span>}
-    {s && s.dur !== undefined && d?.dur && <span className="dur"><i style={{ width: `${(s.dur / d.dur) * 100}%`, background: s.dur / d.dur < 0.25 ? '#ff5a3a' : '#7aff6a' }} /></span>}
+    {s && d?.creatorCore && s.reserves && <span className="slot__res" aria-hidden="true">
+      <i style={{ background: s.reserves.basic > 0 ? 'var(--paper)' : '#3a2222' }} />
+      <i style={{ background: s.reserves.refined > 0 ? 'var(--info)' : '#3a2222' }} />
+      <i style={{ background: s.reserves.signature > 0 ? 'var(--brassLit)' : '#3a2222' }} />
+    </span>}
+    {s && s.dur !== undefined && d?.dur && <span className="dur"><i style={{ width: `${(s.dur / d.dur) * 100}%`, background: s.dur / d.dur < 0.25 ? '#ff5a3a' : s.dur / d.dur < 0.5 ? '#e8b23c' : '#7aff6a' }} /></span>}
   </div>;
 }
-export function Panel({ title, children, style, onClose, className = '' }: { title: React.ReactNode; children: React.ReactNode; style?: React.CSSProperties; onClose?: () => void; className?: string }) {
-  return <div className={`panel absolute fadein ${className}`} style={{ padding: 6, ...style }} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
-    <div className="flex items-center justify-between" style={{ marginBottom: 4 }}><div className="panel-h">{title}</div>{onClose && <button className="btn ghost" style={{ padding: '0 4px', fontSize: 11 }} onClick={onClose}>✕</button>}</div>
+export function Panel({ title, children, style, onClose, className = '', testId }: { title: React.ReactNode; children: React.ReactNode; style?: React.CSSProperties; onClose?: () => void; className?: string; testId?: string }) {
+  return <div className={`panel absolute fadein ${className}`} data-testid={testId} style={{ padding: 6, ...style }} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
+    <div className="flex items-center justify-between" style={{ marginBottom: 4 }}><div className="panel-h">{title}</div>{onClose && <button className="btn ghost" aria-label="Close panel" style={{ padding: '0 4px', fontSize: 11 }} onClick={onClose}>✕</button>}</div>
     {children}
   </div>;
 }

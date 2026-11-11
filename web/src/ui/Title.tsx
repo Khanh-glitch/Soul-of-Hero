@@ -6,12 +6,20 @@ import { setActiveLayout } from '../game/world';
 import { U05_WORLD_LAYOUT_ID } from '../veyra05/scenes';
 import { ACHIEVEMENTS } from '../game/catalog';
 import { initAudio, sfx } from '../game/audio';
+import { QA_PRESETS, type QaPresetId } from '../game/qa-sandbox';
 
 const VEYRA_REGIONS = [
   { id: 0, label: 'Westmouth Shore' },
   { id: 1, label: 'Greywater South Shore' },
   { id: 2, label: 'Hook Meadow' },
   { id: 3, label: 'Gulf West Bank' },
+] as const;
+
+const CLASSIC_REGIONS = [
+  { id: 0, label: 'South Cove' },
+  { id: 1, label: 'East Meadow' },
+  { id: 2, label: 'West Shore' },
+  { id: 3, label: 'North Bay' },
 ] as const;
 
 function useScale() {
@@ -39,43 +47,100 @@ function HeroPreview({ female, active }: { female: boolean; active: boolean }) {
   return <canvas ref={ref} width={64} height={96} style={{ width: 52, height: 78 }} />;
 }
 
-const CLASSIC_REGIONS = [
-  { id: 0, label: 'South Cove' },
-  { id: 1, label: 'East Meadow' },
-  { id: 2, label: 'West Shore' },
-  { id: 3, label: 'North Bay' },
-] as const;
-
-export default function Title({ gs, onContinue, onStart, onInspect, note, summary, clearSummary }: { gs: GameState; onContinue: () => void; onStart: (c: 'male' | 'female', region: number | null, layoutId?: string) => void; onInspect?: () => void; note?: string; summary: GameState['profile']['history'][number] | null; clearSummary: () => void }) {
-  const s = useScale(); const [mode, setMode] = useState<'menu' | 'select' | 'history'>('menu'); const [hero, setHero] = useState<'male' | 'female'>('female'); const [region, setRegion] = useState<number | null>(null);
+export default function Title({
+  gs,
+  onContinue,
+  onStart,
+  onStartQa,
+  onInspect,
+  note,
+  summary,
+  clearSummary,
+}: {
+  gs: GameState;
+  onContinue: () => void;
+  onStart: (c: 'male' | 'female', region: number | null, layoutId?: string) => void;
+  onStartQa?: (preset: QaPresetId, c: 'male' | 'female') => void;
+  onInspect?: () => void;
+  note?: string;
+  summary: GameState['profile']['history'][number] | null;
+  clearSummary: () => void;
+}) {
+  const s = useScale();
+  const [mode, setMode] = useState<'menu' | 'select' | 'history' | 'qa'>('menu');
+  const [hero, setHero] = useState<'male' | 'female'>('female');
+  const [region, setRegion] = useState<number | null>(null);
   const [selectedLayout, setSelectedLayout] = useState<string>(U05_WORLD_LAYOUT_ID);
+  const [qaPreset, setQaPreset] = useState<QaPresetId>('full_gear');
   useEffect(() => { if (!gs.run) { setActiveLayout(selectedLayout); resetRenderCaches(); } }, [gs.run, selectedLayout]);
   const pf = gs.profile; const run = gs.run;
   const click = () => { initAudio(); sfx({ type: 'ui' }); };
   const activeRegions = selectedLayout === U05_WORLD_LAYOUT_ID ? VEYRA_REGIONS : CLASSIC_REGIONS;
+
   return <div style={{ position: 'fixed', inset: 0, background: '#05040a' }}>
     <div className="stage" style={{ transform: `translate(${s.x}px, ${s.y}px) scale(${s.k})` }}>
       <Backdrop layout={selectedLayout} />
-      {summary ? <div className="panel absolute fadein" style={{ left: 150, top: 60, width: 340, padding: 10 }}>
-        <div className="title-font" style={{ fontSize: 20, color: summary.ending === 'evacuated' ? '#9ae0ff' : summary.ending === 'expired' ? '#ff9a5a' : '#cfc2dc' }}>{summary.ending === 'evacuated' ? 'Evacuated' : summary.ending === 'expired' ? 'Consumed by Ragnarok' : 'Run abandoned'}</div>
-        <div style={{ fontSize: 12, lineHeight: 1.2, marginTop: 4 }}>Score {summary.score} · Deposited {summary.deposited} · Elder stones {summary.stones}/6 {summary.qa && <span className="tag" style={{ color: '#ff9a7a' }}>QA</span>} <span className="tag" style={{ color: '#ff9a7a' }}>{summary.verified}</span></div>
-        <div style={{ fontSize: 11, color: '#cfc2dc', marginTop: 4 }}>All run-local items, Cores, recipes, buildings, cargo, bags, discoveries and unsecured cash are gone. Kept on your profile: <b style={{ color: '#9ae0ff' }}>{pf.securedCash} secured cash</b>, achievements and this record.</div>
-        <div style={{ fontSize: 11, marginTop: 3 }}>{summary.achievements.map(a => <span key={a} style={{ marginRight: 6, color: '#ffe27a' }}>★ {ACHIEVEMENTS[a]?.name}</span>)}</div>
-        <button className="btn gold" style={{ marginTop: 8 }} onClick={() => { click(); clearSummary(); }}>Return</button>
+      {summary ? <div className="panel absolute fadein" style={{ left: 120, top: 44, width: 400, padding: 10 }}>
+        <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', letterSpacing: 1 }}>RUN CHRONICLE · 14-DAY CYCLE CONCLUDED</div>
+        <div className="title-font" style={{ fontSize: 22, color: summary.ending === 'evacuated' ? 'var(--info)' : summary.ending === 'expired' ? 'var(--bad)' : 'var(--paper)' }}>
+          {summary.ending === 'evacuated' ? 'Evacuated from the Island' : summary.ending === 'expired' ? 'Consumed by Ragnarok' : 'Run Abandoned'}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 6 }}>
+          <div className="console-col">
+            <div className="console-h" style={{ color: 'var(--info)' }}>Preserved on Profile</div>
+            <div className="lbl" style={{ fontSize: 10, color: 'var(--info)' }}>Secured Cash: <b>{pf.securedCash}</b> <span style={{ color: 'var(--muted)' }}>(+{summary.deposited} this run)</span></div>
+            <div className="lbl" style={{ fontSize: 9, color: 'var(--brassLit)', marginTop: 2 }}>Elder Stones: <b>{summary.stones}/6</b>{summary.stones >= 6 ? ' ★ Crown of Six' : ''}</div>
+            <div className="lbl" style={{ fontSize: 9, color: 'var(--paper)', marginTop: 2 }}>Run Score: <b>{summary.score}</b> {summary.qa && <span className="chip" style={{ color: 'var(--warn)' }}>QA</span>} <span className="chip" style={{ color: 'var(--muted)' }}>{summary.verified}</span></div>
+          </div>
+          <div className="console-col">
+            <div className="console-h" style={{ color: 'var(--bad)' }}>Reset with the Island</div>
+            <div className="lbl" style={{ fontSize: 9, color: 'var(--muted)', lineHeight: 1.25 }}>
+              All run-local gear, Creator Cores, learned recipes, shelter, vehicles, cargo &amp; unsecured cash have been wiped.
+            </div>
+          </div>
+        </div>
+        {summary.achievements.length > 0 && <div style={{ fontSize: 11, marginTop: 5 }}>{summary.achievements.map(a => <span key={a} style={{ marginRight: 6, color: 'var(--brassLit)' }}>★ {ACHIEVEMENTS[a]?.name}</span>)}</div>}
+        <button className="btn gold" style={{ marginTop: 8, width: '100%' }} onClick={() => { click(); clearSummary(); }}>Continue to Title</button>
       </div> : <>
-        {mode !== 'select' && <div className="absolute" style={{ left: 0, right: 0, top: 18, textAlign: 'center' }}>
+        {mode !== 'select' && mode !== 'qa' && <div className="absolute" style={{ left: 0, right: 0, top: 18, textAlign: 'center' }}>
           {import.meta.env.VITE_FX_TEST === '1' && <div style={{ color: '#ffdf7b', fontSize: 12 }}>VFX TEST — 10 mỗi Core, đầy năng lượng · lưu riêng</div>}
           <div className="title-font" style={{ fontSize: 44, fontWeight: 700, color: '#ffe8b0', letterSpacing: 3, textShadow: '0 3px 0 #6a2a0a, 0 5px 0 #2a0a04, 0 0 18px #ff7a2a' }}>SOUL OF HERO</div>
           <div style={{ fontSize: 13, color: '#e0c8a8', marginTop: -2, textShadow: '1px 1px 0 #000' }}>fourteen days · one island · the end of the world</div>
         </div>}
-        {mode === 'menu' && <div className="absolute flex flex-col gap-2 items-center fadein" style={{ left: 0, right: 0, top: 150 }}>
-          {run && <button className="btn gold" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); onContinue(); }}>Continue — {run.character === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</button>}
-          <button className="btn" style={{ fontSize: 16, width: 180 }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={() => { click(); setActiveLayout(U05_WORLD_LAYOUT_ID); resetRenderCaches(); setMode('select'); }}>New run</button>
-          <button className="btn" style={{ fontSize: 16, width: 180 }} onClick={() => { click(); setMode('history'); }}>Profile & history</button>
-          {onInspect && <button className="btn ghost" style={{ fontSize: 11, width: 180, color: '#9ae0ff' }} onClick={() => { click(); onInspect(); }}>Creator Inspector · 81 POIs</button>}
-          <div style={{ fontSize: 11, color: '#cfc2dc', marginTop: 6, textShadow: '1px 1px 0 #000' }}>Secured Ragnarok cash: <b style={{ color: '#9ae0ff' }}>{pf.securedCash}</b> · Runs: {pf.history.length}</div>
-          {note && <div style={{ fontSize: 10, color: '#ffb08a', maxWidth: 380, textAlign: 'center' }}>{note}</div>}
-          <div style={{ fontSize: 9, color: '#7a6a8a', position: 'absolute', top: 196 }}>Offline · single-player · saves locally in this browser (LOCAL/UNVERIFIED)</div>
+        {mode === 'menu' && <div className="absolute flex flex-col gap-2 items-center fadein" style={{ left: 0, right: 0, top: 128 }}>
+          {run && <button className="btn gold" style={{ fontSize: 15, width: 210 }} onClick={() => { click(); onContinue(); }}>Continue — {run.character === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</button>}
+          <button className="btn" style={{ fontSize: 15, width: 210 }} disabled={!!run} title={run ? 'Finish (evacuate/abandon) your current run first' : ''} onClick={() => { click(); setActiveLayout(selectedLayout); resetRenderCaches(); setMode('select'); }}>New run</button>
+          {onStartQa && <button className="btn gold" style={{ fontSize: 13, width: 210 }} onClick={() => { click(); setMode('qa'); }}>Full-Gear QA Sandbox [F9]</button>}
+          <button className="btn" style={{ fontSize: 13, width: 210 }} onClick={() => { click(); setMode('history'); }}>Profile &amp; history</button>
+          {onInspect && <button className="btn ghost" style={{ fontSize: 11, width: 210, color: '#9ae0ff' }} onClick={() => { click(); onInspect(); }}>Creator Inspector · 81 POIs</button>}
+          <div style={{ fontSize: 11, color: 'var(--paper)', marginTop: 2, textShadow: '1px 1px 0 #000' }}>Secured Ragnarok cash: <b style={{ color: 'var(--info)' }}>{pf.securedCash}</b> · Runs: {pf.history.length}</div>
+          {note && <div style={{ fontSize: 10, color: 'var(--warn)', maxWidth: 380, textAlign: 'center' }}>{note}</div>}
+          <div style={{ fontSize: 9, color: 'var(--muted)', position: 'absolute', top: 214 }}>Offline · single-player · saves locally in this browser (LOCAL/UNVERIFIED)</div>
+        </div>}
+        {mode === 'qa' && onStartQa && <div className="panel absolute fadein" style={{ left: 70, top: 24, width: 500, padding: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+            <div className="panel-h">Visual Experience QA · Full-Gear Sandbox</div>
+            <span className="chip" style={{ color: 'var(--warn)' }}>ISOLATED · PRODUCTION SAVES SAFE</span>
+          </div>
+          <div style={{ display: 'flex', gap: 6, marginBottom: 5 }}>
+            {(['female', 'male'] as const).map(h => <button key={h} className={`btn sm ${hero === h ? 'gold' : 'ghost'}`} onClick={() => { click(); setHero(h); }}>{h === 'female' ? 'Adventurer ♀' : 'Adventurer ♂'}</button>)}
+            <span className="lbl" style={{ fontSize: 8, color: 'var(--muted)', alignSelf: 'center', marginLeft: 'auto' }}>Press F9 in-game anytime to switch presets, summon Elders or inspect 1× art</span>
+          </div>
+          <div className="scroll" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, maxHeight: 190, overflowY: 'auto' }}>
+            {QA_PRESETS.map(p => (
+              <div key={p.id} data-testid={`qa-preset-${p.id}`} className={`dirbtn ${qaPreset === p.id ? 'on' : ''}`} onClick={() => { click(); setQaPreset(p.id); }} role="button" tabIndex={0}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span className="lbl" style={{ fontSize: 9, color: qaPreset === p.id ? 'var(--brassLit)' : 'var(--paper)', fontWeight: 700 }}>{p.title}</span>
+                  <span className="chip" style={{ marginLeft: 'auto', color: 'var(--info)' }}>{p.tag}</span>
+                </div>
+                <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 1 }}>{p.desc}</div>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between items-center" style={{ marginTop: 6 }}>
+            <button className="btn ghost" onClick={() => setMode('menu')}>Back</button>
+            <button className="btn gold" style={{ fontSize: 13, padding: '4px 16px' }} onClick={() => { click(); onStartQa(qaPreset, hero); }}>Launch QA Sandbox</button>
+          </div>
         </div>}
         {mode === 'select' && <div className="panel absolute fadein" style={{ left: 90, top: 26, width: 460, padding: 8 }}>
           <div className="panel-h" style={{ marginBottom: 4 }}>Choose your Adventurer</div>

@@ -1,48 +1,28 @@
 import { recoveryPlan, recoveryFits } from '../game/recycler';
 import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { RunState } from '../game/core';
 import { anyAuthorizedOilSource, owned, clearInteraction } from '../game/engine';
 import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
-import { BAL, TILE, WW, WH, T, type Stack, type Entity } from '../game/core';
-import type { OfflineReturnV1, ReturnSectionId, ReturnTone } from '../game/return-report';
-import { CabinetReadout, CABINET_STATE_LABEL, hoursLabel } from './HomeStatus';
-import { heaterLine } from './ThermalStatus';
-import { departureReadiness, fmtH } from '../game/departure';
-import type { HomeCabinetState } from '../game/engine';
+import { isVeyra05Layout } from '../veyra05/scenes';
+import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
+import type { OfflineReturnV1, StoredReturnEntry } from '../game/return-report';
+import { ReturnChronicle } from './ReturnChronicle';
+import { CabinetReadout } from './HomeStatus';
+import { StationConsole } from './StationConsole';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { recipeOutputs } from '../game/engine';
-import { expeditionNotes } from '../game/expedition-intel';
 /** Every product a recipe commits together, e.g. "2 Fuel Canister + 1 Machine Lubricant". */
 const bundleLabel = (rc: { out: string; qty: number; outs?: [string, number][] }) => recipeOutputs(rc).map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ');
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
-import { Panel, Slot, Icon, Cost, type Api } from './common';
-import { isVeyra05Layout } from '../veyra05/scenes';
-import { windowOrigin, playerGlobalAu } from '../veyra05/continuity';
-import { activeFloor, onActiveFloor } from '../veyra05/floors';
-import { POIS, sampleTile } from '../veyra05/reader';
-import { FRAME_W, FRAME_H } from '../veyra05/frame';
-
-const continentCellColorCache = new Map<string, string>();
-const PRIMORDIAL_POI_IDS = new Set(['po_surtur', 'po_typhon', 'po_elderwood', 'po_gate', 'po_hall_eyes', 'po_necropolis']);
-function veyraContinentTileColor(t: number): string {
-  switch (t) {
-    case T.DEEP: return '#14243a';
-    case T.SHALLOW: case T.RIVER: return '#265c84';
-    case T.SAND: return '#b8a26e';
-    case T.GRASS: case T.MEADOW: return '#426e3c';
-    case T.FOREST: return '#284a2a';
-    case T.MARSH: return '#3a5442';
-    case T.HILL: case T.CLIFF: return '#68625c';
-    case T.SNOW: return '#cad8e4';
-    case T.ASH: return '#4e3c38';
-    case T.TOXIC: return '#5a6e2e';
-    case T.ROAD: case T.FLOOR: return '#9a8462';
-    default: return '#426e3c';
-  }
-}
+import { Panel, Slot, Icon, Cost, iconUrl, type Api } from './common';
+import { Glyph } from './hud';
+import { getArt } from '../game/art';
+import { ExpeditionMap } from './ExpeditionMap';
+import { VehicleConsole } from './VehicleConsole';
+import { DGrid, DSlot, DragGhost } from './dragSlots';
 
 const have = (api: Api) => (k: string) => countItem(api.gs.run!, 'inv', k);
 function slotClick(api: Api, c: string, i: number, e: React.MouseEvent, quickTo?: string) {
@@ -57,41 +37,106 @@ function slotContext(api: Api, c: string, i: number, quickTo?: string) {
   else api.act('move', { from: c, fs: i, to: 'inv' });
 }
 function Grid({ api, cid, cols = 8, quickTo, hotRow = false }: { api: Api; cid: string; cols?: number; quickTo?: string; hotRow?: boolean }) {
+  return <DGrid api={api} cid={cid} cols={cols} quickTo={quickTo} hotRow={hotRow} size={22} />;
+}
+function LegacyGrid({ api, cid, cols = 8, quickTo, hotRow = false }: { api: Api; cid: string; cols?: number; quickTo?: string; hotRow?: boolean }) {
   const c = C(api.gs.run!, cid); if (!c) return null;
   return <div className={import.meta.env.VITE_FX_TEST === '1' && cid === 'inv' ? 'scroll' : undefined} style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 20px)`, gap: 2, ...(import.meta.env.VITE_FX_TEST === '1' && cid === 'inv' ? {maxHeight: 110, overflowY:'auto'} : {}) }}>
     {c.slots.map((s, i) => <Slot key={i} s={s} sel={api.sel?.c === cid && api.sel.slot === i} active={hotRow && i === api.gs.run!.player.active} hotkey={hotRow && i < 8 ? String(i + 1) : undefined} onClick={e => slotClick(api, cid, i, e, quickTo)} onContext={() => slotContext(api, cid, i, quickTo)} />)}
   </div>;
 }
-function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
-  if (!s) return <div style={{ fontSize: 10, color: '#8a7a9a', minHeight: 34 }}>Click to pick up · click again to place/swap · right-click to use/equip · Shift-click to quick-transfer.</div>;
+/** Stat chip: glyph + value. Replaces the old sentence of stats. */
+function StatChip({ g, v, c, title }: { g: string; v: string; c?: string; title?: string }) {
+  return <span className="stat" title={title} style={c ? { color: c } : undefined}><Glyph k={g} c={c || 'var(--brassLit)'} s={7} />{v}</span>;
+}
+const CAT_LABEL: Record<string, string> = { res: 'MATERIAL', food: 'FOOD', tool: 'TOOL', weapon: 'WEAPON', armor: 'ARMOR', core: 'CORE', kit: 'KIT', bp: 'BLUEPRINT', cash: 'CASH', stone: 'ELDER STONE', misc: 'ITEM' };
+export function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
+  if (!s) return <div className="iteminfo iteminfo--empty"><span className="key">LMB</span> pick · place<span className="key">RMB</span> use<span className="key">⇧</span> quick move</div>;
   const d = ITEMS[s.key];
-  const stats: string[] = []; if (d.dmg) stats.push(`DMG ${d.dmg}`); if (d.reach) stats.push(`Reach ${d.reach}`); if (d.power) stats.push('Work: ' + Object.entries(d.power).map(([m, p]) => `${m} ${p}`).join(' ')); if (d.armor) stats.push(`Armor ${Math.round(d.armor * 100)}%`); if (d.cold) stats.push(`Warmth +${d.cold}`); if (d.carryBonus) stats.push(`Carry +${d.carryBonus}kg`); if (d.fuel) stats.push(`Fuel ${d.fuel}s`); if (d.food) stats.push(Object.entries(d.food).map(([k, v]) => `${k} ${v! > 0 ? '+' : ''}${v}`).join(' ')); stats.push(`${d.w}kg`);
-  return <div style={{ fontSize: 10, minHeight: 34 }}><div style={{ color: '#ffe0a0', fontSize: 12 }}>{d.name}{s.upgrade === 'freight' ? ' — reinforced freight' : ''}{s.meta ? `: ${ITEMS[RECIPES[s.meta]?.out]?.name || s.meta}` : ''}{s.key==='keycard' ? ` — ${s.charge ?? 1} uses${s.charge===undefined?' (legacy)':''}` : s.charge !== undefined && d.charge ? ` — ${s.charge}/${d.charge} charges` : ''}{s.dur !== undefined && d.dur ? ` — ${s.dur}/${d.dur}${s.dur <= 0 && d.repair ? ' BROKEN' : ''}` : ''}</div><div style={{ color: '#cfc2dc' }}>{d.desc}</div><div style={{ color: '#9ad0a0' }}>{stats.join(' · ')}</div><KnownUses item={s.key} known={known} /></div>;
+  const isCore = !!(d.core || d.creatorCore);
+  const dur = s.dur !== undefined && d.dur ? s.dur / d.dur : null;
+  return <div className={`iteminfo ${isCore ? 'iteminfo--core' : ''}`}>
+    <div className="iteminfo__ico"><Icon k={s.key} size={24} /></div>
+    <div className="iteminfo__body">
+      <div className="iteminfo__name">{d.name}{s.meta ? ` · ${ITEMS[RECIPES[s.meta]?.out]?.name || s.meta}` : ''}</div>
+      <div className="iteminfo__row">
+        <span className="chip" style={{ color: isCore ? 'var(--brassLit)' : 'var(--muted)' }}>{CAT_LABEL[d.cat] || d.cat.toUpperCase()}</span>
+        {d.dmg ? <StatChip g="spark" v={`${d.dmg}`} title="Damage" /> : null}
+        {d.reach ? <StatChip g="eye" v={`${d.reach}`} c="var(--paper)" title="Reach" /> : null}
+        {d.armor ? <StatChip g="hp" v={`-${Math.round(d.armor * 100)}%`} c="var(--good)" title="Damage taken" /> : null}
+        {d.cold ? <StatChip g="wr" v={`+${d.cold}`} c="var(--warm)" title="Warmth" /> : null}
+        {d.carryBonus ? <StatChip g="weight" v={`+${d.carryBonus}`} c="var(--good)" title="Carry bonus (kg)" /> : null}
+        {d.fuel ? <StatChip g="fuel" v={`${d.fuel}s`} c="var(--food)" title="Burn time" /> : null}
+        {d.food?.hunger ? <StatChip g="fd" v={`+${d.food.hunger}`} c="var(--food)" title="Hunger" /> : null}
+        {d.food?.thirst ? <StatChip g="h2o" v={`+${d.food.thirst}`} c="var(--water)" title="Thirst" /> : null}
+        {d.food?.hp ? <StatChip g="hp" v={`${d.food.hp > 0 ? '+' : ''}${d.food.hp}`} c={d.food.hp > 0 ? 'var(--good)' : 'var(--bad)'} title="Health" /> : null}
+        {d.food?.rad ? <StatChip g="rad" v={`${d.food.rad > 0 ? '+' : ''}${d.food.rad}`} c={d.food.rad > 0 ? 'var(--bad)' : 'var(--good)'} title="Radiation" /> : null}
+        {d.power ? Object.entries(d.power).map(([m, p]) => <span key={m} className="chip" style={{ color: 'var(--paper)' }} title={`Work power on ${m}`}>{m} {p}</span>) : null}
+        {s.charge !== undefined && d.charge ? <span className="chip" style={{ color: s.charge ? 'var(--info)' : 'var(--bad)' }}>{s.charge}/{d.charge}⚡</span> : null}
+        {s.reserves ? <><span className="chip" style={{ color: 'var(--paper)' }}>B {s.reserves.basic}</span><span className="chip" style={{ color: 'var(--info)' }}>Q {s.reserves.refined}</span><span className="chip" style={{ color: 'var(--brassLit)' }}>E {s.reserves.signature}</span></> : null}
+        <StatChip g="weight" v={`${(d.w * s.qty).toFixed(1)}kg`} c="var(--muted)" title="Weight carried" />
+      </div>
+      {dur !== null && <div className="durbar" title={`Durability ${s.dur}/${d.dur}`}><i style={{ width: `${dur * 100}%`, background: dur < 0.25 ? 'var(--bad)' : dur < 0.5 ? 'var(--warn)' : 'var(--good)' }} />{dur <= 0 && <b>BROKEN</b>}</div>}
+      <KnownUses item={s.key} known={known} />
+    </div>
+  </div>;
 }
 
 function KnownUses({ item, known }: { item: string; known: string[] }) {
-  // The active run's known recipes only: no undiscovered POI or recipe spoilers.
-  const uses = Object.keys(RECIPES).filter(k => isRecipeKnown(known,k) && RECIPES[k]?.ins.some(([key]) => key === item)).map(k => ITEMS[RECIPES[k].out].name);
+  // The active run's known recipes only: no undiscovered POI or recipe spoilers. Icons, not a sentence.
+  const uses = Object.keys(RECIPES).filter(k => isRecipeKnown(known, k) && RECIPES[k]?.ins.some(([key]) => key === item)).slice(0, 8);
   if (!uses.length) return null;
-  return <details><summary style={{ cursor: 'pointer', color: '#ffd98a' }}>Known uses ({uses.length})</summary><div style={{ maxHeight: 36, overflowY: 'auto', color: '#cfc2dc' }}>{uses.join(' · ')}</div></details>;
+  return <div className="uses" title="Known recipes that use this"><span className="lbl">→</span>{uses.map(k => <span key={k} title={ITEMS[RECIPES[k].out].name}><Icon k={RECIPES[k].out} size={11} /></span>)}</div>;
+}
+
+/** Live Adventurer preview inside the inventory: the same sprite + equipment rendering the world uses. */
+function HeroDoll({ r }: { r: RunState }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const c = ref.current!; const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; let raf = 0;
+    const loop = (t: number) => { raf = requestAnimationFrame(loop); g.clearRect(0, 0, 32, 48); g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(8, 44, 16, 3); g.drawImage(getArt().hero[r.character]['idle0'][Math.floor(t / 700) % 2], 0, 0, 16, 24, 0, 0, 32, 48); };
+    raf = requestAnimationFrame(loop); return () => cancelAnimationFrame(raf);
+  }, [r.character]);
+  return <canvas ref={ref} width={32} height={48} className="doll" />;
 }
 
 export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backToContainer = false }: { api: Api; quickTo?: string; x?: number; top?: number; onClose?: () => void; backToContainer?: boolean }) {
   const r = api.gs.run!; const sel = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null; const w = invWeight(r); const limit = carryLimit(r);
   let armor = 0, warm = 0; for (const s of C(r, 'eq').slots) if (s) { armor += ITEMS[s.key].armor || 0; warm += ITEMS[s.key].cold || 0; }
-  return <Panel title={backToContainer ? "Inventory · X returns" : "Inventory"} style={{ left: x, top, width: 196 }} onClose={onClose ?? (() => api.open(null))}>
-    <div className="flex gap-2 items-center" style={{ marginBottom: 4 }}>
-      {['head', 'body', 'back'].map((sl, i) => <div key={sl} className="flex flex-col items-center" style={{ fontSize: 8, color: '#8a7a9a' }}><Slot s={C(r, 'eq').slots[i]} sel={api.sel?.c === 'eq' && api.sel.slot === i} onClick={e => slotClick(api, 'eq', i, e)} onContext={() => slotContext(api, 'eq', i)} />{sl}</div>)}
-      <div style={{ fontSize: 10, lineHeight: 1.1, marginLeft: 4 }}><div>Armor {Math.round(armor * 100)}% · Warmth +{warm}</div><div style={{ color: w > limit ? '#ff8a7a' : '#cfc2dc' }}>Load {w.toFixed(1)} / {limit} kg{w > limit ? ' (slowed)' : ''}</div><div style={{ color: '#ffe27a' }}>Carried cash {countItem(r, 'inv', 'rcash')} · Secured {api.gs.profile.securedCash}</div></div>
+  const used = C(r, 'inv').slots.filter(Boolean).length, total = C(r, 'inv').slots.length;
+  const load = Math.min(1, w / limit);
+  const cash = countItem(r, 'inv', 'rcash');
+  const SLOT_G = ['helm', 'armor', 'cloak'];
+  return <Panel title={backToContainer ? 'Pack · X returns' : 'Pack'} className="inv" style={{ left: x, top, width: 228 }} onClose={onClose ?? (() => api.open(null))}>
+    {/* paper doll: equipment slots flank the live character; numbers are chips, not sentences */}
+    <div className="doll-row">
+      <div className="doll-slots">
+        {['head', 'body', 'back'].map((sl, i) => <div key={sl} className={`eqslot ${C(r, 'eq').slots[i] ? '' : 'empty'}`} title={sl}>
+          <DSlot api={api} cid="eq" slot={i} s={C(r, 'eq').slots[i]} size={22} />
+          {!C(r, 'eq').slots[i] && <img className="px ghost-ico" src={iconUrl(SLOT_G[i])} alt="" />}
+        </div>)}
+      </div>
+      <HeroDoll r={r} />
+      <div className="doll-stats">
+        <span className="stat" title="Damage reduction from armour"><Glyph k="hp" c="var(--good)" s={7} />-{Math.round(armor * 100)}%</span>
+        <span className="stat" title="Warmth from clothing"><Glyph k="wr" c="var(--warm)" s={7} />+{warm}</span>
+        <span className="stat" title="Unsecured coins carried / profile-secured"><Icon k="rcash" size={8} />{cash}<i className="sep" />{api.gs.profile.securedCash}</span>
+        <div className="loadbar" title={`Load ${w.toFixed(1)} / ${limit} kg`}>
+          <Glyph k="weight" c={w > limit ? 'var(--bad)' : 'var(--muted)'} s={7} />
+          <div className="track"><i style={{ width: `${load * 100}%`, background: w > limit ? 'var(--bad)' : load > 0.8 ? 'var(--warn)' : 'var(--good)' }} /></div>
+          <span className={w > limit ? 'over' : ''}>{Math.round(w)}<small>/{limit}</small></span>
+        </div>
+        <span className="lbl slots-count">{used}<small>/{total} slots</small></span>
+      </div>
     </div>
-    {import.meta.env.VITE_FX_TEST === '1' && <div style={{fontSize:10,color:'#ffd98a'}}>VFX TEST · 10 mỗi Core · cuộn túi để xem</div>}<Grid api={api} cid="inv" quickTo={quickTo} hotRow />
-    <div style={{ borderTop: '1px solid #3a2e46', marginTop: 4, paddingTop: 3 }}><ItemInfo s={sel} known={r.knowledge.recipes} /></div>
-    {sel && api.sel?.c === 'inv' && ITEMS[sel.key].repair && sel.dur !== undefined && sel.dur < ITEMS[sel.key].dur! && <div style={{ fontSize: 10, marginTop: 3 }}>Field repair (+{BAL.player.fieldRepairDurability} durability): <button className="btn" disabled={!C(r, 'inv').slots.some(s => s?.key === 'field_repair_kit')} onClick={() => { const kitSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'field_repair_kit'); const kit = C(r, 'inv').slots[kitSlot]; if (kit && api.sel) api.act('fieldRepair', { slot: api.sel.slot, uid: sel.uid, kitSlot, kitUid: kit.uid }); }}>Use one kit</button></div>}
-    <div className="flex gap-1" style={{ marginTop: 3 }}>
+    <Grid api={api} cid="inv" quickTo={quickTo} hotRow />
+    <ItemInfo s={sel} known={r.knowledge.recipes} />
+    <div className="actions">
       <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('useItem', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Use</button>
       <button className="btn" disabled={!sel || sel.qty < 2} onClick={() => api.sel && api.act('split', { c: api.sel.c, slot: api.sel.slot })}>Split</button>
       <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('drop', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Drop</button>
-      <button className="btn" onClick={() => api.act('sort', { c: 'inv' })}>Sort</button>
+      {sel && api.sel?.c === 'inv' && ITEMS[sel.key].repair && sel.dur !== undefined && sel.dur < ITEMS[sel.key].dur! && <button className="btn gold" title={`Field repair +${BAL.player.fieldRepairDurability} (uses one kit)`} disabled={!C(r, 'inv').slots.some(s => s?.key === 'field_repair_kit')} onClick={() => { const kitSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'field_repair_kit'); const kit = C(r, 'inv').slots[kitSlot]; if (kit && api.sel) api.act('fieldRepair', { slot: api.sel.slot, uid: sel.uid, kitSlot, kitUid: kit.uid }); }}><Icon k="field_repair_kit" size={10} /> Repair</button>}
+      <button className="btn ghost" style={{ marginLeft: 'auto' }} onClick={() => api.act('sort', { c: 'inv' })}>Sort</button>
     </div>
   </Panel>;
 }
@@ -146,19 +191,14 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const takeAll = (cid: string) => { const c = C(r, cid); for (let i = 0; i < c.slots.length; i++) if (c.slots[i]) { const res = api.act('move', { from: cid, fs: i, to: 'inv' }); if (!res.ok) break; } };
   const quickTo = st ? (kind === 'research' || e.kind === 'recycler' ? undefined : st.fuelC) : e.c;
   const compact = !!e.farm || !!e.garden || !!e.basePower || !!e.turret || e.type==='claim';
+  // VISUAL ARENA: production machines and the research table use the new console.
+  // Same entity, same station state, same intents — only the presentation changes.
+  if (st && !compact && kind) return <StationConsole api={api} eid={eid} />;
   if (compact && inventoryOnly) return <InventoryPanel api={api} quickTo={quickTo} x={168} top={54} backToContainer onClose={()=>{api.setSel(null);setInventoryOnly(false);}} />;
   return <>
-    <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className="scroll">
+    <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className={`scroll container-panel container-panel--${e.kind === 'struct' ? e.type : e.kind}`}>
       <div className="scroll" style={{ maxHeight: 250, overflowY: 'auto', overflowX: 'hidden' }}>
-        {e.kind === 'vehicle' && e.vehicle && (() => { const broken = (e.hp ?? 0) <= 0, dry = (e.vehicle.fuel ?? 0) <= 0, cargoN = C(r, e.c!).slots.filter(Boolean).length;
-            const status = broken ? 'Breakdown: condition 0. Repair on foot (1 Part + 1 Fastener).' : dry ? 'Out of fuel. Add 1 Fuel Canister on foot.' : 'Running.';
-            return <div style={{ marginTop: 3, color: broken || dry ? '#ffb36b' : '#cfc2dc' }}>
-              <b>{status}</b>
-              {(broken || dry) && cargoN > 0 && <div>
-                <button className="btn" style={{ fontSize: 10, marginTop: 2 }} onClick={() => api.act('vehicleUnloadBag', { eid: e.id })}>Unload all {cargoN} cargo stacks into a ground bag here</button>
-                <div style={{ color: '#cfc2dc' }}>Cargo keeps its exact items, charges and durability. The bag stays in the world at this spot; you can take from it there later. Nothing is copied or collected remotely.</div>
-              </div>}
-            </div>; })()}
+        {e.kind === 'vehicle' && e.vehicle && <VehicleConsole api={api} e={e} />}
         {compact && <button className="btn" onClick={()=>{api.setSel(null);setInventoryOnly(true);}}>{e.type==='claim' ? 'Inventory / fill cabinet' : e.farm || e.basePower ? 'Inventory / fill fuel' : e.turret ? 'Inventory / load arrows' : 'Inventory'}</button>}
         {e.kind === 'airdrop' && <div style={{fontSize:10,color:'#ffd98a'}}>Withdraw only · partial stock remains until expiry; no replenishment.</div>}
         {e.kind === 'loot' && <div style={{fontSize:10,color:'#ffd98a',marginBottom:4}}>
@@ -167,17 +207,6 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
           Withdraw only · {C(r,e.c!).slots.filter(Boolean).length} stacks remain. Partial stock stays. {lootKind ? `After empty: ordinary stock returns in ${LOOT_CLASSES[lootKind].hours}h; rare finds do not.` : 'Empty crates disappear.'}
         </div>}
         {e.c && <><Grid api={api} cid={e.c} cols={8} /><div className="flex gap-1" style={{ marginTop: 4 }}><button className="btn" onClick={() => takeAll(e.c!)}>Take all</button>{e.kind === 'cart' && <span style={{ fontSize: 10, color: '#cfc2dc' }}>Load {cartWeight(r, e.c).toFixed(0)}/{cartLimit(e)} kg · [F] pull</span>}{e.kind === 'cart' && <button className="btn ghost" onClick={() => api.act('reclaim', { eid })}>Pack up</button>}</div></>}
-        {e.kind === 'vehicle' && e.vehicle && <div style={{fontSize:10,marginTop:5}}>
-          <b>Fuel {e.vehicle.fuel.toFixed(1)}/{BAL.motorbike.tank} · condition {Math.ceil(e.hp||0)}/{BAL.motorbike.maxHp} {e.vehicle.lube ? `· lubed ${(e.vehicle.lube/TILE).toFixed(0)} tiles` : ''}</b><br />
-          Cargo {cartWeight(r,e.c!).toFixed(1)}/{BAL.motorbike.maxWeight} kg · {C(r,e.c!).slots.filter(Boolean).length}/{BAL.motorbike.slots} slots<br />
-          Approx. road range {(e.vehicle.fuel/BAL.motorbike.fuelPerPixel/TILE).toFixed(0)} tiles empty; load and rough ground reduce it.<br />
-          {e.vehicle.lube ? <div style={{color:'#8fd19b'}}>Lubricated: wear -{Math.round(BAL.oilRefineryV1.lubricantWearReduction*100)}% for next {(e.vehicle.lube/TILE).toFixed(0)} tiles ({Math.ceil((e.vehicle.lube||0)/TILE)} tiles protection).</div> : <div style={{color:'#cfc2dc'}}>No lubricant — full wear. Refine salvaged oil at an Oil Refinery into lubricant.</div>}
-          <button className="btn" onClick={()=>{const res=api.act(r.player.vehicle?'vehicleExit':'vehicleMount',{eid:e.id});if(res.ok)api.open(null);}}>{r.player.vehicle?'Exit':'Enter and drive'}</button>{' '}
-          <button className="btn" onClick={()=>api.act('vehicleRefuel',{eid:e.id})}>Add 1 Fuel Canister</button>{' '}
-          <button className="btn" onClick={()=>api.act('vehicleRepair',{eid:e.id})}>Repair: 1 Part + 1 Fastener</button>{' '}
-          <button className="btn" onClick={()=>api.act('vehicleLubricate',{eid:e.id})}>Lubricate: 1 Lubricant ({Math.round((BAL.oilRefineryV1.lubricantDistancePx)/TILE)} tiles, -{Math.round(BAL.oilRefineryV1.lubricantWearReduction*100)}% wear)</button>
-          <div>WASD drive · F exit. Fuel burns only on movement. Each can needs 100 tank space. No packing: vehicle and cargo stay parked here.</div>
-        </div>}
         {e.kind === 'cart' && <div style={{ fontSize: 10, marginTop: 6, borderTop: '1px solid #514155' }}>
           <b>{e.deployed?.upgrade === 'freight' ? 'Reinforced freight cart' : 'Hand cart'}</b> · {C(r, e.c!).slots.length} slots<br />
           {e.deployed?.upgrade !== 'freight' && <details><summary style={{ cursor: 'pointer', color: '#ffd98a' }}>Reinforce at level 2 workbench</summary>
@@ -188,8 +217,8 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
           </details>}
         </div>}
       {e.type === 'claim' && <div style={{fontSize:10}}><b>Territory Cabinet · {territoryForecast(r,e).funded?'funded':'UNFUNDED'}</b><div><button className="btn" onClick={()=>api.act('cabinetRepair',{eid})}>Repair eligible structures</button></div><CabinetReadout r={r} eid={eid} /><svg viewBox="-27 -27 54 54" width="92" height="92" role="img" aria-label="Cabinet coverage map, 25 tiles" style={{float:'right',background:'#21182a',border:'1px solid #6c5770'}}><circle r="25" fill="rgba(225,180,60,.08)" stroke="#e5bd59" strokeWidth=".5"/><circle r="1.4" fill="#ffb64a"/>{Object.values(r.entities).filter(o=>o.kind==='struct'&&o.tx!==undefined&&o.ty!==undefined&&o.id!==e.id&&Math.hypot(o.tx!-e.tx!,o.ty!-e.ty!)<=25).map(o=><circle key={o.id} cx={o.tx!-e.tx!} cy={o.ty!-e.ty!} r=".75" fill={claimAt(r,o.tx!,o.ty!)?.id===e.id?'#7fe78b':'#ff7676'}/>)}</svg></div>}
-        {e.basePower && <div style={{fontSize:11,marginTop:5}}><b>Generator · {e.basePower.enabled ? (e.basePower.energy>0?'running':'no fuel') : 'off'}</b><div>Stored fuel: {(e.basePower.energy/1000).toFixed(1)} fuel-sec · capacity {e.basePower.capacity??1} load(s) · allocated {powerAllocation(r,e).length}. Each allocated load uses fuel; generator idles at one load. Burns while on, including away. {e.basePower.network==='wire-v1' ? 'Physical cable mode.' : 'Legacy direct proximity mode.'}</div>{!e.basePower.network && <button className="btn" onClick={()=>{if(window.confirm('Switch this generator to physical wiring? Existing links remain but need a paid wire route. This cannot be undone.'))api.act('wireGenerator',{eid});}}>Convert to physical wiring</button>}<label>Priority <select aria-label="Power priority" value={e.basePower.priority??'defense'} onChange={ev=>api.act('powerPriority',{eid,value:ev.target.value})}><option value="defense">Defense</option><option value="production">Production</option></select></label><button className="btn gold" onClick={()=>api.act('basePower',{eid,enabled:!e.basePower!.enabled})}>{e.basePower.enabled?'Switch off':'Switch on'}</button>{!e.basePower.capacity && <details><summary>Reinforce with level 2 workbench</summary><div>{GENERATOR_CAPACITY_UPGRADE.cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}</div><button className="btn" onClick={()=>{const bench=Object.values(r.entities).find(b=>b.type==='workbench' && b.station && (b.station.level??1)>=2 && (b.owner===undefined||b.owner==='player') && Math.hypot(b.x-r.player.x,b.y-r.player.y)<=3*TILE && Math.hypot(b.x-e.x,b.y-e.y)<=3*TILE);api.act('upgradeGenerator',{eid,benchId:bench?.id});}}>Pay &amp; reinforce</button></details>}</div>}
-        {e.turret && <div style={{fontSize:11,marginTop:5}}><b>Turret · {turretStatus(r,e)}{e.turret.tracking?' · target in sight':''}</b><div>Arrows: {countItem(r,e.c!,'arrow')} · fog/storm reduce sight. An armed, supplied turret wired to a burning generator keeps its power reservation while you are away — and engages lawful targets under the same sight, range, cooldown and ammunition as while you play. Disarming a turret frees that capacity. An enabled generator may still burn idle fuel; switching the generator off stops fuel use but removes power from every connected device.</div><label>Connected generator: <select aria-label="Turret generator" value={e.turret.generatorId||''} onChange={ev=>api.act('turretConfigure',{eid,field:'generatorId',value:ev.target.value})} style={{background:'#2b1e30',color:'#fff',maxWidth:140}}><option value="">Not linked</option>{Object.values(r.entities).filter(g=>g.basePower&&(g.owner===undefined||g.owner==='player')&&(connectedPower(r,g,e)||g.id===e.turret?.generatorId||g.id===e.industrial?.generatorId)).map(g=><option key={g.id} value={g.id}>Generator {g.tx},{g.ty}</option>)}</select></label><div><button className="btn gold" onClick={()=>api.act('turretConfigure',{eid,field:'enabled',value:!e.turret!.enabled})}>{e.turret.enabled?'Stop':'Start'}</button></div></div>}
+        {e.basePower && <div style={{fontSize:11,marginTop:5}}><b>Generator · {!e.basePower.enabled ? 'off' : e.basePower.energy > 0 ? 'powered' : e.c && C(r,e.c).slots.some(s => s && ITEMS[s.key]?.fuel) ? 'fuel waiting' : 'no fuel'}</b><div>Stored fuel: {(e.basePower.energy/1000).toFixed(1)} fuel-sec · capacity {e.basePower.capacity??1} load(s) · allocated {powerAllocation(r,e).length}. An enabled generator still burns idle fuel while away; switch it off to stop fuel use. {e.basePower.network==='wire-v1' ? 'Physical cable mode.' : 'Legacy direct proximity mode.'}</div>{!e.basePower.network && <button className="btn" onClick={()=>{if(window.confirm('Switch this generator to physical wiring? Existing links remain but need a paid wire route. This cannot be undone.'))api.act('wireGenerator',{eid});}}>Convert to physical wiring</button>}<label>Priority <select aria-label="Power priority" value={e.basePower.priority??'defense'} onChange={ev=>api.act('powerPriority',{eid,value:ev.target.value})}><option value="defense">Defense</option><option value="production">Production</option></select></label><button className="btn gold" onClick={()=>api.act('basePower',{eid,enabled:!e.basePower!.enabled})}>{e.basePower.enabled?'Switch off':e.basePower.energy > 0 || (e.c && C(r,e.c).slots.some(s => s && ITEMS[s.key]?.fuel))?'Switch on':'Enable (needs fuel)'}</button>{!e.basePower.capacity && <details><summary>Reinforce with level 2 workbench</summary><div>{GENERATOR_CAPACITY_UPGRADE.cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}</div><button className="btn" onClick={()=>{const bench=Object.values(r.entities).find(b=>b.type==='workbench' && b.station && (b.station.level??1)>=2 && (b.owner===undefined||b.owner==='player') && Math.hypot(b.x-r.player.x,b.y-r.player.y)<=3*TILE && Math.hypot(b.x-e.x,b.y-e.y)<=3*TILE);api.act('upgradeGenerator',{eid,benchId:bench?.id});}}>Pay &amp; reinforce</button></details>}</div>}
+        {e.turret && <div style={{fontSize:11,marginTop:5}}><b>Turret · {turretStatus(r,e)}{e.turret.tracking?' · target in sight':''}</b><div>Arrows: {countItem(r,e.c!,'arrow')} · fog/storm reduce sight. No firing while away. An armed, wired, supplied turret still reserves generator capacity; switch it off to free capacity.</div><label>Connected generator: <select aria-label="Turret generator" value={e.turret.generatorId||''} onChange={ev=>api.act('turretConfigure',{eid,field:'generatorId',value:ev.target.value})} style={{background:'#2b1e30',color:'#fff',maxWidth:140}}><option value="">Not linked</option>{Object.values(r.entities).filter(g=>g.basePower&&(g.owner===undefined||g.owner==='player')&&(connectedPower(r,g,e)||g.id===e.turret?.generatorId||g.id===e.industrial?.generatorId)).map(g=><option key={g.id} value={g.id}>Generator {g.tx},{g.ty}</option>)}</select></label><div><button className="btn gold" onClick={()=>api.act('turretConfigure',{eid,field:'enabled',value:!e.turret!.enabled})}>{e.turret.enabled?'Stop':'Start'}</button></div></div>}
         {e.farm && <div style={{fontSize:10,marginTop:5}}>
           <b style={{color:'#ffd98a'}}>Garden Tender · {tenderStatus(r,e)}</b>{e.farm.gardenId && r.entities[e.farm.gardenId]?.garden && (()=>{const g=r.entities[e.farm!.gardenId!], climate=gardenEnvironment(r,g,isWet(weatherAt(r,api.now())),(g.garden!.crop==='herb'?'herb':e.farm!.crop));return <div>Climate {climate.climate} · {climate.biome} soil · {Math.round(climate.rate*100)}% growth{climate.frame?' · framed':''}{climate.scorched?' · scorched':''}</div>;})()}{e.farm.gardenId && r.entities[e.farm.gardenId]?.garden && <div>Plot {Math.floor(r.entities[e.farm.gardenId].garden!.growth*100)}% · soil {r.entities[e.farm.gardenId].garden!.water.toFixed(1)}/3 · barrel {(r.entities[e.farm.barrelId||'']?.water||0).toFixed(1)}/12</div>}<div>Fuel: {(e.farm.energy/1000).toFixed(0)} s stored · links ≤3 tiles; walls block.</div>
           {(['gardenId','barrelId','chestId'] as const).map(field => <label key={field} style={{display:'block',marginTop:3}}>{field==='gardenId'?'Plot':field==='barrelId'?'Water barrel':'Input / output chest'}: <select aria-label={field} value={e.farm![field]||''} onChange={ev=>api.act('farmConfigure',{eid,field,value:ev.target.value})} style={{background:'#2b1e30',color:'#fff',maxWidth:130}}><option value="">Not linked</option>{Object.values(r.entities).filter(o=>o.kind==='struct'&&(o.owner===undefined||o.owner==='player')&&Math.hypot(o.x-e.x,o.y-e.y)<=BAL.garden.tenderLinkTiles*TILE&&(field==='gardenId'?o.type==='garden':field==='barrelId'?o.type==='barrel':['chest_small','chest_large'].includes(o.type||''))).map(o=><option value={o.id} key={o.id}>{STRUCTS[o.type!].name} {o.tx},{o.ty}</option>)}</select></label>)}
@@ -227,7 +256,7 @@ function RecyclerBody({api,eid}:{api:Api;eid:string}) {
   <div>Destroy one carried item for physical materials. Keep, repair or study it instead. Cores, cards, cash and unlisted items cannot be recycled.</div>
   {st.queue.map(j=><div key={j.id} style={{marginTop:4,color:'#ffd98a'}}>{j.left>0?`Processing · ${Math.ceil(j.left/1000)}s`:'Complete · output blocked'} <button className="btn ghost" onClick={()=>api.act('cancelJob',{eid,jobId:j.id})}>Cancel / return input</button></div>)}
   {!st.queue.length && <><label>Carried item <select aria-label="Recycler item" value={selected} style={{maxWidth:180,background:'#2b1e30',color:'white'}} onChange={ev=>{setSelected(ev.target.value);setConfirm(false);}}><option value="">Select item</option>{entries.map(({s,i})=><option key={s.uid} value={s.uid}>{ITEMS[s.key].name} · {s.uid} · {recoveryPlan(s)?'eligible':'not eligible'} (slot {i+1})</option>)}</select></label>
-  {choice && (plan ? <div>UID {choice.s.uid} · {plan.condition===null?(plan.recipe==='X:drive'?'fixed drive':'fixed part (no wear tiers)'):`condition ${Math.round(plan.condition*100)}%`}<br/>Returns: {list(plan)} · {plan.total/1000}s<br/>Output: {fits?'all results fit':'not enough space for all results'}<br/>{confirm ? <><span style={{color:'#ffb8a0'}}>Permanently destroy this item?</span> <button className="btn danger" disabled={!fits} onClick={()=>{api.act('recycleItem',{eid,slot:choice.i,uid:choice.s.uid});setConfirm(false);setSelected('');}}>Confirm recycle</button> <button className="btn ghost" onClick={()=>setConfirm(false)}>Back</button></> : <button className="btn gold" disabled={!fits} onClick={()=>setConfirm(true)}>Recycle item…</button>}</div> : <div style={{color:'#ffb8a0'}}>Not eligible: protected, unlisted, stacked or missing valid condition.</div>)}
+  {choice && (plan ? <div>UID {choice.s.uid} · {plan.condition===null?'fixed drive':`condition ${Math.round(plan.condition*100)}%`}<br/>Returns: {list(plan)} · {plan.total/1000}s<br/>Output: {fits?'all results fit':'not enough space for all results'}<br/>{confirm ? <><span style={{color:'#ffb8a0'}}>Permanently destroy this item?</span> <button className="btn danger" disabled={!fits} onClick={()=>{api.act('recycleItem',{eid,slot:choice.i,uid:choice.s.uid});setConfirm(false);setSelected('');}}>Confirm recycle</button> <button className="btn ghost" onClick={()=>setConfirm(false)}>Back</button></> : <button className="btn gold" disabled={!fits} onClick={()=>setConfirm(true)}>Recycle item…</button>}</div> : <div style={{color:'#ffb8a0'}}>Not eligible: protected, unlisted, stacked or missing valid condition.</div>)}
   </>}
   <div style={{marginTop:4,color:'#ffd98a'}}>Output · {output.slots.filter(Boolean).length}/{output.slots.length} slots occupied</div><Grid api={api} cid={st.outC} cols={4}/><button className="btn" onClick={()=>{for(let i=0;i<output.slots.length;i++)if(output.slots[i])api.act('move',{from:st.outC,fs:i,to:'inv'});}}>Take output</button>
  </div>;
@@ -306,41 +335,72 @@ function RecipeTree({ recipe, known, ancestors = [] }: { recipe: string; known: 
   })}</div>;
 }
 
+const CRAFT_GROUPS: { id: string; station: string | null; icon: string }[] = [
+  { id: 'Hand', station: null, icon: 'fists' }, { id: 'Campfire', station: 'campfire', icon: 'st:campfire' },
+  { id: 'Furnace', station: 'furnace', icon: 'st:furnace' }, { id: 'Refinery', station: 'refinery', icon: 'st:refinery' },
+  { id: 'Workbench', station: 'workbench', icon: 'st:workbench' },
+];
 export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: string }) {
-  const [search, setSearch] = useState(''); const [selectedRecipe, setSelectedRecipe] = useState<string | null>(focusRecipe && RECIPES[focusRecipe] ? focusRecipe : null);
-  useEffect(() => { if (focusRecipe && RECIPES[focusRecipe]) setSelectedRecipe(focusRecipe); }, [focusRecipe]);
-  const [category, setCategory] = useState<string>('Hand'); const [inventory, setInventory] = useState(false);
+  const [search, setSearch] = useState(''); const [selectedRecipe, setSelectedRecipe] = useState<string | null>(focusRecipe ?? null);
+  const [category, setCategory] = useState<string>(() => {
+    const st = focusRecipe && RECIPES[focusRecipe]?.station;
+    return CRAFT_GROUPS.find(g => g.station === st)?.id || 'Hand';
+  });
   const r = api.gs.run!;
-  const groups: [string, string | null][] = [['Hand', null], ['Campfire', 'campfire'], ['Furnace', 'furnace'], ['Refinery', 'refinery'], ['Workbench', 'workbench']];
-  const nearSt = (k: string) => Object.values(r.entities).find(e => e.kind === 'struct' && e.station && (e.owner === undefined || e.owner === 'player') && STRUCTS[e.type!]?.station === k && Math.hypot(e.x-r.player.x,e.y-r.player.y) <= 3*TILE);
-  if (inventory) return <InventoryPanel api={api} x={8} top={34} onClose={() => { api.setSel(null); setInventory(false); }} />;
-  const rc = selectedRecipe ? RECIPES[selectedRecipe] : null; const st = rc?.station ? nearSt(rc.station) : null;
-  const materials = !!rc && rc.ins.every(([k,q]) => countItem(r,'inv',k) >= q);
+  const nearSt = (k: string) => Object.values(r.entities).find(e => e.kind === 'struct' && e.station && (e.owner === undefined || e.owner === 'player') && STRUCTS[e.type!]?.station === k && Math.hypot(e.x - r.player.x, e.y - r.player.y) <= 3 * TILE);
+  const q = search.trim().toLowerCase();
+  const group = CRAFT_GROUPS.find(g => g.id === category) || CRAFT_GROUPS[0];
+  const visible = Object.entries(RECIPES).filter(([k, v]) => isRecipeKnown(r.knowledge.recipes, k) && (q ? (v.alias ?? ITEMS[v.out].name).toLowerCase().includes(q) : v.station === group.station));
+  const hidden = q ? 0 : Object.entries(RECIPES).filter(([k, v]) => v.station === group.station && !isRecipeKnown(r.knowledge.recipes, k)).length;
+  const sel = selectedRecipe && RECIPES[selectedRecipe] && visible.some(([k]) => k === selectedRecipe) ? selectedRecipe : (visible[0]?.[0] ?? null);
+  const rc = sel ? RECIPES[sel] : null; const st = rc?.station ? nearSt(rc.station) : null;
+  const have = (k: string) => countItem(r, 'inv', k);
+  const materials = !!rc && rc.ins.every(([k, qq]) => have(k) >= qq);
   const stationReady = !rc?.station || (!!st && (st.station!.level ?? 1) >= (rc.stationLevel ?? 1));
   const fuelNeeded = rc?.station === 'campfire' || rc?.station === 'furnace' || rc?.station === 'refinery';
-  const fuelReady = !fuelNeeded || !!st && (st.station!.burn > 0 || C(r, st.station!.fuelC).slots.some(s => s && stationBurnable(s.key)));   // one policy: stationBurnable
+  const fuelReady = !fuelNeeded || !!st && (st.station!.burn > 0 || C(r, st.station!.fuelC).slots.some(s => s && stationBurnable(s.key)));
   const outputReady = !rc?.station || !st || (rc.outs ? recoveryFits(C(r, st.station!.outC), rc.outs) : spaceFor(r, st.station!.outC, rc.out) >= rc.qty);
-  return <Panel title="Crafting" style={{ left: 8, top: 34, width: 302, height: 306 }} onClose={() => api.open(null)}>
-    <div className="flex gap-1" style={{ marginBottom: 4 }}><button className="btn" onClick={() => setInventory(true)}>Inventory</button>{selectedRecipe && <button className="btn" onClick={() => setSelectedRecipe(null)}>Close details</button>}<span style={{ fontSize: 10, color: '#b7a8bf', alignSelf: 'center' }}>{Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).length} learned</span></div>
-    {rc && selectedRecipe ? <div className="scroll" style={{ maxHeight: 245, overflowY: 'auto', fontSize: 11 }}>
-      <div className="flex items-center gap-1"><Icon k={rc.out} size={20} /><b style={{ color: '#ffd98a' }}>{rc.outs ? bundleLabel(rc) : `${ITEMS[rc.out].name} ×${rc.qty}`}</b><span> · learned</span></div>
-      <div style={{ color: '#cfc2dc', margin: '3px 0' }}>{ITEMS[rc.out].desc}</div>
-      <b>Ingredients per batch</b>{rc.ins.map(([k,q]) => <div key={k} style={{ color: countItem(r,'inv',k) >= q ? '#bfe8a8' : '#ff9a8a' }}>{ITEMS[k].name}: {countItem(r,'inv',k)}/{q}</div>)}
-      <div style={{ marginTop: 3 }}>{rc.station ? `${STRUCTS[rc.station].name}${rc.stationLevel ? ` level ${rc.stationLevel}` : ''}: ${stationReady ? 'in reach' : 'missing / insufficient level'}` : 'By hand'} · {rc.secs}s</div>
-      {rc.station && st && <div>Queue {st.station!.queue.length}/6 · {fuelNeeded ? `Fuel ${fuelReady ? 'available' : 'missing (job pauses)'} · ` : ''}Output {outputReady ? 'space' : 'full (job waits)'}</div>}
-      <button className="btn gold" style={{ marginTop: 4 }} disabled={!materials || !stationReady || !!st && st.station!.queue.length >= 6} onClick={() => api.act('craft', { recipe: selectedRecipe, eid: st?.id })}>{rc.station ? 'Reserve & queue' : 'Craft'}</button>
-      <details style={{ marginTop: 5 }}><summary style={{ cursor: 'pointer', color: '#a9dca8' }}>Ingredients &amp; known sub-recipes</summary><RecipeTree recipe={selectedRecipe} known={r.knowledge.recipes} /></details>
-    </div> : <>
-      <label style={{ fontSize: 10 }}>Find known recipe <input aria-label="Find known recipe" value={search} onChange={e => setSearch(e.target.value)} style={{ width: 135, color: '#fff', background: '#21182a', border: '1px solid #6c5770' }} /></label>
-      <div className="flex gap-1" style={{ margin: '4px 0', flexWrap: 'wrap' }}>{groups.map(([label]) => <button key={label} className="btn" aria-pressed={category === label} onClick={() => { setCategory(label); setSearch(''); }} style={{ color: category === label ? '#ffd98a' : undefined }}>{label}</button>)}</div>
-      <div className="scroll" style={{ maxHeight: 190, overflowY: 'auto', fontSize: 11 }}>
-        {groups.filter(([label]) => search.trim() || category === label).map(([label, station]) => { const all = Object.entries(RECIPES).filter(([,v]) => v.station === station); const list = all.filter(([k,v]) => isRecipeKnown(r.knowledge.recipes, k) && ITEMS[v.out].name.toLowerCase().includes(search.trim().toLowerCase())); const hidden = all.filter(([k]) => !isRecipeKnown(r.knowledge.recipes, k)).length; return <div key={label}>
-          {search.trim() && list.length > 0 && <div style={{ color: '#ffd98a' }}>{label}</div>}
-          {list.map(([k,v]) => <button key={k} className="ghost flex items-center gap-1" onClick={() => setSelectedRecipe(k)} style={{ width: '100%', padding: '3px 0', textAlign: 'left', borderBottom: '1px solid #2a2034', cursor: 'pointer' }}><Icon k={v.out} size={15} /><span>{v.alias ?? ITEMS[v.out].name}{v.qty > 1 ? ` ×${v.qty}` : ''}</span><span style={{ marginLeft: 'auto', color: v.ins.every(([id,q]) => countItem(r,'inv',id) >= q) ? '#a9dca8' : '#ff9a8a' }}>{v.ins.every(([id,q]) => countItem(r,'inv',id) >= q) ? 'materials ready' : 'missing materials'}</span></button>)}
-          {!search.trim() && hidden > 0 && <div style={{ color: '#a093aa', fontSize: 10, marginTop: 4 }}>{hidden} undiscovered · explore, find blueprints or research</div>}
-        </div>; })}
+  const queueFull = !!st && st.station!.queue.length >= 6;
+  const can = !!rc && materials && stationReady && !queueFull;
+  const why = !rc ? '' : !materials ? 'missing materials' : !stationReady ? (st ? `needs level ${rc.stationLevel}` : `no ${STRUCTS[rc.station!].name} in reach`) : queueFull ? 'queue full' : !fuelReady ? 'no fuel · job will wait' : !outputReady ? 'output full · job will wait' : '';
+  return <Panel title="Craft" className="craft" style={{ left: 8, top: 34, width: 318, maxHeight: 300 }} onClose={() => api.open(null)}>
+    <div className="craft-body">
+      {/* station rail: icons, lamp = a usable station is in reach */}
+      <div className="rail">
+        {CRAFT_GROUPS.map(g => { const near = g.station ? !!nearSt(g.station) : true; return <button key={g.id} className={`railbtn ${category === g.id && !q ? 'on' : ''}`} title={g.id} onClick={() => { setCategory(g.id); setSearch(''); setSelectedRecipe(null); }}>
+          <img className="px" src={iconUrl(g.icon)} alt={g.id} /><i className="lamp round" style={{ color: near ? 'var(--good)' : 'var(--edge)' }} />
+        </button>; })}
       </div>
-    </>}
+      <div className="craft-main">
+        <div className="craft-top">
+          <span className="panel-h" style={{ fontSize: 9 }}>{q ? 'Search' : group.id}</span>
+          <input aria-label="Find known recipe" placeholder="find…" value={search} onChange={e => setSearch(e.target.value)} />
+          <span className="chip" style={{ color: 'var(--muted)' }}>{visible.length}{hidden ? ` · ${hidden} ?` : ''}</span>
+        </div>
+        <div className="tiles scroll">
+          {visible.map(([k, v]) => { const ok = v.ins.every(([id, qq]) => have(id) >= qq); const stOk = !v.station || !!nearSt(v.station); return <button key={k} className={`tile ${sel === k ? 'on' : ''} ${ok ? 'ok' : 'no'} ${stOk ? '' : 'far'}`} title={`${v.alias ?? ITEMS[v.out].name}${v.qty > 1 ? ` ×${v.qty}` : ''}`} onClick={() => setSelectedRecipe(k)}>
+            <Icon k={v.out} size={16} />{v.qty > 1 && <b>{v.qty}</b>}<i className="dot" />
+          </button>; })}
+          {!visible.length && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', padding: 4 }}>{hidden ? `${hidden} recipes still undiscovered` : 'nothing here'}</div>}
+        </div>
+        {rc && sel && <div className="recipe">
+          <div className="recipe-head"><Icon k={rc.out} size={18} /><b>{rc.alias ?? ITEMS[rc.out].name}</b>{rc.outs && <span className="chip" style={{ color: 'var(--brassLit)' }}>batch</span>}</div>
+          <div className="diagram">
+            <div className="ins">{rc.ins.map(([k, qq]) => { const h = have(k); return <span key={k} className={`need ${h >= qq ? 'ok' : 'no'}`} title={ITEMS[k].name}><Icon k={k} size={14} /><b>{h}</b><small>/{qq}</small></span>; })}</div>
+            <span className="arrow">▶</span>
+            <div className="outs">{recipeOutputs(rc).map(([k, qq]) => <span key={k} className="out" title={ITEMS[k].name}><Icon k={k} size={16} /><b>×{qq}</b></span>)}</div>
+          </div>
+          <div className="recipe-meta">
+            {rc.station ? <span className="chip" style={{ color: stationReady ? 'var(--good)' : 'var(--bad)' }}><img className="px" src={iconUrlSt(rc.station)} alt="" />{STRUCTS[rc.station].name}{rc.stationLevel ? ` L${rc.stationLevel}` : ''}</span> : <span className="chip" style={{ color: 'var(--paper)' }}>by hand</span>}
+            <span className="chip" style={{ color: 'var(--paper)' }}>⏱ {rc.secs}s</span>
+            {fuelNeeded && <span className="chip" style={{ color: fuelReady ? 'var(--good)' : 'var(--warn)' }}><Glyph k="fuel" c="currentColor" s={7} />{fuelReady ? 'fuel' : 'no fuel'}</span>}
+            {st && <span className="chip" style={{ color: queueFull ? 'var(--bad)' : 'var(--muted)' }}>queue {st.station!.queue.length}/6</span>}
+            <button className="btn gold" disabled={!can} onClick={() => api.act('craft', { recipe: sel, eid: st?.id })}>{rc.station ? 'Queue' : 'Craft'}</button>
+          </div>
+          {why && <div className="why" style={{ color: can ? 'var(--warn)' : 'var(--bad)' }}>{why}</div>}
+        </div>}
+      </div>
+    </div>
   </Panel>;
 }
 
@@ -352,216 +412,52 @@ export const BUILD_GROUPS: Record<string,string[]> = {
 };
 /** Oil Pump is locked until the run holds an authorized source with stock; the reason is shown on the entry. */
 export const buildLocked = (r: RunState, k: string) => k === 'oil_pump' && !anyAuthorizedOilSource(r);
+const BUILD_TAB_ICON: Record<string, string> = { Shell: 'st:wall_stone', Home: 'st:bed_straw', Work: 'st:workbench', Defense: 'st:arrow_turret' };
 export function BuildPanel({ api }: { api: Api }) {
   const r = api.gs.run!; const owned = Object.values(r.entities).some(e => e.type === 'claim');
-  const [category,setCategory]=useState('Shell'); const [query,setQuery]=useState('');
-  const groups = BUILD_GROUPS;
-  const keys=BUILD_ORDER.filter(k=>query.trim() ? STRUCTS[k].name.toLowerCase().includes(query.trim().toLowerCase()) : groups[category].includes(k));
-  return <Panel title="Build · choose a structure" style={{ left: 20, top: 30, width: 390, maxHeight: 300 }} onClose={() => api.open(null)}>
-    {!owned && <div style={{ fontSize: 11, color: '#ffd98a' }}>Build anywhere legal; unfunded structures decay. Place a cabinet on your foundation to maintain them.</div>}
-    <div className="flex gap-1" style={{marginBottom:4}}>{Object.keys(groups).map(k=><button key={k} className={`btn ${category===k&&!query?'gold':''}`} onClick={()=>{setCategory(k);setQuery('')}}>{k}</button>)}</div>
-    <label style={{fontSize:11}}>Find <input aria-label="Find structure" value={query} onChange={e=>setQuery(e.target.value)} style={{width:135,color:'#fff',background:'#21182a',border:'1px solid #6c5770'}} /></label>
-    <div className="scroll" style={{maxHeight:152,overflowY:'auto',display:'grid',gridTemplateColumns:'1fr 1fr',gap:3,marginTop:4}}>
-      {keys.map(k => { const d=STRUCTS[k], ok=d.cost.every(([i,q])=>countItem(r,'inv',i)>=q); const locked = buildLocked(r, k); return <button key={k} className="btn ghost" disabled={locked} data-testid={k==='oil_pump'?'build-oil-pump':undefined} style={{textAlign:'left',padding:4,opacity:ok&&!locked?1:.75}} title={locked ? 'Needs an authorized oil source. None exists on this map yet (Map placement pending).' : d.desc} onClick={()=>{api.setBuild(k);api.setReclaim(false);api.setRepairMode(false);api.setUpgradeMode(false);api.open(null)}}><div className="flex items-center gap-1"><img className="px" src={iconUrlSt(k)} style={{width:18,height:18,objectFit:'contain'}} alt=""/><b style={{fontSize:11}}>{d.name}</b></div>{locked && <div style={{fontSize:10,color:'#ffad9d'}}>Locked: no authorized oil source (Map pending)</div>}<div style={{fontSize:10,lineHeight:1.1,color:ok?'#bfe8a8':'#ffad9d'}}>{d.cost.map(([id,q])=>`${ITEMS[id].name} ${countItem(r,'inv',id)}/${q}`).join(' · ')}</div></button>; })}
-      {!keys.length && <div>No matching structures.</div>}
+  const [category, setCategory] = useState('Shell'); const [query, setQuery] = useState(''); const [hover, setHover] = useState<string | null>(null);
+  const q = query.trim().toLowerCase();
+  const keys = BUILD_ORDER.filter(k => q ? STRUCTS[k].name.toLowerCase().includes(q) : BUILD_GROUPS[category].includes(k));
+  const have = (k: string) => countItem(r, 'inv', k);
+  const focus = hover && keys.includes(hover) ? hover : keys[0];
+  const fd = focus ? STRUCTS[focus] : null;
+  const place = (k: string) => { api.setBuild(k); api.setReclaim(false); api.setRepairMode(false); api.setUpgradeMode(false); api.open(null); };
+  return <Panel title="Build" className="build" style={{ left: 20, top: 30, width: 392, height: 302 }} onClose={() => api.open(null)}>
+    <div className="build-top">
+      {Object.keys(BUILD_GROUPS).map(k => <button key={k} className={`tab ${category === k && !q ? 'on' : ''}`} onClick={() => { setCategory(k); setQuery(''); }}><img className="px" src={iconUrl(BUILD_TAB_ICON[k])} alt="" />{k}</button>)}
+      <input aria-label="Find structure" placeholder="find…" value={query} onChange={e => setQuery(e.target.value)} />
     </div>
-    <div className="flex gap-1" style={{marginTop:5}}><button className="btn" onClick={()=>{api.setReclaim(true);api.setBuild(null);api.setRepairMode(false);api.setUpgradeMode(false);api.open(null)}}>Dismantle [X]</button><button className="btn" onClick={()=>{api.setRepairMode(true);api.setBuild(null);api.setReclaim(false);api.setUpgradeMode(false);api.open(null)}}>Repair [V]</button><button className="btn" onClick={()=>{api.setUpgradeMode(true);api.setBuild(null);api.setReclaim(false);api.setRepairMode(false);api.open(null)}}>Upgrade [U]</button></div>
-    <div style={{fontSize:10,color:'#cfc2dc'}}>Click to place or edit · G cycles layers · RMB/Esc stops. Reclaim bags contents and refunds {Math.round(BAL.economy.reclaimRefund*100)}%.</div>
+    <div className="build-body">
+      <div className="btiles scroll">
+        {keys.map(k => { const d = STRUCTS[k]; const ok = d.cost.every(([i, qq]) => have(i) >= qq); const locked = buildLocked(r, k); return <button key={k} className={`btile ${ok && !locked ? 'ok' : 'no'} ${focus === k ? 'on' : ''}`} disabled={locked} data-testid={k === 'oil_pump' ? 'build-oil-pump' : undefined} onMouseEnter={() => setHover(k)} onFocus={() => setHover(k)} onClick={() => place(k)} title={d.name}>
+          <span className="ground" /><img className="px" src={iconUrlSt(k)} alt="" />
+          {locked && <span className="lock">🔒</span>}
+          <span className="nm">{d.name}</span>
+          <span className="cost">{d.cost.map(([i, qq]) => <span key={i} className={have(i) >= qq ? 'ok' : 'no'} title={`${ITEMS[i].name} ${have(i)}/${qq}`}><Icon k={i} size={8} />{qq}</span>)}</span>
+        </button>; })}
+        {!keys.length && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', padding: 6 }}>nothing matches</div>}
+      </div>
+      {focus && fd && <div className="bdetail">
+        <div className="bdetail-head"><img className="px" src={iconUrlSt(focus)} alt="" /><div><b>{fd.name}</b><div className="lbl meta">{fd.layer.toUpperCase()}{fd.shelter ? ' · SHELTER' : ''}{fd.station ? ' · STATION' : ''}{fd.slots ? ` · ${fd.slots} SLOTS` : ''}{fd.light ? ' · LIGHT' : ''}</div></div></div>
+        <div className="lbl desc">{fd.desc}</div>
+        <div className="bcost">{fd.cost.map(([i, qq]) => { const h = have(i); return <span key={i} className={`need ${h >= qq ? 'ok' : 'no'}`} title={ITEMS[i].name}><Icon k={i} size={14} /><b>{h}</b><small>/{qq}</small></span>; })}<span className="chip" style={{ color: 'var(--muted)', marginLeft: 'auto' }}><Glyph k="hp" c="currentColor" s={7} />{fd.hp}</span></div>
+        {buildLocked(r, focus) ? <div className="why" style={{ color: 'var(--bad)' }}>needs an authorized oil source</div> : <button className="btn gold" style={{ width: '100%' }} disabled={!fd.cost.every(([i, qq]) => have(i) >= qq)} onClick={() => place(focus)}>Place · LMB</button>}
+        {!owned && <div className="why" style={{ color: 'var(--warn)' }}>no Cabinet yet · unprotected builds decay</div>}
+      </div>}
+    </div>
+    <div className="build-modes">
+      <button className="btn" onClick={() => { api.setReclaim(true); api.setBuild(null); api.setRepairMode(false); api.setUpgradeMode(false); api.open(null); }}><span className="key">X</span>Dismantle</button>
+      <button className="btn" onClick={() => { api.setRepairMode(true); api.setBuild(null); api.setReclaim(false); api.setUpgradeMode(false); api.open(null); }}><span className="key">V</span>Repair</button>
+      <button className="btn" onClick={() => { api.setUpgradeMode(true); api.setBuild(null); api.setReclaim(false); api.setRepairMode(false); api.open(null); }}><span className="key">U</span>Upgrade</button>
+      <span className="lbl hint" title={`Dismantle refunds ${Math.round(BAL.economy.reclaimRefund * 100)}% and bags contents`}><span className="key">G</span>layer <span className="key">RMB</span>stop</span>
+    </div>
   </Panel>;
 }
-import { iconUrl } from './common';
 const iconUrlSt = (k: string) => iconUrl('st:' + (k === 'escrow' ? 'escrow' : k));
 
-/** Compact Intel for the map: one selected place, essential facts only. Observed facts; stock is never implied. */
-function ExpeditionIntel({ api, r }: { api: Api; r: RunState }) {
-  const notes = expeditionNotes(r); const [focus, setFocus] = useState<string | null>(null);
-  if (!notes.length) return null;
-  const n = notes.find(x => x.place === focus) ?? notes[0]; const w = getWorld();
-  const names = (ids: string[]) => ids.map(id => w.places.find(p => p.id === id)?.name ?? id).join(', ');
-  return <div style={{ marginTop: 4 }}>
-    <div style={{ color: '#ffd98a' }}>Intel · observed</div>
-    <div className="flex gap-1" style={{ flexWrap: 'wrap', margin: '2px 0 3px' }}>{notes.map(x => <button key={x.place} className="btn ghost" style={{ fontSize: 9, padding: '0 4px', borderColor: x.place === n.place ? '#ffd98a' : undefined, color: x.place === n.place ? '#ffd98a' : undefined }} onClick={() => setFocus(x.place)}>{x.name}</button>)}</div>
-    <div style={{ borderLeft: '2px solid #5a4a6a', paddingLeft: 4, lineHeight: 1.25 }}>
-      <div style={{ color: '#e6d9bc' }}>{n.name}</div>
-      {n.gates.map((g, i) => <div key={i} style={{ marginBottom: 3 }}>
-        <div className="flex items-center gap-1"><Icon k={g.item} size={12} /><span style={{ color: g.carried ? '#a0e070' : '#ff9a7a' }}>{g.requirement === 'power' ? 'Generator gate' : 'Vault gate'} · {ITEMS[g.item].name} {g.have}/{g.need}</span></div>
-        {g.carried && <div style={{ color: '#a0e070' }}>Carried. Ready at the gate.</div>}
-        {!g.carried && g.craft && <div style={{ color: '#cfc2dc' }}>Craft at {g.craft.stationName} L{g.craft.level}: {g.craft.ingredients.map(x => `${x.name} ${x.have}/${x.need}`).join(' · ')}
-          <div><button className="btn ghost" style={{ fontSize: 9, padding: '0 4px', marginTop: 2 }} onClick={() => api.open({ kind: 'craft', recipe: g.craft!.recipe })}>Open recipe</button></div></div>}
-        {!g.carried && !g.craft && <div style={{ color: '#ff9a7a' }}>{g.requirement === 'keycard' ? 'Cannot be crafted. Find a card.' : 'No known recipe.'}</div>}
-        {!g.carried && g.seenIn.length > 0 && <div style={{ color: '#8a7a9a' }}>Seen earlier in {names(g.seenIn)} · may be gone</div>}
-        {!g.carried && g.seenIn.length === 0 && g.requirement === 'keycard' && <div style={{ color: '#8a7a9a' }}>No card seen yet.</div>}
-      </div>)}
-      {n.blueprints.map(b => <div key={b.recipe} style={{ color: b.state === 'learned' ? '#8a7a9a' : b.state === 'owned' ? '#ffd98a' : '#cfc2dc' }}>
-        {b.state === 'learned' ? 'Learned' : b.state === 'owned' ? 'In pack, not learned' : 'Blueprint seen, not owned'}: {b.name}</div>)}
-    </div>
-  </div>;
+export function MapPanel({ api, onTeleportSelect, teleportTarget, qaSession = false }: { api: Api; onTeleportSelect?: (x:number,y:number)=>void; teleportTarget?: {x:number;y:number} | null; qaSession?: boolean }) {
+  return <ExpeditionMap api={api} onTeleportSelect={onTeleportSelect} teleportTarget={teleportTarget} qaSession={qaSession} />;
 }
-
-export function MapPanel({ api, onTeleportSelect, teleportTarget }: { api: Api; onTeleportSelect?: (x:number,y:number)=>void; teleportTarget?: {x:number;y:number} | null }) {
-  const ref = useRef<HTMLCanvasElement>(null);
-  const r = api.gs.run!;
-  const w = getWorld();
-  const isVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
-  const [mapMode, setMapMode] = useState<'continent' | 'local'>(onTeleportSelect ? 'local' : isVeyra ? 'continent' : 'local');
-  useEffect(() => {
-    if (onTeleportSelect) setMapMode('local');
-  }, [Boolean(onTeleportSelect)]);
-
-  const effectiveMode = isVeyra ? mapMode : 'local';
-  const cw = effectiveMode === 'continent' ? 250 : 200;
-  const ch = effectiveMode === 'continent' ? 175 : 200;
-
-  useEffect(() => {
-    const c = ref.current;
-    if (!c) return;
-    const g = c.getContext('2d')!;
-    g.imageSmoothingEnabled = false;
-    const dot = (x: number, y: number, col: string, s = 3) => {
-      const rx = Math.round(x), ry = Math.round(y);
-      g.fillStyle = '#000';
-      g.fillRect(rx - 1 - (s >> 1), ry - 1 - (s >> 1), s + 2, s + 2);
-      g.fillStyle = col;
-      g.fillRect(rx - (s >> 1), ry - (s >> 1), s, s);
-    };
-
-    if (effectiveMode === 'continent') {
-      g.fillStyle = '#0c0a14';
-      g.fillRect(0, 0, cw, ch);
-      g.strokeStyle = '#1b1628';
-      g.lineWidth = 1;
-      for (let gx = 25; gx < cw; gx += 25) { g.beginPath(); g.moveTo(gx + 0.5, 0); g.lineTo(gx + 0.5, ch); g.stroke(); }
-      for (let gy = 25; gy < ch; gy += 25) { g.beginPath(); g.moveTo(0, gy + 0.5); g.lineTo(cw, gy + 0.5); g.stroke(); }
-
-      const [ox, oy] = windowOrigin(r);
-      const discKeys = new Set<string>(r.veyraGlobalDiscovered ? Object.keys(r.veyraGlobalDiscovered) : []);
-      for (let cy4 = 0; cy4 < 50; cy4++) {
-        for (let cx4 = 0; cx4 < 50; cx4++) {
-          if (r.discovered[cy4 * 50 + x4Idx(cx4)]) discKeys.add(`${(ox >> 2) + cx4}:${(oy >> 2) + cy4}`);
-        }
-      }
-      for (const k of discKeys) {
-        const sep = k.indexOf(':');
-        if (sep < 0) continue;
-        const cx4 = Number(k.slice(0, sep)), cy4 = Number(k.slice(sep + 1));
-        if (!Number.isFinite(cx4) || !Number.isFinite(cy4)) continue;
-        let col = continentCellColorCache.get(k);
-        if (!col) {
-          const tx = Math.min(FRAME_W - 1, Math.max(0, cx4 * 4 + 2));
-          const ty = Math.min(FRAME_H - 1, Math.max(0, cy4 * 4 + 2));
-          col = veyraContinentTileColor(sampleTile(tx, ty).tile);
-          if (continentCellColorCache.size > 24000) continentCellColorCache.clear();
-          continentCellColorCache.set(k, col);
-        }
-        g.fillStyle = col;
-        g.fillRect(cx4 >> 2, cy4 >> 2, 1, 1);
-      }
-
-      // Active 200x200 window frame
-      g.strokeStyle = 'rgba(255, 217, 138, 0.55)';
-      g.strokeRect(Math.round(ox / 16) + 0.5, Math.round(oy / 16) + 0.5, Math.round(WW / 16), Math.round(WH / 16));
-
-      // Discovered continent POIs
-      for (const po of POIS) {
-        if (!r.poiSeen.includes(po.id)) continue;
-        const px = po.at[0] / 8, py = po.at[1] / 8;
-        const pCol = PRIMORDIAL_POI_IDS.has(po.id) ? '#ff4a3a' : po.arche === 'port' || po.arche === 'heli' ? '#5af0ff' : '#ffd040';
-        dot(px, py, pCol, 3);
-      }
-
-      // Active + offscreen player claims, bags, carts, vehicles
-      for (const e of Object.values(r.entities)) {
-        if (e.type === 'claim') dot((ox + e.tx!) / 16, (oy + e.ty!) / 16, '#ff9a3a', 4);
-        if (e.kind === 'bag') dot((ox + e.x / TILE) / 16, (oy + e.y / TILE) / 16, '#ffffff', 3);
-        if (e.kind === 'cart' || e.kind === 'vehicle') dot((ox + e.x / TILE) / 16, (oy + e.y / TILE) / 16, '#c9935a', 3);
-      }
-      if (r.veyraOffscreenEntities) {
-        for (const oe of Object.values(r.veyraOffscreenEntities)) {
-          const gtx = oe.tx !== undefined ? oe.tx : oe.x / TILE;
-          const gty = oe.ty !== undefined ? oe.ty : oe.y / TILE;
-          if (oe.type === 'claim') dot(gtx / 16, gty / 16, '#ff9a3a', 4);
-          if (oe.kind === 'bag') dot(gtx / 16, gty / 16, '#ffffff', 3);
-          if (oe.kind === 'cart' || oe.kind === 'vehicle') dot(gtx / 16, gty / 16, '#c9935a', 3);
-        }
-      }
-
-      const p = r.player;
-      dot((ox + p.x / TILE) / 16, (oy + p.y / TILE) / 16, Math.floor(Date.now() / 300) % 2 ? '#ffffff' : '#ff4a8a', 3);
-      return;
-    }
-
-    g.drawImage(getMapCanvas(r), 0, 0);
-    const disc = r.discovered;
-    g.fillStyle = 'rgba(12,10,20,0.86)';
-    for (let y = 0; y < 50; y++) for (let x = 0; x < 50; x++) if (!disc[y * 50 + x]) g.fillRect(x * 4, y * 4, 4, 4);
-    for (const pl of w.places) if (r.poiSeen.includes(pl.id)) dot(pl.tx, pl.ty, pl.kind === 'elder' ? '#ff4a3a' : pl.kind === 'evac' ? '#5af0ff' : pl.kind === 'start' ? '#a0e070' : '#ffd040');
-    for (const e of Object.values(r.entities)) {
-      if (isVeyra && !onActiveFloor(r, e)) continue;
-      if (e.type === 'claim') dot(e.tx!, e.ty!, '#ff9a3a', 4);
-      if (e.kind === 'bag') dot(e.x / 16, e.y / 16, '#ffffff');
-      if (e.kind === 'cart' || e.kind === 'vehicle') dot(e.x / 16, e.y / 16, '#c9935a');
-    }
-    const p = r.player;
-    dot(p.x / 16, p.y / 16, Math.floor(Date.now() / 300) % 2 ? '#ffffff' : '#ff4a8a', 3);
-    if (teleportTarget) dot(teleportTarget.x / TILE, teleportTarget.y / TILE, '#d79cff', 5);
-  });
-
-  const p = r.player;
-  const h = runHours(r, api.now());
-  const fl = isVeyra ? activeFloor(r) : 0;
-  const floorTag = fl < 0 ? `B${Math.abs(fl)} Sublevel` : fl === 0 ? 'F1 Ground' : `F${fl + 1} Upper`;
-  const [ax, ay] = isVeyra ? playerGlobalAu(r) : [0, 0];
-  const offscreenCount = r.veyraOffscreenEntities
-    ? Object.values(r.veyraOffscreenEntities).filter(oe => oe.type === 'claim' || oe.kind === 'bag' || oe.kind === 'cart' || oe.kind === 'vehicle').length
-    : 0;
-  const seenContinentPois = isVeyra ? POIS.filter(po => r.poiSeen.includes(po.id)) : [];
-
-  return <Panel title={`${isVeyra ? (effectiveMode === 'continent' ? 'Map · Veyra Continent (Fog of War)' : 'Map · Active Sector (200×200)') : 'Map of the island'} — ${(w.zoneNames || ZONES)[w.zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]]}`} style={{ left: 112, top: 22, width: 448 }} onClose={() => api.open(null)}>
-    <div className="flex gap-2">
-      <div style={{ width: 260 }}>
-        {isVeyra && <div className="flex justify-between items-center" style={{ marginBottom: 3, fontSize: 9 }}>
-          <div className="flex gap-1">
-            <button data-testid="map-mode-continent" className={`btn ${effectiveMode === 'continent' ? 'gold' : 'ghost'}`} style={{ fontSize: 9, padding: '1px 5px' }} onClick={() => setMapMode('continent')}>Continent · Fog</button>
-            <button data-testid="map-mode-local" className={`btn ${effectiveMode === 'local' ? 'gold' : 'ghost'}`} style={{ fontSize: 9, padding: '1px 5px' }} onClick={() => setMapMode('local')}>Local Sector</button>
-          </div>
-          <span style={{ color: '#9ae0ff' }}>AU {ax.toFixed(0)},{ay.toFixed(0)} · {floorTag}</span>
-        </div>}
-        <div style={{ width: 260, height: isVeyra ? 236 : 260, background: '#0c0a14', border: '1px solid #3a2e46', display: 'grid', placeItems: 'center' }}>
-          <canvas
-            ref={ref}
-            width={cw}
-            height={ch}
-            style={{ width: 260, height: effectiveMode === 'continent' ? 182 : (isVeyra ? 234 : 260), cursor: effectiveMode === 'local' && onTeleportSelect ? 'crosshair' : 'default' }}
-            onClick={effectiveMode === 'local' && onTeleportSelect ? e => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const x = Math.floor((e.clientX - rect.left) / rect.width * 200);
-              const y = Math.floor((e.clientY - rect.top) / rect.height * 200);
-              onTeleportSelect(x * TILE + 8, y * TILE + 8);
-            } : undefined}
-          />
-        </div>
-      </div>
-      <div style={{ fontSize: 10, lineHeight: 1.15, width: 170 }}>
-        {onTeleportSelect && <div style={{ color: '#e2bfff', fontSize: 10, lineHeight: 1.15, marginBottom: 4 }}>Lõi quỷ (Local Sector)<br />Click explored safe ground.<br />Close map; hold &amp; release E.<br />Purple marks destination.</div>}
-        <div style={{ color: '#ffd98a' }}>Discovered ({isVeyra ? seenContinentPois.length : w.places.filter(pl => r.poiSeen.includes(pl.id)).length})</div>
-        <div className="scroll" style={{ maxHeight: 92, overflowY: 'auto' }}>
-          {isVeyra
-            ? seenContinentPois.map(po => <div key={po.id} style={{ color: PRIMORDIAL_POI_IDS.has(po.id) ? '#ff8a7a' : '#e0d0b0' }}>• {po.name} <span style={{ color: '#7a6a8a', fontSize: 9 }}>({po.at[0]},{po.at[1]})</span></div>)
-            : w.places.filter(pl => r.poiSeen.includes(pl.id)).map(pl => <div key={pl.id} style={{ color: pl.kind === 'elder' ? '#ff8a7a' : pl.kind === 'evac' ? '#5af0ff' : '#e0d0b0' }}>• {pl.name}</div>)}
-          {r.poiSeen.length === 0 && <div style={{ color: '#8a7a9a' }}>Nothing yet — explore.</div>}
-        </div>
-        {isVeyra && offscreenCount > 0 && <div style={{ color: '#9ae0ff', fontSize: 9, marginTop: 2 }}>Offscreen markers: {offscreenCount} (shown on Continent)</div>}
-        <ExpeditionIntel api={api} r={r} />
-        <div style={{ color: '#ffd98a', marginTop: 4 }}>Legend</div>
-        <div><span style={{ color: '#ffd040' }}>■</span> landmark <span style={{ color: '#ff4a3a' }}>■</span> {isVeyra ? 'sanctum' : 'elder'}</div>
-        <div><span style={{ color: '#ff9a3a' }}>■</span> your claim <span style={{ color: '#fff' }}>■</span> bag</div>
-        <div><span style={{ color: '#5af0ff' }}>■</span> evacuation {isVeyra && <><span style={{ color: '#ffd98a88' }}>□</span> sector</>}</div>
-        <div style={{ color: '#8a7a9a', marginTop: 4 }}>Run hour {h.toFixed(1)} / {BAL.run.maxRunHours} · {phaseOf(r, api.now()).toUpperCase()}</div>
-      </div>
-    </div>
-  </Panel>;
-}
-function x4Idx(cx4: number) { return cx4; }
 
 export function SkillsPanel({ api }: { api: Api }) {
   const r = api.gs.run!; const lvl = (xp: number) => Math.floor(Math.sqrt(xp / 3));
@@ -572,7 +468,7 @@ export function SkillsPanel({ api }: { api: Api }) {
     <div className="flex gap-3" style={{ fontSize: 10 }}>
       <div style={{ width: 170 }}>{Object.entries(r.player.skills).map(([k, xp]) => <div key={k} style={{ marginBottom: 3 }}><div className="flex justify-between"><span>{labels[k]}</span><span style={{ color: '#ffd98a' }}>Lv {lvl(xp)}</span></div><div className="bar" style={{ width: 160 }}><i style={{ width: `${((Math.sqrt(xp / 3) % 1) * 100)}%`, background: '#9ad0ff' }} /></div></div>)}
         <div style={{ color: '#ffd98a', marginTop: 6 }}>{isVeyra ? 'Primordial stones (optional)' : 'Elder stones (optional)'}</div>
-        <div className="flex gap-1" style={{ marginTop: 2 }}>{elderDefs.map(e => <div key={e.stone} title={`${e.name} — ${e.region}`} style={{ opacity: r.elderStones.includes(e.stone) ? 1 : 0.25 }}><Icon k={e.stone} /></div>)}</div>
+        <div className="flex gap-1" style={{ marginTop: 2 }}>{elderDefs.map(e => <div key={e.stone} title={e.name} style={{ opacity: r.elderStones.includes(e.stone) ? 1 : 0.25 }}><Icon k={e.stone} /></div>)}</div>
         <div style={{ color: '#8a7a9a' }}>{r.elderStones.length}/6 — six stones + evacuation = exceptional ending.</div>
         <div style={{ color: '#ffd98a', marginTop: 6 }}>Run achievements · {r.score} local score</div>{r.achievements.map(a => <div key={a}>★ {ACHIEVEMENTS[a].name} <span style={{ color: '#8a7a9a' }}>+{ACHIEVEMENTS[a].score}</span></div>)}
         <div style={{ color: '#ff9a7a', fontSize: 9 }}>LOCAL/UNVERIFIED — never converts into cash.</div>
@@ -582,144 +478,157 @@ export function SkillsPanel({ api }: { api: Api }) {
     </div></Panel>;
 }
 
-function ReadinessBlock({ label, tag, tone, children }: { label: string; tag: string; tone: string; children: ReactNode }) {
-  return <div data-testid={`readiness-${label.split(' ')[0].toLowerCase()}`} style={{ border: `1px solid ${tone}66`, borderRadius: 3, padding: '2px 4px', minWidth: 0 }}>
-    <div style={{ fontSize: 10, lineHeight: 1.15, color: tone }}><b style={{ letterSpacing: 0.3 }}>{label}</b> <span style={{ fontSize: 9, color: '#9d8fb0' }}>{tag}</span></div>
-    <div style={{ fontSize: 10, lineHeight: 1.15, color: '#e6d9bc' }}>{children}</div>
-  </div>;
-}
-
-export function MenuPanel({ api, onQuit, onSave }: { api: Api; onQuit: () => void; onSave: () => Promise<boolean> }) {
-  const [confirm, setConfirm] = useState(false);
-  // Inline, persistent save result (a toast alone disappears). A failure stays visible until the next attempt.
-  const [saveNote, setSaveNote] = useState<{ ok: boolean; text: string } | null>(null);
-  const pf = api.gs.profile; const r = api.gs.run!; const now = api.now();
-  const outlook = wetOutlook(r, now);
-  // R12 J10: read-only departure readiness. Every field is derived from real state; nothing here writes state.
-  const d = departureReadiness(r, now);
-  const cabinets = d.home.cabinets;
-  const fmtOpt = (h: number | null) => (h === null ? '—' : fmtH(h));
-  return <Panel title="Menu — world time continues" style={{ left: 8, top: 8, width: 624, maxHeight: 344, display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClose={() => api.open(null)}>
-    <div className="flex flex-wrap gap-1 items-center" data-testid="menu-actions" style={{ flex: '0 0 auto' }}>
+export function MenuPanel({ api, onQuit, onSave, qaMode = false, returnHistory = [] }: { api: Api; onQuit: () => void; onSave: () => Promise<boolean>; qaMode?: boolean; returnHistory?: StoredReturnEntry[] }) {
+  const [confirm, setConfirm] = useState(false); const pf = api.gs.profile; const r = api.gs.run!; const outlook = wetOutlook(r, api.now()); const survival = offlineSurvivalEstimate(r); const cabinets=Object.values(r.entities).filter(e=>e.type==='claim'&&(e.owner===undefined||e.owner==='player'));
+  // VISUAL ARENA: shifted right so the Presentation console docks beside it at 640x360 without overlap.
+  return <Panel title="Menu — world time continues" style={{ left: 210, top: 34, width: 424, maxHeight: 300, overflowY: 'auto' }} onClose={() => api.open(null)} className="scroll">
+    <div className="flex flex-wrap gap-1">
       <button className="btn gold" onClick={() => api.open(null)}>Resume</button>
-      <button className="btn" onClick={async () => { const ok = await onSave(); const text = ok ? 'Saved locally.' : 'Save failed. Your changes are not confirmed on disk.'; setSaveNote({ ok, text }); api.toast(text); }}>Save now</button>
-      <button className="btn" onClick={onQuit}>Save & quit to title</button>
-      {saveNote && <span data-testid="save-status" style={{ fontSize: 10, color: saveNote.ok ? '#9ae0a0' : '#ff9a8a', fontWeight: saveNote.ok ? 400 : 700 }}>{saveNote.text}</span>}
+      {!qaMode && <button className="btn" onClick={async () => { const ok = await onSave(); api.toast(ok ? 'Saved locally.' : 'Save failed. Your changes are not confirmed on disk.'); }}>Save now</button>}
+      <button className="btn" onClick={() => api.open({ kind: 'notes' })}>Field Notes [N]</button>
+      {returnHistory.length > 0 && <button className="btn" onClick={() => api.open({ kind: 'report', lines: [], report: returnHistory[0].report })}>Return Log ({returnHistory.length})</button>}
+      <button className="btn" onClick={onQuit}>{qaMode ? 'Leave QA to title' : 'Save & quit to title'}</button>
     </div>
-    <div style={{ overflowY: 'auto', flex: '1 1 auto', minHeight: 0, marginTop: 4, paddingRight: 2 }}>
-      <div style={{ fontSize: 10, color: '#e6d9bc', lineHeight: 1.15 }}><b>Before you leave</b> · read-only · horizon {fmtH(d.horizonH)} ({d.horizonBasis === 'run-remaining' ? 'remaining run' : d.horizonBasis === 'ended' ? 'run ended' : '24 h'}) · stationary estimate, not a guarantee.</div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, marginTop: 3 }}>
-        <ReadinessBlock label="NOW" tag="exact · this instant" tone="#e6d9bc">
-          <div>Warmth <b>{d.now.warmth}</b> · target {d.now.target} · {d.now.cold ? <b style={{ color: '#ff9a8a' }}>COLD (below {d.now.coldThreshold})</b> : `not cold (threshold ${d.now.coldThreshold})`}</div>
-          <div>{d.now.sheltered ? 'Roofed enclosure: counts' : 'No roofed enclosure'} · gear insulation {d.now.insulation}</div>
-          <div>Exposure: {d.now.exposures.length ? d.now.exposures.map(e => `${e.id.replace(/_/g, ' ')} ${e.value}`).join(' · ') : 'none'}{d.now.dark ? ' · dark' : ''}{d.now.wetNow ? ' · wet' : ''}</div>
-          <div>Known weather slot ends in {fmtH(d.now.knownWeatherSlotEndsInH)}; later weather is conditional.</div>
-          <div>HP {d.now.hp} · hunger {d.now.hunger} · thirst {d.now.thirst}</div>
-          <div style={{ color: '#b8a8c8' }}>No new hazards: hunger empty ~{fmtOpt(d.survival.hungerH)}, thirst ~{fmtOpt(d.survival.thirstH)}. Not a survival hour.</div>
-        </ReadinessBlock>
-        <ReadinessBlock label="FUEL LIMIT" tag="paid burn only · queued job" tone="#ffb36b">
-          {d.heat.heaters.length === 0 && <div style={{ color: '#ffae89' }}>No campfire or furnace in reach</div>}
-          {d.heat.heaters.map(h => { const l = heaterLine(h); return <div key={h.id} style={{ color: l.tone }}>{l.text}</div>; })}
-          <div><b>{d.heat.fuelLimitH === null ? 'No paid heat in reach.' : `Paid heat ends in ${fmtH(d.heat.fuelLimitH)}.`}</b></div>
-          {d.heat.notHeating.map((t, i) => <div key={i} style={{ color: '#ffae89' }}>{t}</div>)}
-          {d.heat.nearbyStations.map(n => <div key={n.id} style={{ color: '#cfc2dc' }}>{n.name} …{n.id.slice(-4)}: queue {n.queue}{n.firstJob ? ` (${n.firstJob}, ${n.firstLeftMin} min)` : ''} · fuel {n.fuelPaidMin} min + {n.fuelItems} items · free output {n.freeOutputSlots} · {n.note}</div>)}
-          {d.heat.nearbyNone && <div style={{ color: '#9d8fb0' }}>{d.heat.nearbyNone}</div>}
-        </ReadinessBlock>
-        <ReadinessBlock label="CONDITIONAL OUTLOOK" tag="bounded scenarios, not predicted" tone="#8fc8ff">
-          <div><b>{d.outlook.phrase}</b></div>
-          {d.outlook.scenarios.map(sc => <div key={sc.id}>{sc.label}: {sc.coldInH === null ? 'no cold threshold in horizon' : `cold at ${fmtH(sc.coldInH)}`}{sc.supplyEndH !== null ? ` · heat ends ${fmtH(sc.supplyEndH)}, then target ${sc.targetAfterSupply}` : ' · no paid heat'}</div>)}
-          <div style={{ color: '#b8a8c8' }}>Rain/storm in {Math.round(outlook.hours)} h: ~{Math.round(outlook.wetHours)} h (exact next slot, seasonal after).</div>
-        </ReadinessBlock>
-        <ReadinessBlock label="HOME" tag={d.home.hasHome ? 'planned upkeep' : 'no home: no penalty'} tone="#9ae0a0">
-          {!d.home.hasHome && <div>No home cabinet: no upkeep and no decay penalty.</div>}
-          {cabinets.map(c => <div key={c.id}>Cabinet {c.tx},{c.ty}: {CABINET_STATE_LABEL[c.state]}{c.hours !== null ? `, ${hoursLabel(c.hours)} upkeep` : ''}</div>)}
-          {d.home.damagedStructures.map(s => <div key={s.id} style={{ color: '#ffae89' }}>{s.name} {s.hp}/{s.maxHp} HP{s.funded ? '' : ' (unfunded)'}</div>)}
-          <div style={{ color: '#9d8fb0' }}>Traces: observed status only; they fade (rain faster).</div>
-        </ReadinessBlock>
-        <ReadinessBlock label="CHOICES" tag="only when state grounds them" tone="#e6d9bc">
-          {d.choices.length === 0 && <div style={{ color: '#9d8fb0' }}>No state-grounded action right now.</div>}
-          {d.choices.map(c => <div key={c.id}>· {c.text}</div>)}
-        </ReadinessBlock>
-        <ReadinessBlock label="UNKNOWN" tag="not modelled, never assumed safe" tone="#a9a9a9">
-          {d.unknown.map((u, i) => <div key={i}>· {u}</div>)}
-        </ReadinessBlock>
-      </div>
-      <div style={{ fontSize: 10, marginTop: 4, color: '#e6d9bc' }}>While away: weather, fire, production and exposure advance. Limited trace playback can damage reachable structures; other encounters remain unresolved.</div>
+    {qaMode && <div className="console-col" style={{ marginTop: 4, color: 'var(--warn)', fontSize: 9 }}>ISOLATED QA SESSION · autosave, manual save and browser-exit writes are disabled. Your production save is untouched.</div>}
+    <div style={{ fontSize: 10, marginTop: 5, color: '#e6d9bc', lineHeight: 1.2 }}>
+      <b>Before you leave</b> · {isSheltered(r, r.player.x, r.player.y) ? 'Sheltered here' : 'Not sheltered here'} · Weather: {weatherAt(r, api.now())}.<br />
+      Hunger {Math.round(r.player.hunger)} / thirst {Math.round(r.player.thirst)} / HP {Math.round(r.player.hp)}. Without new hazards: hunger empty ~{survival.hungerHours.toFixed(1)}h; thirst empty ~{survival.thirstHours.toFixed(1)}h; estimated survival ~{survival.survivalHours.toFixed(1)}h. This is not a guarantee: cold, radiation, fire, monsters, changing shelter or run expiry can end it sooner. Shelter prevents hunger-only death, not thirst or other hazards.<br />
+      Next {Math.round(outlook.hours)}h outlook: ~{Math.round(outlook.wetHours)}h wet (global schedule estimate). Footprints fade; rain washes them faster. Change route, clear nearby creatures, wait, or use doors and terrain. No home is required.<br />
+      {cabinets.length>0 && <>{cabinets.map(c=>{const f=territoryForecast(r,c);return <span key={c.id}>Cabinet {c.tx},{c.ty}: {f.funded ? `${f.hours.toFixed(1)}h upkeep` : 'UNFUNDED — structures decay'}. </span>})}<br /></>}
+      While away: weather, fire, production and exposure advance. Limited trace playback can damage reachable structures; other encounters remain unresolved.
+    </div>
     <div style={{ fontSize: 10, marginTop: 6 }} className="flex items-center gap-2">Volume <input type="range" min={0} max={1} step={0.05} value={pf.settings.volume} onChange={e => { pf.settings.volume = +e.target.value; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /><label><input type="checkbox" checked={pf.settings.muted} onChange={e => { pf.settings.muted = e.target.checked; setVolume(pf.settings.volume, pf.settings.muted); api.rerender(); }} /> mute</label></div>
     <div style={{ fontSize: 10, marginTop: 6, color: '#cfc2dc', lineHeight: 1.15 }}>WASD move · mouse aim · LMB attack/use · Space dodge-roll · E interact · V repair structure · F pull cart · 1–8 / wheel quickbar · I inventory · C craft · B build (X reclaim) · R research · M map · Tab skills · RMB cancel cast/build · Esc menu</div>
-    <div className="panel" style={{ padding: 4, marginTop: 6, background: '#1a0e10' }}><div style={{ fontSize: 10, color: '#ff9a7a' }}>QA time acceleration — marks this run QA · LOCAL/UNVERIFIED (not real elapsed time)</div>
+    {qaMode && <div className="panel" style={{ padding: 4, marginTop: 6, background: '#1a0e10' }}><div style={{ fontSize: 10, color: '#ff9a7a' }}>QA time acceleration — marks this run QA · LOCAL/UNVERIFIED (not real elapsed time)</div>
       <div className="flex flex-wrap gap-1" style={{ marginTop: 3 }}>{[1, 24].map(h => <button key={h} className="btn ghost" onClick={() => api.act('qaAdvance', { hours: h })}>+{h}h</button>)}
         <button className="btn ghost" onClick={() => api.act('qaAdvance', { hours: Math.max(0, 264.05 - runHours(r, api.now())) })}>→ Ragnarok (h264)</button>
-        <button className="btn ghost" onClick={() => api.act('qaAdvance', { hours: Math.max(0, 312.05 - runHours(r, api.now())) })}>→ Day 14 (h312)</button></div></div>
+        <button className="btn ghost" onClick={() => api.act('qaAdvance', { hours: Math.max(0, 312.05 - runHours(r, api.now())) })}>→ Day 14 (h312)</button></div></div>}
     <div style={{ marginTop: 6 }}>{!confirm ? <button className="btn danger" onClick={() => setConfirm(true)}>Abandon run…</button> : <span className="flex gap-1 items-center" style={{ fontSize: 10 }}>Abandon wipes all run items, home and unsecured cash. <button className="btn danger" onClick={() => api.act('abandon')}>Confirm abandon</button><button className="btn ghost" onClick={() => setConfirm(false)}>No</button></span>}</div>
-    </div>
   </Panel>;
 }
 
 export function VendorPanel({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const cash = countItem(r, 'inv', 'rcash'); const pf = api.gs.profile;
-  return <><Panel title="Mirela the Trader — Crossroads" style={{ left: 120, top: 40, width: 280 }} onClose={() => api.open(null)}>
-    <div className="scroll" style={{maxHeight:260,overflowY:'auto',overflowX:'hidden'}}>
-    <div style={{ fontSize: 10, color: '#cfc2dc' }}>"Only Ragnarok coin buys an escrow chest. No banks out here — carry it home yourself."</div>
-    <div className="flex items-center gap-1" style={{ marginTop: 4, fontSize: 11 }}><Icon k="escrow_chest" /> Rương ký gửi <span style={{ color: '#ffe27a' }}>{BAL.economy.escrowChestPrice} physical cash</span> <span style={{ color: '#8a7a9a' }}>stock {r.vendorStock.escrow_chest}</span>
-      <button className="btn gold" style={{ marginLeft: 'auto' }} disabled={cash < BAL.economy.escrowChestPrice || r.vendorStock.escrow_chest <= 0} onClick={() => api.act('buy', { eid, item: 'escrow_chest' })}>Buy</button></div>
-    <div style={{ fontSize: 10, color: cash ? '#ffe27a' : '#8a7a9a' }}>You carry {cash} unsecured cash.{!isRagnarok(r, api.now()) && ' Cash only appears from sealed chests in the final 72 hours.'}</div>
-    <div style={{fontSize:11,color:'#ffd98a',marginTop:6}}>Run-local Spares supplies · you carry {countItem(r,'inv','spares')}</div>
-    {Object.entries(VENDOR_SPARES).map(([k,v])=><div key={k} className="flex items-center gap-1" style={{fontSize:10}}><Icon k={k} size={12}/>{ITEMS[k].name} ×{v.qty} · {v.price} Spares <span style={{color:'#8a7a9a'}}>stock {r.vendorStock[`spares:${k}`]||0}</span><button className="btn" style={{marginLeft:'auto',padding:'1px 5px'}} disabled={countItem(r,'inv','spares')<v.price || !(r.vendorStock[`spares:${k}`]>0)} onClick={()=>api.act('buySpares',{eid,item:k})}>Buy</button></div>)}
-    <div style={{fontSize:9,color:'#8a7a9a'}}>Finite stock this run; no resale. Old saves retain their original stock.</div>
-    <div style={{ fontSize: 11, color: '#ffd98a', marginTop: 6 }}>Profile-secured goods <span style={{ fontSize: 10, color: '#cfc2dc' }}>(you have {pf.securedCash} secured)</span></div>
-    {Object.entries(VENDOR_SECURED).map(([k, v]) => <div key={k} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={k} size={12} />{ITEMS[k].name}<span style={{ color: '#ffe27a' }}>{v.price}</span><span style={{ color: '#8a7a9a' }}>×{r.vendorStock[k]}</span><button className="btn" style={{ marginLeft: 'auto', padding: '1px 5px' }} disabled={pf.securedCash < v.price || r.vendorStock[k] <= 0} onClick={() => api.act('buy', { eid, item: k })}>Buy</button><button className="btn" style={{ padding: '1px 5px' }} title="Paid parcel at the trader: collect it or load it into a cart in reach" disabled={pf.securedCash < v.price || r.vendorStock[k] <= 0} onClick={() => api.act('buy', { eid, item: k, id: `parcel-${api.now()}-${k}`, freight: true })}>Parcel</button></div>)}
-    <div style={{ fontSize: 9, color: '#ffd98a', marginTop: 3 }}>Parcels waiting at the trader: {Object.values(r.entities).filter(x => x.parcel).length} · a parcel is bulk-safe: it never needs pack room.</div>
-    <div style={{ fontSize: 9, color: '#8a7a9a', marginTop: 3 }}>Purchases become run-local items and are wiped when this run ends. Prices/stock: PROPOSED.</div>
+  const parcels = Object.values(r.entities).filter(x => x.parcel).length;
+  return <><Panel title="Mirela the Trader — Crossroads" style={{ left: 96, top: 34, width: 302, maxHeight: 294 }} onClose={() => api.open(null)}>
+    <div className="scroll" style={{ maxHeight: 256, overflowY: 'auto', overflowX: 'hidden', display: 'flex', flexDirection: 'column', gap: 5 }}>
+      <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>"Only Ragnarok coin buys an escrow chest. No banks out here — carry it home yourself."</div>
+
+      <div className="console-col" style={{ borderLeft: '2px solid var(--brass)' }}>
+        <div className="console-h" style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span>Ragnarok Coin Exchange</span>
+          <span style={{ color: cash ? 'var(--brassLit)' : 'var(--muted)' }}>Carried: {cash}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <Icon k="escrow_chest" size={16} />
+          <div style={{ flex: 1, lineHeight: 1.1 }}>
+            <div className="lbl" style={{ fontSize: 9, color: 'var(--paper)' }}>Rương ký gửi <span style={{ color: 'var(--muted)' }}>({r.vendorStock.escrow_chest} left)</span></div>
+            <div className="lbl" style={{ fontSize: 8, color: 'var(--brassLit)' }}>{BAL.economy.escrowChestPrice} physical cash · place on owned land</div>
+          </div>
+          <button className="btn gold sm" disabled={cash < BAL.economy.escrowChestPrice || r.vendorStock.escrow_chest <= 0} onClick={() => api.act('buy', { eid, item: 'escrow_chest' })}>Buy</button>
+        </div>
+        {!isRagnarok(r, api.now()) && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>Physical coins appear in sealed POI vaults during the final 72h Ragnarok.</div>}
+      </div>
+
+      <div className="console-col">
+        <div className="console-h" style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span>Spares Barter (Run-Local)</span>
+          <span style={{ color: 'var(--paper)' }}>Spares: {countItem(r, 'inv', 'spares')}</span>
+        </div>
+        {Object.entries(VENDOR_SPARES).map(([k, v]) => (
+          <div key={k} className="recipe-row" style={{ cursor: 'default', padding: '2px 0' }}>
+            <Icon k={k} size={13} />
+            <span className="lbl" style={{ fontSize: 9, flex: 1 }}>{ITEMS[k].name} ×{v.qty} <span style={{ color: 'var(--muted)' }}>({r.vendorStock[`spares:${k}`] || 0})</span></span>
+            <span className="chip" style={{ color: countItem(r, 'inv', 'spares') >= v.price ? 'var(--good)' : 'var(--muted)' }}>{v.price} spares</span>
+            <button className="btn sm" disabled={countItem(r, 'inv', 'spares') < v.price || !(r.vendorStock[`spares:${k}`] > 0)} onClick={() => api.act('buySpares', { eid, item: k })}>Buy</button>
+          </div>
+        ))}
+      </div>
+
+      <div className="console-col">
+        <div className="console-h" style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span>Profile-Secured Outfitting</span>
+          <span style={{ color: 'var(--info)' }}>Secured: {pf.securedCash}</span>
+        </div>
+        <div className="lbl" style={{ fontSize: 9, color: 'var(--muted)' }}>Pack needs a free slot. Parcel stays physical beside Mirela if your pack is full.</div>
+        {Object.entries(VENDOR_SECURED).map(([k, v]) => (
+          <div key={k} className="recipe-row" style={{ cursor: 'default', padding: '2px 0' }}>
+            <Icon k={k} size={13} />
+            <span className="lbl" style={{ fontSize: 9, flex: 1 }}>{ITEMS[k].name} <span style={{ color: 'var(--muted)' }}>({r.vendorStock[k]})</span></span>
+            <span className="chip" style={{ color: pf.securedCash >= v.price ? 'var(--brassLit)' : 'var(--muted)' }}>{v.price}</span>
+            <button className="btn sm" disabled={pf.securedCash < v.price || r.vendorStock[k] <= 0 || spaceFor(r, 'inv', k) < 1} title={spaceFor(r, 'inv', k) < 1 ? 'No space in pack; choose Parcel instead' : pf.securedCash < v.price ? 'Not enough secured cash' : 'Put in pack'} onClick={() => api.act('buy', { eid, item: k })}>Pack</button>
+            <button className="btn sm" title="Spawn a physical bulk-safe Parcel beside Mirela to load into a cart" disabled={pf.securedCash < v.price || r.vendorStock[k] <= 0} onClick={() => api.act('buy', { eid, item: k, id: `parcel-${api.now()}-${k}`, freight: true })}>Parcel</button>
+          </div>
+        ))}
+        <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>
+          Waiting parcels: <b style={{ color: 'var(--brassLit)' }}>{parcels}</b> · Purchases become run-local items wiped at run end.
+        </div>
+      </div>
     </div>
-  </Panel><InventoryPanel api={api} /></>;
+  </Panel><InventoryPanel api={api} top={34} /></>;
 }
+
 export function EscrowPanel({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const cash = countItem(r, 'inv', 'rcash');
-  return <Panel title="Rương ký gửi — escrow chest" style={{ left: 180, top: 70, width: 280 }} onClose={() => api.open(null)}>
-    <div style={{ fontSize: 11 }}>Carried physical cash: <b style={{ color: '#ffe27a' }}>{cash}</b> · Profile-secured: <b style={{ color: '#9ae0ff' }}>{api.gs.profile.securedCash}</b></div>
-    <div style={{ fontSize: 10, color: '#cfc2dc', margin: '3px 0' }}>Depositing converts every coin you carry into profile-secured cash in one atomic step. You may deposit again any time; the run continues. Secured cash survives the end of the run — nothing else does.</div>
-    <div className="flex gap-1"><button className="btn gold" disabled={!cash} onClick={() => { const res = api.act('deposit', { eid }); if (res.ok) api.sfx('coin'); }}>Deposit {cash}</button><button className="btn ghost" onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Pick up chest</button></div>
-    <div style={{ fontSize: 9, color: '#8a7a9a', marginTop: 3 }}>Run total deposited: {r.deposited}</div>
+  return <Panel title={<span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><Icon k="escrow_chest" size={14} />Rương ký gửi — Escrow Vault</span>} style={{ left: 170, top: 64, width: 300 }} onClose={() => api.open(null)}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 6, alignItems: 'center', margin: '4px 0' }}>
+      <div className="console-col" style={{ textAlign: 'center' }}>
+        <div className="console-h" style={{ color: cash ? 'var(--warn)' : 'var(--muted)' }}>Carried (At Risk)</div>
+        <div className="title-font" style={{ fontSize: 16, color: cash ? 'var(--brassLit)' : 'var(--muted)' }}>{cash}</div>
+      </div>
+      <span className="flow-arrow" style={{ fontSize: 16 }}>→</span>
+      <div className="console-col" style={{ textAlign: 'center' }}>
+        <div className="console-h" style={{ color: 'var(--info)' }}>Profile-Secured</div>
+        <div className="title-font" style={{ fontSize: 16, color: 'var(--info)' }}>{api.gs.profile.securedCash}</div>
+      </div>
+    </div>
+    <div className="lbl" style={{ fontSize: 8, color: 'var(--paper)', lineHeight: 1.25 }}>
+      Depositing transfers all carried Ragnarok Cash into your permanent Profile balance in one atomic step. The run continues; only secured cash survives when the run ends.
+    </div>
+    <div className="flex gap-1" style={{ marginTop: 6 }}>
+      <button className="btn gold" style={{ flex: 1 }} disabled={!cash} onClick={() => { const res = api.act('deposit', { eid }); if (res.ok) api.sfx('coin'); }}>
+        {cash ? `Deposit ${cash} Coins into Profile` : 'No Coins Carried'}
+      </button>
+      <button className="btn ghost" onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Pick up chest</button>
+    </div>
+    <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 3 }}>Total secured this run: {r.deposited}</div>
   </Panel>;
 }
+
 export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const cash = countItem(r, 'inv', 'rcash'); const [sure, setSure] = useState(false);
-  return <Panel title="Evacuation Beacon" style={{ left: 170, top: 70, width: 300 }} onClose={() => api.open(null)}>
-    <div style={{ fontSize: 10, color: '#cfc2dc' }}>Signal the boat and leave the island. Evacuation ends this run successfully. Everything run-local is wiped: items, Cores, recipes, buildings, cargo and any <b style={{ color: '#ff9a7a' }}>unsecured cash ({cash})</b>. Only profile-secured cash ({api.gs.profile.securedCash}), achievements and history remain.</div>
-    <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 3 }}>Elder stones carried: {r.elderStones.length}/6{r.elderStones.length >= 6 ? ' — the Crown of Six awaits!' : ''}</div>
-    <div className="flex gap-1" style={{ marginTop: 5 }}>{!sure ? <button className="btn gold" onClick={() => setSure(true)}>Light the beacon…</button> : <button className="btn danger" onClick={() => api.act('evacuate', { eid })}>Confirm evacuation</button>}<button className="btn ghost" onClick={() => api.open(null)}>Stay</button></div>
+  return <Panel title="Evacuation Beacon — End Run" style={{ left: 160, top: 60, width: 320 }} onClose={() => api.open(null)}>
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5, marginBottom: 5 }}>
+      <div className="console-col">
+        <div className="console-h" style={{ color: 'var(--info)' }}>Preserved on Profile</div>
+        <div className="lbl" style={{ fontSize: 9, color: 'var(--info)' }}>Secured Cash: <b>{api.gs.profile.securedCash}</b></div>
+        <div className="lbl" style={{ fontSize: 8, color: 'var(--brassLit)', marginTop: 2 }}>
+          Elder Stones: <b>{r.elderStones.length}/6</b>{r.elderStones.length >= 6 ? ' ★ Crown of Six!' : ''}
+        </div>
+      </div>
+      <div className="console-col">
+        <div className="console-h" style={{ color: 'var(--bad)' }}>Wiped on Departure</div>
+        <div className="lbl" style={{ fontSize: 9, color: cash ? 'var(--bad)' : 'var(--muted)' }}>
+          Unsecured Cash: <b>{cash}</b>{cash > 0 ? ' (LOST!)' : ''}
+        </div>
+        <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>
+          All gear, Cores, recipes, structures &amp; cargo.
+        </div>
+      </div>
+    </div>
+    {cash > 0 && <div className="lbl" style={{ fontSize: 8, color: 'var(--warn)', marginBottom: 4 }}>
+      Warning: You are carrying {cash} unsecured coin{cash === 1 ? '' : 's'}. Deposit them in your Rương ký gửi first if you want to keep them!
+    </div>}
+    <div className="flex gap-1">
+      {!sure
+        ? <button className="btn gold" style={{ flex: 1 }} onClick={() => setSure(true)}>Signal Evacuation Boat…</button>
+        : <button className="btn danger" style={{ flex: 1 }} onClick={() => api.act('evacuate', { eid })}>Confirm Departure &amp; End Run</button>}
+      <button className="btn ghost" onClick={() => api.open(null)}>Stay on Island</button>
+    </div>
   </Panel>;
 }
-const RETURN_TABS: { id: ReturnSectionId; label: string }[] = [
-  { id: 'body', label: 'Body' }, { id: 'home', label: 'Home' }, { id: 'production', label: 'Work' }, { id: 'loss', label: 'Loss' }, { id: 'world', label: 'World' },
-];
-const RETURN_TONE: Record<ReturnTone, string> = { ok: '#9be38a', gold: '#ffd98a', warn: '#ffb36b', bad: '#ff8a7a', muted: '#d8cce4' };
-/** B03-C: grouped 640x360 return report (typed OfflineReturnV1). Legible type, EVENT vs NOW provenance, scroll for detail. */
-export function ReportPanel({ api, lines, report }: { api: Api; lines: string[]; report?: OfflineReturnV1 | null }) {
-  const [tab, setTab] = useState<ReturnSectionId>('body');
-  if (!report) return <Panel title="While you were away" style={{ left: 120, top: 40, width: 400, boxSizing: 'border-box' }} onClose={() => api.open(null)}>
-    <div className="scroll" style={{ maxHeight: 220, overflowY: 'auto' }}>{lines.map((l, i) => <div key={i} style={{ fontSize: 13, lineHeight: 1.3, color: i ? '#d8cce4' : '#ffd98a', marginBottom: 4 }}>• {l}</div>)}</div>
-    <button className="btn gold" style={{ marginTop: 6, fontSize: 13 }} onClick={() => api.open(null)}>Continue</button>
-  </Panel>;
-  const rows = report.sections[tab];
-  const counts = Object.fromEntries(RETURN_TABS.map(t => [t.id, report.sections[t.id].length])) as Record<ReturnSectionId, number>;
-  return <Panel title="While you were away" className="return-report" style={{ left: 0, top: 0, width: 640, height: 360, boxSizing: 'border-box', padding: '8px 10px', display: 'flex', flexDirection: 'column', gap: 6, overflow: 'hidden' }} onClose={() => api.open(null)}>
-    <div style={{ fontSize: 14, color: '#ffd98a', lineHeight: 1.25, maxHeight: 36, overflow: 'hidden' }}>{report.summary}</div>
-    <div style={{ display: 'flex', gap: 4 }}>
-      {RETURN_TABS.map(t => <button key={t.id} className={`btn ${tab === t.id ? 'gold' : 'ghost'}`} style={{ fontSize: 13, padding: '4px 0', flex: 1, whiteSpace: 'nowrap' }} onClick={() => setTab(t.id)}>{t.label} {counts[t.id]}</button>)}
-    </div>
-    <div className="scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto', background: '#120e1a', border: '1px solid #3a2f4a', padding: '6px 8px' }}>
-      {rows.length === 0 && <div style={{ fontSize: 13, color: '#b2a5bd' }}>Nothing to report in this group.</div>}
-      {rows.map(row => <div key={row.id} style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginBottom: 6, fontSize: 13, lineHeight: 1.3, color: RETURN_TONE[row.tone] }}>
-        <span title={row.source === 'event' ? 'Timed event from this absence' : 'Current state read at Continue'} style={{ flex: '0 0 auto', fontSize: 10, letterSpacing: 0.5, padding: '1px 4px', marginTop: 1, border: '1px solid currentColor', color: row.source === 'event' ? '#ffd98a' : '#9fc7e8' }}>{row.source === 'event' ? 'EVENT' : 'NOW'}</span>
-        <span>{row.text}{row.where && !row.text.includes(`${row.where.tx},${row.where.ty}`) && <span style={{ color: '#b2a5bd' }}> · {row.where.name} {row.where.tx},{row.where.ty}</span>}</span>
-      </div>)}
-    </div>
-    <div style={{ fontSize: 12, color: '#e6dcc9', minHeight: 30, lineHeight: 1.3 }}>{report.next.length ? <>Next: {report.next.slice(0, 2).join(' ')}</> : 'Nothing needs you right now.'}</div>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-      <span style={{ fontSize: 11, color: '#9b8fa8', lineHeight: 1.25 }}>EVENT = timed receipt. NOW = reading at Continue. Go to a site to act; nothing is collected remotely.</span>
-      <button className="btn gold" style={{ fontSize: 13, flex: '0 0 auto' }} onClick={() => api.open(null)}>Close</button>
-    </div>
-  </Panel>;
+
+/** Grouped 640x360 Offline Return Chronicle (typed OfflineReturnV1). */
+export function ReportPanel({ api, lines, report, history = [] }: { api: Api; lines: string[]; report?: OfflineReturnV1 | null; history?: StoredReturnEntry[] }) {
+  return <ReturnChronicle api={api} lines={lines} report={report} history={history} />;
 }

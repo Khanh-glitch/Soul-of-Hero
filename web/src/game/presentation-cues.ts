@@ -5,12 +5,38 @@ export interface Receipt { id: string; seq: number; at: number; kind: string; de
 export type CueKind =
   | 'station_job_done' | 'station_state_changed' | 'power_fuel_consumed' | 'core_committed' | 'structure_destroyed'
   | 'territory_collapsed' | 'poi_door_closed' | 'poi_power_expired' | 'loot_depleted' | 'loot_respawned' | 'tool_broke'
-  | 'heat_out' | 'offline_settled' | 'elder_defeated' | 'airdrop_landed' | 'recycle_finished' | 'oil_extracted' | 'turret_fired';
+  | 'heat_out' | 'offline_settled' | 'elder_defeated' | 'airdrop_landed' | 'airdrop_opened' | 'recycle_finished' | 'oil_extracted' | 'turret_fired'
+  | 'hand_craft' | 'recipe_learned' | 'research_started' | 'structure_built' | 'garden_harvested' | 'achievement'
+  | 'cash_secured' | 'freight_paid' | 'vehicle_mounted' | 'vehicle_exited' | 'vehicle_refueled' | 'vehicle_repaired' | 'cash_unsealed' | 'harvested' | 'station_upgraded' | 'structure_upgraded' | 'item_repaired' | 'job_queued';
 export interface Cue { kind: CueKind; cause: string; receiptId: string; at: number; subject: string; detail: string }
 
 // receipt kind → cue, with the subject taken from the first detail segment (the committed entity/id) only.
 const MAP: Record<string, { cue: CueKind; subject: (d: string) => string }> = {
   'job.done': { cue: 'station_job_done', subject: d => d.split(':')[0] },
+  'job.queue': { cue: 'job_queued', subject: d => d.split('@')[1] ?? '' },
+  'craft.hand': { cue: 'hand_craft', subject: d => d },
+  'learn.blueprint': { cue: 'recipe_learned', subject: d => d },
+  'research.specimen': { cue: 'research_started', subject: d => d },
+  'build': { cue: 'structure_built', subject: d => d.split('@')[0] },
+  'garden.harvest': { cue: 'garden_harvested', subject: d => d },
+  'harvest': { cue: 'harvested', subject: d => d.split('@')[0] },
+  'station.upgrade': { cue: 'station_upgraded', subject: d => d.split(':')[0] },
+  'furnace.upgrade': { cue: 'station_upgraded', subject: d => d },
+  'power.upgrade': { cue: 'station_upgraded', subject: d => d },
+  'cart.upgrade': { cue: 'station_upgraded', subject: d => d },
+  'industrial.install': { cue: 'station_upgraded', subject: d => d },
+  'structure.upgrade': { cue: 'structure_upgraded', subject: d => d.split(':')[0] },
+  'item.repair': { cue: 'item_repaired', subject: d => d.split(':')[0] },
+  'achievement': { cue: 'achievement', subject: d => d },
+  'escrow.deposit': { cue: 'cash_secured', subject: d => d },
+  'journey.requisition': { cue: 'cash_secured', subject: d => d.split(':')[0] },
+  'vendor.parcel': { cue: 'freight_paid', subject: d => d.split(' ')[0] },
+  'vehicle.mount': { cue: 'vehicle_mounted', subject: d => d },
+  'vehicle.exit': { cue: 'vehicle_exited', subject: d => d.split('@')[0] },
+  'vehicle.refuel': { cue: 'vehicle_refueled', subject: d => d },
+  'vehicle.repair': { cue: 'vehicle_repaired', subject: d => d },
+  'airdrop.open': { cue: 'airdrop_opened', subject: d => d },
+  'cash.mint': { cue: 'cash_unsealed', subject: d => d.split(':')[0] },
   'station.state': { cue: 'station_state_changed', subject: d => d.split(':')[0] },
   'power.fuel': { cue: 'power_fuel_consumed', subject: d => d.split(':')[0] },
   'core.commit': { cue: 'core_committed', subject: d => d.split(' ')[0].split(':')[0] },

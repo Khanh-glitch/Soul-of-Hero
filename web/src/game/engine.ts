@@ -1,4 +1,5 @@
 import { landingStimulus } from './stimulus';
+import { VFX_TEST_KIT, VFX_TEST_CORES } from './vfx/testkit';
 import { supportsAirdrops, airdropArea, airdropTimes, airdropRewards, chooseAirdropSite, airdropStaticEligible } from './airdrop';
 import { recoveryPlan, recoveryPlanFor, recoveryFits, COMPONENT_RECIPES } from './recycler';
 import { recordIntel, gateKey, placeOfPoi } from './expedition-intel';
@@ -208,6 +209,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   r.custody.inv.slots[0] = mkStack(r, 'knife', 1);
   const fl = mkStack(r, 'water_flask', 1); fl.charge = 2; r.custody.inv.slots[1] = fl;
   r.custody.inv.slots[2] = mkStack(r, 'berries', 3);
+  if (VFX_TEST_KIT) { const inv = r.custody.inv.slots; inv[8] = inv[1]; inv[9] = inv[2]; VFX_TEST_CORES.forEach((k, i) => { const s = mkStack(r, k, 1); s.reserves = { basic: 40, refined: 12, signature: 4 }; inv[1 + i] = s; }); r.qaUsed = true; }
   r.player = { x: sp.tx * TILE + 8, y: sp.ty * TILE + 8, vx: 0, vy: 0, dir: 0, aim: Math.PI / 2, hp: BAL.player.maxHp, stamina: BAL.player.maxStamina, hunger: 85, thirst: 85, warmth: 100, rad: 0, active: 0, action: null, invuln: 0, dead: false, deadT: 0, pulling: null, skills: { gather: 0, combat: 0, craft: 0, survival: 0 }, stepAcc: 0, lastTraceX: 0, lastTraceY: 0, regionName: sp.name, sheltered: false };
   // statics → physical entities with real finite loot
   const pendingRolls: [StaticEnt, Container][] = [];
@@ -1105,6 +1107,8 @@ export function killCreature(gs: GameState, m: Creature, now: number) {
     receipt(r, now, 'elder.defeat', m.elder.key); pushLog(r, now, `${d.name} falls. Its stone lies in the dust.`, 'gold'); award(gs, 'elder_1', now);
   } else {
     const d = CREATURES[m.type]; if (!d) return;
+    // Journey: additive audit receipt only (no outcome change) so combat progress is receipt-backed.
+    receipt(r, now, 'creature.kill', `${m.type}:${m.id}`);
     const rag = isRagnarok(r, now);
     if (m.sideBoss) {
       const defMap = (r.sideBossDefeated ??= {});
@@ -1415,7 +1419,7 @@ export function dispatch(gs: GameState, it: Intent, now: number): Result {
     // The receipt ring is intentionally bounded for UI/history, but irreversible command
     // identity is durable run state and must never be evicted: an old replay is still a replay.
     r.seenIntents.push(it.id);
-    if (['deposit', 'buy', 'abandon', 'evacuate'].includes(it.type)) gs.profile.profileReceipts.push(`intent:${it.id}`);
+    if (['deposit', 'buy', 'abandon', 'evacuate', 'journeyRequisition'].includes(it.type)) gs.profile.profileReceipts.push(`intent:${it.id}`);
     gs.revision++;
   }
   return res;
@@ -2036,6 +2040,29 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       gs.profile.profileReceipts.push(`dep:${r.id}:${it.id}:${n}`);
       award(gs, 'first_deposit', now);
       return ok('escrow.deposit', `${n}`, `Secured ${n} cash to your profile.`);
+    }
+    case 'journeyRequisition': {
+      const date = typeof it.date === 'string' ? it.date : '';
+      const milestone = typeof it.milestone === 'string' ? it.milestone : '';
+      const pts = typeof it.points === 'number' && Number.isFinite(it.points) ? it.points : 0;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return fail('Invalid requisition date.');
+      const table = (BAL as any).journeyRequisitions as Record<string, { points: number; securedCash: number; items: [string, number][] }> | undefined;
+      const spec = table && Object.prototype.hasOwnProperty.call(table, milestone) ? table[milestone] : null;
+      if (!spec) return fail('Unknown daily milestone.');
+      if (pts < spec.points) return fail(`Needs ${spec.points} waypoint points today.`);
+      const prefix = `req:${date}:${milestone}:`;
+      if (gs.profile.profileReceipts.some(x => x.startsWith(prefix))) return fail('Milestone supply requisition already claimed today.');
+      if (!Number.isSafeInteger(gs.profile.securedCash + spec.securedCash)) return fail('Cash total exceeds the supported range.');
+      gs.profile.securedCash += spec.securedCash;
+      gs.profile.profileReceipts.push(`${prefix}${spec.securedCash}`);
+      const granted: string[] = [];
+      for (const [itemKey, qty] of spec.items) {
+        if (ITEMS[itemKey] && qty > 0) {
+          giveOrDrop(r, itemKey, qty, now);
+          granted.push(`${qty}× ${ITEMS[itemKey].name}`);
+        }
+      }
+      return ok('journey.requisition', `${date}:${milestone}:+${spec.securedCash}c`, `+${spec.securedCash} Secured Cash · ${granted.join(', ')}`);
     }
     case 'buySpares': {
       const e=r.entities[it.eid]; if(!e || e.kind!=='vendor' || !near(r,e,2.6) || !clearInteraction(r,e)) return fail('Walk up to the trader.');

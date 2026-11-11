@@ -765,13 +765,15 @@ describe('Veyra Audit Closure & Cross-System Guarantees (#48)', () => {
     );
     expect(ambientOffscreen.length).toBeLessThanOrEqual(96);
 
-    // UI source-contract checks: KeyM unconditionally opens Map, SkillsPanel uses PRIMORDIAL_ELDERS, MapPanel supports Continent Fog-of-War
+    // UI source-contract checks: KeyM unconditionally opens Map, SkillsPanel uses PRIMORDIAL_ELDERS, MapPanel/ExpeditionMap supports Continent Fog-of-War
     const gameTsx = readFileSync(resolve(__dirname, '../ui/Game.tsx'), 'utf8');
     const panelsTsx = readFileSync(resolve(__dirname, '../ui/panels.tsx'), 'utf8');
+    const expeditionMapTsx = readFileSync(resolve(__dirname, '../ui/ExpeditionMap.tsx'), 'utf8');
     expect(gameTsx).toContain("case 'KeyM': toggle('map'); break;");
     expect(gameTsx).not.toContain("case 'KeyM': if(r.layoutId");
     expect(panelsTsx).toContain('PRIMORDIAL_ELDERS');
-    expect(panelsTsx).toContain('map-mode-continent');
-    expect(panelsTsx).toContain('veyraGlobalDiscovered');
+    expect(panelsTsx).toContain('ExpeditionMap');
+    expect(expeditionMapTsx).toContain('map-mode-continent');
+    expect(expeditionMapTsx).toContain('veyraGlobalDiscovered');
   }, 25_000);
 });

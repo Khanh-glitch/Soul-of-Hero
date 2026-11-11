@@ -1,5 +1,9 @@
 // Original pixel art for Soul of Hero, painted pixel-by-pixel into offscreen canvases at boot.
-import { drawParcel, drawVehicleSide, drawVehicleFront, drawVehicleBack, drawVehicleCrate, drawRefinery, drawLubricantJug, drawOilPump, drawCrudeDrum } from './industrial-art';
+import { drawParcel, drawRefinery, drawLubricantJug, drawOilPump, drawCrudeDrum } from './industrial-art';
+// VISUAL ARENA: reconstructed hero animation + motorbike silhouettes.
+import { buildHeroV2 } from './hero-art';
+import { drawBikeSide, drawBikeFront, drawBikeBack, drawBikeCrate } from './vehicle-art';
+import { drawBespokeIcon } from './core-art';
 // (GOLD_SOURCE_NOT_AVAILABLE — these are original replacements; no third-party sprites used.)
 import { hash2 } from './core';
 import { ITEMS } from './catalog';
@@ -82,18 +86,11 @@ function drawHeroDead(g: G, female: boolean) {
   const t = female ? '#2f8f8a' : '#b4532a', h = female ? '#b4482a' : '#5a3a22';
   R(g, 2, 17, 4, 5, h); R(g, 3, 18, 3, 3, '#eab894'); R(g, 6, 17, 7, 5, t); R(g, 13, 18, 3, 3, '#33304a');
 }
-export function buildHero(female: boolean): HeroSet {
-  const set: HeroSet = {};
-  for (let dir = 0; dir < 4; dir++) {
-    set['idle' + dir] = [0, 1].map(f => mk(16, 24, g => drawHero(g, dir, 'idle', f, female)));
-    set['walk' + dir] = [0, 1, 2, 3].map(f => mk(16, 24, g => drawHero(g, dir, 'walk', f, female)));
-    set['wind' + dir] = [mk(16, 24, g => drawHero(g, dir, 'wind', 0, female))];
-    set['hit' + dir] = [mk(16, 24, g => drawHero(g, dir, 'hit', 0, female))];
-  }
-  set.roll = [0, 1, 2, 3].map(f => mk(16, 24, g => drawHeroRoll(g, f, female)));
-  set.dead = [mk(16, 24, g => drawHeroDead(g, female))];
-  return set;
-}
+/** VISUAL ARENA: delegates to hero-art.ts, which owns the 6-frame contact/down/pass
+ *  gait, the anticipation→contact→follow-through attack, the cast pose and the
+ *  heavy-load gait. drawHero/drawHeroRoll/drawHeroDead above are the superseded
+ *  B0x poses, kept only as an audit reference. */
+export function buildHero(female: boolean): HeroSet { return buildHeroV2(female); }
 
 // ===================== CREATURES (facing right) =====================
 function legs(g: G, xs: number[], y: number, f: number, c: string, len = 3) { xs.forEach((x, i) => { const o = (i + f) % 2 ? 1 : 0; R(g, x, y - o, 1, len + o - (o ? 1 : 0), c); }); }
@@ -236,7 +233,7 @@ export function buildStructs() {
   const wall = (top: string, face: string, line: string, kind: string) => mk(16, 24, g => { R(g, 0, 0, 16, 10, top); R(g, 0, 10, 16, 14, face);
     if (kind === 'wood') { for (let x = 0; x < 16; x += 4) { R(g, x, 0, 1, 24, line); R(g, x + 1, 0, 1, 10, '#b08050'); P(g, x + 2, 1, '#c89a60'); } R(g, 0, 15, 16, 1, line); }
     // Sawn planks: horizontal boards, staggered butt joints, no vertical log grain (R8C closeout).
-    if (kind === 'plank') { for (let y = 10; y < 24; y += 4) { R(g, 0, y, 16, 1, line); R(g, 0, y + 1, 16, 1, '#d4a868'); for (let x = (y % 8 ? 5 : 11); x < 16; x += 12) R(g, x, y, 1, 4, line); } R(g, 0, 15, 16, 1, line); }
+    if (kind === 'plank') { for (let y = 10; y < 24; y += 4) { R(g, 0, y, 16, 1, line); R(g, y % 8 ? 0 : 0, y + 1, 16, 1, '#d4a868'); for (let x = (y % 8 ? 5 : 11); x < 16; x += 12) R(g, x, y, 1, 4, line); } R(g, 0, 15, 16, 1, line); }
     if (kind === 'stone') { for (let y = 10; y < 24; y += 4) { R(g, 0, y, 16, 1, line); for (let x = (y % 8 ? 0 : 4); x < 16; x += 8) R(g, x, y, 1, 4, line); } R(g, 0, 0, 16, 1, '#c0c0c8'); }
     if (kind === 'brick') { for (let y = 10; y < 24; y += 3) { R(g, 0, y, 16, 1, line); for (let x = (y % 6 ? 0 : 3); x < 16; x += 6) R(g, x, y, 1, 3, line); } R(g, 0, 0, 16, 1, '#e09a7a'); }
     R(g, 0, 9, 16, 1, 'rgba(0,0,0,0.35)'); });
@@ -302,16 +299,14 @@ export function buildStructs() {
   // B05 oil refinery: idle column, and lit (burning fuel for a queued job). Previously unregistered → invisible station.
   S.refinery = mk(16, 24, g => drawRefinery(g, 'idle'));
   S.refinery_lit = mk(16, 24, g => drawRefinery(g, 'lit'));
-  // B05 motorbike: three views × ok/dead (lamp, tank, rust), plus the strapped cargo crate. Left-facing uses a mirrored side sprite.
-  for (const st of ['ok', 'dead'] as const) {
-    for (const v of ['ok', 'empty', 'broken'] as const) for (const rider of [false, true]) {
-      const k = `${v}${rider ? '_rider' : ''}`;
-      S[`vehicle_side_${k}`] = mk(24, 16, g => drawVehicleSide(g, v, rider));
-      S[`vehicle_front_${k}`] = mk(12, 22, g => drawVehicleFront(g, v, rider));
-      S[`vehicle_back_${k}`] = mk(12, 22, g => drawVehicleBack(g, v, rider));
-    }
+  // Vehicle art is the machine only. The mounted rider is composed from the
+  // same character + equipment layers used on foot (render.ts), never a proxy.
+  for (const v of ['ok', 'empty', 'broken'] as const) {
+    S[`vehicle_side_${v}`] = mk(24, 16, g => drawBikeSide(g, v));
+    S[`vehicle_front_${v}`] = mk(12, 22, g => drawBikeFront(g, v));
+    S[`vehicle_back_${v}`] = mk(12, 22, g => drawBikeBack(g, v));
   }
-  S.vehicle_crate = mk(7, 5, g => drawVehicleCrate(g));
+  S.vehicle_crate = mk(7, 5, g => drawBikeCrate(g));
   // B05-R oil pump: idle, dry (empty source), and two frames of the running beam.
   S.oil_pump_idle = mk(20, 24, g => drawOilPump(g, 'idle'));
   S.oil_pump_dry = mk(20, 24, g => drawOilPump(g, 'dry'));
@@ -429,7 +424,7 @@ function icon(g: G, kind: string, c1: string, c2: string) {
     default: R(g, 4, 4, 8, 8, c1);
   }
 }
-export function buildIcons() { const out: Record<string, Sprite> = {}; for (const [k, d] of Object.entries(ITEMS)) out[k] = mk(16, 16, g => icon(g, d.icon, d.c1, d.c2)); out.fists = mk(16, 16, g => { ell(g, 8, 9, 4, 3.5, '#eab894'); R(g, 5, 6, 6, 2, '#c08060'); }); return out; }
+export function buildIcons() { const out: Record<string, Sprite> = {}; for (const [k, d] of Object.entries(ITEMS)) out[k] = mk(16, 16, g => { if (!drawBespokeIcon(g, k)) icon(g, d.icon, d.c1, d.c2); }); out.fists = mk(16, 16, g => { ell(g, 8, 9, 4, 3.5, '#eab894'); R(g, 5, 6, 6, 2, '#c08060'); }); return out; }
 
 // pixel font for in-world numbers (3x5)
 const DIG: Record<string, string> = { '0': '111101101101111', '1': '010110010010111', '2': '111001111100111', '3': '111001111001111', '4': '101101111001001', '5': '111100111001111', '6': '111100111101111', '7': '111001001001001', '8': '111101111101111', '9': '111101111001111', '+': '000010111010000', '-': '000000111000000' };

@@ -15,11 +15,13 @@ export interface CreatureAtlasSpec {
   atlas: string;
   cellW: number;
   cellH: number;
-  /** Draw scale on the 640×360 pixel-art stage (16px = 1 tile). */
+  /** Native 1:1 draw scale on the 640×360 pixel-art stage (16px = 1 tile). */
   drawW: number;
   drawH: number;
-  /** Vertical foot-anchor offset from sprite center to ground contact (px in screen/world space). */
+  /** Exact vertical offset from creature ground anchor `y` to bottom of cell (`bottomPad + 5`), grounding feet on `y + 4`. */
   footOffsetY: number;
+  /** Distance from creature ground anchor `y` up to the top of its head (`visH - 4`) for crisp overhead UI placement. */
+  headOffsetY: number;
   shadowRx: number;
   shadowRy: number;
   layout: '4dir' | '3dir_mirror_left';
@@ -31,9 +33,9 @@ export interface CreatureAtlasSpec {
 export const DIR_TO_4ROW: readonly [number, number, number, number] = [0, 2, 3, 1];
 
 export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
-  // ---- 9 Ordinary Creatures ----
+  // ---- 9 Ordinary Creatures (native 64×64 cells, 1x pixel art) ----
   vampire_1: {
-    atlas: 'vampire_1.png', cellW: 64, cellH: 64, drawW: 40, drawH: 40, footOffsetY: 5, shadowRx: 7, shadowRy: 3, layout: '4dir',
+    atlas: 'vampire_1.png', cellW: 64, cellH: 64, drawW: 64, drawH: 64, footOffsetY: 25, headOffsetY: 22, shadowRx: 7, shadowRy: 3, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 4, fps: 7, loop: true },
       walk: { yRow: 4, frames: 6, fps: 10, loop: true },
@@ -44,7 +46,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   vampire_2: {
-    atlas: 'vampire_2.png', cellW: 64, cellH: 64, drawW: 42, drawH: 42, footOffsetY: 5, shadowRx: 8, shadowRy: 3, layout: '4dir',
+    atlas: 'vampire_2.png', cellW: 64, cellH: 64, drawW: 64, drawH: 64, footOffsetY: 25, headOffsetY: 24, shadowRx: 8, shadowRy: 3, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 4, fps: 7, loop: true },
       walk: { yRow: 4, frames: 6, fps: 10, loop: true },
@@ -55,7 +57,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   vampire_3: {
-    atlas: 'vampire_3.png', cellW: 64, cellH: 64, drawW: 46, drawH: 46, footOffsetY: 6, shadowRx: 9, shadowRy: 4, layout: '4dir',
+    atlas: 'vampire_3.png', cellW: 64, cellH: 64, drawW: 64, drawH: 64, footOffsetY: 25, headOffsetY: 23, shadowRx: 9, shadowRy: 4, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 4, fps: 7, loop: true },
       walk: { yRow: 4, frames: 6, fps: 10, loop: true },
@@ -66,7 +68,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   orc_1: {
-    atlas: 'orc_1.png', cellW: 64, cellH: 64, drawW: 40, drawH: 40, footOffsetY: 5, shadowRx: 8, shadowRy: 3, layout: '4dir',
+    atlas: 'orc_1.png', cellW: 64, cellH: 64, drawW: 64, drawH: 64, footOffsetY: 27, headOffsetY: 24, shadowRx: 8, shadowRy: 3, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 4, fps: 7, loop: true },
       walk: { yRow: 4, frames: 6, fps: 10, loop: true },
@@ -77,7 +79,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   orc_2: {
-    atlas: 'orc_2.png', cellW: 64, cellH: 64, drawW: 44, drawH: 44, footOffsetY: 6, shadowRx: 8, shadowRy: 3.5, layout: '4dir',
+    atlas: 'orc_2.png', cellW: 64, cellH: 64, drawW: 64, drawH: 64, footOffsetY: 27, headOffsetY: 26, shadowRx: 8, shadowRy: 3.5, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 4, fps: 7, loop: true },
       walk: { yRow: 4, frames: 6, fps: 10, loop: true },
@@ -88,7 +90,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   orc_3: {
-    atlas: 'orc_3.png', cellW: 64, cellH: 64, drawW: 48, drawH: 48, footOffsetY: 6, shadowRx: 9, shadowRy: 4, layout: '4dir',
+    atlas: 'orc_3.png', cellW: 64, cellH: 64, drawW: 64, drawH: 64, footOffsetY: 27, headOffsetY: 31, shadowRx: 9, shadowRy: 4, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 4, fps: 7, loop: true },
       walk: { yRow: 4, frames: 6, fps: 10, loop: true },
@@ -99,7 +101,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   slime_1: {
-    atlas: 'slime_1.png', cellW: 64, cellH: 64, drawW: 36, drawH: 36, footOffsetY: 3, shadowRx: 7, shadowRy: 3, layout: '4dir',
+    atlas: 'slime_1.png', cellW: 64, cellH: 64, drawW: 64, drawH: 64, footOffsetY: 29, headOffsetY: 16, shadowRx: 7, shadowRy: 3, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 6, fps: 8, loop: true },
       walk: { yRow: 4, frames: 8, fps: 10, loop: true },
@@ -110,7 +112,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   slime_2: {
-    atlas: 'slime_2.png', cellW: 64, cellH: 64, drawW: 40, drawH: 40, footOffsetY: 3, shadowRx: 8, shadowRy: 3.5, layout: '4dir',
+    atlas: 'slime_2.png', cellW: 64, cellH: 64, drawW: 64, drawH: 64, footOffsetY: 29, headOffsetY: 17, shadowRx: 8, shadowRy: 3.5, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 6, fps: 8, loop: true },
       walk: { yRow: 4, frames: 8, fps: 10, loop: true },
@@ -121,7 +123,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   slime_3: {
-    atlas: 'slime_3.png', cellW: 64, cellH: 64, drawW: 42, drawH: 42, footOffsetY: 4, shadowRx: 8, shadowRy: 3.5, layout: '4dir',
+    atlas: 'slime_3.png', cellW: 64, cellH: 64, drawW: 64, drawH: 64, footOffsetY: 29, headOffsetY: 21, shadowRx: 8, shadowRy: 3.5, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 6, fps: 8, loop: true },
       walk: { yRow: 4, frames: 8, fps: 10, loop: true },
@@ -132,9 +134,9 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
 
-  // ---- 5 Living Wildlife Species ----
+  // ---- 5 Living Wildlife Species (native 32×32 cells, 1x pixel art) ----
   boar: {
-    atlas: 'wildlife_boar.png', cellW: 32, cellH: 32, drawW: 24, drawH: 24, footOffsetY: 3, shadowRx: 7, shadowRy: 3, layout: '4dir',
+    atlas: 'wildlife_boar.png', cellW: 32, cellH: 32, drawW: 32, drawH: 32, footOffsetY: 11, headOffsetY: 17, shadowRx: 7, shadowRy: 3, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 4, fps: 6, loop: true },
       walk: { yRow: 4, frames: 6, fps: 10, loop: true },
@@ -145,7 +147,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   deer: {
-    atlas: 'wildlife_deer.png', cellW: 32, cellH: 32, drawW: 26, drawH: 26, footOffsetY: 4, shadowRx: 7, shadowRy: 3, layout: '4dir',
+    atlas: 'wildlife_deer.png', cellW: 32, cellH: 32, drawW: 32, drawH: 32, footOffsetY: 11, headOffsetY: 20, shadowRx: 7, shadowRy: 3, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 4, fps: 6, loop: true },
       walk: { yRow: 4, frames: 6, fps: 10, loop: true },
@@ -155,7 +157,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   hare: {
-    atlas: 'wildlife_hare.png', cellW: 32, cellH: 32, drawW: 18, drawH: 18, footOffsetY: 2, shadowRx: 4.5, shadowRy: 2, layout: '4dir',
+    atlas: 'wildlife_hare.png', cellW: 32, cellH: 32, drawW: 32, drawH: 32, footOffsetY: 9, headOffsetY: 17, shadowRx: 5, shadowRy: 2, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 4, fps: 7, loop: true },
       walk: { yRow: 4, frames: 5, fps: 10, loop: true },
@@ -165,7 +167,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   grouse: {
-    atlas: 'wildlife_grouse.png', cellW: 32, cellH: 32, drawW: 20, drawH: 20, footOffsetY: 2, shadowRx: 5, shadowRy: 2.2, layout: '4dir',
+    atlas: 'wildlife_grouse.png', cellW: 32, cellH: 32, drawW: 32, drawH: 32, footOffsetY: 12, headOffsetY: 15, shadowRx: 5, shadowRy: 2, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 4, fps: 6, loop: true },
       walk: { yRow: 4, frames: 6, fps: 10, loop: true },
@@ -175,7 +177,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   fox: {
-    atlas: 'wildlife_fox.png', cellW: 32, cellH: 32, drawW: 22, drawH: 22, footOffsetY: 2, shadowRx: 6, shadowRy: 2.5, layout: '4dir',
+    atlas: 'wildlife_fox.png', cellW: 32, cellH: 32, drawW: 32, drawH: 32, footOffsetY: 10, headOffsetY: 15, shadowRx: 6, shadowRy: 2.5, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 4, fps: 7, loop: true },
       walk: { yRow: 4, frames: 6, fps: 10, loop: true },
@@ -186,9 +188,9 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
 
-  // ---- 4 Optional Side Bosses ----
+  // ---- 4 Optional Side Bosses (native 1:1 cells, 1x pixel art) ----
   boss_greyback: {
-    atlas: 'boss_rock.png', cellW: 64, cellH: 64, drawW: 60, drawH: 60, footOffsetY: 8, shadowRx: 14, shadowRy: 6, layout: '4dir',
+    atlas: 'boss_rock.png', cellW: 64, cellH: 64, drawW: 64, drawH: 64, footOffsetY: 12, headOffsetY: 38, shadowRx: 14, shadowRy: 5, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 7, fps: 8, loop: true },
       walk: { yRow: 4, frames: 10, fps: 11, loop: true },
@@ -199,7 +201,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   boss_tidemarshal: {
-    atlas: 'boss_water.png', cellW: 48, cellH: 48, drawW: 52, drawH: 52, footOffsetY: 8, shadowRx: 11, shadowRy: 5, layout: '3dir_mirror_left',
+    atlas: 'boss_water.png', cellW: 48, cellH: 48, drawW: 48, drawH: 48, footOffsetY: 8, headOffsetY: 34, shadowRx: 10, shadowRy: 4, layout: '3dir_mirror_left',
     clips: {
       idle: { yRow: 0, frames: 6, fps: 8, loop: true, framesBySubRow: [6, 6, 4] },
       walk: { yRow: 3, frames: 4, fps: 10, loop: true, framesBySubRow: [4, 4, 4] },
@@ -210,7 +212,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   boss_custodian: {
-    atlas: 'boss_maid.png', cellW: 96, cellH: 96, drawW: 62, drawH: 62, footOffsetY: 8, shadowRx: 10, shadowRy: 4.5, layout: '4dir',
+    atlas: 'boss_maid.png', cellW: 96, cellH: 96, drawW: 96, drawH: 96, footOffsetY: 25, headOffsetY: 44, shadowRx: 10, shadowRy: 4, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 5, fps: 7, loop: true },
       walk: { yRow: 4, frames: 10, fps: 12, loop: true },
@@ -222,7 +224,7 @@ export const CREATURE_ATLAS_SPECS: Record<string, CreatureAtlasSpec> = {
     },
   },
   boss_ronin: {
-    atlas: 'boss_samurai.png', cellW: 96, cellH: 96, drawW: 72, drawH: 72, footOffsetY: 10, shadowRx: 12, shadowRy: 5, layout: '4dir',
+    atlas: 'boss_samurai.png', cellW: 96, cellH: 96, drawW: 96, drawH: 96, footOffsetY: 27, headOffsetY: 44, shadowRx: 10, shadowRy: 4, layout: '4dir',
     clips: {
       idle: { yRow: 0, frames: 8, fps: 8, loop: true },
       walk: { yRow: 4, frames: 12, fps: 12, loop: true },
@@ -249,6 +251,14 @@ export interface ResolvedSpriteFrame {
 
 export function hasCreatureAtlas(type: string): boolean {
   return Object.prototype.hasOwnProperty.call(CREATURE_ATLAS_SPECS, type);
+}
+
+/** Overhead UI anchor offset above `Y` (accounts for juvenile scale). */
+export function creatureHeadTopY(m: Creature): number {
+  const spec = CREATURE_ATLAS_SPECS[m.type];
+  if (!spec) return 18;
+  const scale = m.husbandry?.stage === 'juvenile' ? 0.75 : 1;
+  return Math.round(spec.headOffsetY * scale);
 }
 
 /** Deterministically resolve which animation clip and source rect a creature displays right now. */
@@ -326,6 +336,7 @@ export function resolveCreatureSpriteFrame(m: Creature, simSec: number): Resolve
 }
 
 const imageCache = new Map<string, HTMLImageElement | null>();
+let flashScratch: HTMLCanvasElement | null = null;
 
 function getAtlasImage(atlasFile: string): HTMLImageElement | null {
   if (typeof Image === 'undefined') return null;
@@ -345,7 +356,20 @@ export function preloadCreatureAtlases(): void {
   }
 }
 
-/** Draw an animated 4-directional creature/wildlife/side-boss sprite onto `g`.
+/** Pixel-snapped stepped contact shadow centered at `(cx, cy)` so silhouettes sit firmly on the tile grid. */
+function drawPixelContactShadow(g: CanvasRenderingContext2D, cx: number, cy: number, rx: number, ry: number, alpha: number) {
+  const X = Math.round(cx), Y = Math.round(cy);
+  const rxi = Math.max(3, Math.round(rx));
+  const ryi = Math.max(1, Math.round(ry * 0.65));
+  g.fillStyle = `rgba(10,6,14,${alpha})`;
+  for (let dy = -ryi; dy <= ryi; dy++) {
+    const frac = Math.sqrt(Math.max(0, 1 - (dy * dy) / ((ryi + 0.65) * (ryi + 0.65))));
+    const hw = Math.max(2, Math.round(rxi * frac));
+    g.fillRect(X - hw, Y + dy, hw * 2, 1);
+  }
+}
+
+/** Draw an animated 4-directional creature/wildlife/side-boss sprite onto `g` at crisp 1:1 pixel scale.
  *  Returns `true` if drawn from its verified PNG atlas, `false` if still loading or non-atlas creature. */
 export function drawCreatureAtlasSprite(
   g: CanvasRenderingContext2D,
@@ -359,18 +383,23 @@ export function drawCreatureAtlasSprite(
   const img = getAtlasImage(rf.spec.atlas);
   if (!img || !img.complete || img.naturalWidth === 0) return false;
 
+  const X = Math.round(x), Y = Math.round(y);
+  // Adult wildlife/creatures/bosses render at exact 1:1 native pixel grid (scale = 1);
+  // juveniles snap to clean 0.75x even-integer cell size (24×24 from 32×32) with nearest-neighbor.
   const isJuvenile = m.husbandry?.stage === 'juvenile';
-  const scale = isJuvenile ? 0.68 : 1;
+  const scale = isJuvenile ? 0.75 : 1;
   const dw = Math.round(rf.spec.drawW * scale);
   const dh = Math.round(rf.spec.drawH * scale);
-  const footY = Math.round(rf.spec.footOffsetY * scale);
+  // Lowest foot pixel row = (cellH - 1 - bottomPad) = cellH - footOffsetY + 4;
+  // placing cell bottom at Y + 4 + (footOffsetY - 4) * scale keeps lowest foot pixel glued to Y + 4!
+  const bottomPad = rf.spec.footOffsetY - 5;
+  const footBottom = Y + 4 + Math.round((bottomPad + 1) * scale);
+  const topY = footBottom - dh;
+  const leftX = X - Math.floor(dw / 2);
 
-  // Ground contact shadow
+  // Single crisp grounded contact shadow directly under the feet (Y + 4)
   if (m.state !== 'dead') {
-    g.fillStyle = m.sideBoss ? 'rgba(0,0,0,0.46)' : 'rgba(0,0,0,0.34)';
-    g.beginPath();
-    g.ellipse(x, y + 4, rf.spec.shadowRx * scale, rf.spec.shadowRy * scale, 0, 0, Math.PI * 2);
-    g.fill();
+    drawPixelContactShadow(g, X, Y + 4, rf.spec.shadowRx * scale, rf.spec.shadowRy * scale, m.sideBoss ? 0.44 : 0.34);
   }
 
   g.save();
@@ -380,37 +409,47 @@ export function drawCreatureAtlasSprite(
     if (age > 1.1) g.globalAlpha = Math.max(0.25, 1 - (age - 1.1) * 1.4);
   }
   if (rf.mirrorX) {
-    g.translate(x, y + footY - dh / 2);
+    g.translate(X, topY);
     g.scale(-1, 1);
-    g.drawImage(img, rf.sx, rf.sy, rf.sw, rf.sh, -Math.floor(dw / 2), -Math.floor(dh / 2), dw, dh);
+    g.drawImage(img, rf.sx, rf.sy, rf.sw, rf.sh, -Math.ceil(dw / 2), 0, dw, dh);
   } else {
-    g.drawImage(
-      img,
-      rf.sx,
-      rf.sy,
-      rf.sw,
-      rf.sh,
-      Math.round(x - dw / 2),
-      Math.round(y + footY - dh),
-      dw,
-      dh,
-    );
+    g.drawImage(img, rf.sx, rf.sy, rf.sw, rf.sh, leftX, topY, dw, dh);
   }
 
-  // Crisp hit-flash silhouette overlay without losing sprite silhouette
-  if (m.flash > 0 && m.state !== 'dead') {
-    g.globalAlpha = Math.min(0.42, m.flash / 360);
-    g.fillStyle = '#fff4e8';
-    g.beginPath();
-    g.arc(x, y - dh * 0.28, Math.max(6, dw * 0.22), 0, Math.PI * 2);
-    g.fill();
+  // Crisp pixel-silhouette hit flash (no blurry floating circle)
+  if (m.flash > 0 && m.state !== 'dead' && typeof document !== 'undefined') {
+    if (!flashScratch) flashScratch = document.createElement('canvas');
+    if (flashScratch.width < dw || flashScratch.height < dh) {
+      flashScratch.width = Math.max(flashScratch.width, dw);
+      flashScratch.height = Math.max(flashScratch.height, dh);
+    }
+    const fg = flashScratch.getContext('2d');
+    if (fg) {
+      fg.imageSmoothingEnabled = false;
+      fg.clearRect(0, 0, dw, dh);
+      fg.globalCompositeOperation = 'source-over';
+      if (rf.mirrorX) {
+        fg.save();
+        fg.translate(dw, 0);
+        fg.scale(-1, 1);
+        fg.drawImage(img, rf.sx, rf.sy, rf.sw, rf.sh, 0, 0, dw, dh);
+        fg.restore();
+      } else {
+        fg.drawImage(img, rf.sx, rf.sy, rf.sw, rf.sh, 0, 0, dw, dh);
+      }
+      fg.globalCompositeOperation = 'source-in';
+      fg.fillStyle = '#fff4e8';
+      fg.fillRect(0, 0, dw, dh);
+    }
   }
   g.restore();
 
-  // Tamed indicator collar / heart pip for husbandry clarity
-  if (m.husbandry?.tamed && m.state !== 'dead') {
-    g.fillStyle = m.husbandry.following ? '#ffe27a' : '#8ef0a0';
-    g.fillRect(x - 2, Math.round(y + footY - dh * 0.78), 4, 2);
+  if (m.flash > 0 && m.state !== 'dead' && flashScratch) {
+    g.save();
+    g.imageSmoothingEnabled = false;
+    g.globalAlpha = Math.min(0.65, m.flash / 220);
+    g.drawImage(flashScratch, 0, 0, dw, dh, rf.mirrorX ? X - Math.floor(dw / 2) : leftX, topY, dw, dh);
+    g.restore();
   }
   return true;
 }
