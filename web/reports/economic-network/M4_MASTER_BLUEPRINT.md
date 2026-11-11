@@ -1,9 +1,14 @@
-# Milestone M4 Report — Soul of Hero Economic Integration & Engineering Master Blueprint
+# Milestone M4 Report — Proposed Engineering Blueprint (`DESIGN_PROPOSED` — Superseded by `M5_CANON_CORRECTIVE.md`)
+
+> **CONTROL TOWER STATUS BANNER (`M5_CANON_CORRECTIVE.md`):**
+> - **Artifact Status:** `DESIGN_PROPOSED` / `RESEARCH_DELIVERED` — **NOT an authorized implementation backlog** and **NOT `SOURCE_IMPLEMENTED`**.
+> - Control Tower rejected M4's proposed diffs involving `A1` (`7/day` `securedCash`), `A2` (`32` slots / `10%` upkeep), `A3` (`qty=1` `<50%` free repair), `A4` (mixing legacy `core_fire/earth/storm/frost` with the 7 Creator Core Gold SKUs), `A5` (`fox`/`slime`/`orc`/`vampire` fabricated drops), `A6` (forced spawn iron/coal nodes), `A7` (random Tier-3 Core unlock lottery), and naive zero-load/empty-campfire cutoffs that violate `w07`/`b03-thermal`.
+> - For **actually authorized, verified fixes (`D1`–`D5`)**, exact CSV audits, and `LOCKED_CANON` status, read **`M5_CANON_CORRECTIVE.md`** and **`SOH_ECONOMIC_HANDOFF.md`**.
 
 **Repository Baseline:** `arena/f561fd0d-soul-of-hero` (branched from `main` @ `82089fea`)  
 **Prerequisites:** M1 (`19a0a8e`), M2 (`7d82c34`), M3 (`8a758b7`)  
-**Target Policy Specification:** `M3_PROPOSED_V1` (`soh.economic-rebalance-m3.v1`)  
-**Scope:** Implementation-ready PR-by-PR roadmap, exact code/schema diffs, save-compatibility contracts, telemetry invariants, and acceptance suites resolving all 16 M2 audit findings without breaking `LOCKED_CANON`.
+**Target Policy Specification:** `M3_PROPOSED_V1` (`soh.economic-rebalance-m3.v1` — unapproved counterfactual baseline)  
+**Scope:** Historical M4 PR roadmap preserved for engineering traceability alongside explicit Control Tower rejections in `M5_CANON_CORRECTIVE.md`.
 
 ---
 

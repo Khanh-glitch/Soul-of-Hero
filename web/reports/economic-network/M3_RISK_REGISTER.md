@@ -1,6 +1,10 @@
-# Milestone M3 Risk Register & Regression Guardrails (`M3_PROPOSED_V1`)
+# Milestone M3 Risk Register (`DESIGN_PROPOSED` — Counterfactual Policy Risks)
 
-**Scope:** Risk identification, save/backwards-compatibility controls, exploit/regression bounds, and rollback triggers across all `M3_PROPOSED_V1` changes defined in `M3_REBALANCE_SPEC.md`.
+> **CONTROL TOWER STATUS BANNER (`M5_CANON_CORRECTIVE.md`):**
+> - **Artifact Status:** `RESEARCH_DELIVERED` / `DESIGN_PROPOSED` (Non-authoritative counterfactual risk study; **NOT approved for runtime rollout**).
+> - Entries referencing `32` cabinet slots (`A2`), `7/day` Journey cash (`A1`), `fuel_can=360s` / zero-load idle cutoff (conflicts with `tests/w07-power-offline-parity.test.ts:82` & `tests/s06-circuits.test.ts:31`), random Core unlocks (`A7`), or forced Veyra drops/ores (`A5`/`A6`) are **`CANON_REJECTED`** or **`REQUIRES_CREATOR_DECISION`** per `M5_CANON_CORRECTIVE.md`.
+
+**Scope:** Risk identification, save/backwards-compatibility controls, exploit/regression bounds, and rollback triggers across the `M3_PROPOSED_V1` counterfactual deltas defined in `M3_REBALANCE_SPEC.md`.
 
 ---
 

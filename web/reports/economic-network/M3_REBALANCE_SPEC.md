@@ -1,9 +1,14 @@
-# Milestone M3 Specification — Soul of Hero Economic Rebalance & Repair Design (`M3_PROPOSED_V1`)
+# Milestone M3 Specification — Soul of Hero Counterfactual Rebalance (`DESIGN_PROPOSED` / Partially `CANON_REJECTED`)
+
+> **CONTROL TOWER STATUS BANNER (`M5_CANON_CORRECTIVE.md`):**
+> - **Artifact Status:** `RESEARCH_DELIVERED` / `DESIGN_PROPOSED` (Counterfactual model ONLY — **NOT `SOURCE_IMPLEMENTED`**, **NOT `PRODUCTION_FIXED`**).
+> - **Superseded Proposals (`CANON_REJECTED`):** **`A1`** (`7/day` Journey `securedCash` — must be **`0`** via `escrow_chest` only), **`A2`** (`32` cabinet slots — **Creator-locked at `24`**, `10%` upkeep unapproved), **`A3`** (`qty=1` free `<50%` repairs — creates infinite repair exploit), **`A4`** (legacy Cores mislabeled as Creator Cores), **`A5`** (cross-species animal/monster drops), **`A6`** (forced spawn iron/coal nodes), **`A7`** (random Tier-3 Core unlock lottery after 4 unlocks).
+> - **Simulation Caveat:** All 336h player archetype simulations in M2/M3 are non-authoritative diagnostics, never balance proof. See **`M5_CANON_CORRECTIVE.md`** and **`SOH_ECONOMIC_HANDOFF.md`** for authoritative canon classification and live fixes (`D1`–`D5`).
 
 **Repository Branch:** `arena/f561fd0d-soul-of-hero`  
-**Policy Spec Identifier:** `soh.economic-rebalance-m3.v1`  
+**Policy Spec Identifier:** `soh.economic-rebalance-m3.v1` *(Non-Authoritative Counterfactual Spec)*  
 **Counterfactual Simulation Engine:** `web/src/game/economic-rebalance-m3.ts`  
-**Verification Suite:** `web/tests/economic-network-m3.test.ts` (Vitest passing)  
+**Verification Suite:** `web/tests/economic-network-m3.test.ts`  
 **Machine-Readable Evidence:** `web/reports/economic-network/M3_BEFORE_AFTER_SIM.json`
 
 ---

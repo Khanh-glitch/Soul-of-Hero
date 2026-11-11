@@ -1,11 +1,11 @@
 /**
- * SOH Economic Rebalance & Counterfactual Simulation Engine (WP3 / M3).
+ * SOH Economic Rebalance & Counterfactual Simulation Engine (WP3 / M3 — DESIGN_PROPOSED).
  *
- * Pure, non-breaking counterfactual policy evaluation comparing M2 Baseline
- * against M3_PROPOSED_V1 across all 16 M2 audit findings (`M2-F01`–`M2-F16`)
- * while enforcing every `LOCKED_CANON` invariant (`K1`–`K8`, `C01`–`C24`,
- * 336h wipe horizon, 72h Ragnarok gate, cash-only escrow, and anti-arbitrage
- * industrial proof invariants).
+ * NON-AUTHORITATIVE counterfactual study comparing M2 Baseline against M3_PROPOSED_V1.
+ * Note: Under Control Tower M5 Canon Corrective (`M5_CANON_CORRECTIVE.md`), items A1–A7
+ * inside `M3_PROPOSED_V1` are `CANON_REJECTED` and remaining hypotheses are `DESIGN_PROPOSED`
+ * — NEVER runtime-fixed authority. Authoritative canon guards live in
+ * `validateAuthoritativeLockedCanon()`.
  */
 
 import {
@@ -326,7 +326,7 @@ export interface M3BeforeAfterResults {
     severity: string;
     beforeMetric: string;
     afterMetric: string;
-    status: 'FIXED_BY_SPEC' | 'VERIFIED_INVARIANT';
+    status: 'PROPOSED_AFTER' | 'CANON_REJECTED' | 'VERIFIED_INVARIANT';
   }[];
 }
 
@@ -461,6 +461,76 @@ export function validateLockedCanonM3(): { allPassed: boolean; checks: LockedCan
       rule: 'All 81 Veyra POIs preserved with zero deletions and valid authored/archetype chests',
       verified: POIS.length === 81 && VEYRA05_SCENES.length === 12,
       detail: `Verified ${POIS.length} POIs across ${VEYRA05_SCENES.length} Veyra scenes.`,
+    },
+  ];
+  return { allPassed: checks.every((c) => c.verified), checks };
+}
+
+export function validateAuthoritativeLockedCanon(): { allPassed: boolean; checks: LockedCanonCheck[] } {
+  const creatorCoreKeys = Object.keys(ITEMS).filter((k) => Boolean(ITEMS[k]?.creatorCore)).sort();
+  const legacyCoreKeys = Object.keys(ITEMS).filter((k) => Boolean(ITEMS[k]?.core) && !ITEMS[k]?.creatorCore).sort();
+  const expectedCreatorCores = [
+    'core_blast',
+    'core_demon',
+    'core_dragon',
+    'core_earthmother',
+    'core_elsa',
+    'core_meteor',
+    'core_mjolnir',
+  ];
+  const expectedLegacyCores = ['core_earth', 'core_fire', 'core_frost', 'core_storm'];
+
+  const foxDrops = new Set((CREATURES.fox?.drops ?? []).map(([k]) => k));
+  const slime3Drops = new Set((CREATURES.slime_3?.drops ?? []).map(([k]) => k));
+  const orc3Drops = new Set((CREATURES.orc_3?.drops ?? []).map(([k]) => k));
+  const vampire2Drops = new Set((CREATURES.vampire_2?.drops ?? []).map(([k]) => k));
+
+  const checks: LockedCanonCheck[] = [
+    {
+      invariantId: 'LOCKED_CANON_CABINET_24_SLOTS',
+      rule: 'Creator-locked Territory Cabinet has exactly 24 physical slots (M3 32 slots CANON_REJECTED)',
+      verified: STRUCTS.claim.slots === 24,
+      detail: `STRUCTS.claim.slots=${STRUCTS.claim.slots}`,
+    },
+    {
+      invariantId: 'LOCKED_CANON_CREATOR_VS_LEGACY_CORES',
+      rule: 'Exact disjoint separation of 7 Creator Core Gold SKUs vs 4 Legacy Cores (A4)',
+      verified:
+        JSON.stringify(creatorCoreKeys) === JSON.stringify(expectedCreatorCores) &&
+        JSON.stringify(legacyCoreKeys) === JSON.stringify(expectedLegacyCores) &&
+        creatorCoreKeys.every((k) => !legacyCoreKeys.includes(k)),
+      detail: `creator=[${creatorCoreKeys.join(',')}], legacy=[${legacyCoreKeys.join(',')}]`,
+    },
+    {
+      invariantId: 'LOCKED_CANON_BIOME_DROP_IDENTITY',
+      rule: 'Preserve creature/biome identity (A5: no wolf_fang on fox, beetle_horn on slime, chitin on orc, crawler_optic on vampire)',
+      verified:
+        !foxDrops.has('wolf_fang') &&
+        !slime3Drops.has('beetle_horn') &&
+        !orc3Drops.has('chitin') &&
+        !vampire2Drops.has('crawler_optic'),
+      detail: 'All forbidden cross-species biological drops absent from live CREATURES.',
+    },
+    {
+      invariantId: 'LOCKED_CANON_RESEARCH_TIER3_AND_CORE_GUARD',
+      rule: 'Directed research denies Tier >= 3 and random Core research does not bypass Tier-3 Core progression (A7)',
+      verified:
+        permitsDirectedResearch(RECIPES.core_dragon) === false &&
+        permitsDirectedResearch(RECIPES.core_fire) === false &&
+        permitsDirectedResearch(RECIPES.chitin_armor) === false,
+      detail: 'Directed Tier-3 gate enforced across Creator, Legacy, and Armor Tier-3 recipes.',
+    },
+    {
+      invariantId: 'LOCKED_CANON_FINITE_RAGNAROK_WIPE',
+      rule: '336h run, 72h Ragnarok gate, finite non-plant sources (K3), cash-only escrow_chest',
+      verified:
+        BAL.run.maxRunHours === 336 &&
+        BAL.run.ragnarokFinalHours === 72 &&
+        BAL.economy.escrowChestPrice === 30 &&
+        STRUCTS.escrow.item === 'escrow_chest' &&
+        ITEMS.rcash.cat === 'cash' &&
+        Object.values(SOURCES).every((s) => s.regrow === undefined || s.mat === 'plant'),
+      detail: `run=${BAL.run.maxRunHours}h, ragnarok=${BAL.run.ragnarokFinalHours}h, finite non-plant sources verified.`,
     },
   ];
   return { allPassed: checks.every((c) => c.verified), checks };
@@ -722,22 +792,22 @@ export function runFullM3BeforeAfterSimulation(): M3BeforeAfterResults {
     shipCrystalNodes * M3_PROPOSED_V1.progressionAndCurrency.crystalStockPerNode * M3_PROPOSED_V1.progressionAndCurrency.energyRefinedOutputQty; // 124 * 5 = 620
 
   const findingResolutionMatrix: M3BeforeAfterResults['findingResolutionMatrix'] = [
-    { findingId: 'M2-F01', severity: 'CRITICAL', beforeMetric: '0 beetle/crawler/crab on Veyra (chitin/optic unobtainable)', afterMetric: 'Native slime_3/orc_3/vampire_2/slime_1/fox drops + [T.SAND] crab (0 dead paths)', status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F02', severity: 'CRITICAL', beforeMetric: '23/24 authored, 57/58 archetype (po_greywater & po_glade dropped)', afterMetric: '24/24 authored, 58/58 archetype (81/81 POIs 100% materialized)', status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F03', severity: 'CRITICAL', beforeMetric: '0 static Cores, 6 BPs, 0 airdrops, 0 damaged_drive on Veyra', afterMetric: '5 static Cores, 8 BPs, 14 airdrops, 16.14 expected damaged_drive', status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F04', severity: 'HIGH', beforeMetric: '588 securedCash/14d vs 76 vendor cap (7.74x)', afterMetric: '98 securedCash/14d vs 160 vendor cap (0.61x)', status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F05', severity: 'HIGH', beforeMetric: 'fuel_can=60s (1028.57x 14d deficit; phantom idle burn)', afterMetric: `fuel_can=360s, 0 zero-load drain (${r2(afterShippingActiveHours / beforeShippingActiveHours)}x active hours)`, status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F06', severity: 'HIGH', beforeMetric: '104 spares mandatory before 1st random Core roll', afterMetric: `Weighted random Core after 4 unlocks: P50=${summarizeDist(afterFirstCoreCosts).p50} spares`, status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F07', severity: 'HIGH', beforeMetric: '2 missing keys (ir_sensor, bear_trap) in BUILD_ORDER', afterMetric: '0 missing keys in BUILD_ORDER', status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F08', severity: 'HIGH', beforeMetric: `claim allowed at dist=9 < ${BAL.economy.claimMinDistFromPoi}`, afterMetric: `Enforced rejection below ${BAL.economy.claimMinDistFromPoi} tiles`, status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F09', severity: 'MEDIUM', beforeMetric: 'Veyra spawn P50 local iron = 0 nodes (only 5/12 scenes have iron)', afterMetric: `Veyra spawn P50 local iron = ${summarizeDist(afterIronNodes).p50} nodes`, status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F10', severity: 'MEDIUM', beforeMetric: 'Brick Citadel 31.22h autonomy (25%/d, 24 slots, 9 mats)', afterMetric: `Brick Citadel ${territoryStressBeforeAfter[3].after.autonomyHours32SlotWeighted}h autonomy (10%/d, 32 weighted slots, 5 mats)`, status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F11', severity: 'MEDIUM', beforeMetric: '30 wood/10m idle campfire burn + stale "~2h" tooltip', afterMetric: '0 wood/10m unattended idle burn + dynamic 12h tooltip', status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F12', severity: 'MEDIUM', beforeMetric: 'oil_pump disabled outside testFixture (0 prod crude)', afterMetric: '2 Shipping (240 crude) + 2 Veyra (300 crude) map-v1 wellheads', status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F13', severity: 'LOW', beforeMetric: `${beforeQty1Overcharge} structure-material pairs bill 100% on 25% HP repair`, afterMetric: '0 pairs bill 100% (50%-damage gate or base-tier fallback)', status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F14', severity: 'INFO', beforeMetric: '0 OVER_RETURN across 9 live recycler items', afterMetric: `${overReturnsAfter} OVER_RETURN verified post-rebalance`, status: 'VERIFIED_INVARIANT' },
-    { findingId: 'M2-F15', severity: 'LOW', beforeMetric: 'oilPumpOffscreenSkipped = true on Veyra', afterMetric: 'oilPumpOffscreenSkipped = false (matches furnace/refinery)', status: 'FIXED_BY_SPEC' },
-    { findingId: 'M2-F16', severity: 'MEDIUM', beforeMetric: `${beforeRefinedMax} max energy_refined charges from wild crystal`, afterMetric: `${afterRefinedMax} max charges (+${r2(((afterRefinedMax - beforeRefinedMax) / beforeRefinedMax) * 100)}%) + creature crystal drops`, status: 'FIXED_BY_SPEC' },
+    { findingId: 'M2-F01', severity: 'CRITICAL', beforeMetric: '0 beetle/crawler/crab on Veyra (chitin/optic unobtainable)', afterMetric: 'A5 REJECTED: cross-species slime/orc/vampire/fox drops forbidden by M5', status: 'CANON_REJECTED' },
+    { findingId: 'M2-F02', severity: 'CRITICAL', beforeMetric: '23/24 authored, 57/58 archetype (po_greywater & po_glade dropped)', afterMetric: '24/24 authored, 58/58 archetype proposed for safe fix D3', status: 'PROPOSED_AFTER' },
+    { findingId: 'M2-F03', severity: 'CRITICAL', beforeMetric: '0 static Cores, 6 BPs, 0 airdrops, 0 damaged_drive on Veyra', afterMetric: 'A4 REJECTED (legacy Core mixup); Recycler po_slag queued in D5', status: 'CANON_REJECTED' },
+    { findingId: 'M2-F04', severity: 'HIGH', beforeMetric: '588 securedCash/14d vs 76 vendor cap (7.74x)', afterMetric: 'A1 REJECTED: 7/day unauthorized mint; must be 0 without Ragnarok Escrow (D1)', status: 'CANON_REJECTED' },
+    { findingId: 'M2-F05', severity: 'HIGH', beforeMetric: 'fuel_can=60s (1028.57x 14d deficit; phantom idle burn)', afterMetric: 'fuel_can=360s proposed hypothesis; idle 1x draw bound to w07/s06 tests', status: 'PROPOSED_AFTER' },
+    { findingId: 'M2-F06', severity: 'HIGH', beforeMetric: '104 spares mandatory before 1st random Core roll', afterMetric: 'A7 REJECTED: random Tier-3 Core unlock lottery after 4 unlocks forbidden', status: 'CANON_REJECTED' },
+    { findingId: 'M2-F07', severity: 'HIGH', beforeMetric: '2 missing keys (ir_sensor, bear_trap) in BUILD_ORDER', afterMetric: '0 missing keys proposed for safe fix D2', status: 'PROPOSED_AFTER' },
+    { findingId: 'M2-F08', severity: 'HIGH', beforeMetric: `claim allowed at dist=9 < ${BAL.economy.claimMinDistFromPoi}`, afterMetric: `Proposed enforcement below ${BAL.economy.claimMinDistFromPoi} tiles`, status: 'PROPOSED_AFTER' },
+    { findingId: 'M2-F09', severity: 'MEDIUM', beforeMetric: 'Veyra spawn P50 local iron = 0 nodes (only 5/12 scenes have iron)', afterMetric: 'A6 REJECTED: forcing 14 spawn iron/coal erases Veyra regional geography', status: 'CANON_REJECTED' },
+    { findingId: 'M2-F10', severity: 'MEDIUM', beforeMetric: 'Brick Citadel 31.22h autonomy (25%/d, 24 slots, 9 mats)', afterMetric: 'A2 REJECTED: 32 cabinet slots (24 Creator-locked) & unverified 10% upkeep', status: 'CANON_REJECTED' },
+    { findingId: 'M2-F11', severity: 'MEDIUM', beforeMetric: '30 wood/10m idle campfire burn + stale "~2h" tooltip', afterMetric: 'Empty campfire heat is intended comfortV1 (b03-thermal); only "~2h" copy defective', status: 'PROPOSED_AFTER' },
+    { findingId: 'M2-F12', severity: 'MEDIUM', beforeMetric: 'oil_pump disabled outside testFixture (0 prod crude)', afterMetric: 'Unverified map wellheads pending Map owner authority', status: 'PROPOSED_AFTER' },
+    { findingId: 'M2-F13', severity: 'LOW', beforeMetric: `${beforeQty1Overcharge} structure-material pairs bill 100% on 25% HP repair`, afterMetric: 'A3 REJECTED: free qty=1 <50% repair creates infinite repair exploit', status: 'CANON_REJECTED' },
+    { findingId: 'M2-F14', severity: 'INFO', beforeMetric: '0 OVER_RETURN across 9 live recycler items', afterMetric: `${overReturnsAfter} OVER_RETURN verified in live recycler`, status: 'VERIFIED_INVARIANT' },
+    { findingId: 'M2-F15', severity: 'LOW', beforeMetric: 'oilPumpOffscreenSkipped = true on Veyra', afterMetric: 'Tied to M2-F12 map oil wellhead decision', status: 'PROPOSED_AFTER' },
+    { findingId: 'M2-F16', severity: 'MEDIUM', beforeMetric: `${beforeRefinedMax} max energy_refined charges from wild crystal`, afterMetric: `Balance hypothesis (${afterRefinedMax} max charges) pending Elder telemetry`, status: 'PROPOSED_AFTER' },
   ];
 
   return {

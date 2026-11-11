@@ -1,27 +1,23 @@
-# Soul of Hero (SOH) — Economic Network Analysis, Audit & Rebalance Blueprint (`M1–M4`)
+# Soul of Hero (SOH) — Economic Network Analysis, Audits & Corrective Implementation (`M1–M5`)
 
 **Repository:** `Khanh-glitch/Soul-of-Hero`  
 **Audit Branch:** `arena/f561fd0d-soul-of-hero` (from `main` @ `82089fea0b28ad1662f9f04496271b92c74c03a7`)  
-**Scope:** Complete economic graph extraction, multi-archetype & Monte Carlo runtime auditing (`Shipping` + `81-POI Veyra`), non-breaking counterfactual rebalance design, and PR-by-PR engineering integration blueprint.
+**Scope:** Economic multigraph extraction (`M1`), diagnostic simulation (`M2`), counterfactual study (`M3` — **`DESIGN_PROPOSED` / partially `CANON_REJECTED`**), engineering draft (`M4` — **`DESIGN_PROPOSED`**, superseded), Control Tower Canon Corrective & Item/Recipe Audits (`M5` + **`SOH_ITEM_FUNCTION_AUDIT.csv`** + **`SOH_RECIPE_ROUTE_AUDIT.csv`**), and verified safe production fixes (`D1`–`D5` + **`SOH_ECONOMIC_HANDOFF.md`**).
 
 ---
 
-## 1. Deliverables Index
+## 1. Deliverables Index & Strict Verification Status
 
-| Milestone | Artifact | Purpose | Verification / Ground Truth |
+| Milestone | Artifact | Status Tag | Verification / Ground Truth |
 |---|---|---|---|
-| **M1** | `TASK_BRIEF.md` | Project charter, authority hierarchy, provenance rules, acceptance criteria | Reviewed |
-| **M1** | `LI_SOURCE_EVIDENCE.md` | Provenance ledger across repo LI archive (`web/ref/atlas/*`, `bible.md`) & live LI docs | Verified URLs & hashes |
-| **M1** | `SOH_ECONOMIC_GRAPH.json` | Machine-readable multigraph: **595** nodes, **2,037** directed edges, **25** gates | `economic-network-m1.test.ts` |
-| **M1** | `SOH_LI_ECONOMIC_CROSSWALK.csv` | **222**-row reconciliation across LI (`S01..S17`, `XEDGE`, `A00..A31`, `H01..H36`, `U01..U12`) & SOH | Byte-deterministic |
-| **M1** | `M1_GRAPH_REPORT.md` | Full structural topology, gate inventory, and static 81-POI audit report | `economic-network-m1.test.ts` |
-| **M2** | `M2_SIMULATION_RESULTS.json` | Complete 8-suite empirical simulation output (`0h–336h`, 4-season `settle()`, $N=400$ MC, 16 probes) | `economic-network-m2.test.ts` (8/8 pass) |
-| **M2** | `M2_AUDIT_REPORT.md` | Comprehensive simulation findings & 16 live code-proven defects (`M2-F01`–`M2-F16`) | Verified verbatim from JSON |
-| **M3** | `M3_BEFORE_AFTER_SIM.json` | Deterministic counterfactual simulation comparing M2 baseline vs `M3_PROPOSED_V1` | `economic-network-m3.test.ts` |
-| **M3** | `M3_REBALANCE_SPEC.md` | Concrete tuning equations, file targets, and `LOCKED_CANON` invariant proof | Verified `6/6` canon checks |
-| **M3** | `M3_RISK_REGISTER.md` | Save-migration, anti-exploit, rollback, and edge-case guardrail register (`M3-R01`–`M3-R11`) | Verified |
-| **M4** | `M4_MASTER_BLUEPRINT.md` | Implementation-ready **6-PR** engineering roadmap, code/schema diffs, & telemetry thresholds | Traceable to line anchors |
-| **M4** | `README.md` | Executive summary & reproduction guide (this index) | Final deliverable |
+| **M5 Corrective** | `M5_CANON_CORRECTIVE.md` | `RESEARCH_DELIVERED` | Reclassifies all M2 findings & `A1`–`A7` rejections; separates 7 Creator Cores vs 4 Legacy Cores |
+| **M5 Audits** | `SOH_ITEM_FUNCTION_AUDIT.csv` | `RESEARCH_DELIVERED` | Complete audit across all existing SOH items (`ITEMS`) — generated before production code edits |
+| **M5 Audits** | `SOH_RECIPE_ROUTE_AUDIT.csv` | `RESEARCH_DELIVERED` | Complete audit across all recipes (`RECIPES`), conversions & Recycler routes |
+| **Handoff** | `SOH_ECONOMIC_HANDOFF.md` | *(Produced after D1–D5)* | Exact tag table (`RESEARCH_DELIVERED`..`STILL_BLOCKED`) & final-SHA verification |
+| **M1** | `TASK_BRIEF.md`, `LI_SOURCE_EVIDENCE.md`, `SOH_ECONOMIC_GRAPH.json`, `SOH_LI_ECONOMIC_CROSSWALK.csv`, `M1_GRAPH_REPORT.md` | `RESEARCH_DELIVERED` | `economic-network-m1.test.ts` (**595** nodes, **2,037** edges, **222** LI rows) |
+| **M2** | `M2_SIMULATION_RESULTS.json`, `M2_AUDIT_REPORT.md` | `RESEARCH_DELIVERED` | `economic-network-m2.test.ts` (**8/8** tests; note: 336h archetypes = diagnostic probes only) |
+| **M3** | `M3_BEFORE_AFTER_SIM.json`, `M3_REBALANCE_SPEC.md`, `M3_RISK_REGISTER.md` | `DESIGN_PROPOSED` / contains `CANON_REJECTED` | Counterfactual study only (`A1`–`A7` rejected per `M5_CANON_CORRECTIVE.md`, **NOT `PRODUCTION_FIXED`**) |
+| **M4** | `M4_MASTER_BLUEPRINT.md` | `DESIGN_PROPOSED` (Superseded) | Unapproved roadmap superseded by `M5_CANON_CORRECTIVE.md` & verified fixes `D1`–`D5` |
 
 ### Accompanying Source & Test Modules (Non-Breaking)
 

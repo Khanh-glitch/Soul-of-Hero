@@ -471,113 +471,113 @@
       "findingId": "M2-F01",
       "severity": "CRITICAL",
       "beforeMetric": "0 beetle/crawler/crab on Veyra (chitin/optic unobtainable)",
-      "afterMetric": "Native slime_3/orc_3/vampire_2/slime_1/fox drops + [T.SAND] crab (0 dead paths)",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "A5 REJECTED: cross-species slime/orc/vampire/fox drops forbidden by M5",
+      "status": "CANON_REJECTED"
     },
     {
       "findingId": "M2-F02",
       "severity": "CRITICAL",
       "beforeMetric": "23/24 authored, 57/58 archetype (po_greywater & po_glade dropped)",
-      "afterMetric": "24/24 authored, 58/58 archetype (81/81 POIs 100% materialized)",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "24/24 authored, 58/58 archetype proposed for safe fix D3",
+      "status": "PROPOSED_AFTER"
     },
     {
       "findingId": "M2-F03",
       "severity": "CRITICAL",
       "beforeMetric": "0 static Cores, 6 BPs, 0 airdrops, 0 damaged_drive on Veyra",
-      "afterMetric": "5 static Cores, 8 BPs, 14 airdrops, 16.14 expected damaged_drive",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "A4 REJECTED (legacy Core mixup); Recycler po_slag queued in D5",
+      "status": "CANON_REJECTED"
     },
     {
       "findingId": "M2-F04",
       "severity": "HIGH",
       "beforeMetric": "588 securedCash/14d vs 76 vendor cap (7.74x)",
-      "afterMetric": "98 securedCash/14d vs 160 vendor cap (0.61x)",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "A1 REJECTED: 7/day unauthorized mint; must be 0 without Ragnarok Escrow (D1)",
+      "status": "CANON_REJECTED"
     },
     {
       "findingId": "M2-F05",
       "severity": "HIGH",
       "beforeMetric": "fuel_can=60s (1028.57x 14d deficit; phantom idle burn)",
-      "afterMetric": "fuel_can=360s, 0 zero-load drain (42.3x active hours)",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "fuel_can=360s proposed hypothesis; idle 1x draw bound to w07/s06 tests",
+      "status": "PROPOSED_AFTER"
     },
     {
       "findingId": "M2-F06",
       "severity": "HIGH",
       "beforeMetric": "104 spares mandatory before 1st random Core roll",
-      "afterMetric": "Weighted random Core after 4 unlocks: P50=32 spares",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "A7 REJECTED: random Tier-3 Core unlock lottery after 4 unlocks forbidden",
+      "status": "CANON_REJECTED"
     },
     {
       "findingId": "M2-F07",
       "severity": "HIGH",
       "beforeMetric": "2 missing keys (ir_sensor, bear_trap) in BUILD_ORDER",
-      "afterMetric": "0 missing keys in BUILD_ORDER",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "0 missing keys proposed for safe fix D2",
+      "status": "PROPOSED_AFTER"
     },
     {
       "findingId": "M2-F08",
       "severity": "HIGH",
       "beforeMetric": "claim allowed at dist=9 < 10",
-      "afterMetric": "Enforced rejection below 10 tiles",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "Proposed enforcement below 10 tiles",
+      "status": "PROPOSED_AFTER"
     },
     {
       "findingId": "M2-F09",
       "severity": "MEDIUM",
       "beforeMetric": "Veyra spawn P50 local iron = 0 nodes (only 5/12 scenes have iron)",
-      "afterMetric": "Veyra spawn P50 local iron = 14 nodes",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "A6 REJECTED: forcing 14 spawn iron/coal erases Veyra regional geography",
+      "status": "CANON_REJECTED"
     },
     {
       "findingId": "M2-F10",
       "severity": "MEDIUM",
       "beforeMetric": "Brick Citadel 31.22h autonomy (25%/d, 24 slots, 9 mats)",
-      "afterMetric": "Brick Citadel 496.55h autonomy (10%/d, 32 weighted slots, 5 mats)",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "A2 REJECTED: 32 cabinet slots (24 Creator-locked) & unverified 10% upkeep",
+      "status": "CANON_REJECTED"
     },
     {
       "findingId": "M2-F11",
       "severity": "MEDIUM",
       "beforeMetric": "30 wood/10m idle campfire burn + stale \"~2h\" tooltip",
-      "afterMetric": "0 wood/10m unattended idle burn + dynamic 12h tooltip",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "Empty campfire heat is intended comfortV1 (b03-thermal); only \"~2h\" copy defective",
+      "status": "PROPOSED_AFTER"
     },
     {
       "findingId": "M2-F12",
       "severity": "MEDIUM",
       "beforeMetric": "oil_pump disabled outside testFixture (0 prod crude)",
-      "afterMetric": "2 Shipping (240 crude) + 2 Veyra (300 crude) map-v1 wellheads",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "Unverified map wellheads pending Map owner authority",
+      "status": "PROPOSED_AFTER"
     },
     {
       "findingId": "M2-F13",
       "severity": "LOW",
       "beforeMetric": "17 structure-material pairs bill 100% on 25% HP repair",
-      "afterMetric": "0 pairs bill 100% (50%-damage gate or base-tier fallback)",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "A3 REJECTED: free qty=1 <50% repair creates infinite repair exploit",
+      "status": "CANON_REJECTED"
     },
     {
       "findingId": "M2-F14",
       "severity": "INFO",
       "beforeMetric": "0 OVER_RETURN across 9 live recycler items",
-      "afterMetric": "0 OVER_RETURN verified post-rebalance",
+      "afterMetric": "0 OVER_RETURN verified in live recycler",
       "status": "VERIFIED_INVARIANT"
     },
     {
       "findingId": "M2-F15",
       "severity": "LOW",
       "beforeMetric": "oilPumpOffscreenSkipped = true on Veyra",
-      "afterMetric": "oilPumpOffscreenSkipped = false (matches furnace/refinery)",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "Tied to M2-F12 map oil wellhead decision",
+      "status": "PROPOSED_AFTER"
     },
     {
       "findingId": "M2-F16",
       "severity": "MEDIUM",
       "beforeMetric": "372 max energy_refined charges from wild crystal",
-      "afterMetric": "620 max charges (+66.67%) + creature crystal drops",
-      "status": "FIXED_BY_SPEC"
+      "afterMetric": "Balance hypothesis (620 max charges) pending Elder telemetry",
+      "status": "PROPOSED_AFTER"
     }
   ]
 }
