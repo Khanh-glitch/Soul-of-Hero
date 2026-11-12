@@ -16,7 +16,7 @@ import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { T } from '../game/core';
-import { newGame, startRun } from '../game/engine';
+import { blockGrid, newGame, startRun } from '../game/engine';
 import { setActiveLayout } from '../game/world';
 import { CHUNK, FRAME_W, FRAME_H, FRAME_AU, auToTile, windowAround } from './frame';
 import { getChunk, FL, streamStats } from './chunks';
@@ -142,6 +142,87 @@ function probeLocations() {
   }
   return probes;
 }
+
+/**
+ * Per-probe REAL ENGINE blockGrid reachability; NOT simulated key presses.
+ * A source may block its own tile: evaluate reachable adjacent standing cells.
+ * This is within one 200x200 window only, so "none" is NOT whole-world scarcity.
+ */
+function probeActualCollisionReach(gs:ReturnType<typeof newGame>, sources:(string|null)[]) {
+  const r=gs.run;
+  if(!r || !r.spawnChoice) return {status:'NO_VALID_RUN'};
+  const grid=blockGrid(r), width=200,height=200,n=width*height;
+  const dist=new Int16Array(n).fill(-1),queue=new Int32Array(n);
+  const {x:sx,y:sy}=r.spawnChoice, start=sy*width+sx;
+  if(grid[start]!==0 && grid[start]!==4) return {status:'PLAYER_SPAWN_COLLISION_BLOCKED',tile:[sx,sy],code:grid[start]};
+  let h=0,t=0;queue[t++]=start;dist[start]=0;
+  const maxDepth=175;
+  while(h<t) {
+    const i=queue[h++],x=i%width,y=Math.floor(i/width),depth=dist[i];
+    if(depth>=maxDepth)continue;
+    for(const next of [x>0?i-1:-1,x+1<width?i+1:-1,y>0?i-width:-1,y+1<height?i+width:-1]) {
+      if(next<0||dist[next]>=0)continue;
+      const c=grid[next];
+      if(c!==0&&c!==4)continue; // both free and player-wade pass
+      dist[next]=depth+1;queue[t++]=next;
+    }
+  }
+  const near=(tile:number)=>{
+    if(tile<0||tile>=n)return -1;
+    const x=tile%width,y=Math.floor(tile/width);
+    let best=dist[tile];
+    for(const j of [x>0?tile-1:-1,x+1<width?tile+1:-1,y>0?tile-width:-1,y+1<height?tile+width:-1]) {
+      if(j<0||dist[j]<0)continue;
+      best=best<0?dist[j]+1:Math.min(best,dist[j]+1);
+    }
+    return best;
+  };
+  const known=['oak','pine','snowpine','palm','willow','rock','bush','mushroom','scrap','wreck','iron','coalv'];
+  const nearest:Record<string,{steps:number;tiles:number;reachable:number}>={};
+  for(const key of known) nearest[key]={steps:-1,tiles:0,reachable:0};
+  for(let i=0;i<n;i++){
+    const key=sources[i];
+    if(!key || !nearest[key])continue;
+    const v=nearest[key];v.tiles++;
+    const found=near(i);
+    if(found<0)continue;
+    v.reachable++;
+    if(v.steps<0||v.steps>found)v.steps=found;
+  }
+  const categories={
+    wood:['oak','pine','snowpine','palm','willow'],
+    stone:['rock'],food:['bush','mushroom'],
+    scrap:['scrap','wreck'],ore:['iron'],coal:['coalv'],
+  } as const;
+  const group:Record<string,{steps:number;reachableNodes:number}>={};
+  for(const [k,ids] of Object.entries(categories)){
+    const values=ids.map(id=>nearest[id]).filter(v=>v&&v.steps>=0);
+    group[k]={steps:values.length?Math.min(...values.map(v=>v.steps)):-1,reachableNodes:values.reduce((s,v)=>s+v.reachable,0)};
+  }
+  const physicallyAccessibleLoot:RecordShape[]=[];
+  for(const e of Object.values(r.entities)){
+    if(e.kind!=='loot'||e.tx===undefined||e.ty===undefined)continue;
+    const reachableSteps=near(e.ty*width+e.tx);
+    const c=e.c?r.custody[e.c]:undefined;
+    const stock=(c?.slots??[]).filter(Boolean).map(v=>({key:v!.key,qty:v!.qty,meta:v!.meta??null}));
+    physicallyAccessibleLoot.push({poi:e.poi??null,label:e.label??null,localTile:[e.tx,e.ty],steps:reachableSteps,stock});
+  }
+  const closure={kind:'player-collision-BFS',radius:175,windowOnly:true,
+    countVisited:t,minimumSources:group,
+    nearestBySource:nearest,
+    lootContainersSeen:physicallyAccessibleLoot.length,
+    lootContainersReachable:physicallyAccessibleLoot.filter(z=>(z.steps as number)>=0).length,
+    nearestLoot:physicallyAccessibleLoot.sort((a,b)=>{
+      const aa=(a.steps as number)<0?9999:a.steps as number;
+      const bb=(b.steps as number)<0?9999:b.steps as number;
+      return aa-bb;
+    }).slice(0,7),
+    caveats:['BFS over actual blockGrid, not moving/swinging/collecting with player input',
+      'No source proof after moving/reloading/stepping beyond current streamed window',
+      'Cost excludes enemy threat, sunlight, hunger, damage, and return cargo']};
+  return closure;
+}
+
 function sourceStartProbes(){
   const outputs:RecordShape[]=[];
   for(const [ordinal,p] of probeLocations().entries()){
@@ -169,6 +250,7 @@ function sourceStartProbes(){
         rec.spawnGlobalTile=[w.originTx+gs.run.spawnChoice!.x,w.originTy+gs.run.spawnChoice!.y];
         rec.qaUsed=gs.run.qaUsed;
         rec.spawnRegionValue=gs.run.spawnRegion;
+        rec.collisionReach=probeActualCollisionReach(gs,region.world.sourceV3);
       } else rec.failure=(result as {reason?:string}).reason??'unknown';
     }catch(e){
       rec.startOk=false;rec.exception=String(e);
@@ -181,6 +263,9 @@ function sourceStartProbes(){
     probes:outputs.length,
     startsAccepted:outputs.filter(r=>r.startOk===true).length,
     startsRejected:outputs.filter(r=>r.startOk===false).length,
+    regionProbesWithSalvageReach:outputs.filter(r=>(r.collisionReach as any)?.minimumSources?.scrap?.steps>=0).length,
+    regionProbesWithOreReach:outputs.filter(r=>(r.collisionReach as any)?.minimumSources?.ore?.steps>=0).length,
+    regionProbesWithOpenLoot:outputs.filter(r=>(r.collisionReach as any)?.lootContainersReachable>0).length,
     landmassesReferenced:GOLD.project.land.length,
     zonesReferenced:GOLD.project.zones.length,
     scenarioTrials:'NOT_RUN: full route traversal/hunger/loot/return/offline needs separate real play evidence',
