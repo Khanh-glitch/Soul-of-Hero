@@ -1,11 +1,11 @@
 {
-  "sha": "7baa6d35f139db15eb1fbce45bc1f8c43161fd16",
+  "sha": "ef4c9fdb71b8e13ebc623ba397a5c0c966daa983",
   "url": "http://127.0.0.1:4173/",
   "phaseA_scope": "PURE_ZERO_FIXTURE_FRESH_BROWSER_RUN",
   "phaseB_scope": "DISCLOSED_SAME_COMMIT_WP3_NATURAL_LOOP_SNAPSHOTS",
   "results": [
     {
-      "sha": "7baa6d35f139db15eb1fbce45bc1f8c43161fd16",
+      "sha": "ef4c9fdb71b8e13ebc623ba397a5c0c966daa983",
       "viewport": [
         1280,
         720
@@ -30,93 +30,93 @@
         {
           "phase": "A",
           "name": "1280x720-01-title.png",
-          "sha256": "df2410803e6434f3fca4e8944d8c643ce28a47248b03005722dd288bbe9380cd"
+          "sha256": "5172910d189cae89eb54fd1aaf23b551dfda2a3afce77864475dbd10eb920070"
         },
         {
           "phase": "A",
           "name": "1280x720-02-profile-escrow.png",
-          "sha256": "5b65cc67023366c1fedb76bb52f3270cdc26ceb0e4860dab5d6c521eb02cbaf1"
+          "sha256": "46ca85ac2db3ef8029dd0b0efbf708f63cf1aa5d4026b8e03a404c669af5e785"
         },
         {
           "phase": "A",
           "name": "1280x720-03-character-select.png",
-          "sha256": "2269c80a0004552a0786555b9ace4d7c8a12e834e5184de520a6bd0da5790f93"
+          "sha256": "0e91cb8c24c8069d0a4792167d3a1cd36ec57036511df1293e746c94e0385a18"
         },
         {
           "phase": "A",
           "name": "1280x720-04-veyra-spawn.png",
-          "sha256": "a0f033d03f0c49c734de343b7e0fbd43d03154ca6326c17e79c5e8ee9930c45a"
+          "sha256": "d747df9556f0e79e5e27775ea4967758e05d3911cd76cb20ea282d0163506286"
         },
         {
           "phase": "A",
           "name": "1280x720-05-veyra-move.png",
-          "sha256": "5ea50187ebd16065eade2276d78b9d93fbcf9a6a65594603aee49b81fed87e7b"
+          "sha256": "1c536ebe506efc1a89c4ff591ca6a78d04d1cf631048c5b5afcc2ad360a6ce13"
         },
         {
           "phase": "A",
           "name": "1280x720-06-journey-waypoints.png",
-          "sha256": "bdf4fe66ffda2ce4a217a86e55c408d904bd9d3d9c478a23b665c21fcad373e2"
+          "sha256": "355e875404f271abcb567ad521eaacd8ffe89d83463d388fee3e23cd112b0877"
         },
         {
           "phase": "A",
           "name": "1280x720-07-buildbar.png",
-          "sha256": "cb5b252f9406db031f16598c7be24d91b54ca4f7d4214783d968490c1f13ca02"
+          "sha256": "1fc0b2f11123b5d72ff3fcea1b8aca60c1ec8ddcc9e9fa374c3df2b1e9e6a69a"
         },
         {
           "phase": "A",
           "name": "1280x720-08-survivor-craft.png",
-          "sha256": "92752e7c79b8ee7a8668f20b765a8554aef65c4397fca6bf04db65b103dc01a8"
+          "sha256": "7a00f1b9f4b7e1e77ef0d7dfd00e294fbd617d9e9504afe6960f62f0ecc1c0af"
         },
         {
           "phase": "A",
           "name": "1280x720-09-map-panel.png",
-          "sha256": "1a6b4011590bc2a3b7c8cfaed4ef3746575d14323bb046e0d8c15ffb371d2aa6"
+          "sha256": "287903d8ab70e98f757fa55d6adbd2a735efeb7c791d12619cea8d3d9020c9d9"
         },
         {
           "phase": "A",
           "name": "1280x720-10-esc-menu.png",
-          "sha256": "cc98d9439f6180a174be7b016027313649cdd4ff48986ffa984f8cf5ec3b2bb9"
+          "sha256": "fddec85dc39ca4107f24a22d604be067820a0d82da8b069d885e9788e03b80cb"
         },
         {
           "phase": "A",
           "name": "1280x720-11-reload-continue.png",
-          "sha256": "612bbe41c98ccf48d84eaf6c7ccd831e45a75af4a8736354111980fd000bf745"
+          "sha256": "e23c26018106b5d29676e943bd3acab52237c4af825f868604e26a68ca3da761"
         },
         {
           "phase": "B",
           "name": "1280x720-12-foundry-recycler-ui.png",
-          "sha256": "c8ac8e922701f68dade3fda0281b2a29aeb9601bc7cabb5b858f49b17743e6e2"
+          "sha256": "b391e00da43d7b70d2b26cc6a2644959907d34d2642970cce309dfb6c60977c5"
         },
         {
           "phase": "B",
           "name": "1280x720-13-built-base-outside.png",
-          "sha256": "fc302c5a9cc23f4b77c659566cab69eec8f8b60f997a2be2365df0e42bcca650"
+          "sha256": "477e71ba137510b5ad209d04225f3955b83db6e45fc448751661b426629d1907"
         },
         {
           "phase": "B",
           "name": "1280x720-14-workbench-l2-ui.png",
-          "sha256": "e631c4012e8bdcedb4c2ad9706f8a65d6877b0cd35c99065633a4111abc68bac"
+          "sha256": "95f614932e70371cd7871f0bcb21d7bb33ab63a170a6b00a1ab45bf6e6c62a6d"
         },
         {
           "phase": "B",
           "name": "1280x720-15-inventory-vehicle-frame.png",
-          "sha256": "b136870d6dcf932363733931d0bcded780f4b0c7c1b2504998e21edde91c0ef9"
+          "sha256": "d3015d299bbf2ea64057e0df1defba7833df08c36f678c7ebb7982f71183c6a4"
         },
         {
           "phase": "B",
           "name": "1280x720-16-floor-minus1.png",
-          "sha256": "51bbbf323ddc4f371ce0875e3eabea57b5cebe797c7f1bc50763386996133e2f"
+          "sha256": "56bad9483da7279c76b38894595ce3d2045fe6b7150991bb78e3cb2a04a323eb"
         },
         {
           "phase": "B",
           "name": "1280x720-17-floor-return-0.png",
-          "sha256": "82c0fcc7ac92d2ccbb212dbe0f462f7eaf6225f82e1d6725d52a461689833bab"
+          "sha256": "fa0ac0e805d3c0d8d74320a4689fbb9191e4867238e83dc296487d572646f30d"
         }
       ],
       "errors": [],
       "auDelta": {
-        "before": "AU 815,577 · F0",
-        "after": "AU 816,575 · F0"
+        "before": "AU 819,579 · F0",
+        "after": "AU 821,577 · F0"
       },
       "saveAudit": {
         "layoutId": "veyra05-world",
@@ -128,7 +128,7 @@
       "verdict": "PASS"
     },
     {
-      "sha": "7baa6d35f139db15eb1fbce45bc1f8c43161fd16",
+      "sha": "ef4c9fdb71b8e13ebc623ba397a5c0c966daa983",
       "viewport": [
         640,
         360
@@ -153,93 +153,93 @@
         {
           "phase": "A",
           "name": "640x360-01-title.png",
-          "sha256": "ebd0f1dd1b6088b4e77ce3094f98101e836fec43330480a6a6e97be802d763ba"
+          "sha256": "4401e4068374cf72274be106720d419ddf3e688fbe34a78762bd3379853d72d5"
         },
         {
           "phase": "A",
           "name": "640x360-02-profile-escrow.png",
-          "sha256": "2b5df94fab1de613e18ba54bf787157f2b3955af502e96639a9ea5e489090ffb"
+          "sha256": "3b758ea34c54b29d9b0cd5b859d0bf513f109f34508995d5f1cb61787a10e8db"
         },
         {
           "phase": "A",
           "name": "640x360-03-character-select.png",
-          "sha256": "5f29aac37c7923d4d9ddd8719867327bd38b40ed21dfbf7f8e21c20ab452b0b2"
+          "sha256": "977cb61393a45c85313c94b127b2bb1cc5b1ec6b72d904874f8e469d055b60c8"
         },
         {
           "phase": "A",
           "name": "640x360-04-veyra-spawn.png",
-          "sha256": "25f18dd2b0b66152e1814342c00e99221ec5f898f49bbaa05e96df3e4ff98d14"
+          "sha256": "dde67d0709247506afbe6a1c4648fbead09c66c67219f22572385c72a46f5b36"
         },
         {
           "phase": "A",
           "name": "640x360-05-veyra-move.png",
-          "sha256": "e9167da5daa000d4bcee9337cf5168a0a6f8e18b1b48965200d187e48891864d"
+          "sha256": "cd5c44b62f557016f0cf35b5c939f3249be08ce35525ea773bcaf12674cb9d7d"
         },
         {
           "phase": "A",
           "name": "640x360-06-journey-waypoints.png",
-          "sha256": "47cb2dcd0a051d4a2ac31f3ca650ebf4cb1fe0cb6ca2903e95e6b0ef339d1160"
+          "sha256": "90ba282448e27e15acd28f41e0297876c28a46b6515a06e640137a69b2c2ff0e"
         },
         {
           "phase": "A",
           "name": "640x360-07-buildbar.png",
-          "sha256": "d1349dd135e3703dc05c583d507a8140edb85f67414a051637a31667d536d939"
+          "sha256": "565076deb2b42f10b47640204c4126f3fd1604fb1e420ffb280b192e46e866a5"
         },
         {
           "phase": "A",
           "name": "640x360-08-survivor-craft.png",
-          "sha256": "53098726fef605e824e206326bc505e27847220b479ac379b1e7558f98f37a57"
+          "sha256": "c1130370311df87aff1d4c84dce7e5be5ec470f18f52ffb7f78e9b01ee41ba73"
         },
         {
           "phase": "A",
           "name": "640x360-09-map-panel.png",
-          "sha256": "e66d87a86c8e1503f33be7930f56d6b7b511100d3604508c9ffa51712b41fef7"
+          "sha256": "b3f996b24c35e8780663d072c92b3b7686906815c51348050539b1a1bc97ca61"
         },
         {
           "phase": "A",
           "name": "640x360-10-esc-menu.png",
-          "sha256": "d325725363d7bd936cffa47bcf38f5f509c422de93e3d784a2221902ab0169b5"
+          "sha256": "e9cac3993a19afea0226e23a4817128b23cf209aa065ce22190d4e0f4a49f1d4"
         },
         {
           "phase": "A",
           "name": "640x360-11-reload-continue.png",
-          "sha256": "df225600cbb320db92bb8bff3d574d8c10fe23f062ecd02f7c20df1987aac8a1"
+          "sha256": "e9846199bf2dca2e815d338fc16b840a7d224912cd240aebc50fb344c0136974"
         },
         {
           "phase": "B",
           "name": "640x360-12-foundry-recycler-ui.png",
-          "sha256": "72ab9f03bfb44ae3b0217c60bfb8344446bb6dc269d14007e9280465a662f23a"
+          "sha256": "b8e2c4108738bde846597d3865407871d3662648059f76aa3764262bf36376ad"
         },
         {
           "phase": "B",
           "name": "640x360-13-built-base-outside.png",
-          "sha256": "039e3a941a2a5c1c472c5d889154ae7c9509d60c369efacbc5ef457561cda1a4"
+          "sha256": "a7ce661634f815e36fa6ef2580296d8bb32256f434fe984bf657bf955402fe90"
         },
         {
           "phase": "B",
           "name": "640x360-14-workbench-l2-ui.png",
-          "sha256": "b3a5cca5e22bafa186c05f8333987336ca64724793780b44b26121ca35b0289f"
+          "sha256": "2cf462e8d170bdc20d1a8b3ae187db6b573c23fd1a215af169e2527f6a020a98"
         },
         {
           "phase": "B",
           "name": "640x360-15-inventory-vehicle-frame.png",
-          "sha256": "c44ffee6c2e598aeb985c256ae166f0c57be82144fcd92cbe5e4f02f6f8f977d"
+          "sha256": "f0927c16b52ce8cf63d9b1ab9a8d3242a880d68b09ccf6c8f491f46f14838474"
         },
         {
           "phase": "B",
           "name": "640x360-16-floor-minus1.png",
-          "sha256": "5c5885c12a37b6cf84659ad1f03ae1cc47c1f97d896e1fff8ffd91966b79b264"
+          "sha256": "133c19842a06658115af8b54aeae5e0173240a973d947ac95f6af65f98dc80f6"
         },
         {
           "phase": "B",
           "name": "640x360-17-floor-return-0.png",
-          "sha256": "df24cc75490d7986d2acd97c6eeb576abb3b2ca09cd2d2c58ab941e5ed4b0b03"
+          "sha256": "7182b836d65a5e25151582e18402131f65705f0052ece35478c2fd266c5ee36c"
         }
       ],
       "errors": [],
       "auDelta": {
-        "before": "AU 820,579 · F0",
-        "after": "AU 822,577 · F0"
+        "before": "AU 820,575 · F0",
+        "after": "AU 823,573 · F0"
       },
       "saveAudit": {
         "layoutId": "veyra05-world",
