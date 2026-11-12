@@ -731,3 +731,34 @@ The separate diagnostic drove `setActiveLayout(U05_WORLD_LAYOUT_ID)`, `newGame()
 - **DESIGN ACTION:** Preserve geographic scarcity; implement neither automatic freshwater springs nor industrial supply gifts without a grounded physical source policy and accessibility verification. Next should test targeted failure reasons and assess water/return viability before changing source placement or global spawn authority.
 
 **Deliverable acceptance level:** G0/G1 corrected bare terrain passed; G2 candidate 30-window tests + separate 4-window selector smoke now measured; G3 actual current-window BFS limited to 175 steps reported; physical gameplay, island passage, loot transfer, save/restart and full 336h simulation remain **NOT_RUN**. Source tests live on design branch only; production SHA unchanged.
+
+---
+
+## 19. Westmouth 706-candidate forensic root-cause results (2026-11-12)
+
+**Evidence:** Dedicated test `web/src/veyra05/spawn-candidate-reasons.audit.test.ts` on design branch, source commit `959861cab7286699f5b557aad874f92bfc646683`. Workflow https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43237314615 **SUCCESS**. The manifest artifact `veyra-spawn-reasons-959861cab7286699f5b557aad874f92bfc646683-1` was **downloaded and parsed**, artifact ID `13954105563`, digest `sha256:40bd0f61514a71b753682631d304aef6aa6656b796bada72fa14483a6c09a864`. No production changes. **Do not infer actual travel or player experience from this predicate trace.**
+
+### 19.1 Westmouth centroid window precise failed conditions
+
+`bz_westmouth` exact global origin **(673,1096)**, seed `0x5f00f56`, normal `startRun` = **REJECT** `No safe, resource-accessible spawn in this region.`. Actual `w.fresh` =97, sourceV3 compiled non-null cells =6470, prefilter candidates=706.
+
+The diagnostic built a **QA-only state after the normal start failed** using `inspectAt` solely to inspect `blockGrid()` and `sourceAt()` against source-coded `chooseLegalSpawn` eligibility. It did NOT treat that inspection landing as a passing legal spawn.
+
+**Exhaustive test of all 706 prefilter cells:**
+- 672/706 have safe center according to traced predicate.
+- 538/706 have a 3×3 safe neighborhood (this is the only set requiring BFS resource checks).
+- **533/538** have water from the walkable 30-step BFS or adjacency; 5/538 do not.
+- **0/538** have reachable wood, **0/538** rock, **0/538** bush/mushroom food, **0/538** enough 9 buildable cells within 30 steps. This outcome applies to all 538 safe 3×3 source-trace candidates.
+- **0/538** satisfy all conditions; failure combinations: 533 = missing wood+stone+food+buildable9; 5 = missing wood+stone+food+water+buildable9. The primary failure is NOT missing water in this window, nor an absent source-grid array.
+- This is a **local candidate/collision-graph vs source placement mismatch**: source cells exist in the 200×200 window but **cannot be reached by every candidate within the engine's strict 30-step limit**. Not proven whether due to geometric distance, water barriers, source solidity, or a reserved/protected terrain belt until specific source-distance diagnostics are performed.
+
+### 19.2 Positive and negative controls, not accepted gameplay proof
+
+- **Greywater centroid** `(1482,1122)`, normal start PASS, no QA landing. 634 total prefilter, sampled **91** cells, of which 75 safe center, 19 clear 3×3; **17/19** of these pass all conditions. Normal start at local (126,131), QA=false. These are sampled control counts; do not report 17 of all 634.
+- **Gulf West centroid** `(1659,1739)` has 0 wet tiles, prefilter fallback=40000; sampled **96** cells (42 clean 3×3), water=0/42, 40/42 otherwise have all wood+stone+food+buildable9. Still no legal full-match. This confirms freshwater mismatch is a distinct failure class that cannot be “fixed” by increased random trials alone.
+- No change to loot economy, island transport, source generation, player spawn selection or 336h physics authorized from these results.
+
+### 19.3 Next decisive engineering measurement
+
+Compute and compare **distance to actual source nodes** and **reachable path distance** from a representative spread of all 538 Westmouth 3×3 candidates to wood, rock, food, buildable and water; test local radius 30 versus an observational extended radius (60/120/175) without changing gameplay. Distinguish:
+(A) starter economy genuinely beyond 30 steps; (B) geometry/objects isolate it despite geometric proximity; (C) compiler protects/filters resource placements around the road/coast. Only after this distinction may we decide whether to change starting-location candidate selection, compiler route reach, or spawn acceptance conditions. **Do NOT simply grant wood/stone/food or enlarge distance threshold until quality/risk is understood.**
