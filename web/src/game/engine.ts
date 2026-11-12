@@ -151,13 +151,16 @@ export function chooseLegalSpawn(r:RunState, candidateMask?:Uint8Array): {tx:num
 /** The main landmass is only a *necessary* first-run travel condition.
  * The real player collision graph must also reach the sliding window's interior
  * edge. This is not an assertion of a complete 14-day mainland itinerary. */
-function spawnCanReachWindowExit(grid:Uint8Array, tx:number, ty:number):boolean {
+function spawnWindowExitReachMask(grid:Uint8Array):Uint8Array {
   const n=WW*WH,seen=new Uint8Array(n),queue=new Int32Array(n);
-  const start=ty*WW+tx; if(grid[start]!==0)return false;
-  let head=0,tail=0;queue[tail++]=start;seen[start]=1;
+  let head=0,tail=0;
+  for(let y=1;y<WH-1;y++)for(let x=1;x<WW-1;x++){
+    if(x>24&&y>24&&x<WW-25&&y<WH-25)continue;
+    const i=y*WW+x;
+    if(grid[i]===0||grid[i]===4){seen[i]=1;queue[tail++]=i;}
+  }
   while(head<tail){
     const i=queue[head++],x=i%WW,y=(i/WW)|0;
-    if(x<=24||y<=24||x>=WW-25||y>=WH-25)return true;
     for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
       const nx=x+dx,ny=y+dy;
       if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;
@@ -165,7 +168,7 @@ function spawnCanReachWindowExit(grid:Uint8Array, tx:number, ty:number):boolean 
       if(!seen[j]&&(grid[j]===0||grid[j]===4)){seen[j]=1;queue[tail++]=j;}
     }
   }
-  return false;
+  return seen;
 }
 
 /** GLOBAL fresh-run selector (new games only), with no hardcoded four-region
@@ -197,10 +200,18 @@ function chooseGlobalVeyraStart(r:RunState, seed:number):{sp:{tx:number;ty:numbe
     r.layoutId=id;
     if(!ww.world.fresh.some(x=>x!==0))continue;
     markDirty();
-    const screen=localSpawnScreen(ww.world,blockGrid(r),(tx,ty)=>sourceAt(r,tx,ty),unverifiedOffshoreExcluded);
+    const physicalGrid=blockGrid(r);
+    const screen=localSpawnScreen(ww.world,physicalGrid,(tx,ty)=>sourceAt(r,tx,ty),unverifiedOffshoreExcluded);
     if(!screen.candidates)continue;
+    const exits=spawnWindowExitReachMask(physicalGrid);
+    let localCandidateCount=0;
+    for(let i=0;i<screen.mask.length;i++){
+      if(screen.mask[i]&&!exits[i])screen.mask[i]=0;
+      if(screen.mask[i])localCandidateCount++;
+    }
+    if(!localCandidateCount)continue;
     const sp=chooseLegalSpawn(r,screen.mask); // exact 30-step + 9 build cells
-    if(sp && spawnCanReachWindowExit(blockGrid(r),sp.tx,sp.ty))return {sp,layout:id};
+    if(sp)return {sp,layout:id};
   }
   setActiveLayout(original);r.layoutId=original;markDirty();
   return null;
@@ -259,6 +270,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     r.spawnRegion=-1; // no fabricated region index for a global cell
     r.sourceMap={id:w.economyMap.id,revision:w.economyMap.revision,seed:w.economyMap.seed,rules:3,
       digest:sourceDigest(w.sourceV3),mapDigest:mapDigest(w),...(w.veyra?{veyra:w.veyra}:{})};
+    r.poiAccessDigest=poiContractDigest(w);
   }
   if (supportsAirdrops(r.layoutId!)) r.airdrops={version:'airdrop-v1',mapDigest:r.sourceMap!.mapDigest!,seed:r.seed,runId:r.id,startedAt:r.startedAt,nextIndex:0};
   r.poiAccessVersion='poi-access-v1';
