@@ -18,7 +18,9 @@ import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_REC
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
 import { mapDigest } from './map-package';
-import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from '../veyra05/scenes';
+import { U05_WORLD_LAYOUT_ID, isVeyra05Layout, layoutIdAt } from '../veyra05/scenes';
+import { globalWindowOrigins, unverifiedOffshoreExcluded } from '../veyra05/global-start-discovery';
+import { localSpawnScreen } from '../veyra05/global-spawn-eligibility';
 import { FRAME_W, FRAME_H, globalIndex } from '../veyra05/frame';
 import { getWindowWorld, getWindowWorldForGlobalTile, resetWindowToGround } from '../veyra05/window';
 import { activeFloor, applyFloor, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
@@ -129,10 +131,12 @@ export function mkContainer(r: RunState, kind: string, n: number): Container { c
 
 /** Random eligible cell, using real collision, current hazards and reachable local sources.
  * Compiler reachability anchors and Map sp_* are never player spawn authorities. */
-export function chooseLegalSpawn(r:RunState): {tx:number;ty:number;name:string}|null {
+export function chooseLegalSpawn(r:RunState, candidateMask?:Uint8Array): {tx:number;ty:number;name:string}|null {
+  if (candidateMask && candidateMask.length!==WW*WH) throw Error('SPAWN_CANDIDATE_MASK_SIZE');
   const w=getWorld(), fl=activeFloor(r); markDirty();const grid=blockGrid(r), n=WW*WH;
   const safe=(x:number,y:number)=>{const i=y*WW+x;return x>2&&y>2&&x<WW-3&&y<WH-3&&grid[i]===0&&w.economyMap.walkable[i]&&![T.TOXIC,T.ASH,T.SNOW].includes(effTile(r,x,y))&&!r.sources[i]?.fire&&!Object.values(r.entities).some(e=>onActiveFloor(r,e)&&e.type==='spikes'&&e.tx===x&&e.ty===y)&&!r.creatures.some(m=>m.state!=='dead'&&((m as any).floor??0)===fl&&Math.hypot(m.x-(x*TILE+8),m.y-(y*TILE+8))<10*TILE);};
-  const eligible=(tx:number,ty:number)=>{if(w.spawnEligible&&!w.spawnEligible[ty*WW+tx])return false;if(!safe(tx,ty))return false;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(!safe(tx+dx,ty+dy))return false;
+  const mask=candidateMask ?? w.spawnEligible;
+  const eligible=(tx:number,ty:number)=>{if(mask&&!mask[ty*WW+tx])return false;if(!safe(tx,ty))return false;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(!safe(tx+dx,ty+dy))return false;
     const seen=new Uint8Array(n),q=new Int32Array(n),depth=new Uint8Array(n);let head=0,tail=0;const start=ty*WW+tx;q[tail++]=start;seen[start]=1;let wood=false,stone=false,food=false,water=false,sites=0;
     while(head<tail){const i=q[head++],x=i%WW,y=Math.floor(i/WW);if(w.economyMap.buildable[i]&&!sourceAt(r,x,y))sites++;for(const [dx,dy]of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;const j=ny*WW+nx;if(w.fresh[j])water=true;const src=sourceAt(r,nx,ny);if(src&&src.stock>0&&!src.fire){if(['oak','pine','snowpine','palm','willow'].includes(src.key))wood=true;if(src.key==='rock')stone=true;if(['bush','mushroom'].includes(src.key))food=true;}
       if((dx||dy)&&depth[i]<30&&!seen[j]&&grid[j]===0&&w.economyMap.walkable[j]){seen[j]=1;depth[j]=depth[i]+1;q[tail++]=j;}}
@@ -142,6 +146,64 @@ export function chooseLegalSpawn(r:RunState): {tx:number;ty:number;name:string}|
   // Seed determines a full, non-repeating traversal; no fixed fallback or spawn beacon.
   const count=(WW-6)*(WH-6),start=Math.floor(rngNext(r)*count),step=1+2*Math.floor(rngNext(r)*(count/2));let stride=step;while((function gcd(a:number,b:number):number{return b?gcd(b,a%b):a})(stride,count)!==1)stride+=2;
   for(let k=0;k<count;k++){const i=(start+k*stride)%count,tx=3+i%(WW-6),ty=3+Math.floor(i/(WW-6));if(eligible(tx,ty))return{tx,ty,name:w.veyra?(w.zoneNames?.[0]||'Veyra region'):'the island'};}return null;
+}
+
+/** The main landmass is only a *necessary* first-run travel condition.
+ * The real player collision graph must also reach the sliding window's interior
+ * edge. This is not an assertion of a complete 14-day mainland itinerary. */
+function spawnCanReachWindowExit(grid:Uint8Array, tx:number, ty:number):boolean {
+  const n=WW*WH,seen=new Uint8Array(n),queue=new Int32Array(n);
+  const start=ty*WW+tx; if(grid[start]!==0)return false;
+  let head=0,tail=0;queue[tail++]=start;seen[start]=1;
+  while(head<tail){
+    const i=queue[head++],x=i%WW,y=(i/WW)|0;
+    if(x<=24||y<=24||x>=WW-25||y>=WH-25)return true;
+    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+      const nx=x+dx,ny=y+dy;
+      if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;
+      const j=ny*WW+nx;
+      if(!seen[j]&&(grid[j]===0||grid[j]===4)){seen[j]=1;queue[tail++]=j;}
+    }
+  }
+  return false;
+}
+
+/** GLOBAL fresh-run selector (new games only), with no hardcoded four-region
+ * fallback. The 64-tile origin grid is a search order, never spawn authority.
+ * Every successful result passes the same exact chooseLegalSpawn BFS after an
+ * efficient stock+collision necessary screen, an offshore veto, and a local
+ * physical route to the next window-slide edge. Budget is a performance limit,
+ * NOT a fixed number of acceptable spawn regions or a claim of full coverage.
+ * If the bounded search finds none, fail closed and preserve the old layout. */
+function chooseGlobalVeyraStart(r:RunState, seed:number):{sp:{tx:number;ty:number;name:string};layout:string}|null {
+  const original=getActiveLayout();
+  let attempted=0;
+  for(const candidate of globalWindowOrigins(seed)){
+    // Until a real vehicle/ferry/evac and return route passes, no offshore
+    // landmass may become a *random starting* destination.
+    if(!unverifiedOffshoreExcluded(candidate.originTx+Math.floor(WW/2), candidate.originTy+Math.floor(WH/2)))continue;
+    if(attempted++>=24)break;
+    const id=layoutIdAt(candidate.originTx,candidate.originTy);
+    let ww;
+    try{ww=getWindowWorld(id);resetWindowToGround(ww);}
+    catch(e){
+      // A non-walkable/malformed window is an ineligible candidate. Other
+      // source/asset integrity failures must fail CLOSED, never cause a grant.
+      const message=String(e);
+      if(!message.includes('No walkable terrain')){setActiveLayout(original);r.layoutId=original;markDirty();return null;}
+      continue;
+    }
+    if(!setActiveLayout(id))continue;
+    r.layoutId=id;
+    if(!ww.world.fresh.some(x=>x!==0))continue;
+    markDirty();
+    const screen=localSpawnScreen(ww.world,blockGrid(r),(tx,ty)=>sourceAt(r,tx,ty),unverifiedOffshoreExcluded);
+    if(!screen.candidates)continue;
+    const sp=chooseLegalSpawn(r,screen.mask); // exact 30-step + 9 build cells
+    if(sp && spawnCanReachWindowExit(blockGrid(r),sp.tx,sp.ty))return {sp,layout:id};
+  }
+  setActiveLayout(original);r.layoutId=original;markDirty();
+  return null;
 }
 
 // Run ids must be unique per run: seed alone repeats across runs with the same seed, which made
@@ -165,7 +227,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   if(getActiveLayout()==='veyra-oasis-u20')setActiveLayout('veyra-oasis-lr02-u20');
   const seed = seedOverride ?? ((now ^ 0x9e3779b9) >>> 0);
   let chosenVeyraReg = 0;
-  if (getActiveLayout() === U05_WORLD_LAYOUT_ID && !inspectAt) {
+  if (getActiveLayout() === U05_WORLD_LAYOUT_ID && !inspectAt && region !== null) {
     chosenVeyraReg = (region !== null && Number.isInteger(region) && region >= 0 && region < VEYRA_SPAWN_LAYOUTS.length)
       ? region
       : (seed >>> 0) % VEYRA_SPAWN_LAYOUTS.length;
@@ -175,7 +237,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     if (idx >= 0) chosenVeyraReg = idx;
   }
   if (isVeyra05Layout(getActiveLayout())) resetWindowToGround(getWindowWorld(getActiveLayout()));
-  const w = getWorld();
+  let w = getWorld();
   const r: RunState = {
     id: runIdFor(gs, seed, now), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: chosenVeyraReg, ended: null,
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Array.from(new Set([...Object.keys(RECIPES).filter(k => RECIPES[k].base), ...ALWAYS_KNOWN_RECIPES])), studied: [] },
@@ -184,6 +246,20 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     dailyLedger: { v: 1, seed, lastSeq: 0, capabilities: { learnedKeys: [] }, days: {} },
     vendorStock: { escrow_chest: 4, ...Object.fromEntries(Object.entries(VENDOR_SECURED).map(([k, v]) => [k, v.stock])), ...Object.fromEntries(Object.entries(VENDOR_SPARES).map(([k,v]) => [`spares:${k}`,v.stock])) }, log: [],
   };
+  // NULL region from unified Veyra means geographic random spawn, not one of
+  // the previous four demo windows. Explicit 0..3 remains a regression/QA
+  // compatibility route; inspector windows and non-Veyra modes are unchanged.
+  let globalFirstSpawn: {tx:number;ty:number;name:string}|null = null;
+  if (getActiveLayout()===U05_WORLD_LAYOUT_ID && !inspectAt && region===null) {
+    const selected=chooseGlobalVeyraStart(r,seed);
+    if(!selected)return {ok:false,reason:'No verified safe Veyra starting window found within the bounded global search.'};
+    globalFirstSpawn=selected.sp;
+    w=getWorld();
+    r.layoutId=selected.layout;
+    r.spawnRegion=-1; // no fabricated region index for a global cell
+    r.sourceMap={id:w.economyMap.id,revision:w.economyMap.revision,seed:w.economyMap.seed,rules:3,
+      digest:sourceDigest(w.sourceV3),mapDigest:mapDigest(w),...(w.veyra?{veyra:w.veyra}:{})};
+  }
   if (supportsAirdrops(r.layoutId!)) r.airdrops={version:'airdrop-v1',mapDigest:r.sourceMap!.mapDigest!,seed:r.seed,runId:r.id,startedAt:r.startedAt,nextIndex:0};
   r.poiAccessVersion='poi-access-v1';
   r.poiAccessDigest=poiContractDigest(w);
@@ -207,7 +283,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     }
   }
   if (inspectAt && !inspectTile) return { ok: false, reason: 'Creator inspection landing is blocked by actual map collision.' };
-  const sp = inspectTile ?? chooseLegalSpawn(r);
+  const sp = inspectTile ?? globalFirstSpawn ?? chooseLegalSpawn(r);
   if(!sp)return {ok:false,reason:'No safe, resource-accessible spawn in this region.'};
   if(inspectAt) r.qaUsed = true;
   r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
