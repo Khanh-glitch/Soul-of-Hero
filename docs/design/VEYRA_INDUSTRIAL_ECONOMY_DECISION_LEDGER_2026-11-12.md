@@ -576,3 +576,29 @@ GOLD also contains **23 named locality polygons**; 20 have a sample point inside
 7. `VEYRA-INDUSTRIAL-LOOT`: **CONTINUE DESIGN**, not implement: source class/grade/room/cooldown and generator coverage can be evaluated only for **eligible and physically reachable** resources. Do not add guaranteed rare intermediate crates as compensation for an untested spawn map.
 
 **No Creator consultation necessary yet:** these are verifiable mapping/test contract defects. Actual design debate about island spawn policy requires valid transport and survival evidence before presenting options. No changes to Gameplay, Map GOLD, production, asset binaries, or previous save contracts were made in this research pass.
+
+---
+
+## 15. Automated full-world scan audit implementation (2026-11-12)
+
+**STATUS:** TEST CODE COMMITTED / GITHUB ACTIONS EXECUTION STARTED; **NOT YET A PASS**. Must retrieve the GitHub workflow result and `manifest.json` before entering measured results. No production runtime patch, biome changes, source-minting, or spawn-policy change.
+
+**Code committed on isolated design branch:**
+- `web/src/veyra05/full-world-spawn-industrial.audit.test.ts` — direct reuse of `getChunk`, the current `T` tile rules, `GOLD`, `getWindowWorld`, `newGame/startRun` and existing `chooseLegalSpawn`.
+- `.github/workflows/veyra-global-spawn-audit.yml` — npm ci / Node 22 / Vitest on the exact design commit, evidence artifact upload even on failure.
+- Workflow run initiated on `e4c6fb91766be4e1c628b926354e5234dd7e4155`: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43231669118
+- Evidence if generated: `web/evidence/veyra-global-spawn-audit/manifest.json` inside Actions artifact `veyra-global-spawn-industrial-audit-<sha>-<attempt>`; this is remote CI evidence, **not** a checked-in result yet.
+- Run exactly the test from `web/`: `SOH_FULL_WORLD_AUDIT=1 npx vitest run --fileParallelism=false --testTimeout=1800000 src/veyra05/full-world-spawn-industrial.audit.test.ts`.
+
+### 15.1 Test layers and what they do NOT prove
+
+- **R0 full static coverage**: stream actual engine `getChunk` over every one of 11,200,000 global tile addresses (full 125×88 chunk envelope) and count real tile codes, landmask/road/zone flags; prove scan count matches frame extent. This is a genuine full tile scan, NOT a global full-frame world materialization. Pre-existing POI solid-prop overrides are not in bare chunks.
+- **R1 global terrain graph**: 4-neighbor BFS over a conservative list of impassable `DEEP,SHALLOW,RIVER,CLIFF,PWALL,LAVA`. It reports terrain-connected components and large vs tiny regions. This is a **topological upper bound**, not real collision/hazard/door/water-vehicle reach, and no claim every tile in a component is a valid spawn.
+- **R2 representative actual-gameplay spawn probes**: for 23 GOLD named locality polygon centroids and 7 non-mainland land polygon centroids, materialize exact 200×200 game windows, tally real `sourceV3` counts, invoke `newGame` and **normal `startRun` without debug landing** with deterministic seed, log actual `spawnChoice`, failures and origin. This tests 30 geographic classes, not 30 canonical spawn points and not all 11.2M spawn cells. The inspector `veyra05-at` layout is used as the test window **only**; no world has been modified.
+- **R3 missing native physical traversal**: human/key-driven walking from the true start to actual source, collecting/processing metal parts, container opening, save/relaunch and 14d regeneration remain **NOT RUN**. Even R0/R1/R2 passing must NOT label `PLAYABLE`/source economy balanced.
+
+**Hard invariants:** Rejected landmass probes are informative, not automatic test failures; source counts alone cannot prove access. Never grant ingredients using inspection mode, rescue players by teleport, claim ferries exist, or pass incomplete `manifest.json` as success.
+
+### 15.2 Artifacts and follow-up
+
+After run completes, extract `manifest.fullRaster`, `manifest.summary`, each region probe failure and `windowCandidatePrefilter`. Update **THIS ledger in place** with actual measured output, carefully distinguish missing resource components, hazard isolation, and platform/test failures. If CI times out or uses an incompatible bundler, fix the **audit harness on the isolated branch**, rerun, and keep failure evidence. Then scope a native input and same-build visual acceptance trial from targeted pathfinding failures. No new spawn count or industrial loot probabilities should be authorized solely by R0/R1/R2.
