@@ -1,5 +1,7 @@
 # VEYRA INDUSTRIAL ECONOMY — Decision ledger (2026-11-12)
 
+> **RED FLAG-SPAWN-001 — HIGH PRIORITY DESIGN MISMATCH:** There are **four hardcoded Veyra *regional starting windows* in today's implementation**, NOT four canonical Last Island / SOH spawn points. NEVER treat that number as a design target, coverage denominator or valid universal balance test. §12's four-region QA matrix is **SUPERSEDED** by §13's full-map, eligible-cell coverage method. No global-spawn code change has been approved or implemented.
+>
 > **READ FIRST — 2026-11-12 CURRENT STATUS:** The only Creator-approved industrial direction is §1. Earlier §4/§9 are recorded exploration hypotheses, **not approved recipes, deterministic reward sites, finite-only policy, rates or implementation authority**. §10 corrects the false guaranteed-vs-random choice; §11 below is the latest **testable SOURCE-CLASS design**, not a production loot contract. Keep original evidence without allowing rejected/superseded examples to function as implementation orders.
 
 **Status: DESIGN ONLY. No gameplay code implemented, no loot table approved, no agent implementation dispatched.**
@@ -404,7 +406,7 @@ The next source-grounded task is to simulate several 336h/first-hour routes with
 
 ---
 
-## 12. Clarify four spawn regions vs four literal spawn cells — QA clarification 2026-11-12
+## 12. HISTORICAL/SUPERSEDED: four current start windows vs literal spawn cells — QA clarification 2026-11-12
 
 **Why recorded:** User challenged an ambiguous statement about "four spawns." This fixes the test scope; do not treat four GOLD geographic anchor coordinates as four exact runtime spawn points.
 
@@ -418,3 +420,60 @@ The next source-grounded task is to simulate several 336h/first-hour routes with
 Per run log: actual `spawnChoice`, map/build SHA & loot spec version, player inventory, real path and first legal interaction to target source, successful loot withdrawals (including failed attempts), time to first **useful** part/Gear/Pipe; carrying weight, weapon/tool wear, water/food loss, encounters/radiation, travel/return time and survival; original cache UID/stock, take/drop/refill/save/relaunch continuity; compare to crafting baseline including furnace/fuel/Workbench costs. A route with no open source by 20min is a meaningful negative outcome. Ideally contrast at least multiple physical paths to a goal per region, not grant debug inventory to pass.
 
 **Ordering:** First run native real-collision reachable-source validation and record what is accessible; THEN estimate openable rolls and expected outcomes under candidate 5/12/20% category chances (which are exploratory values). Do not simulate 14 daily openings from a source if traversability, cooldown and depletion are unproven. No evidence permits a current claim that all four regions are balanced or that any named completed component is actually lootable on Veyra.
+
+---
+
+## 13. RED_FLAG-SPAWN-001 — Fixed four-region test denominator is a false design premise (2026-11-12)
+
+**Severity: P0 for design/acceptance correctness; not yet a proven runtime crash or creator-approved source-code migration.**
+**Reporter: Creator.**
+**RED-FLAG STATEMENT:** “Last Island không hề có cụ thể bao nhiêu điểm spawn cả.” We had extrapolated a SOH `4 regional windows × 10 starts` smoke-test into an assumed global player-spawn system / comprehensive loot-economy coverage. That extrapolation is **INVALID**. Creator requested this red flag be recorded, and work should continue without a fixed spawn count premise.
+
+### 13.1 Evidence hierarchy: separate LI, SOH canon, existing code and maps
+
+- **Last Island**: Independent Last Island of Survival beginner's guide (updated 2022-10-30, LevelWinner) explicitly describes **random starting/respawn areas**, rather than a documented four-point contract: https://www.levelwinner.com/last-day-rules-survival-beginners-guide-tips-cheats-strategies-to-become-a-top-survivor/ . Official 2019 `Civilization Restart` FAQ supports world/respawn gameplay but does **not** document an exact spawn-point count: https://hero.yingxiong.com/info/2019/0730/6973.html . **No assertion that LI has literally infinite possible cells or that LI's exact modern algorithm is known.**
+- **SOH authoritative `web/ref/bible.md` §world**: stable geography, **random spawn in multiple valid safe areas** with nearby viable basic survival resources, geographical asymmetry; no numerical mandate for four regions/cells.
+- **Current code, verified SHA `c6c6fc5`**: `engine.ts::VEYRA_SPAWN_LAYOUTS` contains four values: Westmouth, `U05_WORLD_LAYOUT_ID` (Greywater-centered world window), Hook and Gulf. `startRun` selects one region by seed modulo four or optional region index; `chooseLegalSpawn()` then pseudo-randomly scans eligible cells **within the currently loaded 200×200 tile window**. Thus four applies to the *first window's regional bias*, **not** exactly four spawn tiles and **not** the full Veyra map. In-game no global eligible-site sampling is currently demonstrated.
+- **GOLD map** `project.world` is 2000×1400 AU, `land` has **8** island/land polygons, `pois` **81**, `zones` **23** named candidate terrain/building locality polygons, and `spawns` **4 proposal anchors** (`conf:'proposal'`) used as geographic reference; they do **not** authorize runtime spawn policy or assert that 23 zones are all safe, connected or reachable.
+- **Current scene implementation** `web/src/veyra05/scenes.ts` uses streaming 200×200 tile =100×100 AU windows; other scenes exist (Argus, Saltwick, Slag, Cinder etc.) but are **not selected by the four-branch fresh-run chooser**. A streaming window catalog is a technical subdivision, not a population/spawn zoning mandate.
+
+### 13.2 Why this is a gameplay/economic risk and what is actually proven
+
+The previous four-region test plan excluded all regions not selected in `VEYRA_SPAWN_LAYOUTS`, disproportionately sampling main-island first-hour scenery. Unbalanced availability, island isolation, heat/cold/toxic starts, POI variety and logistics costs would be missed. This is a **test coverage invalidity** independent of whether four current starting windows produce legal positions.
+
+Two different questions MUST be separated:
+
+1. **Current implementation acceptance (bounded):** In the four currently selected starting windows, are random chosen cells safe and survival-capable? This remains an implementation smoke test, not representative global design validation.
+2. **Whole-world design suitability (global):** Across the intended full world, which land/biome cells can support legal starts, which cannot safely start until traversal systems (boat, bridges), hazards or basic resource access exist, and how does local economy vary? This is a separate assessment and requires a global candidate generator / static geometry scan and real movement sampling.
+
+No forced equal opportunity for Pipe/Gear/ore: valid cold, coast, wetlands and valley starts can have **different** industrial pathways. No universal loot gift, no guaranteed mid-tier part, no per-zone fixed quota and no compulsory route to a remote foundry.
+
+### 13.3 Replacement full-map verification, not “4×10 starts”
+
+**Step A — Discover actual *eligible cells*, not pre-name spawn points.** Scan entire streamed frame through Veyra's existing stable world geometry, in windows or global raster. Candidate conditions must be verified on physical tile/collision and source graph: safe player footprint, no immediate lethal terrain, reachable starter wood+stone+food+fresh water (not only Euclidean radius), real buildable site, no blockers/hostile spawn trap, and at least one plausible exit route. Reject an isolated island without a proven boat/bridge/escape plan; the zone name alone does not confer spawn eligibility.
+
+**Step B — Coverage strata derived from actual eligible set, not fixed four.** Group eligible cells by actual landmass, measured biome / hazard band, resource ecology, near-road vs remote and POI accessibility. Sample *all nonempty eligible clusters* with deterministic seeds. Sampling count grows from measured candidate diversity and failure cases; no universal fixed number of spawn regions is assumed. Preserve four implementation-window tests as a separate backward-compatibility track.
+
+**Step C — Economic journey comparisons from each eligible class**, not every exact tile: (1) immediate natural survival baseline and early knife → stone tools, (2) Scrap→Iron via Furnace→Workbench II→Gear, (3) quarry/coal→Refined Iron→Pipe, (4) relevant real industrial POI salvage, (5) route back/storage/recycler; collect actual paths, hazard exposures, hunger/thirst, tools and capacity, stock/cooldown/UID persistence, failed crossings and recovery. The metric is **plural viable player choices** rather than every start guaranteeing one Gear.
+
+**Step D — Class-based loot simulation** only over physically reachable sources. Evaluate expected output per opened source-cycle at actual travel / consumption, controlled by per-source versioned deterministic roll. Do not use four GOLD `sp_*` geographic references as distance origins in a balance acceptance claim.
+
+**Test deliverables:** eligible-cell / rejected-reason heatmap; strata list including island and hazardous edge cases; source-to-goal path matrix; 14-day full-run renewal / conservation stress trials; first 20-minute exploratory play outcomes; correct legacy save and no debug grants. All passed from one pinned build SHA and physical evidence where claims require gameplay proof.
+
+### 13.4 New macro-geography diagnostic (static, not runtime spawn eligibility)
+
+Read-only polygon/POI study from GOLD `project.zones[].ring` and `project.pois[].at`, using **area-weighted polygon centroid** and straight-line distance (AU), without terrain/collision/bridge checks:
+
+- **23 named locality polygons** (one explicitly `Slag Flats Pad (đất độc — viability thấp)`): no claim all are viable/safe spawn candidates.
+- **81 POIs** across **8 land polygons**; straight-line POI proximity from zone centroid: **4 of 23** zone centers have **zero POI inside 75 AU** (Mossbrook Valley Floor, Greyback Foothill Shelf, Dune Rock Outcrop, North Woods Hollow); **8 have exactly one POI**, **7 have exactly two**, **4 have ≥3** within this radius. This is an *exploration density proxy* only, not 4 sites to modify or proof of traversability.
+- Example: North Woods Hollow nearest POI is `po_rc_dam` (~139 AU by geometry), but that is a **special Ragnarok cash POI**, not an ordinary loot source. A simple nearest-POI metric is therefore insufficient to certify early economic viability.
+- Example: Saltwick Flats zone center has three POIs within 75 AU but **is an offshore landmass**; local POI count cannot prove water, food, exit or transport. Slag Flats zone nearest `po_slag` ~58 AU but toxicity may disqualify spawn.
+- Implication for item-source allocation: score **reachable usable source classes** (scrap, food, wood, stone, water, quarry ore, maintenance, foundry) rather than raw POI count or membership in a hardcoded start region. Roadside `SOURCES` can supply useful inputs independently of POI proximity.
+
+### 13.5 Action owner and status
+
+- **DESIGN CHANGE — RECOMMENDED:** no hardcoded `4` in gameplay spawn authority as a canonical design requirement. The eventual choice of safe-global spawn sampling vs weighted-eligible-zone sampling is pending source and QA constraints; it must preserve deterministic run and avoid stranded islands.
+- **AUDIT CHANGE — NOW ACTIVE:** retire §12 four-region matrix as whole-world acceptance standard; retain it only as 4-window regression/smoke coverage.
+- **ECONOMY DESIGN — CONTINUES:** proceed with Veyra's source-class × grade × actual physical room/access × stock/renewal matrix across all eligible geography; not fixed start count.
+- **IMPLEMENTATION STATE:** NOT CHANGED. Current runtime still has four starting windows until code work is specifically approved. No claim of native or browser gameplay run made here.
+- **SOURCE STATUS:** LI spawn area randomness supported by historical guide; exact algorithm/count unknown. SOH Bible is stronger for desired behavior than the four current map anchors. All proposed full-world QA outcomes still untested.
