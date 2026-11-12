@@ -20,10 +20,12 @@ const snapBench = await readFile(resolve(snapDir, 'base-and-bench.json'), 'utf8'
 const snapB1 = await readFile(resolve(snapDir, 'floor-minus1.json'), 'utf8');
 
 async function closeReturnIfVisible(page) {
-  const cont = page.getByRole('button', { name: 'Continue', exact: true });
-  if (await cont.isVisible().catch(() => false)) {
-    await cont.click();
-    await page.waitForTimeout(300);
+  for (const name of ['Enter the Island', 'Continue']) {
+    const btn = page.getByRole('button', { name, exact: true });
+    if (await btn.isVisible().catch(() => false)) {
+      await btn.click();
+      await page.waitForTimeout(300);
+    }
   }
 }
 

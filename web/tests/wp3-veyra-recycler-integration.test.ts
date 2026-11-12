@@ -32,7 +32,7 @@ import { maybeSlideVeyraWindow, windowOrigin } from '../src/veyra05/continuity';
 import { activeFloor, applyFloor, stairAt } from '../src/veyra05/floors';
 import { getWindowWorld, resetWindowToGround } from '../src/veyra05/window';
 
-const NOW = process.env.SOH_WP3_SNAP_DIR ? Date.now() - 180_000 : Date.UTC(2026, 10, 11, 13, 0, 0);
+const NOW = process.env.SOH_WP3_SNAP_DIR ? Date.now() - 1_200_000 : Date.UTC(2026, 10, 11, 13, 0, 0);
 
 afterEach(() => {
   PROJ.length = 0;
