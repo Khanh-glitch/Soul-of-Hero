@@ -118,7 +118,11 @@ const RUNTIME_TESTED_ITEMS = new Set([
   'energy_basic', 'energy_refined', 'essence_fire', 'essence_nature', 'essence_water', 'essence_spirit',
   'stone_surtur', 'stone_typhon', 'stone_aion', 'stone_atlas', 'stone_argus', 'stone_anubis',
   'relic_shaleheart', 'ronin_nodachi', 'tidemarshal_trident', 'custodian_lantern',
-  'keycard', 'water_flask', 'medkit', 'cart_kit', 'leather_armor', 'fur_cloak', 'gas_mask',
+  'keycard', 'water_flask', 'medkit', 'cart_kit', 'vehicle_frame', 'leather_armor', 'fur_cloak', 'gas_mask',
+]);
+
+const WP3_NATURAL_PROOF_ITEMS = new Set([
+  'damaged_drive', 'spares', 'scrap', 'wood', 'stone', 'iron_ingot', 'mechanical_parts', 'vehicle_frame',
 ]);
 
 function withLayout<T>(layoutId: string, fn: () => T): T {
@@ -770,6 +774,8 @@ export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number 
         verificationTier = 'RUNTIME_TESTED+CONDITIONAL_BOSS_DEFEAT(primordial_sanctuary;not_yet_browser_verified)';
       } else if (SIDE_BOSS_UNIQUE_DROPS.has(itemId)) {
         verificationTier = 'RUNTIME_TESTED+CONDITIONAL_BOSS_DEFEAT(side_boss_site;not_yet_browser_verified)';
+      } else if (WP3_NATURAL_PROOF_ITEMS.has(itemId)) {
+        verificationTier = 'RUNTIME_TESTED(wp3_veyra_natural_loop;not_yet_browser_verified)';
       } else if (veyraSrcCount > 0 || veyraStatic > 0) {
         verificationTier = 'RUNTIME_TESTED+PHYSICALLY_REACHABLE(not_yet_browser_verified)';
       } else if (veyraHusbYield.length > 0 || veyraButcher.length > 0 || veyraCreatures.length > 0) {
@@ -945,6 +951,8 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
       shipVeyra = 'BOTH_LIVE(workbench_fallback+D5_po_slag_recycler)';
       recAction = 'KEEP_WORKBENCH_FALLBACK_WITH_D5_PHYSICAL_RECYCLER';
       verTier = 'RUNTIME_TESTED(d5+m1)';
+    } else if (['scrap_ingot', 'mechanical_parts', 'vehicle_frame'].includes(rid)) {
+      verTier = 'RUNTIME_TESTED(catalog+m5+wp3_veyra_natural_loop)';
     }
 
     lines.push(
@@ -1023,7 +1031,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
       'BOTH_LIVE(Shipping_Foundry&Veyra_po_slag_D5)',
       'D5_VERIFIED_PHYSICAL_RECYCLER_AT_PO_SLAG',
       'recycler.ts:X:drive',
-      'RUNTIME_TESTED(d5+recycler;pending_WP3_natural_proof)',
+      'RUNTIME_TESTED(d5+recycler+wp3_veyra_natural_loop)',
     ]),
   );
 
@@ -1106,11 +1114,11 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
   const deviceRoutes: [string, string, string, string, string, string, string, string, number, string, string, string, string][] = [
     ['device:bearTrapSet', 'DEVICE_ARM', 'FOCUS_GEAR_PIPE_BLADE_PLATE', 'bear_trap', 'LIVE_ON_CRAFT_AND_BUILD_ORDER_D2_FIXED', 'iron_plate:1', 'armed_trap:3_triggers', 'iron_plate:1', 0, '0s_mechanical', 'D2_VERIFIED_BEAR_TRAP_IN_BUILD_ORDER', 'engine.ts:bearTrapSet', 'RUNTIME_TESTED(d2-corrective)'],
     ['device:repairStructure_plate', 'DEVICE_PATCH', 'FOCUS_GEAR_PIPE_BLADE_PLATE', 'wall_or_door_damaged', 'SHIFT_CLICK_REPAIR_ACTION', 'iron_plate:1', 'hp_restore:25pct_maxHp', 'iron_plate:1', 0, '0s_action', 'NONE', 'engine.ts:1762', 'RUNTIME_TESTED(repair_reclaim)'],
-    ['device:base_generator_fuel', 'POWER_GEN', 'FOCUS_FUEL_POWER_OIL', 'base_generator', 'PAID_WIRE_V1', 'fuel_can:1|coal:1|charcoal:1|fuel_briquette:1|wood:1', 'power_energy_ms(60s/80s/55s/90s/20s)', 'fuel_can_or_coal_or_wood', 60, '1x_base_plus_loads(w07_s06_contract)', 'D4_VERIFIED_OFFSCREEN_POWER_PARITY', 'engine.ts:stepBasePower', 'RUNTIME_TESTED(d4+w07+s06)'],
+    ['device:base_generator_fuel', 'POWER_GEN', 'FOCUS_FUEL_POWER_OIL', 'base_generator', 'PAID_WIRE_V1', 'fuel_can:1|coal:1|charcoal:1|fuel_briquette:1|wood:1', 'power_energy_ms(60s/80s/55s/90s/20s)', 'fuel_can_or_coal_or_wood', 60, '1x_base_plus_loads(w07_s06_contract)', 'D4_VERIFIED_OFFSCREEN_POWER_PARITY', 'engine.ts:stepBasePower', 'RUNTIME_TESTED(d4+w07+s06+wp2_global_obstacles)'],
     ['device:arrow_turret', 'DEVICE_DEFENSE', 'GENERAL_ECONOMY', 'arrow_turret', 'WIRED_BASE_GENERATOR', 'arrow:1;generator_power', 'hostile_shot_dmg', 'wood+stone+fiber_or_feather', 1, '1_generator_load', 'NONE', 'sim.ts:turretFire', 'RUNTIME_TESTED(defense+s06)'],
     ['device:escrow_deposit', 'META_ESCROW', 'GENERAL_ECONOMY', 'escrow_chest(claim_only)', 'LOCKED_CANON_CASH_ONLY', 'rcash:1', 'profile.securedCash:1', 'finite_world_cash', 0, '0s', 'D1_VERIFIED_ESCROW_ONLY_SECURED_CASH', 'engine.ts:escrowDeposit', 'RUNTIME_TESTED(d1-corrective)'],
     ['industrial:offscreen_catchup', 'OFFSCREEN_SIM', 'FOCUS_IRON_PARTS_SPARES', 'workbench_L2_industrial/furnace/refinery/recycler/pen/garden', 'CAP_12H_WALL_CLOCK_D4', 'queued_inputs_&_generator_fuel', 'completed_outputs_&_decay_12h', 'queued_station_inputs', 0, 'offscreen_step_parity', 'D4_VERIFIED_12H_CAP_AND_RECYCLER_CATCHUP', 'engine.ts:stepOffscreen', 'RUNTIME_TESTED(d4+home-production)'],
-    ['upgrade:workbench_L2', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L1->L2', fmtPairs(WORKBENCH_UPGRADE.cost), 'workbench_level:2', fmtPairs(WORKBENCH_UPGRADE.cost), 0, '0s', 'NONE', 'catalog.ts:WORKBENCH_UPGRADE', 'RUNTIME_TESTED(progression)'],
+    ['upgrade:workbench_L2', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L1->L2', fmtPairs(WORKBENCH_UPGRADE.cost), 'workbench_level:2', fmtPairs(WORKBENCH_UPGRADE.cost), 0, '0s', 'NONE', 'catalog.ts:WORKBENCH_UPGRADE', 'RUNTIME_TESTED(progression+wp3_veyra_natural_loop)'],
     ['upgrade:workbench_L3', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L2->L3', fmtPairs(WORKBENCH_UPGRADE_III.cost), 'workbench_level:3', fmtPairs(WORKBENCH_UPGRADE_III.cost), 0, '0s', 'NONE', 'catalog.ts:WORKBENCH_UPGRADE_III', 'RUNTIME_TESTED(progression)'],
     ['upgrade:industrial_module', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L2_ELECTRIC_QUEUE', fmtPairs(INDUSTRIAL_MODULE.cost), 'automated_powered_bench', fmtPairs(INDUSTRIAL_MODULE.cost), 0, '1_generator_load', 'NONE', 'catalog.ts:INDUSTRIAL_MODULE', 'RUNTIME_TESTED(b05-industrial)'],
     ['upgrade:generator_cap2', 'WORKSTATION_UPGRADE', 'FOCUS_FUEL_POWER_OIL', 'base_generator', 'L2_BENCH_NEARBY', fmtPairs(GENERATOR_CAPACITY_UPGRADE.cost), 'generator_capacity:2', fmtPairs(GENERATOR_CAPACITY_UPGRADE.cost), 0, '2_loads_fuel', 'NONE', 'catalog.ts:GENERATOR_CAPACITY_UPGRADE', 'RUNTIME_TESTED(k6-power)'],

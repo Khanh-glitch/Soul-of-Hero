@@ -150,12 +150,15 @@ describe('SOH M5 Complete Item Function & Recipe Route Audits', () => {
       expect(byRoute.has(ck)).toBe(true);
     }
 
-    // Zero stale PRE_D5 strings anywhere in active routes, and zero premature VISUALLY_PROVEN claims
+    // Zero stale PRE_D5 or pending_WP3 strings anywhere in active routes, and zero premature VISUALLY_PROVEN claims
     for (const r of rows) {
       expect(r.length).toBe(17);
       expect(r.join('|')).not.toContain('PRE_D5');
+      expect(r[16]).not.toContain('pending_WP3');
       expect(r[16]).not.toContain('VISUALLY_PROVEN');
     }
+    expect(byRoute.get('X:drive')![16]).toContain('wp3_veyra_natural_loop');
+    expect(byRoute.get('vehicle_frame')![16]).toContain('wp3_veyra_natural_loop');
 
     // All active (non-superseded) recycler routes maintain net loss / zero active OVER_RETURN and reflect D5 Veyra Foundry live
     const activeRecycleRows = rows.filter(

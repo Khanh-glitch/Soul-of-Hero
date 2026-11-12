@@ -87,6 +87,7 @@ export type RuntimeStatus =
   | 'LIVE_SHIPPING_ONLY'
   | 'LIVE_VEYRA_ONLY'
   | 'UNWIRED_ON_VEYRA'
+  | 'HISTORICAL_INFLIGHT_ONLY'
   | 'TEST_FIXTURE_ONLY'
   | 'PARTIAL_STUB';
 
@@ -1471,7 +1472,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
           probability: 0.7,
           gateIds: [],
           layerScope: 'veyra05',
-          runtimeStatus: 'LIVE_VEYRA_ONLY',
+          runtimeStatus: 'HISTORICAL_INFLIGHT_ONLY',
           codeRef: 'wreck-economy.ts:wreckBonuses',
           notes: 'Historical direct-v1 fallback retained only for legacy static Veyra layouts or pre-D5 saves lacking an authorized recycler',
         });
