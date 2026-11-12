@@ -72,6 +72,12 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
   fullMatch:0,noWaterAmong3x3:0,passedWaterOnly:0,allExceptWater:0,
  };
  const failMasks:Record<string,number>={};
+ // Exhaustive Westmouth trace; control windows are intentionally sampled.
+ const cap=name==='bz_westmouth'?40000:96;
+ let processed=0;
+ const eligibleIndices:number[]=[];
+ for(let i=0;i<n;i++)if(w.spawnEligible[i])eligibleIndices.push(i);
+ const stride=Math.max(1,Math.ceil(eligibleIndices.length/cap));
  const samples:any[]=[];
  const detailTotals:Record<string,number>={};
  function safe(x:number,y:number){
@@ -107,9 +113,8 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
   }
   return {wood,stone,food,water,sites:sites>=9,buildableSeen:sites,explored:tail};
  };
- for(let i=0;i<n;i++){
-  if(!w.spawnEligible[i])continue;
-  measures.prefilter++;
+ for(let si=0;si<eligibleIndices.length;si+=stride){
+  const i=eligibleIndices[si];processed++;
   const x=i%200,y=(i/200)|0;
   if(!safe(x,y))continue;
   measures.centerSafe++;
@@ -135,12 +140,15 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
   if(samples.length<10 || (!missing.length && samples.length<14))
    samples.push({local:[x,y],global:[x+origin[0],y+origin[1]],missing,buildableSeen:d.buildableSeen,explored:d.explored});
  }
+ measures.prefilter=eligibleIndices.length;
+ rec.candidatesEvaluated=processed;
+ rec.candidateSampleCap=cap;
  rec.candidateStageCounts=measures;
  rec.missingCombinationCounts=Object.fromEntries(Object.entries(failMasks).sort((a,b)=>b[1]-a[1]));
  rec.candidateExamples=samples;
  rec.adjacentFreshCells=w.fresh.reduce((a,b)=>a+b,0);
  rec.poiCount=wdata.poiIds.length;
- rec.policy='COPY OF LEGAL-SPAWN PREDICATE FOR CAUSE TRIAGE, QA DIAGNOSTIC IF NORMAL START FAILED';
+ rec.policy=name==='bz_westmouth'?'EXHAUSTIVE PREFILTER CANDIDATE TRACE (IF QA COLLISION STATE CONSTRUCTED)':'SAMPLED CONTROL ONLY, NOT EXHAUSTIVE';
  return rec;
 }
 
