@@ -16,17 +16,19 @@ on:
       - '.github/workflows/veyra-economy-wp4.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   CI: true
 
 jobs:
   veyra-wp4-browser:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: arena/f561fd0d-soul-of-hero
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -37,19 +39,19 @@ jobs:
         run: npm ci
       - name: Install Chromium browser and OS dependencies
         working-directory: web
-        run: npx playwright install --with-deps chromium
+        run: npx --no-install playwright install --with-deps chromium
       - name: Generate current-SHA WP3 non-QA natural-run continuation snapshots
         working-directory: web
         env:
           SOH_WP3_SNAP_DIR: /tmp/wp3-snaps
-        run: npx vitest run --fileParallelism=false --testTimeout=180000 tests/wp3-veyra-recycler-integration.test.ts
+        run: npx --no-install vitest run --fileParallelism=false --testTimeout=180000 tests/wp3-veyra-recycler-integration.test.ts
       - name: Build current-SHA production HTTP distribution (no QA mode)
         working-directory: web
-        run: npx vite build --config vite.http.config.ts
+        run: npx --no-install vite build --config vite.http.config.ts
       - name: Start production HTTP preview
         working-directory: web
         run: |
-          npx vite preview --config vite.http.config.ts --host 127.0.0.1 --port 4173 --strictPort > /tmp/wp4-preview.log 2>&1 &
+          npx --no-install vite preview --config vite.http.config.ts --host 127.0.0.1 --port 4173 --strictPort > /tmp/wp4-preview.log 2>&1 &
           for attempt in $(seq 1 90); do
             if curl -fsS http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
             sleep 1
@@ -63,6 +65,22 @@ jobs:
           BUILD_SHA: ${{ github.sha }}
           WP3_SNAP_DIR: /tmp/wp3-snaps
         run: timeout --signal=TERM --kill-after=15s 8m node e2e/veyra-economy-wp4.mjs
+      - name: Emit WP4 diagnostic summary annotation
+        if: always()
+        working-directory: web
+        run: |
+          if [ -f evidence/veyra-economy-wp4/manifest.json ]; then
+            node -e "
+              const m = JSON.parse(require('fs').readFileSync('evidence/veyra-economy-wp4/manifest.json', 'utf8'));
+              const summary = m.results.map(r => ({ vp: r.viewport, verdict: r.verdict, a: r.phaseA_steps, b: r.phaseB_steps, errors: r.errors, failure: r.failure }));
+              console.log('::notice title=WP4 Manifest::' + JSON.stringify(summary));
+              if (m.results.some(r => r.verdict !== 'PASS')) {
+                console.log('::error title=WP4 Failure::' + JSON.stringify(summary));
+              }
+            "
+          else
+            echo "::error title=WP4 Missing Manifest::evidence/veyra-economy-wp4/manifest.json was not generated"
+          fi
       - name: Upload WP4 browser visual artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -71,6 +89,16 @@ jobs:
           path: web/evidence/veyra-economy-wp4/
           if-no-files-found: warn
           retention-days: 30
+      - name: Commit verified WP4 screenshots & manifest to branch [skip ci]
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add web/evidence/veyra-economy-wp4/
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(evidence): commit WP4 Chromium screenshots & manifest for ${GITHUB_SHA::7} [skip ci]"
+            git push origin HEAD:arena/f561fd0d-soul-of-hero
+          fi
       - name: Print preview logs on failure
         if: failure()
         run: cat /tmp/wp4-preview.log || true

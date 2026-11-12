@@ -85,6 +85,9 @@ try {
       rec.shots.push({ phase, name: filename, sha256: createHash('sha256').update(bytes).digest('hex') });
     };
 
+    records.push(rec);
+    try {
+
     // ==================== PHASE A: Zero-Fixture Fresh New Run ====================
     {
       const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
@@ -332,13 +335,14 @@ try {
       }
     }
 
-    rec.verdict = rec.errors.length === 0 ? 'PASS' : 'FAIL_CONSOLE';
-    if (rec.verdict !== 'PASS') failed = true;
-    records.push(rec);
+      rec.verdict = rec.errors.length === 0 ? 'PASS' : 'FAIL_CONSOLE';
+      if (rec.verdict !== 'PASS') failed = true;
+    } catch (err) {
+      failed = true;
+      rec.verdict = 'FAIL_EXCEPTION';
+      rec.failure = String(err);
+    }
   }
-} catch (err) {
-  failed = true;
-  records.push({ verdict: 'FAIL_EXCEPTION', failure: String(err) });
 } finally {
   await browser.close();
 }
