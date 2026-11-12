@@ -1,0 +1,38 @@
+name: Verify Last Island Atlas v1-v11 Original Archive
+on:
+  push:
+    branches: [audit/last-island-atlas-v1-v11-network]
+    paths:
+      - '.github/workflows/atlas-li-source-verify.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  restore-original:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore all 13 Atlas parts and verify SHA-256 + ZIP CRC
+        run: python3 web/ref/atlas/restore_atlas.py --extract
+      - name: Inventory original and nested packages
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile,json
+          root=Path('web/ref/atlas')
+          with zipfile.ZipFile(root/'atlas.zip') as z:
+            entries=[{'name':x.filename,'size':x.file_size} for x in z.infolist()]
+          (root/'atlas-inventory.json').write_text(json.dumps(entries,ensure_ascii=False,indent=2))
+          for e in entries:
+            print(e['name'],e['size'])
+          PY
+      - name: Upload original byte-exact Atlas and source inventory
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-last-island-atlas-v1-v11-${{ github.sha }}
+          path: |
+            web/ref/atlas/atlas.zip
+            web/ref/atlas/atlas-inventory.json
+          if-no-files-found: error
+          retention-days: 60
