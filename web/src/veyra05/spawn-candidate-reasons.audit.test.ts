@@ -42,7 +42,7 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
  const result=startRun(normal,'male',Date.UTC(2026,10,12,5),null,seed);
  const rec:any={
   name,seed,layout,windowOrigin:origin,normalStart:{ok:result.ok,reason:(result as any).reason??null,spawn:normal.run?.spawnChoice??null},
-  prefilter:w.spawnEligible.reduce((a,b)=>a+b,0),
+  prefilter:w.spawnEligible!.reduce((a,b)=>a+b,0),
   freshTiles:w.fresh.reduce((a,b)=>a+b,0),
   nodesCompiled:w.sourceV3.filter(Boolean).length,
  };
@@ -159,8 +159,8 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
    const v=runCandidate(x,y);
    if(!(v.wood&&v.stone&&v.food&&v.water&&v.sites))continue;
    out.fullyValid++;
-   if(w.spawnEligible[i])out.validInExistingPrefilter++;else out.validOutsidePrefilter++;
-   if(out.firstValidWindows.length<6)out.firstValidWindows.push({local:[x,y],global:[x+origin[0],y+origin[1]],currentPrefilter:!!w.spawnEligible[i],buildableSeen:v.buildableSeen});
+   if(w.spawnEligible![i])out.validInExistingPrefilter++;else out.validOutsidePrefilter++;
+   if(out.firstValidWindows.length<6)out.firstValidWindows.push({local:[x,y],global:[x+origin[0],y+origin[1]],currentPrefilter:!!w.spawnEligible![i],buildableSeen:v.buildableSeen});
    if(out.fullyValid>=6){out.terminatedEarlyAfterSix=true;return out;}
   }
   out.terminatedEarlyAfterSix=false;return out;
@@ -172,7 +172,7 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
  const cap=name==='bz_westmouth'?40000:96;
  let processed=0;
  const eligibleIndices:number[]=[];
- for(let i=0;i<n;i++)if(w.spawnEligible[i])eligibleIndices.push(i);
+ for(let i=0;i<n;i++)if(w.spawnEligible![i])eligibleIndices.push(i);
  const stride=Math.max(1,Math.ceil(eligibleIndices.length/cap));
  const samples:any[]=[];
  const detailTotals:Record<string,number>={};
