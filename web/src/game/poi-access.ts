@@ -28,8 +28,9 @@ export function interiorRelease(r:RunState,e:Entity,d:PoiDoorContract):boolean {
 }
 /** An aperture must not close on any physical player, cart, bike or living creature. */
 export function doorwayOccupied(r:RunState,e:Entity):boolean {
+  if(r.entities[e.id]!==e || ((e as any).floor??0)!==(r.veyraFloor??0)) return false;
   const inDoor=(o:{x:number;y:number})=>Math.abs(o.x-e.x)<TILE*.75&&Math.abs(o.y-e.y)<TILE*.75;
-  return (!r.player.dead&&inDoor(r.player)) || r.creatures.some(c=>c.state!=='dead'&&inDoor(c)) || Object.values(r.entities).some(o=>(o.kind==='cart'||o.kind==='vehicle')&&inDoor(o));
+  return (!r.player.dead&&inDoor(r.player)) || r.creatures.some(c=>c.state!=='dead'&&((c as any).floor??0)===(r.veyraFloor??0)&&inDoor(c)) || Object.values(r.entities).some(o=>((o as any).floor??0)===(r.veyraFloor??0)&&(o.kind==='cart'||o.kind==='vehicle')&&inDoor(o));
 }
 /** Idempotent chronological expiry; an occupied aperture remains open until clear. */
 export function advancePoiAccess(r:RunState,now:number):{closed:string[];expired:string[]} {

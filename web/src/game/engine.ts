@@ -736,145 +736,380 @@ export function roofRoom(r: RunState, px: number, py: number) {
 export function isSheltered(r: RunState, px: number, py: number) { return roofRoom(r, px, py).enclosed; }
 
 /** Built wire-v1 nodes are physical tiles, not proximity links or POI circuits.
- * Player-only pressure plates are evaluated from actual position, including the
+ * Player-only pressure plates are evaluated from actual position (same floor only), including the
  * stationary saved player during offline settlement. No speculative AI movement. */
-function wireNodeOn(r:RunState,e:Entity):boolean {
-  if(e.kind!=='struct'||!['power_cable','power_switch','pressure_switch','ir_sensor'].includes(e.type||'')||!owned(e)||(e.hp??0)<=0||e.tx===undefined||e.ty===undefined)return false;
-  if(r.entities[e.id]===e) {
-    const t=effTile(r,e.tx,e.ty),i=e.ty*WW+e.tx;
-    if([T.DEEP,T.SHALLOW,T.RIVER,T.ICE,T.LAVA,T.CLIFF,T.PWALL].includes(t)||[1,2,3,4,5].includes(blockGrid(r)[i]))return false;
-    if(e.type==='ir_sensor')return irSensorConducts(r,e);
-    if(e.type==='power_switch')return !!e.wireSwitch?.on;
-    if(e.type==='pressure_switch')return !r.player.dead&&Math.hypot(r.player.x-e.x,r.player.y-e.y)<=BAL.homeCircuit.plateRadius;
-    return true;
+function wireNodeBaseOn(r: RunState, e: Entity, entityBlockMap?: Map<string, number>): boolean {
+  if (e.kind !== 'struct' || !['power_cable', 'power_switch', 'pressure_switch', 'ir_sensor'].includes(e.type || '') || !owned(e) || (e.hp ?? 0) <= 0 || e.tx === undefined || e.ty === undefined) return false;
+  const np = entityGlobalCoords(r, e);
+  if (np.onscreen && np.floor === activeFloor(r) && (!isVeyra05Layout(r.layoutId || '') || r.layoutId === getActiveLayout())) {
+    const t = effTile(r, e.tx, e.ty), i = e.ty * WW + e.tx;
+    if ([T.DEEP, T.SHALLOW, T.RIVER, T.ICE, T.LAVA, T.CLIFF, T.PWALL].includes(t) || [1, 2, 3, 4, 5].includes(blockGrid(r)[i])) return false;
+  } else {
+    const cell = globalCellTileAndClass(r, np.gtx, np.gty, np.floor, undefined, entityBlockMap);
+    if ([T.DEEP, T.SHALLOW, T.RIVER, T.ICE, T.LAVA, T.CLIFF, T.PWALL].includes(cell.tile) || [1, 2, 3, 4, 5].includes(cell.cls)) return false;
   }
-  if(e.type==='ir_sensor')return false;
-  if(e.type==='power_switch')return !!e.wireSwitch?.on;
-  if(e.type==='pressure_switch') {
-    if(r.player.dead)return false;
-    const [ox,oy]=isVeyra05Layout(r.layoutId||'')?windowOrigin(r):[0,0];
-    return Math.hypot(ox*TILE+r.player.x-e.x,oy*TILE+r.player.y-e.y)<=BAL.homeCircuit.plateRadius;
+  if (e.type === 'power_switch') return !!e.wireSwitch?.on;
+  if (e.type === 'pressure_switch') {
+    if (r.player.dead || np.floor !== activeFloor(r)) return false;
+    if (np.onscreen && (!isVeyra05Layout(r.layoutId || '') || r.layoutId === getActiveLayout())) {
+      return Math.hypot(r.player.x - e.x, r.player.y - e.y) <= BAL.homeCircuit.plateRadius;
+    }
+    const [ox, oy] = isVeyra05Layout(r.layoutId || '') ? windowOrigin(r) : [0, 0];
+    return Math.hypot(ox * TILE + r.player.x - np.gx, oy * TILE + r.player.y - np.gy) <= BAL.homeCircuit.plateRadius;
   }
   return true;
 }
+
+function wireNodeOn(r: RunState, e: Entity, entityBlockMap?: Map<string, number>, floorGraph?: FloorPowerGraph): boolean {
+  if (!wireNodeBaseOn(r, e, entityBlockMap)) return false;
+  if (e.type === 'ir_sensor') {
+    const np = entityGlobalCoords(r, e);
+    return np.onscreen && np.floor === activeFloor(r) ? irSensorConducts(r, e, floorGraph) : false;
+  }
+  return true;
+}
+
+type FloorPowerGraph = {
+  all: Entity[];
+  blockMap: Map<string, number>;
+  generators: Entity[];
+  gensByTile: Map<string, Entity[]>;
+  relayCells: Map<string, Entity>;
+  allNodeCells: Map<string, Entity>;
+  touchByTile: Map<string, Entity[]>;
+  irSensors: Entity[];
+  doors: Entity[];
+  turrets: Entity[];
+  benches: Entity[];
+};
+
+function buildFloorPowerGraph(r: RunState, floor: number, entities?: Entity[], entityBlockMap?: Map<string, number>): FloorPowerGraph {
+  const all = entities ?? allRunEntities(r);
+  const blockMap = entityBlockMap ?? buildEntityBlockMap(r, all);
+  const gph: FloorPowerGraph = {
+    all,
+    blockMap,
+    generators: [],
+    gensByTile: new Map(),
+    relayCells: new Map(),
+    allNodeCells: new Map(),
+    touchByTile: new Map(),
+    irSensors: [],
+    doors: [],
+    turrets: [],
+    benches: [],
+  };
+
+  for (const e of all) {
+    if (!owned(e) || (e.hp ?? 0) <= 0 || e.tx === undefined || e.ty === undefined) continue;
+    const p = entityGlobalCoords(r, e);
+    if (p.floor !== floor) continue;
+    const tk = `${p.gtx},${p.gty}`;
+    if (e.kind === 'struct' && e.basePower?.network === 'wire-v1') {
+      gph.generators.push(e);
+      const list = gph.gensByTile.get(tk);
+      if (list) list.push(e); else gph.gensByTile.set(tk, [e]);
+      continue;
+    }
+    if (e.kind === 'struct' && ['power_cable', 'power_switch', 'pressure_switch', 'ir_sensor'].includes(e.type || '')) {
+      if (e.type === 'ir_sensor') {
+        gph.irSensors.push(e);
+      } else if (wireNodeBaseOn(r, e, blockMap)) {
+        gph.allNodeCells.set(tk, e);
+        gph.relayCells.set(tk, e);
+      }
+      continue;
+    }
+    if (e.type === 'door_powered' || e.type === 'arrow_turret' || e.type === 'workbench') {
+      if (e.type === 'door_powered') gph.doors.push(e);
+      else if (e.type === 'arrow_turret') gph.turrets.push(e);
+      else gph.benches.push(e);
+      const list = gph.touchByTile.get(tk);
+      if (list) list.push(e); else gph.touchByTile.set(tk, [e]);
+    }
+  }
+  // Pass 2: evaluate IR sensors using gph (relays never include ir_sensors, so zero recursion).
+  for (const s of gph.irSensors) {
+    if (!s.irSensor?.enabled) continue;
+    const sp = entityGlobalCoords(r, s);
+    if (sp.onscreen && sp.floor === activeFloor(r) && wireNodeBaseOn(r, s, blockMap) && irSensorConducts(r, s, gph)) {
+      gph.allNodeCells.set(`${sp.gtx},${sp.gty}`, s);
+    }
+  }
+  return gph;
+}
+
+function collectTouchingGens(
+  gtx: number,
+  gty: number,
+  gensByTile: Map<string, Entity[]>,
+  out: Entity[],
+  seenGen: Set<string>,
+) {
+  for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const gs = gensByTile.get(`${gtx + dx},${gty + dy}`);
+    if (!gs) continue;
+    for (const g of gs) if (!seenGen.has(g.id)) { seenGen.add(g.id); out.push(g); }
+  }
+}
+
 /** B02-P1 infrared sensor (ir-v1). Cable-only relay BFS: sensors never relay for each other, so claim, path and
  * conduction never depend on each other (no recursion). Values are SOH_PROVISIONAL in balance irSensorV1. */
-function wireRelayOn(r:RunState,n:Entity):boolean { return n.type!=='ir_sensor' && wireNodeOn(r,n); }
-function generatorTouching(r:RunState,n:Entity):Entity[] {
-  const np=entityGlobalCoords(r,n);
-  return allRunEntities(r).filter(g=>{
-    if(g.basePower?.network!=='wire-v1'||!owned(g)||(g.hp??0)<=0||g.tx===undefined||g.ty===undefined)return false;
-    const gp=entityGlobalCoords(r,g);
-    return gp.floor===np.floor&&Math.abs(gp.gtx-np.gtx)+Math.abs(gp.gty-np.gty)===1;
-  }).sort((a,b)=>a.id.localeCompare(b.id));
+function wireRelayOn(r: RunState, n: Entity, entityBlockMap?: Map<string, number>): boolean {
+  return n.type !== 'ir_sensor' && wireNodeOn(r, n, entityBlockMap);
 }
 /** The generator whose cable path reaches this sensor (ignores sensor conduction). Prefers a fuelled, enabled one. */
-export function sensorGenerator(r:RunState,sensor:Entity):Entity|undefined {
-  if(sensor.tx===undefined||sensor.ty===undefined)return undefined;
-  const sp=entityGlobalCoords(r,sensor);
-  const relays=allRunEntities(r).filter(n=>n.kind==='struct'&&n.tx!==undefined&&wireRelayOn(r,n)&&entityGlobalCoords(r,n).floor===sp.floor);
-  const cells=new Map(relays.map(n=>{const p=entityGlobalCoords(r,n);return [`${p.gtx},${p.gty}`,n] as const;}));
-  const found:Entity[]=[];const q:Entity[]=[],seen=new Set<string>();
-  for(const g of generatorTouching(r,sensor))found.push(g);
-  for(const n of relays){const np=entityGlobalCoords(r,n);if(Math.abs(np.gtx-sp.gtx)+Math.abs(np.gty-sp.gty)===1){q.push(n);seen.add(n.id);}}
-  for(let h=0;h<q.length;h++){const n=q[h],np=entityGlobalCoords(r,n);found.push(...generatorTouching(r,n));
-    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=cells.get(`${np.gtx+dx},${np.gty+dy}`);if(nx&&!seen.has(nx.id)){seen.add(nx.id);q.push(nx);}}}
-  const uniq=[...new Map(found.map(g=>[g.id,g])).values()].sort((a,b)=>a.id.localeCompare(b.id));
-  return uniq.find(g=>g.basePower?.enabled&&hasPowerFuel(r,g))??uniq[0];
+export function sensorGenerator(r: RunState, sensor: Entity, floorGraph?: FloorPowerGraph): Entity | undefined {
+  if (sensor.tx === undefined || sensor.ty === undefined) return undefined;
+  const sp = entityGlobalCoords(r, sensor);
+  const gph = floorGraph ?? buildFloorPowerGraph(r, sp.floor);
+  const found: Entity[] = [];
+  const seenGen = new Set<string>();
+  const q: Entity[] = [];
+  const seen = new Set<string>();
+  collectTouchingGens(sp.gtx, sp.gty, gph.gensByTile, found, seenGen);
+  for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const nx = gph.relayCells.get(`${sp.gtx + dx},${sp.gty + dy}`);
+    if (nx && !seen.has(nx.id)) { seen.add(nx.id); q.push(nx); }
+  }
+  for (let h = 0; h < q.length; h++) {
+    const n = q[h], np = entityGlobalCoords(r, n);
+    collectTouchingGens(np.gtx, np.gty, gph.gensByTile, found, seenGen);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nx = gph.relayCells.get(`${np.gtx + dx},${np.gty + dy}`);
+      if (nx && !seen.has(nx.id)) { seen.add(nx.id); q.push(nx); }
+    }
+  }
+  found.sort((a, b) => a.id.localeCompare(b.id));
+  return found.find(g => g.basePower?.enabled && hasPowerFuel(r, g)) ?? found[0];
 }
 /** Enabled sensors on this generator claim capacity in ID order, up to the generator's capacity. Fuel-gated. */
-export function sensorClaims(r:RunState,g:Entity):Entity[] {
-  if(!g.basePower?.enabled||!owned(g)||(g.hp??1)<=0||!hasPowerFuel(r,g))return [];
-  return allRunEntities(r).filter(e=>e.type==='ir_sensor'&&e.irSensor?.enabled&&owned(e)&&(e.hp??0)>0&&sensorGenerator(r,e)?.id===g.id)
-    .sort((a,b)=>a.id.localeCompare(b.id)).slice(0,Math.floor((g.basePower.capacity??1)/BAL.irSensorV1.capacitySlots));
+export function sensorClaims(r: RunState, g: Entity, floorGraph?: FloorPowerGraph): Entity[] {
+  if (!g.basePower?.enabled || !owned(g) || (g.hp ?? 1) <= 0 || !hasPowerFuel(r, g) || g.tx === undefined || g.ty === undefined) return [];
+  const gp = entityGlobalCoords(r, g);
+  const gph = floorGraph ?? buildFloorPowerGraph(r, gp.floor);
+  if (!gph.irSensors.length) return [];
+  // BFS from generator over relayCells to gather candidate sensors on this component
+  const sensorCoords = new Map<string, Entity[]>();
+  for (const s of gph.irSensors) {
+    if (!s.irSensor?.enabled) continue;
+    const sp = entityGlobalCoords(r, s);
+    const k = `${sp.gtx},${sp.gty}`;
+    const list = sensorCoords.get(k);
+    if (list) list.push(s); else sensorCoords.set(k, [s]);
+  }
+  if (!sensorCoords.size) return [];
+  const cand: Entity[] = [];
+  const seenCand = new Set<string>();
+  const q: Entity[] = [];
+  const seen = new Set<string>();
+  const harvestSensorsNear = (tx: number, ty: number) => {
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const list = sensorCoords.get(`${tx + dx},${ty + dy}`);
+      if (list) for (const s of list) if (!seenCand.has(s.id)) { seenCand.add(s.id); cand.push(s); }
+    }
+  };
+  harvestSensorsNear(gp.gtx, gp.gty);
+  for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const nx = gph.relayCells.get(`${gp.gtx + dx},${gp.gty + dy}`);
+    if (nx && !seen.has(nx.id)) { seen.add(nx.id); q.push(nx); }
+  }
+  for (let h = 0; h < q.length; h++) {
+    const n = q[h], np = entityGlobalCoords(r, n);
+    harvestSensorsNear(np.gtx, np.gty);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nx = gph.relayCells.get(`${np.gtx + dx},${np.gty + dy}`);
+      if (nx && !seen.has(nx.id)) { seen.add(nx.id); q.push(nx); }
+    }
+  }
+  return cand
+    .filter(e => sensorGenerator(r, e, gph)?.id === g.id)
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .slice(0, Math.floor((g.basePower.capacity ?? 1) / BAL.irSensorV1.capacitySlots));
 }
 /** Line of sight and range only: walls and solid blocks stop it; sleeping and offline-unresolved monsters are never sensed. */
-export function irSensorSees(r:RunState,e:Entity):{ visible:boolean; blockedInRange:boolean } {
-  const range=BAL.irSensorV1.rangeTiles*TILE;let visible=false,blockedInRange=false;
-  const check=(p:{x:number;y:number})=>{ if(dist(e.x,e.y,p.x,p.y)>range)return; if(clearPhysicalLine(r,e,p,true,true))visible=true; else blockedInRange=true; };
-  if(!r.player.dead)check(r.player);
-  for(const m of r.creatures) if(m.state!=='dead'&&m.state!=='sleep'&&m.offlineUnresolvedAt===undefined&&(CREATURES[m.type]?.aggro||(m as any).prov)) check(m);
+export function irSensorSees(r: RunState, e: Entity): { visible: boolean; blockedInRange: boolean } {
+  const range = BAL.irSensorV1.rangeTiles * TILE; let visible = false, blockedInRange = false;
+  const ep = entityGlobalCoords(r, e);
+  const check = (p: { x: number; y: number }) => {
+    if (dist(e.x, e.y, p.x, p.y) > range) return;
+    if (clearPhysicalLine(r, e, p, true, true)) visible = true; else blockedInRange = true;
+  };
+  if (!r.player.dead && activeFloor(r) === ep.floor && ep.onscreen) check(r.player);
+  for (const m of r.creatures) {
+    if (m.state !== 'dead' && m.state !== 'sleep' && m.offlineUnresolvedAt === undefined && ((m as any).floor ?? 0) === ep.floor && (CREATURES[m.type]?.aggro || (m as any).prov)) {
+      if (ep.onscreen && ep.floor === activeFloor(r)) check(m);
+    }
+  }
   return { visible, blockedInRange };
 }
-export function irSensorConducts(r:RunState,e:Entity):boolean {
-  if(!e.irSensor?.enabled)return false;
-  const g=sensorGenerator(r,e);if(!g)return false;
-  if(!sensorClaims(r,g).some(x=>x.id===e.id))return false;
-  return irSensorSees(r,e).visible;
+export function irSensorConducts(r: RunState, e: Entity, floorGraph?: FloorPowerGraph): boolean {
+  if (!e.irSensor?.enabled) return false;
+  const g = sensorGenerator(r, e, floorGraph); if (!g) return false;
+  if (!sensorClaims(r, g, floorGraph).some(x => x.id === e.id)) return false;
+  return irSensorSees(r, e).visible;
 }
-export function irSensorStatus(r:RunState,e:Entity):string {
-  if(!e.irSensor)return 'Not installed';if(!e.irSensor.enabled)return 'Off';
-  const g=sensorGenerator(r,e);if(!g)return 'No cable to a generator';
-  if(!g.basePower?.enabled)return 'Generator off';if(!hasPowerFuel(r,g))return 'No fuel';
-  if(!sensorClaims(r,g).some(x=>x.id===e.id))return 'Capacity full';
-  const v=irSensorSees(r,e);return v.visible?'Target in clear line: conducting':v.blockedInRange?'Blocked by wall: not conducting':'Watching: clear';
+export function irSensorStatus(r: RunState, e: Entity): string {
+  if (!e.irSensor) return 'Not installed'; if (!e.irSensor.enabled) return 'Off';
+  const g = sensorGenerator(r, e); if (!g) return 'No cable to a generator';
+  if (!g.basePower?.enabled) return 'Generator off'; if (!hasPowerFuel(r, g)) return 'No fuel';
+  if (!sensorClaims(r, g).some(x => x.id === e.id)) return 'Capacity full';
+  const v = irSensorSees(r, e); return v.visible ? 'Target in clear line: conducting' : v.blockedInRange ? 'Blocked by wall: not conducting' : 'Watching: clear';
 }
 /** B04-P3 downstream readout for the sensor prompt: only real powered doors on the same wire-v1 network, and only while conducting. */
 /** B04-P4 sprite state for the sensor: same branches as irSensorStatus, returned as a key. */
-export function irSensorVisual(r:RunState,e:Entity):'off'|'unpowered'|'ready'|'detect'|'blocked' {
-  if(!e.irSensor||!e.irSensor.enabled)return 'off';
-  const g=sensorGenerator(r,e);
-  if(!g||!g.basePower?.enabled||!hasPowerFuel(r,g)||!sensorClaims(r,g).some(x=>x.id===e.id))return 'unpowered';
-  const v=irSensorSees(r,e);return v.visible?'detect':v.blockedInRange?'blocked':'ready';
+export function irSensorVisual(r: RunState, e: Entity): 'off' | 'unpowered' | 'ready' | 'detect' | 'blocked' {
+  if (!e.irSensor || !e.irSensor.enabled) return 'off';
+  const g = sensorGenerator(r, e);
+  if (!g || !g.basePower?.enabled || !hasPowerFuel(r, g) || !sensorClaims(r, g).some(x => x.id === e.id)) return 'unpowered';
+  const v = irSensorSees(r, e); return v.visible ? 'detect' : v.blockedInRange ? 'blocked' : 'ready';
 }
-export function irSensorDownstream(r:RunState,e:Entity):string {
-  if(!irSensorConducts(r,e))return '';
+export function irSensorDownstream(r: RunState, e: Entity): string {
+  if (!irSensorConducts(r, e)) return '';
   // B04-P4: count only doors fed by THIS sensor's generator network (not any powered door in the run).
-  const g=sensorGenerator(r,e);
-  const doors=Object.values(r.entities).filter(d=>d.type==='door_powered'&&owned(d)&&(d.hp??0)>0&&electricDoorGenerator(r,d)?.id===g?.id&&electricDoorPowered(r,d)).length;
-  return doors?`, powers ${doors} door${doors>1?'s':''}`:', no powered door on this network';
+  const g = sensorGenerator(r, e);
+  const doors = allRunEntities(r).filter(d => d.type === 'door_powered' && owned(d) && (d.hp ?? 0) > 0 && electricDoorGenerator(r, d)?.id === g?.id && electricDoorPowered(r, d)).length;
+  return doors ? `, powers ${doors} door${doors > 1 ? 's' : ''}` : ', no powered door on this network';
 }
-export function wireReachable(r:RunState,g:Entity,e:Entity):boolean {
-  if(!g.basePower||g.basePower.network!=='wire-v1'||!owned(g)||!owned(e)||(g.hp??0)<=0||(e.hp??0)<=0||g.tx===undefined||g.ty===undefined||e.tx===undefined||e.ty===undefined)return false;
-  const gp=entityGlobalCoords(r,g),ep=entityGlobalCoords(r,e);
-  if(gp.floor!==ep.floor)return false;
-  const nodes=allRunEntities(r).filter(n=>wireNodeOn(r,n)&&entityGlobalCoords(r,n).floor===gp.floor);
-  const cells=new Map(nodes.map(n=>{const p=entityGlobalCoords(r,n);return [`${p.gtx},${p.gty}`,n] as const;}));
-  const q:Entity[]=[],seen=new Set<string>();for(const n of nodes){const p=entityGlobalCoords(r,n);if(Math.abs(p.gtx-gp.gtx)+Math.abs(p.gty-gp.gty)===1){q.push(n);seen.add(n.id);}}
-  for(let head=0;head<q.length;head++){const n=q[head],np=entityGlobalCoords(r,n);if(Math.abs(np.gtx-ep.gtx)+Math.abs(np.gty-ep.gty)===1)return true;
-    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const next=cells.get(`${np.gtx+dx},${np.gty+dy}`);if(next&&!seen.has(next.id)){seen.add(next.id);q.push(next);}}
-  }return false;
+export function wireReachable(r: RunState, g: Entity, e: Entity, floorGraph?: ReturnType<typeof buildFloorPowerGraph>): boolean {
+  if (!g.basePower || g.basePower.network !== 'wire-v1' || !owned(g) || !owned(e) || (g.hp ?? 0) <= 0 || (e.hp ?? 0) <= 0 || g.tx === undefined || g.ty === undefined || e.tx === undefined || e.ty === undefined) return false;
+  const gp = entityGlobalCoords(r, g), ep = entityGlobalCoords(r, e);
+  if (gp.floor !== ep.floor) return false;
+  const cells = floorGraph?.allNodeCells ?? (() => {
+    const all = allRunEntities(r);
+    const blockMap = buildEntityBlockMap(r, all);
+    const map = new Map<string, Entity>();
+    for (const n of all) {
+      if (!wireNodeOn(r, n, blockMap)) continue;
+      const p = entityGlobalCoords(r, n);
+      if (p.floor === gp.floor) map.set(`${p.gtx},${p.gty}`, n);
+    }
+    return map;
+  })();
+  const q: Entity[] = [], seen = new Set<string>();
+  for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const n = cells.get(`${gp.gtx + dx},${gp.gty + dy}`);
+    if (n && !seen.has(n.id)) { seen.add(n.id); q.push(n); }
+  }
+  for (let head = 0; head < q.length; head++) {
+    const n = q[head], np = entityGlobalCoords(r, n);
+    if (Math.abs(np.gtx - ep.gtx) + Math.abs(np.gty - ep.gty) === 1) return true;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const next = cells.get(`${np.gtx + dx},${np.gty + dy}`);
+      if (next && !seen.has(next.id)) { seen.add(next.id); q.push(next); }
+    }
+  }
+  return false;
 }
 /** An electric door is assigned to the lowest stable connected generator ID. */
-export function electricDoorGenerator(r:RunState,e:Entity):Entity|undefined {
-  return allRunEntities(r).filter(g=>g.basePower?.network==='wire-v1'&&wireReachable(r,g,e)).sort((a,b)=>a.id.localeCompare(b.id))[0];
+export function electricDoorGenerator(r: RunState, e: Entity, floorGraph?: ReturnType<typeof buildFloorPowerGraph>): Entity | undefined {
+  if (!owned(e) || (e.hp ?? 0) <= 0 || e.tx === undefined || e.ty === undefined) return undefined;
+  const ep = entityGlobalCoords(r, e);
+  const gph = floorGraph ?? buildFloorPowerGraph(r, ep.floor);
+  const found: Entity[] = [], seenGen = new Set<string>();
+  const q: Entity[] = [], seen = new Set<string>();
+  for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const n = gph.allNodeCells.get(`${ep.gtx + dx},${ep.gty + dy}`);
+    if (n && !seen.has(n.id)) { seen.add(n.id); q.push(n); }
+  }
+  for (let head = 0; head < q.length; head++) {
+    const n = q[head], np = entityGlobalCoords(r, n);
+    collectTouchingGens(np.gtx, np.gty, gph.gensByTile, found, seenGen);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const next = gph.allNodeCells.get(`${np.gtx + dx},${np.gty + dy}`);
+      if (next && !seen.has(next.id)) { seen.add(next.id); q.push(next); }
+    }
+  }
+  found.sort((a, b) => a.id.localeCompare(b.id));
+  return found[0];
 }
-export function electricDoorPowered(r:RunState,e:Entity,online=true):boolean {
-  const g=electricDoorGenerator(r,e);return !!g&&powerAllocation(r,g,online).includes(e);
+export function electricDoorPowered(r: RunState, e: Entity, online = true): boolean {
+  const g = electricDoorGenerator(r, e); return !!g && powerAllocation(r, g, online).includes(e);
 }
-export function electricInterior(r:RunState,e:Entity):boolean {
-  const v=e.electricDoor?.interior;if(!v)return false;const dx=r.player.x-e.x,dy=r.player.y-e.y;
-  return dx*v[0]+dy*v[1]>=TILE*BAL.homeCircuit.interiorDepthTiles&&Math.abs(dx*v[1]-dy*v[0])<TILE*BAL.homeCircuit.interiorHalfWidthTiles;
+export function electricInterior(r: RunState, e: Entity): boolean {
+  if (((e as any).floor ?? 0) !== activeFloor(r) || r.entities[e.id] !== e) return false;
+  const v = e.electricDoor?.interior; if (!v) return false; const dx = r.player.x - e.x, dy = r.player.y - e.y;
+  return dx * v[0] + dy * v[1] >= TILE * BAL.homeCircuit.interiorDepthTiles && Math.abs(dx * v[1] - dy * v[0]) < TILE * BAL.homeCircuit.interiorHalfWidthTiles;
 }
-export function syncElectricDoors(r:RunState,now:number,online=true):string[] {
-  const closed:string[]=[];for(const e of Object.values(r.entities))if(e.electricDoor&&e.open&&!electricDoorPowered(r,e,online)&&(e.electricDoor.releaseUntil??0)<=now&&!doorwayOccupied(r,e)){e.open=false;closed.push(e.id);}
-  if(closed.length)markDirty();return closed;
+export function syncElectricDoors(r: RunState, now: number, online = true): string[] {
+  const closed: string[] = [];
+  for (const e of allRunEntities(r)) {
+    if (e.electricDoor && e.open && !electricDoorPowered(r, e, online) && (e.electricDoor.releaseUntil ?? 0) <= now && !doorwayOccupied(r, e)) {
+      e.open = false; closed.push(e.id);
+    }
+  }
+  if (closed.length) markDirty();
+  return closed;
 }
 
-/** Optional industrial power shares real capacity with existing turret loads. */
-export function connectedPower(r:RunState,g:Entity,e:Entity) {
-  if(g.basePower?.network==='wire-v1')return wireReachable(r,g,e);
-  if(!owned(e)||(e.hp??1)<=0)return false;
-  const gp=entityGlobalCoords(r,g),ep=entityGlobalCoords(r,e);
-  if(gp.floor!==ep.floor||dist(gp.gx,gp.gy,ep.gx,ep.gy)>BAL.industrialPower.connectionTiles*TILE)return false;
-  return gp.onscreen&&ep.onscreen?clearPhysicalLine(r,e,g,true,true):true;
+/** Optional industrial power shares real capacity with existing turret loads.
+ * Both wire-v1 and legacy pre-wire links enforce Map-owned and runtime obstacles across floors and offscreen boundaries. */
+export function connectedPower(r: RunState, g: Entity, e: Entity, floorGraph?: ReturnType<typeof buildFloorPowerGraph>) {
+  if (!g.basePower || g.type !== 'base_generator' || !owned(g) || (g.hp ?? 0) <= 0) return false;
+  if (g.basePower.network === 'wire-v1') return wireReachable(r, g, e, floorGraph);
+  if (!owned(e) || (e.hp ?? 1) <= 0) return false;
+  const gp = entityGlobalCoords(r, g), ep = entityGlobalCoords(r, e);
+  if (gp.floor !== ep.floor || dist(gp.gx, gp.gy, ep.gx, ep.gy) > BAL.industrialPower.connectionTiles * TILE) return false;
+  return clearGlobalPhysicalLine(r, e, g, floorGraph?.all, floorGraph?.blockMap);
 }
-function hasPowerFuel(r:RunState,g:Entity) {
-  return !!g.basePower && !!g.c && (g.basePower.energy>1e-8 || C(r,g.c).slots.some(s=>s&&!!ITEMS[s.key]?.fuel));
+function hasPowerFuel(r: RunState, g: Entity) {
+  return !!g.basePower && !!g.c && (g.basePower.energy > 1e-8 || C(r, g.c).slots.some(s => s && !!ITEMS[s.key]?.fuel));
 }
 /** Stable allocation order; priority is a player choice, not a magic extra load. */
-export function powerAllocation(r:RunState,g:Entity,_online=true):Entity[] {
-  if(!g.basePower?.enabled || !owned(g) || (g.hp??1)<=0 || !hasPowerFuel(r,g))return [];
-  const sensors=sensorClaims(r,g);const freeCapacity=(g.basePower.capacity??1)-sensors.length;
+export function powerAllocation(r: RunState, g: Entity, _online = true, floorGraph?: FloorPowerGraph): Entity[] {
+  if (!g.basePower?.enabled || !owned(g) || (g.hp ?? 1) <= 0 || !hasPowerFuel(r, g)) return [];
+  const gp = entityGlobalCoords(r, g);
+  const gph = floorGraph ?? buildFloorPowerGraph(r, gp.floor);
+  const sensors = g.basePower.network === 'wire-v1' ? sensorClaims(r, g, gph) : [];
+  const freeCapacity = (g.basePower.capacity ?? 1) - sensors.length;
   // W07 Network A: an armed, supplied, wired turret reserves capacity and burns fuel whether or not the player is online.
   // Firing stays online-only (tickTurrets), but the draw must not vanish when the player leaves: offline and online share one allocation.
-  const choices=allRunEntities(r).filter(e=>e.type!=='ir_sensor'&&connectedPower(r,g,e) && (
-    e.turret?.enabled && e.turret.generatorId===g.id && !!e.c && countItem(r,e.c,'arrow')>0 ||
-    e.type==='workbench' && e.industrial?.enabled && e.industrial.generatorId===g.id && !!e.station?.queue[0] && e.station.queue[0].left>0 ||
-    !!e.electricDoor && electricDoorGenerator(r,e)?.id===g.id));
-  const priority=g.basePower.priority??'defense';
-  choices.sort((a,b)=>{const rank=(e:Entity)=>priority==='defense' ? (e.turret?0:e.electricDoor?1:2) : (e.industrial?0:e.electricDoor?1:2);return rank(a)-rank(b)||a.id.localeCompare(b.id);});
-  return [...sensors, ...choices.slice(0,Math.max(0,freeCapacity))];
+  const choices: Entity[] = [];
+  if (g.basePower.network === 'wire-v1') {
+    // Single component BFS discovers every reachable turret, industrial bench, and powered door in O(component).
+    const q: Entity[] = [], seen = new Set<string>(), reachedSet = new Set<string>();
+    const addTouch = (tx: number, ty: number) => {
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const list = gph.touchByTile.get(`${tx + dx},${ty + dy}`);
+        if (list) for (const item of list) reachedSet.add(item.id);
+      }
+    };
+    addTouch(gp.gtx, gp.gty);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const n = gph.allNodeCells.get(`${gp.gtx + dx},${gp.gty + dy}`);
+      if (n && !seen.has(n.id)) { seen.add(n.id); q.push(n); }
+    }
+    for (let head = 0; head < q.length; head++) {
+      const n = q[head], np = entityGlobalCoords(r, n);
+      addTouch(np.gtx, np.gty);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const next = gph.allNodeCells.get(`${np.gtx + dx},${np.gty + dy}`);
+        if (next && !seen.has(next.id)) { seen.add(next.id); q.push(next); }
+      }
+    }
+    for (const e of gph.turrets) {
+      if (reachedSet.has(e.id) && e.turret?.enabled && e.turret.generatorId === g.id && !!e.c && countItem(r, e.c, 'arrow') > 0) choices.push(e);
+    }
+    for (const e of gph.benches) {
+      if (reachedSet.has(e.id) && e.industrial?.enabled && e.industrial.generatorId === g.id && !!e.station?.queue[0] && e.station.queue[0].left > 0) choices.push(e);
+    }
+    for (const e of gph.doors) {
+      if (reachedSet.has(e.id) && e.electricDoor && electricDoorGenerator(r, e, gph)?.id === g.id) choices.push(e);
+    }
+  } else {
+    for (const e of [...gph.turrets, ...gph.benches]) {
+      const isActive =
+        (e.turret?.enabled && e.turret.generatorId === g.id && !!e.c && countItem(r, e.c, 'arrow') > 0) ||
+        (e.type === 'workbench' && e.industrial?.enabled && e.industrial.generatorId === g.id && !!e.station?.queue[0] && e.station.queue[0].left > 0);
+      if (isActive && connectedPower(r, g, e, gph)) choices.push(e);
+    }
+  }
+  const priority = g.basePower.priority ?? 'defense';
+  choices.sort((a, b) => {
+    const rank = (e: Entity) => priority === 'defense' ? (e.turret ? 0 : e.electricDoor ? 1 : 2) : (e.industrial ? 0 : e.electricDoor ? 1 : 2);
+    return rank(a) - rank(b) || a.id.localeCompare(b.id);
+  });
+  return [...sensors, ...choices.slice(0, Math.max(0, freeCapacity))];
 }
 export function industrialStatus(r:RunState,e:Entity):string {
   if(!e.industrial)return 'Not installed';if(!e.industrial.enabled)return 'Off';
@@ -893,19 +1128,64 @@ export function turretStatus(r: RunState, e: Entity): string {
   if(!powerAllocation(r,g).includes(e))return 'Capacity allocated elsewhere'; return 'Ready';
 }
 /** Split the common timeline at the next generator fuel boundary. */
-export function basePowerBoundary(r:RunState,limit:number,online=true):number {
-  let result=limit;for(const g of allRunEntities(r)){if(!g.basePower?.enabled||!g.c)continue;
-    let fuel=g.basePower.energy;if(fuel<=1e-8){const s=C(r,g.c).slots.find(s=>s&&ITEMS[s.key]?.fuel);fuel=s?ITEMS[s.key].fuel!*1000:0;}
-    if(fuel>1e-8)result=Math.min(result,fuel/Math.max(1,powerAllocation(r,g,online).length));
-  }return result;
+export function basePowerBoundary(r: RunState, limit: number, online = true): number {
+  let result = limit;
+  const all = allRunEntities(r);
+  let blockMap: Map<string, number> | undefined;
+  const graphs = new Map<number, FloorPowerGraph>();
+  for (const g of all) {
+    if (!g.basePower?.enabled || !g.c) continue;
+    let fuel = g.basePower.energy;
+    if (fuel <= 1e-8) {
+      const s = C(r, g.c).slots.find(s => s && ITEMS[s.key]?.fuel);
+      fuel = s ? ITEMS[s.key].fuel! * 1000 : 0;
+    }
+    if (fuel > 1e-8) {
+      const fl = entityGlobalCoords(r, g).floor;
+      let gph = graphs.get(fl);
+      if (!gph) {
+        blockMap ??= buildEntityBlockMap(r, all);
+        gph = buildFloorPowerGraph(r, fl, all, blockMap);
+        graphs.set(fl, gph);
+      }
+      result = Math.min(result, fuel / Math.max(1, powerAllocation(r, g, online, gph).length));
+    }
+  }
+  return result;
 }
 /** Fuel is consumed exactly once over each chronological interval. */
-export function stepBasePower(r: RunState, dt: number, now: number, online=true) {
-  for (const e of allRunEntities(r)) { const power=e.basePower; if (!power?.enabled || !e.c) continue;
-    const load=Math.max(1,powerAllocation(r,e,online).length);let left=dt*load;
-    while(left>1e-8){if(power.energy<=1e-8){const slot=C(r,e.c).slots.find(s=>s&&ITEMS[s.key]?.fuel);if(!slot){power.energy=0;break;}power.energy=ITEMS[slot.key].fuel!*1000;const key=slot.key;removeItem(r,e.c,key,1);receipt(r,now-left/load,'power.fuel',`${e.id}:${key}`);}
-      const used=Math.min(left,power.energy);power.energy-=used;left-=used;
+export function stepBasePower(r: RunState, dt: number, now: number, online = true) {
+  const all = allRunEntities(r);
+  const gens = all.filter(e => e.basePower?.enabled && !!e.c);
+  if (!gens.length) return;
+  const blockMap = buildEntityBlockMap(r, all);
+  const graphs = new Map<number, FloorPowerGraph>();
+  const dirtyFloors = new Set<number>();
+  for (const e of gens) {
+    const power = e.basePower!;
+    const fl = entityGlobalCoords(r, e).floor;
+    let gph = dirtyFloors.has(fl) ? undefined : graphs.get(fl);
+    if (!gph) {
+      gph = buildFloorPowerGraph(r, fl, all, blockMap);
+      graphs.set(fl, gph);
+      dirtyFloors.delete(fl);
     }
+    const load = Math.max(1, powerAllocation(r, e, online, gph).length);
+    let left = dt * load;
+    while (left > 1e-8) {
+      if (power.energy <= 1e-8) {
+        const slot = C(r, e.c!).slots.find(s => s && ITEMS[s.key]?.fuel);
+        if (!slot) { power.energy = 0; break; }
+        power.energy = ITEMS[slot.key].fuel! * 1000;
+        const key = slot.key;
+        removeItem(r, e.c!, key, 1);
+        receipt(r, now - left / load, 'power.fuel', `${e.id}:${key}`);
+      }
+      const used = Math.min(left, power.energy);
+      power.energy -= used;
+      left -= used;
+    }
+    if (!hasPowerFuel(r, e)) dirtyFloors.add(fl);
   }
 }
 
@@ -1147,7 +1427,10 @@ export function stepLootRespawn(r: RunState, now: number) {
 }
 /** Destruction and reclaim share the same custody transition. */
 export function destroyStructure(r: RunState, e: Entity, now: number) {
-  if (r.entities[e.id] !== e || e.kind !== 'struct') return null;
+  if (e.kind !== 'struct') return null;
+  if (r.entities[e.id] !== e) {
+    return r.veyraOffscreenEntities?.[e.id] === e ? destroyOffscreenStructure(r, e, now) : null;
+  }
   if (r.rest && (e.id === r.rest.bedId || e.id === r.rest.chestId)) endRest(r, now, 'bed or chest destroyed');
   if (STRUCTS[e.type!]?.layer === 'floor') for (const cabinet of [...entsAt(r,e.tx!,e.ty!)]) if(cabinet.type==='claim' && cabinet.cabinet?.legacy!==true) { destroyStructure(r,cabinet,now); receipt(r,now,'territory.collapse',`${cabinet.id}:lost foundation`); }
   if (STRUCTS[e.type!]?.layer === 'floor') for (const roof of [...entsAt(r, e.tx!, e.ty!)]) if (roof.kind === 'struct' && STRUCTS[roof.type!]?.layer === 'roof') { destroyStructure(r, roof, now); receipt(r, now, 'struct.destroyed', `${roof.type}:lost support`); }
@@ -2647,25 +2930,79 @@ function resolveGardenMapCell(r: RunState, e: Entity): {
   };
 }
 
-function globalCellBlockClass(r: RunState, gtx: number, gty: number, fl: number, entities: Entity[]): number {
-  if (!r.layoutId || !isVeyra05Layout(r.layoutId)) {
-    if (gtx < 0 || gty < 0 || gtx >= WW || gty >= WH) return 1;
-    return blockGrid(r)[gty * WW + gtx];
+function buildEntityBlockMap(r: RunState, entities: Entity[]): Map<string, number> {
+  const map = new Map<string, number>();
+  for (const o of entities) {
+    const op = entityGlobalCoords(r, o);
+    const key = `${op.floor}:${op.gtx},${op.gty}`;
+    let c = 0;
+    if (o.kind === 'struct') {
+      const sd = STRUCTS[o.type!];
+      if (sd?.block && !(o.type!.startsWith('door') && o.open)) c = 3;
+    } else if (o.kind === 'door') {
+      c = o.open ? -1 : 3;
+    } else if (o.kind === 'airdrop' && (o.airdrop?.phase === 'locked' || o.airdrop?.phase === 'open' || o.airdrop?.phase === 'partial')) {
+      c = 3;
+    } else if (o.kind === 'loot' || o.kind === 'cash' || o.kind === 'vendor' || o.kind === 'gen' || o.kind === 'evac' || o.kind === 'recycler') {
+      c = 3;
+    }
+    if (c !== 0) {
+      const prev = map.get(key) ?? 0;
+      if (c === 3 || prev === 0) map.set(key, c);
+    }
   }
-  if (gtx < 0 || gty < 0 || gtx >= FRAME_W || gty >= FRAME_H) return 1;
+  return map;
+}
+
+function globalCellTileAndClass(
+  r: RunState,
+  gtx: number,
+  gty: number,
+  fl: number,
+  entities?: Entity[],
+  entityBlockMap?: Map<string, number>,
+): { tile: number; cls: number } {
+  if (!r.layoutId || !isVeyra05Layout(r.layoutId)) {
+    if (gtx < 0 || gty < 0 || gtx >= WW || gty >= WH) return { tile: T.CLIFF, cls: 1 };
+    return { tile: effTile(r, gtx, gty), cls: blockGrid(r)[gty * WW + gtx] };
+  }
+  if (gtx < 0 || gty < 0 || gtx >= FRAME_W || gty >= FRAME_H) return { tile: T.CLIFF, cls: 1 };
   const [ox, oy] = windowOrigin(r);
   const lx = gtx - ox, ly = gty - oy;
-  if (lx >= 0 && lx < WW && ly >= 0 && ly < WH && fl === activeFloor(r) && r.layoutId === getActiveLayout()) {
-    return blockGrid(r)[ly * WW + lx];
+  const inCurrentWindow = lx >= 0 && lx < WW && ly >= 0 && ly < WH;
+  if (inCurrentWindow && fl === activeFloor(r) && r.layoutId === getActiveLayout()) {
+    let cls = blockGrid(r)[ly * WW + lx];
+    if (cls !== 3 && (lx === 0 || lx === WW - 1 || ly === 0 || ly === WH - 1) && r.veyraOffscreenEntities) {
+      const entCls = entityBlockMap
+        ? (entityBlockMap.get(`${fl}:${gtx},${gty}`) ?? 0)
+        : (() => {
+            for (const o of entities ?? allRunEntities(r)) {
+              const op = entityGlobalCoords(r, o);
+              if (op.floor !== fl || op.gtx !== gtx || op.gty !== gty) continue;
+              if (o.kind === 'struct') { const sd = STRUCTS[o.type!]; if (sd?.block && !(o.type!.startsWith('door') && o.open)) return 3; }
+              else if (o.kind === 'door' && !o.open) return 3;
+              else if (o.kind === 'airdrop' && (o.airdrop?.phase === 'locked' || o.airdrop?.phase === 'open' || o.airdrop?.phase === 'partial')) return 3;
+              else if (o.kind === 'loot' || o.kind === 'cash' || o.kind === 'vendor' || o.kind === 'gen' || o.kind === 'evac' || o.kind === 'recycler') return 3;
+            }
+            return 0;
+          })();
+      if (entCls === 3) cls = 3;
+    }
+    return { tile: effTile(r, lx, ly), cls };
   }
-  const cww = getWindowWorldForGlobalTile(gtx, gty);
-  const cx = gtx - cww.win.originTx, cy = gty - cww.win.originTy;
-  if (cx < 0 || cy < 0 || cx >= WW || cy >= WH) return 1;
+  const cww = inCurrentWindow ? getWindowWorld(r.layoutId) : getWindowWorldForGlobalTile(gtx, gty);
+  const cx = inCurrentWindow ? lx : gtx - cww.win.originTx;
+  const cy = inCurrentWindow ? ly : gty - cww.win.originTy;
+  if (cx < 0 || cy < 0 || cx >= WW || cy >= WH) return { tile: T.CLIFF, cls: 1 };
   const ci = cy * WW + cx;
   const layer = fl === 0 ? cww.floors.ground : cww.floors.layers.get(fl as -1 | 0 | 1 | 2);
-  if (!layer) return 1;
+  if (!layer) return { tile: T.CLIFF, cls: 1 };
   const gi = globalIndex(gtx, gty);
-  const tm = fl === 0 ? r.veyraGlobalTerrain?.[gi] : undefined;
+  const localFs = inCurrentWindow && fl !== activeFloor(r) ? r.veyraFloorState?.[fl] : undefined;
+  const activeRunDirect = inCurrentWindow && fl === activeFloor(r);
+  const tm = activeRunDirect
+    ? r.terrain[ci]
+    : (fl === 0 ? r.veyraGlobalTerrain?.[gi] : undefined);
   const baseTile = layer.tiles[ci];
   const tile = tm && (!tm.until || tm.until > r.clock.simMs) ? tm.t : baseTile;
   let cls = tileClass(tile);
@@ -2673,7 +3010,9 @@ function globalCellBlockClass(r: RunState, gtx: number, gty: number, fl: number,
   if (cls === 0 && !(tile === T.ICE && [T.DEEP, T.SHALLOW, T.RIVER].includes(baseTile)) && !layer.walkable[ci] && !isAuthoredDoor) cls = 1;
   if (cls === 0) {
     let srcKey = layer.sources[ci];
-    const sst = fl === 0 ? r.veyraGlobalSources?.[gi] : r.veyraGlobalFloorState?.[fl]?.sources?.[gi];
+    const sst = activeRunDirect
+      ? r.sources[ci]
+      : (localFs?.sources?.[ci] ?? (fl === 0 ? r.veyraGlobalSources?.[gi] : r.veyraGlobalFloorState?.[fl]?.sources?.[gi]));
     if (srcKey && sst?.burnt) srcKey = 'deadtree';
     if (srcKey) {
       const def = SOURCES[srcKey];
@@ -2682,10 +3021,13 @@ function globalCellBlockClass(r: RunState, gtx: number, gty: number, fl: number,
     }
   }
   if ((cls === 0 || cls === 4) && layer.solidProps[ci]) cls = 2;
+  if (fl === 0 && activeRunDirect && (r.natureTrees || []).some(t => t.tx === cx && t.ty === cy)) cls = 2;
   for (const st of layer.statics) {
     if (st.tx !== cx || st.ty !== cy) continue;
     if (st.kind === 'door') {
-      const open = fl === 0 ? r.veyraGlobalDoors?.[gi] : r.veyraGlobalFloorState?.[fl]?.doors?.[gi];
+      const open = localFs?.doors && `${cx},${cy}` in localFs.doors
+        ? localFs.doors[`${cx},${cy}`]
+        : (fl === 0 ? r.veyraGlobalDoors?.[gi] : r.veyraGlobalFloorState?.[fl]?.doors?.[gi]);
       if (!open) cls = 3;
       else if (!tm && baseTile === T.PWALL) cls = 0;
     } else if (st.kind === 'loot') {
@@ -2694,25 +3036,44 @@ function globalCellBlockClass(r: RunState, gtx: number, gty: number, fl: number,
       cls = 3;
     }
   }
-  for (const o of entities) {
-    const op = entityGlobalCoords(r, o);
-    if (op.floor !== fl || op.gtx !== gtx || op.gty !== gty) continue;
-    if (o.kind === 'struct') { const sd = STRUCTS[o.type!]; if (sd?.block && !(o.type!.startsWith('door') && o.open)) cls = 3; }
-    else if (o.kind === 'door') { if (!o.open) cls = 3; else if (!tm && baseTile === T.PWALL && isAuthoredDoor) cls = 0; }
-    else if (o.kind === 'airdrop' && (o.airdrop?.phase === 'locked' || o.airdrop?.phase === 'open' || o.airdrop?.phase === 'partial')) cls = 3;
-    else if (o.kind === 'loot' || o.kind === 'cash' || o.kind === 'vendor' || o.kind === 'gen' || o.kind === 'evac' || o.kind === 'recycler') cls = 3;
-  }
-  return cls;
+  const entCls = entityBlockMap
+    ? (entityBlockMap.get(`${fl}:${gtx},${gty}`) ?? 0)
+    : (() => {
+        let best = 0;
+        for (const o of entities ?? []) {
+          const op = entityGlobalCoords(r, o);
+          if (op.floor !== fl || op.gtx !== gtx || op.gty !== gty) continue;
+          if (o.kind === 'struct') { const sd = STRUCTS[o.type!]; if (sd?.block && !(o.type!.startsWith('door') && o.open)) return 3; }
+          else if (o.kind === 'door') { if (!o.open) return 3; if (best === 0) best = -1; }
+          else if (o.kind === 'airdrop' && (o.airdrop?.phase === 'locked' || o.airdrop?.phase === 'open' || o.airdrop?.phase === 'partial')) return 3;
+          else if (o.kind === 'loot' || o.kind === 'cash' || o.kind === 'vendor' || o.kind === 'gen' || o.kind === 'evac' || o.kind === 'recycler') return 3;
+        }
+        return best;
+      })();
+  if (entCls === 3) cls = 3;
+  else if (entCls === -1 && !tm && baseTile === T.PWALL && isAuthoredDoor && cls === 1) cls = 0;
+  return { tile, cls };
 }
 
-function clearTenderSegment(r: RunState, a: Entity, b: Entity, entities: Entity[]): boolean {
-  const fa = (a as any).floor ?? 0, fb = (b as any).floor ?? 0;
-  if (fa !== fb) return false;
+function globalCellBlockClass(r: RunState, gtx: number, gty: number, fl: number, entities: Entity[], entityBlockMap?: Map<string, number>): number {
+  return globalCellTileAndClass(r, gtx, gty, fl, entities, entityBlockMap).cls;
+}
+
+function clearGlobalPhysicalLine(
+  r: RunState,
+  a: Entity,
+  b: Entity,
+  entities?: Entity[],
+  entityBlockMap?: Map<string, number>,
+): boolean {
+  const pa = entityGlobalCoords(r, a), pb = entityGlobalCoords(r, b);
+  if (pa.floor !== pb.floor) return false;
   if (!r.layoutId || !isVeyra05Layout(r.layoutId)) return clearSegment(r, a, b);
-  if (r.entities[a.id] === a && r.entities[b.id] === b && fa === activeFloor(r) && r.layoutId === getActiveLayout()) {
+  if (pa.onscreen && pb.onscreen && pa.floor === activeFloor(r) && r.layoutId === getActiveLayout()) {
     return clearSegment(r, a, b);
   }
-  const pa = entityGlobalCoords(r, a), pb = entityGlobalCoords(r, b);
+  const all = entities ?? allRunEntities(r);
+  const blockMap = entityBlockMap ?? buildEntityBlockMap(r, all);
   const sx = Math.floor(pa.gx / TILE), sy = Math.floor(pa.gy / TILE);
   const ex = Math.floor(pb.gx / TILE), ey = Math.floor(pb.gy / TILE);
   let x = sx, y = sy;
@@ -2722,7 +3083,7 @@ function clearTenderSegment(r: RunState, a: Entity, b: Entity, entities: Entity[
   let ty = dy ? ((stepy > 0 ? (y + 1) * TILE : y * TILE) - pa.gy) / dy : Infinity;
   const clear = (cx: number, cy: number) => {
     if ((cx === sx && cy === sy) || (cx === ex && cy === ey)) return true;
-    const cls = globalCellBlockClass(r, cx, cy, pa.floor, entities);
+    const cls = globalCellBlockClass(r, cx, cy, pa.floor, all, blockMap);
     return cls !== 1 && cls !== 2 && cls !== 3 && cls !== 5;
   };
   while (x !== ex || y !== ey) {
@@ -2734,6 +3095,10 @@ function clearTenderSegment(r: RunState, a: Entity, b: Entity, entities: Entity[
     if (!clear(x, y)) return false;
   }
   return true;
+}
+
+function clearTenderSegment(r: RunState, a: Entity, b: Entity, entities: Entity[], entityBlockMap?: Map<string, number>): boolean {
+  return clearGlobalPhysicalLine(r, a, b, entities, entityBlockMap);
 }
 
 export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean, at: number = gs.run!.clock.lastSimAt) {

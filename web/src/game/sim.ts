@@ -1467,7 +1467,8 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     dt = territoryBoundary(r, dt);
     dt = tenderBoundary(r, isWet(weather), dt, t);
     for (const tree of r.natureTrees||[]) if(tree.until>r.clock.simMs)dt=Math.min(dt,tree.until-r.clock.simMs);
-    for(const e of Object.values(r.entities)){if(e.poiPower&&e.power===1&&e.poiPower.expiresAt>t)dt=Math.min(dt,e.poiPower.expiresAt-t);if(e.open&&e.poiDoor&&e.poiDoor.closeAt>t)dt=Math.min(dt,e.poiDoor.closeAt-t);if(e.open&&e.electricDoor?.releaseUntil&&e.electricDoor.releaseUntil>t)dt=Math.min(dt,e.electricDoor.releaseUntil-t);}
+    for(const e of Object.values(r.entities)){if(e.poiPower&&e.power===1&&e.poiPower.expiresAt>t)dt=Math.min(dt,e.poiPower.expiresAt-t);if(e.open&&e.poiDoor&&e.poiDoor.closeAt>t)dt=Math.min(dt,e.poiDoor.closeAt-t);}
+    for(const e of allRunEntities(r)){if(e.open&&e.electricDoor?.releaseUntil&&e.electricDoor.releaseUntil>t)dt=Math.min(dt,e.electricDoor.releaseUntil-t);}
     for (const due of Object.values(r.lootRespawnAt || {})) if (due > t) dt = Math.min(dt, due - t);
     for (const st of Object.values(r.sources)) { if (st.fire && st.fire > r.clock.simMs) dt = Math.min(dt, st.fire - r.clock.simMs); if(st.fireSpreadAt && st.fireSpreadAt > r.clock.simMs) dt = Math.min(dt, st.fireSpreadAt - r.clock.simMs); }
     for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);

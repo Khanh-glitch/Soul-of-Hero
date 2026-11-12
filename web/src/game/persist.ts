@@ -18,6 +18,7 @@ import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
 import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
 import { isVeyra05Layout } from '../veyra05/scenes';
+import { FRAME_W, FRAME_H } from '../veyra05/frame';
 import { getWindowWorld } from '../veyra05/window';
 import { activeFloor, onActiveFloor, syncFloor } from '../veyra05/floors';
 
@@ -358,7 +359,8 @@ export function validate(raw: any): GameState | null {
   if(r.player.vehicle!==undefined) {const e=r.entities[r.player.vehicle];if(typeof r.player.vehicle!=='string'||!e||e.kind!=='vehicle'||r.player.dead||r.player.pulling||r.spiritTransit||r.player.x!==e.x||r.player.y!==e.y)return null;}
   if(([...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})] as any[]).filter(e=>e.kind==='recycler').length>1)return null;
   for(const [key,offer] of Object.entries(VENDOR_SPARES)){const stock=r.vendorStock[`spares:${key}`];if(stock!==undefined && (!integer(stock) || stock>offer.stock))return null;}
-  for(const g of Object.values(r.entities) as any[]) if(g.basePower&&g.basePower.network!=='wire-v1'){const links=(Object.values(r.entities) as any[]).filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
+  const allValidatedEntities = [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})] as any[];
+  for(const g of allValidatedEntities) if(g.basePower&&g.basePower.network!=='wire-v1'){const links=allValidatedEntities.filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
   // B05-R oil sources: registry keyed by tile; only the labelled test-fixture authority is accepted (production oil sites are not authorized).
   if (r.oilSources !== undefined && r.oilTestFixture !== true) return null;   // domain separation: fixture sources need the fixture marker
   if (r.oilSources !== undefined) { if (!obj(r.oilSources)) return null; for (const [key, src] of Object.entries(r.oilSources) as any[]) { if (key !== `oil:${src?.tx}:${src?.ty}` || !integer(src?.tx) || !integer(src?.ty) || src?.authority !== 'test-fixture-v1' || !integer(src?.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; } }
@@ -370,9 +372,22 @@ export function validate(raw: any): GameState | null {
     if (!veyraWw || !obj(r.veyraOffscreenEntities)) return null;
     for (const [oid, oe] of Object.entries(r.veyraOffscreenEntities) as [string, any][]) {
       if (!obj(oe) || oe.id !== oid || r.entities[oid] || !beforeNext(oid, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof oe.kind !== 'string' || !finite(oe.x) || !finite(oe.y)) return null;
+      if (oe.kind === 'struct' && !has(STRUCTS, oe.type)) return null;
       if (oe.kind === 'recycler') {
         if (webRecyclerSite(world, r.layoutId) || oe.tx !== VEYRA_RECYCLER_SITE.tx || oe.ty !== VEYRA_RECYCLER_SITE.ty || oe.x !== VEYRA_RECYCLER_SITE.tx * 16 + 8 || oe.y !== VEYRA_RECYCLER_SITE.ty * 16 + 8 || oe.poi !== 'factory' || oe.type !== undefined || !obj(oe.station) || !finite(oe.station.burn) || oe.station.burn < 0 || r.custody[oe.station.fuelC]?.kind !== 'fuel' || r.custody[oe.station.outC]?.kind !== 'out' || !jobs(oe.station.queue, 'recycler') || oe.station.queue?.length > 1) return null;
       }
+      if (oe.basePower !== undefined && (!obj(oe.basePower) || oe.type !== 'base_generator' || typeof oe.basePower.enabled !== 'boolean' || !finite(oe.basePower.energy) || oe.basePower.energy < 0 || (oe.basePower.capacity !== undefined && oe.basePower.capacity !== 2) || (oe.basePower.priority !== undefined && !['defense','production'].includes(oe.basePower.priority)) || (oe.basePower.network !== undefined && oe.basePower.network!=='wire-v1') || !oe.c)) return null;
+      if(['power_cable','power_switch','pressure_switch','door_powered'].includes(oe.type)) {
+        if(oe.kind!=='struct'||!integer(oe.tx)||!integer(oe.ty)||oe.tx<1||oe.ty<1||oe.tx>=FRAME_W-1||oe.ty>=FRAME_H-1||oe.x!==oe.tx*TILE+8||oe.y!==oe.ty*TILE+8)return null;
+        if(oe.type==='power_switch'&&(!obj(oe.wireSwitch)||oe.wireSwitch.version!=='wire-v1'||typeof oe.wireSwitch.on!=='boolean'))return null;
+        if(oe.type==='door_powered'&&(!obj(oe.electricDoor)||oe.electricDoor.version!=='wire-v1'||!Array.isArray(oe.electricDoor.interior)||oe.electricDoor.interior.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===oe.electricDoor.interior[0]&&v[1]===oe.electricDoor.interior[1])||(oe.electricDoor.releaseUntil!==undefined&&(!finite(oe.electricDoor.releaseUntil)||oe.electricDoor.releaseUntil<r.startedAt))))return null;
+      }
+      if(oe.irSensor!==undefined&&(oe.type!=='ir_sensor'||!obj(oe.irSensor)||oe.irSensor.version!=='ir-v1'||typeof oe.irSensor.enabled!=='boolean'))return null;
+      if(oe.type==='ir_sensor'&&oe.irSensor===undefined)return null;
+      if(oe.wireSwitch!==undefined&&oe.type!=='power_switch'||oe.electricDoor!==undefined&&oe.type!=='door_powered')return null;
+      if (oe.type === 'base_generator' && !oe.basePower || oe.type === 'arrow_turret' && !oe.turret) return null;
+      if (oe.industrial !== undefined && (!obj(oe.industrial) || oe.type !== 'workbench' || !oe.station || typeof oe.industrial.enabled !== 'boolean' || (oe.industrial.generatorId !== undefined && (typeof oe.industrial.generatorId !== 'string' || !oe.industrial.generatorId)))) return null;
+      if (oe.turret !== undefined && (!obj(oe.turret) || oe.type !== 'arrow_turret' || typeof oe.turret.enabled !== 'boolean' || !finite(oe.turret.cooldown) || oe.turret.cooldown < 0 || !finite(oe.turret.angle) || (oe.turret.tracking !== undefined && typeof oe.turret.tracking !== 'boolean') || (oe.turret.generatorId !== undefined && (typeof oe.turret.generatorId !== 'string' || !oe.turret.generatorId)) || !oe.c)) return null;
       if (oe.garden !== undefined && (oe.type !== 'garden' || !obj(oe.garden) || (oe.garden.crop !== null && !['crop', 'herb'].includes(oe.garden.crop)) || !finite(oe.garden.growth) || oe.garden.growth < 0 || oe.garden.growth > 1 || !finite(oe.garden.water) || oe.garden.water < 0 || oe.garden.water > 3 || (oe.garden.coldFrame !== undefined && oe.garden.coldFrame !== true))) return null;
       if (oe.farm !== undefined && (!obj(oe.farm) || oe.kind !== 'struct' || oe.type !== 'farm_controller' || !oe.c || r.custody[oe.c]?.slots.length !== 3 || typeof oe.farm.enabled !== 'boolean' || !['crop', 'herb'].includes(oe.farm.crop) || !finite(oe.farm.energy) || oe.farm.energy < 0 || oe.farm.energy > 90000 || ['gardenId', 'barrelId', 'chestId'].some(k => oe.farm[k] !== undefined && (typeof oe.farm[k] !== 'string' || !oe.farm[k])) || (oe.farm.lastCode !== undefined && (typeof oe.farm.lastCode !== 'string' || oe.farm.lastCode.length > 24)))) return null;
       if (oe.type === 'farm_controller' && !oe.farm) return null;
