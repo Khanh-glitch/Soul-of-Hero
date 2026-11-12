@@ -1162,7 +1162,8 @@ export function stepBasePower(r: RunState, dt: number, now: number, online = tru
   const graphs = new Map<number, FloorPowerGraph>();
   const dirtyFloors = new Set<number>();
   for (const e of gens) {
-    const power = e.basePower!;
+    const power = e.basePower;
+    if (!power?.enabled || !e.c) continue;
     const fl = entityGlobalCoords(r, e).floor;
     let gph = dirtyFloors.has(fl) ? undefined : graphs.get(fl);
     if (!gph) {
@@ -1174,11 +1175,11 @@ export function stepBasePower(r: RunState, dt: number, now: number, online = tru
     let left = dt * load;
     while (left > 1e-8) {
       if (power.energy <= 1e-8) {
-        const slot = C(r, e.c!).slots.find(s => s && ITEMS[s.key]?.fuel);
+        const slot = C(r, e.c).slots.find(s => s && ITEMS[s.key]?.fuel);
         if (!slot) { power.energy = 0; break; }
         power.energy = ITEMS[slot.key].fuel! * 1000;
         const key = slot.key;
-        removeItem(r, e.c!, key, 1);
+        removeItem(r,e.c,key,1);
         receipt(r, now - left / load, 'power.fuel', `${e.id}:${key}`);
       }
       const used = Math.min(left, power.energy);
