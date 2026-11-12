@@ -1,0 +1,63 @@
+name: SOH Veyra Global Spawn — Real Browser Smoke
+on:
+  push:
+    branches: [feature/veyra-global-start-safety-20261112]
+    paths:
+      - 'web/src/game/engine.ts'
+      - 'web/src/ui/Title.tsx'
+      - 'web/src/veyra05/global-start-discovery.ts'
+      - 'web/src/veyra05/global-spawn-eligibility.ts'
+      - 'web/e2e/veyra-global-start-real-browser.mjs'
+      - '.github/workflows/veyra-global-start-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser-global-start:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install exact Web dependencies
+        working-directory: web
+        run: npm ci
+      - name: Install browser
+        working-directory: web
+        run: npx --no-install playwright install --with-deps chromium
+      - name: Build exact current source SHA for HTTP
+        working-directory: web
+        run: npx --no-install vite build --config vite.http.config.ts
+      - name: Start exact-build Web
+        working-directory: web
+        run: |
+          npx --no-install vite preview --config vite.http.config.ts --host 127.0.0.1 --port 4173 --strictPort > /tmp/veyra-pr55-preview.log 2>&1 &
+          for attempt in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/veyra-pr55-preview.log
+          exit 1
+      - name: REAL menu, keyboard, save and reload
+        working-directory: web
+        env:
+          GAME_URL: http://127.0.0.1:4173/
+          BUILD_SHA: ${{ github.sha }}
+        run: node e2e/veyra-global-start-real-browser.mjs
+      - name: Upload exact SHA screenshots and result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veyra-pr55-real-browser-${{ github.sha }}-${{ github.run_attempt }}
+          path: web/evidence/veyra-global-start-browser/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Print preview logs on failure
+        if: failure()
+        run: cat /tmp/veyra-pr55-preview.log || true

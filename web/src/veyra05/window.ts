@@ -294,7 +294,12 @@ export function buildWindowWorld(layoutId: string): WindowWorld {
         }
       }
     }
-    if (anyWet === 0) spawnEligible.fill(1);
+    // A window with no viable freshwater-nearby cells can never satisfy
+    // chooseLegalSpawn's mandatory 30-step freshwater rule.  Previously this
+    // fallback marked ALL 40k cells eligible, causing futile rejection scans
+    // (and misleading diagnostics) without creating a single legal spawn.
+    // Reject it explicitly; do not mint water or relax the survival contract.
+    if (anyWet === 0) spawnEligible.fill(0);
   }
 
   const originAu = windowOriginAu(win);
