@@ -4,6 +4,7 @@ on:
     branches: [audit/item-recipe-network-20261112]
     paths:
       - 'web/scripts/export-item-network.ts'
+      - 'web/src/veyra05/item-network-export.audit.test.ts'
       - '.github/workflows/soh-item-formula-atlas.yml'
   workflow_dispatch:
 permissions:
@@ -24,7 +25,7 @@ jobs:
         run: npm ci
       - name: Export graph from exact current runtime source
         working-directory: web
-        run: npx --no-install vite-node scripts/export-item-network.ts
+        run: npx --no-install vitest run --fileParallelism=false src/veyra05/item-network-export.audit.test.ts
       - name: Verify source catalog counts and non-null archive
         working-directory: web
         run: |
