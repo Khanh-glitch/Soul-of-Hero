@@ -477,3 +477,13 @@ Read-only polygon/POI study from GOLD `project.zones[].ring` and `project.pois[]
 - **ECONOMY DESIGN — CONTINUES:** proceed with Veyra's source-class × grade × actual physical room/access × stock/renewal matrix across all eligible geography; not fixed start count.
 - **IMPLEMENTATION STATE:** NOT CHANGED. Current runtime still has four starting windows until code work is specifically approved. No claim of native or browser gameplay run made here.
 - **SOURCE STATUS:** LI spawn area randomness supported by historical guide; exact algorithm/count unknown. SOH Bible is stronger for desired behavior than the four current map anchors. All proposed full-world QA outcomes still untested.
+
+### 13.6 POI-function-aware coverage check (more precise static diagnostic)
+
+Excluding 6 Elder sites, 6 special Ragnarok cash POIs, 2 vendors, and 3 evacuations = **17 non-ordinary POIs**; **64 ordinary/interactable exploration POI roles** remain in the 81-POI registry. This is a provisional class filter, NOT proof all 64 provide loot to a fresh character. Recompute the centroid/straight-line proxy excluding those 17:
+- Within 75 AU of each of the 23 named zone polygon centroids, the counts of **ordinary POI IDs** are: zero: **4 zones**, exactly one: **12 zones**, exactly two: **4 zones**, three or more: **3 zones**.
+- Four zero-centroid/proxy zones: **Mossbrook Valley Floor** (nearest `po_sapgrove`, ~83 AU), **Greyback Foothill Shelf** (nearest `po_greyquarry`, ~107 AU), **Dune Rock Outcrop** (nearest `po_cairns`, ~83 AU), **North Woods Hollow** (nearest `po_academy`, ~142 AU; likely gated specialist). All four have at least one *ordinary POI ID* inside 150 AU by straight line; not an accessibility pass.
+- **Misleading-nearest examples:** Ironvein Ridge: nearest any-POI `po_rc_meridian` (Ragnarok cash) ~36 AU vs nearest ordinary `po_ironvein` ~48 AU. Westmouth: nearest any `po_evac_west` (evac) ~48 AU vs nearest ordinary `po_westmouth` ~55 AU. Kestrel: nearest any `po_rc_kestrel` (Ragnarok cash) ~32 AU vs ordinary `po_kestrel` ~52 AU. North Woods: nearest `po_rc_dam` (special cash) ~139 AU vs ordinary `po_academy` ~142 AU.
+- **Design correction:** a radius to the nearest named POI is NOT a radius to accessible tools, scrap, food, wood, freshwater or industrial stock. Categorize each POI by *physical source role and actual access* and include roadside/natural sources, otherwise tests produce false-positive economics. This analysis cannot identify which geographic cells are legal spawns and has not simulated routes.
+
+No new spawn count, no uniform POI-distance target, no changes to quantities/cooldowns.
