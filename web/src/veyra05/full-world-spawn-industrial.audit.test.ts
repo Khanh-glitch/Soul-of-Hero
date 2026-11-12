@@ -45,7 +45,9 @@ function dominant(arr: Record<string, number>) {
   return Object.entries(arr).sort((a,b)=>b[1]-a[1]).slice(0,14);
 }
 function add(count: Record<string,number>, key: string, inc=1) { count[key]=(count[key]??0)+inc; }
-const blocked = new Set<number>([T.DEEP,T.SHALLOW,T.RIVER,T.CLIFF,T.PWALL,T.LAVA]);
+// Actual player collision: b=4 SHALLOW/RIVER can be waded (not cargo passable).
+// This graph is a GEOMETRY-ONLY superset of physical player reach: static props/doors/sources still block.
+const blocked = new Set<number>([T.DEEP,T.CLIFF,T.PWALL,T.LAVA]);
 const unsafe = new Set<number>([T.SNOW,T.ASH,T.TOXIC]);
 function centroid(ring: number[][]): [number,number] {
   let a=0, x=0, y=0;
@@ -118,6 +120,7 @@ function globalTerrainScan() {
     streamStats:streamStats(),
     disclaimers:[
       'Full raster uses chunk ground tiles, not POI door/solid-prop/collision overlays',
+      'Player can wade SHALLOW/RIVER (collision class 4); do not use this graph to certify cart/vehicle transport',
       'Global terrain component count is NOT a count of eligible player spawn clusters',
       'No sourceV3 procurement/durability/real interaction modeled by the raster scan',
     ],
