@@ -58,7 +58,6 @@ export function ReturnDigest({
     <div
       className="plate return-digest fadein"
       data-testid="return-digest"
-      style={{ right: 4, top: 78 }}
       onMouseDown={e => e.stopPropagation()}
     >
       <div className="return-digest__head">

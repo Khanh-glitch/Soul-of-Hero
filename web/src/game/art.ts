@@ -312,6 +312,27 @@ export function buildStructs() {
   S.oil_pump_dry = mk(20, 24, g => drawOilPump(g, 'dry'));
   S.oil_pump_run_0 = mk(20, 24, g => drawOilPump(g, 'run', 0));
   S.oil_pump_run_1 = mk(20, 24, g => drawOilPump(g, 'run', 1));
+  // Catalog aliases & circuit device icons so BuildBar / SurvivorScreen / canvas preview never fall back to blank slots.
+  S.oil_pump = S.oil_pump_idle;
+  S.farm_controller = S.gen;
+  S.power_cable = mk(16, 16, g => {
+    R(g, 1, 9, 14, 4, '#302b2a'); R(g, 1, 10, 14, 2, '#d99a38');
+    R(g, 6, 3, 4, 8, '#302b2a'); R(g, 7, 3, 2, 8, '#d99a38');
+    P(g, 7, 10, '#ffe39a'); P(g, 8, 10, '#ffe39a');
+  });
+  S.power_switch = mk(16, 16, g => {
+    R(g, 1, 10, 14, 4, '#302b2a'); R(g, 1, 11, 14, 2, '#d99a38');
+    R(g, 3, 3, 10, 8, '#474750'); R(g, 5, 5, 6, 3, '#d76760'); P(g, 6, 5, '#ffb0a0');
+  });
+  S.pressure_switch = mk(16, 16, g => {
+    R(g, 1, 10, 14, 4, '#302b2a'); R(g, 1, 11, 14, 2, '#d99a38');
+    R(g, 3, 4, 10, 7, '#474750'); R(g, 4, 5, 8, 4, '#e3c65a'); R(g, 5, 5, 6, 1, '#fff3b0');
+  });
+  S.door_powered = mk(16, 24, g => {
+    R(g, 0, 0, 16, 10, '#5a3a22'); R(g, 1, 8, 14, 16, '#6a7280');
+    R(g, 1, 12, 14, 1, '#3a3e46'); R(g, 1, 19, 14, 1, '#3a3e46');
+    R(g, 7, 8, 1, 16, 'rgba(0,0,0,0.3)'); R(g, 11, 14, 3, 3, '#e2bf52'); P(g, 12, 15, '#fff3b0');
+  });
   return S;
 }
 

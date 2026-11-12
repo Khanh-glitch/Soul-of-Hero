@@ -39,7 +39,7 @@ async function assertCanvasAndViewport(page, label, viewport) {
     let nonBlack = 0;
     for (let i = 0; i < mid.length; i += 4) if (mid[i] > 2 || mid[i + 1] > 2 || mid[i + 2] > 2) nonBlack++;
     const boxes = [];
-    for (const sel of ['.panel', '.ledger', '.buildbar', '.sv']) {
+    for (const sel of ['.panel', '.ledger', '.buildbar', '.sv', '.return-digest', '.waymark']) {
       for (const el of document.querySelectorAll(sel)) {
         const st = getComputedStyle(el);
         if (st.display === 'none' || st.visibility === 'hidden') continue;
@@ -50,7 +50,25 @@ async function assertCanvasAndViewport(page, label, viewport) {
         }
       }
     }
-    return { ok: nonBlack > 0 && boxes.length === 0, nonBlack, overflow: boxes, width: c.width, height: c.height };
+    const overlaps = [];
+    const rightCol = document.querySelector('.hud-col--right');
+    if (rightCol) {
+      const children = Array.from(rightCol.children).map((el) => ({ cls: el.className, r: el.getBoundingClientRect() })).filter((x) => x.r.width > 0 && x.r.height > 0);
+      for (let i = 0; i < children.length; i++) {
+        for (let j = i + 1; j < children.length; j++) {
+          const a = children[i].r, b = children[j].r;
+          const ix = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+          const iy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+          if (ix > 2 && iy > 2) overlaps.push({ a: children[i].cls, b: children[j].cls, ix: Math.round(ix), iy: Math.round(iy) });
+        }
+      }
+    }
+    const blankTiles = [];
+    for (const tile of document.querySelectorAll('.sv-tile')) {
+      const img = tile.querySelector('img.px');
+      if (!img || !img.complete || img.naturalWidth === 0) blankTiles.push(tile.getAttribute('data-recipe') || 'unknown');
+    }
+    return { ok: nonBlack > 0 && boxes.length === 0 && overlaps.length === 0 && blankTiles.length === 0, nonBlack, overflow: boxes, overlaps, blankTiles, width: c.width, height: c.height };
   }, { vw: viewport[0], vh: viewport[1] });
   assert.equal(check.ok, true, `${label} UI/canvas check failed: ${JSON.stringify(check)}`);
 }
