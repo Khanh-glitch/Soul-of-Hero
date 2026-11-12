@@ -2,13 +2,14 @@
  * SOH Milestone M5 — Complete Live Item Function Audit & Recipe Route Audit Generator.
  *
  * Pure read-only introspection across live `catalog.ts`, `recycler.ts`,
- * `industrial-proof.ts`, `journey.ts`, `airdrop.ts`, `creator-loot.ts`,
- * `world.ts`, `loot-ecology.ts`, `balance.v1.json`, and all 12 `VEYRA05_SCENES`.
+ * `industrial-proof.ts`, `husbandry.ts`, `journey.ts`, `airdrop.ts`, `creator-loot.ts`,
+ * `world.ts`, `loot-ecology.ts`, `balance.v1.json`, all 12 `VEYRA05_SCENES`,
+ * and all 82 Veyra POIs across Floor 0 and Floor -1.
  *
  * Emits:
- *  - `SOH_ITEM_FUNCTION_AUDIT.csv` (100% of `ITEMS`)
- *  - `SOH_RECIPE_ROUTE_AUDIT.csv` (all `RECIPES`, `COMPONENT_RECIPES`, tool/drive recovery,
- *    refinery, garden, Creator Core reload, upgrades, vendor, & structural device routes)
+ *  - `SOH_ITEM_FUNCTION_AUDIT.csv` (100% of `ITEMS`, 17 columns incl. `verification_tier`)
+ *  - `SOH_RECIPE_ROUTE_AUDIT.csv` (RECIPES, Recycler, Core reload, Devices, Garden,
+ *    Husbandry/Butchery, Research, Vendor/Escrow, Offscreen parity, 17 columns incl. `verification_tier`)
  */
 
 import {
@@ -35,18 +36,25 @@ import {
   WORKBENCH_UPGRADE,
   WORKBENCH_UPGRADE_III,
   permitsDirectedResearch,
-  requiredStationLevel,
 } from './catalog';
 import { BAL } from './core';
 import { creatorLootV1 } from './creator-loot';
+import { BUTCHER_YIELDS, HUSBANDRY_YIELDS } from './husbandry';
 import { expand, ieValue, integerTree, proveItem } from './industrial-proof';
 import { DAILY_MILESTONES, milestoneRewardSpec } from './journey';
 import { LOOT_B04_ROLES, LOOT_B05_TOOLBOX_GRADE, LOOT_CLASSES } from './loot-ecology';
 import { COMPONENT_RECIPES, componentRuleSnapshot, recoveryPlanFor } from './recycler';
 import { getActiveLayout, getWorld, setActiveLayout } from './world';
-import { VEYRA05_SCENES } from '../veyra05/scenes';
-import { getWindowWorld } from '../veyra05/window';
-import { ORDINARY_CREATURE_HABITATS, VEYRA_SIDE_BOSS_SITES } from '../veyra05/ecosystem';
+import { authoredPlan } from '../veyra05/floors';
+import {
+  ORDINARY_CREATURE_HABITATS,
+  VEYRA_PRIMORDIAL_SITES,
+  VEYRA_SIDE_BOSS_SITES,
+} from '../veyra05/ecosystem';
+import { FRAME_H, FRAME_W, WINDOW_H, WINDOW_W, auToTile } from '../veyra05/frame';
+import { POIS } from '../veyra05/reader';
+import { VEYRA05_SCENES, layoutIdAt } from '../veyra05/scenes';
+import { getWindowWorld, type WindowWorld } from '../veyra05/window';
 
 const csvCell = (val: unknown): string => {
   const s = String(val ?? '');
@@ -64,10 +72,9 @@ const CREATOR_CORE_KEYS = new Set(
 const LEGACY_CORE_KEYS = new Set(
   Object.keys(ITEMS).filter((k) => Boolean(ITEMS[k]?.core) && !ITEMS[k]?.creatorCore),
 );
-const ELDER_STONE_KEYS = new Set([
-  ...Object.values(ELDERS).map((e) => e.stone),
-  ...Object.values(PRIMORDIAL_ELDERS).map((e) => e.stone),
-]);
+const LEGACY_ELDER_STONE_KEYS = new Set(Object.values(ELDERS).map((e) => e.stone));
+const PRIMORDIAL_STONE_KEYS = new Set(Object.values(PRIMORDIAL_ELDERS).map((e) => e.stone));
+const ELDER_STONE_KEYS = new Set([...LEGACY_ELDER_STONE_KEYS, ...PRIMORDIAL_STONE_KEYS]);
 const SIDE_BOSS_UNIQUE_DROPS = new Set(
   Object.values(CREATURES)
     .map((c) => c.uniqueDrop)
@@ -82,6 +89,36 @@ const VEYRA_SPAWN_CREATURES = new Set([
   'boar', 'deer', 'hare', 'grouse', 'fox',
   ...ORDINARY_CREATURE_HABITATS.map((h) => h.species),
   ...VEYRA_SIDE_BOSS_SITES.map((b) => b.species),
+]);
+
+const VEYRA_MISSING_RAW_ITEMS = new Set(['chitin', 'beetle_horn', 'crawler_optic', 'wolf_fang']);
+
+const PRIMORDIAL_BY_STONE: Record<string, { elderKey: string; poiId: string; floor: number }> = (() => {
+  const map: Record<string, { elderKey: string; poiId: string; floor: number }> = {};
+  for (const site of VEYRA_PRIMORDIAL_SITES) {
+    const stone = PRIMORDIAL_ELDERS[site.key]?.stone;
+    if (stone) map[stone] = { elderKey: site.key, poiId: site.poiId, floor: site.floor };
+  }
+  return map;
+})();
+
+const LEGACY_ELDER_BY_STONE: Record<string, string> = Object.fromEntries(
+  Object.entries(ELDERS).map(([k, v]) => [v.stone, k]),
+);
+
+const RUNTIME_TESTED_ITEMS = new Set([
+  'knife', 'spares', 'damaged_drive', 'salvaged_oil', 'fuel_can', 'coal', 'charcoal',
+  'fuel_briquette', 'rcash', 'escrow_chest', 'iron_plate', 'bear_trap', 'mechanical_gear',
+  'metal_pipe', 'metal_blade', 'refined_iron_ingot', 'mechanical_parts', 'blueprint',
+  'grouse_egg', 'feather', 'fur', 'meat', 'hide', 'boar_tusk', 'crop', 'herb', 'seed',
+  'iron_ingot', 'iron_pick', 'iron_axe', 'iron_sword', 'industrial_pick', 'industrial_axe',
+  'reinforced_spear', 'arrow', 'wood', 'stone', 'fiber', 'scrap', 'glass', 'cloth',
+  'core_fire', 'core_earth', 'core_storm', 'core_frost',
+  'core_blast', 'core_meteor', 'core_dragon', 'core_elsa', 'core_earthmother', 'core_mjolnir', 'core_demon',
+  'energy_basic', 'energy_refined', 'essence_fire', 'essence_nature', 'essence_water', 'essence_spirit',
+  'stone_surtur', 'stone_typhon', 'stone_aion', 'stone_atlas', 'stone_argus', 'stone_anubis',
+  'relic_shaleheart', 'ronin_nodachi', 'tidemarshal_trident', 'custodian_lantern',
+  'keycard', 'water_flask', 'medkit', 'cart_kit', 'leather_armor', 'fur_cloak', 'gas_mask',
 ]);
 
 function withLayout<T>(layoutId: string, fn: () => T): T {
@@ -100,9 +137,13 @@ interface WorldScanStats {
   staticBlueprintCounts: Record<string, number>;
   creatorLootCores: Record<string, number>;
   cashSites: number;
+  cashTotal: number;
+  vendorSites: number;
+  recyclerSites: number;
   scenesWithSource: Record<string, Set<string>>;
-  scenesWithLoot: Record<string, Set<string>>;
-  scenesWithBlueprint: Record<string, Set<string>>;
+  poisWithLoot: Record<string, Set<string>>;
+  poisWithBlueprint: Record<string, Set<string>>;
+  floorMinus1Items: Set<string>;
 }
 
 function scanWorlds(): { shipping: WorldScanStats; veyra: WorldScanStats } {
@@ -112,9 +153,13 @@ function scanWorlds(): { shipping: WorldScanStats; veyra: WorldScanStats } {
     staticBlueprintCounts: {},
     creatorLootCores: {},
     cashSites: 0,
+    cashTotal: 0,
+    vendorSites: 0,
+    recyclerSites: 0,
     scenesWithSource: {},
-    scenesWithLoot: {},
-    scenesWithBlueprint: {},
+    poisWithLoot: {},
+    poisWithBlueprint: {},
+    floorMinus1Items: new Set<string>(),
   });
 
   const shipping = emptyStats();
@@ -125,7 +170,13 @@ function scanWorlds(): { shipping: WorldScanStats; veyra: WorldScanStats } {
       shipping.sourceCounts[sk] = (shipping.sourceCounts[sk] ?? 0) + 1;
     }
     for (const st of w.statics) {
-      if (st.kind === 'cash' && (st.cash ?? 0) > 0) shipping.cashSites++;
+      const poiTag = st.poi ?? `${st.tx},${st.ty}`;
+      if (st.kind === 'cash' && (st.cash ?? 0) > 0) {
+        shipping.cashSites++;
+        shipping.cashTotal += st.cash ?? 0;
+      }
+      if (st.kind === 'vendor') shipping.vendorSites++;
+      if (st.kind === 'recycler') shipping.recyclerSites++;
       if (st.kind === 'loot' && st.loot) {
         const core = creatorLootV1(st);
         if (core) shipping.creatorLootCores[core] = (shipping.creatorLootCores[core] ?? 0) + 1;
@@ -133,8 +184,10 @@ function scanWorlds(): { shipping: WorldScanStats; veyra: WorldScanStats } {
           if (k.startsWith('blueprint:')) {
             const rk = k.slice('blueprint:'.length);
             shipping.staticBlueprintCounts[rk] = (shipping.staticBlueprintCounts[rk] ?? 0) + q;
+            (shipping.poisWithBlueprint[rk] ??= new Set()).add(poiTag);
           } else {
             shipping.staticLootCounts[k] = (shipping.staticLootCounts[k] ?? 0) + q;
+            (shipping.poisWithLoot[k] ??= new Set()).add(poiTag);
           }
         }
       }
@@ -142,29 +195,91 @@ function scanWorlds(): { shipping: WorldScanStats; veyra: WorldScanStats } {
   });
 
   const veyra = emptyStats();
+  const builtWindows = new Map<string, WindowWorld>();
   for (const sc of VEYRA05_SCENES) {
     const ww = getWindowWorld(sc.id);
+    builtWindows.set(sc.id, ww);
     for (const sk of ww.world.sourceV3) {
       if (!sk) continue;
       veyra.sourceCounts[sk] = (veyra.sourceCounts[sk] ?? 0) + 1;
       (veyra.scenesWithSource[sk] ??= new Set()).add(sc.id);
     }
-    for (const st of ww.world.statics) {
-      if (st.kind === 'cash' && (st.cash ?? 0) > 0) veyra.cashSites++;
-      if (st.kind === 'loot' && st.loot) {
-        for (const [k, q] of st.loot) {
-          if (k.startsWith('blueprint:')) {
-            const rk = k.slice('blueprint:'.length);
-            veyra.staticBlueprintCounts[rk] = (veyra.staticBlueprintCounts[rk] ?? 0) + q;
-            (veyra.scenesWithBlueprint[rk] ??= new Set()).add(sc.id);
-          } else {
-            veyra.staticLootCounts[k] = (veyra.staticLootCounts[k] ?? 0) + q;
-            (veyra.scenesWithLoot[k] ??= new Set()).add(sc.id);
+  }
+
+  // Scan ALL 82 Veyra POIs across Floor 0 and Floor -1 using clustered cover windows, deduplicating global coords.
+  const sortedPois = [...POIS].sort((a, b) => a.id.localeCompare(b.id));
+  const poiTiles = new Map(sortedPois.map((p) => [p.id, auToTile(p.at[0], p.at[1])]));
+  const MARGIN = 36;
+  const findInteriorWindow = (pid: string, tx: number, ty: number): WindowWorld | undefined => {
+    for (const ww of builtWindows.values()) {
+      const lx = tx - ww.win.originTx;
+      const ly = ty - ww.win.originTy;
+      if (lx >= MARGIN && ly >= MARGIN && lx <= WINDOW_W - MARGIN && ly <= WINDOW_H - MARGIN && ww.poiIds.includes(pid)) {
+        return ww;
+      }
+    }
+    return undefined;
+  };
+  const seenStaticCoords = new Set<string>();
+
+  for (const poi of sortedPois) {
+    const [tx, ty] = poiTiles.get(poi.id)!;
+    let ww = findInteriorWindow(poi.id, tx, ty);
+    if (!ww) {
+      const cluster = sortedPois.filter((other) => {
+        const [ox0, oy0] = poiTiles.get(other.id)!;
+        return !findInteriorWindow(other.id, ox0, oy0) && Math.abs(ox0 - tx) <= 115 && Math.abs(oy0 - ty) <= 115;
+      });
+      const minX = Math.min(...cluster.map((c) => poiTiles.get(c.id)![0]));
+      const maxX = Math.max(...cluster.map((c) => poiTiles.get(c.id)![0]));
+      const minY = Math.min(...cluster.map((c) => poiTiles.get(c.id)![1]));
+      const maxY = Math.max(...cluster.map((c) => poiTiles.get(c.id)![1]));
+      const cx = maxX - minX <= WINDOW_W - MARGIN * 2 ? Math.round((minX + maxX) / 2) : tx;
+      const cy = maxY - minY <= WINDOW_H - MARGIN * 2 ? Math.round((minY + maxY) / 2) : ty;
+      const ox = Math.max(0, Math.min(FRAME_W - WINDOW_W, cx - Math.floor(WINDOW_W / 2)));
+      const oy = Math.max(0, Math.min(FRAME_H - WINDOW_H, cy - Math.floor(WINDOW_H / 2)));
+      const wid = layoutIdAt(ox, oy);
+      ww = builtWindows.get(wid);
+      if (!ww) {
+        ww = getWindowWorld(wid);
+        builtWindows.set(wid, ww);
+      }
+    }
+    const ox = ww.win.originTx;
+    const oy = ww.win.originTy;
+    for (const [lv, layer] of ww.floors.layers.entries()) {
+      for (const st of layer.statics) {
+        const gtx = ox + st.tx;
+        const gty = oy + st.ty;
+        const coordKey = `${lv}:${gtx},${gty}:${st.kind}`;
+        if (seenStaticCoords.has(coordKey)) continue;
+        seenStaticCoords.add(coordKey);
+        const poiTag = st.poi ?? authoredPlan(poi.id)?.plan.poi ?? poi.id;
+        if (st.kind === 'cash' && (st.cash ?? 0) > 0) {
+          veyra.cashSites++;
+          veyra.cashTotal += st.cash ?? 0;
+        } else if (st.kind === 'vendor') {
+          veyra.vendorSites++;
+        } else if (st.kind === 'recycler') {
+          veyra.recyclerSites++;
+        } else if (st.kind === 'loot' && st.loot) {
+          for (const [k, q] of st.loot) {
+            if (k.startsWith('blueprint:')) {
+              const rk = k.slice('blueprint:'.length);
+              veyra.staticBlueprintCounts[rk] = (veyra.staticBlueprintCounts[rk] ?? 0) + q;
+              (veyra.poisWithBlueprint[rk] ??= new Set()).add(poiTag);
+              if (lv < 0) veyra.floorMinus1Items.add('blueprint');
+            } else {
+              veyra.staticLootCounts[k] = (veyra.staticLootCounts[k] ?? 0) + q;
+              (veyra.poisWithLoot[k] ??= new Set()).add(poiTag);
+              if (lv < 0) veyra.floorMinus1Items.add(k);
+            }
           }
         }
       }
     }
   }
+
   return { shipping, veyra };
 }
 
@@ -185,6 +300,22 @@ function lootEcologySourcesForItem(itemId: string): { roles: string[]; tables: s
     }
   }
   return { roles: [...roles], tables: [...tables] };
+}
+
+function husbandrySourcesForItem(itemId: string): { yieldSpecies: string[]; butcherSpecies: string[] } {
+  const yieldSpecies: string[] = [];
+  const butcherSpecies: string[] = [];
+  for (const [sp, h] of Object.entries(HUSBANDRY_YIELDS)) {
+    if (h.primary[0] === itemId || h.secondary?.[0] === itemId) {
+      yieldSpecies.push(`${sp}${h.femaleOnlyPrimary && h.primary[0] === itemId ? '(female_only)' : ''}`);
+    }
+  }
+  for (const [sp, b] of Object.entries(BUTCHER_YIELDS)) {
+    if (b.adult.some(([k]) => k === itemId) || b.juvenile.some(([k]) => k === itemId)) {
+      butcherSpecies.push(sp);
+    }
+  }
+  return { yieldSpecies, butcherSpecies };
 }
 
 function collectDeviceConsumers(itemId: string): string[] {
@@ -210,11 +341,13 @@ function collectDeviceConsumers(itemId: string): string[] {
     if (q) list.push(`${label}x${q}`);
   }
   if ((BAL.territory.materials as string[]).includes(itemId)) list.push('territory_cabinet_upkeep');
-  if (itemId === 'spares') list.push(`research_random:${BAL.research.randomSparesCost}`, `research_directed_T1_T2:${BAL.research.directedSparesCost}`);
+  if (itemId === 'spares') {
+    list.push(`research_random:${BAL.research.randomSparesCost}`, `research_directed_T1_T2:${BAL.research.directedSparesCost}`);
+  }
   if (itemId === 'iron_plate') list.push('action:bearTrapSet(x1_arm_3hits)', 'action:repairStructure_wall_door(25pct_HP)');
   if (itemId === 'arrow') list.push('device:arrow_turret_ammo', 'weapon:bow_ammo');
   if (itemId === 'keycard') list.push('poi:vault_door_scan');
-  if (itemId === 'rcash') list.push('device:escrow_chest(profile_deposit)');
+  if (itemId === 'rcash') list.push('device:escrow_chest(profile_deposit)', `vendor_cash:escrow_chest(${BAL.economy.escrowChestPrice})`);
   if (itemId === 'lubricant') list.push('vehicle:motorbike_wear_halver');
   if (itemId === 'animal_feed' || itemId === 'crop' || itemId === 'berries' || itemId === 'water_flask') {
     list.push('device:feed_trough');
@@ -243,7 +376,9 @@ function collectDirectMechanics(itemId: string): string[] {
   if (def.food) m.push(`consume_food(${Object.entries(def.food).map(([k, v]) => `${k}:${v}`).join(' ')})`);
   if (def.dmg) m.push(`combat_dmg:${def.dmg}(dur=${def.dur ?? 'inf'})`);
   if (def.power) m.push(`harvest_power(${Object.entries(def.power).map(([k, v]) => `${k}:${v}`).join(' ')})`);
-  if (def.slot) m.push(`equip_slot:${def.slot}${def.armor ? ` armor=${def.armor}` : ''}${def.cold ? ` cold=${def.cold}` : ''}${def.mask ? ' rad_mask' : ''}${def.carryBonus ? ` carry+${def.carryBonus}` : ''}`);
+  if (def.slot) {
+    m.push(`equip_slot:${def.slot}${def.armor ? ` armor=${def.armor}` : ''}${def.cold ? ` cold=${def.cold}` : ''}${def.mask ? ' rad_mask' : ''}${def.carryBonus ? ` carry+${def.carryBonus}` : ''}`);
+  }
   if (def.creatorCore) m.push(`creator_core_gold:${def.creatorCore}(essence=${def.essence},3_skills)`);
   if (def.core && !def.creatorCore) m.push(`legacy_core_charge:${def.core}(charges=${def.charge})`);
   if (def.fuel) m.push(`fuel:${def.fuel}s`);
@@ -259,7 +394,7 @@ function collectDirectMechanics(itemId: string): string[] {
   if (itemId === 'field_repair_kit') m.push('use_field_repair:+100dur');
   if (itemId === 'lead_rope') m.push('tame_livestock:boar/deer/hare/grouse');
   if (ELDER_STONE_KEYS.has(itemId)) m.push('elder_keystone:victory_or_evac_trophy');
-  if (itemId === 'rcash') m.push('deposit_escrow->profile.securedCash');
+  if (itemId === 'rcash') m.push('deposit_escrow->profile.securedCash;buy_escrow_chest(30)');
   return m;
 }
 
@@ -293,13 +428,58 @@ function vendorSummary(itemId: string): string {
   if (vs) parts.push(`BUY_SECURED:${vs.price}sc(stock=${vs.stock})`);
   const vp = VENDOR_SPARES[itemId];
   if (vp) parts.push(`BUY_SPARES:${vp.price}sp->qty=${vp.qty}(stock=${vp.stock})`);
-  if (itemId === 'rcash') parts.push('ESCROW_DEPOSIT:1_rcash->1_securedCash');
+  if (itemId === 'escrow_chest') parts.push(`BUY_PHYSICAL_RCASH:${BAL.economy.escrowChestPrice}rcash(stock=4)`);
+  if (itemId === 'rcash') parts.push('ESCROW_DEPOSIT:1_rcash->1_securedCash;BUY_ESCROW_CHEST:30');
   if (itemId === 'spares') parts.push('VENDOR_SPARES_CURRENCY');
   return parts.length ? parts.join(' | ') : 'NONE';
 }
 
+function recipesProducingOnVeyra(itemId: string): { all: string[]; unblockedVeyra: string[] } {
+  const all: string[] = [];
+  const unblockedVeyra: string[] = [];
+  for (const [rid, r] of Object.entries(RECIPES)) {
+    if (r.out !== itemId && !r.outs?.some(([k]) => k === itemId)) continue;
+    const outStr = r.outs ? fmtPairs(r.outs) : `${r.out}:${r.qty}`;
+    const desc = `${rid}[${r.station ?? 'hand'}${r.stationLevel ? `L${r.stationLevel}` : ''};T${r.tier}${ALWAYS_KNOWN_RECIPES.includes(rid) ? ';base' : ''}](${fmtPairs(r.ins)}->${outStr})`;
+    all.push(desc);
+    const hasFixtureGate = r.station === 'oil_pump' || rid === 'refinery_crude';
+    const hasMissingInput = (r.ins as [string, number][]).some(([ik]) => VEYRA_MISSING_RAW_ITEMS.has(ik));
+    if (!hasFixtureGate && !hasMissingInput) unblockedVeyra.push(rid);
+  }
+  for (const [rid, snap] of Object.entries(componentRuleSnapshot())) {
+    if (snap.outputs.some(([k]) => k === itemId)) {
+      all.push(`${rid}[recycler](${snap.key}:1->${fmtPairs(snap.outputs)})`);
+      unblockedVeyra.push(rid);
+    }
+  }
+  if (itemId === 'spares') {
+    all.push('X:drive[recycler](damaged_drive:1->spares:2)');
+    unblockedVeyra.push('X:drive');
+  }
+  return { all, unblockedVeyra };
+}
+
+function sourceKeysForItem(itemId: string): string[] {
+  const keys: string[] = [];
+  for (const [sk, sd] of Object.entries(SOURCES)) {
+    if (
+      sd.yields.some(([k]) => k === itemId) ||
+      sd.bonus?.some(([k]) => k === itemId) ||
+      sd.qualityBonus?.tiers.some((t) => t.item === itemId)
+    ) {
+      keys.push(sk);
+    }
+  }
+  if (itemId === 'salvaged_oil' && !keys.includes('wreck')) keys.push('wreck');
+  return keys;
+}
+
 export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number } {
   const { shipping, veyra } = scanWorlds();
+  const totalVeyraBlueprints = Object.values(veyra.staticBlueprintCounts).reduce((a, b) => a + b, 0);
+  const totalShipBlueprints = Object.values(shipping.staticBlueprintCounts).reduce((a, b) => a + b, 0);
+  const totalVeyraBpPois = new Set(Object.values(veyra.poisWithBlueprint).flatMap((s) => [...s])).size;
+
   const header = [
     'item_id',
     'display_name',
@@ -317,6 +497,7 @@ export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number 
     'economic_role_status',
     'recommended_action',
     'code_provenance',
+    'verification_tier',
   ];
 
   const lines: string[] = [csvRow(header)];
@@ -331,51 +512,68 @@ export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number 
 
     // Sources & Drops
     const spawnParts: string[] = [];
-    for (const [sk, sd] of Object.entries(SOURCES)) {
-      if (sd.yields.some(([k]) => k === itemId) || sd.bonus?.some(([k]) => k === itemId) || sd.qualityBonus?.tiers.some((t) => t.item === itemId)) {
+    const srcKeys = sourceKeysForItem(itemId);
+    for (const sk of srcKeys) {
+      if (sk === 'wreck' && itemId === 'salvaged_oil') {
+        spawnParts.push(`source:wreck(p=${SALVAGED_OIL_WRECK_CHANCE})`);
+      } else {
         spawnParts.push(`source:${sk}`);
       }
     }
-    if (itemId === 'salvaged_oil') spawnParts.push(`source:wreck(p=${SALVAGED_OIL_WRECK_CHANCE})`);
     if (itemId === 'crude_petroleum') spawnParts.push('station:oil_pump(oilTestFixture_only)');
     for (const [ck, cd] of Object.entries(CREATURES)) {
       const dr = cd.drops.find(([k]) => k === itemId);
       if (dr) spawnParts.push(`drop:${ck}(${dr[1]}@${dr[2]})`);
       if (cd.uniqueDrop === itemId) spawnParts.push(`boss_unique:${ck}`);
     }
+    if (PRIMORDIAL_BY_STONE[itemId]) {
+      const p = PRIMORDIAL_BY_STONE[itemId];
+      spawnParts.push(`primordial_elder:${p.elderKey}@${p.poiId}(floor=${p.floor})`);
+    }
+    if (LEGACY_ELDER_BY_STONE[itemId]) {
+      spawnParts.push(`legacy_elder:${LEGACY_ELDER_BY_STONE[itemId]}`);
+    }
     for (const [gKey, gDef] of Object.entries(GARDEN_CROPS)) {
       if (gDef.output.some(([k]) => k === itemId)) spawnParts.push(`garden:${gKey}`);
     }
+    const husb = husbandrySourcesForItem(itemId);
+    if (husb.yieldSpecies.length) spawnParts.push(`husbandry_trough:${husb.yieldSpecies.join(',')}`);
+    if (husb.butcherSpecies.length) spawnParts.push(`butcher:${husb.butcherSpecies.join(',')}`);
+
     const eco = lootEcologySourcesForItem(itemId);
     if (eco.roles.length) spawnParts.push(`loot_role:${eco.roles.join('+')}`);
     if (eco.tables.length) spawnParts.push(`loot_table:${eco.tables.join('+')}`);
-    if ((BAL.airdropV1.fixed as [string, number][]).some(([k]) => k === itemId) || (BAL.airdropV1.options as [string, number][]).some(([k]) => k === itemId)) {
+    if (
+      (BAL.airdropV1.fixed as [string, number][]).some(([k]) => k === itemId) ||
+      (BAL.airdropV1.options as [string, number][]).some(([k]) => k === itemId)
+    ) {
       spawnParts.push('airdrop:shipping_dev_only');
     }
     for (const m of DAILY_MILESTONES) {
       const spec = milestoneRewardSpec(m.id);
       if (spec?.items.some(([k]) => k === itemId)) spawnParts.push(`journey:${m.id}`);
     }
-    if (itemId === 'knife') spawnParts.push('starter_equip');
-    if (VENDOR_SECURED[itemId] || VENDOR_SPARES[itemId]) spawnParts.push('vendor_stock');
-    if (shipping.staticLootCounts[itemId] || shipping.creatorLootCores[itemId]) spawnParts.push('shipping_static_loot');
-    if (veyra.staticLootCounts[itemId]) spawnParts.push('veyra_static_loot');
-    if (itemId === 'blueprint') spawnParts.push('authored_crates&loot_ecology_blueprints');
-
-    // Recipes producing itemId
-    const producing = Object.entries(RECIPES)
-      .filter(([, r]) => r.out === itemId || r.outs?.some(([k]) => k === itemId))
-      .map(([rid, r]) => {
-        const outStr = r.outs ? fmtPairs(r.outs) : `${r.out}:${r.qty}`;
-        return `${rid}[${r.station ?? 'hand'}${r.stationLevel ? `L${r.stationLevel}` : ''};T${r.tier}${ALWAYS_KNOWN_RECIPES.includes(rid) ? ';base' : ''}](${fmtPairs(r.ins)}->${outStr})`;
-      });
-    // Also add recycler & garden routes producing it
-    for (const [rid, snap] of Object.entries(componentRuleSnapshot())) {
-      if (snap.outputs.some(([k]) => k === itemId)) producing.push(`${rid}[recycler](${snap.key}:1->${fmtPairs(snap.outputs)})`);
+    if (itemId === 'knife') spawnParts.push('starter_equip(startRun_slot0)');
+    if (VENDOR_SECURED[itemId]) spawnParts.push(`vendor_secured(${VENDOR_SECURED[itemId].price}sc;stock=${VENDOR_SECURED[itemId].stock})`);
+    if (VENDOR_SPARES[itemId]) spawnParts.push(`vendor_spares(${VENDOR_SPARES[itemId].price}sp->${VENDOR_SPARES[itemId].qty};stock=${VENDOR_SPARES[itemId].stock})`);
+    if (itemId === 'escrow_chest') spawnParts.push(`vendor_cash(${BAL.economy.escrowChestPrice}_rcash;stock=4)`);
+    if (itemId === 'rcash') {
+      spawnParts.push(`openCash_Ragnarok>=264h(shipping=${shipping.cashSites};veyra=${veyra.cashSites}_sites_${veyra.cashTotal}rcash)`);
     }
-    if (itemId === 'spares') producing.push('X:drive[recycler](damaged_drive:1->spares:2)');
+    if (shipping.staticLootCounts[itemId] || shipping.creatorLootCores[itemId]) spawnParts.push('shipping_static_loot');
+    if (veyra.staticLootCounts[itemId]) {
+      spawnParts.push(`veyra_static_loot(${veyra.poisWithLoot[itemId]?.size ?? 0}_POIs${veyra.floorMinus1Items.has(itemId) ? '_incl_Floor-1' : ''})`);
+    }
+    if (itemId === 'blueprint') {
+      spawnParts.push(
+        `authored_crates_Floor0_&_Floor-1(${totalVeyraBlueprints}_across_${totalVeyraBpPois}POIs)`,
+        `research_table(random=${BAL.research.randomSparesCost}sp;directed=${BAL.research.directedSparesCost}sp)`,
+      );
+    }
 
-    // Recipes consuming itemId
+    // Producing & consuming recipes
+    const prod = recipesProducingOnVeyra(itemId);
+    const producing = prod.all;
     const consuming = Object.entries(RECIPES)
       .filter(([, r]) => r.ins.some(([k]) => k === itemId))
       .map(([rid, r]) => `${rid}(in:${r.ins.find(([k]) => k === itemId)![1]}->${r.out}:${r.qty})`);
@@ -385,49 +583,123 @@ export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number 
     const recyc = recycleSummary(itemId);
     const vendor = vendorSummary(itemId);
 
-    // Shipping availability
-    const shipSources = Object.entries(SOURCES)
-      .filter(([, sd]) => sd.yields.some(([k]) => k === itemId) || sd.bonus?.some(([k]) => k === itemId) || sd.qualityBonus?.tiers.some((t) => t.item === itemId))
-      .reduce((acc, [sk]) => acc + (shipping.sourceCounts[sk] ?? 0), 0);
-    const shipCreatureAvail = Object.entries(CREATURES).some(([ck, cd]) => SHIPPING_CREATURES.has(ck) && (cd.drops.some(([k]) => k === itemId) || cd.uniqueDrop === itemId));
+    // Shipping availability (never raw unconditional 'AVAILABLE')
+    const shipSources = srcKeys.reduce((acc, sk) => acc + (shipping.sourceCounts[sk] ?? 0), 0);
+    const shipCreatureList = Object.entries(CREATURES)
+      .filter(([ck, cd]) => SHIPPING_CREATURES.has(ck) && (cd.drops.some(([k]) => k === itemId) || cd.uniqueDrop === itemId))
+      .map(([ck]) => ck);
     const shipStaticAvail = (shipping.staticLootCounts[itemId] ?? 0) + (shipping.creatorLootCores[itemId] ?? 0);
+    const shipGarden = Object.entries(GARDEN_CROPS).filter(([, g]) => g.output.some(([k]) => k === itemId)).map(([gk]) => gk);
+    const shipVendorChannels: string[] = [];
+    if (VENDOR_SPARES[itemId] && shipping.vendorSites > 0) shipVendorChannels.push(`vendor_spares:${VENDOR_SPARES[itemId].price}sp`);
+    if (VENDOR_SECURED[itemId] && shipping.vendorSites > 0) shipVendorChannels.push(`vendor_secured:${VENDOR_SECURED[itemId].price}sc_escrow`);
+    if (itemId === 'escrow_chest' && shipping.vendorSites > 0) shipVendorChannels.push(`vendor_cash:${BAL.economy.escrowChestPrice}rcash`);
+
     let shipAvail = 'NONE';
-    if (itemId === 'crude_petroleum') shipAvail = 'TEST_FIXTURE_GATED(oilTestFixture_only)';
-    else if (ELDER_STONE_KEYS.has(itemId) && !itemId.startsWith('stone_surtur') && !itemId.startsWith('stone_typhon') && !itemId.startsWith('stone_aion') && !itemId.startsWith('stone_atlas') && !itemId.startsWith('stone_argus') && !itemId.startsWith('stone_anubis')) {
-      shipAvail = 'AVAILABLE(shipping_elder_drop)';
-    } else if (['stone_surtur', 'stone_typhon', 'stone_aion', 'stone_atlas', 'stone_argus', 'stone_anubis', 'grouse_egg', 'feather', ...SIDE_BOSS_UNIQUE_DROPS].includes(itemId)) {
-      shipAvail = 'VEYRA_EXCLUSIVE';
-    } else if (shipSources > 0 || shipCreatureAvail || shipStaticAvail > 0 || producing.length > 0 || eco.roles.length > 0 || eco.tables.length > 0) {
-      shipAvail = `AVAILABLE(src=${shipSources},static=${shipStaticAvail},creatures=${shipCreatureAvail ? 'Y' : 'N'})`;
+    if (itemId === 'knife') {
+      shipAvail = 'RUNTIME_GRANTED_AT_SPAWN(startRun_slot0)';
+    } else if (itemId === 'crude_petroleum') {
+      shipAvail = 'CONDITIONAL_TEST_FIXTURE_GATED(oilTestFixture_only)';
+    } else if (itemId === 'rcash') {
+      shipAvail = `CONDITIONAL_PHASE_GATED(Ragnarok>=264h_openCash_sites=${shipping.cashSites}_total=${shipping.cashTotal}rcash)`;
+    } else if (itemId === 'escrow_chest') {
+      shipAvail = `CONDITIONAL_VENDOR_PURCHASE(${BAL.economy.escrowChestPrice}_Ragnarok_rcash@vendor_stock=4)`;
+    } else if (itemId === 'blueprint') {
+      shipAvail = `PHYSICALLY_REACHABLE(static_blueprints=${totalShipBlueprints})+CONDITIONAL_RESEARCH(spares@research_table)`;
+    } else if (LEGACY_ELDER_STONE_KEYS.has(itemId)) {
+      shipAvail = `CONDITIONAL_BOSS_DEFEAT(legacy_elder:${LEGACY_ELDER_BY_STONE[itemId]})`;
+    } else if (
+      PRIMORDIAL_STONE_KEYS.has(itemId) ||
+      ['grouse_egg', 'feather', ...SIDE_BOSS_UNIQUE_DROPS].includes(itemId)
+    ) {
+      shipAvail = 'VEYRA_EXCLUSIVE(0_on_Shipping)';
+    } else {
+      const ch: string[] = [];
+      if (shipSources > 0 || shipStaticAvail > 0 || eco.tables.length > 0 || eco.roles.length > 0) {
+        ch.push(`PHYSICALLY_REACHABLE(src=${shipSources},static=${shipStaticAvail},loot_tables=${eco.tables.length + eco.roles.length})`);
+      }
+      if (shipCreatureList.length > 0) ch.push(`CONDITIONAL_MOB_DROP(${shipCreatureList.join(',')})`);
+      if (shipGarden.length > 0) ch.push(`CONDITIONAL_GARDEN(${shipGarden.join(',')})`);
+      if (husb.yieldSpecies.some((sp) => SHIPPING_CREATURES.has(sp.split('(')[0])) || husb.butcherSpecies.some((sp) => SHIPPING_CREATURES.has(sp))) {
+        ch.push('CONDITIONAL_HUSBANDRY_OR_BUTCHER');
+      }
+      if (shipVendorChannels.length > 0) ch.push(`CONDITIONAL_VENDOR_PURCHASE(${shipVendorChannels.join(';')})`);
+      if (producing.length > 0) ch.push(`CONDITIONAL_CRAFTABLE(recipes=${producing.length})`);
+      shipAvail = ch.length ? ch.join('+') : 'NONE';
     }
 
-    // Veyra availability
-    const veyraSrcEntry = Object.entries(SOURCES).filter(([, sd]) => sd.yields.some(([k]) => k === itemId) || sd.bonus?.some(([k]) => k === itemId) || sd.qualityBonus?.tiers.some((t) => t.item === itemId));
-    const veyraSrcCount = veyraSrcEntry.reduce((acc, [sk]) => acc + (veyra.sourceCounts[sk] ?? 0), 0);
+    // Veyra availability (across 12 scenes + all 82 POIs Floor 0 & Floor -1 + Primordials + Husbandry + Garden + Vendor)
+    const veyraSrcCount = srcKeys.reduce((acc, sk) => acc + (veyra.sourceCounts[sk] ?? 0), 0);
     const veyraSrcScenes = new Set<string>();
-    for (const [sk] of veyraSrcEntry) for (const sc of veyra.scenesWithSource[sk] ?? []) veyraSrcScenes.add(sc);
-    const veyraCreatures = Object.entries(CREATURES).filter(([ck, cd]) => VEYRA_SPAWN_CREATURES.has(ck) && (cd.drops.some(([k]) => k === itemId) || cd.uniqueDrop === itemId)).map(([ck]) => ck);
+    for (const sk of srcKeys) for (const sc of veyra.scenesWithSource[sk] ?? []) veyraSrcScenes.add(sc);
+    const veyraCreatures = Object.entries(CREATURES)
+      .filter(([ck, cd]) => VEYRA_SPAWN_CREATURES.has(ck) && (cd.drops.some(([k]) => k === itemId) || cd.uniqueDrop === itemId))
+      .map(([ck]) => ck);
     const veyraStatic = veyra.staticLootCounts[itemId] ?? 0;
-    const veyraLootScenes = veyra.scenesWithLoot[itemId]?.size ?? 0;
+    const veyraLootPois = veyra.poisWithLoot[itemId]?.size ?? 0;
+    const veyraGarden = shipGarden;
+    const veyraHusbYield = Object.entries(HUSBANDRY_YIELDS)
+      .filter(([sp, h]) => VEYRA_SPAWN_CREATURES.has(sp) && (h.primary[0] === itemId || h.secondary?.[0] === itemId))
+      .map(([sp, h]) => `${sp}${h.femaleOnlyPrimary && h.primary[0] === itemId ? ':female' : ''}`);
+    const veyraButcher = Object.entries(BUTCHER_YIELDS)
+      .filter(([sp, b]) => VEYRA_SPAWN_CREATURES.has(sp) && (b.adult.some(([k]) => k === itemId) || b.juvenile.some(([k]) => k === itemId)))
+      .map(([sp]) => sp);
+    const veyraVendorChannels: string[] = [];
+    if (VENDOR_SPARES[itemId] && veyra.vendorSites > 0) veyraVendorChannels.push(`vendor_spares:${VENDOR_SPARES[itemId].price}sp@${veyra.vendorSites}POIs`);
+    if (VENDOR_SECURED[itemId] && veyra.vendorSites > 0) veyraVendorChannels.push(`vendor_secured:${VENDOR_SECURED[itemId].price}sc_escrow@${veyra.vendorSites}POIs`);
+    if (itemId === 'escrow_chest' && veyra.vendorSites > 0) veyraVendorChannels.push(`vendor_cash:${BAL.economy.escrowChestPrice}rcash@${veyra.vendorSites}POIs`);
 
-    let veyraAvail = 'AVAILABLE';
-    if (itemId === 'crude_petroleum') veyraAvail = 'TEST_FIXTURE_GATED(oilTestFixture_only)';
-    else if (['stone_frost', 'stone_magma', 'stone_bog', 'stone_grove', 'stone_tide', 'stone_rust'].includes(itemId)) {
-      veyraAvail = 'LEGACY_SHIPPING_ELDER_ONLY(Veyra_uses_6_Primordials)';
-    } else if (['chitin', 'beetle_horn', 'crawler_optic', 'wolf_fang'].includes(itemId)) {
-      veyraAvail = `MISSING_VEYRA_SOURCE(zero_spawns_of_beetle/crawler/wolf_static=${veyraStatic})`;
-    } else if (['core_meteor', 'core_dragon', 'core_elsa', 'core_mjolnir', 'core_demon'].includes(itemId)) {
-      veyraAvail = itemId === 'core_demon'
-        ? 'BLOCKED_INPUT(crawler_optic_missing_on_Veyra;creatorLootV1_not_on_Veyra)'
-        : 'CRAFTABLE_ONLY(creatorLootV1_Shipping_only)';
+    let veyraAvail = 'MISSING_VEYRA_SOURCE';
+    if (itemId === 'knife') {
+      veyraAvail = 'RUNTIME_GRANTED_AT_SPAWN(startRun_slot0)';
+    } else if (itemId === 'crude_petroleum') {
+      veyraAvail = 'CONDITIONAL_TEST_FIXTURE_GATED(oilTestFixture_only)';
+    } else if (LEGACY_ELDER_STONE_KEYS.has(itemId)) {
+      veyraAvail = 'LEGACY_SHIPPING_ELDER_ONLY(Veyra_uses_6_Primordial_Stones)';
+    } else if (PRIMORDIAL_BY_STONE[itemId]) {
+      const p = PRIMORDIAL_BY_STONE[itemId];
+      veyraAvail = `CONDITIONAL_BOSS_DEFEAT(primordial:${p.elderKey}@${p.poiId}_floor${p.floor})`;
+    } else if (VEYRA_MISSING_RAW_ITEMS.has(itemId)) {
+      veyraAvail = `MISSING_VEYRA_SOURCE(0_spawns_of_beetle/crawler/wolf;static=${veyraStatic})`;
+    } else if (itemId === 'keycard') {
+      veyraAvail = 'NOT_PLACED_ON_VEYRA(0_keycard_caches_and_0_keycard_doors;optional_Shipping_feature)';
+    } else if (itemId === 'rcash') {
+      veyraAvail = `CONDITIONAL_PHASE_GATED(Ragnarok>=264h_openCash_sites=${veyra.cashSites}_total=${veyra.cashTotal}rcash;0_mob_drops)`;
+    } else if (itemId === 'escrow_chest') {
+      veyraAvail = `CONDITIONAL_VENDOR_PURCHASE(${BAL.economy.escrowChestPrice}_Ragnarok_rcash@${veyra.vendorSites}vendorPOIs_stock=4)`;
+    } else if (itemId === 'blueprint') {
+      veyraAvail = `PHYSICALLY_REACHABLE(static_blueprints=${totalVeyraBlueprints}_across_${totalVeyraBpPois}POIs_Floor0_&_Floor-1)+CONDITIONAL_RESEARCH(spares@research_table)`;
+    } else if (itemId === 'core_demon') {
+      veyraAvail = `BLOCKED_VEYRA(0_static_creatorLoot_and_crawler_optic_missing_for_recipe)`;
+    } else if (['core_meteor', 'core_dragon', 'core_elsa', 'core_mjolnir', 'core_blast', 'core_earthmother'].includes(itemId)) {
+      veyraAvail = `CONDITIONAL_CRAFTABLE(recipes=${prod.unblockedVeyra.join(',')};0_static_creatorLoot_on_Veyra)`;
     } else if (LEGACY_CORE_KEYS.has(itemId)) {
-      veyraAvail = 'CRAFTABLE_BLUEPRINT_RESEARCH_ONLY(no_static_placement)';
+      veyraAvail = `CONDITIONAL_CRAFTABLE(research_directed_or_core_study;static=${veyraStatic})`;
+    } else if (itemId === 'chitin_armor') {
+      veyraAvail = `BLOCKED_VEYRA(chitin_missing_0_beetle_spawns_on_Veyra)`;
     } else if (itemId === 'damaged_drive') {
-      veyraAvail = `AVAILABLE_WITH_VEYRA_RECYCLER(src=${veyraSrcCount}_wrecks;D5_po_slag_recycler_live)`;
-    } else if (veyraSrcCount === 0 && veyraCreatures.length === 0 && veyraStatic === 0 && producing.length === 0 && !eco.tables.length) {
-      veyraAvail = 'MISSING_VEYRA_SOURCE';
+      veyraAvail = `PHYSICALLY_REACHABLE(wrecks=${veyraSrcCount}_across_${veyraSrcScenes.size}scenes;D5_po_slag_recycler=${veyra.recyclerSites}site)`;
     } else {
-      veyraAvail = `AVAILABLE(src=${veyraSrcCount}_across_${veyraSrcScenes.size}scenes,creatures=${veyraCreatures.length},static=${veyraStatic}_across_${veyraLootScenes}scenes)`;
+      const ch: string[] = [];
+      if (veyraSrcCount > 0) ch.push(`PHYSICALLY_REACHABLE(src=${veyraSrcCount}_across_${veyraSrcScenes.size}scenes)`);
+      if (veyraStatic > 0) {
+        ch.push(`PHYSICALLY_REACHABLE(static=${veyraStatic}_across_${veyraLootPois}POIs${veyra.floorMinus1Items.has(itemId) ? '_incl_Floor-1' : ''})`);
+      }
+      if (veyraCreatures.length > 0) {
+        const isSideBoss = veyraCreatures.every((c) => c.startsWith('boss_'));
+        ch.push(`${isSideBoss ? 'CONDITIONAL_BOSS_DEFEAT' : 'CONDITIONAL_MOB_DROP'}(${veyraCreatures.join(',')})`);
+      }
+      if (veyraGarden.length > 0) ch.push(`CONDITIONAL_GARDEN(${veyraGarden.join(',')};wild_seeds_reachable)`);
+      if (veyraHusbYield.length > 0) ch.push(`CONDITIONAL_HUSBANDRY(${veyraHusbYield.join(',')})`);
+      if (veyraButcher.length > 0) ch.push(`CONDITIONAL_BUTCHER(${veyraButcher.join(',')})`);
+      if (veyraVendorChannels.length > 0) ch.push(`CONDITIONAL_VENDOR_PURCHASE(${veyraVendorChannels.join(';')})`);
+      if (prod.unblockedVeyra.length > 0) {
+        ch.push(`CONDITIONAL_CRAFTABLE(recipes=${prod.unblockedVeyra.join(',')})`);
+      }
+      if (!ch.length && eco.tables.length > 0) {
+        ch.push(`CONDITIONAL_SHIPPING_LOOT_TABLE(${eco.tables.join(',')};0_Veyra_static)`);
+      }
+      veyraAvail = ch.length ? ch.join('+') : 'MISSING_VEYRA_SOURCE';
     }
 
     // Role classification — NEVER dismiss equipment, weapons, armor, ammo, cores, food, meds, or boss trophies!
@@ -439,27 +711,31 @@ export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number 
       else if (['core_meteor', 'core_dragon', 'core_elsa', 'core_mjolnir'].includes(itemId)) recAction = 'REQUIRES_CREATOR_DECISION(Veyra_creatorLoot_placement)';
     } else if (ELDER_STONE_KEYS.has(itemId)) {
       roleStatus = 'ENDGAME_BOSS_STONE';
+      if (PRIMORDIAL_BY_STONE[itemId]) recAction = 'VERIFIED_6_VEYRA_PRIMORDIAL_SITES';
     } else if (SIDE_BOSS_UNIQUE_DROPS.has(itemId)) {
       roleStatus = 'ELDER_OR_BOSS_REWARD';
     } else if (itemId === 'rcash') {
       roleStatus = 'META_CURRENCY';
-      recAction = 'D1_FIXED_ESCROW_ONLY(journeyRequisitions.securedCash=0)';
+      recAction = 'D1_VERIFIED_ESCROW_ONLY(Ragnarok>=264h_openCash;journey_cash=0)';
     } else if (['food', 'tool', 'weapon', 'armor'].includes(def.cat) || def.cat === 'kit') {
       roleStatus = 'CONSUMABLE_EQUIPMENT';
       if (itemId === 'chitin_armor') recAction = 'BLOCKED_VEYRA_BY_MISSING_CHITIN_A5_CREATOR_DECISION';
-      else if (itemId === 'gas_mask') recAction = 'BLOCKED_VEYRA_BY_MISSING_CRAWLER_OPTIC_A5_CREATOR_DECISION';
-      else if (itemId === 'fur_cloak') recAction = 'CRAFTABLE_VIA_FUR;wolf_fang_specimen_MISSING_ON_VEYRA';
-    } else if (['chitin', 'beetle_horn', 'crawler_optic', 'wolf_fang'].includes(itemId)) {
+      else if (itemId === 'gas_mask') recAction = 'CRAFTABLE_ON_VEYRA(blueprint_or_directed_research;crawler_optic_shortcut_missing)';
+      else if (itemId === 'fur_cloak') recAction = 'CRAFTABLE_ON_VEYRA(blueprint_or_directed_research;wolf_fang_shortcut_missing)';
+      else if (itemId === 'escrow_chest') recAction = 'CONDITIONAL_VENDOR_PURCHASE(30_Ragnarok_rcash)';
+    } else if (VEYRA_MISSING_RAW_ITEMS.has(itemId)) {
       roleStatus = 'BLOCKED_OR_MISSING_VEYRA_SOURCE';
       recAction = 'REQUIRES_CREATOR_DECISION(coherent_Veyra_biome_source_no_cross_species_A5)';
     } else if (itemId === 'damaged_drive') {
       roleStatus = 'CORE_INDUSTRIAL_FLOW';
-      recAction = 'D5_FIXED_PHYSICAL_VEYRA_RECYCLER_AT_PO_SLAG';
-    } else if (itemId === 'iron_plate' || itemId === 'mechanical_gear' || itemId === 'metal_pipe' || itemId === 'metal_blade' || itemId === 'refined_iron_ingot' || itemId === 'mechanical_parts' || itemId === 'spares') {
+      recAction = 'D5_VERIFIED_PHYSICAL_VEYRA_RECYCLER_AT_PO_SLAG';
+    } else if (
+      ['iron_plate', 'mechanical_gear', 'metal_pipe', 'metal_blade', 'refined_iron_ingot', 'mechanical_parts', 'spares'].includes(itemId)
+    ) {
       roleStatus = 'CORE_INDUSTRIAL_FLOW';
       if (itemId === 'iron_plate') recAction = 'D2_FIXED_BEAR_TRAP_IN_BUILD_ORDER';
-      else if (itemId === 'metal_pipe' || itemId === 'metal_blade' || itemId === 'mechanical_gear') {
-        recAction = 'D5_FIXED_VEYRA_RECYCLER_AT_PO_SLAG(X:pipe-v2,X:gear-v1,X:blade-v1)';
+      else if (['metal_pipe', 'metal_blade', 'mechanical_gear'].includes(itemId)) {
+        recAction = 'D5_VERIFIED_VEYRA_RECYCLER_AT_PO_SLAG(X:pipe-v2,X:gear-v1,X:blade-v1)';
       }
     } else if (itemId === 'crude_petroleum') {
       roleStatus = 'TEST_FIXTURE_GATED_FLOW';
@@ -469,6 +745,42 @@ export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number 
       recAction = 'REVIEW_SINK';
     } else {
       roleStatus = 'UTILITY_FLOW';
+    }
+
+    // Verification tier (strictly distinguish declared, conditional, physically reachable, runtime tested, never fake visually proven)
+    let verificationTier = 'DECLARED_ONLY(catalog)';
+    if (itemId === 'crude_petroleum') {
+      verificationTier = 'CONDITIONAL_GATED(oilTestFixture_only)';
+    } else if (VEYRA_MISSING_RAW_ITEMS.has(itemId) || itemId === 'chitin_armor' || itemId === 'core_demon') {
+      verificationTier = 'BLOCKED_VEYRA(Shipping_runtime_tested)';
+    } else if (itemId === 'keycard') {
+      verificationTier = 'RUNTIME_TESTED(Shipping_vault_only;not_placed_Veyra)';
+    } else if (LEGACY_ELDER_STONE_KEYS.has(itemId)) {
+      verificationTier = 'DECLARED_ONLY(Shipping_ELDERS;superseded_Veyra)';
+    } else if (RUNTIME_TESTED_ITEMS.has(itemId)) {
+      if (itemId === 'knife') {
+        verificationTier = 'RUNTIME_TESTED(startRun_spawn_slot0;not_yet_browser_verified)';
+      } else if (itemId === 'rcash') {
+        verificationTier = 'RUNTIME_TESTED+CONDITIONAL_GATED(Ragnarok>=264h_openCash;not_yet_browser_verified)';
+      } else if (itemId === 'escrow_chest') {
+        verificationTier = 'RUNTIME_TESTED+CONDITIONAL_VENDOR_PURCHASE(30_rcash;not_yet_browser_verified)';
+      } else if (itemId === 'blueprint') {
+        verificationTier = 'RUNTIME_TESTED+PHYSICALLY_REACHABLE(static_Floor0_&_Floor-1+research;not_yet_browser_verified)';
+      } else if (PRIMORDIAL_BY_STONE[itemId]) {
+        verificationTier = 'RUNTIME_TESTED+CONDITIONAL_BOSS_DEFEAT(primordial_sanctuary;not_yet_browser_verified)';
+      } else if (SIDE_BOSS_UNIQUE_DROPS.has(itemId)) {
+        verificationTier = 'RUNTIME_TESTED+CONDITIONAL_BOSS_DEFEAT(side_boss_site;not_yet_browser_verified)';
+      } else if (veyraSrcCount > 0 || veyraStatic > 0) {
+        verificationTier = 'RUNTIME_TESTED+PHYSICALLY_REACHABLE(not_yet_browser_verified)';
+      } else if (veyraHusbYield.length > 0 || veyraButcher.length > 0 || veyraCreatures.length > 0) {
+        verificationTier = 'RUNTIME_TESTED+CONDITIONAL_WORLD_DROP_OR_HUSBANDRY(not_yet_browser_verified)';
+      } else {
+        verificationTier = 'RUNTIME_TESTED+CONDITIONAL_CRAFT_OR_VENDOR(not_yet_browser_verified)';
+      }
+    } else if (veyraSrcCount > 0 || veyraStatic > 0 || shipSources > 0 || shipStaticAvail > 0) {
+      verificationTier = 'PHYSICALLY_REACHABLE(world_scan_verified)';
+    } else if (producing.length > 0 || shipVendorChannels.length > 0) {
+      verificationTier = 'CONDITIONAL_GATED(craft_or_vendor_declared)';
     }
 
     const provenance = `ITEMS.${itemId}(cat=${def.cat})`;
@@ -490,6 +802,7 @@ export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number 
         roleStatus,
         recAction,
         provenance,
+        verificationTier,
       ]),
     );
   }
@@ -517,7 +830,6 @@ function classifyFocusGroup(id: string, out: string, ins: [string, number][]): s
 function formatVec(v: Record<string, number> | undefined | null): string {
   if (!v) return 'UNEXPANDABLE';
   return Object.entries(v)
-    .sort(([a], [b]) => a.localeCompare(b))
     .map(([k, q]) => `${k}:${Math.round(q * 1000) / 1000}`)
     .join(';');
 }
@@ -540,6 +852,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
     'shipping_vs_veyra_route_status',
     'recommended_action',
     'code_provenance',
+    'verification_tier',
   ];
   const lines: string[] = [csvRow(header)];
 
@@ -573,12 +886,19 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
           : '0s_hand';
     const throughput = r.secs > 0 ? Math.round(((r.qty * 60) / r.secs) * 100) / 100 : 0;
 
-    // Anti-arbitrage / recycler conservation check if item has a live recovery route
     let conserv = 'N/A(craft_only)';
     const dummy = { uid: 'aud', key: r.out, qty: 1, ...(ITEMS[r.out]?.dur ? { dur: ITEMS[r.out].dur } : {}) };
     const snap = componentRuleSnapshot();
     const matchedComp = Object.keys(snap).find((ck) => snap[ck].key === r.out);
-    const probeVer = matchedComp ?? (Object.prototype.hasOwnProperty.call(BAL.recyclerV3.rules, r.out) ? 'X:recover-v3' : Object.prototype.hasOwnProperty.call(BAL.recyclerV2.rules, r.out) ? 'X:recover-v2' : Object.prototype.hasOwnProperty.call(BAL.recyclerV1.rules, r.out) ? 'X:recover-v1' : null);
+    const probeVer = matchedComp ?? (
+      Object.prototype.hasOwnProperty.call(BAL.recyclerV3.rules, r.out)
+        ? 'X:recover-v3'
+        : Object.prototype.hasOwnProperty.call(BAL.recyclerV2.rules, r.out)
+          ? 'X:recover-v2'
+          : Object.prototype.hasOwnProperty.call(BAL.recyclerV1.rules, r.out)
+            ? 'X:recover-v1'
+            : null
+    );
     if (probeVer) {
       const pr = proveItem(r.out, probeVer);
       const craftEx = expand(r.out, 1);
@@ -606,20 +926,25 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
     let blocker = 'NONE';
     let shipVeyra = 'BOTH_LIVE';
     let recAction = 'KEEP_AS_IS';
+    let verTier = 'RUNTIME_TESTED(catalog+m5)';
     if (r.station === 'oil_pump' || rid === 'refinery_crude') {
       blocker = 'REQUIRES_OIL_TEST_FIXTURE_WELLHEAD';
-      shipVeyra = 'TEST_FIXTURE_ONLY';
+      shipVeyra = 'CONDITIONAL_TEST_FIXTURE_ONLY';
       recAction = 'KEEP_GATED_PENDING_MAP_AUTHORITY';
-    } else if (ins.some(([k]) => ['crawler_optic', 'chitin'].includes(k))) {
-      blocker = `MISSING_VEYRA_SOURCE:${ins.filter(([k]) => ['crawler_optic', 'chitin'].includes(k)).map(([k]) => k).join(',')}`;
+      verTier = 'CONDITIONAL_GATED(oilTestFixture)';
+    } else if (ins.some(([k]) => VEYRA_MISSING_RAW_ITEMS.has(k))) {
+      blocker = `MISSING_VEYRA_SOURCE:${ins.filter(([k]) => VEYRA_MISSING_RAW_ITEMS.has(k)).map(([k]) => k).join(',')}`;
       shipVeyra = 'SHIPPING_LIVE / VEYRA_BLOCKED_INPUT';
       recAction = 'REQUIRES_CREATOR_DECISION(A5_NO_CROSS_SPECIES)';
+      verTier = 'BLOCKED_VEYRA(Shipping_runtime_tested)';
     } else if (rid === 'fuel_can') {
       blocker = 'CHEM_ROUTE_COST(charcoal+sulfur+glass_vs_salvaged_oil_refinery)';
+      verTier = 'RUNTIME_TESTED(m2+d4)';
     } else if (rid === 'recover_drive') {
-      blocker = 'COMPETES_WITH_RECYCLER_X:drive';
-      shipVeyra = 'SHIPPING_BOTH / VEYRA_BENCH_ONLY_PRE_D5';
-      recAction = 'ADD_PHYSICAL_VEYRA_RECYCLER_D5';
+      blocker = 'WORKBENCH_FALLBACK_COMPETES_WITH_RECYCLER_X:drive';
+      shipVeyra = 'BOTH_LIVE(workbench_fallback+D5_po_slag_recycler)';
+      recAction = 'KEEP_WORKBENCH_FALLBACK_WITH_D5_PHYSICAL_RECYCLER';
+      verTier = 'RUNTIME_TESTED(d5+m1)';
     }
 
     lines.push(
@@ -631,7 +956,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
         gateParts.join(';'),
         fmtPairs(ins),
         fmtPairs(outs),
-        footprintOk ? `${formatVec(rawAgg)} (IE=${Math.round((ieValue(rawAgg)) * 1000) / 1000})` : 'UNEXPANDABLE',
+        footprintOk ? `${formatVec(rawAgg)} (IE=${Math.round(ieValue(rawAgg) * 1000) / 1000})` : 'UNEXPANDABLE',
         r.secs,
         fuelCost,
         conserv,
@@ -640,6 +965,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
         shipVeyra,
         recAction,
         `RECIPES.${rid}`,
+        verTier,
       ]),
     );
   }
@@ -661,7 +987,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
         cid,
         'RECYCLE_COMPONENT',
         'FOCUS_GEAR_PIPE_BLADE_PLATE',
-        'poi_recycler(Foundry)',
+        'poi_recycler(Foundry / po_slag)',
         isHistorical ? 'HISTORICAL_SAVED_JOBS_ONLY' : 'LIVE_ACTIVE_PLAN',
         `${spec.key}:1`,
         fmtPairs(spec.outputs),
@@ -670,10 +996,11 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
         '0s_fuel(POI_recycler_batch)',
         `${ratio} (${over ? 'OVER_RETURN' : 'NET_LOSS_VERIFIED'})`,
         Math.round((60 / spec.seconds) * 100) / 100,
-        isHistorical ? 'LEGACY_COMPAT_ONLY' : 'VEYRA_MISSING_PO_SLAG_RECYCLER_PRE_D5',
-        isHistorical ? 'BOTH_COMPAT_ONLY' : 'SHIPPING_LIVE / VEYRA_MISSING_PRE_D5',
-        isHistorical ? 'KEEP_PINNED_IMMUTABLE' : 'IMPLEMENT_VEYRA_RECYCLER_AT_PO_SLAG_D5',
+        isHistorical ? 'LEGACY_COMPAT_ONLY' : 'NONE',
+        isHistorical ? 'BOTH_COMPAT_ONLY' : 'BOTH_LIVE(Shipping_Foundry&Veyra_po_slag_D5)',
+        isHistorical ? 'KEEP_PINNED_IMMUTABLE' : 'D5_VERIFIED_PHYSICAL_RECYCLER_AT_PO_SLAG',
         `recycler.ts:${cid}`,
+        isHistorical ? 'RUNTIME_TESTED(save_compat)' : 'RUNTIME_TESTED(recycler+d5+industrial-proof)',
       ]),
     );
   }
@@ -683,7 +1010,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
       'X:drive',
       'RECYCLE_DRIVE',
       'FOCUS_IRON_PARTS_SPARES',
-      'poi_recycler(Foundry)',
+      'poi_recycler(Foundry / po_slag)',
       'LIVE_ACTIVE_PLAN',
       'damaged_drive:1',
       'spares:2',
@@ -692,10 +1019,11 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
       '0s_fuel(POI_recycler_batch)',
       'NON_REPEATABLE_SALVAGE_OK',
       5,
-      'VEYRA_MISSING_PO_SLAG_RECYCLER_PRE_D5',
-      'SHIPPING_LIVE / VEYRA_MISSING_PRE_D5',
-      'IMPLEMENT_VEYRA_RECYCLER_AT_PO_SLAG_D5',
+      'NONE',
+      'BOTH_LIVE(Shipping_Foundry&Veyra_po_slag_D5)',
+      'D5_VERIFIED_PHYSICAL_RECYCLER_AT_PO_SLAG',
       'recycler.ts:X:drive',
+      'RUNTIME_TESTED(d5+recycler;pending_WP3_natural_proof)',
     ]),
   );
 
@@ -707,7 +1035,6 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
     for (const [itemKey, rule] of Object.entries(tbl as Record<string, { base: [string, number][]; mid: [string, number][]; high: [string, number][] }>)) {
       const pr = proveItem(itemKey, ver);
       const over = pr.rows.some((rw: any) => rw.verdict === 'OVER_RETURN');
-      const fullOut = [...rule.base, ...rule.mid, ...rule.high];
       const craftEx = integerTree(itemKey, 1);
       const isSuperseded =
         (ver === 'X:recover-v1' && (Object.prototype.hasOwnProperty.call(BAL.recyclerV2.rules, itemKey) || Object.prototype.hasOwnProperty.call(BAL.recyclerV3.rules, itemKey))) ||
@@ -717,7 +1044,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
           `${ver}:${itemKey}`,
           'RECYCLE_TOOL_WEAPON',
           'FOCUS_IRON_PARTS_SPARES',
-          'poi_recycler(Foundry)',
+          'poi_recycler(Foundry / po_slag)',
           isSuperseded ? 'HISTORICAL_INFLIGHT_ONLY' : 'LIVE_ACTIVE_PLAN',
           `${itemKey}:1(durability_tiered)`,
           `base:${fmtPairs(rule.base)}|mid:${fmtPairs(rule.mid)}|high:${fmtPairs(rule.high)}`,
@@ -726,10 +1053,11 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
           '0s_fuel(POI_recycler_batch)',
           over ? 'OVER_RETURN(HISTORICAL_V2_SUPERSEDED)' : 'NET_LOSS_VERIFIED_ALL_TIERS',
           Math.round((60 / secs) * 100) / 100,
-          isSuperseded ? 'SUPERSEDED_BY_V3' : 'VEYRA_MISSING_PO_SLAG_RECYCLER_PRE_D5',
-          isSuperseded ? 'COMPAT_ONLY' : 'SHIPPING_LIVE / VEYRA_MISSING_PRE_D5',
-          isSuperseded ? 'KEEP_PINNED_IMMUTABLE' : 'IMPLEMENT_VEYRA_RECYCLER_AT_PO_SLAG_D5',
+          isSuperseded ? 'SUPERSEDED_BY_V3' : 'NONE',
+          isSuperseded ? 'COMPAT_ONLY' : 'BOTH_LIVE(Shipping_Foundry&Veyra_po_slag_D5)',
+          isSuperseded ? 'KEEP_PINNED_IMMUTABLE' : 'D5_VERIFIED_PHYSICAL_RECYCLER_AT_PO_SLAG',
           `balance.v1.json:${ver}.${itemKey}`,
+          isSuperseded ? 'RUNTIME_TESTED(save_compat)' : 'RUNTIME_TESTED(industrial-proof+recycler+d5)',
         ]),
       );
     }
@@ -758,29 +1086,37 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
           'core_reserve_ammo',
           'N/A(combat_ammo_sink)',
           0,
-          def.essence === 'spirit' ? 'VEYRA_SPIRIT_ESSENCE_BLOCKED_ON_RECIPE_ONLY(drops_from_vampire_3_&_custodian)' : 'NONE',
-          ['core_blast', 'core_earthmother'].includes(cid) ? 'BOTH_LIVE' : 'SHIPPING_LOOT_AND_CRAFT / VEYRA_CRAFT_ONLY',
+          def.essence === 'spirit' && tierLabel === 'SIGNATURE_1x'
+            ? 'VEYRA_ESSENCE_SPIRIT_RECIPE_BLOCKED(direct_drops_from_vampire_3_&_custodian_live)'
+            : 'NONE',
+          ['core_blast', 'core_earthmother'].includes(cid)
+            ? 'BOTH_LIVE'
+            : cid === 'core_demon'
+              ? 'SHIPPING_LOOT_AND_CRAFT / VEYRA_CRAFT_BLOCKED_INPUT'
+              : 'SHIPPING_LOOT_AND_CRAFT / VEYRA_CRAFT_ONLY',
           'KEEP_7_CREATOR_CORES_DISJOINT_FROM_4_LEGACY_A4',
           `catalog.ts:ITEMS.${cid}`,
+          'RUNTIME_TESTED(creator-loot+core_energy)',
         ]),
       );
     }
   }
 
-  // 4. Device / Action Sinks & Workstation Upgrades
-  const deviceRoutes: [string, string, string, string, string, string, string, string, number, string, string, string][] = [
-    ['device:bearTrapSet', 'DEVICE_ARM', 'FOCUS_GEAR_PIPE_BLADE_PLATE', 'bear_trap', 'LIVE_ON_CRAFT_AND_BUILD_ORDER_D2_FIXED', 'iron_plate:1', 'armed_trap:3_triggers', 'iron_plate:1', 0, '0s_mechanical', 'D2_FIXED_BEAR_TRAP_IN_BUILD_ORDER', 'engine.ts:bearTrapSet'],
-    ['device:repairStructure_plate', 'DEVICE_PATCH', 'FOCUS_GEAR_PIPE_BLADE_PLATE', 'wall_or_door_damaged', 'SHIFT_CLICK_REPAIR_ACTION', 'iron_plate:1', 'hp_restore:25pct_maxHp', 'iron_plate:1', 0, '0s_action', 'NONE', 'engine.ts:1762'],
-    ['device:base_generator_fuel', 'POWER_GEN', 'FOCUS_FUEL_POWER_OIL', 'base_generator', 'PAID_WIRE_V1', 'fuel_can:1|coal:1|charcoal:1|fuel_briquette:1|wood:1', 'power_energy_ms(60s/80s/55s/90s/20s)', 'fuel_can_or_coal_or_wood', 60, '1x_base_plus_loads(w07_s06_contract)', 'D4_FIXED_OFFSCREEN_POWER_PARITY', 'engine.ts:stepBasePower'],
-    ['device:arrow_turret', 'DEVICE_DEFENSE', 'GENERAL_ECONOMY', 'arrow_turret', 'WIRED_BASE_GENERATOR', 'arrow:1;generator_power', 'hostile_shot_dmg', 'wood+stone+fiber_or_feather', 1, '1_generator_load', 'NONE', 'sim.ts:turretFire'],
-    ['device:escrow_deposit', 'META_ESCROW', 'GENERAL_ECONOMY', 'escrow_chest(claim_only)', 'LOCKED_CANON_CASH_ONLY', 'rcash:1', 'profile.securedCash:1', 'finite_world_cash', 0, '0s', 'D1_FIXED_JOURNEY_CASH_MINT_ZEROED', 'engine.ts:escrowDeposit'],
-    ['upgrade:workbench_L2', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L1->L2', fmtPairs(WORKBENCH_UPGRADE.cost), 'workbench_level:2', fmtPairs(WORKBENCH_UPGRADE.cost), 0, '0s', 'NONE', 'catalog.ts:WORKBENCH_UPGRADE'],
-    ['upgrade:workbench_L3', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L2->L3', fmtPairs(WORKBENCH_UPGRADE_III.cost), 'workbench_level:3', fmtPairs(WORKBENCH_UPGRADE_III.cost), 0, '0s', 'NONE', 'catalog.ts:WORKBENCH_UPGRADE_III'],
-    ['upgrade:industrial_module', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L2_ELECTRIC_QUEUE', fmtPairs(INDUSTRIAL_MODULE.cost), 'automated_powered_bench', fmtPairs(INDUSTRIAL_MODULE.cost), 0, '1_generator_load', 'NONE', 'catalog.ts:INDUSTRIAL_MODULE'],
-    ['upgrade:generator_cap2', 'WORKSTATION_UPGRADE', 'FOCUS_FUEL_POWER_OIL', 'base_generator', 'L2_BENCH_NEARBY', fmtPairs(GENERATOR_CAPACITY_UPGRADE.cost), 'generator_capacity:2', fmtPairs(GENERATOR_CAPACITY_UPGRADE.cost), 0, '2_loads_fuel', 'NONE', 'catalog.ts:GENERATOR_CAPACITY_UPGRADE'],
-    ['upgrade:furnace_lining', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'furnace', 'L2_BENCH_NEARBY', fmtPairs(FURNACE_LINING.cost), 'furnace_lined_speed_bonus', fmtPairs(FURNACE_LINING.cost), 0, '0s', 'NONE', 'catalog.ts:FURNACE_LINING'],
+  // 4. Device / Action Sinks & Workstation Upgrades & Offscreen Parity
+  const deviceRoutes: [string, string, string, string, string, string, string, string, number, string, string, string, string][] = [
+    ['device:bearTrapSet', 'DEVICE_ARM', 'FOCUS_GEAR_PIPE_BLADE_PLATE', 'bear_trap', 'LIVE_ON_CRAFT_AND_BUILD_ORDER_D2_FIXED', 'iron_plate:1', 'armed_trap:3_triggers', 'iron_plate:1', 0, '0s_mechanical', 'D2_VERIFIED_BEAR_TRAP_IN_BUILD_ORDER', 'engine.ts:bearTrapSet', 'RUNTIME_TESTED(d2-corrective)'],
+    ['device:repairStructure_plate', 'DEVICE_PATCH', 'FOCUS_GEAR_PIPE_BLADE_PLATE', 'wall_or_door_damaged', 'SHIFT_CLICK_REPAIR_ACTION', 'iron_plate:1', 'hp_restore:25pct_maxHp', 'iron_plate:1', 0, '0s_action', 'NONE', 'engine.ts:1762', 'RUNTIME_TESTED(repair_reclaim)'],
+    ['device:base_generator_fuel', 'POWER_GEN', 'FOCUS_FUEL_POWER_OIL', 'base_generator', 'PAID_WIRE_V1', 'fuel_can:1|coal:1|charcoal:1|fuel_briquette:1|wood:1', 'power_energy_ms(60s/80s/55s/90s/20s)', 'fuel_can_or_coal_or_wood', 60, '1x_base_plus_loads(w07_s06_contract)', 'D4_VERIFIED_OFFSCREEN_POWER_PARITY', 'engine.ts:stepBasePower', 'RUNTIME_TESTED(d4+w07+s06)'],
+    ['device:arrow_turret', 'DEVICE_DEFENSE', 'GENERAL_ECONOMY', 'arrow_turret', 'WIRED_BASE_GENERATOR', 'arrow:1;generator_power', 'hostile_shot_dmg', 'wood+stone+fiber_or_feather', 1, '1_generator_load', 'NONE', 'sim.ts:turretFire', 'RUNTIME_TESTED(defense+s06)'],
+    ['device:escrow_deposit', 'META_ESCROW', 'GENERAL_ECONOMY', 'escrow_chest(claim_only)', 'LOCKED_CANON_CASH_ONLY', 'rcash:1', 'profile.securedCash:1', 'finite_world_cash', 0, '0s', 'D1_VERIFIED_ESCROW_ONLY_SECURED_CASH', 'engine.ts:escrowDeposit', 'RUNTIME_TESTED(d1-corrective)'],
+    ['industrial:offscreen_catchup', 'OFFSCREEN_SIM', 'FOCUS_IRON_PARTS_SPARES', 'workbench_L2_industrial/furnace/refinery/recycler/pen/garden', 'CAP_12H_WALL_CLOCK_D4', 'queued_inputs_&_generator_fuel', 'completed_outputs_&_decay_12h', 'queued_station_inputs', 0, 'offscreen_step_parity', 'D4_VERIFIED_12H_CAP_AND_RECYCLER_CATCHUP', 'engine.ts:stepOffscreen', 'RUNTIME_TESTED(d4+home-production)'],
+    ['upgrade:workbench_L2', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L1->L2', fmtPairs(WORKBENCH_UPGRADE.cost), 'workbench_level:2', fmtPairs(WORKBENCH_UPGRADE.cost), 0, '0s', 'NONE', 'catalog.ts:WORKBENCH_UPGRADE', 'RUNTIME_TESTED(progression)'],
+    ['upgrade:workbench_L3', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L2->L3', fmtPairs(WORKBENCH_UPGRADE_III.cost), 'workbench_level:3', fmtPairs(WORKBENCH_UPGRADE_III.cost), 0, '0s', 'NONE', 'catalog.ts:WORKBENCH_UPGRADE_III', 'RUNTIME_TESTED(progression)'],
+    ['upgrade:industrial_module', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L2_ELECTRIC_QUEUE', fmtPairs(INDUSTRIAL_MODULE.cost), 'automated_powered_bench', fmtPairs(INDUSTRIAL_MODULE.cost), 0, '1_generator_load', 'NONE', 'catalog.ts:INDUSTRIAL_MODULE', 'RUNTIME_TESTED(b05-industrial)'],
+    ['upgrade:generator_cap2', 'WORKSTATION_UPGRADE', 'FOCUS_FUEL_POWER_OIL', 'base_generator', 'L2_BENCH_NEARBY', fmtPairs(GENERATOR_CAPACITY_UPGRADE.cost), 'generator_capacity:2', fmtPairs(GENERATOR_CAPACITY_UPGRADE.cost), 0, '2_loads_fuel', 'NONE', 'catalog.ts:GENERATOR_CAPACITY_UPGRADE', 'RUNTIME_TESTED(k6-power)'],
+    ['upgrade:furnace_lining', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'furnace', 'L2_BENCH_NEARBY', fmtPairs(FURNACE_LINING.cost), 'furnace_lined_speed_bonus', fmtPairs(FURNACE_LINING.cost), 0, '0s', 'NONE', 'catalog.ts:FURNACE_LINING', 'RUNTIME_TESTED(progression)'],
   ];
-  for (const [id, rtype, focus, dev, gate, ins, outs, raw, secs, fuel, action, prov] of deviceRoutes) {
+  for (const [id, rtype, focus, dev, gate, ins, outs, raw, secs, fuel, action, prov, verTier] of deviceRoutes) {
     lines.push(
       csvRow([
         id,
@@ -795,10 +1131,11 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
         fuel,
         'N/A(device_sink)',
         secs > 0 ? Math.round((60 / secs) * 100) / 100 : 0,
-        action === 'NONE' ? 'NONE' : action,
+        'NONE',
         'BOTH_LIVE',
         action,
         prov,
+        verTier,
       ]),
     );
   }
@@ -823,11 +1160,121 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
         'BOTH_LIVE',
         'KEEP_AS_IS',
         `catalog.ts:GARDEN_CROPS.${gk}`,
+        'RUNTIME_TESTED(garden+home-ecology)',
       ]),
     );
   }
 
-  // 6. Study & Vendor Conversion Routes
+  // 6. Husbandry & Butchery Routes
+  for (const [sp, h] of Object.entries(HUSBANDRY_YIELDS)) {
+    const outList: [string, number][] = [h.primary, ...(h.secondary ? [h.secondary] : [])];
+    lines.push(
+      csvRow([
+        `husbandry:${sp}`,
+        'HUSBANDRY_PEN_YIELD',
+        'GENERAL_ECONOMY',
+        'pen+feed_trough',
+        h.femaleOnlyPrimary ? 'FEMALE_FOR_EGG;BOTH_SEXES_SECONDARY' : 'HYDRATED_FED_ADULT',
+        'feed_nutrition+water',
+        fmtPairs(outList),
+        'renewable_crop_or_forage',
+        Math.round(h.cycleHours * 3600),
+        'trough_feed_&_water',
+        'RENEWABLE_LIVESTOCK_YIELD',
+        Math.round((60 / (h.cycleHours * 3600)) * 1000) / 1000,
+        'NONE',
+        sp === 'grouse' || sp === 'deer' || sp === 'hare' ? 'VEYRA_HABITATS_LIVE' : 'BOTH_LIVE',
+        'KEEP_AS_IS',
+        `husbandry.ts:HUSBANDRY_YIELDS.${sp}`,
+        'RUNTIME_TESTED(audit-closure+review-r2)',
+      ]),
+    );
+  }
+  for (const [sp, b] of Object.entries(BUTCHER_YIELDS)) {
+    lines.push(
+      csvRow([
+        `butcher:${sp}`,
+        'BUTCHERY_HARVEST',
+        'GENERAL_ECONOMY',
+        'penned_livestock(blade)',
+        'BRED_OR_TAMED_ADULT',
+        `${sp}:1`,
+        fmtPairs(b.adult),
+        `tame_&_breed_${sp}`,
+        0,
+        'blade_durability',
+        'TERMINAL_CARCASS_HARVEST',
+        0,
+        'NONE',
+        sp === 'boar' ? 'BOTH_LIVE' : 'VEYRA_HABITATS_LIVE',
+        'KEEP_AS_IS',
+        `husbandry.ts:BUTCHER_YIELDS.${sp}`,
+        'RUNTIME_TESTED(audit-closure+husbandry)',
+      ]),
+    );
+  }
+
+  // 7. Research Table, Study & Vendor / Escrow Conversion Routes
+  lines.push(
+    csvRow([
+      'research:random_spares',
+      'RESEARCH_UNLOCK',
+      'FOCUS_IRON_PARTS_SPARES',
+      'research(table)',
+      'UNKNOWN_RECIPES_POOL',
+      `spares:${BAL.research.randomSparesCost}`,
+      'blueprint:1(unknown_recipe)',
+      `spares:${BAL.research.randomSparesCost}`,
+      BAL.research.randomSeconds,
+      '0s_fuel',
+      'N/A(knowledge_unlock)',
+      Math.round((60 / BAL.research.randomSeconds) * 100) / 100,
+      'NONE',
+      'BOTH_LIVE',
+      'KEEP_AS_IS',
+      'engine.ts:research.random',
+      'RUNTIME_TESTED(research+engine)',
+    ]),
+    csvRow([
+      'research:directed_spares',
+      'RESEARCH_UNLOCK',
+      'FOCUS_IRON_PARTS_SPARES',
+      'research(table)',
+      'T0_T1_T2_ONLY(NO_T3)',
+      `spares:${BAL.research.directedSparesCost}`,
+      'blueprint:1(chosen_recipe)',
+      `spares:${BAL.research.directedSparesCost}`,
+      BAL.research.directedSeconds,
+      '0s_fuel',
+      'N/A(knowledge_unlock)',
+      Math.round((60 / BAL.research.directedSeconds) * 100) / 100,
+      'NONE',
+      'BOTH_LIVE',
+      'KEEP_AS_IS',
+      'engine.ts:research.directed',
+      'RUNTIME_TESTED(research+d1-d5)',
+    ]),
+    csvRow([
+      'vendor_escrow:escrow_chest',
+      'VENDOR_CASH_PURCHASE',
+      'GENERAL_ECONOMY',
+      'vendor(Shipping&2_Veyra_POIs)',
+      `FINITE_STOCK:4;CONDITIONAL_RAGNAROK_RCASH`,
+      `rcash:${BAL.economy.escrowChestPrice}`,
+      'escrow_chest:1',
+      `finite_Ragnarok_openCash:${BAL.economy.escrowChestPrice}`,
+      0,
+      '0s',
+      'N/A(meta_escrow_unlock)',
+      0,
+      'NONE',
+      'BOTH_LIVE(conditional:Ragnarok>=264h_rcash)',
+      'KEEP_AS_IS',
+      'engine.ts:vendor.buy.escrow_chest',
+      'RUNTIME_TESTED(d1-corrective+m2)',
+    ]),
+  );
+
   for (const [itemKey, unlockedRecipe] of Object.entries(CORE_STUDY)) {
     lines.push(
       csvRow([
@@ -847,6 +1294,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
         'BOTH_LIVE',
         'KEEP_AS_IS',
         `catalog.ts:CORE_STUDY.${itemKey}`,
+        'RUNTIME_TESTED(research+core)',
       ]),
     );
   }
@@ -869,6 +1317,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
         'BOTH_LIVE',
         'KEEP_AS_IS',
         `catalog.ts:VENDOR_SPARES.${vk}`,
+        'RUNTIME_TESTED(m2+lr02)',
       ]),
     );
   }
@@ -887,10 +1336,11 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
         '0s',
         'N/A(one_way_meta_vendor)',
         0,
-        'D1_MUST_BLOCK_JOURNEY_CASH_MINT',
-        'BOTH_LIVE',
-        'VERIFY_WITH_ESCROW_ONLY_SECURED_CASH_D1',
+        'NONE(D1_ESCROW_ONLY_SECURED_CASH)',
+        'BOTH_LIVE(conditional:escrow_Ragnarok_rcash)',
+        'D1_VERIFIED_ESCROW_ONLY_SECURED_CASH',
         `catalog.ts:VENDOR_SECURED.${vk}`,
+        'RUNTIME_TESTED(d1-corrective+m2)',
       ]),
     );
   }
