@@ -243,7 +243,7 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
  rec.candidateStageCounts=measures;
  rec.missingCombinationCounts=Object.fromEntries(Object.entries(failMasks).sort((a,b)=>b[1]-a[1]));
  rec.candidateExamples=samples;
- if(name==='bz_westmouth') rec.allWindowAlternativeStarts=enumerateAllWindowStarts();
+ if(name==='bz_westmouth'||name==='bz_greywater') rec.allWindowAlternativeStarts=enumerateAllWindowStarts();
  if(name==='bz_westmouth' && safe3x3Cells.length){
   const picked=[0,Math.floor((safe3x3Cells.length-1)*0.2),Math.floor((safe3x3Cells.length-1)*0.4),Math.floor((safe3x3Cells.length-1)*0.6),Math.floor((safe3x3Cells.length-1)*0.8),safe3x3Cells.length-1];
   rec.extendedRouteDiagnostics=picked.map(index=>{const tile=safe3x3Cells[index],x=tile%200,y=(tile/200)|0;return {localTile:[x,y],globalTile:[x+origin[0],y+origin[1]],validator:measureNearVsReach(tile,'validator'),wading:measureNearVsReach(tile,'wading')};});
@@ -260,6 +260,7 @@ describe('Veyra candidate-level spawn reason trace',()=>{
    const result=inspectDiagnostic(p.name,p.origin,p.seed);
    material.records.push(result);persist();
    expect(result.prefilter).toBeGreaterThan(0);
+   if(p.name==='bz_greywater')expect(result.allWindowAlternativeStarts?.fullyValid).toBeGreaterThan(0);
   }
  },600000);
 });
