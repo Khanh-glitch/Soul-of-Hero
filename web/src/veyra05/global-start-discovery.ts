@@ -2,6 +2,10 @@
  * Global Veyra first-window discovery: deterministic geographic coverage.
  *
  * Research-only generator. Coordinates are window ORIGINS, not spawn points.
+ * The production caller imposes a 24-window latency budget: a search failure
+ * is a visible rejection, never proof that Veyra has no legal spawn anywhere.
+ * Mainland-only starts remain a temporary policy until real sea traversal
+ * and rescue routes are physically certified.
  * This intentionally has no fixed starting regions, POI/GOLD spawn markers,
  * or salvage reward bias. A caller must still verify true engine collision,
  * source stock, nine build sites, hazards, and offshore traversal before using
