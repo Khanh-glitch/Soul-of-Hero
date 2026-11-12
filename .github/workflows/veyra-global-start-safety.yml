@@ -1,0 +1,29 @@
+name: SOH Veyra Global Starting-Window Safety Foundation
+on:
+  push:
+    branches: [feature/veyra-global-start-safety-20261112]
+    paths:
+      - 'web/src/veyra05/window.ts'
+      - 'web/src/veyra05/global-start-discovery.ts'
+      - 'web/src/veyra05/global-start-discovery.test.ts'
+      - '.github/workflows/veyra-global-start-safety.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  safe-global-window-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install pinned web dependencies
+        working-directory: web
+        run: npm ci
+      - name: Verify deterministic full-frame origins and actual spawn negative/positive controls
+        working-directory: web
+        run: npx --no-install vitest run --fileParallelism=false --testTimeout=120000 src/veyra05/global-start-discovery.test.ts
