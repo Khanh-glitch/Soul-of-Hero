@@ -620,3 +620,61 @@ Even the corrected 11.2M tile scan omits POI static solid props and dynamic acto
 `G0/G1` full tile raster can be marked measured only after manifest is downloaded and checked against a completed workflow; `G2` spawn and local resource BFS is at most automated regional evidence; `G3+` physical travel/harvest/save/return remain NOT_RUN until separately performed. No percentage of valid global spawn cells or full 11.2M-source connectedness is established by this harness alone.
 
 **New red-flag test-method note:** `AUDIT-RIVER-PASS-006`: interpreting `SHALLOW/RIVER` as impassable for on-foot players fragments terrain in a way that contradicts real `solidFor` logic. Do not reuse former graph without marking it “dry ground only.”
+
+---
+
+## 17. Verified GitHub Actions audit outputs and root-cause probe — 2026-11-12
+
+**Evidence retrieved and inspected from CI artifacts, not invented:**
+- Audit branch sha **`f189584de582a388ab26b8fc05d2828a37c23a96`**, run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43232561261, artifact `veyra-global-spawn-industrial-audit-f189584de582a388ab26b8fc05d2828a37c23a96-1`, ID **13952215321**, digest `sha256:af22ad233c41f108f2b9057b0ab9b0145971f34e514db048ac37b986958ea045`; workflow **SUCCESS 2/2**; manifest ZIP retrieved and parsed in current audit session. This is **source/procedural reachability evidence, not player-interaction evidence**.
+- `4bc8ac419345f2bf486ef32a0e2f296f55597613` run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43232374086, successful 2/2, per-start collision BFS; **superseded by f189584d for terrain connectivity**.
+- `e4c6fb91766be4e1c628b926354e5234dd7e4155` run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43231669118 success 2/2, initial river-as-blocked graph; **historical only**. Its 4,916 graph components and 3,677,151 terrain-walkable cells are incompatible with real player wading, so not acceptance.
+
+### 17.1 f189584d exact measured output from manifest (no extrapolation to all starts)
+
+| Metric | Manifest value | Proper evidence interpretation |
+| --- | ---: | --- |
+| Tiles scanned | **11,200,000** | Full **bare chunk terrain** 4000×2800 |
+| Authored land-mask cells | **3,856,478** | GOLD landmask, **not** eligible spawn sites |
+| Terrain passable by foot + wading | **3,798,481** | Bare-terrain superset; ignores physical POI props/doors/source stock |
+| Coarse safe-surface pixels | **2,834,905** | Terrain-only non-lethal broad mask, **not** chooseLegalSpawn count |
+| Terrain 4-neighbor components | **4,912** | Bare-terrain geometry, includes many tiny pockets, NOT 4,912 islands or legal spawn clusters |
+| Components with size <30 cells | **4,885** | Mostly micro-islands of walkability; no player significance yet proven |
+| Largest terrain component | **3,299,660** cells | Bare terrain; may cross `SHALLOW/RIVER` by player only; not car cargo or physical bridges |
+| Current-regional source probes | **30** | 23 named locality polygon-centroid windows + seven non-mainland land polygon centroid windows, **one seed/window**, not whole-world random valid-cell study |
+| `startRun` succeeded / rejected | **13 / 17** | Case sample only, 17 rejected with `No safe, resource-accessible spawn in this region.`; no global percent claim |
+| Accepted probes with reachable Scrap/Wreck | **11/13** | Actual `blockGrid` 4-neighbor BFS within 175 steps **and current window**; not completed collection/travel |
+| Accepted probes with reachable ore | **3/13** | Actual within-window local physical adjacency only |
+| Accepted probes with reachable authored loot container | **4/13** | Within-window adjacency; no inventory transfer/UI/input performed |
+
+**Important accepted-source examples from actual manifest:**
+- `bz_greywater`: wood at **2 steps**, rock **8**, food **4**, Scrap/Wreck **94**, no ore or coal within 175 steps, no reachable authored loot container within window. This does not contradict existing authored Greywater caches on the full map; this specific spawn may be far from or blocked off from their particular containers.
+- `bz_moss`: wood 3, rock 5, food 1, **no reachable Scrap/Wreck** within BFS 175. Do not infer the entire Mossbrook region has no scrap.
+- `bz_verdant`: one physically reachable `Verdant Timberyard Cache` at 50 steps (Scrap×6, Rope×2, Bandage×2).
+- `bz_hook`: one reachable `Hook Mere Pier Cache` at 67 steps (Scrap×5, Mechanical Parts×1, Bandage×2).
+- `bz_salt`: one reachable `Salt Pans Cache` at 133 steps (Cloth×4, Spares×3, Torch×1).
+- `island-ld_saltwick`: one `Salt Pans Cache` at 39 steps, same original stock; these are **two distinct test windows over the same world object**; never double-count stock as two separate caches for one run.
+- `island-ld_cinder`: accepted, but no Scrap/Wreck within 175 steps even though near Coal×20-step and Ore×16-step; this is a meaningful alternate economic archetype, not immediate proof of failure.
+- `bz_salt`, `island-ld_cinder`, `island-ld_saltwick` have physical ore/coal nearby in these samples. This does **not** authorize offshore spawn, because sea transport/return viability remains unproved.
+
+### 17.2 Root-cause suspicion: “all 40k candidate cells” is a prefilter FALLBACK, not universal eligibility
+
+Direct source in `web/src/veyra05/window.ts`: when the near-scene water-distance/biome prefilter has <16 candidates, it broadens; if no eligible candidate remains near a freshwater marker within ≤28 tiles, **`spawnEligible.fill(1)`**. Thus a logged `windowCandidatePrefilter=40000` is often **failure fallback** saying “let engine exhaustively search,” and must NEVER be labeled 40,000 suitable starts. `chooseLegalSpawn()` still fails if local wood/stone/plant food/fresh water/buildable access is insufficient.
+
+In these data `bz_elder_clear`, `bz_greyback`, `bz_ridge`, `bz_westwood`, `bz_gulfwest`, `bz_delta`, `bz_argus`, `bz_kestrel`, `bz_slag`, `bz_forest_n`, and offshore Gull/Threshold/Wreck/Beacon all return 40,000 prefilter candidates then reject the run. **Not yet proof specifically that fresh water is missing**; physical water counters and marker comparison required.
+
+Additionally `window.ts` sets `pFresh[pi]` from actual water tile + land flag, but GOLD `resources[].kind='fresh_water'` are geographic resource MARKERS; a marker alone is not a drinkable terrain tile. A lot of authored freshwater markers in GOLD should never be counted as live wet tiles without source implementation evidence. `engine.ts::chooseLegalSpawn` searches only grid code 0 in BFS expansion, while actual walking uses collision class 4 for shallow/river. This difference can reject resource combinations that are wade-reachable in real gameplay; whether it causes any of 17 sampled rejections remains untested. Distinguish cause from hypothesis.
+
+### 17.3 Targeted diagnostic code and LIVE workflow
+
+Added separate **lightweight** source, not another full 11.2M scan:
+- `web/src/veyra05/spawn-failure-cause.audit.test.ts` (commit `1218ea2`): for **14 selected representative windows** report `w.fresh` actual wet tile count, GOLD freshwater-markers inside, safe surface, 3×3 potential and prefilter fallback, plus compiled wood/stone/food/scrap/ore/coal counts.
+- Second test runs **two deterministic non-QA `startRun` cases in each of four *currently implemented* region selectors**, to distinguish runtime regression from hypothetical world-wide span; do NOT interpret four as canonical spawn count.
+- `.github/workflows/veyra-spawn-cause-audit.yml` (commit `065f733`), run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43234161587, artifact `veyra-spawn-cause-<sha>-<attempt>` on completion.
+- STATUS AT DOCUMENT COMMIT: targeted job initiated; **no result inspected yet**. Update **in this same section or a clear dated extension** only after reading manifest. Do not claim a PASS from successful upload alone.
+
+### 17.4 Decisions and remaining acceptance
+
+- Current evidence proves the 11.2M bare tile *geometry scan* works and exposes valid testable geography differences. It proves **only 13 of 30 sampled windows found an eligible start under their single seed**, not that 17 geographic regions are unplayable or that 4 selected start regions are unusable.
+- **NO authorization** for changing spawn count, random-selection region policy, placing a new water source, adding loot quantities, modifying biome risks, bridging water or building ferries based on these counts.
+- Next action after targeted diagnostics: classify rejections into no actual freshwater tile; prefilter bug; 3×3 collision/safety; lack of wood/stone/plant food; actual distance/path blocked; QA window artifact. Then run controlled actual-player movement and save/reload on specific failed-versus-accepted examples before modifying production spawn or loot.
