@@ -283,3 +283,31 @@ The pilot deliberately adds **finite, complete industrial items** at only four P
 ### 9.6 Creator decision needed, only if authorizing this pilot
 
 **Choice:** Should identifiable physical stock (e.g. a pressure-pipe store and turbine bearing) supply **a guaranteed once-per-run specific component** after it is reached, with optional randomized minor toolboxes elsewhere (recommended), or should even these specialist stocks have chance-based outcomes? This is a player-experience and 14-day exploration-economy decision, not something code can settle. Distinguish from total compulsory progression: crafting still exists. Only the selection rule is open; the lifecycle requirement (no duplicate farming) is mandatory technical integrity once finite stock is adopted.
+
+---
+
+## 10. Design correction: false guaranteed-versus-random binary — 2026-11-12 Creator challenge
+
+**STATUS: CORRECTION TO ASSISTANT PROPOSAL, NOT A NEW CREATOR DECISION.** This section explicitly qualifies §9.3–§9.6 and earlier suggestions that finished components must be once-per-run guaranteed drops. The 4-site supply `2 Pipe / 2 Gear / 2 Plate` was **a test fixture to compare source economics**, not justified as the actual SOH loot experience. Do not implement it by default; do not treat finite bonus vs timer refill as a binary based solely on whether item is "advanced".
+
+### What Last Island sources actually demonstrate
+
+1. Official 2022-11-09/10 notice `https://hero.yingxiong.com/info/2022/1109/13052.html` distinguishes **crate category** (Supply guaranteed *facility/material class*, Military guaranteed *weapons/equipment/special-material class*, Food guaranteed *food class*, Medical guaranteed *medical class*, Harpoon guaranteed *harpoon/diving class*), **crate tier** (damaged/low/mid/high as available), and **access rooms** (green/blue/purple with differing crate mixes). **Guaranteed category ≠ guaranteed Pipe/Gear/Plate SKU.**
+2. The notice expressly gives *chance* that any Toolbox drops bicycle blueprint, so specialist crates do not necessarily guarantee a particular blueprint. It separately specifies **guaranteed specific drops for particular bosses** (4 defibrillators per Port Boss death; 2 from Avenger in the named update), showing SKU-specific guarantee is a different, source-specific contract — NOT default ordinary crate behavior.
+3. LI Atlas v4 distinguishes **container family, tier, per-item chance, access** and independently records **POI loot, keycard and power cycles**; the source-specific timers are community/period-variant, not blanket official 2026 values. Atlas v5 S06 likewise distinguishes "guaranteed category" from item chance. Avoid forcing every specialist POI to be a one-time named reward chest.
+4. TapTap 2022-08-04 Metal Pipe note: Pipe appears in yellow/blue barrels, Supply, Military, Advanced Military and Airdrop, can be recycled or crafted at medium bench; it is a **multi-source economical intermediate**, not proven guaranteed once-per-run at one "Pipe Store".
+
+### What SOH canon actually requires
+
+- `web/ref/bible.md` §K3 and source model: source has identity, type, stock, finite-or-respawn status and valid timer; player interaction debits/grants atomically and has save continuity. **Plants/scrap/monsters/POIs can replenish by their own rules**; Ragnarok special cash is **finite** and cannot share ordinary loot renewal. This does **not** imply finished industrial intermediates are globally or locally once-per-run.
+- 336-hour continuously running 14-day world, wipe, offline simulation, player freedom to search/skip/recycle/craft, geographic variability: expected viable **source classes and tradeoffs**, not fixed named collectible pickup itinerary.
+- Creator-approved principle from §1 is only: advanced industry meaningfully uses intermediates, with genuine alternative sources/uses, not unnecessary compulsory chains.
+- Code's current `renewableLoot()` uses broad item-category eligibility; that is too coarse to control special finite bonuses, but **finite bonuses are not automatically the right answer to that defect**. Fix should be source-granular policy with explicit stock/renewal class and evidence-based generation.
+
+### Revised design hypothesis
+
+Prefer **source class (what a place can plausibly contain) + quality tier (how valuable/rare) + access gates/risk + physical stock + per-item probabilities** for normal scavenging. "Guaranteed" may refer to a broad class or minimum useful salvage, not an exact Gear/Pipe every run. Preserve independent replenishment rules for normal sources where intended, with bounded renewable stock and stable deterministic rolls; non-renewable named treasure and unique tech only for exceptional source contracts justified by SOH canon and actual player experience. If a source has a finite component, protect its UID and once-issued state; if it is a renewable industrial toolbox, do not ban Gear simply because it is an advanced intermediate — control cooldown, count, rarity, and anti-exploit.
+
+**Reopen** §9.3 four-site deterministic pilot for design; **DO NOT AUTHORIZE 1 guaranteed Pipe @ Pumphouse, 1 Pipe+Gear @ Falls, 1 Gear @ Freight, 2 Plates @ Slag** as an actual gameplay distribution until class/tier/access/probability and run-time sample are reviewed. Source/site names remain plausible thematic candidates only.
+
+**Next actual design question** is not "guarantee item versus random item?" but: which physical source categories should the player recognize in Veyra, how should risk, recovery, time/route and POI depth change the distribution of viable materials, and which exceptional sources alone warrant guaranteed exact rewards? Revisit Last Island source-version-referenced numbers before locking item-level odds.
