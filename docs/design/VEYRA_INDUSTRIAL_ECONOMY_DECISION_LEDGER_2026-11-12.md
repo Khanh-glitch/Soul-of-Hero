@@ -1,5 +1,7 @@
 # VEYRA INDUSTRIAL ECONOMY — Decision ledger (2026-11-12)
 
+> **CURRENT FOLLOW-ON:** §14 completes a **GOLD-wide landmass / resource-anchor inventory and replay of historical 12-window source census**. It does **not** claim full 11.2M-cell runtime collision/spawn enumeration, walkable water crossings or live play. §13 remains the red-flag / eligibility correction.
+>
 > **RED FLAG-SPAWN-001 — HIGH PRIORITY DESIGN MISMATCH:** There are **four hardcoded Veyra *regional starting windows* in today's implementation**, NOT four canonical Last Island / SOH spawn points. NEVER treat that number as a design target, coverage denominator or valid universal balance test. §12's four-region QA matrix is **SUPERSEDED** by §13's full-map, eligible-cell coverage method. No global-spawn code change has been approved or implemented.
 >
 > **READ FIRST — 2026-11-12 CURRENT STATUS:** The only Creator-approved industrial direction is §1. Earlier §4/§9 are recorded exploration hypotheses, **not approved recipes, deterministic reward sites, finite-only policy, rates or implementation authority**. §10 corrects the false guaranteed-vs-random choice; §11 below is the latest **testable SOURCE-CLASS design**, not a production loot contract. Keep original evidence without allowing rejected/superseded examples to function as implementation orders.
@@ -487,3 +489,90 @@ Excluding 6 Elder sites, 6 special Ragnarok cash POIs, 2 vendors, and 3 evacuati
 - **Design correction:** a radius to the nearest named POI is NOT a radius to accessible tools, scrap, food, wood, freshwater or industrial stock. Categorize each POI by *physical source role and actual access* and include roadside/natural sources, otherwise tests produce false-positive economics. This analysis cannot identify which geographic cells are legal spawns and has not simulated routes.
 
 No new spawn count, no uniform POI-distance target, no changes to quantities/cooldowns.
+
+---
+
+## 14. Full-GOLD landmass/resource coverage audit and effective spawn-source criteria (2026-11-12, pass 6)
+
+**Evidence state: COMPLETED STATIC SOURCE ANALYSIS; NATIVE/REAL WORLD-SPAWN ENUMERATION = NOT RUN.**
+**Source pinned:** `c6c6fc50471f9dff2633e6dcde00f2d342c8ce7e`.
+**Objective:** Continue industrial loot-source work without returning to a false four-spawn premise, preserve biome asymmetry, and identify regions requiring physical eligibility/pathfinding tests before issuing new loot numbers.
+
+### 14.1 Global dimension and generator implementation
+
+- GOLD geography `project.world = 2000×1400 AU`, runtime `U=0.5 AU/tile` ⇒ **4000×2800 tile cells, 11,200,000 addressable**; runtime active window = **200×200 cells (100×100 AU)**, chunks = **32×32**. The `world.ts` UI description still says `3200×2400 tiles`, contradicting the authoritative `frame.ts` 4000×2800. **COPY/ABOUT-TEXT MISMATCH**, not proof the physical engine uses the wrong bounds. Fix copy later after confirming exact live framing.
+- Current `startRun()` Veyra start window picks one of four regional layouts; `chooseLegalSpawn()` samples eligible positions within that one window only. `window.ts` prefilters `spawnEligible` with a **10–42 local-tile annulus** from scene focus and approximate freshwater distance ≤27 tiles, with a fallback if fewer than 16 eligible prefilter cells. **This is a technical first-window spawn bias, not Last Island or SOH canon**. The final gameplay `chooseLegalSpawn()` still checks actual neighborhood + water/wood/stone/food/buildable source graph, but only within chosen window.
+- `chooseLegalSpawn()` requires physically reachable wood, stone, food, water and ≥9 buildable sites within depth 30; **does not require nearby Scrap/Wreck**. `world-economy.ts::diagnoseStarts()` requires Scrap/Wreck in addition to those and uses a separate grid/anchor diagnostic. This is **validation-scope mismatch** to test for industrial starter sufficiency, not proof every current start is impossible.
+- `window.ts` filters procedural sources by reachability from **compiler anchors**, not player's actual spawn. It then filters source availability within window. Compiler-anchor reachability is insufficient evidence of a safe path from a future random spawn in another connected component. A full eligible-cell audit must use **actual spawn→source connectivity**, not compiler-anchor reach.
+- `world-economy.ts::compileEconomy()` uses deterministic competing biome weights per global tile and independently places Scrap/Wreck near roads and industrial terrain. E.g. forest has weighted tree+plant+small rock; hill has rock/iron/coal; ash favors sulfur/rock/deadwood/coal; toxic favors deadwood and very sparse iron; roadside adds scrap/wreck; marsh has willow/reed/mushroom, but no default rock in marsh weight table. These are **roll weights per eligible physical tile**, NOT quantities preallocated to GOLD's `project.resources` markers.
+- `window.ts` freshwater prefilter BFS measures tile-grid distance, not obstructed walking; final `chooseLegalSpawn()` checks nearby reachable source types using collision. Keep both in acceptance to catch non-shortcut and algorithmic efficiency errors.
+
+### 14.2 Eight separate land polygons — complete POI/author resource landmark inventory
+
+We read GOLD `project.land[].rings`, `project.pois[].at`, `project.resources[].at`. Point-in-polygon assignment to outer land ring gives the following **authored marker census**, *not* the full procedural resource stock. All **81/81 POI anchors** fall within a land polygon. Eleven resource points lie outside those outer rings (often coastal/on water/boundary), so per-land totals sum to 269/280 authored resource markers.
+
+| Land polygon | POI anchors | Authored resource landmarks inside polygon | Authored food/wood/stone/freshwater landmarks | Specific diagnostic |
+| --- | ---: | ---: | --- | --- |
+| `ld_veyra` mainland | 58 | 219 | food 47, wood 46, stone 22, freshwater 52 | Broad regional diversity; a full traversal/resource audit must include industrial interior and long routes |
+| `ld_cinder` | 6 | 15 | food 1, wood 1, stone 3, freshwater 2 | Harsh climate / little named basic survival; do not grant automatic start without hazard/crossing proof |
+| `ld_saltwick` | 5 | 11 | food 5, wood 1, stone 1, freshwater 1 | More basic source markers, but offshore return still unproven |
+| `ld_gull` | 3 | 5 | food 1, wood 1, stone 1, freshwater 1 | Isolated island; check viability + physical crossing |
+| `ld_ironholm` | 3 | 8 | food 1, wood 3, stone 1, freshwater 1; ore 1 | Industry island; attractive haul, but cannot count as a freely reachable mainland POI |
+| `ld_threshold` | 3 | 6 | food 2, wood 1, stone 1, freshwater 1 | Island access via named ferry *proposal*; prove usable transport |
+| `ld_wreck` | 2 | 5 | food 1, wood 1, stone 1, freshwater 1 | Salvage destination, no proven travel route |
+| `ld_beacon` | 1 | 0 | none authored | **Highest marker-scarcity sentinel**; procedural source generation may still yield stock, so “zero resource” is NOT yet established |
+
+GOLD also contains **23 named locality polygons**; 20 have a sample point inside mainland and 3 inside specific islands (Cinder, Saltwick, Ironholm). Four islands (Threshold, Wreck, Gull, Beacon) have NO `project.zones` locality polygon. **Do not derive a full-world spawn sample from the 23 named-zone inventory alone**. Conversely, 23 named regions do not mean 23 canonical start points.
+
+11 authored resource landmarks were not assigned to an outer land polygon: ore1, food1, fish3, freshwater6. These may be shore/water nodes, not necessarily errors; keep geometry provenance and avoid dropping them from full-world source coverage.
+
+### 14.3 Transport interdependence — transportation is a P0 gate for island spawn eligibility
+
+- GOLD declares **8 named ferry-type road routes** (Westmouth↔Threshold, Fish Camp↔Wreck Isle, Drowned Pier↔Beacon, Emberport↔Cinder, Hook↔Saltwick, Saltwick↔Gull, Southfoot↔Ironholm, Gulfhead↔Ironholm) and **27 docks**. These describe desired map logistics, **not working transport**.
+- `web/src/veyra05/reader.ts` explicitly excludes `kind:'ferry'` road links from the physical roadway `SEGS` and says **“Ferries are suggestions, never dry roads”**. Docks and bridge markers are `NODES`, not automatic walkable decks. The 12 non-ferry bridge points are mostly river crossings; they do not authorize an island sea crossing by themselves.
+- `web/src/game/catalog.ts` currently includes Motorbike and cart mechanics but **no authored boat/raft/ferry vehicle recipe**; `sim.ts::solidFor` uses block-grid collision and `T.DEEP` is impassable in normal world construction. Based on these inspected paths, **no working inter-island crossing is proven**; do not claim ferries function or grant spawn on disconnected islands by anchor count. A separate real run test must verify any alternative crossing capability; partial source survey is not a global proof of absolute impossibility.
+- **New follow-up risk label:** `WORLD-OFFSHORE-ACCESS-001` — accepting a remote island spawn or promising rare loot there without demonstrated travel/rescue/exit can strand the player and invalidate the 14-day survival/industry loop. **Do not “fix” by drawing a fake road across sea or instant teleport**. The eventual solution must be a physical boat/ferry/route mechanism consistent with SOH, or exclude that area from eligible starting cells until resolved.
+
+### 14.4 Historical M2 source counts, separated from current source feasibility
+
+`web/reports/economic-network/M2_SIMULATION_RESULTS.json -> worldEndowments.veyra.sceneSamples[]` samples **12 windows of 200×200 tiles**, not the whole continuous world. The values count deterministic placed source entities in sampled windows, *not quantities harvested or sources reachable by an individual player*. This is older analytical evidence; later M5 corrections supersede earlier M2 defect verdicts.
+
+| Historical scene window | wood trees (live types only) | bush+mushroom food sources | iron veins | coal seams | scrap nodes | wreck nodes |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Greywater | 1794 | 564 | 0 | 0 | 40 | 7 |
+| Westmouth | 711 | 1345 | 0 | 0 | 51 | 11 |
+| Hook | 2062 | 671 | 0 | 0 | 25 | 5 |
+| Gulf | 634 | 1190 | 195 | 75 | 37 | 4 |
+| Cinder | 13 | 6 | 0 | 264 | 0 | 0 |
+| Mirage | 0 | 0 | 0 | 0 | 105 | 24 |
+| Slag | 0 | 0 | 761 | 263 | 39 | 5 |
+| Saltwick | 1687 | 519 | 251 | 99 | 38 | 6 |
+| Argus | 2116 | 6 | 49 | 12 | 48 | 8 |
+
+**High-value diagnostic outcomes:** Mirage's *sampled window* has zero trees and bush/mushroom; Slag also zero of both and toxic biome; Cinder has very little of both; Argus sampled bush/mushroom counts = 6 even though tree density is high. These are **not proofs of unplayable whole zones**: other food sources may exist, partial windows overlap, distance/path/hazard conditions differ, and neither total authored anchor count nor M2 scene number proves accessibility. They DO identify which possible starting conditions must be actively rejected/proved by eligibility, and which specialized resource-expedition destinations may be attractive without spawn viability.
+
+### 14.5 Cross-system test order — replaces four-window universal balance assumptions
+
+**G0 Map/source version pin:** same GOLD hash, WMP raster revision, runtime SHA, run seed. No mixing old M2 findings into current acceptance as if refreshed.
+
+**G1 Global candidate enumeration:** across **all landmasses**, scan full tile world incrementally, or equivalent deterministic partition, and evaluate broad walkable/safe candidates from actual `getChunk` + `buildWindowWorld` outputs; do not create a giant 11.2M-cell runtime world or assume all 23 locality polygons are legal. Record eligible and rejected cells with reasons (collision, hazard, resource scarcity, lack of fresh water, immediate hostile, missing buildable space, offshore no verified crossing). Prefer reproducible stratification by landmass, biome and actual source distances. Track fraction eligible and number of isolated eligible clusters, not a fixed target point count.
+
+**G2 Prove full local survival from actual sampled candidates:** player knife/fists -> wood + rock + plant/water + buildable patch, tools and storage. Compare `chooseLegalSpawn()` with `diagnoseStarts()` and verify source compiler anchors don't conceal paths from an actual player tile. This G2 does NOT require instant Gear/Pipe.
+
+**G3 Industrial reach:** for each nonempty eligible class, identify nearby actual ordinary source classes: roadside scrap/wreck and source to turn scrap to iron; accessible quarry/hill iron+coal; maintenance/industrial POI exterior stock. Mark real routes disconnected/blocked even when Euclidean distance is small. POI special cash/elder/evac/vending alone is not an ordinary industrial source.
+
+**G4 14-day economies and play styles:** at least scrap-first, miner-first, POI-raider; compare net benefit of collected vs crafted Gear/Pipe accounting for real travel, tool wear, encumbrance, danger, fuel, research, alternate recycler and stock renewal. Advanced industrial intermediate discovery may be delayed but cannot be tied to a mandatory boss/quest. Sources after offline settlement must preserve UID/no duplication.
+
+**G5 Browser and native evidence:** source compile, collision/path constraints, physical loot, separate-process save/relaunch, screenshots and subjective choice; no simple M2 JSON count qualifies as PLAY PASS. No agents requested to implement new loot/spawn rules based on only G0–G1 proxy stats.
+
+### 14.6 Immediate triage and next research
+
+1. `RED_FLAG-SPAWN-001`: **OPEN / DESIGN-P0** — hardcoded four initial regional windows remain implemented, full eligible-cell sampling not built/proven.
+2. `WORLD-OFFSHORE-ACCESS-001`: **OPEN / DESIGN-P0** — ferry lines on GOLD only; no physical cross-island gameplay established.
+3. `SPAWN-SOURCE-CONTRACT-002`: **OPEN / QA** — the startup spawn validator does not require Scrap, but start-source diagnostics do; identify intended industrial viability threshold without forcing Scrap on every starter tile.
+4. `POI-LOOT-ROLE-003`: **OPEN / DESIGN** — 81 POI names ≠ 81 usable loot sources; 64 normal POI roles, 17 special POI roles, and sourced room/access audit still pending.
+5. `GOLD-RESOURCE-MARKERS-004`: **OPEN / DATA** — 280 GOLD resource markers, 269 inside outer land polygons and 11 coastal/water/special; neither implies actual procedural source scarcity in a zone.
+6. `WORLD-COPY-SCALE-005`: **OPEN / LOW** — stale `3200×2400` UI description vs 4000×2800 frame contract.
+7. `VEYRA-INDUSTRIAL-LOOT`: **CONTINUE DESIGN**, not implement: source class/grade/room/cooldown and generator coverage can be evaluated only for **eligible and physically reachable** resources. Do not add guaranteed rare intermediate crates as compensation for an untested spawn map.
+
+**No Creator consultation necessary yet:** these are verifiable mapping/test contract defects. Actual design debate about island spawn policy requires valid transport and survival evidence before presenting options. No changes to Gameplay, Map GOLD, production, asset binaries, or previous save contracts were made in this research pass.
