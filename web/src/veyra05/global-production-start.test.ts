@@ -32,7 +32,7 @@ describe('Veyra global fresh-run engine integration',()=>{
     const r=gs.run!;
     expect(r.qaUsed).toBe(false);
     expect(r.spawnRegion).toBe(-1);
-    expect(r.layoutId).toMatch(/^veyra05-at-\\d+-\\d+$/);
+    expect(r.layoutId).toMatch(/^veyra05-at-\d+-\d+$/);
     const [ox,oy]=windowOrigin(r);
     const global:[number,number]=[ox+r.spawnChoice!.x,oy+r.spawnChoice!.y];
     expect(unverifiedOffshoreExcluded(global[0],global[1])).toBe(true);
