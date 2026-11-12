@@ -71,7 +71,38 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
   prefilter:0,centerSafe:0,clear3x3:0,water:0,wood:0,stone:0,food:0,sites9:0,
   fullMatch:0,noWaterAmong3x3:0,passedWaterOnly:0,allExceptWater:0,
  };
+
+ /** Orthogonal diagnostic: geometric nearest node vs actual normal validator path
+  * vs player walk (including class-4 wading) from selected safe 3x3 candidates.
+  * No movement, collection, fuel, construction or save is simulated. */
+ function measureNearVsReach(start:number, mode:'validator'|'wading'){
+  const dist=new Int16Array(n).fill(-1),queue=new Int32Array(n);let head=0,tail=0;
+  queue[tail++]=start;dist[start]=0;
+  const isWalk=(j:number)=>mode==='validator'?(grid[j]===0&&!!walkable[j]):(grid[j]===0||grid[j]===4);
+  const nearest:Record<string,number>={wood:-1,stone:-1,food:-1,water:-1,buildable:-1};
+  const buildCounts:Record<string,number>={'30':0,'60':0,'120':0,'175':0};
+  const groups:Record<string,string>={oak:'wood',pine:'wood',snowpine:'wood',palm:'wood',willow:'wood',rock:'stone',bush:'food',mushroom:'food'};
+  const setFirst=(key:string,steps:number)=>{if(nearest[key]<0||nearest[key]>steps)nearest[key]=steps;};
+  while(head<tail){
+   const i=queue[head++],x=i%200,y=(i/200)|0,d=dist[i];
+   if(!!w.economyMap.buildable[i]&&!src[i]){
+    setFirst('buildable',d);
+    for(const lim of [30,60,120,175])if(d<=lim)buildCounts[String(lim)]++;
+   }
+   for(const [dx,dy] of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]){
+    const nx=x+dx,ny=y+dy;if(nx<1||ny<1||nx>=199||ny>=199)continue;
+    const j=ny*200+nx;
+    if(w.fresh[j])setFirst('water',d+Math.abs(dx)+Math.abs(dy));
+    const cat=groups[src[j]||''];
+    if(cat)setFirst(cat,d+Math.abs(dx)+Math.abs(dy));
+    if((dx||dy)&&d<175&&dist[j]<0&&isWalk(j)){dist[j]=d+1;queue[tail++]=j;}
+   }
+  }
+  return {mode,tilesVisited:tail,nearest,buildableWithin:buildCounts};
+ }
+
  const failMasks:Record<string,number>={};
+ const safe3x3Cells:number[]=[];
  // Exhaustive Westmouth trace; control windows are intentionally sampled.
  const cap=name==='bz_westmouth'?40000:96;
  let processed=0;
@@ -124,6 +155,7 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
   }
   if(!clear)continue;
   measures.clear3x3++;
+  safe3x3Cells.push(i);
   const d=runCandidate(x,y);
   if(d.wood)measures.wood++;
   if(d.stone)measures.stone++;
@@ -146,6 +178,10 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
  rec.candidateStageCounts=measures;
  rec.missingCombinationCounts=Object.fromEntries(Object.entries(failMasks).sort((a,b)=>b[1]-a[1]));
  rec.candidateExamples=samples;
+ if(name==='bz_westmouth' && safe3x3Cells.length){
+  const picked=[0,Math.floor((safe3x3Cells.length-1)*0.2),Math.floor((safe3x3Cells.length-1)*0.4),Math.floor((safe3x3Cells.length-1)*0.6),Math.floor((safe3x3Cells.length-1)*0.8),safe3x3Cells.length-1];
+  rec.extendedRouteDiagnostics=picked.map(index=>{const tile=safe3x3Cells[index],x=tile%200,y=(tile/200)|0;return {localTile:[x,y],globalTile:[x+origin[0],y+origin[1]],validator:measureNearVsReach(tile,'validator'),wading:measureNearVsReach(tile,'wading')};});
+ }
  rec.adjacentFreshCells=w.fresh.reduce((a,b)=>a+b,0);
  rec.poiCount=wdata.poiIds.length;
  rec.policy=name==='bz_westmouth'?'EXHAUSTIVE PREFILTER CANDIDATE TRACE (IF QA COLLISION STATE CONSTRUCTED)':'SAMPLED CONTROL ONLY, NOT EXHAUSTIVE';
