@@ -817,3 +817,19 @@ Six representative **eligible safe-3×3, but globally rejected** Westmouth-centr
 5. Once eligible cell source geometry and arrival/return paths have real evidence, resume industrial source/loot class/cooldown calibration. Global material rollout still requires 14-day economy + save/restart test; none is cleared by regional graph tests.
 
 **What has actually shipped:** only isolated design-branch test code/workflows and this ledger. `RED_FLAG-SPAWN-001`, `WORLD-OFFSHORE-ACCESS-001`, and physical player-input/336h acceptance remain OPEN.
+
+
+---
+
+## 22. Global start-window foundation — isolated PR #55 (2026-11-12)
+
+**Evidence:** [PR #55](https://github.com/Khanh-glitch/Soul-of-Hero/pull/55), source code tested at `eea9bd2048b950f181c96fe1c3357cb98715fac3`, [Actions run #43245734615](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43245734615) **SUCCESS**. This is **an isolated engineering increment, NOT a production global spawn, not a full 11.2M-cell source audit, and NOT actual player-input gameplay acceptance**.
+
+**Changes actually made:**
+1. `web/src/veyra05/window.ts`: remove `anyWet===0 -> spawnEligible.fill(1)` fallback that marked the entire 40k-tile window eligible in cases that lacked any reachable-nearby freshwater prefilter candidate. It now explicitly marks no prefiltered candidates in that case; the mandatory source-based 30-step test is unchanged. No terrain/source alteration.
+2. `web/src/veyra05/global-start-discovery.ts`: implement a deterministic, non-repeating traversal of 64-tile-spaced **window origins** over the 4000×2800 frame. This is geographical discovery only; it does **not** assert that any generated window has a legal spawn, traversable escape, water, local ecology or a viable player experience.
+3. `web/src/veyra05/global-start-discovery.test.ts` plus `.github/workflows/veyra-global-start-safety.yml`: assert full origin-grid uniqueness/frame bounds and deterministic seed ordering, Westmouth centroid negative versus Greywater positive via normal `startRun` (no QA landing). Exact CI job succeeded.
+
+**Remaining design-to-production proof (P0):** determine actual globally eligible physical candidate cells using live `blockGrid`, source stock, collision-safe 3×3, five prerequisites within 30 walk steps, stable seed, and buildable count; classify and reject every island without proven physical crossing/exit; performance-bound the selection without silent four-window fallback; preserve old saves and non-Veyra modes; prove selected local/global origin persists and streams correctly; then player-input first-hour survival, return and separate-process save/restart. Only after those gates may the global selector replace the four regional layouts in `startRun`. No addition of fixed spawns, source grants, 30-step relaxation, ferry teleports or unapproved industrial loot.
+
+**Decision:** PR #55 remains DRAFT, no merge. `RED_FLAG-SPAWN-001` remains OPEN, `WORLD-OFFSHORE-ACCESS-001` remains OPEN, and industry economy calibration still waits for valid playable origin/source journey evidence.
