@@ -113,3 +113,99 @@ Example cumulative choice: Pick Gear (1) + Drive Gear (1) + Sensor (1) + Bear Tr
 ## 7. Next design pass
 
 Prioritize realistic player-selected gear/pipe demand against geography; inspect the specific Veyra cache list for `po_falls`, `po_ironmine`, `po_pumphouse`, `po_freightyard`, `po_wreck` and authored variants. No work order until proposed numbers and source rules have explicit review. Keep this ledger updated IN PLACE; do not create an equally-authoritative competing document.
+
+---
+
+## 8. Expedition comparison and live-evidence correction — 2026-11-12 research pass 2
+
+**Evidence class:** RESEARCH_DELIVERED / STATIC_SOURCE_AUDIT + replay of existing M2 machine-readable audit, **NOT** new natural-play evidence, walking pathfinding, live re-simulation or a numerical loot-table authorization. Runtime comparison remains pinned to `c6c6fc50471f9dff2633e6dcde00f2d342c8ce7e`; M2 generated evidence may predate later D5 corrections. Record sources in §8.8.
+
+### 8.1 Crucial correction: do not cite stale M2 verdict as current runtime
+
+- Historical `M2_AUDIT_REPORT.md` reported Veyra's old `23/24` authored caches, `57/58` fallback POIs, `0` damaged drives from wrecks, and no Recycler.
+- Later `CURRENT_ACCEPTANCE.md` §1, §3 records **D3: 24/24 authored + 58/58 fallback**, and **D5/WP3: actual Veyra `po_slag` Foundry Recycler**, at global TILE coordinate `(2414,1896)`; fresh runs with authorized recycler have `wreckEconomy:'recycler-v1'`, producing finite `damaged_drive` in wreck salvage. The WP3 integration exercised physical harvest → drive → Recycler → Spares → Workbench L2 Frame → save/reload, with screenshot evidence; it does **not** prove geographic walk-route fitness or the candidate Gear/Pipe caches.
+- `web/src/game/wreck-economy.ts` pins wreck policy by run and ensures old saves without authorized recycler preserve `direct-v1` (no drive bonus, higher Spares chance). Do not overwrite this compatibility to make a loot test pass.
+- M2 `M2_SIMULATION_RESULTS.json` current static POI item count remains **0 Pipe, 0 Gear, 0 Plate, 0 Blade, 0 Refined Iron, 0 static Damaged Drive**: *static inventory* is distinct from the repaired **dynamic wreck drop**.
+- Distinguish `24/24` cache materialization from **walkable reachable from four legal starts**; code-only materialization is not reach proof.
+
+### 8.2 Verified 81-POI static cache stock at M2 snapshot
+
+`M2_SIMULATION_RESULTS.json -> worldEndowments.veyra.staticLootItems`: Pipe=0, Gear=0, Plate=0, Blade=0, Refined Iron=0; Mechanical Parts=16, Spares=62, Fasteners=44, Iron Ingot=18, Iron Ore=25, Scrap=84, Coal=41. These are contents of 81 POIs' static containers; they **exclude** wild veins, roadside scrap/wreck source stock, creature drops, crafting, vendors, recycling and any future authorized new loot contract. No claim that all are available in a given 200×200 local window or accessible from spawn.
+
+Specific currently authored/fallback POI cache contents (before proposed item source roles):
+- `po_greywater` Smith's Chest: 2 Iron Ingot +4 Fasteners +4 Scrap; Smugglers' Hoard Floor -1: 3 Spares +2 Iron Ingot +1 Fuel Can.
+- `po_pumphouse` generic cache: 2 Iron Ingot +3 Fasteners +1 Fuel Can.
+- `po_hook` Boat-Repair Locker: 2 Rope +2 Treated Canvas +3 Fasteners; `po_mere` generic cache: 5 Scrap +1 Mechanical Parts +2 Bandages.
+- `po_westmouth` generic cache: 4 Herb +1 Medkit +1 blueprint:stew; `po_dpier`: 6 Scrap +2 Rope +2 Bandages.
+- `po_westbank`: 3 Spares +1 Mechanical Parts +1 blueprint:gas_mask; `po_filter`: 4 Seed +4 Berries +3 Cloth.
+- `po_falls`: 5 Iron Ore +4 Coal +2 Fasteners.
+- `po_freightyard`: 3 Rope +1 Treated Canvas +3 Herb; `po_ironvein`: 4 Herb +1 Medkit +1 blueprint:stew.
+- `po_ironmine` Crane Cab Locker Floor +1: 2 Mechanical Parts +6 Fasteners +1 repair kit; Drowned Store Floor -1: 5 Iron Ore +4 Coal +1 repair kit.
+- `po_slag`: 4 Seed +4 Berries +3 Cloth (its **separate** D5 actual Recycler is present, even though its fallback loot is inappropriate for metalworkers).
+**Design implication:** prioritise fixing off-theme industrial fallback semantics **without** destroying existing authored/story cache stock, and separately author physical *finite* intermediate containers.
+
+### 8.3 Measured code constants for travel/carry and raw source stock
+
+- `BAL.player.speed=72` px/s, `TILE=16` px, Veyra `U=0.5` AU/tile → 1 AU = 2 tiles = 32px; fastest normal on-foot public surface `ROAD/BRIDGE=1.28` ⇒ **92.16 px/s**. Neutral grass 72, forest 61.92, marsh 44.64 px/s, ignoring slow, combat, collision, baggage. Walking while swinging multiplies speed by 0.45. Source `sim.ts:tickPlayer`.
+- Inventory `BAL.player.carryLimit=60kg`, overload movement penalty lower-bounded at 0.35; `trail_pack` +20kg but occupies back slot. Inventory holds 24 slots plus equipment. `invWeight()` includes inventory *and* equipped items. Cart 24 slots/240kg base; cart may snag at rivers/walls, and cart speed varies by road/rough/freight weight.
+- `SOURCES.iron` 5 Iron Ore per fully depleted vein (hp24), `coalv` 5 Coal per seam, roadside `scrap` 4 Scrap per source, `wreck` 8 Scrap per wreck, all finite (excluding explicitly regenerative plant sources). The tool's power changes swings/work per node; stone pick ore2/scrap2, iron pick ore5/scrap4, salvager ore8/scrap7; no invalid "one swing = five ore" assumption. Dynamic wreck bonuses separately roll Spares, drive, etc., by policy.
+- Mass: 8 Iron Ore ×2kg +5 Scrap ×1kg +1 Coal ×1kg = **22kg** raw carried. Finished 1 Gear (0.8kg) +1 Pipe (1.2kg) = **2kg** before additional co-products. Stock transport, station fuel, equipment and food are additional.
+- Workbench Level 1 placement = 14 Wood +4 Stone; Furnace = 18 Stone +4 Wood; hand-crafted Stone Pick =3 Wood+4 Stone+1 Rope, with 1 Rope =3 Fiber. Thus from a knife-only start, before collecting metals, the basic station/pick **raw item bill** is 21 Wood +26 Stone +3 Fiber (plus fuel and tool wear). At their catalog masses, Wood+Stone already weigh **52.2kg** — staged crafting / cargo/drop storage matters. No claim all building materials must be carried in one load.
+- `WORKBENCH_UPGRADE` L1→L2 =2 Mechanical Parts +1 Iron Ingot, with Parts crafted 2 Scrap+1 Iron Ingot→2 Parts.
+
+### 8.4 Controlled expedition comparison: self-produce versus near versus distant
+
+**A — Self-produce fresh-run 1 Gear + 1 Pipe, no found intermediate.**
+- If Workbench II and Furnace **already exist**: 8 Iron Ore +5 Scrap +1 Coal through 8 Iron smelts, 2 MP batches, 1 Fastener batch, 1 Refined batch, Gear and Pipe; **172 seconds of sequential nominal job time** (not user elapsed time). There is 1 MP +2 Fasteners surplus.
+- If Workbench L2 **still needs to be upgraded**, combined batch schedule: **10 Iron Ore +7 Scrap +1 Coal**, **204 seconds** of sequential nominal metal/intermediate jobs, plus initial Stone Pick, Workbench, Furnace and fuel as above. The source minimum at full stock is at least 2 iron veins, 2 roadside Scrap nodes or 1 wreck, and 1 coal seam, plus wood/stone/fiber sources. Multiple local sources, legal reach, recipe selection, fuel and queues are not proven by the inventory calculation. Actual jobs may overlap when using more than one station.
+- In a region without natural iron, `scrap_ingot` converts **3 Scrap →1 Iron Ingot** without Coal as input, though a fuelled Furnace is still required. Example at Westmouth: Workbench II +1 Gear from **23 Scrap** in a zero-ingot/zero-fastener case (6 ingots cost18 Scrap, MP cost4 Scrap, Fastener batch cost1 Scrap; 2 MP batches, one Fastener batch, Gear); 126s nominal processing plus fuel/stations/gathering. A Gear is feasible from salvage even when local Iron Ore nodes are absent. However a Pipe needs 2 Refined Iron from 3 Ingots **and 1 Coal**, so it can prompt a different expedition.
+
+**B — Near-POI skip, Greywater (theory from exact cache contents, not reach proof):**
+- Greywater Smith's Chest (2 Iron,4 Scrap,4 Fasteners) + Greywater Smugglers' Hoard F-1 (2 Iron,3 Spares) + Pumphouse Cache (2 Iron,3 Fasteners) = **6 Iron Ingots +4 Scrap +7 Fasteners +3 Spares**.
+- Workbench L2 bill consumes 2 Iron Ingots +2 Scrap to manufacture 2 Parts then pay 1 Iron; Gear bill consumes 2 Iron Ingots +2 Scrap for another 2 Parts then 2 Iron +1 Fastener. Combined for **L2+1 Gear =5 Iron +4 Scrap +1 Fastener**, leaving 1 Iron +6 Fasteners +3 Spares, if all containers accessible and unlooted. No ore vein, Coal seam or Furnace needed for these specific metal conversion steps; 2 MP jobs (24s) +Gear (20s)=**44s** sequential. Still must build Workbench (14 Wood +4 Stone), reach Floor -1, survive, interact and return as desired.
+- This is a **strong early Gear bypass**, not a guaranteed route: source competition, camera/doors/stairs, legal world collision and save persistence require natural play proof.
+
+**C — Distant industrial/ore expedition:**
+- `po_slag` currently hosts an actual Recycler from D5 and a *poorly matched* static cache (seeds/berries/cloth). Its sampled 200×200 scene had 761 iron nodes, 263 coal nodes, 39 roadside Scrap nodes and 5 wrecks in the earlier M2 resource raster. This is abundant ore in the sampled window, **not** 761 readily reachable veins on a single route. Toxic hazard matters: `sim.ts` adds radiation on `T.TOXIC` at 7/min without gas mask or 0.8/min with mask (at full exposure), and damage once rad>50; measured trip must account for actual exposure.
+- `po_ironvein` has Orc3 (configured habitat), but its current fallback cache has herbs/medkit/stew. Its name alone is not a rich loot roll or guaranteed mine ore vein.
+- Actual journey advantage must subtract time and loss risk of outbound+return travel, tools, food/water, load, survival, and spent source stock. Far POIs may be worth ore, but presently do **not** reward already-made Gear/Pipe/Plate/Blade from static caches.
+
+### 8.5 Absolute-coordinate straight-line travel LOWER BOUNDS — not traversable path or ETA
+
+Source coordinates: GOLD canonical `web/geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json` `project.spawns[].at` and `project.pois[].at` (AU). Game chooses legal spawn near region; it does not place every run at exact GOLD anchor. Formula:
+
+`D_au = hypot(spawnAU - poiAU); straight_road_min_minutes = D_au * (32 px/AU) / (72 px/s * 1.28) / 60`.
+
+Values below are **unattainable ideal lower bounds if all displacement were on a perfectly straight clear road at full speed**; rivers, no real ferry/bridge decks, interior routes, slowing terrain, enemies, doors, load, darkness, camping, and the randomized legal spawn add cost or may make the route impossible. Do NOT present as real route times.
+
+| GOLD spawn anchor | Near relevant POI | D AU / lower bound one-way | Further industrial POI | D AU / lower bound one-way |
+| --- | --- | --- | --- | --- |
+| Greywater South Shore `sp_lake (790,622)` | Greywater Hamlet | 37.2 AU / 0.22min | Ironvein Mine | 416.3 AU / 2.41min |
+| Greywater South Shore | Greywater Pumphouse | 89.2 AU / 0.52min | Slagworks | 508.5 AU / 2.94min |
+| Westmouth Shore `sp_west (372,606)` | Drowned Pier | 169.4 AU / 0.98min | Slagworks | 882.1 AU / 5.10min |
+| Hook Meadow `sp_hook (1282,392)` | Hook Mere Pier | 40 AU / 0.23min | Ironvein Mine | 274 AU / 1.59min |
+| Gulf West Bank `sp_gulf (872,930)` | Westbank Landing | 46 AU / 0.27min | Slagworks | 318.1 AU / 1.84min |
+| Gulf West Bank | Delta Filter Station | 87.7 AU / 0.51min | Ironvein Mine | 431.9 AU / 2.50min |
+
+Even two legs at these lower bounds are **NOT** an end-to-end walking trip time, and cannot establish whether a trip is worth its loot. Pathfinding on the actual GOLD terrain is next engineering analysis/acceptance task, not delegated before policy approval.
+
+### 8.6 Source census from M2 12 × 200×200 windows (not unique 81-POI all-world totals)
+
+- Sampled `veyra05-greywater`: 0 Iron,0 Coal,40 roadside Scrap,7 Wreck. `westmouth`: 0 Iron,0 Coal,51 Scrap,11 Wreck. `hook`:0 Iron,0 Coal,25 Scrap,5 Wreck. `gulf`:195 Iron,75 Coal,37 Scrap,4 Wreck (these are window-node counts, not guaranteed reachable).
+- `veyra05-slag`: 761 Iron,263 Coal,39 Scrap,5 Wreck in the sampled window. `veyra05-greyback`:51 Iron,28 Coal. Some scene windows may overlap; aggregate counts must NOT be interpreted as unique whole-map stocks.
+- Only `greywater`, `westmouth`, `hook` and `gulf` are the four spawn-choice regions of interest. Each new run has a legal spawn chosen by runtime, not automatically the GOLD anchor.
+
+### 8.7 Recommended **design next action** (proposal, not approval)
+
+1. Do not homogenize ore spawn placement: rejected M3 proposal A6 to mint 14 Iron/8 Coal veins near every spawn is **CANON_REJECTED** in `M5_CANON_CORRECTIVE.md`. Preserve west/Hook salvage and Gulf metal mining asymmetry.
+2. **First POI content fixes** should repair the glaring mismatch: Ironvein Mine herb/medkit/stew and Slagworks Foundry seed/berries/cloth **as primary cache contents**, while preserving existing lore supplies by relocating/retaining them in plausible food/first-aid locations rather than silently deleting. Freight Yard also has rope/canvas/herb, with no machinery scrap reward.
+3. Sample proposal to review, **NOT** apply: source-bound finite 1 Gear candidate at `po_ironmine` Crane Cab Locker or `po_falls` rotor room; 1 Pipe candidate at `po_pumphouse` maintenance store or `po_falls` pipe store; 1–2 Plate candidate at `po_slag` foundry stock. Avoid making every first-hour chest guarantee an intermediate; no chance values approved.
+4. Reuse / extend the existing world floors + source ecology contract with stable global `run_id + source_id + floor + x,y`, separate **finite component bonus** from the ordinary renewed resource stack. Since `renewableLoot()` currently renews `res` items, do NOT merely append `metal_pipe`/Gear/Plate/Blade to ordinary `site.loot`.
+5. After real pathfinding / journey capture, compare available useful outputs from 20-minute natural play (not a mandatory quest) for knife-only, scrap-first, ore-first and POI-raider strategies. Only then approve per-cache counts/probabilities and Pipe/Workbench precision recipe changes.
+
+### 8.8 Evidence pointers
+
+- Live code: `web/src/game/catalog.ts`, `engine.ts`, `sim.ts`, `core.ts`, `wreck-economy.ts`, `world-economy.ts`, `web/src/veyra05/reader.ts`, `floors.ts`, `scenes.ts`, `web/geography/veyra-lr01/map_tower/veyra_gold/VEYRA_GOLD_MAP.sohmap.json`.
+- Programmatically generated source audit: `web/reports/economic-network/M2_SIMULATION_RESULTS.json`, `M2_AUDIT_REPORT.md`. **The report's first-run defect descriptions predate the later D3–D5 fixes.**
+- Corrective authority: `web/reports/economic-network/M5_CANON_CORRECTIVE.md` (rejects false source fixes), `CURRENT_ACCEPTANCE.md` (WP3/D5 Recycler proven, D3 caches fixed), `web/ref/bible.md`.
+- Historical Last Island study: `web/ref/atlas/extracted/LI_MASTER_RESEARCH_REPORT_v5.md`, v10/11 ledgers. Historical figures are research sources, not current-game recipes or production authorization.
