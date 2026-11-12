@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import {
   T,
   TILE,
@@ -23,14 +25,14 @@ import {
   startRun,
 } from '../src/game/engine';
 import { selectSnapshots, serializeSnapshot, validate } from '../src/game/persist';
-import { FX, HAZ, PROJ, settle } from '../src/game/sim';
+import { FX, HAZ, PROJ, findInteract, settle } from '../src/game/sim';
 import { getWorld, setActiveLayout, VEYRA_RECYCLER_SITE } from '../src/game/world';
 import { hasAuthorizedRecycler } from '../src/game/wreck-economy';
 import { maybeSlideVeyraWindow, windowOrigin } from '../src/veyra05/continuity';
 import { activeFloor, applyFloor, stairAt } from '../src/veyra05/floors';
 import { getWindowWorld, resetWindowToGround } from '../src/veyra05/window';
 
-const NOW = Date.UTC(2026, 10, 11, 13, 0, 0);
+const NOW = process.env.SOH_WP3_SNAP_DIR ? Date.now() - 180_000 : Date.UTC(2026, 10, 11, 13, 0, 0);
 
 afterEach(() => {
   PROJ.length = 0;
@@ -337,6 +339,14 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
       throw new Error(`Player died before recycling: ${JSON.stringify(r.receipts.filter(rc => rc.kind === 'death'))}`);
     }
 
+    const snapDir = process.env.SOH_WP3_SNAP_DIR;
+    if (snapDir) {
+      mkdirSync(snapDir, { recursive: true });
+      r.player.aim = Math.atan2(rec.y - r.player.y, rec.x - r.player.x);
+      expect(findInteract(gs, nowRef.t)?.kind).toBe('recycler');
+      writeFileSync(resolve(snapDir, 'po-slag-recycler.json'), serializeSnapshot(gs), 'utf8');
+    }
+
     // Feed 3 natural damaged_drive stacks sequentially into Foundry Recycler -> 6 spares in outC
     for (let i = 0; i < 3; i++) {
       const slot = C(r, 'inv').slots.findIndex((s) => s?.key === 'damaged_drive');
@@ -495,6 +505,20 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     expect(r.qaUsed).toBe(false);
     expect(r.receipts.some((rc) => rc.kind.startsWith('qa') || rc.kind === 'inspect')).toBe(false);
 
+    if (snapDir) {
+      const bAdj = [...adjacentWalkableGoals(r, bench.tx!, bench.ty!)].sort((a, b) => {
+        const ax = (a % WW) * TILE + 8, ay = ((a / WW) | 0) * TILE + 8;
+        const bx = (b % WW) * TILE + 8, by = ((b / WW) | 0) * TILE + 8;
+        const da = Math.min(Math.hypot(ax - furnace.x, ay - furnace.y), Math.hypot(ax - gen.x, ay - gen.y));
+        const db = Math.min(Math.hypot(bx - furnace.x, by - furnace.y), Math.hypot(bx - gen.x, by - gen.y));
+        return db - da;
+      });
+      if (bAdj.length) walkPathTo(gs, new Set([bAdj[0]]), nowRef);
+      r.player.aim = Math.atan2(bench.y - r.player.y, bench.x - r.player.x);
+      expect(findInteract(gs, nowRef.t)?.kind).toBe('struct:workbench');
+      writeFileSync(resolve(snapDir, 'base-and-bench.json'), serializeSnapshot(gs), 'utf8');
+    }
+
     // 6. MANDATORY Floor -1 Descent, Save/Reload, and Return (NO `if` skip guards, NO window teleports!)
     // Walk inside po_slag to the Ground -> Floor -1 stair (`Quench drain service hatch`), descend, save/reload, and ascend back to Floor 0.
     const slagWw = getWindowWorld(r.layoutId!);
@@ -526,6 +550,9 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
 
     // Save & cold reload WHILE standing on Floor -1
     const snapB1 = serializeSnapshot(gs);
+    if (snapDir) {
+      writeFileSync(resolve(snapDir, 'floor-minus1.json'), snapB1, 'utf8');
+    }
     const parsedB1 = JSON.parse(snapB1);
     expect(validate(JSON.parse(parsedB1.payload))).toBeTruthy();
     const reloaded = selectSnapshots([snapB1, null]).gs!;

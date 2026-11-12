@@ -1,0 +1,76 @@
+name: Veyra Economy WP4 Browser Visual E2E
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/f561fd0d-soul-of-hero]
+    paths:
+      - 'web/src/**'
+      - 'web/public/**'
+      - 'web/index.html'
+      - 'web/package.json'
+      - 'web/package-lock.json'
+      - 'web/vite.http.config.ts'
+      - 'web/tests/wp3-veyra-recycler-integration.test.ts'
+      - 'web/e2e/veyra-economy-wp4.mjs'
+      - '.github/workflows/veyra-economy-wp4.yml'
+
+permissions:
+  contents: read
+
+env:
+  CI: true
+
+jobs:
+  veyra-wp4-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install exact locked dependencies
+        working-directory: web
+        run: npm ci
+      - name: Install Chromium browser and OS dependencies
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Generate current-SHA WP3 non-QA natural-run continuation snapshots
+        working-directory: web
+        env:
+          SOH_WP3_SNAP_DIR: /tmp/wp3-snaps
+        run: npx vitest run --fileParallelism=false --testTimeout=180000 tests/wp3-veyra-recycler-integration.test.ts
+      - name: Build current-SHA production HTTP distribution (no QA mode)
+        working-directory: web
+        run: npx vite build --config vite.http.config.ts
+      - name: Start production HTTP preview
+        working-directory: web
+        run: |
+          npx vite preview --config vite.http.config.ts --host 127.0.0.1 --port 4173 --strictPort > /tmp/wp4-preview.log 2>&1 &
+          for attempt in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/wp4-preview.log
+          exit 1
+      - name: Run WP4 Playwright E2E across 1280x720 and 640x360
+        working-directory: web
+        env:
+          GAME_URL: http://127.0.0.1:4173/
+          BUILD_SHA: ${{ github.sha }}
+          WP3_SNAP_DIR: /tmp/wp3-snaps
+        run: timeout --signal=TERM --kill-after=15s 8m node e2e/veyra-economy-wp4.mjs
+      - name: Upload WP4 browser visual artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veyra-economy-wp4-${{ github.sha }}-${{ github.run_attempt }}
+          path: web/evidence/veyra-economy-wp4/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Print preview logs on failure
+        if: failure()
+        run: cat /tmp/wp4-preview.log || true
