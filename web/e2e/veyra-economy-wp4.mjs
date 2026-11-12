@@ -179,9 +179,10 @@ try {
           await workToggle.click();
           await page.waitForTimeout(150);
         }
-        await page.getByLabel('Find recipe').fill('trap');
+        await sv.locator('.sv-cat', { hasText: 'Devices' }).click();
         await page.locator('.sv-tile[data-recipe="S:bear_trap"]').waitFor({ timeout: 5000 });
-        await page.getByLabel('Find recipe').fill('');
+        await page.locator('.sv-tile[data-recipe="S:base_generator"]').waitFor({ timeout: 5000 });
+        await page.locator('.sv-tile[data-recipe="S:bear_trap"]').click();
         await page.waitForTimeout(200);
         await assertCanvasAndViewport(page, `${tag}:survivor`, [w, h]);
         await takeShot(page, 'A', '08-survivor-craft');
