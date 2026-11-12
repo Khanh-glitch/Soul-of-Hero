@@ -61,8 +61,8 @@ function withinRing(px:number,py:number,pts:number[][]):boolean {
   }
   return inside;
 }
-const mainland=GOLD.project.land.find(x=>x.id==='ld_veyra');
-if(!mainland)throw Error('VEYRA_MAINLAND_POLYGON_MISSING');
+const mainland=(()=>{const found=GOLD.project.land.find(x=>x.id==='ld_veyra');
+  if(!found)throw Error('VEYRA_MAINLAND_POLYGON_MISSING');return found;})();
 export function unverifiedOffshoreExcluded(globalTx:number,globalTy:number):boolean {
   const ax=(globalTx+0.5)*U,ay=(globalTy+0.5)*U;
   if(!withinRing(ax,ay,mainland.rings[0] as number[][]))return false;
