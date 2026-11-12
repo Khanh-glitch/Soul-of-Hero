@@ -85,15 +85,24 @@ try {
       rec.shots.push({ phase, name: filename, sha256: createHash('sha256').update(bytes).digest('hex') });
     };
 
-    records.push(rec);
-    try {
-
-    // ==================== PHASE A: Zero-Fixture Fresh New Run ====================
-    {
+    const runStepPage = async (setupInit, fn) => {
       const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
+      if (setupInit) await ctx.addInitScript(setupInit.fn, setupInit.arg);
       const page = await ctx.newPage();
       hookErrors(page);
       try {
+        await fn(page);
+      } catch (err) {
+        try { await takeShot(page, 'ERR', '99-failure'); } catch {}
+        throw err;
+      } finally {
+        await ctx.close();
+      }
+    };
+
+    records.push(rec);
+    try {
+      await runStepPage(null, async (page) => {
         const resp = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
         assert.equal(resp?.status(), 200, 'HTTP 200 required');
         await page.getByRole('button', { name: 'New run', exact: true }).waitFor({ timeout: 30000 });
@@ -227,19 +236,11 @@ try {
         await assertCanvasAndViewport(page, `${tag}:reload`, [w, h]);
         await takeShot(page, 'A', '11-reload-continue');
         rec.phaseA_steps.push('SAVE_RELOAD_CONTINUE_VERIFIED');
-      } finally {
-        await ctx.close();
-      }
-    }
+      });
 
-    // ==================== PHASE B: Disclosed Live-Commit WP3 Natural-Loop Continuation ====================
-    // B1: po_slag Foundry Recycler UI + live X:drive recycle start
-    {
-      const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
-      await ctx.addInitScript((s) => { if (!localStorage.getItem('soh.state.v3')) localStorage.setItem('soh.state.v3', s); }, snapRecycler);
-      const page = await ctx.newPage();
-      hookErrors(page);
-      try {
+      // ==================== PHASE B: Disclosed Live-Commit WP3 Natural-Loop Continuation ====================
+      // B1: po_slag Foundry Recycler UI + live X:drive recycle start
+      await runStepPage({ fn: (s) => { if (!localStorage.getItem('soh.state.v3')) localStorage.setItem('soh.state.v3', s); }, arg: snapRecycler }, async (page) => {
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
         await page.getByRole('button', { name: /^Continue —/ }).click();
         await closeReturnIfVisible(page);
@@ -262,18 +263,10 @@ try {
         await assertCanvasAndViewport(page, `${tag}:recycler`, [w, h]);
         await takeShot(page, 'B', '12-foundry-recycler-ui');
         rec.phaseB_steps.push('PO_SLAG_RECYCLER_XDRIVE_UI');
-      } finally {
-        await ctx.close();
-      }
-    }
+      });
 
-    // B2: Constructed furnace / L2 workbench / base_generator outside po_slag + Vehicle Frame
-    {
-      const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
-      await ctx.addInitScript((s) => { if (!localStorage.getItem('soh.state.v3')) localStorage.setItem('soh.state.v3', s); }, snapBench);
-      const page = await ctx.newPage();
-      hookErrors(page);
-      try {
+      // B2: Constructed furnace / L2 workbench / base_generator outside po_slag + Vehicle Frame
+      await runStepPage({ fn: (s) => { if (!localStorage.getItem('soh.state.v3')) localStorage.setItem('soh.state.v3', s); }, arg: snapBench }, async (page) => {
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
         await page.getByRole('button', { name: /^Continue —/ }).click();
         await closeReturnIfVisible(page);
@@ -304,18 +297,10 @@ try {
         await assertCanvasAndViewport(page, `${tag}:vehicle-frame-inv`, [w, h]);
         await takeShot(page, 'B', '15-inventory-vehicle-frame');
         rec.phaseB_steps.push('BUILT_GEN_WORKBENCH_L2_VEHICLE_FRAME_UI');
-      } finally {
-        await ctx.close();
-      }
-    }
+      });
 
-    // B3: Cold reload on Floor -1 (Quench Underpass) & stair return to Floor 0
-    {
-      const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
-      await ctx.addInitScript((s) => { if (!localStorage.getItem('soh.state.v3')) localStorage.setItem('soh.state.v3', s); }, snapB1);
-      const page = await ctx.newPage();
-      hookErrors(page);
-      try {
+      // B3: Cold reload on Floor -1 (Quench Underpass) & stair return to Floor 0
+      await runStepPage({ fn: (s) => { if (!localStorage.getItem('soh.state.v3')) localStorage.setItem('soh.state.v3', s); }, arg: snapB1 }, async (page) => {
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
         await page.getByRole('button', { name: /^Continue —/ }).click();
         await closeReturnIfVisible(page);
@@ -330,10 +315,7 @@ try {
         await assertCanvasAndViewport(page, `${tag}:floor-return-0`, [w, h]);
         await takeShot(page, 'B', '17-floor-return-0');
         rec.phaseB_steps.push('FLOOR_MINUS1_RELOAD_AND_RETURN_VERIFIED');
-      } finally {
-        await ctx.close();
-      }
-    }
+      });
 
       rec.verdict = rec.errors.length === 0 ? 'PASS' : 'FAIL_CONSOLE';
       if (rec.verdict !== 'PASS') failed = true;
