@@ -1,0 +1,53 @@
+name: SOH Veyra Global Spawn & Industrial Source Audit
+
+on:
+  push:
+    branches:
+      - design/veyra-industrial-economy-20261112
+    paths:
+      - 'web/src/veyra05/full-world-spawn-industrial.audit.test.ts'
+      - '.github/workflows/veyra-global-spawn-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  world-map-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      CI: true
+      SOH_FULL_WORLD_AUDIT: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install reproducible dependencies
+        working-directory: web
+        run: npm ci
+      - name: Scan full 4000x2800 chunk terrain + island graph + actual local source/spawn probes
+        working-directory: web
+        run: npx --no-install vitest run --fileParallelism=false --testTimeout=1800000 src/veyra05/full-world-spawn-industrial.audit.test.ts
+      - name: Show evidence conclusion (never conflate terrain and PLAY PASS)
+        if: always()
+        working-directory: web
+        run: |
+          if [ -s evidence/veyra-global-spawn-audit/manifest.json ]; then
+            node -e "const x=require('./evidence/veyra-global-spawn-audit/manifest.json'); console.log(JSON.stringify({raster:x.fullRaster&&{cells:x.fullRaster.exactCells,land:x.fullRaster.landMaskCells,components:x.fullRaster.terrainComponentsTotal},probes:x.summary,evidence:x.evidence},null,2));"
+          else
+            echo "::error title=Missing global audit evidence::No manifest produced; do not mark audit as passed."
+          fi
+      - name: Attach manifest even on failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veyra-global-spawn-industrial-audit-${{ github.sha }}-${{ github.run_attempt }}
+          path: web/evidence/veyra-global-spawn-audit/
+          if-no-files-found: warn
+          retention-days: 30
