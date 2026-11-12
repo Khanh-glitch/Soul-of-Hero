@@ -783,3 +783,37 @@ Six representative **eligible safe-3×3, but globally rejected** Westmouth-centr
 **Conclusion:** source/candidate neighborhoods are genuinely farther apart or physically isolated **within the current window**; moving from 30 to 60 could alter which source is seen but is NOT recommended without gameplay justification. A shallow-water allowance does not fix Westmouth. The selected candidates lie near the upper-left local window margin, so window-clipping is a plausible separate factor but NOT yet proven. To isolate whether `spawnEligible` annulus is badly positioned versus a window with zero possible starts, next check **all safe 3×3 cells across the same 200×200 window** with the same strict 30-step resource requirements, independent of the prefilter. This new test is being executed at commit `71424e0`, GitHub run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43239021949.
 
 **Design status:** retain criterion of nearby resources and buildable space. Do not scatter resource packs just to pass; do not increase spawn range, change POI loot or graft ferry transport to fix a spawn contract mismatch. Only scope a source-grounded adjustment after the full-window candidate comparison.
+
+---
+
+## 21. Whole-window eligibility: validated negative and positive controls (2026-11-12)
+
+**Run and evidence:** Targeted source-tested diagnostic code `web/src/veyra05/spawn-candidate-reasons.audit.test.ts` commit `36ece12fc51a56bc8ab5bcf1b6c94389ca4ed9fb`. CI run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43239419008 **SUCCESS**. ZIP artifact `veyra-spawn-reasons-36ece12fc51a56bc8ab5bcf1b6c94389ca4ed9fb-1`, ID **13953038999**, digest `sha256:892e8d6c6837f450f5de6b05464fcea867db8eaf843743f36180a5ba5996fdb8` downloaded and parsed. Earlier all-window `71424e0` run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43239021949 success, ZIP ID 13953383382; this was **independently confirmed by `36ece12` positive control**. No production changes.
+
+### 21.1 Exact demonstrated observations
+
+**Westmouth centroid window**, actual compiled origin `(673,1096)`:
+- Current `spawnEligible` prefilter =706. Exactly 538 pass 3×3 safe within prefilter, **zero** meet all survival requirements within 30 steps.
+- Discarding the current annulus/prefilter and searching **every 200×200 cell**, **25,898** have a 3×3 safe neighborhood according to the traced center/surround collision predicate.
+- A multi-source 4-neighbor BFS distance field for **actual water, wood, rock, bush/mushroom food and buildable ground**, restricted to exact engine `blockGrid===0 && economyMap.walkable` paths, finds **zero of those 25,898** cells with **all five prerequisites within 30 steps**. As the pre-screen found none, the exact per-candidate stock check had no remaining candidates to evaluate. Therefore **there is no candidate in this 200×200 window satisfying that necessary condition**, not merely a bias among its 706 chosen prefilter cells.
+- This does NOT establish that all Westmouth geography is unsuitable: the world is continuous, a 200×200 window cuts off source/path possibilities across window boundary, and the main game's *different* `veyra05-westmouth` window passed 2/2 legal starts in §18.
+
+**Positive control Greywater centroid window**, origin `(1482,1122)`:
+- Same five-distance-field algorithm finds **six independently checked strict 30-step valid positions immediately** (it deliberately stops after six, so its logged 3×3 sample count is **not** a whole-window total); each passes full source+buildable checks with the normal game collision state and no QA landing.
+- First six (local) **(4,4), (183,4), (4,5), (5,5), (4,6), (5,6)** all qualify; all happen to fall *outside* the current `spawnEligible` annulus, proving the prefilter isn't exhaustive in a window that does have legal starts. Greywater's `startRun` also succeeds from its current prefilter (previous §19).
+- The positive control makes it substantially less likely that Westmouth's zero came from a trivially broken distance-field implementation.
+
+**Negative control Gulf West centroid window** from §19: zero physical freshwater ⇒ no valid starts under the current source contract; this is a separate missing-water-in-window failure.
+
+### 21.2 Decision and engineering interpretation
+
+**Root-cause classification for this Westmouth sample is `WINDOW-ECOLOGY-COLOCATION-009`:** no location inside the inspected **fixed 200×200 window** satisfies the *necessary overlap* of water+wood+stone+food+buildable within the **current intended 30-step validator traversal**, even though all five classes exist somewhere in the total wider world and the window contains thousands of source entities. It is NOT primarily river-wading policy, a universally wrong 4-spawn count, absence of sources in the whole Westmouth region, or mere under-sampling of the currently selected spawn annulus.
+
+**Recommended correction order, NOT yet implemented:**
+1. **Do not modify `GOLD`, add artificial water/food, introduce fixed respawn points, increase radius beyond 30, or make industry spawn mandatory.** These would hide the diagnostic rather than fix its cause.
+2. Reject any attempted new-run *window* whose verified physical survival neighborhood has no legal candidate; choose a different valid window/cell from the larger world, deterministic by run seed, with **no fixed region count**. Guarantee the chosen spawn is within the window's interior safe footprint and source-accessible by actual collision; preserve world continuity and run save authority. An all-landmass candidate atlas is the long-term design; do not use 23 GOLD locality polygons as authoritative candidate zones.
+3. For each island, require a separate **landing/island travel/escape** proof before making its cells eligible for default random spawn. Ferry polylines are not playable ferry vehicles.
+4. Add negative regression for exact Westmouth centroid `(673,1096)` and positive for current `veyra05-westmouth` and Greywater. A region rejected by the safe-window selector should **not** cause silent fallback to hardcoded four windows or unapproved resource gifts.
+5. Once eligible cell source geometry and arrival/return paths have real evidence, resume industrial source/loot class/cooldown calibration. Global material rollout still requires 14-day economy + save/restart test; none is cleared by regional graph tests.
+
+**What has actually shipped:** only isolated design-branch test code/workflows and this ledger. `RED_FLAG-SPAWN-001`, `WORLD-OFFSHORE-ACCESS-001`, and physical player-input/336h acceptance remain OPEN.
