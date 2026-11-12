@@ -1,5 +1,7 @@
 # VEYRA INDUSTRIAL ECONOMY — Decision ledger (2026-11-12)
 
+> **READ FIRST — 2026-11-12 CURRENT STATUS:** The only Creator-approved industrial direction is §1. Earlier §4/§9 are recorded exploration hypotheses, **not approved recipes, deterministic reward sites, finite-only policy, rates or implementation authority**. §10 corrects the false guaranteed-vs-random choice; §11 below is the latest **testable SOURCE-CLASS design**, not a production loot contract. Keep original evidence without allowing rejected/superseded examples to function as implementation orders.
+
 **Status: DESIGN ONLY. No gameplay code implemented, no loot table approved, no agent implementation dispatched.**
 **Verified code reference:** `arena/f561fd0d-soul-of-hero` @ `c6c6fc50471f9dff2633e6dcde00f2d342c8ce7e`.
 **Source hierarchy:** `web/ref/bible.md` + latest explicit Creator decisions > historical Atlas v1–v11 > old proposals/reports. This design record is a working ledger, not an override of the Bible or a released game specification. Do not merge conflicting design documents as if all were current.
@@ -244,7 +246,7 @@ Do not overwrite `r.lootRespawnAt` or repurpose the meaning of `depletedLootSite
 
 **Specific abuse cases to test:** (a) take 1 of 2 Plates, reload, take last; (b) empty then shift window out/back; (c) empty Floor -1 chest, climb then descend; (d) empty on day 1, offline 25h, return; (e) duplicate/reordered dispatch intent; (f) reload before and after issuing first stock; (g) old save enters new POI after patch; (h) source spot becomes blocked by changed prop; (i) player death with loot in inventory; (j) inventory full/partial withdrawal; (k) rain/weather/resumed offline settlement; (l) fresh new run after previous run wipe; (m) source item dropped on ground then returned; (n) rare source initially empty due to seeded roll; (o) multiple appearances in overlapping Veyra windows. Every test must assert item UID count/receipts and no gains on replay.
 
-### 9.3 Four-site controlled pilot design — NOT AUTHORIZED distribution
+### 9.3 Historical four-site **superseded** deterministic control sample — NOT AUTHORIZED distribution
 
 The pilot deliberately adds **finite, complete industrial items** at only four POIs; it leaves their existing standard cache untouched. Physically distinct places must be checked for real floor cells and unobstructed interaction. **The numbers below are a deterministic fixed-outcome pilot for balancing only**; probability-based/randomized policy is still an open Creator experience decision.
 
@@ -311,3 +313,91 @@ Prefer **source class (what a place can plausibly contain) + quality tier (how v
 **Reopen** §9.3 four-site deterministic pilot for design; **DO NOT AUTHORIZE 1 guaranteed Pipe @ Pumphouse, 1 Pipe+Gear @ Falls, 1 Gear @ Freight, 2 Plates @ Slag** as an actual gameplay distribution until class/tier/access/probability and run-time sample are reviewed. Source/site names remain plausible thematic candidates only.
 
 **Next actual design question** is not "guarantee item versus random item?" but: which physical source categories should the player recognize in Veyra, how should risk, recovery, time/route and POI depth change the distribution of viable materials, and which exceptional sources alone warrant guaranteed exact rewards? Revisit Last Island source-version-referenced numbers before locking item-level odds.
+
+---
+
+## 11. Veyra source-family taxonomy and probability stress test — 2026-11-12 pass 4
+
+**STATUS:** RESEARCH + RECOMMENDED DESIGN, **NOT CREATOR-APPROVED NUMBERS** or implemented. Supersedes §9.3's deterministic `2 Pipe/2 Gear/2 Plate` distribution as a candidate **actual** gameplay policy. Retain that set only as a clearly labeled unit-test fixture. Do not commission an agent based on §11 until outstanding decisions are accepted and data/source versions are pinned.
+
+### 11.1 Key discovery: the source-class infrastructure already exists in SOH, but is Shipping-scoped
+
+- `web/src/game/loot-ecology.ts` has `LootClass=toolbox|supply|military|advanced`, W06 fixed/optional stock, B01/B04 grammar, B05 low/mid/high grade pools, per-run/physical-source/cycle deterministic hashing, source URI and historical LI container-class reference.
+- `web/src/game/loot-source-spec.ts` `LootSourceSpec` already separates `role`, `grade`, `access`, `stock=finite|renewable`, `cooldownHours`, `capacity`, `sourceId`, `match`, `digest`. It declares exactly **three Shipping** sources, not 81 Veyra sites, and is explicitly `loot-source-v2`.
+- `engine.ts` creates `r.lootEcology` only for `shipping_fresh`/`dev_delta_fresh` fresh runs; Veyra receives static authored/fallback items but **no B05 grading or roll** as of reference SHA. `lootClass()` is tied to Shipping site labels/POI aliases, so it will not magically recognize `po_falls` or `po_slag`.
+- `validLootSourceContract()` expects **all contract sites** to exist in the single `World.statics` passed to it. Veyra windows are 200×200 streaming slices of a much larger 4000×2800 geography; do not reuse its all-present Shipping assumption on Veyra's 81 POIs. Validate by compiled `global POI/source registry` once, with per-window actual physical access checked at activation.
+- B05 `LOOT_B05_TOOLBOX_GRADE.high` has **guaranteed 1 Mechanical Gear** (plus refined iron) as fixed grade stock. Shipping's `factory-exterior-industrial` source is flagged `renewable` every **24h**: when legally refilled, that can yield a Gear every cycle. This is not a historical LI rate and must **not** become the Veyra default. Ignoring practical travel/access, 14 successful daily source cycles = 14 Gear, which may overwhelm alternatives.
+- **FINITENESS BUG/SEMANTIC GAP:** B05 finite flag gates only `lootGrammarRoll` optional grade results. `renewableStock()` always concatenates `renewableLoot(site)`, whose broad `ITEMS.cat in ['res','food']` criterion can replenish original source items even if the B05 bonus is `finite`. Therefore "finite spec" does not itself prove "entire physical chest once-per-run"; design must explicitly declare policy at stock-subgroup or distinct-physical-source granularity. Do not erase ordinary replenishment by global category ban.
+
+**Design action:** adapt/reuse `LootSourceSpec` + `lootEcology` rather than building another parallel economy. Extend a versioned Veyra registry and carefully revise per-group stock accounting; preserve Shipping behavior and historical save versions.
+
+### 11.2 Canonical player-recognizable family × grade matrix (design, **not** existing in Veyra)
+
+| Family | Player clue / where | Guaranteed useful *category*, never guaranteed exact rare SKU | Optional finished intermediate | Proposed source rhythm |
+| --- | --- | --- | --- | --- |
+| Roadside **salvage** | Wreck, damaged cart, roadside scrap | Scrap/Spares, occasional Fasteners/Parts; physical harvesting uses existing `SOURCES` | In ordinary roadside low-grade source: none by default (use separate credible containers for uncommon finds) | Existing wild source stock and `wreckEconomy` untouched. Do not turn every roadside wreck into a mystery gear crate |
+| **Field toolbox** | Fishing repair locker, bridge/tool hut, small sawmill | Fasteners/Parts/repair utility | Small chance of Pipe, Blade or Gear according to context | Ordinary cache, provisional 24h; low quality |
+| **Industrial maintenance toolbox** | Pump, turbine access, saw drive loft, crane cab | Parts/Fasteners + repair/metal utility | Pipe/Gear/occasionally Plate by machinery role | Provisional 24h at grade mid, 48h for deep grade high |
+| **Material supply / metal stock** | Ore bin, furnace sorting, foundry/warehouse | Iron Ore/Ingot/Coal/Refined Iron **as site appropriate** | Plate/Blade occasionally at high industrial grade | Stock class independent of a toolbox; proposed 24h or 48h by location, not arbitrary food 12h |
+| **Food/medical/supply** | Village, camp, first aid, kitchen, storage | Existing role-specific health/food and supplies | Not made into a Pipe/Gear farm by POI name alone | Preserve own class and authored content |
+| **Military/special technology** | Actual authorized military cache / exceptional room | Combat materials or study/blueprints per separate canon | Blade/parts where justified; unique tech and Core **not inferred** | Their own explicit source contract, not a generic industrial overlay |
+
+`role` (what class of thing), `grade` (value within that class), `access` (actual geometry/gate), `stockSubgroups` (physical contents/replenishment), and `cycle` remain orthogonal. A high-quality toolbox is NOT automatically a locked military vault. A low-grade machine source is not necessarily closer to every spawn.
+
+### 11.3 Proposed test-only grade parameters to probe economy sensitivity — absolutely NOT LI values
+
+This small model is a *test hypothesis*, not an attempt to assert true official drop odds or final SOH balance. A grade entry always yields useful ordinary materials by its own class; only the finished intermediate is optional:
+
+- `field-toolbox/low`: 24h nominal class cooldown, **5%** roll for at most **one** thematically eligible finished component per eligible successful stock generation; otherwise raw repair stock.
+- `industrial-maintenance/mid`: 24h nominal, **12%** finished-component event, at most one per stock generation; if triggered, choose Pipe/Gear/Blade/Plate from that POI's allowed set using source-specific weights not yet approved.
+- `deep-industrial/high`: 48h nominal, **20%** finished-component event, at most one, still with ordinary useful stock each eligible generation.
+- `metal-stock` is a separate category and must be benchmarked for Refined Iron/Plate/Blade without reusing Gear-focused toolbox probabilities by name.
+- `unique/special` remains its own finite policy: e.g. Ragnarok-only cash and explicitly authored one-off tech. Neither "Pipe" nor "Gear" is automatically unique merely because it is a finished intermediate.
+
+| Laboratory probe | Repeated full-depletion opportunities used for arithmetic | Chance per opportunity | Expected finished components | Probability ≥1 rare success |
+| --- | ---: | ---: | ---: | ---: |
+| One low field toolbox | 14 hypothetical 24h visits | 0.05 | 0.70 | 51.2% |
+| One mid maintenance toolbox | 14 hypothetical 24h visits | 0.12 | 1.68 | 83.3% |
+| One high deep-industrial toolbox | 7 hypothetical 48h visits | 0.20 | 1.40 | 79.0% |
+| Old B05 high toolbox with Gear fixed | 14 hypothetical 24h successful restocks | Gear guaranteed in high grade pool | 14 Gear | 100% (conditional upon valid access/issued pool) |
+
+**Hard caveat:** `14`/`7` are artificial consistent visit counts within 336h, *not* measured reachable visits, not spawn-adjusted and not an inventory endowment. An in-game source restocks only when depleted and due; travel, danger, capacity, remaining partial stock, raid/reset and actual stage length matter. A fixed starting batch may create an additional first opportunity. A sample percentage applies to "any eligible finished component"; it is NOT the drop chance of one named Pipe/Gear/Blade.
+
+**Caution from LI sources:** Original developer update 2022-11-09 guarantees *classes* of supply/food/medical/military contents and specifies card-room crate combinations, not universal guaranteed individual pipe drops. 2023 published bicycle blueprint odds (0.5%→4%) apply ONLY to the stated keycard-room Toolbox context, not an analog for Veyra Pipe rate. 2022-08-04 TapTap player guide documents Pipe from barrels, Supply/Military/Airdrop and recycling. Authoritative source URLs:
+- https://hero.yingxiong.com/info/2022/1109/13052.html
+- https://www.taptap.cn/moment/304314693734893241
+
+### 11.4 Actual POI/room mapping for a 12-site **assessment roster**, not automatic 12 new crates
+
+| POI | Already-existing physical authored room or fallback | Candidate economic class / grade | Why it makes sense | Do not do |
+| --- | --- | --- | --- | --- |
+| `po_mere` | Hook Mere Pier generic 5 Scrap +1 Part + bandages | Field salvage / low | Hook starts with repair and transport material | Do not turn dock into guaranteed Gear |
+| `po_dpier` | Drowned Pier generic 6 Scrap + rope/bandages | Field salvage / low | Westmouth coastal wreck/salvage | Do not spawn a brand-new mandatory inland gate |
+| `po_westbank` | Westbank Landing generic 3 Spares +1 Part + **blueprint:gas_mask** | Field toolbox / low | Gulf's small service pier | **Preserve** existing blueprint/medical entitlement on old saves |
+| `po_pumphouse` | Real F03 `pipe_store` ground-floor room + rotor room | Maintenance toolbox / mid | A pump facility can yield piping repairs | No guaranteed Pipe SKU; no invented keycard |
+| `po_falls` | `pipe_store` F0, `turbine_subfloor` F-1 with actual hatch | Mid maintenance at F0; high at F-1 | Inner bearing room more specialized; physical depth | High grade not equal boss kill; door/hatch must physically work |
+| `po_sawaion` | `saw_attic` F+1 Belt Drive Loft | Maintenance toolbox / mid | Gear/belt tools belong to log-driving mechanism | Do not add a free Gear at exterior generic cache |
+| `po_freightyard` | Real `freight_platform` F0 with ore_cart, existing crew supplies | Freight salvage / low or mid if validated machinery | Loose wagon tools and salvage, Orc1 habitat configured | Do not give guaranteed rare item purely for combat |
+| `po_ironvein` | `iron_cut` F-1 Prospector Cut with real hatch and ore_cart; generic cache today is herb/medkit/stew | **Material supply**, mid only if high-grade vein physically present | Geological role, not generic Gear store | Do not grant renewable ore at 24h without source-stock audit |
+| `po_slag` | F03 `slag_sort` F0, `quench_underpass` F-1; actual Recycler at (2414,1896) | Material/metal stock high, risk-proven before grant | Refined iron/Plate/Blade more plausible than Gear at every cycle | Do not treat Recycler as a loot crate or overwrite its policy |
+| `po_ironmine` | Authored `Crane Cab Locker` at F+1 already has Parts×2/Fasteners×6 | Maintenance toolbox high candidate | Operating crane needs drive gear | Preserve existing authored cache/UID, no duplicate overlay by default |
+| `po_wreck` | `boat_hull` prop and weathered salvage shelter F0, generic ore+coal cache | Wreck salvage / mid after testing | Ship stock, steel or pipe remnants | Do not make free Gear with no corresponding machine evidence |
+| `po_oldpump` | F03 `pipe_store` F0; GOLD notes deeper core gate needing card+electricity+protection | Mid maintenance in *proven open periphery* only | Old hydraulic plant supports pipe repair logic | Do not silently unlock or place stock beyond unimplemented access gate |
+
+**Assessment roster is not a 12-point mandatory quest**. It spans near-spawn alternatives, deeper specialized routes, material-rich industrial stops, and authored multi-floor locations. Any assigned room/source must pass authored-plan occupancy, door/stair reach, item custody, 200×200 window shift, saved floor return and old-run isolation. The F03 designs have meaningful process-specific rooms; **do not replace Map's architecture** simply to host a crate. `po_ironvein` rest48 F-1 adit exists; no claim about its current ore quantity without a path/source audit.
+
+### 11.5 Implementation architecture restrictions (not an implementation order)
+
+- Reuse the **conceptual `LootSourceSpec`** and existing deterministic roll engine, but do not try to call unchanged `SHIPPING_LOOT_SOURCES`, `lootClass()` or `validLootSourceContract()` directly for the full global Veyra world.
+- Define a versioned **global authored Veyra-source registry**, keyed by `runId / sourceVersion / poiId / floor / stableSourceKey`. Evaluate access from real local physical geometry upon entering the source window; do not assume all 81 sites loaded. Store physical stock in one custody owner and durable cycle/issuance/depletion timer in one run ledger; preserve existing item UIDs across unload/reload. A full spec digest change must not automatically invalidate/erase legitimate old runs: keep their compatible older spec versions or explicit safe migration.
+- Add per-group stock policy: e.g. `baseMaterials: renewable`, `generatedOption: renewable or finite`, `oneOffUnique: finite`; never synthesize them from `ITEMS.cat==='res'`.
+- A source is not "available" until location exists at valid unblocked floor cell, visible/interactable, and accessible via legal movement without debug teleport. A physically closed door means it remains gated; bypass classification must never give the rewards for free.
+- Keep physical item economy, ordinary loot one-way (no PUT), partial custody, offline clock, per-cycle deterministic RNG not global RNG rerolling, legacy old save semantics, and no new post-run persistence.
+- Add scarcity stress cases across 14 days: idle 336h without claiming, 14 daily exhaustions, old save updating, low-to-high grade transitions, source without authorized room, two different source IDs same POI, repeat intent replay, recursive site in new window, floor hatch transition and unloading while partial.
+- **Economic failure tripwires:** no successful source roll if physical source didn't exist/access; no repeated bonus on reload; no advanced Gear flood proportional to time alone; no new mandatory recipe requirement sourced only from one locked room; no arbitrary flattening of uneven Veyra iron/scrap geography; no accidental refund arbitrage with Recycler.
+
+### 11.6 Working recommendation / still-open Creator choices
+
+**Working default for further exploration:** player-recognizable source family guarantees a *useful class* of material, while a small optional intermediate bonus follows grade, location and measured source rate. Ordinary mechanically plausible boxes may replenish according to their distinct cycle; unique story/cash/tech sources follow explicitly finite contracts. Exact Pipe/Gear/Plate/Blade drop weights, stock quantities, rollout versions, family-specific cooldown, risk adjustment and physical placements **remain unapproved**.
+
+The next source-grounded task is to simulate several 336h/first-hour routes with these proposed odds and existing POI stock/physical travel, compare the outcomes with baseline and the risk of already-fixed B05 values, and then solicit Creator feedback only on material gameplay trade-offs rather than a generic "guaranteed or random" question.
