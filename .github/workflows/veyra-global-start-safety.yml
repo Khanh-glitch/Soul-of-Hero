@@ -9,7 +9,7 @@ on:
       - 'web/src/veyra05/global-start-discovery.test.ts'
       - 'web/src/veyra05/global-spawn-eligibility.ts'
       - 'web/src/veyra05/global-spawn-eligibility.test.ts'
-      - 'web/src/veyra05/global-production-start.test.ts src/veyra05/global-spawn-seed-stress.test.ts'
+      - 'web/src/veyra05/global-production-start.test.ts'
       - 'web/src/veyra05/global-spawn-seed-stress.test.ts'
       - 'web/src/veyra05/spawn-candidate-reasons.audit.test.ts'
       - '.github/workflows/veyra-global-start-safety.yml'
@@ -37,4 +37,4 @@ jobs:
         run: npx --no-install tsc --noEmit
       - name: Verify global geography, live-stock eligibility, and fresh-run save contract
         working-directory: web
-        run: npx --no-install vitest run --fileParallelism=false --testTimeout=300000 src/veyra05/global-start-discovery.test.ts src/veyra05/global-spawn-eligibility.test.ts src/veyra05/global-production-start.test.ts
+        run: npx --no-install vitest run --fileParallelism=false --testTimeout=300000 src/veyra05/global-start-discovery.test.ts src/veyra05/global-spawn-eligibility.test.ts src/veyra05/global-production-start.test.ts src/veyra05/global-spawn-seed-stress.test.ts
