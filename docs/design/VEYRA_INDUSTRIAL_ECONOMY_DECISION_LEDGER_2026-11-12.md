@@ -209,3 +209,77 @@ Even two legs at these lower bounds are **NOT** an end-to-end walking trip time,
 - Programmatically generated source audit: `web/reports/economic-network/M2_SIMULATION_RESULTS.json`, `M2_AUDIT_REPORT.md`. **The report's first-run defect descriptions predate the later D3–D5 fixes.**
 - Corrective authority: `web/reports/economic-network/M5_CANON_CORRECTIVE.md` (rejects false source fixes), `CURRENT_ACCEPTANCE.md` (WP3/D5 Recycler proven, D3 caches fixed), `web/ref/bible.md`.
 - Historical Last Island study: `web/ref/atlas/extracted/LI_MASTER_RESEARCH_REPORT_v5.md`, v10/11 ledgers. Historical figures are research sources, not current-game recipes or production authorization.
+
+---
+
+## 9. Finite industrial loot protocol and four-site pilot — 2026-11-12 pass 3
+
+**Status:** Engineering design and quantified **CANDIDATE PILOT**. No source code implementation and **NO CREATOR APPROVAL** for amounts, specific guaranteed locations or item content changes. The *only* Creator-locked industrial principle is in §1. Do not turn §9 into an agent coding prompt before explicit review of the distribution policy.
+
+### 9.1 Confirmed lifecycle and exact failure if rare items are naively added
+
+**Files examined on runtime SHA `c6c6fc50471f9dff2633e6dcde00f2d342c8ce7e`:** `web/src/game/engine.ts` around 1332–1427, `web/src/veyra05/floors.ts` 570–735, `web/src/veyra05/continuity.ts` 190–282, `web/src/game/core.ts` run fields 218–249, `web/src/game/balance.v1.json` `lootRespawn`.
+
+1. `renewableLoot(site)` returns **all** original `site.loot` entries whose catalog `cat` is `res` or `food`, except `damaged_drive`. `metal_pipe`, `mechanical_gear`, `iron_plate`, `metal_blade` are all **`res`**. Therefore naïvely placing a Gear/Plate/Pipe/Blade in a normal static crate makes it reappear after normal inventory depletion.
+2. `lootCooldown(site)` falls back to industrial 24h / food 12h / other 18h in Veyra when no special grammar; no Veyra `lootEcology` overlay is initialized in the current default flow.
+3. `retireEmptyLoot()` executes only after a successful transaction that empties the public crate, schedules eligible refresh and removes the physical entity. Partial stock survives in `r.custody` until consumed. `stepLootRespawn()` later rebuilds `renewableStock` in a new crate, potentially minting all original component `res` items again.
+4. Veyra stores depletion and cooldown across window + floor transformations via `r.veyraGlobalDepletedLoot` and `projectDepletedLootFromGlobal`; saved offscreen entities may preserve partial container stock. These mechanisms prove **existing accounting paths**, NOT a new rare finite-source policy.
+5. `r.depletedLootSites` uses **local tile index**, while global Veyra state keys `floor:global_x:global_y` plus timer. A component source must have its own stable identity independent of arbitrary local-window tile index, random new entity ID or site label.
+6. `migrateLootRespawn()` and offline `stepLootRespawn` must obey a rare finite-stock source policy. A global `ITEMS` exclusion based on item key is insufficient because different physical sources may legitimately have different renewal status for the same product.
+7. A changed authored static plan could be materialized on **old ongoing saves** if new POI statics simply become globally visible when the player changes windows/floors. Rollout must pin a new-run loot policy version, not retrofit bonuses to legacy runs.
+8. `r.seenIntents` records successful transaction identities and `dispatch` retires emptied crates after commit. Any new finite claim must use the same authoritative successful withdrawal boundary and be idempotent across replay/restart.
+
+### 9.2 Recommended minimal industrial source contract (proposed architecture)
+
+Do not overwrite `r.lootRespawnAt` or repurpose the meaning of `depletedLootSites` in legacy saves.
+
+- Explicit opt-in on a **new run only**: `industrialLootVersion:'veyra-industrial-v1'`, absent means legacy behavior.
+- Stable **authored physical source ID**: `runId + poiId + floor + authoredSiteKey`; world global x/y as a geometry check, not the sole identity. A site key might be `po_falls/pipe_store/finite_pipe`. Once created, its item roll is bound to a run seed and version.
+- Each source has a declared `policy:` either `ordinary-renewable` (current caches) or `finite-once`. A source should not silently include both types in a single generic respawn bucket. Simpler design: keep old public cache and add **one separately tracked finite industrial lockbox or interactable stock** in a plausible actual room. Visually it may belong to the machine inventory; the real player must physically interact.
+- Single stock authority: durable physical container carries **remaining exact item UID/quantity** while source issuance/exhaustion is recorded in a compact versioned `issued / exhausted` ledger. Do NOT store two independent mutable copies of current item quantity (avoids divergent ownership).
+- On first authorized materialization: derive eligible item(s) once; create physical container and record issuance. On partial withdrawal, update physical stock transactionally; on final withdrawal, mark source exhausted and remove entity. On revisiting, no new roll or re-materialization once exhausted.
+- On ordinary public cache renewal, the industrial finite lockbox is **not** part of the refreshed stock; existing ordinary `supplyHours=12`, `industrialHours=24`, `otherHours=18` stay untouched until a separately approved economy rebalance.
+- Never mint source bonus as profile currency, blueprint or Creator Core; never hide acquisition behind new keycard gate, boss kill or invented POI access.
+- Seasonal/offline clock continues to affect existing ordinary sources. **Finite-once** remains exhausted at 336-hour run boundary. Next new run has a new stock identity and policy. Cross-run inventory transfer stays prohibited.
+
+**Specific abuse cases to test:** (a) take 1 of 2 Plates, reload, take last; (b) empty then shift window out/back; (c) empty Floor -1 chest, climb then descend; (d) empty on day 1, offline 25h, return; (e) duplicate/reordered dispatch intent; (f) reload before and after issuing first stock; (g) old save enters new POI after patch; (h) source spot becomes blocked by changed prop; (i) player death with loot in inventory; (j) inventory full/partial withdrawal; (k) rain/weather/resumed offline settlement; (l) fresh new run after previous run wipe; (m) source item dropped on ground then returned; (n) rare source initially empty due to seeded roll; (o) multiple appearances in overlapping Veyra windows. Every test must assert item UID count/receipts and no gains on replay.
+
+### 9.3 Four-site controlled pilot design — NOT AUTHORIZED distribution
+
+The pilot deliberately adds **finite, complete industrial items** at only four POIs; it leaves their existing standard cache untouched. Physically distinct places must be checked for real floor cells and unobstructed interaction. **The numbers below are a deterministic fixed-outcome pilot for balancing only**; probability-based/randomized policy is still an open Creator experience decision.
+
+| POI | Existing ordinary stock | Finite source candidate with concrete authored room | Candidate first-run bonus | Rationale and verification |
+| --- | --- | --- | --- | --- |
+| `po_pumphouse` Greywater Pumphouse | 2 Iron Ingot +3 Fasteners +1 Fuel Can at F0 global tile approx (1740,1114) | `pipe_store` / Pressure Pipe and Tool Store, Floor 0; author stable source key, choose an actual unblocked cell after compile | **1 Pipe** | Near Greywater; early industrial shortcut, no boss. Do not mistake the fall back cache itself for the new finite source |
+| `po_falls` Falls Powerhouse | 5 Iron Ore +4 Coal +2 Fasteners at Floor 0 approx (1414,848) | `pipe_store` Floor 0, **1 Pipe**; `turbine_subfloor` / Bearing Chamber Floor -1, **1 Gear** | **1 Pipe +1 Gear**, separate physical finite stock | A reason to explore both maintenance storage and the machine subfloor; existing real hatch has authored landing, access still requires natural-play proof |
+| `po_freightyard` Shattered Freight Yard | 3 Rope +1 Treated Canvas +3 Herb at F0 approx (1404,991) | `freight_platform` / Broken Rail Platform with ore_cart; alternative `guard_shack` would not explain a precision Gear as well | **1 Gear** | Salvage of freight handling drive, Orc1 habitat already configured. Crew/food loot may remain as a separate ordinary cache |
+| `po_slag` Slagworks Foundry | 4 Seed +4 Berries +3 Cloth at F0 approx (2410,1852); separate real Recycler at global (2414,1896) | `slag_sort` / Quenched Bloom Sorting Bay Floor 0; additional `quench_underpass` maintenance may matter later | **2 Iron Plates** | A single craft batch equivalent; real industrial risk/toxic terrain, separate from its Recycler. Not one Plate minted at every 24h cooldown |
+
+**Pilot finite supply if all physically reachable and visited:** **Pipe=2, Gear=2, Plate=2, Blade=0**. Total rare stock mass: Pipe 2×1.2kg + Gear 2×0.8kg + Plates 2×1.5kg = **7.0kg** of finished materials. Baseline ordinary stock is preserved; *a new rare bonus increases total run supply*, so quantify separately rather than pretending a cost-neutral substitution.
+
+**Demand cross-check:** §4.3 scenario of Pick+Drive+Sensor+Trap consumes **4 Gear**, so this pilot supplies at most half of that optional Gear demand, forcing meaningful crafting or deeper explorations if player chooses all goals. One piped Frame and one Plate batch together need two Pipes by direct craft composition; pilot's two Pipes cover those selected uses, but `po_slag` already yielding two finished Plates could save that Plate batch instead. There is no required itinerary or mandatory target.
+**Trade-off:** deterministic fixed contents make each POI predictably worth a trip, but may flatten replay surprise; randomized per-run contents add uncertainty but can yield zero finished components in a run. Creator approval required before either rule is implemented.
+
+### 9.4 Why do not immediately rewrite `po_ironvein` or all 58 fallbacks
+
+- `po_ironvein` is not a generic mine shell: `rest48.ts` builds `Prospector Shelter` (F0) and `Stone Prospecting Cut` (F-1) with an actual adit hatch and ore_cart, but M2 fallback cache yields herbs/medkit/stew. A new *ore-bin* cache is thematically valid, but adding even 5 Iron Ore on a 24h renewable contract may mint up to ~70 units over 14 days in one site; must decide its renewal budget before doing so. Retain first-aid/food for now, and audit real adjacent ore seams and walk path before authorizing ore restock.
+- `po_slag` existing pantry-like fallback does not prove no industrial content exists: Recycler is separately placed and has WP3 physical evidence. Pilot only adds a bounded Plate component source, not broad infinite metal resupply.
+- `po_freightyard` has an actual `freight_platform` and cart prop, so a site-bound Gear is more coherent than adding Gear to the generic food/cloth fallback, while leaving ordinary crew supplies intact.
+- Any new source must be physically placed using `compilePlan`/world-floor stack with occupancy tests, stable identity, no obstacle to stairs/doors/props; a POI title alone cannot authorize a container.
+
+### 9.5 Acceptance metrics and stop conditions
+
+**Inventory conservation:**
+1. `physical source initial total = remaining in source + successful withdrawals + lost/destroyed stock` per source UID (account for transfer, drop, salvage and crafting separately).
+2. In one run, `finite delivered ≤ finite original issued` across reload/window/floor/offline; **0 items minted on second visit**. Intent replays never double payout.
+3. Existing non-premium crates maintain old renewal cadence and original content, and existing caches do not silently swap loot on an old save.
+
+**Sandbox usability:** Player can get a Gear through Scrap-to-Iron and Workbench II with no special POI, or by exploring the proposed sites; player can still make a Vehicle Frame and Motor Drive without rare-component routes. No boss and no mission sequence required.
+
+**Evidence classes:** `SOURCE_IMPLEMENTED` only after a merged code SHA; `TESTED` only after code build and automated tests; `PHYSICALLY_PROVEN` only after real Veyra movement, loot, inventory, recycling/crafting and separate-process save/restart; `VISUALLY_VERIFIED` from same SHA screenshots with no clipping. A toy loot-generator unit test cannot prove the loop.
+
+**Stop:** no changes to geography, old run save authority, Ragnarok cash, Creator Core distribution, airdrop or vendor rules in an industrial-loot task. No agent is commissioned just from this ledger. Exact candidate location/guarantee remains creator-review state.
+
+### 9.6 Creator decision needed, only if authorizing this pilot
+
+**Choice:** Should identifiable physical stock (e.g. a pressure-pipe store and turbine bearing) supply **a guaranteed once-per-run specific component** after it is reached, with optional randomized minor toolboxes elsewhere (recommended), or should even these specialist stocks have chance-based outcomes? This is a player-experience and 14-day exploration-economy decision, not something code can settle. Distinguish from total compulsory progression: crafting still exists. Only the selection rule is open; the lifecycle requirement (no duplicate farming) is mandatory technical integrity once finite stock is adopted.
