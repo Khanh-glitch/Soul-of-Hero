@@ -1,0 +1,254 @@
+{
+  "sha": "fee06498bec3d59aa969a4eaa4a6ce7ac6ec7033",
+  "url": "http://127.0.0.1:4173/",
+  "phaseA_scope": "PURE_ZERO_FIXTURE_FRESH_BROWSER_RUN",
+  "phaseB_scope": "DISCLOSED_SAME_COMMIT_WP3_NATURAL_LOOP_SNAPSHOTS",
+  "results": [
+    {
+      "sha": "fee06498bec3d59aa969a4eaa4a6ce7ac6ec7033",
+      "viewport": [
+        1280,
+        720
+      ],
+      "phaseA_steps": [
+        "TITLE_VISIBLE",
+        "D1_PROFILE_CASH_ZERO",
+        "VEYRA_SPAWN_F0",
+        "REAL_WASD_INPUT",
+        "D1_JOURNEY_VERIFIED",
+        "BUILDBAR_RENDERED",
+        "D2_SURVIVOR_CRAFT_VERIFIED",
+        "MAP_PANEL_RENDERED",
+        "SAVE_RELOAD_CONTINUE_VERIFIED"
+      ],
+      "phaseB_steps": [
+        "PO_SLAG_RECYCLER_XDRIVE_UI",
+        "BUILT_GEN_WORKBENCH_L2_VEHICLE_FRAME_UI",
+        "FLOOR_MINUS1_RELOAD_AND_RETURN_VERIFIED"
+      ],
+      "shots": [
+        {
+          "phase": "A",
+          "name": "1280x720-01-title.png",
+          "sha256": "730ccb44cc718474853a0488e684d971cd483954ef265f857b60124db560cb47"
+        },
+        {
+          "phase": "A",
+          "name": "1280x720-02-profile-escrow.png",
+          "sha256": "8d2db526f84522df091061e79046b662880bec9984fae9fa26cb58ce9556af4b"
+        },
+        {
+          "phase": "A",
+          "name": "1280x720-03-character-select.png",
+          "sha256": "cf305acbbbd527ceafb46e6dbadd619ec0555bf8be6bebf654eba767f8bef529"
+        },
+        {
+          "phase": "A",
+          "name": "1280x720-04-veyra-spawn.png",
+          "sha256": "af739d8f6e65c4659b232efb0f76df66ca215681549a5a214c85f39b03939b88"
+        },
+        {
+          "phase": "A",
+          "name": "1280x720-05-veyra-move.png",
+          "sha256": "274148e3d0f15b3fec16a16cf22b232ddde837aa4e83c9480c6378d5b57d089d"
+        },
+        {
+          "phase": "A",
+          "name": "1280x720-06-journey-waypoints.png",
+          "sha256": "37ed5aa783a82440a55d4bcf81a2fda73e007e0594601079faafc86e7fba2faa"
+        },
+        {
+          "phase": "A",
+          "name": "1280x720-07-buildbar.png",
+          "sha256": "ee5e54f2a635393b14f65880b163806e475ab4bcaf768bc27e06fac068e8367b"
+        },
+        {
+          "phase": "A",
+          "name": "1280x720-08-survivor-craft.png",
+          "sha256": "3f82b12db9375a8c24615e7e288459d76aef7dd46528a52cf9de4fad6aa8e1c6"
+        },
+        {
+          "phase": "A",
+          "name": "1280x720-09-map-panel.png",
+          "sha256": "e441f9f4a08d307a944d4ad350c1c264d12817ef8e09ce3079ab592cb930696f"
+        },
+        {
+          "phase": "A",
+          "name": "1280x720-10-esc-menu.png",
+          "sha256": "5d3c9268dc3741013a9518cc8766b5831d2362ddb9dbdee95964a9e199746b6f"
+        },
+        {
+          "phase": "A",
+          "name": "1280x720-11-reload-continue.png",
+          "sha256": "e456646c67a4bb85790506567da19ab8aa8213ec98b1ecd0512b737472782c97"
+        },
+        {
+          "phase": "B",
+          "name": "1280x720-12-foundry-recycler-ui.png",
+          "sha256": "93b7e3f6b4539c9308e65018fad545621ba21d18f75497ea89455f5148af43e2"
+        },
+        {
+          "phase": "B",
+          "name": "1280x720-13-built-base-outside.png",
+          "sha256": "bafa0ecbfc4174da73d630bc8bdcdf272156cc23f62389fd166baf724b51151c"
+        },
+        {
+          "phase": "B",
+          "name": "1280x720-14-workbench-l2-ui.png",
+          "sha256": "809f4b8b0691cde099a6fc2d1067c3a1a8ec58e6a436d5f553cb957b63462edf"
+        },
+        {
+          "phase": "B",
+          "name": "1280x720-15-inventory-vehicle-frame.png",
+          "sha256": "a8c2ef7fc14f553a9189bead78c909d67c65161e21b5ca728ad0a972088cfa01"
+        },
+        {
+          "phase": "B",
+          "name": "1280x720-16-floor-minus1.png",
+          "sha256": "a2284743cb7ff2a965a1e615aaf85965cdda783ff728ac301b77bbf62cc695a9"
+        },
+        {
+          "phase": "B",
+          "name": "1280x720-17-floor-return-0.png",
+          "sha256": "07a108803ac366543307d47029e4d8ee5916690677b3822bb0ccd728c0e4294a"
+        }
+      ],
+      "errors": [],
+      "auDelta": {
+        "before": "AU 806,576 · F0",
+        "after": "AU 808,574 · F0"
+      },
+      "saveAudit": {
+        "layoutId": "veyra05-world",
+        "wreckEconomy": "recycler-v1",
+        "qaUsed": false,
+        "securedCash": 0,
+        "badReceipts": 0
+      },
+      "verdict": "PASS"
+    },
+    {
+      "sha": "fee06498bec3d59aa969a4eaa4a6ce7ac6ec7033",
+      "viewport": [
+        640,
+        360
+      ],
+      "phaseA_steps": [
+        "TITLE_VISIBLE",
+        "D1_PROFILE_CASH_ZERO",
+        "VEYRA_SPAWN_F0",
+        "REAL_WASD_INPUT",
+        "D1_JOURNEY_VERIFIED",
+        "BUILDBAR_RENDERED",
+        "D2_SURVIVOR_CRAFT_VERIFIED",
+        "MAP_PANEL_RENDERED",
+        "SAVE_RELOAD_CONTINUE_VERIFIED"
+      ],
+      "phaseB_steps": [
+        "PO_SLAG_RECYCLER_XDRIVE_UI",
+        "BUILT_GEN_WORKBENCH_L2_VEHICLE_FRAME_UI",
+        "FLOOR_MINUS1_RELOAD_AND_RETURN_VERIFIED"
+      ],
+      "shots": [
+        {
+          "phase": "A",
+          "name": "640x360-01-title.png",
+          "sha256": "fe556a11517da3274b1402370035f980bb6b96589c115eb525698cb6b7fac1c2"
+        },
+        {
+          "phase": "A",
+          "name": "640x360-02-profile-escrow.png",
+          "sha256": "836862709c299e2a466ea446882711cbff0c24f0ee54da6cce837cd352c5a9ce"
+        },
+        {
+          "phase": "A",
+          "name": "640x360-03-character-select.png",
+          "sha256": "683aa4cba8b0df11473a9dc8b638deb375425bbad5f7534db653b70650edf015"
+        },
+        {
+          "phase": "A",
+          "name": "640x360-04-veyra-spawn.png",
+          "sha256": "1709d1269388690e80f4c40c3ca27f6bd59bcf9de6fa7172fe83710e1c94dcf0"
+        },
+        {
+          "phase": "A",
+          "name": "640x360-05-veyra-move.png",
+          "sha256": "71b0e8e6ea918199da7f2e81fafbecf4470146d7137a83d8379ecb17184e2c9b"
+        },
+        {
+          "phase": "A",
+          "name": "640x360-06-journey-waypoints.png",
+          "sha256": "d70a982f68568285a36aadf88a883e12a48b396bd60df85dc04dbb07e58c10a9"
+        },
+        {
+          "phase": "A",
+          "name": "640x360-07-buildbar.png",
+          "sha256": "3dd4dd54385d8bf78c496e7ee3dea51e971f9d7bec7dc0f2c4b226aef7740701"
+        },
+        {
+          "phase": "A",
+          "name": "640x360-08-survivor-craft.png",
+          "sha256": "63a97da4d5c84f8683cedb0933426f6c0991ed4392ae333d6724af1276b87b59"
+        },
+        {
+          "phase": "A",
+          "name": "640x360-09-map-panel.png",
+          "sha256": "7d0cbd60f97293c47b1a59fdbd7ff45706b15cdf9773314acc85df5c6928a540"
+        },
+        {
+          "phase": "A",
+          "name": "640x360-10-esc-menu.png",
+          "sha256": "22fdefc520942d854dcdef6c02894af9e9fb66f3bda3928160a2a16c0c5efd83"
+        },
+        {
+          "phase": "A",
+          "name": "640x360-11-reload-continue.png",
+          "sha256": "42cdad3d579236d6375f963b7e4240d8de13e4626cec41cfe7e3cce7a0144819"
+        },
+        {
+          "phase": "B",
+          "name": "640x360-12-foundry-recycler-ui.png",
+          "sha256": "d6854121447e3da590077bb9f3e7f646bd1209ecc3cb9b54c1db9b0ec3aa6c37"
+        },
+        {
+          "phase": "B",
+          "name": "640x360-13-built-base-outside.png",
+          "sha256": "c6aca748fd5997aedf4cea6371b435cf3c5626705c62ee98a18ffc4d12b94175"
+        },
+        {
+          "phase": "B",
+          "name": "640x360-14-workbench-l2-ui.png",
+          "sha256": "f1903c4277cf3a434d20f55848dd083142ebc14d709846b8ad73f6e318ebd677"
+        },
+        {
+          "phase": "B",
+          "name": "640x360-15-inventory-vehicle-frame.png",
+          "sha256": "a32f44796cc9568538c96e750969d4d9c45ac247e71d6b177cd44d91d80e23f7"
+        },
+        {
+          "phase": "B",
+          "name": "640x360-16-floor-minus1.png",
+          "sha256": "a86a498812ac12053f0132cc4ec0f1e1760732dd14be0755d47a72e0049ec426"
+        },
+        {
+          "phase": "B",
+          "name": "640x360-17-floor-return-0.png",
+          "sha256": "3dc90cc882c4231904d8275d1ba5dd7df7a9780a0c9b51f6b754e961a3ed4611"
+        }
+      ],
+      "errors": [],
+      "auDelta": {
+        "before": "AU 810,578 · F0",
+        "after": "AU 812,575 · F0"
+      },
+      "saveAudit": {
+        "layoutId": "veyra05-world",
+        "wreckEconomy": "recycler-v1",
+        "qaUsed": false,
+        "securedCash": 0,
+        "badReceipts": 0
+      },
+      "verdict": "PASS"
+    }
+  ]
+}
