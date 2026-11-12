@@ -4,7 +4,7 @@
  * stations, outputs and independent rules are copied verbatim from runtime data.
  */
 import { writeFileSync, mkdirSync } from 'node:fs';
-import { ITEMS, RECIPES, STRUCTS, SOURCES, CREATURES, ELDERS,
+import { ITEMS, RECIPES, STRUCTS, SOURCES, CREATURES, ELDERS, PRIMORDIAL_ELDERS,
   WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III,
   INDUSTRIAL_MODULE, FURNACE_LINING, GENERATOR_CAPACITY_UPGRADE,
   CART_FREIGHT_UPGRADE, GARDEN_FRAME_COST, GARDEN_CROPS,
@@ -54,6 +54,7 @@ const graph={
   sources:Object.fromEntries(Object.entries(SOURCES).map(([id,s])=>[id,{id,...s}])),
   creatures:Object.fromEntries(Object.entries(CREATURES).map(([id,s])=>[id,{id,...s}])),
   elders:ELDERS,
+  primordialElders:PRIMORDIAL_ELDERS,
   upgrades:{
     workbench_ii:WORKBENCH_UPGRADE,
     workbench_iii:WORKBENCH_UPGRADE_III,
