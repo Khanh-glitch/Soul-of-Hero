@@ -13,7 +13,7 @@ import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORD
 import { newGame, renewableLoot, markDirty } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
 import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
-import { getWorld, hasLayout, setActiveLayout, webRecyclerSite } from './world';
+import { getWorld, hasLayout, setActiveLayout, VEYRA_RECYCLER_SITE, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
 import { sourceDigest } from './world-economy';
 import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
@@ -356,7 +356,7 @@ export function validate(raw: any): GameState | null {
   if(r.airdrops!==undefined && (!obj(r.airdrops)||r.airdrops.version!=='airdrop-v1'||!supportsAirdrops(r.layoutId)||r.sourceLayoutVersion!==3||r.airdrops.mapDigest!==r.sourceMap?.mapDigest||r.airdrops.mapDigest!==mapDigest(world)||r.airdrops.seed!==r.seed||r.airdrops.runId!==r.id||r.airdrops.startedAt!==r.startedAt||!integer(r.airdrops.nextIndex)||r.airdrops.nextIndex>BAL.airdropV1.maxEvents||r.airdrops.nextIndex!==Array.from({length:BAL.airdropV1.maxEvents},(_,i)=>airdropTimes(r,i).signalAt).filter(t=>t<=r.clock.lastSimAt).length))return null;
   if((Object.values(r.entities) as any[]).filter(e=>e.kind==='airdrop').length>1)return null;
   if(r.player.vehicle!==undefined) {const e=r.entities[r.player.vehicle];if(typeof r.player.vehicle!=='string'||!e||e.kind!=='vehicle'||r.player.dead||r.player.pulling||r.spiritTransit||r.player.x!==e.x||r.player.y!==e.y)return null;}
-  if((Object.values(r.entities) as any[]).filter(e=>e.kind==='recycler').length>1)return null;
+  if(([...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})] as any[]).filter(e=>e.kind==='recycler').length>1)return null;
   for(const [key,offer] of Object.entries(VENDOR_SPARES)){const stock=r.vendorStock[`spares:${key}`];if(stock!==undefined && (!integer(stock) || stock>offer.stock))return null;}
   for(const g of Object.values(r.entities) as any[]) if(g.basePower&&g.basePower.network!=='wire-v1'){const links=(Object.values(r.entities) as any[]).filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
   // B05-R oil sources: registry keyed by tile; only the labelled test-fixture authority is accepted (production oil sites are not authorized).
@@ -370,6 +370,9 @@ export function validate(raw: any): GameState | null {
     if (!veyraWw || !obj(r.veyraOffscreenEntities)) return null;
     for (const [oid, oe] of Object.entries(r.veyraOffscreenEntities) as [string, any][]) {
       if (!obj(oe) || oe.id !== oid || r.entities[oid] || !beforeNext(oid, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof oe.kind !== 'string' || !finite(oe.x) || !finite(oe.y)) return null;
+      if (oe.kind === 'recycler') {
+        if (webRecyclerSite(world, r.layoutId) || oe.tx !== VEYRA_RECYCLER_SITE.tx || oe.ty !== VEYRA_RECYCLER_SITE.ty || oe.x !== VEYRA_RECYCLER_SITE.tx * 16 + 8 || oe.y !== VEYRA_RECYCLER_SITE.ty * 16 + 8 || oe.poi !== 'factory' || oe.type !== undefined || !obj(oe.station) || !finite(oe.station.burn) || oe.station.burn < 0 || r.custody[oe.station.fuelC]?.kind !== 'fuel' || r.custody[oe.station.outC]?.kind !== 'out' || !jobs(oe.station.queue, 'recycler') || oe.station.queue?.length > 1) return null;
+      }
       if (oe.garden !== undefined && (oe.type !== 'garden' || !obj(oe.garden) || (oe.garden.crop !== null && !['crop', 'herb'].includes(oe.garden.crop)) || !finite(oe.garden.growth) || oe.garden.growth < 0 || oe.garden.growth > 1 || !finite(oe.garden.water) || oe.garden.water < 0 || oe.garden.water > 3 || (oe.garden.coldFrame !== undefined && oe.garden.coldFrame !== true))) return null;
       if (oe.farm !== undefined && (!obj(oe.farm) || oe.kind !== 'struct' || oe.type !== 'farm_controller' || !oe.c || r.custody[oe.c]?.slots.length !== 3 || typeof oe.farm.enabled !== 'boolean' || !['crop', 'herb'].includes(oe.farm.crop) || !finite(oe.farm.energy) || oe.farm.energy < 0 || oe.farm.energy > 90000 || ['gardenId', 'barrelId', 'chestId'].some(k => oe.farm[k] !== undefined && (typeof oe.farm[k] !== 'string' || !oe.farm[k])) || (oe.farm.lastCode !== undefined && (typeof oe.farm.lastCode !== 'string' || oe.farm.lastCode.length > 24)))) return null;
       if (oe.type === 'farm_controller' && !oe.farm) return null;

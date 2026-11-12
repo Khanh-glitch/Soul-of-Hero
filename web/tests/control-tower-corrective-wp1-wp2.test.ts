@@ -307,12 +307,13 @@ describe('WP1 — Authoritative Daily Reroll (A1 Corrective)', () => {
     now = performLegitimateObjective(reloaded, replacementId, now + 100);
     const claimRes = dispatch(reloaded, { id: 'claim-ember-legit', type: 'journeyRequisition', date: today, milestone: 'ember' }, now + 200);
     expect(claimRes.ok, !claimRes.ok ? claimRes.reason : '').toBe(true);
-    const emberSpec = (BAL as any).journeyRequisitions.ember;
-    expect(reloaded.profile.securedCash).toBe(emberSpec.securedCash);
+    expect((BAL as any).journeyRequisitions.ember.securedCash).toBe(0);
+    expect(reloaded.profile.securedCash).toBe(0);
+    expect(countItem(reloaded.run!, 'inv', 'bandage')).toBe(3);
 
     // 8. Repeated claim on same UTC day (distinct intent id) MUST fail
     expect(dispatch(reloaded, { id: 'claim-ember-dup', type: 'journeyRequisition', date: today, milestone: 'ember' }, now + 250).ok).toBe(false);
-    expect(reloaded.profile.securedCash).toBe(emberSpec.securedCash);
+    expect(reloaded.profile.securedCash).toBe(0);
 
     // 9. UTC rollover to next day (2026-11-10): yesterday's reroll does NOT carry over; new day allows a fresh once-per-day reroll!
     const day2At = Date.UTC(2026, 10, 10, 1, 0, 0);

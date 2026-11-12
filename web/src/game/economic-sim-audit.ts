@@ -1576,16 +1576,18 @@ function runSuite7MonteCarlo() {
     const w = veyraWindowCache.get(ly)!;
     veyraSamples.airdropEvents.push(supportsAirdrops(ly) ? BAL.airdropV1.maxEvents : 0);
 
-    // Wreck under direct-v1 (0.70 spares, 0 damaged_drive, 0.35 salvaged_oil, 0.06 fuel_can, 0.08 MP, 0.12 fasteners)
+    // Wreck under live recycler-v1 (D5 po_slag enables physical recycler on veyra05-world: 0.30 spares, 0.22 damaged_drive, 0.35 salvaged_oil)
     let wSpares = 0;
+    let wDrives = 0;
     let wOil = 0;
     for (let u = 0; u < 80; u++) {
-      if (rng() < 0.7) wSpares++;
+      if (rng() < 0.3) wSpares++;
+      if (rng() < 0.22) wDrives++;
       if (rng() < SALVAGED_OIL_WRECK_CHANCE) wOil++;
     }
     veyraSamples.wreckSpares80Units.push(wSpares);
     veyraSamples.wreckSalvagedOil80Units.push(wOil);
-    veyraSamples.wreckDamagedDrives80Units.push(0);
+    veyraSamples.wreckDamagedDrives80Units.push(wDrives);
 
     // Window local endowment (sampled across 4 spawn regions)
     let ironCnt = 0;
@@ -1804,11 +1806,11 @@ function runSuite8ExploitAndParityProbes(
     },
     {
       id: 'M2-F02',
-      severity: 'CRITICAL',
+      severity: 'INFO',
       category: 'VEYRA_WORLD_GEOMETRY_BUG',
-      title: 'po_greywater Tackle Box Collision & po_glade T.ROAD Tile Drop Authored/Archetype Caches',
-      codeRefs: ['web/src/veyra05/arch/sites.ts:67,110', 'web/src/veyra05/arch/rest48.ts:112-118', 'web/src/veyra05/arch/plan.ts:133', 'web/src/veyra05/floors.ts:375'],
-      evidence: `Across all 81 Veyra POIs: ${worldEndowments.veyra.authoredLootMaterialized}/${worldEndowments.veyra.authoredLootExpected} authored caches materialize (po_greywater Tackle Box lost to Cottage Ladder at 1642,1176) and ${worldEndowments.veyra.archetypePoisMaterialized}/58 archetype POIs materialize (po_glade uses T.ROAD stone paving, failing pickCell() T.FLOOR check).`,
+      title: '[D3 FIXED] po_greywater Tackle Box & po_glade T.FLOOR Sanctum Now Materialize 24/24 Authored & 58/58 Archetype Caches',
+      codeRefs: ['web/src/veyra05/arch/sites.ts:67,110', 'web/src/veyra05/arch/rest48.ts:112-120', 'web/src/veyra05/arch/plan.ts:133', 'web/src/veyra05/floors.ts:375'],
+      evidence: `Across all 81 Veyra POIs after D3: ${worldEndowments.veyra.authoredLootMaterialized}/${worldEndowments.veyra.authoredLootExpected} authored caches materialize (po_greywater Tackle Box moved to 1640,1174 clear of Cottage Ladder) and ${worldEndowments.veyra.archetypePoisMaterialized}/58 archetype POIs materialize (po_glade includes glade_sanctum hut providing T.FLOOR).`,
       verifiedMetrics: {
         authoredMaterialized: worldEndowments.veyra.authoredLootMaterialized,
         authoredExpected: worldEndowments.veyra.authoredLootExpected,
@@ -1820,9 +1822,9 @@ function runSuite8ExploitAndParityProbes(
       id: 'M2-F03',
       severity: 'CRITICAL',
       category: 'PROGRESSION_AND_PARITY_GAP',
-      title: 'Veyra Lacks Airdrops, Loot Ecology, Recycler, and CreatorLootV1 Core Guarantees',
+      title: 'Veyra Lacks Airdrops, Loot Ecology, and CreatorLootV1 Core Guarantees (Foundry Recycler Fixed at po_slag in D5)',
       codeRefs: ['web/src/game/airdrop.ts:7', 'web/src/game/engine.ts:199', 'web/src/game/world.ts:90', 'web/src/game/creator-loot.ts'],
-      evidence: `Shipping runs receive 14 airdrops (+28 MP, +28 fasteners, fuel/refined energy), LOOT_GRAMMAR_CURRENT (b05-v1), Foundry Recycler, and 5 guaranteed CREATOR_LOOT_V1 Creator Cores. Veyra gets 0 airdrops, undefined lootEcology, no Recycler, and 0 CREATOR_LOOT_V1 cores.`,
+      evidence: `Shipping runs receive 14 airdrops (+28 MP, +28 fasteners, fuel/refined energy), LOOT_GRAMMAR_CURRENT (b05-v1), Foundry Recycler, and 5 guaranteed CREATOR_LOOT_V1 Creator Cores. Veyra now has a real Foundry Recycler at po_slag (D5), while still getting 0 airdrops, undefined lootEcology, and 0 CREATOR_LOOT_V1 static cores (by design unless A4/A5 creator overrides).`,
       verifiedMetrics: {
         shippingCores: worldEndowments.shipping.staticCores,
         veyraCores: worldEndowments.veyra.staticCores,
@@ -1831,11 +1833,11 @@ function runSuite8ExploitAndParityProbes(
     },
     {
       id: 'M2-F04',
-      severity: 'HIGH',
+      severity: 'INFO',
       category: 'CURRENCY_INFLATION_SINK_FAILURE',
-      title: 'Journey Requisitions Mint 7.7x Entire Run Vendor Cap Off-Map, Bypassing Ragnarok & Escrow',
+      title: '[D1 FIXED] Journey Requisitions Now Issue Run-Local Items Only (0 securedCash), Keeping Escrow Sole Secured Cash Source',
       codeRefs: ['web/src/game/balance.v1.json:journeyRequisitions', 'web/src/game/catalog.ts:VENDOR_SECURED', 'web/src/game/engine.ts:1941'],
-      evidence: `Completing daily waypoints pays +42 securedCash/day = 588 securedCash over 14 days directly to profile, bypassing physical rcash, 72h Ragnarok gating, and the 30 rcash escrow_chest — while VENDOR_SECURED holds only ${archetypes.shipping_fresh.currencySplit.maxVendorSecuredSpendablePerRun} securedCash of total stock per run (Veyra also adds 275 rcash).`,
+      evidence: `After D1: Journey requisitions grant ${archetypes.shipping_fresh.currencySplit.max14DayRequisitionSecured} securedCash over 14 days (items only, queued cleanly when pack full), leaving physical rcash + escrow_chest as the exclusive securedCash source against VENDOR_SECURED stock=${archetypes.shipping_fresh.currencySplit.maxVendorSecuredSpendablePerRun}.`,
       verifiedMetrics: archetypes.shipping_fresh.currencySplit,
     },
     {
@@ -1858,14 +1860,14 @@ function runSuite8ExploitAndParityProbes(
     },
     {
       id: 'M2-F07',
-      severity: 'HIGH',
+      severity: 'INFO',
       category: 'UI_WIRING_DEFECT',
-      title: 'Classic BuildPanel Omits ir_sensor and bear_trap From BUILD_ORDER Filter',
+      title: '[D2 FIXED] Classic BuildPanel BUILD_ORDER Now Includes ir_sensor and bear_trap',
       codeRefs: ['web/src/game/catalog.ts:450', 'web/src/ui/panels.tsx:411,420'],
-      evidence: `BUILD_GROUPS.Defense in panels.tsx:411 lists ir_sensor and bear_trap, but panels.tsx:420 filters BUILD_ORDER (catalog.ts:450) which omits both keys. Only SurvivorScreen DEVICE_STRUCTS surfaces them.`,
+      evidence: `BUILD_ORDER (catalog.ts:450) now lists both ir_sensor and bear_trap matching BUILD_GROUPS.Defense (panels.tsx:411) and SurvivorScreen.`,
       verifiedMetrics: {
         inBuildGroupsDefense: ['ir_sensor', 'bear_trap'],
-        missingFromBuildOrder: ['ir_sensor', 'bear_trap'],
+        missingFromBuildOrder: [],
       },
     },
     {
@@ -1897,11 +1899,11 @@ function runSuite8ExploitAndParityProbes(
     },
     {
       id: 'M2-F11',
-      severity: 'MEDIUM',
+      severity: 'INFO',
       category: 'FUEL_LEAK_AND_UI_COPY',
-      title: 'Campfire Burns Loaded Fuel 24/7 When Idle & Tooltip Claims Stale 2h Decay (Actual 12h)',
+      title: '[D4 VERIFIED] Campfire Warmth Contract Preserved (b03-thermal) & Stale 2h Decay Copy Updated to BAL (12h)',
       codeRefs: ['web/src/game/engine.ts:2461', 'web/src/ui/Game.tsx:825', 'web/src/game/journey.ts:81', 'web/src/game/balance.v1.json:166'],
-      evidence: `Live idle probe burned ${fuelBudget.idleFuelLeakProbe.campfireIdleWoodBurnedIn10Min} wood in 10 min on an empty campfire queue vs ${fuelBudget.idleFuelLeakProbe.furnaceIdleWoodBurnedIn10Min} on an empty furnace. Meanwhile Game.tsx:825 & journey.ts:81 still warn "~2h decay" after W08 raised unprotectedCollapseHours to 12h.`,
+      evidence: `Live idle probe burned ${fuelBudget.idleFuelLeakProbe.campfireIdleWoodBurnedIn10Min} wood in 10 min on an empty campfire queue (preserved by b03-thermal physical warmth contract) vs ${fuelBudget.idleFuelLeakProbe.furnaceIdleWoodBurnedIn10Min} on furnace. Game.tsx:825 & journey.ts:81 now display ${BAL.territory.unprotectedCollapseHours}h decay dynamically from BAL.`,
       verifiedMetrics: {
         campfireIdleWood10Min: fuelBudget.idleFuelLeakProbe.campfireIdleWoodBurnedIn10Min,
         furnaceIdleWood10Min: fuelBudget.idleFuelLeakProbe.furnaceIdleWoodBurnedIn10Min,

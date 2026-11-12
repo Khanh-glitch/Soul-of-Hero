@@ -34,8 +34,8 @@ describe('SOH M2 Full Economic Simulation & Structural Audit', () => {
     expect(res.worldEndowments.veyra.sampledTilesTotal).toBe(480_000);
     expect(res.worldEndowments.veyra.totalPois).toBe(81);
     expect(res.worldEndowments.veyra.authoredLootExpected).toBe(24);
-    expect(res.worldEndowments.veyra.authoredLootMaterialized).toBe(23);
-    expect(res.worldEndowments.veyra.archetypePoisMissing).toContain('po_glade');
+    expect(res.worldEndowments.veyra.authoredLootMaterialized).toBe(24);
+    expect(res.worldEndowments.veyra.archetypePoisMissing).toEqual([]);
     expect(res.worldEndowments.veyra.aggregateSceneSources.palm).toBe(66);
     expect(Object.keys(res.worldEndowments.veyra.staticCores)).toHaveLength(0);
     expect(Object.keys(res.worldEndowments.shipping.staticCores)).toHaveLength(8);
@@ -52,7 +52,7 @@ describe('SOH M2 Full Economic Simulation & Structural Audit', () => {
       expect(arch.fortifier14Day.total14dItemsConsumed).toBeGreaterThan(0);
       expect(arch.currencySplit.maxVendorSecuredSpendablePerRun).toBe(76);
       expect(arch.currencySplit.maxVendorSparesSpendablePerRun).toBe(59);
-      expect(arch.currencySplit.max14DayRequisitionSecured).toBe(588);
+      expect(arch.currencySplit.max14DayRequisitionSecured).toBe(0);
       expect(arch.currencySplit.liveProbeDay1.emberClaimOk).toBe(true);
       expect(arch.researchAndCoreGate.sparesNeededBeforeFirstCoreRandom).toBe(104);
     }

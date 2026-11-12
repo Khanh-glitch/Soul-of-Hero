@@ -107,8 +107,8 @@
     "gate:recycler_site": {
       "id": "gate:recycler_site",
       "kind": "layout",
-      "layerScope": "shipping",
-      "rule": "webRecyclerSite() exists only on shipping_fresh / dev_delta_fresh; null on Veyra",
+      "layerScope": "shared",
+      "rule": "webRecyclerSite() authorizes Foundry Yard on shipping_fresh/dev_delta_fresh and VEYRA_RECYCLER_SITE (po_slag) on isVeyra05Layout (null on legacy static Veyra layouts)",
       "codeRef": "world.ts:webRecyclerSite"
     },
     "gate:oil_test_fixture": {
@@ -1735,6 +1735,20 @@
       }
     },
     {
+      "id": "container:veyra:po_glade:L0:1",
+      "kind": "container",
+      "label": "Veyra Mosslight Glade (po_glade) loot",
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "meta": {
+        "poiId": "po_glade",
+        "level": 0,
+        "kind": "loot",
+        "fromArchetypePreset": true,
+        "cash": 0
+      }
+    },
+    {
       "id": "container:veyra:po_greyquarry:L0:2",
       "kind": "container",
       "label": "Veyra Greyback Quarry (po_greyquarry) loot",
@@ -1757,6 +1771,20 @@
       "meta": {
         "poiId": "po_greywater",
         "level": -1,
+        "kind": "loot",
+        "fromArchetypePreset": false,
+        "cash": 0
+      }
+    },
+    {
+      "id": "container:veyra:po_greywater:L0:10",
+      "kind": "container",
+      "label": "Veyra Greywater Hamlet (po_greywater) loot",
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "meta": {
+        "poiId": "po_greywater",
+        "level": 0,
         "kind": "loot",
         "fromArchetypePreset": false,
         "cash": 0
@@ -1791,20 +1819,6 @@
       }
     },
     {
-      "id": "container:veyra:po_greywater:L1:10",
-      "kind": "container",
-      "label": "Veyra Greywater Hamlet (po_greywater) loot",
-      "layerScope": "veyra05",
-      "runtimeStatus": "LIVE_VEYRA_ONLY",
-      "meta": {
-        "poiId": "po_greywater",
-        "level": 1,
-        "kind": "loot",
-        "fromArchetypePreset": false,
-        "cash": 0
-      }
-    },
-    {
       "id": "container:veyra:po_greywater:L1:11",
       "kind": "container",
       "label": "Veyra Greywater Hamlet (po_greywater) loot",
@@ -1819,7 +1833,21 @@
       }
     },
     {
-      "id": "container:veyra:po_greywater:L2:12",
+      "id": "container:veyra:po_greywater:L1:12",
+      "kind": "container",
+      "label": "Veyra Greywater Hamlet (po_greywater) loot",
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "meta": {
+        "poiId": "po_greywater",
+        "level": 1,
+        "kind": "loot",
+        "fromArchetypePreset": false,
+        "cash": 0
+      }
+    },
+    {
+      "id": "container:veyra:po_greywater:L2:13",
       "kind": "container",
       "label": "Veyra Greywater Hamlet (po_greywater) loot",
       "layerScope": "veyra05",
@@ -9110,8 +9138,8 @@
       "id": "recipe:recycler:component:X:blade-v1",
       "kind": "recipe",
       "label": "Recycler Component (Metal Blade -> X:blade-v1)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "recyclerRecipe": "X:blade-v1",
         "key": "metal_blade",
@@ -9132,8 +9160,8 @@
       "id": "recipe:recycler:component:X:drive",
       "kind": "recipe",
       "label": "Recycler Drive Recovery (Damaged Drive -> X:drive)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "recyclerRecipe": "X:drive",
         "key": "damaged_drive",
@@ -9150,8 +9178,8 @@
       "id": "recipe:recycler:component:X:gear-v1",
       "kind": "recipe",
       "label": "Recycler Component (Mechanical Gear -> X:gear-v1)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "recyclerRecipe": "X:gear-v1",
         "key": "mechanical_gear",
@@ -9172,8 +9200,8 @@
       "id": "recipe:recycler:component:X:pipe-v1",
       "kind": "recipe",
       "label": "Recycler Component (Metal Pipe -> X:pipe-v1)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "recyclerRecipe": "X:pipe-v1",
         "key": "metal_pipe",
@@ -9190,8 +9218,8 @@
       "id": "recipe:recycler:component:X:pipe-v2",
       "kind": "recipe",
       "label": "Recycler Component (Metal Pipe -> X:pipe-v2)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "recyclerRecipe": "X:pipe-v2",
         "key": "metal_pipe",
@@ -9212,8 +9240,8 @@
       "id": "recipe:recycler:industrial_axe:v3",
       "kind": "recipe",
       "label": "Recycler Recover (Salvager Axe)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "recyclerVersion": "v3",
         "seconds": 15,
@@ -9245,8 +9273,8 @@
       "id": "recipe:recycler:industrial_pick:v1",
       "kind": "recipe",
       "label": "Recycler Recover (Salvager Pick)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "recyclerVersion": "v1",
         "seconds": 15,
@@ -9274,8 +9302,8 @@
       "id": "recipe:recycler:iron_axe:v3",
       "kind": "recipe",
       "label": "Recycler Recover (Iron Axe)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "recyclerVersion": "v3",
         "seconds": 15,
@@ -9303,8 +9331,8 @@
       "id": "recipe:recycler:iron_pick:v3",
       "kind": "recipe",
       "label": "Recycler Recover (Iron Pickaxe)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "recyclerVersion": "v3",
         "seconds": 15,
@@ -9332,8 +9360,8 @@
       "id": "recipe:recycler:iron_sword:v3",
       "kind": "recipe",
       "label": "Recycler Recover (Iron Sword)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "recyclerVersion": "v3",
         "seconds": 15,
@@ -9365,8 +9393,8 @@
       "id": "recipe:recycler:reinforced_spear:v1",
       "kind": "recipe",
       "label": "Recycler Recover (Reinforced Spear)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "recyclerVersion": "v1",
         "seconds": 15,
@@ -10386,7 +10414,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "points": 75,
-        "securedCash": 25,
+        "securedCash": 0,
         "items": [
           [
             "spares",
@@ -10411,7 +10439,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "points": 25,
-        "securedCash": 5,
+        "securedCash": 0,
         "items": [
           [
             "bandage",
@@ -10432,7 +10460,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "points": 50,
-        "securedCash": 12,
+        "securedCash": 0,
         "items": [
           [
             "medkit",
@@ -10527,8 +10555,8 @@
       "id": "sink:recycler_recovery_loss",
       "kind": "sink",
       "label": "Foundry Recycler Material Loss vs Craft Cost",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {}
     },
     {
@@ -10880,12 +10908,16 @@
     {
       "id": "station:recycler",
       "kind": "station",
-      "label": "Foundry Recycler (Shipping/dev_delta Only)",
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "label": "Foundry Recycler (Shipping Foundry Yard + Veyra po_slag)",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
         "worldEntity": true,
-        "veyraSite": null
+        "veyraSite": {
+          "poi": "po_slag",
+          "tx": 2414,
+          "ty": 1896
+        }
       }
     },
     {
@@ -15751,7 +15783,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:RCASH_BY_POI.po_rc_dam",
-      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_dam:L0:1->item:rcash:1942",
+      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_dam:L0:1->item:rcash:1948",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -15764,7 +15796,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:RCASH_BY_POI.po_rc_ironvein",
-      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_ironvein:L0:1->item:rcash:1943",
+      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_ironvein:L0:1->item:rcash:1949",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -15777,7 +15809,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:RCASH_BY_POI.po_rc_kestrel",
-      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_kestrel:L0:1->item:rcash:1944",
+      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_kestrel:L0:1->item:rcash:1950",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -15790,7 +15822,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:RCASH_BY_POI.po_rc_meridian",
-      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_meridian:L0:1->item:rcash:1945",
+      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_meridian:L0:1->item:rcash:1951",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -15803,7 +15835,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:RCASH_BY_POI.po_rc_salt",
-      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_salt:L0:1->item:rcash:1946",
+      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_salt:L0:1->item:rcash:1952",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -15816,7 +15848,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:RCASH_BY_POI.po_rc_sandgate",
-      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_sandgate:L0:1->item:rcash:1947",
+      "id": "E:CASH_CHEST_MINT:container:veyra:po_rc_sandgate:L0:1->item:rcash:1953",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -23516,10 +23548,10 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "wreck-economy.ts:wreckBonuses",
-      "notes": "Suppressed on Veyra (wreckEconomy === direct-v1)",
+      "notes": "Live on Shipping & Veyra veyra05-world (D5 po_slag recycler-v1); legacy static Veyra saves without recycler retain direct-v1 fallback",
       "id": "E:HARVEST_BONUS:world_source:wreck->item:damaged_drive:1467",
       "authority": "LIVE_VERIFIED_SOH"
     },
@@ -23610,9 +23642,9 @@
       "probability": 0.7,
       "gateIds": [],
       "layerScope": "veyra05",
-      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "runtimeStatus": "HISTORICAL_INFLIGHT_ONLY",
       "codeRef": "wreck-economy.ts:wreckBonuses",
-      "notes": "Direct-v1 spares bonus boost when recycler absent (0.3 -> 0.7)",
+      "notes": "Historical direct-v1 fallback retained only for legacy static Veyra layouts or pre-D5 saves lacking an authorized recycler",
       "id": "E:HARVEST_BONUS:world_source:wreck->item:spares:1468",
       "authority": "LIVE_VERIFIED_SOH"
     },
@@ -24627,25 +24659,13 @@
     {
       "kind": "JOURNEY_REQUISITION",
       "from": "requisition:beacon",
-      "to": "currency:secured_cash",
-      "qtyOut": 25,
-      "gateIds": [],
-      "layerScope": "shared",
-      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
-      "codeRef": "balance.v1.json:journeyRequisitions.beacon",
-      "id": "E:JOURNEY_REQUISITION:requisition:beacon->currency:secured_cash:2034",
-      "authority": "LIVE_VERIFIED_SOH"
-    },
-    {
-      "kind": "JOURNEY_REQUISITION",
-      "from": "requisition:beacon",
       "to": "item:crystal",
       "qtyOut": 1,
       "gateIds": [],
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "balance.v1.json:journeyRequisitions.beacon.items",
-      "id": "E:JOURNEY_REQUISITION:requisition:beacon->item:crystal:2037",
+      "id": "E:JOURNEY_REQUISITION:requisition:beacon->item:crystal:2040",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -24657,7 +24677,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "balance.v1.json:journeyRequisitions.beacon.items",
-      "id": "E:JOURNEY_REQUISITION:requisition:beacon->item:fuel_can:2036",
+      "id": "E:JOURNEY_REQUISITION:requisition:beacon->item:fuel_can:2039",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -24669,19 +24689,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "balance.v1.json:journeyRequisitions.beacon.items",
-      "id": "E:JOURNEY_REQUISITION:requisition:beacon->item:spares:2035",
-      "authority": "LIVE_VERIFIED_SOH"
-    },
-    {
-      "kind": "JOURNEY_REQUISITION",
-      "from": "requisition:ember",
-      "to": "currency:secured_cash",
-      "qtyOut": 5,
-      "gateIds": [],
-      "layerScope": "shared",
-      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
-      "codeRef": "balance.v1.json:journeyRequisitions.ember",
-      "id": "E:JOURNEY_REQUISITION:requisition:ember->currency:secured_cash:2028",
+      "id": "E:JOURNEY_REQUISITION:requisition:beacon->item:spares:2038",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -24693,7 +24701,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "balance.v1.json:journeyRequisitions.ember.items",
-      "id": "E:JOURNEY_REQUISITION:requisition:ember->item:bandage:2029",
+      "id": "E:JOURNEY_REQUISITION:requisition:ember->item:bandage:2034",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -24705,19 +24713,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "balance.v1.json:journeyRequisitions.ember.items",
-      "id": "E:JOURNEY_REQUISITION:requisition:ember->item:cooked_meat:2030",
-      "authority": "LIVE_VERIFIED_SOH"
-    },
-    {
-      "kind": "JOURNEY_REQUISITION",
-      "from": "requisition:hearth",
-      "to": "currency:secured_cash",
-      "qtyOut": 12,
-      "gateIds": [],
-      "layerScope": "shared",
-      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
-      "codeRef": "balance.v1.json:journeyRequisitions.hearth",
-      "id": "E:JOURNEY_REQUISITION:requisition:hearth->currency:secured_cash:2031",
+      "id": "E:JOURNEY_REQUISITION:requisition:ember->item:cooked_meat:2035",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -24729,7 +24725,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "balance.v1.json:journeyRequisitions.hearth.items",
-      "id": "E:JOURNEY_REQUISITION:requisition:hearth->item:mechanical_parts:2033",
+      "id": "E:JOURNEY_REQUISITION:requisition:hearth->item:mechanical_parts:2037",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -24741,7 +24737,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "balance.v1.json:journeyRequisitions.hearth.items",
-      "id": "E:JOURNEY_REQUISITION:requisition:hearth->item:medkit:2032",
+      "id": "E:JOURNEY_REQUISITION:requisition:hearth->item:medkit:2036",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -26875,6 +26871,45 @@
     },
     {
       "kind": "LOOT_STATIC_FIXED",
+      "from": "container:veyra:po_glade:L0:1",
+      "to": "item:cloth",
+      "qtyOut": 4,
+      "probability": 1,
+      "gateIds": [],
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_glade:L0:1->item:cloth:1825",
+      "authority": "LIVE_VERIFIED_SOH"
+    },
+    {
+      "kind": "LOOT_STATIC_FIXED",
+      "from": "container:veyra:po_glade:L0:1",
+      "to": "item:spares",
+      "qtyOut": 3,
+      "probability": 1,
+      "gateIds": [],
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_glade:L0:1->item:spares:1826",
+      "authority": "LIVE_VERIFIED_SOH"
+    },
+    {
+      "kind": "LOOT_STATIC_FIXED",
+      "from": "container:veyra:po_glade:L0:1",
+      "to": "item:torch",
+      "qtyOut": 1,
+      "probability": 1,
+      "gateIds": [],
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_glade:L0:1->item:torch:1827",
+      "authority": "LIVE_VERIFIED_SOH"
+    },
+    {
+      "kind": "LOOT_STATIC_FIXED",
       "from": "container:veyra:po_greyquarry:L0:2",
       "to": "item:berries",
       "qtyOut": 4,
@@ -26883,7 +26918,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greyquarry:L0:2->item:berries:1826",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greyquarry:L0:2->item:berries:1829",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -26896,7 +26931,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greyquarry:L0:2->item:cloth:1827",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greyquarry:L0:2->item:cloth:1830",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -26909,7 +26944,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greyquarry:L0:2->item:seed:1825",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greyquarry:L0:2->item:seed:1828",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -26922,7 +26957,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L-1:0->item:fuel_can:1830",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L-1:0->item:fuel_can:1833",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -26935,7 +26970,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L-1:0->item:iron_ingot:1829",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L-1:0->item:iron_ingot:1832",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -26948,51 +26983,12 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L-1:0->item:spares:1828",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L-1:0->item:spares:1831",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L0:8",
-      "to": "item:fasteners",
-      "qtyOut": 4,
-      "probability": 1,
-      "gateIds": [],
-      "layerScope": "veyra05",
-      "runtimeStatus": "LIVE_VEYRA_ONLY",
-      "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:8->item:fasteners:1832",
-      "authority": "LIVE_VERIFIED_SOH"
-    },
-    {
-      "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L0:8",
-      "to": "item:iron_ingot",
-      "qtyOut": 2,
-      "probability": 1,
-      "gateIds": [],
-      "layerScope": "veyra05",
-      "runtimeStatus": "LIVE_VEYRA_ONLY",
-      "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:8->item:iron_ingot:1831",
-      "authority": "LIVE_VERIFIED_SOH"
-    },
-    {
-      "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L0:8",
-      "to": "item:scrap",
-      "qtyOut": 4,
-      "probability": 1,
-      "gateIds": [],
-      "layerScope": "veyra05",
-      "runtimeStatus": "LIVE_VEYRA_ONLY",
-      "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:8->item:scrap:1833",
-      "authority": "LIVE_VERIFIED_SOH"
-    },
-    {
-      "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L0:9",
+      "from": "container:veyra:po_greywater:L0:10",
       "to": "item:meat",
       "qtyOut": 1,
       "probability": 1,
@@ -27000,12 +26996,12 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:9->item:meat:1836",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:10->item:meat:1842",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L0:9",
+      "from": "container:veyra:po_greywater:L0:10",
       "to": "item:rope",
       "qtyOut": 3,
       "probability": 1,
@@ -27013,12 +27009,12 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:9->item:rope:1834",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:10->item:rope:1840",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L0:9",
+      "from": "container:veyra:po_greywater:L0:10",
       "to": "item:treated_canvas",
       "qtyOut": 2,
       "probability": 1,
@@ -27026,12 +27022,90 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:9->item:treated_canvas:1835",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:10->item:treated_canvas:1841",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L1:10",
+      "from": "container:veyra:po_greywater:L0:8",
+      "to": "item:fiber",
+      "qtyOut": 5,
+      "probability": 1,
+      "gateIds": [],
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "codeRef": "veyra05/arch/sites.ts:po_greywater",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:8->item:fiber:1835",
+      "authority": "LIVE_VERIFIED_SOH"
+    },
+    {
+      "kind": "LOOT_STATIC_FIXED",
+      "from": "container:veyra:po_greywater:L0:8",
+      "to": "item:meat",
+      "qtyOut": 1,
+      "probability": 1,
+      "gateIds": [],
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "codeRef": "veyra05/arch/sites.ts:po_greywater",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:8->item:meat:1836",
+      "authority": "LIVE_VERIFIED_SOH"
+    },
+    {
+      "kind": "LOOT_STATIC_FIXED",
+      "from": "container:veyra:po_greywater:L0:8",
+      "to": "item:rope",
+      "qtyOut": 3,
+      "probability": 1,
+      "gateIds": [],
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "codeRef": "veyra05/arch/sites.ts:po_greywater",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:8->item:rope:1834",
+      "authority": "LIVE_VERIFIED_SOH"
+    },
+    {
+      "kind": "LOOT_STATIC_FIXED",
+      "from": "container:veyra:po_greywater:L0:9",
+      "to": "item:fasteners",
+      "qtyOut": 4,
+      "probability": 1,
+      "gateIds": [],
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "codeRef": "veyra05/arch/sites.ts:po_greywater",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:9->item:fasteners:1838",
+      "authority": "LIVE_VERIFIED_SOH"
+    },
+    {
+      "kind": "LOOT_STATIC_FIXED",
+      "from": "container:veyra:po_greywater:L0:9",
+      "to": "item:iron_ingot",
+      "qtyOut": 2,
+      "probability": 1,
+      "gateIds": [],
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "codeRef": "veyra05/arch/sites.ts:po_greywater",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:9->item:iron_ingot:1837",
+      "authority": "LIVE_VERIFIED_SOH"
+    },
+    {
+      "kind": "LOOT_STATIC_FIXED",
+      "from": "container:veyra:po_greywater:L0:9",
+      "to": "item:scrap",
+      "qtyOut": 4,
+      "probability": 1,
+      "gateIds": [],
+      "layerScope": "veyra05",
+      "runtimeStatus": "LIVE_VEYRA_ONLY",
+      "codeRef": "veyra05/arch/sites.ts:po_greywater",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L0:9->item:scrap:1839",
+      "authority": "LIVE_VERIFIED_SOH"
+    },
+    {
+      "kind": "LOOT_STATIC_FIXED",
+      "from": "container:veyra:po_greywater:L1:11",
       "to": "item:bandage",
       "qtyOut": 1,
       "probability": 1,
@@ -27039,12 +27113,12 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:10->item:bandage:1839",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:11->item:bandage:1845",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L1:10",
+      "from": "container:veyra:po_greywater:L1:11",
       "to": "item:cloth",
       "qtyOut": 3,
       "probability": 1,
@@ -27052,12 +27126,12 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:10->item:cloth:1837",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:11->item:cloth:1843",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L1:10",
+      "from": "container:veyra:po_greywater:L1:11",
       "to": "item:rope",
       "qtyOut": 2,
       "probability": 1,
@@ -27065,12 +27139,12 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:10->item:rope:1838",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:11->item:rope:1844",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L1:11",
+      "from": "container:veyra:po_greywater:L1:12",
       "to": "item:cloth",
       "qtyOut": 2,
       "probability": 1,
@@ -27078,12 +27152,12 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:11->item:cloth:1842",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:12->item:cloth:1848",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L1:11",
+      "from": "container:veyra:po_greywater:L1:12",
       "to": "item:crop",
       "qtyOut": 3,
       "probability": 1,
@@ -27091,12 +27165,12 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:11->item:crop:1841",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:12->item:crop:1847",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L1:11",
+      "from": "container:veyra:po_greywater:L1:12",
       "to": "item:seed",
       "qtyOut": 5,
       "probability": 1,
@@ -27104,12 +27178,12 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:11->item:seed:1840",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L1:12->item:seed:1846",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L2:12",
+      "from": "container:veyra:po_greywater:L2:13",
       "to": "item:arrow",
       "qtyOut": 8,
       "probability": 1,
@@ -27117,12 +27191,12 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L2:12->item:arrow:1843",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L2:13->item:arrow:1849",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L2:12",
+      "from": "container:veyra:po_greywater:L2:13",
       "to": "item:bandage",
       "qtyOut": 2,
       "probability": 1,
@@ -27130,12 +27204,12 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L2:12->item:bandage:1845",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L2:13->item:bandage:1851",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
       "kind": "LOOT_STATIC_FIXED",
-      "from": "container:veyra:po_greywater:L2:12",
+      "from": "container:veyra:po_greywater:L2:13",
       "to": "item:torch",
       "qtyOut": 2,
       "probability": 1,
@@ -27143,7 +27217,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_greywater",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L2:12->item:torch:1844",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_greywater:L2:13->item:torch:1850",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27156,7 +27230,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gulfhead:L0:8->blueprint:stew:1848",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gulfhead:L0:8->blueprint:stew:1854",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27169,7 +27243,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gulfhead:L0:8->item:herb:1846",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gulfhead:L0:8->item:herb:1852",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27182,7 +27256,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gulfhead:L0:8->item:medkit:1847",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gulfhead:L0:8->item:medkit:1853",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27195,7 +27269,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullnest:L0:1->blueprint:gas_mask:1851",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullnest:L0:1->blueprint:gas_mask:1857",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27208,7 +27282,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullnest:L0:1->item:mechanical_parts:1850",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullnest:L0:1->item:mechanical_parts:1856",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27221,7 +27295,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullnest:L0:1->item:spares:1849",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullnest:L0:1->item:spares:1855",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27234,7 +27308,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullpier:L0:3->item:herb:1854",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullpier:L0:3->item:herb:1860",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27247,7 +27321,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullpier:L0:3->item:rope:1852",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullpier:L0:3->item:rope:1858",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27260,7 +27334,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullpier:L0:3->item:treated_canvas:1853",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullpier:L0:3->item:treated_canvas:1859",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27273,7 +27347,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullwreck:L0:1->item:bandage:1857",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullwreck:L0:1->item:bandage:1863",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27286,7 +27360,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullwreck:L0:1->item:mechanical_parts:1856",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullwreck:L0:1->item:mechanical_parts:1862",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27299,7 +27373,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullwreck:L0:1->item:scrap:1855",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_gullwreck:L0:1->item:scrap:1861",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27312,7 +27386,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L-1:0->item:meat:1858",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L-1:0->item:meat:1864",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27325,7 +27399,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L-1:0->item:rope:1859",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L-1:0->item:rope:1865",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27338,7 +27412,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L-1:0->item:torch:1860",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L-1:0->item:torch:1866",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27351,7 +27425,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:10->item:fasteners:1866",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:10->item:fasteners:1872",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27364,7 +27438,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:10->item:rope:1864",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:10->item:rope:1870",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27377,7 +27451,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:10->item:treated_canvas:1865",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:10->item:treated_canvas:1871",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27390,7 +27464,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:9->item:fiber:1862",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:9->item:fiber:1868",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27403,7 +27477,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:9->item:meat:1863",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:9->item:meat:1869",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27416,7 +27490,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:9->item:rope:1861",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L0:9->item:rope:1867",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27429,7 +27503,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L1:11->item:cloth:1869",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L1:11->item:cloth:1875",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27442,7 +27516,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L1:11->item:crop:1868",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L1:11->item:crop:1874",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27455,7 +27529,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_hook",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L1:11->item:seed:1867",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_hook:L1:11->item:seed:1873",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27468,7 +27542,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironharbor:L0:8->item:fasteners:1871",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironharbor:L0:8->item:fasteners:1877",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27481,7 +27555,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironharbor:L0:8->item:fuel_can:1872",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironharbor:L0:8->item:fuel_can:1878",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27494,7 +27568,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironharbor:L0:8->item:iron_ingot:1870",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironharbor:L0:8->item:iron_ingot:1876",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27507,7 +27581,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L-1:1->item:coal:1874",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L-1:1->item:coal:1880",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27520,7 +27594,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L-1:1->item:field_repair_kit:1875",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L-1:1->item:field_repair_kit:1881",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27533,7 +27607,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L-1:1->item:iron_ore:1873",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L-1:1->item:iron_ore:1879",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27546,7 +27620,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:6->item:fasteners:1877",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:6->item:fasteners:1883",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27559,7 +27633,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:6->item:field_repair_kit:1878",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:6->item:field_repair_kit:1884",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27572,7 +27646,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:6->item:mechanical_parts:1876",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:6->item:mechanical_parts:1882",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27585,7 +27659,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:7->blueprint:brick:1881",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:7->blueprint:brick:1887",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27598,7 +27672,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:7->item:iron_ingot:1880",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:7->item:iron_ingot:1886",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27611,7 +27685,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:7->item:spares:1879",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L1:7->item:spares:1885",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27624,7 +27698,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L2:8->item:coal:1882",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L2:8->item:coal:1888",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27637,7 +27711,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L2:8->item:crystal:1883",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L2:8->item:crystal:1889",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27650,7 +27724,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_ironmine",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L2:8->item:torch:1884",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironmine:L2:8->item:torch:1890",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27663,7 +27737,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironvein:L0:1->blueprint:stew:1887",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironvein:L0:1->blueprint:stew:1893",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27676,7 +27750,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironvein:L0:1->item:herb:1885",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironvein:L0:1->item:herb:1891",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27689,7 +27763,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironvein:L0:1->item:medkit:1886",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironvein:L0:1->item:medkit:1892",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27702,7 +27776,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironwh:L0:1->item:field_repair_kit:1889",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironwh:L0:1->item:field_repair_kit:1895",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27715,7 +27789,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironwh:L0:1->item:spares:1888",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironwh:L0:1->item:spares:1894",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27728,7 +27802,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironwh:L0:1->item:torch:1890",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ironwh:L0:1->item:torch:1896",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27741,7 +27815,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kestrel:L0:2->blueprint:bow:1893",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kestrel:L0:2->blueprint:bow:1899",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27754,7 +27828,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kestrel:L0:2->item:arrow:1891",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kestrel:L0:2->item:arrow:1897",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27767,7 +27841,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kestrel:L0:2->item:bandage:1892",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kestrel:L0:2->item:bandage:1898",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27780,7 +27854,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kilns:L0:2->item:coal:1895",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kilns:L0:2->item:coal:1901",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27793,7 +27867,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kilns:L0:2->item:fasteners:1896",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kilns:L0:2->item:fasteners:1902",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27806,7 +27880,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kilns:L0:2->item:iron_ore:1894",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_kilns:L0:2->item:iron_ore:1900",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27819,7 +27893,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lantern:L0:0->item:field_repair_kit:1898",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lantern:L0:0->item:field_repair_kit:1904",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27832,7 +27906,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lantern:L0:0->item:spares:1897",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lantern:L0:0->item:spares:1903",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27845,7 +27919,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lantern:L0:0->item:torch:1899",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lantern:L0:0->item:torch:1905",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27858,7 +27932,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lanternstn:L0:1->blueprint:leather_armor:1902",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lanternstn:L0:1->blueprint:leather_armor:1908",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27871,7 +27945,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lanternstn:L0:1->item:cloth:1900",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lanternstn:L0:1->item:cloth:1906",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27884,7 +27958,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lanternstn:L0:1->item:rope:1901",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_lanternstn:L0:1->item:rope:1907",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27897,7 +27971,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mere:L0:1->item:bandage:1905",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mere:L0:1->item:bandage:1911",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27910,7 +27984,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mere:L0:1->item:mechanical_parts:1904",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mere:L0:1->item:mechanical_parts:1910",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27923,7 +27997,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mere:L0:1->item:scrap:1903",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mere:L0:1->item:scrap:1909",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27936,7 +28010,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_meridian:L0:1->blueprint:bow:1908",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_meridian:L0:1->blueprint:bow:1914",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27949,7 +28023,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_meridian:L0:1->item:arrow:1906",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_meridian:L0:1->item:arrow:1912",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27962,7 +28036,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_meridian:L0:1->item:bandage:1907",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_meridian:L0:1->item:bandage:1913",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27975,7 +28049,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mill:L0:3->item:herb:1911",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mill:L0:3->item:herb:1917",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -27988,7 +28062,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mill:L0:3->item:rope:1909",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mill:L0:3->item:rope:1915",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28001,7 +28075,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mill:L0:3->item:treated_canvas:1910",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_mill:L0:3->item:treated_canvas:1916",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28014,7 +28088,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_netcamp:L0:1->blueprint:gas_mask:1914",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_netcamp:L0:1->blueprint:gas_mask:1920",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28027,7 +28101,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_netcamp:L0:1->item:mechanical_parts:1913",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_netcamp:L0:1->item:mechanical_parts:1919",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28040,7 +28114,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_netcamp:L0:1->item:spares:1912",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_netcamp:L0:1->item:spares:1918",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28053,7 +28127,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_oasis",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L-1:0->item:cloth:1917",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L-1:0->item:cloth:1923",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28066,7 +28140,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_oasis",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L-1:0->item:crop:1915",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L-1:0->item:crop:1921",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28079,7 +28153,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_oasis",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L-1:0->item:seed:1916",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L-1:0->item:seed:1922",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28092,7 +28166,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_oasis",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L0:8->item:cloth:1918",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L0:8->item:cloth:1924",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28105,7 +28179,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_oasis",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L0:8->item:fasteners:1920",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L0:8->item:fasteners:1926",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28118,7 +28192,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/arch/sites.ts:po_oasis",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L0:8->item:rope:1919",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oasis:L0:8->item:rope:1925",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28131,7 +28205,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_observatory:L0:2->item:bandage:1923",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_observatory:L0:2->item:bandage:1929",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28144,7 +28218,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_observatory:L0:2->item:mechanical_parts:1922",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_observatory:L0:2->item:mechanical_parts:1928",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28157,7 +28231,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_observatory:L0:2->item:scrap:1921",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_observatory:L0:2->item:scrap:1927",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28170,7 +28244,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_obsq:L0:2->item:cloth:1924",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_obsq:L0:2->item:cloth:1930",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28183,7 +28257,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_obsq:L0:2->item:spares:1925",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_obsq:L0:2->item:spares:1931",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28196,7 +28270,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_obsq:L0:2->item:torch:1926",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_obsq:L0:2->item:torch:1932",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28209,7 +28283,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oldpump:L0:3->item:berries:1928",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oldpump:L0:3->item:berries:1934",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28222,7 +28296,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oldpump:L0:3->item:cloth:1929",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oldpump:L0:3->item:cloth:1935",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28235,7 +28309,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oldpump:L0:3->item:seed:1927",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_oldpump:L0:3->item:seed:1933",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28248,7 +28322,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_pumphouse:L0:2->item:fasteners:1931",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_pumphouse:L0:2->item:fasteners:1937",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28261,7 +28335,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_pumphouse:L0:2->item:fuel_can:1932",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_pumphouse:L0:2->item:fuel_can:1938",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28274,7 +28348,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_pumphouse:L0:2->item:iron_ingot:1930",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_pumphouse:L0:2->item:iron_ingot:1936",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28287,7 +28361,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_racks:L0:1->item:bandage:1935",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_racks:L0:1->item:bandage:1941",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28300,7 +28374,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_racks:L0:1->item:mechanical_parts:1934",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_racks:L0:1->item:mechanical_parts:1940",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28313,7 +28387,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_racks:L0:1->item:scrap:1933",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_racks:L0:1->item:scrap:1939",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28326,7 +28400,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ranger:L0:1->item:bandage:1938",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ranger:L0:1->item:bandage:1944",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28339,7 +28413,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ranger:L0:1->item:mechanical_parts:1937",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ranger:L0:1->item:mechanical_parts:1943",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28352,7 +28426,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ranger:L0:1->item:scrap:1936",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ranger:L0:1->item:scrap:1942",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28365,7 +28439,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_rapids:L0:2->item:bandage:1941",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_rapids:L0:2->item:bandage:1947",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28378,7 +28452,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_rapids:L0:2->item:mechanical_parts:1940",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_rapids:L0:2->item:mechanical_parts:1946",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28391,7 +28465,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_rapids:L0:2->item:scrap:1939",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_rapids:L0:2->item:scrap:1945",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28404,7 +28478,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ridgestop:L0:2->blueprint:gas_mask:1950",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ridgestop:L0:2->blueprint:gas_mask:1956",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28417,7 +28491,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ridgestop:L0:2->item:mechanical_parts:1949",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ridgestop:L0:2->item:mechanical_parts:1955",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28430,7 +28504,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ridgestop:L0:2->item:spares:1948",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_ridgestop:L0:2->item:spares:1954",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28443,7 +28517,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltharbor:L0:6->item:bandage:1953",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltharbor:L0:6->item:bandage:1959",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28456,7 +28530,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltharbor:L0:6->item:rope:1952",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltharbor:L0:6->item:rope:1958",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28469,7 +28543,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltharbor:L0:6->item:scrap:1951",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltharbor:L0:6->item:scrap:1957",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28482,7 +28556,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltlight:L0:2->blueprint:gas_mask:1956",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltlight:L0:2->blueprint:gas_mask:1962",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28495,7 +28569,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltlight:L0:2->item:mechanical_parts:1955",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltlight:L0:2->item:mechanical_parts:1961",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28508,7 +28582,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltlight:L0:2->item:spares:1954",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltlight:L0:2->item:spares:1960",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28521,7 +28595,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltpans:L0:1->item:cloth:1957",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltpans:L0:1->item:cloth:1963",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28534,7 +28608,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltpans:L0:1->item:spares:1958",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltpans:L0:1->item:spares:1964",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28547,7 +28621,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltpans:L0:1->item:torch:1959",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_saltpans:L0:1->item:torch:1965",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28560,7 +28634,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sandgate:L0:6->blueprint:fur_cloak:1962",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sandgate:L0:6->blueprint:fur_cloak:1968",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28573,7 +28647,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sandgate:L0:6->item:coal:1960",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sandgate:L0:6->item:coal:1966",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28586,7 +28660,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sandgate:L0:6->item:scrap:1961",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sandgate:L0:6->item:scrap:1967",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28599,7 +28673,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sapgrove:L0:1->item:bandage:1965",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sapgrove:L0:1->item:bandage:1971",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28612,7 +28686,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sapgrove:L0:1->item:mechanical_parts:1964",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sapgrove:L0:1->item:mechanical_parts:1970",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28625,7 +28699,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sapgrove:L0:1->item:scrap:1963",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sapgrove:L0:1->item:scrap:1969",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28638,7 +28712,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sawaion:L0:3->item:fasteners:1967",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sawaion:L0:3->item:fasteners:1973",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28651,7 +28725,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sawaion:L0:3->item:fuel_can:1968",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sawaion:L0:3->item:fuel_can:1974",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28664,7 +28738,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sawaion:L0:3->item:iron_ingot:1966",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sawaion:L0:3->item:iron_ingot:1972",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28677,7 +28751,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_siloc:L0:3->item:berries:1970",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_siloc:L0:3->item:berries:1976",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28690,7 +28764,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_siloc:L0:3->item:cloth:1971",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_siloc:L0:3->item:cloth:1977",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28703,7 +28777,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_siloc:L0:3->item:seed:1969",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_siloc:L0:3->item:seed:1975",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28716,7 +28790,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_slag:L0:3->item:berries:1973",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_slag:L0:3->item:berries:1979",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28729,7 +28803,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_slag:L0:3->item:cloth:1974",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_slag:L0:3->item:cloth:1980",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28742,7 +28816,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_slag:L0:3->item:seed:1972",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_slag:L0:3->item:seed:1978",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28755,7 +28829,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_southfoot:L0:2->blueprint:leather_armor:1977",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_southfoot:L0:2->blueprint:leather_armor:1983",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28768,7 +28842,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_southfoot:L0:2->item:cloth:1975",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_southfoot:L0:2->item:cloth:1981",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28781,7 +28855,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_southfoot:L0:2->item:rope:1976",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_southfoot:L0:2->item:rope:1982",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28794,7 +28868,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_strait:L0:2->blueprint:fur_cloak:1980",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_strait:L0:2->blueprint:fur_cloak:1986",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28807,7 +28881,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_strait:L0:2->item:coal:1978",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_strait:L0:2->item:coal:1984",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28820,7 +28894,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_strait:L0:2->item:scrap:1979",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_strait:L0:2->item:scrap:1985",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28833,7 +28907,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sulfur:L0:2->blueprint:stew:1983",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sulfur:L0:2->blueprint:stew:1989",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28846,7 +28920,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sulfur:L0:2->item:herb:1981",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sulfur:L0:2->item:herb:1987",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28859,7 +28933,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sulfur:L0:2->item:medkit:1982",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_sulfur:L0:2->item:medkit:1988",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28872,7 +28946,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tidecamp:L0:1->item:bandage:1986",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tidecamp:L0:1->item:bandage:1992",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28885,7 +28959,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tidecamp:L0:1->item:rope:1985",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tidecamp:L0:1->item:rope:1991",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28898,7 +28972,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tidecamp:L0:1->item:scrap:1984",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tidecamp:L0:1->item:scrap:1990",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28911,7 +28985,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_timberyard:L0:3->item:bandage:1989",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_timberyard:L0:3->item:bandage:1995",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28924,7 +28998,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_timberyard:L0:3->item:rope:1988",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_timberyard:L0:3->item:rope:1994",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28937,7 +29011,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_timberyard:L0:3->item:scrap:1987",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_timberyard:L0:3->item:scrap:1993",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28950,7 +29024,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tombs:L0:1->item:berries:1991",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tombs:L0:1->item:berries:1997",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28963,7 +29037,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tombs:L0:1->item:cloth:1992",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tombs:L0:1->item:cloth:1998",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28976,7 +29050,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tombs:L0:1->item:seed:1990",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_tombs:L0:1->item:seed:1996",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -28989,7 +29063,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_viaduct:L0:1->item:berries:1994",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_viaduct:L0:1->item:berries:2000",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29002,7 +29076,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_viaduct:L0:1->item:cloth:1995",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_viaduct:L0:1->item:cloth:2001",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29015,7 +29089,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_viaduct:L0:1->item:seed:1993",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_viaduct:L0:1->item:seed:1999",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29028,7 +29102,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westbank:L0:5->blueprint:gas_mask:1998",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westbank:L0:5->blueprint:gas_mask:2004",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29041,7 +29115,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westbank:L0:5->item:mechanical_parts:1997",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westbank:L0:5->item:mechanical_parts:2003",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29054,7 +29128,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westbank:L0:5->item:spares:1996",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westbank:L0:5->item:spares:2002",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29067,7 +29141,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westmouth:L0:6->blueprint:stew:2001",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westmouth:L0:6->blueprint:stew:2007",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29080,7 +29154,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westmouth:L0:6->item:herb:1999",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westmouth:L0:6->item:herb:2005",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29093,7 +29167,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westmouth:L0:6->item:medkit:2000",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westmouth:L0:6->item:medkit:2006",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29106,7 +29180,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westwood:L0:3->item:cloth:2002",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westwood:L0:3->item:cloth:2008",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29119,7 +29193,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westwood:L0:3->item:spares:2003",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westwood:L0:3->item:spares:2009",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29132,7 +29206,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westwood:L0:3->item:torch:2004",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_westwood:L0:3->item:torch:2010",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29145,7 +29219,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_wreck:L0:1->item:coal:2006",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_wreck:L0:1->item:coal:2012",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29158,7 +29232,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_wreck:L0:1->item:fasteners:2007",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_wreck:L0:1->item:fasteners:2013",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -29171,7 +29245,7 @@
       "layerScope": "veyra05",
       "runtimeStatus": "LIVE_VEYRA_ONLY",
       "codeRef": "veyra05/floors.ts:ARCHETYPE_LOOT",
-      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_wreck:L0:1->item:iron_ore:2005",
+      "id": "E:LOOT_STATIC_FIXED:container:veyra:po_wreck:L0:1->item:iron_ore:2011",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -31326,8 +31400,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.X:drive",
       "id": "E:RECYCLE_INPUT:item:damaged_drive->recipe:recycler:component:X:drive:1426",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31341,8 +31415,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3",
       "id": "E:RECYCLE_INPUT:item:industrial_axe->recipe:recycler:industrial_axe:v3:1415",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31355,8 +31429,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "industrial-proof.ts",
       "id": "E:RECYCLE_INPUT:item:industrial_axe->sink:recycler_recovery_loss:1420",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31370,8 +31444,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v1",
       "id": "E:RECYCLE_INPUT:item:industrial_pick->recipe:recycler:industrial_pick:v1:1410",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31384,8 +31458,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "industrial-proof.ts",
       "id": "E:RECYCLE_INPUT:item:industrial_pick->sink:recycler_recovery_loss:1414",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31399,8 +31473,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3",
       "id": "E:RECYCLE_INPUT:item:iron_axe->recipe:recycler:iron_axe:v3:1399",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31413,8 +31487,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "industrial-proof.ts",
       "id": "E:RECYCLE_INPUT:item:iron_axe->sink:recycler_recovery_loss:1403",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31428,8 +31502,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3",
       "id": "E:RECYCLE_INPUT:item:iron_pick->recipe:recycler:iron_pick:v3:1394",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31442,8 +31516,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "industrial-proof.ts",
       "id": "E:RECYCLE_INPUT:item:iron_pick->sink:recycler_recovery_loss:1398",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31457,8 +31531,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3",
       "id": "E:RECYCLE_INPUT:item:iron_sword->recipe:recycler:iron_sword:v3:1404",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31471,8 +31545,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "industrial-proof.ts",
       "id": "E:RECYCLE_INPUT:item:iron_sword->sink:recycler_recovery_loss:1409",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31486,8 +31560,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:COMPONENT_RULES.X:gear-v1",
       "id": "E:RECYCLE_INPUT:item:mechanical_gear->recipe:recycler:component:X:gear-v1:1433",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31501,8 +31575,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:COMPONENT_RULES.X:blade-v1",
       "id": "E:RECYCLE_INPUT:item:metal_blade->recipe:recycler:component:X:blade-v1:1436",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31516,8 +31590,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:COMPONENT_RULES.X:pipe-v1",
       "id": "E:RECYCLE_INPUT:item:metal_pipe->recipe:recycler:component:X:pipe-v1:1428",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31531,8 +31605,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:COMPONENT_RULES.X:pipe-v2",
       "id": "E:RECYCLE_INPUT:item:metal_pipe->recipe:recycler:component:X:pipe-v2:1430",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31546,8 +31620,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v1",
       "id": "E:RECYCLE_INPUT:item:reinforced_spear->recipe:recycler:reinforced_spear:v1:1421",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31560,8 +31634,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "industrial-proof.ts",
       "id": "E:RECYCLE_INPUT:item:reinforced_spear->sink:recycler_recovery_loss:1425",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31575,8 +31649,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:COMPONENT_RULES.X:blade-v1",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:component:X:blade-v1->item:iron_ingot:1437",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31590,8 +31664,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:COMPONENT_RULES.X:blade-v1",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:component:X:blade-v1->item:mechanical_parts:1438",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31605,8 +31679,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.X:drive",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:component:X:drive->item:spares:1427",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31620,8 +31694,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:COMPONENT_RULES.X:gear-v1",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:component:X:gear-v1->item:iron_ingot:1435",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31635,8 +31709,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:COMPONENT_RULES.X:gear-v1",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:component:X:gear-v1->item:mechanical_parts:1434",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31650,8 +31724,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:COMPONENT_RULES.X:pipe-v1",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:component:X:pipe-v1->item:refined_iron_ingot:1429",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31665,8 +31739,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:COMPONENT_RULES.X:pipe-v2",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:component:X:pipe-v2->item:mechanical_parts:1432",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31680,8 +31754,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:COMPONENT_RULES.X:pipe-v2",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:component:X:pipe-v2->item:refined_iron_ingot:1431",
       "authority": "LIVE_VERIFIED_SOH"
@@ -31695,8 +31769,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.mid",
       "notes": "Condition tier=mid",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:industrial_axe:v3->item:iron_ingot:1418",
@@ -31711,8 +31785,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.mid",
       "notes": "Condition tier=mid",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:industrial_axe:v3->item:mechanical_parts:1417",
@@ -31727,8 +31801,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.high",
       "notes": "Condition tier=high",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:industrial_axe:v3->item:mechanical_parts:1419",
@@ -31743,8 +31817,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.base",
       "notes": "Condition tier=base",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:industrial_axe:v3->item:scrap:1416",
@@ -31759,8 +31833,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v1.mid",
       "notes": "Condition tier=mid",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:industrial_pick:v1->item:iron_ingot:1412",
@@ -31775,8 +31849,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v1.high",
       "notes": "Condition tier=high",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:industrial_pick:v1->item:mechanical_parts:1413",
@@ -31791,8 +31865,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v1.base",
       "notes": "Condition tier=base",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:industrial_pick:v1->item:scrap:1411",
@@ -31807,8 +31881,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.mid",
       "notes": "Condition tier=mid",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:iron_axe:v3->item:iron_ingot:1401",
@@ -31823,8 +31897,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.high",
       "notes": "Condition tier=high",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:iron_axe:v3->item:mechanical_parts:1402",
@@ -31839,8 +31913,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.base",
       "notes": "Condition tier=base",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:iron_axe:v3->item:scrap:1400",
@@ -31855,8 +31929,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.mid",
       "notes": "Condition tier=mid",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:iron_pick:v3->item:iron_ingot:1396",
@@ -31871,8 +31945,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.high",
       "notes": "Condition tier=high",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:iron_pick:v3->item:iron_ingot:1397",
@@ -31887,8 +31961,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.base",
       "notes": "Condition tier=base",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:iron_pick:v3->item:scrap:1395",
@@ -31903,8 +31977,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.mid",
       "notes": "Condition tier=mid",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:iron_sword:v3->item:iron_ingot:1406",
@@ -31919,8 +31993,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.high",
       "notes": "Condition tier=high",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:iron_sword:v3->item:iron_ingot:1407",
@@ -31935,8 +32009,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.high",
       "notes": "Condition tier=high",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:iron_sword:v3->item:leather:1408",
@@ -31951,8 +32025,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v3.base",
       "notes": "Condition tier=base",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:iron_sword:v3->item:scrap:1405",
@@ -31967,8 +32041,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v1.mid",
       "notes": "Condition tier=mid",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:reinforced_spear:v1->item:iron_ingot:1423",
@@ -31983,8 +32057,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v1.high",
       "notes": "Condition tier=high",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:reinforced_spear:v1->item:mechanical_parts:1424",
@@ -31999,8 +32073,8 @@
       "gateIds": [
         "gate:recycler_site"
       ],
-      "layerScope": "shipping",
-      "runtimeStatus": "LIVE_SHIPPING_ONLY",
+      "layerScope": "shared",
+      "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "recycler.ts:recoveryPlan.v1.base",
       "notes": "Condition tier=base",
       "id": "E:RECYCLE_OUTPUT:recipe:recycler:reinforced_spear:v1->item:scrap:1422",
@@ -41317,7 +41391,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.cart_kit",
       "notes": "Max stock 1 per run",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:cart_kit:2022",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:cart_kit:2028",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41331,7 +41405,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.iron_axe",
       "notes": "Max stock 1 per run",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:iron_axe:2018",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:iron_axe:2024",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41345,7 +41419,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.iron_pick",
       "notes": "Max stock 1 per run",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:iron_pick:2016",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:iron_pick:2022",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41359,7 +41433,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.leather_armor",
       "notes": "Max stock 1 per run",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:leather_armor:2024",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:leather_armor:2030",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41373,7 +41447,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.medkit",
       "notes": "Max stock 4 per run",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:medkit:2020",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:medkit:2026",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41387,7 +41461,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.water_flask",
       "notes": "Max stock 2 per run",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:water_flask:2026",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->item:water_flask:2032",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41399,7 +41473,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.iron_pick",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2017",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2023",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41411,7 +41485,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.iron_axe",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2019",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2025",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41423,7 +41497,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.medkit",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2021",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2027",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41435,7 +41509,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.cart_kit",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2023",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2029",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41447,7 +41521,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.leather_armor",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2025",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2031",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41459,7 +41533,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SECURED.water_flask",
-      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2027",
+      "id": "E:VENDOR_TRADE_SECURED:currency:secured_cash->sink:vendor_secured_cash_sink:2033",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41473,7 +41547,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SPARES.coal",
       "notes": "Max stock 4 per run",
-      "id": "E:VENDOR_TRADE_SPARES:currency:spares->item:coal:2010",
+      "id": "E:VENDOR_TRADE_SPARES:currency:spares->item:coal:2016",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41487,7 +41561,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SPARES.glass",
       "notes": "Max stock 3 per run",
-      "id": "E:VENDOR_TRADE_SPARES:currency:spares->item:glass:2012",
+      "id": "E:VENDOR_TRADE_SPARES:currency:spares->item:glass:2018",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41501,7 +41575,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SPARES.iron_ore",
       "notes": "Max stock 5 per run",
-      "id": "E:VENDOR_TRADE_SPARES:currency:spares->item:iron_ore:2008",
+      "id": "E:VENDOR_TRADE_SPARES:currency:spares->item:iron_ore:2014",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41515,7 +41589,7 @@
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SPARES.salvaged_oil",
       "notes": "Max stock 4 per run",
-      "id": "E:VENDOR_TRADE_SPARES:currency:spares->item:salvaged_oil:2014",
+      "id": "E:VENDOR_TRADE_SPARES:currency:spares->item:salvaged_oil:2020",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41527,7 +41601,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SPARES.iron_ore",
-      "id": "E:VENDOR_TRADE_SPARES:currency:spares->sink:vendor_spares_sink:2009",
+      "id": "E:VENDOR_TRADE_SPARES:currency:spares->sink:vendor_spares_sink:2015",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41539,7 +41613,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SPARES.coal",
-      "id": "E:VENDOR_TRADE_SPARES:currency:spares->sink:vendor_spares_sink:2011",
+      "id": "E:VENDOR_TRADE_SPARES:currency:spares->sink:vendor_spares_sink:2017",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41551,7 +41625,7 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SPARES.glass",
-      "id": "E:VENDOR_TRADE_SPARES:currency:spares->sink:vendor_spares_sink:2013",
+      "id": "E:VENDOR_TRADE_SPARES:currency:spares->sink:vendor_spares_sink:2019",
       "authority": "LIVE_VERIFIED_SOH"
     },
     {
@@ -41563,17 +41637,17 @@
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "codeRef": "catalog.ts:VENDOR_SPARES.salvaged_oil",
-      "id": "E:VENDOR_TRADE_SPARES:currency:spares->sink:vendor_spares_sink:2015",
+      "id": "E:VENDOR_TRADE_SPARES:currency:spares->sink:vendor_spares_sink:2021",
       "authority": "LIVE_VERIFIED_SOH"
     }
   ],
   "summary": {
-    "nodeCount": 595,
-    "edgeCount": 2037,
+    "nodeCount": 597,
+    "edgeCount": 2040,
     "gateCount": 25,
     "nodesByKind": {
       "blueprint": 75,
-      "container": 117,
+      "container": 119,
       "creature": 23,
       "currency": 4,
       "elder": 12,
@@ -41616,9 +41690,9 @@
       "HUSBANDRY_FEED_TAME": 15,
       "HUSBANDRY_PEN_FEED": 24,
       "HUSBANDRY_RENEWABLE_YIELD": 6,
-      "JOURNEY_REQUISITION": 10,
+      "JOURNEY_REQUISITION": 7,
       "LOOT_ECOLOGY_POOL": 45,
-      "LOOT_STATIC_FIXED": 283,
+      "LOOT_STATIC_FIXED": 289,
       "POI_ACCESS_GATE": 8,
       "POWER_ALLOCATION": 4,
       "POWER_FUEL": 12,
@@ -41646,16 +41720,17 @@
       "VENDOR_TRADE_SPARES": 8
     },
     "edgesByRuntimeStatus": {
-      "LIVE_SHIPPING_ONLY": 191,
-      "LIVE_SHIPPING_AND_VEYRA": 1494,
+      "LIVE_SHIPPING_ONLY": 145,
+      "LIVE_SHIPPING_AND_VEYRA": 1537,
       "TEST_FIXTURE_ONLY": 32,
-      "LIVE_VEYRA_ONLY": 320
+      "LIVE_VEYRA_ONLY": 325,
+      "HISTORICAL_INFLIGHT_ONLY": 1
     },
     "veyraPoiStats": {
       "totalPois": 81,
       "authoredCachePois": 6,
-      "authoredCacheTotal": 23,
-      "archetypeLootPois": 57,
+      "authoredCacheTotal": 24,
+      "archetypeLootPois": 58,
       "rcashPois": 6,
       "vendorPois": 2,
       "evacPois": 3,
@@ -41861,6 +41936,7 @@
       "crop",
       "crystal",
       "custodian_lantern",
+      "damaged_drive",
       "energy_basic",
       "energy_refined",
       "escrow_chest",
@@ -41951,7 +42027,6 @@
       "core_demon",
       "crawler_optic",
       "crude_petroleum",
-      "damaged_drive",
       "keycard",
       "stone_bog",
       "stone_frost",
@@ -41970,7 +42045,6 @@
       "core_demon",
       "essence_spirit",
       "pump_crude",
-      "recover_drive",
       "refinery_crude"
     ],
     "itemsWithoutNonWipeSink": [
@@ -42043,22 +42117,9 @@
       "poi_gate:keycard:160_99",
       "poi_gate:power:148_82",
       "poi_gate:power:28_179",
-      "recipe:recycler:component:X:blade-v1",
-      "recipe:recycler:component:X:drive",
-      "recipe:recycler:component:X:gear-v1",
-      "recipe:recycler:component:X:pipe-v1",
-      "recipe:recycler:component:X:pipe-v2",
-      "recipe:recycler:industrial_axe:v3",
-      "recipe:recycler:industrial_pick:v1",
-      "recipe:recycler:iron_axe:v3",
-      "recipe:recycler:iron_pick:v3",
-      "recipe:recycler:iron_sword:v3",
-      "recipe:recycler:reinforced_spear:v1",
       "sink:poi_generator_fuel_burn",
       "sink:poi_keycard_burn",
-      "sink:recycler_recovery_loss",
-      "station:poi_generator",
-      "station:recycler"
+      "station:poi_generator"
     ],
     "veyraOnlySystems": [
       "container:veyra:po_academy:L-1:1",
@@ -42082,13 +42143,15 @@
       "container:veyra:po_fracquarry:L0:2",
       "container:veyra:po_freightyard:L0:1",
       "container:veyra:po_geo:L0:2",
+      "container:veyra:po_glade:L0:1",
       "container:veyra:po_greyquarry:L0:2",
       "container:veyra:po_greywater:L-1:0",
+      "container:veyra:po_greywater:L0:10",
       "container:veyra:po_greywater:L0:8",
       "container:veyra:po_greywater:L0:9",
-      "container:veyra:po_greywater:L1:10",
       "container:veyra:po_greywater:L1:11",
-      "container:veyra:po_greywater:L2:12",
+      "container:veyra:po_greywater:L1:12",
+      "container:veyra:po_greywater:L2:13",
       "container:veyra:po_gulfhead:L0:8",
       "container:veyra:po_gullnest:L0:1",
       "container:veyra:po_gullpier:L0:3",

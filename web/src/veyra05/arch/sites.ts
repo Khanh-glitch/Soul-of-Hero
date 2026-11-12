@@ -64,7 +64,7 @@ export function greywaterHamlet(): ArchPlan {
   b.door(1641, 1178, 0, 'cottage', 'Cottage Door', 'main');
   b.door(1644, 1173, 0, 'cottage', 'Net Room Door', 'interior');
   b.prop(1639, 1173, 0, 'table'); b.prop(1647, 1176, 0, 'bed'); b.prop(1648, 1172, 0, 'net_rack');
-  b.cache(1642, 1176, 0, 'Tackle Box', [['rope', 3], ['fiber', 5], ['meat', 1]]);
+  b.cache(1640, 1174, 0, 'Tackle Box', [['rope', 3], ['fiber', 5], ['meat', 1]]);
 
   // ── granary: grain store, drying loft and roof lookout — outside stair is the alternate route
   b.structure('granary', 'Granary', 0, { mat: 'wood', roof: 'tin' });

@@ -253,7 +253,7 @@ interface CrosswalkRow {
 function mapCapabilityPrefixToSoh(prefix: string): { nodes: string; code: string; veyra: string } {
   if (prefix.startsWith('SYS01')) return { nodes: 'world_source:* -> item:stone_axe/iron_pick/industrial_pick', code: 'catalog.ts:SOURCES,engine.ts:harvestHit', veyra: 'LIVE_VEYRA' };
   if (prefix.startsWith('SYS02')) return { nodes: 'station:furnace -> item:iron_ingot/refined_iron_ingot/mechanical_parts', code: 'catalog.ts:RECIPES,engine.ts:stepStations', veyra: 'LIVE_VEYRA' };
-  if (prefix.startsWith('SYS03')) return { nodes: 'station:recycler -> recipe:recycler:*', code: 'recycler.ts,wreck-economy.ts', veyra: 'ABSENT_ON_VEYRA (direct-v1 fallback)' };
+  if (prefix.startsWith('SYS03')) return { nodes: 'station:recycler -> recipe:recycler:*', code: 'recycler.ts,wreck-economy.ts', veyra: 'LIVE_VEYRA (po_slag Foundry Recycler D5)' };
   if (prefix.startsWith('SYS04')) return { nodes: 'station:workbench_1..3 -> station:workbench_industrial', code: 'catalog.ts:WORKBENCH_UPGRADE*', veyra: 'LIVE_VEYRA' };
   if (prefix.startsWith('SYS05')) return { nodes: 'poi_gate:keycard/*, poi_gate:power/*', code: 'engine.ts:poiAccess,content.ts', veyra: 'ABSENT_IN_VEYRA_POIS (0 keycard/power gates)' };
   if (prefix.startsWith('SYS06')) return { nodes: 'station:base_generator -> station:arrow_turret/ir_sensor/door_powered', code: 'engine.ts:stepBasePower,wireReachable', veyra: 'LIVE_VEYRA' };
@@ -292,7 +292,7 @@ function buildCrosswalkRows(): CrosswalkRow[] {
   const sysMap: Record<string, { soh: string; ship: string; veyra: string; nodes: string; code: string; notes: string }> = {
     S01: { soh: 'IMPLEMENTED_SOH_TUNED', ship: 'LIVE', veyra: 'LIVE', nodes: 'item:stone_axe/iron_pick/industrial_pick; world_source:*', code: 'catalog.ts:SOURCES.qualityBonus,ITEMS', notes: 'Adds rich_iron_ore quality tier via playerTool capability' },
     S02: { soh: 'IMPLEMENTED_SOH_TUNED', ship: 'LIVE', veyra: 'LIVE', nodes: 'station:furnace/furnace_lined; recipe:iron_ingot/refined_iron_ingot', code: 'catalog.ts:RECIPES,FURNACE_LINING', notes: 'Kiln lining yields 0.8x fuel multiplier; 1 ore -> 1 ingot' },
-    S03: { soh: 'IMPLEMENTED_SHIPPING_ONLY', ship: 'LIVE', veyra: 'ABSENT_DIRECT_V1', nodes: 'station:recycler; recipe:recycler:*', code: 'recycler.ts,wreck-economy.ts,world.ts:webRecyclerSite', notes: 'Recycler absent on Veyra; wreck falls back to direct-v1 (+spares, 0 damaged_drive)' },
+    S03: { soh: 'IMPLEMENTED_SHIPPING_AND_VEYRA', ship: 'LIVE', veyra: 'LIVE_VEYRA_PO_SLAG', nodes: 'station:recycler; recipe:recycler:*', code: 'recycler.ts,wreck-economy.ts,world.ts:webRecyclerSite', notes: 'D5 enables physical Foundry Recycler at po_slag (2414, 1896) on Veyra; legacy static Veyra saves preserve direct-v1 fallback' },
     S04: { soh: 'IMPLEMENTED_CANON_MODIFIED', ship: 'LIVE', veyra: 'LIVE_DEGRADED_T3', nodes: 'station:research; currency:spares; blueprint:*', code: 'engine.ts:research,catalog.ts:permitsDirectedResearch', notes: 'Directed research blocked for tier>=3; Veyra lacks creatorLoot/airdrop for tier 3 Cores' },
     S05: { soh: 'IMPLEMENTED_CANON_MODIFIED', ship: 'LIVE', veyra: 'LIVE', nodes: 'station:workbench_1..3; gate:wb_l1..3', code: 'catalog.ts:WORKBENCH_UPGRADE*,H08', notes: 'Knowledge tier decoupled from station level (D03/H08)' },
     S06: { soh: 'IMPLEMENTED_SHIPPING_ONLY', ship: 'LIVE', veyra: 'STATIC_ARCHETYPE_ONLY', nodes: 'container:shipping:ecology:*; container:veyra:*', code: 'loot-ecology.ts,veyra05/floors.ts:ARCHETYPE_LOOT', notes: 'Veyra uses 24 authored caches + 13 static ARCHETYPE_LOOT presets without respawn ecology' },
@@ -348,8 +348,6 @@ function buildCrosswalkRows(): CrosswalkRow[] {
     const m = mapCapabilityPrefixToSoh(xe.from_capability);
     const isOilPumpEdge = xe.edge_id === 'XEDGE-055' || xe.edge_id === 'XEDGE-056';
     const isShippingOnly =
-      xe.from_capability.startsWith('SYS03') ||
-      xe.to_capability.startsWith('SYS03') ||
       xe.from_capability.startsWith('SYS05') ||
       xe.to_capability.startsWith('SYS05') ||
       xe.from_capability.startsWith('SYS12') ||
@@ -410,7 +408,7 @@ function buildCrosswalkRows(): CrosswalkRow[] {
   // 6) Live-Verified Official & Community LI Mechanics (hero.yingxiong.com / 4399 / TapTap)
   const liLiveRows: Array<[string, string, string, string, string, string, string, string]> = [
     ['LI_LIVE_01', 'poi_card_ladder', 'hero.yingxiong.com 6977/7028 & news.4399 895633: Green -> Blue -> Purple card progression with generator timer doors', 'IMPLEMENTED_SHIPPING_SINGLE_TIER', 'LIVE (keycard+power)', 'ABSENT (0 card doors)', 'poi_gate:keycard/*; poi_gate:power/*', 'LI_OFFICIAL_LIVE_VERIFIED'],
-    ['LI_LIVE_02', 'recycler_spares', 'hero.yingxiong.com 10634 & TapTap 304314693734893241: Recycler decomposes components & weapons into Spares/Iron', 'IMPLEMENTED_SHIPPING_ONLY', 'LIVE (Foundry Recycler)', 'ABSENT (direct-v1)', 'station:recycler; recipe:recycler:*', 'LI_OFFICIAL_LIVE_VERIFIED'],
+    ['LI_LIVE_02', 'recycler_spares', 'hero.yingxiong.com 10634 & TapTap 304314693734893241: Recycler decomposes components & weapons into Spares/Iron', 'IMPLEMENTED_SHIPPING_AND_VEYRA', 'LIVE (Foundry Recycler)', 'LIVE (po_slag Foundry Recycler)', 'station:recycler; recipe:recycler:*', 'LI_OFFICIAL_LIVE_VERIFIED'],
     ['LI_LIVE_03', 'research_spares_economy', 'TapTap 304314693734893241: Random research vs Workbench item study spend Spares & compete with gear crafting', 'IMPLEMENTED_SOH_TUNED', 'LIVE (4 random / 9 directed)', 'LIVE (specimen 0 Spares)', 'station:research; currency:spares', 'LI_COMMUNITY_LIVE_VERIFIED'],
     ['LI_LIVE_04', 'territory_cabinet_upkeep', 'hero.yingxiong.com 11237 & bbs.4399 40162443: Territory Cabinet prevents decay via 24h upkeep material reserve', 'IMPLEMENTED_PROVISIONAL', 'LIVE (25%/24h)', 'LIVE (25%/24h)', 'station:claim; sink:territory_upkeep_24h', 'LI_OFFICIAL_LIVE_VERIFIED'],
     ['LI_LIVE_05', 'electrical_circuits', 'hero.yingxiong.com 13285: Fuel generator powers branches, switches, pressure plates, IR sensors, powered doors, turrets', 'IMPLEMENTED_WIRE_V1', 'LIVE', 'LIVE', 'station:base_generator; station:ir_sensor; station:arrow_turret', 'LI_OFFICIAL_LIVE_VERIFIED'],
@@ -481,16 +479,16 @@ describe('WP1 / Milestone M1 — SOH Economic Multigraph & LI Crosswalk', () => 
     expect(JSON.stringify(graph1)).toBe(JSON.stringify(graph2));
 
     // 2. Full catalog & Veyra 81-POI coverage
-    // Real live codebase defect: po_greywater L0 'Tackle Box' (sites.ts:67) and 'Cottage Ladder' (sites.ts:110) share tile (1642, 1176),
-    // so floors.ts occupiedStatic silently drops Tackle Box and materializes 23 of 24 authored caches.
+    // D3 resolved: po_greywater L0 'Tackle Box' moved to (1640, 1174) clear of 'Cottage Ladder' (1642, 1176),
+    // so floors.ts materializes all 24 of 24 authored caches.
     const greyL0 = authoredPlan('po_greywater')!.levels.get(0)!;
     const greyCache = greyL0.loot.find((l) => l.label === 'Tackle Box')!;
     const greyLadder = greyL0.stairs.find((s) => s.x === greyCache.x && s.y === greyCache.y && s.from === 0);
-    expect(greyLadder?.label).toBe('Cottage Ladder');
+    expect(greyLadder).toBeUndefined();
     expect(graph1.summary.veyraPoiStats.totalPois).toBe(POIS.length);
     expect(graph1.summary.veyraPoiStats.totalPois).toBe(81);
     expect(graph1.summary.veyraPoiStats.authoredCachePois).toBe(6);
-    expect(graph1.summary.veyraPoiStats.authoredCacheTotal).toBe(23);
+    expect(graph1.summary.veyraPoiStats.authoredCacheTotal).toBe(24);
     expect(graph1.summary.veyraPoiStats.rcashPois).toBe(6);
     expect(graph1.summary.veyraPoiStats.vendorPois).toBe(2);
     expect(graph1.summary.veyraPoiStats.evacPois).toBe(3);
@@ -510,8 +508,9 @@ describe('WP1 / Milestone M1 — SOH Economic Multigraph & LI Crosswalk', () => 
       Object.keys(VENDOR_SPARES).length + Object.keys(VENDOR_SECURED).length,
     );
 
-    // Confirmed code-grounded Veyra gaps appear in diagnostics
-    expect(graph1.diagnostics.veyraUnreachableItems).toContain('damaged_drive');
+    // Confirmed code-grounded Veyra gaps & D5 Recycler resolution appear in diagnostics
+    expect(graph1.diagnostics.veyraReachableItems).toContain('damaged_drive');
+    expect(graph1.diagnostics.veyraUnreachableItems).not.toContain('damaged_drive');
     expect(graph1.diagnostics.veyraUnreachableItems).toContain('crude_petroleum');
     expect(graph1.diagnostics.veyraUnreachableItems).toContain('chitin');
     expect(graph1.diagnostics.veyraUnreachableItems).toContain('crawler_optic');
@@ -523,7 +522,7 @@ describe('WP1 / Milestone M1 — SOH Economic Multigraph & LI Crosswalk', () => 
     expect(graph1.diagnostics.veyraUncraftableRecipes).toContain('chitin_armor');
     expect(graph1.diagnostics.veyraUncraftableRecipes).toContain('core_demon');
     expect(graph1.diagnostics.veyraUncraftableRecipes).toContain('essence_spirit');
-    expect(graph1.diagnostics.veyraUncraftableRecipes).toContain('recover_drive');
+    expect(graph1.diagnostics.veyraUncraftableRecipes).not.toContain('recover_drive');
     expect(graph1.diagnostics.shippingUnreachableItems).toContain('crude_petroleum');
     expect(graph1.diagnostics.shippingUncraftableRecipes).toContain('pump_crude');
     expect(graph1.diagnostics.shippingUncraftableRecipes).toContain('refinery_crude');

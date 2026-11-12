@@ -14,7 +14,7 @@ import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dis
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
 import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
-import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, webRecyclerSite, type StaticEnt } from './world';
+import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
 import { mapDigest } from './map-package';
@@ -239,10 +239,16 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     if (s.kind === 'gen') e.power = 0;
     r.entities[e.id] = e;
   }
-  // Provisional public machine in the existing Web Foundry. No Map/Veyra
-  // placement is inferred; old runs without this adapter remain unchanged.
-  const site=webRecyclerSite(w,getActiveLayout());
-  if(site){const e:Entity={id:uid(r,'e'),kind:'recycler',x:site.tx*TILE+8,y:site.ty*TILE+8,tx:site.tx,ty:site.ty,poi:'factory',label:'Foundry Recycler',station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',0).id,outC:mkContainer(r,'out',4).id}};r.entities[e.id]=e;}
+  // Authoritative physical Foundry Recycler placement: shipping Foundry OR canonical Veyra po_slag (active window or offscreen).
+  const activeLayoutName = getActiveLayout();
+  const site=webRecyclerSite(w,activeLayoutName);
+  if(site){
+    const e:Entity={id:uid(r,'e'),kind:'recycler',x:site.tx*TILE+8,y:site.ty*TILE+8,tx:site.tx,ty:site.ty,poi:'factory',label:'Foundry Recycler',station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',0).id,outC:mkContainer(r,'out',4).id}};
+    r.entities[e.id]=e;
+  } else if (isVeyra05Layout(activeLayoutName)) {
+    const e:Entity={id:uid(r,'e'),kind:'recycler',x:VEYRA_RECYCLER_SITE.tx*TILE+8,y:VEYRA_RECYCLER_SITE.ty*TILE+8,tx:VEYRA_RECYCLER_SITE.tx,ty:VEYRA_RECYCLER_SITE.ty,poi:'factory',label:'Foundry Recycler',station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',0).id,outC:mkContainer(r,'out',4).id}};
+    (r.veyraOffscreenEntities ??= {})[e.id]=e;
+  }
   // B05 (loot-source-v2): measure physical access once from the real collision grid, record it, then roll initial stock.
   if (r.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT) r.lootEcology.sourceContract = buildLootSourceContract(w, site => lootSiteAccess(r, site));
   for (const [s, c] of pendingRolls) {
@@ -577,7 +583,7 @@ export function territoryBoundary(r:RunState,limit:number) {
   for(const e of plan.structures){const c=plan.assigned.get(e.id);if(!c||!plan.forecast.get(c.id)?.funded)dt=Math.min(dt,e.hp!/(e.maxHp!/(BAL.territory[c?'unfundedCollapseHours':'unprotectedCollapseHours']*HOUR)));}
   return dt;
 }
-function destroyOffscreenStructure(r: RunState, e: Entity, now: number) {
+export function destroyOffscreenStructure(r: RunState, e: Entity, now: number) {
   const off = r.veyraOffscreenEntities;
   if (!off || off[e.id] !== e || e.kind !== 'struct') return null;
   const efl = (e as any).floor ?? 0;
@@ -593,6 +599,13 @@ function destroyOffscreenStructure(r: RunState, e: Entity, now: number) {
     if (efl) (bag as any).floor = efl;
     off[bag.id] = bag;
     delete r.entities[bag.id];
+  }
+  for (const other of allRunEntities(r)) {
+    if (other.maintenance?.chestId === e.id) { delete other.maintenance.chestId; other.maintenance.enabled = false; }
+    if (e.basePower) {
+      if (other.turret?.generatorId === e.id) delete other.turret.generatorId;
+      if (other.industrial?.generatorId === e.id) delete other.industrial.generatorId;
+    }
   }
   delete off[e.id];
   for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid];
@@ -727,35 +740,52 @@ export function isSheltered(r: RunState, px: number, py: number) { return roofRo
  * stationary saved player during offline settlement. No speculative AI movement. */
 function wireNodeOn(r:RunState,e:Entity):boolean {
   if(e.kind!=='struct'||!['power_cable','power_switch','pressure_switch','ir_sensor'].includes(e.type||'')||!owned(e)||(e.hp??0)<=0||e.tx===undefined||e.ty===undefined)return false;
-  const t=effTile(r,e.tx,e.ty),i=e.ty*WW+e.tx;if([T.DEEP,T.SHALLOW,T.RIVER,T.ICE,T.LAVA,T.CLIFF,T.PWALL].includes(t)||[1,2,3,4,5].includes(blockGrid(r)[i]))return false;
-  if(e.type==='ir_sensor')return irSensorConducts(r,e);
+  if(r.entities[e.id]===e) {
+    const t=effTile(r,e.tx,e.ty),i=e.ty*WW+e.tx;
+    if([T.DEEP,T.SHALLOW,T.RIVER,T.ICE,T.LAVA,T.CLIFF,T.PWALL].includes(t)||[1,2,3,4,5].includes(blockGrid(r)[i]))return false;
+    if(e.type==='ir_sensor')return irSensorConducts(r,e);
+    if(e.type==='power_switch')return !!e.wireSwitch?.on;
+    if(e.type==='pressure_switch')return !r.player.dead&&Math.hypot(r.player.x-e.x,r.player.y-e.y)<=BAL.homeCircuit.plateRadius;
+    return true;
+  }
+  if(e.type==='ir_sensor')return false;
   if(e.type==='power_switch')return !!e.wireSwitch?.on;
-  if(e.type==='pressure_switch')return !r.player.dead&&Math.hypot(r.player.x-e.x,r.player.y-e.y)<=BAL.homeCircuit.plateRadius;
+  if(e.type==='pressure_switch') {
+    if(r.player.dead)return false;
+    const [ox,oy]=isVeyra05Layout(r.layoutId||'')?windowOrigin(r):[0,0];
+    return Math.hypot(ox*TILE+r.player.x-e.x,oy*TILE+r.player.y-e.y)<=BAL.homeCircuit.plateRadius;
+  }
   return true;
 }
 /** B02-P1 infrared sensor (ir-v1). Cable-only relay BFS: sensors never relay for each other, so claim, path and
  * conduction never depend on each other (no recursion). Values are SOH_PROVISIONAL in balance irSensorV1. */
 function wireRelayOn(r:RunState,n:Entity):boolean { return n.type!=='ir_sensor' && wireNodeOn(r,n); }
 function generatorTouching(r:RunState,n:Entity):Entity[] {
-  return Object.values(r.entities).filter(g=>g.basePower?.network==='wire-v1'&&owned(g)&&(g.hp??0)>0&&g.tx!==undefined&&g.ty!==undefined&&Math.abs(g.tx!-n.tx!)+Math.abs(g.ty!-n.ty!)===1).sort((a,b)=>a.id.localeCompare(b.id));
+  const np=entityGlobalCoords(r,n);
+  return allRunEntities(r).filter(g=>{
+    if(g.basePower?.network!=='wire-v1'||!owned(g)||(g.hp??0)<=0||g.tx===undefined||g.ty===undefined)return false;
+    const gp=entityGlobalCoords(r,g);
+    return gp.floor===np.floor&&Math.abs(gp.gtx-np.gtx)+Math.abs(gp.gty-np.gty)===1;
+  }).sort((a,b)=>a.id.localeCompare(b.id));
 }
 /** The generator whose cable path reaches this sensor (ignores sensor conduction). Prefers a fuelled, enabled one. */
 export function sensorGenerator(r:RunState,sensor:Entity):Entity|undefined {
   if(sensor.tx===undefined||sensor.ty===undefined)return undefined;
-  const relays=Object.values(r.entities).filter(n=>n.kind==='struct'&&n.tx!==undefined&&wireRelayOn(r,n));
-  const cells=new Map(relays.map(n=>[`${n.tx},${n.ty}`,n]));
+  const sp=entityGlobalCoords(r,sensor);
+  const relays=allRunEntities(r).filter(n=>n.kind==='struct'&&n.tx!==undefined&&wireRelayOn(r,n)&&entityGlobalCoords(r,n).floor===sp.floor);
+  const cells=new Map(relays.map(n=>{const p=entityGlobalCoords(r,n);return [`${p.gtx},${p.gty}`,n] as const;}));
   const found:Entity[]=[];const q:Entity[]=[],seen=new Set<string>();
   for(const g of generatorTouching(r,sensor))found.push(g);
-  for(const n of relays)if(Math.abs(n.tx!-sensor.tx)+Math.abs(n.ty!-sensor.ty)===1){q.push(n);seen.add(n.id);}
-  for(let h=0;h<q.length;h++){const n=q[h];found.push(...generatorTouching(r,n));
-    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=cells.get(`${n.tx!+dx},${n.ty!+dy}`);if(nx&&!seen.has(nx.id)){seen.add(nx.id);q.push(nx);}}}
+  for(const n of relays){const np=entityGlobalCoords(r,n);if(Math.abs(np.gtx-sp.gtx)+Math.abs(np.gty-sp.gty)===1){q.push(n);seen.add(n.id);}}
+  for(let h=0;h<q.length;h++){const n=q[h],np=entityGlobalCoords(r,n);found.push(...generatorTouching(r,n));
+    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=cells.get(`${np.gtx+dx},${np.gty+dy}`);if(nx&&!seen.has(nx.id)){seen.add(nx.id);q.push(nx);}}}
   const uniq=[...new Map(found.map(g=>[g.id,g])).values()].sort((a,b)=>a.id.localeCompare(b.id));
   return uniq.find(g=>g.basePower?.enabled&&hasPowerFuel(r,g))??uniq[0];
 }
 /** Enabled sensors on this generator claim capacity in ID order, up to the generator's capacity. Fuel-gated. */
 export function sensorClaims(r:RunState,g:Entity):Entity[] {
   if(!g.basePower?.enabled||!owned(g)||(g.hp??1)<=0||!hasPowerFuel(r,g))return [];
-  return Object.values(r.entities).filter(e=>e.type==='ir_sensor'&&e.irSensor?.enabled&&owned(e)&&(e.hp??0)>0&&sensorGenerator(r,e)?.id===g.id)
+  return allRunEntities(r).filter(e=>e.type==='ir_sensor'&&e.irSensor?.enabled&&owned(e)&&(e.hp??0)>0&&sensorGenerator(r,e)?.id===g.id)
     .sort((a,b)=>a.id.localeCompare(b.id)).slice(0,Math.floor((g.basePower.capacity??1)/BAL.irSensorV1.capacitySlots));
 }
 /** Line of sight and range only: walls and solid blocks stop it; sleeping and offline-unresolved monsters are never sensed. */
@@ -796,15 +826,18 @@ export function irSensorDownstream(r:RunState,e:Entity):string {
 }
 export function wireReachable(r:RunState,g:Entity,e:Entity):boolean {
   if(!g.basePower||g.basePower.network!=='wire-v1'||!owned(g)||!owned(e)||(g.hp??0)<=0||(e.hp??0)<=0||g.tx===undefined||g.ty===undefined||e.tx===undefined||e.ty===undefined)return false;
-  const nodes=Object.values(r.entities).filter(n=>wireNodeOn(r,n));const cells=new Map(nodes.map(n=>[`${n.tx},${n.ty}`,n]));
-  const q:Entity[]=[],seen=new Set<string>();for(const n of nodes)if(Math.abs(n.tx!-g.tx)+Math.abs(n.ty!-g.ty)===1){q.push(n);seen.add(n.id);}
-  for(let head=0;head<q.length;head++){const n=q[head];if(Math.abs(n.tx!-e.tx)+Math.abs(n.ty!-e.ty)===1)return true;
-    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const next=cells.get(`${n.tx!+dx},${n.ty!+dy}`);if(next&&!seen.has(next.id)){seen.add(next.id);q.push(next);}}
+  const gp=entityGlobalCoords(r,g),ep=entityGlobalCoords(r,e);
+  if(gp.floor!==ep.floor)return false;
+  const nodes=allRunEntities(r).filter(n=>wireNodeOn(r,n)&&entityGlobalCoords(r,n).floor===gp.floor);
+  const cells=new Map(nodes.map(n=>{const p=entityGlobalCoords(r,n);return [`${p.gtx},${p.gty}`,n] as const;}));
+  const q:Entity[]=[],seen=new Set<string>();for(const n of nodes){const p=entityGlobalCoords(r,n);if(Math.abs(p.gtx-gp.gtx)+Math.abs(p.gty-gp.gty)===1){q.push(n);seen.add(n.id);}}
+  for(let head=0;head<q.length;head++){const n=q[head],np=entityGlobalCoords(r,n);if(Math.abs(np.gtx-ep.gtx)+Math.abs(np.gty-ep.gty)===1)return true;
+    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const next=cells.get(`${np.gtx+dx},${np.gty+dy}`);if(next&&!seen.has(next.id)){seen.add(next.id);q.push(next);}}
   }return false;
 }
 /** An electric door is assigned to the lowest stable connected generator ID. */
 export function electricDoorGenerator(r:RunState,e:Entity):Entity|undefined {
-  return Object.values(r.entities).filter(g=>g.basePower?.network==='wire-v1'&&wireReachable(r,g,e)).sort((a,b)=>a.id.localeCompare(b.id))[0];
+  return allRunEntities(r).filter(g=>g.basePower?.network==='wire-v1'&&wireReachable(r,g,e)).sort((a,b)=>a.id.localeCompare(b.id))[0];
 }
 export function electricDoorPowered(r:RunState,e:Entity,online=true):boolean {
   const g=electricDoorGenerator(r,e);return !!g&&powerAllocation(r,g,online).includes(e);
@@ -821,7 +854,10 @@ export function syncElectricDoors(r:RunState,now:number,online=true):string[] {
 /** Optional industrial power shares real capacity with existing turret loads. */
 export function connectedPower(r:RunState,g:Entity,e:Entity) {
   if(g.basePower?.network==='wire-v1')return wireReachable(r,g,e);
-  return owned(e) && (e.hp??1)>0 && dist(e.x,e.y,g.x,g.y)<=BAL.industrialPower.connectionTiles*TILE && clearPhysicalLine(r,e,g,true,true);
+  if(!owned(e)||(e.hp??1)<=0)return false;
+  const gp=entityGlobalCoords(r,g),ep=entityGlobalCoords(r,e);
+  if(gp.floor!==ep.floor||dist(gp.gx,gp.gy,ep.gx,ep.gy)>BAL.industrialPower.connectionTiles*TILE)return false;
+  return gp.onscreen&&ep.onscreen?clearPhysicalLine(r,e,g,true,true):true;
 }
 function hasPowerFuel(r:RunState,g:Entity) {
   return !!g.basePower && !!g.c && (g.basePower.energy>1e-8 || C(r,g.c).slots.some(s=>s&&!!ITEMS[s.key]?.fuel));
@@ -832,7 +868,7 @@ export function powerAllocation(r:RunState,g:Entity,_online=true):Entity[] {
   const sensors=sensorClaims(r,g);const freeCapacity=(g.basePower.capacity??1)-sensors.length;
   // W07 Network A: an armed, supplied, wired turret reserves capacity and burns fuel whether or not the player is online.
   // Firing stays online-only (tickTurrets), but the draw must not vanish when the player leaves: offline and online share one allocation.
-  const choices=Object.values(r.entities).filter(e=>e.type!=='ir_sensor'&&connectedPower(r,g,e) && (
+  const choices=allRunEntities(r).filter(e=>e.type!=='ir_sensor'&&connectedPower(r,g,e) && (
     e.turret?.enabled && e.turret.generatorId===g.id && !!e.c && countItem(r,e.c,'arrow')>0 ||
     e.type==='workbench' && e.industrial?.enabled && e.industrial.generatorId===g.id && !!e.station?.queue[0] && e.station.queue[0].left>0 ||
     !!e.electricDoor && electricDoorGenerator(r,e)?.id===g.id));
@@ -842,14 +878,14 @@ export function powerAllocation(r:RunState,g:Entity,_online=true):Entity[] {
 }
 export function industrialStatus(r:RunState,e:Entity):string {
   if(!e.industrial)return 'Not installed';if(!e.industrial.enabled)return 'Off';
-  const g=e.industrial.generatorId?r.entities[e.industrial.generatorId]:undefined;
+  const g=findRunEntity(r,e.industrial.generatorId);
   if(!g?.basePower || g.type!=='base_generator' || !owned(g))return 'No generator';
   if(!connectedPower(r,g,e))return 'Connection blocked';if(!g.basePower.enabled)return 'Generator off';
   if(!hasPowerFuel(r,g))return 'No power';if(!e.station?.queue[0] || e.station.queue[0].left<=0)return 'Idle';
   return powerAllocation(r,g).includes(e)?'Powered':'Capacity allocated elsewhere';
 }
 export function turretStatus(r: RunState, e: Entity): string {
-  const t=e.turret; if (!t?.enabled) return 'Off'; const g=t.generatorId ? r.entities[t.generatorId] : undefined;
+  const t=e.turret; if (!t?.enabled) return 'Off'; const g=findRunEntity(r,t.generatorId);
   if (!g?.basePower || g.type!=='base_generator' || !owned(g)) return 'No generator';
   if (!connectedPower(r,g,e)) return 'Connection blocked';
   if (!g.basePower.enabled) return 'Generator off'; if (!hasPowerFuel(r,g)) return 'No power';
@@ -858,14 +894,14 @@ export function turretStatus(r: RunState, e: Entity): string {
 }
 /** Split the common timeline at the next generator fuel boundary. */
 export function basePowerBoundary(r:RunState,limit:number,online=true):number {
-  let result=limit;for(const g of Object.values(r.entities)){if(!g.basePower?.enabled||!g.c)continue;
+  let result=limit;for(const g of allRunEntities(r)){if(!g.basePower?.enabled||!g.c)continue;
     let fuel=g.basePower.energy;if(fuel<=1e-8){const s=C(r,g.c).slots.find(s=>s&&ITEMS[s.key]?.fuel);fuel=s?ITEMS[s.key].fuel!*1000:0;}
     if(fuel>1e-8)result=Math.min(result,fuel/Math.max(1,powerAllocation(r,g,online).length));
   }return result;
 }
 /** Fuel is consumed exactly once over each chronological interval. */
 export function stepBasePower(r: RunState, dt: number, now: number, online=true) {
-  for (const e of Object.values(r.entities)) { const power=e.basePower; if (!power?.enabled || !e.c) continue;
+  for (const e of allRunEntities(r)) { const power=e.basePower; if (!power?.enabled || !e.c) continue;
     const load=Math.max(1,powerAllocation(r,e,online).length);let left=dt*load;
     while(left>1e-8){if(power.energy<=1e-8){const slot=C(r,e.c).slots.find(s=>s&&ITEMS[s.key]?.fuel);if(!slot){power.energy=0;break;}power.energy=ITEMS[slot.key].fuel!*1000;const key=slot.key;removeItem(r,e.c,key,1);receipt(r,now-left/load,'power.fuel',`${e.id}:${key}`);}
       const used=Math.min(left,power.energy);power.energy-=used;left-=used;
@@ -971,7 +1007,7 @@ export function bagStation(r: RunState, e: Entity, now: number, label: string) {
   if (e.station) e.station.queue = [];
   return bag;
 }
-function removeEntity(r: RunState, e: Entity) {  if (r.rest && (e.id === r.rest.bedId || e.id === r.rest.chestId)) endRest(r, r.clock.lastSimAt, 'bed or chest removed');  for(const other of Object.values(r.entities)) if(other.maintenance?.chestId===e.id) { delete other.maintenance.chestId; other.maintenance.enabled=false; } if(e.basePower)for(const other of Object.values(r.entities)){if(other.turret?.generatorId===e.id)delete other.turret.generatorId;if(other.industrial?.generatorId===e.id)delete other.industrial.generatorId;} delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; if(e.type==='claim' || STRUCTS[e.type!]?.layer==='floor')refreshTerritoryLinks(r); markDirty(); }
+function removeEntity(r: RunState, e: Entity) {  if (r.rest && (e.id === r.rest.bedId || e.id === r.rest.chestId)) endRest(r, r.clock.lastSimAt, 'bed or chest removed');  for(const other of allRunEntities(r)) if(other.maintenance?.chestId===e.id) { delete other.maintenance.chestId; other.maintenance.enabled=false; } if(e.basePower)for(const other of allRunEntities(r)){if(other.turret?.generatorId===e.id)delete other.turret.generatorId;if(other.industrial?.generatorId===e.id)delete other.industrial.generatorId;} delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; if(e.type==='claim' || STRUCTS[e.type!]?.layer==='floor')refreshTerritoryLinks(r); markDirty(); }
 
 /** Chronological event authority shared by online and offline advancement. */
 export function airdropBoundary(r:RunState,t:number,dt:number):number {
@@ -2161,9 +2197,9 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (gs.profile.profileReceipts.some(x => x.startsWith(prefix))) return fail('Milestone supply requisition already claimed today.');
       const authPts = computeAuthoritativeDailyPoints(r, date);
       if (authPts < spec.points) return fail(`Needs ${spec.points} verified waypoint points today.`);
-      if (!Number.isSafeInteger(gs.profile.securedCash + spec.securedCash)) return fail('Cash total exceeds the supported range.');
-      gs.profile.securedCash += spec.securedCash;
-      gs.profile.profileReceipts.push(`${prefix}${spec.securedCash}`);
+      // LOCKED_CANON D1: Journey requisitions must NEVER mint profile securedCash without physical Ragnarok Escrow provenance.
+      // Existing legitimate securedCash balances and older req: receipts stay intact; run-local supplies remain physical.
+      gs.profile.profileReceipts.push(`${prefix}0`);
       const granted: string[] = [];
       for (const [itemKey, qty] of spec.items) {
         if (ITEMS[itemKey] && qty > 0) {
@@ -2171,7 +2207,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
           granted.push(`${qty}× ${ITEMS[itemKey].name}`);
         }
       }
-      return ok('journey.requisition', `${date}:${milestone}:+${spec.securedCash}c`, `+${spec.securedCash} Secured Cash · ${granted.join(', ')}`);
+      return ok('journey.requisition', `${date}:${milestone}:items`, granted.join(', ') || 'Supplies delivered');
     }
     case 'buySpares': {
       const e=r.entities[it.eid]; if(!e || e.kind!=='vendor' || !near(r,e,2.6) || !clearInteraction(r,e)) return fail('Walk up to the trader.');
@@ -2487,7 +2523,7 @@ function entityIdSortKey(id: string): number {
 
 /** Deterministic deduplicated view across onscreen `r.entities` and Veyra `r.veyraOffscreenEntities`
  *  so straddled or offscreen structures execute in the exact same order without duplicate processing. */
-function allRunEntities(r: RunState): Entity[] {
+export function allRunEntities(r: RunState): Entity[] {
   const off = r.veyraOffscreenEntities;
   if (!off || !Object.keys(off).length) return Object.values(r.entities);
   const seen = new Set<string>();
@@ -2498,7 +2534,7 @@ function allRunEntities(r: RunState): Entity[] {
   return out;
 }
 
-function findRunEntity(r: RunState, id: string | undefined): Entity | undefined {
+export function findRunEntity(r: RunState, id: string | undefined): Entity | undefined {
   if (!id) return undefined;
   return r.entities[id] ?? r.veyraOffscreenEntities?.[id];
 }

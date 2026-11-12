@@ -139,7 +139,7 @@ function DailyLeft({ gs, store, onClaimRequisition }: { gs: GameState; store: Jo
       const h = i === 6 ? { date: d.date, points: d.points, milestones: d.milestones } : store.history[5 - i];
       return <span key={i} className={`week__day m${h?.milestones.length ?? 0}`} title={h ? `${h.date}: ${h.points} pts` : 'no record'}><i />{h ? h.date.slice(8) : '·'}</span>;
     })}</div>
-    <p className="fine">UTC midnight reset. Missed days cost nothing; supply requisitions credit your profile &amp; pack.</p>
+    <p className="fine">UTC midnight reset. Missed days cost nothing; supply requisitions issue run-local field supplies to your pack (Secured Cash comes only from Ragnarok Escrow).</p>
   </div>;
 }
 

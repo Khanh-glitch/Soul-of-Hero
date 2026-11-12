@@ -7,7 +7,7 @@ export type CueKind =
   | 'territory_collapsed' | 'poi_door_closed' | 'poi_power_expired' | 'loot_depleted' | 'loot_respawned' | 'tool_broke'
   | 'heat_out' | 'offline_settled' | 'elder_defeated' | 'airdrop_landed' | 'airdrop_opened' | 'recycle_finished' | 'oil_extracted' | 'turret_fired'
   | 'hand_craft' | 'recipe_learned' | 'research_started' | 'structure_built' | 'garden_harvested' | 'achievement'
-  | 'cash_secured' | 'freight_paid' | 'vehicle_mounted' | 'vehicle_exited' | 'vehicle_refueled' | 'vehicle_repaired' | 'cash_unsealed' | 'harvested' | 'station_upgraded' | 'structure_upgraded' | 'item_repaired' | 'job_queued';
+  | 'cash_secured' | 'supply_requisition' | 'freight_paid' | 'vehicle_mounted' | 'vehicle_exited' | 'vehicle_refueled' | 'vehicle_repaired' | 'cash_unsealed' | 'harvested' | 'station_upgraded' | 'structure_upgraded' | 'item_repaired' | 'job_queued';
 export interface Cue { kind: CueKind; cause: string; receiptId: string; at: number; subject: string; detail: string }
 
 // receipt kind → cue, with the subject taken from the first detail segment (the committed entity/id) only.
@@ -29,7 +29,7 @@ const MAP: Record<string, { cue: CueKind; subject: (d: string) => string }> = {
   'item.repair': { cue: 'item_repaired', subject: d => d.split(':')[0] },
   'achievement': { cue: 'achievement', subject: d => d },
   'escrow.deposit': { cue: 'cash_secured', subject: d => d },
-  'journey.requisition': { cue: 'cash_secured', subject: d => d.split(':')[0] },
+  'journey.requisition': { cue: 'supply_requisition', subject: d => d.split(':')[1] ?? d.split(':')[0] },
   'vendor.parcel': { cue: 'freight_paid', subject: d => d.split(' ')[0] },
   'vehicle.mount': { cue: 'vehicle_mounted', subject: d => d },
   'vehicle.exit': { cue: 'vehicle_exited', subject: d => d.split('@')[0] },

@@ -11,11 +11,11 @@
 | Milestone | Artifact | Status Tag | Verification / Ground Truth |
 |---|---|---|---|
 | **M5 Corrective** | `M5_CANON_CORRECTIVE.md` | `RESEARCH_DELIVERED` | Reclassifies all M2 findings & `A1`–`A7` rejections; separates 7 Creator Cores vs 4 Legacy Cores |
-| **M5 Audits** | `SOH_ITEM_FUNCTION_AUDIT.csv` | `RESEARCH_DELIVERED` | Complete audit across all existing SOH items (`ITEMS`) — generated before production code edits |
-| **M5 Audits** | `SOH_RECIPE_ROUTE_AUDIT.csv` | `RESEARCH_DELIVERED` | Complete audit across all recipes (`RECIPES`), conversions & Recycler routes |
-| **Handoff** | `SOH_ECONOMIC_HANDOFF.md` | *(Produced after D1–D5)* | Exact tag table (`RESEARCH_DELIVERED`..`STILL_BLOCKED`) & final-SHA verification |
-| **M1** | `TASK_BRIEF.md`, `LI_SOURCE_EVIDENCE.md`, `SOH_ECONOMIC_GRAPH.json`, `SOH_LI_ECONOMIC_CROSSWALK.csv`, `M1_GRAPH_REPORT.md` | `RESEARCH_DELIVERED` | `economic-network-m1.test.ts` (**595** nodes, **2,037** edges, **222** LI rows) |
-| **M2** | `M2_SIMULATION_RESULTS.json`, `M2_AUDIT_REPORT.md` | `RESEARCH_DELIVERED` | `economic-network-m2.test.ts` (**8/8** tests; note: 336h archetypes = diagnostic probes only) |
+| **M5 Audits** | `SOH_ITEM_FUNCTION_AUDIT.csv` | `RESEARCH_DELIVERED` | Complete audit across all **123** `ITEMS` (`0` `UI_MISSING`, updated post-`D1`–`D5`) |
+| **M5 Audits** | `SOH_RECIPE_ROUTE_AUDIT.csv` | `RESEARCH_DELIVERED` | Complete audit across all **160** recipes/routes (`0` `OVER_RETURN`) |
+| **Handoff** | `SOH_ECONOMIC_HANDOFF.md` | `PRODUCTION_FIXED` (`D1`–`D5`) | Truth tags for `D1`–`D5` runtime fixes, `M1`–`M5` deliverables, and sandbox Playwright block (`chromium` missing) |
+| **M1** | `TASK_BRIEF.md`, `LI_SOURCE_EVIDENCE.md`, `SOH_ECONOMIC_GRAPH.json`, `SOH_LI_ECONOMIC_CROSSWALK.csv`, `M1_GRAPH_REPORT.md` | `RESEARCH_DELIVERED` | `economic-network-m1.test.ts` (**597** nodes, **2,040** edges, **222** LI rows, `24/24` Veyra authored caches, `damaged_drive` live on Veyra) |
+| **M2** | `M2_SIMULATION_RESULTS.json`, `M2_AUDIT_REPORT.md` | `RESEARCH_DELIVERED` | `economic-network-m2.test.ts` (**8/8** tests; `24/24` authored, `58/58` arch caches, `0` Journey `securedCash`) |
 | **M3** | `M3_BEFORE_AFTER_SIM.json`, `M3_REBALANCE_SPEC.md`, `M3_RISK_REGISTER.md` | `DESIGN_PROPOSED` / contains `CANON_REJECTED` | Counterfactual study only (`A1`–`A7` rejected per `M5_CANON_CORRECTIVE.md`, **NOT `PRODUCTION_FIXED`**) |
 | **M4** | `M4_MASTER_BLUEPRINT.md` | `DESIGN_PROPOSED` (Superseded) | Unapproved roadmap superseded by `M5_CANON_CORRECTIVE.md` & verified fixes `D1`–`D5` |
 

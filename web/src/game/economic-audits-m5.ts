@@ -423,7 +423,7 @@ export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number 
     } else if (LEGACY_CORE_KEYS.has(itemId)) {
       veyraAvail = 'CRAFTABLE_BLUEPRINT_RESEARCH_ONLY(no_static_placement)';
     } else if (itemId === 'damaged_drive') {
-      veyraAvail = `AVAILABLE_SOURCE_ONLY(src=${veyraSrcCount}_wrecks;WORKBENCH_ONLY_NO_VEYRA_RECYCLER_PRE_D5)`;
+      veyraAvail = `AVAILABLE_WITH_VEYRA_RECYCLER(src=${veyraSrcCount}_wrecks;D5_po_slag_recycler_live)`;
     } else if (veyraSrcCount === 0 && veyraCreatures.length === 0 && veyraStatic === 0 && producing.length === 0 && !eco.tables.length) {
       veyraAvail = 'MISSING_VEYRA_SOURCE';
     } else {
@@ -443,7 +443,7 @@ export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number 
       roleStatus = 'ELDER_OR_BOSS_REWARD';
     } else if (itemId === 'rcash') {
       roleStatus = 'META_CURRENCY';
-      recAction = 'BLOCK_JOURNEY_CASH_MINT_D1(escrow_only)';
+      recAction = 'D1_FIXED_ESCROW_ONLY(journeyRequisitions.securedCash=0)';
     } else if (['food', 'tool', 'weapon', 'armor'].includes(def.cat) || def.cat === 'kit') {
       roleStatus = 'CONSUMABLE_EQUIPMENT';
       if (itemId === 'chitin_armor') recAction = 'BLOCKED_VEYRA_BY_MISSING_CHITIN_A5_CREATOR_DECISION';
@@ -454,12 +454,12 @@ export function generateItemFunctionAuditCsv(): { csv: string; rowCount: number 
       recAction = 'REQUIRES_CREATOR_DECISION(coherent_Veyra_biome_source_no_cross_species_A5)';
     } else if (itemId === 'damaged_drive') {
       roleStatus = 'CORE_INDUSTRIAL_FLOW';
-      recAction = 'ENABLE_PHYSICAL_VEYRA_RECYCLER_AT_PO_SLAG_D5';
+      recAction = 'D5_FIXED_PHYSICAL_VEYRA_RECYCLER_AT_PO_SLAG';
     } else if (itemId === 'iron_plate' || itemId === 'mechanical_gear' || itemId === 'metal_pipe' || itemId === 'metal_blade' || itemId === 'refined_iron_ingot' || itemId === 'mechanical_parts' || itemId === 'spares') {
       roleStatus = 'CORE_INDUSTRIAL_FLOW';
-      if (itemId === 'iron_plate') recAction = 'ADD_BEAR_TRAP_TO_BUILD_ORDER_D2(restores_second_consumer_on_UI)';
+      if (itemId === 'iron_plate') recAction = 'D2_FIXED_BEAR_TRAP_IN_BUILD_ORDER';
       else if (itemId === 'metal_pipe' || itemId === 'metal_blade' || itemId === 'mechanical_gear') {
-        recAction = 'ENABLE_VEYRA_RECYCLER_AT_PO_SLAG_D5(X:pipe-v2,X:gear-v1,X:blade-v1)';
+        recAction = 'D5_FIXED_VEYRA_RECYCLER_AT_PO_SLAG(X:pipe-v2,X:gear-v1,X:blade-v1)';
       }
     } else if (itemId === 'crude_petroleum') {
       roleStatus = 'TEST_FIXTURE_GATED_FLOW';
@@ -769,11 +769,11 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
 
   // 4. Device / Action Sinks & Workstation Upgrades
   const deviceRoutes: [string, string, string, string, string, string, string, string, number, string, string, string][] = [
-    ['device:bearTrapSet', 'DEVICE_ARM', 'FOCUS_GEAR_PIPE_BLADE_PLATE', 'bear_trap', 'LIVE_ON_CRAFT_MISSING_FROM_BUILD_ORDER_PRE_D2', 'iron_plate:1', 'armed_trap:3_triggers', 'iron_plate:1', 0, '0s_mechanical', 'D2_FIX_ADD_BEAR_TRAP_TO_BUILD_ORDER', 'engine.ts:bearTrapSet'],
+    ['device:bearTrapSet', 'DEVICE_ARM', 'FOCUS_GEAR_PIPE_BLADE_PLATE', 'bear_trap', 'LIVE_ON_CRAFT_AND_BUILD_ORDER_D2_FIXED', 'iron_plate:1', 'armed_trap:3_triggers', 'iron_plate:1', 0, '0s_mechanical', 'D2_FIXED_BEAR_TRAP_IN_BUILD_ORDER', 'engine.ts:bearTrapSet'],
     ['device:repairStructure_plate', 'DEVICE_PATCH', 'FOCUS_GEAR_PIPE_BLADE_PLATE', 'wall_or_door_damaged', 'SHIFT_CLICK_REPAIR_ACTION', 'iron_plate:1', 'hp_restore:25pct_maxHp', 'iron_plate:1', 0, '0s_action', 'NONE', 'engine.ts:1762'],
-    ['device:base_generator_fuel', 'POWER_GEN', 'FOCUS_FUEL_POWER_OIL', 'base_generator', 'PAID_WIRE_V1', 'fuel_can:1|coal:1|charcoal:1|fuel_briquette:1|wood:1', 'power_energy_ms(60s/80s/55s/90s/20s)', 'fuel_can_or_coal_or_wood', 60, '1x_base_plus_loads(w07_s06_contract)', 'D4_INVESTIGATED_BOUND_TO_W07_S06', 'engine.ts:stepBasePower'],
+    ['device:base_generator_fuel', 'POWER_GEN', 'FOCUS_FUEL_POWER_OIL', 'base_generator', 'PAID_WIRE_V1', 'fuel_can:1|coal:1|charcoal:1|fuel_briquette:1|wood:1', 'power_energy_ms(60s/80s/55s/90s/20s)', 'fuel_can_or_coal_or_wood', 60, '1x_base_plus_loads(w07_s06_contract)', 'D4_FIXED_OFFSCREEN_POWER_PARITY', 'engine.ts:stepBasePower'],
     ['device:arrow_turret', 'DEVICE_DEFENSE', 'GENERAL_ECONOMY', 'arrow_turret', 'WIRED_BASE_GENERATOR', 'arrow:1;generator_power', 'hostile_shot_dmg', 'wood+stone+fiber_or_feather', 1, '1_generator_load', 'NONE', 'sim.ts:turretFire'],
-    ['device:escrow_deposit', 'META_ESCROW', 'GENERAL_ECONOMY', 'escrow_chest(claim_only)', 'LOCKED_CANON_CASH_ONLY', 'rcash:1', 'profile.securedCash:1', 'finite_world_cash', 0, '0s', 'D1_MUST_BLOCK_JOURNEY_MINT_SO_ESCROW_IS_SOLE_SOURCE', 'engine.ts:escrowDeposit'],
+    ['device:escrow_deposit', 'META_ESCROW', 'GENERAL_ECONOMY', 'escrow_chest(claim_only)', 'LOCKED_CANON_CASH_ONLY', 'rcash:1', 'profile.securedCash:1', 'finite_world_cash', 0, '0s', 'D1_FIXED_JOURNEY_CASH_MINT_ZEROED', 'engine.ts:escrowDeposit'],
     ['upgrade:workbench_L2', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L1->L2', fmtPairs(WORKBENCH_UPGRADE.cost), 'workbench_level:2', fmtPairs(WORKBENCH_UPGRADE.cost), 0, '0s', 'NONE', 'catalog.ts:WORKBENCH_UPGRADE'],
     ['upgrade:workbench_L3', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L2->L3', fmtPairs(WORKBENCH_UPGRADE_III.cost), 'workbench_level:3', fmtPairs(WORKBENCH_UPGRADE_III.cost), 0, '0s', 'NONE', 'catalog.ts:WORKBENCH_UPGRADE_III'],
     ['upgrade:industrial_module', 'WORKSTATION_UPGRADE', 'FOCUS_IRON_PARTS_SPARES', 'workbench', 'L2_ELECTRIC_QUEUE', fmtPairs(INDUSTRIAL_MODULE.cost), 'automated_powered_bench', fmtPairs(INDUSTRIAL_MODULE.cost), 0, '1_generator_load', 'NONE', 'catalog.ts:INDUSTRIAL_MODULE'],
@@ -796,7 +796,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
         'N/A(device_sink)',
         secs > 0 ? Math.round((60 / secs) * 100) / 100 : 0,
         action === 'NONE' ? 'NONE' : action,
-        id === 'device:bearTrapSet' ? 'UI_BUILD_ORDER_MISSING_PRE_D2' : 'BOTH_LIVE',
+        'BOTH_LIVE',
         action,
         prov,
       ]),

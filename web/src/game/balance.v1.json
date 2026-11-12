@@ -1199,17 +1199,17 @@
   "journeyRequisitions": {
     "ember": {
       "points": 25,
-      "securedCash": 5,
+      "securedCash": 0,
       "items": [["bandage", 3], ["cooked_meat", 3]]
     },
     "hearth": {
       "points": 50,
-      "securedCash": 12,
+      "securedCash": 0,
       "items": [["medkit", 2], ["mechanical_parts", 3]]
     },
     "beacon": {
       "points": 75,
-      "securedCash": 25,
+      "securedCash": 0,
       "items": [["spares", 3], ["fuel_can", 1], ["crystal", 1]]
     }
   }

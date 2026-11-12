@@ -398,7 +398,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     ['sink:food_water_consume', 'Food, Medicine & Water Consumption Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', {}],
     ['sink:poi_keycard_burn', 'POI Vault Keycard Use Burn (Shipping/dev_delta)', 'shipping', 'LIVE_SHIPPING_ONLY', { usesPerCard: BAL.poiAccess.cardUses }],
     ['sink:poi_generator_fuel_burn', 'POI Generator Fuel Canister Burn (Shipping/dev_delta)', 'shipping', 'LIVE_SHIPPING_ONLY', { runtimeSec: BAL.poiAccess.fuelRuntimeMs / 1000 }],
-    ['sink:recycler_recovery_loss', 'Foundry Recycler Material Loss vs Craft Cost', 'shipping', 'LIVE_SHIPPING_ONLY', {}],
+    ['sink:recycler_recovery_loss', 'Foundry Recycler Material Loss vs Craft Cost', 'shared', 'LIVE_SHIPPING_AND_VEYRA', {}],
     ['sink:husbandry_feed_water_drain', 'Livestock Pen Feed & Hydration Consumption Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', {}],
     ['sink:run_wipe_336h', '336-Hour Run End Full Asset Wipe', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { maxRunHours: BAL.run.maxRunHours }],
   ];
@@ -844,7 +844,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     ['station:workbench_3', 'Workbench (Level 3)', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { level: 3 }],
     ['station:workbench_industrial', 'Powered Industrial Workbench', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { workSpeedMultiplier: BAL.industrialPower.workSpeedMultiplier }],
     ['station:research', 'Research Table', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { randomSpares: BAL.research.randomSparesCost, directedSpares: BAL.research.directedSparesCost }],
-    ['station:recycler', 'Foundry Recycler (Shipping/dev_delta Only)', 'shipping', 'LIVE_SHIPPING_ONLY', { worldEntity: true, veyraSite: null }],
+    ['station:recycler', 'Foundry Recycler (Shipping Foundry Yard + Veyra po_slag)', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { worldEntity: true, veyraSite: { poi: 'po_slag', tx: 2414, ty: 1896 } }],
     ['station:oil_pump', 'Oil Pump (Test-Fixture Only)', 'test_fixture', 'TEST_FIXTURE_ONLY', { fixtureAuthority: BAL.oilPumpV1.fixtureAuthority, requiresWorkbenchLevel: BAL.oilPumpV1.requiresWorkbenchLevel }],
     ['station:refinery', 'Oil Refinery', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { requiresWorkbenchLevel: BAL.oilRefineryV1.requiresWorkbenchLevel }],
     ['station:garden', 'Garden Plot', 'shared', 'LIVE_SHIPPING_AND_VEYRA', {}],
@@ -1274,7 +1274,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     codeRef: 'engine.ts:research',
   });
 
-  // 5. FOUNDRY RECYCLER (Shipping/dev_delta only; absent on Veyra)
+  // 5. FOUNDRY RECYCLER (Shipping Foundry Yard + Veyra po_slag Foundry Recycler per D5)
   type RecyclerBandRule = { base: [string, number][]; mid: [string, number][]; high: [string, number][] };
   const mergedToolRules: Record<string, { version: string; seconds: number; rule: RecyclerBandRule }> = {};
   for (const [k, rule] of Object.entries(BAL.recyclerV1.rules as Record<string, RecyclerBandRule>)) {
@@ -1293,8 +1293,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
       id: rNodeId,
       kind: 'recipe',
       label: `Recycler Recover (${ITEMS[itemKey]?.name ?? itemKey})`,
-      layerScope: 'shipping',
-      runtimeStatus: 'LIVE_SHIPPING_ONLY',
+      layerScope: 'shared',
+      runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
       meta: { recyclerVersion: info.version, seconds: info.seconds, ...info.rule },
     });
     addEdge({
@@ -1304,8 +1304,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
       qtyIn: 1,
       durationSec: info.seconds,
       gateIds: ['gate:recycler_site'],
-      layerScope: 'shipping',
-      runtimeStatus: 'LIVE_SHIPPING_ONLY',
+      layerScope: 'shared',
+      runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
       codeRef: `recycler.ts:recoveryPlan.${info.version}`,
     });
     for (const [band, list] of [['base', info.rule.base], ['mid', info.rule.mid], ['high', info.rule.high]] as const) {
@@ -1317,8 +1317,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
           qtyOut: qty,
           durationSec: info.seconds,
           gateIds: ['gate:recycler_site'],
-          layerScope: 'shipping',
-          runtimeStatus: 'LIVE_SHIPPING_ONLY',
+          layerScope: 'shared',
+          runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
           codeRef: `recycler.ts:recoveryPlan.${info.version}.${band}`,
           notes: `Condition tier=${band}`,
         });
@@ -1330,8 +1330,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
       to: 'sink:recycler_recovery_loss',
       qtyIn: 1,
       gateIds: ['gate:recycler_site'],
-      layerScope: 'shipping',
-      runtimeStatus: 'LIVE_SHIPPING_ONLY',
+      layerScope: 'shared',
+      runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
       codeRef: 'industrial-proof.ts',
     });
   }
@@ -1343,8 +1343,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     id: driveNodeId,
     kind: 'recipe',
     label: 'Recycler Drive Recovery (Damaged Drive -> X:drive)',
-    layerScope: 'shipping',
-    runtimeStatus: 'LIVE_SHIPPING_ONLY',
+    layerScope: 'shared',
+    runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
     meta: { recyclerRecipe: 'X:drive', key: 'damaged_drive', seconds: 12, outputs: [['spares', 2]] },
   });
   addEdge({
@@ -1354,8 +1354,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     qtyIn: 1,
     durationSec: 12,
     gateIds: ['gate:recycler_site'],
-    layerScope: 'shipping',
-    runtimeStatus: 'LIVE_SHIPPING_ONLY',
+    layerScope: 'shared',
+    runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
     codeRef: 'recycler.ts:recoveryPlan.X:drive',
   });
   addEdge({
@@ -1365,8 +1365,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     qtyOut: 2,
     durationSec: 12,
     gateIds: ['gate:recycler_site'],
-    layerScope: 'shipping',
-    runtimeStatus: 'LIVE_SHIPPING_ONLY',
+    layerScope: 'shared',
+    runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
     codeRef: 'recycler.ts:recoveryPlan.X:drive',
   });
 
@@ -1376,8 +1376,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
       id: rNodeId,
       kind: 'recipe',
       label: `Recycler Component (${ITEMS[comp.key]?.name ?? comp.key} -> ${recipeId})`,
-      layerScope: 'shipping',
-      runtimeStatus: 'LIVE_SHIPPING_ONLY',
+      layerScope: 'shared',
+      runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
       meta: { recyclerRecipe: recipeId, key: comp.key, seconds: comp.seconds, outputs: comp.outputs },
     });
     addEdge({
@@ -1387,8 +1387,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
       qtyIn: 1,
       durationSec: comp.seconds,
       gateIds: ['gate:recycler_site'],
-      layerScope: 'shipping',
-      runtimeStatus: 'LIVE_SHIPPING_ONLY',
+      layerScope: 'shared',
+      runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
       codeRef: `recycler.ts:COMPONENT_RULES.${recipeId}`,
     });
     for (const [outKey, qty] of comp.outputs) {
@@ -1399,8 +1399,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
         qtyOut: qty,
         durationSec: comp.seconds,
         gateIds: ['gate:recycler_site'],
-        layerScope: 'shipping',
-        runtimeStatus: 'LIVE_SHIPPING_ONLY',
+        layerScope: 'shared',
+        runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
         codeRef: `recycler.ts:COMPONENT_RULES.${recipeId}`,
       });
     }
@@ -1458,10 +1458,10 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
           qtyOut: 1,
           probability: chance,
           gateIds: ['gate:recycler_site'],
-          layerScope: 'shipping',
-          runtimeStatus: 'LIVE_SHIPPING_ONLY',
+          layerScope: 'shared',
+          runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
           codeRef: 'wreck-economy.ts:wreckBonuses',
-          notes: 'Suppressed on Veyra (wreckEconomy === direct-v1)',
+          notes: 'Live on Shipping & Veyra veyra05-world (D5 po_slag recycler-v1); legacy static Veyra saves without recycler retain direct-v1 fallback',
         });
         addEdge({
           kind: 'HARVEST_BONUS',
@@ -1473,7 +1473,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
           layerScope: 'veyra05',
           runtimeStatus: 'LIVE_VEYRA_ONLY',
           codeRef: 'wreck-economy.ts:wreckBonuses',
-          notes: 'Direct-v1 spares bonus boost when recycler absent (0.3 -> 0.7)',
+          notes: 'Historical direct-v1 fallback retained only for legacy static Veyra layouts or pre-D5 saves lacking an authorized recycler',
         });
       } else {
         addEdge({
@@ -2322,16 +2322,18 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
       runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
       meta: req as Record<string, unknown>,
     });
-    addEdge({
-      kind: 'JOURNEY_REQUISITION',
-      from: id,
-      to: 'currency:secured_cash',
-      qtyOut: req.securedCash,
-      gateIds: [],
-      layerScope: 'shared',
-      runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
-      codeRef: `balance.v1.json:journeyRequisitions.${reqKey}`,
-    });
+    if (req.securedCash > 0) {
+      addEdge({
+        kind: 'JOURNEY_REQUISITION',
+        from: id,
+        to: 'currency:secured_cash',
+        qtyOut: req.securedCash,
+        gateIds: [],
+        layerScope: 'shared',
+        runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
+        codeRef: `balance.v1.json:journeyRequisitions.${reqKey}`,
+      });
+    }
     for (const [itemKey, qty] of req.items) {
       addEdge({
         kind: 'JOURNEY_REQUISITION',
@@ -2612,7 +2614,7 @@ function buildGates(): Record<string, EconGate> {
     { id: 'gate:creator_loot_v1', kind: 'layout', layerScope: 'shipping', rule: 'Enabled only on shipping_fresh / dev_delta_fresh; absent on Veyra', codeRef: 'engine.ts:190' },
     { id: 'gate:loot_ecology_w06', kind: 'layout', layerScope: 'shipping', rule: 'Enabled only on shipping_fresh / dev_delta_fresh; absent on Veyra', codeRef: 'engine.ts:190' },
     { id: 'gate:airdrop_v1', kind: 'layout', layerScope: 'shipping', rule: 'supportsAirdrops() allows shipping_fresh / dev_delta_fresh only', codeRef: 'airdrop.ts:supportsAirdrops' },
-    { id: 'gate:recycler_site', kind: 'layout', layerScope: 'shipping', rule: 'webRecyclerSite() exists only on shipping_fresh / dev_delta_fresh; null on Veyra', codeRef: 'world.ts:webRecyclerSite' },
+    { id: 'gate:recycler_site', kind: 'layout', layerScope: 'shared', rule: 'webRecyclerSite() authorizes Foundry Yard on shipping_fresh/dev_delta_fresh and VEYRA_RECYCLER_SITE (po_slag) on isVeyra05Layout (null on legacy static Veyra layouts)', codeRef: 'world.ts:webRecyclerSite' },
     { id: 'gate:oil_test_fixture', kind: 'fixture', layerScope: 'test_fixture', rule: 'Requires r.oilTestFixture === true with authority test-fixture-v1', codeRef: 'engine.ts:1414' },
     { id: 'gate:poi_keycard', kind: 'poi_access', layerScope: 'shipping', rule: 'Requires physical keycard (3 charges); absent from Veyra loot tables', codeRef: 'engine.ts:poiAccess' },
     { id: 'gate:poi_power', kind: 'poi_access', layerScope: 'shipping', rule: 'Requires POI generator + fuel_can (180s runtime); absent from Veyra POIs', codeRef: 'engine.ts:poiAccess' },

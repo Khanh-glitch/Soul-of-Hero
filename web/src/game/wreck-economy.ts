@@ -1,6 +1,7 @@
 import { SOURCES } from './catalog';
 import type { RunState } from './core';
-import { getWorld, webRecyclerSite } from './world';
+import { getWorld, VEYRA_RECYCLER_SITE, webRecyclerSite } from './world';
+import { isVeyra05Layout } from '../veyra05/scenes';
 
 /** Immutable per-run rules. A pre-policy save is classified by its actual,
  * authorized machine, never by the currently selected title-screen layout. */
@@ -8,8 +9,11 @@ export type WreckEconomy = 'direct-v1' | 'recycler-v1';
 export function hasAuthorizedRecycler(r: RunState): boolean {
   const layout = r.layoutId || 'shipping';
   const site = webRecyclerSite(getWorld(layout), layout);
-  if (!site) return false;
-  return Object.values(r.entities).some(e => e.kind === 'recycler' && e.tx === site.tx && e.ty === site.ty && e.x === site.tx * 16 + 8 && e.y === site.ty * 16 + 8 && e.poi === 'factory' && !!e.station);
+  if (site && Object.values(r.entities).some(e => e.kind === 'recycler' && e.tx === site.tx && e.ty === site.ty && e.x === site.tx * 16 + 8 && e.y === site.ty * 16 + 8 && e.poi === 'factory' && !!e.station)) return true;
+  if (!site && isVeyra05Layout(layout) && r.veyraOffscreenEntities) {
+    return Object.values(r.veyraOffscreenEntities).some(e => e.kind === 'recycler' && e.tx === VEYRA_RECYCLER_SITE.tx && e.ty === VEYRA_RECYCLER_SITE.ty && e.x === VEYRA_RECYCLER_SITE.tx * 16 + 8 && e.y === VEYRA_RECYCLER_SITE.ty * 16 + 8 && e.poi === 'factory' && !!e.station);
+  }
+  return false;
 }
 export function wreckEconomy(r: RunState): WreckEconomy {
   return r.wreckEconomy ?? (hasAuthorizedRecycler(r) ? 'recycler-v1' : 'direct-v1');

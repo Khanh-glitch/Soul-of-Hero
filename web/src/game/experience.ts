@@ -93,6 +93,7 @@ export function experienceFromCue(c: Cue, r: RunState): ExperienceEvent | null {
       return ev(id, 'milestone', a.name.toUpperCase(), `+${a.score}`, undefined, 75, 3200);
     }
     case 'cash_secured': return ev(id, 'ledger', 'SECURED', `${c.detail} coins → profile`, 'rcash', 76, 3200);
+    case 'supply_requisition': return ev(id, 'ledger', 'SUPPLIES ISSUED', `${c.subject.toUpperCase()} bundle to pack`, 'bandage', 56, 2600);
     case 'freight_paid': return ev(id, 'ledger', 'PARCEL PAID', name(c.subject.split(' ')[0]), c.subject.split(' ')[0], 48, 2000);
     case 'vehicle_mounted': return ev(id, 'field', 'RIDING', 'WASD · F to dismount', undefined, 26, 1400);
     case 'vehicle_exited': return ev(id, 'field', 'DISMOUNTED', '', undefined, 24, 1100);

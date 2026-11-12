@@ -354,7 +354,7 @@ describe('Final Journey Durability Corrective — Durable Run-Authoritative Dail
     const claim = dispatch(gs, { id: 'red1-claim-ember', type: 'journeyRequisition', date: today, milestone: 'ember' }, now + 100);
     expect(claim.ok, !claim.ok ? claim.reason : '').toBe(true);
     expect(computeAuthoritativeDailyPoints(r, today)).toBe(earnedBeforeEvict);
-    expect(gs.profile.securedCash).toBe(BAL.journeyRequisitions.ember.securedCash);
+    expect(gs.profile.securedCash).toBe(0);
     expect(countItem(r, 'inv', 'bandage')).toBe(3);
     expect(countItem(r, 'inv', 'cooked_meat')).toBe(3);
 
@@ -569,10 +569,10 @@ describe('Final Journey Durability Corrective — Durable Run-Authoritative Dail
     );
     expect(htmlBeforeClaim).toContain('Claim Supply');
 
-    // 5. Claiming the unclaimed Ember milestone after reload + eviction SUCCEEDS!
+    // 5. Claiming the unclaimed Ember milestone after reload + eviction SUCCEEDS (run supplies only, zero profile cash)!
     const claim = dispatch(reloaded, { id: 'red3-claim-after-reload', type: 'journeyRequisition', date: today, milestone: 'ember' }, afterSettle + 100);
     expect(claim.ok, !claim.ok ? claim.reason : '').toBe(true);
-    expect(reloaded.profile.securedCash).toBe(BAL.journeyRequisitions.ember.securedCash);
+    expect(reloaded.profile.securedCash).toBe(0);
     expect(isMilestoneRequisitioned(reloaded, today, 'ember')).toBe(true);
   });
 
@@ -611,7 +611,7 @@ describe('Final Journey Durability Corrective — Durable Run-Authoritative Dail
     now = commitUnrelatedGameplayEvents(gs, 270, now + 400, 'red4-postroll');
     expect(dispatch(gs, { id: 'red4-valid-claim', type: 'journeyRequisition', date: today, milestone: 'ember' }, now + 100).ok).toBe(true);
     const cashAfterEmber = gs.profile.securedCash;
-    expect(cashAfterEmber).toBe(BAL.journeyRequisitions.ember.securedCash);
+    expect(cashAfterEmber).toBe(0);
 
     // B) Duplicate milestone reward check (after further >260 receipt eviction + save/reload + repeated UI ingest)
     now = commitUnrelatedGameplayEvents(gs, 270, now + 200, 'red4-dup');

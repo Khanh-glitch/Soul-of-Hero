@@ -125,10 +125,11 @@ describe('Stage C: Authoritative Journey Requisitions & Unified Veyra Expedition
     }
 
     // Valid Ember (25 pts) and Hearth (50 pts) claims (plus Beacon if today's 4-objective slate totals >= 75)
+    // D1 LOCKED_CANON: Journey issues run-local physical items ONLY, never profile securedCash
     const seqBefore = r.receipts.at(-1)?.seq ?? 0;
     const c1 = dispatch(gs, { id: 'req-ember', type: 'journeyRequisition', date, milestone: 'ember', points: 0 }, NOW + 100);
     expect(c1.ok).toBe(true);
-    expect(gs.profile.securedCash).toBe(BAL.journeyRequisitions.ember.securedCash);
+    expect(gs.profile.securedCash).toBe(0);
     expect(countItem(r, 'inv', 'bandage')).toBe(3);
     expect(countItem(r, 'inv', 'cooked_meat')).toBe(3);
     expect(isMilestoneRequisitioned(gs, date, 'ember')).toBe(true);
@@ -136,23 +137,19 @@ describe('Stage C: Authoritative Journey Requisitions & Unified Veyra Expedition
     // Duplicate claim on the same day -> rejected
     const dup = dispatch(gs, { id: 'req-ember-dup', type: 'journeyRequisition', date, milestone: 'ember', points: 40 }, NOW + 110);
     expect(dup.ok).toBe(false);
-    expect(gs.profile.securedCash).toBe(BAL.journeyRequisitions.ember.securedCash);
+    expect(gs.profile.securedCash).toBe(0);
 
     // Hearth claim (+ Beacon check against today's exact authoritative total)
     const totalPts = daily.objectives.reduce((s, o) => s + (DAILY_BY_ID[o.id]?.points ?? 0), 0);
     expect(dispatch(gs, { id: 'req-hearth', type: 'journeyRequisition', date, milestone: 'hearth', points: 55 }, NOW + 120).ok).toBe(true);
     const beaconRes = dispatch(gs, { id: 'req-beacon', type: 'journeyRequisition', date, milestone: 'beacon', points: 80 }, NOW + 130);
     expect(beaconRes.ok).toBe(totalPts >= BAL.journeyRequisitions.beacon.points);
-    const expectedCash =
-      BAL.journeyRequisitions.ember.securedCash +
-      BAL.journeyRequisitions.hearth.securedCash +
-      (beaconRes.ok ? BAL.journeyRequisitions.beacon.securedCash : 0);
-    expect(gs.profile.securedCash).toBe(expectedCash);
+    expect(gs.profile.securedCash).toBe(0);
     if (beaconRes.ok) expect(countItem(r, 'inv', 'crystal')).toBe(1);
 
     // B06 presentation cue traced from 'journey.requisition' receipt
     const cues = deriveCues(r.receipts, seqBefore);
-    expect(cues.filter(c => c.cause === 'journey.requisition' && c.kind === 'cash_secured')).toHaveLength(beaconRes.ok ? 3 : 2);
+    expect(cues.filter(c => c.cause === 'journey.requisition' && c.kind === 'supply_requisition')).toHaveLength(beaconRes.ok ? 3 : 2);
   });
 
   it('tracks creature.kill receipts in Journey and renders 4-ribbon JourneyLedger + unified Veyra ExpeditionMap', () => {

@@ -251,10 +251,11 @@ describe('Phase A1 — journeyRequisition authoritative verification & negative 
     expect(dispatch(gs, { id: 'bad-fut', type: 'journeyRequisition', date: '2026-11-10', milestone: 'ember', points: 60 }, NOW + 530).ok).toBe(false);
     expect(gs.profile.securedCash).toBe(0);
 
-    // Legitimate claim on current UTC day succeeds even if client omits/underreports points
+    // Legitimate claim on current UTC day succeeds (issuing run-local supplies, ZERO securedCash without physical Escrow)
     const valid = dispatch(gs, { id: 'ok-ember', type: 'journeyRequisition', date: dateKey(NOW + 600), milestone: 'ember', points: 0 }, NOW + 600);
     expect(valid.ok).toBe(true);
-    expect(gs.profile.securedCash).toBe(BAL.journeyRequisitions.ember.securedCash);
+    expect(gs.profile.securedCash).toBe(0);
+    expect(countItem(gs.run!, 'inv', 'bandage')).toBe(3);
 
     // Once QA time-advance taints the run, remaining milestones cannot mint profile cash
     expect(dispatch(gs, { id: 'qa-adv', type: 'qaAdvance', hours: 0.1 }, NOW + 700).ok).toBe(true);
@@ -270,7 +271,7 @@ describe('Phase A1 — journeyRequisition authoritative verification & negative 
     const day = dateKey(NOW + 500);
     expect(dispatch(gs, { id: 'claim-1', type: 'journeyRequisition', date: day, milestone: 'ember', points: 40 }, NOW + 500).ok).toBe(true);
     const cashAfterFirst = gs.profile.securedCash;
-    expect(cashAfterFirst).toBe(BAL.journeyRequisitions.ember.securedCash);
+    expect(cashAfterFirst).toBe(0);
 
     // Different intent ID on the same run
     const dupDiffId = dispatch(gs, { id: 'claim-2-diff-id', type: 'journeyRequisition', date: day, milestone: 'ember', points: 40 }, NOW + 520);

@@ -105,13 +105,29 @@ export function getWorld(layout: string = activeLayout): World {
   return world;
 }
 
-/** Temporary Web adapter at the existing shipping Foundry; not a Veyra Map placement. */
+/** Canonical Veyra U=0.5 global tile for the physical Foundry Recycler inside Slagworks Foundry (po_slag · Quenched Bloom Sorting Bay). */
+export const VEYRA_RECYCLER_SITE = { poi: 'po_slag', tx: 2414, ty: 1896 } as const;
+
+/** Authoritative physical Foundry Recycler placement: shipping Foundry OR Veyra po_slag within active window. */
 export function webRecyclerSite(w:World,layout:string):{tx:number;ty:number}|null {
-  if(layout!=='shipping_fresh' && layout!=='dev_delta_fresh')return null;
-  const foundry=w.places.find(p=>p.id==='factory');if(!foundry)return null;
-  const tx=foundry.tx-5,ty=foundry.ty+3,i=ty*WW+tx;
-  if(w.tiles[i]!==T.FLOOR||w.sourceV3[i]||w.statics.some(s=>s.tx===tx&&s.ty===ty))return null;
-  return {tx,ty};
+  if(layout==='shipping_fresh' || layout==='dev_delta_fresh') {
+    const foundry=w.places.find(p=>p.id==='factory');if(!foundry)return null;
+    const tx=foundry.tx-5,ty=foundry.ty+3,i=ty*WW+tx;
+    if(w.tiles[i]!==T.FLOOR||w.sourceV3[i]||w.statics.some(s=>s.tx===tx&&s.ty===ty))return null;
+    return {tx,ty};
+  }
+  if(isVeyra05Layout(layout) && windowForLayout(layout)) {
+    const ww=getWindowWorld(layout);
+    const layer0=ww.floors?.layers.get(0);
+    const ox=ww.win.originTx,oy=ww.win.originTy;
+    const tx=VEYRA_RECYCLER_SITE.tx-ox,ty=VEYRA_RECYCLER_SITE.ty-oy;
+    if(tx<1||ty<1||tx>=WW-1||ty>=WH-1)return null;
+    const i=ty*WW+tx;
+    const tiles=layer0?layer0.tiles:w.tiles,srcs=layer0?layer0.sources:w.sourceV3,statics=layer0?layer0.statics:w.statics;
+    if(tiles[i]!==T.FLOOR||srcs[i]||statics.some(s=>s.tx===tx&&s.ty===ty))return null;
+    return {tx,ty};
+  }
+  return null;
 }
 
 function genWorld(layoutId: LayoutId, freshSpawn = false): World {

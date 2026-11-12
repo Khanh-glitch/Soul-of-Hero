@@ -76,7 +76,7 @@ export const FIELDCRAFT: FieldLesson[] = [
       count: rc => ['drink', 'drink.flask', 'consume', 'barrel.drink', 'rest.eat', 'rest.drink'].includes(rc.kind) ? 1 : 0 },
   ] },
   { id: 'shelter', title: 'Hearth & Wall', motto: 'A roof is the first victory.', icon: 'st:wall_wood', steps: [
-    { id: 'claim', title: 'Raise a Territory Cabinet', target: 1, icon: 'st:claim', how: 'B → pick the cabinet, click open ground.', why: 'Unclaimed structures decay in about two hours. The cabinet protects them.', focus: ['build'],
+    { id: 'claim', title: 'Raise a Territory Cabinet', target: 1, icon: 'st:claim', how: 'B → pick the cabinet, click open ground.', why: `Unclaimed structures decay in about ${BAL.territory.unprotectedCollapseHours} hours. The cabinet protects them.`, focus: ['build'],
       count: rc => rc.kind === 'build' && buildType(rc) === 'claim' ? 1 : 0 },
     { id: 'walls', title: 'Raise four walls', target: 4, icon: 'st:wall_wood', how: 'B → Wood Wall. Each wall needs its own tile.', why: 'Walls keep creatures out and keep the warmth of a fire in.', focus: ['build'],
       count: rc => rc.kind === 'build' && buildType(rc).startsWith('wall') ? 1 : 0 },
@@ -147,7 +147,7 @@ export const DAILY_BY_ID = Object.fromEntries(DAILY_POOL.map(d => [d.id, d])) as
 export const CAT_LABEL: Record<DailyCat, string> = { gather: 'Gather', craft: 'Craft', build: 'Build', explore: 'Explore', survive: 'Endure', hunt: 'Hunt', produce: 'Produce' };
 
 /** Milestones: four objectives typically offer 55–95 points; Beacon needs most of a day, never all of it.
- *  Each milestone awards +1 Wayfarer Mark AND an authoritative `journeyRequisition` bundle (Secured Cash + supplies). */
+ *  Each milestone awards +1 Wayfarer Mark AND an authoritative `journeyRequisition` bundle (run-local supplies only; Secured Cash requires physical Ragnarok Escrow). */
 export const DAILY_MILESTONES = [
   { at: 25, id: 'ember', name: 'Ember', marks: 1, pending: null as null | string },
   { at: 50, id: 'hearth', name: 'Hearth', marks: 1, pending: null as null | string },
@@ -162,7 +162,7 @@ export function milestoneRewardLabel(id: string): string {
   const sp = milestoneRewardSpec(id);
   if (!sp) return '';
   const items = sp.items.map(([k, q]) => `${q}× ${ITEMS[k]?.name ?? k}`).join(' · ');
-  return `+${sp.securedCash} Secured Cash · ${items}`;
+  return sp.securedCash > 0 ? `+${sp.securedCash} Secured Cash · ${items}` : items;
 }
 export function isMilestoneRequisitioned(gs: GameState, date: string, id: string): boolean {
   const prefix = `req:${date}:${id}:`;
@@ -793,7 +793,7 @@ export function ingestJourney(prev: JourneyStore, gs: GameState, now: number): I
             s.marks += m.marks;
             if (m.pending) s.pendingRewards = [{ id: mid, date: d.date, milestone: m.name, requirement: m.pending }, ...s.pendingRewards].slice(0, 30);
             const sp = milestoneRewardSpec(m.id);
-            events.push({ id: mid, level: 3, kind: 'milestone', title: `${m.name} reached`, detail: `${dd.points} pts · +${m.marks} Mark${sp ? ` · +${sp.securedCash} Secured` : ''}`, icon: m.id === 'beacon' ? 'crystal' : m.id === 'hearth' ? 'st:campfire' : 'coal', away });
+            events.push({ id: mid, level: 3, kind: 'milestone', title: `${m.name} reached`, detail: `${dd.points} pts · +${m.marks} Mark${sp && sp.securedCash > 0 ? ` · +${sp.securedCash} Secured` : ''}`, icon: m.id === 'beacon' ? 'crystal' : m.id === 'hearth' ? 'st:campfire' : 'coal', away });
             chron({ id: mid, at: rc.at, level: 3, title: `Daily ${m.name}`, detail: `${dd.points} waypoint points on ${d.date}${sp ? ` · ${milestoneRewardLabel(m.id)}` : ''}`, icon: 'coal', runId: r!.id, kind: 'daily', away });
           }
         }
