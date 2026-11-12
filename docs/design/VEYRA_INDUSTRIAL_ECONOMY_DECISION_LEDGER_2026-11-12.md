@@ -602,3 +602,21 @@ GOLD also contains **23 named locality polygons**; 20 have a sample point inside
 ### 15.2 Artifacts and follow-up
 
 After run completes, extract `manifest.fullRaster`, `manifest.summary`, each region probe failure and `windowCandidatePrefilter`. Update **THIS ledger in place** with actual measured output, carefully distinguish missing resource components, hazard isolation, and platform/test failures. If CI times out or uses an incompatible bundler, fix the **audit harness on the isolated branch**, rerun, and keep failure evidence. Then scope a native input and same-build visual acceptance trial from targeted pathfinding failures. No new spawn count or industrial loot probabilities should be authorized solely by R0/R1/R2.
+
+---
+
+## 16. Engine-collision correction and actual local source reachability harness — 2026-11-12
+
+**Status:** SOURCE COMMITTED, CI ACTIVE, RESULTS NOT YET RETRIEVED. Do not mark playable or full-eligible-cell PASS. Related audit commits:
+- `e4c6fb9`: global scan initial test + Actions workflow. Run #43231669118 is **superseded** as an acceptance source due to erroneous assumption that river/shallow are impassable to a walking player. Historical test may be retained only for *dry-ground* components.
+- `4bc8ac4`: extended test with actual `engine.ts::blockGrid()` BFS from normal seeded `startRun()` to adjacent physically harvestable nodes (`wood,stone,food,scrap/ore/coal`) and ordinary loot containers, recording steps and current chest contents. This is within 200×200 window and does NOT play out movement, harvesting/loot UI, enemy encounters or 14d clock. Run #43232374086 has older river graph.
+- **`f189584` FINAL CURRENT AUDIT HEAD**: corrected global terrain graph to keep `SHALLOW`/`RIVER` open for player wading (engine `solidFor()` collision class 4), while `DEEP,CLIFF,PWALL,LAVA` remain impassable. **Wading is NOT cart/vehicle pass**. Run #43232561261 is the current corrected audit candidate: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43232561261
+- Latest source: `web/src/veyra05/full-world-spawn-industrial.audit.test.ts` on design branch; workflow `.github/workflows/veyra-global-spawn-audit.yml`.
+
+### Specific false-claim prevention
+
+Even the corrected 11.2M tile scan omits POI static solid props and dynamic actors from its global raster. It is a **terrain-only reachable supergraph**, not exact player reachable graph. The source-coverage tests that matter derive from a normal `startRun`, passable `blockGrid()` (including actual static props, doors, sources and physical entities) and adjacency to a source. They only run at 30 representative geographical windows, not a universal sample of every possible spawn.
+
+`G0/G1` full tile raster can be marked measured only after manifest is downloaded and checked against a completed workflow; `G2` spawn and local resource BFS is at most automated regional evidence; `G3+` physical travel/harvest/save/return remain NOT_RUN until separately performed. No percentage of valid global spawn cells or full 11.2M-source connectedness is established by this harness alone.
+
+**New red-flag test-method note:** `AUDIT-RIVER-PASS-006`: interpreting `SHALLOW/RIVER` as impassable for on-foot players fragments terrain in a way that contradicts real `solidFor` logic. Do not reuse former graph without marking it “dry ground only.”
