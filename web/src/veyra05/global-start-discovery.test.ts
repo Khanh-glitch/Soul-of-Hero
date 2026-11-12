@@ -48,7 +48,7 @@ describe('global Veyra first-window safety foundation', () => {
       const west=layoutIdAt(673,1096);
       expect(setActiveLayout(west)).toBe(true);
       const w=getWindowWorld(west);
-      expect(w.world.spawnEligible.reduce((a,v)=>a+(v?1:0),0)).toBeLessThan(40000);
+      expect(w.world.spawnEligible!.reduce((a,v)=>a+(v?1:0),0)).toBeLessThan(40000);
       const failed=newGame();
       const no=startRun(failed,'male',Date.UTC(2026,10,12,5),null,0x5f00f56);
       expect(no.ok).toBe(false);
