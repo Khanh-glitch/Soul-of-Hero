@@ -678,3 +678,56 @@ Added separate **lightweight** source, not another full 11.2M scan:
 - Current evidence proves the 11.2M bare tile *geometry scan* works and exposes valid testable geography differences. It proves **only 13 of 30 sampled windows found an eligible start under their single seed**, not that 17 geographic regions are unplayable or that 4 selected start regions are unusable.
 - **NO authorization** for changing spawn count, random-selection region policy, placing a new water source, adding loot quantities, modifying biome risks, bridging water or building ferries based on these counts.
 - Next action after targeted diagnostics: classify rejections into no actual freshwater tile; prefilter bug; 3×3 collision/safety; lack of wood/stone/plant food; actual distance/path blocked; QA window artifact. Then run controlled actual-player movement and save/reload on specific failed-versus-accepted examples before modifying production spawn or loot.
+
+---
+
+## 18. Targeted freshwater/root-cause CI evidence (2026-11-12)
+
+**Status: TEST PASSED 2/2, ARTIFACT RETRIEVED AND PARSED, PRODUCTION UNMODIFIED.** Source/CI ref `065f7337e94327f76e21ce3cdb1d6da66f508929`, workflow https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43234161587; ZIP artifact `veyra-spawn-cause-065f7337e94327f76e21ce3cdb1d6da66f508929-1`, artifact ID **13950923955**, digest `sha256:dc82fc2c2b0f845f7e4ade47e96fa54f86ec8a68f9aff57c04cf1a19b87d29e8`. Source: `web/src/veyra05/spawn-failure-cause.audit.test.ts`; 14 actual compiled 200×200 windows + 8 actual non-QA default startRun attempts (2 seeds per 4 currently implemented region selectors). This is **NOT a global spawn census**.
+
+### 18.1 Exact water/marker evidence
+
+| Runtime 200×200 focus | Actual `w.fresh` tile count | GOLD `fresh_water` point markers inside same window | `spawnEligible` prefilter | Engine issue |
+| --- | ---: | ---: | ---: | --- |
+| `bz_greywater` | 4436 | 2 | 634 | Existing fresh-water terrain for start tests |
+| `bz_moss` | 1852 | 1 | 1607 | Has water and basic crafting resources; historical 175-step BFS no Scrap |
+| `bz_westmouth` zone centroid | 97 | 0 | 706 | Historical start failed **despite 97 wet tiles + 706 prefilter cells**; cause not yet proven; cannot label area unspawnable |
+| `bz_gulfwest` zone centroid | **0** | 0 | **40000 fallback** | Missing actual river/lake in THIS window, not proof whole Gulf lacks water |
+| `bz_delta` zone centroid | **0** | 0 | **40000 fallback** | Ditto; many compiled ore/coal/scrap exist but no runtime water here |
+| `bz_slag` zone centroid | **0** | 0 | **40000 fallback** | Toxic-surface/lack of drinking water in THIS window; industrial expedition ≠ good spawn |
+| `bz_argus` zone centroid | **0** | **1** | **40000 fallback** | GOLD water marker does not materialize to drinkable physical tile |
+| `bz_cinder` | 712 | 1 | 632 | Fresh terrain exists in selected island window |
+| `bz_salt` | 869 | 2 | 2421 | Fresh terrain exists |
+| `bz_ironholm` | 652 | 1 | 301 | Fresh terrain exists |
+| `island-ld_gull` | **0** | **1** | **40000 fallback** | Authored freshwater marker but no drinkable terrain in this sampled window |
+| `island-ld_threshold` | **0** | **1** | **40000 fallback** | Same |
+| `island-ld_wreck` | **0** | **1** | **40000 fallback** | Same |
+| `island-ld_beacon` | **0** | 0 | **40000 fallback** | No water mark, no drinkable terrain |
+
+**Confirmed code reason for mismatch:** `web/src/veyra05/window.ts` `pFresh[pi]=+(water && !!(fl & FL.LAND))`, driven by generated tile class, while `reader.ts` `GOLD.project.resources[].kind='fresh_water'` is a *node marker* not necessarily a `T.SHALLOW`/`T.RIVER`/`T.DEEP` terrain cell. **Do not call the markers usable water**. Marker-driven physical wells are a possible future feature, NOT silently implemented here.
+
+**Semantic trap:** `spawnEligible.fill(1)` is a **fallback search broadening when freshwater prefilter has zero promising cells**, not 40,000 legitimate start locations. A window with 40000 candidates and 0 actual `w.fresh` is certain to fail `chooseLegalSpawn`'s `water=true` requirement, even if sourceV3 contains thousands of tree/ore/scrap nodes.
+
+### 18.2 Actual current fresh-run selector regression (8/8, no QA warp)
+
+The separate diagnostic drove `setActiveLayout(U05_WORLD_LAYOUT_ID)`, `newGame()`, `startRun()` with explicit region index 0..3 and two independent deterministic seeds per index. All **8/8** returned success and `qaUsed=false`. Actual layouts and physical freshwater tile counts in their **CURRENT IMPLEMENTATION WINDOWS**:
+
+| Selector index (current code, NOT canon count) | Actual layout | Fresh tiles | Successes |
+| --- | --- | ---: | ---: |
+| 0 | `veyra05-westmouth` | **408** | **2/2** |
+| 1 | `veyra05-world` | **10,941** | **2/2** |
+| 2 | `veyra05-hook` | **2,813** | **2/2** |
+| 3 | `veyra05-gulf` | **329** | **2/2** |
+
+**Essential contrast:** `bz_westmouth` *centroid-probe window* failed in an older one-seed test, whereas the engine's `veyra05-westmouth` default start window passed 2/2; same named region ≠ same 200×200 coordinates. Similarly `bz_gulfwest` centroid contained 0 live water, while actual `veyra05-gulf` window had 329 wet tiles and 2/2 valid starts. DO NOT conflate maps or falsely declare both regions unplayable.
+
+### 18.3 Decision on implementation vs design
+
+- **CONFIRMED RED FLAG:** `GOLD-FRESHWATER-REALIZATION-007` — authored `fresh_water` markers and playable fresh terrain are separate data channels. For identified offshore islands and Argus centroid, at least one marker appears inside an actual test window but no drinkable terrain tile exists there. This does not prove a standalone error in GOLD if markers are metadata, but blocks using marker counts as proof of game water.
+- **CONFIRMED RED FLAG:** `SPAWN-FILTER-FALLBACK-008` — `spawnEligible.fill(1)` masks a no-local-water condition with superficially huge candidate count; audit metrics must label this branch as fallback and disqualify it from spawn-pool size.
+- **OPEN REASON:** `bz_westmouth` centroid 97 wet tiles and 706 candidates but fails one-seed test. Needs actual `chooseLegalSpawn` candidate-level reason trace, not guesses. Do not claim 706 suitable spots.
+- **CURRENT 4 START WINDOWS:** 8/8 tiny-sample success under tested exact seeds, not global spawn suitability or climate/economic balance. No user-requested fixed spawn count inferred.
+- **OFFSHORE TRANSPORT:** Still unproven despite island windows with workable trees/ore/food; a valid local spawn without route home **is not sufficient** to authorize island start.
+- **DESIGN ACTION:** Preserve geographic scarcity; implement neither automatic freshwater springs nor industrial supply gifts without a grounded physical source policy and accessibility verification. Next should test targeted failure reasons and assess water/return viability before changing source placement or global spawn authority.
+
+**Deliverable acceptance level:** G0/G1 corrected bare terrain passed; G2 candidate 30-window tests + separate 4-window selector smoke now measured; G3 actual current-window BFS limited to 175 steps reported; physical gameplay, island passage, loot transfer, save/restart and full 336h simulation remain **NOT_RUN**. Source tests live on design branch only; production SHA unchanged.
