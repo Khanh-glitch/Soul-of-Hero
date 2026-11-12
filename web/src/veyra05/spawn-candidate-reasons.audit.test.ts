@@ -101,6 +101,71 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
   return {mode,tilesVisited:tail,nearest,buildableWithin:buildCounts};
  }
 
+
+ /**
+  * Crucial negative-control test: search the same 200x200 compiled window for
+  * candidates outside its current annulus/prefilter WITHOUT changing gameplay.
+  * Multi-source BFS distance transforms reject candidates that cannot satisfy
+  * a 30-step source neighborhood. The remaining candidates use the exact
+  * traced player eligibility routine above to verify buildable+all source flags.
+  */
+ function enumerateAllWindowStarts(){
+  const types=['wood','stone','food','water','buildable'] as const;
+  type Family=typeof types[number];
+  const seeds=Object.fromEntries(types.map(k=>[k,new Uint8Array(n)])) as Record<Family,Uint8Array>;
+  const famOf=(key:string|null):Family|null=>{
+   if(!key)return null;
+   if(['oak','pine','snowpine','palm','willow'].includes(key))return 'wood';
+   if(key==='rock')return 'stone';
+   if(key==='bush'||key==='mushroom')return 'food';
+   return null;
+  };
+  function seedAt(k:Family,i:number){
+   const x=i%200,y=(i/200)|0;
+   for(const next of [i,x>0?i-1:-1,x+1<200?i+1:-1,y>0?i-200:-1,y+1<200?i+200:-1]){
+    if(next<0||grid[next]!==0||!walkable[next])continue;
+    seeds[k][next]=1;
+   }
+  }
+  for(let i=0;i<n;i++){
+   const fam=famOf(src[i]);if(fam)seedAt(fam,i);
+   if(w.fresh[i])seedAt('water',i);
+   if(w.economyMap.buildable[i]&&!src[i])seedAt('buildable',i);
+  }
+  function distanceField(mask:Uint8Array){
+   const d=new Int16Array(n).fill(32767),q=new Int32Array(n);let tail=0,head=0;
+   for(let i=0;i<n;i++)if(mask[i]){q[tail++]=i;d[i]=0;}
+   while(head<tail){
+    const i=q[head++],x=i%200,y=(i/200)|0;
+    for(const next of [x>0?i-1:-1,x+1<200?i+1:-1,y>0?i-200:-1,y+1<200?i+200:-1]){
+     if(next<0||d[next]<=d[i]+1||grid[next]!==0||!walkable[next])continue;
+     d[next]=d[i]+1;q[tail++]=next;
+    }
+   }
+   return d;
+  }
+  const dist=Object.fromEntries(types.map(k=>[k,distanceField(seeds[k])])) as Record<Family,Int16Array>;
+  const out:any={safe3x3:0,screenedByFiveDistanceFields:0,exactEvaluated:0,fullyValid:0,validInExistingPrefilter:0,validOutsidePrefilter:0,
+   firstValidWindows:[],note:'Exact exhaustive if fullyValid=0; once six valid windows found, exits early and records that fact'};
+  for(let y=3;y<197;y++)for(let x=3;x<197;x++){
+   if(!safe(x,y))continue;
+   let ok=true;for(let dy=-1;dy<=1&&ok;dy++)for(let dx=-1;dx<=1;dx++)if(!safe(x+dx,y+dy)){ok=false;break;}
+   if(!ok)continue;
+   out.safe3x3++;
+   const i=y*200+x;
+   if(!types.every(k=>dist[k][i]<=30))continue;
+   out.screenedByFiveDistanceFields++;
+   out.exactEvaluated++;
+   const v=runCandidate(x,y);
+   if(!(v.wood&&v.stone&&v.food&&v.water&&v.sites))continue;
+   out.fullyValid++;
+   if(w.spawnEligible[i])out.validInExistingPrefilter++;else out.validOutsidePrefilter++;
+   if(out.firstValidWindows.length<6)out.firstValidWindows.push({local:[x,y],global:[x+origin[0],y+origin[1]],currentPrefilter:!!w.spawnEligible[i],buildableSeen:v.buildableSeen});
+   if(out.fullyValid>=6){out.terminatedEarlyAfterSix=true;return out;}
+  }
+  out.terminatedEarlyAfterSix=false;return out;
+ }
+
  const failMasks:Record<string,number>={};
  const safe3x3Cells:number[]=[];
  // Exhaustive Westmouth trace; control windows are intentionally sampled.
@@ -178,6 +243,7 @@ function inspectDiagnostic(name:string,origin:readonly [number,number],seed:numb
  rec.candidateStageCounts=measures;
  rec.missingCombinationCounts=Object.fromEntries(Object.entries(failMasks).sort((a,b)=>b[1]-a[1]));
  rec.candidateExamples=samples;
+ if(name==='bz_westmouth') rec.allWindowAlternativeStarts=enumerateAllWindowStarts();
  if(name==='bz_westmouth' && safe3x3Cells.length){
   const picked=[0,Math.floor((safe3x3Cells.length-1)*0.2),Math.floor((safe3x3Cells.length-1)*0.4),Math.floor((safe3x3Cells.length-1)*0.6),Math.floor((safe3x3Cells.length-1)*0.8),safe3x3Cells.length-1];
   rec.extendedRouteDiagnostics=picked.map(index=>{const tile=safe3x3Cells[index],x=tile%200,y=(tile/200)|0;return {localTile:[x,y],globalTile:[x+origin[0],y+origin[1]],validator:measureNearVsReach(tile,'validator'),wading:measureNearVsReach(tile,'wading')};});
