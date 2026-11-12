@@ -47,7 +47,7 @@ describe('Veyra exact local eligibility pre-screen',()=>{
    expect(setActiveLayout(dry)).toBe(true);
    const w=getWindowWorld(dry).world;
    expect(w.fresh.reduce((sum,v)=>sum+(v?1:0),0)).toBe(0);
-   expect(w.spawnEligible.reduce((sum,v)=>sum+(v?1:0),0)).toBe(0);
+   expect(w.spawnEligible!.reduce((sum,v)=>sum+(v?1:0),0)).toBe(0);
   }finally{setActiveLayout(old);}
  },120000);
 });
