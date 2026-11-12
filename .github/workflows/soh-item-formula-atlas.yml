@@ -1,0 +1,39 @@
+name: SOH Item Recipe Network — Source-Exact Graph Export
+on:
+  push:
+    branches: [audit/item-recipe-network-20261112]
+    paths:
+      - 'web/scripts/export-item-network.ts'
+      - '.github/workflows/soh-item-formula-atlas.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  export-network:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install exact dependencies
+        working-directory: web
+        run: npm ci
+      - name: Export graph from exact current runtime source
+        working-directory: web
+        run: npx --no-install vite-node scripts/export-item-network.ts
+      - name: Verify source catalog counts and non-null archive
+        working-directory: web
+        run: |
+          node -e "const x=require('./evidence/item-network/catalog-graph.json');if(!x.counts.items||!x.counts.recipes||!x.counts.structures)process.exit(2);console.log(JSON.stringify(x.counts));"
+      - name: Upload data evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: soh-item-formula-atlas-${{ github.sha }}
+          path: web/evidence/item-network/
+          if-no-files-found: warn
+          retention-days: 60
