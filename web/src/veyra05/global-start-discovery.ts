@@ -7,7 +7,8 @@
  * source stock, nine build sites, hazards, and offshore traversal before using
  * an origin for gameplay. Never accept an origin from this iterator alone.
  */
-import { FRAME_W, FRAME_H, WINDOW_W, WINDOW_H } from './frame';
+import { FRAME_W, FRAME_H, WINDOW_W, WINDOW_H, U } from './frame';
+import { GOLD } from './reader';
 
 export interface GlobalWindowCandidate { originTx:number; originTy:number; ordinal:number; }
 const SPACING = 64;
@@ -44,4 +45,27 @@ export function* globalWindowOrigins(seed:number):Generator<GlobalWindowCandidat
       ordinal,
     };
   }
+}
+
+/** The mainland is the only currently travel-connected starting landmass whose
+ *  outbound route does NOT presuppose unimplemented ferry/boat mechanics.
+ *  This is a temporary safety exclusion, NOT an approved forever no-island rule.
+ *  The GOLD polygons are used solely for the offshore-exclusion gate; runtime
+ *  terrain/collision/resources remain the final spawn authority.
+ */
+function withinRing(px:number,py:number,pts:number[][]):boolean {
+  let inside=false;
+  for(let i=0,j=pts.length-1;i<pts.length;j=i++){
+    const a=pts[i],b=pts[j];
+    if((a[1]>py)!==(b[1]>py) && px<(b[0]-a[0])*(py-a[1])/(b[1]-a[1])+a[0])inside=!inside;
+  }
+  return inside;
+}
+const mainland=GOLD.project.land.find(x=>x.id==='ld_veyra');
+if(!mainland)throw Error('VEYRA_MAINLAND_POLYGON_MISSING');
+export function unverifiedOffshoreExcluded(globalTx:number,globalTy:number):boolean {
+  const ax=(globalTx+0.5)*U,ay=(globalTy+0.5)*U;
+  if(!withinRing(ax,ay,mainland.rings[0] as number[][]))return false;
+  for(const hole of mainland.rings.slice(1))if(withinRing(ax,ay,hole as number[][]))return false;
+  return true;
 }
