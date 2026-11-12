@@ -3,11 +3,13 @@ on:
   push:
     branches: [feature/veyra-global-start-safety-20261112]
     paths:
+      - 'web/src/game/engine.ts'
       - 'web/src/veyra05/window.ts'
       - 'web/src/veyra05/global-start-discovery.ts'
-      - 'web/src/veyra05/global-start-discovery.test.ts src/veyra05/global-spawn-eligibility.test.ts'
+      - 'web/src/veyra05/global-start-discovery.test.ts'
       - 'web/src/veyra05/global-spawn-eligibility.ts'
       - 'web/src/veyra05/global-spawn-eligibility.test.ts'
+      - 'web/src/veyra05/global-production-start.test.ts'
       - '.github/workflows/veyra-global-start-safety.yml'
   workflow_dispatch:
 permissions:
@@ -15,7 +17,9 @@ permissions:
 jobs:
   safe-global-window-audit:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
+    env:
+      CI: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -26,6 +30,9 @@ jobs:
       - name: Install pinned web dependencies
         working-directory: web
         run: npm ci
-      - name: Verify deterministic full-frame origins and actual spawn negative/positive controls
+      - name: Typecheck production integration
         working-directory: web
-        run: npx --no-install vitest run --fileParallelism=false --testTimeout=120000 src/veyra05/global-start-discovery.test.ts
+        run: npx --no-install tsc --noEmit
+      - name: Verify global geography, live-stock eligibility, and fresh-run save contract
+        working-directory: web
+        run: npx --no-install vitest run --fileParallelism=false --testTimeout=300000 src/veyra05/global-start-discovery.test.ts src/veyra05/global-spawn-eligibility.test.ts src/veyra05/global-production-start.test.ts
