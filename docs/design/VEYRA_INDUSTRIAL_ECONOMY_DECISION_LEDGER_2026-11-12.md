@@ -762,3 +762,24 @@ The diagnostic built a **QA-only state after the normal start failed** using `in
 
 Compute and compare **distance to actual source nodes** and **reachable path distance** from a representative spread of all 538 Westmouth 3×3 candidates to wood, rock, food, buildable and water; test local radius 30 versus an observational extended radius (60/120/175) without changing gameplay. Distinguish:
 (A) starter economy genuinely beyond 30 steps; (B) geometry/objects isolate it despite geometric proximity; (C) compiler protects/filters resource placements around the road/coast. Only after this distinction may we decide whether to change starting-location candidate selection, compiler route reach, or spawn acceptance conditions. **Do NOT simply grant wood/stone/food or enlarge distance threshold until quality/risk is understood.**
+
+---
+
+## 20. Westmouth 30-vs-175 walking evidence and rejection of river-as-cause hypothesis
+
+**Confirmed measurement:** dedicated test at commit `a58d92c093a46241baf9959f95a2a4ed6e64c9c3`; GitHub Actions run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43238181647 **SUCCESS**, artifact ID `13952898358` `veyra-spawn-reasons-a58d92c093a46241baf9959f95a2a4ed6e64c9c3-1`, digest `sha256:491aa28221b1196db4e0a02dd420545d6eeb29153860f611a07a4af16507f1af`. Manifest downloaded and parsed. No new production patch and no player-input test.
+
+Six representative **eligible safe-3×3, but globally rejected** Westmouth-centroid candidates were explored up to 175 steps via true `blockGrid` under (A) `chooseLegalSpawn()` walk graph of `grid=0 && walkable`, and (B) physical-player-wading graph `grid=0||4`. Both graphs reported **identical shortest distances to relevant source categories and buildable cells** for all six. Therefore the previously suspected *shallow/river discrepancy is NOT the cause of this specific Westmouth failure*.
+
+| Local candidate | Closest Wood / Rock / Food / Buildable / Water (BFS steps) | Earliest count of buildable cells |
+| --- | --- | --- |
+| (14,4) | 64 / 68 / 69 / 62 / 2 | 0 within 60; 3513 within 120 |
+| (33,7) | 42 / 46 / 47 / 40 / 24 | 0 within 30; 366 within 60 |
+| (16,11) | 55 / 59 / 60 / 53 / 11 | 0 within 30; 32 within 60 |
+| (6,15) | 61 / 67 / 66 / 59 / 8 | 0 within 30; 2 within 60 |
+| (15,21) | 46 / 57 / 51 / 44 / 21 | 0 within 30; 131 within 60 |
+| (10,33) | No relevant source or buildable cell reachable within depth 175 (106 visited cells only) | 0 |
+
+**Conclusion:** source/candidate neighborhoods are genuinely farther apart or physically isolated **within the current window**; moving from 30 to 60 could alter which source is seen but is NOT recommended without gameplay justification. A shallow-water allowance does not fix Westmouth. The selected candidates lie near the upper-left local window margin, so window-clipping is a plausible separate factor but NOT yet proven. To isolate whether `spawnEligible` annulus is badly positioned versus a window with zero possible starts, next check **all safe 3×3 cells across the same 200×200 window** with the same strict 30-step resource requirements, independent of the prefilter. This new test is being executed at commit `71424e0`, GitHub run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43239021949.
+
+**Design status:** retain criterion of nearby resources and buildable space. Do not scatter resource packs just to pass; do not increase spawn range, change POI loot or graft ferry transport to fix a spawn contract mismatch. Only scope a source-grounded adjustment after the full-window candidate comparison.
