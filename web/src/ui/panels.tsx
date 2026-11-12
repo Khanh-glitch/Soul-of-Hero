@@ -107,36 +107,39 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
   const load = Math.min(1, w / limit);
   const cash = countItem(r, 'inv', 'rcash');
   const SLOT_G = ['scrap_helm', 'leather_armor', 'fur_cloak'];
-  return <Panel title={backToContainer ? 'Pack · X returns' : 'Pack'} className="inv" style={{ left: x, top, width: 228 }} onClose={onClose ?? (() => api.open(null))}>
-    {/* paper doll: equipment slots flank the live character; numbers are chips, not sentences */}
-    <div className="doll-row">
-      <div className="doll-slots">
-        {['head', 'body', 'back'].map((sl, i) => <div key={sl} className={`eqslot ${C(r, 'eq').slots[i] ? '' : 'empty'}`} title={sl}>
-          <DSlot api={api} cid="eq" slot={i} s={C(r, 'eq').slots[i]} size={22} />
-          {!C(r, 'eq').slots[i] && <img className="px ghost-ico" src={iconUrl(SLOT_G[i])} alt="" />}
-        </div>)}
-      </div>
-      <HeroDoll r={r} />
-      <div className="doll-stats">
-        <span className="stat" title="Damage reduction from armour"><Glyph k="hp" c="var(--good)" s={7} />-{Math.round(armor * 100)}%</span>
-        <span className="stat" title="Warmth from clothing"><Glyph k="wr" c="var(--warm)" s={7} />+{warm}</span>
-        <span className="stat" title="Unsecured coins carried / profile-secured"><Icon k="rcash" size={8} />{cash}<i className="sep" />{api.gs.profile.securedCash}</span>
-        <div className="loadbar" title={`Load ${w.toFixed(1)} / ${limit} kg`}>
-          <Glyph k="weight" c={w > limit ? 'var(--bad)' : 'var(--muted)'} s={7} />
-          <div className="track"><i style={{ width: `${load * 100}%`, background: w > limit ? 'var(--bad)' : load > 0.8 ? 'var(--warn)' : 'var(--good)' }} /></div>
-          <span className={w > limit ? 'over' : ''}>{Math.round(w)}<small>/{limit}</small></span>
+  const panelMaxH = Math.max(210, 354 - top);
+  return <Panel title={backToContainer ? 'Pack · X returns' : 'Pack'} className="inv" style={{ left: x, top, width: 228, maxHeight: panelMaxH }} onClose={onClose ?? (() => api.open(null))}>
+    <div className="scroll" style={{ maxHeight: panelMaxH - 28, overflowY: 'auto', overflowX: 'hidden' }}>
+      {/* paper doll: equipment slots flank the live character; numbers are chips, not sentences */}
+      <div className="doll-row">
+        <div className="doll-slots">
+          {['head', 'body', 'back'].map((sl, i) => <div key={sl} className={`eqslot ${C(r, 'eq').slots[i] ? '' : 'empty'}`} title={sl}>
+            <DSlot api={api} cid="eq" slot={i} s={C(r, 'eq').slots[i]} size={22} />
+            {!C(r, 'eq').slots[i] && <img className="px ghost-ico" src={iconUrl(SLOT_G[i])} alt="" />}
+          </div>)}
         </div>
-        <span className="lbl slots-count">{used}<small>/{total} slots</small></span>
+        <HeroDoll r={r} />
+        <div className="doll-stats">
+          <span className="stat" title="Damage reduction from armour"><Glyph k="hp" c="var(--good)" s={7} />-{Math.round(armor * 100)}%</span>
+          <span className="stat" title="Warmth from clothing"><Glyph k="wr" c="var(--warm)" s={7} />+{warm}</span>
+          <span className="stat" title="Unsecured coins carried / profile-secured"><Icon k="rcash" size={8} />{cash}<i className="sep" />{api.gs.profile.securedCash}</span>
+          <div className="loadbar" title={`Load ${w.toFixed(1)} / ${limit} kg`}>
+            <Glyph k="weight" c={w > limit ? 'var(--bad)' : 'var(--muted)'} s={7} />
+            <div className="track"><i style={{ width: `${load * 100}%`, background: w > limit ? 'var(--bad)' : load > 0.8 ? 'var(--warn)' : 'var(--good)' }} /></div>
+            <span className={w > limit ? 'over' : ''}>{Math.round(w)}<small>/{limit}</small></span>
+          </div>
+          <span className="lbl slots-count">{used}<small>/{total} slots</small></span>
+        </div>
       </div>
-    </div>
-    <Grid api={api} cid="inv" quickTo={quickTo} hotRow />
-    <ItemInfo s={sel} known={r.knowledge.recipes} />
-    <div className="actions">
-      <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('useItem', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Use</button>
-      <button className="btn" disabled={!sel || sel.qty < 2} onClick={() => api.sel && api.act('split', { c: api.sel.c, slot: api.sel.slot })}>Split</button>
-      <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('drop', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Drop</button>
-      {sel && api.sel?.c === 'inv' && ITEMS[sel.key].repair && sel.dur !== undefined && sel.dur < ITEMS[sel.key].dur! && <button className="btn gold" title={`Field repair +${BAL.player.fieldRepairDurability} (uses one kit)`} disabled={!C(r, 'inv').slots.some(s => s?.key === 'field_repair_kit')} onClick={() => { const kitSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'field_repair_kit'); const kit = C(r, 'inv').slots[kitSlot]; if (kit && api.sel) api.act('fieldRepair', { slot: api.sel.slot, uid: sel.uid, kitSlot, kitUid: kit.uid }); }}><Icon k="field_repair_kit" size={10} /> Repair</button>}
-      <button className="btn ghost" style={{ marginLeft: 'auto' }} onClick={() => api.act('sort', { c: 'inv' })}>Sort</button>
+      <Grid api={api} cid="inv" quickTo={quickTo} hotRow />
+      <ItemInfo s={sel} known={r.knowledge.recipes} />
+      <div className="actions">
+        <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('useItem', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Use</button>
+        <button className="btn" disabled={!sel || sel.qty < 2} onClick={() => api.sel && api.act('split', { c: api.sel.c, slot: api.sel.slot })}>Split</button>
+        <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('drop', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Drop</button>
+        {sel && api.sel?.c === 'inv' && ITEMS[sel.key].repair && sel.dur !== undefined && sel.dur < ITEMS[sel.key].dur! && <button className="btn gold" title={`Field repair +${BAL.player.fieldRepairDurability} (uses one kit)`} disabled={!C(r, 'inv').slots.some(s => s?.key === 'field_repair_kit')} onClick={() => { const kitSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'field_repair_kit'); const kit = C(r, 'inv').slots[kitSlot]; if (kit && api.sel) api.act('fieldRepair', { slot: api.sel.slot, uid: sel.uid, kitSlot, kitUid: kit.uid }); }}><Icon k="field_repair_kit" size={10} /> Repair</button>}
+        <button className="btn ghost" style={{ marginLeft: 'auto' }} onClick={() => api.act('sort', { c: 'inv' })}>Sort</button>
+      </div>
     </div>
   </Panel>;
 }
