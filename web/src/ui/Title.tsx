@@ -10,13 +10,6 @@ import { QA_PRESETS, type QaPresetId } from '../game/qa-sandbox';
 import { computeStageFit } from '../visual/direction';
 import { useVisualPrefs } from './hud';
 
-const VEYRA_REGIONS = [
-  { id: 0, label: 'Westmouth Shore' },
-  { id: 1, label: 'Greywater South Shore' },
-  { id: 2, label: 'Hook Meadow' },
-  { id: 3, label: 'Gulf West Bank' },
-] as const;
-
 const CLASSIC_REGIONS = [
   { id: 0, label: 'South Cove' },
   { id: 1, label: 'East Meadow' },
@@ -83,7 +76,7 @@ export default function Title({
   useEffect(() => { if (!gs.run) { setActiveLayout(selectedLayout); resetRenderCaches(); } }, [gs.run, selectedLayout]);
   const pf = gs.profile; const run = gs.run;
   const click = () => { initAudio(); sfx({ type: 'ui' }); };
-  const activeRegions = selectedLayout === U05_WORLD_LAYOUT_ID ? VEYRA_REGIONS : CLASSIC_REGIONS;
+  const activeRegions = selectedLayout === U05_WORLD_LAYOUT_ID ? [] : CLASSIC_REGIONS;
 
   return <div style={{ position: 'fixed', inset: 0, background: '#05040a' }}>
     <div className="stage" style={{ transform: `translate(${s.x}px, ${s.y}px) scale(${s.k})` }}>
@@ -164,13 +157,13 @@ export default function Title({
               ? <><b style={{ color: '#ffe27a' }}>VEYRA · Unified World</b> · 4000×2800 tiles (1 tile = 0.5 AU) · 81 POIs, livestock husbandry, 4 side bosses &amp; 6 Primordials.</>
               : <><b style={{ color: '#9ae0ff' }}>Classic Island (R12)</b> · 200×200 tiles · classic 6-Elder island &amp; R12 industrial baseline.</>}
           </div>
-          <div style={{ fontSize: 11, marginTop: 5, color: '#ffd98a' }}>Landing region</div>
+          <div style={{ fontSize: 11, marginTop: 5, color: '#ffd98a' }}>{selectedLayout === U05_WORLD_LAYOUT_ID ? 'Starting location' : 'Landing region'}</div>
           <div className="flex flex-wrap gap-1" style={{ marginTop: 2 }}>
             <button className={`btn ${region === null ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setRegion(null); }}>Random safe region</button>
             {activeRegions.map(rg => <button key={rg.id} className={`btn ${region === rg.id ? 'gold' : 'ghost'}`} style={{ fontSize: 10 }} onClick={() => { click(); setRegion(rg.id); }}>{rg.label}</button>)}
           </div>
           <div style={{ fontSize: 10, color: '#cfc2dc', minHeight: 20, marginTop: 3 }}>
-            {region === null ? 'Seeded safe landing across the four coastal/lakeside regions. No starter shelter.' : `Seeded safe landing in ${activeRegions[region]?.label}. Reachable wood, stone, food and fresh water.`}
+            {region === null ? 'Seeded random landing across source-verified mainland cells. No fixed four-region quota or starter shelter; offshore starts await proven sea transport.' : `Seeded safe landing in ${activeRegions[region]?.label}. Reachable wood, stone, food and fresh water.`}
           </div>
           <div className="flex justify-between items-center" style={{ marginTop: 6 }}><button className="btn ghost" onClick={() => setMode('menu')}>Back</button><button className="btn gold" style={{ fontSize: 16, padding: '4px 16px' }} onClick={() => { click(); onStart(hero, region, selectedLayout); }}>Begin the 14 days</button></div>
         </div>}
