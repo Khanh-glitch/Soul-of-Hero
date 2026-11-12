@@ -833,3 +833,36 @@ Six representative **eligible safe-3×3, but globally rejected** Westmouth-centr
 **Remaining design-to-production proof (P0):** determine actual globally eligible physical candidate cells using live `blockGrid`, source stock, collision-safe 3×3, five prerequisites within 30 walk steps, stable seed, and buildable count; classify and reject every island without proven physical crossing/exit; performance-bound the selection without silent four-window fallback; preserve old saves and non-Veyra modes; prove selected local/global origin persists and streams correctly; then player-input first-hour survival, return and separate-process save/restart. Only after those gates may the global selector replace the four regional layouts in `startRun`. No addition of fixed spawns, source grants, 30-step relaxation, ferry teleports or unapproved industrial loot.
 
 **Decision:** PR #55 remains DRAFT, no merge. `RED_FLAG-SPAWN-001` remains OPEN, `WORLD-OFFSHORE-ACCESS-001` remains OPEN, and industry economy calibration still waits for valid playable origin/source journey evidence.
+
+
+---
+
+## 23. Production-path global spawn candidate, strict CI and browser evidence — PR #55 (2026-11-12)
+
+**Status:** Web source implementation + test CI **PASS** on isolated [draft PR #55](https://github.com/Khanh-glitch/Soul-of-Hero/pull/55), **NOT MERGED**, NOT production-deployed, NOT real first-hour survival/human-play or offshore/336h acceptance. This supersedes §22's statement that the production `startRun` path was entirely untouched **on the PR #55 feature branch only**. It does **not** change the earlier historical branch evidence or the industrial loot design status.
+
+**Exact evidence ownership and source SHAs:**
+- `568182afb367421753f68abc122fa3d127abc4b3`: [global engine typecheck + 9/9 Vitest CI #43250100877](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43250100877), including exact 30-step stock/collision negative/positive controls, 16 seeded fresh-run starts, and serialization/validation.
+- `59baf8b6d391ae0cabf92aae35b01da3cde86953`: [real built-Web Chromium CI #43250817742](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43250817742) **SUCCESS**. Screenshot + manifest [artifact #13959326395](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/43250817742/artifacts/13959326395), ZIP SHA-256 `f6da4aa514d5a6161eefdf102c82f23f291e5ca09cc31d86ee476`.
+- GitHub workflow confirms exact SHA build and real DOM/keyboard clicks; no QA landing, direct player-coordinate mutation, artificial item grant, or data injection. The browser test is a **smoke test**, not a first-hour source collection or human aesthetic certification.
+
+**Engineering changes on the PR branch:**
+1. `engine.ts::startRun`: default Veyra unified-world random start (`region=null`) now uses `chooseGlobalVeyraStart` rather than selecting four fixed regional windows by modulo four. Explicit numeric demo-region requests, inspector windows, classic and other pre-existing layouts remain compatible. The selected `layoutId`, `sourceMap.veyra.originAu`, source and map digests, POI access digest and `spawnChoice` are pinned to the **selected** window before the run becomes durable.
+2. `global-start-discovery.ts`: deterministic, non-repeating 64-tile-origin traversal over the 4000×2800 stable frame. Origins are only candidate *windows*, not approved spawn locations. No assumption of four canonical starts, 23 zone starts or pre-authored GOLD `sp_*` coordinates.
+3. `global-spawn-eligibility.ts`: actual current `blockGrid` + source stock/freshwater + buildable proximity reverse-distance pre-screen. The necessary five families must be co-located within the original strict 30 walk steps; `chooseLegalSpawn(r, candidateMask)` performs final exact BFS including 3×3 and at least nine buildable cells. All candidates must also be connected through physical collision to a local window-slide edge.
+4. `ld_veyra` mainland polygon is an **offshore-veto** until inter-island boat/ferry and return route pass. It cannot grant a spawn or supersede physics. Ineligible/no-water windows are skipped/rejected, not repaired by source minting, teleport, fallback to the four old regions, or arbitrary radius increase.
+5. Runtime selection uses an explicit **24-window performance search budget**, not a 24-spawn design count or global eligibility census. If the bounded attempt cannot find a verified start, it **fails closed** with a visible reason; all seeds are NOT guaranteed. This remains an acceptance concern.
+
+**Measured tests, no extrapolation:**
+- 16 tested seeds generated 16/16 legal `startRun` results at **16 distinct global starting coordinates**. The recorded samples span different mainland window origins. Initial start measured **740–4,939 ms** in the 16-seed CI sample (runner with caching), not a device-level SLA. One selected fixed-seed duplicate run gave the exact same window+local tile. Other seeds remain untested.
+- Previous Westmouth `(673,1096)` negative and Greywater positive are retained; waterless Gulf West cannot silently become 40k 'eligible' candidates.
+- Browser chosen fresh seed `1314470747` landed at window origin `(768,896)`, local spawn `(61,101)`, global player tile `(829,997)`. Keyboard `KeyD` caused 27.53 px genuine movement. Save to `soh.state.v3`, browser page reload and Continue recovered same seed, `layoutId`, `sourceDigest=75f9e895`, and pixel position; `qaUsed=false`; browser console/page errors = 0.
+- The screenshots were independently opened at 640×360 and 1280×720: rendered marsh/shore/willow trees/player/HUD are visible. This proves a rendered Web first-start, **not** visual-art quality acceptance, harvested wood+stone, ferry/boat, UI accessibility across all devices, save after actual sliding transition, or complete gameplay enjoyment.
+
+**Unclosed critical gates / next action:**
+- G1 eligibility map has NOT exhaustively enumerated all 11.2M physical cells. A 24-window runtime search budget can fail on untested seeds. Generate a source-and-physics-grounded offline eligibility atlas or a proven bounded selection data structure, then measure startup latency (current slow sample 4.939s).
+- G2 must prove from actual selected global starts by **keyboard/mouse only**: reach, harvest and pick up wood, stone, food and water; construct a first base from paid materials; actual window-slide outbound and return; then separate-process save/reload with UID/conservation. The existing browser smoke proves only real movement and reload.
+- G3–G5 actual industrial source routes, hazards, variations in substrate/season, offline/336h and replays are NOT established by 16 successful starts. `WORLD-OFFSHORE-ACCESS-001` remains open; do not expose offshore as random start until physical transport and rescue pass.
+- `RED_FLAG-SPAWN-001` can be marked **source implementation present in draft branch / NOT FINAL ACCEPTED**; no global coverage or human-player acceptance claim, no merge/production deployment.
+
+**Control Tower decision:** Continue targeted early-survival + traversal + performance acceptance on PR #55; retain draft and owner-reviewed integration. Do not overwrite the industrial-source ledger with assumptions about Pipe/Gear/Plate scarcity, do not authorize new loot quantities or exchange rates from this spawn smoke.
