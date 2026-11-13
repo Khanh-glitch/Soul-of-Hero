@@ -98,7 +98,10 @@ jobs:
           SHA: ${{ github.sha }}
         run: |
           PR=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/pulls" --jq '.[0].number // empty')
-          [ -n "$PR" ] || { echo "no PR for $SHA; skipping"; exit 0; }
+          # A run started from the session branch is not attached to a PR; fall back to the open PR so
+          # the evidence is still readable from a branch-only run instead of vanishing into a skipped step.
+          [ -n "$PR" ] || PR=$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --json number --jq '.[0].number // empty')
+          [ -n "$PR" ] || { echo "no PR to report on; skipping"; exit 0; }
           {
             echo "## PA1 browser evidence failed on \`$SHA\`"
             echo

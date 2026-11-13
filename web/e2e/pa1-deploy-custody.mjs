@@ -20,6 +20,16 @@ const page=await context.newPage();
 page.on('pageerror',e=>rec.errors.push('pageerror:'+e.message));
 page.on('console',m=>{if(m.type()==='error')rec.errors.push('console:'+m.text());});
 async function shot(name){const path=name+'.png';await page.screenshot({path:out+'/'+path,animations:'disabled'});rec.screenshots.push(path);}
+// The exact fifteen names catalog.ts puts on the three geometry pages, in page order. An exact list
+// is the strong form of "no device in the Build palette": a device slipping in, a wooden shape
+// disappearing, or a page being re-sorted all fail here, whereas a word filter would still pass on
+// 'Wood Door' vs 'Door Power' ambiguity. web/tests/pa1-building-ontology.test.ts pins the same 15
+// ids from the other side, so the UI claim and the data claim cannot drift apart quietly.
+const GEOMETRY_PAGES={
+  Foundation:['Wood Floor','Wood Triangle Foundation','Wood Ceiling','Wood Triangle Ceiling'],
+  Wall:['Wood Wall','Wood Window Wall','Wood Door Frame','Wood Door','Wood Half Wall','Wood Pillar','Wood Triangle Gable','Wood Fence'],
+  Roof:['Thatch Roof','Thatch Slope Roof','Thatch Corner Roof'],
+};
 // The vocabulary structurePreparation() is allowed to answer with, per the shipped code:
 // pack wording for a device that owns a packed item, site wording for the oil pump, and the ordinary
 // material wording for base geometry (a powered door is not a packed device yet — see ledger §24).
@@ -37,16 +47,14 @@ try{
   await page.keyboard.press('b');
   const bar=page.getByTestId('pa1-expanded-buildbar');
   await bar.waitFor({timeout:15000});
-  const DEVICE_WORDS=/workbench|refinery|oil pump|generator|chest|furnace|campfire|research table|garden|barrel|trough|turret|sensor|cable|switch|trap|spikes|door|barricade|torch|bed|pump|frame/i;
   for(const [name,count] of [['Foundation',4],['Wall',8],['Roof',3]]){
     await bar.getByRole('button',{name:new RegExp('^'+name+'\\s')}).click();
     const chips=bar.locator('.buildbar__row .bslot:not(.mode)');
     assert.equal(await chips.count(),count,'Wrong geometry count on the '+name+' page');
-    // A slot carries only a hotkey + an <img alt=name>, so read the alt too: filtering textContent
-    // alone would match nothing and make "no devices here" a vacuous pass.
+    // A slot carries only a hotkey + an <img alt=name>, so read the alt: textContent alone would be
+    // just the digit and make every label assertion vacuous.
     const labels=await chips.locator('img').evaluateAll(els=>els.map(el=>el.alt||''));
-    const devices=labels.filter(t=>DEVICE_WORDS.test(t));
-    assert.equal(devices.length,0,'A device appeared in the geometry palette: '+JSON.stringify(devices));
+    assert.deepEqual(labels,GEOMETRY_PAGES[name],'Wrong contents on the '+name+' page');
     rec.geometryPages.push({name,count,labels});
     await shot('01-geometry-'+name.toLowerCase()+'-1280');
   }
@@ -111,7 +119,14 @@ try{
 
   assert.equal(rec.errors.length,0,'Browser console/page errors: '+JSON.stringify(rec.errors));
   rec.status='PASS_BROWSER_UI';
-}catch(e){rec.status='FAIL';rec.failure=String(e);try{await shot('FAIL')}catch{}}
+}catch(e){
+  rec.status='FAIL';rec.failure=String(e);try{await shot('FAIL')}catch{}
+  // The Actions log is served from blob storage, which the offline development sandbox cannot reach;
+  // a workflow command lands in an annotation that api.github.com does expose, so the failure is
+  // diagnosable without re-running anything. `%` is escaped because it is the command's own metachar.
+  const flat=(rec.failure||'').replace(/\s+/g,' ').replace(/%/g,'%25').slice(0,1500);
+  console.log('::error::PA1_DEPLOY_CUSTODY '+flat.replace(/\r/g,'%0D').replace(/\n/g,'%0A')+' || errors='+JSON.stringify(rec.errors.slice(0,3)).replace(/%/g,'%25'));
+}
 finally{
   await writeFile(out+'/manifest.json',JSON.stringify(rec,null,2)+'\n');
   console.log('PA1_DEPLOY_CUSTODY '+JSON.stringify({status:rec.status,sha:rec.sha,geometry:rec.geometryPages.map(p=>({name:p.name,count:p.count})),devices:rec.devices.map(d=>({category:d.category,tiles:d.tiles,rows:d.rows.length})),research:rec.research?.open,errors:rec.errors,failure:rec.failure}));
