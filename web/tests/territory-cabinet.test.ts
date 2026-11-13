@@ -3,11 +3,23 @@ import {describe,it,expect} from 'vitest';
 import {TILE,T,WW,HOUR,uid,BAL} from '../src/game/core';
 import {newGame,dispatch,mkContainer,addItem,countItem,markDirty,buildReason,claimAt,territoryForecast,destroyStructure} from '../src/game/engine';
 import {getWorld} from '../src/game/world';
+import {STRUCTS} from '../src/game/catalog';
 import {settle} from '../src/game/sim';
 import {selectSnapshots,serializeSnapshot} from '../src/game/persist';
 const T0=Date.UTC(2026,0,1);let serial=0;
 function setup(){const gs=newGame();expect(dispatch(gs,{id:'tc-start'+ ++serial,type:'startRun',character:'female',seed:98},T0).ok).toBe(true);const r=gs.run!;r.creatures=[];const w=getWorld();let x=0,y=0;for(let yy=5;yy<190&&!x;yy++)for(let xx=5;xx<190;xx++){let ok=true;for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){let i=(yy+dy)*WW+xx+dx;if(w.economyMap.protected[i]||w.accessCorridors?.mask[i]||((w.packageContract||w.enforceMasks)&&!w.economyMap.buildable[i]))ok=false;}if(ok){x=xx;y=yy;break;}}for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const i=(y+dy)*WW+x+dx;r.terrain[i]={t:T.GRASS};if(w.sourceV3[i])r.sources[i]={stock:0,hp:0};}r.player.x=(x-1)*TILE+8;r.player.y=(y+1)*TILE+8;markDirty();const act=(type:string,o:object={},at=T0)=>dispatch(gs,{id:'tc'+ ++serial,type,...o},at);return {gs,r,x,y,act};}
-function place(o:ReturnType<typeof setup>,type:string,dx:number,dy:number){const res=o.act('build',{struct:type,tx:o.x+dx,ty:o.y+dy},o.r.clock.lastSimAt);expect(res.ok,JSON.stringify(res)).toBe(true);return Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===o.x+dx&&e.ty===o.y+dy)!;}
+// PA1: tests must fund the actual new craft → UID pack → placement route;
+// never bypass the mechanic by inventing an item or altering the build engine.
+function place(o:ReturnType<typeof setup>,type:string,dx:number,dy:number){
+  const packed=STRUCTS[type].item;
+  if(packed && !countItem(o.r,'inv',packed)){
+    const cr=o.act('craft',{recipe:packed},o.r.clock.lastSimAt);
+    expect(cr.ok,JSON.stringify(cr)).toBe(true);
+  }
+  const res=o.act('build',{struct:type,tx:o.x+dx,ty:o.y+dy},o.r.clock.lastSimAt);
+  expect(res.ok,JSON.stringify(res)).toBe(true);
+  return Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===o.x+dx&&e.ty===o.y+dy)!;
+}
 describe('territory cabinet (controlled fixtures)',()=>{
  it('builds foundation first, then a 24-slot supported cabinet; explicit repair spends physical stock',()=>{const o=setup();addItem(o.r,'inv','wood',50);addItem(o.r,'inv','stone',20);expect(buildReason(o.gs,'claim',o.x,o.y)).toContain('foundation');const floor=place(o,'floor_wood',0,0),wall=place(o,'wall_wood',1,0);const cabinet=place(o,'claim',0,0);expect(o.r.custody[cabinet.c!].slots).toHaveLength(24);expect(claimAt(o.r,o.x+25,o.y)?.id).toBe(cabinet.id);expect(claimAt(o.r,o.x+26,o.y)).toBeNull();addItem(o.r,cabinet.c!,'wood',10);addItem(o.r,cabinet.c!,'stone',10);expect(territoryForecast(o.r,cabinet).funded).toBe(true);wall.hp=100;expect(o.act('cabinetRepair',{eid:cabinet.id}).ok).toBe(true);expect(wall.hp).toBe(140);expect(countItem(o.r,cabinet.c!,'wood')).toBe(8);const loaded=selectSnapshots([serializeSnapshot(o.gs),null]).gs!;expect(loaded.run!.entities[cabinet.id].c).toBe(cabinet.c);expect(o.act('reclaim',{eid:floor.id}).ok).toBe(false);destroyStructure(o.r,floor,T0);expect(o.r.entities[cabinet.id]).toBeUndefined();expect(Object.values(o.r.entities).some(e=>e.kind==='bag' && countItem(o.r,e.c!,'wood')===8)).toBe(true);});
  it('decays without a cabinet, stops without restoring HP when funded, and expires after the stock boundary',()=>{const o=setup();addItem(o.r,'inv','wood',50);addItem(o.r,'inv','stone',20);const f=place(o,'floor_wood',0,0);settle(o.gs,T0+HOUR,true);const hp1=f.hp!;expect(hp1).toBeCloseTo(120*(1-1/BAL.territory.unprotectedCollapseHours),5);const c=place(o,'claim',0,0);addItem(o.r,c.c!,'wood',1);addItem(o.r,c.c!,'stone',1);const at=T0+HOUR; // build intent uses T0 fixture; world clock is already HOUR
