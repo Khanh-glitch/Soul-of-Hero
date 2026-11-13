@@ -1,0 +1,45 @@
+name: PA1 Veyra Real Oil Source and Transport Gate
+on:
+  push:
+    branches: [feature/pa1-veyra-oil-vehicle-proof-20261113]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  natural-veyra-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Pinned npm clean install
+        working-directory: web
+        run: npm ci
+      - name: TypeScript (runtime and tests)
+        working-directory: web
+        run: |
+          npm run typecheck
+          npm run typecheck:tests
+      - name: Physical Veyra wreck to recycler to factory to floor -1, paid PA1 devices
+        working-directory: web
+        env:
+          SOH_PA1_OIL_EVIDENCE_DIR: evidence/pa1-veyra-oil
+        run: npx --no-install vitest run --fileParallelism=false --testTimeout=1800000 tests/wp3-veyra-recycler-integration.test.ts
+      - name: Oil/wreck finite-source, refinery, UID, vendor, motorbike regressions
+        working-directory: web
+        run: npx --no-install vitest run --fileParallelism=false --testTimeout=180000 tests/v17-oil-chain.test.ts tests/b05-oil-pump.test.ts tests/s10-oil-refinery.test.ts tests/motorbike.test.ts tests/b04-vehicle-unload.test.ts
+      - name: Upload physical route receipts and save evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pa1-veyra-wreck-oil-source-proof-${{ github.sha }}
+          path: |
+            web/evidence/pa1-veyra-oil/**
+          if-no-files-found: warn
+          retention-days: 30

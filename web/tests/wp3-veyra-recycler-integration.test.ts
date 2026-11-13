@@ -10,7 +10,7 @@ import {
   type GameState,
   type RunState,
 } from '../src/game/core';
-import { ITEMS } from '../src/game/catalog';
+import { ITEMS, RECIPES, STRUCTS } from '../src/game/catalog';
 import {
   blockGrid,
   C,
@@ -234,13 +234,54 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     r.creatures = []; // isolate integration from random ambient combat interruptions
 
     const nowRef = { t: NOW + 1000 };
+    const originalStartTile=Math.floor(r.player.y/TILE)*WW+Math.floor(r.player.x/TILE);
+
+    // The SAME run first retrieves an authored Fuel Can underground at Greywater,
+    // then leaves Floor -1 and takes its exact original UID all the way to Slag.
+    // Zero fuel/item injection, no off-map travel or unlocked-door bypass.
+    const greyWw=getWindowWorld(r.layoutId!);
+    const [goX,goY]=windowOrigin(r);
+    const greyCacheG=[1646,1174] as const;
+    const greyStair=greyWw.floors.ground.stairs.filter(st=>st.to===-1 &&
+      Math.hypot(st.x-greyCacheG[0],st.y-greyCacheG[1])<95)
+      .sort((a,b)=>Math.hypot(a.x-greyCacheG[0],a.y-greyCacheG[1])-
+      Math.hypot(b.x-greyCacheG[0],b.y-greyCacheG[1]))[0];
+    expect(greyStair).toBeTruthy();
+    expect(walkPathTo(gs,new Set([(greyStair.y-goY)*WW+(greyStair.x-goX)]),nowRef),
+      'Greywater Fuel Can: ground stair unreachable').not.toBeNull();
+    expect(applyFloor(gs,greyWw,greyWw.floors,-1,
+      [greyStair.tx-goX,greyStair.ty-goY],markDirty)).toBe(true);
+    const greyCache=Object.values(r.entities).find(e=>e.kind==='loot'&&
+      e.tx===greyCacheG[0]-goX&&e.ty===greyCacheG[1]-goY);
+    expect(greyCache).toBeTruthy();
+    expect(walkPathTo(gs,adjacentWalkableGoals(r,greyCache!.tx!,greyCache!.ty!),nowRef),
+      'Greywater Fuel Can: basement loot unreachable').not.toBeNull();
+    const greyFuelSlot=C(r,greyCache!.c!).slots.findIndex(st=>st?.key==='fuel_can');
+    expect(greyFuelSlot).toBeGreaterThanOrEqual(0);
+    const greyFuelUid=C(r,greyCache!.c!).slots[greyFuelSlot]!.uid;
+    expect(dispatch(gs,{id:'wp3-greywater-take-fuel-'+nowRef.t,
+      type:'move',from:greyCache!.c!,fs:greyFuelSlot,to:'inv'},nowRef.t).ok).toBe(true);
+    expect(C(r,'inv').slots.some(st=>st?.uid===greyFuelUid)).toBe(true);
+    const greyUp=greyWw.floors.layers.get(-1)!.stairs.find(st=>st.to===0||st.from===0)!;
+    expect(greyUp).toBeTruthy();
+    const greyDest=greyUp.to===0
+      ? [greyUp.tx-goX,greyUp.ty-goY]
+      : [greyUp.x-goX,greyUp.y-goY];
+    expect(applyFloor(gs,greyWw,greyWw.floors,0,greyDest as [number,number],markDirty)).toBe(true);
+    expect(activeFloor(r)).toBe(0);
+    expect(C(r,'inv').slots.some(st=>st?.uid===greyFuelUid)).toBe(true);
+    // Return on real walkable ground: cave's exit is not the natural spawn's timber zone.
+    expect(walkPathTo(gs,new Set([originalStartTile]),nowRef),
+      'Cannot walk from Greywater underground return to natural starting timber').not.toBeNull();
+    r.creatures=[];
 
     // 2. Harvest natural wood, stone, and accessible wrecks in Greywater before hiking to Slag Flats (charred trees in Slag yield charcoal, not wood)
     const WOOD_SOURCES = ['oak', 'pine', 'snowpine', 'palm', 'willow'] as const;
     for (const src of findReachableSources(r, WOOD_SOURCES, nowRef.t)) {
-      if (countItem(r, 'inv', 'wood') >= 46) break;
+      if (countItem(r, 'inv', 'wood') >= 74) break;
       harvestSourceNaturally(gs, src.tx, src.ty, 'knife', nowRef, ['wood']);
     }
+    expect(countItem(r,'inv','wood'), 'Actual timber budget before entering Slag').toBeGreaterThanOrEqual(60);
     for (const src of findReachableSources(r, ['rock'], nowRef.t)) {
       if (countItem(r, 'inv', 'stone') >= 20) break;
       harvestSourceNaturally(gs, src.tx, src.ty, 'knife', nowRef, ['stone']);
@@ -249,7 +290,7 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     const harvestNearby = (wantDrives: number, wantScrap: number) => {
       for (const w of findReachableSources(r, ['wreck'], nowRef.t)) {
         if (countItem(r, 'inv', 'damaged_drive') >= wantDrives && countItem(r, 'inv', 'scrap') >= wantScrap) break;
-        harvestSourceNaturally(gs, w.tx, w.ty, 'knife', nowRef, ['damaged_drive', 'scrap', 'spares']);
+        harvestSourceNaturally(gs, w.tx, w.ty, 'knife', nowRef, ['damaged_drive', 'scrap', 'spares', 'salvaged_oil']);
       }
     };
 
@@ -301,6 +342,16 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
 
     const driveCount = countItem(r, 'inv', 'damaged_drive');
     expect(driveCount).toBeGreaterThanOrEqual(3);
+    // Same physically harvested wrecks must produce finite oil whose authentic
+    // original stack UIDs are attached to a wreck cell's durable receipt.
+    const oilCount=countItem(r,'inv','salvaged_oil');
+    expect(oilCount, 'Natural Veyra wrecks must fund at least one PA1 refinery oil batch').toBeGreaterThanOrEqual(4);
+    for(const os of C(r,'inv').slots.filter(v=>v?.key==='salvaged_oil')) {
+      expect(r.receipts.some(rc=>rc.kind==='harvest.oil' && rc.detail.includes(os!.uid) &&
+        /^wreck@[0-9]+,[0-9]+:[^:]+:s[0-9a-z]+$/i.test(rc.detail) &&
+        Number(rc.detail.match(/^wreck@([0-9]+)/)?.[1])>WW),
+        'oil source UID with real GLOBAL Veyra cell identity').toBe(true);
+    }
 
     // Every natural damaged_drive must have a harvest.component receipt referencing its exact stack UID
     const driveStacks = C(r, 'inv').slots.filter((s): s is NonNullable<typeof s> => s?.key === 'damaged_drive');
@@ -397,6 +448,16 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
         ) {
           const adj = adjacentWalkableGoals(r, tx, ty);
           if (adj.size && walkPathTo(gs, adj, nowRef)) {
+            // PA1: devices are physical inventory items made from the same
+            // real collected materials. A build request alone cannot mint one.
+            const pack=STRUCTS[structKey]?.item;
+            if(pack && countItem(r,'inv',pack)<1) {
+              const rec=Object.entries(RECIPES).find(([_,v])=>v.out===pack&&v.station===null)?.[0];
+              expect(rec,`PA1 hand recipe for ${structKey}`).toBeTruthy();
+              const cr=dispatch(gs,{id:`pack-${structKey}-${nowRef.t}`,type:'craft',recipe:rec!},nowRef.t);
+              if(!cr.ok)throw new Error(`PA1 ${structKey} pack craft failed: ${(cr as any).reason}`);
+              nowRef.t+=100;
+            }
             const b = dispatch(gs, { id: `b-${structKey}-${tx}-${ty}-${nowRef.t}`, type: 'build', struct: structKey, tx, ty }, nowRef.t);
             if (b.ok) {
               nowRef.t += 200;
@@ -564,6 +625,10 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     // Built generator, crafted vehicle_frame & spares balance on Floor 0 remain intact across Floor -1 cold reload
     expect(reloaded.run!.entities[gen.id]?.type).toBe('base_generator');
     expect(countItem(reloaded.run!, 'inv', 'vehicle_frame')).toBe(1);
+    expect(countItem(reloaded.run!, 'inv', 'salvaged_oil')).toBe(oilCount);
+    expect(C(reloaded.run!,'inv').slots.some(st=>st?.uid===greyFuelUid),
+      'Greywater fuel UID lost on multi-window trip and reload').toBe(true);
+    expect(reloaded.run!.receipts.some(rc=>rc.kind==='harvest.oil')).toBe(true);
     expect(countItem(reloaded.run!, 'inv', 'spares')).toBe(sparesBeforeSpend - 6);
 
     // Ascend back to Floor 0 using the Floor -1 return stair
@@ -578,6 +643,99 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     expect(activeFloor(reloaded.run!)).toBe(0);
     expect(reloaded.run!.entities[gen.id]?.type).toBe('base_generator');
 
+    // Durable provenance evidence, not a screenshot or a simulated yield.
+    // This does not claim the full 14-day player route (mobs isolated, tile BFS).
+    if(process.env.SOH_PA1_OIL_EVIDENCE_DIR){
+      const dst=resolve(process.cwd(),process.env.SOH_PA1_OIL_EVIDENCE_DIR);
+      mkdirSync(dst,{recursive:true});
+      const proof={
+        schema:'pa1.veyra.authentic-wreck-oil.v1',
+        engine:'physical-source-intents + finite wreck stock + pickup + Veyra-window route + recycler + PA1 device craft/placement + save/Floor-1/reload',
+        branchSha:process.env.GITHUB_SHA??'local',
+        seed:901,runId:r.id,
+        rQaUsed:r.qaUsed,fixtureCreaturesDisabled:true,
+        fixtureMaterialInjection:false,
+        playerMovement:'BFS collision-constrained stepping (NOT realtime keyboard input)',
+        greywaterOriginalFuelUid:greyFuelUid,
+        greywaterFuelUidAfterVeyraTrip:C(reloaded.run!,'inv').slots.find(v=>v?.uid===greyFuelUid)?.uid??null,
+        fuelCacheFloor:-1,
+        wreckOilCollected:oilCount,
+        wreckOilAfterColdReload:countItem(reloaded.run!,'inv','salvaged_oil'),
+        oilReceiptExamples:r.receipts.filter(x=>x.kind==='harvest.oil').slice(0,12),
+        recoveredDamagedDrives:driveCount,
+        legalSourceReceipts:driveStacks.map(x=>x.uid),
+        recyclerPoi:VEYRA_RECYCLER_SITE.poi,
+        frameCraftedUid:C(reloaded.run!,'inv').slots.find(x=>x?.key==='vehicle_frame')?.uid??null,
+        floorMinus1Reached:true,floorZeroReturn:true,
+        finishedFullMotorbikeRoute:false,
+        oilRefineryWithoutFixture:false,
+        separateProcessRestart:false,
+        limitations:['Creature ambush disabled','No actual full time-to-travel or survival budget','No complete bike assembly/refuel/drive yet','No full oil refinery source→fuel path yet']
+      };
+      writeFileSync(resolve(dst,'PA1_VEYRA_WRECK_OIL_CUSTODY_PROOF.json'),JSON.stringify(proof,null,2)+'\n');
+    }
     resetWindowToGround(loadedWw);
+  });
+
+  it('walks the ACTUAL Greywater underground loot route and takes a physical Fuel Can from the authored cache',()=>{
+    setActiveLayout('veyra05-world');
+    const gs=newGame();
+    expect(startRun(gs,'female',NOW,1,901).ok).toBe(true);
+    const r=gs.run!;
+    r.creatures=[]; // isolated world-economy acceptance, not survival PvE acceptance
+    expect(r.qaUsed).toBe(false);
+    const nowRef={t:NOW+1000};
+    const ww=getWindowWorld(r.layoutId!);
+    const [ox,oy]=windowOrigin(r);
+    // The source is AUTHORED in po_greywater, not injected into the game.
+    const globalCache=[1646,1174] as const;
+    const candidate=ww.floors.ground.stairs.filter(st=>st.to===-1 &&
+      Math.hypot(st.x-globalCache[0],st.y-globalCache[1])<95)
+      .sort((a,b)=>Math.hypot(a.x-globalCache[0],a.y-globalCache[1])-
+        Math.hypot(b.x-globalCache[0],b.y-globalCache[1]))[0];
+    expect(candidate, 'no authored Greywater stair to underground fuel cache').toBeTruthy();
+    const stairLx=candidate.x-ox, stairLy=candidate.y-oy;
+    expect(walkPathTo(gs,new Set([stairLy*WW+stairLx]),nowRef),
+      'cannot physically reach Greywater staircase').not.toBeNull();
+    expect(stairAt(ww.floors,r,stairLx,stairLy)).not.toBeNull();
+    expect(applyFloor(gs,ww,ww.floors,-1,
+      [candidate.tx-ox,candidate.ty-oy],markDirty),'Greywater Floor -1 failed').toBe(true);
+    expect(activeFloor(r)).toBe(-1);
+    const src=Object.values(r.entities).find(e=>e.kind==='loot'&&
+      e.tx===globalCache[0]-ox&&e.ty===globalCache[1]-oy);
+    expect(src,'the authored po_greywater underground loot source is missing').toBeTruthy();
+    expect(C(r,src!.c!).slots.some(st=>st?.key==='fuel_can'&&st.qty>=1),
+      'authored cache has no fuel can').toBe(true);
+    expect(walkPathTo(gs,adjacentWalkableGoals(r,src!.tx!,src!.ty!),nowRef),
+      'the fuel cache is physically inaccessible').not.toBeNull();
+    const fuelSlot=C(r,src!.c!).slots.findIndex(st=>st?.key==='fuel_can');
+    const uid=C(r,src!.c!).slots[fuelSlot]!.uid;
+    const mv=dispatch(gs,{id:'pa1-greywater-fuel-source-'+nowRef.t,
+      type:'move',from:src!.c!,fs:fuelSlot,to:'inv'},nowRef.t);
+    expect(mv.ok,'source transfer: '+(mv as any).reason).toBe(true);
+    expect(countItem(r,'inv','fuel_can')).toBe(1);
+    expect(C(r,'inv').slots.some(st=>st?.uid===uid)).toBe(true);
+    const snap=serializeSnapshot(gs);
+    const reload=selectSnapshots([snap,null]).gs!;
+    expect(validate(JSON.parse(JSON.parse(snap).payload))).toBeTruthy();
+    expect(reload.run!.qaUsed).toBe(false);
+    expect(activeFloor(reload.run!)).toBe(-1);
+    expect(countItem(reload.run!,'inv','fuel_can')).toBe(1);
+    expect(C(reload.run!,'inv').slots.some(st=>st?.uid===uid)).toBe(true);
+    if(process.env.SOH_PA1_OIL_EVIDENCE_DIR) {
+      const dir=resolve(process.cwd(),process.env.SOH_PA1_OIL_EVIDENCE_DIR);
+      mkdirSync(dir,{recursive:true});
+      writeFileSync(resolve(dir,'PA1_GREYWATER_PHYSICAL_FUEL_CACHE.json'),
+        JSON.stringify({schema:'pa1.greywater.physical-fuel.v1',sha:process.env.GITHUB_SHA??'local',
+          sourcePoi:'po_greywater',floor:-1,globalCache,fuelUid:uid,
+          obtained:1,sourceContainerId:src!.id,qaUsed:false,
+          fixtureNoAmbientCreatures:true,
+          stairActual:true,pathActualBfs:true,
+          separateProcessRestart:false,motorbikeRefueled:false,
+          limitations:['Physical BFS tile-step replay, not real player input',
+            'May change under future Map authored geometry or loot',
+            'One cache success is not a complete motorbike build/drive']},null,2)+'\n');
+    }
+    resetWindowToGround(ww);
   });
 });

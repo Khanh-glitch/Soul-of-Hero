@@ -1555,7 +1555,14 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
     if (quality && rngNext(r) < quality.chance) { spawnDrop(r, quality.item, 1, cx + ox, cy + oy, now); richGot++; }
     // SOH_NEW_TUNED v1: only modern source layouts yield this additional,
     // finite wreck salvage; never modify legacy tables or invent new Map cells.
-    if (s.key==='wreck' && r.sourceLayoutVersion===3 && rngNext(r)<SALVAGED_OIL_WRECK_CHANCE) spawnDrop(r,'salvaged_oil',1,cx+ox,cy+oy,now);
+    if (s.key==='wreck' && r.sourceLayoutVersion===3 && rngNext(r)<SALVAGED_OIL_WRECK_CHANCE) {
+      const oil=spawnDrop(r,'salvaged_oil',1,cx+ox,cy+oy,now);
+      // PA1: tie each finite oil grant to the exact wreck/stack UID before pickup.
+      // Same RNG draw/output; never creates an oil deposit or restocks a source.
+      const [worldOx,worldOy]=isVeyra05Layout(r.layoutId||'') ? windowOrigin(r) : [0,0];
+      receipt(r,now,'harvest.oil',
+        `wreck@${tx+worldOx},${ty+worldOy}:${r.sourceMap?.id??'world'}:${C(r,oil.c!).slots[0]!.uid}`);
+    }
   }
   r.player.skills.gather += units;
   const depleted = st.stock <= 0;
