@@ -1,0 +1,6941 @@
+{
+  "meta": {
+    "schema": "soh-runtime-item-formula-atlas-v1",
+    "sourceSHA": "unspecified",
+    "exportedAt": "2026-11-13T13:15:54.622Z",
+    "project": "Soul of Heroes — WEB Veyra runtime",
+    "authority": [
+      "web/src/game/catalog.ts",
+      "web/src/game/core.ts BAL",
+      "web/src/game/recycler.ts"
+    ],
+    "limits": [
+      "Recipe records are present in runtime catalog, not a guarantee of unlock or source reachability",
+      "Source yields/bonuses are per physical node or probabilistic rolls, NOT unlimited player inventory",
+      "Creature drops are conditional on finding/killing creature; probability is per drop record",
+      "Recycler versioned durability return depends on condition, station and material availability",
+      "Fuel, repair, placement, study, research and transport are NOT automatically counted as normal consumed craft ingredients",
+      "An island POI being listed in map geometry is not proof of access",
+      "This export is Web gameplay, not a claim of parity with unmerged Godot A0/A3 native branches"
+    ]
+  },
+  "items": {
+    "energy_basic": {
+      "id": "energy_basic",
+      "name": "Basic Energy",
+      "cat": "res",
+      "desc": "Load into a Creator Core for its primary attack.",
+      "w": 0.04,
+      "max": 100
+    },
+    "energy_refined": {
+      "id": "energy_refined",
+      "name": "Refined Energy",
+      "cat": "res",
+      "desc": "Load for techniques or combine with matching essence for Signature.",
+      "w": 0.06,
+      "max": 100
+    },
+    "essence_fire": {
+      "id": "essence_fire",
+      "name": "Fire Essence",
+      "cat": "res",
+      "desc": "Fire Signature loading material.",
+      "w": 0.1,
+      "max": 30
+    },
+    "essence_nature": {
+      "id": "essence_nature",
+      "name": "Nature Essence",
+      "cat": "res",
+      "desc": "Nature Signature loading material.",
+      "w": 0.1,
+      "max": 30
+    },
+    "essence_water": {
+      "id": "essence_water",
+      "name": "Water Essence",
+      "cat": "res",
+      "desc": "Water Signature loading material.",
+      "w": 0.1,
+      "max": 30
+    },
+    "essence_spirit": {
+      "id": "essence_spirit",
+      "name": "Spirit Essence",
+      "cat": "res",
+      "desc": "Spirit Signature loading material.",
+      "w": 0.1,
+      "max": 30
+    },
+    "core_blast": {
+      "id": "core_blast",
+      "name": "Vụ nổ lớn",
+      "cat": "core",
+      "desc": "Common Fire Core. Reload each reserve with Basic, Refined or Refined plus Fire Essence.",
+      "w": 0.3,
+      "max": 1,
+      "creatorCore": "blast",
+      "essence": "fire"
+    },
+    "core_meteor": {
+      "id": "core_meteor",
+      "name": "Thiên thạch",
+      "cat": "core",
+      "desc": "Rare Fire Core. A fireball, targeted meteor and ten-meteor storm.",
+      "w": 0.3,
+      "max": 1,
+      "creatorCore": "meteor",
+      "essence": "fire"
+    },
+    "core_dragon": {
+      "id": "core_dragon",
+      "name": "Hơi thở của rồng",
+      "cat": "core",
+      "desc": "Top-tier Fire Core: flamethrower, fire tornado and dragon dive.",
+      "w": 0.3,
+      "max": 1,
+      "creatorCore": "dragon",
+      "essence": "fire"
+    },
+    "core_elsa": {
+      "id": "core_elsa",
+      "name": "Gươm Elsa",
+      "cat": "core",
+      "desc": "Rare Water Core: ice projectile, one-second self-freeze and viewport freeze.",
+      "w": 0.3,
+      "max": 1,
+      "creatorCore": "elsa",
+      "essence": "water"
+    },
+    "core_earthmother": {
+      "id": "core_earthmother",
+      "name": "Hơi thở đất mẹ",
+      "cat": "core",
+      "desc": "Common Nature Core: rock, grove and binding roots.",
+      "w": 0.3,
+      "max": 1,
+      "creatorCore": "earthmother",
+      "essence": "nature"
+    },
+    "core_mjolnir": {
+      "id": "core_mjolnir",
+      "name": "Mjolnir",
+      "cat": "core",
+      "desc": "Rare Nature Core: thunder punch, five lightning strikes and electrical attraction.",
+      "w": 0.3,
+      "max": 1,
+      "creatorCore": "mjolnir",
+      "essence": "nature"
+    },
+    "core_demon": {
+      "id": "core_demon",
+      "name": "Lõi quỷ",
+      "cat": "core",
+      "desc": "Rare Spirit Core: directed rays, a stationary beam and a map-selected teleport.",
+      "w": 0.3,
+      "max": 1,
+      "creatorCore": "demon",
+      "essence": "spirit"
+    },
+    "crude_petroleum": {
+      "id": "crude_petroleum",
+      "name": "Crude Petroleum",
+      "cat": "res",
+      "desc": "Raw petroleum drawn from an authorized oil source. Refine at an Oil Refinery (4 crude + glass).",
+      "w": 0.8,
+      "max": 30
+    },
+    "salvaged_oil": {
+      "id": "salvaged_oil",
+      "name": "Salvaged Oil",
+      "cat": "res",
+      "desc": "Recovered from car wrecks. Study a sample to learn furnace refining into generator canisters.",
+      "w": 0.7,
+      "max": 30,
+      "specimen": "refine_salvaged_oil"
+    },
+    "lubricant": {
+      "id": "lubricant",
+      "name": "Machine Lubricant",
+      "cat": "res",
+      "desc": "Refined from Salvaged Oil at an Oil Refinery. Service a motorbike within reach to halve wear for a limited distance.",
+      "w": 0.6,
+      "max": 20
+    },
+    "damaged_drive": {
+      "id": "damaged_drive",
+      "name": "Damaged Drive",
+      "cat": "res",
+      "desc": "Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.",
+      "w": 3,
+      "max": 1
+    },
+    "mechanical_parts": {
+      "id": "mechanical_parts",
+      "name": "Mechanical Parts",
+      "cat": "res",
+      "desc": "Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.",
+      "w": 0.5,
+      "max": 30
+    },
+    "fasteners": {
+      "id": "fasteners",
+      "name": "Forged Fasteners",
+      "cat": "res",
+      "desc": "Found on wrecks or made from iron and scrap. Used for field repairs, packs and canteens.",
+      "w": 0.2,
+      "max": 30,
+      "studyRecipe": "fasteners"
+    },
+    "treated_canvas": {
+      "id": "treated_canvas",
+      "name": "Treated Canvas",
+      "cat": "res",
+      "desc": "Cloth treated with salt and Bitterleaf at a fire. Competes with food and medicine.",
+      "w": 0.3,
+      "max": 30,
+      "studyRecipe": "treated_canvas"
+    },
+    "field_repair_kit": {
+      "id": "field_repair_kit",
+      "name": "Field Repair Kit",
+      "cat": "kit",
+      "desc": "Consume one from the pack to restore up to 100 durability to a repairable carried tool, away from a bench.",
+      "w": 0.5,
+      "max": 10,
+      "studyRecipe": "field_repair_kit"
+    },
+    "trail_pack": {
+      "id": "trail_pack",
+      "name": "Trail Pack",
+      "cat": "armor",
+      "desc": "Increases walking carry threshold by 20 kg. Occupies the back slot instead of a warm cloak.",
+      "w": 2,
+      "max": 1,
+      "slot": "back"
+    },
+    "trail_canteen": {
+      "id": "trail_canteen",
+      "name": "Trail Canteen",
+      "cat": "food",
+      "desc": "Holds 8 drinks or garden water. Crafted empty; refill at fresh water or a rain barrel.",
+      "w": 1.1,
+      "max": 1,
+      "food": {
+        "thirst": 30
+      },
+      "waterContainer": true
+    },
+    "fuel_briquette": {
+      "id": "fuel_briquette",
+      "name": "Packed Fuel Briquette",
+      "cat": "res",
+      "desc": "Compact portable fuel: 90 seconds of burn. Packing sacrifices some charcoal energy.",
+      "w": 0.35,
+      "max": 30,
+      "fuel": 90
+    },
+    "wood": {
+      "id": "wood",
+      "name": "Wood",
+      "cat": "res",
+      "desc": "Split timber. Fuel, tools, walls.",
+      "w": 1,
+      "max": 60,
+      "fuel": 20
+    },
+    "plank": {
+      "id": "plank",
+      "name": "Plank",
+      "cat": "res",
+      "desc": "Sawn board. Stronger walls per wood than log walls.",
+      "w": 1,
+      "max": 60
+    },
+    "stone": {
+      "id": "stone",
+      "name": "Stone",
+      "cat": "res",
+      "desc": "Rough stone. Foundations, furnaces, tools.",
+      "w": 1.2,
+      "max": 60
+    },
+    "fiber": {
+      "id": "fiber",
+      "name": "Plant Fiber",
+      "cat": "res",
+      "desc": "Grass and reed fiber. Rope, thatch, bandages.",
+      "w": 0.2,
+      "max": 80,
+      "fuel": 4
+    },
+    "iron_ore": {
+      "id": "iron_ore",
+      "name": "Iron Ore",
+      "cat": "res",
+      "desc": "Smelt in a fueled furnace.",
+      "w": 2,
+      "max": 40
+    },
+    "rich_iron_ore": {
+      "id": "rich_iron_ore",
+      "name": "Rich Iron Ore",
+      "cat": "res",
+      "desc": "High-grade ore from an iron vein. One of these with one coal makes two refined ingots.",
+      "w": 2,
+      "max": 40
+    },
+    "coal": {
+      "id": "coal",
+      "name": "Coal",
+      "cat": "res",
+      "desc": "Dense fuel. Burns long.",
+      "w": 1,
+      "max": 40,
+      "fuel": 80
+    },
+    "charcoal": {
+      "id": "charcoal",
+      "name": "Charcoal",
+      "cat": "res",
+      "desc": "Fuel made from burnt wood.",
+      "w": 0.5,
+      "max": 60,
+      "fuel": 55
+    },
+    "crystal": {
+      "id": "crystal",
+      "name": "Frost Crystal",
+      "cat": "res",
+      "desc": "Cold-grown crystal from the north. Core synthesis.",
+      "w": 0.5,
+      "max": 30
+    },
+    "raw_salt": {
+      "id": "raw_salt",
+      "name": "Raw Salt",
+      "cat": "res",
+      "desc": "Mineral crust chipped from coastal salt shale. Seasons a hearty roast.",
+      "w": 0.25,
+      "max": 40
+    },
+    "root_broth": {
+      "id": "root_broth",
+      "name": "Root Broth",
+      "cat": "food",
+      "desc": "Cooked garden sunroot and Bitterleaf: restorative food with moisture.",
+      "w": 0.5,
+      "max": 10,
+      "food": {
+        "hunger": 32,
+        "thirst": 16,
+        "hp": 12,
+        "warmth": 10
+      }
+    },
+    "herb_roast": {
+      "id": "herb_roast",
+      "name": "Herb Roast",
+      "cat": "food",
+      "desc": "A restorative cooked meal; Bitterleaf could instead become medicine.",
+      "w": 0.4,
+      "max": 20,
+      "food": {
+        "hunger": 30,
+        "hp": 15,
+        "warmth": 8
+      }
+    },
+    "salted_meat": {
+      "id": "salted_meat",
+      "name": "Salted Roast",
+      "cat": "food",
+      "desc": "Roast meat seasoned with gathered salt; a hearty field meal.",
+      "w": 0.45,
+      "max": 20,
+      "food": {
+        "hunger": 42,
+        "hp": 8,
+        "warmth": 8
+      }
+    },
+    "sulfur": {
+      "id": "sulfur",
+      "name": "Sulfur",
+      "cat": "res",
+      "desc": "Volcanic sulfur. Volatile.",
+      "w": 0.5,
+      "max": 40
+    },
+    "scrap": {
+      "id": "scrap",
+      "name": "Scrap Metal",
+      "cat": "res",
+      "desc": "Salvage from wrecks. Melts into iron.",
+      "w": 1,
+      "max": 60
+    },
+    "spares": {
+      "id": "spares",
+      "name": "Spares",
+      "cat": "res",
+      "desc": "Run-local components. Research currency and advanced parts.",
+      "w": 0.3,
+      "max": 60
+    },
+    "iron_ingot": {
+      "id": "iron_ingot",
+      "name": "Iron Ingot",
+      "cat": "res",
+      "desc": "Smelted iron.",
+      "w": 1,
+      "max": 40
+    },
+    "rope": {
+      "id": "rope",
+      "name": "Rope",
+      "cat": "res",
+      "desc": "Twisted fiber.",
+      "w": 0.3,
+      "max": 30
+    },
+    "hide": {
+      "id": "hide",
+      "name": "Raw Hide",
+      "cat": "res",
+      "desc": "Cure at a workbench into leather.",
+      "w": 0.8,
+      "max": 30
+    },
+    "leather": {
+      "id": "leather",
+      "name": "Leather",
+      "cat": "res",
+      "desc": "Cured leather.",
+      "w": 0.6,
+      "max": 30
+    },
+    "fur": {
+      "id": "fur",
+      "name": "Wolf Fur",
+      "cat": "res",
+      "desc": "Warm pelt.",
+      "w": 0.6,
+      "max": 30
+    },
+    "chitin": {
+      "id": "chitin",
+      "name": "Ash Chitin",
+      "cat": "res",
+      "desc": "Heat-hardened shell plate.",
+      "w": 0.8,
+      "max": 30
+    },
+    "shell": {
+      "id": "shell",
+      "name": "Crab Shell",
+      "cat": "res",
+      "desc": "Shore crab shell. Furnace flux for glass; competes with other uses of fuel and stone.",
+      "w": 0.5,
+      "max": 30
+    },
+    "gland": {
+      "id": "gland",
+      "name": "Mire Gland",
+      "cat": "res",
+      "desc": "Toad gland. Purges toxins.",
+      "w": 0.2,
+      "max": 20
+    },
+    "brick": {
+      "id": "brick",
+      "name": "Brick",
+      "cat": "res",
+      "desc": "Fired stone brick.",
+      "w": 1,
+      "max": 40
+    },
+    "cloth": {
+      "id": "cloth",
+      "name": "Cloth",
+      "cat": "res",
+      "desc": "Woven fiber cloth.",
+      "w": 0.3,
+      "max": 30
+    },
+    "glass": {
+      "id": "glass",
+      "name": "Glass",
+      "cat": "res",
+      "desc": "Fused glass: furnace crystal, or stone with shell flux.",
+      "w": 0.4,
+      "max": 30
+    },
+    "seed": {
+      "id": "seed",
+      "name": "Wild Seeds",
+      "cat": "res",
+      "desc": "Plant in a garden plot.",
+      "w": 0.05,
+      "max": 40
+    },
+    "berries": {
+      "id": "berries",
+      "name": "Berries",
+      "cat": "food",
+      "desc": "Sweet and watery.",
+      "w": 0.1,
+      "max": 30,
+      "food": {
+        "hunger": 8,
+        "thirst": 4
+      }
+    },
+    "meat": {
+      "id": "meat",
+      "name": "Raw Meat",
+      "cat": "food",
+      "desc": "Risky raw. Cook at a campfire.",
+      "w": 0.5,
+      "max": 20,
+      "food": {
+        "hunger": 12,
+        "hp": -6
+      }
+    },
+    "cooked_meat": {
+      "id": "cooked_meat",
+      "name": "Roast Meat",
+      "cat": "food",
+      "desc": "Hearty and warm.",
+      "w": 0.4,
+      "max": 20,
+      "food": {
+        "hunger": 34,
+        "hp": 6,
+        "warmth": 8
+      }
+    },
+    "mushroom": {
+      "id": "mushroom",
+      "name": "Marsh Cap",
+      "cat": "food",
+      "desc": "Edible. Slightly toxic raw.",
+      "w": 0.1,
+      "max": 20,
+      "food": {
+        "hunger": 6,
+        "rad": 4
+      }
+    },
+    "herb": {
+      "id": "herb",
+      "name": "Bitterleaf",
+      "cat": "food",
+      "desc": "Medicinal herb.",
+      "w": 0.1,
+      "max": 30,
+      "food": {
+        "hp": 6,
+        "rad": -6
+      }
+    },
+    "crop": {
+      "id": "crop",
+      "name": "Sunroot",
+      "cat": "food",
+      "desc": "Garden-grown tuber.",
+      "w": 0.3,
+      "max": 30,
+      "food": {
+        "hunger": 22,
+        "thirst": 6
+      }
+    },
+    "stew": {
+      "id": "stew",
+      "name": "Root Stew",
+      "cat": "food",
+      "desc": "Hot stew. Warms and feeds.",
+      "w": 0.5,
+      "max": 10,
+      "food": {
+        "hunger": 45,
+        "thirst": 20,
+        "hp": 10,
+        "warmth": 25
+      }
+    },
+    "water_flask": {
+      "id": "water_flask",
+      "name": "Water Flask",
+      "cat": "food",
+      "desc": "Holds 4 drinks. Refill at fresh water or a rain barrel.",
+      "w": 0.6,
+      "max": 1,
+      "food": {
+        "thirst": 30
+      },
+      "waterContainer": true
+    },
+    "bandage": {
+      "id": "bandage",
+      "name": "Bandage",
+      "cat": "food",
+      "desc": "Stops bleeding.",
+      "w": 0.1,
+      "max": 20,
+      "food": {
+        "hp": 18
+      }
+    },
+    "medkit": {
+      "id": "medkit",
+      "name": "Field Medkit",
+      "cat": "food",
+      "desc": "Herbal dressing.",
+      "w": 0.4,
+      "max": 10,
+      "food": {
+        "hp": 45
+      }
+    },
+    "antirad": {
+      "id": "antirad",
+      "name": "Purge Tonic",
+      "cat": "food",
+      "desc": "Flushes radiation.",
+      "w": 0.3,
+      "max": 10,
+      "food": {
+        "rad": -45,
+        "thirst": 5
+      }
+    },
+    "knife": {
+      "id": "knife",
+      "name": "Survival Knife",
+      "cat": "tool",
+      "desc": "Humble but honest. Cuts fiber and flesh; very slow on wood and stone.",
+      "w": 0.5,
+      "max": 1,
+      "power": {
+        "wood": 1,
+        "stone": 1,
+        "plant": 3,
+        "scrap": 1
+      },
+      "dmg": 9,
+      "dur": 300,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "scrap",
+            1
+          ],
+          [
+            "fiber",
+            1
+          ]
+        ]
+      }
+    },
+    "stone_axe": {
+      "id": "stone_axe",
+      "name": "Stone Axe",
+      "cat": "tool",
+      "desc": "Fells trees. Clumsy weapon.",
+      "w": 1.4,
+      "max": 1,
+      "power": {
+        "wood": 3,
+        "plant": 1,
+        "scrap": 1
+      },
+      "dmg": 11,
+      "dur": 180,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "stone",
+            1
+          ],
+          [
+            "wood",
+            1
+          ]
+        ]
+      }
+    },
+    "stone_pick": {
+      "id": "stone_pick",
+      "name": "Stone Pickaxe",
+      "cat": "tool",
+      "desc": "Breaks stone and ore. Pries scrap.",
+      "w": 1.5,
+      "max": 1,
+      "power": {
+        "stone": 3,
+        "ore": 2,
+        "scrap": 2
+      },
+      "dmg": 10,
+      "dur": 180,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "stone",
+            1
+          ],
+          [
+            "wood",
+            1
+          ]
+        ]
+      }
+    },
+    "iron_axe": {
+      "id": "iron_axe",
+      "name": "Iron Axe",
+      "cat": "tool",
+      "desc": "Bites deep into timber.",
+      "w": 1.6,
+      "max": 1,
+      "power": {
+        "wood": 6,
+        "plant": 2,
+        "scrap": 2
+      },
+      "dmg": 17,
+      "dur": 400,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      }
+    },
+    "iron_pick": {
+      "id": "iron_pick",
+      "name": "Iron Pickaxe",
+      "cat": "tool",
+      "desc": "Shatters rock and veins.",
+      "w": 1.7,
+      "max": 1,
+      "power": {
+        "stone": 6,
+        "ore": 5,
+        "scrap": 4
+      },
+      "dmg": 15,
+      "dur": 400,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      }
+    },
+    "industrial_pick": {
+      "id": "industrial_pick",
+      "name": "Salvager Pick",
+      "cat": "tool",
+      "desc": "An improved pick: faster work on rock, ore and wrecks. Requires an improved bench.",
+      "w": 1.9,
+      "max": 1,
+      "power": {
+        "stone": 9,
+        "ore": 8,
+        "scrap": 7
+      },
+      "dmg": 17,
+      "dur": 500,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "spares",
+            1
+          ]
+        ]
+      }
+    },
+    "industrial_axe": {
+      "id": "industrial_axe",
+      "name": "Salvager Axe",
+      "cat": "tool",
+      "desc": "An improved axe: more work per strike on timber. Requires an improved bench.",
+      "w": 1.8,
+      "max": 1,
+      "power": {
+        "wood": 9,
+        "plant": 3,
+        "scrap": 3
+      },
+      "dmg": 19,
+      "dur": 500,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "spares",
+            1
+          ]
+        ]
+      }
+    },
+    "wood_spear": {
+      "id": "wood_spear",
+      "name": "Fire-hardened Spear",
+      "cat": "weapon",
+      "desc": "Long reach, narrow thrust.",
+      "w": 1,
+      "max": 1,
+      "power": {
+        "plant": 1
+      },
+      "dmg": 15,
+      "dur": 150
+    },
+    "iron_sword": {
+      "id": "iron_sword",
+      "name": "Iron Sword",
+      "cat": "weapon",
+      "desc": "Fast, wide cuts.",
+      "w": 1.4,
+      "max": 1,
+      "power": {
+        "plant": 2
+      },
+      "dmg": 24,
+      "dur": 350,
+      "studyRecipe": "iron_sword",
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "salvage": {
+        "station": "workbench",
+        "yields": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      }
+    },
+    "bow": {
+      "id": "bow",
+      "name": "Hunting Bow",
+      "cat": "weapon",
+      "desc": "Fires arrows toward the cursor.",
+      "w": 0.8,
+      "max": 1,
+      "dmg": 16,
+      "dur": 200,
+      "studyRecipe": "bow",
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            1
+          ],
+          [
+            "fiber",
+            2
+          ]
+        ]
+      }
+    },
+    "reinforced_spear": {
+      "id": "reinforced_spear",
+      "name": "Reinforced Spear",
+      "cat": "weapon",
+      "desc": "A durable long-reach spear made at an improved workbench.",
+      "w": 1.8,
+      "max": 1,
+      "power": {
+        "plant": 2
+      },
+      "dmg": 23,
+      "dur": 320,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      }
+    },
+    "arrow": {
+      "id": "arrow",
+      "name": "Arrow",
+      "cat": "res",
+      "desc": "Ammunition for bows.",
+      "w": 0.05,
+      "max": 60
+    },
+    "torch": {
+      "id": "torch",
+      "name": "Torch",
+      "cat": "tool",
+      "desc": "Light in the dark. Weak weapon; can ignite.",
+      "w": 0.4,
+      "max": 10,
+      "dmg": 6,
+      "dur": 120
+    },
+    "leather_armor": {
+      "id": "leather_armor",
+      "name": "Leather Jerkin",
+      "cat": "armor",
+      "desc": "-20% damage.",
+      "w": 2,
+      "max": 1,
+      "slot": "body"
+    },
+    "chitin_armor": {
+      "id": "chitin_armor",
+      "name": "Chitin Plate",
+      "cat": "armor",
+      "desc": "-35% damage. Resists heat.",
+      "w": 3,
+      "max": 1,
+      "slot": "body"
+    },
+    "fur_cloak": {
+      "id": "fur_cloak",
+      "name": "Fur Cloak",
+      "cat": "armor",
+      "desc": "Keeps the cold out.",
+      "w": 1.2,
+      "max": 1,
+      "slot": "back"
+    },
+    "gas_mask": {
+      "id": "gas_mask",
+      "name": "Filter Mask",
+      "cat": "armor",
+      "desc": "Blocks most radiation and toxic gas.",
+      "w": 0.8,
+      "max": 1,
+      "slot": "head"
+    },
+    "scrap_helm": {
+      "id": "scrap_helm",
+      "name": "Scrap Helm",
+      "cat": "armor",
+      "desc": "-10% damage.",
+      "w": 1,
+      "max": 1,
+      "slot": "head"
+    },
+    "core_fire": {
+      "id": "core_fire",
+      "name": "Ember Core",
+      "cat": "core",
+      "desc": "Hurls a fireball that ignites trees and grass. Charge spent on release.",
+      "w": 0.3,
+      "max": 1
+    },
+    "core_earth": {
+      "id": "core_earth",
+      "name": "Quake Core",
+      "cat": "core",
+      "desc": "Raises a spike line that shatters rocks into yield.",
+      "w": 0.3,
+      "max": 1
+    },
+    "core_storm": {
+      "id": "core_storm",
+      "name": "Storm Core",
+      "cat": "core",
+      "desc": "Chain lightning. Stronger in rain.",
+      "w": 0.3,
+      "max": 1
+    },
+    "core_frost": {
+      "id": "core_frost",
+      "name": "Rime Core",
+      "cat": "core",
+      "desc": "Frost nova; freezes shallow water into walkable ice for a while.",
+      "w": 0.3,
+      "max": 1
+    },
+    "blueprint": {
+      "id": "blueprint",
+      "name": "Blueprint",
+      "cat": "bp",
+      "desc": "Use to learn the recipe it describes. Consumed once.",
+      "w": 0.05,
+      "max": 1
+    },
+    "wolf_fang": {
+      "id": "wolf_fang",
+      "name": "Wolf Fang (specimen)",
+      "cat": "res",
+      "desc": "Study at a research table.",
+      "w": 0.1,
+      "max": 10,
+      "specimen": "fur_cloak"
+    },
+    "crawler_optic": {
+      "id": "crawler_optic",
+      "name": "Crawler Optic (specimen)",
+      "cat": "res",
+      "desc": "Study at a research table.",
+      "w": 0.1,
+      "max": 10,
+      "specimen": "gas_mask"
+    },
+    "boar_tusk": {
+      "id": "boar_tusk",
+      "name": "Boar Tusk (specimen)",
+      "cat": "res",
+      "desc": "Study at a research table.",
+      "w": 0.1,
+      "max": 10,
+      "specimen": "iron_sword"
+    },
+    "beetle_horn": {
+      "id": "beetle_horn",
+      "name": "Beetle Horn (specimen)",
+      "cat": "res",
+      "desc": "Study at a research table.",
+      "w": 0.1,
+      "max": 10,
+      "specimen": "chitin_armor"
+    },
+    "keycard": {
+      "id": "keycard",
+      "name": "Vault Keycard",
+      "cat": "misc",
+      "desc": "A physical Vault Keycard. New cards have limited scans; legacy cards retain one use.",
+      "w": 0.05,
+      "max": 5
+    },
+    "fuel_can": {
+      "id": "fuel_can",
+      "name": "Fuel Canister",
+      "cat": "misc",
+      "desc": "Fuels generators or motorbikes. Refined from real oil at a furnace or Oil Refinery; can be burned instead. PA1 v1.2: the improvised bench formula is retired, so a motorbike always pays for its first can separately.",
+      "w": 1.5,
+      "max": 5,
+      "fuel": 60
+    },
+    "rcash": {
+      "id": "rcash",
+      "name": "Ragnarok Cash",
+      "cat": "cash",
+      "desc": "Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.",
+      "w": 0.01,
+      "max": 999
+    },
+    "escrow_chest": {
+      "id": "escrow_chest",
+      "name": "Rương ký gửi",
+      "cat": "kit",
+      "desc": "Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.",
+      "w": 4,
+      "max": 1,
+      "place": "escrow"
+    },
+    "vehicle_frame": {
+      "id": "vehicle_frame",
+      "name": "Utility Frame",
+      "cat": "res",
+      "desc": "Welded frame for the motorbike.",
+      "w": 4,
+      "max": 5
+    },
+    "vehicle_drive": {
+      "id": "vehicle_drive",
+      "name": "Motor Drive",
+      "cat": "res",
+      "desc": "Gear and plate drive assembly for the utility motorbike.",
+      "w": 3,
+      "max": 5
+    },
+    "refined_iron_ingot": {
+      "id": "refined_iron_ingot",
+      "name": "Refined Iron Ingot",
+      "cat": "res",
+      "desc": "Furnace-refined iron. Needed for pipe and plate.",
+      "w": 1,
+      "max": 40
+    },
+    "metal_pipe": {
+      "id": "metal_pipe",
+      "name": "Metal Pipe",
+      "cat": "res",
+      "desc": "Pipe section for utility frames and iron plate. Recyclable at the Foundry Recycler: one pipe back into 1 Refined Iron Ingot (net loss, cannot loop). SOH_PROVISIONAL.",
+      "w": 1.2,
+      "max": 20
+    },
+    "metal_blade": {
+      "id": "metal_blade",
+      "name": "Metal Blade",
+      "cat": "res",
+      "desc": "Cut blade stock for sword refits.",
+      "w": 0.8,
+      "max": 20
+    },
+    "mechanical_gear": {
+      "id": "mechanical_gear",
+      "name": "Mechanical Gear",
+      "cat": "res",
+      "desc": "Precision gear for motor drives and powered mechanisms.",
+      "w": 0.8,
+      "max": 20
+    },
+    "iron_plate": {
+      "id": "iron_plate",
+      "name": "Iron Plate",
+      "cat": "res",
+      "desc": "Plate patch for a damaged wall or door (Shift+click when repairing): restores up to 25% of its max HP per plate. Not a permanent reinforcement.",
+      "w": 1.5,
+      "max": 20
+    },
+    "motorbike_kit": {
+      "id": "motorbike_kit",
+      "name": "Utility Motorbike (packed)",
+      "cat": "kit",
+      "desc": "PA1 v1.2 dry kit: frame, drive, two iron plates and two fastener sets. No fuel is packaged — place it, then refuel with a real Fuel Canister.",
+      "w": 12,
+      "max": 1,
+      "dur": 200,
+      "place": "motorbike"
+    },
+    "cart_kit": {
+      "id": "cart_kit",
+      "name": "Hand Cart (packed)",
+      "cat": "kit",
+      "desc": "Place to unpack a cargo cart.",
+      "w": 6,
+      "max": 1,
+      "place": "cart"
+    },
+    "stone_frost": {
+      "id": "stone_frost",
+      "name": "Stone of Rime",
+      "cat": "stone",
+      "desc": "Taken from the Glacier Matron.",
+      "w": 1,
+      "max": 1
+    },
+    "stone_magma": {
+      "id": "stone_magma",
+      "name": "Stone of Cinder",
+      "cat": "stone",
+      "desc": "Taken from the Caldera Titan.",
+      "w": 1,
+      "max": 1
+    },
+    "stone_bog": {
+      "id": "stone_bog",
+      "name": "Stone of Mire",
+      "cat": "stone",
+      "desc": "Taken from the Mire Mother.",
+      "w": 1,
+      "max": 1
+    },
+    "stone_grove": {
+      "id": "stone_grove",
+      "name": "Stone of Roots",
+      "cat": "stone",
+      "desc": "Taken from the Elder Treant.",
+      "w": 1,
+      "max": 1
+    },
+    "stone_tide": {
+      "id": "stone_tide",
+      "name": "Stone of Tides",
+      "cat": "stone",
+      "desc": "Taken from the Tide Serpent.",
+      "w": 1,
+      "max": 1
+    },
+    "stone_rust": {
+      "id": "stone_rust",
+      "name": "Stone of Rust",
+      "cat": "stone",
+      "desc": "Taken from the Rust Colossus.",
+      "w": 1,
+      "max": 1
+    },
+    "stone_surtur": {
+      "id": "stone_surtur",
+      "name": "Stone of Surtur",
+      "cat": "stone",
+      "desc": "Primordial cinder-heart claimed from Surtur in the Volcanic Core.",
+      "w": 1,
+      "max": 1
+    },
+    "stone_typhon": {
+      "id": "stone_typhon",
+      "name": "Stone of Typhon",
+      "cat": "stone",
+      "desc": "Primordial storm-eye claimed from Typhon at the Tempest Lair.",
+      "w": 1,
+      "max": 1
+    },
+    "stone_aion": {
+      "id": "stone_aion",
+      "name": "Stone of Aion",
+      "cat": "stone",
+      "desc": "Primordial hourglass-seed claimed from Aion in the Elderwood.",
+      "w": 1,
+      "max": 1
+    },
+    "stone_atlas": {
+      "id": "stone_atlas",
+      "name": "Stone of Atlas",
+      "cat": "stone",
+      "desc": "Primordial keystone claimed from Atlas at the Gate of Pillars.",
+      "w": 1,
+      "max": 1
+    },
+    "stone_argus": {
+      "id": "stone_argus",
+      "name": "Stone of Argus",
+      "cat": "stone",
+      "desc": "Primordial panopticon lens claimed from Argus in the Hall of Eyes.",
+      "w": 1,
+      "max": 1
+    },
+    "stone_anubis": {
+      "id": "stone_anubis",
+      "name": "Stone of Anubis",
+      "cat": "stone",
+      "desc": "Primordial scale-seal claimed from Anubis in the Necropolis.",
+      "w": 1,
+      "max": 1
+    },
+    "lead_rope": {
+      "id": "lead_rope",
+      "name": "Taming Lead",
+      "cat": "tool",
+      "desc": "SOH_PROVISIONAL: Calm and lead a tamable wild animal (Boar, Deer, Hare, or Black Grouse) into an enclosed pen.",
+      "w": 0.35,
+      "max": 5
+    },
+    "animal_feed": {
+      "id": "animal_feed",
+      "name": "Fodder Bundle",
+      "cat": "res",
+      "desc": "SOH_PROVISIONAL: Bundled fiber and seeds for penned livestock in a Feed & Water Trough.",
+      "w": 0.25,
+      "max": 40
+    },
+    "feather": {
+      "id": "feather",
+      "name": "Grouse Feather",
+      "cat": "res",
+      "desc": "SOH_PROVISIONAL: Flight feather shed by Black Grouse; improves arrow fletching.",
+      "w": 0.03,
+      "max": 60
+    },
+    "grouse_egg": {
+      "id": "grouse_egg",
+      "name": "Grouse Egg",
+      "cat": "food",
+      "desc": "SOH_PROVISIONAL: Nutritious speckled egg laid by fed penned Black Grouse.",
+      "w": 0.12,
+      "max": 20,
+      "food": {
+        "hunger": 16,
+        "thirst": 4,
+        "hp": 4
+      }
+    },
+    "relic_shaleheart": {
+      "id": "relic_shaleheart",
+      "name": "Shaleheart Coreplate",
+      "cat": "armor",
+      "desc": "SOH_PROVISIONAL: Run-local crystal-veined quarry carapace taken from Greyback Shaleheart (-38% damage).",
+      "w": 3.2,
+      "max": 1,
+      "slot": "body"
+    },
+    "ronin_nodachi": {
+      "id": "ronin_nodachi",
+      "name": "Oathless Nodachi",
+      "cat": "weapon",
+      "desc": "SOH_PROVISIONAL: Run-local long-bladed nodachi claimed from the Oathless Ronin.",
+      "w": 1.8,
+      "max": 1,
+      "power": {
+        "plant": 2
+      },
+      "dmg": 31,
+      "dur": 420,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "refined_iron_ingot",
+            1
+          ],
+          [
+            "leather",
+            1
+          ]
+        ]
+      }
+    },
+    "tidemarshal_trident": {
+      "id": "tidemarshal_trident",
+      "name": "Saltwick Trident",
+      "cat": "weapon",
+      "desc": "SOH_PROVISIONAL: Run-local brine-tempered polearm of the Saltwick Tidemarshal.",
+      "w": 1.9,
+      "max": 1,
+      "power": {
+        "plant": 2
+      },
+      "dmg": 28,
+      "dur": 400,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            2
+          ],
+          [
+            "raw_salt",
+            2
+          ]
+        ]
+      }
+    },
+    "custodian_lantern": {
+      "id": "custodian_lantern",
+      "name": "Archive Lantern",
+      "cat": "tool",
+      "desc": "SOH_PROVISIONAL: Run-local silver-violet ward lantern of the Pale Custodian. Steady wide light.",
+      "w": 0.6,
+      "max": 1,
+      "dmg": 12,
+      "dur": 480,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "glass",
+            1
+          ],
+          [
+            "spares",
+            1
+          ]
+        ]
+      }
+    },
+    "deploy_claim": {
+      "id": "deploy_claim",
+      "name": "Territory Cabinet",
+      "cat": "place",
+      "desc": "Packed Territory Cabinet. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 16,
+      "max": 1,
+      "dur": 200
+    },
+    "deploy_bed_straw": {
+      "id": "deploy_bed_straw",
+      "name": "Straw Bed",
+      "cat": "place",
+      "desc": "Packed Straw Bed. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 4,
+      "max": 1,
+      "dur": 60
+    },
+    "deploy_chest_small": {
+      "id": "deploy_chest_small",
+      "name": "Wood Chest",
+      "cat": "place",
+      "desc": "Packed Wood Chest. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 8,
+      "max": 1,
+      "dur": 100
+    },
+    "deploy_chest_large": {
+      "id": "deploy_chest_large",
+      "name": "Iron-bound Chest",
+      "cat": "place",
+      "desc": "Packed Iron-bound Chest. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 14,
+      "max": 1,
+      "dur": 220
+    },
+    "deploy_campfire": {
+      "id": "deploy_campfire",
+      "name": "Campfire",
+      "cat": "place",
+      "desc": "Packed Campfire. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 8.6,
+      "max": 1,
+      "dur": 60
+    },
+    "deploy_furnace": {
+      "id": "deploy_furnace",
+      "name": "Furnace",
+      "cat": "place",
+      "desc": "Packed Furnace. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 25.6,
+      "max": 1,
+      "dur": 300
+    },
+    "deploy_oil_pump": {
+      "id": "deploy_oil_pump",
+      "name": "Oil Pump",
+      "cat": "place",
+      "desc": "Packed Oil Pump. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 6.6,
+      "max": 1,
+      "dur": 160
+    },
+    "deploy_refinery": {
+      "id": "deploy_refinery",
+      "name": "Oil Refinery",
+      "cat": "place",
+      "desc": "Packed Oil Refinery. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 13.8,
+      "max": 1,
+      "dur": 280
+    },
+    "deploy_workbench": {
+      "id": "deploy_workbench",
+      "name": "Workbench",
+      "cat": "place",
+      "desc": "Packed Workbench. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 18.8,
+      "max": 1,
+      "dur": 160
+    },
+    "deploy_research": {
+      "id": "deploy_research",
+      "name": "Research Table",
+      "cat": "place",
+      "desc": "Packed Research Table. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 12.8,
+      "max": 1,
+      "dur": 160
+    },
+    "deploy_garden": {
+      "id": "deploy_garden",
+      "name": "Garden Plot",
+      "cat": "place",
+      "desc": "Packed Garden Plot. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 4.8,
+      "max": 1,
+      "dur": 60
+    },
+    "deploy_farm_controller": {
+      "id": "deploy_farm_controller",
+      "name": "Garden Tender",
+      "cat": "place",
+      "desc": "Packed Garden Tender. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 16.7,
+      "max": 1,
+      "dur": 140
+    },
+    "deploy_barrel": {
+      "id": "deploy_barrel",
+      "name": "Rain Barrel",
+      "cat": "place",
+      "desc": "Packed Rain Barrel. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 8.3,
+      "max": 1,
+      "dur": 80
+    },
+    "deploy_feed_trough": {
+      "id": "deploy_feed_trough",
+      "name": "Feed & Water Trough",
+      "cat": "place",
+      "desc": "Packed Feed & Water Trough. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 8.7,
+      "max": 1,
+      "dur": 110
+    },
+    "deploy_base_generator": {
+      "id": "deploy_base_generator",
+      "name": "Field Generator",
+      "cat": "place",
+      "desc": "Packed Field Generator. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 11.7,
+      "max": 1,
+      "dur": 180
+    },
+    "deploy_power_cable": {
+      "id": "deploy_power_cable",
+      "name": "Power Cable",
+      "cat": "place",
+      "desc": "Packed Power Cable. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 1.2,
+      "max": 1,
+      "dur": 60
+    },
+    "deploy_power_switch": {
+      "id": "deploy_power_switch",
+      "name": "Power Switch",
+      "cat": "place",
+      "desc": "Packed Power Switch. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 1.5,
+      "max": 1,
+      "dur": 100
+    },
+    "deploy_pressure_switch": {
+      "id": "deploy_pressure_switch",
+      "name": "Pressure Switch",
+      "cat": "place",
+      "desc": "Packed Pressure Switch. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 1.7,
+      "max": 1,
+      "dur": 100
+    },
+    "deploy_ir_sensor": {
+      "id": "deploy_ir_sensor",
+      "name": "Infrared Sensor",
+      "cat": "place",
+      "desc": "Packed Infrared Sensor. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 2.2,
+      "max": 1,
+      "dur": 90
+    },
+    "deploy_arrow_turret": {
+      "id": "deploy_arrow_turret",
+      "name": "Arrow Turret",
+      "cat": "place",
+      "desc": "Packed Arrow Turret. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 13.4,
+      "max": 1,
+      "dur": 130
+    },
+    "deploy_bear_trap": {
+      "id": "deploy_bear_trap",
+      "name": "Bear Trap",
+      "cat": "place",
+      "desc": "Packed Bear Trap. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 3.2,
+      "max": 1,
+      "dur": 60
+    },
+    "deploy_spikes": {
+      "id": "deploy_spikes",
+      "name": "Spike Trap",
+      "cat": "place",
+      "desc": "Packed Spike Trap. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 6,
+      "max": 1,
+      "dur": 90
+    },
+    "deploy_barricade": {
+      "id": "deploy_barricade",
+      "name": "Barricade",
+      "cat": "place",
+      "desc": "Packed Barricade. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 8,
+      "max": 1,
+      "dur": 220
+    },
+    "deploy_torch_post": {
+      "id": "deploy_torch_post",
+      "name": "Torch Post",
+      "cat": "place",
+      "desc": "Packed Torch Post. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "w": 2.4,
+      "max": 1,
+      "dur": 40
+    }
+  },
+  "recipes": {
+    "vehicle_frame": {
+      "id": "vehicle_frame",
+      "out": "vehicle_frame",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "spares",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 25,
+      "base": true,
+      "tier": 1
+    },
+    "vehicle_drive": {
+      "id": "vehicle_drive",
+      "out": "vehicle_drive",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "fasteners",
+          2
+        ],
+        [
+          "spares",
+          3
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 25,
+      "base": true,
+      "tier": 1
+    },
+    "motorbike_kit": {
+      "id": "motorbike_kit",
+      "out": "motorbike_kit",
+      "qty": 1,
+      "ins": [
+        [
+          "vehicle_frame",
+          1
+        ],
+        [
+          "vehicle_drive",
+          1
+        ],
+        [
+          "iron_plate",
+          2
+        ],
+        [
+          "fasteners",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 3,
+      "secs": 40,
+      "tier": 2,
+      "rev": 2
+    },
+    "refine_salvaged_oil": {
+      "id": "refine_salvaged_oil",
+      "out": "fuel_can",
+      "qty": 1,
+      "ins": [
+        [
+          "salvaged_oil",
+          3
+        ],
+        [
+          "glass",
+          1
+        ]
+      ],
+      "station": "furnace",
+      "secs": 18,
+      "tier": 1
+    },
+    "refinery_fuel": {
+      "id": "refinery_fuel",
+      "out": "fuel_can",
+      "qty": 1,
+      "ins": [
+        [
+          "salvaged_oil",
+          3
+        ],
+        [
+          "glass",
+          1
+        ]
+      ],
+      "station": "refinery",
+      "secs": 14,
+      "base": true,
+      "tier": 1
+    },
+    "refinery_fuel_batch": {
+      "id": "refinery_fuel_batch",
+      "out": "fuel_can",
+      "qty": 2,
+      "ins": [
+        [
+          "salvaged_oil",
+          5
+        ],
+        [
+          "glass",
+          1
+        ]
+      ],
+      "station": "refinery",
+      "secs": 22,
+      "base": true,
+      "tier": 1
+    },
+    "refinery_industrial": {
+      "id": "refinery_industrial",
+      "out": "fuel_can",
+      "qty": 2,
+      "outs": [
+        [
+          "fuel_can",
+          2
+        ],
+        [
+          "lubricant",
+          1
+        ]
+      ],
+      "ins": [
+        [
+          "salvaged_oil",
+          6
+        ],
+        [
+          "glass",
+          1
+        ]
+      ],
+      "station": "refinery",
+      "secs": 26,
+      "base": true,
+      "tier": 1
+    },
+    "refinery_lubricant": {
+      "id": "refinery_lubricant",
+      "out": "lubricant",
+      "qty": 1,
+      "ins": [
+        [
+          "salvaged_oil",
+          2
+        ]
+      ],
+      "station": "refinery",
+      "secs": 12,
+      "base": true,
+      "tier": 1
+    },
+    "refinery_crude": {
+      "id": "refinery_crude",
+      "out": "fuel_can",
+      "qty": 1,
+      "ins": [
+        [
+          "crude_petroleum",
+          4
+        ],
+        [
+          "glass",
+          1
+        ]
+      ],
+      "station": "refinery",
+      "secs": 16,
+      "base": true,
+      "tier": 1
+    },
+    "pump_crude": {
+      "id": "pump_crude",
+      "out": "crude_petroleum",
+      "qty": 1,
+      "ins": [],
+      "station": "oil_pump",
+      "secs": 12,
+      "base": true,
+      "tier": 1
+    },
+    "energy_basic": {
+      "id": "energy_basic",
+      "out": "energy_basic",
+      "qty": 8,
+      "ins": [
+        [
+          "stone",
+          2
+        ],
+        [
+          "fiber",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0
+    },
+    "energy_refined_industrial": {
+      "id": "energy_refined_industrial",
+      "out": "energy_refined",
+      "qty": 12,
+      "ins": [
+        [
+          "crystal",
+          2
+        ],
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "charcoal",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 3,
+      "secs": 40,
+      "base": true,
+      "tier": 2
+    },
+    "energy_refined": {
+      "id": "energy_refined",
+      "out": "energy_refined",
+      "qty": 4,
+      "ins": [
+        [
+          "crystal",
+          1
+        ],
+        [
+          "iron_ingot",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 16,
+      "base": true,
+      "tier": 2
+    },
+    "essence_fire": {
+      "id": "essence_fire",
+      "out": "essence_fire",
+      "qty": 2,
+      "ins": [
+        [
+          "sulfur",
+          2
+        ],
+        [
+          "coal",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 16,
+      "base": true,
+      "tier": 2
+    },
+    "essence_nature": {
+      "id": "essence_nature",
+      "out": "essence_nature",
+      "qty": 2,
+      "ins": [
+        [
+          "herb",
+          2
+        ],
+        [
+          "seed",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 16,
+      "base": true,
+      "tier": 2
+    },
+    "essence_water": {
+      "id": "essence_water",
+      "out": "essence_water",
+      "qty": 2,
+      "ins": [
+        [
+          "shell",
+          2
+        ],
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 16,
+      "base": true,
+      "tier": 2
+    },
+    "essence_spirit": {
+      "id": "essence_spirit",
+      "out": "essence_spirit",
+      "qty": 2,
+      "ins": [
+        [
+          "crawler_optic",
+          1
+        ],
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 16,
+      "base": true,
+      "tier": 2
+    },
+    "core_blast": {
+      "id": "core_blast",
+      "out": "core_blast",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "spares",
+          4
+        ],
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 30,
+      "base": true,
+      "tier": 1
+    },
+    "core_earthmother": {
+      "id": "core_earthmother",
+      "out": "core_earthmother",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "spares",
+          4
+        ],
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 30,
+      "base": true,
+      "tier": 1
+    },
+    "core_mjolnir": {
+      "id": "core_mjolnir",
+      "out": "core_mjolnir",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          4
+        ],
+        [
+          "spares",
+          9
+        ],
+        [
+          "crystal",
+          4
+        ],
+        [
+          "mechanical_parts",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 50,
+      "tier": 2
+    },
+    "core_demon": {
+      "id": "core_demon",
+      "out": "core_demon",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          4
+        ],
+        [
+          "spares",
+          12
+        ],
+        [
+          "crystal",
+          5
+        ],
+        [
+          "crawler_optic",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 55,
+      "tier": 2
+    },
+    "core_meteor": {
+      "id": "core_meteor",
+      "out": "core_meteor",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          4
+        ],
+        [
+          "spares",
+          8
+        ],
+        [
+          "crystal",
+          3
+        ],
+        [
+          "sulfur",
+          3
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 45,
+      "tier": 2
+    },
+    "core_dragon": {
+      "id": "core_dragon",
+      "out": "core_dragon",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          8
+        ],
+        [
+          "spares",
+          16
+        ],
+        [
+          "crystal",
+          6
+        ],
+        [
+          "sulfur",
+          6
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 3,
+      "secs": 75,
+      "tier": 3
+    },
+    "core_elsa": {
+      "id": "core_elsa",
+      "out": "core_elsa",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "spares",
+          8
+        ],
+        [
+          "crystal",
+          4
+        ],
+        [
+          "shell",
+          3
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 45,
+      "tier": 2
+    },
+    "fasteners": {
+      "id": "fasteners",
+      "out": "fasteners",
+      "qty": 3,
+      "ins": [
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "scrap",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 10,
+      "tier": 1
+    },
+    "treated_canvas": {
+      "id": "treated_canvas",
+      "out": "treated_canvas",
+      "qty": 2,
+      "ins": [
+        [
+          "cloth",
+          1
+        ],
+        [
+          "raw_salt",
+          1
+        ],
+        [
+          "herb",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 12,
+      "tier": 1
+    },
+    "field_repair_kit": {
+      "id": "field_repair_kit",
+      "out": "field_repair_kit",
+      "qty": 1,
+      "ins": [
+        [
+          "fasteners",
+          2
+        ],
+        [
+          "cloth",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 12,
+      "tier": 1
+    },
+    "trail_pack": {
+      "id": "trail_pack",
+      "out": "trail_pack",
+      "qty": 1,
+      "ins": [
+        [
+          "treated_canvas",
+          1
+        ],
+        [
+          "leather",
+          2
+        ],
+        [
+          "fasteners",
+          2
+        ],
+        [
+          "rope",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 22,
+      "tier": 2
+    },
+    "trail_canteen": {
+      "id": "trail_canteen",
+      "out": "trail_canteen",
+      "qty": 1,
+      "ins": [
+        [
+          "treated_canvas",
+          2
+        ],
+        [
+          "leather",
+          1
+        ],
+        [
+          "glass",
+          1
+        ],
+        [
+          "fasteners",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 20,
+      "tier": 2
+    },
+    "fuel_briquette": {
+      "id": "fuel_briquette",
+      "out": "fuel_briquette",
+      "qty": 1,
+      "ins": [
+        [
+          "charcoal",
+          2
+        ],
+        [
+          "fiber",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 10,
+      "tier": 2
+    },
+    "recover_drive": {
+      "id": "recover_drive",
+      "out": "mechanical_parts",
+      "qty": 1,
+      "ins": [
+        [
+          "damaged_drive",
+          1
+        ],
+        [
+          "scrap",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 12,
+      "base": true,
+      "tier": 1
+    },
+    "mechanical_parts": {
+      "id": "mechanical_parts",
+      "out": "mechanical_parts",
+      "qty": 2,
+      "ins": [
+        [
+          "scrap",
+          2
+        ],
+        [
+          "iron_ingot",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 12,
+      "base": true,
+      "tier": 1
+    },
+    "industrial_pick": {
+      "id": "industrial_pick",
+      "out": "industrial_pick",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_pick",
+          1
+        ],
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "spares",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 25,
+      "tier": 2
+    },
+    "industrial_axe": {
+      "id": "industrial_axe",
+      "out": "industrial_axe",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_axe",
+          1
+        ],
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "spares",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 25,
+      "tier": 2
+    },
+    "reinforced_spear": {
+      "id": "reinforced_spear",
+      "out": "reinforced_spear",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "mechanical_parts",
+          1
+        ],
+        [
+          "wood",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 20,
+      "tier": 2
+    },
+    "metal_pipe": {
+      "id": "metal_pipe",
+      "out": "metal_pipe",
+      "qty": 2,
+      "ins": [
+        [
+          "refined_iron_ingot",
+          2
+        ],
+        [
+          "mechanical_parts",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 18,
+      "base": true,
+      "tier": 2,
+      "rev": 2
+    },
+    "metal_blade": {
+      "id": "metal_blade",
+      "out": "metal_blade",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          4
+        ],
+        [
+          "mechanical_parts",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 16,
+      "base": true,
+      "tier": 2
+    },
+    "mechanical_gear": {
+      "id": "mechanical_gear",
+      "out": "mechanical_gear",
+      "qty": 1,
+      "ins": [
+        [
+          "refined_iron_ingot",
+          1
+        ],
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "fasteners",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 20,
+      "base": true,
+      "tier": 2,
+      "rev": 2
+    },
+    "iron_plate": {
+      "id": "iron_plate",
+      "out": "iron_plate",
+      "qty": 2,
+      "ins": [
+        [
+          "refined_iron_ingot",
+          2
+        ],
+        [
+          "fasteners",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 18,
+      "base": true,
+      "tier": 2,
+      "rev": 2
+    },
+    "iron_sword_blade": {
+      "id": "iron_sword_blade",
+      "out": "iron_sword",
+      "qty": 1,
+      "alias": "Iron Sword (blade refit)",
+      "ins": [
+        [
+          "metal_blade",
+          1
+        ],
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "leather",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 14,
+      "base": true,
+      "tier": 2
+    },
+    "vehicle_frame_piped": {
+      "id": "vehicle_frame_piped",
+      "out": "vehicle_frame",
+      "qty": 1,
+      "alias": "Utility Frame (piped)",
+      "ins": [
+        [
+          "metal_pipe",
+          1
+        ],
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "spares",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 22,
+      "base": true,
+      "tier": 2
+    },
+    "reinforced_spear_blade": {
+      "id": "reinforced_spear_blade",
+      "out": "reinforced_spear",
+      "qty": 1,
+      "alias": "Reinforced Spear (blade)",
+      "ins": [
+        [
+          "metal_blade",
+          1
+        ],
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "wood",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 16,
+      "base": true,
+      "tier": 2
+    },
+    "industrial_pick_geared": {
+      "id": "industrial_pick_geared",
+      "out": "industrial_pick",
+      "qty": 1,
+      "alias": "Salvager Pick (geared)",
+      "ins": [
+        [
+          "iron_pick",
+          1
+        ],
+        [
+          "mechanical_gear",
+          1
+        ],
+        [
+          "spares",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 25,
+      "base": true,
+      "tier": 2
+    },
+    "vehicle_drive_geared": {
+      "id": "vehicle_drive_geared",
+      "out": "vehicle_drive",
+      "qty": 1,
+      "alias": "Motor Drive (geared)",
+      "ins": [
+        [
+          "mechanical_gear",
+          1
+        ],
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "fasteners",
+          2
+        ],
+        [
+          "spares",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 22,
+      "base": true,
+      "tier": 2
+    },
+    "rope": {
+      "id": "rope",
+      "out": "rope",
+      "qty": 1,
+      "ins": [
+        [
+          "fiber",
+          3
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "lead_rope": {
+      "id": "lead_rope",
+      "out": "lead_rope",
+      "qty": 1,
+      "ins": [
+        [
+          "rope",
+          2
+        ],
+        [
+          "berries",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0
+    },
+    "animal_feed": {
+      "id": "animal_feed",
+      "out": "animal_feed",
+      "qty": 3,
+      "ins": [
+        [
+          "fiber",
+          3
+        ],
+        [
+          "seed",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0
+    },
+    "arrow_fletched": {
+      "id": "arrow_fletched",
+      "out": "arrow",
+      "qty": 8,
+      "alias": "Arrow (fletched)",
+      "ins": [
+        [
+          "wood",
+          1
+        ],
+        [
+          "stone",
+          1
+        ],
+        [
+          "feather",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 4,
+      "base": true,
+      "tier": 1
+    },
+    "torch": {
+      "id": "torch",
+      "out": "torch",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          1
+        ],
+        [
+          "fiber",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "stone_axe": {
+      "id": "stone_axe",
+      "out": "stone_axe",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          3
+        ],
+        [
+          "stone",
+          3
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0
+    },
+    "stone_pick": {
+      "id": "stone_pick",
+      "out": "stone_pick",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          3
+        ],
+        [
+          "stone",
+          4
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0
+    },
+    "wood_spear": {
+      "id": "wood_spear",
+      "out": "wood_spear",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          4
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0
+    },
+    "bandage": {
+      "id": "bandage",
+      "out": "bandage",
+      "qty": 1,
+      "ins": [
+        [
+          "fiber",
+          4
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "water_flask": {
+      "id": "water_flask",
+      "out": "water_flask",
+      "qty": 1,
+      "ins": [
+        [
+          "hide",
+          2
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0
+    },
+    "root_broth": {
+      "id": "root_broth",
+      "out": "root_broth",
+      "qty": 1,
+      "ins": [
+        [
+          "crop",
+          2
+        ],
+        [
+          "herb",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 12,
+      "base": true,
+      "tier": 1
+    },
+    "poached_eggs": {
+      "id": "poached_eggs",
+      "out": "root_broth",
+      "qty": 1,
+      "alias": "Root Broth (grouse eggs)",
+      "ins": [
+        [
+          "grouse_egg",
+          2
+        ],
+        [
+          "herb",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 8,
+      "base": true,
+      "tier": 0
+    },
+    "herb_roast": {
+      "id": "herb_roast",
+      "out": "herb_roast",
+      "qty": 1,
+      "ins": [
+        [
+          "meat",
+          1
+        ],
+        [
+          "herb",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 10,
+      "base": true,
+      "tier": 0
+    },
+    "cooked_meat": {
+      "id": "cooked_meat",
+      "out": "cooked_meat",
+      "qty": 1,
+      "ins": [
+        [
+          "meat",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 8,
+      "base": true,
+      "tier": 0
+    },
+    "salted_meat": {
+      "id": "salted_meat",
+      "out": "salted_meat",
+      "qty": 1,
+      "ins": [
+        [
+          "meat",
+          1
+        ],
+        [
+          "raw_salt",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 10,
+      "base": true,
+      "tier": 0
+    },
+    "charcoal": {
+      "id": "charcoal",
+      "out": "charcoal",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          2
+        ]
+      ],
+      "station": "campfire",
+      "secs": 12,
+      "base": true,
+      "tier": 0
+    },
+    "stew": {
+      "id": "stew",
+      "out": "stew",
+      "qty": 1,
+      "ins": [
+        [
+          "crop",
+          2
+        ],
+        [
+          "meat",
+          1
+        ],
+        [
+          "herb",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 14,
+      "tier": 1
+    },
+    "iron_ingot": {
+      "id": "iron_ingot",
+      "out": "iron_ingot",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ore",
+          1
+        ]
+      ],
+      "station": "furnace",
+      "secs": 10,
+      "base": true,
+      "tier": 0
+    },
+    "refined_iron_ingot": {
+      "id": "refined_iron_ingot",
+      "out": "refined_iron_ingot",
+      "qty": 2,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "coal",
+          1
+        ]
+      ],
+      "station": "furnace",
+      "secs": 20,
+      "base": true,
+      "tier": 1
+    },
+    "refined_iron_rich": {
+      "id": "refined_iron_rich",
+      "out": "refined_iron_ingot",
+      "qty": 2,
+      "ins": [
+        [
+          "rich_iron_ore",
+          1
+        ],
+        [
+          "coal",
+          1
+        ]
+      ],
+      "station": "furnace",
+      "secs": 14,
+      "base": true,
+      "tier": 1
+    },
+    "scrap_ingot": {
+      "id": "scrap_ingot",
+      "out": "iron_ingot",
+      "qty": 1,
+      "ins": [
+        [
+          "scrap",
+          3
+        ]
+      ],
+      "station": "furnace",
+      "secs": 12,
+      "base": true,
+      "tier": 0
+    },
+    "brick": {
+      "id": "brick",
+      "out": "brick",
+      "qty": 2,
+      "ins": [
+        [
+          "stone",
+          3
+        ]
+      ],
+      "station": "furnace",
+      "secs": 10,
+      "tier": 1
+    },
+    "shell_glass": {
+      "id": "shell_glass",
+      "out": "glass",
+      "qty": 1,
+      "ins": [
+        [
+          "stone",
+          2
+        ],
+        [
+          "shell",
+          2
+        ]
+      ],
+      "station": "furnace",
+      "secs": 16,
+      "base": true,
+      "tier": 1
+    },
+    "glass": {
+      "id": "glass",
+      "out": "glass",
+      "qty": 1,
+      "ins": [
+        [
+          "crystal",
+          1
+        ],
+        [
+          "stone",
+          1
+        ]
+      ],
+      "station": "furnace",
+      "secs": 14,
+      "tier": 2
+    },
+    "leather": {
+      "id": "leather",
+      "out": "leather",
+      "qty": 1,
+      "ins": [
+        [
+          "hide",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 8,
+      "base": true,
+      "tier": 0
+    },
+    "cloth": {
+      "id": "cloth",
+      "out": "cloth",
+      "qty": 1,
+      "ins": [
+        [
+          "fiber",
+          6
+        ]
+      ],
+      "station": "workbench",
+      "secs": 8,
+      "base": true,
+      "tier": 0
+    },
+    "arrow": {
+      "id": "arrow",
+      "out": "arrow",
+      "qty": 6,
+      "ins": [
+        [
+          "wood",
+          1
+        ],
+        [
+          "stone",
+          1
+        ],
+        [
+          "fiber",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 5,
+      "tier": 1
+    },
+    "bow": {
+      "id": "bow",
+      "out": "bow",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          5
+        ],
+        [
+          "rope",
+          3
+        ]
+      ],
+      "station": "workbench",
+      "secs": 12,
+      "tier": 1
+    },
+    "plank": {
+      "id": "plank",
+      "out": "plank",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "secs": 6,
+      "base": true,
+      "tier": 1
+    },
+    "iron_axe": {
+      "id": "iron_axe",
+      "out": "iron_axe",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "wood",
+          2
+        ],
+        [
+          "leather",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 15,
+      "base": true,
+      "tier": 1
+    },
+    "iron_pick": {
+      "id": "iron_pick",
+      "out": "iron_pick",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "wood",
+          2
+        ],
+        [
+          "leather",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 15,
+      "base": true,
+      "tier": 1
+    },
+    "iron_sword": {
+      "id": "iron_sword",
+      "out": "iron_sword",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          5
+        ],
+        [
+          "leather",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 18,
+      "tier": 2
+    },
+    "leather_armor": {
+      "id": "leather_armor",
+      "out": "leather_armor",
+      "qty": 1,
+      "ins": [
+        [
+          "leather",
+          5
+        ],
+        [
+          "rope",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "secs": 15,
+      "tier": 1
+    },
+    "chitin_armor": {
+      "id": "chitin_armor",
+      "out": "chitin_armor",
+      "qty": 1,
+      "ins": [
+        [
+          "chitin",
+          6
+        ],
+        [
+          "leather",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "secs": 20,
+      "tier": 3
+    },
+    "fur_cloak": {
+      "id": "fur_cloak",
+      "out": "fur_cloak",
+      "qty": 1,
+      "ins": [
+        [
+          "fur",
+          4
+        ],
+        [
+          "rope",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "secs": 14,
+      "tier": 2
+    },
+    "gas_mask": {
+      "id": "gas_mask",
+      "out": "gas_mask",
+      "qty": 1,
+      "ins": [
+        [
+          "glass",
+          1
+        ],
+        [
+          "cloth",
+          2
+        ],
+        [
+          "spares",
+          3
+        ]
+      ],
+      "station": "workbench",
+      "secs": 16,
+      "tier": 2
+    },
+    "scrap_helm": {
+      "id": "scrap_helm",
+      "out": "scrap_helm",
+      "qty": 1,
+      "ins": [
+        [
+          "scrap",
+          6
+        ],
+        [
+          "leather",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 12,
+      "tier": 1
+    },
+    "medkit": {
+      "id": "medkit",
+      "out": "medkit",
+      "qty": 1,
+      "ins": [
+        [
+          "bandage",
+          2
+        ],
+        [
+          "herb",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "secs": 8,
+      "tier": 1
+    },
+    "antirad": {
+      "id": "antirad",
+      "out": "antirad",
+      "qty": 1,
+      "ins": [
+        [
+          "gland",
+          1
+        ],
+        [
+          "herb",
+          2
+        ]
+      ],
+      "station": "workbench",
+      "secs": 10,
+      "tier": 2
+    },
+    "cart_kit": {
+      "id": "cart_kit",
+      "out": "cart_kit",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          24
+        ],
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "rope",
+          4
+        ]
+      ],
+      "station": "workbench",
+      "secs": 25,
+      "tier": 1
+    },
+    "core_fire": {
+      "id": "core_fire",
+      "out": "core_fire",
+      "qty": 1,
+      "ins": [
+        [
+          "sulfur",
+          3
+        ],
+        [
+          "spares",
+          8
+        ],
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 40,
+      "tier": 3
+    },
+    "core_earth": {
+      "id": "core_earth",
+      "out": "core_earth",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "spares",
+          8
+        ],
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 40,
+      "tier": 3
+    },
+    "core_storm": {
+      "id": "core_storm",
+      "out": "core_storm",
+      "qty": 1,
+      "ins": [
+        [
+          "glass",
+          2
+        ],
+        [
+          "spares",
+          10
+        ],
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 40,
+      "tier": 3
+    },
+    "core_frost": {
+      "id": "core_frost",
+      "out": "core_frost",
+      "qty": 1,
+      "ins": [
+        [
+          "crystal",
+          3
+        ],
+        [
+          "spares",
+          8
+        ]
+      ],
+      "station": "workbench",
+      "secs": 40,
+      "tier": 3
+    },
+    "deploy_claim": {
+      "id": "deploy_claim",
+      "out": "deploy_claim",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          10
+        ],
+        [
+          "stone",
+          5
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_bed_straw": {
+      "id": "deploy_bed_straw",
+      "out": "deploy_bed_straw",
+      "qty": 1,
+      "ins": [
+        [
+          "fiber",
+          10
+        ],
+        [
+          "wood",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_chest_small": {
+      "id": "deploy_chest_small",
+      "out": "deploy_chest_small",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          8
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_chest_large": {
+      "id": "deploy_chest_large",
+      "out": "deploy_chest_large",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          12
+        ],
+        [
+          "iron_ingot",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_campfire": {
+      "id": "deploy_campfire",
+      "out": "deploy_campfire",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          5
+        ],
+        [
+          "stone",
+          3
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_furnace": {
+      "id": "deploy_furnace",
+      "out": "deploy_furnace",
+      "qty": 1,
+      "ins": [
+        [
+          "stone",
+          18
+        ],
+        [
+          "wood",
+          4
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_oil_pump": {
+      "id": "deploy_oil_pump",
+      "out": "deploy_oil_pump",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "spares",
+          2
+        ],
+        [
+          "brick",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_refinery": {
+      "id": "deploy_refinery",
+      "out": "deploy_refinery",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          4
+        ],
+        [
+          "mechanical_parts",
+          3
+        ],
+        [
+          "spares",
+          5
+        ],
+        [
+          "brick",
+          6
+        ],
+        [
+          "glass",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_workbench": {
+      "id": "deploy_workbench",
+      "out": "deploy_workbench",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          14
+        ],
+        [
+          "stone",
+          4
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_research": {
+      "id": "deploy_research",
+      "out": "deploy_research",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          10
+        ],
+        [
+          "spares",
+          6
+        ],
+        [
+          "iron_ingot",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_garden": {
+      "id": "deploy_garden",
+      "out": "deploy_garden",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          4
+        ],
+        [
+          "fiber",
+          4
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_farm_controller": {
+      "id": "deploy_farm_controller",
+      "out": "deploy_farm_controller",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          12
+        ],
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "mechanical_parts",
+          3
+        ],
+        [
+          "fasteners",
+          3
+        ],
+        [
+          "spares",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_barrel": {
+      "id": "deploy_barrel",
+      "out": "deploy_barrel",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          8
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_feed_trough": {
+      "id": "deploy_feed_trough",
+      "out": "deploy_feed_trough",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          6
+        ],
+        [
+          "stone",
+          2
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_base_generator": {
+      "id": "deploy_base_generator",
+      "out": "deploy_base_generator",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "mechanical_parts",
+          3
+        ],
+        [
+          "spares",
+          4
+        ],
+        [
+          "wood",
+          6
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_power_cable": {
+      "id": "deploy_power_cable",
+      "out": "deploy_power_cable",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "fiber",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_power_switch": {
+      "id": "deploy_power_switch",
+      "out": "deploy_power_switch",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "fasteners",
+          1
+        ],
+        [
+          "spares",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_pressure_switch": {
+      "id": "deploy_pressure_switch",
+      "out": "deploy_pressure_switch",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "mechanical_parts",
+          1
+        ],
+        [
+          "fasteners",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_ir_sensor": {
+      "id": "deploy_ir_sensor",
+      "out": "deploy_ir_sensor",
+      "qty": 1,
+      "ins": [
+        [
+          "mechanical_gear",
+          1
+        ],
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "fasteners",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_arrow_turret": {
+      "id": "deploy_arrow_turret",
+      "out": "deploy_arrow_turret",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          10
+        ],
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "fasteners",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_bear_trap": {
+      "id": "deploy_bear_trap",
+      "out": "deploy_bear_trap",
+      "qty": 1,
+      "ins": [
+        [
+          "mechanical_gear",
+          1
+        ],
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "fasteners",
+          2
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_spikes": {
+      "id": "deploy_spikes",
+      "out": "deploy_spikes",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          6
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_barricade": {
+      "id": "deploy_barricade",
+      "out": "deploy_barricade",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          8
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    },
+    "deploy_torch_post": {
+      "id": "deploy_torch_post",
+      "out": "deploy_torch_post",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          2
+        ],
+        [
+          "torch",
+          1
+        ]
+      ],
+      "station": null,
+      "secs": 1,
+      "base": true,
+      "tier": 0
+    }
+  },
+  "structures": {
+    "claim": {
+      "id": "claim",
+      "name": "Territory Cabinet",
+      "cost": [
+        [
+          "wood",
+          10
+        ],
+        [
+          "stone",
+          5
+        ]
+      ],
+      "hp": 200,
+      "need": "free",
+      "block": true,
+      "layer": "obj",
+      "slots": 24,
+      "desc": "Place on your foundation. 24 physical slots fund upkeep within 25 SOH tiles.",
+      "item": "deploy_claim"
+    },
+    "floor_wood": {
+      "id": "floor_wood",
+      "name": "Wood Floor",
+      "cost": [
+        [
+          "wood",
+          4
+        ]
+      ],
+      "hp": 120,
+      "need": "any",
+      "block": false,
+      "layer": "floor",
+      "desc": "Foundation tile. Roofs need it."
+    },
+    "floor_triangle_wood": {
+      "id": "floor_triangle_wood",
+      "name": "Wood Triangle Foundation",
+      "cost": [
+        [
+          "wood",
+          4
+        ]
+      ],
+      "hp": 120,
+      "need": "any",
+      "block": false,
+      "layer": "floor",
+      "desc": "Triangular top-view foundation piece. Current physics reserves one whole tile; half-cell join rules remain a separate gate."
+    },
+    "floor_stone": {
+      "id": "floor_stone",
+      "name": "Stone Floor",
+      "cost": [
+        [
+          "stone",
+          6
+        ]
+      ],
+      "hp": 260,
+      "need": "any",
+      "block": false,
+      "layer": "floor",
+      "desc": "Sturdy foundation."
+    },
+    "wall_wood": {
+      "id": "wall_wood",
+      "name": "Wood Wall",
+      "cost": [
+        [
+          "wood",
+          5
+        ]
+      ],
+      "hp": 160,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "desc": "Blocks movement and paths."
+    },
+    "wall_window_wood": {
+      "id": "wall_window_wood",
+      "name": "Wood Window Wall",
+      "cost": [
+        [
+          "wood",
+          5
+        ]
+      ],
+      "hp": 160,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "visionTransparent": true,
+      "desc": "Seals shelter, blocks movement; vision goes through its framed opening. No fake shoot-through guarantee."
+    },
+    "wall_doorframe_wood": {
+      "id": "wall_doorframe_wood",
+      "name": "Wood Door Frame",
+      "cost": [
+        [
+          "wood",
+          5
+        ]
+      ],
+      "hp": 160,
+      "need": "any",
+      "block": false,
+      "layer": "wall",
+      "sealsRoom": false,
+      "desc": "Walkable frame opening. Does not seal a room; door is a separate building piece."
+    },
+    "wall_half_wood": {
+      "id": "wall_half_wood",
+      "name": "Wood Half Wall",
+      "cost": [
+        [
+          "wood",
+          5
+        ]
+      ],
+      "hp": 160,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "sealsRoom": false,
+      "visionTransparent": true,
+      "desc": "Low obstacle: blocks traversal, not sight or full shelter closure."
+    },
+    "wall_pillar_wood": {
+      "id": "wall_pillar_wood",
+      "name": "Wood Pillar",
+      "cost": [
+        [
+          "wood",
+          5
+        ]
+      ],
+      "hp": 160,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "sealsRoom": false,
+      "visionTransparent": true,
+      "desc": "One-tile support post and obstacle. True point footprint not yet modeled."
+    },
+    "wall_triangle_wood": {
+      "id": "wall_triangle_wood",
+      "name": "Wood Triangle Gable",
+      "cost": [
+        [
+          "wood",
+          5
+        ]
+      ],
+      "hp": 160,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "desc": "Triangular upper wall silhouette. One-tile top-down collision pending height-aware support."
+    },
+    "fence_wood": {
+      "id": "fence_wood",
+      "name": "Wood Fence",
+      "cost": [
+        [
+          "wood",
+          5
+        ]
+      ],
+      "hp": 160,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "sealsRoom": false,
+      "visionTransparent": true,
+      "desc": "Open fence: blocks walkers, lets sight through, never seals shelter."
+    },
+    "wall_plank": {
+      "id": "wall_plank",
+      "name": "Plank Wall",
+      "cost": [
+        [
+          "plank",
+          3
+        ]
+      ],
+      "hp": 240,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "desc": "Sawn boards: 240 HP for 6 wood, against 160 HP for 5 wood in a log wall."
+    },
+    "wall_stone": {
+      "id": "wall_stone",
+      "name": "Stone Wall",
+      "cost": [
+        [
+          "stone",
+          8
+        ],
+        [
+          "wood",
+          1
+        ]
+      ],
+      "hp": 380,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "desc": "Heavy wall."
+    },
+    "wall_brick": {
+      "id": "wall_brick",
+      "name": "Brick Wall",
+      "cost": [
+        [
+          "brick",
+          6
+        ]
+      ],
+      "hp": 600,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "desc": "Fired brick. Strongest wall."
+    },
+    "door_wood": {
+      "id": "door_wood",
+      "name": "Wood Door",
+      "cost": [
+        [
+          "wood",
+          6
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "hp": 140,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "desc": "E to open/close. Creatures cannot open doors."
+    },
+    "door_iron": {
+      "id": "door_iron",
+      "name": "Iron Door",
+      "cost": [
+        [
+          "iron_ingot",
+          4
+        ]
+      ],
+      "hp": 420,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "desc": "Reinforced door."
+    },
+    "roof_thatch": {
+      "id": "roof_thatch",
+      "name": "Thatch Roof",
+      "cost": [
+        [
+          "wood",
+          2
+        ],
+        [
+          "fiber",
+          5
+        ]
+      ],
+      "hp": 80,
+      "need": "any",
+      "block": false,
+      "layer": "roof",
+      "desc": "Over a floor. Enclosed + roofed = shelter.",
+      "shelter": true
+    },
+    "ceiling_wood": {
+      "id": "ceiling_wood",
+      "name": "Wood Ceiling",
+      "cost": [
+        [
+          "wood",
+          2
+        ],
+        [
+          "fiber",
+          5
+        ]
+      ],
+      "hp": 80,
+      "need": "any",
+      "block": false,
+      "layer": "roof",
+      "shelter": true,
+      "desc": "Flat overhead tile, visually separate from thatch. Not a standable upper-storey floor."
+    },
+    "ceiling_triangle_wood": {
+      "id": "ceiling_triangle_wood",
+      "name": "Wood Triangle Ceiling",
+      "cost": [
+        [
+          "wood",
+          2
+        ],
+        [
+          "fiber",
+          5
+        ]
+      ],
+      "hp": 80,
+      "need": "any",
+      "block": false,
+      "layer": "roof",
+      "shelter": true,
+      "desc": "Triangular overhead silhouette, top-down one-tile cover until half-cell support exists."
+    },
+    "roof_slope_thatch": {
+      "id": "roof_slope_thatch",
+      "name": "Thatch Slope Roof",
+      "cost": [
+        [
+          "wood",
+          2
+        ],
+        [
+          "fiber",
+          5
+        ]
+      ],
+      "hp": 80,
+      "need": "any",
+      "block": false,
+      "layer": "roof",
+      "shelter": true,
+      "desc": "Sloping roof silhouette. Does not provide a climbable ramp."
+    },
+    "roof_corner_thatch": {
+      "id": "roof_corner_thatch",
+      "name": "Thatch Corner Roof",
+      "cost": [
+        [
+          "wood",
+          2
+        ],
+        [
+          "fiber",
+          5
+        ]
+      ],
+      "hp": 80,
+      "need": "any",
+      "block": false,
+      "layer": "roof",
+      "shelter": true,
+      "desc": "Corner roof silhouette with cover, not independent roof physics."
+    },
+    "roof_tile": {
+      "id": "roof_tile",
+      "name": "Tile Roof",
+      "cost": [
+        [
+          "brick",
+          3
+        ]
+      ],
+      "hp": 200,
+      "need": "any",
+      "block": false,
+      "layer": "roof",
+      "desc": "Durable roof.",
+      "shelter": true
+    },
+    "bed_straw": {
+      "id": "bed_straw",
+      "name": "Straw Bed",
+      "cost": [
+        [
+          "fiber",
+          10
+        ],
+        [
+          "wood",
+          2
+        ]
+      ],
+      "hp": 60,
+      "need": "any",
+      "block": false,
+      "layer": "obj",
+      "desc": "Respawn point within this run.",
+      "item": "deploy_bed_straw"
+    },
+    "chest_small": {
+      "id": "chest_small",
+      "name": "Wood Chest",
+      "cost": [
+        [
+          "wood",
+          8
+        ]
+      ],
+      "hp": 100,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "slots": 12,
+      "desc": "12-slot storage.",
+      "item": "deploy_chest_small"
+    },
+    "chest_large": {
+      "id": "chest_large",
+      "name": "Iron-bound Chest",
+      "cost": [
+        [
+          "wood",
+          12
+        ],
+        [
+          "iron_ingot",
+          2
+        ]
+      ],
+      "hp": 220,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "slots": 24,
+      "desc": "24-slot storage.",
+      "item": "deploy_chest_large"
+    },
+    "campfire": {
+      "id": "campfire",
+      "name": "Campfire",
+      "cost": [
+        [
+          "wood",
+          5
+        ],
+        [
+          "stone",
+          3
+        ]
+      ],
+      "hp": 60,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "station": "campfire",
+      "light": 90,
+      "warmth": 1,
+      "desc": "Cooks with fuel. Warmth + light while burning.",
+      "item": "deploy_campfire"
+    },
+    "furnace": {
+      "id": "furnace",
+      "name": "Furnace",
+      "cost": [
+        [
+          "stone",
+          18
+        ],
+        [
+          "wood",
+          4
+        ]
+      ],
+      "hp": 300,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "station": "furnace",
+      "light": 50,
+      "warmth": 1,
+      "desc": "Smelts with fuel. Output waits in its slots.",
+      "item": "deploy_furnace"
+    },
+    "oil_pump": {
+      "id": "oil_pump",
+      "name": "Oil Pump",
+      "cost": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "spares",
+          2
+        ],
+        [
+          "brick",
+          2
+        ]
+      ],
+      "hp": 160,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "station": "oil_pump",
+      "light": 0,
+      "desc": "Draws Crude Petroleum from an authorized oil site. Needs fuel to run; output waits in its slots. Placement needs an authorized source.",
+      "item": "deploy_oil_pump"
+    },
+    "refinery": {
+      "id": "refinery",
+      "name": "Oil Refinery",
+      "cost": [
+        [
+          "iron_ingot",
+          4
+        ],
+        [
+          "mechanical_parts",
+          3
+        ],
+        [
+          "spares",
+          5
+        ],
+        [
+          "brick",
+          6
+        ],
+        [
+          "glass",
+          2
+        ]
+      ],
+      "hp": 280,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "station": "refinery",
+      "light": 40,
+      "desc": "Converts finite Salvaged Oil into Fuel Canisters and Machine Lubricant. Needs a level-2 Workbench nearby and fuel to run. The industrial batch yields fuel and lubricant together.",
+      "item": "deploy_refinery"
+    },
+    "workbench": {
+      "id": "workbench",
+      "name": "Workbench",
+      "cost": [
+        [
+          "wood",
+          14
+        ],
+        [
+          "stone",
+          4
+        ]
+      ],
+      "hp": 160,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "station": "workbench",
+      "desc": "Timed crafting for tools, armor and parts.",
+      "item": "deploy_workbench"
+    },
+    "research": {
+      "id": "research",
+      "name": "Research Table",
+      "cost": [
+        [
+          "wood",
+          10
+        ],
+        [
+          "spares",
+          6
+        ],
+        [
+          "iron_ingot",
+          1
+        ]
+      ],
+      "hp": 160,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "station": "research",
+      "desc": "Spend Spares or study specimens to unlock recipes.",
+      "item": "deploy_research"
+    },
+    "garden": {
+      "id": "garden",
+      "name": "Garden Plot",
+      "cost": [
+        [
+          "wood",
+          4
+        ],
+        [
+          "fiber",
+          4
+        ]
+      ],
+      "hp": 60,
+      "need": "any",
+      "block": false,
+      "layer": "obj",
+      "desc": "Plant seeds; grows only while watered (rain counts).",
+      "item": "deploy_garden"
+    },
+    "farm_controller": {
+      "id": "farm_controller",
+      "name": "Garden Tender",
+      "cost": [
+        [
+          "wood",
+          12
+        ],
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "mechanical_parts",
+          3
+        ],
+        [
+          "fasteners",
+          3
+        ],
+        [
+          "spares",
+          2
+        ]
+      ],
+      "hp": 140,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "slots": 3,
+      "desc": "Optional fuelled garden machinery. Link one nearby plot, barrel and chest; needs an improved workbench to build.",
+      "item": "deploy_farm_controller"
+    },
+    "barrel": {
+      "id": "barrel",
+      "name": "Rain Barrel",
+      "cost": [
+        [
+          "wood",
+          8
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "hp": 80,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "desc": "Collects rainwater; refill flasks.",
+      "item": "deploy_barrel"
+    },
+    "feed_trough": {
+      "id": "feed_trough",
+      "name": "Feed & Water Trough",
+      "cost": [
+        [
+          "wood",
+          6
+        ],
+        [
+          "stone",
+          2
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "hp": 110,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "slots": 6,
+      "desc": "SOH_PROVISIONAL: 6-slot livestock trough. Stock fodder/crops/berries and filled water flasks (or rain/barrel) inside an enclosed pen.",
+      "item": "deploy_feed_trough"
+    },
+    "base_generator": {
+      "id": "base_generator",
+      "name": "Field Generator",
+      "cost": [
+        [
+          "iron_ingot",
+          3
+        ],
+        [
+          "mechanical_parts",
+          3
+        ],
+        [
+          "spares",
+          4
+        ],
+        [
+          "wood",
+          6
+        ]
+      ],
+      "hp": 180,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "slots": 3,
+      "desc": "Fuel one connected load; reinforce for two. New generators require paid physical cable.",
+      "item": "deploy_base_generator"
+    },
+    "power_cable": {
+      "id": "power_cable",
+      "name": "Power Cable",
+      "cost": [
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "fiber",
+          1
+        ]
+      ],
+      "hp": 60,
+      "need": "any",
+      "block": false,
+      "layer": "obj",
+      "desc": "One paid cable tile. Orthogonal connections only; dry ground, no walls.",
+      "item": "deploy_power_cable"
+    },
+    "power_switch": {
+      "id": "power_switch",
+      "name": "Power Switch",
+      "cost": [
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "fasteners",
+          1
+        ],
+        [
+          "spares",
+          1
+        ]
+      ],
+      "hp": 100,
+      "need": "any",
+      "block": false,
+      "layer": "obj",
+      "desc": "E toggles this physical branch on or off.",
+      "item": "deploy_power_switch"
+    },
+    "pressure_switch": {
+      "id": "pressure_switch",
+      "name": "Pressure Switch",
+      "cost": [
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "mechanical_parts",
+          1
+        ],
+        [
+          "fasteners",
+          1
+        ]
+      ],
+      "hp": 100,
+      "need": "any",
+      "block": false,
+      "layer": "obj",
+      "desc": "Conducts only while the player stands on this plate.",
+      "item": "deploy_pressure_switch"
+    },
+    "ir_sensor": {
+      "id": "ir_sensor",
+      "name": "Infrared Sensor",
+      "cost": [
+        [
+          "mechanical_gear",
+          1
+        ],
+        [
+          "iron_ingot",
+          1
+        ],
+        [
+          "fasteners",
+          2
+        ]
+      ],
+      "hp": 90,
+      "need": "any",
+      "block": false,
+      "layer": "obj",
+      "desc": "Paid sensor on a cable tile. Conducts only while it has a cable path to fuelled generator capacity and sees a player or awake hostile in a clear line (range 6 tiles, walls block). E toggles it.",
+      "item": "deploy_ir_sensor"
+    },
+    "door_powered": {
+      "id": "door_powered",
+      "name": "Powered Door",
+      "cost": [
+        [
+          "iron_ingot",
+          4
+        ],
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "fasteners",
+          3
+        ],
+        [
+          "spares",
+          3
+        ]
+      ],
+      "hp": 350,
+      "need": "any",
+      "block": true,
+      "layer": "wall",
+      "desc": "Powered opening; place from the outside to set the interior emergency handle."
+    },
+    "arrow_turret": {
+      "id": "arrow_turret",
+      "name": "Arrow Turret",
+      "cost": [
+        [
+          "wood",
+          10
+        ],
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "fasteners",
+          2
+        ]
+      ],
+      "hp": 130,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "slots": 3,
+      "desc": "Linked power and real arrows; shoots visible hostile creatures.",
+      "item": "deploy_arrow_turret"
+    },
+    "bear_trap": {
+      "id": "bear_trap",
+      "name": "Bear Trap",
+      "cost": [
+        [
+          "mechanical_gear",
+          1
+        ],
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "fasteners",
+          2
+        ]
+      ],
+      "hp": 60,
+      "need": "any",
+      "block": false,
+      "layer": "obj",
+      "desc": "Mechanical jaw: place, arm with an Iron Plate, one paid hit when a creature steps on it, then re-arm with a plate. Three hits, then worn. Live only.",
+      "item": "deploy_bear_trap"
+    },
+    "spikes": {
+      "id": "spikes",
+      "name": "Spike Trap",
+      "cost": [
+        [
+          "wood",
+          6
+        ]
+      ],
+      "hp": 90,
+      "need": "any",
+      "block": false,
+      "layer": "obj",
+      "desc": "Hurts creatures that walk over it.",
+      "item": "deploy_spikes"
+    },
+    "barricade": {
+      "id": "barricade",
+      "name": "Barricade",
+      "cost": [
+        [
+          "wood",
+          8
+        ]
+      ],
+      "hp": 220,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "desc": "Cheap blocking defense.",
+      "item": "deploy_barricade"
+    },
+    "torch_post": {
+      "id": "torch_post",
+      "name": "Torch Post",
+      "cost": [
+        [
+          "wood",
+          2
+        ],
+        [
+          "torch",
+          1
+        ]
+      ],
+      "hp": 40,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "light": 80,
+      "desc": "Permanent light.",
+      "item": "deploy_torch_post"
+    },
+    "escrow": {
+      "id": "escrow",
+      "name": "Rương ký gửi",
+      "cost": [
+        [
+          "escrow_chest",
+          1
+        ]
+      ],
+      "hp": 400,
+      "need": "claim",
+      "block": true,
+      "layer": "obj",
+      "desc": "Deposit physical Ragnarok cash into profile-secured cash.",
+      "item": "escrow_chest"
+    }
+  },
+  "sources": {
+    "oak": {
+      "id": "oak",
+      "name": "Oak",
+      "mat": "wood",
+      "hp": 18,
+      "stock": 6,
+      "yields": [
+        [
+          "wood",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "seed",
+          0.25
+        ]
+      ],
+      "block": true,
+      "art": "oak",
+      "tall": true
+    },
+    "pine": {
+      "id": "pine",
+      "name": "Pine",
+      "mat": "wood",
+      "hp": 16,
+      "stock": 5,
+      "yields": [
+        [
+          "wood",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "pine",
+      "tall": true
+    },
+    "snowpine": {
+      "id": "snowpine",
+      "name": "Snow Pine",
+      "mat": "wood",
+      "hp": 16,
+      "stock": 5,
+      "yields": [
+        [
+          "wood",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "snowpine",
+      "tall": true
+    },
+    "palm": {
+      "id": "palm",
+      "name": "Palm",
+      "mat": "wood",
+      "hp": 12,
+      "stock": 4,
+      "yields": [
+        [
+          "wood",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "fiber",
+          0.5
+        ]
+      ],
+      "block": true,
+      "art": "palm",
+      "tall": true
+    },
+    "willow": {
+      "id": "willow",
+      "name": "Mire Willow",
+      "mat": "wood",
+      "hp": 14,
+      "stock": 4,
+      "yields": [
+        [
+          "wood",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "fiber",
+          0.4
+        ]
+      ],
+      "block": true,
+      "art": "willow",
+      "tall": true
+    },
+    "deadtree": {
+      "id": "deadtree",
+      "name": "Charred Tree",
+      "mat": "wood",
+      "hp": 8,
+      "stock": 3,
+      "yields": [
+        [
+          "charcoal",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "dead",
+      "tall": true
+    },
+    "rock": {
+      "id": "rock",
+      "name": "Boulder",
+      "mat": "stone",
+      "hp": 18,
+      "stock": 6,
+      "yields": [
+        [
+          "stone",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "rock"
+    },
+    "iron": {
+      "id": "iron",
+      "name": "Iron Vein",
+      "mat": "ore",
+      "hp": 24,
+      "stock": 5,
+      "yields": [
+        [
+          "iron_ore",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "stone",
+          0.5
+        ]
+      ],
+      "qualityBonus": {
+        "capability": "playerTool",
+        "power": "ore",
+        "tiers": [
+          {
+            "minPower": 5,
+            "item": "rich_iron_ore",
+            "chance": 0.08
+          },
+          {
+            "minPower": 8,
+            "item": "rich_iron_ore",
+            "chance": 0.12
+          }
+        ]
+      },
+      "block": true,
+      "art": "iron"
+    },
+    "coalv": {
+      "id": "coalv",
+      "name": "Coal Seam",
+      "mat": "ore",
+      "hp": 20,
+      "stock": 5,
+      "yields": [
+        [
+          "coal",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "coal"
+    },
+    "crystal": {
+      "id": "crystal",
+      "name": "Frost Crystal",
+      "mat": "ore",
+      "hp": 20,
+      "stock": 3,
+      "yields": [
+        [
+          "crystal",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "crystal"
+    },
+    "salt_shale": {
+      "id": "salt_shale",
+      "name": "Salt Shale",
+      "mat": "ore",
+      "hp": 12,
+      "stock": 4,
+      "yields": [
+        [
+          "raw_salt",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "crystal",
+      "placement": [
+        {
+          "terrain": "sand",
+          "chance": 0.24
+        }
+      ]
+    },
+    "sulfur": {
+      "id": "sulfur",
+      "name": "Sulfur Vent",
+      "mat": "ore",
+      "hp": 14,
+      "stock": 3,
+      "yields": [
+        [
+          "sulfur",
+          1
+        ]
+      ],
+      "block": true,
+      "art": "sulfur"
+    },
+    "bush": {
+      "id": "bush",
+      "name": "Berry Bush",
+      "mat": "plant",
+      "hp": 6,
+      "stock": 3,
+      "yields": [
+        [
+          "berries",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "seed",
+          0.3
+        ]
+      ],
+      "block": false,
+      "regrow": 420,
+      "regrowClass": "crop",
+      "art": "bush"
+    },
+    "grass": {
+      "id": "grass",
+      "name": "Tall Grass",
+      "mat": "plant",
+      "hp": 3,
+      "stock": 2,
+      "yields": [
+        [
+          "fiber",
+          1
+        ]
+      ],
+      "block": false,
+      "regrow": 300,
+      "regrowClass": "crop",
+      "art": "grass"
+    },
+    "reed": {
+      "id": "reed",
+      "name": "Reeds",
+      "mat": "plant",
+      "hp": 4,
+      "stock": 3,
+      "yields": [
+        [
+          "fiber",
+          1
+        ]
+      ],
+      "block": false,
+      "regrow": 360,
+      "regrowClass": "crop",
+      "art": "reed"
+    },
+    "herb": {
+      "id": "herb",
+      "name": "Bitterleaf",
+      "mat": "plant",
+      "hp": 3,
+      "stock": 2,
+      "yields": [
+        [
+          "herb",
+          1
+        ]
+      ],
+      "block": false,
+      "regrow": 600,
+      "regrowClass": "herb",
+      "art": "herb"
+    },
+    "mushroom": {
+      "id": "mushroom",
+      "name": "Marsh Caps",
+      "mat": "plant",
+      "hp": 3,
+      "stock": 2,
+      "yields": [
+        [
+          "mushroom",
+          1
+        ]
+      ],
+      "block": false,
+      "regrow": 600,
+      "regrowClass": "herb",
+      "art": "mush"
+    },
+    "scrap": {
+      "id": "scrap",
+      "name": "Roadside Scrap",
+      "mat": "scrap",
+      "hp": 8,
+      "stock": 4,
+      "yields": [
+        [
+          "scrap",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "spares",
+          0.55
+        ]
+      ],
+      "block": false,
+      "art": "scrap"
+    },
+    "wreck": {
+      "id": "wreck",
+      "name": "Car Wreck",
+      "mat": "scrap",
+      "hp": 30,
+      "stock": 8,
+      "yields": [
+        [
+          "scrap",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "spares",
+          0.3
+        ],
+        [
+          "damaged_drive",
+          0.2
+        ],
+        [
+          "fuel_can",
+          0.06
+        ],
+        [
+          "mechanical_parts",
+          0.08
+        ],
+        [
+          "fasteners",
+          0.12
+        ],
+        [
+          "field_repair_kit",
+          0.04
+        ]
+      ],
+      "block": true,
+      "art": "wreck"
+    }
+  },
+  "creatures": {
+    "boar": {
+      "id": "boar",
+      "name": "Bristleback Boar",
+      "hp": 40,
+      "dmg": 13,
+      "speed": 46,
+      "r": 6,
+      "sight": 90,
+      "drops": [
+        [
+          "meat",
+          2,
+          1
+        ],
+        [
+          "hide",
+          1,
+          1
+        ],
+        [
+          "boar_tusk",
+          1,
+          0.3
+        ]
+      ],
+      "biome": "meadow",
+      "style": "charge",
+      "tell": 650,
+      "aggro": false,
+      "tamable": true
+    },
+    "wolf": {
+      "id": "wolf",
+      "name": "Greyfang Wolf",
+      "hp": 30,
+      "dmg": 9,
+      "speed": 74,
+      "r": 6,
+      "sight": 120,
+      "drops": [
+        [
+          "meat",
+          1,
+          1
+        ],
+        [
+          "fur",
+          2,
+          1
+        ],
+        [
+          "wolf_fang",
+          1,
+          0.4
+        ]
+      ],
+      "biome": "forest",
+      "style": "lunge",
+      "tell": 380,
+      "aggro": true
+    },
+    "toad": {
+      "id": "toad",
+      "name": "Mire Toad",
+      "hp": 30,
+      "dmg": 10,
+      "speed": 30,
+      "r": 6,
+      "sight": 90,
+      "drops": [
+        [
+          "gland",
+          1,
+          1
+        ],
+        [
+          "meat",
+          1,
+          0.6
+        ]
+      ],
+      "biome": "marsh",
+      "style": "tongue",
+      "tell": 700,
+      "aggro": true
+    },
+    "crawler": {
+      "id": "crawler",
+      "name": "Scrap Crawler",
+      "hp": 44,
+      "dmg": 8,
+      "speed": 40,
+      "r": 6,
+      "sight": 130,
+      "drops": [
+        [
+          "spares",
+          2,
+          1
+        ],
+        [
+          "scrap",
+          2,
+          1
+        ],
+        [
+          "crawler_optic",
+          1,
+          0.35
+        ]
+      ],
+      "biome": "toxic",
+      "style": "shoot",
+      "tell": 600,
+      "aggro": true
+    },
+    "beetle": {
+      "id": "beetle",
+      "name": "Cinder Beetle",
+      "hp": 52,
+      "dmg": 15,
+      "speed": 36,
+      "r": 7,
+      "sight": 100,
+      "drops": [
+        [
+          "chitin",
+          2,
+          1
+        ],
+        [
+          "sulfur",
+          1,
+          0.6
+        ],
+        [
+          "beetle_horn",
+          1,
+          0.3
+        ]
+      ],
+      "biome": "ash",
+      "style": "burrow",
+      "tell": 900,
+      "aggro": true
+    },
+    "crab": {
+      "id": "crab",
+      "name": "Shore Crab",
+      "hp": 24,
+      "dmg": 7,
+      "speed": 42,
+      "r": 5,
+      "sight": 70,
+      "drops": [
+        [
+          "shell",
+          1,
+          1
+        ],
+        [
+          "meat",
+          1,
+          0.8
+        ]
+      ],
+      "biome": "sand",
+      "style": "pinch",
+      "tell": 420,
+      "aggro": false
+    },
+    "vampire_1": {
+      "id": "vampire_1",
+      "name": "Dusk Stray",
+      "hp": 38,
+      "dmg": 11,
+      "speed": 60,
+      "r": 6,
+      "sight": 115,
+      "drops": [
+        [
+          "cloth",
+          1,
+          0.85
+        ],
+        [
+          "herb",
+          1,
+          0.65
+        ],
+        [
+          "hide",
+          1,
+          0.5
+        ]
+      ],
+      "biome": "forest",
+      "style": "lunge",
+      "tell": 440,
+      "aggro": true,
+      "night": true,
+      "leashTiles": 24
+    },
+    "vampire_2": {
+      "id": "vampire_2",
+      "name": "Blood Archivist",
+      "hp": 52,
+      "dmg": 14,
+      "speed": 56,
+      "r": 6,
+      "sight": 125,
+      "drops": [
+        [
+          "cloth",
+          2,
+          0.9
+        ],
+        [
+          "herb",
+          2,
+          0.7
+        ],
+        [
+          "crystal",
+          1,
+          0.45
+        ]
+      ],
+      "biome": "ruin",
+      "style": "slash_step",
+      "tell": 480,
+      "aggro": true,
+      "night": true,
+      "leashTiles": 26
+    },
+    "vampire_3": {
+      "id": "vampire_3",
+      "name": "Crimson Warden",
+      "hp": 74,
+      "dmg": 18,
+      "speed": 52,
+      "r": 7,
+      "sight": 135,
+      "drops": [
+        [
+          "crystal",
+          1,
+          0.85
+        ],
+        [
+          "cloth",
+          2,
+          0.8
+        ],
+        [
+          "iron_ingot",
+          1,
+          0.45
+        ],
+        [
+          "essence_spirit",
+          1,
+          0.35
+        ]
+      ],
+      "biome": "crypt",
+      "style": "cleave",
+      "tell": 560,
+      "aggro": true,
+      "night": true,
+      "leashTiles": 28
+    },
+    "orc_1": {
+      "id": "orc_1",
+      "name": "Scrap Gnawer",
+      "hp": 42,
+      "dmg": 12,
+      "speed": 54,
+      "r": 6,
+      "sight": 105,
+      "drops": [
+        [
+          "scrap",
+          2,
+          0.9
+        ],
+        [
+          "fiber",
+          2,
+          0.7
+        ],
+        [
+          "meat",
+          1,
+          0.5
+        ]
+      ],
+      "biome": "scrap",
+      "style": "lunge",
+      "tell": 440,
+      "aggro": true,
+      "leashTiles": 22
+    },
+    "orc_2": {
+      "id": "orc_2",
+      "name": "Bridge Raider",
+      "hp": 58,
+      "dmg": 15,
+      "speed": 56,
+      "r": 7,
+      "sight": 120,
+      "drops": [
+        [
+          "scrap",
+          2,
+          0.9
+        ],
+        [
+          "plank",
+          1,
+          0.6
+        ],
+        [
+          "hide",
+          1,
+          0.65
+        ],
+        [
+          "iron_ore",
+          1,
+          0.45
+        ]
+      ],
+      "biome": "road",
+      "style": "charge",
+      "tell": 500,
+      "aggro": true,
+      "leashTiles": 26
+    },
+    "orc_3": {
+      "id": "orc_3",
+      "name": "Ironvein Marauder",
+      "hp": 82,
+      "dmg": 19,
+      "speed": 48,
+      "r": 8,
+      "sight": 120,
+      "drops": [
+        [
+          "iron_ore",
+          2,
+          0.9
+        ],
+        [
+          "coal",
+          1,
+          0.7
+        ],
+        [
+          "scrap",
+          2,
+          0.75
+        ],
+        [
+          "fasteners",
+          1,
+          0.4
+        ]
+      ],
+      "biome": "quarry",
+      "style": "slam",
+      "tell": 600,
+      "aggro": true,
+      "leashTiles": 26
+    },
+    "slime_1": {
+      "id": "slime_1",
+      "name": "Lake Droplet",
+      "hp": 28,
+      "dmg": 8,
+      "speed": 44,
+      "r": 6,
+      "sight": 76,
+      "drops": [
+        [
+          "herb",
+          1,
+          0.8
+        ],
+        [
+          "berries",
+          2,
+          0.6
+        ],
+        [
+          "raw_salt",
+          1,
+          0.45
+        ]
+      ],
+      "biome": "lake",
+      "style": "spit_hop",
+      "tell": 460,
+      "aggro": true,
+      "leashTiles": 18
+    },
+    "slime_2": {
+      "id": "slime_2",
+      "name": "Reagent Ooze",
+      "hp": 46,
+      "dmg": 12,
+      "speed": 46,
+      "r": 7,
+      "sight": 96,
+      "drops": [
+        [
+          "gland",
+          1,
+          0.85
+        ],
+        [
+          "sulfur",
+          1,
+          0.65
+        ],
+        [
+          "herb",
+          1,
+          0.6
+        ]
+      ],
+      "biome": "marsh",
+      "style": "acid_pool",
+      "tell": 500,
+      "aggro": true,
+      "leashTiles": 20
+    },
+    "slime_3": {
+      "id": "slime_3",
+      "name": "Cinder Core",
+      "hp": 64,
+      "dmg": 16,
+      "speed": 44,
+      "r": 7,
+      "sight": 106,
+      "drops": [
+        [
+          "sulfur",
+          2,
+          0.9
+        ],
+        [
+          "coal",
+          2,
+          0.8
+        ],
+        [
+          "essence_fire",
+          1,
+          0.35
+        ]
+      ],
+      "biome": "ash",
+      "style": "ember_burst",
+      "tell": 580,
+      "aggro": true,
+      "leashTiles": 22
+    },
+    "deer": {
+      "id": "deer",
+      "name": "Meadow Deer",
+      "hp": 32,
+      "dmg": 6,
+      "speed": 68,
+      "r": 6,
+      "sight": 110,
+      "drops": [
+        [
+          "meat",
+          2,
+          1
+        ],
+        [
+          "hide",
+          2,
+          1
+        ]
+      ],
+      "biome": "meadow",
+      "style": "graze_flee",
+      "tell": 500,
+      "aggro": false,
+      "tamable": true
+    },
+    "hare": {
+      "id": "hare",
+      "name": "Brush Hare",
+      "hp": 14,
+      "dmg": 3,
+      "speed": 76,
+      "r": 4,
+      "sight": 95,
+      "drops": [
+        [
+          "meat",
+          1,
+          1
+        ],
+        [
+          "fur",
+          1,
+          0.7
+        ]
+      ],
+      "biome": "meadow",
+      "style": "graze_flee",
+      "tell": 450,
+      "aggro": false,
+      "tamable": true
+    },
+    "grouse": {
+      "id": "grouse",
+      "name": "Black Grouse",
+      "hp": 16,
+      "dmg": 4,
+      "speed": 70,
+      "r": 4,
+      "sight": 92,
+      "drops": [
+        [
+          "meat",
+          1,
+          1
+        ],
+        [
+          "feather",
+          2,
+          1
+        ],
+        [
+          "grouse_egg",
+          1,
+          0.4
+        ]
+      ],
+      "biome": "marsh",
+      "style": "flush_flee",
+      "tell": 450,
+      "aggro": false,
+      "tamable": true
+    },
+    "fox": {
+      "id": "fox",
+      "name": "Red Fox",
+      "hp": 26,
+      "dmg": 9,
+      "speed": 72,
+      "r": 5,
+      "sight": 115,
+      "drops": [
+        [
+          "fur",
+          1,
+          1
+        ],
+        [
+          "meat",
+          1,
+          0.8
+        ]
+      ],
+      "biome": "forest",
+      "style": "stalk",
+      "tell": 400,
+      "aggro": false,
+      "night": true,
+      "leashTiles": 28
+    },
+    "boss_greyback": {
+      "id": "boss_greyback",
+      "name": "Greyback Shaleheart",
+      "hp": 260,
+      "dmg": 22,
+      "speed": 34,
+      "r": 12,
+      "sight": 150,
+      "drops": [
+        [
+          "stone",
+          6,
+          1
+        ],
+        [
+          "rich_iron_ore",
+          2,
+          1
+        ],
+        [
+          "crystal",
+          2,
+          1
+        ]
+      ],
+      "uniqueDrop": "relic_shaleheart",
+      "biome": "quarry",
+      "style": "sideboss_rock",
+      "tell": 680,
+      "aggro": true,
+      "leashTiles": 22
+    },
+    "boss_ronin": {
+      "id": "boss_ronin",
+      "name": "Oathless Ronin",
+      "hp": 220,
+      "dmg": 24,
+      "speed": 60,
+      "r": 10,
+      "sight": 165,
+      "drops": [
+        [
+          "refined_iron_ingot",
+          2,
+          1
+        ],
+        [
+          "cloth",
+          3,
+          1
+        ],
+        [
+          "spares",
+          4,
+          1
+        ]
+      ],
+      "uniqueDrop": "ronin_nodachi",
+      "biome": "cairns",
+      "style": "sideboss_ronin",
+      "tell": 640,
+      "aggro": true,
+      "leashTiles": 22
+    },
+    "boss_tidemarshal": {
+      "id": "boss_tidemarshal",
+      "name": "Saltwick Tidemarshal",
+      "hp": 235,
+      "dmg": 20,
+      "speed": 50,
+      "r": 10,
+      "sight": 155,
+      "drops": [
+        [
+          "raw_salt",
+          4,
+          1
+        ],
+        [
+          "shell",
+          4,
+          1
+        ],
+        [
+          "essence_water",
+          2,
+          1
+        ]
+      ],
+      "uniqueDrop": "tidemarshal_trident",
+      "biome": "coast",
+      "style": "sideboss_water",
+      "tell": 600,
+      "aggro": true,
+      "leashTiles": 22
+    },
+    "boss_custodian": {
+      "id": "boss_custodian",
+      "name": "Pale Custodian",
+      "hp": 210,
+      "dmg": 21,
+      "speed": 56,
+      "r": 9,
+      "sight": 155,
+      "drops": [
+        [
+          "cloth",
+          4,
+          1
+        ],
+        [
+          "spares",
+          4,
+          1
+        ],
+        [
+          "essence_spirit",
+          2,
+          1
+        ]
+      ],
+      "uniqueDrop": "custodian_lantern",
+      "biome": "academy",
+      "style": "sideboss_maid",
+      "tell": 620,
+      "aggro": true,
+      "leashTiles": 22
+    }
+  },
+  "elders": {
+    "frost": {
+      "name": "Glacier Matron",
+      "title": "Elder of the White Crown",
+      "hpLatent": 320,
+      "hpAwake": 620,
+      "stone": "stone_frost",
+      "r": 14,
+      "size": 40,
+      "color": "#9ad8ff",
+      "region": "Frostcrown Peaks",
+      "dmg": 18,
+      "speed": 30,
+      "patterns": [
+        "shardFan",
+        "frostRing"
+      ],
+      "awakePatterns": [
+        "shardFan",
+        "frostRing",
+        "icePillars",
+        "shardSpiral"
+      ]
+    },
+    "magma": {
+      "name": "Caldera Titan",
+      "title": "Elder of the Burning Throat",
+      "hpLatent": 380,
+      "hpAwake": 700,
+      "stone": "stone_magma",
+      "r": 16,
+      "size": 44,
+      "color": "#ff7a3a",
+      "region": "Caldera Wastes",
+      "dmg": 22,
+      "speed": 24,
+      "patterns": [
+        "fissure",
+        "slam"
+      ],
+      "awakePatterns": [
+        "fissure",
+        "slam",
+        "meteors",
+        "fissureTriple"
+      ]
+    },
+    "bog": {
+      "name": "Mire Mother",
+      "title": "Elder of Still Water",
+      "hpLatent": 300,
+      "hpAwake": 560,
+      "stone": "stone_bog",
+      "r": 15,
+      "size": 40,
+      "color": "#9ad050",
+      "region": "Drowned Fen",
+      "dmg": 16,
+      "speed": 26,
+      "patterns": [
+        "spitPools",
+        "brood"
+      ],
+      "awakePatterns": [
+        "spitPools",
+        "brood",
+        "submerge",
+        "tongueSweep"
+      ]
+    },
+    "grove": {
+      "name": "Elder Treant",
+      "title": "Elder of the First Wood",
+      "hpLatent": 360,
+      "hpAwake": 640,
+      "stone": "stone_grove",
+      "r": 15,
+      "size": 44,
+      "color": "#7ad070",
+      "region": "Oldgrowth",
+      "dmg": 18,
+      "speed": 20,
+      "patterns": [
+        "rootLine",
+        "seedBombs"
+      ],
+      "awakePatterns": [
+        "rootLine",
+        "seedBombs",
+        "rootCage",
+        "drainTrees"
+      ]
+    },
+    "tide": {
+      "name": "Tide Serpent",
+      "title": "Elder of the Breaking Shore",
+      "hpLatent": 300,
+      "hpAwake": 580,
+      "stone": "stone_tide",
+      "r": 13,
+      "size": 40,
+      "color": "#5ac8f0",
+      "region": "Serpent Strand",
+      "dmg": 18,
+      "speed": 50,
+      "patterns": [
+        "spit",
+        "wave"
+      ],
+      "awakePatterns": [
+        "spit",
+        "wave",
+        "dive",
+        "whirl"
+      ]
+    },
+    "rust": {
+      "name": "Rust Colossus",
+      "title": "Elder of the Dead Foundry",
+      "hpLatent": 400,
+      "hpAwake": 720,
+      "stone": "stone_rust",
+      "r": 15,
+      "size": 44,
+      "color": "#f0a050",
+      "region": "Dead Foundry",
+      "dmg": 20,
+      "speed": 22,
+      "patterns": [
+        "beam",
+        "mines"
+      ],
+      "awakePatterns": [
+        "beam",
+        "mines",
+        "beamSweep",
+        "overload"
+      ]
+    }
+  },
+  "primordialElders": {
+    "surtur": {
+      "name": "Surtur",
+      "title": "The World-Burner",
+      "hpLatent": 420,
+      "hpAwake": 780,
+      "stone": "stone_surtur",
+      "r": 18,
+      "size": 52,
+      "color": "#ff6a2a",
+      "region": "Volcanic Core",
+      "dmg": 22,
+      "speed": 34,
+      "patterns": [
+        "surtur_m_s1",
+        "surtur_m_s2",
+        "surtur_m_s3",
+        "surtur_m_ult"
+      ],
+      "awakePatterns": [
+        "surtur_u_s1",
+        "surtur_u_s2",
+        "surtur_u_s3",
+        "surtur_u_ult"
+      ]
+    },
+    "typhon": {
+      "name": "Typhon",
+      "title": "Father of All Monsters",
+      "hpLatent": 400,
+      "hpAwake": 740,
+      "stone": "stone_typhon",
+      "r": 17,
+      "size": 50,
+      "color": "#9c72ff",
+      "region": "Tempest Lair",
+      "dmg": 20,
+      "speed": 38,
+      "patterns": [
+        "typhon_m_s1",
+        "typhon_m_s2",
+        "typhon_m_s3",
+        "typhon_m_ult"
+      ],
+      "awakePatterns": [
+        "typhon_u_s1",
+        "typhon_u_s2",
+        "typhon_u_s3",
+        "typhon_u_ult"
+      ]
+    },
+    "aion": {
+      "name": "Aion",
+      "title": "The Unmoving Clock",
+      "hpLatent": 360,
+      "hpAwake": 680,
+      "stone": "stone_aion",
+      "r": 16,
+      "size": 48,
+      "color": "#ffd86a",
+      "region": "Elderwood Sanctum",
+      "dmg": 18,
+      "speed": 36,
+      "patterns": [
+        "aion_m_s1",
+        "aion_m_s2",
+        "aion_m_s3",
+        "aion_m_ult"
+      ],
+      "awakePatterns": [
+        "aion_u_s1",
+        "aion_u_s2",
+        "aion_u_s3",
+        "aion_u_ult"
+      ]
+    },
+    "atlas": {
+      "name": "Atlas",
+      "title": "Bearer of the Sky-Weight",
+      "hpLatent": 450,
+      "hpAwake": 820,
+      "stone": "stone_atlas",
+      "r": 18,
+      "size": 52,
+      "color": "#8ac4f0",
+      "region": "Gate of Pillars",
+      "dmg": 22,
+      "speed": 28,
+      "patterns": [
+        "atlas_m_s1",
+        "atlas_m_s2",
+        "atlas_m_s3",
+        "atlas_m_ult"
+      ],
+      "awakePatterns": [
+        "atlas_u_s1",
+        "atlas_u_s2",
+        "atlas_u_s3",
+        "atlas_u_ult"
+      ]
+    },
+    "argus": {
+      "name": "Argus Panoptes",
+      "title": "The All-Seeing",
+      "hpLatent": 350,
+      "hpAwake": 660,
+      "stone": "stone_argus",
+      "r": 16,
+      "size": 48,
+      "color": "#5ef0ff",
+      "region": "Hall of Eyes",
+      "dmg": 18,
+      "speed": 36,
+      "patterns": [
+        "argus_m_s1",
+        "argus_m_s2",
+        "argus_m_s3",
+        "argus_m_ult"
+      ],
+      "awakePatterns": [
+        "argus_u_s1",
+        "argus_u_s2",
+        "argus_u_s3",
+        "argus_u_ult"
+      ]
+    },
+    "anubis": {
+      "name": "Anubis",
+      "title": "Judge of the Feather",
+      "hpLatent": 380,
+      "hpAwake": 710,
+      "stone": "stone_anubis",
+      "r": 16,
+      "size": 48,
+      "color": "#f0c45a",
+      "region": "The Necropolis",
+      "dmg": 20,
+      "speed": 38,
+      "patterns": [
+        "anubis_m_s1",
+        "anubis_m_s2",
+        "anubis_m_s3",
+        "anubis_m_ult"
+      ],
+      "awakePatterns": [
+        "anubis_u_s1",
+        "anubis_u_s2",
+        "anubis_u_s3",
+        "anubis_u_ult"
+      ]
+    }
+  },
+  "upgrades": {
+    "workbench_ii": {
+      "toLevel": 2,
+      "cost": [
+        [
+          "mechanical_parts",
+          2
+        ],
+        [
+          "iron_ingot",
+          1
+        ]
+      ]
+    },
+    "workbench_iii": {
+      "toLevel": 3,
+      "cost": [
+        [
+          "mechanical_parts",
+          6
+        ],
+        [
+          "iron_ingot",
+          8
+        ],
+        [
+          "fasteners",
+          8
+        ],
+        [
+          "spares",
+          12
+        ]
+      ]
+    },
+    "furnace_lining": {
+      "cost": [
+        [
+          "brick",
+          2
+        ],
+        [
+          "fasteners",
+          3
+        ],
+        [
+          "mechanical_parts",
+          1
+        ]
+      ],
+      "benchLevel": 2
+    },
+    "generator_capacity": {
+      "cost": [
+        [
+          "mechanical_parts",
+          4
+        ],
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "fasteners",
+          2
+        ],
+        [
+          "spares",
+          4
+        ]
+      ],
+      "benchLevel": 2
+    },
+    "freight_cart": {
+      "cost": [
+        [
+          "mechanical_parts",
+          4
+        ],
+        [
+          "iron_ingot",
+          2
+        ],
+        [
+          "spares",
+          3
+        ]
+      ],
+      "benchLevel": 2
+    },
+    "industrial_module": {
+      "cost": [
+        [
+          "mechanical_parts",
+          3
+        ],
+        [
+          "fasteners",
+          3
+        ],
+        [
+          "spares",
+          4
+        ],
+        [
+          "iron_ingot",
+          2
+        ]
+      ],
+      "benchLevel": 2
+    },
+    "garden_frame": {
+      "cost": [
+        [
+          "wood",
+          4
+        ],
+        [
+          "fiber",
+          4
+        ],
+        [
+          "glass",
+          1
+        ],
+        [
+          "herb",
+          1
+        ]
+      ]
+    }
+  },
+  "gardens": {
+    "crop": {
+      "name": "Sunroot",
+      "inputs": [
+        [
+          "seed",
+          1
+        ]
+      ],
+      "output": [
+        [
+          "crop",
+          3
+        ],
+        [
+          "seed",
+          2
+        ]
+      ],
+      "seconds": 300
+    },
+    "herb": {
+      "name": "Bitterleaf",
+      "inputs": [
+        [
+          "seed",
+          1
+        ],
+        [
+          "herb",
+          1
+        ]
+      ],
+      "output": [
+        [
+          "herb",
+          3
+        ],
+        [
+          "seed",
+          1
+        ]
+      ],
+      "seconds": 600
+    }
+  },
+  "recycler": {
+    "currentComponentRules": {
+      "X:pipe-v1": {
+        "key": "metal_pipe",
+        "seconds": 10,
+        "outputs": [
+          [
+            "refined_iron_ingot",
+            1
+          ]
+        ]
+      },
+      "X:pipe-v2": {
+        "key": "metal_pipe",
+        "seconds": 12,
+        "outputs": [
+          [
+            "refined_iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      },
+      "X:pipe-v3": {
+        "key": "metal_pipe",
+        "seconds": 10,
+        "outputs": [
+          [
+            "refined_iron_ingot",
+            1
+          ]
+        ]
+      },
+      "X:gear-v1": {
+        "key": "mechanical_gear",
+        "seconds": 15,
+        "outputs": [
+          [
+            "mechanical_parts",
+            2
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      },
+      "X:blade-v1": {
+        "key": "metal_blade",
+        "seconds": 14,
+        "outputs": [
+          [
+            "iron_ingot",
+            2
+          ],
+          [
+            "mechanical_parts",
+            1
+          ]
+        ]
+      }
+    },
+    "versions": {
+      "v1": {
+        "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN per-item returns, condition tiers and times; v1 jobs must remain immutable",
+        "midCondition": 0.25,
+        "highCondition": 0.75,
+        "seconds": 15,
+        "rules": {
+          "iron_pick": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "wood",
+                1
+              ]
+            ]
+          },
+          "iron_axe": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "wood",
+                1
+              ]
+            ]
+          },
+          "iron_sword": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "leather",
+                1
+              ]
+            ]
+          },
+          "industrial_pick": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "mechanical_parts",
+                1
+              ]
+            ]
+          },
+          "industrial_axe": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "mechanical_parts",
+                1
+              ]
+            ]
+          },
+          "reinforced_spear": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "mechanical_parts",
+                1
+              ]
+            ]
+          }
+        }
+      },
+      "v2": {
+        "_status": "SOH_PROVISIONAL B01. v2 supersedes v1 only for NEW jobs (recipe X:recover-v2). Queued X:recover-v1 jobs keep v1 outputs forever. Thresholds reuse recyclerV1 midCondition/highCondition. Historical LI Pipe salvage (v4): parts+refined iron, exact per-item yield and condition curve ORIGINAL_UNKNOWN.",
+        "seconds": 15,
+        "rules": {
+          "iron_sword": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ],
+              [
+                "metal_blade",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "leather",
+                1
+              ],
+              [
+                "metal_blade",
+                1
+              ]
+            ]
+          },
+          "iron_pick": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "metal_pipe",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ]
+            ]
+          },
+          "iron_axe": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "iron_plate",
+                1
+              ],
+              [
+                "mechanical_parts",
+                1
+              ]
+            ]
+          },
+          "industrial_axe": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "mechanical_parts",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "mechanical_gear",
+                1
+              ],
+              [
+                "mechanical_parts",
+                1
+              ]
+            ]
+          }
+        }
+      },
+      "v3": {
+        "_status": "SOH_PROVISIONAL MEC-01 P1: recyclerV3 supersedes recyclerV2 ONLY for NEW jobs (X:recover-v3) and ONLY for the four keys listed (each v2 entry over-returned vs its craft under the cumulative-tier recovery proof, see web/src/game/industrial-proof.ts). Queued/saved X:recover-v2 jobs keep v2 outputs forever. Other v2 keys stay on v2 (proved OK). Thresholds reuse recyclerV1 midCondition/highCondition.",
+        "seconds": 15,
+        "rules": {
+          "iron_sword": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "iron_ingot",
+                1
+              ],
+              [
+                "leather",
+                1
+              ]
+            ]
+          },
+          "iron_pick": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ]
+          },
+          "iron_axe": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "mechanical_parts",
+                1
+              ]
+            ]
+          },
+          "industrial_axe": {
+            "base": [
+              [
+                "scrap",
+                1
+              ]
+            ],
+            "mid": [
+              [
+                "mechanical_parts",
+                1
+              ],
+              [
+                "iron_ingot",
+                1
+              ]
+            ],
+            "high": [
+              [
+                "mechanical_parts",
+                1
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "note": "v3 supersedes v2 for its listed keys; v2 supersedes v1 for its listed keys. Do NOT sum all version outputs as concurrent offers."
+  },
+  "vendors": {
+    "spares": {
+      "iron_ore": {
+        "price": 3,
+        "qty": 2,
+        "stock": 5
+      },
+      "coal": {
+        "price": 3,
+        "qty": 2,
+        "stock": 4
+      },
+      "glass": {
+        "price": 4,
+        "qty": 1,
+        "stock": 3
+      },
+      "salvaged_oil": {
+        "price": 5,
+        "qty": 1,
+        "stock": 4
+      }
+    },
+    "secured": {
+      "iron_pick": {
+        "price": 12,
+        "stock": 1
+      },
+      "iron_axe": {
+        "price": 12,
+        "stock": 1
+      },
+      "medkit": {
+        "price": 4,
+        "stock": 4
+      },
+      "cart_kit": {
+        "price": 20,
+        "stock": 1
+      },
+      "leather_armor": {
+        "price": 10,
+        "stock": 1
+      },
+      "water_flask": {
+        "price": 3,
+        "stock": 2
+      }
+    }
+  },
+  "studies": {
+    "core_fire": "core_fire",
+    "core_earth": "core_earth",
+    "core_storm": "core_storm",
+    "core_frost": "core_frost",
+    "core_meteor": "core_meteor",
+    "core_dragon": "core_dragon",
+    "core_elsa": "core_elsa",
+    "core_mjolnir": "core_mjolnir",
+    "core_demon": "core_demon"
+  },
+  "counts": {
+    "items": 147,
+    "recipes": 112,
+    "structures": 47,
+    "sourceTypes": 19,
+    "creatures": 23,
+    "recipeInputs": 273,
+    "recipeOutputVariants": 1
+  }
+}

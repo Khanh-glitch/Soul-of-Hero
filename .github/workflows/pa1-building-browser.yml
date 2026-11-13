@@ -67,12 +67,20 @@ jobs:
           BUILD_SHA: ${{ github.sha }}
           GAME_URL: http://127.0.0.1:4173/
         run: node e2e/pa1-building-palette.mjs
+      # Separate step, deliberately not chained with &&: the geometry palette and the Deploy custody
+      # screen are different claims, and a failure must say which one moved.
+      - name: Real Deploy custody (pack, not ore) and research-family panel
+        working-directory: web
+        env:
+          BUILD_SHA: ${{ github.sha }}
+          GAME_URL: http://127.0.0.1:4173/
+        run: node e2e/pa1-deploy-custody.mjs
       - name: Upload render evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: pa1-build-palette-${{ github.sha }}-${{ github.run_attempt }}
-          path: web/evidence/pa1-building-palette/
+          path: web/evidence/
           if-no-files-found: warn
           retention-days: 30
       - name: Print failure logs

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ITEMS, RECIPES, CREATURES, SOURCES } from '../src/game/catalog';
+import { ITEMS, RECIPES, STRUCTS, CREATURES, SOURCES } from '../src/game/catalog';
 import { TILE, type Entity, type GameState } from '../src/game/core';
 import { addItem, C, countItem, dispatch, harvestHit, gardenEnvironment, blockGrid, markDirty, mkContainer, mkCreature, newGame, stepStations, stepGardensBarrels } from '../src/game/engine';
 import { getWorld, SRC_KEYS } from '../src/game/world';
@@ -76,10 +76,29 @@ describe('connected economy',()=>{
   expect(RECIPES.iron_sword.ins.find(([k])=>k==='iron_ingot')![1]).toBeGreaterThan(1);
   expect(ITEMS.industrial_pick.salvage).toBeUndefined();expect(ITEMS.industrial_axe.salvage).toBeUndefined();
  });
- it('repairs real owned structure HP with bounded cost and rejects replay, range, ownership and full health',()=>{
-  const g=fresh(),r=g.run!,e=station(g,'workbench');e.hp=10;e.maxHp=160;give(g,'wood',4);give(g,'stone',1);const cmd={eid:e.id};
-  expect(act(g,'repairStructure',cmd,'fix-structure').ok).toBe(true);expect(e.hp).toBe(50);expect(countItem(r,'inv','wood')).toBe(0);expect(countItem(r,'inv','stone')).toBe(0);expect(act(g,'repairStructure',cmd,'fix-structure')).toMatchObject({ok:false,dup:true});
-  give(g,'wood',4);give(g,'stone',1);e.owner='other';expect(act(g,'repairStructure',cmd).ok).toBe(false);e.owner=undefined;e.x+=200;expect(act(g,'repairStructure',cmd).ok).toBe(false);e.x-=200;e.hp=160;expect(act(g,'repairStructure',cmd).ok).toBe(false);
-  expect(countItem(r,'inv','wood')).toBe(4);expect(validate(g)).toBeTruthy();
+ /** A placed structure that is NOT a packed device: the only thing the engine lets you patch with raw
+  * materials in place (§24 device custody — a device's condition lives on the packed item). */
+ function geo(g:GameState,type:string){const r=g.run!,p=r.player;const e:Entity={id:`fixture-geo-${++n}`,kind:'struct',type,x:p.x+16,y:p.y,tx:Math.floor(p.x/TILE)+1,ty:Math.floor(p.y/TILE),hp:STRUCTS[type].hp,maxHp:STRUCTS[type].hp};r.entities[e.id]=e;markDirty();return e;}
+ it('repairs real owned geometry HP with bounded cost and rejects replay, range, ownership and full health',()=>{
+  const g=fresh(),r=g.run!,e=geo(g,'wall_wood');e.hp=10;e.maxHp=160;give(g,'wood',6);const cmd={eid:e.id};
+  // Wood Wall costs 5 wood to build, so one patch is ceil(5*0.25)=2 wood and restores ceil(160/4)=40 HP.
+  expect(act(g,'repairStructure',cmd,'fix-structure').ok).toBe(true);expect(e.hp).toBe(50);expect(countItem(r,'inv','wood')).toBe(4);expect(act(g,'repairStructure',cmd,'fix-structure')).toMatchObject({ok:false,dup:true});
+  // A second and third patch each cost the same bounded 2 wood and heal the same 40 HP...
+  e.hp=20;expect(act(g,'repairStructure',cmd).ok).toBe(true);expect(e.hp).toBe(60);expect(countItem(r,'inv','wood')).toBe(2);
+  expect(act(g,'repairStructure',cmd).ok).toBe(true);expect(e.hp).toBe(100);expect(countItem(r,'inv','wood')).toBe(0);
+  // ...and with nothing left to pay, the repair refuses without healing or inventing a debt.
+  expect(act(g,'repairStructure',cmd).ok).toBe(false);expect(e.hp).toBe(100);expect(countItem(r,'inv','wood')).toBe(0);
+  give(g,'wood',2);e.owner='other';expect(act(g,'repairStructure',cmd).ok).toBe(false);e.owner=undefined;e.x+=200;expect(act(g,'repairStructure',cmd).ok).toBe(false);e.x-=200;e.hp=160;expect(act(g,'repairStructure',cmd).ok).toBe(false);
+  expect(countItem(r,'inv','wood')).toBe(2);expect(validate(g)).toBeTruthy();   // the three guards above spent nothing
+ });
+ it('refuses in-place material repair for a packed device, and spends nothing when it refuses',()=>{
+  const g=fresh(),r=g.run!,e=station(g,'workbench');e.hp=10;e.maxHp=160;give(g,'wood',4);give(g,'stone',1);
+  // The pre-§24 version of this test expected a Workbench to be patched with wood and stone. It is a
+  // deployable now: STRUCTS.workbench.item exists, so the engine refuses and the player repairs the
+  // deploy_workbench item instead. Pinning the refusal is what keeps the two surfaces from drifting.
+  const res=act(g,'repairStructure',{eid:e.id});
+  expect(res.ok).toBe(false);expect((res as {reason?:string}).reason).toBe('This structure cannot be repaired.');
+  expect(e.hp).toBe(10);expect(countItem(r,'inv','wood')).toBe(4);expect(countItem(r,'inv','stone')).toBe(1);
+  expect(act(g,'repairStructure',{eid:e.id},'device-fix').ok).toBe(false);expect(validate(g)).toBeTruthy();
  });
 });

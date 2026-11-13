@@ -1,0 +1,14 @@
+{
+  "schema": "soh-runtime-item-formula-atlas-v1",
+  "sourceSHA": "unspecified",
+  "counts": {
+    "items": 147,
+    "recipes": 112,
+    "structures": 47,
+    "sourceTypes": 19,
+    "creatures": 23,
+    "recipeInputs": 273,
+    "recipeOutputVariants": 1
+  },
+  "pass": true
+}
