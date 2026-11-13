@@ -149,14 +149,20 @@ try{
     if(opened) break;
     await hold(ORBIT[i%4],i<4?TILE:Math.round(TILE*0.7));   // first lap walks into the band, then it circles inside it
   }
-  rec.distinctLabels=[...labelCounts.entries()].map(([l,n])=>n+'x '+l).slice(0,12);
-  // The walk did not reach the panel. Only now is it worth perturbing the player: the liveness probe
-  // holds `w` for over a second, so it runs after the orbit, when it can only add information about
-  // whether this pinned build ticks at all.
-  const probeMoved=await inputAlive();
-  rec.postMortem={inputAlive:probeMoved,camBefore:rec.camBefore,camAfter:await camPos()};
-  assert.ok(probeMoved,'the run is not reading world input in this pinned build: a held `w` moved the camera by less than 4 px, so no walk can reach the table');
   rec.research.open=opened;
+  rec.distinctLabels=[...labelCounts.entries()].map(([l,n])=>n+'x '+l).slice(0,12);
+  if(!opened){
+    // The walk did not reach the panel. Only now is it worth perturbing the player: the liveness probe
+    // holds `w` for over a second, so it runs after the orbit, when it can only add information about
+    // whether this pinned build ticks at all. It must NEVER run on success — with the console open the
+    // engine deliberately ignores movement keys (`!panelRef` gates them), so a probe that reports
+    // "input dead" after a panel opened is measuring the panel, not the build. That exact ordering bug
+    // turned a passing run into a failure: hotbarSlotUsed "1", lastOpenedFrom "probe0(17,17)",
+    // research.open still false, because the throw came before the assignment.
+    const probeMoved=await inputAlive();
+    rec.postMortem={inputAlive:probeMoved,camBefore:rec.camBefore,camAfter:await camPos()};
+    assert.ok(probeMoved,'the run is not reading world input in this pinned build: a held `w` moved the camera by less than 4 px, so no walk can reach the table');
+  }
   assert.ok(opened,'the Research Table never became usable from the real UI; last target '+JSON.stringify(rec.prompt)+' after '+rec.attempts+' taps; saw '+JSON.stringify(rec.labels));
   await shot('01-research-panel-1280');
 
