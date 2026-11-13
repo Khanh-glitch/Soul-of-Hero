@@ -106,43 +106,64 @@ try{
   assert.ok(rec.inputAlive,'the run is not reading world input in this build (a held key changed no pixels, before and after a 5 s wait): the QA sandbox would have to be re-scoped, not the sweep widened');
   await shot('00-qa-industry-spawn');
 
-  // The `industry` compound is a dense column — Workbench, Furnace, Refinery and Research Table on one
-  // tile line — and the free ground beside it is a pocket, so a fixed walk gets stuck naming the
-  // refinery. This is a serpentine: sweep right a row at a time, pressing E whenever the target the
-  // player can SEE being offered is the table. A tap of ~260 ms is about one tile at the shipped
-  // 72 px/s; blocked tiles simply stop the player and the next row still explores.
-  const STEP=260;
-  async function hold(key,ms){ await page.keyboard.down(key); await page.waitForTimeout(ms); await page.keyboard.up(key); await page.waitForTimeout(110); }
-  let opened=false;
-  rec.labels=[];
-  const note=(tag,label)=>{ if(rec.labels.length<40) rec.labels.push(tag+'='+label); };
-  for(let row=0;row<12 && !opened;row++){
-    for(let col=0;col<12 && !opened;col++){
-      for(let k=0;k<3;k++){
-        rec.attempts++;
-        const label=await labelOf(); rec.prompt=label;
-        if(!/research/i.test(label)){ note(row+','+col,label); break; }
+  // Where the prompt can name the table at all. `findInteract` (src/game/sim.ts) keeps the NEAREST
+  // interactable within 30 px of a point 6 px ahead of the player's aim, and the `industry` preset plants
+  // its machine column one tile east of the spawn: workbench (bx+5,by), furnace (bx+5,by+1), refinery
+  // (bx+5,by+2), Research Table (bx+5,by+3), player at (bx+4,by+2). From the spawn the refinery is 16 px
+  // away and the table 22.6 px, so standing on the machine line the table can NEVER win the prompt — the
+  // first sweep walked a 12x12 field on that row and named the refinery 144 times. One tile south they
+  // are both 22.6 px, and ties go to the entity scanned last, which is the table (placed after the
+  // refinery). So: a compact 3-column x 4-row grid in one-tile steps from the spawn, and at every
+  // standing spot the mouse is rotated through 8 compass headings, because that 6 px aim offset is the
+  // only lever a player has when two machines are equally close. E is pressed only when the prompt the
+  // player can actually SEE names the table; a second, rougher pass presses E at any station to prove
+  // the panel is not being missed for want of a match, closing whatever console that opens.
+  const TILE=230;                              // about one tile at the shipped 72 px/s
+  const CX=640, CY=360;                        // the camera centers the player in a 1280x720 stage
+  const RING=[[24,0],[0,24],[-24,0],[0,-24],[17,17],[-17,17],[17,-17],[-17,-17]];
+  async function hold(key,ms){ await page.keyboard.down(key); await page.waitForTimeout(ms); await page.keyboard.up(key); await page.waitForTimeout(90); }
+  const aimAt=async(dx,dy)=>{ await page.mouse.move(CX+dx,CY+dy); await page.waitForTimeout(45); };
+  const labelCounts=new Map();
+  const note=(label)=>{ if(!label) return; labelCounts.set(label,(labelCounts.get(label)??0)+1); };
+  async function closePanel(){
+    const x=page.getByRole('button',{name:/^(x|\u00d7|\u2715|close)$/i}).first();
+    if(await x.count()){ await x.click({timeout:1200}).catch(()=>{}); await page.waitForTimeout(180); return; }
+    await page.keyboard.press('Escape'); await page.waitForTimeout(180);
+    if(await menuUp()){ const r=page.getByRole('button',{name:'Resume',exact:true}).first(); if(await r.count()) await r.click({timeout:1200}).catch(()=>{}); await page.waitForTimeout(180); }
+  }
+  async function tryOpen(tag,reckless){
+    let best='';
+    for(const [dx,dy] of RING){
+      rec.attempts++;
+      await aimAt(dx,dy);
+      const label=await labelOf(); rec.prompt=label; note(label);
+      if(!label) continue; best=label;
+      if(/research/i.test(label) || (reckless && /use |open /i.test(label))){
         await page.keyboard.press('e');
-        await page.waitForTimeout(300);
-        opened=(await panel().count())>0;
-        note('E@'+row+','+col,label+(opened?' -> PANEL OPEN':''));
+        await page.waitForTimeout(330);
+        if(await panel().count()>0){ rec.lastOpenedFrom=tag+'('+dx+','+dy+')'; rec.lastOpenedLabel=label; return true; }
+        if(reckless) await closePanel();
+      }
+    }
+    if(best && rec.labels.length<40) rec.labels.push(tag+'='+best);
+    return false;
+  }
+  rec.labels=[];
+  let opened=false;
+  for(const mode of ['named','any']){
+    for(let row=0;row<4 && !opened;row++){
+      for(let col=0;col<3 && !opened;col++){
+        opened=await tryOpen(mode+'@'+row+','+col,mode==='any');
         if(opened) break;
+        await hold('d',TILE);
       }
       if(opened) break;
-      await hold('d',STEP);
+      for(let k=0;k<3;k++) await hold('a',TILE);      // back to the left edge of the sweep
+      await hold('s',TILE);                             // one row south, where the table can out-tie the refinery
     }
-    if(opened) break;
-    // Belt: if a panel stole the screen mid-sweep (a return report, a toast-driven open), clear it once.
-    if(await menuUp()){
-      const closer=page.getByRole('button',{name:'Resume',exact:true}).first();
-      if(await closer.count()) await closer.click({timeout:1500}).catch(()=>{});
-      await page.waitForTimeout(250);
-    }
-    await hold('a',STEP*13);      // back to the left edge of the sweep
-    await hold('s',STEP);         // one row down
-    await hold('d',STEP);         // step right again, so a blocked corner cannot pin the sweep
-    await hold('a',STEP);
+    if(!opened){ await hold('w',TILE*4); await hold('a',TILE*2); }   // walk home for the second pass
   }
+  rec.distinctLabels=[...labelCounts.entries()].map(([l,n])=>n+'x '+l).slice(0,12);
   rec.research.open=opened;
   assert.ok(opened,'the Research Table never became usable from the real UI; last target '+JSON.stringify(rec.prompt)+' after '+rec.attempts+' taps; saw '+JSON.stringify(rec.labels));
   await shot('01-research-panel-1280');
