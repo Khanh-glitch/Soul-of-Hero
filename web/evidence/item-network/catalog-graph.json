@@ -1,14 +1,14 @@
 {
   "meta": {
     "schema": "soh-runtime-item-formula-atlas-v1",
-    "sourceSHA": "6e2ec8603d4bc2e09fc488671b18cac711922791",
+    "sourceSHA": "1fb32860dbc5765f6a10a7ab38ffb6054ca906a4",
     "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
     "recipeCensusNote": "Counts the LIVE RECIPES table only. Retired formulas are excluded, and frozen revision definitions are never added back as active routes.",
     "retiredRecipes": [
       "fuel_can"
     ],
     "recipeRevision": 2,
-    "exportedAt": "2026-11-13T15:15:21.833Z",
+    "exportedAt": "2026-11-13T15:39:36.244Z",
     "project": "Soul of Heroes — WEB Veyra runtime",
     "authority": [
       "web/src/game/catalog.ts",

@@ -81,8 +81,9 @@ try{
       const ctaDisabled=await detail.locator('.sv-go').isDisabled();
       assert.match(status,new RegExp(LEGIBLE.source),cat+'/'+id+' readiness is not a stated requirement: '+status);
       // The double-payment lie this file exists to catch: a row may not claim materials are prepared
-      // while the same row still tells the player to go craft something first.
-      if(/Craft the pack first/i.test(cta))
+      // while the same row still tells the player to go craft something first. Since P0a the button says
+      // what is missing ('No placeable pack') instead of echoing the instruction; either wording guards.
+      if(/Craft the pack first|No placeable pack/i.test(cta))
         assert.ok(!/Materials prepared/i.test(status),cat+'/'+id+' promised prepared materials and demanded a craft: '+status);
       if(!ctaDisabled) assert.match(cta,/Choose site/i,cat+'/'+id+' enabled CTA must send the player to a site: '+cta);
       rows.push({id,state:await tile.getAttribute('data-state'),status,cta,ctaDisabled});
@@ -92,7 +93,10 @@ try{
       const wb=rows.find(x=>x.id==='S:workbench');
       assert.ok(wb,'Workbench row disappeared from the Deploy screen');
       assert.match(wb.status,/Craft the packed Workbench first/, 'workbench status: '+wb.status);
-      assert.match(wb.cta,/Craft the pack first/i,'workbench CTA: '+wb.cta);
+      // P0a changed what the button says when there is no intact pack to spend: it refuses the site
+      // picker by name instead of echoing the craft instruction, and it stays disabled.
+      assert.match(wb.cta,/No placeable pack/i,'workbench CTA: '+wb.cta);
+      assert.equal(wb.ctaDisabled,true,'a row without an intact pack must not open a site picker: '+JSON.stringify(wb));
       // The diagram must show the PACK as the input, not the ore list.
       const needTitle=await page.locator('.sv-detail .sv-diagram .ins .need').first().getAttribute('title');
       assert.match(String(needTitle),/placement spends this item/,'workbench diagram input: '+needTitle);

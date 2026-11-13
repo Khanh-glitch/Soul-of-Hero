@@ -44,10 +44,10 @@ try{
   // line, with the spawn one tile left and one tile up of the table. So a short real tap walks the
   // player to the one free tile beside it; the sweep keeps trying because the neighbouring stations
   // win the tie-break at some offsets. A tile at the shipped 72 px/s is ~240 ms of held key.
-  const taps=['s','d','s','a','w','s','d','w','s','d','s','a'];
+  const taps=['s','d','s','a','w','s','d','w','s','d','s','a','w','w','d','s','a','d','w','s'];
   let opened=false;
   rec.labels=[];
-  for(let round=0;round<8 && !opened;round++){
+  for(let round=0;round<10 && !opened;round++){
     for(const key of taps){
       for(let i=0;i<2 && !opened;i++){
         rec.attempts++;

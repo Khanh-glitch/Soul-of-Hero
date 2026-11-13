@@ -54,6 +54,10 @@ const finishAll = (g: GameState, e: any) => {
   const total = e.station!.queue.reduce((a: number, j: any) => a + j.left, 0);
   tick(g, total + 5_000);
 };
+const stackOf = (r: any, uid: string): Stack | null => {
+  for (const c of Object.values(r.custody) as any[]) { const s = c.slots.find((x: any) => x?.uid === uid); if (s) return s as Stack; }
+  return null;
+};
 const holdsUid = (r: any, uid: string) => Object.values(r.custody).some((c: any) => c.slots.some((x: any) => x?.uid === uid));
 const spend = (g: GameState, rows: [string, number][]) => {
   for (const [k, n] of rows) {
@@ -227,6 +231,51 @@ describe('PA1 P0b — the pre-cutover save keeps its own rules', () => {
     expect(j2.rv).toBe(RECIPE_REVISION);
     expect(j2.reserved!.some((x: Stack) => x.key === 'metal_pipe')).toBe(false);
     expect(countItem(r, 'inv', 'metal_pipe')).toBe(pipesBefore);
+  });
+
+  it('a cancelled revision-1 job returns the stacks it actually paid, not a revision-2 refund', () => {
+    const g = load(FX.earlier);
+    const bench = benchOf(g);
+    const r = g.run!;
+    const job: any = bench.station!.queue[0];
+    expect(job.recipe).toBe('iron_plate');
+    const paid = job.reserved.map((x: Stack) => `${x.uid}:${x.key}:${x.qty}`).sort();
+    expect(act(g, 'cancelJob', { eid: bench.id, jobId: job.id }).ok).toBe(true);
+    // The refund is the same physical stock, UID for UID — including the pipe the approved rule no longer
+    // uses. A refund computed from today's BOM would hand back fasteners and lose this stack.
+    for (const tag of paid) {
+      const [uid, key, qty] = tag.split(':');
+      const s2 = stackOf(r, uid);
+      expect(s2, `${key} uid ${uid} came back`).toBeTruthy();
+      expect(`${s2!.uid}:${s2!.key}:${s2!.qty}`).toBe(tag);
+    }
+    expect(countItem(r, 'inv', 'metal_pipe')).toBe(1);
+    expect(bench.station!.queue.map((j: any) => j.recipe)).toEqual(['mechanical_gear', 'fuel_can']);
+    // Cancelling spent nothing and produced nothing.
+    expect(countItem(r, 'inv', 'iron_plate')).toBe(0);
+  });
+
+  it('rolling an old save back to its earlier copy keeps unfinished work unfinished', () => {
+    // The capture recorded two environments: mid-flight, and the same run after the OLD engine's own
+    // 60-second settle. A player restoring the older copy must land on the paid, unfinished queue.
+    const forward = load(FX.later);
+    expect(benchOf(forward).station!.queue).toHaveLength(0);
+    expect(outKeys(forward, benchOf(forward))).toEqual(['1xfuel_can', '1xmechanical_gear', '2xiron_plate']);
+    const back = load(FX.earlier);
+    expect(benchOf(back).station!.queue.map((j: any) => j.recipe)).toEqual(['iron_plate', 'mechanical_gear', 'fuel_can']);
+    // The loader picks the newer copy when both are offered, reports no conflict, and merges nothing.
+    const picked = selectSnapshots([JSON.stringify(FX.earlier), JSON.stringify(FX.later)]);
+    expect(picked.conflict).toBe(false);
+    expect(picked.unsupported).toBe(false);
+    expect(picked.gs!.revision).toBe(FX.later.revision);
+    expect(C(picked.gs!.run!, benchOf(picked.gs!).station!.outC).slots.filter(Boolean).length).toBe(3);
+    // Both copies still carry their own unfinished/paid shape untouched by being read.
+    expect(JSON.stringify(FX.earlier.run)).not.toMatch(/"rv"/);
+    // Neither copy hands out knowledge early: the older one still has the study in flight, and the
+    // settled one produced a blueprint that only becomes knowledge when someone reads it.
+    expect(back.run!.knowledge.recipes).not.toContain('motorbike_kit');
+    expect(tableOf(back).station!.queue.map((j: any) => j.recipe)).toEqual(['R:motorbike_kit']);
+    expect(C(forward.run!, tableOf(forward).station!.outC).slots.some((x) => x?.key === 'blueprint')).toBe(true);
   });
 
   it('the pre-cutover engine and this one agree on the same window', () => {
