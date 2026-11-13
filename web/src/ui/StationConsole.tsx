@@ -7,6 +7,7 @@ import { Glyph } from './hud';
 import { craftReadiness } from '../game/action-readiness';
 import { recoveryFits } from '../game/recycler';
 import { StationService } from './StationService';
+import { ResearchFamilies } from './ResearchFamilies';
 
 // ============================================================================
 // STATION CONSOLE — one grammar for every production machine and for Research.
@@ -254,6 +255,10 @@ function ResearchList({ api, eid, e, q, setQ }: { api: Api; eid: string; e: Enti
         <button className="btn sm" disabled={!can} title={full ? 'Queue full' : !can ? `Need ${B.directedSparesCost - spares} more Spares` : 'Reserve Spares for this research'} onClick={() => api.act('research', { mode: 'directed', recipe: k, eid })}>Study</button>
       </div>;
     })}
+    // The family ledger belongs in the console the router actually opens. `ContainerPanel` returns
+    // StationConsole for any non-compact station, so a ledger rendered only in the retired `ResearchBody`
+    // column would be invisible in the shipped game — which is what the browser gate caught.
+    <ResearchFamilies api={api} eid={eid} />
   </>;
 }
 

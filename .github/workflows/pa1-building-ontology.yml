@@ -26,6 +26,8 @@ on:
       - 'web/tests/pa1-deploy-custody.test.ts'
       - 'web/tests/pa1-device-repair-loop.test.ts'
       - 'web/tests/pa1-rev1-queued-jobs.test.ts'
+      - 'web/tests/pa1-research-console.test.tsx'
+      - 'web/src/ui/ResearchFamilies.tsx'
       - 'web/tests/fixtures/pa1-rev1-queued-jobs.json'
       - 'web/scripts/export-item-network.ts'
       - 'web/tests/territory-cabinet.test.ts'
@@ -59,7 +61,7 @@ jobs:
       # by the PRE-cutover engine. Kept as its own step so a red run names the gate that broke.
       - name: PA1 recipe-revision, custody and legacy-save acceptance
         working-directory: web
-        run: npx --no-install vitest run --testTimeout=180000 --fileParallelism=false tests/pa1-recipe-migration.test.ts tests/pa1-deploy-custody.test.ts tests/pa1-device-repair-loop.test.ts tests/pa1-rev1-queued-jobs.test.ts
+        run: npx --no-install vitest run --testTimeout=180000 --fileParallelism=false tests/pa1-recipe-migration.test.ts tests/pa1-deploy-custody.test.ts tests/pa1-device-repair-loop.test.ts tests/pa1-rev1-queued-jobs.test.ts tests/pa1-research-console.test.tsx
       - name: Preexisting material and territory regression
         working-directory: web
         run: npx --no-install vitest run --fileParallelism=false tests/territory-cabinet.test.ts tests/progression.test.ts tests/m-core-03.test.ts

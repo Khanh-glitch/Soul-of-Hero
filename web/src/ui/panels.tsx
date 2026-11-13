@@ -10,6 +10,7 @@ import type { OfflineReturnV1, StoredReturnEntry } from '../game/return-report';
 import { ReturnChronicle } from './ReturnChronicle';
 import { CabinetReadout } from './HomeStatus';
 import { StationConsole } from './StationConsole';
+import { ResearchFamilies } from './ResearchFamilies';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { recipeOutputs } from '../game/engine';
@@ -329,15 +330,7 @@ function ResearchBody({ api, eid }: { api: Api; eid: string }) {
     {specimens.map(([s, i]) => <div key={i} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={s!.key} size={12} />{ITEMS[s!.key].name} → {ITEMS[RECIPES[studyTarget(s!.key)!]?.out ?? ''].name ?? 'a retired formula'}{confirmStudy === s!.uid ? <><span>Reserves item; completion consumes it, cancellation returns it</span><button className="btn danger" onClick={() => { api.act('research', { mode: 'specimen', slot: i, uid: s!.uid, eid }); setConfirmStudy(null); }}>Confirm</button><button className="btn ghost" onClick={() => setConfirmStudy(null)}>Cancel</button></> : <button className="btn" style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => setConfirmStudy(s!.uid)}>Study</button>}</div>)}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>In progress</div>
     {st.queue.map(j => { const rc = j.recipe.startsWith('R:') ? recipeForJob(j.recipe.slice(2), j.rv) : null; const label = rc ? ITEMS[rc.out].name + ' blueprint' : j.recipe.startsWith('F:') ? j.recipe.slice(2) + ' family study' : 'a retired formula, kept from your old save'; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k="blueprint" size={12} />{label}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: '#9ad0ff' }} /></div>{Math.ceil(j.left / 1000)}s <button className="btn ghost" onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>; })}
-    <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Technology families</div>
-    <div style={{ fontSize: 9, color: '#8a7a9a', marginBottom: 2 }}>One paid study unlocks a family: its packed devices and the work that plant does. A family with no authorized cost is open design and cannot be bought.</div>
-    {Object.values(RESEARCH_FAMILIES).map(fam => { const owned = (r.tech?.families ?? []).includes(fam.id); const queued = st.queue.some(j => j.recipe === 'F:' + fam.id); const members = familyMembers(fam.id); const withhold = fam.price !== null && fam.enforce; return <div key={fam.id} className="flex items-center gap-1" style={{ fontSize: 10, borderTop: '1px solid #514155', marginTop: 2 }}>
-      <b style={{ color: owned ? '#8fd19b' : '#ffe27a', width: 94 }}>{fam.id}</b>
-      {fam.price === null ? <span style={{ color: '#8a7a9a' }} title={fam.note}>open design · no authorized cost</span> :
-        owned ? <span style={{ color: '#8fd19b' }} title={fam.note}>studied · {members.length} formula{members.length === 1 ? '' : 's'}</span> :
-          withhold ? <span>pay {fam.price.map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ')} · unlocks {members.length} formula{members.length === 1 ? '' : 's'} <button className="btn ghost" disabled={queued} style={{ padding: '0 4px' }} title={fam.note} onClick={() => api.act('unlockFamily', { family: fam.id, eid })}>{queued ? 'In progress' : 'Commission study'}</button></span> :
-            <span style={{ color: '#8a7a9a' }} title={fam.note}>cost recorded ({fam.price.map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ')}) · {members.length} formula{members.length === 1 ? '' : 's'} · nothing withheld in this build</span>}
-    </div>; })}
+    <ResearchFamilies api={api} eid={eid} />
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Blueprints ready (take, then use to learn)</div><Grid api={api} cid={st.outC} cols={4} />
   </div>;
 }

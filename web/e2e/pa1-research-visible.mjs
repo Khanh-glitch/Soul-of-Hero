@@ -11,7 +11,7 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const out='evidence/pa1-research-visible';
 await mkdir(out,{recursive:true});
-const rec={sha:process.env.BUILD_SHA||'unknown',status:'RUNNING',screenshots:[],attempts:0,prompt:'',inputAlive:null,research:{open:false},errors:[]};
+const rec={sha:process.env.BUILD_SHA||'unknown',status:'RUNNING',screenshots:[],attempts:0,prompt:'',inputAlive:null,research:{open:false},hotbarSlotUsed:null,errors:[]};
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 const context=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1});
 const page=await context.newPage();
@@ -110,16 +110,32 @@ try{
   const labelCounts=new Map();
   const note=(label)=>{ if(!label) return; labelCounts.set(label,(labelCounts.get(label)??0)+1); };
   rec.labels=[];
+  // `E` is not unconditionally "use": Game.tsx gives the key to the active stack first — `case 'KeyQ':
+  // case 'KeyE'` arms a Creator Core's Refined/Signature skill when the hotbar item is a Core, and only
+  // `else if (!ITEMS[active]?.creatorCore && !panel) interact()` reaches the station. The QA presets equip
+  // full gear, so a Core sits on the bar and a bare `e` at the table arms a skill instead of opening the
+  // panel (28 probes, one label, no panel: that is what the last run recorded). So the driver does what a
+  // player does: pick a slot that is not a Core, then press `e`, and cancel any skill the attempt armed.
+  async function openWithAnySlot(){
+    for(const slot of ['1','2','3','4','5','6','7','8']){
+      await page.keyboard.press(slot);
+      await page.waitForTimeout(70);
+      await page.keyboard.press('e');
+      await page.waitForTimeout(320);
+      if(await panel().count()>0){ rec.hotbarSlotUsed=slot; return true; }
+      await page.mouse.click(CX,CY,{button:'right'});   // the right-button cancel the engine offers for an armed aim
+      await page.waitForTimeout(90);
+    }
+    return false;
+  }
   async function tryOpen(tag){
     for(const [dx,dy] of RING){
       rec.attempts++;
       await aimAt(dx,dy);
       const label=await labelOf(); rec.prompt=label; note(label);
       if(/research/i.test(label)){
-        await page.keyboard.press('e');
-        await page.waitForTimeout(330);
-        if(await panel().count()>0){ rec.lastOpenedFrom=tag+'('+dx+','+dy+')'; rec.lastOpenedLabel=label; return true; }
-        if(rec.labels.length<40) rec.labels.push(tag+'('+dx+','+dy+')=E pressed, no panel: '+label);
+        if(await openWithAnySlot()){ rec.lastOpenedFrom=tag+'('+dx+','+dy+')'; rec.lastOpenedLabel=label; return true; }
+        if(rec.labels.length<40) rec.labels.push(tag+'('+dx+','+dy+')=e on all 8 slots, no panel: '+label);
       }
     }
     return false;
