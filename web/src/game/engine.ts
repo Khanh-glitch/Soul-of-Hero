@@ -1863,7 +1863,10 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   if (d.layer === 'floor' && layers.includes('floor')) return 'Already floored.';
   if (d.layer === 'roof' && layers.includes('roof')) return 'Already roofed.';
   if (d.layer === 'roof' && !layers.includes('floor')) return 'A roof needs a floor beneath it.';
-  if ((d.layer === 'wall' || d.layer === 'obj') && (layers.includes('wall') || layers.includes('obj'))) return 'Tile occupied.';
+  const installInFrame=type==='door_wood' && here.some(e=>e.kind==='struct' &&
+    e.type==='wall_doorframe_wood'&&owned(e)) && here.filter(e=>STRUCTS[e.type!]?.layer==='wall').length===1;
+  if ((d.layer==='wall'||d.layer==='obj')&&(layers.includes('wall')||layers.includes('obj')) &&
+    !(installInFrame&&!layers.includes('obj')))return 'Tile occupied.';
   if (d.block && Math.hypot(p.x - (tx * TILE + 8), p.y - (ty * TILE + 8)) < 11) return 'You are standing there.';
   if (d.block && r.creatures.some(m => m.state !== 'dead' && Math.hypot(m.x - (tx * TILE + 8), m.y - (ty * TILE + 8)) < 12)) return 'A creature is in the way.';
   if (type === 'escrow' && !claimAt(r,tx,ty)) return 'Escrow requires an owned territory cabinet.';
@@ -2298,6 +2301,20 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'build': {
       const why = buildReason(gs, it.struct, it.tx, it.ty); if (why) return fail(why);
       const d = STRUCTS[it.struct];
+      // A door installed into an already-paid frame is an in-place geometry
+      // conversion. It preserves the existing entity/HP lineage and spends
+      // only the new door leaf materials, never a second frame.
+      const frame=it.struct==='door_wood'
+        ? entsAt(r,it.tx,it.ty).find(e=>e.kind==='struct' &&
+            e.type==='wall_doorframe_wood'&&owned(e)) : undefined;
+      if(frame) {
+        if(!hasAll(r,'inv',d.cost))return fail('Missing door leaf materials.');
+        for(const [k,q] of d.cost)removeItem(r,'inv',k,q);
+        const frac=Math.max(0.01,Math.min(1,(frame.hp??0)/(frame.maxHp||1)));
+        frame.type='door_wood';frame.maxHp=d.hp;frame.hp=Math.max(1,Math.floor(frac*d.hp));
+        frame.open=false;frame.framePaid=true;
+        markDirty();return ok('build.frame-door',frame.id, 'Door installed in the existing paid frame.');
+      }
       let deployed: Stack|undefined;
       if (d.item) {
         const inv=C(r,'inv');
@@ -2469,7 +2486,14 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
           receipt(r,now,'pa1.legacy.unpack',e.id+':'+e.type);
         }
       }
-      else for (const [k, q] of d.cost) { const back = Math.floor(q * BAL.economy.reclaimRefund); if (back > 0) giveOrDrop(r, k, back, now); }
+      else {
+        for(const [k,q] of d.cost){const back=Math.floor(q*BAL.economy.reclaimRefund);if(back>0)giveOrDrop(r,k,back,now);}
+        // Frame was paid independently before the door was installed; do not
+        // erase that payment from reclaim conservation.
+        if(e.framePaid)for(const [k,q] of STRUCTS.wall_doorframe_wood.cost){
+          const back=Math.floor(q*BAL.economy.reclaimRefund);if(back>0)giveOrDrop(r,k,back,now);
+        }
+      }
       return ok('reclaim', `${e.type}${bag ? ' contents→' + bag.id : ''}`);
     }
     case 'wireSwitch': {
