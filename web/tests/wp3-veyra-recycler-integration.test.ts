@@ -10,7 +10,7 @@ import {
   type GameState,
   type RunState,
 } from '../src/game/core';
-import { ITEMS } from '../src/game/catalog';
+import { ITEMS, RECIPES, STRUCTS } from '../src/game/catalog';
 import {
   blockGrid,
   C,
@@ -249,7 +249,7 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     const harvestNearby = (wantDrives: number, wantScrap: number) => {
       for (const w of findReachableSources(r, ['wreck'], nowRef.t)) {
         if (countItem(r, 'inv', 'damaged_drive') >= wantDrives && countItem(r, 'inv', 'scrap') >= wantScrap) break;
-        harvestSourceNaturally(gs, w.tx, w.ty, 'knife', nowRef, ['damaged_drive', 'scrap', 'spares']);
+        harvestSourceNaturally(gs, w.tx, w.ty, 'knife', nowRef, ['damaged_drive', 'scrap', 'spares', 'salvaged_oil']);
       }
     };
 
@@ -301,6 +301,14 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
 
     const driveCount = countItem(r, 'inv', 'damaged_drive');
     expect(driveCount).toBeGreaterThanOrEqual(3);
+    // Same physically harvested wrecks must produce finite oil whose authentic
+    // original stack UIDs are attached to a wreck cell's durable receipt.
+    const oilCount=countItem(r,'inv','salvaged_oil');
+    expect(oilCount, 'Natural Veyra wrecks must fund at least one PA1 refinery oil batch').toBeGreaterThanOrEqual(4);
+    for(const os of C(r,'inv').slots.filter(v=>v?.key==='salvaged_oil')) {
+      expect(r.receipts.some(rc=>rc.kind==='harvest.oil' && rc.detail.includes(os!.uid) &&
+        rc.detail.startsWith('wreck@')),'oil source custody').toBe(true);
+    }
 
     // Every natural damaged_drive must have a harvest.component receipt referencing its exact stack UID
     const driveStacks = C(r, 'inv').slots.filter((s): s is NonNullable<typeof s> => s?.key === 'damaged_drive');
@@ -397,6 +405,16 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
         ) {
           const adj = adjacentWalkableGoals(r, tx, ty);
           if (adj.size && walkPathTo(gs, adj, nowRef)) {
+            // PA1: devices are physical inventory items made from the same
+            // real collected materials. A build request alone cannot mint one.
+            const pack=STRUCTS[structKey]?.item;
+            if(pack && countItem(r,'inv',pack)<1) {
+              const rec=Object.entries(RECIPES).find(([_,v])=>v.out===pack&&v.station===null)?.[0];
+              expect(rec,`PA1 hand recipe for ${structKey}`).toBeTruthy();
+              const cr=dispatch(gs,{id:`pack-${structKey}-${nowRef.t}`,type:'craft',recipe:rec!},nowRef.t);
+              if(!cr.ok)throw new Error(`PA1 ${structKey} pack craft failed: ${(cr as any).reason}`);
+              nowRef.t+=100;
+            }
             const b = dispatch(gs, { id: `b-${structKey}-${tx}-${ty}-${nowRef.t}`, type: 'build', struct: structKey, tx, ty }, nowRef.t);
             if (b.ok) {
               nowRef.t += 200;
@@ -564,6 +582,8 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     // Built generator, crafted vehicle_frame & spares balance on Floor 0 remain intact across Floor -1 cold reload
     expect(reloaded.run!.entities[gen.id]?.type).toBe('base_generator');
     expect(countItem(reloaded.run!, 'inv', 'vehicle_frame')).toBe(1);
+    expect(countItem(reloaded.run!, 'inv', 'salvaged_oil')).toBe(oilCount);
+    expect(reloaded.run!.receipts.some(rc=>rc.kind==='harvest.oil')).toBe(true);
     expect(countItem(reloaded.run!, 'inv', 'spares')).toBe(sparesBeforeSpend - 6);
 
     // Ascend back to Floor 0 using the Floor -1 return stair
