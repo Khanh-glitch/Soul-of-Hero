@@ -585,7 +585,13 @@ export default function Game({
       else if (reclaim && editLayer === 'auto') { const cart=Object.values(r.entities).find(x=>x.kind==='cart'&&Math.hypot(x.x-wx,x.y-wy)<12); if(cart) act('reclaim',{eid:cart.id}); else toast('No matching structure there.'); }
       else toast('No matching structure there. Use G to change layer.'); return;
     }
-    const s = activeStack(r); if (s?.key === 'escrow_chest') { enterBuild('escrow'); return; }
+    const s = activeStack(r);
+    // PA1: a physical station pack selects its placement ghost. The raw inputs
+    // were spent in Craft; the next successful Build consumes only this UID.
+    if (s && (s.key==='escrow_chest' || s.key.startsWith('deploy_'))) {
+      const type=Object.keys(STRUCTS).find(k=>STRUCTS[k].item===s.key);
+      if(type){setBuildMode(false);setBuildType(type);setReclaim(false);setRepairMode(false);setUpgradeMode(false);return;}
+    }
     inp.current.attackPressed = true; inp.current.attack = true;
   };
   const onMouseUp = () => { inp.current.attack = false; };
