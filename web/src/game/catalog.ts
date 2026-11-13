@@ -301,7 +301,19 @@ export const DEPLOYABLE_TYPES = [
   'pressure_switch','ir_sensor','arrow_turret','bear_trap','spikes',
   'barricade','torch_post'
 ] as const;
-export const PA1_BASE_GEOMETRY = ['floor_wood','wall_wood','door_wood','roof_thatch'] as const;
+/** Actual wooden Building palette in the current top-down 1-tile physics.
+ * The triangle/corner forms have dedicated silhouettes, but do NOT claim
+ * fractional tile collision, curved walls or independently built floors.
+ * Those require a separate occupancy/multistorey engine contract.
+ */
+export const PA1_BUILD_PAGES = {
+  Foundation:['floor_wood','floor_triangle_wood','ceiling_wood','ceiling_triangle_wood'],
+  Wall:['wall_wood','wall_window_wood','wall_doorframe_wood','door_wood','wall_half_wood','wall_pillar_wood','wall_triangle_wood','fence_wood'],
+  Roof:['roof_thatch','roof_slope_thatch','roof_corner_thatch'],
+} as const;
+export const PA1_BASE_GEOMETRY = [
+  ...PA1_BUILD_PAGES.Foundation,...PA1_BUILD_PAGES.Wall,...PA1_BUILD_PAGES.Roof
+] as const;
 export const PA1_UPGRADE_ONLY_GEOMETRY = [
   'floor_stone','wall_plank','wall_stone','wall_brick','door_iron','roof_tile'
 ] as const;
@@ -424,18 +436,34 @@ export const WORKBENCH_UPGRADE_III: { toLevel: 3; cost: [string, number][] } = {
 export const CORE_STUDY: Record<string, string> = { core_fire: 'core_fire', core_earth: 'core_earth', core_storm: 'core_storm', core_frost: 'core_frost', core_meteor: 'core_meteor', core_dragon: 'core_dragon', core_elsa: 'core_elsa', core_mjolnir: 'core_mjolnir', core_demon: 'core_demon' };
 
 // ---------- Structures (K6) ----------
-export interface StructDef { name: string; cost: [string, number][]; hp: number; need: 'claim' | 'any' | 'free'; block: boolean; layer: 'floor' | 'wall' | 'obj' | 'roof'; slots?: number; station?: 'campfire' | 'furnace' | 'workbench' | 'research' | 'refinery' | 'oil_pump'; light?: number; desc: string; item?: string; shelter?: boolean; warmth?: number }
+export interface StructDef { name: string; cost: [string, number][]; hp: number; need: 'claim' | 'any' | 'free'; block: boolean; layer: 'floor' | 'wall' | 'obj' | 'roof'; slots?: number; station?: 'campfire' | 'furnace' | 'workbench' | 'research' | 'refinery' | 'oil_pump'; light?: number; desc: string; item?: string; shelter?: boolean; warmth?: number;
+  /** false for fences, half-walls and pillars: physical barriers, NOT sealed rooms. */
+  sealsRoom?: boolean;
+  /** Can see through this wall, but physical collision still blocks passage. */
+  visionTransparent?: boolean;
+}
 export const STRUCTS: Record<string, StructDef> = {
   claim: { name: 'Territory Cabinet', cost: [['wood', 10], ['stone', 5]], hp: 200, need: 'free', block: true, layer: 'obj', slots: 24, desc: 'Place on your foundation. 24 physical slots fund upkeep within 25 SOH tiles.' },
   floor_wood: { name: 'Wood Floor', cost: [['wood', 4]], hp: 120, need: 'any', block: false, layer: 'floor', desc: 'Foundation tile. Roofs need it.' },
+  floor_triangle_wood: { name:'Wood Triangle Foundation', cost:[['wood',4]], hp:120, need:'any', block:false, layer:'floor', desc:'Triangular top-view foundation piece. Current physics reserves one whole tile; half-cell join rules remain a separate gate.' },
   floor_stone: { name: 'Stone Floor', cost: [['stone', 6]], hp: 260, need: 'any', block: false, layer: 'floor', desc: 'Sturdy foundation.' },
   wall_wood: { name: 'Wood Wall', cost: [['wood', 5]], hp: 160, need: 'any', block: true, layer: 'wall', desc: 'Blocks movement and paths.' },
+  wall_window_wood: { name:'Wood Window Wall', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', visionTransparent:true, desc:'Seals shelter, blocks movement; vision goes through its framed opening. No fake shoot-through guarantee.' },
+  wall_doorframe_wood: { name:'Wood Door Frame', cost:[['wood',5]], hp:160, need:'any', block:false, layer:'wall', sealsRoom:false, desc:'Walkable frame opening. Does not seal a room; door is a separate building piece.' },
+  wall_half_wood: { name:'Wood Half Wall', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', sealsRoom:false, visionTransparent:true, desc:'Low obstacle: blocks traversal, not sight or full shelter closure.' },
+  wall_pillar_wood: { name:'Wood Pillar', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', sealsRoom:false, visionTransparent:true, desc:'One-tile support post and obstacle. True point footprint not yet modeled.' },
+  wall_triangle_wood: { name:'Wood Triangle Gable', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', desc:'Triangular upper wall silhouette. One-tile top-down collision pending height-aware support.' },
+  fence_wood: { name:'Wood Fence', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', sealsRoom:false, visionTransparent:true, desc:'Open fence: blocks walkers, lets sight through, never seals shelter.' },
   wall_plank: { name: 'Plank Wall', cost: [['plank', 3]], hp: 240, need: 'any', block: true, layer: 'wall', desc: 'Sawn boards: 240 HP for 6 wood, against 160 HP for 5 wood in a log wall.' },
   wall_stone: { name: 'Stone Wall', cost: [['stone', 8], ['wood', 1]], hp: 380, need: 'any', block: true, layer: 'wall', desc: 'Heavy wall.' },
   wall_brick: { name: 'Brick Wall', cost: [['brick', 6]], hp: 600, need: 'any', block: true, layer: 'wall', desc: 'Fired brick. Strongest wall.' },
   door_wood: { name: 'Wood Door', cost: [['wood', 6], ['rope', 1]], hp: 140, need: 'any', block: true, layer: 'wall', desc: 'E to open/close. Creatures cannot open doors.' },
   door_iron: { name: 'Iron Door', cost: [['iron_ingot', 4]], hp: 420, need: 'any', block: true, layer: 'wall', desc: 'Reinforced door.' },
   roof_thatch: { name: 'Thatch Roof', cost: [['wood', 2], ['fiber', 5]], hp: 80, need: 'any', block: false, layer: 'roof', desc: 'Over a floor. Enclosed + roofed = shelter.', shelter: true },
+  ceiling_wood: { name:'Wood Ceiling', cost:[['wood',2],['fiber',5]], hp:80, need:'any', block:false, layer:'roof', shelter:true, desc:'Flat overhead tile, visually separate from thatch. Not a standable upper-storey floor.' },
+  ceiling_triangle_wood: { name:'Wood Triangle Ceiling', cost:[['wood',2],['fiber',5]], hp:80, need:'any', block:false, layer:'roof', shelter:true, desc:'Triangular overhead silhouette, top-down one-tile cover until half-cell support exists.' },
+  roof_slope_thatch: { name:'Thatch Slope Roof', cost:[['wood',2],['fiber',5]], hp:80, need:'any', block:false, layer:'roof', shelter:true, desc:'Sloping roof silhouette. Does not provide a climbable ramp.' },
+  roof_corner_thatch: { name:'Thatch Corner Roof', cost:[['wood',2],['fiber',5]], hp:80, need:'any', block:false, layer:'roof', shelter:true, desc:'Corner roof silhouette with cover, not independent roof physics.' },
   roof_tile: { name: 'Tile Roof', cost: [['brick', 3]], hp: 200, need: 'any', block: false, layer: 'roof', desc: 'Durable roof.', shelter: true },
   bed_straw: { name: 'Straw Bed', cost: [['fiber', 10], ['wood', 2]], hp: 60, need: 'any', block: false, layer: 'obj', desc: 'Respawn point within this run.' },
   chest_small: { name: 'Wood Chest', cost: [['wood', 8]], hp: 100, need: 'any', block: true, layer: 'obj', slots: 12, desc: '12-slot storage.' },
@@ -490,7 +518,7 @@ export const STRUCTURE_UPGRADES: Record<string, string> = {
   floor_wood:'floor_stone',wall_wood:'wall_stone',door_wood:'door_iron',
   roof_thatch:'roof_tile',chest_small:'chest_large'
 };
-export const BUILD_ORDER = ['floor_wood', 'claim', 'wall_wood', 'door_wood', 'roof_thatch', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'feed_trough', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'ir_sensor', 'bear_trap', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
+export const BUILD_ORDER = [...PA1_BASE_GEOMETRY, ' 'claim', 'wall_wood', 'door_wood', 'roof_thatch', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'feed_trough', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'ir_sensor', 'bear_trap', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit
