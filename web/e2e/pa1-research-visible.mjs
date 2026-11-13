@@ -72,38 +72,24 @@ try{
   await page.locator('canvas').first().click({position:{x:640,y:360},timeout:2500}).catch(()=>{});
   await page.waitForTimeout(400);
 
-  // Liveness probe: the only way to tell "the player is walled in" apart from "the run is not reading
-  // keys" without touching game state is to watch the frame. A held key must change pixels; if the
-  // stage is pixel-identical after 1.5 s of 'w', world input is not reaching the sim and no amount of
-  // sweeping will help. If the QA preset leaves the player busy (its fixture queues real dispatches),
-  // time is what clears it, so wait and try again before blaming the driver.
   const camPos=async()=>{
     try{ const v=await page.evaluate(()=>typeof window.__sohView==='function'?window.__sohView():null);
       if(v&&v.cam&&Number.isFinite(v.cam.x)) return {x:v.cam.x,y:v.cam.y}; }catch{}
     return null;
   };
   async function inputAlive(){
-    const before=await camPos();
+    const before=rec.camBefore ?? await camPos();
     await page.keyboard.down('w'); await page.waitForTimeout(1300); await page.keyboard.up('w');
     await page.waitForTimeout(250);
     const after=await camPos();
     if(before&&after) return Math.hypot(after.x-before.x,after.y-before.y)>4;   // the camera follows the player, so a real step moves it
-    const clip={x:Math.round(1280/2-90),y:Math.round(720/2-70),width:180,height:140};   // no view hook: fall back to pixels
+    const clip={x:Math.round(1280/2-90),y:Math.round(720/2-70),width:180,height:140};
     const a=await page.screenshot({clip});
     await page.keyboard.down('w'); await page.waitForTimeout(1300); await page.keyboard.up('w');
     await page.waitForTimeout(200);
     return Buffer.compare(a,await page.screenshot({clip}))!==0;
   }
-  rec.camAtProbe=await camPos();
-  rec.inputAlive=await inputAlive();
-  rec.camAfterProbe=await camPos();
-  if(!rec.inputAlive){
-    rec.inputRetryWaited=true;
-    await page.waitForTimeout(5000);          // a busy spawn (the preset queues real dispatches) clears with time
-    rec.inputAlive=await inputAlive();
-    rec.camAfterRetry=await camPos();
-  }
-  assert.ok(rec.inputAlive,'the run is not reading world input in this build (a held key changed no pixels, before and after a 5 s wait): the QA sandbox would have to be re-scoped, not the sweep widened');
+  rec.camBefore=await camPos();
   await shot('00-qa-industry-spawn');
 
   // Where the prompt can name the table at all. `findInteract` (src/game/sim.ts) keeps the NEAREST
@@ -111,13 +97,16 @@ try{
   // its machine column one tile east of the spawn: workbench (bx+5,by), furnace (bx+5,by+1), refinery
   // (bx+5,by+2), Research Table (bx+5,by+3), player at (bx+4,by+2). From the spawn the refinery is 16 px
   // away and the table 22.6 px, so standing on the machine line the table can NEVER win the prompt — the
-  // first sweep walked a 12x12 field on that row and named the refinery 144 times. One tile south they
-  // are both 22.6 px, and ties go to the entity scanned last, which is the table (placed after the
-  // refinery). So: a compact 3-column x 4-row grid in one-tile steps from the spawn, and at every
-  // standing spot the mouse is rotated through 8 compass headings, because that 6 px aim offset is the
-  // only lever a player has when two machines are equally close. E is pressed only when the prompt the
-  // player can actually SEE names the table; a second, rougher pass presses E at any station to prove
-  // the panel is not being missed for want of a match, closing whatever console that opens.
+  // first sweep walked a 12x12 field on that row and named the refinery 144 times. South of the line the
+  // machines fall out of the 30 px reach one by one and the table is what remains: at (bx+4,by+4) the
+  // table is 22.6 px, the refinery 35.8 px and the farm controller 35.8 px, so the table is the ONLY
+  // thing the prompt can name. That is a real player's maneuver — walk around the machine line and come
+  // at the table from the open ground below it — so the driver walks south one tile at a time, probing
+  // the spawn column and one tile either side at each row, and rotates the mouse through 8 compass
+  // headings at every spot because that 6 px aim offset is the only lever on an equal-distance tie.
+  // `e` is pressed only when the prompt the player can actually SEE names the table; a second, rougher
+  // pass presses `e` at any station, in case the shipped wording differs from the match below, and closes
+  // whatever console that opens.
   const TILE=230;                              // about one tile at the shipped 72 px/s
   const CX=640, CY=360;                        // the camera centers the player in a 1280x720 stage
   const RING=[[24,0],[0,24],[-24,0],[0,-24],[17,17],[-17,17],[17,-17],[-17,-17]];
@@ -150,20 +139,25 @@ try{
   }
   rec.labels=[];
   let opened=false;
+  const rough=(mode)=>mode==='any';
   for(const mode of ['named','any']){
-    for(let row=0;row<4 && !opened;row++){
-      for(let col=0;col<3 && !opened;col++){
-        opened=await tryOpen(mode+'@'+row+','+col,mode==='any');
-        if(opened) break;
-        await hold('d',TILE);
-      }
-      if(opened) break;
-      for(let k=0;k<3;k++) await hold('a',TILE);      // back to the left edge of the sweep
-      await hold('s',TILE);                             // one row south, where the table can out-tie the refinery
+    for(let row=0;row<7 && !opened;row++){
+      const tag=mode+'@'+row;
+      // center column -> one east -> one west (back through center) -> one row south
+      opened=await tryOpen(tag+',0',rough(mode));
+      if(!opened){ await hold('d',TILE); opened=await tryOpen(tag+',E',rough(mode)); }
+      if(!opened){ await hold('a',TILE); await hold('a',TILE); opened=await tryOpen(tag+',W',rough(mode)); }
+      if(!opened){ await hold('d',TILE); await hold('s',TILE); }
     }
-    if(!opened){ await hold('w',TILE*4); await hold('a',TILE*2); }   // walk home for the second pass
+    if(!opened){ for(let k=0;k<7;k++) await hold('w',TILE); }        // walk home for the second pass
   }
   rec.distinctLabels=[...labelCounts.entries()].map(([l,n])=>n+'x '+l).slice(0,12);
+  // The sweep did not reach the panel. Only now is it worth perturbing the player: the liveness probe
+  // holds `w` for over a second, and doing that before the walk moves the spawn off the tile the whole
+  // grid plan depends on. Here it can only help: it says whether the run ticks at all.
+  const probeMoved=await inputAlive();
+  rec.postMortem={inputAlive:probeMoved,camBefore:rec.camBefore,camAfter:await camPos()};
+  assert.ok(probeMoved,'the run is not reading world input in this pinned build: a held `w` moved the camera by less than 4 px, so no walk can reach the table');
   rec.research.open=opened;
   assert.ok(opened,'the Research Table never became usable from the real UI; last target '+JSON.stringify(rec.prompt)+' after '+rec.attempts+' taps; saw '+JSON.stringify(rec.labels));
   await shot('01-research-panel-1280');
