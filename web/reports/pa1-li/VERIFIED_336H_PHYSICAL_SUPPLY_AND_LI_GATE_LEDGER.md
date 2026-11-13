@@ -16,7 +16,7 @@
 | Approved paper v1.1 | 148 proposed item IDs, 128 active recipes | **DESIGN ONLY**, not game code; SHA256 `b45b157e27f39688d22cc1319de43fec663aecbed8b63bd5b2cb92a6831c5537` |
 | Global Veyra | 11.2M exact terrain tiles + 4-neighbor components | Terrain passability is only upper bound; no enemies, doors, player travel |
 | Representative localities | 30 samples; 13 legal spawn, 17 rejected | 17 rejected are mostly non-spawn localities, not proven defects |
-| Actual collision BFS ≤175 steps, one 200×200 window | Scrap reachable 11/30; ore reachable 3/30; loot containers reachable 4/30 | No across-window travel, pickup action, cargo, hunger, path-back or hazard proof |
+| Actual collision BFS ≤175 steps, one 200×200 window | Among **13 engine-accepted spawn probes**: scrap reachable 11/13; ore 3/13; loot 4/13 (11/30, 3/30, 4/30 respectively if dividing by all 30 sampled named localities, which includes 17 non-spawn locations) | No across-window travel, pickup action, cargo, hunger, path-back or hazard proof |
 | Paid PA1 fortifier over 336 hours | Shipping 617 upkeep units/18 protected structures; Veyra 494/17 | **Fixture-material-funded**, different building layouts; NOT natural progression |
 | Casual 2h-active + 22h-offline/day scenario | 14 deaths/14 days, no `startRest` supplied-bed scenario | Does not establish bed/offline mechanic is inherently broken |
 | POI claim distance | `BAL.economy.claimMinDistFromPoi=10`; **validly placed at 9** | Real PA1 craft of claim pack + source-run engine placement; FAIL distance law |
