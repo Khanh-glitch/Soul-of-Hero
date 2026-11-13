@@ -899,7 +899,7 @@
     }
   },
   "recyclerV4": {
-    "_status": "SOH_PROVISIONAL MEC-01 R2 A1/A2 DOCUMENTATION MIRROR. Runtime rules are immutable constants in recycler.ts (COMPONENT_RULES); a test asserts equality. New jobs only: X:gear-v1 (gear->2 MP+1 ingot, 15s), X:pipe-v2 (pipe->1 refined+1 MP, 12s), X:blade-v1 (blade->2 ingot+1 MP, 14s). X:pipe-v1 (pipe->1 refined, 10s) stays in code for stored jobs. Returns are below craft cost (no loop). LI per-item yields: ORIGINAL_UNKNOWN.",
+    "_status": "SOH_PROVISIONAL MEC-01 R2 A1/A2 + PA1 R1 DOCUMENTATION MIRROR. Runtime rules are immutable constants in recycler.ts (COMPONENT_RULES); a test asserts equality. New jobs only: X:gear-v1 (gear->2 MP+1 ingot, 15s), X:pipe-v3 (pipe->1 refined, 10s), X:blade-v1 (blade->2 ingot+1 MP, 14s). X:pipe-v1 and X:pipe-v2 stay in code for stored jobs forever. X:pipe-v3 replaces v2 for NEW jobs the moment the PA1 pipe recipe began yielding 2 per craft: 2 refined + 1 MP in, 2 refined + 2 MP out was a repeatable parts mint (bible.md K4). Returns are below craft cost (no loop). LI per-item yields: ORIGINAL_UNKNOWN; the 1 pipe -> 1 refined ingot figure is the recovered v1.1 paper return.",
     "seconds": 15,
     "components": {
       "mechanical_gear": {
@@ -917,15 +917,11 @@
         ]
       },
       "metal_pipe": {
-        "recipe": "X:pipe-v2",
-        "seconds": 12,
+        "recipe": "X:pipe-v3",
+        "seconds": 10,
         "outputs": [
           [
             "refined_iron_ingot",
-            1
-          ],
-          [
-            "mechanical_parts",
             1
           ]
         ]

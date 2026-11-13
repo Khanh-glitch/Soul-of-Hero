@@ -1,9 +1,14 @@
 import { BAL } from './core';
+import { RECIPE_FAMILY, RESEARCH_FAMILIES, RECIPE_REVISION, RETIRED_RECIPES, familyOfRecipe, familyMembers, recipeAtRevision, purchasableFamilies, isFamilyGated } from './recipe-migration';
+export { RECIPE_REVISION, RETIRED_RECIPES, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY, purchasableFamilies, isFamilyGated };
+export const recipeForJob = (id: string, rev: number | undefined): Recipe | null => recipeAtRevision(id, rev, RECIPES as Record<string, Recipe>);
 // Runtime catalogs. Numbers = TUNABLE_BALANCE; mechanisms flagged where PROPOSED_MECHANISM.
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
-/** `tier` governs discovery; `stationLevel` alone specifies physical workbench capability. */
-export interface RecipeDef { out: string; qty: number; /** Optional co-products committed atomically with the job (industrial batches). Absent = single output `out`×`qty`. */ outs?: [string, number][]; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery' | 'oil_pump'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3; /** B01: distinct display name for an alternate recipe whose output item is shared with another recipe. */ alias?: string }
+/** `tier` governs discovery; `stationLevel` alone specifies physical workbench capability.
+ *  `rev` is the catalog revision this definition is live in (PA1 R1 migration ledger);
+ *  a saved job resolves the revision it was queued under, never the newest one. */
+export interface RecipeDef { out: string; qty: number; /** Optional co-products committed atomically with the job (industrial batches). Absent = single output `out`×`qty`. */ outs?: [string, number][]; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery' | 'oil_pump'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3; /** B01: distinct display name for an alternate recipe whose output item is shared with another recipe. */ alias?: string; rev?: number }
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
 export const INDUSTRIAL_MODULE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 3], ['fasteners', 3], ['spares', 4], ['iron_ingot', 2]], benchLevel: 2 }; // SOH_NEW_TUNED provisional; no equivalent LI numerical table established
@@ -131,7 +136,9 @@ export const ITEMS: Record<string, ItemDef> = {
   boar_tusk: I({ name: 'Boar Tusk (specimen)', cat: 'res', icon: 'fang', c1: '#c0a070', c2: '#fff0d0', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'iron_sword' }),
   beetle_horn: I({ name: 'Beetle Horn (specimen)', cat: 'res', icon: 'fang', c1: '#5a2a1e', c2: '#e06a3a', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'chitin_armor' }),
   keycard: I({ name: 'Vault Keycard', cat: 'misc', icon: 'card', c1: '#2a6a5a', c2: '#a0f0d0', w: 0.05, max: 5, desc: 'A physical Vault Keycard. New cards have limited scans; legacy cards retain one use.' }),
-  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Fuels generators or motorbikes. Can be studied or burned instead.', fuel: 60, studyRecipe: 'fuel_can' }),
+  // PA1 R1: only the RECIPE is retired. The item keeps `fuel: 60` — a canister is still what a
+  // furnace, generator and motorbike burn, and `stationBurnable` / `isStationFuel` read this field.
+  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Fuels generators or motorbikes. Refined from real oil at a furnace or Oil Refinery; can be burned instead. PA1 v1.2: the improvised bench formula is retired, so a motorbike always pays for its first can separately.', fuel: 60 }),
   // Ragnarok & profile
   rcash: I({ name: 'Ragnarok Cash', cat: 'cash', icon: 'coin', c1: '#b07a1e', c2: '#ffe27a', w: 0.01, max: 999, desc: 'Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.' }),
   escrow_chest: I({ name: 'Rương ký gửi', cat: 'kit', icon: 'chest', c1: '#5a3a7a', c2: '#ffd040', w: 4, max: 1, desc: 'Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.', place: 'escrow' }),
@@ -143,7 +150,7 @@ export const ITEMS: Record<string, ItemDef> = {
   metal_blade: I({ name:'Metal Blade', cat:'res', icon:'blade', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock for sword refits.' }),
   mechanical_gear: I({ name:'Mechanical Gear', cat:'res', icon:'mgear', c1:'#6b6f76', c2:'#d6c27a', w:0.8, max:20, desc:'Precision gear for motor drives and powered mechanisms.' }),
   iron_plate: I({ name:'Iron Plate', cat:'res', icon:'plate', c1:'#4f5a63', c2:'#c9d1d8', w:1.5, max:20, desc:'Plate patch for a damaged wall or door (Shift+click when repairing): restores up to 25% of its max HP per plate. Not a permanent reinforcement.' }),
-  motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'Place on clear eligible ground; fuel and cargo are separate.', place:'motorbike' }),
+  motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'PA1 v1.2 dry kit: frame, drive, two iron plates and two fastener sets. No fuel is packaged — place it, then refuel with a real Fuel Canister.', place:'motorbike' }),
   cart_kit: I({ name: 'Hand Cart (packed)', cat: 'kit', icon: 'cart', c1: '#7a5a32', c2: '#c0c8d0', w: 6, max: 1, desc: 'Place to unpack a cargo cart.', place: 'cart' }),
   // elder stones (unique per run)
   stone_frost: I({ name: 'Stone of Rime', cat: 'stone', icon: 'relic', c1: '#3a8ad0', c2: '#e0ffff', w: 1, max: 1, desc: 'Taken from the Glacier Matron.' }),
@@ -320,7 +327,16 @@ export const PA1_UPGRADE_ONLY_GEOMETRY = [
 export const PA1_STRUCTURE_ITEM = (type:string):string|null =>
   type === 'escrow' ? 'escrow_chest' : (DEPLOYABLE_TYPES as readonly string[]).includes(type) ? 'deploy_'+type : null;
 
-export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['pump_crude','refinery_crude','vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother',...DEPLOYABLE_TYPES.map(k=>'deploy_'+k)];
+export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['pump_crude','refinery_crude','vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother',...DEPLOYABLE_TYPES.map(k=>'deploy_'+k).filter(id=>!isFamilyGated(id))];
+
+/** The single authority for "what a run knows without paying for it". A family whose gate is
+ *  priced AND approved for enforcement is excluded here, and that exclusion is the only way a
+ *  formula leaves starter knowledge — new runs and legacy-save re-grants both come through this
+ *  function, so a save can never lose a recipe it already paid for or was given. */
+export const starterKnowledge = (): string[] => Array.from(new Set([
+  ...Object.keys(RECIPES).filter(k => RECIPES[k].base && !isFamilyGated(k)),
+  ...ALWAYS_KNOWN_RECIPES.filter(k => !isFamilyGated(k)),
+]));
 export const isRecipeKnown = (known: readonly string[], key: string) => known.includes(key);
 export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 | 3 => recipe.stationLevel ?? 1;
 
@@ -336,7 +352,11 @@ export const RECIPES: Record<string, Recipe> = {
   // SOH_NEW_TUNED v1. Furnace fuel is separate from consumed input.
   vehicle_frame: { out:'vehicle_frame', qty:1, ins:[['iron_ingot',3],['mechanical_parts',2],['spares',2]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
   vehicle_drive: { out:'vehicle_drive', qty:1, ins:[['iron_ingot',2],['mechanical_parts',2],['fasteners',2],['spares',3]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
-  motorbike_kit: { out:'motorbike_kit', qty:1, ins:[['vehicle_frame',1],['vehicle_drive',1],['iron_ingot',2],['fasteners',2]], station:'workbench', stationLevel:3, secs:40, tier:2 },
+  // PA1 v1.2 DRY KIT (docs/design/PA1_OIL_MOBILITY_V1_2_ACCEPTANCE.md §1, superseding the
+  // recovered v1.1 row): Frame + Drive + 2 Iron Plate + 2 Fasteners. The kit carries NO
+  // fuel — `placeMotorbike` starts at fuel 0 and `vehicleRefuel` consumes one real
+  // physical Fuel Can afterwards. Rev 1 (2 raw ingots, paper also charged a can) is frozen.
+  motorbike_kit: { out:'motorbike_kit', qty:1, ins:[['vehicle_frame',1],['vehicle_drive',1],['iron_plate',2],['fasteners',2]], station:'workbench', stationLevel:3, secs:40, tier:2, rev:2 },
   refine_salvaged_oil: { out:'fuel_can', qty:1, ins:[['salvaged_oil',3],['glass',1]], station:'furnace', secs:18, tier:1 },
   // SOH_PROVISIONAL v1 Oil Refinery: batch-efficient fuel + dedicated lubricant, distinct from furnace single-pot.
   // Refinery recipes are derived from BAL.oilRefineryV1 (single runtime authority).
@@ -368,16 +388,22 @@ export const RECIPES: Record<string, Recipe> = {
   trail_pack: { out: 'trail_pack', qty: 1, ins: [['treated_canvas', 1], ['leather', 2], ['fasteners', 2], ['rope', 2]], station: 'workbench', stationLevel: 2, secs: 22, tier: 2 },
   trail_canteen: { out: 'trail_canteen', qty: 1, ins: [['treated_canvas', 2], ['leather', 1], ['glass', 1], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
   fuel_briquette: { out: 'fuel_briquette', qty: 1, ins: [['charcoal', 2], ['fiber', 1]], station: 'workbench', stationLevel: 2, secs: 10, tier: 2 },
-  fuel_can: { out: 'fuel_can', qty: 1, ins: [['charcoal', 1], ['sulfur', 1], ['glass', 1]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
+  // PA1 R1: the direct `fuel_can` workbench recipe is RETIRED (v1.2 §2) — a canister is
+  // no longer improvised from charcoal + sulfur + glass at a bench. The definition is
+  // frozen in recipe-migration.ts so an older queued job or held blueprint still loads.
+  // Fuel now comes from `refine_salvaged_oil` (furnace, learned by studying real oil) or
+  // the Oil Refinery recipes. `ITEMS.fuel_can.studyRecipe` is removed with it.
   recover_drive: { out: 'mechanical_parts', qty: 1, ins: [['damaged_drive', 1], ['scrap', 1]], station: 'workbench', secs: 12, base: true, tier: 1 },
   mechanical_parts: { out: 'mechanical_parts', qty: 2, ins: [['scrap', 2], ['iron_ingot', 1]], station: 'workbench', secs: 12, base: true, tier: 1 },
   industrial_pick: { out: 'industrial_pick', qty: 1, ins: [['iron_pick', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
   industrial_axe: { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
   reinforced_spear: { out: 'reinforced_spear', qty: 1, ins: [['iron_ingot', 2], ['mechanical_parts', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
-  metal_pipe: { out: 'metal_pipe', qty: 1, ins: [['refined_iron_ingot', 2], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2 },
+  // ---- PA1 R1 cutover (recovered paper v1.1 BOMs, `workbench_ii` rows) ----
+  // Rev 1 definitions are frozen in recipe-migration.ts; jobs keep what they paid for.
+  metal_pipe: { out: 'metal_pipe', qty: 2, ins: [['refined_iron_ingot', 2], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2, rev: 2 },
   metal_blade: { out: 'metal_blade', qty: 1, ins: [['iron_ingot', 4], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
-  mechanical_gear: { out: 'mechanical_gear', qty: 1, ins: [['iron_ingot', 2], ['mechanical_parts', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, base: true, tier: 2 },
-  iron_plate: { out: 'iron_plate', qty: 2, ins: [['refined_iron_ingot', 2], ['metal_pipe', 1], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2 },
+  mechanical_gear: { out: 'mechanical_gear', qty: 1, ins: [['refined_iron_ingot', 1], ['iron_ingot', 1], ['mechanical_parts', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, base: true, tier: 2, rev: 2 },
+  iron_plate: { out: 'iron_plate', qty: 2, ins: [['refined_iron_ingot', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2, rev: 2 },
   iron_sword_blade: { out: 'iron_sword', qty: 1, alias: 'Iron Sword (blade refit)', ins: [['metal_blade', 1], ['iron_ingot', 2], ['leather', 1]], station: 'workbench', stationLevel: 2, secs: 14, base: true, tier: 2 },
   vehicle_frame_piped: { out: 'vehicle_frame', qty: 1, alias: 'Utility Frame (piped)', ins: [['metal_pipe', 1], ['iron_ingot', 2], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
   reinforced_spear_blade: { out: 'reinforced_spear', qty: 1, alias: 'Reinforced Spear (blade)', ins: [['metal_blade', 1], ['iron_ingot', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
@@ -506,6 +532,15 @@ for (const type of DEPLOYABLE_TYPES) {
   ITEMS[id]=I({name:d.name,cat:'place',icon:'parts',c1:'#758995',c2:'#d4c9a8',
     w:Math.round(packWeight*100)/100,max:1,dur:d.hp,
     desc:'Packed '+d.name+'. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.'});
+  // PA1 WP3: family membership is recorded, and a family whose gate is BOTH priced and
+  // approved for enforcement stops being free spawn knowledge (the family study is then the
+  // paid authority). No pack is locked today: the recovered paper does not say the shipped
+  // Refinery / Oil Pump / Field Generator packs were behind a study, and pulling them would
+  // regress starter crafting. `isFamilyGated` returns false for every family in this build.
+  // `base` stays the "physical starter craft availability" flag the ontology test pins:
+  // every pack is craftable by hand from its own materials. Whether a family WITHHOLDS the
+  // formula from a new run is decided once, by `starterKnowledge()`, from the approved
+  // enforcement flag — so no pack can end up half-locked.
   RECIPES[id]={out:id,qty:1,ins:d.cost.map(([k,q])=>[k,q]),
     station:null,secs:1,base:true,tier:0};
   d.item=id;
@@ -599,6 +634,31 @@ export function validateGameplayCatalog(catalog: GameplayCatalogData = { items: 
     if (recipe.stationLevel !== undefined && (recipe.station !== 'workbench' || ![1, 2, 3].includes(recipe.stationLevel))) errors.push(`recipe ${id}: invalid station level`);
     if (recipe.station && (!structures[recipe.station] || structures[recipe.station].station !== recipe.station)) errors.push(`recipe ${id}: missing station ${recipe.station}`);
     if (recipe.outs !== undefined && (recipe.outs.length < 1 || recipe.outs[0][0] !== recipe.out || recipe.outs[0][1] !== recipe.qty || recipe.outs.some(([k, q]) => !items[k] || !Number.isSafeInteger(q) || q <= 0) || new Set(recipe.outs.map(([k]) => k)).size !== recipe.outs.length)) errors.push(`recipe ${id}: invalid output list`);
+  }
+  // ---- PA1 R1 migration + research-family contracts (authored data, no runtime branch) ----
+  for (const retired of RETIRED_RECIPES) {
+    if (recipes[retired]) errors.push(`recipe ${retired}: retired by the PA1 cutover but still live in the catalog`);
+    for (const [id, item] of Object.entries(items)) if (item.studyRecipe === retired) errors.push(`item ${id}: studyRecipe points at the retired recipe ${retired}`);
+  }
+  for (const [id, fam] of Object.entries(RECIPE_FAMILY)) {
+    const def = RESEARCH_FAMILIES[fam];
+    if (!def) errors.push(`recipe ${id}: research family ${fam} is not declared`);
+    else if (def.price === null) errors.push(`recipe ${id}: family ${fam} has no authorized price, so it must not gate a recipe`);
+    if (!recipes[id]) errors.push(`recipe ${id}: RECIPE_FAMILY names a recipe that does not exist`);
+    // A gate is either on or off for the whole family, never half-applied: an enforced
+    // family's members must not be free starter knowledge, and a family that is not an
+    // enforced gate must not leave a member locked out of starter knowledge by hand.
+    const gated = !!def && def.price !== null && def.enforce;
+    // `base` is the pack's physical-craft flag and stays true; what a run is GIVEN is computed
+    // by starterKnowledge(). So the only authoring mistake this can catch is naming a family
+    // that cannot actually gate (unpriced / unapproved) while still holding a member, or
+    // locking a formula that no family owns.
+    if (!gated && !isFamilyGated(id)) { /* membership is informational until enforcement is approved */ }
+    if (gated && !recipes[id]) errors.push(`recipe ${id}: enforced family ${fam} has no recipe to gate`);
+    if (!def) continue;
+  }
+  for (const [id, recipe] of Object.entries(recipes)) {
+    if (recipe.rev !== undefined && (recipe.rev < 1 || recipe.rev > RECIPE_REVISION)) errors.push(`recipe ${id}: rev ${recipe.rev} is outside the migration ledger (1..${RECIPE_REVISION})`);
   }
   if (errors.length) throw new Error(`Invalid gameplay catalog:\n${errors.join('\n')}`);
   return true;

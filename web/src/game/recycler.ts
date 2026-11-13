@@ -3,7 +3,7 @@ import { ITEMS } from './catalog';
 
 type Output = [string, number];
 /** B01: X:recover-v1 jobs keep the v1 table forever; X:recover-v2 jobs use recyclerV2 (new physical outputs). */
-export type RecoveryRecipe = 'X:drive'|'X:recover-v1'|'X:recover-v2'|'X:recover-v3'|'X:pipe-v1'|'X:pipe-v2'|'X:gear-v1'|'X:blade-v1';
+export type RecoveryRecipe = 'X:drive'|'X:recover-v1'|'X:recover-v2'|'X:recover-v3'|'X:pipe-v1'|'X:pipe-v2'|'X:pipe-v3'|'X:gear-v1'|'X:blade-v1';
 /**
  * MEC-01 R2 (A2): IMMUTABLE component rule snapshots. Each versioned key pins its own seconds and outputs in code,
  * so a saved job never re-reads a live balance table. recyclerV4 in balance.v1.json is a documentation mirror
@@ -15,6 +15,12 @@ const COMPONENT_RULES = {
   'X:pipe-v1': { key: 'metal_pipe', seconds: 10, outputs: [['refined_iron_ingot', 1]] as Output[] },
   // X:pipe-v2 (A2, new jobs): pipe -> 1 refined + 1 Mechanical Parts. Craft = 2 refined + 1 MP (>= 3.83 ingot-eq); return >= 2.33 ingot-eq.
   'X:pipe-v2': { key: 'metal_pipe', seconds: 12, outputs: [['refined_iron_ingot', 1], ['mechanical_parts', 1]] as Output[] },
+  // X:pipe-v3 (PA1 R1): the recovered paper return — one pipe back into exactly one
+  // Refined Iron Ingot. Mandatory companion to the pipe recipe cut to 2 per craft: at
+  // X:pipe-v2 the pair of pipes returned 2 refined + 2 parts against a 2 refined + 1 parts
+  // craft, i.e. a repeatable +1 Mechanical Parts mint (bible.md K4 forbids craft->recycle->craft
+  // producing net-positive material). v1/v2 stay frozen for jobs already stored.
+  'X:pipe-v3': { key: 'metal_pipe', seconds: 10, outputs: [['refined_iron_ingot', 1]] as Output[] },
   // X:gear-v1 (historical gear experiment): gear -> 2 MP + 1 ingot. Craft = 2 ingot + 2 MP + 1 fastener (~4.11 ingot-eq); return ~2.67 ingot-eq.
   'X:gear-v1': { key: 'mechanical_gear', seconds: 15, outputs: [['mechanical_parts', 2], ['iron_ingot', 1]] as Output[] },
   // X:blade-v1 (A2): blade -> 2 ingot + 1 MP. Craft = 4 ingot + 1 MP (~4.83 ingot-eq); return ~2.83 ingot-eq.
@@ -43,7 +49,7 @@ function planFromTable(s:Stack, table:RuleTable, recipe:'X:recover-v1'|'X:recove
 export function recoveryPlan(s:Stack):RecoveryPlan|null {
   if(!s||typeof s!=="object"||s.qty!==1)return null;
   if(s.key==='damaged_drive')return {recipe:'X:drive',total:12000,outputs:[['spares',2]],condition:null};
-  if(s.key==='metal_pipe')return componentPlan('X:pipe-v2',s);
+  if(s.key==='metal_pipe')return componentPlan('X:pipe-v3',s);
   if(s.key==='mechanical_gear')return componentPlan('X:gear-v1',s);
   if(s.key==='metal_blade')return componentPlan('X:blade-v1',s);
   // MEC-01 P1: v3 supersedes v2 for the four keys it lists (v2 over-returned); new jobs only.

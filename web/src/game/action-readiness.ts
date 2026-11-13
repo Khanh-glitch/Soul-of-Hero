@@ -101,10 +101,36 @@ export function craftReadiness(r: RunState, key: string, now: number, preferredE
   return state('unknown', 'Work now', 'Reserve inputs and start work', 'ready', true);
 }
 
-/** A structure cannot claim "build ready" until the player has selected a legal tile. */
-export function structurePreparation(r: RunState, type: string) {
+export interface StructurePreparation {
+  materials: boolean;
+  missing: { key: string; have: number; need: number }[];
+  sourceBlocked: boolean;
+  next: string;
+  /** Present for a crafted device: what the placement actually consumes is the PACK. */
+  pack?: { key: string; name: string; carried: number; intact: boolean; craftCost: [string, number][] };
+}
+
+/** A structure cannot claim "build ready" until the player has selected a legal tile.
+ *
+ * PA1 device custody: a device that owns a packed item is placed BY SPENDING THAT ITEM, never by
+ * paying its raw material list a second time. If this projection reported the raw list as
+ * "prepared", the Deploy screen would promise a placement the engine then refuses with
+ * "No valid packed device in inventory." — so the pack, not the ore, is the readiness authority. */
+export function structurePreparation(r: RunState, type: string): StructurePreparation {
   const d = STRUCTS[type];
   const missing = d?.cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => ({ key: k, have: countItem(r, 'inv', k), need: q })) ?? [];
   const sourceBlocked = type === 'oil_pump' && !anyAuthorizedOilSource(r);
+  if (d?.item) {
+    const packKey = d.item;
+    const carried = (C(r, 'inv').slots.filter(s => s?.key === packKey));
+    const hpOf = ITEMS[packKey]?.dur;
+    const intact = carried.some(s => s && s.qty === 1 && (!hpOf || (Number.isFinite(s.dur) && (s.dur as number) > 0 && (s.dur as number) <= d.hp)));
+    const next = sourceBlocked ? 'No authorized oil site on this map'
+      : intact ? 'Placement spends the packed device, not its materials — choose a legal site'
+      : carried.length ? `The packed ${d.name} is damaged — repair it before placing`
+      : `Craft the packed ${d.name} first${missing.length ? ' · ' + missingLabel(missing[0].key, missing[0].have, missing[0].need) : ''}`;
+    return { materials: !sourceBlocked && intact, missing, sourceBlocked, next,
+      pack: { key: packKey, name: d.name, carried: carried.length, intact, craftCost: d.cost } };
+  }
   return { materials: missing.length === 0, missing, sourceBlocked, next: sourceBlocked ? 'No authorized oil site on this map' : missing.length ? missingLabel(missing[0].key, missing[0].have, missing[0].need) : 'Materials ready · choose a legal site' };
 }

@@ -5,7 +5,8 @@ import {TILE,type GameState} from '../src/game/core';
 import {addItem,dispatch,newGame,mkStack} from '../src/game/engine';
 import {setActiveLayout} from '../src/game/world';
 import {serializeSnapshot,selectSnapshots} from '../src/game/persist';
-import {expeditionNotes,validIntel,MAX_INTEL_KEY} from '../src/game/expedition-intel';
+import {expeditionNotes,validIntel,MAX_INTEL_KEY,FUEL_ROUTES} from '../src/game/expedition-intel';
+import {RECIPES} from '../src/game/catalog';
 const START=Date.UTC(2026,10,5);
 let serial=0;
 afterAll(()=>setActiveLayout('shipping'));
@@ -73,12 +74,16 @@ describe('GP11 expedition intel invariants', () => {
     r.intel=['gate:light:power','loot:light:fuel_can','gate:factory:keycard_vault','loot:wreck:bp_bow'];
     let n=expeditionNotes(r).find(x=>x.place==='light')!;
     expect(n.gates[0]).toMatchObject({item:'fuel_can',have:0,carried:false,seenIn:['light'],craft:undefined});  // recipe not known yet
-    r.knowledge.recipes.push('fuel_can');
+    // PA1 v1.2: the bench canister formula is retired, so preparation guidance must name a route
+    // that still exists — refining the oil the survivor actually salvages.
+    expect(FUEL_ROUTES.map(k=>RECIPES[k]?.out).every(o=>o===undefined||o==='fuel_can')).toBe(true);
+    r.knowledge.recipes.push('refine_salvaged_oil');
     n=expeditionNotes(r).find(x=>x.place==='light')!;
-    expect(n.gates[0].craft!.missing.map(i=>i.key).sort()).toEqual(['charcoal','glass','sulfur']);
-    addItem(r,'inv','charcoal',1);
+    expect(n.gates[0].craft!.recipe).toBe('refine_salvaged_oil');
+    expect(n.gates[0].craft!.missing.map(i=>i.key).sort()).toEqual(['glass','salvaged_oil']);
+    addItem(r,'inv','salvaged_oil',3);
     n=expeditionNotes(r).find(x=>x.place==='light')!;
-    expect(n.gates[0].craft!.missing.map(i=>i.key).sort()).toEqual(['glass','sulfur']);
+    expect(n.gates[0].craft!.missing.map(i=>i.key).sort()).toEqual(['glass']);
     const kc=expeditionNotes(r).find(x=>x.place==='factory')!.gates[0];
     expect(kc.item).toBe('keycard');expect(kc.carried).toBe(false);expect(kc.craft).toBeUndefined();
   });

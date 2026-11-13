@@ -1,8 +1,19 @@
 name: PA1 Building — Real Chromium Palette Evidence
 on:
   push:
-    branches: [feature/pa1-building-ontology-20261113]
+    # The feature branch is the review head; the Arena session branch carries the same commits and
+    # must not silently lose its browser evidence.
+    branches: [feature/pa1-building-ontology-20261113, arena/de604ab6-soul-of-hero]
     paths:
+      - 'web/src/game/action-readiness.ts'
+      - 'web/src/game/expedition-intel.ts'
+      - 'web/src/game/recycler.ts'
+      - 'web/src/game/recipe-migration.ts'
+      - 'web/src/game/economic-audits-m5.ts'
+      - 'web/src/game/balance.v1.json'
+      - 'web/src/ui/panels.tsx'
+      - 'web/src/ui/SurvivorScreen.tsx'
+      - 'web/e2e/pa1-deploy-custody.mjs'
       - 'web/src/game/core.ts'
       - 'web/src/game/engine.ts'
       - 'web/src/game/persist.ts'
@@ -15,6 +26,7 @@ on:
       - 'web/src/ui/Game.tsx'
       - 'web/src/index.css'
       - 'web/e2e/pa1-building-palette.mjs'
+      - 'web/tests/pa1-deploy-custody.test.ts'
       - '.github/workflows/pa1-building-browser.yml'
   workflow_dispatch:
 permissions:

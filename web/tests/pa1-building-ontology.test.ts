@@ -4,6 +4,7 @@ import {DEPLOYABLE_TYPES,PA1_BASE_GEOMETRY,PA1_BUILD_PAGES,PA1_UPGRADE_ONLY_GEOM
   ITEMS,RECIPES,STRUCTS,BUILD_ORDER,STRUCTURE_UPGRADES} from '../src/game/catalog';
 import {newGame,dispatch,addItem,countItem,C,buildReason,markDirty,blockedAt,clearWallLine,roofAt} from '../src/game/engine';
 import {getWorld,getActiveLayout,setActiveLayout} from '../src/game/world';
+import {structurePreparation} from '../src/game/action-readiness';
 import {serializeSnapshot,selectSnapshots,validate} from '../src/game/persist';
 
 const T0=Date.UTC(2026,10,13,9);let serial=0;
@@ -171,5 +172,58 @@ describe('PA1 building geometry vs physical device custody',()=>{
     expect(floor.type).toBe('floor_stone');
     expect(countItem(o.r,'inv','stone')).toBe(before-5-6);
     expect(validate(o.g)).not.toBeNull();
+  });
+});
+
+describe('PA1 Deploy readiness projection matches what placement actually spends',()=>{
+  // The UI must never promise a placement the engine will refuse: for a device, the placement
+  // spends the CRAFTED PACK (no second material payment), so the pack — not the ore list — is
+  // the readiness authority. This is the same function SurvivorScreen renders.
+  it('refuses to call raw materials "prepared" and names the pack instead',()=>{
+    const o=setup();
+    addItem(o.r,'inv','wood',14);addItem(o.r,'inv','stone',4);
+    const prep=structurePreparation(o.r,'workbench');
+    expect(prep.pack?.key).toBe('deploy_workbench');
+    expect(prep.materials).toBe(false);
+    expect(prep.next).toMatch(/Craft the packed Workbench first/);
+    expect(o.build('workbench').ok).toBe(false);              // the engine agrees with the UI
+    expect(countItem(o.r,'inv','wood')).toBe(14);             // a refused placement spends nothing
+  });
+  it('goes green on the crafted pack and spends only the pack when placing',()=>{
+    const o=setup();
+    addItem(o.r,'inv','wood',14);addItem(o.r,'inv','stone',4);
+    expect(act(o.g,'craft',{recipe:'deploy_workbench'}).ok).toBe(true);
+    expect(countItem(o.r,'inv','wood')).toBe(0);expect(countItem(o.r,'inv','stone')).toBe(0);
+    let prep=structurePreparation(o.r,'workbench');
+    expect(prep.materials).toBe(true);
+    expect(prep.next).toMatch(/spends the packed device, not its materials/);
+    expect(o.build('workbench').ok).toBe(true);
+    expect(countItem(o.r,'inv','deploy_workbench')).toBe(0);   // the pack left the pack slot…
+    const bench=Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;
+    expect(bench.hp).toBe(STRUCTS.workbench.hp);               // …and the device arrived at full HP
+    expect(structurePreparation(o.r,'workbench').materials).toBe(false);   // one pack, one placement
+    expect(o.build('workbench',1,0).ok).toBe(false);
+  });
+  it('a spent-down pack blocks the CTA and asks for a repair, not for more ore',()=>{
+    const o=setup();
+    expect(act(o.g,'craft',{recipe:'deploy_workbench'}).ok).toBe(false);   // no materials yet
+    addItem(o.r,'inv','wood',14);addItem(o.r,'inv','stone',4);
+    expect(act(o.g,'craft',{recipe:'deploy_workbench'}).ok).toBe(true);
+    const slot=C(o.r,'inv').slots.findIndex(s=>s?.key==='deploy_workbench');
+    o.r.custody.inv.slots[slot]!.dur=0;                         // FIXTURE: burn the pack's condition off
+    const prep=structurePreparation(o.r,'workbench');
+    expect(prep.materials).toBe(false);
+    expect(prep.next).toMatch(/damaged — repair it before placing/);
+    expect(o.build('workbench').ok).toBe(false);
+  });
+  it('keeps plain geometry on the material rule, because a shape is not an item',()=>{
+    const o=setup();
+    addItem(o.r,'inv','wood',4);
+    const prep=structurePreparation(o.r,'floor_wood');
+    expect(prep.pack).toBeUndefined();
+    expect(prep.materials).toBe(true);
+    expect(prep.next).toBe('Materials ready · choose a legal site');
+    expect(o.build('floor_wood').ok).toBe(true);
+    expect(countItem(o.r,'inv','wood')).toBe(0);                // geometry pays materials, once
   });
 });

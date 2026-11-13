@@ -230,15 +230,16 @@ function StructDetail({ api, k }: { api: Api; k: string }) {
   return <div className="sv-detail">
     <div className="sv-dhead"><div className="sv-dico"><img className="px" src={iconUrl(`st:${k}`)} alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} /></div><div><b>{d.name}</b><div className="sv-ddesc">{d.desc}</div></div></div>
     <div className="sv-diagram">
-      <div className="ins">{d.cost.map(([i, n]) => <span key={i} className={`need ${have(i) >= n ? 'ok' : 'no'}`} title={ITEMS[i].name}><Icon k={i} size={16} /><b>{have(i)}</b><small>/{n}</small></span>)}</div>
+      {/* A device placement consumes the CRAFTED PACK; its material list is the craft cost, paid once at the bench. */}
+      <div className="ins">{(prep.pack ? ([[prep.pack.key, 1]] as [string, number][]) : d.cost).map(([i, n]) => <span key={i} className={`need ${have(i) >= n ? 'ok' : 'no'}`} title={prep.pack ? `Packed ${d.name} — placement spends this item` : ITEMS[i].name}><Icon k={i} size={16} /><b>{have(i)}</b><small>/{n}</small></span>)}</div>
       <span className="arrow">▶</span>
       <div className="outs"><span className="out"><img className="px" src={iconUrl(`st:${k}`)} alt="" style={{ width: 18, height: 18, objectFit: 'contain' }} /><b>place</b></span></div>
     </div>
     <div className="sv-dfoot">
       <span className="chip" style={{ color: 'var(--muted)' }}><Glyph k="hp" c="currentColor" s={7} />{d.hp}</span>
       {d.station && <span className="chip" style={{ color: 'var(--info)' }}>workstation</span>}
-      <button className="btn gold sv-go" disabled={!ok} onClick={() => { api.setBuild(k); api.setReclaim(false); api.setRepairMode(false); api.setUpgradeMode(false); api.open(null); }}>Choose site</button>
+      <button className="btn gold sv-go" disabled={!ok} onClick={() => { api.setBuild(k); api.setReclaim(false); api.setRepairMode(false); api.setUpgradeMode(false); api.open(null); }}>{prep.pack ? (prep.pack.intact ? 'Choose site · spends the pack' : 'Craft the pack first') : 'Choose site'}</button>
     </div>
-    <div className={`sv-readiness sv-readiness--${ok ? 'waiting' : 'blocked'}`} role="status"><b>{ok ? '▤ Materials prepared' : '× Not prepared'}</b><span>{prep.next}. Placement is checked on the ground.</span></div>
+    <div className={`sv-readiness sv-readiness--${ok ? 'waiting' : 'blocked'}`} role="status"><b>{ok ? (prep.pack ? '▤ Packed device in hand' : '▤ Materials prepared') : '× Not prepared'}</b><span>{prep.next}. Placement is checked on the ground.</span></div>
   </div>;
 }
