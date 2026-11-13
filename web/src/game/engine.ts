@@ -2121,7 +2121,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (structural && (!Number.isInteger(e.tx) || !Number.isInteger(e.ty) ||
         !claimAt(r,e.tx!,e.ty!) || !cabinetSupported(r,claimAt(r,e.tx!,e.ty!)!)))
         return fail('Upgrade wooden construction only through a valid Territory Cabinet within its claim.');
-      if (!next || e.deployed || e.station || e.farm || e.garden || !Number.isFinite(e.hp) || !Number.isFinite(e.maxHp) || e.hp! <= 0 || e.maxHp! <= 0) return fail('No in-place upgrade for this structure.');
+      if (!next || e.station || e.farm || e.garden || !Number.isFinite(e.hp) || !Number.isFinite(e.maxHp) || e.hp! <= 0 || e.maxHp! <= 0) return fail('No in-place upgrade for this structure.');
       const chest = e.c ? C(r, e.c) : null;
       if (next.slots && (!chest || chest.kind !== 'chest' || chest.slots.length > next.slots)) return fail('Storage is invalid; no materials spent.');
       if (!hasAll(r, 'inv', next.cost)) return fail('Missing upgrade materials: ' + next.cost.filter(([k,q]) => countItem(r,'inv',k) < q).map(([k,q]) => `${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', '));
@@ -2290,8 +2290,12 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       let deployed: Stack|undefined;
       if (d.item) {
         const inv=C(r,'inv');
-        const idx=inv.slots.findLastIndex(v=>v?.key===d.item&&v.qty===1&&(
-          !ITEMS[d.item!].dur || Number.isFinite(v.dur)&&v.dur!>0&&v.dur!<=d.hp));
+        let idx=-1;
+        for(let i=inv.slots.length-1;i>=0;i--){
+          const v=inv.slots[i];
+          if(v?.key===d.item&&v.qty===1&&
+            (!ITEMS[d.item!].dur||(Number.isFinite(v.dur)&&v.dur!>0&&v.dur!<=d.hp))){idx=i;break;}
+        }
         if(idx<0)return fail('No valid packed device in inventory.');
         deployed=inv.slots[idx]!;
         inv.slots[idx]=null;
