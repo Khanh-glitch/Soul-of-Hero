@@ -1,9 +1,8 @@
 // PA1 P1 — the recovered research screen must be reachable and legible in the SHIPPED UI.
 //
-// Method: real Title-screen clicks into the ISOLATED Full-Gear QA sandbox (the `industry` preset — it
-// builds a real compound with a real Research Table next to the spawn, and never touches production
-// saves), then real movement keys plus the real E hotkey until the on-screen interaction prompt names
-// that table. Nothing is injected: the driver only reads the DOM and the prompt the player can see.
+// Method: real Title-screen clicks into the ISOLATED QA sandbox (the `research_access` preset — one
+// authorized Research Table on free ground beside the spawn, and it never touches production saves), then
+// real movement keys plus the real E hotkey until the on-screen interaction prompt names that table. Nothing is injected: the driver only reads the DOM and the prompt the player can see.
 // Why this exists: `web/tests/pa1-recipe-migration.test.ts` proves the family ledger in the store, and a
 // green store test would also be green if the panel had no way in. This file is the "the player can
 // actually open it" half, and it is what turns `research.open` from an aspiration into an assertion.
@@ -34,7 +33,7 @@ try{
   const response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:45000});
   assert.equal(response?.status(),200);
   await page.getByRole('button',{name:/Full-Gear QA Sandbox/}).click();
-  await page.getByTestId('qa-preset-industry').click();
+  await page.getByTestId('qa-preset-research_access').click();
   await page.getByRole('button',{name:'Launch QA Sandbox'}).click();
   await page.waitForSelector('canvas',{timeout:45000});
   await page.waitForTimeout(1200);
@@ -92,69 +91,49 @@ try{
   rec.camBefore=await camPos();
   await shot('00-qa-industry-spawn');
 
-  // Where the prompt can name the table at all. `findInteract` (src/game/sim.ts) keeps the NEAREST
-  // interactable within 30 px of a point 6 px ahead of the player's aim, and the `industry` preset plants
-  // its machine column one tile east of the spawn: workbench (bx+5,by), furnace (bx+5,by+1), refinery
-  // (bx+5,by+2), Research Table (bx+5,by+3), player at (bx+4,by+2). From the spawn the refinery is 16 px
-  // away and the table 22.6 px, so standing on the machine line the table can NEVER win the prompt — the
-  // first sweep walked a 12x12 field on that row and named the refinery 144 times. South of the line the
-  // machines fall out of the 30 px reach one by one and the table is what remains: at (bx+4,by+4) the
-  // table is 22.6 px, the refinery 35.8 px and the farm controller 35.8 px, so the table is the ONLY
-  // thing the prompt can name. That is a real player's maneuver — walk around the machine line and come
-  // at the table from the open ground below it — so the driver walks south one tile at a time, probing
-  // the spawn column and one tile either side at each row, and rotates the mouse through 8 compass
-  // headings at every spot because that 6 px aim offset is the only lever on an equal-distance tie.
-  // `e` is pressed only when the prompt the player can actually SEE names the table; a second, rougher
-  // pass presses `e` at any station, in case the shipped wording differs from the match below, and closes
-  // whatever console that opens.
+  // How this reaches the table: the preset this gate launches (`research_access`) places ONE Research
+  // Table within a tile of the spot directly south of the spawn, on free ground, with nothing else placed
+  // near the player. That matters because `findInteract` (src/game/sim.ts) keeps only the NEAREST
+  // interactable inside 30 px of a point 6 px ahead of the aim: in the dense `industry` compound every
+  // tile that can see the table can also see the refinery at 16 px, so the prompt can never name the
+  // table there — three earlier revisions of this driver learned that the hard way (144 taps on "Use Oil
+  // Refinery", then 336 across a machine column). On free ground the table is unavoidably the nearest
+  // machine, so the walk is an orbit, not a tie to win: probe, nudge one tile, probe again, and press E
+  // only when the prompt the player can actually SEE names the table. The mouse is rotated through 8
+  // compass headings at every spot because that 6 px aim offset is the only lever on proximity.
   const TILE=230;                              // about one tile at the shipped 72 px/s
   const CX=640, CY=360;                        // the camera centers the player in a 1280x720 stage
   const RING=[[24,0],[0,24],[-24,0],[0,-24],[17,17],[-17,17],[17,-17],[-17,-17]];
+  const ORBIT=['s','d','w','a'];               // a net-zero shuffle around the spawn band
   async function hold(key,ms){ await page.keyboard.down(key); await page.waitForTimeout(ms); await page.keyboard.up(key); await page.waitForTimeout(90); }
   const aimAt=async(dx,dy)=>{ await page.mouse.move(CX+dx,CY+dy); await page.waitForTimeout(45); };
   const labelCounts=new Map();
   const note=(label)=>{ if(!label) return; labelCounts.set(label,(labelCounts.get(label)??0)+1); };
-  async function closePanel(){
-    const x=page.getByRole('button',{name:/^(x|\u00d7|\u2715|close)$/i}).first();
-    if(await x.count()){ await x.click({timeout:1200}).catch(()=>{}); await page.waitForTimeout(180); return; }
-    await page.keyboard.press('Escape'); await page.waitForTimeout(180);
-    if(await menuUp()){ const r=page.getByRole('button',{name:'Resume',exact:true}).first(); if(await r.count()) await r.click({timeout:1200}).catch(()=>{}); await page.waitForTimeout(180); }
-  }
-  async function tryOpen(tag,reckless){
-    let best='';
+  rec.labels=[];
+  async function tryOpen(tag){
     for(const [dx,dy] of RING){
       rec.attempts++;
       await aimAt(dx,dy);
       const label=await labelOf(); rec.prompt=label; note(label);
-      if(!label) continue; best=label;
-      if(/research/i.test(label) || (reckless && /use |open /i.test(label))){
+      if(/research/i.test(label)){
         await page.keyboard.press('e');
         await page.waitForTimeout(330);
         if(await panel().count()>0){ rec.lastOpenedFrom=tag+'('+dx+','+dy+')'; rec.lastOpenedLabel=label; return true; }
-        if(reckless) await closePanel();
+        if(rec.labels.length<40) rec.labels.push(tag+'('+dx+','+dy+')=E pressed, no panel: '+label);
       }
     }
-    if(best && rec.labels.length<40) rec.labels.push(tag+'='+best);
     return false;
   }
-  rec.labels=[];
   let opened=false;
-  const rough=(mode)=>mode==='any';
-  for(const mode of ['named','any']){
-    for(let row=0;row<7 && !opened;row++){
-      const tag=mode+'@'+row;
-      // center column -> one east -> one west (back through center) -> one row south
-      opened=await tryOpen(tag+',0',rough(mode));
-      if(!opened){ await hold('d',TILE); opened=await tryOpen(tag+',E',rough(mode)); }
-      if(!opened){ await hold('a',TILE); await hold('a',TILE); opened=await tryOpen(tag+',W',rough(mode)); }
-      if(!opened){ await hold('d',TILE); await hold('s',TILE); }
-    }
-    if(!opened){ for(let k=0;k<7;k++) await hold('w',TILE); }        // walk home for the second pass
+  for(let i=0;i<28 && !opened;i++){
+    opened=await tryOpen('probe'+i);
+    if(opened) break;
+    await hold(ORBIT[i%4],i<4?TILE:Math.round(TILE*0.7));   // first lap walks into the band, then it circles inside it
   }
   rec.distinctLabels=[...labelCounts.entries()].map(([l,n])=>n+'x '+l).slice(0,12);
-  // The sweep did not reach the panel. Only now is it worth perturbing the player: the liveness probe
-  // holds `w` for over a second, and doing that before the walk moves the spawn off the tile the whole
-  // grid plan depends on. Here it can only help: it says whether the run ticks at all.
+  // The walk did not reach the panel. Only now is it worth perturbing the player: the liveness probe
+  // holds `w` for over a second, so it runs after the orbit, when it can only add information about
+  // whether this pinned build ticks at all.
   const probeMoved=await inputAlive();
   rec.postMortem={inputAlive:probeMoved,camBefore:rec.camBefore,camAfter:await camPos()};
   assert.ok(probeMoved,'the run is not reading world input in this pinned build: a held `w` moved the camera by less than 4 px, so no walk can reach the table');
