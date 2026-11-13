@@ -14,6 +14,10 @@ on:
       - 'web/src/ui/panels.tsx'
       - 'web/src/ui/SurvivorScreen.tsx'
       - 'web/e2e/pa1-deploy-custody.mjs'
+      - 'web/e2e/pa1-research-visible.mjs'
+      - 'web/src/ui/panels.tsx'
+      - 'web/src/game/qa-sandbox.ts'
+      - 'web/src/ui/Title.tsx'
       - 'web/src/game/core.ts'
       - 'web/src/game/engine.ts'
       - 'web/src/game/persist.ts'
@@ -79,6 +83,14 @@ jobs:
           BUILD_SHA: ${{ github.sha }}
           GAME_URL: http://127.0.0.1:4173/
         run: node e2e/pa1-deploy-custody.mjs
+      # The research half of PA1 is a UI claim, so it is not allowed to rest on a store test: this step
+      # opens the family panel in the shipped build and fails if the panel cannot be reached or read.
+      - name: Real Research Table panel, reached from the title screen
+        working-directory: web
+        env:
+          BUILD_SHA: ${{ github.sha }}
+          GAME_URL: http://127.0.0.1:4173/
+        run: node e2e/pa1-research-visible.mjs
       - name: Upload render evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -106,7 +118,7 @@ jobs:
             echo "## PA1 browser evidence failed on \`$SHA\`"
             echo
             echo "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-            for f in web/evidence/pa1-deploy-custody/manifest.json web/evidence/pa1-building-palette/manifest.json; do
+            for f in web/evidence/pa1-deploy-custody/manifest.json web/evidence/pa1-building-palette/manifest.json web/evidence/pa1-research-visible/manifest.json; do
               [ -f "$f" ] || continue
               echo; echo "\`\`\`json"; echo "// $f"; head -c 5000 "$f"; echo; echo "\`\`\`"
             done

@@ -403,9 +403,22 @@ describe('PA1 WP3 research families — recorded ledger, priced ENERGY study, en
     expect(purchasableFamilies()).toEqual(['ENERGY']);
     expect(RESEARCH_FAMILIES.ENERGY.price).toEqual([['spares', 5], ['iron_ingot', 2]]);   // recovered v1.1
     expect(RESEARCH_FAMILIES.ENERGY.status).toBe('SOURCE_APPROVED');
-    // Membership is recorded for exactly the three energy-plant packs; the other ten families
-    // carry no price and no enforcement, so they cannot collect anything from a player.
-    expect(familyMembers('ENERGY')).toEqual(['deploy_base_generator', 'deploy_oil_pump', 'deploy_refinery']);
+    // PA1 P1: ENERGY covers the recovered energy chain — the three plants AND the pump /
+    // refinery work they do. The other ten families carry no price and no enforcement, so they
+    // cannot collect anything from a player, and membership alone withholds nothing today.
+    expect(familyMembers('ENERGY')).toEqual([
+      'deploy_base_generator', 'deploy_oil_pump', 'deploy_refinery',
+      'pump_crude', 'refinery_crude', 'refinery_fuel', 'refinery_fuel_batch',
+      'refinery_industrial', 'refinery_lubricant',
+    ]);
+    for (const id of familyMembers('ENERGY')) {
+      expect(familyOfRecipe(id), id).toBe('ENERGY');
+      expect(isFamilyGated(id), id).toBe(false);
+      expect(RECIPES[id].base, id + ' is a real craftable formula').toBe(true);
+      expect(starterKnowledge(), id + ' stays free starter knowledge while enforcement is undecided').toContain(id);
+    }
+    // The furnace salvage fallback stays outside the family by decision, not by omission.
+    expect(familyOfRecipe('refine_salvaged_oil')).toBeNull();
     for (const fam of Object.values(RESEARCH_FAMILIES)) {
       expect(fam.enforce, fam.id).toBe(false);
       if (fam.id !== 'ENERGY') expect(fam.price, fam.id).toBeNull();
@@ -423,6 +436,8 @@ describe('PA1 WP3 research families — recorded ledger, priced ENERGY study, en
       expect(r.knowledge.recipes, id).toContain(id);              // still free starter knowledge
       expect(RECIPES[id].base, id).toBe(true);                     // and still a hand-craftable pack
     }
+    // P1: the fuel chain is equally ungated today — a fresh run can already pump and refine.
+    for (const id of familyMembers('ENERGY')) expect(r.knowledge.recipes, id).toContain(id);
     give(gs, 'iron_ingot', 8); give(gs, 'mechanical_parts', 6); give(gs, 'spares', 12); give(gs, 'brick', 12); give(gs, 'glass', 4);
     expect(act(gs, 'craft', { recipe: 'deploy_refinery' }).ok, 'no study may be required today').toBe(true);
     expect(countItem(gs.run!, 'inv', 'deploy_refinery')).toBe(1);

@@ -1,8 +1,8 @@
 name: PA1 Building Ontology — strict source / runtime acceptance
 on:
   push:
-    branches: [feature/pa1-building-ontology-20261113]
-    paths:
+    branches: [feature/pa1-building-ontology-20261113, arena/de604ab6-soul-of-hero]
+    paths:  # the browser gate lists the same set: a session branch must not silently lose this check
       - 'web/src/game/art.ts'
       - 'web/src/game/core.ts'
       - 'web/src/game/persist.ts'
@@ -14,7 +14,20 @@ on:
       - 'web/src/ui/BuildBar.tsx'
       - 'web/src/ui/panels.tsx'
       - 'web/src/ui/Game.tsx'
+      - 'web/src/game/action-readiness.ts'
+      - 'web/src/game/recipe-migration.ts'
+      - 'web/src/game/recycler.ts'
+      - 'web/src/game/economic-audits-m5.ts'
+      - 'web/src/game/balance.v1.json'
+      - 'web/src/ui/SurvivorScreen.tsx'
+      - 'web/src/ui/StationService.tsx'
       - 'web/tests/pa1-building-ontology.test.ts'
+      - 'web/tests/pa1-recipe-migration.test.ts'
+      - 'web/tests/pa1-deploy-custody.test.ts'
+      - 'web/tests/pa1-device-repair-loop.test.ts'
+      - 'web/tests/pa1-rev1-queued-jobs.test.ts'
+      - 'web/tests/fixtures/pa1-rev1-queued-jobs.json'
+      - 'web/scripts/export-item-network.ts'
       - 'web/tests/territory-cabinet.test.ts'
       - '.github/workflows/pa1-building-ontology.yml'
   workflow_dispatch:
@@ -42,6 +55,11 @@ jobs:
       - name: PA1 device+building transaction tests
         working-directory: web
         run: npx --no-install vitest run --fileParallelism=false src/../tests/pa1-building-ontology.test.ts
+      # The cutover gate: frozen recipe revisions, the repair/custody closed loop, and a save captured
+      # by the PRE-cutover engine. Kept as its own step so a red run names the gate that broke.
+      - name: PA1 recipe-revision, custody and legacy-save acceptance
+        working-directory: web
+        run: npx --no-install vitest run --testTimeout=180000 --fileParallelism=false tests/pa1-recipe-migration.test.ts tests/pa1-deploy-custody.test.ts tests/pa1-device-repair-loop.test.ts tests/pa1-rev1-queued-jobs.test.ts
       - name: Preexisting material and territory regression
         working-directory: web
         run: npx --no-install vitest run --fileParallelism=false tests/territory-cabinet.test.ts tests/progression.test.ts tests/m-core-03.test.ts

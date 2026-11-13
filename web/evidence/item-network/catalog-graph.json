@@ -1,8 +1,14 @@
 {
   "meta": {
     "schema": "soh-runtime-item-formula-atlas-v1",
-    "sourceSHA": "unspecified",
-    "exportedAt": "2026-11-13T13:15:54.622Z",
+    "sourceSHA": "6e2ec8603d4bc2e09fc488671b18cac711922791",
+    "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
+    "recipeCensusNote": "Counts the LIVE RECIPES table only. Retired formulas are excluded, and frozen revision definitions are never added back as active routes.",
+    "retiredRecipes": [
+      "fuel_can"
+    ],
+    "recipeRevision": 2,
+    "exportedAt": "2026-11-13T15:15:21.833Z",
     "project": "Soul of Heroes — WEB Veyra runtime",
     "authority": [
       "web/src/game/catalog.ts",
@@ -1068,7 +1074,7 @@
       "id": "fuel_can",
       "name": "Fuel Canister",
       "cat": "misc",
-      "desc": "Fuels generators or motorbikes. Refined from real oil at a furnace or Oil Refinery; can be burned instead. PA1 v1.2: the improvised bench formula is retired, so a motorbike always pays for its first can separately.",
+      "desc": "Fuels generators and motorbikes. Refined from real oil at a furnace or Oil Refinery. NOT station kindling — a campfire, furnace, refinery or research table burns solid fuel, never a canister. PA1 v1.2: the improvised bench formula is retired, so a motorbike always pays for its first can separately.",
       "w": 1.5,
       "max": 5,
       "fuel": 60
@@ -1118,7 +1124,7 @@
       "id": "metal_pipe",
       "name": "Metal Pipe",
       "cat": "res",
-      "desc": "Pipe section for utility frames and iron plate. Recyclable at the Foundry Recycler: one pipe back into 1 Refined Iron Ingot (net loss, cannot loop). SOH_PROVISIONAL.",
+      "desc": "Pipe section for the piped utility frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Mechanical Part spent to make it is NOT returned — so pipe never loops. PA1 v1.1: the recovered BOM removed Iron Plate as a pipe sink.",
       "w": 1.2,
       "max": 20
     },
@@ -1386,217 +1392,589 @@
       "id": "deploy_claim",
       "name": "Territory Cabinet",
       "cat": "place",
-      "desc": "Packed Territory Cabinet. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Territory Cabinet. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 16,
       "max": 1,
-      "dur": 200
+      "dur": 200,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            3
+          ],
+          [
+            "stone",
+            2
+          ]
+        ]
+      }
     },
     "deploy_bed_straw": {
       "id": "deploy_bed_straw",
       "name": "Straw Bed",
       "cat": "place",
-      "desc": "Packed Straw Bed. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Straw Bed. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 4,
       "max": 1,
-      "dur": 60
+      "dur": 60,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "fiber",
+            3
+          ],
+          [
+            "wood",
+            1
+          ]
+        ]
+      }
     },
     "deploy_chest_small": {
       "id": "deploy_chest_small",
       "name": "Wood Chest",
       "cat": "place",
-      "desc": "Packed Wood Chest. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Wood Chest. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 8,
       "max": 1,
-      "dur": 100
+      "dur": 100,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            2
+          ]
+        ]
+      }
     },
     "deploy_chest_large": {
       "id": "deploy_chest_large",
       "name": "Iron-bound Chest",
       "cat": "place",
-      "desc": "Packed Iron-bound Chest. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Iron-bound Chest. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 14,
       "max": 1,
-      "dur": 220
+      "dur": 220,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            3
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      }
     },
     "deploy_campfire": {
       "id": "deploy_campfire",
       "name": "Campfire",
       "cat": "place",
-      "desc": "Packed Campfire. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Campfire. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 8.6,
       "max": 1,
-      "dur": 60
+      "dur": 60,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            2
+          ],
+          [
+            "stone",
+            1
+          ]
+        ]
+      }
     },
     "deploy_furnace": {
       "id": "deploy_furnace",
       "name": "Furnace",
       "cat": "place",
-      "desc": "Packed Furnace. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Furnace. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 25.6,
       "max": 1,
-      "dur": 300
+      "dur": 300,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "stone",
+            5
+          ],
+          [
+            "wood",
+            1
+          ]
+        ]
+      }
     },
     "deploy_oil_pump": {
       "id": "deploy_oil_pump",
       "name": "Oil Pump",
       "cat": "place",
-      "desc": "Packed Oil Pump. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Oil Pump. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 6.6,
       "max": 1,
-      "dur": 160
+      "dur": 160,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "spares",
+            1
+          ],
+          [
+            "brick",
+            1
+          ]
+        ]
+      }
     },
     "deploy_refinery": {
       "id": "deploy_refinery",
       "name": "Oil Refinery",
       "cat": "place",
-      "desc": "Packed Oil Refinery. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Oil Refinery. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 13.8,
       "max": 1,
-      "dur": 280
+      "dur": 280,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "spares",
+            2
+          ],
+          [
+            "brick",
+            2
+          ],
+          [
+            "glass",
+            1
+          ]
+        ]
+      }
     },
     "deploy_workbench": {
       "id": "deploy_workbench",
       "name": "Workbench",
       "cat": "place",
-      "desc": "Packed Workbench. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Workbench. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Furnace for a quarter of its materials.",
       "w": 18.8,
       "max": 1,
-      "dur": 160
+      "dur": 160,
+      "repair": {
+        "station": "furnace",
+        "cost": [
+          [
+            "wood",
+            4
+          ],
+          [
+            "stone",
+            1
+          ]
+        ]
+      }
     },
     "deploy_research": {
       "id": "deploy_research",
       "name": "Research Table",
       "cat": "place",
-      "desc": "Packed Research Table. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Research Table. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 12.8,
       "max": 1,
-      "dur": 160
+      "dur": 160,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            3
+          ],
+          [
+            "spares",
+            2
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      }
     },
     "deploy_garden": {
       "id": "deploy_garden",
       "name": "Garden Plot",
       "cat": "place",
-      "desc": "Packed Garden Plot. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Garden Plot. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 4.8,
       "max": 1,
-      "dur": 60
+      "dur": 60,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            1
+          ],
+          [
+            "fiber",
+            1
+          ]
+        ]
+      }
     },
     "deploy_farm_controller": {
       "id": "deploy_farm_controller",
       "name": "Garden Tender",
       "cat": "place",
-      "desc": "Packed Garden Tender. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Garden Tender. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 16.7,
       "max": 1,
-      "dur": 140
+      "dur": 140,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            3
+          ],
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "fasteners",
+            1
+          ],
+          [
+            "spares",
+            1
+          ]
+        ]
+      }
     },
     "deploy_barrel": {
       "id": "deploy_barrel",
       "name": "Rain Barrel",
       "cat": "place",
-      "desc": "Packed Rain Barrel. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Rain Barrel. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 8.3,
       "max": 1,
-      "dur": 80
+      "dur": 80,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            2
+          ],
+          [
+            "rope",
+            1
+          ]
+        ]
+      }
     },
     "deploy_feed_trough": {
       "id": "deploy_feed_trough",
       "name": "Feed & Water Trough",
       "cat": "place",
-      "desc": "Packed Feed & Water Trough. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Feed & Water Trough. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 8.7,
       "max": 1,
-      "dur": 110
+      "dur": 110,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            2
+          ],
+          [
+            "stone",
+            1
+          ],
+          [
+            "rope",
+            1
+          ]
+        ]
+      }
     },
     "deploy_base_generator": {
       "id": "deploy_base_generator",
       "name": "Field Generator",
       "cat": "place",
-      "desc": "Packed Field Generator. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Field Generator. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 11.7,
       "max": 1,
-      "dur": 180
+      "dur": 180,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "spares",
+            1
+          ],
+          [
+            "wood",
+            2
+          ]
+        ]
+      }
     },
     "deploy_power_cable": {
       "id": "deploy_power_cable",
       "name": "Power Cable",
       "cat": "place",
-      "desc": "Packed Power Cable. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Power Cable. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 1.2,
       "max": 1,
-      "dur": 60
+      "dur": 60,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "fiber",
+            1
+          ]
+        ]
+      }
     },
     "deploy_power_switch": {
       "id": "deploy_power_switch",
       "name": "Power Switch",
       "cat": "place",
-      "desc": "Packed Power Switch. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Power Switch. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 1.5,
       "max": 1,
-      "dur": 100
+      "dur": 100,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "fasteners",
+            1
+          ],
+          [
+            "spares",
+            1
+          ]
+        ]
+      }
     },
     "deploy_pressure_switch": {
       "id": "deploy_pressure_switch",
       "name": "Pressure Switch",
       "cat": "place",
-      "desc": "Packed Pressure Switch. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Pressure Switch. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 1.7,
       "max": 1,
-      "dur": 100
+      "dur": 100,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "fasteners",
+            1
+          ]
+        ]
+      }
     },
     "deploy_ir_sensor": {
       "id": "deploy_ir_sensor",
       "name": "Infrared Sensor",
       "cat": "place",
-      "desc": "Packed Infrared Sensor. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Infrared Sensor. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 2.2,
       "max": 1,
-      "dur": 90
+      "dur": 90,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "mechanical_gear",
+            1
+          ],
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "fasteners",
+            1
+          ]
+        ]
+      }
     },
     "deploy_arrow_turret": {
       "id": "deploy_arrow_turret",
       "name": "Arrow Turret",
       "cat": "place",
-      "desc": "Packed Arrow Turret. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Arrow Turret. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 13.4,
       "max": 1,
-      "dur": 130
+      "dur": 130,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            3
+          ],
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "mechanical_parts",
+            1
+          ],
+          [
+            "fasteners",
+            1
+          ]
+        ]
+      }
     },
     "deploy_bear_trap": {
       "id": "deploy_bear_trap",
       "name": "Bear Trap",
       "cat": "place",
-      "desc": "Packed Bear Trap. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Bear Trap. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 3.2,
       "max": 1,
-      "dur": 60
+      "dur": 60,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "mechanical_gear",
+            1
+          ],
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "fasteners",
+            1
+          ]
+        ]
+      }
     },
     "deploy_spikes": {
       "id": "deploy_spikes",
       "name": "Spike Trap",
       "cat": "place",
-      "desc": "Packed Spike Trap. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Spike Trap. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 6,
       "max": 1,
-      "dur": 90
+      "dur": 90,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            2
+          ]
+        ]
+      }
     },
     "deploy_barricade": {
       "id": "deploy_barricade",
       "name": "Barricade",
       "cat": "place",
-      "desc": "Packed Barricade. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Barricade. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 8,
       "max": 1,
-      "dur": 220
+      "dur": 220,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            2
+          ]
+        ]
+      }
     },
     "deploy_torch_post": {
       "id": "deploy_torch_post",
       "name": "Torch Post",
       "cat": "place",
-      "desc": "Packed Torch Post. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.",
+      "desc": "Packed Torch Post. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
       "w": 2.4,
       "max": 1,
-      "dur": 40
+      "dur": 40,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            1
+          ],
+          [
+            "torch",
+            1
+          ]
+        ]
+      }
     }
   },
   "recipes": {

@@ -133,6 +133,21 @@ export const RECIPE_FAMILY: Readonly<Record<string, string>> = Object.freeze({
   deploy_refinery: 'ENERGY',
   deploy_oil_pump: 'ENERGY',
   deploy_base_generator: 'ENERGY',
+  // PA1 P1: the same recovered chapter prices the WORK that plant does — pumping crude
+  // and refining it into canisters and lubricant. Membership declares what the ENERGY
+  // study covers; it withholds nothing while `enforce` is undecided (see the note on
+  // RESEARCH_FAMILIES.ENERGY), so starter crafting stays exactly as the Control Tower
+  // ordered. Flipping that one flag is all a future approval needs.
+  // Deliberately NOT a member: `refine_salvaged_oil`, the furnace salvage fallback. It is a
+  // survival path for players with no refinery, not part of the approved energy plant, and it
+  // is not free starter knowledge — claiming it would make the study the only way to run a
+  // generator, which the recovered paper does not say.
+  pump_crude: 'ENERGY',
+  refinery_crude: 'ENERGY',
+  refinery_fuel: 'ENERGY',
+  refinery_fuel_batch: 'ENERGY',
+  refinery_industrial: 'ENERGY',
+  refinery_lubricant: 'ENERGY',
 });
 export const familyOfRecipe = (id: string): string | null =>
   Object.prototype.hasOwnProperty.call(RECIPE_FAMILY, id) ? RECIPE_FAMILY[id] : null;

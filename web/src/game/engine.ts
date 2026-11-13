@@ -14,7 +14,7 @@ import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dis
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
 import { ALWAYS_KNOWN_RECIPES, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
-import { purchasableFamilies } from './recipe-migration';
+import { LEGACY_RECIPES, PRE_STAMPING_REVISION, RETIRED_RECIPES, purchasableFamilies } from './recipe-migration';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -2896,8 +2896,22 @@ function stationNear(r: RunState, kind: string, eid?: string) {
   if (eid) { const e = r.entities[eid]; if (e?.kind === 'struct' && e.station && owned(e) && STRUCTS[e.type!]?.station === kind && near(r, e, 3)) return e; return null; }
   return Object.values(r.entities).find(e => e.kind === 'struct' && owned(e) && STRUCTS[e.type!].station === kind && near(r, e, 3)) || null;
 }
+/**
+ * PA1 R1: a retired formula is NOT an unknown one. An old save legitimately learned it, so new work
+ * must be refused by name with what still applies — never "Unknown recipe", never "Missing materials".
+ */
+export function retiredRecipeReason(id: unknown): string | null {
+  if (typeof id !== 'string' || !RETIRED_RECIPES.includes(id)) return null;
+  if (Object.prototype.hasOwnProperty.call(RECIPES, id)) return null;   // re-approved: not retired anymore
+  const legacy = LEGACY_RECIPES[id + '@' + PRE_STAMPING_REVISION];
+  const name = legacy ? ITEMS[legacy.out]?.name ?? legacy.out : id;
+  return `Retired by the Approved Ledger (rev ${RECIPE_REVISION}): no new ${name} work can start — ${id} was withdrawn by the recovered paper · work already paid for under the old rule still finishes`;
+}
+
 function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
-  if (typeof it.recipe !== 'string' || !Object.prototype.hasOwnProperty.call(RECIPES, it.recipe)) return fail('Unknown recipe.'); const rc = RECIPES[it.recipe];
+  if (typeof it.recipe !== 'string') return fail('Unknown recipe.');
+  if (!Object.prototype.hasOwnProperty.call(RECIPES, it.recipe)) return fail(retiredRecipeReason(it.recipe) ?? 'Unknown recipe.');
+  const rc = RECIPES[it.recipe];
   if (!isRecipeKnown(r.knowledge.recipes, it.recipe)) return fail('You have not learned this recipe.');
   const ins = rc.ins.filter(([, q]) => q > 0);
   const activeAction = r.player.action; const activeInput = activeAction?.slot !== undefined && activeAction.slot >= 0 ? C(r, 'inv').slots[activeAction.slot] : null;
@@ -2944,6 +2958,8 @@ function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: s
     const k = it.recipe;
     const gate = familyOfRecipe(k);
     if (gate && RESEARCH_FAMILIES[gate]?.enforce && !researchFamilyUnlocked(r, gate)) return fail(`${ITEMS[RECIPES[k]?.out]?.name ?? k} is a ${gate} study — buy the family unlock first.`);
+    const retiredReason = retiredRecipeReason(k);
+    if (retiredReason) return fail(retiredReason);
     if (!unknown.includes(k)) return fail('Already known or in progress.');
     if (!permitsDirectedResearch(RECIPES[k])) return fail('Too advanced to reverse-engineer from Spares — study a Core or find a blueprint.');
     if (countItem(r, 'inv', 'spares') < B.directedSparesCost) return fail(`Needs ${B.directedSparesCost} Spares.`);
@@ -3012,7 +3028,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
             receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
           }
           completeFamilyStudy(r, fam, at, e.id);
-          note(`Research table: ${fam} study complete. ${recipesOfFamily(fam).length} packed device formula${recipesOfFamily(fam).length === 1 ? '' : 's'} available to craft.`);
+          note(`Research table: ${fam} study complete. ${recipesOfFamily(fam).length} formula${recipesOfFamily(fam).length === 1 ? '' : 's'} available to craft.`);
           receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
         } else if (job.recipe.startsWith('R:')) {
           const k = job.recipe.slice(2);
