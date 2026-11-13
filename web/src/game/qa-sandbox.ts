@@ -491,7 +491,10 @@ export function buildQaSandbox(
     placeStruct(r, 'research', spot.tx, spot.ty);
     // The family ledger is reached with no knowledge grant: every family row must still be legible,
     // decided or undecided, exactly as the shipped build states it.
-    addItem(r, 'inv', 'deploy_research_table', 1);
+    // The pack key is `deploy_` + the structure type (catalog.ts deployable synthesis) — 'research',
+    // not a noun phrase; addItem would hand back the whole qty if the item did not exist.
+    const left = addItem(r, 'inv', 'deploy_research', 1);
+    if (left > 0) throw new Error('qa preset research_access: deploy_research is not a real item key');
     banner = { text: 'RECOVERED RESEARCH TABLE · OPEN GROUND', sub: 'One authorized table south of the spawn · a packed spare in slot 1 · E opens the technology families' };
     pushLog(r, now, 'QA Sandbox: a Research Table stands on free ground nearby. Select the packed spare to place a second, or press E at the table.', 'gold');
   }

@@ -124,6 +124,9 @@ try{
     }
     return false;
   }
+  // A launch-time crash used to cost 224 blind taps before anyone saw it: the fixture only has to be
+  // legible about that, so a page error right after launch fails here, with the error, not later.
+  assert.equal(rec.errors.length,0,'the run errored on launch, so no prompt could ever appear: '+JSON.stringify(rec.errors.slice(0,3)));
   let opened=false;
   for(let i=0;i<28 && !opened;i++){
     opened=await tryOpen('probe'+i);
