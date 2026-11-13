@@ -3,7 +3,8 @@
   "baseline": {
     "repo": "Khanh-glitch/Soul-of-Hero",
     "commit": "52f27959f732aa8b47d6a897c9a5aa7d708cf926",
-    "branch": "arena/f561fd0d-soul-of-hero"
+    "branch": "arena/f561fd0d-soul-of-hero",
+    "note": "Frozen M5 crosswalk reference: the tree the audit rows were measured against. This is NOT the provenance of this export — see generatedFrom."
   },
   "gates": {
     "gate:wb_l1": {
@@ -48568,6 +48569,14 @@
       "station:oil_pump",
       "structure:oil_pump",
       "world_source:oil_site_fixture"
+    ]
+  },
+  "generatedFrom": {
+    "sourceSHA": "d1d752434ff1d39afec7d2891015366ae488c1e9",
+    "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
+    "recipeRevision": 2,
+    "retiredRecipes": [
+      "fuel_can"
     ]
   }
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import {
   CREATURES,
@@ -11,6 +12,8 @@ import {
   STRUCTS,
   VENDOR_SECURED,
   VENDOR_SPARES,
+  RECIPE_REVISION,
+  RETIRED_RECIPES,
 } from '../src/game/catalog';
 import { getWorld } from '../src/game/world';
 import { POIS } from '../src/veyra05/reader';
@@ -471,7 +474,29 @@ describe('WP1 / Milestone M1 — SOH Economic Multigraph & LI Crosswalk', () => 
   it('extracts a complete, valid, deterministic multigraph across Shipping, dev_delta, and all 81 Veyra POIs, and generates M1 deliverables', () => {
     const input = collectExtractionInput();
     const graph1 = buildSohEconomicGraph(input);
+    // P2: an artifact names the tree it came from. `baseline` inside the graph is a frozen audit
+    // reference; this block is the file's own provenance, resolved the way the atlas exporter resolves it
+    // (CI's SHA first, then the working tree, and never a silent placeholder).
+    const provenance = (() => {
+      const fromCi = process.env.GITHUB_SHA;
+      if (fromCi) return { sourceSHA: fromCi, sourceSHAProvenance: 'GITHUB_SHA (CI checkout)' };
+      try {
+        return {
+          sourceSHA: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+          sourceSHAProvenance: 'git rev-parse HEAD (working tree at export time)',
+        };
+      } catch {
+        return { sourceSHA: 'unspecified', sourceSHAProvenance: 'unavailable: no GITHUB_SHA and git rev-parse failed' };
+      }
+    })();
     const graph2 = buildSohEconomicGraph(input);
+    for (const g of [graph1, graph2]) {
+      g.generatedFrom = {
+        ...provenance,
+        recipeRevision: RECIPE_REVISION,
+        retiredRecipes: [...RETIRED_RECIPES],
+      };
+    }
 
     // 1. Determinism & zero validation errors
     const errors = validateEconomicGraph(graph1);
@@ -569,6 +594,21 @@ describe('WP1 / Milestone M1 — SOH Economic Multigraph & LI Crosswalk', () => 
     // Quick sanity check that every RECIPES key has a recipe node
     for (const rk of Object.keys(RECIPES)) {
       expect(graph1.nodes.some((n) => n.id === `recipe:${rk}`)).toBe(true);
+    }
+
+    // P2: the deliverable must say which rules it encodes. `baseline` inside the file is the FROZEN commit
+    // the M5 crosswalk rows were measured against; `generatedFrom` is the tree this export was produced
+    // from. A reader who confuses the two reads a superseded rule as the current one, which is the exact
+    // failure this section exists to make impossible — so both are asserted, from the file on disk.
+    {
+      const written = JSON.parse(readFileSync(resolve(REPORTS_DIR, 'SOH_ECONOMIC_GRAPH.json'), 'utf8'));
+      expect(written.generatedFrom?.sourceSHA).toMatch(/^([0-9a-f]{40}|unspecified)$/);
+      expect(String(written.generatedFrom?.sourceSHAProvenance ?? '').length).toBeGreaterThan(8);
+      expect(written.generatedFrom?.recipeRevision).toBe(RECIPE_REVISION);
+      expect(written.generatedFrom?.retiredRecipes).toEqual([...RETIRED_RECIPES]);
+      expect(written.baseline.note).toContain('NOT the provenance');
+      expect(written.summary.edgeCount).toBe(written.edges.length);
+      expect(written.summary.edgesByKind.REPAIR_INPUT).toBeGreaterThan(0);
     }
   }, 120_000);
 });
