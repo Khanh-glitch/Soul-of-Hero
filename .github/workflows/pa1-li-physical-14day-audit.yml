@@ -1,0 +1,72 @@
+name: PA1 vs LI — Same-SHA Physical Supply and 336h Evidence
+on:
+  push:
+    branches: [audit/pa1-li-reachability-14d-20261113]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  economic-runtime:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CI: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+        working-directory: web
+      - name: Source and test type checks
+        working-directory: web
+        run: |
+          npm run typecheck
+          npm run typecheck:tests
+      - name: Run actual existing M2 (336 hours, 8 suites, N=400) and M5 sources
+        working-directory: web
+        run: npx --no-install vitest run --fileParallelism=false --testTimeout=120000 tests/economic-network-m2.test.ts tests/economic-network-m5-audits.test.ts tests/pa1-li-reality-gates.test.ts
+      - name: Attach M2 and M5 machine evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pa1-li-m2-m5-source-evidence-${{ github.sha }}
+          path: |
+            web/reports/economic-network/M2_SIMULATION_RESULTS.json
+            web/reports/economic-network/SOH_ITEM_FUNCTION_AUDIT.csv
+            web/reports/economic-network/SOH_RECIPE_ROUTE_AUDIT.csv
+            web/reports/pa1-li/PA1_LI_RUNTIME_GATES.json
+          if-no-files-found: warn
+          retention-days: 45
+  full-world-physical:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      CI: 'true'
+      SOH_FULL_WORLD_AUDIT: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+        working-directory: web
+      - name: Run actual 4000x2800 terrain scan and seeded source-window collision probes
+        working-directory: web
+        run: npx --no-install vitest run --fileParallelism=false --testTimeout=1800000 src/veyra05/full-world-spawn-industrial.audit.test.ts
+      - name: Attach physical Veyra evidence even if assertions fail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pa1-li-veyra-full-world-source-evidence-${{ github.sha }}
+          path: |
+            web/evidence/**/veyra*full*/*.json
+            web/evidence/**/full-world*/*.json
+            web/reports/**/VEYRA*FULL*.json
+            web/reports/**/veyra*spawn*.json
+          if-no-files-found: warn
+          retention-days: 45
