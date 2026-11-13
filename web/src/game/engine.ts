@@ -1559,7 +1559,9 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
       const oil=spawnDrop(r,'salvaged_oil',1,cx+ox,cy+oy,now);
       // PA1: tie each finite oil grant to the exact wreck/stack UID before pickup.
       // Same RNG draw/output; never creates an oil deposit or restocks a source.
-      receipt(r,now,'harvest.oil',`wreck@${tx},${ty}:${C(r,oil.c!).slots[0]!.uid}`);
+      const [worldOx,worldOy]=isVeyra05Layout(r.layoutId||'') ? windowOrigin(r) : [0,0];
+      receipt(r,now,'harvest.oil',
+        `wreck@${tx+worldOx},${ty+worldOy}:${r.sourceMap?.id??'world'}:${C(r,oil.c!).slots[0]!.uid}`);
     }
   }
   r.player.skills.gather += units;
