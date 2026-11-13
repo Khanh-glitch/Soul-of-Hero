@@ -79,10 +79,21 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     expect(act(g, 'build', { struct: 'refinery', tx, ty }).ok).toBe(false);
     bench1.station!.level = 2 as any; bench1.type = 'workbench';
     markDirty();
+    // PA1 changed this route: make one authentic packed refinery item first.
+    const materialsBefore = (BAL.oilRefineryV1.cost as [string,number][])
+      .map(([k,q])=>[k,countItem(r,'inv',k),q] as const);
+    expect(act(g,'craft',{recipe:'deploy_refinery'}).ok).toBe(true);
+    const pack=C(r,'inv').slots.find(v=>v?.key==='deploy_refinery')!;
+    expect(pack).toBeTruthy();
+    const uid=pack.uid;
+    for(const [k,before,cost] of materialsBefore)
+      expect(countItem(r,'inv',k), 'charged once for '+k).toBe(before-cost);
     expect(act(g, 'build', { struct: 'refinery', tx, ty }).ok).toBe(true);
     const ref = Object.values(r.entities).find(e => e.type === 'refinery')!;
     expect(ref.station?.fuelC).toBeTruthy();
     expect(ref.hp).toBe(BAL.oilRefineryV1.hp);
+    expect(ref.deployed?.uid).toBe(uid);
+    expect(countItem(r,'inv','deploy_refinery')).toBe(0);
     expect(Object.values(r.entities).some(e => e.type === 'claim')).toBe(false);
     expect(validate(snapshot(g))).toBeTruthy();
   });
