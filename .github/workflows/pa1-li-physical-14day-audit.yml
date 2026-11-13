@@ -1,72 +1,50 @@
-name: PA1 vs LI — Same-SHA Physical Supply and 336h Evidence
+name: PA1 LI Handoff Source Snapshot (no code changes)
 on:
   push:
-    branches: [audit/pa1-li-reachability-14d-20261113]
+    branches: [handoff/pa1-li-doc-archive-20261113]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  economic-runtime:
+  snapshot:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    env:
-      CI: 'true'
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: web/package-lock.json
-      - run: npm ci
-        working-directory: web
-      - name: Source and test type checks
-        working-directory: web
+      - name: Archive existing sources at HEAD
         run: |
-          npm run typecheck
-          npm run typecheck:tests
-      - name: Run actual existing M2 (336 hours, 8 suites, N=400) and M5 sources
-        working-directory: web
-        run: npx --no-install vitest run --fileParallelism=false --testTimeout=120000 tests/economic-network-m2.test.ts tests/economic-network-m5-audits.test.ts tests/pa1-li-reality-gates.test.ts
-      - name: Attach M2 and M5 machine evidence
-        if: always()
-        uses: actions/upload-artifact@v4
+          python3 - <<'PY'
+          import glob,zipfile,pathlib,json,hashlib,os
+          patterns=[
+            'docs/design/VEYRA_INDUSTRIAL_ECONOMY_DECISION_LEDGER_2026-11-12.md',
+            'docs/survival/CONTROL_TOWER_CURRENT.md',
+            'docs/survival/CHAT_REENTRY_HANDOFF_CURRENT.md',
+            'web/ref/bible.md','web/ref/OPERATIONS.md',
+            'web/reports/economic-network/*.md',
+            'web/reports/economic-network/*.csv',
+            'web/reports/economic-network/*.json',
+            'web/reports/pa1-li/*.md',
+            'web/evidence/mec01-post-pr47/LI_MOTORBIKE_RECONCILIATION_R4.md',
+            'web/src/game/catalog.ts','web/src/game/world-economy.ts',
+            'web/src/game/economic-graph.ts','web/src/game/economic-audits-m5.ts',
+            'web/src/game/economic-sim-audit.ts','web/src/game/economy-adapter.ts',
+            'web/src/game/engine.ts','web/src/game/world.ts',
+            'web/src/veyra05/full-world-spawn-industrial.audit.test.ts',
+            'web/tests/economic-network-*.test.ts',
+            'web/tests/pa1-li-reality-gates.test.ts',
+            'web/tests/pa1-building-ontology.test.ts'
+          ]
+          paths=sorted(set(f for g in patterns for f in glob.glob(g) if pathlib.Path(f).is_file()))
+          manifest={'repository_commit':os.environ.get('GITHUB_SHA'),
+            'source_status':'EXACT_REPO_BYTES, not user-chat paper master',
+            'files':[{'path':f,'sha256':hashlib.sha256(pathlib.Path(f).read_bytes()).hexdigest()} for f in paths]}
+          with zipfile.ZipFile('PA1_LI_REPO_SOURCES_SNAPSHOT.zip','w',zipfile.ZIP_DEFLATED,compresslevel=8) as z:
+            for f in paths:z.write(f,'PA1_LI_GITHUB_SOURCES/'+f)
+            z.writestr('PA1_LI_GITHUB_SOURCES/MANIFEST_REPO.json',json.dumps(manifest,indent=2))
+          print('PACKED_FILES',len(paths))
+          PY
+      - uses: actions/upload-artifact@v4
         with:
-          name: pa1-li-m2-m5-source-evidence-${{ github.sha }}
-          path: |
-            web/reports/economic-network/M2_SIMULATION_RESULTS.json
-            web/reports/economic-network/SOH_ITEM_FUNCTION_AUDIT.csv
-            web/reports/economic-network/SOH_RECIPE_ROUTE_AUDIT.csv
-            web/reports/pa1-li/PA1_LI_RUNTIME_GATES.json
-          if-no-files-found: warn
-          retention-days: 45
-  full-world-physical:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 35
-    env:
-      CI: 'true'
-      SOH_FULL_WORLD_AUDIT: '1'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: web/package-lock.json
-      - run: npm ci
-        working-directory: web
-      - name: Run actual 4000x2800 terrain scan and seeded source-window collision probes
-        working-directory: web
-        run: npx --no-install vitest run --fileParallelism=false --testTimeout=1800000 src/veyra05/full-world-spawn-industrial.audit.test.ts
-      - name: Attach physical Veyra evidence even if assertions fail
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pa1-li-veyra-full-world-source-evidence-${{ github.sha }}
-          path: |
-            web/evidence/veyra-global-spawn-audit/manifest.json
-            web/evidence/**/veyra*full*/*.json
-            web/evidence/**/full-world*/*.json
-            web/reports/**/VEYRA*FULL*.json
-          if-no-files-found: warn
+          name: PA1_LI_REPO_SOURCES_HANDOFF
+          path: PA1_LI_REPO_SOURCES_SNAPSHOT.zip
           retention-days: 45
