@@ -343,7 +343,9 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     expect(oilCount, 'Natural Veyra wrecks must fund at least one PA1 refinery oil batch').toBeGreaterThanOrEqual(4);
     for(const os of C(r,'inv').slots.filter(v=>v?.key==='salvaged_oil')) {
       expect(r.receipts.some(rc=>rc.kind==='harvest.oil' && rc.detail.includes(os!.uid) &&
-        rc.detail.startsWith('wreck@')),'oil source custody').toBe(true);
+        /^wreck@[0-9]+,[0-9]+:[^:]+:s[0-9a-z]+$/i.test(rc.detail) &&
+        Number(rc.detail.match(/^wreck@([0-9]+)/)?.[1])>WW),
+        'oil source UID with real GLOBAL Veyra cell identity').toBe(true);
     }
 
     // Every natural damaged_drive must have a harvest.component receipt referencing its exact stack UID
