@@ -100,6 +100,29 @@ describe('PA1 building geometry vs physical device custody',()=>{
     expect(validate(selectSnapshots([serializeSnapshot(o.g),null]).gs!)).not.toBeNull();
   },120000);
 
+  it('installs a paid door into an existing open frame with durable provenance',()=>{
+    const o=setup();
+    expect(addItem(o.r,'inv','wood',45)).toBe(0);
+    expect(addItem(o.r,'inv','rope',4)).toBe(0);
+    expect(o.build('wall_doorframe_wood').ok).toBe(true);
+    const e=Object.values(o.r.entities).find(v=>v.kind==='struct'&&v.type==='wall_doorframe_wood')!;
+    const eid=e.id,before=countItem(o.r,'inv','wood');
+    expect(blockedAt(o.r,o.x,o.y)).toBe(false);
+    const installed=o.build('door_wood');
+    expect(installed.ok,JSON.stringify(installed)).toBe(true);
+    expect(e.id).toBe(eid);expect(e.type).toBe('door_wood');
+    expect(e.framePaid).toBe(true);
+    expect(countItem(o.r,'inv','wood')).toBe(before-6);
+    expect(blockedAt(o.r,o.x,o.y)).toBe(true);
+    const saved=selectSnapshots([serializeSnapshot(o.g),null]).gs!;
+    expect(saved.run!.entities[eid].framePaid).toBe(true);
+    expect(validate(saved)).not.toBeNull();
+    expect(act(o.g,'door',{eid}).ok).toBe(true);
+    expect(blockedAt(o.r,o.x,o.y)).toBe(false);
+    expect(act(o.g,'reclaim',{eid}).ok).toBe(true);
+    expect(o.r.entities[eid]).toBeUndefined();
+    expect(validate(o.g)).not.toBeNull();
+  });
   it('crafts a chest from original paid wood, places exact packed UID, saves, reclaims, and does not heal',()=>{
     const o=setup();
     expect(addItem(o.r,'inv','wood',24)).toBe(0);
