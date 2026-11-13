@@ -109,7 +109,10 @@ try{
       assert.match(door.status,/module-pending: no approved packed-device formula/,'door status: '+door.status);
       assert.equal(door.ctaDisabled,true,'an unapproved module must not offer a site');
       assert.match(door.cta,/Not placeable yet/,'door CTA: '+door.cta);
-      assert.ok(!/pack/i.test(door.status),'the pending module must not borrow pack language: '+door.status);
+      // The row may be truthful about WHY nothing is placeable — naming the absent approved formula is
+      // exactly the honest copy — but it must not borrow the readiness vocabulary of a real packed
+      // device: no "materials prepared", no pack in hand, no site that spends something.
+      assert.ok(!/Materials prepared|device in hand|spends the pack|Craft the packed/i.test(door.status),'the pending module must not read as a placeable packed device: '+door.status);
       rec.doorRow=door;
     }
     rec.devices.push({category:cat,tiles:n,rows});

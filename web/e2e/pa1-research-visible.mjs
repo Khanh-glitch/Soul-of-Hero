@@ -38,6 +38,12 @@ try{
   await page.getByRole('button',{name:'Launch QA Sandbox'}).click();
   await page.waitForSelector('canvas',{timeout:45000});
   await page.waitForTimeout(1200);
+  // The E hotkey is ignored while any panel owns the screen, and the QA lab opens its own panel on
+  // launch in some presets — so clear the screen first, with real Escape presses, before steering.
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(150);
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(150);
   await shot('00-qa-industry-spawn');
 
   // The `industry` compound is a column: Workbench, Furnace, Refinery and Research Table on one tile
@@ -48,6 +54,7 @@ try{
   let opened=false;
   rec.labels=[];
   for(let round=0;round<10 && !opened;round++){
+    if(round===2 && !opened) await page.keyboard.press('Escape');   // a panel that opened by accident must not blind the rest of the sweep
     for(const key of taps){
       for(let i=0;i<2 && !opened;i++){
         rec.attempts++;
