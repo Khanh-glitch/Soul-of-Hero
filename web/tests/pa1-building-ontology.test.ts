@@ -213,7 +213,9 @@ describe('PA1 Deploy readiness projection matches what placement actually spends
     o.r.custody.inv.slots[slot]!.dur=0;                         // FIXTURE: burn the pack's condition off
     const prep=structurePreparation(o.r,'workbench');
     expect(prep.materials).toBe(false);
-    expect(prep.next).toMatch(/damaged — repair it before placing/);
+    // the row must name the one paid control that exists, with its price, not a vague "repair it"
+    expect(prep.next).toMatch(/has no condition left \(0\/160\) and cannot be placed · re-forge for 4 Wood \+ 1 Stone at the Furnace/);
+    expect(prep.pack?.reforge?.station).toBe('furnace');
     expect(o.build('workbench').ok).toBe(false);
   });
   it('keeps plain geometry on the material rule, because a shape is not an item',()=>{

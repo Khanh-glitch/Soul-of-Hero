@@ -33,7 +33,7 @@ const GEOMETRY_PAGES={
 // The vocabulary structurePreparation() is allowed to answer with, per the shipped code:
 // pack wording for a device that owns a packed item, site wording for the oil pump, and the ordinary
 // material wording for base geometry (a powered door is not a packed device yet — see ledger §24).
-const LEGIBLE=/(Craft the packed|spends the packed device|damaged — repair it|authorized oil site|Materials ready|Materials prepared|Get \d|Needs materials)/;
+const LEGIBLE=/(Craft the packed|spends the packed device|places at that damage|no condition left|authorized oil site|module-pending|Materials ready|Materials prepared|Get \d|Needs materials)/;
 try{
   const url=process.env.GAME_URL||'http://127.0.0.1:4173/';
   const response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:45000});
@@ -97,6 +97,17 @@ try{
       const needTitle=await page.locator('.sv-detail .sv-diagram .ins .need').first().getAttribute('title');
       assert.match(String(needTitle),/placement spends this item/,'workbench diagram input: '+needTitle);
     }
+    if(cat==='Devices'){
+      // The unapproved electrical module must be labelled for what it is — an unapproved module, not a
+      // device the player is merely under-equipped for — and it must not read as a packed device.
+      const door=rows.find(x=>x.id==='S:door_powered');
+      assert.ok(door,'Powered Door disappeared from the Devices list');
+      assert.match(door.status,/module-pending: no approved packed-device formula/,'door status: '+door.status);
+      assert.equal(door.ctaDisabled,true,'an unapproved module must not offer a site');
+      assert.match(door.cta,/Not placeable yet/,'door CTA: '+door.cta);
+      assert.ok(!/pack/i.test(door.status),'the pending module must not borrow pack language: '+door.status);
+      rec.doorRow=door;
+    }
     rec.devices.push({category:cat,tiles:n,rows});
     await shot('02-deploy-'+cat.toLowerCase()+'-1280');
   }
@@ -129,7 +140,7 @@ try{
 }
 finally{
   await writeFile(out+'/manifest.json',JSON.stringify(rec,null,2)+'\n');
-  console.log('PA1_DEPLOY_CUSTODY '+JSON.stringify({status:rec.status,sha:rec.sha,geometry:rec.geometryPages.map(p=>({name:p.name,count:p.count})),devices:rec.devices.map(d=>({category:d.category,tiles:d.tiles,rows:d.rows.length})),research:rec.research?.open,errors:rec.errors,failure:rec.failure}));
+  console.log('PA1_DEPLOY_CUSTODY '+JSON.stringify({status:rec.status,sha:rec.sha,geometry:rec.geometryPages.map(p=>({name:p.name,count:p.count})),devices:rec.devices.map(d=>({category:d.category,tiles:d.tiles,rows:d.rows.length})),door:rec.doorRow?.status,research:rec.research?.open,errors:rec.errors,failure:rec.failure}));
   await context.close();await browser.close();
 }
 if(rec.status!=='PASS_BROWSER_UI')process.exitCode=1;

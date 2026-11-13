@@ -137,7 +137,9 @@ describe('PA1 device custody — every Deploy row states what placement really s
     r.custody.inv.slots[slot]!.dur=0;
     const prep=structurePreparation(r,k);
     expect(prep.materials).toBe(false);
-    expect(prep.next).toMatch(/damaged/);
+    // the copy names the price and the station, because the control really exists now
+    expect(prep.next).toMatch(/has no condition left \(0\/100\) and cannot be placed · re-forge for 2 Wood at the Workbench/);
+    expect(prep.pack?.reforge?.cost).toEqual([['wood',2]]);
     expect(buildReason(o.g,k,o.x,o.y)).toBe('Need an intact packed device.');
   });
 });

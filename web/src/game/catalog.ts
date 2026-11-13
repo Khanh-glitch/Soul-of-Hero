@@ -27,8 +27,12 @@ export interface ItemDef {
   power?: Partial<Record<Mat, number>>; dmg?: number; reach?: number; arc?: number; swing?: number; dur?: number;
   food?: { hunger?: number; thirst?: number; hp?: number; warmth?: number; rad?: number; stamina?: number };
   slot?: 'head' | 'body' | 'back'; armor?: number; cold?: number; mask?: boolean; fuel?: number; charge?: number; initialCharge?: number; waterContainer?: boolean; carryBonus?: number;
-  core?: string; creatorCore?: 'blast' | 'meteor' | 'dragon' | 'elsa' | 'earthmother' | 'mjolnir' | 'demon'; essence?: 'fire' | 'nature' | 'water' | 'spirit'; specimen?: string; studyRecipe?: string; repair?: { station: 'workbench'; cost: [string, number][] }; salvage?: { station: 'workbench'; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
+  core?: string; creatorCore?: 'blast' | 'meteor' | 'dragon' | 'elsa' | 'earthmother' | 'mjolnir' | 'demon'; essence?: 'fire' | 'nature' | 'water' | 'spirit'; specimen?: string; studyRecipe?: string;
+  /** `maintainItem` matches this against the STRUCTURE TYPE of the station in reach, so any station
+   * kind may serve; widening it past 'workbench' is what lets a packed Workbench re-forge at a Furnace. */
+  repair?: { station: StationKind; cost: [string, number][] }; salvage?: { station: StationKind; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
 }
+export type StationKind = 'workbench' | 'furnace' | 'campfire' | 'refinery' | 'oil_pump' | 'research';
 const I = (d: ItemDef) => d;
 export const ITEMS: Record<string, ItemDef> = {
   // SOH_NEW_TUNED v1: shared physical Core ammunition, not legacy Core charge.
@@ -138,7 +142,7 @@ export const ITEMS: Record<string, ItemDef> = {
   keycard: I({ name: 'Vault Keycard', cat: 'misc', icon: 'card', c1: '#2a6a5a', c2: '#a0f0d0', w: 0.05, max: 5, desc: 'A physical Vault Keycard. New cards have limited scans; legacy cards retain one use.' }),
   // PA1 R1: only the RECIPE is retired. The item keeps `fuel: 60` — a canister is still what a
   // furnace, generator and motorbike burn, and `stationBurnable` / `isStationFuel` read this field.
-  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Fuels generators or motorbikes. Refined from real oil at a furnace or Oil Refinery; can be burned instead. PA1 v1.2: the improvised bench formula is retired, so a motorbike always pays for its first can separately.', fuel: 60 }),
+  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Fuels generators and motorbikes. Refined from real oil at a furnace or Oil Refinery. NOT station kindling — a campfire, furnace, refinery or research table burns solid fuel, never a canister. PA1 v1.2: the improvised bench formula is retired, so a motorbike always pays for its first can separately.', fuel: 60 }),
   // Ragnarok & profile
   rcash: I({ name: 'Ragnarok Cash', cat: 'cash', icon: 'coin', c1: '#b07a1e', c2: '#ffe27a', w: 0.01, max: 999, desc: 'Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.' }),
   escrow_chest: I({ name: 'Rương ký gửi', cat: 'kit', icon: 'chest', c1: '#5a3a7a', c2: '#ffd040', w: 4, max: 1, desc: 'Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.', place: 'escrow' }),
@@ -146,7 +150,7 @@ export const ITEMS: Record<string, ItemDef> = {
   vehicle_drive: I({ name:'Motor Drive', cat:'res', icon:'gear', c1:'#625e58', c2:'#c8bca1', w:3, max:5, desc:'Gear and plate drive assembly for the utility motorbike.' }),
   // B01 industrial intermediates (SOH_PROVISIONAL; historical v5 ratios are documented in B01 ledger, not copied).
   refined_iron_ingot: I({ name:'Refined Iron Ingot', cat:'res', icon:'rfingot', c1:'#8f9fb3', c2:'#f2f8ff', w:1, max:40, desc:'Furnace-refined iron. Needed for pipe and plate.' }),
-  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'pipe', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for utility frames and iron plate. Recyclable at the Foundry Recycler: one pipe back into 1 Refined Iron Ingot (net loss, cannot loop). SOH_PROVISIONAL.' }),
+  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'pipe', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for the piped utility frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Mechanical Part spent to make it is NOT returned — so pipe never loops. PA1 v1.1: the recovered BOM removed Iron Plate as a pipe sink.' }),
   metal_blade: I({ name:'Metal Blade', cat:'res', icon:'blade', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock for sword refits.' }),
   mechanical_gear: I({ name:'Mechanical Gear', cat:'res', icon:'mgear', c1:'#6b6f76', c2:'#d6c27a', w:0.8, max:20, desc:'Precision gear for motor drives and powered mechanisms.' }),
   iron_plate: I({ name:'Iron Plate', cat:'res', icon:'plate', c1:'#4f5a63', c2:'#c9d1d8', w:1.5, max:20, desc:'Plate patch for a damaged wall or door (Shift+click when repairing): restores up to 25% of its max HP per plate. Not a permanent reinforcement.' }),
@@ -529,9 +533,19 @@ for (const type of DEPLOYABLE_TYPES) {
   const id='deploy_'+type;
   if(ITEMS[id] || RECIPES[id] || d.item)throw new Error('PA1_DUPLICATE_DEPLOYABLE:'+id);
   const packWeight=d.cost.reduce((sum,[ingredient,qty])=>sum+ITEMS[ingredient].w*qty,0);
+  // §24 puts a device's CONDITION on the pack, and `reclaim` hands that condition back verbatim
+  // (dur = structure hp, never healed). Without a paid recovery rule that made the row's own advice
+  // a lie — the Deploy screen said "repair it" while `maintainItem` had nothing to accept. The price
+  // is the game's EXISTING bounded patch arithmetic for structures (a quarter of the build list, never
+  // less than one), so no new material, drop or sink is invented.
+  const repairCost = d.cost.map(([k, q]) => [k, Math.max(1, Math.ceil(q * 0.25))] as [string, number]);
+  // A packed Workbench re-forges at a placed Furnace, not at a Workbench: repairing a device at its
+  // own station is the one self-softlock this table would otherwise create (you cannot build a bench
+  // at that bench). Every other pack, including the Furnace's, is accepted at a placed Workbench.
+  const repairStation = type === 'workbench' ? 'furnace' : 'workbench';
   ITEMS[id]=I({name:d.name,cat:'place',icon:'parts',c1:'#758995',c2:'#d4c9a8',
-    w:Math.round(packWeight*100)/100,max:1,dur:d.hp,
-    desc:'Packed '+d.name+'. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.'});
+    w:Math.round(packWeight*100)/100,max:1,dur:d.hp,repair:{station:repairStation,cost:repairCost},
+    desc:'Packed '+d.name+'. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the '+(repairStation==='furnace'?'Furnace':'Workbench')+' for a quarter of its materials.'});
   // PA1 WP3: family membership is recorded, and a family whose gate is BOTH priced and
   // approved for enforcement stops being free spawn knowledge (the family study is then the
   // paid authority). No pack is locked today: the recovered paper does not say the shipped
@@ -556,6 +570,19 @@ export const STRUCTURE_UPGRADES: Record<string, string> = {
 export const BUILD_ORDER = [...PA1_BASE_GEOMETRY, 'claim','bed_straw','chest_small','chest_large','campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','feed_trough','farm_controller','base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','arrow_turret','spikes','barricade','torch_post','escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
+/** §24/§25: a powered door is a working electrical STRUCTURE but its module design (ID, steel cost,
+ * higher-tier geometry) is still unapproved, so it has no packed-device formula and is deliberately
+ * absent from BUILD_ORDER. The Survivor 'Devices' list must therefore show it as PENDING rather than
+ * as a device the player is merely under-equipped for, and it must never be counted as a deployed pack.
+ * The assertions below keep that list from growing silently into a way of hiding an unbuilt feature. */
+export const MODULE_PENDING_STRUCTURES: readonly (keyof typeof STRUCTS & string)[] = ['door_powered'];
+for (const k of MODULE_PENDING_STRUCTURES) {
+  const d = STRUCTS[k];
+  if (!d || d.item || (DEPLOYABLE_TYPES as readonly string[]).includes(k) || (BUILD_ORDER as readonly string[]).includes(k))
+    throw new Error('PA1_MODULE_PENDING_CONTRADICTION:' + k);
+}
+export const modulePending = (type: string) => MODULE_PENDING_STRUCTURES.includes(type);
+
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit
 /** R8D: the highest tier whose minPower the caller's tool reaches, if the source grants that capability. No tier -> no roll.
  *  Expected extra per 5-unit iron vein: 0.4 rich (iron pick, +24% iron-equivalent on the vein), 0.6 rich (salvager, +36%).
