@@ -1873,7 +1873,7 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   }
   const cost: [string,number][] = d.item ? [[d.item,1]] : d.cost;
   // Reject damaged or spoofed packed devices *before* reserveInputs can spend.
-  if (d.item) {
+  if (d.item && ITEMS[d.item]?.dur) {
     const packs=C(r,'inv').slots.filter(v=>v?.key===d.item);
     if (!packs.some(v=>v?.qty===1&&Number.isFinite(v.dur)&&(v.dur??0)>0&&(v.dur??0)<=d.hp))
       return 'Need an intact packed device.';
@@ -2287,10 +2287,15 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'build': {
       const why = buildReason(gs, it.struct, it.tx, it.ty); if (why) return fail(why);
       const d = STRUCTS[it.struct];
-      const deployed = d.item ? reserveInputs(r, [[d.item,1]])[0] : undefined;
-      if (!d.item) for (const [k, q] of d.cost) removeItem(r, 'inv', k, q);
-      if (deployed && (!Number.isFinite(deployed.dur) || deployed.dur!<=0 || deployed.dur!>d.hp))
-        throw new Error('Invalid PA1 pack durability passed build preflight');
+      let deployed: Stack|undefined;
+      if (d.item) {
+        const inv=C(r,'inv');
+        const idx=inv.slots.findLastIndex(v=>v?.key===d.item&&v.qty===1&&(
+          !ITEMS[d.item!].dur || Number.isFinite(v.dur)&&v.dur!>0&&v.dur!<=d.hp));
+        if(idx<0)return fail('No valid packed device in inventory.');
+        deployed=inv.slots[idx]!;
+        inv.slots[idx]=null;
+      } else for (const [k, q] of d.cost) removeItem(r, 'inv', k, q);
       const e: Entity = { id: uid(r, 'e'), kind: 'struct', type: it.struct, tx: it.tx, ty: it.ty, x: it.tx * TILE + 8, y: it.ty * TILE + 8, hp: deployed?.dur ?? d.hp, maxHp: d.hp, born: now, deployed };
       if (d.slots) e.c = mkContainer(r, 'chest', d.slots).id;
       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
