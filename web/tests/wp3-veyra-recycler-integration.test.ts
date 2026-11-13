@@ -234,6 +234,7 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     r.creatures = []; // isolate integration from random ambient combat interruptions
 
     const nowRef = { t: NOW + 1000 };
+    const originalStartTile=Math.floor(r.player.y/TILE)*WW+Math.floor(r.player.x/TILE);
 
     // The SAME run first retrieves an authored Fuel Can underground at Greywater,
     // then leaves Floor -1 and takes its exact original UID all the way to Slag.
@@ -269,14 +270,18 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     expect(applyFloor(gs,greyWw,greyWw.floors,0,greyDest as [number,number],markDirty)).toBe(true);
     expect(activeFloor(r)).toBe(0);
     expect(C(r,'inv').slots.some(st=>st?.uid===greyFuelUid)).toBe(true);
+    // Return on real walkable ground: cave's exit is not the natural spawn's timber zone.
+    expect(walkPathTo(gs,new Set([originalStartTile]),nowRef),
+      'Cannot walk from Greywater underground return to natural starting timber').not.toBeNull();
     r.creatures=[];
 
     // 2. Harvest natural wood, stone, and accessible wrecks in Greywater before hiking to Slag Flats (charred trees in Slag yield charcoal, not wood)
     const WOOD_SOURCES = ['oak', 'pine', 'snowpine', 'palm', 'willow'] as const;
     for (const src of findReachableSources(r, WOOD_SOURCES, nowRef.t)) {
-      if (countItem(r, 'inv', 'wood') >= 46) break;
+      if (countItem(r, 'inv', 'wood') >= 74) break;
       harvestSourceNaturally(gs, src.tx, src.ty, 'knife', nowRef, ['wood']);
     }
+    expect(countItem(r,'inv','wood'), 'Actual timber budget before entering Slag').toBeGreaterThanOrEqual(60);
     for (const src of findReachableSources(r, ['rock'], nowRef.t)) {
       if (countItem(r, 'inv', 'stone') >= 20) break;
       harvestSourceNaturally(gs, src.tx, src.ty, 'knife', nowRef, ['stone']);
