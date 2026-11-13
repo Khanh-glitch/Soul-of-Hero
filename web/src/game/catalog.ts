@@ -290,7 +290,25 @@ export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
 // Recovery is a base recipe introduced after older run snapshots were saved.
 /** B01-D: the ONLY recipe-knowledge authority is the run-local knowledge.recipes list. These keys are seeded
  * into new runs and migrated into existing saves (persist.validate); no static 'always known' path remains. */
-export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['pump_crude','refinery_crude','vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother'];
+// PA1: building shells are NOT inventory, but physical devices are items until placed.
+// Powered Door is deliberately excluded: it needs a separately designed lock/electrical
+// module applied to an existing door; it is not a second stand-alone wall tier.
+// Keep this explicit list stable for recipe knowledge migration in old saves.
+export const DEPLOYABLE_TYPES = [
+  'claim','bed_straw','chest_small','chest_large','campfire','furnace',
+  'oil_pump','refinery','workbench','research','garden','farm_controller',
+  'barrel','feed_trough','base_generator','power_cable','power_switch',
+  'pressure_switch','ir_sensor','arrow_turret','bear_trap','spikes',
+  'barricade','torch_post'
+] as const;
+export const PA1_BASE_GEOMETRY = ['floor_wood','wall_wood','door_wood','roof_thatch'] as const;
+export const PA1_UPGRADE_ONLY_GEOMETRY = [
+  'floor_stone','wall_plank','wall_stone','wall_brick','door_iron','roof_tile'
+] as const;
+export const PA1_STRUCTURE_ITEM = (type:string):string|null =>
+  type === 'escrow' ? 'escrow_chest' : (DEPLOYABLE_TYPES as readonly string[]).includes(type) ? 'deploy_'+type : null;
+
+export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['pump_crude','refinery_crude','vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother',...DEPLOYABLE_TYPES.map(k=>'deploy_'+k)];
 export const isRecipeKnown = (known: readonly string[], key: string) => known.includes(key);
 export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 | 3 => recipe.stationLevel ?? 1;
 
@@ -445,9 +463,34 @@ export const STRUCTS: Record<string, StructDef> = {
   torch_post: { name: 'Torch Post', cost: [['wood', 2], ['torch', 1]], hp: 40, need: 'any', block: true, layer: 'obj', light: 80, desc: 'Permanent light.' },
   escrow: { name: 'Rương ký gửi', cost: [['escrow_chest', 1]], hp: 400, need: 'claim', block: true, layer: 'obj', desc: 'Deposit physical Ragnarok cash into profile-secured cash.', item: 'escrow_chest' },
 };
+// PA1 item custody: the existing material cost of each device is now consumed
+// exactly once by its known hand-crafting recipe. Placing it consumes the item,
+// preserving its unique stack UID in Entity.deployed; reclaim returns that UID.
+// No new speculative materials, drop tables or hidden research paywalls.
+for (const type of DEPLOYABLE_TYPES) {
+  const d=STRUCTS[type];
+  if(!d || d.layer!=='obj' && type!=='power_cable' && type!=='power_switch' &&
+    type!=='pressure_switch' && type!=='ir_sensor' && type!=='bear_trap')
+    throw new Error('PA1_INVALID_DEPLOYABLE:'+type);
+  const id='deploy_'+type;
+  if(ITEMS[id] || RECIPES[id] || d.item)throw new Error('PA1_DUPLICATE_DEPLOYABLE:'+id);
+  const packWeight=d.cost.reduce((sum,[ingredient,qty])=>sum+ITEMS[ingredient].w*qty,0);
+  ITEMS[id]=I({name:d.name,cat:'place',icon:'parts',c1:'#758995',c2:'#d4c9a8',
+    w:Math.round(packWeight*100)/100,max:1,dur:d.hp,
+    desc:'Packed '+d.name+'. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again.'});
+  RECIPES[id]={out:id,qty:1,ins:d.cost.map(([k,q])=>[k,q]),
+    station:null,secs:1,base:true,tier:0};
+  d.item=id;
+}
+
 /** Full target materials are paid again; condition is preserved, never a free repair. */
-export const STRUCTURE_UPGRADES: Record<string, string> = { floor_wood: 'floor_stone', wall_wood: 'wall_stone', wall_stone: 'wall_brick', door_wood: 'door_iron', roof_thatch: 'roof_tile', chest_small: 'chest_large' };
-export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_plank', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'feed_trough', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'ir_sensor', 'bear_trap', 'door_powered', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
+// Steel and iron wall-tier material costs are NOT specified by the owner. The
+// stone→brick historical path is frozen; do not pretend that brick is steel.
+export const STRUCTURE_UPGRADES: Record<string, string> = {
+  floor_wood:'floor_stone',wall_wood:'wall_stone',door_wood:'door_iron',
+  roof_thatch:'roof_tile',chest_small:'chest_large'
+};
+export const BUILD_ORDER = ['floor_wood', 'claim', 'wall_wood', 'door_wood', 'roof_thatch', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'feed_trough', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'ir_sensor', 'bear_trap', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit
