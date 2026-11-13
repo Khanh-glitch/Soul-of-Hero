@@ -1,8 +1,8 @@
 import {afterAll,describe,it,expect} from 'vitest';
 import {TILE,T,WW,type GameState} from '../src/game/core';
-import {DEPLOYABLE_TYPES,PA1_BASE_GEOMETRY,PA1_UPGRADE_ONLY_GEOMETRY,
+import {DEPLOYABLE_TYPES,PA1_BASE_GEOMETRY,PA1_BUILD_PAGES,PA1_UPGRADE_ONLY_GEOMETRY,
   ITEMS,RECIPES,STRUCTS,BUILD_ORDER,STRUCTURE_UPGRADES} from '../src/game/catalog';
-import {newGame,dispatch,addItem,countItem,C,buildReason,markDirty} from '../src/game/engine';
+import {newGame,dispatch,addItem,countItem,C,buildReason,markDirty,blockedAt,clearWallLine,roofAt} from '../src/game/engine';
 import {getWorld,getActiveLayout,setActiveLayout} from '../src/game/world';
 import {serializeSnapshot,selectSnapshots,validate} from '../src/game/persist';
 
@@ -45,11 +45,60 @@ describe('PA1 building geometry vs physical device custody',()=>{
       expect(RECIPES[id].ins).toEqual(d.cost);
       expect(RECIPES[id].base).toBe(true);
     }
-    expect(PA1_BASE_GEOMETRY).toHaveLength(4);
+    expect(PA1_BASE_GEOMETRY).toHaveLength(15);
+    expect(PA1_BUILD_PAGES.Foundation).toHaveLength(4);
+    expect(PA1_BUILD_PAGES.Wall).toHaveLength(8);
+    expect(PA1_BUILD_PAGES.Roof).toHaveLength(3);
+    expect(new Set(PA1_BASE_GEOMETRY).size).toBe(15);
+    for(const key of PA1_BASE_GEOMETRY){
+      expect(STRUCTS[key]).toBeDefined();
+      expect(STRUCTS[key].item).toBeUndefined();
+      expect(RECIPES[key]).toBeUndefined();
+      expect(BUILD_ORDER).toContain(key);
+    }
     for(const type of PA1_UPGRADE_ONLY_GEOMETRY)expect(BUILD_ORDER).not.toContain(type);
     expect(BUILD_ORDER).not.toContain('door_powered');
     expect(STRUCTURE_UPGRADES.wall_stone).toBeUndefined(); // brick must never impersonate steel
   });
+
+  it('builds and removes every wooden shape through real intents, with physical collisions, sight and roof cover',()=>{
+    const o=setup();
+    expect(addItem(o.r,'inv','wood',240)).toBe(0);
+    expect(addItem(o.r,'inv','fiber',120)).toBe(0);
+    expect(addItem(o.r,'inv','rope',8)).toBe(0);
+    const px=o.r.player.x,py=o.r.player.y;
+    for(const key of PA1_BUILD_PAGES.Wall){
+      expect(buildReason(o.g,key,o.x,o.y),key).toBeNull();
+      const result=o.build(key);
+      expect(result.ok,key+':'+JSON.stringify(result)).toBe(true);
+      const e=Object.values(o.r.entities).find(v=>v.kind==='struct'&&v.type===key&&v.tx===o.x&&v.ty===o.y);
+      expect(e,key+' entity').toBeTruthy();
+      expect(blockedAt(o.r,o.x,o.y),key+' collision').toBe(STRUCTS[key].block);
+      o.r.player.x=(o.x-2)*TILE+8;o.r.player.y=o.y*TILE+8;markDirty();
+      const visible=clearWallLine(o.r,o.r.player,{x:(o.x+2)*TILE+8,y:o.y*TILE+8});
+      const expectedTransparent=STRUCTS[key].visionTransparent===true||STRUCTS[key].sealsRoom===false;
+      expect(visible,key+' LOS').toBe(expectedTransparent);
+      o.r.player.x=px;o.r.player.y=py;markDirty();
+      expect(act(o.g,'reclaim',{eid:e!.id}).ok,key+' reclaim').toBe(true);
+      expect(o.r.entities[e!.id]).toBeUndefined();
+    }
+    expect(o.build('floor_wood').ok).toBe(true);
+    const fl=Object.values(o.r.entities).find(v=>v.type==='floor_wood'&&v.tx===o.x&&v.ty===o.y)!;
+    for(const roof of [...PA1_BUILD_PAGES.Roof,'ceiling_wood','ceiling_triangle_wood']){
+      expect(o.build(roof).ok,roof+' place').toBe(true);
+      expect(roofAt(o.r,o.x,o.y)).toBe(true);
+      const e=Object.values(o.r.entities).find(v=>v.type===roof&&v.tx===o.x&&v.ty===o.y)!;
+      expect(act(o.g,'reclaim',{eid:e.id}).ok,roof+' reclaim').toBe(true);
+    }
+    expect(act(o.g,'reclaim',{eid:fl.id}).ok).toBe(true);
+    for(const floor of ['floor_wood','floor_triangle_wood']){
+      expect(o.build(floor).ok,floor).toBe(true);
+      const e=Object.values(o.r.entities).find(v=>v.type===floor&&v.tx===o.x&&v.ty===o.y)!;
+      expect(blockedAt(o.r,o.x,o.y)).toBe(false);
+      expect(act(o.g,'reclaim',{eid:e.id}).ok).toBe(true);
+    }
+    expect(validate(selectSnapshots([serializeSnapshot(o.g),null]).gs!)).not.toBeNull();
+  },120000);
 
   it('crafts a chest from original paid wood, places exact packed UID, saves, reclaims, and does not heal',()=>{
     const o=setup();
