@@ -408,14 +408,20 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
 }
 
 export const BUILD_GROUPS: Record<string,string[]> = {
-  Shell:['claim','floor_wood','floor_stone','wall_wood','wall_plank','wall_stone','wall_brick','door_wood','door_iron','roof_thatch','roof_tile'],
-  Home:['bed_straw','chest_small','chest_large','escrow'],
+  Shell:['floor_wood','wall_wood','door_wood','roof_thatch'],
+  Home:['claim','bed_straw','chest_small','chest_large','escrow'],
   Work:['campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','feed_trough','farm_controller'],
   Defense:['base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','door_powered','arrow_turret','spikes','barricade','torch_post'],
 };
 /** Oil Pump is locked until the run holds an authorized source with stock; the reason is shown on the entry. */
 export const buildLocked = (r: RunState, k: string) => k === 'oil_pump' && !anyAuthorizedOilSource(r);
-const BUILD_TAB_ICON: Record<string, string> = { Shell: 'st:wall_stone', Home: 'st:bed_straw', Work: 'st:workbench', Defense: 'st:arrow_turret' };
+const BUILD_TAB_ICON: Record<string, string> = { Shell: 'st:wall_wood', Home: 'st:bed_straw', Work: 'st:workbench', Defense: 'st:arrow_turret' };
+/** PA1: raw inputs are consumed only by crafting a packed station/device.
+ * Building a deployable then requires exactly one real packed item UID. */
+const costToPlace = (k:string):[string,number][] => {
+  const d=STRUCTS[k];
+  return d.item ? [[d.item,1]] : d.cost;
+};
 export function BuildPanel({ api }: { api: Api }) {
   const r = api.gs.run!; const owned = Object.values(r.entities).some(e => e.type === 'claim');
   const [category, setCategory] = useState('Shell'); const [query, setQuery] = useState(''); const [hover, setHover] = useState<string | null>(null);
@@ -432,19 +438,20 @@ export function BuildPanel({ api }: { api: Api }) {
     </div>
     <div className="build-body">
       <div className="btiles scroll">
-        {keys.map(k => { const d = STRUCTS[k]; const ok = d.cost.every(([i, qq]) => have(i) >= qq); const locked = buildLocked(r, k); return <button key={k} className={`btile ${ok && !locked ? 'ok' : 'no'} ${focus === k ? 'on' : ''}`} disabled={locked} data-testid={k === 'oil_pump' ? 'build-oil-pump' : undefined} onMouseEnter={() => setHover(k)} onFocus={() => setHover(k)} onClick={() => place(k)} title={d.name}>
+        {keys.map(k => { const d = STRUCTS[k]; const costs=costToPlace(k); const ok = costs.every(([i, qq]) => have(i) >= qq); const locked = buildLocked(r, k); return <button key={k} className={`btile ${ok && !locked ? 'ok' : 'no'} ${focus === k ? 'on' : ''}`} disabled={locked} data-testid={k === 'oil_pump' ? 'build-oil-pump' : undefined} onMouseEnter={() => setHover(k)} onFocus={() => setHover(k)} onClick={() => place(k)} title={d.name}>
           <span className="ground" /><img className="px" src={iconUrlSt(k)} alt="" />
           {locked && <span className="lock">🔒</span>}
           <span className="nm">{d.name}</span>
-          <span className="cost">{d.cost.map(([i, qq]) => <span key={i} className={have(i) >= qq ? 'ok' : 'no'} title={`${ITEMS[i].name} ${have(i)}/${qq}`}><Icon k={i} size={8} />{qq}</span>)}</span>
+          <span className="cost">{costs.map(([i, qq]) => <span key={i} className={have(i) >= qq ? 'ok' : 'no'} title={`${ITEMS[i].name} ${have(i)}/${qq}`}><Icon k={i} size={8} />{qq}</span>)}</span>
         </button>; })}
         {!keys.length && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', padding: 6 }}>nothing matches</div>}
       </div>
       {focus && fd && <div className="bdetail">
         <div className="bdetail-head"><img className="px" src={iconUrlSt(focus)} alt="" /><div><b>{fd.name}</b><div className="lbl meta">{fd.layer.toUpperCase()}{fd.shelter ? ' · SHELTER' : ''}{fd.station ? ' · STATION' : ''}{fd.slots ? ` · ${fd.slots} SLOTS` : ''}{fd.light ? ' · LIGHT' : ''}</div></div></div>
         <div className="lbl desc">{fd.desc}</div>
-        <div className="bcost">{fd.cost.map(([i, qq]) => { const h = have(i); return <span key={i} className={`need ${h >= qq ? 'ok' : 'no'}`} title={ITEMS[i].name}><Icon k={i} size={14} /><b>{h}</b><small>/{qq}</small></span>; })}<span className="chip" style={{ color: 'var(--muted)', marginLeft: 'auto' }}><Glyph k="hp" c="currentColor" s={7} />{fd.hp}</span></div>
-        {buildLocked(r, focus) ? <div className="why" style={{ color: 'var(--bad)' }}>needs an authorized oil source</div> : <button className="btn gold" style={{ width: '100%' }} disabled={!fd.cost.every(([i, qq]) => have(i) >= qq)} onClick={() => place(focus)}>Place · LMB</button>}
+        {fd.item && <div className="why" style={{ color: 'var(--warn)' }}>Craft {ITEMS[fd.item].name} in Survivor first; placing consumes that physical item, not its materials again.</div>}
+        <div className="bcost">{costToPlace(focus).map(([i, qq]) => { const h = have(i); return <span key={i} className={`need ${h >= qq ? 'ok' : 'no'}`} title={ITEMS[i].name}><Icon k={i} size={14} /><b>{h}</b><small>/{qq}</small></span>; })}<span className="chip" style={{ color: 'var(--muted)', marginLeft: 'auto' }}><Glyph k="hp" c="currentColor" s={7} />{fd.hp}</span></div>
+        {buildLocked(r, focus) ? <div className="why" style={{ color: 'var(--bad)' }}>needs an authorized oil source</div> : <button className="btn gold" style={{ width: '100%' }} disabled={!costToPlace(focus).every(([i, qq]) => have(i) >= qq)} onClick={() => place(focus)}>Select placement · LMB</button>}
         {!owned && <div className="why" style={{ color: 'var(--warn)' }}>no Cabinet yet · unprotected builds decay</div>}
       </div>}
     </div>
