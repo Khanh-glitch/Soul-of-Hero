@@ -1842,6 +1842,17 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   if (type === 'door_powered')
     return 'A powered door is an installed door module, not a new standalone wall. Module recipe pending.';
   const w = getWorld(); const p = r.player;
+  // Existing locked balance had no runtime authority. A paid PA1 cabinet pack
+  // was placeable 9 tiles from the Trading Post despite the 10-tile exclusion.
+  // Preserve the packed UID: preflight must run before the build transaction.
+  if (type === 'claim' && Number.isInteger(tx) && Number.isInteger(ty)) {
+    const nearest = w.places
+      .filter(site => site.kind === 'poi')
+      .map(site => Math.hypot(tx-site.tx, ty-site.ty))
+      .reduce((min, distance) => Math.min(min, distance), Infinity);
+    if (nearest < BAL.economy.claimMinDistFromPoi)
+      return `Territory Cabinet requires at least ${BAL.economy.claimMinDistFromPoi} tiles from any POI.`;
+  }
   if(p.vehicle)return 'Exit the motorbike before building.';
   if (Object.values(r.entities).some(e=>e.kind==='vehicle' && Math.abs(e.x-(tx*TILE+8))<TILE && Math.abs(e.y-(ty*TILE+8))<TILE)) return 'Move the motorbike away before building here.';
   if (type === 'farm_controller' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=2 && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
