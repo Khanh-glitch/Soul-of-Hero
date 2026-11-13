@@ -569,6 +569,20 @@ function runSuite1WorldEndowments(onSub?: (label: string, ms: number) => void) {
   };
 }
 
+// PA1 audit adapter: run the *real* paid pack recipe before the real placement
+// intent. Neither UID nor station is injected. The material provision below is
+// still a fixture assumption, NOT a natural 14-day harvesting route.
+function pa1PaidBuild(gs: GameState, r: RunState, kind: string, tx: number, ty: number, now: number) {
+  const def = STRUCTS[kind];
+  if (def?.item && countItem(r, 'inv', def.item) < 1) {
+    const recipe = Object.entries(RECIPES).find(([_, p]) => p.out === def.item && p.station === null)?.[0];
+    if (!recipe) return { ok:false, reason:'PA1 fixture cannot hand-craft pack '+def.item };
+    const craftResult = dispatch(gs, {id:nextIntentId(),type:'craft',recipe},now);
+    if(!craftResult.ok) return craftResult;
+  }
+  return dispatch(gs, {id:nextIntentId(),type:'build',struct:kind,tx,ty},now);
+}
+
 // ---------- Suite 2: Live Multi-Day Engine Archetype Trajectories (0h -> 336h) ----------
 function setupBaseAndClaim(
   gs: GameState,
@@ -580,13 +594,15 @@ function setupBaseAndClaim(
   const tiles = findBuildableCluster(r, w, 24);
   if (tiles.length < 10) return { claimId: null, bedId: null, chestId: null, furnaceId: null, workbenchId: null, researchId: null, placed: 0 };
 
-  // Seed starter building materials realistically gathered in first active hours
-  addItem(r, 'inv', 'wood', 60);
-  addItem(r, 'inv', 'stone', 60);
-  addItem(r, 'inv', 'fiber', 40);
-  addItem(r, 'inv', 'rope', 10);
-  addItem(r, 'inv', 'iron_ingot', 16);
-  addItem(r, 'inv', 'spares', 12);
+  // FIXTURE SUPPLY, NOT NATURAL HARVEST. Preserve exact PA1 craft costs and UIDs.
+  // The scenario isolates offline upkeep, not time-to-acquire these supplies.
+  addItem(r, 'inv', 'wood', 240);
+  addItem(r, 'inv', 'stone', 120);
+  addItem(r, 'inv', 'fiber', 120);
+  addItem(r, 'inv', 'rope', 30);
+  addItem(r, 'inv', 'iron_ingot', 24);
+  addItem(r, 'inv', 'spares', 30);
+  addItem(r, 'inv', 'glass', 10);
 
   let placed = 0;
   let claimId: string | null = null;
@@ -606,7 +622,7 @@ function setupBaseAndClaim(
     if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'floor_wood', tx, ty }, now).ok) placed++;
     if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'roof_thatch', tx, ty }, now).ok) placed++;
   }
-  const cRes = dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'claim', tx: ax, ty: ay }, now);
+  const cRes = pa1PaidBuild(gs, r, 'claim', ax, ay, now);
   if (cRes.ok) {
     placed++;
     claimId = Object.values(r.entities).find((e) => e.type === 'claim' && e.tx === ax && e.ty === ay)?.id ?? null;
@@ -614,12 +630,12 @@ function setupBaseAndClaim(
 
   if (options.addBedChest) {
     const [bx, by] = tiles[1] ?? [ax + 1, ay];
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'bed_straw', tx: bx, ty: by }, now).ok) {
+    if (pa1PaidBuild(gs, r, 'bed_straw', bx, by, now).ok) {
       placed++;
       bedId = Object.values(r.entities).find((e) => e.type === 'bed_straw' && e.tx === bx && e.ty === by)?.id ?? null;
     }
     const [cx, cy] = tiles[2] ?? [ax + 2, ay];
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'chest_small', tx: cx, ty: cy }, now).ok) {
+    if (pa1PaidBuild(gs, r, 'chest_small', cx, cy, now).ok) {
       placed++;
       chestId = Object.values(r.entities).find((e) => e.type === 'chest_small' && e.tx === cx && e.ty === cy)?.id ?? null;
     }
@@ -632,21 +648,21 @@ function setupBaseAndClaim(
   }
   if (options.addFurnace && tiles[12]) {
     const [fx, fy] = tiles[12];
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'furnace', tx: fx, ty: fy }, now).ok) {
+    if (pa1PaidBuild(gs, r, 'furnace', fx, fy, now).ok) {
       placed++;
       furnaceId = Object.values(r.entities).find((e) => e.type === 'furnace' && e.tx === fx && e.ty === fy)?.id ?? null;
     }
   }
   if (options.addWorkbench && tiles[13]) {
     const [wx, wy] = tiles[13];
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'workbench', tx: wx, ty: wy }, now).ok) {
+    if (pa1PaidBuild(gs, r, 'workbench', wx, wy, now).ok) {
       placed++;
       workbenchId = Object.values(r.entities).find((e) => e.type === 'workbench' && e.tx === wx && e.ty === wy)?.id ?? null;
     }
   }
   if (options.addResearch && tiles[14]) {
     const [rx, ry] = tiles[14];
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'research', tx: rx, ty: ry }, now).ok) {
+    if (pa1PaidBuild(gs, r, 'research', rx, ry, now).ok) {
       placed++;
       researchId = Object.values(r.entities).find((e) => e.type === 'research' && e.tx === rx && e.ty === ry)?.id ?? null;
     }
@@ -729,10 +745,22 @@ function runSuite2Archetypes() {
       addItem(rB, 'inv', 'spares', 30);
       addItem(rB, 'inv', 'glass', 10);
       addItem(rB, 'inv', 'wood', 40);
-      if (moreTiles[15]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'wall_brick', tx: moreTiles[15][0], ty: moreTiles[15][1] }, BASE_AUDIT_NOW);
-      if (moreTiles[16]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'door_iron', tx: moreTiles[16][0], ty: moreTiles[16][1] }, BASE_AUDIT_NOW);
-      if (moreTiles[17]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'base_generator', tx: moreTiles[17][0], ty: moreTiles[17][1] }, BASE_AUDIT_NOW);
-      if (moreTiles[18]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'arrow_turret', tx: moreTiles[18][0], ty: moreTiles[18][1] }, BASE_AUDIT_NOW);
+      // Legacy direct brick-wall build is forbidden under PA1. Use a genuine
+      // wooden wall and paid, cabinet-authorized upgrade if available.
+      if (moreTiles[15]) {
+        const [x,y]=moreTiles[15];
+        const placed=pa1PaidBuild(gsB,rB,'wall_wood',x,y,BASE_AUDIT_NOW);
+        const wall=placed.ok ? Object.values(rB.entities).find(e=>e.type==='wall_wood'&&e.tx===x&&e.ty===y):undefined;
+        if(wall)dispatch(gsB,{id:nextIntentId(),type:'upgradeStructure',eid:wall.id},BASE_AUDIT_NOW+100);
+      }
+      if (moreTiles[16]) {
+        const [x,y]=moreTiles[16];
+        const placed=pa1PaidBuild(gsB,rB,'door_wood',x,y,BASE_AUDIT_NOW);
+        const door=placed.ok?Object.values(rB.entities).find(e=>e.type==='door_wood'&&e.tx===x&&e.ty===y):undefined;
+        if(door)dispatch(gsB,{id:nextIntentId(),type:'upgradeStructure',eid:door.id},BASE_AUDIT_NOW+100);
+      }
+      if (moreTiles[17]) pa1PaidBuild(gsB,rB,'base_generator',moreTiles[17][0],moreTiles[17][1],BASE_AUDIT_NOW);
+      if (moreTiles[18]) pa1PaidBuild(gsB,rB,'arrow_turret',moreTiles[18][0],moreTiles[18][1],BASE_AUDIT_NOW);
 
       const fcB = claimEntB ? territoryForecastSafe(rB, claimEntB) : null;
       const dailyUpkeepB: Record<string, number> = {};
@@ -1677,8 +1705,10 @@ function runSuite8ExploitAndParityProbes(
     const w = getWorld();
     const tp = w.places.find((p) => p.id === 'tp')!;
     r.creatures = [];
-    addItem(r, 'inv', 'wood', 60);
+    addItem(r, 'inv', 'wood', 300);
     addItem(r, 'inv', 'stone', 40);
+    const packClaim=dispatch(gs,{id:nextIntentId(),type:'craft',recipe:'deploy_claim'},BASE_AUDIT_NOW+90);
+    if(!packClaim.ok) throw new Error('PA1 claim-poi audit fixture failed paid pack craft: '+packClaim.reason);
     for (let dy = -9; dy <= 9 && !claimInsidePoiAllowed; dy++) {
       for (let dx = -9; dx <= 9 && !claimInsidePoiAllowed; dx++) {
         const d = Math.hypot(dx, dy);
@@ -1696,7 +1726,7 @@ function runSuite8ExploitAndParityProbes(
           if (!bRes.ok) continue;
           const claimErr = buildReason(gs, 'claim', tx, ty);
           if (claimErr === null) {
-            const cRes = dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'claim', tx, ty }, BASE_AUDIT_NOW + 200);
+            const cRes = pa1PaidBuild(gs,r,'claim',tx,ty,BASE_AUDIT_NOW + 200);
             if (cRes.ok) {
               claimInsidePoiAllowed = true;
               minPoiClaimDistFound = r2(d);
