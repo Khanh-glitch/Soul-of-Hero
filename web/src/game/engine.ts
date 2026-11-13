@@ -13,7 +13,7 @@ import { creatorLootV1 } from './creator-loot';
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
-import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
+import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -1835,6 +1835,10 @@ export function registerTestOilSource(r: RunState, tx: number, ty: number, stock
 
 export function buildReason(gs: GameState, type: string, tx: number, ty: number): string | null {
   const r = gs.run!; if (typeof type !== 'string' || !Object.prototype.hasOwnProperty.call(STRUCTS, type)) return 'Unknown structure.'; const d = STRUCTS[type];
+  if ((PA1_UPGRADE_ONLY_GEOMETRY as readonly string[]).includes(type))
+    return 'Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.';
+  if (type === 'door_powered')
+    return 'A powered door is an installed door module, not a new standalone wall. Module recipe pending.';
   const w = getWorld(); const p = r.player;
   if(p.vehicle)return 'Exit the motorbike before building.';
   if (Object.values(r.entities).some(e=>e.kind==='vehicle' && Math.abs(e.x-(tx*TILE+8))<TILE && Math.abs(e.y-(ty*TILE+8))<TILE)) return 'Move the motorbike away before building here.';
@@ -1867,7 +1871,14 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
     if (claims.length >= BAL.economy.maxClaims) return `Claim limit reached (${BAL.economy.maxClaims}).`;
     if (claims.some(c => c.tx===tx && c.ty===ty)) return 'A cabinet already occupies this tile.';
   }
-  const cost = d.cost; if (!hasAll(r, 'inv', cost)) return 'Missing materials: ' + cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ');
+  const cost: [string,number][] = d.item ? [[d.item,1]] : d.cost;
+  // Reject damaged or spoofed packed devices *before* reserveInputs can spend.
+  if (d.item) {
+    const packs=C(r,'inv').slots.filter(v=>v?.key===d.item);
+    if (!packs.some(v=>v?.qty===1&&Number.isFinite(v.dur)&&(v.dur??0)>0&&(v.dur??0)<=d.hp))
+      return 'Need an intact packed device.';
+  }
+  if (!hasAll(r, 'inv', cost)) return 'Missing materials: ' + cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ');
   return null;
 }
 
@@ -2106,12 +2117,22 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e = r.entities[it.eid];
       if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');
       const target = STRUCTURE_UPGRADES[e.type!], next = target && STRUCTS[target];
+      const structural = (PA1_BASE_GEOMETRY as readonly string[]).includes(e.type!);
+      if (structural && (!Number.isInteger(e.tx) || !Number.isInteger(e.ty) ||
+        !claimAt(r,e.tx!,e.ty!) || !cabinetSupported(r,claimAt(r,e.tx!,e.ty!)!)))
+        return fail('Upgrade wooden construction only through a valid Territory Cabinet within its claim.');
       if (!next || e.deployed || e.station || e.farm || e.garden || !Number.isFinite(e.hp) || !Number.isFinite(e.maxHp) || e.hp! <= 0 || e.maxHp! <= 0) return fail('No in-place upgrade for this structure.');
       const chest = e.c ? C(r, e.c) : null;
       if (next.slots && (!chest || chest.kind !== 'chest' || chest.slots.length > next.slots)) return fail('Storage is invalid; no materials spent.');
       if (!hasAll(r, 'inv', next.cost)) return fail('Missing upgrade materials: ' + next.cost.filter(([k,q]) => countItem(r,'inv',k) < q).map(([k,q]) => `${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', '));
       for (const [k,q] of next.cost) removeItem(r, 'inv', k, q);
       const old = e.type, fraction = Math.min(1, e.hp! / e.maxHp!); e.type = target; e.maxHp = next.hp; e.hp = Math.max(1, Math.floor(next.hp * fraction));
+      // A packed chest upgraded in-place changes its original chassis identity,
+      // not its UID. The material upgrade payment was debited exactly once.
+      if (e.deployed && next.item) {
+        e.deployed.key = next.item;
+        e.deployed.dur = e.hp;
+      }
       if (chest && next.slots) while (chest.slots.length < next.slots) chest.slots.push(null);
       markDirty(); return ok('structure.upgrade', `${e.id}:${old}->${target}`, `${next.name}: ${Math.round(e.hp)}/${e.maxHp} HP (condition preserved).`);
     }
@@ -2266,9 +2287,11 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'build': {
       const why = buildReason(gs, it.struct, it.tx, it.ty); if (why) return fail(why);
       const d = STRUCTS[it.struct];
-      const deployed = d.item ? reserveInputs(r, d.cost)[0] : undefined;
+      const deployed = d.item ? reserveInputs(r, [[d.item,1]])[0] : undefined;
       if (!d.item) for (const [k, q] of d.cost) removeItem(r, 'inv', k, q);
-      const e: Entity = { id: uid(r, 'e'), kind: 'struct', type: it.struct, tx: it.tx, ty: it.ty, x: it.tx * TILE + 8, y: it.ty * TILE + 8, hp: d.hp, maxHp: d.hp, born: now, deployed };
+      if (deployed && (!Number.isFinite(deployed.dur) || deployed.dur!<=0 || deployed.dur!>d.hp))
+        throw new Error('Invalid PA1 pack durability passed build preflight');
+      const e: Entity = { id: uid(r, 'e'), kind: 'struct', type: it.struct, tx: it.tx, ty: it.ty, x: it.tx * TILE + 8, y: it.ty * TILE + 8, hp: deployed?.dur ?? d.hp, maxHp: d.hp, born: now, deployed };
       if (d.slots) e.c = mkContainer(r, 'chest', d.slots).id;
       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
       if (d.station === 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id };
@@ -2408,11 +2431,24 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (e.kind !== 'struct') return fail('Cannot reclaim that.');
       if (STRUCTS[e.type!].layer === 'floor' && entsAt(r,e.tx!,e.ty!).some(o=>o.type==='claim')) return fail('Remove the cabinet on this foundation first.');
       const d = STRUCTS[e.type!];
+      if ((e.hp??0)<=0) return fail('Destroyed devices cannot be packed into pristine items.');
       if (entsAt(r, e.tx!, e.ty!).some(o => o.id !== e.id && STRUCTS[o.type!]?.layer === 'roof') && d.layer === 'floor') return fail('Remove the roof above first.');
       if (e.station?.queue.some(j => j.reserved === undefined)) return fail('Legacy job has no recoverable input record; let it finish before reclaiming.');
       const bag = bagStation(r, e, now, 'Reclaimed contents');
       removeEntity(r, e);
-      if (d.item) { if (e.deployed) returnReservations(r, [e.deployed], e.x, e.y, now); else giveOrDrop(r, d.item, 1, now); }
+      if (d.item) {
+        if (e.deployed) {
+          // One authentic UID survives inventory → placement → recovery. Damage
+          // follows it; no reclaim/redeploy healing exploit.
+          e.deployed.dur = e.hp;
+          returnReservations(r, [e.deployed], e.x, e.y, now);
+        } else {
+          // Historical raw-paid saves have no deployed identity. Mint exactly
+          // one explicit migration recovery item only when that entity is removed.
+          giveOrDrop(r, d.item, 1, now, {dur:e.hp});
+          receipt(r,now,'pa1.legacy.unpack',e.id+':'+e.type);
+        }
+      }
       else for (const [k, q] of d.cost) { const back = Math.floor(q * BAL.economy.reclaimRefund); if (back > 0) giveOrDrop(r, k, back, now); }
       return ok('reclaim', `${e.type}${bag ? ' contents→' + bag.id : ''}`);
     }
