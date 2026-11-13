@@ -229,6 +229,13 @@ export function buildSources() {
 export function buildStructs() {
   const S: Record<string, Sprite> = {};
   S.floor_wood = mk(16, 16, g => { for (let y = 0; y < 16; y += 4) { R(g, 0, y, 16, 4, y % 8 ? '#9a6a3e' : '#8a5e36'); R(g, 0, y + 3, 16, 1, '#5a3a22'); P(g, (y * 5) % 16, y + 1, '#b0804a'); } }, null);
+  // PA1: authored wooden shape silhouettes. Transparent pixels matter: open
+  // frames, triangular tiles and apertures must NOT be disguised as solid slabs.
+  S.floor_triangle_wood = mk(16,16,g => {
+    g.fillStyle='#8c5d34';g.beginPath();g.moveTo(1,1);g.lineTo(15,8);g.lineTo(1,15);g.closePath();g.fill();
+    R(g,1,1,2,14,'#c18b4e');R(g,2,7,11,2,'#a87242');
+    for(let y=4;y<13;y+=4)R(g,2,y,8,1,'#58361f');
+  },null);
   S.floor_stone = mk(16, 16, g => { R(g, 0, 0, 16, 16, '#8a8a90'); for (const [x, y, w, h] of [[0, 0, 8, 8], [8, 0, 8, 8], [0, 8, 8, 8], [8, 8, 8, 8]]) { R(g, x, y, w, 1, '#a8a8b0'); R(g, x, y + h - 1, w, 1, '#5e5e66'); R(g, x + w - 1, y, 1, h, '#6a6a72'); } }, null);
   const wall = (top: string, face: string, line: string, kind: string) => mk(16, 24, g => { R(g, 0, 0, 16, 10, top); R(g, 0, 10, 16, 14, face);
     if (kind === 'wood') { for (let x = 0; x < 16; x += 4) { R(g, x, 0, 1, 24, line); R(g, x + 1, 0, 1, 10, '#b08050'); P(g, x + 2, 1, '#c89a60'); } R(g, 0, 15, 16, 1, line); }
@@ -238,11 +245,58 @@ export function buildStructs() {
     if (kind === 'brick') { for (let y = 10; y < 24; y += 3) { R(g, 0, y, 16, 1, line); for (let x = (y % 6 ? 0 : 3); x < 16; x += 6) R(g, x, y, 1, 3, line); } R(g, 0, 0, 16, 1, '#e09a7a'); }
     R(g, 0, 9, 16, 1, 'rgba(0,0,0,0.35)'); });
   S.wall_wood = wall('#8a5e36', '#7a5230', '#4a2e1a', 'wood'); S.wall_plank = wall('#c49a5c', '#a87c44', '#5e4220', 'plank'); S.wall_stone = wall('#9a9aa2', '#7a7a82', '#55555e', 'stone'); S.wall_brick = wall('#b0624a', '#9a4e3a', '#5a2a1e', 'brick');
+  S.wall_window_wood = mk(16,24,g=>{
+    R(g,0,0,16,5,'#b88a50');R(g,0,21,16,3,'#6a4326');
+    for(const x of [0,13]){R(g,x,0,3,24,'#8f633b');R(g,x+1,0,1,24,'#c1965c');}
+    R(g,3,5,10,2,'#5a3d29');R(g,3,19,10,2,'#bd8b53');
+    R(g,7,7,2,12,'#a97d49');R(g,3,12,10,1,'#a97d49');
+    for(const [x,y] of [[3,7],[9,7],[3,13],[9,13]])R(g,x,y,4,4,'rgba(145,203,216,.15)');
+  });
+  S.wall_doorframe_wood = mk(16,24,g=>{
+    R(g,0,0,16,6,'#9e7443');R(g,0,6,3,18,'#94643b');R(g,13,6,3,18,'#94643b');
+    R(g,1,0,1,24,'#d0a36a');R(g,14,0,1,24,'#d0a36a');R(g,2,8,1,16,'#5b391e');R(g,13,8,1,16,'#5b391e');
+  });
+  S.wall_half_wood = mk(16,16,g=>{
+    R(g,0,5,16,11,'#815432');R(g,0,5,16,2,'#b38650');
+    for(let x=0;x<16;x+=4){R(g,x,6,1,9,'#57361e');P(g,x+2,9,'#cd9c62');}
+    R(g,0,14,16,2,'#58371f');
+  });
+  S.wall_pillar_wood = mk(16,24,g=>{
+    R(g,5,0,6,24,'#83522d');R(g,4,0,8,4,'#b18750');R(g,4,20,8,4,'#5e3d20');
+    R(g,6,4,1,16,'#c99d61');R(g,10,4,1,16,'#49301d');R(g,7,9,2,3,'#ba8750');
+  });
+  S.wall_triangle_wood = mk(16,24,g=>{
+    g.fillStyle='#885a32';g.beginPath();g.moveTo(8,0);g.lineTo(16,10);g.lineTo(16,24);g.lineTo(0,24);g.lineTo(0,10);g.closePath();g.fill();
+    for(let x=2;x<16;x+=4)R(g,x,10,1,14,'#593820');
+    R(g,0,20,16,2,'#ad7745');R(g,3,10,10,1,'#bb8b52');P(g,8,2,'#d5a268');
+  });
+  S.fence_wood = mk(16,16,g=>{
+    for(const x of [1,5,9,13]){R(g,x,3,2,13,'#8e5e35');P(g,x,2,'#c39355');}
+    R(g,0,7,16,2,'#b48449');R(g,0,13,16,2,'#6b492b');
+  });
   const door = (c: string, band: string, open: boolean) => mk(16, 24, g => { R(g, 0, 0, 16, 10, '#5a3a22'); if (open) { R(g, 0, 10, 2, 14, c); R(g, 14, 10, 2, 14, c); R(g, 2, 10, 12, 14, 'rgba(20,12,20,0.6)'); } else { R(g, 1, 8, 14, 16, c); R(g, 1, 12, 14, 1, band); R(g, 1, 19, 14, 1, band); P(g, 12, 16, '#e0c060'); R(g, 7, 8, 1, 16, 'rgba(0,0,0,0.3)'); } });
   S.door_wood = door('#9a6a3e', '#4a4e56', false); S.door_wood_open = door('#9a6a3e', '#4a4e56', true); S.door_iron = door('#6a7280', '#3a3e46', false); S.door_iron_open = door('#6a7280', '#3a3e46', true);
   S.poi_door = mk(16, 24, g => { R(g, 0, 6, 16, 18, '#4a5058'); R(g, 2, 8, 12, 16, '#6a7280'); for (let y = 10; y < 24; y += 3) R(g, 2, y, 12, 1, '#3a3e46'); R(g, 12, 13, 2, 3, '#ff3a2a'); });
   S.poi_door_open = mk(16, 24, g => { R(g, 0, 6, 16, 18, '#4a5058'); R(g, 2, 8, 12, 16, '#1a141a'); R(g, 12, 13, 2, 3, '#3aff6a'); });
   S.roof_thatch = mk(16, 16, g => { for (let y = 0; y < 16; y += 3) { R(g, 0, y, 16, 3, y % 6 ? '#c8a050' : '#b08a40'); for (let x = (y % 6 ? 1 : 3); x < 16; x += 4) P(g, x, y + 2, '#8a6a2a'); } }, null);
+  S.ceiling_wood=mk(16,16,g=>{
+    R(g,0,0,16,16,'#805a35');
+    for(let y=1;y<16;y+=4){R(g,0,y,16,1,'#b48a58');R(g,0,y+2,16,1,'#52371f');}
+    for(const x of [2,13])R(g,x,0,1,16,'#6e492b');
+  },null);
+  S.ceiling_triangle_wood=mk(16,16,g=>{
+    g.fillStyle='#8b6038';g.beginPath();g.moveTo(1,1);g.lineTo(15,8);g.lineTo(1,15);g.closePath();g.fill();
+    R(g,2,7,11,2,'#c0935e');R(g,2,4,7,1,'#613c25');R(g,2,11,7,1,'#613c25');
+  },null);
+  S.roof_slope_thatch=mk(16,16,g=>{
+    for(let y=0;y<16;y+=2){R(g,0,y,16,2,y%4?'#c4a059':'#9d7738');R(g,0,y+1,16,1,'#73542a');}
+    for(let x=0;x<16;x+=4)R(g,x,0,1,16,'rgba(255,225,153,.15)');
+  },null);
+  S.roof_corner_thatch=mk(16,16,g=>{
+    R(g,0,0,16,16,'#a88443');
+    for(let n=0;n<8;n++){R(g,n,n,16-2*n,1,n%2?'#ddbd70':'#785726');}
+    R(g,7,0,2,16,'#8b602d');R(g,0,7,16,2,'#8b602d');
+  },null);
   S.roof_tile = mk(16, 16, g => { for (let y = 0; y < 16; y += 4) for (let x = (y % 8 ? 0 : 2); x < 16; x += 4) { R(g, x, y, 4, 4, '#a84a32'); R(g, x, y + 3, 4, 1, '#6a2a1e'); P(g, x + 1, y, '#d07a5a'); } }, null);
   S.roof_tin = mk(16, 16, g => { R(g, 0, 0, 16, 16, '#7a8288'); for (let x = 0; x < 16; x += 3) R(g, x, 0, 1, 16, '#5a6268'); for (let k = 0; k < 6; k++) P(g, hash2(k, 1, 3) * 16 | 0, hash2(k, 2, 3) * 16 | 0, '#a0602a'); }, null);
   S.roof_wood = mk(16, 16, g => { for (let y = 0; y < 16; y += 2) R(g, 0, y, 16, 2, y % 4 ? '#7a5230' : '#6a4426'); for (let x = 0; x < 16; x += 5) R(g, x, 0, 1, 16, '#4a2e1a'); }, null);
