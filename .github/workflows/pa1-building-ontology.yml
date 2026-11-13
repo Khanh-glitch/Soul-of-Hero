@@ -9,6 +9,7 @@ on:
       - 'web/src/ui/panels.tsx'
       - 'web/src/ui/Game.tsx'
       - 'web/tests/pa1-building-ontology.test.ts'
+      - 'web/tests/territory-cabinet.test.ts'
       - '.github/workflows/pa1-building-ontology.yml'
   workflow_dispatch:
 permissions:
