@@ -64,9 +64,9 @@ jobs:
         with:
           name: pa1-li-veyra-full-world-source-evidence-${{ github.sha }}
           path: |
+            web/evidence/veyra-global-spawn-audit/manifest.json
             web/evidence/**/veyra*full*/*.json
             web/evidence/**/full-world*/*.json
             web/reports/**/VEYRA*FULL*.json
-            web/reports/**/veyra*spawn*.json
           if-no-files-found: warn
           retention-days: 45
