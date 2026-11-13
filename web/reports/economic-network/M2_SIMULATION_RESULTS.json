@@ -3339,29 +3339,21 @@
   "archetypeSimulations": {
     "shipping_fresh": {
       "casualOffline14Day": {
-        "placedStructures": 12,
+        "placedStructures": 9,
         "deathsIn14DaysWithDaily2hPlay": 14,
-        "collapses": 0,
-        "totalUpkeepWood14d": 182,
-        "totalUpkeepStone14d": 14,
+        "collapses": 7,
+        "totalUpkeepWood14d": 0,
+        "totalUpkeepStone14d": 0,
         "finalHp": 0,
         "finalHunger": 28.69,
         "finalThirst": 0,
         "finalPhase": "expired"
       },
       "fortifier14Day": {
-        "coveredCount": 12,
-        "dailyUpkeepRates": {
-          "wood": 14.25,
-          "fiber": 5,
-          "stone": 1.25
-        },
-        "cumulative14DayDebits": {
-          "wood": 200,
-          "fiber": 70,
-          "stone": 18
-        },
-        "total14dItemsConsumed": 288
+        "coveredCount": 0,
+        "dailyUpkeepRates": {},
+        "cumulative14DayDebits": {},
+        "total14dItemsConsumed": 0
       },
       "motorbikeKinematics": {
         "wreckEconomy": "recycler-v1",
@@ -3373,10 +3365,10 @@
         "wearPerFullTankLoaded": 32
       },
       "researchAndCoreGate": {
-        "totalRecipes": 89,
-        "knownAtStart": 54,
-        "unknownAtStart": 35,
-        "unknownNonCore": 26,
+        "totalRecipes": 112,
+        "knownAtStart": 78,
+        "unknownAtStart": 34,
+        "unknownNonCore": 25,
         "unknownTier3NonCore": [
           "chitin_armor"
         ],
@@ -3391,9 +3383,9 @@
           "core_storm",
           "core_frost"
         ],
-        "sparesNeededBeforeFirstCoreRandom": 104,
-        "totalRandomResearchSparesAll": 140,
-        "minSparesDirectedPlusRandom": 265
+        "sparesNeededBeforeFirstCoreRandom": 100,
+        "totalRandomResearchSparesAll": 136,
+        "minSparesDirectedPlusRandom": 256
       },
       "currencySplit": {
         "maxVendorSecuredSpendablePerRun": 76,
@@ -3412,37 +3404,21 @@
     },
     "veyra05-world": {
       "casualOffline14Day": {
-        "placedStructures": 12,
+        "placedStructures": 9,
         "deathsIn14DaysWithDaily2hPlay": 14,
-        "collapses": 0,
-        "totalUpkeepWood14d": 182,
-        "totalUpkeepStone14d": 14,
+        "collapses": 7,
+        "totalUpkeepWood14d": 0,
+        "totalUpkeepStone14d": 0,
         "finalHp": 0,
         "finalHunger": 28.69,
         "finalThirst": 0,
         "finalPhase": "expired"
       },
       "fortifier14Day": {
-        "coveredCount": 15,
-        "dailyUpkeepRates": {
-          "wood": 16.75,
-          "fiber": 5,
-          "stone": 1.25,
-          "brick": 1.5,
-          "iron_ingot": 1.5,
-          "mechanical_parts": 0.5,
-          "fasteners": 0.5
-        },
-        "cumulative14DayDebits": {
-          "wood": 235,
-          "fiber": 70,
-          "stone": 18,
-          "brick": 21,
-          "iron_ingot": 21,
-          "mechanical_parts": 7,
-          "fasteners": 7
-        },
-        "total14dItemsConsumed": 379
+        "coveredCount": 0,
+        "dailyUpkeepRates": {},
+        "cumulative14DayDebits": {},
+        "total14dItemsConsumed": 0
       },
       "motorbikeKinematics": {
         "wreckEconomy": "recycler-v1",
@@ -3454,10 +3430,10 @@
         "wearPerFullTankLoaded": 32
       },
       "researchAndCoreGate": {
-        "totalRecipes": 89,
-        "knownAtStart": 54,
-        "unknownAtStart": 35,
-        "unknownNonCore": 26,
+        "totalRecipes": 112,
+        "knownAtStart": 78,
+        "unknownAtStart": 34,
+        "unknownNonCore": 25,
         "unknownTier3NonCore": [
           "chitin_armor"
         ],
@@ -3472,9 +3448,9 @@
           "core_storm",
           "core_frost"
         ],
-        "sparesNeededBeforeFirstCoreRandom": 104,
-        "totalRandomResearchSparesAll": 140,
-        "minSparesDirectedPlusRandom": 265
+        "sparesNeededBeforeFirstCoreRandom": 100,
+        "totalRandomResearchSparesAll": 136,
+        "minSparesDirectedPlusRandom": 256
       },
       "currencySplit": {
         "maxVendorSecuredSpendablePerRun": 76,
@@ -4977,12 +4953,12 @@
       },
       "randomResearchCostForCore_spares": {
         "n": 200,
-        "min": 108,
-        "p10": 108,
-        "p50": 108,
-        "p90": 108,
-        "max": 108,
-        "mean": 108
+        "min": 104,
+        "p10": 104,
+        "p50": 104,
+        "p90": 104,
+        "max": 104,
+        "mean": 104
       },
       "dailyPointsDay1": {
         "n": 200,
@@ -5062,10 +5038,10 @@
         "n": 4,
         "min": 23,
         "p10": 23.6,
-        "p50": 27.5,
-        "p90": 31.4,
+        "p50": 28,
+        "p90": 31.7,
         "max": 32,
-        "mean": 27.5
+        "mean": 27.75
       }
     }
   },
@@ -5464,7 +5440,7 @@
       {
         "item": "mechanical_gear",
         "liveRecipe": "X:gear-v1",
-        "craftIe": 4.111,
+        "craftIe": 4.611,
         "recoveredHighIe": 2.667,
         "overReturnDetected": false,
         "rows": [
@@ -5481,7 +5457,7 @@
               ]
             ],
             "ieRecovered": 2.667,
-            "ieCraft": 4.111,
+            "ieCraft": 4.611,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5490,9 +5466,9 @@
       },
       {
         "item": "metal_pipe",
-        "liveRecipe": "X:pipe-v2",
-        "craftIe": 3.833,
-        "recoveredHighIe": 2.333,
+        "liveRecipe": "X:pipe-v3",
+        "craftIe": 1.917,
+        "recoveredHighIe": 1.5,
         "overReturnDetected": false,
         "rows": [
           {
@@ -5501,14 +5477,10 @@
               [
                 "refined_iron_ingot",
                 1
-              ],
-              [
-                "mechanical_parts",
-                1
               ]
             ],
-            "ieRecovered": 2.333,
-            "ieCraft": 3.833,
+            "ieRecovered": 1.5,
+            "ieCraft": 1.917,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5760,10 +5732,10 @@
                   1
                 ]
               ],
-              "ieRecovered": 6.167,
+              "ieRecovered": 4.25,
               "ieCraft": 3,
               "mintedNonNumeraire": [
-                "coal:+1"
+                "coal:+0.5"
               ],
               "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5903,10 +5875,10 @@
                   1
                 ]
               ],
-              "ieRecovered": 6,
+              "ieRecovered": 3.889,
               "ieCraft": 3,
               "mintedNonNumeraire": [
-                "coal:+1"
+                "coal:+0.5"
               ],
               "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -6056,9 +6028,11 @@
                   1
                 ]
               ],
-              "ieRecovered": 7.111,
+              "ieRecovered": 7.611,
               "ieCraft": 4.667,
-              "mintedNonNumeraire": [],
+              "mintedNonNumeraire": [
+                "coal:+0.5"
+              ],
               "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             }
@@ -6145,12 +6119,9 @@
     ],
     "claimMinDistFromPoiProbe": {
       "claimMinDistFromPoi": 10,
-      "claimInsidePoiAllowed": true,
-      "minPoiClaimDistFound": 9,
-      "testPoiCoords": [
-        100,
-        111
-      ]
+      "claimInsidePoiAllowed": false,
+      "minPoiClaimDistFound": null,
+      "testPoiCoords": null
     },
     "oilPumpOffscreenSkipped": true,
     "creatorCoreRefinedBudget": {
@@ -6176,126 +6147,6 @@
         "repairCost25PctHp": 1,
         "reclaimRefund": 0,
         "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "research",
-        "material": "iron_ingot",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "barrel",
-        "material": "rope",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "feed_trough",
-        "material": "rope",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "power_cable",
-        "material": "iron_ingot",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "power_cable",
-        "material": "fiber",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (fiber: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "power_switch",
-        "material": "iron_ingot",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "power_switch",
-        "material": "fasteners",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (fasteners: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "power_switch",
-        "material": "spares",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (spares: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "pressure_switch",
-        "material": "iron_ingot",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "pressure_switch",
-        "material": "mechanical_parts",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (mechanical_parts: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "pressure_switch",
-        "material": "fasteners",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (fasteners: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "ir_sensor",
-        "material": "mechanical_gear",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (mechanical_gear: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "ir_sensor",
-        "material": "iron_ingot",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "bear_trap",
-        "material": "mechanical_gear",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (mechanical_gear: 1/1), whereas reclaim refunds 0."
-      },
-      {
-        "struct": "torch_post",
-        "material": "torch",
-        "buildCost": 1,
-        "repairCost25PctHp": 1,
-        "reclaimRefund": 0,
-        "note": "Repairing 25% HP costs 100% of build cost (torch: 1/1), whereas reclaim refunds 0."
       }
     ],
     "findings": [
@@ -6459,12 +6310,12 @@
           "web/src/game/engine.ts:2383",
           "web/src/game/catalog.ts:permitsDirectedResearch"
         ],
-        "evidence": "Random research filters pool = unknown.filter(k => !k.startsWith('core_')). Since directed research blocks Tier 3, unlocking Tier-3 core_dragon (or any unfound core on Veyra) via research requires burning 104 spares across 26 non-core recipes first.",
+        "evidence": "Random research filters pool = unknown.filter(k => !k.startsWith('core_')). Since directed research blocks Tier 3, unlocking Tier-3 core_dragon (or any unfound core on Veyra) via research requires burning 100 spares across 25 non-core recipes first.",
         "verifiedMetrics": {
-          "totalRecipes": 89,
-          "knownAtStart": 54,
-          "unknownAtStart": 35,
-          "unknownNonCore": 26,
+          "totalRecipes": 112,
+          "knownAtStart": 78,
+          "unknownAtStart": 34,
+          "unknownNonCore": 25,
           "unknownTier3NonCore": [
             "chitin_armor"
           ],
@@ -6479,9 +6330,9 @@
             "core_storm",
             "core_frost"
           ],
-          "sparesNeededBeforeFirstCoreRandom": 104,
-          "totalRandomResearchSparesAll": 140,
-          "minSparesDirectedPlusRandom": 265
+          "sparesNeededBeforeFirstCoreRandom": 100,
+          "totalRandomResearchSparesAll": 136,
+          "minSparesDirectedPlusRandom": 256
         }
       },
       {
@@ -6511,15 +6362,12 @@
           "web/src/game/balance.v1.json:169",
           "web/src/game/engine.ts:1428-1458"
         ],
-        "evidence": "Live buildReason() probe placed floor_wood + Territory Cabinet at dist=9 tiles (< claimMinDistFromPoi=10) from Crossroads Trading Post (100,111) with zero rejection.",
+        "evidence": "Live buildReason() probe placed floor_wood + Territory Cabinet at dist=N/A tiles (< claimMinDistFromPoi=10) from Crossroads Trading Post (N/A) with zero rejection.",
         "verifiedMetrics": {
           "claimMinDistFromPoi": 10,
-          "claimInsidePoiAllowed": true,
-          "minPoiClaimDistFound": 9,
-          "testPoiCoords": [
-            100,
-            111
-          ]
+          "claimInsidePoiAllowed": false,
+          "minPoiClaimDistFound": null,
+          "testPoiCoords": null
         }
       },
       {
@@ -6611,9 +6459,9 @@
           "web/src/game/engine.ts:624",
           "web/src/game/balance.v1.json:economy"
         ],
-        "evidence": "structureRepairCost uses max(1, ceil(q * 0.25)) per material. On qty=1 costs (e.g. door_wood rope, wall_stone wood, chest_large iron/wood edges), repairing 25% HP charges 100% of that ingredient (17 structure-ingredient pairs affected).",
+        "evidence": "structureRepairCost uses max(1, ceil(q * 0.25)) per material. On qty=1 costs (e.g. door_wood rope, wall_stone wood, chest_large iron/wood edges), repairing 25% HP charges 100% of that ingredient (2 structure-ingredient pairs affected).",
         "verifiedMetrics": {
-          "affectedPairsCount": 17,
+          "affectedPairsCount": 2,
           "samplePairs": [
             {
               "struct": "wall_stone",
@@ -6630,54 +6478,6 @@
               "repairCost25PctHp": 1,
               "reclaimRefund": 0,
               "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
-            },
-            {
-              "struct": "research",
-              "material": "iron_ingot",
-              "buildCost": 1,
-              "repairCost25PctHp": 1,
-              "reclaimRefund": 0,
-              "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
-            },
-            {
-              "struct": "barrel",
-              "material": "rope",
-              "buildCost": 1,
-              "repairCost25PctHp": 1,
-              "reclaimRefund": 0,
-              "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
-            },
-            {
-              "struct": "feed_trough",
-              "material": "rope",
-              "buildCost": 1,
-              "repairCost25PctHp": 1,
-              "reclaimRefund": 0,
-              "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
-            },
-            {
-              "struct": "power_cable",
-              "material": "iron_ingot",
-              "buildCost": 1,
-              "repairCost25PctHp": 1,
-              "reclaimRefund": 0,
-              "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
-            },
-            {
-              "struct": "power_cable",
-              "material": "fiber",
-              "buildCost": 1,
-              "repairCost25PctHp": 1,
-              "reclaimRefund": 0,
-              "note": "Repairing 25% HP costs 100% of build cost (fiber: 1/1), whereas reclaim refunds 0."
-            },
-            {
-              "struct": "power_switch",
-              "material": "iron_ingot",
-              "buildCost": 1,
-              "repairCost25PctHp": 1,
-              "reclaimRefund": 0,
-              "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
             }
           ]
         }

@@ -311,21 +311,21 @@
       "before": {
         "sparesToFirstCoreDist": {
           "n": 400,
-          "min": 108,
-          "p10": 108,
-          "p50": 108,
-          "p90": 108,
-          "max": 108,
-          "mean": 108
+          "min": 104,
+          "p10": 104,
+          "p50": 104,
+          "p90": 104,
+          "max": 104,
+          "mean": 104
         },
         "totalSparesAllRecipesDist": {
           "n": 400,
-          "min": 140,
-          "p10": 140,
-          "p50": 140,
-          "p90": 140,
-          "max": 140,
-          "mean": 140
+          "min": 136,
+          "p10": 136,
+          "p50": 136,
+          "p90": 136,
+          "max": 136,
+          "mean": 136
         }
       },
       "after": {
@@ -334,18 +334,18 @@
           "min": 20,
           "p10": 20,
           "p50": 32,
-          "p90": 60,
+          "p90": 56,
           "max": 84,
-          "mean": 35.89
+          "mean": 35.15
         },
         "totalSparesAllRecipesDist": {
           "n": 400,
-          "min": 140,
-          "p10": 140,
-          "p50": 140,
-          "p90": 140,
-          "max": 140,
-          "mean": 140
+          "min": 136,
+          "p10": 136,
+          "p50": 136,
+          "p90": 136,
+          "max": 136,
+          "mean": 136
         }
       }
     }
@@ -445,7 +445,7 @@
   },
   "exploitAndConservationChecks": {
     "poiDistanceGuard": {
-      "beforeAllowedAtDist9": true,
+      "beforeAllowedAtDist9": false,
       "afterAllowedAtDist9": false,
       "enforcedMinDist": 10
     },
@@ -454,7 +454,7 @@
       "afterMissingDefenseKeys": []
     },
     "repairParity": {
-      "beforeQty1OverchargePairs": 17,
+      "beforeQty1OverchargePairs": 2,
       "afterQty1OverchargePairs": 0
     },
     "recyclerAntiArbitrage": {
@@ -551,7 +551,7 @@
     {
       "findingId": "M2-F13",
       "severity": "LOW",
-      "beforeMetric": "17 structure-material pairs bill 100% on 25% HP repair",
+      "beforeMetric": "2 structure-material pairs bill 100% on 25% HP repair",
       "afterMetric": "A3 REJECTED: free qty=1 <50% repair creates infinite repair exploit",
       "status": "CANON_REJECTED"
     },

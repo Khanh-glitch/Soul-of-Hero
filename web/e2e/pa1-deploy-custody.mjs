@@ -38,7 +38,9 @@ try{
   for(const name of ['Foundation','Wall','Roof']){
     await bar.getByRole('button',{name:new RegExp('^'+name+'\\s')}).click();
     const chips=bar.locator('.buildbar__row .bslot:not(.mode)');
-    const labels=(await chips.allTextContents()).map(t=>t.trim().replace(/\s+/g,' '));
+    // A geometry slot carries only a hotkey + an <img alt=name>, so read the alt too: filtering the
+    // text alone would match nothing and make the "no devices here" assertion vacuous.
+    const labels=await chips.evaluateAll(els=>els.map(e=>((e.querySelector('img')?.getAttribute('alt')||'')+' '+(e.textContent||'')).replace(/\s+/g,' ').trim()));
     const devices=labels.filter(t=>DEVICE_WORDS.test(t));
     assert.equal(devices.length,0,'A device appeared in the geometry palette: '+JSON.stringify(devices));
     rec.geometryPages[name]={count:labels.length,labels:labels.slice(0,4)};
