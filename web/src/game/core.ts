@@ -109,6 +109,9 @@ export interface Entity {
   id: string; kind: 'drop' | 'struct' | 'bag' | 'cart' | 'vehicle' | 'loot' | 'cash' | 'vendor' | 'evac' | 'door' | 'gen' | 'recycler' | 'airdrop';
   x: number; y: number; // px for drops/carts, tile*16+8 for structures
   tx?: number; ty?: number; type?: string; hp?: number; maxHp?: number;
+  /** A door installed into a paid wooden frame retains frame material ancestry.
+   * Refund uses both paid contributions; not an inventory door-frame item. */
+  framePaid?: true;
   c?: string; // container id
   open?: boolean; locked?: string; poi?: string; label?: string; stock?: Record<string, number>;
   station?: { queue: Job[]; burn: number; fuelC: string; outC: string; level?: 1 | 2 | 3; upgrade?: 'kiln_lining'; stateCode?: string };
