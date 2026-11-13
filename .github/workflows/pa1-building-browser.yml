@@ -1,0 +1,62 @@
+name: PA1 Building — Real Chromium Palette Evidence
+on:
+  push:
+    branches: [feature/pa1-building-ontology-20261113]
+    paths:
+      - 'web/src/game/art.ts'
+      - 'web/src/game/catalog.ts'
+      - 'web/src/ui/BuildBar.tsx'
+      - 'web/src/ui/Game.tsx'
+      - 'web/src/index.css'
+      - 'web/e2e/pa1-building-palette.mjs'
+      - '.github/workflows/pa1-building-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-build-palette:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install exact dependencies
+        working-directory: web
+        run: npm ci
+      - name: Install Chromium
+        working-directory: web
+        run: npx --no-install playwright install --with-deps chromium
+      - name: Build pinned Web
+        working-directory: web
+        run: npx --no-install vite build --config vite.http.config.ts
+      - name: Serve pinned build
+        working-directory: web
+        run: |
+          npx --no-install vite preview --config vite.http.config.ts --host 127.0.0.1 --port 4173 --strictPort > /tmp/pa1-preview.log 2>&1 &
+          for attempt in $(seq 1 90); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/pa1-preview.log
+          exit 1
+      - name: Real menu, Build palette clicks and screenshots
+        working-directory: web
+        env:
+          BUILD_SHA: ${{ github.sha }}
+          GAME_URL: http://127.0.0.1:4173/
+        run: node e2e/pa1-building-palette.mjs
+      - name: Upload render evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pa1-build-palette-${{ github.sha }}-${{ github.run_attempt }}
+          path: web/evidence/pa1-building-palette/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Print failure logs
+        if: failure()
+        run: cat /tmp/pa1-preview.log || true
