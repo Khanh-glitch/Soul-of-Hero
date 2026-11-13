@@ -3,7 +3,7 @@ import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
 import type { RunState } from '../game/core';
 import { anyAuthorizedOilSource, owned, clearInteraction } from '../game/engine';
-import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
+import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, PA1_BASE_GEOMETRY, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
 import type { OfflineReturnV1, StoredReturnEntry } from '../game/return-report';
@@ -416,14 +416,14 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
 }
 
 export const BUILD_GROUPS: Record<string,string[]> = {
-  Shell:['floor_wood','wall_wood','door_wood','roof_thatch'],
+  Shell:[...PA1_BASE_GEOMETRY],
   Home:['claim','bed_straw','chest_small','chest_large','escrow'],
   Work:['campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','feed_trough','farm_controller'],
   Defense:['base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','door_powered','arrow_turret','spikes','barricade','torch_post'],
 };
 /** Oil Pump is locked until the run holds an authorized source with stock; the reason is shown on the entry. */
 export const buildLocked = (r: RunState, k: string) => k === 'oil_pump' && !anyAuthorizedOilSource(r);
-const BUILD_TAB_ICON: Record<string, string> = { Shell: 'st:wall_wood', Home: 'st:bed_straw', Work: 'st:workbench', Defense: 'st:arrow_turret' };
+const BUILD_TAB_ICON: Record<string, string> = { Shell: 'st:wall_window_wood', Home: 'st:bed_straw', Work: 'st:workbench', Defense: 'st:arrow_turret' };
 /** PA1: raw inputs are consumed only by crafting a packed station/device.
  * Building a deployable then requires exactly one real packed item UID. */
 const costToPlace = (k:string):[string,number][] => {
