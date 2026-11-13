@@ -628,4 +628,66 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     }
     resetWindowToGround(loadedWw);
   });
+
+  it('walks the ACTUAL Greywater underground loot route and takes a physical Fuel Can from the authored cache',()=>{
+    setActiveLayout('veyra05-world');
+    const gs=newGame();
+    expect(startRun(gs,'female',NOW,1,901).ok).toBe(true);
+    const r=gs.run!;
+    r.creatures=[]; // isolated world-economy acceptance, not survival PvE acceptance
+    expect(r.qaUsed).toBe(false);
+    const nowRef={t:NOW+1000};
+    const ww=getWindowWorld(r.layoutId!);
+    const [ox,oy]=windowOrigin(r);
+    // The source is AUTHORED in po_greywater, not injected into the game.
+    const globalCache=[1646,1174] as const;
+    const candidate=ww.floors.ground.stairs.filter(st=>st.to===-1 &&
+      Math.hypot(st.x-globalCache[0],st.y-globalCache[1])<95)
+      .sort((a,b)=>Math.hypot(a.x-globalCache[0],a.y-globalCache[1])-
+        Math.hypot(b.x-globalCache[0],b.y-globalCache[1]))[0];
+    expect(candidate, 'no authored Greywater stair to underground fuel cache').toBeTruthy();
+    const stairLx=candidate.x-ox, stairLy=candidate.y-oy;
+    expect(walkPathTo(gs,new Set([stairLy*WW+stairLx]),nowRef),
+      'cannot physically reach Greywater staircase').not.toBeNull();
+    expect(stairAt(ww.floors,r,stairLx,stairLy)).not.toBeNull();
+    expect(applyFloor(gs,ww,ww.floors,-1,
+      [candidate.tx-ox,candidate.ty-oy],markDirty),'Greywater Floor -1 failed').toBe(true);
+    expect(activeFloor(r)).toBe(-1);
+    const src=Object.values(r.entities).find(e=>e.kind==='loot'&&
+      e.tx===globalCache[0]-ox&&e.ty===globalCache[1]-oy);
+    expect(src,'the authored po_greywater underground loot source is missing').toBeTruthy();
+    expect(C(r,src!.c!).slots.some(st=>st?.key==='fuel_can'&&st.qty>=1),
+      'authored cache has no fuel can').toBe(true);
+    expect(walkPathTo(gs,adjacentWalkableGoals(r,src!.tx!,src!.ty!),nowRef),
+      'the fuel cache is physically inaccessible').not.toBeNull();
+    const fuelSlot=C(r,src!.c!).slots.findIndex(st=>st?.key==='fuel_can');
+    const uid=C(r,src!.c!).slots[fuelSlot]!.uid;
+    const mv=dispatch(gs,{id:'pa1-greywater-fuel-source-'+nowRef.t,
+      type:'move',from:src!.c!,fs:fuelSlot,to:'inv'},nowRef.t);
+    expect(mv.ok,'source transfer: '+(mv as any).reason).toBe(true);
+    expect(countItem(r,'inv','fuel_can')).toBe(1);
+    expect(C(r,'inv').slots.some(st=>st?.uid===uid)).toBe(true);
+    const snap=serializeSnapshot(gs);
+    const reload=selectSnapshots([snap,null]).gs!;
+    expect(validate(JSON.parse(JSON.parse(snap).payload))).toBeTruthy();
+    expect(reload.run!.qaUsed).toBe(false);
+    expect(activeFloor(reload.run!)).toBe(-1);
+    expect(countItem(reload.run!,'inv','fuel_can')).toBe(1);
+    expect(C(reload.run!,'inv').slots.some(st=>st?.uid===uid)).toBe(true);
+    if(process.env.SOH_PA1_OIL_EVIDENCE_DIR) {
+      const dir=resolve(process.cwd(),process.env.SOH_PA1_OIL_EVIDENCE_DIR);
+      mkdirSync(dir,{recursive:true});
+      writeFileSync(resolve(dir,'PA1_GREYWATER_PHYSICAL_FUEL_CACHE.json'),
+        JSON.stringify({schema:'pa1.greywater.physical-fuel.v1',sha:process.env.GITHUB_SHA??'local',
+          sourcePoi:'po_greywater',floor:-1,globalCache,fuelUid:uid,
+          obtained:1,sourceContainerId:src!.id,qaUsed:false,
+          fixtureNoAmbientCreatures:true,
+          stairActual:true,pathActualBfs:true,
+          separateProcessRestart:false,motorbikeRefueled:false,
+          limitations:['Physical BFS tile-step replay, not real player input',
+            'May change under future Map authored geometry or loot',
+            'One cache success is not a complete motorbike build/drive']},null,2)+'\n');
+    }
+    resetWindowToGround(ww);
+  });
 });
