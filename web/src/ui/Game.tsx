@@ -48,7 +48,7 @@ import { triggerQaEvent, qaCycleBikeState, type QaPresetId } from '../game/qa-sa
 import { ElderBossHUD, RagnarokStrip, CoreReserveStrip, AirdropCard, DeathRecoveryOverlay, QaSandboxDrawer } from './EventExperiences';
 import { ExperienceStage, FieldPickupLayer, EventFeed, type FieldPickup, type FeedLine } from './ExperienceStage';
 import { SurvivorScreen } from './SurvivorScreen';
-import { BuildBar, BUILD_KIT, type BuildTool } from './BuildBar';
+import { BuildBar, BUILD_KIT, BUILD_PAGES, type BuildTool } from './BuildBar';
 import { clearSlotInteraction, getHoverSlot, getKeyboardPick, DragGhost } from './dragSlots';
 import { loadJourney, flushJourney, ingestJourney, resolveTrack, rerollDaily, recordWorldMoment, markChronicleSeen, lessonState, type JourneyStore, type JourneyEvent, type TrackRef, type QuickJumpTarget } from '../game/journey';
 import { directCues, standingIssues, ragnarokCinematic, eldersWakeCinematic, type Flare, type Cinematic, type Issue } from '../game/attention';
@@ -97,6 +97,7 @@ export default function Game({
   const [feed, setFeed] = useState<FeedLine[]>([]);
   const [buildMode, setBuildMode] = useState(false);
   const [buildTool, setBuildTool] = useState<BuildTool>('wall_wood');
+  const buildToolRef=useRef<BuildTool>(buildTool); buildToolRef.current=buildTool;
   const buildModeRef = useRef(buildMode); buildModeRef.current = buildMode;
   const lastPieceRef = useRef<BuildTool>('wall_wood');
   const feedbackSeen = useRef<Map<string, number>>(new Map());
@@ -409,7 +410,13 @@ export default function Game({
         default: {
           const dm = e.code.match(/^Digit(\d)$/); if (!dm) break;
           const n = +dm[1];
-          if (buildModeRef.current) { const i = n === 0 ? 9 : n - 1; if (BUILD_KIT[i]) applyTool(BUILD_KIT[i]); break; }
+          if (buildModeRef.current) {
+            const i=n===0?9:n-1;
+            const page=Object.values(BUILD_PAGES).find(parts=>
+              (parts as readonly string[]).includes(buildToolRef.current)) ?? BUILD_PAGES.Foundation;
+            if(page[i])applyTool(page[i] as BuildTool);
+            break;
+          }
           if (n < 1 || n > 8) break;
           // Hover (or keyboard-focus) a slot in any open container and press 1-8: move/swap onto that quickbar slot.
           const focusedEl = !getHoverSlot() && document.activeElement instanceof HTMLElement ? document.activeElement.closest('[data-dslot]') as HTMLElement | null : null;
@@ -827,7 +834,7 @@ export default function Game({
       </div>}
 
       {/* build helper */}
-      {!buildMode && (buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 38, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {STRUCTS[buildType].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||(buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:`Placement allowed · unprotected, decays in ~${BAL.territory.unprotectedCollapseHours}h`)} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
+      {!buildMode && (buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 38, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {(STRUCTS[buildType].item ? [[STRUCTS[buildType].item!,1] as [string,number]] : STRUCTS[buildType].cost).map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||(buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:`Placement allowed · unprotected, decays in ~${BAL.territory.unprotectedCollapseHours}h`)} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
 
       {/* cargo + bottom-left event feed */}
       {(bike || cart) && !fullScreen && <div className="hud" style={{ left: 4, bottom: 32 }} onMouseDown={e => e.stopPropagation()}><RigStatus r={r} /></div>}
