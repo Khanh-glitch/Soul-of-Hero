@@ -885,3 +885,29 @@ Six representative **eligible safe-3×3, but globally rejected** Westmouth-centr
 **LI comparison custody:** Restored LI Atlas original archive SHA-256 `8b4fdedaa9397baaa1bcb8ba58d5c95ca2e7cbdd679963c6d4177fc9ab861e98`; cross-era LI research graph has **132 ID labels** (not a full single-mode LI database, with duplicate aliases/loot containers), mapped one by one to the pinned SOH Web runtime source export `11a3306519103c7b309ae54819a100f95b8e8f60`. Classifications: 17 same-ID items; 14 functional counterparts; 24 partial counterparts; 50 intentionally replaced-system weapon/ammo/etc; 17 unmatched names; 9 alias/ambiguous rows; 1 loot-container row not proven inventory. These labels do **not** imply all missing items should be introduced. LI `Parts (零件)` is NOT equal 1:1 to SOH `Spares` or `Mechanical Parts`; LI `Electronic Parts` is also NOT identical to either. 22 extra officially documented LI facility names (cabinets/chests/furnaces/Workbench/etc.) were examined separately because the 132-row item index omitted them; this is **not proof each is a craftable inventory item**. Reference: https://hero.yingxiong.com/info/2023/0726/13493.html and https://news.4399.com/zhytgz/xinde/m/895633.html .
 
 **PA1 implementation gates:** architecture piece upgrade authority + HP/ownership/streaming persistence; crafted fixture inventory UID + source custody + unique transaction; no free duplication/silent double spending; preserve storage queues and placed contents; old saves migrate with original material tier intact; station/fixture recipes require verified unlock policies; UI keeps Building geometry separate from Crafting deployables. This entry is a **design decision only on audit branch; no production mutation, no merge, no economy balance change.**
+
+
+---
+
+## 25. PA1 Building shape coverage — expanded from 4 to 15 wooden forms (2026-11-13)
+
+**Code candidate:** branch feature/pa1-building-ontology-20261113. **NOT merged, NOT deployed, NOT Last Island full-building parity.** The earlier four-piece BUILD_KIT was an incomplete UI subset and is NOT the creator's intended maximum.
+
+**LI reference scope, not a SOH implementation claim:** the [2024 official shape inventory](https://hero.yingxiong.com/info/2024/0131/13737.html) lists foundations, triangle floors/ceilings, doors, door frames, window walls, half walls, triangle walls, roof corners, stairs L/U, railings, etc. The [2023 official curved-shapes release](https://hero.yingxiong.com/info/2023/0104/13178.html) also covers curved foundations/walls/windows/doors/ceilings/roof/balconies. Do NOT treat the original 2D sprites in SOH as 3D geometric parity.
+
+**Wooden non-inventory geometry actually added to Building (15 total, 11 new):**
+
+| Page | Runtime IDs | Count |
+| --- | --- | ---: |
+| Foundation | floor_wood, floor_triangle_wood, ceiling_wood, ceiling_triangle_wood | 4 |
+| Wall | wall_wood, wall_window_wood, wall_doorframe_wood, door_wood, wall_half_wood, wall_pillar_wood, wall_triangle_wood, fence_wood | 8 |
+| Roof | roof_thatch, roof_slope_thatch, roof_corner_thatch | 3 |
+| TOTAL | All base architecture, NOT inventory items | 15 |
+
+**Real execution:** each selected piece consumes physical raw resources once under a normal Build intent; has distinct source-made pixel art, placed entity, HP, render/ghost and save/reclaim support. BuildBar groups shapes into Foundation/Wall/Roof with per-page 1–8 hotkeys; BuildPanel Shell shows all 15. A door frame is traversable and does NOT seal shelter. Window wall seals shelter, blocks passage and lets non-physical sight rays through. Half walls/pillars/fences block passage but do not seal shelter. A door built on an existing paid wooden frame installs into the SAME entity ID, spends only the door's materials and preserves provenance for reclaim and save validation. These capabilities are testable, not solely decorative buttons.
+
+**Explicitly NOT completed:** triangle/corner forms are still one whole 2D tile and do not have fractional-shape collision/support/joins. Sloped roofs are not climbable ramps; ceilings are cover, not walkable upper storeys. Structural strength/support, rotations, L/U/straight stair gameplay, half-tile joins, tall/double doors, stairs between player-built floors, balconies and curved pieces are not present. The fifteen wooden shapes also do not have an approved shape-preserving wood→stone→iron→steel matrix: existing wood floor/wall/door/roof legacy upgrades remain only provisional mechanics; notably the existing wood door→iron door path skips stone, and brick is NOT steel. No steel inventory identity/cost/drop rate was invented.
+
+**Next hard gates:** authoritative geometry/rotation/upper floor and stair traversals; owner-approved steel and tier upgrade costs; no duplication/loss across damage, building UID, world sliding, reclaim and save; real browser screenshots, exploratory player construction and rollback/migration. Continue as a bounded PA1 development PR; NEVER mark complete because tests alone pass.
+
+**Deployable boundary remains §24:** 24 packable device items are not architecture shapes. Escrow already has a physical item. Powered-door electrical module design remains separate and unresolved. No additional industrial sink or loot policy introduced.
