@@ -28,6 +28,8 @@ jobs:
           npm run typecheck:tests
       - name: Physical Veyra wreck to recycler to factory to floor -1, paid PA1 devices
         working-directory: web
+        env:
+          SOH_PA1_OIL_EVIDENCE_DIR: evidence/pa1-veyra-oil
         run: npx --no-install vitest run --fileParallelism=false --testTimeout=1800000 tests/wp3-veyra-recycler-integration.test.ts
       - name: Oil/wreck finite-source, refinery, UID, vendor, motorbike regressions
         working-directory: web
