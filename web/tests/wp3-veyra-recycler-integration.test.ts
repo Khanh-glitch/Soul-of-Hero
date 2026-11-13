@@ -598,6 +598,34 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
     expect(activeFloor(reloaded.run!)).toBe(0);
     expect(reloaded.run!.entities[gen.id]?.type).toBe('base_generator');
 
+    // Durable provenance evidence, not a screenshot or a simulated yield.
+    // This does not claim the full 14-day player route (mobs isolated, tile BFS).
+    if(process.env.SOH_PA1_OIL_EVIDENCE_DIR){
+      const dst=resolve(process.cwd(),process.env.SOH_PA1_OIL_EVIDENCE_DIR);
+      mkdirSync(dst,{recursive:true});
+      const proof={
+        schema:'pa1.veyra.authentic-wreck-oil.v1',
+        engine:'physical-source-intents + finite wreck stock + pickup + Veyra-window route + recycler + PA1 device craft/placement + save/Floor-1/reload',
+        branchSha:process.env.GITHUB_SHA??'local',
+        seed:901,runId:r.id,
+        rQaUsed:r.qaUsed,fixtureCreaturesDisabled:true,
+        fixtureMaterialInjection:false,
+        playerMovement:'BFS collision-constrained stepping (NOT realtime keyboard input)',
+        wreckOilCollected:oilCount,
+        wreckOilAfterColdReload:countItem(reloaded.run!,'inv','salvaged_oil'),
+        oilReceiptExamples:r.receipts.filter(x=>x.kind==='harvest.oil').slice(0,12),
+        recoveredDamagedDrives:driveCount,
+        legalSourceReceipts:driveStacks.map(x=>x.uid),
+        recyclerPoi:VEYRA_RECYCLER_SITE.poi,
+        frameCraftedUid:C(reloaded.run!,'inv').slots.find(x=>x?.key==='vehicle_frame')?.uid??null,
+        floorMinus1Reached:true,floorZeroReturn:true,
+        finishedFullMotorbikeRoute:false,
+        oilRefineryWithoutFixture:false,
+        separateProcessRestart:false,
+        limitations:['Creature ambush disabled','No actual full time-to-travel or survival budget','No complete bike assembly/refuel/drive yet','No full oil refinery source→fuel path yet']
+      };
+      writeFileSync(resolve(dst,'PA1_VEYRA_WRECK_OIL_CUSTODY_PROOF.json'),JSON.stringify(proof,null,2)+'\n');
+    }
     resetWindowToGround(loadedWw);
   });
 });
