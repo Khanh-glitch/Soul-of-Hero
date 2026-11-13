@@ -797,7 +797,9 @@ export function roofAt(r: RunState, x: number, y: number) {
 function roomWall(r: RunState, x: number, y: number) {
   if (x < 0 || y < 0 || x >= WW || y >= WH) return false;
   const t = effTile(r, x, y); if (t === T.PWALL || t === T.CLIFF) { const door=entsAt(r,x,y).find(e=>e.kind==='door'&&e.open);if(t!==T.PWALL||!door||r.terrain[y*WW+x]||!getWorld().statics.some(s=>s.kind==='door'&&s.tx===x&&s.ty===y))return true; }
-  return entsAt(r, x, y).some(e => e.kind === 'struct' && STRUCTS[e.type!]?.layer === 'wall' && !(e.type!.startsWith('door') && e.open) || e.kind === 'door' && !e.open);
+  return entsAt(r,x,y).some(e => e.kind === 'struct' &&
+    STRUCTS[e.type!]?.layer==='wall' && STRUCTS[e.type!]?.sealsRoom!==false &&
+    !(e.type!.startsWith('door')&&e.open) || e.kind==='door'&&!e.open);
 }
 let roomCache: { run: RunState; start: number; cells: Set<number>; enclosed: boolean } | null = null;
 /** Roofed connected room, bounded by world cells rather than an arbitrary size limit.
@@ -1935,7 +1937,16 @@ export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: {
   const clear = (cx: number, cy: number) => {
     if (cx === sx && cy === sy || excludeEnd && cx === ex && cy === ey) return true;
     if (cx < 0 || cy < 0 || cx >= WW || cy >= WH) return false;
-    if (wallsOnly) return !roomWall(r, cx, cy) && effTile(r, cx, cy) !== T.LAVA;
+    if (wallsOnly) {
+      // Windows, railings and half walls are visible through in the 2D ray
+      // layer; they still BLOCK physical movement and all collision rays.
+      const transparent=entsAt(r,cx,cy).some(z=>z.kind==='struct' &&
+        STRUCTS[z.type!]?.layer==='wall' &&
+        STRUCTS[z.type!]?.visionTransparent===true);
+      const raw=effTile(r,cx,cy);
+      return (transparent || !roomWall(r,cx,cy)) && raw!==T.LAVA &&
+        raw!==T.PWALL && raw!==T.CLIFF;
+    }
     const b = grid[cy * WW + cx]; return b !== 1 && b !== 3 && b !== 5 && (!blockTrees || b !== 2);
   };
   while (x !== ex || y !== ey) {
