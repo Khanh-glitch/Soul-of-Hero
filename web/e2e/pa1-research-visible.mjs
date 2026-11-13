@@ -12,7 +12,7 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const out='evidence/pa1-research-visible';
 await mkdir(out,{recursive:true});
-const rec={sha:process.env.BUILD_SHA||'unknown',status:'RUNNING',screenshots:[],attempts:0,prompt:'',research:{open:false},errors:[]};
+const rec={sha:process.env.BUILD_SHA||'unknown',status:'RUNNING',screenshots:[],attempts:0,prompt:'',inputAlive:null,research:{open:false},errors:[]};
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 const context=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1});
 const page=await context.newPage();
@@ -38,17 +38,72 @@ try{
   await page.getByRole('button',{name:'Launch QA Sandbox'}).click();
   await page.waitForSelector('canvas',{timeout:45000});
   await page.waitForTimeout(1200);
-  // Movement and E are ignored while ANY panel owns the screen (Game.tsx gates both on `!panelRef`).
-  // A blind second Escape used to be the failure: with nothing open, the first Escape opens the pause
-  // menu and the second only closes it — but with the launch report open, the first closes the report
-  // and the second opens the menu, which then freezes the whole sweep. So close, then close again ONLY
-  // when the menu is provably up.
+  // Headless pages can be treated as backgrounded, which starves requestAnimationFrame — and the sim,
+  // including player movement, only advances inside that loop. Bring the tab forward and hand focus to
+  // the stage the way a click would, or every key tap below is delivered to a page that never ticks.
+  await page.bringToFront();
+  // Movement and E are ignored while ANY panel owns the screen (Game.tsx gates both on `!panelRef`), and
+  // a blind Escape on a clear screen OPENS the pause menu — which then swallows every keystroke, which is
+  // exactly how the first two sweeps of this gate burned 400 and 144 taps on one frozen target. So no
+  // Escape guessing: click the affordance the overlay itself offers, repeatedly, until none is on screen.
   const menuUp=async()=>(await page.getByRole('button',{name:'Resume',exact:true}).count())>0;
-  await page.keyboard.press('Escape');
-  await page.waitForTimeout(320);
+  // Whatever owns the screen at launch — the QA launch report, a return digest, an experience modal or
+  // the pause menu — has a close/Resume affordance. Click it instead of guessing at Escape: one blind
+  // Escape on a clear screen OPENS the pause menu, which then swallows every movement key.
   rec.launchedWithPanel=await menuUp();
-  if(rec.launchedWithPanel){ await page.keyboard.press('Escape'); await page.waitForTimeout(320); }
-  assert.ok(!(await menuUp()),'the pause menu refused to close, so no world input would be read');
+  for(let i=0;i<4;i++){
+    const closer=page.locator('button:has-text("Resume"), button:has-text("Continue"), button:has-text("Dismiss"), button:has-text("Close")').first();
+    if(await closer.count()===0) break;
+    await closer.click({timeout:1500}).catch(()=>{});
+    await page.waitForTimeout(260);
+    rec.launchedWithPanel=true;
+  }
+  // The QA launch opens the Visual QA Lab drawer as well (Game.tsx: `useState(qaOpen, qaMode)`). The
+  // drawer does not gate `panelRef`, but it does cover the left half of the stage, so close it with the
+  // player's own [F9] toggle and record that we did — "which overlay owned the screen" is the difference
+  // between a stuck walk and a run that ignores keys, and this line is what tells the next reader.
+  rec.qaDrawerToggledWithF9=true;
+  await page.keyboard.press('F9');
+  await page.waitForTimeout(250);
+  rec.menuStillUp=await menuUp();
+  assert.ok(!rec.menuStillUp,'the pause menu refused to close, so no world input would be read');
+  // Now that the screen is clear, hand focus to the stage exactly as a player's click would (it also
+  // primes audio). If something still covers the canvas the click is refused, which is not fatal.
+  await page.locator('canvas').first().click({position:{x:640,y:360},timeout:2500}).catch(()=>{});
+  await page.waitForTimeout(400);
+
+  // Liveness probe: the only way to tell "the player is walled in" apart from "the run is not reading
+  // keys" without touching game state is to watch the frame. A held key must change pixels; if the
+  // stage is pixel-identical after 1.5 s of 'w', world input is not reaching the sim and no amount of
+  // sweeping will help. If the QA preset leaves the player busy (its fixture queues real dispatches),
+  // time is what clears it, so wait and try again before blaming the driver.
+  const camPos=async()=>{
+    try{ const v=await page.evaluate(()=>typeof window.__sohView==='function'?window.__sohView():null);
+      if(v&&v.cam&&Number.isFinite(v.cam.x)) return {x:v.cam.x,y:v.cam.y}; }catch{}
+    return null;
+  };
+  async function inputAlive(){
+    const before=await camPos();
+    await page.keyboard.down('w'); await page.waitForTimeout(1300); await page.keyboard.up('w');
+    await page.waitForTimeout(250);
+    const after=await camPos();
+    if(before&&after) return Math.hypot(after.x-before.x,after.y-before.y)>4;   // the camera follows the player, so a real step moves it
+    const clip={x:Math.round(1280/2-90),y:Math.round(720/2-70),width:180,height:140};   // no view hook: fall back to pixels
+    const a=await page.screenshot({clip});
+    await page.keyboard.down('w'); await page.waitForTimeout(1300); await page.keyboard.up('w');
+    await page.waitForTimeout(200);
+    return Buffer.compare(a,await page.screenshot({clip}))!==0;
+  }
+  rec.camAtProbe=await camPos();
+  rec.inputAlive=await inputAlive();
+  rec.camAfterProbe=await camPos();
+  if(!rec.inputAlive){
+    rec.inputRetryWaited=true;
+    await page.waitForTimeout(5000);          // a busy spawn (the preset queues real dispatches) clears with time
+    rec.inputAlive=await inputAlive();
+    rec.camAfterRetry=await camPos();
+  }
+  assert.ok(rec.inputAlive,'the run is not reading world input in this build (a held key changed no pixels, before and after a 5 s wait): the QA sandbox would have to be re-scoped, not the sweep widened');
   await shot('00-qa-industry-spawn');
 
   // The `industry` compound is a dense column — Workbench, Furnace, Refinery and Research Table on one
@@ -78,7 +133,11 @@ try{
     }
     if(opened) break;
     // Belt: if a panel stole the screen mid-sweep (a return report, a toast-driven open), clear it once.
-    if(await menuUp()){ await page.keyboard.press('Escape'); await page.waitForTimeout(250); }
+    if(await menuUp()){
+      const closer=page.getByRole('button',{name:'Resume',exact:true}).first();
+      if(await closer.count()) await closer.click({timeout:1500}).catch(()=>{});
+      await page.waitForTimeout(250);
+    }
     await hold('a',STEP*13);      // back to the left edge of the sweep
     await hold('s',STEP);         // one row down
     await hold('d',STEP);         // step right again, so a blocked corner cannot pin the sweep
