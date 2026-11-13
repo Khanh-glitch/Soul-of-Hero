@@ -86,7 +86,16 @@ describe('B01 B: intermediates have real producers and consumers',()=>{
       // iron_plate's second consumer is the wall/door repair action (not a recipe), tested in C2.
       if(k!=='iron_plate')expect(consumers.length).toBeGreaterThanOrEqual(1);
     }
-    expect(Object.values(RECIPES).filter(rc=>rc.ins.some(([i])=>i==='metal_pipe')).length).toBeGreaterThanOrEqual(2);
+    // PA1 retired the iron_plate pipe sink, so the piped frame is now the ONE craft consumer of a
+    // metal pipe. A bare ">=2" would have hidden that retirement; pin the set instead, so adding or
+    // removing a pipe sink shows up here as a named change rather than as a passing number.
+    const pipeConsumers=Object.entries(RECIPES).filter(([,rc])=>rc.ins.some(([i])=>i==='metal_pipe')).map(([k])=>k).sort();
+    expect(pipeConsumers).toEqual(['vehicle_frame_piped']);
+    expect(RECIPES.iron_plate.ins.some(([i])=>i==='metal_pipe')).toBe(false);
+    // Recovery is a recycler route, not a craft consumer: one pipe -> one refined iron, no MP minted.
+    const pipePlan=recoveryPlan({uid:'b01-pin',key:'metal_pipe',qty:1})!;
+    expect(pipePlan.recipe).toBe('X:pipe-v3');
+    expect(pipePlan.outputs).toEqual([['refined_iron_ingot',1]]);
     expect(Object.values(RECIPES).filter(rc=>rc.ins.some(([i])=>i==='mechanical_gear')).length).toBeGreaterThanOrEqual(2);
     expect(Object.values(RECIPES).filter(rc=>rc.ins.some(([i])=>i==='metal_blade')).length).toBeGreaterThanOrEqual(2);
   });

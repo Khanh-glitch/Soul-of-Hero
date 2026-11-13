@@ -32,6 +32,11 @@ const inv=(r:RunState)=>Object.fromEntries(['pipe' ,'metal_pipe','metal_blade','
 function benchL2(g:GameState){
   const r=g.run!;const c=Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='iron_sword'))!;place(r,c.tx!+1,c.ty!);   // FIXTURE position beside the authored Foundry cache (same anchor as the A1 test)
   addItem(r,'inv','wood',20);addItem(r,'inv','stone',4);addItem(r,'inv','iron_ingot',12);addItem(r,'inv','refined_iron_ingot',6);addItem(r,'inv','mechanical_parts',10);addItem(r,'inv','spares',10);addItem(r,'inv','fasteners',4);
+  // PA1 §24 device custody: a Workbench is placed by SPENDING a packed device, so the fixture pays
+  // the material list at the bench first. Before this line existed, the scan below could never find a
+  // legal tile (every tile answered "Need an intact packed device."), which is why this test failed at
+  // 023ec62 for a reason unrelated to the recipe cutover.
+  expect(dispatch(g,{id:'a2-pack-'+(++n),type:'craft',recipe:'deploy_workbench'},START+19).ok).toBe(true);
   const sp=legalTileNear(g,Math.floor(r.player.x/TILE),Math.floor(r.player.y/TILE));
   expect(dispatch(g,{id:'a2-b-'+(++n),type:'build',struct:'workbench',tx:sp[0],ty:sp[1]},START+20).ok).toBe(true);
   const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;

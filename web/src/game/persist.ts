@@ -9,7 +9,7 @@ import { validIntel } from './expedition-intel';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
-import { ALWAYS_KNOWN_RECIPES, starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
+import { starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
 import { RETIRED_RECIPES, hasLegacyDefinition } from './recipe-migration';
 import { newGame, renewableLoot, markDirty } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';

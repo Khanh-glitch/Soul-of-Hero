@@ -5,8 +5,19 @@ import legacyPair from './fixtures/3b37ae9-legacy-pair.json';
 
 // Loading a pre-policy save pins its compatible fallback without changing the raw fixture.
 // B01-D: loading a pre-B01 save migrates the always-known recipe keys into run.knowledge.recipes (same visible behaviour as the old static path).
-import { ALWAYS_KNOWN_RECIPES } from '../src/game/catalog';
-const migratedRecipes = [...legacyPair.later.run.knowledge.recipes, ...ALWAYS_KNOWN_RECIPES.filter(k => !legacyPair.later.run.knowledge.recipes.includes(k))];
+import { ALWAYS_KNOWN_RECIPES, starterKnowledge } from '../src/game/catalog';
+import { RETIRED_RECIPES } from '../src/game/recipe-migration';
+// PA1 WP3: the load-path grant is starterKnowledge(), which is the always-known list plus every
+// packable-device formula (all base:true today, so the visible behaviour is unchanged) and it is
+// routed through the family gate so an approved `enforce` would be honoured on legacy loads too.
+const legacyKnew: string[] = legacyPair.later.run.knowledge.recipes;
+const migratedRecipes = [...legacyKnew, ...starterKnowledge().filter(k => !legacyKnew.includes(k))]
+  .filter(k => !RETIRED_RECIPES.includes(k));
+// The migration contract this fixture exists to protect: a legacy save never loses a formula it
+// already knew, and the only id the load path may take away is one the paper retired.
+expect(migratedRecipes.filter(k => !legacyKnew.includes(k)).every(k => starterKnowledge().includes(k))).toBe(true);
+expect(legacyKnew.filter(k => !migratedRecipes.includes(k)).every(k => RETIRED_RECIPES.includes(k))).toBe(true);
+expect(migratedRecipes.length).toBeGreaterThanOrEqual(ALWAYS_KNOWN_RECIPES.length);
 const laterWithPolicy = { ...legacyPair.later, run: { ...legacyPair.later.run, wreckEconomy: 'direct-v1', knowledge: { ...legacyPair.later.run.knowledge, recipes: migratedRecipes } } };
 
 function fakeStorage() {
