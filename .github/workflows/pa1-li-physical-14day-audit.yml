@@ -25,7 +25,7 @@ jobs:
             'web/reports/economic-network/*.json',
             'web/reports/pa1-li/*.md',
             'web/evidence/mec01-post-pr47/LI_MOTORBIKE_RECONCILIATION_R4.md',
-            'web/src/game/catalog.ts','web/src/game/core.ts','web/src/game/world-economy.ts',
+            'web/src/game/catalog.ts','web/src/game/core.ts','web/src/game/balance.v1.json','web/src/game/world-economy.ts',
             'web/src/game/economic-graph.ts','web/src/game/economic-audits-m5.ts',
             'web/src/game/economic-sim-audit.ts','web/src/game/economy-adapter.ts',
             'web/src/game/engine.ts','web/src/game/world.ts',
