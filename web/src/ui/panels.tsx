@@ -339,7 +339,9 @@ function RecipeTree({ recipe, known, ancestors = [] }: { recipe: string; known: 
 }
 
 const CRAFT_GROUPS: { id: string; station: string | null; icon: string }[] = [
-  { id: 'Hand', station: null, icon: 'fists' }, { id: 'Campfire', station: 'campfire', icon: 'st:campfire' },
+  { id: 'Hand', station: null, icon: 'fists' },
+  { id: 'Deploy', station: null, icon: 'st:chest_small' },
+  { id: 'Campfire', station: 'campfire', icon: 'st:campfire' },
   { id: 'Furnace', station: 'furnace', icon: 'st:furnace' }, { id: 'Refinery', station: 'refinery', icon: 'st:refinery' },
   { id: 'Workbench', station: 'workbench', icon: 'st:workbench' },
 ];
@@ -347,14 +349,20 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
   const [search, setSearch] = useState(''); const [selectedRecipe, setSelectedRecipe] = useState<string | null>(focusRecipe ?? null);
   const [category, setCategory] = useState<string>(() => {
     const st = focusRecipe && RECIPES[focusRecipe]?.station;
-    return CRAFT_GROUPS.find(g => g.station === st)?.id || 'Hand';
+    return focusRecipe && ITEMS[RECIPES[focusRecipe]?.out]?.cat==='place'
+      ? 'Deploy' : CRAFT_GROUPS.find(g => g.station === st)?.id || 'Hand';
   });
   const r = api.gs.run!;
   const nearSt = (k: string) => Object.values(r.entities).find(e => e.kind === 'struct' && e.station && (e.owner === undefined || e.owner === 'player') && STRUCTS[e.type!]?.station === k && Math.hypot(e.x - r.player.x, e.y - r.player.y) <= 3 * TILE);
   const q = search.trim().toLowerCase();
   const group = CRAFT_GROUPS.find(g => g.id === category) || CRAFT_GROUPS[0];
-  const visible = Object.entries(RECIPES).filter(([k, v]) => isRecipeKnown(r.knowledge.recipes, k) && (q ? (v.alias ?? ITEMS[v.out].name).toLowerCase().includes(q) : v.station === group.station));
-  const hidden = q ? 0 : Object.entries(RECIPES).filter(([k, v]) => v.station === group.station && !isRecipeKnown(r.knowledge.recipes, k)).length;
+  const inCraftGroup=(v:typeof RECIPES[string])=>
+    group.id==='Deploy' ? ITEMS[v.out]?.cat==='place' :
+    group.id==='Hand' ? v.station===null && ITEMS[v.out]?.cat!=='place' :
+    v.station===group.station;
+  const visible = Object.entries(RECIPES).filter(([k, v]) => isRecipeKnown(r.knowledge.recipes, k) &&
+    (q ? (v.alias ?? ITEMS[v.out].name).toLowerCase().includes(q) : inCraftGroup(v)));
+  const hidden = q ? 0 : Object.entries(RECIPES).filter(([k,v])=>inCraftGroup(v)&&!isRecipeKnown(r.knowledge.recipes,k)).length;
   const sel = selectedRecipe && RECIPES[selectedRecipe] && visible.some(([k]) => k === selectedRecipe) ? selectedRecipe : (visible[0]?.[0] ?? null);
   const rc = sel ? RECIPES[sel] : null; const st = rc?.station ? nearSt(rc.station) : null;
   const have = (k: string) => countItem(r, 'inv', k);
