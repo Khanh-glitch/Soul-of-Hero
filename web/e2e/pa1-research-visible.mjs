@@ -38,12 +38,17 @@ try{
   await page.getByRole('button',{name:'Launch QA Sandbox'}).click();
   await page.waitForSelector('canvas',{timeout:45000});
   await page.waitForTimeout(1200);
-  // The E hotkey is ignored while any panel owns the screen, and the QA lab opens its own panel on
-  // launch in some presets — so clear the screen first, with real Escape presses, before steering.
+  // Movement and E are ignored while ANY panel owns the screen (Game.tsx gates both on `!panelRef`).
+  // A blind second Escape used to be the failure: with nothing open, the first Escape opens the pause
+  // menu and the second only closes it — but with the launch report open, the first closes the report
+  // and the second opens the menu, which then freezes the whole sweep. So close, then close again ONLY
+  // when the menu is provably up.
+  const menuUp=async()=>(await page.getByRole('button',{name:'Resume',exact:true}).count())>0;
   await page.keyboard.press('Escape');
-  await page.waitForTimeout(150);
-  await page.keyboard.press('Escape');
-  await page.waitForTimeout(150);
+  await page.waitForTimeout(320);
+  rec.launchedWithPanel=await menuUp();
+  if(rec.launchedWithPanel){ await page.keyboard.press('Escape'); await page.waitForTimeout(320); }
+  assert.ok(!(await menuUp()),'the pause menu refused to close, so no world input would be read');
   await shot('00-qa-industry-spawn');
 
   // The `industry` compound is a dense column — Workbench, Furnace, Refinery and Research Table on one
@@ -72,6 +77,8 @@ try{
       await hold('d',STEP);
     }
     if(opened) break;
+    // Belt: if a panel stole the screen mid-sweep (a return report, a toast-driven open), clear it once.
+    if(await menuUp()){ await page.keyboard.press('Escape'); await page.waitForTimeout(250); }
     await hold('a',STEP*13);      // back to the left edge of the sweep
     await hold('s',STEP);         // one row down
     await hold('d',STEP);         // step right again, so a blocked corner cannot pin the sweep
