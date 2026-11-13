@@ -3,6 +3,12 @@ on:
   push:
     branches: [feature/pa1-building-ontology-20261113]
     paths:
+      - 'web/src/game/art.ts'
+      - 'web/src/game/core.ts'
+      - 'web/src/game/persist.ts'
+      - 'web/src/index.css'
+      - 'docs/design/VEYRA_INDUSTRIAL_ECONOMY_DECISION_LEDGER_2026-11-12.md'
+      - '.github/workflows/pa1-building-browser.yml'
       - 'web/src/game/catalog.ts'
       - 'web/src/game/engine.ts'
       - 'web/src/ui/BuildBar.tsx'
