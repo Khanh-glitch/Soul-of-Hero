@@ -46,31 +46,36 @@ try{
   await page.waitForTimeout(150);
   await shot('00-qa-industry-spawn');
 
-  // The `industry` compound is a column: Workbench, Furnace, Refinery and Research Table on one tile
-  // line, with the spawn one tile left and one tile up of the table. So a short real tap walks the
-  // player to the one free tile beside it; the sweep keeps trying because the neighbouring stations
-  // win the tie-break at some offsets. A tile at the shipped 72 px/s is ~240 ms of held key.
-  const taps=['s','d','s','a','w','s','d','w','s','d','s','a','w','w','d','s','a','d','w','s'];
+  // The `industry` compound is a dense column — Workbench, Furnace, Refinery and Research Table on one
+  // tile line — and the free ground beside it is a pocket, so a fixed walk gets stuck naming the
+  // refinery. This is a serpentine: sweep right a row at a time, pressing E whenever the target the
+  // player can SEE being offered is the table. A tap of ~260 ms is about one tile at the shipped
+  // 72 px/s; blocked tiles simply stop the player and the next row still explores.
+  const STEP=260;
+  async function hold(key,ms){ await page.keyboard.down(key); await page.waitForTimeout(ms); await page.keyboard.up(key); await page.waitForTimeout(110); }
   let opened=false;
   rec.labels=[];
-  for(let round=0;round<10 && !opened;round++){
-    if(round===2 && !opened) await page.keyboard.press('Escape');   // a panel that opened by accident must not blind the rest of the sweep
-    for(const key of taps){
-      for(let i=0;i<2 && !opened;i++){
+  const note=(tag,label)=>{ if(rec.labels.length<40) rec.labels.push(tag+'='+label); };
+  for(let row=0;row<12 && !opened;row++){
+    for(let col=0;col<12 && !opened;col++){
+      for(let k=0;k<3;k++){
         rec.attempts++;
         const label=await labelOf(); rec.prompt=label;
-        if(rec.labels.length<24) rec.labels.push(round+':'+key+'='+label);
-        if(/research/i.test(label)){
-          await page.keyboard.press('e');
-          await page.waitForTimeout(260);
-          opened=(await panel().count())>0;
-          if(opened) break;
-        }
-        await page.keyboard.down(key); await page.waitForTimeout(240); await page.keyboard.up(key);
-        await page.waitForTimeout(120);
+        if(!/research/i.test(label)){ note(row+','+col,label); break; }
+        await page.keyboard.press('e');
+        await page.waitForTimeout(300);
+        opened=(await panel().count())>0;
+        note('E@'+row+','+col,label+(opened?' -> PANEL OPEN':''));
+        if(opened) break;
       }
       if(opened) break;
+      await hold('d',STEP);
     }
+    if(opened) break;
+    await hold('a',STEP*13);      // back to the left edge of the sweep
+    await hold('s',STEP);         // one row down
+    await hold('d',STEP);         // step right again, so a blocked corner cannot pin the sweep
+    await hold('a',STEP);
   }
   rec.research.open=opened;
   assert.ok(opened,'the Research Table never became usable from the real UI; last target '+JSON.stringify(rec.prompt)+' after '+rec.attempts+' taps; saw '+JSON.stringify(rec.labels));
