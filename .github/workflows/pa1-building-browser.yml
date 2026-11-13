@@ -31,6 +31,10 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  # The failure-report step below. Run logs live on blob storage that the offline sandbox cannot
+  # reach, so the manifest is echoed onto the PR instead — a red CI run stays diagnosable without
+  # anyone re-running it locally.
+  pull-requests: write
 jobs:
   real-build-palette:
     runs-on: ubuntu-24.04
@@ -86,3 +90,22 @@ jobs:
       - name: Print failure logs
         if: failure()
         run: cat /tmp/pa1-preview.log || true
+      - name: Echo the evidence manifests onto the PR
+        if: failure()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.sha }}
+        run: |
+          PR=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/pulls" --jq '.[0].number // empty')
+          [ -n "$PR" ] || { echo "no PR for $SHA; skipping"; exit 0; }
+          {
+            echo "## PA1 browser evidence failed on \`$SHA\`"
+            echo
+            echo "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            for f in web/evidence/pa1-deploy-custody/manifest.json web/evidence/pa1-building-palette/manifest.json; do
+              [ -f "$f" ] || continue
+              echo; echo "\`\`\`json"; echo "// $f"; head -c 5000 "$f"; echo; echo "\`\`\`"
+            done
+          } > /tmp/pa1-evidence-failure.md
+          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file /tmp/pa1-evidence-failure.md
