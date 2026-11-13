@@ -518,7 +518,7 @@ export const STRUCTURE_UPGRADES: Record<string, string> = {
   floor_wood:'floor_stone',wall_wood:'wall_stone',door_wood:'door_iron',
   roof_thatch:'roof_tile',chest_small:'chest_large'
 };
-export const BUILD_ORDER = [...PA1_BASE_GEOMETRY, ' 'claim', 'wall_wood', 'door_wood', 'roof_thatch', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'feed_trough', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'ir_sensor', 'bear_trap', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
+export const BUILD_ORDER = [...PA1_BASE_GEOMETRY, 'claim','bed_straw','chest_small','chest_large','campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','feed_trough','farm_controller','base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','arrow_turret','spikes','barricade','torch_post','escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit
