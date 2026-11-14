@@ -266,7 +266,7 @@ describe('decisions', () => {
     // P10: four legacy + seven creator, different save fields
     expect(findings.P10.legacy.length).toBe(4); expect(findings.P10.creator.length).toBe(7);
     expect(findings.P10.creator_loot_markers.length).toBe(3);
-    // LI: 86 ids; the only way this corpus yields 137 is ids + recipe entries.
+    // LI: 86 atlas ids. 86 + 51 = 137 is a coincidence: the delivered 137-id set is 84 + 45 + 8 (see item-ontology-v2-li-historical.test.ts).
     expect(findings.LI.counts.unique_item_ids).toBe(86);
     expect(findings.LI.counts.recipe_entries).toBe(51);
     expect(findings.LI.counts.ids_plus_recipe_entries).toBe(137);

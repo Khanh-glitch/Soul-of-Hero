@@ -340,6 +340,8 @@ export function appendixMd(d: OntologyData): string {
   for (const r of d.li_crosswalk) lv[r.verdict] = (lv[r.verdict] ?? 0) + 1;
   o.push(`${d.li_crosswalk.length} Last Island item ids from \`web/ref/atlas/extracted/ATLAS_v2.json\`: ${Object.entries(lv).map(([k, v]) => `${k} ${v}`).join(' · ')}. Full rows in \`li-crosswalk.csv\`. The atlas records no drop rates, recycler yields or smelt ratios (its unresolved list U01–U12), so Last Island is used for structure only, never for numbers.`);
   o.push('');
+  o.push('The 137-id historical set (84 shared with these ids, 53 historical-only, 2 atlas-only) is crosswalked separately in `LI_HISTORICAL_CROSSWALK.md` / `li-historical-crosswalk.csv`. It is reference-only evidence, not a parity target.');
+  o.push('');
   o.push(table(['LI item', 'Role in LI', 'SOH equivalent', 'Verdict', 'Why'], d.li_crosswalk.filter((r) => !/^(Gun|Ammunition|Explosive|Gun body|Heavy weapon part|Ammunition reagent)$/.test(r.li_role) || r.li_id === 'sulfur_powder').map((r) => [r.li_id, r.li_role, r.soh_equivalent, r.verdict, r.why])));
   o.push('');
   o.push(`The ${d.li_crosswalk.filter((r) => /^(Gun|Ammunition|Explosive|Gun body|Heavy weapon part)$/.test(r.li_role) || r.li_id === 'gunpowder').length} firearm, ammunition and explosive rows are all NOT_ADDED for the same reason (no gun mechanic in SOH) and are listed in the CSV.`);

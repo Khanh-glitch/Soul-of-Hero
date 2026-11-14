@@ -35711,7 +35711,7 @@
    "sha": null,
    "acceptance": "BLOCKED_OR_UNRESOLVED",
    "gate": "The 137-id CSV and the 137-vs-86 diff (53 missing historical ids, 2 crosswalk-only ids) are in the repository as reference-only inputs; crosswalk graded by evidence, version, alias and gameplay role; no production item added to match a count.",
-   "note": "Inputs still unreadable. Control Tower gave two Drive file ids (15_nzs8tyEV7QlzUt18N7Kc48sBzdcsk3, 10rDJar3QgbjMSrD42XsT_omA32WXiAIR); the connected Drive account answers 404 File not found for both (get, download and read), and no file with those contents is listed or searchable there. Expected SHA-256 e4a1b066…70c5 (CSV) and 67b8fb98…0d04 (diff) could not be checked. Nothing was written from memory."
+   "note": "Inputs delivered and verified 2026-11-14 (Drive access granted; both files match the published size and SHA-256 byte for byte) and stored reference-only under web/ref/item-ontology-v2/li-historical/. Crosswalk: 139 rows = 137 historical ids (84 shared with the atlas, 53 historical-only) + 2 atlas-only ids, one explicit decision each, in LI_HISTORICAL_CROSSWALK.md and li-historical-crosswalk.csv. Two genuinely missing gameplay roles recorded, none added. Gate run: tests/item-ontology-v2-li-historical.test.ts. Local run only; GitHub Actions do not run on this branch."
   },
   {
    "id": "T-E2E",

@@ -287,13 +287,13 @@ function li(atlas: LiAtlasFull) {
     rows, variants,
     conclusion: [
       `The atlas file in this repository (web/ref/atlas/extracted/ATLAS_v2.json) yields ${all.size} unique item ids: ${recipeOut.size} recipe outputs, ${ingredient.size} ingredient ids, ${loot.size} loot items and ${itemsBlock.size} entries in its items block, de-duplicated (${rows.filter((x) => x.appears_in.length > 1).length} ids appear in more than one of those places).`,
-      `One arithmetic match for "137" exists in this corpus: ${all.size} unique ids + ${atlas.recipes.length} recipe entries = ${total}. ${total === 137 ? 'If that is where the figure comes from, 137 counts each of the ' + recipeOut.size + ' recipe outputs twice (once as an item, once as a recipe) and the two figures describe the same corpus. This is a HYPOTHESIS: the match could be coincidence.' : 'That sum is not 137, so the figure does not come from this file.'}`,
-      `SOURCE NOT LOCATED: no file in the repository (atlas branches included) and nothing found in two searches of the connected Google Drive is a "research summary" with 137 rows. The reading above is therefore UNVERIFIED until the 137-entry document is supplied. If it is a different list, the ${Math.max(0, 137 - all.size)}-entry difference has to be diffed row by row; nothing here should be read as having done that.`,
+      `RESOLVED 2026-11-14: the 137-entry source was delivered (LI_137_ITEM_HISTORICAL_ATLAS_AUDIT.csv, SHA-256 e4a1b066…70c5). It is 137 distinct historical item ids: 84 ATLAS_INDEXED + 45 EXTERNAL_CRAFT_OR_INPUT + 8 OFFICIAL_MODERN. The earlier reading "${all.size} ids + ${atlas.recipes.length} recipe entries = ${total}" was a coincidence and is withdrawn. 84 ids are shared with this atlas, 53 are historical-only and 2 atlas ids are absent from the historical set.`,
+      'The row-by-row comparison is in web/ref/item-ontology-v2/LI_HISTORICAL_CROSSWALK.md and li-historical-crosswalk.csv (one decision per id, provenance grade, alias / version relation, gameplay-role status).',
       `Inside the 86: ${count('UNVERIFIED')} ids rest only on unconfirmed evidence (recipe confidence below B, or loot edges that are not "confirmed"), ${count('INGREDIENT_ONLY_NO_SOURCE_RECORDED')} are named only as an ingredient with no source recorded, ${count('DUPLICATE_RECIPE_ENTRY')} have more than one recipe entry, and ${variants.length} stems have tier/material variants.`,
     ],
     resolution: [
       'No Last Island item was added to SOH on the strength of this comparison. Firearms, ammunition and explosives stay out of scope.',
-      'Next action for the owner: attach the 137-entry research summary (file or link). The generator will then diff it against these 86 ids and report missing / duplicate / variant / unverified per row.',
+      'The 137 historical ids are multi-version evidence, not a parity target. Two genuinely missing gameplay roles were recorded for their owners (a second head-armour tier; a fuel-free personal vehicle) and neither was added.',
     ],
   };
 }

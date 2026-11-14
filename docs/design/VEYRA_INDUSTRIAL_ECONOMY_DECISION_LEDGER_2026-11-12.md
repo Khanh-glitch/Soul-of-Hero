@@ -1093,3 +1093,27 @@ The general rule this turn produced, worth carrying: a pin that counts consumers
 - **Tracker rule tightened.** `HANDOFF_ACKNOWLEDGED` now requires a named PR and a receipt on that PR. Only the wall tiers (PR #56) qualify. The Veyra source work (P8) has no confirmed owner or PR and is `BLOCKED_OR_UNRESOLVED`; so is the runnable Oil Pump (a notice on PR #59 that nobody accepted). No row changed to verified.
 - **PR #59 integration.** Recipe revision 3 is kept. A zero-injection Metal Pipe route for PR #59's `wp3-veyra-recycler-integration` test is delivered as `docs/integration/PR59_x_PR61_wp3_metal_pipe_route.patch` and measured on a local probe merge (`web/evidence/item-ontology-v2/integration-pr59.md`). It is **not landed**: PR #59's branch was not touched, so the defect stays unresolved until its owner applies it.
 - **Last Island 137.** Both Drive file ids supplied by Control Tower return 404 to the connected account. Content, counts and SHA-256 could not be checked; no crosswalk was written.
+
+## 34. Item Ontology V2 — Last Island 137-vs-86 historical crosswalk completed (2026-11-14)
+
+**Inputs.** Control Tower shared both Drive files with the connected account. Both were downloaded and match the published values byte for byte; they are stored reference-only in `web/ref/item-ontology-v2/li-historical/` and a test pins their hashes.
+
+| File | Bytes | Lines | SHA-256 |
+|---|---|---|---|
+| `LI_137_ITEM_HISTORICAL_ATLAS_AUDIT.csv` | 36,494 | 138 | `e4a1b066429d7afc8b9e91dc024ceed317058738e45163f02662d6315a4570c5` |
+| `LI_137_VS_86_ITEM_DIFF_20261114.txt` | 9,323 | 79 | `67b8fb988ddda6039fee6d21f048f527dc6931eebc54cbc80271aca572430d04` |
+
+**Rule.** The 137 ids are historical, multi-version evidence about another game. They are not a parity target. No SOH item, recipe, id, price or mechanic was added or changed. Recipe revision 3 is untouched.
+
+**Result** (`web/ref/item-ontology-v2/LI_HISTORICAL_CROSSWALK.md`, `li-historical-crosswalk.csv`; generator `web/src/game/item-ontology-li-historical.ts`):
+
+- 139 rows, one decision per id: 137 historical (84 shared with the atlas, 53 historical-only) + 2 atlas-only (`raw_iron_ore`, `refined_iron_ore`, naming differences).
+- Provenance: all 84 shared ids are `ATLAS_INDEXED`; the 53 historical-only ids are 45 `EXTERNAL_CRAFT_OR_INPUT` + 8 `OFFICIAL_MODERN`. The withdrawn "86 + 51" reading is now recorded as a coincidence.
+- The 53 historical-only ids: 7 version variants of atlas ids, 1 alias of an atlas id, 3 aliases of things SOH already has (`animal_hide` → `hide`, `charcoal`, `territory_cabinet` → `claim`), 6 event-only, 8 later official additions, 28 separate historical items.
+- By gameplay role, those 53 are: 29 with no SOH mechanic to use them, 15 whose role SOH already has (5 same, 10 in a different shape), 6 event-only, 1 declined as redundant, **2 genuinely missing roles**.
+- The two genuine gaps, recorded for their owners and **not added**: a second head-armour tier (`refined_iron_helmet`; SOH has one head armour piece) and a fuel-free personal vehicle (`mountain_bicycle_blueprint`; SOH has Hand Cart and fuelled Motorbike only).
+- The five omissions the diff asked about: `charcoal`, `animal_hide` already exist in SOH; `egg` exists as Grouse Egg; `large_furnace` is covered by the in-place furnace lining; `electric_resistor` has no SOH mechanic.
+- The historical `match_soh` column disagrees with the crosswalk on 9 of 137 ids; each is explained in the artifact and the crosswalk verdict stands.
+- Unsupported figures stay UNKNOWN: 19 UNKNOWN benches and the empty recipes are reproduced as such. The `year_mode` column is one generic note on every row, so no id is dated by the source.
+
+**Unchanged.** PR #59 integration patch still pending owner acceptance (local probe merge only, not CI at an integrated SHA). P6 wall tiers unrepaired (PR #56). P8 Veyra sources unowned and unrepaired. Oil Pump not functional. The Web suite is not green.
