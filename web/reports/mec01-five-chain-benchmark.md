@@ -7,7 +7,7 @@ Models: amortized per-unit (cheapestCraft) AND integer craft batches (integerTre
 
 | Chain | Cheapest route | ingot-eq / unit | craft tree s | recycler v2 high (pinned) | recycler v3 high (new) | LI leaf BOM (context) |
 |---|---|---|---|---|---|---|
-| Metal Blade | metal_blade | 4.833 | 22 | iron_sword: OVER_RETURN (11 vs 5) | iron_sword: OK (2.333 vs 5) | 30×iron_ingot, 15×LI Parts |
+| Metal Blade | metal_blade | 4.833 | 22 | iron_sword: OK (11 vs 18.5) | iron_sword: OK (2.333 vs 18.5) | 30×iron_ingot, 15×LI Parts |
 | Metal Pipe | metal_pipe | 1.917 | 22 | iron_pick: OVER_RETURN (4.25 vs 3) | iron_pick: OK (2.333 vs 3) | 30×LI Parts, 5×refined_iron_ingot |
 | Mechanical Gear | mechanical_gear | 4.611 | 45.333 | industrial_axe: OVER_RETURN (7.611 vs 8.667) | industrial_axe: OK (3 vs 8.667) | 50×iron_ingot, 65×LI Parts |
 | Iron Plate | iron_plate | 1.722 | 20.667 | iron_axe: OVER_RETURN (3.889 vs 3) | iron_axe: OK (2.167 vs 3) | 30×LI Parts, 5×refined_iron_ingot |

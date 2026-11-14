@@ -172,8 +172,9 @@
       },
       "finiteCacheCanSupply": false,
       "consumers": [
+        "cleaver",
         "industrial_axe",
-        "iron_sword_blade (Iron Sword (blade refit))",
+        "machete",
         "reinforced_spear_blade (Reinforced Spear (blade))"
       ],
       "recycler": {
@@ -190,7 +191,7 @@
                 ]
               ],
               "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 5,
+              "ingotEqCraft": 18.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -207,7 +208,7 @@
                 ]
               ],
               "ingotEqRecovered": 1.333,
-              "ingotEqCraft": 5,
+              "ingotEqCraft": 18.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -221,14 +222,10 @@
                 [
                   "iron_ingot",
                   1
-                ],
-                [
-                  "leather",
-                  1
                 ]
               ],
               "ingotEqRecovered": 1.333,
-              "ingotEqCraft": 5,
+              "ingotEqCraft": 18.5,
               "minted": [],
               "verdict": "OK"
             }
@@ -243,7 +240,7 @@
                 ]
               ],
               "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 5,
+              "ingotEqCraft": 18.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -264,9 +261,9 @@
                 ]
               ],
               "ingotEqRecovered": 6.167,
-              "ingotEqCraft": 5,
+              "ingotEqCraft": 18.5,
               "minted": [],
-              "verdict": "OVER_RETURN"
+              "verdict": "OK"
             },
             {
               "tier": "high",
@@ -284,18 +281,14 @@
                   1
                 ],
                 [
-                  "leather",
-                  1
-                ],
-                [
                   "metal_blade",
                   1
                 ]
               ],
               "ingotEqRecovered": 11,
-              "ingotEqCraft": 5,
+              "ingotEqCraft": 18.5,
               "minted": [],
-              "verdict": "OVER_RETURN"
+              "verdict": "OK"
             }
           ],
           "v3": [
@@ -308,7 +301,7 @@
                 ]
               ],
               "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 5,
+              "ingotEqCraft": 18.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -325,7 +318,7 @@
                 ]
               ],
               "ingotEqRecovered": 1.333,
-              "ingotEqCraft": 5,
+              "ingotEqCraft": 18.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -343,14 +336,10 @@
                 [
                   "iron_ingot",
                   1
-                ],
-                [
-                  "leather",
-                  1
                 ]
               ],
               "ingotEqRecovered": 2.333,
-              "ingotEqCraft": 5,
+              "ingotEqCraft": 18.5,
               "minted": [],
               "verdict": "OK"
             }
@@ -798,9 +787,8 @@
       "finiteCacheCanSupply": false,
       "consumers": [
         "deploy_bear_trap",
-        "deploy_ir_sensor",
         "industrial_pick_geared (Salvager Pick (geared))",
-        "vehicle_drive_geared (Motor Drive (geared))"
+        "motorbike_kit"
       ],
       "recycler": {
         "source": "industrial_axe",
@@ -1117,6 +1105,9 @@
       },
       "finiteCacheCanSupply": false,
       "consumers": [
+        "deploy_pressure_switch",
+        "iron_plate_chest",
+        "iron_plate_helmet",
         "motorbike_kit"
       ],
       "recycler": {
@@ -1413,31 +1404,31 @@
         "motorbike_kit": {
           "route": "motorbike_kit",
           "atomsPerKit": {
-            "iron_ingot": 12.417,
-            "coal": 1.5,
-            "scrap": 6.167,
-            "spares": 5
+            "iron_ingot": 23.417,
+            "coal": 5,
+            "scrap": 7.667,
+            "spares": 2
           },
-          "ingotEqPerKit": 14.472,
-          "treeSeconds": 187.667,
+          "ingotEqPerKit": 25.972,
+          "treeSeconds": 288.667,
           "integerTreePerKit": {
             "atoms": {
-              "iron_ingot": 16,
-              "coal": 2,
-              "scrap": 9,
-              "spares": 5
+              "iron_ingot": 28,
+              "coal": 6,
+              "scrap": 10,
+              "spares": 2
             },
-            "ingotEq": 19,
-            "treeSeconds": 229,
+            "ingotEq": 31.333,
+            "treeSeconds": 344,
             "crafts": {
               "motorbike_kit": 1,
               "vehicle_frame": 1,
               "metal_pipe": 1,
-              "refined_iron_ingot": 2,
-              "mechanical_parts": 3,
-              "vehicle_drive": 1,
-              "fasteners": 3,
-              "iron_plate": 1
+              "refined_iron_ingot": 6,
+              "mechanical_parts": 4,
+              "mechanical_gear": 2,
+              "fasteners": 2,
+              "iron_plate": 2
             }
           },
           "stationLevel": 3,
@@ -1492,12 +1483,12 @@
     {
       "tool": "iron_sword",
       "v2_pinned": {
-        "resourceOverReturn": true,
-        "netIngotEqPerLoop": 6,
+        "resourceOverReturn": false,
+        "netIngotEqPerLoop": 11,
         "mintedNonNumeraire": []
       },
       "repeatableLoop": {
-        "netIngotEqPerLoop": 6,
+        "netIngotEqPerLoop": 11,
         "consumesRepeatableInputsOnly": "ORIGINAL_UNKNOWN (wood/leather source stock unverified — no renewable proof in this benchmark)",
         "realizable": "ORIGINAL_UNKNOWN (no renewable-input proof for wood/leather)",
         "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"

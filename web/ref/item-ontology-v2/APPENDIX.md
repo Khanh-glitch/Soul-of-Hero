@@ -85,6 +85,7 @@ Reachability: FIXTURE_ONLY 1 · SHIPPING_AND_VEYRA 140 · SHIPPING_ONLY 14 · UN
 | Item | Rule | Returns | Parts in | Parts out | Verdict |
 | --- | --- | --- | --- | --- | --- |
 | damaged_drive | X:drive | 2 spares | 0 | 2 | SOURCE_ONLY |
+| machete | X:recover-v3 | 1 scrap + 1 iron_ingot + 1 iron_ingot | 3 | 0 | PARTS_NEGATIVE |
 | iron_axe | X:recover-v3 | 1 scrap + 1 iron_ingot + 1 mechanical_parts | 0 | 1 | PARTS_POSITIVE |
 | iron_pick | X:recover-v3 | 1 scrap + 1 iron_ingot + 1 iron_ingot | 0 | 0 | PARTS_NEGATIVE |
 | industrial_pick | X:recover-v1 | 1 scrap + 1 iron_ingot + 1 mechanical_parts | 4 | 1 | PARTS_NEGATIVE |

@@ -1,7 +1,7 @@
 {
   "meta": {
     "schema": "soh-runtime-item-formula-atlas-v1",
-    "sourceSHA": "fe339acef9fb63c56ab08143beb3c6a550c4e56f",
+    "sourceSHA": "67fb2c7feac1b9cde6f7fb68c5012769db40b1da",
     "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
     "recipeCensusNote": "Counts the LIVE RECIPES table only. Retired formulas are excluded, and frozen revision definitions are never added back as active routes.",
     "retiredRecipes": [
@@ -18,7 +18,7 @@
       "iron_sword_blade"
     ],
     "recipeRevision": 4,
-    "exportedAt": "2026-11-14T18:44:18.443Z",
+    "exportedAt": "2026-11-14T19:18:49.754Z",
     "project": "Soul of Heroes — WEB Veyra runtime",
     "authority": [
       "web/src/game/catalog.ts",
@@ -586,7 +586,7 @@
       "cat": "food",
       "desc": "Slow-dried at a campfire. Half the weight of a roast: trail food, less filling.",
       "w": 0.2,
-      "max": 20,
+      "max": 40,
       "food": {
         "hunger": 26,
         "hp": 2

@@ -19189,7 +19189,7 @@
    "item_class": "FOOD",
    "desc": "Slow-dried at a campfire. Half the weight of a roast: trail food, less filling.",
    "weight": 0.2,
-   "stack_max": 20,
+   "stack_max": 40,
    "generated_deployable": false,
    "craft_depth": 1,
    "craft_depth_recipe": "dried_meat",
@@ -20092,7 +20092,23 @@
     "weapon",
     "specimen_study"
    ],
-   "recycle": null,
+   "recycle": {
+    "rule": "X:recover-v3",
+    "outputs": [
+     [
+      "scrap",
+      1
+     ],
+     [
+      "iron_ingot",
+      1
+     ],
+     [
+      "iron_ingot",
+      1
+     ]
+    ]
+   },
    "recycled_from": [],
    "alt_routes": {
     "live_recipes": 1,
@@ -37974,6 +37990,27 @@
    "parts_in": 0,
    "parts_out": 2,
    "merged_parts_verdict": "SOURCE_ONLY"
+  },
+  {
+   "item": "machete",
+   "rule": "X:recover-v3",
+   "outputs": [
+    [
+     "scrap",
+     1
+    ],
+    [
+     "iron_ingot",
+     1
+    ],
+    [
+     "iron_ingot",
+     1
+    ]
+   ],
+   "parts_in": 3,
+   "parts_out": 0,
+   "merged_parts_verdict": "PARTS_NEGATIVE"
   },
   {
    "item": "iron_axe",
