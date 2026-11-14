@@ -149,7 +149,8 @@
    "stops_on_base": "same",
    "same_step": false,
    "reason": "blocked by a base failure owned by PR #56; PR #59 edits that test.",
-   "ci_workflow": ".github/workflows/veyra-economy-wp4.yml"
+   "ci_workflow": ".github/workflows/veyra-economy-wp4.yml",
+   "on_probe_merge_with_pr59": "2026-11-14: with PR #59 merged and the Metal Pipe patch applied, the prerequisite snapshots are written and the driver starts; at 1280x720 it stops in Phase A waiting for a \"Greywater South Shore\" button. Still not passing."
   }
  ],
  "release_rule": "A driver leaves this file only by passing on the head it is cited for. Reverting the string edit is not an exit: the old names no longer exist in the UI."

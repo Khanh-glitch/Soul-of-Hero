@@ -306,7 +306,7 @@ export function appendixMd(d: OntologyData): string {
   o.push('');
   o.push('## 6a. Acceptance tracker (defect → owner → PR → SHA → gate)');
   o.push('');
-  o.push('IMPLEMENTED_AND_VERIFIED = working code at the named SHA and the gate passed there. HANDOFF_ACKNOWLEDGED = dispatched to the owner; not a fix, no SHA yet. BLOCKED_OR_UNRESOLVED = cannot be closed as things stand. A document never makes a row verified.');
+  o.push('IMPLEMENTED_AND_VERIFIED = working code at the named SHA and the gate passed there. HANDOFF_ACKNOWLEDGED = the responsible owner received the order on their own PR; not a fix, no SHA yet. BLOCKED_OR_UNRESOLVED = cannot be closed as things stand. A document never makes a row verified.');
   o.push('');
   o.push(trackerMd());
   o.push('');

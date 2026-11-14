@@ -381,16 +381,24 @@ describe('ACCEPTANCE TRACKER — a handoff is never counted as a fix', () => {
     }
     expect(ROUND3_ACCEPTED_SHA).toMatch(/^[0-9a-f]{40}$/);
   });
-  it('every HANDED_OFF proposal is tracked, is owned outside Item V2, and is not verified', () => {
+  it('every HANDED_OFF proposal is tracked, is not owned by Item V2, and is never verified', () => {
     for (const pr of PROPOSALS.filter((x) => x.status === 'HANDED_OFF')) {
       const mine = rows.filter((r) => r.proposal === pr.id);
       expect(mine.length, pr.id).toBeGreaterThan(0);
-      for (const r of mine) { expect(r.acceptance, r.id).toBe('HANDOFF_ACKNOWLEDGED'); expect(r.owner, r.id).not.toBe('Item V2'); }
+      for (const r of mine) { expect(r.acceptance, r.id).not.toBe('IMPLEMENTED_AND_VERIFIED'); expect(r.owner, r.id).not.toBe('Item V2'); }
     }
+  });
+  it('a handoff counts as acknowledged only with a named PR and a receipt on that PR; unowned work is blocked', () => {
+    for (const r of rows.filter((x) => x.acceptance === 'HANDOFF_ACKNOWLEDGED')) {
+      expect(r.pr, r.id).toBeTypeOf('number');
+      expect(r.receipt, r.id).toMatch(new RegExp(`^https://github\\.com/Khanh-glitch/Soul-of-Hero/pull/${r.pr}#issuecomment-\\d+$`));
+    }
+    for (const r of rows.filter((x) => x.pr === null)) expect(r.acceptance, r.id).toBe('BLOCKED_OR_UNRESOLVED');
+    expect(rows.filter((r) => r.proposal === 'P8').every((r) => r.acceptance === 'BLOCKED_OR_UNRESOLVED')).toBe(true);
   });
   it('every proposal has a tracker row, and a partly implemented one also carries its unfinished half', () => {
     for (const pr of PROPOSALS) expect(rows.some((r) => r.proposal === pr.id), pr.id).toBe(true);
-    expect(rows.find((r) => r.id === 'T-P9-PUMP')!.acceptance).toBe('HANDOFF_ACKNOWLEDGED');
+    expect(rows.find((r) => r.id === 'T-P9-PUMP')!.acceptance).toBe('BLOCKED_OR_UNRESOLVED');
     expect(rows.find((r) => r.id === 'T-LI-137')!.acceptance).toBe('BLOCKED_OR_UNRESOLVED');
   });
 });

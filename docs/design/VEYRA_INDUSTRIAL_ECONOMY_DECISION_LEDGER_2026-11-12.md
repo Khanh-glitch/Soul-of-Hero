@@ -1087,3 +1087,9 @@ The general rule this turn produced, worth carrying: a pin that counts consumers
 - **Blocked or unresolved:** the 137-id Last Island crosswalk (inputs still not delivered to the repository, the session or the Drive); 15 browser drivers quarantined in `web/e2e/QUARANTINE.json`; the 179 inherited Vitest failures (PR #56); and one integration defect: PR #61 + PR #59 merge cleanly as text but the merged tree fails `wp3-veyra-recycler-integration` because that route crafts the Utility Frame without the Metal Pipe that recipe revision 3 requires.
 
 **The Web suite is not green.** PR #61 shows only that it adds no failure to the 179 it inherited.
+
+## 33. Item Ontology V2 — tracker corrected, PR #59 integration fix prepared, Last Island inputs still unreadable (2026-11-14)
+
+- **Tracker rule tightened.** `HANDOFF_ACKNOWLEDGED` now requires a named PR and a receipt on that PR. Only the wall tiers (PR #56) qualify. The Veyra source work (P8) has no confirmed owner or PR and is `BLOCKED_OR_UNRESOLVED`; so is the runnable Oil Pump (a notice on PR #59 that nobody accepted). No row changed to verified.
+- **PR #59 integration.** Recipe revision 3 is kept. A zero-injection Metal Pipe route for PR #59's `wp3-veyra-recycler-integration` test is delivered as `docs/integration/PR59_x_PR61_wp3_metal_pipe_route.patch` and measured on a local probe merge (`web/evidence/item-ontology-v2/integration-pr59.md`). It is **not landed**: PR #59's branch was not touched, so the defect stays unresolved until its owner applies it.
+- **Last Island 137.** Both Drive file ids supplied by Control Tower return 404 to the connected account. Content, counts and SHA-256 could not be checked; no crosswalk was written.

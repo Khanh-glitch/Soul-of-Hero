@@ -401,7 +401,7 @@ export const PROPOSALS: readonly Proposal[] = [
     id: 'P8', group: 'B', recommendation: 'HOLD',
     status: 'HANDED_OFF',
     handoff: 'docs/design/VEYRA_WORLD_SOURCE_REPAIR_ORDER_2026-11-14.md',
-    ruling: 'ROUND 3: world source repair. Chitin, Crawler Optic, Wolf Fang and Beetle Horn need real Veyra creatures and habitats; that is the Veyra ecology/map owner\'s work and is written up as a work order. Inside this PR only the honest "no source on Veyra yet" readiness text is implemented; no source, loot or probability was added and no recipe is hidden.',
+    ruling: 'ROUND 3: world source repair. Chitin, Crawler Optic, Wolf Fang and Beetle Horn need real Veyra creatures and habitats; that is Veyra ecology/map work and is written up as a work order. NO CONFIRMED OWNER OR PR HAS RECEIVED THE ORDER YET, so the defect is unowned, not handed over (see the acceptance tracker). Inside this PR only the honest "no source on Veyra yet" readiness text is implemented; no source, loot or probability was added and no recipe is hidden.',
     shipped: [
       "Craft readiness on a Veyra run says '<item> has no source on Veyra yet' for an input listed in VEYRA_UNSOURCED_INPUTS instead of 'Get N <item>'. The recipe stays listed.",
       "VEYRA_UNSOURCED_INPUTS is pinned by test to the projection: it must be emptied when the world owner adds the source.",

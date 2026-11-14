@@ -3,7 +3,8 @@
  *
  * One row per DEFECT or DELIVERABLE, not per proposal. Three acceptance states and nothing else:
  *   IMPLEMENTED_AND_VERIFIED  working code in the named PR at the named SHA, and the named gate passed there.
- *   HANDOFF_ACKNOWLEDGED      Control Tower dispatched it to the named owner. NOT a fix. No SHA exists yet.
+ *   HANDOFF_ACKNOWLEDGED      the responsible owner has RECEIVED the work order on their own PR (`receipt`) and Control Tower
+ *                             confirmed it. NOT a fix. No SHA exists yet. A notice nobody accepted does not qualify.
  *   BLOCKED_OR_UNRESOLVED     nobody can close it as things stand; `gate` says what is missing.
  * A document never moves a row to IMPLEMENTED_AND_VERIFIED. `tests/item-ontology-v2.test.ts` enforces that a row without
  * a fix SHA cannot be verified and that every HANDED_OFF proposal stays out of the verified state.
@@ -23,6 +24,8 @@ export interface TrackerRow {
   /** The acceptance gate, stated so that it can be checked. */
   gate: string;
   acceptance: Acceptance;
+  /** URL of the notice on the owner's own PR. Required for HANDOFF_ACKNOWLEDGED. */
+  receipt?: string;
   note?: string;
 }
 
@@ -42,31 +45,32 @@ export const ACCEPTANCE_TRACKER: readonly TrackerRow[] = [
   V('T-P9-TEXT', 'P9', 'Oil text claimed an "authorized oil site" that no world contains', 'round3 suite source scan + four oil states; b05 oil suites; pa1-deploy-custody browser driver'),
   { id: 'T-P6', proposal: 'P6', defect: 'Plank Wall (240 HP) and Brick Wall (600 HP) cannot be obtained; Plank has no reachable consumer',
     owner: 'PA1 Building', pr: 56, sha: null, acceptance: 'HANDOFF_ACKNOWLEDGED',
+    receipt: 'https://github.com/Khanh-glitch/Soul-of-Hero/pull/56#issuecomment-6877505704',
     gate: 'Optional upgrades Wood→Reinforced Wood, Wood→Stone, Reinforced Wood→Stone, Stone→Brick work through real build intents; resources debited; save/restart; browser; formula graph. Saved Plank stacks, placed Plank Walls, queued jobs and reclaim refunds conserved (an old Plank Wall must not refund from the live cost table).',
     note: 'Work order: docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md. No building code in PR #61.' },
   { id: 'T-P8-MATERIALS', proposal: 'P8', defect: 'Ash Chitin and Crawler Optic have no source on Veyra',
-    owner: 'Veyra World / Ecology', pr: null, sha: null, acceptance: 'HANDOFF_ACKNOWLEDGED',
+    owner: 'UNASSIGNED — Veyra World / Ecology has no confirmed owner or PR', pr: null, sha: null, acceptance: 'BLOCKED_OR_UNRESOLVED',
     gate: 'Creature placed in a fitting Veyra habitat, actually spawns, is fought, drops loot that is physically picked up, survives restart. Before any renewable Scrap Crawler population: measured Parts per hour, research pace and farming exploit check. No invented drops, no changed probabilities without design authority.',
-    note: 'Work order: docs/design/VEYRA_WORLD_SOURCE_REPAIR_ORDER_2026-11-14.md. No Keycard work: Veyra has 0 keycard doors.' },
+    note: 'Work order: docs/design/VEYRA_WORLD_SOURCE_REPAIR_ORDER_2026-11-14.md. No Keycard work: Veyra has 0 keycard doors. The order exists only as a document in PR #61; nobody responsible has received or accepted it.' },
   { id: 'T-P8-RESEARCH', proposal: 'P8', defect: 'Wolf Fang and Beetle Horn (research routes) have no source on Veyra',
-    owner: 'Veyra World / Ecology', pr: null, sha: null, acceptance: 'HANDOFF_ACKNOWLEDGED',
+    owner: 'UNASSIGNED — Veyra World / Ecology has no confirmed owner or PR', pr: null, sha: null, acceptance: 'BLOCKED_OR_UNRESOLVED',
     gate: 'Owner evaluates the research routes and either places a source under the gate above or rules the routes Shipping-only.' },
   { id: 'T-P9-PUMP', proposal: 'P9', defect: 'Oil Pump is not runnable in natural play; Crude Petroleum is fixture-only',
-    owner: 'Oil / World Production', pr: 59, sha: null, acceptance: 'HANDOFF_ACKNOWLEDGED',
+    owner: 'Oil / World Production', pr: 59, sha: null, acceptance: 'BLOCKED_OR_UNRESOLVED',
     gate: 'Map-owned oil site, normal placement, finite stock debit, production output, separate-process restart. Salvaged Oil (real) kept distinct from pumped Crude Petroleum.',
-    note: 'PR #59 is the current oil/mobility work; whether the pump lands there is the owner\'s call.' },
+    note: 'Notice posted on PR #59 (issuecomment-6878207281); no reply, so not acknowledged. Whether the pump lands in PR #59 is the owner\'s call.' },
   { id: 'T-LI-137', defect: 'Last Island crosswalk covers the 86-id atlas, not the 137-id research set',
     owner: 'Item V2', pr: 61, sha: null, acceptance: 'BLOCKED_OR_UNRESOLVED',
     gate: 'The 137-id CSV and the 137-vs-86 diff (53 missing historical ids, 2 crosswalk-only ids) are in the repository as reference-only inputs; crosswalk graded by evidence, version, alias and gameplay role; no production item added to match a count.',
-    note: 'Inputs not delivered: absent from the session, every branch and PR head, and the connected Drive (checked again 2026-11-14 after the ruling).' },
+    note: 'Inputs still unreadable. Control Tower gave two Drive file ids (15_nzs8tyEV7QlzUt18N7Kc48sBzdcsk3, 10rDJar3QgbjMSrD42XsT_omA32WXiAIR); the connected Drive account answers 404 File not found for both (get, download and read), and no file with those contents is listed or searchable there. Expected SHA-256 e4a1b066…70c5 (CSV) and 67b8fb98…0d04 (diff) could not be checked. Nothing was written from memory.' },
   { id: 'T-E2E', defect: 'Browser drivers whose strings were edited in round 2 but which cannot be run to completion',
     owner: 'Item V2', pr: 61, sha: null, acceptance: 'BLOCKED_OR_UNRESOLVED',
     gate: 'Each driver either passes on this head or is listed in web/e2e/QUARANTINE.json with the step it stops at on base and on head.',
     note: 'Quarantined, not fixed: see web/e2e/QUARANTINE.json.' },
-  { id: 'T-INTEGRATION-59', defect: 'PR #61 and PR #59 merge without text conflicts, but the merged tree fails tests/wp3-veyra-recycler-integration.test.ts (passes on PR #59 alone): its natural-harvest route crafts the Utility Frame with the rev-2 bill and never makes the Metal Pipe that rev 3 requires',
-    owner: 'Whichever of PR #59 / PR #61 merges second', pr: null, sha: null, acceptance: 'BLOCKED_OR_UNRESOLVED',
-    gate: 'On the merged tree the wp3 route obtains 1 Metal Pipe by natural play (no injection) and the test passes; tsc clean.',
-    note: 'Measured 2026-11-14 on a probe merge of 7b78a554 + b3a2c64e: tsc clean; round-3, oil and recipe-migration suites 83/83; wp3 1 failed at the vehicle_frame craft.' },
+  { id: 'T-INTEGRATION-59', defect: 'PR #61 + PR #59 merge without text conflicts, but tests/wp3-veyra-recycler-integration.test.ts (PR #59 version) crafts the Utility Frame without the Metal Pipe that recipe revision 3 requires',
+    owner: 'PR #59 owner (their test file); fix prepared by Item V2', pr: 59, sha: null, acceptance: 'BLOCKED_OR_UNRESOLVED',
+    gate: 'The patch (or an equivalent) is on PR #59 or on the integration branch, and wp3 passes on the merged tree with tsc clean.',
+    note: 'Fix written and measured, NOT landed: docs/integration/PR59_x_PR61_wp3_metal_pipe_route.patch adds a zero-injection route (Tall Grass→Fiber→Rope, Boulder→Stone, hand-crafted Stone Pickaxe, real Coal Seam, Furnace-refined iron, Workbench L2 pipe). The recipe is unchanged. Evidence: web/evidence/item-ontology-v2/integration-pr59.md. PR #59 was not modified.' },
   { id: 'T-BASELINE', defect: '179 Vitest failures inherited from the PR #56 head (devices built from raw materials, which PA1 forbids)',
     owner: 'PA1 Building', pr: 56, sha: null, acceptance: 'BLOCKED_OR_UNRESOLVED',
     gate: 'Failures fixed or retired on PR #56. Until then the Web suite is NOT green; PR #61 only shows it adds none.',
@@ -76,7 +80,7 @@ export const ACCEPTANCE_TRACKER: readonly TrackerRow[] = [
 export function trackerMd(): string {
   const o: string[] = ['| Id | Defect / deliverable | Owner | PR | SHA | Acceptance | Gate |', '|---|---|---|---|---|---|---|'];
   for (const r of ACCEPTANCE_TRACKER) {
-    o.push(`| ${r.id} | ${r.defect}${r.note ? ` — ${r.note}` : ''} | ${r.owner} | ${r.pr ? '#' + r.pr : 'not named'} | ${r.sha ? '`' + r.sha.slice(0, 8) + '`' : 'none'} | **${r.acceptance}** | ${r.gate} |`);
+    o.push(`| ${r.id} | ${r.defect}${r.note ? ` — ${r.note}` : ''} | ${r.owner} | ${r.pr ? '#' + r.pr : 'not named'} | ${r.sha ? '`' + r.sha + '`' : 'none'} | **${r.acceptance}** | ${r.gate} |`);
   }
   return o.join('\n');
 }
