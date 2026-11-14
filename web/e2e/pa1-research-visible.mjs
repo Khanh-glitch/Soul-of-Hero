@@ -190,10 +190,15 @@ try{
       if(!pane) return 'no-pane';
       return pane.contains(el) ? 'inside-pane' : 'covered-by:'+el.tagName+'.'+String(el.className&&el.className.toString?el.className.toString():'');
     },[box.x+box.width/2,box.y+Math.min(box.height/2,10),'[data-testid="research-family-pane"]']);
-    const recd={label,box:{x:Math.round(box.x),y:Math.round(box.y),w:Math.round(box.width),h:Math.round(box.height)},visible,fits,hitTest};
+    const pr=await pane().boundingBox();
+    const inPane=!!pr && box.y>=pr.y-0.5 && box.y+box.height<=pr.y+pr.height+0.5 && box.x>=pr.x-0.5 && box.x+box.width<=pr.x+pr.width+0.5;
+    const recd={label,box:{x:Math.round(box.x),y:Math.round(box.y),w:Math.round(box.width),h:Math.round(box.height)},pane:pr?{x:Math.round(pr.x),y:Math.round(pr.y),w:Math.round(pr.width),h:Math.round(pr.height)}:null,visible,fits,inPane,hitTest};
     assert.ok(visible,recd.label+' is not visible (hidden or zero-opacity)');
     assert.ok(fits,recd.label+' is outside the '+vp.width+'x'+vp.height+' viewport: '+JSON.stringify(recd.box));
     assert.equal(hitTest,'inside-pane',recd.label+' is not the thing the player would hit at that point');
+    // A box inside the viewport but below the pane's own client area is clipped by that pane — which is
+    // precisely how this claim died once. "Fits on screen" must mean "fits inside the scroll area too".
+    assert.ok(inPane,recd.label+' sits outside the family pane box and is therefore clipped: '+JSON.stringify({el:recd.box,pane:recd.pane}));
     return recd;
   }
   const vp1280=page.viewportSize();
@@ -201,6 +206,12 @@ try{
     await inFrame(famText(),'Technology families heading',vp1280),
     await inFrame(page.getByTestId('family-row-ENERGY'),'ENERGY family row',vp1280),
   ];
+  // Nine of eleven rows cannot fit in one screenful at this stage size, so the gate proves the rest
+  // are reachable: scroll the pane and require the LAST family row inside its client area.
+  const lastRow=page.getByTestId('family-row-CORE_SPECIFIC');
+  await lastRow.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(200);
+  rec.research.frames1280.push(await inFrame(lastRow,'last family row after scrolling the pane',vp1280));
   await shot('02-technology-families-1280');
 
   const box=pane();
@@ -267,6 +278,9 @@ try{
     await inFrame(famText(),'Technology families heading @640',vp640),
     await inFrame(page.getByTestId('family-row-ENERGY'),'ENERGY family row @640',vp640),
   ];
+  await lastRow.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(200);
+  rec.research.frames640.push(await inFrame(lastRow,'last family row after scrolling the pane @640',vp640));
   await shot('03-technology-families-640');
   const count=await page.getByTestId(/^family-row-/).count();
   rec.research.familyRows=count;

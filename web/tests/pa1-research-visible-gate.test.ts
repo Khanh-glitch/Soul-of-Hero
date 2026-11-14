@@ -49,6 +49,13 @@ describe('PA1 research-visible browser gate — legibility, not DOM presence', (
     re(gate, "shot\\('03-technology-families-640'\\)");
     // all eleven families must be COUNTED in the pane at the small size, not just named in a comment
     expect(gate).toContain('getByTestId(/^family-row-/)');
+    // clipped-by-the-pane must be a failure, and the last row must be proven reachable by scrolling
+    expect(gate).toContain("const inPane=");
+    expect(gate).toContain("is therefore clipped");
+    expect(gate).toContain("getByTestId('family-row-CORE_SPECIFIC')");
+    expect(gate).toContain('scrollIntoViewIfNeeded');
+    expect(gate.match(/frames1280\.push|frames640\.push/g)?.length).toBe(2);
+
     re(gate, 'count>=11');
   });
   it('keeps the other two research views reachable and refuses a purchase the ledger did not price', () => {
@@ -68,6 +75,23 @@ describe('PA1 research-visible browser gate — legibility, not DOM presence', (
     expect(gate).toContain('/\\/\\/|\\bTODO\\b|ContainerPanel|ResearchBody|StationConsole');
     expect(gate.match(/leakFree\(/g)?.length).toBe(3);   // three calls: the ledger plus both craft views
   });
+  it('wires the proof into CI as a real file, not as a YAML-embedded string', () => {
+    // The proof step is the only thing standing between "the gate exited 0" and "the panel was readable".
+    // It must therefore be checkable here: a script in the repo, invoked by path, with no quoting layer
+    // between the YAML and the JavaScript that decides the verdict.
+    const wf = read('../../.github/workflows/pa1-building-browser.yml');   // repo root, one level above web/
+    const step = wf.slice(wf.indexOf('- name: Publish the visibility proof'));
+    expect(step.slice(0, 900), 'the proof step no longer runs the checked-in script')
+      .toMatch(/run: node scripts\/pa1-research-proof\.mjs/);
+    expect(step.slice(0, 900), 'an inline node -e inside YAML is how a broken proof reported success')
+      .not.toContain("node -e '");
+    expect(step.slice(0, 900)).toContain('if: always()');   // a red gate is exactly when the table matters
+    expect(wf).toContain("- 'web/scripts/pa1-research-proof.mjs'");
+    const proof = read('../scripts/pa1-research-proof.mjs');
+    expect(proof).toContain('inPane !== true');
+    expect(proof).toContain('the Technology tab was never clicked');
+    expect(proof).toContain('CORE_SPECIFIC');
+  });
   it('rejects the two shapes this branch already shipped by mistake', () => {
     // (a) a gate satisfied by text anywhere in the panel; (b) a ledger buried at the end of the make column
     expect(gate).not.toMatch(/assert\.ok\(\(await panel\(\)\.count\(\)\)>0,'the family list is not on screen/);
@@ -76,7 +100,7 @@ describe('PA1 research-visible browser gate — legibility, not DOM presence', (
     // the pane must not be the 142 px strip the two-column body used, or "visible" is a lie again
     const pane = console_.match(/data-testid="research-family-pane"[^>]*style=\{\{([^}]*)\}\}/);
     expect(pane, 'the family pane lost its own sizing').toBeTruthy();
-    expect(pane![1]).toMatch(/maxHeight: *246/);
+    expect(pane![1]).toMatch(/maxHeight: *288/);
     expect(pane![1]).toMatch(/overflowY: *'auto'/);
     expect(pane![1]).not.toMatch(/maxHeight: *142/);
     // the ledger is rendered exactly once by the console (its own tab), and the justification prose that
