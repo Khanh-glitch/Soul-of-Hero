@@ -1,0 +1,1859 @@
+{
+  "schema": "soh.li_copy_first.alignment.v1",
+  "head": "bb2d4a7f544d9c5ec8436bc08b1e449fc6abb7f9",
+  "warning": "Only exact and a few manual semantic alias IDs are matched. Source 139 historical/atlas union is not a complete confirmed 2019 inventory. SOH names may diverge and LI edition variants are separate evidence, not duplicate runtime items.",
+  "summary": {
+    "BIBLE_REQUIRED_SOH": 25,
+    "NOT_IN_SOURCE_COPIED_YET": 66,
+    "SOH_EXTRA_NOT_IN_LI_CANDIDATE_RETIRE": 3,
+    "LI_EXACT_ID": 15,
+    "LI_SEMANTIC_ALIAS_REVIEW": 8,
+    "LEGACY_NOT_CANON": 6,
+    "RUNTIME_PACK_ADAPTER": 24
+  },
+  "soh_runtime_items": [
+    {
+      "soh_id": "energy_basic",
+      "name": "Basic Energy",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "energy_refined",
+      "name": "Refined Energy",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "essence_fire",
+      "name": "Fire Essence",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "essence_nature",
+      "name": "Nature Essence",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "essence_water",
+      "name": "Water Essence",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "essence_spirit",
+      "name": "Spirit Essence",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "core_blast",
+      "name": "Big Bang",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "core_meteor",
+      "name": "Meteor",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "core_dragon",
+      "name": "Dragon",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "core_elsa",
+      "name": "Elsa",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "core_earthmother",
+      "name": "Earth Mother",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "core_mjolnir",
+      "name": "Mjolnir",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "core_demon",
+      "name": "Demon Core",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "crude_petroleum",
+      "name": "Crude Petroleum",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "salvaged_oil",
+      "name": "Salvaged Oil",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "lubricant",
+      "name": "Machine Lubricant",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "damaged_drive",
+      "name": "Damaged Drive",
+      "li_id": null,
+      "classification": "SOH_EXTRA_NOT_IN_LI_CANDIDATE_RETIRE",
+      "reason": "Never substitute for original LI inputs merely because old SOH BOM uses it"
+    },
+    {
+      "soh_id": "mechanical_parts",
+      "name": "Machine Parts",
+      "li_id": null,
+      "classification": "SOH_EXTRA_NOT_IN_LI_CANDIDATE_RETIRE",
+      "reason": "Never substitute for original LI inputs merely because old SOH BOM uses it"
+    },
+    {
+      "soh_id": "fasteners",
+      "name": "Forged Fasteners",
+      "li_id": null,
+      "classification": "SOH_EXTRA_NOT_IN_LI_CANDIDATE_RETIRE",
+      "reason": "Never substitute for original LI inputs merely because old SOH BOM uses it"
+    },
+    {
+      "soh_id": "treated_canvas",
+      "name": "Treated Canvas",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "field_repair_kit",
+      "name": "Field Repair Kit",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "trail_pack",
+      "name": "Trail Pack",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "trail_canteen",
+      "name": "Trail Canteen",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "fuel_briquette",
+      "name": "Packed Fuel Briquette",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "wood",
+      "name": "Wood",
+      "li_id": "wood",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "plank",
+      "name": "Plank",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "stone",
+      "name": "Stone",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "fiber",
+      "name": "Plant Fiber",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "iron_ore",
+      "name": "Iron Ore",
+      "li_id": "raw_iron_ore",
+      "classification": "LI_SEMANTIC_ALIAS_REVIEW",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "rich_iron_ore",
+      "name": "Rich Iron Ore",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "coal",
+      "name": "Coal",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "charcoal",
+      "name": "Charcoal",
+      "li_id": "charcoal",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "crystal",
+      "name": "Frost Crystal",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "raw_salt",
+      "name": "Raw Salt",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "root_broth",
+      "name": "Root Broth",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "herb_roast",
+      "name": "Herb Roast",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "salted_meat",
+      "name": "Salted Roast",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "sulfur",
+      "name": "Sulfur",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "scrap",
+      "name": "Scrap Metal",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "spares",
+      "name": "Parts",
+      "li_id": "parts",
+      "classification": "LI_SEMANTIC_ALIAS_REVIEW",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "iron_ingot",
+      "name": "Iron Ingot",
+      "li_id": "iron_ingot",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "rope",
+      "name": "Rope",
+      "li_id": "rope",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "hide",
+      "name": "Raw Hide",
+      "li_id": "animal_hide",
+      "classification": "LI_SEMANTIC_ALIAS_REVIEW",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "leather",
+      "name": "Leather",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "fur",
+      "name": "Fur",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "chitin",
+      "name": "Ash Chitin",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "shell",
+      "name": "Crab Shell",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "gland",
+      "name": "Mire Gland",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "brick",
+      "name": "Brick",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "cloth",
+      "name": "Cloth",
+      "li_id": "cloth",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "glass",
+      "name": "Glass",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "seed",
+      "name": "Wild Seeds",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "berries",
+      "name": "Berries",
+      "li_id": "wild_berry",
+      "classification": "LI_SEMANTIC_ALIAS_REVIEW",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "meat",
+      "name": "Raw Meat",
+      "li_id": "animal_meat",
+      "classification": "LI_SEMANTIC_ALIAS_REVIEW",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "cooked_meat",
+      "name": "Roast Meat",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "mushroom",
+      "name": "Marsh Cap",
+      "li_id": "mushroom",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "herb",
+      "name": "Bitterleaf",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "crop",
+      "name": "Sunroot",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "stew",
+      "name": "Root Stew",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "water_flask",
+      "name": "Water Flask",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "bandage",
+      "name": "Bandage",
+      "li_id": "bandage",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "medkit",
+      "name": "Field Medkit",
+      "li_id": "medkit",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "antirad",
+      "name": "Purge Tonic",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "knife",
+      "name": "Survival Knife",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "stone_axe",
+      "name": "Stone Axe",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "stone_pick",
+      "name": "Stone Pickaxe",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "iron_axe",
+      "name": "Iron Axe",
+      "li_id": "iron_axe",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "iron_pick",
+      "name": "Iron Pickaxe",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "industrial_pick",
+      "name": "Salvager Pick",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "industrial_axe",
+      "name": "Salvager Axe",
+      "li_id": "refined_iron_axe",
+      "classification": "LI_SEMANTIC_ALIAS_REVIEW",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "wood_spear",
+      "name": "Fire-hardened Spear",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "iron_sword",
+      "name": "Iron Sword",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "bow",
+      "name": "Hunting Bow",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "reinforced_spear",
+      "name": "Reinforced Spear",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "arrow",
+      "name": "Arrow",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "torch",
+      "name": "Torch",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "leather_armor",
+      "name": "Leather Jerkin",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "chitin_armor",
+      "name": "Chitin Plate",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "fur_cloak",
+      "name": "Fur Cloak",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "gas_mask",
+      "name": "Filter Mask",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "scrap_helm",
+      "name": "Scrap Helm",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "core_fire",
+      "name": "Ember Core",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "core_earth",
+      "name": "Quake Core",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "core_storm",
+      "name": "Storm Core",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "core_frost",
+      "name": "Rime Core",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "blueprint",
+      "name": "Blueprint",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "wolf_fang",
+      "name": "Wolf Fang (specimen)",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "crawler_optic",
+      "name": "Crawler Optic (specimen)",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "boar_tusk",
+      "name": "Boar Tusk (specimen)",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "beetle_horn",
+      "name": "Beetle Horn (specimen)",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "keycard",
+      "name": "Vault Keycard",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "fuel_can",
+      "name": "Fuel Canister",
+      "li_id": "low_quality_fuel",
+      "classification": "LI_SEMANTIC_ALIAS_REVIEW",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "rcash",
+      "name": "Ragnarok Cash",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "escrow_chest",
+      "name": "Escrow Chest",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "vehicle_frame",
+      "name": "Utility Frame",
+      "li_id": "vehicle_frame",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "vehicle_drive",
+      "name": "Motor Drive",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "refined_iron_ingot",
+      "name": "Refined Iron Ingot",
+      "li_id": "refined_iron_ingot",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "metal_pipe",
+      "name": "Metal Pipe",
+      "li_id": "metal_pipe",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "metal_blade",
+      "name": "Metal Blade",
+      "li_id": "metal_blade",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "mechanical_gear",
+      "name": "Mechanical Gear",
+      "li_id": "mechanical_gear",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "iron_plate",
+      "name": "Iron Plate",
+      "li_id": "iron_plate",
+      "classification": "LI_EXACT_ID",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "motorbike_kit",
+      "name": "Utility Motorbike (packed)",
+      "li_id": "motorcycle",
+      "classification": "LI_SEMANTIC_ALIAS_REVIEW",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "cart_kit",
+      "name": "Hand Cart (packed)",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "stone_frost",
+      "name": "Stone of Rime",
+      "li_id": null,
+      "classification": "LEGACY_NOT_CANON",
+      "reason": "Historic old 6 stones, not six current Primordial stones"
+    },
+    {
+      "soh_id": "stone_magma",
+      "name": "Stone of Cinder",
+      "li_id": null,
+      "classification": "LEGACY_NOT_CANON",
+      "reason": "Historic old 6 stones, not six current Primordial stones"
+    },
+    {
+      "soh_id": "stone_bog",
+      "name": "Stone of Mire",
+      "li_id": null,
+      "classification": "LEGACY_NOT_CANON",
+      "reason": "Historic old 6 stones, not six current Primordial stones"
+    },
+    {
+      "soh_id": "stone_grove",
+      "name": "Stone of Roots",
+      "li_id": null,
+      "classification": "LEGACY_NOT_CANON",
+      "reason": "Historic old 6 stones, not six current Primordial stones"
+    },
+    {
+      "soh_id": "stone_tide",
+      "name": "Stone of Tides",
+      "li_id": null,
+      "classification": "LEGACY_NOT_CANON",
+      "reason": "Historic old 6 stones, not six current Primordial stones"
+    },
+    {
+      "soh_id": "stone_rust",
+      "name": "Stone of Rust",
+      "li_id": null,
+      "classification": "LEGACY_NOT_CANON",
+      "reason": "Historic old 6 stones, not six current Primordial stones"
+    },
+    {
+      "soh_id": "stone_surtur",
+      "name": "Stone of Surtur",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "stone_typhon",
+      "name": "Stone of Typhon",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "stone_aion",
+      "name": "Stone of Aion",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "stone_atlas",
+      "name": "Stone of Atlas",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "stone_argus",
+      "name": "Stone of Argus",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "stone_anubis",
+      "name": "Stone of Anubis",
+      "li_id": null,
+      "classification": "BIBLE_REQUIRED_SOH",
+      "reason": "SOH-specific approved canon; not LI content"
+    },
+    {
+      "soh_id": "lead_rope",
+      "name": "Taming Lead",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "animal_feed",
+      "name": "Fodder Bundle",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "feather",
+      "name": "Grouse Feather",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "grouse_egg",
+      "name": "Grouse Egg",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "relic_shaleheart",
+      "name": "Shaleheart Coreplate",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "ronin_nodachi",
+      "name": "Oathless Nodachi",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "tidemarshal_trident",
+      "name": "Saltwick Trident",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "custodian_lantern",
+      "name": "Archive Lantern",
+      "li_id": null,
+      "classification": "NOT_IN_SOURCE_COPIED_YET",
+      "reason": "Need source/semantics/functional check before changing active catalog"
+    },
+    {
+      "soh_id": "deploy_claim",
+      "name": "deploy_claim",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_bed_straw",
+      "name": "deploy_bed_straw",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_chest_small",
+      "name": "deploy_chest_small",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_chest_large",
+      "name": "deploy_chest_large",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_campfire",
+      "name": "deploy_campfire",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_furnace",
+      "name": "deploy_furnace",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_oil_pump",
+      "name": "deploy_oil_pump",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_refinery",
+      "name": "deploy_refinery",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_workbench",
+      "name": "deploy_workbench",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_research",
+      "name": "deploy_research",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_garden",
+      "name": "deploy_garden",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_farm_controller",
+      "name": "deploy_farm_controller",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_barrel",
+      "name": "deploy_barrel",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_feed_trough",
+      "name": "deploy_feed_trough",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_base_generator",
+      "name": "deploy_base_generator",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_power_cable",
+      "name": "deploy_power_cable",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_power_switch",
+      "name": "deploy_power_switch",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_pressure_switch",
+      "name": "deploy_pressure_switch",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_ir_sensor",
+      "name": "deploy_ir_sensor",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_arrow_turret",
+      "name": "deploy_arrow_turret",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_bear_trap",
+      "name": "deploy_bear_trap",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_spikes",
+      "name": "deploy_spikes",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_barricade",
+      "name": "deploy_barricade",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    },
+    {
+      "soh_id": "deploy_torch_post",
+      "name": "deploy_torch_post",
+      "li_id": null,
+      "classification": "RUNTIME_PACK_ADAPTER",
+      "reason": "K1 physical item/deploy UID wrapper, not extra Last Island item"
+    }
+  ],
+  "li_source_ids_not_yet_matched": [
+    {
+      "li_id": "akm",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_12g",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_12g_ap",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_556",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_556_base",
+      "category": "combat",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_556_he",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_556_he_old",
+      "category": "combat",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_762",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_762_base",
+      "category": "combat",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_762_he",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_762_he_old",
+      "category": "combat",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_8mm_handmade",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_9mm",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_9mm_base",
+      "category": "combat",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "animal_fat",
+      "category": "raw",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "auto_rifle_turret",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "auto_shotgun_turret",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "barrel_bomb",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "bear_trap",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "birthday_cake_2022",
+      "category": "access",
+      "copy_policy": "KEEP_EDITION_SCOPED",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "bizon_smg",
+      "category": "combat",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "blue_card",
+      "category": "access",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "canned_meat",
+      "category": "food",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "cleaver",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "cream",
+      "category": "food",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "crude_oil",
+      "category": "oil",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "dirt_grenade",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "double_barrel_shotgun",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "drawing_bench",
+      "category": "production",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "dried_meat",
+      "category": "food",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "egg",
+      "category": "food",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "egg_flour",
+      "category": "food",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "electric_door",
+      "category": "power",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "electric_resistor",
+      "category": "power",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "electronic_parts",
+      "category": "power",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "energy_extractor",
+      "category": "power",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "energy_refinery",
+      "category": "power",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "explosive_material",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "famas",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "flamethrower",
+      "category": "access",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "flamethrower_gas_ammo",
+      "category": "combat",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "flour",
+      "category": "food",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "fruit_juice",
+      "category": "food",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "fruit_wine",
+      "category": "food",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "fuel_generator",
+      "category": "power",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "glider_legacy",
+      "category": "armor",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "green_card",
+      "category": "access",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "grilled_mushroom",
+      "category": "food",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "gunpowder",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "gunpowder_legacy",
+      "category": "combat",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "handgun_body",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "handmade_explosive_pack",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "handmade_explosives",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "improved_grenade",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "inferno_chariot",
+      "category": "transport",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "inferno_chariot_blueprint",
+      "category": "access",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "infrared_switch",
+      "category": "power",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_folding_ladder",
+      "category": "building",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_plate_boots",
+      "category": "armor",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_plate_chest",
+      "category": "armor",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_plate_helmet",
+      "category": "armor",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_plate_pants",
+      "category": "armor",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "jam",
+      "category": "food",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "k31",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "large_furnace",
+      "category": "production",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "launcher_mechanism",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "low_quality_fuel_can",
+      "category": "oil",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "m24",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "machete",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "mg4",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "military_c4",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "molotov_cocktail",
+      "category": "defense",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "mountain_bicycle_blueprint",
+      "category": "transport",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "mushroom_soup",
+      "category": "food",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "needle_thread",
+      "category": "metal",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "needle_tube",
+      "category": "medical",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "nettle",
+      "category": "food",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "nettle_seed",
+      "category": "food",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "oil_refinery",
+      "category": "oil",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "old_military_mine",
+      "category": "defense",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "pressure_switch",
+      "category": "power",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "purple_card",
+      "category": "access",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "qbz97",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "red_bean_paste",
+      "category": "food",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_boots",
+      "category": "armor",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_chest",
+      "category": "armor",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_helmet",
+      "category": "armor",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_legs",
+      "category": "armor",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_ore",
+      "category": "Rare ore yield for refined metal",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "ATLAS_INDEX_ONLY"
+    },
+    {
+      "li_id": "reunion_mooncake_lottery_pack",
+      "category": "access",
+      "copy_policy": "KEEP_EDITION_SCOPED",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "rifle_body",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "rocket_ammo",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "rocket_launcher",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "rocket_turret",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "self_revive_defibrillator",
+      "category": "medical",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "semi_auto_pistol",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "semi_auto_rifle",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "shotgun_body",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "simple_revolver",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "single_shot_shotgun",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "smg",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "smg_body",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "sniper_body",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "steel_folding_ladder",
+      "category": "building",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "suicide_robot",
+      "category": "defense",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "sulfur_powder",
+      "category": "raw",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "switch",
+      "category": "power",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "syringe",
+      "category": "medical",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "territory_cabinet",
+      "category": "building",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "INDIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "tin_can",
+      "category": "metal",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "torsion_spring",
+      "category": "metal",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "tracking_auto_turret",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "LEGACY_CLAIM",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "wild_berry_seed",
+      "category": "food",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "source_support": "UNSUPPORTED_CITATION",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "wood_club",
+      "category": "combat",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "wood_spikes",
+      "category": "defense",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "wooden_ladder",
+      "category": "building",
+      "copy_policy": "COPY_LI_SOURCE",
+      "source_support": "DIRECT",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    }
+  ]
+}
