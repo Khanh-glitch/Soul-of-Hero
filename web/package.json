@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run --testTimeout=120000",
     "typecheck": "tsc --noEmit -p .",
-    "typecheck:tests": "tsc --noEmit -p tsconfig.test.json"
+    "typecheck:tests": "tsc --noEmit -p tsconfig.test.json",
+    "audit:items": "node scripts/build-item-ontology-v2.mjs"
   },
   "dependencies": {
     "@fontsource/pixelify-sans": "^5.2.5",

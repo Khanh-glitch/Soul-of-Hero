@@ -12,6 +12,10 @@
 | Các cạnh xuyên hệ | [v11 cross-edges](atlas/extracted/v11/17_EXPLICIT_CROSS_SYSTEM_NETWORK.csv) | Dependency research, cần test với source/consumer hiện hành |
 | Kỹ thuật thật | `web/src/game/`, `web/tests/`, `web/evidence/` | Source of actual behavior; không tự thay luật Creator |
 
+## Draft item ontology audit (2026-11-14)
+
+[Interactive item graph and catalog](item-ontology-v2/index.html) · [complete item/source/recipe/consumer ledger](item-ontology-v2/AUDIT.md) · [Last Island crosswalk and migration limits](item-ontology-v2/DECISIONS.md). This is a derived audit of the current production `ITEMS` / `RECIPES` registry, not a new gameplay authority or approval for pending merges. Regenerate with `cd web && npm run audit:items`.
+
 ## Bắt đầu làm việc
 1. Đọc [OPERATIONS.md](OPERATIONS.md) phần mốc R12, nhánh Git, trạng thái và lệnh thực thi.
 2. Đọc đúng điều [CHỐT] trong [bible.md](bible.md) cùng K/C/J liên quan; mở Atlas **chỉ theo cơ chế thật sự cần nghiên cứu**.
