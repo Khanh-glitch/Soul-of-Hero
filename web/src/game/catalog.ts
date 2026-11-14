@@ -1,4 +1,5 @@
 import { BAL } from './core';
+import { ITEM_RETIREMENT } from './final-item-set';
 import { RECIPE_FAMILY, RESEARCH_FAMILIES, RECIPE_REVISION, RETIRED_RECIPES, familyOfRecipe, familyMembers, recipeAtRevision, purchasableFamilies, isFamilyGated } from './recipe-migration';
 export { RECIPE_REVISION, RETIRED_RECIPES, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY, purchasableFamilies, isFamilyGated };
 export const recipeForJob = (id: string, rev: number | undefined): Recipe | null => recipeAtRevision(id, rev, RECIPES as Record<string, Recipe>);
@@ -17,9 +18,18 @@ export const GENERATOR_CAPACITY_UPGRADE: { cost: [string, number][]; benchLevel:
 export const CART_FREIGHT_UPGRADE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 4], ['iron_ingot', 2], ['spares', 3]], benchLevel: 2 };
 // Seed and plant input are consumed; produce remains physical in the inventory or a drop.
 export const GARDEN_FRAME_COST: [string,number][] = [['wood',4], ['fiber',4], ['glass',1], ['herb',1]];
-export const GARDEN_CROPS: Record<'crop' | 'herb', { name: string; inputs: [string, number][]; output: [string, number][]; seconds: number }> = {
-  crop: { name: 'Sunroot', inputs: [['seed', 1]], output: [['crop', 3], ['seed', 2]], seconds: BAL.garden.growSeconds },
-  herb: { name: 'Bitterleaf', inputs: [['seed', 1], ['herb', 1]], output: [['herb', 3], ['seed', 1]], seconds: BAL.garden.herbGrowSeconds },
+// Item set v2 (Bible §0.2a C): three named cultivars replace the generic Wild Seeds. A harvest hands
+// back exactly the ONE seed that was planted — replanting never multiplies seed stock (roster rule 3);
+// more plots need more seed from a physical wild source or loot. `berry` grows on the Sunroot climate table.
+export type GardenCrop = 'crop' | 'herb' | 'berry';
+export const GARDEN_CROP_KINDS: readonly GardenCrop[] = ['crop', 'herb', 'berry'];
+export const isGardenCrop = (k: unknown): k is GardenCrop => k === 'crop' || k === 'herb' || k === 'berry';
+/** Seasonal growth table a cultivar reads (`calendar.cropSeasonFactor`). */
+export const gardenClimateClass = (k: GardenCrop): 'crop' | 'herb' => k === 'herb' ? 'herb' : 'crop';
+export const GARDEN_CROPS: Record<GardenCrop, { name: string; inputs: [string, number][]; output: [string, number][]; seconds: number }> = {
+  crop: { name: 'Sunroot', inputs: [['seed_sunroot', 1]], output: [['crop', 3], ['seed_sunroot', 1]], seconds: BAL.garden.growSeconds },
+  herb: { name: 'Bitterleaf', inputs: [['seed_bitterleaf', 1]], output: [['herb', 3], ['seed_bitterleaf', 1]], seconds: BAL.garden.herbGrowSeconds },
+  berry: { name: 'Wild Berry', inputs: [['seed_wildberry', 1]], output: [['berries', 4], ['seed_wildberry', 1]], seconds: BAL.garden.growSeconds },
 };
 
 export interface ItemDef {
@@ -99,6 +109,44 @@ export const ITEMS: Record<string, ItemDef> = {
   cloth: I({ name: 'Cloth', cat: 'res', icon: 'cloth', c1: '#7a6e9a', c2: '#c8c0e0', w: 0.3, max: 30, desc: 'Woven fiber cloth.' }),
   glass: I({ name: 'Glass', cat: 'res', icon: 'gem', c1: '#6fb0a8', c2: '#e0fff8', w: 0.4, max: 30, desc: 'Fused glass: furnace crystal, or stone with shell flux.' }),
   seed: I({ name: 'Wild Seeds', cat: 'res', icon: 'seed', c1: '#7a6a3a', c2: '#d8c070', w: 0.05, max: 40, desc: 'Plant in a garden plot.' }),
+  // ===== ARENA 1 — FINAL ITEM SET v2 (Bible §0.2a). Group A imports from Last Island + three SOH cultivars. =====
+  // No Last Island stat table is in the evidence set (only names, recipes and partial loot), so every NUMBER
+  // below (weight, stack, damage, food value, armour) is an SOH trial value, recorded as such in
+  // `LI_RECIPE_LEDGER` / ITEM_VISUAL_HANDOFF.json. Icons reuse an existing key: TEMP_FALLBACK until Arena 2.
+  seed_sunroot: I({ name: 'Sunroot Seed', vi: 'Hạt Sunroot', cat: 'res', icon: 'seed', c1: '#8a5a22', c2: '#f0b050', w: 0.05, max: 40, desc: 'Plant in a garden plot for Sunroot. Wants the warm season. A harvest returns the one seed you planted, never more.' }),
+  seed_bitterleaf: I({ name: 'Bitterleaf Seed', vi: 'Hạt Bitterleaf', cat: 'res', icon: 'seed', c1: '#2e6a3a', c2: '#9ad88a', w: 0.05, max: 40, desc: 'Plant in a garden plot for Bitterleaf. Tolerates cold better than Sunroot. A harvest returns the one seed you planted.' }),
+  seed_wildberry: I({ name: 'Wild Berry Seed', vi: 'Hạt dâu dại', cat: 'res', icon: 'seed', c1: '#7a1e3a', c2: '#e88aa0', w: 0.05, max: 40, desc: 'Plant in a garden plot for berries, or mix into fodder. A harvest returns the one seed you planted.' }),
+  animal_fat: I({ name: 'Animal Fat', vi: 'Mỡ động vật', cat: 'res', icon: 'hide', c1: '#d8c890', c2: '#fff4c8', w: 0.3, max: 40, desc: 'Rendered from large game. Furnace-render it with cloth into a Fuel Canister, or use it in a Syringe.' }),
+  tin_can: I({ name: 'Tin Can', vi: 'Hộp thiếc', cat: 'res', icon: 'can', c1: '#8e969c', c2: '#e6ecf0', w: 0.15, max: 30, desc: 'Empty food tin pulled from wrecks and roadside scrap. Cannot be crafted. Needed for canned meat, soup, jam and wine.' }),
+  electronic_parts: I({ name: 'Electronic Parts', vi: 'Linh kiện điện tử', cat: 'res', icon: 'gear', c1: '#2f6a5a', c2: '#9af0c8', w: 0.2, max: 40, desc: 'Salvaged boards and relays. Cannot be crafted: taken from Scrap Crawlers and car wrecks. Goes into switches, pressure plates and infrared sensors.' }),
+  electric_resistor: I({ name: 'Resistor Wire', vi: 'Dây điện trở', cat: 'res', icon: 'rope', c1: '#8a5a3a', c2: '#f0a060', w: 0.1, max: 30, desc: 'Last Island toolbox material. No use is evidenced in the source set, so nothing in this build issues or consumes it yet.' }),
+  needle_tube: I({ name: 'Needle Tube', vi: 'Ống kim', cat: 'res', icon: 'arrow', c1: '#9aa4b0', c2: '#e8f4ff', w: 0.05, max: 30, desc: 'Empty injector body from roadside scrap or a Blood Archivist. Cannot be crafted. Fill at a workbench to make a Syringe.' }),
+  needle_thread: I({ name: 'Needle and Thread', vi: 'Kim chỉ', cat: 'res', icon: 'fiber', c1: '#c8c0e0', c2: '#f4f0ff', w: 0.05, max: 40, desc: 'Sewing kit made from cloth and iron. Stitches hide onto plate for iron and refined-iron armour.' }),
+  syringe: I({ name: 'Syringe', vi: 'Ống tiêm', cat: 'food', icon: 'flask', c1: '#b03838', c2: '#f4e4e4', w: 0.15, max: 10, desc: 'Fast field injection: restores health and stamina at once.', food: { hp: 35, stamina: 20 } }),
+  dried_meat: I({ name: 'Dried Meat', vi: 'Thịt khô', cat: 'food', icon: 'meat', c1: '#5a2e1e', c2: '#a8683a', w: 0.2, max: 20, desc: 'Slow-dried at a campfire. Half the weight of a roast: trail food, less filling.', food: { hunger: 26, hp: 2 } }),
+  canned_meat: I({ name: 'Canned Meat', vi: 'Thịt hộp', cat: 'food', icon: 'can', c1: '#8a3a2a', c2: '#e8d0a0', w: 0.6, max: 10, desc: 'Three cuts sealed in one tin. A whole meal in a single slot.', food: { hunger: 70, hp: 8 } }),
+  grilled_mushroom: I({ name: 'Grilled Mushroom', vi: 'Nấm nướng', cat: 'food', icon: 'mush', c1: '#7a5a3a', c2: '#e0c090', w: 0.1, max: 20, desc: 'Marsh Cap cooked through: the toxin is gone.', food: { hunger: 12 } }),
+  mushroom_soup: I({ name: 'Mushroom Soup', vi: 'Súp nấm', cat: 'food', icon: 'bowl', c1: '#594e30', c2: '#d8c8a0', w: 0.5, max: 10, desc: 'Warm tinned soup. Feeds, hydrates and warms.', food: { hunger: 36, thirst: 22, hp: 6, warmth: 12 } }),
+  fruit_juice: I({ name: 'Fruit Juice', vi: 'Nước ép quả', cat: 'food', icon: 'flask', c1: '#a02a4a', c2: '#ff9ab0', w: 0.3, max: 10, desc: 'Pressed berries. Mostly a drink.', food: { thirst: 26, hunger: 6 } }),
+  fruit_wine: I({ name: 'Fruit Wine', vi: 'Rượu quả', cat: 'food', icon: 'flask', c1: '#5a1e4a', c2: '#d88ac8', w: 0.4, max: 10, desc: 'Fermented in a tin by the fire. Warms you through; quenches little.', food: { thirst: 12, warmth: 24, hp: 4 } }),
+  jam: I({ name: 'Jam', vi: 'Mứt', cat: 'food', icon: 'can', c1: '#7a1e3a', c2: '#ff7a9a', w: 0.4, max: 10, desc: 'Berries boiled down and sealed under cloth. Dense energy for a long haul.', food: { hunger: 40, stamina: 30 } }),
+  wood_club: I({ name: 'Wood Club', vi: 'Gậy gỗ', cat: 'weapon', icon: 'log', c1: '#7a5a32', c2: '#c9a064', w: 1.2, max: 1, desc: 'A heavy branch. Crude, hand-made, wears out fast.', repair: { station: 'workbench', cost: [['wood', 3]] }, power: { plant: 1 }, dmg: 12, reach: 22, arc: 1.4, swing: 420, dur: 120 }),
+  cleaver: I({ name: 'Cleaver', vi: 'Dao phay', cat: 'weapon', icon: 'knife', c1: '#c8d0dc', c2: '#5a3a22', w: 0.9, max: 1, desc: 'Short heavy blade. Quick chops at close reach; clears brush.', repair: { station: 'workbench', cost: [['iron_ingot', 1]] }, power: { plant: 3 }, dmg: 17, reach: 20, arc: 1.3, swing: 330, dur: 260 }),
+  machete: I({ name: 'Machete', vi: 'Rựa', cat: 'weapon', icon: 'sword', c1: '#dfe6ee', c2: '#7a4a2a', w: 1.4, max: 1, desc: 'Fast, wide cuts. The iron long blade.', studyRecipe: 'machete', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['metal_blade', 1]] }, salvage: { station: 'workbench', yields: [['iron_ingot', 1]] }, power: { plant: 3 }, dmg: 24, reach: 26, arc: 1.7, swing: 330, dur: 350 }),
+  iron_plate_helmet: I({ name: 'Iron Plate Helmet', vi: 'Mũ tấm sắt', cat: 'armor', icon: 'helm', c1: '#4f5a63', c2: '#c9d1d8', w: 1.8, max: 1, desc: '-14% damage.', slot: 'head', armor: 0.14 }),
+  iron_plate_chest: I({ name: 'Iron Plate Chest', vi: 'Giáp ngực tấm sắt', cat: 'armor', icon: 'armor', c1: '#4f5a63', c2: '#c9d1d8', w: 5.5, max: 1, desc: '-28% damage. Heavy.', slot: 'body', armor: 0.28 }),
+  iron_plate_pants: I({ name: 'Iron Plate Pants', vi: 'Quần tấm sắt', cat: 'armor', icon: 'armor', c1: '#4f5a63', c2: '#a8b0b8', w: 3.5, max: 1, desc: 'Leg armour. This build has no leg slot yet, so it cannot be worn or crafted.' }),
+  iron_plate_boots: I({ name: 'Iron Plate Boots', vi: 'Giày tấm sắt', cat: 'armor', icon: 'armor', c1: '#4f5a63', c2: '#8a9298', w: 2, max: 1, desc: 'Foot armour. This build has no foot slot yet, so it cannot be worn or crafted.' }),
+  refined_iron_helmet: I({ name: 'Refined Iron Helmet', vi: 'Mũ sắt tinh luyện', cat: 'armor', icon: 'helm', c1: '#71c3c6', c2: '#e4f4f4', w: 2.2, max: 1, desc: '-20% damage.', slot: 'head', armor: 0.2 }),
+  refined_iron_chest: I({ name: 'Refined Iron Chest', vi: 'Giáp ngực sắt tinh luyện', cat: 'armor', icon: 'armor', c1: '#71c3c6', c2: '#e4f4f4', w: 6.5, max: 1, desc: '-36% damage. The heaviest crafted body armour.', slot: 'body', armor: 0.36 }),
+  refined_iron_legs: I({ name: 'Refined Iron Legs', vi: 'Giáp chân sắt tinh luyện', cat: 'armor', icon: 'armor', c1: '#71c3c6', c2: '#b8d8d8', w: 4, max: 1, desc: 'Leg armour. This build has no leg slot yet, so it cannot be worn or crafted.' }),
+  refined_iron_boots: I({ name: 'Refined Iron Boots', vi: 'Giày sắt tinh luyện', cat: 'armor', icon: 'armor', c1: '#71c3c6', c2: '#98b8b8', w: 2.4, max: 1, desc: 'Foot armour. This build has no foot slot yet, so it cannot be worn or crafted.' }),
+  green_card: I({ name: 'Green Card', vi: 'Thẻ xanh lá', cat: 'misc', icon: 'card', c1: '#2a7a3a', c2: '#a0f0b0', w: 0.05, max: 5, desc: 'Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.' }),
+  blue_card: I({ name: 'Blue Card', vi: 'Thẻ xanh dương', cat: 'misc', icon: 'card', c1: '#2a4a8a', c2: '#a0c8f0', w: 0.05, max: 5, desc: 'Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.' }),
+  purple_card: I({ name: 'Purple Card', vi: 'Thẻ tím', cat: 'misc', icon: 'card', c1: '#5a2a8a', c2: '#d0a0f0', w: 0.05, max: 5, desc: 'Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.' }),
+  wooden_ladder: I({ name: 'Wooden Ladder', vi: 'Thang gỗ', cat: 'misc', icon: 'plank', c1: '#7a5a32', c2: '#c9a064', w: 4, max: 1, desc: 'Last Island climbing ladder. This build has no climbing action, so it cannot be crafted or used yet.' }),
+  steel_folding_ladder: I({ name: 'Steel Folding Ladder', vi: 'Thang gấp thép', cat: 'misc', icon: 'plank', c1: '#71c3c6', c2: '#e4f4f4', w: 6, max: 1, desc: 'Last Island folding ladder. This build has no climbing action, so it cannot be crafted or used yet.' }),
+  large_furnace: I({ name: 'Large Furnace', vi: 'Lò lớn', cat: 'misc', icon: 'parts', c1: '#6a4a3a', c2: '#f0a050', w: 30, max: 1, desc: 'Last Island large smelter. Its recipe is not in the source set and no structure is built for it yet.' }),
   // food
   berries: I({ name: 'Berries', cat: 'food', icon: 'berry', c1: '#7a1e3a', c2: '#e05a7a', w: 0.1, max: 30, desc: 'Sweet and watery.', food: { hunger: 8, thirst: 4 } }),
   meat: I({ name: 'Raw Meat', cat: 'food', icon: 'meat', c1: '#8e2a2a', c2: '#e07a7a', w: 0.5, max: 20, desc: 'Risky raw. Cook at a campfire.', food: { hunger: 12, hp: -6 } }),
@@ -120,7 +168,7 @@ export const ITEMS: Record<string, ItemDef> = {
   industrial_pick: I({ name: 'Salvager Pick', cat: 'tool', icon: 'salvage_pick', c1: '#71c3c6', c2: '#a37945', w: 1.9, max: 1, desc: 'An improved pick: faster work on rock, ore and wrecks. Requires an improved bench.', power: { stone: 9, ore: 8, scrap: 7 }, dmg: 17, reach: 23, arc: 1.2, swing: 410, dur: 500, repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1], ['spares', 1]] } }),
   industrial_axe: I({ name: 'Salvager Axe', cat: 'tool', icon: 'salvage_axe', c1: '#71c3c6', c2: '#a37945', w: 1.8, max: 1, desc: 'An improved axe: more work per strike on timber. Requires an improved bench.', power: { wood: 9, plant: 3, scrap: 3 }, dmg: 19, reach: 23, arc: 1.5, swing: 390, dur: 500, repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1], ['spares', 1]] } }),
   wood_spear: I({ name: 'Fire-hardened Spear', cat: 'weapon', icon: 'spear', c1: '#c9935a', c2: '#e0e0e0', w: 1, max: 1, desc: 'Long reach, narrow thrust.', power: { plant: 1 }, dmg: 15, reach: 34, arc: 0.45, swing: 380, dur: 150 }),
-  iron_sword: I({ name: 'Iron Sword', cat: 'weapon', icon: 'sword', c1: '#dfe6ee', c2: '#7a4a2a', w: 1.4, max: 1, desc: 'Fast, wide cuts.', studyRecipe: 'iron_sword', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1]] }, salvage: { station: 'workbench', yields: [['iron_ingot', 1]] }, power: { plant: 2 }, dmg: 24, reach: 26, arc: 1.7, swing: 330, dur: 350 }),
+  iron_sword: I({ name: 'Iron Sword', cat: 'weapon', icon: 'sword', c1: '#dfe6ee', c2: '#7a4a2a', w: 1.4, max: 1, desc: 'Retired with the final item set: every Iron Sword is now a Machete. Row kept only so old saves and frozen recipes still parse.', repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1]] }, salvage: { station: 'workbench', yields: [['iron_ingot', 1]] }, power: { plant: 2 }, dmg: 24, reach: 26, arc: 1.7, swing: 330, dur: 350 }),
   bow: I({ name: 'Hunting Bow', cat: 'weapon', icon: 'bow', c1: '#8a5a32', c2: '#e0d8c0', w: 0.8, max: 1, desc: 'Fires arrows toward the cursor.', studyRecipe: 'bow', repair: { station: 'workbench', cost: [['wood', 1], ['fiber', 2]] }, dmg: 16, reach: 220, swing: 520, dur: 200, ranged: 'arrow' }),
   reinforced_spear: I({ name: 'Reinforced Spear', cat: 'weapon', icon: 'spear', c1: '#bbc8d0', c2: '#a77745', w: 1.8, max: 1, desc: 'A durable long-reach spear made at an improved workbench.', power: { plant: 2 }, dmg: 23, reach: 36, arc: 0.5, swing: 390, dur: 320, repair: { station: 'workbench', cost: [['iron_ingot', 1], ['mechanical_parts', 1]] } }),
   arrow: I({ name: 'Arrow', cat: 'res', icon: 'arrow', c1: '#8a5a32', c2: '#c0c0c8', w: 0.05, max: 60, desc: 'Ammunition for bows.' }),
@@ -140,7 +188,7 @@ export const ITEMS: Record<string, ItemDef> = {
   blueprint: I({ name: 'Blueprint', cat: 'bp', icon: 'scroll', c1: '#3a5a8a', c2: '#e0e8f0', w: 0.05, max: 1, desc: 'Use to learn the recipe it describes. Consumed once.' }),
   wolf_fang: I({ name: 'Wolf Fang (specimen)', cat: 'res', icon: 'fang', c1: '#d0c8b0', c2: '#fff', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'fur_cloak' }),
   crawler_optic: I({ name: 'Crawler Optic (specimen)', cat: 'res', icon: 'gem', c1: '#a01e1e', c2: '#ff8a6a', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'gas_mask' }),
-  boar_tusk: I({ name: 'Boar Tusk (specimen)', cat: 'res', icon: 'fang', c1: '#c0a070', c2: '#fff0d0', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'iron_sword' }),
+  boar_tusk: I({ name: 'Boar Tusk (specimen)', cat: 'res', icon: 'fang', c1: '#c0a070', c2: '#fff0d0', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'machete' }),
   beetle_horn: I({ name: 'Beetle Horn (specimen)', cat: 'res', icon: 'fang', c1: '#5a2a1e', c2: '#e06a3a', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'chitin_armor' }),
   keycard: I({ name: 'Vault Keycard', cat: 'misc', icon: 'card', c1: '#2a6a5a', c2: '#a0f0d0', w: 0.05, max: 5, desc: 'A physical Vault Keycard. New cards have limited scans; legacy cards retain one use.' }),
   // PA1 R1: only the RECIPE is retired. The item keeps `fuel: 60` — a canister is still what a
@@ -157,7 +205,7 @@ export const ITEMS: Record<string, ItemDef> = {
   metal_blade: I({ name:'Metal Blade', cat:'res', icon:'blade', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock: the edge of the Salvager Axe, and an optional refit for the Iron Sword and Reinforced Spear.' }),
   mechanical_gear: I({ name:'Mechanical Gear', cat:'res', icon:'mgear', c1:'#6b6f76', c2:'#d6c27a', w:0.8, max:20, desc:'Precision gear for motor drives and powered mechanisms.' }),
   iron_plate: I({ name:'Iron Plate', cat:'res', icon:'plate', c1:'#4f5a63', c2:'#c9d1d8', w:1.5, max:20, desc:'Plate patch for a damaged wall or door (Shift+click when repairing): restores up to 25% of its max HP per plate. Not a permanent reinforcement.' }),
-  motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'Packed dry: frame, drive, two iron plates and two fastener sets. No fuel is packaged — place it, then refuel with a real Fuel Canister.', place:'motorbike' }),
+  motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'Packed dry: frame, two gears, three iron plates and refined-iron stock. No fuel is packaged — place it, then refuel with a real Fuel Canister.', place:'motorbike' }),
   cart_kit: I({ name: 'Hand Cart (packed)', cat: 'kit', icon: 'cart', c1: '#7a5a32', c2: '#c0c8d0', w: 6, max: 1, desc: 'Place to unpack a cargo cart.', place: 'cart' }),
   // elder stones (unique per run)
   stone_frost: I({ name: 'Stone of Rime', cat: 'stone', icon: 'relic', c1: '#3a8ad0', c2: '#e0ffff', w: 1, max: 1, desc: 'Taken from the Glacier Matron.' }),
@@ -193,7 +241,7 @@ export interface QualityBonus { capability: 'playerTool'; power: Mat; tiers: { m
 export type RegrowClass = 'crop' | 'herb';
 export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; qualityBonus?: QualityBonus; block: boolean; regrow?: number; regrowClass?: RegrowClass; art: string; tall?: boolean; placement?: SourcePlacementRule[] }
 export const SOURCES: Record<string, SourceDef> = {
-  oak: { name: 'Oak', mat: 'wood', hp: 18, stock: 6, yields: [['wood', 1]], bonus: [['seed', 0.25]], block: true, art: 'oak', tall: true },
+  oak: { name: 'Oak', mat: 'wood', hp: 18, stock: 6, yields: [['wood', 1]], block: true, art: 'oak', tall: true },
   pine: { name: 'Pine', mat: 'wood', hp: 16, stock: 5, yields: [['wood', 1]], block: true, art: 'pine', tall: true },
   snowpine: { name: 'Snow Pine', mat: 'wood', hp: 16, stock: 5, yields: [['wood', 1]], block: true, art: 'snowpine', tall: true },
   palm: { name: 'Palm', mat: 'wood', hp: 12, stock: 4, yields: [['wood', 1]], bonus: [['fiber', 0.5]], block: true, art: 'palm', tall: true },
@@ -206,30 +254,30 @@ export const SOURCES: Record<string, SourceDef> = {
   crystal: { name: 'Frost Crystal', mat: 'ore', hp: 20, stock: 3, yields: [['crystal', 1]], block: true, art: 'crystal' },
   salt_shale: { name: 'Salt Shale', mat: 'ore', hp: 12, stock: 4, yields: [['raw_salt', 1]], block: true, art: 'crystal', placement: [{ terrain: 'sand', chance: 0.24 }] },
   sulfur: { name: 'Sulfur Vent', mat: 'ore', hp: 14, stock: 3, yields: [['sulfur', 1]], block: true, art: 'sulfur' },
-  bush: { name: 'Berry Bush', mat: 'plant', hp: 6, stock: 3, yields: [['berries', 1]], bonus: [['seed', 0.3]], block: false, regrow: 420, regrowClass: 'crop', art: 'bush' },
-  grass: { name: 'Tall Grass', mat: 'plant', hp: 3, stock: 2, yields: [['fiber', 1]], block: false, regrow: 300, regrowClass: 'crop', art: 'grass' },
+  bush: { name: 'Berry Bush', mat: 'plant', hp: 6, stock: 3, yields: [['berries', 1]], bonus: [['seed_wildberry', 0.3]], block: false, regrow: 420, regrowClass: 'crop', art: 'bush' },
+  grass: { name: 'Tall Grass', mat: 'plant', hp: 3, stock: 2, yields: [['fiber', 1]], bonus: [['seed_sunroot', 0.08]], block: false, regrow: 300, regrowClass: 'crop', art: 'grass' },
   reed: { name: 'Reeds', mat: 'plant', hp: 4, stock: 3, yields: [['fiber', 1]], block: false, regrow: 360, regrowClass: 'crop', art: 'reed' },
-  herb: { name: 'Bitterleaf', mat: 'plant', hp: 3, stock: 2, yields: [['herb', 1]], block: false, regrow: 600, regrowClass: 'herb', art: 'herb' },
+  herb: { name: 'Bitterleaf', mat: 'plant', hp: 3, stock: 2, yields: [['herb', 1]], bonus: [['seed_bitterleaf', 0.3]], block: false, regrow: 600, regrowClass: 'herb', art: 'herb' },
   mushroom: { name: 'Marsh Caps', mat: 'plant', hp: 3, stock: 2, yields: [['mushroom', 1]], block: false, regrow: 600, regrowClass: 'herb', art: 'mush' },
-  scrap: { name: 'Roadside Scrap', mat: 'scrap', hp: 8, stock: 4, yields: [['scrap', 1]], bonus: [['spares', 0.55]], block: false, art: 'scrap' },
-  wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.3], ['damaged_drive', 0.2], ['fuel_can', 0.06], ['mechanical_parts', 0.08], ['fasteners', 0.12], ['field_repair_kit', 0.04]], block: true, art: 'wreck' },
+  scrap: { name: 'Roadside Scrap', mat: 'scrap', hp: 8, stock: 4, yields: [['scrap', 1]], bonus: [['spares', 0.55], ['tin_can', 0.35], ['needle_tube', 0.1]], block: false, art: 'scrap' },
+  wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['scrap', 1]], bonus: [['spares', 0.3], ['damaged_drive', 0.2], ['fuel_can', 0.06], ['mechanical_parts', 0.08], ['fasteners', 0.12], ['field_repair_kit', 0.04], ['tin_can', 0.2], ['electronic_parts', 0.15]], block: true, art: 'wreck' },
 };
 
 // ---------- Creatures (K5) ----------
 export interface CreatureDef { name: string; hp: number; dmg: number; speed: number; r: number; sight: number; drops: [string, number, number][]; biome: string; style: string; tell: number; aggro: boolean; night?: boolean; leashTiles?: number; uniqueDrop?: string; tamable?: boolean }
 export const CREATURES: Record<string, CreatureDef> = {
-  boar: { name: 'Bristleback Boar', hp: 40, dmg: 13, speed: 46, r: 6, sight: 90, drops: [['meat', 2, 1], ['hide', 1, 1], ['boar_tusk', 1, 0.3]], biome: 'meadow', style: 'charge', tell: 650, aggro: false, tamable: true },
+  boar: { name: 'Bristleback Boar', hp: 40, dmg: 13, speed: 46, r: 6, sight: 90, drops: [['meat', 2, 1], ['hide', 1, 1], ['animal_fat', 1, 0.8], ['boar_tusk', 1, 0.3]], biome: 'meadow', style: 'charge', tell: 650, aggro: false, tamable: true },
   wolf: { name: 'Greyfang Wolf', hp: 30, dmg: 9, speed: 74, r: 6, sight: 120, drops: [['meat', 1, 1], ['fur', 2, 1], ['wolf_fang', 1, 0.4]], biome: 'forest', style: 'lunge', tell: 380, aggro: true },
   toad: { name: 'Mire Toad', hp: 30, dmg: 10, speed: 30, r: 6, sight: 90, drops: [['gland', 1, 1], ['meat', 1, 0.6]], biome: 'marsh', style: 'tongue', tell: 700, aggro: true },
-  crawler: { name: 'Scrap Crawler', hp: 44, dmg: 8, speed: 40, r: 6, sight: 130, drops: [['spares', 2, 1], ['scrap', 2, 1], ['crawler_optic', 1, 0.35]], biome: 'toxic', style: 'shoot', tell: 600, aggro: true },
+  crawler: { name: 'Scrap Crawler', hp: 44, dmg: 8, speed: 40, r: 6, sight: 130, drops: [['spares', 2, 1], ['scrap', 2, 1], ['electronic_parts', 1, 0.5], ['crawler_optic', 1, 0.35]], biome: 'toxic', style: 'shoot', tell: 600, aggro: true },
   beetle: { name: 'Cinder Beetle', hp: 52, dmg: 15, speed: 36, r: 7, sight: 100, drops: [['chitin', 2, 1], ['sulfur', 1, 0.6], ['beetle_horn', 1, 0.3]], biome: 'ash', style: 'burrow', tell: 900, aggro: true },
   crab: { name: 'Shore Crab', hp: 24, dmg: 7, speed: 42, r: 5, sight: 70, drops: [['shell', 1, 1], ['meat', 1, 0.8]], biome: 'sand', style: 'pinch', tell: 420, aggro: false },
 
   // SOH_PROVISIONAL: 9 Veyra Ordinary Creatures (verified recovery sprites; knife-defensible telegraphs; zero rcash)
   vampire_1: { name: 'Dusk Stray', hp: 38, dmg: 11, speed: 60, r: 6, sight: 115, drops: [['cloth', 1, 0.85], ['herb', 1, 0.65], ['hide', 1, 0.5]], biome: 'forest', style: 'lunge', tell: 440, aggro: true, night: true, leashTiles: 24 },
-  vampire_2: { name: 'Blood Archivist', hp: 52, dmg: 14, speed: 56, r: 6, sight: 125, drops: [['cloth', 2, 0.9], ['herb', 2, 0.7], ['crystal', 1, 0.45]], biome: 'ruin', style: 'slash_step', tell: 480, aggro: true, night: true, leashTiles: 26 },
+  vampire_2: { name: 'Blood Archivist', hp: 52, dmg: 14, speed: 56, r: 6, sight: 125, drops: [['cloth', 2, 0.9], ['herb', 2, 0.7], ['crystal', 1, 0.45], ['needle_tube', 1, 0.4]], biome: 'ruin', style: 'slash_step', tell: 480, aggro: true, night: true, leashTiles: 26 },
   vampire_3: { name: 'Crimson Warden', hp: 74, dmg: 18, speed: 52, r: 7, sight: 135, drops: [['crystal', 1, 0.85], ['cloth', 2, 0.8], ['iron_ingot', 1, 0.45], ['essence_spirit', 1, 0.35]], biome: 'crypt', style: 'cleave', tell: 560, aggro: true, night: true, leashTiles: 28 },
-  orc_1: { name: 'Scrap Gnawer', hp: 42, dmg: 12, speed: 54, r: 6, sight: 105, drops: [['scrap', 2, 0.9], ['fiber', 2, 0.7], ['meat', 1, 0.5]], biome: 'scrap', style: 'lunge', tell: 440, aggro: true, leashTiles: 22 },
+  orc_1: { name: 'Scrap Gnawer', hp: 42, dmg: 12, speed: 54, r: 6, sight: 105, drops: [['scrap', 2, 0.9], ['fiber', 2, 0.7], ['meat', 1, 0.5], ['electronic_parts', 1, 0.3]], biome: 'scrap', style: 'lunge', tell: 440, aggro: true, leashTiles: 22 },
   orc_2: { name: 'Bridge Raider', hp: 58, dmg: 15, speed: 56, r: 7, sight: 120, drops: [['scrap', 2, 0.9], ['plank', 1, 0.6], ['hide', 1, 0.65], ['iron_ore', 1, 0.45]], biome: 'road', style: 'charge', tell: 500, aggro: true, leashTiles: 26 },
   orc_3: { name: 'Ironvein Marauder', hp: 82, dmg: 19, speed: 48, r: 8, sight: 120, drops: [['iron_ore', 2, 0.9], ['coal', 1, 0.7], ['scrap', 2, 0.75], ['fasteners', 1, 0.4]], biome: 'quarry', style: 'slam', tell: 600, aggro: true, leashTiles: 26 },
   slime_1: { name: 'Lake Droplet', hp: 28, dmg: 8, speed: 44, r: 6, sight: 76, drops: [['herb', 1, 0.8], ['berries', 2, 0.6], ['raw_salt', 1, 0.45]], biome: 'lake', style: 'spit_hop', tell: 460, aggro: true, leashTiles: 18 },
@@ -237,7 +285,7 @@ export const CREATURES: Record<string, CreatureDef> = {
   slime_3: { name: 'Cinder Core', hp: 64, dmg: 16, speed: 44, r: 7, sight: 106, drops: [['sulfur', 2, 0.9], ['coal', 2, 0.8], ['essence_fire', 1, 0.35]], biome: 'ash', style: 'ember_burst', tell: 580, aggro: true, leashTiles: 22 },
 
   // SOH_PROVISIONAL: 5 Veyra Living Wildlife Species (boar above + deer, hare, grouse, fox)
-  deer: { name: 'Meadow Deer', hp: 32, dmg: 6, speed: 68, r: 6, sight: 110, drops: [['meat', 2, 1], ['hide', 2, 1]], biome: 'meadow', style: 'graze_flee', tell: 500, aggro: false, tamable: true },
+  deer: { name: 'Meadow Deer', hp: 32, dmg: 6, speed: 68, r: 6, sight: 110, drops: [['meat', 2, 1], ['hide', 2, 1], ['animal_fat', 1, 0.6]], biome: 'meadow', style: 'graze_flee', tell: 500, aggro: false, tamable: true },
   hare: { name: 'Brush Hare', hp: 14, dmg: 3, speed: 76, r: 4, sight: 95, drops: [['meat', 1, 1], ['fur', 1, 0.7]], biome: 'meadow', style: 'graze_flee', tell: 450, aggro: false, tamable: true },
   grouse: { name: 'Black Grouse', hp: 16, dmg: 4, speed: 70, r: 4, sight: 92, drops: [['meat', 1, 1], ['feather', 2, 1], ['grouse_egg', 1, 0.4]], biome: 'marsh', style: 'flush_flee', tell: 450, aggro: false, tamable: true },
   fox: { name: 'Red Fox', hp: 26, dmg: 9, speed: 72, r: 5, sight: 115, drops: [['fur', 1, 1], ['meat', 1, 0.8]], biome: 'forest', style: 'stalk', tell: 400, aggro: false, night: true, leashTiles: 28 },
@@ -339,7 +387,7 @@ export const PA1_STRUCTURE_ITEM = (type:string):string|null =>
  * the ontology manifest still reports `authority_status`. */
 export const SOH_PROVISIONAL_ITEMS: readonly string[] = Object.freeze(['lead_rope', 'animal_feed', 'feather', 'grouse_egg', 'relic_shaleheart', 'ronin_nodachi', 'tidemarshal_trident', 'custodian_lantern']);
 
-export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['pump_crude','refinery_crude','vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother',...DEPLOYABLE_TYPES.map(k=>'deploy_'+k).filter(id=>!isFamilyGated(id))];
+export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['pump_crude','refinery_crude','vehicle_frame','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother',...DEPLOYABLE_TYPES.map(k=>'deploy_'+k).filter(id=>!isFamilyGated(id))];
 
 /** The single authority for "what a run knows without paying for it". A family whose gate is
  *  priced AND approved for enforcement is excluded here, and that exclusion is the only way a
@@ -365,12 +413,11 @@ export const RECIPES: Record<string, Recipe> = {
   // Item Ontology V2 P3 (rev 3): the Metal Pipe is the tubing of THE frame recipe. The rev-2 plain frame and the
   // rev-2 `vehicle_frame_piped` alternative are frozen in recipe-migration.ts; this line is the former piped BOM.
   vehicle_frame: { out:'vehicle_frame', qty:1, ins:[['metal_pipe',1],['iron_ingot',2],['mechanical_parts',2],['spares',2]], station:'workbench', stationLevel:2, secs:22, base:true, tier:1, rev:3 },
-  vehicle_drive: { out:'vehicle_drive', qty:1, ins:[['iron_ingot',2],['mechanical_parts',2],['fasteners',2],['spares',3]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
   // PA1 v1.2 DRY KIT (docs/design/PA1_OIL_MOBILITY_V1_2_ACCEPTANCE.md §1, superseding the
   // recovered v1.1 row): Frame + Drive + 2 Iron Plate + 2 Fasteners. The kit carries NO
   // fuel — `placeMotorbike` starts at fuel 0 and `vehicleRefuel` consumes one real
   // physical Fuel Can afterwards. Rev 1 (2 raw ingots, paper also charged a can) is frozen.
-  motorbike_kit: { out:'motorbike_kit', qty:1, ins:[['vehicle_frame',1],['vehicle_drive',1],['iron_plate',2],['fasteners',2]], station:'workbench', stationLevel:3, secs:40, tier:2, rev:2 },
+  motorbike_kit: { out:'motorbike_kit', qty:1, ins:[['vehicle_frame',1],['mechanical_gear',2],['iron_plate',3],['refined_iron_ingot',4]], station:'workbench', stationLevel:3, secs:40, tier:2, rev:4 },
   refine_salvaged_oil: { out:'fuel_can', qty:1, ins:[['salvaged_oil',3],['glass',1]], station:'furnace', secs:18, tier:1 },
   // SOH_PROVISIONAL v1 Oil Refinery: batch-efficient fuel + dedicated lubricant, distinct from furnace single-pot.
   // Refinery recipes are derived from BAL.oilRefineryV1 (single runtime authority).
@@ -386,7 +433,7 @@ export const RECIPES: Record<string, Recipe> = {
   energy_refined_industrial: { out:'energy_refined', qty:12, ins:[['crystal',2],['iron_ingot',2],['charcoal',2]], station:'workbench', stationLevel:3, secs:40, base:true, tier:2 },
   energy_refined: { out:'energy_refined', qty:4, ins:[['crystal',1],['iron_ingot',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
   essence_fire: { out:'essence_fire', qty:2, ins:[['sulfur',2],['coal',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
-  essence_nature: { out:'essence_nature', qty:2, ins:[['herb',2],['seed',2]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
+  essence_nature: { out:'essence_nature', qty:2, ins:[['herb',2],['seed_bitterleaf',2]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2, rev:4 },
   essence_water: { out:'essence_water', qty:2, ins:[['shell',2],['crystal',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
   essence_spirit: { out:'essence_spirit', qty:2, ins:[['crawler_optic',1],['crystal',1]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
   core_blast: { out:'core_blast', qty:1, ins:[['iron_ingot',2],['spares',4],['crystal',1]], station:'workbench', secs:30, base:true, tier:1 },
@@ -401,7 +448,6 @@ export const RECIPES: Record<string, Recipe> = {
   field_repair_kit: { out: 'field_repair_kit', qty: 1, ins: [['fasteners', 2], ['cloth', 1]], station: 'workbench', secs: 12, tier: 1 },
   trail_pack: { out: 'trail_pack', qty: 1, ins: [['treated_canvas', 1], ['leather', 2], ['fasteners', 2], ['rope', 2]], station: 'workbench', stationLevel: 2, secs: 22, tier: 2 },
   trail_canteen: { out: 'trail_canteen', qty: 1, ins: [['treated_canvas', 2], ['leather', 1], ['glass', 1], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
-  fuel_briquette: { out: 'fuel_briquette', qty: 1, ins: [['charcoal', 2], ['fiber', 1]], station: 'workbench', stationLevel: 2, secs: 10, tier: 2 },
   // PA1 R1: the direct `fuel_can` workbench recipe is RETIRED (v1.2 §2) — a canister is
   // no longer improvised from charcoal + sulfur + glass at a bench. The definition is
   // frozen in recipe-migration.ts so an older queued job or held blueprint still loads.
@@ -419,13 +465,31 @@ export const RECIPES: Record<string, Recipe> = {
   metal_blade: { out: 'metal_blade', qty: 1, ins: [['iron_ingot', 4], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
   mechanical_gear: { out: 'mechanical_gear', qty: 1, ins: [['refined_iron_ingot', 1], ['iron_ingot', 1], ['mechanical_parts', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, base: true, tier: 2, rev: 2 },
   iron_plate: { out: 'iron_plate', qty: 2, ins: [['refined_iron_ingot', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2, rev: 2 },
-  iron_sword_blade: { out: 'iron_sword', qty: 1, alias: 'Iron Sword (blade refit)', ins: [['metal_blade', 1], ['iron_ingot', 2], ['leather', 1]], station: 'workbench', stationLevel: 2, secs: 14, base: true, tier: 2 },
   reinforced_spear_blade: { out: 'reinforced_spear', qty: 1, alias: 'Reinforced Spear (blade)', ins: [['metal_blade', 1], ['iron_ingot', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
   industrial_pick_geared: { out: 'industrial_pick', qty: 1, alias: 'Salvager Pick (geared)', ins: [['iron_pick', 1], ['mechanical_gear', 1], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, base: true, tier: 2 },
-  vehicle_drive_geared: { out: 'vehicle_drive', qty: 1, alias: 'Motor Drive (geared)', ins: [['mechanical_gear', 1], ['iron_ingot', 1], ['fasteners', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
+  // ===== ARENA 1 — item set v2 formulas. Provenance (LI original -> SOH value, reason, impact) for every row is in
+  // `LI_RECIPE_LEDGER` (li-recipe-ledger.ts); nothing here claims to be a verbatim Last Island number unless that
+  // ledger says LI_EXACT. =====
+  wood_club: { out: 'wood_club', qty: 1, ins: [['wood', 12]], station: null, secs: 3, base: true, tier: 0, rev: 4 },
+  cleaver: { out: 'cleaver', qty: 1, ins: [['iron_ingot', 1], ['metal_blade', 1]], station: 'workbench', secs: 14, tier: 1, rev: 4 },
+  machete: { out: 'machete', qty: 1, ins: [['iron_ingot', 4], ['metal_blade', 3]], station: 'workbench', stationLevel: 2, secs: 22, tier: 2, rev: 4 },
+  needle_thread: { out: 'needle_thread', qty: 2, ins: [['cloth', 2], ['iron_ingot', 1]], station: 'workbench', secs: 10, tier: 1, rev: 4 },
+  syringe: { out: 'syringe', qty: 1, ins: [['needle_tube', 1], ['animal_fat', 2], ['iron_ingot', 1]], station: 'workbench', stationLevel: 2, secs: 14, tier: 2, rev: 4 },
+  low_quality_fuel: { out: 'fuel_can', qty: 1, alias: 'Fuel Canister (rendered fat)', ins: [['animal_fat', 6], ['cloth', 1]], station: 'furnace', secs: 24, tier: 1, rev: 4 },
+  iron_plate_helmet: { out: 'iron_plate_helmet', qty: 1, ins: [['iron_plate', 1], ['hide', 3], ['needle_thread', 3]], station: 'workbench', stationLevel: 2, secs: 24, tier: 2, rev: 4 },
+  iron_plate_chest: { out: 'iron_plate_chest', qty: 1, ins: [['iron_plate', 3], ['hide', 4], ['needle_thread', 3]], station: 'workbench', stationLevel: 2, secs: 30, tier: 2, rev: 4 },
+  refined_iron_helmet: { out: 'refined_iron_helmet', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 30, tier: 3, rev: 4 },
+  refined_iron_chest: { out: 'refined_iron_chest', qty: 1, ins: [['refined_iron_ingot', 5], ['hide', 5], ['needle_thread', 8]], station: 'workbench', stationLevel: 2, secs: 38, tier: 3, rev: 4 },
+  dried_meat: { out: 'dried_meat', qty: 1, ins: [['meat', 1]], station: 'campfire', secs: 20, base: true, tier: 0, rev: 4 },
+  grilled_mushroom: { out: 'grilled_mushroom', qty: 1, ins: [['mushroom', 1]], station: 'campfire', secs: 6, base: true, tier: 0, rev: 4 },
+  mushroom_soup: { out: 'mushroom_soup', qty: 1, ins: [['mushroom', 5], ['tin_can', 1]], station: 'campfire', secs: 14, base: true, tier: 0, rev: 4 },
+  canned_meat: { out: 'canned_meat', qty: 1, ins: [['meat', 3], ['tin_can', 1]], station: 'campfire', secs: 18, base: true, tier: 0, rev: 4 },
+  fruit_juice: { out: 'fruit_juice', qty: 1, ins: [['berries', 3]], station: null, secs: 2, base: true, tier: 0, rev: 4 },
+  fruit_wine: { out: 'fruit_wine', qty: 1, ins: [['berries', 5], ['tin_can', 1]], station: 'campfire', secs: 30, base: true, tier: 0, rev: 4 },
+  jam: { out: 'jam', qty: 1, ins: [['berries', 10], ['cloth', 1], ['tin_can', 1]], station: 'campfire', secs: 20, base: true, tier: 0, rev: 4 },
   rope: { out: 'rope', qty: 1, ins: [['fiber', 3]], station: null, secs: 1, base: true, tier: 0 },
   lead_rope: { out: 'lead_rope', qty: 1, ins: [['rope', 2], ['berries', 2]], station: null, secs: 2, base: true, tier: 0 },
-  animal_feed: { out: 'animal_feed', qty: 3, ins: [['fiber', 3], ['seed', 1]], station: null, secs: 2, base: true, tier: 0 },
+  animal_feed: { out: 'animal_feed', qty: 3, ins: [['fiber', 3], ['seed_wildberry', 1]], station: null, secs: 2, base: true, tier: 0, rev: 4 },
   arrow_fletched: { out: 'arrow', qty: 8, alias: 'Arrow (fletched)', ins: [['wood', 1], ['stone', 1], ['feather', 1]], station: 'workbench', secs: 4, base: true, tier: 1 },
   torch: { out: 'torch', qty: 1, ins: [['wood', 1], ['fiber', 2]], station: null, secs: 1, base: true, tier: 0 },
   stone_axe: { out: 'stone_axe', qty: 1, ins: [['wood', 3], ['stone', 3], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
@@ -433,11 +497,7 @@ export const RECIPES: Record<string, Recipe> = {
   wood_spear: { out: 'wood_spear', qty: 1, ins: [['wood', 4], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
   bandage: { out: 'bandage', qty: 1, ins: [['fiber', 4]], station: null, secs: 1, base: true, tier: 0 },
   water_flask: { out: 'water_flask', qty: 1, ins: [['hide', 2], ['rope', 1]], station: null, secs: 2, base: true, tier: 0 },
-  root_broth: { out: 'root_broth', qty: 1, ins: [['crop', 2], ['herb', 1]], station: 'campfire', secs: 12, base: true, tier: 1 },
-  poached_eggs: { out: 'root_broth', qty: 1, alias: 'Root Broth (grouse eggs)', ins: [['grouse_egg', 2], ['herb', 1]], station: 'campfire', secs: 8, base: true, tier: 0 },
-  herb_roast: { out: 'herb_roast', qty: 1, ins: [['meat', 1], ['herb', 1]], station: 'campfire', secs: 10, base: true, tier: 0 },
   cooked_meat: { out: 'cooked_meat', qty: 1, ins: [['meat', 1]], station: 'campfire', secs: 8, base: true, tier: 0 },
-  salted_meat: { out: 'salted_meat', qty: 1, ins: [['meat', 1], ['raw_salt', 1]], station: 'campfire', secs: 10, base: true, tier: 0 },
   charcoal: { out: 'charcoal', qty: 1, ins: [['wood', 2]], station: 'campfire', secs: 12, base: true, tier: 0 },
   stew: { out: 'stew', qty: 1, ins: [['crop', 2], ['meat', 1], ['herb', 1]], station: 'campfire', secs: 14, tier: 1 },
   iron_ingot: { out: 'iron_ingot', qty: 1, ins: [['iron_ore', 1]], station: 'furnace', secs: 10, base: true, tier: 0 },
@@ -454,7 +514,6 @@ export const RECIPES: Record<string, Recipe> = {
   plank: { out: 'plank', qty: 1, ins: [['wood', 2]], station: 'workbench', secs: 6, base: true, tier: 1 },
   iron_axe: { out: 'iron_axe', qty: 1, ins: [['iron_ingot', 3], ['wood', 2], ['leather', 1]], station: 'workbench', secs: 15, base: true, tier: 1 },
   iron_pick: { out: 'iron_pick', qty: 1, ins: [['iron_ingot', 3], ['wood', 2], ['leather', 1]], station: 'workbench', secs: 15, base: true, tier: 1 },
-  iron_sword: { out: 'iron_sword', qty: 1, ins: [['iron_ingot', 5], ['leather', 1]], station: 'workbench', secs: 18, tier: 2 },
   leather_armor: { out: 'leather_armor', qty: 1, ins: [['leather', 5], ['rope', 2]], station: 'workbench', secs: 15, tier: 1 },
   chitin_armor: { out: 'chitin_armor', qty: 1, ins: [['chitin', 6], ['leather', 2]], station: 'workbench', secs: 20, tier: 3 },
   fur_cloak: { out: 'fur_cloak', qty: 1, ins: [['fur', 4], ['rope', 2]], station: 'workbench', secs: 14, tier: 2 },

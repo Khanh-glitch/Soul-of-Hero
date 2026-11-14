@@ -11,6 +11,7 @@ import { validIntel } from './expedition-intel';
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
 import { starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
 import { RETIRED_RECIPES, hasLegacyDefinition } from './recipe-migration';
+import { ITEM_SET_VERSION, isRetiredLive, liveItemId, liveRecipeId, RECIPE_SUCCESSOR } from './final-item-set';
 import { newGame, renewableLoot, markDirty } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
 import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
@@ -89,6 +90,42 @@ export function validate(raw: any): GameState | null {
   // that studied the canister as a specimen). Knowledge is pruned explicitly and the run is
   // flagged so the player is told what happened; a queued job or blueprint for the same
   // formula stays resolvable through the frozen migration ledger and is NOT touched here.
+  // ARENA 1 — FINAL ITEM SET v2 migration (Bible §0.2a, roster rule 6). Runs BEFORE structural validation, on every
+  // custody container of the run (pack, equipment, chests, station slots, drops, bags, vehicles — they all live in
+  // `run.custody`), and is idempotent: a second load finds nothing to convert.
+  //   * a stack of a LIVE-retired id becomes its 1:1 successor IN PLACE — same uid, same count, same slot. Nothing is
+  //     deleted and nothing is minted, so the conversion cannot be farmed (the old id can no longer be obtained).
+  //   * durability carries over as the same FRACTION of the successor's maximum; a stale charge/meta the successor
+  //     does not use is dropped. An over-full stack is clamped to the successor's stack size only if the successor is
+  //     smaller (never the case for the seven ids of this revision; pinned by tests/final-item-set.test.ts).
+  //   * a blueprint naming a retired formula is re-pointed to the successor formula when one exists.
+  //   * learned / studied knowledge of a retired formula is replaced by the successor (or pruned below).
+  //   * queued jobs are NOT touched: they resolve through the frozen `@3` ledger and pay out through `mkStack`,
+  //     which mints the successor.
+  // A save stamped with a NEWER item set than this build fails closed.
+  if (r.itemSetVersion !== undefined && (!integer(r.itemSetVersion) || r.itemSetVersion < 1 || r.itemSetVersion > ITEM_SET_VERSION)) return null;
+  let retiredItems = 0;
+  if (obj(r.custody)) for (const c of Object.values(r.custody) as any[]) {
+    if (!obj(c) || !Array.isArray(c.slots)) continue;
+    for (const st of c.slots) {
+      if (!obj(st) || typeof st.key !== 'string') continue;
+      if (st.key === 'blueprint' && typeof st.meta === 'string' && Object.prototype.hasOwnProperty.call(RECIPE_SUCCESSOR, st.meta) && liveRecipeId(st.meta)) { st.meta = liveRecipeId(st.meta); retiredItems++; continue; }
+      if (!isRetiredLive(st.key) || !has(ITEMS, st.key)) continue;
+      const from = ITEMS[st.key], toKey = liveItemId(st.key), to = ITEMS[toKey];
+      if (!to) return null;
+      if (to.dur) st.dur = from.dur && finite(st.dur) ? Math.max(1, Math.min(to.dur, Math.round(st.dur / from.dur * to.dur))) : to.dur; else delete st.dur;
+      if (!to.charge) delete st.charge;
+      delete st.meta;
+      if (integer(st.qty) && st.qty > to.max) st.qty = to.max;
+      st.key = toKey; retiredItems++;
+    }
+  }
+  if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) for (const list of [r.knowledge.recipes, r.knowledge.studied]) {
+    if (!stringArray(list)) continue;
+    for (const k of [...list]) { const live = liveRecipeId(k); if (live && live !== k && has(RECIPES, live) && !list.includes(live)) list.push(live); }
+  }
+  if (retiredItems > 0) r.migrated = { ...(obj(r.migrated) ? r.migrated : {}), retiredRecipes: integer(r.migrated?.retiredRecipes) ? r.migrated.retiredRecipes : 0, retiredItems: (integer(r.migrated?.retiredItems) ? r.migrated.retiredItems : 0) + retiredItems };
+  r.itemSetVersion = ITEM_SET_VERSION;
   let retiredKnowledge = 0;
   if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) {
     const live = r.knowledge.recipes.filter((k: string) => !RETIRED_RECIPES.includes(k));
@@ -101,7 +138,7 @@ export function validate(raw: any): GameState | null {
   }
   // PA1 R1 ledgers are additive: absent on an older run, validated when present.
   // The counter is durable evidence; `retiredNoticeShown` is the one-shot player notice.
-  if (r.migrated !== undefined && (!obj(r.migrated) || !integer(r.migrated.retiredRecipes) ||
+  if (r.migrated !== undefined && (!obj(r.migrated) || !integer(r.migrated.retiredRecipes) || (r.migrated.retiredItems !== undefined && (!integer(r.migrated.retiredItems) || r.migrated.retiredItems < 0)) ||
     (r.migrated.retiredNoticeShown !== undefined && r.migrated.retiredNoticeShown !== true))) return null;
   if (r.tech !== undefined && (!obj(r.tech) || !stringArray(r.tech.families) || new Set(r.tech.families).size !== r.tech.families.length ||
     !r.tech.families.every((f: string) => !!RESEARCH_FAMILIES[f]) || !integer(r.tech.recipeRev) || r.tech.recipeRev < 1 || r.tech.recipeRev > RECIPE_REVISION)) return null;
@@ -390,7 +427,7 @@ export function validate(raw: any): GameState | null {
     if (e.turret !== undefined && (!obj(e.turret) || e.type !== 'arrow_turret' || typeof e.turret.enabled !== 'boolean' || !finite(e.turret.cooldown) || e.turret.cooldown < 0 || !finite(e.turret.angle) || (e.turret.tracking !== undefined && typeof e.turret.tracking !== 'boolean') || (e.turret.generatorId !== undefined && (typeof e.turret.generatorId !== 'string' || !e.turret.generatorId)) || !e.c)) return null;
     if (e.type === 'base_generator' && !e.basePower || e.type === 'arrow_turret' && !e.turret) return null;
     if(e.garden?.coldFrame !== undefined && (e.type !== 'garden' || e.garden.coldFrame !== true)) return null;
-    if(e.farm !== undefined && (!obj(e.farm) || e.kind!=='struct' || e.type!=='farm_controller' || !e.c || r.custody[e.c]?.slots.length!==3 || typeof e.farm.enabled!=='boolean' || !['crop','herb'].includes(e.farm.crop) || !finite(e.farm.energy) || e.farm.energy<0 || e.farm.energy>90000 || ['gardenId','barrelId','chestId'].some(k=>e.farm[k]!==undefined && (typeof e.farm[k]!=='string'||!e.farm[k])) || (e.farm.lastCode!==undefined && (typeof e.farm.lastCode!=='string' || e.farm.lastCode.length>24))))return null;
+    if(e.farm !== undefined && (!obj(e.farm) || e.kind!=='struct' || e.type!=='farm_controller' || !e.c || r.custody[e.c]?.slots.length!==3 || typeof e.farm.enabled!=='boolean' || !['crop','herb','berry'].includes(e.farm.crop) || !finite(e.farm.energy) || e.farm.energy<0 || e.farm.energy>90000 || ['gardenId','barrelId','chestId'].some(k=>e.farm[k]!==undefined && (typeof e.farm[k]!=='string'||!e.farm[k])) || (e.farm.lastCode!==undefined && (typeof e.farm.lastCode!=='string' || e.farm.lastCode.length>24))))return null;
     if(e.type==='farm_controller' && !e.farm)return null;
     if (e.station?.upgrade !== undefined && (e.type !== 'furnace' || e.station.upgrade !== 'kiln_lining')) return null;
     if (e.type === 'refinery' && (e.kind !== 'struct' || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.refinery.hp || !e.station || e.station.level !== undefined)) return null;
@@ -436,8 +473,8 @@ export function validate(raw: any): GameState | null {
       if (oe.type === 'base_generator' && !oe.basePower || oe.type === 'arrow_turret' && !oe.turret) return null;
       if (oe.industrial !== undefined && (!obj(oe.industrial) || oe.type !== 'workbench' || !oe.station || typeof oe.industrial.enabled !== 'boolean' || (oe.industrial.generatorId !== undefined && (typeof oe.industrial.generatorId !== 'string' || !oe.industrial.generatorId)))) return null;
       if (oe.turret !== undefined && (!obj(oe.turret) || oe.type !== 'arrow_turret' || typeof oe.turret.enabled !== 'boolean' || !finite(oe.turret.cooldown) || oe.turret.cooldown < 0 || !finite(oe.turret.angle) || (oe.turret.tracking !== undefined && typeof oe.turret.tracking !== 'boolean') || (oe.turret.generatorId !== undefined && (typeof oe.turret.generatorId !== 'string' || !oe.turret.generatorId)) || !oe.c)) return null;
-      if (oe.garden !== undefined && (oe.type !== 'garden' || !obj(oe.garden) || (oe.garden.crop !== null && !['crop', 'herb'].includes(oe.garden.crop)) || !finite(oe.garden.growth) || oe.garden.growth < 0 || oe.garden.growth > 1 || !finite(oe.garden.water) || oe.garden.water < 0 || oe.garden.water > 3 || (oe.garden.coldFrame !== undefined && oe.garden.coldFrame !== true))) return null;
-      if (oe.farm !== undefined && (!obj(oe.farm) || oe.kind !== 'struct' || oe.type !== 'farm_controller' || !oe.c || r.custody[oe.c]?.slots.length !== 3 || typeof oe.farm.enabled !== 'boolean' || !['crop', 'herb'].includes(oe.farm.crop) || !finite(oe.farm.energy) || oe.farm.energy < 0 || oe.farm.energy > 90000 || ['gardenId', 'barrelId', 'chestId'].some(k => oe.farm[k] !== undefined && (typeof oe.farm[k] !== 'string' || !oe.farm[k])) || (oe.farm.lastCode !== undefined && (typeof oe.farm.lastCode !== 'string' || oe.farm.lastCode.length > 24)))) return null;
+      if (oe.garden !== undefined && (oe.type !== 'garden' || !obj(oe.garden) || (oe.garden.crop !== null && !['crop', 'herb', 'berry'].includes(oe.garden.crop)) || !finite(oe.garden.growth) || oe.garden.growth < 0 || oe.garden.growth > 1 || !finite(oe.garden.water) || oe.garden.water < 0 || oe.garden.water > 3 || (oe.garden.coldFrame !== undefined && oe.garden.coldFrame !== true))) return null;
+      if (oe.farm !== undefined && (!obj(oe.farm) || oe.kind !== 'struct' || oe.type !== 'farm_controller' || !oe.c || r.custody[oe.c]?.slots.length !== 3 || typeof oe.farm.enabled !== 'boolean' || !['crop', 'herb', 'berry'].includes(oe.farm.crop) || !finite(oe.farm.energy) || oe.farm.energy < 0 || oe.farm.energy > 90000 || ['gardenId', 'barrelId', 'chestId'].some(k => oe.farm[k] !== undefined && (typeof oe.farm[k] !== 'string' || !oe.farm[k])) || (oe.farm.lastCode !== undefined && (typeof oe.farm.lastCode !== 'string' || oe.farm.lastCode.length > 24)))) return null;
       if (oe.type === 'farm_controller' && !oe.farm) return null;
       const orefs = [oe.c, oe.station?.fuelC, oe.station?.outC].filter((v: any) => v !== undefined);
       for (const cid of orefs) {
@@ -600,7 +637,7 @@ export function validate(raw: any): GameState | null {
       } else {
         const cycle=r.lootEcology?.cycles[lootSiteIndex(site)] || 0;
         const base=r.lootEcology && lootClass(site) && cycle>0 ? renewableLoot(site) : site.loot || [];
-        const available = new Map<string,number>(); for(const [k,q] of [...base,...lootRoll(r,site,cycle)]) available.set(k,(available.get(k)||0)+q); const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
+        const available = new Map<string,number>(); /* Item set v2: authored loot tables may still NAME a retired id (their signatures are digest-pinned); what the crate physically holds is the successor, so the allowance is counted in live ids. */ const liveLootKey=(k:string)=>k.startsWith('blueprint:')?`blueprint:${liveRecipeId(k.slice(10))??k.slice(10)}`:liveItemId(k); for(const [k0,q] of [...base,...lootRoll(r,site,cycle)]) { const k=liveLootKey(k0); available.set(k,(available.get(k)||0)+q); } const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
         for(const stack of slots){if(!stack)continue;const key=stack.key==='blueprint'?`blueprint:${stack.meta}`:stack.key;const left=(available.get(key)||0)-stack.qty;if(left<0)return null;available.set(key,left);}
       }
     }

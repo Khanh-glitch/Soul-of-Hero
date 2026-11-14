@@ -46,6 +46,7 @@ export interface ItemDecision {
   proposal?: string;
 }
 
+import { FINAL_ITEMS } from './final-item-set';
 const D = (domain: Domain, decision: Disposition, li: string, why: string, extra: Partial<ItemDecision> = {}): ItemDecision =>
   ({ domain, decision, li, why, ...extra });
 
@@ -179,6 +180,13 @@ export function decisionFor(id: string): ItemDecision | undefined {
   if (ITEM_DECISIONS[id]) return ITEM_DECISIONS[id];
   if (id.startsWith('deploy_')) return D(id.match(/generator|cable|switch|sensor|controller/) ? 'POWER' : 'BUILDING', 'KEEP', 'none', 'Packed device generated from DEPLOYABLE_TYPES (craft once, place, pack up). Cost equals the structure cost; no separate tuning.');
   if (id.startsWith('stone_')) return D('SPECIAL', 'KEEP', 'none', 'Elder stone: unique per run, one per Elder. Bible-protected.');
+  // Final item set v2 (Bible §0.2a, Creator 2026-11-15) supersedes the V2 dispositions for these ids: they are not V2
+  // decisions at all, they are roster imports. One rule instead of 34 rows; the authority is final-item-set.ts.
+  const fin = FINAL_ITEMS[id];
+  if (fin && (fin[1] === 'LI_IMPORTED' || id.startsWith('seed_'))) {
+    const domain: Domain = id.startsWith('seed_') ? 'FARMING' : /meat|mushroom|juice|wine|jam|syringe/.test(id) ? 'SURVIVAL' : /helmet|chest|pants|boots|legs|club|cleaver|machete/.test(id) ? 'GEAR' : /card|ladder|furnace/.test(id) ? 'BUILDING' : 'INDUSTRY';
+    return D(domain, 'KEEP', fin[2] ?? 'none', 'Final item set v2 (Bible §0.2a): ' + (fin[1] === 'LI_IMPORTED' ? 'Group A import from Last Island' : 'Group C named cultivar') + '. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.');
+  }
   return undefined;
 }
 

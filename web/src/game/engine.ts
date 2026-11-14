@@ -13,7 +13,8 @@ import { creatorLootV1 } from './creator-loot';
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
-import { ALWAYS_KNOWN_RECIPES, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
+import { ALWAYS_KNOWN_RECIPES, isGardenCrop, gardenClimateClass, type GardenCrop, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
+import { liveItemId, liveRecipeId, ITEM_SET_VERSION } from './final-item-set';
 import { latestLegacyDefinition, RETIRED_RECIPES, purchasableFamilies } from './recipe-migration';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
@@ -124,6 +125,9 @@ export function newProfile(): Profile { return { securedCash: 0, achievements: {
 export function newGame(): GameState { return { version: SAVE_VERSION, revision: 0, profile: newProfile(), run: null }; }
 
 export function mkStack(r: RunState, key: string, qty: number, meta?: string): Stack {
+  // Item set v2: the ONE minting choke point. A LIVE-retired id resolves to its successor here, so no loot table,
+  // legacy job, fixture or stale caller can put a retired item into any container of any run.
+  key = liveItemId(key); if (key === 'blueprint' && meta) meta = liveRecipeId(meta) ?? meta;
   const d = ITEMS[key]; const s: Stack = { uid: uid(r, 's'), key, qty };
   if (d?.creatorCore) s.reserves = { basic: 0, refined: 0, signature: 0 };
   if (d?.dur) s.dur = d.dur; if (d?.charge) s.charge = d.initialCharge ?? d.charge; if(key==='keycard' && qty===1 && r.poiAccessVersion==='poi-access-v1') s.charge=BAL.poiAccess.cardUses; if (meta) s.meta = meta; return s;
@@ -281,6 +285,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   }
   if (supportsAirdrops(r.layoutId!)) r.airdrops={version:'airdrop-v1',mapDigest:r.sourceMap!.mapDigest!,seed:r.seed,runId:r.id,startedAt:r.startedAt,nextIndex:0};
   r.poiAccessVersion='poi-access-v1';
+  r.itemSetVersion=ITEM_SET_VERSION;
   r.poiAccessDigest=poiContractDigest(w);
   if (getActiveLayout()==='shipping_fresh' || getActiveLayout()==='dev_delta_fresh') { r.creatorLootV1=true; r.lootEcology={version:LOOT_ECOLOGY_VERSION,cycles:{},grammar:LOOT_GRAMMAR_CURRENT}; }
   let inspectTile: { tx: number; ty: number; name: string } | null = null;
@@ -387,10 +392,10 @@ const VEYRA_BIOME_CREATURE: Record<number, string[]> = {
   [T.GRASS]: ['boar', 'hare', 'grouse', 'deer'],
   [T.MEADOW]: ['deer', 'hare', 'grouse', 'boar'],
   [T.MARSH]: ['slime_1', 'slime_2', 'grouse'],
-  [T.TOXIC]: ['slime_2', 'vampire_2'],
-  [T.ASH]: ['slime_3', 'orc_2'],
+  [T.TOXIC]: ['slime_2', 'vampire_2', 'crawler'], // ARENA 1 repair order B: Scrap Crawler lives on the toxic flats (Crawler Optic, Electronic Parts)
+  [T.ASH]: ['slime_3', 'orc_2', 'beetle'], // ARENA 1 repair order A: Cinder Beetle on volcanic ash (Ash Chitin, Beetle Horn)
   [T.SAND]: ['orc_1', 'slime_1'],
-  [T.SNOW]: ['vampire_3', 'orc_3'],
+  [T.SNOW]: ['vampire_3', 'orc_3', 'wolf'], // ARENA 1 repair order C: Greyfang Wolf kept off the first-hour forest (Wolf Fang)
   [T.HILL]: ['orc_2', 'orc_3', 'deer'],
 };
 export function trySpawnCreature(r: RunState, _now: number, avoidX: number, avoidY: number, avoidTiles: number) {
@@ -1295,6 +1300,7 @@ export function spaceFor(r: RunState, cid: string, key: string) {
 }
 /** Adds qty; returns leftover that did not fit (caller decides what to do — never silently deleted). */
 export function addItem(r: RunState, cid: string, key: string, qty: number, tmpl?: Partial<Stack>): number {
+  key = liveItemId(key);
   const d = ITEMS[key]; const c = C(r, cid);
   if (!(key==='keycard'&&r.poiAccessVersion==='poi-access-v1') && d.max > 1 && !d.dur && !d.charge && tmpl?.meta === undefined && tmpl?.dur === undefined && tmpl?.charge === undefined) for (const s of c.slots) if (s && s.key === key && s.meta === undefined && s.dur === undefined && s.charge === undefined && s.qty < d.max && qty > 0) { const m = Math.min(qty, d.max - s.qty); s.qty += m; qty -= m; }
   for (let i = 0; i < c.slots.length && qty > 0; i++) if (!c.slots[i]) { const m = Math.min(qty, key==='keycard'&&r.poiAccessVersion==='poi-access-v1'?1:d.max); const s = mkStack(r, key, m, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[i] = s; qty -= m; }
@@ -1360,6 +1366,7 @@ export function cartLimit(e: Entity | undefined) { return e?.deployed?.upgrade =
 export function cartWeight(r: RunState, cid: string) { return C(r, cid).slots.reduce((a, s) => a + (s ? ITEMS[s.key].w * s.qty : 0), 0); }
 export function hasAll(r: RunState, cid: string, ins: [string, number][]) { return ins.every(([k, q]) => countItem(r, cid, k) >= q); }
 export function spawnDrop(r: RunState, key: string, qty: number, x: number, y: number, now: number, tmpl?: Partial<Stack>, burst = true): Entity {
+  key = liveItemId(key);
   const max = key==='keycard'&&r.poiAccessVersion==='poi-access-v1' ? 1 : ITEMS[key].max;
   if (qty > max) { const first = spawnDrop(r, key, max, x, y, now, tmpl, burst); spawnDrop(r, key, qty - max, x, y, now, tmpl, burst); return first; }
   const c = mkContainer(r, 'drop', 1); const s = mkStack(r, key, qty, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[0] = s;
@@ -2774,7 +2781,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e=r.entities[it.eid], f=e?.farm;
       if(!e || e.kind!=='struct' || e.type!=='farm_controller' || !f || !owned(e) || !near(r,e,3) || !clearInteraction(r,e)) return fail('Use your Garden Tender within reach.');
       if(it.field==='enabled' && typeof it.value==='boolean') f.enabled=it.value;
-      else if(it.field==='crop' && (it.value==='crop'||it.value==='herb')) f.crop=it.value;
+      else if(it.field==='crop' && isGardenCrop(it.value)) f.crop=it.value;
       else if(['gardenId','barrelId','chestId'].includes(it.field)) {
         const field=it.field as 'gardenId'|'barrelId'|'chestId';
         if(it.value === '') delete f[field];
@@ -2819,14 +2826,14 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'struct' || e.type !== 'garden' || !e.garden || !owned(e) || !near(r, e)) return fail('Use your garden within reach.'); const g = e.garden;
       if (!g.crop) {
         const crop: unknown = it.crop ?? 'crop'; // Old commands still plant Sunroot.
-        if (crop !== 'crop' && crop !== 'herb') return fail('Unknown planting choice.');
+        if (!isGardenCrop(crop)) return fail('Unknown planting choice.');
         const rule = GARDEN_CROPS[crop];
         if (!hasAll(r, 'inv', rule.inputs)) return fail('Missing planting materials.');
         for (const [key, qty] of rule.inputs) removeItem(r, 'inv', key, qty);
         g.crop = crop; g.growth = 0; return ok('garden.plant', `${e.id}:${crop}`, `${rule.name} planted. Water keeps it growing.`);
       }
       if (g.growth >= 1) {
-        if (g.crop !== 'crop' && g.crop !== 'herb') return fail('Unknown crop.');
+        if (!isGardenCrop(g.crop)) return fail('Unknown crop.');
         const crop = g.crop, rule = GARDEN_CROPS[crop]; g.crop = null; g.growth = 0;
         for (const [key, qty] of rule.output) giveOrDrop(r, key, qty, now);
         return ok('garden.harvest', `${e.id}:${crop}`, `${rule.name} harvested into your pack or on the ground.`);
@@ -2892,7 +2899,7 @@ function useItem(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: st
       // PA1 R1: the paper survives as a physical item; only the formula is retired.
       // Reading it must not teach an unknown recipe and must not silently delete the sheet.
       const legacy = recipeForJob(rec, undefined);
-      return fail(legacy ? 'That formula was retired by the Fuel Canister correction — canisters come from refining real oil.' : 'Invalid blueprint.');
+      return fail(legacy ? (rec === 'fuel_can' ? 'That formula was retired by the Fuel Canister correction — canisters come from refining real oil.' : 'That formula was retired with the final item set; the paper no longer teaches anything.') : 'Invalid blueprint.');
     }
     if (isRecipeKnown(r.knowledge.recipes, rec)) return fail('You already know this recipe.');
     const gate = familyOfRecipe(rec);
@@ -3404,7 +3411,7 @@ export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean, at
     // does not water it. A cold frame (or a roof) keeps its cover either way.
     const rain = wet && !isEntityRoofed(r, e, entities) && !e.garden?.coldFrame && env.catch > 0;
     if (e.garden) {
-      const g = e.garden; const growSeconds = g.crop === 'herb' ? GARDEN_CROPS.herb.seconds : GARDEN_CROPS.crop.seconds; const rate = g.crop === 'crop' || g.crop === 'herb' ? env.rate : 1;
+      const g = e.garden; const growSeconds = isGardenCrop(g.crop) ? GARDEN_CROPS[g.crop].seconds : GARDEN_CROPS.crop.seconds; const rate = isGardenCrop(g.crop) ? env.rate : 1;
       const incoming = rain ? env.catch / 60000 : 0; const use = env.evaporation / (G.waterSecondsPerUnit * 1000);
       let growing = g.crop && g.growth < 1 && rate>0 ? Math.min(dtMs, (1 - g.growth) * growSeconds * 1000 / rate) : 0;
       if (use > incoming) growing = Math.min(growing, g.water / (use - incoming));
@@ -3500,16 +3507,16 @@ export function tenderStatus(r:RunState,e:Entity):string { return tenderState(r,
 function tenderCode(r:RunState,e:Entity, entities?: Entity[]):TenderCode {
   const f=e.farm;if(!f)return 'stopped';if(!f.enabled)return 'stopped';const links=tenderLinks(r,e,entities);if(!links)return 'unlinked';
   const {garden,barrel,chest}=links, g=garden.garden!;
-  if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])return 'unsupported';
+  if(g.crop && !GARDEN_CROPS[g.crop as GardenCrop])return 'unsupported';
   // Upkeep-decayed structure: an unfunded linked structure that has already lost HP.
   const plan=planTerritory(r);
   const decayed=[garden,barrel,chest,e].some(o=>o.hp!==undefined&&o.maxHp!==undefined&&o.hp<o.maxHp&&!(plan.assigned.get(o.id)&&plan.forecast.get(plan.assigned.get(o.id)!.id)?.funded));
   if(decayed)return 'structure_decayed';
-  if(g.crop&&g.growth>=1){if(!tenderFits(r,chest.c!,GARDEN_CROPS[g.crop as 'crop'|'herb'].output))return 'storage_full';if(tenderEnergyAvailable(r,e)<BAL.garden.tenderHarvestEnergySeconds*1000)return 'fuel_harvest';return 'ready_harvest';}
+  if(g.crop&&g.growth>=1){if(!tenderFits(r,chest.c!,GARDEN_CROPS[g.crop as GardenCrop].output))return 'storage_full';if(tenderEnergyAvailable(r,e)<BAL.garden.tenderHarvestEnergySeconds*1000)return 'fuel_harvest';return 'ready_harvest';}
   if(!g.crop){if(!hasAll(r,chest.c!,GARDEN_CROPS[f.crop].inputs))return 'seed_missing';if(g.water<1 && (barrel.water||0)<1)return 'barrel_dry';if(tenderEnergyAvailable(r,e)<BAL.garden.tenderPlantEnergySeconds*1000)return 'fuel_plant';return 'ready_plant';}
   if(g.water<=1e-10 && (barrel.water||0)<1)return 'dry';
   if(g.water<=1e-10 && tenderEnergyAvailable(r,e)<BAL.garden.tenderPumpEnergySeconds*1000)return 'fuel_pump';
-  if(g.crop&&gardenEnvironment(r,garden,isWet(weatherAt(r,r.clock.lastSimAt)),g.crop as 'crop'|'herb').rate<0.7)return 'slow';
+  if(g.crop&&gardenEnvironment(r,garden,isWet(weatherAt(r,r.clock.lastSimAt)),gardenClimateClass(g.crop as GardenCrop)).rate<0.7)return 'slow';
   return 'growing';
 }
 /** Transition receipts only on a real state change (never per tick). The last coded state is persisted on the
@@ -3528,8 +3535,8 @@ export function stepTenders(gs:GameState,now:number) {
   const r=gs.run!;
   const entities = allRunEntities(r);
   for(const e of entities) {const f=e.farm;if(!f?.enabled)continue;const links=tenderLinks(r,e,entities);if(!links)continue;const {garden,barrel,chest}=links,g=garden.garden!,cid=chest.c!;
-    if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])continue;
-    if(g.crop&&g.growth>=1){const rule=GARDEN_CROPS[g.crop as 'crop'|'herb'];if(!rule||!tenderFits(r,cid,rule.output)||!tenderSpend(r,e,BAL.garden.tenderHarvestEnergySeconds*1000))continue;const crop=g.crop;for(const [key,qty] of rule.output)addItem(r,cid,key,qty);g.crop=null;g.growth=0;receipt(r,now,'tender.harvest',`${e.id}:${crop}`);}
+    if(g.crop && !GARDEN_CROPS[g.crop as GardenCrop])continue;
+    if(g.crop&&g.growth>=1){const rule=GARDEN_CROPS[g.crop as GardenCrop];if(!rule||!tenderFits(r,cid,rule.output)||!tenderSpend(r,e,BAL.garden.tenderHarvestEnergySeconds*1000))continue;const crop=g.crop;for(const [key,qty] of rule.output)addItem(r,cid,key,qty);g.crop=null;g.growth=0;receipt(r,now,'tender.harvest',`${e.id}:${crop}`);}
     if(!g.crop){const rule=GARDEN_CROPS[f.crop];if(!hasAll(r,cid,rule.inputs)||(g.water<1&&(barrel.water||0)<1)||!tenderSpend(r,e,BAL.garden.tenderPlantEnergySeconds*1000))continue;for(const [key,qty] of rule.inputs)removeItem(r,cid,key,qty);if(g.water<1){barrel.water!-=1;g.water=Math.min(3,g.water+1);}g.crop=f.crop;g.growth=0;receipt(r,now,'tender.plant',`${e.id}:${f.crop}`);}
     if(g.crop&&g.growth<1&&g.water<=1e-10&&(barrel.water||0)>=1&&tenderSpend(r,e,BAL.garden.tenderPumpEnergySeconds*1000)){barrel.water!-=1;g.water+=1;receipt(r,now,'tender.water',e.id);}
   }
@@ -3544,8 +3551,8 @@ export function tenderBoundary(r:RunState,wet:boolean,limit:number,at:number = r
     const g=l.garden.garden!;
     const env=gardenEnvironment(r,l.garden,wet,g.crop==='herb'?'herb':'crop',at);
     const incoming=wet&&!isEntityRoofed(r,l.garden,entities)&&!g.coldFrame?env.catch/60000:0, use=env.evaporation/(BAL.garden.waterSecondsPerUnit*1000);
-    if(g.crop && !GARDEN_CROPS[g.crop as 'crop'|'herb'])continue;
-    if(g.crop&&g.growth<1&&(g.water>1e-10||incoming>=use)){dt=Math.min(dt,(1-g.growth)*GARDEN_CROPS[g.crop as 'crop'|'herb'].seconds*1000/env.rate);if(use>incoming&&g.water>1e-10)dt=Math.min(dt,g.water/(use-incoming));}
+    if(g.crop && !GARDEN_CROPS[g.crop as GardenCrop])continue;
+    if(g.crop&&g.growth<1&&(g.water>1e-10||incoming>=use)){dt=Math.min(dt,(1-g.growth)*GARDEN_CROPS[g.crop as GardenCrop].seconds*1000/env.rate);if(use>incoming&&g.water>1e-10)dt=Math.min(dt,g.water/(use-incoming));}
     if(wet&&!isEntityRoofed(r,l.barrel,entities)&&(l.barrel.water||0)<1&&env.catch>0)dt=Math.min(dt,(1-(l.barrel.water||0))*20000);
   }return dt;
 }

@@ -27,7 +27,7 @@ import type { Recipe } from './catalog';
 
 /** Live catalog revision. Bump by exactly 1 whenever a recipe is changed or retired,
  *  and freeze the superseded definition in `LEGACY_RECIPES` under `<id>@<old rev>`. */
-export const RECIPE_REVISION = 3;
+export const RECIPE_REVISION = 4;
 
 /** The revision a save written before job stamping existed must resolve to. */
 export const PRE_STAMPING_REVISION = 1;
@@ -50,12 +50,27 @@ export const LEGACY_RECIPES: Readonly<Record<string, Recipe>> = Object.freeze({
   'vehicle_frame_piped@2': { out: 'vehicle_frame', qty: 1, alias: 'Utility Frame (piped)', ins: [['metal_pipe', 1], ['iron_ingot', 2], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
   // P4: the Salvager Axe took two Machine Parts and no Blade.
   'industrial_axe@2': { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
+  // Rev 3 — live values before the FINAL ITEM SET v2 cutover (Bible §0.2a, ARENA 1). Seven outputs were retired
+  // (`final-item-set.ts` ITEM_RETIREMENT, stage LIVE); a job queued under rev 3 still resolves here, and whatever it
+  // pays out is minted through `liveItemId`, so an old queue finishes into the successor item, never into a dead id.
+  'vehicle_drive@3': { out:'vehicle_drive', qty:1, ins:[['iron_ingot',2],['mechanical_parts',2],['fasteners',2],['spares',3]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
+  'vehicle_drive_geared@3': { out: 'vehicle_drive', qty: 1, alias: 'Motor Drive (geared)', ins: [['mechanical_gear', 1], ['iron_ingot', 1], ['fasteners', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
+  'fuel_briquette@3': { out: 'fuel_briquette', qty: 1, ins: [['charcoal', 2], ['fiber', 1]], station: 'workbench', stationLevel: 2, secs: 10, tier: 2 },
+  'root_broth@3': { out: 'root_broth', qty: 1, ins: [['crop', 2], ['herb', 1]], station: 'campfire', secs: 12, base: true, tier: 1 },
+  'poached_eggs@3': { out: 'root_broth', qty: 1, alias: 'Root Broth (grouse eggs)', ins: [['grouse_egg', 2], ['herb', 1]], station: 'campfire', secs: 8, base: true, tier: 0 },
+  'herb_roast@3': { out: 'herb_roast', qty: 1, ins: [['meat', 1], ['herb', 1]], station: 'campfire', secs: 10, base: true, tier: 0 },
+  'salted_meat@3': { out: 'salted_meat', qty: 1, ins: [['meat', 1], ['raw_salt', 1]], station: 'campfire', secs: 10, base: true, tier: 0 },
+  'iron_sword@3': { out: 'iron_sword', qty: 1, ins: [['iron_ingot', 5], ['leather', 1]], station: 'workbench', secs: 18, tier: 2 },
+  'iron_sword_blade@3': { out: 'iron_sword', qty: 1, alias: 'Iron Sword (blade refit)', ins: [['metal_blade', 1], ['iron_ingot', 2], ['leather', 1]], station: 'workbench', stationLevel: 2, secs: 14, base: true, tier: 2 },
+  'motorbike_kit@3': { out:'motorbike_kit', qty:1, ins:[['vehicle_frame',1],['vehicle_drive',1],['iron_plate',2],['fasteners',2]], station:'workbench', stationLevel:3, secs:40, tier:2, rev:2 },
+  'essence_nature@3': { out:'essence_nature', qty:2, ins:[['herb',2],['seed',2]], station:'workbench', stationLevel:2, secs:16, base:true, tier:2 },
+  'animal_feed@3': { out: 'animal_feed', qty: 3, ins: [['fiber', 3], ['seed', 1]], station: null, secs: 2, base: true, tier: 0 },
 });
 
 /** Recipe ids removed from the live catalog by a cutover, in the order retired.
  *  Knowledge carrying one of these ids is pruned on load; a queued job or a held
  *  blueprint referencing it stays valid through `LEGACY_RECIPES`. */
-export const RETIRED_RECIPES: readonly string[] = ['fuel_can', 'vehicle_frame_piped'];
+export const RETIRED_RECIPES: readonly string[] = ['fuel_can', 'vehicle_frame_piped', 'vehicle_drive', 'vehicle_drive_geared', 'fuel_briquette', 'root_broth', 'poached_eggs', 'herb_roast', 'salted_meat', 'iron_sword', 'iron_sword_blade'];
 export const isRetiredRecipe = (id: unknown): boolean =>
   typeof id === 'string' && RETIRED_RECIPES.includes(id);
 /** A blueprint may legally name a retired formula: the paper is a real item the
@@ -76,6 +91,7 @@ export function latestLegacyDefinition(id: unknown): Recipe | null {
 export const CUT_OVER_REVISIONS: Readonly<Record<number, readonly string[]>> = Object.freeze({
   1: ['metal_pipe', 'mechanical_gear', 'iron_plate', 'motorbike_kit', 'fuel_can'],
   2: ['vehicle_frame', 'vehicle_frame_piped', 'industrial_axe'],
+  3: ['vehicle_drive', 'vehicle_drive_geared', 'fuel_briquette', 'root_broth', 'poached_eggs', 'herb_roast', 'salted_meat', 'iron_sword', 'iron_sword_blade', 'motorbike_kit', 'essence_nature', 'animal_feed'],
 });
 
 /** The definition a job queued at `rev` must be paid out under.

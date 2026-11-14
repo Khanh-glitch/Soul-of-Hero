@@ -9,31 +9,22 @@ Unit prices. Fasteners: 1 iron_ingot + 1 scrap → 3 (researched: base=false). M
 
 | Consumer | Kind | Live | Fasteners | Before iron | Before scrap | M1 Machine Parts | M1 iron | M1 scrap | M1 scrap × | M2 iron | M2 scrap | M2 × |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| vehicle_drive | recipe | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
-| motorbike_kit | recipe | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
 | field_repair_kit | recipe | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
 | trail_pack | recipe | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
 | trail_canteen | recipe | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
 | mechanical_gear | recipe | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
 | iron_plate | recipe | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| vehicle_drive_geared | recipe | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
 | farm_controller | structure | yes | 3 | 1 | 1 | 2 | 1 | 2 | 2 | 1 | 1 | 1 |
-| power_switch | structure | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| pressure_switch | structure | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| ir_sensor | structure | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
 | door_powered | structure | NO | 3 | 1 | 1 | 2 | 1 | 2 | 2 | 1 | 1 | 1 |
 | arrow_turret | structure | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
 | bear_trap | structure | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
 | deploy_farm_controller | repair | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| deploy_power_switch | repair | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| deploy_pressure_switch | repair | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| deploy_ir_sensor | repair | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
 | deploy_arrow_turret | repair | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
 | deploy_bear_trap | repair | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
 | workbench → level 3 | upgrade | yes | 8 | 2.667 | 2.667 | 4 | 2 | 4 | 1.5 | 3 | 3 | 1.125 |
 | vehicleRepair (motorbike, engine.ts) | action | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
 
-Totals over 22 live consumers — before: 12.999 iron / 12.999 scrap · M1: 13 / 26 · M2: 24 / 24.
+Totals over 13 live consumers — before: 8.666 iron / 8.666 scrap · M1: 8.5 / 17 · M2: 15 / 15.
 
 **Other measured facts**
 
@@ -43,8 +34,8 @@ Totals over 22 live consumers — before: 12.999 iron / 12.999 scrap · M1: 13 /
 
 **Conclusion**
 
-- M1 (n Fasteners → ceil(n/2) Machine Parts) is NOT cost-neutral for a single consumer. Total iron is about unchanged (12.999 → 13) but scrap rises on every row: best case 1.5×, worst case 3× (the 12 one-fastener consumers). Across all 22 live consumers scrap goes 12.999 → 26.
-- M2 (write the batch ratio into the consumer: ceil(n/3) ingot + ceil(n/3) scrap) costs exactly what one fastener batch costs today for an isolated craft, but removes leftover sharing: pooled cost rises up to 3× on one-fastener consumers (12.999 → 24 scrap overall).
+- M1 (n Fasteners → ceil(n/2) Machine Parts) is NOT cost-neutral for a single consumer. Total iron is about unchanged (8.666 → 8.5) but scrap rises on every row: best case 1.5×, worst case 3× (the 7 one-fastener consumers). Across all 13 live consumers scrap goes 8.666 → 17.
+- M2 (write the batch ratio into the consumer: ceil(n/3) ingot + ceil(n/3) scrap) costs exactly what one fastener batch costs today for an isolated craft, but removes leftover sharing: pooled cost rises up to 3× on one-fastener consumers (8.666 → 15 scrap overall).
 - No integer mapping removes Fasteners without a cost jump on the one- and two-fastener consumers. That is the blocker; it is arithmetic, not taste.
 
 **Resolution path**
@@ -92,7 +83,7 @@ Plank: 2 wood → 1 @ workbench, 6s. Listed consumers: structure:wall_plank. Cre
 | crawler_optic (Crawler Optic (specimen)) | SHIPPING_ONLY | CREATURE_DROP creature:crawler p=0.35 [gate:shipping_spawner] | **none** | not craftable | gas_mask | NO_VEYRA_SOURCE |
 | wolf_fang (Wolf Fang (specimen)) | SHIPPING_ONLY | CREATURE_DROP creature:wolf p=0.4 [gate:shipping_spawner] | **none** | not craftable | fur_cloak | NO_VEYRA_SOURCE |
 | beetle_horn (Beetle Horn (specimen)) | SHIPPING_ONLY | CREATURE_DROP creature:beetle p=0.3 [gate:shipping_spawner] | **none** | not craftable | chitin_armor | NO_VEYRA_SOURCE |
-| boar_tusk (Boar Tusk (specimen)) | SHIPPING_AND_VEYRA | CREATURE_DROP creature:boar p=0.3; HUSBANDRY_BUTCHER husbandry:boar | CREATURE_DROP creature:boar p=0.3; HUSBANDRY_BUTCHER husbandry:boar | not craftable | iron_sword | HAS_VEYRA_SOURCE |
+| boar_tusk (Boar Tusk (specimen)) | SHIPPING_AND_VEYRA | CREATURE_DROP creature:boar p=0.3; HUSBANDRY_BUTCHER husbandry:boar | CREATURE_DROP creature:boar p=0.3; HUSBANDRY_BUTCHER husbandry:boar | not craftable | machete | HAS_VEYRA_SOURCE |
 | keycard (Vault Keycard) | SHIPPING_ONLY | LOOT_STATIC_FIXED container:dev_delta:delta_relay:4; LOOT_STATIC_FIXED container:shipping:watch:21 | **none** | not craftable | - | NO_VEYRA_SOURCE |
 | core_demon (Demon Core) | SHIPPING_ONLY | CREATOR_LOOT_UNIQUE container:shipping:factory_vault:9 [gate:poi_keycard,gate:creator_loot_v1] | **none** | core_demon: 4 iron_ingot + 12 spares + 5 crystal + 2 crawler_optic — BLOCKED on Veyra | - | NO_VEYRA_SOURCE |
 | essence_spirit (Spirit Essence) | SHIPPING_AND_VEYRA | none | CREATURE_DROP creature:boss_custodian [gate:veyra_spawner]; CREATURE_DROP creature:vampire_3 p=0.35 [gate:veyra_spawner] | essence_spirit: 1 crawler_optic + 1 crystal — BLOCKED on Veyra | - | VEYRA_DROP_ONLY_CRAFT_BLOCKED |
@@ -104,7 +95,7 @@ Plank: 2 wood → 1 @ workbench, 6s. Listed consumers: structure:wall_plank. Cre
 - Veyra-blocked recipes and the input that blocks each: chitin_armor (needs chitin); core_demon (needs crawler_optic); essence_spirit (needs crawler_optic); pump_crude (needs a blocked input); refinery_crude (needs crude_petroleum).
 - Reachable on Veyra by drop but not by craft: essence_spirit (CREATURE_DROP creature:boss_custodian [gate:veyra_spawner]; CREATURE_DROP creature:vampire_3 p=0.35 [gate:veyra_spawner]). For these the recipe is dead weight on Veyra while the item itself is obtainable.
 - Has a Veyra source: boar_tusk.
-- Specimens also carry a research route (crawler_optic → gas_mask; wolf_fang → fur_cloak; beetle_horn → chitin_armor; boar_tusk → iron_sword): without the specimen the formula can only come from a blueprint or paid study.
+- Specimens also carry a research route (crawler_optic → gas_mask; wolf_fang → fur_cloak; beetle_horn → chitin_armor; boar_tusk → machete): without the specimen the formula can only come from a blueprint or paid study.
 
 **Resolution path**
 

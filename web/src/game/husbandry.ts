@@ -73,7 +73,7 @@ export const TAMING_SPECIES: Record<string, { preferredFoods: string[]; feedings
   boar: { preferredFoods: ['animal_feed', 'mushroom', 'crop', 'berries'], feedingsToTame: 2 },
   deer: { preferredFoods: ['animal_feed', 'crop', 'herb', 'berries'], feedingsToTame: 2 },
   hare: { preferredFoods: ['animal_feed', 'crop', 'berries', 'herb'], feedingsToTame: 1 },
-  grouse: { preferredFoods: ['animal_feed', 'seed', 'berries'], feedingsToTame: 1 },
+  grouse: { preferredFoods: ['animal_feed', 'seed_wildberry', 'berries'], feedingsToTame: 1 },
 };
 
 /** Deterministic biological sex (`'f' | 'm'`) derived from actor ID so regional pairs (`:0` / `:1`, `b1` / `b2`) balance naturally. */

@@ -15,48 +15,6 @@
   },
   "rows": [
    {
-    "consumer": "vehicle_drive",
-    "kind": "recipe",
-    "live": true,
-    "fasteners": 2,
-    "before": {
-     "iron": 0.667,
-     "scrap": 0.667
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 1.5,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 1.5
-   },
-   {
-    "consumer": "motorbike_kit",
-    "kind": "recipe",
-    "live": true,
-    "fasteners": 2,
-    "before": {
-     "iron": 0.667,
-     "scrap": 0.667
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 1.5,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 1.5
-   },
-   {
     "consumer": "field_repair_kit",
     "kind": "recipe",
     "live": true,
@@ -162,27 +120,6 @@
     "m2_ratio": 3
    },
    {
-    "consumer": "vehicle_drive_geared",
-    "kind": "recipe",
-    "live": true,
-    "fasteners": 2,
-    "before": {
-     "iron": 0.667,
-     "scrap": 0.667
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 1.5,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 1.5
-   },
-   {
     "consumer": "farm_controller",
     "kind": "structure",
     "live": true,
@@ -202,69 +139,6 @@
      "scrap": 1
     },
     "m2_ratio": 1
-   },
-   {
-    "consumer": "power_switch",
-    "kind": "structure",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   },
-   {
-    "consumer": "pressure_switch",
-    "kind": "structure",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   },
-   {
-    "consumer": "ir_sensor",
-    "kind": "structure",
-    "live": true,
-    "fasteners": 2,
-    "before": {
-     "iron": 0.667,
-     "scrap": 0.667
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 1.5,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 1.5
    },
    {
     "consumer": "door_powered",
@@ -331,69 +205,6 @@
    },
    {
     "consumer": "deploy_farm_controller",
-    "kind": "repair",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   },
-   {
-    "consumer": "deploy_power_switch",
-    "kind": "repair",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   },
-   {
-    "consumer": "deploy_pressure_switch",
-    "kind": "repair",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   },
-   {
-    "consumer": "deploy_ir_sensor",
     "kind": "repair",
     "live": true,
     "fasteners": 1,
@@ -499,15 +310,15 @@
    }
   ],
   "totals": {
-   "consumers": 23,
-   "live_consumers": 22,
-   "single_fastener_consumers": 12,
-   "before_iron": 12.999,
-   "before_scrap": 12.999,
-   "m1_iron": 13,
-   "m1_scrap": 26,
-   "m2_iron": 24,
-   "m2_scrap": 24,
+   "consumers": 14,
+   "live_consumers": 13,
+   "single_fastener_consumers": 7,
+   "before_iron": 8.666,
+   "before_scrap": 8.666,
+   "m1_iron": 8.5,
+   "m1_scrap": 17,
+   "m2_iron": 15,
+   "m2_scrap": 15,
    "m1_worst_scrap_ratio": 3,
    "m1_best_scrap_ratio": 1.5,
    "m2_worst_ratio": 3,
@@ -519,8 +330,8 @@
    "door_powered consumer is listed but not buildable today (module pending) and is excluded from the totals."
   ],
   "conclusion": [
-   "M1 (n Fasteners → ceil(n/2) Machine Parts) is NOT cost-neutral for a single consumer. Total iron is about unchanged (12.999 → 13) but scrap rises on every row: best case 1.5×, worst case 3× (the 12 one-fastener consumers). Across all 22 live consumers scrap goes 12.999 → 26.",
-   "M2 (write the batch ratio into the consumer: ceil(n/3) ingot + ceil(n/3) scrap) costs exactly what one fastener batch costs today for an isolated craft, but removes leftover sharing: pooled cost rises up to 3× on one-fastener consumers (12.999 → 24 scrap overall).",
+   "M1 (n Fasteners → ceil(n/2) Machine Parts) is NOT cost-neutral for a single consumer. Total iron is about unchanged (8.666 → 8.5) but scrap rises on every row: best case 1.5×, worst case 3× (the 7 one-fastener consumers). Across all 13 live consumers scrap goes 8.666 → 17.",
+   "M2 (write the batch ratio into the consumer: ceil(n/3) ingot + ceil(n/3) scrap) costs exactly what one fastener batch costs today for an isolated craft, but removes leftover sharing: pooled cost rises up to 3× on one-fastener consumers (8.666 → 15 scrap overall).",
    "No integer mapping removes Fasteners without a cost jump on the one- and two-fastener consumers. That is the blocker; it is arithmetic, not taste."
   ],
   "resolution": [
@@ -771,9 +582,9 @@
     ],
     "other_layer_sources": [],
     "recipes": [],
-    "teaches_recipe": "iron_sword",
+    "teaches_recipe": "machete",
     "veyra_consumers": [
-     "recipe:iron_sword",
+     "recipe:machete",
      "sink:specimen_destructive_study"
     ],
     "gap": "HAS_VEYRA_SOURCE"
@@ -882,7 +693,7 @@
    "Veyra-blocked recipes and the input that blocks each: chitin_armor (needs chitin); core_demon (needs crawler_optic); essence_spirit (needs crawler_optic); pump_crude (needs a blocked input); refinery_crude (needs crude_petroleum).",
    "Reachable on Veyra by drop but not by craft: essence_spirit (CREATURE_DROP creature:boss_custodian [gate:veyra_spawner]; CREATURE_DROP creature:vampire_3 p=0.35 [gate:veyra_spawner]). For these the recipe is dead weight on Veyra while the item itself is obtainable.",
    "Has a Veyra source: boar_tusk.",
-   "Specimens also carry a research route (crawler_optic → gas_mask; wolf_fang → fur_cloak; beetle_horn → chitin_armor; boar_tusk → iron_sword): without the specimen the formula can only come from a blueprint or paid study."
+   "Specimens also carry a research route (crawler_optic → gas_mask; wolf_fang → fur_cloak; beetle_horn → chitin_armor; boar_tusk → machete): without the specimen the formula can only come from a blueprint or paid study."
   ],
   "resolution": [
    "No source was invented. The matrix is the work order for the Veyra content pass: per NO_VEYRA_SOURCE item choose (a) a Veyra spawner entry for the dropping creature, (b) an authored Veyra crate, or (c) an explicit \"Shipping-only by design\" ruling.",

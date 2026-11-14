@@ -179,8 +179,8 @@ describe('P1 + P7 — display language (no id, recipe, source or price moved)', 
 });
 
 describe('G — migration ledger: exactly one revision bump, history stored', () => {
-  it('revision is 3; the three rev-2 definitions are frozen verbatim; the live catalog validates', () => {
-    expect(RECIPE_REVISION).toBe(3);
+  it('revision moved on to 4 (final item set); the three rev-2 definitions are frozen verbatim; the live catalog validates', () => {
+    expect(RECIPE_REVISION).toBe(4);
     expect(CUT_OVER_REVISIONS[2]).toEqual(['vehicle_frame', 'vehicle_frame_piped', 'industrial_axe']);
     expect(Object.keys(LEGACY_RECIPES).filter((k) => k.endsWith('@2')).sort()).toEqual(['industrial_axe@2', 'vehicle_frame@2', 'vehicle_frame_piped@2']);
     expect(LEGACY_RECIPES['vehicle_frame@2'].ins).toEqual([['iron_ingot', 3], ['mechanical_parts', 2], ['spares', 2]]);
@@ -189,7 +189,8 @@ describe('G — migration ledger: exactly one revision bump, history stored', ()
     expect(LEGACY_RECIPES['industrial_axe@2'].ins).toEqual([['iron_axe', 1], ['mechanical_parts', 2], ['spares', 2]]);
     // Rev-1 entries are untouched (never edit a frozen key).
     expect(Object.keys(LEGACY_RECIPES).filter((k) => k.endsWith('@1')).sort()).toEqual(['fuel_can@1', 'iron_plate@1', 'mechanical_gear@1', 'metal_pipe@1', 'motorbike_kit@1']);
-    expect(RETIRED_RECIPES).toEqual(['fuel_can', 'vehicle_frame_piped']);
+    expect(RETIRED_RECIPES.slice(0, 2)).toEqual(['fuel_can', 'vehicle_frame_piped']); // rev 4 appended nine more (final item set); order of the old ones is frozen
+    expect(RETIRED_RECIPES).toHaveLength(11);
     expect(RECIPES.vehicle_frame_piped).toBeUndefined();
     expect(RECIPES.vehicle_frame.ins).toEqual(LEGACY_RECIPES['vehicle_frame_piped@2'].ins);   // the piped BOM IS the frame now
     expect(RECIPES.vehicle_frame.rev).toBe(3); expect(RECIPES.industrial_axe.rev).toBe(3);
@@ -209,7 +210,7 @@ describe('G — migration ledger: exactly one revision bump, history stored', ()
     // Rev-1 behaviour is exactly what it was.
     expect(recipeForJob('metal_pipe', 1)!.qty).toBe(1); expect(recipeForJob('metal_pipe', 2)!.qty).toBe(2); expect(recipeForJob('metal_pipe', 3)!.qty).toBe(2);
     expect(recipeForJob('fuel_can', 1)!.out).toBe('fuel_can'); expect(recipeForJob('fuel_can', 2)).toBeNull(); expect(recipeForJob('fuel_can', 3)).toBeNull();
-    expect(recipeForJob('rope', 1)).toBe(RECIPES.rope); expect(recipeForJob('rope', 4)).toBeNull();
+    expect(recipeForJob('rope', 1)).toBe(RECIPES.rope); expect(recipeForJob('rope', 4)).toBe(RECIPES.rope); expect(recipeForJob('rope', 5)).toBeNull();
     expect(hasLegacyDefinition('vehicle_frame_piped')).toBe(true); expect(latestLegacyDefinition('vehicle_frame')).toBe(plain);
     // Untouched this round, by order: the two fluid machines.
     expect(STRUCTS.oil_pump.cost).toEqual([['iron_ingot', 3], ['mechanical_parts', 2], ['spares', 2], ['brick', 2]]);
@@ -309,14 +310,16 @@ describe('P3 — the Utility Frame takes a Metal Pipe (frame only)', () => {
     expect(before.station_seconds).toBe(543); expect(after.station_seconds).toBe(620);
   });
 
-  it('INTENT on FIXTURE atoms: the rev-3 chain runs end to end and consumes exactly the analytic bill', () => {
+  // Rev 3 is history now: the final item set (rev 4) retired the Motor Drive, so the LIVE chain is the rev-4 one.
+  // The rev-2 → rev-3 comparison above stays as the frozen analytic record of what round 2 changed.
+  it('INTENT on FIXTURE atoms: the LIVE (rev 4) chain runs end to end and consumes exactly the analytic bill', () => {
     const g = start(); const r = g.run!;
-    const bill = plan(tableAt(3), MOTORBIKE_STEPS);
+    const bill = plan(tableAt(RECIPE_REVISION), MOTORBIKE_STEPS);
     const spares0 = countItem(r, 'inv', 'spares');
     for (const [k, q] of Object.entries(bill.atoms)) expect(addItem(r, 'inv', k, q), k).toBe(0);     // FIXTURE: atoms only
-    const FUEL_WOOD = 24; expect(addItem(r, 'inv', 'wood', FUEL_WOOD)).toBe(0);                    // FIXTURE: furnace fuel, measured below
+    const FUEL_WOOD = 48; expect(addItem(r, 'inv', 'wood', FUEL_WOOD)).toBe(0);                    // FIXTURE: furnace fuel, measured below
     let t = START + 100; let bench!: Entity, furnace!: Entity, table!: Entity; const log: string[] = [];
-    plan(tableAt(3), MOTORBIKE_STEPS, {
+    plan(tableAt(RECIPE_REVISION), MOTORBIKE_STEPS, {
       craft(recipe) {
         const rc = RECIPES[recipe]; log.push(recipe);
         if (!rc.station) { const res = act(g, 'craft', { recipe }, t); expect(res.ok, recipe + ': ' + why(res)).toBe(true); t += 1000; return; }

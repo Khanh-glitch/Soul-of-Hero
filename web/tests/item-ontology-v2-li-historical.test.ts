@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { ITEMS, STRUCTS, RECIPES, MODULE_PENDING_STRUCTURES } from '../src/game/catalog';
+import { FINAL_ITEMS } from '../src/game/final-item-set';
 import { UNOBTAINABLE_STRUCTURES } from '../src/game/item-ontology';
 import { LI_CROSSWALK } from '../src/game/item-ontology-decisions';
 import { buildLiCrosswalk, type LiAtlas } from '../src/game/item-ontology-report';
@@ -126,15 +127,17 @@ describe('137-vs-86 crosswalk', () => {
     expect(NOTICE_EVIDENCE.mountain_bicycle_blueprint.quote).toContain('扣除人物血量');
     // Helmet: an extra tier, not missing head protection. SOH has a head slot with exactly one armour piece.
     expect(row('refined_iron_helmet').why).toMatch(/already has head protection/);
-    expect(Object.entries(ITEMS).filter(([, d]) => (d as { slot?: string; armor?: number }).slot === 'head' && (d as { armor?: number }).armor).map(([k]) => k)).toEqual(['scrap_helm']);
+    expect(Object.entries(ITEMS).filter(([, d]) => (d as { slot?: string; armor?: number }).slot === 'head' && (d as { armor?: number }).armor).map(([k]) => k).sort()).toEqual(['iron_plate_helmet', 'refined_iron_helmet', 'scrap_helm']); // the 15/11 final item set (Bible §0.2a) imported both LI helmets AFTER this crosswalk; the crosswalk row is history
     expect(new Set(Object.values(ITEMS).map((d) => (d as { slot?: string }).slot).filter(Boolean))).toEqual(new Set(['head', 'body', 'back']));
-    for (const k of Object.keys(ITEMS)) expect(k).not.toMatch(/bicycle|iron_helmet/);
+    for (const k of Object.keys(ITEMS)) expect(k).not.toMatch(/bicycle/);
   });
 
   it('no production item, recipe or structure was created from a historical-only id', () => {
     const preexisting = new Set(['charcoal']); // SOH's own Charcoal predates this crosswalk (same word, SOH's own recipe)
     for (const id of Object.keys(HISTORICAL_ONLY)) {
       if (preexisting.has(id)) continue;
+      // Superseded for exactly the ids the Creator's 15/11 roster imported as Group A (final-item-set.ts).
+      if (FINAL_ITEMS[id]?.[1] === 'LI_IMPORTED') continue;
       expect(ITEMS[id], id).toBeUndefined(); expect(RECIPES[id], id).toBeUndefined(); expect(STRUCTS[id], id).toBeUndefined();
     }
     expect(RECIPES.charcoal.ins).toEqual([['wood', 2]]);

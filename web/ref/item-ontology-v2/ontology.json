@@ -8,35 +8,45 @@
   "rejected_pr": 60
  },
  "counts": {
-  "items": 147,
-  "items_static": 123,
+  "items": 181,
+  "items_static": 157,
   "items_generated_deployable": 24,
-  "recipes": 111,
+  "recipes": 119,
   "recipes_deploy": 24,
-  "recipe_revision": 3,
+  "recipe_revision": 4,
   "retired_recipes": [
    "fuel_can",
-   "vehicle_frame_piped"
+   "vehicle_frame_piped",
+   "vehicle_drive",
+   "vehicle_drive_geared",
+   "fuel_briquette",
+   "root_broth",
+   "poached_eggs",
+   "herb_roast",
+   "salted_meat",
+   "iron_sword",
+   "iron_sword_blade"
   ],
-  "graph_nodes": 654,
-  "graph_edges": 2353,
+  "graph_nodes": 706,
+  "graph_edges": 2489,
   "by_reachability": {
    "FIXTURE_ONLY": 1,
-   "SHIPPING_AND_VEYRA": 123,
-   "SHIPPING_ONLY": 13,
+   "SHIPPING_AND_VEYRA": 140,
+   "SHIPPING_ONLY": 14,
+   "UNREACHABLE": 16,
    "VEYRA_ONLY": 10
   },
   "by_craft_depth": {
-   "L0": 52,
-   "L1": 37,
-   "L2": 42,
-   "L3": 13,
-   "L4": 3
+   "L0": 76,
+   "L1": 41,
+   "L2": 45,
+   "L3": 14,
+   "L4": 5
   },
   "by_class": {
    "AMMO": 1,
-   "ANIMAL": 6,
-   "ARMOR": 7,
+   "ANIMAL": 7,
+   "ARMOR": 15,
    "BLUEPRINT": 1,
    "CASH": 1,
    "COMPONENT": 8,
@@ -44,36 +54,36 @@
    "DEVICE": 24,
    "ELDER_STONE": 12,
    "ENERGY": 6,
-   "FARM": 2,
+   "FARM": 5,
    "FIELD_CORE": 4,
-   "FOOD": 13,
+   "FOOD": 20,
    "FUEL": 1,
-   "KEY": 1,
+   "KEY": 7,
    "KIT": 4,
-   "MEDICAL": 3,
+   "MEDICAL": 4,
    "METAL": 2,
    "NATURAL": 3,
    "ORE": 6,
    "PARTS": 1,
-   "PROCESSED": 10,
-   "SALVAGE": 4,
+   "PROCESSED": 11,
+   "SALVAGE": 8,
    "SPECIMEN": 4,
    "TOOL": 10,
-   "WEAPON": 6
+   "WEAPON": 9
   },
   "by_cat": {
-   "armor": 7,
+   "armor": 15,
    "bp": 1,
    "cash": 1,
    "core": 11,
-   "food": 16,
+   "food": 24,
    "kit": 4,
-   "misc": 2,
+   "misc": 8,
    "place": 24,
-   "res": 53,
+   "res": 62,
    "stone": 12,
    "tool": 10,
-   "weapon": 6
+   "weapon": 9
   }
  },
  "research": {
@@ -603,7 +613,7 @@
    "level": "L1",
    "domain": "INDUSTRY",
    "source": "craft[recover_drive mechanical_parts]; AIRDROP_DROP(shipping only); HARVEST_BONUS; JOURNEY_REQUISITION; LOOT_ECOLOGY_POOL(shipping only); LOOT_STATIC_FIXED; RECYCLE_OUTPUT",
-   "consumer": "22 target(s): make:core_mjolnir make:industrial_axe make:industrial_pick make:mechanical_gear make:metal_blade make:metal_pipe …; 13 upkeep use(s)",
+   "consumer": "20 target(s): make:core_mjolnir make:industrial_axe make:industrial_pick make:mechanical_gear make:metal_blade make:metal_pipe …; 12 upkeep use(s)",
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "none",
@@ -623,7 +633,7 @@
    "level": "L2",
    "domain": "INDUSTRY",
    "source": "craft[fasteners]; AIRDROP_DROP(shipping only); CREATURE_DROP(veyra only); HARVEST_BONUS; LOOT_ECOLOGY_POOL(shipping only); LOOT_STATIC_FIXED",
-   "consumer": "18 target(s): make:field_repair_kit make:iron_plate make:mechanical_gear make:motorbike_kit make:trail_canteen make:trail_pack …; 7 upkeep use(s)",
+   "consumer": "13 target(s): make:field_repair_kit make:iron_plate make:mechanical_gear make:trail_canteen make:trail_pack station:base_generator …; 4 upkeep use(s)",
    "action": "specimen_study",
    "role": "COMPONENT",
    "LI_reference": "none",
@@ -663,7 +673,7 @@
    "level": "L3",
    "domain": "GEAR",
    "source": "craft[field_repair_kit]; HARVEST_BONUS; LOOT_ECOLOGY_POOL(shipping only); LOOT_STATIC_FIXED(veyra only)",
-   "consumer": "no craft/build consumer; 40 upkeep use(s)",
+   "consumer": "no craft/build consumer; 43 upkeep use(s)",
    "action": "specimen_study",
    "role": "KIT",
    "LI_reference": "none",
@@ -720,9 +730,9 @@
    "old_id": "fuel_briquette",
    "proposed_id": "fuel_briquette",
    "display_name": "Packed Fuel Briquette",
-   "level": "L2",
+   "level": "L0",
    "domain": "POWER",
-   "source": "craft[fuel_briquette]",
+   "source": "none found in graph",
    "consumer": "no craft/build consumer",
    "action": "fuel",
    "role": "PROCESSED",
@@ -731,9 +741,9 @@
    "justification": "Top rung (90 s), renewable from wood; the choice against mined Coal (80 s) is real: labour vs travel.",
    "migration_required": "NO",
    "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
-   "station_tier": "workbench_2",
-   "research_tier": "2",
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
    "proposal": ""
   },
   {
@@ -743,7 +753,7 @@
    "level": "L0",
    "domain": "BUILDING",
    "source": "CORE_CAST_OUTPUT; HARVEST_YIELD; LOOT_STATIC_FIXED(shipping only)",
-   "consumer": "46 target(s): make:arrow make:bow make:cart_kit make:charcoal make:iron_axe make:iron_pick …; 20 upkeep use(s)",
+   "consumer": "47 target(s): make:arrow make:bow make:cart_kit make:charcoal make:iron_axe make:iron_pick …; 21 upkeep use(s)",
    "action": "fuel",
    "role": "NATURAL",
    "LI_reference": "wood",
@@ -803,7 +813,7 @@
    "level": "L0",
    "domain": "BUILDING",
    "source": "CREATURE_DROP(veyra only); HARVEST_BONUS; HARVEST_YIELD; HUSBANDRY_RENEWABLE_YIELD; LOOT_STATIC_FIXED(veyra only)",
-   "consumer": "17 target(s): make:animal_feed make:arrow make:bandage make:cloth make:energy_basic make:fuel_briquette …; 5 upkeep use(s)",
+   "consumer": "16 target(s): make:animal_feed make:arrow make:bandage make:cloth make:energy_basic make:rope …; 5 upkeep use(s)",
    "action": "fuel",
    "role": "NATURAL",
    "LI_reference": "cloth",
@@ -883,7 +893,7 @@
    "level": "L1",
    "domain": "POWER",
    "source": "craft[charcoal]; HARVEST_YIELD",
-   "consumer": "2 target(s): make:energy_refined make:fuel_briquette",
+   "consumer": "1 target(s): make:energy_refined",
    "action": "fuel",
    "role": "PROCESSED",
    "LI_reference": "none",
@@ -923,7 +933,7 @@
    "level": "L0",
    "domain": "SURVIVAL",
    "source": "CREATURE_DROP(veyra only); HARVEST_YIELD",
-   "consumer": "2 target(s): make:salted_meat make:treated_canvas; 1 upkeep use(s)",
+   "consumer": "1 target(s): make:treated_canvas; 1 upkeep use(s)",
    "action": "ingredient",
    "role": "ORE",
    "LI_reference": "none",
@@ -940,9 +950,9 @@
    "old_id": "root_broth",
    "proposed_id": "root_broth",
    "display_name": "Root Broth",
-   "level": "L1",
+   "level": "L0",
    "domain": "SURVIVAL",
-   "source": "craft[root_broth poached_eggs]",
+   "source": "none found in graph",
    "consumer": "no craft/build consumer",
    "action": "consume",
    "role": "FOOD",
@@ -951,18 +961,18 @@
    "justification": "Meat-free meal with thirst; two routes (garden or eggs) now both named in the description.",
    "migration_required": "NO",
    "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
-   "station_tier": "campfire",
-   "research_tier": "0",
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
    "proposal": ""
   },
   {
    "old_id": "herb_roast",
    "proposed_id": "herb_roast",
    "display_name": "Herb Roast",
-   "level": "L1",
+   "level": "L0",
    "domain": "SURVIVAL",
-   "source": "craft[herb_roast]",
+   "source": "none found in graph",
    "consumer": "no craft/build consumer",
    "action": "consume",
    "role": "FOOD",
@@ -971,18 +981,18 @@
    "justification": "Healing meal (15 HP): different from Salted Roast by stat, not just by name.",
    "migration_required": "NO",
    "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
-   "station_tier": "campfire",
-   "research_tier": "0",
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
    "proposal": ""
   },
   {
    "old_id": "salted_meat",
    "proposed_id": "salted_meat",
    "display_name": "Salted Roast",
-   "level": "L1",
+   "level": "L0",
    "domain": "SURVIVAL",
-   "source": "craft[salted_meat]",
+   "source": "none found in graph",
    "consumer": "no craft/build consumer",
    "action": "consume",
    "role": "FOOD",
@@ -991,9 +1001,9 @@
    "justification": "Hunger meal (42).",
    "migration_required": "NO",
    "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
-   "station_tier": "campfire",
-   "research_tier": "0",
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
    "proposal": ""
   },
   {
@@ -1043,7 +1053,7 @@
    "level": "L0",
    "domain": "INDUSTRY",
    "source": "CREATURE_DROP; ELDER_STONE_DROP; HARVEST_BONUS; JOURNEY_REQUISITION; LOOT_ECOLOGY_POOL(shipping only); LOOT_STATIC_FIXED; RECYCLE_OUTPUT",
-   "consumer": "27 target(s): make:core_blast make:core_demon make:core_dragon make:core_earth make:core_earthmother make:core_elsa …; 9 upkeep use(s)",
+   "consumer": "28 target(s): make:core_blast make:core_demon make:core_dragon make:core_earth make:core_earthmother make:core_elsa …; 11 upkeep use(s)",
    "action": "ingredient",
    "role": "PARTS",
    "LI_reference": "parts",
@@ -1063,7 +1073,7 @@
    "level": "L1",
    "domain": "INDUSTRY",
    "source": "craft[iron_ingot scrap_ingot]; AIRDROP_DROP(shipping only); CREATURE_DROP(veyra only); DISMANTLE_SALVAGE; LOOT_STATIC_FIXED; RECYCLE_OUTPUT",
-   "consumer": "40 target(s): make:cart_kit make:core_blast make:core_demon make:core_dragon make:core_earth make:core_earthmother …; 19 upkeep use(s)",
+   "consumer": "42 target(s): make:cart_kit make:cleaver make:core_blast make:core_demon make:core_dragon make:core_earth …; 21 upkeep use(s)",
    "action": "ingredient",
    "role": "METAL",
    "LI_reference": "iron_ingot",
@@ -1103,7 +1113,7 @@
    "level": "L0",
    "domain": "GEAR",
    "source": "CREATURE_DROP; HUSBANDRY_BUTCHER",
-   "consumer": "2 target(s): make:leather make:water_flask",
+   "consumer": "6 target(s): make:iron_plate_chest make:iron_plate_helmet make:leather make:refined_iron_chest make:refined_iron_helmet make:water_flask",
    "action": "ingredient",
    "role": "ANIMAL",
    "LI_reference": "none",
@@ -1123,7 +1133,7 @@
    "level": "L1",
    "domain": "GEAR",
    "source": "craft[leather]; LOOT_STATIC_FIXED(shipping only); RECYCLE_OUTPUT",
-   "consumer": "8 target(s): make:chitin_armor make:iron_axe make:iron_pick make:iron_sword make:leather_armor make:scrap_helm …; 1 upkeep use(s)",
+   "consumer": "7 target(s): make:chitin_armor make:iron_axe make:iron_pick make:leather_armor make:scrap_helm make:trail_canteen …; 1 upkeep use(s)",
    "action": "ingredient",
    "role": "PROCESSED",
    "LI_reference": "none",
@@ -1243,7 +1253,7 @@
    "level": "L1",
    "domain": "GEAR",
    "source": "craft[cloth]; CREATURE_DROP(veyra only); LOOT_STATIC_FIXED",
-   "consumer": "3 target(s): make:field_repair_kit make:gas_mask make:treated_canvas",
+   "consumer": "6 target(s): make:field_repair_kit make:fuel_can make:gas_mask make:jam make:needle_thread make:treated_canvas",
    "action": "ingredient",
    "role": "PROCESSED",
    "LI_reference": "cloth",
@@ -1282,9 +1292,9 @@
    "display_name": "Wild Seeds",
    "level": "L0",
    "domain": "FARMING",
-   "source": "GARDEN_HARVEST_OUTPUT; HARVEST_BONUS; LOOT_STATIC_FIXED",
-   "consumer": "2 target(s): make:animal_feed make:essence_nature",
-   "action": "ingredient",
+   "source": "LOOT_STATIC_FIXED",
+   "consumer": "no craft/build consumer",
+   "action": "none",
    "role": "FARM",
    "LI_reference": "none",
    "decision": "KEEP",
@@ -1297,13 +1307,693 @@
    "proposal": ""
   },
   {
+   "old_id": "seed_sunroot",
+   "proposed_id": "seed_sunroot",
+   "display_name": "Sunroot Seed",
+   "level": "L0",
+   "domain": "FARMING",
+   "source": "GARDEN_HARVEST_OUTPUT; HARVEST_BONUS",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "FARM",
+   "LI_reference": "none",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group C named cultivar. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "seed_bitterleaf",
+   "proposed_id": "seed_bitterleaf",
+   "display_name": "Bitterleaf Seed",
+   "level": "L0",
+   "domain": "FARMING",
+   "source": "GARDEN_HARVEST_OUTPUT; HARVEST_BONUS",
+   "consumer": "1 target(s): make:essence_nature",
+   "action": "ingredient",
+   "role": "FARM",
+   "LI_reference": "none",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group C named cultivar. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "seed_wildberry",
+   "proposed_id": "seed_wildberry",
+   "display_name": "Wild Berry Seed",
+   "level": "L0",
+   "domain": "FARMING",
+   "source": "GARDEN_HARVEST_OUTPUT; HARVEST_BONUS",
+   "consumer": "1 target(s): make:animal_feed",
+   "action": "ingredient",
+   "role": "FARM",
+   "LI_reference": "none",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group C named cultivar. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "animal_fat",
+   "proposed_id": "animal_fat",
+   "display_name": "Animal Fat",
+   "level": "L0",
+   "domain": "INDUSTRY",
+   "source": "CREATURE_DROP",
+   "consumer": "2 target(s): make:fuel_can make:syringe",
+   "action": "ingredient",
+   "role": "ANIMAL",
+   "LI_reference": "animal_fat",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "tin_can",
+   "proposed_id": "tin_can",
+   "display_name": "Tin Can",
+   "level": "L0",
+   "domain": "INDUSTRY",
+   "source": "HARVEST_BONUS",
+   "consumer": "4 target(s): make:canned_meat make:fruit_wine make:jam make:mushroom_soup",
+   "action": "ingredient",
+   "role": "SALVAGE",
+   "LI_reference": "tin_can",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "electronic_parts",
+   "proposed_id": "electronic_parts",
+   "display_name": "Electronic Parts",
+   "level": "L0",
+   "domain": "INDUSTRY",
+   "source": "CREATURE_DROP; HARVEST_BONUS",
+   "consumer": "3 target(s): structure:ir_sensor structure:power_switch structure:pressure_switch; 3 upkeep use(s)",
+   "action": "ingredient",
+   "role": "SALVAGE",
+   "LI_reference": "electronic_parts",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "electric_resistor",
+   "proposed_id": "electric_resistor",
+   "display_name": "Resistor Wire",
+   "level": "L0",
+   "domain": "INDUSTRY",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "SALVAGE",
+   "LI_reference": "electric_resistor",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
+   "proposal": ""
+  },
+  {
+   "old_id": "needle_tube",
+   "proposed_id": "needle_tube",
+   "display_name": "Needle Tube",
+   "level": "L0",
+   "domain": "INDUSTRY",
+   "source": "CREATURE_DROP(veyra only); HARVEST_BONUS",
+   "consumer": "1 target(s): make:syringe",
+   "action": "ingredient",
+   "role": "SALVAGE",
+   "LI_reference": "needle_tube",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "needle_thread",
+   "proposed_id": "needle_thread",
+   "display_name": "Needle and Thread",
+   "level": "L2",
+   "domain": "INDUSTRY",
+   "source": "craft[needle_thread]",
+   "consumer": "4 target(s): make:iron_plate_chest make:iron_plate_helmet make:refined_iron_chest make:refined_iron_helmet",
+   "action": "ingredient",
+   "role": "PROCESSED",
+   "LI_reference": "needle_thread",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "workbench_1",
+   "research_tier": "1",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "syringe",
+   "proposed_id": "syringe",
+   "display_name": "Syringe",
+   "level": "L2",
+   "domain": "SURVIVAL",
+   "source": "craft[syringe]",
+   "consumer": "no craft/build consumer",
+   "action": "consume",
+   "role": "MEDICAL",
+   "LI_reference": "syringe",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "workbench_2",
+   "research_tier": "2",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "dried_meat",
+   "proposed_id": "dried_meat",
+   "display_name": "Dried Meat",
+   "level": "L1",
+   "domain": "SURVIVAL",
+   "source": "craft[dried_meat]",
+   "consumer": "no craft/build consumer",
+   "action": "consume",
+   "role": "FOOD",
+   "LI_reference": "dried_meat",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "campfire",
+   "research_tier": "0",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "canned_meat",
+   "proposed_id": "canned_meat",
+   "display_name": "Canned Meat",
+   "level": "L1",
+   "domain": "SURVIVAL",
+   "source": "craft[canned_meat]",
+   "consumer": "no craft/build consumer",
+   "action": "consume",
+   "role": "FOOD",
+   "LI_reference": "canned_meat",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "campfire",
+   "research_tier": "0",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "grilled_mushroom",
+   "proposed_id": "grilled_mushroom",
+   "display_name": "Grilled Mushroom",
+   "level": "L1",
+   "domain": "SURVIVAL",
+   "source": "craft[grilled_mushroom]",
+   "consumer": "no craft/build consumer",
+   "action": "consume",
+   "role": "FOOD",
+   "LI_reference": "grilled_mushroom",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "campfire",
+   "research_tier": "0",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "mushroom_soup",
+   "proposed_id": "mushroom_soup",
+   "display_name": "Mushroom Soup",
+   "level": "L1",
+   "domain": "SURVIVAL",
+   "source": "craft[mushroom_soup]",
+   "consumer": "no craft/build consumer",
+   "action": "consume",
+   "role": "FOOD",
+   "LI_reference": "mushroom_soup",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "campfire",
+   "research_tier": "0",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "fruit_juice",
+   "proposed_id": "fruit_juice",
+   "display_name": "Fruit Juice",
+   "level": "L1",
+   "domain": "SURVIVAL",
+   "source": "craft[fruit_juice]",
+   "consumer": "no craft/build consumer",
+   "action": "consume",
+   "role": "FOOD",
+   "LI_reference": "fruit_juice",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "hand",
+   "research_tier": "0",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "fruit_wine",
+   "proposed_id": "fruit_wine",
+   "display_name": "Fruit Wine",
+   "level": "L1",
+   "domain": "SURVIVAL",
+   "source": "craft[fruit_wine]",
+   "consumer": "no craft/build consumer",
+   "action": "consume",
+   "role": "FOOD",
+   "LI_reference": "fruit_wine",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "campfire",
+   "research_tier": "0",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "jam",
+   "proposed_id": "jam",
+   "display_name": "Jam",
+   "level": "L2",
+   "domain": "SURVIVAL",
+   "source": "craft[jam]",
+   "consumer": "no craft/build consumer",
+   "action": "consume",
+   "role": "FOOD",
+   "LI_reference": "jam",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "campfire",
+   "research_tier": "0",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "wood_club",
+   "proposed_id": "wood_club",
+   "display_name": "Wood Club",
+   "level": "L1",
+   "domain": "GEAR",
+   "source": "craft[wood_club]",
+   "consumer": "no craft/build consumer",
+   "action": "harvest_tool weapon",
+   "role": "WEAPON",
+   "LI_reference": "wood_club",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "hand",
+   "research_tier": "0",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "cleaver",
+   "proposed_id": "cleaver",
+   "display_name": "Cleaver",
+   "level": "L3",
+   "domain": "GEAR",
+   "source": "craft[cleaver]",
+   "consumer": "no craft/build consumer",
+   "action": "harvest_tool weapon",
+   "role": "WEAPON",
+   "LI_reference": "cleaver",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "workbench_1",
+   "research_tier": "1",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "machete",
+   "proposed_id": "machete",
+   "display_name": "Machete",
+   "level": "L3",
+   "domain": "GEAR",
+   "source": "craft[machete]",
+   "consumer": "no craft/build consumer",
+   "action": "harvest_tool weapon specimen_study",
+   "role": "WEAPON",
+   "LI_reference": "machete",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "workbench_2",
+   "research_tier": "2",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "iron_plate_helmet",
+   "proposed_id": "iron_plate_helmet",
+   "display_name": "Iron Plate Helmet",
+   "level": "L4",
+   "domain": "GEAR",
+   "source": "craft[iron_plate_helmet]",
+   "consumer": "no craft/build consumer",
+   "action": "equip_head",
+   "role": "ARMOR",
+   "LI_reference": "iron_plate_helmet",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "workbench_2",
+   "research_tier": "2",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "iron_plate_chest",
+   "proposed_id": "iron_plate_chest",
+   "display_name": "Iron Plate Chest",
+   "level": "L4",
+   "domain": "GEAR",
+   "source": "craft[iron_plate_chest]",
+   "consumer": "no craft/build consumer",
+   "action": "equip_body",
+   "role": "ARMOR",
+   "LI_reference": "iron_plate_chest",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "workbench_2",
+   "research_tier": "2",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "iron_plate_pants",
+   "proposed_id": "iron_plate_pants",
+   "display_name": "Iron Plate Pants",
+   "level": "L0",
+   "domain": "GEAR",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "ARMOR",
+   "LI_reference": "iron_plate_pants",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
+   "proposal": ""
+  },
+  {
+   "old_id": "iron_plate_boots",
+   "proposed_id": "iron_plate_boots",
+   "display_name": "Iron Plate Boots",
+   "level": "L0",
+   "domain": "GEAR",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "ARMOR",
+   "LI_reference": "iron_plate_boots",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
+   "proposal": ""
+  },
+  {
+   "old_id": "refined_iron_helmet",
+   "proposed_id": "refined_iron_helmet",
+   "display_name": "Refined Iron Helmet",
+   "level": "L3",
+   "domain": "GEAR",
+   "source": "craft[refined_iron_helmet]",
+   "consumer": "no craft/build consumer",
+   "action": "equip_head",
+   "role": "ARMOR",
+   "LI_reference": "refined_iron_helmet",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "workbench_2",
+   "research_tier": "3",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "refined_iron_chest",
+   "proposed_id": "refined_iron_chest",
+   "display_name": "Refined Iron Chest",
+   "level": "L3",
+   "domain": "GEAR",
+   "source": "craft[refined_iron_chest]",
+   "consumer": "no craft/build consumer",
+   "action": "equip_body",
+   "role": "ARMOR",
+   "LI_reference": "refined_iron_chest",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "workbench_2",
+   "research_tier": "3",
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "proposal": ""
+  },
+  {
+   "old_id": "refined_iron_legs",
+   "proposed_id": "refined_iron_legs",
+   "display_name": "Refined Iron Legs",
+   "level": "L0",
+   "domain": "GEAR",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "ARMOR",
+   "LI_reference": "refined_iron_legs",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
+   "proposal": ""
+  },
+  {
+   "old_id": "refined_iron_boots",
+   "proposed_id": "refined_iron_boots",
+   "display_name": "Refined Iron Boots",
+   "level": "L0",
+   "domain": "GEAR",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "ARMOR",
+   "LI_reference": "refined_iron_boots",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
+   "proposal": ""
+  },
+  {
+   "old_id": "green_card",
+   "proposed_id": "green_card",
+   "display_name": "Green Card",
+   "level": "L0",
+   "domain": "BUILDING",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "KEY",
+   "LI_reference": "green_card",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
+   "proposal": ""
+  },
+  {
+   "old_id": "blue_card",
+   "proposed_id": "blue_card",
+   "display_name": "Blue Card",
+   "level": "L0",
+   "domain": "BUILDING",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "KEY",
+   "LI_reference": "blue_card",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
+   "proposal": ""
+  },
+  {
+   "old_id": "purple_card",
+   "proposed_id": "purple_card",
+   "display_name": "Purple Card",
+   "level": "L0",
+   "domain": "BUILDING",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "KEY",
+   "LI_reference": "purple_card",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
+   "proposal": ""
+  },
+  {
+   "old_id": "wooden_ladder",
+   "proposed_id": "wooden_ladder",
+   "display_name": "Wooden Ladder",
+   "level": "L0",
+   "domain": "BUILDING",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "KEY",
+   "LI_reference": "wooden_ladder",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
+   "proposal": ""
+  },
+  {
+   "old_id": "steel_folding_ladder",
+   "proposed_id": "steel_folding_ladder",
+   "display_name": "Steel Folding Ladder",
+   "level": "L0",
+   "domain": "BUILDING",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "KEY",
+   "LI_reference": "steel_folding_ladder",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
+   "proposal": ""
+  },
+  {
+   "old_id": "large_furnace",
+   "proposed_id": "large_furnace",
+   "display_name": "Large Furnace",
+   "level": "L0",
+   "domain": "BUILDING",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
+   "role": "KEY",
+   "LI_reference": "large_furnace",
+   "decision": "KEEP",
+   "justification": "Final item set v2 (Bible §0.2a): Group A import from Last Island. Decided by the 15/11 roster, not by Item Ontology V2; see final-item-set.ts and final-item-ledger.ts.",
+   "migration_required": "NO",
+   "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
+   "proposal": ""
+  },
+  {
    "old_id": "berries",
    "proposed_id": "berries",
    "display_name": "Berries",
    "level": "L0",
    "domain": "FARMING",
-   "source": "CREATURE_DROP(veyra only); HARVEST_YIELD; LOOT_ECOLOGY_POOL(shipping only); LOOT_STATIC_FIXED(veyra only)",
-   "consumer": "1 target(s): make:lead_rope",
+   "source": "CREATURE_DROP(veyra only); GARDEN_HARVEST_OUTPUT; HARVEST_YIELD; LOOT_ECOLOGY_POOL(shipping only); LOOT_STATIC_FIXED(veyra only)",
+   "consumer": "4 target(s): make:fruit_juice make:fruit_wine make:jam make:lead_rope",
    "action": "consume",
    "role": "FOOD",
    "LI_reference": "wild_berry",
@@ -1323,7 +2013,7 @@
    "level": "L0",
    "domain": "SURVIVAL",
    "source": "CREATURE_DROP; HUSBANDRY_BUTCHER; LOOT_STATIC_FIXED(veyra only)",
-   "consumer": "4 target(s): make:cooked_meat make:herb_roast make:salted_meat make:stew",
+   "consumer": "4 target(s): make:canned_meat make:cooked_meat make:dried_meat make:stew",
    "action": "consume",
    "role": "FOOD",
    "LI_reference": "animal_meat",
@@ -1363,7 +2053,7 @@
    "level": "L0",
    "domain": "FARMING",
    "source": "HARVEST_YIELD; HUSBANDRY_RENEWABLE_YIELD; LOOT_ECOLOGY_POOL(shipping only)",
-   "consumer": "no craft/build consumer",
+   "consumer": "2 target(s): make:grilled_mushroom make:mushroom_soup",
    "action": "consume",
    "role": "FOOD",
    "LI_reference": "mushroom",
@@ -1383,7 +2073,7 @@
    "level": "L0",
    "domain": "FARMING",
    "source": "CREATURE_DROP(veyra only); GARDEN_HARVEST_OUTPUT; HARVEST_YIELD; HUSBANDRY_RENEWABLE_YIELD; LOOT_ECOLOGY_POOL(shipping only); LOOT_STATIC_FIXED(veyra only)",
-   "consumer": "8 target(s): make:antirad make:essence_nature make:herb_roast make:medkit make:root_broth make:stew …",
+   "consumer": "6 target(s): make:antirad make:essence_nature make:medkit make:stew make:treated_canvas station:garden_cold_frame",
    "action": "consume",
    "role": "FOOD",
    "LI_reference": "none",
@@ -1403,7 +2093,7 @@
    "level": "L0",
    "domain": "FARMING",
    "source": "GARDEN_HARVEST_OUTPUT; LOOT_STATIC_FIXED",
-   "consumer": "2 target(s): make:root_broth make:stew",
+   "consumer": "1 target(s): make:stew",
    "action": "consume",
    "role": "FOOD",
    "LI_reference": "none",
@@ -1680,20 +2370,20 @@
    "old_id": "iron_sword",
    "proposed_id": "iron_sword",
    "display_name": "Iron Sword",
-   "level": "L2",
+   "level": "L0",
    "domain": "GEAR",
-   "source": "craft[iron_sword_blade iron_sword]; AIRDROP_DROP(shipping only); LOOT_STATIC_FIXED(shipping only)",
+   "source": "AIRDROP_DROP(shipping only); LOOT_STATIC_FIXED(shipping only)",
    "consumer": "no craft/build consumer",
-   "action": "harvest_tool weapon specimen_study",
+   "action": "harvest_tool weapon",
    "role": "WEAPON",
    "LI_reference": "machete",
    "decision": "KEEP",
    "justification": "Iron melee; Blade alternate trades a higher station for skipping research.",
    "migration_required": "NO",
    "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
-   "station_tier": "workbench_1",
-   "research_tier": "2",
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "SHIPPING_ONLY",
    "proposal": ""
   },
   {
@@ -2082,7 +2772,7 @@
    "display_name": "Fuel Canister",
    "level": "L2",
    "domain": "POWER",
-   "source": "craft[refine_salvaged_oil refinery_fuel refinery_fuel_batch refinery_industrial refinery_crude]; AIRDROP_DROP(shipping only); HARVEST_BONUS; JOURNEY_REQUISITION; LOOT_STATIC_FIXED",
+   "source": "craft[refine_salvaged_oil refinery_fuel refinery_fuel_batch refinery_industrial refinery_crude low_quality_fuel]; AIRDROP_DROP(shipping only); HARVEST_BONUS; JOURNEY_REQUISITION; LOOT_STATIC_FIXED",
    "consumer": "no craft/build consumer",
    "action": "fuel",
    "role": "FUEL",
@@ -2160,20 +2850,20 @@
    "old_id": "vehicle_drive",
    "proposed_id": "vehicle_drive",
    "display_name": "Motor Drive",
-   "level": "L3",
+   "level": "L0",
    "domain": "TRANSPORT",
-   "source": "craft[vehicle_drive vehicle_drive_geared]",
-   "consumer": "1 target(s): make:motorbike_kit",
-   "action": "ingredient",
+   "source": "none found in graph",
+   "consumer": "no craft/build consumer",
+   "action": "none",
    "role": "COMPONENT",
    "LI_reference": "none",
    "decision": "KEEP",
    "justification": "Looks like a twin of the Frame (same raw inputs, same single consumer) but is the item a Damaged Drive visibly relates to, and it is where Gears enter the bike. Kept; revisit only if P2–P4 leave it still redundant.",
    "migration_required": "NO",
    "authority_status": "RUNTIME_CATALOG; NO_CHANGE_PROPOSED",
-   "station_tier": "workbench_2",
-   "research_tier": "1",
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "station_tier": "-",
+   "research_tier": "-",
+   "runtime_reachability": "UNREACHABLE",
    "proposal": ""
   },
   {
@@ -2183,7 +2873,7 @@
    "level": "L1",
    "domain": "INDUSTRY",
    "source": "craft[refined_iron_ingot refined_iron_rich]; CREATURE_DROP(veyra only); LOOT_ECOLOGY_POOL(shipping only); RECYCLE_OUTPUT",
-   "consumer": "3 target(s): make:iron_plate make:mechanical_gear make:metal_pipe; 1 upkeep use(s)",
+   "consumer": "6 target(s): make:iron_plate make:mechanical_gear make:metal_pipe make:motorbike_kit make:refined_iron_chest make:refined_iron_helmet; 1 upkeep use(s)",
    "action": "ingredient",
    "role": "METAL",
    "LI_reference": "refined_iron_ingot",
@@ -2223,7 +2913,7 @@
    "level": "L2",
    "domain": "INDUSTRY",
    "source": "craft[metal_blade]; LOOT_ECOLOGY_POOL(shipping only)",
-   "consumer": "3 target(s): make:industrial_axe make:iron_sword make:reinforced_spear",
+   "consumer": "4 target(s): make:cleaver make:industrial_axe make:machete make:reinforced_spear; 1 upkeep use(s)",
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "metal_blade",
@@ -2243,7 +2933,7 @@
    "level": "L3",
    "domain": "INDUSTRY",
    "source": "craft[mechanical_gear]; LOOT_ECOLOGY_POOL(shipping only)",
-   "consumer": "4 target(s): make:industrial_pick make:vehicle_drive structure:bear_trap structure:ir_sensor; 2 upkeep use(s)",
+   "consumer": "3 target(s): make:industrial_pick make:motorbike_kit structure:bear_trap; 1 upkeep use(s)",
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "mechanical_gear",
@@ -2263,7 +2953,7 @@
    "level": "L3",
    "domain": "INDUSTRY",
    "source": "craft[iron_plate]; LOOT_ECOLOGY_POOL(shipping only)",
-   "consumer": "1 target(s): make:motorbike_kit; 14 upkeep use(s)",
+   "consumer": "4 target(s): make:iron_plate_chest make:iron_plate_helmet make:motorbike_kit structure:pressure_switch; 15 upkeep use(s)",
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "iron_plate",
@@ -2623,7 +3313,7 @@
    "level": "L0",
    "domain": "HUSBANDRY",
    "source": "CREATURE_DROP(veyra only); HUSBANDRY_RENEWABLE_YIELD",
-   "consumer": "1 target(s): make:root_broth",
+   "consumer": "no craft/build consumer",
    "action": "consume",
    "role": "FOOD",
    "LI_reference": "none",
@@ -3040,7 +3730,7 @@
    "old_id": "deploy_power_switch",
    "proposed_id": "deploy_power_switch",
    "display_name": "Power Switch",
-   "level": "L3",
+   "level": "L2",
    "domain": "POWER",
    "source": "craft[deploy_power_switch]",
    "consumer": "no craft/build consumer",
@@ -3060,7 +3750,7 @@
    "old_id": "deploy_pressure_switch",
    "proposed_id": "deploy_pressure_switch",
    "display_name": "Pressure Switch",
-   "level": "L3",
+   "level": "L4",
    "domain": "POWER",
    "source": "craft[deploy_pressure_switch]",
    "consumer": "no craft/build consumer",
@@ -3080,7 +3770,7 @@
    "old_id": "deploy_ir_sensor",
    "proposed_id": "deploy_ir_sensor",
    "display_name": "Infrared Sensor",
-   "level": "L4",
+   "level": "L2",
    "domain": "POWER",
    "source": "craft[deploy_ir_sensor]",
    "consumer": "no craft/build consumer",
@@ -3298,7 +3988,7 @@
   }
  ],
  "disposition_counts": {
-  "KEEP": 143,
+  "KEEP": 177,
   "DEFER": 4,
   "ADD_CANDIDATE": 5
  },
@@ -3769,7 +4459,7 @@
    },
    "raw_per_unit": {
     "herb": 1,
-    "seed": 1
+    "seed_bitterleaf": 1
    },
    "signals": []
   },
@@ -5635,13 +6325,6 @@
     },
     {
      "kind": "BUILD_COST",
-     "to": "structure:pressure_switch",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "BUILD_COST",
      "to": "structure:refinery",
      "layer": "BOTH",
      "qty": 3,
@@ -5680,13 +6363,6 @@
      "to": "recipe:deploy_oil_pump",
      "layer": "BOTH",
      "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:deploy_pressure_switch",
-     "layer": "BOTH",
-     "qty": 1,
      "count": 1
     },
     {
@@ -5740,13 +6416,6 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_drive",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:vehicle_frame",
      "layer": "BOTH",
      "qty": 2,
@@ -5776,13 +6445,6 @@
     {
      "kind": "REPAIR_INPUT",
      "to": "item:deploy_oil_pump",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "item:deploy_pressure_switch",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -5899,7 +6561,7 @@
      "to": "sink:structure_reclaim_loss",
      "layer": "BOTH",
      "qty": null,
-     "count": 6
+     "count": 5
     },
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
@@ -5913,7 +6575,7 @@
      "to": "sink:territory_upkeep_24h",
      "layer": "BOTH",
      "qty": null,
-     "count": 6
+     "count": 5
     },
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
@@ -5952,13 +6614,6 @@
     },
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
-     "to": "structure:pressure_switch",
-     "layer": "BOTH",
-     "qty": null,
-     "count": 1
-    },
-    {
-     "kind": "TERRITORY_UPKEEP_PER_24H",
      "to": "structure:refinery",
      "layer": "BOTH",
      "qty": null,
@@ -5971,7 +6626,6 @@
    ],
    "consumed_by": [
     "vehicle_frame",
-    "vehicle_drive",
     "core_mjolnir",
     "industrial_pick",
     "industrial_axe",
@@ -5983,7 +6637,6 @@
     "deploy_refinery",
     "deploy_farm_controller",
     "deploy_base_generator",
-    "deploy_pressure_switch",
     "deploy_arrow_turret"
    ],
    "consumer_targets": [
@@ -5994,7 +6647,6 @@
     "make:metal_blade",
     "make:metal_pipe",
     "make:reinforced_spear",
-    "make:vehicle_drive",
     "make:vehicle_frame",
     "station:base_generator",
     "station:cart_freight",
@@ -6007,7 +6659,6 @@
     "structure:door_powered",
     "structure:farm_controller",
     "structure:oil_pump",
-    "structure:pressure_switch",
     "structure:refinery"
    ],
    "maintenance_targets": [
@@ -6015,7 +6666,6 @@
     "REPAIR_INPUT:item:deploy_base_generator",
     "REPAIR_INPUT:item:deploy_farm_controller",
     "REPAIR_INPUT:item:deploy_oil_pump",
-    "REPAIR_INPUT:item:deploy_pressure_switch",
     "REPAIR_INPUT:item:deploy_refinery",
     "REPAIR_INPUT:item:industrial_axe",
     "REPAIR_INPUT:item:industrial_pick",
@@ -6330,15 +6980,6 @@
      "probability": null,
      "gates": [],
      "count": 1
-    },
-    {
-     "kind": "RECLAIM_REFUND",
-     "from": "structure:ir_sensor",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [],
-     "count": 1
     }
    ],
    "maintained_by": [],
@@ -6372,27 +7013,6 @@
      "count": 1
     },
     {
-     "kind": "BUILD_COST",
-     "to": "structure:ir_sensor",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "BUILD_COST",
-     "to": "structure:power_switch",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "BUILD_COST",
-     "to": "structure:pressure_switch",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
      "kind": "CRAFT_INPUT",
      "to": "recipe:deploy_arrow_turret",
      "layer": "BOTH",
@@ -6411,27 +7031,6 @@
      "to": "recipe:deploy_farm_controller",
      "layer": "BOTH",
      "qty": 3,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:deploy_ir_sensor",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:deploy_power_switch",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:deploy_pressure_switch",
-     "layer": "BOTH",
-     "qty": 1,
      "count": 1
     },
     {
@@ -6457,13 +7056,6 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:motorbike_kit",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:trail_canteen",
      "layer": "BOTH",
      "qty": 1,
@@ -6472,20 +7064,6 @@
     {
      "kind": "CRAFT_INPUT",
      "to": "recipe:trail_pack",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_drive",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_drive_geared",
      "layer": "BOTH",
      "qty": 2,
      "count": 1
@@ -6507,27 +7085,6 @@
     {
      "kind": "REPAIR_INPUT",
      "to": "item:deploy_farm_controller",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "item:deploy_ir_sensor",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "item:deploy_power_switch",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "item:deploy_pressure_switch",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -6588,14 +7145,14 @@
      "to": "sink:structure_reclaim_loss",
      "layer": "BOTH",
      "qty": null,
-     "count": 7
+     "count": 4
     },
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
      "to": "sink:territory_upkeep_24h",
      "layer": "BOTH",
      "qty": null,
-     "count": 7
+     "count": 4
     },
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
@@ -6624,45 +7181,18 @@
      "layer": "BOTH",
      "qty": null,
      "count": 1
-    },
-    {
-     "kind": "TERRITORY_UPKEEP_PER_24H",
-     "to": "structure:ir_sensor",
-     "layer": "BOTH",
-     "qty": null,
-     "count": 1
-    },
-    {
-     "kind": "TERRITORY_UPKEEP_PER_24H",
-     "to": "structure:power_switch",
-     "layer": "BOTH",
-     "qty": null,
-     "count": 1
-    },
-    {
-     "kind": "TERRITORY_UPKEEP_PER_24H",
-     "to": "structure:pressure_switch",
-     "layer": "BOTH",
-     "qty": null,
-     "count": 1
     }
    ],
    "produced_by": [
     "fasteners"
    ],
    "consumed_by": [
-    "vehicle_drive",
-    "motorbike_kit",
     "field_repair_kit",
     "trail_pack",
     "trail_canteen",
     "mechanical_gear",
     "iron_plate",
-    "vehicle_drive_geared",
     "deploy_farm_controller",
-    "deploy_power_switch",
-    "deploy_pressure_switch",
-    "deploy_ir_sensor",
     "deploy_arrow_turret",
     "deploy_bear_trap"
    ],
@@ -6670,10 +7200,8 @@
     "make:field_repair_kit",
     "make:iron_plate",
     "make:mechanical_gear",
-    "make:motorbike_kit",
     "make:trail_canteen",
     "make:trail_pack",
-    "make:vehicle_drive",
     "station:base_generator",
     "station:furnace_lined",
     "station:workbench_3",
@@ -6681,18 +7209,12 @@
     "structure:arrow_turret",
     "structure:bear_trap",
     "structure:door_powered",
-    "structure:farm_controller",
-    "structure:ir_sensor",
-    "structure:power_switch",
-    "structure:pressure_switch"
+    "structure:farm_controller"
    ],
    "maintenance_targets": [
     "REPAIR_INPUT:item:deploy_arrow_turret",
     "REPAIR_INPUT:item:deploy_bear_trap",
     "REPAIR_INPUT:item:deploy_farm_controller",
-    "REPAIR_INPUT:item:deploy_ir_sensor",
-    "REPAIR_INPUT:item:deploy_power_switch",
-    "REPAIR_INPUT:item:deploy_pressure_switch",
     "VEHICLE_WEAR_REPAIR:station:motorbike"
    ],
    "direct_use": [
@@ -7012,6 +7534,13 @@
     },
     {
      "kind": "FIELD_REPAIR",
+     "to": "item:cleaver",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "FIELD_REPAIR",
      "to": "item:custodian_lantern",
      "layer": "BOTH",
      "qty": 1,
@@ -7229,6 +7758,13 @@
     },
     {
      "kind": "FIELD_REPAIR",
+     "to": "item:machete",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "FIELD_REPAIR",
      "to": "item:motorbike_kit",
      "layer": "BOTH",
      "qty": 1,
@@ -7278,6 +7814,13 @@
     },
     {
      "kind": "FIELD_REPAIR",
+     "to": "item:wood_club",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "FIELD_REPAIR",
      "to": "item:wood_spear",
      "layer": "BOTH",
      "qty": 1,
@@ -7306,6 +7849,7 @@
    "consumer_targets": [],
    "maintenance_targets": [
     "FIELD_REPAIR:item:bow",
+    "FIELD_REPAIR:item:cleaver",
     "FIELD_REPAIR:item:custodian_lantern",
     "FIELD_REPAIR:item:deploy_arrow_turret",
     "FIELD_REPAIR:item:deploy_barrel",
@@ -7337,6 +7881,7 @@
     "FIELD_REPAIR:item:iron_pick",
     "FIELD_REPAIR:item:iron_sword",
     "FIELD_REPAIR:item:knife",
+    "FIELD_REPAIR:item:machete",
     "FIELD_REPAIR:item:motorbike_kit",
     "FIELD_REPAIR:item:reinforced_spear",
     "FIELD_REPAIR:item:ronin_nodachi",
@@ -7344,6 +7889,7 @@
     "FIELD_REPAIR:item:stone_pick",
     "FIELD_REPAIR:item:tidemarshal_trident",
     "FIELD_REPAIR:item:torch",
+    "FIELD_REPAIR:item:wood_club",
     "FIELD_REPAIR:item:wood_spear"
    ],
    "direct_use": [
@@ -7529,37 +8075,20 @@
    "weight": 0.35,
    "stack_max": 30,
    "generated_deployable": false,
-   "craft_depth": 2,
-   "craft_depth_recipe": "fuel_briquette",
-   "station_tier": "workbench_2",
-   "research_tier": 2,
-   "knowledge": "RESEARCH_OR_BLUEPRINT",
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
    "rarity": null,
    "acquisition_types": {
-    "shipping": [
-     "CRAFT_OUTPUT"
-    ],
-    "veyra": [
-     "CRAFT_OUTPUT"
-    ],
+    "shipping": [],
+    "veyra": [],
     "fixture": []
    },
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "runtime_reachability": "UNREACHABLE",
    "non_craft_sources_all_gated": false,
-   "sources": [
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:fuel_briquette",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:wb_l2"
-     ],
-     "count": 1
-    }
-   ],
+   "sources": [],
    "refunds": [],
    "maintained_by": [],
    "consumers": [
@@ -7614,9 +8143,7 @@
     }
    ],
    "derived_sinks": [],
-   "produced_by": [
-    "fuel_briquette"
-   ],
+   "produced_by": [],
    "consumed_by": [],
    "consumer_targets": [],
    "maintenance_targets": [],
@@ -7628,14 +8155,15 @@
    "recycle": null,
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 1,
+    "live_recipes": 0,
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "fiber": 1,
-    "wood": 4
+    "fuel_briquette": 1
    },
-   "signals": []
+   "signals": [
+    "UNREACHABLE_EVERYWHERE"
+   ]
   },
   {
    "id": "wood",
@@ -8466,6 +8994,13 @@
     },
     {
      "kind": "CRAFT_INPUT",
+     "to": "recipe:wood_club",
+     "layer": "BOTH",
+     "qty": 12,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
      "to": "recipe:wood_spear",
      "layer": "BOTH",
      "qty": 4,
@@ -8623,6 +9158,13 @@
      "to": "item:stone_pick",
      "layer": "BOTH",
      "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "to": "item:wood_club",
+     "layer": "BOTH",
+     "qty": 3,
      "count": 1
     },
     {
@@ -8933,6 +9475,7 @@
    "consumed_by": [
     "reinforced_spear",
     "reinforced_spear_blade",
+    "wood_club",
     "arrow_fletched",
     "torch",
     "stone_axe",
@@ -8975,6 +9518,7 @@
     "make:stone_axe",
     "make:stone_pick",
     "make:torch",
+    "make:wood_club",
     "make:wood_spear",
     "station:garden_cold_frame",
     "structure:arrow_turret",
@@ -9031,7 +9575,8 @@
     "REPAIR_INPUT:item:deploy_torch_post",
     "REPAIR_INPUT:item:deploy_workbench",
     "REPAIR_INPUT:item:stone_axe",
-    "REPAIR_INPUT:item:stone_pick"
+    "REPAIR_INPUT:item:stone_pick",
+    "REPAIR_INPUT:item:wood_club"
    ],
    "direct_use": [
     "fuel",
@@ -9905,13 +10450,6 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:fuel_briquette",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:rope",
      "layer": "BOTH",
      "qty": 3,
@@ -10091,7 +10629,6 @@
    "produced_by": [],
    "consumed_by": [
     "energy_basic",
-    "fuel_briquette",
     "rope",
     "animal_feed",
     "torch",
@@ -10108,7 +10645,6 @@
     "make:bandage",
     "make:cloth",
     "make:energy_basic",
-    "make:fuel_briquette",
     "make:rope",
     "make:torch",
     "station:garden_cold_frame",
@@ -10720,13 +11256,6 @@
      "count": 1
     },
     {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:fuel_briquette",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
      "kind": "POWER_FUEL",
      "to": "station:base_generator",
      "layer": "BOTH",
@@ -10781,12 +11310,10 @@
     "charcoal"
    ],
    "consumed_by": [
-    "energy_refined_industrial",
-    "fuel_briquette"
+    "energy_refined_industrial"
    ],
    "consumer_targets": [
-    "make:energy_refined",
-    "make:fuel_briquette"
+    "make:energy_refined"
    ],
    "maintenance_targets": [],
    "direct_use": [
@@ -11271,13 +11798,6 @@
    "consumers": [
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:salted_meat",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:treated_canvas",
      "layer": "BOTH",
      "qty": 1,
@@ -11294,11 +11814,9 @@
    "derived_sinks": [],
    "produced_by": [],
    "consumed_by": [
-    "treated_canvas",
-    "salted_meat"
+    "treated_canvas"
    ],
    "consumer_targets": [
-    "make:salted_meat",
     "make:treated_canvas"
    ],
    "maintenance_targets": [
@@ -11325,49 +11843,20 @@
    "weight": 0.5,
    "stack_max": 10,
    "generated_deployable": false,
-   "craft_depth": 1,
-   "craft_depth_recipe": "root_broth",
-   "station_tier": "campfire",
-   "research_tier": 0,
-   "knowledge": "STARTER",
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
    "rarity": null,
    "acquisition_types": {
-    "shipping": [
-     "CRAFT_OUTPUT"
-    ],
-    "veyra": [
-     "CRAFT_OUTPUT"
-    ],
+    "shipping": [],
+    "veyra": [],
     "fixture": []
    },
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "runtime_reachability": "UNREACHABLE",
    "non_craft_sources_all_gated": false,
-   "sources": [
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:poached_eggs",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:station_campfire"
-     ],
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:root_broth",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:station_campfire"
-     ],
-     "count": 1
-    }
-   ],
+   "sources": [],
    "refunds": [],
    "maintained_by": [],
    "consumers": [
@@ -11401,10 +11890,7 @@
     }
    ],
    "derived_sinks": [],
-   "produced_by": [
-    "root_broth",
-    "poached_eggs"
-   ],
+   "produced_by": [],
    "consumed_by": [],
    "consumer_targets": [],
    "maintenance_targets": [],
@@ -11415,14 +11901,15 @@
    "recycle": null,
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 2,
+    "live_recipes": 0,
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "crop": 2,
-    "herb": 1
+    "root_broth": 1
    },
-   "signals": []
+   "signals": [
+    "UNREACHABLE_EVERYWHERE"
+   ]
   },
   {
    "id": "herb_roast",
@@ -11433,37 +11920,20 @@
    "weight": 0.4,
    "stack_max": 20,
    "generated_deployable": false,
-   "craft_depth": 1,
-   "craft_depth_recipe": "herb_roast",
-   "station_tier": "campfire",
-   "research_tier": 0,
-   "knowledge": "STARTER",
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
    "rarity": null,
    "acquisition_types": {
-    "shipping": [
-     "CRAFT_OUTPUT"
-    ],
-    "veyra": [
-     "CRAFT_OUTPUT"
-    ],
+    "shipping": [],
+    "veyra": [],
     "fixture": []
    },
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "runtime_reachability": "UNREACHABLE",
    "non_craft_sources_all_gated": false,
-   "sources": [
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:herb_roast",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:station_campfire"
-     ],
-     "count": 1
-    }
-   ],
+   "sources": [],
    "refunds": [],
    "maintained_by": [],
    "consumers": [
@@ -11490,9 +11960,7 @@
     }
    ],
    "derived_sinks": [],
-   "produced_by": [
-    "herb_roast"
-   ],
+   "produced_by": [],
    "consumed_by": [],
    "consumer_targets": [],
    "maintenance_targets": [],
@@ -11503,14 +11971,15 @@
    "recycle": null,
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 1,
+    "live_recipes": 0,
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "herb": 1,
-    "meat": 1
+    "herb_roast": 1
    },
-   "signals": []
+   "signals": [
+    "UNREACHABLE_EVERYWHERE"
+   ]
   },
   {
    "id": "salted_meat",
@@ -11521,37 +11990,20 @@
    "weight": 0.45,
    "stack_max": 20,
    "generated_deployable": false,
-   "craft_depth": 1,
-   "craft_depth_recipe": "salted_meat",
-   "station_tier": "campfire",
-   "research_tier": 0,
-   "knowledge": "STARTER",
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
    "rarity": null,
    "acquisition_types": {
-    "shipping": [
-     "CRAFT_OUTPUT"
-    ],
-    "veyra": [
-     "CRAFT_OUTPUT"
-    ],
+    "shipping": [],
+    "veyra": [],
     "fixture": []
    },
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "runtime_reachability": "UNREACHABLE",
    "non_craft_sources_all_gated": false,
-   "sources": [
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:salted_meat",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:station_campfire"
-     ],
-     "count": 1
-    }
-   ],
+   "sources": [],
    "refunds": [],
    "maintained_by": [],
    "consumers": [
@@ -11578,9 +12030,7 @@
     }
    ],
    "derived_sinks": [],
-   "produced_by": [
-    "salted_meat"
-   ],
+   "produced_by": [],
    "consumed_by": [],
    "consumer_targets": [],
    "maintenance_targets": [],
@@ -11591,14 +12041,15 @@
    "recycle": null,
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 1,
+    "live_recipes": 0,
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "meat": 1,
-    "raw_salt": 1
+    "salted_meat": 1
    },
-   "signals": []
+   "signals": [
+    "UNREACHABLE_EVERYWHERE"
+   ]
   },
   {
    "id": "sulfur",
@@ -12752,6 +13203,13 @@
     },
     {
      "kind": "BUILD_COST",
+     "to": "structure:ir_sensor",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BUILD_COST",
      "to": "structure:oil_pump",
      "layer": "FIXTURE",
      "qty": 2,
@@ -12760,6 +13218,13 @@
     {
      "kind": "BUILD_COST",
      "to": "structure:power_switch",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BUILD_COST",
+     "to": "structure:pressure_switch",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -12871,6 +13336,13 @@
     },
     {
      "kind": "CRAFT_INPUT",
+     "to": "recipe:deploy_ir_sensor",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
      "to": "recipe:deploy_oil_pump",
      "layer": "BOTH",
      "qty": 2,
@@ -12879,6 +13351,13 @@
     {
      "kind": "CRAFT_INPUT",
      "to": "recipe:deploy_power_switch",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:deploy_pressure_switch",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -12927,20 +13406,6 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_drive",
-     "layer": "BOTH",
-     "qty": 3,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_drive_geared",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:vehicle_frame",
      "layer": "BOTH",
      "qty": 2,
@@ -12969,6 +13434,13 @@
     },
     {
      "kind": "REPAIR_INPUT",
+     "to": "item:deploy_ir_sensor",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
      "to": "item:deploy_oil_pump",
      "layer": "BOTH",
      "qty": 1,
@@ -12977,6 +13449,13 @@
     {
      "kind": "REPAIR_INPUT",
      "to": "item:deploy_power_switch",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "to": "item:deploy_pressure_switch",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -13060,6 +13539,13 @@
     },
     {
      "kind": "RESEARCH_DIRECTED",
+     "to": "recipe:canned_meat",
+     "layer": "BOTH",
+     "qty": 9,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_DIRECTED",
      "to": "recipe:cart_kit",
      "layer": "BOTH",
      "qty": 9,
@@ -13068,6 +13554,13 @@
     {
      "kind": "RESEARCH_DIRECTED",
      "to": "recipe:charcoal",
+     "layer": "BOTH",
+     "qty": 9,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_DIRECTED",
+     "to": "recipe:cleaver",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
@@ -13116,6 +13609,13 @@
     },
     {
      "kind": "RESEARCH_DIRECTED",
+     "to": "recipe:dried_meat",
+     "layer": "BOTH",
+     "qty": 9,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_DIRECTED",
      "to": "recipe:fasteners",
      "layer": "BOTH",
      "qty": 9,
@@ -13130,7 +13630,14 @@
     },
     {
      "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:fuel_briquette",
+     "to": "recipe:fruit_juice",
+     "layer": "BOTH",
+     "qty": 9,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_DIRECTED",
+     "to": "recipe:fruit_wine",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
@@ -13158,7 +13665,7 @@
     },
     {
      "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:herb_roast",
+     "to": "recipe:grilled_mushroom",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
@@ -13214,14 +13721,21 @@
     },
     {
      "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:iron_sword",
+     "to": "recipe:iron_plate_chest",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
     },
     {
      "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:iron_sword_blade",
+     "to": "recipe:iron_plate_helmet",
+     "layer": "BOTH",
+     "qty": 9,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_DIRECTED",
+     "to": "recipe:jam",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
@@ -13243,6 +13757,20 @@
     {
      "kind": "RESEARCH_DIRECTED",
      "to": "recipe:leather_armor",
+     "layer": "BOTH",
+     "qty": 9,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_DIRECTED",
+     "to": "recipe:low_quality_fuel",
+     "layer": "BOTH",
+     "qty": 9,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_DIRECTED",
+     "to": "recipe:machete",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
@@ -13291,14 +13819,21 @@
     },
     {
      "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:plank",
+     "to": "recipe:mushroom_soup",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
     },
     {
      "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:poached_eggs",
+     "to": "recipe:needle_thread",
+     "layer": "BOTH",
+     "qty": 9,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_DIRECTED",
+     "to": "recipe:plank",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
@@ -13368,21 +13903,7 @@
     },
     {
      "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:root_broth",
-     "layer": "BOTH",
-     "qty": 9,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_DIRECTED",
      "to": "recipe:rope",
-     "layer": "BOTH",
-     "qty": 9,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:salted_meat",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
@@ -13431,6 +13952,13 @@
     },
     {
      "kind": "RESEARCH_DIRECTED",
+     "to": "recipe:syringe",
+     "layer": "BOTH",
+     "qty": 9,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_DIRECTED",
      "to": "recipe:torch",
      "layer": "BOTH",
      "qty": 9,
@@ -13459,14 +13987,14 @@
     },
     {
      "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:vehicle_drive_geared",
+     "to": "recipe:water_flask",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
     },
     {
      "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:water_flask",
+     "to": "recipe:wood_club",
      "layer": "BOTH",
      "qty": 9,
      "count": 1
@@ -13529,6 +14057,13 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
+     "to": "recipe:canned_meat",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_RANDOM",
      "to": "recipe:cart_kit",
      "layer": "BOTH",
      "qty": 4,
@@ -13544,6 +14079,13 @@
     {
      "kind": "RESEARCH_RANDOM",
      "to": "recipe:chitin_armor",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_RANDOM",
+     "to": "recipe:cleaver",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
@@ -13627,6 +14169,13 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
+     "to": "recipe:dried_meat",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_RANDOM",
      "to": "recipe:fasteners",
      "layer": "BOTH",
      "qty": 4,
@@ -13641,7 +14190,14 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
-     "to": "recipe:fuel_briquette",
+     "to": "recipe:fruit_juice",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_RANDOM",
+     "to": "recipe:fruit_wine",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
@@ -13669,7 +14225,7 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
-     "to": "recipe:herb_roast",
+     "to": "recipe:grilled_mushroom",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
@@ -13725,14 +14281,21 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
-     "to": "recipe:iron_sword",
+     "to": "recipe:iron_plate_chest",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
     },
     {
      "kind": "RESEARCH_RANDOM",
-     "to": "recipe:iron_sword_blade",
+     "to": "recipe:iron_plate_helmet",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_RANDOM",
+     "to": "recipe:jam",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
@@ -13754,6 +14317,20 @@
     {
      "kind": "RESEARCH_RANDOM",
      "to": "recipe:leather_armor",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_RANDOM",
+     "to": "recipe:low_quality_fuel",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_RANDOM",
+     "to": "recipe:machete",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
@@ -13802,6 +14379,20 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
+     "to": "recipe:mushroom_soup",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_RANDOM",
+     "to": "recipe:needle_thread",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_RANDOM",
      "to": "recipe:plank",
      "layer": "BOTH",
      "qty": 4,
@@ -13809,14 +14400,21 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
-     "to": "recipe:poached_eggs",
+     "to": "recipe:refine_salvaged_oil",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
     },
     {
      "kind": "RESEARCH_RANDOM",
-     "to": "recipe:refine_salvaged_oil",
+     "to": "recipe:refined_iron_chest",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_RANDOM",
+     "to": "recipe:refined_iron_helmet",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
@@ -13879,21 +14477,7 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
-     "to": "recipe:root_broth",
-     "layer": "BOTH",
-     "qty": 4,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_RANDOM",
      "to": "recipe:rope",
-     "layer": "BOTH",
-     "qty": 4,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_RANDOM",
-     "to": "recipe:salted_meat",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
@@ -13942,6 +14526,13 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
+     "to": "recipe:syringe",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_RANDOM",
      "to": "recipe:torch",
      "layer": "BOTH",
      "qty": 4,
@@ -13970,14 +14561,14 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
-     "to": "recipe:vehicle_drive_geared",
+     "to": "recipe:water_flask",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
     },
     {
      "kind": "RESEARCH_RANDOM",
-     "to": "recipe:water_flask",
+     "to": "recipe:wood_club",
      "layer": "BOTH",
      "qty": 4,
      "count": 1
@@ -14087,7 +14678,7 @@
      "to": "sink:structure_reclaim_loss",
      "layer": "BOTH",
      "qty": null,
-     "count": 6
+     "count": 8
     },
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
@@ -14101,7 +14692,7 @@
      "to": "sink:territory_upkeep_24h",
      "layer": "BOTH",
      "qty": null,
-     "count": 6
+     "count": 8
     },
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
@@ -14126,6 +14717,13 @@
     },
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
+     "to": "structure:ir_sensor",
+     "layer": "BOTH",
+     "qty": null,
+     "count": 1
+    },
+    {
+     "kind": "TERRITORY_UPKEEP_PER_24H",
      "to": "structure:oil_pump",
      "layer": "FIXTURE",
      "qty": null,
@@ -14134,6 +14732,13 @@
     {
      "kind": "TERRITORY_UPKEEP_PER_24H",
      "to": "structure:power_switch",
+     "layer": "BOTH",
+     "qty": null,
+     "count": 1
+    },
+    {
+     "kind": "TERRITORY_UPKEEP_PER_24H",
+     "to": "structure:pressure_switch",
      "layer": "BOTH",
      "qty": null,
      "count": 1
@@ -14156,7 +14761,6 @@
    "produced_by": [],
    "consumed_by": [
     "vehicle_frame",
-    "vehicle_drive",
     "core_blast",
     "core_earthmother",
     "core_mjolnir",
@@ -14167,7 +14771,6 @@
     "industrial_pick",
     "industrial_axe",
     "industrial_pick_geared",
-    "vehicle_drive_geared",
     "gas_mask",
     "core_fire",
     "core_earth",
@@ -14178,7 +14781,9 @@
     "deploy_research",
     "deploy_farm_controller",
     "deploy_base_generator",
-    "deploy_power_switch"
+    "deploy_power_switch",
+    "deploy_pressure_switch",
+    "deploy_ir_sensor"
    ],
    "consumer_targets": [
     "make:core_blast",
@@ -14195,7 +14800,6 @@
     "make:gas_mask",
     "make:industrial_axe",
     "make:industrial_pick",
-    "make:vehicle_drive",
     "make:vehicle_frame",
     "station:base_generator",
     "station:cart_freight",
@@ -14204,8 +14808,10 @@
     "structure:base_generator",
     "structure:door_powered",
     "structure:farm_controller",
+    "structure:ir_sensor",
     "structure:oil_pump",
     "structure:power_switch",
+    "structure:pressure_switch",
     "structure:refinery",
     "structure:research"
    ],
@@ -14213,8 +14819,10 @@
     "REPAIR_INPUT:item:custodian_lantern",
     "REPAIR_INPUT:item:deploy_base_generator",
     "REPAIR_INPUT:item:deploy_farm_controller",
+    "REPAIR_INPUT:item:deploy_ir_sensor",
     "REPAIR_INPUT:item:deploy_oil_pump",
     "REPAIR_INPUT:item:deploy_power_switch",
+    "REPAIR_INPUT:item:deploy_pressure_switch",
     "REPAIR_INPUT:item:deploy_refinery",
     "REPAIR_INPUT:item:deploy_research",
     "REPAIR_INPUT:item:industrial_axe",
@@ -14322,6 +14930,17 @@
     {
      "kind": "DISMANTLE_SALVAGE",
      "from": "item:iron_sword",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:wb_l1"
+     ],
+     "count": 1
+    },
+    {
+     "kind": "DISMANTLE_SALVAGE",
+     "from": "item:machete",
      "layer": "BOTH",
      "qty": 1,
      "probability": null,
@@ -14600,6 +15219,15 @@
     },
     {
      "kind": "RECLAIM_REFUND",
+     "from": "structure:pressure_switch",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [],
+     "count": 1
+    },
+    {
+     "kind": "RECLAIM_REFUND",
      "from": "structure:refinery",
      "layer": "BOTH",
      "qty": 2,
@@ -14691,7 +15319,7 @@
      "kind": "BUILD_COST",
      "to": "structure:pressure_switch",
      "layer": "BOTH",
-     "qty": 1,
+     "qty": 2,
      "count": 1
     },
     {
@@ -14713,6 +15341,13 @@
      "to": "recipe:cart_kit",
      "layer": "BOTH",
      "qty": 3,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:cleaver",
+     "layer": "BOTH",
+     "qty": 1,
      "count": 1
     },
     {
@@ -14838,7 +15473,7 @@
      "kind": "CRAFT_INPUT",
      "to": "recipe:deploy_pressure_switch",
      "layer": "BOTH",
-     "qty": 1,
+     "qty": 2,
      "count": 1
     },
     {
@@ -14892,16 +15527,9 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:iron_sword",
+     "to": "recipe:machete",
      "layer": "BOTH",
-     "qty": 5,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:iron_sword_blade",
-     "layer": "BOTH",
-     "qty": 2,
+     "qty": 4,
      "count": 1
     },
     {
@@ -14927,6 +15555,13 @@
     },
     {
      "kind": "CRAFT_INPUT",
+     "to": "recipe:needle_thread",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
      "to": "recipe:refined_iron_ingot",
      "layer": "BOTH",
      "qty": 3,
@@ -14948,14 +15583,7 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_drive",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_drive_geared",
+     "to": "recipe:syringe",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -14965,6 +15593,13 @@
      "to": "recipe:vehicle_frame",
      "layer": "BOTH",
      "qty": 2,
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "to": "item:cleaver",
+     "layer": "BOTH",
+     "qty": 1,
      "count": 1
     },
     {
@@ -15082,6 +15717,13 @@
     {
      "kind": "REPAIR_INPUT",
      "to": "item:iron_sword",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "to": "item:machete",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -15284,7 +15926,6 @@
    ],
    "consumed_by": [
     "vehicle_frame",
-    "vehicle_drive",
     "energy_refined_industrial",
     "energy_refined",
     "core_blast",
@@ -15299,13 +15940,14 @@
     "reinforced_spear",
     "metal_blade",
     "mechanical_gear",
-    "iron_sword_blade",
     "reinforced_spear_blade",
-    "vehicle_drive_geared",
+    "cleaver",
+    "machete",
+    "needle_thread",
+    "syringe",
     "refined_iron_ingot",
     "iron_axe",
     "iron_pick",
-    "iron_sword",
     "cart_kit",
     "core_earth",
     "deploy_chest_large",
@@ -15323,6 +15965,7 @@
    ],
    "consumer_targets": [
     "make:cart_kit",
+    "make:cleaver",
     "make:core_blast",
     "make:core_demon",
     "make:core_dragon",
@@ -15335,13 +15978,14 @@
     "make:fasteners",
     "make:iron_axe",
     "make:iron_pick",
-    "make:iron_sword",
+    "make:machete",
     "make:mechanical_gear",
     "make:mechanical_parts",
     "make:metal_blade",
+    "make:needle_thread",
     "make:refined_iron_ingot",
     "make:reinforced_spear",
-    "make:vehicle_drive",
+    "make:syringe",
     "make:vehicle_frame",
     "station:base_generator",
     "station:cart_freight",
@@ -15364,6 +16008,7 @@
     "structure:research"
    ],
    "maintenance_targets": [
+    "REPAIR_INPUT:item:cleaver",
     "REPAIR_INPUT:item:deploy_arrow_turret",
     "REPAIR_INPUT:item:deploy_base_generator",
     "REPAIR_INPUT:item:deploy_bear_trap",
@@ -15381,6 +16026,7 @@
     "REPAIR_INPUT:item:iron_axe",
     "REPAIR_INPUT:item:iron_pick",
     "REPAIR_INPUT:item:iron_sword",
+    "REPAIR_INPUT:item:machete",
     "REPAIR_INPUT:item:reinforced_spear",
     "REPAIR_INPUT:item:tidemarshal_trident"
    ],
@@ -15921,9 +16567,37 @@
    "consumers": [
     {
      "kind": "CRAFT_INPUT",
+     "to": "recipe:iron_plate_chest",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:iron_plate_helmet",
+     "layer": "BOTH",
+     "qty": 3,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
      "to": "recipe:leather",
      "layer": "BOTH",
      "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:refined_iron_chest",
+     "layer": "BOTH",
+     "qty": 5,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:refined_iron_helmet",
+     "layer": "BOTH",
+     "qty": 5,
      "count": 1
     },
     {
@@ -15937,11 +16611,19 @@
    "derived_sinks": [],
    "produced_by": [],
    "consumed_by": [
+    "iron_plate_helmet",
+    "iron_plate_chest",
+    "refined_iron_helmet",
+    "refined_iron_chest",
     "water_flask",
     "leather"
    ],
    "consumer_targets": [
+    "make:iron_plate_chest",
+    "make:iron_plate_helmet",
     "make:leather",
+    "make:refined_iron_chest",
+    "make:refined_iron_helmet",
     "make:water_flask"
    ],
    "maintenance_targets": [],
@@ -16046,20 +16728,6 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:iron_sword",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:iron_sword_blade",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:leather_armor",
      "layer": "BOTH",
      "qty": 5,
@@ -16101,10 +16769,8 @@
    "consumed_by": [
     "trail_pack",
     "trail_canteen",
-    "iron_sword_blade",
     "iron_axe",
     "iron_pick",
-    "iron_sword",
     "leather_armor",
     "chitin_armor",
     "scrap_helm"
@@ -16113,7 +16779,6 @@
     "make:chitin_armor",
     "make:iron_axe",
     "make:iron_pick",
-    "make:iron_sword",
     "make:leather_armor",
     "make:scrap_helm",
     "make:trail_canteen",
@@ -17098,6 +17763,27 @@
     },
     {
      "kind": "CRAFT_INPUT",
+     "to": "recipe:jam",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:low_quality_fuel",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:needle_thread",
+     "layer": "BOTH",
+     "qty": 2,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
      "to": "recipe:treated_canvas",
      "layer": "BOTH",
      "qty": 1,
@@ -17111,11 +17797,17 @@
    "consumed_by": [
     "treated_canvas",
     "field_repair_kit",
+    "needle_thread",
+    "low_quality_fuel",
+    "jam",
     "gas_mask"
    ],
    "consumer_targets": [
     "make:field_repair_kit",
+    "make:fuel_can",
     "make:gas_mask",
+    "make:jam",
+    "make:needle_thread",
     "make:treated_canvas"
    ],
    "maintenance_targets": [],
@@ -17379,13 +18071,9 @@
    "rarity": null,
    "acquisition_types": {
     "shipping": [
-     "GARDEN_HARVEST_OUTPUT",
-     "HARVEST_BONUS",
      "LOOT_STATIC_FIXED"
     ],
     "veyra": [
-     "GARDEN_HARVEST_OUTPUT",
-     "HARVEST_BONUS",
      "LOOT_STATIC_FIXED"
     ],
     "fixture": []
@@ -17393,42 +18081,6 @@
    "runtime_reachability": "SHIPPING_AND_VEYRA",
    "non_craft_sources_all_gated": false,
    "sources": [
-    {
-     "kind": "GARDEN_HARVEST_OUTPUT",
-     "from": "recipe:garden:crop",
-     "layer": "BOTH",
-     "qty": 2,
-     "probability": null,
-     "gates": [],
-     "count": 1
-    },
-    {
-     "kind": "GARDEN_HARVEST_OUTPUT",
-     "from": "recipe:garden:herb",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [],
-     "count": 1
-    },
-    {
-     "kind": "HARVEST_BONUS",
-     "from": "world_source:bush",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": 0.3,
-     "gates": [],
-     "count": 1
-    },
-    {
-     "kind": "HARVEST_BONUS",
-     "from": "world_source:oak",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": 0.25,
-     "gates": [],
-     "count": 1
-    },
     {
      "kind": "LOOT_STATIC_FIXED",
      "from": "container:shipping:mill:4",
@@ -17542,12 +18194,161 @@
    "maintained_by": [],
    "consumers": [
     {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:animal_feed",
+     "kind": "HUSBANDRY_PEN_FEED",
+     "to": "sink:husbandry_feed_water_drain",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 4
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "graph:HUSBANDRY_PEN_FEED"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 1
+   },
+   "raw_per_unit": {
+    "seed": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "seed_sunroot",
+   "name": "Sunroot Seed",
+   "cat": "res",
+   "item_class": "FARM",
+   "desc": "Plant in a garden plot for Sunroot. Wants the warm season. A harvest returns the one seed you planted, never more.",
+   "weight": 0.05,
+   "stack_max": 40,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "GARDEN_HARVEST_OUTPUT",
+     "HARVEST_BONUS"
+    ],
+    "veyra": [
+     "GARDEN_HARVEST_OUTPUT",
+     "HARVEST_BONUS"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "GARDEN_HARVEST_OUTPUT",
+     "from": "recipe:garden:crop",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [],
+     "count": 1
+    },
+    {
+     "kind": "HARVEST_BONUS",
+     "from": "world_source:grass",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": 0.08,
+     "gates": [],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "GARDEN_PLANT_INPUT",
+     "to": "recipe:garden:crop",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "graph:GARDEN_PLANT_INPUT"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 2
+   },
+   "raw_per_unit": {
+    "seed_sunroot": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "seed_bitterleaf",
+   "name": "Bitterleaf Seed",
+   "cat": "res",
+   "item_class": "FARM",
+   "desc": "Plant in a garden plot for Bitterleaf. Tolerates cold better than Sunroot. A harvest returns the one seed you planted.",
+   "weight": 0.05,
+   "stack_max": 40,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "GARDEN_HARVEST_OUTPUT",
+     "HARVEST_BONUS"
+    ],
+    "veyra": [
+     "GARDEN_HARVEST_OUTPUT",
+     "HARVEST_BONUS"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "GARDEN_HARVEST_OUTPUT",
+     "from": "recipe:garden:herb",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [],
+     "count": 1
     },
+    {
+     "kind": "HARVEST_BONUS",
+     "from": "world_source:herb",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": 0.3,
+     "gates": [],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
     {
      "kind": "CRAFT_INPUT",
      "to": "recipe:essence_nature",
@@ -17557,14 +18358,96 @@
     },
     {
      "kind": "GARDEN_PLANT_INPUT",
-     "to": "recipe:garden:crop",
+     "to": "recipe:garden:herb",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [
+    "essence_nature"
+   ],
+   "consumer_targets": [
+    "make:essence_nature"
+   ],
+   "maintenance_targets": [],
+   "direct_use": [
+    "graph:GARDEN_PLANT_INPUT"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 2
+   },
+   "raw_per_unit": {
+    "seed_bitterleaf": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "seed_wildberry",
+   "name": "Wild Berry Seed",
+   "cat": "res",
+   "item_class": "FARM",
+   "desc": "Plant in a garden plot for berries, or mix into fodder. A harvest returns the one seed you planted.",
+   "weight": 0.05,
+   "stack_max": 40,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "GARDEN_HARVEST_OUTPUT",
+     "HARVEST_BONUS"
+    ],
+    "veyra": [
+     "GARDEN_HARVEST_OUTPUT",
+     "HARVEST_BONUS"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "GARDEN_HARVEST_OUTPUT",
+     "from": "recipe:garden:berry",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [],
+     "count": 1
+    },
+    {
+     "kind": "HARVEST_BONUS",
+     "from": "world_source:bush",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": 0.3,
+     "gates": [],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:animal_feed",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
     },
     {
      "kind": "GARDEN_PLANT_INPUT",
-     "to": "recipe:garden:herb",
+     "to": "recipe:garden:berry",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -17575,41 +18458,2381 @@
      "layer": "BOTH",
      "qty": 1,
      "count": 1
-    },
-    {
-     "kind": "HUSBANDRY_PEN_FEED",
-     "to": "sink:husbandry_feed_water_drain",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 4
     }
    ],
    "derived_sinks": [],
    "produced_by": [],
    "consumed_by": [
-    "essence_nature",
     "animal_feed"
    ],
    "consumer_targets": [
-    "make:animal_feed",
-    "make:essence_nature"
+    "make:animal_feed"
    ],
    "maintenance_targets": [],
    "direct_use": [
     "graph:GARDEN_PLANT_INPUT",
-    "graph:HUSBANDRY_FEED_TAME",
-    "graph:HUSBANDRY_PEN_FEED"
+    "graph:HUSBANDRY_FEED_TAME"
    ],
    "recycle": null,
    "recycled_from": [],
    "alt_routes": {
     "live_recipes": 0,
-    "non_craft_source_kinds": 3
+    "non_craft_source_kinds": 2
    },
    "raw_per_unit": {
-    "seed": 1
+    "seed_wildberry": 1
    },
    "signals": []
+  },
+  {
+   "id": "animal_fat",
+   "name": "Animal Fat",
+   "cat": "res",
+   "item_class": "ANIMAL",
+   "desc": "Rendered from large game. Furnace-render it with cloth into a Fuel Canister, or use it in a Syringe.",
+   "weight": 0.3,
+   "stack_max": 40,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CREATURE_DROP"
+    ],
+    "veyra": [
+     "CREATURE_DROP"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CREATURE_DROP",
+     "from": "creature:boar",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": 0.8,
+     "gates": [],
+     "count": 1
+    },
+    {
+     "kind": "CREATURE_DROP",
+     "from": "creature:deer",
+     "layer": "VEYRA",
+     "qty": 1,
+     "probability": 0.6,
+     "gates": [
+      "gate:veyra_spawner"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:low_quality_fuel",
+     "layer": "BOTH",
+     "qty": 6,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:syringe",
+     "layer": "BOTH",
+     "qty": 2,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [
+    "syringe",
+    "low_quality_fuel"
+   ],
+   "consumer_targets": [
+    "make:fuel_can",
+    "make:syringe"
+   ],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 1
+   },
+   "raw_per_unit": {
+    "animal_fat": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "tin_can",
+   "name": "Tin Can",
+   "cat": "res",
+   "item_class": "SALVAGE",
+   "desc": "Empty food tin pulled from wrecks and roadside scrap. Cannot be crafted. Needed for canned meat, soup, jam and wine.",
+   "weight": 0.15,
+   "stack_max": 30,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "HARVEST_BONUS"
+    ],
+    "veyra": [
+     "HARVEST_BONUS"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "HARVEST_BONUS",
+     "from": "world_source:scrap",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": 0.35,
+     "gates": [],
+     "count": 1
+    },
+    {
+     "kind": "HARVEST_BONUS",
+     "from": "world_source:wreck",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": 0.2,
+     "gates": [],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:canned_meat",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:fruit_wine",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:jam",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:mushroom_soup",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [
+    "mushroom_soup",
+    "canned_meat",
+    "fruit_wine",
+    "jam"
+   ],
+   "consumer_targets": [
+    "make:canned_meat",
+    "make:fruit_wine",
+    "make:jam",
+    "make:mushroom_soup"
+   ],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 1
+   },
+   "raw_per_unit": {
+    "tin_can": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "electronic_parts",
+   "name": "Electronic Parts",
+   "cat": "res",
+   "item_class": "SALVAGE",
+   "desc": "Salvaged boards and relays. Cannot be crafted: taken from Scrap Crawlers and car wrecks. Goes into switches, pressure plates and infrared sensors.",
+   "weight": 0.2,
+   "stack_max": 40,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CREATURE_DROP",
+     "HARVEST_BONUS"
+    ],
+    "veyra": [
+     "CREATURE_DROP",
+     "HARVEST_BONUS"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CREATURE_DROP",
+     "from": "creature:crawler",
+     "layer": "SHIPPING",
+     "qty": 1,
+     "probability": 0.5,
+     "gates": [
+      "gate:shipping_spawner"
+     ],
+     "count": 1
+    },
+    {
+     "kind": "CREATURE_DROP",
+     "from": "creature:orc_1",
+     "layer": "VEYRA",
+     "qty": 1,
+     "probability": 0.3,
+     "gates": [
+      "gate:veyra_spawner"
+     ],
+     "count": 1
+    },
+    {
+     "kind": "HARVEST_BONUS",
+     "from": "world_source:wreck",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": 0.15,
+     "gates": [],
+     "count": 1
+    }
+   ],
+   "refunds": [
+    {
+     "kind": "RECLAIM_REFUND",
+     "from": "structure:ir_sensor",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [],
+     "count": 1
+    },
+    {
+     "kind": "RECLAIM_REFUND",
+     "from": "structure:power_switch",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [],
+     "count": 1
+    },
+    {
+     "kind": "RECLAIM_REFUND",
+     "from": "structure:pressure_switch",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [],
+     "count": 1
+    }
+   ],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "BUILD_COST",
+     "to": "structure:ir_sensor",
+     "layer": "BOTH",
+     "qty": 2,
+     "count": 1
+    },
+    {
+     "kind": "BUILD_COST",
+     "to": "structure:power_switch",
+     "layer": "BOTH",
+     "qty": 2,
+     "count": 1
+    },
+    {
+     "kind": "BUILD_COST",
+     "to": "structure:pressure_switch",
+     "layer": "BOTH",
+     "qty": 2,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:deploy_ir_sensor",
+     "layer": "BOTH",
+     "qty": 2,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:deploy_power_switch",
+     "layer": "BOTH",
+     "qty": 2,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:deploy_pressure_switch",
+     "layer": "BOTH",
+     "qty": 2,
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "to": "item:deploy_ir_sensor",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "to": "item:deploy_power_switch",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "to": "item:deploy_pressure_switch",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [
+    {
+     "kind": "RECLAIM_REFUND",
+     "to": "sink:structure_reclaim_loss",
+     "layer": "BOTH",
+     "qty": null,
+     "count": 3
+    }
+   ],
+   "produced_by": [],
+   "consumed_by": [
+    "deploy_power_switch",
+    "deploy_pressure_switch",
+    "deploy_ir_sensor"
+   ],
+   "consumer_targets": [
+    "structure:ir_sensor",
+    "structure:power_switch",
+    "structure:pressure_switch"
+   ],
+   "maintenance_targets": [
+    "REPAIR_INPUT:item:deploy_ir_sensor",
+    "REPAIR_INPUT:item:deploy_power_switch",
+    "REPAIR_INPUT:item:deploy_pressure_switch"
+   ],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 2
+   },
+   "raw_per_unit": {
+    "electronic_parts": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "electric_resistor",
+   "name": "Resistor Wire",
+   "cat": "res",
+   "item_class": "SALVAGE",
+   "desc": "Last Island toolbox material. No use is evidenced in the source set, so nothing in this build issues or consumes it yet.",
+   "weight": 0.1,
+   "stack_max": 30,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [],
+    "veyra": [],
+    "fixture": []
+   },
+   "runtime_reachability": "UNREACHABLE",
+   "non_craft_sources_all_gated": false,
+   "sources": [],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "electric_resistor": 1
+   },
+   "signals": [
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
+   ]
+  },
+  {
+   "id": "needle_tube",
+   "name": "Needle Tube",
+   "cat": "res",
+   "item_class": "SALVAGE",
+   "desc": "Empty injector body from roadside scrap or a Blood Archivist. Cannot be crafted. Fill at a workbench to make a Syringe.",
+   "weight": 0.05,
+   "stack_max": 30,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "HARVEST_BONUS"
+    ],
+    "veyra": [
+     "CREATURE_DROP",
+     "HARVEST_BONUS"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CREATURE_DROP",
+     "from": "creature:vampire_2",
+     "layer": "VEYRA",
+     "qty": 1,
+     "probability": 0.4,
+     "gates": [
+      "gate:veyra_spawner"
+     ],
+     "count": 1
+    },
+    {
+     "kind": "HARVEST_BONUS",
+     "from": "world_source:scrap",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": 0.1,
+     "gates": [],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:syringe",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [
+    "syringe"
+   ],
+   "consumer_targets": [
+    "make:syringe"
+   ],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 2
+   },
+   "raw_per_unit": {
+    "needle_tube": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "needle_thread",
+   "name": "Needle and Thread",
+   "cat": "res",
+   "item_class": "PROCESSED",
+   "desc": "Sewing kit made from cloth and iron. Stitches hide onto plate for iron and refined-iron armour.",
+   "weight": 0.05,
+   "stack_max": 40,
+   "generated_deployable": false,
+   "craft_depth": 2,
+   "craft_depth_recipe": "needle_thread",
+   "station_tier": "workbench_1",
+   "research_tier": 1,
+   "knowledge": "RESEARCH_OR_BLUEPRINT",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:needle_thread",
+     "layer": "BOTH",
+     "qty": 2,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:wb_l1"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:iron_plate_chest",
+     "layer": "BOTH",
+     "qty": 3,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:iron_plate_helmet",
+     "layer": "BOTH",
+     "qty": 3,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:refined_iron_chest",
+     "layer": "BOTH",
+     "qty": 8,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:refined_iron_helmet",
+     "layer": "BOTH",
+     "qty": 6,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "needle_thread"
+   ],
+   "consumed_by": [
+    "iron_plate_helmet",
+    "iron_plate_chest",
+    "refined_iron_helmet",
+    "refined_iron_chest"
+   ],
+   "consumer_targets": [
+    "make:iron_plate_chest",
+    "make:iron_plate_helmet",
+    "make:refined_iron_chest",
+    "make:refined_iron_helmet"
+   ],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "fiber": 6,
+    "iron_ore": 0.5
+   },
+   "signals": []
+  },
+  {
+   "id": "syringe",
+   "name": "Syringe",
+   "cat": "food",
+   "item_class": "MEDICAL",
+   "desc": "Fast field injection: restores health and stamina at once.",
+   "weight": 0.15,
+   "stack_max": 10,
+   "generated_deployable": false,
+   "craft_depth": 2,
+   "craft_depth_recipe": "syringe",
+   "station_tier": "workbench_2",
+   "research_tier": 2,
+   "knowledge": "RESEARCH_OR_BLUEPRINT",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:syringe",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:wb_l2"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:hp",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "sink:food_water_consume",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "syringe"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "consume",
+    "graph:SURVIVAL_CONSUME"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "animal_fat": 2,
+    "iron_ore": 1,
+    "needle_tube": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "dried_meat",
+   "name": "Dried Meat",
+   "cat": "food",
+   "item_class": "FOOD",
+   "desc": "Slow-dried at a campfire. Half the weight of a roast: trail food, less filling.",
+   "weight": 0.2,
+   "stack_max": 20,
+   "generated_deployable": false,
+   "craft_depth": 1,
+   "craft_depth_recipe": "dried_meat",
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "knowledge": "STARTER",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:dried_meat",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:station_campfire"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:hp",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:hunger",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "sink:food_water_consume",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "dried_meat"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "consume",
+    "graph:SURVIVAL_CONSUME"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "meat": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "canned_meat",
+   "name": "Canned Meat",
+   "cat": "food",
+   "item_class": "FOOD",
+   "desc": "Three cuts sealed in one tin. A whole meal in a single slot.",
+   "weight": 0.6,
+   "stack_max": 10,
+   "generated_deployable": false,
+   "craft_depth": 1,
+   "craft_depth_recipe": "canned_meat",
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "knowledge": "STARTER",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:canned_meat",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:station_campfire"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:hp",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:hunger",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "sink:food_water_consume",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "canned_meat"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "consume",
+    "graph:SURVIVAL_CONSUME"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "meat": 3,
+    "tin_can": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "grilled_mushroom",
+   "name": "Grilled Mushroom",
+   "cat": "food",
+   "item_class": "FOOD",
+   "desc": "Marsh Cap cooked through: the toxin is gone.",
+   "weight": 0.1,
+   "stack_max": 20,
+   "generated_deployable": false,
+   "craft_depth": 1,
+   "craft_depth_recipe": "grilled_mushroom",
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "knowledge": "STARTER",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:grilled_mushroom",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:station_campfire"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:hunger",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "sink:food_water_consume",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "grilled_mushroom"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "consume",
+    "graph:SURVIVAL_CONSUME"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "mushroom": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "mushroom_soup",
+   "name": "Mushroom Soup",
+   "cat": "food",
+   "item_class": "FOOD",
+   "desc": "Warm tinned soup. Feeds, hydrates and warms.",
+   "weight": 0.5,
+   "stack_max": 10,
+   "generated_deployable": false,
+   "craft_depth": 1,
+   "craft_depth_recipe": "mushroom_soup",
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "knowledge": "STARTER",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:mushroom_soup",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:station_campfire"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:hp",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:hunger",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:thirst",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "sink:food_water_consume",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "mushroom_soup"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "consume",
+    "graph:SURVIVAL_CONSUME"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "mushroom": 5,
+    "tin_can": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "fruit_juice",
+   "name": "Fruit Juice",
+   "cat": "food",
+   "item_class": "FOOD",
+   "desc": "Pressed berries. Mostly a drink.",
+   "weight": 0.3,
+   "stack_max": 10,
+   "generated_deployable": false,
+   "craft_depth": 1,
+   "craft_depth_recipe": "fruit_juice",
+   "station_tier": "hand",
+   "research_tier": 0,
+   "knowledge": "STARTER",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:fruit_juice",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:hunger",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:thirst",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "sink:food_water_consume",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "fruit_juice"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "consume",
+    "graph:SURVIVAL_CONSUME"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "berries": 3
+   },
+   "signals": []
+  },
+  {
+   "id": "fruit_wine",
+   "name": "Fruit Wine",
+   "cat": "food",
+   "item_class": "FOOD",
+   "desc": "Fermented in a tin by the fire. Warms you through; quenches little.",
+   "weight": 0.4,
+   "stack_max": 10,
+   "generated_deployable": false,
+   "craft_depth": 1,
+   "craft_depth_recipe": "fruit_wine",
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "knowledge": "STARTER",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:fruit_wine",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:station_campfire"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:hp",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:thirst",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "sink:food_water_consume",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "fruit_wine"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "consume",
+    "graph:SURVIVAL_CONSUME"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "berries": 5,
+    "tin_can": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "jam",
+   "name": "Jam",
+   "cat": "food",
+   "item_class": "FOOD",
+   "desc": "Berries boiled down and sealed under cloth. Dense energy for a long haul.",
+   "weight": 0.4,
+   "stack_max": 10,
+   "generated_deployable": false,
+   "craft_depth": 2,
+   "craft_depth_recipe": "jam",
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "knowledge": "STARTER",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:jam",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:station_campfire"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "player:hunger",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "SURVIVAL_CONSUME",
+     "to": "sink:food_water_consume",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "jam"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "consume",
+    "graph:SURVIVAL_CONSUME"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "berries": 10,
+    "fiber": 6,
+    "tin_can": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "wood_club",
+   "name": "Wood Club",
+   "cat": "weapon",
+   "item_class": "WEAPON",
+   "desc": "A heavy branch. Crude, hand-made, wears out fast.",
+   "weight": 1.2,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 1,
+   "craft_depth_recipe": "wood_club",
+   "station_tier": "hand",
+   "research_tier": 0,
+   "knowledge": "STARTER",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:wood_club",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [
+    {
+     "kind": "FIELD_REPAIR",
+     "from": "item:field_repair_kit",
+     "layer": "BOTH",
+     "qty": null,
+     "probability": null,
+     "gates": [],
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "from": "item:wood",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:wb_l1"
+     ],
+     "count": 1
+    }
+   ],
+   "consumers": [
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "sink:tool_durability_wear",
+     "layer": "BOTH",
+     "qty": null,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "wood_club"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "harvest_tool",
+    "weapon"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "wood": 12
+   },
+   "signals": []
+  },
+  {
+   "id": "cleaver",
+   "name": "Cleaver",
+   "cat": "weapon",
+   "item_class": "WEAPON",
+   "desc": "Short heavy blade. Quick chops at close reach; clears brush.",
+   "weight": 0.9,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 3,
+   "craft_depth_recipe": "cleaver",
+   "station_tier": "workbench_1",
+   "research_tier": 1,
+   "knowledge": "RESEARCH_OR_BLUEPRINT",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:cleaver",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:wb_l1"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [
+    {
+     "kind": "FIELD_REPAIR",
+     "from": "item:field_repair_kit",
+     "layer": "BOTH",
+     "qty": null,
+     "probability": null,
+     "gates": [],
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "from": "item:iron_ingot",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:wb_l1"
+     ],
+     "count": 1
+    }
+   ],
+   "consumers": [
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "sink:tool_durability_wear",
+     "layer": "BOTH",
+     "qty": null,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "cleaver"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "harvest_tool",
+    "weapon"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "iron_ore": 5.5,
+    "scrap": 1
+   },
+   "signals": []
+  },
+  {
+   "id": "machete",
+   "name": "Machete",
+   "cat": "weapon",
+   "item_class": "WEAPON",
+   "desc": "Fast, wide cuts. The iron long blade.",
+   "weight": 1.4,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 3,
+   "craft_depth_recipe": "machete",
+   "station_tier": "workbench_2",
+   "research_tier": 2,
+   "knowledge": "RESEARCH_OR_BLUEPRINT",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:machete",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:wb_l2"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [
+    {
+     "kind": "FIELD_REPAIR",
+     "from": "item:field_repair_kit",
+     "layer": "BOTH",
+     "qty": null,
+     "probability": null,
+     "gates": [],
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "from": "item:iron_ingot",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:wb_l1"
+     ],
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "from": "item:metal_blade",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:wb_l1"
+     ],
+     "count": 1
+    }
+   ],
+   "consumers": [
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "sink:tool_durability_wear",
+     "layer": "BOTH",
+     "qty": null,
+     "count": 1
+    },
+    {
+     "kind": "DISMANTLE_SALVAGE",
+     "to": "item:iron_ingot",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_SPECIMEN",
+     "to": "recipe:machete",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "RESEARCH_SPECIMEN",
+     "to": "sink:specimen_destructive_study",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    }
+   ],
+   "derived_sinks": [],
+   "produced_by": [
+    "machete"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "harvest_tool",
+    "weapon",
+    "specimen_study"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "iron_ore": 17.5,
+    "scrap": 3
+   },
+   "signals": []
+  },
+  {
+   "id": "iron_plate_helmet",
+   "name": "Iron Plate Helmet",
+   "cat": "armor",
+   "item_class": "ARMOR",
+   "desc": "-14% damage.",
+   "weight": 1.8,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 4,
+   "craft_depth_recipe": "iron_plate_helmet",
+   "station_tier": "workbench_2",
+   "research_tier": 2,
+   "knowledge": "RESEARCH_OR_BLUEPRINT",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:iron_plate_helmet",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:wb_l2"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [
+    "iron_plate_helmet"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "equip_head"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "coal": 0.5,
+    "fiber": 18,
+    "hide": 3,
+    "iron_ore": 3.167,
+    "scrap": 0.167
+   },
+   "signals": []
+  },
+  {
+   "id": "iron_plate_chest",
+   "name": "Iron Plate Chest",
+   "cat": "armor",
+   "item_class": "ARMOR",
+   "desc": "-28% damage. Heavy.",
+   "weight": 5.5,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 4,
+   "craft_depth_recipe": "iron_plate_chest",
+   "station_tier": "workbench_2",
+   "research_tier": 2,
+   "knowledge": "RESEARCH_OR_BLUEPRINT",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:iron_plate_chest",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:wb_l2"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [
+    "iron_plate_chest"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "equip_body"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "coal": 1.5,
+    "fiber": 18,
+    "hide": 4,
+    "iron_ore": 6.5,
+    "scrap": 0.5
+   },
+   "signals": []
+  },
+  {
+   "id": "iron_plate_pants",
+   "name": "Iron Plate Pants",
+   "cat": "armor",
+   "item_class": "ARMOR",
+   "desc": "Leg armour. This build has no leg slot yet, so it cannot be worn or crafted.",
+   "weight": 3.5,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [],
+    "veyra": [],
+    "fixture": []
+   },
+   "runtime_reachability": "UNREACHABLE",
+   "non_craft_sources_all_gated": false,
+   "sources": [],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "iron_plate_pants": 1
+   },
+   "signals": [
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
+   ]
+  },
+  {
+   "id": "iron_plate_boots",
+   "name": "Iron Plate Boots",
+   "cat": "armor",
+   "item_class": "ARMOR",
+   "desc": "Foot armour. This build has no foot slot yet, so it cannot be worn or crafted.",
+   "weight": 2,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [],
+    "veyra": [],
+    "fixture": []
+   },
+   "runtime_reachability": "UNREACHABLE",
+   "non_craft_sources_all_gated": false,
+   "sources": [],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "iron_plate_boots": 1
+   },
+   "signals": [
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
+   ]
+  },
+  {
+   "id": "refined_iron_helmet",
+   "name": "Refined Iron Helmet",
+   "cat": "armor",
+   "item_class": "ARMOR",
+   "desc": "-20% damage.",
+   "weight": 2.2,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 3,
+   "craft_depth_recipe": "refined_iron_helmet",
+   "station_tier": "workbench_2",
+   "research_tier": 3,
+   "knowledge": "RESEARCH_OR_BLUEPRINT",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:refined_iron_helmet",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:wb_l2"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [
+    "refined_iron_helmet"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "equip_head"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "coal": 1.5,
+    "fiber": 36,
+    "hide": 5,
+    "iron_ore": 7.5
+   },
+   "signals": []
+  },
+  {
+   "id": "refined_iron_chest",
+   "name": "Refined Iron Chest",
+   "cat": "armor",
+   "item_class": "ARMOR",
+   "desc": "-36% damage. The heaviest crafted body armour.",
+   "weight": 6.5,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 3,
+   "craft_depth_recipe": "refined_iron_chest",
+   "station_tier": "workbench_2",
+   "research_tier": 3,
+   "knowledge": "RESEARCH_OR_BLUEPRINT",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [
+     "CRAFT_OUTPUT"
+    ],
+    "veyra": [
+     "CRAFT_OUTPUT"
+    ],
+    "fixture": []
+   },
+   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "non_craft_sources_all_gated": false,
+   "sources": [
+    {
+     "kind": "CRAFT_OUTPUT",
+     "from": "recipe:refined_iron_chest",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:wb_l2"
+     ],
+     "count": 1
+    }
+   ],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [
+    "refined_iron_chest"
+   ],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [
+    "equip_body"
+   ],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 1,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "coal": 2.5,
+    "fiber": 48,
+    "hide": 5,
+    "iron_ore": 11.5
+   },
+   "signals": []
+  },
+  {
+   "id": "refined_iron_legs",
+   "name": "Refined Iron Legs",
+   "cat": "armor",
+   "item_class": "ARMOR",
+   "desc": "Leg armour. This build has no leg slot yet, so it cannot be worn or crafted.",
+   "weight": 4,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [],
+    "veyra": [],
+    "fixture": []
+   },
+   "runtime_reachability": "UNREACHABLE",
+   "non_craft_sources_all_gated": false,
+   "sources": [],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "refined_iron_legs": 1
+   },
+   "signals": [
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
+   ]
+  },
+  {
+   "id": "refined_iron_boots",
+   "name": "Refined Iron Boots",
+   "cat": "armor",
+   "item_class": "ARMOR",
+   "desc": "Foot armour. This build has no foot slot yet, so it cannot be worn or crafted.",
+   "weight": 2.4,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [],
+    "veyra": [],
+    "fixture": []
+   },
+   "runtime_reachability": "UNREACHABLE",
+   "non_craft_sources_all_gated": false,
+   "sources": [],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "refined_iron_boots": 1
+   },
+   "signals": [
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
+   ]
+  },
+  {
+   "id": "green_card",
+   "name": "Green Card",
+   "cat": "misc",
+   "item_class": "KEY",
+   "desc": "Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.",
+   "weight": 0.05,
+   "stack_max": 5,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [],
+    "veyra": [],
+    "fixture": []
+   },
+   "runtime_reachability": "UNREACHABLE",
+   "non_craft_sources_all_gated": false,
+   "sources": [],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "green_card": 1
+   },
+   "signals": [
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
+   ]
+  },
+  {
+   "id": "blue_card",
+   "name": "Blue Card",
+   "cat": "misc",
+   "item_class": "KEY",
+   "desc": "Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.",
+   "weight": 0.05,
+   "stack_max": 5,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [],
+    "veyra": [],
+    "fixture": []
+   },
+   "runtime_reachability": "UNREACHABLE",
+   "non_craft_sources_all_gated": false,
+   "sources": [],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "blue_card": 1
+   },
+   "signals": [
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
+   ]
+  },
+  {
+   "id": "purple_card",
+   "name": "Purple Card",
+   "cat": "misc",
+   "item_class": "KEY",
+   "desc": "Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.",
+   "weight": 0.05,
+   "stack_max": 5,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [],
+    "veyra": [],
+    "fixture": []
+   },
+   "runtime_reachability": "UNREACHABLE",
+   "non_craft_sources_all_gated": false,
+   "sources": [],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "purple_card": 1
+   },
+   "signals": [
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
+   ]
+  },
+  {
+   "id": "wooden_ladder",
+   "name": "Wooden Ladder",
+   "cat": "misc",
+   "item_class": "KEY",
+   "desc": "Last Island climbing ladder. This build has no climbing action, so it cannot be crafted or used yet.",
+   "weight": 4,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [],
+    "veyra": [],
+    "fixture": []
+   },
+   "runtime_reachability": "UNREACHABLE",
+   "non_craft_sources_all_gated": false,
+   "sources": [],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "wooden_ladder": 1
+   },
+   "signals": [
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
+   ]
+  },
+  {
+   "id": "steel_folding_ladder",
+   "name": "Steel Folding Ladder",
+   "cat": "misc",
+   "item_class": "KEY",
+   "desc": "Last Island folding ladder. This build has no climbing action, so it cannot be crafted or used yet.",
+   "weight": 6,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [],
+    "veyra": [],
+    "fixture": []
+   },
+   "runtime_reachability": "UNREACHABLE",
+   "non_craft_sources_all_gated": false,
+   "sources": [],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "steel_folding_ladder": 1
+   },
+   "signals": [
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
+   ]
+  },
+  {
+   "id": "large_furnace",
+   "name": "Large Furnace",
+   "cat": "misc",
+   "item_class": "KEY",
+   "desc": "Last Island large smelter. Its recipe is not in the source set and no structure is built for it yet.",
+   "weight": 30,
+   "stack_max": 1,
+   "generated_deployable": false,
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
+   "rarity": null,
+   "acquisition_types": {
+    "shipping": [],
+    "veyra": [],
+    "fixture": []
+   },
+   "runtime_reachability": "UNREACHABLE",
+   "non_craft_sources_all_gated": false,
+   "sources": [],
+   "refunds": [],
+   "maintained_by": [],
+   "consumers": [],
+   "derived_sinks": [],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
+   "maintenance_targets": [],
+   "direct_use": [],
+   "recycle": null,
+   "recycled_from": [],
+   "alt_routes": {
+    "live_recipes": 0,
+    "non_craft_source_kinds": 0
+   },
+   "raw_per_unit": {
+    "large_furnace": 1
+   },
+   "signals": [
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
+   ]
   },
   {
    "id": "berries",
@@ -17628,11 +20851,13 @@
    "rarity": null,
    "acquisition_types": {
     "shipping": [
+     "GARDEN_HARVEST_OUTPUT",
      "HARVEST_YIELD",
      "LOOT_ECOLOGY_POOL"
     ],
     "veyra": [
      "CREATURE_DROP",
+     "GARDEN_HARVEST_OUTPUT",
      "HARVEST_YIELD",
      "LOOT_STATIC_FIXED"
     ],
@@ -17650,6 +20875,15 @@
      "gates": [
       "gate:veyra_spawner"
      ],
+     "count": 1
+    },
+    {
+     "kind": "GARDEN_HARVEST_OUTPUT",
+     "from": "recipe:garden:berry",
+     "layer": "BOTH",
+     "qty": 4,
+     "probability": null,
+     "gates": [],
      "count": 1
     },
     {
@@ -17761,6 +20995,27 @@
    "consumers": [
     {
      "kind": "CRAFT_INPUT",
+     "to": "recipe:fruit_juice",
+     "layer": "BOTH",
+     "qty": 3,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:fruit_wine",
+     "layer": "BOTH",
+     "qty": 5,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:jam",
+     "layer": "BOTH",
+     "qty": 10,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
      "to": "recipe:lead_rope",
      "layer": "BOTH",
      "qty": 2,
@@ -17826,9 +21081,15 @@
    "derived_sinks": [],
    "produced_by": [],
    "consumed_by": [
+    "fruit_juice",
+    "fruit_wine",
+    "jam",
     "lead_rope"
    ],
    "consumer_targets": [
+    "make:fruit_juice",
+    "make:fruit_wine",
+    "make:jam",
     "make:lead_rope"
    ],
    "maintenance_targets": [],
@@ -17842,7 +21103,7 @@
    "recycled_from": [],
    "alt_routes": {
     "live_recipes": 0,
-    "non_craft_source_kinds": 4
+    "non_craft_source_kinds": 5
    },
    "raw_per_unit": {
     "berries": 1
@@ -18045,6 +21306,13 @@
    "consumers": [
     {
      "kind": "CRAFT_INPUT",
+     "to": "recipe:canned_meat",
+     "layer": "BOTH",
+     "qty": 3,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
      "to": "recipe:cooked_meat",
      "layer": "BOTH",
      "qty": 1,
@@ -18052,14 +21320,7 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:herb_roast",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:salted_meat",
+     "to": "recipe:dried_meat",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -18089,15 +21350,15 @@
    "derived_sinks": [],
    "produced_by": [],
    "consumed_by": [
-    "herb_roast",
+    "dried_meat",
+    "canned_meat",
     "cooked_meat",
-    "salted_meat",
     "stew"
    ],
    "consumer_targets": [
+    "make:canned_meat",
     "make:cooked_meat",
-    "make:herb_roast",
-    "make:salted_meat",
+    "make:dried_meat",
     "make:stew"
    ],
    "maintenance_targets": [],
@@ -18278,6 +21539,20 @@
    "maintained_by": [],
    "consumers": [
     {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:grilled_mushroom",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:mushroom_soup",
+     "layer": "BOTH",
+     "qty": 5,
+     "count": 1
+    },
+    {
      "kind": "HUSBANDRY_FEED_TAME",
      "to": "husbandry:boar",
      "layer": "BOTH",
@@ -18308,8 +21583,14 @@
    ],
    "derived_sinks": [],
    "produced_by": [],
-   "consumed_by": [],
-   "consumer_targets": [],
+   "consumed_by": [
+    "grilled_mushroom",
+    "mushroom_soup"
+   ],
+   "consumer_targets": [
+    "make:grilled_mushroom",
+    "make:mushroom_soup"
+   ],
    "maintenance_targets": [],
    "direct_use": [
     "consume",
@@ -18558,30 +21839,9 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:herb_roast",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:medkit",
      "layer": "BOTH",
      "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:poached_eggs",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:root_broth",
-     "layer": "BOTH",
-     "qty": 1,
      "count": 1
     },
     {
@@ -18594,13 +21854,6 @@
     {
      "kind": "CRAFT_INPUT",
      "to": "recipe:treated_canvas",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "GARDEN_PLANT_INPUT",
-     "to": "recipe:garden:herb",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -18653,9 +21906,6 @@
    "consumed_by": [
     "essence_nature",
     "treated_canvas",
-    "root_broth",
-    "poached_eggs",
-    "herb_roast",
     "stew",
     "medkit",
     "antirad"
@@ -18663,9 +21913,7 @@
    "consumer_targets": [
     "make:antirad",
     "make:essence_nature",
-    "make:herb_roast",
     "make:medkit",
-    "make:root_broth",
     "make:stew",
     "make:treated_canvas",
     "station:garden_cold_frame"
@@ -18673,7 +21921,6 @@
    "maintenance_targets": [],
    "direct_use": [
     "consume",
-    "graph:GARDEN_PLANT_INPUT",
     "graph:HUSBANDRY_FEED_TAME",
     "graph:HUSBANDRY_PEN_FEED",
     "graph:SURVIVAL_CONSUME"
@@ -18769,13 +22016,6 @@
    "consumers": [
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:root_broth",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
      "to": "recipe:stew",
      "layer": "BOTH",
      "qty": 2,
@@ -18834,11 +22074,9 @@
    "derived_sinks": [],
    "produced_by": [],
    "consumed_by": [
-    "root_broth",
     "stew"
    ],
    "consumer_targets": [
-    "make:root_broth",
     "make:stew"
    ],
    "maintenance_targets": [],
@@ -20648,28 +23886,25 @@
    "name": "Iron Sword",
    "cat": "weapon",
    "item_class": "WEAPON",
-   "desc": "Fast, wide cuts.",
+   "desc": "Retired with the final item set: every Iron Sword is now a Machete. Row kept only so old saves and frozen recipes still parse.",
    "weight": 1.4,
    "stack_max": 1,
    "generated_deployable": false,
-   "craft_depth": 2,
-   "craft_depth_recipe": "iron_sword",
-   "station_tier": "workbench_1",
-   "research_tier": 2,
-   "knowledge": "STARTER",
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
    "rarity": null,
    "acquisition_types": {
     "shipping": [
      "AIRDROP_DROP",
-     "CRAFT_OUTPUT",
      "LOOT_STATIC_FIXED"
     ],
-    "veyra": [
-     "CRAFT_OUTPUT"
-    ],
+    "veyra": [],
     "fixture": []
    },
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "runtime_reachability": "SHIPPING_ONLY",
    "non_craft_sources_all_gated": false,
    "sources": [
     {
@@ -20680,30 +23915,6 @@
      "probability": 0.25,
      "gates": [
       "gate:airdrop_v1"
-     ],
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:iron_sword_blade",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:wb_l2"
-     ],
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:iron_sword",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:wb_l1"
      ],
      "count": 1
     },
@@ -20779,34 +23990,16 @@
      "layer": "BOTH",
      "qty": 1,
      "count": 1
-    },
-    {
-     "kind": "RESEARCH_SPECIMEN",
-     "to": "recipe:iron_sword",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_SPECIMEN",
-     "to": "sink:specimen_destructive_study",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
     }
    ],
    "derived_sinks": [],
-   "produced_by": [
-    "iron_sword_blade",
-    "iron_sword"
-   ],
+   "produced_by": [],
    "consumed_by": [],
    "consumer_targets": [],
    "maintenance_targets": [],
    "direct_use": [
     "harvest_tool",
-    "weapon",
-    "specimen_study"
+    "weapon"
    ],
    "recycle": {
     "rule": "X:recover-v3",
@@ -20831,14 +24024,15 @@
    },
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 2,
+    "live_recipes": 0,
     "non_craft_source_kinds": 2
    },
    "raw_per_unit": {
-    "hide": 1,
-    "iron_ore": 5
+    "iron_sword": 1
    },
-   "signals": []
+   "signals": [
+    "NOT_REACHABLE_ON_VEYRA"
+   ]
   },
   {
    "id": "bow",
@@ -22584,6 +25778,13 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
+     "to": "recipe:canned_meat",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BLUEPRINT_LEARN",
      "to": "recipe:cart_kit",
      "layer": "BOTH",
      "qty": 1,
@@ -22599,6 +25800,13 @@
     {
      "kind": "BLUEPRINT_LEARN",
      "to": "recipe:chitin_armor",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BLUEPRINT_LEARN",
+     "to": "recipe:cleaver",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -22682,6 +25890,13 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
+     "to": "recipe:dried_meat",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BLUEPRINT_LEARN",
      "to": "recipe:fasteners",
      "layer": "BOTH",
      "qty": 1,
@@ -22696,7 +25911,14 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:fuel_briquette",
+     "to": "recipe:fruit_juice",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BLUEPRINT_LEARN",
+     "to": "recipe:fruit_wine",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -22724,7 +25946,7 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:herb_roast",
+     "to": "recipe:grilled_mushroom",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -22780,14 +26002,21 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:iron_sword",
+     "to": "recipe:iron_plate_chest",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:iron_sword_blade",
+     "to": "recipe:iron_plate_helmet",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BLUEPRINT_LEARN",
+     "to": "recipe:jam",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -22809,6 +26038,20 @@
     {
      "kind": "BLUEPRINT_LEARN",
      "to": "recipe:leather_armor",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BLUEPRINT_LEARN",
+     "to": "recipe:low_quality_fuel",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BLUEPRINT_LEARN",
+     "to": "recipe:machete",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -22857,6 +26100,20 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
+     "to": "recipe:mushroom_soup",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BLUEPRINT_LEARN",
+     "to": "recipe:needle_thread",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BLUEPRINT_LEARN",
      "to": "recipe:plank",
      "layer": "BOTH",
      "qty": 1,
@@ -22864,14 +26121,21 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:poached_eggs",
+     "to": "recipe:refine_salvaged_oil",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:refine_salvaged_oil",
+     "to": "recipe:refined_iron_chest",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BLUEPRINT_LEARN",
+     "to": "recipe:refined_iron_helmet",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -22934,21 +26198,7 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:root_broth",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "BLUEPRINT_LEARN",
      "to": "recipe:rope",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:salted_meat",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -22997,6 +26247,13 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
+     "to": "recipe:syringe",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "BLUEPRINT_LEARN",
      "to": "recipe:torch",
      "layer": "BOTH",
      "qty": 1,
@@ -23025,14 +26282,14 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:vehicle_drive_geared",
+     "to": "recipe:water_flask",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:water_flask",
+     "to": "recipe:wood_club",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -23049,7 +26306,7 @@
      "to": "sink:blueprint_consume_learn",
      "layer": "BOTH",
      "qty": 1,
-     "count": 73
+     "count": 82
     }
    ],
    "derived_sinks": [],
@@ -23298,7 +26555,7 @@
    "consumers": [
     {
      "kind": "RESEARCH_SPECIMEN",
-     "to": "recipe:iron_sword",
+     "to": "recipe:machete",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -23545,6 +26802,18 @@
     },
     {
      "kind": "CRAFT_OUTPUT",
+     "from": "recipe:low_quality_fuel",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:knowledge_run_local",
+      "gate:station_furnace"
+     ],
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_OUTPUT",
      "from": "recipe:refine_salvaged_oil",
      "layer": "BOTH",
      "qty": 1,
@@ -23751,7 +27020,8 @@
     "refinery_fuel",
     "refinery_fuel_batch",
     "refinery_industrial",
-    "refinery_crude"
+    "refinery_crude",
+    "low_quality_fuel"
    ],
    "consumed_by": [],
    "consumer_targets": [],
@@ -23765,7 +27035,7 @@
    "recycle": null,
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 4,
+    "live_recipes": 5,
     "non_craft_source_kinds": 4
    },
    "raw_per_unit": {
@@ -23995,86 +27265,41 @@
    "weight": 3,
    "stack_max": 5,
    "generated_deployable": false,
-   "craft_depth": 3,
-   "craft_depth_recipe": "vehicle_drive",
-   "station_tier": "workbench_2",
-   "research_tier": 1,
-   "knowledge": "STARTER",
+   "craft_depth": 0,
+   "craft_depth_recipe": null,
+   "station_tier": null,
+   "research_tier": null,
+   "knowledge": "NOT_CRAFTED",
    "rarity": null,
    "acquisition_types": {
-    "shipping": [
-     "CRAFT_OUTPUT"
-    ],
-    "veyra": [
-     "CRAFT_OUTPUT"
-    ],
+    "shipping": [],
+    "veyra": [],
     "fixture": []
    },
-   "runtime_reachability": "SHIPPING_AND_VEYRA",
+   "runtime_reachability": "UNREACHABLE",
    "non_craft_sources_all_gated": false,
-   "sources": [
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:vehicle_drive_geared",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:wb_l2"
-     ],
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:vehicle_drive",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:wb_l2"
-     ],
-     "count": 1
-    }
-   ],
+   "sources": [],
    "refunds": [],
    "maintained_by": [],
-   "consumers": [
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:motorbike_kit",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    }
-   ],
+   "consumers": [],
    "derived_sinks": [],
-   "produced_by": [
-    "vehicle_drive",
-    "vehicle_drive_geared"
-   ],
-   "consumed_by": [
-    "motorbike_kit"
-   ],
-   "consumer_targets": [
-    "make:motorbike_kit"
-   ],
+   "produced_by": [],
+   "consumed_by": [],
+   "consumer_targets": [],
    "maintenance_targets": [],
    "direct_use": [],
    "recycle": null,
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 2,
+    "live_recipes": 0,
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "iron_ore": 3.667,
-    "scrap": 2.667,
-    "spares": 3
+    "vehicle_drive": 1
    },
    "signals": [
-    "PASS_THROUGH_INTERMEDIATE"
+    "UNREACHABLE_EVERYWHERE",
+    "NO_CONSUMER_NO_USE"
    ]
   },
   {
@@ -24247,6 +27472,27 @@
      "count": 1
     },
     {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:motorbike_kit",
+     "layer": "BOTH",
+     "qty": 4,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:refined_iron_chest",
+     "layer": "BOTH",
+     "qty": 5,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:refined_iron_helmet",
+     "layer": "BOTH",
+     "qty": 3,
+     "count": 1
+    },
+    {
      "kind": "REPAIR_INPUT",
      "to": "item:ronin_nodachi",
      "layer": "BOTH",
@@ -24260,14 +27506,20 @@
     "refined_iron_rich"
    ],
    "consumed_by": [
+    "motorbike_kit",
     "metal_pipe",
     "mechanical_gear",
-    "iron_plate"
+    "iron_plate",
+    "refined_iron_helmet",
+    "refined_iron_chest"
    ],
    "consumer_targets": [
     "make:iron_plate",
     "make:mechanical_gear",
-    "make:metal_pipe"
+    "make:metal_pipe",
+    "make:motorbike_kit",
+    "make:refined_iron_chest",
+    "make:refined_iron_helmet"
    ],
    "maintenance_targets": [
     "REPAIR_INPUT:item:ronin_nodachi"
@@ -24513,6 +27765,13 @@
    "consumers": [
     {
      "kind": "CRAFT_INPUT",
+     "to": "recipe:cleaver",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
      "to": "recipe:industrial_axe",
      "layer": "BOTH",
      "qty": 1,
@@ -24520,9 +27779,9 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:iron_sword_blade",
+     "to": "recipe:machete",
      "layer": "BOTH",
-     "qty": 1,
+     "qty": 3,
      "count": 1
     },
     {
@@ -24538,6 +27797,13 @@
      "layer": "BOTH",
      "qty": 1,
      "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "to": "item:machete",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
     }
    ],
    "derived_sinks": [],
@@ -24546,15 +27812,19 @@
    ],
    "consumed_by": [
     "industrial_axe",
-    "iron_sword_blade",
-    "reinforced_spear_blade"
+    "reinforced_spear_blade",
+    "cleaver",
+    "machete"
    ],
    "consumer_targets": [
+    "make:cleaver",
     "make:industrial_axe",
-    "make:iron_sword",
+    "make:machete",
     "make:reinforced_spear"
    ],
-   "maintenance_targets": [],
+   "maintenance_targets": [
+    "REPAIR_INPUT:item:machete"
+   ],
    "direct_use": [],
    "recycle": {
     "rule": "X:blade-v1",
@@ -24677,22 +27947,8 @@
      "count": 1
     },
     {
-     "kind": "BUILD_COST",
-     "to": "structure:ir_sensor",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
      "kind": "CRAFT_INPUT",
      "to": "recipe:deploy_bear_trap",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:deploy_ir_sensor",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -24706,9 +27962,9 @@
     },
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_drive_geared",
+     "to": "recipe:motorbike_kit",
      "layer": "BOTH",
-     "qty": 1,
+     "qty": 2,
      "count": 1
     },
     {
@@ -24724,13 +27980,6 @@
      "layer": "BOTH",
      "qty": 1,
      "count": 1
-    },
-    {
-     "kind": "REPAIR_INPUT",
-     "to": "item:deploy_ir_sensor",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
     }
    ],
    "derived_sinks": [
@@ -24739,27 +27988,24 @@
      "to": "sink:structure_reclaim_loss",
      "layer": "BOTH",
      "qty": null,
-     "count": 2
+     "count": 1
     }
    ],
    "produced_by": [
     "mechanical_gear"
    ],
    "consumed_by": [
+    "motorbike_kit",
     "industrial_pick_geared",
-    "vehicle_drive_geared",
-    "deploy_ir_sensor",
     "deploy_bear_trap"
    ],
    "consumer_targets": [
     "make:industrial_pick",
-    "make:vehicle_drive",
-    "structure:bear_trap",
-    "structure:ir_sensor"
+    "make:motorbike_kit",
+    "structure:bear_trap"
    ],
    "maintenance_targets": [
-    "REPAIR_INPUT:item:deploy_bear_trap",
-    "REPAIR_INPUT:item:deploy_ir_sensor"
+    "REPAIR_INPUT:item:deploy_bear_trap"
    ],
    "direct_use": [],
    "recycle": {
@@ -24868,15 +28114,50 @@
    "maintained_by": [],
    "consumers": [
     {
+     "kind": "BUILD_COST",
+     "to": "structure:pressure_switch",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:deploy_pressure_switch",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:iron_plate_chest",
+     "layer": "BOTH",
+     "qty": 3,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
+     "to": "recipe:iron_plate_helmet",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
      "kind": "CRAFT_INPUT",
      "to": "recipe:motorbike_kit",
      "layer": "BOTH",
-     "qty": 2,
+     "qty": 3,
      "count": 1
     },
     {
      "kind": "RECYCLE_INPUT",
      "to": "recipe:recycler:component:X:plate-v1",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "to": "item:deploy_pressure_switch",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -24980,17 +28261,32 @@
      "count": 1
     }
    ],
-   "derived_sinks": [],
+   "derived_sinks": [
+    {
+     "kind": "RECLAIM_REFUND",
+     "to": "sink:structure_reclaim_loss",
+     "layer": "BOTH",
+     "qty": null,
+     "count": 1
+    }
+   ],
    "produced_by": [
     "iron_plate"
    ],
    "consumed_by": [
-    "motorbike_kit"
+    "motorbike_kit",
+    "iron_plate_helmet",
+    "iron_plate_chest",
+    "deploy_pressure_switch"
    ],
    "consumer_targets": [
-    "make:motorbike_kit"
+    "make:iron_plate_chest",
+    "make:iron_plate_helmet",
+    "make:motorbike_kit",
+    "structure:pressure_switch"
    ],
    "maintenance_targets": [
+    "REPAIR_INPUT:item:deploy_pressure_switch",
     "REPAIR_INPUT:structure:door_iron",
     "REPAIR_INPUT:structure:door_powered",
     "REPAIR_INPUT:structure:door_wood",
@@ -25036,7 +28332,7 @@
    "name": "Utility Motorbike (packed)",
    "cat": "kit",
    "item_class": "KIT",
-   "desc": "Packed dry: frame, drive, two iron plates and two fastener sets. No fuel is packaged — place it, then refuel with a real Fuel Canister.",
+   "desc": "Packed dry: frame, two gears, three iron plates and refined-iron stock. No fuel is packaged — place it, then refuel with a real Fuel Canister.",
    "weight": 12,
    "stack_max": 1,
    "generated_deployable": false,
@@ -25117,10 +28413,10 @@
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "coal": 1.5,
-    "iron_ore": 12.417,
-    "scrap": 6.167,
-    "spares": 5
+    "coal": 5,
+    "iron_ore": 23.417,
+    "scrap": 7.667,
+    "spares": 2
    },
    "signals": []
   },
@@ -26103,7 +29399,7 @@
    },
    "raw_per_unit": {
     "fiber": 1,
-    "seed": 0.333
+    "seed_wildberry": 0.333
    },
    "signals": []
   },
@@ -26252,13 +29548,6 @@
    "maintained_by": [],
    "consumers": [
     {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:poached_eggs",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
      "kind": "SURVIVAL_CONSUME",
      "to": "player:hp",
      "layer": "BOTH",
@@ -26289,12 +29578,8 @@
    ],
    "derived_sinks": [],
    "produced_by": [],
-   "consumed_by": [
-    "poached_eggs"
-   ],
-   "consumer_targets": [
-    "make:root_broth"
-   ],
+   "consumed_by": [],
+   "consumer_targets": [],
    "maintenance_targets": [],
    "direct_use": [
     "consume",
@@ -28479,10 +31764,10 @@
    "cat": "place",
    "item_class": "DEVICE",
    "desc": "Packed Power Switch. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
-   "weight": 1.5,
+   "weight": 1.7,
    "stack_max": 1,
    "generated_deployable": true,
-   "craft_depth": 3,
+   "craft_depth": 2,
    "craft_depth_recipe": "deploy_power_switch",
    "station_tier": "hand",
    "research_tier": 0,
@@ -28525,7 +31810,7 @@
     },
     {
      "kind": "REPAIR_INPUT",
-     "from": "item:fasteners",
+     "from": "item:electronic_parts",
      "layer": "BOTH",
      "qty": 1,
      "probability": null,
@@ -28583,8 +31868,8 @@
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "iron_ore": 1.333,
-    "scrap": 0.333,
+    "electronic_parts": 2,
+    "iron_ore": 1,
     "spares": 1
    },
    "signals": []
@@ -28595,10 +31880,10 @@
    "cat": "place",
    "item_class": "DEVICE",
    "desc": "Packed Pressure Switch. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
-   "weight": 1.7,
+   "weight": 4.2,
    "stack_max": 1,
    "generated_deployable": true,
-   "craft_depth": 3,
+   "craft_depth": 4,
    "craft_depth_recipe": "deploy_pressure_switch",
    "station_tier": "hand",
    "research_tier": 0,
@@ -28641,7 +31926,7 @@
     },
     {
      "kind": "REPAIR_INPUT",
-     "from": "item:fasteners",
+     "from": "item:electronic_parts",
      "layer": "BOTH",
      "qty": 1,
      "probability": null,
@@ -28663,7 +31948,18 @@
     },
     {
      "kind": "REPAIR_INPUT",
-     "from": "item:mechanical_parts",
+     "from": "item:iron_plate",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:wb_l1"
+     ],
+     "count": 1
+    },
+    {
+     "kind": "REPAIR_INPUT",
+     "from": "item:spares",
      "layer": "BOTH",
      "qty": 1,
      "probability": null,
@@ -28699,8 +31995,11 @@
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "iron_ore": 1.833,
-    "scrap": 1.333
+    "coal": 0.5,
+    "electronic_parts": 2,
+    "iron_ore": 3.667,
+    "scrap": 0.167,
+    "spares": 1
    },
    "signals": []
   },
@@ -28710,10 +32009,10 @@
    "cat": "place",
    "item_class": "DEVICE",
    "desc": "Packed Infrared Sensor. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
-   "weight": 2.2,
+   "weight": 1.7,
    "stack_max": 1,
    "generated_deployable": true,
-   "craft_depth": 4,
+   "craft_depth": 2,
    "craft_depth_recipe": "deploy_ir_sensor",
    "station_tier": "hand",
    "research_tier": 0,
@@ -28756,7 +32055,7 @@
     },
     {
      "kind": "REPAIR_INPUT",
-     "from": "item:fasteners",
+     "from": "item:electronic_parts",
      "layer": "BOTH",
      "qty": 1,
      "probability": null,
@@ -28778,7 +32077,7 @@
     },
     {
      "kind": "REPAIR_INPUT",
-     "from": "item:mechanical_gear",
+     "from": "item:spares",
      "layer": "BOTH",
      "qty": 1,
      "probability": null,
@@ -28814,9 +32113,9 @@
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "coal": 0.5,
-    "iron_ore": 5.5,
-    "scrap": 3
+    "electronic_parts": 2,
+    "iron_ore": 1,
+    "spares": 1
    },
    "signals": []
   },
@@ -29405,56 +32704,6 @@
    }
   },
   {
-   "id": "vehicle_drive",
-   "out": "vehicle_drive",
-   "outs": [
-    [
-     "vehicle_drive",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "iron_ingot",
-     2
-    ],
-    [
-     "mechanical_parts",
-     2
-    ],
-    [
-     "fasteners",
-     2
-    ],
-    [
-     "spares",
-     3
-    ]
-   ],
-   "station": "workbench",
-   "stationLevel": 2,
-   "station_tier": "workbench_2",
-   "research_tier": 1,
-   "base": true,
-   "starter_known": true,
-   "family": null,
-   "alias": null,
-   "secs": 25,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 3,
-   "bom": {
-    "distinct_items": 6,
-    "craft_steps": 4,
-    "raw": {
-     "iron_ore": 3.667,
-     "scrap": 2.667,
-     "spares": 3
-    }
-   }
-  },
-  {
    "id": "motorbike_kit",
    "out": "motorbike_kit",
    "outs": [
@@ -29469,16 +32718,16 @@
      1
     ],
     [
-     "vehicle_drive",
-     1
+     "mechanical_gear",
+     2
     ],
     [
      "iron_plate",
-     2
+     3
     ],
     [
-     "fasteners",
-     2
+     "refined_iron_ingot",
+     4
     ]
    ],
    "station": "workbench",
@@ -29498,10 +32747,10 @@
     "distinct_items": 12,
     "craft_steps": 9,
     "raw": {
-     "coal": 1.5,
-     "iron_ore": 12.417,
-     "scrap": 6.167,
-     "spares": 5
+     "coal": 5,
+     "iron_ore": 23.417,
+     "scrap": 7.667,
+     "spares": 2
     }
    }
   },
@@ -29968,7 +33217,7 @@
      2
     ],
     [
-     "seed",
+     "seed_bitterleaf",
      2
     ]
    ],
@@ -29990,7 +33239,7 @@
     "craft_steps": 1,
     "raw": {
      "herb": 1,
-     "seed": 1
+     "seed_bitterleaf": 1
     }
    }
   },
@@ -30661,47 +33910,6 @@
    }
   },
   {
-   "id": "fuel_briquette",
-   "out": "fuel_briquette",
-   "outs": [
-    [
-     "fuel_briquette",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "charcoal",
-     2
-    ],
-    [
-     "fiber",
-     1
-    ]
-   ],
-   "station": "workbench",
-   "stationLevel": 2,
-   "station_tier": "workbench_2",
-   "research_tier": 2,
-   "base": false,
-   "starter_known": false,
-   "family": null,
-   "alias": null,
-   "secs": 10,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 2,
-   "bom": {
-    "distinct_items": 3,
-    "craft_steps": 2,
-    "raw": {
-     "fiber": 1,
-     "wood": 4
-    }
-   }
-  },
-  {
    "id": "recover_drive",
    "out": "mechanical_parts",
    "outs": [
@@ -31105,52 +34313,6 @@
    }
   },
   {
-   "id": "iron_sword_blade",
-   "out": "iron_sword",
-   "outs": [
-    [
-     "iron_sword",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "metal_blade",
-     1
-    ],
-    [
-     "iron_ingot",
-     2
-    ],
-    [
-     "leather",
-     1
-    ]
-   ],
-   "station": "workbench",
-   "stationLevel": 2,
-   "station_tier": "workbench_2",
-   "research_tier": 2,
-   "base": true,
-   "starter_known": true,
-   "family": null,
-   "alias": "Iron Sword (blade refit)",
-   "secs": 14,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 3,
-   "bom": {
-    "distinct_items": 7,
-    "craft_steps": 5,
-    "raw": {
-     "hide": 1,
-     "iron_ore": 6.5,
-     "scrap": 1
-    }
-   }
-  },
-  {
    "id": "reinforced_spear_blade",
    "out": "reinforced_spear",
    "outs": [
@@ -31246,53 +34408,715 @@
    }
   },
   {
-   "id": "vehicle_drive_geared",
-   "out": "vehicle_drive",
+   "id": "wood_club",
+   "out": "wood_club",
    "outs": [
     [
-     "vehicle_drive",
+     "wood_club",
      1
     ]
    ],
    "ins": [
     [
-     "mechanical_gear",
+     "wood",
+     12
+    ]
+   ],
+   "station": "hand",
+   "stationLevel": 1,
+   "station_tier": "hand",
+   "research_tier": 0,
+   "base": true,
+   "starter_known": true,
+   "family": null,
+   "alias": null,
+   "secs": 3,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 1,
+   "bom": {
+    "distinct_items": 1,
+    "craft_steps": 1,
+    "raw": {
+     "wood": 12
+    }
+   }
+  },
+  {
+   "id": "cleaver",
+   "out": "cleaver",
+   "outs": [
+    [
+     "cleaver",
      1
-    ],
+    ]
+   ],
+   "ins": [
     [
      "iron_ingot",
      1
     ],
     [
-     "fasteners",
-     2
+     "metal_blade",
+     1
+    ]
+   ],
+   "station": "workbench",
+   "stationLevel": 1,
+   "station_tier": "workbench_1",
+   "research_tier": 1,
+   "base": false,
+   "starter_known": false,
+   "family": null,
+   "alias": null,
+   "secs": 14,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 3,
+   "bom": {
+    "distinct_items": 5,
+    "craft_steps": 4,
+    "raw": {
+     "iron_ore": 5.5,
+     "scrap": 1
+    }
+   }
+  },
+  {
+   "id": "machete",
+   "out": "machete",
+   "outs": [
+    [
+     "machete",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "iron_ingot",
+     4
     ],
     [
-     "spares",
-     2
+     "metal_blade",
+     3
     ]
    ],
    "station": "workbench",
    "stationLevel": 2,
    "station_tier": "workbench_2",
    "research_tier": 2,
-   "base": true,
-   "starter_known": true,
+   "base": false,
+   "starter_known": false,
    "family": null,
-   "alias": "Motor Drive (geared)",
+   "alias": null,
    "secs": 22,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 3,
+   "bom": {
+    "distinct_items": 5,
+    "craft_steps": 4,
+    "raw": {
+     "iron_ore": 17.5,
+     "scrap": 3
+    }
+   }
+  },
+  {
+   "id": "needle_thread",
+   "out": "needle_thread",
+   "outs": [
+    [
+     "needle_thread",
+     2
+    ]
+   ],
+   "ins": [
+    [
+     "cloth",
+     2
+    ],
+    [
+     "iron_ingot",
+     1
+    ]
+   ],
+   "station": "workbench",
+   "stationLevel": 1,
+   "station_tier": "workbench_1",
+   "research_tier": 1,
+   "base": false,
+   "starter_known": false,
+   "family": null,
+   "alias": null,
+   "secs": 10,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 2,
+   "bom": {
+    "distinct_items": 4,
+    "craft_steps": 3,
+    "raw": {
+     "fiber": 6,
+     "iron_ore": 0.5
+    }
+   }
+  },
+  {
+   "id": "syringe",
+   "out": "syringe",
+   "outs": [
+    [
+     "syringe",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "needle_tube",
+     1
+    ],
+    [
+     "animal_fat",
+     2
+    ],
+    [
+     "iron_ingot",
+     1
+    ]
+   ],
+   "station": "workbench",
+   "stationLevel": 2,
+   "station_tier": "workbench_2",
+   "research_tier": 2,
+   "base": false,
+   "starter_known": false,
+   "family": null,
+   "alias": null,
+   "secs": 14,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 2,
+   "bom": {
+    "distinct_items": 4,
+    "craft_steps": 2,
+    "raw": {
+     "animal_fat": 2,
+     "iron_ore": 1,
+     "needle_tube": 1
+    }
+   }
+  },
+  {
+   "id": "low_quality_fuel",
+   "out": "fuel_can",
+   "outs": [
+    [
+     "fuel_can",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "animal_fat",
+     6
+    ],
+    [
+     "cloth",
+     1
+    ]
+   ],
+   "station": "furnace",
+   "stationLevel": 1,
+   "station_tier": "furnace",
+   "research_tier": 1,
+   "base": false,
+   "starter_known": false,
+   "family": null,
+   "alias": "Fuel Canister (rendered fat)",
+   "secs": 24,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 2,
+   "bom": {
+    "distinct_items": 3,
+    "craft_steps": 2,
+    "raw": {
+     "animal_fat": 6,
+     "fiber": 6
+    }
+   }
+  },
+  {
+   "id": "iron_plate_helmet",
+   "out": "iron_plate_helmet",
+   "outs": [
+    [
+     "iron_plate_helmet",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "iron_plate",
+     1
+    ],
+    [
+     "hide",
+     3
+    ],
+    [
+     "needle_thread",
+     3
+    ]
+   ],
+   "station": "workbench",
+   "stationLevel": 2,
+   "station_tier": "workbench_2",
+   "research_tier": 2,
+   "base": false,
+   "starter_known": false,
+   "family": null,
+   "alias": null,
+   "secs": 24,
    "layer": "BOTH",
    "craftable_shipping": true,
    "craftable_veyra": true,
    "depth": 4,
    "bom": {
-    "distinct_items": 9,
-    "craft_steps": 6,
+    "distinct_items": 11,
+    "craft_steps": 7,
     "raw": {
      "coal": 0.5,
-     "iron_ore": 5.5,
-     "scrap": 3,
-     "spares": 2
+     "fiber": 18,
+     "hide": 3,
+     "iron_ore": 3.167,
+     "scrap": 0.167
+    }
+   }
+  },
+  {
+   "id": "iron_plate_chest",
+   "out": "iron_plate_chest",
+   "outs": [
+    [
+     "iron_plate_chest",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "iron_plate",
+     3
+    ],
+    [
+     "hide",
+     4
+    ],
+    [
+     "needle_thread",
+     3
+    ]
+   ],
+   "station": "workbench",
+   "stationLevel": 2,
+   "station_tier": "workbench_2",
+   "research_tier": 2,
+   "base": false,
+   "starter_known": false,
+   "family": null,
+   "alias": null,
+   "secs": 30,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 4,
+   "bom": {
+    "distinct_items": 11,
+    "craft_steps": 7,
+    "raw": {
+     "coal": 1.5,
+     "fiber": 18,
+     "hide": 4,
+     "iron_ore": 6.5,
+     "scrap": 0.5
+    }
+   }
+  },
+  {
+   "id": "refined_iron_helmet",
+   "out": "refined_iron_helmet",
+   "outs": [
+    [
+     "refined_iron_helmet",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "refined_iron_ingot",
+     3
+    ],
+    [
+     "hide",
+     5
+    ],
+    [
+     "needle_thread",
+     6
+    ]
+   ],
+   "station": "workbench",
+   "stationLevel": 2,
+   "station_tier": "workbench_2",
+   "research_tier": 3,
+   "base": false,
+   "starter_known": false,
+   "family": null,
+   "alias": null,
+   "secs": 30,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 3,
+   "bom": {
+    "distinct_items": 8,
+    "craft_steps": 5,
+    "raw": {
+     "coal": 1.5,
+     "fiber": 36,
+     "hide": 5,
+     "iron_ore": 7.5
+    }
+   }
+  },
+  {
+   "id": "refined_iron_chest",
+   "out": "refined_iron_chest",
+   "outs": [
+    [
+     "refined_iron_chest",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "refined_iron_ingot",
+     5
+    ],
+    [
+     "hide",
+     5
+    ],
+    [
+     "needle_thread",
+     8
+    ]
+   ],
+   "station": "workbench",
+   "stationLevel": 2,
+   "station_tier": "workbench_2",
+   "research_tier": 3,
+   "base": false,
+   "starter_known": false,
+   "family": null,
+   "alias": null,
+   "secs": 38,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 3,
+   "bom": {
+    "distinct_items": 8,
+    "craft_steps": 5,
+    "raw": {
+     "coal": 2.5,
+     "fiber": 48,
+     "hide": 5,
+     "iron_ore": 11.5
+    }
+   }
+  },
+  {
+   "id": "dried_meat",
+   "out": "dried_meat",
+   "outs": [
+    [
+     "dried_meat",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "meat",
+     1
+    ]
+   ],
+   "station": "campfire",
+   "stationLevel": 1,
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "base": true,
+   "starter_known": true,
+   "family": null,
+   "alias": null,
+   "secs": 20,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 1,
+   "bom": {
+    "distinct_items": 1,
+    "craft_steps": 1,
+    "raw": {
+     "meat": 1
+    }
+   }
+  },
+  {
+   "id": "grilled_mushroom",
+   "out": "grilled_mushroom",
+   "outs": [
+    [
+     "grilled_mushroom",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "mushroom",
+     1
+    ]
+   ],
+   "station": "campfire",
+   "stationLevel": 1,
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "base": true,
+   "starter_known": true,
+   "family": null,
+   "alias": null,
+   "secs": 6,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 1,
+   "bom": {
+    "distinct_items": 1,
+    "craft_steps": 1,
+    "raw": {
+     "mushroom": 1
+    }
+   }
+  },
+  {
+   "id": "mushroom_soup",
+   "out": "mushroom_soup",
+   "outs": [
+    [
+     "mushroom_soup",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "mushroom",
+     5
+    ],
+    [
+     "tin_can",
+     1
+    ]
+   ],
+   "station": "campfire",
+   "stationLevel": 1,
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "base": true,
+   "starter_known": true,
+   "family": null,
+   "alias": null,
+   "secs": 14,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 1,
+   "bom": {
+    "distinct_items": 2,
+    "craft_steps": 1,
+    "raw": {
+     "mushroom": 5,
+     "tin_can": 1
+    }
+   }
+  },
+  {
+   "id": "canned_meat",
+   "out": "canned_meat",
+   "outs": [
+    [
+     "canned_meat",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "meat",
+     3
+    ],
+    [
+     "tin_can",
+     1
+    ]
+   ],
+   "station": "campfire",
+   "stationLevel": 1,
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "base": true,
+   "starter_known": true,
+   "family": null,
+   "alias": null,
+   "secs": 18,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 1,
+   "bom": {
+    "distinct_items": 2,
+    "craft_steps": 1,
+    "raw": {
+     "meat": 3,
+     "tin_can": 1
+    }
+   }
+  },
+  {
+   "id": "fruit_juice",
+   "out": "fruit_juice",
+   "outs": [
+    [
+     "fruit_juice",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "berries",
+     3
+    ]
+   ],
+   "station": "hand",
+   "stationLevel": 1,
+   "station_tier": "hand",
+   "research_tier": 0,
+   "base": true,
+   "starter_known": true,
+   "family": null,
+   "alias": null,
+   "secs": 2,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 1,
+   "bom": {
+    "distinct_items": 1,
+    "craft_steps": 1,
+    "raw": {
+     "berries": 3
+    }
+   }
+  },
+  {
+   "id": "fruit_wine",
+   "out": "fruit_wine",
+   "outs": [
+    [
+     "fruit_wine",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "berries",
+     5
+    ],
+    [
+     "tin_can",
+     1
+    ]
+   ],
+   "station": "campfire",
+   "stationLevel": 1,
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "base": true,
+   "starter_known": true,
+   "family": null,
+   "alias": null,
+   "secs": 30,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 1,
+   "bom": {
+    "distinct_items": 2,
+    "craft_steps": 1,
+    "raw": {
+     "berries": 5,
+     "tin_can": 1
+    }
+   }
+  },
+  {
+   "id": "jam",
+   "out": "jam",
+   "outs": [
+    [
+     "jam",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "berries",
+     10
+    ],
+    [
+     "cloth",
+     1
+    ],
+    [
+     "tin_can",
+     1
+    ]
+   ],
+   "station": "campfire",
+   "stationLevel": 1,
+   "station_tier": "campfire",
+   "research_tier": 0,
+   "base": true,
+   "starter_known": true,
+   "family": null,
+   "alias": null,
+   "secs": 20,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 2,
+   "bom": {
+    "distinct_items": 4,
+    "craft_steps": 2,
+    "raw": {
+     "berries": 10,
+     "fiber": 6,
+     "tin_can": 1
     }
    }
   },
@@ -31388,7 +35212,7 @@
      3
     ],
     [
-     "seed",
+     "seed_wildberry",
      1
     ]
    ],
@@ -31410,7 +35234,7 @@
     "craft_steps": 1,
     "raw": {
      "fiber": 1,
-     "seed": 0.333
+     "seed_wildberry": 0.333
     }
    }
   },
@@ -31712,129 +35536,6 @@
    }
   },
   {
-   "id": "root_broth",
-   "out": "root_broth",
-   "outs": [
-    [
-     "root_broth",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "crop",
-     2
-    ],
-    [
-     "herb",
-     1
-    ]
-   ],
-   "station": "campfire",
-   "stationLevel": 1,
-   "station_tier": "campfire",
-   "research_tier": 1,
-   "base": true,
-   "starter_known": true,
-   "family": null,
-   "alias": null,
-   "secs": 12,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 1,
-   "bom": {
-    "distinct_items": 2,
-    "craft_steps": 1,
-    "raw": {
-     "crop": 2,
-     "herb": 1
-    }
-   }
-  },
-  {
-   "id": "poached_eggs",
-   "out": "root_broth",
-   "outs": [
-    [
-     "root_broth",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "grouse_egg",
-     2
-    ],
-    [
-     "herb",
-     1
-    ]
-   ],
-   "station": "campfire",
-   "stationLevel": 1,
-   "station_tier": "campfire",
-   "research_tier": 0,
-   "base": true,
-   "starter_known": true,
-   "family": null,
-   "alias": "Root Broth (grouse eggs)",
-   "secs": 8,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 1,
-   "bom": {
-    "distinct_items": 2,
-    "craft_steps": 1,
-    "raw": {
-     "grouse_egg": 2,
-     "herb": 1
-    }
-   }
-  },
-  {
-   "id": "herb_roast",
-   "out": "herb_roast",
-   "outs": [
-    [
-     "herb_roast",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "meat",
-     1
-    ],
-    [
-     "herb",
-     1
-    ]
-   ],
-   "station": "campfire",
-   "stationLevel": 1,
-   "station_tier": "campfire",
-   "research_tier": 0,
-   "base": true,
-   "starter_known": true,
-   "family": null,
-   "alias": null,
-   "secs": 10,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 1,
-   "bom": {
-    "distinct_items": 2,
-    "craft_steps": 1,
-    "raw": {
-     "herb": 1,
-     "meat": 1
-    }
-   }
-  },
-  {
    "id": "cooked_meat",
    "out": "cooked_meat",
    "outs": [
@@ -31867,47 +35568,6 @@
     "craft_steps": 1,
     "raw": {
      "meat": 1
-    }
-   }
-  },
-  {
-   "id": "salted_meat",
-   "out": "salted_meat",
-   "outs": [
-    [
-     "salted_meat",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "meat",
-     1
-    ],
-    [
-     "raw_salt",
-     1
-    ]
-   ],
-   "station": "campfire",
-   "stationLevel": 1,
-   "station_tier": "campfire",
-   "research_tier": 0,
-   "base": true,
-   "starter_known": true,
-   "family": null,
-   "alias": null,
-   "secs": 10,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 1,
-   "bom": {
-    "distinct_items": 2,
-    "craft_steps": 1,
-    "raw": {
-     "meat": 1,
-     "raw_salt": 1
     }
    }
   },
@@ -32549,47 +36209,6 @@
      "hide": 1,
      "iron_ore": 3,
      "wood": 2
-    }
-   }
-  },
-  {
-   "id": "iron_sword",
-   "out": "iron_sword",
-   "outs": [
-    [
-     "iron_sword",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "iron_ingot",
-     5
-    ],
-    [
-     "leather",
-     1
-    ]
-   ],
-   "station": "workbench",
-   "stationLevel": 1,
-   "station_tier": "workbench_1",
-   "research_tier": 2,
-   "base": false,
-   "starter_known": false,
-   "family": null,
-   "alias": null,
-   "secs": 18,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 2,
-   "bom": {
-    "distinct_items": 4,
-    "craft_steps": 3,
-    "raw": {
-     "hide": 1,
-     "iron_ore": 5
     }
    }
   },
@@ -33836,8 +37455,8 @@
      1
     ],
     [
-     "fasteners",
-     1
+     "electronic_parts",
+     2
     ],
     [
      "spares",
@@ -33856,13 +37475,13 @@
    "layer": "BOTH",
    "craftable_shipping": true,
    "craftable_veyra": true,
-   "depth": 3,
+   "depth": 2,
    "bom": {
-    "distinct_items": 5,
-    "craft_steps": 3,
+    "distinct_items": 4,
+    "craft_steps": 2,
     "raw": {
-     "iron_ore": 1.333,
-     "scrap": 0.333,
+     "electronic_parts": 2,
+     "iron_ore": 1,
      "spares": 1
     }
    }
@@ -33879,60 +37498,19 @@
    "ins": [
     [
      "iron_ingot",
-     1
-    ],
-    [
-     "mechanical_parts",
-     1
-    ],
-    [
-     "fasteners",
-     1
-    ]
-   ],
-   "station": "hand",
-   "stationLevel": 1,
-   "station_tier": "hand",
-   "research_tier": 0,
-   "base": true,
-   "starter_known": true,
-   "family": null,
-   "alias": null,
-   "secs": 1,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 3,
-   "bom": {
-    "distinct_items": 5,
-    "craft_steps": 4,
-    "raw": {
-     "iron_ore": 1.833,
-     "scrap": 1.333
-    }
-   }
-  },
-  {
-   "id": "deploy_ir_sensor",
-   "out": "deploy_ir_sensor",
-   "outs": [
-    [
-     "deploy_ir_sensor",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "mechanical_gear",
-     1
-    ],
-    [
-     "iron_ingot",
-     1
-    ],
-    [
-     "fasteners",
      2
+    ],
+    [
+     "spares",
+     1
+    ],
+    [
+     "electronic_parts",
+     2
+    ],
+    [
+     "iron_plate",
+     1
     ]
    ],
    "station": "hand",
@@ -33949,12 +37527,60 @@
    "craftable_veyra": true,
    "depth": 4,
    "bom": {
-    "distinct_items": 8,
-    "craft_steps": 6,
+    "distinct_items": 9,
+    "craft_steps": 5,
     "raw": {
      "coal": 0.5,
-     "iron_ore": 5.5,
-     "scrap": 3
+     "electronic_parts": 2,
+     "iron_ore": 3.667,
+     "scrap": 0.167,
+     "spares": 1
+    }
+   }
+  },
+  {
+   "id": "deploy_ir_sensor",
+   "out": "deploy_ir_sensor",
+   "outs": [
+    [
+     "deploy_ir_sensor",
+     1
+    ]
+   ],
+   "ins": [
+    [
+     "iron_ingot",
+     1
+    ],
+    [
+     "electronic_parts",
+     2
+    ],
+    [
+     "spares",
+     1
+    ]
+   ],
+   "station": "hand",
+   "stationLevel": 1,
+   "station_tier": "hand",
+   "research_tier": 0,
+   "base": true,
+   "starter_known": true,
+   "family": null,
+   "alias": null,
+   "secs": 1,
+   "layer": "BOTH",
+   "craftable_shipping": true,
+   "craftable_veyra": true,
+   "depth": 2,
+   "bom": {
+    "distinct_items": 4,
+    "craft_steps": 2,
+    "raw": {
+     "electronic_parts": 2,
+     "iron_ore": 1,
+     "spares": 1
     }
    }
   },
@@ -34277,22 +37903,6 @@
    "note": "industrial_pick_geared is known from the start; industrial_pick must be learned. Paying more materials buys skipping research."
   },
   {
-   "out": "iron_sword",
-   "cheaper": "iron_sword",
-   "dearer": "iron_sword_blade",
-   "cheaper_raw": {
-    "hide": 1,
-    "iron_ore": 5
-   },
-   "dearer_raw": {
-    "hide": 1,
-    "iron_ore": 6.5,
-    "scrap": 1
-   },
-   "verdict": "STATION_TRADEOFF",
-   "note": "iron_sword is cheaper per unit but needs workbench_1; iron_sword_blade runs at workbench_2. The station is the price."
-  },
-  {
    "out": "reinforced_spear",
    "cheaper": "reinforced_spear",
    "dearer": "reinforced_spear_blade",
@@ -34476,7 +38086,7 @@
    ],
    "parts_in": 0,
    "parts_out": 0,
-   "merged_parts_verdict": "PARTS_NEGATIVE"
+   "merged_parts_verdict": "SOURCE_ONLY"
   },
   {
    "item": "reinforced_spear",

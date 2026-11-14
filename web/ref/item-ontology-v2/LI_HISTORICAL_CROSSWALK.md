@@ -145,15 +145,19 @@ A `HAVE_*` verdict says SOH defines something for the role. `soh_live_status` sa
 
 | SOH live status | Rows |
 |---|---|
-| LIVE_PLAYER_FUNCTION | 52 |
-| LIVE_WITH_LIMIT | 3 |
-| CATALOG_PRESENT_NOT_LIVE | 1 |
+| LIVE_PLAYER_FUNCTION | 48 |
+| LIVE_WITH_LIMIT | 5 |
+| CATALOG_PRESENT_NOT_LIVE | 3 |
 
 | Last Island id | SOH | Verdict | Live status | Note |
 |---|---|---|---|---|
+| `canned_meat` | `salted_meat` | HAVE_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: UNREACHABLE. |
+| `cleaver` | `iron_sword` | HAVE_SAME_ROLE | LIVE_WITH_LIMIT | Projection reachability: SHIPPING_ONLY. Not obtainable on the other world. |
 | `crude_oil` | `salvaged_oil` | HAVE_SAME_ROLE | LIVE_WITH_LIMIT | Salvaged Oil is live (salvage bonus, vendor). The Last Island role of crude pumped from the ground is NOT live: Crude Petroleum is fixture-only and the Oil Pump produces nothing in live play. This row does not establish a working Oil Pump. |
 | `electric_door` | `structure:door_powered` | HAVE_SAME_ROLE | CATALOG_PRESENT_NOT_LIVE | `door_powered` is MODULE_PENDING in the catalog: defined, not player-buildable. The role exists on paper only. |
 | `green_card` | `keycard` | HAVE_DIFFERENT_SHAPE | LIVE_WITH_LIMIT | Projection reachability: SHIPPING_ONLY. Not obtainable on the other world. |
+| `machete` | `iron_sword` | HAVE_SAME_ROLE | LIVE_WITH_LIMIT | Projection reachability: SHIPPING_ONLY. Not obtainable on the other world. |
+| `mushroom_soup` | `root_broth` | HAVE_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: UNREACHABLE. |
 | `refined_iron_chest` | `chitin_armor` | HAVE_DIFFERENT_SHAPE | LIVE_WITH_LIMIT | Projection reachability: SHIPPING_ONLY. Not obtainable on the other world. |
 
 ## The five omissions the diff asked to investigate
@@ -217,9 +221,9 @@ The `year_mode` column is the same generic note on all 137 rows, so the source d
 | `birthday_cake_2022` | EXTERNAL_CRAFT_OR_INPUT | DIRECT | no | EVENT_LIMITED | - | missing | `-` | NOT_ADDED | EVENT_ONLY | NOT_APPLICABLE |
 | `bizon_smg` | OFFICIAL_MODERN | UNSUPPORTED_CITATION | no | MODERN_ADDITION | smg | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
 | `blue_card` | EXTERNAL_CRAFT_OR_INPUT | INDIRECT | no | DISTINCT_HISTORICAL | green_card | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
-| `canned_meat` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `salted_meat` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | LIVE_PLAYER_FUNCTION |
+| `canned_meat` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `salted_meat` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE |
 | `charcoal` | EXTERNAL_CRAFT_OR_INPUT | UNSUPPORTED_CITATION | no | ALIAS_OF_SOH_ITEM | - | direct | `charcoal` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
-| `cleaver` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `iron_sword` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
+| `cleaver` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `iron_sword` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_WITH_LIMIT |
 | `cloth` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | direct | `cloth` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `cream` | EXTERNAL_CRAFT_OR_INPUT | DIRECT | no | EVENT_LIMITED | birthday_cake_2022 | missing | `-` | NOT_ADDED | EVENT_ONLY | NOT_APPLICABLE |
 | `crude_oil` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `salvaged_oil` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_WITH_LIMIT |
@@ -269,7 +273,7 @@ The `year_mode` column is the same generic note on all 137 rows, so the source d
 | `low_quality_fuel` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `fuel_can` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `low_quality_fuel_can` | EXTERNAL_CRAFT_OR_INPUT | UNSUPPORTED_CITATION | no | ALIAS_OF_ATLAS_ID | low_quality_fuel | analogy | `fuel_can` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `m24` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
-| `machete` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `iron_sword` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
+| `machete` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `iron_sword` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_WITH_LIMIT |
 | `mechanical_gear` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | direct | `mechanical_gear` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `medkit` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | direct | `medkit` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `metal_blade` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | direct | `metal_blade` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | LIVE_PLAYER_FUNCTION |
@@ -280,7 +284,7 @@ The `year_mode` column is the same generic note on all 137 rows, so the source d
 | `motorcycle` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `motorbike_kit` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `mountain_bicycle_blueprint` | OFFICIAL_MODERN | DIRECT | no | MODERN_ADDITION | - | missing | `-` | NOT_ADDED | DESIGN_CANDIDATE | NOT_APPLICABLE |
 | `mushroom` | ATLAS_INDEXED | INDIRECT | yes | EXACT_ID | - | direct | `mushroom` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
-| `mushroom_soup` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `root_broth` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | LIVE_PLAYER_FUNCTION |
+| `mushroom_soup` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `root_broth` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE |
 | `needle_thread` | EXTERNAL_CRAFT_OR_INPUT | LEGACY_CLAIM | no | DISTINCT_HISTORICAL | - | missing | `-` | NOT_ADDED | DECLINED_REDUNDANT | NOT_APPLICABLE |
 | `needle_tube` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `-` | NOT_ADDED | DECLINED_REDUNDANT | NOT_APPLICABLE |
 | `nettle` | EXTERNAL_CRAFT_OR_INPUT | INDIRECT | no | DISTINCT_HISTORICAL | - | analogy | `fiber` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |

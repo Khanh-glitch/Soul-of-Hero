@@ -1,0 +1,3824 @@
+{
+ "schema": "soh-item-visual-handoff-v1",
+ "generated_by": "web/tests/final-item-set.test.ts (SOH_WRITE_ARENA1=1)",
+ "owner_of_final_pixels": "Arena 2",
+ "contract": [
+  "`icon_key` is the stable asset id and always equals `item_id`: one asset registration per id, used by inventory, tooltip, hotbar, crafting, loot and world drop alike.",
+  "`current_art_key` + `palette` is what the build draws TODAY through the single icon function `art.ts icon(key, c1, c2)`; an unknown key falls back to a flat square, so a missing asset never crashes a screen.",
+  "asset_status: TEMP_FALLBACK = new id borrowing another item's art key, must be replaced; TEMP_SHARED_PACK_ICON = all 24 packs share one generic key; EXISTING_SHARED_ICON = an older id that shares its art key with other ids; EXISTING_ICON = unique art key today.",
+  "Nothing in this file is final art. No icon was drawn for any new id in ARENA 1 round 1."
+ ],
+ "counts": {
+  "total": 157,
+  "by_asset_status": {
+   "EXISTING_SHARED_ICON": 75,
+   "EXISTING_ICON": 23,
+   "TEMP_FALLBACK": 34,
+   "TEMP_SHARED_PACK_ICON": 24,
+   "NO_ITEM_ICON_STRUCTURE_ONLY": 1
+  }
+ },
+ "items": [
+  {
+   "item_id": "energy_basic",
+   "icon_key": "energy_basic",
+   "current_art_key": "crystal",
+   "palette": [
+    "#5d9fc3",
+    "#e9faff"
+   ],
+   "name": "Basic Energy",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"crystal\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "energy_refined",
+   "icon_key": "energy_refined",
+   "current_art_key": "crystal",
+   "palette": [
+    "#727be4",
+    "#f3eaff"
+   ],
+   "name": "Refined Energy",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"crystal\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "essence_fire",
+   "icon_key": "essence_fire",
+   "current_art_key": "crystal",
+   "palette": [
+    "#c94a28",
+    "#ffd16c"
+   ],
+   "name": "Fire Essence",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"crystal\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "essence_nature",
+   "icon_key": "essence_nature",
+   "current_art_key": "crystal",
+   "palette": [
+    "#43813e",
+    "#c6ee80"
+   ],
+   "name": "Nature Essence",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"crystal\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "essence_water",
+   "icon_key": "essence_water",
+   "current_art_key": "crystal",
+   "palette": [
+    "#468da5",
+    "#b9f5ff"
+   ],
+   "name": "Water Essence",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"crystal\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "essence_spirit",
+   "icon_key": "essence_spirit",
+   "current_art_key": "crystal",
+   "palette": [
+    "#8954ac",
+    "#efd8ff"
+   ],
+   "name": "Spirit Essence",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"crystal\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "core_blast",
+   "icon_key": "core_blast",
+   "current_art_key": "core",
+   "palette": [
+    "#b63c21",
+    "#ffcb6a"
+   ],
+   "name": "Big Bang",
+   "name_vi": "Vụ nổ lớn",
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"core\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "core_meteor",
+   "icon_key": "core_meteor",
+   "current_art_key": "core",
+   "palette": [
+    "#b64b30",
+    "#ffe695"
+   ],
+   "name": "Meteor",
+   "name_vi": "Thiên thạch",
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"core\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "core_dragon",
+   "icon_key": "core_dragon",
+   "current_art_key": "core",
+   "palette": [
+    "#96332b",
+    "#ffda79"
+   ],
+   "name": "Dragon's Breath",
+   "name_vi": "Hơi thở của rồng",
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"core\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "core_elsa",
+   "icon_key": "core_elsa",
+   "current_art_key": "core",
+   "palette": [
+    "#5c9fc5",
+    "#d9ffff"
+   ],
+   "name": "Elsa's Sword",
+   "name_vi": "Gươm Elsa",
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"core\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "core_earthmother",
+   "icon_key": "core_earthmother",
+   "current_art_key": "core",
+   "palette": [
+    "#436f37",
+    "#cbe998"
+   ],
+   "name": "Earth Mother's Breath",
+   "name_vi": "Hơi thở đất mẹ",
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"core\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "core_mjolnir",
+   "icon_key": "core_mjolnir",
+   "current_art_key": "core",
+   "palette": [
+    "#6689ad",
+    "#eefbff"
+   ],
+   "name": "Mjolnir",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"core\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "core_demon",
+   "icon_key": "core_demon",
+   "current_art_key": "core",
+   "palette": [
+    "#593777",
+    "#ebc5ff"
+   ],
+   "name": "Demon Core",
+   "name_vi": "Lõi quỷ",
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"core\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "crude_petroleum",
+   "icon_key": "crude_petroleum",
+   "current_art_key": "drum",
+   "palette": [
+    "#1e1a16",
+    "#5a4a3a"
+   ],
+   "name": "Crude Petroleum",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "crude_oil",
+   "physical_shape": "as drawn today by art key \"drum\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "trail_pack",
+   "icon_key": "trail_pack",
+   "current_art_key": "pack",
+   "palette": [
+    "#7c7352",
+    "#c8bd87"
+   ],
+   "name": "Trail Pack",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"pack\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "trail_canteen",
+   "icon_key": "trail_canteen",
+   "current_art_key": "canteen",
+   "palette": [
+    "#617e72",
+    "#b4d6c5"
+   ],
+   "name": "Trail Canteen",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"canteen\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "wood",
+   "icon_key": "wood",
+   "current_art_key": "log",
+   "palette": [
+    "#8a5a32",
+    "#c9935a"
+   ],
+   "name": "Wood",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "wood",
+   "physical_shape": "as drawn today by art key \"log\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "plank",
+   "icon_key": "plank",
+   "current_art_key": "plank",
+   "palette": [
+    "#b98a52",
+    "#e0b878"
+   ],
+   "name": "Plank",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"plank\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "stone",
+   "icon_key": "stone",
+   "current_art_key": "stone",
+   "palette": [
+    "#7d8088",
+    "#b9bcc4"
+   ],
+   "name": "Stone",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"stone\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "fiber",
+   "icon_key": "fiber",
+   "current_art_key": "fiber",
+   "palette": [
+    "#5d8a3a",
+    "#a5d65e"
+   ],
+   "name": "Plant Fiber",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"fiber\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "iron_ore",
+   "icon_key": "iron_ore",
+   "current_art_key": "ore",
+   "palette": [
+    "#6b5a52",
+    "#d08a5a"
+   ],
+   "name": "Iron Ore",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "raw_iron_ore",
+   "physical_shape": "as drawn today by art key \"ore\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "rich_iron_ore",
+   "icon_key": "rich_iron_ore",
+   "current_art_key": "rich_ore",
+   "palette": [
+    "#4f4560",
+    "#f0c040"
+   ],
+   "name": "Rich Iron Ore",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "refined_iron_ore",
+   "physical_shape": "as drawn today by art key \"rich_ore\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "charcoal",
+   "icon_key": "charcoal",
+   "current_art_key": "ore",
+   "palette": [
+    "#2b2420",
+    "#6e5a4c"
+   ],
+   "name": "Charcoal",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "charcoal",
+   "physical_shape": "as drawn today by art key \"ore\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "crystal",
+   "icon_key": "crystal",
+   "current_art_key": "gem",
+   "palette": [
+    "#4fa6d8",
+    "#c8f0ff"
+   ],
+   "name": "Frost Crystal",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"gem\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "sulfur",
+   "icon_key": "sulfur",
+   "current_art_key": "ore",
+   "palette": [
+    "#b59a1e",
+    "#f2e05a"
+   ],
+   "name": "Sulfur",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"ore\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "spares",
+   "icon_key": "spares",
+   "current_art_key": "gear",
+   "palette": [
+    "#8a8f96",
+    "#e2c25a"
+   ],
+   "name": "Parts",
+   "name_vi": "Linh kiện",
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "parts",
+   "physical_shape": "as drawn today by art key \"gear\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "iron_ingot",
+   "icon_key": "iron_ingot",
+   "current_art_key": "ingot",
+   "palette": [
+    "#7a8696",
+    "#dfe6ee"
+   ],
+   "name": "Iron Ingot",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "iron_ingot",
+   "physical_shape": "as drawn today by art key \"ingot\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "rope",
+   "icon_key": "rope",
+   "current_art_key": "rope",
+   "palette": [
+    "#9a7a44",
+    "#d8bb78"
+   ],
+   "name": "Rope",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "rope",
+   "physical_shape": "as drawn today by art key \"rope\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "hide",
+   "icon_key": "hide",
+   "current_art_key": "hide",
+   "palette": [
+    "#7a4e34",
+    "#b88a62"
+   ],
+   "name": "Raw Hide",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "animal_hide",
+   "physical_shape": "as drawn today by art key \"hide\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "leather",
+   "icon_key": "leather",
+   "current_art_key": "hide",
+   "palette": [
+    "#5a3a22",
+    "#9c6a3e"
+   ],
+   "name": "Leather",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"hide\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "fur",
+   "icon_key": "fur",
+   "current_art_key": "hide",
+   "palette": [
+    "#8e95a0",
+    "#e1e6ee"
+   ],
+   "name": "Fur",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"hide\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "chitin",
+   "icon_key": "chitin",
+   "current_art_key": "shell",
+   "palette": [
+    "#3a2a2a",
+    "#c0503a"
+   ],
+   "name": "Ash Chitin",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"shell\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "shell",
+   "icon_key": "shell",
+   "current_art_key": "shell",
+   "palette": [
+    "#b4502e",
+    "#f0a070"
+   ],
+   "name": "Crab Shell",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"shell\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "gland",
+   "icon_key": "gland",
+   "current_art_key": "berry",
+   "palette": [
+    "#5a7a2a",
+    "#c8e070"
+   ],
+   "name": "Mire Gland",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"berry\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "cloth",
+   "icon_key": "cloth",
+   "current_art_key": "cloth",
+   "palette": [
+    "#7a6e9a",
+    "#c8c0e0"
+   ],
+   "name": "Cloth",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "cloth",
+   "physical_shape": "as drawn today by art key \"cloth\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "glass",
+   "icon_key": "glass",
+   "current_art_key": "gem",
+   "palette": [
+    "#6fb0a8",
+    "#e0fff8"
+   ],
+   "name": "Glass",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"gem\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "berries",
+   "icon_key": "berries",
+   "current_art_key": "berry",
+   "palette": [
+    "#7a1e3a",
+    "#e05a7a"
+   ],
+   "name": "Berries",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "wild_berry",
+   "physical_shape": "as drawn today by art key \"berry\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "meat",
+   "icon_key": "meat",
+   "current_art_key": "meat",
+   "palette": [
+    "#8e2a2a",
+    "#e07a7a"
+   ],
+   "name": "Raw Meat",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "animal_meat",
+   "physical_shape": "as drawn today by art key \"meat\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "cooked_meat",
+   "icon_key": "cooked_meat",
+   "current_art_key": "meat",
+   "palette": [
+    "#6a3a1e",
+    "#d0904a"
+   ],
+   "name": "Roast Meat",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"meat\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "mushroom",
+   "icon_key": "mushroom",
+   "current_art_key": "mush",
+   "palette": [
+    "#6a4a8a",
+    "#d0a0f0"
+   ],
+   "name": "Marsh Cap",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "mushroom",
+   "physical_shape": "as drawn today by art key \"mush\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "herb",
+   "icon_key": "herb",
+   "current_art_key": "herb",
+   "palette": [
+    "#2e6a3a",
+    "#7ad08a"
+   ],
+   "name": "Bitterleaf",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"herb\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "crop",
+   "icon_key": "crop",
+   "current_art_key": "crop",
+   "palette": [
+    "#b0601e",
+    "#f0b050"
+   ],
+   "name": "Sunroot",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"crop\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "stew",
+   "icon_key": "stew",
+   "current_art_key": "bowl",
+   "palette": [
+    "#6a3a1e",
+    "#e0a050"
+   ],
+   "name": "Root Stew",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"bowl\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "water_flask",
+   "icon_key": "water_flask",
+   "current_art_key": "flask",
+   "palette": [
+    "#3a6aa0",
+    "#9ad0ff"
+   ],
+   "name": "Water Flask",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"flask\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "bandage",
+   "icon_key": "bandage",
+   "current_art_key": "cloth",
+   "palette": [
+    "#c0b8a8",
+    "#fff8e8"
+   ],
+   "name": "Bandage",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "bandage",
+   "physical_shape": "as drawn today by art key \"cloth\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "medkit",
+   "icon_key": "medkit",
+   "current_art_key": "kit",
+   "palette": [
+    "#a03030",
+    "#f0e0e0"
+   ],
+   "name": "Field Medkit",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "medkit",
+   "physical_shape": "as drawn today by art key \"kit\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "antirad",
+   "icon_key": "antirad",
+   "current_art_key": "flask",
+   "palette": [
+    "#4a7a1e",
+    "#c8f070"
+   ],
+   "name": "Purge Tonic",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"flask\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "knife",
+   "icon_key": "knife",
+   "current_art_key": "knife",
+   "palette": [
+    "#9aa4b0",
+    "#5a3a22"
+   ],
+   "name": "Survival Knife",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"knife\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "stone_axe",
+   "icon_key": "stone_axe",
+   "current_art_key": "axe",
+   "palette": [
+    "#8a8a90",
+    "#7a5a32"
+   ],
+   "name": "Stone Axe",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"axe\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "stone_pick",
+   "icon_key": "stone_pick",
+   "current_art_key": "pick",
+   "palette": [
+    "#8a8a90",
+    "#7a5a32"
+   ],
+   "name": "Stone Pickaxe",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"pick\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "iron_axe",
+   "icon_key": "iron_axe",
+   "current_art_key": "axe",
+   "palette": [
+    "#c8d0dc",
+    "#5a3a22"
+   ],
+   "name": "Iron Axe",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "iron_axe",
+   "physical_shape": "as drawn today by art key \"axe\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "iron_pick",
+   "icon_key": "iron_pick",
+   "current_art_key": "pick",
+   "palette": [
+    "#c8d0dc",
+    "#5a3a22"
+   ],
+   "name": "Iron Pickaxe",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"pick\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "industrial_pick",
+   "icon_key": "industrial_pick",
+   "current_art_key": "salvage_pick",
+   "palette": [
+    "#71c3c6",
+    "#a37945"
+   ],
+   "name": "Salvager Pick",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"salvage_pick\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "industrial_axe",
+   "icon_key": "industrial_axe",
+   "current_art_key": "salvage_axe",
+   "palette": [
+    "#71c3c6",
+    "#a37945"
+   ],
+   "name": "Salvager Axe",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "refined_iron_axe",
+   "physical_shape": "as drawn today by art key \"salvage_axe\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "wood_spear",
+   "icon_key": "wood_spear",
+   "current_art_key": "spear",
+   "palette": [
+    "#c9935a",
+    "#e0e0e0"
+   ],
+   "name": "Fire-hardened Spear",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"spear\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "bow",
+   "icon_key": "bow",
+   "current_art_key": "bow",
+   "palette": [
+    "#8a5a32",
+    "#e0d8c0"
+   ],
+   "name": "Hunting Bow",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"bow\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "reinforced_spear",
+   "icon_key": "reinforced_spear",
+   "current_art_key": "spear",
+   "palette": [
+    "#bbc8d0",
+    "#a77745"
+   ],
+   "name": "Reinforced Spear",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"spear\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "arrow",
+   "icon_key": "arrow",
+   "current_art_key": "arrow",
+   "palette": [
+    "#8a5a32",
+    "#c0c0c8"
+   ],
+   "name": "Arrow",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"arrow\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "torch",
+   "icon_key": "torch",
+   "current_art_key": "torch",
+   "palette": [
+    "#7a5a32",
+    "#ffb040"
+   ],
+   "name": "Torch",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"torch\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "leather_armor",
+   "icon_key": "leather_armor",
+   "current_art_key": "armor",
+   "palette": [
+    "#6a4226",
+    "#a8764a"
+   ],
+   "name": "Leather Jerkin",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"armor\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "chitin_armor",
+   "icon_key": "chitin_armor",
+   "current_art_key": "armor",
+   "palette": [
+    "#3a2a2a",
+    "#c0503a"
+   ],
+   "name": "Chitin Plate",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"armor\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "fur_cloak",
+   "icon_key": "fur_cloak",
+   "current_art_key": "cloak",
+   "palette": [
+    "#8e95a0",
+    "#e1e6ee"
+   ],
+   "name": "Fur Cloak",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"cloak\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "gas_mask",
+   "icon_key": "gas_mask",
+   "current_art_key": "mask",
+   "palette": [
+    "#4a5a4a",
+    "#a0b0a0"
+   ],
+   "name": "Filter Mask",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"mask\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "scrap_helm",
+   "icon_key": "scrap_helm",
+   "current_art_key": "helm",
+   "palette": [
+    "#6f7378",
+    "#c0a07a"
+   ],
+   "name": "Scrap Helm",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"helm\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "core_fire",
+   "icon_key": "core_fire",
+   "current_art_key": "core",
+   "palette": [
+    "#c0381e",
+    "#ffd070"
+   ],
+   "name": "Ember Core",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"core\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "core_earth",
+   "icon_key": "core_earth",
+   "current_art_key": "core",
+   "palette": [
+    "#7a5a32",
+    "#e0c080"
+   ],
+   "name": "Quake Core",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"core\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "core_storm",
+   "icon_key": "core_storm",
+   "current_art_key": "core",
+   "palette": [
+    "#3a4ac0",
+    "#c0e0ff"
+   ],
+   "name": "Storm Core",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"core\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "core_frost",
+   "icon_key": "core_frost",
+   "current_art_key": "core",
+   "palette": [
+    "#2a8ab0",
+    "#e0ffff"
+   ],
+   "name": "Rime Core",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"core\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "blueprint",
+   "icon_key": "blueprint",
+   "current_art_key": "scroll",
+   "palette": [
+    "#3a5a8a",
+    "#e0e8f0"
+   ],
+   "name": "Blueprint",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"scroll\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "wolf_fang",
+   "icon_key": "wolf_fang",
+   "current_art_key": "fang",
+   "palette": [
+    "#d0c8b0",
+    "#fff"
+   ],
+   "name": "Wolf Fang (specimen)",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"fang\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "crawler_optic",
+   "icon_key": "crawler_optic",
+   "current_art_key": "gem",
+   "palette": [
+    "#a01e1e",
+    "#ff8a6a"
+   ],
+   "name": "Crawler Optic (specimen)",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"gem\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "boar_tusk",
+   "icon_key": "boar_tusk",
+   "current_art_key": "fang",
+   "palette": [
+    "#c0a070",
+    "#fff0d0"
+   ],
+   "name": "Boar Tusk (specimen)",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"fang\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "beetle_horn",
+   "icon_key": "beetle_horn",
+   "current_art_key": "fang",
+   "palette": [
+    "#5a2a1e",
+    "#e06a3a"
+   ],
+   "name": "Beetle Horn (specimen)",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"fang\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "fuel_can",
+   "icon_key": "fuel_can",
+   "current_art_key": "can",
+   "palette": [
+    "#a03a1e",
+    "#f0c060"
+   ],
+   "name": "Fuel Canister",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "low_quality_fuel",
+   "physical_shape": "as drawn today by art key \"can\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "rcash",
+   "icon_key": "rcash",
+   "current_art_key": "coin",
+   "palette": [
+    "#b07a1e",
+    "#ffe27a"
+   ],
+   "name": "Ragnarok Cash",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"coin\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "escrow_chest",
+   "icon_key": "escrow_chest",
+   "current_art_key": "chest",
+   "palette": [
+    "#5a3a7a",
+    "#ffd040"
+   ],
+   "name": "Escrow Chest",
+   "name_vi": "Rương ký gửi",
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"chest\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "vehicle_frame",
+   "icon_key": "vehicle_frame",
+   "current_art_key": "scrap",
+   "palette": [
+    "#706c5f",
+    "#c6bca0"
+   ],
+   "name": "Utility Frame",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "vehicle_frame",
+   "physical_shape": "as drawn today by art key \"scrap\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "refined_iron_ingot",
+   "icon_key": "refined_iron_ingot",
+   "current_art_key": "rfingot",
+   "palette": [
+    "#8f9fb3",
+    "#f2f8ff"
+   ],
+   "name": "Refined Iron Ingot",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "refined_iron_ingot",
+   "physical_shape": "as drawn today by art key \"rfingot\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "metal_pipe",
+   "icon_key": "metal_pipe",
+   "current_art_key": "pipe",
+   "palette": [
+    "#5f6a74",
+    "#b8c4cc"
+   ],
+   "name": "Metal Pipe",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "metal_pipe",
+   "physical_shape": "as drawn today by art key \"pipe\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "metal_blade",
+   "icon_key": "metal_blade",
+   "current_art_key": "blade",
+   "palette": [
+    "#7d8a96",
+    "#eef4f8"
+   ],
+   "name": "Metal Blade",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "metal_blade",
+   "physical_shape": "as drawn today by art key \"blade\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "mechanical_gear",
+   "icon_key": "mechanical_gear",
+   "current_art_key": "mgear",
+   "palette": [
+    "#6b6f76",
+    "#d6c27a"
+   ],
+   "name": "Mechanical Gear",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "mechanical_gear",
+   "physical_shape": "as drawn today by art key \"mgear\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "iron_plate",
+   "icon_key": "iron_plate",
+   "current_art_key": "plate",
+   "palette": [
+    "#4f5a63",
+    "#c9d1d8"
+   ],
+   "name": "Iron Plate",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "iron_plate",
+   "physical_shape": "as drawn today by art key \"plate\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "motorbike_kit",
+   "icon_key": "motorbike_kit",
+   "current_art_key": "cart",
+   "palette": [
+    "#4d7180",
+    "#e4c475"
+   ],
+   "name": "Utility Motorbike (packed)",
+   "name_vi": null,
+   "group": "A",
+   "origin": "SOH_CURRENT",
+   "li_id": "motorcycle",
+   "physical_shape": "as drawn today by art key \"cart\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "cart_kit",
+   "icon_key": "cart_kit",
+   "current_art_key": "cart",
+   "palette": [
+    "#7a5a32",
+    "#c0c8d0"
+   ],
+   "name": "Hand Cart (packed)",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"cart\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "stone_surtur",
+   "icon_key": "stone_surtur",
+   "current_art_key": "relic",
+   "palette": [
+    "#d8421e",
+    "#ffd470"
+   ],
+   "name": "Stone of Surtur",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"relic\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "stone_typhon",
+   "icon_key": "stone_typhon",
+   "current_art_key": "relic",
+   "palette": [
+    "#6a48b8",
+    "#d6b8ff"
+   ],
+   "name": "Stone of Typhon",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"relic\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "stone_aion",
+   "icon_key": "stone_aion",
+   "current_art_key": "relic",
+   "palette": [
+    "#c89a38",
+    "#fff2b2"
+   ],
+   "name": "Stone of Aion",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"relic\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "stone_atlas",
+   "icon_key": "stone_atlas",
+   "current_art_key": "relic",
+   "palette": [
+    "#5a7690",
+    "#d8ecff"
+   ],
+   "name": "Stone of Atlas",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"relic\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "stone_argus",
+   "icon_key": "stone_argus",
+   "current_art_key": "relic",
+   "palette": [
+    "#2e9ab8",
+    "#c8ffff"
+   ],
+   "name": "Stone of Argus",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"relic\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "stone_anubis",
+   "icon_key": "stone_anubis",
+   "current_art_key": "relic",
+   "palette": [
+    "#8e6a24",
+    "#ffe49a"
+   ],
+   "name": "Stone of Anubis",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"relic\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "lead_rope",
+   "icon_key": "lead_rope",
+   "current_art_key": "rope",
+   "palette": [
+    "#b89456",
+    "#f0dcb0"
+   ],
+   "name": "Taming Lead",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"rope\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "animal_feed",
+   "icon_key": "animal_feed",
+   "current_art_key": "fiber",
+   "palette": [
+    "#8e8a3a",
+    "#e2d878"
+   ],
+   "name": "Fodder Bundle",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"fiber\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "feather",
+   "icon_key": "feather",
+   "current_art_key": "fiber",
+   "palette": [
+    "#3a3848",
+    "#c8c4d8"
+   ],
+   "name": "Grouse Feather",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"fiber\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "grouse_egg",
+   "icon_key": "grouse_egg",
+   "current_art_key": "berry",
+   "palette": [
+    "#b8a888",
+    "#f4efe2"
+   ],
+   "name": "Grouse Egg",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"berry\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "relic_shaleheart",
+   "icon_key": "relic_shaleheart",
+   "current_art_key": "armor",
+   "palette": [
+    "#5a5248",
+    "#7ef2ff"
+   ],
+   "name": "Shaleheart Coreplate",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"armor\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "ronin_nodachi",
+   "icon_key": "ronin_nodachi",
+   "current_art_key": "sword",
+   "palette": [
+    "#dfe6f2",
+    "#b0326a"
+   ],
+   "name": "Oathless Nodachi",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"sword\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "tidemarshal_trident",
+   "icon_key": "tidemarshal_trident",
+   "current_art_key": "spear",
+   "palette": [
+    "#4aa8d8",
+    "#d8f8ff"
+   ],
+   "name": "Saltwick Trident",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"spear\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "custodian_lantern",
+   "icon_key": "custodian_lantern",
+   "current_art_key": "torch",
+   "palette": [
+    "#8e96d8",
+    "#eef2ff"
+   ],
+   "name": "Archive Lantern",
+   "name_vi": null,
+   "group": "C",
+   "origin": "SOH_CURRENT",
+   "li_id": null,
+   "physical_shape": "as drawn today by art key \"torch\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "EXISTING_SHARED_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "animal_fat",
+   "icon_key": "animal_fat",
+   "current_art_key": "hide",
+   "palette": [
+    "#d8c890",
+    "#fff4c8"
+   ],
+   "name": "Animal Fat",
+   "name_vi": "Mỡ động vật",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "animal_fat",
+   "physical_shape": "irregular slab of tallow with a cut face",
+   "material": "animal fat",
+   "colour_silhouette": "pale cream-yellow block, soft rounded corners, no fur",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "blue_card",
+   "icon_key": "blue_card",
+   "current_art_key": "card",
+   "palette": [
+    "#2a4a8a",
+    "#a0c8f0"
+   ],
+   "name": "Blue Card",
+   "name_vi": "Thẻ xanh dương",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "blue_card",
+   "physical_shape": "plastic access card with a chip and a stripe",
+   "material": "plastic",
+   "colour_silhouette": "blue rectangle, pale stripe",
+   "display_size": "tiny",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "canned_meat",
+   "icon_key": "canned_meat",
+   "current_art_key": "can",
+   "palette": [
+    "#8a3a2a",
+    "#e8d0a0"
+   ],
+   "name": "Canned Meat",
+   "name_vi": "Thịt hộp",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "canned_meat",
+   "physical_shape": "sealed tin with a meat-red band",
+   "material": "tin, paper band",
+   "colour_silhouette": "grey cylinder, red-brown band, closed flat lid",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "cleaver",
+   "icon_key": "cleaver",
+   "current_art_key": "knife",
+   "palette": [
+    "#c8d0dc",
+    "#5a3a22"
+   ],
+   "name": "Cleaver",
+   "name_vi": "Dao phay",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "cleaver",
+   "physical_shape": "broad rectangular blade with a short wooden handle and a hang hole",
+   "material": "iron, wood",
+   "colour_silhouette": "wide bright rectangle on a short brown grip; wider and squarer than the knife",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "held"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "dried_meat",
+   "icon_key": "dried_meat",
+   "current_art_key": "meat",
+   "palette": [
+    "#5a2e1e",
+    "#a8683a"
+   ],
+   "name": "Dried Meat",
+   "name_vi": "Thịt khô",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "dried_meat",
+   "physical_shape": "two dark twisted jerky strips tied with twine",
+   "material": "dried meat",
+   "colour_silhouette": "dark brown strips, thin and wrinkled; darker and thinner than Roast Meat",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "electric_resistor",
+   "icon_key": "electric_resistor",
+   "current_art_key": "rope",
+   "palette": [
+    "#8a5a3a",
+    "#f0a060"
+   ],
+   "name": "Resistor Wire",
+   "name_vi": "Dây điện trở",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "electric_resistor",
+   "physical_shape": "coil of bare resistance wire on a ceramic bobbin",
+   "material": "nichrome wire, ceramic",
+   "colour_silhouette": "orange-brown coil, pale core",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "electronic_parts",
+   "icon_key": "electronic_parts",
+   "current_art_key": "gear",
+   "palette": [
+    "#2f6a5a",
+    "#9af0c8"
+   ],
+   "name": "Electronic Parts",
+   "name_vi": "Linh kiện điện tử",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "electronic_parts",
+   "physical_shape": "small green board with two relays and trailing wires",
+   "material": "PCB, copper, plastic",
+   "colour_silhouette": "green rectangle, yellow and silver dots, two wire tails; must NOT read as the round Parts gear",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "fruit_juice",
+   "icon_key": "fruit_juice",
+   "current_art_key": "flask",
+   "palette": [
+    "#a02a4a",
+    "#ff9ab0"
+   ],
+   "name": "Fruit Juice",
+   "name_vi": "Nước ép quả",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "fruit_juice",
+   "physical_shape": "small stoppered bottle of pink juice",
+   "material": "glass, juice",
+   "colour_silhouette": "bottle shape, bright pink fill",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "fruit_wine",
+   "icon_key": "fruit_wine",
+   "current_art_key": "flask",
+   "palette": [
+    "#5a1e4a",
+    "#d88ac8"
+   ],
+   "name": "Fruit Wine",
+   "name_vi": "Rượu quả",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "fruit_wine",
+   "physical_shape": "corked dark bottle",
+   "material": "dark glass, cork",
+   "colour_silhouette": "bottle shape, deep purple fill, tan cork",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "green_card",
+   "icon_key": "green_card",
+   "current_art_key": "card",
+   "palette": [
+    "#2a7a3a",
+    "#a0f0b0"
+   ],
+   "name": "Green Card",
+   "name_vi": "Thẻ xanh lá",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "green_card",
+   "physical_shape": "plastic access card with a chip and a stripe",
+   "material": "plastic",
+   "colour_silhouette": "green rectangle, pale stripe",
+   "display_size": "tiny",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "grilled_mushroom",
+   "icon_key": "grilled_mushroom",
+   "current_art_key": "mush",
+   "palette": [
+    "#7a5a3a",
+    "#e0c090"
+   ],
+   "name": "Grilled Mushroom",
+   "name_vi": "Nấm nướng",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "grilled_mushroom",
+   "physical_shape": "single cap on a short skewer with grill marks",
+   "material": "cooked mushroom, wood skewer",
+   "colour_silhouette": "tan cap with dark bars; brown not purple (raw Marsh Cap is purple)",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "iron_plate_boots",
+   "icon_key": "iron_plate_boots",
+   "current_art_key": "armor",
+   "palette": [
+    "#4f5a63",
+    "#8a9298"
+   ],
+   "name": "Iron Plate Boots",
+   "name_vi": "Giày tấm sắt",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "iron_plate_boots",
+   "physical_shape": "hide boots with a plate toe cap",
+   "material": "iron plate, hide",
+   "colour_silhouette": "pair of boots, steel toes",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "equipped"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "iron_plate_chest",
+   "icon_key": "iron_plate_chest",
+   "current_art_key": "armor",
+   "palette": [
+    "#4f5a63",
+    "#c9d1d8"
+   ],
+   "name": "Iron Plate Chest",
+   "name_vi": "Giáp ngực tấm sắt",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "iron_plate_chest",
+   "physical_shape": "three overlapping plates on a hide vest with stitching",
+   "material": "iron plate, hide, thread",
+   "colour_silhouette": "dark steel torso, visible stitch line, hide shoulders",
+   "display_size": "large",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "equipped"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "iron_plate_helmet",
+   "icon_key": "iron_plate_helmet",
+   "current_art_key": "helm",
+   "palette": [
+    "#4f5a63",
+    "#c9d1d8"
+   ],
+   "name": "Iron Plate Helmet",
+   "name_vi": "Mũ tấm sắt",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "iron_plate_helmet",
+   "physical_shape": "riveted dome of plate over a hide liner with cheek flaps",
+   "material": "iron plate, hide",
+   "colour_silhouette": "dark steel dome, lighter rim, hide flaps",
+   "display_size": "medium",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "equipped"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "iron_plate_pants",
+   "icon_key": "iron_plate_pants",
+   "current_art_key": "armor",
+   "palette": [
+    "#4f5a63",
+    "#a8b0b8"
+   ],
+   "name": "Iron Plate Pants",
+   "name_vi": "Quần tấm sắt",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "iron_plate_pants",
+   "physical_shape": "hide trousers with two thigh plates",
+   "material": "iron plate, hide",
+   "colour_silhouette": "two-leg shape, steel thigh blocks",
+   "display_size": "medium",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "equipped"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "jam",
+   "icon_key": "jam",
+   "current_art_key": "can",
+   "palette": [
+    "#7a1e3a",
+    "#ff7a9a"
+   ],
+   "name": "Jam",
+   "name_vi": "Mứt",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "jam",
+   "physical_shape": "tin covered with a tied cloth cap",
+   "material": "tin, cloth, jam",
+   "colour_silhouette": "grey cylinder, pink-red cloth dome with a string",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "large_furnace",
+   "icon_key": "large_furnace",
+   "current_art_key": "parts",
+   "palette": [
+    "#6a4a3a",
+    "#f0a050"
+   ],
+   "name": "Large Furnace",
+   "name_vi": "Lò lớn",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "large_furnace",
+   "physical_shape": "wide brick-and-iron smelter with two doors and a stack",
+   "material": "stone, iron",
+   "colour_silhouette": "twice the footprint of the Furnace, orange glow",
+   "display_size": "large",
+   "contexts": [
+    "inventory",
+    "placed"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "machete",
+   "icon_key": "machete",
+   "current_art_key": "sword",
+   "palette": [
+    "#dfe6ee",
+    "#7a4a2a"
+   ],
+   "name": "Machete",
+   "name_vi": "Rựa",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "machete",
+   "physical_shape": "long single-edged blade widening toward the tip, wrapped grip",
+   "material": "iron, leather wrap",
+   "colour_silhouette": "long bright curve, no crossguard (the retired sword had one)",
+   "display_size": "medium",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "held"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "mushroom_soup",
+   "icon_key": "mushroom_soup",
+   "current_art_key": "bowl",
+   "palette": [
+    "#594e30",
+    "#d8c8a0"
+   ],
+   "name": "Mushroom Soup",
+   "name_vi": "Súp nấm",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "mushroom_soup",
+   "physical_shape": "open tin of pale soup with steam",
+   "material": "tin, soup",
+   "colour_silhouette": "grey cylinder, cream surface, two steam ticks",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "needle_thread",
+   "icon_key": "needle_thread",
+   "current_art_key": "fiber",
+   "palette": [
+    "#c8c0e0",
+    "#f4f0ff"
+   ],
+   "name": "Needle and Thread",
+   "name_vi": "Kim chỉ",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "needle_thread",
+   "physical_shape": "spool of thread with a needle stuck through it",
+   "material": "cotton thread, steel needle",
+   "colour_silhouette": "pale lilac spool, one diagonal silver needle",
+   "display_size": "tiny",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "needle_tube",
+   "icon_key": "needle_tube",
+   "current_art_key": "arrow",
+   "palette": [
+    "#9aa4b0",
+    "#e8f4ff"
+   ],
+   "name": "Needle Tube",
+   "name_vi": "Ống kim",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "needle_tube",
+   "physical_shape": "empty glass injector barrel with a steel needle, no plunger",
+   "material": "glass, steel",
+   "colour_silhouette": "thin pale diagonal with a bright tip",
+   "display_size": "tiny",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "purple_card",
+   "icon_key": "purple_card",
+   "current_art_key": "card",
+   "palette": [
+    "#5a2a8a",
+    "#d0a0f0"
+   ],
+   "name": "Purple Card",
+   "name_vi": "Thẻ tím",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "purple_card",
+   "physical_shape": "plastic access card with a chip and a stripe",
+   "material": "plastic",
+   "colour_silhouette": "purple rectangle, pale stripe",
+   "display_size": "tiny",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "refined_iron_boots",
+   "icon_key": "refined_iron_boots",
+   "current_art_key": "armor",
+   "palette": [
+    "#71c3c6",
+    "#98b8b8"
+   ],
+   "name": "Refined Iron Boots",
+   "name_vi": "Giày sắt tinh luyện",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "refined_iron_boots",
+   "physical_shape": "plated boots with ankle guard",
+   "material": "refined iron, hide",
+   "colour_silhouette": "pair of boots, teal plating",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "equipped"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "refined_iron_chest",
+   "icon_key": "refined_iron_chest",
+   "current_art_key": "armor",
+   "palette": [
+    "#71c3c6",
+    "#e4f4f4"
+   ],
+   "name": "Refined Iron Chest",
+   "name_vi": "Giáp ngực sắt tinh luyện",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "refined_iron_chest",
+   "physical_shape": "fitted cuirass with a raised centre line",
+   "material": "refined iron, hide",
+   "colour_silhouette": "teal-steel torso, bright centre line",
+   "display_size": "large",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "equipped"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "refined_iron_helmet",
+   "icon_key": "refined_iron_helmet",
+   "current_art_key": "helm",
+   "palette": [
+    "#71c3c6",
+    "#e4f4f4"
+   ],
+   "name": "Refined Iron Helmet",
+   "name_vi": "Mũ sắt tinh luyện",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "refined_iron_helmet",
+   "physical_shape": "smooth one-piece helmet with a brow ridge",
+   "material": "refined iron, hide liner",
+   "colour_silhouette": "teal-steel dome with a bright ridge; cleaner than the riveted iron plate helmet",
+   "display_size": "medium",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "equipped"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "refined_iron_legs",
+   "icon_key": "refined_iron_legs",
+   "current_art_key": "armor",
+   "palette": [
+    "#71c3c6",
+    "#b8d8d8"
+   ],
+   "name": "Refined Iron Legs",
+   "name_vi": "Giáp chân sắt tinh luyện",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "refined_iron_legs",
+   "physical_shape": "articulated leg guards on hide",
+   "material": "refined iron, hide",
+   "colour_silhouette": "two-leg shape, teal knee plates",
+   "display_size": "medium",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "equipped"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "steel_folding_ladder",
+   "icon_key": "steel_folding_ladder",
+   "current_art_key": "plank",
+   "palette": [
+    "#71c3c6",
+    "#e4f4f4"
+   ],
+   "name": "Steel Folding Ladder",
+   "name_vi": "Thang gấp thép",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "steel_folding_ladder",
+   "physical_shape": "folded metal ladder with a hinge",
+   "material": "refined iron",
+   "colour_silhouette": "teal-steel folded ladder, hinge dot",
+   "display_size": "large",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "syringe",
+   "icon_key": "syringe",
+   "current_art_key": "flask",
+   "palette": [
+    "#b03838",
+    "#f4e4e4"
+   ],
+   "name": "Syringe",
+   "name_vi": "Ống tiêm",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "syringe",
+   "physical_shape": "filled injector with plunger drawn",
+   "material": "glass, steel, red fluid",
+   "colour_silhouette": "red-filled diagonal barrel, white plunger, bright needle",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "tin_can",
+   "icon_key": "tin_can",
+   "current_art_key": "can",
+   "palette": [
+    "#8e969c",
+    "#e6ecf0"
+   ],
+   "name": "Tin Can",
+   "name_vi": "Hộp thiếc",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "tin_can",
+   "physical_shape": "short open cylinder, lid bent back, no label",
+   "material": "tin-plated steel",
+   "colour_silhouette": "grey cylinder with a bright rim highlight and a jagged lid",
+   "display_size": "small",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "wood_club",
+   "icon_key": "wood_club",
+   "current_art_key": "log",
+   "palette": [
+    "#7a5a32",
+    "#c9a064"
+   ],
+   "name": "Wood Club",
+   "name_vi": "Gậy gỗ",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "wood_club",
+   "physical_shape": "thick tapered branch, bark stripped at the grip",
+   "material": "raw wood",
+   "colour_silhouette": "brown club, heavy end up, lighter grip",
+   "display_size": "medium",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "held"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "wooden_ladder",
+   "icon_key": "wooden_ladder",
+   "current_art_key": "plank",
+   "palette": [
+    "#7a5a32",
+    "#c9a064"
+   ],
+   "name": "Wooden Ladder",
+   "name_vi": "Thang gỗ",
+   "group": "A",
+   "origin": "LI_IMPORTED",
+   "li_id": "wooden_ladder",
+   "physical_shape": "two rails and five rungs lashed with rope",
+   "material": "wood, rope",
+   "colour_silhouette": "tall brown ladder",
+   "display_size": "large",
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "deploy_bed_straw",
+   "icon_key": "deploy_bed_straw",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Straw Bed",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Straw Bed\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_chest_small",
+   "icon_key": "deploy_chest_small",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Wood Chest",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Wood Chest\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_chest_large",
+   "icon_key": "deploy_chest_large",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Iron-bound Chest",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Iron-bound Chest\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_campfire",
+   "icon_key": "deploy_campfire",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Campfire",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Campfire\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_furnace",
+   "icon_key": "deploy_furnace",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Furnace",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Furnace\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_oil_pump",
+   "icon_key": "deploy_oil_pump",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Oil Pump",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Oil Pump\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "deploy_refinery",
+   "icon_key": "deploy_refinery",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Oil Refinery",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": "oil_refinery",
+   "physical_shape": "packed crate of the structure \"Oil Refinery\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_workbench",
+   "icon_key": "deploy_workbench",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Workbench",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Workbench\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_base_generator",
+   "icon_key": "deploy_base_generator",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Field Generator",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": "fuel_generator",
+   "physical_shape": "packed crate of the structure \"Field Generator\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_power_cable",
+   "icon_key": "deploy_power_cable",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Power Cable",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Power Cable\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_power_switch",
+   "icon_key": "deploy_power_switch",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Power Switch",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": "switch",
+   "physical_shape": "packed crate of the structure \"Power Switch\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_pressure_switch",
+   "icon_key": "deploy_pressure_switch",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Pressure Switch",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": "pressure_switch",
+   "physical_shape": "packed crate of the structure \"Pressure Switch\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_ir_sensor",
+   "icon_key": "deploy_ir_sensor",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Infrared Sensor",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": "infrared_switch",
+   "physical_shape": "packed crate of the structure \"Infrared Sensor\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_bear_trap",
+   "icon_key": "deploy_bear_trap",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Bear Trap",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": "bear_trap",
+   "physical_shape": "packed crate of the structure \"Bear Trap\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_spikes",
+   "icon_key": "deploy_spikes",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Spike Trap",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": "wood_spikes",
+   "physical_shape": "packed crate of the structure \"Spike Trap\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_barricade",
+   "icon_key": "deploy_barricade",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Barricade",
+   "name_vi": null,
+   "group": "A",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Barricade\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_claim",
+   "icon_key": "deploy_claim",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Territory Cabinet",
+   "name_vi": null,
+   "group": "B",
+   "origin": "STRUCT_PACK",
+   "li_id": "territory_cabinet",
+   "physical_shape": "packed crate of the structure \"Territory Cabinet\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_research",
+   "icon_key": "deploy_research",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Research Table",
+   "name_vi": null,
+   "group": "B",
+   "origin": "STRUCT_PACK",
+   "li_id": "drawing_bench",
+   "physical_shape": "packed crate of the structure \"Research Table\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_arrow_turret",
+   "icon_key": "deploy_arrow_turret",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Arrow Turret",
+   "name_vi": null,
+   "group": "B",
+   "origin": "STRUCT_PACK",
+   "li_id": "auto_rifle_turret",
+   "physical_shape": "packed crate of the structure \"Arrow Turret\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_torch_post",
+   "icon_key": "deploy_torch_post",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Torch Post",
+   "name_vi": null,
+   "group": "B",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Torch Post\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_garden",
+   "icon_key": "deploy_garden",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Garden Plot",
+   "name_vi": null,
+   "group": "C",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Garden Plot\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_farm_controller",
+   "icon_key": "deploy_farm_controller",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Garden Tender",
+   "name_vi": null,
+   "group": "C",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Garden Tender\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_barrel",
+   "icon_key": "deploy_barrel",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Rain Barrel",
+   "name_vi": null,
+   "group": "C",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Rain Barrel\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "deploy_feed_trough",
+   "icon_key": "deploy_feed_trough",
+   "current_art_key": "parts",
+   "palette": [
+    "#758995",
+    "#d4c9a8"
+   ],
+   "name": "Feed & Water Trough",
+   "name_vi": null,
+   "group": "C",
+   "origin": "STRUCT_PACK",
+   "li_id": null,
+   "physical_shape": "packed crate of the structure \"Feed & Water Trough\"; needs its own pack silhouette showing the device",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "inventory",
+    "world_drop",
+    "placed"
+   ],
+   "asset_status": "TEMP_SHARED_PACK_ICON",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "door_powered",
+   "icon_key": "door_powered",
+   "current_art_key": null,
+   "palette": null,
+   "name": "Powered Door",
+   "name_vi": null,
+   "group": "B",
+   "origin": "SOH_APPROVED_DESIGN_NEW",
+   "li_id": "electric_door",
+   "physical_shape": "as drawn today by art key \"structure\"; no new brief written in round 1",
+   "material": null,
+   "colour_silhouette": null,
+   "display_size": null,
+   "contexts": [
+    "placed"
+   ],
+   "asset_status": "NO_ITEM_ICON_STRUCTURE_ONLY",
+   "gameplay_status": "BLOCKED"
+  },
+  {
+   "item_id": "seed_sunroot",
+   "icon_key": "seed_sunroot",
+   "current_art_key": "seed",
+   "palette": [
+    "#8a5a22",
+    "#f0b050"
+   ],
+   "name": "Sunroot Seed",
+   "name_vi": "Hạt Sunroot",
+   "group": "C",
+   "origin": "SOH_APPROVED_DESIGN_NEW",
+   "li_id": null,
+   "physical_shape": "four plump teardrop seeds in a loose pile",
+   "material": "dry seed husk",
+   "colour_silhouette": "warm amber-brown cluster, one bright orange seed on top; must read apart from the two other seeds by COLOUR and one distinct top shape",
+   "display_size": "tiny",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "seed_bitterleaf",
+   "icon_key": "seed_bitterleaf",
+   "current_art_key": "seed",
+   "palette": [
+    "#2e6a3a",
+    "#9ad88a"
+   ],
+   "name": "Bitterleaf Seed",
+   "name_vi": "Hạt Bitterleaf",
+   "group": "C",
+   "origin": "SOH_APPROVED_DESIGN_NEW",
+   "li_id": null,
+   "physical_shape": "thin flat oval seeds with a tiny sprout curl",
+   "material": "dry seed, green shoot",
+   "colour_silhouette": "dark green cluster with one pale leaf tick",
+   "display_size": "tiny",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  },
+  {
+   "item_id": "seed_wildberry",
+   "icon_key": "seed_wildberry",
+   "current_art_key": "seed",
+   "palette": [
+    "#7a1e3a",
+    "#e88aa0"
+   ],
+   "name": "Wild Berry Seed",
+   "name_vi": "Hạt dâu dại",
+   "group": "C",
+   "origin": "SOH_APPROVED_DESIGN_NEW",
+   "li_id": null,
+   "physical_shape": "small round pips, one still inside a berry skin",
+   "material": "pip and dried berry flesh",
+   "colour_silhouette": "crimson-pink cluster, one round berry outline",
+   "display_size": "tiny",
+   "contexts": [
+    "inventory",
+    "world_drop"
+   ],
+   "asset_status": "TEMP_FALLBACK",
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
+  }
+ ]
+}

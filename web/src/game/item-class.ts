@@ -58,14 +58,16 @@ export const RES_ITEM_CLASS: Readonly<Record<string, ItemClass>> = Object.freeze
   plank: 'PROCESSED', brick: 'PROCESSED', glass: 'PROCESSED', charcoal: 'PROCESSED', rope: 'PROCESSED',
   cloth: 'PROCESSED', leather: 'PROCESSED', treated_canvas: 'PROCESSED', fuel_briquette: 'PROCESSED', lubricant: 'PROCESSED',
   hide: 'ANIMAL', fur: 'ANIMAL', chitin: 'ANIMAL', shell: 'ANIMAL', gland: 'ANIMAL', feather: 'ANIMAL',
-  seed: 'FARM', animal_feed: 'FARM',
+  seed: 'FARM', animal_feed: 'FARM', seed_sunroot: 'FARM', seed_bitterleaf: 'FARM', seed_wildberry: 'FARM',
+  // Final item set v2 (Last Island imports).
+  animal_fat: 'ANIMAL', tin_can: 'SALVAGE', electronic_parts: 'SALVAGE', electric_resistor: 'SALVAGE', needle_tube: 'SALVAGE', needle_thread: 'PROCESSED',
   energy_basic: 'ENERGY', energy_refined: 'ENERGY', essence_fire: 'ENERGY', essence_nature: 'ENERGY',
   essence_water: 'ENERGY', essence_spirit: 'ENERGY',
   wolf_fang: 'SPECIMEN', crawler_optic: 'SPECIMEN', boar_tusk: 'SPECIMEN', beetle_horn: 'SPECIMEN',
   arrow: 'AMMO',
 });
 
-const MEDICAL = new Set(['bandage', 'medkit', 'antirad']);
+const MEDICAL = new Set(['bandage', 'medkit', 'antirad', 'syringe']);
 
 /** Class of any runtime item id. Total over ITEMS; unknown ids fall back to their `cat`. */
 export function itemClass(key: string): ItemClass | null {

@@ -511,34 +511,8 @@
         1
       ]
     ],
-    "switchCost": [
-      [
-        "iron_ingot",
-        1
-      ],
-      [
-        "fasteners",
-        1
-      ],
-      [
-        "spares",
-        1
-      ]
-    ],
-    "plateCost": [
-      [
-        "iron_ingot",
-        1
-      ],
-      [
-        "mechanical_parts",
-        1
-      ],
-      [
-        "fasteners",
-        1
-      ]
-    ],
+    "switchCost": [["iron_ingot", 1], ["electronic_parts", 2], ["spares", 1]],
+    "plateCost": [["iron_ingot", 2], ["spares", 1], ["electronic_parts", 2], ["iron_plate", 1]],
     "doorCost": [
       [
         "iron_ingot",
@@ -1048,20 +1022,7 @@
     ],
     "offlineCreatures": "excluded (no synthetic offline detection)",
     "lineOfSight": "clearPhysicalLine, walls and solid blocks stop detection",
-    "cost": [
-      [
-        "mechanical_gear",
-        1
-      ],
-      [
-        "iron_ingot",
-        1
-      ],
-      [
-        "fasteners",
-        2
-      ]
-    ]
+    "cost": [["iron_ingot", 1], ["electronic_parts", 2], ["spares", 1]]
   },
   "bearTrapV1": {
     "_status": "SOH_PROVISIONAL B02-P1-B (trap-v1). ORIGINAL_UNKNOWN for historical LI bear trap damage, durability and cost; the LI-v5 example (50 iron ingot + 1 gear) is historical context only, not an SOH default.",

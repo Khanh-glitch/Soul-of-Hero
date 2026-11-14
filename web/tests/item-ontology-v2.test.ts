@@ -9,6 +9,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ITEMS, RECIPES, STRUCTS, SOH_PROVISIONAL_ITEMS } from '../src/game/catalog';
+import { FINAL_ITEMS, isRetiredLive } from '../src/game/final-item-set';
 import { buildSohEconomicGraph, type SohEconomicGraph } from '../src/game/economic-graph';
 import { UNOBTAINABLE_STRUCTURES, projectItemOntology, type ItemOntologyProjection } from '../src/game/item-ontology';
 import { buildRound2Findings, round2FindingsMd, type LiAtlasFull, type Round2Findings } from '../src/game/item-ontology-findings';
@@ -136,7 +137,8 @@ describe('player-facing class (Group A, display only)', () => {
     for (const i of p.items) {
       const liveMade = i.produced_by.filter((r) => { const x = p.recipes.find((y) => y.id === r)!; return x.craftable_shipping || x.craftable_veyra; });
       if (['SALVAGE', 'ORE', 'NATURAL', 'PARTS', 'SPECIMEN'].includes(i.item_class ?? '')) expect(liveMade, i.id).toEqual([]);
-      if (['COMPONENT', 'METAL'].includes(i.item_class ?? '')) expect(i.produced_by.length, i.id).toBeGreaterThan(0);
+      // A LIVE-retired id (final item set v2) keeps its catalog row for old saves but has no live formula any more.
+      if (['COMPONENT', 'METAL'].includes(i.item_class ?? '') && !isRetiredLive(i.id)) expect(i.produced_by.length, i.id).toBeGreaterThan(0);
     }
   });
 
@@ -155,7 +157,8 @@ describe('decisions', () => {
   it('has an explicit decision for every hand-written item and none for ids that no longer exist', () => {
     for (const id of Object.keys(ITEMS)) expect(decisionFor(id), id).toBeDefined();
     for (const id of Object.keys(ITEM_DECISIONS)) expect(ITEMS[id], id).toBeDefined();
-    const explicit = Object.keys(ITEMS).filter((k) => !k.startsWith('deploy_') && !k.startsWith('stone_'));
+    // Final-set imports (34 ids) are decided by the 15/11 roster and get one generated rule, not a V2 row.
+    const explicit = Object.keys(ITEMS).filter((k) => !k.startsWith('deploy_') && !k.startsWith('stone_') && !(FINAL_ITEMS[k] && (FINAL_ITEMS[k][1] === 'LI_IMPORTED' || k.startsWith('seed_'))));
     expect(Object.keys(ITEM_DECISIONS).sort()).toEqual(explicit.sort());
   });
 
@@ -191,6 +194,10 @@ describe('decisions', () => {
           expect(sorted(b.out), `${pr.id}:${b.id} out`).toEqual([`${frozen.out}:${frozen.qty}`]);
         } else {
           const r = live(b.id);
+          // P2 was CLOSED_KEEP in round 2; the final item set then retired the Motor Drive outright (Bible §0.2a).
+          if (!r && RETIRED_RECIPES.includes(b.id)) continue;
+          // …and re-wrote the kit without Fasteners at rev 4. A CLOSED proposal's `before` is then a historical record.
+          if (pr.status === 'CLOSED_KEEP' && (RECIPES as Record<string, { rev?: number }>)[b.id]?.rev === RECIPE_REVISION) continue;
           expect(r, `${pr.id}:${b.id}`).toBeDefined();
           expect(sorted(b.ins), `${pr.id}:${b.id} ins`).toEqual(sorted(r!.ins));
           expect(sorted(b.out), `${pr.id}:${b.id} out`).toEqual(sorted(r!.outs));
@@ -217,7 +224,7 @@ describe('decisions', () => {
   it('round 2 status: exactly the authorised proposals are live, and nothing else moved', () => {
     const status = Object.fromEntries(PROPOSALS.map((x) => [x.id, x.status]));
     expect(status).toEqual({ P1: 'IMPLEMENTED', P2: 'CLOSED_KEEP', P3: 'IMPLEMENTED_PARTIAL', P4: 'IMPLEMENTED', P5: 'IMPLEMENTED', P6: 'HANDED_OFF', P7: 'IMPLEMENTED', P8: 'HANDED_OFF', P9: 'IMPLEMENTED_PARTIAL', P10: 'IMPLEMENTED' });
-    expect(RECIPE_REVISION).toBe(3);
+    expect(RECIPE_REVISION).toBe(4); // rev 3 = Item Ontology V2 round 2; rev 4 = final item set v2 (ARENA 1)
     // P1 / P7 — display only, ids untouched
     expect(ITEMS.spares.name).toBe('Parts'); expect(ITEMS.spares.vi).toBe('Linh kiện');
     expect(ITEMS.mechanical_parts.name).toBe('Machine Parts'); expect(ITEMS.mechanical_parts.vi).toBe('Bộ phận máy');
@@ -250,7 +257,9 @@ describe('decisions', () => {
     // P2: every consumer listed, and the merge is shown to cost more — not asserted to be neutral.
     const f = findings.P2;
     expect(f.rows.length).toBeGreaterThanOrEqual(14);
-    for (const id of ['vehicle_drive', 'motorbike_kit', 'iron_plate', 'mechanical_gear']) expect(f.rows.some((x) => x.consumer === id), id).toBe(true);
+    for (const id of ['iron_plate', 'mechanical_gear']) expect(f.rows.some((x) => x.consumer === id), id).toBe(true);
+    // Final item set (rev 4): the Motor Drive is retired and the Motorbike Kit no longer takes Fasteners.
+    for (const id of ['vehicle_drive', 'motorbike_kit']) expect(f.rows.some((x) => x.consumer === id), id).toBe(false);
     expect(f.rows.find((x) => x.consumer === 'door_powered')!.live).toBe(false);
     expect(f.totals.m1_scrap).toBeGreaterThan(f.totals.before_scrap);
     expect(f.totals.m1_worst_scrap_ratio).toBe(3);

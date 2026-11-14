@@ -116,7 +116,7 @@ export interface Entity {
   open?: boolean; locked?: string; poi?: string; label?: string; stock?: Record<string, number>;
   station?: { queue: Job[]; burn: number; fuelC: string; outC: string; level?: 1 | 2 | 3; upgrade?: 'kiln_lining'; stateCode?: string };
   garden?: { crop: string | null; growth: number; water: number; coldFrame?: boolean };
-  farm?: { enabled: boolean; crop: 'crop' | 'herb'; energy: number; gardenId?: string; barrelId?: string; chestId?: string; lastCode?: string };
+  farm?: { enabled: boolean; crop: 'crop' | 'herb' | 'berry'; energy: number; gardenId?: string; barrelId?: string; chestId?: string; lastCode?: string };
   irSensor?: { version: 'ir-v1'; enabled: boolean };
   bearTrap?: { version: 'trap-v1'; state: 'unarmed' | 'armed' | 'spent' | 'worn'; uses: number; snapAt?: number };
   basePower?: { enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production'; network?: 'wire-v1' };
@@ -266,7 +266,9 @@ export interface RunState {
   tech?: { families: string[]; recipeRev: number };
   /** PA1 R1 (additive): count of knowledge entries removed by an explicit save migration,
    *  so the load note can tell the player what changed. Never a material grant. */
-  migrated?: { retiredRecipes?: number; retiredNoticeShown?: true };
+  migrated?: { retiredRecipes?: number; retiredNoticeShown?: true; /** Item set v2: stacks converted from a retired id on load (durable evidence). */ retiredItems?: number };
+  /** Final item set stamp (final-item-set.ts). Absent = written before the cutover; converted once on load. */
+  itemSetVersion?: number;
   traces: Trace[];
   /** Bounded, ephemeral real event impulses; absent in legacy runs. */
   worldStimuli?: WorldStimulus[];
