@@ -27,7 +27,8 @@ import type { Api } from '../src/ui/common';
 
 const NOW = Date.UTC(2026, 10, 13, 9, 0, 0);
 
-const stubApi = (gs: any): Api => ({
+const stubApi = (gs: any, stationConsoleTab?: 'make' | 'study' | 'families'): Api => ({
+  stationConsoleTab,
   gs,
   now: () => Date.now(),
   act: () => ({ ok: true }),
@@ -47,6 +48,11 @@ const stubApi = (gs: any): Api => ({
   sfx: () => {},
   rerender: () => {},
 } as unknown as Api);
+
+/** Render the console the router chooses, optionally with the Technology tab already open. */
+const renderStation = (gs: any, eid: string, tab?: 'make' | 'study' | 'families') =>
+  renderToStaticMarkup(<ContainerPanel api={stubApi(gs, tab)} eid={eid} />);
+const plain = (html: string) => html.replace(/<[^>]*>/g, ' ').replace(/&#x27;|&#39;/g, "'").replace(/\s+/g, ' ');
 
 function fixture() {
   const built = buildQaSandbox('research_access', 'female', NOW);
@@ -93,19 +99,62 @@ describe('PA1 P1: the research_access fixture the Chromium gate drives', () => {
 });
 
 describe('PA1 P1: the shipped router reaches the technology-family ledger', () => {
-  it('ContainerPanel renders the console, and the console carries the ledger', () => {
+  it('the console opens on Blueprints and offers a named Technology control', () => {
     const { gs, table } = fixture();
-    const html = renderToStaticMarkup(<ContainerPanel api={stubApi(gs)} eid={table.id} />);
+    const html = renderStation(gs, table.id);
     // The console header proves this is StationConsole (the router's choice), not the retired column.
     expect(html).toContain('Research table');
-    expect(html).toContain('Technology families');
-    expect(html).toContain('One paid study unlocks a family');
+    // Discoverability is the control itself: a player-readable tab label, present on the default surface.
+    expect(html).toContain('data-testid="research-tab-families"');
+    expect(plain(html)).toContain('Technology');
+    // The recovered craft views are not displaced by it.
+    expect(plain(html)).toContain('Blueprints');
+    expect(plain(html)).toContain('Specimens');
+    expect(plain(html)).toContain('Tinker');
+    expect(plain(html)).toContain('Directed study');
+    // And on that default surface the ledger is deliberately NOT stacked under the scroll area: it is the
+    // Technology tab's content, which the Chromium gate proves is inside the viewport once selected.
+    expect(html).not.toContain('Technology families');
+  });
+
+  it('the Technology tab renders the ledger in a pane of its own', () => {
+    const { gs, table } = fixture();
+    const html = renderStation(gs, table.id, 'families');
+    expect(html).toContain('data-testid="research-family-pane"');
+    expect(plain(html)).toContain('Technology families');
+    expect(plain(html)).toContain('One paid study unlocks a family');
+    // No source commentary may leak into shipped text (an earlier revision rendered raw `//` lines).
+    const text = plain(html);
+    expect(text).not.toMatch(/\/\//);
+    for (const leaked of ['ContainerPanel', 'ResearchBody', 'browser gate', 'StationConsole for any']) {
+      expect(text, `source commentary leaked into shipped UI text: ${leaked}`).not.toContain(leaked);
+    }
+  });
+
+  it('no tab paints source commentary, and only the Technology tab carries the ledger', () => {
+    // The leak this pins is specific and has bitten twice: a `//` line left in the JSX children list is not
+    // a comment, it is text. Checking the rendered string of every tab — rather than trusting a source scan
+    // — is what makes that impossible to ship again silently.
+    const { gs, table } = fixture();
+    const TABS = ['make', 'study', 'families'] as const;
+    for (const tab of TABS) {
+      const text = plain(renderStation(gs, table.id, tab));
+      expect(text, `raw // commentary painted in the ${tab} view`).not.toMatch(/\/\//);
+      for (const leaked of ['ContainerPanel', 'ResearchBody', 'StationConsole for any', 'initialTab', 'test/inspection seam', 'Chromium']) {
+        expect(text, `${leaked} leaked into the ${tab} view`).not.toContain(leaked);
+      }
+      if (tab === 'families') {
+        expect((text.match(/open design · no authorized cost/g) ?? []).length).toBeGreaterThanOrEqual(10);
+      } else {
+        expect(text, 'the ledger is stacked back into the craft column instead of its own tab').not.toContain('Technology families');
+      }
+    }
   });
 
   it('every recovered family is listed, priced where the paper priced it, and undecided where it is not', () => {
     const { gs, table } = fixture();
-    const html = renderToStaticMarkup(<ContainerPanel api={stubApi(gs)} eid={table.id} />);
-    const text = html.replace(/<[^>]*>/g, ' ').replace(/&#x27;|&#39;/g, "'").replace(/\s+/g, ' ');
+    const html = renderStation(gs, table.id, 'families');
+    const text = plain(html);
     for (const fam of ['ENERGY', 'METALLURGY', 'MOBILITY', 'ELECTRICAL', 'AGRICULTURE', 'ARMORY', 'EXPLORATION', 'ARCANA', 'STEEL', 'DEFENSE', 'CORE_SPECIFIC']) {
       expect(text, `${fam} is missing from the console the player actually sees`).toContain(fam);
     }
@@ -123,8 +172,8 @@ describe('PA1 P1: the shipped router reaches the technology-family ledger', () =
     // buy button while enforcement is unapproved (ledger: no family is withheld in this build).
     const { gs, r, table } = fixture();
     r.tech = { ...(r.tech ?? { families: [] }), families: [...((r.tech?.families) ?? []), 'ENERGY'] };
-    const html = renderToStaticMarkup(<ContainerPanel api={stubApi(gs)} eid={table.id} />);
-    const text = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ');
+    const html = renderStation(gs, table.id, 'families');
+    const text = plain(html);
     expect(text).toContain('studied · 9 formulas');
     expect(text).not.toContain('Commission study');
     expect(text).not.toContain('pay 5 Spares');

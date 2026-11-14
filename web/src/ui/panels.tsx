@@ -197,7 +197,9 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const compact = !!e.farm || !!e.garden || !!e.basePower || !!e.turret || e.type==='claim';
   // VISUAL ARENA: production machines and the research table use the new console.
   // Same entity, same station state, same intents — only the presentation changes.
-  if (st && !compact && kind) return <StationConsole api={api} eid={eid} />;
+  // `stationConsoleTab` is a test/inspection seam only: the shipped path never sets it, so the router's
+  // behaviour is unchanged for a player.
+  if (st && !compact && kind) return <StationConsole api={api} eid={eid} initialTab={api.stationConsoleTab} />;
   if (compact && inventoryOnly) return <InventoryPanel api={api} quickTo={quickTo} x={168} top={54} backToContainer onClose={()=>{api.setSel(null);setInventoryOnly(false);}} />;
   return <>
     <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className={`scroll container-panel container-panel--${e.kind === 'struct' ? e.type : e.kind}`}>

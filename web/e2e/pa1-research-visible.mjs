@@ -11,14 +11,17 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const out='evidence/pa1-research-visible';
 await mkdir(out,{recursive:true});
-const rec={sha:process.env.BUILD_SHA||'unknown',status:'RUNNING',screenshots:[],attempts:0,prompt:'',inputAlive:null,research:{open:false},hotbarSlotUsed:null,errors:[]};
+const rec={sha:process.env.BUILD_SHA||'unknown',status:'RUNNING',screenshots:[],attempts:0,prompt:'',inputAlive:null,research:{open:false,tabClicked:false,families:[],frames1280:[],frames640:[],purchaseControls:null,leakCheck:[]},hotbarSlotUsed:null,errors:[]};
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 const context=await browser.newContext({viewport:{width:1280,height:720},deviceScaleFactor:1});
 const page=await context.newPage();
 page.on('pageerror',e=>rec.errors.push('pageerror:'+e.message));
 page.on('console',m=>{if(m.type()==='error')rec.errors.push('console:'+m.text());});
 async function shot(name){const path=name+'.png';await page.screenshot({path:out+'/'+path,animations:'disabled'});rec.screenshots.push(path);}
-const panel=()=>page.getByText('Technology families',{exact:true});
+const panel=()=>page.getByTestId('research-tab-families');            // the console's own control: proof it is open
+const pane=()=>page.getByTestId('research-family-pane');              // the Technology tab's body
+const famText=()=>page.getByText('Technology families',{exact:true}); // what the pane is headed by
+
 const promptText=async()=>{const el=page.locator('.prompt').first();return (await el.count())?(await el.innerText()).replace(/\s+/g,' ').trim():'';};
 // The read-only driver view the shipped UI already publishes (camera, stage transform, current target).
 // It is the same target the on-screen prompt is naming, so the loop is steered by what the player can see.
@@ -166,11 +169,45 @@ try{
   assert.ok(opened,'the Research Table never became usable from the real UI; last target '+JSON.stringify(rec.prompt)+' after '+rec.attempts+' taps; saw '+JSON.stringify(rec.labels));
   await shot('01-research-panel-1280');
 
-  // The recovered ledger, in the player's own words: all eleven family names, the one price the paper
-  // authorises, and the honest status of a family whose enforcement has not been approved.
-  const box=page.locator('.panel').filter({hasText:'Technology families'}).first();
+  // --- the Technology tab: clicked, not assumed -----------------------------------------------
+  // DOM presence and innerText() do not prove legibility, so every check below measures the painted box:
+  // the heading and the ENERGY row must be inside the viewport, on top of the family pane, at both the
+  // desktop and the shipped minimum size. The other two research views are clicked too, because the tab
+  // must not have eaten Blueprints or Specimens/Core study on the way in.
+  const famTab=page.getByTestId('research-tab-families');
+  await famTab.click();
+  await page.waitForTimeout(320);
+  rec.research.tabClicked=true;
+  async function inFrame(locator,label,vp){
+    const box=await locator.boundingBox();
+    assert.ok(box,label+' has no bounding box: it is not painted on screen');
+    const visible=await locator.isVisible();
+    const fits=box.x>=-0.5 && box.y>=-0.5 && box.width>0 && box.height>0
+      && box.x+box.width<=vp.width+0.5 && box.y+box.height<=vp.height+0.5;
+    const hitTest=await page.evaluate(([cx,cy,sel])=>{
+      const el=document.elementFromPoint(cx,cy); const pane=document.querySelector(sel);
+      if(!el) return 'nothing-at-point';
+      if(!pane) return 'no-pane';
+      return pane.contains(el) ? 'inside-pane' : 'covered-by:'+el.tagName+'.'+String(el.className&&el.className.toString?el.className.toString():'');
+    },[box.x+box.width/2,box.y+Math.min(box.height/2,10),'[data-testid="research-family-pane"]']);
+    const recd={label,box:{x:Math.round(box.x),y:Math.round(box.y),w:Math.round(box.width),h:Math.round(box.height)},visible,fits,hitTest};
+    assert.ok(visible,recd.label+' is not visible (hidden or zero-opacity)');
+    assert.ok(fits,recd.label+' is outside the '+vp.width+'x'+vp.height+' viewport: '+JSON.stringify(recd.box));
+    assert.equal(hitTest,'inside-pane',recd.label+' is not the thing the player would hit at that point');
+    return recd;
+  }
+  const vp1280=page.viewportSize();
+  rec.research.frames1280=[
+    await inFrame(famText(),'Technology families heading',vp1280),
+    await inFrame(page.getByTestId('family-row-ENERGY'),'ENERGY family row',vp1280),
+  ];
+  await shot('02-technology-families-1280');
+
+  const box=pane();
   const text=(await box.innerText()).replace(/\s+/g,' ').trim();
   rec.research.text=text.slice(0,3000);
+  // The recovered ledger, in the player's own words: all eleven family names, the one price the paper
+  // authorises, and the honest status of a family whose enforcement has not been approved.
   const FAMS=['ENERGY','METALLURGY','MOBILITY','ELECTRICAL','AGRICULTURE','ARMORY','EXPLORATION','ARCANA','STEEL','DEFENSE','CORE_SPECIFIC'];
   const seen=FAMS.filter(f=>new RegExp('\\b'+f+'\\b').test(text));
   const missing=FAMS.filter(f=>!seen.includes(f));
@@ -183,12 +220,53 @@ try{
   assert.match(energy,/nothing withheld in this build/,'an unenforced family must say so, not hint at a gate: '+energy);
   assert.ok((text.match(/open design · no authorized cost/g) ?? []).length>=10,'at least ten undecided families must be labelled undecided: '+text.slice(0,600));
   assert.ok(!/ENERGY[^.]{0,120}(Required|locked|buy)/i.test(text),'the panel may not claim the ENERGY study gates anything today: '+energy);
+  // Nothing may offer a purchase the ledger has not authorised, and no source commentary may be painted.
+  // The buy control lives INSIDE a family row, so the row itself is what gets counted: a page-wide
+  // getByRole('button',{name:...}) for a label this code never renders would pass forever and prove nothing.
+  rec.research.purchaseControls={
+    energyRow:await page.getByTestId('family-row-ENERGY').getByRole('button').count(),
+    pane:await page.getByTestId('research-family-pane').getByRole('button').count(),
+  };
+  assert.equal(rec.research.purchaseControls.energyRow,0,'the unapproved ENERGY family must not present a buy control: '+JSON.stringify(rec.research.purchaseControls));
+  assert.equal(rec.research.purchaseControls.pane,0,'the family pane must be readable text, not a shop: '+JSON.stringify(rec.research.purchaseControls));
+  // Source commentary is a whole-console problem, not a pane problem — the leaked `//` lines sat in the
+  // Blueprints column — so every tab's painted text runs through this check, and a failure names the tab.
+  const leakFree=(t,label)=>{
+    const bad=/\/\/|\bTODO\b|ContainerPanel|ResearchBody|StationConsole|ResearchFamilies|\bapi\.gs\b/.exec(t);
+    if(bad)throw new Error('source text leaked into the '+label+' view of the shipped console ('+bad[0]+'): '+t.slice(0,300));
+    return {label,chars:t.length,leak:null};
+  };
+  rec.research.leakCheck.push(leakFree(text,'Technology'));
+
+  // The other two research views must still be reachable from the same console.
+  const tabText=async(name)=>{
+    await page.getByRole('button',{name:new RegExp('^'+name+'$')}).first().click();
+    await page.waitForTimeout(260);
+    return (await page.locator('.station-console').first().innerText()).replace(/\s+/g,' ').trim();
+  };
+  rec.research.blueprintsTab=await tabText('Blueprints');
+  assert.match(rec.research.blueprintsTab,/Directed study/,'the Blueprints view lost its directed-study list');
+  assert.match(rec.research.blueprintsTab,/Tinker/,'the Blueprints view lost the random-study control');
+  rec.research.leakCheck.push(leakFree(rec.research.blueprintsTab,'Blueprints'));
+  rec.research.specimensTab=await tabText('Specimens & Cores');
+  assert.match(rec.research.specimensTab,/Specimen \/ Core study/,'the Specimens & Cores view lost its heading');
+  rec.research.leakCheck.push(leakFree(rec.research.specimensTab,'Specimens & Cores'));
+  await famTab.click(); await page.waitForTimeout(280);   // back to the ledger for the small-viewport shot
+  assert.ok((await pane().count())>0,'the Technology tab did not re-open after visiting the other views');
 
   // And it must stay legible on the shipped minimum viewport, not only on a desktop.
   await page.setViewportSize({width:640,height:360});
-  await page.waitForTimeout(300);
-  assert.ok((await panel().count())>0,'the family list vanished at 640x360');
-  await shot('02-research-panel-640');
+  await page.waitForTimeout(400);
+  const vp640=page.viewportSize();
+  assert.ok((await famText().count())>0,'the family list vanished at 640x360');
+  rec.research.frames640=[
+    await inFrame(famText(),'Technology families heading @640',vp640),
+    await inFrame(page.getByTestId('family-row-ENERGY'),'ENERGY family row @640',vp640),
+  ];
+  await shot('03-technology-families-640');
+  const count=await page.getByTestId(/^family-row-/).count();
+  rec.research.familyRows=count;
+  assert.ok(count>=11,'the Technology pane listed only '+count+' of the 11 recovered families');
   assert.equal(rec.errors.length,0,'Browser console/page errors: '+JSON.stringify(rec.errors.slice(0,3)));
   rec.status='PASS_BROWSER_UI';
 }catch(e){rec.status='FAIL';rec.failure=String(e);try{await shot('FAIL')}catch{}}

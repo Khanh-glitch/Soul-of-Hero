@@ -20,6 +20,8 @@ export interface Api {
   sel: { c: string; slot: number } | null; setSel: (s: { c: string; slot: number } | null) => void;
   setBuild: (t: string | null) => void; buildType: string | null; reclaim: boolean; setReclaim: (b: boolean) => void; repairMode: boolean; setRepairMode: (b: boolean) => void; setUpgradeMode: (b: boolean) => void;
   sfx: (t: string) => void; rerender: () => void;
+  /** Test/inspection seam forwarded to StationConsole by ContainerPanel; never set in the shipped loop. */
+  stationConsoleTab?: 'make' | 'study' | 'families';
 }
 export type PanelState = { kind: 'inv' | 'craft' | 'build' | 'map' | 'skills' | 'rest' | 'menu' | 'container' | 'vendor' | 'escrow' | 'evac' | 'report' | 'research' | 'notes' | 'journey'; eid?: string; recipe?: string; lines?: string[]; report?: import('../game/return-report').OfflineReturnV1 | null };
 export const mkIntent = (type: string, p: Record<string, any> = {}): Intent => ({ id: `${type}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`, type, ...p });

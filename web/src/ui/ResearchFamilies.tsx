@@ -9,12 +9,15 @@ import type { Api } from './common';
 // older `ResearchBody` column in panels.tsx is only reached when that early return is bypassed (a
 // compact station, or a test that renders the body directly). Before this file existed the ledger lived
 // ONLY in ResearchBody, which is exactly why a green panel test coexisted with a shipped UI that never
-// showed it: the router opened the console, and the console had no family list at all. The recovered
-// paper's rule — a family with an authorized price states that price, a family whose enforcement is NOT
+// showed it: the router opened the console, and the console had no family list at all. Inside the
+// console it is now a tab of its own (`Technology`), because the two-column Blueprints body is capped at
+// 142 px and a ledger appended to that column is present in the DOM yet unreadable on screen — which is
+// the second way this same claim died. The recovered paper's rule — a family with an authorized price states that price, a family whose enforcement is NOT
 // approved says so without pretending there is a gate, a family with no authorized cost is open design and
 // cannot be bought — is something the player has to be able to READ, so it may not live in whichever
 // component happens to be wired up. Both hosts render this file, and `web/e2e/pa1-research-visible.mjs`
-// asserts the words are on the screen after a real E press, so the duplication can never silently rot.
+// asserts the words sit inside the painted viewport after a real E press and a real tab click, at
+// 1280x720 and at the shipped minimum 640x360, so the duplication can never silently rot again.
 // ============================================================================
 
 export function ResearchFamilies({ api, eid, header = true }: { api: Api; eid: string; header?: boolean }) {

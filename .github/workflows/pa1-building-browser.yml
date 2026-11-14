@@ -31,6 +31,9 @@ on:
       - 'web/src/ui/StationConsole.tsx'
       - 'web/src/ui/ResearchFamilies.tsx'
       - 'web/tests/pa1-research-console.test.tsx'
+      - 'web/tests/pa1-research-visible-gate.test.ts'
+      - 'web/src/ui/common.tsx'
+      - 'web/src/ui/StationConsole.tsx'
       - 'web/src/ui/Game.tsx'
       - 'web/src/index.css'
       - 'web/e2e/pa1-building-palette.mjs'
@@ -95,6 +98,42 @@ jobs:
           BUILD_SHA: ${{ github.sha }}
           GAME_URL: http://127.0.0.1:4173/
         run: node e2e/pa1-research-visible.mjs
+      # The manifest is the evidence, so the manifest is what gets read here — not a green exit code.
+      # A run whose research block does not carry per-element frames at BOTH sizes is a run that never
+      # proved legibility, which is precisely the claim Control Tower held this branch for.
+      - name: Publish the visibility proof
+        working-directory: web
+        shell: bash
+        run: |
+          node -e '
+            const fs=require("node:fs");
+            const m=JSON.parse(fs.readFileSync(process.env.MANIFEST||"./evidence/pa1-research-visible/manifest.json","utf8"));
+            const r=m.research||{};
+            const bad=[];
+            if(r.open!==true)bad.push("panel never opened");
+            if(r.tabClicked!==true)bad.push("the Technology tab was never clicked");
+            for(const k of ["frames1280","frames640"]){
+              const f=r[k]||[];
+              if(f.length<2)bad.push(k+" has no per-element frames");
+              for(const e of f){ if(!e.fits||!e.visible||e.hitTest!=="inside-pane")bad.push(k+":"+e.label+" not readable " +JSON.stringify(e)); }
+            }
+            if((r.families||[]).length<11)bad.push("only "+(r.families||[]).length+" of 11 families read from the screen");
+            if(!/cost recorded \(5 Spares \+ 2 Iron Ingot\)/.test(r.energyRow||""))bad.push("the ENERGY cost row is not in the captured text");
+            if((r.leakCheck||[]).length!==3)bad.push("leak check did not cover all three tabs");
+            if(r.purchaseControls&&(r.purchaseControls.pane||r.purchaseControls.energyRow))bad.push("an unapproved family presented a purchase control");
+            const rows=(r.frames1280||[]).concat(r.frames640||[]).map(e=>"| "+e.label+" | "+e.box.x+","+e.box.y+" | "+e.box.w+"x"+e.box.h+" | "+(e.fits&&e.visible?"yes":"NO")+" |").join("\n");
+            const shots=fs.readdirSync("./evidence/pa1-research-visible").filter(f=>f.endsWith(".png")).map(f=>"- `web/evidence/pa1-research-visible/"+f+"`").join("\n");
+            const body=["## PA1 research panel — what the browser actually painted","",
+              "| element | top-left | size | inside viewport |","|---|---|---|---|",rows,"",
+              "families read from the screen: "+(r.families||[]).join(", "),"",
+              "ENERGY row: `"+String(r.energyRow||"").slice(0,220)+"`","",
+              "screenshots:",shots,"",
+              bad.length?"**PROOF INCOMPLETE:** "+bad.join(" · "):"all frames inside the viewport at 1280x720 and 640x360",
+            ].join("\n");
+            console.log(body);
+            if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,body+"\n\n");
+            if(bad.length)process.exit(1);
+          '
       - name: Upload render evidence
         if: always()
         uses: actions/upload-artifact@v4

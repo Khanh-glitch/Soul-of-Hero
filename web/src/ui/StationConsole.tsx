@@ -48,9 +48,13 @@ function CostChips({ ins, have }: { ins: [string, number][]; have: (k: string) =
   </span>;
 }
 
-export function StationConsole({ api, eid }: { api: Api; eid: string }) {
+export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; eid: string; initialTab?: 'make' | 'study' | 'families' }) {
   const { r, e, st, kind } = useStation(api, eid);
-  const [tab, setTab] = useState<'make' | 'study'>('make');
+  // 'families' is the recovered technology ledger: a first-class tab, not a strip below the blueprint
+  // scroll area. Kept out of the default so a survivor opening the table to craft sees craft first.
+  // `initialTab` exists so the family pane can be rendered in a static test without a click; the shipped
+  // game always opens on Blueprints, so nothing about the player's default view changes.
+  const [tab, setTab] = useState<'make' | 'study' | 'families'>(initialTab);
   const [view, setView] = useState<'work' | 'service'>('work');
   const [q, setQ] = useState('');
   const [picked, setPicked] = useState<string | null>(null);
@@ -134,15 +138,23 @@ export function StationConsole({ api, eid }: { api: Api; eid: string }) {
     </div>
 
     {/* ---- tabs ---------------------------------------------------------- */}
-    {research && <div style={{ display: 'flex', gap: 3, marginBottom: 4 }}>
+    {research && <div style={{ display: 'flex', gap: 3, marginBottom: 4, flexWrap: 'wrap' }}>
       <button className={`btn sm ${tab === 'make' ? 'gold' : ''}`} onClick={() => setTab('make')}>Blueprints</button>
       <button className={`btn sm ${tab === 'study' ? 'gold' : ''}`} onClick={() => setTab('study')}>Specimens &amp; Cores</button>
+      <button className={`btn sm ${tab === 'families' ? 'gold' : ''}`} data-testid="research-tab-families" onClick={() => setTab('families')}>Technology</button>
     </div>}
     {hasService && <div className="station-service-tabs"><button className={`btn sm ${view === 'work' ? 'gold' : ''}`} onClick={() => setView('work')}>Production</button><button className={`btn sm ${view === 'service' ? 'gold' : ''}`} onClick={() => setView('service')}>Service · Upgrades</button></div>}
     {hasService && view === 'service' && <StationService api={api} e={e} />}
 
     {(!hasService || view === 'work') && <>
-    <div style={{ display: 'flex', gap: 4, minHeight: 0, flex: 1 }}>
+    {research && tab === 'families'
+      // The family ledger gets the whole body, not the 142 px strip under a scroll area: eleven recovered
+      // families with their state must be readable at the shipped minimum viewport, which is why this is a
+      // tab of its own rather than another block appended below Blueprints.
+      ? <div className="console-col scroll" data-testid="research-family-pane" style={{ minHeight: 0, maxHeight: 246, overflowY: 'auto' }}>
+        <ResearchFamilies api={api} eid={eid} />
+      </div>
+      : <div style={{ display: 'flex', gap: 4, minHeight: 0, flex: 1 }}>
       {/* -------- left: what can I run -------- */}
       <div className="console-col scroll" style={{ flex: 1, maxHeight: 142, overflowY: 'auto' }}>
         {research && tab === 'make' ? <ResearchList api={api} eid={eid} e={e} q={q} setQ={setQ} />
@@ -208,7 +220,7 @@ export function StationConsole({ api, eid }: { api: Api; eid: string }) {
           {research && outUsed > 0 && <div className="lbl" style={{ fontSize: 8, color: 'var(--brassLit)', marginTop: 2 }}>Take a blueprint, then use it in the pack to learn it.</div>}
         </div>
       </div>
-    </div>
+    </div>}
 
     {/* ---- pack strip: physical transfer, no remote access ---- */}
     <div className="rule" style={{ margin: '4px 0 3px' }} />
@@ -255,10 +267,6 @@ function ResearchList({ api, eid, e, q, setQ }: { api: Api; eid: string; e: Enti
         <button className="btn sm" disabled={!can} title={full ? 'Queue full' : !can ? `Need ${B.directedSparesCost - spares} more Spares` : 'Reserve Spares for this research'} onClick={() => api.act('research', { mode: 'directed', recipe: k, eid })}>Study</button>
       </div>;
     })}
-    // The family ledger belongs in the console the router actually opens. `ContainerPanel` returns
-    // StationConsole for any non-compact station, so a ledger rendered only in the retired `ResearchBody`
-    // column would be invisible in the shipped game — which is what the browser gate caught.
-    <ResearchFamilies api={api} eid={eid} />
   </>;
 }
 
