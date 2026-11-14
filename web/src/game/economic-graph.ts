@@ -2465,6 +2465,13 @@ function computeReachabilityDiagnostics(nodes: EconNode[], edges: EconEdge[]): E
               knownRecipes.add(rk);
               changed = true;
             }
+            // Item Ontology V2 audit fix: a looted `blueprint:<recipe>` IS the physical `blueprint`
+            // item (engine.ts mkStack(r,'blueprint',1,<recipe>)). Recording only the knowledge made
+            // the diagnostics report item:blueprint as unreachable on every layout.
+            if (!items.has('blueprint')) {
+              items.add('blueprint');
+              changed = true;
+            }
           } else if (e.to.startsWith('currency:')) {
             const ck = e.to.slice(9);
             if (!currencies.has(ck)) {
@@ -2503,6 +2510,11 @@ function computeReachabilityDiagnostics(nodes: EconNode[], edges: EconEdge[]): E
           const rk = e.to.slice(7);
           if (!knownRecipes.has(rk)) {
             knownRecipes.add(rk);
+            changed = true;
+          }
+          // The research table's output slot receives a physical blueprint (engine.ts stepStations 'R:' jobs).
+          if (!items.has('blueprint')) {
+            items.add('blueprint');
             changed = true;
           }
         }

@@ -5365,7 +5365,7 @@
     {
       "id": "item:fur",
       "kind": "item",
-      "label": "Wolf Fur",
+      "label": "Fur",
       "layerScope": "shared",
       "runtimeStatus": "LIVE_SHIPPING_AND_VEYRA",
       "meta": {
@@ -48070,6 +48070,7 @@
       "bandage",
       "beetle_horn",
       "berries",
+      "blueprint",
       "boar_tusk",
       "bow",
       "brick",
@@ -48201,7 +48202,6 @@
       "wood_spear"
     ],
     "shippingUnreachableItems": [
-      "blueprint",
       "crude_petroleum",
       "custodian_lantern",
       "relic_shaleheart",
@@ -48220,6 +48220,7 @@
       "arrow",
       "bandage",
       "berries",
+      "blueprint",
       "boar_tusk",
       "bow",
       "brick",
@@ -48350,7 +48351,6 @@
     ],
     "veyraUnreachableItems": [
       "beetle_horn",
-      "blueprint",
       "chitin",
       "chitin_armor",
       "core_demon",
@@ -48572,7 +48572,7 @@
     ]
   },
   "generatedFrom": {
-    "sourceSHA": "d1d752434ff1d39afec7d2891015366ae488c1e9",
+    "sourceSHA": "934f4471326116737f206d2fb2d9a84ba77328da",
     "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
     "recipeRevision": 2,
     "retiredRecipes": [

@@ -1,6 +1,6 @@
 {
   "schema": "soh-runtime-item-formula-atlas-v1",
-  "sourceSHA": "fd9390609f0a6675894166b2dc8716390a32f4de",
+  "sourceSHA": "934f4471326116737f206d2fb2d9a84ba77328da",
   "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
   "recipeRevision": 2,
   "retiredRecipes": [

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { itemClassLabel } from '../game/item-class';
 import { BAL, type RunState, type Stack } from '../game/core';
 import { ITEMS } from '../game/catalog';
 import { C, countItem, invWeight, carryLimit, cartWeight, cartLimit, phaseOf, runHours, dayTime, weatherAt, weatherSlot, effTile } from '../game/engine';
@@ -206,7 +207,7 @@ function HeldInfo({ s, r }: { s: Stack | null; r: RunState }) {
           : d.slot ? <div className="lbl" style={{ fontSize: 8, color: 'var(--info)' }}>RMB equip ({d.slot})</div>
             : d.dmg ? <div className="lbl" style={{ fontSize: 8, color: s.dur === 0 ? 'var(--bad)' : 'var(--muted)' }}>dmg {d.dmg}{d.power ? ' · tool' : ''}{s.dur !== undefined && d.dur ? ` · ${s.dur === 0 ? 'BROKEN' : `${Math.round((s.dur / d.dur) * 100)}%`}` : ''}</div>
               : d.place ? <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>LMB place</div>
-                : <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>{d.cat}</div>}
+                : <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>{itemClassLabel(s.key, d.cat).toLowerCase()}</div>}
     {core && s.reserves && s.reserves.basic + s.reserves.refined + s.reserves.signature === 0 && <div className="lbl" style={{ fontSize: 8, color: 'var(--bad)' }}>EMPTY · R / Shift+R / Alt+R</div>}
     {void r}
   </>;

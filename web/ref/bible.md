@@ -712,6 +712,7 @@ Only tests defined, not executed. Native proof needs real input, source/receipt,
 
 
 - **08/11/2026 — [CHỐT CREATOR D-FINAL-01..04]:** phạm vi toàn bộ cơ chế Bible đã duyệt và LI phù hợp, Atlas proposal cần quyết định riêng; 336h chứa khoảng hai năm với tám mùa; LMB/Q/E/F/R có ngữ nghĩa đã chốt; Control Tower được ủy quyền quyết định chi tiết trong-scope; Map/UI/HUD và Gold là hợp đồng tích hợp bắt buộc, không là lý do chờ agent cũ. Ghi tại §0.1c, đối chiếu K2/K8, VI, VIII và hợp đồng thực thi duy nhất.
+- **14/11/2026 — Item Ontology V2 (phụ lục kiểm toán, KHÔNG đổi luật):** [item-ontology-v2/APPENDIX.md](item-ontology-v2/APPENDIX.md) được sinh từ đồ thị kinh tế runtime tại `934f447`. Đã làm (không đổi cơ chế): nhãn phân loại vật phẩm thay cho một nhãn "MATERIAL", sửa mô tả sai, sửa lỗi kiểm toán báo Blueprint không với tới được. Các đề xuất P1–P10 (đặt tên trục Parts/Linh kiện cho `spares`, gộp Fasteners, vai trò Pipe/Blade/Plate, bỏ Plank…) **chưa được duyệt và chưa triển khai**; khi Creator duyệt mục nào thì sửa K4/§0.2 tại chính file này trong cùng commit.
 
 ### 8.7. Canonical correction changelog — 2026-11-01 (plus BUILD-0 integration baseline)
 

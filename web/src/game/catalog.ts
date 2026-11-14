@@ -78,7 +78,7 @@ export const ITEMS: Record<string, ItemDef> = {
   charcoal: I({ name: 'Charcoal', cat: 'res', icon: 'ore', c1: '#2b2420', c2: '#6e5a4c', w: 0.5, max: 60, desc: 'Fuel made from burnt wood.', fuel: 55 }),
   crystal: I({ name: 'Frost Crystal', cat: 'res', icon: 'gem', c1: '#4fa6d8', c2: '#c8f0ff', w: 0.5, max: 30, desc: 'Cold-grown crystal from the north. Core synthesis.' }),
   raw_salt: I({ name: 'Raw Salt', cat: 'res', icon: 'gem', c1: '#9bb8b2', c2: '#f2fff0', w: 0.25, max: 40, desc: 'Mineral crust chipped from coastal salt shale. Seasons a hearty roast.' }),
-  root_broth: I({ name: 'Root Broth', cat: 'food', icon: 'bowl', c1: '#594e30', c2: '#b7d476', w: 0.5, max: 10, desc: 'Cooked garden sunroot and Bitterleaf: restorative food with moisture.', food: { hunger: 32, thirst: 16, hp: 12, warmth: 10 } }),
+  root_broth: I({ name: 'Root Broth', cat: 'food', icon: 'bowl', c1: '#594e30', c2: '#b7d476', w: 0.5, max: 10, desc: 'Warm broth simmered with Bitterleaf from garden Sunroot or from Grouse Eggs: restorative food with moisture.', food: { hunger: 32, thirst: 16, hp: 12, warmth: 10 } }),
   herb_roast: I({ name: 'Herb Roast', cat: 'food', icon: 'meat', c1: '#8b6e37', c2: '#d8c080', w: 0.4, max: 20, desc: 'A restorative cooked meal; Bitterleaf could instead become medicine.', food: { hunger: 30, hp: 15, warmth: 8 } }),
   salted_meat: I({ name: 'Salted Roast', cat: 'food', icon: 'meat', c1: '#9a5638', c2: '#f0bb76', w: 0.45, max: 20, desc: 'Roast meat seasoned with gathered salt; a hearty field meal.', food: { hunger: 42, hp: 8, warmth: 8 } }),
   sulfur: I({ name: 'Sulfur', cat: 'res', icon: 'ore', c1: '#b59a1e', c2: '#f2e05a', w: 0.5, max: 40, desc: 'Volcanic sulfur. Volatile.' }),
@@ -88,7 +88,7 @@ export const ITEMS: Record<string, ItemDef> = {
   rope: I({ name: 'Rope', cat: 'res', icon: 'rope', c1: '#9a7a44', c2: '#d8bb78', w: 0.3, max: 30, desc: 'Twisted fiber.' }),
   hide: I({ name: 'Raw Hide', cat: 'res', icon: 'hide', c1: '#7a4e34', c2: '#b88a62', w: 0.8, max: 30, desc: 'Cure at a workbench into leather.' }),
   leather: I({ name: 'Leather', cat: 'res', icon: 'hide', c1: '#5a3a22', c2: '#9c6a3e', w: 0.6, max: 30, desc: 'Cured leather.' }),
-  fur: I({ name: 'Wolf Fur', cat: 'res', icon: 'hide', c1: '#8e95a0', c2: '#e1e6ee', w: 0.6, max: 30, desc: 'Warm pelt.' }),
+  fur: I({ name: 'Fur', cat: 'res', icon: 'hide', c1: '#8e95a0', c2: '#e1e6ee', w: 0.6, max: 30, desc: 'Warm pelt from a fox or hare, wild or penned. Sewn into a Fur Cloak.' }),
   chitin: I({ name: 'Ash Chitin', cat: 'res', icon: 'shell', c1: '#3a2a2a', c2: '#c0503a', w: 0.8, max: 30, desc: 'Heat-hardened shell plate.' }),
   shell: I({ name: 'Crab Shell', cat: 'res', icon: 'shell', c1: '#b4502e', c2: '#f0a070', w: 0.5, max: 30, desc: 'Shore crab shell. Furnace flux for glass; competes with other uses of fuel and stone.' }),
   gland: I({ name: 'Mire Gland', cat: 'res', icon: 'berry', c1: '#5a7a2a', c2: '#c8e070', w: 0.2, max: 20, desc: 'Toad gland. Purges toxins.' }),
@@ -142,7 +142,7 @@ export const ITEMS: Record<string, ItemDef> = {
   keycard: I({ name: 'Vault Keycard', cat: 'misc', icon: 'card', c1: '#2a6a5a', c2: '#a0f0d0', w: 0.05, max: 5, desc: 'A physical Vault Keycard. New cards have limited scans; legacy cards retain one use.' }),
   // PA1 R1: only the RECIPE is retired. The item keeps `fuel: 60` — a canister is still what a
   // furnace, generator and motorbike burn, and `stationBurnable` / `isStationFuel` read this field.
-  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Fuels generators and motorbikes. Refined from real oil at a furnace or Oil Refinery. NOT station kindling — a campfire, furnace, refinery or research table burns solid fuel, never a canister. PA1 v1.2: the improvised bench formula is retired, so a motorbike always pays for its first can separately.', fuel: 60 }),
+  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Fuels generators and motorbikes. Refined from real oil at a furnace or Oil Refinery. NOT station kindling — a campfire, furnace, refinery or research table burns solid fuel, never a canister. A packed motorbike ships dry: its first canister is made separately.', fuel: 60 }),
   // Ragnarok & profile
   rcash: I({ name: 'Ragnarok Cash', cat: 'cash', icon: 'coin', c1: '#b07a1e', c2: '#ffe27a', w: 0.01, max: 999, desc: 'Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.' }),
   escrow_chest: I({ name: 'Rương ký gửi', cat: 'kit', icon: 'chest', c1: '#5a3a7a', c2: '#ffd040', w: 4, max: 1, desc: 'Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.', place: 'escrow' }),
@@ -150,11 +150,11 @@ export const ITEMS: Record<string, ItemDef> = {
   vehicle_drive: I({ name:'Motor Drive', cat:'res', icon:'gear', c1:'#625e58', c2:'#c8bca1', w:3, max:5, desc:'Gear and plate drive assembly for the utility motorbike.' }),
   // B01 industrial intermediates (SOH_PROVISIONAL; historical v5 ratios are documented in B01 ledger, not copied).
   refined_iron_ingot: I({ name:'Refined Iron Ingot', cat:'res', icon:'rfingot', c1:'#8f9fb3', c2:'#f2f8ff', w:1, max:40, desc:'Furnace-refined iron. Needed for pipe and plate.' }),
-  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'pipe', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for the piped utility frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Mechanical Part spent to make it is NOT returned — so pipe never loops. PA1 v1.1: the recovered BOM removed Iron Plate as a pipe sink.' }),
+  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'pipe', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for the piped utility frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Mechanical Part spent to make it is NOT returned — so pipe never loops.' }),
   metal_blade: I({ name:'Metal Blade', cat:'res', icon:'blade', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock for sword refits.' }),
   mechanical_gear: I({ name:'Mechanical Gear', cat:'res', icon:'mgear', c1:'#6b6f76', c2:'#d6c27a', w:0.8, max:20, desc:'Precision gear for motor drives and powered mechanisms.' }),
   iron_plate: I({ name:'Iron Plate', cat:'res', icon:'plate', c1:'#4f5a63', c2:'#c9d1d8', w:1.5, max:20, desc:'Plate patch for a damaged wall or door (Shift+click when repairing): restores up to 25% of its max HP per plate. Not a permanent reinforcement.' }),
-  motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'PA1 v1.2 dry kit: frame, drive, two iron plates and two fastener sets. No fuel is packaged — place it, then refuel with a real Fuel Canister.', place:'motorbike' }),
+  motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'Packed dry: frame, drive, two iron plates and two fastener sets. No fuel is packaged — place it, then refuel with a real Fuel Canister.', place:'motorbike' }),
   cart_kit: I({ name: 'Hand Cart (packed)', cat: 'kit', icon: 'cart', c1: '#7a5a32', c2: '#c0c8d0', w: 6, max: 1, desc: 'Place to unpack a cargo cart.', place: 'cart' }),
   // elder stones (unique per run)
   stone_frost: I({ name: 'Stone of Rime', cat: 'stone', icon: 'relic', c1: '#3a8ad0', c2: '#e0ffff', w: 1, max: 1, desc: 'Taken from the Glacier Matron.' }),
@@ -171,15 +171,15 @@ export const ITEMS: Record<string, ItemDef> = {
   stone_argus: I({ name: 'Stone of Argus', cat: 'stone', icon: 'relic', c1: '#2e9ab8', c2: '#c8ffff', w: 1, max: 1, desc: 'Primordial panopticon lens claimed from Argus in the Hall of Eyes.' }),
   stone_anubis: I({ name: 'Stone of Anubis', cat: 'stone', icon: 'relic', c1: '#8e6a24', c2: '#ffe49a', w: 1, max: 1, desc: 'Primordial scale-seal claimed from Anubis in the Necropolis.' }),
   // SOH_PROVISIONAL: Wildlife & Husbandry items (strictly run-local)
-  lead_rope: I({ name: 'Taming Lead', cat: 'tool', icon: 'rope', c1: '#b89456', c2: '#f0dcb0', w: 0.35, max: 5, desc: 'SOH_PROVISIONAL: Calm and lead a tamable wild animal (Boar, Deer, Hare, or Black Grouse) into an enclosed pen.' }),
-  animal_feed: I({ name: 'Fodder Bundle', cat: 'res', icon: 'fiber', c1: '#8e8a3a', c2: '#e2d878', w: 0.25, max: 40, desc: 'SOH_PROVISIONAL: Bundled fiber and seeds for penned livestock in a Feed & Water Trough.' }),
-  feather: I({ name: 'Grouse Feather', cat: 'res', icon: 'fiber', c1: '#3a3848', c2: '#c8c4d8', w: 0.03, max: 60, desc: 'SOH_PROVISIONAL: Flight feather shed by Black Grouse; improves arrow fletching.' }),
-  grouse_egg: I({ name: 'Grouse Egg', cat: 'food', icon: 'berry', c1: '#b8a888', c2: '#f4efe2', w: 0.12, max: 20, desc: 'SOH_PROVISIONAL: Nutritious speckled egg laid by fed penned Black Grouse.', food: { hunger: 16, thirst: 4, hp: 4 } }),
+  lead_rope: I({ name: 'Taming Lead', cat: 'tool', icon: 'rope', c1: '#b89456', c2: '#f0dcb0', w: 0.35, max: 5, desc: 'Calm and lead a tamable wild animal (Boar, Deer, Hare, or Black Grouse) into an enclosed pen.' }),
+  animal_feed: I({ name: 'Fodder Bundle', cat: 'res', icon: 'fiber', c1: '#8e8a3a', c2: '#e2d878', w: 0.25, max: 40, desc: 'Bundled fiber and seeds for penned livestock in a Feed & Water Trough.' }),
+  feather: I({ name: 'Grouse Feather', cat: 'res', icon: 'fiber', c1: '#3a3848', c2: '#c8c4d8', w: 0.03, max: 60, desc: 'Flight feather shed by Black Grouse; improves arrow fletching.' }),
+  grouse_egg: I({ name: 'Grouse Egg', cat: 'food', icon: 'berry', c1: '#b8a888', c2: '#f4efe2', w: 0.12, max: 20, desc: 'Nutritious speckled egg laid by fed penned Black Grouse.', food: { hunger: 16, thirst: 4, hp: 4 } }),
   // SOH_PROVISIONAL: Unique run-local optional Side Boss rewards (max 1 per run per boss; zero Ragnarok cash)
-  relic_shaleheart: I({ name: 'Shaleheart Coreplate', cat: 'armor', icon: 'armor', c1: '#5a5248', c2: '#7ef2ff', w: 3.2, max: 1, slot: 'body', armor: 0.38, cold: 6, desc: 'SOH_PROVISIONAL: Run-local crystal-veined quarry carapace taken from Greyback Shaleheart (-38% damage).' }),
-  ronin_nodachi: I({ name: 'Oathless Nodachi', cat: 'weapon', icon: 'sword', c1: '#dfe6f2', c2: '#b0326a', w: 1.8, max: 1, dmg: 31, reach: 34, arc: 1.85, swing: 340, dur: 420, power: { plant: 2 }, repair: { station: 'workbench', cost: [['refined_iron_ingot', 1], ['leather', 1]] }, desc: 'SOH_PROVISIONAL: Run-local long-bladed nodachi claimed from the Oathless Ronin.' }),
-  tidemarshal_trident: I({ name: 'Saltwick Trident', cat: 'weapon', icon: 'spear', c1: '#4aa8d8', c2: '#d8f8ff', w: 1.9, max: 1, dmg: 28, reach: 38, arc: 0.78, swing: 360, dur: 400, power: { plant: 2 }, repair: { station: 'workbench', cost: [['iron_ingot', 2], ['raw_salt', 2]] }, desc: 'SOH_PROVISIONAL: Run-local brine-tempered polearm of the Saltwick Tidemarshal.' }),
-  custodian_lantern: I({ name: 'Archive Lantern', cat: 'tool', icon: 'torch', c1: '#8e96d8', c2: '#eef2ff', w: 0.6, max: 1, dmg: 12, reach: 20, arc: 1.3, swing: 320, dur: 480, light: 125, repair: { station: 'workbench', cost: [['glass', 1], ['spares', 1]] }, desc: 'SOH_PROVISIONAL: Run-local silver-violet ward lantern of the Pale Custodian. Steady wide light.' }),
+  relic_shaleheart: I({ name: 'Shaleheart Coreplate', cat: 'armor', icon: 'armor', c1: '#5a5248', c2: '#7ef2ff', w: 3.2, max: 1, slot: 'body', armor: 0.38, cold: 6, desc: 'Run-local crystal-veined quarry carapace taken from Greyback Shaleheart (-38% damage).' }),
+  ronin_nodachi: I({ name: 'Oathless Nodachi', cat: 'weapon', icon: 'sword', c1: '#dfe6f2', c2: '#b0326a', w: 1.8, max: 1, dmg: 31, reach: 34, arc: 1.85, swing: 340, dur: 420, power: { plant: 2 }, repair: { station: 'workbench', cost: [['refined_iron_ingot', 1], ['leather', 1]] }, desc: 'Run-local long-bladed nodachi claimed from the Oathless Ronin.' }),
+  tidemarshal_trident: I({ name: 'Saltwick Trident', cat: 'weapon', icon: 'spear', c1: '#4aa8d8', c2: '#d8f8ff', w: 1.9, max: 1, dmg: 28, reach: 38, arc: 0.78, swing: 360, dur: 400, power: { plant: 2 }, repair: { station: 'workbench', cost: [['iron_ingot', 2], ['raw_salt', 2]] }, desc: 'Run-local brine-tempered polearm of the Saltwick Tidemarshal.' }),
+  custodian_lantern: I({ name: 'Archive Lantern', cat: 'tool', icon: 'torch', c1: '#8e96d8', c2: '#eef2ff', w: 0.6, max: 1, dmg: 12, reach: 20, arc: 1.3, swing: 320, dur: 480, light: 125, repair: { station: 'workbench', cost: [['glass', 1], ['spares', 1]] }, desc: 'Run-local silver-violet ward lantern of the Pale Custodian. Steady wide light.' }),
 };
 
 // ---------- Sources (K3) ----------
@@ -330,6 +330,11 @@ export const PA1_UPGRADE_ONLY_GEOMETRY = [
 ] as const;
 export const PA1_STRUCTURE_ITEM = (type:string):string|null =>
   type === 'escrow' ? 'escrow_chest' : (DEPLOYABLE_TYPES as readonly string[]).includes(type) ? 'deploy_'+type : null;
+
+/** Items whose numbers are SOH_PROVISIONAL (reversible tuning, no LI parity claim). The marker used to be
+ * typed into the player-facing description; Item Ontology V2 keeps it as data so the tooltip reads clean and
+ * the ontology manifest still reports `authority_status`. */
+export const SOH_PROVISIONAL_ITEMS: readonly string[] = Object.freeze(['lead_rope', 'animal_feed', 'feather', 'grouse_egg', 'relic_shaleheart', 'ronin_nodachi', 'tidemarshal_trident', 'custodian_lantern']);
 
 export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['pump_crude','refinery_crude','vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother',...DEPLOYABLE_TYPES.map(k=>'deploy_'+k).filter(id=>!isFamilyGated(id))];
 
@@ -507,7 +512,7 @@ export const STRUCTS: Record<string, StructDef> = {
   garden: { name: 'Garden Plot', cost: [['wood', 4], ['fiber', 4]], hp: 60, need: 'any', block: false, layer: 'obj', desc: 'Plant seeds; grows only while watered (rain counts).' },
   farm_controller: { name: 'Garden Tender', cost: [['wood', 12], ['iron_ingot', 2], ['mechanical_parts', 3], ['fasteners', 3], ['spares', 2]], hp: 140, need: 'any', block: true, layer: 'obj', slots: 3, desc: 'Optional fuelled garden machinery. Link one nearby plot, barrel and chest; needs an improved workbench to build.' },
   barrel: { name: 'Rain Barrel', cost: [['wood', 8], ['rope', 1]], hp: 80, need: 'any', block: true, layer: 'obj', desc: 'Collects rainwater; refill flasks.' },
-  feed_trough: { name: 'Feed & Water Trough', cost: [['wood', 6], ['stone', 2], ['rope', 1]], hp: 110, need: 'any', block: true, layer: 'obj', slots: 6, desc: 'SOH_PROVISIONAL: 6-slot livestock trough. Stock fodder/crops/berries and filled water flasks (or rain/barrel) inside an enclosed pen.' },
+  feed_trough: { name: 'Feed & Water Trough', cost: [['wood', 6], ['stone', 2], ['rope', 1]], hp: 110, need: 'any', block: true, layer: 'obj', slots: 6, desc: '6-slot livestock trough. Stock fodder/crops/berries and filled water flasks (or rain/barrel) inside an enclosed pen.' },
   base_generator: { name: 'Field Generator', cost: [['iron_ingot', 3], ['mechanical_parts', 3], ['spares', 4], ['wood', 6]], hp: 180, need: 'any', block: true, layer: 'obj', slots: 3, desc: 'Fuel one connected load; reinforce for two. New generators require paid physical cable.' },
   power_cable: { name:'Power Cable', cost:BAL.homeCircuit.cableCost, hp:BAL.homeCircuit.cableHp, need:'any', block:false, layer:'obj', desc:'One paid cable tile. Orthogonal connections only; dry ground, no walls.' },
   power_switch: { name:'Power Switch', cost:BAL.homeCircuit.switchCost, hp:BAL.homeCircuit.switchHp, need:'any', block:false, layer:'obj', desc:'E toggles this physical branch on or off.' },

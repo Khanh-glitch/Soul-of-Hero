@@ -1,4 +1,5 @@
 import { recoveryPlan, recoveryFits } from '../game/recycler';
+import { itemClassLabel } from '../game/item-class';
 import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
 import type { RunState } from '../game/core';
@@ -61,7 +62,7 @@ export function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
     <div className="iteminfo__body">
       <div className="iteminfo__name">{d.name}{s.meta ? ` · ${ITEMS[RECIPES[s.meta]?.out]?.name || s.meta}` : ''}</div>
       <div className="iteminfo__row">
-        <span className="chip" style={{ color: isCore ? 'var(--brassLit)' : 'var(--muted)' }}>{CAT_LABEL[d.cat] || d.cat.toUpperCase()}</span>
+        <span className="chip" style={{ color: isCore ? 'var(--brassLit)' : 'var(--muted)' }}>{itemClassLabel(s.key, CAT_LABEL[d.cat] || d.cat.toUpperCase())}</span>
         {d.dmg ? <StatChip g="spark" v={`${d.dmg}`} title="Damage" /> : null}
         {d.reach ? <StatChip g="eye" v={`${d.reach}`} c="var(--paper)" title="Reach" /> : null}
         {d.armor ? <StatChip g="hp" v={`-${Math.round(d.armor * 100)}%`} c="var(--good)" title="Damage taken" /> : null}
