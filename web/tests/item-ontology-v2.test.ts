@@ -399,7 +399,9 @@ describe('ACCEPTANCE TRACKER — a handoff is never counted as a fix', () => {
   it('every proposal has a tracker row, and a partly implemented one also carries its unfinished half', () => {
     for (const pr of PROPOSALS) expect(rows.some((r) => r.proposal === pr.id), pr.id).toBe(true);
     expect(rows.find((r) => r.id === 'T-P9-PUMP')!.acceptance).toBe('BLOCKED_OR_UNRESOLVED');
-    expect(rows.find((r) => r.id === 'T-LI-137')!.acceptance).toBe('BLOCKED_OR_UNRESOLVED');
+    // verified only because the crosswalk exists at a named SHA and its gate (item-ontology-v2-li-historical.test.ts) passed there
+    expect(rows.find((r) => r.id === 'T-LI-137')!.acceptance).toBe('IMPLEMENTED_AND_VERIFIED');
+    expect(rows.find((r) => r.id === 'T-LI-137')!.sha).toBe('56f32e0c4d051a89357730058d1c6782ee1768cc');
   });
 });
 
