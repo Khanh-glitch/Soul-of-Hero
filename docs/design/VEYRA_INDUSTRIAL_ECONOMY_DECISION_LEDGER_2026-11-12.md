@@ -1111,9 +1111,23 @@ The general rule this turn produced, worth carrying: a pin that counts consumers
 - Provenance: all 84 shared ids are `ATLAS_INDEXED`; the 53 historical-only ids are 45 `EXTERNAL_CRAFT_OR_INPUT` + 8 `OFFICIAL_MODERN`. The withdrawn "86 + 51" reading is now recorded as a coincidence.
 - The 53 historical-only ids: 7 version variants of atlas ids, 1 alias of an atlas id, 3 aliases of things SOH already has (`animal_hide` → `hide`, `charcoal`, `territory_cabinet` → `claim`), 6 event-only, 8 later official additions, 28 separate historical items.
 - By gameplay role, those 53 are: 29 with no SOH mechanic to use them, 15 whose role SOH already has (5 same, 10 in a different shape), 6 event-only, 1 declined as redundant, **2 genuinely missing roles**.
-- The two genuine gaps, recorded for their owners and **not added**: a second head-armour tier (`refined_iron_helmet`; SOH has one head armour piece) and a fuel-free personal vehicle (`mountain_bicycle_blueprint`; SOH has Hand Cart and fuelled Motorbike only).
+- *(Wording superseded by §35: these are design candidates, not established gaps.)* The two genuine gaps, recorded for their owners and **not added**: a second head-armour tier (`refined_iron_helmet`; SOH has one head armour piece) and a fuel-free personal vehicle (`mountain_bicycle_blueprint`; SOH has Hand Cart and fuelled Motorbike only).
 - The five omissions the diff asked about: `charcoal`, `animal_hide` already exist in SOH; `egg` exists as Grouse Egg; `large_furnace` is covered by the in-place furnace lining; `electric_resistor` has no SOH mechanic.
 - The historical `match_soh` column disagrees with the crosswalk on 9 of 137 ids; each is explained in the artifact and the crosswalk verdict stands.
 - Unsupported figures stay UNKNOWN: 19 UNKNOWN benches and the empty recipes are reproduced as such. The `year_mode` column is one generic note on every row, so no id is dated by the source.
 
 **Unchanged.** PR #59 integration patch still pending owner acceptance (local probe merge only, not CI at an integrated SHA). P6 wall tiers unrepaired (PR #56). P8 Veyra sources unowned and unrepaired. Oil Pump not functional. The Web suite is not green.
+
+## 35. Item Ontology V2 — Last Island reference-quality correction (2026-11-14)
+
+Control Tower accepted the 139-id coverage at `7307442c` and asked for one bounded correction. No item, recipe, loot, balance, save or Core change. Recipe revision stays 3. The two raw inputs are unchanged and still hash-pinned.
+
+- **Source support is now derived per row** (`source_support_status`, `support_basis`, `citation_check`, `verified_source_url`, `evidence_date`, `source_note` in `li-historical-crosswalk.csv`). Of 137 historical rows: 76 DIRECT, 23 INDIRECT, 23 LEGACY_CLAIM (cited page not re-read), 15 UNSUPPORTED_CITATION.
+- **Defective citations, reproduced and flagged, not hidden.** 26 non-atlas rows cite `ATLAS_v2.json` (18 `EXTERNAL_CRAFT_OR_INPUT`, 8 `OFFICIAL_MODERN`). None is an atlas id; 22 do not occur in the file at all and 4 occur only inside another name or in prose.
+- **Official notice of 2022-11-09** (https://hero.yingxiong.com/info/2022/1109/13052.html) was read and is applied to the 14 ids it documents: 7 documented (Mountain Bicycle blueprint, Self-revive Defibrillator, resistor as a toolbox drop, the event cake and its three inputs) and 7 named in passing. No other row receives a date.
+- **`OFFICIAL_MODERN` is an inherited label.** 3 of its 8 ids are backed by the notice; 5 have no opened source (`bizon_smg`, `flamethrower_gas_ammo`, `inferno_chariot`, `inferno_chariot_blueprint`, `suicide_robot`).
+- **Design candidates, not gaps.** `mountain_bicycle_blueprint`: pedalling consumes the rider's lung air and exhaustion costs HP, so it is an exertion-for-speed vehicle, not simply fuel-free. `refined_iron_helmet`: an additional head-armour tier; SOH already has head protection. Neither is approved.
+- **Catalog vs live** (`soh_live_status`). `electric_door` → `door_powered` is MODULE_PENDING: catalog only, not live. `crude_oil` → Salvaged Oil is live, but pumped crude is not, and the row does not establish a working Oil Pump. `green_card` → Keycard and `refined_iron_chest` → Chitin Plate are Shipping-only.
+- **Tracker.** `T-LI-137` stays verified for coverage. New row `T-LI-SOURCES` (blocked): source attribution needs sources from the research owner.
+
+Item V2 development pauses here. Open gates are unchanged and belong to others: PR #59 × #61 WP3 integration (patch pending owner acceptance), P6 wall tiers (PR #56), P8 Veyra sources (no owner), Oil Pump production.

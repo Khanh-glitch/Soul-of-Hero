@@ -6,11 +6,13 @@ import { describe, expect, it } from 'vitest';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
-import { ITEMS, STRUCTS, RECIPES } from '../src/game/catalog';
+import { ITEMS, STRUCTS, RECIPES, MODULE_PENDING_STRUCTURES } from '../src/game/catalog';
+import { UNOBTAINABLE_STRUCTURES } from '../src/game/item-ontology';
 import { LI_CROSSWALK } from '../src/game/item-ontology-decisions';
 import { buildLiCrosswalk, type LiAtlas } from '../src/game/item-ontology-report';
 import {
-  ATLAS_ONLY, HISTORICAL_ONLY, LI_HISTORICAL_INPUTS, SHARED_DISAGREEMENTS, buildLiHistorical, liHistoricalCsv, liHistoricalMd, parseHistorical,
+  ATLAS_ONLY, HISTORICAL_ONLY, LI_HISTORICAL_INPUTS, LIVE_LIMITS, NOTICE_EVIDENCE, OFFICIAL_NOTICE_2022, SHARED_DISAGREEMENTS, buildLiHistorical, liHistoricalCsv,
+  liHistoricalMd, parseCsv, parseHistorical,
 } from '../src/game/item-ontology-li-historical';
 
 const WEB = resolve(__dirname, '..');
@@ -19,12 +21,19 @@ const DIR = resolve(WEB, LI_HISTORICAL_INPUTS.dir);
 const WRITE = process.env.SOH_WRITE_ONTOLOGY === '1';
 const csvBytes = readFileSync(resolve(DIR, LI_HISTORICAL_INPUTS.csv.name));
 const diffBytes = readFileSync(resolve(DIR, LI_HISTORICAL_INPUTS.diff.name));
-const atlas = JSON.parse(readFileSync(resolve(WEB, 'ref/atlas/extracted/ATLAS_v2.json'), 'utf8')) as LiAtlas;
+const atlasText = readFileSync(resolve(WEB, 'ref/atlas/extracted/ATLAS_v2.json'), 'utf8');
+const atlas = JSON.parse(atlasText) as LiAtlas;
+// reachability comes from the projection's own generated manifest (drift-checked in item-ontology-v2.test.ts)
+const manifest = parseCsv(readFileSync(resolve(OUT, 'manifest.csv'), 'utf8'));
+const reachability = Object.fromEntries(manifest.slice(1).map((r) => [r[manifest[0].indexOf('old_id')], r[manifest[0].indexOf('runtime_reachability')]]));
+const live = { reachability, pendingStructures: MODULE_PENDING_STRUCTURES as readonly string[], unobtainableStructures: UNOBTAINABLE_STRUCTURES };
 const atlasRows = buildLiCrosswalk(atlas);
 const src = parseHistorical(csvBytes.toString('utf8'));
-const rows = buildLiHistorical(csvBytes.toString('utf8'), atlasRows.map((r) => r.li_id), atlas);
+const rows = buildLiHistorical(csvBytes.toString('utf8'), atlasRows.map((r) => r.li_id), atlas, atlasText, live);
+const row = (id: string) => rows.find((r) => r.li_id === id)!;
 const count = <T,>(xs: T[], f: (x: T) => string) => xs.reduce<Record<string, number>>((m, x) => ((m[f(x)] = (m[f(x)] ?? 0) + 1), m), {});
 const sha = (b: Buffer) => createHash('sha256').update(b).digest('hex');
+const SUPPORT_COUNTS = { DIRECT: 76, INDIRECT: 23, LEGACY_CLAIM: 23, UNSUPPORTED_CITATION: 15 };
 
 describe('Last Island historical inputs are the delivered bytes', () => {
   it('CSV and diff match the size and SHA-256 Control Tower published', () => {
@@ -105,10 +114,18 @@ describe('137-vs-86 crosswalk', () => {
     expect(src.filter((s) => s.recipe_bench === 'UNKNOWN').length).toBe(19);
   });
 
-  it('genuinely missing roles are exactly two, and neither was added', () => {
-    expect(rows.filter((r) => r.role_status === 'ROLE_GAP').map((r) => r.li_id).sort()).toEqual(['mountain_bicycle_blueprint', 'refined_iron_helmet']);
-    for (const r of rows.filter((x) => x.role_status === 'ROLE_GAP')) { expect(r.verdict).toBe('NOT_ADDED'); expect(r.soh_equivalent).toBe('-'); }
-    // the facts the two gaps rest on
+  it('the two open positions are DESIGN_CANDIDATEs, not approved adds, and are described accurately', () => {
+    const c = rows.filter((r) => r.role_status === 'DESIGN_CANDIDATE');
+    expect(c.map((r) => r.li_id).sort()).toEqual(['mountain_bicycle_blueprint', 'refined_iron_helmet']);
+    for (const r of c) { expect(r.verdict).toBe('NOT_ADDED'); expect(r.soh_equivalent).toBe('-'); expect(r.why).toMatch(/not approved and not added/); }
+    expect(rows.some((r) => (r.role_status as string) === 'ROLE_GAP')).toBe(false);
+    // Bicycle: the documented cost is exertion (lung air, then HP), not merely "fuel-free"
+    expect(row('mountain_bicycle_blueprint').why).toMatch(/air in the rider's lungs/);
+    expect(row('mountain_bicycle_blueprint').why).toMatch(/loses HP/);
+    expect(NOTICE_EVIDENCE.mountain_bicycle_blueprint.quote).toContain('肺部的空气');
+    expect(NOTICE_EVIDENCE.mountain_bicycle_blueprint.quote).toContain('扣除人物血量');
+    // Helmet: an extra tier, not missing head protection. SOH has a head slot with exactly one armour piece.
+    expect(row('refined_iron_helmet').why).toMatch(/already has head protection/);
     expect(Object.entries(ITEMS).filter(([, d]) => (d as { slot?: string; armor?: number }).slot === 'head' && (d as { armor?: number }).armor).map(([k]) => k)).toEqual(['scrap_helm']);
     expect(new Set(Object.values(ITEMS).map((d) => (d as { slot?: string }).slot).filter(Boolean))).toEqual(new Set(['head', 'body', 'back']));
     for (const k of Object.keys(ITEMS)) expect(k).not.toMatch(/bicycle|iron_helmet/);
@@ -129,6 +146,101 @@ describe('137-vs-86 crosswalk', () => {
       .filter((p) => /(from|import|require)\s*\(?\s*['"][^'"]*(li-historical|LI_137_)[^'"]*['"]/.test(readFileSync(p, 'utf8')));
     expect(offenders).toEqual([]);
     expect(readFileSync(resolve(WEB, 'src/game/item-ontology-li-historical.ts'), 'utf8')).not.toMatch(/from 'node:|require\(/);
+  });
+});
+
+describe('source support is derived next to the raw file, never written into it', () => {
+  const hist = rows.filter((r) => r.in_historical_137 === 'yes');
+  const citesAtlas = (id: string) => src.find((s) => s.id === id)!.source.includes('ATLAS_v2.json');
+
+  it('the raw citation column is reproduced verbatim for all 137 rows', () => {
+    for (const s of src) expect(row(s.id).source, s.id).toBe(s.source);
+  });
+
+  it('every row has exactly one of the four support classes', () => {
+    expect(new Set(rows.map((r) => r.source_support_status))).toEqual(new Set(['DIRECT', 'INDIRECT', 'LEGACY_CLAIM', 'UNSUPPORTED_CITATION']));
+    expect(count(hist, (r) => r.source_support_status)).toEqual(SUPPORT_COUNTS);
+  });
+
+  it('a citation to ATLAS_v2.json is never counted as proof when the id is not in that file', () => {
+    const ext = src.filter((s) => s.source_evidence === 'EXTERNAL_CRAFT_OR_INPUT' && citesAtlas(s.id));
+    const mod = src.filter((s) => s.source_evidence === 'OFFICIAL_MODERN' && citesAtlas(s.id));
+    expect(ext.length).toBe(18); expect(mod.length).toBe(8);
+    // no literal id among them; 14 of the 18 and all 8 do not occur even as a substring
+    for (const s of [...ext, ...mod]) expect(atlasText.includes(`"${s.id}"`), s.id).toBe(false);
+    expect(ext.filter((s) => !atlasText.includes(s.id)).length).toBe(14);
+    expect(mod.filter((s) => !atlasText.includes(s.id)).length).toBe(8);
+    for (const r of hist) {
+      const inFile = atlasText.includes(r.li_id);
+      if (citesAtlas(r.li_id) && !inFile) {
+        expect(r.citation_check, r.li_id).toBe('CITED_SOURCE_LACKS_ID');
+        expect(r.verified_source_url, r.li_id).not.toContain('ATLAS_v2.json');
+        expect(r.source_note, r.li_id).toMatch(/does not occur anywhere in that file/);
+        // supported only if the official notice documents it
+        expect(r.source_support_status === 'UNSUPPORTED_CITATION', r.li_id).toBe(!NOTICE_EVIDENCE[r.li_id]);
+      }
+      if (r.verified_source_url.includes('ATLAS_v2.json')) expect(inFile, r.li_id).toBe(true);
+      if (r.source_support_status === 'DIRECT') expect(r.verified_source_url, r.li_id).not.toBe('-');
+      if (r.source_support_status === 'LEGACY_CLAIM' || r.source_support_status === 'UNSUPPORTED_CITATION') expect(r.verified_source_url, r.li_id).toBe('-');
+    }
+  });
+
+  it('the 2022-11-09 date is given only to ids the official notice documents', () => {
+    expect(OFFICIAL_NOTICE_2022.url).toBe('https://hero.yingxiong.com/info/2022/1109/13052.html');
+    for (const k of Object.keys(NOTICE_EVIDENCE)) expect(src.some((s) => s.id === k), k).toBe(true);
+    for (const r of rows) {
+      const n = NOTICE_EVIDENCE[r.li_id];
+      expect(r.evidence_date === 'UNKNOWN', r.li_id).toBe(!n);
+      expect(r.verified_source_url.includes(OFFICIAL_NOTICE_2022.url), r.li_id).toBe(!!n);
+      if (n) { expect(r.evidence_date.startsWith('2022-11-09'), r.li_id).toBe(true); expect(n.quote.length, r.li_id).toBeGreaterThan(3); }
+      // being named in passing is never DIRECT on the strength of the notice alone
+      if (n?.kind === 'NAMED_ONLY') expect(r.source_support_status, r.li_id).toBe('INDIRECT');
+    }
+    expect(Object.keys(NOTICE_EVIDENCE).filter((k) => NOTICE_EVIDENCE[k].kind === 'ANNOUNCED_AS_NEW').sort()).toEqual(['mountain_bicycle_blueprint', 'self_revive_defibrillator']);
+  });
+
+  it('OFFICIAL_MODERN is an inherited label: only the ids the notice documents are supported', () => {
+    const mod = hist.filter((r) => r.provenance_grade === 'OFFICIAL_MODERN');
+    expect(mod.filter((r) => r.source_support_status === 'DIRECT').map((r) => r.li_id).sort()).toEqual(['electric_resistor', 'mountain_bicycle_blueprint', 'self_revive_defibrillator']);
+    expect(mod.filter((r) => r.source_support_status === 'UNSUPPORTED_CITATION').map((r) => r.li_id).sort()).toEqual(['bizon_smg', 'flamethrower_gas_ammo', 'inferno_chariot', 'inferno_chariot_blueprint', 'suicide_robot']);
+    for (const r of mod) expect(r.source_note, r.li_id).toMatch(/inherited/);
+    // the resistor's notice evidence is its drop category, nothing more
+    expect(NOTICE_EVIDENCE.electric_resistor.kind).toBe('DROP_CATEGORY_ONLY');
+  });
+
+  it('unresolved citations are listed by name in the document', () => {
+    const md = liHistoricalMd(rows);
+    for (const r of hist.filter((x) => x.source_support_status === 'UNSUPPORTED_CITATION')) expect(md, r.li_id).toContain(`\`${r.li_id}\``);
+    expect(md).toContain('### Unresolved citations');
+    expect(md).not.toMatch(/Genuinely missing|genuine gap/i);
+  });
+});
+
+describe('catalog-defined is not the same as live', () => {
+  it('electric_door maps to a MODULE_PENDING structure and is flagged not live', () => {
+    expect(MODULE_PENDING_STRUCTURES).toContain('door_powered');
+    const r = row('electric_door');
+    expect(r.soh_equivalent).toBe('structure:door_powered');
+    expect(r.verdict).toBe('HAVE_SAME_ROLE'); // accepted catalog verdict, unchanged
+    expect(r.soh_live_status).toBe('CATALOG_PRESENT_NOT_LIVE');
+    expect(r.soh_live_note).toMatch(/MODULE_PENDING/);
+  });
+  it('crude_oil mapping does not claim a working Oil Pump', () => {
+    const r = row('crude_oil');
+    expect(r.soh_equivalent).toBe('salvaged_oil');
+    expect(r.soh_live_status).toBe('LIVE_WITH_LIMIT');
+    expect(r.soh_live_note).toMatch(/does not establish a working Oil Pump/);
+    expect(reachability.crude_petroleum).toBe('FIXTURE_ONLY');
+    expect(Object.keys(LIVE_LIMITS)).toEqual(['crude_oil']);
+  });
+  it('every HAVE_* row has a live status computed from the catalog; every other row has none', () => {
+    for (const r of rows) {
+      const has = r.verdict === 'HAVE_SAME_ROLE' || r.verdict === 'HAVE_DIFFERENT_SHAPE';
+      expect(r.soh_live_status !== 'NOT_APPLICABLE', r.li_id).toBe(has);
+      const st = r.soh_equivalent.startsWith('structure:') ? r.soh_equivalent.slice(10) : r.soh_equivalent.startsWith('deploy_') ? r.soh_equivalent.slice(7) : null;
+      if (has && st && (MODULE_PENDING_STRUCTURES as readonly string[]).includes(st)) expect(r.soh_live_status, r.li_id).toBe('CATALOG_PRESENT_NOT_LIVE');
+      if (has && !r.soh_equivalent.startsWith('structure:')) expect(reachability[r.soh_equivalent], r.li_id).toBeDefined();
+    }
   });
 });
 
