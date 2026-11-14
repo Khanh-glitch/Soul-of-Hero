@@ -318,7 +318,12 @@ input::placeholder { color: #566872; }
 .iteminfo--empty { align-items: center; font-family: 'Pixelify Sans', monospace; font-size: 8px; color: var(--muted); gap: 4px; }
 .iteminfo__ico { width: 30px; height: 30px; display: grid; place-items: center; background: #05070a; box-shadow: inset 0 0 0 1px var(--edge); flex: none; }
 .iteminfo__body { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
-.iteminfo__name { font-family: 'Pixelify Sans', monospace; font-size: 10px; color: var(--brassLit); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iteminfo__name { font-family: 'Pixelify Sans', monospace; font-size: 10px; line-height: 11px; color: var(--brassLit); overflow-wrap: anywhere; flex: none; }
+.iteminfo__vi { margin-left: 5px; font-size: 8px; font-weight: 400; color: var(--muted); white-space: nowrap; }
+.iteminfo__desc { font-family: 'Pixelify Sans', monospace; font-size: 8px; line-height: 9px; color: var(--paper); opacity: .88; flex: none; }
+.iteminfo__core { font-family: 'Pixelify Sans', monospace; font-size: 8px; line-height: 9px; color: var(--info); flex: none; }
+.iteminfo--field { box-shadow: inset 0 0 0 1px var(--info); background: linear-gradient(180deg, rgba(16,40,56,.45), rgba(5,7,10,.5)); }
+.iteminfo__row, .iteminfo .durbar, .iteminfo .uses { flex: none; }
 .iteminfo__row { display: flex; flex-wrap: wrap; gap: 3px; }
 .durbar { position: relative; height: 4px; background: #05070a; box-shadow: inset 0 0 0 1px var(--edge); overflow: hidden; }
 .durbar i { display: block; height: 100%; }
@@ -428,7 +433,24 @@ input::placeholder { color: #566872; }
 .sv-load small { color: var(--muted); font-size: 8px; } .sv-load .over { color: var(--bad); }
 .sv-packlabel { display: flex; align-items: center; gap: 4px; font-family: 'Pixelify Sans', monospace; font-size: 8px; letter-spacing: 1px; color: var(--muted); }
 .sv-packlabel small { color: var(--paper); } .sv-packlabel .btn { margin-left: auto; }
-.sv-left .iteminfo { margin-top: 2px; min-height: 40px; }
+.sv-left .iteminfo { margin-top: 2px; min-height: 40px; flex: none; }
+/* Item Ontology V2 round 3 — 640x360 desktop layout. The pack column used to stack body, grid, item details and the
+   action row in 324 px, which left the details ~20 px (name squeezed, "used in" row and Use/Split/Drop below the fold).
+   The body now sits in its own narrow column, so the pack column holds grid + full details + actions with no clipping
+   and no inner scrolling. Mobile keeps its own grid below. */
+.sv:not([data-layout="mobile"]) .sv-left { width: 348px; display: grid; grid-template-columns: 78px minmax(0, 1fr); grid-auto-rows: min-content; column-gap: 8px; row-gap: 4px; align-content: start; }
+.sv:not([data-layout="mobile"]) .sv-left > * { grid-column: 2; }
+.sv:not([data-layout="mobile"]) .sv-left > .sv-char { grid-column: 1; grid-row: 1 / span 6; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; gap: 4px 0; }
+.sv:not([data-layout="mobile"]) .sv-char .sv-stats { flex: 0 0 100%; }
+.sv:not([data-layout="mobile"]) .sv-char .sv-load { flex-wrap: wrap; }
+.sv:not([data-layout="mobile"]) .sv-char .sv-load .track { flex: 1 0 60px; order: 3; }
+.sv:not([data-layout="mobile"]) .sv-char .sv-load small { margin-right: auto; }
+/* The work column is 80 px narrower: keep its filter row and recipe diagram on one line so the recipe tiles keep their rows. */
+.sv:not([data-layout="mobile"]) .sv-filter input { width: 58px; }
+.sv:not([data-layout="mobile"]) .sv-filter .btn, .sv:not([data-layout="mobile"]) .sv-filter .chip { white-space: nowrap; }
+.sv:not([data-layout="mobile"]) .sv-diagram { gap: 3px; }
+.sv:not([data-layout="mobile"]) .sv-diagram .ins, .sv:not([data-layout="mobile"]) .sv-diagram .outs { gap: 2px; }
+.sv:not([data-layout="mobile"]) .sv-diagram .need { padding-left: 2px; padding-right: 2px; }
 .sv-itemacts { display: flex; gap: 3px; flex-wrap: wrap; }
 .sv-cats { display: flex; gap: 2px; }
 .sv-cat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 3px 1px 2px; background: linear-gradient(180deg, #141a20, #0c1014); border: 1px solid #05070a; box-shadow: inset 0 0 0 1px rgba(57,70,79,.6); cursor: pointer; color: var(--muted); font-family: 'Pixelify Sans', monospace; font-size: 7px; white-space: nowrap; }

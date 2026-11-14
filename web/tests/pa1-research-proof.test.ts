@@ -30,8 +30,8 @@ const good = () => ({
   screenshots: ['02-technology-families-1280.png', '03-technology-families-640.png'],
   research: {
     open: true, tabClicked: true, families: FAMS,
-    energyRow: 'ENERGY cost recorded (5 Spares + 2 Iron Ingot) · 9 formulas · nothing withheld in this build',
-    text: 'TECHNOLOGY FAMILIES One paid study unlocks a family … ENERGY cost recorded (5 Spares + 2 Iron Ingot)',
+    energyRow: 'ENERGY cost recorded (5 Parts + 2 Iron Ingot) · 9 formulas · nothing withheld in this build',
+    text: 'TECHNOLOGY FAMILIES One paid study unlocks a family … ENERGY cost recorded (5 Parts + 2 Iron Ingot)',
     purchaseControls: { energyRow: 0, pane: 0 },
     leakCheck: [{ label: 'Technology' }, { label: 'Blueprints' }, { label: 'Specimens & Cores' }],
     frames1280: [frame('Technology families heading'), frame('ENERGY family row'), frame('last family row after scrolling the pane')],

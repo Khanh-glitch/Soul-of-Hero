@@ -148,7 +148,7 @@ export const FIELD_NOTES: FieldNoteDef[] = [
     category: 'expedition',
     title: 'Ragnarok · Final 72h',
     keyHint: 'M · E',
-    body: 'Sealed POI vaults are open and Elders stir. Secure Ragnarok coins in Rương ký gửi or reach the Evacuation Beacon.',
+    body: 'Sealed POI vaults are open and Elders stir. Secure Ragnarok coins in an Escrow Chest or reach the Evacuation Beacon.',
     priority: 68,
     when: ({ r, now }) => isRagnarok(r, now),
   },

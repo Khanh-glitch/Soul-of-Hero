@@ -1,3 +1,4 @@
+// QUARANTINED (Item Ontology V2, 2026-11-14): string-edited in round 2, not runnable to completion on base or head. See e2e/QUARANTINE.json. Not evidence.
 // WP4 Browser Visual E2E across 1280x720 and 640x360 against the real production HTTP build (no QA mode).
 // Phase A: pure zero-fixture new run on veyra05-world (Title -> D1 Profile -> New Run -> Movement -> Journey D1 ->
 //          BuildBar -> Survivor/Craft D2 -> Map -> Esc Save & Quit -> localStorage audit -> Reload -> Continue).
@@ -278,7 +279,7 @@ try {
         assert.ok(driveVal, 'Natural Damaged Drive missing from Foundry Recycler select');
         await sel.selectOption(driveVal);
         await page.getByRole('button', { name: 'Recycle item…', exact: true }).click();
-        await page.getByText(/Returns:\s*2 Spares/).waitFor({ timeout: 5000 });
+        await page.getByText(/Returns:\s*2 Parts/).waitFor({ timeout: 5000 });
         await page.getByRole('button', { name: 'Confirm recycle', exact: true }).click();
         await page.getByText(/Processing · \d+s/).waitFor({ timeout: 5000 });
         await assertCanvasAndViewport(page, `${tag}:recycler`, [w, h]);

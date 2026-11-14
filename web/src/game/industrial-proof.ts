@@ -18,7 +18,7 @@ const INGOT_PER: Record<string, number> = { iron_ingot: 1, iron_ore: 1, rich_iro
 export type Route = { recipe: string; out: string; qty: number; secs: number; ins: [string, number][]; alias?: string };
 export function routesFor(item: string): Route[] {
   return Object.entries(RECIPES).filter(([, r]) => r.out === item).map(([id, r]) => ({ recipe: id, out: r.out, qty: r.qty, secs: r.secs, ins: r.ins as [string, number][], alias: (r as any).alias }))
-    // Mechanical parts' recover_drive route: a salvage input, so it is listed but excluded from craft cost below.
+    // Machine Parts' recover_drive route: a salvage input, so it is listed but excluded from craft cost below.
     ;
 }
 /** Expand one unit-quantity of `item` to atoms along the cheapest non-salvage route. Returns null if no acyclic route. */

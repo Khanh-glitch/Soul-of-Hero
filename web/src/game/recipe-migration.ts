@@ -27,7 +27,7 @@ import type { Recipe } from './catalog';
 
 /** Live catalog revision. Bump by exactly 1 whenever a recipe is changed or retired,
  *  and freeze the superseded definition in `LEGACY_RECIPES` under `<id>@<old rev>`. */
-export const RECIPE_REVISION = 2;
+export const RECIPE_REVISION = 3;
 
 /** The revision a save written before job stamping existed must resolve to. */
 export const PRE_STAMPING_REVISION = 1;
@@ -44,43 +44,60 @@ export const LEGACY_RECIPES: Readonly<Record<string, Recipe>> = Object.freeze({
   // RETIRED at rev 2 (v1.2 §2): the workbench "anyone can improvise a canister"
   // shortcut is gone. Fuel comes from a real Furnace study route or an Oil Refinery.
   'fuel_can@1': { out: 'fuel_can', qty: 1, ins: [['charcoal', 1], ['sulfur', 1], ['glass', 1]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
+  // Rev 2 — live values before the Item Ontology V2 cutover (Control Tower ruling, PR #61 round 2).
+  // P3: the plain frame is superseded by the piped BOM; the piped alternative id is retired.
+  'vehicle_frame@2': { out: 'vehicle_frame', qty: 1, ins: [['iron_ingot', 3], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, base: true, tier: 1 },
+  'vehicle_frame_piped@2': { out: 'vehicle_frame', qty: 1, alias: 'Utility Frame (piped)', ins: [['metal_pipe', 1], ['iron_ingot', 2], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
+  // P4: the Salvager Axe took two Machine Parts and no Blade.
+  'industrial_axe@2': { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
 });
 
 /** Recipe ids removed from the live catalog by a cutover, in the order retired.
  *  Knowledge carrying one of these ids is pruned on load; a queued job or a held
  *  blueprint referencing it stays valid through `LEGACY_RECIPES`. */
-export const RETIRED_RECIPES: readonly string[] = ['fuel_can'];
+export const RETIRED_RECIPES: readonly string[] = ['fuel_can', 'vehicle_frame_piped'];
 export const isRetiredRecipe = (id: unknown): boolean =>
   typeof id === 'string' && RETIRED_RECIPES.includes(id);
 /** A blueprint may legally name a retired formula: the paper is a real item the
  *  player earned, and deleting it from a save would be a silent material loss. */
-export const hasLegacyDefinition = (id: unknown): boolean =>
-  typeof id === 'string' && Object.prototype.hasOwnProperty.call(LEGACY_RECIPES, `${id}@${PRE_STAMPING_REVISION}`);
+export const hasLegacyDefinition = (id: unknown): boolean => latestLegacyDefinition(id) !== null;
+/** The newest frozen definition of a recipe id, whatever revision retired or changed it. */
+export function latestLegacyDefinition(id: unknown): Recipe | null {
+  if (typeof id !== 'string') return null;
+  for (let rev = RECIPE_REVISION - 1; rev >= PRE_STAMPING_REVISION; rev--) {
+    const key = `${id}@${rev}`;
+    if (Object.prototype.hasOwnProperty.call(LEGACY_RECIPES, key)) return LEGACY_RECIPES[key];
+  }
+  return null;
+}
 
 /** Which revisions this cutover touched — used by save migration and by tests that
  *  must prove a legacy job is not re-priced. */
 export const CUT_OVER_REVISIONS: Readonly<Record<number, readonly string[]>> = Object.freeze({
   1: ['metal_pipe', 'mechanical_gear', 'iron_plate', 'motorbike_kit', 'fuel_can'],
+  2: ['vehicle_frame', 'vehicle_frame_piped', 'industrial_axe'],
 });
 
 /** The definition a job queued at `rev` must be paid out under.
- *  - `rev === undefined`: a save written before stamping existed. If this cutover
- *    superseded that recipe, the revision-1 definition is used, so an old payment
- *    never buys the new (larger) yield; otherwise the live table still applies.
+ *  - `rev === undefined`: a save written before stamping existed; it resolves as
+ *    revision 1, so an old payment never buys a later (larger or different) recipe.
  *  - `rev === RECIPE_REVISION`: the live table.
- *  - any other revision: the frozen entry if one exists, else the live table
+ *  - any older revision: the oldest frozen entry at or after it, else the live table
  *    (an unchanged recipe has one definition valid across every revision).
  *  - a revision NEWER than this build: null, and the save fails closed. */
 export function recipeAtRevision(id: string, rev: number | undefined, live: Record<string, Recipe>): Recipe | null {
   const current = Object.prototype.hasOwnProperty.call(live, id) ? live[id] : null;
-  if (rev === undefined) {
-    const legacy = LEGACY_RECIPES[`${id}@${PRE_STAMPING_REVISION}`];
-    if (legacy && (CUT_OVER_REVISIONS[PRE_STAMPING_REVISION] ?? []).includes(id)) return legacy;
-    return current;
-  }
+  // A save written before stamping existed was written while revision 1 was live.
+  if (rev === undefined) rev = PRE_STAMPING_REVISION;
   if (rev > RECIPE_REVISION) return null;
   if (rev === RECIPE_REVISION) return current;
-  return LEGACY_RECIPES[`${id}@${rev}`] ?? current;
+  // The definition in force at `rev` is the OLDEST frozen entry at or after it: a recipe untouched by
+  // the rev-1 cutover but changed at rev 2 was still its `@2` definition while revision 1 was live.
+  for (let at = rev; at < RECIPE_REVISION; at++) {
+    const key = `${id}@${at}`;
+    if (Object.prototype.hasOwnProperty.call(LEGACY_RECIPES, key)) return LEGACY_RECIPES[key];
+  }
+  return current;
 }
 /** The station a saved job belongs to, resolved at the job's own revision. A
  *  retired recipe keeps its historical station so an old queue still validates. */
@@ -112,7 +129,7 @@ export type ResearchFamily = {
   note: string;
 };
 export const RESEARCH_FAMILIES: Readonly<Record<string, ResearchFamily>> = Object.freeze({
-  ENERGY: { id: 'ENERGY', price: [['spares', 5], ['iron_ingot', 2]], status: 'SOURCE_APPROVED', enforce: false, note: 'Recovered v1.1 ENERGY starter study materials (5 spares + 2 iron ingot), one-time paid unlock. Its three packed devices are still starter knowledge in this build, so the study records the unlock and grants anything the survivor did not already know; it does not take what they already have.' },
+  ENERGY: { id: 'ENERGY', price: [['spares', 5], ['iron_ingot', 2]], status: 'SOURCE_APPROVED', enforce: false, note: 'Recovered v1.1 ENERGY starter study materials (5 Parts + 2 Iron Ingot), one-time paid unlock. Its three packed devices are still starter knowledge in this build, so the study records the unlock and grants anything the survivor did not already know; it does not take what they already have.' },
   METALLURGY: { id: 'METALLURGY', price: null, enforce: false, status: 'OPEN_DESIGN', note: 'Family name recovered; price UNKNOWN. No runtime gate until the Creator sets a cost.' },
   MOBILITY: { id: 'MOBILITY', price: null, enforce: false, status: 'OPEN_DESIGN', note: 'Family name recovered; price UNKNOWN. The v1.2 dry kit is a recipe correction, not a paid unlock.' },
   ELECTRICAL: { id: 'ELECTRICAL', price: null, enforce: false, status: 'OPEN_DESIGN', note: 'Wire hardware (cables, switches, sensors) is documented as a family; price UNKNOWN, so the survival bootstrap stays open.' },

@@ -128,7 +128,8 @@ describe('PA1 R1 contract freeze — live catalog vs recovered paper v1.1 + v1.2
   it('census moves by ID set, not by ambition: minus one recipe, items and ontology unchanged', () => {
     const recipeIds = Object.keys(RECIPES);
     expect(new Set(recipeIds).size).toBe(recipeIds.length);
-    expect(recipeIds).toHaveLength(112);                       // 113 live at the base SHA minus the retired canister
+    expect(recipeIds).toHaveLength(111);                       // 113 at the base SHA, minus the retired canister (rev 2), minus vehicle_frame_piped (rev 3)
+    expect(recipeIds).not.toContain('vehicle_frame_piped');
     expect(recipeIds).not.toContain('fuel_can');
     expect(recipeIds).toContain('refinery_fuel');              // still exactly ONE refinery fuel recipe id
     expect(Object.keys(RECIPES).filter(k => RECIPES[k].out === 'fuel_can')).toEqual(['refine_salvaged_oil', 'refinery_fuel', 'refinery_fuel_batch', 'refinery_industrial', 'refinery_crude']);
@@ -137,7 +138,7 @@ describe('PA1 R1 contract freeze — live catalog vs recovered paper v1.1 + v1.2
     expect(DEPLOYABLE_TYPES).toHaveLength(24);
     expect(ALWAYS_KNOWN_RECIPES.filter(k => k.startsWith('deploy_'))).toHaveLength(24); // nothing is withheld in this build
     expect(starterKnowledge().filter(k => k.startsWith('deploy_'))).toHaveLength(24);
-    expect(RECIPE_REVISION).toBe(2);
+    expect(RECIPE_REVISION).toBe(3);                           // exactly one bump for the Item Ontology V2 cutover
   });
 });
 

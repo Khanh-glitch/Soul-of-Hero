@@ -172,6 +172,7 @@
       },
       "finiteCacheCanSupply": false,
       "consumers": [
+        "industrial_axe",
         "iron_sword_blade (Iron Sword (blade refit))",
         "reinforced_spear_blade (Reinforced Spear (blade))"
       ],
@@ -484,7 +485,7 @@
       },
       "finiteCacheCanSupply": false,
       "consumers": [
-        "vehicle_frame_piped (Utility Frame (piped))"
+        "vehicle_frame"
       ],
       "recycler": {
         "source": "iron_pick",
@@ -815,7 +816,7 @@
                 ]
               ],
               "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 4.667,
+              "ingotEqCraft": 8.667,
               "minted": [],
               "verdict": "OK"
             },
@@ -832,7 +833,7 @@
                 ]
               ],
               "ingotEqRecovered": 1.333,
-              "ingotEqCraft": 4.667,
+              "ingotEqCraft": 8.667,
               "minted": [],
               "verdict": "OK"
             },
@@ -853,7 +854,7 @@
                 ]
               ],
               "ingotEqRecovered": 2.167,
-              "ingotEqCraft": 4.667,
+              "ingotEqCraft": 8.667,
               "minted": [],
               "verdict": "OK"
             }
@@ -868,7 +869,7 @@
                 ]
               ],
               "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 4.667,
+              "ingotEqCraft": 8.667,
               "minted": [],
               "verdict": "OK"
             },
@@ -889,7 +890,7 @@
                 ]
               ],
               "ingotEqRecovered": 2.167,
-              "ingotEqCraft": 4.667,
+              "ingotEqCraft": 8.667,
               "minted": [],
               "verdict": "OK"
             },
@@ -918,7 +919,7 @@
                 ]
               ],
               "ingotEqRecovered": 7.611,
-              "ingotEqCraft": 4.667,
+              "ingotEqCraft": 8.667,
               "minted": [
                 "coal:+0.5"
               ],
@@ -935,7 +936,7 @@
                 ]
               ],
               "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 4.667,
+              "ingotEqCraft": 8.667,
               "minted": [],
               "verdict": "OK"
             },
@@ -956,7 +957,7 @@
                 ]
               ],
               "ingotEqRecovered": 2.167,
-              "ingotEqCraft": 4.667,
+              "ingotEqCraft": 8.667,
               "minted": [],
               "verdict": "OK"
             },
@@ -981,7 +982,7 @@
                 ]
               ],
               "ingotEqRecovered": 3,
-              "ingotEqCraft": 4.667,
+              "ingotEqCraft": 8.667,
               "minted": [],
               "verdict": "OK"
             }
@@ -1313,25 +1314,29 @@
       "cheapestCraft": {
         "route": "vehicle_frame",
         "atomsPerUnit": {
-          "iron_ingot": 4,
-          "scrap": 2,
+          "iron_ingot": 4.75,
+          "coal": 0.5,
+          "scrap": 2.5,
           "spares": 2
         },
-        "ingotEqPerUnit": 4.667,
-        "treeSeconds": 37,
+        "ingotEqPerUnit": 5.583,
+        "treeSeconds": 56,
         "model": "amortized per output unit"
       },
       "integerTreePerUnit": {
         "atoms": {
-          "iron_ingot": 4,
-          "scrap": 2,
+          "iron_ingot": 7,
+          "coal": 1,
+          "scrap": 4,
           "spares": 2
         },
-        "ingotEq": 4.667,
-        "treeSeconds": 37,
+        "ingotEq": 8.333,
+        "treeSeconds": 84,
         "crafts": {
           "vehicle_frame": 1,
-          "mechanical_parts": 1
+          "metal_pipe": 1,
+          "refined_iron_ingot": 1,
+          "mechanical_parts": 2
         },
         "rule": "whole craft batches at every node; overshoot is surplus, never fractional crafts; alternative to the amortized cheapestCraft model"
       },
@@ -1339,52 +1344,6 @@
         {
           "recipe": "vehicle_frame",
           "alias": null,
-          "outQty": 1,
-          "station": "workbench",
-          "stationLevel": 2,
-          "secs": 25,
-          "ins": [
-            [
-              "iron_ingot",
-              3
-            ],
-            [
-              "mechanical_parts",
-              2
-            ],
-            [
-              "spares",
-              2
-            ]
-          ],
-          "salvageDependent": false,
-          "rawPerOutputUnit": {
-            "atoms": {
-              "iron_ingot": 4,
-              "scrap": 2,
-              "spares": 2
-            },
-            "ingotEq": 4.667,
-            "treeSeconds": 37,
-            "model": "amortized per output unit"
-          },
-          "integerBatch": {
-            "rule": "integer craft batches (whole crafts only; overshoot is surplus output, never fractional crafts)",
-            "crafts": 1,
-            "outputs": 1,
-            "consumed": {
-              "iron_ingot": 3,
-              "mechanical_parts": 2,
-              "spares": 2
-            },
-            "seconds": 25,
-            "surplusOutputs": 0
-          },
-          "chosenByCheapestRule": true
-        },
-        {
-          "recipe": "vehicle_frame_piped",
-          "alias": "Utility Frame (piped)",
           "outQty": 1,
           "station": "workbench",
           "stationLevel": 2,
@@ -1432,7 +1391,7 @@
             "seconds": 22,
             "surplusOutputs": 0
           },
-          "chosenByCheapestRule": false
+          "chosenByCheapestRule": true
         }
       ],
       "researchCost": "base (known at start, no research)",
@@ -1454,30 +1413,31 @@
         "motorbike_kit": {
           "route": "motorbike_kit",
           "atomsPerKit": {
-            "iron_ingot": 11.667,
-            "scrap": 5.667,
-            "spares": 5,
-            "coal": 1
+            "iron_ingot": 12.417,
+            "coal": 1.5,
+            "scrap": 6.167,
+            "spares": 5
           },
-          "ingotEqPerKit": 13.556,
-          "treeSeconds": 168.667,
+          "ingotEqPerKit": 14.472,
+          "treeSeconds": 187.667,
           "integerTreePerKit": {
             "atoms": {
-              "iron_ingot": 13,
-              "scrap": 7,
-              "spares": 5,
-              "coal": 1
+              "iron_ingot": 16,
+              "coal": 2,
+              "scrap": 9,
+              "spares": 5
             },
-            "ingotEq": 15.333,
-            "treeSeconds": 182,
+            "ingotEq": 19,
+            "treeSeconds": 229,
             "crafts": {
               "motorbike_kit": 1,
               "vehicle_frame": 1,
-              "mechanical_parts": 2,
+              "metal_pipe": 1,
+              "refined_iron_ingot": 2,
+              "mechanical_parts": 3,
               "vehicle_drive": 1,
               "fasteners": 3,
-              "iron_plate": 1,
-              "refined_iron_ingot": 1
+              "iron_plate": 1
             }
           },
           "stationLevel": 3,
@@ -1591,17 +1551,12 @@
       "tool": "industrial_axe",
       "v2_pinned": {
         "resourceOverReturn": true,
-        "netIngotEqPerLoop": 2.944,
+        "netIngotEqPerLoop": -1.056,
         "mintedNonNumeraire": [
           "coal:+0.5"
         ]
       },
-      "repeatableLoop": {
-        "netIngotEqPerLoop": 2.944,
-        "consumesRepeatableInputsOnly": "ORIGINAL_UNKNOWN (wood/leather source stock unverified — no renewable proof in this benchmark)",
-        "realizable": "ORIGINAL_UNKNOWN (no renewable-input proof for wood/leather)",
-        "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
-      },
+      "repeatableLoop": "none",
       "salvageWindfall": "none in table (damaged_drive is a wreck-only input, not consumed by these tools)",
       "v3_new": {
         "resourceOverReturn": false

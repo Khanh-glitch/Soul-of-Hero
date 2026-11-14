@@ -71,6 +71,6 @@ describe('B05-R P0 defect 2: source-stock line is rendered (not discarded) and c
     const g = setup(); const id = pumpAt(g, 2);
     delete g.run!.oilSources!['oil:12:12'];
     const html = renderToStaticMarkup(React.createElement(StationBody, { api: api(g), eid: id }));
-    expect(html).toContain('No authorized oil source here');
+    expect(html).toContain('No oil site exists in this world yet');
   });
 });

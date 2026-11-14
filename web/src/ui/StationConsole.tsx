@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BAL, type Entity } from '../game/core';
 import { ITEMS, RECIPES, STRUCTS, isRecipeKnown, permitsDirectedResearch, CORE_STUDY, stationBurnable } from '../game/catalog';
-import { C, countItem, recipeOutputs, spaceFor } from '../game/engine';
+import { C, countItem, recipeOutputs, spaceFor, oilAvailability, OIL_TEXT } from '../game/engine';
 import { Panel, Slot, Icon, type Api } from './common';
 import { Glyph } from './hud';
 import { craftReadiness } from '../game/action-readiness';
@@ -121,7 +121,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
       {e.type === 'oil_pump' && (() => {
         const src = e.tx !== undefined && e.ty !== undefined ? r.oilSources?.[`oil:${e.tx}:${e.ty}`] : undefined;
         return <div className="lbl" style={{ fontSize: 8, marginTop: 2, color: src && src.stock > 0 ? 'var(--good)' : 'var(--bad)' }}>
-          {src ? `Authorized source: ${src.stock} crude left${src.stock <= 0 ? ' — dry, cycles blocked' : ''}` : 'No authorized oil source here. The pump cannot run.'}
+          {src ? `Oil site: ${src.stock} crude left${src.stock <= 0 ? ' — dry, cycles blocked' : ''}` : oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : OIL_TEXT.notOnSite}
         </div>;
       })()}
       {/* live job */}
@@ -247,16 +247,16 @@ function ResearchList({ api, eid, e, q, setQ }: { api: Api; eid: string; e: Enti
   return <>
     <div className="console-h">Research table</div>
     <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginBottom: 3 }}>
-      Known <b style={{ color: 'var(--paper)' }}>{knownN}/{all.length}</b> · Spares carried <b style={{ color: spares ? 'var(--brassLit)' : 'var(--bad)' }}>{spares}</b>
+      Known <b style={{ color: 'var(--paper)' }}>{knownN}/{all.length}</b> · Parts carried <b style={{ color: spares ? 'var(--brassLit)' : 'var(--bad)' }}>{spares}</b>
     </div>
     <button className="btn gold sm" style={{ width: '100%' }} disabled={full || !randomAvailable || spares < B.randomSparesCost}
       onClick={() => api.act('research', { mode: 'random', eid })}>
-      Tinker · {B.randomSparesCost} spares · {B.randomSeconds}s
+      Tinker · {B.randomSparesCost} Parts · {B.randomSeconds}s
     </button>
     <div className="station-action" style={{ margin: '2px 0 4px' }} role="status">
-      {full ? 'Queue full · wait or cancel a study.' : !randomAvailable ? 'Nothing left to discover.' : spares < B.randomSparesCost ? `Need ${B.randomSparesCost - spares} more Spares.` : 'Unknown blueprint will appear in output.'}
+      {full ? 'Queue full · wait or cancel a study.' : !randomAvailable ? 'Nothing left to discover.' : spares < B.randomSparesCost ? `Need ${B.randomSparesCost - spares} more Parts.` : 'Unknown blueprint will appear in output.'}
     </div>
-    <div className="console-h">Directed study · {B.directedSparesCost} spares · {B.directedSeconds}s</div>
+    <div className="console-h">Directed study · {B.directedSparesCost} Parts · {B.directedSeconds}s</div>
     <input type="text" placeholder="find a blueprint…" value={q} onChange={ev => setQ(ev.target.value)} style={{ width: '100%', marginBottom: 3 }} aria-label="Find research recipe" />
     {shown.length === 0 && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>No unknown directed target matches.</div>}
     {shown.slice(0, 40).map(k => {
@@ -264,7 +264,7 @@ function ResearchList({ api, eid, e, q, setQ }: { api: Api; eid: string; e: Enti
       return <div key={k} className={`recipe-row ${can ? '' : 'no'}`} style={{ cursor: 'default' }}>
         <Icon k={rc.out} size={12} />
         <span className="lbl" style={{ fontSize: 9, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ITEMS[rc.out].name}</span>
-        <button className="btn sm" disabled={!can} title={full ? 'Queue full' : !can ? `Need ${B.directedSparesCost - spares} more Spares` : 'Reserve Spares for this research'} onClick={() => api.act('research', { mode: 'directed', recipe: k, eid })}>Study</button>
+        <button className="btn sm" disabled={!can} title={full ? 'Queue full' : !can ? `Need ${B.directedSparesCost - spares} more Parts` : 'Reserve Parts for this research'} onClick={() => api.act('research', { mode: 'directed', recipe: k, eid })}>Study</button>
       </div>;
     })}
   </>;

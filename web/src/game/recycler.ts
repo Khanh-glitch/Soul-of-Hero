@@ -3,7 +3,7 @@ import { ITEMS } from './catalog';
 
 type Output = [string, number];
 /** B01: X:recover-v1 jobs keep the v1 table forever; X:recover-v2 jobs use recyclerV2 (new physical outputs). */
-export type RecoveryRecipe = 'X:drive'|'X:recover-v1'|'X:recover-v2'|'X:recover-v3'|'X:pipe-v1'|'X:pipe-v2'|'X:pipe-v3'|'X:gear-v1'|'X:blade-v1';
+export type RecoveryRecipe = 'X:drive'|'X:recover-v1'|'X:recover-v2'|'X:recover-v3'|'X:pipe-v1'|'X:pipe-v2'|'X:pipe-v3'|'X:gear-v1'|'X:blade-v1'|'X:plate-v1';
 /**
  * MEC-01 R2 (A2): IMMUTABLE component rule snapshots. Each versioned key pins its own seconds and outputs in code,
  * so a saved job never re-reads a live balance table. recyclerV4 in balance.v1.json is a documentation mirror
@@ -13,18 +13,23 @@ export type RecoveryRecipe = 'X:drive'|'X:recover-v1'|'X:recover-v2'|'X:recover-
 const COMPONENT_RULES = {
   // X:pipe-v1 (B04-P4): one pipe -> one refined ingot. Kept forever for stored jobs.
   'X:pipe-v1': { key: 'metal_pipe', seconds: 10, outputs: [['refined_iron_ingot', 1]] as Output[] },
-  // X:pipe-v2 (A2, new jobs): pipe -> 1 refined + 1 Mechanical Parts. Craft = 2 refined + 1 MP (>= 3.83 ingot-eq); return >= 2.33 ingot-eq.
+  // X:pipe-v2 (A2, new jobs): pipe -> 1 refined + 1 Machine Parts. Craft = 2 refined + 1 MP (>= 3.83 ingot-eq); return >= 2.33 ingot-eq.
   'X:pipe-v2': { key: 'metal_pipe', seconds: 12, outputs: [['refined_iron_ingot', 1], ['mechanical_parts', 1]] as Output[] },
   // X:pipe-v3 (PA1 R1): the recovered paper return — one pipe back into exactly one
   // Refined Iron Ingot. Mandatory companion to the pipe recipe cut to 2 per craft: at
   // X:pipe-v2 the pair of pipes returned 2 refined + 2 parts against a 2 refined + 1 parts
-  // craft, i.e. a repeatable +1 Mechanical Parts mint (bible.md K4 forbids craft->recycle->craft
+  // craft, i.e. a repeatable +1 Machine Parts mint (bible.md K4 forbids craft->recycle->craft
   // producing net-positive material). v1/v2 stay frozen for jobs already stored.
   'X:pipe-v3': { key: 'metal_pipe', seconds: 10, outputs: [['refined_iron_ingot', 1]] as Output[] },
   // X:gear-v1 (historical gear experiment): gear -> 2 MP + 1 ingot. Craft = 2 ingot + 2 MP + 1 fastener (~4.11 ingot-eq); return ~2.67 ingot-eq.
   'X:gear-v1': { key: 'mechanical_gear', seconds: 15, outputs: [['mechanical_parts', 2], ['iron_ingot', 1]] as Output[] },
   // X:blade-v1 (A2): blade -> 2 ingot + 1 MP. Craft = 4 ingot + 1 MP (~4.83 ingot-eq); return ~2.83 ingot-eq.
   'X:blade-v1': { key: 'metal_blade', seconds: 14, outputs: [['iron_ingot', 2], ['mechanical_parts', 1]] as Output[] },
+  // X:plate-v1 (Item Ontology V2 P5, Control Tower ruling): plate -> 1 Iron Ingot, nothing else.
+  // Craft = 2 refined + 1 fastener -> 2 plates, i.e. 1 refined (1.5 ingot + 0.5 coal) + 0.5 fastener per plate.
+  // The return is one PLAIN ingot: less iron than went in, no refined ingot, no Fastener, no Machine Parts,
+  // no Parts — so craft -> recycle -> craft loses iron every turn and can mint nothing (bible.md K4).
+  'X:plate-v1': { key: 'iron_plate', seconds: 10, outputs: [['iron_ingot', 1]] as Output[] },
 } as const;
 export const COMPONENT_RECIPES: readonly string[] = Object.keys(COMPONENT_RULES);
 /** Pinned-rule view for tests and the balance mirror. */
@@ -52,6 +57,7 @@ export function recoveryPlan(s:Stack):RecoveryPlan|null {
   if(s.key==='metal_pipe')return componentPlan('X:pipe-v3',s);
   if(s.key==='mechanical_gear')return componentPlan('X:gear-v1',s);
   if(s.key==='metal_blade')return componentPlan('X:blade-v1',s);
+  if(s.key==='iron_plate')return componentPlan('X:plate-v1',s);
   // MEC-01 P1: v3 supersedes v2 for the four keys it lists (v2 over-returned); new jobs only.
   const v3=BAL.recyclerV3.rules as RuleTable;
   if(Object.prototype.hasOwnProperty.call(v3,s.key))return planFromTable(s,v3,'X:recover-v3',BAL.recyclerV3.seconds);

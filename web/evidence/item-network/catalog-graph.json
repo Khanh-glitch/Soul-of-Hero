@@ -1,14 +1,15 @@
 {
   "meta": {
     "schema": "soh-runtime-item-formula-atlas-v1",
-    "sourceSHA": "fd9390609f0a6675894166b2dc8716390a32f4de",
+    "sourceSHA": "a0bd4368170817388afc2a72cdaa689fe92f9833",
     "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
     "recipeCensusNote": "Counts the LIVE RECIPES table only. Retired formulas are excluded, and frozen revision definitions are never added back as active routes.",
     "retiredRecipes": [
-      "fuel_can"
+      "fuel_can",
+      "vehicle_frame_piped"
     ],
-    "recipeRevision": 2,
-    "exportedAt": "2026-11-13T17:22:35.758Z",
+    "recipeRevision": 3,
+    "exportedAt": "2026-11-14T12:48:02.774Z",
     "project": "Soul of Heroes — WEB Veyra runtime",
     "authority": [
       "web/src/game/catalog.ts",
@@ -76,7 +77,7 @@
     },
     "core_blast": {
       "id": "core_blast",
-      "name": "Vụ nổ lớn",
+      "name": "Big Bang",
       "cat": "core",
       "desc": "Common Fire Core. Reload each reserve with Basic, Refined or Refined plus Fire Essence.",
       "w": 0.3,
@@ -86,7 +87,7 @@
     },
     "core_meteor": {
       "id": "core_meteor",
-      "name": "Thiên thạch",
+      "name": "Meteor",
       "cat": "core",
       "desc": "Rare Fire Core. A fireball, targeted meteor and ten-meteor storm.",
       "w": 0.3,
@@ -96,7 +97,7 @@
     },
     "core_dragon": {
       "id": "core_dragon",
-      "name": "Hơi thở của rồng",
+      "name": "Dragon's Breath",
       "cat": "core",
       "desc": "Top-tier Fire Core: flamethrower, fire tornado and dragon dive.",
       "w": 0.3,
@@ -106,7 +107,7 @@
     },
     "core_elsa": {
       "id": "core_elsa",
-      "name": "Gươm Elsa",
+      "name": "Elsa's Sword",
       "cat": "core",
       "desc": "Rare Water Core: ice projectile, one-second self-freeze and viewport freeze.",
       "w": 0.3,
@@ -116,7 +117,7 @@
     },
     "core_earthmother": {
       "id": "core_earthmother",
-      "name": "Hơi thở đất mẹ",
+      "name": "Earth Mother's Breath",
       "cat": "core",
       "desc": "Common Nature Core: rock, grove and binding roots.",
       "w": 0.3,
@@ -136,7 +137,7 @@
     },
     "core_demon": {
       "id": "core_demon",
-      "name": "Lõi quỷ",
+      "name": "Demon Core",
       "cat": "core",
       "desc": "Rare Spirit Core: directed rays, a stationary beam and a map-selected teleport.",
       "w": 0.3,
@@ -148,7 +149,7 @@
       "id": "crude_petroleum",
       "name": "Crude Petroleum",
       "cat": "res",
-      "desc": "Raw petroleum drawn from an authorized oil source. Refine at an Oil Refinery (4 crude + glass).",
+      "desc": "Raw petroleum pumped from an oil site. No oil site exists in this world yet, so none can be obtained today. Fuel comes from Salvaged Oil.",
       "w": 0.8,
       "max": 30
     },
@@ -173,15 +174,15 @@
       "id": "damaged_drive",
       "name": "Damaged Drive",
       "cat": "res",
-      "desc": "Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.",
+      "desc": "Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Machine Parts. Or carry to the Foundry Recycler: 1 drive → 2 Parts. The same drive is spent either way.",
       "w": 3,
       "max": 1
     },
     "mechanical_parts": {
       "id": "mechanical_parts",
-      "name": "Mechanical Parts",
+      "name": "Machine Parts",
       "cat": "res",
-      "desc": "Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.",
+      "desc": "Craftable industrial component: made at a Workbench from Scrap and Iron, or found in industrial wrecks. Builds tools, machines and vehicles and maintains equipment. Not the same thing as Parts.",
       "w": 0.5,
       "max": 30
     },
@@ -330,7 +331,7 @@
       "id": "root_broth",
       "name": "Root Broth",
       "cat": "food",
-      "desc": "Cooked garden sunroot and Bitterleaf: restorative food with moisture.",
+      "desc": "Warm broth simmered with Bitterleaf from garden Sunroot or from Grouse Eggs: restorative food with moisture.",
       "w": 0.5,
       "max": 10,
       "food": {
@@ -384,9 +385,9 @@
     },
     "spares": {
       "id": "spares",
-      "name": "Spares",
+      "name": "Parts",
       "cat": "res",
-      "desc": "Run-local components. Research currency and advanced parts.",
+      "desc": "Progression resource. Cannot be crafted: found in loot and wrecks or recovered at the Recycler. Pays for research and trader barter and goes into Cores and powered machines. Run-local.",
       "w": 0.3,
       "max": 60
     },
@@ -424,9 +425,9 @@
     },
     "fur": {
       "id": "fur",
-      "name": "Wolf Fur",
+      "name": "Fur",
       "cat": "res",
-      "desc": "Warm pelt.",
+      "desc": "Warm pelt from a fox or hare, wild or penned. Sewn into a Fur Cloak.",
       "w": 0.6,
       "max": 30
     },
@@ -1074,7 +1075,7 @@
       "id": "fuel_can",
       "name": "Fuel Canister",
       "cat": "misc",
-      "desc": "Fuels generators and motorbikes. Refined from real oil at a furnace or Oil Refinery. NOT station kindling — a campfire, furnace, refinery or research table burns solid fuel, never a canister. PA1 v1.2: the improvised bench formula is retired, so a motorbike always pays for its first can separately.",
+      "desc": "Fuels generators and motorbikes. Refined from real oil at a furnace or Oil Refinery. NOT station kindling — a campfire, furnace, refinery or research table burns solid fuel, never a canister. A packed motorbike ships dry: its first canister is made separately.",
       "w": 1.5,
       "max": 5,
       "fuel": 60
@@ -1083,13 +1084,13 @@
       "id": "rcash",
       "name": "Ragnarok Cash",
       "cat": "cash",
-      "desc": "Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.",
+      "desc": "Physical, unsecured. Can be lost. Deposit in an owned Escrow Chest.",
       "w": 0.01,
       "max": 999
     },
     "escrow_chest": {
       "id": "escrow_chest",
-      "name": "Rương ký gửi",
+      "name": "Escrow Chest",
       "cat": "kit",
       "desc": "Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.",
       "w": 4,
@@ -1124,7 +1125,7 @@
       "id": "metal_pipe",
       "name": "Metal Pipe",
       "cat": "res",
-      "desc": "Pipe section for the piped utility frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Mechanical Part spent to make it is NOT returned — so pipe never loops. PA1 v1.1: the recovered BOM removed Iron Plate as a pipe sink.",
+      "desc": "Pipe section: the tubing of every Utility Frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Machine Part spent to make it is NOT returned — so pipe never loops.",
       "w": 1.2,
       "max": 20
     },
@@ -1132,7 +1133,7 @@
       "id": "metal_blade",
       "name": "Metal Blade",
       "cat": "res",
-      "desc": "Cut blade stock for sword refits.",
+      "desc": "Cut blade stock: the edge of the Salvager Axe, and an optional refit for the Iron Sword and Reinforced Spear.",
       "w": 0.8,
       "max": 20
     },
@@ -1156,7 +1157,7 @@
       "id": "motorbike_kit",
       "name": "Utility Motorbike (packed)",
       "cat": "kit",
-      "desc": "PA1 v1.2 dry kit: frame, drive, two iron plates and two fastener sets. No fuel is packaged — place it, then refuel with a real Fuel Canister.",
+      "desc": "Packed dry: frame, drive, two iron plates and two fastener sets. No fuel is packaged — place it, then refuel with a real Fuel Canister.",
       "w": 12,
       "max": 1,
       "dur": 200,
@@ -1271,7 +1272,7 @@
       "id": "lead_rope",
       "name": "Taming Lead",
       "cat": "tool",
-      "desc": "SOH_PROVISIONAL: Calm and lead a tamable wild animal (Boar, Deer, Hare, or Black Grouse) into an enclosed pen.",
+      "desc": "Calm and lead a tamable wild animal (Boar, Deer, Hare, or Black Grouse) into an enclosed pen.",
       "w": 0.35,
       "max": 5
     },
@@ -1279,7 +1280,7 @@
       "id": "animal_feed",
       "name": "Fodder Bundle",
       "cat": "res",
-      "desc": "SOH_PROVISIONAL: Bundled fiber and seeds for penned livestock in a Feed & Water Trough.",
+      "desc": "Bundled fiber and seeds for penned livestock in a Feed & Water Trough.",
       "w": 0.25,
       "max": 40
     },
@@ -1287,7 +1288,7 @@
       "id": "feather",
       "name": "Grouse Feather",
       "cat": "res",
-      "desc": "SOH_PROVISIONAL: Flight feather shed by Black Grouse; improves arrow fletching.",
+      "desc": "Flight feather shed by Black Grouse; improves arrow fletching.",
       "w": 0.03,
       "max": 60
     },
@@ -1295,7 +1296,7 @@
       "id": "grouse_egg",
       "name": "Grouse Egg",
       "cat": "food",
-      "desc": "SOH_PROVISIONAL: Nutritious speckled egg laid by fed penned Black Grouse.",
+      "desc": "Nutritious speckled egg laid by fed penned Black Grouse.",
       "w": 0.12,
       "max": 20,
       "food": {
@@ -1308,7 +1309,7 @@
       "id": "relic_shaleheart",
       "name": "Shaleheart Coreplate",
       "cat": "armor",
-      "desc": "SOH_PROVISIONAL: Run-local crystal-veined quarry carapace taken from Greyback Shaleheart (-38% damage).",
+      "desc": "Run-local crystal-veined quarry carapace taken from Greyback Shaleheart (-38% damage).",
       "w": 3.2,
       "max": 1,
       "slot": "body"
@@ -1317,7 +1318,7 @@
       "id": "ronin_nodachi",
       "name": "Oathless Nodachi",
       "cat": "weapon",
-      "desc": "SOH_PROVISIONAL: Run-local long-bladed nodachi claimed from the Oathless Ronin.",
+      "desc": "Run-local long-bladed nodachi claimed from the Oathless Ronin.",
       "w": 1.8,
       "max": 1,
       "power": {
@@ -1343,7 +1344,7 @@
       "id": "tidemarshal_trident",
       "name": "Saltwick Trident",
       "cat": "weapon",
-      "desc": "SOH_PROVISIONAL: Run-local brine-tempered polearm of the Saltwick Tidemarshal.",
+      "desc": "Run-local brine-tempered polearm of the Saltwick Tidemarshal.",
       "w": 1.9,
       "max": 1,
       "power": {
@@ -1369,7 +1370,7 @@
       "id": "custodian_lantern",
       "name": "Archive Lantern",
       "cat": "tool",
-      "desc": "SOH_PROVISIONAL: Run-local silver-violet ward lantern of the Pale Custodian. Steady wide light.",
+      "desc": "Run-local silver-violet ward lantern of the Pale Custodian. Steady wide light.",
       "w": 0.6,
       "max": 1,
       "dmg": 12,
@@ -1984,8 +1985,12 @@
       "qty": 1,
       "ins": [
         [
+          "metal_pipe",
+          1
+        ],
+        [
           "iron_ingot",
-          3
+          2
         ],
         [
           "mechanical_parts",
@@ -1998,9 +2003,10 @@
       ],
       "station": "workbench",
       "stationLevel": 2,
-      "secs": 25,
+      "secs": 22,
       "base": true,
-      "tier": 1
+      "tier": 1,
+      "rev": 3
     },
     "vehicle_drive": {
       "id": "vehicle_drive",
@@ -2713,8 +2719,12 @@
           1
         ],
         [
+          "metal_blade",
+          1
+        ],
+        [
           "mechanical_parts",
-          2
+          1
         ],
         [
           "spares",
@@ -2724,7 +2734,8 @@
       "station": "workbench",
       "stationLevel": 2,
       "secs": 25,
-      "tier": 2
+      "tier": 2,
+      "rev": 3
     },
     "reinforced_spear": {
       "id": "reinforced_spear",
@@ -2862,35 +2873,6 @@
       "station": "workbench",
       "stationLevel": 2,
       "secs": 14,
-      "base": true,
-      "tier": 2
-    },
-    "vehicle_frame_piped": {
-      "id": "vehicle_frame_piped",
-      "out": "vehicle_frame",
-      "qty": 1,
-      "alias": "Utility Frame (piped)",
-      "ins": [
-        [
-          "metal_pipe",
-          1
-        ],
-        [
-          "iron_ingot",
-          2
-        ],
-        [
-          "mechanical_parts",
-          2
-        ],
-        [
-          "spares",
-          2
-        ]
-      ],
-      "station": "workbench",
-      "stationLevel": 2,
-      "secs": 22,
       "base": true,
       "tier": 2
     },
@@ -4828,7 +4810,7 @@
       "layer": "obj",
       "station": "oil_pump",
       "light": 0,
-      "desc": "Draws Crude Petroleum from an authorized oil site. Needs fuel to run; output waits in its slots. Placement needs an authorized source.",
+      "desc": "Draws Crude Petroleum from an oil site. No oil site exists in this world yet, so the pump cannot be placed today. Fuel comes from Salvaged Oil at an Oil Refinery.",
       "item": "deploy_oil_pump"
     },
     "refinery": {
@@ -4908,7 +4890,7 @@
       "block": true,
       "layer": "obj",
       "station": "research",
-      "desc": "Spend Spares or study specimens to unlock recipes.",
+      "desc": "Spend Parts or study specimens to unlock recipes.",
       "item": "deploy_research"
     },
     "garden": {
@@ -5006,7 +4988,7 @@
       "block": true,
       "layer": "obj",
       "slots": 6,
-      "desc": "SOH_PROVISIONAL: 6-slot livestock trough. Stock fodder/crops/berries and filled water flasks (or rain/barrel) inside an enclosed pen.",
+      "desc": "6-slot livestock trough. Stock fodder/crops/berries and filled water flasks (or rain/barrel) inside an enclosed pen.",
       "item": "deploy_feed_trough"
     },
     "base_generator": {
@@ -5265,7 +5247,7 @@
     },
     "escrow": {
       "id": "escrow",
-      "name": "Rương ký gửi",
+      "name": "Escrow Chest",
       "cost": [
         [
           "escrow_chest",
@@ -6908,6 +6890,16 @@
             1
           ]
         ]
+      },
+      "X:plate-v1": {
+        "key": "iron_plate",
+        "seconds": 10,
+        "outputs": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
       }
     },
     "versions": {
@@ -7309,11 +7301,11 @@
   },
   "counts": {
     "items": 147,
-    "recipes": 112,
+    "recipes": 111,
     "structures": 47,
     "sourceTypes": 19,
     "creatures": 23,
-    "recipeInputs": 273,
+    "recipeInputs": 271,
     "recipeOutputVariants": 1
   }
 }

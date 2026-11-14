@@ -1,8 +1,9 @@
 import { recoveryPlan, recoveryFits } from '../game/recycler';
+import { itemClass, itemClassLabel, coreClassLine, ITEM_CLASS_MEANING, ITEM_CLASS_VI } from '../game/item-class';
 import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
 import type { RunState } from '../game/core';
-import { anyAuthorizedOilSource, owned, clearInteraction } from '../game/engine';
+import { anyAuthorizedOilSource, owned, clearInteraction, oilAvailability, OIL_TEXT } from '../game/engine';
 import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, PA1_BASE_GEOMETRY, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, recipeForJob, familyOfRecipe, familyMembers, isFamilyGated, RESEARCH_FAMILIES } from '../game/catalog';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
@@ -56,12 +57,13 @@ export function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
   const d = ITEMS[s.key];
   const isCore = !!(d.core || d.creatorCore);
   const dur = s.dur !== undefined && d.dur ? s.dur / d.dur : null;
-  return <div className={`iteminfo ${isCore ? 'iteminfo--core' : ''}`}>
+  const cls = itemClass(s.key); const clsVi = cls ? ITEM_CLASS_VI[cls] : undefined; const coreLine = coreClassLine(s.key);
+  return <div className={`iteminfo ${isCore ? 'iteminfo--core' : ''} ${cls === 'FIELD_CORE' ? 'iteminfo--field' : ''}`} data-testid="iteminfo">
     <div className="iteminfo__ico"><Icon k={s.key} size={24} /></div>
     <div className="iteminfo__body">
-      <div className="iteminfo__name">{d.name}{s.meta ? ` · ${ITEMS[RECIPES[s.meta]?.out]?.name || s.meta}` : ''}</div>
+      <div className="iteminfo__name" data-testid="iteminfo-name">{d.name}{s.meta ? ` · ${ITEMS[RECIPES[s.meta]?.out]?.name || s.meta}` : ''}{d.vi ? <span className="iteminfo__vi" lang="vi" title="Vietnamese name" data-testid="iteminfo-vi">{d.vi}</span> : null}</div>
       <div className="iteminfo__row">
-        <span className="chip" style={{ color: isCore ? 'var(--brassLit)' : 'var(--muted)' }}>{CAT_LABEL[d.cat] || d.cat.toUpperCase()}</span>
+        <span className="chip" data-testid="iteminfo-class" data-class={cls ?? ''} title={cls ? ITEM_CLASS_MEANING[cls] : undefined} style={{ color: cls === 'FIELD_CORE' ? 'var(--info)' : isCore ? 'var(--brassLit)' : 'var(--muted)' }}>{itemClassLabel(s.key, CAT_LABEL[d.cat] || d.cat.toUpperCase())}{clsVi ? <span lang="vi" style={{ marginLeft: 4, opacity: .85 }}>{clsVi}</span> : null}</span>
         {d.dmg ? <StatChip g="spark" v={`${d.dmg}`} title="Damage" /> : null}
         {d.reach ? <StatChip g="eye" v={`${d.reach}`} c="var(--paper)" title="Reach" /> : null}
         {d.armor ? <StatChip g="hp" v={`-${Math.round(d.armor * 100)}%`} c="var(--good)" title="Damage taken" /> : null}
@@ -78,6 +80,8 @@ export function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
         <StatChip g="weight" v={`${(d.w * s.qty).toFixed(1)}kg`} c="var(--muted)" title="Weight carried" />
       </div>
       {dur !== null && <div className="durbar" title={`Durability ${s.dur}/${d.dur}`}><i style={{ width: `${dur * 100}%`, background: dur < 0.25 ? 'var(--bad)' : dur < 0.5 ? 'var(--warn)' : 'var(--good)' }} />{dur <= 0 && <b>BROKEN</b>}</div>}
+      {coreLine && <div className="iteminfo__core" data-testid="iteminfo-coreline">{coreLine}</div>}
+      {d.desc && <div className="iteminfo__desc" data-testid="iteminfo-desc">{d.desc}</div>}
       <KnownUses item={s.key} known={known} />
     </div>
   </div>;
@@ -87,7 +91,7 @@ function KnownUses({ item, known }: { item: string; known: string[] }) {
   // The active run's known recipes only: no undiscovered POI or recipe spoilers. Icons, not a sentence.
   const uses = Object.keys(RECIPES).filter(k => isRecipeKnown(known, k) && RECIPES[k]?.ins.some(([key]) => key === item)).slice(0, 8);
   if (!uses.length) return null;
-  return <div className="uses" title="Known recipes that use this"><span className="lbl">→</span>{uses.map(k => <span key={k} title={ITEMS[RECIPES[k].out].name}><Icon k={RECIPES[k].out} size={11} /></span>)}</div>;
+  return <div className="uses" data-testid="iteminfo-uses" title="Known recipes that use this"><span className="lbl">→</span>{uses.map(k => <span key={k} title={ITEMS[RECIPES[k].out].name}><Icon k={RECIPES[k].out} size={11} /></span>)}</div>;
 }
 
 /** Live Adventurer preview inside the inventory: the same sprite + equipment rendering the world uses. */
@@ -277,7 +281,7 @@ export function StationBody({ api, eid }: { api: Api; eid: string }) {
   const [confirmSalvage, setConfirmSalvage] = useState<string | null>(null);
   const maintenance = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].repair || ITEMS[s.key].salvage));
   return <div>
-    {e.type === 'oil_pump' && (oilSrc ? <div data-testid="oil-source-stock" style={{fontSize:10,color:oilSrc.stock>0?'#d6ffc0':'#ffb8a0'}}>Authorized source (test fixture): {oilSrc.stock} Crude Petroleum left{oilSrc.stock<=0?' — dry, cycles blocked':''}</div> : <div style={{fontSize:10,color:'#ffb8a0'}}>No authorized oil source here. Pump cannot run.</div>)}
+    {e.type === 'oil_pump' && (oilSrc ? <div data-testid="oil-source-stock" style={{fontSize:10,color:oilSrc.stock>0?'#d6ffc0':'#ffb8a0'}}>Oil site (test fixture): {oilSrc.stock} Crude Petroleum left{oilSrc.stock<=0?' — dry, cycles blocked':''}</div> : <div data-testid="oil-no-site" style={{fontSize:10,color:'#ffb8a0'}}>{oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : OIL_TEXT.notOnSite}</div>)}
     {kind === 'refinery' && <div style={{fontSize:10,marginBottom:4,color:'#8fd19b'}}><b>Industrial batch:</b> 6 Salvaged Oil + 1 Glass → 2 Fuel Canister + 1 Machine Lubricant, {BAL.oilRefineryV1.recipes.industrial.secs}s, one job. Needs fuel to run; both products wait in Output until there is room for the whole batch. Lubricant halves motorbike wear for {Math.round(BAL.oilRefineryV1.lubricantDistancePx/TILE)} tiles.</div>}
     {kind === 'workbench' && <details style={{ fontSize: 10, marginBottom: 5, borderBottom: '1px solid #514155', paddingBottom: 4 }}>
       <summary style={{ color: '#ffd98a', cursor: 'pointer' }}>Equipment maintenance &amp; upgrades</summary>
@@ -302,12 +306,12 @@ export function StationBody({ api, eid }: { api: Api; eid: string }) {
     {st.queue.map((j, i) => { const rcj = j.recipe.startsWith('R:') || j.recipe.startsWith('F:') ? null : recipeForJob(j.recipe, j.rv); const out = rcj ? rcj.out : 'blueprint'; const label = rcj ? bundleLabel(rcj) : j.recipe.startsWith('F:') ? j.recipe.slice(2) + ' family study' : ITEMS[out]?.name ?? j.recipe; const pause = i === 0 && rcj?.station === 'refinery' ? (j.left <= 0 ? (rcj.outs && !recoveryFits(C(r, st.outC), recipeOutputs(rcj)) ? 'paused: output storage full' : '') : (st.burn <= 0 && !C(r, st.fuelC).slots.some(s => s && ITEMS[s.key].fuel) ? 'paused: no fuel' : '')) : ''; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10, flexWrap: 'wrap' }}><Icon k={out} size={12} /><span style={{ width: 150 }}>{label}</span>{pause && <span style={{ color: '#ffb040', width: '100%' }}>{pause}</span>}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: i === 0 && (!fuelled || st.burn > 0) ? '#7aff6a' : '#a07a3a' }} /></div><span>{Math.ceil(j.left / 1000)}s</span><button className="btn ghost" style={{ padding: '0 3px' }} onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>; })}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Output</div><Grid api={api} cid={st.outC} cols={6} />
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Recipes</div>
-    {kind === 'workbench' && <div style={{ fontSize: 10, color: '#cfc2dc' }}>Drive recovery: 1 Damaged Drive + 1 Scrap → 1 Mechanical Parts (12s).</div>}
+    {kind === 'workbench' && <div style={{ fontSize: 10, color: '#cfc2dc' }}>Drive recovery: 1 Damaged Drive + 1 Scrap → 1 Machine Parts (12s).</div>}
     <div style={{fontSize: 9, color: '#cfc2dc'}}>Red cost = missing · queue holds up to 6.</div>
     {known.map(([k, rc]) => {
       const missing = rc.ins.some(([item, qty]) => countItem(r, 'inv', item) < qty);
       const reason = (rc.stationLevel ?? 1) > level ? `Requires bench ${rc.stationLevel}` : st.queue.length >= 6 ? 'Queue full' : missing ? 'Missing ingredients' : 'Queue this recipe';
-      return <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, marginBottom: 1 }}><Icon k={rc.out} size={12} /><span style={{ width: 150 }}>{k === 'recover_drive' ? 'Recover Drive → Parts' : rc.outs ? bundleLabel(rc) : ITEMS[rc.out].name + (rc.qty > 1 ? ` ×${rc.qty}` : '')}</span><Cost ins={rc.ins} have={have(api)} /><span style={{ color: '#8a7a9a' }}>{rc.secs}s{(rc.stationLevel ?? 1) > level ? ` · bench ${rc.stationLevel} required` : ''}</span><button className="btn" title={reason} disabled={reason !== 'Queue this recipe'} style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => api.act('craft', { recipe: k, eid })}>Queue</button></div>;
+      return <div key={k} className="flex items-center gap-1" style={{ fontSize: 10, marginBottom: 1 }}><Icon k={rc.out} size={12} /><span style={{ width: 150 }}>{k === 'recover_drive' ? 'Recover Drive → Machine Parts' : rc.outs ? bundleLabel(rc) : ITEMS[rc.out].name + (rc.qty > 1 ? ` ×${rc.qty}` : '')}</span><Cost ins={rc.ins} have={have(api)} /><span style={{ color: '#8a7a9a' }}>{rc.secs}s{(rc.stationLevel ?? 1) > level ? ` · bench ${rc.stationLevel} required` : ''}</span><button className="btn" title={reason} disabled={reason !== 'Queue this recipe'} style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => api.act('craft', { recipe: k, eid })}>Queue</button></div>;
     })}
     {recipes.length > known.length && <div style={{ fontSize: 10, color: '#8a7a9a' }}>{recipes.length - known.length} more recipes undiscovered here (blueprints, research, specimens).</div>}
   </div>;
@@ -322,11 +326,11 @@ function ResearchBody({ api, eid }: { api: Api; eid: string }) {
   const studyTarget = (key: string) => ITEMS[key].specimen || CORE_STUDY[key] || ITEMS[key].studyRecipe || null;
   const specimens = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && studyTarget(s.key));
   return <div>
-    <div style={{ fontSize: 10, color: '#cfc2dc' }}>Spares compete with trader purchases and machinery. Spares in pack: <b style={{ color: '#ffe27a' }}>{countItem(r, 'inv', 'spares')}</b> · Known recipes {Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).length}/{Object.keys(RECIPES).length}</div>
-    <div className="flex gap-1 items-center" style={{ margin: '3px 0' }}><button className="btn gold" onClick={() => api.act('research', { mode: 'random', eid })}>Tinker ({B.randomSparesCost} Spares, {B.randomSeconds}s)</button><span style={{ fontSize: 9, color: '#8a7a9a' }}>random unknown blueprint; take and use to learn</span></div>
-    <details style={{ marginBottom: 3 }}><summary style={{ fontSize: 10, color: '#ffd98a', cursor: 'pointer' }}>Directed study ({B.directedSparesCost} Spares, {B.directedSeconds}s)</summary>
+    <div style={{ fontSize: 10, color: '#cfc2dc' }}>Parts compete with trader purchases and machinery. Parts in pack: <b style={{ color: '#ffe27a' }}>{countItem(r, 'inv', 'spares')}</b> · Known recipes {Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).length}/{Object.keys(RECIPES).length}</div>
+    <div className="flex gap-1 items-center" style={{ margin: '3px 0' }}><button className="btn gold" onClick={() => api.act('research', { mode: 'random', eid })}>Tinker ({B.randomSparesCost} Parts, {B.randomSeconds}s)</button><span style={{ fontSize: 9, color: '#8a7a9a' }}>random unknown blueprint; take and use to learn</span></div>
+    <details style={{ marginBottom: 3 }}><summary style={{ fontSize: 10, color: '#ffd98a', cursor: 'pointer' }}>Directed study ({B.directedSparesCost} Parts, {B.directedSeconds}s)</summary>
     <label style={{ fontSize: 10 }}>Find <input aria-label="Find research recipe" value={search} onChange={e => setSearch(e.target.value)} style={{ width: 120, color: '#fff', background: '#21182a', border: '1px solid #6c5770' }} /></label>
-    <div className="scroll" style={{ maxHeight: 105, overflowY: 'auto' }}>{unknown.filter(k => permitsDirectedResearch(RECIPES[k]) && ITEMS[RECIPES[k].out].name.toLowerCase().includes(search.toLowerCase())).map(k => { const rc=RECIPES[k], pending=st.queue.some(j=>j.recipe==='R:'+k); return <div key={k} style={{borderTop:'1px solid #514155',fontSize:10,marginTop:3}}><b><Icon k={rc.out} size={10} /> {ITEMS[rc.out].name}</b> · blueprint → {rc.qty} output<br />{rc.station} {rc.station==='workbench'?`level ${rc.stationLevel||1}`:''} · {rc.secs}s · craft: {rc.ins.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(' + ')}<br /><button className="btn ghost" disabled={pending} onClick={()=>api.act('research',{mode:'directed',recipe:k,eid})}>{pending?'Already in progress':`Study: ${B.directedSparesCost} Spares / ${B.directedSeconds}s`}</button></div>;})}</div></details>
+    <div className="scroll" style={{ maxHeight: 105, overflowY: 'auto' }}>{unknown.filter(k => permitsDirectedResearch(RECIPES[k]) && ITEMS[RECIPES[k].out].name.toLowerCase().includes(search.toLowerCase())).map(k => { const rc=RECIPES[k], pending=st.queue.some(j=>j.recipe==='R:'+k); return <div key={k} style={{borderTop:'1px solid #514155',fontSize:10,marginTop:3}}><b><Icon k={rc.out} size={10} /> {ITEMS[rc.out].name}</b> · blueprint → {rc.qty} output<br />{rc.station} {rc.station==='workbench'?`level ${rc.stationLevel||1}`:''} · {rc.secs}s · craft: {rc.ins.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(' + ')}<br /><button className="btn ghost" disabled={pending} onClick={()=>api.act('research',{mode:'directed',recipe:k,eid})}>{pending?'Already in progress':`Study: ${B.directedSparesCost} Parts / ${B.directedSeconds}s`}</button></div>;})}</div></details>
     <div style={{ fontSize: 10, color: '#ffd98a' }}>Specimen / Core / equipment study ({B.specimenSeconds}s, consumes 1)</div>
     {specimens.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Carry a creature specimen, Core or studyable equipment.</div>}
     {specimens.map(([s, i]) => <div key={i} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={s!.key} size={12} />{ITEMS[s!.key].name} → {ITEMS[RECIPES[studyTarget(s!.key)!]?.out ?? ''].name ?? 'a retired formula'}{confirmStudy === s!.uid ? <><span>Reserves item; completion consumes it, cancellation returns it</span><button className="btn danger" onClick={() => { api.act('research', { mode: 'specimen', slot: i, uid: s!.uid, eid }); setConfirmStudy(null); }}>Confirm</button><button className="btn ghost" onClick={() => setConfirmStudy(null)}>Cancel</button></> : <button className="btn" style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => setConfirmStudy(s!.uid)}>Study</button>}</div>)}
@@ -471,7 +475,7 @@ export function BuildPanel({ api }: { api: Api }) {
         <div className="lbl desc">{fd.desc}</div>
         {fd.item && <div className="why" style={{ color: 'var(--warn)' }}>Craft {ITEMS[fd.item].name} in Survivor first; placing consumes that physical item, not its materials again.</div>}
         <div className="bcost">{costToPlace(focus).map(([i, qq]) => { const h = have(i); return <span key={i} className={`need ${h >= qq ? 'ok' : 'no'}`} title={ITEMS[i].name}><Icon k={i} size={14} /><b>{h}</b><small>/{qq}</small></span>; })}<span className="chip" style={{ color: 'var(--muted)', marginLeft: 'auto' }}><Glyph k="hp" c="currentColor" s={7} />{fd.hp}</span></div>
-        {buildLocked(r, focus) ? <div className="why" style={{ color: 'var(--bad)' }}>needs an authorized oil source</div> : <button className="btn gold" style={{ width: '100%' }} disabled={!costToPlace(focus).every(([i, qq]) => have(i) >= qq)} onClick={() => place(focus)}>Select placement · LMB</button>}
+        {buildLocked(r, focus) ? <div className="why" data-testid="build-oil-why" style={{ color: 'var(--bad)' }}>{oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : 'Every known oil site is dry.'}</div> : <button className="btn gold" style={{ width: '100%' }} disabled={!costToPlace(focus).every(([i, qq]) => have(i) >= qq)} onClick={() => place(focus)}>Select placement · LMB</button>}
         {!owned && <div className="why" style={{ color: 'var(--warn)' }}>no Cabinet yet · unprotected builds decay</div>}
       </div>}
     </div>
@@ -552,7 +556,7 @@ export function VendorPanel({ api, eid }: { api: Api; eid: string }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
           <Icon k="escrow_chest" size={16} />
           <div style={{ flex: 1, lineHeight: 1.1 }}>
-            <div className="lbl" style={{ fontSize: 9, color: 'var(--paper)' }}>Rương ký gửi <span style={{ color: 'var(--muted)' }}>({r.vendorStock.escrow_chest} left)</span></div>
+            <div className="lbl" style={{ fontSize: 9, color: 'var(--paper)' }}>Escrow Chest <span style={{ color: 'var(--muted)' }}>({r.vendorStock.escrow_chest} left)</span></div>
             <div className="lbl" style={{ fontSize: 8, color: 'var(--brassLit)' }}>{BAL.economy.escrowChestPrice} physical cash · place on owned land</div>
           </div>
           <button className="btn gold sm" disabled={cash < BAL.economy.escrowChestPrice || r.vendorStock.escrow_chest <= 0} onClick={() => api.act('buy', { eid, item: 'escrow_chest' })}>Buy</button>
@@ -562,8 +566,8 @@ export function VendorPanel({ api, eid }: { api: Api; eid: string }) {
 
       <div className="console-col">
         <div className="console-h" style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span>Spares Barter (Run-Local)</span>
-          <span style={{ color: 'var(--paper)' }}>Spares: {countItem(r, 'inv', 'spares')}</span>
+          <span>Parts Barter (Run-Local)</span>
+          <span style={{ color: 'var(--paper)' }}>Parts: {countItem(r, 'inv', 'spares')}</span>
         </div>
         {Object.entries(VENDOR_SPARES).map(([k, v]) => (
           <div key={k} className="recipe-row" style={{ cursor: 'default', padding: '2px 0' }}>
@@ -600,7 +604,7 @@ export function VendorPanel({ api, eid }: { api: Api; eid: string }) {
 
 export function EscrowPanel({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const cash = countItem(r, 'inv', 'rcash');
-  return <Panel title={<span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><Icon k="escrow_chest" size={14} />Rương ký gửi — Escrow Vault</span>} style={{ left: 170, top: 64, width: 300 }} onClose={() => api.open(null)}>
+  return <Panel title={<span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><Icon k="escrow_chest" size={14} />Escrow Chest — Vault</span>} style={{ left: 170, top: 64, width: 300 }} onClose={() => api.open(null)}>
     <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 6, alignItems: 'center', margin: '4px 0' }}>
       <div className="console-col" style={{ textAlign: 'center' }}>
         <div className="console-h" style={{ color: cash ? 'var(--warn)' : 'var(--muted)' }}>Carried (At Risk)</div>
@@ -647,7 +651,7 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
       </div>
     </div>
     {cash > 0 && <div className="lbl" style={{ fontSize: 8, color: 'var(--warn)', marginBottom: 4 }}>
-      Warning: You are carrying {cash} unsecured coin{cash === 1 ? '' : 's'}. Deposit them in your Rương ký gửi first if you want to keep them!
+      Warning: You are carrying {cash} unsecured coin{cash === 1 ? '' : 's'}. Deposit them in your Escrow Chest first if you want to keep them!
     </div>}
     <div className="flex gap-1">
       {!sure
