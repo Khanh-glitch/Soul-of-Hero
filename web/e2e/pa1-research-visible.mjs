@@ -210,6 +210,7 @@ try{
     assert.ok(inPane,recd.label+' sits outside the family pane box and is therefore clipped: '+JSON.stringify({el:recd.box,pane:recd.pane}));
     return recd;
   }
+  const resetPane=async()=>{await page.evaluate(()=>{const p=document.querySelector('[data-testid="research-family-pane"]'); if(p) p.scrollTop=0;}); await page.waitForTimeout(180);};
   const vp1280=page.viewportSize();
   rec.research.frames1280=[
     await inFrame(famText(),'Technology families heading',vp1280),
@@ -221,6 +222,7 @@ try{
   await lastRow.scrollIntoViewIfNeeded();
   await page.waitForTimeout(200);
   rec.research.frames1280.push(await inFrame(lastRow,'last family row after scrolling the pane',vp1280));
+  await resetPane();   // screenshot and every later measurement see the pane as a fresh look sees it
   await shot('02-technology-families-1280');
 
   const box=pane();
@@ -280,6 +282,7 @@ try{
 
   // And it must stay legible on the shipped minimum viewport, not only on a desktop.
   await page.setViewportSize({width:640,height:360});
+  await resetPane();
   await page.waitForTimeout(400);
   const vp640=page.viewportSize();
   assert.ok((await famText().count())>0,'the family list vanished at 640x360');
@@ -290,6 +293,7 @@ try{
   await lastRow.scrollIntoViewIfNeeded();
   await page.waitForTimeout(200);
   rec.research.frames640.push(await inFrame(lastRow,'last family row after scrolling the pane @640',vp640));
+  await resetPane();
   await shot('03-technology-families-640');
   const count=await page.getByTestId(/^family-row-/).count();
   rec.research.familyRows=count;

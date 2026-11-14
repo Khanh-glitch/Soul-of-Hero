@@ -59,6 +59,11 @@ describe('PA1 research-visible browser gate — legibility, not DOM presence', (
     // something else, so the hit must land on the element itself and the box must sit in the panel too.
     expect(gate).toContain("if(el===at||el.contains(at)) return 'hits-element'");
     expect(gate).toContain('const inPanel=');
+    // scrolling the pane to reach row eleven leaves row ONE off screen; measuring afterwards without
+    // resetting is how the 640x360 pass reported a heading at y:-1 that no fresh look would show.
+    expect(gate).toContain('const resetPane=');
+    expect(gate.match(/await resetPane\(\)/g)?.length).toBeGreaterThanOrEqual(3);
+
     expect(gate).toContain('clipped by it');
     // the stage is a fixed 640x360 design that the whole UI is scaled inside, so a console taller than
     // the stage is a console whose last rows are unseeable at every window size. This is the arithmetic
