@@ -13,7 +13,8 @@ import { creatorLootV1 } from './creator-loot';
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
-import { ALWAYS_KNOWN_RECIPES, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, permitsDirectedResearch, requiredStationLevel, isRecipeKnown } from './catalog';
+import { ALWAYS_KNOWN_RECIPES, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
+import { LEGACY_RECIPES, PRE_STAMPING_REVISION, RETIRED_RECIPES, purchasableFamilies } from './recipe-migration';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -251,7 +252,13 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   let w = getWorld();
   const r: RunState = {
     id: runIdFor(gs, seed, now), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: chosenVeyraReg, ended: null,
-    player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: Array.from(new Set([...Object.keys(RECIPES).filter(k => RECIPES[k].base), ...ALWAYS_KNOWN_RECIPES])), studied: [] },
+    // PA1 WP3: starter knowledge comes from one place, so an approved family gate can withhold
+    // a formula without ever touching a recipe a run already paid for or was given.
+    player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: starterKnowledge(), studied: [] },
+    // PA1 R1: additive research-family ledger. `recipeRev` pins the catalog revision the run
+    // was created under; every family other than the priced ENERGY study is OPEN_DESIGN and
+    // therefore imposes no gate. Legacy saves without this field keep all knowledge they hold.
+    tech: { families: [], recipeRev: RECIPE_REVISION },
     traces: [], discovered: [], poiSeen: [], intel: [], elderStones: [], achievements: [], score: 0, deposited: 0,
     clock: { lastSimAt: now, simMs: 0, respawnAcc: 0, weatherSlot: -1 }, rng: seed, nextId: 1, receipts: [], seenIntents: [], seq: 0,
     dailyLedger: { v: 1, seed, lastSeq: 0, capabilities: { learnedKeys: [] }, days: {} },
@@ -797,7 +804,9 @@ export function roofAt(r: RunState, x: number, y: number) {
 function roomWall(r: RunState, x: number, y: number) {
   if (x < 0 || y < 0 || x >= WW || y >= WH) return false;
   const t = effTile(r, x, y); if (t === T.PWALL || t === T.CLIFF) { const door=entsAt(r,x,y).find(e=>e.kind==='door'&&e.open);if(t!==T.PWALL||!door||r.terrain[y*WW+x]||!getWorld().statics.some(s=>s.kind==='door'&&s.tx===x&&s.ty===y))return true; }
-  return entsAt(r, x, y).some(e => e.kind === 'struct' && STRUCTS[e.type!]?.layer === 'wall' && !(e.type!.startsWith('door') && e.open) || e.kind === 'door' && !e.open);
+  return entsAt(r,x,y).some(e => e.kind === 'struct' &&
+    STRUCTS[e.type!]?.layer==='wall' && STRUCTS[e.type!]?.sealsRoom!==false &&
+    !(e.type!.startsWith('door')&&e.open) || e.kind==='door'&&!e.open);
 }
 let roomCache: { run: RunState; start: number; cells: Set<number>; enclosed: boolean } | null = null;
 /** Roofed connected room, bounded by world cells rather than an arbitrary size limit.
@@ -1835,6 +1844,10 @@ export function registerTestOilSource(r: RunState, tx: number, ty: number, stock
 
 export function buildReason(gs: GameState, type: string, tx: number, ty: number): string | null {
   const r = gs.run!; if (typeof type !== 'string' || !Object.prototype.hasOwnProperty.call(STRUCTS, type)) return 'Unknown structure.'; const d = STRUCTS[type];
+  if ((PA1_UPGRADE_ONLY_GEOMETRY as readonly string[]).includes(type))
+    return 'Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.';
+  if (type === 'door_powered')
+    return 'A powered door is an installed door module, not a new standalone wall. Module recipe pending.';
   const w = getWorld(); const p = r.player;
   if(p.vehicle)return 'Exit the motorbike before building.';
   if (Object.values(r.entities).some(e=>e.kind==='vehicle' && Math.abs(e.x-(tx*TILE+8))<TILE && Math.abs(e.y-(ty*TILE+8))<TILE)) return 'Move the motorbike away before building here.';
@@ -1857,7 +1870,10 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   if (d.layer === 'floor' && layers.includes('floor')) return 'Already floored.';
   if (d.layer === 'roof' && layers.includes('roof')) return 'Already roofed.';
   if (d.layer === 'roof' && !layers.includes('floor')) return 'A roof needs a floor beneath it.';
-  if ((d.layer === 'wall' || d.layer === 'obj') && (layers.includes('wall') || layers.includes('obj'))) return 'Tile occupied.';
+  const installInFrame=type==='door_wood' && here.some(e=>e.kind==='struct' &&
+    e.type==='wall_doorframe_wood'&&owned(e)) && here.filter(e=>STRUCTS[e.type!]?.layer==='wall').length===1;
+  if ((d.layer==='wall'||d.layer==='obj')&&(layers.includes('wall')||layers.includes('obj')) &&
+    !(installInFrame&&!layers.includes('obj')))return 'Tile occupied.';
   if (d.block && Math.hypot(p.x - (tx * TILE + 8), p.y - (ty * TILE + 8)) < 11) return 'You are standing there.';
   if (d.block && r.creatures.some(m => m.state !== 'dead' && Math.hypot(m.x - (tx * TILE + 8), m.y - (ty * TILE + 8)) < 12)) return 'A creature is in the way.';
   if (type === 'escrow' && !claimAt(r,tx,ty)) return 'Escrow requires an owned territory cabinet.';
@@ -1867,8 +1883,56 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
     if (claims.length >= BAL.economy.maxClaims) return `Claim limit reached (${BAL.economy.maxClaims}).`;
     if (claims.some(c => c.tx===tx && c.ty===ty)) return 'A cabinet already occupies this tile.';
   }
-  const cost = d.cost; if (!hasAll(r, 'inv', cost)) return 'Missing materials: ' + cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ');
+  const cost: [string,number][] = d.item ? [[d.item,1]] : d.cost;
+  // Reject damaged or spoofed packed devices *before* reserveInputs can spend.
+  if (d.item && ITEMS[d.item]?.dur) {
+    const packs=C(r,'inv').slots.filter(v=>v?.key===d.item);
+    if (!packs.some(v=>v?.qty===1&&Number.isFinite(v.dur)&&(v.dur??0)>0&&(v.dur??0)<=d.hp))
+      return 'Need an intact packed device.';
+  }
+  if (!hasAll(r, 'inv', cost)) return 'Missing materials: ' + cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ');
   return null;
+}
+
+// ---------------- research families (PA1 WP3) ----------------
+/** A family is unlocked only by its own atomic paid unlock; never by crafting, never by tier. */
+export function researchFamilyUnlocked(r: RunState, family: string): boolean {
+  return !!r.tech && Array.isArray(r.tech.families) && r.tech.families.includes(family);
+}
+/** Recipes a family owns. Empty for a family with no members yet. */
+export function recipesOfFamily(family: string): string[] {
+  return Object.keys(RECIPES).filter(k => RECIPE_FAMILY[k] === family);
+}
+/** Buy a family once, at the Research Table. Payment and knowledge are one transaction:
+ *  the materials leave the inventory in the same commit that adds the recipes, and a second
+ *  purchase of an unlocked family is refused before anything is spent. */
+function unlockFamily(r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
+  const family = typeof it.family === 'string' ? it.family : '';
+  const def = RESEARCH_FAMILIES[family];
+  if (!def) return fail('Unknown research family.');
+  if (!def.price) return fail(`The ${family} study has no authorized cost yet — it stays open design, not a paywall.`);
+  // Never take materials for a formula the survivor already has: with enforcement not yet
+  // approved, a family can legitimately have nothing to sell, and the honest answer is "nothing to buy".
+  if (!recipesOfFamily(family).some(k => !isRecipeKnown(r.knowledge.recipes, k))) return fail(`Nothing is withheld behind the ${family} study in this build — its formulas are already known, so there is nothing to buy.`);
+  const st = stationNear(r, 'research', it.eid); if (!st) return fail('Requires a Research Table within reach.');
+  if (researchFamilyUnlocked(r, family)) return fail('That study is already complete.');
+  const pending = st.station!.queue.some(j => j.recipe === 'F:' + family);
+  if (pending) return fail('That study is already in progress.');
+  if (st.station!.queue.length >= 3) return fail('Research queue is full.');
+  const price = def.price as [string, number][];
+  if (!hasAll(r, 'inv', price)) return fail('Missing: ' + price.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', '));
+  const reserved = reserveInputs(r, price);
+  st.station!.queue.push({ id: uid(r, 'j'), recipe: 'F:' + family, left: BAL.research.directedSeconds * 1000, total: BAL.research.directedSeconds * 1000, reserved, rv: RECIPE_REVISION });
+  return ok('research.family.queue', family, `${family} study queued at the Research Table (${BAL.research.directedSeconds}s): ${price.map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ')}.`);
+}
+/** Commit a finished family study: grant exactly the recipes it owns that are still unknown. */
+function completeFamilyStudy(r: RunState, family: string, at: number, okId: string): string[] {
+  const granted = recipesOfFamily(family).filter(k => !isRecipeKnown(r.knowledge.recipes, k));
+  r.tech = r.tech ?? { families: [], recipeRev: RECIPE_REVISION };
+  if (!r.tech.families.includes(family)) r.tech.families.push(family);
+  for (const k of granted) r.knowledge.recipes.push(k);
+  receipt(r, at, 'research.family.done', `${family}:${granted.join(',')}`);
+  return granted;
 }
 
 // ---------------- dispatcher ----------------
@@ -1924,7 +1988,16 @@ export function clearPhysicalLine(r: RunState, p: { x: number; y: number }, e: {
   const clear = (cx: number, cy: number) => {
     if (cx === sx && cy === sy || excludeEnd && cx === ex && cy === ey) return true;
     if (cx < 0 || cy < 0 || cx >= WW || cy >= WH) return false;
-    if (wallsOnly) return !roomWall(r, cx, cy) && effTile(r, cx, cy) !== T.LAVA;
+    if (wallsOnly) {
+      // Windows, railings and half walls are visible through in the 2D ray
+      // layer; they still BLOCK physical movement and all collision rays.
+      const transparent=entsAt(r,cx,cy).some(z=>z.kind==='struct' &&
+        STRUCTS[z.type!]?.layer==='wall' &&
+        STRUCTS[z.type!]?.visionTransparent===true);
+      const raw=effTile(r,cx,cy);
+      return (transparent || !roomWall(r,cx,cy)) && raw!==T.LAVA &&
+        raw!==T.PWALL && raw!==T.CLIFF;
+    }
     const b = grid[cy * WW + cx]; return b !== 1 && b !== 3 && b !== 5 && (!blockTrees || b !== 2);
   };
   while (x !== ex || y !== ey) {
@@ -2106,12 +2179,22 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e = r.entities[it.eid];
       if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');
       const target = STRUCTURE_UPGRADES[e.type!], next = target && STRUCTS[target];
-      if (!next || e.deployed || e.station || e.farm || e.garden || !Number.isFinite(e.hp) || !Number.isFinite(e.maxHp) || e.hp! <= 0 || e.maxHp! <= 0) return fail('No in-place upgrade for this structure.');
+      const structural = (PA1_BASE_GEOMETRY as readonly string[]).includes(e.type!);
+      if (structural && (!Number.isInteger(e.tx) || !Number.isInteger(e.ty) ||
+        !claimAt(r,e.tx!,e.ty!) || !cabinetSupported(r,claimAt(r,e.tx!,e.ty!)!)))
+        return fail('Upgrade wooden construction only through a valid Territory Cabinet within its claim.');
+      if (!next || e.station || e.farm || e.garden || !Number.isFinite(e.hp) || !Number.isFinite(e.maxHp) || e.hp! <= 0 || e.maxHp! <= 0) return fail('No in-place upgrade for this structure.');
       const chest = e.c ? C(r, e.c) : null;
       if (next.slots && (!chest || chest.kind !== 'chest' || chest.slots.length > next.slots)) return fail('Storage is invalid; no materials spent.');
       if (!hasAll(r, 'inv', next.cost)) return fail('Missing upgrade materials: ' + next.cost.filter(([k,q]) => countItem(r,'inv',k) < q).map(([k,q]) => `${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', '));
       for (const [k,q] of next.cost) removeItem(r, 'inv', k, q);
       const old = e.type, fraction = Math.min(1, e.hp! / e.maxHp!); e.type = target; e.maxHp = next.hp; e.hp = Math.max(1, Math.floor(next.hp * fraction));
+      // A packed chest upgraded in-place changes its original chassis identity,
+      // not its UID. The material upgrade payment was debited exactly once.
+      if (e.deployed && next.item) {
+        e.deployed.key = next.item;
+        e.deployed.dur = e.hp;
+      }
       if (chest && next.slots) while (chest.slots.length < next.slots) chest.slots.push(null);
       markDirty(); return ok('structure.upgrade', `${e.id}:${old}->${target}`, `${next.name}: ${Math.round(e.hp)}/${e.maxHp} HP (condition preserved).`);
     }
@@ -2266,9 +2349,34 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'build': {
       const why = buildReason(gs, it.struct, it.tx, it.ty); if (why) return fail(why);
       const d = STRUCTS[it.struct];
-      const deployed = d.item ? reserveInputs(r, d.cost)[0] : undefined;
-      if (!d.item) for (const [k, q] of d.cost) removeItem(r, 'inv', k, q);
-      const e: Entity = { id: uid(r, 'e'), kind: 'struct', type: it.struct, tx: it.tx, ty: it.ty, x: it.tx * TILE + 8, y: it.ty * TILE + 8, hp: d.hp, maxHp: d.hp, born: now, deployed };
+      // A door installed into an already-paid frame is an in-place geometry
+      // conversion. It preserves the existing entity/HP lineage and spends
+      // only the new door leaf materials, never a second frame.
+      const frame=it.struct==='door_wood'
+        ? entsAt(r,it.tx,it.ty).find(e=>e.kind==='struct' &&
+            e.type==='wall_doorframe_wood'&&owned(e)) : undefined;
+      if(frame) {
+        if(!hasAll(r,'inv',d.cost))return fail('Missing door leaf materials.');
+        for(const [k,q] of d.cost)removeItem(r,'inv',k,q);
+        const frac=Math.max(0.01,Math.min(1,(frame.hp??0)/(frame.maxHp||1)));
+        frame.type='door_wood';frame.maxHp=d.hp;frame.hp=Math.max(1,Math.floor(frac*d.hp));
+        frame.open=false;frame.framePaid=true;
+        markDirty();return ok('build.frame-door',frame.id, 'Door installed in the existing paid frame.');
+      }
+      let deployed: Stack|undefined;
+      if (d.item) {
+        const inv=C(r,'inv');
+        let idx=-1;
+        for(let i=inv.slots.length-1;i>=0;i--){
+          const v=inv.slots[i];
+          if(v?.key===d.item&&v.qty===1&&
+            (!ITEMS[d.item!].dur||(Number.isFinite(v.dur)&&v.dur!>0&&v.dur!<=d.hp))){idx=i;break;}
+        }
+        if(idx<0)return fail('No valid packed device in inventory.');
+        deployed=inv.slots[idx]!;
+        inv.slots[idx]=null;
+      } else for (const [k, q] of d.cost) removeItem(r, 'inv', k, q);
+      const e: Entity = { id: uid(r, 'e'), kind: 'struct', type: it.struct, tx: it.tx, ty: it.ty, x: it.tx * TILE + 8, y: it.ty * TILE + 8, hp: deployed?.dur ?? d.hp, maxHp: d.hp, born: now, deployed };
       if (d.slots) e.c = mkContainer(r, 'chest', d.slots).id;
       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
       if (d.station === 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id };
@@ -2408,12 +2516,32 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (e.kind !== 'struct') return fail('Cannot reclaim that.');
       if (STRUCTS[e.type!].layer === 'floor' && entsAt(r,e.tx!,e.ty!).some(o=>o.type==='claim')) return fail('Remove the cabinet on this foundation first.');
       const d = STRUCTS[e.type!];
+      if ((e.hp??0)<=0) return fail('Destroyed devices cannot be packed into pristine items.');
       if (entsAt(r, e.tx!, e.ty!).some(o => o.id !== e.id && STRUCTS[o.type!]?.layer === 'roof') && d.layer === 'floor') return fail('Remove the roof above first.');
       if (e.station?.queue.some(j => j.reserved === undefined)) return fail('Legacy job has no recoverable input record; let it finish before reclaiming.');
       const bag = bagStation(r, e, now, 'Reclaimed contents');
       removeEntity(r, e);
-      if (d.item) { if (e.deployed) returnReservations(r, [e.deployed], e.x, e.y, now); else giveOrDrop(r, d.item, 1, now); }
-      else for (const [k, q] of d.cost) { const back = Math.floor(q * BAL.economy.reclaimRefund); if (back > 0) giveOrDrop(r, k, back, now); }
+      if (d.item) {
+        if (e.deployed) {
+          // One authentic UID survives inventory → placement → recovery. Damage
+          // follows it; no reclaim/redeploy healing exploit.
+          e.deployed.dur = e.hp;
+          returnReservations(r, [e.deployed], e.x, e.y, now);
+        } else {
+          // Historical raw-paid saves have no deployed identity. Mint exactly
+          // one explicit migration recovery item only when that entity is removed.
+          giveOrDrop(r, d.item, 1, now, {dur:e.hp});
+          receipt(r,now,'pa1.legacy.unpack',e.id+':'+e.type);
+        }
+      }
+      else {
+        for(const [k,q] of d.cost){const back=Math.floor(q*BAL.economy.reclaimRefund);if(back>0)giveOrDrop(r,k,back,now);}
+        // Frame was paid independently before the door was installed; do not
+        // erase that payment from reclaim conservation.
+        if(e.framePaid)for(const [k,q] of STRUCTS.wall_doorframe_wood.cost){
+          const back=Math.floor(q*BAL.economy.reclaimRefund);if(back>0)giveOrDrop(r,k,back,now);
+        }
+      }
       return ok('reclaim', `${e.type}${bag ? ' contents→' + bag.id : ''}`);
     }
     case 'wireSwitch': {
@@ -2617,6 +2745,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return ok('vendor.secured', `${item} -${v.price} secured`);
     }
     case 'research': return research(gs, r, it, now, ok);
+    case 'unlockFamily': return unlockFamily(r, it, now, ok);
     case 'drink': {
       const tx = Math.floor(it.x / TILE), ty = Math.floor(it.y / TILE); if (dist(p.x, p.y, it.x, it.y) > 2 * TILE) return fail('Too far.');
       if (!getWorld().fresh[ty * WW + tx] || effTile(r, tx, ty) === T.ICE) return fail('Not fresh water (sea water would make you sick).');
@@ -2739,7 +2868,20 @@ function useItem(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: st
   const cid = it.c ?? 'inv'; const c = C(r, cid); if (!c || !canAccess(r, cid) || !validSlot(c, it.slot)) return fail('Invalid or out of reach container.');
   const s = c.slots[it.slot]; if (!s) return fail('Empty.');
   const d = ITEMS[s.key]; const p = r.player;
-  if (d.cat === 'bp') { const rec = s.meta!; if (!RECIPES[rec]) return fail('Invalid blueprint.'); if (isRecipeKnown(r.knowledge.recipes, rec)) return fail('You already know this recipe.'); r.knowledge.recipes.push(rec); c.slots[it.slot] = null; return ok('learn.blueprint', rec, `Learned: ${ITEMS[RECIPES[rec].out].name}`); }
+  if (d.cat === 'bp') {
+    const rec = s.meta!;
+    const rc = RECIPES[rec];
+    if (!rc) {
+      // PA1 R1: the paper survives as a physical item; only the formula is retired.
+      // Reading it must not teach an unknown recipe and must not silently delete the sheet.
+      const legacy = recipeForJob(rec, undefined);
+      return fail(legacy ? 'That formula was retired by the Fuel Canister correction — canisters come from refining real oil.' : 'Invalid blueprint.');
+    }
+    if (isRecipeKnown(r.knowledge.recipes, rec)) return fail('You already know this recipe.');
+    const gate = familyOfRecipe(rec);
+    if (gate && RESEARCH_FAMILIES[gate]?.enforce && !researchFamilyUnlocked(r, gate)) return fail(`Requires the ${gate} study.`);
+    r.knowledge.recipes.push(rec); c.slots[it.slot] = null; return ok('learn.blueprint', rec, `Learned: ${ITEMS[rc.out].name}`);
+  }
   if (d.slot) { const idx = ['head', 'body', 'back'].indexOf(d.slot); const eq = C(r, 'eq'); if (c === eq) return fail('Already equipped.'); const prev = eq.slots[idx]; if (prev && !accepts(c, it.slot, prev)) return fail('Move the old equipment to inventory first.'); eq.slots[idx] = s; c.slots[it.slot] = prev; return ok('equip', s.key); }
   if (d.food) {
     if (d.waterContainer) { if ((s.charge ?? 0) <= 0) return fail('Flask is empty.'); s.charge!--; p.thirst = Math.min(100, p.thirst + (d.food.thirst ?? 0)); return ok('drink.flask', `${s.uid}:${s.charge}`); }
@@ -2754,8 +2896,22 @@ function stationNear(r: RunState, kind: string, eid?: string) {
   if (eid) { const e = r.entities[eid]; if (e?.kind === 'struct' && e.station && owned(e) && STRUCTS[e.type!]?.station === kind && near(r, e, 3)) return e; return null; }
   return Object.values(r.entities).find(e => e.kind === 'struct' && owned(e) && STRUCTS[e.type!].station === kind && near(r, e, 3)) || null;
 }
+/**
+ * PA1 R1: a retired formula is NOT an unknown one. An old save legitimately learned it, so new work
+ * must be refused by name with what still applies — never "Unknown recipe", never "Missing materials".
+ */
+export function retiredRecipeReason(id: unknown): string | null {
+  if (typeof id !== 'string' || !RETIRED_RECIPES.includes(id)) return null;
+  if (Object.prototype.hasOwnProperty.call(RECIPES, id)) return null;   // re-approved: not retired anymore
+  const legacy = LEGACY_RECIPES[id + '@' + PRE_STAMPING_REVISION];
+  const name = legacy ? ITEMS[legacy.out]?.name ?? legacy.out : id;
+  return `Retired by the Approved Ledger (rev ${RECIPE_REVISION}): no new ${name} work can start — ${id} was withdrawn by the recovered paper · work already paid for under the old rule still finishes`;
+}
+
 function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
-  if (typeof it.recipe !== 'string' || !Object.prototype.hasOwnProperty.call(RECIPES, it.recipe)) return fail('Unknown recipe.'); const rc = RECIPES[it.recipe];
+  if (typeof it.recipe !== 'string') return fail('Unknown recipe.');
+  if (!Object.prototype.hasOwnProperty.call(RECIPES, it.recipe)) return fail(retiredRecipeReason(it.recipe) ?? 'Unknown recipe.');
+  const rc = RECIPES[it.recipe];
   if (!isRecipeKnown(r.knowledge.recipes, it.recipe)) return fail('You have not learned this recipe.');
   const ins = rc.ins.filter(([, q]) => q > 0);
   const activeAction = r.player.action; const activeInput = activeAction?.slot !== undefined && activeAction.slot >= 0 ? C(r, 'inv').slots[activeAction.slot] : null;
@@ -2775,7 +2931,9 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
   // Multi-output bundles are preflighted at queue time too, so no paid inputs are reserved for a batch that cannot land.
   if (rc.outs && !recoveryFits(C(r, st.station!.outC), rc.outs)) return fail('Refinery output cannot hold the whole batch; collect items first.');
   const reserved = reserveInputs(r, ins);
-  st.station!.queue.push({ id: uid(r, 'j'), recipe: it.recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved });
+  // PA1 R1: the job carries the catalog revision it was paid under. A later recipe
+  // cutover can never re-price a queued job in either direction.
+  st.station!.queue.push({ id: uid(r, 'j'), recipe: it.recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved, rv: RECIPE_REVISION });
   return ok('job.queue', `${it.recipe}@${st.id}`, `${recipeOutputs(rc).map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ')} queued at ${STRUCTS[st.type!].name}.`);
 }
 
@@ -2783,20 +2941,29 @@ function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: s
   const st = stationNear(r, 'research', it.eid); if (!st) return fail('Requires a Research Table within reach.');
   if (st.station!.queue.length >= 3) return fail('Research queue is full.');
   const known = new Set(r.knowledge.recipes); const pending = new Set(st.station!.queue.map(j => j.recipe.split(':')[1]));
-  const unknown = Object.keys(RECIPES).filter(k => !known.has(k) && !pending.has(k));
+  // PA1 WP3: a family-gated formula is not discoverable by tinkering. The paid family study is
+  // its only authority, so random/directed research cannot hand it out and make the price a lie.
+  // A family gate that is not enforced must not hide anything from the tinker pool.
+  const gated = (k: string) => { const f = familyOfRecipe(k); return !!f && RESEARCH_FAMILIES[f]?.enforce === true && !researchFamilyUnlocked(r, f); };
+  const unknown = Object.keys(RECIPES).filter(k => !known.has(k) && !pending.has(k) && !gated(k));
   const B = BAL.research;
   if (it.mode === 'random') {
     if (!unknown.length) return fail('Nothing left to discover.');
     if (countItem(r, 'inv', 'spares') < B.randomSparesCost) return fail(`Needs ${B.randomSparesCost} Spares.`);
     const pool = unknown.filter(k => !k.startsWith('core_')); const pick = (pool.length ? pool : unknown)[Math.floor(rngNext(r) * (pool.length || unknown.length))];
-    const reserved = reserveInputs(r, [['spares', B.randomSparesCost]]); st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + pick, left: B.randomSeconds * 1000, total: B.randomSeconds * 1000, reserved });
+    const reserved = reserveInputs(r, [['spares', B.randomSparesCost]]); st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + pick, left: B.randomSeconds * 1000, total: B.randomSeconds * 1000, reserved, rv: RECIPE_REVISION });
     return ok('research.random', pick, 'Tinkering with Spares… a blueprint will appear in the table output.');
   }
   if (it.mode === 'directed') {
-    const k = it.recipe; if (!unknown.includes(k)) return fail('Already known or in progress.');
+    const k = it.recipe;
+    const gate = familyOfRecipe(k);
+    if (gate && RESEARCH_FAMILIES[gate]?.enforce && !researchFamilyUnlocked(r, gate)) return fail(`${ITEMS[RECIPES[k]?.out]?.name ?? k} is a ${gate} study — buy the family unlock first.`);
+    const retiredReason = retiredRecipeReason(k);
+    if (retiredReason) return fail(retiredReason);
+    if (!unknown.includes(k)) return fail('Already known or in progress.');
     if (!permitsDirectedResearch(RECIPES[k])) return fail('Too advanced to reverse-engineer from Spares — study a Core or find a blueprint.');
     if (countItem(r, 'inv', 'spares') < B.directedSparesCost) return fail(`Needs ${B.directedSparesCost} Spares.`);
-    const reserved = reserveInputs(r, [['spares', B.directedSparesCost]]); st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + k, left: B.directedSeconds * 1000, total: B.directedSeconds * 1000, reserved });
+    const reserved = reserveInputs(r, [['spares', B.directedSparesCost]]); st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + k, left: B.directedSeconds * 1000, total: B.directedSeconds * 1000, reserved, rv: RECIPE_REVISION });
     return ok('research.directed', k);
   }
   if (it.mode === 'specimen') {
@@ -2807,7 +2974,7 @@ function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: s
     if (known.has(target) || pending.has(target)) return fail('You already know what it can teach.');
     const reserved = s.qty > 1 ? [portion(r, s, 1)] : [s];
     if (s.qty > 1) s.qty--; else inv.slots[it.slot] = null;
-    st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + target, left: B.specimenSeconds * 1000, total: B.specimenSeconds * 1000, reserved });
+    st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + target, left: B.specimenSeconds * 1000, total: B.specimenSeconds * 1000, reserved, rv: RECIPE_REVISION });
     return ok('research.specimen', `${s.key}->${target}`, 'Specimen dissected. Notes forming…');
   }
   return fail('Unknown research mode.');
@@ -2849,12 +3016,32 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
           src.stock -= 1; addItem(r, st.outC, 'crude_petroleum', 1);
           receipt(r, at, 'pump.extract', `${oilSourceKey(src.tx, src.ty)}:crude_petroleum x1 stock=${src.stock}`);
           note('Oil pump: 1 Crude Petroleum in output.');
+        } else if (job.recipe.startsWith('F:')) {
+          // PA1 WP3: a family study pays once and grants the family's recipes in the same commit.
+          const fam = job.recipe.slice(2);
+          if (!RESEARCH_FAMILIES[fam]) { blocked = true; note('Research table: this study is no longer defined.'); stationState(r,e,'blocked',at); continue; }
+          if (researchFamilyUnlocked(r, fam)) {
+            // Already bought (e.g. two studies queued, or a save crossed a migration): return the paid materials, never re-sell them.
+            if (job.reserved) returnReservations(r, job.reserved, e.x, e.y, at);
+            receipt(r, at, 'research.family.duplicate', fam);
+            note('Research table: that study was already complete — materials returned.');
+            receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
+          }
+          completeFamilyStudy(r, fam, at, e.id);
+          note(`Research table: ${fam} study complete. ${recipesOfFamily(fam).length} formula${recipesOfFamily(fam).length === 1 ? '' : 's'} available to craft.`);
+          receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
         } else if (job.recipe.startsWith('R:')) {
           const k = job.recipe.slice(2);
+          // PA1 R1: a retired formula still resolves through the migration ledger, so an
+          // old research queue completes and pays out its blueprint instead of bricking the save.
+          const legacy = recipeForJob(k, job.rv);
+          if (!legacy) { blocked = true; note('Research table: this formula is no longer in the catalog.'); stationState(r,e,'blocked',at); continue; }
           if (addItem(r, st.outC, 'blueprint', 1, { meta: k }) > 0) { blocked = true; note('Research table: output slots full.'); stationState(r,e,'output_full',at); continue; }
-          note(`Research table: blueprint for ${ITEMS[RECIPES[k].out].name} is ready.`); award(gs, 'first_research', at);
+          note(`Research table: blueprint for ${ITEMS[legacy.out].name} is ready.`); award(gs, 'first_research', at);
         } else {
-          const rc = RECIPES[job.recipe]; const outs = recipeOutputs(rc);
+          const rc = recipeForJob(job.recipe, job.rv);
+          if (!rc) { blocked = true; note(`${STRUCTS[e.type!].name}: this job's formula is no longer in the catalog.`); stationState(r,e,'blocked',at); continue; }
+          const outs = recipeOutputs(rc);
           // Single-output recipes keep their original capacity rule. Multi-output bundles are
           // preflighted as a whole: either every co-product is committed or none is.
           if (rc.outs ? !recoveryFits(C(r, st.outC), outs) : spaceFor(r, st.outC, rc.out) < rc.qty) { blocked = true; note(`${STRUCTS[e.type!].name}: output slots full.`); stationState(r,e,'output_full',at); continue; }
@@ -2873,7 +3060,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
           // B05-R free-energy guard (policy: stationBurnable): a station never burns Fuel Canisters. Canisters are the refinery/furnace product, worth 60 s of
           // burn per 12–26 s cycle; burning them lets a station pay for its own output (a self-feeding loop). Generators and motorbikes still use them.
           const fc = C(r, st.fuelC); const fi = fc.slots.findIndex(s => s && stationBurnable(s.key));
-          if (fi < 0) { if (job) { const key = job.recipe.startsWith('R:') ? job.recipe.slice(2) : job.recipe; note(`${STRUCTS[e.type!].name}: fuel ran out — ${ITEMS[RECIPES[key].out].name} paused.`); stationState(r,e,'fuel_out',now-t); } break; }
+          if (fi < 0) { if (job) { const key = job.recipe.startsWith('R:') ? job.recipe.slice(2) : job.recipe; const paused = recipeForJob(key, job.rv); note(`${STRUCTS[e.type!].name}: fuel ran out — ${paused ? ITEMS[paused.out].name : 'the queued job'} paused.`); stationState(r,e,'fuel_out',now-t); } break; }
           const s = fc.slots[fi]!; st.burn += ITEMS[s.key].fuel! * 1000; s.qty--; if (s.qty <= 0) fc.slots[fi] = null;
         }
       }

@@ -81,7 +81,9 @@ describe('MEC-01 R2 A1: one found Mechanical Gear, three competing actions', () 
 
   it('branch A (drive) and branch B (geared Salvager Pick) both need the real L2 bench, and cost different things', () => {
     const {g:base}=savePoint();
-    const runBench=(g:GameState)=>{const r=g.run!;const sp=legalTileNear(g,Math.floor(r.player.x/TILE),Math.floor(r.player.y/TILE));
+    // PA1 §24: pay for the packed Workbench before looking for a site — buildReason demands the pack,
+    // not the ore, so the scan below would otherwise never return. (This is why the test failed at 023ec62.)
+    const runBench=(g:GameState)=>{const r=g.run!;expect(dispatch(g,{id:'a1-pack-'+(++n),type:'craft',recipe:'deploy_workbench'},START+19).ok).toBe(true);const sp=legalTileNear(g,Math.floor(r.player.x/TILE),Math.floor(r.player.y/TILE));
       expect(dispatch(g,{id:'a1-b-'+(++n),type:'build',struct:'workbench',tx:sp[0],ty:sp[1]},START+20).ok).toBe(true);
       const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;
       expect(dispatch(g,{id:'a1-up-'+(++n),type:'upgradeStation',eid:bench.id},START+21).ok).toBe(true);expect(bench.station!.level).toBe(2);return bench;};

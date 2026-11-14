@@ -9,7 +9,8 @@ import { validIntel } from './expedition-intel';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
-import { ALWAYS_KNOWN_RECIPES, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED } from './catalog';
+import { starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
+import { RETIRED_RECIPES, hasLegacyDefinition } from './recipe-migration';
 import { newGame, renewableLoot, markDirty } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
 import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
@@ -80,7 +81,30 @@ export function validate(raw: any): GameState | null {
   if (r.sourceLayoutVersion !== 3 && r.sourceMap !== undefined) return null;
   if ((r.player.iceUntil !== undefined && !finite(r.player.iceUntil)) || (r.player.channelUntil !== undefined && !finite(r.player.channelUntil)) || (r.player.primordialSlowMul !== undefined && (!finite(r.player.primordialSlowMul) || r.player.primordialSlowMul <= 0 || r.player.primordialSlowMul > 1)) || (r.player.primordialSlowUntil !== undefined && !finite(r.player.primordialSlowUntil)) || !['x','y','hp','stamina','hunger','thirst','warmth','rad','active'].every(k => finite(r.player[k])) || !obj(r.player.skills) || typeof r.player.dead !== 'boolean' || !finite(r.clock.lastSimAt) || !finite(r.clock.simMs) || !finite(r.clock.respawnAcc) || !finite(r.clock.weatherSlot)) return null;
   if (r.clock.defenseFrames !== undefined && (!Number.isInteger(r.clock.defenseFrames) || r.clock.defenseFrames < 0 || r.clock.defenseFrames > 14400)) return null;
-  if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) for (const k of ALWAYS_KNOWN_RECIPES) if (!r.knowledge.recipes.includes(k)) r.knowledge.recipes.push(k); // B01-D: single knowledge authority migration (idempotent)
+  // B01-D: single knowledge authority migration (idempotent). PA1 WP3 routes it through
+  // starterKnowledge() so an approved family gate is honoured on legacy loads too — while a
+  // recipe the save already knew is NEVER taken away, gated or not.
+  if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) for (const k of starterKnowledge()) if (!r.knowledge.recipes.includes(k)) r.knowledge.recipes.push(k);
+  // PA1 R1: the retired `fuel_can` bench formula must not brick a save that learned it (or
+  // that studied the canister as a specimen). Knowledge is pruned explicitly and the run is
+  // flagged so the player is told what happened; a queued job or blueprint for the same
+  // formula stays resolvable through the frozen migration ledger and is NOT touched here.
+  let retiredKnowledge = 0;
+  if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) {
+    const live = r.knowledge.recipes.filter((k: string) => !RETIRED_RECIPES.includes(k));
+    retiredKnowledge = r.knowledge.recipes.length - live.length;
+    if (retiredKnowledge > 0) {
+      r.knowledge.recipes = live;
+      if (stringArray(r.knowledge.studied)) r.knowledge.studied = r.knowledge.studied.filter((k: string) => !RETIRED_RECIPES.includes(k));
+      r.migrated = { ...r.migrated, retiredRecipes: integer(r.migrated?.retiredRecipes) ? r.migrated.retiredRecipes + retiredKnowledge : retiredKnowledge };
+    }
+  }
+  // PA1 R1 ledgers are additive: absent on an older run, validated when present.
+  // The counter is durable evidence; `retiredNoticeShown` is the one-shot player notice.
+  if (r.migrated !== undefined && (!obj(r.migrated) || !integer(r.migrated.retiredRecipes) ||
+    (r.migrated.retiredNoticeShown !== undefined && r.migrated.retiredNoticeShown !== true))) return null;
+  if (r.tech !== undefined && (!obj(r.tech) || !stringArray(r.tech.families) || new Set(r.tech.families).size !== r.tech.families.length ||
+    !r.tech.families.every((f: string) => !!RESEARCH_FAMILIES[f]) || !integer(r.tech.recipeRev) || r.tech.recipeRev < 1 || r.tech.recipeRev > RECIPE_REVISION)) return null;
   if (r.intel !== undefined && !validIntel(r.intel)) return null;
   if (!Array.isArray(r.creatures) || !obj(r.sources) || !obj(r.terrain) || Object.values(r.terrain).some((m: any) => !obj(m) || (m.untilAt !== undefined && !finite(m.untilAt))) || !obj(r.knowledge) || !stringArray(r.knowledge.recipes) || !stringArray(r.knowledge.studied) || !r.knowledge.recipes.every((k: string) => has(RECIPES, k)) || !Array.isArray(r.traces) || !Array.isArray(r.discovered) || !stringArray(r.poiSeen) || !stringArray(r.elderStones) || !stringArray(r.achievements) || !Array.isArray(r.receipts) || !stringArray(r.seenIntents) || !obj(r.vendorStock) || !Object.values(r.vendorStock).every(integer) || !integer(r.score) || !integer(r.deposited) || !Array.isArray(r.log)) return null;
   // Old saves have no combat record. New records preserve committed effects,
@@ -246,7 +270,7 @@ export function validate(raw: any): GameState | null {
     if(s.key==='keycard' && s.charge!==undefined && (!integer(s.charge)||s.charge<1||s.charge>100||s.qty!==1))return false;
     if(s.key==='motorbike_kit' && (!finite(s.dur)||s.dur<0||s.dur>BAL.motorbike.maxHp))return false;
     if (ITEMS[s.key].creatorCore ? (!obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k])) : s.reserves !== undefined) return false;
-    if ((s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) || (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) || (s.meta !== undefined && typeof s.meta !== 'string') || (s.key === 'blueprint' && (!s.meta || !has(RECIPES, s.meta)))) return false;
+    if ((s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) || (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) || (s.meta !== undefined && typeof s.meta !== 'string') || (s.key === 'blueprint' && (!s.meta || (!has(RECIPES, s.meta) && !hasLegacyDefinition(s.meta))))) return false;
     uids.add(s.uid); return true;
   };
   for (const [id, c] of Object.entries(r.custody) as [string, any][]) {
@@ -263,13 +287,35 @@ export function validate(raw: any): GameState | null {
     }
     const recycler = j.recipe==='X:drive';
     if(recycler){if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.total!==12000||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1||j.reserved[0]?.key!=='damaged_drive'||j.reserved[0]?.qty!==1||!j.reserved.every(stack))return false;jobIds.add(j.id);return true;}
-    const research = j.recipe.startsWith('R:'), recipe = research ? j.recipe.slice(2) : j.recipe;
-    if (!has(RECIPES, recipe) || (station === 'research' ? !research : research || RECIPES[recipe].station !== station) || !finite(j.left) || !finite(j.total) || j.total <= 0 || j.left < 0 || j.left > j.total || (j.reserved !== undefined && (!Array.isArray(j.reserved) || !j.reserved.every(stack)))) return false;
+    // PA1 R1: a job is validated against the CATALOG REVISION it was queued under
+    // (`j.rv`; absent = a pre-stamping save, resolved by the migration ledger), never
+    // against whatever the live table says today. Retired and superseded formulas keep
+    // their frozen definition, so a recipe cutover can neither reject a valid save nor
+    // re-price a paid job.
+    if (j.rv !== undefined && (!Number.isSafeInteger(j.rv) || j.rv < 1 || j.rv > RECIPE_REVISION)) return false;
+    const study = j.recipe.startsWith('R:'), studyFamily = j.recipe.startsWith('F:');
+    const recipe = study || studyFamily ? j.recipe.slice(2) : j.recipe;
+    if (studyFamily) {
+      // A queued family study holds exactly its authorized price and the study duration.
+      const def = RESEARCH_FAMILIES[recipe];
+      if (station !== 'research' || !def || !def.price || !finite(j.left) || !finite(j.total) || j.total !== BAL.research.directedSeconds * 1000 || j.left < 0 || j.left > j.total) return false;
+      if (!Array.isArray(j.reserved)) return false;
+      const want = new Map(def.price.map(([k, q]) => [k, q] as [string, number]));
+      const got = new Map<string, number>();
+      for (const st2 of j.reserved) got.set(st2.key, (got.get(st2.key) ?? 0) + st2.qty);
+      if (got.size !== want.size || [...want].some(([k, q]) => got.get(k) !== q)) return false;
+      if (!j.reserved.every(stack)) return false;
+      jobIds.add(j.id); return true;
+    }
+    const rc = recipeForJob(recipe, j.rv);
+    if (!rc || (station === 'research' ? !study : study || rc.station !== station) || !finite(j.left) || !finite(j.total) || j.total <= 0 || j.left < 0 || j.left > j.total || (j.reserved !== undefined && (!Array.isArray(j.reserved) || !j.reserved.every(stack)))) return false;
+    // A stored job may not name a revision that has no definition left in the ledger.
+    if (j.rv !== undefined && j.rv < RECIPE_REVISION && !has(RECIPES, recipe) && !hasLegacyDefinition(recipe)) return false;
     // B05-R pump jobs: only the canonical extraction cycle, no inputs held, canonical time.
     if (station === 'oil_pump') { if (recipe !== 'pump_crude' || j.total !== BAL.oilPumpV1.secs * 1000 || (j.reserved !== undefined && j.reserved.length !== 0)) return false; }
     // Refinery jobs: the recipe is canonical. Time must be the recipe time and any recorded reservation must equal the recipe inputs exactly.
     if (station === 'refinery') {
-      const canon = RECIPES[recipe];
+      const canon = rc!;
       if (j.total !== canon.secs * 1000) return false;
       // New refinery jobs always hold paid reservations; there is no historical refinery save to migrate (feature is branch-local).
       if (!Array.isArray(j.reserved)) return false;
@@ -321,6 +367,8 @@ export function validate(raw: any): GameState | null {
       if(r.custody[e.c].slots.reduce((sum:number,s:any)=>sum+(s?ITEMS[s.key].w*s.qty:0),0)>BAL.motorbike.maxWeight+1e-8)return null;
     } else if(e.vehicle!==undefined)return null;
     if (e.kind === 'cart' && e.deployed?.upgrade === 'freight' && r.custody[e.c].slots.length !== BAL.cart.freightSlots) return null;
+    if(e.framePaid!==undefined && (e.framePaid!==true || e.kind!=='struct' ||
+      !['door_wood','door_iron'].includes(e.type)))return null;
     if (e.kind === 'struct' && e.c && r.custody[e.c]?.kind !== 'chest') return null;
     const refs = [e.c, e.station?.fuelC, e.station?.outC].filter((v: any) => v !== undefined);
     for (const cid of refs) { if (typeof cid !== 'string' || !r.custody[cid] || ownedContainers.has(cid)) return null; ownedContainers.add(cid); }
@@ -674,7 +722,11 @@ export async function load(): Promise<LoadResult> {
     }
   }
   const legacy = r && Object.values(r.entities).some(e => e.station?.queue.some(j => j.reserved === undefined) || e.legacyJobs?.queue.length);
-  const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : ''].filter(Boolean);
+  // Say it once per run, not on every boot: the flag is consumed here and persisted by the next save.
+  const retiredNotice = !!r?.migrated?.retiredRecipes && !r.migrated.retiredNoticeShown;
+  const retired = retiredNotice ? r.migrated!.retiredRecipes! : 0;
+  if (retiredNotice) r!.migrated = { ...r!.migrated, retiredNoticeShown: true };
+  const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : '', retired ? `Recipe revision: ${retired} retired Fuel Canister formula${retired === 1 ? ' was' : 's were'} removed from your known recipes. Anything already queued or written on paper for it was kept; canisters now come from refining real oil.` : ''].filter(Boolean);
   return { gs: m.gs, note: notes.join(' ') || undefined };
 }
 let writeTail: Promise<unknown> = Promise.resolve();

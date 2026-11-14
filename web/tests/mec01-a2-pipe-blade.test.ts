@@ -5,7 +5,7 @@
 // NATURAL: none is claimed here. Scope: bounded transactions on a bench/recycler fixture; not a delivery or expedition proof.
 // The claim boundary is the direct craft/recycle vector only (one cycle); it is NOT a multi-route arbitrage proof. Walking evidence is in tests/mec01-gear-decision-network.test.ts (labelled FIXTURE_INTENT).
 // Economics (ingot-eq; scrap=1/3, MP=0.833, fastener=0.444, refined>=1.5 because its coal input is unpriced):
-//   pipe craft 2 refined + 1 MP >= 3.833 ; X:pipe-v2 return 1 refined + 1 MP >= 2.333  (loss >= 1.5)
+//   pipe craft 2 refined + 1 MP >= 3.833 ; X:pipe-v3 return 1 refined >= 2.333 (loss >= 1.5)
 //   blade craft 4 ingot + 1 MP = 4.833      ; X:blade-v1 return 2 ingot + 1 MP = 2.833  (loss 2.0)
 import {describe,it,expect} from 'vitest';
 import {type GameState,type RunState,TILE,BAL} from '../src/game/core';
@@ -32,6 +32,11 @@ const inv=(r:RunState)=>Object.fromEntries(['pipe' ,'metal_pipe','metal_blade','
 function benchL2(g:GameState){
   const r=g.run!;const c=Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='iron_sword'))!;place(r,c.tx!+1,c.ty!);   // FIXTURE position beside the authored Foundry cache (same anchor as the A1 test)
   addItem(r,'inv','wood',20);addItem(r,'inv','stone',4);addItem(r,'inv','iron_ingot',12);addItem(r,'inv','refined_iron_ingot',6);addItem(r,'inv','mechanical_parts',10);addItem(r,'inv','spares',10);addItem(r,'inv','fasteners',4);
+  // PA1 §24 device custody: a Workbench is placed by SPENDING a packed device, so the fixture pays
+  // the material list at the bench first. Before this line existed, the scan below could never find a
+  // legal tile (every tile answered "Need an intact packed device."), which is why this test failed at
+  // 023ec62 for a reason unrelated to the recipe cutover.
+  expect(dispatch(g,{id:'a2-pack-'+(++n),type:'craft',recipe:'deploy_workbench'},START+19).ok).toBe(true);
   const sp=legalTileNear(g,Math.floor(r.player.x/TILE),Math.floor(r.player.y/TILE));
   expect(dispatch(g,{id:'a2-b-'+(++n),type:'build',struct:'workbench',tx:sp[0],ty:sp[1]},START+20).ok).toBe(true);
   const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;
@@ -48,13 +53,17 @@ function craftAndCollect(g:GameState,bench:any,recipe:string,at:number){
 describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immutable rules', () => {
   it('immutable component snapshots: routes, seconds and outputs are pinned, and the balance mirror equals them', () => {
     const snap=componentRuleSnapshot();
-    expect(Object.keys(snap).sort()).toEqual(['X:blade-v1','X:gear-v1','X:pipe-v1','X:pipe-v2'].sort());
+    // PA1 R1 adds X:pipe-v3: the recovered paper return (1 refined ingot) is what keeps the
+    // two-section-per-craft yield conservation-safe. v1/v2 stay frozen for stored jobs.
+    expect(Object.keys(snap).sort()).toEqual(['X:blade-v1','X:gear-v1','X:pipe-v1','X:pipe-v2','X:pipe-v3'].sort());
+    expect(snap['X:pipe-v3']).toEqual({key:'metal_pipe',seconds:10,outputs:[['refined_iron_ingot',1]]});
     expect(snap['X:pipe-v1']).toEqual({key:'metal_pipe',seconds:10,outputs:[['refined_iron_ingot',1]]});   // stored-job rule kept
     expect(snap['X:pipe-v2']).toEqual({key:'metal_pipe',seconds:12,outputs:[['refined_iron_ingot',1],['mechanical_parts',1]]});
     expect(snap['X:blade-v1']).toEqual({key:'metal_blade',seconds:14,outputs:[['iron_ingot',2],['mechanical_parts',1]]});
     expect(snap['X:gear-v1']).toEqual({key:'mechanical_gear',seconds:15,outputs:[['mechanical_parts',2],['iron_ingot',1]]});
     const mirror=(BAL as any).recyclerV4?.components??(BAL as any).recyclerV4;
-    for (const [recipe,r] of Object.entries(snap)) if (recipe!=='X:pipe-v1') {
+    // Every rule except the frozen pre-D5 / superseded rows must be priced against today's table.
+    for (const [recipe,r] of Object.entries(snap)) if (recipe!=='X:pipe-v1' && recipe!=='X:pipe-v2') {
       const row=mirror[r.key];expect(row.recipe).toBe(recipe);expect(row.seconds).toBe(r.seconds);expect(row.outputs).toEqual(r.outputs);
     }
     expect(COMPONENT_RECIPES).toContain('X:blade-v1');
@@ -62,7 +71,10 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
 
   it('D-proof verdicts: new component routes are OK (priced, not over-return); no applicable route is NO_RECOVERY_ROUTE, not UNKNOWN', () => {
     const v=(item:string,recipe:string)=>proveItem(item,recipe).rows.map((r:any)=>r.verdict);
-    expect(v('metal_pipe','X:pipe-v2')).toEqual(['OK']);
+    // The live route is OK under the corrected craft (2 sections per cycle); the superseded v2
+    // return is exactly what the proof flags, and it can never be selected for a new job again.
+    expect(v('metal_pipe','X:pipe-v3')).toEqual(['OK']);
+    expect(v('metal_pipe','X:pipe-v2')).toEqual(['OVER_RETURN']);
     expect(v('metal_blade','X:blade-v1')).toEqual(['OK']);
     expect(v('mechanical_gear','X:gear-v1')).toEqual(['OK']);
     expect(v('mechanical_parts','X:recover-v3').every((x:string)=>x==='NO_RECOVERY_ROUTE')).toBe(true);
@@ -90,8 +102,8 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     expect(recoveryPlanFor(gear,'X:gear-v1')?.outputs).toEqual([['mechanical_parts',2],['iron_ingot',1]]);
   });
 
-  it('new jobs: pipe -> X:pipe-v2, blade -> X:blade-v1; stored v1 pipe still returns 1 ingot; qty>1 and durable parts are refused', () => {
-    expect(recoveryPlan({uid:'x',key:'metal_pipe',qty:1} as any)?.recipe).toBe('X:pipe-v2');
+  it('new jobs: pipe -> X:pipe-v3, blade -> X:blade-v1; stored v1 pipe still returns 1 ingot; qty>1 and durable parts are refused', () => {
+    expect(recoveryPlan({uid:'x',key:'metal_pipe',qty:1} as any)?.recipe).toBe('X:pipe-v3');
     expect(recoveryPlan({uid:'x',key:'metal_blade',qty:1} as any)?.recipe).toBe('X:blade-v1');
     expect(recoveryPlan({uid:'x',key:'metal_blade',qty:2} as any)).toBeNull();
     expect(recoveryPlan({uid:'x',key:'metal_pipe',qty:2} as any)).toBeNull();
@@ -100,31 +112,36 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     expect(recoveryPlanFor({uid:'x',key:'metal_blade',qty:1} as any,'X:pipe-v2')).toBeNull();
   });
 
-  it('three different Pipe consequences with real crafts/recycling: plate sink, piped frame sink, or recover to refined+MP', () => {
+  it('three different Pipe consequences with real crafts/recycling: plate sink retired, piped frame sink, or recover to one ingot', () => {
     const base=start();const bench0=benchL2(base);
     const ledger=(g:GameState)=>inv(g.run!);
-    // Craft ONE pipe for real, then branch from the same point.
+    // Craft pipes for real (the corrected BOM yields TWO sections per paid cycle), then branch.
     craftAndCollect(base,bench0,'metal_pipe',START+30);
-    expect(countItem(base.run!,'inv','metal_pipe')).toBe(1);
+    expect(countItem(base.run!,'inv','metal_pipe')).toBe(2);
     const at=copy(base);
-    // Branch P1: Iron Plate (2 refined + 1 pipe + 1 MP -> 2 plates)
+    // Branch P1: Iron Plate. The recovered v1.1 BOM is 2 refined + 1 fastener -> 2 plates, so the
+    // plate is NO LONGER a pipe sink — removing that invented third sink is part of the cutover.
     const gP1=copy(at);const bP1=Object.values(gP1.run!.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;const beforeP1=ledger(gP1);
+    addItem(gP1.run!,'inv','fasteners',1);                    // FIXTURE grant for the corrected input
     craftAndCollect(gP1,bP1,'iron_plate',START+100);const afterP1=ledger(gP1);
-    expect(afterP1.iron_plate).toBe(beforeP1.iron_plate+2);expect(afterP1.metal_pipe).toBe(0);expect(afterP1.refined_iron_ingot).toBe(beforeP1.refined_iron_ingot-2);
+    expect(afterP1.iron_plate).toBe(beforeP1.iron_plate+2);expect(afterP1.metal_pipe).toBe(2);expect(afterP1.refined_iron_ingot).toBe(beforeP1.refined_iron_ingot-2);
     // Branch P2: piped Utility Frame (pipe + 2 iron + 2 MP + 2 spares -> frame)
     const gP2=copy(at);const bP2=Object.values(gP2.run!.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;const beforeP2=ledger(gP2);
     craftAndCollect(gP2,bP2,'vehicle_frame_piped',START+100);const afterP2=ledger(gP2);
-    expect(afterP2.vehicle_frame).toBe(beforeP2.vehicle_frame+1);expect(afterP2.metal_pipe).toBe(0);expect(afterP2.spares).toBe(beforeP2.spares-2);
-    // Branch P3: recycle at the Foundry Recycler (X:pipe-v2): 1 refined + 1 MP back, no spares, no bench time paid
+    expect(afterP2.vehicle_frame).toBe(beforeP2.vehicle_frame+1);expect(afterP2.metal_pipe).toBe(1);expect(afterP2.spares).toBe(beforeP2.spares-2);
+    // Branch P3: recycle at the Foundry Recycler (X:pipe-v3): 1 refined ingot back, no parts, no spares
     const gP3=copy(at);const rP3=gP3.run!;const beforeP3=ledger(gP3);const rc=recyclerOf(rP3);
     place(rP3,rc.tx!-1,rc.ty!);
     expect(lootSiteAccess(rP3,{tx:rc.tx!,ty:rc.ty!} as any)).toBe('open');
-    const slot=rP3.custody.inv.slots.findIndex(s=>s?.key==='metal_pipe');const uid=rP3.custody.inv.slots[slot]!.uid;
+    // The corrected craft yields a pair; the Recycler takes one part at a time, so split first.
+    const pair=rP3.custody.inv.slots.findIndex(s=>s?.key==='metal_pipe'&&s.qty===2);
+    if (pair>=0) expect(dispatch(gP3,{id:'a2-p3-split-'+(++n),type:'split',c:'inv',slot:pair},START+190).ok).toBe(true);
+    const slot=rP3.custody.inv.slots.findIndex(s=>s?.key==='metal_pipe'&&s.qty===1);const uid=rP3.custody.inv.slots[slot]!.uid;
     expect(dispatch(gP3,{id:'a2-p3-'+(++n),type:'recycleItem',eid:rc.id,slot,uid},START+200).ok).toBe(true);
-    expect(rc.station!.queue[0].recipe).toBe('X:pipe-v2');
-    stepStations(gP3,12000+500,START+12700);
-    const out=rc.station!.outC!;expect(countItem(rP3,out,'refined_iron_ingot')).toBe(1);expect(countItem(rP3,out,'mechanical_parts')).toBe(1);
-    const afterP3=ledger(gP3);expect(afterP3.spares).toBe(beforeP3.spares);expect(afterP3.metal_pipe).toBe(0);
+    expect(rc.station!.queue[0].recipe).toBe('X:pipe-v3');
+    stepStations(gP3,10000+500,START+12700);
+    const out=rc.station!.outC!;expect(countItem(rP3,out,'refined_iron_ingot')).toBe(1);expect(countItem(rP3,out,'mechanical_parts')).toBe(0);
+    const afterP3=ledger(gP3);expect(afterP3.spares).toBe(beforeP3.spares);expect(afterP3.metal_pipe).toBe(1);
     // The three branches consume the same pipe UID and produce different things.
     expect(afterP1.iron_plate-beforeP1.iron_plate).not.toBe(afterP2.vehicle_frame-beforeP2.vehicle_frame);
   });
@@ -151,7 +168,7 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     expect(dispatch(g,{id:'a2o-'+(++n),type:'recycleItem',eid:rc.id,slot,uid},START+10).ok).toBe(true);
     const rawSave=raw(g);
     // FIXTURE: rewrite ONLY the stored job to the v1 shape (what a pre-A2 save holds). Its id/reservation/custody are the real ones.
-    const job=rawSave.run.entities[rc.id].station.queue[0];expect(job.recipe).toBe('X:pipe-v2');
+    const job=rawSave.run.entities[rc.id].station.queue[0];expect(job.recipe).toBe('X:pipe-v3');  // the live rule; the fixture rewrites it to v1
     job.recipe='X:pipe-v1';job.total=10000;job.left=10000;
     const back=validate(JSON.parse(JSON.stringify(rawSave)))!;expect(back).not.toBeNull();
     const rb=recyclerOf(back.run!);expect(rb.station!.queue[0].recipe).toBe('X:pipe-v1');

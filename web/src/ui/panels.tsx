@@ -3,13 +3,14 @@ import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
 import type { RunState } from '../game/core';
 import { anyAuthorizedOilSource, owned, clearInteraction } from '../game/engine';
-import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING } from '../game/catalog';
+import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, PA1_BASE_GEOMETRY, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, recipeForJob, familyOfRecipe, familyMembers, isFamilyGated, RESEARCH_FAMILIES } from '../game/catalog';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
 import type { OfflineReturnV1, StoredReturnEntry } from '../game/return-report';
 import { ReturnChronicle } from './ReturnChronicle';
 import { CabinetReadout } from './HomeStatus';
 import { StationConsole } from './StationConsole';
+import { ResearchFamilies } from './ResearchFamilies';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { recipeOutputs } from '../game/engine';
@@ -196,7 +197,9 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const compact = !!e.farm || !!e.garden || !!e.basePower || !!e.turret || e.type==='claim';
   // VISUAL ARENA: production machines and the research table use the new console.
   // Same entity, same station state, same intents — only the presentation changes.
-  if (st && !compact && kind) return <StationConsole api={api} eid={eid} />;
+  // `stationConsoleTab` is a test/inspection seam only: the shipped path never sets it, so the router's
+  // behaviour is unchanged for a player.
+  if (st && !compact && kind) return <StationConsole api={api} eid={eid} initialTab={api.stationConsoleTab} />;
   if (compact && inventoryOnly) return <InventoryPanel api={api} quickTo={quickTo} x={168} top={54} backToContainer onClose={()=>{api.setSel(null);setInventoryOnly(false);}} />;
   return <>
     <Panel title={title} style={{ left: 168, top: 54, width: 230, maxHeight: 286 }} onClose={() => api.open(null)} className={`scroll container-panel container-panel--${e.kind === 'struct' ? e.type : e.kind}`}>
@@ -296,7 +299,7 @@ export function StationBody({ api, eid }: { api: Api; eid: string }) {
       <div style={{ fontSize: 10, color: '#ffd98a' }}>Fuel {st.burn > 0 ? <span style={{ color: '#ffb040' }}>· burning {Math.ceil(st.burn / 1000)}s</span> : <span style={{ color: '#8a7a9a' }}>· cold</span>}{kind === 'campfire' ? ' (burns continuously; warmth + light)' : ' (burns only while working)'}</div><Grid api={api} cid={st.fuelC} cols={3} /></div>}
     <div style={{ fontSize: 10, color: '#ffd98a' }}>Queue</div>
     {st.queue.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Idle.</div>}
-    {st.queue.map((j, i) => { const rcj = j.recipe.startsWith('R:') ? null : RECIPES[j.recipe]; const out = rcj ? rcj.out : 'blueprint'; const label = rcj ? bundleLabel(rcj) : ITEMS[out].name; const pause = i === 0 && rcj?.station === 'refinery' ? (j.left <= 0 ? (rcj.outs && !recoveryFits(C(r, st.outC), recipeOutputs(rcj)) ? 'paused: output storage full' : '') : (st.burn <= 0 && !C(r, st.fuelC).slots.some(s => s && ITEMS[s.key].fuel) ? 'paused: no fuel' : '')) : ''; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10, flexWrap: 'wrap' }}><Icon k={out} size={12} /><span style={{ width: 150 }}>{label}</span>{pause && <span style={{ color: '#ffb040', width: '100%' }}>{pause}</span>}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: i === 0 && (!fuelled || st.burn > 0) ? '#7aff6a' : '#a07a3a' }} /></div><span>{Math.ceil(j.left / 1000)}s</span><button className="btn ghost" style={{ padding: '0 3px' }} onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>; })}
+    {st.queue.map((j, i) => { const rcj = j.recipe.startsWith('R:') || j.recipe.startsWith('F:') ? null : recipeForJob(j.recipe, j.rv); const out = rcj ? rcj.out : 'blueprint'; const label = rcj ? bundleLabel(rcj) : j.recipe.startsWith('F:') ? j.recipe.slice(2) + ' family study' : ITEMS[out]?.name ?? j.recipe; const pause = i === 0 && rcj?.station === 'refinery' ? (j.left <= 0 ? (rcj.outs && !recoveryFits(C(r, st.outC), recipeOutputs(rcj)) ? 'paused: output storage full' : '') : (st.burn <= 0 && !C(r, st.fuelC).slots.some(s => s && ITEMS[s.key].fuel) ? 'paused: no fuel' : '')) : ''; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10, flexWrap: 'wrap' }}><Icon k={out} size={12} /><span style={{ width: 150 }}>{label}</span>{pause && <span style={{ color: '#ffb040', width: '100%' }}>{pause}</span>}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: i === 0 && (!fuelled || st.burn > 0) ? '#7aff6a' : '#a07a3a' }} /></div><span>{Math.ceil(j.left / 1000)}s</span><button className="btn ghost" style={{ padding: '0 3px' }} onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>; })}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Output</div><Grid api={api} cid={st.outC} cols={6} />
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Recipes</div>
     {kind === 'workbench' && <div style={{ fontSize: 10, color: '#cfc2dc' }}>Drive recovery: 1 Damaged Drive + 1 Scrap → 1 Mechanical Parts (12s).</div>}
@@ -312,8 +315,12 @@ export function StationBody({ api, eid }: { api: Api; eid: string }) {
 function ResearchBody({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const e = r.entities[eid]; const st = e.station!; const B = BAL.research;
   const [search, setSearch] = useState(''); const [confirmStudy, setConfirmStudy] = useState<string | null>(null);
-  const unknown = Object.keys(RECIPES).filter(k => !isRecipeKnown(r.knowledge.recipes, k));
-  const specimens = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].specimen || CORE_STUDY[s.key] || ITEMS[s.key].studyRecipe));
+  // PA1 WP3: a family-gated formula is bought through its study, never discovered here, so it is
+  // listed under Technology families instead of the directed-study pool.
+  const familyLocked = (k: string) => isFamilyGated(k) && !(r.tech?.families ?? []).includes(familyOfRecipe(k)!);
+  const unknown = Object.keys(RECIPES).filter(k => !isRecipeKnown(r.knowledge.recipes, k) && !familyLocked(k));
+  const studyTarget = (key: string) => ITEMS[key].specimen || CORE_STUDY[key] || ITEMS[key].studyRecipe || null;
+  const specimens = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && studyTarget(s.key));
   return <div>
     <div style={{ fontSize: 10, color: '#cfc2dc' }}>Spares compete with trader purchases and machinery. Spares in pack: <b style={{ color: '#ffe27a' }}>{countItem(r, 'inv', 'spares')}</b> · Known recipes {Object.keys(RECIPES).filter(k => isRecipeKnown(r.knowledge.recipes,k)).length}/{Object.keys(RECIPES).length}</div>
     <div className="flex gap-1 items-center" style={{ margin: '3px 0' }}><button className="btn gold" onClick={() => api.act('research', { mode: 'random', eid })}>Tinker ({B.randomSparesCost} Spares, {B.randomSeconds}s)</button><span style={{ fontSize: 9, color: '#8a7a9a' }}>random unknown blueprint; take and use to learn</span></div>
@@ -322,9 +329,10 @@ function ResearchBody({ api, eid }: { api: Api; eid: string }) {
     <div className="scroll" style={{ maxHeight: 105, overflowY: 'auto' }}>{unknown.filter(k => permitsDirectedResearch(RECIPES[k]) && ITEMS[RECIPES[k].out].name.toLowerCase().includes(search.toLowerCase())).map(k => { const rc=RECIPES[k], pending=st.queue.some(j=>j.recipe==='R:'+k); return <div key={k} style={{borderTop:'1px solid #514155',fontSize:10,marginTop:3}}><b><Icon k={rc.out} size={10} /> {ITEMS[rc.out].name}</b> · blueprint → {rc.qty} output<br />{rc.station} {rc.station==='workbench'?`level ${rc.stationLevel||1}`:''} · {rc.secs}s · craft: {rc.ins.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(' + ')}<br /><button className="btn ghost" disabled={pending} onClick={()=>api.act('research',{mode:'directed',recipe:k,eid})}>{pending?'Already in progress':`Study: ${B.directedSparesCost} Spares / ${B.directedSeconds}s`}</button></div>;})}</div></details>
     <div style={{ fontSize: 10, color: '#ffd98a' }}>Specimen / Core / equipment study ({B.specimenSeconds}s, consumes 1)</div>
     {specimens.length === 0 && <div style={{ fontSize: 10, color: '#8a7a9a' }}>Carry a creature specimen, Core or studyable equipment.</div>}
-    {specimens.map(([s, i]) => <div key={i} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={s!.key} size={12} />{ITEMS[s!.key].name} → {ITEMS[RECIPES[ITEMS[s!.key].specimen || CORE_STUDY[s!.key] || ITEMS[s!.key].studyRecipe!].out].name}{confirmStudy === s!.uid ? <><span>Reserves item; completion consumes it, cancellation returns it</span><button className="btn danger" onClick={() => { api.act('research', { mode: 'specimen', slot: i, uid: s!.uid, eid }); setConfirmStudy(null); }}>Confirm</button><button className="btn ghost" onClick={() => setConfirmStudy(null)}>Cancel</button></> : <button className="btn" style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => setConfirmStudy(s!.uid)}>Study</button>}</div>)}
+    {specimens.map(([s, i]) => <div key={i} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k={s!.key} size={12} />{ITEMS[s!.key].name} → {ITEMS[RECIPES[studyTarget(s!.key)!]?.out ?? ''].name ?? 'a retired formula'}{confirmStudy === s!.uid ? <><span>Reserves item; completion consumes it, cancellation returns it</span><button className="btn danger" onClick={() => { api.act('research', { mode: 'specimen', slot: i, uid: s!.uid, eid }); setConfirmStudy(null); }}>Confirm</button><button className="btn ghost" onClick={() => setConfirmStudy(null)}>Cancel</button></> : <button className="btn" style={{ marginLeft: 'auto', padding: '1px 5px' }} onClick={() => setConfirmStudy(s!.uid)}>Study</button>}</div>)}
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>In progress</div>
-    {st.queue.map(j => <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k="blueprint" size={12} />{ITEMS[RECIPES[j.recipe.slice(2)].out].name}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: '#9ad0ff' }} /></div>{Math.ceil(j.left / 1000)}s <button className="btn ghost" onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>)}
+    {st.queue.map(j => { const rc = j.recipe.startsWith('R:') ? recipeForJob(j.recipe.slice(2), j.rv) : null; const label = rc ? ITEMS[rc.out].name + ' blueprint' : j.recipe.startsWith('F:') ? j.recipe.slice(2) + ' family study' : 'a retired formula, kept from your old save'; return <div key={j.id} className="flex items-center gap-1" style={{ fontSize: 10 }}><Icon k="blueprint" size={12} />{label}<div className="bar" style={{ width: 60 }}><i style={{ width: `${(1 - j.left / j.total) * 100}%`, background: '#9ad0ff' }} /></div>{Math.ceil(j.left / 1000)}s <button className="btn ghost" onClick={() => api.act('cancelJob', { eid, jobId: j.id })}>✕</button></div>; })}
+    <ResearchFamilies api={api} eid={eid} />
     <div style={{ fontSize: 10, color: '#ffd98a', marginTop: 4 }}>Blueprints ready (take, then use to learn)</div><Grid api={api} cid={st.outC} cols={4} />
   </div>;
 }
@@ -339,7 +347,9 @@ function RecipeTree({ recipe, known, ancestors = [] }: { recipe: string; known: 
 }
 
 const CRAFT_GROUPS: { id: string; station: string | null; icon: string }[] = [
-  { id: 'Hand', station: null, icon: 'fists' }, { id: 'Campfire', station: 'campfire', icon: 'st:campfire' },
+  { id: 'Hand', station: null, icon: 'fists' },
+  { id: 'Deploy', station: null, icon: 'st:chest_small' },
+  { id: 'Campfire', station: 'campfire', icon: 'st:campfire' },
   { id: 'Furnace', station: 'furnace', icon: 'st:furnace' }, { id: 'Refinery', station: 'refinery', icon: 'st:refinery' },
   { id: 'Workbench', station: 'workbench', icon: 'st:workbench' },
 ];
@@ -347,14 +357,24 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
   const [search, setSearch] = useState(''); const [selectedRecipe, setSelectedRecipe] = useState<string | null>(focusRecipe ?? null);
   const [category, setCategory] = useState<string>(() => {
     const st = focusRecipe && RECIPES[focusRecipe]?.station;
-    return CRAFT_GROUPS.find(g => g.station === st)?.id || 'Hand';
+    return focusRecipe && ITEMS[RECIPES[focusRecipe]?.out]?.cat==='place'
+      ? 'Deploy' : CRAFT_GROUPS.find(g => g.station === st)?.id || 'Hand';
   });
   const r = api.gs.run!;
   const nearSt = (k: string) => Object.values(r.entities).find(e => e.kind === 'struct' && e.station && (e.owner === undefined || e.owner === 'player') && STRUCTS[e.type!]?.station === k && Math.hypot(e.x - r.player.x, e.y - r.player.y) <= 3 * TILE);
   const q = search.trim().toLowerCase();
   const group = CRAFT_GROUPS.find(g => g.id === category) || CRAFT_GROUPS[0];
-  const visible = Object.entries(RECIPES).filter(([k, v]) => isRecipeKnown(r.knowledge.recipes, k) && (q ? (v.alias ?? ITEMS[v.out].name).toLowerCase().includes(q) : v.station === group.station));
-  const hidden = q ? 0 : Object.entries(RECIPES).filter(([k, v]) => v.station === group.station && !isRecipeKnown(r.knowledge.recipes, k)).length;
+  const inCraftGroup=(v:typeof RECIPES[string])=>
+    group.id==='Deploy' ? ITEMS[v.out]?.cat==='place' :
+    group.id==='Hand' ? v.station===null && ITEMS[v.out]?.cat!=='place' :
+    v.station===group.station;
+  const visible = Object.entries(RECIPES).filter(([k, v]) => isRecipeKnown(r.knowledge.recipes, k) &&
+    (q ? (v.alias ?? ITEMS[v.out].name).toLowerCase().includes(q) : inCraftGroup(v)));
+  const hiddenList = q ? [] as string[] : Object.entries(RECIPES).filter(([k,v])=>inCraftGroup(v)&&!isRecipeKnown(r.knowledge.recipes,k)).map(([k])=>k);
+  const hidden = hiddenList.length;
+  // PA1 WP3: a family-gated formula is not "undiscovered", it is bought. Say which, where and for how much.
+  const familyLocked = hiddenList.filter(k => isFamilyGated(k) && !(r.tech?.families ?? []).includes(familyOfRecipe(k)!));
+  const lockedFamilies = [...new Set(familyLocked.map(k => familyOfRecipe(k)!))];
   const sel = selectedRecipe && RECIPES[selectedRecipe] && visible.some(([k]) => k === selectedRecipe) ? selectedRecipe : (visible[0]?.[0] ?? null);
   const rc = sel ? RECIPES[sel] : null; const st = rc?.station ? nearSt(rc.station) : null;
   const have = (k: string) => countItem(r, 'inv', k);
@@ -384,7 +404,7 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
           {visible.map(([k, v]) => { const ok = v.ins.every(([id, qq]) => have(id) >= qq); const stOk = !v.station || !!nearSt(v.station); return <button key={k} className={`tile ${sel === k ? 'on' : ''} ${ok ? 'ok' : 'no'} ${stOk ? '' : 'far'}`} title={`${v.alias ?? ITEMS[v.out].name}${v.qty > 1 ? ` ×${v.qty}` : ''}`} onClick={() => setSelectedRecipe(k)}>
             <Icon k={v.out} size={16} />{v.qty > 1 && <b>{v.qty}</b>}<i className="dot" />
           </button>; })}
-          {!visible.length && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', padding: 4 }}>{hidden ? `${hidden} recipes still undiscovered` : 'nothing here'}</div>}
+          {!visible.length && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', padding: 4 }}>{hidden ? `${hidden - familyLocked.length} recipes still undiscovered${familyLocked.length ? ` · ${familyLocked.length} behind the ${lockedFamilies.join(', ')} stud${lockedFamilies.length === 1 ? 'y' : 'ies'} (Research Table)` : ''}` : 'nothing here'}</div>}
         </div>
         {rc && sel && <div className="recipe">
           <div className="recipe-head"><Icon k={rc.out} size={18} /><b>{rc.alias ?? ITEMS[rc.out].name}</b>{rc.outs && <span className="chip" style={{ color: 'var(--brassLit)' }}>batch</span>}</div>
@@ -408,14 +428,20 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
 }
 
 export const BUILD_GROUPS: Record<string,string[]> = {
-  Shell:['claim','floor_wood','floor_stone','wall_wood','wall_plank','wall_stone','wall_brick','door_wood','door_iron','roof_thatch','roof_tile'],
-  Home:['bed_straw','chest_small','chest_large','escrow'],
+  Shell:[...PA1_BASE_GEOMETRY],
+  Home:['claim','bed_straw','chest_small','chest_large','escrow'],
   Work:['campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','feed_trough','farm_controller'],
   Defense:['base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','door_powered','arrow_turret','spikes','barricade','torch_post'],
 };
 /** Oil Pump is locked until the run holds an authorized source with stock; the reason is shown on the entry. */
 export const buildLocked = (r: RunState, k: string) => k === 'oil_pump' && !anyAuthorizedOilSource(r);
-const BUILD_TAB_ICON: Record<string, string> = { Shell: 'st:wall_stone', Home: 'st:bed_straw', Work: 'st:workbench', Defense: 'st:arrow_turret' };
+const BUILD_TAB_ICON: Record<string, string> = { Shell: 'st:wall_window_wood', Home: 'st:bed_straw', Work: 'st:workbench', Defense: 'st:arrow_turret' };
+/** PA1: raw inputs are consumed only by crafting a packed station/device.
+ * Building a deployable then requires exactly one real packed item UID. */
+const costToPlace = (k:string):[string,number][] => {
+  const d=STRUCTS[k];
+  return d.item ? [[d.item,1]] : d.cost;
+};
 export function BuildPanel({ api }: { api: Api }) {
   const r = api.gs.run!; const owned = Object.values(r.entities).some(e => e.type === 'claim');
   const [category, setCategory] = useState('Shell'); const [query, setQuery] = useState(''); const [hover, setHover] = useState<string | null>(null);
@@ -432,19 +458,20 @@ export function BuildPanel({ api }: { api: Api }) {
     </div>
     <div className="build-body">
       <div className="btiles scroll">
-        {keys.map(k => { const d = STRUCTS[k]; const ok = d.cost.every(([i, qq]) => have(i) >= qq); const locked = buildLocked(r, k); return <button key={k} className={`btile ${ok && !locked ? 'ok' : 'no'} ${focus === k ? 'on' : ''}`} disabled={locked} data-testid={k === 'oil_pump' ? 'build-oil-pump' : undefined} onMouseEnter={() => setHover(k)} onFocus={() => setHover(k)} onClick={() => place(k)} title={d.name}>
+        {keys.map(k => { const d = STRUCTS[k]; const costs=costToPlace(k); const ok = costs.every(([i, qq]) => have(i) >= qq); const locked = buildLocked(r, k); return <button key={k} className={`btile ${ok && !locked ? 'ok' : 'no'} ${focus === k ? 'on' : ''}`} disabled={locked} data-testid={k === 'oil_pump' ? 'build-oil-pump' : undefined} onMouseEnter={() => setHover(k)} onFocus={() => setHover(k)} onClick={() => place(k)} title={d.name}>
           <span className="ground" /><img className="px" src={iconUrlSt(k)} alt="" />
           {locked && <span className="lock">🔒</span>}
           <span className="nm">{d.name}</span>
-          <span className="cost">{d.cost.map(([i, qq]) => <span key={i} className={have(i) >= qq ? 'ok' : 'no'} title={`${ITEMS[i].name} ${have(i)}/${qq}`}><Icon k={i} size={8} />{qq}</span>)}</span>
+          <span className="cost">{costs.map(([i, qq]) => <span key={i} className={have(i) >= qq ? 'ok' : 'no'} title={`${ITEMS[i].name} ${have(i)}/${qq}`}><Icon k={i} size={8} />{qq}</span>)}</span>
         </button>; })}
         {!keys.length && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', padding: 6 }}>nothing matches</div>}
       </div>
       {focus && fd && <div className="bdetail">
         <div className="bdetail-head"><img className="px" src={iconUrlSt(focus)} alt="" /><div><b>{fd.name}</b><div className="lbl meta">{fd.layer.toUpperCase()}{fd.shelter ? ' · SHELTER' : ''}{fd.station ? ' · STATION' : ''}{fd.slots ? ` · ${fd.slots} SLOTS` : ''}{fd.light ? ' · LIGHT' : ''}</div></div></div>
         <div className="lbl desc">{fd.desc}</div>
-        <div className="bcost">{fd.cost.map(([i, qq]) => { const h = have(i); return <span key={i} className={`need ${h >= qq ? 'ok' : 'no'}`} title={ITEMS[i].name}><Icon k={i} size={14} /><b>{h}</b><small>/{qq}</small></span>; })}<span className="chip" style={{ color: 'var(--muted)', marginLeft: 'auto' }}><Glyph k="hp" c="currentColor" s={7} />{fd.hp}</span></div>
-        {buildLocked(r, focus) ? <div className="why" style={{ color: 'var(--bad)' }}>needs an authorized oil source</div> : <button className="btn gold" style={{ width: '100%' }} disabled={!fd.cost.every(([i, qq]) => have(i) >= qq)} onClick={() => place(focus)}>Place · LMB</button>}
+        {fd.item && <div className="why" style={{ color: 'var(--warn)' }}>Craft {ITEMS[fd.item].name} in Survivor first; placing consumes that physical item, not its materials again.</div>}
+        <div className="bcost">{costToPlace(focus).map(([i, qq]) => { const h = have(i); return <span key={i} className={`need ${h >= qq ? 'ok' : 'no'}`} title={ITEMS[i].name}><Icon k={i} size={14} /><b>{h}</b><small>/{qq}</small></span>; })}<span className="chip" style={{ color: 'var(--muted)', marginLeft: 'auto' }}><Glyph k="hp" c="currentColor" s={7} />{fd.hp}</span></div>
+        {buildLocked(r, focus) ? <div className="why" style={{ color: 'var(--bad)' }}>needs an authorized oil source</div> : <button className="btn gold" style={{ width: '100%' }} disabled={!costToPlace(focus).every(([i, qq]) => have(i) >= qq)} onClick={() => place(focus)}>Select placement · LMB</button>}
         {!owned && <div className="why" style={{ color: 'var(--warn)' }}>no Cabinet yet · unprotected builds decay</div>}
       </div>}
     </div>

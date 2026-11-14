@@ -43,7 +43,7 @@ import { BUTCHER_YIELDS, HUSBANDRY_YIELDS } from './husbandry';
 import { expand, ieValue, integerTree, proveItem } from './industrial-proof';
 import { DAILY_MILESTONES, milestoneRewardSpec } from './journey';
 import { LOOT_B04_ROLES, LOOT_B05_TOOLBOX_GRADE, LOOT_CLASSES } from './loot-ecology';
-import { COMPONENT_RECIPES, componentRuleSnapshot, recoveryPlanFor } from './recycler';
+import { COMPONENT_RECIPES, componentRuleSnapshot, recoveryPlan, recoveryPlanFor } from './recycler';
 import { getActiveLayout, getWorld, setActiveLayout } from './world';
 import { authoredPlan } from '../veyra05/floors';
 import {
@@ -989,7 +989,11 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
     const pr = proveItem(spec.key, cid);
     const over = pr.rows.some((rw: any) => rw.verdict === 'OVER_RETURN');
     const ratio = craftEx && ieValue(craftEx.vec) > 0 ? Math.round((ieValue(outVec) / ieValue(craftEx.vec)) * 1000) / 1000 : 0;
-    const isHistorical = cid === 'X:pipe-v1';
+    // A rule is LIVE only while the Recycler would still select it for a NEW job. A frozen rule a
+    // cutover superseded stays readable for in-flight saved jobs and must never be reported as an
+    // active route (X:pipe-v1 after D5, and X:pipe-v2 after the PA1 two-section pipe correction).
+    const liveForItem = recoveryPlan({ uid: 'audit-probe', key: spec.key, qty: 1 } as any)?.recipe ?? null;
+    const isHistorical = liveForItem !== cid;
     lines.push(
       csvRow([
         cid,
@@ -1004,7 +1008,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
         '0s_fuel(POI_recycler_batch)',
         `${ratio} (${over ? 'OVER_RETURN' : 'NET_LOSS_VERIFIED'})`,
         Math.round((60 / spec.seconds) * 100) / 100,
-        isHistorical ? 'LEGACY_COMPAT_ONLY' : 'NONE',
+        isHistorical ? (cid === 'X:pipe-v1' ? 'LEGACY_COMPAT_ONLY' : `SUPERSEDED_BY_${liveForItem ?? 'LATER_RULE'}`) : 'NONE',
         isHistorical ? 'BOTH_COMPAT_ONLY' : 'BOTH_LIVE(Shipping_Foundry&Veyra_po_slag_D5)',
         isHistorical ? 'KEEP_PINNED_IMMUTABLE' : 'D5_VERIFIED_PHYSICAL_RECYCLER_AT_PO_SLAG',
         `recycler.ts:${cid}`,

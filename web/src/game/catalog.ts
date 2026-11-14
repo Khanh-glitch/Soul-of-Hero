@@ -1,9 +1,14 @@
 import { BAL } from './core';
+import { RECIPE_FAMILY, RESEARCH_FAMILIES, RECIPE_REVISION, RETIRED_RECIPES, familyOfRecipe, familyMembers, recipeAtRevision, purchasableFamilies, isFamilyGated } from './recipe-migration';
+export { RECIPE_REVISION, RETIRED_RECIPES, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY, purchasableFamilies, isFamilyGated };
+export const recipeForJob = (id: string, rev: number | undefined): Recipe | null => recipeAtRevision(id, rev, RECIPES as Record<string, Recipe>);
 // Runtime catalogs. Numbers = TUNABLE_BALANCE; mechanisms flagged where PROPOSED_MECHANISM.
 export type Mat = 'wood' | 'stone' | 'ore' | 'plant' | 'scrap';
 export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow' | 'hill'; chance: number }
-/** `tier` governs discovery; `stationLevel` alone specifies physical workbench capability. */
-export interface RecipeDef { out: string; qty: number; /** Optional co-products committed atomically with the job (industrial batches). Absent = single output `out`×`qty`. */ outs?: [string, number][]; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery' | 'oil_pump'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3; /** B01: distinct display name for an alternate recipe whose output item is shared with another recipe. */ alias?: string }
+/** `tier` governs discovery; `stationLevel` alone specifies physical workbench capability.
+ *  `rev` is the catalog revision this definition is live in (PA1 R1 migration ledger);
+ *  a saved job resolves the revision it was queued under, never the newest one. */
+export interface RecipeDef { out: string; qty: number; /** Optional co-products committed atomically with the job (industrial batches). Absent = single output `out`×`qty`. */ outs?: [string, number][]; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery' | 'oil_pump'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3; /** B01: distinct display name for an alternate recipe whose output item is shared with another recipe. */ alias?: string; rev?: number }
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
 export const INDUSTRIAL_MODULE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_parts', 3], ['fasteners', 3], ['spares', 4], ['iron_ingot', 2]], benchLevel: 2 }; // SOH_NEW_TUNED provisional; no equivalent LI numerical table established
@@ -22,8 +27,12 @@ export interface ItemDef {
   power?: Partial<Record<Mat, number>>; dmg?: number; reach?: number; arc?: number; swing?: number; dur?: number;
   food?: { hunger?: number; thirst?: number; hp?: number; warmth?: number; rad?: number; stamina?: number };
   slot?: 'head' | 'body' | 'back'; armor?: number; cold?: number; mask?: boolean; fuel?: number; charge?: number; initialCharge?: number; waterContainer?: boolean; carryBonus?: number;
-  core?: string; creatorCore?: 'blast' | 'meteor' | 'dragon' | 'elsa' | 'earthmother' | 'mjolnir' | 'demon'; essence?: 'fire' | 'nature' | 'water' | 'spirit'; specimen?: string; studyRecipe?: string; repair?: { station: 'workbench'; cost: [string, number][] }; salvage?: { station: 'workbench'; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
+  core?: string; creatorCore?: 'blast' | 'meteor' | 'dragon' | 'elsa' | 'earthmother' | 'mjolnir' | 'demon'; essence?: 'fire' | 'nature' | 'water' | 'spirit'; specimen?: string; studyRecipe?: string;
+  /** `maintainItem` matches this against the STRUCTURE TYPE of the station in reach, so any station
+   * kind may serve; widening it past 'workbench' is what lets a packed Workbench re-forge at a Furnace. */
+  repair?: { station: StationKind; cost: [string, number][] }; salvage?: { station: StationKind; yields: [string, number][] }; place?: string; light?: number; ranged?: string;
 }
+export type StationKind = 'workbench' | 'furnace' | 'campfire' | 'refinery' | 'oil_pump' | 'research';
 const I = (d: ItemDef) => d;
 export const ITEMS: Record<string, ItemDef> = {
   // SOH_NEW_TUNED v1: shared physical Core ammunition, not legacy Core charge.
@@ -131,7 +140,9 @@ export const ITEMS: Record<string, ItemDef> = {
   boar_tusk: I({ name: 'Boar Tusk (specimen)', cat: 'res', icon: 'fang', c1: '#c0a070', c2: '#fff0d0', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'iron_sword' }),
   beetle_horn: I({ name: 'Beetle Horn (specimen)', cat: 'res', icon: 'fang', c1: '#5a2a1e', c2: '#e06a3a', w: 0.1, max: 10, desc: 'Study at a research table.', specimen: 'chitin_armor' }),
   keycard: I({ name: 'Vault Keycard', cat: 'misc', icon: 'card', c1: '#2a6a5a', c2: '#a0f0d0', w: 0.05, max: 5, desc: 'A physical Vault Keycard. New cards have limited scans; legacy cards retain one use.' }),
-  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Fuels generators or motorbikes. Can be studied or burned instead.', fuel: 60, studyRecipe: 'fuel_can' }),
+  // PA1 R1: only the RECIPE is retired. The item keeps `fuel: 60` — a canister is still what a
+  // furnace, generator and motorbike burn, and `stationBurnable` / `isStationFuel` read this field.
+  fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Fuels generators and motorbikes. Refined from real oil at a furnace or Oil Refinery. NOT station kindling — a campfire, furnace, refinery or research table burns solid fuel, never a canister. PA1 v1.2: the improvised bench formula is retired, so a motorbike always pays for its first can separately.', fuel: 60 }),
   // Ragnarok & profile
   rcash: I({ name: 'Ragnarok Cash', cat: 'cash', icon: 'coin', c1: '#b07a1e', c2: '#ffe27a', w: 0.01, max: 999, desc: 'Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.' }),
   escrow_chest: I({ name: 'Rương ký gửi', cat: 'kit', icon: 'chest', c1: '#5a3a7a', c2: '#ffd040', w: 4, max: 1, desc: 'Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.', place: 'escrow' }),
@@ -139,11 +150,11 @@ export const ITEMS: Record<string, ItemDef> = {
   vehicle_drive: I({ name:'Motor Drive', cat:'res', icon:'gear', c1:'#625e58', c2:'#c8bca1', w:3, max:5, desc:'Gear and plate drive assembly for the utility motorbike.' }),
   // B01 industrial intermediates (SOH_PROVISIONAL; historical v5 ratios are documented in B01 ledger, not copied).
   refined_iron_ingot: I({ name:'Refined Iron Ingot', cat:'res', icon:'rfingot', c1:'#8f9fb3', c2:'#f2f8ff', w:1, max:40, desc:'Furnace-refined iron. Needed for pipe and plate.' }),
-  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'pipe', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for utility frames and iron plate. Recyclable at the Foundry Recycler: one pipe back into 1 Refined Iron Ingot (net loss, cannot loop). SOH_PROVISIONAL.' }),
+  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'pipe', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for the piped utility frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Mechanical Part spent to make it is NOT returned — so pipe never loops. PA1 v1.1: the recovered BOM removed Iron Plate as a pipe sink.' }),
   metal_blade: I({ name:'Metal Blade', cat:'res', icon:'blade', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock for sword refits.' }),
   mechanical_gear: I({ name:'Mechanical Gear', cat:'res', icon:'mgear', c1:'#6b6f76', c2:'#d6c27a', w:0.8, max:20, desc:'Precision gear for motor drives and powered mechanisms.' }),
   iron_plate: I({ name:'Iron Plate', cat:'res', icon:'plate', c1:'#4f5a63', c2:'#c9d1d8', w:1.5, max:20, desc:'Plate patch for a damaged wall or door (Shift+click when repairing): restores up to 25% of its max HP per plate. Not a permanent reinforcement.' }),
-  motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'Place on clear eligible ground; fuel and cargo are separate.', place:'motorbike' }),
+  motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'PA1 v1.2 dry kit: frame, drive, two iron plates and two fastener sets. No fuel is packaged — place it, then refuel with a real Fuel Canister.', place:'motorbike' }),
   cart_kit: I({ name: 'Hand Cart (packed)', cat: 'kit', icon: 'cart', c1: '#7a5a32', c2: '#c0c8d0', w: 6, max: 1, desc: 'Place to unpack a cargo cart.', place: 'cart' }),
   // elder stones (unique per run)
   stone_frost: I({ name: 'Stone of Rime', cat: 'stone', icon: 'relic', c1: '#3a8ad0', c2: '#e0ffff', w: 1, max: 1, desc: 'Taken from the Glacier Matron.' }),
@@ -290,7 +301,46 @@ export const permitsDirectedResearch = (recipe: RecipeDef) => recipe.tier < 3;
 // Recovery is a base recipe introduced after older run snapshots were saved.
 /** B01-D: the ONLY recipe-knowledge authority is the run-local knowledge.recipes list. These keys are seeded
  * into new runs and migrated into existing saves (persist.validate); no static 'always known' path remains. */
-export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['pump_crude','refinery_crude','vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother'];
+// PA1: building shells are NOT inventory, but physical devices are items until placed.
+// Powered Door is deliberately excluded: it needs a separately designed lock/electrical
+// module applied to an existing door; it is not a second stand-alone wall tier.
+// Keep this explicit list stable for recipe knowledge migration in old saves.
+export const DEPLOYABLE_TYPES = [
+  'claim','bed_straw','chest_small','chest_large','campfire','furnace',
+  'oil_pump','refinery','workbench','research','garden','farm_controller',
+  'barrel','feed_trough','base_generator','power_cable','power_switch',
+  'pressure_switch','ir_sensor','arrow_turret','bear_trap','spikes',
+  'barricade','torch_post'
+] as const;
+/** Actual wooden Building palette in the current top-down 1-tile physics.
+ * The triangle/corner forms have dedicated silhouettes, but do NOT claim
+ * fractional tile collision, curved walls or independently built floors.
+ * Those require a separate occupancy/multistorey engine contract.
+ */
+export const PA1_BUILD_PAGES = {
+  Foundation:['floor_wood','floor_triangle_wood','ceiling_wood','ceiling_triangle_wood'],
+  Wall:['wall_wood','wall_window_wood','wall_doorframe_wood','door_wood','wall_half_wood','wall_pillar_wood','wall_triangle_wood','fence_wood'],
+  Roof:['roof_thatch','roof_slope_thatch','roof_corner_thatch'],
+} as const;
+export const PA1_BASE_GEOMETRY = [
+  ...PA1_BUILD_PAGES.Foundation,...PA1_BUILD_PAGES.Wall,...PA1_BUILD_PAGES.Roof
+] as const;
+export const PA1_UPGRADE_ONLY_GEOMETRY = [
+  'floor_stone','wall_plank','wall_stone','wall_brick','door_iron','roof_tile'
+] as const;
+export const PA1_STRUCTURE_ITEM = (type:string):string|null =>
+  type === 'escrow' ? 'escrow_chest' : (DEPLOYABLE_TYPES as readonly string[]).includes(type) ? 'deploy_'+type : null;
+
+export const ALWAYS_KNOWN_RECIPES: readonly string[] = ['pump_crude','refinery_crude','vehicle_frame','vehicle_drive','recover_drive','energy_refined_industrial','energy_basic','energy_refined','essence_fire','essence_nature','essence_water','essence_spirit','core_blast','core_earthmother',...DEPLOYABLE_TYPES.map(k=>'deploy_'+k).filter(id=>!isFamilyGated(id))];
+
+/** The single authority for "what a run knows without paying for it". A family whose gate is
+ *  priced AND approved for enforcement is excluded here, and that exclusion is the only way a
+ *  formula leaves starter knowledge — new runs and legacy-save re-grants both come through this
+ *  function, so a save can never lose a recipe it already paid for or was given. */
+export const starterKnowledge = (): string[] => Array.from(new Set([
+  ...Object.keys(RECIPES).filter(k => RECIPES[k].base && !isFamilyGated(k)),
+  ...ALWAYS_KNOWN_RECIPES.filter(k => !isFamilyGated(k)),
+]));
 export const isRecipeKnown = (known: readonly string[], key: string) => known.includes(key);
 export const requiredStationLevel = (recipe: RecipeDef): 1 | 2 | 3 => recipe.stationLevel ?? 1;
 
@@ -306,7 +356,11 @@ export const RECIPES: Record<string, Recipe> = {
   // SOH_NEW_TUNED v1. Furnace fuel is separate from consumed input.
   vehicle_frame: { out:'vehicle_frame', qty:1, ins:[['iron_ingot',3],['mechanical_parts',2],['spares',2]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
   vehicle_drive: { out:'vehicle_drive', qty:1, ins:[['iron_ingot',2],['mechanical_parts',2],['fasteners',2],['spares',3]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
-  motorbike_kit: { out:'motorbike_kit', qty:1, ins:[['vehicle_frame',1],['vehicle_drive',1],['iron_ingot',2],['fasteners',2]], station:'workbench', stationLevel:3, secs:40, tier:2 },
+  // PA1 v1.2 DRY KIT (docs/design/PA1_OIL_MOBILITY_V1_2_ACCEPTANCE.md §1, superseding the
+  // recovered v1.1 row): Frame + Drive + 2 Iron Plate + 2 Fasteners. The kit carries NO
+  // fuel — `placeMotorbike` starts at fuel 0 and `vehicleRefuel` consumes one real
+  // physical Fuel Can afterwards. Rev 1 (2 raw ingots, paper also charged a can) is frozen.
+  motorbike_kit: { out:'motorbike_kit', qty:1, ins:[['vehicle_frame',1],['vehicle_drive',1],['iron_plate',2],['fasteners',2]], station:'workbench', stationLevel:3, secs:40, tier:2, rev:2 },
   refine_salvaged_oil: { out:'fuel_can', qty:1, ins:[['salvaged_oil',3],['glass',1]], station:'furnace', secs:18, tier:1 },
   // SOH_PROVISIONAL v1 Oil Refinery: batch-efficient fuel + dedicated lubricant, distinct from furnace single-pot.
   // Refinery recipes are derived from BAL.oilRefineryV1 (single runtime authority).
@@ -338,16 +392,22 @@ export const RECIPES: Record<string, Recipe> = {
   trail_pack: { out: 'trail_pack', qty: 1, ins: [['treated_canvas', 1], ['leather', 2], ['fasteners', 2], ['rope', 2]], station: 'workbench', stationLevel: 2, secs: 22, tier: 2 },
   trail_canteen: { out: 'trail_canteen', qty: 1, ins: [['treated_canvas', 2], ['leather', 1], ['glass', 1], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
   fuel_briquette: { out: 'fuel_briquette', qty: 1, ins: [['charcoal', 2], ['fiber', 1]], station: 'workbench', stationLevel: 2, secs: 10, tier: 2 },
-  fuel_can: { out: 'fuel_can', qty: 1, ins: [['charcoal', 1], ['sulfur', 1], ['glass', 1]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
+  // PA1 R1: the direct `fuel_can` workbench recipe is RETIRED (v1.2 §2) — a canister is
+  // no longer improvised from charcoal + sulfur + glass at a bench. The definition is
+  // frozen in recipe-migration.ts so an older queued job or held blueprint still loads.
+  // Fuel now comes from `refine_salvaged_oil` (furnace, learned by studying real oil) or
+  // the Oil Refinery recipes. `ITEMS.fuel_can.studyRecipe` is removed with it.
   recover_drive: { out: 'mechanical_parts', qty: 1, ins: [['damaged_drive', 1], ['scrap', 1]], station: 'workbench', secs: 12, base: true, tier: 1 },
   mechanical_parts: { out: 'mechanical_parts', qty: 2, ins: [['scrap', 2], ['iron_ingot', 1]], station: 'workbench', secs: 12, base: true, tier: 1 },
   industrial_pick: { out: 'industrial_pick', qty: 1, ins: [['iron_pick', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
   industrial_axe: { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
   reinforced_spear: { out: 'reinforced_spear', qty: 1, ins: [['iron_ingot', 2], ['mechanical_parts', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
-  metal_pipe: { out: 'metal_pipe', qty: 1, ins: [['refined_iron_ingot', 2], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2 },
+  // ---- PA1 R1 cutover (recovered paper v1.1 BOMs, `workbench_ii` rows) ----
+  // Rev 1 definitions are frozen in recipe-migration.ts; jobs keep what they paid for.
+  metal_pipe: { out: 'metal_pipe', qty: 2, ins: [['refined_iron_ingot', 2], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2, rev: 2 },
   metal_blade: { out: 'metal_blade', qty: 1, ins: [['iron_ingot', 4], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
-  mechanical_gear: { out: 'mechanical_gear', qty: 1, ins: [['iron_ingot', 2], ['mechanical_parts', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, base: true, tier: 2 },
-  iron_plate: { out: 'iron_plate', qty: 2, ins: [['refined_iron_ingot', 2], ['metal_pipe', 1], ['mechanical_parts', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2 },
+  mechanical_gear: { out: 'mechanical_gear', qty: 1, ins: [['refined_iron_ingot', 1], ['iron_ingot', 1], ['mechanical_parts', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, base: true, tier: 2, rev: 2 },
+  iron_plate: { out: 'iron_plate', qty: 2, ins: [['refined_iron_ingot', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2, rev: 2 },
   iron_sword_blade: { out: 'iron_sword', qty: 1, alias: 'Iron Sword (blade refit)', ins: [['metal_blade', 1], ['iron_ingot', 2], ['leather', 1]], station: 'workbench', stationLevel: 2, secs: 14, base: true, tier: 2 },
   vehicle_frame_piped: { out: 'vehicle_frame', qty: 1, alias: 'Utility Frame (piped)', ins: [['metal_pipe', 1], ['iron_ingot', 2], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
   reinforced_spear_blade: { out: 'reinforced_spear', qty: 1, alias: 'Reinforced Spear (blade)', ins: [['metal_blade', 1], ['iron_ingot', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
@@ -406,18 +466,34 @@ export const WORKBENCH_UPGRADE_III: { toLevel: 3; cost: [string, number][] } = {
 export const CORE_STUDY: Record<string, string> = { core_fire: 'core_fire', core_earth: 'core_earth', core_storm: 'core_storm', core_frost: 'core_frost', core_meteor: 'core_meteor', core_dragon: 'core_dragon', core_elsa: 'core_elsa', core_mjolnir: 'core_mjolnir', core_demon: 'core_demon' };
 
 // ---------- Structures (K6) ----------
-export interface StructDef { name: string; cost: [string, number][]; hp: number; need: 'claim' | 'any' | 'free'; block: boolean; layer: 'floor' | 'wall' | 'obj' | 'roof'; slots?: number; station?: 'campfire' | 'furnace' | 'workbench' | 'research' | 'refinery' | 'oil_pump'; light?: number; desc: string; item?: string; shelter?: boolean; warmth?: number }
+export interface StructDef { name: string; cost: [string, number][]; hp: number; need: 'claim' | 'any' | 'free'; block: boolean; layer: 'floor' | 'wall' | 'obj' | 'roof'; slots?: number; station?: 'campfire' | 'furnace' | 'workbench' | 'research' | 'refinery' | 'oil_pump'; light?: number; desc: string; item?: string; shelter?: boolean; warmth?: number;
+  /** false for fences, half-walls and pillars: physical barriers, NOT sealed rooms. */
+  sealsRoom?: boolean;
+  /** Can see through this wall, but physical collision still blocks passage. */
+  visionTransparent?: boolean;
+}
 export const STRUCTS: Record<string, StructDef> = {
   claim: { name: 'Territory Cabinet', cost: [['wood', 10], ['stone', 5]], hp: 200, need: 'free', block: true, layer: 'obj', slots: 24, desc: 'Place on your foundation. 24 physical slots fund upkeep within 25 SOH tiles.' },
   floor_wood: { name: 'Wood Floor', cost: [['wood', 4]], hp: 120, need: 'any', block: false, layer: 'floor', desc: 'Foundation tile. Roofs need it.' },
+  floor_triangle_wood: { name:'Wood Triangle Foundation', cost:[['wood',4]], hp:120, need:'any', block:false, layer:'floor', desc:'Triangular top-view foundation piece. Current physics reserves one whole tile; half-cell join rules remain a separate gate.' },
   floor_stone: { name: 'Stone Floor', cost: [['stone', 6]], hp: 260, need: 'any', block: false, layer: 'floor', desc: 'Sturdy foundation.' },
   wall_wood: { name: 'Wood Wall', cost: [['wood', 5]], hp: 160, need: 'any', block: true, layer: 'wall', desc: 'Blocks movement and paths.' },
+  wall_window_wood: { name:'Wood Window Wall', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', visionTransparent:true, desc:'Seals shelter, blocks movement; vision goes through its framed opening. No fake shoot-through guarantee.' },
+  wall_doorframe_wood: { name:'Wood Door Frame', cost:[['wood',5]], hp:160, need:'any', block:false, layer:'wall', sealsRoom:false, desc:'Walkable frame opening. Does not seal a room; door is a separate building piece.' },
+  wall_half_wood: { name:'Wood Half Wall', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', sealsRoom:false, visionTransparent:true, desc:'Low obstacle: blocks traversal, not sight or full shelter closure.' },
+  wall_pillar_wood: { name:'Wood Pillar', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', sealsRoom:false, visionTransparent:true, desc:'One-tile support post and obstacle. True point footprint not yet modeled.' },
+  wall_triangle_wood: { name:'Wood Triangle Gable', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', desc:'Triangular upper wall silhouette. One-tile top-down collision pending height-aware support.' },
+  fence_wood: { name:'Wood Fence', cost:[['wood',5]], hp:160, need:'any', block:true, layer:'wall', sealsRoom:false, visionTransparent:true, desc:'Open fence: blocks walkers, lets sight through, never seals shelter.' },
   wall_plank: { name: 'Plank Wall', cost: [['plank', 3]], hp: 240, need: 'any', block: true, layer: 'wall', desc: 'Sawn boards: 240 HP for 6 wood, against 160 HP for 5 wood in a log wall.' },
   wall_stone: { name: 'Stone Wall', cost: [['stone', 8], ['wood', 1]], hp: 380, need: 'any', block: true, layer: 'wall', desc: 'Heavy wall.' },
   wall_brick: { name: 'Brick Wall', cost: [['brick', 6]], hp: 600, need: 'any', block: true, layer: 'wall', desc: 'Fired brick. Strongest wall.' },
   door_wood: { name: 'Wood Door', cost: [['wood', 6], ['rope', 1]], hp: 140, need: 'any', block: true, layer: 'wall', desc: 'E to open/close. Creatures cannot open doors.' },
   door_iron: { name: 'Iron Door', cost: [['iron_ingot', 4]], hp: 420, need: 'any', block: true, layer: 'wall', desc: 'Reinforced door.' },
   roof_thatch: { name: 'Thatch Roof', cost: [['wood', 2], ['fiber', 5]], hp: 80, need: 'any', block: false, layer: 'roof', desc: 'Over a floor. Enclosed + roofed = shelter.', shelter: true },
+  ceiling_wood: { name:'Wood Ceiling', cost:[['wood',2],['fiber',5]], hp:80, need:'any', block:false, layer:'roof', shelter:true, desc:'Flat overhead tile, visually separate from thatch. Not a standable upper-storey floor.' },
+  ceiling_triangle_wood: { name:'Wood Triangle Ceiling', cost:[['wood',2],['fiber',5]], hp:80, need:'any', block:false, layer:'roof', shelter:true, desc:'Triangular overhead silhouette, top-down one-tile cover until half-cell support exists.' },
+  roof_slope_thatch: { name:'Thatch Slope Roof', cost:[['wood',2],['fiber',5]], hp:80, need:'any', block:false, layer:'roof', shelter:true, desc:'Sloping roof silhouette. Does not provide a climbable ramp.' },
+  roof_corner_thatch: { name:'Thatch Corner Roof', cost:[['wood',2],['fiber',5]], hp:80, need:'any', block:false, layer:'roof', shelter:true, desc:'Corner roof silhouette with cover, not independent roof physics.' },
   roof_tile: { name: 'Tile Roof', cost: [['brick', 3]], hp: 200, need: 'any', block: false, layer: 'roof', desc: 'Durable roof.', shelter: true },
   bed_straw: { name: 'Straw Bed', cost: [['fiber', 10], ['wood', 2]], hp: 60, need: 'any', block: false, layer: 'obj', desc: 'Respawn point within this run.' },
   chest_small: { name: 'Wood Chest', cost: [['wood', 8]], hp: 100, need: 'any', block: true, layer: 'obj', slots: 12, desc: '12-slot storage.' },
@@ -445,11 +521,68 @@ export const STRUCTS: Record<string, StructDef> = {
   torch_post: { name: 'Torch Post', cost: [['wood', 2], ['torch', 1]], hp: 40, need: 'any', block: true, layer: 'obj', light: 80, desc: 'Permanent light.' },
   escrow: { name: 'Rương ký gửi', cost: [['escrow_chest', 1]], hp: 400, need: 'claim', block: true, layer: 'obj', desc: 'Deposit physical Ragnarok cash into profile-secured cash.', item: 'escrow_chest' },
 };
+// PA1 item custody: the existing material cost of each device is now consumed
+// exactly once by its known hand-crafting recipe. Placing it consumes the item,
+// preserving its unique stack UID in Entity.deployed; reclaim returns that UID.
+// No new speculative materials, drop tables or hidden research paywalls.
+for (const type of DEPLOYABLE_TYPES) {
+  const d=STRUCTS[type];
+  if(!d || d.layer!=='obj' && type!=='power_cable' && type!=='power_switch' &&
+    type!=='pressure_switch' && type!=='ir_sensor' && type!=='bear_trap')
+    throw new Error('PA1_INVALID_DEPLOYABLE:'+type);
+  const id='deploy_'+type;
+  if(ITEMS[id] || RECIPES[id] || d.item)throw new Error('PA1_DUPLICATE_DEPLOYABLE:'+id);
+  const packWeight=d.cost.reduce((sum,[ingredient,qty])=>sum+ITEMS[ingredient].w*qty,0);
+  // §24 puts a device's CONDITION on the pack, and `reclaim` hands that condition back verbatim
+  // (dur = structure hp, never healed). Without a paid recovery rule that made the row's own advice
+  // a lie — the Deploy screen said "repair it" while `maintainItem` had nothing to accept. The price
+  // is the game's EXISTING bounded patch arithmetic for structures (a quarter of the build list, never
+  // less than one), so no new material, drop or sink is invented.
+  const repairCost = d.cost.map(([k, q]) => [k, Math.max(1, Math.ceil(q * 0.25))] as [string, number]);
+  // A packed Workbench re-forges at a placed Furnace, not at a Workbench: repairing a device at its
+  // own station is the one self-softlock this table would otherwise create (you cannot build a bench
+  // at that bench). Every other pack, including the Furnace's, is accepted at a placed Workbench.
+  const repairStation = type === 'workbench' ? 'furnace' : 'workbench';
+  ITEMS[id]=I({name:d.name,cat:'place',icon:'parts',c1:'#758995',c2:'#d4c9a8',
+    w:Math.round(packWeight*100)/100,max:1,dur:d.hp,repair:{station:repairStation,cost:repairCost},
+    desc:'Packed '+d.name+'. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the '+(repairStation==='furnace'?'Furnace':'Workbench')+' for a quarter of its materials.'});
+  // PA1 WP3: family membership is recorded, and a family whose gate is BOTH priced and
+  // approved for enforcement stops being free spawn knowledge (the family study is then the
+  // paid authority). No pack is locked today: the recovered paper does not say the shipped
+  // Refinery / Oil Pump / Field Generator packs were behind a study, and pulling them would
+  // regress starter crafting. `isFamilyGated` returns false for every family in this build.
+  // `base` stays the "physical starter craft availability" flag the ontology test pins:
+  // every pack is craftable by hand from its own materials. Whether a family WITHHOLDS the
+  // formula from a new run is decided once, by `starterKnowledge()`, from the approved
+  // enforcement flag — so no pack can end up half-locked.
+  RECIPES[id]={out:id,qty:1,ins:d.cost.map(([k,q])=>[k,q]),
+    station:null,secs:1,base:true,tier:0};
+  d.item=id;
+}
+
 /** Full target materials are paid again; condition is preserved, never a free repair. */
-export const STRUCTURE_UPGRADES: Record<string, string> = { floor_wood: 'floor_stone', wall_wood: 'wall_stone', wall_stone: 'wall_brick', door_wood: 'door_iron', roof_thatch: 'roof_tile', chest_small: 'chest_large' };
-export const BUILD_ORDER = ['floor_wood', 'floor_stone', 'claim', 'wall_wood', 'wall_plank', 'wall_stone', 'wall_brick', 'door_wood', 'door_iron', 'roof_thatch', 'roof_tile', 'bed_straw', 'chest_small', 'chest_large', 'campfire', 'furnace', 'refinery', 'oil_pump', 'workbench', 'research', 'garden', 'barrel', 'feed_trough', 'farm_controller', 'base_generator', 'power_cable', 'power_switch', 'pressure_switch', 'ir_sensor', 'bear_trap', 'door_powered', 'arrow_turret', 'spikes', 'barricade', 'torch_post', 'escrow'];
+// Steel and iron wall-tier material costs are NOT specified by the owner. The
+// stone→brick historical path is frozen; do not pretend that brick is steel.
+export const STRUCTURE_UPGRADES: Record<string, string> = {
+  floor_wood:'floor_stone',wall_wood:'wall_stone',door_wood:'door_iron',
+  roof_thatch:'roof_tile',chest_small:'chest_large'
+};
+export const BUILD_ORDER = [...PA1_BASE_GEOMETRY, 'claim','bed_straw','chest_small','chest_large','campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','feed_trough','farm_controller','base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','arrow_turret','spikes','barricade','torch_post','escrow'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items
+/** §24/§25: a powered door is a working electrical STRUCTURE but its module design (ID, steel cost,
+ * higher-tier geometry) is still unapproved, so it has no packed-device formula and is deliberately
+ * absent from BUILD_ORDER. The Survivor 'Devices' list must therefore show it as PENDING rather than
+ * as a device the player is merely under-equipped for, and it must never be counted as a deployed pack.
+ * The assertions below keep that list from growing silently into a way of hiding an unbuilt feature. */
+export const MODULE_PENDING_STRUCTURES: readonly (keyof typeof STRUCTS & string)[] = ['door_powered'];
+for (const k of MODULE_PENDING_STRUCTURES) {
+  const d = STRUCTS[k];
+  if (!d || d.item || (DEPLOYABLE_TYPES as readonly string[]).includes(k) || (BUILD_ORDER as readonly string[]).includes(k))
+    throw new Error('PA1_MODULE_PENDING_CONTRADICTION:' + k);
+}
+export const modulePending = (type: string) => MODULE_PENDING_STRUCTURES.includes(type);
+
 export const SALVAGED_OIL_WRECK_CHANCE = 0.35; // SOH_NEW_TUNED v1 per finite wreck stock unit
 /** R8D: the highest tier whose minPower the caller's tool reaches, if the source grants that capability. No tier -> no roll.
  *  Expected extra per 5-unit iron vein: 0.4 rich (iron pick, +24% iron-equivalent on the vein), 0.6 rich (salvager, +36%).
@@ -528,6 +661,31 @@ export function validateGameplayCatalog(catalog: GameplayCatalogData = { items: 
     if (recipe.stationLevel !== undefined && (recipe.station !== 'workbench' || ![1, 2, 3].includes(recipe.stationLevel))) errors.push(`recipe ${id}: invalid station level`);
     if (recipe.station && (!structures[recipe.station] || structures[recipe.station].station !== recipe.station)) errors.push(`recipe ${id}: missing station ${recipe.station}`);
     if (recipe.outs !== undefined && (recipe.outs.length < 1 || recipe.outs[0][0] !== recipe.out || recipe.outs[0][1] !== recipe.qty || recipe.outs.some(([k, q]) => !items[k] || !Number.isSafeInteger(q) || q <= 0) || new Set(recipe.outs.map(([k]) => k)).size !== recipe.outs.length)) errors.push(`recipe ${id}: invalid output list`);
+  }
+  // ---- PA1 R1 migration + research-family contracts (authored data, no runtime branch) ----
+  for (const retired of RETIRED_RECIPES) {
+    if (recipes[retired]) errors.push(`recipe ${retired}: retired by the PA1 cutover but still live in the catalog`);
+    for (const [id, item] of Object.entries(items)) if (item.studyRecipe === retired) errors.push(`item ${id}: studyRecipe points at the retired recipe ${retired}`);
+  }
+  for (const [id, fam] of Object.entries(RECIPE_FAMILY)) {
+    const def = RESEARCH_FAMILIES[fam];
+    if (!def) errors.push(`recipe ${id}: research family ${fam} is not declared`);
+    else if (def.price === null) errors.push(`recipe ${id}: family ${fam} has no authorized price, so it must not gate a recipe`);
+    if (!recipes[id]) errors.push(`recipe ${id}: RECIPE_FAMILY names a recipe that does not exist`);
+    // A gate is either on or off for the whole family, never half-applied: an enforced
+    // family's members must not be free starter knowledge, and a family that is not an
+    // enforced gate must not leave a member locked out of starter knowledge by hand.
+    const gated = !!def && def.price !== null && def.enforce;
+    // `base` is the pack's physical-craft flag and stays true; what a run is GIVEN is computed
+    // by starterKnowledge(). So the only authoring mistake this can catch is naming a family
+    // that cannot actually gate (unpriced / unapproved) while still holding a member, or
+    // locking a formula that no family owns.
+    if (!gated && !isFamilyGated(id)) { /* membership is informational until enforcement is approved */ }
+    if (gated && !recipes[id]) errors.push(`recipe ${id}: enforced family ${fam} has no recipe to gate`);
+    if (!def) continue;
+  }
+  for (const [id, recipe] of Object.entries(recipes)) {
+    if (recipe.rev !== undefined && (recipe.rev < 1 || recipe.rev > RECIPE_REVISION)) errors.push(`recipe ${id}: rev ${recipe.rev} is outside the migration ledger (1..${RECIPE_REVISION})`);
   }
   if (errors.length) throw new Error(`Invalid gameplay catalog:\n${errors.join('\n')}`);
   return true;

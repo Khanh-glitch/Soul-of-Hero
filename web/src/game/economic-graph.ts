@@ -256,6 +256,19 @@ export interface SohEconomicGraph {
     repo: string;
     commit: string;
     branch: string;
+    /** States what this frozen block IS, so it can never be read as the file's own provenance. */
+    note?: string;
+  };
+  /**
+   * Provenance of THIS file: which tree the edges were extracted from, and which recipe revision those
+   * rules encode. Written by the exporter (tests/economic-network-m1.test.ts), not by the builder, so the
+   * builder stays pure and `graph1 === graph2` remains a determinism pin rather than a SHA accident.
+   */
+  generatedFrom?: {
+    sourceSHA: string;
+    sourceSHAProvenance: string;
+    recipeRevision: number;
+    retiredRecipes: string[];
   };
   gates: Record<string, EconGate>;
   nodes: EconNode[];
@@ -2370,6 +2383,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
       repo: 'Khanh-glitch/Soul-of-Hero',
       commit: '52f27959f732aa8b47d6a897c9a5aa7d708cf926',
       branch: 'arena/f561fd0d-soul-of-hero',
+      note: 'Frozen M5 crosswalk reference: the tree the audit rows were measured against. This is NOT the provenance of this export — see generatedFrom.',
     },
     gates,
     nodes,

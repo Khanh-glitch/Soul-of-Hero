@@ -109,6 +109,9 @@ export interface Entity {
   id: string; kind: 'drop' | 'struct' | 'bag' | 'cart' | 'vehicle' | 'loot' | 'cash' | 'vendor' | 'evac' | 'door' | 'gen' | 'recycler' | 'airdrop';
   x: number; y: number; // px for drops/carts, tile*16+8 for structures
   tx?: number; ty?: number; type?: string; hp?: number; maxHp?: number;
+  /** A door installed into a paid wooden frame retains frame material ancestry.
+   * Refund uses both paid contributions; not an inventory door-frame item. */
+  framePaid?: true;
   c?: string; // container id
   open?: boolean; locked?: string; poi?: string; label?: string; stock?: Record<string, number>;
   station?: { queue: Job[]; burn: number; fuelC: string; outC: string; level?: 1 | 2 | 3; upgrade?: 'kiln_lining'; stateCode?: string };
@@ -137,7 +140,10 @@ export interface Entity {
   legacyJobs?: { stationType: string; queue: Job[] };
 }
 /** Undefined reserved means an older save whose paid inputs cannot be reconstructed safely. */
-export interface Job { id: string; recipe: string; left: number; total: number; reserved?: Stack[] }
+/** PA1 R1: `rv` pins the catalog revision the job was paid under, so a later recipe
+ *  cutover can neither reject the save nor change what the job pays out. Absent = a save
+ *  from before stamping; the migration ledger resolves those to revision 1. */
+export interface Job { id: string; recipe: string; left: number; total: number; reserved?: Stack[]; rv?: number }
 
 export interface WorldStimulus { version:'world-stimulus-v1'; id:string; sourceId:string; eventIndex:number; kind:'airdrop-landing'|'combat-sound'; modality:'sound'; eligibility:'audible-landing-v1'|'audible-ranged-v1'|'audible-melee-v1'; x:number; y:number; at:number; expiresAt:number; range:number; strength:number }
 
@@ -255,6 +261,12 @@ export interface RunState {
   entities: Record<string, Entity>;
   custody: Record<string, Container>;
   knowledge: { recipes: string[]; studied: string[] };
+  /** PA1 R1 (additive): paid research-family ledger + the catalog revision the run uses.
+   *  Absent on older runs, which keep every recipe they already knew. */
+  tech?: { families: string[]; recipeRev: number };
+  /** PA1 R1 (additive): count of knowledge entries removed by an explicit save migration,
+   *  so the load note can tell the player what changed. Never a material grant. */
+  migrated?: { retiredRecipes?: number; retiredNoticeShown?: true };
   traces: Trace[];
   /** Bounded, ephemeral real event impulses; absent in legacy runs. */
   worldStimuli?: WorldStimulus[];

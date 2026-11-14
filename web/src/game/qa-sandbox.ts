@@ -27,6 +27,7 @@ export type QaPresetId =
   | 'vehicle'
   | 'offline_return'
   | 'ragnarok_economy'
+  | 'research_access'
   | 'death_recovery';
 
 export interface QaPresetMeta {
@@ -45,6 +46,11 @@ export const QA_PRESETS: QaPresetMeta[] = [
   { id: 'vehicle', title: 'Utility Motorbike & Freight Convoy', tag: 'VEHICLE', desc: 'Fueled & lubricated motorbike, Hand Cart, Paid Parcel & automated drive demo.' },
   { id: 'offline_return', title: 'Offline Return · Engine Replay', tag: 'REAL SETTLE', desc: 'Run the engine settlement against real queued jobs, fuel, crops, home and receipts; no hand-authored report rows.' },
   { id: 'ragnarok_economy', title: 'Ragnarok, Escrow & Evacuation', tag: 'ENDGAME', desc: 'Hour 266 Ragnarok, Sealed Cash Chest, Mirela Trader, Escrow Chest & Evac Beacon.' },
+  // PA1 P1 evidence fixture: ONE recovered device on open ground, so the browser gate that proves the
+  // family ledger panel is reachable is not hostage to `industry`'s machine column, where every tile
+  // within reach of the Research Table is also within reach of a nearer machine (findInteract keeps the
+  // nearest interactable inside 30 px, so the prompt can name only one of them).
+  { id: 'research_access', title: 'Recovered Research Table · Open Ground', tag: 'PA1 PANEL EVIDENCE', desc: 'A single authorized Research Table beside the spawn on free ground: walk up to it and press E for the technology families.' },
   { id: 'death_recovery', title: 'Death & Bag Recovery Preview', tag: 'STAGED PREVIEW', desc: 'Preassembled fallen-state overlay with recoverable bag; use Full Gear to test a natural combat death.' },
   { id: 'fresh', title: 'Fresh-Start Survival', tag: 'BASELINE', desc: 'Clean Day 1 wash-up with standard knife, flask & berries.' },
 ];
@@ -474,6 +480,23 @@ export function buildQaSandbox(
     p.deadT = 1500;
     p.hp = 0;
     pushLog(r, now, `QA Sandbox: Fallen state active. Your bag lies at (${bx}, ${by}).`, 'red');
+  }
+
+  if (preset === 'research_access') {
+    // Nothing else is placed near the player: on free ground the table is unavoidably the nearest
+    // interactable, so "press E" is a real, repeatable route to the panel rather than a tie to win.
+    // Radius 1 around one tile south of the spawn: the table is then at most ~2 tiles away, so the
+    // prompt reaches it after a single step, whatever the terrain looks like at the start position.
+    const spot = findOpenTile(r, ptx, pty + 1, 1);
+    placeStruct(r, 'research', spot.tx, spot.ty);
+    // The family ledger is reached with no knowledge grant: every family row must still be legible,
+    // decided or undecided, exactly as the shipped build states it.
+    // The pack key is `deploy_` + the structure type (catalog.ts deployable synthesis) — 'research',
+    // not a noun phrase; addItem would hand back the whole qty if the item did not exist.
+    const left = addItem(r, 'inv', 'deploy_research', 1);
+    if (left > 0) throw new Error('qa preset research_access: deploy_research is not a real item key');
+    banner = { text: 'RECOVERED RESEARCH TABLE · OPEN GROUND', sub: 'One authorized table south of the spawn · a packed spare in slot 1 · E opens the technology families' };
+    pushLog(r, now, 'QA Sandbox: a Research Table stands on free ground nearby. Select the packed spare to place a second, or press E at the table.', 'gold');
   }
 
   markDirty();

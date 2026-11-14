@@ -1,7 +1,7 @@
 // Read-only presentation projection. The engine remains the sole authority for
 // costs, reach, reservation and completion. Never use this to commit a job.
 import { BAL, TILE, type Entity, type RunState } from './core';
-import { ITEMS, RECIPES, STRUCTS, isRecipeKnown, requiredStationLevel, stationBurnable } from './catalog';
+import { ITEMS, RECIPES, STRUCTS, isRecipeKnown, modulePending, requiredStationLevel, stationBurnable } from './catalog';
 import { C, anyAuthorizedOilSource, authorizedOilSource, clearInteraction, clearWallLine, countItem, phaseOf, spaceFor } from './engine';
 import { recoveryFits } from './recycler';
 
@@ -101,10 +101,61 @@ export function craftReadiness(r: RunState, key: string, now: number, preferredE
   return state('unknown', 'Work now', 'Reserve inputs and start work', 'ready', true);
 }
 
-/** A structure cannot claim "build ready" until the player has selected a legal tile. */
-export function structurePreparation(r: RunState, type: string) {
+export interface StructurePreparation {
+  materials: boolean;
+  missing: { key: string; have: number; need: number }[];
+  sourceBlocked: boolean;
+  next: string;
+  /** True for a structure whose module is unapproved (no packed-device formula, not in BUILD_ORDER). */
+  pending?: boolean;
+  /** Present for a crafted device: what the placement actually consumes is the PACK. */
+  pack?: {
+    key: string; name: string; carried: number; intact: boolean;
+    /** 0 = nothing left (only reachable through a forged save); below `max` = worn but placeable. */
+    dur: number; max: number;
+    reforge: { station: string; stationName: string; cost: [string, number][] } | null;
+    craftCost: [string, number][];
+  };
+}
+
+const costLabel = (cost: [string, number][]) =>
+  cost.map(([k, q]) => `${q} ${ITEMS[k]?.name ?? k}`).join(' + ');
+
+/** A structure cannot claim "build ready" until the player has selected a legal tile.
+ *
+ * PA1 device custody: a device that owns a packed item is placed BY SPENDING THAT ITEM, never by
+ * paying its raw material list a second time. If this projection reported the raw list as
+ * "prepared", the Deploy screen would promise a placement the engine then refuses with
+ * "No valid packed device in inventory." — so the pack, not the ore, is the readiness authority.
+ *
+ * Condition is stated as a number, not as a verdict, because the two low-durability states mean
+ * different things: a pack reclaimed from a damaged device places again AT that damage (no
+ * reclaim/redeploy healing exploit), while a zero-condition pack cannot be placed at all. Both name
+ * the one paid control that exists — `maintainItem` re-forging at a station — so the advice is never
+ * a promise the game cannot keep. */
+export function structurePreparation(r: RunState, type: string): StructurePreparation {
   const d = STRUCTS[type];
+  if (modulePending(type))
+    return { materials: false, missing: [], sourceBlocked: false, pending: true,
+      next: `${d?.name ?? type} is module-pending: no approved packed-device formula in this build` };
   const missing = d?.cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => ({ key: k, have: countItem(r, 'inv', k), need: q })) ?? [];
   const sourceBlocked = type === 'oil_pump' && !anyAuthorizedOilSource(r);
+  if (d?.item) {
+    const packKey = d.item;
+    const packs = C(r, 'inv').slots.filter(s => s?.key === packKey);
+    const max = ITEMS[packKey]?.dur ?? d.hp;
+    const rule = ITEMS[packKey]?.repair;
+    const reforge = rule ? { station: rule.station, stationName: STRUCTS[rule.station]?.name ?? rule.station, cost: rule.cost } : null;
+    const best = packs.reduce((hi, s) => Math.max(hi, Number.isFinite(s?.dur) ? s!.dur as number : 0), 0);
+    const intact = packs.some(s => s && s.qty === 1 && Number.isFinite(s.dur) && (s.dur as number) > 0 && (s.dur as number) <= d.hp);
+    const reforgeNote = reforge ? ` · re-forge for ${costLabel(reforge.cost)} at the ${reforge.stationName}` : '';
+    const next = sourceBlocked ? 'No authorized oil site on this map'
+      : intact && best < max ? `Packed ${d.name} is worn (${best}/${max}) — it places at that damage, nothing is healed${reforgeNote}`
+      : intact ? 'Placement spends the packed device, not its materials — choose a legal site'
+      : packs.length ? `The packed ${d.name} has no condition left (${best}/${max}) and cannot be placed${reforgeNote || ' · no re-forge path in this build'}`
+      : `Craft the packed ${d.name} first${missing.length ? ' · ' + missingLabel(missing[0].key, missing[0].have, missing[0].need) : ''}`;
+    return { materials: !sourceBlocked && intact, missing, sourceBlocked, next,
+      pack: { key: packKey, name: d.name, carried: packs.length, intact, dur: best, max, reforge, craftCost: d.cost } };
+  }
   return { materials: missing.length === 0, missing, sourceBlocked, next: sourceBlocked ? 'No authorized oil site on this map' : missing.length ? missingLabel(missing[0].key, missing[0].have, missing[0].need) : 'Materials ready · choose a legal site' };
 }

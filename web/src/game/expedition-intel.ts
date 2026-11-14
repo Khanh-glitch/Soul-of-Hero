@@ -57,6 +57,8 @@ export interface GateNote {
   craft?: CraftNote;
 }
 export type BlueprintState = 'seen' | 'owned' | 'learned';
+/** Live ways to obtain one Fuel Canister, in guidance priority order (PA1 v1.2). */
+export const FUEL_ROUTES: readonly string[] = ['refine_salvaged_oil', 'refinery_fuel', 'refinery_fuel_batch', 'refinery_industrial', 'refinery_crude'];
 export interface BlueprintNote { recipe: string; name: string; state: BlueprintState }
 export interface PlaceNote { place: string; name: string; gates: GateNote[]; blueprints: BlueprintNote[]; generatorSeen: boolean }
 
@@ -75,10 +77,14 @@ export function expeditionNotes(r: RunState): PlaceNote[] {
       if (!k.startsWith(`gate:${place}:`)) continue;
       const req = k.slice(`gate:${place}:`.length);
       if (req === 'power') {
-        const rc = RECIPES.fuel_can;
-        const ingredients = rc.ins.map(([key, need]) => ({ key, name: ITEMS[key].name, have: carriedCount(r, key), need }));
-        const craft: CraftNote | undefined = isRecipeKnown(r.knowledge.recipes, 'fuel_can') && rc.station ? {
-          recipe: 'fuel_can', station: rc.station, stationName: STRUCTS[rc.station]?.name ?? rc.station, level: rc.stationLevel ?? 1,
+        // PA1 v1.2 retired the improvised bench canister, so preparation guidance must name a
+        // route that still exists: the furnace recipe learned by studying real oil, then the
+        // Oil Refinery batch. The first known route wins; none known = no craft hint at all.
+        const route = FUEL_ROUTES.find(k => !!RECIPES[k]);
+        const rc = route ? RECIPES[route] : undefined;
+        const ingredients = (rc?.ins ?? []).map(([key, need]) => ({ key, name: ITEMS[key].name, have: carriedCount(r, key), need }));
+        const craft: CraftNote | undefined = route && rc && isRecipeKnown(r.knowledge.recipes, route) && rc.station ? {
+          recipe: route, station: rc.station, stationName: STRUCTS[rc.station]?.name ?? rc.station, level: rc.stationLevel ?? 1,
           ingredients, missing: ingredients.filter(i => i.have < i.need),
         } : undefined;
         const have = carriedCount(r, 'fuel_can');

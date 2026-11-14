@@ -166,7 +166,12 @@ describe('SOH M5 Complete Item Function & Recipe Route Audits', () => {
         (r[1] === 'RECYCLE_COMPONENT' || r[1] === 'RECYCLE_TOOL_WEAPON' || r[1] === 'RECYCLE_DRIVE') &&
         r[4] === 'LIVE_ACTIVE_PLAN',
     );
+    // PA1 R1: the component table grew (X:pipe-v3 is the live pipe rule), but the LIVE set did
+    // not — X:pipe-v2 is now reported as superseded, so it cannot hide an over-return by being
+    // counted as active. Liveness comes from recoveryPlan(), not from a hardcoded rule id.
     expect(activeRecycleRows.length).toBe(10);
+    const historicalPipeRows = rows.filter((r) => r[1] === 'RECYCLE_COMPONENT' && r[4] === 'HISTORICAL_SAVED_JOBS_ONLY').map((r) => r[0]).sort();
+    expect(historicalPipeRows).toEqual(['X:pipe-v1', 'X:pipe-v2']);
     for (const r of activeRecycleRows) {
       expect(r[10]).not.toMatch(/OVER_RETURN\(HISTORICAL|^\s*OVER_RETURN/);
       if (r[1] !== 'RECYCLE_DRIVE') expect(r[10]).toContain('NET_LOSS_VERIFIED');
