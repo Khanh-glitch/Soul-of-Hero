@@ -47,8 +47,9 @@ export const ITEMS: Record<string, ItemDef> = {
   salvaged_oil: I({ name:'Salvaged Oil', cat:'res', icon:'can', c1:'#3d3025', c2:'#9c8050', w:0.7, max:30, desc:'Recovered from car wrecks. Study a sample to learn furnace refining into generator canisters.', specimen:'refine_salvaged_oil' }),
   // SOH_PROVISIONAL v1: Oil Refinery output; motorbike wear mitigator, not a LI-verified lubricant grade.
   lubricant: I({ name:'Machine Lubricant', cat:'res', icon:'jug', c1:'#2b4a3a', c2:'#8fd19b', w:0.6, max:20, desc:'Refined from Salvaged Oil at an Oil Refinery. Service a motorbike within reach to halve wear for a limited distance.' }),
-  damaged_drive: I({ name: 'Damaged Drive', cat: 'res', icon: 'parts', c1: '#4b6570', c2: '#f0bd56', w: 3, max: 1, desc: 'Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.' }),
-  mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
+  damaged_drive: I({ name: 'Damaged Drive', cat: 'res', icon: 'parts', c1: '#4b6570', c2: '#f0bd56', w: 3, max: 1, desc: 'Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.' }),
+  // V2 display ontology: canonical Parts spine; persisted ID stays mechanical_parts for save/job compatibility.
+  mechanical_parts: I({ name: 'Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Core industrial component: salvaged from industrial wrecks or made at a bench. Used across tools, repairs, devices and machinery.' }),
   // Provisional, run-local cross-system materials and equipment.
   fasteners: I({ name: 'Forged Fasteners', cat: 'res', icon: 'fasteners', c1: '#85939b', c2: '#e4cd88', w: 0.2, max: 30, desc: 'Found on wrecks or made from iron and scrap. Used for field repairs, packs and canteens.', studyRecipe: 'fasteners' }),
   treated_canvas: I({ name: 'Treated Canvas', cat: 'res', icon: 'canvas', c1: '#71896b', c2: '#c4c6a1', w: 0.3, max: 30, desc: 'Cloth treated with salt and Bitterleaf at a fire. Competes with food and medicine.', studyRecipe: 'treated_canvas' }),
@@ -138,7 +139,7 @@ export const ITEMS: Record<string, ItemDef> = {
   vehicle_frame: I({ name:'Utility Frame', cat:'res', icon:'scrap', c1:'#706c5f', c2:'#c6bca0', w:4, max:5, desc:'Welded frame for the motorbike.' }),
   vehicle_drive: I({ name:'Motor Drive', cat:'res', icon:'gear', c1:'#625e58', c2:'#c8bca1', w:3, max:5, desc:'Gear and plate drive assembly for the utility motorbike.' }),
   // B01 industrial intermediates (SOH_PROVISIONAL; historical v5 ratios are documented in B01 ledger, not copied).
-  refined_iron_ingot: I({ name:'Refined Iron Ingot', cat:'res', icon:'rfingot', c1:'#8f9fb3', c2:'#f2f8ff', w:1, max:40, desc:'Furnace-refined iron. Needed for pipe and plate.' }),
+  refined_iron_ingot: I({ name:'Refined Iron', cat:'res', icon:'rfingot', c1:'#8f9fb3', c2:'#f2f8ff', w:1, max:40, desc:'Furnace-refined iron. The industrial spine for Pipe and Plate.' }),
   metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'pipe', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for utility frames and iron plate. Recyclable at the Foundry Recycler: one pipe back into 1 Refined Iron Ingot (net loss, cannot loop). SOH_PROVISIONAL.' }),
   metal_blade: I({ name:'Metal Blade', cat:'res', icon:'blade', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock for sword refits.' }),
   mechanical_gear: I({ name:'Mechanical Gear', cat:'res', icon:'mgear', c1:'#6b6f76', c2:'#d6c27a', w:0.8, max:20, desc:'Precision gear for motor drives and powered mechanisms.' }),
