@@ -1075,3 +1075,15 @@ The general rule this turn produced, worth carrying: a pin that counts consumers
 **Last Island 86 vs 137 — BLOCKED.** `LI_137_ITEM_HISTORICAL_ATLAS_AUDIT.csv` is not in the repository, in any PR head, or in the connected Drive. The round-2 "86 + 51" guess is withdrawn (the owner states 137 distinct item ids). No crosswalk was written; none can be until the file is delivered.
 
 **Not proven.** Godot was not run. No human played this build. Natural-play reachability of the Oil Pump, the wall tiers and the four Veyra materials is, by the table above, known to be absent.
+
+## 32. Item Ontology V2 — round 3 accepted as a scoped increment; owner dispatch and acceptance tracker (2026-11-14)
+
+**Authority.** Control Tower accepted PR #61 at `7b78a554` as a scoped implementation and evidence increment. PR #61 stays Draft, unmerged, undeployed. No fourth audit round. P1–P5, P7, P10 are not to be reworked; P2 is not to be reopened without new evidence.
+
+**Three acceptance states, kept apart** (`web/src/game/item-ontology-tracker.ts`, rendered in `web/ref/item-ontology-v2/APPENDIX.md` §6a and the explorer; enforced by test): `IMPLEMENTED_AND_VERIFIED` (code at a named SHA, gate passed), `HANDOFF_ACKNOWLEDGED` (dispatched to an owner; **not a fix**, no SHA), `BLOCKED_OR_UNRESOLVED`. A document never makes a row verified.
+
+- **Verified at `7b78a554` (Item V2, PR #61):** P1, P2 (closed, keep), P3 (frame only), P4, P5, P7, P10, P9 wording.
+- **Handoff acknowledged, unrepaired:** wall tiers → PA1 Building, PR #56. Ash Chitin / Crawler Optic sources and the Wolf Fang / Beetle Horn research routes → Veyra World / Ecology (no PR named). Runnable Oil Pump → Oil / World Production (PR #59 where applicable). Veyra gets no Keycards.
+- **Blocked or unresolved:** the 137-id Last Island crosswalk (inputs still not delivered to the repository, the session or the Drive); 15 browser drivers quarantined in `web/e2e/QUARANTINE.json`; the 179 inherited Vitest failures (PR #56); and one integration defect: PR #61 + PR #59 merge cleanly as text but the merged tree fails `wp3-veyra-recycler-integration` because that route crafts the Utility Frame without the Metal Pipe that recipe revision 3 requires.
+
+**The Web suite is not green.** PR #61 shows only that it adds no failure to the 179 it inherited.

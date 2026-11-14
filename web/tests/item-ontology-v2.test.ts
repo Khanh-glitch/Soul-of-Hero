@@ -4,8 +4,9 @@
  * Regenerate the committed artifacts after an intentional change:
  *   SOH_WRITE_ONTOLOGY=1 npx vitest run tests/item-ontology-v2.test.ts --testTimeout=600000
  */
+import { ACCEPTANCE_TRACKER, ROUND3_ACCEPTED_SHA } from '../src/game/item-ontology-tracker';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ITEMS, RECIPES, STRUCTS, SOH_PROVISIONAL_ITEMS } from '../src/game/catalog';
 import { buildSohEconomicGraph, type SohEconomicGraph } from '../src/game/economic-graph';
@@ -363,5 +364,53 @@ describe('ROUND 3 — P8 world source repair is handed off, not papered over', (
     }
     // P6 is still a live defect: both walls remain unobtainable until the building owner ships the fix
     expect([...UNOBTAINABLE_STRUCTURES].sort()).toEqual(expect.arrayContaining(['wall_brick', 'wall_plank']));
+  });
+});
+
+describe('ACCEPTANCE TRACKER — a handoff is never counted as a fix', () => {
+  const rows = ACCEPTANCE_TRACKER;
+  it('uses exactly the three Control Tower states and unique ids', () => {
+    expect(new Set(rows.map((r) => r.acceptance))).toEqual(new Set(['IMPLEMENTED_AND_VERIFIED', 'HANDOFF_ACKNOWLEDGED', 'BLOCKED_OR_UNRESOLVED']));
+    expect(new Set(rows.map((r) => r.id)).size).toBe(rows.length);
+    for (const r of rows) { expect(r.owner.length, r.id).toBeGreaterThan(0); expect(r.gate.length, r.id).toBeGreaterThan(20); }
+  });
+  it('a verified row names a PR and a full SHA; a row without a SHA is not verified', () => {
+    for (const r of rows) {
+      if (r.acceptance === 'IMPLEMENTED_AND_VERIFIED') { expect(r.pr, r.id).toBeTypeOf('number'); expect(r.sha, r.id).toMatch(/^[0-9a-f]{40}$/); }
+      else expect(r.sha, r.id).toBeNull();
+    }
+    expect(ROUND3_ACCEPTED_SHA).toMatch(/^[0-9a-f]{40}$/);
+  });
+  it('every HANDED_OFF proposal is tracked, is owned outside Item V2, and is not verified', () => {
+    for (const pr of PROPOSALS.filter((x) => x.status === 'HANDED_OFF')) {
+      const mine = rows.filter((r) => r.proposal === pr.id);
+      expect(mine.length, pr.id).toBeGreaterThan(0);
+      for (const r of mine) { expect(r.acceptance, r.id).toBe('HANDOFF_ACKNOWLEDGED'); expect(r.owner, r.id).not.toBe('Item V2'); }
+    }
+  });
+  it('every proposal has a tracker row, and a partly implemented one also carries its unfinished half', () => {
+    for (const pr of PROPOSALS) expect(rows.some((r) => r.proposal === pr.id), pr.id).toBe(true);
+    expect(rows.find((r) => r.id === 'T-P9-PUMP')!.acceptance).toBe('HANDOFF_ACKNOWLEDGED');
+    expect(rows.find((r) => r.id === 'T-LI-137')!.acceptance).toBe('BLOCKED_OR_UNRESOLVED');
+  });
+});
+
+describe('E2E QUARANTINE — unverified browser drivers are named, not silently trusted', () => {
+  const q = JSON.parse(readFileSync(resolve(__dirname, '../e2e/QUARANTINE.json'), 'utf8'));
+  it('every quarantined driver exists, is marked in its first line, and records where it stops on base and head', () => {
+    expect(q.quarantined.length).toBe(15);
+    for (const r of q.quarantined) {
+      const src = readFileSync(resolve(__dirname, '..', r.driver), 'utf8');
+      expect(src.startsWith('// QUARANTINED'), r.driver).toBe(true);
+      expect(r.stops_on_head.length && r.stops_on_base.length && r.reason.length, r.driver).toBeGreaterThan(0);
+    }
+  });
+  it('no driver carries the marker without being listed, and no verified driver is quarantined', () => {
+    const listed = new Set(q.quarantined.map((r: any) => r.driver));
+    for (const f of readdirSync(resolve(__dirname, '../e2e')).filter((x) => x.endsWith('.mjs'))) {
+      const marked = readFileSync(resolve(__dirname, '../e2e', f), 'utf8').startsWith('// QUARANTINED');
+      expect(marked, f).toBe(listed.has('e2e/' + f));
+    }
+    for (const v of q.verified_pass) expect(listed.has(v.driver), v.driver).toBe(false);
   });
 });

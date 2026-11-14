@@ -1,3 +1,4 @@
+// QUARANTINED (Item Ontology V2, 2026-11-14): string-edited in round 2, not runnable to completion on base or head. See e2e/QUARANTINE.json. Not evidence.
 // Controlled proximity fixtures only: no claim of natural travel, route safety or gated-door access.
 // The browser performs real E/right-click actions on authentic, unmodified authored containers.
 import { chromium } from 'playwright';

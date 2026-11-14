@@ -1,3 +1,4 @@
+// QUARANTINED (Item Ontology V2, 2026-11-14): string-edited in round 2, not runnable to completion on base or head. See e2e/QUARANTINE.json. Not evidence.
 // Controlled clock and proximity only; the live event creates every crate stack.
 import {chromium} from 'playwright';import {createServer} from 'vite';import {mkdir,writeFile} from 'node:fs/promises';import assert from 'node:assert/strict';
 const dir='evidence/s12-airdrop-fixture';await mkdir(dir,{recursive:true});const vite=await createServer({configFile:'vite.config.ts',server:{middlewareMode:true,hmr:false},appType:'custom'});

@@ -1,3 +1,4 @@
+// QUARANTINED (Item Ontology V2, 2026-11-14): string-edited in round 2, not runnable to completion on base or head. See e2e/QUARANTINE.json. Not evidence.
 // Short, deliberately injected fixture. Screenshots and checks are not a human playtest or a route proof.
 import { chromium } from 'playwright';
 import { createServer } from 'vite';

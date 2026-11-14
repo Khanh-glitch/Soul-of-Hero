@@ -1,3 +1,4 @@
+// QUARANTINED (Item Ontology V2, 2026-11-14): string-edited in round 2, not runnable to completion on base or head. See e2e/QUARANTINE.json. Not evidence.
 // Continuation of natural run. Read-only route planning inspects crate contents;
 // all movement, pickup, transfers and upgrade use the visible game controls.
 import{chromium}from'playwright';import{writeFile}from'node:fs/promises';import assert from'node:assert/strict';

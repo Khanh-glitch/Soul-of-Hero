@@ -5,6 +5,7 @@
  * Markdown and the HTML explorer, so the four can never disagree. `tests/item-ontology-v2.test.ts`
  * regenerates them from the live multigraph and fails when a committed artifact has drifted.
  */
+import { ACCEPTANCE_TRACKER, trackerMd, type TrackerRow } from './item-ontology-tracker';
 import type { ItemOntologyProjection, OntologyItem, OntologyRecipe } from './item-ontology';
 import { ITEM_CLASS_LABEL, ITEM_CLASS_MEANING } from './item-class';
 import { SOH_PROVISIONAL_ITEMS } from './catalog';
@@ -90,6 +91,7 @@ export interface OntologyData {
   veyra_blocked_recipes: string[];
   shipping_blocked_recipes: string[];
   proposals: readonly Proposal[];
+  tracker: readonly TrackerRow[];
   parts: { scope: readonly string[]; options: typeof PARTS_OPTIONS; recommendation: typeof PARTS_RECOMMENDATION };
   li_crosswalk: LiCrosswalkRow[];
   add_reviewed: typeof ADD_CANDIDATES_REVIEWED;
@@ -171,7 +173,7 @@ export function buildOntologyData(p: ItemOntologyProjection, atlas: LiAtlas): On
     manifest, disposition_counts, items: p.items, recipes: p.recipes,
     dominated_alternatives: p.dominated_alternatives, twin_intermediates: p.twin_intermediates, recycle_loops: p.recycle_loops,
     veyra_blocked_recipes: p.veyra_blocked_recipes, shipping_blocked_recipes: p.shipping_blocked_recipes,
-    proposals: PROPOSALS, parts: { scope: PARTS_SCOPE, options: PARTS_OPTIONS, recommendation: PARTS_RECOMMENDATION },
+    proposals: PROPOSALS, tracker: ACCEPTANCE_TRACKER, parts: { scope: PARTS_SCOPE, options: PARTS_OPTIONS, recommendation: PARTS_RECOMMENDATION },
     li_crosswalk: buildLiCrosswalk(atlas), add_reviewed: ADD_CANDIDATES_REVIEWED,
   };
 }
@@ -302,6 +304,12 @@ export function appendixMd(d: OntologyData): string {
   o.push('');
   o.push(`**Recommendation: Option ${d.parts.recommendation.choose}.** ${d.parts.recommendation.reason}`);
   o.push('');
+  o.push('## 6a. Acceptance tracker (defect → owner → PR → SHA → gate)');
+  o.push('');
+  o.push('IMPLEMENTED_AND_VERIFIED = working code at the named SHA and the gate passed there. HANDOFF_ACKNOWLEDGED = dispatched to the owner; not a fix, no SHA yet. BLOCKED_OR_UNRESOLVED = cannot be closed as things stand. A document never makes a row verified.');
+  o.push('');
+  o.push(trackerMd());
+  o.push('');
   o.push('## 7. Proposals and their round-3 status');
   o.push('');
   o.push('IMPLEMENTED = live at recipe revision ' + c.recipe_revision + '. IMPLEMENTED_PARTIAL = only the authorised part is live. CLOSED_KEEP = ruled final, items stay as they are. HANDED_OFF = a real defect whose fix belongs to another owner; the work order is the linked document and the defect stays live until that owner ships it. Measured before/after numbers: `web/evidence/item-ontology-v2/round2-simulations.json`. Findings: `ROUND2_FINDINGS.md`. **A HANDED_OFF row is not a fixed row.**');
@@ -426,7 +434,7 @@ function recipes(){
 const rt=x=>x&&x.length?tbl(['Recipe','Inputs','Output','Station','Note'],x.map(r=>tr(['<code>'+esc(r.id)+'</code>',esc(bom(r.ins)),esc(bom(r.out)),esc(r.station),esc(r.note||'')]))):'';
 const st=x=>x&&x.length?tbl(['Structure','Cost','Note'],x.map(r=>tr(['<code>'+esc(r.id)+'</code>',esc(bom(r.cost)),esc(r.note||'')]))):'';
 function changes(){
- main.innerHTML='<p class="mute">Round 3 status of every proposal. IMPLEMENTED = live at recipe revision '+D.counts.recipe_revision+'. IMPLEMENTED PARTIAL = only the authorised part is live. CLOSED KEEP = ruled final, items stay. HANDED OFF = a real defect whose fix belongs to another owner; it stays live until that owner ships it. Measured numbers are in <code>web/evidence/item-ontology-v2/round2-simulations.json</code>; open findings in <code>ROUND2_FINDINGS.md</code>.</p>'+D.proposals.map(p=>'<div class="box" id="'+p.id+'"><h2 style="margin-top:0">'+p.id+'. '+esc(p.title)+' '+chip(p.status.replace(/_/g,' '),(p.status.indexOf('IMPLEMENTED')===0||p.status==='CLOSED_KEEP')?'KEEP':'RENAME')+'</h2><p>'+p.items.map(i=>'<code>'+i+'</code>').join(' ')+'</p><p><b>Ruling.</b> '+esc(p.ruling)+'</p>'+(p.handoff?'<p><b>Work order.</b> <code>'+esc(p.handoff)+'</code></p>':'')+(p.shipped?'<h3>Shipped</h3><ul>'+p.shipped.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul>':'')+'<p><b>Problem.</b> '+esc(p.problem)+'</p><p><b>'+(p.status==='IMPLEMENTED'?'Decision':'Round-1 proposal (superseded by the ruling above)')+'.</b> '+esc(p.decision)+'</p>'+((p.before_recipes||p.before_structs)?'<div class="two"><div><h3>Before</h3>'+rt(p.before_recipes)+st(p.before_structs)+'</div><div><h3>After</h3>'+rt(p.after_recipes)+st(p.after_structs)+'</div></div>':'')+'<h3>Migration</h3><ul>'+p.migration.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul><p><b>Risk.</b> '+esc(p.risk)+'</p><h3>Tests</h3><ul>'+p.tests.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul></div>').join('');
+ main.innerHTML='<h2>Acceptance tracker</h2><p class="mute">A handoff is not a fix. Only rows with a SHA and a passed gate are verified.</p>'+tbl(['Id','Defect / deliverable','Owner','PR','SHA','Acceptance','Gate'],D.tracker.map(r=>tr(['<code>'+r.id+'</code>',esc(r.defect)+(r.note?'<br><span class="mute">'+esc(r.note)+'</span>':''),esc(r.owner),r.pr?'#'+r.pr:'not named',r.sha?'<code>'+r.sha.slice(0,8)+'</code>':'none',chip(r.acceptance.replace(/_/g,' '),r.acceptance==='IMPLEMENTED_AND_VERIFIED'?'KEEP':'RENAME'),esc(r.gate)])))+'<h2>Proposals</h2>'+'<p class="mute">Round 3 status of every proposal. IMPLEMENTED = live at recipe revision '+D.counts.recipe_revision+'. IMPLEMENTED PARTIAL = only the authorised part is live. CLOSED KEEP = ruled final, items stay. HANDED OFF = a real defect whose fix belongs to another owner; it stays live until that owner ships it. Measured numbers are in <code>web/evidence/item-ontology-v2/round2-simulations.json</code>; open findings in <code>ROUND2_FINDINGS.md</code>.</p>'+D.proposals.map(p=>'<div class="box" id="'+p.id+'"><h2 style="margin-top:0">'+p.id+'. '+esc(p.title)+' '+chip(p.status.replace(/_/g,' '),(p.status.indexOf('IMPLEMENTED')===0||p.status==='CLOSED_KEEP')?'KEEP':'RENAME')+'</h2><p>'+p.items.map(i=>'<code>'+i+'</code>').join(' ')+'</p><p><b>Ruling.</b> '+esc(p.ruling)+'</p>'+(p.handoff?'<p><b>Work order.</b> <code>'+esc(p.handoff)+'</code></p>':'')+(p.shipped?'<h3>Shipped</h3><ul>'+p.shipped.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul>':'')+'<p><b>Problem.</b> '+esc(p.problem)+'</p><p><b>'+(p.status==='IMPLEMENTED'?'Decision':'Round-1 proposal (superseded by the ruling above)')+'.</b> '+esc(p.decision)+'</p>'+((p.before_recipes||p.before_structs)?'<div class="two"><div><h3>Before</h3>'+rt(p.before_recipes)+st(p.before_structs)+'</div><div><h3>After</h3>'+rt(p.after_recipes)+st(p.after_structs)+'</div></div>':'')+'<h3>Migration</h3><ul>'+p.migration.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul><p><b>Risk.</b> '+esc(p.risk)+'</p><h3>Tests</h3><ul>'+p.tests.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul></div>').join('');
 }
 function parts(){
  const keys=Object.keys(D.parts.options[0].scores);

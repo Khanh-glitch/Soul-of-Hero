@@ -1,3 +1,4 @@
+// QUARANTINED (Item Ontology V2, 2026-11-14): string-edited in round 2, not runnable to completion on base or head. See e2e/QUARANTINE.json. Not evidence.
 // WP4 Browser Visual E2E across 1280x720 and 640x360 against the real production HTTP build (no QA mode).
 // Phase A: pure zero-fixture new run on veyra05-world (Title -> D1 Profile -> New Run -> Movement -> Journey D1 ->
 //          BuildBar -> Survivor/Craft D2 -> Map -> Esc Save & Quit -> localStorage audit -> Reload -> Continue).
