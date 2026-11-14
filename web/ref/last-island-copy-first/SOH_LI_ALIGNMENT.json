@@ -1855,5 +1855,8 @@
       "source_support": "DIRECT",
       "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
     }
-  ]
+  ],
+  "status": "ARCHIVED_SNAPSHOT_SUPERSEDED_2026_11_15",
+  "superseded_by": "web/ref/last-island-copy-first/FINAL_THREE_GROUP_ITEM_SET_20261115.json",
+  "status_warning": "Old group verdicts/counts are historic, no longer current design decisions. Creator final three-group set explicitly replaces gun-retention, 14-exclusion and old P2 Fasteners rules."
 }
