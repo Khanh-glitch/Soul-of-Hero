@@ -1,7 +1,7 @@
 {
   "schema": "soh.li_copy_first.bible_delta.audit.v1",
   "source_ref": "bb2d4a7f544d9c5ec8436bc08b1e449fc6abb7f9",
-  "interpretation": "COUNT BY SOURCE ROW (139 historical union IDs), not verified item count for any one Last Island version. 'Must transform' counts item-specific Bible differences only, not universal save/target/map integration; 'no delta identified' does not certify unchanged.",
+  "interpretation": "COUNT BY SOURCE ROW (139 historical union IDs), not verified item count for any one Last Island version. 'Must transform' counts item-specific Bible differences only, not universal save/target/map integration; 'no delta identified' does not certify unchanged. Existing SOH Core recipes spending Parts are proposals, not Bible-required deltas.",
   "counting": {
     "total_li_source_rows": 139,
     "excluded_from_default_survival": 14,
@@ -9,9 +9,9 @@
     "variants_not_new_items": 7,
     "events_not_default": 6,
     "li_candidate_source_rows": 125,
-    "explicit_item_rule_transform": 4,
+    "explicit_item_rule_transform": 3,
     "world_runtime_integration_examples": 3,
-    "copy_first_without_proven_item_override": 118,
+    "copy_first_without_proven_item_override": 119,
     "source_unverified_among_candidates": 13,
     "soh_named_bible_mandatory_ids": 25,
     "soh_function_mandatory_machine_without_fixed_id": 1,
@@ -79,11 +79,6 @@
     }
   ],
   "delta_ids": [
-    {
-      "id": "parts",
-      "bucket": "MUST_TRANSFORM_ITEM_RULE",
-      "why": "Bible K4 and §0.2: original Parts sources/LI recipe ratios remain, but item also funds SOH-specific Creator/Field Core recipes only where authorized; run-local."
-    },
     {
       "id": "drawing_bench",
       "bucket": "MUST_TRANSFORM_ITEM_RULE",
@@ -1486,8 +1481,8 @@
       "li_id": "parts",
       "li_name": "Parts",
       "category": "metal",
-      "disposition": "MUST_TRANSFORM_ITEM_RULE",
-      "impact_reason": "Bible K4 and §0.2: original Parts sources/LI recipe ratios remain, but item also funds SOH-specific Creator/Field Core recipes only where authorized; run-local.",
+      "disposition": "COPY_LI_ORIGINAL_NO_ITEM_SPECIFIC_DELTA_IDENTIFIED",
+      "impact_reason": "Keep original LI Parts sources/recipes. Current SOH Core recipes spending Parts are not themselves Bible-locked; no mandatory override assumed.",
       "source_support": "DIRECT",
       "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
       "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
