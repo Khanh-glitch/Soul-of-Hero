@@ -206,6 +206,8 @@ try{
   const box=pane();
   const text=(await box.innerText()).replace(/\s+/g,' ').trim();
   rec.research.text=text.slice(0,3000);
+  rec.research.headingPainted=/TECHNOLOGY FAMILIES/i.test(text);
+  assert.ok(rec.research.headingPainted,'the pane has no visible heading: '+text.slice(0,160));
   // The recovered ledger, in the player's own words: all eleven family names, the one price the paper
   // authorises, and the honest status of a family whose enforcement has not been approved.
   const FAMS=['ENERGY','METALLURGY','MOBILITY','ELECTRICAL','AGRICULTURE','ARMORY','EXPLORATION','ARCANA','STEEL','DEFENSE','CORE_SPECIFIC'];
@@ -245,11 +247,13 @@ try{
     return (await page.locator('.station-console').first().innerText()).replace(/\s+/g,' ').trim();
   };
   rec.research.blueprintsTab=await tabText('Blueprints');
-  assert.match(rec.research.blueprintsTab,/Directed study/,'the Blueprints view lost its directed-study list');
-  assert.match(rec.research.blueprintsTab,/Tinker/,'the Blueprints view lost the random-study control');
+  // Headings are CSS-uppercased (`.console-h{text-transform:uppercase}`) and innerText() returns the
+  // transformed text, so section titles are matched case-insensitively. Row copy stays case-exact.
+  assert.match(rec.research.blueprintsTab,/Directed study/i,'the Blueprints view lost its directed-study list');
+  assert.match(rec.research.blueprintsTab,/Tinker/i,'the Blueprints view lost the random-study control');
   rec.research.leakCheck.push(leakFree(rec.research.blueprintsTab,'Blueprints'));
   rec.research.specimensTab=await tabText('Specimens & Cores');
-  assert.match(rec.research.specimensTab,/Specimen \/ Core study/,'the Specimens & Cores view lost its heading');
+  assert.match(rec.research.specimensTab,/Specimen \/ Core study/i,'the Specimens & Cores view lost its heading');
   rec.research.leakCheck.push(leakFree(rec.research.specimensTab,'Specimens & Cores'));
   await famTab.click(); await page.waitForTimeout(280);   // back to the ledger for the small-viewport shot
   assert.ok((await pane().count())>0,'the Technology tab did not re-open after visiting the other views');

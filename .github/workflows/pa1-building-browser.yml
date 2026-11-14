@@ -102,14 +102,19 @@ jobs:
       # A run whose research block does not carry per-element frames at BOTH sizes is a run that never
       # proved legibility, which is precisely the claim Control Tower held this branch for.
       - name: Publish the visibility proof
+        if: always()
         working-directory: web
         shell: bash
         run: |
           node -e '
             const fs=require("node:fs");
-            const m=JSON.parse(fs.readFileSync(process.env.MANIFEST||"./evidence/pa1-research-visible/manifest.json","utf8"));
+            const mf=process.env.MANIFEST||"./evidence/pa1-research-visible/manifest.json";
+            if(!fs.existsSync(mf)){console.log("no research manifest at "+mf+" - the gate died before recording evidence");process.exit(0);}
+            const m=JSON.parse(fs.readFileSync(mf,"utf8"));
             const r=m.research||{};
             const bad=[];
+            const gateFailed=m.status!=="PASS_BROWSER_UI";
+            if(gateFailed)bad.push("browser gate status="+m.status+(m.failure?" :: "+m.failure:""));
             if(r.open!==true)bad.push("panel never opened");
             if(r.tabClicked!==true)bad.push("the Technology tab was never clicked");
             for(const k of ["frames1280","frames640"]){
@@ -132,7 +137,10 @@ jobs:
             ].join("\n");
             console.log(body);
             if(process.env.GITHUB_STEP_SUMMARY)fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,body+"\n\n");
-            if(bad.length)process.exit(1);
+            // When the gate itself already failed, its step is the red one; this step must still print
+            // whatever frames were captured before the throw, which is how a reviewer diagnoses a run
+            // whose logs live on storage the sandbox cannot reach.
+            if(bad.length&&!gateFailed)process.exit(1);
           '
       - name: Upload render evidence
         if: always()
@@ -152,11 +160,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ github.sha }}
         run: |
+          BR="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
           PR=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/pulls" --jq '.[0].number // empty')
-          # A run started from the session branch is not attached to a PR; fall back to the open PR so
-          # the evidence is still readable from a branch-only run instead of vanishing into a skipped step.
-          [ -n "$PR" ] || PR=$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --json number --jq '.[0].number // empty')
-          [ -n "$PR" ] || { echo "no PR to report on; skipping"; exit 0; }
+          # A branch-only run is not attached to a PR by commit, so resolve it by HEAD REF NAME. "The newest
+          # open PR" is not a fallback: it once put this session's browser manifest on another wave's thread.
+          # If no open PR carries this branch, the job summary is the honest place for the evidence.
+          [ -n "$PR" ] || PR=$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100" --jq --arg b "$BR" '[.[] | select(.head.ref==$b) | .number] | .[0] // empty')
           {
             echo "## PA1 browser evidence failed on \`$SHA\`"
             echo
@@ -166,4 +175,9 @@ jobs:
               echo; echo "\`\`\`json"; echo "// $f"; head -c 5000 "$f"; echo; echo "\`\`\`"
             done
           } > /tmp/pa1-evidence-failure.md
-          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file /tmp/pa1-evidence-failure.md
+          if [ -n "$PR" ]; then
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file /tmp/pa1-evidence-failure.md
+          else
+            echo "no open PR carries branch '$BR'; the evidence goes to the job summary instead"
+            cat /tmp/pa1-evidence-failure.md >> "$GITHUB_STEP_SUMMARY"
+          fi

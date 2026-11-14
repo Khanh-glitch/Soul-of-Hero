@@ -54,8 +54,13 @@ describe('PA1 research-visible browser gate — legibility, not DOM presence', (
   it('keeps the other two research views reachable and refuses a purchase the ledger did not price', () => {
     re(gate, "tabText\\('Blueprints'\\)");
     re(gate, "tabText\\('Specimens & Cores'\\)");
-    re(gate, 'Directed study');
-    re(gate, 'Specimen \\\\/ Core study');
+    // `.console-h` is CSS-uppercased and innerText() returns the TRANSFORMED text, so a case-sensitive
+    // heading match is a trap that already cost one CI run: the gate failed with "the Blueprints view lost
+    // its directed-study list" against a screen that plainly said DIRECTED STUDY. Section titles /i.
+    re(gate, '/Directed study/i');
+    re(gate, '/Specimen \\\\/ Core study/i');
+    re(gate, '/Tinker/i');
+    expect(gate).toContain('rec.research.headingPainted');
     re(gate, "getByTestId\\('family-row-ENERGY'\\)\\.getByRole\\('button'\\)");
     re(gate, 'energyRow,0');
     // raw source commentary inside JSX: counted on every tab, since that is where the leak actually was
