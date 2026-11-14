@@ -1,0 +1,26 @@
+name: PA1 Claim-POI exclusion — real paid UID / Veyra regression
+on:
+  push:
+    branches: [fix/pa1-claim-poi-min-distance-20261113]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+        working-directory: web
+      - name: Runtime typecheck
+        working-directory: web
+        run: npm run typecheck
+      - name: Exact paid-UID POI rejection plus PA1, territory, progression and save regression
+        working-directory: web
+        run: npx --no-install vitest run --fileParallelism=false tests/pa1-claim-poi-min-distance.test.ts tests/pa1-building-ontology.test.ts tests/territory-cabinet.test.ts tests/progression.test.ts tests/m-core-03.test.ts
