@@ -1,9 +1,9 @@
 import { recoveryPlan, recoveryFits } from '../game/recycler';
-import { itemClassLabel } from '../game/item-class';
+import { itemClass, itemClassLabel, coreClassLine, ITEM_CLASS_MEANING, ITEM_CLASS_VI } from '../game/item-class';
 import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
 import type { RunState } from '../game/core';
-import { anyAuthorizedOilSource, owned, clearInteraction } from '../game/engine';
+import { anyAuthorizedOilSource, owned, clearInteraction, oilAvailability, OIL_TEXT } from '../game/engine';
 import { stationBurnable, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, PA1_BASE_GEOMETRY, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, recipeForJob, familyOfRecipe, familyMembers, isFamilyGated, RESEARCH_FAMILIES } from '../game/catalog';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
@@ -57,12 +57,13 @@ export function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
   const d = ITEMS[s.key];
   const isCore = !!(d.core || d.creatorCore);
   const dur = s.dur !== undefined && d.dur ? s.dur / d.dur : null;
-  return <div className={`iteminfo ${isCore ? 'iteminfo--core' : ''}`}>
+  const cls = itemClass(s.key); const clsVi = cls ? ITEM_CLASS_VI[cls] : undefined; const coreLine = coreClassLine(s.key);
+  return <div className={`iteminfo ${isCore ? 'iteminfo--core' : ''} ${cls === 'FIELD_CORE' ? 'iteminfo--field' : ''}`} data-testid="iteminfo">
     <div className="iteminfo__ico"><Icon k={s.key} size={24} /></div>
     <div className="iteminfo__body">
-      <div className="iteminfo__name">{d.name}{s.meta ? ` · ${ITEMS[RECIPES[s.meta]?.out]?.name || s.meta}` : ''}{d.vi ? <span className="iteminfo__vi" lang="vi" title="Vietnamese name" style={{ marginLeft: 5, fontSize: '0.8em', fontWeight: 400, color: 'var(--muted)' }}>{d.vi}</span> : null}</div>
+      <div className="iteminfo__name" data-testid="iteminfo-name">{d.name}{s.meta ? ` · ${ITEMS[RECIPES[s.meta]?.out]?.name || s.meta}` : ''}{d.vi ? <span className="iteminfo__vi" lang="vi" title="Vietnamese name" data-testid="iteminfo-vi">{d.vi}</span> : null}</div>
       <div className="iteminfo__row">
-        <span className="chip" style={{ color: isCore ? 'var(--brassLit)' : 'var(--muted)' }}>{itemClassLabel(s.key, CAT_LABEL[d.cat] || d.cat.toUpperCase())}</span>
+        <span className="chip" data-testid="iteminfo-class" data-class={cls ?? ''} title={cls ? ITEM_CLASS_MEANING[cls] : undefined} style={{ color: cls === 'FIELD_CORE' ? 'var(--info)' : isCore ? 'var(--brassLit)' : 'var(--muted)' }}>{itemClassLabel(s.key, CAT_LABEL[d.cat] || d.cat.toUpperCase())}{clsVi ? <span lang="vi" style={{ marginLeft: 4, opacity: .85 }}>{clsVi}</span> : null}</span>
         {d.dmg ? <StatChip g="spark" v={`${d.dmg}`} title="Damage" /> : null}
         {d.reach ? <StatChip g="eye" v={`${d.reach}`} c="var(--paper)" title="Reach" /> : null}
         {d.armor ? <StatChip g="hp" v={`-${Math.round(d.armor * 100)}%`} c="var(--good)" title="Damage taken" /> : null}
@@ -79,6 +80,8 @@ export function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
         <StatChip g="weight" v={`${(d.w * s.qty).toFixed(1)}kg`} c="var(--muted)" title="Weight carried" />
       </div>
       {dur !== null && <div className="durbar" title={`Durability ${s.dur}/${d.dur}`}><i style={{ width: `${dur * 100}%`, background: dur < 0.25 ? 'var(--bad)' : dur < 0.5 ? 'var(--warn)' : 'var(--good)' }} />{dur <= 0 && <b>BROKEN</b>}</div>}
+      {coreLine && <div className="iteminfo__core" data-testid="iteminfo-coreline">{coreLine}</div>}
+      {d.desc && <div className="iteminfo__desc" data-testid="iteminfo-desc">{d.desc}</div>}
       <KnownUses item={s.key} known={known} />
     </div>
   </div>;
@@ -88,7 +91,7 @@ function KnownUses({ item, known }: { item: string; known: string[] }) {
   // The active run's known recipes only: no undiscovered POI or recipe spoilers. Icons, not a sentence.
   const uses = Object.keys(RECIPES).filter(k => isRecipeKnown(known, k) && RECIPES[k]?.ins.some(([key]) => key === item)).slice(0, 8);
   if (!uses.length) return null;
-  return <div className="uses" title="Known recipes that use this"><span className="lbl">→</span>{uses.map(k => <span key={k} title={ITEMS[RECIPES[k].out].name}><Icon k={RECIPES[k].out} size={11} /></span>)}</div>;
+  return <div className="uses" data-testid="iteminfo-uses" title="Known recipes that use this"><span className="lbl">→</span>{uses.map(k => <span key={k} title={ITEMS[RECIPES[k].out].name}><Icon k={RECIPES[k].out} size={11} /></span>)}</div>;
 }
 
 /** Live Adventurer preview inside the inventory: the same sprite + equipment rendering the world uses. */
@@ -278,7 +281,7 @@ export function StationBody({ api, eid }: { api: Api; eid: string }) {
   const [confirmSalvage, setConfirmSalvage] = useState<string | null>(null);
   const maintenance = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].repair || ITEMS[s.key].salvage));
   return <div>
-    {e.type === 'oil_pump' && (oilSrc ? <div data-testid="oil-source-stock" style={{fontSize:10,color:oilSrc.stock>0?'#d6ffc0':'#ffb8a0'}}>Authorized source (test fixture): {oilSrc.stock} Crude Petroleum left{oilSrc.stock<=0?' — dry, cycles blocked':''}</div> : <div style={{fontSize:10,color:'#ffb8a0'}}>No authorized oil source here. Pump cannot run.</div>)}
+    {e.type === 'oil_pump' && (oilSrc ? <div data-testid="oil-source-stock" style={{fontSize:10,color:oilSrc.stock>0?'#d6ffc0':'#ffb8a0'}}>Oil site (test fixture): {oilSrc.stock} Crude Petroleum left{oilSrc.stock<=0?' — dry, cycles blocked':''}</div> : <div data-testid="oil-no-site" style={{fontSize:10,color:'#ffb8a0'}}>{oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : OIL_TEXT.notOnSite}</div>)}
     {kind === 'refinery' && <div style={{fontSize:10,marginBottom:4,color:'#8fd19b'}}><b>Industrial batch:</b> 6 Salvaged Oil + 1 Glass → 2 Fuel Canister + 1 Machine Lubricant, {BAL.oilRefineryV1.recipes.industrial.secs}s, one job. Needs fuel to run; both products wait in Output until there is room for the whole batch. Lubricant halves motorbike wear for {Math.round(BAL.oilRefineryV1.lubricantDistancePx/TILE)} tiles.</div>}
     {kind === 'workbench' && <details style={{ fontSize: 10, marginBottom: 5, borderBottom: '1px solid #514155', paddingBottom: 4 }}>
       <summary style={{ color: '#ffd98a', cursor: 'pointer' }}>Equipment maintenance &amp; upgrades</summary>
@@ -472,7 +475,7 @@ export function BuildPanel({ api }: { api: Api }) {
         <div className="lbl desc">{fd.desc}</div>
         {fd.item && <div className="why" style={{ color: 'var(--warn)' }}>Craft {ITEMS[fd.item].name} in Survivor first; placing consumes that physical item, not its materials again.</div>}
         <div className="bcost">{costToPlace(focus).map(([i, qq]) => { const h = have(i); return <span key={i} className={`need ${h >= qq ? 'ok' : 'no'}`} title={ITEMS[i].name}><Icon k={i} size={14} /><b>{h}</b><small>/{qq}</small></span>; })}<span className="chip" style={{ color: 'var(--muted)', marginLeft: 'auto' }}><Glyph k="hp" c="currentColor" s={7} />{fd.hp}</span></div>
-        {buildLocked(r, focus) ? <div className="why" style={{ color: 'var(--bad)' }}>needs an authorized oil source</div> : <button className="btn gold" style={{ width: '100%' }} disabled={!costToPlace(focus).every(([i, qq]) => have(i) >= qq)} onClick={() => place(focus)}>Select placement · LMB</button>}
+        {buildLocked(r, focus) ? <div className="why" data-testid="build-oil-why" style={{ color: 'var(--bad)' }}>{oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : 'Every known oil site is dry.'}</div> : <button className="btn gold" style={{ width: '100%' }} disabled={!costToPlace(focus).every(([i, qq]) => have(i) >= qq)} onClick={() => place(focus)}>Select placement · LMB</button>}
         {!owned && <div className="why" style={{ color: 'var(--warn)' }}>no Cabinet yet · unprotected builds decay</div>}
       </div>}
     </div>

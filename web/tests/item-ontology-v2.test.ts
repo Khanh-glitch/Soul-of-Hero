@@ -13,7 +13,7 @@ import { UNOBTAINABLE_STRUCTURES, projectItemOntology, type ItemOntologyProjecti
 import { buildRound2Findings, round2FindingsMd, type LiAtlasFull, type Round2Findings } from '../src/game/item-ontology-findings';
 import { LEGACY_RECIPES, RECIPE_REVISION, RETIRED_RECIPES } from '../src/game/recipe-migration';
 import { componentRuleSnapshot } from '../src/game/recycler';
-import { RES_ITEM_CLASS, itemClass, itemClassLabel } from '../src/game/item-class';
+import { RES_ITEM_CLASS, VEYRA_UNSOURCED_INPUTS, itemClass, itemClassLabel } from '../src/game/item-class';
 import { ITEM_DECISIONS, LI_CROSSWALK, PARTS_RECOMMENDATION, PARTS_SCOPE, PROPOSALS, decisionFor } from '../src/game/item-ontology-decisions';
 import {
   MANIFEST_COLUMNS, appendixMd, buildOntologyData, explorerHtml, liCrosswalkCsv, manifestCsv, type LiAtlas, type OntologyData,
@@ -215,7 +215,7 @@ describe('decisions', () => {
 
   it('round 2 status: exactly the authorised proposals are live, and nothing else moved', () => {
     const status = Object.fromEntries(PROPOSALS.map((x) => [x.id, x.status]));
-    expect(status).toEqual({ P1: 'IMPLEMENTED', P2: 'NOT_AUTHORISED', P3: 'IMPLEMENTED_PARTIAL', P4: 'IMPLEMENTED', P5: 'IMPLEMENTED', P6: 'NOT_AUTHORISED', P7: 'IMPLEMENTED', P8: 'OPEN', P9: 'OPEN', P10: 'OPEN' });
+    expect(status).toEqual({ P1: 'IMPLEMENTED', P2: 'CLOSED_KEEP', P3: 'IMPLEMENTED_PARTIAL', P4: 'IMPLEMENTED', P5: 'IMPLEMENTED', P6: 'HANDED_OFF', P7: 'IMPLEMENTED', P8: 'HANDED_OFF', P9: 'IMPLEMENTED_PARTIAL', P10: 'IMPLEMENTED' });
     expect(RECIPE_REVISION).toBe(3);
     // P1 / P7 — display only, ids untouched
     expect(ITEMS.spares.name).toBe('Parts'); expect(ITEMS.spares.vi).toBe('Linh kiện');
@@ -330,5 +330,38 @@ describe('generated artifacts come from one data object and have not drifted', (
       expect(existsSync(path), `${name} missing: run with SOH_WRITE_ONTOLOGY=1`).toBe(true);
       expect(readFileSync(path, 'utf8') === body, `${name} drifted from the live game: regenerate with SOH_WRITE_ONTOLOGY=1`).toBe(true);
     }
+  });
+});
+
+describe('ROUND 3 — P8 world source repair is handed off, not papered over', () => {
+  it('VEYRA_UNSOURCED_INPUTS is exactly the projection: recipe inputs with no Veyra source (shrinks when the world is fixed)', () => {
+    const noVeyra = findings.P8.rows.filter((x) => x.gap === 'NO_VEYRA_SOURCE').map((x) => x.id);
+    const inputs = new Set(Object.values(RECIPES).flatMap((r) => r.ins.map(([k]) => k)));
+    expect(noVeyra.filter((k: string) => inputs.has(k)).sort()).toEqual([...VEYRA_UNSOURCED_INPUTS].sort());
+    // the four items of the repair order are all still unsourced on Veyra: nothing was invented in this PR
+    for (const k of ['chitin', 'crawler_optic', 'wolf_fang', 'beetle_horn']) expect(item(k).runtime_reachability, k).toBe('SHIPPING_ONLY');
+  });
+  it('Veyra has no keycard door, so the missing Keycard source is correct by design', () => {
+    expect(graph.summary.veyraPoiStats.keycardDoors).toBe(0);
+    expect(item('keycard').consumers.every((c) => c.layer === 'SHIPPING')).toBe(true);
+  });
+  it('Demon Core and Spirit Essence: drop route and own-recipe route are separate facts', () => {
+    const drop = (id: string, layer: string) => item(id).sources.filter((s) => s.kind !== 'CRAFT_OUTPUT' && (s.layer === layer || s.layer === 'BOTH')).map((s) => s.from);
+    // Spirit Essence: drops on Veyra, recipe blocked there by crawler_optic
+    expect(drop('essence_spirit', 'VEYRA').sort()).toEqual(['creature:boss_custodian', 'creature:vampire_3']);
+    expect(RECIPES.essence_spirit.ins.map(([k]) => k)).toContain('crawler_optic');
+    // Demon Core: one Shipping crate, no Veyra drop; recipe blocked on Veyra by crawler_optic
+    expect(drop('core_demon', 'VEYRA')).toEqual([]);
+    expect(drop('core_demon', 'SHIPPING')).toEqual(['container:shipping:factory_vault:9']);
+    expect(RECIPES.core_demon.ins.map(([k]) => k)).toContain('crawler_optic');
+    expect(p.veyra_blocked_recipes).toEqual(expect.arrayContaining(['chitin_armor', 'core_demon', 'essence_spirit']));
+  });
+  it('handed-off proposals name a work order that exists in the repo', () => {
+    for (const pr of PROPOSALS.filter((x) => x.status === 'HANDED_OFF' || x.handoff)) {
+      expect(pr.handoff, pr.id).toBeTruthy();
+      expect(existsSync(resolve(__dirname, '../..', pr.handoff!)), pr.handoff).toBe(true);
+    }
+    // P6 is still a live defect: both walls remain unobtainable until the building owner ships the fix
+    expect([...UNOBTAINABLE_STRUCTURES].sort()).toEqual(expect.arrayContaining(['wall_brick', 'wall_plank']));
   });
 });

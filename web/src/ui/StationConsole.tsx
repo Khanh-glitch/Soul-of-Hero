@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BAL, type Entity } from '../game/core';
 import { ITEMS, RECIPES, STRUCTS, isRecipeKnown, permitsDirectedResearch, CORE_STUDY, stationBurnable } from '../game/catalog';
-import { C, countItem, recipeOutputs, spaceFor } from '../game/engine';
+import { C, countItem, recipeOutputs, spaceFor, oilAvailability, OIL_TEXT } from '../game/engine';
 import { Panel, Slot, Icon, type Api } from './common';
 import { Glyph } from './hud';
 import { craftReadiness } from '../game/action-readiness';
@@ -121,7 +121,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
       {e.type === 'oil_pump' && (() => {
         const src = e.tx !== undefined && e.ty !== undefined ? r.oilSources?.[`oil:${e.tx}:${e.ty}`] : undefined;
         return <div className="lbl" style={{ fontSize: 8, marginTop: 2, color: src && src.stock > 0 ? 'var(--good)' : 'var(--bad)' }}>
-          {src ? `Authorized source: ${src.stock} crude left${src.stock <= 0 ? ' — dry, cycles blocked' : ''}` : 'No authorized oil source here. The pump cannot run.'}
+          {src ? `Oil site: ${src.stock} crude left${src.stock <= 0 ? ' — dry, cycles blocked' : ''}` : oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : OIL_TEXT.notOnSite}
         </div>;
       })()}
       {/* live job */}

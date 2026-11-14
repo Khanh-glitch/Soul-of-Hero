@@ -1055,3 +1055,23 @@ The general rule this turn produced, worth carrying: a pin that counts consumers
 - *Last Island 86 vs 137.* The atlas in the repository yields 86 unique item ids and 51 recipe entries. 86 + 51 = 137 is the only match found, and it is a hypothesis, not a finding: the 137-entry research summary itself was **not located** in the repository or in the connected Drive.
 
 **Also fixed while taking the screenshots.** At the 640×360 stage the item info box on the Survivor screen showed no item name at all (the name row collapsed to zero height); this predates the PR. `index.css`: the name row no longer shrinks and the box clips its last row instead of spilling onto the action buttons. Consequence: at that stage size the "used in" icon row can be cut off.
+
+## 31. Item Ontology V2, round 3 — no proposal left open; two handed to their owners unrepaired (2026-11-14)
+
+**Authority.** Control Tower "close the real gaps" ruling on draft PR #61. Same branch, same PR, still Draft. Recipe revision stays 3; no recipe, cost, loot table, creature placement or probability changed in this round. **Item V2 is not complete** while P6 and P8 are unrepaired in the world.
+
+| | Status | What is true in the build now |
+|---|---|---|
+| P1, P4, P5, P7 | IMPLEMENTED (round 2) | unchanged |
+| P3 | IMPLEMENTED_PARTIAL | Utility Frame only; Oil Pump and Refinery costs untouched |
+| P2 Fasteners | **CLOSED — KEEP** | Fasteners and Machine Parts stay separate items with separate roles. No merge, no recipe rewrite. Not to be reopened without new evidence. |
+| P10 legacy cores | **IMPLEMENTED** | Two named classes. *Creator Core* (seven): three skills on B / Q / E energy reserves. *Field Core* (Ember, Quake, Storm, Rime): one ability, fixed charges (3 / 3 / 4 / 3), no reserve, **no reload exists in code**. The class is derived from the fields the engine already uses (`creatorCore`, `core`); ids, recipes, charge rules, saves and loot are byte-identical. The three Creator Core crates located by a Field Core are pinned by a regression test. |
+| P9 Crude Petroleum | IMPLEMENTED_PARTIAL (text only) | Every player-facing string now distinguishes "no oil site exists in this world yet" from "not standing on the site" and "site is dry", and names the route that works (Salvaged Oil → Fuel Can). Crude Petroleum is still FIXTURE-only; the Oil Pump is still not runnable in natural play. |
+| P6 Plank / wall tiers | **HANDED OFF, not repaired** | Plank Wall (240 HP) and Brick Wall (600 HP) remain unobtainable. Proposal for the building-ontology owner (PR #56): `docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md`. No building code was changed in PR #61. |
+| P8 Veyra sources | **HANDED OFF, not repaired** | Ash Chitin, Crawler Optic, Wolf Fang and Beetle Horn still have no source on Veyra; Demon Core has none either. Veyra has 0 keycard doors, so Keycard needs no repair. Repair order for the Veyra ecology/map owner: `docs/design/VEYRA_WORLD_SOURCE_REPAIR_ORDER_2026-11-14.md`. Nothing was invented. On Veyra a recipe line that needs Ash Chitin or Crawler Optic now reads "has no source on Veyra yet". |
+
+**UI.** The Survivor screen item box at the 640×360 stage was re-laid-out (the round-2 clip is removed): name, class chip, rule line, description and action buttons are all visible with no clipping and no inner scroll. Measured in a real browser for all 147 catalog items and for the 63 items of the three QA presets (`web/evidence/item-ontology-v2/round3-layout-*.json`), plus the touch layout for three items.
+
+**Last Island 86 vs 137 — BLOCKED.** `LI_137_ITEM_HISTORICAL_ATLAS_AUDIT.csv` is not in the repository, in any PR head, or in the connected Drive. The round-2 "86 + 51" guess is withdrawn (the owner states 137 distinct item ids). No crosswalk was written; none can be until the file is delivered.
+
+**Not proven.** Godot was not run. No human played this build. Natural-play reachability of the Oil Pump, the wall tiers and the four Veyra materials is, by the table above, known to be absent.

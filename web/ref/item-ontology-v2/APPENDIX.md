@@ -132,21 +132,17 @@ Recipes that cannot run on Shipping: `pump_crude`, `refinery_crude`. On Veyra: `
 | Decision | Count |
 | --- | --- |
 | ADD_CANDIDATE | 5 |
-| DEFER | 8 |
-| KEEP | 139 |
+| DEFER | 4 |
+| KEEP | 143 |
 
 ### DEFER
 
 | Item | Name | Proposal | Why |
 | --- | --- | --- | --- |
-| `crude_petroleum` | Crude Petroleum | P9 | Second raw oil with NO live source: the Oil Pump adapter is test-fixture only. Not shown to players today. Decide when the pump ships; until then it must not be advertised. |
-| `plank` | Plank | P6 | ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement. |
+| `crude_petroleum` | Crude Petroleum | P9 | Second raw oil with NO live source: the Oil Pump adapter is test-fixture only. ROUND 3: every player-facing text now says no oil site exists in this world yet. Becomes live only when a real physical site, interaction, production job and restart are demonstrated. |
+| `plank` | Plank | P6 | ROUND 3: handed to the building-ontology owner (PR #56) with a corrective design; the item, saved stock and queued jobs stay valid. ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement. |
 | `chitin` | Ash Chitin | P8 | Single consumer (Chitin Plate) and no Veyra source. The item is fine; the Veyra gap needs a creature placement decision. |
 | `chitin_armor` | Chitin Plate | P8 | Body armour tier 2; uncraftable on Veyra because Chitin has no source there. |
-| `core_fire` | Ember Core | P10 | Legacy core outside the seven Creator Cores, still craftable and castable. Whether four extra cores remain is a Bible ruling, not an audit fix. |
-| `core_earth` | Quake Core | P10 | Legacy core; see core_fire. |
-| `core_storm` | Storm Core | P10 | Legacy core; see core_fire. |
-| `core_frost` | Rime Core | P10 | Legacy core; see core_fire. |
 
 ### ADD_CANDIDATE
 
@@ -158,11 +154,11 @@ Recipes that cannot run on Shipping: `pump_crude`, `refinery_crude`. On Veyra: `
 | animal_fat | animal_fat | — | Reviewed, REJECTED: Duplicates existing fuel routes. |
 | energy_refinery / energy_extractor | energy_refinery / energy_extractor | — | Reviewed, BACKLOG: Unapproved Energy Ore backlog; explicitly out of scope. |
 
-KEEP (139) is listed row by row, with a reason each, in `manifest.csv`.
+KEEP (143) is listed row by row, with a reason each, in `manifest.csv`.
 
 ### Newcomer load
 
-Before this PR 53 items shared the single chip "MATERIAL". They now show one of 25 classes (display only). Round 2 removed one redundant recipe (`vehicle_frame_piped`), gave Pipe and Blade a required consumer and Plate a Recycler rule, and left exactly one item called Parts. The item count did not change: Fasteners and Plank stay by ruling.
+Before this PR 53 items shared the single chip "MATERIAL". They now show one of 26 classes (display only). Round 2 removed one redundant recipe (`vehicle_frame_piped`), gave Pipe and Blade a required consumer and Plate a Recycler rule, and left exactly one item called Parts. The item count did not change: Fasteners and Plank stay by ruling.
 
 ## 6. Parts decision package
 
@@ -191,22 +187,22 @@ Scope: `spares`, `mechanical_parts`, `scrap`, `fasteners`, `metal_pipe`, `mechan
 
 **Recommendation: Option A.** Option A gets the clarity benefit for almost no cost and keeps the research currency uncraftable. Option B can only be made safe by deleting the Machine Parts recipe, rewriting every Recycler return and converting player inventories — a large migration whose end state is a single pool where building machines and buying knowledge fight each other. That removes a decision the Bible asks for (K4) rather than clarifying it.
 
-## 7. Proposals and their round-2 status
+## 7. Proposals and their round-3 status
 
-IMPLEMENTED = live at recipe revision 3. NOT_AUTHORISED = ruled out; analysis only. OPEN = not implemented, owner decision needed. Measured before/after numbers: `web/evidence/item-ontology-v2/round2-simulations.json`. Open findings: `ROUND2_FINDINGS.md`. **Item V2 is not complete while any row is OPEN.**
+IMPLEMENTED = live at recipe revision 3. IMPLEMENTED_PARTIAL = only the authorised part is live. CLOSED_KEEP = ruled final, items stay as they are. HANDED_OFF = a real defect whose fix belongs to another owner; the work order is the linked document and the defect stays live until that owner ships it. Measured before/after numbers: `web/evidence/item-ontology-v2/round2-simulations.json`. Findings: `ROUND2_FINDINGS.md`. **A HANDED_OFF row is not a fixed row.**
 
 | Id | Title | Status | Ruling | Items |
 | --- | --- | --- | --- | --- |
 | P1 | Parts axis — Option A: one item called Parts, one called Machine Parts | IMPLEMENTED | Approved. Display only; `mechanical_parts` VN name is "Bộ phận máy". | spares, mechanical_parts |
-| P2 | Merge Forged Fasteners into Machine Parts | NOT_AUTHORISED | Not allowed. Fasteners stay. Analysis only: see ROUND2_FINDINGS.md §P2. | fasteners, mechanical_parts |
+| P2 | Merge Forged Fasteners into Machine Parts | CLOSED_KEEP | ROUND 3: CLOSED. Fasteners stay, distinct from Machine Parts. Fasteners = researched assembly/joining stock; Machine Parts = manufactured mechanisms. No id merge, no recipe rewrite, no new intermediate. Numbers: ROUND2_FINDINGS.md §P2. | fasteners, mechanical_parts |
 | P3 | Give the Metal Pipe a real job | IMPLEMENTED_PARTIAL | Approved for the Utility Frame only. `oil_pump` and `refinery` costs must not change this round. | metal_pipe, vehicle_frame |
 | P4 | Make the Metal Blade the edge of the Salvager Axe | IMPLEMENTED | Approved, subject to the blade-before-axe and no-net-material checks. Both passed. | metal_blade, industrial_axe |
 | P5 | Add a Recycler rule for Iron Plate | IMPLEMENTED | Approved as a NEW versioned rule; existing rules untouched. | iron_plate |
-| P6 | Retire Plank | NOT_AUTHORISED | Not allowed. Plank stays. Analysis only: see ROUND2_FINDINGS.md §P6. | plank |
+| P6 | Retire Plank | HANDED_OFF | ROUND 3: live defect, not an item retirement. Plank Wall and Brick Wall are upgrade-only and unreachable. The fix belongs to the PR #56 building-ontology owner; the corrective design is handed over in writing. Nothing in the building ontology is edited in PR #61. | plank |
 | P7 | One display language for item names | IMPLEMENTED | Approved. English is the display language; the settled Vietnamese names are kept as alias data. | core_blast, core_meteor, core_dragon, core_elsa, core_earthmother, core_demon, escrow_chest |
-| P8 | Veyra source gaps | OPEN | Stay unimplemented; produce the exact Veyra source-access matrix. See ROUND2_FINDINGS.md §P8. | chitin, chitin_armor, crawler_optic, wolf_fang, beetle_horn, keycard, core_demon, essence_spirit |
-| P9 | Crude Petroleum has no live source | OPEN | Keep fixture-only; the UI must not advertise it as minable. See ROUND2_FINDINGS.md §P9. | crude_petroleum |
-| P10 | Four legacy cores beside the seven Creator Cores | OPEN | Do not delete Cores. Compare each legacy Core with the seven and propose one canon decision. See ROUND2_FINDINGS.md §P10. | core_fire, core_earth, core_storm, core_frost |
+| P8 | Veyra source gaps | HANDED_OFF | ROUND 3: world source repair. Chitin, Crawler Optic, Wolf Fang and Beetle Horn need real Veyra creatures and habitats; that is the Veyra ecology/map owner's work and is written up as a work order. Inside this PR only the honest "no source on Veyra yet" readiness text is implemented; no source, loot or probability was added and no recipe is hidden. | chitin, chitin_armor, crawler_optic, wolf_fang, beetle_horn, keycard, core_demon, essence_spirit |
+| P9 | Crude Petroleum has no live source | IMPLEMENTED_PARTIAL | ROUND 3: fix the misleading text only. Crude Petroleum stays fixture-only; Oil Pump production is NOT live. Ids, systems and Salvaged Oil → Fuel Can are unchanged. | crude_petroleum |
+| P10 | Four legacy cores beside the seven Creator Cores | IMPLEMENTED | ROUND 3: APPROVED. The four legacy cores are kept as their own class, Field Core / Lõi dã chiến, distinct from the seven Creator Cores. Ids, formulas, charge rules, saves, VFX and loot unchanged. | core_fire, core_earth, core_storm, core_frost |
 
 ### P1. Parts axis — Option A: one item called Parts, one called Machine Parts — IMPLEMENTED
 
@@ -235,13 +231,13 @@ Tests:
 - item-ontology-v2: exactly one item has class PARTS and no other item name contains the word "Parts" alone
 - existing research / vendor tests unchanged (they use ids)
 
-### P2. Merge Forged Fasteners into Machine Parts — NOT_AUTHORISED
+### P2. Merge Forged Fasteners into Machine Parts — CLOSED_KEEP
 
-**Ruling.** Not allowed. Fasteners stay. Analysis only: see ROUND2_FINDINGS.md §P2.
+**Ruling.** ROUND 3: CLOSED. Fasteners stay, distinct from Machine Parts. Fasteners = researched assembly/joining stock; Machine Parts = manufactured mechanisms. No id merge, no recipe rewrite, no new intermediate. Numbers: ROUND2_FINDINGS.md §P2.
 
 **Problem.** Fasteners and Machine Parts are made at the same bench tier from the same two raw inputs and are both generic assembly bits. A newcomer has to learn two names for one idea, and most advanced recipes ask for both.
 
-**Round-1 proposal (not implemented).** Retire the `fasteners` recipe and replace every Fasteners cost with Machine Parts at ceil(n / 2) (2 Fasteners ≈ 1 Machine Part in raw value: 0.67 iron + 0.67 scrap vs 0.5 iron + 1 scrap). The item id stays in the catalog so nothing a player owns disappears.
+**Round-1 proposal (superseded by the ruling above).** Retire the `fasteners` recipe and replace every Fasteners cost with Machine Parts at ceil(n / 2) (2 Fasteners ≈ 1 Machine Part in raw value: 0.67 iron + 0.67 scrap vs 0.5 iron + 1 scrap). The item id stays in the catalog so nothing a player owns disappears.
 
 Recipes before:
 
@@ -302,7 +298,7 @@ Shipped:
 
 **Problem.** The Pipe has exactly one consumer, the alternate frame recipe `vehicle_frame_piped`, and that recipe costs strictly more than the plain `vehicle_frame` for the same output at the same station. A rational player never makes a Pipe. Finding one in loot is a Recycler ticket for 1 Refined Iron and nothing else.
 
-**Decision.** The piped recipe becomes THE frame recipe. (Round 1 also proposed Pipes in the Oil Pump and Refinery; the ruling excludes that, so their costs below are quoted only to prove they did not move.)
+**Round-1 proposal (superseded by the ruling above).** The piped recipe becomes THE frame recipe. (Round 1 also proposed Pipes in the Oil Pump and Refinery; the ruling excludes that, so their costs below are quoted only to prove they did not move.)
 
 Recipes before:
 
@@ -402,13 +398,13 @@ Tests:
 - recycler: plate rule output value < plate recipe input value
 - projection: iron_plate.recycle is non-null and verdict is PARTS_NEUTRAL or PARTS_NEGATIVE
 
-### P6. Retire Plank — NOT_AUTHORISED
+### P6. Retire Plank — HANDED_OFF
 
-**Ruling.** Not allowed. Plank stays. Analysis only: see ROUND2_FINDINGS.md §P6.
+**Ruling.** ROUND 3: live defect, not an item retirement. Plank Wall and Brick Wall are upgrade-only and unreachable. The fix belongs to the PR #56 building-ontology owner; the corrective design is handed over in writing. Nothing in the building ontology is edited in PR #61.
 
 **Problem.** Plank exists to build one thing. 3 Plank = 6 Wood, and the Plank Wall description already says "for 6 wood". The item adds a bench step and an inventory row, not a choice.
 
-**Round-1 proposal (not implemented).** Plank Wall costs 6 Wood directly. The `plank` recipe is retired; the item stays so existing stacks are valid, and can be split back to Wood.
+**Round-1 proposal (superseded by the ruling above).** Plank Wall costs 6 Wood directly. The `plank` recipe is retired; the item stays so existing stacks are valid, and can be split back to Wood.
 
 Recipes before:
 
@@ -472,13 +468,19 @@ Tests:
 
 - item-ontology-v2: no item name mixes languages
 
-### P8. Veyra source gaps — OPEN
+### P8. Veyra source gaps — HANDED_OFF
 
-**Ruling.** Stay unimplemented; produce the exact Veyra source-access matrix. See ROUND2_FINDINGS.md §P8.
+**Ruling.** ROUND 3: world source repair. Chitin, Crawler Optic, Wolf Fang and Beetle Horn need real Veyra creatures and habitats; that is the Veyra ecology/map owner's work and is written up as a work order. Inside this PR only the honest "no source on Veyra yet" readiness text is implemented; no source, loot or probability was added and no recipe is hidden.
+
+Shipped:
+
+- Craft readiness on a Veyra run says '<item> has no source on Veyra yet' for an input listed in VEYRA_UNSOURCED_INPUTS instead of 'Get N <item>'. The recipe stays listed.
+- VEYRA_UNSOURCED_INPUTS is pinned by test to the projection: it must be emptied when the world owner adds the source.
+- Measured: Veyra has 0 keycard doors, so the missing Keycard source is correct by design and no Keycard was added.
 
 **Problem.** These items have no reachable source on the Veyra layout, and three recipes are uncraftable there. On Veyra a player can see or learn recipes they can never complete.
 
-**Round-1 proposal (not implemented).** Do not invent sources in an ontology PR. Until Veyra creature and POI placement is decided, hide Veyra-unreachable recipes from the craft list on that layout (a filter driven by this projection), and treat each gap as a content task.
+**Round-1 proposal (superseded by the ruling above).** Do not invent sources in an ontology PR. Until Veyra creature and POI placement is decided, hide Veyra-unreachable recipes from the craft list on that layout (a filter driven by this projection), and treat each gap as a content task.
 
 Migration:
 
@@ -490,13 +492,20 @@ Tests a future change would need:
 
 - projection lists exactly these ids as NOT_REACHABLE_ON_VEYRA
 
-### P9. Crude Petroleum has no live source — OPEN
+### P9. Crude Petroleum has no live source — IMPLEMENTED_PARTIAL
 
-**Ruling.** Keep fixture-only; the UI must not advertise it as minable. See ROUND2_FINDINGS.md §P9.
+**Ruling.** ROUND 3: fix the misleading text only. Crude Petroleum stays fixture-only; Oil Pump production is NOT live. Ids, systems and Salvaged Oil → Fuel Can are unchanged.
+
+Shipped:
+
+- One owner of the wording: engine.oilAvailability() + OIL_TEXT. With no oil site in the world every surface says 'No oil site exists in this world yet' (build refusal, build menu, packed-device readiness, Station Console, station panel, recipe readiness, item and structure descriptions).
+- Removed: 'No authorized oil site here', 'Find an authorized oil source', 'needs an authorized oil source' — each implied a site the player could go and find.
+- The pump_crude and refinery_crude recipes stay listed; they now state why they cannot run and point at Salvaged Oil.
+- NOT done, by ruling: no oil site, no source, no production claim. The physical-site work order is in the handoff document.
 
 **Problem.** The Oil Pump that produces it runs only in the test fixture. On both live layouts the item cannot be obtained and its recipes cannot run.
 
-**Round-1 proposal (not implemented).** Keep the id (the pump work depends on it); keep it out of player-facing lists until the pump is live. Salvaged Oil remains the single live oil.
+**Round-1 proposal (superseded by the ruling above).** Keep the id (the pump work depends on it); keep it out of player-facing lists until the pump is live. Salvaged Oil remains the single live oil.
 
 Migration:
 
@@ -504,17 +513,24 @@ Migration:
 
 **Risk.** None while hidden.
 
-Tests a future change would need:
+Tests:
 
 - projection: crude_petroleum runtime_reachability is FIXTURE_ONLY
 
-### P10. Four legacy cores beside the seven Creator Cores — OPEN
+### P10. Four legacy cores beside the seven Creator Cores — IMPLEMENTED
 
-**Ruling.** Do not delete Cores. Compare each legacy Core with the seven and propose one canon decision. See ROUND2_FINDINGS.md §P10.
+**Ruling.** ROUND 3: APPROVED. The four legacy cores are kept as their own class, Field Core / Lõi dã chiến, distinct from the seven Creator Cores. Ids, formulas, charge rules, saves, VFX and loot unchanged.
+
+Shipped:
+
+- itemClass() returns CREATOR_CORE (item has `creatorCore`) or FIELD_CORE (item has `core`); it reads the fields the engine already branches on and adds no data.
+- Inventory details: chip 'CREATOR CORE' (brass) or 'FIELD CORE · Lõi dã chiến' (blue frame), plus one line: '3 skills · B / Q / E energy reserves' or '1 ability · N charges · no reload'. Hotbar label says FIELD CORE.
+- Regression tests: the three Creator Core crates located by a Field Core marker still resolve (factory_vault/core_fire → Dragon's Breath, light_top/core_storm → Meteor, wreck/core_frost → Elsa's Sword).
+- Bible §0.2 / §8.6 and the decision ledger §31 record the class.
 
 **Problem.** The Bible fixes seven Creator Cores. Four older cores are still craftable (8–10 Parts each) and castable, so the Core list a newcomer sees has eleven entries in two rule-sets.
 
-**Round-1 proposal (not implemented).** Owner ruling needed: either they are canon "minor cores" (then say so in the Bible and label them), or their recipes are retired while existing cores keep working until the run reset. The audit recommends the second, after confirming every legacy effect has a Creator Core counterpart.
+**Decision.** Kept as the Field Core class (ruling above). Round-1 text, superseded: Owner ruling needed: either they are canon "minor cores" (then say so in the Bible and label them), or their recipes are retired while existing cores keep working until the run reset. The audit recommends the second, after confirming every legacy effect has a Creator Core counterpart.
 
 Migration:
 
@@ -522,7 +538,7 @@ Migration:
 
 **Risk.** Touches player assets and a Bible-protected system; not safe to decide inside an audit.
 
-Tests a future change would need:
+Tests:
 
 - save round-trip of a charged legacy core
 

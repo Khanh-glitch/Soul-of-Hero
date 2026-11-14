@@ -60,14 +60,14 @@ export const ITEM_DECISIONS: Readonly<Record<string, ItemDecision>> = Object.fre
   scrap: D('INDUSTRY', 'KEEP', 'parts', 'SOH splits LI "Parts" into raw Scrap (bulk, smeltable) and Parts (scarce). Scrap is the bulk half and stays.'),
   spares: D('INDUSTRY', 'KEEP', 'parts', 'This IS the LI Parts role: found / recovered, never crafted, spent on research, trade, Cores and technology (Bible §0.2, K4). ROUND 2: display name is now "Parts / Linh kiện" (was "Spares"); id unchanged.', { was_name: 'Spares', proposal: 'P1' }),
   mechanical_parts: D('INDUSTRY', 'KEEP', 'none', 'Crafted from Scrap + Iron; NOT a research currency. ROUND 2: display name is now "Machine Parts / Bộ phận máy" (was "Mechanical Parts"); never shown as "Parts".', { was_name: 'Mechanical Parts', proposal: 'P1' }),
-  fasteners: D('INDUSTRY', 'KEEP', 'none', 'ROUND 2 ruling: stays. Round 1 called it a twin of Machine Parts (same raw inputs, same tier). The measured merge (ROUND2_FINDINGS §P2) raises scrap cost on every consumer and up to 3× on one-fastener consumers, and deletes a research step; no integer mapping avoids that.', { proposal: 'P2' }),
+  fasteners: D('INDUSTRY', 'KEEP', 'none', 'ROUND 3: CLOSED — researched assembly/joining stock, distinct from Machine Parts (manufactured mechanisms). ROUND 2 ruling: stays. Round 1 called it a twin of Machine Parts (same raw inputs, same tier). The measured merge (ROUND2_FINDINGS §P2) raises scrap cost on every consumer and up to 3× on one-fastener consumers, and deletes a research step; no integer mapping avoids that.', { proposal: 'P2' }),
   metal_pipe: D('INDUSTRY', 'KEEP', 'metal_pipe', 'ROUND 2: now the tubing of THE Utility Frame recipe (rev 3), so every motorbike takes one. The fluid-machine job LI gives it (Oil Pump, Refinery) was ruled out for this round and stays a candidate.', { proposal: 'P3' }),
   metal_blade: D('INDUSTRY', 'KEEP', 'metal_blade', 'ROUND 2: now the required edge of the Salvager Axe (rev 3), as in LI. The two alternate weapon recipes stay as honest shortcuts.', { proposal: 'P4' }),
   mechanical_gear: D('INDUSTRY', 'KEEP', 'mechanical_gear', 'Four distinct consumers (bear trap, IR sensor, drive, pick) plus a versioned Recycler rule. Same job as LI.'),
   iron_plate: D('INDUSTRY', 'KEEP', 'iron_plate', 'Real jobs (motorbike, wall patching, trap re-arm). ROUND 2: has its own Recycler rule X:plate-v1 (1 plate → 1 ingot, lossy), so all four technical components now behave alike.', { proposal: 'P5' }),
   damaged_drive: D('INDUSTRY', 'KEEP', 'none', 'The physical "appliance to recycle": the only way the Recycler mints Parts. Carries the LI recycler loop without making Parts craftable.'),
   salvaged_oil: D('INDUSTRY', 'KEEP', 'crude_oil', 'LI red-barrel oil. Live source of all fuel and lubricant.'),
-  crude_petroleum: D('INDUSTRY', 'DEFER', 'crude_oil', 'Second raw oil with NO live source: the Oil Pump adapter is test-fixture only. Not shown to players today. Decide when the pump ships; until then it must not be advertised.', { proposal: 'P9' }),
+  crude_petroleum: D('INDUSTRY', 'DEFER', 'crude_oil', 'Second raw oil with NO live source: the Oil Pump adapter is test-fixture only. ROUND 3: every player-facing text now says no oil site exists in this world yet. Becomes live only when a real physical site, interaction, production job and restart are demonstrated.', { proposal: 'P9' }),
   lubricant: D('TRANSPORT', 'KEEP', 'none', 'One clear job (vehicle service). By-product of the industrial refinery batch.'),
   fuel_can: D('POWER', 'KEEP', 'low_quality_fuel', 'Liquid fuel for generators and vehicles; also a POI fuel gate. Bench recipe already retired at revision 2.'),
   // ── Power / solid fuel ───────────────────────────────────────────────────────────────────────
@@ -77,7 +77,7 @@ export const ITEM_DECISIONS: Readonly<Record<string, ItemDecision>> = Object.fre
   wood: D('BUILDING', 'KEEP', 'wood', 'Universal starter material and fuel.'),
   stone: D('BUILDING', 'KEEP', 'none', 'Second building tier; feeds Brick, Glass, Basic Energy.'),
   fiber: D('BUILDING', 'KEEP', 'cloth', 'Rope / Cloth / Bandage root. LI goes plant → cloth directly; SOH keeps the gather step.'),
-  plank: D('BUILDING', 'DEFER', 'none', 'ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement.', { proposal: 'P6' }),
+  plank: D('BUILDING', 'DEFER', 'none', 'ROUND 3: handed to the building-ontology owner (PR #56) with a corrective design; the item, saved stock and queued jobs stay valid. ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement.', { proposal: 'P6' }),
   brick: D('BUILDING', 'KEEP', 'none', 'Third building tier; also refinery / pump housing.'),
   glass: D('BUILDING', 'KEEP', 'none', 'Windows, mask, canteen, fuel batches. Two recipes are a genuine regional choice (Frost Crystal vs Crab Shell).'),
   rope: D('BUILDING', 'KEEP', 'rope', 'Thirteen consumers; binding material across building, gear and husbandry.'),
@@ -150,10 +150,10 @@ export const ITEM_DECISIONS: Readonly<Record<string, ItemDecision>> = Object.fre
   core_earthmother: D('CORE', 'KEEP', 'none', 'Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data.', { was_name: 'Hơi thở đất mẹ', proposal: 'P7' }),
   core_mjolnir: D('CORE', 'KEEP', 'none', 'Creator Core; name already language-neutral.'),
   core_demon: D('CORE', 'KEEP', 'none', 'Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data. Also uncraftable on Veyra (P8).', { was_name: 'Lõi quỷ', proposal: 'P7' }),
-  core_fire: D('CORE', 'DEFER', 'none', 'Legacy core outside the seven Creator Cores, still craftable and castable. Whether four extra cores remain is a Bible ruling, not an audit fix.', { proposal: 'P10' }),
-  core_earth: D('CORE', 'DEFER', 'none', 'Legacy core; see core_fire.', { proposal: 'P10' }),
-  core_storm: D('CORE', 'DEFER', 'none', 'Legacy core; see core_fire.', { proposal: 'P10' }),
-  core_frost: D('CORE', 'DEFER', 'none', 'Legacy core; see core_fire.', { proposal: 'P10' }),
+  core_fire: D('CORE', 'KEEP', 'none', 'ROUND 3: Field Core / Lõi dã chiến — one ability, fixed charges, no reload. A class of its own beside the seven Creator Cores; id, recipe, charge rule, VFX and loot unchanged.', { proposal: 'P10' }),
+  core_earth: D('CORE', 'KEEP', 'none', 'ROUND 3: Field Core / Lõi dã chiến — one ability, fixed charges, no reload. A class of its own beside the seven Creator Cores; id, recipe, charge rule, VFX and loot unchanged.', { proposal: 'P10' }),
+  core_storm: D('CORE', 'KEEP', 'none', 'ROUND 3: Field Core / Lõi dã chiến — one ability, fixed charges, no reload. A class of its own beside the seven Creator Cores; id, recipe, charge rule, VFX and loot unchanged.', { proposal: 'P10' }),
+  core_frost: D('CORE', 'KEEP', 'none', 'ROUND 3: Field Core / Lõi dã chiến — one ability, fixed charges, no reload. A class of its own beside the seven Creator Cores; id, recipe, charge rule, VFX and loot unchanged.', { proposal: 'P10' }),
   // ── Special ──────────────────────────────────────────────────────────────────────────────────
   blueprint: D('SPECIAL', 'KEEP', 'none', 'Recipe paper. The audit reported it unreachable; that was a solver defect, fixed in this PR.'),
   wolf_fang: D('SPECIAL', 'KEEP', 'none', 'Specimen: studied to learn Fur Cloak. No Veyra source.', { proposal: 'P8' }),
@@ -196,7 +196,11 @@ export interface Proposal {
   /** Round 2 (Control Tower ruling on PR #61). IMPLEMENTED = live in the catalog at recipe revision 3;
    *  IMPLEMENTED_PARTIAL = only the authorised part is live; NOT_AUTHORISED = ruled out, analysis only;
    *  OPEN = no implementation, needs an owner decision. */
-  status: 'IMPLEMENTED' | 'IMPLEMENTED_PARTIAL' | 'NOT_AUTHORISED' | 'OPEN';
+  /** Round 3 adds: CLOSED_KEEP = ruled final, the items stay as they are; HANDED_OFF = the defect is real but its
+   *  fix belongs to another owner, who has a written work order (see `handoff`). */
+  status: 'IMPLEMENTED' | 'IMPLEMENTED_PARTIAL' | 'NOT_AUTHORISED' | 'OPEN' | 'CLOSED_KEEP' | 'HANDED_OFF';
+  /** Repo path of the work order for a HANDED_OFF proposal. */
+  handoff?: string;
   ruling: string;
   /** What actually shipped, when status is IMPLEMENTED*. */
   shipped?: string[];
@@ -239,8 +243,8 @@ export const PROPOSALS: readonly Proposal[] = [
   },
   {
     id: 'P2', group: 'B', recommendation: 'APPROVE_LATER',
-    status: 'NOT_AUTHORISED',
-    ruling: 'Not allowed. Fasteners stay. Analysis only: see ROUND2_FINDINGS.md §P2.',
+    status: 'CLOSED_KEEP',
+    ruling: 'ROUND 3: CLOSED. Fasteners stay, distinct from Machine Parts. Fasteners = researched assembly/joining stock; Machine Parts = manufactured mechanisms. No id merge, no recipe rewrite, no new intermediate. Numbers: ROUND2_FINDINGS.md §P2.',
     title: 'Merge Forged Fasteners into Machine Parts',
     items: ['fasteners', 'mechanical_parts'],
     problem: 'Fasteners and Machine Parts are made at the same bench tier from the same two raw inputs and are both generic assembly bits. A newcomer has to learn two names for one idea, and most advanced recipes ask for both.',
@@ -354,8 +358,9 @@ export const PROPOSALS: readonly Proposal[] = [
   },
   {
     id: 'P6', group: 'B', recommendation: 'APPROVE_LATER',
-    status: 'NOT_AUTHORISED',
-    ruling: 'Not allowed. Plank stays. Analysis only: see ROUND2_FINDINGS.md §P6.',
+    status: 'HANDED_OFF',
+    handoff: 'docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md',
+    ruling: 'ROUND 3: live defect, not an item retirement. Plank Wall and Brick Wall are upgrade-only and unreachable. The fix belongs to the PR #56 building-ontology owner; the corrective design is handed over in writing. Nothing in the building ontology is edited in PR #61.',
     title: 'Retire Plank',
     items: ['plank'],
     problem: 'Plank exists to build one thing. 3 Plank = 6 Wood, and the Plank Wall description already says "for 6 wood". The item adds a bench step and an inventory row, not a choice.',
@@ -394,8 +399,14 @@ export const PROPOSALS: readonly Proposal[] = [
   },
   {
     id: 'P8', group: 'B', recommendation: 'HOLD',
-    status: 'OPEN',
-    ruling: 'Stay unimplemented; produce the exact Veyra source-access matrix. See ROUND2_FINDINGS.md §P8.',
+    status: 'HANDED_OFF',
+    handoff: 'docs/design/VEYRA_WORLD_SOURCE_REPAIR_ORDER_2026-11-14.md',
+    ruling: 'ROUND 3: world source repair. Chitin, Crawler Optic, Wolf Fang and Beetle Horn need real Veyra creatures and habitats; that is the Veyra ecology/map owner\'s work and is written up as a work order. Inside this PR only the honest "no source on Veyra yet" readiness text is implemented; no source, loot or probability was added and no recipe is hidden.',
+    shipped: [
+      "Craft readiness on a Veyra run says '<item> has no source on Veyra yet' for an input listed in VEYRA_UNSOURCED_INPUTS instead of 'Get N <item>'. The recipe stays listed.",
+      "VEYRA_UNSOURCED_INPUTS is pinned by test to the projection: it must be emptied when the world owner adds the source.",
+      "Measured: Veyra has 0 keycard doors, so the missing Keycard source is correct by design and no Keycard was added.",
+    ],
     title: 'Veyra source gaps',
     items: ['chitin', 'chitin_armor', 'crawler_optic', 'wolf_fang', 'beetle_horn', 'keycard', 'core_demon', 'essence_spirit'],
     problem: 'These items have no reachable source on the Veyra layout, and three recipes are uncraftable there. On Veyra a player can see or learn recipes they can never complete.',
@@ -406,8 +417,15 @@ export const PROPOSALS: readonly Proposal[] = [
   },
   {
     id: 'P9', group: 'B', recommendation: 'HOLD',
-    status: 'OPEN',
-    ruling: 'Keep fixture-only; the UI must not advertise it as minable. See ROUND2_FINDINGS.md §P9.',
+    status: 'IMPLEMENTED_PARTIAL',
+    handoff: 'docs/design/VEYRA_WORLD_SOURCE_REPAIR_ORDER_2026-11-14.md',
+    ruling: 'ROUND 3: fix the misleading text only. Crude Petroleum stays fixture-only; Oil Pump production is NOT live. Ids, systems and Salvaged Oil → Fuel Can are unchanged.',
+    shipped: [
+      "One owner of the wording: engine.oilAvailability() + OIL_TEXT. With no oil site in the world every surface says 'No oil site exists in this world yet' (build refusal, build menu, packed-device readiness, Station Console, station panel, recipe readiness, item and structure descriptions).",
+      "Removed: 'No authorized oil site here', 'Find an authorized oil source', 'needs an authorized oil source' — each implied a site the player could go and find.",
+      "The pump_crude and refinery_crude recipes stay listed; they now state why they cannot run and point at Salvaged Oil.",
+      "NOT done, by ruling: no oil site, no source, no production claim. The physical-site work order is in the handoff document.",
+    ],
     title: 'Crude Petroleum has no live source',
     items: ['crude_petroleum'],
     problem: 'The Oil Pump that produces it runs only in the test fixture. On both live layouts the item cannot be obtained and its recipes cannot run.',
@@ -418,12 +436,18 @@ export const PROPOSALS: readonly Proposal[] = [
   },
   {
     id: 'P10', group: 'B', recommendation: 'HOLD',
-    status: 'OPEN',
-    ruling: 'Do not delete Cores. Compare each legacy Core with the seven and propose one canon decision. See ROUND2_FINDINGS.md §P10.',
+    status: 'IMPLEMENTED',
+    ruling: 'ROUND 3: APPROVED. The four legacy cores are kept as their own class, Field Core / Lõi dã chiến, distinct from the seven Creator Cores. Ids, formulas, charge rules, saves, VFX and loot unchanged.',
+    shipped: [
+      "itemClass() returns CREATOR_CORE (item has `creatorCore`) or FIELD_CORE (item has `core`); it reads the fields the engine already branches on and adds no data.",
+      "Inventory details: chip 'CREATOR CORE' (brass) or 'FIELD CORE · Lõi dã chiến' (blue frame), plus one line: '3 skills · B / Q / E energy reserves' or '1 ability · N charges · no reload'. Hotbar label says FIELD CORE.",
+      "Regression tests: the three Creator Core crates located by a Field Core marker still resolve (factory_vault/core_fire → Dragon's Breath, light_top/core_storm → Meteor, wreck/core_frost → Elsa's Sword).",
+      "Bible §0.2 / §8.6 and the decision ledger §31 record the class.",
+    ],
     title: 'Four legacy cores beside the seven Creator Cores',
     items: ['core_fire', 'core_earth', 'core_storm', 'core_frost'],
     problem: 'The Bible fixes seven Creator Cores. Four older cores are still craftable (8–10 Parts each) and castable, so the Core list a newcomer sees has eleven entries in two rule-sets.',
-    decision: 'Owner ruling needed: either they are canon "minor cores" (then say so in the Bible and label them), or their recipes are retired while existing cores keep working until the run reset. The audit recommends the second, after confirming every legacy effect has a Creator Core counterpart.',
+    decision: 'Kept as the Field Core class (ruling above). Round-1 text, superseded: Owner ruling needed: either they are canon "minor cores" (then say so in the Bible and label them), or their recipes are retired while existing cores keep working until the run reset. The audit recommends the second, after confirming every legacy effect has a Creator Core counterpart.',
     migration: ['If retired: RETIRED_RECIPES for the four recipes; items, charge and learned state untouched; per-run reset removes them naturally.'],
     risk: 'Touches player assets and a Bible-protected system; not safe to decide inside an audit.',
     tests: ['save round-trip of a charged legacy core'],

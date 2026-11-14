@@ -887,7 +887,7 @@
   "resolution": [
    "No source was invented. The matrix is the work order for the Veyra content pass: per NO_VEYRA_SOURCE item choose (a) a Veyra spawner entry for the dropping creature, (b) an authored Veyra crate, or (c) an explicit \"Shipping-only by design\" ruling.",
    "Until that pass: hide the Veyra-blocked recipes from the Veyra craft list using `veyra_blocked_recipes` (display filter; no recipe or save change). NOT implemented this round — it changes what a Veyra player sees and was not in the authorised set.",
-   "Keycard needs its own ruling: if Veyra has no keycard doors, \"no source\" is correct by design."
+   "Keycard — ROUND 3, measured: the Veyra layouts have 0 keycard doors (graph.summary.veyraPoiStats.keycardDoors, pinned in item-ontology-v2.test.ts), so \"no source\" is correct by design. No Keycard is added."
   ]
  },
  "P9": {
@@ -898,8 +898,8 @@
   "consumed_by": [
    "refinery_crude"
   ],
-  "description_shown_to_player": "Raw petroleum drawn from an authorized oil source. Refine at an Oil Refinery (4 crude + glass).",
-  "oil_pump_description": "Draws Crude Petroleum from an authorized oil site. Needs fuel to run; output waits in its slots. Placement needs an authorized source.",
+  "description_shown_to_player": "Raw petroleum pumped from an oil site. No oil site exists in this world yet, so none can be obtained today. Fuel comes from Salvaged Oil.",
+  "oil_pump_description": "Draws Crude Petroleum from an oil site. No oil site exists in this world yet, so the pump cannot be placed today. Fuel comes from Salvaged Oil at an Oil Refinery.",
   "blocked_on": {
    "veyra": [
     "pump_crude",

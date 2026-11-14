@@ -2,8 +2,10 @@
 // costs, reach, reservation and completion. Never use this to commit a job.
 import { BAL, TILE, type Entity, type RunState } from './core';
 import { ITEMS, RECIPES, STRUCTS, isRecipeKnown, modulePending, requiredStationLevel, stationBurnable } from './catalog';
-import { C, anyAuthorizedOilSource, authorizedOilSource, clearInteraction, clearWallLine, countItem, phaseOf, spaceFor } from './engine';
+import { C, OIL_TEXT, oilAvailability, anyAuthorizedOilSource, authorizedOilSource, clearInteraction, clearWallLine, countItem, phaseOf, spaceFor } from './engine';
 import { recoveryFits } from './recycler';
+import { VEYRA_UNSOURCED_INPUTS } from './item-class';
+import { isVeyra05Layout } from '../veyra05/scenes';
 
 export type ReadinessState = 'ready' | 'waiting' | 'blocked';
 export type ReadinessCode = 'unknown' | 'dead' | 'resting' | 'expired' | 'busy' | 'materials' |
@@ -81,7 +83,14 @@ export function craftReadiness(r: RunState, key: string, now: number, preferredE
     return state('expired', 'Run ended', 'Begin a new run');
   const active = r.player.action?.slot !== undefined && r.player.action.slot >= 0 ? C(r, 'inv').slots[r.player.action.slot] : null;
   if (active && ingredients.some(i => i.key === active.key)) return state('busy', 'Item in use', 'Finish the current action');
+  // P9: a known oil recipe stays listed, but says the truth when the world has no oil site instead of sending the
+  // player to "reach an Oil Pump" or "get Crude Petroleum" that cannot exist yet.
+  const noOilWorld = oilAvailability(r) === 'NO_SITE_IN_WORLD';
+  if (noOilWorld && rc.station === 'oil_pump') return state('oil', 'No oil site', OIL_TEXT.noSiteWorldShort);
   const lacking = ingredients.find(i => i.have < i.need);
+  if (noOilWorld && lacking?.key === 'crude_petroleum') return state('oil', 'No oil site', `${OIL_TEXT.noSiteWorldShort} · refine Salvaged Oil instead`);
+  if (lacking && r.layoutId && isVeyra05Layout(r.layoutId) && VEYRA_UNSOURCED_INPUTS.includes(lacking.key))
+    return state('materials', 'No source here', `${ITEMS[lacking.key].name} has no source on Veyra yet`);
   if (lacking) return state('materials', 'Needs materials', missingLabel(lacking.key, lacking.have, lacking.need));
   if (!rc.station) {
     const freesSlot = ingredients.some(i => i.have === i.need);
@@ -91,7 +100,7 @@ export function craftReadiness(r: RunState, key: string, now: number, preferredE
   if (!station) return state('station', 'No station nearby', `Reach a ${STRUCTS[rc.station].name}`);
   if (key === 'recover_drive' && !clearInteraction(r, station)) return state('station', 'Access blocked', 'Stand beside the Workbench');
   if (level < requiredStationLevel(rc)) return state('level', `Needs L${requiredStationLevel(rc)}`, `Upgrade ${STRUCTS[rc.station].name}`);
-  if (rc.station === 'oil_pump' && !authorizedOilSource(r, station.tx!, station.ty!)) return state('oil', 'Source dry', 'Find an authorized oil source');
+  if (rc.station === 'oil_pump' && !authorizedOilSource(r, station.tx!, station.ty!)) return state('oil', oilAvailability(r, station.tx!, station.ty!) === 'SITE_DRY' ? 'Source dry' : 'No oil site', oilAvailability(r, station.tx!, station.ty!) === 'SITE_DRY' ? 'This oil site is dry' : 'This pump is not on an oil site');
   if (queue >= 6) return state('queue', 'Queue full', 'Wait or cancel a job');
   // Multi-output bundles are rejected at queue time by the engine; single outputs can queue but will pause at completion.
   if (rc.outs && output === 'full') return state('output', 'Output full', 'Collect station output');
@@ -149,7 +158,7 @@ export function structurePreparation(r: RunState, type: string): StructurePrepar
     const best = packs.reduce((hi, s) => Math.max(hi, Number.isFinite(s?.dur) ? s!.dur as number : 0), 0);
     const intact = packs.some(s => s && s.qty === 1 && Number.isFinite(s.dur) && (s.dur as number) > 0 && (s.dur as number) <= d.hp);
     const reforgeNote = reforge ? ` · re-forge for ${costLabel(reforge.cost)} at the ${reforge.stationName}` : '';
-    const next = sourceBlocked ? 'No authorized oil site on this map'
+    const next = sourceBlocked ? (oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorldShort : 'This oil site is dry')
       : intact && best < max ? `Packed ${d.name} is worn (${best}/${max}) — it places at that damage, nothing is healed${reforgeNote}`
       : intact ? 'Placement spends the packed device, not its materials — choose a legal site'
       : packs.length ? `The packed ${d.name} has no condition left (${best}/${max}) and cannot be placed${reforgeNote || ' · no re-forge path in this build'}`
@@ -157,5 +166,5 @@ export function structurePreparation(r: RunState, type: string): StructurePrepar
     return { materials: !sourceBlocked && intact, missing, sourceBlocked, next,
       pack: { key: packKey, name: d.name, carried: packs.length, intact, dur: best, max, reforge, craftCost: d.cost } };
   }
-  return { materials: missing.length === 0, missing, sourceBlocked, next: sourceBlocked ? 'No authorized oil site on this map' : missing.length ? missingLabel(missing[0].key, missing[0].have, missing[0].need) : 'Materials ready · choose a legal site' };
+  return { materials: missing.length === 0, missing, sourceBlocked, next: sourceBlocked ? (oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorldShort : 'This oil site is dry') : missing.length ? missingLabel(missing[0].key, missing[0].have, missing[0].need) : 'Materials ready · choose a legal site' };
 }

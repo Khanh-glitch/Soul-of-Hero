@@ -1834,6 +1834,23 @@ export function authorizedOilSource(r: RunState, tx: number, ty: number) {
   const src = r.oilSources?.[oilSourceKey(tx, ty)];
   return r.oilTestFixture === true && src && src.authority === 'test-fixture-v1' && src.tx === tx && src.ty === ty && src.stock > 0 ? src : null;
 }
+/** Item Ontology V2 P9 (Round 3): honest player-facing oil availability. No shipping map carries an oil site, so the
+ * old wording (which spoke of an "authorized" site to be found) sent players looking for something that does
+ * not exist. One function owns the three states; ids, systems and the fixture adapter are unchanged. */
+export type OilAvailability = 'NO_SITE_IN_WORLD' | 'SITE_ELSEWHERE' | 'SITE_HERE' | 'SITE_DRY';
+export function oilAvailability(r: RunState, tx?: number, ty?: number): OilAvailability {
+  const all = r.oilTestFixture === true ? Object.values(r.oilSources ?? {}).filter(s => s.authority === 'test-fixture-v1') : [];
+  if (!all.length) return 'NO_SITE_IN_WORLD';
+  if (tx === undefined || ty === undefined) return all.some(s => s.stock > 0) ? 'SITE_ELSEWHERE' : 'SITE_DRY';
+  const here = all.find(s => s.tx === tx && s.ty === ty);
+  return here ? (here.stock > 0 ? 'SITE_HERE' : 'SITE_DRY') : 'SITE_ELSEWHERE';
+}
+export const OIL_TEXT = {
+  noSiteWorld: 'No oil site exists in this world yet, so an Oil Pump cannot be placed or run. Fuel today comes from Salvaged Oil refined into Fuel Cans.',
+  noSiteWorldShort: 'No oil site exists in this world yet',
+  notOnSite: 'This tile is not an oil site. An Oil Pump only works on an oil site.',
+  dry: 'This oil site has no oil left. The pump cannot run.',
+} as const;
 /** TEST-ONLY FIXTURE: registers a labelled temporary oil source. Never called by any shipping action or map loader. */
 export function registerTestOilSource(r: RunState, tx: number, ty: number, stock: number) {
   if (!Number.isInteger(stock) || stock < 0 || stock > BAL.oilPumpV1.maxSourceStock) throw new Error('bad fixture stock');
@@ -1852,7 +1869,7 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   if(p.vehicle)return 'Exit the motorbike before building.';
   if (Object.values(r.entities).some(e=>e.kind==='vehicle' && Math.abs(e.x-(tx*TILE+8))<TILE && Math.abs(e.y-(ty*TILE+8))<TILE)) return 'Move the motorbike away before building here.';
   if (type === 'farm_controller' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=2 && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
-  if (type === 'oil_pump' && !authorizedOilSource(r, tx, ty)) return 'No authorized oil site here. Oil pumps need Map-authorized placement.';
+  if (type === 'oil_pump' && !authorizedOilSource(r, tx, ty)) { const a = oilAvailability(r, tx, ty); return a === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : a === 'SITE_DRY' ? OIL_TEXT.dry : OIL_TEXT.notOnSite; }
   if (type === 'oil_pump' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=BAL.oilPumpV1.requiresWorkbenchLevel && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
   if (type === 'refinery' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=BAL.oilRefineryV1.requiresWorkbenchLevel && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
   if (!Number.isInteger(tx) || !Number.isInteger(ty) || tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1) return 'Out of bounds.';
@@ -2926,7 +2943,7 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
   const st = stationNear(r, rc.station, it.eid); if (!st) return fail(`Requires a ${STRUCTS[rc.station].name} within reach.`);
   if (it.recipe === 'recover_drive' && !clearInteraction(r, st)) return fail('A wall blocks access to the workbench.');
   if ((st.station!.level ?? 1) < requiredStationLevel(rc)) return fail(`Requires workbench level ${rc.stationLevel}.`);
-  if (rc.station === 'oil_pump' && !authorizedOilSource(r, st.tx!, st.ty!)) return fail('This pump has no oil left in its source (or no authorized source).');
+  if (rc.station === 'oil_pump' && !authorizedOilSource(r, st.tx!, st.ty!)) { const a = oilAvailability(r, st.tx!, st.ty!); return fail(a === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : a === 'SITE_DRY' ? OIL_TEXT.dry : OIL_TEXT.notOnSite); }
   if (st.station!.queue.length >= 6) return fail('Station queue is full.');
   // Multi-output bundles are preflighted at queue time too, so no paid inputs are reserved for a batch that cannot land.
   if (rc.outs && !recoveryFits(C(r, st.station!.outC), rc.outs)) return fail('Refinery output cannot hold the whole batch; collect items first.');

@@ -33,7 +33,7 @@ const GEOMETRY_PAGES={
 // The vocabulary structurePreparation() is allowed to answer with, per the shipped code:
 // pack wording for a device that owns a packed item, site wording for the oil pump, and the ordinary
 // material wording for base geometry (a powered door is not a packed device yet — see ledger §24).
-const LEGIBLE=/(Craft the packed|spends the packed device|places at that damage|no condition left|authorized oil site|module-pending|Materials ready|Materials prepared|Get \d|Needs materials)/;
+const LEGIBLE=/(Craft the packed|spends the packed device|places at that damage|no condition left|No oil site exists in this world yet|module-pending|Materials ready|Materials prepared|Get \d|Needs materials)/;
 try{
   const url=process.env.GAME_URL||'http://127.0.0.1:4173/';
   const response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:45000});

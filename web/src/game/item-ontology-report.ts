@@ -302,9 +302,9 @@ export function appendixMd(d: OntologyData): string {
   o.push('');
   o.push(`**Recommendation: Option ${d.parts.recommendation.choose}.** ${d.parts.recommendation.reason}`);
   o.push('');
-  o.push('## 7. Proposals and their round-2 status');
+  o.push('## 7. Proposals and their round-3 status');
   o.push('');
-  o.push('IMPLEMENTED = live at recipe revision ' + c.recipe_revision + '. NOT_AUTHORISED = ruled out; analysis only. OPEN = not implemented, owner decision needed. Measured before/after numbers: `web/evidence/item-ontology-v2/round2-simulations.json`. Open findings: `ROUND2_FINDINGS.md`. **Item V2 is not complete while any row is OPEN.**');
+  o.push('IMPLEMENTED = live at recipe revision ' + c.recipe_revision + '. IMPLEMENTED_PARTIAL = only the authorised part is live. CLOSED_KEEP = ruled final, items stay as they are. HANDED_OFF = a real defect whose fix belongs to another owner; the work order is the linked document and the defect stays live until that owner ships it. Measured before/after numbers: `web/evidence/item-ontology-v2/round2-simulations.json`. Findings: `ROUND2_FINDINGS.md`. **A HANDED_OFF row is not a fixed row.**');
   o.push('');
   o.push(table(['Id', 'Title', 'Status', 'Ruling', 'Items'], d.proposals.map((p) => [p.id, p.title, p.status, p.ruling, p.items.join(', ')])));
   o.push('');
@@ -316,7 +316,7 @@ export function appendixMd(d: OntologyData): string {
     if (p.shipped?.length) { o.push('Shipped:'); o.push(''); for (const x of p.shipped) o.push(`- ${x}`); o.push(''); }
     o.push(`**Problem.** ${p.problem}`);
     o.push('');
-    o.push(`**${p.status.startsWith('IMPLEMENTED') ? 'Decision' : 'Round-1 proposal (not implemented)'}.** ${p.decision}`);
+    o.push(`**${p.status === 'IMPLEMENTED' ? 'Decision' : 'Round-1 proposal (superseded by the ruling above)'}.** ${p.decision}`);
     o.push('');
     if (p.before_recipes?.length) { o.push('Recipes before:'); o.push(''); o.push(table(['Recipe', 'Inputs', 'Output', 'Station', 'Note'], recipeRows(p.before_recipes))); o.push(''); }
     if (p.after_recipes?.length) { o.push('Recipes after:'); o.push(''); o.push(table(['Recipe', 'Inputs', 'Output', 'Station', 'Note'], recipeRows(p.after_recipes))); o.push(''); }
@@ -383,14 +383,14 @@ const chip=(t,c)=>'<span class="chip '+(c||'')+'">'+esc(t)+'</span>';
 const M=Object.fromEntries(D.manifest.map(m=>[m.old_id,m]));
 const tbl=(head,rows)=>'<div class="wrap"><table><thead><tr>'+head.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.join('')+'</tbody></table></div>';
 const tr=cells=>'<tr>'+cells.map(c=>'<td>'+c+'</td>').join('')+'</tr>';
-document.getElementById('sub').innerHTML='Generated from the live economic multigraph at <code>'+D.baseline.sha.slice(0,9)+'</code> ('+esc(D.baseline.branch)+'). '+D.counts.items+' items · '+D.counts.recipes+' recipes · '+D.counts.graph_nodes+' nodes / '+D.counts.graph_edges+' edges. Round 2: each proposal carries its status — implemented at this recipe revision, not authorised, or still open.';
+document.getElementById('sub').innerHTML='Generated from the live economic multigraph at <code>'+D.baseline.sha.slice(0,9)+'</code> ('+esc(D.baseline.branch)+'). '+D.counts.items+' items · '+D.counts.recipes+' recipes · '+D.counts.graph_nodes+' nodes / '+D.counts.graph_edges+' edges. Round 3: each proposal carries its status — implemented, closed and kept, or handed to the owner who must fix it.';
 const TABS={Overview:overview,Items:items,Recipes:recipes,'Proposals and status':changes,'Parts decision':parts,'Last Island':li,Findings:findings};
 const nav=document.getElementById('nav'),main=document.getElementById('main');
 Object.keys(TABS).forEach((t,i)=>{const b=document.createElement('button');b.textContent=t;b.setAttribute('role','tab');b.onclick=()=>show(t);nav.appendChild(b)});
 function show(t){[...nav.children].forEach(b=>b.setAttribute('aria-selected',b.textContent===t));main.innerHTML='';TABS[t]();location.hash=encodeURIComponent(t)}
 function overview(){
  const c=D.counts;
- main.innerHTML='<div class="cards">'+[[c.items,'runtime items'],[c.items_generated_deployable,'generated packed devices'],[c.recipes,'recipes'],[c.recipe_revision,'recipe revision'],[D.proposals.filter(x=>x.status.indexOf('IMPLEMENTED')===0).length,'proposals implemented'],[D.proposals.filter(x=>x.status==='NOT_AUTHORISED').length,'not authorised'],[D.proposals.filter(x=>x.status==='OPEN').length,'still open'],[D.li_crosswalk.length,'Last Island items compared']].map(([n,l])=>'<div class="card"><b>'+n+'</b><span>'+l+'</span></div>').join('')+'</div>'
+ main.innerHTML='<div class="cards">'+[[c.items,'runtime items'],[c.items_generated_deployable,'generated packed devices'],[c.recipes,'recipes'],[c.recipe_revision,'recipe revision'],[D.proposals.filter(x=>x.status.indexOf('IMPLEMENTED')===0).length,'proposals implemented'],[D.proposals.filter(x=>x.status==='CLOSED_KEEP').length,'closed, kept as is'],[D.proposals.filter(x=>x.status==='HANDED_OFF').length,'handed to another owner'],[D.proposals.filter(x=>x.status==='OPEN').length,'still open'],[D.li_crosswalk.length,'Last Island items compared']].map(([n,l])=>'<div class="card"><b>'+n+'</b><span>'+l+'</span></div>').join('')+'</div>'
  +'<h2>Decisions</h2><div class="cards">'+Object.entries(D.disposition_counts).sort().map(([k,v])=>'<div class="card"><b class="'+k+'">'+v+'</b><span>'+k+'</span></div>').join('')+'</div>'
  +'<h2>Level graph (craft depth)</h2>'+tbl(['Depth','Items','Meaning'],Object.keys(c.by_craft_depth).sort().map(k=>tr([chip(k),c.by_craft_depth[k],k==='L0'?'Not crafted: gathered, looted, dropped or granted':'Needs '+k.slice(1)+' recipe step(s) from raw inputs'])))
  +'<p class="mute">Craft depth is not rarity, not station tier and not research tier. Each is a separate column on the Items tab. Rarity is deliberately empty: the game has no rarity stat.</p>'
@@ -426,7 +426,7 @@ function recipes(){
 const rt=x=>x&&x.length?tbl(['Recipe','Inputs','Output','Station','Note'],x.map(r=>tr(['<code>'+esc(r.id)+'</code>',esc(bom(r.ins)),esc(bom(r.out)),esc(r.station),esc(r.note||'')]))):'';
 const st=x=>x&&x.length?tbl(['Structure','Cost','Note'],x.map(r=>tr(['<code>'+esc(r.id)+'</code>',esc(bom(r.cost)),esc(r.note||'')]))):'';
 function changes(){
- main.innerHTML='<p class="mute">Round 2 status of every proposal. IMPLEMENTED = live at recipe revision '+D.counts.recipe_revision+'. NOT AUTHORISED = ruled out, analysis only. OPEN = not implemented; Item V2 is not complete while any is open. Measured numbers are in <code>web/evidence/item-ontology-v2/round2-simulations.json</code>; open findings in <code>ROUND2_FINDINGS.md</code>.</p>'+D.proposals.map(p=>'<div class="box" id="'+p.id+'"><h2 style="margin-top:0">'+p.id+'. '+esc(p.title)+' '+chip(p.status.replace(/_/g,' '),p.status.indexOf('IMPLEMENTED')===0?'KEEP':p.status==='OPEN'?'RENAME':'MERGE_CANDIDATE')+'</h2><p>'+p.items.map(i=>'<code>'+i+'</code>').join(' ')+'</p><p><b>Ruling.</b> '+esc(p.ruling)+'</p>'+(p.shipped?'<h3>Shipped</h3><ul>'+p.shipped.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul>':'')+'<p><b>Problem.</b> '+esc(p.problem)+'</p><p><b>'+(p.status.indexOf('IMPLEMENTED')===0?'Decision':'Round-1 proposal (not implemented)')+'.</b> '+esc(p.decision)+'</p>'+((p.before_recipes||p.before_structs)?'<div class="two"><div><h3>Before</h3>'+rt(p.before_recipes)+st(p.before_structs)+'</div><div><h3>After</h3>'+rt(p.after_recipes)+st(p.after_structs)+'</div></div>':'')+'<h3>Migration</h3><ul>'+p.migration.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul><p><b>Risk.</b> '+esc(p.risk)+'</p><h3>Tests</h3><ul>'+p.tests.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul></div>').join('');
+ main.innerHTML='<p class="mute">Round 3 status of every proposal. IMPLEMENTED = live at recipe revision '+D.counts.recipe_revision+'. IMPLEMENTED PARTIAL = only the authorised part is live. CLOSED KEEP = ruled final, items stay. HANDED OFF = a real defect whose fix belongs to another owner; it stays live until that owner ships it. Measured numbers are in <code>web/evidence/item-ontology-v2/round2-simulations.json</code>; open findings in <code>ROUND2_FINDINGS.md</code>.</p>'+D.proposals.map(p=>'<div class="box" id="'+p.id+'"><h2 style="margin-top:0">'+p.id+'. '+esc(p.title)+' '+chip(p.status.replace(/_/g,' '),(p.status.indexOf('IMPLEMENTED')===0||p.status==='CLOSED_KEEP')?'KEEP':'RENAME')+'</h2><p>'+p.items.map(i=>'<code>'+i+'</code>').join(' ')+'</p><p><b>Ruling.</b> '+esc(p.ruling)+'</p>'+(p.handoff?'<p><b>Work order.</b> <code>'+esc(p.handoff)+'</code></p>':'')+(p.shipped?'<h3>Shipped</h3><ul>'+p.shipped.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul>':'')+'<p><b>Problem.</b> '+esc(p.problem)+'</p><p><b>'+(p.status==='IMPLEMENTED'?'Decision':'Round-1 proposal (superseded by the ruling above)')+'.</b> '+esc(p.decision)+'</p>'+((p.before_recipes||p.before_structs)?'<div class="two"><div><h3>Before</h3>'+rt(p.before_recipes)+st(p.before_structs)+'</div><div><h3>After</h3>'+rt(p.after_recipes)+st(p.after_structs)+'</div></div>':'')+'<h3>Migration</h3><ul>'+p.migration.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul><p><b>Risk.</b> '+esc(p.risk)+'</p><h3>Tests</h3><ul>'+p.tests.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul></div>').join('');
 }
 function parts(){
  const keys=Object.keys(D.parts.options[0].scores);

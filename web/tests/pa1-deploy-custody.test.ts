@@ -66,7 +66,7 @@ describe('PA1 device custody — every Deploy row states what placement really s
       const prep=structurePreparation(r,k);
       expect(prep.pack?.key,k+' must project a pack requirement').toBe('deploy_'+k);
       expect(prep.materials,k+' must not claim readiness from ore alone').toBe(false);
-      if(SOURCE_GATED.has(k)) expect(prep.next,k+' source gating outranks custody').toMatch(/authorized oil site/);
+      if(SOURCE_GATED.has(k)) expect(prep.next,k+' source gating outranks custody').toMatch(/No oil site exists in this world yet/);
       else expect(prep.next,k+' must name the packed device the player still needs').toMatch(/packed/i);
       // The engine's own placement cost for a device is the PACK. If it ever listed raw ore here,
       // the projection and the transaction would disagree and the material list would be charged twice.
@@ -88,7 +88,7 @@ describe('PA1 device custody — every Deploy row states what placement really s
         const p=structurePreparation(r,k);
         expect(p.sourceBlocked,k).toBe(true);
         expect(p.materials,k).toBe(false);
-        expect(p.next,k).toMatch(/authorized oil site/);
+        expect(p.next,k).toMatch(/No oil site exists in this world yet/);
         sourceGated.push(k);
         continue;
       }

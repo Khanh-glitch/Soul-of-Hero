@@ -42,7 +42,7 @@ describe('B05-R oil source authority: production placement is refused', () => {
     const p = r.player, tx = Math.floor(p.x / TILE) + 1, ty = Math.floor(p.y / TILE);
     const res = act(g, 'build', { struct: 'oil_pump', tx, ty });
     expect(res.ok).toBe(false);
-    expect((res as any).reason).toMatch(/authorized oil site/);
+    expect((res as any).reason).toMatch(/No oil site exists in this world yet/);
     expect(Object.values(r.entities).some(e => e.type === 'oil_pump')).toBe(false);
   });
   it('the test authority is not a production source: none is registered by default', () => {

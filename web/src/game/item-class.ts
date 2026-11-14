@@ -15,14 +15,14 @@ import { ITEMS } from './catalog';
 export type ItemClass =
   | 'NATURAL' | 'ORE' | 'SALVAGE' | 'PARTS' | 'METAL' | 'COMPONENT' | 'PROCESSED' | 'ANIMAL'
   | 'FARM' | 'ENERGY' | 'SPECIMEN' | 'AMMO' | 'FUEL' | 'KEY'
-  | 'FOOD' | 'MEDICAL' | 'TOOL' | 'WEAPON' | 'ARMOR' | 'CORE' | 'KIT' | 'DEVICE' | 'BLUEPRINT' | 'CASH' | 'ELDER_STONE';
+  | 'FOOD' | 'MEDICAL' | 'TOOL' | 'WEAPON' | 'ARMOR' | 'CREATOR_CORE' | 'FIELD_CORE' | 'KIT' | 'DEVICE' | 'BLUEPRINT' | 'CASH' | 'ELDER_STONE';
 
 /** Short chip text. Kept as plain English like the existing CAT_LABEL table it refines. */
 export const ITEM_CLASS_LABEL: Record<ItemClass, string> = {
   NATURAL: 'NATURAL', ORE: 'ORE', SALVAGE: 'SALVAGE', PARTS: 'PARTS', METAL: 'METAL', COMPONENT: 'COMPONENT',
   PROCESSED: 'PROCESSED', ANIMAL: 'ANIMAL', FARM: 'FARM', ENERGY: 'CORE ENERGY', SPECIMEN: 'SPECIMEN', AMMO: 'AMMO',
   FUEL: 'FUEL', KEY: 'KEY', FOOD: 'FOOD', MEDICAL: 'MEDICAL', TOOL: 'TOOL', WEAPON: 'WEAPON', ARMOR: 'ARMOR',
-  CORE: 'CORE', KIT: 'KIT', DEVICE: 'DEVICE', BLUEPRINT: 'BLUEPRINT', CASH: 'CASH', ELDER_STONE: 'ELDER STONE',
+  CREATOR_CORE: 'CREATOR CORE', FIELD_CORE: 'FIELD CORE', KIT: 'KIT', DEVICE: 'DEVICE', BLUEPRINT: 'BLUEPRINT', CASH: 'CASH', ELDER_STONE: 'ELDER STONE',
 };
 
 /** One-line meaning shown in the explorer legend (and usable as a tooltip). */
@@ -40,7 +40,9 @@ export const ITEM_CLASS_MEANING: Record<ItemClass, string> = {
   SPECIMEN: 'Study sample: destroyed at a Research Table to learn one recipe.',
   AMMO: 'Ammunition.', FUEL: 'Liquid fuel for generators and vehicles.', KEY: 'Access credential.',
   FOOD: 'Eaten or drunk.', MEDICAL: 'Heals or cures.', TOOL: 'Tool.', WEAPON: 'Weapon.', ARMOR: 'Worn equipment.',
-  CORE: 'Core.', KIT: 'Packed kit.', DEVICE: 'Packed physical device; place it to use it.',
+  CREATOR_CORE: 'Creator Core: three skills (LMB / hold Q / hold E), reloaded from Basic, Refined and Signature energy reserves.',
+  FIELD_CORE: 'Field Core (Lõi dã chiến): one ability on LMB, spent from a small fixed charge count. No energy reserves and no reload.',
+  KIT: 'Packed kit.', DEVICE: 'Packed physical device; place it to use it.',
   BLUEPRINT: 'Recipe paper.', CASH: 'Ragnarok currency.', ELDER_STONE: 'Elder stone, unique per run.',
 };
 
@@ -74,7 +76,9 @@ export function itemClass(key: string): ItemClass | null {
   if (d.cat === 'tool') return 'TOOL';
   if (d.cat === 'weapon') return 'WEAPON';
   if (d.cat === 'armor') return 'ARMOR';
-  if (d.cat === 'core') return 'CORE';
+  // P10 (Round 3): two Core classes. The split reads the SAME fields the engine already branches on
+  // (`creatorCore` = reserve-fed three-skill Core, `core` = charge-fed single-ability Core); it adds no data.
+  if (d.cat === 'core') return d.creatorCore ? 'CREATOR_CORE' : 'FIELD_CORE';
   if (d.cat === 'place') return 'DEVICE';
   if (d.cat === 'kit') return 'KIT';
   if (d.cat === 'bp') return 'BLUEPRINT';
@@ -84,8 +88,26 @@ export function itemClass(key: string): ItemClass | null {
   return null;
 }
 
+/** Vietnamese class alias, shown next to the chip where one is canon. Display data only. */
+export const ITEM_CLASS_VI: Partial<Record<ItemClass, string>> = { FIELD_CORE: 'Lõi dã chiến' };
+
+/** One short line telling the two Core classes apart in the item details. Null for everything else. */
+export function coreClassLine(key: string): string | null {
+  const c = itemClass(key);
+  if (c === 'CREATOR_CORE') return '3 skills · B / Q / E energy reserves';
+  if (c === 'FIELD_CORE') return `1 ability · ${ITEMS[key].charge ?? 0} charges · no reload`;
+  return null;
+}
+
 /** Chip text for the inventory: the refined class when known, else the legacy `cat` label. */
 export function itemClassLabel(key: string, fallback: string): string {
   const c = itemClass(key);
   return c ? ITEM_CLASS_LABEL[c] : fallback;
 }
+
+/** Item Ontology V2 P8 (Round 3). Recipe inputs that NO creature, crate or node supplies on the Veyra layouts today.
+ * Used only to word the craft-readiness line honestly ("no source on Veyra yet" instead of "Get 6 Ash Chitin"); it
+ * hides nothing and grants nothing. It is NOT a second authority: `tests/item-ontology-v2-round3.test.tsx` requires it
+ * to equal the projection's Veyra-unsourced recipe inputs, so the day the Veyra ecology owner adds a source the test
+ * fails until this list is shortened. Work order: docs/design/VEYRA_WORLD_SOURCE_REPAIR_ORDER_2026-11-14.md */
+export const VEYRA_UNSOURCED_INPUTS: readonly string[] = ['chitin', 'crawler_optic'];

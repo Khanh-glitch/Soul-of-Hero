@@ -1,7 +1,7 @@
 {
   "meta": {
     "schema": "soh-runtime-item-formula-atlas-v1",
-    "sourceSHA": "5b4b5fad7427b7c7da93dc1e73987b845539aaac",
+    "sourceSHA": "a0bd4368170817388afc2a72cdaa689fe92f9833",
     "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
     "recipeCensusNote": "Counts the LIVE RECIPES table only. Retired formulas are excluded, and frozen revision definitions are never added back as active routes.",
     "retiredRecipes": [
@@ -9,7 +9,7 @@
       "vehicle_frame_piped"
     ],
     "recipeRevision": 3,
-    "exportedAt": "2026-11-14T10:43:39.197Z",
+    "exportedAt": "2026-11-14T12:48:02.774Z",
     "project": "Soul of Heroes — WEB Veyra runtime",
     "authority": [
       "web/src/game/catalog.ts",
@@ -149,7 +149,7 @@
       "id": "crude_petroleum",
       "name": "Crude Petroleum",
       "cat": "res",
-      "desc": "Raw petroleum drawn from an authorized oil source. Refine at an Oil Refinery (4 crude + glass).",
+      "desc": "Raw petroleum pumped from an oil site. No oil site exists in this world yet, so none can be obtained today. Fuel comes from Salvaged Oil.",
       "w": 0.8,
       "max": 30
     },
@@ -4810,7 +4810,7 @@
       "layer": "obj",
       "station": "oil_pump",
       "light": 0,
-      "desc": "Draws Crude Petroleum from an authorized oil site. Needs fuel to run; output waits in its slots. Placement needs an authorized source.",
+      "desc": "Draws Crude Petroleum from an oil site. No oil site exists in this world yet, so the pump cannot be placed today. Fuel comes from Salvaged Oil at an Oil Refinery.",
       "item": "deploy_oil_pump"
     },
     "refinery": {
