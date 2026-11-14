@@ -11,7 +11,7 @@ import { validIntel } from './expedition-intel';
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
 import { starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
 import { RETIRED_RECIPES, hasLegacyDefinition } from './recipe-migration';
-import { ITEM_SET_VERSION, isRetiredLive, liveItemId, liveRecipeId, RECIPE_SUCCESSOR } from './final-item-set';
+import { ITEM_SET_VERSION, isRetiredLive, RETIRED_ITEM_IDS, liveItemId, liveItemPer, liveRecipeId, RECIPE_SUCCESSOR } from './final-item-set';
 import { newGame, renewableLoot, markDirty } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
 import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
@@ -116,7 +116,10 @@ export function validate(raw: any): GameState | null {
       if (to.dur) st.dur = from.dur && finite(st.dur) ? Math.max(1, Math.min(to.dur, Math.round(st.dur / from.dur * to.dur))) : to.dur; else delete st.dur;
       if (!to.charge) delete st.charge;
       delete st.meta;
-      if (integer(st.qty) && st.qty > to.max) st.qty = to.max;
+      // Value-preserving: the count is multiplied where one successor is worth less (final-item-set `per`). A converted
+      // stack that could not fit its successor's stack size would be a silent loss, so that fails closed instead.
+      if (!integer(st.qty) || st.qty < 1) return null;
+      st.qty *= liveItemPer(st.key); if (st.qty > to.max) return null;
       st.key = toKey; retiredItems++;
     }
   }
@@ -124,7 +127,8 @@ export function validate(raw: any): GameState | null {
     if (!stringArray(list)) continue;
     for (const k of [...list]) { const live = liveRecipeId(k); if (live && live !== k && has(RECIPES, live) && !list.includes(live)) list.push(live); }
   }
-  if (retiredItems > 0) r.migrated = { ...(obj(r.migrated) ? r.migrated : {}), retiredRecipes: integer(r.migrated?.retiredRecipes) ? r.migrated.retiredRecipes : 0, retiredItems: (integer(r.migrated?.retiredItems) ? r.migrated.retiredItems : 0) + retiredItems };
+  if (retiredItems > 0) r.migrated = { ...(obj(r.migrated) ? r.migrated : {}), retiredRecipes: integer(r.migrated?.retiredRecipes) ? r.migrated.retiredRecipes : 0, retiredItems: (integer(r.migrated?.retiredItems) ? r.migrated.retiredItems : 0) + retiredItems, /* the conversion is new information: re-arm the one-shot receipt */ retiredNoticeShown: undefined, retiredItemsUnseen: retiredItems };
+  if (retiredItems > 0) delete r.migrated.retiredNoticeShown;
   r.itemSetVersion = ITEM_SET_VERSION;
   let retiredKnowledge = 0;
   if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) {
@@ -139,7 +143,7 @@ export function validate(raw: any): GameState | null {
   // PA1 R1 ledgers are additive: absent on an older run, validated when present.
   // The counter is durable evidence; `retiredNoticeShown` is the one-shot player notice.
   if (r.migrated !== undefined && (!obj(r.migrated) || !integer(r.migrated.retiredRecipes) || (r.migrated.retiredItems !== undefined && (!integer(r.migrated.retiredItems) || r.migrated.retiredItems < 0)) ||
-    (r.migrated.retiredNoticeShown !== undefined && r.migrated.retiredNoticeShown !== true))) return null;
+    (r.migrated.retiredNoticeShown !== undefined && r.migrated.retiredNoticeShown !== true) || (r.migrated.retiredItemsUnseen !== undefined && (!integer(r.migrated.retiredItemsUnseen) || r.migrated.retiredItemsUnseen < 0)))) return null;
   if (r.tech !== undefined && (!obj(r.tech) || !stringArray(r.tech.families) || new Set(r.tech.families).size !== r.tech.families.length ||
     !r.tech.families.every((f: string) => !!RESEARCH_FAMILIES[f]) || !integer(r.tech.recipeRev) || r.tech.recipeRev < 1 || r.tech.recipeRev > RECIPE_REVISION)) return null;
   if (r.intel !== undefined && !validIntel(r.intel)) return null;
@@ -637,7 +641,7 @@ export function validate(raw: any): GameState | null {
       } else {
         const cycle=r.lootEcology?.cycles[lootSiteIndex(site)] || 0;
         const base=r.lootEcology && lootClass(site) && cycle>0 ? renewableLoot(site) : site.loot || [];
-        const available = new Map<string,number>(); /* Item set v2: authored loot tables may still NAME a retired id (their signatures are digest-pinned); what the crate physically holds is the successor, so the allowance is counted in live ids. */ const liveLootKey=(k:string)=>k.startsWith('blueprint:')?`blueprint:${liveRecipeId(k.slice(10))??k.slice(10)}`:liveItemId(k); for(const [k0,q] of [...base,...lootRoll(r,site,cycle)]) { const k=liveLootKey(k0); available.set(k,(available.get(k)||0)+q); } const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
+        const available = new Map<string,number>(); /* Item set v2: authored loot tables may still NAME a retired id (their signatures are digest-pinned); what the crate physically holds is the successor, so the allowance is counted in live ids. */ const liveLootKey=(k:string)=>k.startsWith('blueprint:')?`blueprint:${liveRecipeId(k.slice(10))??k.slice(10)}`:liveItemId(k); for(const [k0,q] of [...base,...lootRoll(r,site,cycle)]) { const k=liveLootKey(k0); available.set(k,(available.get(k)||0)+q*liveItemPer(k0)); } const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
         for(const stack of slots){if(!stack)continue;const key=stack.key==='blueprint'?`blueprint:${stack.meta}`:stack.key;const left=(available.get(key)||0)-stack.qty;if(left<0)return null;available.set(key,left);}
       }
     }
@@ -762,8 +766,10 @@ export async function load(): Promise<LoadResult> {
   // Say it once per run, not on every boot: the flag is consumed here and persisted by the next save.
   const retiredNotice = !!r?.migrated?.retiredRecipes && !r.migrated.retiredNoticeShown;
   const retired = retiredNotice ? r.migrated!.retiredRecipes! : 0;
-  if (retiredNotice) r!.migrated = { ...r!.migrated, retiredNoticeShown: true };
-  const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : '', retired ? `Recipe revision: ${retired} retired Fuel Canister formula${retired === 1 ? ' was' : 's were'} removed from your known recipes. Anything already queued or written on paper for it was kept; canisters now come from refining real oil.` : ''].filter(Boolean);
+  // Item set v2 receipt: how many stacks were swapped for their successor on this load. Shown once, then cleared.
+  const swapped = r?.migrated?.retiredItemsUnseen || 0;
+  if (retiredNotice || swapped) { r!.migrated = { ...r!.migrated!, retiredNoticeShown: true }; delete r!.migrated.retiredItemsUnseen; }
+  const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : '', retired ? `Recipe revision: ${retired} retired Fuel Canister formula${retired === 1 ? ' was' : 's were'} removed from your known recipes. Anything already queued or written on paper for it was kept; canisters now come from refining real oil.` : '', swapped ? `Item update: ${swapped} stack${swapped === 1 ? '' : 's'} of retired items ${swapped === 1 ? 'was' : 'were'} exchanged for the replacement (${RETIRED_ITEM_IDS.filter(k => liveItemId(k) !== k).map(k => `${ITEMS[k]?.name ?? k} → ${liveItemPer(k) > 1 ? liveItemPer(k) + ' ' : ''}${ITEMS[liveItemId(k)]?.name ?? liveItemId(k)}`).join(', ')}). Nothing was removed.` : ''].filter(Boolean);
   return { gs: m.gs, note: notes.join(' ') || undefined };
 }
 let writeTail: Promise<unknown> = Promise.resolve();

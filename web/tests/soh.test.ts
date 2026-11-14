@@ -78,17 +78,17 @@ describe('typed versioned map content packs', () => {
 describe('catalog validation rejects broken content before play', () => {
   const cloneCatalog = () => structuredClone({ items: ITEMS, sources: SOURCES, recipes: RECIPES, structures: STRUCTS });
   it('rejects zero/negative inputs, missing item references, invalid station/terrain/chance, and placement conflicts', () => {
-    const zero = cloneCatalog(); zero.recipes.salted_meat.ins[0][1] = 0;
+    const zero = cloneCatalog(); zero.recipes.canned_meat.ins[0][1] = 0;
     expect(() => validateGameplayCatalog(zero)).toThrow(/invalid input meat x0/);
-    const negative = cloneCatalog(); negative.recipes.salted_meat.ins[0][1] = -1;
+    const negative = cloneCatalog(); negative.recipes.canned_meat.ins[0][1] = -1;
     expect(() => validateGameplayCatalog(negative)).toThrow(/invalid input meat x-1/);
-    const missingItem = cloneCatalog(); missingItem.recipes.salted_meat.ins[1][0] = 'unknown_material';
+    const missingItem = cloneCatalog(); missingItem.recipes.canned_meat.ins[1][0] = 'unknown_material';
     expect(() => validateGameplayCatalog(missingItem)).toThrow(/invalid input unknown_material/);
-    const missingOutput = cloneCatalog(); missingOutput.recipes.salted_meat.out = 'missing_recipe_output' as any;
-    expect(() => validateGameplayCatalog(missingOutput)).toThrow(/recipe salted_meat: invalid output\/time/);
+    const missingOutput = cloneCatalog(); missingOutput.recipes.canned_meat.out = 'missing_recipe_output' as any;
+    expect(() => validateGameplayCatalog(missingOutput)).toThrow(/recipe canned_meat: invalid output\/time/);
     const missingYield = cloneCatalog(); missingYield.sources.oak.yields[0][0] = 'missing_recipe_reference' as any;
     expect(() => validateGameplayCatalog(missingYield)).toThrow(/invalid yield missing_recipe_reference/);
-    const missingStation = cloneCatalog(); missingStation.recipes.salted_meat.station = 'unknown_station' as any;
+    const missingStation = cloneCatalog(); missingStation.recipes.canned_meat.station = 'unknown_station' as any;
     expect(() => validateGameplayCatalog(missingStation)).toThrow(/missing station unknown_station/);
     const invalidTerrain = cloneCatalog(); invalidTerrain.sources.salt_shale.placement![0].terrain = 'moon' as any;
     expect(() => validateGameplayCatalog(invalidTerrain)).toThrow(/invalid placement rule/);
@@ -98,7 +98,7 @@ describe('catalog validation rejects broken content before play', () => {
     expect(() => validateGameplayCatalog(placementConflict)).toThrow(/placement conflicts with salt_shale on sand/);
   });
   it('accepts a positive recipe-input mutation and preserves honest migration effects', () => {
-    const positive = cloneCatalog(); positive.recipes.salted_meat.ins[0][1] = 2;
+    const positive = cloneCatalog(); positive.recipes.canned_meat.ins[0][1] = 2;
     expect(validateGameplayCatalog(positive)).toBe(true);
     const older = migrate({ version: SAVE_VERSION - 1, profile: { securedCash: 23, history: [] }, run: { inProgress: true } });
     expect(older.gs).toBeNull();
@@ -106,11 +106,14 @@ describe('catalog validation rejects broken content before play', () => {
   });
 });
 
-describe('new salt-shale → salted roast content chain', () => {
+// Final item set (rev 4): Salted Roast is retired (→ Dried Meat) and Raw Salt is ordered retired but still PENDING —
+// its Salt Shale nodes are placed on the map, so the source half of this chain is still live and still tested here.
+// The cooking half is now LI Dried Meat: meat only, no salt.
+describe('salt-shale source + dried meat content chain', () => {
   it('validates definitions, harvests a world-placed source, rejects wrong tool/missing input, then cooks and collects physical output', () => {
     expect(validateGameplayCatalog()).toBe(true);
     expect(ITEMS.raw_salt.name).toBe('Raw Salt'); expect(SOURCES.salt_shale.yields).toEqual([['raw_salt', 1]]);
-    expect(RECIPES.salted_meat).toMatchObject({ out: 'salted_meat', station: 'campfire', base: true });
+    expect(RECIPES.salted_meat).toBeUndefined(); expect(RECIPES.dried_meat).toMatchObject({ out: 'dried_meat', ins: [['meat', 1]], station: 'campfire', base: true });
     const gs = fresh(); const r = gs.run!; const w = getWorld();
     const sourceIndex = w.sourceV3.findIndex(k => k === 'salt_shale');
     expect(sourceIndex).toBeGreaterThanOrEqual(0); // naturally placed in the generated world
@@ -133,21 +136,21 @@ describe('new salt-shale → salted roast content chain', () => {
     addItem(r, 'inv', 'wood', 8); addItem(r, 'inv', 'stone', 4); addItem(r, 'inv', 'meat', 1);
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'campfire', tx: bx, ty: by }, afterHarvest + 2).ok).toBe(true);
     const fire = Object.values(r.entities).find(e => e.type === 'campfire')!;
-    expect(dispatch(gs, { id: id(), type: 'craft', recipe: 'salted_meat', eid: fire.id }, afterHarvest + 3).ok).toBe(true);
-    expect(countItem(r, 'inv', 'raw_salt')).toBe(0); expect(countItem(r, 'inv', 'meat')).toBe(0);
+    expect(dispatch(gs, { id: id(), type: 'craft', recipe: 'dried_meat', eid: fire.id }, afterHarvest + 3).ok).toBe(true);
+    expect(countItem(r, 'inv', 'raw_salt'), 'no live food formula takes salt any more').toBe(1); expect(countItem(r, 'inv', 'meat')).toBe(0);
     expect(dispatch(gs, { id: id(), type: 'move', from: 'inv', fs: C(r, 'inv').slots.findIndex(s => s?.key === 'wood'), to: fire.station!.fuelC }, afterHarvest + 4).ok).toBe(true);
-    stepStations(gs, 11_000, afterHarvest + 11_004);
-    const output = C(r, fire.station!.outC); const slot = output.slots.findIndex(s => s?.key === 'salted_meat');
+    stepStations(gs, RECIPES.dried_meat.secs * 1000 + 1000, afterHarvest + 11_004);
+    const output = C(r, fire.station!.outC); const slot = output.slots.findIndex(s => s?.key === 'dried_meat');
     expect(slot).toBeGreaterThanOrEqual(0); // physically waiting in station output
     expect(dispatch(gs, { id: id(), type: 'move', from: fire.station!.outC, fs: slot, to: 'inv' }, afterHarvest + 11_005).ok).toBe(true);
-    expect(countItem(r, 'inv', 'salted_meat')).toBe(1);
+    expect(countItem(r, 'inv', 'dried_meat')).toBe(1);
     const restored = JSON.parse(JSON.stringify(gs)) as GameState;
     expect(restored.version).toBe(SAVE_VERSION); // additive content needs no destructive save migration
-    expect(totalItems(restored, 'salted_meat')).toBe(1);
+    expect(totalItems(restored, 'dried_meat')).toBe(1);
     expect(restored.run!.sources[ty * WW + tx].stock).toBe(sourceAt(r, tx, ty)?.stock);
-    r.player.hunger = 40; const mealSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'salted_meat');
+    r.player.hunger = 40; const mealSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'dried_meat');
     expect(dispatch(gs, { id: id(), type: 'useItem', slot: mealSlot }, afterHarvest + 11_006).ok).toBe(true);
-    expect(r.player.hunger).toBe(82); expect(countItem(r, 'inv', 'salted_meat')).toBe(0);
+    expect(r.player.hunger).toBe(40 + ITEMS.dried_meat.food!.hunger!); expect(countItem(r, 'inv', 'dried_meat')).toBe(0);
   });
 });
 

@@ -176,7 +176,10 @@ describe('P9 — oil text tells the truth: no oil site exists in this world yet'
 describe('P8 — nothing invented; the recipe line is honest on Veyra', () => {
   it('ANALYTIC: no source, drop or probability moved for the four repair-order items', () => {
     expect(CREATURES.wolf.drops).toEqual([['meat', 1, 1], ['fur', 2, 1], ['wolf_fang', 1, 0.4]]);
-    expect(CREATURES.crawler.drops).toEqual([['spares', 2, 1], ['scrap', 2, 1], ['crawler_optic', 1, 0.35]]);
+    // ARENA 1 (final item set) added ONE row here afterwards: the crawler is the LI source of Electronic Parts. The three
+    // round-3 rows are unchanged, in order.
+    expect(CREATURES.crawler.drops.filter(([k]) => k !== 'electronic_parts')).toEqual([['spares', 2, 1], ['scrap', 2, 1], ['crawler_optic', 1, 0.35]]);
+    expect(CREATURES.crawler.drops.filter(([k]) => k === 'electronic_parts')).toEqual([['electronic_parts', 1, 0.5]]);
     expect(CREATURES.beetle.drops).toEqual([['chitin', 2, 1], ['sulfur', 1, 0.6], ['beetle_horn', 1, 0.3]]);
     const droppers = (item: string) => Object.entries(CREATURES).filter(([, d]) => d.drops.some(([k]) => k === item)).map(([k]) => k).sort();
     expect(droppers('chitin')).toEqual(['beetle']); expect(droppers('beetle_horn')).toEqual(['beetle']);
@@ -202,7 +205,7 @@ describe('migration and restart — rev-1, rev-2 and rev-3 saves with queued Fra
     for (const rev of [1, 2]) {
       expect(frameAt(rev)).toEqual(LEGACY_RECIPES['vehicle_frame@2']); expect(axeAt(rev)).toEqual(LEGACY_RECIPES['industrial_axe@2']);
     }
-    expect(frameAt(3)).toBe(LIVE.vehicle_frame); expect(axeAt(3)).toBe(LIVE.industrial_axe); expect(RECIPE_REVISION).toBe(3);
+    expect(frameAt(3)).toBe(LIVE.vehicle_frame); expect(axeAt(3)).toBe(LIVE.industrial_axe); expect(frameAt(4)).toBe(LIVE.vehicle_frame); expect(RECIPE_REVISION).toBe(4);
   });
   for (const rev of [1, 2, 3] as const) {
     it(`a rev-${rev} save: Frame + Axe + Recycler jobs keep UIDs and stock, survive two restarts mid-job, pay out once under rev-${rev} economics (INTENT on FIXTURE stock)`, () => {
@@ -265,7 +268,7 @@ describe('migration and restart — rev-1, rev-2 and rev-3 saves with queued Fra
       const dr = done.run!; const db = dr.entities[bench.id]; place(dr, db.tx! - 1, db.ty!);
       const pipe0 = countItem(dr, 'inv', 'metal_pipe');
       const fresh = act(done, 'craft', { eid: db.id, recipe: 'vehicle_frame' }, START + 500_000);
-      if (pipe0 > 0) { expect(fresh.ok, why(fresh)).toBe(true); expect(countItem(dr, 'inv', 'metal_pipe')).toBe(pipe0 - 1); expect(db.station!.queue[0].rv).toBe(3); }
+      if (pipe0 > 0) { expect(fresh.ok, why(fresh)).toBe(true); expect(countItem(dr, 'inv', 'metal_pipe')).toBe(pipe0 - 1); expect(db.station!.queue[0].rv).toBe(RECIPE_REVISION); }
       else { expect(fresh.ok).toBe(false); expect(why(fresh)).toMatch(/Metal Pipe/); }
       expect(validate(raw(done))).not.toBeNull();
     });

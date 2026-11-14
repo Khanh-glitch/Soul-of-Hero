@@ -266,7 +266,7 @@ export interface RunState {
   tech?: { families: string[]; recipeRev: number };
   /** PA1 R1 (additive): count of knowledge entries removed by an explicit save migration,
    *  so the load note can tell the player what changed. Never a material grant. */
-  migrated?: { retiredRecipes?: number; retiredNoticeShown?: true; /** Item set v2: stacks converted from a retired id on load (durable evidence). */ retiredItems?: number };
+  migrated?: { retiredRecipes?: number; retiredNoticeShown?: true; /** Item set v2: stacks converted from a retired id on load (durable evidence). */ retiredItems?: number; /** not yet reported to the player; cleared by the load receipt */ retiredItemsUnseen?: number };
   /** Final item set stamp (final-item-set.ts). Absent = written before the cutover; converted once on load. */
   itemSetVersion?: number;
   traces: Trace[];

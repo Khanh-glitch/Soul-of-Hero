@@ -20,7 +20,7 @@ const START=Date.UTC(2026,10,5);
 let n=0;
 const copy=(g:GameState)=>selectSnapshots([serializeSnapshot(g),null]).gs!;
 function start(){setActiveLayout('shipping_fresh');const g=newGame();expect(dispatch(g,{id:'a1-start-'+(++n),type:'startRun',character:'female',seed:101},START).ok).toBe(true);g.run!.creatures=[];markDirty();return g;}
-const cacheOf=(r:RunState)=>Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='iron_sword'))!;
+const cacheOf=(r:RunState)=>Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='machete'))!;
 const recyclerOf=(r:RunState)=>Object.values(r.entities).find(e=>e.kind==='recycler')!;
 function place(r:RunState,tx:number,ty:number){r.player.x=tx*TILE+8;r.player.y=ty*TILE+8;markDirty();}
 function legalTileNear(g:GameState,cx:number,cy:number):[number,number]{
@@ -79,7 +79,9 @@ describe('MEC-01 R2 A1: one found Mechanical Gear, three competing actions', () 
     expect(rc.station!.queue.length).toBe(0);
   });
 
-  it('branch A (drive) and branch B (geared Salvager Pick) both need the real L2 bench, and cost different things', () => {
+  // Final item set (rev 4): branch A is no longer a Motor Drive (retired). Keeping the gear for the Motorbike Kit is the
+  // competing use; the drive formula itself must now refuse without touching the gear.
+  it('branch A (retired drive: refused, gear kept for the kit) and branch B (geared Salvager Pick) at the real L2 bench', () => {
     const {g:base}=savePoint();
     // PA1 §24: pay for the packed Workbench before looking for a site — buildReason demands the pack,
     // not the ore, so the scan below would otherwise never return. (This is why the test failed at 023ec62.)
@@ -89,11 +91,11 @@ describe('MEC-01 R2 A1: one found Mechanical Gear, three competing actions', () 
       expect(dispatch(g,{id:'a1-up-'+(++n),type:'upgradeStation',eid:bench.id},START+21).ok).toBe(true);expect(bench.station!.level).toBe(2);return bench;};
     // ---- A: drive
     const gA=copy(base);const rA=gA.run!;const beforeA=invSnapshot(rA);const benchA=runBench(gA);
-    expect(dispatch(gA,{id:'a1-craftA-'+(++n),type:'craft',eid:benchA.id,recipe:'vehicle_drive_geared'},START+22).ok).toBe(true);
-    stepStations(gA,RECIPES.vehicle_drive_geared.secs*1000+500,START+30000);
-    const outA=benchA.station!.outC!;expect(countItem(rA,outA,'vehicle_drive')).toBe(1);
-    const afterA=invSnapshot(rA);
-    expect(afterA.mechanical_gear).toBe(0);expect(beforeA.spares-afterA.spares).toBe(2);expect(beforeA.fasteners-afterA.fasteners).toBe(2);
+    const midA=invSnapshot(rA);
+    expect(dispatch(gA,{id:'a1-craftA-'+(++n),type:'craft',eid:benchA.id,recipe:'vehicle_drive_geared'},START+22).ok).toBe(false);
+    const outA=benchA.station!.outC!;expect(benchA.station!.queue).toHaveLength(0);
+    const afterA=invSnapshot(rA);expect(afterA).toEqual(midA);void beforeA;
+    expect(afterA.mechanical_gear).toBe(1);expect(RECIPES.motorbike_kit.ins).toContainEqual(['mechanical_gear',2]);
     // ---- B: geared Salvager Pick (needs an Iron Pickaxe first, then the upgrade)
     const gB=copy(base);const rB=gB.run!;const beforeB=invSnapshot(rB);const benchB=runBench(gB);
     const ipr=dispatch(gB,{id:'a1-ip-'+(++n),type:'craft',eid:benchB.id,recipe:'iron_pick'},START+22);expect((ipr as any).reason??'ok').toBe('ok');
@@ -108,8 +110,8 @@ describe('MEC-01 R2 A1: one found Mechanical Gear, three competing actions', () 
     expect(afterB.mechanical_gear).toBe(0);expect(beforeB.spares-afterB.spares).toBe(2);expect(afterB.iron_pick).toBe(0);
     expect(ITEMS.industrial_pick.power!.ore).toBeGreaterThan(ITEMS.iron_pick.power!.ore!);
     // A yields a drive (a vehicle component, no pick); B yields a pick and consumes the old iron pick UID.
-    expect(afterA.vehicle_drive).toBe(0);                 // the drive sits in the bench output, not the pack
-    expect(countItem(rA,outA,'vehicle_drive')).toBe(1);
+    expect(afterA.vehicle_drive).toBe(0);
+    expect(countItem(rA,outA,'vehicle_drive')+countItem(rA,outA,'mechanical_gear')).toBe(0);  // nothing was made in branch A
     expect(beforeB.iron_pick).toBe(0);expect(afterB.industrial_pick).toBe(0);
   });
 

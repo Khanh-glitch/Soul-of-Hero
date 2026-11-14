@@ -184,9 +184,12 @@ export const isFinalItem = (id: string): boolean => Object.prototype.hasOwnPrope
 export type Retirement = {
   /** LIVE = enforced at the single minting choke point; PENDING = ordered, not yet rewired. */
   stage: 'LIVE' | 'PENDING';
-  /** 1:1 successor a LIVE id resolves to. Always 1:1 so a stack, its uid and its count survive;
-   *  a successor must be able to hold the old stack (`max` >= old `max`, checked by test). */
+  /** Successor a LIVE id resolves to. The stack keeps its uid and slot. */
   to?: string;
+  /** Successor units per retired unit (default 1). The roster orders a migration that PRESERVES what the player
+   *  held, so where one successor is worth less than the retired item the stack is multiplied — never rounded down.
+   *  The successor must be able to hold the whole converted stack: `old.max * per <= to.max` (checked by test). */
+  per?: number;
   /** Roster reason (design file), shortened. */
   why: string;
   /** What still has to change before a PENDING id can go LIVE. */
@@ -196,11 +199,11 @@ export const ITEM_RETIREMENT: Readonly<Record<string, Retirement>> = Object.free
   // ---- LIVE in item set v2 ----
   seed: { stage: 'LIVE', to: 'seed_sunroot', why: 'Generic Wild Seeds replaced by three named cultivars; an old generic seed was planted as Sunroot by default, so it becomes a Sunroot seed.' },
   iron_sword: { stage: 'LIVE', to: 'machete', why: 'LI Machete is the iron long blade; SOH keeps Knife and Spear as the non-LI melee shapes.' },
-  vehicle_drive: { stage: 'LIVE', to: 'mechanical_gear', why: 'LI motorcycle is Frame + Gear + Plates; no intermediate Motor Drive. One drive held at least one gear of value.' },
+  vehicle_drive: { stage: 'LIVE', to: 'mechanical_gear', per: 2, /* the rev-4 kit takes 2 Gears where it took 1 Drive */ why: 'LI motorcycle is Frame + Gear + Plates; no intermediate Motor Drive. One drive held at least one gear of value.' },
   root_broth: { stage: 'LIVE', to: 'mushroom_soup', why: 'LI Mushroom Soup is the warm bowl; Root Stew stays as the SOH cold-weather meal.' },
   herb_roast: { stage: 'LIVE', to: 'cooked_meat', why: 'Duplicate of the LI cooked-meat role.' },
-  salted_meat: { stage: 'LIVE', to: 'dried_meat', why: 'LI Dried / Canned Meat carry preservation; no separate salt chain.' },
-  fuel_briquette: { stage: 'LIVE', to: 'charcoal', why: 'No extra solid-fuel tier above LI wood / charcoal / low-quality fuel.' },
+  salted_meat: { stage: 'LIVE', to: 'dried_meat', per: 2, /* 42 hunger -> 2 x 26 */ why: 'LI Dried / Canned Meat carry preservation; no separate salt chain.' },
+  fuel_briquette: { stage: 'LIVE', to: 'charcoal', per: 2, /* 90 s of burn -> 2 x 55 s */ why: 'No extra solid-fuel tier above LI wood / charcoal / low-quality fuel.' },
   // ---- PENDING: ordered by the roster, consumers not rewired in this revision ----
   salvaged_oil: { stage: 'PENDING', why: 'Merge into LI Crude Oil.', blockedBy: 'refine_salvaged_oil route + wreck oil channel + crude_petroleum has no live Veyra oil site' },
   lubricant: { stage: 'PENDING', why: 'No separate vehicle-maintenance material.', blockedBy: 'refinery co-product table in balance.v1.json and motorbike upkeep read it' },
@@ -224,6 +227,12 @@ export const isRetiredLive = (id: string): boolean => ITEM_RETIREMENT[id]?.stage
 export function liveItemId(id: string): string {
   const r = ITEM_RETIREMENT[id];
   return r && r.stage === 'LIVE' && r.to ? r.to : id;
+}
+
+/** Successor units minted per unit of `id` (1 for every id that is not LIVE-retired). */
+export function liveItemPer(id: string): number {
+  const r = ITEM_RETIREMENT[id];
+  return r && r.stage === 'LIVE' && r.to ? r.per ?? 1 : 1;
 }
 
 /** Recipe ids whose OUTPUT was retired, and the live formula a paper naming the old one now teaches.

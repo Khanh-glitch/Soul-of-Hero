@@ -52,16 +52,18 @@ describe('connected economy',()=>{
   addItem(r,e.station!.fuelC,'wood',1);const saved=JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;settle(saved,T+30000);const out=C(saved.run!,saved.run!.entities[e.id].station!.outC);expect(out.slots.filter(s=>s?.key==='glass')).toHaveLength(1);settle(saved,T+30000);expect(out.slots.filter(s=>s?.key==='glass')).toHaveLength(1);
  });
  it('funded crop and herb broth is timed physical home food',()=>{
-  const g=fresh(),r=g.run!,e=station(g,'campfire');give(g,'crop',2);give(g,'herb');addItem(r,e.station!.fuelC,'wood',1);
-  expect(act(g,'craft',{eid:e.id,recipe:'root_broth'}).ok).toBe(true);expect(countItem(r,'inv','crop')).toBe(0);
-  const saved=JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;settle(saved,T+15000);const out=C(saved.run!,saved.run!.entities[e.id].station!.outC);expect(out.slots.some(s=>s?.key==='root_broth')).toBe(true);expect(ITEMS.root_broth.food!.thirst).toBeGreaterThan(0);
+  const g=fresh(),r=g.run!,e=station(g,'campfire');give(g,'mushroom',5);give(g,'tin_can');addItem(r,e.station!.fuelC,'wood',1); // rev 4: Root Broth retired → LI Mushroom Soup
+  expect(act(g,'craft',{eid:e.id,recipe:'mushroom_soup'}).ok).toBe(true);expect(countItem(r,'inv','mushroom')).toBe(0);
+  const saved=JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;settle(saved,T+15000);const out=C(saved.run!,saved.run!.entities[e.id].station!.outC);expect(out.slots.some(s=>s?.key==='mushroom_soup')).toBe(true);expect(ITEMS.mushroom_soup.food!.thirst).toBeGreaterThan(0);
  });
  it('real seed and flask water grow a crop that can fund a timed meal',()=>{
   const g=fresh(),r=g.run!,p=r.player,e=station(g,'campfire');
-  const plot:Entity={id:'fixture-garden',kind:'struct',type:'garden',x:p.x+8,y:p.y+8,tx:Math.floor(p.x/16),ty:Math.floor(p.y/16),hp:60,maxHp:60,garden:{crop:null,growth:0,water:0}};r.entities[plot.id]=plot;markDirty();give(g,'seed');
-  expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);expect(countItem(r,'inv','seed')).toBe(0);expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);
+  const plot:Entity={id:'fixture-garden',kind:'struct',type:'garden',x:p.x+8,y:p.y+8,tx:Math.floor(p.x/16),ty:Math.floor(p.y/16),hp:60,maxHp:60,garden:{crop:null,growth:0,water:0}};r.entities[plot.id]=plot;markDirty();give(g,'seed_sunroot');
+  expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);expect(countItem(r,'inv','seed_sunroot')).toBe(0);expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);
   stepGardensBarrels(g,300000,false);expect(plot.garden!.growth).toBe(1);expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);expect(countItem(r,'inv','crop')).toBe(3);
-  give(g,'herb');addItem(r,e.station!.fuelC,'wood',1);expect(act(g,'craft',{eid:e.id,recipe:'root_broth'}).ok).toBe(true);stepStations(g,12000,T+12000);expect(C(r,e.station!.outC).slots.some(s=>s?.key==='root_broth')).toBe(true);
+  // rev 4: with Root Broth retired the only meal Sunroot funds is Root Stew, a LEARNED formula (not starter knowledge).
+  expect(act(g,'craft',{eid:e.id,recipe:'stew'}).ok,'stew is not known at run start').toBe(false);r.knowledge.recipes.push('stew');markDirty();
+  give(g,'herb');give(g,'meat');addItem(r,e.station!.fuelC,'wood',1);expect(act(g,'craft',{eid:e.id,recipe:'stew'}).ok).toBe(true);stepStations(g,15000,T+15000);expect(C(r,e.station!.outC).slots.some(s=>s?.key==='stew')).toBe(true);
  });
  it('the real equipped gas mask reduces foundry exposure during offline settlement',()=>{
   const unprotected=fresh(), protectedRun=structuredClone(unprotected), w=getWorld('shipping');
@@ -72,8 +74,8 @@ describe('connected economy',()=>{
   expect(unprotected.run!.player.rad).toBeGreaterThan(2);expect(protectedRun.run!.player.rad).toBeLessThan(unprotected.run!.player.rad/2);
  });
  it('salvage output is bounded below ingredient costs and no reciprocal crafting cycle is added',()=>{
-  expect(ITEMS.iron_sword.salvage!.yields).toEqual([['iron_ingot',1]]);
-  expect(RECIPES.iron_sword.ins.find(([k])=>k==='iron_ingot')![1]).toBeGreaterThan(1);
+  expect(ITEMS.machete.salvage!.yields).toEqual([['iron_ingot',1]]);
+  expect(RECIPES.machete.ins.find(([k])=>k==='iron_ingot')![1]).toBeGreaterThan(1);
   expect(ITEMS.industrial_pick.salvage).toBeUndefined();expect(ITEMS.industrial_axe.salvage).toBeUndefined();
  });
  /** A placed structure that is NOT a packed device: the only thing the engine lets you patch with raw

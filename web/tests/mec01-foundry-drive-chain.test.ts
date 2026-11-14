@@ -15,7 +15,7 @@ const START=Date.UTC(2026,10,5);
 let n=0;
 const copy=(g:GameState)=>selectSnapshots([serializeSnapshot(g),null]).gs!;
 function start(){setActiveLayout('shipping_fresh');const g=newGame();expect(dispatch(g,{id:'p3-start-'+(++n),type:'startRun',character:'female',seed:101},START).ok).toBe(true);g.run!.creatures=[];markDirty();return g;}
-const cacheOf=(r:RunState)=>Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='iron_sword'))!;
+const cacheOf=(r:RunState)=>Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='machete'))!;
 function place(r:RunState,tx:number,ty:number){r.player.x=tx*TILE+8;r.player.y=ty*TILE+8;markDirty();}
 /** Legal workbench tile nearest a centre. buildReason has a reach rule, so the player is placed beside each candidate first (FIXTURE position). */
 function legalTileNear(g:GameState,cx:number,cy:number):[number,number]{

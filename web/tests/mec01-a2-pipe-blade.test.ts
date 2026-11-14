@@ -30,7 +30,7 @@ function legalTileNear(g:GameState,cx:number,cy:number):[number,number]{
 const inv=(r:RunState)=>Object.fromEntries(['pipe' ,'metal_pipe','metal_blade','iron_ingot','refined_iron_ingot','mechanical_parts','spares','iron_plate','vehicle_frame','fasteners','wood','stone'].map(k=>[k,k==='pipe'?0:countItem(r,'inv',k)]));
 /** Shared start: fixture grants, real L2 workbench, real upgrade. */
 function benchL2(g:GameState){
-  const r=g.run!;const c=Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='iron_sword'))!;place(r,c.tx!+1,c.ty!);   // FIXTURE position beside the authored Foundry cache (same anchor as the A1 test)
+  const r=g.run!;const c=Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='machete'))!;place(r,c.tx!+1,c.ty!);   // FIXTURE position beside the authored Foundry cache (same anchor as the A1 test)
   addItem(r,'inv','wood',20);addItem(r,'inv','stone',4);addItem(r,'inv','iron_ingot',12);addItem(r,'inv','refined_iron_ingot',6);addItem(r,'inv','mechanical_parts',10);addItem(r,'inv','spares',10);addItem(r,'inv','fasteners',4);
   // PA1 §24 device custody: a Workbench is placed by SPENDING a packed device, so the fixture pays
   // the material list at the bench first. Before this line existed, the scan below could never find a

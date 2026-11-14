@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { ITEMS, RECIPES, SOURCES, CREATURES, STRUCTS, GARDEN_CROPS, GARDEN_CROP_KINDS, RECIPE_REVISION, RETIRED_RECIPES, starterKnowledge, recipeForJob, validateGameplayCatalog } from '../src/game/catalog';
 import { LEGACY_RECIPES, CUT_OVER_REVISIONS } from '../src/game/recipe-migration';
-import { FINAL_ITEMS, FINAL_ITEM_IDS, ITEM_RETIREMENT, ITEM_SET_VERSION, LEGACY_STONE_IDS, RECIPE_SUCCESSOR, RETIRED_ITEM_IDS, isRetiredLive, liveItemId } from '../src/game/final-item-set';
+import { FINAL_ITEMS, FINAL_ITEM_IDS, ITEM_RETIREMENT, ITEM_SET_VERSION, LEGACY_STONE_IDS, RECIPE_SUCCESSOR, RETIRED_ITEM_IDS, isRetiredLive, liveItemId, liveItemPer } from '../src/game/final-item-set';
 import { DRAFT_RECIPES_NOT_LIVE, ITEM_SOURCE, LI_RECIPE_LEDGER, VISUAL_BRIEF, statusOf } from '../src/game/final-item-ledger';
 import { TILE, WW, type Entity, type GameState } from '../src/game/core';
 import { addItem, C, countItem, dispatch, harvestHit, killCreature, markDirty, mkContainer, mkCreature, mkStack, newGame, spawnDrop, startRun, stepGardensBarrels, stepStations } from '../src/game/engine';
@@ -87,10 +87,14 @@ describe('retirement — 7 ids LIVE, 12 PENDING (never counted as done)', () => 
     expect(LIVE_RETIRED.sort()).toEqual(['fuel_briquette', 'herb_roast', 'iron_sword', 'root_broth', 'salted_meat', 'seed', 'vehicle_drive']);
     for (const [id, r] of Object.entries(ITEM_RETIREMENT)) if (r.stage === 'PENDING') expect(r.blockedBy, id).toBeTruthy();
   });
-  it('a LIVE-retired id has a 1:1 successor that is final, not retired, and can hold the old stack', () => {
+  it('a LIVE-retired id has a successor that is final, not retired, holds the converted stack and is never worth less', () => {
     for (const id of LIVE_RETIRED) {
       const to = liveItemId(id); expect(to, id).not.toBe(id); expect(FINAL_ITEMS[to], id + '->' + to).toBeDefined();
-      expect(ITEMS[to].max, id).toBeGreaterThanOrEqual(ITEMS[id].max);
+      expect(ITEMS[to].max, id + ': the successor must hold a full converted stack').toBeGreaterThanOrEqual(ITEMS[id].max * liveItemPer(id));
+      // "preserve" means the player never ends up with less: food and fuel value of the converted stack is >= the original.
+      const f0 = ITEMS[id].food, f1 = ITEMS[to].food, per = liveItemPer(id);
+      if (f0) expect((f1?.hunger ?? 0) * per, id + ' hunger').toBeGreaterThanOrEqual(f0.hunger ?? 0);
+      if (ITEMS[id].fuel) expect((ITEMS[to].fuel ?? 0) * per, id + ' burn seconds').toBeGreaterThanOrEqual(ITEMS[id].fuel!);
     }
   });
   it('nothing live produces, consumes, yields, drops or costs a LIVE-retired id', () => {
@@ -285,24 +289,25 @@ describe('VI.11 — save migration across a serialize / validate boundary', () =
     rr.knowledge.recipes.push('iron_sword', 'vehicle_drive', 'salted_meat');
     return { raw, chestId: chest.id };
   }
-  it('converts every retired stack in place — same uid, same count — once, and a second load changes nothing', () => {
+  it('converts every retired stack in place — same uid, same slot, count × its preservation ratio — once, and a second load changes nothing', () => {
     const { raw, chestId } = oldSave();
-    const uids = (g: any) => Object.values(g.run.custody).flatMap((c: any) => c.slots.filter(Boolean).map((s: any) => s.uid + ':' + s.qty)).sort();
+    const uids = (g: any) => Object.values(g.run.custody).flatMap((c: any) => c.slots.filter(Boolean).map((s: any) => s.uid + ':' + s.qty * liveItemPer(s.key))).sort();
     const before = uids(raw);
     const back = validate(raw)!; expect(back, 'an old save must load').toBeTruthy(); const r = back.run!;
-    expect(uids(back), 'no stack deleted, none minted, no count changed').toEqual(before);
+    expect(uids(back), 'no stack deleted, none minted; counts move only by the declared ratio').toEqual(before);
     const keys = (cid: string) => C(r, cid).slots.filter(Boolean).map(s => `${s!.key}x${s!.qty}`);
-    expect(keys('inv')).toEqual(expect.arrayContaining(['seed_sunrootx37', 'machetex1', 'blueprintx1', 'dried_meatx3']));
-    expect(keys(chestId)).toEqual(['mechanical_gearx2', 'charcoalx30', 'mushroom_soupx4', 'cooked_meatx5', 'scrapx9']);
+    expect(keys('inv')).toEqual(expect.arrayContaining(['seed_sunrootx37', 'machetex1', 'blueprintx1', 'dried_meatx6']));
+    expect(keys(chestId)).toEqual(['mechanical_gearx4', 'charcoalx60', 'mushroom_soupx4', 'cooked_meatx5', 'scrapx9']);
     expect(C(r, 'inv').slots.find(s => s?.key === 'machete')!.dur, 'half-worn sword -> half-worn machete').toBe(175);
     expect(C(r, 'inv').slots.find(s => s?.key === 'blueprint')!.meta).toBe('machete');
     expect(r.itemSetVersion).toBe(ITEM_SET_VERSION); expect(r.migrated!.retiredItems).toBe(8);
+    expect(r.migrated!.retiredItemsUnseen, 'a one-shot receipt is owed to the player').toBe(8); expect(r.migrated!.retiredNoticeShown).toBeUndefined();
     expect(r.knowledge.recipes).toContain('machete'); expect(r.knowledge.recipes).toContain('dried_meat');
     for (const dead of ['iron_sword', 'vehicle_drive', 'salted_meat']) expect(r.knowledge.recipes).not.toContain(dead);
     for (const c of Object.values(r.custody)) for (const s of c.slots) if (s) expect(isRetiredLive(s.key), s.key).toBe(false);
     // PENDING ids are untouched — they are not retired yet and this file does not pretend otherwise.
     expect(countItem(r, chestId, 'scrap')).toBe(9);
-    const again = validate(snapshot(back))!; expect(again).toBeTruthy(); expect(again.run!.migrated!.retiredItems, 'idempotent').toBe(8); expect(uids(again)).toEqual(before);
+    const again = validate(snapshot(back))!; expect(again).toBeTruthy(); expect(again.run!.migrated!.retiredItems, 'idempotent').toBe(8); expect(again.run!.migrated!.retiredItemsUnseen, 'not re-counted').toBe(8); expect(uids(again)).toEqual(before);
   });
   it('a job queued under revision 3 still completes, pays once, and pays the successor item', () => {
     const gs = veyraRun('male', 4021), r = gs.run!, fire = station(gs, 'campfire');
@@ -312,8 +317,8 @@ describe('VI.11 — save migration across a serialize / validate boundary', () =
     const back = validate(raw)!; expect(back, 'a save holding a retired-recipe job must load').toBeTruthy();
     const st = back.run!.entities[fire.id].station!; expect(st.queue).toHaveLength(1);
     stepStations(back, 11_000, T0 + 2_000_000);
-    expect(st.queue).toHaveLength(0); expect(countItem(back.run!, st.outC, 'dried_meat')).toBe(1); expect(countItem(back.run!, st.outC, 'salted_meat')).toBe(0);
-    stepStations(back, 60_000, T0 + 2_100_000); expect(countItem(back.run!, st.outC, 'dried_meat'), 'paid exactly once').toBe(1);
+    expect(st.queue).toHaveLength(0); expect(countItem(back.run!, st.outC, 'dried_meat'), 'one Salted Roast owed = two Dried Meat').toBe(2); expect(countItem(back.run!, st.outC, 'salted_meat')).toBe(0);
+    stepStations(back, 60_000, T0 + 2_100_000); expect(countItem(back.run!, st.outC, 'dried_meat'), 'paid exactly once').toBe(2);
     expect(dispatch(back, { id: 'fis-retired', type: 'craft', eid: fire.id, recipe: 'salted_meat' } as any, T0 + 2_200_000).ok, 'the retired formula cannot be queued again').toBe(false);
   });
   it('fails closed on a save stamped by a newer item set', () => {

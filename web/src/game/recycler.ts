@@ -1,5 +1,8 @@
 import { BAL, type Container, type Stack } from './core';
-import { ITEMS } from './catalog';
+import { ITEMS, RECIPES } from './catalog';
+import { ITEM_RETIREMENT } from './final-item-set';
+/** live successor id → the LIVE-retired id whose recycler rule it inherits. */
+const PREDECESSOR:Record<string,string>=Object.fromEntries(Object.entries(ITEM_RETIREMENT).filter(([,r])=>r.stage==='LIVE'&&r.to).map(([k,r])=>[r.to as string,k]));
 
 type Output = [string, number];
 /** B01: X:recover-v1 jobs keep the v1 table forever; X:recover-v2 jobs use recyclerV2 (new physical outputs). */
@@ -44,11 +47,16 @@ function componentPlan(recipe: keyof typeof COMPONENT_RULES, s: Stack): Recovery
 export type RecoveryPlan = { recipe:RecoveryRecipe; total:number; outputs:Output[]; condition:number|null };
 type RuleTable = Record<string,{base:Output[];mid:Output[];high:Output[]}>;
 function planFromTable(s:Stack, table:RuleTable, recipe:'X:recover-v1'|'X:recover-v2'|'X:recover-v3', seconds:number):RecoveryPlan|null {
-  if(!Object.prototype.hasOwnProperty.call(table,s.key))return null;
+  // Item set v2: a successor inherits the frozen rule of the id it replaced (the tables are never edited), minus any
+  // output its own formula does not contain — so a Machete (ingots + blades) can never pay out the Iron Sword's leather.
+  const own=Object.prototype.hasOwnProperty.call(table,s.key);
+  const from=own?s.key:PREDECESSOR[s.key];
+  if(!from||!Object.prototype.hasOwnProperty.call(table,from))return null;
   const max=ITEMS[s.key]?.dur;
   if(!max||!Number.isFinite(s.dur)||s.dur!<0||s.dur!>max)return null;
-  const condition=s.dur!/max,rule=table[s.key];
-  return {recipe,total:seconds*1000,condition,outputs:[...rule.base,...(condition>=BAL.recyclerV1.midCondition?rule.mid:[]),...(condition>=BAL.recyclerV1.highCondition?rule.high:[])].map(([k,q])=>[k,q])};
+  const condition=s.dur!/max,rule=table[from];
+  const made=own?null:new Set(['scrap',...(RECIPES[s.key]?.ins.map(([k])=>k)??[])]);
+  return {recipe,total:seconds*1000,condition,outputs:[...rule.base,...(condition>=BAL.recyclerV1.midCondition?rule.mid:[]),...(condition>=BAL.recyclerV1.highCondition?rule.high:[])].filter(([k])=>!made||made.has(k)).map(([k,q])=>[k,q])};
 }
 /** Plan a NEW job. v2 supersedes v1 for keys it lists; every other v1 key stays on v1. */
 export function recoveryPlan(s:Stack):RecoveryPlan|null {
@@ -60,7 +68,7 @@ export function recoveryPlan(s:Stack):RecoveryPlan|null {
   if(s.key==='iron_plate')return componentPlan('X:plate-v1',s);
   // MEC-01 P1: v3 supersedes v2 for the four keys it lists (v2 over-returned); new jobs only.
   const v3=BAL.recyclerV3.rules as RuleTable;
-  if(Object.prototype.hasOwnProperty.call(v3,s.key))return planFromTable(s,v3,'X:recover-v3',BAL.recyclerV3.seconds);
+  if(Object.prototype.hasOwnProperty.call(v3,s.key)||(PREDECESSOR[s.key]&&Object.prototype.hasOwnProperty.call(v3,PREDECESSOR[s.key])))return planFromTable(s,v3,'X:recover-v3',BAL.recyclerV3.seconds);
   const v2=BAL.recyclerV2.rules as RuleTable;
   if(Object.prototype.hasOwnProperty.call(v2,s.key))return planFromTable(s,v2,'X:recover-v2',BAL.recyclerV2.seconds);
   return planFromTable(s,BAL.recyclerV1.rules as RuleTable,'X:recover-v1',BAL.recyclerV1.seconds);

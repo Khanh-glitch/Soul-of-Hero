@@ -79,8 +79,11 @@ describe('PA1 R1 contract freeze — live catalog vs recovered paper v1.1 + v1.2
     expect(RECIPES.mechanical_gear.ins).toEqual([['refined_iron_ingot', 1], ['iron_ingot', 1], ['mechanical_parts', 2], ['fasteners', 1]]);
     expect(RECIPES.iron_plate.ins).toEqual([['refined_iron_ingot', 2], ['fasteners', 1]]);
     expect(RECIPES.iron_plate.qty).toBe(2);
-    expect(RECIPES.motorbike_kit.ins).toEqual([['vehicle_frame', 1], ['vehicle_drive', 1], ['iron_plate', 2], ['fasteners', 2]]);
-    for (const id of ['metal_pipe', 'mechanical_gear', 'iron_plate', 'motorbike_kit']) expect(RECIPES[id].rev, id).toBe(2);
+    // Final item set (rev 4) superseded the PA1 kit row: no Motor Drive, LI-shaped frame + gears + plates + refined iron.
+    // The PA1 row is frozen as motorbike_kit@3 and still prices any job queued under it.
+    expect(LEGACY_RECIPES['motorbike_kit@3'].ins).toEqual([['vehicle_frame', 1], ['vehicle_drive', 1], ['iron_plate', 2], ['fasteners', 2]]);
+    expect(RECIPES.motorbike_kit.ins).toEqual([['vehicle_frame', 1], ['mechanical_gear', 2], ['iron_plate', 3], ['refined_iron_ingot', 4]]); expect(RECIPES.motorbike_kit.rev).toBe(4);
+    for (const id of ['metal_pipe', 'mechanical_gear', 'iron_plate']) expect(RECIPES[id].rev, id).toBe(2);
     // The frozen predecessor of each changed row is still resolvable and untouched.
     expect(LEGACY_RECIPES['metal_pipe@1'].qty).toBe(1);
     expect(LEGACY_RECIPES['iron_plate@1'].ins).toEqual([['refined_iron_ingot', 2], ['metal_pipe', 1], ['mechanical_parts', 1]]);
@@ -104,7 +107,7 @@ describe('PA1 R1 contract freeze — live catalog vs recovered paper v1.1 + v1.2
     // `fuel_briquette_legacy` is a retirement MARKER in the paper, not a live extra recipe; the
     // live Packed Fuel Briquette is a different SOH item and is deliberately kept.
     expect(RECIPES.fuel_briquette_legacy).toBeUndefined();
-    expect(RECIPES.fuel_briquette).toBeDefined();
+    expect(RECIPES.fuel_briquette, 'retired by the final item set (rev 4); frozen as fuel_briquette@3').toBeUndefined(); expect(LEGACY_RECIPES['fuel_briquette@3']).toBeDefined();
   });
   it('retires the improvised bench Fuel Canister formula and its dangling study pointer', () => {
     expect(RECIPES.fuel_can).toBeUndefined();
@@ -128,17 +131,17 @@ describe('PA1 R1 contract freeze — live catalog vs recovered paper v1.1 + v1.2
   it('census moves by ID set, not by ambition: minus one recipe, items and ontology unchanged', () => {
     const recipeIds = Object.keys(RECIPES);
     expect(new Set(recipeIds).size).toBe(recipeIds.length);
-    expect(recipeIds).toHaveLength(111);                       // 113 at the base SHA, minus the retired canister (rev 2), minus vehicle_frame_piped (rev 3)
+    expect(recipeIds).toHaveLength(119);                       // 113 at the base SHA, −1 retired canister (rev 2), −1 vehicle_frame_piped (rev 3); final item set (rev 4): −9 retired, +17 LI-shaped
     expect(recipeIds).not.toContain('vehicle_frame_piped');
     expect(recipeIds).not.toContain('fuel_can');
     expect(recipeIds).toContain('refinery_fuel');              // still exactly ONE refinery fuel recipe id
-    expect(Object.keys(RECIPES).filter(k => RECIPES[k].out === 'fuel_can')).toEqual(['refine_salvaged_oil', 'refinery_fuel', 'refinery_fuel_batch', 'refinery_industrial', 'refinery_crude']);
-    expect(Object.keys(ITEMS)).toHaveLength(147);              // no phantom steel item was added
+    expect(Object.keys(RECIPES).filter(k => RECIPES[k].out === 'fuel_can')).toEqual(['refine_salvaged_oil', 'refinery_fuel', 'refinery_fuel_batch', 'refinery_industrial', 'refinery_crude', 'low_quality_fuel']); // + rendered-fat canister (final item set)
+    expect(Object.keys(ITEMS)).toHaveLength(147 + 34);         // no phantom steel item; +34 = exactly the new ids of the 15/11 final roster (final-item-set.test.ts)
     expect(PA1_BASE_GEOMETRY).toHaveLength(15);
     expect(DEPLOYABLE_TYPES).toHaveLength(24);
     expect(ALWAYS_KNOWN_RECIPES.filter(k => k.startsWith('deploy_'))).toHaveLength(24); // nothing is withheld in this build
     expect(starterKnowledge().filter(k => k.startsWith('deploy_'))).toHaveLength(24);
-    expect(RECIPE_REVISION).toBe(3);                           // exactly one bump for the Item Ontology V2 cutover
+    expect(RECIPE_REVISION).toBe(4);                           // 3 = Item Ontology V2 cutover; 4 = final item set
   });
 });
 
@@ -352,14 +355,14 @@ describe('PA1 v1.2 dry Motorbike Kit — first fuel is paid separately, never tw
     // the paid BOM, the dry package and the separate first fill.
     gs.run!.knowledge.recipes.push('motorbike_kit');
     const bench = station(gs, 'workbench', 3);
-    give(gs, 'vehicle_frame', 1); give(gs, 'vehicle_drive', 1); give(gs, 'iron_plate', 2); give(gs, 'fasteners', 2);
+    give(gs, 'vehicle_frame', 1); give(gs, 'mechanical_gear', 2); give(gs, 'iron_plate', 3); give(gs, 'refined_iron_ingot', 4); // rev-4 BOM
     const plate = invStack(gs, 'iron_plate')!;
     expect(invStack(gs, 'fuel_can'), 'nothing flammable is part of this recipe').toBeUndefined();
     craftOnce(gs, bench, 'motorbike_kit');
     expect(outOf(gs, bench, 'motorbike_kit')).toBe(1);
     expect(outOf(gs, bench, 'fuel_can'), 'no canister is packaged with it').toBe(0);
     expect(countItem(gs.run!, outC(gs, bench), 'iron_plate')).toBe(0);
-    expect(plate.qty, 'both plates went into the kit, none were re-priced').toBe(2);
+    expect(plate.qty, 'all three plates went into the kit, none were re-priced').toBe(3);
     expect(invCount(gs, 'iron_ingot')).toBe(0);                          // v1.1's 2 raw ingots are gone
     const kitSlot = C(gs.run!, outC(gs, bench)).slots.findIndex(s => s?.key === 'motorbike_kit');
     expect(act(gs, 'move', { from: outC(gs, bench), fs: kitSlot, to: 'inv' }).ok).toBe(true);

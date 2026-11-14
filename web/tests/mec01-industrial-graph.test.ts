@@ -41,7 +41,9 @@ describe('recycler economic proof (cumulative tiers, actual recovery plans)', ()
     expect(overItems('X:recover-v1','recyclerV1')).toEqual([]);
   });
   it('recyclerV2 defect is proven and pinned: exactly the four keys corrected for new jobs in V3', () => {
-    expect(overItems('X:recover-v2','recyclerV2')).toEqual([...V2_OVER].sort());
+    // Item set v2: `iron_sword` is retired → every such stack is a Machete (4 ingot + 3 blade), which the inherited V2 row
+    // (≤ 1 ingot + 2 blades, leather filtered out) no longer over-returns. The other three keys are unchanged.
+    expect(overItems('X:recover-v2','recyclerV2')).toEqual(V2_OVER.filter(k=>k!=='iron_sword').sort());
   });
   it('recyclerV3 (new jobs): no over-return for any key it lists, and every V3 key is one V2 over-returned', () => {
     expect(overItems('X:recover-v3','recyclerV3')).toEqual([]);

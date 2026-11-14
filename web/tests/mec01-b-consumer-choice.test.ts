@@ -94,17 +94,21 @@ describe('B1: role × grade × access × stock — the three authorized sources 
 // sink, so a metal pipe now feeds ONE paid craft (the piped frame) plus the recycler route X:pipe-v3.
 // The gear still legitimately feeds two. Saying "two" for both would be a false pin.
 describe('B2: consumer choice — the gear feeds two real paid recipes, the pipe feeds one craft sink plus a recovery route', () => {
-  it('same craft order, two worlds: vehicle_drive_geared beats industrial_pick_geared for the same gear stack (drive path)', () => {
+  // Final item set (rev 4): the Motor Drive and both its formulas are retired. The gear's two paid consumers are now
+  // the Salvager Pick (below) and the Motorbike Kit itself (2 gears, bench III — exercised in final-item-set.test.ts).
+  it('the retired drive formula is refused and the gear stack is left intact; the kit is the gear\'s other live consumer', () => {
     const g = start(); const r = g.run!;
     for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 2], ['mechanical_parts', 4], ['fasteners', 4], ['spares', 6], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const bench = bringUpL2(g);
     const gearUid = craftCollect(g, bench, 'mechanical_gear', START + 10_000);
     expect(r.custody.inv.slots.some(s => s?.uid === gearUid && s.key === 'mechanical_gear')).toBe(true);
-    // CONSUMER A: the geared motor drive (what the C1 chain uses for the motorbike)
-    const driveUid = craftCollect(g, bench, 'vehicle_drive_geared', START + 20_000);
-    expect(r.custody.inv.slots.some(s => s?.uid === driveUid && s.key === 'vehicle_drive')).toBe(true);
-    expect(countItem(r, 'inv', 'mechanical_gear')).toBe(0);   // the gear is GONE — consumed, not copied
-    expect(countItem(r, 'inv', 'vehicle_drive')).toBe(1);
+    const before = JSON.stringify(r.custody.inv);
+    expect(RECIPES.vehicle_drive_geared).toBeUndefined(); expect(RECIPES.vehicle_drive).toBeUndefined();
+    expect(act(g, 'craft', { eid: bench.id, recipe: 'vehicle_drive_geared' }, START + 20_000).ok).toBe(false);
+    expect(JSON.stringify(r.custody.inv), 'a refused craft consumes nothing').toBe(before);
+    expect(countItem(r, 'inv', 'mechanical_gear')).toBe(1);
+    expect(Object.keys(RECIPES).filter(k => !k.startsWith('deploy_') && RECIPES[k].ins.some(([i]) => i === 'mechanical_gear')).sort()).toEqual(['industrial_pick_geared', 'motorbike_kit']);
+    expect(RECIPES.motorbike_kit.ins).toContainEqual(['mechanical_gear', 2]);
   });
   it('the SAME gear stack instead feeds the salvager pick (the other live consumer) — one gear, one outcome, no duplication', () => {
     const g = start(); const r = g.run!;

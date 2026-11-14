@@ -2,6 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { dispatch, markDirty, newGame } from '../src/game/engine';
 import { settle } from '../src/game/sim';
 import legacyPair from './fixtures/3b37ae9-legacy-pair.json';
+import { ITEM_SET_VERSION, liveItemId } from '../src/game/final-item-set';
 
 // Loading a pre-policy save pins its compatible fallback without changing the raw fixture.
 // B01-D: loading a pre-B01 save migrates the always-known recipe keys into run.knowledge.recipes (same visible behaviour as the old static path).
@@ -18,7 +19,16 @@ const migratedRecipes = [...legacyKnew, ...starterKnowledge().filter(k => !legac
 expect(migratedRecipes.filter(k => !legacyKnew.includes(k)).every(k => starterKnowledge().includes(k))).toBe(true);
 expect(legacyKnew.filter(k => !migratedRecipes.includes(k)).every(k => RETIRED_RECIPES.includes(k))).toBe(true);
 expect(migratedRecipes.length).toBeGreaterThanOrEqual(ALWAYS_KNOWN_RECIPES.length);
-const laterWithPolicy = { ...legacyPair.later, run: { ...legacyPair.later.run, wreckEconomy: 'direct-v1', knowledge: { ...legacyPair.later.run.knowledge, recipes: migratedRecipes } } };
+// Item set v2 (ARENA 1): the load path also exchanges LIVE-retired stacks for their successor, in place — same uid,
+// same count, same slot. In this fixture that is exactly one stack (6 Wild Seeds in the mill crate → Sunroot Seed).
+const liveCustody = (custody: Record<string, { slots: ({ key: string } | null)[] }>) => {
+  const out = structuredClone(custody); let swapped = 0;
+  for (const c of Object.values(out)) for (const st of c.slots) if (st && liveItemId(st.key) !== st.key) { st.key = liveItemId(st.key); swapped++; }
+  return { out, swapped };
+};
+const laterLive = liveCustody(legacyPair.later.run.custody as never);
+expect(laterLive.swapped).toBe(1);
+const laterWithPolicy = { ...legacyPair.later, run: { ...legacyPair.later.run, custody: laterLive.out, itemSetVersion: ITEM_SET_VERSION, migrated: { retiredRecipes: legacyKnew.filter(k => RETIRED_RECIPES.includes(k)).length, retiredItems: 1, retiredNoticeShown: true }, wreckEconomy: 'direct-v1', knowledge: { ...legacyPair.later.run.knowledge, recipes: migratedRecipes } } };
 
 function fakeStorage() {
   const map = new Map<string, string>(); let failWrites = false, failReads = false;
@@ -69,11 +79,11 @@ it('continues an actual original save with its profile, inventory and queued job
   const p = await import('../src/game/persist');
   const loaded = await p.load(); expect(loaded.gs).not.toBeNull();
   expect(loaded.gs!.profile).toEqual(legacyPair.earlier.profile); expect(loaded.gs!.profile.securedCash).toBe(17); expect(loaded.gs!.profile.history).toHaveLength(1);
-  expect(loaded.gs!.run!.custody).toEqual(legacyPair.earlier.run!.custody);
+  expect(loaded.gs!.run!.custody).toEqual(liveCustody(legacyPair.earlier.run!.custody as never).out);
   const research = Object.values(loaded.gs!.run!.entities).find(e => e.type === 'research')!;
   expect(research.station!.queue[0].reserved).toBeUndefined();
   expect(await p.save(loaded.gs!)).toBe(true);
-  const continued = (await p.load()).gs!; expect(continued.run!.custody).toEqual(legacyPair.earlier.run!.custody);
+  const continued = (await p.load()).gs!; expect(continued.run!.custody).toEqual(liveCustody(legacyPair.earlier.run!.custody as never).out);
   settle(continued, continued.run!.clock.lastSimAt + 60000);
   expect(continued.run!.clock.lastSimAt).toBe(legacyPair.earlier.run!.clock.lastSimAt + 60000);
   expect(await p.save(continued)).toBe(true); expect((await p.load()).gs!.run!.clock.lastSimAt).toBe(continued.run!.clock.lastSimAt);

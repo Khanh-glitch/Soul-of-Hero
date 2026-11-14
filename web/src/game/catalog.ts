@@ -123,7 +123,7 @@ export const ITEMS: Record<string, ItemDef> = {
   needle_tube: I({ name: 'Needle Tube', vi: 'Ống kim', cat: 'res', icon: 'arrow', c1: '#9aa4b0', c2: '#e8f4ff', w: 0.05, max: 30, desc: 'Empty injector body from roadside scrap or a Blood Archivist. Cannot be crafted. Fill at a workbench to make a Syringe.' }),
   needle_thread: I({ name: 'Needle and Thread', vi: 'Kim chỉ', cat: 'res', icon: 'fiber', c1: '#c8c0e0', c2: '#f4f0ff', w: 0.05, max: 40, desc: 'Sewing kit made from cloth and iron. Stitches hide onto plate for iron and refined-iron armour.' }),
   syringe: I({ name: 'Syringe', vi: 'Ống tiêm', cat: 'food', icon: 'flask', c1: '#b03838', c2: '#f4e4e4', w: 0.15, max: 10, desc: 'Fast field injection: restores health and stamina at once.', food: { hp: 35, stamina: 20 } }),
-  dried_meat: I({ name: 'Dried Meat', vi: 'Thịt khô', cat: 'food', icon: 'meat', c1: '#5a2e1e', c2: '#a8683a', w: 0.2, max: 20, desc: 'Slow-dried at a campfire. Half the weight of a roast: trail food, less filling.', food: { hunger: 26, hp: 2 } }),
+  dried_meat: I({ name: 'Dried Meat', vi: 'Thịt khô', cat: 'food', icon: 'meat', c1: '#5a2e1e', c2: '#a8683a', w: 0.2, max: 40, desc: 'Slow-dried at a campfire. Half the weight of a roast: trail food, less filling.', food: { hunger: 26, hp: 2 } }),
   canned_meat: I({ name: 'Canned Meat', vi: 'Thịt hộp', cat: 'food', icon: 'can', c1: '#8a3a2a', c2: '#e8d0a0', w: 0.6, max: 10, desc: 'Three cuts sealed in one tin. A whole meal in a single slot.', food: { hunger: 70, hp: 8 } }),
   grilled_mushroom: I({ name: 'Grilled Mushroom', vi: 'Nấm nướng', cat: 'food', icon: 'mush', c1: '#7a5a3a', c2: '#e0c090', w: 0.1, max: 20, desc: 'Marsh Cap cooked through: the toxin is gone.', food: { hunger: 12 } }),
   mushroom_soup: I({ name: 'Mushroom Soup', vi: 'Súp nấm', cat: 'food', icon: 'bowl', c1: '#594e30', c2: '#d8c8a0', w: 0.5, max: 10, desc: 'Warm tinned soup. Feeds, hydrates and warms.', food: { hunger: 36, thirst: 22, hp: 6, warmth: 12 } }),
@@ -468,7 +468,7 @@ export const RECIPES: Record<string, Recipe> = {
   reinforced_spear_blade: { out: 'reinforced_spear', qty: 1, alias: 'Reinforced Spear (blade)', ins: [['metal_blade', 1], ['iron_ingot', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
   industrial_pick_geared: { out: 'industrial_pick', qty: 1, alias: 'Salvager Pick (geared)', ins: [['iron_pick', 1], ['mechanical_gear', 1], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, base: true, tier: 2 },
   // ===== ARENA 1 — item set v2 formulas. Provenance (LI original -> SOH value, reason, impact) for every row is in
-  // `LI_RECIPE_LEDGER` (li-recipe-ledger.ts); nothing here claims to be a verbatim Last Island number unless that
+  // `LI_RECIPE_LEDGER` (final-item-ledger.ts); nothing here claims to be a verbatim Last Island number unless that
   // ledger says LI_EXACT. =====
   wood_club: { out: 'wood_club', qty: 1, ins: [['wood', 12]], station: null, secs: 3, base: true, tier: 0, rev: 4 },
   cleaver: { out: 'cleaver', qty: 1, ins: [['iron_ingot', 1], ['metal_blade', 1]], station: 'workbench', secs: 14, tier: 1, rev: 4 },

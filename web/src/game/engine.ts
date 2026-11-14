@@ -14,7 +14,7 @@ import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dis
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
 import { ALWAYS_KNOWN_RECIPES, isGardenCrop, gardenClimateClass, type GardenCrop, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
-import { liveItemId, liveRecipeId, ITEM_SET_VERSION } from './final-item-set';
+import { liveItemId, liveItemPer, liveRecipeId, ITEM_SET_VERSION } from './final-item-set';
 import { latestLegacyDefinition, RETIRED_RECIPES, purchasableFamilies } from './recipe-migration';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
@@ -127,7 +127,7 @@ export function newGame(): GameState { return { version: SAVE_VERSION, revision:
 export function mkStack(r: RunState, key: string, qty: number, meta?: string): Stack {
   // Item set v2: the ONE minting choke point. A LIVE-retired id resolves to its successor here, so no loot table,
   // legacy job, fixture or stale caller can put a retired item into any container of any run.
-  key = liveItemId(key); if (key === 'blueprint' && meta) meta = liveRecipeId(meta) ?? meta;
+  qty *= liveItemPer(key); key = liveItemId(key); if (key === 'blueprint' && meta) meta = liveRecipeId(meta) ?? meta;
   const d = ITEMS[key]; const s: Stack = { uid: uid(r, 's'), key, qty };
   if (d?.creatorCore) s.reserves = { basic: 0, refined: 0, signature: 0 };
   if (d?.dur) s.dur = d.dur; if (d?.charge) s.charge = d.initialCharge ?? d.charge; if(key==='keycard' && qty===1 && r.poiAccessVersion==='poi-access-v1') s.charge=BAL.poiAccess.cardUses; if (meta) s.meta = meta; return s;
@@ -1300,7 +1300,7 @@ export function spaceFor(r: RunState, cid: string, key: string) {
 }
 /** Adds qty; returns leftover that did not fit (caller decides what to do — never silently deleted). */
 export function addItem(r: RunState, cid: string, key: string, qty: number, tmpl?: Partial<Stack>): number {
-  key = liveItemId(key);
+  qty *= liveItemPer(key); key = liveItemId(key);
   const d = ITEMS[key]; const c = C(r, cid);
   if (!(key==='keycard'&&r.poiAccessVersion==='poi-access-v1') && d.max > 1 && !d.dur && !d.charge && tmpl?.meta === undefined && tmpl?.dur === undefined && tmpl?.charge === undefined) for (const s of c.slots) if (s && s.key === key && s.meta === undefined && s.dur === undefined && s.charge === undefined && s.qty < d.max && qty > 0) { const m = Math.min(qty, d.max - s.qty); s.qty += m; qty -= m; }
   for (let i = 0; i < c.slots.length && qty > 0; i++) if (!c.slots[i]) { const m = Math.min(qty, key==='keycard'&&r.poiAccessVersion==='poi-access-v1'?1:d.max); const s = mkStack(r, key, m, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[i] = s; qty -= m; }
@@ -1366,7 +1366,7 @@ export function cartLimit(e: Entity | undefined) { return e?.deployed?.upgrade =
 export function cartWeight(r: RunState, cid: string) { return C(r, cid).slots.reduce((a, s) => a + (s ? ITEMS[s.key].w * s.qty : 0), 0); }
 export function hasAll(r: RunState, cid: string, ins: [string, number][]) { return ins.every(([k, q]) => countItem(r, cid, k) >= q); }
 export function spawnDrop(r: RunState, key: string, qty: number, x: number, y: number, now: number, tmpl?: Partial<Stack>, burst = true): Entity {
-  key = liveItemId(key);
+  qty *= liveItemPer(key); key = liveItemId(key);
   const max = key==='keycard'&&r.poiAccessVersion==='poi-access-v1' ? 1 : ITEMS[key].max;
   if (qty > max) { const first = spawnDrop(r, key, max, x, y, now, tmpl, burst); spawnDrop(r, key, qty - max, x, y, now, tmpl, burst); return first; }
   const c = mkContainer(r, 'drop', 1); const s = mkStack(r, key, qty, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[0] = s;

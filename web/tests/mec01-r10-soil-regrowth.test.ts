@@ -169,13 +169,13 @@ describe('R10 starter not starved', () => {
 describe('R10 consumer chain (symbols only; no invented items or recipes)', () => {
   it('bush → berries (food) and seed; herb → food and medkit input; garden crop/herb inputs use the same seed and herb', () => {
     expect(SOURCES.bush.yields[0][0]).toBe('berries');
-    expect(SOURCES.bush.bonus?.some(([k])=>k==='seed')).toBe(true);
+    expect(SOURCES.bush.bonus?.some(([k])=>k==='seed_wildberry')).toBe(true); // item set v2: each plant gives its OWN named seed
     expect(ITEMS.berries.food?.hunger).toBeGreaterThan(0);
     expect(SOURCES.herb.yields[0][0]).toBe('herb');
     expect(ITEMS.herb.food?.hp).toBeGreaterThan(0);
     expect(RECIPES.medkit.ins.some(([k])=>k==='herb')).toBe(true);
-    expect(GARDEN_CROPS.herb.inputs.some(([k])=>k==='herb')).toBe(true);
-    expect(GARDEN_CROPS.crop.inputs.some(([k])=>k==='seed')).toBe(true);
+    expect(GARDEN_CROPS.herb.inputs).toEqual([['seed_bitterleaf',1]]);expect(SOURCES.herb.bonus?.some(([k])=>k==='seed_bitterleaf')).toBe(true);
+    expect(GARDEN_CROPS.crop.inputs).toEqual([['seed_sunroot',1]]);expect(SOURCES.grass.bonus?.some(([k])=>k==='seed_sunroot')).toBe(true);
   });
 });
 

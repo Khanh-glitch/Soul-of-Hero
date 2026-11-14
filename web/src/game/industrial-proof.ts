@@ -2,6 +2,7 @@
 // Numeraire (authored, not invented): 1 iron_ingot = 1 iron_ore (furnace iron_ingot) = 3 scrap (furnace scrap_ingot).
 // Atoms without an authored conversion (coal, wood, leather, stone, crystal, spares) are compared per material and never
 // converted. damaged_drive is salvage-only (non-repeatable): any route through it is excluded from craft cost.
+import { liveItemId } from './final-item-set';
 import { RECIPES, ITEMS } from './catalog';
 import { recoveryPlanFor, COMPONENT_RECIPES, type RecoveryPlan } from './recycler';
 import BAL from './balance.v1.json';
@@ -107,7 +108,11 @@ export function recoveryAtTier(item: string, recipe: string, tier: 'base' | 'mid
  *  UNPROVEN = a route exists but its craft or output cannot be expanded to priced atoms (unknown evidence, never zero);
  *  OVER_RETURN / OK = both priced. Scope: a DIRECT_CRAFT_RECYCLE comparison at atom level, NOT a global anti-arbitrage proof. */
 export type Verdict = 'OK' | 'OVER_RETURN' | 'UNPROVEN' | 'NO_RECOVERY_ROUTE';
-export function proveItem(item: string, recipe: string) {
+export function proveItem(item0: string, recipe: string) {
+  // Item set v2: a LIVE-retired key can only exist in a run as its successor (mint choke point + save migration), and the
+  // successor inherits the frozen table row (recycler.ts). So the physical question "what does recycling this pay" is
+  // asked of the successor: its own formula on the craft side, the inherited-and-filtered rule on the recovery side.
+  const item = liveItemId(item0);
   const craft = expand(item, 1);
   const tiers = COMPONENT_RECIPES.includes(recipe) ? (['single'] as const) : (['base', 'mid', 'high'] as const);
   const rows: any[] = [];

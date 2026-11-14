@@ -43,25 +43,25 @@ describe('integrated logistics and cultivation',()=>{
   const inp:Input={up:false,down:false,left:true,right:false,mx:0,my:0,attack:false,attackPressed:false,roll:false,cancel:false};tick(light,inp,50,T+50);tick(heavy,inp,50,T+50);expect(Math.abs(heavy.run!.player.vx)).toBeLessThan(Math.abs(r.player.vx)*.6);
  });
  it('funds Bitterleaf with seed, specimen and three flask charges, waits wet time, harvests once and enables medicine',()=>{
-  const g=fresh(),r=g.run!,e=plot(g),b=bench(g);give(g,'seed');give(g,'herb');const f=C(r,'inv').slots.find(s=>s?.key==='water_flask')!; f.charge=4; // fixture: flask refilled at fresh water
-  expect(act(g,'garden',{eid:e.id,crop:'herb'},'plant').ok).toBe(true);expect(countItem(r,'inv','herb')).toBe(0);expect(countItem(r,'inv','seed')).toBe(0);expect(act(g,'garden',{eid:e.id,crop:'crop'},'plant')).toMatchObject({ok:false,dup:true});
+  const g=fresh(),r=g.run!,e=plot(g),b=bench(g);give(g,'seed_bitterleaf');const f=C(r,'inv').slots.find(s=>s?.key==='water_flask')!; f.charge=4; // fixture: flask refilled at fresh water
+  expect(act(g,'garden',{eid:e.id,crop:'herb'},'plant').ok).toBe(true);expect(countItem(r,'inv','herb')).toBe(0);expect(countItem(r,'inv','seed_bitterleaf')).toBe(0);expect(act(g,'garden',{eid:e.id,crop:'crop'},'plant')).toMatchObject({ok:false,dup:true});
   stepGardensBarrels(g,600000,false);expect(e.garden!.growth).toBe(0);for(let i=0;i<3;i++)expect(act(g,'garden',{eid:e.id}).ok).toBe(true);expect(f.charge).toBe(1);
-  expect(act(g,'garden',{eid:e.id}).ok).toBe(false);expect(f.charge).toBe(1);stepGardensBarrels(g,600000,false);expect(e.garden!.growth).toBe(1);expect(act(g,'garden',{eid:e.id},'harvest').ok).toBe(true);expect(countItem(r,'inv','herb')).toBe(3);expect(countItem(r,'inv','seed')).toBe(1);expect(act(g,'garden',{eid:e.id},'harvest')).toMatchObject({ok:false,dup:true});
+  expect(act(g,'garden',{eid:e.id}).ok).toBe(false);expect(f.charge).toBe(1);stepGardensBarrels(g,600000,false);expect(e.garden!.growth).toBe(1);expect(act(g,'garden',{eid:e.id},'harvest').ok).toBe(true);expect(countItem(r,'inv','herb')).toBe(3);expect(countItem(r,'inv','seed_bitterleaf')).toBe(1);expect(act(g,'garden',{eid:e.id},'harvest')).toMatchObject({ok:false,dup:true});
   r.knowledge.recipes.push('antirad');give(g,'gland');expect(act(g,'craft',{eid:b.id,recipe:'antirad'}).ok).toBe(true);stepStations(g,10000,T+10000);expect(C(r,b.station!.outC).slots.some(s=>s?.key==='antirad')).toBe(true);expect(countItem(r,'inv','herb')).toBe(1);expect(ITEMS.antirad.food!.rad).toBe(-45);expect(GARDEN_CROPS.herb.seconds).toBe(600);
  });
  it('drops physical harvest when inventory is full without replaying it',()=>{
-  const g=fresh(),r=g.run!,e=plot(g);give(g,'seed');give(g,'herb');expect(act(g,'garden',{eid:e.id,crop:'herb'}).ok).toBe(true);e.garden!.growth=1;
+  const g=fresh(),r=g.run!,e=plot(g);give(g,'seed_bitterleaf');expect(act(g,'garden',{eid:e.id,crop:'herb'}).ok).toBe(true);e.garden!.growth=1;
   const empty=C(r,'inv').slots.filter(s=>!s).length;give(g,'cart_kit',empty);expect(C(r,'inv').slots.every(Boolean)).toBe(true);
   expect(act(g,'garden',{eid:e.id},'full-harvest').ok).toBe(true);expect(act(g,'garden',{eid:e.id},'full-harvest')).toMatchObject({ok:false,dup:true});
-  const drops=Object.values(r.entities).filter(e=>e.kind==='drop').flatMap(e=>C(r,e.c!).slots.filter(Boolean));expect(drops.filter(s=>s?.key==='herb').reduce((n,s)=>n+s!.qty,0)).toBe(3);expect(drops.filter(s=>s?.key==='seed').reduce((n,s)=>n+s!.qty,0)).toBe(1);expect(validate(snapshot(g))).toBeTruthy();
+  const drops=Object.values(r.entities).filter(e=>e.kind==='drop').flatMap(e=>C(r,e.c!).slots.filter(Boolean));expect(drops.filter(s=>s?.key==='herb').reduce((n,s)=>n+s!.qty,0)).toBe(3);expect(drops.filter(s=>s?.key==='seed_bitterleaf').reduce((n,s)=>n+s!.qty,0)).toBe(1);expect(validate(snapshot(g))).toBeTruthy();
  });
  it('settles funded Bitterleaf only once across a saved offline interval and legacy garden intent still plants Sunroot',()=>{
-  const g=fresh(),r=g.run!,e=plot(g);give(g,'seed');give(g,'herb');C(r,'inv').slots.find(s=>s?.key==='water_flask')!.charge=4;expect(act(g,'garden',{eid:e.id,crop:'herb'}).ok).toBe(true);for(let i=0;i<3;i++)expect(act(g,'garden',{eid:e.id}).ok).toBe(true);
+  const g=fresh(),r=g.run!,e=plot(g);give(g,'seed_bitterleaf');give(g,'seed_sunroot');C(r,'inv').slots.find(s=>s?.key==='water_flask')!.charge=4; /* item set v2: one named seed per cultivar, no herb specimen */expect(act(g,'garden',{eid:e.id,crop:'herb'}).ok).toBe(true);for(let i=0;i<3;i++)expect(act(g,'garden',{eid:e.id}).ok).toBe(true);
   const saved=snapshot(g);settle(saved,T+600001);const garden=saved.run!.entities[e.id].garden!;expect(garden.growth).toBeCloseTo(1);const before=JSON.stringify(garden);settle(saved,T+600001);expect(JSON.stringify(garden)).toBe(before);expect(act(saved,'garden',{eid:e.id},'offline-harvest',T+600002).ok).toBe(true);expect(countItem(saved.run!,'inv','herb')).toBe(3);
   expect(act(saved,'garden',{eid:e.id},'legacy-plant',T+600003).ok).toBe(true);expect(garden.crop).toBe('crop');expect(validate(saved)).toBeTruthy();
  });
  it('links garden-funded tonic and freight custody to the finite hazardous foundry crate (position fixture, not route proof)',()=>{
-  const g=fresh(),r=g.run!,garden=plot(g),b=bench(g),{e:cartEntity,uid}=cart(g);give(g,'seed');give(g,'herb');give(g,'gland');give(g,'mechanical_parts',4);give(g,'iron_ingot',2);give(g,'spares',3);
+  const g=fresh(),r=g.run!,garden=plot(g),b=bench(g),{e:cartEntity,uid}=cart(g);give(g,'seed_bitterleaf');give(g,'gland');give(g,'mechanical_parts',4);give(g,'iron_ingot',2);give(g,'spares',3);
   expect(act(g,'upgradeCart',{eid:cartEntity.id,uid,benchId:b.id}).ok).toBe(true);C(r,'inv').slots.find(s=>s?.key==='water_flask')!.charge=4;
   expect(act(g,'garden',{eid:garden.id,crop:'herb'}).ok).toBe(true);for(let i=0;i<3;i++)expect(act(g,'garden',{eid:garden.id}).ok).toBe(true);stepGardensBarrels(g,600000,false);expect(act(g,'garden',{eid:garden.id}).ok).toBe(true);
   r.knowledge.recipes.push('antirad');expect(act(g,'craft',{eid:b.id,recipe:'antirad'}).ok).toBe(true);stepStations(g,10000,T+10000);const tonicSlot=C(r,b.station!.outC).slots.findIndex(s=>s?.key==='antirad');expect(act(g,'move',{from:b.station!.outC,fs:tonicSlot,to:'inv'}).ok).toBe(true);
