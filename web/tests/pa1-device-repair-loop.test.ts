@@ -46,7 +46,10 @@ function setup(){
   }
   r.player.x=(xx-1)*TILE+8;r.player.y=(yy+1)*TILE+8;markDirty();
   const used=new Set<string>();
-  const place=(type:string,pack?:string)=>{
+  // `place` dispatches against the GameState it is handed — callers that mean "after a restart" must pass
+  // the reloaded game, or the placement silently lands in the live run and proves nothing.
+  const place=(type:string,pack?:string,game:GameState=g)=>{
+    const g=game,r=game.run!;
     const d=STRUCTS[type];
     if(pack) addItem(r,'inv',pack,1);
     for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){
@@ -165,28 +168,59 @@ describe('PA1 worn device lifecycle — craft → UID → place → damage → r
     // …and a brand-new intent has nothing left to fix, because a full pack is not a repair target
     expect(act(o.g,'maintainItem',{eid:furnace.id,slot:slot(),uid,mode:'repair'})).toMatchObject({ok:false});
     expect(r.custody.inv.slots[slot()]!.dur).toBe(160);
-    // 10) save/restart on the repaired pack, then redeploy at full condition
+    // 10) save/restart on the repaired pack, then redeploy — THROUGH THE RELOADED GAME.
+    // The whole point of this step is that the restart is the state being acted on, so every dispatch
+    // below goes to `g2`; a place() bound to the pre-restart run would leave the reloaded run untouched.
     const reloaded=copy(o.g);
     const g2=newGame();g2.run=reloaded.run!;g2.profile=reloaded.profile;markDirty();
     const r2=g2.run!;
     const s2=()=>r2.custody.inv.slots.findIndex(s=>s?.key==='deploy_workbench');
     expect(s2()).toBeGreaterThanOrEqual(0);
     expect(r2.custody.inv.slots[s2()]!.dur).toBe(160);expect(r2.custody.inv.slots[s2()]!.uid).toBe(uid);
-    const bench3=o.place('workbench');
+    const benchesIn=(rr:RunState)=>Object.values(rr.entities).filter(e=>e.kind==='struct'&&e.type==='workbench');
+    expect(benchesIn(r2)).toHaveLength(0);
+    const woodR2=countItem(r2,'inv','wood'),stoneR2=countItem(r2,'inv','stone');
+    const bench3=o.place('workbench',undefined,g2);
+    // the reloaded run paid with its own carried pack: full condition, the SAME physical identity
     expect(bench3.hp).toBe(160);
-    // 11) conservation across the whole life: exactly the two build lists plus one patch, and the
-    // device is standing. Nothing was minted, nothing was silently refunded.
+    expect(bench3.deployed!.uid).toBe(uid);
+    expect(s2()).toBe(-1);expect(countItem(r2,'inv','deploy_workbench')).toBe(0);
+    // exactly one pack, one device, and no second material charge at placement (craft already paid for it)
+    expect(benchesIn(r2)).toHaveLength(1);
+    expect([countItem(r2,'inv','wood'),countItem(r2,'inv','stone')]).toEqual([woodR2,stoneR2]);
+    // the pre-restart run never saw this placement — its still-unplaced pack is where it was left
+    expect(countItem(r,'inv','deploy_workbench')).toBe(1);
+    expect(benchesIn(r)).toHaveLength(0);
+    // 11) a replayed placement must neither mint a second device nor hand the spent pack back
+    const replay=act(g2,'build',{struct:'workbench',tx:bench3.tx,ty:bench3.ty},'redeploy-once');
+    expect(replay.ok===true).toBe(false);
+    expect(benchesIn(r2)).toHaveLength(1);
+    expect(countItem(r2,'inv','deploy_workbench')).toBe(0);
+    expect([countItem(r2,'inv','wood'),countItem(r2,'inv','stone')]).toEqual([woodR2,stoneR2]);
+    // 12) and the redeployed device survives a SECOND reload with identity and condition intact
+    const reloaded2=copy(g2);
+    const g3=newGame();g3.run=reloaded2.run!;g3.profile=reloaded2.profile;
+    const r3=g3.run!;
+    expect(benchesIn(r3)).toHaveLength(1);
+    const kept=r3.entities[bench3.id];
+    expect(kept,'the bench placed on the reloaded run did not persist').toBeTruthy();
+    expect(kept!.deployed!.uid).toBe(uid);expect(kept!.hp).toBe(160);
+    expect(countItem(r3,'inv','deploy_workbench')).toBe(0);
+    // the snapshot taken while the pack was worn still describes it as worn: the paid repair did not
+    // rewrite history, which is what makes the conservation ledger below auditable
+    const wornSlot=snapOfWorn.run!.custody.inv.slots.findIndex(x=>x?.key==='deploy_workbench');
+    expect(snapOfWorn.run!.custody.inv.slots[wornSlot]!.dur).toBe(40);
+    // 13) conservation across the whole life: exactly the two build lists plus one patch, and the
+    // device is standing in the reloaded run. Nothing was minted, nothing was silently refunded.
     const spentW=wood0-countItem(r2,'inv','wood'),spentS=stone0-countItem(r2,'inv','stone');
     const builds:Record<string,number>={};
     for(const t of ['workbench','furnace'])for(const [k,q] of STRUCTS[t].cost)builds[k]=(builds[k]??0)+q;
-    expect(spentW).toBe(builds.wood+4);               // both packs once each, plus the 4-wood patch
+    expect(spentW).toBe(builds.wood+4);               // both packs crafted once each, plus the 4-wood patch
     expect(spentS).toBe(builds.stone+1);              // …plus the single 1-stone patch
-    // the reloaded copy still holds the pack (the placement below happened in the live run), and the
-    // live run now owns exactly one Workbench — one identity, one entity, no second bench
-    expect(countItem(r2,'inv','deploy_workbench')).toBe(1);
-    expect(Object.values(r.entities).filter(e=>e.kind==='struct'&&e.type==='workbench').length).toBe(1);
-    expect(snapOfWorn).toBeTruthy();
+    expect(Object.values(r.entities).filter(e=>e.kind==='struct'&&e.type==='workbench')).toHaveLength(0);
+    expect(benchesIn(r2)).toHaveLength(1);
   });
+
   it('refuses the wrong station, the missing materials and the undamaged pack — and spends nothing',()=>{
     const o=setup();const r=o.r;
     addItem(r,'inv','wood',40);addItem(r,'inv','stone',24);
