@@ -1,3 +1,5 @@
+> **SUPERSEDED · 15/11/2026.** Bảng 14 / 125 bên dưới chỉ là snapshot kiểm kê **trước khi Creator chốt 3 nhóm item**. KHÔNG dùng các verdict giữ súng/đạn hoặc 14 exclusions làm quyết định final. Bản chốt duy nhất: [FINAL_THREE_GROUP_ITEM_SET_20261115.md](FINAL_THREE_GROUP_ITEM_SET_20261115.md) và [JSON](FINAL_THREE_GROUP_ITEM_SET_20261115.json) — 78 A + 42 B + 37 C.
+
 # Li → SOH Bible delta: kết quả phân loại có đếm (2026-11-14)
 
 ## Quy tắc đếm và giới hạn
