@@ -13,6 +13,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 
 const here = new URL('.', import.meta.url);
+import { VIEW_W, VIEW_H } from '../src/game/core';
 const read = (rel: string) => readFileSync(new URL(rel, here), 'utf8');
 const gate = read('../e2e/pa1-research-visible.mjs');
 const console_ = read('../src/ui/StationConsole.tsx');
@@ -54,6 +55,23 @@ describe('PA1 research-visible browser gate — legibility, not DOM presence', (
     expect(gate).toContain("is therefore clipped");
     expect(gate).toContain("getByTestId('family-row-CORE_SPECIFIC')");
     expect(gate).toContain('scrollIntoViewIfNeeded');
+    // "inside the pane" is not enough: an ancestor that clips leaves geometry intact and paints
+    // something else, so the hit must land on the element itself and the box must sit in the panel too.
+    expect(gate).toContain("if(el===at||el.contains(at)) return 'hits-element'");
+    expect(gate).toContain('const inPanel=');
+    expect(gate).toContain('clipped by it');
+    // the stage is a fixed 640x360 design that the whole UI is scaled inside, so a console taller than
+    // the stage is a console whose last rows are unseeable at every window size. This is the arithmetic
+    // that broke `782cc25`: 34 + 330 = 364 > 360.
+    const geo = /left: (\d+), top: (\d+), width: (\d+), maxHeight: (\d+)/.exec(console_);
+    expect(geo, 'the console lost its explicit stage geometry').toBeTruthy();
+    const [, l, t2, w, mh] = geo!.map(Number);
+    expect(l + w).toBeLessThanOrEqual(VIEW_W);
+    expect(t2 + mh).toBeLessThanOrEqual(VIEW_H);
+    const paneStyle = /data-testid="research-family-pane"[^>]*style=\{\{([^}]*)\}\}/.exec(console_)![1];
+    const paneH = Number((paneStyle.match(/maxHeight: *(\d+)/) ?? [0, '0'])[1]);
+    expect(t2 + 78 + paneH).toBeLessThanOrEqual(VIEW_H);   // header + truth strip + tabs above the pane
+
     expect(gate.match(/frames1280\.push|frames640\.push/g)?.length).toBe(2);
 
     re(gate, 'count>=11');
@@ -91,6 +109,11 @@ describe('PA1 research-visible browser gate — legibility, not DOM presence', (
     expect(proof).toContain('inPane !== true');
     expect(proof).toContain('the Technology tab was never clicked');
     expect(proof).toContain('CORE_SPECIFIC');
+    // The digest is what a reviewer without artifact access can read; if it disappears, the run's
+    // evidence is only as good as GitHub's UI.
+    expect(proof).toContain('::');
+    expect(proof).toContain('title=PA1 research visibility proof');
+    expect(proof).toContain(".replace(/%/g, '%25')");
   });
   it('rejects the two shapes this branch already shipped by mistake', () => {
     // (a) a gate satisfied by text anywhere in the panel; (b) a ledger buried at the end of the make column
@@ -100,7 +123,7 @@ describe('PA1 research-visible browser gate — legibility, not DOM presence', (
     // the pane must not be the 142 px strip the two-column body used, or "visible" is a lie again
     const pane = console_.match(/data-testid="research-family-pane"[^>]*style=\{\{([^}]*)\}\}/);
     expect(pane, 'the family pane lost its own sizing').toBeTruthy();
-    expect(pane![1]).toMatch(/maxHeight: *288/);
+    expect(pane![1]).toMatch(/maxHeight: *246/);
     expect(pane![1]).toMatch(/overflowY: *'auto'/);
     expect(pane![1]).not.toMatch(/maxHeight: *142/);
     // the ledger is rendered exactly once by the console (its own tab), and the justification prose that

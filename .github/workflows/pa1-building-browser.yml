@@ -135,7 +135,7 @@ jobs:
           # A branch-only run is not attached to a PR by commit, so resolve it by HEAD REF NAME. "The newest
           # open PR" is not a fallback: it once put this session's browser manifest on another wave's thread.
           # If no open PR carries this branch, the job summary is the honest place for the evidence.
-          [ -n "$PR" ] || PR=$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100" --jq --arg b "$BR" '[.[] | select(.head.ref==$b) | .number] | .[0] // empty')
+          [ -n "$PR" ] || PR=$(gh api "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100" --jq "[.[] | select(.head.ref==\"$BR\") | .number] | .[0] // empty")
           {
             echo "## PA1 browser evidence failed on \`$SHA\`"
             echo

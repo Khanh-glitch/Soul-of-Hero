@@ -101,7 +101,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
       {kind !== 'campfire' && <span className="chip" style={{ color: 'var(--muted)' }}>LV {level}</span>}
     </span>}
     className={`station-console station-console--${kind}`}
-    style={{ left: 330, top: 34, width: 304, maxHeight: research && tab === 'families' ? 330 : 296, display: 'flex', flexDirection: 'column' }}
+    style={{ left: 330, top: 34, width: 304, maxHeight: 296, display: 'flex', flexDirection: 'column' }}
     onClose={() => api.open(null)}>
 
     {/* ---- machine truth strip ------------------------------------------ */}
@@ -151,7 +151,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
       // The family ledger gets the whole body, not the 142 px strip under a scroll area: eleven recovered
       // families with their state must be readable at the shipped minimum viewport, which is why this is a
       // tab of its own rather than another block appended below Blueprints.
-      ? <div className="console-col scroll" data-testid="research-family-pane" style={{ minHeight: 0, maxHeight: 288, overflowY: 'auto' }}>
+      ? <div className="console-col scroll" data-testid="research-family-pane" style={{ minHeight: 0, maxHeight: 246, overflowY: 'auto' }}>
         <ResearchFamilies api={api} eid={eid} />
       </div>
       : <div style={{ display: 'flex', gap: 4, minHeight: 0, flex: 1 }}>

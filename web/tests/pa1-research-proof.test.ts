@@ -23,7 +23,7 @@ afterAll(() => { rmSync(dir, { recursive: true, force: true }); });
 
 const frame = (label: string, over: Record<string, unknown> = {}) => ({
   label, box: { x: 682, y: 230, w: 564, h: 30 }, pane: { x: 660, y: 100, w: 576, h: 288 },
-  visible: true, fits: true, inPane: true, hitTest: 'inside-pane', ...over,
+  visible: true, fits: true, inPane: true, inPanel: true, hitTest: 'hits-element', ...over,
 });
 const good = () => ({
   sha: 'abcdef0123456789abcdef0123456789abcdef01', status: 'PASS_BROWSER_UI',

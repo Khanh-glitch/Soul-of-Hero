@@ -178,24 +178,33 @@ try{
   await famTab.click();
   await page.waitForTimeout(320);
   rec.research.tabClicked=true;
+  const consoleBox=()=>page.locator('.station-console').first().boundingBox();
   async function inFrame(locator,label,vp){
     const box=await locator.boundingBox();
     assert.ok(box,label+' has no bounding box: it is not painted on screen');
     const visible=await locator.isVisible();
     const fits=box.x>=-0.5 && box.y>=-0.5 && box.width>0 && box.height>0
       && box.x+box.width<=vp.width+0.5 && box.y+box.height<=vp.height+0.5;
-    const hitTest=await page.evaluate(([cx,cy,sel])=>{
-      const el=document.elementFromPoint(cx,cy); const pane=document.querySelector(sel);
-      if(!el) return 'nothing-at-point';
-      if(!pane) return 'no-pane';
-      return pane.contains(el) ? 'inside-pane' : 'covered-by:'+el.tagName+'.'+String(el.className&&el.className.toString?el.className.toString():'');
-    },[box.x+box.width/2,box.y+Math.min(box.height/2,10),'[data-testid="research-family-pane"]']);
+    // The point must resolve to the measured element itself (or its child), not merely to "the pane":
+    // an ancestor's clip leaves the geometry intact while painting something else over it, and that is
+    // exactly the shape this claim kept shipping in. ElementHandle → no selector guessing, no false pass.
+    const handle=await locator.elementHandle();
+    const cx=box.x+box.width/2, cy=box.y+Math.min(box.height/2,10);
+    const hitTest=await page.evaluate(([el,x,y])=>{
+      const at=document.elementFromPoint(x,y);
+      if(!at) return 'nothing-at-point';
+      if(el===at||el.contains(at)) return 'hits-element';
+      return 'covered-by:'+at.tagName+'.'+String(at.className&&at.className.toString?at.className.toString():'').slice(0,40);
+    },[handle,cx,cy]);
+    const cp=await consoleBox();
+    const inPanel=!!cp && box.y>=cp.y-0.5 && box.y+box.height<=cp.y+cp.height+0.5 && box.x>=cp.x-0.5 && box.x+box.width<=cp.x+cp.width+0.5;
     const pr=await pane().boundingBox();
     const inPane=!!pr && box.y>=pr.y-0.5 && box.y+box.height<=pr.y+pr.height+0.5 && box.x>=pr.x-0.5 && box.x+box.width<=pr.x+pr.width+0.5;
-    const recd={label,box:{x:Math.round(box.x),y:Math.round(box.y),w:Math.round(box.width),h:Math.round(box.height)},pane:pr?{x:Math.round(pr.x),y:Math.round(pr.y),w:Math.round(pr.width),h:Math.round(pr.height)}:null,visible,fits,inPane,hitTest};
+    const recd={label,box:{x:Math.round(box.x),y:Math.round(box.y),w:Math.round(box.width),h:Math.round(box.height)},pane:pr?{x:Math.round(pr.x),y:Math.round(pr.y),w:Math.round(pr.width),h:Math.round(pr.height)}:null,panel:cp?{x:Math.round(cp.x),y:Math.round(cp.y),w:Math.round(cp.width),h:Math.round(cp.height)}:null,visible,fits,inPane,inPanel,hitTest};
     assert.ok(visible,recd.label+' is not visible (hidden or zero-opacity)');
     assert.ok(fits,recd.label+' is outside the '+vp.width+'x'+vp.height+' viewport: '+JSON.stringify(recd.box));
-    assert.equal(hitTest,'inside-pane',recd.label+' is not the thing the player would hit at that point');
+    assert.equal(hitTest,'hits-element',recd.label+' is not what the player would actually hit at that point: '+hitTest);
+    assert.ok(inPanel,recd.label+' is outside the console panel box and is therefore clipped by it: '+JSON.stringify({el:recd.box,panel:recd.panel}));
     // A box inside the viewport but below the pane's own client area is clipped by that pane — which is
     // precisely how this claim died once. "Fits on screen" must mean "fits inside the scroll area too".
     assert.ok(inPane,recd.label+' sits outside the family pane box and is therefore clipped: '+JSON.stringify({el:recd.box,pane:recd.pane}));

@@ -47,7 +47,7 @@ for (const k of ['frames1280', 'frames640']) {
   const f = r[k] || [];
   if (f.length < 3) bad.push(`${k} is missing per-element frames for the heading, the ENERGY row and the last row`);
   for (const e of f) {
-    if (!e.visible || !e.fits || e.inPane !== true || e.hitTest !== 'inside-pane') {
+    if (!e.visible || !e.fits || e.inPane !== true || e.inPanel !== true || e.hitTest !== 'hits-element') {
       bad.push(`${k}:${e.label} not readable ${JSON.stringify(e)}`);
     }
   }
@@ -61,7 +61,7 @@ if ((r.leakCheck || []).length !== 3) bad.push('the leak check did not cover all
 if (r.purchaseControls && (r.purchaseControls.pane || r.purchaseControls.energyRow)) bad.push('an unapproved family presented a purchase control');
 if (!/TECHNOLOGY FAMILIES/i.test(r.text || '')) bad.push('the captured pane text has no heading');
 
-const ok = (e) => !!e && e.visible === true && e.fits === true && e.inPane === true && e.hitTest === 'inside-pane';
+const ok = (e) => !!e && e.visible === true && e.fits === true && e.inPane === true && e.inPanel === true && e.hitTest === 'hits-element';
 const frame = (e) => `| ${e.label} | ${e.box.x},${e.box.y} | ${e.box.w}x${e.box.h} | ` +
   `${e.pane ? e.pane.w + 'x' + e.pane.h : '-'} | ${ok(e) ? 'yes' : 'NO'} |`;
 const all = (r.frames1280 || []).concat(r.frames640 || []);
@@ -86,4 +86,27 @@ console.log('PA1_RESEARCH_PROOF ' + JSON.stringify({
   status: bad.length ? 'INCOMPLETE' : 'COMPLETE', sha: m.sha, gate: m.status,
   problems: bad.length, frames: all.length, readable: all.filter(e => ok(e)).length,
 }));
+
+
+// Where a reviewer can read it without a browser or artifact access. Job logs and artifact zips redirect
+// to Actions blob storage, which is unreachable from an offline sandbox, and step summaries are not in the
+// REST API — but annotations ARE (`GET /repos/{o}/{r}/check-runs/{id}/annotations`). So the verdict, the
+// failure string and the per-element geometry travel as one annotation, kept under the length a workflow
+// command survives. `%` and CR are escaped because that is how the runner reads them.
+const short = (m.failure || '').slice(0, 420);
+const digest = JSON.stringify({
+  status: bad.length ? 'INCOMPLETE' : 'COMPLETE', gate: m.status, failure: short,
+  open: r.open === true, tabClicked: r.tabClicked === true, familiesSeen: seen.length,
+  problems: bad.slice(0, 4).map(x => x.slice(0, 200)),
+  frames: all.map(e => ({
+    l: e.label, x: e.box.x, y: e.box.y, w: e.box.w, h: e.box.h,
+    visible: e.visible === true, fits: e.fits === true, inPane: e.inPane === true, hit: e.hitTest,
+  })),
+  purchaseControls: r.purchaseControls || null, leakTabs: (r.leakCheck || []).map(x => x.label),
+  energyRow: String(r.energyRow || '').slice(0, 200),
+}).slice(0, 4000).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, ' ');   // slice first, so an escape sequence is never cut in half
+// capped, because the annotation channel is the only one an offline reviewer can read: the verdict and
+// the first problems come first, so a cut tail costs frames, never the diagnosis.
+
+console.log(`::${bad.length ? 'warning' : 'notice'} file=web/evidence/pa1-research-visible/manifest.json,title=PA1 research visibility proof @ ${m.sha}::${digest}`);
 if (bad.length && !gateFailed) process.exit(1);
