@@ -102,7 +102,7 @@ export const FIELDCRAFT: FieldLesson[] = [
       count: rc => ['intel.loot', 'airdrop.open', 'cash.view'].includes(rc.kind) ? 1 : 0 },
     { id: 'defend', title: 'Defend yourself', target: 1, icon: 'leather', how: 'LMB to strike, Space to dodge-roll away from tells.', why: 'Creatures guard the best ground. Learning their tells keeps you alive.',
       count: rc => rc.kind === 'creature.kill' ? 1 : 0 },
-    { id: 'secure', title: 'Secure coins to your profile', target: 1, icon: 'rcash', how: 'Deposit cash in an Escrow chest (Rương ký gửi).', why: 'Secured coins survive death and the end of the run.',
+    { id: 'secure', title: 'Secure coins to your profile', target: 1, icon: 'rcash', how: 'Deposit cash in an Escrow Chest.', why: 'Secured coins survive death and the end of the run.',
       count: rc => rc.kind === 'escrow.deposit' ? 1 : 0 },
   ] },
 ];

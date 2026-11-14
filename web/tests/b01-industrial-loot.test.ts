@@ -90,7 +90,9 @@ describe('B01 B: intermediates have real producers and consumers',()=>{
     // metal pipe. A bare ">=2" would have hidden that retirement; pin the set instead, so adding or
     // removing a pipe sink shows up here as a named change rather than as a passing number.
     const pipeConsumers=Object.entries(RECIPES).filter(([,rc])=>rc.ins.some(([i])=>i==='metal_pipe')).map(([k])=>k).sort();
-    expect(pipeConsumers).toEqual(['vehicle_frame_piped']);
+    // Item Ontology V2 P3 (rev 3): the piped BOM is now THE frame recipe; the alias id is retired.
+    expect(pipeConsumers).toEqual(['vehicle_frame']);
+    expect(RECIPES.vehicle_frame_piped).toBeUndefined();
     expect(RECIPES.iron_plate.ins.some(([i])=>i==='metal_pipe')).toBe(false);
     // Recovery is a recycler route, not a craft consumer: one pipe -> one refined iron, no MP minted.
     const pipePlan=recoveryPlan({uid:'b01-pin',key:'metal_pipe',qty:1})!;
@@ -100,8 +102,9 @@ describe('B01 B: intermediates have real producers and consumers',()=>{
     expect(Object.values(RECIPES).filter(rc=>rc.ins.some(([i])=>i==='metal_blade')).length).toBeGreaterThanOrEqual(2);
   });
   it('alias recipes share an output with a base recipe but keep their own tier and station level',()=>{
-    expect(RECIPES.vehicle_frame_piped.out).toBe(RECIPES.vehicle_frame.out);expect(RECIPES.vehicle_frame_piped.alias).toBeTruthy();
-    expect(RECIPES.vehicle_frame_piped.stationLevel).toBe(2);expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
+    // Item Ontology V2 P3: the frame alias was retired at rev 3 (frozen as vehicle_frame_piped@2); the blade refit is the alias pinned here.
+    expect(RECIPES.iron_sword_blade.out).toBe(RECIPES.iron_sword.out);expect(RECIPES.iron_sword_blade.alias).toBeTruthy();
+    expect(RECIPES.iron_sword_blade.stationLevel).toBe(2);expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
     expect(RECIPES.refined_iron_ingot.station).toBe('furnace');
   });
   it('a real station craft pays time and yields a physical metal blade into the output container',()=>{

@@ -55,7 +55,8 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     const snap=componentRuleSnapshot();
     // PA1 R1 adds X:pipe-v3: the recovered paper return (1 refined ingot) is what keeps the
     // two-section-per-craft yield conservation-safe. v1/v2 stay frozen for stored jobs.
-    expect(Object.keys(snap).sort()).toEqual(['X:blade-v1','X:gear-v1','X:pipe-v1','X:pipe-v2','X:pipe-v3'].sort());
+    expect(Object.keys(snap).sort()).toEqual(['X:blade-v1','X:gear-v1','X:pipe-v1','X:pipe-v2','X:pipe-v3','X:plate-v1'].sort());
+    expect(snap['X:plate-v1']).toEqual({key:'iron_plate',seconds:10,outputs:[['iron_ingot',1]]});   // Item Ontology V2 P5
     expect(snap['X:pipe-v3']).toEqual({key:'metal_pipe',seconds:10,outputs:[['refined_iron_ingot',1]]});
     expect(snap['X:pipe-v1']).toEqual({key:'metal_pipe',seconds:10,outputs:[['refined_iron_ingot',1]]});   // stored-job rule kept
     expect(snap['X:pipe-v2']).toEqual({key:'metal_pipe',seconds:12,outputs:[['refined_iron_ingot',1],['mechanical_parts',1]]});
@@ -127,7 +128,7 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     expect(afterP1.iron_plate).toBe(beforeP1.iron_plate+2);expect(afterP1.metal_pipe).toBe(2);expect(afterP1.refined_iron_ingot).toBe(beforeP1.refined_iron_ingot-2);
     // Branch P2: piped Utility Frame (pipe + 2 iron + 2 MP + 2 spares -> frame)
     const gP2=copy(at);const bP2=Object.values(gP2.run!.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;const beforeP2=ledger(gP2);
-    craftAndCollect(gP2,bP2,'vehicle_frame_piped',START+100);const afterP2=ledger(gP2);
+    craftAndCollect(gP2,bP2,'vehicle_frame',START+100);const afterP2=ledger(gP2);   // rev 3: the piped BOM is THE frame recipe
     expect(afterP2.vehicle_frame).toBe(beforeP2.vehicle_frame+1);expect(afterP2.metal_pipe).toBe(1);expect(afterP2.spares).toBe(beforeP2.spares-2);
     // Branch P3: recycle at the Foundry Recycler (X:pipe-v3): 1 refined ingot back, no parts, no spares
     const gP3=copy(at);const rP3=gP3.run!;const beforeP3=ledger(gP3);const rc=recyclerOf(rP3);

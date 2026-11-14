@@ -4,18 +4,18 @@
 
 ## 1. Baseline
 
-Audited on `Khanh-glitch/Soul-of-Hero` branch `feature/pa1-building-ontology-20261113` at `934f4471326116737f206d2fb2d9a84ba77328da` (head of draft PR #56). PR #60 was not used as a base and its graph module was not copied.
+Audited on `Khanh-glitch/Soul-of-Hero` branch `feature/pa1-building-ontology-20261113` at `934f4471326116737f206d2fb2d9a84ba77328da` (head of draft PR #56); round 2 changes are measured against that same base. PR #60 was not used as a base and its graph module was not copied.
 
 | Measure | Value | Where it comes from |
 | --- | --- | --- |
 | Runtime item ids | 147 | `ITEMS` in `catalog.ts` |
 | — written by hand | 123 | literal rows (includes 12 Elder stones) |
 | — generated packed devices | 24 | `deploy_<type>` loop over `DEPLOYABLE_TYPES` (PA1) |
-| Recipes | 112 | `RECIPES` |
+| Recipes | 111 | `RECIPES` |
 | — generated `deploy_*` recipes | 24 | cost copied from `STRUCTS` |
-| Recipe revision | 2 | `recipe-migration.ts` |
-| Retired recipes | fuel_can | `RETIRED_RECIPES` (item kept) |
-| Multigraph | 655 nodes / 2358 edges | `buildSohEconomicGraph` |
+| Recipe revision | 3 | `recipe-migration.ts` |
+| Retired recipes | fuel_can, vehicle_frame_piped | `RETIRED_RECIPES` (item kept) |
+| Multigraph | 654 nodes / 2353 edges | `buildSohEconomicGraph` |
 
 ## 2. Six different things the old audit called "level"
 
@@ -34,8 +34,8 @@ Audited on `Khanh-glitch/Soul-of-Hero` branch `feature/pa1-building-ontology-202
 | --- | --- | --- |
 | L0 | 52 | crude_petroleum, salvaged_oil, damaged_drive, wood, stone, fiber, iron_ore, rich_iron_ore |
 | L1 | 37 | energy_basic, essence_fire, essence_nature, essence_water, essence_spirit, lubricant, mechanical_parts, plank |
-| L2 | 43 | energy_refined, core_blast, core_meteor, core_dragon, core_elsa, core_earthmother, core_mjolnir, core_demon |
-| L3 | 12 | field_repair_kit, trail_pack, trail_canteen, industrial_pick, industrial_axe, vehicle_drive, mechanical_gear, iron_plate |
+| L2 | 42 | energy_refined, core_blast, core_meteor, core_dragon, core_elsa, core_earthmother, core_mjolnir, core_demon |
+| L3 | 13 | field_repair_kit, trail_pack, trail_canteen, industrial_pick, industrial_axe, vehicle_frame, vehicle_drive, mechanical_gear |
 | L4 | 3 | motorbike_kit |
 
 Reachability: FIXTURE_ONLY 1 · SHIPPING_AND_VEYRA 123 · SHIPPING_ONLY 13 · VEYRA_ONLY 10.
@@ -69,7 +69,6 @@ Reachability: FIXTURE_ONLY 1 · SHIPPING_AND_VEYRA 123 · SHIPPING_ONLY 13 · VE
 | industrial_pick | `industrial_pick` | `industrial_pick_geared` | KNOWLEDGE_BYPASS | industrial_pick_geared is known from the start; industrial_pick must be learned. Paying more materials buys skipping research. |
 | iron_sword | `iron_sword` | `iron_sword_blade` | STATION_TRADEOFF | iron_sword is cheaper per unit but needs workbench_1; iron_sword_blade runs at workbench_2. The station is the price. |
 | reinforced_spear | `reinforced_spear` | `reinforced_spear_blade` | KNOWLEDGE_BYPASS | reinforced_spear_blade is known from the start; reinforced_spear must be learned. Paying more materials buys skipping research. |
-| vehicle_frame | `vehicle_frame` | `vehicle_frame_piped` | STRICTLY_DOMINATED | vehicle_frame_piped needs at least as much of every raw input as vehicle_frame and both are equally known: no reason to ever pick vehicle_frame_piped. |
 
 `STRICTLY_DOMINATED` is fake complexity. `KNOWLEDGE_BYPASS` and `STATION_TRADEOFF` are real choices and are kept.
 
@@ -78,7 +77,6 @@ Reachability: FIXTURE_ONLY 1 · SHIPPING_AND_VEYRA 123 · SHIPPING_ONLY 13 · VE
 | A | B | Shared raw inputs | Station tier |
 | --- | --- | --- | --- |
 | mechanical_parts | fasteners | iron_ore, scrap | workbench_1 |
-| vehicle_frame | vehicle_drive | iron_ore, scrap, spares | workbench_2 |
 | metal_pipe | mechanical_gear | coal, iron_ore, scrap | workbench_2 |
 | metal_pipe | iron_plate | coal, iron_ore, scrap | workbench_2 |
 | mechanical_gear | iron_plate | coal, iron_ore, scrap | workbench_2 |
@@ -97,6 +95,7 @@ Reachability: FIXTURE_ONLY 1 · SHIPPING_AND_VEYRA 123 · SHIPPING_ONLY 13 · VE
 | metal_pipe | X:pipe-v3 | 1 refined_iron_ingot | 0.5 | 0 | PARTS_NEGATIVE |
 | metal_blade | X:blade-v1 | 2 iron_ingot + 1 mechanical_parts | 1 | 1 | PARTS_NEUTRAL |
 | mechanical_gear | X:gear-v1 | 2 mechanical_parts + 1 iron_ingot | 2 | 2 | PARTS_NEUTRAL |
+| iron_plate | X:plate-v1 | 1 iron_ingot | 0 | 0 | PARTS_NEGATIVE |
 
 A `PARTS_POSITIVE` row is harmless today (Machine Parts are not a currency) and would be a research-currency mint under a merge. This is the main evidence against Option B below.
 
@@ -108,16 +107,17 @@ A `PARTS_POSITIVE` row is harmless today (Machine Parts are not a currency) and 
 | crude_petroleum | L0 | TEST_FIXTURE_SOURCE_ONLY, NO_CONSUMER_NO_USE, ALL_RECIPE_CONSUMERS_BLOCKED_ON_VEYRA |
 | mechanical_parts | L1 | TWIN_INTERMEDIATE:fasteners |
 | fasteners | L2 | TWIN_INTERMEDIATE:mechanical_parts |
-| plank | L1 | PASS_THROUGH_INTERMEDIATE |
+| plank | L1 | PASS_THROUGH_INTERMEDIATE, NO_REACHABLE_CONSUMER:wall_plank |
 | chitin | L0 | NOT_REACHABLE_ON_VEYRA, ALL_RECIPE_CONSUMERS_BLOCKED_ON_VEYRA, BLOCKS_VEYRA_RECIPES |
+| brick | L1 | CONSUMER_UNOBTAINABLE:wall_brick |
 | chitin_armor | L2 | NOT_REACHABLE_ON_VEYRA |
 | wolf_fang | L0 | NOT_REACHABLE_ON_VEYRA |
 | crawler_optic | L0 | NOT_REACHABLE_ON_VEYRA, ALL_RECIPE_CONSUMERS_BLOCKED_ON_VEYRA, BLOCKS_VEYRA_RECIPES |
 | beetle_horn | L0 | NOT_REACHABLE_ON_VEYRA |
 | keycard | L0 | NOT_REACHABLE_ON_VEYRA |
-| vehicle_frame | L2 | PASS_THROUGH_INTERMEDIATE, TWIN_INTERMEDIATE:vehicle_drive |
-| vehicle_drive | L3 | PASS_THROUGH_INTERMEDIATE, TWIN_INTERMEDIATE:vehicle_frame |
-| metal_pipe | L2 | SINGLE_CONSUMER_COMPONENT, TWIN_INTERMEDIATE:mechanical_gear, TWIN_INTERMEDIATE:iron_plate, ONLY_USED_BY_DOMINATED_RECIPE:vehicle_frame_piped |
+| vehicle_frame | L3 | PASS_THROUGH_INTERMEDIATE |
+| vehicle_drive | L3 | PASS_THROUGH_INTERMEDIATE |
+| metal_pipe | L2 | SINGLE_CONSUMER_COMPONENT, TWIN_INTERMEDIATE:mechanical_gear, TWIN_INTERMEDIATE:iron_plate |
 | mechanical_gear | L3 | TWIN_INTERMEDIATE:metal_pipe, TWIN_INTERMEDIATE:iron_plate |
 | iron_plate | L3 | TWIN_INTERMEDIATE:metal_pipe, TWIN_INTERMEDIATE:mechanical_gear |
 | relic_shaleheart | L0 | NOT_REACHABLE_ON_SHIPPING |
@@ -132,54 +132,15 @@ Recipes that cannot run on Shipping: `pump_crude`, `refinery_crude`. On Veyra: `
 | Decision | Count |
 | --- | --- |
 | ADD_CANDIDATE | 5 |
-| DEFER | 7 |
-| KEEP | 124 |
-| MERGE_CANDIDATE | 1 |
-| REDESIGN | 5 |
-| RENAME | 9 |
-| RETIRE_CANDIDATE | 1 |
-
-### RENAME
-
-| Item | Name | Proposal | Why |
-| --- | --- | --- | --- |
-| `core_blast` | Vụ nổ lớn → Big Bang | P7 | Creator Core. Vietnamese display name inside an otherwise English item list. |
-| `core_meteor` | Thiên thạch → Meteor | P7 | Creator Core. Display-language consistency. |
-| `core_dragon` | Hơi thở của rồng → Dragon's Breath | P7 | Creator Core. Display-language consistency. |
-| `core_elsa` | Gươm Elsa → Elsa's Sword | P7 | Creator Core. Display-language consistency. |
-| `core_earthmother` | Hơi thở đất mẹ → Earth Mother's Breath | P7 | Creator Core. Display-language consistency. |
-| `core_demon` | Lõi quỷ → Demon Core | P7 | Creator Core; also uncraftable on Veyra. |
-| `mechanical_parts` | Mechanical Parts → Machine Parts | P1 | Crafted from Scrap + Iron; NOT a research currency. Its current name collides with the Parts axis. Re-labelled as the crafted machine component ("Machine Parts / Cụm máy"); never shown as "Parts". |
-| `spares` | Spares → Parts | P1 | This IS the LI Parts role: found / recovered, never crafted, spent on research, trade, Cores and technology (Bible §0.2 "Spares/linh kiện", K4). The id stays; the display name becomes "Parts / Linh kiện" so the backbone resource has the backbone name. |
-| `escrow_chest` | Rương ký gửi → Escrow Chest | P7 | Escrow mechanic is Bible-protected; only the display language is inconsistent. |
-
-### REDESIGN
-
-| Item | Name | Proposal | Why |
-| --- | --- | --- | --- |
-| `industrial_axe` | Salvager Axe | P4 | Top axe. LI builds it from Blades + Pipe; SOH builds it from generic Machine Parts. Give the Blade its job here. |
-| `vehicle_frame` | Utility Frame | P3 | Stays as the motorbike chassis (LI has the same item). Its two recipes collapse to the piped one. |
-| `metal_pipe` | Metal Pipe | P3 | Only consumer is vehicle_frame_piped, which is strictly dominated by the plain frame recipe — so today a Pipe is never the rational choice. LI uses Pipe for fluid/pressure machines. Give it that job. |
-| `metal_blade` | Metal Blade | P4 | Only used by two optional alternative recipes. LI makes the Blade the cutting edge of the refined axe. Make it the required edge of the Salvager Axe; keep the two alternates as honest shortcuts. |
-| `iron_plate` | Iron Plate | P5 | Real jobs (motorbike, wall patching, trap re-arm) so the item stays; but it is the only one of the four technical components with no Recycler rule. Add one. |
-
-### MERGE_CANDIDATE
-
-| Item | Name | Proposal | Why |
-| --- | --- | --- | --- |
-| `fasteners` | Forged Fasteners | P2 | Twin of Machine Parts: same raw inputs (iron ore + scrap), same station tier, both generic "small metal bits" with 18 vs 22 consumers and no distinct mechanic. Two near-identical intermediates are fake depth. |
-
-### RETIRE_CANDIDATE
-
-| Item | Name | Proposal | Why |
-| --- | --- | --- | --- |
-| `plank` | Plank | P6 | One consumer (Plank Wall = 3 plank), and its own description prices it as "6 wood". A whole item + recipe that is only a renamed 2 wood adds a click, not a decision. |
+| DEFER | 8 |
+| KEEP | 139 |
 
 ### DEFER
 
 | Item | Name | Proposal | Why |
 | --- | --- | --- | --- |
 | `crude_petroleum` | Crude Petroleum | P9 | Second raw oil with NO live source: the Oil Pump adapter is test-fixture only. Not shown to players today. Decide when the pump ships; until then it must not be advertised. |
+| `plank` | Plank | P6 | ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement. |
 | `chitin` | Ash Chitin | P8 | Single consumer (Chitin Plate) and no Veyra source. The item is fine; the Veyra gap needs a creature placement decision. |
 | `chitin_armor` | Chitin Plate | P8 | Body armour tier 2; uncraftable on Veyra because Chitin has no source there. |
 | `core_fire` | Ember Core | P10 | Legacy core outside the seven Creator Cores, still craftable and castable. Whether four extra cores remain is a Bible ruling, not an audit fix. |
@@ -197,11 +158,11 @@ Recipes that cannot run on Shipping: `pump_crude`, `refinery_crude`. On Veyra: `
 | animal_fat | animal_fat | — | Reviewed, REJECTED: Duplicates existing fuel routes. |
 | energy_refinery / energy_extractor | energy_refinery / energy_extractor | — | Reviewed, BACKLOG: Unapproved Energy Ore backlog; explicitly out of scope. |
 
-KEEP (124) is listed row by row, with a reason each, in `manifest.csv`.
+KEEP (139) is listed row by row, with a reason each, in `manifest.csv`.
 
 ### Newcomer load
 
-Before this PR 53 items shared the single chip "MATERIAL". They now show one of 25 classes (display only). If P2, P3, P4 and P6 are approved the game loses 2 items a newcomer must learn (Fasteners, Plank) and 2 redundant recipes (`vehicle_frame_piped`, `fasteners`), every one of Pipe / Gear / Plate / Blade has a required consumer and a Recycler rule, and exactly one item is called Parts.
+Before this PR 53 items shared the single chip "MATERIAL". They now show one of 25 classes (display only). Round 2 removed one redundant recipe (`vehicle_frame_piped`), gave Pipe and Blade a required consumer and Plate a Recycler rule, and left exactly one item called Parts. The item count did not change: Fasteners and Plank stay by ruling.
 
 ## 6. Parts decision package
 
@@ -209,19 +170,19 @@ Scope: `spares`, `mechanical_parts`, `scrap`, `fasteners`, `metal_pipe`, `mechan
 
 | Item | Depth | Made by | Non-craft sources | Craft/build targets | Upkeep uses | Recycler |
 | --- | --- | --- | --- | --- | --- | --- |
-| `spares` (Spares) | L0 | not craftable | 7 | 27 | 9 | no rule |
-| `mechanical_parts` (Mechanical Parts) | L1 | recover_drive, mechanical_parts | 6 | 22 | 13 | no rule |
+| `spares` (Parts) | L0 | not craftable | 7 | 27 | 9 | no rule |
+| `mechanical_parts` (Machine Parts) | L1 | recover_drive, mechanical_parts | 6 | 22 | 13 | no rule |
 | `scrap` (Scrap Metal) | L0 | not craftable | 4 | 4 | 1 | no rule |
 | `fasteners` (Forged Fasteners) | L2 | fasteners | 5 | 18 | 7 | no rule |
 | `metal_pipe` (Metal Pipe) | L2 | metal_pipe | 1 | 1 | 0 | X:pipe-v3 → 1 refined_iron_ingot |
 | `mechanical_gear` (Mechanical Gear) | L3 | mechanical_gear | 1 | 4 | 2 | X:gear-v1 → 2 mechanical_parts + 1 iron_ingot |
-| `iron_plate` (Iron Plate) | L3 | iron_plate | 1 | 1 | 14 | no rule |
-| `metal_blade` (Metal Blade) | L2 | metal_blade | 1 | 2 | 0 | X:blade-v1 → 2 iron_ingot + 1 mechanical_parts |
+| `iron_plate` (Iron Plate) | L3 | iron_plate | 1 | 1 | 14 | X:plate-v1 → 1 iron_ingot |
+| `metal_blade` (Metal Blade) | L2 | metal_blade | 1 | 3 | 0 | X:blade-v1 → 2 iron_ingot + 1 mechanical_parts |
 
 | Criterion | Option A: Two distinct axes | Option B: Collapse to a single Parts item |
 | --- | --- | --- |
-| Summary | `spares` is shown as Parts and stays the uncraftable progression resource. `mechanical_parts` is shown as Machine Parts, a crafted component. Gear / Pipe / Plate / Blade keep their ids and get one clear job each (P3–P5). Fasteners fold into Machine Parts later (P2). | Merge `mechanical_parts` into `spares` so there is one Parts item, as in Last Island. Every recipe that takes Machine Parts takes Parts instead. |
-| implementation cost | Small: two display names now; three small recipe proposals after. | Large: 22 consumer targets and 13 repair costs rewired, every Recycler return re-versioned, loot tables re-rolled, inventory conversion. |
+| Summary | `spares` is shown as Parts and stays the uncraftable progression resource. `mechanical_parts` is shown as Machine Parts, a crafted component. Gear / Pipe / Plate / Blade keep their ids and have one clear job each (P3–P5, implemented in round 2). Fasteners stay a separate researched joining stock (P2 ruled out). | Merge `mechanical_parts` into `spares` so there is one Parts item, as in Last Island. Every recipe that takes Machine Parts takes Parts instead. |
+| implementation cost | Small: two display names, two recipe revisions and one new Recycler rule (all done in round 2). | Large: 22 consumer targets and 13 repair costs rewired, every Recycler return re-versioned, loot tables re-rolled, inventory conversion. |
 | clarity | High: one word, one item. "Parts are found; Machine Parts are made." | Highest on paper: one item. |
 | gameplay choice | Kept: Parts still competes between research, trade, Cores and devices (Bible K4). | Reduced: bulk machine-building and scarce research would draw on the same pool, so one starves the other. |
 | scarcity | Unchanged: no new Parts source, no craft recipe. | Broken unless the Machine Parts recipe is deleted: today 2 Scrap + 1 Iron Ingot makes 2, i.e. 5 Scrap would buy 2 research Parts. |
@@ -230,45 +191,57 @@ Scope: `spares`, `mechanical_parts`, `scrap`, `fasteners`, `metal_pipe`, `mechan
 
 **Recommendation: Option A.** Option A gets the clarity benefit for almost no cost and keeps the research currency uncraftable. Option B can only be made safe by deleting the Machine Parts recipe, rewriting every Recycler return and converting player inventories — a large migration whose end state is a single pool where building machines and buying knowledge fight each other. That removes a decision the Bible asks for (K4) rather than clarifying it.
 
-## 7. Proposals awaiting approval (Group B — none of this is implemented)
+## 7. Proposals and their round-2 status
 
-| Id | Title | Recommendation | Items |
-| --- | --- | --- | --- |
-| P1 | Parts axis — Option A: one item called Parts, one called Machine Parts | APPROVE | spares, mechanical_parts |
-| P2 | Merge Forged Fasteners into Machine Parts | APPROVE_LATER | fasteners, mechanical_parts |
-| P3 | Give the Metal Pipe a real job | APPROVE | metal_pipe, vehicle_frame |
-| P4 | Make the Metal Blade the edge of the Salvager Axe | APPROVE | metal_blade, industrial_axe |
-| P5 | Add a Recycler rule for Iron Plate | APPROVE | iron_plate |
-| P6 | Retire Plank | APPROVE_LATER | plank |
-| P7 | One display language for item names | APPROVE | core_blast, core_meteor, core_dragon, core_elsa, core_earthmother, core_demon, escrow_chest |
-| P8 | Veyra source gaps | HOLD | chitin, chitin_armor, crawler_optic, wolf_fang, beetle_horn, keycard, core_demon, essence_spirit |
-| P9 | Crude Petroleum has no live source | HOLD | crude_petroleum |
-| P10 | Four legacy cores beside the seven Creator Cores | HOLD | core_fire, core_earth, core_storm, core_frost |
+IMPLEMENTED = live at recipe revision 3. NOT_AUTHORISED = ruled out; analysis only. OPEN = not implemented, owner decision needed. Measured before/after numbers: `web/evidence/item-ontology-v2/round2-simulations.json`. Open findings: `ROUND2_FINDINGS.md`. **Item V2 is not complete while any row is OPEN.**
 
-### P1. Parts axis — Option A: one item called Parts, one called Machine Parts — APPROVE
+| Id | Title | Status | Ruling | Items |
+| --- | --- | --- | --- | --- |
+| P1 | Parts axis — Option A: one item called Parts, one called Machine Parts | IMPLEMENTED | Approved. Display only; `mechanical_parts` VN name is "Bộ phận máy". | spares, mechanical_parts |
+| P2 | Merge Forged Fasteners into Machine Parts | NOT_AUTHORISED | Not allowed. Fasteners stay. Analysis only: see ROUND2_FINDINGS.md §P2. | fasteners, mechanical_parts |
+| P3 | Give the Metal Pipe a real job | IMPLEMENTED_PARTIAL | Approved for the Utility Frame only. `oil_pump` and `refinery` costs must not change this round. | metal_pipe, vehicle_frame |
+| P4 | Make the Metal Blade the edge of the Salvager Axe | IMPLEMENTED | Approved, subject to the blade-before-axe and no-net-material checks. Both passed. | metal_blade, industrial_axe |
+| P5 | Add a Recycler rule for Iron Plate | IMPLEMENTED | Approved as a NEW versioned rule; existing rules untouched. | iron_plate |
+| P6 | Retire Plank | NOT_AUTHORISED | Not allowed. Plank stays. Analysis only: see ROUND2_FINDINGS.md §P6. | plank |
+| P7 | One display language for item names | IMPLEMENTED | Approved. English is the display language; the settled Vietnamese names are kept as alias data. | core_blast, core_meteor, core_dragon, core_elsa, core_earthmother, core_demon, escrow_chest |
+| P8 | Veyra source gaps | OPEN | Stay unimplemented; produce the exact Veyra source-access matrix. See ROUND2_FINDINGS.md §P8. | chitin, chitin_armor, crawler_optic, wolf_fang, beetle_horn, keycard, core_demon, essence_spirit |
+| P9 | Crude Petroleum has no live source | OPEN | Keep fixture-only; the UI must not advertise it as minable. See ROUND2_FINDINGS.md §P9. | crude_petroleum |
+| P10 | Four legacy cores beside the seven Creator Cores | OPEN | Do not delete Cores. Compare each legacy Core with the seven and propose one canon decision. See ROUND2_FINDINGS.md §P10. | core_fire, core_earth, core_storm, core_frost |
+
+### P1. Parts axis — Option A: one item called Parts, one called Machine Parts — IMPLEMENTED
+
+**Ruling.** Approved. Display only; `mechanical_parts` VN name is "Bộ phận máy".
+
+Shipped:
+
+- ITEMS.spares.name = 'Parts' (vi 'Linh kiện'); ITEMS.mechanical_parts.name = 'Machine Parts' (vi 'Bộ phận máy').
+- Research Table, trader, Station Console, HUD, tooltips, engine refusal messages and e2e selectors say Parts / Machine Parts.
+- Parts description states its real sources: loot, wrecks, machine creatures and the Recycler. No id, recipe, source, price or research right moved.
 
 **Problem.** Two items compete for the word "Parts". `spares` ("Spares") is the scarce, uncraftable resource that pays for research, vendor trade, every Core and every powered device — the Last Island Parts role. `mechanical_parts` ("Mechanical Parts") is a bench product made from Scrap and Iron. PR #60 renamed the crafted one to "Parts", which put the backbone name on the wrong item.
 
-**Decision proposed.** Display rename only. `spares` → "Parts" (VI: "Linh kiện"). `mechanical_parts` → "Machine Parts" (VI: "Cụm máy"). No id, recipe, source, cost or research price changes. Parts stays uncraftable; the only mint remains Recycler Damaged Drive → 2.
+**Decision.** Display rename only. `spares` → "Parts" (VI: "Linh kiện"). `mechanical_parts` → "Machine Parts" (VI: "Bộ phận máy"). No id, recipe, source, cost or research price changes. Parts stays uncraftable. It is NOT single-sourced: it comes from authored loot and wrecks, from machine creatures (crawler, two bosses) and from the Recycler (Damaged Drive → 2). Round 1 wrongly called the Recycler the only source; it is the only CONVERSION into Parts, not the only source.
 
 Migration:
 
 - No save migration: ids, stacks and recipes are untouched.
 - Change `ITEMS.spares.name`, `ITEMS.mechanical_parts.name` and their descriptions; sweep UI strings that hard-code "Spares" (research panel, vendor, Journey).
-- Update Bible §0.2 / K4 wording in the same commit (term "Spares/linh kiện" → "Parts/Linh kiện (id spares)").
+- Bible §0.2 wording updated in the same commit: "Parts / Linh kiện (id `spares`)".
 
 **Risk.** Low. Players and docs that say "Spares" need one release note. Tests that pin the display string must be updated in the same commit.
 
-Tests to add with the change:
+Tests:
 
 - item-ontology-v2: exactly one item has class PARTS and no other item name contains the word "Parts" alone
 - existing research / vendor tests unchanged (they use ids)
 
-### P2. Merge Forged Fasteners into Machine Parts — APPROVE_LATER
+### P2. Merge Forged Fasteners into Machine Parts — NOT_AUTHORISED
+
+**Ruling.** Not allowed. Fasteners stay. Analysis only: see ROUND2_FINDINGS.md §P2.
 
 **Problem.** Fasteners and Machine Parts are made at the same bench tier from the same two raw inputs and are both generic assembly bits. A newcomer has to learn two names for one idea, and most advanced recipes ask for both.
 
-**Decision proposed.** Retire the `fasteners` recipe and replace every Fasteners cost with Machine Parts at ceil(n / 2) (2 Fasteners ≈ 1 Machine Part in raw value: 0.67 iron + 0.67 scrap vs 0.5 iron + 1 scrap). The item id stays in the catalog so nothing a player owns disappears.
+**Round-1 proposal (not implemented).** Retire the `fasteners` recipe and replace every Fasteners cost with Machine Parts at ceil(n / 2) (2 Fasteners ≈ 1 Machine Part in raw value: 0.67 iron + 0.67 scrap vs 0.5 iron + 1 scrap). The item id stays in the catalog so nothing a player owns disappears.
 
 Recipes before:
 
@@ -310,18 +283,26 @@ Migration:
 
 **Risk.** Medium. Recipes that used a single Fastener get slightly dearer in Scrap (1 Machine Part > 1 Fastener). Reverses a one-day-old PA1 decision, so it needs the owner's explicit yes. Do it after P1 so the surviving item already has its final name.
 
-Tests to add with the change:
+Tests a future change would need:
 
 - recipe-migration: every `<id>@2` equals the pre-change recipe
 - in-flight job started at rev 2 completes with rev-2 output after reload
 - economic sim: motorbike raw cost before/after within ±10 % iron and scrap
 - save round-trip: a chest holding Fasteners loads with the same count
 
-### P3. Give the Metal Pipe a real job — APPROVE
+### P3. Give the Metal Pipe a real job — IMPLEMENTED_PARTIAL
+
+**Ruling.** Approved for the Utility Frame only. `oil_pump` and `refinery` costs must not change this round.
+
+Shipped:
+
+- RECIPES.vehicle_frame = 1 Metal Pipe + 2 Iron Ingot + 2 Machine Parts + 2 Parts, 22 s, rev 3.
+- `vehicle_frame_piped` retired (RETIRED_RECIPES); `vehicle_frame@2` and `vehicle_frame_piped@2` frozen.
+- Oil Pump and Refinery costs untouched (asserted).
 
 **Problem.** The Pipe has exactly one consumer, the alternate frame recipe `vehicle_frame_piped`, and that recipe costs strictly more than the plain `vehicle_frame` for the same output at the same station. A rational player never makes a Pipe. Finding one in loot is a Recycler ticket for 1 Refined Iron and nothing else.
 
-**Decision proposed.** The piped recipe becomes THE frame recipe, and the two fluid machines take Pipes in place of one Machine Part each (Last Island uses Pipes for the extractor and for frames).
+**Decision.** The piped recipe becomes THE frame recipe. (Round 1 also proposed Pipes in the Oil Pump and Refinery; the ruling excludes that, so their costs below are quoted only to prove they did not move.)
 
 Recipes before:
 
@@ -344,33 +325,33 @@ Structure cost before:
 | `oil_pump` | 3 iron_ingot + 2 mechanical_parts + 2 spares + 2 brick |  |
 | `refinery` | 4 iron_ingot + 3 mechanical_parts + 5 spares + 6 brick + 2 glass |  |
 
-Structure cost after:
-
-| Structure | Cost | Note |
-| --- | --- | --- |
-| `oil_pump` | 3 iron_ingot + 1 mechanical_parts + 2 metal_pipe + 2 spares + 2 brick |  |
-| `refinery` | 4 iron_ingot + 2 mechanical_parts + 2 metal_pipe + 5 spares + 6 brick + 2 glass |  |
-
 Migration:
 
 - Bump RECIPE_REVISION; freeze `vehicle_frame@<old>` and `vehicle_frame_piped@<old>`; add `vehicle_frame_piped` to RETIRED_RECIPES.
 - Frames already crafted are unchanged items. Frame jobs in progress finish at their frozen revision.
-- Packed Refinery / Oil Pump items already crafted keep working; `deploy_*` recipes are generated from STRUCTS, so the new cost applies only to packs crafted after the change. Reclaim refunds read the cost stored at placement.
-- Consequence to accept: a Refinery now needs a level-2 Workbench first (Pipes are made there). Today it needs none. This is the intended gate — refining becomes a mid-game step — but it is a real pacing change.
+- Measured cost of the change, bare hands → one Utility Motorbike: +3 iron ore, +1 coal, +2 scrap, +77 s of station time, Parts unchanged (41); one Pipe and one Machine Part are left over (round2-simulations.json).
 
-**Risk.** Medium: pushes fuel production behind Workbench II. Mitigation already in the game: the Furnace recipe `refine_salvaged_oil` still makes fuel without a Refinery.
+**Risk.** Low for the frame: the motorbike route already needs the Furnace, coal and Refined Iron for its plates, so the pipe adds no new station, atom or knowledge.
 
-Tests to add with the change:
+Tests:
 
-- projection: metal_pipe.consumer_targets ≥ 3 and no ONLY_USED_BY_DOMINATED_RECIPE signal
+- projection: metal_pipe has a non-dominated consumer and no ONLY_USED_BY_DOMINATED_RECIPE signal
 - projection: no STRICTLY_DOMINATED pair remains for vehicle_frame
-- route sim: wreck loot → pipe → refinery → fuel_can completes
+- round2: analytic + intent motorbike chain before/after
+- round2: rev-2 frame jobs finish under the frozen definition
 
-### P4. Make the Metal Blade the edge of the Salvager Axe — APPROVE
+### P4. Make the Metal Blade the edge of the Salvager Axe — IMPLEMENTED
+
+**Ruling.** Approved, subject to the blade-before-axe and no-net-material checks. Both passed.
+
+Shipped:
+
+- RECIPES.industrial_axe = Iron Axe + 1 Metal Blade + 1 Machine Part + 2 Parts, rev 3; `industrial_axe@2` frozen.
+- No new Recycler rule: the existing X:recover-v3 return (1 scrap + 2 Machine Parts + 1 ingot) is already ≤ what the rev-3 axe embeds (7 ingots, 2 Machine Parts, 2 Parts).
 
 **Problem.** The Blade is only an optional ingredient in two alternate weapon recipes. Its Recycler rule returns exactly what went in, so it is neutral there too. Nothing in the game requires a Blade.
 
-**Decision proposed.** The Salvager Axe takes one Blade in place of one Machine Part. The two alternate weapon recipes stay: they are honest shortcuts (more iron, no research).
+**Decision.** The Salvager Axe takes one Blade in place of one Machine Part. The two alternate weapon recipes stay: they are honest shortcuts (more iron, no research).
 
 Recipes before:
 
@@ -387,20 +368,27 @@ Recipes after:
 Migration:
 
 - Freeze `industrial_axe@<old>`; existing axes and in-progress jobs are untouched.
-- Recycler: add a NEW rule key for the axe built at the new revision (rules are immutable and versioned; never edit X:recover-v3). Return must stay ≤ inputs (Bible K4).
+- Recycler: NO new rule. Round 1 asked for one; the check shows the existing X:recover-v3 return is already ≤ the rev-3 inputs, and existing rules must not be altered.
 
-**Risk.** Low. One tool gets 4 iron dearer; the Pick is unchanged, so the two top tools stop being copies of each other.
+**Risk.** Low. Measured: +4 iron ore and +56 s of station time for the axe, Parts unchanged; the Pick is unchanged, so the two top tools stop being copies of each other.
 
-Tests to add with the change:
+Tests:
 
 - projection: metal_blade has a non-alternate consumer
-- recycler: new rule returns no more Machine Parts than the recipe consumed
+- round2: axe refused without a Blade
+- round2: craft → recycle returns no more of any material than the axe and the blade embed
 
-### P5. Add a Recycler rule for Iron Plate — APPROVE
+### P5. Add a Recycler rule for Iron Plate — IMPLEMENTED
+
+**Ruling.** Approved as a NEW versioned rule; existing rules untouched.
+
+Shipped:
+
+- COMPONENT_RULES['X:plate-v1'] = 1 Iron Plate → 1 Iron Ingot, 10 s. Mirrored in balance.v1.json recyclerV4.
 
 **Problem.** Pipe, Gear and Blade each have a versioned Recycler rule; Plate has none, so a looted Plate you do not need is dead weight. The four technical components should behave alike.
 
-**Decision proposed.** New immutable rule `X:plate-v1`: 1 Iron Plate → 1 Iron Ingot. Deliberately lossy (a Plate costs 1 Refined Iron + half a Fastener), so craft → recycle → craft can never be net-positive.
+**Decision.** New immutable rule `X:plate-v1`: 1 Iron Plate → 1 Iron Ingot. Deliberately lossy (a Plate costs 1 Refined Iron + half a Fastener), so craft → recycle → craft can never be net-positive.
 
 Migration:
 
@@ -409,16 +397,18 @@ Migration:
 
 **Risk.** Low. Returns less than the cheapest input, so it cannot be farmed.
 
-Tests to add with the change:
+Tests:
 
 - recycler: plate rule output value < plate recipe input value
 - projection: iron_plate.recycle is non-null and verdict is PARTS_NEUTRAL or PARTS_NEGATIVE
 
-### P6. Retire Plank — APPROVE_LATER
+### P6. Retire Plank — NOT_AUTHORISED
+
+**Ruling.** Not allowed. Plank stays. Analysis only: see ROUND2_FINDINGS.md §P6.
 
 **Problem.** Plank exists to build one thing. 3 Plank = 6 Wood, and the Plank Wall description already says "for 6 wood". The item adds a bench step and an inventory row, not a choice.
 
-**Decision proposed.** Plank Wall costs 6 Wood directly. The `plank` recipe is retired; the item stays so existing stacks are valid, and can be split back to Wood.
+**Round-1 proposal (not implemented).** Plank Wall costs 6 Wood directly. The `plank` recipe is retired; the item stays so existing stacks are valid, and can be split back to Wood.
 
 Recipes before:
 
@@ -454,32 +444,41 @@ Migration:
 
 **Risk.** Low value risk (exact 1:2). It removes the Workbench requirement from the Plank Wall, which makes the 240 HP wall available earlier — accept or add `need` on the structure.
 
-Tests to add with the change:
+Tests a future change would need:
 
 - save round-trip with Plank in a chest
 - reclaim of a pre-change Plank Wall refunds Plank, never Wood
 
-### P7. One display language for item names — APPROVE
+### P7. One display language for item names — IMPLEMENTED
+
+**Ruling.** Approved. English is the display language; the settled Vietnamese names are kept as alias data.
+
+Shipped:
+
+- Six Creator Cores and the Escrow Chest show English names; `ItemDef.vi` holds the Vietnamese name and the tooltip shows it as a subtitle.
+- Ids, creatorCore keys, recipes and VFX untouched.
 
 **Problem.** Seven items show Vietnamese names in an otherwise English inventory. The names are canon; the mixture is not.
 
-**Decision proposed.** Show the English name with the canonical Vietnamese name kept as subtitle/alias. Ids and mechanics untouched.
+**Decision.** Show the English name with the canonical Vietnamese name kept as subtitle/alias. Ids and mechanics untouched.
 
 Migration:
 
-- Display strings only. Any test or e2e that selects by the Vietnamese label must move to the id.
+- Display strings only. e2e selectors that used the old labels were updated in the same commit.
 
-**Risk.** Low. Needs the owner to confirm the English wording of canon names.
+**Risk.** Low. The English wording of the six canon names still needs the owner to confirm it; changing a string later needs no migration.
 
-Tests to add with the change:
+Tests:
 
 - item-ontology-v2: no item name mixes languages
 
-### P8. Veyra source gaps — HOLD
+### P8. Veyra source gaps — OPEN
+
+**Ruling.** Stay unimplemented; produce the exact Veyra source-access matrix. See ROUND2_FINDINGS.md §P8.
 
 **Problem.** These items have no reachable source on the Veyra layout, and three recipes are uncraftable there. On Veyra a player can see or learn recipes they can never complete.
 
-**Decision proposed.** Do not invent sources in an ontology PR. Until Veyra creature and POI placement is decided, hide Veyra-unreachable recipes from the craft list on that layout (a filter driven by this projection), and treat each gap as a content task.
+**Round-1 proposal (not implemented).** Do not invent sources in an ontology PR. Until Veyra creature and POI placement is decided, hide Veyra-unreachable recipes from the craft list on that layout (a filter driven by this projection), and treat each gap as a content task.
 
 Migration:
 
@@ -487,15 +486,17 @@ Migration:
 
 **Risk.** Leaving it means dead recipes on Veyra; fixing it wrong means free rare items.
 
-Tests to add with the change:
+Tests a future change would need:
 
 - projection lists exactly these ids as NOT_REACHABLE_ON_VEYRA
 
-### P9. Crude Petroleum has no live source — HOLD
+### P9. Crude Petroleum has no live source — OPEN
+
+**Ruling.** Keep fixture-only; the UI must not advertise it as minable. See ROUND2_FINDINGS.md §P9.
 
 **Problem.** The Oil Pump that produces it runs only in the test fixture. On both live layouts the item cannot be obtained and its recipes cannot run.
 
-**Decision proposed.** Keep the id (the pump work depends on it); keep it out of player-facing lists until the pump is live. Salvaged Oil remains the single live oil.
+**Round-1 proposal (not implemented).** Keep the id (the pump work depends on it); keep it out of player-facing lists until the pump is live. Salvaged Oil remains the single live oil.
 
 Migration:
 
@@ -503,15 +504,17 @@ Migration:
 
 **Risk.** None while hidden.
 
-Tests to add with the change:
+Tests a future change would need:
 
 - projection: crude_petroleum runtime_reachability is FIXTURE_ONLY
 
-### P10. Four legacy cores beside the seven Creator Cores — HOLD
+### P10. Four legacy cores beside the seven Creator Cores — OPEN
+
+**Ruling.** Do not delete Cores. Compare each legacy Core with the seven and propose one canon decision. See ROUND2_FINDINGS.md §P10.
 
 **Problem.** The Bible fixes seven Creator Cores. Four older cores are still craftable (8–10 Parts each) and castable, so the Core list a newcomer sees has eleven entries in two rule-sets.
 
-**Decision proposed.** Owner ruling needed: either they are canon "minor cores" (then say so in the Bible and label them), or their recipes are retired while existing cores keep working until the run reset. The audit recommends the second, after confirming every legacy effect has a Creator Core counterpart.
+**Round-1 proposal (not implemented).** Owner ruling needed: either they are canon "minor cores" (then say so in the Bible and label them), or their recipes are retired while existing cores keep working until the run reset. The audit recommends the second, after confirming every legacy effect has a Creator Core counterpart.
 
 Migration:
 
@@ -519,7 +522,7 @@ Migration:
 
 **Risk.** Touches player assets and a Bible-protected system; not safe to decide inside an audit.
 
-Tests to add with the change:
+Tests a future change would need:
 
 - save round-trip of a charged legacy core
 

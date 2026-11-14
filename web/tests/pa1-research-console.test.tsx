@@ -159,7 +159,7 @@ describe('PA1 P1: the shipped router reaches the technology-family ledger', () =
       expect(text, `${fam} is missing from the console the player actually sees`).toContain(fam);
     }
     const energy = text.match(/ENERGY[\s\S]{0,220}?(?=METALLURGY|MOBILITY|ELECTRICAL|AGRICULTURE|ARMORY|EXPLORATION|ARCANA|STEEL|DEFENSE|CORE_SPECIFIC|$)/)?.[0] ?? '';
-    expect(energy).toContain('cost recorded (5 Spares + 2 Iron Ingot)');
+    expect(energy).toContain('cost recorded (5 Parts + 2 Iron Ingot)');
     expect(energy).toContain(`${familyMembers('ENERGY').length} formulas`);
     expect(energy).toContain('nothing withheld in this build');
     // An enforced/buyable row would be a gate the paper has not approved.
@@ -176,7 +176,7 @@ describe('PA1 P1: the shipped router reaches the technology-family ledger', () =
     const text = plain(html);
     expect(text).toContain('studied · 9 formulas');
     expect(text).not.toContain('Commission study');
-    expect(text).not.toContain('pay 5 Spares');
+    expect(text).not.toContain('pay 5 Parts');
     expect(r.entities[table.id]?.station?.queue.length).toBe(0);
   });
 });

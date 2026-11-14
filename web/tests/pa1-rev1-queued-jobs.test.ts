@@ -129,7 +129,10 @@ describe('PA1 P0b — the pre-cutover save keeps its own rules', () => {
     expect((g.run as unknown as { recipeRevision?: unknown }).recipeRevision).toBeUndefined();
     // The retired formula is taken out of knowledge and counted, so the UI can say so out loud.
     expect(g.run!.knowledge.recipes).not.toContain('fuel_can');
-    expect(g.run!.migrated?.retiredRecipes).toBe(1);
+    // Rev 3 also retires `vehicle_frame_piped` (its BOM became the frame recipe), and this save knew it.
+    expect(g.run!.knowledge.recipes).not.toContain('vehicle_frame_piped');
+    expect(g.run!.knowledge.recipes).toContain('vehicle_frame');
+    expect(g.run!.migrated?.retiredRecipes).toBe(2);
     // The revision ledger is what prices them.
     expect(recipeForJob('iron_plate', undefined)!.ins).toEqual(LEGACY_RECIPES['iron_plate@1'].ins);
     expect(recipeForJob('fuel_can', undefined)!.ins).toEqual(LEGACY_RECIPES['fuel_can@1'].ins);

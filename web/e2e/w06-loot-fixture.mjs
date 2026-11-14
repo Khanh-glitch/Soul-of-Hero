@@ -21,7 +21,7 @@ try {
   await page.goto(process.env.GAME_URL||'http://127.0.0.1:4194/',{waitUntil:'networkidle'});await page.getByRole('button',{name:/Continue/i}).first().click();await page.waitForFunction(()=>window.__soh?.run);await page.waitForTimeout(5500);const overlay=page.getByRole('button',{name:'Continue',exact:true});if(await overlay.isVisible().catch(()=>false))await overlay.click();
   await page.mouse.move(330,180);await page.keyboard.press('e');const panel=page.locator('.panel').filter({hasText:LOOT_CLASSES[kind].name}).first();await panel.waitFor({timeout:5000});
   await page.waitForTimeout(500);const text=await panel.innerText();assert.match(text,/Withdraw only/);assert.match(text,new RegExp(`${LOOT_CLASSES[kind].hours}h`));await page.screenshot({path:`${out}/${kind}-before-640.png`});
-  const selected={toolbox:'Spares',supply:'Bandage',military:'Basic Energy',advanced:'Refined Energy'}[kind];await panel.locator(`[title="${selected}"]`).last().click({button:'right'});await page.waitForTimeout(200);
+  const selected={toolbox:'Parts',supply:'Bandage',military:'Basic Energy',advanced:'Refined Energy'}[kind];await panel.locator(`[title="${selected}"]`).last().click({button:'right'});await page.waitForTimeout(200);
   const after=await page.evaluate(id=>{const r=window.__soh.run,e=r.entities[id];return {remaining:r.custody[e.c].slots.filter(Boolean).length,inventory:r.custody.inv.slots.filter(Boolean).map(s=>[s.key,s.qty])};},e.id);
   assert.equal(after.remaining,initial-1);assert(after.inventory.some(([k])=>k===LOOT_CLASSES[kind].fixed[0]));await page.screenshot({path:`${out}/${kind}-partial-640.png`});assert.deepEqual(errors,[]);report.push({kind,site:`${site.poi} ${site.tx},${site.ty}`,initial,after,ui:text});await ctx.close();
  }

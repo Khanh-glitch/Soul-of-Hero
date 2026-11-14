@@ -124,7 +124,7 @@ describe('B2: consumer choice — the gear feeds two real paid recipes, the pipe
     const bench = bringUpL2(g);
     craftCollect(g, bench, 'metal_pipe', START + 10_000);
     expect(countItem(r, 'inv', 'metal_pipe')).toBe(2);   // PA1 rev-2: one paid cycle pays for TWO sections
-    craftCollect(g, bench, 'vehicle_frame_piped', START + 20_000);
+    craftCollect(g, bench, 'vehicle_frame', START + 20_000);   // rev 3: the piped BOM is the frame recipe
     expect(countItem(r, 'inv', 'vehicle_frame')).toBe(1);
     expect(countItem(r, 'inv', 'metal_pipe')).toBe(1);   // one section consumed, the other kept
   });

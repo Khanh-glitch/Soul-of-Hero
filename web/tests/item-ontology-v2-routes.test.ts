@@ -54,7 +54,7 @@ function recycle(g: GameState, key: string, at: number) {
 }
 
 describe('Item Ontology V2 routes (INTENT on FIXTURE stock)', () => {
-  it('R1 scrap → Machine Parts is a craft; research is paid ONLY in spares; the Recycler turns a Damaged Drive into spares', () => {
+  it('R1 scrap → Machine Parts is a craft; research is paid ONLY in Parts (`spares`); the Recycler converts a Damaged Drive into 2', () => {
     const g = start(); const r = g.run!;
     addItem(r, 'inv', 'wood', 60); addItem(r, 'inv', 'stone', 10); addItem(r, 'inv', 'scrap', 6); addItem(r, 'inv', 'iron_ingot', 4);
     const spares0 = countItem(r, 'inv', 'spares');
@@ -70,9 +70,10 @@ describe('Item Ontology V2 routes (INTENT on FIXTURE stock)', () => {
     expect(left).toBeLessThan(BAL.research.randomSparesCost);
     const refused = act(g, 'research', { eid: table.id, mode: 'random' }, t + 10);
     expect(refused.ok, 'Machine Parts must not pay for research').toBe(false);
-    expect((refused as { reason?: string }).reason ?? '').toMatch(/spares/i);
+    expect((refused as { reason?: string }).reason ?? '').toBe(`Needs ${BAL.research.randomSparesCost} Parts.`);   // names the scarce resource, never "Machine Parts"
     expect(countItem(r, 'inv', 'mechanical_parts')).toBe(2);
-    // Recycler: one Damaged Drive → 2 spares (the only mint of the currency).
+    // Recycler: one Damaged Drive → 2 Parts. This is the only CONVERSION into Parts; loot, wrecks and machine
+    // creatures are the other sources (round 1 wrongly called this "the only mint").
     addItem(r, 'inv', 'damaged_drive', 1);
     const before = countItem(r, 'inv', 'spares');
     const rec = recycle(g, 'damaged_drive', t + 1000); expect(rec.ok, rec.reason).toBe(true);
@@ -109,7 +110,7 @@ describe('Item Ontology V2 routes (INTENT on FIXTURE stock)', () => {
     expect(countItem(r, 'inv', 'fasteners')).toBe(3);
   });
 
-  it('R3 Pipe, Gear and Blade recycle to their versioned returns; an Iron Plate is refused (no rule — proposal P5)', () => {
+  it('R3 Pipe, Gear, Blade and (round 2, P5) Iron Plate recycle to their versioned returns; a non-component is refused, not eaten', () => {
     const g = start(); const r = g.run!;
     let t = START + 100;
     const expectOut = (key: string, want: Record<string, number>) => {
@@ -122,10 +123,11 @@ describe('Item Ontology V2 routes (INTENT on FIXTURE stock)', () => {
     expectOut('metal_pipe', { refined_iron_ingot: 1, mechanical_parts: 0 });
     expectOut('mechanical_gear', { mechanical_parts: 2, iron_ingot: 1 });
     expectOut('metal_blade', { iron_ingot: 2, mechanical_parts: 1 });
-    addItem(r, 'inv', 'iron_plate', 1);
-    const plate = recycle(g, 'iron_plate', t);
-    expect(plate.ok).toBe(false);
-    expect(plate.reason).toMatch(/not an eligible Recycler input/);
-    expect(countItem(r, 'inv', 'iron_plate')).toBe(1);               // refused, not eaten
+    expectOut('iron_plate', { iron_ingot: 1, refined_iron_ingot: 0, fasteners: 0 });
+    addItem(r, 'inv', 'fasteners', 1);
+    const no = recycle(g, 'fasteners', t);
+    expect(no.ok).toBe(false);
+    expect(no.reason).toMatch(/not an eligible Recycler input/);
+    expect(countItem(r, 'inv', 'fasteners')).toBe(1);                // refused, not eaten
   });
 });

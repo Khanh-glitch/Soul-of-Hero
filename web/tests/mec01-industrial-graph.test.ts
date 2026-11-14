@@ -26,8 +26,8 @@ describe('MEC-01 five-chain SOH benchmark is anchored to the registry', () => {
     expect(ins('iron_plate')).toEqual({refined_iron_ingot:2,fasteners:1}); expect(RECIPES.iron_plate.qty).toBe(2);
     expect(RECIPES.iron_plate.rev).toBe(2);
   });
-  it('utility frame: 3 iron + 2 mechanical parts + 2 spares at bench II', () => {
-    expect(ins('vehicle_frame')).toEqual({iron_ingot:3,mechanical_parts:2,spares:2}); expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
+  it('utility frame (rev 3, Item Ontology V2 P3): 1 pipe + 2 iron + 2 machine parts + 2 parts at bench II', () => {
+    expect(ins('vehicle_frame')).toEqual({metal_pipe:1,iron_ingot:2,mechanical_parts:2,spares:2}); expect(RECIPES.vehicle_frame.rev).toBe(3); expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
   });
 });
 

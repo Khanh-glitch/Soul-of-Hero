@@ -939,6 +939,16 @@
             1
           ]
         ]
+      },
+      "iron_plate": {
+        "recipe": "X:plate-v1",
+        "seconds": 10,
+        "outputs": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
       }
     }
   },

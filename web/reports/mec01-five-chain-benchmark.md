@@ -9,8 +9,8 @@ Models: amortized per-unit (cheapestCraft) AND integer craft batches (integerTre
 |---|---|---|---|---|---|---|
 | Metal Blade | metal_blade | 4.833 | 22 | iron_sword: OVER_RETURN (11 vs 5) | iron_sword: OK (2.333 vs 5) | 30×iron_ingot, 15×LI Parts |
 | Metal Pipe | metal_pipe | 1.917 | 22 | iron_pick: OVER_RETURN (4.25 vs 3) | iron_pick: OK (2.333 vs 3) | 30×LI Parts, 5×refined_iron_ingot |
-| Mechanical Gear | mechanical_gear | 4.611 | 45.333 | industrial_axe: OVER_RETURN (7.611 vs 4.667) | industrial_axe: OK (3 vs 4.667) | 50×iron_ingot, 65×LI Parts |
+| Mechanical Gear | mechanical_gear | 4.611 | 45.333 | industrial_axe: OVER_RETURN (7.611 vs 8.667) | industrial_axe: OK (3 vs 8.667) | 50×iron_ingot, 65×LI Parts |
 | Iron Plate | iron_plate | 1.722 | 20.667 | iron_axe: OVER_RETURN (3.889 vs 3) | iron_axe: OK (2.167 vs 3) | 30×LI Parts, 5×refined_iron_ingot |
-| Utility Frame → Motorbike Kit | vehicle_frame | 4.667 | 37 | none: n/a | none: n/a | 100×iron_ingot, 50×LI Parts, 30×refined_iron_ingot |
+| Utility Frame → Motorbike Kit | vehicle_frame | 5.583 | 56 | none: n/a | none: n/a | 100×iron_ingot, 50×LI Parts, 30×refined_iron_ingot |
 
 Unknowns: ORIGINAL_UNKNOWN: ore-to-ingot fuel burn; ORIGINAL_UNKNOWN: travel/route cost; ORIGINAL_UNKNOWN: per-source drop rate for Metal Blade/Frame authored caches; ORIGINAL_UNKNOWN: LI per-item yields (ASSUMED only).

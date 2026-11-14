@@ -24,6 +24,9 @@ export const GARDEN_CROPS: Record<'crop' | 'herb', { name: string; inputs: [stri
 
 export interface ItemDef {
   name: string; cat: string; icon: string; c1: string; c2: string; w: number; max: number; desc: string;
+  /** Item Ontology V2 (P1/P7): settled Vietnamese name kept as localization/alias DATA. `name` is the
+   *  English display string; the id never changes. Shown as a subtitle in the tooltip and searchable. */
+  vi?: string;
   power?: Partial<Record<Mat, number>>; dmg?: number; reach?: number; arc?: number; swing?: number; dur?: number;
   food?: { hunger?: number; thirst?: number; hp?: number; warmth?: number; rad?: number; stamina?: number };
   slot?: 'head' | 'body' | 'back'; armor?: number; cold?: number; mask?: boolean; fuel?: number; charge?: number; initialCharge?: number; waterContainer?: boolean; carryBonus?: number;
@@ -42,13 +45,13 @@ export const ITEMS: Record<string, ItemDef> = {
   essence_nature: I({ name:'Nature Essence', cat:'res', icon:'crystal', c1:'#43813e', c2:'#c6ee80', w:0.1, max:30, desc:'Nature Signature loading material.' }),
   essence_water: I({ name:'Water Essence', cat:'res', icon:'crystal', c1:'#468da5', c2:'#b9f5ff', w:0.1, max:30, desc:'Water Signature loading material.' }),
   essence_spirit: I({ name:'Spirit Essence', cat:'res', icon:'crystal', c1:'#8954ac', c2:'#efd8ff', w:0.1, max:30, desc:'Spirit Signature loading material.' }),
-  core_blast: I({ name:'Vụ nổ lớn', cat:'core', icon:'core', c1:'#b63c21', c2:'#ffcb6a', w:0.3, max:1, desc:'Common Fire Core. Reload each reserve with Basic, Refined or Refined plus Fire Essence.', creatorCore:'blast', essence:'fire' }),
-  core_meteor: I({ name:'Thiên thạch', cat:'core', icon:'core', c1:'#b64b30', c2:'#ffe695', w:0.3, max:1, desc:'Rare Fire Core. A fireball, targeted meteor and ten-meteor storm.', creatorCore:'meteor', essence:'fire' }),
-  core_dragon: I({ name:'Hơi thở của rồng', cat:'core', icon:'core', c1:'#96332b', c2:'#ffda79', w:0.3, max:1, desc:'Top-tier Fire Core: flamethrower, fire tornado and dragon dive.', creatorCore:'dragon', essence:'fire' }),
-  core_elsa: I({ name:'Gươm Elsa', cat:'core', icon:'core', c1:'#5c9fc5', c2:'#d9ffff', w:0.3, max:1, desc:'Rare Water Core: ice projectile, one-second self-freeze and viewport freeze.', creatorCore:'elsa', essence:'water' }),
-  core_earthmother: I({ name:'Hơi thở đất mẹ', cat:'core', icon:'core', c1:'#436f37', c2:'#cbe998', w:0.3, max:1, desc:'Common Nature Core: rock, grove and binding roots.', creatorCore:'earthmother', essence:'nature' }),
+  core_blast: I({ name:"Big Bang", vi:'Vụ nổ lớn', cat:'core', icon:'core', c1:'#b63c21', c2:'#ffcb6a', w:0.3, max:1, desc:'Common Fire Core. Reload each reserve with Basic, Refined or Refined plus Fire Essence.', creatorCore:'blast', essence:'fire' }),
+  core_meteor: I({ name:"Meteor", vi:'Thiên thạch', cat:'core', icon:'core', c1:'#b64b30', c2:'#ffe695', w:0.3, max:1, desc:'Rare Fire Core. A fireball, targeted meteor and ten-meteor storm.', creatorCore:'meteor', essence:'fire' }),
+  core_dragon: I({ name:"Dragon's Breath", vi:'Hơi thở của rồng', cat:'core', icon:'core', c1:'#96332b', c2:'#ffda79', w:0.3, max:1, desc:'Top-tier Fire Core: flamethrower, fire tornado and dragon dive.', creatorCore:'dragon', essence:'fire' }),
+  core_elsa: I({ name:"Elsa's Sword", vi:'Gươm Elsa', cat:'core', icon:'core', c1:'#5c9fc5', c2:'#d9ffff', w:0.3, max:1, desc:'Rare Water Core: ice projectile, one-second self-freeze and viewport freeze.', creatorCore:'elsa', essence:'water' }),
+  core_earthmother: I({ name:"Earth Mother's Breath", vi:'Hơi thở đất mẹ', cat:'core', icon:'core', c1:'#436f37', c2:'#cbe998', w:0.3, max:1, desc:'Common Nature Core: rock, grove and binding roots.', creatorCore:'earthmother', essence:'nature' }),
   core_mjolnir: I({ name:'Mjolnir', cat:'core', icon:'core', c1:'#6689ad', c2:'#eefbff', w:0.3, max:1, desc:'Rare Nature Core: thunder punch, five lightning strikes and electrical attraction.', creatorCore:'mjolnir', essence:'nature' }),
-  core_demon: I({ name:'Lõi quỷ', cat:'core', icon:'core', c1:'#593777', c2:'#ebc5ff', w:0.3, max:1, desc:'Rare Spirit Core: directed rays, a stationary beam and a map-selected teleport.', creatorCore:'demon', essence:'spirit' }),
+  core_demon: I({ name:"Demon Core", vi:'Lõi quỷ', cat:'core', icon:'core', c1:'#593777', c2:'#ebc5ff', w:0.3, max:1, desc:'Rare Spirit Core: directed rays, a stationary beam and a map-selected teleport.', creatorCore:'demon', essence:'spirit' }),
   // All lifecycle and upgrade costs are provisional TUNABLE values.
   // B05-R (provisional): crude petroleum is a DIFFERENT material from Salvaged Oil. It comes only from an authorized oil pump; it is never created from wrecks.
   crude_petroleum: I({ name:'Crude Petroleum', cat:'res', icon:'drum', c1:'#1e1a16', c2:'#5a4a3a', w:0.8, max:30, desc:'Raw petroleum drawn from an authorized oil source. Refine at an Oil Refinery (4 crude + glass).' }),
@@ -56,8 +59,8 @@ export const ITEMS: Record<string, ItemDef> = {
   salvaged_oil: I({ name:'Salvaged Oil', cat:'res', icon:'can', c1:'#3d3025', c2:'#9c8050', w:0.7, max:30, desc:'Recovered from car wrecks. Study a sample to learn furnace refining into generator canisters.', specimen:'refine_salvaged_oil' }),
   // SOH_PROVISIONAL v1: Oil Refinery output; motorbike wear mitigator, not a LI-verified lubricant grade.
   lubricant: I({ name:'Machine Lubricant', cat:'res', icon:'jug', c1:'#2b4a3a', c2:'#8fd19b', w:0.6, max:20, desc:'Refined from Salvaged Oil at an Oil Refinery. Service a motorbike within reach to halve wear for a limited distance.' }),
-  damaged_drive: I({ name: 'Damaged Drive', cat: 'res', icon: 'parts', c1: '#4b6570', c2: '#f0bd56', w: 3, max: 1, desc: 'Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.' }),
-  mechanical_parts: I({ name: 'Mechanical Parts', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.' }),
+  damaged_drive: I({ name: 'Damaged Drive', cat: 'res', icon: 'parts', c1: '#4b6570', c2: '#f0bd56', w: 3, max: 1, desc: 'Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Machine Parts. Or carry to the Foundry Recycler: 1 drive → 2 Parts. The same drive is spent either way.' }),
+  mechanical_parts: I({ name: 'Machine Parts', vi: 'Bộ phận máy', cat: 'res', icon: 'parts', c1: '#707984', c2: '#c9d2d8', w: 0.5, max: 30, desc: 'Craftable industrial component: made at a Workbench from Scrap and Iron, or found in industrial wrecks. Builds tools, machines and vehicles and maintains equipment. Not the same thing as Parts.' }),
   // Provisional, run-local cross-system materials and equipment.
   fasteners: I({ name: 'Forged Fasteners', cat: 'res', icon: 'fasteners', c1: '#85939b', c2: '#e4cd88', w: 0.2, max: 30, desc: 'Found on wrecks or made from iron and scrap. Used for field repairs, packs and canteens.', studyRecipe: 'fasteners' }),
   treated_canvas: I({ name: 'Treated Canvas', cat: 'res', icon: 'canvas', c1: '#71896b', c2: '#c4c6a1', w: 0.3, max: 30, desc: 'Cloth treated with salt and Bitterleaf at a fire. Competes with food and medicine.', studyRecipe: 'treated_canvas' }),
@@ -83,7 +86,7 @@ export const ITEMS: Record<string, ItemDef> = {
   salted_meat: I({ name: 'Salted Roast', cat: 'food', icon: 'meat', c1: '#9a5638', c2: '#f0bb76', w: 0.45, max: 20, desc: 'Roast meat seasoned with gathered salt; a hearty field meal.', food: { hunger: 42, hp: 8, warmth: 8 } }),
   sulfur: I({ name: 'Sulfur', cat: 'res', icon: 'ore', c1: '#b59a1e', c2: '#f2e05a', w: 0.5, max: 40, desc: 'Volcanic sulfur. Volatile.' }),
   scrap: I({ name: 'Scrap Metal', cat: 'res', icon: 'scrap', c1: '#6f7378', c2: '#c0a07a', w: 1, max: 60, desc: 'Salvage from wrecks. Melts into iron.' }),
-  spares: I({ name: 'Spares', cat: 'res', icon: 'gear', c1: '#8a8f96', c2: '#e2c25a', w: 0.3, max: 60, desc: 'Run-local components. Research currency and advanced parts.' }),
+  spares: I({ name: 'Parts', vi: 'Linh kiện', cat: 'res', icon: 'gear', c1: '#8a8f96', c2: '#e2c25a', w: 0.3, max: 60, desc: 'Progression resource. Cannot be crafted: found in loot and wrecks or recovered at the Recycler. Pays for research and trader barter and goes into Cores and powered machines. Run-local.' }),
   iron_ingot: I({ name: 'Iron Ingot', cat: 'res', icon: 'ingot', c1: '#7a8696', c2: '#dfe6ee', w: 1, max: 40, desc: 'Smelted iron.' }),
   rope: I({ name: 'Rope', cat: 'res', icon: 'rope', c1: '#9a7a44', c2: '#d8bb78', w: 0.3, max: 30, desc: 'Twisted fiber.' }),
   hide: I({ name: 'Raw Hide', cat: 'res', icon: 'hide', c1: '#7a4e34', c2: '#b88a62', w: 0.8, max: 30, desc: 'Cure at a workbench into leather.' }),
@@ -144,14 +147,14 @@ export const ITEMS: Record<string, ItemDef> = {
   // furnace, generator and motorbike burn, and `stationBurnable` / `isStationFuel` read this field.
   fuel_can: I({ name: 'Fuel Canister', cat: 'misc', icon: 'can', c1: '#a03a1e', c2: '#f0c060', w: 1.5, max: 5, desc: 'Fuels generators and motorbikes. Refined from real oil at a furnace or Oil Refinery. NOT station kindling — a campfire, furnace, refinery or research table burns solid fuel, never a canister. A packed motorbike ships dry: its first canister is made separately.', fuel: 60 }),
   // Ragnarok & profile
-  rcash: I({ name: 'Ragnarok Cash', cat: 'cash', icon: 'coin', c1: '#b07a1e', c2: '#ffe27a', w: 0.01, max: 999, desc: 'Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.' }),
-  escrow_chest: I({ name: 'Rương ký gửi', cat: 'kit', icon: 'chest', c1: '#5a3a7a', c2: '#ffd040', w: 4, max: 1, desc: 'Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.', place: 'escrow' }),
+  rcash: I({ name: 'Ragnarok Cash', cat: 'cash', icon: 'coin', c1: '#b07a1e', c2: '#ffe27a', w: 0.01, max: 999, desc: 'Physical, unsecured. Can be lost. Deposit in an owned Escrow Chest.' }),
+  escrow_chest: I({ name: 'Escrow Chest', vi: 'Rương ký gửi', cat: 'kit', icon: 'chest', c1: '#5a3a7a', c2: '#ffd040', w: 4, max: 1, desc: 'Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.', place: 'escrow' }),
   vehicle_frame: I({ name:'Utility Frame', cat:'res', icon:'scrap', c1:'#706c5f', c2:'#c6bca0', w:4, max:5, desc:'Welded frame for the motorbike.' }),
   vehicle_drive: I({ name:'Motor Drive', cat:'res', icon:'gear', c1:'#625e58', c2:'#c8bca1', w:3, max:5, desc:'Gear and plate drive assembly for the utility motorbike.' }),
   // B01 industrial intermediates (SOH_PROVISIONAL; historical v5 ratios are documented in B01 ledger, not copied).
   refined_iron_ingot: I({ name:'Refined Iron Ingot', cat:'res', icon:'rfingot', c1:'#8f9fb3', c2:'#f2f8ff', w:1, max:40, desc:'Furnace-refined iron. Needed for pipe and plate.' }),
-  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'pipe', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section for the piped utility frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Mechanical Part spent to make it is NOT returned — so pipe never loops.' }),
-  metal_blade: I({ name:'Metal Blade', cat:'res', icon:'blade', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock for sword refits.' }),
+  metal_pipe: I({ name:'Metal Pipe', cat:'res', icon:'pipe', c1:'#5f6a74', c2:'#b8c4cc', w:1.2, max:20, desc:'Pipe section: the tubing of every Utility Frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Machine Part spent to make it is NOT returned — so pipe never loops.' }),
+  metal_blade: I({ name:'Metal Blade', cat:'res', icon:'blade', c1:'#7d8a96', c2:'#eef4f8', w:0.8, max:20, desc:'Cut blade stock: the edge of the Salvager Axe, and an optional refit for the Iron Sword and Reinforced Spear.' }),
   mechanical_gear: I({ name:'Mechanical Gear', cat:'res', icon:'mgear', c1:'#6b6f76', c2:'#d6c27a', w:0.8, max:20, desc:'Precision gear for motor drives and powered mechanisms.' }),
   iron_plate: I({ name:'Iron Plate', cat:'res', icon:'plate', c1:'#4f5a63', c2:'#c9d1d8', w:1.5, max:20, desc:'Plate patch for a damaged wall or door (Shift+click when repairing): restores up to 25% of its max HP per plate. Not a permanent reinforcement.' }),
   motorbike_kit: I({ name:'Utility Motorbike (packed)', cat:'kit', icon:'cart', c1:'#4d7180', c2:'#e4c475', w:12, max:1, dur:200, desc:'Packed dry: frame, drive, two iron plates and two fastener sets. No fuel is packaged — place it, then refuel with a real Fuel Canister.', place:'motorbike' }),
@@ -359,7 +362,9 @@ function refineryRecipe(key: 'single' | 'batch' | 'industrial' | 'lube' | 'crude
 }
 export const RECIPES: Record<string, Recipe> = {
   // SOH_NEW_TUNED v1. Furnace fuel is separate from consumed input.
-  vehicle_frame: { out:'vehicle_frame', qty:1, ins:[['iron_ingot',3],['mechanical_parts',2],['spares',2]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
+  // Item Ontology V2 P3 (rev 3): the Metal Pipe is the tubing of THE frame recipe. The rev-2 plain frame and the
+  // rev-2 `vehicle_frame_piped` alternative are frozen in recipe-migration.ts; this line is the former piped BOM.
+  vehicle_frame: { out:'vehicle_frame', qty:1, ins:[['metal_pipe',1],['iron_ingot',2],['mechanical_parts',2],['spares',2]], station:'workbench', stationLevel:2, secs:22, base:true, tier:1, rev:3 },
   vehicle_drive: { out:'vehicle_drive', qty:1, ins:[['iron_ingot',2],['mechanical_parts',2],['fasteners',2],['spares',3]], station:'workbench', stationLevel:2, secs:25, base:true, tier:1 },
   // PA1 v1.2 DRY KIT (docs/design/PA1_OIL_MOBILITY_V1_2_ACCEPTANCE.md §1, superseding the
   // recovered v1.1 row): Frame + Drive + 2 Iron Plate + 2 Fasteners. The kit carries NO
@@ -405,7 +410,8 @@ export const RECIPES: Record<string, Recipe> = {
   recover_drive: { out: 'mechanical_parts', qty: 1, ins: [['damaged_drive', 1], ['scrap', 1]], station: 'workbench', secs: 12, base: true, tier: 1 },
   mechanical_parts: { out: 'mechanical_parts', qty: 2, ins: [['scrap', 2], ['iron_ingot', 1]], station: 'workbench', secs: 12, base: true, tier: 1 },
   industrial_pick: { out: 'industrial_pick', qty: 1, ins: [['iron_pick', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
-  industrial_axe: { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2 },
+  // Item Ontology V2 P4 (rev 3): one Machine Part becomes one Metal Blade. Rev 2 frozen in recipe-migration.ts.
+  industrial_axe: { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['metal_blade', 1], ['mechanical_parts', 1], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2, rev: 3 },
   reinforced_spear: { out: 'reinforced_spear', qty: 1, ins: [['iron_ingot', 2], ['mechanical_parts', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2 },
   // ---- PA1 R1 cutover (recovered paper v1.1 BOMs, `workbench_ii` rows) ----
   // Rev 1 definitions are frozen in recipe-migration.ts; jobs keep what they paid for.
@@ -414,7 +420,6 @@ export const RECIPES: Record<string, Recipe> = {
   mechanical_gear: { out: 'mechanical_gear', qty: 1, ins: [['refined_iron_ingot', 1], ['iron_ingot', 1], ['mechanical_parts', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 20, base: true, tier: 2, rev: 2 },
   iron_plate: { out: 'iron_plate', qty: 2, ins: [['refined_iron_ingot', 2], ['fasteners', 1]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2, rev: 2 },
   iron_sword_blade: { out: 'iron_sword', qty: 1, alias: 'Iron Sword (blade refit)', ins: [['metal_blade', 1], ['iron_ingot', 2], ['leather', 1]], station: 'workbench', stationLevel: 2, secs: 14, base: true, tier: 2 },
-  vehicle_frame_piped: { out: 'vehicle_frame', qty: 1, alias: 'Utility Frame (piped)', ins: [['metal_pipe', 1], ['iron_ingot', 2], ['mechanical_parts', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
   reinforced_spear_blade: { out: 'reinforced_spear', qty: 1, alias: 'Reinforced Spear (blade)', ins: [['metal_blade', 1], ['iron_ingot', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
   industrial_pick_geared: { out: 'industrial_pick', qty: 1, alias: 'Salvager Pick (geared)', ins: [['iron_pick', 1], ['mechanical_gear', 1], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, base: true, tier: 2 },
   vehicle_drive_geared: { out: 'vehicle_drive', qty: 1, alias: 'Motor Drive (geared)', ins: [['mechanical_gear', 1], ['iron_ingot', 1], ['fasteners', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 22, base: true, tier: 2 },
@@ -508,7 +513,7 @@ export const STRUCTS: Record<string, StructDef> = {
   oil_pump: { name: 'Oil Pump', cost: BAL.oilPumpV1.cost as [string, number][], hp: BAL.oilPumpV1.hp, need: 'any', block: true, layer: 'obj', station: 'oil_pump', light: 0, desc: 'Draws Crude Petroleum from an authorized oil site. Needs fuel to run; output waits in its slots. Placement needs an authorized source.' },
   refinery: { name: 'Oil Refinery', cost: BAL.oilRefineryV1.cost as [string, number][], hp: BAL.oilRefineryV1.hp, need: BAL.oilRefineryV1.need as 'any', block: true, layer: 'obj', station: 'refinery', light: 40, desc: 'Converts finite Salvaged Oil into Fuel Canisters and Machine Lubricant. Needs a level-2 Workbench nearby and fuel to run. The industrial batch yields fuel and lubricant together.' },
   workbench: { name: 'Workbench', cost: [['wood', 14], ['stone', 4]], hp: 160, need: 'any', block: true, layer: 'obj', station: 'workbench', desc: 'Timed crafting for tools, armor and parts.' },
-  research: { name: 'Research Table', cost: [['wood', 10], ['spares', 6], ['iron_ingot', 1]], hp: 160, need: 'any', block: true, layer: 'obj', station: 'research', desc: 'Spend Spares or study specimens to unlock recipes.' },
+  research: { name: 'Research Table', cost: [['wood', 10], ['spares', 6], ['iron_ingot', 1]], hp: 160, need: 'any', block: true, layer: 'obj', station: 'research', desc: 'Spend Parts or study specimens to unlock recipes.' },
   garden: { name: 'Garden Plot', cost: [['wood', 4], ['fiber', 4]], hp: 60, need: 'any', block: false, layer: 'obj', desc: 'Plant seeds; grows only while watered (rain counts).' },
   farm_controller: { name: 'Garden Tender', cost: [['wood', 12], ['iron_ingot', 2], ['mechanical_parts', 3], ['fasteners', 3], ['spares', 2]], hp: 140, need: 'any', block: true, layer: 'obj', slots: 3, desc: 'Optional fuelled garden machinery. Link one nearby plot, barrel and chest; needs an improved workbench to build.' },
   barrel: { name: 'Rain Barrel', cost: [['wood', 8], ['rope', 1]], hp: 80, need: 'any', block: true, layer: 'obj', desc: 'Collects rainwater; refill flasks.' },
@@ -524,7 +529,7 @@ export const STRUCTS: Record<string, StructDef> = {
   spikes: { name: 'Spike Trap', cost: [['wood', 6]], hp: 90, need: 'any', block: false, layer: 'obj', desc: 'Hurts creatures that walk over it.' },
   barricade: { name: 'Barricade', cost: [['wood', 8]], hp: 220, need: 'any', block: true, layer: 'obj', desc: 'Cheap blocking defense.' },
   torch_post: { name: 'Torch Post', cost: [['wood', 2], ['torch', 1]], hp: 40, need: 'any', block: true, layer: 'obj', light: 80, desc: 'Permanent light.' },
-  escrow: { name: 'Rương ký gửi', cost: [['escrow_chest', 1]], hp: 400, need: 'claim', block: true, layer: 'obj', desc: 'Deposit physical Ragnarok cash into profile-secured cash.', item: 'escrow_chest' },
+  escrow: { name: 'Escrow Chest', cost: [['escrow_chest', 1]], hp: 400, need: 'claim', block: true, layer: 'obj', desc: 'Deposit physical Ragnarok cash into profile-secured cash.', item: 'escrow_chest' },
 };
 // PA1 item custody: the existing material cost of each device is now consumed
 // exactly once by its known hand-crafting recipe. Placing it consumes the item,

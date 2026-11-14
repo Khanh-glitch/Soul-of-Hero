@@ -1,0 +1,331 @@
+{
+ "generated_from": {
+  "recipe_revision": 3,
+  "retired": [
+   "fuel_can",
+   "vehicle_frame_piped"
+  ]
+ },
+ "motorbike": {
+  "scope": "ANALYTIC. Sequential station seconds only (no walking, gathering or fuel). Fuel is measured in the INTENT run.",
+  "steps": [
+   "need 1 deploy_workbench",
+   "place:workbench [[\"deploy_workbench\",1]]",
+   "need 1 deploy_furnace",
+   "place:furnace [[\"deploy_furnace\",1]]",
+   "upgrade:2 [[\"mechanical_parts\",2],[\"iron_ingot\",1]]",
+   "need 1 deploy_research",
+   "place:research [[\"deploy_research\",1]]",
+   "research:fasteners [[\"spares\",9]]",
+   "research:motorbike_kit [[\"spares\",9]]",
+   "upgrade:3 [[\"mechanical_parts\",6],[\"iron_ingot\",8],[\"fasteners\",8],[\"spares\",12]]",
+   "need 1 motorbike_kit"
+  ],
+  "before_rev2": {
+   "atoms": {
+    "coal": 1,
+    "iron_ore": 29,
+    "scrap": 17,
+    "spares": 41,
+    "stone": 22,
+    "wood": 28
+   },
+   "crafts": {
+    "deploy_furnace": 1,
+    "deploy_research": 1,
+    "deploy_workbench": 1,
+    "fasteners": 5,
+    "iron_ingot": 29,
+    "iron_plate": 1,
+    "mechanical_parts": 6,
+    "motorbike_kit": 1,
+    "refined_iron_ingot": 1,
+    "vehicle_drive": 1,
+    "vehicle_frame": 1
+   },
+   "leftovers": {
+    "fasteners": 2,
+    "motorbike_kit": 1
+   },
+   "station_seconds": 543
+  },
+  "after_rev3": {
+   "atoms": {
+    "coal": 2,
+    "iron_ore": 32,
+    "scrap": 19,
+    "spares": 41,
+    "stone": 22,
+    "wood": 28
+   },
+   "crafts": {
+    "deploy_furnace": 1,
+    "deploy_research": 1,
+    "deploy_workbench": 1,
+    "fasteners": 5,
+    "iron_ingot": 32,
+    "iron_plate": 1,
+    "mechanical_parts": 7,
+    "metal_pipe": 1,
+    "motorbike_kit": 1,
+    "refined_iron_ingot": 2,
+    "vehicle_drive": 1,
+    "vehicle_frame": 1
+   },
+   "leftovers": {
+    "fasteners": 2,
+    "mechanical_parts": 1,
+    "metal_pipe": 1,
+    "motorbike_kit": 1
+   },
+   "station_seconds": 620
+  },
+  "delta": {
+   "atoms": {
+    "coal": 1,
+    "iron_ore": 3,
+    "scrap": 2
+   },
+   "crafts": {
+    "iron_ingot": 3,
+    "mechanical_parts": 1,
+    "metal_pipe": 1,
+    "refined_iron_ingot": 1
+   },
+   "leftovers": {
+    "mechanical_parts": 1,
+    "metal_pipe": 1
+   },
+   "station_seconds": 77
+  }
+ },
+ "motorbike_intent_run": {
+  "scope": "INTENT on FIXTURE atoms (shipping_fresh, seed 303). Not natural play.",
+  "rev": 3,
+  "intents": 61,
+  "sequence": [
+   "deploy_workbench",
+   "place:workbench",
+   "deploy_furnace",
+   "place:furnace",
+   "iron_ingot",
+   "mechanical_parts",
+   "iron_ingot",
+   "upgrade:2",
+   "iron_ingot",
+   "deploy_research",
+   "place:research",
+   "research:fasteners",
+   "research:motorbike_kit",
+   "iron_ingot",
+   "mechanical_parts",
+   "iron_ingot",
+   "mechanical_parts",
+   "iron_ingot",
+   "mechanical_parts",
+   "iron_ingot",
+   "iron_ingot",
+   "iron_ingot",
+   "iron_ingot",
+   "iron_ingot",
+   "iron_ingot",
+   "iron_ingot",
+   "iron_ingot",
+   "iron_ingot",
+   "fasteners",
+   "iron_ingot",
+   "fasteners",
+   "iron_ingot",
+   "fasteners",
+   "upgrade:3",
+   "iron_ingot",
+   "iron_ingot",
+   "iron_ingot",
+   "refined_iron_ingot",
+   "iron_ingot",
+   "mechanical_parts",
+   "metal_pipe",
+   "iron_ingot",
+   "iron_ingot",
+   "iron_ingot",
+   "mechanical_parts",
+   "vehicle_frame",
+   "iron_ingot",
+   "iron_ingot",
+   "iron_ingot",
+   "mechanical_parts",
+   "iron_ingot",
+   "fasteners",
+   "vehicle_drive",
+   "iron_ingot",
+   "iron_ingot",
+   "iron_ingot",
+   "refined_iron_ingot",
+   "iron_plate",
+   "iron_ingot",
+   "fasteners",
+   "motorbike_kit"
+  ],
+  "station_seconds_simulated": 772,
+  "furnace_fuel_wood_granted": 24,
+  "furnace_fuel_wood_left_in_slot": 6,
+  "kit": 1,
+  "leftover_metal_pipe_recycled_to": "refined_iron_ingot x1"
+ },
+ "salvager_axe": {
+  "scope": "ANALYTIC. `hide` is the raw atom behind the Iron Axe leather grip. Recipe knowledge for industrial_axe (tier 2) is unchanged and not priced here.",
+  "before_rev2": {
+   "atoms": {
+    "hide": 1,
+    "iron_ore": 6,
+    "scrap": 4,
+    "spares": 2,
+    "stone": 22,
+    "wood": 20
+   },
+   "crafts": {
+    "deploy_furnace": 1,
+    "deploy_workbench": 1,
+    "industrial_axe": 1,
+    "iron_axe": 1,
+    "iron_ingot": 6,
+    "leather": 1,
+    "mechanical_parts": 2
+   },
+   "leftovers": {
+    "industrial_axe": 1
+   },
+   "station_seconds": 134
+  },
+  "after_rev3": {
+   "atoms": {
+    "hide": 1,
+    "iron_ore": 10,
+    "scrap": 4,
+    "spares": 2,
+    "stone": 22,
+    "wood": 20
+   },
+   "crafts": {
+    "deploy_furnace": 1,
+    "deploy_workbench": 1,
+    "industrial_axe": 1,
+    "iron_axe": 1,
+    "iron_ingot": 10,
+    "leather": 1,
+    "mechanical_parts": 2,
+    "metal_blade": 1
+   },
+   "leftovers": {
+    "industrial_axe": 1
+   },
+   "station_seconds": 190
+  },
+  "delta": {
+   "atoms": {
+    "iron_ore": 4
+   },
+   "crafts": {
+    "iron_ingot": 4,
+    "metal_blade": 1
+   },
+   "leftovers": {},
+   "station_seconds": 56
+  },
+  "blade": {
+   "recipe": {
+    "out": "metal_blade",
+    "qty": 1,
+    "ins": [
+     [
+      "iron_ingot",
+      4
+     ],
+     [
+      "mechanical_parts",
+      1
+     ]
+    ],
+    "station": "workbench",
+    "stationLevel": 2,
+    "secs": 16,
+    "base": true,
+    "tier": 2
+   },
+   "station": "workbench level 2 (same level the axe upgrade itself needs)",
+   "known_from_start": true
+  }
+ },
+ "salvager_axe_recycle": {
+  "embedded_in_one_rev3_axe": {
+   "iron_ingot": 7,
+   "mechanical_parts": 2,
+   "spares": 2
+  },
+  "recycler_returns_at_full_condition": {
+   "scrap": 1,
+   "mechanical_parts": 2,
+   "iron_ingot": 1
+  },
+  "net_per_craft_recycle_turn": {
+   "iron_ingot": -6,
+   "mechanical_parts": 0,
+   "spares": -2,
+   "scrap": 1
+  },
+  "blade_loop_net": {
+   "iron_ingot": -2,
+   "mechanical_parts": 0
+  },
+  "verdict": "NO NET MATERIAL: iron and Parts strictly negative, Machine Parts neutral. New Recycler rule for the axe NOT needed (Round 1 migration note withdrawn)."
+ },
+ "plate_recycle_loop": {
+  "scope": "INTENT on FIXTURE stock",
+  "per_turn": {
+   "iron_ingot": -1,
+   "coal": -1,
+   "fasteners": -1,
+   "mechanical_parts": 0,
+   "spares": 0
+  },
+  "ledger_by_turn": [
+   {
+    "iron_ingot": 9,
+    "coal": 3,
+    "fasteners": 3,
+    "refined_iron_ingot": 0,
+    "iron_plate": 0,
+    "mechanical_parts": 0,
+    "spares": 0
+   },
+   {
+    "iron_ingot": 8,
+    "coal": 2,
+    "fasteners": 2,
+    "refined_iron_ingot": 0,
+    "iron_plate": 0,
+    "mechanical_parts": 0,
+    "spares": 0
+   },
+   {
+    "iron_ingot": 7,
+    "coal": 1,
+    "fasteners": 1,
+    "refined_iron_ingot": 0,
+    "iron_plate": 0,
+    "mechanical_parts": 0,
+    "spares": 0
+   },
+   {
+    "iron_ingot": 6,
+    "coal": 0,
+    "fasteners": 0,
+    "refined_iron_ingot": 0,
+    "iron_plate": 0,
+    "mechanical_parts": 0,
+    "spares": 0
+   }
+  ],
+  "verdict": "NET NEGATIVE: no iron, no Machine Parts and no Parts are created."
+ }
+}

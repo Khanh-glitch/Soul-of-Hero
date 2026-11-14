@@ -2,7 +2,7 @@
  * Item Ontology V2 — player-facing material class (Group A: display grouping only, no mechanics).
  *
  * `ItemDef.cat` puts 60+ unrelated things under one `res` bucket, so the inventory chip said
- * "MATERIAL" for wood, Spares, a Mechanical Gear and Fire Essence alike. This table splits that one
+ * "MATERIAL" for wood, Parts, a Mechanical Gear and Fire Essence alike. This table splits that one
  * bucket into the classes a new survivor has to tell apart at a glance. It changes NO id, recipe,
  * source or stack rule; `cat` is untouched and still drives every runtime branch.
  *

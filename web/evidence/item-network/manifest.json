@@ -1,18 +1,19 @@
 {
   "schema": "soh-runtime-item-formula-atlas-v1",
-  "sourceSHA": "934f4471326116737f206d2fb2d9a84ba77328da",
+  "sourceSHA": "5b4b5fad7427b7c7da93dc1e73987b845539aaac",
   "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
-  "recipeRevision": 2,
+  "recipeRevision": 3,
   "retiredRecipes": [
-    "fuel_can"
+    "fuel_can",
+    "vehicle_frame_piped"
   ],
   "counts": {
     "items": 147,
-    "recipes": 112,
+    "recipes": 111,
     "structures": 47,
     "sourceTypes": 19,
     "creatures": 23,
-    "recipeInputs": 273,
+    "recipeInputs": 271,
     "recipeOutputVariants": 1
   },
   "countsNote": "Counts the LIVE RECIPES table only. Retired formulas are excluded, and frozen revision definitions are never added back as active routes.",

@@ -28,6 +28,7 @@ import {
   starterKnowledge,
   type Recipe,
 } from './catalog';
+import { PA1_UPGRADE_ONLY_GEOMETRY, STRUCTURE_UPGRADES } from './catalog';
 import { BAL, type Stack } from './core';
 import type { EconEdge, EdgeKind, RuntimeStatus, SohEconomicGraph } from './economic-graph';
 import { itemClass, type ItemClass } from './item-class';
@@ -495,6 +496,13 @@ export function projectItemOntology(graph: SohEconomicGraph): ItemOntologyProjec
     if (ka === kb && ta === tb) twins.push({ a: A.id, b: B.id, raw_inputs: Object.keys(A.raw_per_unit), station_tier: ta });
   }
   for (const t of twins) for (const id of [t.a, t.b]) items.find((i) => i.id === id)!.signals.push(`TWIN_INTERMEDIATE:${id === t.a ? t.b : t.a}`);
+  // Upgrade-only geometry that no upgrade path leads to cannot exist in a live world, so a cost paid
+  // into it is not a real consumer (round 2, P6: this is how Plank looked "used" in round 1).
+  for (const it of items) {
+    const dead = it.consumer_targets.filter((t) => t.startsWith('structure:') && UNOBTAINABLE_STRUCTURES.includes(t.slice(10)));
+    if (dead.length && dead.length === it.consumer_targets.length && it.maintenance_targets.length === 0) it.signals.push(`NO_REACHABLE_CONSUMER:${dead.map((t) => t.slice(10)).join('+')}`);
+    else for (const t of dead) it.signals.push(`CONSUMER_UNOBTAINABLE:${t.slice(10)}`);
+  }
   for (const d of dominated) if (d.verdict === 'STRICTLY_DOMINATED') {
     for (const [k] of table[d.dearer].ins) {
       const it = items.find((i) => i.id === k)!;
@@ -556,3 +564,7 @@ export function projectItemOntology(graph: SohEconomicGraph): ItemOntologyProjec
     shipping_blocked_recipes: [...shipBlocked].sort(),
   };
 }
+
+/** Structures that can neither be placed (upgrade-only) nor reached by any in-place upgrade. */
+export const UNOBTAINABLE_STRUCTURES: readonly string[] = (PA1_UPGRADE_ONLY_GEOMETRY as readonly string[])
+  .filter((id) => !Object.values(STRUCTURE_UPGRADES).includes(id));

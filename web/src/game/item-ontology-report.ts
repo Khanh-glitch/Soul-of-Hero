@@ -48,10 +48,11 @@ export const MANIFEST_COLUMNS: (keyof ManifestRow)[] = [
 
 const BIBLE_PROTECTED = /^(core_(blast|meteor|dragon|elsa|earthmother|mjolnir|demon)|energy_|essence_|stone_|rcash|escrow_chest|blueprint)/;
 const MIGRATION: Record<string, string> = {
-  P1: 'NO (display name only)', P2: 'YES (recipe revision + retire recipe; item kept)', P3: 'YES (recipe revision + structure cost)',
-  P4: 'YES (recipe revision + new recycler rule)', P5: 'NO (new recycler rule key only)', P6: 'YES (retire recipe; item kept)',
-  P7: 'NO (display name only)', P8: 'TBD (content decision)', P9: 'NO', P10: 'TBD (owner ruling)',
+  P1: 'NO (display name only) — DONE', P2: 'NO (not authorised; nothing changes)', P3: 'DONE (recipe revision 3; rev 2 frozen; piped recipe retired)',
+  P4: 'DONE (recipe revision 3; rev 2 frozen)', P5: 'NO (new recycler rule key only) — DONE', P6: 'NO (not authorised; nothing changes)',
+  P7: 'NO (display name only) — DONE', P8: 'TBD (content decision)', P9: 'NO', P10: 'TBD (owner ruling)',
 };
+const PROPOSAL_STATUS: Record<string, string> = Object.fromEntries(PROPOSALS.map((x) => [x.id, x.status]));
 
 function sourceSummary(i: OntologyItem): string {
   const parts: string[] = [];
@@ -135,7 +136,7 @@ export function buildOntologyData(p: ItemOntologyProjection, atlas: LiAtlas): On
     return {
       old_id: i.id,
       proposed_id: d?.proposed_id ?? i.id,
-      display_name: d?.proposed_name ? `${i.name} → ${d.proposed_name}` : i.name,
+      display_name: d?.proposed_name ? `${i.name} → ${d.proposed_name}` : d?.was_name ? `${i.name} (was: ${d.was_name})` : i.name,
       level: `L${i.craft_depth}`,
       domain: d?.domain ?? 'UNASSIGNED',
       source: sourceSummary(i),
@@ -146,7 +147,7 @@ export function buildOntologyData(p: ItemOntologyProjection, atlas: LiAtlas): On
       decision: d?.decision ?? 'DEFER',
       justification: d?.why ?? 'NO DECISION RECORDED',
       migration_required: d?.proposal ? MIGRATION[d.proposal] ?? 'TBD' : 'NO',
-      authority_status: d?.proposal ? `${authority}; PENDING_APPROVAL(${d.proposal})` : `${authority}; NO_CHANGE_PROPOSED`,
+      authority_status: d?.proposal ? `${authority}; ${PROPOSAL_STATUS[d.proposal] ?? 'OPEN'}(${d.proposal})` : `${authority}; NO_CHANGE_PROPOSED`,
       station_tier: i.station_tier ?? '-',
       research_tier: i.research_tier === null ? '-' : String(i.research_tier),
       runtime_reachability: i.runtime_reachability,
@@ -202,7 +203,7 @@ export function appendixMd(d: OntologyData): string {
   o.push('');
   o.push('## 1. Baseline');
   o.push('');
-  o.push(`Audited on \`${d.baseline.repo}\` branch \`${d.baseline.branch}\` at \`${d.baseline.sha}\` (head of draft PR #${d.baseline.pr}). PR #${d.baseline.rejected_pr} was not used as a base and its graph module was not copied.`);
+  o.push(`Audited on \`${d.baseline.repo}\` branch \`${d.baseline.branch}\` at \`${d.baseline.sha}\` (head of draft PR #${d.baseline.pr}); round 2 changes are measured against that same base. PR #${d.baseline.rejected_pr} was not used as a base and its graph module was not copied.`);
   o.push('');
   o.push(table(['Measure', 'Value', 'Where it comes from'], [
     ['Runtime item ids', String(c.items), '`ITEMS` in `catalog.ts`'],
@@ -281,7 +282,7 @@ export function appendixMd(d: OntologyData): string {
   o.push('### Newcomer load');
   o.push('');
   const res = c.by_cat.res ?? 0;
-  o.push(`Before this PR ${res} items shared the single chip "MATERIAL". They now show one of ${Object.keys(c.by_class).length} classes (display only). If P2, P3, P4 and P6 are approved the game loses 2 items a newcomer must learn (Fasteners, Plank) and 2 redundant recipes (\`vehicle_frame_piped\`, \`fasteners\`), every one of Pipe / Gear / Plate / Blade has a required consumer and a Recycler rule, and exactly one item is called Parts.`);
+  o.push(`Before this PR ${res} items shared the single chip "MATERIAL". They now show one of ${Object.keys(c.by_class).length} classes (display only). Round 2 removed one redundant recipe (\`vehicle_frame_piped\`), gave Pipe and Blade a required consumer and Plate a Recycler rule, and left exactly one item called Parts. The item count did not change: Fasteners and Plank stay by ruling.`);
   o.push('');
   o.push('## 6. Parts decision package');
   o.push('');
@@ -301,16 +302,21 @@ export function appendixMd(d: OntologyData): string {
   o.push('');
   o.push(`**Recommendation: Option ${d.parts.recommendation.choose}.** ${d.parts.recommendation.reason}`);
   o.push('');
-  o.push('## 7. Proposals awaiting approval (Group B — none of this is implemented)');
+  o.push('## 7. Proposals and their round-2 status');
   o.push('');
-  o.push(table(['Id', 'Title', 'Recommendation', 'Items'], d.proposals.map((p) => [p.id, p.title, p.recommendation, p.items.join(', ')])));
+  o.push('IMPLEMENTED = live at recipe revision ' + c.recipe_revision + '. NOT_AUTHORISED = ruled out; analysis only. OPEN = not implemented, owner decision needed. Measured before/after numbers: `web/evidence/item-ontology-v2/round2-simulations.json`. Open findings: `ROUND2_FINDINGS.md`. **Item V2 is not complete while any row is OPEN.**');
+  o.push('');
+  o.push(table(['Id', 'Title', 'Status', 'Ruling', 'Items'], d.proposals.map((p) => [p.id, p.title, p.status, p.ruling, p.items.join(', ')])));
   o.push('');
   for (const p of d.proposals) {
-    o.push(`### ${p.id}. ${p.title} — ${p.recommendation}`);
+    o.push(`### ${p.id}. ${p.title} — ${p.status}`);
     o.push('');
+    o.push(`**Ruling.** ${p.ruling}`);
+    o.push('');
+    if (p.shipped?.length) { o.push('Shipped:'); o.push(''); for (const x of p.shipped) o.push(`- ${x}`); o.push(''); }
     o.push(`**Problem.** ${p.problem}`);
     o.push('');
-    o.push(`**Decision proposed.** ${p.decision}`);
+    o.push(`**${p.status.startsWith('IMPLEMENTED') ? 'Decision' : 'Round-1 proposal (not implemented)'}.** ${p.decision}`);
     o.push('');
     if (p.before_recipes?.length) { o.push('Recipes before:'); o.push(''); o.push(table(['Recipe', 'Inputs', 'Output', 'Station', 'Note'], recipeRows(p.before_recipes))); o.push(''); }
     if (p.after_recipes?.length) { o.push('Recipes after:'); o.push(''); o.push(table(['Recipe', 'Inputs', 'Output', 'Station', 'Note'], recipeRows(p.after_recipes))); o.push(''); }
@@ -318,7 +324,7 @@ export function appendixMd(d: OntologyData): string {
     if (p.after_structs?.length) { o.push('Structure cost after:'); o.push(''); o.push(table(['Structure', 'Cost', 'Note'], structRows(p.after_structs))); o.push(''); }
     o.push('Migration:'); o.push(''); for (const m of p.migration) o.push(`- ${m}`); o.push('');
     o.push(`**Risk.** ${p.risk}`); o.push('');
-    o.push('Tests to add with the change:'); o.push(''); for (const t of p.tests) o.push(`- ${t}`); o.push('');
+    o.push(p.status.startsWith('IMPLEMENTED') ? 'Tests:' : 'Tests a future change would need:'); o.push(''); for (const t of p.tests) o.push(`- ${t}`); o.push('');
   }
   o.push('## 8. Last Island crosswalk');
   o.push('');
@@ -377,14 +383,14 @@ const chip=(t,c)=>'<span class="chip '+(c||'')+'">'+esc(t)+'</span>';
 const M=Object.fromEntries(D.manifest.map(m=>[m.old_id,m]));
 const tbl=(head,rows)=>'<div class="wrap"><table><thead><tr>'+head.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.join('')+'</tbody></table></div>';
 const tr=cells=>'<tr>'+cells.map(c=>'<td>'+c+'</td>').join('')+'</tr>';
-document.getElementById('sub').innerHTML='Generated from the live economic multigraph at <code>'+D.baseline.sha.slice(0,9)+'</code> ('+esc(D.baseline.branch)+'). '+D.counts.items+' items · '+D.counts.recipes+' recipes · '+D.counts.graph_nodes+' nodes / '+D.counts.graph_edges+' edges. Proposals shown here are <b>not implemented</b>.';
-const TABS={Overview:overview,Items:items,Recipes:recipes,'Proposed changes':changes,'Parts decision':parts,'Last Island':li,Findings:findings};
+document.getElementById('sub').innerHTML='Generated from the live economic multigraph at <code>'+D.baseline.sha.slice(0,9)+'</code> ('+esc(D.baseline.branch)+'). '+D.counts.items+' items · '+D.counts.recipes+' recipes · '+D.counts.graph_nodes+' nodes / '+D.counts.graph_edges+' edges. Round 2: each proposal carries its status — implemented at this recipe revision, not authorised, or still open.';
+const TABS={Overview:overview,Items:items,Recipes:recipes,'Proposals and status':changes,'Parts decision':parts,'Last Island':li,Findings:findings};
 const nav=document.getElementById('nav'),main=document.getElementById('main');
 Object.keys(TABS).forEach((t,i)=>{const b=document.createElement('button');b.textContent=t;b.setAttribute('role','tab');b.onclick=()=>show(t);nav.appendChild(b)});
 function show(t){[...nav.children].forEach(b=>b.setAttribute('aria-selected',b.textContent===t));main.innerHTML='';TABS[t]();location.hash=encodeURIComponent(t)}
 function overview(){
  const c=D.counts;
- main.innerHTML='<div class="cards">'+[[c.items,'runtime items'],[c.items_generated_deployable,'generated packed devices'],[c.recipes,'recipes'],[c.recipe_revision,'recipe revision'],[D.proposals.length,'proposals pending'],[D.li_crosswalk.length,'Last Island items compared']].map(([n,l])=>'<div class="card"><b>'+n+'</b><span>'+l+'</span></div>').join('')+'</div>'
+ main.innerHTML='<div class="cards">'+[[c.items,'runtime items'],[c.items_generated_deployable,'generated packed devices'],[c.recipes,'recipes'],[c.recipe_revision,'recipe revision'],[D.proposals.filter(x=>x.status.indexOf('IMPLEMENTED')===0).length,'proposals implemented'],[D.proposals.filter(x=>x.status==='NOT_AUTHORISED').length,'not authorised'],[D.proposals.filter(x=>x.status==='OPEN').length,'still open'],[D.li_crosswalk.length,'Last Island items compared']].map(([n,l])=>'<div class="card"><b>'+n+'</b><span>'+l+'</span></div>').join('')+'</div>'
  +'<h2>Decisions</h2><div class="cards">'+Object.entries(D.disposition_counts).sort().map(([k,v])=>'<div class="card"><b class="'+k+'">'+v+'</b><span>'+k+'</span></div>').join('')+'</div>'
  +'<h2>Level graph (craft depth)</h2>'+tbl(['Depth','Items','Meaning'],Object.keys(c.by_craft_depth).sort().map(k=>tr([chip(k),c.by_craft_depth[k],k==='L0'?'Not crafted: gathered, looted, dropped or granted':'Needs '+k.slice(1)+' recipe step(s) from raw inputs'])))
  +'<p class="mute">Craft depth is not rarity, not station tier and not research tier. Each is a separate column on the Items tab. Rarity is deliberately empty: the game has no rarity stat.</p>'
@@ -420,7 +426,7 @@ function recipes(){
 const rt=x=>x&&x.length?tbl(['Recipe','Inputs','Output','Station','Note'],x.map(r=>tr(['<code>'+esc(r.id)+'</code>',esc(bom(r.ins)),esc(bom(r.out)),esc(r.station),esc(r.note||'')]))):'';
 const st=x=>x&&x.length?tbl(['Structure','Cost','Note'],x.map(r=>tr(['<code>'+esc(r.id)+'</code>',esc(bom(r.cost)),esc(r.note||'')]))):'';
 function changes(){
- main.innerHTML='<p class="mute">Every proposal below changes progression, value or saved assets, so none is implemented. Each has exact before/after recipes and a migration plan that can be executed once approved.</p>'+D.proposals.map(p=>'<div class="box" id="'+p.id+'"><h2 style="margin-top:0">'+p.id+'. '+esc(p.title)+' '+chip(p.recommendation.replace('_',' '),p.recommendation==='APPROVE'?'KEEP':p.recommendation==='HOLD'?'MERGE_CANDIDATE':'RENAME')+'</h2><p>'+p.items.map(i=>'<code>'+i+'</code>').join(' ')+'</p><p><b>Problem.</b> '+esc(p.problem)+'</p><p><b>Proposed decision.</b> '+esc(p.decision)+'</p>'+((p.before_recipes||p.before_structs)?'<div class="two"><div><h3>Before</h3>'+rt(p.before_recipes)+st(p.before_structs)+'</div><div><h3>After</h3>'+rt(p.after_recipes)+st(p.after_structs)+'</div></div>':'')+'<h3>Migration</h3><ul>'+p.migration.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul><p><b>Risk.</b> '+esc(p.risk)+'</p><h3>Tests to add</h3><ul>'+p.tests.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul></div>').join('');
+ main.innerHTML='<p class="mute">Round 2 status of every proposal. IMPLEMENTED = live at recipe revision '+D.counts.recipe_revision+'. NOT AUTHORISED = ruled out, analysis only. OPEN = not implemented; Item V2 is not complete while any is open. Measured numbers are in <code>web/evidence/item-ontology-v2/round2-simulations.json</code>; open findings in <code>ROUND2_FINDINGS.md</code>.</p>'+D.proposals.map(p=>'<div class="box" id="'+p.id+'"><h2 style="margin-top:0">'+p.id+'. '+esc(p.title)+' '+chip(p.status.replace(/_/g,' '),p.status.indexOf('IMPLEMENTED')===0?'KEEP':p.status==='OPEN'?'RENAME':'MERGE_CANDIDATE')+'</h2><p>'+p.items.map(i=>'<code>'+i+'</code>').join(' ')+'</p><p><b>Ruling.</b> '+esc(p.ruling)+'</p>'+(p.shipped?'<h3>Shipped</h3><ul>'+p.shipped.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul>':'')+'<p><b>Problem.</b> '+esc(p.problem)+'</p><p><b>'+(p.status.indexOf('IMPLEMENTED')===0?'Decision':'Round-1 proposal (not implemented)')+'.</b> '+esc(p.decision)+'</p>'+((p.before_recipes||p.before_structs)?'<div class="two"><div><h3>Before</h3>'+rt(p.before_recipes)+st(p.before_structs)+'</div><div><h3>After</h3>'+rt(p.after_recipes)+st(p.after_structs)+'</div></div>':'')+'<h3>Migration</h3><ul>'+p.migration.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul><p><b>Risk.</b> '+esc(p.risk)+'</p><h3>Tests</h3><ul>'+p.tests.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul></div>').join('');
 }
 function parts(){
  const keys=Object.keys(D.parts.options[0].scores);

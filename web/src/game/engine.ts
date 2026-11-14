@@ -14,7 +14,7 @@ import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dis
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
 import { ALWAYS_KNOWN_RECIPES, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
-import { LEGACY_RECIPES, PRE_STAMPING_REVISION, RETIRED_RECIPES, purchasableFamilies } from './recipe-migration';
+import { latestLegacyDefinition, RETIRED_RECIPES, purchasableFamilies } from './recipe-migration';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
@@ -2327,7 +2327,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e=r.entities[it.eid];if(!e||e.kind!=='recycler'||!e.station||!near(r,e,2.8)||!clearInteraction(r,e))return fail('Stand at the Foundry Recycler with a clear path.');
       const inv=C(r,'inv');if(!validSlot(inv,it.slot))return fail('Choose a carried recyclable item.');const s=inv.slots[it.slot];
       if(!s||s.uid!==it.uid)return fail('That item is no longer carried.');
-      const plan=recoveryPlan(s);if(!plan&&(s.key==='metal_pipe'||s.key==='metal_blade'||s.key==='mechanical_gear')&&s.qty!==1)return fail(`Split one ${ITEMS[s.key].name} off the stack first (Split in the inventory), then recycle that single part.`);
+      const plan=recoveryPlan(s);if(!plan&&(s.key==='metal_pipe'||s.key==='metal_blade'||s.key==='mechanical_gear'||s.key==='iron_plate')&&s.qty!==1)return fail(`Split one ${ITEMS[s.key].name} off the stack first (Split in the inventory), then recycle that single part.`);
       if(!plan||(it.type==='recycleDrive'&&s.key!=='damaged_drive'))return fail('This item is not an eligible Recycler input.');
       if(p.action?.slot===it.slot)return fail('Finish your current action.');if(e.station.queue.length>=1)return fail('Recycler is already processing an item.');
       if(!recoveryFits(C(r,e.station.outC),plan.outputs))return fail('Recycler output cannot hold all results; collect items first.');
@@ -2430,7 +2430,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'vehicleRepair': {
       const e=r.entities[it.eid];if(!e||e.kind!=='vehicle'||!e.vehicle||!e.deployed||!owned(e)||!near(r,e,2)||p.vehicle)return fail('Dismount near your motorbike.');
       if((e.hp??0)>=BAL.motorbike.maxHp)return fail('Motorbike is already sound.');
-      const cost:[string,number][]=[['mechanical_parts',1],['fasteners',1]];if(!hasAll(r,'inv',cost))return fail('Repair needs 1 Mechanical Part and 1 Fastener.');
+      const cost:[string,number][]=[['mechanical_parts',1],['fasteners',1]];if(!hasAll(r,'inv',cost))return fail('Repair needs 1 Machine Part and 1 Fastener.');
       for(const [key,qty] of cost)removeItem(r,'inv',key,qty);const before=e.hp||0;e.hp=Math.min(BAL.motorbike.maxHp,before+BAL.motorbike.repairHp);e.deployed.dur=e.hp;
       return ok('vehicle.repair',`${e.deployed.uid}:${before.toFixed(2)}->${e.hp.toFixed(2)}:mechanical_partsx1,fastenersx1`);
     }
@@ -2648,7 +2648,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return ok('cash.mint', `${e.id}:${countItem(r, e.c!, 'rcash')}`);
     }
     case 'deposit': { // C17 atomic debit physical → credit profile
-      const e = r.entities[it.eid]; if (!e || e.type !== 'escrow' || !owned(e) || !near(r, e, 2.7)) return fail('Stand next to your Rương ký gửi.');
+      const e = r.entities[it.eid]; if (!e || e.type !== 'escrow' || !owned(e) || !near(r, e, 2.7)) return fail('Stand next to your Escrow Chest.');
       const claim = claimAt(r, e.tx!, e.ty!); if (!claim || !owned(claim)) return fail('Escrow chest is not on owned land.');
       const n = countItem(r, 'inv', 'rcash'); if (n <= 0) return fail('You carry no physical Ragnarok cash.');
       if (!Number.isSafeInteger(gs.profile.securedCash + n) || !Number.isSafeInteger(r.deposited + n)) return fail('Cash total exceeds the supported range.');
@@ -2711,13 +2711,13 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     }
     case 'buySpares': {
       const e=r.entities[it.eid]; if(!e || e.kind!=='vendor' || !near(r,e,2.6) || !clearInteraction(r,e)) return fail('Walk up to the trader.');
-      const item=it.item; if(typeof item!=='string' || !Object.prototype.hasOwnProperty.call(VENDOR_SPARES,item)) return fail('Not sold for Spares.');
+      const item=it.item; if(typeof item!=='string' || !Object.prototype.hasOwnProperty.call(VENDOR_SPARES,item)) return fail('Not sold for Parts.');
       const offer=VENDOR_SPARES[item], stockKey=`spares:${item}`;
       if((r.vendorStock[stockKey]??0)<=0) return fail('Out of stock this run.');
-      if(countItem(r,'inv','spares')<offer.price) return fail(`Needs ${offer.price} Spares.`);
+      if(countItem(r,'inv','spares')<offer.price) return fail(`Needs ${offer.price} Parts.`);
       // Physical overflow is dropped at the trader, never deleted. No sell path.
       removeItem(r,'inv','spares',offer.price); r.vendorStock[stockKey]--; giveOrDrop(r,item,offer.qty,now);
-      return ok('vendor.spares',`${item}x${offer.qty} -${offer.price} spares`, `Bought ${offer.qty} ${ITEMS[item].name} for ${offer.price} Spares.`);
+      return ok('vendor.spares',`${item}x${offer.qty} -${offer.price} spares`, `Bought ${offer.qty} ${ITEMS[item].name} for ${offer.price} Parts.`);
     }
     case 'buy': { // physical vendor
       const e = r.entities[it.eid]; if (!e || e.kind !== 'vendor' || !near(r, e, 2.6) || !clearInteraction(r,e)) return fail('Walk up to the trader.');
@@ -2903,7 +2903,7 @@ function stationNear(r: RunState, kind: string, eid?: string) {
 export function retiredRecipeReason(id: unknown): string | null {
   if (typeof id !== 'string' || !RETIRED_RECIPES.includes(id)) return null;
   if (Object.prototype.hasOwnProperty.call(RECIPES, id)) return null;   // re-approved: not retired anymore
-  const legacy = LEGACY_RECIPES[id + '@' + PRE_STAMPING_REVISION];
+  const legacy = latestLegacyDefinition(id);
   const name = legacy ? ITEMS[legacy.out]?.name ?? legacy.out : id;
   return `Retired by the Approved Ledger (rev ${RECIPE_REVISION}): no new ${name} work can start — ${id} was withdrawn by the recovered paper · work already paid for under the old rule still finishes`;
 }
@@ -2949,10 +2949,10 @@ function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: s
   const B = BAL.research;
   if (it.mode === 'random') {
     if (!unknown.length) return fail('Nothing left to discover.');
-    if (countItem(r, 'inv', 'spares') < B.randomSparesCost) return fail(`Needs ${B.randomSparesCost} Spares.`);
+    if (countItem(r, 'inv', 'spares') < B.randomSparesCost) return fail(`Needs ${B.randomSparesCost} Parts.`);
     const pool = unknown.filter(k => !k.startsWith('core_')); const pick = (pool.length ? pool : unknown)[Math.floor(rngNext(r) * (pool.length || unknown.length))];
     const reserved = reserveInputs(r, [['spares', B.randomSparesCost]]); st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + pick, left: B.randomSeconds * 1000, total: B.randomSeconds * 1000, reserved, rv: RECIPE_REVISION });
-    return ok('research.random', pick, 'Tinkering with Spares… a blueprint will appear in the table output.');
+    return ok('research.random', pick, 'Tinkering with Parts… a blueprint will appear in the table output.');
   }
   if (it.mode === 'directed') {
     const k = it.recipe;
@@ -2961,8 +2961,8 @@ function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: s
     const retiredReason = retiredRecipeReason(k);
     if (retiredReason) return fail(retiredReason);
     if (!unknown.includes(k)) return fail('Already known or in progress.');
-    if (!permitsDirectedResearch(RECIPES[k])) return fail('Too advanced to reverse-engineer from Spares — study a Core or find a blueprint.');
-    if (countItem(r, 'inv', 'spares') < B.directedSparesCost) return fail(`Needs ${B.directedSparesCost} Spares.`);
+    if (!permitsDirectedResearch(RECIPES[k])) return fail('Too advanced to reverse-engineer from Parts — study a Core or find a blueprint.');
+    if (countItem(r, 'inv', 'spares') < B.directedSparesCost) return fail(`Needs ${B.directedSparesCost} Parts.`);
     const reserved = reserveInputs(r, [['spares', B.directedSparesCost]]); st.station!.queue.push({ id: uid(r, 'j'), recipe: 'R:' + k, left: B.directedSeconds * 1000, total: B.directedSeconds * 1000, reserved, rv: RECIPE_REVISION });
     return ok('research.directed', k);
   }

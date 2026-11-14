@@ -278,7 +278,7 @@ try {
         assert.ok(driveVal, 'Natural Damaged Drive missing from Foundry Recycler select');
         await sel.selectOption(driveVal);
         await page.getByRole('button', { name: 'Recycle item…', exact: true }).click();
-        await page.getByText(/Returns:\s*2 Spares/).waitFor({ timeout: 5000 });
+        await page.getByText(/Returns:\s*2 Parts/).waitFor({ timeout: 5000 });
         await page.getByRole('button', { name: 'Confirm recycle', exact: true }).click();
         await page.getByText(/Processing · \d+s/).waitFor({ timeout: 5000 });
         await assertCanvasAndViewport(page, `${tag}:recycler`, [w, h]);

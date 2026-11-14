@@ -1,14 +1,15 @@
 {
   "meta": {
     "schema": "soh-runtime-item-formula-atlas-v1",
-    "sourceSHA": "934f4471326116737f206d2fb2d9a84ba77328da",
+    "sourceSHA": "5b4b5fad7427b7c7da93dc1e73987b845539aaac",
     "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
     "recipeCensusNote": "Counts the LIVE RECIPES table only. Retired formulas are excluded, and frozen revision definitions are never added back as active routes.",
     "retiredRecipes": [
-      "fuel_can"
+      "fuel_can",
+      "vehicle_frame_piped"
     ],
-    "recipeRevision": 2,
-    "exportedAt": "2026-11-14T08:38:03.705Z",
+    "recipeRevision": 3,
+    "exportedAt": "2026-11-14T10:43:39.197Z",
     "project": "Soul of Heroes — WEB Veyra runtime",
     "authority": [
       "web/src/game/catalog.ts",
@@ -76,7 +77,7 @@
     },
     "core_blast": {
       "id": "core_blast",
-      "name": "Vụ nổ lớn",
+      "name": "Big Bang",
       "cat": "core",
       "desc": "Common Fire Core. Reload each reserve with Basic, Refined or Refined plus Fire Essence.",
       "w": 0.3,
@@ -86,7 +87,7 @@
     },
     "core_meteor": {
       "id": "core_meteor",
-      "name": "Thiên thạch",
+      "name": "Meteor",
       "cat": "core",
       "desc": "Rare Fire Core. A fireball, targeted meteor and ten-meteor storm.",
       "w": 0.3,
@@ -96,7 +97,7 @@
     },
     "core_dragon": {
       "id": "core_dragon",
-      "name": "Hơi thở của rồng",
+      "name": "Dragon's Breath",
       "cat": "core",
       "desc": "Top-tier Fire Core: flamethrower, fire tornado and dragon dive.",
       "w": 0.3,
@@ -106,7 +107,7 @@
     },
     "core_elsa": {
       "id": "core_elsa",
-      "name": "Gươm Elsa",
+      "name": "Elsa's Sword",
       "cat": "core",
       "desc": "Rare Water Core: ice projectile, one-second self-freeze and viewport freeze.",
       "w": 0.3,
@@ -116,7 +117,7 @@
     },
     "core_earthmother": {
       "id": "core_earthmother",
-      "name": "Hơi thở đất mẹ",
+      "name": "Earth Mother's Breath",
       "cat": "core",
       "desc": "Common Nature Core: rock, grove and binding roots.",
       "w": 0.3,
@@ -136,7 +137,7 @@
     },
     "core_demon": {
       "id": "core_demon",
-      "name": "Lõi quỷ",
+      "name": "Demon Core",
       "cat": "core",
       "desc": "Rare Spirit Core: directed rays, a stationary beam and a map-selected teleport.",
       "w": 0.3,
@@ -173,15 +174,15 @@
       "id": "damaged_drive",
       "name": "Damaged Drive",
       "cat": "res",
-      "desc": "Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.",
+      "desc": "Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Machine Parts. Or carry to the Foundry Recycler: 1 drive → 2 Parts. The same drive is spent either way.",
       "w": 3,
       "max": 1
     },
     "mechanical_parts": {
       "id": "mechanical_parts",
-      "name": "Mechanical Parts",
+      "name": "Machine Parts",
       "cat": "res",
-      "desc": "Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.",
+      "desc": "Craftable industrial component: made at a Workbench from Scrap and Iron, or found in industrial wrecks. Builds tools, machines and vehicles and maintains equipment. Not the same thing as Parts.",
       "w": 0.5,
       "max": 30
     },
@@ -384,9 +385,9 @@
     },
     "spares": {
       "id": "spares",
-      "name": "Spares",
+      "name": "Parts",
       "cat": "res",
-      "desc": "Run-local components. Research currency and advanced parts.",
+      "desc": "Progression resource. Cannot be crafted: found in loot and wrecks or recovered at the Recycler. Pays for research and trader barter and goes into Cores and powered machines. Run-local.",
       "w": 0.3,
       "max": 60
     },
@@ -1083,13 +1084,13 @@
       "id": "rcash",
       "name": "Ragnarok Cash",
       "cat": "cash",
-      "desc": "Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.",
+      "desc": "Physical, unsecured. Can be lost. Deposit in an owned Escrow Chest.",
       "w": 0.01,
       "max": 999
     },
     "escrow_chest": {
       "id": "escrow_chest",
-      "name": "Rương ký gửi",
+      "name": "Escrow Chest",
       "cat": "kit",
       "desc": "Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.",
       "w": 4,
@@ -1124,7 +1125,7 @@
       "id": "metal_pipe",
       "name": "Metal Pipe",
       "cat": "res",
-      "desc": "Pipe section for the piped utility frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Mechanical Part spent to make it is NOT returned — so pipe never loops.",
+      "desc": "Pipe section: the tubing of every Utility Frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Machine Part spent to make it is NOT returned — so pipe never loops.",
       "w": 1.2,
       "max": 20
     },
@@ -1132,7 +1133,7 @@
       "id": "metal_blade",
       "name": "Metal Blade",
       "cat": "res",
-      "desc": "Cut blade stock for sword refits.",
+      "desc": "Cut blade stock: the edge of the Salvager Axe, and an optional refit for the Iron Sword and Reinforced Spear.",
       "w": 0.8,
       "max": 20
     },
@@ -1984,8 +1985,12 @@
       "qty": 1,
       "ins": [
         [
+          "metal_pipe",
+          1
+        ],
+        [
           "iron_ingot",
-          3
+          2
         ],
         [
           "mechanical_parts",
@@ -1998,9 +2003,10 @@
       ],
       "station": "workbench",
       "stationLevel": 2,
-      "secs": 25,
+      "secs": 22,
       "base": true,
-      "tier": 1
+      "tier": 1,
+      "rev": 3
     },
     "vehicle_drive": {
       "id": "vehicle_drive",
@@ -2713,8 +2719,12 @@
           1
         ],
         [
+          "metal_blade",
+          1
+        ],
+        [
           "mechanical_parts",
-          2
+          1
         ],
         [
           "spares",
@@ -2724,7 +2734,8 @@
       "station": "workbench",
       "stationLevel": 2,
       "secs": 25,
-      "tier": 2
+      "tier": 2,
+      "rev": 3
     },
     "reinforced_spear": {
       "id": "reinforced_spear",
@@ -2862,35 +2873,6 @@
       "station": "workbench",
       "stationLevel": 2,
       "secs": 14,
-      "base": true,
-      "tier": 2
-    },
-    "vehicle_frame_piped": {
-      "id": "vehicle_frame_piped",
-      "out": "vehicle_frame",
-      "qty": 1,
-      "alias": "Utility Frame (piped)",
-      "ins": [
-        [
-          "metal_pipe",
-          1
-        ],
-        [
-          "iron_ingot",
-          2
-        ],
-        [
-          "mechanical_parts",
-          2
-        ],
-        [
-          "spares",
-          2
-        ]
-      ],
-      "station": "workbench",
-      "stationLevel": 2,
-      "secs": 22,
       "base": true,
       "tier": 2
     },
@@ -4908,7 +4890,7 @@
       "block": true,
       "layer": "obj",
       "station": "research",
-      "desc": "Spend Spares or study specimens to unlock recipes.",
+      "desc": "Spend Parts or study specimens to unlock recipes.",
       "item": "deploy_research"
     },
     "garden": {
@@ -5265,7 +5247,7 @@
     },
     "escrow": {
       "id": "escrow",
-      "name": "Rương ký gửi",
+      "name": "Escrow Chest",
       "cost": [
         [
           "escrow_chest",
@@ -6908,6 +6890,16 @@
             1
           ]
         ]
+      },
+      "X:plate-v1": {
+        "key": "iron_plate",
+        "seconds": 10,
+        "outputs": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
       }
     },
     "versions": {
@@ -7309,11 +7301,11 @@
   },
   "counts": {
     "items": 147,
-    "recipes": 112,
+    "recipes": 111,
     "structures": 47,
     "sourceTypes": 19,
     "creatures": 23,
-    "recipeInputs": 273,
+    "recipeInputs": 271,
     "recipeOutputVariants": 1
   }
 }

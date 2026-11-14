@@ -11,14 +11,15 @@
   "items": 147,
   "items_static": 123,
   "items_generated_deployable": 24,
-  "recipes": 112,
+  "recipes": 111,
   "recipes_deploy": 24,
-  "recipe_revision": 2,
+  "recipe_revision": 3,
   "retired_recipes": [
-   "fuel_can"
+   "fuel_can",
+   "vehicle_frame_piped"
   ],
-  "graph_nodes": 655,
-  "graph_edges": 2358,
+  "graph_nodes": 654,
+  "graph_edges": 2353,
   "by_reachability": {
    "FIXTURE_ONLY": 1,
    "SHIPPING_AND_VEYRA": 123,
@@ -28,8 +29,8 @@
   "by_craft_depth": {
    "L0": 52,
    "L1": 37,
-   "L2": 43,
-   "L3": 12,
+   "L2": 42,
+   "L3": 13,
    "L4": 3
   },
   "by_class": {
@@ -363,7 +364,7 @@
    "decision": "KEEP",
    "justification": "One of the four Essences. Uncraftable on Veyra today (ingredient gap).",
    "migration_required": "TBD (content decision)",
-   "authority_status": "BIBLE_PROTECTED; PENDING_APPROVAL(P8)",
+   "authority_status": "BIBLE_PROTECTED; OPEN(P8)",
    "station_tier": "workbench_2",
    "research_tier": "2",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -372,7 +373,7 @@
   {
    "old_id": "core_blast",
    "proposed_id": "core_blast",
-   "display_name": "Vụ nổ lớn → Big Bang",
+   "display_name": "Big Bang (was: Vụ nổ lớn)",
    "level": "L2",
    "domain": "CORE",
    "source": "craft[core_blast]",
@@ -380,10 +381,10 @@
    "action": "creator_core",
    "role": "CORE",
    "LI_reference": "none",
-   "decision": "RENAME",
-   "justification": "Creator Core. Vietnamese display name inside an otherwise English item list.",
-   "migration_required": "NO (display name only)",
-   "authority_status": "BIBLE_PROTECTED; PENDING_APPROVAL(P7)",
+   "decision": "KEEP",
+   "justification": "Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data.",
+   "migration_required": "NO (display name only) — DONE",
+   "authority_status": "BIBLE_PROTECTED; IMPLEMENTED(P7)",
    "station_tier": "workbench_1",
    "research_tier": "1",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -392,7 +393,7 @@
   {
    "old_id": "core_meteor",
    "proposed_id": "core_meteor",
-   "display_name": "Thiên thạch → Meteor",
+   "display_name": "Meteor (was: Thiên thạch)",
    "level": "L2",
    "domain": "CORE",
    "source": "craft[core_meteor]; CREATOR_LOOT_UNIQUE(shipping only)",
@@ -400,10 +401,10 @@
    "action": "creator_core specimen_study",
    "role": "CORE",
    "LI_reference": "none",
-   "decision": "RENAME",
-   "justification": "Creator Core. Display-language consistency.",
-   "migration_required": "NO (display name only)",
-   "authority_status": "BIBLE_PROTECTED; PENDING_APPROVAL(P7)",
+   "decision": "KEEP",
+   "justification": "Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data.",
+   "migration_required": "NO (display name only) — DONE",
+   "authority_status": "BIBLE_PROTECTED; IMPLEMENTED(P7)",
    "station_tier": "workbench_2",
    "research_tier": "2",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -412,7 +413,7 @@
   {
    "old_id": "core_dragon",
    "proposed_id": "core_dragon",
-   "display_name": "Hơi thở của rồng → Dragon's Breath",
+   "display_name": "Dragon's Breath (was: Hơi thở của rồng)",
    "level": "L2",
    "domain": "CORE",
    "source": "craft[core_dragon]; CREATOR_LOOT_UNIQUE(shipping only)",
@@ -420,10 +421,10 @@
    "action": "creator_core specimen_study",
    "role": "CORE",
    "LI_reference": "none",
-   "decision": "RENAME",
-   "justification": "Creator Core. Display-language consistency.",
-   "migration_required": "NO (display name only)",
-   "authority_status": "BIBLE_PROTECTED; PENDING_APPROVAL(P7)",
+   "decision": "KEEP",
+   "justification": "Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data.",
+   "migration_required": "NO (display name only) — DONE",
+   "authority_status": "BIBLE_PROTECTED; IMPLEMENTED(P7)",
    "station_tier": "workbench_3",
    "research_tier": "3",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -432,7 +433,7 @@
   {
    "old_id": "core_elsa",
    "proposed_id": "core_elsa",
-   "display_name": "Gươm Elsa → Elsa's Sword",
+   "display_name": "Elsa's Sword (was: Gươm Elsa)",
    "level": "L2",
    "domain": "CORE",
    "source": "craft[core_elsa]; CREATOR_LOOT_UNIQUE(shipping only)",
@@ -440,10 +441,10 @@
    "action": "creator_core specimen_study",
    "role": "CORE",
    "LI_reference": "none",
-   "decision": "RENAME",
-   "justification": "Creator Core. Display-language consistency.",
-   "migration_required": "NO (display name only)",
-   "authority_status": "BIBLE_PROTECTED; PENDING_APPROVAL(P7)",
+   "decision": "KEEP",
+   "justification": "Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data.",
+   "migration_required": "NO (display name only) — DONE",
+   "authority_status": "BIBLE_PROTECTED; IMPLEMENTED(P7)",
    "station_tier": "workbench_2",
    "research_tier": "2",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -452,7 +453,7 @@
   {
    "old_id": "core_earthmother",
    "proposed_id": "core_earthmother",
-   "display_name": "Hơi thở đất mẹ → Earth Mother's Breath",
+   "display_name": "Earth Mother's Breath (was: Hơi thở đất mẹ)",
    "level": "L2",
    "domain": "CORE",
    "source": "craft[core_earthmother]",
@@ -460,10 +461,10 @@
    "action": "creator_core",
    "role": "CORE",
    "LI_reference": "none",
-   "decision": "RENAME",
-   "justification": "Creator Core. Display-language consistency.",
-   "migration_required": "NO (display name only)",
-   "authority_status": "BIBLE_PROTECTED; PENDING_APPROVAL(P7)",
+   "decision": "KEEP",
+   "justification": "Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data.",
+   "migration_required": "NO (display name only) — DONE",
+   "authority_status": "BIBLE_PROTECTED; IMPLEMENTED(P7)",
    "station_tier": "workbench_1",
    "research_tier": "1",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -492,7 +493,7 @@
   {
    "old_id": "core_demon",
    "proposed_id": "core_demon",
-   "display_name": "Lõi quỷ → Demon Core",
+   "display_name": "Demon Core (was: Lõi quỷ)",
    "level": "L2",
    "domain": "CORE",
    "source": "craft[core_demon]; CREATOR_LOOT_UNIQUE(shipping only)",
@@ -500,10 +501,10 @@
    "action": "creator_core specimen_study",
    "role": "CORE",
    "LI_reference": "none",
-   "decision": "RENAME",
-   "justification": "Creator Core; also uncraftable on Veyra.",
-   "migration_required": "NO (display name only)",
-   "authority_status": "BIBLE_PROTECTED; PENDING_APPROVAL(P7)",
+   "decision": "KEEP",
+   "justification": "Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data. Also uncraftable on Veyra (P8).",
+   "migration_required": "NO (display name only) — DONE",
+   "authority_status": "BIBLE_PROTECTED; IMPLEMENTED(P7)",
    "station_tier": "workbench_2",
    "research_tier": "2",
    "runtime_reachability": "SHIPPING_ONLY",
@@ -523,7 +524,7 @@
    "decision": "DEFER",
    "justification": "Second raw oil with NO live source: the Oil Pump adapter is test-fixture only. Not shown to players today. Decide when the pump ships; until then it must not be advertised.",
    "migration_required": "NO",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P9)",
+   "authority_status": "RUNTIME_CATALOG; OPEN(P9)",
    "station_tier": "-",
    "research_tier": "-",
    "runtime_reachability": "FIXTURE_ONLY",
@@ -592,7 +593,7 @@
   {
    "old_id": "mechanical_parts",
    "proposed_id": "mechanical_parts",
-   "display_name": "Mechanical Parts → Machine Parts",
+   "display_name": "Machine Parts (was: Mechanical Parts)",
    "level": "L1",
    "domain": "INDUSTRY",
    "source": "craft[recover_drive mechanical_parts]; AIRDROP_DROP(shipping only); HARVEST_BONUS; JOURNEY_REQUISITION; LOOT_ECOLOGY_POOL(shipping only); LOOT_STATIC_FIXED; RECYCLE_OUTPUT",
@@ -600,10 +601,10 @@
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "none",
-   "decision": "RENAME",
-   "justification": "Crafted from Scrap + Iron; NOT a research currency. Its current name collides with the Parts axis. Re-labelled as the crafted machine component (\"Machine Parts / Cụm máy\"); never shown as \"Parts\".",
-   "migration_required": "NO (display name only)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P1)",
+   "decision": "KEEP",
+   "justification": "Crafted from Scrap + Iron; NOT a research currency. ROUND 2: display name is now \"Machine Parts / Bộ phận máy\" (was \"Mechanical Parts\"); never shown as \"Parts\".",
+   "migration_required": "NO (display name only) — DONE",
+   "authority_status": "RUNTIME_CATALOG; IMPLEMENTED(P1)",
    "station_tier": "workbench_1",
    "research_tier": "1",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -611,7 +612,7 @@
   },
   {
    "old_id": "fasteners",
-   "proposed_id": "mechanical_parts",
+   "proposed_id": "fasteners",
    "display_name": "Forged Fasteners",
    "level": "L2",
    "domain": "INDUSTRY",
@@ -620,10 +621,10 @@
    "action": "specimen_study",
    "role": "COMPONENT",
    "LI_reference": "none",
-   "decision": "MERGE_CANDIDATE",
-   "justification": "Twin of Machine Parts: same raw inputs (iron ore + scrap), same station tier, both generic \"small metal bits\" with 18 vs 22 consumers and no distinct mechanic. Two near-identical intermediates are fake depth.",
-   "migration_required": "YES (recipe revision + retire recipe; item kept)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P2)",
+   "decision": "KEEP",
+   "justification": "ROUND 2 ruling: stays. Round 1 called it a twin of Machine Parts (same raw inputs, same tier). The measured merge (ROUND2_FINDINGS §P2) raises scrap cost on every consumer and up to 3× on one-fastener consumers, and deletes a research step; no integer mapping avoids that.",
+   "migration_required": "NO (not authorised; nothing changes)",
+   "authority_status": "RUNTIME_CATALOG; NOT_AUTHORISED(P2)",
    "station_tier": "workbench_1",
    "research_tier": "1",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -751,7 +752,7 @@
   },
   {
    "old_id": "plank",
-   "proposed_id": "wood",
+   "proposed_id": "plank",
    "display_name": "Plank",
    "level": "L1",
    "domain": "BUILDING",
@@ -760,10 +761,10 @@
    "action": "ingredient",
    "role": "PROCESSED",
    "LI_reference": "none",
-   "decision": "RETIRE_CANDIDATE",
-   "justification": "One consumer (Plank Wall = 3 plank), and its own description prices it as \"6 wood\". A whole item + recipe that is only a renamed 2 wood adds a click, not a decision.",
-   "migration_required": "YES (retire recipe; item kept)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P6)",
+   "decision": "DEFER",
+   "justification": "ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement.",
+   "migration_required": "NO (not authorised; nothing changes)",
+   "authority_status": "RUNTIME_CATALOG; NOT_AUTHORISED(P6)",
    "station_tier": "workbench_1",
    "research_tier": "1",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -1032,7 +1033,7 @@
   {
    "old_id": "spares",
    "proposed_id": "spares",
-   "display_name": "Spares → Parts",
+   "display_name": "Parts (was: Spares)",
    "level": "L0",
    "domain": "INDUSTRY",
    "source": "CREATURE_DROP; ELDER_STONE_DROP; HARVEST_BONUS; JOURNEY_REQUISITION; LOOT_ECOLOGY_POOL(shipping only); LOOT_STATIC_FIXED; RECYCLE_OUTPUT",
@@ -1040,10 +1041,10 @@
    "action": "ingredient",
    "role": "PARTS",
    "LI_reference": "parts",
-   "decision": "RENAME",
-   "justification": "This IS the LI Parts role: found / recovered, never crafted, spent on research, trade, Cores and technology (Bible §0.2 \"Spares/linh kiện\", K4). The id stays; the display name becomes \"Parts / Linh kiện\" so the backbone resource has the backbone name.",
-   "migration_required": "NO (display name only)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P1)",
+   "decision": "KEEP",
+   "justification": "This IS the LI Parts role: found / recovered, never crafted, spent on research, trade, Cores and technology (Bible §0.2, K4). ROUND 2: display name is now \"Parts / Linh kiện\" (was \"Spares\"); id unchanged.",
+   "migration_required": "NO (display name only) — DONE",
+   "authority_status": "RUNTIME_CATALOG; IMPLEMENTED(P1)",
    "station_tier": "-",
    "research_tier": "-",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -1163,7 +1164,7 @@
    "decision": "DEFER",
    "justification": "Single consumer (Chitin Plate) and no Veyra source. The item is fine; the Veyra gap needs a creature placement decision.",
    "migration_required": "TBD (content decision)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P8)",
+   "authority_status": "RUNTIME_CATALOG; OPEN(P8)",
    "station_tier": "-",
    "research_tier": "-",
    "runtime_reachability": "SHIPPING_ONLY",
@@ -1640,10 +1641,10 @@
    "action": "harvest_tool weapon",
    "role": "TOOL",
    "LI_reference": "refined_iron_axe",
-   "decision": "REDESIGN",
-   "justification": "Top axe. LI builds it from Blades + Pipe; SOH builds it from generic Machine Parts. Give the Blade its job here.",
-   "migration_required": "YES (recipe revision + new recycler rule)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P4)",
+   "decision": "KEEP",
+   "justification": "Top axe. ROUND 2: takes one Metal Blade in place of one Machine Part (rev 3), closer to the LI build.",
+   "migration_required": "DONE (recipe revision 3; rev 2 frozen)",
+   "authority_status": "RUNTIME_CATALOG; IMPLEMENTED(P4)",
    "station_tier": "workbench_2",
    "research_tier": "2",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -1803,7 +1804,7 @@
    "decision": "DEFER",
    "justification": "Body armour tier 2; uncraftable on Veyra because Chitin has no source there.",
    "migration_required": "TBD (content decision)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P8)",
+   "authority_status": "RUNTIME_CATALOG; OPEN(P8)",
    "station_tier": "workbench_1",
    "research_tier": "3",
    "runtime_reachability": "SHIPPING_ONLY",
@@ -1883,7 +1884,7 @@
    "decision": "DEFER",
    "justification": "Legacy core outside the seven Creator Cores, still craftable and castable. Whether four extra cores remain is a Bible ruling, not an audit fix.",
    "migration_required": "TBD (owner ruling)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P10)",
+   "authority_status": "RUNTIME_CATALOG; OPEN(P10)",
    "station_tier": "workbench_1",
    "research_tier": "3",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -1903,7 +1904,7 @@
    "decision": "DEFER",
    "justification": "Legacy core; see core_fire.",
    "migration_required": "TBD (owner ruling)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P10)",
+   "authority_status": "RUNTIME_CATALOG; OPEN(P10)",
    "station_tier": "workbench_1",
    "research_tier": "3",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -1923,7 +1924,7 @@
    "decision": "DEFER",
    "justification": "Legacy core; see core_fire.",
    "migration_required": "TBD (owner ruling)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P10)",
+   "authority_status": "RUNTIME_CATALOG; OPEN(P10)",
    "station_tier": "workbench_1",
    "research_tier": "3",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -1943,7 +1944,7 @@
    "decision": "DEFER",
    "justification": "Legacy core; see core_fire.",
    "migration_required": "TBD (owner ruling)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P10)",
+   "authority_status": "RUNTIME_CATALOG; OPEN(P10)",
    "station_tier": "workbench_1",
    "research_tier": "3",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -1983,7 +1984,7 @@
    "decision": "KEEP",
    "justification": "Specimen: studied to learn Fur Cloak. No Veyra source.",
    "migration_required": "TBD (content decision)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P8)",
+   "authority_status": "RUNTIME_CATALOG; OPEN(P8)",
    "station_tier": "-",
    "research_tier": "-",
    "runtime_reachability": "SHIPPING_ONLY",
@@ -2003,7 +2004,7 @@
    "decision": "KEEP",
    "justification": "Specimen and component. No Veyra source.",
    "migration_required": "TBD (content decision)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P8)",
+   "authority_status": "RUNTIME_CATALOG; OPEN(P8)",
    "station_tier": "-",
    "research_tier": "-",
    "runtime_reachability": "SHIPPING_ONLY",
@@ -2043,7 +2044,7 @@
    "decision": "KEEP",
    "justification": "Specimen: studied to learn Chitin Plate. No Veyra source.",
    "migration_required": "TBD (content decision)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P8)",
+   "authority_status": "RUNTIME_CATALOG; OPEN(P8)",
    "station_tier": "-",
    "research_tier": "-",
    "runtime_reachability": "SHIPPING_ONLY",
@@ -2063,7 +2064,7 @@
    "decision": "KEEP",
    "justification": "Vault access; LI green/red/blue cards collapsed to one. No Veyra source.",
    "migration_required": "TBD (content decision)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P8)",
+   "authority_status": "RUNTIME_CATALOG; OPEN(P8)",
    "station_tier": "-",
    "research_tier": "-",
    "runtime_reachability": "SHIPPING_ONLY",
@@ -2112,7 +2113,7 @@
   {
    "old_id": "escrow_chest",
    "proposed_id": "escrow_chest",
-   "display_name": "Rương ký gửi → Escrow Chest",
+   "display_name": "Escrow Chest (was: Rương ký gửi)",
    "level": "L0",
    "domain": "SPECIAL",
    "source": "ESCROW_PURCHASE",
@@ -2120,10 +2121,10 @@
    "action": "place",
    "role": "KIT",
    "LI_reference": "none",
-   "decision": "RENAME",
-   "justification": "Escrow mechanic is Bible-protected; only the display language is inconsistent.",
-   "migration_required": "NO (display name only)",
-   "authority_status": "BIBLE_PROTECTED; PENDING_APPROVAL(P7)",
+   "decision": "KEEP",
+   "justification": "Escrow mechanic is Bible-protected. ROUND 2: English display name; \"Rương ký gửi\" kept as `vi` alias data.",
+   "migration_required": "NO (display name only) — DONE",
+   "authority_status": "BIBLE_PROTECTED; IMPLEMENTED(P7)",
    "station_tier": "-",
    "research_tier": "-",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -2133,17 +2134,17 @@
    "old_id": "vehicle_frame",
    "proposed_id": "vehicle_frame",
    "display_name": "Utility Frame",
-   "level": "L2",
+   "level": "L3",
    "domain": "TRANSPORT",
-   "source": "craft[vehicle_frame vehicle_frame_piped]",
+   "source": "craft[vehicle_frame]",
    "consumer": "1 target(s): make:motorbike_kit",
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "vehicle_frame",
-   "decision": "REDESIGN",
-   "justification": "Stays as the motorbike chassis (LI has the same item). Its two recipes collapse to the piped one.",
-   "migration_required": "YES (recipe revision + structure cost)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P3)",
+   "decision": "KEEP",
+   "justification": "Motorbike chassis (LI has the same item). ROUND 2: its two recipes collapsed to the piped one (rev 3).",
+   "migration_required": "DONE (recipe revision 3; rev 2 frozen; piped recipe retired)",
+   "authority_status": "RUNTIME_CATALOG; IMPLEMENTED_PARTIAL(P3)",
    "station_tier": "workbench_2",
    "research_tier": "1",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -2200,10 +2201,10 @@
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "metal_pipe",
-   "decision": "REDESIGN",
-   "justification": "Only consumer is vehicle_frame_piped, which is strictly dominated by the plain frame recipe — so today a Pipe is never the rational choice. LI uses Pipe for fluid/pressure machines. Give it that job.",
-   "migration_required": "YES (recipe revision + structure cost)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P3)",
+   "decision": "KEEP",
+   "justification": "ROUND 2: now the tubing of THE Utility Frame recipe (rev 3), so every motorbike takes one. The fluid-machine job LI gives it (Oil Pump, Refinery) was ruled out for this round and stays a candidate.",
+   "migration_required": "DONE (recipe revision 3; rev 2 frozen; piped recipe retired)",
+   "authority_status": "RUNTIME_CATALOG; IMPLEMENTED_PARTIAL(P3)",
    "station_tier": "workbench_2",
    "research_tier": "2",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -2216,14 +2217,14 @@
    "level": "L2",
    "domain": "INDUSTRY",
    "source": "craft[metal_blade]; LOOT_ECOLOGY_POOL(shipping only)",
-   "consumer": "2 target(s): make:iron_sword make:reinforced_spear",
+   "consumer": "3 target(s): make:industrial_axe make:iron_sword make:reinforced_spear",
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "metal_blade",
-   "decision": "REDESIGN",
-   "justification": "Only used by two optional alternative recipes. LI makes the Blade the cutting edge of the refined axe. Make it the required edge of the Salvager Axe; keep the two alternates as honest shortcuts.",
-   "migration_required": "YES (recipe revision + new recycler rule)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P4)",
+   "decision": "KEEP",
+   "justification": "ROUND 2: now the required edge of the Salvager Axe (rev 3), as in LI. The two alternate weapon recipes stay as honest shortcuts.",
+   "migration_required": "DONE (recipe revision 3; rev 2 frozen)",
+   "authority_status": "RUNTIME_CATALOG; IMPLEMENTED(P4)",
    "station_tier": "workbench_2",
    "research_tier": "2",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -2260,10 +2261,10 @@
    "action": "ingredient",
    "role": "COMPONENT",
    "LI_reference": "iron_plate",
-   "decision": "REDESIGN",
-   "justification": "Real jobs (motorbike, wall patching, trap re-arm) so the item stays; but it is the only one of the four technical components with no Recycler rule. Add one.",
-   "migration_required": "NO (new recycler rule key only)",
-   "authority_status": "RUNTIME_CATALOG; PENDING_APPROVAL(P5)",
+   "decision": "KEEP",
+   "justification": "Real jobs (motorbike, wall patching, trap re-arm). ROUND 2: has its own Recycler rule X:plate-v1 (1 plate → 1 ingot, lossy), so all four technical components now behave alike.",
+   "migration_required": "NO (new recycler rule key only) — DONE",
+   "authority_status": "RUNTIME_CATALOG; IMPLEMENTED(P5)",
    "station_tier": "workbench_2",
    "research_tier": "2",
    "runtime_reachability": "SHIPPING_AND_VEYRA",
@@ -3291,12 +3292,8 @@
   }
  ],
  "disposition_counts": {
-  "KEEP": 124,
-  "RENAME": 9,
-  "DEFER": 7,
-  "MERGE_CANDIDATE": 1,
-  "RETIRE_CANDIDATE": 1,
-  "REDESIGN": 5,
+  "KEEP": 139,
+  "DEFER": 8,
   "ADD_CANDIDATE": 5
  },
  "items": [
@@ -3953,7 +3950,7 @@
   },
   {
    "id": "core_blast",
-   "name": "Vụ nổ lớn",
+   "name": "Big Bang",
    "cat": "core",
    "item_class": "CORE",
    "desc": "Common Fire Core. Reload each reserve with Basic, Refined or Refined plus Fire Essence.",
@@ -4056,7 +4053,7 @@
   },
   {
    "id": "core_meteor",
-   "name": "Thiên thạch",
+   "name": "Meteor",
    "cat": "core",
    "item_class": "CORE",
    "desc": "Rare Fire Core. A fireball, targeted meteor and ten-meteor storm.",
@@ -4188,7 +4185,7 @@
   },
   {
    "id": "core_dragon",
-   "name": "Hơi thở của rồng",
+   "name": "Dragon's Breath",
    "cat": "core",
    "item_class": "CORE",
    "desc": "Top-tier Fire Core: flamethrower, fire tornado and dragon dive.",
@@ -4320,7 +4317,7 @@
   },
   {
    "id": "core_elsa",
-   "name": "Gươm Elsa",
+   "name": "Elsa's Sword",
    "cat": "core",
    "item_class": "CORE",
    "desc": "Rare Water Core: ice projectile, one-second self-freeze and viewport freeze.",
@@ -4451,7 +4448,7 @@
   },
   {
    "id": "core_earthmother",
-   "name": "Hơi thở đất mẹ",
+   "name": "Earth Mother's Breath",
    "cat": "core",
    "item_class": "CORE",
    "desc": "Common Nature Core: rock, grove and binding roots.",
@@ -4693,7 +4690,7 @@
   },
   {
    "id": "core_demon",
-   "name": "Lõi quỷ",
+   "name": "Demon Core",
    "cat": "core",
    "item_class": "CORE",
    "desc": "Rare Spirit Core: directed rays, a stationary beam and a map-selected teleport.",
@@ -5120,7 +5117,7 @@
    "name": "Damaged Drive",
    "cat": "res",
    "item_class": "SALVAGE",
-   "desc": "Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.",
+   "desc": "Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Machine Parts. Or carry to the Foundry Recycler: 1 drive → 2 Parts. The same drive is spent either way.",
    "weight": 3,
    "stack_max": 1,
    "generated_deployable": false,
@@ -5203,10 +5200,10 @@
   },
   {
    "id": "mechanical_parts",
-   "name": "Mechanical Parts",
+   "name": "Machine Parts",
    "cat": "res",
    "item_class": "COMPONENT",
-   "desc": "Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.",
+   "desc": "Craftable industrial component: made at a Workbench from Scrap and Iron, or found in industrial wrecks. Builds tools, machines and vehicles and maintains equipment. Not the same thing as Parts.",
    "weight": 0.5,
    "stack_max": 30,
    "generated_deployable": false,
@@ -5697,7 +5694,7 @@
      "kind": "CRAFT_INPUT",
      "to": "recipe:industrial_axe",
      "layer": "BOTH",
-     "qty": 2,
+     "qty": 1,
      "count": 1
     },
     {
@@ -5745,13 +5742,6 @@
     {
      "kind": "CRAFT_INPUT",
      "to": "recipe:vehicle_frame",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_frame_piped",
      "layer": "BOTH",
      "qty": 2,
      "count": 1
@@ -5983,7 +5973,6 @@
     "metal_pipe",
     "metal_blade",
     "mechanical_gear",
-    "vehicle_frame_piped",
     "deploy_oil_pump",
     "deploy_refinery",
     "deploy_farm_controller",
@@ -9169,7 +9158,8 @@
     "wood": 2
    },
    "signals": [
-    "PASS_THROUGH_INTERMEDIATE"
+    "PASS_THROUGH_INTERMEDIATE",
+    "NO_REACHABLE_CONSUMER:wall_plank"
    ]
   },
   {
@@ -12144,10 +12134,10 @@
   },
   {
    "id": "spares",
-   "name": "Spares",
+   "name": "Parts",
    "cat": "res",
    "item_class": "PARTS",
-   "desc": "Run-local components. Research currency and advanced parts.",
+   "desc": "Progression resource. Cannot be crafted: found in loot and wrecks or recovered at the Recycler. Pays for research and trader barter and goes into Cores and powered machines. Run-local.",
    "weight": 0.3,
    "stack_max": 60,
    "generated_deployable": false,
@@ -12951,13 +12941,6 @@
      "count": 1
     },
     {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_frame_piped",
-     "layer": "BOTH",
-     "qty": 2,
-     "count": 1
-    },
-    {
      "kind": "REPAIR_INPUT",
      "to": "item:custodian_lantern",
      "layer": "BOTH",
@@ -13477,13 +13460,6 @@
     },
     {
      "kind": "RESEARCH_DIRECTED",
-     "to": "recipe:vehicle_frame_piped",
-     "layer": "BOTH",
-     "qty": 9,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_DIRECTED",
      "to": "recipe:water_flask",
      "layer": "BOTH",
      "qty": 9,
@@ -13995,13 +13971,6 @@
     },
     {
      "kind": "RESEARCH_RANDOM",
-     "to": "recipe:vehicle_frame_piped",
-     "layer": "BOTH",
-     "qty": 4,
-     "count": 1
-    },
-    {
-     "kind": "RESEARCH_RANDOM",
      "to": "recipe:water_flask",
      "layer": "BOTH",
      "qty": 4,
@@ -14191,7 +14160,6 @@
     "core_elsa",
     "industrial_pick",
     "industrial_axe",
-    "vehicle_frame_piped",
     "industrial_pick_geared",
     "vehicle_drive_geared",
     "gas_mask",
@@ -14465,6 +14433,17 @@
     {
      "kind": "RECYCLE_OUTPUT",
      "from": "recipe:recycler:component:X:gear-v1",
+     "layer": "BOTH",
+     "qty": 1,
+     "probability": null,
+     "gates": [
+      "gate:recycler_site"
+     ],
+     "count": 1
+    },
+    {
+     "kind": "RECYCLE_OUTPUT",
+     "from": "recipe:recycler:component:X:plate-v1",
      "layer": "BOTH",
      "qty": 1,
      "probability": null,
@@ -14979,13 +14958,6 @@
      "kind": "CRAFT_INPUT",
      "to": "recipe:vehicle_frame",
      "layer": "BOTH",
-     "qty": 3,
-     "count": 1
-    },
-    {
-     "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_frame_piped",
-     "layer": "BOTH",
      "qty": 2,
      "count": 1
     },
@@ -15322,7 +15294,6 @@
     "metal_blade",
     "mechanical_gear",
     "iron_sword_blade",
-    "vehicle_frame_piped",
     "reinforced_spear_blade",
     "vehicle_drive_geared",
     "refined_iron_ingot",
@@ -15412,6 +15383,7 @@
    "recycled_from": [
     "recipe:recycler:component:X:blade-v1",
     "recipe:recycler:component:X:gear-v1",
+    "recipe:recycler:component:X:plate-v1",
     "recipe:recycler:industrial_axe:v3",
     "recipe:recycler:industrial_pick:v1",
     "recipe:recycler:iron_axe:v3",
@@ -16765,7 +16737,9 @@
    "raw_per_unit": {
     "stone": 1.5
    },
-   "signals": []
+   "signals": [
+    "CONSUMER_UNOBTAINABLE:wall_brick"
+   ]
   },
   {
    "id": "cloth",
@@ -20573,7 +20547,7 @@
    },
    "raw_per_unit": {
     "hide": 1,
-    "iron_ore": 4,
+    "iron_ore": 8,
     "scrap": 2,
     "spares": 2,
     "wood": 2
@@ -23052,13 +23026,6 @@
     },
     {
      "kind": "BLUEPRINT_LEARN",
-     "to": "recipe:vehicle_frame_piped",
-     "layer": "BOTH",
-     "qty": 1,
-     "count": 1
-    },
-    {
-     "kind": "BLUEPRINT_LEARN",
      "to": "recipe:water_flask",
      "layer": "BOTH",
      "qty": 1,
@@ -23076,7 +23043,7 @@
      "to": "sink:blueprint_consume_learn",
      "layer": "BOTH",
      "qty": 1,
-     "count": 74
+     "count": 73
     }
    ],
    "derived_sinks": [],
@@ -23807,7 +23774,7 @@
    "name": "Ragnarok Cash",
    "cat": "cash",
    "item_class": "CASH",
-   "desc": "Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.",
+   "desc": "Physical, unsecured. Can be lost. Deposit in an owned Escrow Chest.",
    "weight": 0.01,
    "stack_max": 999,
    "generated_deployable": false,
@@ -23857,7 +23824,7 @@
   },
   {
    "id": "escrow_chest",
-   "name": "Rương ký gửi",
+   "name": "Escrow Chest",
    "cat": "kit",
    "item_class": "KIT",
    "desc": "Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.",
@@ -23943,7 +23910,7 @@
    "weight": 4,
    "stack_max": 5,
    "generated_deployable": false,
-   "craft_depth": 2,
+   "craft_depth": 3,
    "craft_depth_recipe": "vehicle_frame",
    "station_tier": "workbench_2",
    "research_tier": 1,
@@ -23961,18 +23928,6 @@
    "runtime_reachability": "SHIPPING_AND_VEYRA",
    "non_craft_sources_all_gated": false,
    "sources": [
-    {
-     "kind": "CRAFT_OUTPUT",
-     "from": "recipe:vehicle_frame_piped",
-     "layer": "BOTH",
-     "qty": 1,
-     "probability": null,
-     "gates": [
-      "gate:knowledge_run_local",
-      "gate:wb_l2"
-     ],
-     "count": 1
-    },
     {
      "kind": "CRAFT_OUTPUT",
      "from": "recipe:vehicle_frame",
@@ -23999,8 +23954,7 @@
    ],
    "derived_sinks": [],
    "produced_by": [
-    "vehicle_frame",
-    "vehicle_frame_piped"
+    "vehicle_frame"
    ],
    "consumed_by": [
     "motorbike_kit"
@@ -24013,17 +23967,17 @@
    "recycle": null,
    "recycled_from": [],
    "alt_routes": {
-    "live_recipes": 2,
+    "live_recipes": 1,
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "iron_ore": 4,
-    "scrap": 2,
+    "coal": 0.5,
+    "iron_ore": 4.75,
+    "scrap": 2.5,
     "spares": 2
    },
    "signals": [
-    "PASS_THROUGH_INTERMEDIATE",
-    "TWIN_INTERMEDIATE:vehicle_drive"
+    "PASS_THROUGH_INTERMEDIATE"
    ]
   },
   {
@@ -24114,8 +24068,7 @@
     "spares": 3
    },
    "signals": [
-    "PASS_THROUGH_INTERMEDIATE",
-    "TWIN_INTERMEDIATE:vehicle_frame"
+    "PASS_THROUGH_INTERMEDIATE"
    ]
   },
   {
@@ -24335,7 +24288,7 @@
    "name": "Metal Pipe",
    "cat": "res",
    "item_class": "COMPONENT",
-   "desc": "Pipe section for the piped utility frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Mechanical Part spent to make it is NOT returned — so pipe never loops.",
+   "desc": "Pipe section: the tubing of every Utility Frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Machine Part spent to make it is NOT returned — so pipe never loops.",
    "weight": 1.2,
    "stack_max": 20,
    "generated_deployable": false,
@@ -24421,7 +24374,7 @@
    "consumers": [
     {
      "kind": "CRAFT_INPUT",
-     "to": "recipe:vehicle_frame_piped",
+     "to": "recipe:vehicle_frame",
      "layer": "BOTH",
      "qty": 1,
      "count": 1
@@ -24453,7 +24406,7 @@
     "metal_pipe"
    ],
    "consumed_by": [
-    "vehicle_frame_piped"
+    "vehicle_frame"
    ],
    "consumer_targets": [
     "make:vehicle_frame"
@@ -24482,8 +24435,7 @@
    "signals": [
     "SINGLE_CONSUMER_COMPONENT",
     "TWIN_INTERMEDIATE:mechanical_gear",
-    "TWIN_INTERMEDIATE:iron_plate",
-    "ONLY_USED_BY_DOMINATED_RECIPE:vehicle_frame_piped"
+    "TWIN_INTERMEDIATE:iron_plate"
    ]
   },
   {
@@ -24491,7 +24443,7 @@
    "name": "Metal Blade",
    "cat": "res",
    "item_class": "COMPONENT",
-   "desc": "Cut blade stock for sword refits.",
+   "desc": "Cut blade stock: the edge of the Salvager Axe, and an optional refit for the Iron Sword and Reinforced Spear.",
    "weight": 0.8,
    "stack_max": 20,
    "generated_deployable": false,
@@ -24555,6 +24507,13 @@
    "consumers": [
     {
      "kind": "CRAFT_INPUT",
+     "to": "recipe:industrial_axe",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
+     "kind": "CRAFT_INPUT",
      "to": "recipe:iron_sword_blade",
      "layer": "BOTH",
      "qty": 1,
@@ -24580,10 +24539,12 @@
     "metal_blade"
    ],
    "consumed_by": [
+    "industrial_axe",
     "iron_sword_blade",
     "reinforced_spear_blade"
    ],
    "consumer_targets": [
+    "make:industrial_axe",
     "make:iron_sword",
     "make:reinforced_spear"
    ],
@@ -24908,6 +24869,13 @@
      "count": 1
     },
     {
+     "kind": "RECYCLE_INPUT",
+     "to": "recipe:recycler:component:X:plate-v1",
+     "layer": "BOTH",
+     "qty": 1,
+     "count": 1
+    },
+    {
      "kind": "REPAIR_INPUT",
      "to": "structure:door_iron",
      "layer": "BOTH",
@@ -25033,7 +25001,15 @@
     "TRAP_ARM_SINK:sink:trap_arm_wear"
    ],
    "direct_use": [],
-   "recycle": null,
+   "recycle": {
+    "rule": "X:plate-v1",
+    "outputs": [
+     [
+      "iron_ingot",
+      1
+     ]
+    ]
+   },
    "recycled_from": [],
    "alt_routes": {
     "live_recipes": 1,
@@ -25135,9 +25111,9 @@
     "non_craft_source_kinds": 0
    },
    "raw_per_unit": {
-    "coal": 1,
-    "iron_ore": 11.667,
-    "scrap": 5.667,
+    "coal": 1.5,
+    "iron_ore": 12.417,
+    "scrap": 6.167,
     "spares": 5
    },
    "signals": []
@@ -29382,8 +29358,12 @@
    ],
    "ins": [
     [
+     "metal_pipe",
+     1
+    ],
+    [
      "iron_ingot",
-     3
+     2
     ],
     [
      "mechanical_parts",
@@ -29402,17 +29382,18 @@
    "starter_known": true,
    "family": null,
    "alias": null,
-   "secs": 25,
+   "secs": 22,
    "layer": "BOTH",
    "craftable_shipping": true,
    "craftable_veyra": true,
-   "depth": 2,
+   "depth": 3,
    "bom": {
-    "distinct_items": 5,
-    "craft_steps": 3,
+    "distinct_items": 8,
+    "craft_steps": 5,
     "raw": {
-     "iron_ore": 4,
-     "scrap": 2,
+     "coal": 0.5,
+     "iron_ore": 4.75,
+     "scrap": 2.5,
      "spares": 2
     }
    }
@@ -29508,12 +29489,12 @@
    "craftable_veyra": true,
    "depth": 4,
    "bom": {
-    "distinct_items": 11,
-    "craft_steps": 8,
+    "distinct_items": 12,
+    "craft_steps": 9,
     "raw": {
-     "coal": 1,
-     "iron_ore": 11.667,
-     "scrap": 5.667,
+     "coal": 1.5,
+     "iron_ore": 12.417,
+     "scrap": 6.167,
      "spares": 5
     }
    }
@@ -30859,8 +30840,12 @@
      1
     ],
     [
+     "metal_blade",
+     1
+    ],
+    [
      "mechanical_parts",
-     2
+     1
     ],
     [
      "spares",
@@ -30881,11 +30866,11 @@
    "craftable_veyra": true,
    "depth": 3,
    "bom": {
-    "distinct_items": 9,
-    "craft_steps": 5,
+    "distinct_items": 10,
+    "craft_steps": 6,
     "raw": {
      "hide": 1,
-     "iron_ore": 4,
+     "iron_ore": 8,
      "scrap": 2,
      "spares": 2,
      "wood": 2
@@ -31156,57 +31141,6 @@
      "hide": 1,
      "iron_ore": 6.5,
      "scrap": 1
-    }
-   }
-  },
-  {
-   "id": "vehicle_frame_piped",
-   "out": "vehicle_frame",
-   "outs": [
-    [
-     "vehicle_frame",
-     1
-    ]
-   ],
-   "ins": [
-    [
-     "metal_pipe",
-     1
-    ],
-    [
-     "iron_ingot",
-     2
-    ],
-    [
-     "mechanical_parts",
-     2
-    ],
-    [
-     "spares",
-     2
-    ]
-   ],
-   "station": "workbench",
-   "stationLevel": 2,
-   "station_tier": "workbench_2",
-   "research_tier": 2,
-   "base": true,
-   "starter_known": true,
-   "family": null,
-   "alias": "Utility Frame (piped)",
-   "secs": 22,
-   "layer": "BOTH",
-   "craftable_shipping": true,
-   "craftable_veyra": true,
-   "depth": 3,
-   "bom": {
-    "distinct_items": 8,
-    "craft_steps": 5,
-    "raw": {
-     "coal": 0.5,
-     "iron_ore": 4.75,
-     "scrap": 2.5,
-     "spares": 2
     }
    }
   },
@@ -34368,24 +34302,6 @@
    },
    "verdict": "KNOWLEDGE_BYPASS",
    "note": "reinforced_spear_blade is known from the start; reinforced_spear must be learned. Paying more materials buys skipping research."
-  },
-  {
-   "out": "vehicle_frame",
-   "cheaper": "vehicle_frame",
-   "dearer": "vehicle_frame_piped",
-   "cheaper_raw": {
-    "iron_ore": 4,
-    "scrap": 2,
-    "spares": 2
-   },
-   "dearer_raw": {
-    "coal": 0.5,
-    "iron_ore": 4.75,
-    "scrap": 2.5,
-    "spares": 2
-   },
-   "verdict": "STRICTLY_DOMINATED",
-   "note": "vehicle_frame_piped needs at least as much of every raw input as vehicle_frame and both are equally known: no reason to ever pick vehicle_frame_piped."
   }
  ],
  "twin_intermediates": [
@@ -34397,16 +34313,6 @@
     "scrap"
    ],
    "station_tier": "workbench_1"
-  },
-  {
-   "a": "vehicle_frame",
-   "b": "vehicle_drive",
-   "raw_inputs": [
-    "iron_ore",
-    "scrap",
-    "spares"
-   ],
-   "station_tier": "workbench_2"
   },
   {
    "a": "metal_pipe",
@@ -34633,6 +34539,19 @@
    "parts_in": 2,
    "parts_out": 2,
    "merged_parts_verdict": "PARTS_NEUTRAL"
+  },
+  {
+   "item": "iron_plate",
+   "rule": "X:plate-v1",
+   "outputs": [
+    [
+     "iron_ingot",
+     1
+    ]
+   ],
+   "parts_in": 0,
+   "parts_out": 0,
+   "merged_parts_verdict": "PARTS_NEGATIVE"
   }
  ],
  "veyra_blocked_recipes": [
@@ -34651,17 +34570,24 @@
    "id": "P1",
    "group": "B",
    "recommendation": "APPROVE",
+   "status": "IMPLEMENTED",
+   "ruling": "Approved. Display only; `mechanical_parts` VN name is \"Bộ phận máy\".",
+   "shipped": [
+    "ITEMS.spares.name = 'Parts' (vi 'Linh kiện'); ITEMS.mechanical_parts.name = 'Machine Parts' (vi 'Bộ phận máy').",
+    "Research Table, trader, Station Console, HUD, tooltips, engine refusal messages and e2e selectors say Parts / Machine Parts.",
+    "Parts description states its real sources: loot, wrecks, machine creatures and the Recycler. No id, recipe, source, price or research right moved."
+   ],
    "title": "Parts axis — Option A: one item called Parts, one called Machine Parts",
    "items": [
     "spares",
     "mechanical_parts"
    ],
    "problem": "Two items compete for the word \"Parts\". `spares` (\"Spares\") is the scarce, uncraftable resource that pays for research, vendor trade, every Core and every powered device — the Last Island Parts role. `mechanical_parts` (\"Mechanical Parts\") is a bench product made from Scrap and Iron. PR #60 renamed the crafted one to \"Parts\", which put the backbone name on the wrong item.",
-   "decision": "Display rename only. `spares` → \"Parts\" (VI: \"Linh kiện\"). `mechanical_parts` → \"Machine Parts\" (VI: \"Cụm máy\"). No id, recipe, source, cost or research price changes. Parts stays uncraftable; the only mint remains Recycler Damaged Drive → 2.",
+   "decision": "Display rename only. `spares` → \"Parts\" (VI: \"Linh kiện\"). `mechanical_parts` → \"Machine Parts\" (VI: \"Bộ phận máy\"). No id, recipe, source, cost or research price changes. Parts stays uncraftable. It is NOT single-sourced: it comes from authored loot and wrecks, from machine creatures (crawler, two bosses) and from the Recycler (Damaged Drive → 2). Round 1 wrongly called the Recycler the only source; it is the only CONVERSION into Parts, not the only source.",
    "migration": [
     "No save migration: ids, stacks and recipes are untouched.",
     "Change `ITEMS.spares.name`, `ITEMS.mechanical_parts.name` and their descriptions; sweep UI strings that hard-code \"Spares\" (research panel, vendor, Journey).",
-    "Update Bible §0.2 / K4 wording in the same commit (term \"Spares/linh kiện\" → \"Parts/Linh kiện (id spares)\")."
+    "Bible §0.2 wording updated in the same commit: \"Parts / Linh kiện (id `spares`)\"."
    ],
    "risk": "Low. Players and docs that say \"Spares\" need one release note. Tests that pin the display string must be updated in the same commit.",
    "tests": [
@@ -34673,6 +34599,8 @@
    "id": "P2",
    "group": "B",
    "recommendation": "APPROVE_LATER",
+   "status": "NOT_AUTHORISED",
+   "ruling": "Not allowed. Fasteners stay. Analysis only: see ROUND2_FINDINGS.md §P2.",
    "title": "Merge Forged Fasteners into Machine Parts",
    "items": [
     "fasteners",
@@ -35156,13 +35084,20 @@
    "id": "P3",
    "group": "B",
    "recommendation": "APPROVE",
+   "status": "IMPLEMENTED_PARTIAL",
+   "ruling": "Approved for the Utility Frame only. `oil_pump` and `refinery` costs must not change this round.",
+   "shipped": [
+    "RECIPES.vehicle_frame = 1 Metal Pipe + 2 Iron Ingot + 2 Machine Parts + 2 Parts, 22 s, rev 3.",
+    "`vehicle_frame_piped` retired (RETIRED_RECIPES); `vehicle_frame@2` and `vehicle_frame_piped@2` frozen.",
+    "Oil Pump and Refinery costs untouched (asserted)."
+   ],
    "title": "Give the Metal Pipe a real job",
    "items": [
     "metal_pipe",
     "vehicle_frame"
    ],
    "problem": "The Pipe has exactly one consumer, the alternate frame recipe `vehicle_frame_piped`, and that recipe costs strictly more than the plain `vehicle_frame` for the same output at the same station. A rational player never makes a Pipe. Finding one in loot is a Recycler ticket for 1 Refined Iron and nothing else.",
-   "decision": "The piped recipe becomes THE frame recipe, and the two fluid machines take Pipes in place of one Machine Part each (Last Island uses Pipes for the extractor and for frames).",
+   "decision": "The piped recipe becomes THE frame recipe. (Round 1 also proposed Pipes in the Oil Pump and Refinery; the ruling excludes that, so their costs below are quoted only to prove they did not move.)",
    "before_recipes": [
     {
      "id": "vehicle_frame",
@@ -35303,79 +35238,29 @@
      ]
     }
    ],
-   "after_structs": [
-    {
-     "id": "oil_pump",
-     "cost": [
-      [
-       "iron_ingot",
-       3
-      ],
-      [
-       "mechanical_parts",
-       1
-      ],
-      [
-       "metal_pipe",
-       2
-      ],
-      [
-       "spares",
-       2
-      ],
-      [
-       "brick",
-       2
-      ]
-     ]
-    },
-    {
-     "id": "refinery",
-     "cost": [
-      [
-       "iron_ingot",
-       4
-      ],
-      [
-       "mechanical_parts",
-       2
-      ],
-      [
-       "metal_pipe",
-       2
-      ],
-      [
-       "spares",
-       5
-      ],
-      [
-       "brick",
-       6
-      ],
-      [
-       "glass",
-       2
-      ]
-     ]
-    }
-   ],
    "migration": [
     "Bump RECIPE_REVISION; freeze `vehicle_frame@<old>` and `vehicle_frame_piped@<old>`; add `vehicle_frame_piped` to RETIRED_RECIPES.",
     "Frames already crafted are unchanged items. Frame jobs in progress finish at their frozen revision.",
-    "Packed Refinery / Oil Pump items already crafted keep working; `deploy_*` recipes are generated from STRUCTS, so the new cost applies only to packs crafted after the change. Reclaim refunds read the cost stored at placement.",
-    "Consequence to accept: a Refinery now needs a level-2 Workbench first (Pipes are made there). Today it needs none. This is the intended gate — refining becomes a mid-game step — but it is a real pacing change."
+    "Measured cost of the change, bare hands → one Utility Motorbike: +3 iron ore, +1 coal, +2 scrap, +77 s of station time, Parts unchanged (41); one Pipe and one Machine Part are left over (round2-simulations.json)."
    ],
-   "risk": "Medium: pushes fuel production behind Workbench II. Mitigation already in the game: the Furnace recipe `refine_salvaged_oil` still makes fuel without a Refinery.",
+   "risk": "Low for the frame: the motorbike route already needs the Furnace, coal and Refined Iron for its plates, so the pipe adds no new station, atom or knowledge.",
    "tests": [
-    "projection: metal_pipe.consumer_targets ≥ 3 and no ONLY_USED_BY_DOMINATED_RECIPE signal",
+    "projection: metal_pipe has a non-dominated consumer and no ONLY_USED_BY_DOMINATED_RECIPE signal",
     "projection: no STRICTLY_DOMINATED pair remains for vehicle_frame",
-    "route sim: wreck loot → pipe → refinery → fuel_can completes"
+    "round2: analytic + intent motorbike chain before/after",
+    "round2: rev-2 frame jobs finish under the frozen definition"
    ]
   },
   {
    "id": "P4",
    "group": "B",
    "recommendation": "APPROVE",
+   "status": "IMPLEMENTED",
+   "ruling": "Approved, subject to the blade-before-axe and no-net-material checks. Both passed.",
+   "shipped": [
+    "RECIPES.industrial_axe = Iron Axe + 1 Metal Blade + 1 Machine Part + 2 Parts, rev 3; `industrial_axe@2` frozen.",
+    "No new Recycler rule: the existing X:recover-v3 return (1 scrap + 2 Machine Parts + 1 ingot) is already ≤ what the rev-3 axe embeds (7 ingots, 2 Machine Parts, 2 Parts)."
+   ],
    "title": "Make the Metal Blade the edge of the Salvager Axe",
    "items": [
     "metal_blade",
@@ -35442,18 +35327,24 @@
    ],
    "migration": [
     "Freeze `industrial_axe@<old>`; existing axes and in-progress jobs are untouched.",
-    "Recycler: add a NEW rule key for the axe built at the new revision (rules are immutable and versioned; never edit X:recover-v3). Return must stay ≤ inputs (Bible K4)."
+    "Recycler: NO new rule. Round 1 asked for one; the check shows the existing X:recover-v3 return is already ≤ the rev-3 inputs, and existing rules must not be altered."
    ],
-   "risk": "Low. One tool gets 4 iron dearer; the Pick is unchanged, so the two top tools stop being copies of each other.",
+   "risk": "Low. Measured: +4 iron ore and +56 s of station time for the axe, Parts unchanged; the Pick is unchanged, so the two top tools stop being copies of each other.",
    "tests": [
     "projection: metal_blade has a non-alternate consumer",
-    "recycler: new rule returns no more Machine Parts than the recipe consumed"
+    "round2: axe refused without a Blade",
+    "round2: craft → recycle returns no more of any material than the axe and the blade embed"
    ]
   },
   {
    "id": "P5",
    "group": "B",
    "recommendation": "APPROVE",
+   "status": "IMPLEMENTED",
+   "ruling": "Approved as a NEW versioned rule; existing rules untouched.",
+   "shipped": [
+    "COMPONENT_RULES['X:plate-v1'] = 1 Iron Plate → 1 Iron Ingot, 10 s. Mirrored in balance.v1.json recyclerV4."
+   ],
    "title": "Add a Recycler rule for Iron Plate",
    "items": [
     "iron_plate"
@@ -35474,6 +35365,8 @@
    "id": "P6",
    "group": "B",
    "recommendation": "APPROVE_LATER",
+   "status": "NOT_AUTHORISED",
+   "ruling": "Not allowed. Plank stays. Analysis only: see ROUND2_FINDINGS.md §P6.",
    "title": "Retire Plank",
    "items": [
     "plank"
@@ -35562,6 +35455,12 @@
    "id": "P7",
    "group": "B",
    "recommendation": "APPROVE",
+   "status": "IMPLEMENTED",
+   "ruling": "Approved. English is the display language; the settled Vietnamese names are kept as alias data.",
+   "shipped": [
+    "Six Creator Cores and the Escrow Chest show English names; `ItemDef.vi` holds the Vietnamese name and the tooltip shows it as a subtitle.",
+    "Ids, creatorCore keys, recipes and VFX untouched."
+   ],
    "title": "One display language for item names",
    "items": [
     "core_blast",
@@ -35575,9 +35474,9 @@
    "problem": "Seven items show Vietnamese names in an otherwise English inventory. The names are canon; the mixture is not.",
    "decision": "Show the English name with the canonical Vietnamese name kept as subtitle/alias. Ids and mechanics untouched.",
    "migration": [
-    "Display strings only. Any test or e2e that selects by the Vietnamese label must move to the id."
+    "Display strings only. e2e selectors that used the old labels were updated in the same commit."
    ],
-   "risk": "Low. Needs the owner to confirm the English wording of canon names.",
+   "risk": "Low. The English wording of the six canon names still needs the owner to confirm it; changing a string later needs no migration.",
    "tests": [
     "item-ontology-v2: no item name mixes languages"
    ]
@@ -35586,6 +35485,8 @@
    "id": "P8",
    "group": "B",
    "recommendation": "HOLD",
+   "status": "OPEN",
+   "ruling": "Stay unimplemented; produce the exact Veyra source-access matrix. See ROUND2_FINDINGS.md §P8.",
    "title": "Veyra source gaps",
    "items": [
     "chitin",
@@ -35611,6 +35512,8 @@
    "id": "P9",
    "group": "B",
    "recommendation": "HOLD",
+   "status": "OPEN",
+   "ruling": "Keep fixture-only; the UI must not advertise it as minable. See ROUND2_FINDINGS.md §P9.",
    "title": "Crude Petroleum has no live source",
    "items": [
     "crude_petroleum"
@@ -35629,6 +35532,8 @@
    "id": "P10",
    "group": "B",
    "recommendation": "HOLD",
+   "status": "OPEN",
+   "ruling": "Do not delete Cores. Compare each legacy Core with the seven and propose one canon decision. See ROUND2_FINDINGS.md §P10.",
    "title": "Four legacy cores beside the seven Creator Cores",
    "items": [
     "core_fire",
@@ -35662,9 +35567,9 @@
    {
     "id": "A",
     "title": "Two distinct axes",
-    "summary": "`spares` is shown as Parts and stays the uncraftable progression resource. `mechanical_parts` is shown as Machine Parts, a crafted component. Gear / Pipe / Plate / Blade keep their ids and get one clear job each (P3–P5). Fasteners fold into Machine Parts later (P2).",
+    "summary": "`spares` is shown as Parts and stays the uncraftable progression resource. `mechanical_parts` is shown as Machine Parts, a crafted component. Gear / Pipe / Plate / Blade keep their ids and have one clear job each (P3–P5, implemented in round 2). Fasteners stay a separate researched joining stock (P2 ruled out).",
     "scores": {
-     "implementation_cost": "Small: two display names now; three small recipe proposals after.",
+     "implementation_cost": "Small: two display names, two recipe revisions and one new Recycler rule (all done in round 2).",
      "clarity": "High: one word, one item. \"Parts are found; Machine Parts are made.\"",
      "gameplay_choice": "Kept: Parts still competes between research, trade, Cores and devices (Bible K4).",
      "scarcity": "Unchanged: no new Parts source, no craft recipe.",

@@ -1022,3 +1022,36 @@ The general rule this turn produced, worth carrying: a pin that counts consumers
 **Not shipped — awaiting the Creator.** P1 Parts naming (Option A, recommended), P2 merge Fasteners into Machine Parts (this would reverse part of §26), P3 Pipe gets a required job, P4 Blade becomes the Salvager Axe edge, P5 Recycler rule for Iron Plate, P6 retire Plank, P7 one display language, P8 Veyra source gaps (HOLD), P9 Crude Petroleum (HOLD), P10 legacy cores (HOLD). Each has before/after recipes and a migration plan in the appendix; a test pins that every "before" equals the live catalog and that none of them is implemented.
 
 **What was run.** `tests/item-ontology-v2.test.ts` (projection, classes, decisions, drift) and `tests/item-ontology-v2-routes.test.ts` (engine intents on granted stock: scrap → Machine Parts, research refused without Spares, Damaged Drive → 2 Spares at the Recycler; ore → ingot at a fuelled Furnace → bench products; Pipe/Gear/Blade recycle to their versioned returns and an Iron Plate is refused). Browser evidence was **not** produced: the sandbox cannot download a Playwright browser. `tests/economic-network-m2.test.ts` Suites 2 and 8 fail identically at `934f447` without these changes.
+
+## 30. Item Ontology V2, round 2 — five proposals executed at recipe revision 3, two ruled out, three still open (2026-11-14)
+
+**Authority.** Control Tower ruling on draft PR #61: P1, P3 (Utility Frame only), P4, P5, P7 approved; P2 and P6 not authorised (analysis only); P8, P9, P10 stay unimplemented but must end in a concrete conclusion. Same branch, same PR, still Draft. **Item V2 is not complete.**
+
+**Executed (recipe revision 2 → 3).**
+
+| | Change | Save / migration |
+|---|---|---|
+| P1 | `spares` shown as **Parts** (VN *Linh kiện*); `mechanical_parts` shown as **Machine Parts** (VN *Bộ phận máy*). Ids, sources, research prices, trader, Recycler rights unchanged. Parts still has no recipe. | none (display) |
+| P3 | `vehicle_frame` = 1 Metal Pipe + 2 Iron Ingot + 2 Machine Parts + 2 Parts, 22 s. `vehicle_frame_piped` retired. **Oil Pump and Refinery costs untouched.** | `vehicle_frame@2`, `vehicle_frame_piped@2` frozen; queued rev-2 jobs finish and refund under the old BOM |
+| P4 | `industrial_axe` = Iron Axe + 1 Metal Blade + 1 Machine Part + 2 Parts. | `industrial_axe@2` frozen. No Recycler rule added or edited |
+| P5 | New Recycler rule `X:plate-v1`: 1 Iron Plate → 1 Iron Ingot, 10 s. | new key only; existing rules byte-identical |
+| P7 | English display names for six Creator Cores and the Escrow Chest; Vietnamese canon names kept as `ItemDef.vi` and shown as a subtitle in the item info box. | none (display) |
+
+**Round-1 statements withdrawn.** (1) "The Recycler is the only mint of Parts" was wrong: Parts come from authored loot and wrecks, machine creatures and the Recycler; the Recycler is the only *conversion* into Parts. (2) "The Salvager Axe needs a new Recycler rule" was wrong: the existing `X:recover-v3` return is already no larger than what the rev-3 axe embeds. (3) Plank was counted as having a consumer; see P6 below.
+
+**Measured cost of the changes** (`web/evidence/item-ontology-v2/round2-simulations.json`; ANALYTIC = arithmetic over the recipe table at each revision, INTENT = real engine dispatch on FIXTURE-granted atoms; neither is natural play, and no human played it):
+
+- Bare hands → one Utility Motorbike kit, rev 2 → rev 3: iron ore 29 → 32, coal 1 → 2, scrap 17 → 19, Parts 41 → 41, station time 543 s → 620 s. One Metal Pipe and one Machine Part are left over (the pipe recipe makes two). The INTENT run consumed exactly the analytic bill.
+- Salvager Axe: +4 iron ore, +56 s station time, Parts unchanged. The axe is refused without a Blade.
+- Loops: plate craft → recycle loses 1 Iron Ingot + 1 coal + 1 Fastener per turn; blade craft → recycle loses 2 Iron Ingot; axe craft → recycle returns less of every material than went in. Recycler jobs survive save/restart and pay once; a forged rule key is rejected.
+
+**Not executed — conclusions** (`web/ref/item-ontology-v2/ROUND2_FINDINGS.md`, generated from the live catalog):
+
+- *P2 Fasteners (ruled out).* 22 live consumers. Replacing n Fasteners with ceil(n/2) Machine Parts raises scrap on every consumer, 1.5× at best and 3× on the twelve one-fastener consumers; no integer mapping avoids it. Fasteners stay; disposition is now KEEP.
+- *P6 Plank (ruled out).* The 240 HP Plank Wall is upgrade-only geometry and no entry of `STRUCTURE_UPGRADES` leads to it, so a player cannot obtain it; the Brick Wall (600 HP) is in the same state. Plank therefore has no reachable consumer today. This is a building-ontology decision (make the tier reachable), not an item retirement. Disposition DEFER.
+- *P8 Veyra sources (open).* Six of the eight named items have no Veyra source: chitin, crawler_optic, wolf_fang, beetle_horn (creatures behind the Shipping spawner), keycard and core_demon (Shipping/Dev crates only). Spirit Essence drops on Veyra but its recipe is blocked there. No source was invented.
+- *P9 Crude Petroleum (open).* Fixture-only on both layouts; item and Oil Pump texts are quoted in the findings for wording review. No UI change made.
+- *P10 legacy cores (open).* Different mechanic from the seven (charge tool vs reserve weapon); Quake and Rime have effects no Creator Core has; three Creator Core crates are located by the legacy core inside them. Proposed canon decision: keep the four as a named minor class ("Field Core"), outside the seven. Needs the owner.
+- *Last Island 86 vs 137.* The atlas in the repository yields 86 unique item ids and 51 recipe entries. 86 + 51 = 137 is the only match found, and it is a hypothesis, not a finding: the 137-entry research summary itself was **not located** in the repository or in the connected Drive.
+
+**Also fixed while taking the screenshots.** At the 640×360 stage the item info box on the Survivor screen showed no item name at all (the name row collapsed to zero height); this predates the PR. `index.css`: the name row no longer shrinks and the box clips its last row instead of spilling onto the action buttons. Consequence: at that stage size the "used in" icon row can be cut off.

@@ -9,7 +9,10 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ITEMS, RECIPES, STRUCTS, SOH_PROVISIONAL_ITEMS } from '../src/game/catalog';
 import { buildSohEconomicGraph, type SohEconomicGraph } from '../src/game/economic-graph';
-import { projectItemOntology, type ItemOntologyProjection } from '../src/game/item-ontology';
+import { UNOBTAINABLE_STRUCTURES, projectItemOntology, type ItemOntologyProjection } from '../src/game/item-ontology';
+import { buildRound2Findings, round2FindingsMd, type LiAtlasFull, type Round2Findings } from '../src/game/item-ontology-findings';
+import { LEGACY_RECIPES, RECIPE_REVISION, RETIRED_RECIPES } from '../src/game/recipe-migration';
+import { componentRuleSnapshot } from '../src/game/recycler';
 import { RES_ITEM_CLASS, itemClass, itemClassLabel } from '../src/game/item-class';
 import { ITEM_DECISIONS, LI_CROSSWALK, PARTS_RECOMMENDATION, PARTS_SCOPE, PROPOSALS, decisionFor } from '../src/game/item-ontology-decisions';
 import {
@@ -25,6 +28,7 @@ let graph: SohEconomicGraph;
 let p: ItemOntologyProjection;
 let data: OntologyData;
 let atlas: LiAtlas;
+let findings: Round2Findings;
 const item = (id: string) => p.items.find((i) => i.id === id)!;
 const sorted = (xs: [string, number][]) => [...xs].map(([k, q]) => `${k}:${q}`).sort();
 
@@ -33,6 +37,7 @@ beforeAll(() => {
   p = projectItemOntology(graph);
   atlas = JSON.parse(readFileSync(ATLAS, 'utf8')) as LiAtlas;
   data = buildOntologyData(p, atlas);
+  findings = buildRound2Findings(p, atlas as unknown as LiAtlasFull);
 }, 600_000);
 
 describe('projection is an adapter over the existing multigraph, not a second catalog', () => {
@@ -92,13 +97,21 @@ describe('projection is an adapter over the existing multigraph, not a second ca
     }
   });
 
-  it('finds the fake-complexity cases the proposals rely on', () => {
-    const strict = p.dominated_alternatives.filter((d) => d.verdict === 'STRICTLY_DOMINATED').map((d) => d.dearer);
-    expect(strict).toEqual(['vehicle_frame_piped']);
-    expect(item('metal_pipe').signals).toContain('ONLY_USED_BY_DOMINATED_RECIPE:vehicle_frame_piped');
+  it('round 2 removed the fake-complexity cases it was allowed to, and still reports the rest', () => {
+    // P3: no strictly dominated alternative is left, and the Pipe is no longer hostage to one.
+    expect(p.dominated_alternatives.filter((d) => d.verdict === 'STRICTLY_DOMINATED')).toEqual([]);
+    expect(item('metal_pipe').signals.filter((s) => s.startsWith('ONLY_USED_BY_DOMINATED_RECIPE'))).toEqual([]);
+    expect(item('metal_pipe').consumer_targets).toContain('make:vehicle_frame');
+    // P4: the Blade has a consumer that is not an optional alternate.
+    expect(item('metal_blade').consumer_targets).toContain('make:industrial_axe');
+    // P5: all four technical components have a Recycler rule.
+    expect(item('iron_plate').recycle?.rule).toBe('X:plate-v1');
+    for (const id of ['metal_pipe', 'mechanical_gear', 'metal_blade', 'iron_plate']) expect(item(id).recycle, id).not.toBeNull();
+    // P2 not authorised: the twin is still there and still reported, not hidden.
     expect(p.twin_intermediates.some((t) => t.a === 'mechanical_parts' && t.b === 'fasteners')).toBe(true);
-    expect(item('iron_plate').recycle).toBeNull();
-    for (const id of ['metal_pipe', 'mechanical_gear', 'metal_blade']) expect(item(id).recycle, id).not.toBeNull();
+    // P6: Plank's only listed consumer cannot exist in a live world.
+    expect(UNOBTAINABLE_STRUCTURES).toContain('wall_plank');
+    expect(item('plank').signals).toContain('NO_REACHABLE_CONSUMER:wall_plank');
     // Under a merged Parts resource the Recycler would mint research currency from an Iron Axe.
     expect(p.recycle_loops.find((l) => l.item === 'iron_axe')!.merged_parts_verdict).toBe('PARTS_POSITIVE');
   });
@@ -145,9 +158,10 @@ describe('decisions', () => {
     expect(Object.keys(ITEM_DECISIONS).sort()).toEqual(explicit.sort());
   });
 
-  it('does not KEEP everything, and every MERGE/RETIRE/REDESIGN/RENAME points at a proposal with a migration plan', () => {
+  it('after round 2 nothing is left as an unexecuted RENAME/REDESIGN/MERGE/RETIRE; every non-KEEP row points at a proposal', () => {
     const c = data.disposition_counts;
-    for (const k of ['RENAME', 'REDESIGN', 'MERGE_CANDIDATE', 'RETIRE_CANDIDATE', 'DEFER', 'ADD_CANDIDATE']) expect(c[k] ?? 0, k).toBeGreaterThan(0);
+    for (const k of ['DEFER', 'ADD_CANDIDATE']) expect(c[k] ?? 0, k).toBeGreaterThan(0);
+    for (const k of ['RENAME', 'REDESIGN', 'MERGE_CANDIDATE', 'RETIRE_CANDIDATE']) expect(c[k] ?? 0, k).toBe(0);
     const ids = new Set(PROPOSALS.map((x) => x.id));
     for (const [id, d] of Object.entries(ITEM_DECISIONS)) {
       if (d.decision === 'KEEP') continue;
@@ -164,31 +178,97 @@ describe('decisions', () => {
     }
   });
 
-  it('every "before" recipe and structure cost quoted in a proposal equals the live catalog', () => {
+  it('proposal recipes are true: implemented ones match the frozen rev-2 ledger before and the live catalog after', () => {
+    const live = (id: string) => p.recipes.find((x) => x.id === id);
     for (const pr of PROPOSALS) {
+      const done = pr.status === 'IMPLEMENTED' || pr.status === 'IMPLEMENTED_PARTIAL';
       for (const b of pr.before_recipes ?? []) {
-        const r = p.recipes.find((x) => x.id === b.id);
-        expect(r, `${pr.id}:${b.id}`).toBeDefined();
-        expect(sorted(b.ins), `${pr.id}:${b.id} ins`).toEqual(sorted(r!.ins));
-        expect(sorted(b.out), `${pr.id}:${b.id} out`).toEqual(sorted(r!.outs));
-        expect(b.station, `${pr.id}:${b.id} station`).toBe(r!.station_tier);
+        if (done) {
+          const frozen = LEGACY_RECIPES[`${b.id}@2`];
+          expect(frozen, `${pr.id}:${b.id}@2 frozen`).toBeDefined();
+          expect(sorted(b.ins), `${pr.id}:${b.id} ins`).toEqual(sorted(frozen.ins as [string, number][]));
+          expect(sorted(b.out), `${pr.id}:${b.id} out`).toEqual([`${frozen.out}:${frozen.qty}`]);
+        } else {
+          const r = live(b.id);
+          expect(r, `${pr.id}:${b.id}`).toBeDefined();
+          expect(sorted(b.ins), `${pr.id}:${b.id} ins`).toEqual(sorted(r!.ins));
+          expect(sorted(b.out), `${pr.id}:${b.id} out`).toEqual(sorted(r!.outs));
+          expect(b.station, `${pr.id}:${b.id} station`).toBe(r!.station_tier);
+        }
       }
-      for (const b of pr.before_structs ?? []) {
-        expect(sorted(b.cost), `${pr.id}:${b.id}`).toEqual(sorted(STRUCTS[b.id].cost as [string, number][]));
+      // Structure costs quoted anywhere must equal the live catalog: round 2 changed NO structure cost.
+      for (const b of pr.before_structs ?? []) expect(sorted(b.cost), `${pr.id}:${b.id}`).toEqual(sorted(STRUCTS[b.id].cost as [string, number][]));
+      for (const a of pr.after_recipes ?? []) {
+        for (const [k] of [...a.ins, ...a.out]) expect(ITEMS[k], `${pr.id}:${a.id}:${k}`).toBeDefined();
+        if (!done) continue;
+        if (a.ins.length === 0) { expect(RETIRED_RECIPES as readonly string[], `${pr.id}:${a.id} retired`).toContain(a.id); expect(RECIPES[a.id]).toBeUndefined(); continue; }
+        const r = live(a.id)!;
+        expect(sorted(a.ins), `${pr.id}:${a.id} live ins`).toEqual(sorted(r.ins));
+        expect(sorted(a.out), `${pr.id}:${a.id} live out`).toEqual(sorted(r.outs));
+        expect(a.station, `${pr.id}:${a.id} live station`).toBe(r.station_tier);
       }
-      for (const a of [...(pr.after_recipes ?? [])]) for (const [k] of [...a.ins, ...a.out]) expect(ITEMS[k], `${pr.id}:${a.id}:${k}`).toBeDefined();
       for (const a of pr.after_structs ?? []) for (const [k] of a.cost) expect(ITEMS[k], `${pr.id}:${a.id}:${k}`).toBeDefined();
+      expect(pr.ruling.length, pr.id).toBeGreaterThan(10);
+      if (done) expect(pr.shipped?.length ?? 0, pr.id).toBeGreaterThan(0);
     }
   });
 
-  it('Group B is NOT implemented: the names and recipes the proposals would change are still the baseline ones', () => {
-    expect(ITEMS.spares.name).toBe('Spares');
-    expect(ITEMS.mechanical_parts.name).toBe('Mechanical Parts');
-    expect(RECIPES.fasteners).toBeDefined();
-    expect(RECIPES.plank).toBeDefined();
-    expect(RECIPES.vehicle_frame_piped).toBeDefined();
+  it('round 2 status: exactly the authorised proposals are live, and nothing else moved', () => {
+    const status = Object.fromEntries(PROPOSALS.map((x) => [x.id, x.status]));
+    expect(status).toEqual({ P1: 'IMPLEMENTED', P2: 'NOT_AUTHORISED', P3: 'IMPLEMENTED_PARTIAL', P4: 'IMPLEMENTED', P5: 'IMPLEMENTED', P6: 'NOT_AUTHORISED', P7: 'IMPLEMENTED', P8: 'OPEN', P9: 'OPEN', P10: 'OPEN' });
+    expect(RECIPE_REVISION).toBe(3);
+    // P1 / P7 — display only, ids untouched
+    expect(ITEMS.spares.name).toBe('Parts'); expect(ITEMS.spares.vi).toBe('Linh kiện');
+    expect(ITEMS.mechanical_parts.name).toBe('Machine Parts'); expect(ITEMS.mechanical_parts.vi).toBe('Bộ phận máy');
+    expect(Object.values(ITEMS).filter((d) => d.name === 'Parts').length).toBe(1);
+    expect(RECIPES.spares).toBeUndefined();
+    for (const d of Object.values(ITEMS)) expect(d.name, d.name).toMatch(/^[\x20-\x7e]+$/);
+    for (const [k, d] of Object.entries(ITEMS)) if (d.creatorCore && k !== 'core_mjolnir') expect(d.vi, k).toBeTruthy();
+    // P3 — frame only; fluid machines untouched
+    expect(RECIPES.vehicle_frame_piped).toBeUndefined();
+    expect(sorted(STRUCTS.oil_pump.cost as [string, number][])).toEqual(sorted([['iron_ingot', 3], ['mechanical_parts', 2], ['spares', 2], ['brick', 2]]));
+    expect(sorted(STRUCTS.refinery.cost as [string, number][])).toEqual(sorted([['iron_ingot', 4], ['mechanical_parts', 3], ['spares', 5], ['brick', 6], ['glass', 2]]));
+    // P5 — new key, old rules byte-for-byte where they were
+    const rules = componentRuleSnapshot();
+    expect(rules['X:plate-v1']).toEqual({ key: 'iron_plate', seconds: 10, outputs: [['iron_ingot', 1]] });
+    expect(rules['X:pipe-v3'].outputs).toEqual([['refined_iron_ingot', 1]]);
+    expect(sorted(rules['X:gear-v1'].outputs)).toEqual(['iron_ingot:1', 'mechanical_parts:2']);
+    expect(sorted(rules['X:blade-v1'].outputs)).toEqual(['iron_ingot:2', 'mechanical_parts:1']);
+    // P2 / P6 — not authorised, so nothing about them changed
+    expect(sorted(RECIPES.fasteners.ins)).toEqual(['iron_ingot:1', 'scrap:1']); expect(RECIPES.fasteners.qty).toBe(3);
+    expect(sorted(RECIPES.plank.ins)).toEqual(['wood:2']);
+    expect(sorted(STRUCTS.wall_plank.cost as [string, number][])).toEqual(['plank:3']);
+    expect(decisionFor('fasteners')!.decision).toBe('KEEP');
+    expect(decisionFor('plank')!.decision).toBe('DEFER');
+    expect(data.manifest.filter((m) => ['RENAME', 'REDESIGN', 'MERGE_CANDIDATE', 'RETIRE_CANDIDATE'].includes(m.decision)).map((m) => m.old_id)).toEqual([]);
     expect(PARTS_RECOMMENDATION.choose).toBe('A');
     for (const id of PARTS_SCOPE) expect(ITEMS[id], id).toBeDefined();
+  });
+
+  it('round 2 findings are computed from the live game and say what they measured', () => {
+    // P2: every consumer listed, and the merge is shown to cost more — not asserted to be neutral.
+    const f = findings.P2;
+    expect(f.rows.length).toBeGreaterThanOrEqual(14);
+    for (const id of ['vehicle_drive', 'motorbike_kit', 'iron_plate', 'mechanical_gear']) expect(f.rows.some((x) => x.consumer === id), id).toBe(true);
+    expect(f.rows.find((x) => x.consumer === 'door_powered')!.live).toBe(false);
+    expect(f.totals.m1_scrap).toBeGreaterThan(f.totals.before_scrap);
+    expect(f.totals.m1_worst_scrap_ratio).toBe(3);
+    // P6: the 240 HP wall is not obtainable today.
+    expect(findings.P6.tiers.find((t) => t.id === 'wall_plank')).toMatchObject({ hp: 240, buildable_directly: false, upgrade_from: [], obtainable: false });
+    expect(findings.P6.tiers.find((t) => t.id === 'wall_stone')!.obtainable).toBe(true);
+    // P8: the matrix covers the eight named items and agrees with the blocked-recipe list.
+    expect(findings.P8.rows.map((x) => x.id)).toEqual(['chitin', 'crawler_optic', 'wolf_fang', 'beetle_horn', 'boar_tusk', 'keycard', 'core_demon', 'essence_spirit']);
+    for (const x of findings.P8.rows) expect(x.gap === 'NO_VEYRA_SOURCE', x.id).toBe(['SHIPPING_ONLY', 'FIXTURE_ONLY', 'UNREACHABLE'].includes(x.reachability));
+    expect(findings.P8.rows.find((x) => x.id === 'core_demon')!.gap).toBe('NO_VEYRA_SOURCE');
+    // P9
+    expect(findings.P9.reachability).toBe('FIXTURE_ONLY');
+    // P10: four legacy + seven creator, different save fields
+    expect(findings.P10.legacy.length).toBe(4); expect(findings.P10.creator.length).toBe(7);
+    expect(findings.P10.creator_loot_markers.length).toBe(3);
+    // LI: 86 ids; the only way this corpus yields 137 is ids + recipe entries.
+    expect(findings.LI.counts.unique_item_ids).toBe(86);
+    expect(findings.LI.counts.recipe_entries).toBe(51);
+    expect(findings.LI.counts.ids_plus_recipe_entries).toBe(137);
   });
 
   it('no proposed recipe makes the research currency craftable', () => {
@@ -218,6 +298,8 @@ describe('generated artifacts come from one data object and have not drifted', (
     'li-crosswalk.csv': liCrosswalkCsv(data),
     'APPENDIX.md': appendixMd(data),
     'index.html': explorerHtml(data),
+    'ROUND2_FINDINGS.md': round2FindingsMd(findings),
+    'round2-findings.json': JSON.stringify(findings, null, 1) + '\n',
   });
 
   it('manifest has the required columns in the required order, one row per item', () => {

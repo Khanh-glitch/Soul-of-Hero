@@ -35,6 +35,8 @@ export interface ItemDecision {
   decision: Disposition;
   /** Proposed player-facing name when it differs from today (id never changes silently). */
   proposed_name?: string;
+  /** Display name before an IMPLEMENTED rename (round 2), kept for the manifest and for search. */
+  was_name?: string;
   /** Proposed id when the decision would move the item (MERGE/RETIRE target). */
   proposed_id?: string;
   /** Last Island item id(s) compared against, or 'none' when LI has no counterpart. */
@@ -56,13 +58,13 @@ export const ITEM_DECISIONS: Readonly<Record<string, ItemDecision>> = Object.fre
   iron_ingot: D('INDUSTRY', 'KEEP', 'iron_ingot', 'Most-consumed crafted material in the game; same role as in LI.'),
   refined_iron_ingot: D('INDUSTRY', 'KEEP', 'refined_iron_ingot', 'Second metal tier; gates Pipe / Gear / Plate exactly as in LI.'),
   scrap: D('INDUSTRY', 'KEEP', 'parts', 'SOH splits LI "Parts" into raw Scrap (bulk, smeltable) and Parts (scarce). Scrap is the bulk half and stays.'),
-  spares: D('INDUSTRY', 'RENAME', 'parts', 'This IS the LI Parts role: found / recovered, never crafted, spent on research, trade, Cores and technology (Bible §0.2 "Spares/linh kiện", K4). The id stays; the display name becomes "Parts / Linh kiện" so the backbone resource has the backbone name.', { proposed_name: 'Parts', proposal: 'P1' }),
-  mechanical_parts: D('INDUSTRY', 'RENAME', 'none', 'Crafted from Scrap + Iron; NOT a research currency. Its current name collides with the Parts axis. Re-labelled as the crafted machine component ("Machine Parts / Cụm máy"); never shown as "Parts".', { proposed_name: 'Machine Parts', proposal: 'P1' }),
-  fasteners: D('INDUSTRY', 'MERGE_CANDIDATE', 'none', 'Twin of Machine Parts: same raw inputs (iron ore + scrap), same station tier, both generic "small metal bits" with 18 vs 22 consumers and no distinct mechanic. Two near-identical intermediates are fake depth.', { proposed_id: 'mechanical_parts', proposal: 'P2' }),
-  metal_pipe: D('INDUSTRY', 'REDESIGN', 'metal_pipe', 'Only consumer is vehicle_frame_piped, which is strictly dominated by the plain frame recipe — so today a Pipe is never the rational choice. LI uses Pipe for fluid/pressure machines. Give it that job.', { proposal: 'P3' }),
-  metal_blade: D('INDUSTRY', 'REDESIGN', 'metal_blade', 'Only used by two optional alternative recipes. LI makes the Blade the cutting edge of the refined axe. Make it the required edge of the Salvager Axe; keep the two alternates as honest shortcuts.', { proposal: 'P4' }),
+  spares: D('INDUSTRY', 'KEEP', 'parts', 'This IS the LI Parts role: found / recovered, never crafted, spent on research, trade, Cores and technology (Bible §0.2, K4). ROUND 2: display name is now "Parts / Linh kiện" (was "Spares"); id unchanged.', { was_name: 'Spares', proposal: 'P1' }),
+  mechanical_parts: D('INDUSTRY', 'KEEP', 'none', 'Crafted from Scrap + Iron; NOT a research currency. ROUND 2: display name is now "Machine Parts / Bộ phận máy" (was "Mechanical Parts"); never shown as "Parts".', { was_name: 'Mechanical Parts', proposal: 'P1' }),
+  fasteners: D('INDUSTRY', 'KEEP', 'none', 'ROUND 2 ruling: stays. Round 1 called it a twin of Machine Parts (same raw inputs, same tier). The measured merge (ROUND2_FINDINGS §P2) raises scrap cost on every consumer and up to 3× on one-fastener consumers, and deletes a research step; no integer mapping avoids that.', { proposal: 'P2' }),
+  metal_pipe: D('INDUSTRY', 'KEEP', 'metal_pipe', 'ROUND 2: now the tubing of THE Utility Frame recipe (rev 3), so every motorbike takes one. The fluid-machine job LI gives it (Oil Pump, Refinery) was ruled out for this round and stays a candidate.', { proposal: 'P3' }),
+  metal_blade: D('INDUSTRY', 'KEEP', 'metal_blade', 'ROUND 2: now the required edge of the Salvager Axe (rev 3), as in LI. The two alternate weapon recipes stay as honest shortcuts.', { proposal: 'P4' }),
   mechanical_gear: D('INDUSTRY', 'KEEP', 'mechanical_gear', 'Four distinct consumers (bear trap, IR sensor, drive, pick) plus a versioned Recycler rule. Same job as LI.'),
-  iron_plate: D('INDUSTRY', 'REDESIGN', 'iron_plate', 'Real jobs (motorbike, wall patching, trap re-arm) so the item stays; but it is the only one of the four technical components with no Recycler rule. Add one.', { proposal: 'P5' }),
+  iron_plate: D('INDUSTRY', 'KEEP', 'iron_plate', 'Real jobs (motorbike, wall patching, trap re-arm). ROUND 2: has its own Recycler rule X:plate-v1 (1 plate → 1 ingot, lossy), so all four technical components now behave alike.', { proposal: 'P5' }),
   damaged_drive: D('INDUSTRY', 'KEEP', 'none', 'The physical "appliance to recycle": the only way the Recycler mints Parts. Carries the LI recycler loop without making Parts craftable.'),
   salvaged_oil: D('INDUSTRY', 'KEEP', 'crude_oil', 'LI red-barrel oil. Live source of all fuel and lubricant.'),
   crude_petroleum: D('INDUSTRY', 'DEFER', 'crude_oil', 'Second raw oil with NO live source: the Oil Pump adapter is test-fixture only. Not shown to players today. Decide when the pump ships; until then it must not be advertised.', { proposal: 'P9' }),
@@ -75,7 +77,7 @@ export const ITEM_DECISIONS: Readonly<Record<string, ItemDecision>> = Object.fre
   wood: D('BUILDING', 'KEEP', 'wood', 'Universal starter material and fuel.'),
   stone: D('BUILDING', 'KEEP', 'none', 'Second building tier; feeds Brick, Glass, Basic Energy.'),
   fiber: D('BUILDING', 'KEEP', 'cloth', 'Rope / Cloth / Bandage root. LI goes plant → cloth directly; SOH keeps the gather step.'),
-  plank: D('BUILDING', 'RETIRE_CANDIDATE', 'none', 'One consumer (Plank Wall = 3 plank), and its own description prices it as "6 wood". A whole item + recipe that is only a renamed 2 wood adds a click, not a decision.', { proposed_id: 'wood', proposal: 'P6' }),
+  plank: D('BUILDING', 'DEFER', 'none', 'ROUND 2 ruling: stays, not retired. Measured (ROUND2_FINDINGS §P6): its only listed consumer, the Plank Wall, is upgrade-only geometry that no upgrade path reaches, so Plank has NO reachable consumer today. The fix is a building-ontology decision (make the 240 HP tier reachable), not an item retirement.', { proposal: 'P6' }),
   brick: D('BUILDING', 'KEEP', 'none', 'Third building tier; also refinery / pump housing.'),
   glass: D('BUILDING', 'KEEP', 'none', 'Windows, mask, canteen, fuel batches. Two recipes are a genuine regional choice (Frost Crystal vs Crab Shell).'),
   rope: D('BUILDING', 'KEEP', 'rope', 'Thirteen consumers; binding material across building, gear and husbandry.'),
@@ -97,7 +99,7 @@ export const ITEM_DECISIONS: Readonly<Record<string, ItemDecision>> = Object.fre
   torch: D('GEAR', 'KEEP', 'none', 'Light + ignition; also the Torch Post input.'),
   iron_axe: D('GEAR', 'KEEP', 'iron_axe', 'Iron tool tier.'),
   iron_pick: D('GEAR', 'KEEP', 'none', 'Iron tool tier; unlocks Rich Iron Ore quality.'),
-  industrial_axe: D('GEAR', 'REDESIGN', 'refined_iron_axe', 'Top axe. LI builds it from Blades + Pipe; SOH builds it from generic Machine Parts. Give the Blade its job here.', { proposal: 'P4' }),
+  industrial_axe: D('GEAR', 'KEEP', 'refined_iron_axe', 'Top axe. ROUND 2: takes one Metal Blade in place of one Machine Part (rev 3), closer to the LI build.', { proposal: 'P4' }),
   industrial_pick: D('GEAR', 'KEEP', 'none', 'Top pick; its geared alternate is a real knowledge bypass (more iron, no research).'),
   wood_spear: D('GEAR', 'KEEP', 'wood_club', 'Starter weapon.'),
   iron_sword: D('GEAR', 'KEEP', 'machete', 'Iron melee; Blade alternate trades a higher station for skipping research.'),
@@ -141,13 +143,13 @@ export const ITEM_DECISIONS: Readonly<Record<string, ItemDecision>> = Object.fre
   essence_nature: D('CORE', 'KEEP', 'none', 'One of the four Essences. Bible-protected.'),
   essence_water: D('CORE', 'KEEP', 'none', 'One of the four Essences. Bible-protected.'),
   essence_spirit: D('CORE', 'KEEP', 'none', 'One of the four Essences. Uncraftable on Veyra today (ingredient gap).', { proposal: 'P8' }),
-  core_blast: D('CORE', 'RENAME', 'none', 'Creator Core. Vietnamese display name inside an otherwise English item list.', { proposed_name: 'Big Bang', proposal: 'P7' }),
-  core_meteor: D('CORE', 'RENAME', 'none', 'Creator Core. Display-language consistency.', { proposed_name: 'Meteor', proposal: 'P7' }),
-  core_dragon: D('CORE', 'RENAME', 'none', 'Creator Core. Display-language consistency.', { proposed_name: "Dragon's Breath", proposal: 'P7' }),
-  core_elsa: D('CORE', 'RENAME', 'none', 'Creator Core. Display-language consistency.', { proposed_name: "Elsa's Sword", proposal: 'P7' }),
-  core_earthmother: D('CORE', 'RENAME', 'none', 'Creator Core. Display-language consistency.', { proposed_name: "Earth Mother's Breath", proposal: 'P7' }),
+  core_blast: D('CORE', 'KEEP', 'none', 'Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data.', { was_name: 'Vụ nổ lớn', proposal: 'P7' }),
+  core_meteor: D('CORE', 'KEEP', 'none', 'Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data.', { was_name: 'Thiên thạch', proposal: 'P7' }),
+  core_dragon: D('CORE', 'KEEP', 'none', 'Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data.', { was_name: 'Hơi thở của rồng', proposal: 'P7' }),
+  core_elsa: D('CORE', 'KEEP', 'none', 'Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data.', { was_name: 'Gươm Elsa', proposal: 'P7' }),
+  core_earthmother: D('CORE', 'KEEP', 'none', 'Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data.', { was_name: 'Hơi thở đất mẹ', proposal: 'P7' }),
   core_mjolnir: D('CORE', 'KEEP', 'none', 'Creator Core; name already language-neutral.'),
-  core_demon: D('CORE', 'RENAME', 'none', 'Creator Core; also uncraftable on Veyra.', { proposed_name: 'Demon Core', proposal: 'P7' }),
+  core_demon: D('CORE', 'KEEP', 'none', 'Creator Core. ROUND 2: English display name; the settled Vietnamese name is kept as `vi` alias data. Also uncraftable on Veyra (P8).', { was_name: 'Lõi quỷ', proposal: 'P7' }),
   core_fire: D('CORE', 'DEFER', 'none', 'Legacy core outside the seven Creator Cores, still craftable and castable. Whether four extra cores remain is a Bible ruling, not an audit fix.', { proposal: 'P10' }),
   core_earth: D('CORE', 'DEFER', 'none', 'Legacy core; see core_fire.', { proposal: 'P10' }),
   core_storm: D('CORE', 'DEFER', 'none', 'Legacy core; see core_fire.', { proposal: 'P10' }),
@@ -160,13 +162,13 @@ export const ITEM_DECISIONS: Readonly<Record<string, ItemDecision>> = Object.fre
   beetle_horn: D('SPECIAL', 'KEEP', 'none', 'Specimen: studied to learn Chitin Plate. No Veyra source.', { proposal: 'P8' }),
   keycard: D('SPECIAL', 'KEEP', 'none', 'Vault access; LI green/red/blue cards collapsed to one. No Veyra source.', { proposal: 'P8' }),
   rcash: D('SPECIAL', 'KEEP', 'none', 'Ragnarok currency. Bible-protected.'),
-  escrow_chest: D('SPECIAL', 'RENAME', 'none', 'Escrow mechanic is Bible-protected; only the display language is inconsistent.', { proposed_name: 'Escrow Chest', proposal: 'P7' }),
+  escrow_chest: D('SPECIAL', 'KEEP', 'none', 'Escrow mechanic is Bible-protected. ROUND 2: English display name; "Rương ký gửi" kept as `vi` alias data.', { was_name: 'Rương ký gửi', proposal: 'P7' }),
   relic_shaleheart: D('SPECIAL', 'KEEP', 'none', 'Veyra side-boss unique.'),
   ronin_nodachi: D('SPECIAL', 'KEEP', 'none', 'Veyra side-boss unique.'),
   tidemarshal_trident: D('SPECIAL', 'KEEP', 'none', 'Veyra side-boss unique.'),
   custodian_lantern: D('SPECIAL', 'KEEP', 'none', 'Veyra side-boss unique.'),
   // ── Transport ────────────────────────────────────────────────────────────────────────────────
-  vehicle_frame: D('TRANSPORT', 'REDESIGN', 'vehicle_frame', 'Stays as the motorbike chassis (LI has the same item). Its two recipes collapse to the piped one.', { proposal: 'P3' }),
+  vehicle_frame: D('TRANSPORT', 'KEEP', 'vehicle_frame', 'Motorbike chassis (LI has the same item). ROUND 2: its two recipes collapsed to the piped one (rev 3).', { proposal: 'P3' }),
   vehicle_drive: D('TRANSPORT', 'KEEP', 'none', 'Looks like a twin of the Frame (same raw inputs, same single consumer) but is the item a Damaged Drive visibly relates to, and it is where Gears enter the bike. Kept; revisit only if P2–P4 leave it still redundant.'),
   motorbike_kit: D('TRANSPORT', 'KEEP', 'motorcycle', 'Deepest craft in the game (L4). The reward of the whole industry axis.'),
   cart_kit: D('TRANSPORT', 'KEEP', 'none', 'Early freight.'),
@@ -191,11 +193,19 @@ export interface Proposal {
   id: string;
   title: string;
   recommendation: 'APPROVE' | 'APPROVE_LATER' | 'HOLD';
+  /** Round 2 (Control Tower ruling on PR #61). IMPLEMENTED = live in the catalog at recipe revision 3;
+   *  IMPLEMENTED_PARTIAL = only the authorised part is live; NOT_AUTHORISED = ruled out, analysis only;
+   *  OPEN = no implementation, needs an owner decision. */
+  status: 'IMPLEMENTED' | 'IMPLEMENTED_PARTIAL' | 'NOT_AUTHORISED' | 'OPEN';
+  ruling: string;
+  /** What actually shipped, when status is IMPLEMENTED*. */
+  shipped?: string[];
   group: 'B';
   items: string[];
   problem: string;
   decision: string;
-  /** Current recipes this proposal touches. The test proves each equals the live catalog. */
+  /** Recipes before the change. For an IMPLEMENTED proposal the test proves each equals the frozen rev-2 ledger entry;
+   *  otherwise that each equals the live catalog. `after_recipes` of an IMPLEMENTED proposal must equal the live catalog. */
   before_recipes?: RecipeLine[];
   after_recipes?: RecipeLine[];
   before_structs?: StructLine[];
@@ -208,20 +218,29 @@ export interface Proposal {
 export const PROPOSALS: readonly Proposal[] = [
   {
     id: 'P1', group: 'B', recommendation: 'APPROVE',
+    status: 'IMPLEMENTED',
+    ruling: 'Approved. Display only; `mechanical_parts` VN name is "Bộ phận máy".',
+    shipped: [
+      "ITEMS.spares.name = 'Parts' (vi 'Linh kiện'); ITEMS.mechanical_parts.name = 'Machine Parts' (vi 'Bộ phận máy').",
+      "Research Table, trader, Station Console, HUD, tooltips, engine refusal messages and e2e selectors say Parts / Machine Parts.",
+      "Parts description states its real sources: loot, wrecks, machine creatures and the Recycler. No id, recipe, source, price or research right moved.",
+    ],
     title: 'Parts axis — Option A: one item called Parts, one called Machine Parts',
     items: ['spares', 'mechanical_parts'],
     problem: 'Two items compete for the word "Parts". `spares` ("Spares") is the scarce, uncraftable resource that pays for research, vendor trade, every Core and every powered device — the Last Island Parts role. `mechanical_parts` ("Mechanical Parts") is a bench product made from Scrap and Iron. PR #60 renamed the crafted one to "Parts", which put the backbone name on the wrong item.',
-    decision: 'Display rename only. `spares` → "Parts" (VI: "Linh kiện"). `mechanical_parts` → "Machine Parts" (VI: "Cụm máy"). No id, recipe, source, cost or research price changes. Parts stays uncraftable; the only mint remains Recycler Damaged Drive → 2.',
+    decision: 'Display rename only. `spares` → "Parts" (VI: "Linh kiện"). `mechanical_parts` → "Machine Parts" (VI: "Bộ phận máy"). No id, recipe, source, cost or research price changes. Parts stays uncraftable. It is NOT single-sourced: it comes from authored loot and wrecks, from machine creatures (crawler, two bosses) and from the Recycler (Damaged Drive → 2). Round 1 wrongly called the Recycler the only source; it is the only CONVERSION into Parts, not the only source.',
     migration: [
       'No save migration: ids, stacks and recipes are untouched.',
       'Change `ITEMS.spares.name`, `ITEMS.mechanical_parts.name` and their descriptions; sweep UI strings that hard-code "Spares" (research panel, vendor, Journey).',
-      'Update Bible §0.2 / K4 wording in the same commit (term "Spares/linh kiện" → "Parts/Linh kiện (id spares)").',
+      'Bible §0.2 wording updated in the same commit: "Parts / Linh kiện (id `spares`)".',
     ],
     risk: 'Low. Players and docs that say "Spares" need one release note. Tests that pin the display string must be updated in the same commit.',
     tests: ['item-ontology-v2: exactly one item has class PARTS and no other item name contains the word "Parts" alone', 'existing research / vendor tests unchanged (they use ids)'],
   },
   {
     id: 'P2', group: 'B', recommendation: 'APPROVE_LATER',
+    status: 'NOT_AUTHORISED',
+    ruling: 'Not allowed. Fasteners stay. Analysis only: see ROUND2_FINDINGS.md §P2.',
     title: 'Merge Forged Fasteners into Machine Parts',
     items: ['fasteners', 'mechanical_parts'],
     problem: 'Fasteners and Machine Parts are made at the same bench tier from the same two raw inputs and are both generic assembly bits. A newcomer has to learn two names for one idea, and most advanced recipes ask for both.',
@@ -262,10 +281,17 @@ export const PROPOSALS: readonly Proposal[] = [
   },
   {
     id: 'P3', group: 'B', recommendation: 'APPROVE',
+    status: 'IMPLEMENTED_PARTIAL',
+    ruling: 'Approved for the Utility Frame only. `oil_pump` and `refinery` costs must not change this round.',
+    shipped: [
+      "RECIPES.vehicle_frame = 1 Metal Pipe + 2 Iron Ingot + 2 Machine Parts + 2 Parts, 22 s, rev 3.",
+      "`vehicle_frame_piped` retired (RETIRED_RECIPES); `vehicle_frame@2` and `vehicle_frame_piped@2` frozen.",
+      "Oil Pump and Refinery costs untouched (asserted).",
+    ],
     title: 'Give the Metal Pipe a real job',
     items: ['metal_pipe', 'vehicle_frame'],
     problem: 'The Pipe has exactly one consumer, the alternate frame recipe `vehicle_frame_piped`, and that recipe costs strictly more than the plain `vehicle_frame` for the same output at the same station. A rational player never makes a Pipe. Finding one in loot is a Recycler ticket for 1 Refined Iron and nothing else.',
-    decision: 'The piped recipe becomes THE frame recipe, and the two fluid machines take Pipes in place of one Machine Part each (Last Island uses Pipes for the extractor and for frames).',
+    decision: 'The piped recipe becomes THE frame recipe. (Round 1 also proposed Pipes in the Oil Pump and Refinery; the ruling excludes that, so their costs below are quoted only to prove they did not move.)',
     before_recipes: [
       { id: 'vehicle_frame', ins: [['iron_ingot', 3], ['mechanical_parts', 2], ['spares', 2]], out: [['vehicle_frame', 1]], station: 'workbench_2' },
       { id: 'vehicle_frame_piped', ins: [['metal_pipe', 1], ['iron_ingot', 2], ['mechanical_parts', 2], ['spares', 2]], out: [['vehicle_frame', 1]], station: 'workbench_2' },
@@ -278,21 +304,22 @@ export const PROPOSALS: readonly Proposal[] = [
       { id: 'oil_pump', cost: [['iron_ingot', 3], ['mechanical_parts', 2], ['spares', 2], ['brick', 2]] },
       { id: 'refinery', cost: [['iron_ingot', 4], ['mechanical_parts', 3], ['spares', 5], ['brick', 6], ['glass', 2]] },
     ],
-    after_structs: [
-      { id: 'oil_pump', cost: [['iron_ingot', 3], ['mechanical_parts', 1], ['metal_pipe', 2], ['spares', 2], ['brick', 2]] },
-      { id: 'refinery', cost: [['iron_ingot', 4], ['mechanical_parts', 2], ['metal_pipe', 2], ['spares', 5], ['brick', 6], ['glass', 2]] },
-    ],
     migration: [
       'Bump RECIPE_REVISION; freeze `vehicle_frame@<old>` and `vehicle_frame_piped@<old>`; add `vehicle_frame_piped` to RETIRED_RECIPES.',
       'Frames already crafted are unchanged items. Frame jobs in progress finish at their frozen revision.',
-      'Packed Refinery / Oil Pump items already crafted keep working; `deploy_*` recipes are generated from STRUCTS, so the new cost applies only to packs crafted after the change. Reclaim refunds read the cost stored at placement.',
-      'Consequence to accept: a Refinery now needs a level-2 Workbench first (Pipes are made there). Today it needs none. This is the intended gate — refining becomes a mid-game step — but it is a real pacing change.',
+      'Measured cost of the change, bare hands → one Utility Motorbike: +3 iron ore, +1 coal, +2 scrap, +77 s of station time, Parts unchanged (41); one Pipe and one Machine Part are left over (round2-simulations.json).',
     ],
-    risk: 'Medium: pushes fuel production behind Workbench II. Mitigation already in the game: the Furnace recipe `refine_salvaged_oil` still makes fuel without a Refinery.',
-    tests: ['projection: metal_pipe.consumer_targets ≥ 3 and no ONLY_USED_BY_DOMINATED_RECIPE signal', 'projection: no STRICTLY_DOMINATED pair remains for vehicle_frame', 'route sim: wreck loot → pipe → refinery → fuel_can completes'],
+    risk: 'Low for the frame: the motorbike route already needs the Furnace, coal and Refined Iron for its plates, so the pipe adds no new station, atom or knowledge.',
+    tests: ['projection: metal_pipe has a non-dominated consumer and no ONLY_USED_BY_DOMINATED_RECIPE signal', 'projection: no STRICTLY_DOMINATED pair remains for vehicle_frame', 'round2: analytic + intent motorbike chain before/after', 'round2: rev-2 frame jobs finish under the frozen definition'],
   },
   {
     id: 'P4', group: 'B', recommendation: 'APPROVE',
+    status: 'IMPLEMENTED',
+    ruling: 'Approved, subject to the blade-before-axe and no-net-material checks. Both passed.',
+    shipped: [
+      "RECIPES.industrial_axe = Iron Axe + 1 Metal Blade + 1 Machine Part + 2 Parts, rev 3; `industrial_axe@2` frozen.",
+      "No new Recycler rule: the existing X:recover-v3 return (1 scrap + 2 Machine Parts + 1 ingot) is already ≤ what the rev-3 axe embeds (7 ingots, 2 Machine Parts, 2 Parts).",
+    ],
     title: 'Make the Metal Blade the edge of the Salvager Axe',
     items: ['metal_blade', 'industrial_axe'],
     problem: 'The Blade is only an optional ingredient in two alternate weapon recipes. Its Recycler rule returns exactly what went in, so it is neutral there too. Nothing in the game requires a Blade.',
@@ -305,13 +332,18 @@ export const PROPOSALS: readonly Proposal[] = [
     ],
     migration: [
       'Freeze `industrial_axe@<old>`; existing axes and in-progress jobs are untouched.',
-      'Recycler: add a NEW rule key for the axe built at the new revision (rules are immutable and versioned; never edit X:recover-v3). Return must stay ≤ inputs (Bible K4).',
+      'Recycler: NO new rule. Round 1 asked for one; the check shows the existing X:recover-v3 return is already ≤ the rev-3 inputs, and existing rules must not be altered.',
     ],
-    risk: 'Low. One tool gets 4 iron dearer; the Pick is unchanged, so the two top tools stop being copies of each other.',
-    tests: ['projection: metal_blade has a non-alternate consumer', 'recycler: new rule returns no more Machine Parts than the recipe consumed'],
+    risk: 'Low. Measured: +4 iron ore and +56 s of station time for the axe, Parts unchanged; the Pick is unchanged, so the two top tools stop being copies of each other.',
+    tests: ['projection: metal_blade has a non-alternate consumer', 'round2: axe refused without a Blade', 'round2: craft → recycle returns no more of any material than the axe and the blade embed'],
   },
   {
     id: 'P5', group: 'B', recommendation: 'APPROVE',
+    status: 'IMPLEMENTED',
+    ruling: 'Approved as a NEW versioned rule; existing rules untouched.',
+    shipped: [
+      "COMPONENT_RULES['X:plate-v1'] = 1 Iron Plate → 1 Iron Ingot, 10 s. Mirrored in balance.v1.json recyclerV4.",
+    ],
     title: 'Add a Recycler rule for Iron Plate',
     items: ['iron_plate'],
     problem: 'Pipe, Gear and Blade each have a versioned Recycler rule; Plate has none, so a looted Plate you do not need is dead weight. The four technical components should behave alike.',
@@ -322,6 +354,8 @@ export const PROPOSALS: readonly Proposal[] = [
   },
   {
     id: 'P6', group: 'B', recommendation: 'APPROVE_LATER',
+    status: 'NOT_AUTHORISED',
+    ruling: 'Not allowed. Plank stays. Analysis only: see ROUND2_FINDINGS.md §P6.',
     title: 'Retire Plank',
     items: ['plank'],
     problem: 'Plank exists to build one thing. 3 Plank = 6 Wood, and the Plank Wall description already says "for 6 wood". The item adds a bench step and an inventory row, not a choice.',
@@ -344,16 +378,24 @@ export const PROPOSALS: readonly Proposal[] = [
   },
   {
     id: 'P7', group: 'B', recommendation: 'APPROVE',
+    status: 'IMPLEMENTED',
+    ruling: 'Approved. English is the display language; the settled Vietnamese names are kept as alias data.',
+    shipped: [
+      "Six Creator Cores and the Escrow Chest show English names; `ItemDef.vi` holds the Vietnamese name and the tooltip shows it as a subtitle.",
+      "Ids, creatorCore keys, recipes and VFX untouched.",
+    ],
     title: 'One display language for item names',
     items: ['core_blast', 'core_meteor', 'core_dragon', 'core_elsa', 'core_earthmother', 'core_demon', 'escrow_chest'],
     problem: 'Seven items show Vietnamese names in an otherwise English inventory. The names are canon; the mixture is not.',
     decision: 'Show the English name with the canonical Vietnamese name kept as subtitle/alias. Ids and mechanics untouched.',
-    migration: ['Display strings only. Any test or e2e that selects by the Vietnamese label must move to the id.'],
-    risk: 'Low. Needs the owner to confirm the English wording of canon names.',
+    migration: ['Display strings only. e2e selectors that used the old labels were updated in the same commit.'],
+    risk: 'Low. The English wording of the six canon names still needs the owner to confirm it; changing a string later needs no migration.',
     tests: ['item-ontology-v2: no item name mixes languages'],
   },
   {
     id: 'P8', group: 'B', recommendation: 'HOLD',
+    status: 'OPEN',
+    ruling: 'Stay unimplemented; produce the exact Veyra source-access matrix. See ROUND2_FINDINGS.md §P8.',
     title: 'Veyra source gaps',
     items: ['chitin', 'chitin_armor', 'crawler_optic', 'wolf_fang', 'beetle_horn', 'keycard', 'core_demon', 'essence_spirit'],
     problem: 'These items have no reachable source on the Veyra layout, and three recipes are uncraftable there. On Veyra a player can see or learn recipes they can never complete.',
@@ -364,6 +406,8 @@ export const PROPOSALS: readonly Proposal[] = [
   },
   {
     id: 'P9', group: 'B', recommendation: 'HOLD',
+    status: 'OPEN',
+    ruling: 'Keep fixture-only; the UI must not advertise it as minable. See ROUND2_FINDINGS.md §P9.',
     title: 'Crude Petroleum has no live source',
     items: ['crude_petroleum'],
     problem: 'The Oil Pump that produces it runs only in the test fixture. On both live layouts the item cannot be obtained and its recipes cannot run.',
@@ -374,6 +418,8 @@ export const PROPOSALS: readonly Proposal[] = [
   },
   {
     id: 'P10', group: 'B', recommendation: 'HOLD',
+    status: 'OPEN',
+    ruling: 'Do not delete Cores. Compare each legacy Core with the seven and propose one canon decision. See ROUND2_FINDINGS.md §P10.',
     title: 'Four legacy cores beside the seven Creator Cores',
     items: ['core_fire', 'core_earth', 'core_storm', 'core_frost'],
     problem: 'The Bible fixes seven Creator Cores. Four older cores are still craftable (8–10 Parts each) and castable, so the Core list a newcomer sees has eleven entries in two rule-sets.',
@@ -398,9 +444,9 @@ export interface PartsOption {
 export const PARTS_OPTIONS: readonly PartsOption[] = [
   {
     id: 'A', title: 'Two distinct axes',
-    summary: '`spares` is shown as Parts and stays the uncraftable progression resource. `mechanical_parts` is shown as Machine Parts, a crafted component. Gear / Pipe / Plate / Blade keep their ids and get one clear job each (P3–P5). Fasteners fold into Machine Parts later (P2).',
+    summary: '`spares` is shown as Parts and stays the uncraftable progression resource. `mechanical_parts` is shown as Machine Parts, a crafted component. Gear / Pipe / Plate / Blade keep their ids and have one clear job each (P3–P5, implemented in round 2). Fasteners stay a separate researched joining stock (P2 ruled out).',
     scores: {
-      implementation_cost: 'Small: two display names now; three small recipe proposals after.',
+      implementation_cost: 'Small: two display names, two recipe revisions and one new Recycler rule (all done in round 2).',
       clarity: 'High: one word, one item. "Parts are found; Machine Parts are made."',
       gameplay_choice: 'Kept: Parts still competes between research, trade, Cores and devices (Bible K4).',
       scarcity: 'Unchanged: no new Parts source, no craft recipe.',
