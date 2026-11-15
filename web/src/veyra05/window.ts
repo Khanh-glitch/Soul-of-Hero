@@ -26,7 +26,7 @@ import { POIS, GOLD } from './reader';
 import { slicePoisForWindow, getPoiLayout, type PoiLandmarkProp } from './poi-kit';
 import { layoutIdAt, windowForLayout, isVeyra05Layout, U05_WORLD_LAYOUT_ID, type Veyra05Scene } from './scenes';
 import { hash2 } from '../game/core';
-import { SOURCES } from '../game/catalog';
+import { SOURCES, isIndustrialSalvage } from '../game/catalog';
 import { pickWeighted } from '../game/world-economy';
 import { buildFloorStack, type FloorStack } from './floors';
 
@@ -102,6 +102,33 @@ export const G1A_POI_WEIGHTS: Readonly<Record<string, readonly [string, number][
   evac: [['road_fuel_rack', 2], ['road_salvage_bale', 1]],
 };
 const G1A_POI_RATE = 0.05, G1A_POI_SPACING = 4, G1A_POI_SALT = 0x61a7;
+
+/** G1A-R1: a solid salvage node must never cost the player a walkable cell. Compare what can be walked to with and
+ *  without the G1A nodes; wherever a cell is lost, withdraw the node(s) that close it in. Never adds or moves anything. */
+function unplugSalvage(ww: WindowWorld): number {
+  const g = ww.floors.ground, n = WW * WH; let removed = 0;
+  const base = (i: number) => !g.walkable[i] || !!g.solidProps[i] || !!(g.sources[i] && !isIndustrialSalvage(g.sources[i]) && SOURCES[g.sources[i]!]?.block);
+  const flood = (solid: (i: number) => boolean) => {
+    const r = new Uint8Array(n), q = new Int32Array(n); let h = 0, t = 0;
+    for (const a of ww.world.economyMap.starts) { const i = a.y * WW + a.x; if (!solid(i) && !r[i]) { r[i] = 1; q[t++] = i; } }
+    // The window rim continues into the next window: an open rim cell counts as reached, so a node is never withdrawn (or kept)
+    // because of where the window edge happens to fall.
+    for (let i = 0; i < n; i++) { const x = i % WW, y = (i / WW) | 0; if ((x === 0 || y === 0 || x === WW - 1 || y === WH - 1) && !solid(i) && !r[i]) { r[i] = 1; q[t++] = i; } }
+    while (h < t) { const i = q[h++], x = i % WW, y = (i / WW) | 0; for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= WW || ny >= WH) continue; const j = ny * WW + nx; if (!r[j] && !solid(j)) { r[j] = 1; q[t++] = j; } } }
+    return r;
+  };
+  const open = flood(base);
+  for (let pass = 0; pass < 6; pass++) {
+    const now = flood(i => base(i) || isIndustrialSalvage(g.sources[i])); let cut = 0;
+    for (let i = 0; i < n; i++) {
+      if (!open[i] || now[i] || isIndustrialSalvage(g.sources[i])) continue;
+      const x = i % WW, y = (i / WW) | 0;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= WW || ny >= WH) continue; const j = ny * WW + nx; if (isIndustrialSalvage(g.sources[j])) { g.sources[j] = null; cut++; } }
+    }
+    removed += cut; if (!cut) break;
+  }
+  return removed;
+}
 
 /** Stand archetype-matched salvage in the open yard of industrial POIs (ground storey only).
  *  Reads the authored layer, never writes masks/tiles/props: a slot must be open yard ground beside a
@@ -456,7 +483,7 @@ export function buildWindowWorld(layoutId: string, rules: VeyraPlacementRules = 
     floors: null as unknown as FloorStack, poiAt,
   };
   ww.floors = buildFloorStack(ww);
-  if (rules === 4) placePoiSalvage(ww, poiAt);
+  if (rules === 4) { placePoiSalvage(ww, poiAt); unplugSalvage(ww); }
   resetWindowToGround(ww);
   // Pin ground-level mapDigest in map-package WeakMap so storey switches never alter mapDigest(world).
   mapDigest(world);

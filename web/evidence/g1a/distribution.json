@@ -5,48 +5,48 @@
   "legacySalvage": 2489,
   "legacyScrap": 2130,
   "legacyWreck": 359,
-  "newTotal": 2302,
-  "ratioNewToLegacy": 0.925,
+  "newTotal": 1999,
+  "ratioNewToLegacy": 0.803,
   "byArchetype": {
-   "road_relay_wreck": 580,
-   "road_salvage_bale": 1419,
-   "road_fuel_rack": 303
+   "road_relay_wreck": 507,
+   "road_salvage_bale": 1233,
+   "road_fuel_rack": 259
   },
   "share": {
-   "road_relay_wreck": 0.252,
-   "road_salvage_bale": 0.616,
-   "road_fuel_rack": 0.132
+   "road_relay_wreck": 0.254,
+   "road_salvage_bale": 0.617,
+   "road_fuel_rack": 0.13
   },
   "byBiome": {
    "snow": {
-    "road_relay_wreck": 135,
-    "road_salvage_bale": 385,
-    "road_fuel_rack": 76
+    "road_relay_wreck": 114,
+    "road_salvage_bale": 319,
+    "road_fuel_rack": 63
    },
    "forest": {
-    "road_salvage_bale": 351,
-    "road_fuel_rack": 78,
-    "road_relay_wreck": 160
+    "road_salvage_bale": 330,
+    "road_fuel_rack": 71,
+    "road_relay_wreck": 154
    },
    "sand": {
-    "road_salvage_bale": 168,
-    "road_relay_wreck": 81,
-    "road_fuel_rack": 41
+    "road_salvage_bale": 155,
+    "road_relay_wreck": 75,
+    "road_fuel_rack": 38
    },
    "hill": {
-    "road_salvage_bale": 140,
-    "road_relay_wreck": 56,
-    "road_fuel_rack": 32
+    "road_salvage_bale": 70,
+    "road_relay_wreck": 24,
+    "road_fuel_rack": 16
    },
    "meadow": {
-    "road_salvage_bale": 216,
-    "road_relay_wreck": 86,
-    "road_fuel_rack": 46
+    "road_salvage_bale": 206,
+    "road_relay_wreck": 81,
+    "road_fuel_rack": 44
    },
    "grass": {
     "road_salvage_bale": 43,
     "road_relay_wreck": 17,
-    "road_fuel_rack": 8
+    "road_fuel_rack": 7
    },
    "marsh": {
     "road_salvage_bale": 62,
@@ -59,9 +59,9 @@
     "road_fuel_rack": 6
    },
    "ash": {
-    "road_salvage_bale": 22,
-    "road_relay_wreck": 10,
-    "road_fuel_rack": 3
+    "road_salvage_bale": 16,
+    "road_relay_wreck": 7,
+    "road_fuel_rack": 1
    }
   },
   "windowsWithNoSalvage": 0,
@@ -692,103 +692,103 @@
    "window": "1792,448",
    "legacyScrap": 45,
    "legacyWreck": 10,
-   "road_relay_wreck": 16,
-   "road_salvage_bale": 32,
-   "road_fuel_rack": 9
+   "road_relay_wreck": 13,
+   "road_salvage_bale": 28,
+   "road_fuel_rack": 7
   },
   {
    "window": "1792,256",
    "legacyScrap": 48,
    "legacyWreck": 7,
-   "road_salvage_bale": 36,
-   "road_fuel_rack": 9,
-   "road_relay_wreck": 12
+   "road_salvage_bale": 25,
+   "road_fuel_rack": 8,
+   "road_relay_wreck": 9
   },
   {
    "window": "1920,384",
    "legacyScrap": 14,
    "legacyWreck": 1,
-   "road_salvage_bale": 12,
-   "road_relay_wreck": 11,
-   "road_fuel_rack": 4
+   "road_salvage_bale": 10,
+   "road_relay_wreck": 10,
+   "road_fuel_rack": 3
   },
   {
    "window": "1856,320",
    "legacyScrap": 50,
    "legacyWreck": 8,
-   "road_salvage_bale": 39,
-   "road_relay_wreck": 16,
-   "road_fuel_rack": 8
+   "road_salvage_bale": 30,
+   "road_relay_wreck": 15,
+   "road_fuel_rack": 7
   },
   {
    "window": "1984,192",
    "legacyScrap": 25,
    "legacyWreck": 3,
-   "road_salvage_bale": 15,
+   "road_salvage_bale": 14,
    "road_fuel_rack": 5,
-   "road_relay_wreck": 5
+   "road_relay_wreck": 4
   },
   {
    "window": "2048,512",
    "legacyScrap": 46,
    "legacyWreck": 9,
-   "road_salvage_bale": 34,
-   "road_fuel_rack": 7,
-   "road_relay_wreck": 10
+   "road_salvage_bale": 28,
+   "road_fuel_rack": 6,
+   "road_relay_wreck": 8
   },
   {
    "window": "1280,512",
    "legacyScrap": 18,
    "legacyWreck": 2,
-   "road_fuel_rack": 4,
-   "road_salvage_bale": 17,
+   "road_fuel_rack": 3,
+   "road_salvage_bale": 16,
    "road_relay_wreck": 15
   },
   {
    "window": "1024,576",
    "legacyScrap": 9,
    "legacyWreck": 2,
-   "road_salvage_bale": 4,
-   "road_relay_wreck": 4,
-   "road_fuel_rack": 2
+   "road_salvage_bale": 2,
+   "road_relay_wreck": 3,
+   "road_fuel_rack": 1
   },
   {
    "window": "1216,768",
    "legacyScrap": 44,
    "legacyWreck": 10,
-   "road_relay_wreck": 15,
-   "road_fuel_rack": 6,
-   "road_salvage_bale": 40
+   "road_relay_wreck": 11,
+   "road_fuel_rack": 3,
+   "road_salvage_bale": 32
   },
   {
    "window": "1280,896",
    "legacyScrap": 89,
    "legacyWreck": 15,
-   "road_salvage_bale": 65,
-   "road_relay_wreck": 30,
-   "road_fuel_rack": 7
+   "road_salvage_bale": 54,
+   "road_relay_wreck": 27,
+   "road_fuel_rack": 5
   },
   {
    "window": "1088,960",
    "legacyScrap": 63,
    "legacyWreck": 4,
-   "road_relay_wreck": 18,
-   "road_salvage_bale": 41,
-   "road_fuel_rack": 11
+   "road_relay_wreck": 12,
+   "road_salvage_bale": 33,
+   "road_fuel_rack": 9
   },
   {
    "window": "1344,768",
    "legacyScrap": 43,
    "legacyWreck": 10,
-   "road_relay_wreck": 15,
-   "road_fuel_rack": 9,
-   "road_salvage_bale": 36
+   "road_relay_wreck": 13,
+   "road_fuel_rack": 8,
+   "road_salvage_bale": 31
   },
   {
    "window": "1536,1088",
    "legacyScrap": 41,
    "legacyWreck": 6,
-   "road_salvage_bale": 35,
+   "road_salvage_bale": 32,
    "road_fuel_rack": 3,
    "road_relay_wreck": 11
   },
@@ -797,30 +797,30 @@
    "legacyScrap": 49,
    "legacyWreck": 5,
    "road_relay_wreck": 13,
-   "road_fuel_rack": 8,
-   "road_salvage_bale": 34
+   "road_fuel_rack": 7,
+   "road_salvage_bale": 32
   },
   {
    "window": "1728,1216",
    "legacyScrap": 92,
    "legacyWreck": 5,
-   "road_salvage_bale": 50,
-   "road_relay_wreck": 26,
-   "road_fuel_rack": 18
+   "road_salvage_bale": 45,
+   "road_relay_wreck": 23,
+   "road_fuel_rack": 16
   },
   {
    "window": "1408,1216",
    "legacyScrap": 31,
    "legacyWreck": 4,
    "road_fuel_rack": 7,
-   "road_salvage_bale": 32,
+   "road_salvage_bale": 31,
    "road_relay_wreck": 5
   },
   {
    "window": "1920,1344",
    "legacyScrap": 28,
    "legacyWreck": 11,
-   "road_salvage_bale": 19,
+   "road_salvage_bale": 18,
    "road_fuel_rack": 5,
    "road_relay_wreck": 12
   },
@@ -828,72 +828,72 @@
    "window": "1728,1472",
    "legacyScrap": 85,
    "legacyWreck": 19,
-   "road_salvage_bale": 56,
-   "road_fuel_rack": 8,
+   "road_salvage_bale": 57,
+   "road_fuel_rack": 6,
    "road_relay_wreck": 30
   },
   {
    "window": "1472,1408",
    "legacyScrap": 59,
    "legacyWreck": 11,
-   "road_salvage_bale": 41,
-   "road_fuel_rack": 17,
-   "road_relay_wreck": 10
+   "road_salvage_bale": 35,
+   "road_fuel_rack": 15,
+   "road_relay_wreck": 9
   },
   {
    "window": "1472,1280",
    "legacyScrap": 44,
    "legacyWreck": 10,
    "road_relay_wreck": 11,
-   "road_salvage_bale": 40,
+   "road_salvage_bale": 37,
    "road_fuel_rack": 12
   },
   {
    "window": "1792,1152",
    "legacyScrap": 60,
    "legacyWreck": 7,
-   "road_fuel_rack": 17,
-   "road_relay_wreck": 19,
-   "road_salvage_bale": 29
+   "road_fuel_rack": 16,
+   "road_relay_wreck": 16,
+   "road_salvage_bale": 26
   },
   {
    "window": "1664,1344",
    "legacyScrap": 51,
    "legacyWreck": 4,
-   "road_fuel_rack": 8,
-   "road_salvage_bale": 27,
+   "road_fuel_rack": 7,
+   "road_salvage_bale": 26,
    "road_relay_wreck": 13
   },
   {
    "window": "2112,1408",
    "legacyScrap": 51,
    "legacyWreck": 12,
-   "road_salvage_bale": 34,
    "road_relay_wreck": 17,
-   "road_fuel_rack": 10
+   "road_fuel_rack": 9,
+   "road_salvage_bale": 32
   },
   {
    "window": "2112,1280",
    "legacyScrap": 55,
    "legacyWreck": 14,
    "road_relay_wreck": 23,
-   "road_salvage_bale": 36,
-   "road_fuel_rack": 8
+   "road_salvage_bale": 34,
+   "road_fuel_rack": 7
   },
   {
    "window": "1600,1856",
    "legacyScrap": 23,
    "legacyWreck": 5,
-   "road_salvage_bale": 20,
+   "road_salvage_bale": 11,
    "road_fuel_rack": 4,
-   "road_relay_wreck": 15
+   "road_relay_wreck": 12
   },
   {
    "window": "2432,896",
    "legacyScrap": 85,
    "legacyWreck": 9,
    "road_relay_wreck": 22,
-   "road_salvage_bale": 66,
+   "road_salvage_bale": 61,
    "road_fuel_rack": 15
   },
   {
@@ -901,7 +901,7 @@
    "legacyScrap": 34,
    "legacyWreck": 7,
    "road_relay_wreck": 14,
-   "road_salvage_bale": 26,
+   "road_salvage_bale": 25,
    "road_fuel_rack": 5
   },
   {
@@ -910,15 +910,15 @@
    "legacyWreck": 8,
    "road_relay_wreck": 9,
    "road_salvage_bale": 14,
-   "road_fuel_rack": 6
+   "road_fuel_rack": 5
   },
   {
    "window": "2176,832",
    "legacyScrap": 51,
    "legacyWreck": 9,
-   "road_salvage_bale": 34,
-   "road_fuel_rack": 7,
-   "road_relay_wreck": 15
+   "road_salvage_bale": 30,
+   "road_relay_wreck": 12,
+   "road_fuel_rack": 5
   },
   {
    "window": "2496,576",
@@ -931,56 +931,56 @@
    "window": "2432,640",
    "legacyScrap": 48,
    "legacyWreck": 5,
-   "road_salvage_bale": 31,
-   "road_relay_wreck": 8,
-   "road_fuel_rack": 7
+   "road_salvage_bale": 27,
+   "road_relay_wreck": 9,
+   "road_fuel_rack": 6
   },
   {
    "window": "1920,832",
    "legacyScrap": 58,
    "legacyWreck": 6,
-   "road_salvage_bale": 41,
+   "road_salvage_bale": 34,
    "road_fuel_rack": 7,
-   "road_relay_wreck": 18
+   "road_relay_wreck": 16
   },
   {
    "window": "2368,1600",
    "legacyScrap": 33,
    "legacyWreck": 6,
-   "road_salvage_bale": 24,
-   "road_fuel_rack": 7,
-   "road_relay_wreck": 8
+   "road_salvage_bale": 14,
+   "road_fuel_rack": 4,
+   "road_relay_wreck": 4
   },
   {
    "window": "2304,1792",
    "legacyScrap": 38,
    "legacyWreck": 3,
-   "road_relay_wreck": 11,
-   "road_salvage_bale": 28,
-   "road_fuel_rack": 5
+   "road_relay_wreck": 8,
+   "road_salvage_bale": 23,
+   "road_fuel_rack": 4
   },
   {
    "window": "2304,2048",
    "legacyScrap": 11,
    "legacyWreck": 3,
-   "road_salvage_bale": 20,
-   "road_relay_wreck": 3,
-   "road_fuel_rack": 13
+   "road_salvage_bale": 15,
+   "road_fuel_rack": 12,
+   "road_relay_wreck": 2
   },
   {
    "window": "1984,1664",
    "legacyScrap": 38,
    "legacyWreck": 5,
-   "road_relay_wreck": 13,
-   "road_salvage_bale": 30,
-   "road_fuel_rack": 5
+   "road_relay_wreck": 10,
+   "road_salvage_bale": 20,
+   "road_fuel_rack": 2
   },
   {
    "window": "1792,1664",
    "legacyScrap": 71,
    "legacyWreck": 16,
    "road_salvage_bale": 48,
-   "road_relay_wreck": 19,
+   "road_relay_wreck": 18,
    "road_fuel_rack": 11
   },
   {
@@ -988,30 +988,30 @@
    "legacyScrap": 29,
    "legacyWreck": 3,
    "road_fuel_rack": 6,
-   "road_salvage_bale": 20,
-   "road_relay_wreck": 7
+   "road_salvage_bale": 15,
+   "road_relay_wreck": 5
   },
   {
    "window": "576,1024",
    "legacyScrap": 15,
    "legacyWreck": 2,
-   "road_salvage_bale": 16,
+   "road_salvage_bale": 15,
    "road_fuel_rack": 4,
-   "road_relay_wreck": 4
+   "road_relay_wreck": 3
   },
   {
    "window": "896,1216",
    "legacyScrap": 17,
    "legacyWreck": 2,
-   "road_fuel_rack": 8,
-   "road_salvage_bale": 16,
-   "road_relay_wreck": 3
+   "road_fuel_rack": 4,
+   "road_salvage_bale": 12,
+   "road_relay_wreck": 1
   },
   {
    "window": "768,1408",
    "legacyScrap": 33,
    "legacyWreck": 8,
-   "road_salvage_bale": 24,
+   "road_salvage_bale": 23,
    "road_relay_wreck": 12,
    "road_fuel_rack": 2
   },
@@ -1020,23 +1020,23 @@
    "legacyScrap": 17,
    "legacyWreck": 4,
    "road_salvage_bale": 12,
-   "road_relay_wreck": 5,
+   "road_relay_wreck": 4,
    "road_fuel_rack": 2
   },
   {
    "window": "1088,1984",
    "legacyScrap": 16,
    "legacyWreck": 5,
-   "road_salvage_bale": 9,
+   "road_salvage_bale": 8,
    "road_relay_wreck": 8,
-   "road_fuel_rack": 2
+   "road_fuel_rack": 1
   },
   {
    "window": "960,2048",
    "legacyScrap": 11,
    "legacyWreck": 3,
-   "road_salvage_bale": 5,
-   "road_relay_wreck": 6,
+   "road_salvage_bale": 4,
+   "road_relay_wreck": 5,
    "road_fuel_rack": 3
   },
   {
@@ -1051,23 +1051,23 @@
    "window": "1216,1856",
    "legacyScrap": 92,
    "legacyWreck": 20,
-   "road_fuel_rack": 15,
-   "road_salvage_bale": 56,
+   "road_fuel_rack": 14,
+   "road_salvage_bale": 51,
    "road_relay_wreck": 26
   },
   {
    "window": "1408,1856",
    "legacyScrap": 42,
    "legacyWreck": 10,
-   "road_salvage_bale": 32,
-   "road_relay_wreck": 10,
+   "road_salvage_bale": 27,
+   "road_relay_wreck": 8,
    "road_fuel_rack": 7
   },
   {
    "window": "1280,2176",
    "legacyScrap": 12,
    "legacyWreck": 0,
-   "road_relay_wreck": 7,
+   "road_relay_wreck": 6,
    "road_salvage_bale": 9,
    "road_fuel_rack": 3
   },
@@ -1091,16 +1091,16 @@
    "window": "448,1216",
    "legacyScrap": 10,
    "legacyWreck": 1,
-   "road_salvage_bale": 6,
-   "road_fuel_rack": 3,
-   "road_relay_wreck": 5
+   "road_salvage_bale": 5,
+   "road_relay_wreck": 5,
+   "road_fuel_rack": 2
   },
   {
    "window": "256,1664",
    "legacyScrap": 13,
    "legacyWreck": 4,
    "road_relay_wreck": 6,
-   "road_salvage_bale": 11,
+   "road_salvage_bale": 8,
    "road_fuel_rack": 2
   },
   {
@@ -1115,7 +1115,7 @@
    "window": "3648,768",
    "legacyScrap": 11,
    "legacyWreck": 1,
-   "road_relay_wreck": 6,
+   "road_relay_wreck": 5,
    "road_salvage_bale": 10,
    "road_fuel_rack": 1
   },
@@ -1123,7 +1123,7 @@
    "window": "3648,832",
    "legacyScrap": 11,
    "legacyWreck": 1,
-   "road_relay_wreck": 6,
+   "road_relay_wreck": 5,
    "road_salvage_bale": 10,
    "road_fuel_rack": 1
   },
@@ -1132,24 +1132,24 @@
    "legacyScrap": 7,
    "legacyWreck": 2,
    "road_relay_wreck": 3,
-   "road_salvage_bale": 6,
+   "road_salvage_bale": 4,
    "road_fuel_rack": 1
   },
   {
    "window": "3072,1664",
    "legacyScrap": 45,
    "legacyWreck": 8,
-   "road_salvage_bale": 28,
-   "road_fuel_rack": 8,
-   "road_relay_wreck": 15
+   "road_salvage_bale": 25,
+   "road_fuel_rack": 7,
+   "road_relay_wreck": 12
   },
   {
    "window": "3200,1472",
    "legacyScrap": 36,
    "legacyWreck": 5,
-   "road_relay_wreck": 12,
-   "road_salvage_bale": 29,
-   "road_fuel_rack": 6
+   "road_relay_wreck": 10,
+   "road_salvage_bale": 23,
+   "road_fuel_rack": 4
   },
   {
    "window": "3456,1664",
@@ -1163,31 +1163,31 @@
    "window": "3392,1728",
    "legacyScrap": 55,
    "legacyWreck": 12,
-   "road_salvage_bale": 41,
+   "road_salvage_bale": 39,
    "road_fuel_rack": 12,
-   "road_relay_wreck": 17
+   "road_relay_wreck": 16
   },
   {
    "window": "3136,1408",
    "legacyScrap": 52,
    "legacyWreck": 8,
-   "road_relay_wreck": 12,
-   "road_salvage_bale": 40,
-   "road_fuel_rack": 7
+   "road_relay_wreck": 9,
+   "road_salvage_bale": 37,
+   "road_fuel_rack": 6
   },
   {
    "window": "3264,1536",
    "legacyScrap": 9,
    "legacyWreck": 1,
-   "road_salvage_bale": 6,
-   "road_fuel_rack": 3,
+   "road_salvage_bale": 5,
+   "road_fuel_rack": 2,
    "road_relay_wreck": 4
   },
   {
    "window": "3008,576",
    "legacyScrap": 15,
    "legacyWreck": 3,
-   "road_salvage_bale": 12,
+   "road_salvage_bale": 9,
    "road_relay_wreck": 4,
    "road_fuel_rack": 4
   },
@@ -1195,25 +1195,25 @@
    "window": "3200,576",
    "legacyScrap": 32,
    "legacyWreck": 5,
-   "road_salvage_bale": 33,
+   "road_salvage_bale": 30,
    "road_fuel_rack": 5,
-   "road_relay_wreck": 11
+   "road_relay_wreck": 6
   },
   {
    "window": "3392,448",
    "legacyScrap": 49,
    "legacyWreck": 5,
-   "road_relay_wreck": 12,
+   "road_relay_wreck": 11,
    "road_fuel_rack": 4,
-   "road_salvage_bale": 37
+   "road_salvage_bale": 36
   },
   {
    "window": "3264,640",
    "legacyScrap": 34,
    "legacyWreck": 6,
-   "road_salvage_bale": 31,
+   "road_salvage_bale": 27,
    "road_fuel_rack": 5,
-   "road_relay_wreck": 6
+   "road_relay_wreck": 5
   },
   {
    "window": "2112,2432",
@@ -1227,24 +1227,24 @@
    "window": "2304,2496",
    "legacyScrap": 23,
    "legacyWreck": 5,
-   "road_salvage_bale": 21,
+   "road_salvage_bale": 20,
    "road_relay_wreck": 5,
-   "road_fuel_rack": 7
+   "road_fuel_rack": 6
   },
   {
    "window": "2368,2496",
    "legacyScrap": 9,
    "legacyWreck": 1,
-   "road_salvage_bale": 12,
-   "road_fuel_rack": 2,
-   "road_relay_wreck": 1
+   "road_salvage_bale": 11,
+   "road_relay_wreck": 1,
+   "road_fuel_rack": 1
   },
   {
    "window": "2176,1216",
    "legacyScrap": 59,
    "legacyWreck": 19,
-   "road_salvage_bale": 43,
-   "road_fuel_rack": 6,
+   "road_salvage_bale": 41,
+   "road_fuel_rack": 5,
    "road_relay_wreck": 27
   },
   {
@@ -1259,16 +1259,16 @@
    "window": "1344,512",
    "legacyScrap": 53,
    "legacyWreck": 8,
-   "road_fuel_rack": 8,
-   "road_salvage_bale": 43,
-   "road_relay_wreck": 23
+   "road_fuel_rack": 6,
+   "road_salvage_bale": 39,
+   "road_relay_wreck": 21
   },
   {
    "window": "1408,832",
    "legacyScrap": 100,
    "legacyWreck": 17,
-   "road_salvage_bale": 70,
-   "road_relay_wreck": 31,
+   "road_salvage_bale": 62,
+   "road_relay_wreck": 26,
    "road_fuel_rack": 15
   },
   {
@@ -1276,32 +1276,32 @@
    "legacyScrap": 25,
    "legacyWreck": 2,
    "road_salvage_bale": 18,
-   "road_relay_wreck": 9,
+   "road_relay_wreck": 8,
    "road_fuel_rack": 5
   },
   {
    "window": "2048,1664",
    "legacyScrap": 54,
    "legacyWreck": 7,
-   "road_relay_wreck": 14,
-   "road_salvage_bale": 45,
-   "road_fuel_rack": 6
+   "road_relay_wreck": 10,
+   "road_salvage_bale": 29,
+   "road_fuel_rack": 2
   },
   {
    "window": "2496,896",
    "legacyScrap": 67,
    "legacyWreck": 4,
    "road_relay_wreck": 15,
-   "road_salvage_bale": 54,
+   "road_salvage_bale": 49,
    "road_fuel_rack": 13
   },
   {
    "window": "576,1088",
    "legacyScrap": 15,
    "legacyWreck": 2,
-   "road_salvage_bale": 16,
+   "road_salvage_bale": 15,
    "road_fuel_rack": 4,
-   "road_relay_wreck": 4
+   "road_relay_wreck": 3
   },
   {
    "window": "2240,2112",
@@ -1314,7 +1314,7 @@
    "window": "2688,640",
    "legacyScrap": 32,
    "legacyWreck": 5,
-   "road_salvage_bale": 23,
+   "road_salvage_bale": 22,
    "road_relay_wreck": 6,
    "road_fuel_rack": 7
   }

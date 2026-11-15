@@ -272,11 +272,21 @@ export const SOURCES: Record<string, SourceDef> = {
   wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['spares', 1]], bonus: [['spares', 0.3], ['mechanical_gear', 0.08], ['fuel_can', 0.06], ['metal_pipe', 0.08], ['iron_plate', 0.06], ['tin_can', 0.2], ['electronic_parts', 0.15], ['electric_resistor', 0.12]], block: true, art: 'wreck' },
   // G1A (SOH_PROVISIONAL, in-house tuning — not Last Island figures): the three industrial salvage archetypes that replace
   // `scrap`/`wreck` in NEW Veyra placement (sourceMap.rules 4). Legacy rows above stay for old saves and non-Veyra layouts.
-  // Bale pipe/plate rolls are a G1A ROUTE-PRESERVATION addition (not in the work-order pool): the legacy wreck was the only world source of both on Veyra.
-  // Rates are parity-derived (legacy ~0.107 pipe / ~0.08 plate per salvage source -> 0.6 x 3 x p). Remove the two entries to return to the literal pool.
-  road_salvage_bale: { name: 'Salvage Bale', mat: 'scrap', hp: 9, stock: 3, yields: [['spares', 1]], bonus: [['tin_can', 0.25], ['needle_tube', 0.07], ['metal_pipe', 0.05], ['iron_plate', 0.04]], block: true, art: 'salvage_bale', harvestBy: G1A_HARVEST },
-  road_relay_wreck: { name: 'Relay Wreck', mat: 'scrap', hp: 12, stock: 3, yields: [['spares', 1]], bonus: [['electronic_parts', 0.15], ['electric_resistor', 0.12], ['mechanical_gear', 0.06]], block: true, art: 'relay_wreck', harvestBy: G1A_HARVEST },
-  road_fuel_rack: { name: 'Fuel Rack', mat: 'scrap', hp: 12, stock: 2, yields: [['tin_can', 1]], bonus: [['spares', 0.4], ['fuel_can', 0.06]], block: true, art: 'fuel_rack', harvestBy: G1A_HARVEST },
+  // Bale pipe/plate rolls: KEPT by Control Tower decision (G1A-R1). Deliberate source-route preservation: the legacy Car Wreck was
+  // the only world node for Metal Pipe / Iron Plate on Veyra, both are existing master items with policy BOTH (also made at a
+  // level-2 bench), and pressed industrial scrap is a plausible origin. Whole-map expectation vs legacy: pipe -18%, plate -12%.
+  // G1A-R1 (measured, evidence/g1a/economy.json + play-compare.json):
+  //   * Bale / Relay Wreck give 2 Parts per stock unit (was 1). At 1 the whole-map Parts expectation fell by more than half and
+  //     the same scavenging bot needed twice the nodes; at 2 (with the rack below) it is about -15% on paper and equal-or-better in play to 60 Parts.
+  //   * Relay Wreck: Electronic Parts 25% / Resistor 20% / Gear 14% per unit (were 15 / 12 / 6). The trio has fewer nodes and
+  //     fewer units than Scrap + Wreck, and only a quarter of them are Relay Wrecks, so the old rates left the map with about
+  //     half its found components; these bring the whole-map expectation back to within a few percent of legacy, not above.
+  //   * Fuel Rack: 1 Part per unit for certain (was a 40% roll) and Fuel Canister 20% per unit (was 6%). A rack with no fuel is
+  //     still worth the swings (2 tins + 2 Parts); 36% of racks hold at least one can (was 12%). The map total of found fuel
+  //     stays BELOW the legacy wrecks, so it never outgrows the Oil Pump -> Refinery route. No crude, no new item.
+  road_salvage_bale: { name: 'Salvage Bale', mat: 'scrap', hp: 9, stock: 3, yields: [['spares', 2]], bonus: [['tin_can', 0.25], ['needle_tube', 0.07], ['metal_pipe', 0.05], ['iron_plate', 0.04]], block: true, art: 'salvage_bale', harvestBy: G1A_HARVEST },
+  road_relay_wreck: { name: 'Relay Wreck', mat: 'scrap', hp: 12, stock: 3, yields: [['spares', 2]], bonus: [['electronic_parts', 0.25], ['electric_resistor', 0.2], ['mechanical_gear', 0.14]], block: true, art: 'relay_wreck', harvestBy: G1A_HARVEST },
+  road_fuel_rack: { name: 'Fuel Rack', mat: 'scrap', hp: 12, stock: 2, yields: [['tin_can', 1], ['spares', 1]], bonus: [['fuel_can', 0.2]], block: true, art: 'fuel_rack', harvestBy: G1A_HARVEST },
 };
 
 // ---------- Creatures (K5) ----------

@@ -71,12 +71,13 @@ function runWithTrio(min = 6, from = 1): Bot {
 }
 
 describe('G1A catalog contract', () => {
-  it('registers exactly the three archetypes with the work-order HP / stock / pools (SOH_PROVISIONAL)', () => {
+  it('registers exactly the three archetypes with the work-order HP / stock and the G1A-R1 pools (SOH_PROVISIONAL)', () => {
     expect(TRIO).toEqual(['road_salvage_bale', 'road_relay_wreck', 'road_fuel_rack']);
-    expect(SOURCES[BALE]).toMatchObject({ hp: 9, stock: 3, yields: [['spares', 1]], block: true, art: 'salvage_bale' });
-    expect(SOURCES[RELAY]).toMatchObject({ hp: 12, stock: 3, yields: [['spares', 1]], bonus: [['electronic_parts', 0.15], ['electric_resistor', 0.12], ['mechanical_gear', 0.06]], block: true, art: 'relay_wreck' });
-    expect(SOURCES[RACK]).toMatchObject({ hp: 12, stock: 2, yields: [['tin_can', 1]], bonus: [['spares', 0.4], ['fuel_can', 0.06]], block: true, art: 'fuel_rack' });
-    // work-order pool for the bale, plus the two flagged route-preservation rolls
+    // G1A-R1 (Control Tower corrective): Parts 2 per unit on Bale / Relay Wreck (was 1); Fuel Rack 1 Part per unit for certain (was 40%) and Fuel Canister 20% (was 6%); Relay Wreck components 25 / 20 / 14% (were 15 / 12 / 6).
+    expect(SOURCES[BALE]).toMatchObject({ hp: 9, stock: 3, yields: [['spares', 2]], block: true, art: 'salvage_bale' });
+    expect(SOURCES[RELAY]).toMatchObject({ hp: 12, stock: 3, yields: [['spares', 2]], bonus: [['electronic_parts', 0.25], ['electric_resistor', 0.2], ['mechanical_gear', 0.14]], block: true, art: 'relay_wreck' });
+    expect(SOURCES[RACK]).toMatchObject({ hp: 12, stock: 2, yields: [['tin_can', 1], ['spares', 1]], bonus: [['fuel_can', 0.2]], block: true, art: 'fuel_rack' });
+    // work-order pool for the bale, plus Metal Pipe / Iron Plate, kept by Control Tower decision (G1A-R1)
     expect(SOURCES[BALE].bonus).toEqual([['tin_can', 0.25], ['needle_tube', 0.07], ['metal_pipe', 0.05], ['iron_plate', 0.04]]);
     expect(new Set(TRIO.map(k => SOURCES[k].art)).size).toBe(3);
   });

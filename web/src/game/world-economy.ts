@@ -59,11 +59,14 @@ export function pickWeighted(weights: readonly [string, number][], u: number): s
 /** `rules` 3 = frozen legacy placement (byte-identical, pinned by every existing save's digest).
  *  `rules` 4 = G1A: the SAME keyed competition, but every cell won by `scrap`/`wreck` becomes one of
  *  the three industrial salvage archetypes (60/25/15, keyed by global coordinates). No density is added. */
+/** Timber (the most abundant solid, tens of thousands of trees): the only natural solids a G1A salvage node may displace in the blocker competition. */
+export const G1A_YIELDING_TREES: ReadonlySet<string> = new Set(['oak','pine','snowpine','palm','willow','deadtree']);
 export function compileEconomy(m: EconomyMap, rules: 3 | 4 = 3): EconomyPlacement {
   const errors=validateEconomyMap(m); const n=m.width*m.height; if(errors.length) return {sources:[],errors};
   const reached=new Uint8Array(n); for(const s of m.starts){const d=reachable(m,s.x,s.y);if(d[s.y*m.width+s.x]<0) errors.push(`start ${s.id} is not walkable`);for(let i=0;i<n;i++)if(d[i]>=0)reached[i]=1;}
   const out:(string|null)[]=Array(n).fill(null), salt=stableHash(`${m.id}/${m.revision}/v3`) ^ m.seed;
   const nearRoad=(x:number,y:number)=>{let best=99;for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=m.width||ny>=m.height)continue;if(m.road[ny*m.width+nx] && reached[ny*m.width+nx] && m.cargoPassable[ny*m.width+nx])best=Math.min(best,Math.abs(dx)+Math.abs(dy));}return best;};
+  const fromWreck=new Uint8Array(n); // G1A-R1: cells the legacy rules gave a (solid) Wreck, as opposed to (walk-over) Roadside Scrap
   for(let y=1;y<m.height-1;y++)for(let x=1;x<m.width-1;x++){
     const i=y*m.width+x, biome=m.biome[i]; if(!m.walkable[i]||!reached[i]||m.protected[i]||m.road[i]||['water','road','floor','wall','lava'].includes(biome)||m.slope[i]>.6)continue;
     const roadDist=nearRoad(x,y), cold=m.temperature[i]<.3, warm=m.temperature[i]>.55, moist=m.moisture[i];
@@ -84,17 +87,30 @@ export function compileEconomy(m: EconomyMap, rules: 3 | 4 = 3): EconomyPlacemen
     const gx=x+(m.origin?.x??0),gy=y+(m.origin?.y??0);
     for(const [key,p] of Object.entries(rates)){ const u=Math.max(hash2(gx,gy,salt ^ stableHash(key)),1e-9);const score=-Math.log(u)/p;if(score<best){best=score;choice=key;} }
     if(best<1) out[i]=choice;
+    if(rules===4 && out[i]==='wreck') fromWreck[i]=1;
     if(rules===4 && (out[i]==='scrap'||out[i]==='wreck')){
       // The new archetypes are solid: only stand them where all eight neighbours are open ground, so one can never plug a one-tile gap.
       let open=true; for(let dy=-1;dy<=1&&open;dy++)for(let dx=-1;dx<=1;dx++){ if(!m.walkable[(y+dy)*m.width+x+dx]||m.road[(y+dy)*m.width+x+dx]&&false){open=false;break;} }
       out[i]=open?pickWeighted(G1A_ROADSIDE_WEIGHTS,hash2(gx,gy,salt ^ 0x61a4)):null;
     }
   }
+  // G1A-R1: a salvage node must never cost the map a mineral node (rock, ore, crystal ...). Legacy Roadside Scrap was not
+  // solid and never competed; the solid trio does, and with its priority it evicted whatever stood beside it. So:
+  //   * salvage standing where legacy had Scrap is withdrawn when it touches a mineral (the mineral was never contested);
+  //   * salvage standing where legacy had a Wreck contests a touching mineral with the plain legacy priority, i.e. the same
+  //     draw the Wreck had, so the outcome for the mineral is what it was before G1A.
+  // Only timber, the most abundant node by far, always yields to salvage.
+  const contested=new Uint8Array(n);
+  if(rules===4){const mineral=(k:string|null|undefined)=>!!k&&!isIndustrialSalvage(k)&&!!SOURCES[k]?.block&&!G1A_YIELDING_TREES.has(k);
+    const drop:number[]=[];for(let i=0;i<n;i++){if(!isIndustrialSalvage(out[i]))continue;const x=i%m.width,y=Math.floor(i/m.width);
+      if(!OFFSETS.some(([dx,dy])=>{const nx=x+dx,ny=y+dy;return nx>=0&&ny>=0&&nx<m.width&&ny<m.height&&mineral(out[ny*m.width+nx]);}))continue;
+      if(fromWreck[i])contested[i]=1;else drop.push(i);}
+    for(const i of drop)out[i]=null;}
   // Blockers compete using a separate spatial priority, not scan order. This
   // prevents touching solid nodes from forming artificial one-tile walls.
   const blockers:number[]=[];for(let i=0;i<n;i++)if(out[i]&&SOURCES[out[i]!]?.block)blockers.push(i);
   const ox=m.origin?.x??0,oy=m.origin?.y??0;
-  const prio=(a:number)=>hash2(ox+(a%m.width),oy+Math.floor(a/m.width),salt ^ 0x275e)-(rules===4&&isIndustrialSalvage(out[a])?1:0); // G1A: salvage keeps its cell, so the Parts share is not thinned away by neighbouring trees
+  const prio=(a:number)=>hash2(ox+(a%m.width),oy+Math.floor(a/m.width),salt ^ 0x275e)-(rules===4&&isIndustrialSalvage(out[a])&&!contested[a]?1:0); // G1A: salvage keeps its cell, so the Parts share is not thinned away by neighbouring trees
   blockers.sort((a,b)=>prio(a)-prio(b)||a-b);
   const accepted=new Uint8Array(n);for(const i of blockers){const x=i%m.width,y=Math.floor(i/m.width);if(OFFSETS.some(([dx,dy])=>accepted[(y+dy)*m.width+x+dx]))out[i]=null;else accepted[i]=1;}
   // Remove candidates which became physically isolated by the combined source

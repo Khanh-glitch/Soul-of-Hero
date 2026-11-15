@@ -268,11 +268,19 @@ export class Bot {
   }
   /** Pack full: put by-products this route has no use for on the ground (the ordinary `drop` intent), as a player would. */
   leave = new Set<string>();
-  dropJunk(keys: string[]): number {
+  dropJunk(keys: string[], toward?: [number, number]): number {
     const inv = C(this.r, 'inv'); let n = 0; for (const k of keys) this.leave.add(k);   // and do not pick them back up
+    // A dropped stack within ~2 tiles is pulled back into the pack after 0.4 s, and walking pace (about 45 px/s) is just too
+    // slow to get clear in time: measured in G1A-R1, the stack came back on every plain walk. So do what a player does:
+    // look away from the way out (the stack lands where you look), drop, dodge-roll out of range, then walk on.
+    const [px, py] = this.tile; const pth = inv.slots.some(s => s && keys.includes(s.key)) ? this.pathWhere(i => Math.max(Math.abs((i % WW) - px), Math.abs(Math.floor(i / WW) - py)) >= 5, 60) : null;
+    let dx = pth && pth.length > 1 ? Math.sign((pth[1] % WW) - px) : 1, dy = pth && pth.length > 1 ? Math.sign(Math.floor(pth[1] / WW) - py) : 0;
+    // `toward` (global tile): leave in that direction instead, so the stack is behind the bot and not on its way there.
+    if (toward) { const [gx, gy] = this.toGlobal(px, py); const ax = toward[0] - gx, ay = toward[1] - gy; if (ax || ay) { dx = Math.abs(ax) >= Math.abs(ay) ? Math.sign(ax) : 0; dy = dx ? 0 : Math.sign(ay); } }
+    const behind = () => ({ mx: this.p.x - dx * 99, my: this.p.y - dy * 99 });
+    if (pth) this.step(behind());
     for (let i = 0; i < inv.slots.length; i++) { const s = inv.slots[i]; if (s && keys.includes(s.key) && this.act('drop', { c: 'inv', slot: i }).ok) n++; }
-    // Drops within ~2 tiles are pulled back into the pack after 0.4 s, so step well clear straight away.
-    if (n) { const [px, py] = this.tile; const pth = this.pathWhere(i => Math.max(Math.abs((i % WW) - px), Math.abs(Math.floor(i / WW) - py)) >= 5, 60); if (pth) this.walk(pth); }
+    if (n) { this.step({ left: dx < 0, right: dx > 0, up: dy < 0, down: dy > 0, roll: true, ...behind() } as Partial<Input>); for (let k = 0; k < 8; k++) this.step({ left: dx < 0, right: dx > 0, up: dy < 0, down: dy > 0, ...behind() } as Partial<Input>); if (toward) this.travel(toward[0], toward[1]); else if (pth) this.walk(pth); }
     if (n) this.note(`pack full: dropped ${n} stack(s) of by-products`); return n;
   }
   /** Take every stack of the listed items back out of an owned chest the bot stands beside. */

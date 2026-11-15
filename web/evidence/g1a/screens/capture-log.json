@@ -1,0 +1,526 @@
+{
+ "note": "Real browser (headless Chromium 131), Vite dev server of this checkout with VITE_SOH_QA=1, 640x360 viewport, device scale 1. Real New Game on Veyra through the menu. The player is PLACED beside each source by the driver (QA state handle), then every swing is real mouse input held on the source. Not a human play-through.",
+ "log": [
+  {
+   "info": {
+    "layout": "veyra05-at-2176-1088",
+    "rules": 4,
+    "seed": 1095888790,
+    "origin": [
+     2176,
+     1088
+    ],
+    "tile": [
+     34,
+     73
+    ],
+    "counts": {
+     "road_relay_wreck": 20,
+     "road_salvage_bale": 35,
+     "road_fuel_rack": 11
+    },
+    "inv": [
+     "knife",
+     "water_flask",
+     "berries",
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    "active": 0
+   }
+  },
+  {
+   "shot": "context-roadside-trio.png",
+   "note": {
+    "spread": 4,
+    "relay": {
+     "tx": 52,
+     "ty": 114,
+     "d": 58,
+     "poi": -1
+    },
+    "bale": {
+     "tx": 52,
+     "ty": 112,
+     "d": 56,
+     "poi": -1
+    },
+    "rack": {
+     "tx": 52,
+     "ty": 116,
+     "d": 60,
+     "poi": -1
+    }
+   },
+   "tile": [
+    52,
+    115
+   ],
+   "view": null
+  },
+  {
+   "shot": "bale-1-intact.png",
+   "note": {
+    "source": {
+     "key": "road_salvage_bale",
+     "stock": 3,
+     "hp": 9
+    },
+    "at": [
+     2235,
+     1220
+    ],
+    "playerSide": [
+     -1,
+     0
+    ],
+    "poi": -1
+   },
+   "tile": [
+    58,
+    132
+   ],
+   "view": null
+  },
+  {
+   "shot": "bale-1b-aimed.png",
+   "note": {
+    "note": "cursor on the source: interaction target label"
+   },
+   "tile": [
+    58,
+    132
+   ],
+   "view": null
+  },
+  {
+   "shot": "bale-hit-a-1.png",
+   "note": "after one clicked swing",
+   "before": {
+    "key": "road_salvage_bale",
+    "stock": 3,
+    "hp": 9
+   },
+   "after": {
+    "key": "road_salvage_bale",
+    "stock": 3,
+    "hp": 7
+   }
+  },
+  {
+   "shot": "bale-2-damaged.png",
+   "note": {
+    "source": {
+     "key": "road_salvage_bale",
+     "stock": 1,
+     "hp": 3
+    }
+   },
+   "tile": [
+    58,
+    132
+   ],
+   "view": null
+  },
+  {
+   "shot": "bale-hit-b-1.png",
+   "note": "frame taken right after a landed hit (mouse held, real input)",
+   "before": {
+    "key": "road_salvage_bale",
+    "stock": 1,
+    "hp": 3
+   },
+   "after": {
+    "key": "road_salvage_bale",
+    "stock": 1,
+    "hp": 1
+   },
+   "dropsOnGround": 0
+  },
+  {
+   "shot": "bale-hit-b-2.png",
+   "note": "frame taken right after a landed hit (mouse held, real input)",
+   "before": {
+    "key": "road_salvage_bale",
+    "stock": 1,
+    "hp": 1
+   },
+   "after": {
+    "key": "road_salvage_bale",
+    "stock": 0,
+    "hp": 0
+   },
+   "dropsOnGround": 0
+  },
+  {
+   "shot": "bale-3-depleted.png",
+   "note": {
+    "source": {
+     "key": "road_salvage_bale",
+     "stock": 0,
+     "hp": 0
+    },
+    "inv": [
+     "knife",
+     "water_flask",
+     "berries",
+     "spares",
+     "tin_can",
+     "tin_can",
+     "spares",
+     "spares"
+    ]
+   },
+   "tile": [
+    58,
+    132
+   ],
+   "view": null
+  },
+  {
+   "shot": "relay-1-intact.png",
+   "note": {
+    "source": {
+     "key": "road_relay_wreck",
+     "stock": 3,
+     "hp": 12
+    },
+    "at": [
+     2228,
+     1202
+    ],
+    "playerSide": [
+     -1,
+     0
+    ],
+    "poi": -1
+   },
+   "tile": [
+    51,
+    114
+   ],
+   "view": null
+  },
+  {
+   "shot": "relay-1b-aimed.png",
+   "note": {
+    "note": "cursor on the source: interaction target label"
+   },
+   "tile": [
+    51,
+    114
+   ],
+   "view": null
+  },
+  {
+   "shot": "relay-hit-a-2.png",
+   "note": "after one clicked swing",
+   "before": {
+    "key": "road_relay_wreck",
+    "stock": 3,
+    "hp": 12
+   },
+   "after": {
+    "key": "road_relay_wreck",
+    "stock": 3,
+    "hp": 10
+   }
+  },
+  {
+   "shot": "relay-2-damaged.png",
+   "note": {
+    "source": {
+     "key": "road_relay_wreck",
+     "stock": 2,
+     "hp": 6
+    }
+   },
+   "tile": [
+    51,
+    114
+   ],
+   "view": null
+  },
+  {
+   "shot": "relay-hit-b-1.png",
+   "note": "frame taken right after a landed hit (mouse held, real input)",
+   "before": {
+    "key": "road_relay_wreck",
+    "stock": 2,
+    "hp": 6
+   },
+   "after": {
+    "key": "road_relay_wreck",
+    "stock": 1,
+    "hp": 4
+   },
+   "dropsOnGround": 0
+  },
+  {
+   "shot": "relay-hit-b-2.png",
+   "note": "frame taken right after a landed hit (mouse held, real input)",
+   "before": {
+    "key": "road_relay_wreck",
+    "stock": 1,
+    "hp": 4
+   },
+   "after": {
+    "key": "road_relay_wreck",
+    "stock": 0,
+    "hp": 0
+   },
+   "dropsOnGround": 0
+  },
+  {
+   "shot": "relay-3-depleted.png",
+   "note": {
+    "source": {
+     "key": "road_relay_wreck",
+     "stock": 0,
+     "hp": 0
+    },
+    "inv": [
+     "knife",
+     "water_flask",
+     "berries",
+     "spares",
+     "tin_can",
+     "tin_can",
+     "spares",
+     "spares",
+     "mechanical_gear",
+     "spares",
+     "spares",
+     "electronic_parts",
+     "spares",
+     "electric_resistor",
+     "berries",
+     "berries",
+     "berries"
+    ]
+   },
+   "tile": [
+    51,
+    114
+   ],
+   "view": null
+  },
+  {
+   "shot": "rack-1-intact.png",
+   "note": {
+    "source": {
+     "key": "road_fuel_rack",
+     "stock": 2,
+     "hp": 12
+    },
+    "at": [
+     2228,
+     1222
+    ],
+    "playerSide": [
+     -1,
+     0
+    ],
+    "poi": -1
+   },
+   "tile": [
+    51,
+    134
+   ],
+   "view": null
+  },
+  {
+   "shot": "rack-1b-aimed.png",
+   "note": {
+    "note": "cursor on the source: interaction target label"
+   },
+   "tile": [
+    51,
+    134
+   ],
+   "view": null
+  },
+  {
+   "shot": "rack-hit-a-2.png",
+   "note": "after one clicked swing",
+   "before": {
+    "key": "road_fuel_rack",
+    "stock": 2,
+    "hp": 12
+   },
+   "after": {
+    "key": "road_fuel_rack",
+    "stock": 2,
+    "hp": 10
+   }
+  },
+  {
+   "shot": "rack-2-damaged.png",
+   "note": {
+    "source": {
+     "key": "road_fuel_rack",
+     "stock": 1,
+     "hp": 6
+    }
+   },
+   "tile": [
+    51,
+    134
+   ],
+   "view": null
+  },
+  {
+   "shot": "rack-hit-b-1.png",
+   "note": "frame taken right after a landed hit (mouse held, real input)",
+   "before": {
+    "key": "road_fuel_rack",
+    "stock": 1,
+    "hp": 6
+   },
+   "after": {
+    "key": "road_fuel_rack",
+    "stock": 1,
+    "hp": 4
+   },
+   "dropsOnGround": 2
+  },
+  {
+   "shot": "rack-hit-b-2.png",
+   "note": "frame taken right after a landed hit (mouse held, real input)",
+   "before": {
+    "key": "road_fuel_rack",
+    "stock": 1,
+    "hp": 4
+   },
+   "after": {
+    "key": "road_fuel_rack",
+    "stock": 0,
+    "hp": 0
+   },
+   "dropsOnGround": 0
+  },
+  {
+   "shot": "rack-3-depleted.png",
+   "note": {
+    "source": {
+     "key": "road_fuel_rack",
+     "stock": 0,
+     "hp": 0
+    },
+    "inv": [
+     "knife",
+     "water_flask",
+     "berries",
+     "spares",
+     "tin_can",
+     "tin_can",
+     "spares",
+     "spares",
+     "mechanical_gear",
+     "spares",
+     "spares",
+     "electronic_parts",
+     "spares",
+     "electric_resistor",
+     "berries",
+     "berries",
+     "berries",
+     "tin_can",
+     "spares",
+     "tin_can",
+     "spares",
+     "seed_wildberry",
+     "berries",
+     "berries"
+    ]
+   },
+   "tile": [
+    51,
+    134
+   ],
+   "view": null
+  },
+  {
+   "shot": "context-poi-yard.png",
+   "note": {
+    "poiIndex": 27,
+    "at": [
+     169,
+     71
+    ]
+   },
+   "tile": [
+    169,
+    73
+   ],
+   "view": null
+  },
+  {
+   "pageErrors": [],
+   "final": {
+    "layout": "veyra05-at-2176-1088",
+    "rules": 4,
+    "seed": 1095888790,
+    "origin": [
+     2176,
+     1088
+    ],
+    "tile": [
+     169,
+     73
+    ],
+    "counts": {
+     "road_relay_wreck": 20,
+     "road_salvage_bale": 35,
+     "road_fuel_rack": 11
+    },
+    "inv": [
+     "knife",
+     "water_flask",
+     "berries",
+     "spares",
+     "tin_can",
+     "tin_can",
+     "spares",
+     "spares",
+     "mechanical_gear",
+     "spares",
+     "spares",
+     "electronic_parts",
+     "spares",
+     "electric_resistor",
+     "berries",
+     "berries",
+     "berries",
+     "tin_can",
+     "spares",
+     "tin_can",
+     "spares",
+     "seed_wildberry",
+     "berries",
+     "berries"
+    ],
+    "active": 0
+   }
+  }
+ ]
+}

@@ -214,16 +214,26 @@ function wreck(g: G, v: number) { const body = v % 2 ? '#7a3a2a' : '#4a5a6a';
  * Each silhouette is its own drawing (no recolour of `scrap`, `wreck` or a barrel). Sprites are anchored bottom-centre on the tile. */
 function salvageBale(g: G, st: number) {
   if (st === 2) { R(g, 2, 13, 6, 2, '#565a61'); R(g, 3, 13, 4, 1, '#7d838b'); R(g, 9, 14, 5, 1, '#4a4e55'); P(g, 12, 13, '#8a4a2a'); R(g, 6, 12, 3, 1, '#b8862e'); P(g, 1, 14, '#3d4046'); return; }
-  const top = st ? 9 : 7;
+  if (st === 1) {
+    // G1A-R1 (seen in play: the old half-broken frame read as intact): the bundle has burst. Half its height is gone, the
+    // right side has slumped into loose sheets, one strap lies snapped on the ground.
+    R(g, 1, 10, 9, 5, '#6b6f76'); R(g, 1, 10, 9, 1, '#a3a9b1'); R(g, 1, 14, 9, 1, '#3d4046'); R(g, 2, 12, 7, 1, '#565a61');
+    R(g, 4, 9, 2, 6, '#b8862e'); P(g, 4, 9, '#e8c060');                                   // the one strap still holding
+    R(g, 10, 12, 3, 3, '#565a61'); R(g, 10, 12, 3, 1, '#8a9098'); R(g, 13, 13, 2, 2, '#4a4e55'); P(g, 13, 13, '#7d838b');   // slumped sheets
+    P(g, 10, 11, '#6b6f76'); P(g, 15, 14, '#3d4046');
+    P(g, 11, 15, '#b8862e'); P(g, 12, 15, '#b8862e'); P(g, 13, 15, '#e8c060'); P(g, 14, 15, '#b8862e');                    // snapped strap on the ground
+    P(g, 7, 9, '#c4cad2'); P(g, 8, 8, '#e6ebf0'); P(g, 1, 9, '#9aa0a8'); P(g, 3, 11, '#8a4a2a'); P(g, 7, 13, '#8a4a2a'); P(g, 11, 13, '#9a5a30');
+    return;
+  }
+  const top = 7;
   R(g, 1, top, 14, 15 - top, '#6b6f76'); R(g, 1, top, 14, 1, '#a3a9b1'); R(g, 1, 14, 14, 1, '#3d4046'); R(g, 15, top + 1, 1, 14 - top, '#4a4e55');
   for (let y = top + 2; y < 14; y += 2) R(g, 2, y, 12, 1, '#565a61');           // pressed sheet layers
   P(g, 3, top + 1, '#8a4a2a'); P(g, 8, top + 3, '#8a4a2a'); P(g, 12, 12, '#9a5a30'); P(g, 6, 13, '#8a4a2a');
   R(g, 4, top - 1, 2, 16 - top, '#b8862e'); P(g, 4, top - 1, '#e8c060');          // strap 1
-  if (!st) { R(g, 10, top - 1, 2, 16 - top, '#b8862e'); P(g, 10, top - 1, '#e8c060'); }
-  else { R(g, 10, 12, 2, 3, '#b8862e'); P(g, 12, 11, '#b8862e'); P(g, 13, 10, '#e8c060'); } // snapped strap curls away
+  R(g, 10, top - 1, 2, 16 - top, '#b8862e'); P(g, 10, top - 1, '#e8c060');        // strap 2
   // steel bars sticking out of the bundle
   P(g, 12, top - 1, '#c4cad2'); P(g, 13, top - 2, '#c4cad2'); P(g, 14, top - 3, '#e6ebf0');
-  P(g, 7, top - 1, '#9aa0a8'); P(g, 7, top - 2, '#c4cad2'); if (!st) P(g, 7, top - 3, '#e6ebf0');
+  P(g, 7, top - 1, '#9aa0a8'); P(g, 7, top - 2, '#c4cad2'); P(g, 7, top - 3, '#e6ebf0');
   P(g, 1, top - 1, '#9aa0a8'); P(g, 0, top - 2, '#c4cad2');
 }
 function relayWreck(g: G, st: number) {
@@ -245,18 +255,24 @@ function relayWreck(g: G, st: number) {
   } else { P(g, 13, 14, '#36404a'); P(g, 14, 20, '#566270'); P(g, 1, 20, '#7a8794'); }
 }
 function fuelRack(g: G, st: number) {
-  // canvas 16x20; rusty tube frame leaning left, small cans on two shelves
-  const fr = '#8a5a3a', hi = '#b8845a', dk = '#5a3a26';
-  if (st === 2) { R(g, 1, 17, 13, 1, fr); R(g, 2, 16, 5, 1, hi); P(g, 14, 18, dk); R(g, 9, 18, 4, 1, dk); P(g, 5, 18, fr); R(g, 10, 15, 3, 2, '#5d6a3a'); P(g, 10, 15, '#8a9a5a'); P(g, 13, 16, '#2a2e22'); return; }
-  for (let y = 3; y < 19; y++) { const o = ((y - 3) / 8) | 0; P(g, 2 + o, y, fr); P(g, 12 + o, y, y % 5 ? fr : dk); }
-  P(g, 2, 3, hi); P(g, 12, 3, hi); R(g, 1, 18, 3, 1, dk); R(g, 12, 18, 4, 1, dk);
-  R(g, 2, 9, 11, 1, hi); R(g, 3, 15, 11, 1, hi); R(g, 3, 16, 11, 1, dk);
-  if (!st) R(g, 2, 3, 11, 1, fr); else { R(g, 2, 3, 5, 1, fr); P(g, 7, 4, fr); P(g, 8, 5, dk); }
-  const can = (x: number, y: number, c: string, h: string) => { R(g, x, y, 3, 4, c); R(g, x, y, 1, 4, h); P(g, x + 1, y - 1, '#2a2e22'); P(g, x + 2, y + 3, '#2a2e22'); };
-  can(4, 11, '#5d6a3a', '#8a9a5a'); can(9, 11, '#c8a030', '#f0d070');           // lower shelf: olive + mustard
-  if (!st) can(6, 5, '#4a6a86', '#7a9ab6');                                      // upper shelf: grey-blue
-  else { P(g, 9, 8, '#4a6a86'); }
-  P(g, 5, 12, '#2a2e22'); P(g, 10, 13, '#7a5a10');
+  // canvas 16x20; rusty tube frame, fuel cans on two shelves.
+  // G1A-R1 (seen in play: 1px posts and olive cans sank into grass and bushes): posts are 2px with a dark edge, the shelves
+  // are lit, and the cans are fuel-red / mustard so the rack reads as "fuel" at 640x360.
+  const fr = '#9a5f38', hi = '#d09a62', dk = '#3e2616';
+  if (st === 2) { R(g, 1, 17, 13, 1, fr); R(g, 2, 16, 5, 1, hi); R(g, 1, 18, 14, 1, dk); P(g, 5, 15, fr); R(g, 10, 15, 3, 2, '#7a2a1e'); P(g, 10, 15, '#b8483a'); P(g, 13, 16, '#2a2e22'); P(g, 8, 16, '#7a5a10'); return; }
+  const top = st ? 8 : 2;
+  R(g, 1, top, 2, 19 - top, fr); R(g, 1, top, 1, 19 - top, hi); R(g, 12, top, 2, 19 - top, fr); R(g, 13, top, 1, 19 - top, dk);     // posts
+  R(g, 0, 18, 4, 1, dk); R(g, 11, 18, 4, 1, dk);                                                                                  // feet
+  R(g, 3, 15, 9, 1, hi); R(g, 3, 16, 9, 1, dk);                                                                                    // lower shelf
+  const can = (x: number, y: number, c: string, h: string) => { R(g, x, y, 3, 4, c); R(g, x, y, 1, 4, h); P(g, x + 1, y - 1, '#2a2e22'); P(g, x + 2, y + 3, '#2a1a12'); };
+  can(4, 11, '#b8322a', '#ee6a55'); can(8, 11, '#c8a030', '#f0d070');                    // lower shelf: fuel red + mustard
+  if (!st) {
+    R(g, 1, 2, 13, 1, fr); R(g, 1, 2, 13, 1, hi); R(g, 3, 9, 9, 1, hi); R(g, 3, 10, 9, 1, dk);                                     // top rail + upper shelf
+    can(5, 5, '#b8322a', '#ee6a55'); P(g, 10, 8, '#4a6a86'); P(g, 10, 7, '#7a9ab6');
+  } else {
+    // upper half torn off: bent post stubs, the upper shelf hangs by one end, one can gone
+    P(g, 2, 7, fr); P(g, 3, 6, hi); P(g, 12, 7, dk); R(g, 3, 9, 5, 1, hi); P(g, 8, 10, fr); P(g, 9, 11, dk); P(g, 14, 17, '#b8322a'); P(g, 15, 18, '#7a2a1e');
+  }
 }
 export function buildSources() {
   const S: Record<string, Sprite[]> = {};

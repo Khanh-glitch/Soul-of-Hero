@@ -105,6 +105,11 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
       const PARTS = 33; if (!b.gather('spares', PARTS, SALVAGE, 40)) throw new BotStop(`only ${b.inv('spares')}/${PARTS} Parts within reach`);
       done(stageName, { parts: b.inv('spares'), alsoDropped: Object.fromEntries(['tin_can', 'electronic_parts', 'electric_resistor', 'mechanical_gear', 'metal_pipe', 'iron_plate', 'fuel_can', 'needle_tube'].map(k => [k, b.inv(k)]).filter(([, n]) => (n as number) > 0)) });
       const windfallFuel = b.inv('fuel_can'), windfallPipe = b.inv('metal_pipe'), windfallGear = b.inv('mechanical_gear');
+      // G1A-R1: salvage now gives more by-product kinds per node (Relay Wreck components, rack Parts + Fuel), so the 24 slots run
+      // out two stages earlier than before (the bench kit had nowhere to go). The route already threw these by-products away at
+      // the refinery stage; it now does so here, at the roadside, and walks home with the stack behind it. Ordinary `drop`,
+      // nothing granted, no assertion changed.
+      b.dropJunk(['tin_can', 'needle_tube', 'sulfur', 'herb'], seep.g);
       care(b, camp);
 
       // ---- 5. Glass is not starter knowledge: build a Research Table, pay for the study, read the blueprint
@@ -215,7 +220,10 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
       attempt('Wooden Ladder: study, craft, lean on a cliff, cross on foot', () => {
         service(); need('spares', BAL.research.directedSparesCost, SALVAGE);
         b.study(b.at(ids.table, ids.home), 'wooden_ladder');
-        need('fiber', 3, ['reed', 'grass']); b.craft('rope'); need('wood', 12, TREES); bench(['wooden_ladder']); expect(b.inv('wooden_ladder')).toBe(1);
+        // G1A-R1: `need` ends with first aid, which may turn the fibre just picked into bandages when the bot arrives hurt (it did, on the
+        // R1 timeline). Pick again until three are actually carried; the Rope bill and every assertion are unchanged.
+        for (let k = 0; k < 3 && (k === 0 || b.inv('fiber') < 3); k++) need('fiber', 3, ['reed', 'grass']);
+        b.craft('rope'); need('wood', 12, TREES); bench(['wooden_ladder']); expect(b.inv('wooden_ladder')).toBe(1);
         // every (stand tile, cliff tile, far tile) triple in the window where the cliff is exactly one tile thick
         let g0 = blockGrid(b.r); const open = (x: number, y: number) => x > 1 && y > 1 && x < WW - 2 && y < WH - 2 && (g0[y * WW + x] === 0 || g0[y * WW + x] === 4);
         let px = 0, py = 0; const faces: { s: [number, number]; c: [number, number]; f: [number, number]; d: number }[] = []; let cliffTiles = 0; const looked: unknown[] = [];

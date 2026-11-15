@@ -1,0 +1,817 @@
+{
+ "note": "ENGINE-LEVEL placement census, whole 4000x2800 frame, 200x200 windows at stride 192, cells de-duplicated by global coordinate. rules3 = legacy placement (old saves), rules4 = G1A (new runs). SOH_PROVISIONAL.",
+ "windowsBuilt": 159,
+ "windowsWithNoLand": 156,
+ "windowsWithNoSalvageUnderG1A": 61,
+ "legacy": {
+  "scrap": 3225,
+  "wreck": 542,
+  "total": 3767
+ },
+ "g1a": {
+  "roadside": {
+   "road_salvage_bale": 1785,
+   "road_relay_wreck": 755,
+   "road_fuel_rack": 422,
+   "total": 2962
+  },
+  "poi": {
+   "road_relay_wreck": 63,
+   "road_salvage_bale": 123,
+   "road_fuel_rack": 61,
+   "total": 247
+  },
+  "total": 3209,
+  "roadsideRatioToLegacy": 0.786,
+  "salvageWithNoReachedNeighbour": 0
+ },
+ "poiSites": {
+  "sites": 81,
+  "listedSites": 53,
+  "withAny": 46,
+  "listedWithNone": [
+   "po_kilns:smelter",
+   "po_ridgestop:roadstop",
+   "po_rapids:roadstop",
+   "po_mere:pier",
+   "po_filter:filter",
+   "po_westbank:pier",
+   "po_dpier:pier"
+  ],
+  "over10": [
+   "po_kestrel:facility:15",
+   "po_oldpump:facility:13",
+   "po_strait:port:16",
+   "po_southfoot:port:15",
+   "po_saltpans:quarry:13"
+  ],
+  "bySite": [
+   {
+    "poi": "po_academy",
+    "arche": "research",
+    "listed": true,
+    "road_relay_wreck": 2,
+    "total": 2
+   },
+   {
+    "poi": "po_observatory",
+    "arche": "observatory",
+    "listed": true,
+    "road_relay_wreck": 2,
+    "total": 2
+   },
+   {
+    "poi": "po_archive",
+    "arche": "facility",
+    "listed": true,
+    "road_relay_wreck": 8,
+    "total": 8
+   },
+   {
+    "poi": "po_hall_eyes",
+    "arche": "elder_site",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_lantern",
+    "arche": "observatory",
+    "listed": true,
+    "road_relay_wreck": 2,
+    "total": 2
+   },
+   {
+    "poi": "po_lanternstn",
+    "arche": "roadstop",
+    "listed": true,
+    "road_fuel_rack": 1,
+    "total": 1
+   },
+   {
+    "poi": "po_kestrel",
+    "arche": "facility",
+    "listed": true,
+    "road_relay_wreck": 10,
+    "road_salvage_bale": 5,
+    "total": 15
+   },
+   {
+    "poi": "po_typhon",
+    "arche": "elder_site",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_viaduct",
+    "arche": "ruins",
+    "listed": true,
+    "road_salvage_bale": 3,
+    "road_relay_wreck": 1,
+    "total": 4
+   },
+   {
+    "poi": "po_freightyard",
+    "arche": "ruins",
+    "listed": true,
+    "road_relay_wreck": 3,
+    "road_salvage_bale": 4,
+    "total": 7
+   },
+   {
+    "poi": "po_fracquarry",
+    "arche": "quarry",
+    "listed": true,
+    "road_fuel_rack": 1,
+    "road_salvage_bale": 8,
+    "total": 9
+   },
+   {
+    "poi": "po_falls",
+    "arche": "powerplant",
+    "listed": true,
+    "road_relay_wreck": 4,
+    "road_fuel_rack": 6,
+    "total": 10
+   },
+   {
+    "poi": "po_greywater",
+    "arche": "village",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_pumphouse",
+    "arche": "filter",
+    "listed": true,
+    "road_relay_wreck": 2,
+    "road_fuel_rack": 1,
+    "total": 3
+   },
+   {
+    "poi": "po_confluence",
+    "arche": "roadstop",
+    "listed": true,
+    "road_fuel_rack": 1,
+    "total": 1
+   },
+   {
+    "poi": "po_sawaion",
+    "arche": "sawmill",
+    "listed": true,
+    "road_fuel_rack": 1,
+    "total": 1
+   },
+   {
+    "poi": "po_mill",
+    "arche": "mill",
+    "listed": true,
+    "road_salvage_bale": 1,
+    "total": 1
+   },
+   {
+    "poi": "po_kilns",
+    "arche": "smelter",
+    "listed": true,
+    "total": 0
+   },
+   {
+    "poi": "po_ranger",
+    "arche": "hamlet",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_glade",
+    "arche": "grove",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_sapgrove",
+    "arche": "grove",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_elderwood",
+    "arche": "elder_site",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_siloc",
+    "arche": "warehouse",
+    "listed": true,
+    "road_relay_wreck": 1,
+    "road_salvage_bale": 1,
+    "total": 2
+   },
+   {
+    "poi": "po_meridian",
+    "arche": "research",
+    "listed": true,
+    "road_relay_wreck": 2,
+    "total": 2
+   },
+   {
+    "poi": "po_oldpump",
+    "arche": "facility",
+    "listed": true,
+    "road_relay_wreck": 10,
+    "road_salvage_bale": 3,
+    "total": 13
+   },
+   {
+    "poi": "po_strait",
+    "arche": "port",
+    "listed": true,
+    "road_salvage_bale": 10,
+    "road_fuel_rack": 6,
+    "total": 16
+   },
+   {
+    "poi": "po_ironvein",
+    "arche": "mine",
+    "listed": true,
+    "road_salvage_bale": 5,
+    "road_relay_wreck": 1,
+    "total": 6
+   },
+   {
+    "poi": "po_ridgestop",
+    "arche": "roadstop",
+    "listed": true,
+    "total": 0
+   },
+   {
+    "poi": "po_rapids",
+    "arche": "roadstop",
+    "listed": true,
+    "total": 0
+   },
+   {
+    "poi": "po_hook",
+    "arche": "village",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_mere",
+    "arche": "pier",
+    "listed": true,
+    "total": 0
+   },
+   {
+    "poi": "po_timberyard",
+    "arche": "sawmill",
+    "listed": true,
+    "road_fuel_rack": 2,
+    "road_salvage_bale": 5,
+    "total": 7
+   },
+   {
+    "poi": "po_ember",
+    "arche": "port",
+    "listed": true,
+    "road_fuel_rack": 1,
+    "road_salvage_bale": 2,
+    "total": 3
+   },
+   {
+    "poi": "po_slag",
+    "arche": "smelter",
+    "listed": true,
+    "road_fuel_rack": 2,
+    "road_relay_wreck": 1,
+    "road_salvage_bale": 1,
+    "total": 4
+   },
+   {
+    "poi": "po_southfoot",
+    "arche": "port",
+    "listed": true,
+    "road_fuel_rack": 4,
+    "road_salvage_bale": 11,
+    "total": 15
+   },
+   {
+    "poi": "po_gulfhead",
+    "arche": "port",
+    "listed": true,
+    "road_fuel_rack": 2,
+    "road_salvage_bale": 4,
+    "total": 6
+   },
+   {
+    "poi": "po_filter",
+    "arche": "filter",
+    "listed": true,
+    "total": 0
+   },
+   {
+    "poi": "po_westbank",
+    "arche": "pier",
+    "listed": true,
+    "total": 0
+   },
+   {
+    "poi": "po_westmouth",
+    "arche": "port",
+    "listed": true,
+    "road_salvage_bale": 5,
+    "road_fuel_rack": 1,
+    "total": 6
+   },
+   {
+    "poi": "po_greyquarry",
+    "arche": "quarry",
+    "listed": true,
+    "road_fuel_rack": 2,
+    "road_salvage_bale": 6,
+    "total": 8
+   },
+   {
+    "poi": "po_westwood",
+    "arche": "hamlet",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_fishcamp",
+    "arche": "hamlet",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_necropolis",
+    "arche": "elder_site",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_tombs",
+    "arche": "tomb",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_cairns",
+    "arche": "ruins",
+    "listed": true,
+    "road_salvage_bale": 2,
+    "total": 2
+   },
+   {
+    "poi": "po_oasis",
+    "arche": "village",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_bonestop",
+    "arche": "roadstop",
+    "listed": true,
+    "road_salvage_bale": 2,
+    "road_fuel_rack": 1,
+    "total": 3
+   },
+   {
+    "poi": "po_sandgate",
+    "arche": "port",
+    "listed": true,
+    "road_fuel_rack": 3,
+    "road_salvage_bale": 5,
+    "total": 8
+   },
+   {
+    "poi": "po_gate",
+    "arche": "gate",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_dpier",
+    "arche": "pier",
+    "listed": true,
+    "total": 0
+   },
+   {
+    "poi": "po_beacon",
+    "arche": "observatory",
+    "listed": true,
+    "road_relay_wreck": 3,
+    "total": 3
+   },
+   {
+    "poi": "po_wreck",
+    "arche": "ruins",
+    "listed": true,
+    "road_salvage_bale": 2,
+    "road_relay_wreck": 1,
+    "total": 3
+   },
+   {
+    "poi": "po_tidecamp",
+    "arche": "hamlet",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_gullnest",
+    "arche": "grove",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_gullpier",
+    "arche": "pier",
+    "listed": true,
+    "road_salvage_bale": 3,
+    "road_fuel_rack": 1,
+    "total": 4
+   },
+   {
+    "poi": "po_netcamp",
+    "arche": "hamlet",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_cindercamp",
+    "arche": "village",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_obsq",
+    "arche": "quarry",
+    "listed": true,
+    "road_salvage_bale": 4,
+    "road_fuel_rack": 3,
+    "total": 7
+   },
+   {
+    "poi": "po_sulfur",
+    "arche": "mine",
+    "listed": true,
+    "road_salvage_bale": 1,
+    "road_fuel_rack": 1,
+    "road_relay_wreck": 2,
+    "total": 4
+   },
+   {
+    "poi": "po_geo",
+    "arche": "powerplant",
+    "listed": true,
+    "road_fuel_rack": 3,
+    "road_relay_wreck": 1,
+    "total": 4
+   },
+   {
+    "poi": "po_emberwatch",
+    "arche": "observatory",
+    "listed": true,
+    "road_relay_wreck": 3,
+    "total": 3
+   },
+   {
+    "poi": "po_surtur",
+    "arche": "elder_site",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_saltharbor",
+    "arche": "port",
+    "listed": true,
+    "road_salvage_bale": 1,
+    "road_fuel_rack": 2,
+    "total": 3
+   },
+   {
+    "poi": "po_saltpans",
+    "arche": "quarry",
+    "listed": true,
+    "road_salvage_bale": 11,
+    "road_fuel_rack": 2,
+    "total": 13
+   },
+   {
+    "poi": "po_saltlight",
+    "arche": "observatory",
+    "listed": true,
+    "road_relay_wreck": 4,
+    "total": 4
+   },
+   {
+    "poi": "po_racks",
+    "arche": "hamlet",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_gullwreck",
+    "arche": "ruins",
+    "listed": true,
+    "road_salvage_bale": 2,
+    "total": 2
+   },
+   {
+    "poi": "po_ironharbor",
+    "arche": "port",
+    "listed": true,
+    "road_salvage_bale": 4,
+    "road_fuel_rack": 3,
+    "total": 7
+   },
+   {
+    "poi": "po_ironmine",
+    "arche": "mine",
+    "listed": true,
+    "road_salvage_bale": 4,
+    "total": 4
+   },
+   {
+    "poi": "po_ironwh",
+    "arche": "warehouse",
+    "listed": true,
+    "road_salvage_bale": 5,
+    "total": 5
+   },
+   {
+    "poi": "po_rc_meridian",
+    "arche": "ragnarok_cache",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_rc_ironvein",
+    "arche": "ragnarok_cache",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_rc_kestrel",
+    "arche": "ragnarok_cache",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_rc_dam",
+    "arche": "ragnarok_cache",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_rc_sandgate",
+    "arche": "ragnarok_cache",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_rc_salt",
+    "arche": "ragnarok_cache",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_vend_gulf",
+    "arche": "chest_vendor",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_vend_strait",
+    "arche": "chest_vendor",
+    "listed": false,
+    "total": 0
+   },
+   {
+    "poi": "po_evac_west",
+    "arche": "evac",
+    "listed": true,
+    "road_fuel_rack": 2,
+    "total": 2
+   },
+   {
+    "poi": "po_evac_south",
+    "arche": "evac",
+    "listed": true,
+    "road_fuel_rack": 5,
+    "road_salvage_bale": 1,
+    "total": 6
+   },
+   {
+    "poi": "po_evac_hook",
+    "arche": "evac",
+    "listed": true,
+    "road_fuel_rack": 4,
+    "road_salvage_bale": 2,
+    "total": 6
+   }
+  ]
+ },
+ "natural": {
+  "total": {
+   "rules3": 480381,
+   "rules4": 479773,
+   "delta": -608,
+   "pct": -0.127
+  },
+  "byKey": {
+   "bush": {
+    "rules3": 46241,
+    "rules4": 46241,
+    "delta": 0,
+    "pct": 0,
+    "solid": false,
+    "mayYieldToSalvage": false
+   },
+   "coalv": {
+    "rules3": 12234,
+    "rules4": 12234,
+    "delta": 0,
+    "pct": 0,
+    "solid": true,
+    "mayYieldToSalvage": false
+   },
+   "crystal": {
+    "rules3": 9880,
+    "rules4": 9887,
+    "delta": 7,
+    "pct": 0.07,
+    "solid": true,
+    "mayYieldToSalvage": false
+   },
+   "deadtree": {
+    "rules3": 1919,
+    "rules4": 1913,
+    "delta": -6,
+    "pct": -0.31,
+    "solid": true,
+    "mayYieldToSalvage": true
+   },
+   "grass": {
+    "rules3": 81573,
+    "rules4": 81572,
+    "delta": -1,
+    "pct": 0,
+    "solid": false,
+    "mayYieldToSalvage": false
+   },
+   "herb": {
+    "rules3": 10105,
+    "rules4": 10104,
+    "delta": -1,
+    "pct": -0.01,
+    "solid": false,
+    "mayYieldToSalvage": false
+   },
+   "iron": {
+    "rules3": 27488,
+    "rules4": 27488,
+    "delta": 0,
+    "pct": 0,
+    "solid": true,
+    "mayYieldToSalvage": false
+   },
+   "mushroom": {
+    "rules3": 3835,
+    "rules4": 3835,
+    "delta": 0,
+    "pct": 0,
+    "solid": false,
+    "mayYieldToSalvage": false
+   },
+   "oak": {
+    "rules3": 96752,
+    "rules4": 96390,
+    "delta": -362,
+    "pct": -0.37,
+    "solid": true,
+    "mayYieldToSalvage": true
+   },
+   "palm": {
+    "rules3": 1986,
+    "rules4": 1984,
+    "delta": -2,
+    "pct": -0.1,
+    "solid": true,
+    "mayYieldToSalvage": true
+   },
+   "pine": {
+    "rules3": 13094,
+    "rules4": 13074,
+    "delta": -20,
+    "pct": -0.15,
+    "solid": true,
+    "mayYieldToSalvage": true
+   },
+   "reed": {
+    "rules3": 15423,
+    "rules4": 15423,
+    "delta": 0,
+    "pct": 0,
+    "solid": false,
+    "mayYieldToSalvage": false
+   },
+   "rock": {
+    "rules3": 81958,
+    "rules4": 81975,
+    "delta": 17,
+    "pct": 0.02,
+    "solid": true,
+    "mayYieldToSalvage": false
+   },
+   "salt_shale": {
+    "rules3": 5824,
+    "rules4": 5824,
+    "delta": 0,
+    "pct": 0,
+    "solid": true,
+    "mayYieldToSalvage": false
+   },
+   "snowpine": {
+    "rules3": 63938,
+    "rules4": 63718,
+    "delta": -220,
+    "pct": -0.34,
+    "solid": true,
+    "mayYieldToSalvage": true
+   },
+   "sulfur": {
+    "rules3": 2087,
+    "rules4": 2087,
+    "delta": 0,
+    "pct": 0,
+    "solid": true,
+    "mayYieldToSalvage": false
+   },
+   "willow": {
+    "rules3": 6044,
+    "rules4": 6024,
+    "delta": -20,
+    "pct": -0.33,
+    "solid": true,
+    "mayYieldToSalvage": true
+   }
+  },
+  "lost": {
+   "besideSalvage": 750,
+   "notBesideSalvage": 31,
+   "byKey": {
+    "snowpine": 262,
+    "rock": 1,
+    "oak": 460,
+    "willow": 20,
+    "bush": 1,
+    "pine": 27,
+    "grass": 1,
+    "herb": 1,
+    "deadtree": 6,
+    "palm": 2
+   }
+  },
+  "gainedByKey": {
+   "snowpine": 42,
+   "rock": 18,
+   "pine": 7,
+   "crystal": 7,
+   "oak": 98,
+   "bush": 1
+  },
+  "changeMatrix": {
+   "empty -> g1a-salvage": 301,
+   "legacy-salvage -> g1a-salvage": 2908,
+   "legacy-salvage -> empty": 859,
+   "snowpine -> empty": 262,
+   "empty -> snowpine": 42,
+   "rock -> empty": 1,
+   "empty -> rock": 18,
+   "empty -> pine": 7,
+   "oak -> empty": 460,
+   "empty -> crystal": 7,
+   "willow -> empty": 20,
+   "empty -> oak": 98,
+   "bush -> empty": 1,
+   "pine -> empty": 27,
+   "grass -> empty": 1,
+   "empty -> bush": 1,
+   "herb -> empty": 1,
+   "deadtree -> empty": 6,
+   "palm -> empty": 2
+  }
+ },
+ "reachability": {
+  "walkableReached3": 3256314,
+  "walkableReached4": 3254262,
+  "lostCells": 2885,
+  "lostCellsOnlyUnderNewSalvage": 2883,
+  "gainedCells": 833,
+  "lostPocketCells": 2,
+  "windowsWithLostPocket": [
+   "2112,768:1",
+   "1728,1536:1"
+  ]
+ }
+}
