@@ -84,7 +84,7 @@ describe('P10 — Field Core / Lõi dã chiến is a class of its own beside the
     for (const k of FIELD) { expect(itemClass(k), k).toBe('FIELD_CORE'); expect(ITEMS[k].core, k).toBeTruthy(); expect(ITEMS[k].creatorCore, k).toBeUndefined(); }
     expect(ITEM_CLASS_LABEL.CREATOR_CORE).toBe('CREATOR CORE'); expect(ITEM_CLASS_LABEL.FIELD_CORE).toBe('FIELD CORE');
     expect(ITEM_CLASS_VI.FIELD_CORE).toBe('Lõi dã chiến');
-    expect(coreClassLine('core_dragon')).toMatch(/3 skills/); expect(coreClassLine('core_storm')).toBe('1 ability · 4 charges · no reload');
+    expect(coreClassLine('core_dragon')).toMatch(/Lv1–3 · LMB \/ Q \/ E/); expect(coreClassLine('core_storm')).toBe('1 ability · 4 charges · no reload');
     expect(coreClassLine('iron_ingot')).toBeNull();
   });
   it('ANALYTIC: ids, names, formulas, charge counts and effect keys of the four Field Cores are exactly what they were', () => {
@@ -103,7 +103,7 @@ describe('P10 — Field Core / Lõi dã chiến is a class of its own beside the
     expect(field).toContain('data-class="FIELD_CORE"'); expect(field).toContain('FIELD CORE'); expect(field).toContain('Lõi dã chiến');
     expect(field).toContain('1 ability · 3 charges · no reload'); expect(field).toContain('iteminfo--field');
     expect(field).not.toContain('CREATOR CORE');
-    expect(creator).toContain('data-class="CREATOR_CORE"'); expect(creator).toContain('CREATOR CORE'); expect(creator).toContain('3 skills');
+    expect(creator).toContain('data-class="CREATOR_CORE"'); expect(creator).toContain('CREATOR CORE'); expect(creator).toContain('Lv1–3');
     expect(creator).not.toContain('FIELD CORE'); expect(creator).not.toContain('Lõi dã chiến'); expect(creator).not.toContain('iteminfo--field');
     // P7 alias still shown for the Creator Core, description shown for both
     expect(creator).toContain(ITEMS.core_dragon.vi!); expect(creator).toContain('data-testid="iteminfo-desc"'); expect(field).toContain(ITEMS.core_fire.desc);
@@ -127,12 +127,12 @@ describe('P10 — Field Core / Lõi dã chiến is a class of its own beside the
     const g = start(); const r = g.run!;
     for (const k of ['core_frost', 'core_blast']) expect(addItem(r, 'inv', k, 1)).toBe(0);
     const f = C(r, 'inv').slots.find((s) => s?.key === 'core_frost')!; const c = C(r, 'inv').slots.find((s) => s?.key === 'core_blast')!;
-    expect(f.charge).toBe(3); expect(f.reserves).toBeUndefined(); expect(c.reserves).toBeDefined(); expect(c.charge).toBeUndefined();
+    expect(f.charge).toBe(3); expect(f.reserves).toBeUndefined(); expect(c.reserves).toBeUndefined(); expect([c.lvl, c.dur]).toEqual([1, 300]); expect(c.charge).toBeUndefined(); c.dur = 123; c.lvl = 2;
     f.charge = 1; markDirty();
     const back = validate(raw(g))!; expect(back).not.toBeNull();
     const bf = C(back.run!, 'inv').slots.find((s) => s?.uid === f.uid)!; const bc = C(back.run!, 'inv').slots.find((s) => s?.uid === c.uid)!;
     expect([bf.key, bf.charge, bf.reserves]).toEqual(['core_frost', 1, undefined]);
-    expect(bc.key).toBe('core_blast'); expect(bc.reserves).toEqual(c.reserves);
+    expect([bc.key, bc.lvl, bc.dur, bc.reserves]).toEqual(['core_blast', 2, 123, undefined]);
   });
 });
 

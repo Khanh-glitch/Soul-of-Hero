@@ -378,13 +378,13 @@ Items whose value is what they unlock or prove. None is crafted.
 | Nature Essence | `essence_nature` | B | CRAFT_ONLY | Nature Essence. Loads the strongest reserve of nature Cores. | 2 Bitterleaf + 2 Bitterleaf Seed → 2 | — / NONE |
 | Water Essence | `essence_water` | B | CRAFT_ONLY | Water Essence. Loads the strongest reserve of water Cores. | 2 Crab Shell + 1 Frost Crystal → 2 | — / NONE |
 | Spirit Essence | `essence_spirit` | B | CRAFT_ONLY | Spirit Essence. Loads the strongest reserve of spirit Cores. | 1 Crawler Optic (specimen) + 1 Frost Crystal → 2 | — / NONE |
-| Big Bang | `core_blast` | B | CRAFT_ONLY | Big Bang. The common fire Core: the first weapon. | 2 Iron Ingot + 4 Parts + 1 Frost Crystal → 1 | — / NONE |
-| Meteor | `core_meteor` | B | CRAFT_ONLY | Meteor. The rare fire Core. | 4 Iron Ingot + 8 Parts + 3 Frost Crystal + 3 Sulfur → 1 | — / NONE |
-| Dragon's Breath | `core_dragon` | B | CRAFT_ONLY | Dragon's Breath. The top fire Core. | 8 Iron Ingot + 16 Parts + 6 Frost Crystal + 6 Sulfur → 1 | — / NONE |
-| Elsa's Sword | `core_elsa` | B | CRAFT_ONLY | Elsa's Sword. The rare water Core. | 3 Iron Ingot + 8 Parts + 4 Frost Crystal + 3 Crab Shell → 1 | — / NONE |
-| Earth Mother's Breath | `core_earthmother` | B | CRAFT_ONLY | Earth Mother's Breath. The common nature Core. | 2 Iron Ingot + 4 Parts + 1 Frost Crystal → 1 | — / NONE |
-| Mjolnir | `core_mjolnir` | B | CRAFT_ONLY | Mjolnir. The rare lightning Core (nature essence). | 4 Iron Ingot + 9 Parts + 4 Frost Crystal + 2 Electronic Parts → 1 | — / NONE |
-| Demon Core | `core_demon` | B | CRAFT_ONLY | Demon Core. The rare spirit Core. | 4 Iron Ingot + 12 Parts + 5 Frost Crystal + 2 Crawler Optic (specimen) → 1 | — / NONE |
+| Big Bang | `core_blast` | B | BOTH | Big Bang. The common fire Core: the first weapon. Crafted at a Workbench or found in approved world chests (G1B). | 2 Iron Ingot + 4 Parts + 1 Frost Crystal → 1 | — / NONE |
+| Meteor | `core_meteor` | B | BOTH | Meteor. The rare fire Core. Crafted at a Workbench or found in approved world chests (G1B). | 4 Iron Ingot + 8 Parts + 3 Frost Crystal + 3 Sulfur → 1 | — / NONE |
+| Dragon's Breath | `core_dragon` | B | BOTH | Dragon's Breath. The top fire Core. Crafted at a Workbench or found in approved world chests (G1B). | 8 Iron Ingot + 16 Parts + 6 Frost Crystal + 6 Sulfur → 1 | — / NONE |
+| Elsa's Sword | `core_elsa` | B | BOTH | Elsa's Sword. The rare water Core. Crafted at a Workbench or found in approved world chests (G1B). | 3 Iron Ingot + 8 Parts + 4 Frost Crystal + 3 Crab Shell → 1 | — / NONE |
+| Earth Mother's Breath | `core_earthmother` | B | BOTH | Earth Mother's Breath. The common nature Core. Crafted at a Workbench or found in approved world chests (G1B). | 2 Iron Ingot + 4 Parts + 1 Frost Crystal → 1 | — / NONE |
+| Mjolnir | `core_mjolnir` | B | BOTH | Mjolnir. The rare lightning Core (nature essence). Crafted at a Workbench or found in approved world chests (G1B). | 4 Iron Ingot + 9 Parts + 4 Frost Crystal + 2 Electronic Parts → 1 | — / NONE |
+| Demon Core | `core_demon` | B | BOTH | Demon Core. The rare spirit Core. Crafted at a Workbench or found in approved world chests (G1B). | 4 Iron Ingot + 12 Parts + 5 Frost Crystal + 2 Crawler Optic (specimen) → 1 | — / NONE |
 | Ember Core | `core_fire` | B | CRAFT_ONLY | Ember Core. Older single-element charge Core (fire). | 3 Sulfur + 8 Parts + 1 Frost Crystal → 1 | — / NONE |
 | Quake Core | `core_earth` | B | CRAFT_ONLY | Quake Core. Older single-element charge Core (earth). | 3 Iron Ingot + 8 Parts + 1 Frost Crystal → 1 | — / NONE |
 | Storm Core | `core_storm` | B | CRAFT_ONLY | Storm Core. Older single-element charge Core (storm). | 2 Glass + 10 Parts + 1 Frost Crystal → 1 | — / NONE |

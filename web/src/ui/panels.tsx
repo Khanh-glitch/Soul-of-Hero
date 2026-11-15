@@ -1,3 +1,4 @@
+import { coreReadout, CORE_SPECS, CORE_V2, CORE_REPAIR_BILL, g1bChestName, g1bRefreshHours, G1B_SITES } from '../game/g1b';
 import { recoveryPlan, recoveryFits } from '../game/recycler';
 import { itemClass, itemClassLabel, coreClassLine, ITEM_CLASS_MEANING, ITEM_CLASS_VI } from '../game/item-class';
 import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
@@ -27,6 +28,24 @@ import { VehicleConsole } from './VehicleConsole';
 import { DGrid, DSlot, DragGhost } from './dragSlots';
 
 const have = (api: Api) => (k: string) => countItem(api.gs.run!, 'inv', k);
+/** Core V2 service card: the same physical Core is upgraded (Lv1→2→3) and repaired at the player's own Workbench. */
+function CoreService({ api, s }: { api: Api; s: Stack }) {
+  const r = api.gs.run!; const v = coreReadout(s, Date.now()); const sp = CORE_SPECS[s.key]; if (!sp) return null;
+  const bill = (b: [string, number][]) => b.map(([k, q]) => { const n = countItem(r, 'inv', k); return <span key={k} className="chip" style={{ color: n >= q ? 'var(--good)' : 'var(--bad)' }}>{ITEMS[k]?.name ?? k} {Math.min(n, q)}/{q}</span>; });
+  const next = v.lvl < 3 ? (v.lvl + 1) as 2 | 3 : null;
+  return <div className="plate" data-testid="core-service" style={{ padding: 4, marginTop: 3, fontSize: 9 }}>
+    <div className="lbl" style={{ fontSize: 8, color: 'var(--brassLit)' }}>CORE SERVICE · Lv{v.lvl}/3 · durability {v.dur}/{v.maxDur}</div>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2, margin: '2px 0' }}>{v.modes.map(m => <span key={m.key} className="chip" style={{ color: m.unlocked ? 'var(--paper)' : 'var(--muted)' }}>{m.key} {m.unlocked ? `· cd ${(sp.cooldownMs[m.mode] / 1000)}s · wear ${m.wear}` : `· Lv${m.needLvl}`}</span>)}</div>
+    {v.upgradingTo ? <div className="lbl" style={{ fontSize: 8, color: 'var(--info)' }}>Upgrading to Lv{v.upgradingTo} · {Math.ceil(v.upgradeLeftMs / 1000)}s</div>
+      : next ? <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
+        <button className="btn sm" data-testid="core-upgrade" onClick={() => api.act('coreUpgrade', { uid: s.uid })}>Upgrade → Lv{next}</button>
+        <span className="lbl" style={{ fontSize: 7, color: 'var(--muted)' }}>Workbench Lv{CORE_V2.upgrade[next].benchLevel} · {CORE_V2.upgrade[next].ms / 1000}s</span>{bill(sp.bills[next])}</div>
+        : <div className="lbl" style={{ fontSize: 8, color: 'var(--good)' }}>Fully upgraded</div>}
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center', marginTop: 2 }}>
+      <button className="btn sm" data-testid="core-repair" disabled={v.dur >= v.maxDur || !!v.upgradingTo} onClick={() => api.act('coreRepair', { uid: s.uid })}>Repair +{CORE_V2.repairPoints}</button>
+      <span className="lbl" style={{ fontSize: 7, color: 'var(--muted)' }}>any Workbench</span>{bill(CORE_REPAIR_BILL[sp.tier])}</div>
+  </div>;
+}
 function slotClick(api: Api, c: string, i: number, e: React.MouseEvent, quickTo?: string) {
   const r = api.gs.run!; const s = C(r, c)?.slots[i];
   if (e.shiftKey && s) { const to = c === 'inv' ? quickTo : 'inv'; if (to) { api.act('move', { from: c, fs: i, to }); api.setSel(null); } return; }
@@ -78,7 +97,7 @@ export function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
         {d.food?.rad ? <StatChip g="rad" v={`${d.food.rad > 0 ? '+' : ''}${d.food.rad}`} c={d.food.rad > 0 ? 'var(--bad)' : 'var(--good)'} title="Radiation" /> : null}
         {d.power ? Object.entries(d.power).map(([m, p]) => <span key={m} className="chip" style={{ color: 'var(--paper)' }} title={`Work power on ${m}`}>{m} {p}</span>) : null}
         {s.charge !== undefined && d.charge ? <span className="chip" style={{ color: s.charge ? 'var(--info)' : 'var(--bad)' }}>{s.charge}/{d.charge}⚡</span> : null}
-        {s.reserves ? <><span className="chip" style={{ color: 'var(--paper)' }}>B {s.reserves.basic}</span><span className="chip" style={{ color: 'var(--info)' }}>Q {s.reserves.refined}</span><span className="chip" style={{ color: 'var(--brassLit)' }}>E {s.reserves.signature}</span></> : null}
+        {d.creatorCore ? <><span className="chip" style={{ color: 'var(--brassLit)' }}>Lv {s.lvl ?? 3}/3</span><span className="chip" style={{ color: (s.dur ?? 300) > 0 ? 'var(--good)' : 'var(--bad)' }}>Dur {s.dur ?? 300}/300</span>{s.reserves && s.reserves.basic + s.reserves.refined + s.reserves.signature > 0 ? <span className="chip" style={{ color: 'var(--muted)' }} title="Energy loaded before the Core rework. Spent first, never refilled.">Stored {s.reserves.basic}/{s.reserves.refined}/{s.reserves.signature}</span> : null}</> : null}
         <StatChip g="weight" v={`${(d.w * s.qty).toFixed(1)}kg`} c="var(--muted)" title="Weight carried" />
       </div>
       {dur !== null && <div className="durbar" title={`Durability ${s.dur}/${d.dur}`}><i style={{ width: `${dur * 100}%`, background: dur < 0.25 ? 'var(--bad)' : dur < 0.5 ? 'var(--warn)' : 'var(--good)' }} />{dur <= 0 && <b>BROKEN</b>}</div>}
@@ -140,6 +159,7 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
       </div>
       <Grid api={api} cid="inv" quickTo={quickTo} hotRow />
       <ItemInfo s={sel} known={r.knowledge.recipes} />
+      {sel && ITEMS[sel.key]?.creatorCore && api.sel?.c === 'inv' && <CoreService api={api} s={sel} />}
       <div className="actions">
         <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('useItem', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Use</button>
         <button className="btn" disabled={!sel || sel.qty < 2} onClick={() => api.sel && api.act('split', { c: api.sel.c, slot: api.sel.slot })}>Split</button>
@@ -196,7 +216,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const lootKind=lootSite ? lootClass(lootSite) : null;
   const poiId=e.poi==='factory_vault'?'factory':e.poi==='light_top'?'light':e.poi;
   const lootPlace=e.label || (lootSite && getWorld(r.layoutId||'shipping').places.find(p=>p.id===poiId)?.name) || e.poi || 'authored site';
-  const title = e.kind === 'airdrop' ? 'Airdrop · take only' : e.kind === 'recycler' ? 'Foundry Recycler' : e.kind === 'bag' ? (e.label || 'Bag') : e.kind === 'loot' ? (lootKind ? LOOT_CLASSES[lootKind].name : 'Crate') : e.kind === 'cash' ? 'Ragnarok Chest' : e.kind === 'vehicle' ? 'Utility Motorbike' : e.kind === 'cart' ? 'Cart Cargo' : STRUCTS[e.type!]?.name || 'Storage';
+  const title = e.kind === 'airdrop' ? 'Airdrop · take only' : e.kind === 'recycler' ? 'Foundry Recycler' : e.kind === 'bag' ? (e.label || 'Bag') : e.kind === 'loot' ? (e.g1b ? (e.g1b.kind === 'card' ? 'Access-card case' : g1bChestName(G1B_SITES[e.g1b.sid]?.variant)) : lootKind ? LOOT_CLASSES[lootKind].name : 'Crate') : e.kind === 'cash' ? 'Ragnarok Chest' : e.kind === 'vehicle' ? 'Utility Motorbike' : e.kind === 'cart' ? 'Cart Cargo' : STRUCTS[e.type!]?.name || 'Storage';
   const takeAll = (cid: string) => { const c = C(r, cid); for (let i = 0; i < c.slots.length; i++) if (c.slots[i]) { const res = api.act('move', { from: cid, fs: i, to: 'inv' }); if (!res.ok) break; } };
   const quickTo = st ? (kind === 'research' || e.kind === 'recycler' ? undefined : st.fuelC) : e.c;
   const compact = !!e.farm || !!e.garden || !!e.basePower || !!e.turret || e.type==='claim';
@@ -215,7 +235,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
         {e.kind === 'loot' && <div style={{fontSize:10,color:'#ffd98a',marginBottom:4}}>
           {lootKind && <div>{LOOT_CLASSES[lootKind].description} · {lootPlace} ({e.tx},{e.ty})</div>}
           {lootKind && <div style={{color:'#cfc2dc'}}>Family: {LOOT_CLASSES[lootKind].name} · grade {LOOT_B04_ROLES[lootKind].grade} · role {({food:'food',medical:'medical',metal:'metal',medical_high:'high-grade medical'} as const)[LOOT_B04_ROLES[lootKind].role]}</div>}
-          Withdraw only · {C(r,e.c!).slots.filter(Boolean).length} stacks remain. Partial stock stays. {lootKind ? `After empty: ordinary stock returns in ${LOOT_CLASSES[lootKind].hours}h; rare finds do not.` : 'Empty crates disappear.'}
+          Withdraw only · {C(r,e.c!).slots.filter(Boolean).length} stacks remain. Partial stock stays. {e.g1b ? (e.g1b.kind === 'card' ? 'This case is never restocked.' : `Once emptied it restocks after ${g1bRefreshHours(e.g1b.sid)}h, one time per cycle.`) : lootKind ? `After empty: ordinary stock returns in ${LOOT_CLASSES[lootKind].hours}h; rare finds do not.` : 'Empty crates disappear.'}
         </div>}
         {e.c && <><Grid api={api} cid={e.c} cols={8} /><div className="flex gap-1" style={{ marginTop: 4 }}><button className="btn" onClick={() => takeAll(e.c!)}>Take all</button>{e.kind === 'cart' && <span style={{ fontSize: 10, color: '#cfc2dc' }}>Load {cartWeight(r, e.c).toFixed(0)}/{cartLimit(e)} kg · [F] pull</span>}{e.kind === 'cart' && <button className="btn ghost" onClick={() => api.act('reclaim', { eid })}>Pack up</button>}</div></>}
         {e.kind === 'cart' && <div style={{ fontSize: 10, marginTop: 6, borderTop: '1px solid #514155' }}>

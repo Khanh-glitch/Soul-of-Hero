@@ -1,3 +1,4 @@
+import { G1B_VERSION, G1B_CHEST_SLOTS, G1B_SITES, G1B_FIXTURE_BY_ID, G1B_GATE_BY_ID, G1B_SOURCE_SITES, G1B_FIXTURES, g1bSeed, CORE_V2 } from './g1b';
 import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} from './airdrop';
 import { recoveryPlanFor, COMPONENT_RECIPES } from './recycler';
 import { combatKindOf } from './stimulus';
@@ -11,6 +12,26 @@ import { validIntel } from './expedition-intel';
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
 import { OIL_SEEP_AUTHORITY, SEEP_CELL } from './oil-seeps';
 const veyraRun = (r: any) => typeof r?.layoutId === 'string' && isVeyra05Layout(r.layoutId);
+/** G1B chest / card case / generator: a real approved source id at its resolved tile, one instance, coherent lifecycle. */
+function g1bEntityOk(r: any, e: any, offscreen: boolean, seen: Set<string>): boolean {
+  const g = e.g1b; const isObj = (v: any) => v !== null && typeof v === 'object' && !Array.isArray(v);
+  if (!isObj(r.g1b) || !isObj(g) || e.kind !== 'loot' || typeof g.sid !== 'string' || seen.has(g.sid) || (e.floor ?? 0) !== 0) return false;
+  const site = G1B_SITES[g.sid], fx = G1B_FIXTURE_BY_ID[g.sid]; const at = site ?? fx; if (!at) return false;
+  if (g.kind !== (site ? 'chest' : fx!.kind) || !['closed', 'opened', 'empty'].includes(g.state) || !Number.isSafeInteger(g.cycle) || g.cycle < 0) return false;
+  const o = r.sourceMap?.veyra?.originAu; const ox = offscreen || !o ? 0 : Math.round(o[0] / 0.5), oy = offscreen || !o ? 0 : Math.round(o[1] / 0.5);
+  if (e.tx !== at.gx - ox || e.ty !== at.gy - oy || e.x !== e.tx * 16 + 8 || e.y !== e.ty * 16 + 8) return false;
+  const c = r.custody?.[e.c]; if (!isObj(c) || !Array.isArray(c.slots) || c.slots.length !== (g.kind === 'chest' ? G1B_CHEST_SLOTS : 1)) return false;
+  const filled = c.slots.filter(Boolean).length;
+  if (g.refillAt !== undefined && (g.kind !== 'chest' || g.state !== 'empty' || !Number.isFinite(g.refillAt))) return false;
+  if (g.state === 'empty' && g.kind === 'chest' && g.refillAt === undefined) return false;
+  if (g.state !== 'opened' && filled) return false; // CLOSED is unrolled, EMPTY holds nothing
+  if (g.roll !== undefined && (g.state !== 'opened' && g.state !== 'empty' || !isObj(g.roll) || typeof g.roll.rev !== 'string' || !Number.isSafeInteger(g.roll.seed) || !Number.isFinite(g.roll.at))) return false;
+  if (g.kind === 'chest' && g.state === 'opened' && (!g.roll || g.roll.seed !== g1bSeed(r.id, g.sid, g.cycle))) return false;
+  if (g.poweredUntil !== undefined && (g.kind !== 'gen' || !Number.isFinite(g.poweredUntil))) return false;
+  if (g.kind === 'gen' && (g.state !== 'closed' || filled)) return false;
+  if (g.kind === 'card' && (g.state === 'closed' || c.slots.some((s: any) => s && s.key !== fx!.card))) return false;
+  seen.add(g.sid); return true;
+}
 const oilAuthorityOk = (r: any, a: unknown) => a === 'test-fixture-v1' ? r.oilTestFixture === true : a === OIL_SEEP_AUTHORITY ? veyraRun(r) : false;
 import { LADDER_SPAN, POWERED_DOOR_HOSTS, EQ_SLOTS, starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
 import { RETIRED_RECIPES, hasLegacyDefinition } from './recipe-migration';
@@ -112,6 +133,17 @@ export function validate(raw: any): GameState | null {
   if (r.itemSetVersion !== undefined && (!integer(r.itemSetVersion) || r.itemSetVersion < 1 || r.itemSetVersion > ITEM_SET_VERSION)) return null;
   // Item set v3: the equipment container grew from head/body/back to head/body/back/legs/feet. Old slots keep their index.
   if (obj(r.custody) && obj(r.custody.eq) && Array.isArray(r.custody.eq.slots) && r.custody.eq.slots.length === 3) r.custody.eq.slots.push(null, null);
+  // G1B — Creator Core V2 migration (idempotent, in place, same UID). A Core minted before V2 owned all three skills
+  // and had no durability: it becomes Lv3 at full durability so nothing the player held is lost. Its unspent reserve is
+  // kept as a bank the Core spends before touching the pack (never refilled, never duplicated); an empty bank is dropped.
+  if (obj(r.custody)) for (const c of Object.values(r.custody) as any[]) {
+    if (!obj(c) || !Array.isArray(c.slots)) continue;
+    for (const st of c.slots) {
+      if (!obj(st) || typeof st.key !== 'string' || !has(ITEMS, st.key) || !ITEMS[st.key].creatorCore || st.lvl !== undefined) continue;
+      st.lvl = 3; if (st.dur === undefined) st.dur = CORE_V2.maxDur;
+      if (obj(st.reserves) && !['basic', 'refined', 'signature'].some(k => st.reserves[k] > 0)) delete st.reserves;
+    }
+  }
   let retiredItems = 0;
   if (obj(r.custody)) for (const c of Object.values(r.custody) as any[]) {
     if (!obj(c) || !Array.isArray(c.slots)) continue;
@@ -312,13 +344,19 @@ export function validate(raw: any): GameState | null {
   if (r.dragonDive !== undefined && (!obj(r.dragonDive) || !Array.isArray(r.dragonDive.ids) || new Set(r.dragonDive.ids).size !== r.dragonDive.ids.length || r.dragonDive.ids.some((id: any) => typeof id !== 'string' || !id) || !finite(r.dragonDive.x) || !finite(r.dragonDive.y) || !finite(r.dragonDive.left) || r.dragonDive.left <= 0 || r.dragonDive.left > BAL.creatorCoreDragon.collectMs || (r.dragonDive.route !== undefined && (!Array.isArray(r.dragonDive.route) || r.dragonDive.route.length>500 || r.dragonDive.route.length!==r.dragonDive.ids.length || r.dragonDive.route.some((q:any,i:number)=>!obj(q)||q.id!==r.dragonDive.ids[i]||!finite(q.x)||!finite(q.y)) || !Number.isInteger(r.dragonDive.index) || r.dragonDive.index<0 || r.dragonDive.index>r.dragonDive.route.length || !finite(r.dragonDive.dragonX) || !finite(r.dragonDive.dragonY) || !['traverse','gather','dive'].includes(r.dragonDive.phase) || !Array.isArray(r.dragonDive.hitIds) || new Set(r.dragonDive.hitIds).size!==r.dragonDive.hitIds.length || r.dragonDive.hitIds.some((id:any)=>!r.dragonDive.ids.includes(id)))))) return null;
   if (r.natureTrees !== undefined && (!Array.isArray(r.natureTrees) || r.natureTrees.length>100 || new Set(r.natureTrees.map((q:any)=>`${q.tx},${q.ty}`)).size!==r.natureTrees.length || r.natureTrees.some((q:any)=>!obj(q)||!integer(q.tx)||!integer(q.ty)||q.tx<0||q.ty<0||q.tx>=WW||q.ty>=WW||!finite(q.until)||q.until<=0))) return null;
   if(r.spiritTransit!==undefined && (!obj(r.spiritTransit)||!finite(r.spiritTransit.x)||!finite(r.spiritTransit.y)||r.spiritTransit.x<TILE||r.spiritTransit.y<TILE||r.spiritTransit.x>=(WW-1)*TILE||r.spiritTransit.y>=(WW-1)*TILE||!finite(r.spiritTransit.arriveAt)||r.spiritTransit.arriveAt<r.startedAt-r.qaOffset||r.spiritTransit.arriveAt>r.clock.lastSimAt+BAL.creatorCoreDemon.teleportMs||typeof r.spiritTransit.uid!=='string'||!/^s[0-9a-z]+$/.test(r.spiritTransit.uid)||!beforeNext(r.spiritTransit.uid,/^s([a-z0-9]+)$/)))return null;
-  const uids = new Set<string>(), ownedContainers = new Set<string>(['inv', 'eq']);
+  const uids = new Set<string>(), ownedContainers = new Set<string>(['inv', 'eq']); const g1bSeen = new Set<string>();
   const stack = (s: any): s is Stack => {
     if (!obj(s) || typeof s.uid !== 'string' || !s.uid || !beforeNext(s.uid, /^s([a-z0-9]+)$/) || uids.has(s.uid) || typeof s.key !== 'string' || !has(ITEMS, s.key) || !integer(s.qty) || s.qty < 1 || s.qty > ITEMS[s.key].max) return false;
     if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return false;
     if((s.key==='keycard'||isAccessCard(s.key)) && s.charge!==undefined && (!integer(s.charge)||s.charge<1||s.charge>100||s.qty!==1))return false;
     if(s.key==='motorbike_kit' && (!finite(s.dur)||s.dur<0||s.dur>BAL.motorbike.maxHp))return false;
-    if (ITEMS[s.key].creatorCore ? (!obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k])) : s.reserves !== undefined) return false;
+    if (s.reserves !== undefined && (!ITEMS[s.key].creatorCore || !obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k]))) return false;
+    // Core V2: level, durability, three ready-at stamps and at most one running upgrade live on the physical instance.
+    if (ITEMS[s.key].creatorCore) {
+      if (![1, 2, 3].includes(s.lvl) || !finite(s.dur) || s.dur < 0 || s.dur > CORE_V2.maxDur) return false;
+      if (s.cd !== undefined && (!obj(s.cd) || Object.entries(s.cd).some(([k, v]) => !['basic', 'refined', 'signature'].includes(k) || !finite(v) || (v as number) < 0))) return false;
+      if (s.upg !== undefined && (!obj(s.upg) || s.upg.to !== s.lvl + 1 || !finite(s.upg.readyAt))) return false;
+    } else if (s.lvl !== undefined || s.cd !== undefined || s.upg !== undefined) return false;
     if ((s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) || (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) || (s.meta !== undefined && typeof s.meta !== 'string') || (s.key === 'blueprint' && (!s.meta || (!has(RECIPES, s.meta) && !hasLegacyDefinition(s.meta))))) return false;
     uids.add(s.uid); return true;
   };
@@ -391,6 +429,8 @@ export function validate(raw: any): GameState | null {
       if (!raw.profile.profileReceipts.includes(`spend:${r.id}:${e.parcel.purchaseId}:${VENDOR_SECURED[e.parcel.item].price}`)) return null;
     }
     if (!['drop','struct','bag','cart','vehicle','loot','cash','vendor','evac','door','gen','recycler','airdrop'].includes(e.kind)) return null;
+    if (e.g1b !== undefined && !g1bEntityOk(r, e, false, g1bSeen)) return null;
+    if (e.manual !== undefined && (e.manual !== true || e.kind !== 'drop')) return null;
     if (e.kind === 'struct' && !has(STRUCTS, e.type)) return null;
     if(e.kind==='airdrop'){
       const a=e.airdrop,d=r.airdrops;
@@ -476,6 +516,7 @@ export function validate(raw: any): GameState | null {
     for (const [oid, oe] of Object.entries(r.veyraOffscreenEntities) as [string, any][]) {
       if (!obj(oe) || oe.id !== oid || r.entities[oid] || !beforeNext(oid, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof oe.kind !== 'string' || !finite(oe.x) || !finite(oe.y)) return null;
       if (oe.kind === 'struct' && !has(STRUCTS, oe.type)) return null;
+      if (oe.g1b !== undefined) return null; // G1B objects live in r.g1b.far, never in the structure table
       if (oe.kind === 'recycler') {
         if (webRecyclerSite(world, r.layoutId) || oe.tx !== VEYRA_RECYCLER_SITE.tx || oe.ty !== VEYRA_RECYCLER_SITE.ty || oe.x !== VEYRA_RECYCLER_SITE.tx * 16 + 8 || oe.y !== VEYRA_RECYCLER_SITE.ty * 16 + 8 || oe.poi !== 'factory' || oe.type !== undefined || !obj(oe.station) || !finite(oe.station.burn) || oe.station.burn < 0 || r.custody[oe.station.fuelC]?.kind !== 'fuel' || r.custody[oe.station.outC]?.kind !== 'out' || !jobs(oe.station.queue, 'recycler') || oe.station.queue?.length > 1) return null;
       }
@@ -660,6 +701,18 @@ export function validate(raw: any): GameState | null {
       }
     }
   }
+  // G1B: a run either carries the whole approved chest system (every source id exactly once) or none of it.
+  if (r.g1b !== undefined) {
+    if (!obj(r.g1b) || r.g1b.version !== G1B_VERSION || typeof r.g1b.rev !== 'string' || !veyraRun(r) || !obj(r.g1b.doors) || Object.entries(r.g1b.doors).some(([k, v]: [string, any]) => !G1B_GATE_BY_ID[k] || !obj(v) || !finite(v.closeAt))) return null;
+    if (!obj(r.g1b.far)) return null;
+    for (const [oid, oe] of Object.entries(r.g1b.far) as [string, any][]) {
+      if (!obj(oe) || oe.id !== oid || r.entities[oid] || r.veyraOffscreenEntities?.[oid] || !/^e[a-z0-9]+$/.test(oid) || !beforeNext(oid, /^e([a-z0-9]+)$/) || !finite(oe.x) || !finite(oe.y)) return null;
+      if (Object.keys(oe).some(k => !['id', 'kind', 'x', 'y', 'tx', 'ty', 'c', 'label', 'g1b', 'floor'].includes(k))) return null;
+      if (!g1bEntityOk(r, oe, true, g1bSeen)) return null;
+      if (typeof oe.c !== 'string' || !r.custody[oe.c] || ownedContainers.has(oe.c)) return null; ownedContainers.add(oe.c);
+    }
+    if (g1bSeen.size !== G1B_SOURCE_SITES.length + G1B_FIXTURES.length) return null;
+  } else if (g1bSeen.size) return null;
   if (Object.keys(r.custody).some(id => !ownedContainers.has(id))) return null;
   // CAL-01 world_calendar_v1 persistence policy — ONE explicit rule for every stored record:
   //   absent (pre-season save) -> reconstructed from the run clock, nothing granted;

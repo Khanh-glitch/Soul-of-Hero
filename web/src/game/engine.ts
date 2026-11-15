@@ -1,5 +1,6 @@
 import { landingStimulus } from './stimulus';
 import { VFX_TEST_KIT, VFX_TEST_CORES } from './vfx/testkit';
+import { G1B_VERSION, G1B_LOOT_REVISION, G1B_CHEST_SLOTS, G1B_SOURCE_SITES, G1B_FIXTURES, G1B_GATES, G1B_SITES, G1B_FIXTURE_BY_ID, g1bGateAtDoor, g1bRoll, g1bRefreshHours, g1bChestName, CORE_V2, CORE_SPECS, CORE_REPAIR_BILL, coreAmmo, coreLevel, coreDur, type CoreMode, type G1bGate } from './g1b';
 import { supportsAirdrops, airdropArea, airdropTimes, airdropRewards, chooseAirdropSite, airdropStaticEligible } from './airdrop';
 import { recoveryPlan, recoveryPlanFor, recoveryFits, COMPONENT_RECIPES } from './recycler';
 import { recordIntel, gateKey, placeOfPoi } from './expedition-intel';
@@ -130,7 +131,7 @@ export function mkStack(r: RunState, key: string, qty: number, meta?: string): S
   // legacy job, fixture or stale caller can put a retired item into any container of any run.
   qty = Math.ceil(qty * liveItemPer(key)); key = liveItemId(key); if (key === 'blueprint' && meta) meta = liveRecipeId(meta) ?? meta;
   const d = ITEMS[key]; const s: Stack = { uid: uid(r, 's'), key, qty };
-  if (d?.creatorCore) s.reserves = { basic: 0, refined: 0, signature: 0 };
+  if (d?.creatorCore) { s.lvl = 1; s.dur = CORE_V2.maxDur; } // Core V2: a new Core is Lv1 at full durability and has no magazine
   if (d?.dur) s.dur = d.dur; if (d?.charge) s.charge = d.initialCharge ?? d.charge; if(isAccessCard(key) && qty===1 && r.poiAccessVersion==='poi-access-v1') s.charge=BAL.poiAccess.cardUses; if (meta) s.meta = meta; return s;
 }
 export function mkContainer(r: RunState, kind: string, n: number): Container { const c = { id: uid(r, 'c'), kind, slots: Array(n).fill(null) }; r.custody[c.id] = c; return c; }
@@ -320,7 +321,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   r.custody.inv.slots[0] = mkStack(r, 'knife', 1);
   const fl = mkStack(r, 'water_flask', 1); fl.charge = 2; r.custody.inv.slots[1] = fl;
   r.custody.inv.slots[2] = mkStack(r, 'berries', 3);
-  if (VFX_TEST_KIT) { const inv = r.custody.inv.slots; inv[8] = inv[1]; inv[9] = inv[2]; VFX_TEST_CORES.forEach((k, i) => { const s = mkStack(r, k, 1); s.reserves = { basic: 40, refined: 12, signature: 4 }; inv[1 + i] = s; }); r.qaUsed = true; }
+  if (VFX_TEST_KIT) { const inv = r.custody.inv.slots; inv[8] = inv[1]; inv[9] = inv[2]; VFX_TEST_CORES.forEach((k, i) => { const s = mkStack(r, k, 1); s.lvl = 3; inv[1 + i] = s; }); r.qaUsed = true; }
   r.player = { x: sp.tx * TILE + 8, y: sp.ty * TILE + 8, vx: 0, vy: 0, dir: 0, aim: Math.PI / 2, hp: BAL.player.maxHp, stamina: BAL.player.maxStamina, hunger: 85, thirst: 85, warmth: 100, rad: 0, active: 0, action: null, invuln: 0, dead: false, deadT: 0, pulling: null, skills: { gather: 0, combat: 0, craft: 0, survival: 0 }, stepAcc: 0, lastTraceX: 0, lastTraceY: 0, regionName: sp.name, sheltered: false };
   // statics → physical entities with real finite loot
   const pendingRolls: [StaticEnt, Container][] = [];
@@ -330,10 +331,10 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
       const c = mkContainer(r, 'loot', lootSlots(r));
       s.loot!.forEach(([k, q], i) => {
         if (k.startsWith('blueprint:')) c.slots[i] = mkStack(r, 'blueprint', 1, k.slice(10));
-        else { const stack=mkStack(r,k,q); if (['meteor','dragon','elsa'].includes(ITEMS[k]?.creatorCore || '') && stack.reserves) stack.reserves.signature=3; c.slots[i]=stack; }
+        else c.slots[i]=mkStack(r,k,q); // Core V2: a found Core is Lv1 with full durability and no pre-loaded energy
       });
       const unique=r.creatorLootV1 && creatorLootV1(s);
-      if(unique){const free=c.slots.findIndex(x=>!x);if(free>=0){const stack=mkStack(r,unique,1);stack.reserves!.signature=3;c.slots[free]=stack;}}
+      if(unique){const free=c.slots.findIndex(x=>!x);if(free>=0)c.slots[free]=mkStack(r,unique,1);}
       // Initial rolls are deferred until the physical source contract is measured (B05 needs it).
       pendingRolls.push([s,c]);
       e.c = c.id;
@@ -353,6 +354,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     const e:Entity={id:uid(r,'e'),kind:'recycler',x:VEYRA_RECYCLER_SITE.tx*TILE+8,y:VEYRA_RECYCLER_SITE.ty*TILE+8,tx:VEYRA_RECYCLER_SITE.tx,ty:VEYRA_RECYCLER_SITE.ty,poi:'factory',label:'Foundry Recycler',station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',0).id,outC:mkContainer(r,'out',4).id}};
     (r.veyraOffscreenEntities ??= {})[e.id]=e;
   }
+  if (isVeyra05Layout(activeLayoutName)) seedG1b(r);
   // B05 (loot-source-v2): measure physical access once from the real collision grid, record it, then roll initial stock.
   if (r.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT) r.lootEcology.sourceContract = buildLootSourceContract(w, site => lootSiteAccess(r, site));
   for (const [s, c] of pendingRolls) {
@@ -1502,6 +1504,102 @@ export function lootSiteAccess(r: RunState, site: StaticEnt): PhysicalAccess {
   if (reach(true)) return 'door-required';
   return 'unreachable';
 }
+// ====================================================================================================
+// G1B — creator-approved world chests (see g1b.ts). Chests are ordinary `loot` entities with a `g1b` block; they keep
+// GLOBAL coordinates while off-window (the same ledger the Veyra recycler uses) so a window slide never touches them.
+// ====================================================================================================
+export function g1bEta(ms: number): string { const m = Math.max(1, Math.ceil(ms / 60000)); return m >= 60 ? `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}m` : `${m}m`; }
+/** Every G1B entity of the run, in the window or not. */
+const G1B_ID_CACHE = new WeakMap<RunState, string[]>(); // derived index only (never saved): entity ids are stable across window streaming
+export function g1bEntities(r: RunState): Entity[] {
+  const off = r.g1b?.far, ids = G1B_ID_CACHE.get(r);
+  if (ids) { const out: Entity[] = []; let ok = true; for (const id of ids) { const e = r.entities[id] || off?.[id]; if (!e?.g1b) { ok = false; break; } out.push(e); } if (ok) return out; }
+  const out: Entity[] = []; for (const e of Object.values(r.entities)) if (e.g1b) out.push(e); for (const e of Object.values(off || {})) if (e.g1b) out.push(e);
+  out.sort((a, b) => a.g1b!.sid < b.g1b!.sid ? -1 : a.g1b!.sid > b.g1b!.sid ? 1 : 0); // one order whether scanned or indexed
+  G1B_ID_CACHE.set(r, out.map(e => e.id)); return out;
+}
+function seedG1b(r: RunState) {
+  r.g1b = { version: G1B_VERSION, rev: G1B_LOOT_REVISION, doors: {}, far: {} };
+  const o = r.sourceMap?.veyra?.originAu; const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  const put = (sid: string, kind: 'chest' | 'card' | 'gen', gx: number, gy: number, label: string, slots: number, fill?: string) => {
+    const c = mkContainer(r, 'loot', slots); if (fill) c.slots[0] = mkStack(r, fill, 1);
+    const e: Entity = { id: uid(r, 'e'), kind: 'loot', x: gx * TILE + 8, y: gy * TILE + 8, tx: gx, ty: gy, c: c.id, label, g1b: { sid, kind, state: kind === 'card' ? 'opened' : 'closed', cycle: 0 } };
+    const lx = gx - ox, ly = gy - oy;
+    if (lx >= 1 && ly >= 1 && lx < WW - 1 && ly < WH - 1) { e.x = lx * TILE + 8; e.y = ly * TILE + 8; e.tx = lx; e.ty = ly; r.entities[e.id] = e; }
+    else r.g1b!.far[e.id] = e;
+  };
+  for (const s of G1B_SOURCE_SITES) put(s.id, 'chest', s.gx, s.gy, g1bChestName(s.variant), G1B_CHEST_SLOTS);
+  for (const f of G1B_FIXTURES) put(f.id, f.kind, f.gx, f.gy, f.kind === 'card' ? 'Access-card case' : 'Circuit generator', 1, f.kind === 'card' ? f.card : undefined);
+}
+function g1bWindowOrigin(r: RunState): [number, number] { const o = r.sourceMap?.veyra?.originAu; return o ? [Math.round(o[0] / 0.5), Math.round(o[1] / 0.5)] : [0, 0]; }
+/** The gate contract of a real POI door entity, by its global tile. Only runs that carry the chest system have gates. */
+export function g1bGateOf(r: RunState, e: Entity): G1bGate | undefined {
+  if (!r.g1b || e.kind !== 'door' || e.tx === undefined || e.ty === undefined || ((e as any).floor ?? 0) !== 0 || !r.layoutId || !isVeyra05Layout(r.layoutId)) return;
+  const [ox, oy] = g1bWindowOrigin(r); return g1bGateAtDoor(ox + e.tx, oy + e.ty);
+}
+export function g1bPowered(r: RunState, gate: G1bGate, now: number): boolean { if (!gate.power) return true; const g = g1bEntities(r).find(e => e.g1b!.sid === gate.power); return (g?.g1b?.poweredUntil ?? 0) > now; }
+export function g1bDoorLabel(r: RunState, e: Entity, gate: G1bGate, now: number): string {
+  if (e.open) { const at = r.g1b?.doors[gate.id]?.closeAt; return at ? `Close door · auto-close ${Math.max(0, Math.ceil((at - now) / 1000))}s` : 'Close door'; }
+  if (interiorRelease(r, e, { interior: gate.interior } as any)) return 'Interior exit handle';
+  const need: string[] = [];
+  if (gate.card) { const want = cardItemForClass(gate.card), card = r.custody.inv?.slots.find(s => s?.key === want && (s.charge === undefined || s.charge > 0)); need.push(card ? `${ITEMS[want].name} · ${card.charge ?? 1} uses` : `${ITEMS[want].name} required`); }
+  if (gate.power) need.push(g1bPowered(r, gate, now) ? 'circuit live' : 'circuit dead · fuel the generator');
+  if (gate.ppe) need.push(ITEMS[r.custody.eq?.slots[EQ_SLOTS.indexOf('head')]?.key || '']?.mask ? 'mask on' : 'Filter Mask required');
+  return `Sealed door · ${need.join(' · ')}`;
+}
+/** Run-clock settlement (online and offline share it): EMPTY starts one timer; one refill; never a catch-up or a reroll. */
+export function stepG1b(r: RunState, now: number) {
+  if (!r.g1b) return;
+  for (const e of g1bEntities(r)) {
+    const g = e.g1b!; if (g.kind === 'gen') continue;
+    if (g.state === 'opened' && !r.custody[e.c!]?.slots.some(Boolean)) {
+      g.state = 'empty';
+      if (g.kind === 'chest') { g.refillAt = now + g1bRefreshHours(g.sid) * HOUR; receipt(r, now, 'g1b.empty', `${g.sid}:cycle${g.cycle}:refill=${g.refillAt}`); }
+      else receipt(r, now, 'g1b.card.taken', g.sid); // finite: a card case never restocks
+    }
+    if (g.state === 'empty' && g.kind === 'chest' && g.refillAt !== undefined && now >= g.refillAt) {
+      g.state = 'closed'; g.cycle += 1; delete g.refillAt; delete g.roll; receipt(r, now, 'g1b.refill', `${g.sid}:cycle${g.cycle}`);
+    }
+  }
+  const pending = Object.entries(r.g1b.doors); if (!pending.length) return;
+  const [ox, oy] = g1bWindowOrigin(r);
+  for (const [id, d] of pending) {
+    if (d.closeAt > now) continue; const gate = G1B_GATES.find(q => q.id === id); if (!gate) { delete r.g1b.doors[id]; continue; }
+    const e = Object.values(r.entities).find(v => v.kind === 'door' && ((v as any).floor ?? 0) === 0 && v.tx === gate.door[0] - ox && v.ty === gate.door[1] - oy);
+    if (!e) { const gi = gate.door[1] * 4000 + gate.door[0]; if (r.veyraGlobalDoors && gi in r.veyraGlobalDoors) r.veyraGlobalDoors[gi] = false; delete r.g1b.doors[id]; continue; }
+    if (!e.open) { delete r.g1b.doors[id]; continue; }
+    if (doorwayOccupied(r, e)) continue; // never closes on a body; retried at the next settlement
+    e.open = false; markDirty(); delete r.g1b.doors[id]; receipt(r, now, 'g1b.door.close', id);
+  }
+}
+
+// ---------- Creator Core V2 ----------
+/** Finish a same-UID upgrade whose real-time timer has elapsed (also while the game was closed). */
+export function settleCore(s: Stack, now: number) { if (s.upg && now >= s.upg.readyAt) { s.lvl = s.upg.to; delete s.upg; } }
+/** Why this cast cannot start right now, or null. Never mutates anything except settling a finished upgrade. */
+export function coreCastBlock(r: RunState, s: Stack, mode: CoreMode, now: number): string | null {
+  const d = ITEMS[s.key]; if (!d?.creatorCore) return 'Not a Creator Core.';
+  settleCore(s, now);
+  if (s.upg) return `${d.name} is being upgraded: ${Math.ceil((s.upg.readyAt - now) / 1000)}s left.`;
+  if (coreLevel(s) < CORE_V2.modeLevel[mode]) return `${mode === 'refined' ? 'Q' : 'E'} needs ${d.name} Lv${CORE_V2.modeLevel[mode]}. Upgrade it at a Workbench.`;
+  if (coreDur(s) <= 0) return `${d.name} is worn out. Repair it at a Workbench.`;
+  const ready = s.cd?.[mode] ?? 0; if (ready > now) return `${mode === 'basic' ? 'LMB' : mode === 'refined' ? 'Q' : 'E'} recharging: ${((ready - now) / 1000).toFixed(1)}s.`;
+  if (VFX_TEST_KIT || (s.reserves?.[mode] ?? 0) > 0) return null;
+  const missing = coreAmmo(mode, d.essence).filter(([k, q]) => countItem(r, 'inv', k) < q);
+  return missing.length ? `No ${missing.map(([k]) => ITEMS[k]?.name ?? k).join(' or ')} in your pack.` : null;
+}
+/** The accepted cast: ammunition, wear and the per-UID cooldown are charged together, or not at all. */
+export function coreCastCommit(r: RunState, s: Stack, mode: CoreMode, now: number): boolean {
+  if (coreCastBlock(r, s, mode, now)) return false;
+  const d = ITEMS[s.key], sp = CORE_SPECS[s.key];
+  if (!VFX_TEST_KIT) {
+    if ((s.reserves?.[mode] ?? 0) > 0) { s.reserves![mode]--; if (!s.reserves!.basic && !s.reserves!.refined && !s.reserves!.signature) delete s.reserves; } // pre-V2 bank is spent first, never refilled
+    else for (const [k, q] of coreAmmo(mode, d.essence)) removeItem(r, 'inv', k, q);
+  }
+  if (sp) { if (!VFX_TEST_KIT) s.dur = Math.max(0, coreDur(s) - sp.wear[mode]); (s.cd ??= {})[mode] = now + sp.cooldownMs[mode]; }
+  return true;
+}
+
 export function lootCooldown(site: StaticEnt, r?:RunState): number {
   const spec = r?.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT ? specForSite(site) : null; if (spec) return spec.cooldownHours*HOUR;
   const kind=r?.lootEcology && lootClass(site); if(kind)return LOOT_CLASSES[kind].hours*HOUR;
@@ -1517,7 +1615,7 @@ export function renewableStock(r:RunState,site:StaticEnt,cycle:number):[string,n
 function retireEmptyLoot(r: RunState, cid: string, now: number) {
   const e = Object.values(r.entities).find(v => v.kind === 'loot' && v.c === cid && onActiveFloor(r, v));
   const c = r.custody[cid];
-  if (!e || !c || c.slots.some(Boolean) || !Number.isInteger(e.tx) || !Number.isInteger(e.ty)) return;
+  if (!e || e.g1b || !c || c.slots.some(Boolean) || !Number.isInteger(e.tx) || !Number.isInteger(e.ty)) return;
   const w = getWorld(r.layoutId || 'shipping');
   const site = w.statics.find(s => s.kind === 'loot' && s.tx === e.tx && s.ty === e.ty);
   if (!site) return;
@@ -2183,21 +2281,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       }
       return fail('Unknown husbandry action.');
     }
-    case 'loadCore': {
-      if (!Number.isInteger(it.slot) || it.slot < 0 || it.slot >= 8 || !['basic','refined','signature'].includes(it.mode)) return fail('Invalid Core reload.');
-      if (p.action) return fail('Finish your current action first.');
-      const s = C(r, 'inv').slots[it.slot];
-      if (!s || s.uid !== it.uid || !ITEMS[s.key]?.creatorCore || !s.reserves) return fail('Select the same physical Creator Core.');
-      const mode = it.mode as 'basic'|'refined'|'signature';
-      const caps = { basic: 40, refined: 12, signature: 4 }; const room = caps[mode] - s.reserves[mode];
-      const energy = mode === 'basic' ? 'energy_basic' : 'energy_refined';
-      const essence = `essence_${ITEMS[s.key].essence}`;
-      const n = Math.min(room, countItem(r, 'inv', energy), mode === 'signature' ? countItem(r, 'inv', essence) : room);
-      if (n <= 0) return fail(room <= 0 ? 'Reserve is full.' : `Missing ${mode === 'signature' ? 'Refined Energy or matching Essence' : ITEMS[energy].name}.`);
-      removeItem(r, 'inv', energy, n); if (mode === 'signature') removeItem(r, 'inv', essence, n);
-      s.reserves[mode] += n;
-      return ok('core.load', `${s.uid}:${mode}+${n}`);
-    }
+    case 'loadCore': return fail('Creator Cores no longer reload. A cast takes its energy straight from your pack.');
     case 'pickup': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'drop' || !owned(e)) return fail('Nothing to pick up.');
       if (!near(r, e, 2.5)) return fail('Too far.');
@@ -2206,6 +2290,58 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (room <= 0) return fail('Inventory full.');
       if (room >= s.qty) { if (!addStack(r, 'inv', s)) return fail('Inventory full.'); removeEntity(r, e); return ok('pickup', `${s.key}x${s.qty}`); }
       addItem(r, 'inv', s.key, room); s.qty -= room; return ok('pickup', `${s.key}x${room} (partial)`);
+    }
+    case 'g1bOpen': {
+      const e = r.entities[it.eid]; if (!e || e.kind !== 'loot' || !e.g1b || !r.g1b) return fail('No chest here.');
+      if (!near(r, e, 2.8) || !clearInteraction(r, e)) return fail('Chest is out of reach or blocked.');
+      stepG1b(r, now);
+      const g = e.g1b, c = C(r, e.c!);
+      if (g.kind === 'gen') return fail('That is a generator.');
+      if (g.state === 'empty') return fail(g.refillAt ? `Empty. Restocks in ${g1bEta(g.refillAt - now)}.` : 'Empty.');
+      if (g.state === 'closed') {
+        // rolled exactly once for this (run, source, cycle, table revision); the stacks are stored, never re-rolled
+        const roll = g1bRoll(r.id, g.sid, g.cycle, key => ITEMS[liveItemId(key)]?.max ?? 1);
+        if (!roll.stacks.length || roll.stacks.length > c.slots.length) return fail('Chest contract missing for this source.');
+        roll.stacks.forEach((st, i) => { const stack = mkStack(r, st.key, st.qty); if (st.level) stack.lvl = st.level; c.slots[i] = stack; receipt(r, now, 'g1b.roll', `${g.sid}:${G1B_LOOT_REVISION}:cycle${g.cycle}:seed${roll.seed}:slot${i}:${stack.key}${st.level ? ':lv' + st.level : ''}x${stack.qty}:${stack.uid}`); });
+        g.state = 'opened'; g.roll = { rev: G1B_LOOT_REVISION, seed: roll.seed, at: now };
+        return ok('g1b.open', `${g.sid}:cycle${g.cycle}`);
+      }
+      return ok('g1b.search', g.sid);
+    }
+    case 'g1bGenerator': {
+      const e = r.entities[it.eid]; if (!e || e.kind !== 'loot' || e.g1b?.kind !== 'gen' || !r.g1b) return fail('No generator here.');
+      if (!near(r, e, 2.8) || !clearInteraction(r, e)) return fail('Generator is out of reach or blocked.');
+      if ((e.g1b.poweredUntil ?? 0) > now) return fail(`Generator already running: ${Math.ceil((e.g1b.poweredUntil! - now) / 1000)}s left.`);
+      if (countItem(r, 'inv', 'fuel_can') < 1) return fail('Generator needs one physical Fuel Canister.');
+      removeItem(r, 'inv', 'fuel_can', 1); e.g1b.poweredUntil = now + BAL.poiAccess.fuelRuntimeMs;
+      return ok('g1b.power', `${e.g1b.sid}:until=${e.g1b.poweredUntil}`, `Generator running for ${BAL.poiAccess.fuelRuntimeMs / 1000} seconds.`);
+    }
+    case 'coreUpgrade': {
+      const inv = C(r, 'inv'), s = inv.slots.find(v => v?.uid === it.uid); if (!s || !ITEMS[s.key]?.creatorCore) return fail('Carry the Creator Core you want to upgrade.');
+      settleCore(s, now); const sp = CORE_SPECS[s.key]; if (!sp) return fail('This Core has no upgrade path.');
+      if (s.upg) return fail(`Upgrade in progress: ${Math.ceil((s.upg.readyAt - now) / 1000)}s left.`);
+      const lvl = coreLevel(s); if (lvl >= 3) return fail('This Core is already Lv3.');
+      const to = (lvl + 1) as 2 | 3, rule = CORE_V2.upgrade[to];
+      const bench = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'workbench' && e.station && owned(e) && (e.station.level ?? 1) >= rule.benchLevel && near(r, e, 3));
+      if (!bench) return fail(`Stand at your level ${rule.benchLevel} Workbench.`);
+      const bill = sp.bills[to]; const missing = bill.filter(([k, q]) => countItem(r, 'inv', k) < q);
+      if (missing.length) return fail(`Missing ${missing.map(([k, q]) => `${ITEMS[k].name} ×${q - countItem(r, 'inv', k)}`).join(', ')}.`);
+      for (const [k, q] of bill) removeItem(r, 'inv', k, q);
+      s.upg = { to, readyAt: now + rule.ms }; // same physical UID; durability and cooldowns are untouched
+      return ok('core.upgrade.start', `${s.uid}:${s.key}:lv${to}:ready=${s.upg.readyAt}`, `${ITEMS[s.key].name} → Lv${to} in ${rule.ms / 1000}s.`);
+    }
+    case 'coreRepair': {
+      const inv = C(r, 'inv'), s = inv.slots.find(v => v?.uid === it.uid); if (!s || !ITEMS[s.key]?.creatorCore) return fail('Carry the Creator Core you want to repair.');
+      settleCore(s, now); const sp = CORE_SPECS[s.key]; if (!sp) return fail('This Core cannot be repaired.');
+      if (s.upg) return fail('Wait for the upgrade to finish.');
+      if (coreDur(s) >= CORE_V2.maxDur) return fail('This Core is at full durability.');
+      const bench = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'workbench' && e.station && owned(e) && near(r, e, 3));
+      if (!bench) return fail('Stand at your Workbench.');
+      const bill = CORE_REPAIR_BILL[sp.tier]; const missing = bill.filter(([k, q]) => countItem(r, 'inv', k) < q);
+      if (missing.length) return fail(`Missing ${missing.map(([k, q]) => `${ITEMS[k].name} ×${q - countItem(r, 'inv', k)}`).join(', ')}.`);
+      for (const [k, q] of bill) removeItem(r, 'inv', k, q);
+      s.dur = Math.min(CORE_V2.maxDur, coreDur(s) + CORE_V2.repairPoints);
+      return ok('core.repair', `${s.uid}:${s.key}:dur=${s.dur}`, `${ITEMS[s.key].name} repaired to ${s.dur}/${CORE_V2.maxDur}.`);
     }
     case 'move': {
       const from = C(r, it.from), to = C(r, it.to);
@@ -2268,7 +2404,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const order = ['tool', 'weapon', 'core', 'armor', 'food', 'res', 'kit', 'bp', 'misc', 'stone', 'cash'];
       rest.sort((a, b) => order.indexOf(ITEMS[a.key].cat) - order.indexOf(ITEMS[b.key].cat) || a.key.localeCompare(b.key));
       const out = it.c === 'inv' ? [...keep.map(s => (s && s.qty > 0 ? s : null))] : []; while (out.length < c.slots.length) out.push(rest.shift() || null); c.slots = out; return ok('sort', c.id); }
-    case 'drop': { const c = C(r, it.c); const s = c && validSlot(c, it.slot) ? c.slots[it.slot] : null; if (!s || !canAccess(r, it.c)) return fail('Nothing to drop.'); c.slots[it.slot] = null; if (p.pulling && s.key === 'x') p.pulling = null; dropStackEntity(r, s, p.x + Math.cos(p.aim) * 12, p.y + Math.sin(p.aim) * 12, now); pruneEmptyBag(r, it.c); return ok('drop', `${s.key}x${s.qty}`); }
+    case 'drop': { const c = C(r, it.c); const s = c && validSlot(c, it.slot) ? c.slots[it.slot] : null; if (!s || !canAccess(r, it.c)) return fail('Nothing to drop.'); c.slots[it.slot] = null; if (p.pulling && s.key === 'x') p.pulling = null; dropStackEntity(r, s, p.x + Math.cos(p.aim) * 12, p.y + Math.sin(p.aim) * 12, now).manual = true; pruneEmptyBag(r, it.c); return ok('drop', `${s.key}x${s.qty}`); }
     case 'upgradeStructure': {
       const e = r.entities[it.eid];
       if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');
@@ -2671,6 +2807,27 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if(e.open) {
         if(doorwayOccupied(r,e))return fail('Doorway occupied. Step clear before closing.');
         e.open=false;markDirty();return ok('door',`${e.id}:closed`);
+      }
+      const gate=e.kind==='door'?g1bGateOf(r,e):undefined;
+      if(gate){
+        // G1B card room / deep room: the interior handle always works, so a player can never be sealed in.
+        const exit=interiorRelease(r,e,{interior:gate.interior} as any);
+        let note='interior-release';
+        if(!exit){
+          if(gate.power && !g1bPowered(r,gate,now))return fail('Sealed: the door circuit is dead. Fuel the generator outside with 1 Fuel Canister.');
+          if(gate.ppe && !ITEMS[C(r,'eq').slots[EQ_SLOTS.indexOf('head')]?.key||'']?.mask)return fail('Sealed: the interlock refuses unprotected entry. Wear a Filter Mask.');
+          if(gate.card){
+            const want=cardItemForClass(gate.card),inv=C(r,'inv'),i=inv.slots.findIndex(s=>s?.key===want && (s.charge===undefined||s.charge>0));
+            if(i<0)return fail(inv.slots.some(s=>s&&isAccessCard(s.key))?`Sealed. This reader takes a ${ITEMS[want].name}; the card you carry is the wrong colour or exhausted.`:`Sealed. A ${ITEMS[want].name} is required.`);
+            const card=inv.slots[i]!;let remaining=0;
+            if(card.charge===undefined){card.qty--;if(!card.qty)inv.slots[i]=null;}
+            else {card.charge--;remaining=card.charge;if(card.charge===0)inv.slots[i]=null;}
+            note=`${card.uid}:remaining=${remaining}`;
+          } else note='powered';
+        }
+        r.g1b!.doors[gate.id]={closeAt:now+BAL.poiAccess.doorOpenMs};
+        e.open=true;markDirty();
+        return ok(exit?'g1b.door.exit':'g1b.door.open',`${gate.id}:${note}`,exit?'Interior handle opened the door.':gate.card?`${ITEMS[cardItemForClass(gate.card)].name} accepted.`:'Powered door opened.');
       }
       if(e.electricDoor){
         const emergency=electricInterior(r,e);if(!emergency&&!electricDoorPowered(r,e))return fail('Powered door: no connected allocated power. Interior handle is on the other side.');

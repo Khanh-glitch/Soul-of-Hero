@@ -143,7 +143,7 @@ function loadAllCores(r: RunState) {
   const elementals = ['core_fire', 'core_frost', 'core_storm', 'core_earth'];
   creators.forEach((k, idx) => {
     const st = mkStack(r, k, 1);
-    if (st.reserves) st.reserves = { basic: 40, refined: 12, signature: 4 };
+    st.lvl = 3; // QA kit: every skill unlocked; ammunition is still spent from the pack
     inv.slots[idx] = st;
   });
   elementals.forEach((k, idx) => {
@@ -466,7 +466,7 @@ export function buildQaSandbox(
     // Drop a real Ground Death Bag 10 tiles east containing high-value Cores & Ragnarok Cash
     const bx = Math.min(WW - 6, ptx + 10), by = pty;
     const bagC = mkContainer(r, 'bag', 12);
-    const dragon = mkStack(r, 'core_dragon', 1); dragon.reserves = { basic: 40, refined: 12, signature: 4 };
+    const dragon = mkStack(r, 'core_dragon', 1); dragon.lvl = 3;
     bagC.slots[0] = dragon;
     bagC.slots[1] = mkStack(r, 'rcash', 60);
     bagC.slots[2] = mkStack(r, 'iron_sword', 1);
@@ -556,7 +556,7 @@ export function triggerQaEvent(
     }
     case 'discover_core': {
       const st = mkStack(r, 'core_dragon', 1);
-      if (st.reserves) st.reserves = { basic: 40, refined: 12, signature: 4 };
+      st.lvl = 3;
       addItem(r, 'inv', 'energy_basic', 20);
       const inv = C(r, 'inv');
       const free = inv.slots.findIndex(x => !x);

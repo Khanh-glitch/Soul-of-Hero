@@ -28,6 +28,7 @@ function lootFamilySprite(r: RunState, e: Entity): string | null {
 }
 import { FX, PROJ, HAZ, activeStack } from './sim';
 import * as vfxDirector from './vfx/director';
+import { drawG1bChest } from './g1b-art';
 import * as vfxStage from './vfx/stage';
 import { getArt, pixelText, mk, type Sprite } from './art';
 import { HERO_FRAMES } from './hero-art';
@@ -470,7 +471,18 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       for(let k=0;k<3;k++){g.fillStyle=k<stacks?'#f0d060':'#3a2a2a';g.fillRect(X-5+k*4,Y+3,2,2);}
       g.fillStyle=lampCol;g.fillRect(X+5,Y-16,3,3);g.fillStyle='#120c18';g.fillRect(X+5,Y-16,3,1);
       return; }
-    case 'loot': { const empty = !C(r, e.c!).slots.some(Boolean); const fam = lootFamilySprite(r, e); shadow(g, X, Y + 5, 7); g.drawImage(fam ? A.st[fam] : (empty ? A.st.loot_open : A.st.loot), X - 8, Y - 10); return; }
+    case 'loot': {
+      if (e.g1b) {
+        const gb = e.g1b; shadow(g, X, Y + 5, gb.kind === 'chest' ? 11 : 7);
+        if (gb.kind === 'chest') { if (!drawG1bChest(g, gb.sid, gb.state, X, Y + 6, time)) g.drawImage(gb.state === 'closed' ? A.st.loot : A.st.loot_open, X - 8, Y - 10); return; }
+        if (gb.kind === 'gen') { const run = (gb.poweredUntil ?? 0) > now; g.drawImage(A.st.gen, X - 8 + (run ? Math.round(Math.sin(time / 40)) : 0), Y - 10); g.fillStyle = run ? '#7aff6a' : '#ff5a3a'; g.fillRect(X + 4, Y - 8, 2, 2); return; }
+        // access-card case: a small lock-box whose stripe is the colour of the card it holds; dark when taken
+        const col = gb.sid.endsWith('green') ? '#5fd67a' : gb.sid.endsWith('blue') ? '#5aa8ff' : '#b47aff';
+        g.fillStyle = '#17131d'; g.fillRect(X - 6, Y - 9, 12, 13); g.fillStyle = '#5b6470'; g.fillRect(X - 5, Y - 8, 10, 11); g.fillStyle = '#8a95a1'; g.fillRect(X - 5, Y - 8, 10, 1);
+        g.fillStyle = gb.state === 'empty' ? '#2a2630' : col; g.fillRect(X - 4, Y - 5, 8, 3); g.fillStyle = '#17131d'; g.fillRect(X - 1, Y, 2, 2);
+        return;
+      }
+      const empty = !C(r, e.c!).slots.some(Boolean); const fam = lootFamilySprite(r, e); shadow(g, X, Y + 5, 7); g.drawImage(fam ? A.st[fam] : (empty ? A.st.loot_open : A.st.loot), X - 8, Y - 10); return; }
     case 'cash': { const rag = isRagnarok(r, now); shadow(g, X, Y + 5, 7); g.drawImage(e.minted && !C(r, e.c!).slots.some(Boolean) ? A.st.cash_open : A.st.cash, X - 8, Y - 10); if (rag && !e.minted) { const a = 0.4 + Math.sin(time / 200) * 0.3; g.fillStyle = `rgba(255,208,64,${a})`; g.fillRect(X - 7, Y - 12, 14, 1); if (Math.random() < 0.2) add({ x: X - 6 + Math.random() * 12, y: Y - 8, vx: 0, vy: -16, col: '#ffe27a', max: 700, s: 1, g: -4 }); } return; }
     case 'vendor': { shadow(g, X, Y + 6, 5); const bob = Math.floor(time / 600) % 2; g.drawImage(A.st.vendor, X - 8, Y - 18 + bob); return; }
     case 'recycler': {

@@ -212,7 +212,8 @@ export function shiftVeyraWindowBy(
       if (ntx !== undefined) e.tx = ntx;
       if (nty !== undefined) e.ty = nty;
     } else {
-      offscreen[id] = {
+      // G1B world objects wait in their own table, so structure scans never walk them (see RunState.g1b.far)
+      (e.g1b && r.g1b ? r.g1b.far : offscreen)[id] = {
         ...e,
         x: ox * TILE + e.x,
         y: oy * TILE + e.y,
@@ -222,7 +223,7 @@ export function shiftVeyraWindowBy(
     }
   }
 
-  for (const [id, oe] of Object.entries(offscreen)) {
+  for (const table of r.g1b ? [offscreen, r.g1b.far] : [offscreen]) for (const [id, oe] of Object.entries(table)) {
     const lx = oe.x - newOx * TILE, ly = oe.y - newOy * TILE;
     const ltx = oe.tx !== undefined ? oe.tx - newOx : undefined;
     const lty = oe.ty !== undefined ? oe.ty - newOy : undefined;
@@ -236,7 +237,7 @@ export function shiftVeyraWindowBy(
         y: ly,
         ...(ltx !== undefined ? { tx: ltx, ty: lty } : {}),
       };
-      delete offscreen[id];
+      delete table[id];
     }
   }
   if (!Object.keys(offscreen).length) delete r.veyraOffscreenEntities;

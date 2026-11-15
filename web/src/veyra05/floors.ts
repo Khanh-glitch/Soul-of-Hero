@@ -21,6 +21,12 @@ import { FRAME_W, U, type WindowSpec } from './frame';
 import { sampleTile } from './reader';
 import { compilePlan, roomAt, type ArchPlan, type CompiledPlan, type CompiledRoom, type Level, type StairSpec } from './arch/plan';
 import { AUTHORED_SITES } from './arch/sites';
+import { G1B_SOURCE_SITES, G1B_FIXTURES } from '../game/g1b-sources.generated';
+const G1B_OBJECT_TILES: readonly [number, number][] = [...G1B_SOURCE_SITES, ...G1B_FIXTURES].map(v => [v.gx, v.gy]);
+let g1bReservation = true;
+/** Tooling only (tests/g1b-resolve.test.ts): the resolver must measure the world as it is WITHOUT the chests it is about
+ *  to place, otherwise its answer would depend on its own previous answer. The game never calls this. */
+export function setG1bFurnitureReservation(on: boolean) { g1bReservation = on; }
 import { detailInteriors } from './arch/interior';
 import type { WindowWorld } from './window';
 import { syncVeyraEcosystemActors } from './ecosystem';
@@ -188,6 +194,14 @@ function buildLayerPlacementContext(layer: FloorLayer, ox: number, oy: number): 
     }
   }
 
+  // G1B: a creator-approved chest / card case / generator owns its ground tile and the four tiles around it in EVERY
+  // window. Procedural furniture is dressed per window, so without this the same global tile could hold a crate stack
+  // in one window and nothing in the next, burying a chest or its only approach.
+  const g1bReserved = new Set<number>();
+  if (g1bReservation && layer.level === 0) for (const [gx, gy] of G1B_OBJECT_TILES) for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const lx = gx - ox + dx, ly = gy - oy + dy; if (lx >= 0 && ly >= 0 && lx < WW && ly < WH) g1bReserved.add(ly * WW + lx);
+  }
+
   const isPassable = (tx: number, ty: number) => {
     if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return false;
     const i = ty * WW + tx;
@@ -273,7 +287,7 @@ function buildLayerPlacementContext(layer: FloorLayer, ox: number, oy: number): 
       const cx = x + dx, cy = y + dy;
       if (cx <= 1 || cy <= 1 || cx >= WW - 2 || cy >= WH - 2) return false;
       const i = cy * WW + cx;
-      if (solid[i] || protectedThreshold.has(i) || layer.sources[i] || !isPassable(cx, cy)) return false;
+      if (solid[i] || protectedThreshold.has(i) || g1bReserved.has(i) || layer.sources[i] || !isPassable(cx, cy)) return false;
       cells.push([cx, cy]);
     }
     return !wouldSeverFootprint(cells);
@@ -561,7 +575,7 @@ function makeValidStack(r: RunState, rawKey: string, qty: number): Stack {
   const meta = isBp ? (liveRecipeId(rawKey.slice(10)) ?? rawKey.slice(10)) : undefined;
   const d = ITEMS[key];
   const s: Stack = { uid: uid(r, 's'), key, qty: isBp ? 1 : qty };
-  if (d?.creatorCore) s.reserves = { basic: 0, refined: 0, signature: 0 };
+  if (d?.creatorCore) { s.lvl = 1; s.dur = 300; } // Core V2 (G1B): Lv1, full durability, no magazine
   if (d?.dur) s.dur = d.dur;
   if (d?.charge) s.charge = d.initialCharge ?? d.charge;
   if (isAccessCard(key) && s.qty === 1 && r.poiAccessVersion === 'poi-access-v1') s.charge = BAL.poiAccess.cardUses;

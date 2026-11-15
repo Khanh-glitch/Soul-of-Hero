@@ -340,6 +340,9 @@ export default function Game({
       case 'cash': { const res = act('openCash', { eid: t.eid }); if (res.ok) { setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'coin' }); } return; }
       case 'vendor': setPanel({ kind: 'vendor', eid: t.eid }); return;
       case 'door': act('door', { eid: t.eid }); act('observeGate', { eid: t.eid }); return;
+      case 'drop': { const res = act('pickup', { eid: t.eid }); if (res.ok) sfx({ type: 'pickup' }); return; }
+      case 'g1b:chest': case 'g1b:card': { const res = act('g1bOpen', { eid: t.eid }); if (res.ok) { setPanel({ kind: 'container', eid: t.eid }); sfx({ type: 'ui' }); } return; }
+      case 'g1b:gen': act('g1bGenerator', { eid: t.eid }); return;
       case 'gen': act('generator', { eid: t.eid }); act('observeGate', { eid: t.eid }); return;
       case 'evac': setPanel({ kind: 'evac', eid: t.eid }); return;
     }
@@ -405,7 +408,7 @@ export default function Game({
         case 'KeyU': enterBuild('upgrade'); break;
         case 'KeyX': enterBuild('reclaim'); break;
         case 'KeyV': enterBuild('repair'); break;
-        case 'KeyR': { const selected=activeStack(r); if(selected && ITEMS[selected.key]?.creatorCore && !panelRef.current){act('loadCore',{slot:r.player.active,uid:selected.uid,mode:e.altKey?'signature':e.shiftKey?'refined':'basic'});break;} const t = Object.values(r.entities).find(x => x.type === 'research' && onActiveFloor(r, x) && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 3 * TILE && clearWallLine(r, r.player, x)); if (t) setPanel({ kind: 'container', eid: t.id }); else toast('Research needs a Research Table within reach.'); break; }
+        case 'KeyR': { const selected=activeStack(r); const t = Object.values(r.entities).find(x => x.type === 'research' && onActiveFloor(r, x) && Math.hypot(x.x - r.player.x, x.y - r.player.y) < 3 * TILE && clearWallLine(r, r.player, x)); if (t) setPanel({ kind: 'container', eid: t.id }); else toast('Research needs a Research Table within reach.'); break; }
         case 'Escape': if (buildModeRef.current) { exitBuild(); break; } if(coreAimRef.current || (r.player.action?.kind==='cast' && !r.player.action.done)){coreAimRef.current=null;setCoreAim(null);inp.current.skill=undefined;inp.current.cancel=true;break;} if (panelRef.current && getKeyboardPick()) { clearSlotInteraction(); setSel(null); break; } if (buildRef.current || reclaimRef.current || repairRef.current || upgradeRef.current) { setUpgradeMode(false); setBuildType(null); setReclaim(false); setRepairMode(false); } else if (panelRef.current) setPanel(null); else setPanel({ kind: 'menu' }); setSel(null); break;
         default: {
           const dm = e.code.match(/^Digit(\d)$/); if (!dm) break;
@@ -455,8 +458,8 @@ export default function Game({
       } else if (ev.code === 'F7') {
         ev.preventDefault();
         p.hp = BAL.player.maxHp; p.stamina = BAL.player.maxStamina; p.hunger = 100; p.thirst = 100;
-        for (const s of r.custody.inv.slots) if (s?.reserves) s.reserves = { basic: 40, refined: 12, signature: 4 };
-        toast('Restored vitals & reloaded all 7 Creator Cores.', 'ok');
+        for (const s of r.custody.inv.slots) if (s && ITEMS[s.key]?.creatorCore) { s.lvl = 3; s.dur = 300; delete s.cd; delete s.upg; }
+        toast('Restored vitals; all 7 Creator Cores set to Lv3, full durability.', 'ok');
       } else if (ev.code === 'F8') {
         ev.preventDefault();
         const targetBoss = r.creatures.find(c => c.state !== 'dead' && (c.sideBoss || c.elder)) || r.creatures.find(c => c.state !== 'dead');
@@ -526,7 +529,7 @@ export default function Game({
       for (const sl of C(gs.run, 'inv').slots) {
         if (sl && ITEMS[sl.key]?.creatorCore && !seenCores.current.has(sl.uid)) {
           seenCores.current.add(sl.uid);
-          present({ id: `core:${sl.uid}`, kind: 'relic', priority: 96, title: 'CREATOR CORE RECOVERED', detail: `${ITEMS[sl.key].name} · all three reserves remain physical. Equip it, inspect its signature, or save the charge.`, icon: sl.key, accent: ITEMS[sl.key].essence === 'fire' ? '#ff8a3a' : ITEMS[sl.key].essence === 'water' ? '#7fd8ff' : ITEMS[sl.key].essence === 'spirit' ? '#d99bff' : '#91d66d', duration: 5200, source: 'engine', tier: 'stage' });
+          present({ id: `core:${sl.uid}`, kind: 'relic', priority: 96, title: 'CREATOR CORE RECOVERED', detail: `${ITEMS[sl.key].name} · Lv${sl.lvl ?? 3} · casts spend Energy Cells from your pack. Upgrade and repair it at your Workbench.`, icon: sl.key, accent: ITEMS[sl.key].essence === 'fire' ? '#ff8a3a' : ITEMS[sl.key].essence === 'water' ? '#7fd8ff' : ITEMS[sl.key].essence === 'spirit' ? '#d99bff' : '#91d66d', duration: 5200, source: 'engine', tier: 'stage' });
           sfx({ type: 'jrelic' });
         }
       }

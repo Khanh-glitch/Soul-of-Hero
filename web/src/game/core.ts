@@ -49,7 +49,9 @@ export const TERRAIN_NAME = ['deep', 'shallow', 'sand', 'grass', 'meadow', 'fore
 
 // ---------- Items & custody ----------
 export interface CoreReserve { basic: number; refined: number; signature: number }
-export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve }
+/** Creator Core V2 (G1B): `lvl` 1-3 lives on the physical instance, `cd` holds the three per-UID ready-at timestamps,
+ *  `upg` is a running same-UID upgrade. `reserves` survives only as the unspent pre-V2 bank of an old Core. */
+export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
 export interface Container { id: string; kind: string; slots: (Stack | null)[] }
 
 export type Dir = 0 | 1 | 2 | 3; // down, left, right, up
@@ -134,6 +136,10 @@ export interface Entity {
   power?: number; fire?: number;
   /** The original deployable instance, retained until reclaim or destruction. */
   deployed?: Stack;
+  /** G1B: a creator-approved world chest, access-card case or circuit generator (kind 'loot'; never an authored Shipping cache). */
+  g1b?: { sid: string; kind: 'chest' | 'card' | 'gen'; state: 'closed' | 'opened' | 'empty'; cycle: number; refillAt?: number; roll?: { rev: string; seed: number; at: number }; poweredUntil?: number };
+  /** G1B: put down on purpose by the player; never magnet-collected, picked up with F. */
+  manual?: boolean;
   vehicle?: { fuel:number; angle:number; odometer:number; geometry:'vehicle-geometry-v1'; lube?: number };
   /** Deterministic local identity marker for station types that must not be relabeled (refinery-v1). */
   identity?: 'refinery-v1';
@@ -263,6 +269,11 @@ export interface RunState {
   lootEcology?: { version: 'w06-v1'; cycles: Record<string,number>; /** B01 family×grade grammar; absent on pre-B01 runs (no reroll). */ grammar?: 'b01-v1' | 'b04-v1' | 'b05-v1'; /** B05 only: digest-pinned physical source contract measured at run start. */ sourceContract?: import('./loot-source-spec').LootSourceContract };
   poiAccessVersion?: 'poi-access-v1';
   poiAccessDigest?: string;
+  /** G1B chest system of this run (absent on every older save: no chest is retro-fitted). `doors` = pending auto-close of gated doors. */
+  /** G1B approved chest system. `far` holds the chests / card cases / generators outside the streamed window, in
+   *  GLOBAL tile coordinates. It is a table of its own (not `veyraOffscreenEntities`) so the 136 world objects never
+   *  enter the structure scans that run inside every settlement slice. */
+  g1b?: { version: 'g1b-v1'; rev: string; doors: Record<string, { closeAt: number }>; far: Record<string, Entity> };
   natureTrees?: {tx:number;ty:number;until:number}[];
   spiritTransit?: { x:number; y:number; arriveAt:number; uid:string };
   terrain: Record<number, { t: number; until?: number; untilAt?: number }>; // K2 terrain mutations (burns, ice)

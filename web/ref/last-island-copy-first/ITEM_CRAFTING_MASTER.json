@@ -32,8 +32,8 @@
    "09": 4
   },
   "by_policy": {
-   "BOTH": 25,
-   "CRAFT_ONLY": 82,
+   "BOTH": 32,
+   "CRAFT_ONLY": 75,
    "WORLD_ONLY": 36,
    "SPECIAL_AUTHORITY": 14
   },
@@ -675,8 +675,8 @@
    "tags": [
     "CHARGES"
    ],
-   "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Big Bang. The common fire Core: the first weapon.",
+   "acquire_policy": "BOTH",
+   "player_purpose": "Big Bang. The common fire Core: the first weapon. Crafted at a Workbench or found in approved world chests (G1B).",
    "recipes": [
     "core_blast"
    ],
@@ -705,8 +705,8 @@
    "tags": [
     "CHARGES"
    ],
-   "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Meteor. The rare fire Core.",
+   "acquire_policy": "BOTH",
+   "player_purpose": "Meteor. The rare fire Core. Crafted at a Workbench or found in approved world chests (G1B).",
    "recipes": [
     "core_meteor"
    ],
@@ -736,8 +736,8 @@
    "tags": [
     "CHARGES"
    ],
-   "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Dragon's Breath. The top fire Core.",
+   "acquire_policy": "BOTH",
+   "player_purpose": "Dragon's Breath. The top fire Core. Crafted at a Workbench or found in approved world chests (G1B).",
    "recipes": [
     "core_dragon"
    ],
@@ -767,8 +767,8 @@
    "tags": [
     "CHARGES"
    ],
-   "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Elsa's Sword. The rare water Core.",
+   "acquire_policy": "BOTH",
+   "player_purpose": "Elsa's Sword. The rare water Core. Crafted at a Workbench or found in approved world chests (G1B).",
    "recipes": [
     "core_elsa"
    ],
@@ -798,8 +798,8 @@
    "tags": [
     "CHARGES"
    ],
-   "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Earth Mother's Breath. The common nature Core.",
+   "acquire_policy": "BOTH",
+   "player_purpose": "Earth Mother's Breath. The common nature Core. Crafted at a Workbench or found in approved world chests (G1B).",
    "recipes": [
     "core_earthmother"
    ],
@@ -828,8 +828,8 @@
    "tags": [
     "CHARGES"
    ],
-   "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Mjolnir. The rare lightning Core (nature essence).",
+   "acquire_policy": "BOTH",
+   "player_purpose": "Mjolnir. The rare lightning Core (nature essence). Crafted at a Workbench or found in approved world chests (G1B).",
    "recipes": [
     "core_mjolnir"
    ],
@@ -859,8 +859,8 @@
    "tags": [
     "CHARGES"
    ],
-   "acquire_policy": "CRAFT_ONLY",
-   "player_purpose": "Demon Core. The rare spirit Core.",
+   "acquire_policy": "BOTH",
+   "player_purpose": "Demon Core. The rare spirit Core. Crafted at a Workbench or found in approved world chests (G1B).",
    "recipes": [
     "core_demon"
    ],

@@ -40,7 +40,7 @@ export const ITEM_CLASS_MEANING: Record<ItemClass, string> = {
   SPECIMEN: 'Study sample: destroyed at a Research Table to learn one recipe.',
   AMMO: 'Ammunition.', FUEL: 'Liquid fuel for generators and vehicles.', KEY: 'Access credential.',
   FOOD: 'Eaten or drunk.', MEDICAL: 'Heals or cures.', TOOL: 'Tool.', WEAPON: 'Weapon.', ARMOR: 'Worn equipment.',
-  CREATOR_CORE: 'Creator Core: three skills (LMB / hold Q / hold E), reloaded from Basic, Refined and Signature energy reserves.',
+  CREATOR_CORE: 'Creator Core: Lv1 LMB, Lv2 adds hold Q, Lv3 adds hold E. Each cast spends Energy Cells from your pack and wears the Core (300 durability); upgrade and repair it at your Workbench.',
   FIELD_CORE: 'Field Core (Lõi dã chiến): one ability on LMB, spent from a small fixed charge count. No energy reserves and no reload.',
   KIT: 'Packed kit.', DEVICE: 'Packed physical device; place it to use it.',
   BLUEPRINT: 'Recipe paper.', CASH: 'Ragnarok currency.', ELDER_STONE: 'Elder stone, unique per run.',
@@ -96,7 +96,7 @@ export const ITEM_CLASS_VI: Partial<Record<ItemClass, string>> = { FIELD_CORE: '
 /** One short line telling the two Core classes apart in the item details. Null for everything else. */
 export function coreClassLine(key: string): string | null {
   const c = itemClass(key);
-  if (c === 'CREATOR_CORE') return '3 skills · B / Q / E energy reserves';
+  if (c === 'CREATOR_CORE') return 'Lv1–3 · LMB / Q / E · spends Energy Cells';
   if (c === 'FIELD_CORE') return `1 ability · ${ITEMS[key].charge ?? 0} charges · no reload`;
   return null;
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { itemClassLabel } from '../game/item-class';
 import { BAL, type RunState, type Stack } from '../game/core';
 import { ITEMS } from '../game/catalog';
+import { coreReadout, coreAmmo } from '../game/g1b';
 import { C, countItem, invWeight, carryLimit, cartWeight, cartLimit, phaseOf, runHours, dayTime, weatherAt, weatherSlot, effTile } from '../game/engine';
 import { SPEED_KEY, activeStack } from '../game/sim';
 import { getWorld, ZONES } from '../game/world';
@@ -198,17 +199,22 @@ function HeldInfo({ s, r }: { s: Stack | null; r: RunState }) {
     <div className="lbl" style={{ fontSize: 9, color: 'var(--brassLit)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
       {d.name}{s.qty > 1 ? ` ×${s.qty}` : ''}
     </div>
-    {core && s.reserves ? <div className="core-readout" role="group" aria-label={`Core reserves: basic ${s.reserves.basic} of 40, refined ${s.reserves.refined} of 12, signature ${s.reserves.signature} of 4`}>
-      {([['B', s.reserves.basic, 40, 'Basic · LMB · R loads', 'var(--paper)'], ['Q', s.reserves.refined, 12, 'Refined · hold Q · Shift+R loads', 'var(--info)'], ['E', s.reserves.signature, 4, 'Signature · hold E · Alt+R loads', 'var(--brassLit)']] as const).map(([key, value, cap, title, color]) =>
-        <span key={key} className={value === 0 ? 'empty' : ''} title={`${title}: ${value}/${cap}`} style={{ color }}><b>{key}</b><i><em style={{ width: `${100 * value / cap}%`, background: value > 0 ? color : 'var(--bad)' }} /></i><strong>{value}</strong></span>)}
-    </div>
+    {core ? (() => { const v = coreReadout(s, Date.now()); const col = ['var(--paper)', 'var(--info)', 'var(--brassLit)'];
+      return <div className="core-readout" role="group" data-testid="core-readout" aria-label={`Creator Core level ${v.lvl}, durability ${v.dur} of ${v.maxDur}`}>
+        <span title={`Level ${v.lvl} of 3`} style={{ color: 'var(--brassLit)' }}><b>Lv</b><strong>{v.lvl}</strong></span>
+        {v.modes.map((m, i) => { const ammo = coreAmmo(m.mode, d.essence); const n = Math.min(...ammo.map(([k, q]) => Math.floor(countItem(r, 'inv', k) / q)));
+          return <span key={m.key} className={!m.unlocked || n === 0 ? 'empty' : ''} style={{ color: m.unlocked ? col[i] : 'var(--muted)' }}
+            title={m.unlocked ? `${m.key}: ${ammo.map(([k, q]) => `${q} ${ITEMS[k]?.name ?? k}`).join(' + ')} per cast · ${n} casts in pack${m.cdLeftMs ? ` · ready in ${(m.cdLeftMs / 1000).toFixed(1)}s` : ''}` : `${m.key} unlocks at Lv${m.needLvl}`}>
+            <b>{m.key}</b><strong>{!m.unlocked ? `Lv${m.needLvl}` : m.cdLeftMs > 0 ? `${Math.ceil(m.cdLeftMs / 1000)}s` : n}</strong></span>; })}
+        <span title={`Durability ${v.dur}/${v.maxDur}`} style={{ color: v.dur <= 0 ? 'var(--bad)' : v.dur < 75 ? 'var(--warn)' : 'var(--good)' }}><b>Dur</b><strong>{v.dur}</strong></span>
+      </div>; })()
       : d.core ? <div className="lbl" style={{ fontSize: 8, color: s.charge ? 'var(--info)' : 'var(--bad)' }}>FIELD CORE · {s.charge}/{d.charge}⚡ · LMB cast</div>
         : d.food ? <div className="lbl" style={{ fontSize: 8, color: 'var(--good)' }}>LMB / RMB consume</div>
           : d.slot ? <div className="lbl" style={{ fontSize: 8, color: 'var(--info)' }}>RMB equip ({d.slot})</div>
             : d.dmg ? <div className="lbl" style={{ fontSize: 8, color: s.dur === 0 ? 'var(--bad)' : 'var(--muted)' }}>dmg {d.dmg}{d.power ? ' · tool' : ''}{s.dur !== undefined && d.dur ? ` · ${s.dur === 0 ? 'BROKEN' : `${Math.round((s.dur / d.dur) * 100)}%`}` : ''}</div>
               : d.place ? <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>LMB place</div>
                 : <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>{itemClassLabel(s.key, d.cat).toLowerCase()}</div>}
-    {core && s.reserves && s.reserves.basic + s.reserves.refined + s.reserves.signature === 0 && <div className="lbl" style={{ fontSize: 8, color: 'var(--bad)' }}>EMPTY · R / Shift+R / Alt+R</div>}
+    {core && (s.dur ?? 300) <= 0 && <div className="lbl" style={{ fontSize: 8, color: 'var(--bad)' }}>WORN OUT · repair at your Workbench</div>}
     {void r}
   </>;
 }

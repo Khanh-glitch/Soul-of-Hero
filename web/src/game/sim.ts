@@ -10,7 +10,7 @@ import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, 
 import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInReach, coldDamageActive } from './thermal';
 import { calendarAt, climateAt, calendarEventV1, phaseBoundaryAt, seasonTransitionsBetween, normalizeCalendarLedger, type Season, type PrecipWeather } from './calendar';
 import { LADDER_CLIMB_SPEED, ITEMS, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable, wornProtection } from './catalog';
-import { VFX_TEST_KIT, VFX_TEST_CAPS } from './vfx/testkit';
+import { g1bChestName, G1B_SITES } from './g1b';
 import { getWorld } from './world';
 import { maybeSlideVeyraWindow } from '../veyra05/continuity';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
@@ -19,7 +19,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
+import { stepG1b, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -280,11 +280,13 @@ export function spiritDestination(r:RunState,x:number,y:number):string|null {
 /** The physical UID captured at windup must still occupy the same slot at commit. */
 function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: string, mode: 'basic'|'refined'|'signature', a: number, aim: Input) {
   const r = gs.run!, p = r.player, s = C(r, 'inv').slots[slot];
-  if (!s || p.active !== slot || s.uid !== uid0 || !ITEMS[s.key]?.creatorCore || !s.reserves || s.reserves[mode] <= 0) { fx('fizzle', {x:p.x,y:p.y}); return; }
+  if (!s || p.active !== slot || s.uid !== uid0 || !ITEMS[s.key]?.creatorCore || coreCastBlock(r, s, mode, now)) { fx('fizzle', {x:p.x,y:p.y}); return; }
   let grove:{tx:number;ty:number;d:number}[] | undefined;
   if(ITEMS[s.key].creatorCore==='earthmother' && mode==='refined') { const len=Math.min(BAL.creatorCoreEarthmother.groveRange,dist(p.x,p.y,aim.mx,aim.my),rayLen(r,p.x,p.y,a,BAL.creatorCoreEarthmother.groveRange));grove=groveCells(r,p.x+Math.cos(a)*len,p.y+Math.sin(a)*len);if(grove.length!==BAL.creatorCoreEarthmother.treeCount || (r.natureTrees?.length||0)+grove.length>100){fx('toast',{text:'Need open ground for all ten trees.'});return;} }
   if(ITEMS[s.key].creatorCore==='demon'&&mode==='signature'){const reason=spiritDestination(r,aim.mx,aim.my);if(reason){fx('toast',{text:reason});return;}}
-  s.reserves[mode]--; if (VFX_TEST_KIT && s.reserves[mode] <= 0) s.reserves[mode] = VFX_TEST_CAPS[mode]; receipt(r, now, 'core.commit', `${s.uid}:${mode}:${s.reserves[mode]}`); award(gs,'first_core',now);
+  // Core V2: every refusal above this line (no ammunition, worn out, recharging, no ground for the grove, blocked teleport) cost nothing.
+  if (!coreCastCommit(r, s, mode, now)) { fx('fizzle', {x:p.x,y:p.y}); return; }
+  receipt(r, now, 'core.commit', `${s.uid}:${mode}:dur=${s.dur}`); award(gs,'first_core',now);
   const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
   const visualCore=ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire';
   fx('cast',{x:hx,y:hy,core:visualCore,a,ck:ITEMS[s.key].creatorCore,mode,tx:aim.mx,ty:aim.my});
@@ -367,13 +369,14 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   } else if (inp.cancel && act?.kind === 'cast') { dispatch(gs, { id: 'cc' + now, type: 'castCancel' }, now); p.action = null; fx('fizzle', { x: p.x, y: p.y }); }
   else if (!p.vehicle && !selfFrozen && inp.skill && !p.action) {
     const s = activeStack(r), mode=inp.skill, chosen=inp.skillAim;
-    if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && s.reserves && s.reserves[mode]>0) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,dur:380,contact:300,angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire',ck:ITEMS[s.key].creatorCore,mode,a:Math.atan2(ty-p.y,tx-p.x)}); }
-    else fx('toast',{text:'Creator Core reserve empty — reload with R.'});
+    const why = s && ITEMS[s.key]?.creatorCore ? coreCastBlock(r, s, mode, now) : 'Hold a Creator Core.';
+    if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && !why) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,dur:380,contact:300,angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire',ck:ITEMS[s.key].creatorCore,mode,a:Math.atan2(ty-p.y,tx-p.x)}); }
+    else fx('toast',{text:why || 'That Core is no longer in hand.'});
   }
   else if (!p.vehicle && !selfFrozen && (inp.attackPressed || inp.attack) && !p.action) {
     const s = activeStack(r); const d = s ? ITEMS[s.key] : null;
     if (d?.repair && s?.dur !== undefined && s.dur <= 0) { if (inp.attackPressed) fx('toast', { text: `${d.name} is broken. Repair it at a workbench.` }); }
-    else if (d?.creatorCore) { if (s!.reserves && s!.reserves.basic>0) { p.action={kind:'cast',t:0,dur:d.creatorCore==='meteor'?400:d.creatorCore==='dragon'?280:180,contact:d.creatorCore==='meteor'?300:d.creatorCore==='dragon'?170:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed) fx('toast',{text:'Basic reserve empty — press R to reload.'}); }
+    else if (d?.creatorCore) { const why = coreCastBlock(r, s!, 'basic', now); if (!why) { p.action={kind:'cast',t:0,dur:d.creatorCore==='meteor'?400:d.creatorCore==='dragon'?280:180,contact:d.creatorCore==='meteor'?300:d.creatorCore==='dragon'?170:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed && !why.startsWith('LMB recharging')) fx('toast',{text:why}); }
     else if (d?.core) { if ((s!.charge ?? 0) > 0) { p.action = { kind: 'cast', t: 0, dur: 520, contact: 460, angle: p.aim, slot: p.active }; fx('windup', { x: p.x, y: p.y, core: d.core }); } else if (inp.attackPressed) fx('toast', { text: 'This Core is spent. Study it at a Research Table.' }); }
     else if (d && d.food && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx(res.ok ? 'eat' : 'toast', { x: p.x, y: p.y, text: res.ok ? '' : (res as any).reason }); }
     else if (d && d.cat === 'bp' && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx('toast', { text: res.ok ? res.msg : (res as any).reason }); }
@@ -1439,7 +1442,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   syncPoi(t); syncHome(t);
   commitSeasonBoundaries(r, t, t);
   resolveFires(gs, t, visual);
-  stepLootRespawn(r, t);
+  stepLootRespawn(r, t); stepG1b(r, t);
   syncDrops(t);
   stepNatureTrees(r,t);
   while (t < end) {
@@ -1507,7 +1510,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     // ground from there. Only the entries expiring in this slice are visited (no world scan).
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { const ci = +k; settleRegrowthAt(r, ci % WW, Math.floor(ci / WW), m.untilAt ?? t); delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
-    stepLootRespawn(r, t);
+    stepLootRespawn(r, t); stepG1b(r, t);
     syncDrops(t);
     stepNatureTrees(r,t);
   }
@@ -1591,7 +1594,8 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   for (const e of Object.values(r.entities)) {
     if (e.kind !== 'drop' || !onActiveFloor(r, e)) continue;
     if (e.vx || e.vy) { e.x += e.vx! * dtMs / 1000; e.y += e.vy! * dtMs / 1000; e.vx! *= 0.88; e.vy! *= 0.88; if (Math.abs(e.vx!) + Math.abs(e.vy!) < 2) { e.vx = 0; e.vy = 0; } }
-    if (p.dead) continue; const d = dist(e.x, e.y, p.x, p.y); const age = now - (e.born || 0);
+    if (p.dead || e.manual) continue; // G1B: something put down on purpose stays put; F picks it up
+    const d = dist(e.x, e.y, p.x, p.y); const age = now - (e.born || 0);
     if (age > 380 && d < 30) { const s = C(r, e.c!)?.slots[0]; if (!s) continue; const full = ITEMS[s.key].max > 1 && !s.meta ? false : !C(r, 'inv').slots.includes(null);
       if (full) continue; e.x += (p.x - e.x) * Math.min(1, dtMs / 90); e.y += (p.y - e.y) * Math.min(1, dtMs / 90);
       if (d < 9) { const key = s.key, q = s.qty; const res = dispatch(gs, { id: 'ap_' + e.id + '_' + q, type: 'pickup', eid: e.id }, now); if (res.ok) fx('pickup', { x: p.x, y: p.y, key, q }); else e.born = now + 1500; } }
@@ -1852,14 +1856,22 @@ export function findInteract(gs: GameState, now: number): Interact | null {
   const r = gs.run!; const p = r.player; if (p.dead) return null; let best: Interact | null = null; let bd = 30;
   const fx0 = p.x + Math.cos(p.aim) * 6, fy0 = p.y + Math.sin(p.aim) * 6;
   for (const e of Object.values(r.entities)) {
-    if (e.kind === 'drop' || !onActiveFloor(r, e)) continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
+    if ((e.kind === 'drop' && !e.manual) || !onActiveFloor(r, e)) continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
     let label = ''; let kind = e.kind as string;
+    if (e.kind === 'drop') { const s0 = C(r, e.c!)?.slots[0]; if (!s0) continue; label = `Pick up ${ITEMS[s0.key].name}${s0.qty > 1 ? ' ×' + s0.qty : ''}`; bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y }; continue; }
+    if (e.kind === 'loot' && e.g1b) {
+      const g = e.g1b; kind = 'g1b:' + g.kind;
+      if (g.kind === 'gen') label = (g.poweredUntil ?? 0) > now ? `Circuit generator · running ${Math.ceil((g.poweredUntil! - now) / 1000)}s` : 'Circuit generator · add 1 Fuel Canister';
+      else if (g.kind === 'card') label = g.state === 'empty' ? 'Access-card case · empty' : 'Open access-card case';
+      else { const name = g1bChestName(G1B_SITES[g.sid]?.variant); label = g.state === 'closed' ? `Open ${name}` : g.state === 'opened' ? `Search ${name}` : `${name} · empty${g.refillAt ? ' · restocks in ' + g1bEta(g.refillAt - now) : ''}`; }
+      bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y }; continue;
+    }
     if (e.kind === 'bag') { if (!C(r,e.c!).slots.some(Boolean) && !e.legacyJobs?.queue.length) continue; label = `Open ${e.label || 'bag'}`; }
     else if (e.kind === 'airdrop') { if(!e.airdrop || ['signal','descending'].includes(e.airdrop.phase))continue; const v=airdropView(e.airdrop,e.tx!,e.ty!,now,C(r,e.c!).slots.filter(Boolean).length); label = v.key==='locked' ? `Airdrop locked · opens in ${v.lockedRemainS}s` : v.key==='emptied' ? 'Airdrop empty' : v.key==='partial' ? 'Airdrop partly claimed · take only' : v.key==='expiring' ? `Airdrop expiring · take only` : 'Search airdrop · take only'; }
     else if (e.kind === 'loot') { const site=r.lootEcology && getWorld(r.layoutId||'shipping').statics.find(s=>s.kind==='loot'&&s.tx===e.tx&&s.ty===e.ty);const cls=site && lootClass(site);label=C(r,e.c!).slots.some(Boolean) ? `Search ${cls ? LOOT_CLASSES[cls].name : 'crate'}` : 'Empty crate'; }
     else if (e.kind === 'cash') label = isRagnarok(r, now) ? (e.minted ? 'Ragnarok chest' : 'Break the Ragnarok seal') : 'Sealed Ragnarok chest';
     else if (e.kind === 'vendor') label = `Trade with ${e.label}`;
-    else if (e.kind === 'door') label = e.locked || e.poiDoor ? poiDoorLabel(r,e,now) : e.open ? 'Close door' : 'Open door';
+    else if (e.kind === 'door') { const gate = g1bGateOf(r, e); label = gate ? g1bDoorLabel(r, e, gate, now) : e.locked || e.poiDoor ? poiDoorLabel(r,e,now) : e.open ? 'Close door' : 'Open door'; }
     else if (e.kind === 'recycler') label = 'Use Foundry Recycler';
     else if (e.kind === 'gen') label = poiGenLabel(r,e,now);
     else if (e.type === 'ir_sensor') label = `Infrared sensor ${e.irSensor?.enabled ? 'ON' : 'OFF'}: ${irSensorStatus(r, e)}${irSensorDownstream(r, e)} (E toggles)`;

@@ -1,10 +1,11 @@
 // W09: a committed Mjolnir Signature is one physical sound at the pull point at commit time (the pull field exists then;
-// the delayed burst is NOT claimed to have happened at commit). Real engine paths: loadCore dispatch and the skill input.
+// the delayed burst is NOT claimed to have happened at commit). Real engine path: the skill input (Core V2: ammunition is spent from the pack at commit).
 // Fixture disclosure: fresh shipping run; a Mjolnir is inserted into an empty inventory slot (the crate reward is not
-// walked to in this test). Energy and essence are added to inventory, and the reserve is then loaded via dispatch(loadCore).
+// walked to in this test). Energy and essence are added to inventory; the cast itself spends them.
 import {afterAll,describe,it,expect} from 'vitest';
+import { armCore, coreView } from './helpers/core-v2';
 import {BAL,TILE,WW,WH,uid,type GameState,type RunState} from '../src/game/core';
-import {addItem,blockGrid,clearPhysicalLine,countItem,dispatch,mkCreature,mkStack,newGame,markDirty} from '../src/game/engine';
+import {addItem,blockGrid,clearPhysicalLine,countItem,dispatch,mkCreature,mkStack,newGame,markDirty,removeItem} from '../src/game/engine';
 import {tick,type Input} from '../src/game/sim';
 import {setActiveLayout} from '../src/game/world';
 import {serializeSnapshot,selectSnapshots} from '../src/game/persist';
@@ -27,14 +28,12 @@ function frame(g:GameState,at:number,ms=50,inp:Partial<Input>={}){tick(g,{...idl
 function copy(g:GameState){return selectSnapshots([serializeSnapshot(g),null]).gs!;}
 function emits(r:RunState){return r.receipts.filter(x=>x.kind==='stimulus.emit');}
 function wolfAt(r:RunState,x:number,y:number){const m=mkCreature(r,'wolf',x,y,30);r.creatures.push(m);return m;}
-/** Loads a Mjolnir signature reserve through the real loadCore intent, consuming Refined Energy and Nature Essence. */
+/** Core V2: a Lv3 Mjolnir with `charges` signature casts' worth of Refined Energy and Nature Essence in the pack. */
 function mjolnirReady(r:RunState,g:GameState,charges=1){
-  const slot=1;r.custody.inv.slots[slot]=mkStack(r,'core_mjolnir',1);markDirty();
+  const slot=1;r.custody.inv.slots[slot]=mkStack(r,'core_mjolnir',1);armCore(r.custody.inv.slots[slot]!);markDirty();
   const uidv=r.custody.inv.slots[slot]!.uid!;
   addItem(r,'inv','energy_refined',charges);addItem(r,'inv','essence_nature',charges);
-  const res=dispatch(g,{id:'w09-load-'+ ++serial,type:'loadCore',slot,uid:uidv,mode:'signature'} as any,START+10);
-  expect(res.ok).toBe(true);
-  expect(r.custody.inv.slots[slot]!.reserves!.signature).toBe(charges);
+  expect(coreView(r,r.custody.inv.slots[slot]!).signature).toBe(charges);
   return {slot,uid:uidv};
 }
 function commitSig(g:GameState,r:RunState,at:number,core:{slot:number;uid:string},target:{x:number;y:number}){
@@ -47,13 +46,13 @@ function commitSig(g:GameState,r:RunState,at:number,core:{slot:number;uid:string
 describe('W09 Mjolnir Signature sound', () => {
   it('a committed signature commits once, costs one reserve charge, and emits at the pull point at commit time', () => {
     const {g,r}=run();const core=mjolnirReady(r,g);
-    expect(countItem(r,'inv','energy_refined')).toBe(0);
+    expect(countItem(r,'inv','energy_refined')).toBe(1); // Core V2: still in the pack until the cast commits
     const tgt={x:r.player.x+100,y:r.player.y};
     const m=wolfAt(r,tgt.x+200,tgt.y);expect(clearPhysicalLine(r,m,tgt,false,true)).toBe(true);
     const commitAt=START+2000;
     const t=commitSig(g,r,commitAt,core,tgt);
     expect(emits(r)).toHaveLength(1);
-    expect(r.custody.inv.slots[core.slot]!.reserves!.signature).toBe(0);
+    expect(coreView(r,r.custody.inv.slots[core.slot]!).signature).toBe(0);
     expect(r.receipts.filter(x=>x.kind==='core.commit')).toHaveLength(1);
     const e=emits(r)[0];const s=r.worldStimuli!.find(w=>w.kind==='combat-sound')!;
     expect(e.detail).toBe(`signature:${s.x},${s.y}`);
@@ -68,7 +67,7 @@ describe('W09 Mjolnir Signature sound', () => {
 
   it('empty reserve, wrong UID, and cancelled casts produce no sound and no free outcome', () => {
     // empty reserve
-    const a=run();const ca=mjolnirReady(a.r,a.g,1);a.r.custody.inv.slots[ca.slot]!.reserves!.signature=0;markDirty();
+    const a=run();const ca=mjolnirReady(a.r,a.g,1);removeItem(a.r,'inv','essence_nature',1);markDirty(); // no Essence in the pack
     frame(a.g,START+3000,50,{skill:'signature',skillAim:{uid:ca.uid,slot:ca.slot,mx:a.r.player.x+100,my:a.r.player.y,viewX:0,viewY:0}} as any);
     for(let ms=100;ms<=800;ms+=50)frame(a.g,START+3000+ms);
     expect(emits(a.r)).toHaveLength(0);expect(a.r.receipts.filter(x=>x.kind==='core.commit')).toHaveLength(0);
@@ -76,13 +75,13 @@ describe('W09 Mjolnir Signature sound', () => {
     const b=run();const cb=mjolnirReady(b.r,b.g,1);b.r.player.active=cb.slot;
     frame(b.g,START+3000,50,{skill:'signature',skillAim:{uid:'not-this-core',slot:cb.slot,mx:b.r.player.x+100,my:b.r.player.y,viewX:0,viewY:0}} as any);
     for(let ms=100;ms<=800;ms+=50)frame(b.g,START+3000+ms);
-    expect(emits(b.r)).toHaveLength(0);expect(b.r.custody.inv.slots[cb.slot]!.reserves!.signature).toBe(1);
+    expect(emits(b.r)).toHaveLength(0);expect(coreView(b.r,b.r.custody.inv.slots[cb.slot]!).signature).toBe(1);
     // cancelled during windup
     const c=run();const cc=mjolnirReady(c.r,c.g,1);c.r.player.active=cc.slot;
     frame(c.g,START+3000,50,{skill:'signature',skillAim:{uid:cc.uid,slot:cc.slot,mx:c.r.player.x+100,my:c.r.player.y,viewX:0,viewY:0}} as any);
     frame(c.g,START+3050,50,{cancel:true});
     for(let ms=100;ms<=800;ms+=50)frame(c.g,START+3050+ms);
-    expect(emits(c.r)).toHaveLength(0);expect(c.r.custody.inv.slots[cc.slot]!.reserves!.signature).toBe(1);
+    expect(emits(c.r)).toHaveLength(0);expect(coreView(c.r,c.r.custody.inv.slots[cc.slot]!).signature).toBe(1);
   });
 
   it('save/reload neither duplicates nor relocates the sound; replayed ticks add nothing', () => {

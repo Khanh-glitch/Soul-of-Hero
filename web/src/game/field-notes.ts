@@ -138,7 +138,7 @@ export const FIELD_NOTES: FieldNoteDef[] = [
     category: 'combat',
     title: 'Creator Core Reserves',
     keyHint: 'Q · E · R',
-    body: 'Hold Q (Refined) or E (Signature) to cast stronger modes; LMB fires Basic. Reload reserves with R, Shift+R, or Alt+R.',
+    body: 'LMB fires Basic (1 Energy Cell). Lv2 unlocks hold Q (1 Refined Cell); Lv3 unlocks hold E (1 Refined Cell + 1 Essence). Cells are spent from your pack per cast; there is no reload. Upgrade and repair at your Workbench.',
     priority: 70,
     when: ({ r }) => C(r, 'inv').slots.some(s => !!s && !!ITEMS[s.key]?.creatorCore),
     autoResolve: ({ r }) => r.receipts.some(rc => rc.kind === 'core.commit' || rc.kind === 'core.load'),
@@ -193,7 +193,7 @@ export const FIELD_REFERENCE_GROUPS: { title: string; items: [string, string][] 
   { title: 'Movement & Action', items: [['WASD / Arrows', 'Move'], ['LMB', 'Swing tool / Attack / Use'], ['Space', 'Dodge roll'], ['E', 'Interact / Drink / Open'], ['F', 'Grab Cart / Mount or Exit Bike']] },
   { title: 'Quickbar & Pack', items: [['1–8 / Wheel', 'Select Quickbar slot'], ['I / C', 'Survivor Pack & Crafting'], ['Hover + 1–8', 'Assign slot to Quickbar'], ['Sort Pack', 'Sorts slots 9–24; protects 1–8']] },
   { title: 'Build & Base', items: [['B', 'Toggle Build Mode'], ['U / V / X', 'Upgrade / Repair / Dismantle'], ['G', 'Cycle structure layer'], ['E on Cabinet', 'Deposit upkeep materials']] },
-  { title: 'Cores & Navigation', items: [['Q / E (hold)', 'Refined / Signature Core skill'], ['R / ⇧R / Alt+R', 'Reload Basic / Refined / Sig'], ['M', 'Field Chart (Continent ↔ Sector)'], ['J / N / Esc', 'Journey Ledger / Notes / Menu']] },
+  { title: 'Cores & Navigation', items: [['Q / E (hold)', 'Refined / Signature Core skill'], ['Workbench', 'Upgrade / repair a Creator Core'], ['M', 'Field Chart (Continent ↔ Sector)'], ['J / N / Esc', 'Journey Ledger / Notes / Menu']] },
   { title: 'Husbandry & Waymark', items: [['T (near animal)', 'Feed / Tame / Command animal'], ['⇧T (near tamed)', 'Toggle Follow / Stay'], ['T (open field)', 'Peek Journey Waymark'], ['Walk on Stairs', 'Change floor (B1 · F1 · F2)']] },
 ];
 
