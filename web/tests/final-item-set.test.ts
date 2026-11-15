@@ -123,7 +123,7 @@ describe('retirement — all 19 ids LIVE, none PENDING', () => {
 
 describe('III — recipes: LI provenance, closure and no loops', () => {
   it('recipe revisions 4 and 5 freeze every formula they changed or retired', () => {
-    expect(RECIPE_REVISION).toBe(5);
+    expect(RECIPE_REVISION).toBe(6);   // revision 6 = ITEM_CRAFTING_MASTER cutover, covered by tests/item-crafting-master.test.ts
     expect(CUT_OVER_REVISIONS[4]).toHaveLength(28);
     for (const id of CUT_OVER_REVISIONS[4]) { expect(LEGACY_RECIPES[id + '@4'], id).toBeDefined(); expect(recipeForJob(id, 4), id).not.toBeNull(); }
     for (const rc of Object.values(LEGACY_RECIPES)) for (const [k] of rc.ins) expect(ITEMS[k], 'a frozen formula still names a parseable item: ' + k).toBeDefined();

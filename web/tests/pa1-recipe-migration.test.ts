@@ -141,7 +141,7 @@ describe('PA1 R1 contract freeze — live catalog vs recovered paper v1.1 + v1.2
   it('census moves by ID set, not by ambition: minus one recipe, items and ontology unchanged', () => {
     const recipeIds = Object.keys(RECIPES);
     expect(new Set(recipeIds).size).toBe(recipeIds.length);
-    expect(recipeIds).toHaveLength(115); /* item set v3 (rev 5): 119 at rev 4, −14 retired with the twelve ids, +10 (ladders, large furnace, leg and foot armour, pump/refinery rows) */                       // 113 at the base SHA, −1 retired canister (rev 2), −1 vehicle_frame_piped (rev 3); final item set (rev 4): −9 retired, +17 LI-shaped
+    expect(recipeIds).toHaveLength(114); /* rev 6: −1, the dominated reinforced_spear_blade alias. item set v3 (rev 5): 119 at rev 4, −14 retired with the twelve ids, +10 (ladders, large furnace, leg and foot armour, pump/refinery rows) */                       // 113 at the base SHA, −1 retired canister (rev 2), −1 vehicle_frame_piped (rev 3); final item set (rev 4): −9 retired, +17 LI-shaped
     expect(recipeIds).not.toContain('vehicle_frame_piped');
     expect(recipeIds).not.toContain('fuel_can');
     expect(recipeIds).toContain('refinery_fuel');              // still exactly ONE refinery fuel recipe id
@@ -151,7 +151,7 @@ describe('PA1 R1 contract freeze — live catalog vs recovered paper v1.1 + v1.2
     expect(DEPLOYABLE_TYPES).toHaveLength(24);
     expect(ALWAYS_KNOWN_RECIPES.filter(k => k.startsWith('deploy_'))).toHaveLength(24); // nothing is withheld in this build
     expect(starterKnowledge().filter(k => k.startsWith('deploy_'))).toHaveLength(24);
-    expect(RECIPE_REVISION).toBe(5);                           // 3 = Item Ontology V2 cutover; 4 = final item set; 5 = item set v3 (all 19 retired)
+    expect(RECIPE_REVISION).toBe(6);                           // 3 = Item Ontology V2 cutover; 4 = final item set; 5 = item set v3 (all 19 retired); 6 = crafting master
   });
 });
 

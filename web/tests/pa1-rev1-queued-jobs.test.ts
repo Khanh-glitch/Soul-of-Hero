@@ -133,8 +133,8 @@ describe('PA1 P0b — the pre-cutover save keeps its own rules', () => {
     // Rev 3 also retires `vehicle_frame_piped` (its BOM became the frame recipe), and this save knew it.
     expect(g.run!.knowledge.recipes).not.toContain('vehicle_frame_piped');
     expect(g.run!.knowledge.recipes).toContain('vehicle_frame');
-    // Rev 4 and rev 5 (final item set, all 19 ids retired) retire more formulas; this save knew fifteen in all.
-    expect(g.run!.migrated?.retiredRecipes).toBe(15);
+    // Rev 4 and rev 5 (final item set, all 19 ids retired) retire more formulas; rev 6 retires the spear alias. Sixteen in all.
+    expect(g.run!.migrated?.retiredRecipes).toBe(16);
     // ... and the stacks of retired items it held were converted in place, counted once.
     expect(g.run!.migrated?.retiredItems).toBe(17);
     // The revision ledger is what prices them.

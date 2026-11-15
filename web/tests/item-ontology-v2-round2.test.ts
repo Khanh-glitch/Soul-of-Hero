@@ -186,8 +186,8 @@ describe('P1 + P7 — display language (no id, recipe, source or price moved)', 
 });
 
 describe('G — migration ledger: exactly one revision bump, history stored', () => {
-  it('revision moved on to 5 (item set v3); the three rev-2 definitions are frozen verbatim; the live catalog validates', () => {
-    expect(RECIPE_REVISION).toBe(5);
+  it('revision moved on to 6 (crafting master); the three rev-2 definitions are frozen verbatim; the live catalog validates', () => {
+    expect(RECIPE_REVISION).toBe(6);
     expect(CUT_OVER_REVISIONS[2]).toEqual(['vehicle_frame', 'vehicle_frame_piped', 'industrial_axe']);
     expect(Object.keys(LEGACY_RECIPES).filter((k) => k.endsWith('@2')).sort()).toEqual(['industrial_axe@2', 'vehicle_frame@2', 'vehicle_frame_piped@2']);
     expect(LEGACY_RECIPES['vehicle_frame@2'].ins).toEqual([['iron_ingot', 3], ['mechanical_parts', 2], ['spares', 2]]);
@@ -217,11 +217,11 @@ describe('G — migration ledger: exactly one revision bump, history stored', ()
     expect(recipeForJob('vehicle_frame_piped', 1)).toBe(LEGACY_RECIPES['vehicle_frame_piped@2']);
     expect(recipeForJob('vehicle_frame_piped', 3)).toBeNull();     // retired: not live
     expect(recipeForJob('industrial_axe', 2)).toBe(LEGACY_RECIPES['industrial_axe@2']);
-    expect(recipeForJob('industrial_axe', 3)).toBe(recipeForJob('industrial_axe', 4)); expect(recipeForJob('industrial_axe', 3)).not.toBe(RECIPES.industrial_axe); expect(recipeForJob('industrial_axe', 5)).toBe(RECIPES.industrial_axe);
+    expect(recipeForJob('industrial_axe', 3)).toBe(recipeForJob('industrial_axe', 4)); expect(recipeForJob('industrial_axe', 3)).not.toBe(RECIPES.industrial_axe); expect(recipeForJob('industrial_axe', 5)).toBe(RECIPES.industrial_axe); expect(recipeForJob('industrial_axe', 6)).toBe(RECIPES.industrial_axe);   // untouched by rev 6
     // Rev-1 behaviour is exactly what it was.
     expect(recipeForJob('metal_pipe', 1)!.qty).toBe(1); expect(recipeForJob('metal_pipe', 2)!.qty).toBe(2); expect(recipeForJob('metal_pipe', 3)!.qty).toBe(2);
     expect(recipeForJob('fuel_can', 1)!.out).toBe('fuel_can'); expect(recipeForJob('fuel_can', 2)).toBeNull(); expect(recipeForJob('fuel_can', 3)).toBeNull();
-    expect(recipeForJob('rope', 1)).toBe(RECIPES.rope); expect(recipeForJob('rope', 5)).toBe(RECIPES.rope); expect(recipeForJob('rope', 6)).toBeNull();
+    expect(recipeForJob('rope', 1)).toBe(RECIPES.rope); expect(recipeForJob('rope', 5)).toBe(RECIPES.rope); expect(recipeForJob('rope', 6)).toBe(RECIPES.rope); expect(recipeForJob('rope', 7)).toBeNull();   // a revision newer than this build fails closed
     expect(hasLegacyDefinition('vehicle_frame_piped')).toBe(true); expect(latestLegacyDefinition('vehicle_frame')).toBe(recipeForJob('vehicle_frame', 4)); // the newest frozen frame is now the rev-4 one
     // Item set v3 re-priced the two fluid machines in live ids (Machine Parts and Brick retired).
     for (const s of ['oil_pump', 'refinery']) for (const [k] of STRUCTS[s].cost) expect(isRetiredLive(k), s + ' <- ' + k).toBe(false);
@@ -474,7 +474,7 @@ describe('P4 — the Salvager Axe takes a Metal Blade', () => {
     expect(blade.recipe).toBe('X:blade-v2'); expect(blade.outputs).toEqual([['iron_ingot', 2]]);   // half the iron, never the Part
     REPORT.salvager_axe_recycle = { embedded_in_one_live_axe: embedded, recycler_returns_at_full_condition: back, net_per_craft_recycle_turn: { iron_equivalent: back.iron_ingot + back.refined_iron_ingot * 1.5 - embedded.iron_ingot, spares: -embedded.spares }, verdict: 'NET NEGATIVE' };
   });
-  it('INTENT: three blade craft → recycle turns lose two ingots and one Part each; nothing is minted', () => {
+  it('INTENT: three blade craft → recycle turns lose one ingot and one Part each (rev 6 blade); nothing is minted', () => {
     const g = start(); const r = g.run!;
     const spares0 = countItem(r, 'inv', 'spares');
     for (const [k, q] of [['wood', 20], ['stone', 6], ['iron_ingot', 14], ['spares', 7]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
@@ -486,10 +486,11 @@ describe('P4 — the Salvager Axe takes a Metal Blade', () => {
       t = craftOut(g, bench, 'metal_blade', t);
       const rec = recycleStart(g, 'metal_blade', t); expect(rec.ok, rec.reason).toBe(true);
       stepStations(g, 15_000, t + 15_000); t += 16_000; collect(g, rec.rc.station!.outC, t); t += 100;
-      expect(countItem(r, 'inv', 'iron_ingot')).toBe(iron - 2); expect(countItem(r, 'inv', 'spares')).toBe(parts - 1);
+      // rev 6 blade = 3 Iron + 1 Part, return 2 Iron: every turn still loses iron and the Part
+      expect(countItem(r, 'inv', 'iron_ingot')).toBe(iron - 1); expect(countItem(r, 'inv', 'spares')).toBe(parts - 1);
       seen.push([countItem(r, 'inv', 'iron_ingot'), countItem(r, 'inv', 'spares') - spares0]);
     }
-    expect(seen).toEqual([[10, 2], [8, 1], [6, 0]]);
+    expect(seen).toEqual([[11, 2], [10, 1], [9, 0]]);
   });
 });
 

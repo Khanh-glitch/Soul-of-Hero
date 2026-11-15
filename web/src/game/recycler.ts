@@ -38,6 +38,7 @@ const COMPONENT_RULES = {
   // X:gear-v2: gear -> 2 Parts + 1 ingot. Craft (rev 5) = 2 ingot + 3 Parts, so a turn loses 1 ingot and 1 Part.
   'X:gear-v2': { key: 'mechanical_gear', seconds: 15, outputs: [['spares', 2], ['iron_ingot', 1]] as Output[] },
   // X:blade-v2: blade -> 2 ingot. Craft (rev 5) = 4 ingot + 1 Part: half the iron back, never the Part.
+  // Recipe revision 6 cut the craft to 3 ingot + 1 Part; the return is unchanged, so a turn still loses 1 ingot and 1 Part.
   'X:blade-v2': { key: 'metal_blade', seconds: 14, outputs: [['iron_ingot', 2]] as Output[] },
 } as const;
 export const COMPONENT_RECIPES: readonly string[] = Object.keys(COMPONENT_RULES);

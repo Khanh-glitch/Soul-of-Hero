@@ -12,8 +12,8 @@ const ins=(k:string)=>Object.fromEntries((RECIPES[k].ins as [string,number][]).m
 // Item set v3 (recipe revision 5): Machine Parts, Fasteners, Coal and Scrap Metal are retired. Every chain below is priced in
 // Parts and Charcoal; the pre-cutover shapes stay frozen in the migration ledger for queued jobs (pa1-rev1-queued-jobs.test.ts).
 describe('MEC-01 five-chain SOH benchmark is anchored to the registry', () => {
-  it('metal blade: 4 iron + 1 Parts at bench II', () => {
-    expect(ins('metal_blade')).toEqual({iron_ingot:4,spares:1}); expect(RECIPES.metal_blade.stationLevel).toBe(2); expect(RECIPES.metal_blade.rev).toBe(5);
+  it('metal blade: 3 iron + 1 Parts at bench II (recipe revision 6)', () => {
+    expect(ins('metal_blade')).toEqual({iron_ingot:3,spares:1}); expect(RECIPES.metal_blade.stationLevel).toBe(2); expect(RECIPES.metal_blade.rev).toBe(6);
   });
   it('metal pipe: 2 refined iron + 2 Parts -> 2 sections at bench II', () => {
     expect(ins('metal_pipe')).toEqual({refined_iron_ingot:2,spares:2}); expect(RECIPES.metal_pipe.qty).toBe(2); expect(RECIPES.metal_pipe.stationLevel).toBe(2);

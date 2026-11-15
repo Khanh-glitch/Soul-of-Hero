@@ -1,5 +1,7 @@
 # SOH item inventory vs Last Island — tách item riêng, vai trò tương đương và legacy
 
+> **SUPERSEDED for item and recipe facts (2026-11-15, recipe revision 6).** The one canonical document is [`ITEM_CRAFTING_MASTER.md`](ITEM_CRAFTING_MASTER.md) / `ITEM_CRAFTING_MASTER.json`. This file is kept as a historical record of its round; where the two differ, the master wins.
+
 **Nguồn:** Bible đang hiệu lực `web/ref/bible.md`; item/recipe hiện có `web/src/game/catalog.ts` trên PR #62 (nền `bb2d4a7`); `item-ontology-decisions.ts` (bảng V2 có quyết định cũ); `LI_SOURCE_ITEMS_AND_RECIPES.json` (139 ID lịch sử nhiều đời, **không bao phủ toàn Last Island**).
 
 **Đếm đúng:** **147 ID hiện có** = **123 định nghĩa trong catalog** + **24 gói công trình `deploy_*` sinh từ `DEPLOYABLE_TYPES`**. 123 chia không trùng: 25 item SOH canon; 4 phần thưởng side boss; 6 đá Elder legacy; 32 item có đối chiếu LI cụ thể trong ontology V2 (trong đó có cả các tương đồng **chỉ chức năng**, không phải item y hệt); 56 item SOH mở rộng/chưa thể chứng minh có đối ứng trực tiếp trong 139 ID LI. **Không được suy ra 56 item là bản quyền độc quyền SOH, hoặc 32 item có cùng recipe LI.**

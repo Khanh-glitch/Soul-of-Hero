@@ -461,14 +461,17 @@ export const RECIPES: Record<string, Recipe> = {
   industrial_pick: { out: 'industrial_pick', qty: 1, ins: [['iron_pick', 1], ['refined_iron_ingot', 2], ['metal_pipe', 1]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2, rev: 5 },
   // Item Ontology V2 P4 (rev 3): one Machine Part becomes one Metal Blade. Rev 2 frozen in recipe-migration.ts.
   industrial_axe: { out: 'industrial_axe', qty: 1, ins: [['iron_axe', 1], ['metal_blade', 1], ['refined_iron_ingot', 2], ['metal_pipe', 1]], station: 'workbench', stationLevel: 2, secs: 25, tier: 2, rev: 5 },
-  reinforced_spear: { out: 'reinforced_spear', qty: 1, ins: [['iron_ingot', 2], ['metal_blade', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2, rev: 5 },
+  // rev 6: ONE spear formula. The old researched bill (2 Iron, 20 s) was strictly dominated by the starter-known alias
+  // `reinforced_spear_blade` (1 Iron, 16 s); the alias is retired and its bill lives here, starter-known as it was.
+  reinforced_spear: { out: 'reinforced_spear', qty: 1, ins: [['metal_blade', 1], ['iron_ingot', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2, rev: 6 },
   // ---- PA1 R1 cutover (recovered paper v1.1 BOMs, `workbench_ii` rows) ----
   // Rev 1 definitions are frozen in recipe-migration.ts; jobs keep what they paid for.
   metal_pipe: { out: 'metal_pipe', qty: 2, ins: [['refined_iron_ingot', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2, rev: 5 },
-  metal_blade: { out: 'metal_blade', qty: 1, ins: [['iron_ingot', 4], ['spares', 1]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2, rev: 5 },
+  // rev 6: 4 -> 3 Iron. LI prices a blade (30 iron + 15 Parts) well below a gear (50 + 65); at 4 + 1 the SOH blade cost as
+  // much as the gear (2 + 3). 3 + 1 restores the order and still exceeds the 2-ingot recycle return (X:blade-v2).
+  metal_blade: { out: 'metal_blade', qty: 1, ins: [['iron_ingot', 3], ['spares', 1]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2, rev: 6 },
   mechanical_gear: { out: 'mechanical_gear', qty: 1, ins: [['iron_ingot', 2], ['spares', 3]], station: 'workbench', stationLevel: 2, secs: 20, base: true, tier: 2, rev: 5 },
   iron_plate: { out: 'iron_plate', qty: 2, ins: [['refined_iron_ingot', 2], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 18, base: true, tier: 2, rev: 5 },
-  reinforced_spear_blade: { out: 'reinforced_spear', qty: 1, alias: 'Reinforced Spear (blade)', ins: [['metal_blade', 1], ['iron_ingot', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
   industrial_pick_geared: { out: 'industrial_pick', qty: 1, alias: 'Salvager Pick (geared)', ins: [['iron_pick', 1], ['mechanical_gear', 1], ['spares', 2]], station: 'workbench', stationLevel: 2, secs: 25, base: true, tier: 2 },
   // ===== ARENA 1 — item set v2 formulas. Provenance (LI original -> SOH value, reason, impact) for every row is in
   // `LI_RECIPE_LEDGER` (final-item-ledger.ts); nothing here claims to be a verbatim Last Island number unless that
@@ -481,16 +484,18 @@ export const RECIPES: Record<string, Recipe> = {
   low_quality_fuel: { out: 'fuel_can', qty: 1, alias: 'Fuel Canister (rendered fat)', ins: [['animal_fat', 6], ['cloth', 1]], station: 'furnace', secs: 24, tier: 1, rev: 4 },
   iron_plate_helmet: { out: 'iron_plate_helmet', qty: 1, ins: [['iron_plate', 1], ['hide', 3], ['needle_thread', 3]], station: 'workbench', stationLevel: 2, secs: 24, tier: 2, rev: 4 },
   iron_plate_chest: { out: 'iron_plate_chest', qty: 1, ins: [['iron_plate', 3], ['hide', 4], ['needle_thread', 3]], station: 'workbench', stationLevel: 2, secs: 30, tier: 2, rev: 4 },
-  refined_iron_helmet: { out: 'refined_iron_helmet', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 30, tier: 3, rev: 4 },
-  refined_iron_chest: { out: 'refined_iron_chest', qty: 1, ins: [['refined_iron_ingot', 5], ['hide', 5], ['needle_thread', 8]], station: 'workbench', stationLevel: 2, secs: 38, tier: 3, rev: 4 },
+  // rev 6 (knowledge only, bills unchanged): the four Refined Iron pieces are tier 2 so a Research Table can study them
+  // directly; at tier 3 they could only come from random tinkering and no blueprint source exists.
+  refined_iron_helmet: { out: 'refined_iron_helmet', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 30, tier: 2, rev: 4 },
+  refined_iron_chest: { out: 'refined_iron_chest', qty: 1, ins: [['refined_iron_ingot', 5], ['hide', 5], ['needle_thread', 8]], station: 'workbench', stationLevel: 2, secs: 38, tier: 2, rev: 4 },
   // Item set v3 (rev 5): leg and foot armour. LI numbers scaled by the same unit rule as the helmet / chest rows.
   wooden_ladder: { out: 'wooden_ladder', qty: 1, ins: [['wood', 12], ['rope', 1]], station: 'workbench', secs: 14, tier: 1, rev: 5 },
   steel_folding_ladder: { out: 'steel_folding_ladder', qty: 1, ins: [['refined_iron_ingot', 6], ['wooden_ladder', 1], ['mechanical_gear', 1]], station: 'workbench', stationLevel: 2, secs: 30, tier: 2, rev: 5 },   // tier 2 so the Research Table can study it directly (round 2: a tier-3 formula is only ever found by random tinkering)
   large_furnace: { out: 'large_furnace', qty: 1, ins: [['stone', 36], ['iron_ingot', 8], ['iron_plate', 4], ['charcoal', 4]], station: 'workbench', stationLevel: 2, secs: 40, tier: 2, rev: 5 },   // tier 2 so the Research Table can study it directly (round 2: a tier-3 formula is only ever found by random tinkering)
   iron_plate_pants: { out: 'iron_plate_pants', qty: 1, ins: [['iron_plate', 2], ['hide', 3], ['needle_thread', 3]], station: 'workbench', stationLevel: 2, secs: 26, tier: 2, rev: 5 },
   iron_plate_boots: { out: 'iron_plate_boots', qty: 1, ins: [['iron_plate', 1], ['hide', 3], ['needle_thread', 3]], station: 'workbench', stationLevel: 2, secs: 22, tier: 2, rev: 5 },
-  refined_iron_legs: { out: 'refined_iron_legs', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 32, tier: 3, rev: 5 },
-  refined_iron_boots: { out: 'refined_iron_boots', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 28, tier: 3, rev: 5 },
+  refined_iron_legs: { out: 'refined_iron_legs', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 32, tier: 2, rev: 5 },
+  refined_iron_boots: { out: 'refined_iron_boots', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 28, tier: 2, rev: 5 },
   dried_meat: { out: 'dried_meat', qty: 1, ins: [['meat', 1]], station: 'campfire', secs: 20, base: true, tier: 0, rev: 4 },
   grilled_mushroom: { out: 'grilled_mushroom', qty: 1, ins: [['mushroom', 1]], station: 'campfire', secs: 6, base: true, tier: 0, rev: 4 },
   mushroom_soup: { out: 'mushroom_soup', qty: 1, ins: [['mushroom', 5], ['tin_can', 1]], station: 'campfire', secs: 14, base: true, tier: 0, rev: 4 },
@@ -518,7 +523,8 @@ export const RECIPES: Record<string, Recipe> = {
   glass: { out: 'glass', qty: 1, ins: [['crystal', 1], ['stone', 1]], station: 'furnace', secs: 14, tier: 2 },
   leather: { out: 'leather', qty: 1, ins: [['hide', 1]], station: 'workbench', secs: 8, base: true, tier: 0 },
   cloth: { out: 'cloth', qty: 1, ins: [['fiber', 6]], station: 'workbench', secs: 8, base: true, tier: 0 },
-  arrow: { out: 'arrow', qty: 6, ins: [['wood', 1], ['stone', 1], ['fiber', 1]], station: 'workbench', secs: 5, tier: 1 },
+  // rev 6 (knowledge only): starter-known. The better fletched arrow was starter-known while this plainer one needed study.
+  arrow: { out: 'arrow', qty: 6, ins: [['wood', 1], ['stone', 1], ['fiber', 1]], station: 'workbench', secs: 5, base: true, tier: 1 },
   bow: { out: 'bow', qty: 1, ins: [['wood', 5], ['rope', 3]], station: 'workbench', secs: 12, tier: 1 },
   plank: { out: 'plank', qty: 1, ins: [['wood', 2]], station: 'workbench', secs: 6, base: true, tier: 1 },
   iron_axe: { out: 'iron_axe', qty: 1, ins: [['iron_ingot', 3], ['wood', 2], ['leather', 1]], station: 'workbench', secs: 15, base: true, tier: 1 },

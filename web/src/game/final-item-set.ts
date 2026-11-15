@@ -245,6 +245,8 @@ export const RECIPE_SUCCESSOR: Readonly<Record<string, string | null>> = Object.
   // round 2
   refine_salvaged_oil: 'refinery_fuel', refinery_crude: 'refinery_fuel', refinery_industrial: 'refinery_fuel_batch', refinery_lubricant: null,
   fasteners: null, treated_canvas: null, field_repair_kit: null, recover_drive: null, mechanical_parts: null, scrap_ingot: null, brick: 'glass',
+  // recipe revision 6: the dominated alias folds into the one spear formula
+  reinforced_spear_blade: 'reinforced_spear',
 });
 export function liveRecipeId(id: string): string | null {
   return Object.prototype.hasOwnProperty.call(RECIPE_SUCCESSOR, id) ? RECIPE_SUCCESSOR[id] : id;

@@ -95,7 +95,7 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     const per=(id:string)=>Object.fromEntries(RECIPES[id].ins.map(([k,q])=>[k,q/RECIPES[id].qty]));
     const back=(key:string)=>Object.fromEntries(recoveryPlan({uid:'x',key,qty:1} as any)!.outputs);
     expect(per('metal_pipe')).toEqual({refined_iron_ingot:1,spares:1});expect(back('metal_pipe')).toEqual({refined_iron_ingot:1});      // the Part is lost
-    expect(per('metal_blade')).toEqual({iron_ingot:4,spares:1});expect(back('metal_blade')).toEqual({iron_ingot:2});                    // half the iron, the Part is lost
+    expect(per('metal_blade')).toEqual({iron_ingot:3,spares:1});expect(back('metal_blade')).toEqual({iron_ingot:2});                    // rev 6: two of three ingots back, the Part is lost
     expect(per('mechanical_gear')).toEqual({iron_ingot:2,spares:3});expect(back('mechanical_gear')).toEqual({spares:2,iron_ingot:1});
     for(const key of ['metal_pipe','metal_blade','mechanical_gear']){const c=per(key),b=back(key);let less=false;for(const [k,q] of Object.entries(b)){expect(q,key+' '+k).toBeLessThanOrEqual(c[k]??0);}for(const k of Object.keys(c))if((b[k]??0)<c[k])less=true;expect(less,key).toBe(true);}
   });

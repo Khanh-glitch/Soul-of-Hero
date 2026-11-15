@@ -90,19 +90,19 @@
       "cheapestCraft": {
         "route": "metal_blade",
         "atomsPerUnit": {
-          "iron_ingot": 4,
+          "iron_ingot": 3,
           "spares": 1
         },
-        "ingotEqPerUnit": 4,
+        "ingotEqPerUnit": 3,
         "treeSeconds": 16,
         "model": "amortized per output unit"
       },
       "integerTreePerUnit": {
         "atoms": {
-          "iron_ingot": 4,
+          "iron_ingot": 3,
           "spares": 1
         },
-        "ingotEq": 4,
+        "ingotEq": 3,
         "treeSeconds": 16,
         "crafts": {
           "metal_blade": 1
@@ -120,7 +120,7 @@
           "ins": [
             [
               "iron_ingot",
-              4
+              3
             ],
             [
               "spares",
@@ -130,10 +130,10 @@
           "salvageDependent": false,
           "rawPerOutputUnit": {
             "atoms": {
-              "iron_ingot": 4,
+              "iron_ingot": 3,
               "spares": 1
             },
-            "ingotEq": 4,
+            "ingotEq": 3,
             "treeSeconds": 16,
             "model": "amortized per output unit"
           },
@@ -142,7 +142,7 @@
             "crafts": 1,
             "outputs": 1,
             "consumed": {
-              "iron_ingot": 4,
+              "iron_ingot": 3,
               "spares": 1
             },
             "seconds": 16,
@@ -179,8 +179,7 @@
         "cleaver",
         "industrial_axe",
         "machete",
-        "reinforced_spear",
-        "reinforced_spear_blade (Reinforced Spear (blade))"
+        "reinforced_spear"
       ],
       "recycler": {
         "source": "iron_sword",
@@ -196,7 +195,7 @@
                 ]
               ],
               "ingotEqRecovered": 0,
-              "ingotEqCraft": 16,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -213,7 +212,7 @@
                 ]
               ],
               "ingotEqRecovered": 1,
-              "ingotEqCraft": 16,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -230,7 +229,7 @@
                 ]
               ],
               "ingotEqRecovered": 1,
-              "ingotEqCraft": 16,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             }
@@ -245,7 +244,7 @@
                 ]
               ],
               "ingotEqRecovered": 0,
-              "ingotEqCraft": 16,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -265,8 +264,8 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 5,
-              "ingotEqCraft": 16,
+              "ingotEqRecovered": 4,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -290,8 +289,8 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 9,
-              "ingotEqCraft": 16,
+              "ingotEqRecovered": 7,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             }
@@ -306,7 +305,7 @@
                 ]
               ],
               "ingotEqRecovered": 0,
-              "ingotEqCraft": 16,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -323,7 +322,7 @@
                 ]
               ],
               "ingotEqRecovered": 1,
-              "ingotEqCraft": 16,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -344,7 +343,7 @@
                 ]
               ],
               "ingotEqRecovered": 2,
-              "ingotEqCraft": 16,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             }
@@ -359,7 +358,7 @@
                 ]
               ],
               "ingotEqRecovered": 1,
-              "ingotEqCraft": 16,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -376,7 +375,7 @@
                 ]
               ],
               "ingotEqRecovered": 2,
-              "ingotEqCraft": 16,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -397,7 +396,7 @@
                 ]
               ],
               "ingotEqRecovered": 3,
-              "ingotEqCraft": 16,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             }
@@ -941,7 +940,7 @@
                 ]
               ],
               "ingotEqRecovered": 0,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -958,7 +957,7 @@
                 ]
               ],
               "ingotEqRecovered": 1,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -979,7 +978,7 @@
                 ]
               ],
               "ingotEqRecovered": 1,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [
                 "spares:+1"
               ],
@@ -996,7 +995,7 @@
                 ]
               ],
               "ingotEqRecovered": 0,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -1017,7 +1016,7 @@
                 ]
               ],
               "ingotEqRecovered": 1,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [
                 "spares:+1"
               ],
@@ -1048,7 +1047,7 @@
                 ]
               ],
               "ingotEqRecovered": 3,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [
                 "spares:+6"
               ],
@@ -1065,7 +1064,7 @@
                 ]
               ],
               "ingotEqRecovered": 0,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -1086,7 +1085,7 @@
                 ]
               ],
               "ingotEqRecovered": 1,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [
                 "spares:+1"
               ],
@@ -1113,7 +1112,7 @@
                 ]
               ],
               "ingotEqRecovered": 1,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [
                 "spares:+3"
               ],
@@ -1130,7 +1129,7 @@
                 ]
               ],
               "ingotEqRecovered": 1,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -1147,7 +1146,7 @@
                 ]
               ],
               "ingotEqRecovered": 2,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -1168,7 +1167,7 @@
                 ]
               ],
               "ingotEqRecovered": 3.5,
-              "ingotEqCraft": 11.5,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             }
@@ -1755,11 +1754,11 @@
       "tool": "iron_sword",
       "v2_pinned": {
         "resourceOverReturn": false,
-        "netIngotEqPerLoop": 9,
+        "netIngotEqPerLoop": 7,
         "mintedNonNumeraire": []
       },
       "repeatableLoop": {
-        "netIngotEqPerLoop": 9,
+        "netIngotEqPerLoop": 7,
         "consumesRepeatableInputsOnly": "ORIGINAL_UNKNOWN (wood/leather source stock unverified — no renewable proof in this benchmark)",
         "realizable": "ORIGINAL_UNKNOWN (no renewable-input proof for wood/leather)",
         "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
@@ -1810,7 +1809,7 @@
       "tool": "industrial_axe",
       "v2_pinned": {
         "resourceOverReturn": true,
-        "netIngotEqPerLoop": -8.5,
+        "netIngotEqPerLoop": -7.5,
         "mintedNonNumeraire": [
           "spares:+6"
         ]

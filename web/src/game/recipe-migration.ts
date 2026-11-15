@@ -27,7 +27,7 @@ import type { Recipe } from './catalog';
 
 /** Live catalog revision. Bump by exactly 1 whenever a recipe is changed or retired,
  *  and freeze the superseded definition in `LEGACY_RECIPES` under `<id>@<old rev>`. */
-export const RECIPE_REVISION = 5;
+export const RECIPE_REVISION = 6;
 
 /** The revision a save written before job stamping existed must resolve to. */
 export const PRE_STAMPING_REVISION = 1;
@@ -96,12 +96,23 @@ export const LEGACY_RECIPES: Readonly<Record<string, Recipe>> = Object.freeze({
   'refinery_industrial@4': { out: 'fuel_can', qty: 2, outs: [['fuel_can', 2], ['lubricant', 1]], ins: [['salvaged_oil', 6], ['glass', 1]], station: 'refinery', secs: 26, base: true, tier: 1 },
   'refinery_lubricant@4': { out: 'lubricant', qty: 1, ins: [['salvaged_oil', 2]], station: 'refinery', secs: 12, base: true, tier: 1 },
   'refinery_crude@4': { out: 'fuel_can', qty: 1, ins: [['crude_petroleum', 4], ['glass', 1]], station: 'refinery', secs: 16, base: true, tier: 1 },
+  // Rev 5 — live values before the ITEM & RECIPE RECONSTRUCTION cutover (Control Tower 2026-11-15, ITEM_CRAFTING_MASTER).
+  // Two bills changed and one dominated alias was retired; five more rows changed research access only (same inputs,
+  // same output) and are frozen too so every definition this cutover touched has its rev-5 form on record.
+  'reinforced_spear@5': { out: 'reinforced_spear', qty: 1, ins: [['iron_ingot', 2], ['metal_blade', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 20, tier: 2, rev: 5 },
+  'reinforced_spear_blade@5': { out: 'reinforced_spear', qty: 1, alias: 'Reinforced Spear (blade)', ins: [['metal_blade', 1], ['iron_ingot', 1], ['wood', 2]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2 },
+  'metal_blade@5': { out: 'metal_blade', qty: 1, ins: [['iron_ingot', 4], ['spares', 1]], station: 'workbench', stationLevel: 2, secs: 16, base: true, tier: 2, rev: 5 },
+  'refined_iron_helmet@5': { out: 'refined_iron_helmet', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 30, tier: 3, rev: 4 },
+  'refined_iron_chest@5': { out: 'refined_iron_chest', qty: 1, ins: [['refined_iron_ingot', 5], ['hide', 5], ['needle_thread', 8]], station: 'workbench', stationLevel: 2, secs: 38, tier: 3, rev: 4 },
+  'refined_iron_legs@5': { out: 'refined_iron_legs', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 32, tier: 3, rev: 5 },
+  'refined_iron_boots@5': { out: 'refined_iron_boots', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 28, tier: 3, rev: 5 },
+  'arrow@5': { out: 'arrow', qty: 6, ins: [['wood', 1], ['stone', 1], ['fiber', 1]], station: 'workbench', secs: 5, tier: 1 },
 });
 
 /** Recipe ids removed from the live catalog by a cutover, in the order retired.
  *  Knowledge carrying one of these ids is pruned on load; a queued job or a held
  *  blueprint referencing it stays valid through `LEGACY_RECIPES`. */
-export const RETIRED_RECIPES: readonly string[] = ['fuel_can', 'vehicle_frame_piped', 'vehicle_drive', 'vehicle_drive_geared', 'fuel_briquette', 'root_broth', 'poached_eggs', 'herb_roast', 'salted_meat', 'iron_sword', 'iron_sword_blade', 'refine_salvaged_oil', 'refinery_industrial', 'refinery_lubricant', 'refinery_crude', 'fasteners', 'treated_canvas', 'field_repair_kit', 'recover_drive', 'mechanical_parts', 'scrap_ingot', 'brick'];
+export const RETIRED_RECIPES: readonly string[] = ['fuel_can', 'vehicle_frame_piped', 'vehicle_drive', 'vehicle_drive_geared', 'fuel_briquette', 'root_broth', 'poached_eggs', 'herb_roast', 'salted_meat', 'iron_sword', 'iron_sword_blade', 'refine_salvaged_oil', 'refinery_industrial', 'refinery_lubricant', 'refinery_crude', 'fasteners', 'treated_canvas', 'field_repair_kit', 'recover_drive', 'mechanical_parts', 'scrap_ingot', 'brick', 'reinforced_spear_blade'];
 export const isRetiredRecipe = (id: unknown): boolean =>
   typeof id === 'string' && RETIRED_RECIPES.includes(id);
 /** A blueprint may legally name a retired formula: the paper is a real item the
@@ -120,6 +131,7 @@ export function latestLegacyDefinition(id: unknown): Recipe | null {
 /** Which revisions this cutover touched — used by save migration and by tests that
  *  must prove a legacy job is not re-priced. */
 export const CUT_OVER_REVISIONS: Readonly<Record<number, readonly string[]>> = Object.freeze({
+  5: ['reinforced_spear', 'reinforced_spear_blade', 'metal_blade', 'refined_iron_helmet', 'refined_iron_chest', 'refined_iron_legs', 'refined_iron_boots', 'arrow'],
   4: ['vehicle_frame','refine_salvaged_oil','fasteners','treated_canvas','field_repair_kit','recover_drive','mechanical_parts','scrap_ingot','brick','essence_fire','core_mjolnir','trail_pack','trail_canteen','industrial_pick','industrial_axe','reinforced_spear','metal_pipe','metal_blade','mechanical_gear','iron_plate','refined_iron_ingot','refined_iron_rich','scrap_helm','refinery_fuel','refinery_fuel_batch','refinery_industrial','refinery_lubricant','refinery_crude'],
   1: ['metal_pipe', 'mechanical_gear', 'iron_plate', 'motorbike_kit', 'fuel_can'],
   2: ['vehicle_frame', 'vehicle_frame_piped', 'industrial_axe'],

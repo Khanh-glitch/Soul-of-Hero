@@ -1,5 +1,7 @@
 # LAST ISLAND → SOH: một set item thiết kế chính thức
 
+> **CÔNG THỨC & VAI TRÒ ITEM (15/11/2026, recipe revision 6):** đọc [`ITEM_CRAFTING_MASTER.md`](ITEM_CRAFTING_MASTER.md) (sinh từ `ITEM_CRAFTING_MASTER.json`). Đây là tài liệu duy nhất cho công thức, họ chế tạo và lý do không có công thức của 157 item. `FINAL_THREE_GROUP_ITEM_SET_20261115.*` vẫn giữ danh sách 157 id và kiểm chứng nguồn Last Island. `ARENA1_ROUND1_REPORT.md`, `ARENA1_ROUND2_REPORT.md`, `SOH_147_ITEMS_BY_ROLE.md` là hồ sơ lịch sử.
+
 **CURRENT DESIGN DECISION · 2026-11-15.** Creator đã chốt **ba nhóm item** (chỉ là các nhóm quyết định, không phải item categories trong game). Quyết định này thay những đề xuất Item Ontology V2 và PR #62 ngày 14/11 còn mâu thuẫn, đặc biệt kết luận cũ “giữ toàn bộ súng và đạn chỉ vì PvE có thể dùng chúng”.
 
 ## Chỉ đọc hai file này để lấy quyết định hiện hành

@@ -213,7 +213,7 @@ describe('migration and restart — rev-1, rev-2 and rev-3 saves with queued Fra
     }
     // rev 3 and rev 4 share one frozen bill (the piped frame / the blade axe, still priced in Machine Parts); rev 5 is live
     expect(frameAt(3)).toBe(frameAt(4)); expect(frameAt(3).ins).toEqual(LEGACY_RECIPES['vehicle_frame_piped@2'].ins); expect(axeAt(3)).toBe(axeAt(4));
-    expect(frameAt(5)).toBe(LIVE.vehicle_frame); expect(axeAt(5)).toBe(LIVE.industrial_axe); expect(frameAt(3)).not.toBe(LIVE.vehicle_frame); expect(RECIPE_REVISION).toBe(5);
+    expect(frameAt(5)).toBe(LIVE.vehicle_frame); expect(axeAt(5)).toBe(LIVE.industrial_axe); expect(frameAt(3)).not.toBe(LIVE.vehicle_frame); expect(frameAt(6)).toBe(LIVE.vehicle_frame); expect(RECIPE_REVISION).toBe(6);
   });
   for (const rev of [1, 2, 3] as const) {
     // SUPERSEDED BY ITEM SET V3. This test AUTHORS an old save by running the live engine with Machine Parts and a Damaged

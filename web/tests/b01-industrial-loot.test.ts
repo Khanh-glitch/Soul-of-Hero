@@ -107,8 +107,11 @@ describe('B01 B: intermediates have real producers and consumers',()=>{
     // Item Ontology V2 P3: the frame alias was retired at rev 3 (frozen as vehicle_frame_piped@2); the blade refit is the alias pinned here.
     // Final item set (rev 4): the Iron Sword and its blade refit were retired; the spear's blade alias carries the same pin.
     expect(RECIPES.iron_sword_blade).toBeUndefined();expect(RECIPES.iron_sword).toBeUndefined();
-    expect(RECIPES.reinforced_spear_blade.out).toBe(RECIPES.reinforced_spear.out);expect(RECIPES.reinforced_spear_blade.alias).toBeTruthy();
-    expect(RECIPES.reinforced_spear_blade.stationLevel).toBe(2);expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
+    // Recipe revision 6 (ITEM_CRAFTING_MASTER): the spear's blade alias dominated the researched bill and was folded into it.
+    // The alias pattern itself stays live on the Salvager Pick (a Parts-heavy route beside the refined-iron route).
+    expect(RECIPES.reinforced_spear_blade).toBeUndefined();expect(RECIPES.reinforced_spear.base).toBe(true);
+    expect(RECIPES.industrial_pick_geared.out).toBe(RECIPES.industrial_pick.out);expect(RECIPES.industrial_pick_geared.alias).toBeTruthy();
+    expect(RECIPES.industrial_pick_geared.stationLevel).toBe(2);expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
     expect(RECIPES.refined_iron_ingot.station).toBe('furnace');
   });
   it('a real station craft pays time and yields a physical metal blade into the output container',()=>{

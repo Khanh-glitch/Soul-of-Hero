@@ -1,5 +1,7 @@
 # ARENA 1 — ROUND 2 REPORT
 
+> **SUPERSEDED for item and recipe facts (2026-11-15, recipe revision 6).** The one canonical document is [`ITEM_CRAFTING_MASTER.md`](ITEM_CRAFTING_MASTER.md) / `ITEM_CRAFTING_MASTER.json`. This file is kept as a historical record of its round; where the two differ, the master wins.
+
 Branch `arena/f7f5cf36-soul-of-hero`, Draft PR #61. Not merged. No `BUILD READY` / `PLAYABLE` claim is made.
 
 ## 1. Status in one paragraph

@@ -7,9 +7,9 @@ Models: amortized per-unit (cheapestCraft) AND integer craft batches (integerTre
 
 | Chain | Cheapest route | ingot-eq / unit | craft tree s | recycler v2 high (pinned) | recycler v3 high (new) | LI leaf BOM (context) |
 |---|---|---|---|---|---|---|
-| Metal Blade | metal_blade | 4 | 16 | iron_sword: OK (9 vs 16) | iron_sword: OK (2 vs 16) | 30×iron_ingot, 15×LI Parts |
+| Metal Blade | metal_blade | 3 | 16 | iron_sword: OK (7 vs 13) | iron_sword: OK (2 vs 13) | 30×iron_ingot, 15×LI Parts |
 | Metal Pipe | metal_pipe | 1.5 | 19 | iron_pick: OVER_RETURN (3.5 vs 3) | iron_pick: OVER_RETURN (2 vs 3) | 30×LI Parts, 5×refined_iron_ingot |
-| Mechanical Gear | mechanical_gear | 2 | 20 | industrial_axe: OVER_RETURN (3 vs 11.5) | industrial_axe: OVER_RETURN (1 vs 11.5) | 50×iron_ingot, 65×LI Parts |
+| Mechanical Gear | mechanical_gear | 2 | 20 | industrial_axe: OVER_RETURN (3 vs 10.5) | industrial_axe: OVER_RETURN (1 vs 10.5) | 50×iron_ingot, 65×LI Parts |
 | Iron Plate | iron_plate | 1.5 | 19 | iron_axe: OVER_RETURN (2.5 vs 3) | iron_axe: OVER_RETURN (1 vs 3) | 30×LI Parts, 5×refined_iron_ingot |
 | Utility Frame → Motorbike Kit | vehicle_frame | 8.5 | 61 | none: n/a | none: n/a | 100×iron_ingot, 50×LI Parts, 30×refined_iron_ingot |
 

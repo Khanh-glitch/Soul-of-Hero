@@ -1,5 +1,7 @@
 # ARENA 1 — Final item registration, crafting & Veyra integration — round 1 report
 
+> **SUPERSEDED for item and recipe facts (2026-11-15, recipe revision 6).** The one canonical document is [`ITEM_CRAFTING_MASTER.md`](ITEM_CRAFTING_MASTER.md) / `ITEM_CRAFTING_MASTER.json`. This file is kept as a historical record of its round; where the two differ, the master wins.
+
 Authority: `FINAL_THREE_GROUP_ITEM_SET_20261115.json` (157 ids = A 78 / B 42 / C 37) and `web/ref/bible.md`.
 Code authority: `web/src/game/final-item-set.ts` (roster + retirement) and `web/src/game/final-item-ledger.ts`
 (recipe provenance, sources, status, visual briefs). Proof: `web/tests/final-item-set.test.ts` (21 tests).
