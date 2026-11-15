@@ -485,8 +485,8 @@ export const RECIPES: Record<string, Recipe> = {
   refined_iron_chest: { out: 'refined_iron_chest', qty: 1, ins: [['refined_iron_ingot', 5], ['hide', 5], ['needle_thread', 8]], station: 'workbench', stationLevel: 2, secs: 38, tier: 3, rev: 4 },
   // Item set v3 (rev 5): leg and foot armour. LI numbers scaled by the same unit rule as the helmet / chest rows.
   wooden_ladder: { out: 'wooden_ladder', qty: 1, ins: [['wood', 12], ['rope', 1]], station: 'workbench', secs: 14, tier: 1, rev: 5 },
-  steel_folding_ladder: { out: 'steel_folding_ladder', qty: 1, ins: [['refined_iron_ingot', 6], ['wooden_ladder', 1], ['mechanical_gear', 1]], station: 'workbench', stationLevel: 2, secs: 30, tier: 3, rev: 5 },
-  large_furnace: { out: 'large_furnace', qty: 1, ins: [['stone', 36], ['iron_ingot', 8], ['iron_plate', 4], ['charcoal', 4]], station: 'workbench', stationLevel: 2, secs: 40, tier: 3, rev: 5 },
+  steel_folding_ladder: { out: 'steel_folding_ladder', qty: 1, ins: [['refined_iron_ingot', 6], ['wooden_ladder', 1], ['mechanical_gear', 1]], station: 'workbench', stationLevel: 2, secs: 30, tier: 2, rev: 5 },   // tier 2 so the Research Table can study it directly (round 2: a tier-3 formula is only ever found by random tinkering)
+  large_furnace: { out: 'large_furnace', qty: 1, ins: [['stone', 36], ['iron_ingot', 8], ['iron_plate', 4], ['charcoal', 4]], station: 'workbench', stationLevel: 2, secs: 40, tier: 2, rev: 5 },   // tier 2 so the Research Table can study it directly (round 2: a tier-3 formula is only ever found by random tinkering)
   iron_plate_pants: { out: 'iron_plate_pants', qty: 1, ins: [['iron_plate', 2], ['hide', 3], ['needle_thread', 3]], station: 'workbench', stationLevel: 2, secs: 26, tier: 2, rev: 5 },
   iron_plate_boots: { out: 'iron_plate_boots', qty: 1, ins: [['iron_plate', 1], ['hide', 3], ['needle_thread', 3]], station: 'workbench', stationLevel: 2, secs: 22, tier: 2, rev: 5 },
   refined_iron_legs: { out: 'refined_iron_legs', qty: 1, ins: [['refined_iron_ingot', 3], ['hide', 5], ['needle_thread', 6]], station: 'workbench', stationLevel: 2, secs: 32, tier: 3, rev: 5 },

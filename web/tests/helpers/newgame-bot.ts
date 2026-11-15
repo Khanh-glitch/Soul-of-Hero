@@ -23,7 +23,8 @@ export class Bot {
   gs: GameState; r: RunState; now = BOT_T0; seq = 0;
   /** Veyra streams a 200x200 window and re-bases local tile coordinates when the player nears its edge. The bot keeps
    *  every target in GLOBAL tiles and re-plans after a shift. */
-  drinks = 0; refuels = 0; fightTicks = 0; shifts = 0; private origin: [number, number] = [0, 0];
+  started = new Set<string>(); toolsRemade = 0; repairs = 0;
+  drinks = 0; resided = 0; stashed = 0; bandages = 0; hunts = 0; refuels = 0; fightTicks = 0; shifts = 0; private origin: [number, number] = [0, 0];
   failures: Record<string, number> = {}; private fail(why: string) { this.failures[why] = (this.failures[why] || 0) + 1; }
   /** GLOBAL tiles the bot must not build on (e.g. the seep it intends to pump). */
   keepClear: [number, number][] = [];
@@ -42,7 +43,8 @@ export class Bot {
   minutes() { return (this.now - BOT_T0) / 60000; }
   note(s: string) { this.log.push(`[${this.minutes().toFixed(1)}m] ${s}`); }
   inv(key: string) { return countItem(this.r, 'inv', key); }
-  slotOf(key: string) { return C(this.r, 'inv').slots.findIndex(s => s?.key === key); }
+  /** Slot of a carried item; a tool with durability left is preferred over a worn-out one of the same kind. */
+  slotOf(key: string) { const sl = C(this.r, 'inv').slots; const ok = sl.findIndex(s => s?.key === key && (s.dur === undefined || s.dur > 0)); return ok >= 0 ? ok : sl.findIndex(s => s?.key === key); }
   act(type: string, p: object = {}) { this.now += 10; return dispatch(this.gs, { id: `bot-${this.seed}-${++this.seq}`, type, ...p } as any, this.now) as any; }
   must(type: string, p: object = {}) { const rc = this.act(type, p); if (!rc.ok) throw new BotStop(`${type} ${JSON.stringify(p)} refused: ${rc.reason}`); return rc; }
 
@@ -58,6 +60,8 @@ export class Bot {
         input = { ...this.idle(), left: far && dx < -3, right: far && dx > 3, up: far && dy < -3, down: far && dy > 3, mx: foe.x, my: foe.y, attack: true, attackPressed: !this.p.action } as Input;
       }
     }
+    // A hurt player binds the wound with a carried bandage (ordinary `useItem`).
+    if (this.p.hp > 0 && this.p.hp < 50 && !this.p.action) { const s = this.slotOf('bandage'); if (s >= 0 && this.act('useItem', { slot: s }).ok) this.bandages++; }
     const hp0 = this.p.hp, alive = new Map(this.r.creatures.map(c => [c.id, c.type] as const));
     this.now += DT; tick(this.gs, input, DT, this.now); this.ticks++;
     const o = windowOrigin(this.r); if (o[0] !== this.origin[0] || o[1] !== this.origin[1]) { this.origin = o; this.shifts++; }
@@ -80,7 +84,8 @@ export class Bot {
     return best;
   }
 
-  private passable(g: Uint8Array | number[], i: number) { return g[i] === 0 || g[i] === 4; }
+  /** Free ground, wadeable water, and a ladder over a cliff (foot-only crossing). */
+  private passable(g: Uint8Array | number[], i: number) { return g[i] === 0 || g[i] === 4 || g[i] === 6; }
   /** BFS over the engine's own block grid. `adjacent`: stop on a free tile 4-adjacent to the target. */
   path(tx: number, ty: number, adjacent: boolean): number[] | null {
     const g = blockGrid(this.r) as any, [sx, sy] = this.tile, start = sy * WW + sx, from = new Int32Array(WW * WH).fill(-2), q = new Int32Array(WW * WH); let h = 0, t = 0;
@@ -103,7 +108,7 @@ export class Bot {
     const w = getWorld();
     for (let tries = 0; tries < 6; tries++) {
       const fresh = (i: number) => [1, -1, WW, -WW].some(d => w.fresh[i + d]);
-      const p = this.pathWhere(fresh); if (!p) { this.note('drink: no fresh water within 140 steps'); return false; }
+      const p = this.pathWhere(fresh) ?? this.pathWhere(fresh, 600); if (!p) { this.note('drink: no fresh water within 600 steps'); return false; }
       if (!this.walk(p)) continue;
       const [tx, ty] = this.tile, i = ty * WW + tx, d = [1, -1, WW, -WW].find(k => w.fresh[i + k]); if (d === undefined) continue;
       const wx = ((i + d) % WW) * TILE + 8, wy = Math.floor((i + d) / WW) * TILE + 8; let n = 0;
@@ -166,11 +171,17 @@ export class Bot {
     const tool = this.bestTool(src0.def.mat); if (!tool) return false;
     const [gx, gy] = this.toGlobal(s.tx, s.ty);
     if (!this.goNearGlobal(gx, gy)) { this.unreachable.add(gx + ',' + gy); this.fail(`${s.key}: no walkable route`); return false; } if (!this.hold(tool)) { this.fail(`${s.key}: cannot put ${tool} on the hotbar`); return false; }
-    let lastHp = -1, stale = 0;
+    let lastHp = -1, stale = 0; const sides: [number, number][] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
     for (let k = 0; k < 900; k++) {
       const [tx, ty] = this.toLocal(gx, gy); const src = sourceAt(this.r, tx, ty, this.now); if (!src || src.stock <= 0) break;
       // A swing that never bites (the node cannot be struck from this side) is abandoned after 4 s and not retried.
-      const hpNow = src.stock * 1000 + src.hp; if (hpNow === lastHp) { if (++stale > 80) { this.unreachable.add(gx + ',' + gy); this.fail(`${s.key}: swing never connected`); return false; } } else { stale = 0; lastHp = hpNow; }
+      const hpNow = src.stock * 1000 + src.hp; if (hpNow === lastHp) { if (++stale > 80) {
+        // Like a player, step round to another side of the node before giving up (a neighbouring node can soak the swing).
+        let moved = false;
+        while (sides.length && !moved) { const [dx, dy] = sides.shift()!; const pth = this.path(tx + dx, ty + dy, false); if (pth && pth.length < 30 && this.walk(pth) && this.tile[0] === tx + dx && this.tile[1] === ty + dy) moved = true; }
+        if (!moved) { this.unreachable.add(gx + ',' + gy); this.fail(`${s.key}: swing never connected from any side`); return false; }
+        this.resided++; stale = 0;
+      } } else { stale = 0; lastHp = hpNow; }
       if (Math.abs(this.tile[0] - tx) + Math.abs(this.tile[1] - ty) > 1 && !this.goNearGlobal(gx, gy)) return false;   // pushed away (a fight, a shift)
       this.hold(tool); this.step({ mx: tx * TILE + 8, my: ty * TILE + 8, attack: true, attackPressed: !this.p.action }); if (k % 20 === 19) this.pickupNearby();
     }
@@ -182,17 +193,39 @@ export class Bot {
   gather(item: string, count: number, kinds: string[], maxNodes = 60): boolean {
     for (let n = 0; n < maxNodes && this.inv(item) < count; n++) {
       const cands = this.sources(kinds, 8); let done = false;
+      if (cands.length && !this.bestTool(sourceAt(this.r, cands[0].tx, cands[0].ty, this.now)!.def.mat)) { this.note(`gather ${item}: no working tool carried for ${cands[0].key}`); this.fail(`${cands[0].key}: no working tool`); return false; }
       for (const s of cands) { if (this.harvestOne(s)) { done = true; break; } }
-      if (!done) { this.note(`gather ${item}: no reachable ${kinds.join('/')} (have ${this.inv(item)}/${count})`); return false; }
+      if (!done) { for (const s of cands) this.unreachable.add(this.toGlobal(s.tx, s.ty).join(','));   // tried and failed: look further out next pass
+        if (cands.length) continue; this.note(`gather ${item}: no reachable ${kinds.join('/')} (have ${this.inv(item)}/${count})`); return false; }
     }
     return this.inv(item) >= count;
+  }
+  /** Hunt the nearest animal of the given kinds on foot with the carried blade. Real chase, real swings; gives up after
+   *  `maxSec`. Returns true if it died (its drops are then picked up). */
+  hunt(types: string[], maxSec = 25, maxTiles = 30): boolean {
+    const prey = this.r.creatures.filter(c => types.includes(c.type) && (c as any).hp > 0 && c.state !== 'dead' && Math.hypot(c.x - this.p.x, c.y - this.p.y) < maxTiles * TILE).sort((x, y) => Math.hypot(x.x - this.p.x, x.y - this.p.y) - Math.hypot(y.x - this.p.x, y.y - this.p.y))[0];
+    if (!prey) return false; this.hunts++;
+    for (let k = 0; k < maxSec * 1000 / DT; k++) {
+      const c = this.r.creatures.find(x => x.id === prey.id);
+      if (!c || c.state === 'dead' || (c as any).hp <= 0) { this.wait(300); for (const e of Object.values(this.r.entities)) if (e.kind === 'drop' && Math.hypot(e.x - prey.x, e.y - prey.y) < 3 * TILE) { this.goNear(Math.floor(e.x / TILE), Math.floor(e.y / TILE)); } this.pickupNearby(); this.act('sort', { c: 'inv' }); return !!c || true; }
+      if (this.p.hp < 45) { this.note(`hunt of ${prey.type} broken off at ${Math.round(this.p.hp)} hp`); return false; }
+      this.hold(this.weapon()); const dx = c.x - this.p.x, dy = c.y - this.p.y, far = Math.hypot(dx, dy) > 14;
+      this.step({ left: far && dx < -3, right: far && dx > 3, up: far && dy < -3, down: far && dy > 3, mx: c.x, my: c.y, attack: !far || Math.hypot(dx, dy) < 22, attackPressed: !this.p.action && Math.hypot(dx, dy) < 22 }, false);
+    }
+    return false;
+  }
+  /** Pay for a directed study at a Research Table, wait for it, carry the blueprint and read it. */
+  study(table: Entity, recipe: string) {
+    this.must('research', { eid: table.id, mode: 'directed', recipe }); if (!this.runStation(table)) throw new BotStop('research table stalled');
+    const bp = C(this.r, 'inv').slots.findIndex(s => s?.key === 'blueprint' && s.meta === recipe); if (bp < 0) throw new BotStop(`no ${recipe} blueprint came out of the table`);
+    this.must('useItem', { slot: bp }); if (!this.r.knowledge.recipes.includes(recipe)) throw new BotStop(`${recipe} was not learned`);
   }
   eat(key: string): boolean { const i = this.slotOf(key); if (i < 0) return false; const rc = this.act('useItem', { slot: i }); if (rc.ok) this.ate[key] = (this.ate[key] || 0) + 1; return rc.ok; }
   craft(recipe: string, eid?: string) { return this.must('craft', eid ? { recipe, eid } : { recipe }); }
   /** Hand-craft the packed device, then place it on a free tile beside the bot. Returns the placed entity. */
   place(struct: string): Entity {
     const keep = this.keepClear.map(g => this.toLocal(g[0], g[1]).join(','));
-    if (this.inv('deploy_' + struct) < 1) this.craft('deploy_' + struct);
+    if (ITEMS['deploy_' + struct] && this.inv('deploy_' + struct) < 1) this.craft('deploy_' + struct);
     const [px, py] = this.tile, before = new Set(Object.keys(this.r.entities));
     for (let rad = 1; rad <= 3; rad++) for (let dy = -rad; dy <= rad; dy++) for (let dx = -rad; dx <= rad; dx++) {
       if (Math.max(Math.abs(dx), Math.abs(dy)) !== rad) continue;
@@ -201,6 +234,28 @@ export class Bot {
       const e = Object.values(this.r.entities).find(x => !before.has(x.id) && x.type === struct); if (e) { this.note(`placed ${STRUCTS[struct].name}`); return e; }
     }
     throw new BotStop(`no place for ${struct}: ${buildReason(this.gs, struct, px + 1, py)}`);
+  }
+  /** Repair every carried tool below `frac` durability at an owned station the bot stands beside (the bench's Repair
+   *  action). Returns how many were repaired. */
+  repairTools(bench: Entity, frac = 0.35, intent = 'maintainItem'): number {
+    let n = 0; const inv = C(this.r, 'inv');
+    for (let i = 0; i < inv.slots.length; i++) { const s = inv.slots[i]; const d = s && ITEMS[s.key]; if (!s || !d || !d.repair || !d.dur || s.dur === undefined || s.dur > d.dur * frac) continue;
+      if (this.act(intent, { eid: bench.id, slot: i, uid: s.uid, mode: 'repair' }).ok) { n++; this.repairs++; } }
+    return n;
+  }
+  /** True if a tool of this id with durability left is carried. */
+  working(key: string): boolean { return C(this.r, 'inv').slots.some(s => s?.key === key && (s.dur === undefined || s.dur > 0)); }
+  /** Put everything except `keep` into an owned chest the bot stands beside (drag pack -> chest). Returns stacks stored. */
+  stash(chest: Entity, keep: string[], toolsToo = false): number {
+    let n = 0; const inv = C(this.r, 'inv');
+    for (let i = 0; i < inv.slots.length; i++) { const s = inv.slots[i]; if (!s || keep.includes(s.key) || (!toolsToo && (ITEMS[s.key].power || ITEMS[s.key].dmg))) continue; if (this.act('move', { from: 'inv', fs: i, to: chest.c! }).ok) n++; }
+    this.act('sort', { c: 'inv' }); this.stashed += n; return n;
+  }
+  /** Take every stack of the listed items back out of an owned chest the bot stands beside. */
+  withdraw(chest: Entity, keys: string[]): number {
+    let n = 0; const c = C(this.r, chest.c!);
+    for (let i = 0; i < c.slots.length; i++) { const s = c.slots[i]; if (s && keys.includes(s.key) && this.act('move', { from: c.id, fs: i, to: 'inv' }).ok) n++; }
+    this.act('sort', { c: 'inv' }); return n;
   }
   /** Put one whole stack of a burnable into a station's fuel container (the drag from pack to the fuel slot). */
   fuel(e: Entity, key: string) { this.act('sort', { c: 'inv' }); const i = this.slotOf(key); if (i < 0) throw new BotStop('no ' + key + ' for fuel'); this.must('move', { from: 'inv', fs: i, to: e.station!.fuelC }); }
@@ -220,6 +275,6 @@ export class Bot {
   }
   /** Walk back to a placed structure. Its local tile is re-read every try: the engine re-bases it on a window shift. */
   goToEntity(e: Entity): boolean { for (let k = 0; k < 4; k++) { const live = this.r.entities[e.id]; if (!live) return false; if (this.goNear(live.tx!, live.ty!)) return true; } return false; }
-  summary() { return { seed: this.seed, minutes: +this.minutes().toFixed(1), ticks: this.ticks, hp: Math.round(this.p.hp), hunger: Math.round(this.p.hunger), thirst: Math.round(this.p.thirst), drinks: this.drinks, refuels: this.refuels, fightSeconds: Math.round(this.fightTicks * DT / 1000), shifts: this.shifts, damageTaken: Math.round(this.damageTaken), failures: this.failures, ate: this.ate, kills: this.kills }; }
+  summary() { return { seed: this.seed, minutes: +this.minutes().toFixed(1), ticks: this.ticks, hp: Math.round(this.p.hp), hunger: Math.round(this.p.hunger), thirst: Math.round(this.p.thirst), drinks: this.drinks, toolsRemade: this.toolsRemade, toolRepairs: this.repairs, nodesStruckFromAnotherSide: this.resided, stacksStashed: this.stashed, bandages: this.bandages, hunts: this.hunts, refuels: this.refuels, fightSeconds: Math.round(this.fightTicks * DT / 1000), shifts: this.shifts, damageTaken: Math.round(this.damageTaken), failures: this.failures, ate: this.ate, kills: this.kills }; }
 }
 export const recipeBill = (id: string) => RECIPES[id].ins.map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ');
