@@ -127,6 +127,12 @@
 
 **Điều kiện giao việc:** Gameplay hiện hành triển khai từ K/C/J và nghiên cứu Atlas có chọn lọc. Có code + test + input thật + source/cost/UID. `SPEC_READY`, `BUILD_READY`, `S3_COMPOSED`, `S4_PLAYER_PROVEN` độc lập; không xin phép lại cho sửa lỗi đã thuộc phạm vi Creator duyệt.
 
+### 0.1d. [CHỐT — CREATOR 2026-11-15] CỘNG ĐỒNG NPC SỐNG ĐỘNG (SURVIVOR SETTLEMENT V1)
+
+**Quyết định Creator: phương án A.** SOH có người sống sót gặp được trên đường/POI, người có thể tự nguyện theo về căn cứ do player xây, có giường/nơi ở, nhu cầu ăn–nước–nghỉ, nghề/công việc thật và khả năng phòng thủ vật lý. Người chơi không bắt buộc phải tuyển người hay dựng khu định cư riêng. Toàn bộ vật phẩm, công việc, cư dân và kết quả offline tiếp tục chịu K1–K8; không có đồ/Parts/recipe/đạn miễn phí, raid ngẫu nhiên vì có NPC, teleport người/đồ về nhà, hoặc cư dân xuyên run. **Rương Last Island (gồm cấu trúc phòng thẻ) vẫn tồn tại song song, không bị NPC thay thế.**
+
+**Hợp đồng chi tiết duy nhất:** [SURVIVOR_SETTLEMENT_CONTRACT_V1_20261115.md](survivors/SURVIVOR_SETTLEMENT_CONTRACT_V1_20261115.md). Trạng thái: **DESIGN_LOCKED; NOT IMPLEMENTED, NOT PLAYABLE, NOT VISUAL_ACCEPTED**. Mọi thông số định lượng chưa có nguồn là SOH_PROVISIONAL, không được tự xưng Last Island parity. K1/K3/K4/K5/K6/K7/K8 vẫn là luật cao hơn; không tạo engine nhiệm vụ, luật sở hữu hoặc registry recipe thứ hai.
+
 ## I. TÁM HỌ MECHANICS GỐC — HỆ THỐNG TRẠNG THÁI, KHÔNG PHẢI TÁM TÍNH NĂNG
 
 ### I.A. Bảng sở hữu state–action–event chuẩn cho K1–K8
