@@ -13,6 +13,8 @@
 //
 // Every stage is recorded as a checkpoint. A stage that cannot be completed is recorded as NOT_PROVEN with the
 // engine's own refusal text; the assertions below pin exactly which stages are proven on this build.
+// G1A: new Veyra runs place the three industrial salvage sources; the legacy keys stay listed so the same bot also drives an old layout.
+const SALVAGE = ['scrap', 'wreck', 'road_salvage_bale', 'road_relay_wreck', 'road_fuel_rack'];
 import { afterAll, describe, expect, it } from 'vitest';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { ITEMS, RECIPES, STRUCTS, WORKBENCH_UPGRADE } from '../src/game/catalog';
@@ -100,7 +102,7 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
 
       // ---- 4. Parts: 33 are spent below (research table 6, Glass study 9, bench upgrade 4, Gear 3, two Pipe jobs 4, pump 2, refinery 5)
       stageName = 'Parts from roadside scrap and wrecks';
-      const PARTS = 33; if (!b.gather('spares', PARTS, ['scrap', 'wreck'], 40)) throw new BotStop(`only ${b.inv('spares')}/${PARTS} Parts within reach`);
+      const PARTS = 33; if (!b.gather('spares', PARTS, SALVAGE, 40)) throw new BotStop(`only ${b.inv('spares')}/${PARTS} Parts within reach`);
       done(stageName, { parts: b.inv('spares'), alsoDropped: Object.fromEntries(['tin_can', 'electronic_parts', 'electric_resistor', 'mechanical_gear', 'metal_pipe', 'iron_plate', 'fuel_can', 'needle_tube'].map(k => [k, b.inv(k)]).filter(([, n]) => (n as number) > 0)) });
       const windfallFuel = b.inv('fuel_can'), windfallPipe = b.inv('metal_pipe'), windfallGear = b.inv('mechanical_gear');
       care(b, camp);
@@ -159,6 +161,8 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
 
       // ---- 11. Refinery, then fuel
       stageName = 'Refinery -> Fuel Canister';
+      // G1A: the three salvage sources shed more kinds of by-product than scrap did, and a 24-slot pack that is full cannot pick wood up.
+      b.dropJunk(['tin_can', 'needle_tube', 'sulfur', 'herb']);
       b.gather('wood', 20, TREES); b.at(bench.id, seep.g);   // the Refinery must stand near the level-2 bench
       const refinery = b.place('refinery'); b.fuel(refinery, 'wood');
       b.craft('refinery_fuel', refinery.id); b.craft('refinery_fuel', refinery.id); if (!b.runStation(refinery)) throw new BotStop('refinery stalled');
@@ -180,7 +184,10 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
       const bench = (recipes: string[]) => { const w = b.at(ids.bench, ids.seep); for (const r of recipes) b.craft(r, w.id); if (!b.runStation(w)) throw new BotStop('bench stalled'); };
       // A player who runs out near camp walks back to ground already seen: the spawn area and the ore field.
       const grounds: [number, number][] = [ids.home, spawnG, [Math.round((ids.home[0] + spawnG[0]) / 2), Math.round((ids.home[1] + spawnG[1]) / 2)], [spawnG[0] + Math.round((spawnG[0] - ids.home[0]) / 2), spawnG[1] + Math.round((spawnG[1] - ids.home[1]) / 2)]];
-      const need = (item: string, n: number, kinds: string[]) => { for (const g of grounds) { if (b.inv(item) >= n) break; b.travel(g[0], g[1]); b.gather(item, n, kinds, 60); care(b, camp); } if (b.inv(item) < n) {
+      // G1A: a salvage node now holds 2-3 units where scrap held 4 and a wreck 8, so the ground near camp runs dry sooner.
+      // For Parts the bot walks on, as a player would, to four further grounds a window-slide away from the spawn.
+      const farGrounds: [number, number][] = [[90, 0], [-90, 0], [0, 90], [0, -90]].map(([dx, dy]) => [spawnG[0] + dx, spawnG[1] + dy] as [number, number]);
+      const need = (item: string, n: number, kinds: string[]) => { for (const g of (kinds === SALVAGE ? [...grounds, ...farGrounds] : grounds)) { if (b.inv(item) >= n) break; b.travel(g[0], g[1]); b.gather(item, n, kinds, 60); care(b, camp); } if (b.inv(item) < n) {
           // census of the window the bot stands in: how many such nodes exist, still hold stock, and can be walked to
           const w = getWorld(); let all = 0, stocked = 0, walkable = 0;
           for (let i = 0; i < w.sourceV3.length; i++) if (kinds.includes(w.sourceV3[i] as string)) { all++; const s = sourceAt(b.r, i % WW, Math.floor(i / WW), b.now); if (s && s.stock > 0) { stocked++; if (b.path(i % WW, Math.floor(i / WW), true)) walkable++; } }
@@ -200,13 +207,13 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
         return b.repairTools(b.at(ids.bench, ids.seep)); };
       attempt('Electric Resistor from a wreck', () => {
         // The only source is the wreck bonus roll. Whatever the Parts run above already dropped counts.
-        for (let k = 0; k < 12 && b.inv('electric_resistor') < 1; k++) { const w = b.sources(['wreck'], 4)[0]; if (!w) break; b.harvestOne(w); }
+        for (let k = 0; k < 12 && b.inv('electric_resistor') < 1; k++) { const w = b.sources(['wreck', 'road_relay_wreck'], 4)[0]; if (!w) break; b.harvestOne(w); }
         if (b.inv('electric_resistor') < 1) throw new BotStop('no wreck within reach dropped a resistor'); return { carried: b.inv('electric_resistor') };
       });
       care(b, camp);
 
       attempt('Wooden Ladder: study, craft, lean on a cliff, cross on foot', () => {
-        service(); need('spares', BAL.research.directedSparesCost, ['scrap', 'wreck']);
+        service(); need('spares', BAL.research.directedSparesCost, SALVAGE);
         b.study(b.at(ids.table, ids.home), 'wooden_ladder');
         need('fiber', 3, ['reed', 'grass']); b.craft('rope'); need('wood', 12, TREES); bench(['wooden_ladder']); expect(b.inv('wooden_ladder')).toBe(1);
         // every (stand tile, cliff tile, far tile) triple in the window where the cliff is exactly one tile thick
@@ -237,7 +244,7 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
 
       attempt('Large Furnace: study, plates, craft, place, smelt', () => {
         service(); unload(['spares', 'iron_ore', 'iron_ingot', 'refined_iron_ingot', 'iron_plate', 'charcoal', 'stone']);
-        need('spares', BAL.research.directedSparesCost + 4, ['scrap', 'wreck']);
+        need('spares', BAL.research.directedSparesCost + 4, SALVAGE);
         // 8 ingots for the pack + 6 for 4 Refined Iron (two plate crafts); ingots already carried count
         const oreShort = Math.max(0, 14 - b.inv('iron_ingot')); if (oreShort) { need('iron_ore', oreShort, ['iron', 'coalv']); care(b, camp); smelt('iron_ingot', b.inv('iron_ore')); }
         b.study(b.at(ids.table, ids.home), 'large_furnace');
@@ -259,7 +266,7 @@ describe('ARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)',
       attempt('Iron Plate Pants: study, hunt hide, sew, wear', () => {
         for (const id of chests) b.withdraw(b.at(id, ids.home), ['stone_pick', 'stone_axe', 'knife', 'wood_spear']);
         service(); unload(['spares', 'iron_ore', 'iron_ingot', 'refined_iron_ingot', 'iron_plate', 'charcoal', 'hide', 'cloth', 'needle_thread']); care(b, camp);
-        need('spares', BAL.research.directedSparesCost * 2 + 2, ['scrap', 'wreck']);
+        need('spares', BAL.research.directedSparesCost * 2 + 2, SALVAGE);
         const table = () => b.at(ids.table, ids.home); b.study(table(), 'needle_thread'); b.study(table(), 'iron_plate_pants');
         for (let k = 0; k < 30 && b.inv('hide') < 3; k++) { if (!b.hunt(['deer', 'boar'], 30, 60)) { const g = grounds[k % grounds.length]; b.travel(g[0], g[1]); } b.pickupNearby(); care(b, camp); }
         if (b.inv('hide') < 3) throw new BotStop(`only ${b.inv('hide')}/3 hide after ${b.hunts} hunts (kills ${JSON.stringify(b.kills)}); carried ${invWeight(b.r).toFixed(1)}/${carryLimit(b.r)} kg: ${C(b.r, 'inv').slots.map(s => s ? s.key + 'x' + s.qty : '-').join(' ')}; hide on the ground: ${Object.values(b.r.entities).filter(e => (e as any).stack?.key === 'hide' || (e as any).item?.key === 'hide').length}`);

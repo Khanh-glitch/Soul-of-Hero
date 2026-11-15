@@ -1,4 +1,5 @@
 import { combatStimulus, pushCombatStimulus, type CombatKind } from './stimulus';
+import { syncVeyraPlacement } from '../veyra05/window';
 import { airdropBoundary, stepAirdrops } from './engine';
 import { airdropView } from './airdrop';
 import { advancePoiAccess, poiDoorLabel, poiGenLabel } from './poi-access';
@@ -528,7 +529,7 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
   }
   best ||= exhausted;
   if (best) {
-    const res = harvestHit(gs, best.tx, best.ty, d.power || {}, now, p.x, p.y, { extraction: 'playerTool' });
+    const res = harvestHit(gs, best.tx, best.ty, d.power || {}, now, p.x, p.y, { extraction: 'playerTool', tool: s?.key });
     const x = best.tx * TILE + 8, y = best.ty * TILE + 8;
     const ignited = s?.key === 'torch' && ignite(gs, best.tx, best.ty, now);
     if (res.result === 'yield') { fx('chip', { x, y, mat: res.mat, key: res.key, depleted: res.depleted, rich: (res.quality ?? 0) > 0 }); hitAny = true; if (res.depleted) fx('fell', { x, y, key: res.key }); }
@@ -1562,6 +1563,7 @@ function tickDragonDive(gs: GameState, dtMs: number, now: number) {
 
 // ---------- main tick ----------
 export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
+  syncVeyraPlacement(gs.run);
   const r = gs.run; if (!r || r.ended) return;
   bindCombat(r);
   r.clock.defenseFrames = 0;   // the fine-defense budget is per absence window; presence online refreshes it

@@ -166,24 +166,28 @@ describe('III — recipes: LI provenance, closure and no loops', () => {
 
 describe('IV — Veyra: measured from the real window data, not from the catalog', () => {
   it('surveys all twelve regions and the spawn tables; every loot/drop source of a new id exists on Veyra', () => {
-    const perScene: Record<string, Record<string, number>> = {}; const total: Record<string, number> = {};
+    const perScene: Record<string, Record<string, number>> = {}; const total: Record<string, number> = {}; const legacy: Record<string, number> = {};
     for (const id of SCENE_IDS) {
       expect(setActiveLayout(id), id).toBe(true);
-      const ww = getWindowWorld(id)!; const cnt: Record<string, number> = {};
+      // New runs place the G1A trio (rules 4); saves from before G1A keep Roadside Scrap / Car Wrecks (rules 3). Survey both.
+      for (const k of getWindowWorld(id, 3)!.floors.ground.sources) if (k === 'scrap' || k === 'wreck') legacy[k] = (legacy[k] || 0) + 1;
+      const ww = getWindowWorld(id, 4)!; const cnt: Record<string, number> = {};
       for (const s of ww.floors.ground.sources) if (s) { cnt[s] = (cnt[s] || 0) + 1; total[s] = (total[s] || 0) + 1; }
       perScene[id] = cnt;
     }
     const firstHour = VEYRA05_SCENES.filter(s => s.firstHour).map(s => s.id);
     const anchored = [...new Set(ORDINARY_CREATURE_HABITATS.map(h => h.species))];
-    const survey = { note: 'Counts are source TILES in the 200x200 window around each of the 12 scene foci (windows can overlap; this is presence and relative density, not a world total).', firstHourScenes: firstHour, perScene, totalAcrossWindows: total, anchoredSpecies: anchored };
+    const survey = { note: 'Counts are source TILES in the 200x200 window around each of the 12 scene foci (windows can overlap; this is presence and relative density, not a world total).', firstHourScenes: firstHour, perScene, totalAcrossWindows: total, legacySalvageAcrossWindows: legacy, anchoredSpecies: anchored };
     if (WRITE) { mkdirSync('evidence/arena1', { recursive: true }); writeFileSync('evidence/arena1/veyra-source-survey.json', JSON.stringify(survey, null, 1) + '\n'); }
     // Seeds, berries, fiber: in at least one first-hour window each.
     for (const src of ['grass', 'bush', 'herb']) expect(firstHour.some(id => (perScene[id][src] || 0) > 0), src + ' in a first-hour region').toBe(true);
     // Tins / tubes / electronics need salvage nodes somewhere on the map.
-    expect((total.scrap || 0) + (total.wreck || 0)).toBeGreaterThan(0);
+    expect((legacy.scrap || 0) + (legacy.wreck || 0)).toBeGreaterThan(0);
+    for (const k of ['road_salvage_bale', 'road_relay_wreck', 'road_fuel_rack']) expect(total[k] || 0, k + ' placed on Veyra').toBeGreaterThan(0);
+    expect((total.scrap || 0) + (total.wreck || 0), 'no legacy salvage in a new run').toBe(0);
     for (const [item, rows] of Object.entries(ITEM_SOURCE)) for (const row of rows) {
       const [table, key] = row.source_id.split('.');
-      if (table === 'SOURCES') { expect(SOURCES[key], row.source_id).toBeDefined(); expect([...SOURCES[key].yields, ...(SOURCES[key].bonus ?? [])].map(([i]) => i), row.source_id).toContain(item); expect(total[key] || 0, row.source_id + ' placed on Veyra').toBeGreaterThan(0); }
+      if (table === 'SOURCES') { expect(SOURCES[key], row.source_id).toBeDefined(); expect([...SOURCES[key].yields, ...(SOURCES[key].bonus ?? [])].map(([i]) => i), row.source_id).toContain(item); expect((total[key] || 0) + (legacy[key] || 0), row.source_id + ' placed on Veyra').toBeGreaterThan(0); }
       else { expect(CREATURES[key].drops.map(([i]) => i), row.source_id).toContain(item); }
     }
     expect(setActiveLayout(U05_WORLD_LAYOUT_ID)).toBe(true);

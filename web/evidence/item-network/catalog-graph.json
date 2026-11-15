@@ -1,7 +1,7 @@
 {
   "meta": {
     "schema": "soh-runtime-item-formula-atlas-v1",
-    "sourceSHA": "4e5d3bc33db9ed39378e218b8167e586bd80b5fb",
+    "sourceSHA": "3f80bf4f6e570dc5a8588880cf14cd87c4ba1531",
     "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
     "recipeCensusNote": "Counts the LIVE RECIPES table only. Retired formulas are excluded, and frozen revision definitions are never added back as active routes.",
     "retiredRecipes": [
@@ -26,10 +26,11 @@
       "recover_drive",
       "mechanical_parts",
       "scrap_ingot",
-      "brick"
+      "brick",
+      "reinforced_spear_blade"
     ],
-    "recipeRevision": 5,
-    "exportedAt": "2026-11-15T02:04:37.987Z",
+    "recipeRevision": 6,
+    "exportedAt": "2026-11-15T10:55:05.006Z",
     "project": "Soul of Heroes — WEB Veyra runtime",
     "authority": [
       "web/src/game/catalog.ts",
@@ -2907,11 +2908,11 @@
       "qty": 1,
       "ins": [
         [
-          "iron_ingot",
-          2
+          "metal_blade",
+          1
         ],
         [
-          "metal_blade",
+          "iron_ingot",
           1
         ],
         [
@@ -2921,9 +2922,10 @@
       ],
       "station": "workbench",
       "stationLevel": 2,
-      "secs": 20,
+      "secs": 16,
+      "base": true,
       "tier": 2,
-      "rev": 5
+      "rev": 6
     },
     "metal_pipe": {
       "id": "metal_pipe",
@@ -2953,7 +2955,7 @@
       "ins": [
         [
           "iron_ingot",
-          4
+          3
         ],
         [
           "spares",
@@ -2965,7 +2967,7 @@
       "secs": 16,
       "base": true,
       "tier": 2,
-      "rev": 5
+      "rev": 6
     },
     "mechanical_gear": {
       "id": "mechanical_gear",
@@ -3008,31 +3010,6 @@
       "base": true,
       "tier": 2,
       "rev": 5
-    },
-    "reinforced_spear_blade": {
-      "id": "reinforced_spear_blade",
-      "out": "reinforced_spear",
-      "qty": 1,
-      "alias": "Reinforced Spear (blade)",
-      "ins": [
-        [
-          "metal_blade",
-          1
-        ],
-        [
-          "iron_ingot",
-          1
-        ],
-        [
-          "wood",
-          2
-        ]
-      ],
-      "station": "workbench",
-      "stationLevel": 2,
-      "secs": 16,
-      "base": true,
-      "tier": 2
     },
     "industrial_pick_geared": {
       "id": "industrial_pick_geared",
@@ -3246,7 +3223,7 @@
       "station": "workbench",
       "stationLevel": 2,
       "secs": 30,
-      "tier": 3,
+      "tier": 2,
       "rev": 4
     },
     "refined_iron_chest": {
@@ -3270,7 +3247,7 @@
       "station": "workbench",
       "stationLevel": 2,
       "secs": 38,
-      "tier": 3,
+      "tier": 2,
       "rev": 4
     },
     "wooden_ladder": {
@@ -3313,7 +3290,7 @@
       "station": "workbench",
       "stationLevel": 2,
       "secs": 30,
-      "tier": 3,
+      "tier": 2,
       "rev": 5
     },
     "large_furnace": {
@@ -3341,7 +3318,7 @@
       "station": "workbench",
       "stationLevel": 2,
       "secs": 40,
-      "tier": 3,
+      "tier": 2,
       "rev": 5
     },
     "iron_plate_pants": {
@@ -3413,7 +3390,7 @@
       "station": "workbench",
       "stationLevel": 2,
       "secs": 32,
-      "tier": 3,
+      "tier": 2,
       "rev": 5
     },
     "refined_iron_boots": {
@@ -3437,7 +3414,7 @@
       "station": "workbench",
       "stationLevel": 2,
       "secs": 28,
-      "tier": 3,
+      "tier": 2,
       "rev": 5
     },
     "dried_meat": {
@@ -3962,6 +3939,7 @@
       ],
       "station": "workbench",
       "secs": 5,
+      "base": true,
       "tier": 1
     },
     "bow": {
@@ -6233,6 +6211,120 @@
       ],
       "block": true,
       "art": "wreck"
+    },
+    "road_salvage_bale": {
+      "id": "road_salvage_bale",
+      "name": "Salvage Bale",
+      "mat": "scrap",
+      "hp": 9,
+      "stock": 3,
+      "yields": [
+        [
+          "spares",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "tin_can",
+          0.25
+        ],
+        [
+          "needle_tube",
+          0.07
+        ],
+        [
+          "metal_pipe",
+          0.05
+        ],
+        [
+          "iron_plate",
+          0.04
+        ]
+      ],
+      "block": true,
+      "art": "salvage_bale",
+      "harvestBy": {
+        "stone_axe": 1,
+        "stone_pick": 1,
+        "knife": 2,
+        "cleaver": 3,
+        "machete": 4,
+        "iron_pick": 1,
+        "industrial_pick": 1
+      }
+    },
+    "road_relay_wreck": {
+      "id": "road_relay_wreck",
+      "name": "Relay Wreck",
+      "mat": "scrap",
+      "hp": 12,
+      "stock": 3,
+      "yields": [
+        [
+          "spares",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "electronic_parts",
+          0.15
+        ],
+        [
+          "electric_resistor",
+          0.12
+        ],
+        [
+          "mechanical_gear",
+          0.06
+        ]
+      ],
+      "block": true,
+      "art": "relay_wreck",
+      "harvestBy": {
+        "stone_axe": 1,
+        "stone_pick": 1,
+        "knife": 2,
+        "cleaver": 3,
+        "machete": 4,
+        "iron_pick": 1,
+        "industrial_pick": 1
+      }
+    },
+    "road_fuel_rack": {
+      "id": "road_fuel_rack",
+      "name": "Fuel Rack",
+      "mat": "scrap",
+      "hp": 12,
+      "stock": 2,
+      "yields": [
+        [
+          "tin_can",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "spares",
+          0.4
+        ],
+        [
+          "fuel_can",
+          0.06
+        ]
+      ],
+      "block": true,
+      "art": "fuel_rack",
+      "harvestBy": {
+        "stone_axe": 1,
+        "stone_pick": 1,
+        "knife": 2,
+        "cleaver": 3,
+        "machete": 4,
+        "iron_pick": 1,
+        "industrial_pick": 1
+      }
     }
   },
   "creatures": {
@@ -7929,11 +8021,11 @@
   },
   "counts": {
     "items": 181,
-    "recipes": 115,
+    "recipes": 114,
     "structures": 50,
-    "sourceTypes": 19,
+    "sourceTypes": 22,
     "creatures": 23,
-    "recipeInputs": 283,
+    "recipeInputs": 280,
     "recipeOutputVariants": 0
   }
 }

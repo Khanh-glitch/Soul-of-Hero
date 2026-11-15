@@ -210,6 +210,54 @@ function scrap(g: G, v: number) { R(g, 2, 10, 12, 4, '#5a5e64'); R(g, 4, 7, 6, 4
 function wreck(g: G, v: number) { const body = v % 2 ? '#7a3a2a' : '#4a5a6a';
   R(g, 2, 8, 28, 9, body); R(g, 6, 4, 16, 5, body); R(g, 8, 5, 5, 3, '#2a3a4a'); R(g, 14, 5, 6, 3, '#3a4a5a'); P(g, 15, 6, '#8ab0c0');
   for (let k = 0; k < 18; k++) P(g, 2 + hash2(k, v, 12) * 28 | 0, 8 + hash2(k, v, 13) * 9 | 0, '#a0602a'); ell(g, 8, 17, 3, 2.5, '#1a1a1e'); ell(g, 24, 17, 3, 2.5, '#1a1a1e'); R(g, 2, 12, 28, 1, '#2a2a2e'); R(g, 28, 10, 2, 2, '#e0c060'); }
+/* G1A in-house pixel art: three industrial salvage archetypes. stage 0 = intact, 1 = half broken, 2 = depleted debris.
+ * Each silhouette is its own drawing (no recolour of `scrap`, `wreck` or a barrel). Sprites are anchored bottom-centre on the tile. */
+function salvageBale(g: G, st: number) {
+  if (st === 2) { R(g, 2, 13, 6, 2, '#565a61'); R(g, 3, 13, 4, 1, '#7d838b'); R(g, 9, 14, 5, 1, '#4a4e55'); P(g, 12, 13, '#8a4a2a'); R(g, 6, 12, 3, 1, '#b8862e'); P(g, 1, 14, '#3d4046'); return; }
+  const top = st ? 9 : 7;
+  R(g, 1, top, 14, 15 - top, '#6b6f76'); R(g, 1, top, 14, 1, '#a3a9b1'); R(g, 1, 14, 14, 1, '#3d4046'); R(g, 15, top + 1, 1, 14 - top, '#4a4e55');
+  for (let y = top + 2; y < 14; y += 2) R(g, 2, y, 12, 1, '#565a61');           // pressed sheet layers
+  P(g, 3, top + 1, '#8a4a2a'); P(g, 8, top + 3, '#8a4a2a'); P(g, 12, 12, '#9a5a30'); P(g, 6, 13, '#8a4a2a');
+  R(g, 4, top - 1, 2, 16 - top, '#b8862e'); P(g, 4, top - 1, '#e8c060');          // strap 1
+  if (!st) { R(g, 10, top - 1, 2, 16 - top, '#b8862e'); P(g, 10, top - 1, '#e8c060'); }
+  else { R(g, 10, 12, 2, 3, '#b8862e'); P(g, 12, 11, '#b8862e'); P(g, 13, 10, '#e8c060'); } // snapped strap curls away
+  // steel bars sticking out of the bundle
+  P(g, 12, top - 1, '#c4cad2'); P(g, 13, top - 2, '#c4cad2'); P(g, 14, top - 3, '#e6ebf0');
+  P(g, 7, top - 1, '#9aa0a8'); P(g, 7, top - 2, '#c4cad2'); if (!st) P(g, 7, top - 3, '#e6ebf0');
+  P(g, 1, top - 1, '#9aa0a8'); P(g, 0, top - 2, '#c4cad2');
+}
+function relayWreck(g: G, st: number) {
+  // canvas 16x24; concrete footing, cabinet leaning right
+  R(g, 2, 21, 12, 2, '#7d8088'); R(g, 2, 21, 12, 1, '#a6a9b0'); P(g, 3, 23, '#4a4c52'); P(g, 12, 23, '#4a4c52');
+  if (st === 2) { R(g, 4, 18, 6, 3, '#3e4852'); R(g, 4, 18, 6, 1, '#566270'); P(g, 6, 19, '#2f8a55'); P(g, 10, 20, '#d04a3a'); P(g, 11, 21, '#d04a3a'); P(g, 12, 20, '#e0c040'); P(g, 1, 22, '#566270'); return; }
+  const y0 = st ? 9 : 3;
+  for (let y = y0; y < 21; y++) { const o = ((20 - y) / 6) | 0; R(g, 4 + o, y, 8, 1, '#566270'); P(g, 4 + o, y, '#7a8794'); P(g, 11 + o, y, '#36404a'); }
+  { const o = ((20 - y0) / 6) | 0; R(g, 4 + o, y0, 8, 1, st ? '#36404a' : '#8a97a4'); if (st) { P(g, 5 + o, y0 - 1, '#566270'); P(g, 9 + o, y0 - 1, '#7a8794'); P(g, 10 + o, y0 - 2, '#566270'); } }
+  // torn-open panel: circuit board
+  for (let y = 11; y < 18; y++) { const o = ((20 - y) / 6) | 0; R(g, 6 + o, y, 4, 1, '#1e5a3a'); }
+  P(g, 7, 12, '#9be07a'); P(g, 9, 13, '#e8c040'); P(g, 8, 14, '#9be07a'); P(g, 7, 16, '#e8c040'); P(g, 9, 16, '#9be07a'); P(g, 8, 12, '#2f8a55'); P(g, 7, 14, '#2f8a55');
+  // hanging wires
+  P(g, 10, 17, '#d04a3a'); P(g, 11, 18, '#d04a3a'); P(g, 12, 19, '#d04a3a'); P(g, 12, 20, '#d04a3a');
+  P(g, 6, 18, '#e0c040'); P(g, 5, 19, '#e0c040'); P(g, 5, 20, '#e0c040'); P(g, 3, 20, '#4a8ad0'); P(g, 4, 19, '#4a8ad0');
+  if (!st) { // relay head: insulators + bent mast
+    R(g, 8, 1, 1, 2, '#c4cad2'); P(g, 9, 0, '#c4cad2'); P(g, 10, 0, '#e6ebf0'); R(g, 11, 2, 2, 1, '#d8d0b0'); R(g, 6, 2, 2, 1, '#d8d0b0'); P(g, 13, 4, '#ffb040');
+    R(g, 8, 5, 3, 2, '#2a323a'); P(g, 9, 6, '#6ad0ff');
+  } else { P(g, 13, 14, '#36404a'); P(g, 14, 20, '#566270'); P(g, 1, 20, '#7a8794'); }
+}
+function fuelRack(g: G, st: number) {
+  // canvas 16x20; rusty tube frame leaning left, small cans on two shelves
+  const fr = '#8a5a3a', hi = '#b8845a', dk = '#5a3a26';
+  if (st === 2) { R(g, 1, 17, 13, 1, fr); R(g, 2, 16, 5, 1, hi); P(g, 14, 18, dk); R(g, 9, 18, 4, 1, dk); P(g, 5, 18, fr); R(g, 10, 15, 3, 2, '#5d6a3a'); P(g, 10, 15, '#8a9a5a'); P(g, 13, 16, '#2a2e22'); return; }
+  for (let y = 3; y < 19; y++) { const o = ((y - 3) / 8) | 0; P(g, 2 + o, y, fr); P(g, 12 + o, y, y % 5 ? fr : dk); }
+  P(g, 2, 3, hi); P(g, 12, 3, hi); R(g, 1, 18, 3, 1, dk); R(g, 12, 18, 4, 1, dk);
+  R(g, 2, 9, 11, 1, hi); R(g, 3, 15, 11, 1, hi); R(g, 3, 16, 11, 1, dk);
+  if (!st) R(g, 2, 3, 11, 1, fr); else { R(g, 2, 3, 5, 1, fr); P(g, 7, 4, fr); P(g, 8, 5, dk); }
+  const can = (x: number, y: number, c: string, h: string) => { R(g, x, y, 3, 4, c); R(g, x, y, 1, 4, h); P(g, x + 1, y - 1, '#2a2e22'); P(g, x + 2, y + 3, '#2a2e22'); };
+  can(4, 11, '#5d6a3a', '#8a9a5a'); can(9, 11, '#c8a030', '#f0d070');           // lower shelf: olive + mustard
+  if (!st) can(6, 5, '#4a6a86', '#7a9ab6');                                      // upper shelf: grey-blue
+  else { P(g, 9, 8, '#4a6a86'); }
+  P(g, 5, 12, '#2a2e22'); P(g, 10, 13, '#7a5a10');
+}
 export function buildSources() {
   const S: Record<string, Sprite[]> = {};
   S.oak = [0, 1, 2].map(v => mk(24, 32, g => oak(g, v))); S.pine = [0, 1].map(v => mk(24, 32, g => pine(g, v, false))); S.snowpine = [0, 1].map(v => mk(24, 32, g => pine(g, v, true)));
@@ -219,6 +267,7 @@ export function buildSources() {
   S.bush = [0, 1].map(v => mk(16, 16, g => bush(g, true, v))); S.bush_empty = [0, 1].map(v => mk(16, 16, g => bush(g, false, v)));
   S.grass = [0, 1, 2].map(v => mk(16, 16, g => grass(g, v), null)); S.reed = [0, 1].map(v => mk(16, 16, g => reed(g, v), null)); S.herb = [mk(16, 16, g => herb(g))]; S.mush = [mk(16, 16, g => mush(g))];
   S.scrap = [0, 1].map(v => mk(16, 16, g => scrap(g, v))); S.wreck = [0, 1].map(v => mk(32, 20, g => wreck(g, v)));
+  S.salvage_bale = [0, 1, 2].map(v => mk(16, 16, g => salvageBale(g, v))); S.relay_wreck = [0, 1, 2].map(v => mk(16, 24, g => relayWreck(g, v))); S.fuel_rack = [0, 1, 2].map(v => mk(16, 20, g => fuelRack(g, v)));
   S.stump = [mk(16, 16, g => { ell(g, 8, 11, 4, 2.5, '#7a5232'); ell(g, 8, 10, 3, 1.5, '#c9935a'); P(g, 8, 10, '#8a5a32'); })];
   S.rubble = [mk(16, 16, g => { for (const [x, y] of [[4, 11], [8, 12], [11, 10], [6, 9]]) ell(g, x, y, 1.5, 1, '#6e7078'); })];
   S.picked = [mk(16, 16, g => { for (let k = 0; k < 4; k++) R(g, 5 + k * 2, 12, 1, 2, '#4a6a2a'); }, null)];

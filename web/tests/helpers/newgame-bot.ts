@@ -78,6 +78,19 @@ export class Bot {
     this.p.active = i; return true;
   }
   weapon(): string { let best = 'knife', bd = 0; for (const s of C(this.r, 'inv').slots) if (s && (s.dur === undefined || s.dur > 0)) { const d = ITEMS[s.key].dmg ?? 0; if (d > bd && !ITEMS[s.key].ranged) { bd = d; best = s.key; } } return best; }
+  /** G1A: a source with its own harvest table is struck with whatever carried tool that table rates highest. */
+  toolFor(def: { mat: string; harvestBy?: Record<string, number> }): string | null {
+    if (!def.harvestBy) return this.bestTool(def.mat);
+    // A player keeps an edge on the knife (it is also the weapon and what stone tools are re-cut with): below a fifth
+    // of its life the bot stops spending it on salvage and falls back to a stone tool, which it can remake by hand.
+    let best: string | null = null, bp = 0, bd = -1;
+    for (const s of C(this.r, 'inv').slots) if (s && (s.dur === undefined || s.dur > 0)) {
+      const pw = def.harvestBy[s.key] ?? Math.min(1, (ITEMS[s.key].power as Record<string, number> | undefined)?.[def.mat] ?? 0); if (pw <= 0) continue;
+      if (s.key === 'knife' && s.dur !== undefined && s.dur < (ITEMS.knife.dur ?? 300) / 5) continue;
+      const d = s.dur ?? 1e9; if (pw > bp || (pw === bp && d > bd)) { bp = pw; bd = d; best = s.key; }
+    }
+    return best;
+  }
   bestTool(mat: string): string | null {
     let best: string | null = null, bp = 0;
     for (const s of C(this.r, 'inv').slots) if (s && (s.dur === undefined || s.dur > 0)) { const pw = ITEMS[s.key].power?.[mat] ?? 0; if (pw > bp) { bp = pw; best = s.key; } }
@@ -162,13 +175,13 @@ export class Bot {
   }
   pickupNearby(): number {
     let n = 0;
-    for (let pass = 0; pass < 3; pass++) for (const e of Object.values(this.r.entities)) if (e.kind === 'drop' && Math.hypot(e.x - this.p.x, e.y - this.p.y) < 2.4 * TILE) { if (this.act('pickup', { eid: e.id }).ok) n++; }
+    for (let pass = 0; pass < 3; pass++) for (const e of Object.values(this.r.entities)) if (e.kind === 'drop' && Math.hypot(e.x - this.p.x, e.y - this.p.y) < 2.4 * TILE && !this.leave.has(C(this.r, e.c!)?.slots[0]?.key ?? '')) { if (this.act('pickup', { eid: e.id }).ok) n++; }
     return n;
   }
   /** Swing the best carried tool at one source until it is empty; pick up what falls. */
   harvestOne(s: { tx: number; ty: number; key: string }): boolean {
     const src0 = sourceAt(this.r, s.tx, s.ty, this.now); if (!src0 || src0.stock <= 0) return false;
-    const tool = this.bestTool(src0.def.mat); if (!tool) return false;
+    const tool = this.toolFor(src0.def); if (!tool) return false;
     const [gx, gy] = this.toGlobal(s.tx, s.ty);
     if (!this.goNearGlobal(gx, gy)) { this.unreachable.add(gx + ',' + gy); this.fail(`${s.key}: no walkable route`); return false; } if (!this.hold(tool)) { this.fail(`${s.key}: cannot put ${tool} on the hotbar`); return false; }
     let lastHp = -1, stale = 0; const sides: [number, number][] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
@@ -193,7 +206,7 @@ export class Bot {
   gather(item: string, count: number, kinds: string[], maxNodes = 60): boolean {
     for (let n = 0; n < maxNodes && this.inv(item) < count; n++) {
       const cands = this.sources(kinds, 8); let done = false;
-      if (cands.length && !this.bestTool(sourceAt(this.r, cands[0].tx, cands[0].ty, this.now)!.def.mat)) { this.note(`gather ${item}: no working tool carried for ${cands[0].key}`); this.fail(`${cands[0].key}: no working tool`); return false; }
+      if (cands.length && !this.toolFor(sourceAt(this.r, cands[0].tx, cands[0].ty, this.now)!.def)) { this.note(`gather ${item}: no working tool carried for ${cands[0].key}`); this.fail(`${cands[0].key}: no working tool`); return false; }
       for (const s of cands) { if (this.harvestOne(s)) { done = true; break; } }
       if (!done) { for (const s of cands) this.unreachable.add(this.toGlobal(s.tx, s.ty).join(','));   // tried and failed: look further out next pass
         if (cands.length) continue; this.note(`gather ${item}: no reachable ${kinds.join('/')} (have ${this.inv(item)}/${count})`); return false; }
@@ -230,6 +243,8 @@ export class Bot {
     for (let rad = 1; rad <= 3; rad++) for (let dy = -rad; dy <= rad; dy++) for (let dx = -rad; dx <= rad; dx++) {
       if (Math.max(Math.abs(dx), Math.abs(dy)) !== rad) continue;
       if (keep.includes(`${px + dx},${py + dy}`) || buildReason(this.gs, struct, px + dx, py + dy)) continue;
+      // Never wall yourself in: after this build the bot's own tile must keep two open sides (a player sees this; the bot must check).
+      if (Math.abs(dx) + Math.abs(dy) === 1) { const g = blockGrid(this.r); let open = 0; for (const [ax, ay] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (!(ax === dx && ay === dy) && this.passable(g, (py + ay) * WW + px + ax)) open++; if (open < 2) continue; }
       if (!this.act('build', { struct, tx: px + dx, ty: py + dy }).ok) continue;
       const e = Object.values(this.r.entities).find(x => !before.has(x.id) && x.type === struct); if (e) { this.note(`placed ${STRUCTS[struct].name}`); return e; }
     }
@@ -251,6 +266,15 @@ export class Bot {
     for (let i = 0; i < inv.slots.length; i++) { const s = inv.slots[i]; if (!s || keep.includes(s.key) || (!toolsToo && (ITEMS[s.key].power || ITEMS[s.key].dmg))) continue; if (this.act('move', { from: 'inv', fs: i, to: chest.c! }).ok) n++; }
     this.act('sort', { c: 'inv' }); this.stashed += n; return n;
   }
+  /** Pack full: put by-products this route has no use for on the ground (the ordinary `drop` intent), as a player would. */
+  leave = new Set<string>();
+  dropJunk(keys: string[]): number {
+    const inv = C(this.r, 'inv'); let n = 0; for (const k of keys) this.leave.add(k);   // and do not pick them back up
+    for (let i = 0; i < inv.slots.length; i++) { const s = inv.slots[i]; if (s && keys.includes(s.key) && this.act('drop', { c: 'inv', slot: i }).ok) n++; }
+    // Drops within ~2 tiles are pulled back into the pack after 0.4 s, so step well clear straight away.
+    if (n) { const [px, py] = this.tile; const pth = this.pathWhere(i => Math.max(Math.abs((i % WW) - px), Math.abs(Math.floor(i / WW) - py)) >= 5, 60); if (pth) this.walk(pth); }
+    if (n) this.note(`pack full: dropped ${n} stack(s) of by-products`); return n;
+  }
   /** Take every stack of the listed items back out of an owned chest the bot stands beside. */
   withdraw(chest: Entity, keys: string[]): number {
     let n = 0; const c = C(this.r, chest.c!);
@@ -269,7 +293,10 @@ export class Bot {
       if (left !== last) { last = left; stale = 0; continue; }
       if (++stale < 100) continue; stale = 0;
       if (++rescues > 12) { this.note(`${e.type}: job stopped and could not be restarted`); return false; }
-      collect(); if (this.inv('wood') > 0 && C(this.r, e.station!.fuelC).slots.length) { this.fuel(e, 'wood'); this.refuels++; }
+      collect();
+      // Fire out and no wood carried: fetch some, as a player would, instead of watching a cold furnace.
+      if (this.inv('wood') < 1 && C(this.r, e.station!.fuelC).slots.length && !(e.station!.burn! > 0) && !C(this.r, e.station!.fuelC).slots.some(Boolean)) { this.gather('wood', 8, ['oak', 'pine', 'snowpine', 'palm', 'willow', 'deadtree'], 8); this.goToEntity(e); }
+      if (this.inv('wood') > 0 && C(this.r, e.station!.fuelC).slots.length) { this.fuel(e, 'wood'); this.refuels++; }
     }
     const ok = e.station!.queue.length === 0; collect(); return ok;
   }

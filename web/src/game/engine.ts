@@ -25,7 +25,7 @@ import { U05_WORLD_LAYOUT_ID, isVeyra05Layout, layoutIdAt } from '../veyra05/sce
 import { globalWindowOrigins, unverifiedOffshoreExcluded } from '../veyra05/global-start-discovery';
 import { localSpawnScreen } from '../veyra05/global-spawn-eligibility';
 import { FRAME_W, FRAME_H, globalIndex } from '../veyra05/frame';
-import { getWindowWorld, getWindowWorldForGlobalTile, resetWindowToGround } from '../veyra05/window';
+import { getWindowWorld, getWindowWorldForGlobalTile, resetWindowToGround, setVeyraPlacementRules, syncVeyraPlacement } from '../veyra05/window';
 import { activeFloor, applyFloor, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
 import { windowOrigin } from '../veyra05/continuity';
 import {
@@ -253,10 +253,13 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     const idx = (VEYRA_SPAWN_LAYOUTS as readonly string[]).indexOf(getActiveLayout());
     if (idx >= 0) chosenVeyraReg = idx;
   }
+  // G1A: every NEW Veyra run is created under placement rules 4 (three industrial salvage sources). Old saves keep rules 3.
+  const placementRules: 3 | 4 = isVeyra05Layout(getActiveLayout()) ? 4 : 3;
+  if (placementRules === 4) setVeyraPlacementRules(4);
   if (isVeyra05Layout(getActiveLayout())) resetWindowToGround(getWindowWorld(getActiveLayout()));
   let w = getWorld();
   const r: RunState = {
-    id: runIdFor(gs, seed, now), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: 3, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: chosenVeyraReg, ended: null,
+    id: runIdFor(gs, seed, now), seed, character, startedAt: now, qaOffset: 0, qaUsed: false, layoutId: getActiveLayout(), sourceLayoutVersion: 3, sourceMap: { id: w.economyMap.id, revision: w.economyMap.revision, seed: w.economyMap.seed, rules: placementRules, digest: sourceDigest(w.sourceV3), mapDigest: mapDigest(w), ...(w.veyra ? {veyra:w.veyra} : {}) }, spawnRegion: chosenVeyraReg, ended: null,
     // PA1 WP3: starter knowledge comes from one place, so an approved family gate can withhold
     // a formula without ever touching a recipe a run already paid for or was given.
     player: null as any, creatures: [], sources: {}, terrain: {}, entities: {}, custody: {}, knowledge: { recipes: starterKnowledge(), studied: [] },
@@ -280,7 +283,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     w=getWorld();
     r.layoutId=selected.layout;
     r.spawnRegion=-1; // no fabricated region index for a global cell
-    r.sourceMap={id:w.economyMap.id,revision:w.economyMap.revision,seed:w.economyMap.seed,rules:3,
+    r.sourceMap={id:w.economyMap.id,revision:w.economyMap.revision,seed:w.economyMap.seed,rules:placementRules,
       digest:sourceDigest(w.sourceV3),mapDigest:mapDigest(w),...(w.veyra?{veyra:w.veyra}:{})};
     r.poiAccessDigest=poiContractDigest(w);
   }
@@ -1589,10 +1592,11 @@ export function award(gs: GameState, key: string, now: number) {
 }
 
 // ---------------- combat / harvesting shared hit rules (C05) ----------------
-export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial<Record<string, number>>, now: number, fromX: number, fromY: number, opts?: { extraction?: ExtractionCapability }): { result: 'yield' | 'nopower' | 'empty' | 'none'; key?: string; got?: number; mat?: string; depleted?: boolean; quality?: number } {
+export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial<Record<string, number>>, now: number, fromX: number, fromY: number, opts?: { extraction?: ExtractionCapability; tool?: string }): { result: 'yield' | 'nopower' | 'empty' | 'none'; key?: string; got?: number; mat?: string; depleted?: boolean; quality?: number } {
   const r = gs.run!; const s = sourceAt(r, tx, ty, now); if (!s) return { result: 'none' };
   if (s.stock <= 0) return { result: 'empty', key: s.key, mat: s.def.mat };
-  const p = power[s.def.mat] || 0; if (p <= 0) return { result: 'nopower', key: s.key, mat: s.def.mat };
+  // G1A: a source with a `harvestBy` table is damaged by that table alone (per tool id); global tool power is not consulted beyond a capped fallback.
+  const p = s.def.harvestBy ? (opts?.tool ? (s.def.harvestBy[opts.tool] ?? Math.min(1, power[s.def.mat] || 0)) : 0) : (power[s.def.mat] || 0); if (p <= 0) return { result: 'nopower', key: s.key, mat: s.def.mat };
   const st = r.sources[s.i] || (r.sources[s.i] = { stock: s.stock, hp: s.hp, burnt: s.st?.burnt });
   const per = s.def.hp / s.def.stock; const before = Math.ceil(st.hp / per - 1e-9);
   st.hp = Math.max(0, st.hp - p); const after = Math.ceil(st.hp / per - 1e-9); let units = Math.min(st.stock, before - after);
@@ -2026,6 +2030,7 @@ function completeFamilyStudy(r: RunState, family: string, at: number, okId: stri
 
 // ---------------- dispatcher ----------------
 export function dispatch(gs: GameState, it: Intent, now: number): Result {
+  syncVeyraPlacement(gs.run);
   if (!it || typeof it.id !== 'string' || !it.id.trim() || typeof it.type !== 'string' || !Number.isFinite(now)) return { ok: false, reason: 'Invalid request.' };
   if (gs.profile.profileReceipts.includes(`intent:${it.id}`)) return { ok: false, reason: 'Duplicate request ignored.', dup: true };
   const r = gs.run;

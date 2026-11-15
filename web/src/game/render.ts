@@ -154,6 +154,9 @@ const add = (p: Partial<Part>) => { if (PARTS.length < 900) PARTS.push({ x: 0, y
 const burst = (x: number, y: number, n: number, cols: string[], sp = 60, g = 120, life = 450, s = 1) => { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = sp * (0.3 + Math.random()); add({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - sp * 0.5, col: cols[i % cols.length], max: life * (0.6 + Math.random() * 0.6), g, s }); } };
 /** R8D: gold flecks for a rare ore strike, distinct from ordinary ore dust. */
 const RICH_CHIP = ['#f0c040', '#fff3b0', '#4f4560'];
+// G1A hit feedback per archetype: bale = steel shards + strap flecks, relay = board/wire sparks, fuel rack = rust + can paint.
+const G1A_CHIP: Record<string, string[]> = { road_salvage_bale: ['#c4cad2', '#b8862e', '#6b6f76'], road_relay_wreck: ['#9be07a', '#e8c040', '#9be0ff', '#d04a3a'], road_fuel_rack: ['#b8845a', '#c8a030', '#5d6a3a'] };
+const G1A_FELL: Record<string, string[]> = { road_salvage_bale: ['#a3a9b1', '#565a61', '#b8862e'], road_relay_wreck: ['#566270', '#2f8a55', '#e0c040'], road_fuel_rack: ['#8a5a3a', '#c8a030', '#4a6a86'] };
 const MATC: Record<string, string[]> = { wood: ['#c9935a', '#8a5a32', '#e0b070', '#6aa84a'], stone: ['#b9bcc4', '#7d8088', '#ffffff'], ore: ['#d08a5a', '#7d8088', '#ffe0a0'], plant: ['#8ac25a', '#5a9a3c', '#e05a7a'], scrap: ['#c0a07a', '#ffd070', '#6f7378', '#ffffff'] };
 const SURFC: Record<number, string[]> = { [T.SNOW]: ['#ffffff', '#c8d8e8'], [T.SAND]: ['#e8d8a0', '#c4aa74'], [T.MARSH]: ['#4a3e2a', '#3a5a5a'], [T.SHALLOW]: ['#a0d0ff', '#ffffff'], [T.RIVER]: ['#a0d0ff', '#ffffff'], [T.ASH]: ['#6a5a5a', '#3a3236'], [T.ROAD]: ['#b89470', '#9a7a58'] };
 export let shake = 0; export let flash = 0; export const banners: { text: string; sub: string; t: number }[] = [];
@@ -167,8 +170,8 @@ export function consumeFX(onFx: (e: any) => void) {
     const e = FX.shift(); onFx(e);
     switch (e.type) {
       case 'slash': ARCS.push({ x: e.x, y: e.y, a: e.a, reach: e.reach, arc: e.arc, life: 0, max: 150, key: e.key } as Part); break;
-      case 'chip': burst(e.x, e.y - 6, e.depleted ? 14 : 7, e.rich ? RICH_CHIP : (MATC[e.mat] || MATC.wood), 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
-      case 'fell': burst(e.x, e.y - 14, 16, ['#6aa84a', '#3f7a32', '#c9935a'], 70, 60, 900); break;
+      case 'chip': if (G1A_CHIP[e.key]) burst(e.x, e.y - 8, e.depleted ? 8 : 4, G1A_CHIP[e.key], 70, 120, 420); burst(e.x, e.y - 6, e.depleted ? 14 : 7, e.rich ? RICH_CHIP : (MATC[e.mat] || MATC.wood), 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
+      case 'fell': burst(e.x, e.y - 14, 16, G1A_FELL[e.key] || ['#6aa84a', '#3f7a32', '#c9935a'], 70, 60, 900); break;
       case 'clank': burst(e.x, e.y - 6, e.soft ? 2 : 5, ['#ffffff', '#ffe070'], 80, 200, 220); break;
       case 'turretshot': burst(e.x, e.y - 4, 7, ['#fff6b5', '#ffc653', '#ffffff'], 50, 100, 350); break;
       case 'mhit': burst(e.x, e.y - 6, e.big ? 12 : 8, ['#ffffff', '#ff5a4a', '#a01e1e'], 90, 220, 380); TEXTS.push({ x: e.x, y: e.y - 14, vx: 0, vy: -28, life: 0, max: 700, col: '#ffffff', text: String(e.n) } as Part); break;
@@ -368,6 +371,13 @@ function drawSource(g: CanvasRenderingContext2D, r: RunState, s: NonNullable<Ret
   if (art === 'bush') spr = depleted ? A.src.bush_empty[v % 2] : A.src.bush[v % 2];
   else if (['grass', 'reed', 'herb', 'mush'].includes(art)) { if (depleted) { g.drawImage(A.src.picked[0], X, Y); return; } const arr = A.src[art]; spr = arr[v % arr.length];
     const sway = Math.round(Math.sin(time / 600 + tx * 0.8 + ty * 0.3) * 1); g.drawImage(spr, 0, 0, 16, 9, X + sway + jx, Y - 2, 16, 9); g.drawImage(spr, 0, 9, 16, 7, X + jx, Y + 7, 16, 7); return; }
+  else if (art === 'salvage_bale' || art === 'relay_wreck' || art === 'fuel_rack') {
+    // G1A industrial salvage: intact / half-broken / depleted debris, anchored bottom-centre so the sprite stays on its tile.
+    const stage = depleted ? 2 : s.hp <= s.def.hp / 2 ? 1 : 0; spr = A.src[art][stage];
+    shadow(g, X + 8, Y + 14, depleted ? 4 : art === 'salvage_bale' ? 8 : 6);
+    g.drawImage(spr, X + 8 - (spr.width >> 1) + jx, Y + 16 - spr.height);
+    if (art === 'relay_wreck' && !depleted && hash2(tx, ty, Math.floor(time / 140)) < 0.04) add({ x: X + 9, y: Y + 4, vx: (Math.random() - 0.5) * 30, vy: -20, col: '#9be0ff', max: 220, s: 1 } as any);
+    return; }
   else if (art === 'scrap') { if (depleted) return; spr = A.src.scrap[v % 2]; }
   else if (art === 'wreck') { spr = A.src.wreck[v % 2]; shadow(g, X + 8, Y + 13, 13); if (depleted) g.globalAlpha = 0.7; g.drawImage(spr, X + 8 - 16 + jx, Y + 14 - 20); g.globalAlpha = 1; return; }
   else { if (depleted) { g.drawImage(A.src.rubble[0], X, Y); return; } const arr = A.src[art] || A.src.rock; spr = arr[v % arr.length]; if (art === 'sulfur' && Math.random() < 0.05) add({ x: X + 8, y: Y + 4, vx: 0, vy: -12, col: '#e8e0a0', max: 1200, s: 1, g: -4 }); if (art === 'crystal' && hash2(tx, ty, Math.floor(time / 500)) > 0.9) add({ x: X + 4 + Math.random() * 8, y: Y + 4 + Math.random() * 6, vx: 0, vy: 0, col: '#ffffff', max: 300, s: 1, g: 0 }); }

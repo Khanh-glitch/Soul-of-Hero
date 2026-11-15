@@ -140,7 +140,7 @@ export function shiftVeyraWindowBy(
     id: nw.economyMap.id,
     revision: nw.economyMap.revision,
     seed: nw.economyMap.seed,
-    rules: 3,
+    rules: r.sourceMap?.rules === 4 ? 4 : 3, // G1A: a window shift never changes the placement a run was created under
     digest: sourceDigest(nw.sourceV3),
     mapDigest: mapDigest(nw),
     ...(nw.veyra ? { veyra: nw.veyra } : {}),

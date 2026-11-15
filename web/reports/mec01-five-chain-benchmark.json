@@ -526,6 +526,15 @@
           "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
           "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
           "probabilityPerRoll": 0.08
+        },
+        {
+          "kind": "source-bonus-chance",
+          "where": "road_salvage_bale",
+          "qty": 0.05,
+          "stockClass": "world-node",
+          "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "probabilityPerRoll": 0.05
         }
       ],
       "lootCacheStock": {
@@ -534,7 +543,7 @@
           "shipping.factory.exterior.industrial-toolbox",
           "shipping.tp.bow-cache.standard-toolbox"
         ],
-        "worldNode": 1,
+        "worldNode": 2,
         "unknown": 0
       },
       "finiteCacheCanSupply": false,
@@ -905,6 +914,15 @@
           "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
           "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
           "probabilityPerRoll": 0.08
+        },
+        {
+          "kind": "source-bonus-chance",
+          "where": "road_relay_wreck",
+          "qty": 0.06,
+          "stockClass": "world-node",
+          "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "probabilityPerRoll": 0.06
         }
       ],
       "lootCacheStock": {
@@ -913,7 +931,7 @@
           "shipping.factory.exterior.industrial-toolbox",
           "shipping.tp.bow-cache.standard-toolbox"
         ],
-        "worldNode": 1,
+        "worldNode": 2,
         "unknown": 0
       },
       "finiteCacheCanSupply": false,
@@ -1297,6 +1315,15 @@
           "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
           "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
           "probabilityPerRoll": 0.06
+        },
+        {
+          "kind": "source-bonus-chance",
+          "where": "road_salvage_bale",
+          "qty": 0.04,
+          "stockClass": "world-node",
+          "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "probabilityPerRoll": 0.04
         }
       ],
       "lootCacheStock": {
@@ -1305,7 +1332,7 @@
           "shipping.factory.exterior.industrial-toolbox",
           "shipping.tp.bow-cache.standard-toolbox"
         ],
-        "worldNode": 1,
+        "worldNode": 2,
         "unknown": 0
       },
       "finiteCacheCanSupply": false,

@@ -239,7 +239,16 @@ export type ExtractionCapability = 'playerTool' | 'environment';
 export interface QualityBonus { capability: 'playerTool'; power: Mat; tiers: { minPower: number; item: string; chance: number }[] }
 /** R9: renewable wild plants only. `regrowClass` picks the seasonal growth table (crop or herb). */
 export type RegrowClass = 'crop' | 'herb';
-export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; qualityBonus?: QualityBonus; block: boolean; regrow?: number; regrowClass?: RegrowClass; art: string; tall?: boolean; placement?: SourcePlacementRule[] }
+export interface SourceDef { name: string; mat: Mat; hp: number; stock: number; yields: [string, number][]; bonus?: [string, number][]; qualityBonus?: QualityBonus; block: boolean; regrow?: number; regrowClass?: RegrowClass; art: string; tall?: boolean; placement?: SourcePlacementRule[];
+  /** G1A: target-specific harvest damage per tool id. When present it REPLACES `power[mat]` for this source only, so global tool power and combat damage stay untouched. Unlisted tools fall back to min(1, power[mat]); bare hands do nothing. */
+  harvestBy?: Record<string, number> }
+/** G1A: harvest damage against the three industrial salvage sources only (SOH_PROVISIONAL test tuning). */
+export const G1A_HARVEST: Record<string, number> = { stone_axe: 1, stone_pick: 1, knife: 2, cleaver: 3, machete: 4, iron_pick: 1, industrial_pick: 1 };
+export const INDUSTRIAL_SALVAGE = ['road_salvage_bale', 'road_relay_wreck', 'road_fuel_rack'] as const;
+export const isIndustrialSalvage = (k: string | null | undefined): boolean => !!k && (INDUSTRIAL_SALVAGE as readonly string[]).includes(k);
+/** Any HP salvage source, legacy or G1A — for spawn/diagnostic "is there salvage nearby" checks. */
+export const isSalvageSource = (k: string | null | undefined): boolean => k === 'scrap' || k === 'wreck' || isIndustrialSalvage(k);
+
 export const SOURCES: Record<string, SourceDef> = {
   oak: { name: 'Oak', mat: 'wood', hp: 18, stock: 6, yields: [['wood', 1]], block: true, art: 'oak', tall: true },
   pine: { name: 'Pine', mat: 'wood', hp: 16, stock: 5, yields: [['wood', 1]], block: true, art: 'pine', tall: true },
@@ -261,6 +270,13 @@ export const SOURCES: Record<string, SourceDef> = {
   mushroom: { name: 'Marsh Caps', mat: 'plant', hp: 3, stock: 2, yields: [['mushroom', 1]], block: false, regrow: 600, regrowClass: 'herb', art: 'mush' },
   scrap: { name: 'Roadside Scrap', mat: 'scrap', hp: 8, stock: 4, yields: [['spares', 1]], bonus: [['tin_can', 0.35], ['needle_tube', 0.1]], block: false, art: 'scrap' },
   wreck: { name: 'Car Wreck', mat: 'scrap', hp: 30, stock: 8, yields: [['spares', 1]], bonus: [['spares', 0.3], ['mechanical_gear', 0.08], ['fuel_can', 0.06], ['metal_pipe', 0.08], ['iron_plate', 0.06], ['tin_can', 0.2], ['electronic_parts', 0.15], ['electric_resistor', 0.12]], block: true, art: 'wreck' },
+  // G1A (SOH_PROVISIONAL, in-house tuning — not Last Island figures): the three industrial salvage archetypes that replace
+  // `scrap`/`wreck` in NEW Veyra placement (sourceMap.rules 4). Legacy rows above stay for old saves and non-Veyra layouts.
+  // Bale pipe/plate rolls are a G1A ROUTE-PRESERVATION addition (not in the work-order pool): the legacy wreck was the only world source of both on Veyra.
+  // Rates are parity-derived (legacy ~0.107 pipe / ~0.08 plate per salvage source -> 0.6 x 3 x p). Remove the two entries to return to the literal pool.
+  road_salvage_bale: { name: 'Salvage Bale', mat: 'scrap', hp: 9, stock: 3, yields: [['spares', 1]], bonus: [['tin_can', 0.25], ['needle_tube', 0.07], ['metal_pipe', 0.05], ['iron_plate', 0.04]], block: true, art: 'salvage_bale', harvestBy: G1A_HARVEST },
+  road_relay_wreck: { name: 'Relay Wreck', mat: 'scrap', hp: 12, stock: 3, yields: [['spares', 1]], bonus: [['electronic_parts', 0.15], ['electric_resistor', 0.12], ['mechanical_gear', 0.06]], block: true, art: 'relay_wreck', harvestBy: G1A_HARVEST },
+  road_fuel_rack: { name: 'Fuel Rack', mat: 'scrap', hp: 12, stock: 2, yields: [['tin_can', 1]], bonus: [['spares', 0.4], ['fuel_can', 0.06]], block: true, art: 'fuel_rack', harvestBy: G1A_HARVEST },
 };
 
 // ---------- Creatures (K5) ----------

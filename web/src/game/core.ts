@@ -218,7 +218,7 @@ export interface RunState {
   /** Run-pinned additive source overlay; absent legacy runs keep v1 placements. */
   sourceLayoutVersion?: 2 | 3;
   /** Source map identity is mandatory for v3; older runs retain their own layout. */
-  sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string; veyra?: import('./veyra/projection').VeyraViewIdentity };
+  sourceMap?: { id: string; revision: number; seed: number; /** 3 = legacy placement (scrap/wreck); 4 = G1A Veyra placement (three industrial salvage sources + POI slots). */ rules: 3 | 4; digest: string; mapDigest?: string; veyra?: import('./veyra/projection').VeyraViewIdentity };
   /** Additive, pinned when a run is created or first resumed/saved. */
   airdrops?: {version:'airdrop-v1'; mapDigest:string; seed:number; runId:string; startedAt:number; nextIndex:number};
   wreckEconomy?: 'direct-v1' | 'recycler-v1';

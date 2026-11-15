@@ -24,7 +24,7 @@ import { sourceDigest } from './world-economy';
 import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { FRAME_W, FRAME_H } from '../veyra05/frame';
-import { getWindowWorld } from '../veyra05/window';
+import { getWindowWorld, syncVeyraPlacement } from '../veyra05/window';
 import { activeFloor, onActiveFloor, syncFloor } from '../veyra05/floors';
 
 const testMode = import.meta.env.VITE_FX_TEST === '1';
@@ -66,6 +66,9 @@ export function validate(raw: any): GameState | null {
   if (!obj(r) || typeof r.id !== 'string' || !r.id || !integer(r.nextId) || r.nextId < 1 || !finite(r.startedAt) || !finite(r.qaOffset) || !integer(r.seed) || !integer(r.rng) || !integer(r.seq) || !obj(r.player) || !obj(r.custody) || !obj(r.entities) || !obj(r.clock)) return null;
   if (r.sourceLayoutVersion !== undefined && r.sourceLayoutVersion !== 2 && r.sourceLayoutVersion !== 3) return null;
   const layout = r.layoutId || 'shipping'; if (typeof layout !== 'string' || !hasLayout(layout)) return null;
+  // G1A: resolve the window world under the placement rules this run was created with (3 = legacy scrap/wreck, 4 = industrial salvage).
+  // The digest check below is unchanged and still fails closed; rules 4 exists only for Veyra U=0.5 layouts.
+  if (isVeyra05Layout(layout)) { if (r.sourceLayoutVersion === 3 && obj(r.sourceMap) && r.sourceMap.rules !== 3 && r.sourceMap.rules !== 4) return null; syncVeyraPlacement(r); }
   const world = getWorld(layout), fingerprint = mapDigest(world);
   // Snapshots written before mapDigest existed are accepted only against the
   // exact built-in geometry which shipped with PR #44, never an imported map.
@@ -76,7 +79,7 @@ export function validate(raw: any): GameState | null {
   const activeSources = veyraActiveLayer ? veyraActiveLayer.sources : world.sourceV3;
   const activeStatics = veyraActiveLayer ? veyraActiveLayer.statics : world.statics;
   if (r.sourceLayoutVersion === 3) {
-    const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || m.rules !== 3 || m.seed !== world.economyMap.seed || m.digest !== expectedSourceDigest) return null;
+    const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || (m.rules !== 3 && !(m.rules === 4 && isVeyra05Layout(layout))) || m.seed !== world.economyMap.seed || m.digest !== expectedSourceDigest) return null;
     if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) return null;
     if (world.veyra && JSON.stringify(m.veyra)!==JSON.stringify(world.veyra)) return null;
     if (world.randomSpawn && (!obj(r.spawnChoice) || r.spawnChoice.contract!=='seeded-geographic-v1' || !Number.isInteger(r.spawnChoice.x) || !Number.isInteger(r.spawnChoice.y) || r.spawnChoice.x<1 || r.spawnChoice.y<1 || r.spawnChoice.x>=199 || r.spawnChoice.y>=199)) return null;
@@ -744,6 +747,7 @@ export async function load(): Promise<LoadResult> {
   const m = migrate(selected.gs); const r = m.gs?.run;
   if (r && !r.wreckEconomy) r.wreckEconomy = wreckEconomy(r);
   if (r?.layoutId && isVeyra05Layout(r.layoutId)) {
+    syncVeyraPlacement(r);
     setActiveLayout(r.layoutId);
     const ww = getWindowWorld(r.layoutId);
     syncFloor(m.gs!, ww, ww.floors, markDirty);
