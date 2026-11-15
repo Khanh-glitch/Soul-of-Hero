@@ -16,7 +16,7 @@
 export type FinalGroup = 'A' | 'B' | 'C';
 export type FinalOrigin = 'SOH_CURRENT' | 'LI_IMPORTED' | 'STRUCT_PACK' | 'SOH_APPROVED_DESIGN_NEW';
 /** Save-level stamp. 1 (or absent) = written before the final item set; 2 = this cutover. */
-export const ITEM_SET_VERSION = 2;
+export const ITEM_SET_VERSION = 3;
 
 /** id -> [group, origin, Last Island id it stands for (when the roster names one)]. */
 export const FINAL_ITEMS: Readonly<Record<string, readonly [FinalGroup, FinalOrigin, string?]>> = Object.freeze({
@@ -204,19 +204,20 @@ export const ITEM_RETIREMENT: Readonly<Record<string, Retirement>> = Object.free
   herb_roast: { stage: 'LIVE', to: 'cooked_meat', why: 'Duplicate of the LI cooked-meat role.' },
   salted_meat: { stage: 'LIVE', to: 'dried_meat', per: 2, /* 42 hunger -> 2 x 26 */ why: 'LI Dried / Canned Meat carry preservation; no separate salt chain.' },
   fuel_briquette: { stage: 'LIVE', to: 'charcoal', per: 2, /* 90 s of burn -> 2 x 55 s */ why: 'No extra solid-fuel tier above LI wood / charcoal / low-quality fuel.' },
-  // ---- PENDING: ordered by the roster, consumers not rewired in this revision ----
-  salvaged_oil: { stage: 'PENDING', why: 'Merge into LI Crude Oil.', blockedBy: 'refine_salvaged_oil route + wreck oil channel + crude_petroleum has no live Veyra oil site' },
-  lubricant: { stage: 'PENDING', why: 'No separate vehicle-maintenance material.', blockedBy: 'refinery co-product table in balance.v1.json and motorbike upkeep read it' },
-  damaged_drive: { stage: 'PENDING', why: 'Recycler takes LI machine items directly.', blockedBy: 'recycler plans + wreck bonus table' },
-  mechanical_parts: { stage: 'PENDING', why: 'Return consumers to LI Mechanical Gear / Parts / Electronic Parts.', blockedBy: '25 catalog consumers incl. bench upgrades, tool repairs, Core recipes' },
-  fasteners: { stage: 'PENDING', why: 'No LI source; return to Needle Thread / Gear / Iron Plate per case.', blockedBy: '16 catalog consumers incl. wire hardware and bench III' },
-  treated_canvas: { stage: 'PENDING', why: 'Packs and canteens must not need a non-LI treated cloth.', blockedBy: 'trail_pack / trail_canteen recipes + raw_salt' },
-  field_repair_kit: { stage: 'PENDING', why: 'Repair with stations and real materials.', blockedBy: 'field repair action in engine + wreck / cache loot' },
-  coal: { stage: 'PENDING', why: 'LI industrial heat uses wood / charcoal / fuel.', blockedBy: 'Coal Seam nodes are placed on the map (source digest) + refined-iron and essence recipes' },
-  raw_salt: { stage: 'PENDING', why: 'No SOH salt chain.', blockedBy: 'Salt Shale nodes on the map + Tidemarshal drop + trident repair' },
-  scrap: { stage: 'PENDING', why: 'LI Parts for R&D; metal recovered through LI sources.', blockedBy: 'Roadside Scrap / Car Wreck yields, 12 recipes, knife repair, creature drops' },
-  brick: { stage: 'PENDING', why: 'House tiers use LI Stone / Iron.', blockedBy: 'wall_brick tier belongs to PR #56 (Building); furnace lining upgrade' },
-  keycard: { stage: 'PENDING', why: 'Return to LI Green / Blue / Purple cards.', blockedBy: 'poi-access door contract is single-class; no Veyra door declares a card colour yet' },
+  // ---- LIVE in item set v3 (ARENA 1 round 2). Every consumer was re-authored one by one (ledger: `ROUND2_REWIRE`);
+  //      the `to` / `per` below is ONLY the save-migration rate for stock a player already held. ----
+  salvaged_oil: { stage: 'LIVE', to: 'crude_petroleum', why: 'Merged into LI Crude Oil: 3 oil refined into one canister before and after.' },
+  lubricant: { stage: 'LIVE', to: 'crude_petroleum', per: 1.5, /* 2 oil made 1 lubricant; 20 x 1.5 = one full crude stack */ why: 'No separate vehicle-maintenance material; a held jar goes back to the oil it was made from.' },
+  damaged_drive: { stage: 'LIVE', to: 'spares', per: 2, /* the Recycler paid exactly 2 Parts per drive */ why: 'Recycler takes LI machine items directly; a held drive pays out its old Recycler return.' },
+  mechanical_parts: { stage: 'LIVE', to: 'spares', per: 2, /* 2 scrap + 1 ingot made 2 */ why: 'Consumers returned to LI Mechanical Gear / Parts / Electronic Parts one by one.' },
+  fasteners: { stage: 'LIVE', to: 'spares', why: 'No LI source; consumers returned to Needle Thread / Gear / Iron Plate per case.' },
+  treated_canvas: { stage: 'LIVE', to: 'cloth', why: 'Packs and canteens take plain cloth and thread.' },
+  field_repair_kit: { stage: 'LIVE', to: 'spares', per: 2, /* 2 fasteners + 1 cloth */ why: 'Repair happens at stations with real materials.' },
+  coal: { stage: 'LIVE', to: 'charcoal', per: 1.5, /* 80 s of burn -> 1.5 x 55 s; 40 x 1.5 = one full charcoal stack */ why: 'LI industrial heat uses wood / charcoal / fuel. The old seams are now Pyrite Seams (iron ore + sulfur).' },
+  raw_salt: { stage: 'LIVE', to: 'stone', why: 'No SOH salt chain. Salt Shale is now Shell Shale: stone with fossil shell.' },
+  scrap: { stage: 'LIVE', to: 'spares', why: 'LI Parts: roadside scrap and wrecks give Parts directly; metal comes back through the Recycler.' },
+  brick: { stage: 'LIVE', to: 'stone', per: 1.5, /* 3 stone fired 2 bricks */ why: 'House tiers use LI Stone / Iron.' },
+  keycard: { stage: 'LIVE', to: 'green_card', why: 'LI colour cards. The single Vault Keycard was the lowest tier; remaining scans carry over.' },
 });
 export const RETIRED_ITEM_IDS: readonly string[] = Object.freeze(["salvaged_oil", "lubricant", "damaged_drive", "mechanical_parts", "fasteners", "treated_canvas", "field_repair_kit", "fuel_briquette", "coal", "raw_salt", "root_broth", "herb_roast", "salted_meat", "scrap", "brick", "seed", "iron_sword", "keycard", "vehicle_drive"]);
 /** Old-schema Elder stones. Their migration is the existing Elder schema v1 -> v2 path in `persist.ts`. */
@@ -241,7 +242,18 @@ export const RECIPE_SUCCESSOR: Readonly<Record<string, string | null>> = Object.
   iron_sword: 'machete', iron_sword_blade: 'machete',
   root_broth: 'mushroom_soup', poached_eggs: null, herb_roast: null, salted_meat: 'dried_meat',
   fuel_briquette: null, vehicle_drive: null, vehicle_drive_geared: null,
+  // round 2
+  refine_salvaged_oil: 'refinery_fuel', refinery_crude: 'refinery_fuel', refinery_industrial: 'refinery_fuel_batch', refinery_lubricant: null,
+  fasteners: null, treated_canvas: null, field_repair_kit: null, recover_drive: null, mechanical_parts: null, scrap_ingot: null, brick: 'glass',
 });
 export function liveRecipeId(id: string): string | null {
   return Object.prototype.hasOwnProperty.call(RECIPE_SUCCESSOR, id) ? RECIPE_SUCCESSOR[id] : id;
 }
+
+/** LI colour access cards (item set v3). One physical card per slot; each carries a finite number of scans. */
+export const ACCESS_CARD_IDS: readonly string[] = Object.freeze(['green_card', 'blue_card', 'purple_card']);
+export const isAccessCard = (id: string): boolean => ACCESS_CARD_IDS.includes(id);
+/** Door contract card class -> the card item that opens it. `vault` is the pre-v3 single class (digest-pinned in the
+ *  Shipping / dev_delta map contracts): it was the lowest tier, so the Green Card opens it. */
+export const CARD_ITEM_FOR_CLASS: Readonly<Record<string, string>> = Object.freeze({ vault: 'green_card', green: 'green_card', blue: 'blue_card', purple: 'purple_card' });
+export const cardItemForClass = (cls: string | undefined): string => CARD_ITEM_FOR_CLASS[cls ?? 'vault'] ?? 'green_card';

@@ -9,9 +9,12 @@ import { validIntel } from './expedition-intel';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
-import { starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
+import { OIL_SEEP_AUTHORITY, SEEP_CELL } from './oil-seeps';
+const veyraRun = (r: any) => typeof r?.layoutId === 'string' && isVeyra05Layout(r.layoutId);
+const oilAuthorityOk = (r: any, a: unknown) => a === 'test-fixture-v1' ? r.oilTestFixture === true : a === OIL_SEEP_AUTHORITY ? veyraRun(r) : false;
+import { LADDER_SPAN, POWERED_DOOR_HOSTS, EQ_SLOTS, starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
 import { RETIRED_RECIPES, hasLegacyDefinition } from './recipe-migration';
-import { ITEM_SET_VERSION, isRetiredLive, RETIRED_ITEM_IDS, liveItemId, liveItemPer, liveRecipeId, RECIPE_SUCCESSOR } from './final-item-set';
+import { ITEM_SET_VERSION, isAccessCard, isRetiredLive, RETIRED_ITEM_IDS, liveItemId, liveItemPer, liveRecipeId, RECIPE_SUCCESSOR } from './final-item-set';
 import { newGame, renewableLoot, markDirty } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
 import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
@@ -104,6 +107,8 @@ export function validate(raw: any): GameState | null {
   //     which mints the successor.
   // A save stamped with a NEWER item set than this build fails closed.
   if (r.itemSetVersion !== undefined && (!integer(r.itemSetVersion) || r.itemSetVersion < 1 || r.itemSetVersion > ITEM_SET_VERSION)) return null;
+  // Item set v3: the equipment container grew from head/body/back to head/body/back/legs/feet. Old slots keep their index.
+  if (obj(r.custody) && obj(r.custody.eq) && Array.isArray(r.custody.eq.slots) && r.custody.eq.slots.length === 3) r.custody.eq.slots.push(null, null);
   let retiredItems = 0;
   if (obj(r.custody)) for (const c of Object.values(r.custody) as any[]) {
     if (!obj(c) || !Array.isArray(c.slots)) continue;
@@ -114,12 +119,12 @@ export function validate(raw: any): GameState | null {
       const from = ITEMS[st.key], toKey = liveItemId(st.key), to = ITEMS[toKey];
       if (!to) return null;
       if (to.dur) st.dur = from.dur && finite(st.dur) ? Math.max(1, Math.min(to.dur, Math.round(st.dur / from.dur * to.dur))) : to.dur; else delete st.dur;
-      if (!to.charge) delete st.charge;
+      if (!to.charge && !isAccessCard(toKey)) delete st.charge;
       delete st.meta;
       // Value-preserving: the count is multiplied where one successor is worth less (final-item-set `per`). A converted
       // stack that could not fit its successor's stack size would be a silent loss, so that fails closed instead.
       if (!integer(st.qty) || st.qty < 1) return null;
-      st.qty *= liveItemPer(st.key); if (st.qty > to.max) return null;
+      st.qty = Math.ceil(st.qty * liveItemPer(st.key)); if (st.qty > to.max) return null;
       st.key = toKey; retiredItems++;
     }
   }
@@ -161,7 +166,7 @@ export function validate(raw: any): GameState | null {
     const def=SOURCES[st.burnt ? 'deadtree' : activeSources[i]!];
     if (!def || !finite(st.stock) || !Number.isInteger(st.stock) || st.stock<0 || st.stock>def.stock || !finite(st.hp) || st.hp<0 || st.hp>def.hp || (st.burnt!==undefined && typeof st.burnt!=='boolean') || (st.regrowAt!==undefined && (!finite(st.regrowAt)||st.regrowAt<0)) || ((st.regrowFrom!==undefined || st.regrowAcc!==undefined || st.regrowDoneAt!==undefined) && (!def.regrow || (st.regrowFrom!==undefined && (!finite(st.regrowFrom)||st.regrowFrom<0)) || (st.regrowAcc!==undefined && (!finite(st.regrowAcc)||st.regrowAcc<0)) || (st.regrowDoneAt!==undefined && !finite(st.regrowDoneAt)))) || (st.fire!==undefined && (!finite(st.fire)||st.fire<0)) || (st.fireSpreadAt!==undefined && (!finite(st.fireSpreadAt)||st.fireSpreadAt<0 || !st.fire || st.fireSpreadAt>st.fire)) || (st.fireDepth!==undefined && (!Number.isInteger(st.fireDepth)||st.fireDepth<0||st.fireDepth>BAL.fire.maxSpreadDepth))) return null;
   }
-  if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || (r.custody.inv.slots?.length !== 24 && !(testMode && r.qaUsed === true && r.custody.inv.slots?.length === 128)) || r.custody.eq.slots?.length !== 3) return null;
+  if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || (r.custody.inv.slots?.length !== 24 && !(testMode && r.qaUsed === true && r.custody.inv.slots?.length === 128)) || r.custody.eq.slots?.length !== EQ_SLOTS.length) return null;
   if (!Number.isInteger(r.player.active) || r.player.active < 0 || r.player.active > 7 || !['vx','vy','dir','aim','invuln','deadT','stepAcc','lastTraceX','lastTraceY'].every(k => finite(r.player[k])) || !['gather','combat','craft','survival'].every(k => finite(r.player.skills[k]))) return null;
   const beforeNext = (id: string, re: RegExp) => { const m = re.exec(id); return !m || parseInt(m[1], 36) < r.nextId; };
   // Versioned Elder schema validation & deterministic v1 -> v2 migration on Veyra saves (fails closed on unknown schema version or unknown Elder key).
@@ -308,7 +313,7 @@ export function validate(raw: any): GameState | null {
   const stack = (s: any): s is Stack => {
     if (!obj(s) || typeof s.uid !== 'string' || !s.uid || !beforeNext(s.uid, /^s([a-z0-9]+)$/) || uids.has(s.uid) || typeof s.key !== 'string' || !has(ITEMS, s.key) || !integer(s.qty) || s.qty < 1 || s.qty > ITEMS[s.key].max) return false;
     if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return false;
-    if(s.key==='keycard' && s.charge!==undefined && (!integer(s.charge)||s.charge<1||s.charge>100||s.qty!==1))return false;
+    if((s.key==='keycard'||isAccessCard(s.key)) && s.charge!==undefined && (!integer(s.charge)||s.charge<1||s.charge>100||s.qty!==1))return false;
     if(s.key==='motorbike_kit' && (!finite(s.dur)||s.dur<0||s.dur>BAL.motorbike.maxHp))return false;
     if (ITEMS[s.key].creatorCore ? (!obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k])) : s.reserves !== undefined) return false;
     if ((s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) || (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) || (s.meta !== undefined && typeof s.meta !== 'string') || (s.key === 'blueprint' && (!s.meta || (!has(RECIPES, s.meta) && !hasLegacyDefinition(s.meta))))) return false;
@@ -316,12 +321,12 @@ export function validate(raw: any): GameState | null {
   };
   for (const [id, c] of Object.entries(r.custody) as [string, any][]) {
     if (!obj(c) || c.id !== id || (id !== 'inv' && id !== 'eq' && !beforeNext(id, /^c([a-z0-9]+)$/)) || !['inv','eq','drop','bag','cart','vehicle','loot','cash','chest','fuel','out','rest'].includes(c.kind) || !Array.isArray(c.slots)) return null;
-    for (let i = 0; i < c.slots.length; i++) { const s = c.slots[i]; if (s !== null && (!stack(s) || (c.kind === 'eq' && ITEMS[s.key].slot !== ['head','body','back'][i]) || (c.kind === 'fuel' && !ITEMS[s.key].fuel))) return null; }
+    for (let i = 0; i < c.slots.length; i++) { const s = c.slots[i]; if (s !== null && (!stack(s) || (c.kind === 'eq' && ITEMS[s.key].slot !== EQ_SLOTS[i]) || (c.kind === 'fuel' && !ITEMS[s.key].fuel))) return null; }
   }
   const jobIds = new Set<string>();
   const jobs = (queue: any, station: string): boolean => Array.isArray(queue) && queue.every((j: any) => {
     if (!obj(j) || typeof j.id !== 'string' || !j.id || jobIds.has(j.id) || !beforeNext(j.id, /^j([a-z0-9]+)$/) || typeof j.recipe !== 'string') return false;
-    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'||j.recipe==='X:recover-v3'||COMPONENT_RECIPES.includes(j.recipe)){
+    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'||j.recipe==='X:recover-v3'||j.recipe==='X:recover-v4'||COMPONENT_RECIPES.includes(j.recipe)){
       if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1)return false;
       const plan=recoveryPlanFor(j.reserved[0],j.recipe);if(!plan||plan.recipe!==j.recipe||j.total!==plan.total||!j.reserved.every(stack))return false;
       jobIds.add(j.id);return true;
@@ -421,6 +426,9 @@ export function validate(raw: any): GameState | null {
     }
     if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!obj(e.bearTrap)||e.bearTrap.version!=='trap-v1'||!bearTrapStateValid(e.bearTrap.state,e.bearTrap.uses)||(e.bearTrap.snapAt!==undefined&&!(Number.isSafeInteger(e.bearTrap.snapAt)&&e.bearTrap.snapAt>=0))))return null;
     if(e.type==='bear_trap'&&e.bearTrap===undefined)return null;
+    // Item set v3: a ladder record only on a ladder, a unit direction, and a reach its type allows; a fitted lock module names a real host door.
+    if(e.ladder!==undefined&&(!LADDER_SPAN[e.type]||!obj(e.ladder)||!Array.isArray(e.ladder.dir)||e.ladder.dir.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===e.ladder.dir[0]&&v[1]===e.ladder.dir[1])||!integer(e.ladder.len)||e.ladder.len<1||e.ladder.len>LADDER_SPAN[e.type]))return null;
+    if(e.poweredHost!==undefined&&(e.type!=='door_powered'||!POWERED_DOOR_HOSTS.includes(e.poweredHost)))return null;
     if(e.irSensor!==undefined&&(e.type!=='ir_sensor'||!obj(e.irSensor)||e.irSensor.version!=='ir-v1'||typeof e.irSensor.enabled!=='boolean'))return null;
     if(e.type==='ir_sensor'&&e.irSensor===undefined)return null;
     if(e.wireSwitch!==undefined&&e.type!=='power_switch'||e.electricDoor!==undefined&&e.type!=='door_powered')return null;
@@ -436,7 +444,7 @@ export function validate(raw: any): GameState | null {
     if (e.station?.upgrade !== undefined && (e.type !== 'furnace' || e.station.upgrade !== 'kiln_lining')) return null;
     if (e.type === 'refinery' && (e.kind !== 'struct' || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.refinery.hp || !e.station || e.station.level !== undefined)) return null;
     // B05-R oil pump: a pump must stand on a registered test-fixture oil source at its own tile; stock may be 0 (depleted) but never negative.
-    if (e.type === 'oil_pump') { const src = r.oilSources?.[`oil:${e.tx}:${e.ty}`]; if (e.kind !== 'struct' || !e.station || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.oil_pump.hp || !src || src.authority !== 'test-fixture-v1' || src.tx !== e.tx || src.ty !== e.ty || !integer(src.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; }
+    if (e.type === 'oil_pump') { const src = r.oilSources?.[`oil:${e.tx}:${e.ty}`]; if (e.kind !== 'struct' || !e.station || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.oil_pump.hp || !src || !oilAuthorityOk(r, src.authority) || src.tx !== e.tx || src.ty !== e.ty || !integer(src.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; }
     // Identity binds the station type: a refinery cannot be emptied and relabeled, and a non-refinery cannot claim refinery identity.
     if ((e.identity !== undefined && e.identity !== 'refinery-v1') || (e.identity === 'refinery-v1' && e.type !== 'refinery') || (e.type === 'refinery' && e.identity !== 'refinery-v1')) return null;
     if (e.station?.level !== undefined && (e.type !== 'workbench' || ![1, 2, 3].includes(e.station.level))) return null;
@@ -451,8 +459,11 @@ export function validate(raw: any): GameState | null {
   const allValidatedEntities = [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})] as any[];
   for(const g of allValidatedEntities) if(g.basePower&&g.basePower.network!=='wire-v1'){const links=allValidatedEntities.filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
   // B05-R oil sources: registry keyed by tile; only the labelled test-fixture authority is accepted (production oil sites are not authorized).
-  if (r.oilSources !== undefined && r.oilTestFixture !== true) return null;   // domain separation: fixture sources need the fixture marker
-  if (r.oilSources !== undefined) { if (!obj(r.oilSources)) return null; for (const [key, src] of Object.entries(r.oilSources) as any[]) { if (key !== `oil:${src?.tx}:${src?.ty}` || !integer(src?.tx) || !integer(src?.ty) || src?.authority !== 'test-fixture-v1' || !integer(src?.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; } }
+  // domain separation: a fixture row needs the fixture marker; a seep row needs a Veyra run and a ledger row at the same global tile that never holds less than the live row (a pump only draws down)
+  if (r.oilSeeps !== undefined) { if (!obj(r.oilSeeps) || !veyraRun(r)) return null; for (const [key, row] of Object.entries(r.oilSeeps) as any[]) { if (!obj(row) || !integer(row.gx) || !integer(row.gy) || key !== Math.floor(row.gx / SEEP_CELL) + ':' + Math.floor(row.gy / SEEP_CELL) || !integer(row.stock) || row.stock < 0 || row.stock > BAL.oilPumpV1.seepStock) return null; } }
+  if (r.oilSeepWindow !== undefined && (typeof r.oilSeepWindow !== 'string' || !/^-?\d+,-?\d+$/.test(r.oilSeepWindow) || !veyraRun(r))) return null;
+  if (r.oilSources !== undefined && obj(r.oilSources)) { for (const src of Object.values(r.oilSources) as any[]) { if (src?.authority !== OIL_SEEP_AUTHORITY) continue; if (!r.oilSeepWindow || !r.oilSeeps) return null; const [sox, soy] = r.oilSeepWindow.split(',').map(Number); const gx = sox + src.tx, gy = soy + src.ty; const row = r.oilSeeps[Math.floor(gx / SEEP_CELL) + ':' + Math.floor(gy / SEEP_CELL)]; if (!row || row.gx !== gx || row.gy !== gy || src.stock > row.stock) return null; } }
+  if (r.oilSources !== undefined) { if (!obj(r.oilSources)) return null; for (const [key, src] of Object.entries(r.oilSources) as any[]) { if (key !== `oil:${src?.tx}:${src?.ty}` || !integer(src?.tx) || !integer(src?.ty) || !oilAuthorityOk(r, src?.authority) || !integer(src?.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; } }
   if (r.wreckEconomy !== undefined && r.wreckEconomy !== 'direct-v1' && r.wreckEconomy !== 'recycler-v1') return null;
   if (r.wreckEconomy === 'recycler-v1' && !hasAuthorizedRecycler(r)) return null;
   // A retired site must be a real authored public loot site and cannot also
@@ -641,7 +652,7 @@ export function validate(raw: any): GameState | null {
       } else {
         const cycle=r.lootEcology?.cycles[lootSiteIndex(site)] || 0;
         const base=r.lootEcology && lootClass(site) && cycle>0 ? renewableLoot(site) : site.loot || [];
-        const available = new Map<string,number>(); /* Item set v2: authored loot tables may still NAME a retired id (their signatures are digest-pinned); what the crate physically holds is the successor, so the allowance is counted in live ids. */ const liveLootKey=(k:string)=>k.startsWith('blueprint:')?`blueprint:${liveRecipeId(k.slice(10))??k.slice(10)}`:liveItemId(k); for(const [k0,q] of [...base,...lootRoll(r,site,cycle)]) { const k=liveLootKey(k0); available.set(k,(available.get(k)||0)+q*liveItemPer(k0)); } const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
+        const available = new Map<string,number>(); /* Item set v2: authored loot tables may still NAME a retired id (their signatures are digest-pinned); what the crate physically holds is the successor, so the allowance is counted in live ids. */ const liveLootKey=(k:string)=>k.startsWith('blueprint:')?`blueprint:${liveRecipeId(k.slice(10))??k.slice(10)}`:liveItemId(k); for(const [k0,q] of [...base,...lootRoll(r,site,cycle)]) { const k=liveLootKey(k0); available.set(k,(available.get(k)||0)+Math.ceil(q*liveItemPer(k0))); } const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
         for(const stack of slots){if(!stack)continue;const key=stack.key==='blueprint'?`blueprint:${stack.meta}`:stack.key;const left=(available.get(key)||0)-stack.qty;if(left<0)return null;available.set(key,left);}
       }
     }

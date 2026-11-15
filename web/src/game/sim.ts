@@ -8,7 +8,7 @@ import { LOOT_CLASSES, lootClass } from './loot-ecology';
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInReach, coldDamageActive } from './thermal';
 import { calendarAt, climateAt, calendarEventV1, phaseBoundaryAt, seasonTransitionsBetween, normalizeCalendarLedger, type Season, type PrecipWeather } from './calendar';
-import { ITEMS, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable } from './catalog';
+import { LADDER_CLIMB_SPEED, ITEMS, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable, wornProtection } from './catalog';
 import { VFX_TEST_KIT, VFX_TEST_CAPS } from './vfx/testkit';
 import { getWorld } from './world';
 import { maybeSlideVeyraWindow } from '../veyra05/continuity';
@@ -18,7 +18,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
+import { ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -64,6 +64,7 @@ function solidFor(r: RunState, x: number, y: number, who: 'player' | 'creature' 
   const w = getWorld(); const i=ty*WW+tx;
   if (who === 'cart' && (w.packageContract || w.enforceMasks) && !w.economyMap.cargoPassable[i] && !w.statics.some(s=>s.kind==='door' && s.tx===tx && s.ty===ty)) return true;
   if (b === 4) return who === 'cart' || (who === 'creature' && false);
+  if (b === 6) return who !== 'player' || !!r.player.vehicle;
   return b === 1 || b === 2 || b === 3 || b === 5;
 }
 function moveBody(r: RunState, o: { x: number; y: number }, dx: number, dy: number, rad: number, who: 'player' | 'creature' | 'cart') {
@@ -86,16 +87,18 @@ function observePlayer(r: RunState, m: Creature, now: number, range: number, eli
 export function rayLen(r: RunState, x: number, y: number, a: number, max: number) { const g = blockGrid(r); for (let d = 8; d < max; d += 4) { const tx=tileOf(x+Math.cos(a)*d),ty=tileOf(y+Math.sin(a)*d); if(tx<0||ty<0||tx>=WW||ty>=WH)return d; const b=g[ty*WW+tx]; if (b === 1 || b === 2 || b === 3 || b === 5) return d; } return max; }
 
 // ---------- player damage ----------
-export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number, cause: string, now: number, kb = 140) {
+export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number, cause: string, now: number, kb = 140, groundHit = cause === 'fire' || cause === 'lava') {
   const r = gs.run!; const p = r.player; if (p.dead) return false;
   if ((r.spiritTransit && now < r.spiritTransit.arriveAt) || p.invuln > 0 || (p.iceUntil !== undefined && now < p.iceUntil) || p.action?.kind === 'roll') { fx('dodge', { x: p.x, y: p.y }); return false; }
-  let armor = 0; for (const s of C(r, 'eq').slots) if (s) armor += ITEMS[s.key].armor || 0;
-  const d = Math.max(1, Math.round(dmg * (1 - Math.min(0.6, armor))));
+  // Item set v3 armour model: head + body + legs + feet add into the capped general reduction; boots additionally cut
+  // damage that comes from the ground, and leg armour cuts knock-back and the hurt stagger.
+  const worn = wornProtection(C(r, 'eq').slots); kb *= 1 - worn.steady;
+  const d = Math.max(1, Math.round(dmg * (1 - worn.armor) * (groundHit ? 1 - worn.ground : 1)));
   if((p.channelUntil||0)>now){delete p.channelUntil;fx('fizzle',{x:p.x,y:p.y});}
   p.hp -= d; p.invuln = 520; const a = Math.atan2(p.y - fy0, p.x - fx0);
   moveBody(r, p, Math.cos(a) * kb * 0.06, Math.sin(a) * kb * 0.06, 4, 'player');
   if (p.action?.kind === 'cast') { fx('fizzle', { x: p.x, y: p.y }); dispatch(gs, { id: 'cc' + now + Math.random(), type: 'castCancel' }, now); }
-  p.action = { kind: 'hurt', t: 0, dur: 220, angle: a };
+  p.action = { kind: 'hurt', t: 0, dur: Math.round(220 * (1 - worn.steady)), angle: a };
   fx('phit', { x: p.x, y: p.y, n: d, a }); fx('shake', { m: Math.min(4, 1 + d / 8) });
   if (p.hp <= 0) { killPlayer(gs, now, cause); fx('pdeath', { x: p.x, y: p.y }); }
   return true;
@@ -392,6 +395,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   const t = effTile(r, tileOf(p.x), tileOf(p.y));
   if ((p.iceUntil||0)>now || (p.channelUntil||0)>now || r.spiritTransit) speedMul=0;
   let sp = B.speed * (BAL.terrainSpeed[SPEED_KEY[t]] ?? 1) * speedMul;
+  if (blockGrid(r)[tileOf(p.y) * WW + tileOf(p.x)] === 6) sp *= LADDER_CLIMB_SPEED; // item set v3: climbing a ladder
   const w = invWeight(r), limit = carryLimit(r), personalLoad = w > limit ? Math.max(0.35, 1 - (w - limit) / limit) : 1;
   let condition = 1;
   if (slowTimer > 0) { condition *= 0.5; slowTimer -= dtMs; }
@@ -1351,7 +1355,7 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
     }
     else {
       const dot = h.kind === 'pool' || h.effect === 'dot' || h.kind === 'sweep' || h.style === 'burn';
-      if (dot) { h.tickAcc = (h.tickAcc || 0) - dtMs; if (h.tickAcc <= 0 && inHaz(h, p.x, p.y)) { h.tickAcc = h.kind === 'pool' ? 500 : 220; hurtPlayer(gs, h.kind === 'pool' ? 5 : h.dmg * 0.45, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, 30); if (h.kind === 'pool') p.rad = Math.min(100, p.rad + 4); } }
+      if (dot) { h.tickAcc = (h.tickAcc || 0) - dtMs; if (h.tickAcc <= 0 && inHaz(h, p.x, p.y)) { h.tickAcc = h.kind === 'pool' ? 500 : 220; hurtPlayer(gs, h.kind === 'pool' ? 5 : h.dmg * 0.45, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, 30, h.kind === 'pool' || h.style === 'burn'); if (h.kind === 'pool') p.rad = Math.min(100, p.rad + 4); } }
       else if (!h.hit && inHaz(h, p.x, p.y)) { if (hurtPlayer(gs, h.dmg, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, h.effect === 'knock' ? 320 : 140)) { h.hit = true; if (h.effect === 'slow') slowTimer = 2200; if (h.effect === 'root') rootTimer = 900; if (h.effect === 'pull') { const a = Math.atan2(h.y - p.y, h.x - p.x); moveBody(r, p, Math.cos(a) * 14, Math.sin(a) * 14, 4, 'player'); } } }
     }
     if (h.t >= h.tell + h.dur) HAZ.splice(i, 1);
@@ -1565,6 +1569,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (!syncWorld(gs, now)) { if (!gs.run) fx('banner', { text: 'The run has ended', sub: 'Ragnarok consumed the island.' }); return; }
   // Resting hands the online clock to the same chronological settlement used offline (no online drain while asleep).
   if (r.rest) { settle(gs, now, true); return; }
+  ensureOilSeeps(r); // item set v3: Veyra crude seeps exist from the first frame, pump or no pump
   const ph = phaseOf(r, now);
   if (ph !== 'calm' && ragAnnounced !== r.id + ph) { ragAnnounced = r.id + ph; if (ph === 'danger') { award(gs, 'ragnarok', now); fx('banner', { text: 'RAGNAROK', sub: 'The final 72 hours. Sealed chests can now be opened.' }); } if (ph === 'awakening') fx('banner', { text: 'DAY 14', sub: 'The six Elders awaken.' }); }
   const weather = weatherAt(r, now);
@@ -1706,8 +1711,8 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     }
     if ((p.iceUntil||0)>t) dtMs=Math.min(dtMs,p.iceUntil!-t);
     const activeFire = !isWet(weatherAt(r,t)) && Object.entries(r.sources).some(([key,st])=>!!st.fire && st.fire>r.clock.simMs && dist(p.x,p.y,(+key%WW)*TILE+8,Math.floor(+key/WW)*TILE+8)<18);
-    const armor = C(r,'eq').slots.reduce((n,s)=>n+(s ? ITEMS[s.key].armor||0 : 0),0);
-    const fireRate = activeFire && (p.iceUntil||0)<=t ? Math.max(1,Math.round(B.offlineFireHitDamage*(1-Math.min(0.6,armor))))/B.offlineFireHitMs : 0;
+    const worn = wornProtection(C(r,'eq').slots);
+    const fireRate = activeFire && (p.iceUntil||0)<=t ? Math.max(1,Math.round(B.offlineFireHitDamage*(1-worn.armor)*(1-worn.ground)))/B.offlineFireHitMs : 0;
     const unit = B.offlineDrainFactor / 60000;
     const hungerRate = B.offlineHungerPerHour / HOUR;
     // CAL-01: summer heat/dryness at THIS Map cell raises water demand, exactly as the

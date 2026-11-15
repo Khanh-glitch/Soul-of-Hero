@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ITEMS, stationBurnable } from '../game/catalog';
+import { ITEMS, stationBurnable, EQ_SLOTS } from '../game/catalog';
 import { BAL, type RunState, type Stack, type Container } from '../game/core';
 import { C, cartWeight, isStationFuel } from '../game/engine';
 import { Icon, type Api } from './common';
@@ -27,7 +27,6 @@ function useSlotStore() {
   useEffect(() => { const s = () => f(v => v + 1); store.subs.add(s); return () => { store.subs.delete(s); }; }, []);
 }
 
-const EQ_SLOTS = ['head', 'body', 'back'] as const;
 function acceptsUI(r: RunState, c: Container, slot: number, s: Stack): boolean {
   if (['loot', 'cash', 'out'].includes(c.kind)) return false;
   if (isStationFuel(r, c.id)) return stationBurnable(s.key);

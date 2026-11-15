@@ -2,11 +2,11 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { dispatch, markDirty, newGame } from '../src/game/engine';
 import { settle } from '../src/game/sim';
 import legacyPair from './fixtures/3b37ae9-legacy-pair.json';
-import { ITEM_SET_VERSION, liveItemId } from '../src/game/final-item-set';
+import { ITEM_SET_VERSION, liveItemId, liveItemPer, liveRecipeId } from '../src/game/final-item-set';
 
 // Loading a pre-policy save pins its compatible fallback without changing the raw fixture.
 // B01-D: loading a pre-B01 save migrates the always-known recipe keys into run.knowledge.recipes (same visible behaviour as the old static path).
-import { ALWAYS_KNOWN_RECIPES, starterKnowledge } from '../src/game/catalog';
+import { ALWAYS_KNOWN_RECIPES, EQ_SLOTS, starterKnowledge } from '../src/game/catalog';
 import { RETIRED_RECIPES } from '../src/game/recipe-migration';
 // PA1 WP3: the load-path grant is starterKnowledge(), which is the always-known list plus every
 // packable-device formula (all base:true today, so the visible behaviour is unchanged) and it is
@@ -21,14 +21,20 @@ expect(legacyKnew.filter(k => !migratedRecipes.includes(k)).every(k => RETIRED_R
 expect(migratedRecipes.length).toBeGreaterThanOrEqual(ALWAYS_KNOWN_RECIPES.length);
 // Item set v2 (ARENA 1): the load path also exchanges LIVE-retired stacks for their successor, in place — same uid,
 // same count, same slot. In this fixture that is exactly one stack (6 Wild Seeds in the mill crate → Sunroot Seed).
-const liveCustody = (custody: Record<string, { slots: ({ key: string } | null)[] }>) => {
+const liveCustody = (custody: Record<string, { kind?: string; slots: ({ key: string; qty: number; meta?: string } | null)[] }>) => {
   const out = structuredClone(custody); let swapped = 0;
-  for (const c of Object.values(out)) for (const st of c.slots) if (st && liveItemId(st.key) !== st.key) { st.key = liveItemId(st.key); swapped++; }
+  for (const c of Object.values(out)) for (const st of c.slots) if (st && liveItemId(st.key) !== st.key) { st.qty = Math.ceil(st.qty * liveItemPer(st.key)); st.key = liveItemId(st.key); swapped++; }
+  // a blueprint that teaches a retired formula now teaches its successor (Brick -> Glass): counted as one more exchange
+  for (const c of Object.values(out)) for (const st of c.slots) if (st?.key === 'blueprint' && st.meta && liveRecipeId(st.meta) !== st.meta) { st.meta = liveRecipeId(st.meta); swapped++; }
+  // armour v3: the equipment container grew from 3 to 5 slots (legs, feet)
+  for (const c of Object.values(out)) if (c.kind === 'eq') while (c.slots.length < EQ_SLOTS.length) c.slots.push(null);
   return { out, swapped };
 };
 const laterLive = liveCustody(legacyPair.later.run.custody as never);
-expect(laterLive.swapped).toBe(1);
-const laterWithPolicy = { ...legacyPair.later, run: { ...legacyPair.later.run, custody: laterLive.out, itemSetVersion: ITEM_SET_VERSION, migrated: { retiredRecipes: legacyKnew.filter(k => RETIRED_RECIPES.includes(k)).length, retiredItems: 1, retiredNoticeShown: true }, wreckEconomy: 'direct-v1', knowledge: { ...legacyPair.later.run.knowledge, recipes: migratedRecipes } } };
+// Item set v3 retired 12 more ids (Scrap, Coal, Machine Parts, ...): this old save holds five such stacks, each exchanged
+// in place at the roster ratio (count rounded up).
+expect(laterLive.swapped).toBe(6);   // five stacks + one Brick blueprint
+const laterWithPolicy = { ...legacyPair.later, run: { ...legacyPair.later.run, custody: laterLive.out, itemSetVersion: ITEM_SET_VERSION, migrated: { retiredRecipes: legacyKnew.filter(k => RETIRED_RECIPES.includes(k)).length, retiredItems: laterLive.swapped, retiredNoticeShown: true }, wreckEconomy: 'direct-v1', knowledge: { ...legacyPair.later.run.knowledge, recipes: migratedRecipes } } };
 
 function fakeStorage() {
   const map = new Map<string, string>(); let failWrites = false, failReads = false;

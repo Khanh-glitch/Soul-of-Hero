@@ -1,0 +1,158 @@
+
+#### salvaged_oil :: {"name":"Salvaged Oil","cat":"res","w":0.7,"max":30,"specimen":"refine_salvaged_oil"}
+  USE  refine_salvaged_oil: 3 salvaged_oil + 1 glass -> 1 fuel_can @furnace t1 18s
+  USE  refinery_fuel: 3 salvaged_oil + 1 glass -> 1 fuel_can @refinery t1 base 14s
+  USE  refinery_fuel_batch: 5 salvaged_oil + 1 glass -> 2 fuel_can @refinery t1 base 22s
+  USE  refinery_industrial: 6 salvaged_oil + 1 glass -> 2 fuel_can @refinery t1 base 26s
+  USE  refinery_lubricant: 2 salvaged_oil -> 1 lubricant @refinery t1 base 12s
+  SPECIMEN-> refine_salvaged_oil
+  BAL .oilRefineryV1.recipes.single.ins: ["salvaged_oil",3]
+  BAL .oilRefineryV1.recipes.batch.ins: ["salvaged_oil",5]
+  BAL .oilRefineryV1.recipes.industrial.ins: ["salvaged_oil",6]
+  BAL .oilRefineryV1.recipes.lube.ins: ["salvaged_oil",2]
+
+#### lubricant :: {"name":"Machine Lubricant","cat":"res","w":0.6,"max":20}
+  MAKE refinery_industrial: 6 salvaged_oil + 1 glass -> 2 fuel_can +2 fuel_can + 1 lubricant @refinery t1 base
+  MAKE refinery_lubricant: 2 salvaged_oil -> 1 lubricant @refinery t1 base
+  BAL .oilRefineryV1.recipes.industrial.outs: ["lubricant",1]
+  BAL .oilRefineryV1.recipes.lube.outs: ["lubricant",1]
+
+#### damaged_drive :: {"name":"Damaged Drive","cat":"res","w":3,"max":1}
+  USE  recover_drive: 1 damaged_drive + 1 scrap -> 1 mechanical_parts @workbench t1 base 12s
+  SOURCE wreck: 1 scrap bonus 0.3 spares + 0.2 damaged_drive + 0.06 fuel_can + 0.08 mechanical_parts + 0.12 fasteners + 0.04 field_repair_kit + 0.2 tin_can + 0.15 electronic_parts mat=scrap
+
+#### mechanical_parts :: {"name":"Machine Parts","vi":"Bộ phận máy","cat":"res","w":0.5,"max":30}
+  MAKE recover_drive: 1 damaged_drive + 1 scrap -> 1 mechanical_parts @workbench t1 base
+  MAKE mechanical_parts: 2 scrap + 1 iron_ingot -> 2 mechanical_parts @workbench t1 base
+  USE  vehicle_frame: 1 metal_pipe + 2 iron_ingot + 2 mechanical_parts + 2 spares -> 1 vehicle_frame @workbench2 t1 base 22s
+  USE  core_mjolnir: 4 iron_ingot + 9 spares + 4 crystal + 2 mechanical_parts -> 1 core_mjolnir @workbench2 t2 50s
+  USE  industrial_pick: 1 iron_pick + 2 mechanical_parts + 2 spares -> 1 industrial_pick @workbench2 t2 25s
+  USE  industrial_axe: 1 iron_axe + 1 metal_blade + 1 mechanical_parts + 2 spares -> 1 industrial_axe @workbench2 t2 25s
+  USE  reinforced_spear: 2 iron_ingot + 1 mechanical_parts + 2 wood -> 1 reinforced_spear @workbench2 t2 20s
+  USE  metal_pipe: 2 refined_iron_ingot + 1 mechanical_parts -> 2 metal_pipe @workbench2 t2 base 18s
+  USE  metal_blade: 4 iron_ingot + 1 mechanical_parts -> 1 metal_blade @workbench2 t2 base 16s
+  USE  mechanical_gear: 1 refined_iron_ingot + 1 iron_ingot + 2 mechanical_parts + 1 fasteners -> 1 mechanical_gear @workbench2 t2 base 20s
+  STRUCT oil_pump: 3 iron_ingot + 2 mechanical_parts + 2 spares + 2 brick
+  STRUCT refinery: 4 iron_ingot + 3 mechanical_parts + 5 spares + 6 brick + 2 glass
+  STRUCT farm_controller: 12 wood + 2 iron_ingot + 3 mechanical_parts + 3 fasteners + 2 spares
+  STRUCT base_generator: 3 iron_ingot + 3 mechanical_parts + 4 spares + 6 wood
+  STRUCT door_powered: 4 iron_ingot + 2 mechanical_parts + 3 fasteners + 3 spares
+  STRUCT arrow_turret: 10 wood + 2 iron_ingot + 2 mechanical_parts + 2 fasteners
+  SOURCE wreck: 1 scrap bonus 0.3 spares + 0.2 damaged_drive + 0.06 fuel_can + 0.08 mechanical_parts + 0.12 fasteners + 0.04 field_repair_kit + 0.2 tin_can + 0.15 electronic_parts mat=scrap
+  REPAIR iron_axe: 1 iron_ingot + 1 mechanical_parts
+  REPAIR iron_pick: 1 iron_ingot + 1 mechanical_parts
+  REPAIR industrial_pick: 1 iron_ingot + 1 mechanical_parts + 1 spares
+  REPAIR industrial_axe: 1 iron_ingot + 1 mechanical_parts + 1 spares
+  REPAIR iron_sword: 1 iron_ingot + 1 mechanical_parts
+  REPAIR reinforced_spear: 1 iron_ingot + 1 mechanical_parts
+  REPAIR deploy_oil_pump: 1 iron_ingot + 1 mechanical_parts + 1 spares + 1 brick
+  REPAIR deploy_refinery: 1 iron_ingot + 1 mechanical_parts + 2 spares + 2 brick + 1 glass
+  REPAIR deploy_farm_controller: 3 wood + 1 iron_ingot + 1 mechanical_parts + 1 fasteners + 1 spares
+  REPAIR deploy_base_generator: 1 iron_ingot + 1 mechanical_parts + 1 spares + 2 wood
+  REPAIR deploy_arrow_turret: 3 wood + 1 iron_ingot + 1 mechanical_parts + 1 fasteners
+  BALVAL .territory.materials
+  BAL .oilRefineryV1.cost: ["mechanical_parts",3]
+  BAL .homeCircuit.doorCost: ["mechanical_parts",2]
+  BAL .recyclerV1.rules.industrial_pick.high: ["mechanical_parts",1]
+  BAL .recyclerV1.rules.industrial_axe.high: ["mechanical_parts",1]
+  BAL .recyclerV1.rules.reinforced_spear.high: ["mechanical_parts",1]
+  BAL .recyclerV2.rules.iron_axe.high: ["mechanical_parts",1]
+  BAL .recyclerV2.rules.industrial_axe.mid: ["mechanical_parts",1]
+  BAL .recyclerV2.rules.industrial_axe.high: ["mechanical_parts",1]
+  BAL .recyclerV3.rules.iron_axe.high: ["mechanical_parts",1]
+  BAL .recyclerV3.rules.industrial_axe.mid: ["mechanical_parts",1]
+  BAL .recyclerV3.rules.industrial_axe.high: ["mechanical_parts",1]
+  BAL .recyclerV4.components.mechanical_gear.outputs: ["mechanical_parts",2]
+  BAL .recyclerV4.components.metal_blade.outputs: ["mechanical_parts",1]
+  BAL .airdropV1.fixed: ["mechanical_parts",2]
+  BAL .oilPumpV1.cost: ["mechanical_parts",2]
+  BAL .journeyRequisitions.hearth.items: ["mechanical_parts",3]
+
+#### fasteners :: {"name":"Forged Fasteners","cat":"res","w":0.2,"max":30,"studyRecipe":"fasteners"}
+  MAKE fasteners: 1 iron_ingot + 1 scrap -> 3 fasteners @workbench t1
+  USE  field_repair_kit: 2 fasteners + 1 cloth -> 1 field_repair_kit @workbench t1 12s
+  USE  trail_pack: 1 treated_canvas + 2 leather + 2 fasteners + 2 rope -> 1 trail_pack @workbench2 t2 22s
+  USE  trail_canteen: 2 treated_canvas + 1 leather + 1 glass + 1 fasteners -> 1 trail_canteen @workbench2 t2 20s
+  USE  mechanical_gear: 1 refined_iron_ingot + 1 iron_ingot + 2 mechanical_parts + 1 fasteners -> 1 mechanical_gear @workbench2 t2 base 20s
+  USE  iron_plate: 2 refined_iron_ingot + 1 fasteners -> 2 iron_plate @workbench2 t2 base 18s
+  STRUCT farm_controller: 12 wood + 2 iron_ingot + 3 mechanical_parts + 3 fasteners + 2 spares
+  STRUCT door_powered: 4 iron_ingot + 2 mechanical_parts + 3 fasteners + 3 spares
+  STRUCT arrow_turret: 10 wood + 2 iron_ingot + 2 mechanical_parts + 2 fasteners
+  STRUCT bear_trap: 1 mechanical_gear + 2 iron_ingot + 2 fasteners
+  SOURCE wreck: 1 scrap bonus 0.3 spares + 0.2 damaged_drive + 0.06 fuel_can + 0.08 mechanical_parts + 0.12 fasteners + 0.04 field_repair_kit + 0.2 tin_can + 0.15 electronic_parts mat=scrap
+  DROP orc_3: 2 iron_ore@0.9 + 1 coal@0.7 + 2 scrap@0.75 + 1 fasteners@0.4
+  REPAIR deploy_farm_controller: 3 wood + 1 iron_ingot + 1 mechanical_parts + 1 fasteners + 1 spares
+  REPAIR deploy_arrow_turret: 3 wood + 1 iron_ingot + 1 mechanical_parts + 1 fasteners
+  REPAIR deploy_bear_trap: 1 mechanical_gear + 1 iron_ingot + 1 fasteners
+  BALVAL .territory.materials
+  BAL .homeCircuit.doorCost: ["fasteners",3]
+  BAL .airdropV1.fixed: ["fasteners",2]
+  BAL .bearTrapV1.cost: ["fasteners",2]
+
+#### treated_canvas :: {"name":"Treated Canvas","cat":"res","w":0.3,"max":30,"studyRecipe":"treated_canvas"}
+  MAKE treated_canvas: 1 cloth + 1 raw_salt + 1 herb -> 2 treated_canvas @campfire t1
+  USE  trail_pack: 1 treated_canvas + 2 leather + 2 fasteners + 2 rope -> 1 trail_pack @workbench2 t2 22s
+  USE  trail_canteen: 2 treated_canvas + 1 leather + 1 glass + 1 fasteners -> 1 trail_canteen @workbench2 t2 20s
+
+#### field_repair_kit :: {"name":"Field Repair Kit","cat":"kit","w":0.5,"max":10,"studyRecipe":"field_repair_kit"}
+  MAKE field_repair_kit: 2 fasteners + 1 cloth -> 1 field_repair_kit @workbench t1
+  SOURCE wreck: 1 scrap bonus 0.3 spares + 0.2 damaged_drive + 0.06 fuel_can + 0.08 mechanical_parts + 0.12 fasteners + 0.04 field_repair_kit + 0.2 tin_can + 0.15 electronic_parts mat=scrap
+
+#### coal :: {"name":"Coal","cat":"res","w":1,"max":40,"fuel":80}
+  USE  essence_fire: 2 sulfur + 1 coal -> 2 essence_fire @workbench2 t2 base 16s
+  USE  refined_iron_ingot: 3 iron_ingot + 1 coal -> 2 refined_iron_ingot @furnace t1 base 20s
+  USE  refined_iron_rich: 1 rich_iron_ore + 1 coal -> 2 refined_iron_ingot @furnace t1 base 14s
+  SOURCE coalv: 1 coal bonus  mat=ore
+  DROP orc_3: 2 iron_ore@0.9 + 1 coal@0.7 + 2 scrap@0.75 + 1 fasteners@0.4
+  DROP slime_3: 2 sulfur@0.9 + 2 coal@0.8 + 1 essence_fire@0.35
+  BALKEY .fuel.coal: 80
+
+#### raw_salt :: {"name":"Raw Salt","cat":"res","w":0.25,"max":40}
+  USE  treated_canvas: 1 cloth + 1 raw_salt + 1 herb -> 2 treated_canvas @campfire t1 12s
+  SOURCE salt_shale: 1 raw_salt bonus  mat=ore
+  DROP slime_1: 1 herb@0.8 + 2 berries@0.6 + 1 raw_salt@0.45
+  DROP boss_tidemarshal: 4 raw_salt@1 + 4 shell@1 + 2 essence_water@1
+  REPAIR tidemarshal_trident: 2 iron_ingot + 2 raw_salt
+
+#### scrap :: {"name":"Scrap Metal","cat":"res","w":1,"max":60}
+  USE  fasteners: 1 iron_ingot + 1 scrap -> 3 fasteners @workbench t1 10s
+  USE  recover_drive: 1 damaged_drive + 1 scrap -> 1 mechanical_parts @workbench t1 base 12s
+  USE  mechanical_parts: 2 scrap + 1 iron_ingot -> 2 mechanical_parts @workbench t1 base 12s
+  USE  scrap_ingot: 3 scrap -> 1 iron_ingot @furnace t0 base 12s
+  USE  scrap_helm: 6 scrap + 1 leather -> 1 scrap_helm @workbench t1 12s
+  SOURCE scrap: 1 scrap bonus 0.55 spares + 0.35 tin_can + 0.1 needle_tube mat=scrap
+  SOURCE wreck: 1 scrap bonus 0.3 spares + 0.2 damaged_drive + 0.06 fuel_can + 0.08 mechanical_parts + 0.12 fasteners + 0.04 field_repair_kit + 0.2 tin_can + 0.15 electronic_parts mat=scrap
+  DROP crawler: 2 spares@1 + 2 scrap@1 + 1 electronic_parts@0.5 + 1 crawler_optic@0.35
+  DROP orc_1: 2 scrap@0.9 + 2 fiber@0.7 + 1 meat@0.5 + 1 electronic_parts@0.3
+  DROP orc_2: 2 scrap@0.9 + 1 plank@0.6 + 1 hide@0.65 + 1 iron_ore@0.45
+  DROP orc_3: 2 iron_ore@0.9 + 1 coal@0.7 + 2 scrap@0.75 + 1 fasteners@0.4
+  REPAIR knife: 1 scrap + 1 fiber
+  BALVAL .territory.materials
+  BAL .recyclerV1.rules.iron_pick.base: ["scrap",1]
+  BAL .recyclerV1.rules.iron_axe.base: ["scrap",1]
+  BAL .recyclerV1.rules.iron_sword.base: ["scrap",1]
+  BAL .recyclerV1.rules.industrial_pick.base: ["scrap",1]
+  BAL .recyclerV1.rules.industrial_axe.base: ["scrap",1]
+  BAL .recyclerV1.rules.reinforced_spear.base: ["scrap",1]
+  BAL .recyclerV2.rules.iron_sword.base: ["scrap",1]
+  BAL .recyclerV2.rules.iron_pick.base: ["scrap",1]
+  BAL .recyclerV2.rules.iron_axe.base: ["scrap",1]
+  BAL .recyclerV2.rules.industrial_axe.base: ["scrap",1]
+  BAL .recyclerV3.rules.iron_sword.base: ["scrap",1]
+  BAL .recyclerV3.rules.iron_pick.base: ["scrap",1]
+  BAL .recyclerV3.rules.iron_axe.base: ["scrap",1]
+  BAL .recyclerV3.rules.industrial_axe.base: ["scrap",1]
+
+#### brick :: {"name":"Brick","cat":"res","w":1,"max":40}
+  MAKE brick: 3 stone -> 2 brick @furnace t1
+  STRUCT wall_brick: 6 brick
+  STRUCT roof_tile: 3 brick
+  STRUCT oil_pump: 3 iron_ingot + 2 mechanical_parts + 2 spares + 2 brick
+  STRUCT refinery: 4 iron_ingot + 3 mechanical_parts + 5 spares + 6 brick + 2 glass
+  REPAIR deploy_oil_pump: 1 iron_ingot + 1 mechanical_parts + 1 spares + 1 brick
+  REPAIR deploy_refinery: 1 iron_ingot + 1 mechanical_parts + 2 spares + 2 brick + 1 glass
+  BALVAL .territory.materials
+  BAL .oilRefineryV1.cost: ["brick",6]
+  BAL .oilPumpV1.cost: ["brick",2]
+
+#### keycard :: {"name":"Vault Keycard","cat":"misc","w":0.05,"max":5}

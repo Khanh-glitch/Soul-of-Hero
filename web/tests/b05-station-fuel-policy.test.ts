@@ -27,8 +27,10 @@ function refineryWithBench(g: GameState): Entity {
 const snap = (g: GameState) => JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
 
 describe('B05-R station fuel policy: one rule for burn, deposit and display', () => {
-  it('the policy: wood, charcoal, coal and briquette are station fuel; Fuel Canister and non-fuel are not', () => {
-    for (const k of ['wood', 'charcoal', 'coal', 'fuel_briquette']) expect(stationBurnable(k)).toBe(true);
+  it('the policy: wood and charcoal are station fuel; Fuel Canister and non-fuel are not', () => {
+    for (const k of ['wood', 'charcoal']) expect(stationBurnable(k)).toBe(true);
+    // item set v3: Coal and Fuel Briquettes are retired into Charcoal; they cannot be held, so they are not a fuel any more
+    for (const k of ['coal', 'fuel_briquette']) { const g0 = setup(); const before = countItem(g0.run!, 'inv', 'charcoal'); addItem(g0.run!, 'inv', k, 2); expect(countItem(g0.run!, 'inv', k), k).toBe(0); expect(countItem(g0.run!, 'inv', 'charcoal'), k).toBeGreaterThan(before); }
     expect(stationBurnable('fuel_can')).toBe(false);
     expect(stationBurnable('iron_ingot')).toBe(false);
     expect(stationBurnable(undefined)).toBe(false);

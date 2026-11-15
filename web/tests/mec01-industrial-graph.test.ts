@@ -3,71 +3,72 @@
 // ingot-equivalent (1 ore = 1 ingot = 3 scrap, authored furnace recipes) plus per-material atoms. LI figures are context only.
 import {describe,it,expect} from 'vitest';
 import {RECIPES} from '../src/game/catalog';
+import {recyclerV4Rules} from '../src/game/recycler';
 import {proveItem,expand,routesFor,SALVAGE_ONLY} from '../src/game/industrial-proof';
 import BAL from '../src/game/balance.v1.json';
 
 const ins=(k:string)=>Object.fromEntries((RECIPES[k].ins as [string,number][]).map(([i,q])=>[i,q]));
 
+// Item set v3 (recipe revision 5): Machine Parts, Fasteners, Coal and Scrap Metal are retired. Every chain below is priced in
+// Parts and Charcoal; the pre-cutover shapes stay frozen in the migration ledger for queued jobs (pa1-rev1-queued-jobs.test.ts).
 describe('MEC-01 five-chain SOH benchmark is anchored to the registry', () => {
-  it('metal blade: 4 iron + 1 mechanical part at bench II', () => {
-    expect(ins('metal_blade')).toEqual({iron_ingot:4,mechanical_parts:1}); expect(RECIPES.metal_blade.stationLevel).toBe(2);
+  it('metal blade: 4 iron + 1 Parts at bench II', () => {
+    expect(ins('metal_blade')).toEqual({iron_ingot:4,spares:1}); expect(RECIPES.metal_blade.stationLevel).toBe(2); expect(RECIPES.metal_blade.rev).toBe(5);
   });
-  it('metal pipe: 2 refined iron + 1 mechanical part at bench II', () => {
-    expect(ins('metal_pipe')).toEqual({refined_iron_ingot:2,mechanical_parts:1}); expect(RECIPES.metal_pipe.stationLevel).toBe(2);
+  it('metal pipe: 2 refined iron + 2 Parts -> 2 sections at bench II', () => {
+    expect(ins('metal_pipe')).toEqual({refined_iron_ingot:2,spares:2}); expect(RECIPES.metal_pipe.qty).toBe(2); expect(RECIPES.metal_pipe.stationLevel).toBe(2);
   });
-  // PA1 R1 (recovered v1.1 paper): the gear pays a refined ingot alongside the raw one, and the
-  // plate is 2 refined + 1 fastener — no pipe in it. Rows are stamped rev 2; the pre-cutover shape
-  // above stays frozen in the migration ledger for queued jobs.
-  it('mechanical gear: 1 refined + 1 iron + 2 mechanical parts + 1 fastener at bench II', () => {
-    expect(ins('mechanical_gear')).toEqual({refined_iron_ingot:1,iron_ingot:1,mechanical_parts:2,fasteners:1}); expect(RECIPES.mechanical_gear.stationLevel).toBe(2);
-    expect(RECIPES.mechanical_gear.rev).toBe(2);
+  it('mechanical gear: 2 iron + 3 Parts at bench II (LI: iron + Parts, Parts-heavy)', () => {
+    expect(ins('mechanical_gear')).toEqual({iron_ingot:2,spares:3}); expect(RECIPES.mechanical_gear.stationLevel).toBe(2);
+    expect(RECIPES.mechanical_gear.rev).toBe(5);
   });
-  it('iron plate: 2 refined iron + 1 fastener → 2 plates (no pipe sink)', () => {
-    expect(ins('iron_plate')).toEqual({refined_iron_ingot:2,fasteners:1}); expect(RECIPES.iron_plate.qty).toBe(2);
-    expect(RECIPES.iron_plate.rev).toBe(2);
+  it('iron plate: 2 refined iron + 2 Parts → 2 plates (no pipe sink)', () => {
+    expect(ins('iron_plate')).toEqual({refined_iron_ingot:2,spares:2}); expect(RECIPES.iron_plate.qty).toBe(2);
+    expect(RECIPES.iron_plate.rev).toBe(5);
   });
-  it('utility frame (rev 3, Item Ontology V2 P3): 1 pipe + 2 iron + 2 machine parts + 2 parts at bench II', () => {
-    expect(ins('vehicle_frame')).toEqual({metal_pipe:1,iron_ingot:2,mechanical_parts:2,spares:2}); expect(RECIPES.vehicle_frame.rev).toBe(3); expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
+  it('utility frame (rev 5): 1 pipe + 4 iron + 2 refined + 4 Parts at bench II', () => {
+    expect(ins('vehicle_frame')).toEqual({metal_pipe:1,iron_ingot:4,refined_iron_ingot:2,spares:4}); expect(RECIPES.vehicle_frame.rev).toBe(5); expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
   });
 });
 
-// Pinned historical defect set: recyclerV2 keys that over-returned at the cumulative high (or mid) tier. Corrected for NEW jobs in recyclerV3.
-const V2_OVER=['iron_axe','iron_pick','iron_sword','industrial_axe'];
 const keysOf=(ver:string)=>Object.keys((BAL as any)[ver].rules);
-const overItems=(recipe:'X:recover-v1'|'X:recover-v2'|'X:recover-v3',ver:string)=>keysOf(ver).filter(k=>proveItem(k,recipe).rows.some((r:any)=>r.verdict==='OVER_RETURN')).sort();
+const overItems=(recipe:string,keys:string[])=>keys.filter(k=>proveItem(k,recipe).rows.some((r:any)=>r.verdict==='OVER_RETURN')).sort();
+const notOk=(recipe:string,keys:string[])=>keys.filter(k=>proveItem(k,recipe).rows.some((r:any)=>r.verdict!=='OK')).sort();
 
 describe('recycler economic proof (cumulative tiers, actual recovery plans)', () => {
-  it('recyclerV1 (immutable saved-job table): no over-return for any tabled item', () => {
-    expect(overItems('X:recover-v1','recyclerV1')).toEqual([]);
+  it('recyclerV4 (every NEW job): priced OK at every tier for every tool, and never pays out Parts', () => {
+    const keys=Object.keys(recyclerV4Rules());
+    expect(keys.sort()).toEqual(['industrial_axe','industrial_pick','iron_axe','iron_pick','machete','reinforced_spear']);
+    expect(notOk('X:recover-v4',keys)).toEqual([]);
+    for(const r of Object.values(recyclerV4Rules()))for(const [k] of [...r.base,...r.mid,...r.high])expect(['wood','iron_ingot','refined_iron_ingot']).toContain(k);
   });
-  it('recyclerV2 defect is proven and pinned: exactly the four keys corrected for new jobs in V3', () => {
-    // Item set v2: `iron_sword` is retired → every such stack is a Machete (4 ingot + 3 blade), which the inherited V2 row
-    // (≤ 1 ingot + 2 blades, leather filtered out) no longer over-returns. The other three keys are unchanged.
-    expect(overItems('X:recover-v2','recyclerV2')).toEqual(V2_OVER.filter(k=>k!=='iron_sword').sort());
+  it('new component jobs are priced OK: gear-v2, blade-v2, pipe-v3, plate-v1', () => {
+    for(const [k,rc] of [['mechanical_gear','X:gear-v2'],['metal_blade','X:blade-v2'],['metal_pipe','X:pipe-v3'],['iron_plate','X:plate-v1']] as const)expect(proveItem(k,rc).rows.map((r:any)=>r.verdict),rc).toEqual(['OK']);
   });
-  it('recyclerV3 (new jobs): no over-return for any key it lists, and every V3 key is one V2 over-returned', () => {
-    expect(overItems('X:recover-v3','recyclerV3')).toEqual([]);
-    expect(keysOf('recyclerV3').sort()).toEqual([...V2_OVER].sort());
-  });
-  it('iron_pick v2 high: the proof names the minted coal and the ingot excess (not hidden by a unit count)', () => {
+  it('KNOWN, BOUNDED: frozen tables read through the retirement ratios over-return Parts — they can only pay a job that was already queued', () => {
+    // A stored v1/v2/v3 (or gear-v1 / blade-v1) job pays Scrap Metal and Machine Parts. Those ids are retired, so the job
+    // hands out their successors at the save-migration ratio (1 Scrap -> 1 Parts, 1 Machine Part -> 2 Parts). Read that way
+    // the frozen rows return more Parts than the tool's live formula holds. This is pinned, not hidden: it is a one-time
+    // payout bounded by the jobs sitting in a recycler queue when the save was migrated; recoveryPlan() never selects
+    // these versions for a new job (asserted in sys03-recycler and b01-industrial-loot).
+    expect(overItems('X:recover-v1',keysOf('recyclerV1'))).toEqual(['industrial_axe','iron_axe','iron_pick','reinforced_spear']);
+    expect(overItems('X:recover-v2',keysOf('recyclerV2'))).toEqual(['industrial_axe','iron_axe','iron_pick']);
+    expect(overItems('X:recover-v3',keysOf('recyclerV3'))).toEqual(['industrial_axe','iron_axe','iron_pick']);
+    expect(proveItem('mechanical_gear','X:gear-v1').rows.map((r:any)=>r.verdict)).toEqual(['OVER_RETURN']);
+    expect(proveItem('metal_blade','X:blade-v1').rows.map((r:any)=>r.verdict)).toEqual(['OVER_RETURN']);
     const r=proveItem('iron_pick','X:recover-v2').rows.find((x:any)=>x.tier==='high') as any;
-    // The cutover also cheapened the coal attribution inside the proof's expansion (a pipe section
-    // now carries half the coal it used to, and the plate route no longer carries a pipe at all),
-    // so the minted atom is named as +0.5. The defect pin itself is unchanged: over-return, and
-    // the ingot-equivalent excess over the craft cost is still what the verdict is about.
-    expect(r.verdict).toBe('OVER_RETURN'); expect(r.mintedNonNumeraire).toEqual(['coal:+0.5']); expect(r.ieRecovered).toBeGreaterThan(r.ieCraft);
+    expect(r.mintedNonNumeraire).toEqual(['spares:+2','charcoal:+1']); expect(r.ieRecovered).toBeGreaterThan(r.ieCraft);
   });
-  it('craft cost never routes through the salvage-only damaged_drive (mechanical_parts uses the bench recipe, not recover_drive)', () => {
-    const e=expand('mechanical_parts',1); expect(e!.route).toBe('mechanical_parts'); expect(e!.vec).toEqual({iron_ingot:0.5,scrap:1});
-    expect(routesFor('mechanical_parts').map(r=>r.recipe).sort()).toEqual(['mechanical_parts','recover_drive']);
+  it('craft cost is priced in live atoms only: no route through a retired id', () => {
+    for(const k of ['mechanical_gear','metal_pipe','metal_blade','iron_plate','vehicle_frame']){const e=expand(k,1)!;expect(e.route).toBe(k);for(const atom of Object.keys(e.vec))expect(['iron_ingot','charcoal','spares','wood']).toContain(atom);}
+    expect(expand('mechanical_gear',1)!.vec).toEqual({iron_ingot:2,spares:3});
+    for(const dead of ['mechanical_parts','fasteners','recover_drive','scrap_ingot'])expect(RECIPES[dead],dead).toBeUndefined();
+    expect(routesFor('mechanical_parts')).toEqual([]);
     expect(SALVAGE_ONLY.has('damaged_drive')).toBe(true);
   });
-  it('scrap and coal are costed, not zero: scrap via furnace scrap_ingot (3:1), coal kept as its own atom', () => {
-    // Corrected plate BOM: 1 refined + 0.5 fastener per plate still carries coal and scrap atoms.
-    expect(expand('iron_plate',1)!.vec.coal).toBe(0.5);
-    expect(expand('iron_plate',1)!.vec.coal).toBeGreaterThan(0);
-    expect(expand('metal_pipe',1)!.vec.coal).toBe(0.5);
-    expect(RECIPES.scrap_ingot.ins).toEqual([['scrap',3]]);
+  it('charcoal is costed, not zero: a plate and a pipe section each carry one charcoal and one Parts', () => {
+    expect(expand('iron_plate',1)!.vec).toEqual({iron_ingot:1.5,charcoal:1,spares:1});
+    expect(expand('metal_pipe',1)!.vec).toEqual({iron_ingot:1.5,charcoal:1,spares:1});
+    expect(RECIPES.refined_iron_ingot.ins).toEqual([['iron_ingot',3],['charcoal',2]]);
   });
 });
-

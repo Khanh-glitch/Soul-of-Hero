@@ -42,7 +42,7 @@ describe('B05-R oil source authority: production placement is refused', () => {
     const p = r.player, tx = Math.floor(p.x / TILE) + 1, ty = Math.floor(p.y / TILE);
     const res = act(g, 'build', { struct: 'oil_pump', tx, ty });
     expect(res.ok).toBe(false);
-    expect((res as any).reason).toMatch(/No oil site exists in this world yet/);
+    expect((res as any).reason).toMatch(/No oil seep exists in this world/);   // Shipping has no seep; Veyra seeps are covered in arena1-round2-mechanics
     expect(Object.values(r.entities).some(e => e.type === 'oil_pump')).toBe(false);
   });
   it('the test authority is not a production source: none is registered by default', () => {
@@ -127,27 +127,31 @@ describe('B05-R save/reload and offline: no duplicate grant, same result on repl
 });
 
 describe('B05-R refinery turns crude into the existing fuel canister', () => {
-  it('four crude + glass refines into one Fuel Canister, which is the existing generator/motorbike fuel', () => {
+  it('three crude + glass refines into one Fuel Canister (item set v3: one refinery recipe), which is the existing generator/motorbike fuel', () => {
     const g = setup(), r = g.run!;
     const fx = { ...fixturePump(g, 0) }; // only used for reach-free refinery fixture below
     expect(fx).toBeDefined();
     const ref: Entity = { id: `fixture-refinery-${++serial}`, kind: 'struct', type: 'refinery', x: r.player.x + 8, y: r.player.y, tx: Math.floor(r.player.x / TILE), ty: Math.floor(r.player.y / TILE), hp: BAL.oilRefineryV1.hp, maxHp: BAL.oilRefineryV1.hp, identity: 'refinery-v1', station: { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id, level: undefined } as any };
     r.entities[ref.id] = ref;
     addItem(r, ref.station!.fuelC, 'wood', 2);
-    addItem(r, 'inv', 'crude_petroleum', 4); addItem(r, 'inv', 'glass', 1);
+    addItem(r, 'inv', 'crude_petroleum', 3); addItem(r, 'inv', 'glass', 1);
     const bench: Entity = { id: `fixture-bench-${++serial}`, kind: 'struct', type: 'workbench', x: ref.x, y: ref.y, tx: ref.tx, ty: ref.ty, hp: 160, maxHp: 160, station: { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id, level: 2 } };
     r.entities[bench.id] = bench;
-    const res = act(g, 'craft', { recipe: 'refinery_crude', eid: ref.id });
+    expect(act(g, 'craft', { recipe: 'refinery_crude', eid: ref.id }).ok, 'the retired id starts no work').toBe(false);
+    expect(countItem(r, 'inv', 'crude_petroleum')).toBe(3);
+    const res = act(g, 'craft', { recipe: 'refinery_fuel', eid: ref.id });
     expect(res.ok, (res as any).reason).toBe(true);
     expect(countItem(r, 'inv', 'crude_petroleum')).toBe(0);  // paid up front, reserved in the job
-    stepStations(g, RECIPES.refinery_crude.secs * 1000, T + 90_000);
+    stepStations(g, RECIPES.refinery_fuel.secs * 1000, T + 90_000);
     expect(countItem(r, ref.station!.outC, 'fuel_can')).toBe(1);
     expect(ITEMS.fuel_can.fuel).toBeGreaterThan(0);          // consumed by the existing generator and motorbike paths
   });
   it('the crude recipe is derived from the single balance authority, not a copied number', () => {
-    expect(RECIPES.refinery_crude.ins).toEqual([['crude_petroleum', 4], ['glass', 1]]);
-    expect(RECIPES.refinery_crude.out).toBe('fuel_can');
-    expect(RECIPES.refinery_crude.secs).toBe(BAL.oilRefineryV1.recipes.crude.secs);
+    expect(RECIPES.refinery_crude).toBeUndefined();
+    expect(RECIPES.refinery_fuel.ins).toEqual(BAL.oilRefineryV1.recipes.single.ins);
+    expect(RECIPES.refinery_fuel.ins).toEqual([['crude_petroleum', 3], ['glass', 1]]);
+    expect(RECIPES.refinery_fuel.out).toBe('fuel_can');
+    expect(RECIPES.refinery_fuel.secs).toBe(BAL.oilRefineryV1.recipes.single.secs);
     expect(RECIPES.pump_crude.ins).toEqual([]);
   });
 });

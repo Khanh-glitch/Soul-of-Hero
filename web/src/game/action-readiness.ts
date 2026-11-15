@@ -88,7 +88,7 @@ export function craftReadiness(r: RunState, key: string, now: number, preferredE
   const noOilWorld = oilAvailability(r) === 'NO_SITE_IN_WORLD';
   if (noOilWorld && rc.station === 'oil_pump') return state('oil', 'No oil site', OIL_TEXT.noSiteWorldShort);
   const lacking = ingredients.find(i => i.have < i.need);
-  if (noOilWorld && lacking?.key === 'crude_petroleum') return state('oil', 'No oil site', `${OIL_TEXT.noSiteWorldShort} · refine Salvaged Oil instead`);
+  if (noOilWorld && lacking?.key === 'crude_petroleum') return state('oil', 'No oil site', `${OIL_TEXT.noSiteWorldShort} · trade for Crude Petroleum`);
   if (lacking && r.layoutId && isVeyra05Layout(r.layoutId) && VEYRA_UNSOURCED_INPUTS.includes(lacking.key))
     return state('materials', 'No source here', `${ITEMS[lacking.key].name} has no source on Veyra yet`);
   if (lacking) return state('materials', 'Needs materials', missingLabel(lacking.key, lacking.have, lacking.need));

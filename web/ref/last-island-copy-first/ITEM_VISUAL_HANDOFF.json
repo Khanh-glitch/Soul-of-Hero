@@ -353,7 +353,7 @@
     "world_drop"
    ],
    "asset_status": "EXISTING_ICON",
-   "gameplay_status": "BLOCKED"
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
    "item_id": "trail_pack",
@@ -2514,7 +2514,7 @@
     "world_drop"
    ],
    "asset_status": "TEMP_FALLBACK",
-   "gameplay_status": "BLOCKED"
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
    "item_id": "electronic_parts",
@@ -2659,7 +2659,7 @@
     "equipped"
    ],
    "asset_status": "TEMP_FALLBACK",
-   "gameplay_status": "BLOCKED"
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
    "item_id": "iron_plate_chest",
@@ -2734,7 +2734,7 @@
     "equipped"
    ],
    "asset_status": "TEMP_FALLBACK",
-   "gameplay_status": "BLOCKED"
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
    "item_id": "jam",
@@ -2782,7 +2782,7 @@
     "placed"
    ],
    "asset_status": "TEMP_FALLBACK",
-   "gameplay_status": "BLOCKED"
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
    "item_id": "machete",
@@ -2928,7 +2928,7 @@
     "equipped"
    ],
    "asset_status": "TEMP_FALLBACK",
-   "gameplay_status": "BLOCKED"
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
    "item_id": "refined_iron_chest",
@@ -3003,7 +3003,7 @@
     "equipped"
    ],
    "asset_status": "TEMP_FALLBACK",
-   "gameplay_status": "BLOCKED"
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
    "item_id": "steel_folding_ladder",
@@ -3028,7 +3028,7 @@
     "placed"
    ],
    "asset_status": "TEMP_FALLBACK",
-   "gameplay_status": "BLOCKED"
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
    "item_id": "syringe",
@@ -3126,7 +3126,7 @@
     "placed"
    ],
    "asset_status": "TEMP_FALLBACK",
-   "gameplay_status": "BLOCKED"
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
    "item_id": "deploy_bed_straw",
@@ -3276,7 +3276,7 @@
     "placed"
    ],
    "asset_status": "TEMP_SHARED_PACK_ICON",
-   "gameplay_status": "BLOCKED"
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
    "item_id": "deploy_refinery",
@@ -3746,7 +3746,7 @@
     "placed"
    ],
    "asset_status": "NO_ITEM_ICON_STRUCTURE_ONLY",
-   "gameplay_status": "BLOCKED"
+   "gameplay_status": "IMPLEMENTED_NOT_PROVEN"
   },
   {
    "item_id": "seed_sunroot",

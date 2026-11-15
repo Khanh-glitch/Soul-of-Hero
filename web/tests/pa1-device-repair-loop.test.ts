@@ -91,22 +91,22 @@ describe('PA1 packed-device re-forge rule — priced from the device itself, nev
       else expect(rule.station).toBe('furnace');
     }
   });
-  it('the unapproved powered-door module is labelled pending, and is not counted as a deployed pack',()=>{
-    expect(MODULE_PENDING_STRUCTURES).toEqual(['door_powered']);
-    expect(modulePending('door_powered')).toBe(true);
-    for(const k of MODULE_PENDING_STRUCTURES){
-      expect(STRUCTS[k].item,`${k} must have no packed identity`).toBeUndefined();
-      expect(RECIPES['deploy_'+k]).toBeUndefined();
-      expect(DEPLOYABLE_TYPES).not.toContain(k);
-      expect(BUILD_ORDER).not.toContain(k);
-    }
+  // ITEM SET V3 (round 2): the Powered Door has an approved bill (STRUCTS.door_powered.cost) and is fitted directly
+  // into an owned door. Nothing is "module pending" any more, and it still has no packed-device identity: one route.
+  it('no module is pending; the powered door is a direct module with a bill and no packed identity',()=>{
+    expect(MODULE_PENDING_STRUCTURES).toEqual([]);
+    expect(modulePending('door_powered')).toBe(false);
+    expect(STRUCTS.door_powered.item,'door_powered must have no packed identity').toBeUndefined();
+    expect(RECIPES.deploy_door_powered).toBeUndefined();
+    expect(DEPLOYABLE_TYPES).not.toContain('door_powered');
+    expect(BUILD_ORDER).toContain('door_powered');
+    expect(STRUCTS.door_powered.cost.length).toBeGreaterThan(0);
     for(const k of DEPLOYABLE_TYPES) expect(modulePending(k),`${k} cannot hide as pending`).toBe(false);
     const o=setup();
     const prep=structurePreparation(o.r,'door_powered');
-    expect(prep.pending).toBe(true);
+    expect(prep.pending).toBeFalsy();
     expect(prep.materials).toBe(false);
-    expect(prep.next).toMatch(/module-pending: no approved packed-device formula/);
-    expect(buildReason(o.g,'door_powered',o.x,o.y), 'an unapproved module must not place silently').not.toBeNull();
+    expect(buildReason(o.g,'door_powered',o.x,o.y), 'without the bill and a host door it must not place silently').not.toBeNull();
   });
 });
 

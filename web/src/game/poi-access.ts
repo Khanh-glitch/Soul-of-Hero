@@ -1,6 +1,8 @@
 /** Local POI access adapter. No name-based circuits; missing map contract fails closed. */
 import { BAL, TILE, type Entity, type RunState } from './core';
 import { getWorld, type PoiDoorContract, type World } from './world';
+import { cardItemForClass, isAccessCard } from './final-item-set';
+import { ITEMS } from './catalog';
 
 /** Binds a run to this gameplay adapter's geometry interpretation, independently of Map's digest. */
 export function poiContractDigest(w:World):string|undefined {
@@ -47,7 +49,7 @@ export function poiDoorLabel(r:RunState,e:Entity,now:number):string {
   const d=poiDoorContract(r,e);if(!d)return e.locked?'Access metadata missing':e.open?'Close door':'Open door';
   if(e.open)return (e.poiDoor?.closeAt??now)<=now&&doorwayOccupied(r,e)?'Door open · aperture occupied':`Close door · auto-close ${Math.max(0,Math.ceil(((e.poiDoor?.closeAt??now)-now)/1000))}s`;
   if(interiorRelease(r,e,d))return 'Interior exit handle';
-  if(d.requirement==='keycard'){const cards=r.custody.inv?.slots.filter(s=>s?.key==='keycard')||[], card=cards.find(s=>(s!.meta??'vault')===(d.cardClass??'vault')&&(s!.charge===undefined||s!.charge>0));return card?`${d.cardClass??'vault'} card · ${card.charge??1} uses`:cards.length?'Incompatible or exhausted card':`${d.cardClass??'vault'} card required`;}
+  if(d.requirement==='keycard'){const want=cardItemForClass(d.cardClass),name=ITEMS[want].name,cards=r.custody.inv?.slots.filter(s=>s&&isAccessCard(s.key))||[], card=cards.find(s=>s!.key===want&&(s!.charge===undefined||s!.charge>0));return card?`${name} · ${card.charge??1} uses`:cards.length?`Wrong colour or exhausted · ${name} required`:`${name} required`;}
   const g=poiGenerator(r,d);if(!g)return 'Circuit generator missing';
   return poiPowered(r,d,now)?`Powered gate · ${Math.ceil((g.poiPower!.expiresAt-now)/1000)}s`:g.poiPower?.pausedMs?'Gate unpowered · generator off':'Gate unpowered · generator empty';
 }

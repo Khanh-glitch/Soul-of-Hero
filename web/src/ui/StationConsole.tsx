@@ -121,7 +121,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
       {e.type === 'oil_pump' && (() => {
         const src = e.tx !== undefined && e.ty !== undefined ? r.oilSources?.[`oil:${e.tx}:${e.ty}`] : undefined;
         return <div className="lbl" style={{ fontSize: 8, marginTop: 2, color: src && src.stock > 0 ? 'var(--good)' : 'var(--bad)' }}>
-          {src ? `Oil site: ${src.stock} crude left${src.stock <= 0 ? ' — dry, cycles blocked' : ''}` : oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : OIL_TEXT.notOnSite}
+          {src ? `Crude seep: ${src.stock} Crude Petroleum left${src.stock <= 0 ? ' — dry, cycles blocked' : ''}` : oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : OIL_TEXT.notOnSite}
         </div>;
       })()}
       {/* live job */}

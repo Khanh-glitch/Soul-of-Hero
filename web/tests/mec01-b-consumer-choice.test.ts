@@ -19,6 +19,8 @@ import type { StaticEnt } from '../src/game/world';
 
 const START = Date.UTC(2026, 10, 8, 9, 0, 0);
 const SEED = 4242;
+// item set v3 added the folding ladder; structure costs (pump, powered door, upgrades) spend gears too but are not recipes.
+const GEAR_CONSUMERS = ['industrial_pick_geared', 'motorbike_kit', 'steel_folding_ladder'];
 let n = 0;
 const act = (g: GameState, type: string, data: object = {}, now = START) => dispatch(g, { id: `b-${++n}`, type, ...data } as any, now);
 function start() { setActiveLayout('shipping_fresh'); const g = newGame(); expect(act(g, 'startRun', { character: 'female', seed: SEED }).ok).toBe(true); g.run!.creatures = []; return g; }
@@ -98,7 +100,7 @@ describe('B2: consumer choice — the gear feeds two real paid recipes, the pipe
   // the Salvager Pick (below) and the Motorbike Kit itself (2 gears, bench III — exercised in final-item-set.test.ts).
   it('the retired drive formula is refused and the gear stack is left intact; the kit is the gear\'s other live consumer', () => {
     const g = start(); const r = g.run!;
-    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 2], ['mechanical_parts', 4], ['fasteners', 4], ['spares', 6], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
+    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 2], ['spares', 20], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const bench = bringUpL2(g);
     const gearUid = craftCollect(g, bench, 'mechanical_gear', START + 10_000);
     expect(r.custody.inv.slots.some(s => s?.uid === gearUid && s.key === 'mechanical_gear')).toBe(true);
@@ -107,13 +109,13 @@ describe('B2: consumer choice — the gear feeds two real paid recipes, the pipe
     expect(act(g, 'craft', { eid: bench.id, recipe: 'vehicle_drive_geared' }, START + 20_000).ok).toBe(false);
     expect(JSON.stringify(r.custody.inv), 'a refused craft consumes nothing').toBe(before);
     expect(countItem(r, 'inv', 'mechanical_gear')).toBe(1);
-    expect(Object.keys(RECIPES).filter(k => !k.startsWith('deploy_') && RECIPES[k].ins.some(([i]) => i === 'mechanical_gear')).sort()).toEqual(['industrial_pick_geared', 'motorbike_kit']);
+    expect(Object.keys(RECIPES).filter(k => !k.startsWith('deploy_') && RECIPES[k].ins.some(([i]) => i === 'mechanical_gear')).sort()).toEqual(GEAR_CONSUMERS);
     expect(RECIPES.motorbike_kit.ins).toContainEqual(['mechanical_gear', 2]);
   });
   it('the SAME gear stack instead feeds the salvager pick (the other live consumer) — one gear, one outcome, no duplication', () => {
     const g = start(); const r = g.run!;
-    // PA1 gear BOM is 1 refined + 1 iron ingot + 2 MP + 1 fastener: the refined section is the new input.
-    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 3], ['refined_iron_ingot', 1], ['mechanical_parts', 4], ['fasteners', 1], ['spares', 4], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
+    // rev-5 gear BOM: 2 iron ingots + 3 Parts.
+    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 1], ['spares', 20], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const bench = bringUpL2(g);
     const gearUid = craftCollect(g, bench, 'mechanical_gear', START + 10_000);
     const pickUid = craftCollect(g, bench, 'industrial_pick_geared', START + 20_000);
@@ -124,7 +126,7 @@ describe('B2: consumer choice — the gear feeds two real paid recipes, the pipe
   });
   it('metal_pipe feeds the piped frame (motorbike path) — the one surviving pipe sink', () => {
     const g = start(); const r = g.run!;
-    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 2], ['mechanical_parts', 5], ['fasteners', 1], ['spares', 4]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
+    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 4], ['spares', 20]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const bench = bringUpL2(g);
     craftCollect(g, bench, 'metal_pipe', START + 10_000);
     expect(countItem(r, 'inv', 'metal_pipe')).toBe(2);   // PA1 rev-2: one paid cycle pays for TWO sections
@@ -134,11 +136,11 @@ describe('B2: consumer choice — the gear feeds two real paid recipes, the pipe
   });
   it('the plate is NOT a pipe sink any more: recovered BOM, and the plate still exists for walls/doors (repairStructure path)', () => {
     const g = start(); const r = g.run!;
-    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 2], ['refined_iron_ingot', 4], ['mechanical_parts', 4], ['fasteners', 2]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);   // fasteners: the plate's recovered input
+    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 4], ['spares', 20]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);   // item set v3: plate and pipe are both paid in Parts
     const bench = bringUpL2(g);
     craftCollect(g, bench, 'metal_pipe', START + 10_000);
     expect(countItem(r, 'inv', 'metal_pipe')).toBe(2);
-    expect(RECIPES.iron_plate.ins).toEqual([['refined_iron_ingot', 2], ['fasteners', 1]]);   // recovered v1.1 BOM
+    expect(RECIPES.iron_plate.ins).toEqual([['refined_iron_ingot', 2], ['spares', 2]]);   // rev-5 BOM (Fasteners retired into Parts)
     const plateUid = craftCollect(g, bench, 'iron_plate', START + 20_000);
     expect(countItem(r, 'inv', 'iron_plate')).toBe(2);   // iron_plate recipe yields 2
     // The invented third sink is gone: crafting plates leaves every paid pipe section alone. This is
@@ -148,7 +150,7 @@ describe('B2: consumer choice — the gear feeds two real paid recipes, the pipe
   });
   it('writes the consumer-choice evidence with real UIDs and the sources B actually read', () => {
     const g = start(); const r = g.run!;
-    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 3], ['refined_iron_ingot', 1], ['mechanical_parts', 4], ['fasteners', 1], ['spares', 2], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
+    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 1], ['spares', 20], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const bench = bringUpL2(g);
     const gearUid = craftCollect(g, bench, 'mechanical_gear', START + 10_000);
     const pickUid = craftCollect(g, bench, 'industrial_pick_geared', START + 20_000);

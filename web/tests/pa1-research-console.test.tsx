@@ -11,6 +11,7 @@ import { setActiveLayout } from '../src/game/world';
 import { buildQaSandbox, resetQaSandboxFlags } from '../src/game/qa-sandbox';
 import { ITEMS, STRUCTS, familyMembers } from '../src/game/catalog';
 import { TILE } from '../src/game/core';
+import { recipesOfFamily } from '../src/game/engine';
 import { ContainerPanel } from '../src/ui/panels';
 import type { Api } from '../src/ui/common';
 
@@ -174,7 +175,9 @@ describe('PA1 P1: the shipped router reaches the technology-family ledger', () =
     r.tech = { ...(r.tech ?? { families: [] }), families: [...((r.tech?.families) ?? []), 'ENERGY'] };
     const html = renderStation(gs, table.id, 'families');
     const text = plain(html);
-    expect(text).toContain('studied · 9 formulas');
+    // item set v3 retired three refinery formulas from this family (9 -> 6); the count is read from the registry
+    expect(recipesOfFamily('ENERGY').length).toBe(6);
+    expect(text).toContain(`studied · ${recipesOfFamily('ENERGY').length} formulas`);
     expect(text).not.toContain('Commission study');
     expect(text).not.toContain('pay 5 Parts');
     expect(r.entities[table.id]?.station?.queue.length).toBe(0);

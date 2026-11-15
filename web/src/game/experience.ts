@@ -98,7 +98,7 @@ export function experienceFromCue(c: Cue, r: RunState): ExperienceEvent | null {
     case 'vehicle_mounted': return ev(id, 'field', 'RIDING', 'WASD · F to dismount', undefined, 26, 1400);
     case 'vehicle_exited': return ev(id, 'field', 'DISMOUNTED', '', undefined, 24, 1100);
     case 'vehicle_refueled': return ev(id, 'field', 'REFUELLED', '−1 Fuel Canister', 'fuel_can', 34, 1600);
-    case 'vehicle_repaired': return ev(id, 'field', 'REPAIRED', '−1 Parts · −1 Fasteners', 'mechanical_parts', 46, 1900);
+    case 'vehicle_repaired': return ev(id, 'field', 'REPAIRED', '−1 Iron Ingot · −1 Parts', 'mechanical_gear', 46, 1900);
     case 'cash_unsealed': return ev(id, 'ledger', 'CACHE OPENED', 'coins are unsecured', 'rcash', 72, 2800);
     case 'airdrop_opened': return ev(id, 'world', 'CRATE OPEN', 'take what you can carry', 'airdrop_open', 56, 2200);
     case 'airdrop_landed': return ev(id, 'world', 'SUPPLY DROP', 'landed · locked for now', 'airdrop_locked', 64, 2800);

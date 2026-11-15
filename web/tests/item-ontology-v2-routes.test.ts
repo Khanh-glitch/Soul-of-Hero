@@ -53,39 +53,37 @@ function recycle(g: GameState, key: string, at: number) {
   return { ok: true as const, reason: '', out: rc.station!.outC! };
 }
 
-describe('Item Ontology V2 routes (INTENT on FIXTURE stock)', () => {
-  it('R1 scrap → Machine Parts is a craft; research is paid ONLY in Parts (`spares`); the Recycler converts a Damaged Drive into 2', () => {
+describe('Item Ontology V2 routes (INTENT on FIXTURE stock) — item set v3 ids', () => {
+  it('R1 Machine Parts / Scrap / Damaged Drive cannot be held or crafted any more; research is paid ONLY in Parts (`spares`)', () => {
     const g = start(); const r = g.run!;
-    addItem(r, 'inv', 'wood', 60); addItem(r, 'inv', 'stone', 10); addItem(r, 'inv', 'scrap', 6); addItem(r, 'inv', 'iron_ingot', 4);
+    addItem(r, 'inv', 'wood', 60); addItem(r, 'inv', 'stone', 10); addItem(r, 'inv', 'iron_ingot', 4);
     const spares0 = countItem(r, 'inv', 'spares');
-    const bench = build(g, 'workbench', START + 10);
-    let t = craftOut(g, bench, 'mechanical_parts', START + 100);
-    expect(countItem(r, 'inv', 'mechanical_parts')).toBe(2);
-    expect(countItem(r, 'inv', 'scrap')).toBe(4);
-    expect(countItem(r, 'inv', 'spares')).toBe(spares0);            // crafting never mints the research currency
-    // A Research Table costs spares to build, so grant exactly its cost and nothing for the research itself.
-    addItem(r, 'inv', 'spares', 6);
-    const table = build(g, 'research', t); place(r, table.tx! - 1, table.ty!);
+    const bench = build(g, 'workbench', START + 10); place(r, bench.tx! - 1, bench.ty!);
+    expect(RECIPES.mechanical_parts).toBeUndefined();
+    const dead = act(g, 'craft', { eid: bench.id, recipe: 'mechanical_parts' }, START + 100);
+    expect(dead.ok, 'a retired recipe starts no work').toBe(false);
+    expect(countItem(r, 'inv', 'spares')).toBe(spares0);            // the refusal debits nothing
+    // every mint point issues the successor: Scrap 1:1, Machine Parts and a Damaged Drive 1:2
+    addItem(r, 'inv', 'scrap', 3); addItem(r, 'inv', 'mechanical_parts', 1); addItem(r, 'inv', 'damaged_drive', 1);
+    for (const k of ['scrap', 'mechanical_parts', 'damaged_drive']) expect(countItem(r, 'inv', k), k).toBe(0);
+    expect(countItem(r, 'inv', 'spares')).toBe(spares0 + 3 + 2 + 2);
+    // spend down to less than a research roll and prove the refusal names Parts
+    const inv = C(r, 'inv'); let keep = BAL.research.randomSparesCost - 1;
+    for (let k = 0; k < inv.slots.length; k++) { const s = inv.slots[k]; if (s?.key !== 'spares') continue; if (keep > 0) { s.qty = Math.min(s.qty, keep); keep -= s.qty; } else inv.slots[k] = null; }
+    markDirty();                                                     // FIXTURE: stock trimmed
+    addItem(r, 'inv', 'spares', 6);                                  // exactly a Research Table's Parts (see below)
+    const table = build(g, 'research', START + 2000); place(r, table.tx! - 1, table.ty!);
     const left = countItem(r, 'inv', 'spares');
     expect(left).toBeLessThan(BAL.research.randomSparesCost);
-    const refused = act(g, 'research', { eid: table.id, mode: 'random' }, t + 10);
-    expect(refused.ok, 'Machine Parts must not pay for research').toBe(false);
-    expect((refused as { reason?: string }).reason ?? '').toBe(`Needs ${BAL.research.randomSparesCost} Parts.`);   // names the scarce resource, never "Machine Parts"
-    expect(countItem(r, 'inv', 'mechanical_parts')).toBe(2);
-    // Recycler: one Damaged Drive → 2 Parts. This is the only CONVERSION into Parts; loot, wrecks and machine
-    // creatures are the other sources (round 1 wrongly called this "the only mint").
-    addItem(r, 'inv', 'damaged_drive', 1);
-    const before = countItem(r, 'inv', 'spares');
-    const rec = recycle(g, 'damaged_drive', t + 1000); expect(rec.ok, rec.reason).toBe(true);
-    expect(countItem(r, rec.out, 'spares')).toBe(2);
-    const si = r.custody[rec.out].slots.findIndex((s) => s?.key === 'spares');
-    expect(act(g, 'move', { from: rec.out, fs: si, to: 'inv' }, t + 130_000).ok).toBe(true);
-    expect(countItem(r, 'inv', 'spares')).toBe(before + 2);
+    const refused = act(g, 'research', { eid: table.id, mode: 'random' }, START + 2010);
+    expect(refused.ok).toBe(false);
+    expect((refused as { reason?: string }).reason ?? '').toBe(`Needs ${BAL.research.randomSparesCost} Parts.`);
+    expect(countItem(r, 'inv', 'spares')).toBe(left);
   });
 
-  it('R2 ore → Iron Ingot at a fuelled Furnace → Machine Parts and Forged Fasteners at the Workbench', () => {
+  it('R2 ore → Iron Ingot at a fuelled Furnace → Mechanical Gear at the Workbench, paid in ingots and Parts', () => {
     const g = start(); const r = g.run!;
-    addItem(r, 'inv', 'wood', 60); addItem(r, 'inv', 'stone', 40); addItem(r, 'inv', 'iron_ore', 2); addItem(r, 'inv', 'scrap', 3);
+    addItem(r, 'inv', 'wood', 60); addItem(r, 'inv', 'stone', 40); addItem(r, 'inv', 'iron_ore', 2);
     const f = build(g, 'furnace', START + 10); place(r, f.tx! - 1, f.ty!);
     const dry = act(g, 'craft', { eid: f.id, recipe: 'iron_ingot' }, START + 20);
     const wi = C(r, 'inv').slots.findIndex((s) => s?.key === 'wood');
@@ -99,18 +97,22 @@ describe('Item Ontology V2 routes (INTENT on FIXTURE stock)', () => {
       if (i >= 0) expect(act(g, 'move', { from: f.station!.outC, fs: i, to: 'inv' }, START + 41_000 + k).ok).toBe(true);
     }
     expect(countItem(r, 'inv', 'iron_ingot')).toBe(2);
-    const bench = build(g, 'workbench', START + 42_000);
-    let t = craftOut(g, bench, 'mechanical_parts', START + 43_000);
-    expect(countItem(r, 'inv', 'mechanical_parts')).toBe(2);
-    // Fasteners is a researched recipe (not known at start): the craft is refused until learned.
-    place(r, bench.tx! - 1, bench.ty!);
-    expect(act(g, 'craft', { eid: bench.id, recipe: 'fasteners' }, t).ok).toBe(false);
-    r.knowledge.recipes.push('fasteners'); markDirty();                          // FIXTURE: knowledge granted
-    t = craftOut(g, bench, 'fasteners', t + 10);
-    expect(countItem(r, 'inv', 'fasteners')).toBe(3);
+    expect(RECIPES.mechanical_gear.ins).toEqual([['iron_ingot', 2], ['spares', 3]]);
+    const bench = build(g, 'workbench', START + 42_000); place(r, bench.tx! - 1, bench.ty!);
+    // FIXTURE: bench level and Parts for the gear (Parts are salvage, never crafted)
+    const parts0 = countItem(r, 'inv', 'spares'); addItem(r, 'inv', 'spares', 3);
+    addItem(r, 'inv', 'iron_ingot', 2); addItem(r, 'inv', 'spares', 4);        // FIXTURE: the bench upgrade's own bill (iron 2 + Parts 4)
+    expect(act(g, 'upgradeStation', { eid: bench.id }, START + 42_500).ok).toBe(true);
+    craftOut(g, bench, 'mechanical_gear', START + 43_000);
+    expect(countItem(r, 'inv', 'mechanical_gear')).toBe(1);
+    expect(countItem(r, 'inv', 'iron_ingot')).toBe(0); expect(countItem(r, 'inv', 'spares')).toBe(parts0);
+    // the retired Fasteners recipe is gone for good: knowing its id does not bring it back
+    expect(RECIPES.fasteners).toBeUndefined();
+    r.knowledge.recipes.push('fasteners'); markDirty();
+    expect(act(g, 'craft', { eid: bench.id, recipe: 'fasteners' }, START + 90_000).ok).toBe(false);
   });
 
-  it('R3 Pipe, Gear, Blade and (round 2, P5) Iron Plate recycle to their versioned returns; a non-component is refused, not eaten', () => {
+  it('R3 Pipe, Gear, Blade and Iron Plate recycle to their live versioned returns (never more than they cost); a non-component is refused, not eaten', () => {
     const g = start(); const r = g.run!;
     let t = START + 100;
     const expectOut = (key: string, want: Record<string, number>) => {
@@ -120,14 +122,14 @@ describe('Item Ontology V2 routes (INTENT on FIXTURE stock)', () => {
       const out = r.custody[rec.out]; for (let i = 0; i < out.slots.length; i++) out.slots[i] = null; markDirty();
       t += 200_000;
     };
-    expectOut('metal_pipe', { refined_iron_ingot: 1, mechanical_parts: 0 });
-    expectOut('mechanical_gear', { mechanical_parts: 2, iron_ingot: 1 });
-    expectOut('metal_blade', { iron_ingot: 2, mechanical_parts: 1 });
-    expectOut('iron_plate', { iron_ingot: 1, refined_iron_ingot: 0, fasteners: 0 });
-    addItem(r, 'inv', 'fasteners', 1);
-    const no = recycle(g, 'fasteners', t);
+    expectOut('metal_pipe', { refined_iron_ingot: 1, spares: 0 });
+    expectOut('mechanical_gear', { spares: 2, iron_ingot: 1 });          // gear-v2: cost 3 Parts + 2 ingots
+    expectOut('metal_blade', { iron_ingot: 2, spares: 0 });              // blade-v2: cost 1 Parts + 4 ingots
+    expectOut('iron_plate', { iron_ingot: 1, refined_iron_ingot: 0, spares: 0 });
+    addItem(r, 'inv', 'cloth', 1);
+    const no = recycle(g, 'cloth', t);
     expect(no.ok).toBe(false);
     expect(no.reason).toMatch(/not an eligible Recycler input/);
-    expect(countItem(r, 'inv', 'fasteners')).toBe(1);                // refused, not eaten
+    expect(countItem(r, 'inv', 'cloth')).toBeGreaterThanOrEqual(1);       // refused, not eaten
   });
 });

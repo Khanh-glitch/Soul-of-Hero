@@ -54,6 +54,30 @@ export const LI_RECIPE_LEDGER: Readonly<Record<string, LedgerRow>> = Object.free
   motorbike_kit: R('motorcycle', 'DIRECT', { refined_iron_ingot: 200, vehicle_frame: 1, mechanical_gear: 30, iron_plate: 30 }, null, 'SOH_ADJUSTED', 'Shape is LI (Frame + Gears + Plates + refined iron, no intermediate Motor Drive). Counts are an SOH trial: gears and plates /10 rounded to 2 and 3 because each SOH gear / plate craft already embeds refined ingots; refined iron 4. Previous SOH kit: frame + drive + 2 plates + 2 fasteners.', 'The retired Motor Drive (2 ingots, 2 machine parts, 2 fasteners, 3 Parts) is replaced by 2 gears + 1 plate + 4 refined ingots. Bench level 3 unchanged.'),
   essence_nature: R(null, 'NONE', null, null, 'SOH_ONLY', 'Group B Core fuel, no LI counterpart. Only the seed input changed: generic seed -> Bitterleaf Seed.', 'Nature Essence now competes with Bitterleaf planting for the same seed.'),
   animal_feed: R(null, 'NONE', null, null, 'SOH_ONLY', 'Group C husbandry. Generic seed -> Wild Berry Seed (the most renewable cultivar: berry bushes regrow).', 'Fodder draws on berry-bush seed instead of oak seed.'),
+  // ---- revision 5 (item set v3): the twelve PENDING ids are gone, so every formula that named one is re-priced in live ids ----
+  vehicle_frame: R(null, 'NONE', null, null, 'SOH_ONLY', 'Group B vehicle chain, no LI counterpart. Machine Parts and Fasteners are retired; their share is paid in Parts at the declared ratio.', 'Was pipe + ingots + Machine Parts + Fasteners. Now pipe 1, Iron 4, Refined Iron 2, Parts 4: one fewer crafted intermediate before the first bike.'),
+  essence_fire: R(null, 'NONE', null, null, 'SOH_ONLY', 'Group B Core fuel. Coal is retired; Charcoal is the one carbon fuel.', 'Fire Essence now competes with smelting for Charcoal instead of drawing on a separate coal seam.'),
+  core_mjolnir: R(null, 'NONE', null, null, 'SOH_ONLY', 'Group B Core. Machine Parts retired -> Parts at x2, plus the Electronic Parts it already used.', 'Costs 9 Parts where it cost 3 Parts + 3 Machine Parts: the same wreck time, one fewer bench step.'),
+  trail_pack: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH travel gear. Treated Canvas is retired -> Cloth.', 'No tanning step for canvas; the pack is gated by Needle and Thread only.'),
+  trail_canteen: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH travel gear. Treated Canvas is retired -> Cloth.', 'Same as Trail Pack: one fewer intermediate.'),
+  industrial_pick: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH tool tier. Fasteners retired; the pipe handle stays.', 'Upgrade costs the old pick, 2 Refined Iron and a pipe; no Fasteners to forge first.'),
+  industrial_axe: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH tool tier. Fasteners retired; blade and pipe stay.', 'Upgrade costs the old axe, a blade, 2 Refined Iron and a pipe.'),
+  reinforced_spear: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH weapon. Fasteners retired.', 'Iron 2 + blade + wood: the blade is the only crafted part.'),
+  metal_pipe: R('metal_pipe', 'DIRECT', { refined_iron_ingot: 5, parts: 30 }, null, 'LI_SCALED', UNIT + ' Refined Iron /2.5, Parts /15; yields 2 so a pipe costs 1 Refined Iron + 1 Parts.', 'Was Refined Iron + Machine Parts. Parts come straight from wrecks, so the first pipe needs no Machine Parts bench step.'),
+  metal_blade: R('metal_blade', 'DIRECT', { iron_ingot: 30, parts: 15 }, null, 'LI_SCALED', UNIT + ' Iron /7.5, Parts /15.', 'Was Iron + Machine Parts. A blade is 4 Iron + 1 Parts.'),
+  mechanical_gear: R('mechanical_gear', 'DIRECT', { iron_ingot: 50, parts: 65 }, null, 'LI_SCALED', UNIT + ' Iron /25, Parts /~22: the LI gear is Parts-heavy and stays so.', 'Was Machine Parts + Fasteners. A gear is 2 Iron + 3 Parts: the most Parts-hungry component, as in LI.'),
+  iron_plate: R('iron_plate', 'DIRECT', { refined_iron_ingot: 5, parts: 30 }, null, 'LI_SCALED', UNIT + ' Same LI bill as the pipe; yields 2.', 'Was Refined Iron + Fasteners. A plate costs 1 Refined Iron + 1 Parts.'),
+  refined_iron_ingot: R('refined_iron_ingot', 'DIRECT', null, null, 'SOH_ADJUSTED', 'LI lists the ingot but the audit holds no recipe for it. Coal is retired, so the carbon is Charcoal (3 Iron + 2 Charcoal -> 2).', 'Refining needs a charcoal burn first; there is no coal seam to mine instead.'),
+  refined_iron_rich: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH rich-ore route. Coal -> Charcoal.', 'Same Charcoal dependency as the ordinary ingot.'),
+  scrap_helm: R(null, 'NONE', null, null, 'SOH_ONLY', 'SOH starter helmet. Scrap is retired; it is hammered from Iron and leather.', 'Needs a furnace (2 Iron) where it needed loose scrap.'),
+  wooden_ladder: R('wooden_ladder', 'DIRECT', { wood: 300, rope: 3 }, null, 'LI_SCALED', UNIT + ' Wood /25, rope 3 -> 1.', 'New in round 2. A foot-only crossing over a cliff one tile thick; see LADDER_SPAN. The reach is SOH_PROVISIONAL.'),
+  steel_folding_ladder: R('steel_folding_ladder', 'DIRECT', { refined_iron_ingot: 30, wooden_ladder: 1, mechanical_gear: 3 }, null, 'LI_SCALED', UNIT + ' Refined Iron /5, gears 3 -> 1; the wooden ladder is consumed as in LI.', 'New in round 2. Reaches three cliff tiles. The reach is SOH_PROVISIONAL.'),
+  large_furnace: R('large_furnace', 'INDIRECT', null, null, 'SOH_ADJUSTED', 'LI names the Large Furnace; the audit holds no recipe. Bill is SOH_PROVISIONAL: the Furnace stone doubled, plus iron, plate and a charcoal bed.', 'New in round 2. Runs Furnace formulas at twice the pace on the same fire (LARGE_FURNACE). SOH_TRIAL_UNVERIFIED.'),
+  iron_plate_pants: R('iron_plate_pants', 'LEGACY_CLAIM', { iron_plate: 2, animal_hide: 30, needle_thread: 3 }, null, 'LI_SCALED', UNIT + ' Hide /10; plate and thread as in LI.', 'New in round 2 with the legs slot. Armour 8%, knock-back and stagger -30%.'),
+  iron_plate_boots: R('iron_plate_boots', 'LEGACY_CLAIM', { iron_plate: 1, animal_hide: 30, needle_thread: 3 }, null, 'LI_SCALED', UNIT + ' Hide /10; plate and thread as in LI.', 'New in round 2 with the feet slot. Armour 4%, ground-hazard damage -35%.'),
+  refined_iron_legs: R('refined_iron_legs', 'LEGACY_CLAIM', { animal_hide: 50, needle_thread: 6, refined_iron_ingot: 15 }, null, 'LI_SCALED', UNIT + ' Hide /10, Refined Iron /5; thread as in LI.', 'New in round 2. Armour 10%, knock-back and stagger -45%.'),
+  refined_iron_boots: R('refined_iron_boots', 'LEGACY_CLAIM', { animal_hide: 50, needle_thread: 6, refined_iron_ingot: 15 }, null, 'LI_SCALED', UNIT + ' Hide /10, Refined Iron /5; thread as in LI.', 'New in round 2. Armour 6%, ground-hazard damage -50%.'),
+  'struct:door_powered': R('electric_door', 'DIRECT', { iron_ingot: 50, electronic_parts: 5, mechanical_gear: 1, iron_plate: 10 }, null, 'LI_SCALED', UNIT + ' Iron /25, Electronic Parts /2.5, plate /5, gear as in LI; plus 2 Resistor Wire (SOH_ADJUSTED: the lock coil is the one consumer of that LI material).', 'New in round 2. A lock module fitted into a door you own; needs generator power from outside.'),
   'struct:power_switch': R('switch', 'DIRECT', { iron_ingot: 10, electronic_parts: 2, parts: 10 }, null, 'LI_SCALED', UNIT + ' Parts 10 -> 1 (Parts are the scarce SOH research currency, /10).', 'Was 1 ingot + 1 fasteners + 1 Parts. Now needs 2 Electronic Parts: wiring starts after the first wreck or Crawler.'),
   'struct:pressure_switch': R('pressure_switch', 'DIRECT', { iron_ingot: 50, parts: 15, electronic_parts: 10, iron_plate: 2 }, null, 'LI_SCALED', UNIT + ' Electronic Parts /5, Parts /10, plate 2 -> 1.', 'Was 1 ingot + 1 machine part + 1 fasteners. Now needs an Iron Plate, i.e. a level-2 bench and refined iron.'),
   'struct:ir_sensor': R('infrared_switch', 'DIRECT', { iron_ingot: 30, electronic_parts: 10, parts: 15 }, null, 'LI_SCALED', UNIT + ' Electronic Parts /5, Parts /10.', 'Was 1 gear + 1 ingot + 2 fasteners. The gear is gone; 2 Electronic Parts take its place.'),
@@ -61,17 +85,9 @@ export const LI_RECIPE_LEDGER: Readonly<Record<string, LedgerRow>> = Object.free
 
 /** Drafted but deliberately NOT in RECIPES: the product has no working use yet, so a craft would be a trap. */
 export const DRAFT_RECIPES_NOT_LIVE: Readonly<Record<string, { li: Record<string, number> | null; grade: LiGrade; blockedBy: string }>> = Object.freeze({
-  iron_plate_pants: { li: { iron_plate: 2, animal_hide: 30, needle_thread: 3 }, grade: 'LEGACY_CLAIM', blockedBy: 'no leg equipment slot (run.custody.eq is 3 slots: head, body, back; widening it is a save-schema change)' },
-  iron_plate_boots: { li: { iron_plate: 1, animal_hide: 30, needle_thread: 3 }, grade: 'LEGACY_CLAIM', blockedBy: 'no foot equipment slot' },
-  refined_iron_legs: { li: { animal_hide: 50, needle_thread: 6, refined_iron_ingot: 15 }, grade: 'LEGACY_CLAIM', blockedBy: 'no leg equipment slot' },
-  refined_iron_boots: { li: { animal_hide: 50, needle_thread: 6, refined_iron_ingot: 15 }, grade: 'LEGACY_CLAIM', blockedBy: 'no foot equipment slot' },
-  wooden_ladder: { li: { wood: 300, rope: 3 }, grade: 'DIRECT', blockedBy: 'no climbing / vertical traversal action in the 1-tile top-down physics' },
-  steel_folding_ladder: { li: { refined_iron_ingot: 30, wooden_ladder: 1, mechanical_gear: 3 }, grade: 'DIRECT', blockedBy: 'no climbing action; depends on wooden_ladder' },
-  large_furnace: { li: null, grade: 'INDIRECT', blockedBy: 'LI recipe not in the source set; no structure type; furnace upgrade code is keyed to type "furnace" (Building, PR #56)' },
-  green_card: { li: null, grade: 'INDIRECT', blockedBy: 'loot-only in LI; no Veyra door declares a card colour (0 keycard doors on Veyra)' },
-  blue_card: { li: null, grade: 'INDIRECT', blockedBy: 'same as green_card' },
-  purple_card: { li: null, grade: 'INDIRECT', blockedBy: 'same as green_card' },
-  electric_resistor: { li: null, grade: 'DIRECT', blockedBy: 'no consumer is evidenced in the LI source set; inventing one would fabricate a mechanic' },
+  green_card: { li: null, grade: 'INDIRECT', blockedBy: 'the card is issued (the Watch crate on the shipping map; old Keycards convert to it) and opens the shipping vault door, but no Veyra door declares a card lock: a Veyra POI door contract changes the window map digest and needs an owner-approved digest migration' },
+  blue_card: { li: null, grade: 'INDIRECT', blockedBy: 'no source and no door on any map; same digest decision as green_card' },
+  purple_card: { li: null, grade: 'INDIRECT', blockedBy: 'no source and no door on any map; same digest decision as green_card' },
 });
 
 /** K3 source rows for ids that enter the world as loot or drops (not as a recipe output). */
@@ -89,6 +105,8 @@ export const ITEM_SOURCE: Readonly<Record<string, readonly SourceRow[]>> = Objec
   needle_tube: [
     { source_id: 'SOURCES.scrap', kind: 'node', yields: '10% per stock unit', condition: 'scrap power', reserve: '4 stock, finite', respawn: 'none', veyra: 'Roadside Scrap', antiFarm: 'finite node' },
     { source_id: 'CREATURES.vampire_2', kind: 'creature', yields: '1 at 40%', condition: 'kill a Blood Archivist (52 HP, night, Argus Academy and snow)', reserve: 'one roll per animal', respawn: 'habitat anchor po_academy (4) + snow roaming', veyra: 'spawns', antiFarm: 'habitat cooldown per anchor id' }],
+  electric_resistor: [
+    { source_id: 'SOURCES.wreck', kind: 'node', yields: '12% per stock unit', condition: 'scrap power', reserve: '8 stock, finite', respawn: 'none', veyra: 'Car Wrecks; the ONLY source (no crate, vendor or creature row). SOH_PROVISIONAL rate, not yet measured against the Veyra wreck count', antiFarm: 'finite node' }],
   electronic_parts: [
     { source_id: 'SOURCES.wreck', kind: 'node', yields: '15% per stock unit', condition: 'scrap power', reserve: '8 stock, finite', respawn: 'none', veyra: 'Car Wrecks', antiFarm: 'finite node' },
     { source_id: 'CREATURES.orc_1', kind: 'creature', yields: '1 at 30%', condition: 'kill a Scrap Gnawer (42 HP)', reserve: 'one roll per animal', respawn: 'habitat anchor po_freightyard (4) + forest / sand roaming', veyra: 'spawns', antiFarm: 'habitat cooldown' },
@@ -102,12 +120,9 @@ export type ItemStatus = 'PLAYABLE' | 'IMPLEMENTED_NOT_PROVEN' | 'BLOCKED';
  *  (tests/final-item-set.test.ts) is evidence for IMPLEMENTED_NOT_PROVEN, never for PLAYABLE. */
 export const ITEM_STATUS: Readonly<Record<string, { status: ItemStatus; note: string }>> = Object.freeze({
   ...Object.fromEntries(Object.entries(DRAFT_RECIPES_NOT_LIVE).map(([id, d]) => [id, { status: 'BLOCKED' as ItemStatus, note: d.blockedBy }])),
-  door_powered: { status: 'BLOCKED', note: 'MODULE_PENDING_STRUCTURES: the lock / electrical module contract is undecided; no build entry' },
-  crude_petroleum: { status: 'BLOCKED', note: 'no oil site on any shipping map (fixture-only authority)' },
-  deploy_oil_pump: { status: 'BLOCKED', note: 'placeable only on an oil site; none exists' },
 });
 export function statusOf(id: string): { status: ItemStatus; note: string } {
-  return ITEM_STATUS[id] ?? { status: 'IMPLEMENTED_NOT_PROVEN', note: 'engine scenario or inherited runtime; not observed in the browser build in ARENA 1 round 1' };
+  return ITEM_STATUS[id] ?? { status: 'IMPLEMENTED_NOT_PROVEN', note: 'engine scenario or inherited runtime; not observed in the browser build' };
 }
 
 /** V — asset contract seed. Physical description of the ids this cutover introduced, for Arena 2 (final pixels are

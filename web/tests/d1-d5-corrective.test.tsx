@@ -458,21 +458,26 @@ describe('D5 Corrective: Veyra po_slag Foundry Recycler, Offscreen Streaming & L
     expect(activeRec.tx).toBe(VEYRA_RECYCLER_SITE.tx - targetWw.win.originTx);
     expect(activeRec.ty).toBe(VEYRA_RECYCLER_SITE.ty - targetWw.win.originTy);
 
-    // Recycle a damaged_drive -> X:drive -> 2 spares and verify save/reload persistence
+    // Item set v3: the Damaged Drive (X:drive) is retired into Parts and can no longer be held. The live rule used here
+    // is X:plate-v1: one Iron Plate -> one Iron Ingot. Verify it, then save/reload persistence.
     r.player.x = activeRec.x;
     r.player.y = activeRec.y + TILE;
     addItem(r, 'inv', 'damaged_drive', 1);
-    const driveSlot = C(r, 'inv').slots.findIndex((s) => s?.key === 'damaged_drive');
+    expect(C(r, 'inv').slots.some((s) => s?.key === 'damaged_drive')).toBe(false);
+    const ingots0 = countItem(r, 'inv', 'iron_ingot');
+    addItem(r, 'inv', 'iron_plate', 1);
+    const driveSlot = C(r, 'inv').slots.findIndex((s) => s?.key === 'iron_plate');
     const driveUid = C(r, 'inv').slots[driveSlot]!.uid;
     const startRes = dispatch(gs, { id: 'rec-drv-start', type: 'recycleItem', eid: activeRec.id, slot: driveSlot, uid: driveUid }, NOW + 100);
     expect(startRes.ok, (startRes as any).reason).toBe(true);
+    expect(activeRec.station!.queue[0].recipe).toBe('X:plate-v1');
     stepStations(gs, 13000, NOW + 13100);
     const outC = activeRec.station!.outC;
-    expect(countItem(r, outC, 'spares')).toBe(2);
-    const outSlot = C(r, outC).slots.findIndex((s) => s?.key === 'spares');
+    expect(countItem(r, outC, 'iron_ingot')).toBe(1);
+    const outSlot = C(r, outC).slots.findIndex((s) => s?.key === 'iron_ingot');
     const colRes = dispatch(gs, { id: 'rec-drv-collect', type: 'move', from: outC, fs: outSlot, to: 'inv' }, NOW + 13200);
     expect(colRes.ok, (colRes as any).reason).toBe(true);
-    expect(countItem(r, 'inv', 'spares')).toBe(2);
+    expect(countItem(r, 'inv', 'iron_ingot')).toBe(ingots0 + 1);
 
     // Descend to Floor -1 inside po_slag and verify cold reload stays valid while po_slag recycler is offscreen Floor-0
     const snap = serializeSnapshot(gs);

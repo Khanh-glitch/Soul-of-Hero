@@ -276,6 +276,13 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     if (e.type === 'garden' && e.garden?.coldFrame) { g.strokeStyle='#c5e5df';g.lineWidth=1;g.strokeRect(e.x-7.5,e.y-7.5,15,13);g.fillStyle='rgba(156,211,203,.24)';g.fillRect(e.x-7,e.y-7,14,12); }
     if (e.type === 'spikes') g.drawImage(A.st.spikes, e.x - 8, e.y - 8);
   }
+  // Item set v3: crude seeps — a dark pool with a slow sheen, drawn on the ground under any pump.
+  if (activeFloor(r) === 0) for (const s of Object.values(r.oilSources ?? {})) {
+    const sx = s.tx * 16 + 8, sy = s.ty * 16 + 8; if (sx < cx - 16 || sx > cx + VIEW_W + 16 || sy < cy - 16 || sy > cy + VIEW_H + 16) continue;
+    g.fillStyle = s.stock > 0 ? '#14110f' : '#3a342c'; g.beginPath(); g.ellipse(sx, sy + 1, 7, 5, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = s.stock > 0 ? '#2a2420' : '#4a443a'; g.beginPath(); g.ellipse(sx - 1, sy, 5, 3, 0, 0, Math.PI * 2); g.fill();
+    if (s.stock > 0) { const k = Math.floor(time / 500) % 4; g.fillStyle = ['#6a5a8a', '#4a7a8a', '#8a7a4a', '#4a7a8a'][k]; g.fillRect(sx - 3 + k, sy - 1, 2, 1); g.fillRect(sx + 1 - k, sy + 2, 1, 1); }
+  }
   vfxDirector.sync(gs,now,HAZ,PROJ);pfx.syncHazards(HAZ.filter(h=>!vfxDirector.ownsHaz(h)),p);
   // hazard telegraphs (ground)
   for (const h of HAZ) if (!vfxDirector.ownsHaz(h) || (h.owner !== 'player' && h.t < h.tell)) drawHaz(g, h, time);
@@ -494,6 +501,16 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       if (e.type === 'ir_sensor') spr = A.st['ir_sensor_' + (({ off: 'off', unpowered: 'unpowered', ready: 'ready', detect: 'detect', blocked: 'blocked' } as const)[irSensorVisual(r, e)])];
       if (e.type!.startsWith('door') && e.type!=='door_powered' && e.open) spr = A.st[e.type + '_open'];
       if (e.type === 'furnace' && e.station && e.station.burn > 0 && e.station.queue.length) spr = A.st.furnace_lit;
+      if (e.type === 'large_furnace' && e.station && e.station.burn > 0 && e.station.queue.length) spr = A.st.large_furnace_lit;
+      if (e.ladder) {
+        // Item set v3: rails and rungs across every cliff tile the ladder covers, along its direction.
+        const steel = e.type === 'ladder_steel', rail = steel ? '#71c3c6' : '#7a5a32', rung = steel ? '#e4f4f4' : '#c9a064';
+        const [dx, dy] = e.ladder.dir, L = e.ladder.len * 16;
+        if (dx) { const x0 = dx > 0 ? X - 8 : X + 8 - L; g.fillStyle = rail; g.fillRect(x0, Y - 4, L, 2); g.fillRect(x0, Y + 2, L, 2); g.fillStyle = rung; for (let k = 2; k < L; k += 4) g.fillRect(x0 + k, Y - 2, 1, 4); }
+        else { const y0 = dy > 0 ? Y - 8 : Y + 8 - L; g.fillStyle = rail; g.fillRect(X - 4, y0, 2, L); g.fillRect(X + 2, y0, 2, L); g.fillStyle = rung; for (let k = 2; k < L; k += 4) g.fillRect(X - 2, y0 + k, 4, 1); }
+        if (steel) { g.fillStyle = '#2c4a52'; g.fillRect(X - 1, Y - 1, 2, 2); }
+        return;
+      }
       if (!spr) return; if (d.layer !== 'wall') shadow(g, X, Y + 5, 7);
       g.drawImage(spr, X - spr.width / 2, Y + 8 - spr.height);
       if(e.electricDoor){g.fillStyle='#e2bf52';g.fillRect(X+3,Y-7,3,3);}

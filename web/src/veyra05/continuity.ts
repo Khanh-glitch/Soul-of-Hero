@@ -15,6 +15,7 @@
  */
 import { TILE, WW, WH, clamp, type GameState, type RunState } from '../game/core';
 import { getWorld, setActiveLayout } from '../game/world';
+import { syncOilSeeps } from '../game/oil-seeps';
 import { sourceDigest } from '../game/world-economy';
 import { mapDigest } from '../game/map-package';
 import { poiContractDigest } from '../game/poi-access';
@@ -291,6 +292,8 @@ export function shiftVeyraWindowBy(
   // 4b. VEYRA05: reinstall the active storey of the new window & archive/restore/seed global ecosystem actors
   syncFloor(gs, nww, nww.floors, markDirtyFn);
   syncVeyraEcosystemActors(r, nww, ox, oy, newOx, newOy);
+  // 4c. Item set v3: crude seeps follow the window (global ledger -> window-local `oilSources`)
+  syncOilSeeps(r, nww.floors.ground, newOx, newOy);
   // 5. Mark collision dirty & shift camera seamlessly
   markDirtyFn();
   for (const fn of shiftListeners) fn(dx, dy);

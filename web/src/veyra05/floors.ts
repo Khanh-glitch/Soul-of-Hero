@@ -15,6 +15,7 @@
  */
 import { BAL, T, TILE, WW, WH, uid, hash2, type GameState, type RunState, type Entity, type Stack, type Container } from '../game/core';
 import { ITEMS } from '../game/catalog';
+import { isAccessCard, liveItemId, liveItemPer, liveRecipeId } from '../game/final-item-set';
 import type { Building, StaticEnt, World } from '../game/world';
 import { FRAME_W, U, type WindowSpec } from './frame';
 import { sampleTile } from './reader';
@@ -554,14 +555,16 @@ export const onActiveFloor = (r: RunState, e: Entity) => entityFloor(e) === acti
 
 function makeValidStack(r: RunState, rawKey: string, qty: number): Stack {
   const isBp = rawKey.startsWith('blueprint:');
-  const key = isBp ? 'blueprint' : rawKey;
-  const meta = isBp ? rawKey.slice(10) : undefined;
+  /* Item set v3: second minting point (interior loot). Same rule as engine.mkStack — a retired id can never be issued. */
+  const key = isBp ? 'blueprint' : liveItemId(rawKey);
+  if (!isBp) qty = Math.ceil(qty * liveItemPer(rawKey));
+  const meta = isBp ? (liveRecipeId(rawKey.slice(10)) ?? rawKey.slice(10)) : undefined;
   const d = ITEMS[key];
   const s: Stack = { uid: uid(r, 's'), key, qty: isBp ? 1 : qty };
   if (d?.creatorCore) s.reserves = { basic: 0, refined: 0, signature: 0 };
   if (d?.dur) s.dur = d.dur;
   if (d?.charge) s.charge = d.initialCharge ?? d.charge;
-  if (key === 'keycard' && s.qty === 1 && r.poiAccessVersion === 'poi-access-v1') s.charge = BAL.poiAccess.cardUses;
+  if (isAccessCard(key) && s.qty === 1 && r.poiAccessVersion === 'poi-access-v1') s.charge = BAL.poiAccess.cardUses;
   if (meta) s.meta = meta;
   return s;
 }

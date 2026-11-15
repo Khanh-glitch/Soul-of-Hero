@@ -21,6 +21,7 @@ import { CREATOR_LOOT_V1, creatorLootV1 } from '../src/game/creator-loot';
 import { ITEM_CLASS_LABEL, ITEM_CLASS_VI, VEYRA_UNSOURCED_INPUTS, coreClassLine, itemClass, itemClassLabel } from '../src/game/item-class';
 import { craftReadiness, structurePreparation } from '../src/game/action-readiness';
 import { PROPOSALS, decisionFor } from '../src/game/item-ontology-decisions';
+import { ITEM_RETIREMENT, liveItemPer } from '../src/game/final-item-set';
 import { ItemInfo } from '../src/ui/panels';
 
 const START = Date.UTC(2026, 10, 14, 9); let n = 0;
@@ -59,16 +60,19 @@ const noopCtx: any = new Proxy({}, { get: (t: any, k) => (k in t ? t[k] : (k ===
 const CREATOR = ['core_blast', 'core_meteor', 'core_dragon', 'core_elsa', 'core_earthmother', 'core_mjolnir', 'core_demon'];
 const FIELD = ['core_fire', 'core_earth', 'core_storm', 'core_frost'];
 
-describe('P2 — CLOSED: Fasteners stay, distinct from Machine Parts', () => {
-  it('status is final; ids, both recipes and the item rows are untouched', () => {
+describe('P2 — round-3 ruling (Fasteners stay) is SUPERSEDED by item set v3: both retire into Parts', () => {
+  it('the round-3 record is kept as history; the live game follows the owner roster: one Parts item, no formula for either', () => {
     const p2 = PROPOSALS.find((x) => x.id === 'P2')!;
-    expect(p2.status).toBe('CLOSED_KEEP'); expect(p2.ruling).toMatch(/joining stock/); expect(p2.ruling).toMatch(/manufactured mechanisms/);
+    expect(p2.status).toBe('CLOSED_KEEP'); expect(p2.ruling).toMatch(/joining stock/);       // the historical ruling, not edited
+    // item rows stay parseable for old saves
     expect(ITEMS.fasteners.name).toBe('Forged Fasteners'); expect(ITEMS.mechanical_parts.name).toBe('Machine Parts');
-    expect(RECIPES.fasteners).toMatchObject({ out: 'fasteners', qty: 3, ins: [['iron_ingot', 1], ['scrap', 1]] });
-    expect(RECIPES.mechanical_parts.out).toBe('mechanical_parts');
-    expect(decisionFor('fasteners')!.decision).toBe('KEEP');
-    // still a researched recipe, not starter knowledge: the research step the merge would have deleted
-    const g = start(); expect(g.run!.knowledge.recipes).not.toContain('fasteners');
+    // ...but the later owner decision (final three-group item set) retires both: 1 Fastener -> 1 Parts, 1 Machine Parts -> 2 Parts
+    expect(ITEM_RETIREMENT.fasteners).toMatchObject({ stage: 'LIVE', to: 'spares' }); expect(liveItemPer('fasteners')).toBe(1);
+    expect(ITEM_RETIREMENT.mechanical_parts).toMatchObject({ stage: 'LIVE', to: 'spares' }); expect(liveItemPer('mechanical_parts')).toBe(2);
+    expect(RECIPES.fasteners).toBeUndefined(); expect(RECIPES.mechanical_parts).toBeUndefined();
+    const g = start(); const r = g.run!; expect(r.knowledge.recipes).not.toContain('fasteners');
+    const before = countItem(r, 'inv', 'spares'); expect(addItem(r, 'inv', 'fasteners', 3)).toBe(0);
+    expect(countItem(r, 'inv', 'fasteners')).toBe(0); expect(countItem(r, 'inv', 'spares')).toBe(before + 3);   // every mint point issues Parts
   });
 });
 
@@ -132,18 +136,19 @@ describe('P10 — Field Core / Lõi dã chiến is a class of its own beside the
   });
 });
 
-describe('P9 — oil text tells the truth: no oil site exists in this world yet', () => {
+describe('P9 — oil text tells the truth: Shipping has no crude seep; Veyra seeps are the item-set-v3 source', () => {
   it('a fresh run has no oil site; every surface says so and nothing claims a site can be found', () => {
     const g = start(); const r = g.run!;
     expect(oilAvailability(r)).toBe('NO_SITE_IN_WORLD');
     expect(buildReason(g, 'oil_pump', Math.floor(r.player.x / TILE) + 1, Math.floor(r.player.y / TILE))).toBe(OIL_TEXT.noSiteWorld);
     expect(structurePreparation(r, 'oil_pump').next).toBe(OIL_TEXT.noSiteWorldShort);
     const pump = craftReadiness(r, 'pump_crude', START); expect([pump.short, pump.next, pump.canSubmit]).toEqual(['No oil site', OIL_TEXT.noSiteWorldShort, false]);
-    const ref = craftReadiness(r, 'refinery_crude', START); expect(ref.short).toBe('No oil site'); expect(ref.next).toMatch(/refine Salvaged Oil instead/);
-    expect(ITEMS.crude_petroleum.desc).toMatch(/No oil site exists in this world yet/);
-    expect(STRUCTS.oil_pump.desc).toMatch(/No oil site exists in this world yet/);
-    // the recipes are still known and listed: nothing was hidden
-    expect(r.knowledge.recipes).toEqual(expect.arrayContaining(['pump_crude', 'refinery_crude']));
+    const ref = craftReadiness(r, 'refinery_fuel', START); expect(ref.canSubmit).toBe(false);
+    // no surface still sends the player to a retired item
+    for (const text of [OIL_TEXT.noSiteWorld, OIL_TEXT.noSiteWorldShort, ITEMS.crude_petroleum.desc, STRUCTS.oil_pump.desc, ref.next ?? '']) expect(text).not.toMatch(/Salvaged Oil|Lubricant/);
+    expect(STRUCTS.oil_pump.desc).toMatch(/crude seep/); expect(STRUCTS.oil_pump.desc).not.toMatch(/No oil site exists/);   // true on Veyra, where seeps exist
+    expect(RECIPES.refinery_crude).toBeUndefined();                              // folded into refinery_fuel at rev 5
+    expect(r.knowledge.recipes).toEqual(expect.arrayContaining(['pump_crude']));
   });
   it('no player-facing source file still promises an "authorized" oil site or source', () => {
     const roots = ['../src/ui', '../src/game'].map((d) => resolve(__dirname, d));
@@ -166,10 +171,11 @@ describe('P9 — oil text tells the truth: no oil site exists in this world yet'
     expect(oilAvailability(r, tx, ty)).toBe('SITE_DRY'); expect(buildReason(g, 'oil_pump', tx, ty)).toBe(OIL_TEXT.dry);
     expect(RECIPES.pump_crude).toMatchObject({ out: 'crude_petroleum', qty: 1, ins: [], station: 'oil_pump' });
   });
-  it('Salvaged Oil → Fuel Can is untouched and is the route the text points to', () => {
+  it('item set v3: Crude Petroleum → Fuel Canister is the one refinery route; Salvaged Oil is retired into crude', () => {
     expect(RECIPES.refinery_fuel.station).toBe('refinery'); expect(RECIPES.refinery_fuel.out).toBe('fuel_can');
-    expect(RECIPES.refinery_fuel.ins.map(([k]) => k)).toContain('salvaged_oil');
-    expect(PROPOSALS.find((x) => x.id === 'P9')!.status).toBe('IMPLEMENTED_PARTIAL');   // text only; production is NOT live
+    expect(RECIPES.refinery_fuel.ins).toEqual([['crude_petroleum', 3], ['glass', 1]]);
+    expect(ITEM_RETIREMENT.salvaged_oil).toMatchObject({ stage: 'LIVE', to: 'crude_petroleum' });
+    expect(PROPOSALS.find((x) => x.id === 'P9')!.status).toBe('IMPLEMENTED_PARTIAL');   // the round-3 record (text only) is history
   });
 });
 
@@ -178,7 +184,7 @@ describe('P8 — nothing invented; the recipe line is honest on Veyra', () => {
     expect(CREATURES.wolf.drops).toEqual([['meat', 1, 1], ['fur', 2, 1], ['wolf_fang', 1, 0.4]]);
     // ARENA 1 (final item set) added ONE row here afterwards: the crawler is the LI source of Electronic Parts. The three
     // round-3 rows are unchanged, in order.
-    expect(CREATURES.crawler.drops.filter(([k]) => k !== 'electronic_parts')).toEqual([['spares', 2, 1], ['scrap', 2, 1], ['crawler_optic', 1, 0.35]]);
+    expect(CREATURES.crawler.drops.filter(([k]) => k !== 'electronic_parts')).toEqual([['spares', 3, 1], ['crawler_optic', 1, 0.35]]);   // item set v3: the Scrap row merged into Parts (2 + 2 -> 3, SOH_PROVISIONAL)
     expect(CREATURES.crawler.drops.filter(([k]) => k === 'electronic_parts')).toEqual([['electronic_parts', 1, 0.5]]);
     expect(CREATURES.beetle.drops).toEqual([['chitin', 2, 1], ['sulfur', 1, 0.6], ['beetle_horn', 1, 0.3]]);
     const droppers = (item: string) => Object.entries(CREATURES).filter(([, d]) => d.drops.some(([k]) => k === item)).map(([k]) => k).sort();
@@ -205,10 +211,16 @@ describe('migration and restart — rev-1, rev-2 and rev-3 saves with queued Fra
     for (const rev of [1, 2]) {
       expect(frameAt(rev)).toEqual(LEGACY_RECIPES['vehicle_frame@2']); expect(axeAt(rev)).toEqual(LEGACY_RECIPES['industrial_axe@2']);
     }
-    expect(frameAt(3)).toBe(LIVE.vehicle_frame); expect(axeAt(3)).toBe(LIVE.industrial_axe); expect(frameAt(4)).toBe(LIVE.vehicle_frame); expect(RECIPE_REVISION).toBe(4);
+    // rev 3 and rev 4 share one frozen bill (the piped frame / the blade axe, still priced in Machine Parts); rev 5 is live
+    expect(frameAt(3)).toBe(frameAt(4)); expect(frameAt(3).ins).toEqual(LEGACY_RECIPES['vehicle_frame_piped@2'].ins); expect(axeAt(3)).toBe(axeAt(4));
+    expect(frameAt(5)).toBe(LIVE.vehicle_frame); expect(axeAt(5)).toBe(LIVE.industrial_axe); expect(frameAt(3)).not.toBe(LIVE.vehicle_frame); expect(RECIPE_REVISION).toBe(5);
   });
   for (const rev of [1, 2, 3] as const) {
-    it(`a rev-${rev} save: Frame + Axe + Recycler jobs keep UIDs and stock, survive two restarts mid-job, pay out once under rev-${rev} economics (INTENT on FIXTURE stock)`, () => {
+    // SUPERSEDED BY ITEM SET V3. This test AUTHORS an old save by running the live engine with Machine Parts and a Damaged
+    // Drive in the pack. Neither can be held any more (every mint point issues Parts), so the fixture cannot be produced this
+    // way. The invariant itself (reserved UIDs kept, paid once under the old bill, restart mid-job) is proven on a CAPTURED
+    // old save holding the retired ids: tests/pa1-rev1-queued-jobs.test.ts, and tests/final-item-set.test.ts (old-save migration).
+    it.skip(`a rev-${rev} save: Frame + Axe + Recycler jobs keep UIDs and stock, survive two restarts mid-job, pay out once under rev-${rev} economics (INTENT on FIXTURE stock)`, () => {
       const g = start(400 + rev); const r = g.run!;
       // ── author the save under the table that was live at `rev` ──
       (RECIPES as Table).vehicle_frame = frameAt(rev); (RECIPES as Table).industrial_axe = axeAt(rev);

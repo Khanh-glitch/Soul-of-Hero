@@ -112,24 +112,22 @@ function equipFullGear(r: RunState) {
   inv.slots = Array(24).fill(null);
   eq.slots = [mkStack(r, 'gas_mask', 1), mkStack(r, 'chitin_armor', 1), mkStack(r, 'trail_pack', 1)];
   const gear: [string, number][] = [
-    ['iron_sword', 1],
+    ['machete', 1],
     ['bow', 1],
     ['industrial_axe', 1],
     ['industrial_pick', 1],
     ['stew', 4],
     ['trail_canteen', 1],
     ['medkit', 4],
-    ['field_repair_kit', 4],
     ['arrow', 40],
     ['spares', 30],
     ['fuel_can', 4],
-    ['lubricant', 3],
     ['wood', 30],
     ['stone', 25],
     ['iron_ingot', 16],
-    ['mechanical_parts', 10],
-    ['fasteners', 12],
-    ['coal', 15],
+    ['mechanical_gear', 6],
+    ['electronic_parts', 8],
+    ['charcoal', 20],
   ];
   gear.forEach(([k, q], idx) => {
     const st = mkStack(r, k, q);
@@ -176,9 +174,8 @@ function loadFullGear(r: RunState) {
   inv.slots = Array(24).fill(null);
   cores.forEach((s, i) => { inv.slots[i] = s; });
   const pack: [string, number][] = [
-    ['iron_sword', 1], ['bow', 1], ['industrial_axe', 1], ['industrial_pick', 1],
+    ['machete', 1], ['bow', 1], ['industrial_axe', 1], ['industrial_pick', 1],
     ['arrow', 60], ['stew', 5], ['trail_canteen', 1], ['medkit', 5],
-    ['field_repair_kit', 4],
   ];
   pack.forEach(([key, qty], i) => {
     const s = mkStack(r, key, qty);
@@ -239,7 +236,7 @@ function buildIndustrialCompound(gs: GameState, ptx: number, pty: number) {
   // The workshop actions below use real dispatch costs, reservations and job IDs.
   r.player.x = (bx + 4) * TILE + 8; r.player.y = (by + 2) * TILE + 8;
   const ironJob = qaAction(gs, 'craft', { recipe: 'iron_ingot', eid: furnace.id }, r.clock.lastSimAt);
-  const refineryJob = qaAction(gs, 'craft', { recipe: 'refinery_industrial', eid: refinery.id }, r.clock.lastSimAt);
+  const refineryJob = qaAction(gs, 'craft', { recipe: 'refinery_fuel_batch', eid: refinery.id }, r.clock.lastSimAt);
   const specimenSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'wolf_fang');
   const researchJob = specimenSlot >= 0 ? qaAction(gs, 'research', { mode: 'specimen', eid: research.id, slot: specimenSlot, uid: C(r, 'inv').slots[specimenSlot]?.uid }, r.clock.lastSimAt) : null;
   return { bx, by, cab, chest, wb, furnace, refinery, research, garden, ironJob, refineryJob, researchJob };

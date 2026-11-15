@@ -4,7 +4,7 @@ import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
 import type { RunState } from '../game/core';
 import { anyAuthorizedOilSource, owned, clearInteraction, oilAvailability, OIL_TEXT } from '../game/engine';
-import { stationBurnable, GARDEN_CROP_KINDS, isGardenCrop, gardenClimateClass, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, PA1_BASE_GEOMETRY, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, recipeForJob, familyOfRecipe, familyMembers, isFamilyGated, RESEARCH_FAMILIES } from '../game/catalog';
+import { stationBurnable, GARDEN_CROP_KINDS, isGardenCrop, gardenClimateClass, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, PA1_BASE_GEOMETRY, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, recipeForJob, familyOfRecipe, familyMembers, isFamilyGated, RESEARCH_FAMILIES, EQ_SLOTS, ARMOR_CAP, wornProtection } from '../game/catalog';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
 import type { OfflineReturnV1, StoredReturnEntry } from '../game/return-report';
@@ -67,6 +67,8 @@ export function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
         {d.dmg ? <StatChip g="spark" v={`${d.dmg}`} title="Damage" /> : null}
         {d.reach ? <StatChip g="eye" v={`${d.reach}`} c="var(--paper)" title="Reach" /> : null}
         {d.armor ? <StatChip g="hp" v={`-${Math.round(d.armor * 100)}%`} c="var(--good)" title="Damage taken" /> : null}
+        {d.steady ? <StatChip g="hp" v={`-${Math.round(d.steady * 100)}% kb`} c="var(--info)" title="Knock-back and stagger" /> : null}
+        {d.ground ? <StatChip g="hp" v={`-${Math.round(d.ground * 100)}% gnd`} c="var(--warm)" title="Fire, lava and pool damage underfoot" /> : null}
         {d.cold ? <StatChip g="wr" v={`+${d.cold}`} c="var(--warm)" title="Warmth" /> : null}
         {d.carryBonus ? <StatChip g="weight" v={`+${d.carryBonus}`} c="var(--good)" title="Carry bonus (kg)" /> : null}
         {d.fuel ? <StatChip g="fuel" v={`${d.fuel}s`} c="var(--food)" title="Burn time" /> : null}
@@ -111,14 +113,14 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
   const used = C(r, 'inv').slots.filter(Boolean).length, total = C(r, 'inv').slots.length;
   const load = Math.min(1, w / limit);
   const cash = countItem(r, 'inv', 'rcash');
-  const SLOT_G = ['scrap_helm', 'leather_armor', 'fur_cloak'];
+  const SLOT_G = ['scrap_helm', 'leather_armor', 'fur_cloak', 'iron_plate_pants', 'iron_plate_boots'];
   const panelMaxH = Math.max(210, 354 - top);
   return <Panel title={backToContainer ? 'Pack · X returns' : 'Pack'} className="inv" style={{ left: x, top, width: 228, maxHeight: panelMaxH }} onClose={onClose ?? (() => api.open(null))}>
     <div className="scroll" style={{ maxHeight: panelMaxH - 28, overflowY: 'auto', overflowX: 'hidden' }}>
       {/* paper doll: equipment slots flank the live character; numbers are chips, not sentences */}
       <div className="doll-row">
         <div className="doll-slots">
-          {['head', 'body', 'back'].map((sl, i) => <div key={sl} className={`eqslot ${C(r, 'eq').slots[i] ? '' : 'empty'}`} title={sl}>
+          {EQ_SLOTS.map((sl, i) => <div key={sl} className={`eqslot ${C(r, 'eq').slots[i] ? '' : 'empty'}`} title={sl}>
             <DSlot api={api} cid="eq" slot={i} s={C(r, 'eq').slots[i]} size={22} />
             {!C(r, 'eq').slots[i] && <img className="px ghost-ico" src={iconUrl(SLOT_G[i])} alt="" />}
           </div>)}
@@ -142,7 +144,6 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
         <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('useItem', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Use</button>
         <button className="btn" disabled={!sel || sel.qty < 2} onClick={() => api.sel && api.act('split', { c: api.sel.c, slot: api.sel.slot })}>Split</button>
         <button className="btn" disabled={!sel} onClick={() => { if (api.sel) { api.act('drop', { c: api.sel.c, slot: api.sel.slot }); api.setSel(null); } }}>Drop</button>
-        {sel && api.sel?.c === 'inv' && ITEMS[sel.key].repair && sel.dur !== undefined && sel.dur < ITEMS[sel.key].dur! && <button className="btn gold" title={`Field repair +${BAL.player.fieldRepairDurability} (uses one kit)`} disabled={!C(r, 'inv').slots.some(s => s?.key === 'field_repair_kit')} onClick={() => { const kitSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'field_repair_kit'); const kit = C(r, 'inv').slots[kitSlot]; if (kit && api.sel) api.act('fieldRepair', { slot: api.sel.slot, uid: sel.uid, kitSlot, kitUid: kit.uid }); }}><Icon k="field_repair_kit" size={10} /> Repair</button>}
         <button className="btn ghost" style={{ marginLeft: 'auto' }} onClick={() => api.act('sort', { c: 'inv' })}>Sort</button>
       </div>
     </div>
@@ -281,8 +282,8 @@ export function StationBody({ api, eid }: { api: Api; eid: string }) {
   const [confirmSalvage, setConfirmSalvage] = useState<string | null>(null);
   const maintenance = C(r, 'inv').slots.map((s, i) => [s, i] as const).filter(([s]) => s && (ITEMS[s.key].repair || ITEMS[s.key].salvage));
   return <div>
-    {e.type === 'oil_pump' && (oilSrc ? <div data-testid="oil-source-stock" style={{fontSize:10,color:oilSrc.stock>0?'#d6ffc0':'#ffb8a0'}}>Oil site (test fixture): {oilSrc.stock} Crude Petroleum left{oilSrc.stock<=0?' — dry, cycles blocked':''}</div> : <div data-testid="oil-no-site" style={{fontSize:10,color:'#ffb8a0'}}>{oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : OIL_TEXT.notOnSite}</div>)}
-    {kind === 'refinery' && <div style={{fontSize:10,marginBottom:4,color:'#8fd19b'}}><b>Industrial batch:</b> 6 Salvaged Oil + 1 Glass → 2 Fuel Canister + 1 Machine Lubricant, {BAL.oilRefineryV1.recipes.industrial.secs}s, one job. Needs fuel to run; both products wait in Output until there is room for the whole batch. Lubricant halves motorbike wear for {Math.round(BAL.oilRefineryV1.lubricantDistancePx/TILE)} tiles.</div>}
+    {e.type === 'oil_pump' && (oilSrc ? <div data-testid="oil-source-stock" style={{fontSize:10,color:oilSrc.stock>0?'#d6ffc0':'#ffb8a0'}}>{oilSrc.authority === 'test-fixture-v1' ? 'Oil site (test fixture)' : 'Crude seep'}: {oilSrc.stock} Crude Petroleum left{oilSrc.stock<=0?' — dry, cycles blocked':''}</div> : <div data-testid="oil-no-site" style={{fontSize:10,color:'#ffb8a0'}}>{oilAvailability(r) === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : OIL_TEXT.notOnSite}</div>)}
+    {kind === 'refinery' && <div style={{fontSize:10,marginBottom:4,color:'#8fd19b'}}><b>Batch run:</b> 5 Crude Petroleum + 1 Glass → 2 Fuel Canister, {BAL.oilRefineryV1.recipes.batch.secs}s. Needs solid fuel to run; output waits until there is room.</div>}
     {kind === 'workbench' && <details style={{ fontSize: 10, marginBottom: 5, borderBottom: '1px solid #514155', paddingBottom: 4 }}>
       <summary style={{ color: '#ffd98a', cursor: 'pointer' }}>Equipment maintenance &amp; upgrades</summary>
       <div style={{ color: '#ffd98a' }}>Workbench level {level} / 3</div>
@@ -434,7 +435,7 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
 export const BUILD_GROUPS: Record<string,string[]> = {
   Shell:[...PA1_BASE_GEOMETRY],
   Home:['claim','bed_straw','chest_small','chest_large','escrow'],
-  Work:['campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','feed_trough','farm_controller'],
+  Work:['campfire','furnace','large_furnace','ladder_wood','ladder_steel','refinery','oil_pump','workbench','research','garden','barrel','feed_trough','farm_controller'],
   Defense:['base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','door_powered','arrow_turret','spikes','barricade','torch_post'],
 };
 /** Oil Pump is locked until the run holds an authorized source with stock; the reason is shown on the entry. */

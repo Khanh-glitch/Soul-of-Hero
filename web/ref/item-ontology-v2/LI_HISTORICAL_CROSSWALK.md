@@ -145,16 +145,15 @@ A `HAVE_*` verdict says SOH defines something for the role. `soh_live_status` sa
 
 | SOH live status | Rows |
 |---|---|
-| LIVE_PLAYER_FUNCTION | 48 |
-| LIVE_WITH_LIMIT | 5 |
+| LIVE_PLAYER_FUNCTION | 49 |
+| LIVE_WITH_LIMIT | 4 |
 | CATALOG_PRESENT_NOT_LIVE | 3 |
 
 | Last Island id | SOH | Verdict | Live status | Note |
 |---|---|---|---|---|
 | `canned_meat` | `salted_meat` | HAVE_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: UNREACHABLE. |
 | `cleaver` | `iron_sword` | HAVE_SAME_ROLE | LIVE_WITH_LIMIT | Projection reachability: SHIPPING_ONLY. Not obtainable on the other world. |
-| `crude_oil` | `salvaged_oil` | HAVE_SAME_ROLE | LIVE_WITH_LIMIT | Salvaged Oil is live (salvage bonus, vendor). The Last Island role of crude pumped from the ground is NOT live: Crude Petroleum is fixture-only and the Oil Pump produces nothing in live play. This row does not establish a working Oil Pump. |
-| `electric_door` | `structure:door_powered` | HAVE_SAME_ROLE | CATALOG_PRESENT_NOT_LIVE | `door_powered` is MODULE_PENDING in the catalog: defined, not player-buildable. The role exists on paper only. |
+| `crude_oil` | `crude_petroleum` | HAVE_SAME_ROLE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: FIXTURE_ONLY. |
 | `green_card` | `keycard` | HAVE_DIFFERENT_SHAPE | LIVE_WITH_LIMIT | Projection reachability: SHIPPING_ONLY. Not obtainable on the other world. |
 | `machete` | `iron_sword` | HAVE_SAME_ROLE | LIVE_WITH_LIMIT | Projection reachability: SHIPPING_ONLY. Not obtainable on the other world. |
 | `mushroom_soup` | `root_broth` | HAVE_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: UNREACHABLE. |
@@ -177,7 +176,7 @@ A `HAVE_*` verdict says SOH defines something for the role. `soh_live_status` sa
 | Id | Historical | Crosswalk | SOH | Reason |
 |---|---|---|---|---|
 | `canned_meat` | missing | HAVE_DIFFERENT_SHAPE | `salted_meat` | SOH preserves with Salt; there is no spoilage timer, so a can would be decoration. [Historical says missing. Atlas verdict stands: the preserved-food role is Salted Roast.] |
-| `electric_door` | missing | HAVE_SAME_ROLE | `structure:door_powered` | A structure in SOH, not an item. [Historical says missing. The atlas verdict stands for the catalog only: SOH defines the Powered Door structure, but it is MODULE_PENDING and not player-buildable, so for live play the historical reading is right (see soh_live_status).] |
+| `electric_door` | missing | HAVE_SAME_ROLE | `structure:door_powered` | A structure in SOH, not an item. [Historical says missing. The atlas verdict stands for the catalog only: since item set v3 the Powered Door is a craftable module fitted into an owned door (engine-tested, not yet play-proven; see soh_live_status).] |
 | `electronic_parts` | missing | HAVE_DIFFERENT_SHAPE | `spares` | Considered as an ADD and rejected: in SOH powered devices already spend Parts, and that contention (research vs devices vs Cores) is the K4 design. A second rare currency would dissolve it. [Historical says missing. Atlas verdict stands: powered devices spend Parts in SOH; a separate electronics item was reviewed and rejected.] |
 | `fruit_juice` | missing | HAVE_DIFFERENT_SHAPE | `water_flask` | Thirst is handled by water containers and broth. [Historical says missing. Atlas verdict stands: thirst is served by water containers and broth.] |
 | `grilled_mushroom` | analogy | NOT_ADDED | `-` | A sixth near-equal campfire meal would be count, not depth. [Historical says analogy. Atlas verdict stands: the cooked-food role exists, this specific meal was declined as redundant.] |
@@ -226,14 +225,14 @@ The `year_mode` column is the same generic note on all 137 rows, so the source d
 | `cleaver` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `iron_sword` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_WITH_LIMIT |
 | `cloth` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | direct | `cloth` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `cream` | EXTERNAL_CRAFT_OR_INPUT | DIRECT | no | EVENT_LIMITED | birthday_cake_2022 | missing | `-` | NOT_ADDED | EVENT_ONLY | NOT_APPLICABLE |
-| `crude_oil` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `salvaged_oil` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_WITH_LIMIT |
+| `crude_oil` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `crude_petroleum` | HAVE_SAME_ROLE | ROLE_PRESENT | CATALOG_PRESENT_NOT_LIVE |
 | `dirt_grenade` | ATLAS_INDEXED | INDIRECT | yes | EXACT_ID | - | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
 | `double_barrel_shotgun` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
 | `drawing_bench` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `deploy_research` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `dried_meat` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `cooked_meat` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `egg` | EXTERNAL_CRAFT_OR_INPUT | DIRECT | no | DISTINCT_HISTORICAL | - | analogy | `grouse_egg` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | LIVE_PLAYER_FUNCTION |
 | `egg_flour` | EXTERNAL_CRAFT_OR_INPUT | UNSUPPORTED_CITATION | no | EVENT_LIMITED | reunion_mooncake_lottery_pack | missing | `-` | NOT_ADDED | EVENT_ONLY | NOT_APPLICABLE |
-| `electric_door` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `structure:door_powered` | HAVE_SAME_ROLE | ROLE_PRESENT | CATALOG_PRESENT_NOT_LIVE |
+| `electric_door` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `structure:door_powered` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `electric_resistor` | OFFICIAL_MODERN | DIRECT | no | MODERN_ADDITION | - | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
 | `electronic_parts` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `spares` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | LIVE_PLAYER_FUNCTION |
 | `energy_extractor` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `-` | BACKLOG | BACKLOG | NOT_APPLICABLE |

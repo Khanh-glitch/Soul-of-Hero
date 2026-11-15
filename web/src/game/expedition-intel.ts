@@ -1,4 +1,5 @@
 /** Expedition intel: bounded, physically observed facts remembered per run. No POI spoilers, no hidden stock. */
+import { cardItemForClass } from './final-item-set';
 import type { RunState } from './core';
 import { ITEMS, RECIPES, STRUCTS, isRecipeKnown } from './catalog';
 import { getWorld } from './world';
@@ -40,8 +41,8 @@ export function gateKey(place: string, requirement: 'power' | 'keycard', cardCla
 /** Live carried quantity from the physical inventory only. */
 function carriedCount(r: RunState, key: string, cardClass?: string): number {
   return (r.custody.inv?.slots ?? []).reduce((n, s) => {
+    if (key === 'keycard') return n + (!!s && s.key === cardItemForClass(cardClass) && (s.charge === undefined || s.charge > 0) ? 1 : 0);
     if (!s || s.key !== key) return n;
-    if (key === 'keycard') return n + ((s.meta ?? 'vault') === cardClass && (s.charge === undefined || s.charge > 0) ? 1 : 0);
     return n + s.qty;
   }, 0);
 }
@@ -49,7 +50,7 @@ function carriedCount(r: RunState, key: string, cardClass?: string): number {
 export interface Ingredient { key: string; name: string; have: number; need: number }
 export interface CraftNote { recipe: string; station: string; stationName: string; level: number; ingredients: Ingredient[]; missing: Ingredient[] }
 export interface GateNote {
-  requirement: 'power' | 'keycard'; cardClass?: string; item: 'fuel_can' | 'keycard';
+  requirement: 'power' | 'keycard'; cardClass?: string; item: string;
   have: number; need: number; carried: boolean;
   /** Places where this item was physically seen in an opened container (historical, not current stock). */
   seenIn: string[];
@@ -58,7 +59,7 @@ export interface GateNote {
 }
 export type BlueprintState = 'seen' | 'owned' | 'learned';
 /** Live ways to obtain one Fuel Canister, in guidance priority order (PA1 v1.2). */
-export const FUEL_ROUTES: readonly string[] = ['refine_salvaged_oil', 'refinery_fuel', 'refinery_fuel_batch', 'refinery_industrial', 'refinery_crude'];
+export const FUEL_ROUTES: readonly string[] = ['low_quality_fuel', 'refinery_fuel', 'refinery_fuel_batch'];
 export interface BlueprintNote { recipe: string; name: string; state: BlueprintState }
 export interface PlaceNote { place: string; name: string; gates: GateNote[]; blueprints: BlueprintNote[]; generatorSeen: boolean }
 
@@ -78,8 +79,8 @@ export function expeditionNotes(r: RunState): PlaceNote[] {
       const req = k.slice(`gate:${place}:`.length);
       if (req === 'power') {
         // PA1 v1.2 retired the improvised bench canister, so preparation guidance must name a
-        // route that still exists: the furnace recipe learned by studying real oil, then the
-        // Oil Refinery batch. The first known route wins; none known = no craft hint at all.
+        // route that still exists (item set v3): rendered-fat fuel at the furnace, then the Oil
+        // Refinery (Crude Petroleum + Glass). The first live route wins; not known = no craft hint.
         const route = FUEL_ROUTES.find(k => !!RECIPES[k]);
         const rc = route ? RECIPES[route] : undefined;
         const ingredients = (rc?.ins ?? []).map(([key, need]) => ({ key, name: ITEMS[key].name, have: carriedCount(r, key), need }));
@@ -92,7 +93,7 @@ export function expeditionNotes(r: RunState): PlaceNote[] {
       } else {
         const cardClass = req.slice('keycard_'.length);
         const have = carriedCount(r, 'keycard', cardClass);
-        gates.push({ requirement: 'keycard', cardClass, item: 'keycard', have, need: 1, carried: have >= 1, seenIn: seenIn('keycard') });
+        gates.push({ requirement: 'keycard', cardClass, item: cardItemForClass(cardClass), have, need: 1, carried: have >= 1, seenIn: seenIn(cardItemForClass(cardClass)) });
       }
     }
     const blueprints: BlueprintNote[] = intel.filter(k => k.startsWith(`loot:${place}:bp_`)).map(k => {

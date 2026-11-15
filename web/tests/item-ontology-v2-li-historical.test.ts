@@ -128,7 +128,7 @@ describe('137-vs-86 crosswalk', () => {
     // Helmet: an extra tier, not missing head protection. SOH has a head slot with exactly one armour piece.
     expect(row('refined_iron_helmet').why).toMatch(/already has head protection/);
     expect(Object.entries(ITEMS).filter(([, d]) => (d as { slot?: string; armor?: number }).slot === 'head' && (d as { armor?: number }).armor).map(([k]) => k).sort()).toEqual(['iron_plate_helmet', 'refined_iron_helmet', 'scrap_helm']); // the 15/11 final item set (Bible §0.2a) imported both LI helmets AFTER this crosswalk; the crosswalk row is history
-    expect(new Set(Object.values(ITEMS).map((d) => (d as { slot?: string }).slot).filter(Boolean))).toEqual(new Set(['head', 'body', 'back']));
+    expect(new Set(Object.values(ITEMS).map((d) => (d as { slot?: string }).slot).filter(Boolean))).toEqual(new Set(['head', 'body', 'back', 'legs', 'feet']));   // armour v3: the LI pants and boots are live pieces
     for (const k of Object.keys(ITEMS)) expect(k).not.toMatch(/bicycle/);
   });
 
@@ -220,20 +220,20 @@ describe('source support is derived next to the raw file, never written into it'
 });
 
 describe('catalog-defined is not the same as live', () => {
-  it('electric_door maps to a MODULE_PENDING structure and is flagged not live', () => {
-    expect(MODULE_PENDING_STRUCTURES).toContain('door_powered');
+  it('electric_door: the Powered Door is no longer MODULE_PENDING (item set v3 module route); the row follows the catalog', () => {
+    expect(MODULE_PENDING_STRUCTURES).not.toContain('door_powered'); expect(MODULE_PENDING_STRUCTURES).toEqual([]);
     const r = row('electric_door');
     expect(r.soh_equivalent).toBe('structure:door_powered');
     expect(r.verdict).toBe('HAVE_SAME_ROLE'); // accepted catalog verdict, unchanged
-    expect(r.soh_live_status).toBe('CATALOG_PRESENT_NOT_LIVE');
-    expect(r.soh_live_note).toMatch(/MODULE_PENDING/);
+    expect(r.soh_live_status).toBe('LIVE_PLAYER_FUNCTION'); expect(r.soh_live_note).toMatch(/not MODULE_PENDING/);   // the atlas label is catalog-computed; it is NOT play evidence
+    // the mechanism is still honest: a structure in the pending list is always reported not live
+    expect(MODULE_PENDING_STRUCTURES.every((s) => rows.filter((x) => x.soh_equivalent === 'structure:' + s).every((x) => x.soh_live_status === 'CATALOG_PRESENT_NOT_LIVE'))).toBe(true);
   });
-  it('crude_oil mapping does not claim a working Oil Pump', () => {
+  it('crude_oil maps to Crude Petroleum (Salvaged Oil retired) and still does not claim a play-proven Oil Pump', () => {
     const r = row('crude_oil');
-    expect(r.soh_equivalent).toBe('salvaged_oil');
-    expect(r.soh_live_status).toBe('LIVE_WITH_LIMIT');
-    expect(r.soh_live_note).toMatch(/does not establish a working Oil Pump/);
-    expect(reachability.crude_petroleum).toBe('FIXTURE_ONLY');
+    expect(r.soh_equivalent).toBe('crude_petroleum');
+    expect(['LIVE_WITH_LIMIT', 'CATALOG_PRESENT_NOT_LIVE']).toContain(r.soh_live_status);
+    if (r.soh_live_status === 'LIVE_WITH_LIMIT') expect(r.soh_live_note).toMatch(/does not establish a working Oil Pump/);
     expect(Object.keys(LIVE_LIMITS)).toEqual(['crude_oil']);
   });
   it('every HAVE_* row has a live status computed from the catalog; every other row has none', () => {

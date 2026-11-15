@@ -118,6 +118,10 @@ export interface Entity {
   garden?: { crop: string | null; growth: number; water: number; coldFrame?: boolean };
   farm?: { enabled: boolean; crop: 'crop' | 'herb' | 'berry'; energy: number; gardenId?: string; barrelId?: string; chestId?: string; lastCode?: string };
   irSensor?: { version: 'ir-v1'; enabled: boolean };
+  /** Item set v3: a placed ladder covers `len` cliff tiles from its own tile in direction `dir`. */
+  ladder?: { dir: [number, number]; len: number };
+  /** Item set v3: the door type a Powered Door module was fitted into (reclaim hands that door back). */
+  poweredHost?: string;
   bearTrap?: { version: 'trap-v1'; state: 'unarmed' | 'armed' | 'spent' | 'worn'; uses: number; snapAt?: number };
   basePower?: { enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production'; network?: 'wire-v1' };
   wireSwitch?: {version:'wire-v1'; on:boolean};
@@ -239,7 +243,11 @@ export interface RunState {
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
   /** B05-R: oil sources keyed `oil:tx:ty`. Only a labelled test fixture authority exists today; production Map oil sites are NOT authorized (see balance oilPumpV1). */
-  oilSources?: Record<string, { tx: number; ty: number; stock: number; authority: 'test-fixture-v1' }>;
+  oilSources?: Record<string, { tx: number; ty: number; stock: number; authority: 'test-fixture-v1' | 'veyra-seep-v1' }>;
+  /** Item set v3: Veyra crude seeps by seep cell (`cx:cy`), in GLOBAL tiles. The chosen tile and the stock left; see oil-seeps.ts. */
+  oilSeeps?: Record<string, { gx: number; gy: number; stock: number }>;
+  /** Window origin (`ox,oy`) the `veyra-seep-v1` rows of `oilSources` are projected for. */
+  oilSeepWindow?: string;
   /** Domain marker: set ONLY by the test-only fixture registrar. A run without it cannot hold or validate oil sources.
    *  Future production sources must bind to a versioned Map site + map revision (authority not yet defined). */
   oilTestFixture?: true;

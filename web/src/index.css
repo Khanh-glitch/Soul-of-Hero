@@ -418,7 +418,7 @@ input::placeholder { color: #566872; }
 .sv-left { width: 262px; display: flex; flex-direction: column; gap: 4px; padding: 6px; background: rgba(5,7,10,.45); box-shadow: inset 0 0 0 1px rgba(57,70,79,.55); overflow-y: auto; }
 .sv-right { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 6px; min-width: 0; background: rgba(5,7,10,.45); box-shadow: inset 0 0 0 1px rgba(57,70,79,.55); }
 .sv-char { display: flex; align-items: center; gap: 6px; }
-.sv-eq { display: flex; flex-direction: column; gap: 3px; }
+.sv-eq { display: grid; grid-template-rows: repeat(3, auto); grid-auto-flow: column; gap: 3px; }
 .sv-eqcell { position: relative; }
 .sv-ghost { position: absolute; left: 5px; top: 5px; width: 16px; height: 16px; opacity: .18; filter: grayscale(1); pointer-events: none; }
 .sv-doll { width: 48px; height: 72px; image-rendering: pixelated; background: radial-gradient(circle at 50% 85%, rgba(200,150,60,.22), transparent 60%); }

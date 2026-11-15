@@ -15,7 +15,7 @@ function line(g:GameState){const r=g.run!,w=getWorld(r.layoutId);for(let y=2;y<1
 function deploy(g:GameState){const r=g.run!,q=line(g);r.player.x=q.x-TILE;r.player.y=q.y;addItem(r,'inv','motorbike_kit',1);expect(act(g,'placeMotorbike',q).ok).toBe(true);const e=Object.values(r.entities).find(x=>x.kind==='vehicle')!;return {r,e};}
 const allUids=(g:GameState)=>Object.values(g.run!.custody).flatMap(c=>c.slots.filter(Boolean).map(s=>s!.uid)).sort();
 const bagsAt=(r:any,e:Entity)=>Object.values(r.entities).filter((x:any)=>x.kind==='bag'&&x.vehicleSource?.vehicleId===e.id) as Entity[];
-function loadCargo(g:GameState,e:Entity){const r=g.run!;for(const k of ['core_fire','fuel_can','scrap']) addItem(r,'inv',k,1);const inv=C(r,'inv');for(const key of ['core_fire','fuel_can','scrap']){const i=inv.slots.findIndex(s=>s?.key===key);expect(act(g,'move',{from:'inv',fs:i,to:e.c}).ok).toBe(true);}return C(r,e.c!).slots.filter(Boolean).map(s=>s!.uid);}
+function loadCargo(g:GameState,e:Entity){const r=g.run!;for(const k of ['core_fire','fuel_can','spares']) addItem(r,'inv',k,1);const inv=C(r,'inv');for(const key of ['core_fire','fuel_can','spares']){const i=inv.slots.findIndex(s=>s?.key===key);expect(act(g,'move',{from:'inv',fs:i,to:e.c}).ok).toBe(true);}return C(r,e.c!).slots.filter(Boolean).map(s=>s!.uid);}
 afterEach(()=>setActiveLayout('shipping'));
 
 describe('B04 stranded motorbike: emergency unload into a physical ground bag', () => {
@@ -73,7 +73,7 @@ describe('B04 stranded motorbike: emergency unload into a physical ground bag', 
   });
   it('a full ground bag refuses without moving anything (no silent loss)', () => {
     const g=setup(),{r,e}=deploy(g);const cargo=loadCargo(g,e);e.hp=0;e.deployed!.dur=0;
-    const cont=mkContainer(r,'bag',1);addItem(r,cont.id,'scrap',1);
+    const cont=mkContainer(r,'bag',1);addItem(r,cont.id,'spares',1);
     const spot=vehicleExitPoint(r,e.x,e.y,e.id)!;
     const bag:Entity={id:'bag-full',kind:'bag',x:spot.x,y:spot.y,c:cont.id,label:'full',born:T,vehicleSource:{vehicleId:e.id,vehicleUid:e.deployed!.uid}};r.entities[bag.id]=bag;markDirty();
     const res=act(g,'vehicleUnloadBag',{eid:e.id},'u11',T+100);
@@ -94,7 +94,7 @@ describe('B04 stranded motorbike: emergency unload into a physical ground bag', 
 describe('B04 OfflineReturnV1 truth repairs (R1-R3)', () => {
   it('R3: a synthetic station receipt for an unseen, non-owned POI station is dropped; an owned workbench receipt is shown', () => {
     const g=setup(),r=g.run!;
-    const poiOut=mkContainer(r,'out',6);addItem(r,poiOut.id,'scrap',3);
+    const poiOut=mkContainer(r,'out',6);addItem(r,poiOut.id,'spares',3);
     r.entities['poi-hidden']={id:'poi-hidden',kind:'recycler',poi:'factory',label:'Hidden site',x:50*TILE,y:50*TILE,tx:50,ty:50,station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',3).id,outC:poiOut.id}} as any;
     const bench:Entity={id:'bench-mine',kind:'struct',type:'workbench',x:20*TILE,y:20*TILE,tx:20,ty:20,hp:100,maxHp:100,station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',3).id,outC:mkContainer(r,'out',6).id}} as any;
     r.entities[bench.id]=bench;markDirty();
@@ -113,7 +113,7 @@ describe('B04 OfflineReturnV1 truth repairs (R1-R3)', () => {
     const g=setup(),r=g.run!;
     const before=captureReturnSnapshot(g)!;
     before.structs['gone1']={name:'Garden',tx:30,ty:30,hp:40,maxHp:60};
-    const cont=mkContainer(r,'bag',4);addItem(r,cont.id,'scrap',2);
+    const cont=mkContainer(r,'bag',4);addItem(r,cont.id,'spares',2);
     r.entities['bag-stray']={id:'bag-stray',kind:'bag',x:30*TILE,y:30*TILE,c:cont.id,label:'stray',born:T};markDirty();
     const rep=buildOfflineReturn(g,before,[],T,T+60000,false);
     const lost=rep.sections.loss.find(x=>x.id==='gone:gone1'||x.id==='lost:gone1');
@@ -134,7 +134,7 @@ describe('B04 OfflineReturnV1 truth repairs (R1-R3)', () => {
     const g=setup(),r=g.run!;
     const before=captureReturnSnapshot(g)!;
     r.player.dead=true;
-    const cont=mkContainer(r,'bag',8);addItem(r,cont.id,'scrap',1);
+    const cont=mkContainer(r,'bag',8);addItem(r,cont.id,'spares',1);
     r.entities['bag-death']={id:'bag-death',kind:'bag',x:r.player.x,y:r.player.y,c:cont.id,label:'death',born:T};markDirty();
     const rep=buildOfflineReturn(g,before,[],T,T+60000,false);
     expect(rep.sections.body.find(x=>x.id==='dead')!.text).toMatch(/bag-death/);
@@ -145,7 +145,7 @@ describe('B04-P2 source provenance, reuse, cleanup and validation', () => {
   it('an unrelated bag on the motorbike exit spot is never mixed in; the unload is refused with stock untouched', () => {
     const g=setup(),{r,e}=deploy(g);const cargo=loadCargo(g,e);e.hp=0;e.deployed!.dur=0;
     const spot=vehicleExitPoint(r,e.x,e.y,e.id)!;
-    const cont=mkContainer(r,'bag',4);addItem(r,cont.id,'scrap',1);
+    const cont=mkContainer(r,'bag',4);addItem(r,cont.id,'spares',1);
     r.entities['bag-stranger']={id:'bag-stranger',kind:'bag',x:spot.x,y:spot.y,c:cont.id,label:'stranger',born:T};markDirty();
     const res=act(g,'vehicleUnloadBag',{eid:e.id},'p1',T+100);
     expect(res.ok).toBe(false);
@@ -179,7 +179,7 @@ describe('B04-P2 source provenance, reuse, cleanup and validation', () => {
   });
   it('a bag with no vehicleSource (any older or other bag) still validates; a malformed vehicleSource is refused on load', () => {
     const g=setup(),{r}=deploy(g);
-    const cont=mkContainer(r,'bag',4);addItem(r,cont.id,'scrap',1);
+    const cont=mkContainer(r,'bag',4);addItem(r,cont.id,'spares',1);
     r.entities['bag-old']={id:'bag-old',kind:'bag',x:r.player.x,y:r.player.y,c:cont.id,label:'old',born:T};markDirty();
     expect(validate(snapshot(g))).toBeTruthy();
     (r.entities['bag-old'] as any).vehicleSource={vehicleId:'',vehicleUid:'x'};markDirty();

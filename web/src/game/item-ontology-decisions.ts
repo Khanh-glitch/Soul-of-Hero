@@ -532,7 +532,7 @@ export const LI_CROSSWALK: Readonly<Record<string, LiRow>> = Object.freeze({
   wood: L('Base material', 'wood', 'HAVE_SAME_ROLE', 'Same.'),
   cloth: L('Textile', 'cloth', 'HAVE_SAME_ROLE', 'Same; made from Plant Fiber.'),
   rope: L('Binding', 'rope', 'HAVE_SAME_ROLE', 'Same.'),
-  crude_oil: L('Raw oil from red barrels / extraction base', 'salvaged_oil', 'HAVE_SAME_ROLE', 'Salvaged Oil is live. Crude Petroleum (pumped) is fixture-only: P9.'),
+  crude_oil: L('Raw oil from red barrels / extraction base', 'crude_petroleum', 'HAVE_SAME_ROLE', 'Item set v3: Crude Petroleum is the one raw oil (Salvaged Oil retired into it). Pumped from a Veyra crude seep or bought from the vendor.'),
   low_quality_fuel: L('Fuel for generator and refinery', 'fuel_can', 'HAVE_SAME_ROLE', 'Same role.'),
   animal_fat: L('Animal by-product turned into fuel', '-', 'NOT_ADDED', 'SOH fuel comes from oil and wood; a second fuel source from hunting would duplicate Charcoal.'),
   oil_refinery: L('Fuel-making station', 'deploy_refinery', 'HAVE_SAME_ROLE', 'Same.'),

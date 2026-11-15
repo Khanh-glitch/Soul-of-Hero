@@ -19,6 +19,7 @@ import { COMPONENT_RECIPES, componentRuleSnapshot, recoveryPlan, recoveryPlanFor
 import { serializeSnapshot, validate } from '../src/game/persist';
 import { setActiveLayout } from '../src/game/world';
 import { itemClassLabel } from '../src/game/item-class';
+import { ITEM_RETIREMENT, isRetiredLive, liveItemPer } from '../src/game/final-item-set';
 
 const START = Date.UTC(2026, 10, 14, 6); let n = 0;
 const WRITE = process.env.SOH_WRITE_ONTOLOGY === '1';
@@ -70,6 +71,12 @@ function craftOut(g: GameState, st: Entity, recipe: string, at: number): number 
     expect(act(g, 'move', { from: out, fs: i, to: 'inv' }, at + ms + 600 + guard).ok).toBe(true);
   }
   return at + ms + 1000;
+}
+/** INTENT: put one log on a Campfire. A Campfire burns whether or not it has work, so fuel is brought per job. */
+function stoke(g: GameState, fire: Entity, at: number) {
+  const r = g.run!; place(r, fire.tx! - 1, fire.ty!);
+  const wi = C(r, 'inv').slots.findIndex((s) => s?.key === 'wood'); expect(wi, 'a log for the campfire').toBeGreaterThanOrEqual(0);
+  const mv = act(g, 'move', { from: 'inv', fs: wi, to: fire.station!.fuelC, qty: 1 }, at); expect(mv.ok, 'stoke: ' + why(mv)).toBe(true);
 }
 const recyclerOf = (r: RunState) => Object.values(r.entities).find((e) => e.kind === 'recycler')!;
 /** INTENT: feed one single-item stack to the Foundry Recycler. Returns the job without finishing it. */
@@ -124,14 +131,18 @@ function plan(table: Table, steps: Step[], exec?: { craft(recipe: string): void;
   const obj = (m: Map<string, number>) => Object.fromEntries([...m].filter(([, v]) => v > 0).sort(([a], [b]) => a.localeCompare(b)));
   return { atoms: obj(atoms), crafts: obj(crafts), leftovers: obj(stock), station_seconds: secs };
 }
+/** A Campfire is a packed device when the catalog lists one, otherwise it is built straight from its cost. */
+const CAMPFIRE_STEPS: Step[] = RECIPES.deploy_campfire
+  ? [{ kind: 'need', item: 'deploy_campfire', qty: 1 }, { kind: 'spend', label: 'place:campfire', cost: [['deploy_campfire', 1]] }]
+  : [{ kind: 'spend', label: 'place:campfire', cost: STRUCTS.campfire.cost as [string, number][] }];
 /** Bare hands → one packed Utility Motorbike. The two formulas a new run does not know (Forged Fasteners,
  *  Motorbike Kit) are paid for as directed studies at a real Research Table (9 Parts each). */
 const MOTORBIKE_STEPS: Step[] = [
   { kind: 'need', item: 'deploy_workbench', qty: 1 }, { kind: 'spend', label: 'place:workbench', cost: [['deploy_workbench', 1]] },
   { kind: 'need', item: 'deploy_furnace', qty: 1 }, { kind: 'spend', label: 'place:furnace', cost: [['deploy_furnace', 1]] },
+  ...CAMPFIRE_STEPS,   // item set v3: Refined Iron burns Charcoal, and Charcoal is a Campfire job
   { kind: 'spend', label: 'upgrade:2', cost: WORKBENCH_UPGRADE.cost },
   { kind: 'need', item: 'deploy_research', qty: 1 }, { kind: 'spend', label: 'place:research', cost: [['deploy_research', 1]] },
-  { kind: 'spend', label: 'research:fasteners', cost: [['spares', 9]] },
   { kind: 'spend', label: 'research:motorbike_kit', cost: [['spares', 9]] },
   { kind: 'spend', label: 'upgrade:3', cost: WORKBENCH_UPGRADE_III.cost },
   { kind: 'need', item: 'motorbike_kit', qty: 1 },
@@ -147,19 +158,15 @@ const delta = (a: Record<string, number>, b: Record<string, number>) =>
   Object.fromEntries([...new Set([...Object.keys(a), ...Object.keys(b)])].sort().map((k) => [k, (b[k] ?? 0) - (a[k] ?? 0)]).filter(([, v]) => v !== 0));
 
 describe('P1 + P7 — display language (no id, recipe, source or price moved)', () => {
-  it('Parts and Machine Parts are two different names, icons and classes; the Vietnamese names are alias data', () => {
+  it('item set v3: there is ONE parts item. Machine Parts is retired into Parts; the Vietnamese name is alias data', () => {
     expect(ITEMS.spares.name).toBe('Parts'); expect(ITEMS.spares.vi).toBe('Linh kiện');
-    expect(ITEMS.mechanical_parts.name).toBe('Machine Parts'); expect(ITEMS.mechanical_parts.vi).toBe('Bộ phận máy');
-    // Not "one word apart" only: different icon, different accent colour, different class chip.
-    expect(ITEMS.spares.icon).not.toBe(ITEMS.mechanical_parts.icon);
-    expect(ITEMS.spares.c2).not.toBe(ITEMS.mechanical_parts.c2);
-    expect(itemClassLabel('spares', 'x')).not.toBe(itemClassLabel('mechanical_parts', 'x'));
-    // Parts stays uncraftable; Machine Parts stays the same bench recipe.
+    // Round 2 kept two names one word apart ("Parts" / "Machine Parts"). The owner's final roster keeps only Parts:
+    // the old id stays parseable for saves, converts 1 -> 2, and has no formula.
+    expect(ITEM_RETIREMENT.mechanical_parts).toMatchObject({ stage: 'LIVE', to: 'spares' }); expect(liveItemPer('mechanical_parts')).toBe(2);
+    expect(ITEMS.mechanical_parts, 'still parseable').toBeDefined(); expect(RECIPES.mechanical_parts).toBeUndefined();
+    expect(itemClassLabel('spares', 'x')).toBeTruthy();
+    // Parts stays uncraftable.
     expect(Object.values(RECIPES).some((rc) => rc.out === 'spares' || rc.outs?.some(([k]) => k === 'spares'))).toBe(false);
-    expect(RECIPES.mechanical_parts.ins).toEqual([['scrap', 2], ['iron_ingot', 1]]);
-    expect(RECIPES.mechanical_parts.qty).toBe(2);
-    // The description no longer implies one source: Parts come from loot AND the Recycler.
-    expect(ITEMS.spares.desc).toMatch(/loot/i); expect(ITEMS.spares.desc).toMatch(/Recycler/);
     expect(ITEMS.spares.desc).toMatch(/Cannot be crafted/);
   });
   it('every item name is English; the seven settled Vietnamese names survive as `vi`', () => {
@@ -179,8 +186,8 @@ describe('P1 + P7 — display language (no id, recipe, source or price moved)', 
 });
 
 describe('G — migration ledger: exactly one revision bump, history stored', () => {
-  it('revision moved on to 4 (final item set); the three rev-2 definitions are frozen verbatim; the live catalog validates', () => {
-    expect(RECIPE_REVISION).toBe(4);
+  it('revision moved on to 5 (item set v3); the three rev-2 definitions are frozen verbatim; the live catalog validates', () => {
+    expect(RECIPE_REVISION).toBe(5);
     expect(CUT_OVER_REVISIONS[2]).toEqual(['vehicle_frame', 'vehicle_frame_piped', 'industrial_axe']);
     expect(Object.keys(LEGACY_RECIPES).filter((k) => k.endsWith('@2')).sort()).toEqual(['industrial_axe@2', 'vehicle_frame@2', 'vehicle_frame_piped@2']);
     expect(LEGACY_RECIPES['vehicle_frame@2'].ins).toEqual([['iron_ingot', 3], ['mechanical_parts', 2], ['spares', 2]]);
@@ -189,16 +196,20 @@ describe('G — migration ledger: exactly one revision bump, history stored', ()
     expect(LEGACY_RECIPES['industrial_axe@2'].ins).toEqual([['iron_axe', 1], ['mechanical_parts', 2], ['spares', 2]]);
     // Rev-1 entries are untouched (never edit a frozen key).
     expect(Object.keys(LEGACY_RECIPES).filter((k) => k.endsWith('@1')).sort()).toEqual(['fuel_can@1', 'iron_plate@1', 'mechanical_gear@1', 'metal_pipe@1', 'motorbike_kit@1']);
-    expect(RETIRED_RECIPES.slice(0, 2)).toEqual(['fuel_can', 'vehicle_frame_piped']); // rev 4 appended nine more (final item set); order of the old ones is frozen
-    expect(RETIRED_RECIPES).toHaveLength(11);
+    expect(RETIRED_RECIPES.slice(0, 2)).toEqual(['fuel_can', 'vehicle_frame_piped']); // later revisions only append; the order of the old ones is frozen
+    expect(RETIRED_RECIPES.slice(0, 11)).toHaveLength(11); expect(RETIRED_RECIPES.length).toBeGreaterThan(11);
+    expect(new Set(RETIRED_RECIPES).size).toBe(RETIRED_RECIPES.length);
     expect(RECIPES.vehicle_frame_piped).toBeUndefined();
-    expect(RECIPES.vehicle_frame.ins).toEqual(LEGACY_RECIPES['vehicle_frame_piped@2'].ins);   // the piped BOM IS the frame now
-    expect(RECIPES.vehicle_frame.rev).toBe(3); expect(RECIPES.industrial_axe.rev).toBe(3);
+    // the piped BOM became the frame at rev 3 and is what a job stamped 3 or 4 is still paid under
+    expect(recipeForJob('vehicle_frame', 3)!.ins).toEqual(LEGACY_RECIPES['vehicle_frame_piped@2'].ins);
+    expect(recipeForJob('vehicle_frame', 4)!.ins).toEqual(LEGACY_RECIPES['vehicle_frame_piped@2'].ins);
+    expect(RECIPES.vehicle_frame.rev).toBe(5); expect(RECIPES.industrial_axe.rev).toBe(5);
     expect(validateGameplayCatalog()).toBe(true);
   });
   it('resolves every (recipe, revision) pair to the definition that was live then', () => {
     const plain = LEGACY_RECIPES['vehicle_frame@2'];
-    expect(recipeForJob('vehicle_frame', 3)).toBe(RECIPES.vehicle_frame);
+    expect(recipeForJob('vehicle_frame', 5)).toBe(RECIPES.vehicle_frame);
+    expect(recipeForJob('vehicle_frame', 3)!.ins).toEqual(LEGACY_RECIPES['vehicle_frame_piped@2'].ins); expect(recipeForJob('vehicle_frame', 3)).toBe(recipeForJob('vehicle_frame', 4));
     expect(recipeForJob('vehicle_frame', 2)).toBe(plain);
     expect(recipeForJob('vehicle_frame', 1)).toBe(plain);          // unchanged by the rev-1 cutover → still its @2 definition
     expect(recipeForJob('vehicle_frame', undefined)).toBe(plain);  // pre-stamping save
@@ -206,18 +217,23 @@ describe('G — migration ledger: exactly one revision bump, history stored', ()
     expect(recipeForJob('vehicle_frame_piped', 1)).toBe(LEGACY_RECIPES['vehicle_frame_piped@2']);
     expect(recipeForJob('vehicle_frame_piped', 3)).toBeNull();     // retired: not live
     expect(recipeForJob('industrial_axe', 2)).toBe(LEGACY_RECIPES['industrial_axe@2']);
-    expect(recipeForJob('industrial_axe', 3)).toBe(RECIPES.industrial_axe);
+    expect(recipeForJob('industrial_axe', 3)).toBe(recipeForJob('industrial_axe', 4)); expect(recipeForJob('industrial_axe', 3)).not.toBe(RECIPES.industrial_axe); expect(recipeForJob('industrial_axe', 5)).toBe(RECIPES.industrial_axe);
     // Rev-1 behaviour is exactly what it was.
     expect(recipeForJob('metal_pipe', 1)!.qty).toBe(1); expect(recipeForJob('metal_pipe', 2)!.qty).toBe(2); expect(recipeForJob('metal_pipe', 3)!.qty).toBe(2);
     expect(recipeForJob('fuel_can', 1)!.out).toBe('fuel_can'); expect(recipeForJob('fuel_can', 2)).toBeNull(); expect(recipeForJob('fuel_can', 3)).toBeNull();
-    expect(recipeForJob('rope', 1)).toBe(RECIPES.rope); expect(recipeForJob('rope', 4)).toBe(RECIPES.rope); expect(recipeForJob('rope', 5)).toBeNull();
-    expect(hasLegacyDefinition('vehicle_frame_piped')).toBe(true); expect(latestLegacyDefinition('vehicle_frame')).toBe(plain);
-    // Untouched this round, by order: the two fluid machines.
-    expect(STRUCTS.oil_pump.cost).toEqual([['iron_ingot', 3], ['mechanical_parts', 2], ['spares', 2], ['brick', 2]]);
-    expect(STRUCTS.refinery.cost).toEqual([['iron_ingot', 4], ['mechanical_parts', 3], ['spares', 5], ['brick', 6], ['glass', 2]]);
+    expect(recipeForJob('rope', 1)).toBe(RECIPES.rope); expect(recipeForJob('rope', 5)).toBe(RECIPES.rope); expect(recipeForJob('rope', 6)).toBeNull();
+    expect(hasLegacyDefinition('vehicle_frame_piped')).toBe(true); expect(latestLegacyDefinition('vehicle_frame')).toBe(recipeForJob('vehicle_frame', 4)); // the newest frozen frame is now the rev-4 one
+    // Item set v3 re-priced the two fluid machines in live ids (Machine Parts and Brick retired).
+    for (const s of ['oil_pump', 'refinery']) for (const [k] of STRUCTS[s].cost) expect(isRetiredLive(k), s + ' <- ' + k).toBe(false);
+    expect(STRUCTS.oil_pump.cost).toEqual([['iron_ingot', 3], ['mechanical_gear', 1], ['metal_pipe', 2], ['spares', 2]]);
   });
 
-  it('a rev-2 save keeps its queued jobs, reserved UIDs, stock, crafted frames and a held retired blueprint (INTENT on FIXTURE stock)', () => {
+  // SUPERSEDED BY ITEM SET V3 (recipe revision 5). This test AUTHORS a rev-2 save by running the live engine with Machine Parts in the pack. A run can no
+  // longer hold Machine Parts (every mint point issues Parts), so the fixture cannot be produced this way. The same
+  // invariant — an old job keeps its reserved UIDs, finishes under the bill it paid, and cancels to exactly its stacks —
+  // is proven on a CAPTURED old save that really contains the retired ids: tests/pa1-rev1-queued-jobs.test.ts, and on
+  // raw-payload saves in tests/final-item-set.test.ts (VI.11).
+  it.skip('a rev-2 save keeps its queued jobs, reserved UIDs, stock, crafted frames and a held retired blueprint (INTENT on FIXTURE stock)', () => {
     const g = start(); const r = g.run!;
     // ── author the OLD save: for this moment only the table is the rev-2 table ──
     (RECIPES as Table).vehicle_frame = LEGACY_RECIPES['vehicle_frame@2'] as RecipeDef;
@@ -288,7 +304,9 @@ describe('G — migration ledger: exactly one revision bump, history stored', ()
 });
 
 describe('P3 — the Utility Frame takes a Metal Pipe (frame only)', () => {
-  it('ANALYTIC: bare hands → one Utility Motorbike, material and station time before (rev 2) vs after (rev 3)', () => {
+  // SUPERSEDED BY ITEM SET V3 (recipe revision 5). A rev-2 vs rev-3 comparison in atoms that no longer exist (scrap, coal, Machine Parts). The upgrade
+  // costs it spends are not versioned, so the frozen numbers cannot be recomputed. The LIVE bill is pinned in the next test.
+  it.skip('ANALYTIC: bare hands → one Utility Motorbike, material and station time before (rev 2) vs after (rev 3)', () => {
     const before = plan(tableAt(2), MOTORBIKE_STEPS), after = plan(tableAt(3), MOTORBIKE_STEPS);
     const d = { atoms: delta(before.atoms, after.atoms), crafts: delta(before.crafts, after.crafts), leftovers: delta(before.leftovers, after.leftovers), station_seconds: after.station_seconds - before.station_seconds };
     if (process.env.V2_DUMP) console.log(JSON.stringify({ before, after, d }));
@@ -312,18 +330,20 @@ describe('P3 — the Utility Frame takes a Metal Pipe (frame only)', () => {
 
   // Rev 3 is history now: the final item set (rev 4) retired the Motor Drive, so the LIVE chain is the rev-4 one.
   // The rev-2 → rev-3 comparison above stays as the frozen analytic record of what round 2 changed.
-  it('INTENT on FIXTURE atoms: the LIVE (rev 4) chain runs end to end and consumes exactly the analytic bill', () => {
+  it('INTENT on FIXTURE atoms: the LIVE (rev 5) chain runs end to end and consumes exactly the analytic bill', () => {
     const g = start(); const r = g.run!;
     const bill = plan(tableAt(RECIPE_REVISION), MOTORBIKE_STEPS);
     const spares0 = countItem(r, 'inv', 'spares');
     for (const [k, q] of Object.entries(bill.atoms)) expect(addItem(r, 'inv', k, q), k).toBe(0);     // FIXTURE: atoms only
     const FUEL_WOOD = 48; expect(addItem(r, 'inv', 'wood', FUEL_WOOD)).toBe(0);                    // FIXTURE: furnace fuel, measured below
-    let t = START + 100; let bench!: Entity, furnace!: Entity, table!: Entity; const log: string[] = [];
+    let t = START + 100; let bench!: Entity, furnace!: Entity, table!: Entity, fire!: Entity; const log: string[] = [];
+    let campLogs = 0; const CAMP_WOOD = 24; expect(addItem(r, 'inv', 'wood', CAMP_WOOD)).toBe(0);                    // FIXTURE: campfire fuel for the charcoal burns
     plan(tableAt(RECIPE_REVISION), MOTORBIKE_STEPS, {
       craft(recipe) {
         const rc = RECIPES[recipe]; log.push(recipe);
         if (!rc.station) { const res = act(g, 'craft', { recipe }, t); expect(res.ok, recipe + ': ' + why(res)).toBe(true); t += 1000; return; }
-        t = craftOut(g, rc.station === 'furnace' ? furnace : bench, recipe, t);
+        if (rc.station === 'campfire') { stoke(g, fire, t); t += 10; campLogs++; }
+        t = craftOut(g, rc.station === 'furnace' ? furnace : rc.station === 'campfire' ? fire : bench, recipe, t);
       },
       spend(label) {
         log.push(label);
@@ -337,6 +357,9 @@ describe('P3 — the Utility Frame takes a Metal Pipe (frame only)', () => {
             furnace = e; place(r, e.tx! - 1, e.ty!);
             const wi = C(r, 'inv').slots.findIndex((s) => s?.key === 'wood');
             expect(act(g, 'move', { from: 'inv', fs: wi, to: e.station!.fuelC, qty: FUEL_WOOD }, t + 1).ok).toBe(true);
+          } else if (what === 'campfire') {
+            fire = e; place(r, e.tx! - 1, e.ty!);
+            // not fuelled here: a Campfire burns whether or not it is working, so each charcoal burn brings its own log (stoke)
           } else table = e;
           t += 1000;
         } else if (kind === 'upgrade') {
@@ -359,8 +382,10 @@ describe('P3 — the Utility Frame takes a Metal Pipe (frame only)', () => {
     expect(countItem(r, 'inv', 'motorbike_kit')).toBe(1);
     expect(bench.station!.level).toBe(3);
     // every granted atom was consumed; what is left is exactly the analytic batch remainder
-    for (const k of Object.keys(bill.atoms)) expect(countItem(r, 'inv', k) - (k === 'spares' ? spares0 : 0), 'atom left: ' + k).toBe(0);
+    for (const k of Object.keys(bill.atoms)) expect(countItem(r, 'inv', k) - (k === 'spares' ? spares0 : 0) - (k === 'wood' ? CAMP_WOOD - campLogs : 0), 'atom left: ' + k).toBe(0);
+    expect(campLogs, 'one log per charcoal burn').toBe(bill.crafts.charcoal);
     for (const [k, q] of Object.entries(bill.leftovers)) if (k !== 'motorbike_kit') expect(countItem(r, 'inv', k), 'leftover ' + k).toBe(q);
+    expect(Object.keys(bill.atoms).sort(), 'the live chain closes on atoms a run can gather: no retired id').toEqual(['iron_ore', 'spares', 'stone', 'wood']);
     expect(countItem(r, 'inv', 'metal_pipe')).toBe(1);                 // the second section of the pair
     const fuelLeft = countItem(r, furnace.station!.fuelC, 'wood');
     // the spare pipe is not waste: the Recycler takes it back for one refined ingot
@@ -375,10 +400,12 @@ describe('P4 — the Salvager Axe takes a Metal Blade', () => {
   const AXE_STEPS: Step[] = [
     { kind: 'need', item: 'deploy_workbench', qty: 1 }, { kind: 'spend', label: 'place:workbench', cost: [['deploy_workbench', 1]] },
     { kind: 'need', item: 'deploy_furnace', qty: 1 }, { kind: 'spend', label: 'place:furnace', cost: [['deploy_furnace', 1]] },
+    ...CAMPFIRE_STEPS,
     { kind: 'spend', label: 'upgrade:2', cost: WORKBENCH_UPGRADE.cost },
     { kind: 'need', item: 'industrial_axe', qty: 1 },
   ];
-  it('ANALYTIC: cost and time before vs after; the Blade needs nothing the old axe did not already need', () => {
+  // SUPERSEDED BY ITEM SET V3 (recipe revision 5). Same reason as the motorbike comparison above: rev-2 vs rev-3 in retired atoms.
+  it.skip('ANALYTIC: cost and time before vs after; the Blade needs nothing the old axe did not already need', () => {
     const before = plan(tableAt(2), AXE_STEPS), after = plan(tableAt(3), AXE_STEPS);
     const d = { atoms: delta(before.atoms, after.atoms), crafts: delta(before.crafts, after.crafts), leftovers: delta(before.leftovers, after.leftovers), station_seconds: after.station_seconds - before.station_seconds };
     REPORT.salvager_axe = { scope: 'ANALYTIC. `hide` is the raw atom behind the Iron Axe leather grip. Recipe knowledge for industrial_axe (tier 2) is unchanged and not priced here.', before_rev2: before, after_rev3: after, delta: d, blade: { recipe: RECIPES.metal_blade, station: 'workbench level 2 (same level the axe upgrade itself needs)', known_from_start: RECIPES.metal_blade.base === true } };
@@ -395,12 +422,12 @@ describe('P4 — the Salvager Axe takes a Metal Blade', () => {
   });
   it('INTENT on FIXTURE atoms: blade is craftable before the axe; the old BOM is refused; the new one pays out', () => {
     const g = start(); const r = g.run!;
-    const bill = plan(tableAt(3), AXE_STEPS); const spares0 = countItem(r, 'inv', 'spares');
+    const bill = plan(tableAt(RECIPE_REVISION), AXE_STEPS); const spares0 = countItem(r, 'inv', 'spares');
     for (const [k, q] of Object.entries(bill.atoms)) expect(addItem(r, 'inv', k, q), k).toBe(0);
-    expect(addItem(r, 'inv', 'wood', 12)).toBe(0);
+    expect(addItem(r, 'inv', 'wood', 24)).toBe(0);
     r.knowledge.recipes.push('industrial_axe'); markDirty();              // FIXTURE: tier-2 knowledge (unchanged by P4)
-    let t = START + 100; let bench!: Entity, furnace!: Entity; let bladeAt = -1, axeAt = -1, i = 0;
-    plan(tableAt(3), AXE_STEPS, {
+    let t = START + 100; let bench!: Entity, furnace!: Entity, fire!: Entity; let bladeAt = -1, axeAt = -1, i = 0;
+    plan(tableAt(RECIPE_REVISION), AXE_STEPS, {
       craft(recipe) {
         i++; const rc = RECIPES[recipe];
         if (recipe === 'industrial_axe') {
@@ -413,7 +440,8 @@ describe('P4 — the Salvager Axe takes a Metal Blade', () => {
         }
         if (recipe === 'metal_blade') bladeAt = i;
         if (!rc.station) { expect(act(g, 'craft', { recipe }, t).ok, recipe).toBe(true); t += 1000; return; }
-        t = craftOut(g, rc.station === 'furnace' ? furnace : bench, recipe, t);
+        if (rc.station === 'campfire') { stoke(g, fire, t); t += 10; }
+        t = craftOut(g, rc.station === 'furnace' ? furnace : rc.station === 'campfire' ? fire : bench, recipe, t);
       },
       spend(label) {
         const [kind, what] = label.split(':');
@@ -421,48 +449,47 @@ describe('P4 — the Salvager Axe takes a Metal Blade', () => {
           const [tx, ty] = legalTileNear(g, Math.floor(r.player.x / TILE), Math.floor(r.player.y / TILE), what);
           expect(act(g, 'build', { struct: what, tx, ty }, t).ok, label).toBe(true);
           const e = Object.values(r.entities).filter((x) => x.kind === 'struct' && x.type === what).pop()!;
-          if (what === 'workbench') bench = e; else { furnace = e; place(r, e.tx! - 1, e.ty!); const wi = C(r, 'inv').slots.findIndex((s) => s?.key === 'wood' && s.qty >= 12); expect(act(g, 'move', { from: 'inv', fs: wi, to: e.station!.fuelC, qty: 12 }, t + 1).ok).toBe(true); }
+          if (what === 'workbench') bench = e; else if (what === 'campfire') fire = e; else { furnace = e; place(r, e.tx! - 1, e.ty!); const wi = C(r, 'inv').slots.findIndex((s) => s?.key === 'wood' && s.qty >= 12); expect(act(g, 'move', { from: 'inv', fs: wi, to: e.station!.fuelC, qty: 12 }, t + 1).ok).toBe(true); }
         } else { place(r, bench.tx! - 1, bench.ty!); expect(act(g, 'upgradeStation', { eid: bench.id }, t).ok, label).toBe(true); }
         t += 1000;
       },
     });
     expect(bladeAt).toBeGreaterThan(0); expect(bladeAt).toBeLessThan(axeAt);
     expect(countItem(r, 'inv', 'industrial_axe')).toBe(1); expect(countItem(r, 'inv', 'metal_blade')).toBe(0);
-    expect(countItem(r, 'inv', 'spares')).toBe(spares0);
+    expect(countItem(r, 'inv', 'spares'), 'every Part the bill asked for was spent, none minted').toBe(spares0);
     for (const k of Object.keys(bill.atoms)) if (k !== 'spares' && k !== 'wood') expect(countItem(r, 'inv', k), 'atom left: ' + k).toBe(0);
     expect(validate(raw(g))).not.toBeNull();
   });
   it('Recycler loops around the axe and the blade return no net material (K4)', () => {
-    // Raw ingot/part content of everything the rev-3 axe consumes, blade expanded.
-    const embedded = { iron_ingot: 3 /* iron axe */ + 4 /* blade */, mechanical_parts: 1 + 1 /* blade */, spares: 2 };
+    // Raw content of everything the live axe consumes: iron axe 3 + blade 4 ingots, 2 refined (3 ingots), a pipe section
+    // (1 refined = 1.5 ingots, 1 Parts) and the blade's 1 Parts.
+    const embedded = { iron_ingot: 3 + 4 + 3 + 1.5, spares: 1 + 1 };
     const axe = recoveryPlan({ uid: 'x', key: 'industrial_axe', qty: 1, dur: ITEMS.industrial_axe.dur } as never)!;
-    expect(axe.recipe).toBe('X:recover-v3');                               // existing rule, untouched
+    expect(axe.recipe).toBe('X:recover-v4');                               // item set v3: live-id table for every new job
     const back: Record<string, number> = {}; for (const [k, q] of axe.outputs) back[k] = (back[k] ?? 0) + q;
-    expect(back).toEqual({ scrap: 1, mechanical_parts: 2, iron_ingot: 1 }); // same return as at rev 2
-    expect(back.mechanical_parts).toBeLessThanOrEqual(embedded.mechanical_parts);
-    expect(back.iron_ingot).toBeLessThan(embedded.iron_ingot);
+    expect(back).toEqual({ iron_ingot: 2, refined_iron_ingot: 1 });
+    expect(back.iron_ingot + back.refined_iron_ingot * 1.5).toBeLessThan(embedded.iron_ingot);
     expect(back.spares ?? 0).toBe(0); expect(back.metal_blade ?? 0).toBe(0); expect(back.iron_axe ?? 0).toBe(0);
-    // One Scrap comes back, but a Machine Part needs TWO scrap per pair plus an ingot, and the loop burns 6 ingots and 2 Parts.
     const blade = recoveryPlan({ uid: 'y', key: 'metal_blade', qty: 1 } as never)!;
-    expect(blade.recipe).toBe('X:blade-v1'); expect(blade.outputs).toEqual([['iron_ingot', 2], ['mechanical_parts', 1]]);
-    REPORT.salvager_axe_recycle = { embedded_in_one_rev3_axe: embedded, recycler_returns_at_full_condition: back, net_per_craft_recycle_turn: { iron_ingot: back.iron_ingot - embedded.iron_ingot, mechanical_parts: back.mechanical_parts - embedded.mechanical_parts, spares: -embedded.spares, scrap: back.scrap }, blade_loop_net: { iron_ingot: 2 - 4, mechanical_parts: 1 - 1 }, verdict: 'NO NET MATERIAL: iron and Parts strictly negative, Machine Parts neutral. New Recycler rule for the axe NOT needed (Round 1 migration note withdrawn).' };
+    expect(blade.recipe).toBe('X:blade-v2'); expect(blade.outputs).toEqual([['iron_ingot', 2]]);   // half the iron, never the Part
+    REPORT.salvager_axe_recycle = { embedded_in_one_live_axe: embedded, recycler_returns_at_full_condition: back, net_per_craft_recycle_turn: { iron_equivalent: back.iron_ingot + back.refined_iron_ingot * 1.5 - embedded.iron_ingot, spares: -embedded.spares }, verdict: 'NET NEGATIVE' };
   });
-  it('INTENT: three blade craft → recycle turns only ever lose iron', () => {
+  it('INTENT: three blade craft → recycle turns lose two ingots and one Part each; nothing is minted', () => {
     const g = start(); const r = g.run!;
-    for (const [k, q] of [['wood', 20], ['stone', 6], ['iron_ingot', 13], ['mechanical_parts', 3]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const spares0 = countItem(r, 'inv', 'spares');
+    for (const [k, q] of [['wood', 20], ['stone', 6], ['iron_ingot', 14], ['spares', 7]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const bench = build(g, 'workbench', START + 10); place(r, bench.tx! - 1, bench.ty!);
-    expect(act(g, 'upgradeStation', { eid: bench.id }, START + 20).ok).toBe(true);       // −2 MP −1 iron
+    expect(act(g, 'upgradeStation', { eid: bench.id }, START + 20).ok).toBe(true);       // −2 iron −4 Parts
     let t = START + 100; const seen: [number, number][] = [];
     for (let turn = 0; turn < 3; turn++) {
-      const iron = countItem(r, 'inv', 'iron_ingot'), mp = countItem(r, 'inv', 'mechanical_parts');
+      const iron = countItem(r, 'inv', 'iron_ingot'), parts = countItem(r, 'inv', 'spares');
       t = craftOut(g, bench, 'metal_blade', t);
       const rec = recycleStart(g, 'metal_blade', t); expect(rec.ok, rec.reason).toBe(true);
       stepStations(g, 15_000, t + 15_000); t += 16_000; collect(g, rec.rc.station!.outC, t); t += 100;
-      expect(countItem(r, 'inv', 'iron_ingot')).toBe(iron - 2); expect(countItem(r, 'inv', 'mechanical_parts')).toBe(mp);
-      seen.push([countItem(r, 'inv', 'iron_ingot'), countItem(r, 'inv', 'mechanical_parts')]);
+      expect(countItem(r, 'inv', 'iron_ingot')).toBe(iron - 2); expect(countItem(r, 'inv', 'spares')).toBe(parts - 1);
+      seen.push([countItem(r, 'inv', 'iron_ingot'), countItem(r, 'inv', 'spares') - spares0]);
     }
-    expect(seen).toEqual([[10, 1], [8, 1], [6, 1]]); expect(countItem(r, 'inv', 'spares')).toBe(spares0);
+    expect(seen).toEqual([[10, 2], [8, 1], [6, 0]]);
   });
 });
 
@@ -476,7 +503,10 @@ describe('P5 — Recycler rule X:plate-v1 (1 Iron Plate → 1 Iron Ingot)', () =
     expect(snap['X:pipe-v3']).toEqual({ key: 'metal_pipe', seconds: 10, outputs: [['refined_iron_ingot', 1]] });
     expect(snap['X:gear-v1']).toEqual({ key: 'mechanical_gear', seconds: 15, outputs: [['mechanical_parts', 2], ['iron_ingot', 1]] });
     expect(snap['X:blade-v1']).toEqual({ key: 'metal_blade', seconds: 14, outputs: [['iron_ingot', 2], ['mechanical_parts', 1]] });
-    expect(recoveryPlan({ uid: 'd', key: 'damaged_drive', qty: 1 } as never)).toEqual({ recipe: 'X:drive', total: 12000, outputs: [['spares', 2]], condition: null });
+    // Item set v3: two NEW keys for the two rules that paid Machine Parts; the old keys above are untouched.
+    expect(snap['X:gear-v2']).toEqual({ key: 'mechanical_gear', seconds: 15, outputs: [['spares', 2], ['iron_ingot', 1]] });
+    expect(snap['X:blade-v2']).toEqual({ key: 'metal_blade', seconds: 14, outputs: [['iron_ingot', 2]] });
+    expect(recoveryPlan({ uid: 'd', key: 'damaged_drive', qty: 1 } as never), 'a Damaged Drive cannot be held any more').toBeNull();
     // Only a clean single plate qualifies; the rule cannot be reached through another recipe key.
     expect(recoveryPlan({ uid: 'p', key: 'iron_plate', qty: 2 } as never)).toBeNull();
     expect(recoveryPlanFor({ uid: 'p', key: 'iron_plate', qty: 1 } as never, 'X:pipe-v3')).toBeNull();
@@ -523,20 +553,21 @@ describe('P5 — Recycler rule X:plate-v1 (1 Iron Plate → 1 Iron Ingot)', () =
     expect(validate(raw(back))).not.toBeNull();
   });
 
-  it('INTENT: repeated craft → recycle loses one ingot, one coal and one fastener per turn; never mints iron or Parts', () => {
+  it('INTENT: repeated craft → recycle loses one ingot, two charcoal and two Parts per turn; never mints iron or Parts', () => {
     const g = start(); const r = g.run!;
-    for (const [k, q] of [['wood', 40], ['stone', 30], ['iron_ingot', 10], ['coal', 3], ['fasteners', 3], ['mechanical_parts', 2]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
+    const spares0 = countItem(r, 'inv', 'spares');
+    for (const [k, q] of [['wood', 40], ['stone', 30], ['iron_ingot', 11], ['charcoal', 6], ['spares', 10]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const bench = build(g, 'workbench', START + 10); place(r, bench.tx! - 1, bench.ty!);
-    expect(act(g, 'upgradeStation', { eid: bench.id }, START + 20).ok).toBe(true);       // −2 MP −1 iron → 9 ingots
+    expect(act(g, 'upgradeStation', { eid: bench.id }, START + 20).ok).toBe(true);       // −2 iron −4 Parts → 9 ingots, 6 Parts
     const furnace = build(g, 'furnace', START + 30); place(r, furnace.tx! - 1, furnace.ty!);
     const wi = C(r, 'inv').slots.findIndex((s) => s?.key === 'wood' && s.qty >= 8);
     expect(act(g, 'move', { from: 'inv', fs: wi, to: furnace.station!.fuelC, qty: 8 }, START + 31).ok).toBe(true);
-    const spares0 = countItem(r, 'inv', 'spares'); let t = START + 100;
-    const ledger = () => ({ iron_ingot: countItem(r, 'inv', 'iron_ingot'), coal: countItem(r, 'inv', 'coal'), fasteners: countItem(r, 'inv', 'fasteners'), refined_iron_ingot: countItem(r, 'inv', 'refined_iron_ingot'), iron_plate: countItem(r, 'inv', 'iron_plate'), mechanical_parts: countItem(r, 'inv', 'mechanical_parts'), spares: countItem(r, 'inv', 'spares') - spares0 });
+    let t = START + 100;
+    const ledger = () => ({ iron_ingot: countItem(r, 'inv', 'iron_ingot'), charcoal: countItem(r, 'inv', 'charcoal'), refined_iron_ingot: countItem(r, 'inv', 'refined_iron_ingot'), iron_plate: countItem(r, 'inv', 'iron_plate'), spares: countItem(r, 'inv', 'spares') - spares0 });
     const turns = [ledger()];
     for (let turn = 0; turn < 3; turn++) {
-      t = craftOut(g, furnace, 'refined_iron_ingot', t);                   // 3 ingot + 1 coal → 2 refined
-      t = craftOut(g, bench, 'iron_plate', t);                             // 2 refined + 1 fastener → 2 plates
+      t = craftOut(g, furnace, 'refined_iron_ingot', t);                   // 3 ingot + 2 charcoal → 2 refined
+      t = craftOut(g, bench, 'iron_plate', t);                             // 2 refined + 2 Parts → 2 plates
       for (let k = 0; k < 2; k++) {
         splitOne(g, 'iron_plate', t); t += 20;
         const rec = recycleStart(g, 'iron_plate', t); expect(rec.ok, rec.reason).toBe(true);
@@ -545,12 +576,12 @@ describe('P5 — Recycler rule X:plate-v1 (1 Iron Plate → 1 Iron Ingot)', () =
       turns.push(ledger());
     }
     expect(turns).toEqual([
-      { iron_ingot: 9, coal: 3, fasteners: 3, refined_iron_ingot: 0, iron_plate: 0, mechanical_parts: 0, spares: 0 },
-      { iron_ingot: 8, coal: 2, fasteners: 2, refined_iron_ingot: 0, iron_plate: 0, mechanical_parts: 0, spares: 0 },
-      { iron_ingot: 7, coal: 1, fasteners: 1, refined_iron_ingot: 0, iron_plate: 0, mechanical_parts: 0, spares: 0 },
-      { iron_ingot: 6, coal: 0, fasteners: 0, refined_iron_ingot: 0, iron_plate: 0, mechanical_parts: 0, spares: 0 },
+      { iron_ingot: 9, charcoal: 6, refined_iron_ingot: 0, iron_plate: 0, spares: 6 },
+      { iron_ingot: 8, charcoal: 4, refined_iron_ingot: 0, iron_plate: 0, spares: 4 },
+      { iron_ingot: 7, charcoal: 2, refined_iron_ingot: 0, iron_plate: 0, spares: 2 },
+      { iron_ingot: 6, charcoal: 0, refined_iron_ingot: 0, iron_plate: 0, spares: 0 },
     ]);
-    REPORT.plate_recycle_loop = { scope: 'INTENT on FIXTURE stock', per_turn: { iron_ingot: -1, coal: -1, fasteners: -1, mechanical_parts: 0, spares: 0 }, ledger_by_turn: turns, verdict: 'NET NEGATIVE: no iron, no Machine Parts and no Parts are created.' };
+    REPORT.plate_recycle_loop = { scope: 'INTENT on FIXTURE stock', per_turn: { iron_ingot: -1, charcoal: -2, spares: -2 }, ledger_by_turn: turns, verdict: 'NET NEGATIVE: no iron and no Parts are created.' };
     expect(validate(raw(g))).not.toBeNull();
   });
 

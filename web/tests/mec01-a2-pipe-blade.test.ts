@@ -55,7 +55,10 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     const snap=componentRuleSnapshot();
     // PA1 R1 adds X:pipe-v3: the recovered paper return (1 refined ingot) is what keeps the
     // two-section-per-craft yield conservation-safe. v1/v2 stay frozen for stored jobs.
-    expect(Object.keys(snap).sort()).toEqual(['X:blade-v1','X:gear-v1','X:pipe-v1','X:pipe-v2','X:pipe-v3','X:plate-v1'].sort());
+    expect(Object.keys(snap).sort()).toEqual(['X:blade-v1','X:blade-v2','X:gear-v1','X:gear-v2','X:pipe-v1','X:pipe-v2','X:pipe-v3','X:plate-v1'].sort());
+    // item set v3: the two rules that paid Machine Parts got NEW keys; the v1 rows above stay byte-identical for stored jobs
+    expect(snap['X:blade-v2']).toEqual({key:'metal_blade',seconds:14,outputs:[['iron_ingot',2]]});
+    expect(snap['X:gear-v2']).toEqual({key:'mechanical_gear',seconds:15,outputs:[['spares',2],['iron_ingot',1]]});
     expect(snap['X:plate-v1']).toEqual({key:'iron_plate',seconds:10,outputs:[['iron_ingot',1]]});   // Item Ontology V2 P5
     expect(snap['X:pipe-v3']).toEqual({key:'metal_pipe',seconds:10,outputs:[['refined_iron_ingot',1]]});
     expect(snap['X:pipe-v1']).toEqual({key:'metal_pipe',seconds:10,outputs:[['refined_iron_ingot',1]]});   // stored-job rule kept
@@ -64,10 +67,10 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     expect(snap['X:gear-v1']).toEqual({key:'mechanical_gear',seconds:15,outputs:[['mechanical_parts',2],['iron_ingot',1]]});
     const mirror=(BAL as any).recyclerV4?.components??(BAL as any).recyclerV4;
     // Every rule except the frozen pre-D5 / superseded rows must be priced against today's table.
-    for (const [recipe,r] of Object.entries(snap)) if (recipe!=='X:pipe-v1' && recipe!=='X:pipe-v2') {
+    for (const [recipe,r] of Object.entries(snap)) if (!['X:pipe-v1','X:pipe-v2','X:gear-v1','X:blade-v1'].includes(recipe)) {
       const row=mirror[r.key];expect(row.recipe).toBe(recipe);expect(row.seconds).toBe(r.seconds);expect(row.outputs).toEqual(r.outputs);
     }
-    expect(COMPONENT_RECIPES).toContain('X:blade-v1');
+    expect(COMPONENT_RECIPES).toContain('X:blade-v1');expect(COMPONENT_RECIPES).toContain('X:blade-v2');
   });
 
   it('D-proof verdicts: new component routes are OK (priced, not over-return); no applicable route is NO_RECOVERY_ROUTE, not UNKNOWN', () => {
@@ -76,19 +79,25 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     // return is exactly what the proof flags, and it can never be selected for a new job again.
     expect(v('metal_pipe','X:pipe-v3')).toEqual(['OK']);
     expect(v('metal_pipe','X:pipe-v2')).toEqual(['OVER_RETURN']);
-    expect(v('metal_blade','X:blade-v1')).toEqual(['OK']);
-    expect(v('mechanical_gear','X:gear-v1')).toEqual(['OK']);
+    expect(v('metal_blade','X:blade-v2')).toEqual(['OK']);
+    expect(v('mechanical_gear','X:gear-v2')).toEqual(['OK']);
+    // KNOWN, BOUNDED: the frozen v1 rules pay Machine Parts, which are now issued as 2 Parts each. They over-return against
+    // today's bill and can never be selected for a new job; only a job already stored under them is paid this way.
+    expect(v('metal_blade','X:blade-v1')).toEqual(['OVER_RETURN']);
+    expect(v('mechanical_gear','X:gear-v1')).toEqual(['OVER_RETURN']);
     expect(v('mechanical_parts','X:recover-v3').every((x:string)=>x==='NO_RECOVERY_ROUTE')).toBe(true);
     expect(v('metal_blade','X:recover-v3').every((x:string)=>x==='NO_RECOVERY_ROUTE')).toBe(true);
     expect(v('metal_pipe','X:recover-v3').every((x:string)=>x==='NO_RECOVERY_ROUTE')).toBe(true);
   });
 
-  it('economics: every new return is strictly below its craft cost (no free loop), with stated lower bounds', () => {
-    const ingot=1, scrap=1/3, mp=2*scrap/2+1*ingot/2, refined=1.5;   // MP recipe = 2 scrap + 1 ingot -> 2 MP
-    const pipeCraft=2*refined+mp, pipeV2=refined+mp, bladeCraft=4*ingot+mp, bladeV1=2*ingot+mp;
-    expect(pipeCraft).toBeGreaterThanOrEqual(3.83);expect(pipeV2).toBeGreaterThanOrEqual(2.33);
-    expect(pipeV2).toBeLessThan(pipeCraft);expect(bladeV1).toBeLessThan(bladeCraft);
-    expect(bladeCraft-bladeV1).toBeGreaterThan(1.5);
+  it('economics: every new return is strictly below its craft cost in EVERY input (no free loop)', () => {
+    // rev 5 bills, per unit made
+    const per=(id:string)=>Object.fromEntries(RECIPES[id].ins.map(([k,q])=>[k,q/RECIPES[id].qty]));
+    const back=(key:string)=>Object.fromEntries(recoveryPlan({uid:'x',key,qty:1} as any)!.outputs);
+    expect(per('metal_pipe')).toEqual({refined_iron_ingot:1,spares:1});expect(back('metal_pipe')).toEqual({refined_iron_ingot:1});      // the Part is lost
+    expect(per('metal_blade')).toEqual({iron_ingot:4,spares:1});expect(back('metal_blade')).toEqual({iron_ingot:2});                    // half the iron, the Part is lost
+    expect(per('mechanical_gear')).toEqual({iron_ingot:2,spares:3});expect(back('mechanical_gear')).toEqual({spares:2,iron_ingot:1});
+    for(const key of ['metal_pipe','metal_blade','mechanical_gear']){const c=per(key),b=back(key);let less=false;for(const [k,q] of Object.entries(b)){expect(q,key+' '+k).toBeLessThanOrEqual(c[k]??0);}for(const k of Object.keys(c))if((b[k]??0)<c[k])less=true;expect(less,key).toBe(true);}
   });
 
   it('a stored X:gear-v1 / X:pipe-v2 job keeps its return vector even after the live balance mirror changes', () => {
@@ -103,9 +112,9 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     expect(recoveryPlanFor(gear,'X:gear-v1')?.outputs).toEqual([['mechanical_parts',2],['iron_ingot',1]]);
   });
 
-  it('new jobs: pipe -> X:pipe-v3, blade -> X:blade-v1; stored v1 pipe still returns 1 ingot; qty>1 and durable parts are refused', () => {
+  it('new jobs: pipe -> X:pipe-v3, blade -> X:blade-v2; stored v1 pipe still returns 1 ingot; qty>1 and durable parts are refused', () => {
     expect(recoveryPlan({uid:'x',key:'metal_pipe',qty:1} as any)?.recipe).toBe('X:pipe-v3');
-    expect(recoveryPlan({uid:'x',key:'metal_blade',qty:1} as any)?.recipe).toBe('X:blade-v1');
+    expect(recoveryPlan({uid:'x',key:'metal_blade',qty:1} as any)?.recipe).toBe('X:blade-v2');
     expect(recoveryPlan({uid:'x',key:'metal_blade',qty:2} as any)).toBeNull();
     expect(recoveryPlan({uid:'x',key:'metal_pipe',qty:2} as any)).toBeNull();
     expect(recoveryPlan({uid:'x',key:'metal_blade',qty:1,dur:4} as any)).toBeNull();
@@ -123,13 +132,13 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     // Branch P1: Iron Plate. The recovered v1.1 BOM is 2 refined + 1 fastener -> 2 plates, so the
     // plate is NO LONGER a pipe sink — removing that invented third sink is part of the cutover.
     const gP1=copy(at);const bP1=Object.values(gP1.run!.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;const beforeP1=ledger(gP1);
-    addItem(gP1.run!,'inv','fasteners',1);                    // FIXTURE grant for the corrected input
+    addItem(gP1.run!,'inv','spares',2);                       // FIXTURE grant: the plate's 2 Parts
     craftAndCollect(gP1,bP1,'iron_plate',START+100);const afterP1=ledger(gP1);
     expect(afterP1.iron_plate).toBe(beforeP1.iron_plate+2);expect(afterP1.metal_pipe).toBe(2);expect(afterP1.refined_iron_ingot).toBe(beforeP1.refined_iron_ingot-2);
     // Branch P2: piped Utility Frame (pipe + 2 iron + 2 MP + 2 spares -> frame)
     const gP2=copy(at);const bP2=Object.values(gP2.run!.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;const beforeP2=ledger(gP2);
     craftAndCollect(gP2,bP2,'vehicle_frame',START+100);const afterP2=ledger(gP2);   // rev 3: the piped BOM is THE frame recipe
-    expect(afterP2.vehicle_frame).toBe(beforeP2.vehicle_frame+1);expect(afterP2.metal_pipe).toBe(1);expect(afterP2.spares).toBe(beforeP2.spares-2);
+    expect(afterP2.vehicle_frame).toBe(beforeP2.vehicle_frame+1);expect(afterP2.metal_pipe).toBe(1);expect(afterP2.spares).toBe(beforeP2.spares-4);   // rev-5 frame: 4 Parts
     // Branch P3: recycle at the Foundry Recycler (X:pipe-v3): 1 refined ingot back, no parts, no spares
     const gP3=copy(at);const rP3=gP3.run!;const beforeP3=ledger(gP3);const rc=recyclerOf(rP3);
     place(rP3,rc.tx!-1,rc.ty!);
@@ -141,7 +150,7 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     expect(dispatch(gP3,{id:'a2-p3-'+(++n),type:'recycleItem',eid:rc.id,slot,uid},START+200).ok).toBe(true);
     expect(rc.station!.queue[0].recipe).toBe('X:pipe-v3');
     stepStations(gP3,10000+500,START+12700);
-    const out=rc.station!.outC!;expect(countItem(rP3,out,'refined_iron_ingot')).toBe(1);expect(countItem(rP3,out,'mechanical_parts')).toBe(0);
+    const out=rc.station!.outC!;expect(countItem(rP3,out,'refined_iron_ingot')).toBe(1);expect(countItem(rP3,out,'spares')).toBe(0);
     const afterP3=ledger(gP3);expect(afterP3.spares).toBe(beforeP3.spares);expect(afterP3.metal_pipe).toBe(1);
     // The three branches consume the same pipe UID and produce different things.
     expect(afterP1.iron_plate-beforeP1.iron_plate).not.toBe(afterP2.vehicle_frame-beforeP2.vehicle_frame);
@@ -156,9 +165,9 @@ describe('MEC-01 R2 A2: Metal Pipe and Metal Blade recovery (new jobs) and immut
     stepStations(g,6000,START+6000);
     const saved=raw(g);                                   // the same serializer the save path uses
     const back=validate(JSON.parse(JSON.stringify(saved)))!;expect(back).not.toBeNull();
-    const rb=recyclerOf(back.run!);expect(rb.station!.queue[0].recipe).toBe('X:blade-v1');expect(rb.station!.queue[0].reserved![0].uid).toBe(uid);
+    const rb=recyclerOf(back.run!);expect(rb.station!.queue[0].recipe).toBe('X:blade-v2');expect(rb.station!.queue[0].reserved![0].uid).toBe(uid);
     stepStations(back,8500,START+14500);stepStations(back,2000,START+16500);
-    const out=rb.station!.outC!;expect(countItem(back.run!,out,'iron_ingot')).toBe(2);expect(countItem(back.run!,out,'mechanical_parts')).toBe(1);
+    const out=rb.station!.outC!;expect(countItem(back.run!,out,'iron_ingot')).toBe(2);expect(countItem(back.run!,out,'spares')).toBe(0);   // blade-v2: the Part is never returned
     expect(rb.station!.queue.length).toBe(0);
   });
 

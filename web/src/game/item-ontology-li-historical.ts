@@ -170,7 +170,7 @@ export interface LiveInputs {
 }
 /** Limits that reachability alone cannot show: the SOH item is live, the Last Island ROLE it is matched to is only partly live. */
 export const LIVE_LIMITS: Readonly<Record<string, string>> = Object.freeze({
-  crude_oil: 'Salvaged Oil is live (salvage bonus, vendor). The Last Island role of crude pumped from the ground is NOT live: Crude Petroleum is fixture-only and the Oil Pump produces nothing in live play. This row does not establish a working Oil Pump.',
+  crude_oil: 'Crude Petroleum is the one raw oil since item set v3. Engine routes exist (Oil Pump on a Veyra crude seep; vendor stock) and are covered by engine tests only: no New-Game play-through has pumped oil yet, so this row does not establish a working Oil Pump in live play.',
 });
 
 /** Atlas ids that the historical set does not carry. */
@@ -185,7 +185,7 @@ const SHARED_DECLINED = new Set(['animal_fat', 'grilled_mushroom', 'needle_tube'
 /** Shared ids where the historical `match_soh` column and the atlas verdict point different ways, and which one stands. */
 export const SHARED_DISAGREEMENTS: Readonly<Record<string, string>> = Object.freeze({
   canned_meat: 'Historical says missing. Atlas verdict stands: the preserved-food role is Salted Roast.',
-  electric_door: 'Historical says missing. The atlas verdict stands for the catalog only: SOH defines the Powered Door structure, but it is MODULE_PENDING and not player-buildable, so for live play the historical reading is right (see soh_live_status).',
+  electric_door: 'Historical says missing. The atlas verdict stands for the catalog only: since item set v3 the Powered Door is a craftable module fitted into an owned door (engine-tested, not yet play-proven; see soh_live_status).',
   electronic_parts: 'Historical says missing. Atlas verdict stands: powered devices spend Parts in SOH; a separate electronics item was reviewed and rejected.',
   fruit_juice: 'Historical says missing. Atlas verdict stands: thirst is served by water containers and broth.',
   sulfur_powder: 'Historical says missing. Atlas verdict stands: SOH has Sulfur, used for Cores and Essences instead of ammunition.',

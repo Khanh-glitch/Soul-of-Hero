@@ -2,7 +2,7 @@
 // Numeraire (authored, not invented): 1 iron_ingot = 1 iron_ore (furnace iron_ingot) = 3 scrap (furnace scrap_ingot).
 // Atoms without an authored conversion (coal, wood, leather, stone, crystal, spares) are compared per material and never
 // converted. damaged_drive is salvage-only (non-repeatable): any route through it is excluded from craft cost.
-import { liveItemId } from './final-item-set';
+import { liveItemId, liveItemPer } from './final-item-set';
 import { RECIPES, ITEMS } from './catalog';
 import { recoveryPlanFor, COMPONENT_RECIPES, type RecoveryPlan } from './recycler';
 import BAL from './balance.v1.json';
@@ -13,7 +13,9 @@ export const SALVAGE_ONLY = new Set(['damaged_drive']);
 /** Atoms: expansion stops here. iron_ingot/iron_ore/scrap are the numeraire; the rest are compared per material. */
 // R8C: rich_iron_ore is an authored atom valued at 3 ingot-equivalents: the furnace recipe refined_iron_rich (1 rich + 1 coal -> 2 refined)
 // replaces refined_iron_ingot (3 iron_ingot + 1 coal -> 2 refined), so one rich ore stands for three iron ore units.
-const ATOMS = new Set(['iron_ingot', 'iron_ore', 'rich_iron_ore', 'scrap', 'coal', 'wood', 'stone', 'leather', 'spares', 'crystal', 'damaged_drive']);
+// Item set v3: Coal, Scrap Metal and the Damaged Drive are retired. Charcoal is the carbon atom (kept as an atom, like coal was, so the
+// carbon in a part stays visible instead of dissolving into wood); the retired ids stay listed only so a frozen table can still be read.
+const ATOMS = new Set(['iron_ingot', 'iron_ore', 'rich_iron_ore', 'scrap', 'coal', 'charcoal', 'wood', 'stone', 'leather', 'spares', 'crystal', 'damaged_drive']);
 const INGOT_PER: Record<string, number> = { iron_ingot: 1, iron_ore: 1, rich_iron_ore: 3, scrap: 1 / 3 };
 
 export type Route = { recipe: string; out: string; qty: number; secs: number; ins: [string, number][]; alias?: string };
@@ -100,7 +102,9 @@ export function recoveryAtTier(item: string, recipe: string, tier: 'base' | 'mid
   const plan = recoveryPlanFor(s, recipe);
   if (!plan) return { plan: null, vec: null, repeatable: false };
   const vec: Vec = {};
-  for (const [k, q] of plan.outputs) { const e = expand(k, q); if (!e) return { plan, vec: null, repeatable: false }; add(vec, e.vec); }
+  // A frozen plan may name a retired output. What the player receives is its successor at the declared ratio (the mint
+  // choke point), so that is what the proof prices.
+  for (const [k0, q0] of plan.outputs) { const k = liveItemId(k0), q = q0 * liveItemPer(k0); const e = expand(k, q); if (!e) return { plan, vec: null, repeatable: false }; add(vec, e.vec); }
   return { plan, vec, repeatable: true };
 }
 

@@ -1,3 +1,4 @@
+import { RETIRED_ITEM_IDS } from '../src/game/final-item-set';
 import { describe, expect, it } from 'vitest';
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -368,7 +369,7 @@ describe('WP1 / Milestone M1 — SOH Economic Multigraph & LI Crosswalk', () => 
 
     // Every catalog key accounted for
     expect(graph1.summary.nodesByKind.item).toBe(Object.keys(ITEMS).length);
-    expect(graph1.summary.nodesByKind.world_source).toBe(Object.keys(SOURCES).length + 1); // + oil_site_fixture
+    expect(graph1.summary.nodesByKind.world_source).toBe(Object.keys(SOURCES).length + 2); // + oil_site_fixture + oil_seep_veyra (round 2)
     expect(graph1.summary.nodesByKind.structure).toBe(Object.keys(STRUCTS).length);
     expect(graph1.summary.nodesByKind.creature).toBe(Object.keys(CREATURES).length);
     expect(graph1.summary.nodesByKind.elder).toBe(
@@ -378,24 +379,30 @@ describe('WP1 / Milestone M1 — SOH Economic Multigraph & LI Crosswalk', () => 
       Object.keys(VENDOR_SPARES).length + Object.keys(VENDOR_SECURED).length,
     );
 
-    // Confirmed code-grounded Veyra gaps & D5 Recycler resolution appear in diagnostics
-    expect(graph1.diagnostics.veyraReachableItems).toContain('damaged_drive');
-    expect(graph1.diagnostics.veyraUnreachableItems).not.toContain('damaged_drive');
-    expect(graph1.diagnostics.veyraUnreachableItems).toContain('crude_petroleum');
-    expect(graph1.diagnostics.veyraUnreachableItems).toContain('chitin');
-    expect(graph1.diagnostics.veyraUnreachableItems).toContain('crawler_optic');
-    expect(graph1.diagnostics.veyraUnreachableItems).toContain('chitin_armor');
-    expect(graph1.diagnostics.veyraUnreachableItems).toContain('core_demon');
-    expect(graph1.diagnostics.veyraUnreachableItems).toContain('keycard');
-    expect(graph1.diagnostics.veyraUnreachableItems).toContain('wolf_fang');
-    expect(graph1.diagnostics.veyraUnreachableItems).toContain('beetle_horn');
-    expect(graph1.diagnostics.veyraUncraftableRecipes).toContain('chitin_armor');
-    expect(graph1.diagnostics.veyraUncraftableRecipes).toContain('core_demon');
-    expect(graph1.diagnostics.veyraUncraftableRecipes).toContain('essence_spirit');
-    expect(graph1.diagnostics.veyraUncraftableRecipes).not.toContain('recover_drive');
-    expect(graph1.diagnostics.shippingUnreachableItems).toContain('crude_petroleum');
-    expect(graph1.diagnostics.shippingUncraftableRecipes).toContain('pump_crude');
-    expect(graph1.diagnostics.shippingUncraftableRecipes).toContain('refinery_crude');
+    // Confirmed code-grounded gaps appear in diagnostics. ITEM SET V3 (round 2):
+    //  - every retired id is unreachable on BOTH layers: an authored table that names one issues its successor;
+    //  - Crude Petroleum is reachable on Veyra (finite seeps + Oil Pump) and on Shipping (vendor only: no seep, no pump);
+    //  - the Green Card is found on Shipping only; Blue and Purple Cards have no source anywhere (BLOCKED);
+    //  - Veyra still spawns no wolf / crawler / beetle, so their drops and what is made from them stay unreachable.
+    const d = graph1.diagnostics;
+    for (const retired of RETIRED_ITEM_IDS) {
+      expect(d.veyraUnreachableItems, retired).toContain(retired);
+      expect(d.shippingUnreachableItems, retired).toContain(retired);
+    }
+    expect(d.veyraReachableItems).toEqual(expect.arrayContaining(['spares', 'crude_petroleum', 'fuel_can', 'electric_resistor', 'mechanical_gear']));
+    expect(d.shippingUnreachableItems).not.toContain('crude_petroleum');
+    expect(d.shippingUnreachableItems).not.toContain('green_card');
+    expect(d.veyraUnreachableItems).toContain('green_card');
+    for (const card of ['blue_card', 'purple_card']) {
+      expect(d.veyraUnreachableItems).toContain(card);
+      expect(d.shippingUnreachableItems).toContain(card);
+    }
+    for (const k of ['chitin', 'crawler_optic', 'chitin_armor', 'core_demon', 'wolf_fang', 'beetle_horn']) expect(d.veyraUnreachableItems, k).toContain(k);
+    expect(d.veyraUncraftableRecipes).toEqual(expect.arrayContaining(['chitin_armor', 'core_demon', 'essence_spirit']));
+    expect(d.veyraUncraftableRecipes).not.toContain('pump_crude');
+    expect(d.shippingUncraftableRecipes).toContain('pump_crude');
+    for (const gone of ['recover_drive', 'refinery_crude']) expect(RECIPES[gone], gone).toBeUndefined();
+    expect(graph1.nodes.find((n) => n.id === 'world_source:oil_seep_veyra')?.runtimeStatus).toBe('LIVE_VEYRA_ONLY');
 
     // 3. Build & assert exhaustive LI Crosswalk
     const cwRows = buildCrosswalkRows();

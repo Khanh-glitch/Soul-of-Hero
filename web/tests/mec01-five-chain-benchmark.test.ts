@@ -86,7 +86,7 @@ function routeRows(item:string){
 }
 function recyclerRows(item:string){
   const out:any={};
-  for(const [ver,rec] of [['v1','X:recover-v1'],['v2','X:recover-v2'],['v3','X:recover-v3']] as const){
+  for(const [ver,rec] of [['v1','X:recover-v1'],['v2','X:recover-v2'],['v3','X:recover-v3'],['v4','X:recover-v4']] as const){
     const p=proveItem(item,rec as any);
     if(p.rows.every((r:any)=>r.verdict==='UNKNOWN'))continue;
     out[ver]=p.rows.map((r:any)=>({tier:r.tier,outputs:r.cumulativeOutputs??null,ingotEqRecovered:r.ieRecovered??null,ingotEqCraft:r.ieCraft??null,minted:r.mintedNonNumeraire??[],verdict:r.verdict}));
@@ -142,43 +142,57 @@ describe('MEC-01 P4: five-chain industrial benchmark (reproducible)', () => {
       };
     });
     // Fuel/time receipts for the ore-to-ingot leg, from the authored furnace recipes.
-    const furnace={iron_ingot:{fromOre:{secs:RECIPES.iron_ingot.secs,ins:RECIPES.iron_ingot.ins,outQty:RECIPES.iron_ingot.qty}},scrap_ingot:{fromScrap:{secs:RECIPES.scrap_ingot.secs,ins:RECIPES.scrap_ingot.ins,outQty:RECIPES.scrap_ingot.qty}},refined_iron_ingot:{secs:RECIPES.refined_iron_ingot.secs,ins:RECIPES.refined_iron_ingot.ins,outQty:RECIPES.refined_iron_ingot.qty}};
-    // MEC-01 R2 A1: Gear as a carried INPUT at the Foundry Recycler (X:gear-v1). Same ingot-equivalent basis as the chains above.
-    const ieScrap=1/RECIPES.scrap_ingot.ins[0][1]*RECIPES.scrap_ingot.qty;   // ingot per scrap
-    const ieMP=(RECIPES.mechanical_parts.ins as [string,number][]).reduce((a,[k,q])=>a+q*(k==='iron_ingot'?1:k==='scrap'?ieScrap:0),0)/RECIPES.mechanical_parts.qty;
-    const ieFast=(RECIPES.fasteners.ins as [string,number][]).reduce((a,[k,q])=>a+q*(k==='iron_ingot'?1:k==='scrap'?ieScrap:0),0)/RECIPES.fasteners.qty;
-    const ieGearCraft=(RECIPES.mechanical_gear.ins as [string,number][]).reduce((a,[k,q])=>a+q*(k==='iron_ingot'?1:k==='mechanical_parts'?ieMP:k==='fasteners'?ieFast:0),0);
+    // ITEM SET V3: Scrap Metal, Machine Parts and Fasteners are retired into Parts (`spares`), and `scrap_ingot` with them.
+    // There is no scrap numeraire any more: only iron_ingot = iron_ore carries one; Parts are finite salvage and are
+    // compared per material, never converted.
+    const furnace={iron_ingot:{fromOre:{secs:RECIPES.iron_ingot.secs,ins:RECIPES.iron_ingot.ins,outQty:RECIPES.iron_ingot.qty}},refined_iron_ingot:{secs:RECIPES.refined_iron_ingot.secs,ins:RECIPES.refined_iron_ingot.ins,outQty:RECIPES.refined_iron_ingot.qty}};
+    expect(RECIPES.scrap_ingot).toBeUndefined();
+    // Gear as a carried INPUT at the Recycler (live rule X:gear-v2), per material.
+    const gearIn=RECIPES.mechanical_gear.ins as [string,number][];
     const gearOut=BAL.recyclerV4.components.mechanical_gear.outputs as [string,number][];
-    const ieGearRet=gearOut.reduce((a,[k,q])=>a+q*(k==='iron_ingot'?1:k==='mechanical_parts'?ieMP:0),0);
-    const gearRecycleV4={recipe:'X:gear-v1',seconds:BAL.recyclerV4.seconds,outputs:gearOut,craftIngotEq:round(ieGearCraft),returnIngotEq:round(ieGearRet),netLossIngotEq:round(ieGearCraft-ieGearRet),basis:'1 ingot = 1 ore; scrap = 1/3 ingot (scrap_ingot); MP and fastener from their authored recipes; no durability so no condition tiers',sourceStatus:'SOH_PROVISIONAL (recyclerV4); LI per-item yield ORIGINAL_UNKNOWN',consumersOfGear:['vehicle_drive_geared','industrial_pick_geared']};
-    const report={version:'mec01-five-chain-benchmark-v2',numeraire:'1 iron_ingot = 1 iron_ore (furnace) = 3 scrap (scrap_ingot); other atoms compared per material',
-      salvageOnly:['damaged_drive'],recyclerVersions:{v1:'immutable saved-job table',v2:'pinned saved-job table (four keys over-returned)',v3:'new jobs, corrected four keys'},
+    const qtyOf=(rows:[string,number][],k:string)=>rows.filter(r=>r[0]===k).reduce((a,r)=>a+r[1],0);
+    const gearNet=Object.fromEntries([...new Set([...gearIn,...gearOut].map(r=>r[0]))].map(k=>[k,qtyOf(gearIn,k)-qtyOf(gearOut,k)]));
+    for(const [k,v] of Object.entries(gearNet)) expect(v,`recycling a Gear must lose ${k}`).toBeGreaterThan(0);
+    expect(BAL.recyclerV4.components.mechanical_gear.recipe).toBe('X:gear-v2');
+    const gearRecycleV4={recipe:BAL.recyclerV4.components.mechanical_gear.recipe,seconds:BAL.recyclerV4.seconds,craftInputs:gearIn,outputs:gearOut,netLossPerMaterial:gearNet,basis:'per material; Parts carry no ingot conversion; no durability so no condition tiers',sourceStatus:'SOH_PROVISIONAL / SOH_TRIAL_UNVERIFIED (recyclerV4); LI per-item yield ORIGINAL_UNKNOWN',consumersOfGear:Object.keys(RECIPES).filter(k=>RECIPES[k].ins.some(([x])=>x==='mechanical_gear')).sort()};
+    const report={version:'mec01-five-chain-benchmark-v2',numeraire:'1 iron_ingot = 1 iron_ore (furnace); other atoms (incl. Parts) compared per material',
+      salvageOnly:['spares'],recyclerVersions:{v1:'immutable saved-job table',v2:'pinned saved-job table (four keys over-returned)',v3:'saved-job table (retired ids)',v4:'new jobs, live ids'},
       structuresNote:`workbench ${STRUCTS.workbench.name} level 2 for the chain recipes; motorbike_kit needs level 3`,
       furnace,gearRecycleV4,chains,li_context_only:true,
       b05Eligibility:{rule:B05_REPEATABLE_RULE,
         renewable:SHIPPING_LOOT_SOURCES.filter(s=>s.stock==='renewable').map(s=>s.sourceId),
         finite:SHIPPING_LOOT_SOURCES.filter(s=>s.stock==='finite').map(s=>s.sourceId),
-        salvageExcluded:['damaged_drive (non-repeatable wreck input; never a craft-cost input — SALVAGE_ONLY)'],
+        salvageExcluded:['spares (Parts: finite wreck/scrap salvage — SALVAGE_ONLY; damaged_drive is retired into it)'],
         note:'authored-cache hits are spec-matched via specForSite and tagged per hit; toolbox grammar hits carry the authored spec stock class; vault (finite) can never underwrite a repeatable route claim'},
-      unpricedAtoms:{atoms:['coal','wood','stone','leather','spares','crystal'],mode:'per-material comparison only; no numeraire conversion is invented for these; only iron_ingot/iron_ore/scrap carry one'},
+      unpricedAtoms:{atoms:['charcoal','wood','stone','leather','spares','crystal'],mode:'per-material comparison only; no numeraire conversion is invented for these; only iron_ingot/iron_ore carry one'},
       separateChannels:{sourceProbability:'probabilityPerRoll per hit (grammar fixed = 1; grammar pool = 1/pool.length; bonus chance as authored)',stockClocks:'stockClass + stockClock + cooldownHours per hit (authored specs); world-node respawn clocks are ORIGINAL_UNKNOWN',playerTravel:'ORIGINAL_UNKNOWN (no travel-cost model in shipping Web)',liHistory:'context only; version/mode/confidence per LI row; never a balance input'},
       proofClasses: proofClasses(),
       unknowns:['ORIGINAL_UNKNOWN: ore-to-ingot fuel burn','ORIGINAL_UNKNOWN: travel/route cost','ORIGINAL_UNKNOWN: per-source drop rate for Metal Blade/Frame authored caches','ORIGINAL_UNKNOWN: LI per-item yields (ASSUMED only)'] };
     const dir=join(process.cwd(),'reports');
     writeFileSync(join(dir,'mec01-five-chain-benchmark.json'),JSON.stringify(report,null,2)+'\n');
-    const md=[`# MEC-01 five-chain industrial benchmark (generated)`,'',`Numeraire: ${report.numeraire}. Salvage-only: damaged_drive. LI figures are context only (${LI_V5.version}; mode ${LI_V5.mode}; confidence ${LI_V5.confidence}; LI Parts are not SOH Mechanical Parts).`,`B05 eligibility: ${report.b05Eligibility.rule} Renewable: ${report.b05Eligibility.renewable.join(', ')}. Finite (never repeatable): ${report.b05Eligibility.finite.join(', ')}.`,'',`Models: amortized per-unit (cheapestCraft) AND integer craft batches (integerTreePerUnit / route integerBatch) are both reported. Player travel is not modelled. Unpriced atoms compared per material: ${report.unpricedAtoms.atoms.join(', ')}.`,'',
+    const md=[`# MEC-01 five-chain industrial benchmark (generated)`,'',`Numeraire: ${report.numeraire}. Salvage-only: Parts (spares). LI figures are context only (${LI_V5.version}; mode ${LI_V5.mode}; confidence ${LI_V5.confidence}; LI Parts are not SOH Mechanical Parts).`,`B05 eligibility: ${report.b05Eligibility.rule} Renewable: ${report.b05Eligibility.renewable.join(', ')}. Finite (never repeatable): ${report.b05Eligibility.finite.join(', ')}.`,'',`Models: amortized per-unit (cheapestCraft) AND integer craft batches (integerTreePerUnit / route integerBatch) are both reported. Player travel is not modelled. Unpriced atoms compared per material: ${report.unpricedAtoms.atoms.join(', ')}.`,'',
       '| Chain | Cheapest route | ingot-eq / unit | craft tree s | recycler v2 high (pinned) | recycler v3 high (new) | LI leaf BOM (context) |','|---|---|---|---|---|---|---|',
       ...chains.map(c=>{const rr=typeof c.recycler==='object'&&c.recycler&&'rows' in c.recycler?(c.recycler as any).rows:null;const v2=rr?.v2?.[2],v3=rr?.v3?.[2];const src=typeof c.recycler==='object'&&c.recycler?(c.recycler as any).source:'none';return `| ${c.label} | ${c.cheapestCraft.route} | ${c.cheapestCraft.ingotEqPerUnit} | ${c.cheapestCraft.treeSeconds} | ${src}: ${v2?`${v2.verdict} (${v2.ingotEqRecovered} vs ${v2.ingotEqCraft})`:'n/a'} | ${src}: ${v3?`${v3.verdict} (${v3.ingotEqRecovered} vs ${v3.ingotEqCraft})`:'n/a'} | ${c.li.leaf} |`;}),
       '','Unknowns: '+report.unknowns.join('; ')+'.'];
     writeFileSync(join(dir,'mec01-five-chain-benchmark.md'),md.join('\n')+'\n');
     // Assertions: LI carries version/mode/confidence; recycler v3 has no over-return; every chain resolved a route.
     for(const c of chains){expect(c.li.version).toBe(LI_V5.version);expect(c.li.mode).toBeDefined();expect(c.li.confidence).toBe('ASSUMED');expect(c.li.partsIsSohMechanicalParts).toBe(false);expect(c.cheapestCraft.route).toBeTruthy();}
-    for(const c of chains) if(typeof c.recycler==='object'&&c.recycler&&'rows' in c.recycler&&(c.recycler as any).rows?.v3) expect((c.recycler as any).rows.v3.some((r:any)=>r.verdict==='OVER_RETURN'),c.id).toBe(false);
+    // Item set v3: NEW jobs use X:recover-v4, which must never over-return. v1-v3 name retired ids (Scrap, Machine Parts)
+    // that now arrive as Parts, so against today's cheaper bills they over-return; they are reachable only through a job
+    // already stored in a save at cut-over (KNOWN, BOUNDED) and are pinned here so a change is noticed.
+    const overV3:string[]=[];
+    for(const c of chains) if(typeof c.recycler==='object'&&c.recycler&&'rows' in c.recycler){
+      const rows=(c.recycler as any).rows;
+      expect(rows?.v4,`${c.id}: live table row`).toBeTruthy();
+      expect(rows.v4.some((r:any)=>r.verdict==='OVER_RETURN'),c.id).toBe(false);
+      if(rows.v3?.some((r:any)=>r.verdict==='OVER_RETURN'))overV3.push((c.recycler as any).source);
+    }
+    expect(overV3.sort()).toEqual(['industrial_axe','iron_axe','iron_pick']);
     // MEC-01 R2 D: B05 eligibility, finite-vs-renewable stock, integer batch routes, ORIGINAL_UNKNOWN discipline.
     expect(report.b05Eligibility.rule).toBe(B05_REPEATABLE_RULE);
     expect(report.b05Eligibility.renewable).toEqual(['shipping.factory.exterior.industrial-toolbox','shipping.tp.bow-cache.standard-toolbox']);
     expect(report.b05Eligibility.finite).toEqual(['shipping.factory.vault.advanced-keycard']);   // the only finite spec; never a repeatable loop input
-    expect(report.unpricedAtoms.atoms).toEqual(expect.arrayContaining(['coal','wood','stone','leather','spares','crystal']));
+    expect(report.unpricedAtoms.atoms).toEqual(expect.arrayContaining(['charcoal','wood','stone','leather','spares','crystal']));
     for(const u of report.unknowns) expect(u.startsWith('ORIGINAL_UNKNOWN')).toBe(true);
     for(const c of chains as any[]){
       for(const h of c.sourceHits){

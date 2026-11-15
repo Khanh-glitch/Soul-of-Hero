@@ -6,6 +6,7 @@
 // revision-1 Metal Pipe is eaten by a queued revision-1 Iron Plate. So this file is the P0 gate: what an
 // actual player's unfinished work does when the ledger under it changes.
 import { describe, it, expect } from 'vitest';
+import { liveItemId, liveItemPer } from '../src/game/final-item-set';
 import { readFileSync } from 'node:fs';
 import { RECIPES, ITEMS, RETIRED_RECIPES, RECIPE_REVISION, recipeForJob } from '../src/game/catalog';
 import { LEGACY_RECIPES, PRE_STAMPING_REVISION } from '../src/game/recipe-migration';
@@ -104,13 +105,13 @@ describe('PA1 P0b — the pre-cutover save keeps its own rules', () => {
     expect(RECIPES.iron_plate).toBeTruthy();
     expect(RECIPES.mechanical_gear).toBeTruthy();
     expect(RECIPES.fuel_can, 'fuel_can must not be craftable any more').toBeUndefined();
-    // Iron Plate: the save paid a pipe; the approved rule pays fasteners instead.
+    // Iron Plate: the save paid a pipe; the approved rule (rev 5, item set v3: Fasteners retired) pays Parts instead.
     expect(seen.iron_plate).toContainEqual(['metal_pipe', 1]);
-    expect(RECIPES.iron_plate.ins).toEqual([['refined_iron_ingot', 2], ['fasteners', 1]]);
+    expect(RECIPES.iron_plate.ins).toEqual([['refined_iron_ingot', 2], ['spares', 2]]);
     expect(RECIPES.iron_plate.ins).not.toEqual(seen.iron_plate);
     // Mechanical Gear: the save paid 2 iron ingots; the approved rule needs a refined one.
     expect(seen.mechanical_gear).toEqual([['iron_ingot', 2], ['mechanical_parts', 2], ['fasteners', 1]]);
-    expect(RECIPES.mechanical_gear.ins).toEqual([['refined_iron_ingot', 1], ['iron_ingot', 1], ['mechanical_parts', 2], ['fasteners', 1]]);
+    expect(RECIPES.mechanical_gear.ins).toEqual([['iron_ingot', 2], ['spares', 3]]); // rev 5: LI's gear is iron + Parts
     // Fuel Canister is retired outright.
     expect(RETIRED_RECIPES).toContain('fuel_can');
     expect(seen.fuel_can).toEqual([['charcoal', 1], ['sulfur', 1], ['glass', 1]]);
@@ -132,8 +133,10 @@ describe('PA1 P0b — the pre-cutover save keeps its own rules', () => {
     // Rev 3 also retires `vehicle_frame_piped` (its BOM became the frame recipe), and this save knew it.
     expect(g.run!.knowledge.recipes).not.toContain('vehicle_frame_piped');
     expect(g.run!.knowledge.recipes).toContain('vehicle_frame');
-    // Rev 4 (final item set) retires nine more formulas; this save knew seven of them.
-    expect(g.run!.migrated?.retiredRecipes).toBe(9);
+    // Rev 4 and rev 5 (final item set, all 19 ids retired) retire more formulas; this save knew fifteen in all.
+    expect(g.run!.migrated?.retiredRecipes).toBe(15);
+    // ... and the stacks of retired items it held were converted in place, counted once.
+    expect(g.run!.migrated?.retiredItems).toBe(17);
     // The revision ledger is what prices them.
     expect(recipeForJob('iron_plate', undefined)!.ins).toEqual(LEGACY_RECIPES['iron_plate@1'].ins);
     expect(recipeForJob('fuel_can', undefined)!.ins).toEqual(LEGACY_RECIPES['fuel_can@1'].ins);
@@ -215,18 +218,18 @@ describe('PA1 P0b — the pre-cutover save keeps its own rules', () => {
     finishAll(g, bench);
     beside(g, bench);
     if (!r.knowledge.recipes.includes('metal_pipe')) r.knowledge.recipes.push('metal_pipe');
-    const refined = countItem(r, 'inv', 'refined_iron_ingot'), parts = countItem(r, 'inv', 'mechanical_parts');
+    const refined = countItem(r, 'inv', 'refined_iron_ingot'), parts = countItem(r, 'inv', 'spares');
     expect(act(g, 'craft', { recipe: 'metal_pipe', eid: bench.id }).ok).toBe(true);
     const job: any = bench.station!.queue[bench.station!.queue.length - 1];
     expect(job.rv).toBe(RECIPE_REVISION);            // new work declares its revision
-    expect(countItem(r, 'inv', 'refined_iron_ingot')).toBe(refined - 2); // same bill as rev 1 ...
-    expect(countItem(r, 'inv', 'mechanical_parts')).toBe(parts - 1);
+    expect(countItem(r, 'inv', 'refined_iron_ingot')).toBe(refined - 2); // same refined iron as rev 1 ...
+    expect(countItem(r, 'inv', 'spares')).toBe(parts - 2);                 // ... and 1 Machine Part is now 2 Parts
     tick(g, job.total + 1000);
     expect(outKeys(g, bench)).toContain('2xmetal_pipe');   // ... but one paid cycle now yields TWO sections
 
     // The input-side correction, where it actually bites: an approved Iron Plate pays fasteners and
     // never eats a pipe section again, so a save with no pipes in the pack can still start the work.
-    addItem(r, 'inv', 'refined_iron_ingot', 4); addItem(r, 'inv', 'fasteners', 2);
+    addItem(r, 'inv', 'refined_iron_ingot', 4); addItem(r, 'inv', 'spares', 4);
     if (!r.knowledge.recipes.includes('iron_plate')) r.knowledge.recipes.push('iron_plate');
     const pipesBefore = countItem(r, 'inv', 'metal_pipe');
     const again = act(g, 'craft', { recipe: 'iron_plate', eid: bench.id });
@@ -246,13 +249,15 @@ describe('PA1 P0b — the pre-cutover save keeps its own rules', () => {
     const paid = job.reserved.map((x: Stack) => `${x.uid}:${x.key}:${x.qty}`).sort();
     expect(act(g, 'cancelJob', { eid: bench.id, jobId: job.id }).ok).toBe(true);
     // The refund is the same physical stock, UID for UID — including the pipe the approved rule no longer
-    // uses. A refund computed from today's BOM would hand back fasteners and lose this stack.
+    // uses. A refund computed from today's BOM would lose this stack. Item set v3: a reserved stack of a
+    // retired item comes back under the same UID as its successor, at the declared ratio (never less).
     for (const tag of paid) {
       const [uid, key, qty] = tag.split(':');
       const s2 = stackOf(r, uid);
       expect(s2, `${key} uid ${uid} came back`).toBeTruthy();
-      expect(`${s2!.uid}:${s2!.key}:${s2!.qty}`).toBe(tag);
+      expect(`${s2!.uid}:${s2!.key}:${s2!.qty}`).toBe(`${uid}:${liveItemId(key)}:${Math.ceil(+qty * liveItemPer(key))}`);
     }
+    expect(paid.some((tag: string) => tag.includes(':mechanical_parts:') || tag.includes(':fasteners:')), 'the save really had paid in retired items').toBe(true);
     expect(countItem(r, 'inv', 'metal_pipe')).toBe(1);
     expect(bench.station!.queue.map((j: any) => j.recipe)).toEqual(['mechanical_gear', 'fuel_can']);
     // Cancelling spent nothing and produced nothing.

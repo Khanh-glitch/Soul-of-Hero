@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { BAL, TILE, type RunState } from '../game/core';
-import { ITEMS, RECIPES, STRUCTS, isRecipeKnown } from '../game/catalog';
+import { ITEMS, RECIPES, STRUCTS, isRecipeKnown, EQ_SLOTS, ARMOR_CAP, wornProtection } from '../game/catalog';
 import { C, countItem, invWeight, carryLimit, recipeOutputs } from '../game/engine';
 import { craftReadiness, structurePreparation, type CraftReadiness } from '../game/action-readiness';
 import { getArt } from '../game/art';
@@ -21,7 +21,7 @@ import { ItemInfo } from './panels';
 // ============================================================================
 type Cat = 'all' | 'tools' | 'gear' | 'food' | 'mats' | 'cores' | 'stations' | 'devices';
 const CATS: { id: Cat; label: string; icon: string }[] = [
-  { id: 'all', label: 'All', icon: 'mechanical_parts' }, { id: 'tools', label: 'Tools', icon: 'stone_axe' },
+  { id: 'all', label: 'All', icon: 'mechanical_gear' }, { id: 'tools', label: 'Tools', icon: 'stone_axe' },
   { id: 'gear', label: 'Gear', icon: 'leather_armor' }, { id: 'food', label: 'Food & Med', icon: 'stew' },
   { id: 'mats', label: 'Materials', icon: 'iron_ingot' }, { id: 'cores', label: 'Cores', icon: 'core_blast' },
   { id: 'stations', label: 'Stations', icon: 'st:workbench' }, { id: 'devices', label: 'Devices', icon: 'st:base_generator' },
@@ -120,7 +120,7 @@ export function SurvivorScreen({
   const w = invWeight(r), lim = carryLimit(r), load = Math.min(1, w / lim);
   let armor = 0, warm = 0; for (const s of C(r, 'eq').slots) if (s) { armor += ITEMS[s.key].armor || 0; warm += ITEMS[s.key].cold || 0; }
   const selStack = api.sel ? C(r, api.sel.c)?.slots[api.sel.slot] ?? null : null;
-  const EQ_GHOST = ['scrap_helm', 'leather_armor', 'fur_cloak'];
+  const EQ_GHOST = ['scrap_helm', 'leather_armor', 'fur_cloak', 'iron_plate_pants', 'iron_plate_boots']; const worn = wornProtection(C(r, 'eq').slots);
 
   return <div className="sv" data-layout={uiLayout} data-compact-view={compactView} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
     <div className="sv-top">
@@ -141,14 +141,14 @@ export function SurvivorScreen({
       <section className="sv-left">
         <div className="sv-char">
           <div className="sv-eq">
-            {[0, 1, 2].map(i => <div key={i} className="sv-eqcell">
+            {EQ_SLOTS.map((sl, i) => <div key={i} className="sv-eqcell" title={sl} data-eq-slot={sl}>
               <DSlot api={api} cid="eq" slot={i} s={C(r, 'eq').slots[i]} size={26} />
               {!C(r, 'eq').slots[i] && <img className="px sv-ghost" src={iconUrl(EQ_GHOST[i])} alt="" />}
             </div>)}
           </div>
           <Doll r={r} />
           <div className="sv-stats">
-            <span className="stat" title="Damage reduction"><Glyph k="hp" c="var(--good)" s={7} />-{Math.round(armor * 100)}%</span>
+            <span className="stat" title={`Damage reduction (cap ${Math.round(ARMOR_CAP * 100)}%)${worn.steady ? ` · legs: -${Math.round(worn.steady * 100)}% knock-back` : ''}${worn.ground ? ` · boots: -${Math.round(worn.ground * 100)}% ground damage` : ''}`}><Glyph k="hp" c="var(--good)" s={7} />-{Math.round(Math.min(ARMOR_CAP, armor) * 100)}%{worn.steady ? ` L${Math.round(worn.steady * 100)}` : ''}{worn.ground ? ` F${Math.round(worn.ground * 100)}` : ''}</span>
             <span className="stat" title="Warmth from clothing"><Glyph k="wr" c="var(--warm)" s={7} />+{warm}</span>
             <span className="stat" title="Unsecured coins / profile-secured"><Icon k="rcash" size={8} />{have('rcash')}<i className="sep" />{api.gs.profile.securedCash}</span>
             <div className="sv-load" title={`Load ${w.toFixed(1)} / ${lim} kg`}>
@@ -168,7 +168,6 @@ export function SurvivorScreen({
             : <button className="btn sm" onClick={() => { api.act('useItem', { c: api.sel!.c, slot: api.sel!.slot }); }}>{ITEMS[selStack.key]?.slot ? 'Equip' : 'Use'}</button>}
           <button className="btn sm" disabled={selStack.qty < 2} onClick={() => api.act('split', { c: api.sel!.c, slot: api.sel!.slot })}>Split</button>
           <button className="btn sm" onClick={() => { api.act('drop', { c: api.sel!.c, slot: api.sel!.slot }); api.setSel(null); }}>Drop</button>
-          {api.sel.c === 'inv' && ITEMS[selStack.key].repair && selStack.dur !== undefined && selStack.dur < (ITEMS[selStack.key].dur || 0) && <button className="btn sm gold" disabled={!C(r, 'inv').slots.some(s => s?.key === 'field_repair_kit')} onClick={() => { const kitSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'field_repair_kit'); const kit = C(r, 'inv').slots[kitSlot]; if (kit) api.act('fieldRepair', { slot: api.sel!.slot, uid: selStack.uid, kitSlot, kitUid: kit.uid }); }}><Icon k="field_repair_kit" size={9} /> Repair +{BAL.player.fieldRepairDurability}</button>}
           {api.sel.c === 'inv' && api.sel.slot >= 8 && <span className="sv-itemacts__hint">Hover + <span className="key">1-8</span> quickbar</span>}
         </div>}
       </section>

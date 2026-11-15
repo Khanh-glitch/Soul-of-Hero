@@ -12,9 +12,10 @@ import { creatorLootV1 } from './creator-loot';
 // Rule: validate EVERYTHING first, then commit. Failed preconditions never partially debit.
 import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dist, clamp,
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
+import { OIL_SEEP_AUTHORITY, syncOilSeeps } from './oil-seeps';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
-import { ALWAYS_KNOWN_RECIPES, isGardenCrop, gardenClimateClass, type GardenCrop, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
-import { liveItemId, liveItemPer, liveRecipeId, ITEM_SET_VERSION } from './final-item-set';
+import { LADDER_SPAN, LARGE_FURNACE, POWERED_DOOR_HOSTS, EQ_SLOTS, ALWAYS_KNOWN_RECIPES, isGardenCrop, gardenClimateClass, type GardenCrop, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
+import { liveItemId, liveItemPer, liveRecipeId, ITEM_SET_VERSION, isAccessCard, isRetiredLive, cardItemForClass } from './final-item-set';
 import { latestLegacyDefinition, RETIRED_RECIPES, purchasableFamilies } from './recipe-migration';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
 import { sourceDigest } from './world-economy';
@@ -127,10 +128,10 @@ export function newGame(): GameState { return { version: SAVE_VERSION, revision:
 export function mkStack(r: RunState, key: string, qty: number, meta?: string): Stack {
   // Item set v2: the ONE minting choke point. A LIVE-retired id resolves to its successor here, so no loot table,
   // legacy job, fixture or stale caller can put a retired item into any container of any run.
-  qty *= liveItemPer(key); key = liveItemId(key); if (key === 'blueprint' && meta) meta = liveRecipeId(meta) ?? meta;
+  qty = Math.ceil(qty * liveItemPer(key)); key = liveItemId(key); if (key === 'blueprint' && meta) meta = liveRecipeId(meta) ?? meta;
   const d = ITEMS[key]; const s: Stack = { uid: uid(r, 's'), key, qty };
   if (d?.creatorCore) s.reserves = { basic: 0, refined: 0, signature: 0 };
-  if (d?.dur) s.dur = d.dur; if (d?.charge) s.charge = d.initialCharge ?? d.charge; if(key==='keycard' && qty===1 && r.poiAccessVersion==='poi-access-v1') s.charge=BAL.poiAccess.cardUses; if (meta) s.meta = meta; return s;
+  if (d?.dur) s.dur = d.dur; if (d?.charge) s.charge = d.initialCharge ?? d.charge; if(isAccessCard(key) && qty===1 && r.poiAccessVersion==='poi-access-v1') s.charge=BAL.poiAccess.cardUses; if (meta) s.meta = meta; return s;
 }
 export function mkContainer(r: RunState, kind: string, n: number): Container { const c = { id: uid(r, 'c'), kind, slots: Array(n).fill(null) }; r.custody[c.id] = c; return c; }
 
@@ -312,7 +313,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
   if(inspectAt) r.qaUsed = true;
   r.spawnChoice={x:sp.tx,y:sp.ty,contract:'seeded-geographic-v1'};
   r.custody.inv = { id: 'inv', kind: 'inv', slots: Array(24).fill(null) };
-  r.custody.eq = { id: 'eq', kind: 'eq', slots: [null, null, null] };
+  r.custody.eq = { id: 'eq', kind: 'eq', slots: EQ_SLOTS.map(() => null) };
   r.custody.inv.slots[0] = mkStack(r, 'knife', 1);
   const fl = mkStack(r, 'water_flask', 1); fl.charge = 2; r.custody.inv.slots[1] = fl;
   r.custody.inv.slots[2] = mkStack(r, 'berries', 3);
@@ -539,7 +540,7 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
 // B04-P4: keyed by the RunState object itself (not run.id), like entsAt: a copied run with the same id must never reuse another copy's collision grid.
 let blockCache: { run: RunState; layout: string; sourceVersion: number; floor: number; arr: Uint8Array } | null = null; let blockDirty = true;
 export function markDirty() { blockDirty = true; tileIndex = null; roomCache = null; }
-/** 0 free, 1 terrain wall, 2 source, 3 structure, 4 shallow/river (wade), 5 lava */
+/** 0 free, 1 terrain wall, 2 source, 3 structure, 4 shallow/river (wade), 5 lava, 6 ladder over a cliff (foot only) */
 let baseGrid: Uint8Array | null = null; let baseGridLayout = '';
 function tileClass(t: number) { return (t === T.DEEP || t === T.CLIFF || t === T.PWALL) ? 1 : t === T.LAVA ? 5 : (t === T.SHALLOW || t === T.RIVER) ? 4 : 0; }
 function cellClass(r: RunState | null, tx: number, ty: number) {
@@ -565,14 +566,40 @@ export function blockGrid(r: RunState) {
   for (const tree of r.natureTrees || []) arr[tree.ty * WW + tree.tx] = 2;
   for (const e of Object.values(r.entities)) {
     if (!onActiveFloor(r, e) || e.tx === undefined) continue; const i = e.ty! * WW + e.tx;
-    if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.block && !(e.type!.startsWith('door') && e.open)) arr[i] = 3; }
+    if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.block && !(e.type!.startsWith('door') && e.open)) arr[i] = 3;
+      if (e.ladder && (e.hp ?? 0) > 0) for (const j of ladderTiles(e)) if (arr[j] === 1) arr[j] = 6; }
     else if (e.kind === 'door') { if (!e.open) arr[i] = 3; else if (!r.terrain[i] && getWorld().tiles[i]===T.PWALL && getWorld().statics.some(s=>s.kind==='door'&&s.tx===e.tx&&s.ty===e.ty)) arr[i]=0; }
     else if (e.kind === 'airdrop' && (e.airdrop?.phase==='locked'||e.airdrop?.phase==='open'||e.airdrop?.phase==='partial')) arr[i] = 3;
     else if (e.kind === 'loot' || e.kind === 'cash' || e.kind === 'vendor' || e.kind === 'gen' || e.kind === 'evac' || e.kind === 'recycler') arr[i] = 3;
   }
   blockCache = { run: r, layout, sourceVersion: r.sourceLayoutVersion ?? 1, floor: fl, arr }; blockDirty = false; return arr;
 }
-export function blockedAt(r: RunState, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return true; const b = blockGrid(r)[ty * WW + tx]; return b === 1 || b === 2 || b === 3 || b === 5; }
+export function blockedAt(r: RunState, tx: number, ty: number) { if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return true; const b = blockGrid(r)[ty * WW + tx]; return b === 1 || b === 2 || b === 3 || b === 5 || b === 6; }
+/** Window-local tile indices a placed ladder covers. Derived from the entity each time, so a Veyra window shift cannot leave them stale. */
+export function ladderTiles(e: Entity): number[] {
+  const out: number[] = []; if (!e.ladder || e.tx === undefined || e.ty === undefined) return out;
+  for (let k = 0; k < e.ladder.len; k++) { const x = e.tx + e.ladder.dir[0] * k, y = e.ty + e.ladder.dir[1] * k; if (x >= 0 && y >= 0 && x < WW && y < WH) out.push(y * WW + x); }
+  return out;
+}
+/** Where a ladder of this type would go from the player's side, or the reason it cannot. */
+export function ladderPlan(r: RunState, type: string, tx: number, ty: number): { dir: [number, number]; len: number } | string {
+  const span = LADDER_SPAN[type] ?? 0; const p = r.player;
+  if (activeFloor(r) !== 0) return 'A ladder only stands on open ground.';
+  const ptx = Math.floor(p.x / TILE), pty = Math.floor(p.y / TILE);
+  const dx = tx - ptx, dy = ty - pty;
+  if (Math.abs(dx) + Math.abs(dy) !== 1) return 'Stand right next to the cliff face and aim straight at it.';
+  if (effTile(r, tx, ty) !== T.CLIFF) return 'A ladder needs a cliff face.';
+  const g = blockGrid(r); let len = 0;
+  for (let k = 0; k <= span; k++) {
+    const x = tx + dx * k, y = ty + dy * k;
+    if (x < 1 || y < 1 || x >= WW - 1 || y >= WH - 1) return 'This cliff is the edge of the world.';
+    const i = y * WW + x;
+    if (effTile(r, x, y) === T.CLIFF) { if (g[i] === 6) return 'A ladder already stands here.'; len++; continue; }
+    if (g[i] !== 0 && g[i] !== 4) return 'The far side is blocked.';
+    return { dir: [dx, dy], len };
+  }
+  return span === 1 ? 'This cliff is more than one tile thick. A Steel Folding Ladder reaches three.' : 'This cliff is too thick for any ladder.';
+}
 let tileIndex: Map<number, Entity[]> | null = null; let tileIndexRun: RunState | null = null; let tileIndexFloor = 0;
 export function entsAt(r: RunState, tx: number, ty: number): Entity[] {
   const fl = activeFloor(r);
@@ -1296,14 +1323,14 @@ export function stepBasePower(r: RunState, dt: number, now: number, online = tru
 export const C = (r: RunState, id: string): Container => typeof id === 'string' && Object.prototype.hasOwnProperty.call(r.custody, id) ? r.custody[id] : undefined as unknown as Container;
 export function countItem(r: RunState, cid: string, key: string) { return C(r, cid).slots.reduce((a, s) => a + (s && s.key === key ? s.qty : 0), 0); }
 export function spaceFor(r: RunState, cid: string, key: string) {
-  const d = ITEMS[key]; const uniqueCard=key==='keycard'&&r.poiAccessVersion==='poi-access-v1'; let n = 0; for (const s of C(r, cid).slots) { if (!s) n += uniqueCard?1:d.max; else if (!uniqueCard && s.key === key && d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined && !d.dur && !d.charge) n += d.max - s.qty; } return n;
+  const d = ITEMS[key]; const uniqueCard=isAccessCard(key)&&r.poiAccessVersion==='poi-access-v1'; let n = 0; for (const s of C(r, cid).slots) { if (!s) n += uniqueCard?1:d.max; else if (!uniqueCard && s.key === key && d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined && !d.dur && !d.charge) n += d.max - s.qty; } return n;
 }
 /** Adds qty; returns leftover that did not fit (caller decides what to do — never silently deleted). */
 export function addItem(r: RunState, cid: string, key: string, qty: number, tmpl?: Partial<Stack>): number {
-  qty *= liveItemPer(key); key = liveItemId(key);
+  qty = Math.ceil(qty * liveItemPer(key)); key = liveItemId(key);
   const d = ITEMS[key]; const c = C(r, cid);
-  if (!(key==='keycard'&&r.poiAccessVersion==='poi-access-v1') && d.max > 1 && !d.dur && !d.charge && tmpl?.meta === undefined && tmpl?.dur === undefined && tmpl?.charge === undefined) for (const s of c.slots) if (s && s.key === key && s.meta === undefined && s.dur === undefined && s.charge === undefined && s.qty < d.max && qty > 0) { const m = Math.min(qty, d.max - s.qty); s.qty += m; qty -= m; }
-  for (let i = 0; i < c.slots.length && qty > 0; i++) if (!c.slots[i]) { const m = Math.min(qty, key==='keycard'&&r.poiAccessVersion==='poi-access-v1'?1:d.max); const s = mkStack(r, key, m, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[i] = s; qty -= m; }
+  if (!(isAccessCard(key)&&r.poiAccessVersion==='poi-access-v1') && d.max > 1 && !d.dur && !d.charge && tmpl?.meta === undefined && tmpl?.dur === undefined && tmpl?.charge === undefined) for (const s of c.slots) if (s && s.key === key && s.meta === undefined && s.dur === undefined && s.charge === undefined && s.qty < d.max && qty > 0) { const m = Math.min(qty, d.max - s.qty); s.qty += m; qty -= m; }
+  for (let i = 0; i < c.slots.length && qty > 0; i++) if (!c.slots[i]) { const m = Math.min(qty, isAccessCard(key)&&r.poiAccessVersion==='poi-access-v1'?1:d.max); const s = mkStack(r, key, m, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[i] = s; qty -= m; }
   return qty;
 }
 /** K1 custody law: a whole stack moved into an EMPTY slot keeps its UID — the move is one custody
@@ -1316,12 +1343,12 @@ export function addStack(r: RunState, cid: string, s: Stack): boolean {
   if (i >= 0) { c.slots[i] = s; return true; }
   // No empty slot: legitimate merge-lineage for stackable stacks (exact material conservation;
   // the source stack is consumed by the caller after this returns true).
-  if (s.key!=='keycard' && d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined) { const room = spaceFor(r, cid, s.key); if (room >= s.qty) { addItem(r, cid, s.key, s.qty); return true; } }
+  if (!isAccessCard(s.key) && d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined) { const room = spaceFor(r, cid, s.key); if (room >= s.qty) { addItem(r, cid, s.key, s.qty); return true; } }
   return false;
 }
 // Unique or stateful stacks must never be merged into a different instance.
 function mergeable(a: Stack, b: Stack) {
-  return a.key === b.key && a.key!=='keycard' && ITEMS[a.key].max > 1 && a.meta === undefined && b.meta === undefined &&
+  return a.key === b.key && !isAccessCard(a.key) && ITEMS[a.key].max > 1 && a.meta === undefined && b.meta === undefined &&
     a.dur === undefined && b.dur === undefined && a.charge === undefined && b.charge === undefined;
 }
 function portion(r: RunState, s: Stack, qty: number): Stack {
@@ -1348,9 +1375,20 @@ function reserveInputs(r: RunState, ins: [string, number][]): Stack[] {
   return reserved;
 }
 /** Return original instances without merging. Full inventories produce physical drops. */
+/** Item set v3: a stack that sat inside a queued job (reserved input) was never in a container, so the save migration
+ *  did not touch it. When it re-enters the world it becomes its successor IN PLACE — same uid, value-preserving count. */
+export function liveStackInPlace(stack: Stack): Stack {
+  if (!isRetiredLive(stack.key)) return stack;
+  const from = ITEMS[stack.key], toKey = liveItemId(stack.key), to = ITEMS[toKey];
+  stack.qty = Math.min(to.max, Math.ceil(stack.qty * liveItemPer(stack.key)));
+  if (to.dur) stack.dur = from?.dur && Number.isFinite(stack.dur) ? Math.max(1, Math.min(to.dur, Math.round(stack.dur! / from.dur * to.dur))) : to.dur; else delete stack.dur;
+  if (!to.charge && !isAccessCard(toKey)) delete stack.charge;
+  delete stack.meta; stack.key = toKey; return stack;
+}
 function returnReservations(r: RunState, stacks: Stack[], x: number, y: number, now: number) {
   const inv = C(r, 'inv');
   for (const stack of stacks) {
+    liveStackInPlace(stack);
     const slot = inv.slots.indexOf(null);
     if (slot >= 0) inv.slots[slot] = stack;
     else dropStackEntity(r, stack, x, y, now);
@@ -1366,8 +1404,8 @@ export function cartLimit(e: Entity | undefined) { return e?.deployed?.upgrade =
 export function cartWeight(r: RunState, cid: string) { return C(r, cid).slots.reduce((a, s) => a + (s ? ITEMS[s.key].w * s.qty : 0), 0); }
 export function hasAll(r: RunState, cid: string, ins: [string, number][]) { return ins.every(([k, q]) => countItem(r, cid, k) >= q); }
 export function spawnDrop(r: RunState, key: string, qty: number, x: number, y: number, now: number, tmpl?: Partial<Stack>, burst = true): Entity {
-  qty *= liveItemPer(key); key = liveItemId(key);
-  const max = key==='keycard'&&r.poiAccessVersion==='poi-access-v1' ? 1 : ITEMS[key].max;
+  qty = Math.ceil(qty * liveItemPer(key)); key = liveItemId(key);
+  const max = isAccessCard(key)&&r.poiAccessVersion==='poi-access-v1' ? 1 : ITEMS[key].max;
   if (qty > max) { const first = spawnDrop(r, key, max, x, y, now, tmpl, burst); spawnDrop(r, key, qty - max, x, y, now, tmpl, burst); return first; }
   const c = mkContainer(r, 'drop', 1); const s = mkStack(r, key, qty, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[0] = s;
   const a = rngNext(r) * Math.PI * 2, sp = burst ? 30 + rngNext(r) * 40 : 0;
@@ -1385,7 +1423,7 @@ export function bagContainers(r: RunState, cids: string[], x: number, y: number,
 /** Station-owned reservations and contents leave together on reclaim or destruction. */
 export function bagStation(r: RunState, e: Entity, now: number, label: string) {
   const queue = e.station?.queue || [];
-  const reserved = queue.flatMap(j => j.reserved || []);
+  const reserved = queue.flatMap(j => j.reserved || []).map(liveStackInPlace);
   const legacy = queue.filter(j => j.reserved === undefined);
   const bag = bagContainers(r, [e.c, e.station?.fuelC, e.station?.outC].filter(Boolean) as string[], e.x, e.y + 4, now, label, reserved,
     legacy.length ? { stationType: e.type!, queue: legacy } : undefined);
@@ -1465,7 +1503,7 @@ export function lootCooldown(site: StaticEnt, r?:RunState): number {
   const spec = r?.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT ? specForSite(site) : null; if (spec) return spec.cooldownHours*HOUR;
   const kind=r?.lootEcology && lootClass(site); if(kind)return LOOT_CLASSES[kind].hours*HOUR;
   const stock = renewableLoot(site);
-  const industrial = stock.some(([k]) => ['spares', 'scrap', 'iron_ore', 'iron_ingot', 'coal', 'mechanical_parts', 'fasteners'].includes(k));
+  const industrial = stock.some(([k]) => ['spares', 'iron_ore', 'iron_ingot', 'charcoal', 'mechanical_gear', 'electronic_parts'].includes(liveItemId(k)));
   const food = stock.some(([k]) => ITEMS[k]?.cat === 'food');
   return (industrial ? BAL.lootRespawn.industrialHours : food ? BAL.lootRespawn.supplyHours : BAL.lootRespawn.otherHours) * HOUR;
 }
@@ -1569,7 +1607,7 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
     if (quality && rngNext(r) < quality.chance) { spawnDrop(r, quality.item, 1, cx + ox, cy + oy, now); richGot++; }
     // SOH_NEW_TUNED v1: only modern source layouts yield this additional,
     // finite wreck salvage; never modify legacy tables or invent new Map cells.
-    if (s.key==='wreck' && r.sourceLayoutVersion===3 && rngNext(r)<SALVAGED_OIL_WRECK_CHANCE) spawnDrop(r,'salvaged_oil',1,cx+ox,cy+oy,now);
+    /* Item set v2 r2: wrecks no longer leak Salvaged Oil. Crude Petroleum comes only from an oil seep under an Oil Pump. */
   }
   r.player.skills.gather += units;
   const depleted = st.stock <= 0;
@@ -1834,28 +1872,39 @@ export function countStones(r: RunState) {
 export const oilSourceKey = (tx: number, ty: number) => `oil:${tx}:${ty}`;
 /** The authorized, non-empty oil source under a pump tile. Production placement has no authority (Map owner pending). */
 /** Any run-local authorized (test-fixture) source with stock. Production Map sources will be added here only via a versioned Map site. */
+/** Item set v3: bring the Veyra seep projection in line with the current window (no-op elsewhere and when already current). */
+export function ensureOilSeeps(r: RunState): void {
+  if (!r.layoutId || !isVeyra05Layout(r.layoutId)) return;
+  const [ox, oy] = windowOrigin(r); if (r.oilSeepWindow === ox + ',' + oy) return;
+  syncOilSeeps(r, getWindowWorld(r.layoutId).floors.ground, ox, oy);
+}
+const oilRowLive = (r: RunState, src: { authority: string }) => src.authority === 'test-fixture-v1' ? r.oilTestFixture === true : src.authority === OIL_SEEP_AUTHORITY ? !!r.layoutId && isVeyra05Layout(r.layoutId) : false;
+/** True when the run can hold a working pump somewhere: a fixture with stock, or (Veyra) the world's seeps. */
 export function anyAuthorizedOilSource(r: RunState): boolean {
-  return r.oilTestFixture === true && Object.values(r.oilSources ?? {}).some(src => src.authority === 'test-fixture-v1' && src.stock > 0);
+  ensureOilSeeps(r);
+  if (r.layoutId && isVeyra05Layout(r.layoutId)) return true;
+  return Object.values(r.oilSources ?? {}).some(src => oilRowLive(r, src) && src.stock > 0);
 }
 export function authorizedOilSource(r: RunState, tx: number, ty: number) {
+  ensureOilSeeps(r);
   const src = r.oilSources?.[oilSourceKey(tx, ty)];
-  return r.oilTestFixture === true && src && src.authority === 'test-fixture-v1' && src.tx === tx && src.ty === ty && src.stock > 0 ? src : null;
+  return src && oilRowLive(r, src) && src.tx === tx && src.ty === ty && src.stock > 0 ? src : null;
 }
-/** Item Ontology V2 P9 (Round 3): honest player-facing oil availability. No shipping map carries an oil site, so the
- * old wording (which spoke of an "authorized" site to be found) sent players looking for something that does
- * not exist. One function owns the three states; ids, systems and the fixture adapter are unchanged. */
+/** One function owns the player-facing oil states. On Veyra the world always has seeps, so the answer is never NO_SITE_IN_WORLD. */
 export type OilAvailability = 'NO_SITE_IN_WORLD' | 'SITE_ELSEWHERE' | 'SITE_HERE' | 'SITE_DRY';
 export function oilAvailability(r: RunState, tx?: number, ty?: number): OilAvailability {
-  const all = r.oilTestFixture === true ? Object.values(r.oilSources ?? {}).filter(s => s.authority === 'test-fixture-v1') : [];
-  if (!all.length) return 'NO_SITE_IN_WORLD';
-  if (tx === undefined || ty === undefined) return all.some(s => s.stock > 0) ? 'SITE_ELSEWHERE' : 'SITE_DRY';
+  ensureOilSeeps(r);
+  const veyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
+  const all = Object.values(r.oilSources ?? {}).filter(s => oilRowLive(r, s));
+  if (!all.length) return veyra ? 'SITE_ELSEWHERE' : 'NO_SITE_IN_WORLD';
+  if (tx === undefined || ty === undefined) return veyra || all.some(s => s.stock > 0) ? 'SITE_ELSEWHERE' : 'SITE_DRY';
   const here = all.find(s => s.tx === tx && s.ty === ty);
   return here ? (here.stock > 0 ? 'SITE_HERE' : 'SITE_DRY') : 'SITE_ELSEWHERE';
 }
 export const OIL_TEXT = {
-  noSiteWorld: 'No oil site exists in this world yet, so an Oil Pump cannot be placed or run. Fuel today comes from Salvaged Oil refined into Fuel Cans.',
-  noSiteWorldShort: 'No oil site exists in this world yet',
-  notOnSite: 'This tile is not an oil site. An Oil Pump only works on an oil site.',
+  noSiteWorld: 'No oil seep exists in this world, so an Oil Pump cannot be placed or run here. Crude Petroleum has to be traded for.',
+  noSiteWorldShort: 'No oil seep exists in this world',
+  notOnSite: 'This tile is not an oil site. Stand the Oil Pump on a crude seep: a dark, shining pool on open ground.',
   dry: 'This oil site has no oil left. The pump cannot run.',
 } as const;
 /** TEST-ONLY FIXTURE: registers a labelled temporary oil source. Never called by any shipping action or map loader. */
@@ -1870,13 +1919,29 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   const r = gs.run!; if (typeof type !== 'string' || !Object.prototype.hasOwnProperty.call(STRUCTS, type)) return 'Unknown structure.'; const d = STRUCTS[type];
   if ((PA1_UPGRADE_ONLY_GEOMETRY as readonly string[]).includes(type))
     return 'Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.';
-  if (type === 'door_powered')
-    return 'A powered door is an installed door module, not a new standalone wall. Module recipe pending.';
   const w = getWorld(); const p = r.player;
   if(p.vehicle)return 'Exit the motorbike before building.';
+  if (LADDER_SPAN[type]) {
+    if (!Number.isInteger(tx) || !Number.isInteger(ty)) return 'Out of bounds.';
+    const plan = ladderPlan(r, type, tx, ty); if (typeof plan === 'string') return plan;
+    const item = d.item!; const packs = C(r, 'inv').slots.filter(v => v?.key === item);
+    if (!packs.length) return 'Missing materials: ' + ITEMS[item].name + ' 0/1';
+    if (!packs.some(v => v?.qty === 1 && Number.isFinite(v.dur) && (v.dur ?? 0) > 0 && (v.dur ?? 0) <= d.hp)) return 'This ladder is broken.';
+    return null;
+  }
+  if (type === 'door_powered') {
+    if (!Number.isInteger(tx) || !Number.isInteger(ty) || tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1) return 'Out of bounds.';
+    if (dist(p.x, p.y, tx * TILE + 8, ty * TILE + 8) > 4.6 * TILE) return 'Too far away.';
+    const host = entsAt(r, tx, ty).find(o => o.kind === 'struct' && POWERED_DOOR_HOSTS.includes(o.type || ''));
+    if (!host) return 'Fit the lock module into a Wooden or Iron Door you own.';
+    if (!owned(host) || (host.hp ?? 0) <= 0) return 'That door is not yours or is broken.';
+    if (Math.floor(p.x / TILE) === tx && Math.floor(p.y / TILE) === ty) return 'Step out of the doorway first.';
+    if (!hasAll(r, 'inv', d.cost)) return 'Missing materials: ' + d.cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ');
+    return null;
+  }
   if (Object.values(r.entities).some(e=>e.kind==='vehicle' && Math.abs(e.x-(tx*TILE+8))<TILE && Math.abs(e.y-(ty*TILE+8))<TILE)) return 'Move the motorbike away before building here.';
   if (type === 'farm_controller' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=2 && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
-  if (type === 'oil_pump' && !authorizedOilSource(r, tx, ty)) { const a = oilAvailability(r, tx, ty); return a === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : a === 'SITE_DRY' ? OIL_TEXT.dry : OIL_TEXT.notOnSite; }
+  if (type === 'oil_pump' && (activeFloor(r) !== 0 || !authorizedOilSource(r, tx, ty))) { const a = oilAvailability(r, tx, ty); return a === 'NO_SITE_IN_WORLD' ? OIL_TEXT.noSiteWorld : a === 'SITE_DRY' ? OIL_TEXT.dry : OIL_TEXT.notOnSite; }
   if (type === 'oil_pump' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=BAL.oilPumpV1.requiresWorkbenchLevel && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
   if (type === 'refinery' && !Object.values(r.entities).some(e=>e.kind==='struct' && e.type==='workbench' && e.station && owned(e) && (e.station.level ?? 1)>=BAL.oilRefineryV1.requiresWorkbenchLevel && near(r,e,3) && dist(e.x,e.y,tx*TILE+8,ty*TILE+8)<=3*TILE)) return 'Build near your level 2 workbench.';
   if (!Number.isInteger(tx) || !Number.isInteger(ty) || tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WH - 1) return 'Out of bounds.';
@@ -2308,18 +2373,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       e.station.upgrade = 'kiln_lining';
       return ok('furnace.upgrade', e.id, 'Furnace lined: future jobs use less fuel for the same work.');
     }
-    case 'fieldRepair': {
-      const inv = C(r, 'inv');
-      if (!validSlot(inv, it.slot) || !validSlot(inv, it.kitSlot)) return fail('Invalid inventory slot.');
-      const item = inv.slots[it.slot], kit = inv.slots[it.kitSlot];
-      if (!item || item.uid !== it.uid || !kit || kit.uid !== it.kitUid || kit.key !== 'field_repair_kit') return fail('The selected item or kit has changed.');
-      const def = ITEMS[item.key];
-      if (!def.repair || !def.dur || item.dur === undefined || item.dur < 0 || item.dur >= def.dur) return fail('This item cannot be field repaired.');
-      if (p.action) return fail('Finish your current action first.');
-      const before = item.dur; item.dur = Math.min(def.dur, item.dur + BAL.player.fieldRepairDurability);
-      if (--kit.qty === 0) inv.slots[it.kitSlot] = null;
-      return ok('item.fieldRepair', `${item.uid}:${before}->${item.dur}`, `${def.name} field repaired to ${item.dur}/${def.dur}.`);
-    }
+    case 'fieldRepair': return fail('Field Repair Kits were retired. Repair at a Workbench with the listed materials.');
     case 'maintainItem': {
       const e = r.entities[it.eid], inv = C(r, 'inv');
       if (!e || e.kind !== 'struct' || !e.station || !owned(e) || !near(r, e, 3)) return fail('Use your station within reach.');
@@ -2352,7 +2406,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const inv=C(r,'inv');if(!validSlot(inv,it.slot))return fail('Choose a carried recyclable item.');const s=inv.slots[it.slot];
       if(!s||s.uid!==it.uid)return fail('That item is no longer carried.');
       const plan=recoveryPlan(s);if(!plan&&(s.key==='metal_pipe'||s.key==='metal_blade'||s.key==='mechanical_gear'||s.key==='iron_plate')&&s.qty!==1)return fail(`Split one ${ITEMS[s.key].name} off the stack first (Split in the inventory), then recycle that single part.`);
-      if(!plan||(it.type==='recycleDrive'&&s.key!=='damaged_drive'))return fail('This item is not an eligible Recycler input.');
+      if(!plan||it.type==='recycleDrive')return fail('This item is not an eligible Recycler input.');
       if(p.action?.slot===it.slot)return fail('Finish your current action.');if(e.station.queue.length>=1)return fail('Recycler is already processing an item.');
       if(!recoveryFits(C(r,e.station.outC),plan.outputs))return fail('Recycler output cannot hold all results; collect items first.');
       inv.slots[it.slot]=null;e.station.queue.push({id:uid(r,'j'),recipe:plan.recipe,left:plan.total,total:plan.total,reserved:[s]});
@@ -2387,6 +2441,17 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         frame.open=false;frame.framePaid=true;
         markDirty();return ok('build.frame-door',frame.id, 'Door installed in the existing paid frame.');
       }
+      if (it.struct === 'door_powered') {
+        // The module is fitted into the existing door: same entity, same damage share, no second wall.
+        const host = entsAt(r, it.tx, it.ty).find(o => o.kind === 'struct' && POWERED_DOOR_HOSTS.includes(o.type || ''))!;
+        for (const [k, q] of d.cost) removeItem(r, 'inv', k, q);
+        const frac = Math.max(0.01, Math.min(1, (host.hp ?? 0) / (host.maxHp || 1)));
+        const dx = p.x - host.x, dy = p.y - host.y; const outside: [number, number] = Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx) || 1, 0] : [0, Math.sign(dy) || 1];
+        host.poweredHost = host.type as string; host.type = 'door_powered'; host.maxHp = Math.max(d.hp, host.maxHp || 0); host.hp = Math.max(1, Math.floor(frac * host.maxHp));
+        host.open = false; host.electricDoor = { version: 'wire-v1', interior: [outside[0] ? -outside[0] : 0, outside[1] ? -outside[1] : 0] };
+        markDirty(); receipt(r, now, 'build.powered-door', host.id);
+        return ok('build.powered-door', host.id, 'Lock module fitted. Wire the door to a generator; the inside keeps a hand release.');
+      }
       let deployed: Stack|undefined;
       if (d.item) {
         const inv=C(r,'inv');
@@ -2409,6 +2474,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (it.struct === 'base_generator') e.basePower = { enabled: false, energy: 0, network:'wire-v1' };
       if (it.struct === 'power_switch') e.wireSwitch={version:'wire-v1',on:false};
       if (it.struct === 'ir_sensor') e.irSensor={version:'ir-v1',enabled:false};
+      if (LADDER_SPAN[it.struct]) { const plan = ladderPlan(r, it.struct, it.tx, it.ty); if (typeof plan !== 'string') e.ladder = plan; }
+      if (it.struct === 'large_furnace' && e.station) { delete r.custody[e.station.outC]; e.station.outC = mkContainer(r, 'out', LARGE_FURNACE.outSlots).id; }
       if (it.struct === 'bear_trap') e.bearTrap={version:'trap-v1',state:'unarmed',uses:BAL.bearTrapV1.uses};
       if (it.struct === 'door_powered') {const dx=p.x-e.x,dy=p.y-e.y;const outside:[number,number]=Math.abs(dx)>Math.abs(dy)?[Math.sign(dx)||1,0]:[0,Math.sign(dy)||1];e.electricDoor={version:'wire-v1',interior:[outside[0] ? -outside[0] : 0,outside[1] ? -outside[1] : 0]};}
       if (it.struct === 'arrow_turret') e.turret = { enabled: false, cooldown: 0, angle: 0 };
@@ -2454,9 +2521,9 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'vehicleRepair': {
       const e=r.entities[it.eid];if(!e||e.kind!=='vehicle'||!e.vehicle||!e.deployed||!owned(e)||!near(r,e,2)||p.vehicle)return fail('Dismount near your motorbike.');
       if((e.hp??0)>=BAL.motorbike.maxHp)return fail('Motorbike is already sound.');
-      const cost:[string,number][]=[['mechanical_parts',1],['fasteners',1]];if(!hasAll(r,'inv',cost))return fail('Repair needs 1 Machine Part and 1 Fastener.');
+      const cost:[string,number][]=[['spares',3]]; /* item set v3: was 1 Machine Part + 1 Fastener = 2 + 1 Parts at the retirement ratios */ if(!hasAll(r,'inv',cost))return fail('Repair needs 3 Parts.');
       for(const [key,qty] of cost)removeItem(r,'inv',key,qty);const before=e.hp||0;e.hp=Math.min(BAL.motorbike.maxHp,before+BAL.motorbike.repairHp);e.deployed.dur=e.hp;
-      return ok('vehicle.repair',`${e.deployed.uid}:${before.toFixed(2)}->${e.hp.toFixed(2)}:mechanical_partsx1,fastenersx1`);
+      return ok('vehicle.repair',`${e.deployed.uid}:${before.toFixed(2)}->${e.hp.toFixed(2)}:sparesx3`);
     }
     case 'vehicleUnloadBag': {
       // B04: a broken or out-of-fuel motorbike keeps its UID and cargo; the player moves its real cargo stacks (same objects,
@@ -2491,14 +2558,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       for(const i of picks){ const stack=cargo.slots[i]!; cargo.slots[i]=null; const slot=bc.slots.findIndex(sl=>!sl); bc.slots[slot]=stack; moved.push(stack.uid); }
       return ok('vehicle.unload',`${e.deployed.uid}:${bag.id}:${moved.join(',')}`,`Moved ${moved.length} stack${moved.length===1?'':'s'} from the motorbike into a ground bag beside it.`);
     }
-    case 'vehicleLubricate': {
-      const e=r.entities[it.eid];if(!e||e.kind!=='vehicle'||!e.vehicle||!e.deployed||!owned(e)||!near(r,e,2)||p.vehicle)return fail('Dismount near your motorbike.');
-      if(!Number.isFinite(e.vehicle.lube)) e.vehicle.lube=0;
-      if((e.vehicle.lube||0) >= BAL.oilRefineryV1.lubricantDistancePx) return fail('Motorbike already fully lubricated.');
-      if(countItem(r,'inv','lubricant')<1) return fail('Need 1 Machine Lubricant from the Oil Refinery.');
-      removeItem(r,'inv','lubricant',1); const add=BAL.oilRefineryV1.lubricantDistancePx; e.vehicle.lube=Math.min(BAL.oilRefineryV1.lubricantDistancePx*BAL.oilRefineryV1.lubricantOverCapFactor, (e.vehicle.lube||0)+add);
-      return ok('vehicle.lubricate',`${e.deployed.uid}:lube+${add}->${e.vehicle.lube}`,`Lubricated: wear halved for next ${(e.vehicle.lube/TILE).toFixed(0)} tiles.`);
-    }
+    case 'vehicleLubricate': return fail('Machine Lubricant was retired. Keep the motorbike in repair at a Workbench instead.');
     case 'placeCart': {
       if(p.vehicle)return fail('Exit the vehicle first.');
       const slots = C(r, 'inv').slots; const idx = slots[p.active]?.key === 'cart_kit' ? p.active : slots.findIndex(s => s?.key === 'cart_kit'); if (idx < 0) return fail('No packed cart.');
@@ -2541,8 +2601,16 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (STRUCTS[e.type!].layer === 'floor' && entsAt(r,e.tx!,e.ty!).some(o=>o.type==='claim')) return fail('Remove the cabinet on this foundation first.');
       const d = STRUCTS[e.type!];
       if ((e.hp??0)<=0) return fail('Destroyed devices cannot be packed into pristine items.');
+      if (e.ladder && ladderTiles(e).includes(Math.floor(p.y / TILE) * WW + Math.floor(p.x / TILE))) return fail('Climb off the ladder first.');
       if (entsAt(r, e.tx!, e.ty!).some(o => o.id !== e.id && STRUCTS[o.type!]?.layer === 'roof') && d.layer === 'floor') return fail('Remove the roof above first.');
       if (e.station?.queue.some(j => j.reserved === undefined)) return fail('Legacy job has no recoverable input record; let it finish before reclaiming.');
+      if (e.type === 'door_powered' && e.poweredHost && STRUCTS[e.poweredHost]) {
+        // Taking the module out leaves the door it was fitted into, with the same share of damage.
+        const hd = STRUCTS[e.poweredHost]; const frac = Math.max(0.01, Math.min(1, (e.hp ?? 0) / (e.maxHp || 1)));
+        for (const [k, q] of d.cost) { const back = Math.floor(q * BAL.economy.reclaimRefund); if (back > 0) giveOrDrop(r, k, back, now); }
+        e.type = e.poweredHost; delete e.poweredHost; delete e.electricDoor; e.maxHp = hd.hp; e.hp = Math.max(1, Math.floor(frac * hd.hp)); e.open = false;
+        markDirty(); return ok('reclaim.powered-door', e.id, 'Lock module removed. The door stays.');
+      }
       const bag = bagStation(r, e, now, 'Reclaimed contents');
       removeEntity(r, e);
       if (d.item) {
@@ -2615,8 +2683,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         }
         let cardUid:string|undefined, remaining=0;
         if(!exit && d.requirement==='keycard') {
-          const inv=C(r,'inv'),i=inv.slots.findIndex(s=>s?.key==='keycard' && (s.meta??'vault')===(d.cardClass??'vault') && (s.charge===undefined||s.charge>0));
-          if(i<0)return fail(inv.slots.some(s=>s?.key==='keycard')?'Sealed. Carried card is incompatible or exhausted.':`Sealed. A ${d.cardClass??'vault'} keycard is required.`);
+          const want=cardItemForClass(d.cardClass),inv=C(r,'inv'),i=inv.slots.findIndex(s=>s?.key===want && (s.charge===undefined||s.charge>0));
+          if(i<0)return fail(inv.slots.some(s=>s&&isAccessCard(s.key))?`Sealed. This reader takes a ${ITEMS[want].name}; the card you carry is the wrong colour or exhausted.`:`Sealed. A ${ITEMS[want].name} is required.`);
           const card=inv.slots[i]!;cardUid=card.uid;
           if(card.charge===undefined){card.qty--;if(!card.qty)inv.slots[i]=null;}
           else {card.charge--;remaining=card.charge;if(card.charge===0)inv.slots[i]=null;}
@@ -2625,7 +2693,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         r.poiAccessDigest=poiContractDigest(getWorld(r.layoutId||'shipping'));
         e.poiDoor={version:'poi-access-v1',closeAt:now+BAL.poiAccess.doorOpenMs,scans:(e.poiDoor?.scans||0)+(cardUid?1:0),...(cardUid?{lastCardUid:cardUid}:e.poiDoor?.lastCardUid?{lastCardUid:e.poiDoor.lastCardUid}:{})};
         e.open=true;markDirty();
-        return ok(cardUid?'poi.card.scan':'poi.door.open',`${e.id}:${exit?'interior-release':cardUid?`${cardUid}:remaining=${remaining}`:'powered'}`,cardUid?`${(d.cardClass??'vault')[0].toUpperCase()+(d.cardClass??'vault').slice(1)} card scanned; ${remaining} uses remain.`:exit?'Interior release opened the door.':'Powered gate opened.');
+        return ok(cardUid?'poi.card.scan':'poi.door.open',`${e.id}:${exit?'interior-release':cardUid?`${cardUid}:remaining=${remaining}`:'powered'}`,cardUid?`${ITEMS[cardItemForClass(d.cardClass)].name} scanned; ${remaining} uses remain.`:exit?'Interior release opened the door.':'Powered gate opened.');
       }
       e.open=true;markDirty();return ok('door',`${e.id}:open`);
     }
@@ -2863,7 +2931,7 @@ export function isStationFuel(r: RunState, cid: string): boolean {
 function accepts(c: Container, slot: number, s: Stack) {
   if (['loot', 'cash', 'out'].includes(c.kind)) return false;
   if (c.kind === 'fuel') return !!ITEMS[s.key]?.fuel;
-  if (c.kind === 'eq') return ITEMS[s.key]?.slot === ['head', 'body', 'back'][slot];
+  if (c.kind === 'eq') return ITEMS[s.key]?.slot === EQ_SLOTS[slot];
   return true;
 }
 /** B04: a bag emptied by a legal physical withdrawal disappears (no ghost). A bag with pending legacy recovery jobs is kept. */
@@ -2906,7 +2974,7 @@ function useItem(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: st
     if (gate && RESEARCH_FAMILIES[gate]?.enforce && !researchFamilyUnlocked(r, gate)) return fail(`Requires the ${gate} study.`);
     r.knowledge.recipes.push(rec); c.slots[it.slot] = null; return ok('learn.blueprint', rec, `Learned: ${ITEMS[rc.out].name}`);
   }
-  if (d.slot) { const idx = ['head', 'body', 'back'].indexOf(d.slot); const eq = C(r, 'eq'); if (c === eq) return fail('Already equipped.'); const prev = eq.slots[idx]; if (prev && !accepts(c, it.slot, prev)) return fail('Move the old equipment to inventory first.'); eq.slots[idx] = s; c.slots[it.slot] = prev; return ok('equip', s.key); }
+  if (d.slot) { const idx = EQ_SLOTS.indexOf(d.slot); const eq = C(r, 'eq'); if (c === eq) return fail('Already equipped.'); const prev = eq.slots[idx]; if (prev && !accepts(c, it.slot, prev)) return fail('Move the old equipment to inventory first.'); eq.slots[idx] = s; c.slots[it.slot] = prev; return ok('equip', s.key); }
   if (d.food) {
     if (d.waterContainer) { if ((s.charge ?? 0) <= 0) return fail('Flask is empty.'); s.charge!--; p.thirst = Math.min(100, p.thirst + (d.food.thirst ?? 0)); return ok('drink.flask', `${s.uid}:${s.charge}`); }
     const f = d.food; p.hunger = clamp(p.hunger + (f.hunger || 0), 0, 100); p.thirst = clamp(p.thirst + (f.thirst || 0), 0, 100); p.hp = clamp(p.hp + (f.hp || 0), 1, BAL.player.maxHp); p.warmth = clamp(p.warmth + (f.warmth || 0), 0, 100); p.rad = clamp(p.rad + (f.rad || 0), 0, 100);
@@ -3024,7 +3092,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
       // A finished job is committed at its event time without requiring extra work or fuel.
       if (job && job.left <= 0) {
         const at = now - t;
-        if (job.recipe==='X:drive'||job.recipe==='X:recover-v1'||job.recipe==='X:recover-v2'||job.recipe==='X:recover-v3'||COMPONENT_RECIPES.includes(job.recipe)) {
+        if (job.recipe==='X:drive'||job.recipe==='X:recover-v1'||job.recipe==='X:recover-v2'||job.recipe==='X:recover-v3'||job.recipe==='X:recover-v4'||COMPONENT_RECIPES.includes(job.recipe)) {
           // Outputs are fixed by the job's stored recipe version (v1 jobs never change when v2 is added).
           const plan=job.reserved?.length===1?recoveryPlanFor(job.reserved[0],job.recipe):null;
           if(e.kind!=='recycler'||!plan||plan.recipe!==job.recipe||!recoveryFits(C(r,st.outC),plan.outputs)){blocked=true;note('Recycler: output full or invalid reservation.');stationState(r,e,'output_full',at);continue;}
@@ -3090,7 +3158,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
       }
       if (job && kind !== 'campfire') stationState(r,e,'running',now-t);
       const fuelRate = kind === 'furnace' && st.upgrade === 'kiln_lining' ? BAL.fuel.linedFurnaceFuelMultiplier : 1;
-      const speed=kind==='workbench' && powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1;
+      const speed=kind==='workbench' && powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : e.type==='large_furnace' ? LARGE_FURNACE.speed : 1;
       let step = needsFuel ? Math.min(t, st.burn / fuelRate) : t; if (job) step = Math.min(step, job.left / speed);
       if (needsFuel) st.burn = Math.max(0, st.burn - step * fuelRate);
       t -= step;

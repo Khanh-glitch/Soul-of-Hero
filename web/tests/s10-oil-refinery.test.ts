@@ -6,6 +6,7 @@ import { vehicleClear } from '../src/game/motorbike';
 import { serializeSnapshot, validate } from '../src/game/persist';
 import { tick, settle, type Input } from '../src/game/sim';
 import { ITEMS, RECIPES } from '../src/game/catalog';
+import { RECIPE_REVISION } from '../src/game/recipe-migration';
 
 // SYS10-R1 fixtures. Stations, injected stock and the motorbike kit are CONTROLLED FIXTURES
 // placed by the test; they are not natural-player acquisition evidence.
@@ -51,19 +52,25 @@ function fixtureStation(g: GameState, type: string, level?: number): Entity {
 }
 const STRUCT_HP = (type: string) => (type === 'refinery' ? BAL.oilRefineryV1.hp : 160);
 const fuelQty = (c: { slots: any[] }) => c.slots.filter(s => s?.key === 'fuel_can').reduce((a, s) => a + s.qty, 0);
-const lubeQty = (c: { slots: any[] }) => c.slots.filter(s => s?.key === 'lubricant').reduce((a, s) => a + s.qty, 0);
+const lubeQty = (c: { slots: any[] }) => c.slots.filter(s => s?.key === 'lubricant').reduce((a, s) => a + s.qty, 0); // always 0 now: Lubricant is retired
+// Item set v3: the refinery's input is Crude Petroleum (Salvaged Oil retired); the batch is 5 crude + 1 glass -> 2 fuel.
+const OIL = 'crude_petroleum', BATCH = 'refinery_fuel_batch';
+const BATCH_MS = BAL.oilRefineryV1.recipes.batch.secs * 1000, SINGLE_MS = BAL.oilRefineryV1.recipes.single.secs * 1000;
 const bindRefinery = (g: GameState) => { const e = fixtureStation(g, 'refinery'); addItem(g.run!, e.station!.fuelC, 'wood', 3); return e; };
 afterEach(() => setActiveLayout('shipping'));
 
 describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, validation', () => {
   it('derives every refinery recipe and cost from the single balance authority', () => {
-    const R = BAL.oilRefineryV1.recipes;
+    const R = BAL.oilRefineryV1.recipes as any;
+    expect(Object.keys(R).sort()).toEqual(['batch', 'single']);
     expect(RECIPES.refinery_fuel.ins).toEqual(R.single.ins);
     expect(RECIPES.refinery_fuel_batch.ins).toEqual(R.batch.ins);
-    expect(RECIPES.refinery_industrial.ins).toEqual(R.industrial.ins);
-    expect(RECIPES.refinery_industrial.outs).toEqual(R.industrial.outs);
-    expect(RECIPES.refinery_industrial.secs).toBe(R.industrial.secs);
-    expect(RECIPES.refinery_lubricant.outs ?? [[RECIPES.refinery_lubricant.out, RECIPES.refinery_lubricant.qty]]).toEqual(R.lube.outs);
+    expect(RECIPES.refinery_fuel_batch.secs).toBe(R.batch.secs);
+    expect([[RECIPES.refinery_fuel_batch.out, RECIPES.refinery_fuel_batch.qty]]).toEqual(R.batch.outs);
+    // Item set v3: Salvaged Oil and Lubricant are retired. The co-product batch and the lubricant run are gone with them;
+    // the refinery turns Crude Petroleum into Fuel Canisters and nothing else.
+    for (const dead of ['refinery_' + 'industrial', 'refinery_lubricant', 'refinery_crude', 'refine_salvaged_oil']) expect(RECIPES[dead], dead).toBeUndefined();
+    for (const rc of [R.single, R.batch]) { expect(rc.ins[0][0]).toBe(OIL); expect(rc.outs).toHaveLength(1); expect(rc.outs[0][0]).toBe('fuel_can'); }
     expect(BAL.motorbike).not.toHaveProperty('lubricantWearReduction');
     expect(BAL.oilRefineryV1.need).toBe('any');
   });
@@ -87,32 +94,31 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     expect(validate(snapshot(g))).toBeTruthy();
   });
 
-  it('commits the industrial batch as one paid job: 2 Fuel Canisters + 1 Lubricant, atomically, on one timeline', () => {
+  it('commits the batch as one paid job: 5 Crude + 1 Glass -> 2 Fuel Canisters, on one timeline', () => {
     const g = setup(), r = g.run!, ref = bindRefinery(g);
-    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
-    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(true);
-    expect(countItem(r, 'inv', 'salvaged_oil')).toBe(0);
+    addItem(r, 'inv', OIL, 5); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: BATCH, eid: ref.id }).ok).toBe(true);
+    expect(countItem(r, 'inv', OIL)).toBe(0);
     expect(countItem(r, 'inv', 'glass')).toBe(0);
     expect(ref.station!.queue).toHaveLength(1);
-    expect(ref.station!.queue[0].total).toBe(BAL.oilRefineryV1.recipes.industrial.secs * 1000);
-    stepStations(g, 25000, T + 20000);
+    expect(ref.station!.queue[0].total).toBe(BAL.oilRefineryV1.recipes.batch.secs * 1000);
+    stepStations(g, 20000, T + 20000);
     const out = C(r, ref.station!.outC);
-    expect(ref.station!.queue).toHaveLength(1);                    // not finished at 25 s
-    stepStations(g, 2000, T + 30000);
+    expect(ref.station!.queue).toHaveLength(1);                    // not finished at 20 s
+    stepStations(g, 3000, T + 30000);
     expect(ref.station!.queue).toHaveLength(0);
     expect(fuelQty(out)).toBe(2);
-    expect(lubeQty(out)).toBe(1);
+    expect(lubeQty(out)).toBe(0);
     expect(validate(snapshot(g))).toBeTruthy();
   });
 
-  it('preflights the whole bundle: when only one product fits, neither is committed and inputs stay reserved', () => {
+  it('preflights the output: when the product does not fit, nothing is committed and the job is held finished', () => {
     const g = setup(), r = g.run!, ref = bindRefinery(g);
     const out = C(r, ref.station!.outC);
-    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
-    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(true);
-    // Output space is taken by other stock while the batch runs: five of six slots hold stone,
-    // leaving one slot that fits 2 fuel but not 2 fuel + 1 lubricant.
-    for (let i = 0; i < 5; i++) out.slots[i] = { uid: `pad${i}`, key: 'stone', qty: ITEMS.stone.max };
+    addItem(r, 'inv', OIL, 5); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: BATCH, eid: ref.id }).ok).toBe(true);
+    // Output space is taken by other stock while the batch runs: all six slots hold stone.
+    for (let i = 0; i < 6; i++) out.slots[i] = { uid: `pad${i}`, key: 'stone', qty: ITEMS.stone.max };
     stepStations(g, 26000, T + 30000);
     expect(fuelQty(out)).toBe(0);
     expect(lubeQty(out)).toBe(0);
@@ -123,32 +129,37 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     stepStations(g, 1000, T + 31000);
     expect(ref.station!.queue).toHaveLength(0);
     expect(fuelQty(out)).toBe(2);
-    expect(lubeQty(out)).toBe(1);
+    expect(lubeQty(out)).toBe(0);
     expect(validate(snapshot(g))).toBeTruthy();
   });
 
-  it('refuses to queue an industrial batch that cannot land, reserving no inputs', () => {
+  it('a batch queued against a full output is paid once, held finished, and grants nothing until there is room', () => {
+    // The old co-product batch was refused up front when its bundle could not land. A single-product job follows the
+    // ordinary station rule instead: it is accepted, runs, and waits finished — never lost, never duplicated.
     const g = setup(), r = g.run!, ref = bindRefinery(g);
     const out = C(r, ref.station!.outC);
     for (let i = 0; i < 6; i++) out.slots[i] = { uid: `pad${i}`, key: 'stone', qty: ITEMS.stone.max };
-    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
-    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(false);
-    expect(countItem(r, 'inv', 'salvaged_oil')).toBe(6);
-    expect(ref.station!.queue).toHaveLength(0);
+    addItem(r, 'inv', OIL, 5); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: BATCH, eid: ref.id }).ok).toBe(true);
+    expect(countItem(r, 'inv', OIL)).toBe(0);
+    stepStations(g, 60000, T + 60000);
+    expect(ref.station!.queue).toHaveLength(1);
+    expect(ref.station!.queue[0].left).toBe(0);
+    expect(fuelQty(out)).toBe(0);
   });
 
   it('starves without fuel, keeps progress, and resumes when fuel arrives', () => {
     const g = setup(), r = g.run!, ref = fixtureStation(g, 'refinery');
-    addItem(r, 'inv', 'salvaged_oil', 2);
-    expect(act(g, 'craft', { recipe: 'refinery_lubricant', eid: ref.id }).ok).toBe(true);
+    addItem(r, 'inv', OIL, 3); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: 'refinery_fuel', eid: ref.id }).ok).toBe(true);
     stepStations(g, 5000, T + 5000);
-    expect(ref.station!.queue[0].left).toBe(12000);                // no fuel yet: nothing advances
+    expect(ref.station!.queue[0].left).toBe(SINGLE_MS);                // no fuel yet: nothing advances
     stepStations(g, 60000, T + 65000);
-    expect(ref.station!.queue[0].left).toBe(12000);
+    expect(ref.station!.queue[0].left).toBe(SINGLE_MS);
     addItem(r, ref.station!.fuelC, 'wood', 1);
     stepStations(g, 4000, T + 69000);
     const partial = ref.station!.queue[0].left;
-    expect(partial).toBeLessThan(12000);                           // progress kept once fuel arrives
+    expect(partial).toBeLessThan(SINGLE_MS);                           // progress kept once fuel arrives
     stepStations(g, 1000, T + 70000);
     expect(ref.station!.queue[0].left).toBeLessThan(partial);      // the burning fuel keeps the job moving
     addItem(r, ref.station!.fuelC, 'wood', 3);
@@ -157,16 +168,16 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     addItem(r, ref.station!.fuelC, 'wood', 3);
     stepStations(g, 60000, T + 125000);
     expect(ref.station!.queue).toHaveLength(0);
-    expect(lubeQty(C(r, ref.station!.outC))).toBe(1);
+    expect(fuelQty(C(r, ref.station!.outC))).toBe(1);
   });
 
   it('cancelling a queued industrial batch refunds every reserved input exactly', () => {
     const g = setup(), r = g.run!, ref = bindRefinery(g);
-    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
-    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(true);
+    addItem(r, 'inv', OIL, 5); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: BATCH, eid: ref.id }).ok).toBe(true);
     const jobId = ref.station!.queue[0].id;
     expect(act(g, 'cancelJob', { eid: ref.id, jobId }).ok).toBe(true);
-    expect(countItem(r, 'inv', 'salvaged_oil')).toBe(6);
+    expect(countItem(r, 'inv', OIL)).toBe(5);
     expect(countItem(r, 'inv', 'glass')).toBe(1);
     expect(ref.station!.queue).toHaveLength(0);
     expect(validate(snapshot(g))).toBeTruthy();
@@ -175,17 +186,17 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
   it('offline settlement matches chronological stepping and produces no duplicate output', () => {
     const run = (chunks: number[]) => {
       const g = setup(), r = g.run!, ref = bindRefinery(g);
-      addItem(r, 'inv', 'salvaged_oil', 8); addItem(r, 'inv', 'glass', 2);
-      act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }, 'a', T + 1);
+      addItem(r, 'inv', OIL, 7); addItem(r, 'inv', 'glass', 2);
+      act(g, 'craft', { recipe: BATCH, eid: ref.id }, 'a', T + 1);
       let now = T + 1;
       for (const c of chunks) { now += c; settle(g, now, true); }
       const out = C(r, ref.station!.outC);
-      return { fuel: fuelQty(out), lube: lubeQty(out), queue: ref.station!.queue.length, oil: countItem(r, 'inv', 'salvaged_oil') };
+      return { fuel: fuelQty(out), lube: lubeQty(out), queue: ref.station!.queue.length, oil: countItem(r, 'inv', OIL) };
     };
     const once = run([60000]);
     const chunked = run([5000, 5000, 5000, 5000, 5000, 35000]);
     expect(chunked).toEqual(once);
-    expect(once).toEqual({ fuel: 2, lube: 1, queue: 0, oil: 2 });
+    expect(once).toEqual({ fuel: 2, lube: 0, queue: 0, oil: 2 });
   });
 
   it('wear split: only the protected distance is charged at the reduced rate, on the same bike UID', () => {
@@ -214,29 +225,24 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     expect(q).toBeTruthy();
   });
 
-  it('service: exact distance boundary, cap, inventory debit, same UID, no free HP', () => {
+  it('item set v3: the lubricant service is retired — refused with no debit, no protection and no free HP', () => {
     const g = setup(), { r, e } = deployBike(g);
-    const hpBefore = e.hp;
-    for (let i = 0; i < 2; i++) addItem(r, 'inv', 'lubricant', 1);
-    expect(act(g, 'vehicleLubricate', { eid: e.id }, 'l1').ok).toBe(true);
-    expect(e.vehicle!.lube).toBe(BAL.oilRefineryV1.lubricantDistancePx);
-    // Already covered by a full interval: a further service is refused, with no debit.
-    expect(act(g, 'vehicleLubricate', { eid: e.id }, 'l2').ok).toBe(false);
-    expect(countItem(r, 'inv', 'lubricant')).toBe(1);
-    // Partial protection tops up but is capped at 1.5 service intervals.
-    e.vehicle!.lube = 6000;
-    expect(act(g, 'vehicleLubricate', { eid: e.id }, 'l3').ok).toBe(true);
-    expect(e.vehicle!.lube).toBe(BAL.oilRefineryV1.lubricantDistancePx * 1.5);
+    const hpBefore = e.hp, lubeBefore = e.vehicle!.lube ?? 0;
+    addItem(r, 'inv', 'lubricant', 2);                              // minted as its successor: 3 Crude Petroleum
     expect(countItem(r, 'inv', 'lubricant')).toBe(0);
-    expect(e.hp).toBe(hpBefore);                                   // servicing never restores HP
+    const crude = countItem(r, 'inv', OIL); expect(crude).toBe(3);
+    expect(act(g, 'vehicleLubricate', { eid: e.id }, 'l1').ok).toBe(false);
+    expect(countItem(r, 'inv', OIL)).toBe(crude);
+    expect(e.vehicle!.lube ?? 0).toBe(lubeBefore);
+    expect(e.hp).toBe(hpBefore);
     expect(e.deployed!.uid).toBeTruthy();
     expect(validate(snapshot(g))).toBeTruthy();
   });
 
   it('strict validation rejects forged refinery and vehicle states (fail-first assertions)', () => {
     const g = setup(), r = g.run!, ref = bindRefinery(g);
-    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
-    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(true);
+    addItem(r, 'inv', OIL, 5); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: BATCH, eid: ref.id }).ok).toBe(true);
     const good = snapshot(g);
     expect(validate(good)).toBeTruthy();
 
@@ -249,8 +255,8 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     expect(validate(forgedInputs)).toBeNull();
 
     const forgedRecipe = snapshot(g); const fr = Object.values(forgedRecipe.run!.entities).find(e => e.type === 'refinery')!.station!.queue[0];
-    fr.recipe = 'refinery_fuel_batch';                             // a different refinery recipe with the wrong inputs
-    fr.total = RECIPES.refinery_fuel_batch.secs * 1000;
+    fr.recipe = 'refinery_fuel';                                   // a different refinery recipe with the wrong inputs
+    fr.total = RECIPES.refinery_fuel.secs * 1000; fr.left = Math.min(fr.left, fr.total);
     expect(validate(forgedRecipe)).toBeNull();
 
     const badHp = snapshot(g); Object.values(badHp.run!.entities).find(e => e.type === 'refinery')!.hp = BAL.oilRefineryV1.hp * 10;
@@ -274,14 +280,17 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     expect(e.kind).toBe('vehicle');
   });
 
-  it('legacy single-output furnace recipes still validate', () => {
+  it('item set v3: the furnace oil recipe is retired — a furnace refuses crude, keeps the stock, and the state validates', () => {
     const g = setup(), r = g.run!;
     const furnace = fixtureStation(g, 'furnace');
     addItem(r, furnace.station!.fuelC, 'wood', 2);
-    addItem(r, 'inv', 'salvaged_oil', 3); addItem(r, 'inv', 'glass', 1);
+    addItem(r, 'inv', OIL, 3); addItem(r, 'inv', 'glass', 1);
     r.knowledge.recipes.push('refine_salvaged_oil');
-    expect(act(g, 'craft', { recipe: 'refine_salvaged_oil', eid: furnace.id }).ok).toBe(true);
-    stepStations(g, 19000, T + 30000);
+    expect(act(g, 'craft', { recipe: 'refine_salvaged_oil', eid: furnace.id }).ok).toBe(false);
+    expect(act(g, 'craft', { recipe: 'refinery_fuel', eid: furnace.id }).ok).toBe(false);   // a furnace is not a refinery
+    expect(countItem(r, 'inv', OIL)).toBe(3); expect(countItem(r, 'inv', 'glass')).toBe(1);
+    expect(furnace.station!.queue).toHaveLength(0);
+    r.knowledge.recipes.pop();
     expect(validate(snapshot(g))).toBeTruthy();
   });
 
@@ -289,10 +298,10 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     const g = setup(), r = g.run!, ref = fixtureStation(g, 'refinery');
     expect(validate(snapshot(g))).toBeTruthy();
     // Forged job: no paid reservation. Validation must reject the raw state (save guard would throw).
-    ref.station!.queue.push({ id: 'j1', recipe: 'refinery_industrial', left: 26000, total: 26000 } as any);
+    ref.station!.queue.push({ id: 'j1', recipe: BATCH, left: BATCH_MS, total: BATCH_MS, rv: RECIPE_REVISION /* an un-stamped job is priced by the frozen rev-1 bill */ } as any);
     expect(validate(structuredClone(g))).toBeNull();
     // The same job with a canonical reservation is accepted.
-    ref.station!.queue[0].reserved = [{ uid: 'resv1', key: 'salvaged_oil', qty: 6 }, { uid: 'resv2', key: 'glass', qty: 1 }] as any;
+    ref.station!.queue[0].reserved = [{ uid: 'resv1', key: OIL, qty: 5 }, { uid: 'resv2', key: 'glass', qty: 1 }] as any;
     expect(validate(structuredClone(g))).toBeTruthy();
     expect(r).toBeTruthy();
   });
@@ -320,8 +329,8 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
 
   it('rejects an ACTIVE industrial job whose refinery is retyped, separately from the empty case', () => {
     const g = setup(), r = g.run!, ref = bindRefinery(g);
-    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
-    expect(act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(true);
+    addItem(r, 'inv', OIL, 5); addItem(r, 'inv', 'glass', 1);
+    expect(act(g, 'craft', { recipe: BATCH, eid: ref.id }).ok).toBe(true);
     expect(validate(snapshot(g))).toBeTruthy();
     const retyped = snapshot(g);
     Object.values(retyped.run!.entities).find(e => e.type === 'refinery')!.type = 'furnace';
@@ -332,15 +341,15 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
   it('save -> reopen mid-job keeps UID, job progress and reservation; completion matches an uninterrupted run', () => {
     const reference = (() => {
       const g = setup(), r = g.run!, ref = bindRefinery(g);
-      addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
-      act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }, 'ref-job', T + 1);
+      addItem(r, 'inv', OIL, 5); addItem(r, 'inv', 'glass', 1);
+      act(g, 'craft', { recipe: BATCH, eid: ref.id }, 'ref-job', T + 1);
       settle(g, T + 60000, true);
       const out = C(r, ref.station!.outC);
-      return { fuel: fuelQty(out), lube: lubeQty(out), oil: countItem(r, 'inv', 'salvaged_oil') };
+      return { fuel: fuelQty(out), lube: lubeQty(out), oil: countItem(r, 'inv', OIL) };
     })();
     const g = setup(), r = g.run!, ref = bindRefinery(g);
-    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
-    act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }, 'rj', T + 1);
+    addItem(r, 'inv', OIL, 5); addItem(r, 'inv', 'glass', 1);
+    act(g, 'craft', { recipe: BATCH, eid: ref.id }, 'rj', T + 1);
     settle(g, T + 10000, true);
     const reservedBefore = JSON.stringify(ref.station!.queue[0].reserved);
     const leftBefore = ref.station!.queue[0].left;
@@ -353,29 +362,29 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     expect(JSON.stringify(rref.station!.queue[0].reserved)).toBe(reservedBefore);
     settle(reopened, T + 60000, true);
     const out = C(reopened.run!, rref.station!.outC);
-    expect({ fuel: fuelQty(out), lube: lubeQty(out), oil: countItem(reopened.run!, 'inv', 'salvaged_oil') }).toEqual(reference);
+    expect({ fuel: fuelQty(out), lube: lubeQty(out), oil: countItem(reopened.run!, 'inv', OIL) }).toEqual(reference);
     expect(rref.station!.queue).toHaveLength(0);
   });
 
   it('fault: no fuel never advances or grants output, and resumes exactly once fuel arrives', () => {
     const g = setup(), r = g.run!, ref = fixtureStation(g, 'refinery');
-    addItem(r, 'inv', 'salvaged_oil', 2);
-    act(g, 'craft', { recipe: 'refinery_lubricant', eid: ref.id }, 'nf', T + 1);
+    addItem(r, 'inv', OIL, 3); addItem(r, 'inv', 'glass', 1);
+    act(g, 'craft', { recipe: 'refinery_fuel', eid: ref.id }, 'nf', T + 1);
     settle(g, T + 600000, true);                                   // ten minutes, no fuel
-    expect(ref.station!.queue[0].left).toBe(12000);
-    expect(lubeQty(C(r, ref.station!.outC))).toBe(0);
+    expect(ref.station!.queue[0].left).toBe(SINGLE_MS);
+    expect(fuelQty(C(r, ref.station!.outC))).toBe(0);
     addItem(r, ref.station!.fuelC, 'wood', 3);
     settle(g, T + 700000, true);
     expect(ref.station!.queue).toHaveLength(0);
-    expect(lubeQty(C(r, ref.station!.outC))).toBe(1);             // exactly one lubricant, no duplicate
+    expect(fuelQty(C(r, ref.station!.outC))).toBe(1);             // exactly one canister, no duplicate
   });
 
   it('fault: finished industrial job waits for storage, grants nothing partial, and lands once room exists', () => {
     const g = setup(), r = g.run!, ref = bindRefinery(g);
     const out = C(r, ref.station!.outC);
-    addItem(r, 'inv', 'salvaged_oil', 6); addItem(r, 'inv', 'glass', 1);
-    act(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }, 'full', T + 1);
-    for (let i = 0; i < 5; i++) out.slots[i] = { uid: `full${i}`, key: 'stone', qty: ITEMS.stone.max };
+    addItem(r, 'inv', OIL, 5); addItem(r, 'inv', 'glass', 1);
+    act(g, 'craft', { recipe: BATCH, eid: ref.id }, 'full', T + 1);
+    for (let i = 0; i < 6; i++) out.slots[i] = { uid: `full${i}`, key: 'stone', qty: ITEMS.stone.max };
     settle(g, T + 900000, true);                                   // fifteen minutes blocked
     expect(ref.station!.queue).toHaveLength(1);
     expect(ref.station!.queue[0].left).toBe(0);
@@ -385,6 +394,6 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
     settle(g, T + 901000, true);
     expect(ref.station!.queue).toHaveLength(0);
     expect(fuelQty(out)).toBe(2);
-    expect(lubeQty(out)).toBe(1);
+    expect(lubeQty(out)).toBe(0);
   });
 });
