@@ -1,0 +1,131 @@
+source_id,status,site_id,zone,variant,candidate_maplab_center,runtime_tile,access_gate,refresh_hours_base
+veyra.g1b:po_greywater:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_greywater,POI,supply_low,"[812, 592]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_greywater:supply_low:02,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_greywater,POI,supply_low,"[812, 592]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_greywater:food_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_greywater,POI,food_low,"[812, 592]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_greywater:medical_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_greywater,POI,medical_low,"[812, 592]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_greywater:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_greywater,POI,toolbox_low,"[812, 592]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_pumphouse:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_pumphouse,POI,supply_low,"[850, 556]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_pumphouse:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_pumphouse,POI,toolbox_low,"[850, 556]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_pumphouse:medical_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_pumphouse,POI,medical_low,"[850, 556]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_confluence:supply_damaged:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_confluence,POI,supply_damaged,"[918, 668]",UNRESOLVED,POI exterior or safe interior: verify physical route,12
+veyra.g1b:po_confluence:toolbox_damaged:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_confluence,POI,toolbox_damaged,"[918, 668]",UNRESOLVED,POI exterior or safe interior: verify physical route,12
+veyra.g1b:po_sawaion:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_sawaion,POI,supply_mid,"[748, 668]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_sawaion:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_sawaion,POI,toolbox_low,"[748, 668]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_mill:food_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_mill,POI,food_mid,"[1002, 730]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_mill:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_mill,POI,supply_low,"[1002, 730]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_ranger:food_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ranger,POI,food_low,"[800, 760]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_ranger:medical_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ranger,POI,medical_low,"[800, 760]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_siloc:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_siloc,POI,supply_mid,"[1090, 760]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_siloc:supply_mid:02,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_siloc,POI,supply_mid,"[1090, 760]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_siloc:food_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_siloc,POI,food_high,"[1090, 760]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_slag:toolbox_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_slag,POI,toolbox_high,"[1190, 936]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_slag:military_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_slag,POI,military_mid,"[1190, 936]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_slag:supply_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_slag,POI,supply_high,"[1190, 936]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_gulfhead:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_gulfhead,POI,supply_low,"[1052, 878]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_gulfhead:supply_low:02,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_gulfhead,POI,supply_low,"[1052, 878]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_gulfhead:food_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_gulfhead,POI,food_low,"[1052, 878]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_freightyard:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_freightyard,POI,supply_mid,"[690, 500]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_freightyard:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_freightyard,POI,toolbox_low,"[690, 500]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_freightyard:military_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_freightyard,POI,military_low,"[690, 500]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_falls:military_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_falls,POI,military_mid,"[722, 438]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_falls:military_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_falls,POI,military_high,"[722, 438]",UNRESOLVED,"DEEP: verify powered door, manual release & escape",72
+veyra.g1b:po_falls:toolbox_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_falls,POI,toolbox_high,"[722, 438]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_falls:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_falls,POI,supply_mid,"[722, 438]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_academy:toolbox_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_academy,POI,toolbox_high,"[936, 262]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_academy:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_academy,POI,supply_mid,"[936, 262]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_academy:medical_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_academy,POI,medical_mid,"[936, 262]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_observatory:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_observatory,POI,supply_mid,"[958, 170]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_observatory:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_observatory,POI,toolbox_low,"[958, 170]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_archive:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_archive,POI,supply_mid,"[1018, 226]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_archive:military_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_archive,POI,military_high,"[1018, 226]",UNRESOLVED,DEEP: verify keycard+power+PPE & escape,72
+veyra.g1b:po_archive:medical_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_archive,POI,medical_high,"[1018, 226]",UNRESOLVED,DEEP: verify keycard+power+PPE & escape,48
+veyra.g1b:po_ironmine:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ironmine,POI,toolbox_low,"[1186, 1290]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_ironmine:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ironmine,POI,supply_mid,"[1186, 1290]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_ironmine:military_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ironmine,POI,military_low,"[1186, 1290]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_ironwh:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ironwh,POI,supply_mid,"[1236, 1290]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_ironwh:toolbox_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ironwh,POI,toolbox_high,"[1236, 1290]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_ironwh:military_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ironwh,POI,military_low,"[1236, 1290]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_ironharbor:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ironharbor,POI,supply_mid,"[1108, 1264]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_ironharbor:food_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ironharbor,POI,food_mid,"[1108, 1264]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_wreck:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_wreck,POI,supply_mid,"[184, 872]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_wreck:toolbox_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_wreck,POI,toolbox_high,"[184, 872]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_wreck:military_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_wreck,POI,military_mid,"[184, 872]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_filter:medical_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_filter,POI,medical_mid,"[934, 868]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_filter:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_filter,POI,supply_mid,"[934, 868]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_meridian:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_meridian,POI,supply_mid,"[1120, 690]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_meridian:medical_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_meridian,POI,medical_mid,"[1120, 690]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_meridian:medical_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_meridian,POI,medical_high,"[1120, 690]",UNRESOLVED,"DEEP: verify keyed door, power & escape",48
+veyra.g1b:po_kestrel:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_kestrel,POI,toolbox_low,"[700, 300]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_kestrel:military_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_kestrel,POI,military_low,"[700, 300]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_tidecamp:food_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_tidecamp,POI,food_low,"[170, 548]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_tidecamp:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_tidecamp,POI,supply_low,"[170, 548]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_fishcamp:food_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_fishcamp,POI,food_low,"[352, 846]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_fishcamp:medical_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_fishcamp,POI,medical_low,"[352, 846]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_saltpans:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_saltpans,POI,supply_low,"[1640, 322]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_saltpans:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_saltpans,POI,toolbox_low,"[1640, 322]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_ember:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ember,POI,supply_mid,"[1244, 838]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_ember:military_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ember,POI,military_low,"[1244, 838]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_sulfur:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_sulfur,POI,supply_mid,"[1768, 882]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_sulfur:toolbox_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_sulfur,POI,toolbox_high,"[1768, 882]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_geo:supply_high:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_geo,POI,supply_high,"[1736, 916]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_geo:military_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_geo,POI,military_mid,"[1736, 916]",UNRESOLVED,POI exterior or safe interior: verify physical route,48
+veyra.g1b:po_emberwatch:military_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_emberwatch,POI,military_low,"[1620, 746]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_emberwatch:medical_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_emberwatch,POI,medical_low,"[1620, 746]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_kilns:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_kilns,POI,supply_mid,"[905, 785]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_kilns:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_kilns,POI,toolbox_low,"[905, 785]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_greyquarry:toolbox_damaged:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_greyquarry,POI,toolbox_damaged,"[506, 652]",UNRESOLVED,POI exterior or safe interior: verify physical route,12
+veyra.g1b:po_greyquarry:supply_damaged:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_greyquarry,POI,supply_damaged,"[506, 652]",UNRESOLVED,POI exterior or safe interior: verify physical route,12
+veyra.g1b:po_saltharbor:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_saltharbor,POI,supply_mid,"[1546, 334]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_saltharbor:food_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_saltharbor,POI,food_mid,"[1546, 334]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_ironvein:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ironvein,POI,supply_mid,"[1205, 655]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_ironvein:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_ironvein,POI,toolbox_low,"[1205, 655]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_lantern:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_lantern,POI,supply_low,"[1050, 152]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_lantern:medical_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_lantern,POI,medical_low,"[1050, 152]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:po_strait:supply_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_strait,POI,supply_mid,"[1268, 490]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_strait:food_mid:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_strait,POI,food_mid,"[1268, 490]",UNRESOLVED,POI exterior or safe interior: verify physical route,36
+veyra.g1b:po_strait:medical_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,po_strait,POI,medical_low,"[1268, 490]",UNRESOLVED,POI exterior or safe interior: verify physical route,24
+veyra.g1b:rd_b:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_b,ROAD,supply_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_b:supply_low:02,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_b,ROAD,supply_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_b:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_b,ROAD,toolbox_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_b:food_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_b,ROAD,food_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_6:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_6,ROAD,supply_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_6:supply_low:02,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_6,ROAD,supply_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_6:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_6,ROAD,toolbox_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_6:military_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_6,ROAD,military_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_11:supply_damaged:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_11,ROAD,supply_damaged,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,12
+veyra.g1b:rd_11:toolbox_damaged:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_11,ROAD,toolbox_damaged,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,12
+veyra.g1b:rd_13:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_13,ROAD,supply_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_13:food_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_13,ROAD,food_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_16:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_16,ROAD,supply_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_16:medical_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_16,ROAD,medical_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_19:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_19,ROAD,supply_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_19:toolbox_damaged:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_19,ROAD,toolbox_damaged,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,12
+veyra.g1b:rd_1a:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_1a,ROAD,supply_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_1a:military_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_1a,ROAD,military_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_1b:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_1b,ROAD,supply_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_1b:medical_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_1b,ROAD,medical_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_1c:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_1c,ROAD,supply_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_1c:toolbox_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_1c,ROAD,toolbox_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_2:supply_damaged:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_2,ROAD,supply_damaged,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,12
+veyra.g1b:rd_2:toolbox_damaged:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_2,ROAD,toolbox_damaged,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,12
+veyra.g1b:rd_3:supply_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_3,ROAD,supply_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:rd_3:food_low:01,BASE_CANDIDATE__NOT_TILE_VERIFIED,rd_3,ROAD,food_low,,UNRESOLVED,verify GOLD road ID + walkable shoulder; not colliding with G1A,24
+veyra.g1b:po_academy:room_green:01,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_academy,CARD_ROOM,supply_low,"(936, 262)",UNRESOLVED,verified green_card source + real door + safe hand release,24
+veyra.g1b:po_academy:room_green:02,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_academy,CARD_ROOM,supply_low,"(936, 262)",UNRESOLVED,verified green_card source + real door + safe hand release,24
+veyra.g1b:po_academy:room_green:03,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_academy,CARD_ROOM,toolbox_low,"(936, 262)",UNRESOLVED,verified green_card source + real door + safe hand release,24
+veyra.g1b:po_academy:room_green:04,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_academy,CARD_ROOM,military_low,"(936, 262)",UNRESOLVED,verified green_card source + real door + safe hand release,24
+veyra.g1b:po_academy:room_green:05,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_academy,CARD_ROOM,food_low,"(936, 262)",UNRESOLVED,verified green_card source + real door + safe hand release,24
+veyra.g1b:po_academy:room_green:06,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_academy,CARD_ROOM,medical_low,"(936, 262)",UNRESOLVED,verified green_card source + real door + safe hand release,24
+veyra.g1b:po_meridian:room_blue:01,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_meridian,CARD_ROOM,supply_mid,"(1120, 690)",UNRESOLVED,verified blue_card source + real door + safe hand release,36
+veyra.g1b:po_meridian:room_blue:02,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_meridian,CARD_ROOM,supply_mid,"(1120, 690)",UNRESOLVED,verified blue_card source + real door + safe hand release,36
+veyra.g1b:po_meridian:room_blue:03,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_meridian,CARD_ROOM,toolbox_low,"(1120, 690)",UNRESOLVED,verified blue_card source + real door + safe hand release,24
+veyra.g1b:po_meridian:room_blue:04,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_meridian,CARD_ROOM,military_mid,"(1120, 690)",UNRESOLVED,verified blue_card source + real door + safe hand release,48
+veyra.g1b:po_meridian:room_blue:05,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_meridian,CARD_ROOM,food_mid,"(1120, 690)",UNRESOLVED,verified blue_card source + real door + safe hand release,36
+veyra.g1b:po_meridian:room_blue:06,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_meridian,CARD_ROOM,medical_mid,"(1120, 690)",UNRESOLVED,verified blue_card source + real door + safe hand release,36
+veyra.g1b:po_archive:room_purple:01,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_archive,CARD_ROOM,supply_high,"(1018, 226)",UNRESOLVED,verified purple_card + power + PPE + real door + safe hand release,48
+veyra.g1b:po_archive:room_purple:02,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_archive,CARD_ROOM,supply_high,"(1018, 226)",UNRESOLVED,verified purple_card + power + PPE + real door + safe hand release,48
+veyra.g1b:po_archive:room_purple:03,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_archive,CARD_ROOM,toolbox_high,"(1018, 226)",UNRESOLVED,verified purple_card + power + PPE + real door + safe hand release,48
+veyra.g1b:po_archive:room_purple:04,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_archive,CARD_ROOM,military_high,"(1018, 226)",UNRESOLVED,verified purple_card + power + PPE + real door + safe hand release,72
+veyra.g1b:po_archive:room_purple:05,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_archive,CARD_ROOM,military_mid,"(1018, 226)",UNRESOLVED,verified purple_card + power + PPE + real door + safe hand release,48
+veyra.g1b:po_archive:room_purple:06,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_archive,CARD_ROOM,food_high,"(1018, 226)",UNRESOLVED,verified purple_card + power + PPE + real door + safe hand release,48
+veyra.g1b:po_archive:room_purple:07,CONDITIONAL_CARD_ROOM__NOT_TILE_OR_GATE_VERIFIED,po_archive,CARD_ROOM,medical_high,"(1018, 226)",UNRESOLVED,verified purple_card + power + PPE + real door + safe hand release,48
