@@ -8,7 +8,7 @@ Contract: `approved/APPROVAL_README.md`, `approved/G1B_CREATOR_APPROVED_DESIGN_2
 - Emptied chest stays in the world as EMPTY, shows its restock timer (12–72 h, per contract) and refills exactly once per cycle, also while far away.
 - Three access-card cases (Green at Kestrel, Blue at Freightyard, Purple at Slag): finite, never restocked. A card has 3 uses.
 - Five sealed doors: Falls deep room (generator power), Academy green room (Green Card), Archive purple room and deep room (Purple Card + power + Filter Mask), Meridian blue room (Blue Card + power). A generator burns exactly one Fuel Canister for 180 s.
-- Creator Core V2: no magazine. LMB spends Basic Energy from the pack, Q (Lv2) Refined Energy, E (Lv3) Refined Energy + Essence. Durability 300, repair +75, upgrade at a Workbench with the 14 approved bills. Old saves with a loaded magazine are migrated (charges returned as items).
+- Creator Core V2: no magazine. LMB spends Basic Energy from the pack, Q (Lv2) Refined Energy, E (Lv3) Refined Energy + Essence. Durability 300, repair +75, upgrade at a Workbench with the 14 approved bills. A Core from a pre-V2 save loads as Lv3 300/300 with the same UID; the energy already stored in it is spent first and can never be refilled.
 
 ## Evidence
 - Tests: `tests/g1b-roll.test.ts` (9), `tests/g1b-geometry.test.ts` (4), `tests/g1b-lifecycle.test.ts` (11), `tests/g1b-core-v2.test.ts` (11); opt-in `G1B_RESOLVE=1 tests/g1b-resolve.test.ts` re-measures the world and reproduces `src/game/g1b-sources.generated.ts` byte-for-byte.
