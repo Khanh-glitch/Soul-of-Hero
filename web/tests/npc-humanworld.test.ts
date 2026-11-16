@@ -52,6 +52,7 @@ describe('NPC HumanWorld ledger', () => {
         expect(store?.kind).toBe('bag');
         expect(comm.storeContainers).toContain(store?.c);
         expect(r.custody[store?.c ?? '']?.kind).toBe('bag');
+        expect(r.custody[store?.c ?? '']?.origin).toEqual({ authority: 'REGIONAL_HUMAN_ECONOMY', sourceId: `regional-human-economy:${comm.poi}` });
       }
       for (const stationId of comm.workStations) {
         expect(allEntities[stationId]?.kind).toBe('struct');
@@ -73,9 +74,19 @@ describe('NPC HumanWorld ledger', () => {
     }
   });
 
-  it('a fresh run validates cleanly with the human ledger present', () => {
+  it('a fresh run validates physical stores and rejects missing or forged regional sources', () => {
     const gs = startAt(921, 259);
     expect(validate(JSON.parse(JSON.stringify(gs)))).not.toBeNull();
+    const comm = Object.values(gs.run!.humanWorld!.communities).find(c => c.storeEntityId)!;
+    expect(comm).toBeTruthy();
+    const missing = JSON.parse(JSON.stringify(gs));
+    delete missing.run.entities[comm.storeEntityId!];
+    delete missing.run.veyraOffscreenEntities?.[comm.storeEntityId!];
+    expect(validate(missing)).toBeNull();
+    const forged = JSON.parse(JSON.stringify(gs));
+    const containerId = comm.storeContainers[0];
+    forged.run.custody[containerId].origin.sourceId = 'regional-human-economy:another-poi';
+    expect(validate(forged)).toBeNull();
   });
 
   it('tickNeeds + advanceElderPressure run each tick without corrupting state', () => {

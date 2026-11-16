@@ -785,7 +785,16 @@ export function validate(raw: any): GameState | null {
     for (const comm of Object.values(hw.communities ?? {}) as any[]) {
       // P0.2: old abstract stock mirrors could mint items during work ticks. Physical custody is canonical.
       if (comm && typeof comm === 'object') delete comm.stock;
+      if (comm?.storeEntityId !== undefined) {
+        const storeEntity = r.entities[comm.storeEntityId] ?? r.veyraOffscreenEntities?.[comm.storeEntityId];
+        const store = comm.storeContainers?.length === 1 ? r.custody[comm.storeContainers[0]] : null;
+        if (typeof comm.poi !== 'string' || comm.id !== `com:${comm.poi}` || typeof comm.storeEntityId !== 'string' || !storeEntity || storeEntity.kind !== 'bag' || storeEntity.poi !== comm.poi || storeEntity.c !== store?.id || store?.kind !== 'bag' || store.origin?.authority !== 'REGIONAL_HUMAN_ECONOMY' || store.origin.sourceId !== `regional-human-economy:${comm.poi}` || !Array.isArray(comm.storeTile) || comm.storeTile.length !== 2 || !comm.storeTile.every(integer)) return null;
+      }
       for (const c of [...(comm?.storeContainers ?? []), ...(comm?.foodStores ?? []), ...(comm?.homeBeds ?? [])]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
+    }
+    for (const [cid, c] of Object.entries(r.custody) as [string, any][]) if (c?.origin !== undefined) {
+      const owners = Object.values(hw.communities ?? {}) as any[];
+      if (!obj(c.origin) || c.kind !== 'bag' || c.origin.authority !== 'REGIONAL_HUMAN_ECONOMY' || typeof c.origin.sourceId !== 'string' || owners.filter(comm => comm?.storeContainers?.includes(cid) && comm.storeEntityId && c.origin.sourceId === `regional-human-economy:${comm.poi}`).length !== 1) return null;
     }
   }
   if (Object.keys(r.custody).some(id => !ownedContainers.has(id))) return null;

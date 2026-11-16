@@ -53,7 +53,7 @@ export interface CoreReserve { basic: number; refined: number; signature: number
  *  `upg` is a running same-UID upgrade. `reserves` exists only in pre-V2 saves and is converted on load into `owed`: the exact items that energy was
  *  loaded from, handed back to the Core's own container as soon as there is room. A cast never draws on it. */
 export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; owed?: Record<string, number>; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
-export interface Container { id: string; kind: string; slots: (Stack | null)[] }
+export interface Container { id: string; kind: string; slots: (Stack | null)[]; origin?: { authority: 'REGIONAL_HUMAN_ECONOMY'; sourceId: string } }
 
 export type Dir = 0 | 1 | 2 | 3; // down, left, right, up
 

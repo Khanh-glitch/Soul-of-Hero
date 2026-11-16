@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { WW, TILE } from '../src/game/core';
-import { newGame, startRun, dispatch, C, addItem, blockGrid } from '../src/game/engine';
+import { newGame, startRun, dispatch, C, addItem, blockGrid, mkStack, markDirty } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
 import { auToTile, windowAround } from '../src/veyra05/frame';
@@ -19,7 +19,7 @@ import { T0 } from './helpers/g1b-kit';
 import {
   tickNeeds, stepHumans, tradeWithHuman, lootHuman, killHuman, applyDamage, downHuman,
   treatHuman, boardEvac, resolveOrder, setFollowing, finalizeHumanOutcomes,
-  humanPack, humanHistoryAggregate, humanWorkTick,
+  humanPack, humanHistoryAggregate, humanWorkTick, stepHumanCombat,
 } from '../src/game/humanworld';
 
 function startAt(ax: number, ay: number, seed = 7606) {
@@ -141,11 +141,13 @@ describe('NPC P0 corrective', () => {
     addItem(r, humanPack(r, h).id, 'berries', 1);
     const pSlot = r.custody.inv.slots.findIndex(Boolean);
     const hSlot = humanPack(r, h).slots.findIndex(Boolean);
-    const pUid = r.custody.inv.slots[pSlot]!.uid, hUid = humanPack(r, h).slots[hSlot]!.uid;
+    const pStack = r.custody.inv.slots[pSlot]!, hStack = humanPack(r, h).slots[hSlot]!;
+    pStack.meta = 'player-lot:one'; hStack.meta = 'survivor-lot:two';
+    const pUid = pStack.uid, hUid = hStack.uid, pQty = pStack.qty, hQty = hStack.qty;
     expect(dispatch(gs, { id: 'human-talk-test', type: 'humanTalk', actorId: h.actorId }, T0 + 1000).ok).toBe(true);
     expect(dispatch(gs, { id: 'human-trade-test', type: 'humanExchange', actorId: h.actorId, playerSlot: pSlot, humanSlot: hSlot }, T0 + 1001).ok).toBe(true);
-    expect(r.custody.inv.slots[pSlot]!.uid).toBe(hUid);
-    expect(humanPack(r, h).slots[hSlot]!.uid).toBe(pUid);
+    expect(r.custody.inv.slots[pSlot]).toMatchObject({ uid: hUid, qty: hQty, meta: 'survivor-lot:two' });
+    expect(humanPack(r, h).slots[hSlot]).toMatchObject({ uid: pUid, qty: pQty, meta: 'player-lot:one' });
     expect(h.trust).toBeGreaterThan(50);
     expect(h.disposition_known.knownPeople).toContain('player');
     const loaded = validate(JSON.parse(JSON.stringify(gs)))!;
@@ -165,6 +167,25 @@ describe('NPC P0 corrective', () => {
     expect(h.trust).toBe(trust);
     expect(h.state).not.toBe('FIGHTING');
     expect(r.seq).toBe(seq);
+  });
+
+  it('remote robbery of a downed survivor is rejected without moving any carried UID', () => {
+    const gs = startAt(921, 259);
+    const r = gs.run!;
+    const hw = r.humanWorld!;
+    const h = Object.values(hw.people)[0];
+    const pack = humanPack(r, h);
+    const carried = pack.slots.find(s => s !== null)!;
+    expect(carried).toBeTruthy();
+    downHuman(r, hw, h, T0 + 1000, 'player', 'player');
+    r.player.x = 0; r.player.y = 0;
+    const seq = r.seq;
+    const invBefore = JSON.stringify(r.custody.inv.slots);
+    const result = dispatch(gs, { id: 'human-remote-loot-test', type: 'humanLoot', actorId: h.actorId }, T0 + 1001);
+    expect(result.ok).toBe(false);
+    expect(r.seq).toBe(seq);
+    expect(pack.slots.some(s => s?.uid === carried.uid)).toBe(true);
+    expect(JSON.stringify(r.custody.inv.slots)).toBe(invBefore);
   });
 
   it('P0.3: custody survives JSON round-trip with owner + UID stock conservation', () => {
@@ -235,10 +256,13 @@ describe('NPC P0 corrective', () => {
     expect(h.equip.weapon).toBeNull(); // equipped weapon transferred to corpse
     if (weaponUid) {
       // The corpse bag (a drop entity) should carry the weapon UID.
-      const drop = Object.values(r.entities).find(e => e.kind === 'bag' && e.born === T0 + 1000);
+      const drop = [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities ?? {})].find(e => e.kind === 'bag' && e.born === T0 + 1000);
       const corpse = drop ? r.custody[(drop as any).c] : null;
-      const found = corpse?.slots.some(s => s?.uid === weaponUid);
-      expect(found).toBe(true);
+      expect(corpse?.slots.some(s => s?.uid === weaponUid)).toBe(true);
+      expect(Object.values(r.custody).flatMap(c => c.slots).filter(s => s?.uid === weaponUid)).toHaveLength(1);
+      const loaded = validate(JSON.parse(JSON.stringify(gs)))!;
+      expect(loaded).toBeTruthy();
+      expect(Object.values(loaded.run!.custody).flatMap(c => c.slots).filter(s => s?.uid === weaponUid)).toHaveLength(1);
     }
   });
 
@@ -285,6 +309,48 @@ describe('NPC P0 corrective', () => {
     setFollowing(r2, r2.humanWorld!, h2, true, T0 + 1000);
     const res2 = resolveOrder(r2, r2.humanWorld!, h2, 'ord-det-1', 'engage', T0 + 1000, 'sometarget');
     expect(res2.result).toBe(res1.result); // deterministic, no RNG reroll
+  });
+
+  it('human melee uses K5 reach, floor and cadence gates and wears its equipped weapon', () => {
+    const gs = startAt(921, 259);
+    const r = gs.run!;
+    const hw = r.humanWorld!;
+    const h = Object.values(hw.people)[0];
+    const m = r.creatures[0];
+    expect(m).toBeTruthy();
+    const grid = blockGrid(r), o = r.sourceMap?.veyra?.originAu;
+    const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+    let lane: [number, number] | null = null;
+    for (let y = 10; y < WW - 10 && !lane; y++) for (let x = 10; x < WW - 11; x++) {
+      const a = grid[y * WW + x], b = grid[y * WW + x + 1];
+      if ((a === 0 || a === 4) && (b === 0 || b === 4)) { lane = [x, y]; break; }
+    }
+    expect(lane).not.toBeNull();
+    for (const other of Object.values(hw.people)) if (other !== h) other.state = 'DEAD';
+    h.gx = ox + lane![0]; h.gy = oy + lane![1]; h.floor = 0; h.dir = 2; h.state = 'FIGHTING';
+    h.intent = { intentId: 'combat-test', actorId: h.actorId, kind: 'fight', target: m.id, preconditions: [], reserved: [], startAt: T0, dueAt: T0 };
+    h.equip.weapon = mkStack(r, 'knife', 1); h.equip.weapon.dur = 10;
+    r.creatures = [m]; m.state = 'idle'; m.floor = 0; m.x = (lane![0] + 1.5) * TILE; m.y = (lane![1] + 0.5) * TILE;
+    let hits = 0;
+    const wallId = 'npc-combat-test-wall';
+    r.entities[wallId] = { id: wallId, kind: 'struct', type: 'wall_wood', tx: lane![0] + 1, ty: lane![1], x: (lane![0] + 1.5) * TILE, y: (lane![1] + 0.5) * TILE, hp: 100, maxHp: 100 };
+    markDirty();
+    stepHumanCombat(r, hw, T0 + 1000, () => hits++);
+    expect(hits).toBe(0); // blocking wall prevents the hit
+    delete r.entities[wallId]; markDirty();
+    stepHumanCombat(r, hw, T0 + 1100, () => hits++);
+    stepHumanCombat(r, hw, T0 + 1200, () => hits++);
+    expect(hits).toBe(1); // cadence blocks the second release
+    expect(h.equip.weapon?.dur).toBe(9);
+    m.floor = 1;
+    stepHumanCombat(r, hw, T0 + 2000, () => hits++);
+    expect(hits).toBe(1); // wrong floor cannot be struck
+    m.floor = 0; m.x = (lane![0] + 20.5) * TILE;
+    stepHumanCombat(r, hw, T0 + 3000, () => hits++);
+    expect(hits).toBe(1); // out of reach
+    m.x = (lane![0] + 1.5) * TILE;
+    stepHumanCombat(r, hw, T0 + 4000, () => hits++);
+    expect(hits).toBe(2);
   });
 
   it('P0.8: applyDamage floors the hit and DOWNS (not auto-kills) on zero HP', () => {

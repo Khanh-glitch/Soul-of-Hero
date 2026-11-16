@@ -498,6 +498,7 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
     // Community store (finite stock, registered origin) is a real container on a real POI tile.
     const communityId = `com:${site.id}`;
     const store = mkContainer(r, 'bag', 10);
+    store.origin = { authority: 'REGIONAL_HUMAN_ECONOMY', sourceId: `regional-human-economy:${site.id}` };
     const bed = mkContainer(r, 'chest', 4);
     const stock = communityStock(cls, site.rooms);
     for (const [k, q] of Object.entries(stock)) addItem(r, store.id, k, q);
@@ -795,9 +796,13 @@ export function killHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
   h.outcome = 'DEAD';
   // One recoverable corpse bag entity (kind 'bag') with its own custody container.
   const corpseC = mkContainer(r, 'bag', humanPack(r, h).slots.length + 5);
-  const bag: Entity = { id: uid(r, 'e'), kind: 'bag', x: h.gx * TILE + 8, y: h.gy * TILE + 8, tx: h.gx, ty: h.gy, c: corpseC.id, born: now };
+  const origin = r.sourceMap?.veyra?.originAu;
+  const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+  const lx = h.gx - ox, ly = h.gy - oy;
+  const bag: Entity = { id: uid(r, 'e'), kind: 'bag', x: lx * TILE + 8, y: ly * TILE + 8, tx: lx, ty: ly, c: corpseC.id, born: now };
   if (r.veyraFloor) (bag as any).floor = r.veyraFloor;
-  r.entities[bag.id] = bag;
+  if (lx >= 1 && ly >= 1 && lx < WW - 1 && ly < WH - 1) r.entities[bag.id] = bag;
+  else (r.veyraOffscreenEntities ??= {})[bag.id] = { ...bag, x: h.gx * TILE + 8, y: h.gy * TILE + 8, tx: h.gx, ty: h.gy };
   {
     // Transfer carried/equipped stacks by moving the same object and UID. addStack is
     // intentionally unsuitable here because K1 correctly rejects a UID still owned
