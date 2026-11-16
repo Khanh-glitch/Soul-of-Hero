@@ -37,7 +37,7 @@ import {
 import { syncVeyraEcosystemActors, VEYRA_PRIMORDIAL_SITES, resolvePrimordialGlobalTile } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
-import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerEvacuate, talkToHuman, threatenHuman, recruitHuman, setFollowing, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand } from './humanworld';
+import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerEvacuate, talkToHuman, threatenHuman, recruitHuman, setFollowing, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
 import { NPC_POI_CENSUS } from './npc-census';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
@@ -2344,7 +2344,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
       if (h.floor !== activeFloor(r) || Math.hypot(p.x - hx, p.y - hy) > 3.2 * TILE || !clearWallLine(r, p, { x: hx, y: hy })) return fail('Move closer; the survivor is not reachable from here.');
       const latestReceipt = () => r.receipts.at(-1)?.id ?? it.id;
-      if (it.type === 'humanTalk') { const msg = talkToHuman(r, hw, h, now); return { ok: true, receipt: latestReceipt(), msg }; }
+      if (it.type === 'humanTalk') { const topic = (['activity', 'needs', 'place', 'goods', 'accompany'] as string[]).includes(it.topic) ? it.topic as HumanTalkTopic : undefined; const msg = talkToHuman(r, hw, h, now, topic); return { ok: true, receipt: latestReceipt(), msg }; }
       if (it.type === 'humanDismiss') {
         if (!h.following) return fail('This survivor is not your companion.');
         setFollowing(r, hw, h, false, now);

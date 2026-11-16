@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BAL, TILE, WW, type Entity, type GameState, type RunState, type Creature } from '../game/core';
 import { ITEMS, ELDERS, lookupElderDef, CREATURES, STRUCTS } from '../game/catalog';
 import { C, countItem, runHours, phaseOf, isRagnarok } from '../game/engine';
@@ -6,6 +6,8 @@ import { activeStack } from '../game/sim';
 import { coreReadout, coreAmmo } from '../game/g1b';
 import { airdropView } from '../game/airdrop';
 import { getArt } from '../game/art';
+import { drawNpcSprite, NPC_DIRECTIONS, preloadNpcArt, resolveNpcFrame } from '../game/npc-art';
+import type { HumanRecord, HumanState } from '../game/humanworld';
 import { Icon, Panel, type Api } from './common';
 import { Glyph } from './hud';
 import { QA_PRESETS, type QaPresetId } from '../game/qa-sandbox';
@@ -298,7 +300,7 @@ export function QaSandboxDrawer({
   bikeDemoState: string | null;
   onClose: () => void;
 }) {
-  const [tab, setTab] = useState<'presets' | 'events' | 'anim' | 'assets'>('presets');
+  const [tab, setTab] = useState<'presets' | 'events' | 'anim' | 'assets' | 'npcs'>('presets');
   const [elderKey, setElderKey] = useState<string>('rust');
   const [zoom, setZoom] = useState<number>(2);
   const r = gs.run!;
@@ -314,7 +316,7 @@ export function QaSandboxDrawer({
       onClose={onClose}
     >
       <div style={{ display: 'flex', gap: 3, marginBottom: 4 }}>
-        {([['presets', 'Presets'], ['events', 'Events'], ['anim', 'Anim & Bike'], ['assets', '1× Assets']] as const).map(([k, lbl]) => (
+        {([['presets', 'Presets'], ['events', 'Events'], ['anim', 'Anim'], ['assets', 'Assets'], ['npcs', 'NPCs']] as const).map(([k, lbl]) => (
           <button key={k} className={`btn sm ${tab === k ? 'gold' : ''}`} style={{ flex: 1 }} onClick={() => setTab(k)}>{lbl}</button>
         ))}
       </div>
@@ -416,9 +418,68 @@ export function QaSandboxDrawer({
             <SpriteGallery zoom={zoom} />
           </div>
         )}
+        {tab === 'npcs' && <NpcArtCheck />}
       </div>
     </Panel>
   );
+}
+
+type NpcCheckMode = 'idle' | 'walk' | 'use' | 'attack' | 'hurt' | 'downed' | 'dead';
+const NPC_CHECK_STATES: { mode: NpcCheckMode; label: string; state: HumanState; moving: boolean }[] = [
+  { mode: 'idle', label: 'Idle', state: 'IDLE', moving: false },
+  { mode: 'walk', label: 'Walk', state: 'MOVING', moving: true },
+  { mode: 'use', label: 'Work', state: 'WORKING', moving: false },
+  { mode: 'attack', label: 'Attack', state: 'FIGHTING', moving: false },
+  { mode: 'hurt', label: 'Hurt', state: 'IDLE', moving: false },
+  { mode: 'downed', label: 'Down', state: 'DOWNED', moving: false },
+  { mode: 'dead', label: 'Dead', state: 'DEAD', moving: false },
+];
+function NpcArtCheck() {
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const [mode, setMode] = useState<NpcCheckMode>('idle');
+  useEffect(() => {
+    const cv = canvas.current; const g = cv?.getContext('2d'); if (!cv || !g) return;
+    preloadNpcArt();
+    let raf = 0;
+    const render = (now: number) => {
+      g.setTransform(1, 0, 0, 1, 0, 0); g.imageSmoothingEnabled = false;
+      g.fillStyle = '#11171d'; g.fillRect(0, 0, 288, 234);
+      g.font = '6px monospace'; g.textBaseline = 'top';
+      const headings = ['DOWN', 'LEFT', 'RIGHT', 'UP'];
+      headings.forEach((label, col) => { g.fillStyle = '#d7c99e'; g.fillText(label, col * 72 + 25, 2); });
+      const descriptor = NPC_CHECK_STATES.find(x => x.mode === mode)!;
+      for (let appearance = 0; appearance < 6; appearance++) {
+        const top = 12 + appearance * 37;
+        g.fillStyle = '#8293a0'; g.fillText(`A${appearance}`, 3, top + 1);
+        for (let col = 0; col < 4; col++) {
+          const dir = col as 0 | 1 | 2 | 3;
+          const weapon = mode === 'use' || mode === 'attack' ? { uid: `npc-check-${appearance}`, key: 'iron_axe', qty: 1, dur: 80 } : null;
+          const h = {
+            appearance, dir, state: descriptor.state, wounds: mode === 'hurt' ? [{ severity: 1, bleeding: true, treated: false }] : [],
+            flash: mode === 'hurt' ? 100 : 0,
+            intent: mode === 'use' ? { kind: 'work', target: 'harvest:1,1' } : undefined,
+            equip: { weapon }, gx: appearance, gy: col,
+          } as unknown as HumanRecord;
+          const cx = col * 72 + 36, footY = top + 33;
+          g.strokeStyle = '#27343e'; g.strokeRect(col * 72 + 1, top, 70, 36);
+          drawNpcSprite(g, h, cx, footY, now / 1000, descriptor.moving);
+          const frame = resolveNpcFrame(h, now / 1000, descriptor.moving);
+          if (frame) { g.fillStyle = '#b7c1c7'; g.fillText(`r${frame.row}${frame.mirrorX ? '*' : ''}`, col * 72 + 18, top + 1); }
+        }
+      }
+      raf = requestAnimationFrame(render);
+    };
+    raf = requestAnimationFrame(render);
+    return () => cancelAnimationFrame(raf);
+  }, [mode]);
+  return <div>
+    <div className="qa-provenance"><b>NPC BODY CONTINUITY</b> · Real MetroCity atlas frames through each action; this isolated art check does not mutate world actors.</div>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3, margin: '4px 0' }}>
+      {NPC_CHECK_STATES.map(x => <button key={x.mode} className={`btn sm ${mode === x.mode ? 'gold' : ''}`} onClick={() => setMode(x.mode)}>{x.label}</button>)}
+    </div>
+    <canvas ref={canvas} width={288} height={234} style={{ width: 288, height: 234, imageRendering: 'pixelated', display: 'block' }} aria-label={`Six MetroCity NPC appearances, four facings, ${mode} state`} />
+    <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>Atlas rows: down/front, up/back, right profile; left is the same profile mirrored. Preview is native 16×32 with smoothing disabled.</div>
+  </div>;
 }
 
 function SpriteGallery({ zoom }: { zoom: number }) {

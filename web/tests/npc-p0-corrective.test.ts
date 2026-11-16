@@ -19,12 +19,22 @@ import { doorwayOccupied } from '../src/game/poi-access';
 import { validate } from '../src/game/persist';
 import { T0 } from './helpers/g1b-kit';
 import {
-  tickNeeds, stepHumans, tradeWithHuman, lootHuman, killHuman, applyDamage, downHuman,
+  tickNeeds, stepHumans, humanHarvest, tradeWithHuman, lootHuman, killHuman, applyDamage, downHuman,
   treatHuman, boardEvac, resolveOrder, setFollowing, finalizeHumanOutcomes,
   humanPack, humanHistoryAggregate, humanWorkTick, stepHumanCombat, humanWorldPosition,
   type HumanRecord,
 } from '../src/game/humanworld';
 
+function stableHash(s: string) { let n = 2166136261; for (let i = 0; i < s.length; i++) n = Math.imul(n ^ s.charCodeAt(i), 16777619); return n >>> 0; }
+function confrontationScene(h: any, r: any, witnesses: string[] = []) {
+  const w = r.custody.inv.slots[r.player.active];
+  return JSON.stringify([h.gx, h.gy, h.floor, h.state, h.equip.weapon?.uid ?? '', h.equip.weapon?.dur ?? -1, Math.round(h.hp), [...witnesses].sort(), w?.uid ?? '', w?.dur ?? -1, Math.round(r.player.hp), r.player.active]);
+}
+function chooseActorHash(hw: any, h: any, predicate: (actorId: string) => boolean) {
+  const prior = h.actorId; delete hw.people[prior];
+  for (let i = 0; i < 5000; i++) { h.actorId = `qa-${i}`; if (predicate(h.actorId)) break; }
+  hw.people[h.actorId] = h;
+}
 function startAt(ax: number, ay: number, seed = 7606) {
   const [gtx, gty] = auToTile(ax, ay);
   const win = windowAround(gtx, gty);
@@ -141,7 +151,7 @@ describe('NPC P0 corrective', () => {
     const [ox, oy] = r.sourceMap?.veyra?.originAu ? r.sourceMap.veyra.originAu.map(v => Math.round(v / 0.5)) as [number, number] : [0, 0];
     const grid = blockGrid(r); const h = Object.values(hw.people)[0];
     for (const other of Object.values(hw.people)) if (other !== h) other.state = 'DEAD';
-    h.occupation = 'builder'; h.equip.weapon = mkStack(r, 'iron_axe', 1); h.state = 'IDLE'; h.intent = undefined; h.following = false; h.nextThinkAt = 0;
+    h.occupation = 'builder'; h.equip.weapon = mkStack(r, 'iron_axe', 1); const toolDurBefore = h.equip.weapon.dur!; h.state = 'IDLE'; h.intent = undefined; h.following = false; h.nextThinkAt = 0;
     let choice: { x: number; y: number; tx: number; ty: number; stock: number } | null = null;
     for (let y = 4; y < WW - 4 && !choice; y++) for (let x = 4; x < WW - 4; x++) {
       const s = sourceAt(r, x, y, T0); if (!s || s.stock <= 0 || s.def.mat !== 'wood' || !(ITEMS.iron_axe.power?.wood)) continue;
@@ -164,6 +174,83 @@ describe('NPC P0 corrective', () => {
     expect(humanPack(r, h).slots.some(s => s?.key === 'wood')).toBe(true);
     expect(r.receipts.some(x => x.kind === 'human.harvest' && x.detail.includes(h.actorId))).toBe(true);
     expect(Object.values(h.workOutputs ?? {}).reduce((n, q) => n + q, 0)).toBeGreaterThan(0); // real output is tracked for later physical-store transfer
+    expect(h.equip.weapon?.dur).toBeLessThan(toolDurBefore); // the actual harvesting tool wears on committed source work
+  });
+
+  it('returns tracked harvest UID and quantity by a real legal route to authorized community storage and survives reload', () => {
+    const gs = startAt(921, 259), r = gs.run!, hw = r.humanWorld!, h = Object.values(hw.people)[0];
+    for (const other of Object.values(hw.people)) if (other !== h) other.state = 'DEAD';
+    const [ox, oy] = r.sourceMap?.veyra?.originAu ? r.sourceMap.veyra.originAu.map(v => Math.round(v / 0.5)) as [number, number] : [0, 0];
+    const grid = blockGrid(r), dirs = [[1,0],[-1,0],[0,1],[0,-1]] as const;
+    let delivery: { comm: (typeof hw.communities)[string]; start: [number, number] } | null = null;
+    for (const comm0 of Object.values(hw.communities)) {
+      const tile = comm0.storeTile; if (!tile) continue;
+      const tx = tile[0] - ox, ty = tile[1] - oy;
+      if (tx < 1 || ty < 1 || tx >= WW - 1 || ty >= WW - 1) continue;
+      const parent = new Int32Array(WW * WW); parent.fill(-2); const queue = new Int32Array(WW * WW); let head = 0, tail = 0;
+      for (const [dx, dy] of dirs) {
+        const x = tx + dx, y = ty + dy, i = y * WW + x;
+        if ((grid[i] === 0 || grid[i] === 4) && parent[i] === -2) { parent[i] = -1; queue[tail++] = i; }
+      }
+      while (head < tail && !delivery) {
+        const at = queue[head++], x = at % WW, y = Math.floor(at / WW);
+        // A legal reachable tile at least three steps from the store exercises real movement before deposit.
+        if (Math.abs(x - tx) + Math.abs(y - ty) >= 3 && (grid[at] === 0 || grid[at] === 4)) {
+          const candidate = Object.values(hw.people).find(v => v.floor === (r.veyraFloor ?? 0));
+          if (candidate) { delivery = { comm: comm0, start: [x,y] }; h.community = comm0.id; break; }
+        }
+        for (const [dx, dy] of dirs) { const nx=x+dx, ny=y+dy, ni=ny*WW+nx;
+          if (nx<1||ny<1||nx>=WW-1||ny>=WW-1||parent[ni]!==-2||!(grid[ni]===0||grid[ni]===4)) continue;
+          parent[ni] = at; queue[tail++] = ni;
+        }
+      }
+      if (delivery) break;
+    }
+    expect(delivery).not.toBeNull();
+    const comm = delivery!.comm, start = delivery!.start;
+    h.gx = ox + start[0]; h.gy = oy + start[1]; h.floor = r.veyraFloor ?? 0;
+    h.state = 'IDLE'; h.intent = undefined; h.following = false; h.nextThinkAt = 0; hw.plannerAt = 0;
+    const pack = humanPack(r, h), store = r.custody[comm.storeContainers[0]];
+    pack.slots.fill(null); store.slots.fill(null);
+    const output = mkStack(r, 'berries', 3); pack.slots[0] = output; h.workOutputs = { [output.uid]: 3 };
+    for (let i = 1; i <= 30; i++) stepHumans(r, hw, T0 + i * 50);
+    expect(h.gx).not.toBe(ox + start![0]);
+    expect(h.workOutputs?.[output.uid]).toBeUndefined();
+    expect(pack.slots.some(s => s?.uid === output.uid)).toBe(false);
+    expect(store.slots.filter(s => s?.uid === output.uid)).toHaveLength(1);
+    expect(store.slots.find(s => s?.uid === output.uid)).toMatchObject({ key: 'berries', qty: 3 });
+    const loaded = validate(JSON.parse(JSON.stringify(gs)))!;
+    expect(Object.values(loaded.run!.custody).flatMap(c => c.slots).filter(s => s?.uid === output.uid)).toHaveLength(1);
+    expect(loaded.run!.custody[comm.storeContainers[0]].slots.find(s => s?.uid === output.uid)).toMatchObject({ qty: 3 });
+  });
+
+  it('harvest capacity is transactional: merges one admitted unit, then a full pack causes no further source damage', () => {
+    const gs = startAt(921, 259), r = gs.run!, hw = r.humanWorld!, h = Object.values(hw.people)[0];
+    for (const other of Object.values(hw.people)) if (other !== h) other.state = 'DEAD';
+    h.state = 'IDLE'; h.equip.weapon = null;
+    const pack = humanPack(r, h); pack.slots.fill(null);
+    pack.slots[0] = mkStack(r, 'berries', ITEMS.berries.max - 1);
+    for (let i = 1; i < pack.slots.length; i++) pack.slots[i] = mkStack(r, 'iron_axe', 1);
+    let target: { x: number; y: number; i: number } | null = null;
+    for (let y = 4; y < WW - 4 && !target; y++) for (let x = 4; x < WW - 4; x++) {
+      const s = sourceAt(r, x, y, T0);
+      if (s?.key !== 'bush' || s.stock <= 0) continue;
+      if (Object.values(r.entities).some(e => e.tx === x && e.ty === y && (e.g1b || e.kind === 'loot'))) continue;
+      if (Object.values(r.g1b?.far ?? {}).some(e => e.g1b && e.tx === x && e.ty === y)) continue;
+      target = { x, y, i: s.i }; break;
+    }
+    expect(target).not.toBeNull();
+    const beforeStock = sourceAt(r, target!.x, target!.y, T0)!.stock;
+    expect(humanHarvest(r, hw, h, target!.x, target!.y, T0 + 1000)).toMatchObject({ result: 'yield', got: 0 });
+    const admitted = humanHarvest(r, hw, h, target!.x, target!.y, T0 + 2000);
+    expect(admitted).toMatchObject({ result: 'yield', got: 1 });
+    expect(sourceAt(r, target!.x, target!.y, T0 + 2000)!.stock).toBe(beforeStock - 1);
+    expect(pack.slots[0]).toMatchObject({ key: 'berries', qty: ITEMS.berries.max });
+    const beforeBlocked = { ...r.sources[target!.i] };
+    const blocked = humanHarvest(r, hw, h, target!.x, target!.y, T0 + 3000);
+    expect(blocked).toMatchObject({ result: 'blocked', reason: 'pack full; no harvest was taken' });
+    expect(r.sources[target!.i]).toEqual(beforeBlocked);
+    expect(Object.values(r.custody).flatMap(c => c.slots).filter(s => s?.uid === pack.slots[0]!.uid)).toHaveLength(1);
   });
 
   it('human talk and barter commit through dispatch; save/reload preserves trust, memory and both UIDs', () => {
@@ -175,7 +262,7 @@ describe('NPC P0 corrective', () => {
     const h = Object.values(hw.people).find(v => v.floor === (r.veyraFloor ?? 0) && v.gx - ox >= 0 && v.gy - oy >= 0 && v.gx - ox < WW && v.gy - oy < WW)!;
     expect(h).toBeTruthy();
     r.player.x = (h.gx - ox + 0.5) * TILE; r.player.y = (h.gy - oy + 0.5) * TILE;
-    addItem(r, 'inv', 'wood', 1);
+    addItem(r, 'inv', 'wood', 4);
     addItem(r, humanPack(r, h).id, 'berries', 1);
     const pSlot = r.custody.inv.slots.findIndex(Boolean);
     const hSlot = humanPack(r, h).slots.findIndex(Boolean);
@@ -190,6 +277,18 @@ describe('NPC P0 corrective', () => {
     expect(r.custody.inv.slots[pSlot]).toMatchObject({ uid: hUid, qty: hQty, meta: 'survivor-lot:two' });
     expect(humanPack(r, h).slots[hSlot]).toMatchObject({ uid: pUid, qty: pQty, meta: 'player-lot:one' });
     expect(h.trust).toBeGreaterThan(50);
+    const earnedTrust = h.trust;
+    expect(dispatch(gs, { id: 'human-trade-return', type: 'humanExchange', actorId: h.actorId, playerSlot: pSlot, humanSlot: hSlot }, T0 + 1011).ok).toBe(true);
+    expect(h.trust).toBe(earnedTrust);
+    expect(dispatch(gs, { id: 'human-trade-repeat', type: 'humanExchange', actorId: h.actorId, playerSlot: pSlot, humanSlot: hSlot }, T0 + 1012).ok).toBe(true);
+    expect(h.trust).toBe(earnedTrust); // swapping the same two UIDs back and forth is not new social evidence
+    addItem(r, 'inv', 'wood', 2);
+    addItem(r, humanPack(r, h).id, 'berries', 1);
+    const freshOffer = r.custody.inv.slots.findIndex(s => s?.key === 'wood' && s.meta === undefined);
+    const freshAsk = humanPack(r, h).slots.findIndex(s => s?.key === 'berries' && s.meta === undefined);
+    expect(freshOffer).toBeGreaterThanOrEqual(0); expect(freshAsk).toBeGreaterThanOrEqual(0);
+    expect(dispatch(gs, { id: 'human-trade-distinct-stacks', type: 'humanExchange', actorId: h.actorId, playerSlot: freshOffer, humanSlot: freshAsk }, T0 + 1013).ok).toBe(true);
+    expect(h.trust).toBe(earnedTrust); // even distinct stacks cannot turn repeat swaps into farmable trust
     expect(h.disposition_known.knownPeople).toContain('player');
     const loaded = validate(JSON.parse(JSON.stringify(gs)))!;
     const h2 = loaded.run!.humanWorld!.people[h.actorId];
@@ -227,15 +326,38 @@ describe('NPC P0 corrective', () => {
     r.player.x = (h.gx - ox + 0.5) * TILE; r.player.y = (h.gy - oy + 0.5) * TILE;
     addItem(r, humanPack(r, h).id, 'wood', 1);
     const stack = humanPack(r, h).slots.find(s => s?.key === 'wood')!;
-    const hash = (s: string) => { let n = 2166136261; for (let i = 0; i < s.length; i++) n = Math.imul(n ^ s.charCodeAt(i), 16777619); return n >>> 0; };
-    const at = Array.from({ length: 200 }, (_, i) => T0 + i + 1).find(t => hash(`${h.actorId}:${t}:item:${stack.uid}`) % 100 < 78)!;
-    const res = dispatch(gs, { id: 'human-demand-stack', type: 'humanThreaten', actorId: h.actorId, demand: 'item', stackUid: stack.uid }, at);
+    chooseActorHash(hw, h, actorId => stableHash(`${actorId}:${confrontationScene(h, r)}:item:${stack.uid}:1`) % 100 < 78);
+    const res = dispatch(gs, { id: 'human-demand-stack', type: 'humanThreaten', actorId: h.actorId, demand: 'item', stackUid: stack.uid }, T0 + 1001);
     if (!res.ok) throw new Error(res.reason);
     expect(res.msg).toMatch(/Hands over/);
     expect(r.custody.inv.slots.some(s => s?.uid === stack.uid)).toBe(true);
     expect(humanPack(r, h).slots.some(s => s?.uid === stack.uid)).toBe(false);
     const incident = Object.values(hw.incidents).at(-1)!;
     expect(incident.witnesses).toEqual([]);
+  });
+
+  it('does not reroll repeated confrontation clicks against an unchanged scene', () => {
+    const gs = startAt(921, 259), r = gs.run!, hw = r.humanWorld!;
+    const h = Object.values(hw.people)[0];
+    for (const other of Object.values(hw.people)) if (other !== h) other.state = 'DEAD';
+    h.state = 'IDLE'; h.equip.weapon = null; h.disposition = 'neutral'; h.intent = undefined;
+    const origin = r.sourceMap?.veyra?.originAu;
+    const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+    const grid = blockGrid(r); let cell: [number, number] | null = null;
+    for (let y = 10; y < WW - 10 && !cell; y++) for (let x = 10; x < WW - 11; x++) if ((grid[y * WW + x] === 0 || grid[y * WW + x] === 4) && (grid[y * WW + x + 1] === 0 || grid[y * WW + x + 1] === 4)) { cell = [x, y]; break; }
+    expect(cell).not.toBeNull();
+    h.gx = ox + cell![0]; h.gy = oy + cell![1]; h.floor = r.veyraFloor ?? 0;
+    r.player.x = (cell![0] + 1.5) * TILE; r.player.y = (cell![1] + 0.5) * TILE;
+    chooseActorHash(hw, h, actorId => stableHash(`${actorId}:${confrontationScene(h, r)}:back_off::1`) % 100 >= 78);
+    const first = dispatch(gs, { id: 'human-repeat-threat-1', type: 'humanThreaten', actorId: h.actorId, demand: 'back_off' }, T0 + 1001);
+    expect(first.ok).toBe(true);
+    expect(first.msg).toMatch(/Refuses/);
+    const trust = h.trust, incidents = Object.keys(hw.incidents).length;
+    const repeat = dispatch(gs, { id: 'human-repeat-threat-2', type: 'humanThreaten', actorId: h.actorId, demand: 'back_off' }, T0 + 1002);
+    expect(repeat.ok).toBe(false);
+    expect(repeat.reason).toMatch(/already answered/);
+    expect(h.trust).toBe(trust);
+    expect(Object.keys(hw.incidents)).toHaveLength(incidents);
   });
 
   it('a survivor who chooses FIGHT lands a timed, facing- and LOS-gated K5 hit on the player', () => {
@@ -252,8 +374,8 @@ describe('NPC P0 corrective', () => {
     h.gx = ox + cell![0]; h.gy = oy + cell![1]; h.floor = r.veyraFloor ?? 0; h.dir = 2;
     r.player.x = (cell![0] + 1.5) * TILE; r.player.y = (cell![1] + 0.5) * TILE;
     expect(clearPhysicalLine(r, { x: (cell![0] + 0.5) * TILE, y: (cell![1] + 0.5) * TILE }, r.player, true)).toBe(true);
-    const hash = (s: string) => { let n = 2166136261; for (let i = 0; i < s.length; i++) n = Math.imul(n ^ s.charCodeAt(i), 16777619); return n >>> 0; };
-    const at = Array.from({ length: 200 }, (_, i) => T0 + i + 1).find(t => { const v = hash(`${h.actorId}:${t}:back_off:`) % 100; return v >= 10 && v < 68; })!;
+    chooseActorHash(hw, h, actorId => stableHash(`${actorId}:${confrontationScene(h, r)}:back_off::1`) % 100 < 68);
+    const at = T0 + 1001;
     const confrontation = dispatch(gs, { id: 'human-fight-branch', type: 'humanThreaten', actorId: h.actorId, demand: 'back_off' }, at);
     if (!confrontation.ok) throw new Error(confrontation.reason);
     expect(confrontation.msg).toMatch(/fights back/);

@@ -1960,7 +1960,7 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     const [ox, oy] = windowOrigin(r);
     for (const h of Object.values(r.humanWorld.people)) {
       if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== activeFloor(r)) continue;
-      const pos = humanWorldPosition(h);
+      const pos = humanWorldPosition(h, now);
       const x = (pos.gx - ox) * TILE, y = (pos.gy - oy) * TILE;
       const d = dist(fx0, fy0, x, y);
       if (d > bd || !clearInteraction(r, { x, y })) continue;

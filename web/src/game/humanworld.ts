@@ -23,6 +23,7 @@ import { ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PR
 import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
+import { liveItemId, liveItemPer } from './final-item-set';
 
 export const HUMAN_WORLD_VERSION = 'human-world-v1';
 
@@ -153,9 +154,12 @@ export interface HumanRecord {
   lastDamageAt?: number;
   /** Throttled autonomous planner; movement interpolation is presentation of the tile-legal route. */
   nextThinkAt?: number;
-  motion?: { fromGx: number; fromGy: number; toGx: number; toGy: number; elapsedMs: number };
+  motion?: { fromGx: number; fromGy: number; toGx: number; toGy: number; elapsedMs: number; updatedAt?: number };
   workOutputs?: Record<string, number>;
   lastTalkAt?: number;
+  lastWorkBlock?: string;
+  tradeTrustReceipts?: Record<string, number>;
+  confrontationAttempt?: { scene: string; at: number; attempts: number; demand: string; reaction: string; message: string };
 }
 export interface Community {
   id: string;
@@ -672,30 +676,76 @@ export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 
 // ---------------------------------------------------------------------------
 /** Actor-aware harvest: decrements real source stock, attaches output to the actor's pack,
  *  does NOT award player gather XP (the player-only `harvestHit` is never reused for humans). */
-export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: number, ty: number, now: number): { result: 'yield' | 'empty' | 'none' | 'blocked'; got?: number; key?: string } {
-  if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED') return { result: 'blocked' };
+function simulateHumanOutput(slots: (Stack | null)[], yields: [string, number][]): boolean {
+  const trial = slots.map(s => s ? { ...s } : null);
+  for (const [rawKey, rawQty] of yields) {
+    const key = liveItemId(rawKey), d = ITEMS[key]; let qty = Math.ceil(rawQty * liveItemPer(rawKey));
+    const mergeable = d.max > 1 && !d.dur && !d.charge;
+    if (mergeable) for (const s of trial) {
+      if (!s || s.key !== key || s.meta !== undefined || s.dur !== undefined || s.charge !== undefined || qty <= 0) continue;
+      const moved = Math.min(qty, d.max - s.qty); s.qty += moved; qty -= moved;
+    }
+    for (let i = 0; i < trial.length && qty > 0; i++) if (!trial[i]) {
+      const moved = Math.min(qty, d.max); trial[i] = { uid: 'capacity-probe', key, qty: moved }; qty -= moved;
+    }
+    if (qty > 0) return false;
+  }
+  slots.splice(0, slots.length, ...trial);
+  return true;
+}
+export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: number, ty: number, now: number): { result: 'yield' | 'empty' | 'none' | 'blocked'; got?: number; key?: string; reason?: string } {
+  if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED') return { result: 'blocked', reason: 'actor unavailable' };
   const s = sourceAt(r, tx, ty, now);
-  if (!s) return { result: 'none' };
+  if (!s) return { result: 'none', reason: 'source unavailable' };
   // PLAYER_EXPLORATION sources are never depleted by NPC autonomous scavenging.
-  if (isPlayerExplorationSource(r, s.key, tx, ty)) return { result: 'blocked', key: s.key };
+  if (isPlayerExplorationSource(r, s.key, tx, ty)) return { result: 'blocked', key: s.key, reason: 'player-exploration cache protected' };
   const st = r.sources[s.i] || (r.sources[s.i] = { stock: s.stock, hp: s.hp });
-  if (st.stock <= 0) return { result: 'empty', key: s.key };
+  if (st.stock <= 0) return { result: 'empty', key: s.key, reason: 'source depleted' };
   const tool = h.equip.weapon;
   const toolKey = tool?.key;
   // Hand-gatherable plants are real shared sources; solid timber/ore/scrap still require an equipped tool.
   const power = s.def.harvestBy ? (toolKey ? (s.def.harvestBy[toolKey] ?? 0) : 0) : (toolKey ? (ITEMS[toolKey]?.power?.[s.def.mat] ?? 0) : s.def.mat === 'plant' ? 1 : 0);
-  if (power <= 0) return { result: 'blocked', key: s.key };
+  if (power <= 0) return { result: 'blocked', key: s.key, reason: 'required tool is unavailable' };
   const per = s.def.hp / s.def.stock;
+  const pack = humanPack(r, h);
+  const oneUnitProbe = pack.slots.map(s => s ? { ...s } : null);
+  if (!simulateHumanOutput(oneUnitProbe, s.def.yields.map(([k, q]) => [k, q] as [string, number]))) return { result: 'blocked', key: s.key, reason: 'pack full; no harvest was taken' };
   const before = Math.ceil(st.hp / per - 1e-9);
-  st.hp = Math.max(0, st.hp - power);
-  const after = Math.ceil(st.hp / per - 1e-9);
-  const units = Math.min(st.stock, before - after);
-  st.stock -= units;
-  let got = 0;
-  for (let u = 0; u < units; u++) {
-    for (const [k, q] of s.def.yields) { addItem(r, humanPack(r, h).id, k, q); got += q; }
+  const wouldAfter = Math.ceil(Math.max(0, st.hp - power) / per - 1e-9);
+  const potentialUnits = Math.min(st.stock, before - wouldAfter);
+  if (potentialUnits <= 0) {
+    // A valid strike advances real source damage but releases no item yet. No stock or pack output is claimed.
+    st.hp = Math.max(0, st.hp - power);
+    if (tool?.dur !== undefined) { tool.dur = Math.max(0, tool.dur - 1); if (tool.dur === 0) h.equip.weapon = null; }
+    receipt(r, now, 'human.work', `${h.actorId}:strike:${s.key}@${tx},${ty}`);
+    return { result: 'yield', got: 0, key: s.key };
   }
-  if (st.stock <= 0) { if (s.def.regrow) { st.regrowFrom = now; st.regrowAcc = 0; } }
+  let acceptedUnits = 0;
+  // Simulate successive units on a private copy. Never mutate custody during admission:
+  // physical output is committed exactly once below, after source damage is bounded.
+  const capacityProbe = pack.slots.map(s => s ? { ...s } : null);
+  for (let n = 1; n <= potentialUnits; n++) {
+    if (!simulateHumanOutput(capacityProbe, s.def.yields.map(([k, q]) => [k, q] as [string, number]))) break;
+    acceptedUnits++;
+  }
+  if (acceptedUnits <= 0) return { result: 'blocked', key: s.key, reason: 'pack full; no harvest was taken' };
+  // Limit source damage to the last whole unit that the real pack can admit.
+  const desiredHp = Math.max(0, (before - acceptedUnits) * per);
+  const hitPower = Math.min(power, Math.max(0, st.hp - desiredHp));
+  if (hitPower <= 0) return { result: 'blocked', key: s.key, reason: 'source cannot release an admissible unit' };
+  st.hp = Math.max(0, st.hp - hitPower);
+  const after = Math.ceil(st.hp / per - 1e-9);
+  const units = Math.min(st.stock, before - after, acceptedUnits);
+  // The capacity simulation is against the same normalized addItem laws. Any mismatch is an invariant failure.
+  let got = 0;
+  for (let u = 0; u < units; u++) for (const [k, q] of s.def.yields) {
+    const left = addItem(r, pack.id, k, q);
+    if (left > 0) throw new Error(`human harvest capacity invariant: ${left} ${k} could not enter ${pack.id}`);
+    got += Math.ceil(q * liveItemPer(k));
+  }
+  st.stock -= units;
+  if (tool?.dur !== undefined) { tool.dur = Math.max(0, tool.dur - 1); if (tool.dur === 0) h.equip.weapon = null; }
+  if (st.stock <= 0 && s.def.regrow) { st.regrowFrom = now; st.regrowAcc = 0; }
   receipt(r, now, 'human.harvest', `${h.actorId}:${s.key}@${tx},${ty}:-${units}`);
   return { result: 'yield', got, key: s.key };
 }
@@ -830,27 +880,58 @@ export function killHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
 // Trade — real item exchange through K1 custody; refusal by state.
 // ---------------------------------------------------------------------------
 export type TradeResult = { ok: boolean; reason?: string; transferred?: number };
+export interface HumanTradeEvaluation { ok: boolean; reason: string; offeredName?: string; requestedName?: string; offeredValue?: number; requestedValue?: number; ratio?: number; }
+function humanTradeItemValue(s: Stack, recipient: HumanRecord): number {
+  const d = ITEMS[s.key], qty = Math.max(1, Math.min(d.max, s.qty));
+  let unit = d?.creatorCore ? 95 + (s.lvl ?? 1) * 20 : d?.dmg ? 9 + d.dmg : d?.food?.thirst ? 8 : d?.food?.hunger ? 6 : d?.repair || d?.salvage ? 9 : d?.max === 1 ? 8 : 3;
+  if (d?.dur) unit *= Math.max(0.12, Math.min(1, (s.dur ?? d.dur) / d.dur));
+  if (d?.charge) unit *= Math.max(0.1, Math.min(1, (s.charge ?? d.charge) / d.charge));
+  if (d?.food?.hunger && recipient.hunger < 65) unit *= 1 + (65 - recipient.hunger) / 28;
+  if (d?.food?.thirst && recipient.thirst < 65) unit *= 1 + (65 - recipient.thirst) / 26;
+  if ((s.key === 'bandage' || s.key === 'herb') && (recipient.hp < recipient.maxHp * 0.7 || recipient.wounds.some(w => w.bleeding && !w.treated))) unit *= 1.8;
+  if (recipient.occupation === 'builder' && ['wood', 'stone'].includes(s.key)) unit *= 1.6;
+  if (['mechanic', 'engineer'].includes(recipient.occupation) && ['spares', 'scrap', 'iron'].includes(s.key)) unit *= 1.5;
+  if (recipient.occupation === 'gardener' && (s.key.startsWith('seed_') || s.key === 'water_flask')) unit *= 1.5;
+  if (recipient.occupation === 'cook' && ['berries', 'meat', 'mushroom', 'charcoal'].includes(s.key)) unit *= 1.5;
+  if (recipient.occupation === 'medic' && ['bandage', 'herb'].includes(s.key)) unit *= 1.6;
+  return unit * qty;
+}
+export function evaluateHumanExchange(r: RunState, h: HumanRecord, playerSlot: number, humanSlot: number): HumanTradeEvaluation {
+  if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'FIGHTING') return { ok: false, reason: 'It is not safe to barter right now.' };
+  const player = r.custody.inv, pack = humanPack(r, h);
+  if (playerSlot < 0 || humanSlot < 0 || playerSlot >= player.slots.length || humanSlot >= pack.slots.length) return { ok: false, reason: 'One of those items is no longer available.' };
+  const offered = player.slots[playerSlot], requested = pack.slots[humanSlot];
+  if (!offered || !requested) return { ok: false, reason: 'One of those items is no longer available.' };
+  const offeredValue = humanTradeItemValue(offered, h), requestedBase = humanTradeItemValue(requested, h);
+  const carried = pack.slots.reduce((n, s) => n + (s?.key === requested.key ? s.qty : 0), 0);
+  const soleUsefulFood = (ITEMS[requested.key]?.food?.hunger && h.hunger < 45) || (ITEMS[requested.key]?.food?.thirst && h.thirst < 45);
+  const reserve = soleUsefulFood && carried <= requested.qty ? 1.8 : 1;
+  const requestedValue = requestedBase * reserve, ratio = offeredValue / Math.max(0.01, requestedValue);
+  const offeredName = ITEMS[offered.key]?.name ?? offered.key, requestedName = ITEMS[requested.key]?.name ?? requested.key;
+  if (ITEMS[requested.key]?.creatorCore && !ITEMS[offered.key]?.creatorCore && ratio < 0.9) return { ok: false, reason: 'I will not trade my Creator Core for this offer.', offeredName, requestedName, offeredValue, requestedValue, ratio };
+  if (ratio < 0.85) {
+    const gap = Math.max(1, Math.ceil(requestedValue * 0.85 - offeredValue));
+    return { ok: false, reason: `Counter-offer: choose something less valuable from me, or add about ${gap} value points to your offer.`, offeredName, requestedName, offeredValue, requestedValue, ratio };
+  }
+  return { ok: true, reason: `That is a fair exchange: your ${offeredName} for my ${requestedName}.`, offeredName, requestedName, offeredValue, requestedValue, ratio };
+}
 
 /** Equal-stack barter. Both stacks move by identity; neither side mints or destroys stock. */
 export function exchangeHumanStacks(r: RunState, hw: HumanWorld, h: HumanRecord, playerSlot: number, humanSlot: number, now: number): TradeResult {
-  if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'FIGHTING') return { ok: false, reason: 'not safe to trade' };
+  const evaluation = evaluateHumanExchange(r, h, playerSlot, humanSlot);
+  if (!evaluation.ok) return { ok: false, reason: evaluation.reason };
   const player = r.custody.inv, pack = humanPack(r, h);
-  if (!player || playerSlot < 0 || humanSlot < 0 || playerSlot >= player.slots.length || humanSlot >= pack.slots.length) return { ok: false, reason: 'stale trade selection' };
   const offered = player.slots[playerSlot], requested = pack.slots[humanSlot];
   if (!offered || !requested) return { ok: false, reason: 'selected stack is gone' };
-  const baseValue = (s: Stack) => {
-    const d = ITEMS[s.key], count = Math.max(1, Math.min(8, s.qty));
-    const unit = d?.creatorCore ? 80 + (s.lvl ?? 1) * 18 + (s.dur ?? 100) * 0.1 : d?.dmg ? 8 + d.dmg * 0.8 : d?.food?.thirst ? 7 : d?.food?.hunger ? 5 : d?.repair || d?.salvage ? 8 : 2;
-    const condition = d?.creatorCore ? Math.max(0.15, Math.min(1, (s.dur ?? 100) / 100)) : 1;
-    return unit * count * condition;
-  };
-  const offeredValue = baseValue(offered) * (ITEMS[offered.key]?.food?.hunger && h.hunger < 40 ? 2.5 : 1) * (ITEMS[offered.key]?.food?.thirst && h.thirst < 40 ? 2.5 : 1);
-  const askValue = baseValue(requested) * (ITEMS[requested.key]?.food?.hunger && h.hunger < 40 ? 0.35 : 1) * (ITEMS[requested.key]?.food?.thirst && h.thirst < 40 ? 0.35 : 1);
-  if (ITEMS[requested.key]?.creatorCore && !ITEMS[offered.key]?.creatorCore && offeredValue < askValue * 0.9) return { ok: false, reason: 'they refuse to trade away a Creator Core for an ordinary item.' };
-  if (offeredValue < askValue * 0.35) return { ok: false, reason: `${h.name} refuses: the offer is not useful enough for what they would give up.` };
   // Atomic slot-for-slot swap: same two Stack objects, same UIDs, no intermediate duplicate.
   player.slots[playerSlot] = requested; pack.slots[humanSlot] = offered;
-  h.trust = clamp((h.trust ?? 50) + 4, 0, 100);
+  faceTowardPlayer(r, h);
+  const pairKey = [offered.uid, requested.uid].sort().join('|');
+  h.tradeTrustReceipts ??= {};
+  const firstFairTrade = Object.keys(h.tradeTrustReceipts).length === 0;
+  h.tradeTrustReceipts[pairKey] ??= now;
+  // Barter is modest social evidence once, never a renewable trust source through item cycling.
+  if (firstFairTrade) h.trust = clamp((h.trust ?? 50) + 1, 0, 100);
   recordIncident(r, hw, { kind: 'trade', victim: h.actorId, aggressor: 'player', witnesses: [], at: now, place: { tx: h.gx, ty: h.gy, floor: h.floor }, property: [offered.uid, requested.uid], resolved: true }, now);
   receipt(r, now, 'human.exchange', `${h.actorId}:${offered.uid}<->${requested.uid}`);
   return { ok: true, transferred: offered.qty + requested.qty };
@@ -905,9 +986,16 @@ export function lootHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
 // ---------------------------------------------------------------------------
 // Companion — consent, follow, orders, 5-way resolution, carrying.
 // ---------------------------------------------------------------------------
-export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): string {
+function faceTowardPlayer(r: RunState, h: HumanRecord): void {
+  const o = r.sourceMap?.veyra?.originAu;
+  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  faceHumanToward(h, ox + r.player.x / TILE, oy + r.player.y / TILE);
+}
+export type HumanTalkTopic = 'activity' | 'needs' | 'place' | 'goods' | 'accompany';
+export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, topic?: HumanTalkTopic): string {
   if (h.state === 'DEAD' || h.state === 'EVACUATED') return 'No response.';
   if (h.state === 'DOWNED') return `${h.name} is down and cannot answer.`;
+  faceTowardPlayer(r, h);
   if (!h.disposition_known.knownPeople.includes('player')) h.disposition_known.knownPeople.push('player');
   h.lastTalkAt = now;
   const facts: string[] = [`${h.name} · ${h.occupation} · ${h.community ? hw.communities[h.community]?.poi ?? 'traveler' : 'traveler'}`];
@@ -918,6 +1006,7 @@ export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   } else if (h.following) facts.push(h.state === 'MOVING' ? 'Keeping pace with you.' : 'Waiting nearby for your next move.');
   else if (h.intent?.blockReason) facts.push(`Cannot continue: ${h.intent.blockReason}.`);
   else if (h.state === 'WORKING') facts.push(`Currently working as a ${h.occupation}.`);
+  if (h.lastWorkBlock) facts.push(h.lastWorkBlock);
   if (h.hunger < 35) facts.push(`Hungry (${Math.round(h.hunger)}%).`);
   if (h.thirst < 35) facts.push(`Thirsty (${Math.round(h.thirst)}%).`);
   if (h.hp < h.maxHp * 0.5) facts.push(`Injured (${Math.round(h.hp)}/${h.maxHp} HP).`);
@@ -925,8 +1014,23 @@ export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   if (carried.length) facts.push(`Carrying: ${carried.join(', ')}.`);
   const knownIncidents = h.disposition_known.incidents.map(id => hw.incidents[id]).filter((x): x is HumanIncident => !!x);
   if (knownIncidents.length) facts.push(`Known incident: ${knownIncidents[knownIncidents.length - 1].kind}.`);
-  receipt(r, now, 'human.talk', `${h.actorId}:status`);
-  return facts.join(' ');
+  const activity = facts.slice(0, 2).join(' ');
+  const needs: string[] = [];
+  if (h.hunger < 35) needs.push('I could use a proper meal.');
+  if (h.thirst < 35) needs.push('I need clean water soon.');
+  if (h.hp < h.maxHp * 0.5) needs.push('I am hurt and need treatment.');
+  if (h.lastWorkBlock) needs.push(h.lastWorkBlock);
+  if (!needs.length) needs.push('I have no urgent need right now.');
+  const packSummary = carried.length ? `I am carrying ${carried.join(', ')}.` : 'I have nothing in my personal pack to offer.';
+  const place = h.community ? `This is my community at ${hw.communities[h.community]?.poi ?? 'this settlement'}. I can only tell you what I have personally seen.` : 'I have not learned enough about this place to guide you yet.';
+  const response = topic === 'activity' ? activity
+    : topic === 'needs' ? needs.join(' ')
+    : topic === 'place' ? place
+    : topic === 'goods' ? packSummary
+    : topic === 'accompany' ? (h.following ? 'I am already traveling with you.' : h.disposition === 'predatory' ? 'No. I will not travel with you.' : (h.trust ?? 50) < 55 ? 'I do not know you well enough to travel together. Show me I can rely on you first.' : 'I would consider traveling with you. Ask me to join when you are ready.')
+    : facts.slice(0, 4).join(' ');
+  receipt(r, now, 'human.talk', `${h.actorId}:${topic ?? 'status'}`);
+  return response;
 }
 
 export type HumanDemand = 'item' | 'disarm' | 'back_off' | 'stop_attack';
@@ -956,6 +1060,7 @@ export function threatenHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: 
   if (demand === 'item' && !demanded) return { ok: false, reason: 'That carried item is no longer accessible.' };
   if (demand === 'disarm' && !h.equip.weapon) return { ok: false, reason: 'They are not carrying an equipped weapon.' };
   if (demand === 'stop_attack' && h.state !== 'FIGHTING') return { ok: false, reason: 'They are not attacking anyone right now.' };
+  faceTowardPlayer(r, h);
   const origin = r.sourceMap?.veyra?.originAu;
   const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
   const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
@@ -965,11 +1070,16 @@ export function threatenHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: 
     return Math.hypot(other.gx - h.gx, other.gy - h.gy) <= 8 && clearPhysicalLine(r, { x: wx, y: wy }, { x: hx, y: hy }, true);
   }).map(other => other.actorId);
   const playerWeapon = r.custody.inv.slots[r.player.active];
+  const scene = JSON.stringify([h.gx, h.gy, h.floor, h.state, h.equip.weapon?.uid ?? '', h.equip.weapon?.dur ?? -1, Math.round(h.hp), witnesses.sort(), playerWeapon?.uid ?? '', playerWeapon?.dur ?? -1, Math.round(r.player.hp), r.player.active]);
+  if (h.confrontationAttempt?.scene === scene && now - h.confrontationAttempt.at < 15000) {
+    return { ok: false, reason: `${h.name} has already answered this threat. Give them time or change the situation before pressing again.` };
+  }
+  const attemptNo = (h.confrontationAttempt?.attempts ?? 0) + 1;
   const playerThreat = (playerWeapon ? ITEMS[playerWeapon.key]?.dmg ?? 0 : 0) + (r.player.hp < 30 ? 0 : 5);
   const valuable = demanded ? (ITEMS[demanded.key]?.creatorCore ? 50 : demanded.key.includes('weapon') || ITEMS[demanded.key]?.dmg ? 18 : ITEMS[demanded.key]?.food ? 7 : 3) * Math.max(1, Math.min(5, demanded.qty)) : 0;
   const resolve = (h.equip.weapon ? 20 : 0) + h.combatProficiency * 7 + (h.disposition === 'predatory' ? 10 : h.disposition === 'protective' ? 4 : 0) + witnesses.length * 8 + h.protectedPeople.length * 2 + (h.hp < h.maxHp * 0.35 ? -16 : 0) + ((h.trust ?? 50) - 50) * 0.2;
   const pressure = playerThreat + (demand === 'item' ? 20 + valuable : demand === 'disarm' ? 22 : 18);
-  const roll = hashInt(`${h.actorId}:${now}:${demand}:${stackUid ?? ''}`) % 100;
+  const roll = hashInt(`${h.actorId}:${scene}:${demand}:${stackUid ?? ''}:${attemptNo}`) % 100;
   let reaction: ConfrontationResult['reaction'];
   if (pressure - resolve >= 18 && (demand !== 'item' || valuable < 18) && roll < 78) reaction = 'COMPLY';
   else if (pressure - resolve >= 5 && roll < 42) reaction = 'NEGOTIATE';
@@ -1005,6 +1115,7 @@ export function threatenHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: 
       NEGOTIATE: `Refuses the demand for now; ${demanded ? `${ITEMS[demanded.key]?.name ?? demanded.key} is valuable to them.` : 'they are weighing the risk.'}`,
       REFUSE: 'Refuses and holds position.', FLEE: 'Retreats along an open route.', CALL_FOR_HELP: `Calls out to ${witnesses.length} visible ally/allies.`, FIGHT: 'Raises their weapon and fights back.',
     };
+    h.confrontationAttempt = { scene, at: now, attempts: attemptNo, demand, reaction, message: reasons[reaction] };
     receipt(r, now, 'human.threaten', `${h.actorId}:${demand}:${reaction}`);
     return { ok: true, reaction, msg: reasons[reaction] };
   }
@@ -1015,7 +1126,8 @@ export function recruitHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: n
   if (h.following) return { ok: false, reason: 'already a companion' };
   if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'FIGHTING') return { ok: false, reason: 'not available to recruit' };
   if (h.disposition === 'predatory') return { ok: false, reason: 'this survivor will not join you' };
-  if ((h.trust ?? 50) < 55) return { ok: false, reason: 'needs a reason to trust you: trade or talk first' };
+  if ((h.trust ?? 50) < 55) return { ok: false, reason: 'I do not know you well enough yet. Show that I can rely on you first.' };
+  faceTowardPlayer(r, h);
   setFollowing(r, hw, h, true, now);
   return { ok: true };
 }
@@ -1245,11 +1357,19 @@ function countOutcomes(hw: HumanWorld): HumanOutcomeSummary {
  *  player-exploration loot. Movement is tile-step toward an intent target (no teleport). */
 function humanCellKey(floor: number, gx: number, gy: number): string { return `${floor}:${gx}:${gy}`; }
 /** Render/query position in global tile coordinates. Logical occupancy remains tile-authoritative. */
-export function humanWorldPosition(h: HumanRecord): { gx: number; gy: number } {
+export function humanWorldPosition(h: HumanRecord, at?: number): { gx: number; gy: number } {
   const m = h.motion;
   if (!m) return { gx: h.gx + 0.5, gy: h.gy + 0.5 };
-  const t = clamp(m.elapsedMs / (TILE / PROFILES[h.profile].speed * 1000), 0, 1);
+  // Render may interpolate only the small uncommitted remainder since the latest simulation
+  // update. Tile occupancy/route legality remains authoritative and never advances here.
+  const extrapolation = at === undefined || m.updatedAt === undefined ? 0 : clamp(at - m.updatedAt, 0, 50);
+  const travelMs = TILE / PROFILES[h.profile].speed * 1000;
+  const t = clamp((m.elapsedMs + extrapolation) / travelMs, 0, 1);
   return { gx: m.fromGx + 0.5 + (m.toGx - m.fromGx) * t, gy: m.fromGy + 0.5 + (m.toGy - m.fromGy) * t };
+}
+function faceHumanToward(h: HumanRecord, gx: number, gy: number): void {
+  const dx = gx - (h.gx + 0.5), dy = gy - (h.gy + 0.5);
+  h.dir = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 1 : 2) : (dy < 0 ? 3 : 0);
 }
 function humanRouteToAdjacent(r: RunState, h: HumanRecord, targetGx: number, targetGy: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): { tx: number; ty: number; floor: number }[] | null {
   const floor = r.veyraFloor ?? 0;
@@ -1348,20 +1468,21 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     if (!route.length) { depositHumanOutputs(r, h, now); h.intent = undefined; h.nextThinkAt = now + 6000; }
     return;
   }
-  if (!pack.slots.some(s => !s)) return;
   const lx = h.gx - ox, ly = h.gy - oy;
   if (lx < 1 || ly < 1 || lx >= WW - 1 || ly >= WH - 1) return;
-  let best: { tx: number; ty: number; score: number } | null = null;
+  let best: { tx: number; ty: number; score: number } | null = null, spaceBlocked = false;
   for (let y = Math.max(1, ly - 24); y <= Math.min(WH - 2, ly + 24); y++) for (let x = Math.max(1, lx - 24); x <= Math.min(WW - 2, lx + 24); x++) {
     const s = sourceAt(r, x, y, now);
     if (!s || s.stock <= 0 || protectedTiles.has(`${x}:${y}`) || !canHarvestSource(h, s)) continue;
+    if (!simulateHumanOutput(pack.slots.map(v => v ? { ...v } : null), s.def.yields)) { spaceBlocked = true; continue; }
     const score = Math.abs(x - lx) + Math.abs(y - ly) + (s.stock <= 1 ? 4 : 0);
     if (!best || score < best.score) best = { tx: x, ty: y, score };
   }
-  if (!best) return;
+  if (!best) { if (spaceBlocked) h.lastWorkBlock = 'My pack is full; I cannot take another source unit until I make room.'; return; }
   const targetGx = ox + best.tx, targetGy = oy + best.ty;
   const route = humanRouteToAdjacent(r, h, targetGx, targetGy, grid, ox, oy, occupied);
-  if (!route) return;
+  if (!route) { h.lastWorkBlock = 'I cannot reach a suitable shared source by a legal route from here.'; return; }
+  h.lastWorkBlock = undefined;
   h.intent = { intentId: `work:${h.actorId}:${now}`, actorId: h.actorId, kind: 'work', target: `harvest:${best.tx},${best.ty}`, preconditions: ['shared source in active window', 'occupation and equipped tool can extract source', 'pack has room', 'player-exploration caches excluded'], reserved: [], startAt: now, dueAt: now, route };
   h.state = route.length ? 'MOVING' : 'WORKING';
   if (!route.length) h.intent.dueAt = now + 1500;
@@ -1372,13 +1493,14 @@ function performHumanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, now: n
   const tx = Number(m[1]), ty = Number(m[2]);
   const before = new Map(humanPack(r, h).slots.filter((s): s is Stack => !!s).map(s => [s.uid, s.qty]));
   const result = humanHarvest(r, hw, h, tx, ty, now);
-  if (result.result !== 'yield') { h.intent = undefined; h.state = 'IDLE'; h.nextThinkAt = now + 10000; return false; }
+  if (result.result !== 'yield') { h.lastWorkBlock = result.reason; h.intent = undefined; h.state = 'IDLE'; h.nextThinkAt = now + 10000; return false; }
   if ((result.got ?? 0) <= 0) {
     // The source took a real strike, but no whole stock unit crossed the extraction threshold yet.
     // Continue the same work commitment; do not record output or claim production.
     if (h.intent) { h.intent.dueAt = now + 900; h.intent.blockReason = 'working the source; no full unit released yet'; }
     return false;
   }
+  h.lastWorkBlock = undefined;
   h.workOutputs ??= {};
   for (const s of humanPack(r, h).slots) if (s) {
     const delta = s.qty - (before.get(s.uid) ?? 0);
@@ -1462,6 +1584,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
     const moveIntent = h.intent, moveRoute = moveIntent?.route;
     if (h.state === 'MOVING' && moveIntent && moveRoute?.length) {
       const next = moveRoute[0];
+      let beganStep = false;
       if (!h.motion) {
         const dx = next.tx - h.gx, dy = next.ty - h.gy;
         const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
@@ -1470,12 +1593,16 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
           if (moveIntent.kind === 'follow') moveRoute.length = 0;
           else { h.intent = undefined; h.state = 'IDLE'; h.nextThinkAt = now + 3000; }
         } else {
-          h.motion = { fromGx: h.gx, fromGy: h.gy, toGx: next.tx, toGy: next.ty, elapsedMs: 0 };
+          const intentStart = Number.isFinite(moveIntent.startAt) ? Math.max(lastStepAt, moveIntent.startAt) : lastStepAt;
+          const initialElapsed = clamp(now - intentStart, 0, 250);
+          h.motion = { fromGx: h.gx, fromGy: h.gy, toGx: next.tx, toGy: next.ty, elapsedMs: initialElapsed, updatedAt: now };
+          beganStep = true;
           h.dir = dy > 0 ? 0 : dy < 0 ? 3 : dx > 0 ? 2 : 1;
         }
       }
       if (h.motion) {
-        h.motion.elapsedMs += Math.min(dtMs, 250);
+        if (!beganStep) h.motion.elapsedMs += Math.min(dtMs, 250);
+        h.motion.updatedAt = now;
         const travelMs = TILE / PROFILES[h.profile].speed * 1000;
         if (h.motion.elapsedMs >= travelMs) {
           const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
@@ -1483,7 +1610,11 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
           h.lastSimAt = now; occupied.add(humanCellKey(h.floor, h.gx, h.gy));
           if (!moveRoute.length) {
             if (moveIntent.kind === 'follow') { h.state = 'IDLE'; moveRoute.length = 0; }
-            else if (moveIntent.kind === 'work' && moveIntent.target?.startsWith('harvest:')) { h.state = 'WORKING'; moveIntent.dueAt = now + 1500; }
+            else if (moveIntent.kind === 'work' && moveIntent.target?.startsWith('harvest:')) {
+              const target = moveIntent.target.match(/^harvest:(\d+),(\d+)$/);
+              if (target) faceHumanToward(h, Number(target[1]) + ox, Number(target[2]) + oy);
+              h.state = 'WORKING'; moveIntent.dueAt = now + 1500;
+            }
             else if (moveIntent.kind === 'work' && moveIntent.target === 'store') { h.state = 'IDLE'; depositHumanOutputs(r, h, now); h.intent = undefined; h.nextThinkAt = now + 6000; }
             else { h.state = 'IDLE'; h.intent = undefined; }
           }

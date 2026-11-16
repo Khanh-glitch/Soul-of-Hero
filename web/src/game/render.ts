@@ -310,7 +310,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     for (const h of Object.values(r.humanWorld.people)) {
       if (h.state === 'EVACUATED') continue;
       if (h.floor !== activeFloor(r)) continue;
-      const pos = humanWorldPosition(h);
+      const pos = humanWorldPosition(h, now);
       const wx = (pos.gx - ox) * TILE, wy = (pos.gy - oy) * TILE;
       if (wx < cx - 40 || wx > cx + VIEW_W + 40 || wy < cy - 40 || wy > cy + VIEW_H + 60) continue;
       if (life.undergroundHides(r, wx, wy)) continue;
