@@ -1,5 +1,6 @@
 import { G1B_VERSION, G1B_CHEST_SLOTS, G1B_SITES, G1B_FIXTURE_BY_ID, G1B_GATE_BY_ID, G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, g1bSeed, CORE_V2 } from './g1b';
 import { G1B_BATCH2_ECOLOGY } from './g1b-ecology-batch2.frozen';
+import { G1B_BATCH3_ECOLOGY } from './g1b-ecology-batch3.frozen';
 import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} from './airdrop';
 import { recoveryPlanFor, COMPONENT_RECIPES } from './recycler';
 import { combatKindOf } from './stimulus';
@@ -154,6 +155,12 @@ export function validate(raw: any): GameState | null {
       } else if (r.g1b.layout === 1) {
         const round1 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
         if (had.size !== round1.length || !round1.every(id => had.has(id))) return null;
+        g1bEnsureSources(r);
+      } else if (r.g1b.layout === 3) {
+        // Batch-3 layout: exactly the 130 base + 599 Batch-3 ecology + fixtures. P2 batch-3.2 adds the
+        // justified physical chests; every id the Batch-3 save carries is kept verbatim.
+        const batch3 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_BATCH3_ECOLOGY.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+        if (had.size !== batch3.length || !batch3.every(id => had.has(id))) return null;
         g1bEnsureSources(r);
       } else return null;                                                                          // unknown / forged / future revision
     } catch { return null; }

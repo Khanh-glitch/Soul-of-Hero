@@ -376,7 +376,16 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
         R.push(`${row.kind} (${dscr}): physical capacity ${cap} chest${cap === 1 ? '' : 's'} (size, wall pockets, danger ${row.danger} + access ${row.access})`);
       }
       row.want = Math.max(row.want, cap);
-      const need2 = 0; // frozen roster: the physical pass computes capacity reasons only, never places
+      // P2 batch-3.2: legitimate physical additions for large, storage/warehouse-function enclosed rooms whose
+      // real wall-backed pocket capacity is not yet filled. No quota inflation: only enclosed (room/cellar/upper)
+      // reachable spaces, usable >= 180, pockets >= 2, (danger >= 2 OR a storage/loot function in the name),
+      // and current chests below capacity. Place up to the physical capacity (min of cap/want and pockets).
+      const STORE = /store|warehouse|freight|depot|cellar|loft|cargo|receiving|sorting|transfer|ore|supply|locker|tally|records|ledger|archive|library|stacks|hall|office|shelter|booth|annex|niche|chamber|pocket|house|shed|gallery/i;
+      const justified = (['room', 'cellar', 'upper'].includes(row.kind) && row.reachable && row.usable >= 180
+        && pockets >= 2 && (row.danger >= 2 || STORE.test(row.name) || STORE.test(row.struct)) && have < pockets);
+      // each real wall-backed pocket can stand one chest: fill the unused pockets, never above 5 per space
+      const need2 = justified ? Math.max(0, Math.min(5, pockets) - have) : 0;
+      if (justified) R.push(`P2 batch-3.2 physical addition: ${need2} chest(s) placed to fill unused wall-backed pocket capacity in this storage room`);
       if (!need2) continue;
       const [fam, why] = row.family ? [row.family as Family, 'the room’s function'] as [Family, string] : famOf(row.name, row.struct, row.arche);
       let family: Family = fam;

@@ -19,7 +19,7 @@ const emit = (sources: any[]) => `/**
  */
 import type { G1bSourceSite } from './g1b-sources.generated';
 /** Bumped whenever the set of source ids changes; persist.ts migrates older saves by adding the missing sources closed. */
-export const G1B_LAYOUT_REVISION = 3;
+export const G1B_LAYOUT_REVISION = 4;
 export const G1B_ECOLOGY_SOURCES: readonly G1bSourceSite[] = [
 ${sources.map(s => '  ' + JSON.stringify(s) + ',').join('\n')}
 ];
@@ -29,7 +29,7 @@ describe('G1B ecology (frozen data)', () => {
   it('adds sources without touching the 130 round-1 ids, on distinct tiles and real variants', () => {
     expect(G1B_BASE_SOURCE_SITES.length).toBe(130);
     expect(G1B_SOURCE_SITES.slice(0, 130)).toEqual(G1B_BASE_SOURCE_SITES);
-    expect(G1B_LAYOUT_REVISION).toBe(3);
+    expect(G1B_LAYOUT_REVISION).toBe(4);
     const ids = new Set<string>(), tiles = new Set<string>();
     for (const s of G1B_SOURCE_SITES) { expect(ids.has(s.id), s.id).toBe(false); ids.add(s.id); const k = `${s.level ?? 0}:${s.gx},${s.gy}`; expect(tiles.has(k), k).toBe(false); tiles.add(k); expect(G1B_CHESTS[s.variant], s.variant).toBeTruthy(); }
     for (const f of G1B_FIXTURES) expect(tiles.has(`0:${f.gx},${f.gy}`)).toBe(false);
@@ -72,7 +72,7 @@ describe.runIf(process.env.G1B_ECOLOGY === '1' || process.env.G1B_WRITE === '1')
     if (process.env.G1B_WRITE === '1') {
       mkdirSync(DIR, { recursive: true });
       writeFileSync(GEN, text);
-      writeFileSync(resolve(DIR, 'G1B_SPACE_CENSUS.json'), JSON.stringify({ schema: 'soh.g1b.space-census.v3', layoutRevision: 3, spaces: E.spaces, roads: E.roads, notes: E.notes, baseSpace: E.baseLevels }, null, 1));
+      writeFileSync(resolve(DIR, 'G1B_SPACE_CENSUS.json'), JSON.stringify({ schema: 'soh.g1b.space-census.v3', layoutRevision: G1B_LAYOUT_REVISION, spaces: E.spaces, roads: E.roads, notes: E.notes, baseSpace: E.baseLevels }, null, 1));
     } else expect(text).toBe(readFileSync(GEN, 'utf8'));
   }, 1800000);
 });

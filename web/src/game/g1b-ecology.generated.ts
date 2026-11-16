@@ -6,7 +6,7 @@
  */
 import type { G1bSourceSite } from './g1b-sources.generated';
 /** Bumped whenever the set of source ids changes; persist.ts migrates older saves by adding the missing sources closed. */
-export const G1B_LAYOUT_REVISION = 3;
+export const G1B_LAYOUT_REVISION = 4;
 export const G1B_ECOLOGY_SOURCES: readonly G1bSourceSite[] = [
   {"id":"veyra.g1b:br_2:toolbox_damaged:head.01","site":"br_2","zone":"ROAD","variant":"toolbox_damaged","gx":2576,"gy":1047,"level":0,"place":"bridgehead repair cache","space":"road/br_2","ax":2575,"ay":1047},
   {"id":"veyra.g1b:br_5:toolbox_damaged:head.01","site":"br_5","zone":"ROAD","variant":"toolbox_damaged","gx":1940,"gy":1626,"level":0,"place":"bridgehead repair cache","space":"road/br_5","ax":1940,"ay":1625},
@@ -607,4 +607,13 @@ export const G1B_ECOLOGY_SOURCES: readonly G1bSourceSite[] = [
   {"id":"veyra.g1b:rd_x:supply_damaged:ford.01","site":"rd_x","zone":"ROAD","variant":"supply_damaged","gx":3341,"gy":1913,"level":0,"place":"cargo lost at the ford","space":"road/rd_x","ax":3342,"ay":1913},
   {"id":"veyra.g1b:rd_x:toolbox_low:k0197.01","site":"rd_x","zone":"ROAD","variant":"toolbox_low","gx":3251,"gy":1882,"level":0,"place":"trail cache","space":"road/rd_x","ax":3252,"ay":1882},
   {"id":"veyra.g1b:rd_z:medical_low:k0126.01","site":"rd_z","zone":"ROAD","variant":"medical_low","gx":3216,"gy":678,"level":0,"place":"roadside wreck / dropped load","space":"road/rd_z","ax":3217,"ay":678},
+  {"id":"veyra.g1b:po_southfoot:supply_low:f0.storehouse.02","site":"po_southfoot","zone":"POI","variant":"supply_low","gx":2370,"gy":2127,"level":0,"place":"room:Southfoot Freight Store","space":"po_southfoot/0/storehouse","ax":2371,"ay":2127},
+  {"id":"veyra.g1b:po_gulfhead:food_low:f0.grain_market.02","site":"po_gulfhead","zone":"POI","variant":"food_low","gx":2143,"gy":1793,"level":0,"place":"room:Gulfhead Grain Weighing Hall","space":"po_gulfhead/0/grain_market","ax":2142,"ay":1793},
+  {"id":"veyra.g1b:po_westmouth:supply_low:f0.guildhouse.02","site":"po_westmouth","zone":"POI","variant":"supply_low","gx":746,"gy":1107,"level":0,"place":"room:Harbour Guild Hall","space":"po_westmouth/0/guildhouse","ax":745,"ay":1107},
+  {"id":"veyra.g1b:po_ironharbor:supply_low:f0.ore_shed.01","site":"po_ironharbor","zone":"POI","variant":"supply_low","gx":2259,"gy":2486,"level":0,"place":"room:Covered Ironstone Sorting Shed","space":"po_ironharbor/0/ore_shed","ax":2258,"ay":2486},
+  {"id":"veyra.g1b:po_ironharbor:toolbox_low:f0.winch_hall.02","site":"po_ironharbor","zone":"POI","variant":"toolbox_low","gx":2207,"gy":2497,"level":0,"place":"room:Haulage Winch Hall","space":"po_ironharbor/0/winch_hall","ax":2206,"ay":2497},
+  {"id":"veyra.g1b:po_sandgate:food_low:f0.ware_a.02","site":"po_sandgate","zone":"POI","variant":"food_low","gx":1436,"gy":2227,"level":0,"place":"room:Upper Grain Transit Warehouse","space":"po_sandgate/0/ware_A","ax":1435,"ay":2227},
+  {"id":"veyra.g1b:po_sandgate:food_low:f0.ware_a.03","site":"po_sandgate","zone":"POI","variant":"food_low","gx":1425,"gy":2220,"level":0,"place":"room:Upper Grain Transit Warehouse","space":"po_sandgate/0/ware_A","ax":1426,"ay":2220},
+  {"id":"veyra.g1b:po_mill:supply_low:f0.wheelhouse.02","site":"po_mill","zone":"POI","variant":"supply_low","gx":2002,"gy":1453,"level":0,"place":"room:Wheelhouse and Grinding Floor","space":"po_mill/0/wheelhouse","ax":2003,"ay":1453},
+  {"id":"veyra.g1b:po_hall_eyes:supply_mid:f0.left_scriptorium.02","site":"po_hall_eyes","zone":"POI","variant":"supply_mid","gx":1971,"gy":390,"level":0,"place":"room:West Archive of Mirrors","space":"po_hall_eyes/0/left_scriptorium","ax":1970,"ay":390},
 ];

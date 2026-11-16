@@ -6,22 +6,22 @@ Exact expectation from the approved pools: 1 anchor + N regular draws + bonus (p
 
 ## Headline
 
-- Chests: **130 → 729** (×5.61).
-- Item units in one full sweep of the island: **1175.7 → 5801.7** (×4.93).
-- Gear units in one full sweep: **30.4 → 140.8** (×4.63).
-- Creator Cores in one full sweep: **11.06 → 35.23** (×3.19); by level L1 10.13 → 33.51, L2 0.92 → 1.70, L3 0.01 → 0.03.
-- Restock ceiling per game day: items 941.2 → 5318.1, Cores 7.91 → 29.99.
+- Chests: **130 → 738** (×5.68).
+- Item units in one full sweep of the island: **1175.7 → 5874.9** (×5.00).
+- Gear units in one full sweep: **30.4 → 141.9** (×4.66).
+- Creator Cores in one full sweep: **11.06 → 35.51** (×3.21); by level L1 10.13 → 33.77, L2 0.92 → 1.71, L3 0.01 → 0.03.
+- Restock ceiling per game day: items 941.2 → 5388.3, Cores 7.91 → 30.24.
 - Core chance per chest, averaged: 8.5% → 4.8% (added chests alone: 4.0%). The total still rises because there are more chests — a consequence for the Creator to judge in play; no odds, cap or pity was changed to mask it.
-- The added 599 chests carry 4626.0 item units and 24.18 Cores per full sweep: 82.2% of the chests, 68.6% of the Cores.
+- The added 608 chests carry 4699.2 item units and 24.45 Cores per full sweep: 82.4% of the chests, 68.8% of the Cores.
 
 ## By zone
 
 | | chests before | chests after | items / full open before | after | gear before | after | Cores / full open before | after | Cores / day ceiling before | after |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | CARD_ROOM | 19 | 24 | 204.4 | 263.2 | 5.3 | 7.2 | 2.27 | 3.01 | 1.28 | 1.59 |
-| POI | 85 | 601 | 780.9 | 4806.5 | 20.9 | 120.1 | 7.52 | 28.80 | 5.19 | 24.22 |
+| POI | 85 | 610 | 780.9 | 4879.7 | 20.9 | 121.2 | 7.52 | 29.07 | 5.19 | 24.47 |
 | ROAD | 26 | 104 | 190.4 | 732.0 | 4.2 | 13.5 | 1.27 | 3.42 | 1.44 | 4.18 |
-| **all** | **130** | **729** | **1175.7** | **5801.7** | **30.4** | **140.8** | **11.06** | **35.23** | **7.91** | **29.99** |
+| **all** | **130** | **738** | **1175.7** | **5874.9** | **30.4** | **141.9** | **11.06** | **35.51** | **7.91** | **30.24** |
 
 ## By gating
 
@@ -32,36 +32,36 @@ Exact expectation from the approved pools: 1 anchor + N regular draws + bonus (p
 | gated: power | 1 | 2 | 16.3 | 22.3 | 0.8 | 1.1 | 0.54 | 0.58 | 0.18 | 0.23 |
 | gated: purple card + power + filter mask | 9 | 10 | 125.0 | 141.3 | 3.8 | 4.6 | 1.80 | 2.33 | 0.72 | 0.90 |
 | open road | 26 | 104 | 190.4 | 732.0 | 4.2 | 13.5 | 1.27 | 3.42 | 1.44 | 4.18 |
-| open site | 81 | 597 | 724.9 | 4750.6 | 19.1 | 118.2 | 6.45 | 27.73 | 4.83 | 23.86 |
-| **all** | **130** | **729** | **1175.7** | **5801.7** | **30.4** | **140.8** | **11.06** | **35.23** | **7.91** | **29.99** |
+| open site | 81 | 606 | 724.9 | 4823.8 | 19.1 | 119.4 | 6.45 | 28.00 | 4.83 | 24.11 |
+| **all** | **130** | **738** | **1175.7** | **5874.9** | **30.4** | **141.9** | **11.06** | **35.51** | **7.91** | **30.24** |
 
 ## By risk of the space (census danger 1–4; roads apart)
 
 | | chests before | chests after | items / full open before | after | gear before | after | Cores / full open before | after | Cores / day ceiling before | after |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| danger 1 | 29 | 335 | 241.9 | 2646.7 | 3.4 | 48.4 | 0.96 | 10.70 | 0.93 | 10.66 |
+| danger 1 | 29 | 343 | 241.9 | 2711.2 | 3.4 | 49.3 | 0.96 | 10.90 | 0.93 | 10.87 |
 | danger 2 | 59 | 184 | 556.9 | 1437.1 | 16.9 | 45.9 | 6.42 | 11.78 | 4.26 | 9.49 |
-| danger 3 | 16 | 73 | 186.5 | 634.0 | 6.0 | 22.9 | 2.40 | 6.91 | 1.28 | 4.29 |
+| danger 3 | 16 | 74 | 186.5 | 642.7 | 6.0 | 23.1 | 2.40 | 6.96 | 1.28 | 4.33 |
 | danger 4 | 0 | 33 | 0.0 | 351.8 | 0.0 | 10.2 | 0.00 | 2.44 | 0.00 | 1.37 |
 | road | 26 | 104 | 190.4 | 732.0 | 4.2 | 13.5 | 1.27 | 3.42 | 1.44 | 4.18 |
-| **all** | **130** | **729** | **1175.7** | **5801.7** | **30.4** | **140.8** | **11.06** | **35.23** | **7.91** | **29.99** |
+| **all** | **130** | **738** | **1175.7** | **5874.9** | **30.4** | **141.9** | **11.06** | **35.51** | **7.91** | **30.24** |
 
 ## By storey
 
 | | chests before | chests after | items / full open before | after | gear before | after | Cores / full open before | after | Cores / day ceiling before | after |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | cellar (-1) | 0 | 51 | 0.0 | 400.3 | 0.0 | 12.4 | 0.00 | 3.13 | 0.00 | 2.19 |
-| ground (0) | 130 | 567 | 1175.7 | 4449.0 | 30.4 | 105.3 | 11.06 | 27.27 | 7.91 | 23.86 |
+| ground (0) | 130 | 576 | 1175.7 | 4522.2 | 30.4 | 106.4 | 11.06 | 27.55 | 7.91 | 24.11 |
 | roof / top (2) | 0 | 34 | 0.0 | 282.0 | 0.0 | 6.7 | 0.00 | 1.37 | 0.00 | 1.19 |
 | upper (1) | 0 | 77 | 0.0 | 670.4 | 0.0 | 16.4 | 0.00 | 3.46 | 0.00 | 2.75 |
-| **all** | **130** | **729** | **1175.7** | **5801.7** | **30.4** | **140.8** | **11.06** | **35.23** | **7.91** | **29.99** |
+| **all** | **130** | **738** | **1175.7** | **5874.9** | **30.4** | **141.9** | **11.06** | **35.51** | **7.91** | **30.24** |
 
 ## By chest variant
 
 | | chests before | chests after | items / full open before | after | gear before | after | Cores / full open before | after | Cores / day ceiling before | after |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | food_high | 2 | 2 | 38.4 | 38.4 | 0.0 | 0.0 | 0.00 | 0.00 | 0.00 | 0.00 |
-| food_low | 9 | 94 | 75.8 | 792.0 | 0.0 | 0.0 | 0.00 | 0.00 | 0.00 | 0.00 |
+| food_low | 9 | 97 | 75.8 | 817.2 | 0.0 | 0.0 | 0.00 | 0.00 | 0.00 | 0.00 |
 | food_mid | 5 | 12 | 59.6 | 143.1 | 0.0 | 0.0 | 0.00 | 0.00 | 0.00 | 0.00 |
 | medical_high | 3 | 4 | 34.9 | 46.5 | 0.4 | 0.5 | 0.00 | 0.00 | 0.00 | 0.00 |
 | medical_low | 10 | 30 | 67.4 | 202.1 | 0.0 | 0.0 | 0.00 | 0.00 | 0.00 | 0.00 |
@@ -71,12 +71,12 @@ Exact expectation from the approved pools: 1 anchor + N regular draws + bonus (p
 | military_mid | 6 | 7 | 82.7 | 96.5 | 3.5 | 4.1 | 2.64 | 3.08 | 1.32 | 1.54 |
 | supply_damaged | 4 | 11 | 22.0 | 60.5 | 0.4 | 1.1 | 0.12 | 0.33 | 0.24 | 0.66 |
 | supply_high | 4 | 23 | 49.6 | 285.3 | 1.4 | 8.1 | 0.32 | 1.84 | 0.16 | 0.92 |
-| supply_low | 22 | 251 | 182.8 | 2085.8 | 3.5 | 40.2 | 0.88 | 10.04 | 0.88 | 10.04 |
-| supply_mid | 22 | 62 | 191.9 | 540.7 | 4.8 | 13.6 | 1.32 | 3.72 | 0.88 | 2.48 |
+| supply_low | 22 | 255 | 182.8 | 2119.1 | 3.5 | 40.8 | 0.88 | 10.20 | 0.88 | 10.20 |
+| supply_mid | 22 | 63 | 191.9 | 549.5 | 4.8 | 13.8 | 1.32 | 3.78 | 0.88 | 2.52 |
 | toolbox_damaged | 5 | 16 | 14.5 | 46.4 | 0.8 | 2.4 | 0.17 | 0.56 | 0.35 | 1.12 |
 | toolbox_high | 7 | 10 | 78.8 | 112.6 | 4.5 | 6.5 | 0.91 | 1.30 | 0.46 | 0.65 |
-| toolbox_low | 15 | 187 | 89.3 | 1112.7 | 4.5 | 56.1 | 0.75 | 9.35 | 0.75 | 9.35 |
-| **all** | **130** | **729** | **1175.7** | **5801.7** | **30.4** | **140.8** | **11.06** | **35.23** | **7.91** | **29.99** |
+| toolbox_low | 15 | 188 | 89.3 | 1118.6 | 4.5 | 56.4 | 0.75 | 9.40 | 0.75 | 9.40 |
+| **all** | **130** | **738** | **1175.7** | **5874.9** | **30.4** | **141.9** | **11.06** | **35.51** | **7.91** | **30.24** |
 
 ## By site
 
@@ -126,13 +126,13 @@ Exact expectation from the approved pools: 1 anchor + N regular draws + bonus (p
 | po_glade | 0 | 1 | 0.0 | 6.7 | 0.00 | 0.00 |
 | po_greyquarry | 2 | 8 | 8.4 | 48.8 | 0.07 | 0.34 |
 | po_greywater | 5 | 18 | 37.7 | 142.9 | 0.13 | 0.44 |
-| po_gulfhead | 3 | 33 | 25.0 | 268.1 | 0.08 | 1.03 |
+| po_gulfhead | 3 | 34 | 25.0 | 276.5 | 0.08 | 1.03 |
 | po_gullnest | 0 | 5 | 0.0 | 39.3 | 0.00 | 0.17 |
 | po_gullpier | 0 | 11 | 0.0 | 91.5 | 0.00 | 0.40 |
 | po_gullwreck | 0 | 1 | 0.0 | 8.3 | 0.00 | 0.04 |
-| po_hall_eyes | 0 | 12 | 0.0 | 119.4 | 0.00 | 0.80 |
+| po_hall_eyes | 0 | 13 | 0.0 | 128.1 | 0.00 | 0.86 |
 | po_hook | 0 | 18 | 0.0 | 149.7 | 0.00 | 0.26 |
-| po_ironharbor | 2 | 23 | 20.6 | 176.5 | 0.06 | 0.90 |
+| po_ironharbor | 2 | 25 | 20.6 | 190.8 | 0.06 | 0.99 |
 | po_ironmine | 3 | 22 | 26.0 | 147.1 | 0.37 | 1.41 |
 | po_ironvein | 2 | 3 | 14.7 | 20.6 | 0.11 | 0.16 |
 | po_ironwh | 3 | 3 | 31.3 | 31.3 | 0.45 | 0.45 |
@@ -142,7 +142,7 @@ Exact expectation from the approved pools: 1 anchor + N regular draws + bonus (p
 | po_lanternstn | 0 | 2 | 0.0 | 14.3 | 0.00 | 0.09 |
 | po_mere | 0 | 3 | 0.0 | 25.0 | 0.00 | 0.08 |
 | po_meridian | 9 | 10 | 87.9 | 99.5 | 0.67 | 0.67 |
-| po_mill | 2 | 6 | 20.2 | 53.8 | 0.04 | 0.08 |
+| po_mill | 2 | 7 | 20.2 | 62.1 | 0.04 | 0.12 |
 | po_necropolis | 0 | 8 | 0.0 | 85.9 | 0.00 | 0.92 |
 | po_netcamp | 0 | 4 | 0.0 | 33.4 | 0.00 | 0.12 |
 | po_oasis | 0 | 18 | 0.0 | 154.2 | 0.00 | 0.32 |
@@ -157,12 +157,12 @@ Exact expectation from the approved pools: 1 anchor + N regular draws + bonus (p
 | po_saltharbor | 2 | 26 | 20.6 | 216.4 | 0.06 | 0.68 |
 | po_saltlight | 0 | 3 | 0.0 | 17.9 | 0.00 | 0.15 |
 | po_saltpans | 2 | 5 | 14.3 | 34.5 | 0.09 | 0.23 |
-| po_sandgate | 0 | 24 | 0.0 | 176.1 | 0.00 | 0.98 |
+| po_sandgate | 0 | 26 | 0.0 | 192.9 | 0.00 | 0.98 |
 | po_sapgrove | 0 | 1 | 0.0 | 6.7 | 0.00 | 0.00 |
 | po_sawaion | 2 | 9 | 14.7 | 61.0 | 0.11 | 0.44 |
 | po_siloc | 3 | 10 | 36.6 | 109.6 | 0.12 | 0.12 |
 | po_slag | 3 | 19 | 37.4 | 149.2 | 0.65 | 1.38 |
-| po_southfoot | 0 | 6 | 0.0 | 47.5 | 0.00 | 0.25 |
+| po_southfoot | 0 | 7 | 0.0 | 55.8 | 0.00 | 0.29 |
 | po_strait | 3 | 7 | 27.4 | 60.6 | 0.06 | 0.22 |
 | po_sulfur | 2 | 10 | 20.0 | 74.7 | 0.19 | 0.56 |
 | po_surtur | 0 | 12 | 0.0 | 113.4 | 0.00 | 0.88 |
@@ -172,7 +172,7 @@ Exact expectation from the approved pools: 1 anchor + N regular draws + bonus (p
 | po_typhon | 0 | 6 | 0.0 | 63.4 | 0.00 | 0.42 |
 | po_viaduct | 0 | 2 | 0.0 | 14.3 | 0.00 | 0.09 |
 | po_westbank | 0 | 14 | 0.0 | 108.0 | 0.00 | 0.43 |
-| po_westmouth | 0 | 25 | 0.0 | 206.1 | 0.00 | 0.77 |
+| po_westmouth | 0 | 26 | 0.0 | 214.4 | 0.00 | 0.81 |
 | po_westwood | 0 | 3 | 0.0 | 23.4 | 0.00 | 0.08 |
 | po_wreck | 3 | 3 | 33.8 | 33.8 | 0.63 | 0.63 |
 | rd_0 | 0 | 1 | 0.0 | 2.9 | 0.00 | 0.04 |

@@ -1,6 +1,6 @@
 {
  "schema": "soh.g1b.space-census.v3",
- "layoutRevision": 3,
+ "layoutRevision": 4,
  "spaces": [
   {
    "id": "po_greywater/-1/lh_cellar",
@@ -7388,14 +7388,17 @@
    "want": 1,
    "base": [],
    "added": [
-    "veyra.g1b:po_southfoot:supply_low:f0.storehouse.01"
+    "veyra.g1b:po_southfoot:supply_low:f0.storehouse.01",
+    "veyra.g1b:po_southfoot:supply_low:f0.storehouse.02"
    ],
    "legacyCaches": 1,
    "reasons": [
     "room with a loot function (storage / general-purpose room; 206 standable tiles)",
     "grade low: danger 1 + access 0",
     "1 authored one-time cache(s) also in this space (kept, not counted)",
-    "room (206 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)"
+    "room (206 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)",
+    "P2 batch-3.2 physical addition: 1 chest(s) placed to fill unused wall-backed pocket capacity in this storage room",
+    "physical placement: chest 2 of 1 against a wall pocket (2 solid sides)"
    ],
    "_b2add": [
     {
@@ -10412,13 +10415,16 @@
    "want": 1,
    "base": [],
    "added": [
-    "veyra.g1b:po_gulfhead:food_low:f0.grain_market.01"
+    "veyra.g1b:po_gulfhead:food_low:f0.grain_market.01",
+    "veyra.g1b:po_gulfhead:food_low:f0.grain_market.02"
    ],
    "legacyCaches": 0,
    "reasons": [
     "room with a loot function (\"Grain\" in the room name; 198 standable tiles)",
     "grade low: danger 1 + access 0",
-    "room (198 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)"
+    "room (198 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)",
+    "P2 batch-3.2 physical addition: 1 chest(s) placed to fill unused wall-backed pocket capacity in this storage room",
+    "physical placement: chest 2 of 1 against a wall pocket (2 solid sides)"
    ],
    "_b2add": [
     {
@@ -11849,13 +11855,16 @@
    "want": 1,
    "base": [],
    "added": [
-    "veyra.g1b:po_westmouth:supply_low:f0.guildhouse.01"
+    "veyra.g1b:po_westmouth:supply_low:f0.guildhouse.01",
+    "veyra.g1b:po_westmouth:supply_low:f0.guildhouse.02"
    ],
    "legacyCaches": 0,
    "reasons": [
     "room with a loot function (storage / general-purpose room; 207 standable tiles)",
     "grade low: danger 1 + access 0",
-    "room (207 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)"
+    "room (207 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)",
+    "P2 batch-3.2 physical addition: 1 chest(s) placed to fill unused wall-backed pocket capacity in this storage room",
+    "physical placement: chest 2 of 1 against a wall pocket (2 solid sides)"
    ],
    "_b2add": [
     {
@@ -14709,14 +14718,18 @@
    "base": [
     "veyra.g1b:po_ironharbor:supply_mid:01"
    ],
-   "added": [],
+   "added": [
+    "veyra.g1b:po_ironharbor:supply_low:f0.ore_shed.01"
+   ],
    "legacyCaches": 0,
    "reasons": [
     "round-1 source stands in this space's cells: counted here",
     "room with a loot function (storage / general-purpose room; 190 standable tiles)",
     "grade low: danger 1 + access 0",
     "1 round-1 source(s) already stand here and count toward the 1",
-    "room (190 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)"
+    "room (190 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)",
+    "P2 batch-3.2 physical addition: 1 chest(s) placed to fill unused wall-backed pocket capacity in this storage room",
+    "physical placement: chest 2 of 1 against a wall pocket (2 solid sides)"
    ]
   },
   {
@@ -14746,13 +14759,16 @@
    "want": 1,
    "base": [],
    "added": [
-    "veyra.g1b:po_ironharbor:toolbox_low:f0.winch_hall.01"
+    "veyra.g1b:po_ironharbor:toolbox_low:f0.winch_hall.01",
+    "veyra.g1b:po_ironharbor:toolbox_low:f0.winch_hall.02"
    ],
    "legacyCaches": 0,
    "reasons": [
     "room with a loot function (\"Winch\" in the room name; 180 standable tiles)",
     "grade low: danger 1 + access 0",
-    "room (180 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)"
+    "room (180 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)",
+    "P2 batch-3.2 physical addition: 1 chest(s) placed to fill unused wall-backed pocket capacity in this storage room",
+    "physical placement: chest 2 of 1 against a wall pocket (2 solid sides)"
    ],
    "_b2add": [
     {
@@ -17157,13 +17173,18 @@
    "want": 1,
    "base": [],
    "added": [
-    "veyra.g1b:po_sandgate:food_low:f0.ware_a.01"
+    "veyra.g1b:po_sandgate:food_low:f0.ware_a.01",
+    "veyra.g1b:po_sandgate:food_low:f0.ware_a.02",
+    "veyra.g1b:po_sandgate:food_low:f0.ware_a.03"
    ],
    "legacyCaches": 0,
    "reasons": [
     "room with a loot function (\"Grain\" in the room name; 199 standable tiles)",
     "grade low: danger 1 + access 0",
-    "room (199 standable tiles, 3 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)"
+    "room (199 standable tiles, 3 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)",
+    "P2 batch-3.2 physical addition: 2 chest(s) placed to fill unused wall-backed pocket capacity in this storage room",
+    "physical placement: chest 2 of 1 against a wall pocket (1 solid sides)",
+    "physical placement: chest 3 of 1 against a wall pocket (1 solid sides)"
    ],
    "_b2add": [
     {
@@ -20525,14 +20546,17 @@
    "want": 1,
    "base": [],
    "added": [
-    "veyra.g1b:po_mill:supply_low:f0.wheelhouse.01"
+    "veyra.g1b:po_mill:supply_low:f0.wheelhouse.01",
+    "veyra.g1b:po_mill:supply_low:f0.wheelhouse.02"
    ],
    "legacyCaches": 1,
    "reasons": [
     "room with a loot function (storage / general-purpose room; 266 standable tiles)",
     "grade low: danger 1 + access 0",
     "1 authored one-time cache(s) also in this space (kept, not counted)",
-    "room (266 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)"
+    "room (266 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 1 + access 0)",
+    "P2 batch-3.2 physical addition: 1 chest(s) placed to fill unused wall-backed pocket capacity in this storage room",
+    "physical placement: chest 2 of 1 against a wall pocket (1 solid sides)"
    ],
    "_b2add": [
     {
@@ -26664,7 +26688,8 @@
    "want": 2,
    "base": [],
    "added": [
-    "veyra.g1b:po_hall_eyes:supply_mid:f0.left_scriptorium.01"
+    "veyra.g1b:po_hall_eyes:supply_mid:f0.left_scriptorium.01",
+    "veyra.g1b:po_hall_eyes:supply_mid:f0.left_scriptorium.02"
    ],
    "legacyCaches": 0,
    "reasons": [
@@ -26672,7 +26697,9 @@
     "room with a loot function (storage / general-purpose room; 183 standable tiles)",
     "large (183 tiles) in a danger-3 site: second chest at the far wall",
     "grade mid: danger 3 + access 0",
-    "room (183 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 3 + access 0)"
+    "room (183 standable tiles, 2 wall-backed pocket(s)): physical capacity 1 chest (size, wall pockets, danger 3 + access 0)",
+    "P2 batch-3.2 physical addition: 1 chest(s) placed to fill unused wall-backed pocket capacity in this storage room",
+    "physical placement: chest 2 of 1 against a wall pocket (3 solid sides)"
    ],
    "_b2add": [
     {
