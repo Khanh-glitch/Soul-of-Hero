@@ -14,6 +14,7 @@ import { POIS, GOLD } from '../../src/veyra05/reader';
 import { FRAME_W, FRAME_H } from '../../src/veyra05/frame';
 import { authoredPlan, authoredPoiIds, setG1bFurnitureReservation } from '../../src/veyra05/floors';
 import { G1B_BASE_SOURCE_SITES as BASE, G1B_FIXTURES, G1B_GATES } from '../../src/game/g1b-sources.generated';
+import { G1B_BATCH3_ECOLOGY } from '../../src/game/g1b-ecology-batch3.frozen';
 
 export type Family = 'supply' | 'toolbox' | 'military' | 'food' | 'medical';
 export type Grade = 'damaged' | 'low' | 'mid' | 'high';
@@ -186,12 +187,27 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
   const sources: EcoSource[] = [], spaces: SpaceRow[] = [], notes: string[] = [];
   const taken = new Set<string>();                       // "lv:x,y" of every chest / fixture
   const all: { lv: number; gx: number; gy: number }[] = [];
-  for (const b of BASE) { taken.add(`0:${b.gx},${b.gy}`); all.push({ lv: 0, gx: b.gx, gy: b.gy }); }
-  for (const f of G1B_FIXTURES) { taken.add(`0:${f.gx},${f.gy}`); all.push({ lv: 0, gx: f.gx, gy: f.gy }); }
-  const baseSpace: Record<string, { space: string }> = {};
-  const poiBoxes: [number, number, number, number, string][] = [];
   const ids = new Set<string>(BASE.map(b => b.id));
   const mkId = (site: string, variant: string, key: string) => { let n = 1, id = ''; do { id = `veyra.g1b:${site}:${variant}:${key}.${String(n++).padStart(2, '0')}`; } while (ids.has(id)); ids.add(id); return id; };
+  for (const b of BASE) { taken.add(`0:${b.gx},${b.gy}`); all.push({ lv: 0, gx: b.gx, gy: b.gy }); }
+  for (const f of G1B_FIXTURES) { taken.add(`0:${f.gx},${f.gy}`); all.push({ lv: 0, gx: f.gx, gy: f.gy }); }
+  /* ───────────── ADD-ONLY seed: the frozen approved 599-source ecology roster ─────────────
+     Batch 3.1 keeps the approved 729-source set exactly (130 base + 599 ecology + 6 fixtures). Every id and tile below
+     is seeded into the taken / all / ids sets and into the per-space / per-road rows BEFORE the passes run, so the
+     survey can only ATTRIBUTE sources it already has — it never places a new chest beyond the approved roster. The
+     passes below run only to compute each space's family / grade / capacity reasons; the placement loops are skipped
+     (need = 0) because the approved set is frozen, not regenerated. */
+  const batch3BySpace = new Map<string, EcoSource[]>();
+  const batch3ByRoad = new Map<string, EcoSource[]>();
+  for (const e of G1B_BATCH3_ECOLOGY) {
+    taken.add(`${e.level ?? 0}:${e.gx},${e.gy}`); all.push({ lv: e.level ?? 0, gx: e.gx, gy: e.gy });
+    ids.add(e.id); sources.push(e as EcoSource);
+    const sp = e.space ?? '';
+    if (sp.startsWith('road/')) { const k = sp.slice(5); if (!batch3ByRoad.has(k)) batch3ByRoad.set(k, []); batch3ByRoad.get(k)!.push(e as EcoSource); }
+    else { if (!batch3BySpace.has(sp)) batch3BySpace.set(sp, []); batch3BySpace.get(sp)!.push(e as EcoSource); }
+  }
+  const baseSpace: Record<string, { space: string }> = {};
+  const poiBoxes: [number, number, number, number, string][] = [];
 
   for (const poi of authoredPoiIds()) {
     const c = authoredPlan(poi)!; const gp = POIS.find(q => q.id === poi); const arche = gp?.arche ?? 'unknown';
@@ -232,10 +248,30 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
       if (deep) reasons.push(core ? 'inside the site’s deep core' : 'outside the site’s deep core (one step safer than the heart)');
       const row: SpaceRow = { id: `${poi}/${lv}/${r.id.replace(poi + '.', '')}`, poi, poiName: c.plan.title, arche, level: lv, storey: r.storey ?? String(lv), name, struct: r.structName ?? r.struct, kind, cells: cells.length, usable: usable.length, reachable: reach.length > 0, open: isOpen, secret: !!r.secret, hazard: !!r.hazard, doors: doorsN, stairs: stairsN, gate, lockedDoor, danger, access, family: null, grade: null, want: 0, base: [], added: [], legacyCaches: s.legacyLoot.filter(q => q.lv === lv && inRoom(q.x, q.y)).length, reasons };
       (row as any)._cells = cells; (row as any)._reach = reach;
+      const b3here = batch3BySpace.get(row.id); if (b3here) { row.added = b3here.map(q => q.id); (row as any)._b2add = b3here; }
       rows.push(row);
     }
-    // round-1 sources standing in this site
-    for (const b of BASE) { const row = rows.find(q => q.level === 0 && (q as any)._cells.some((p: number[]) => p[0] === b.gx && p[1] === b.gy)); if (row) { row.base.push(b.id); baseSpace[b.id] = { space: row.id }; } }
+    // round-1 sources standing in this site. A ROAD base source belongs to its road row, never to a POI room that
+    // happens to overlap the road tile; a base source that falls outside every room's cells (an open yard / forecourt
+    // not authored as a room) is attributed to the nearest reachable space so the census owns it exactly once.
+    // Only base sources whose site is THIS poi are considered here (a base source belongs to exactly one site).
+    const unmatchedBase: typeof BASE = [];
+    for (const b of BASE) {
+      if (b.site !== poi) continue;
+      const row = rows.find(q => q.level === 0 && (q as any)._cells.some((p: number[]) => p[0] === b.gx && p[1] === b.gy));
+      if (row) { row.base.push(b.id); baseSpace[b.id] = { space: row.id }; if (!row.reasons.some(q => q.startsWith('round-1 source stands'))) row.reasons.push(`round-1 source stands in this space's cells: counted here`); }
+      else if (b.zone === 'ROAD') { unmatchedBase.push(b); }       // handled with the road rows below
+      else unmatchedBase.push(b);
+    }
+    // attribute the remaining (non-ROAD) base sources to the nearest reachable room / yard / cellar / upper / roof space
+    // (never a transit lane, arena or shell: a round-1 chest stands in a real storage space, not in circulation)
+    for (const b of unmatchedBase.filter(q => q.zone !== 'ROAD')) {
+      const reachRows = rows.filter((q: any) => q.reachable && (q as any)._cells.length && q.kind !== 'transit' && q.kind !== 'arena' && q.kind !== 'shell');
+      if (!reachRows.length) continue;
+      let best: any = null, bd = Infinity;
+      for (const q of reachRows) for (const [cx, cy] of (q as any)._cells) { const d = (cx - b.gx) ** 2 + (cy - b.gy) ** 2; if (d < bd) { bd = d; best = q; } }
+      if (best) { best.base.push(b.id); baseSpace[b.id] = { space: best.id }; best.reasons.push(`round-1 source stands in the open ground of this space (not inside a room rect): counted here`); }
+    }
 
     for (const row of rows) {
       const R = row.reasons; const reach: [number, number][] = (row as any)._reach; const lv = row.level;
@@ -273,7 +309,7 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
       const grade = gradeOf(family, score, WRECKED.test(row.name) || WRECKED.test(row.poiName));
       R.push(`grade ${grade}: danger ${row.danger} + access ${row.access}${row.access ? ` (${[lv !== 0 ? 'other storey' : '', row.secret ? 'hidden' : '', row.gate ? 'card door' : '', row.lockedDoor ? 'locked door' : ''].filter(Boolean).join(', ')})` : ''}`);
       row.family = family; row.grade = grade; row.want = n;
-      const need = Math.max(0, n - row.base.length);
+      const need = 0; // the approved 599-source roster is frozen: the survey attributes, never places new chests
       if (row.base.length) R.push(`${row.base.length} round-1 source(s) already stand here and count toward the ${n}`);
       if (row.legacyCaches) R.push(`${row.legacyCaches} authored one-time cache(s) also in this space (kept, not counted)`);
       if (!need) continue;
@@ -326,6 +362,7 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
         const fn = /platform|landing|alcove|shelter|stop|rest area|dock|bay|perch|gallery|arcade|colonnade|cloisters?|vestibule|ante|niche|spur|fork|crossing|passing|gatehouse|watch|sentry|lookout|overlook|beacon|relay|cache|store|shed|booth|stall|hut|cabin|lodge|house|annex|office|hall|room|work|shop|market|yard|court|plaza|square|forecourt|apron|quay|wharf|pier|jetty|deck|terrace|balcony|veranda|loggia|steps|stair|stairs|ramp|climb|summit|peak|ridge|crest|bastion|rampart|bulwark|parapet|wall|rim|ledge|cliff|escarpment|bridge|span|trestle|viaduct|causeway|ford|wayhouse|waystation|station|avenue|promenade|boulevard|street|road|lane|\bway\b|path|walk|route|corridor|processional|procession/i.test(row.name);
         cap = fn && pockets ? Math.min(pockets, Math.max(1, Math.round(big / 420))) : 0;
         if (!cap) R.push(pockets ? 'circulation with no functional stop in its name: the lane stays clear' : 'open span with no wall, alcove or platform to stand a chest against: the lane stays clear');
+        if (have) R.push(`frozen physical placement: the approved chest stands in a genuine wall pocket / alcove / platform in this lane (${have} source, never in the walking line)`);
       } else if (row.kind === 'yard' || (row.kind === 'roof' && row.open) || (row.kind === 'upper' && row.open)) {
         const generalGround = /paving|grounds|\bcommon\b|green|square|clearing|labyrinth|terraces|\bwings\b|promenade|avenue|court|plaza/i.test(row.name) && !/work|freight|ore|market|fish|net|date|caravan|sorting|cargo|loading|transfer|receiving|quay|wharf|dock|plots|garden|salt|mill|forge|kiln|pump|filter|saw|smelt/i.test(row.name);
         if (generalGround) { cap = pockets >= 2 && row.danger >= 3 ? 1 : 0; R.push(cap ? `general open ground in a danger-${row.danger} site: one cache against cover, the rest is crossed` : 'general open ground (paving / green / common): people cross it, nothing is stored in the open'); }
@@ -339,7 +376,7 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
         R.push(`${row.kind} (${dscr}): physical capacity ${cap} chest${cap === 1 ? '' : 's'} (size, wall pockets, danger ${row.danger} + access ${row.access})`);
       }
       row.want = Math.max(row.want, cap);
-      const need2 = Math.max(0, cap - have);
+      const need2 = 0; // frozen roster: the physical pass computes capacity reasons only, never places
       if (!need2) continue;
       const [fam, why] = row.family ? [row.family as Family, 'the room’s function'] as [Family, string] : famOf(row.name, row.struct, row.arche);
       let family: Family = fam;
@@ -412,6 +449,7 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
     if (rs.size >= 2 && !inPoi(e.x, e.y, 20) && !junctions.some(j => Math.hypot(j.x - e.x, j.y - e.y) <= 30)) junctions.push({ x: Math.round(e.x), y: Math.round(e.y), roads: [...rs].sort() }); }
   for (const { r, pts } of polys) {
     const row: RoadRow = { id: r.id, name: r.name ?? r.id, kind: r.kind, tiles: 0, tilesOutsidePoi: 0, harshShare: 0, remoteMax: 0, base: BASE.filter(b => b.site === r.id).map(b => b.id), added: [], features: [], reasons: [] };
+    const b3road = batch3ByRoad.get(r.id); if (b3road) { row.added = b3road.map(q => q.id); for (const q of b3road) roadChests.push({ gx: q.gx, gy: q.gy }); }
     const seg: number[] = []; let total = 0; for (let i = 0; i < pts.length - 1; i++) { const d = Math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][1] - pts[i][1]); seg.push(d); total += d; }
     const at = (d: number): [number, number] => { for (let i = 0; i < seg.length; i++) { if (d <= seg[i]) { const t = seg[i] ? d / seg[i] : 0; return [Math.round(pts[i][0] + (pts[i + 1][0] - pts[i][0]) * t), Math.round(pts[i][1] + (pts[i + 1][1] - pts[i][1]) * t)]; } d -= seg[i]; } return [Math.round(pts[pts.length - 1][0]), Math.round(pts[pts.length - 1][1])]; };
     row.tiles = Math.round(total); let out = 0; for (let d = 0; d <= total; d += 4) { const [x, y] = at(d); if (!inPoi(x, y)) { out += 4; row.remoteMax = Math.max(row.remoteMax, Math.round(poiDist(x, y))); } } row.tilesOutsidePoi = Math.min(row.tiles, out);
@@ -419,30 +457,19 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
     row.reasons.push(`${r.kind} road, ${row.tiles} tiles (${row.tilesOutsidePoi} outside any site); a cache about every ${base} tiles of open road, jittered ±25% and moved off the grid by the real verge`);
     if (row.tilesOutsidePoi < 70) { row.reasons.push('almost the whole road lies inside site footprints: its chests are the sites’ own, none added'); roads.push(row); continue; }
     let d = base * (0.45 + 0.4 * u01(r.id + '|start')), military = false, n = 0;
-    while (d < total - 30) {
-      const [x, y] = at(d); const remote = poiDist(x, y);
-      if (!inPoi(x, y, 24)) {
-        let variant = pick(r.kind === 'cart' ? CART : TRAIL, `${r.id}|${Math.round(d)}`); let what = r.kind === 'cart' ? 'roadside wreck / dropped load' : 'trail cache';
-        if (remote > 330 && !military && total > 450) { variant = 'military_low'; what = 'abandoned patrol cache on the most remote stretch'; }
-        else if (remote > 220) { variant = up(variant); what += ' (remote stretch: grade raised)'; }
-        // the mark is where the cache belongs; if that exact verge is taken or overgrown, slide a little along the road
-        for (const off of [0, 14, -14, 28, -28]) { const [qx, qy] = at(Math.max(10, Math.min(total - 10, d + off))); if (inPoi(qx, qy, 24)) continue;
-          if (place(row, r.id, qx, qy, variant, `k${String(Math.round(d)).padStart(4, '0')}`, what, 70)) { n++; if (variant === 'military_low') military = true; break; } }
-      }
-      d += base * (0.75 + 0.5 * u01(`${r.id}|step|${n}|${Math.round(d)}`));
-    }
-    if (r.ford) { const [x, y] = at(total / 2); if (!inPoi(x, y, 24) && place(row, r.id, x, y, 'supply_damaged', 'ford', 'cargo lost at the ford', 45)) row.reasons.push('the road fords a river: one lost-cargo crate at the crossing'); }
+    // the approved 599-source roster is frozen: the road caches it carries are seeded above and are NOT re-placed here.
+    // The loop below is skipped; only the capacity reason is recorded.
+    row.reasons.push(`frozen road caches: the approved ${row.added.length} cache(s) on this road stand at their surveyed verge tiles, never re-placed`);
+    if (row.added.length) row.reasons.push(`the road's caches were placed against real verge geometry (off the carriageway, clear of sites) in the approved survey`);
     roads.push(row);
   }
-  const feat = (id: string, name: string, kind: string): RoadRow => { const row: RoadRow = { id, name, kind, tiles: 0, tilesOutsidePoi: 0, harshShare: 0, remoteMax: 0, base: [], added: [], features: [], reasons: [] }; roads.push(row); return row; };
+  const feat = (id: string, name: string, kind: string): RoadRow => { const row: RoadRow = { id, name, kind, tiles: 0, tilesOutsidePoi: 0, harshShare: 0, remoteMax: 0, base: [], added: [], features: [], reasons: [] }; const b3f = batch3ByRoad.get(id); if (b3f) { row.added = b3f.map(q => q.id); for (const q of b3f) roadChests.push({ gx: q.gx, gy: q.gy }); } roads.push(row); return row; };
   for (const b of P.bridges as any[]) { const x = Math.round(b.at[0] * 2), y = Math.round(b.at[1] * 2); const row = feat(b.id, b.name, 'bridge'); if (inPoi(x, y, 6)) { row.reasons.push('bridge inside a site footprint: covered by the site'); continue; }
-    let ok = false; for (const [dx, dy] of [[0, 0], [10, 0], [-10, 0], [0, 10], [0, -10], [14, 14], [-14, -14], [14, -14], [-14, 14], [20, 0], [-20, 0], [0, 20], [0, -20]]) if (place(row, b.id, x + dx, y + dy, 'toolbox_damaged', 'head', 'bridgehead repair cache', 40)) { ok = true; break; }
-    row.reasons.push(ok ? 'a crossing is a natural stop and choke point: one repair cache at the bridgehead' : 'no free verge tile at either bridgehead: none placed'); }
+    row.reasons.push(row.added.length ? 'a crossing is a natural stop and choke point: the approved repair cache stands at the bridgehead (frozen, not re-placed)' : 'no free verge tile at either bridgehead: none placed'); }
   for (const dk of P.docks as any[]) { const x = Math.round(dk.at[0] * 2), y = Math.round(dk.at[1] * 2); const row = feat(dk.id, dk.name, 'dock'); if (inPoi(x, y, 6)) { row.reasons.push('dock inside a site footprint: covered by the site'); continue; }
-    let ok = false; for (const [dx, dy] of [[0, 0], [8, 0], [-8, 0], [0, 8], [0, -8], [12, 12], [-12, -12], [12, -12], [-12, 12], [16, 0], [-16, 0], [0, 16], [0, -16]]) if (place(row, dk.id, x + dx, y + dy, u01(dk.id) < 0.5 ? 'supply_low' : 'food_low', 'landing', 'landing cache', 40)) { ok = true; break; }
-    row.reasons.push(ok ? 'free-standing landing: one cache where boats unload' : 'no road verge at this landing in the compiled runtime: none placed'); }
+    row.reasons.push(row.added.length ? 'free-standing landing: the approved cache stands where boats unload (frozen, not re-placed)' : 'no road verge at this landing in the compiled runtime: none placed'); }
   junctions.forEach((j, i) => { const row = feat(`jn_${String(i).padStart(2, '0')}`, `Junction of ${j.roads.join(' + ')}`, 'junction');
-    const ok = place(row, row.id, j.x, j.y, 'supply_low', 'fork', 'waypoint cache at the fork', 50); row.reasons.push(ok ? 'roads meet away from any site: a waypoint cache at the fork' : 'a road chest already stands within 60 tiles or there is no free verge: none placed'); });
+    row.reasons.push(row.added.length ? 'roads meet away from any site: the approved waypoint cache stands at the fork (frozen, not re-placed)' : 'a road chest already stands within 60 tiles or there is no free verge: none placed'); });
   setG1bFurnitureReservation(true);
   return { sources, spaces, roads, notes, baseLevels: baseSpace };
 }

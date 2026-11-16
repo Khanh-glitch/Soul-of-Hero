@@ -140,40 +140,28 @@
     "coresPerDay": 0.93
    },
    "danger 2": {
-    "chests": 58,
-    "items": 548.18,
-    "gear": 16.633,
-    "cores": 6.365,
-    "coreL1": 5.765,
-    "coreL2": 0.59,
+    "chests": 59,
+    "items": 556.901,
+    "gear": 16.851,
+    "cores": 6.425,
+    "coreL1": 5.82,
+    "coreL2": 0.595,
     "coreL3": 0.01,
-    "itemsPerDay": 400.248,
-    "gearPerDay": 11.824,
-    "coresPerDay": 4.217
+    "itemsPerDay": 406.063,
+    "gearPerDay": 11.97,
+    "coresPerDay": 4.257
    },
    "danger 3": {
     "chests": 16,
-    "items": 183.977,
-    "gear": 5.584,
-    "cores": 2.325,
-    "coreL1": 2.035,
-    "coreL2": 0.285,
+    "items": 186.514,
+    "gear": 6.015,
+    "cores": 2.395,
+    "coreL1": 2.09,
+    "coreL2": 0.3,
     "coreL3": 0.005,
-    "itemsPerDay": 105.348,
-    "gearPerDay": 3.157,
-    "coresPerDay": 1.258
-   },
-   "danger ?": {
-    "chests": 1,
-    "items": 11.259,
-    "gear": 0.65,
-    "cores": 0.13,
-    "coreL1": 0.11,
-    "coreL2": 0.02,
-    "coreL3": 0,
-    "itemsPerDay": 5.63,
-    "gearPerDay": 0.325,
-    "coresPerDay": 0.065
+    "itemsPerDay": 105.163,
+    "gearPerDay": 3.337,
+    "coresPerDay": 1.283
    },
    "road": {
     "chests": 26,
@@ -988,16 +976,16 @@
     "coresPerDay": 0.39
    },
    "po_archive/0/reading_hall": {
-    "chests": 2,
-    "items": 27.972,
-    "gear": 0.922,
-    "cores": 0.535,
-    "coreL1": 0.38,
-    "coreL2": 0.15,
+    "chests": 3,
+    "items": 36.694,
+    "gear": 1.141,
+    "cores": 0.595,
+    "coreL1": 0.435,
+    "coreL2": 0.155,
     "coreL3": 0.005,
-    "itemsPerDay": 11.263,
-    "gearPerDay": 0.328,
-    "coresPerDay": 0.178
+    "itemsPerDay": 17.077,
+    "gearPerDay": 0.474,
+    "coresPerDay": 0.218
    },
    "po_archive/0/side_office": {
     "chests": 7,
@@ -1083,6 +1071,18 @@
     "gearPerDay": 0.45,
     "coresPerDay": 0.26
    },
+   "po_falls/-1/turbine_subfloor": {
+    "chests": 1,
+    "items": 11.259,
+    "gear": 0.65,
+    "cores": 0.13,
+    "coreL1": 0.11,
+    "coreL2": 0.02,
+    "coreL3": 0,
+    "itemsPerDay": 5.63,
+    "gearPerDay": 0.325,
+    "coresPerDay": 0.065
+   },
    "po_falls/0/intake_shack": {
     "chests": 1,
     "items": 13.78,
@@ -1118,18 +1118,6 @@
     "itemsPerDay": 5.814,
     "gearPerDay": 0.146,
     "coresPerDay": 0.04
-   },
-   "po_falls/?": {
-    "chests": 1,
-    "items": 11.259,
-    "gear": 0.65,
-    "cores": 0.13,
-    "coreL1": 0.11,
-    "coreL2": 0.02,
-    "coreL3": 0,
-    "itemsPerDay": 5.63,
-    "gearPerDay": 0.325,
-    "coresPerDay": 0.065
    },
    "po_filter/0/control_room": {
     "chests": 1,
@@ -1347,18 +1335,6 @@
     "gearPerDay": 0.16,
     "coresPerDay": 0.04
    },
-   "po_hall_eyes/0/left_scriptorium": {
-    "chests": 1,
-    "items": 8.721,
-    "gear": 0.219,
-    "cores": 0.06,
-    "coreL1": 0.055,
-    "coreL2": 0.005,
-    "coreL3": 0,
-    "itemsPerDay": 5.814,
-    "gearPerDay": 0.146,
-    "coresPerDay": 0.04
-   },
    "po_ironharbor/0/ore_shed": {
     "chests": 1,
     "items": 8.721,
@@ -1528,16 +1504,16 @@
     "coresPerDay": 0.04
    },
    "po_meridian/0/field_hut": {
-    "chests": 7,
-    "items": 69.956,
-    "gear": 1.488,
-    "cores": 0.61,
-    "coreL1": 0.57,
-    "coreL2": 0.04,
+    "chests": 8,
+    "items": 78.678,
+    "gear": 1.706,
+    "cores": 0.67,
+    "coreL1": 0.625,
+    "coreL2": 0.045,
     "coreL3": 0,
-    "itemsPerDay": 44.385,
-    "gearPerDay": 0.974,
-    "coresPerDay": 0.35
+    "itemsPerDay": 50.2,
+    "gearPerDay": 1.12,
+    "coresPerDay": 0.39
    },
    "po_meridian/0/woodland_path": {
     "chests": 1,
@@ -1646,18 +1622,6 @@
     "itemsPerDay": 6.736,
     "gearPerDay": 0,
     "coresPerDay": 0
-   },
-   "po_rc_meridian/0/annex": {
-    "chests": 1,
-    "items": 8.721,
-    "gear": 0.219,
-    "cores": 0.06,
-    "coreL1": 0.055,
-    "coreL2": 0.005,
-    "coreL3": 0,
-    "itemsPerDay": 5.814,
-    "gearPerDay": 0.146,
-    "coresPerDay": 0.04
    },
    "po_saltharbor/0/brine_lane": {
     "chests": 1,
@@ -1904,15 +1868,15 @@
  "after": {
   "total": {
    "chests": 729,
-   "items": 5786.489,
-   "gear": 141.494,
-   "cores": 35.42,
-   "coreL1": 33.695,
+   "items": 5801.673,
+   "gear": 140.764,
+   "cores": 35.235,
+   "coreL1": 33.51,
    "coreL2": 1.7,
    "coreL3": 0.025,
-   "itemsPerDay": 5338.769,
-   "gearPerDay": 128.903,
-   "coresPerDay": 30.392
+   "itemsPerDay": 5318.053,
+   "gearPerDay": 127.423,
+   "coresPerDay": 29.992
   },
   "byZone": {
    "CARD_ROOM": {
@@ -1941,15 +1905,15 @@
    },
    "ROAD": {
     "chests": 104,
-    "items": 716.82,
-    "gear": 14.19,
-    "cores": 3.605,
-    "coreL1": 3.605,
+    "items": 732.004,
+    "gear": 13.46,
+    "cores": 3.42,
+    "coreL1": 3.42,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 842.82,
-    "gearPerDay": 17.94,
-    "coresPerDay": 4.58
+    "itemsPerDay": 822.104,
+    "gearPerDay": 16.46,
+    "coresPerDay": 4.18
    }
   },
   "byGating": {
@@ -2003,15 +1967,15 @@
    },
    "open road": {
     "chests": 104,
-    "items": 716.82,
-    "gear": 14.19,
-    "cores": 3.605,
-    "coreL1": 3.605,
+    "items": 732.004,
+    "gear": 13.46,
+    "cores": 3.42,
+    "coreL1": 3.42,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 842.82,
-    "gearPerDay": 17.94,
-    "coresPerDay": 4.58
+    "itemsPerDay": 822.104,
+    "gearPerDay": 16.46,
+    "coresPerDay": 4.18
    },
    "open site": {
     "chests": 597,
@@ -2040,28 +2004,28 @@
     "coresPerDay": 10.66
    },
    "danger 2": {
-    "chests": 183,
-    "items": 1428.417,
-    "gear": 45.643,
-    "cores": 11.715,
-    "coreL1": 11.085,
-    "coreL2": 0.62,
+    "chests": 184,
+    "items": 1437.138,
+    "gear": 45.861,
+    "cores": 11.775,
+    "coreL1": 11.14,
+    "coreL2": 0.625,
     "coreL3": 0.01,
-    "itemsPerDay": 1237.863,
-    "gearPerDay": 40.292,
-    "coresPerDay": 9.447
+    "itemsPerDay": 1243.677,
+    "gearPerDay": 40.438,
+    "coresPerDay": 9.487
    },
    "danger 3": {
     "chests": 73,
-    "items": 631.43,
-    "gear": 22.456,
-    "cores": 6.835,
-    "coreL1": 6.06,
-    "coreL2": 0.76,
+    "items": 633.968,
+    "gear": 22.887,
+    "cores": 6.905,
+    "coreL1": 6.115,
+    "coreL2": 0.775,
     "coreL3": 0.015,
-    "itemsPerDay": 441.965,
-    "gearPerDay": 16.449,
-    "coresPerDay": 4.27
+    "itemsPerDay": 441.781,
+    "gearPerDay": 16.628,
+    "coresPerDay": 4.295
    },
    "danger 4": {
     "chests": 33,
@@ -2075,29 +2039,17 @@
     "gearPerDay": 5.637,
     "coresPerDay": 1.37
    },
-   "danger ?": {
-    "chests": 1,
-    "items": 11.259,
-    "gear": 0.65,
-    "cores": 0.13,
-    "coreL1": 0.11,
-    "coreL2": 0.02,
-    "coreL3": 0,
-    "itemsPerDay": 5.63,
-    "gearPerDay": 0.325,
-    "coresPerDay": 0.065
-   },
    "road": {
     "chests": 104,
-    "items": 716.82,
-    "gear": 14.19,
-    "cores": 3.605,
-    "coreL1": 3.605,
+    "items": 732.004,
+    "gear": 13.46,
+    "cores": 3.42,
+    "coreL1": 3.42,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 842.82,
-    "gearPerDay": 17.94,
-    "coresPerDay": 4.58
+    "itemsPerDay": 822.104,
+    "gearPerDay": 16.46,
+    "coresPerDay": 4.18
    }
   },
   "byStorey": {
@@ -2115,15 +2067,15 @@
    },
    "ground (0)": {
     "chests": 567,
-    "items": 4433.785,
-    "gear": 106.008,
-    "cores": 27.46,
-    "coreL1": 26.335,
+    "items": 4448.969,
+    "gear": 105.278,
+    "cores": 27.275,
+    "coreL1": 26.15,
     "coreL2": 1.11,
     "coreL3": 0.015,
-    "itemsPerDay": 4205.252,
-    "gearPerDay": 99.428,
-    "coresPerDay": 24.26
+    "itemsPerDay": 4184.536,
+    "gearPerDay": 97.948,
+    "coresPerDay": 23.86
    },
    "roof / top (2)": {
     "chests": 34,
@@ -2200,14 +2152,14 @@
     "coresPerDay": 0
    },
    "medical_low": {
-    "chests": 24,
-    "items": 161.657,
+    "chests": 30,
+    "items": 202.071,
     "gear": 0,
     "cores": 0,
     "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 161.657,
+    "itemsPerDay": 202.071,
     "gearPerDay": 0,
     "coresPerDay": 0
    },
@@ -2260,16 +2212,16 @@
     "coresPerDay": 1.54
    },
    "supply_damaged": {
-    "chests": 17,
-    "items": 93.5,
-    "gear": 1.7,
-    "cores": 0.51,
-    "coreL1": 0.51,
+    "chests": 11,
+    "items": 60.5,
+    "gear": 1.1,
+    "cores": 0.33,
+    "coreL1": 0.33,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 187,
-    "gearPerDay": 3.4,
-    "coresPerDay": 1.02
+    "itemsPerDay": 121,
+    "gearPerDay": 2.2,
+    "coresPerDay": 0.66
    },
    "supply_high": {
     "chests": 23,
@@ -2284,16 +2236,16 @@
     "coresPerDay": 0.92
    },
    "supply_low": {
-    "chests": 249,
-    "items": 2069.19,
-    "gear": 39.84,
-    "cores": 9.96,
-    "coreL1": 9.96,
+    "chests": 251,
+    "items": 2085.81,
+    "gear": 40.16,
+    "cores": 10.04,
+    "coreL1": 10.04,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 2069.19,
-    "gearPerDay": 39.84,
-    "coresPerDay": 9.96
+    "itemsPerDay": 2085.81,
+    "gearPerDay": 40.16,
+    "coresPerDay": 10.04
    },
    "supply_mid": {
     "chests": 62,
@@ -2308,16 +2260,16 @@
     "coresPerDay": 2.48
    },
    "toolbox_damaged": {
-    "chests": 17,
-    "items": 49.3,
-    "gear": 2.55,
-    "cores": 0.595,
-    "coreL1": 0.595,
+    "chests": 16,
+    "items": 46.4,
+    "gear": 2.4,
+    "cores": 0.56,
+    "coreL1": 0.56,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 98.6,
-    "gearPerDay": 5.1,
-    "coresPerDay": 1.19
+    "itemsPerDay": 92.8,
+    "gearPerDay": 4.8,
+    "coresPerDay": 1.12
    },
    "toolbox_high": {
     "chests": 10,
@@ -2332,16 +2284,16 @@
     "coresPerDay": 0.65
    },
    "toolbox_low": {
-    "chests": 188,
-    "items": 1118.6,
-    "gear": 56.4,
-    "cores": 9.4,
-    "coreL1": 9.4,
+    "chests": 187,
+    "items": 1112.65,
+    "gear": 56.1,
+    "cores": 9.35,
+    "coreL1": 9.35,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 1118.6,
-    "gearPerDay": 56.4,
-    "coresPerDay": 9.4
+    "itemsPerDay": 1112.65,
+    "gearPerDay": 56.1,
+    "coresPerDay": 9.35
    }
   },
   "bySite": {
@@ -2441,6 +2393,18 @@
     "gearPerDay": 0,
     "coresPerDay": 0
    },
+   "dk_saltwick_e": {
+    "chests": 1,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
+   },
    "dk_verdant_n": {
     "chests": 1,
     "items": 8.425,
@@ -2477,6 +2441,18 @@
     "gearPerDay": 0.16,
     "coresPerDay": 0.04
    },
+   "jn_03": {
+    "chests": 1,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
+   },
    "jn_06": {
     "chests": 1,
     "items": 8.31,
@@ -2501,6 +2477,18 @@
     "gearPerDay": 0.16,
     "coresPerDay": 0.04
    },
+   "jn_08": {
+    "chests": 1,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
+   },
    "jn_11": {
     "chests": 1,
     "items": 8.31,
@@ -2514,6 +2502,18 @@
     "coresPerDay": 0.04
    },
    "jn_12": {
+    "chests": 1,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
+   },
+   "jn_13": {
     "chests": 1,
     "items": 8.31,
     "gear": 0.16,
@@ -3254,7 +3254,7 @@
     "coreL2": 0.06,
     "coreL3": 0,
     "itemsPerDay": 130.442,
-    "gearPerDay": 4.613,
+    "gearPerDay": 4.612,
     "coresPerDay": 1.055
    },
    "po_southfoot": {
@@ -3350,7 +3350,7 @@
     "coreL2": 0.045,
     "coreL3": 0,
     "itemsPerDay": 36.051,
-    "gearPerDay": 0.962,
+    "gearPerDay": 0.963,
     "coresPerDay": 0.24
    },
    "po_viaduct": {
@@ -3427,15 +3427,15 @@
    },
    "rd_1": {
     "chests": 3,
-    "items": 16.71,
-    "gear": 0.41,
-    "cores": 0.105,
-    "coreL1": 0.105,
+    "items": 22.235,
+    "gear": 0.26,
+    "cores": 0.07,
+    "coreL1": 0.07,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 25.11,
-    "gearPerDay": 0.66,
-    "coresPerDay": 0.17
+    "itemsPerDay": 27.735,
+    "gearPerDay": 0.36,
+    "coresPerDay": 0.1
    },
    "rd_11": {
     "chests": 2,
@@ -3474,16 +3474,16 @@
     "coresPerDay": 0.04
    },
    "rd_18": {
-    "chests": 2,
-    "items": 13.925,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
+    "chests": 1,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 19.425,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
    },
    "rd_19": {
     "chests": 2,
@@ -3535,27 +3535,27 @@
    },
    "rd_1d": {
     "chests": 1,
-    "items": 5.95,
-    "gear": 0.3,
-    "cores": 0.05,
-    "coreL1": 0.05,
+    "items": 8.425,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 5.95,
-    "gearPerDay": 0.3,
-    "coresPerDay": 0.05
+    "itemsPerDay": 8.425,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_1e": {
     "chests": 2,
-    "items": 14.26,
-    "gear": 0.46,
-    "cores": 0.09,
-    "coreL1": 0.09,
+    "items": 16.735,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 14.26,
-    "gearPerDay": 0.46,
-    "coresPerDay": 0.09
+    "itemsPerDay": 16.735,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
    },
    "rd_1g": {
     "chests": 1,
@@ -3583,15 +3583,15 @@
    },
    "rd_1l": {
     "chests": 1,
-    "items": 8.31,
-    "gear": 0.16,
-    "cores": 0.04,
-    "coreL1": 0.04,
+    "items": 6.736,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 8.31,
-    "gearPerDay": 0.16,
-    "coresPerDay": 0.04
+    "itemsPerDay": 6.736,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_1p": {
     "chests": 1,
@@ -3607,15 +3607,15 @@
    },
    "rd_1s": {
     "chests": 1,
-    "items": 5.5,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
+    "items": 8.425,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 11,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
+    "itemsPerDay": 8.425,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_1v": {
     "chests": 1,
@@ -3631,15 +3631,15 @@
    },
    "rd_1y": {
     "chests": 2,
-    "items": 15.046,
-    "gear": 0.16,
-    "cores": 0.04,
-    "coreL1": 0.04,
+    "items": 14.26,
+    "gear": 0.46,
+    "cores": 0.09,
+    "coreL1": 0.09,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 15.046,
-    "gearPerDay": 0.16,
-    "coresPerDay": 0.04
+    "itemsPerDay": 14.26,
+    "gearPerDay": 0.46,
+    "coresPerDay": 0.09
    },
    "rd_2": {
     "chests": 2,
@@ -3655,39 +3655,39 @@
    },
    "rd_20": {
     "chests": 1,
-    "items": 5.5,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
+    "items": 8.425,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 11,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
+    "itemsPerDay": 8.425,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_21": {
     "chests": 1,
-    "items": 5.5,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
+    "items": 6.736,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 11,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
+    "itemsPerDay": 6.736,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_22": {
     "chests": 1,
-    "items": 8.31,
-    "gear": 0.16,
-    "cores": 0.04,
-    "coreL1": 0.04,
+    "items": 2.9,
+    "gear": 0.15,
+    "cores": 0.035,
+    "coreL1": 0.035,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 8.31,
-    "gearPerDay": 0.16,
-    "coresPerDay": 0.04
+    "itemsPerDay": 5.8,
+    "gearPerDay": 0.3,
+    "coresPerDay": 0.07
    },
    "rd_23": {
     "chests": 1,
@@ -3739,27 +3739,27 @@
    },
    "rd_4": {
     "chests": 1,
-    "items": 5.5,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
+    "items": 8.425,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 11,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
+    "itemsPerDay": 8.425,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_5": {
-    "chests": 3,
-    "items": 13.9,
-    "gear": 0.35,
-    "cores": 0.095,
-    "coreL1": 0.095,
+    "chests": 4,
+    "items": 25.02,
+    "gear": 0.57,
+    "cores": 0.145,
+    "coreL1": 0.145,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 27.8,
-    "gearPerDay": 0.7,
-    "coresPerDay": 0.19
+    "itemsPerDay": 33.42,
+    "gearPerDay": 0.82,
+    "coresPerDay": 0.21
    },
    "rd_6": {
     "chests": 4,
@@ -3774,28 +3774,28 @@
     "coresPerDay": 0.39
    },
    "rd_8": {
-    "chests": 4,
-    "items": 30.995,
-    "gear": 0.62,
-    "cores": 0.13,
-    "coreL1": 0.13,
+    "chests": 3,
+    "items": 20.996,
+    "gear": 0.46,
+    "cores": 0.09,
+    "coreL1": 0.09,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 30.995,
-    "gearPerDay": 0.62,
-    "coresPerDay": 0.13
+    "itemsPerDay": 20.996,
+    "gearPerDay": 0.46,
+    "coresPerDay": 0.09
    },
    "rd_9": {
     "chests": 1,
-    "items": 8.31,
-    "gear": 0.16,
-    "cores": 0.04,
-    "coreL1": 0.04,
+    "items": 2.9,
+    "gear": 0.15,
+    "cores": 0.035,
+    "coreL1": 0.035,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 8.31,
-    "gearPerDay": 0.16,
-    "coresPerDay": 0.04
+    "itemsPerDay": 5.8,
+    "gearPerDay": 0.3,
+    "coresPerDay": 0.07
    },
    "rd_a": {
     "chests": 2,
@@ -3822,28 +3822,28 @@
     "coresPerDay": 0.13
    },
    "rd_d": {
-    "chests": 3,
-    "items": 16.71,
-    "gear": 0.41,
-    "cores": 0.105,
-    "coreL1": 0.105,
+    "chests": 2,
+    "items": 16.735,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 25.11,
-    "gearPerDay": 0.66,
-    "coresPerDay": 0.17
+    "itemsPerDay": 16.735,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
    },
    "rd_h": {
     "chests": 3,
-    "items": 22.57,
-    "gear": 0.62,
-    "cores": 0.13,
-    "coreL1": 0.13,
+    "items": 20.996,
+    "gear": 0.46,
+    "cores": 0.09,
+    "coreL1": 0.09,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 22.57,
-    "gearPerDay": 0.62,
-    "coresPerDay": 0.13
+    "itemsPerDay": 20.996,
+    "gearPerDay": 0.46,
+    "coresPerDay": 0.09
    },
    "rd_i": {
     "chests": 1,
@@ -3871,15 +3871,15 @@
    },
    "rd_k": {
     "chests": 1,
-    "items": 8.425,
-    "gear": 0,
-    "cores": 0,
-    "coreL1": 0,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 8.425,
-    "gearPerDay": 0,
-    "coresPerDay": 0
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
    },
    "rd_l": {
     "chests": 1,
@@ -3895,53 +3895,17 @@
    },
    "rd_m": {
     "chests": 1,
-    "items": 2.9,
-    "gear": 0.15,
-    "cores": 0.035,
-    "coreL1": 0.035,
+    "items": 5.5,
+    "gear": 0.1,
+    "cores": 0.03,
+    "coreL1": 0.03,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 5.8,
-    "gearPerDay": 0.3,
-    "coresPerDay": 0.07
+    "itemsPerDay": 11,
+    "gearPerDay": 0.2,
+    "coresPerDay": 0.06
    },
    "rd_n": {
-    "chests": 2,
-    "items": 13.925,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
-    "coreL2": 0,
-    "coreL3": 0,
-    "itemsPerDay": 19.425,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
-   },
-   "rd_r": {
-    "chests": 2,
-    "items": 13.925,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
-    "coreL2": 0,
-    "coreL3": 0,
-    "itemsPerDay": 19.425,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
-   },
-   "rd_s": {
-    "chests": 4,
-    "items": 25.375,
-    "gear": 0.5,
-    "cores": 0.11,
-    "coreL1": 0.11,
-    "coreL2": 0,
-    "coreL3": 0,
-    "itemsPerDay": 36.375,
-    "gearPerDay": 0.7,
-    "coresPerDay": 0.17
-   },
-   "rd_u": {
     "chests": 1,
     "items": 8.425,
     "gear": 0,
@@ -3953,41 +3917,77 @@
     "gearPerDay": 0,
     "coresPerDay": 0
    },
-   "rd_w": {
+   "rd_r": {
     "chests": 2,
-    "items": 14.26,
-    "gear": 0.46,
-    "cores": 0.09,
-    "coreL1": 0.09,
+    "items": 8.4,
+    "gear": 0.25,
+    "cores": 0.065,
+    "coreL1": 0.065,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 14.26,
-    "gearPerDay": 0.46,
-    "coresPerDay": 0.09
+    "itemsPerDay": 16.8,
+    "gearPerDay": 0.5,
+    "coresPerDay": 0.13
+   },
+   "rd_s": {
+    "chests": 3,
+    "items": 19.31,
+    "gear": 0.36,
+    "cores": 0.1,
+    "coreL1": 0.1,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 30.31,
+    "gearPerDay": 0.56,
+    "coresPerDay": 0.16
+   },
+   "rd_u": {
+    "chests": 1,
+    "items": 5.95,
+    "gear": 0.3,
+    "cores": 0.05,
+    "coreL1": 0.05,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 5.95,
+    "gearPerDay": 0.3,
+    "coresPerDay": 0.05
+   },
+   "rd_w": {
+    "chests": 2,
+    "items": 13.471,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 13.471,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_x": {
     "chests": 2,
-    "items": 11.325,
-    "gear": 0.15,
-    "cores": 0.035,
-    "coreL1": 0.035,
+    "items": 11.45,
+    "gear": 0.4,
+    "cores": 0.08,
+    "coreL1": 0.08,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 14.225,
-    "gearPerDay": 0.3,
-    "coresPerDay": 0.07
+    "itemsPerDay": 16.95,
+    "gearPerDay": 0.5,
+    "coresPerDay": 0.11
    },
    "rd_z": {
     "chests": 1,
-    "items": 8.31,
-    "gear": 0.16,
-    "cores": 0.04,
-    "coreL1": 0.04,
+    "items": 6.736,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 8.31,
-    "gearPerDay": 0.16,
-    "coresPerDay": 0.04
+    "itemsPerDay": 6.736,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    }
   },
   "bySpace": {
@@ -4220,16 +4220,16 @@
     "coresPerDay": 0.05
    },
    "po_archive/0/reading_hall": {
-    "chests": 2,
-    "items": 27.972,
-    "gear": 0.922,
-    "cores": 0.535,
-    "coreL1": 0.38,
-    "coreL2": 0.15,
+    "chests": 3,
+    "items": 36.694,
+    "gear": 1.141,
+    "cores": 0.595,
+    "coreL1": 0.435,
+    "coreL2": 0.155,
     "coreL3": 0.005,
-    "itemsPerDay": 11.263,
-    "gearPerDay": 0.328,
-    "coresPerDay": 0.178
+    "itemsPerDay": 17.077,
+    "gearPerDay": 0.474,
+    "coresPerDay": 0.218
    },
    "po_archive/0/side_office": {
     "chests": 7,
@@ -4916,16 +4916,16 @@
     "coresPerDay": 0.05
    },
    "po_falls/-1/turbine_subfloor": {
-    "chests": 2,
-    "items": 17.443,
-    "gear": 0.438,
-    "cores": 0.12,
-    "coreL1": 0.11,
-    "coreL2": 0.01,
+    "chests": 3,
+    "items": 28.702,
+    "gear": 1.088,
+    "cores": 0.25,
+    "coreL1": 0.22,
+    "coreL2": 0.03,
     "coreL3": 0,
-    "itemsPerDay": 11.629,
-    "gearPerDay": 0.292,
-    "coresPerDay": 0.08
+    "itemsPerDay": 17.258,
+    "gearPerDay": 0.617,
+    "coresPerDay": 0.145
    },
    "po_falls/0/intake_shack": {
     "chests": 2,
@@ -4974,18 +4974,6 @@
     "itemsPerDay": 5.95,
     "gearPerDay": 0.3,
     "coresPerDay": 0.05
-   },
-   "po_falls/?": {
-    "chests": 1,
-    "items": 11.259,
-    "gear": 0.65,
-    "cores": 0.13,
-    "coreL1": 0.11,
-    "coreL2": 0.02,
-    "coreL3": 0,
-    "itemsPerDay": 5.63,
-    "gearPerDay": 0.325,
-    "coresPerDay": 0.065
    },
    "po_filter/-1/valve_below": {
     "chests": 2,
@@ -6068,16 +6056,16 @@
     "coresPerDay": 0.2
    },
    "po_hall_eyes/0/left_scriptorium": {
-    "chests": 2,
-    "items": 17.443,
-    "gear": 0.438,
-    "cores": 0.12,
-    "coreL1": 0.11,
-    "coreL2": 0.01,
+    "chests": 1,
+    "items": 8.721,
+    "gear": 0.219,
+    "cores": 0.06,
+    "coreL1": 0.055,
+    "coreL2": 0.005,
     "coreL3": 0,
-    "itemsPerDay": 11.629,
-    "gearPerDay": 0.292,
-    "coresPerDay": 0.08
+    "itemsPerDay": 5.814,
+    "gearPerDay": 0.146,
+    "coresPerDay": 0.04
    },
    "po_hall_eyes/0/right_scriptorium": {
     "chests": 2,
@@ -6992,16 +6980,16 @@
     "coresPerDay": 0.04
    },
    "po_meridian/0/field_hut": {
-    "chests": 7,
-    "items": 69.956,
-    "gear": 1.488,
-    "cores": 0.61,
-    "coreL1": 0.57,
-    "coreL2": 0.04,
+    "chests": 8,
+    "items": 78.678,
+    "gear": 1.706,
+    "cores": 0.67,
+    "coreL1": 0.625,
+    "coreL2": 0.045,
     "coreL3": 0,
-    "itemsPerDay": 44.385,
-    "gearPerDay": 0.974,
-    "coresPerDay": 0.35
+    "itemsPerDay": 50.2,
+    "gearPerDay": 1.12,
+    "coresPerDay": 0.39
    },
    "po_meridian/0/woodland_path": {
     "chests": 1,
@@ -7697,18 +7685,6 @@
     "coreL3": 0,
     "itemsPerDay": 8.31,
     "gearPerDay": 0.16,
-    "coresPerDay": 0.04
-   },
-   "po_rc_meridian/0/annex": {
-    "chests": 1,
-    "items": 8.721,
-    "gear": 0.219,
-    "cores": 0.06,
-    "coreL1": 0.055,
-    "coreL2": 0.005,
-    "coreL3": 0,
-    "itemsPerDay": 5.814,
-    "gearPerDay": 0.146,
     "coresPerDay": 0.04
    },
    "po_ridgestop/0/supply": {
@@ -9588,15 +9564,15 @@
  "added": {
   "total": {
    "chests": 599,
-   "items": 4610.802,
-   "gear": 111.063,
-   "cores": 24.36,
-   "coreL1": 23.57,
+   "items": 4625.986,
+   "gear": 110.333,
+   "cores": 24.175,
+   "coreL1": 23.385,
    "coreL2": 0.78,
    "coreL3": 0.01,
-   "itemsPerDay": 4397.607,
-   "gearPerDay": 105.497,
-   "coresPerDay": 22.482
+   "itemsPerDay": 4376.892,
+   "gearPerDay": 104.017,
+   "coresPerDay": 22.082
   },
   "byZone": {
    "CARD_ROOM": {
@@ -9625,15 +9601,15 @@
    },
    "ROAD": {
     "chests": 78,
-    "items": 526.426,
-    "gear": 9.98,
-    "cores": 2.33,
-    "coreL1": 2.33,
+    "items": 541.611,
+    "gear": 9.25,
+    "cores": 2.145,
+    "coreL1": 2.145,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 632.726,
-    "gearPerDay": 13.08,
-    "coresPerDay": 3.14
+    "itemsPerDay": 612.011,
+    "gearPerDay": 11.6,
+    "coresPerDay": 2.74
    }
   },
   "byGating": {
@@ -9687,15 +9663,15 @@
    },
    "open road": {
     "chests": 78,
-    "items": 526.426,
-    "gear": 9.98,
-    "cores": 2.33,
-    "coreL1": 2.33,
+    "items": 541.611,
+    "gear": 9.25,
+    "cores": 2.145,
+    "coreL1": 2.145,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 632.726,
-    "gearPerDay": 13.08,
-    "coresPerDay": 3.14
+    "itemsPerDay": 612.011,
+    "gearPerDay": 11.6,
+    "coresPerDay": 2.74
    },
    "open site": {
     "chests": 516,
@@ -9761,15 +9737,15 @@
    },
    "road": {
     "chests": 78,
-    "items": 526.426,
-    "gear": 9.98,
-    "cores": 2.33,
-    "coreL1": 2.33,
+    "items": 541.611,
+    "gear": 9.25,
+    "cores": 2.145,
+    "coreL1": 2.145,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 632.726,
-    "gearPerDay": 13.08,
-    "coresPerDay": 3.14
+    "itemsPerDay": 612.011,
+    "gearPerDay": 11.6,
+    "coresPerDay": 2.74
    }
   },
   "byStorey": {
@@ -9787,15 +9763,15 @@
    },
    "ground (0)": {
     "chests": 437,
-    "items": 3258.098,
-    "gear": 75.577,
-    "cores": 16.4,
-    "coreL1": 16.21,
+    "items": 3273.282,
+    "gear": 74.847,
+    "cores": 16.215,
+    "coreL1": 16.025,
     "coreL2": 0.19,
     "coreL3": 0,
-    "itemsPerDay": 3264.091,
-    "gearPerDay": 76.022,
-    "coresPerDay": 16.35
+    "itemsPerDay": 3243.375,
+    "gearPerDay": 74.542,
+    "coresPerDay": 15.95
    },
    "roof / top (2)": {
     "chests": 34,
@@ -9860,14 +9836,14 @@
     "coresPerDay": 0
    },
    "medical_low": {
-    "chests": 14,
-    "items": 94.3,
+    "chests": 20,
+    "items": 134.714,
     "gear": 0,
     "cores": 0,
     "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 94.3,
+    "itemsPerDay": 134.714,
     "gearPerDay": 0,
     "coresPerDay": 0
    },
@@ -9908,16 +9884,16 @@
     "coresPerDay": 0.22
    },
    "supply_damaged": {
-    "chests": 13,
-    "items": 71.5,
-    "gear": 1.3,
-    "cores": 0.39,
-    "coreL1": 0.39,
+    "chests": 7,
+    "items": 38.5,
+    "gear": 0.7,
+    "cores": 0.21,
+    "coreL1": 0.21,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 143,
-    "gearPerDay": 2.6,
-    "coresPerDay": 0.78
+    "itemsPerDay": 77,
+    "gearPerDay": 1.4,
+    "coresPerDay": 0.42
    },
    "supply_high": {
     "chests": 19,
@@ -9932,16 +9908,16 @@
     "coresPerDay": 0.76
    },
    "supply_low": {
-    "chests": 227,
-    "items": 1886.37,
-    "gear": 36.32,
-    "cores": 9.08,
-    "coreL1": 9.08,
+    "chests": 229,
+    "items": 1902.99,
+    "gear": 36.64,
+    "cores": 9.16,
+    "coreL1": 9.16,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 1886.37,
-    "gearPerDay": 36.32,
-    "coresPerDay": 9.08
+    "itemsPerDay": 1902.99,
+    "gearPerDay": 36.64,
+    "coresPerDay": 9.16
    },
    "supply_mid": {
     "chests": 40,
@@ -9956,16 +9932,16 @@
     "coresPerDay": 1.6
    },
    "toolbox_damaged": {
-    "chests": 12,
-    "items": 34.8,
-    "gear": 1.8,
-    "cores": 0.42,
-    "coreL1": 0.42,
+    "chests": 11,
+    "items": 31.9,
+    "gear": 1.65,
+    "cores": 0.385,
+    "coreL1": 0.385,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 69.6,
-    "gearPerDay": 3.6,
-    "coresPerDay": 0.84
+    "itemsPerDay": 63.8,
+    "gearPerDay": 3.3,
+    "coresPerDay": 0.77
    },
    "toolbox_high": {
     "chests": 3,
@@ -9980,16 +9956,16 @@
     "coresPerDay": 0.195
    },
    "toolbox_low": {
-    "chests": 173,
-    "items": 1029.35,
-    "gear": 51.9,
-    "cores": 8.65,
-    "coreL1": 8.65,
+    "chests": 172,
+    "items": 1023.4,
+    "gear": 51.6,
+    "cores": 8.6,
+    "coreL1": 8.6,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 1029.35,
-    "gearPerDay": 51.9,
-    "coresPerDay": 8.65
+    "itemsPerDay": 1023.4,
+    "gearPerDay": 51.6,
+    "coresPerDay": 8.6
    }
   },
   "bySite": {
@@ -10089,6 +10065,18 @@
     "gearPerDay": 0,
     "coresPerDay": 0
    },
+   "dk_saltwick_e": {
+    "chests": 1,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
+   },
    "dk_verdant_n": {
     "chests": 1,
     "items": 8.425,
@@ -10125,6 +10113,18 @@
     "gearPerDay": 0.16,
     "coresPerDay": 0.04
    },
+   "jn_03": {
+    "chests": 1,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
+   },
    "jn_06": {
     "chests": 1,
     "items": 8.31,
@@ -10149,6 +10149,18 @@
     "gearPerDay": 0.16,
     "coresPerDay": 0.04
    },
+   "jn_08": {
+    "chests": 1,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
+   },
    "jn_11": {
     "chests": 1,
     "items": 8.31,
@@ -10162,6 +10174,18 @@
     "coresPerDay": 0.04
    },
    "jn_12": {
+    "chests": 1,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
+   },
+   "jn_13": {
     "chests": 1,
     "items": 8.31,
     "gear": 0.16,
@@ -10974,7 +10998,7 @@
     "coreL2": 0.045,
     "coreL3": 0,
     "itemsPerDay": 36.051,
-    "gearPerDay": 0.962,
+    "gearPerDay": 0.963,
     "coresPerDay": 0.24
    },
    "po_viaduct": {
@@ -11039,51 +11063,51 @@
    },
    "rd_1": {
     "chests": 3,
-    "items": 16.71,
-    "gear": 0.41,
-    "cores": 0.105,
-    "coreL1": 0.105,
+    "items": 22.235,
+    "gear": 0.26,
+    "cores": 0.07,
+    "coreL1": 0.07,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 25.11,
-    "gearPerDay": 0.66,
-    "coresPerDay": 0.17
+    "itemsPerDay": 27.735,
+    "gearPerDay": 0.36,
+    "coresPerDay": 0.1
    },
    "rd_18": {
-    "chests": 2,
-    "items": 13.925,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
+    "chests": 1,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 19.425,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
    },
    "rd_1d": {
     "chests": 1,
-    "items": 5.95,
-    "gear": 0.3,
-    "cores": 0.05,
-    "coreL1": 0.05,
+    "items": 8.425,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 5.95,
-    "gearPerDay": 0.3,
-    "coresPerDay": 0.05
+    "itemsPerDay": 8.425,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_1e": {
     "chests": 2,
-    "items": 14.26,
-    "gear": 0.46,
-    "cores": 0.09,
-    "coreL1": 0.09,
+    "items": 16.735,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 14.26,
-    "gearPerDay": 0.46,
-    "coresPerDay": 0.09
+    "itemsPerDay": 16.735,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
    },
    "rd_1g": {
     "chests": 1,
@@ -11111,15 +11135,15 @@
    },
    "rd_1l": {
     "chests": 1,
-    "items": 8.31,
-    "gear": 0.16,
-    "cores": 0.04,
-    "coreL1": 0.04,
+    "items": 6.736,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 8.31,
-    "gearPerDay": 0.16,
-    "coresPerDay": 0.04
+    "itemsPerDay": 6.736,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_1p": {
     "chests": 1,
@@ -11135,15 +11159,15 @@
    },
    "rd_1s": {
     "chests": 1,
-    "items": 5.5,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
+    "items": 8.425,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 11,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
+    "itemsPerDay": 8.425,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_1v": {
     "chests": 1,
@@ -11159,51 +11183,51 @@
    },
    "rd_1y": {
     "chests": 2,
-    "items": 15.046,
-    "gear": 0.16,
-    "cores": 0.04,
-    "coreL1": 0.04,
+    "items": 14.26,
+    "gear": 0.46,
+    "cores": 0.09,
+    "coreL1": 0.09,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 15.046,
-    "gearPerDay": 0.16,
-    "coresPerDay": 0.04
+    "itemsPerDay": 14.26,
+    "gearPerDay": 0.46,
+    "coresPerDay": 0.09
    },
    "rd_20": {
     "chests": 1,
-    "items": 5.5,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
+    "items": 8.425,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 11,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
+    "itemsPerDay": 8.425,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_21": {
     "chests": 1,
-    "items": 5.5,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
+    "items": 6.736,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 11,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
+    "itemsPerDay": 6.736,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_22": {
     "chests": 1,
-    "items": 8.31,
-    "gear": 0.16,
-    "cores": 0.04,
-    "coreL1": 0.04,
+    "items": 2.9,
+    "gear": 0.15,
+    "cores": 0.035,
+    "coreL1": 0.035,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 8.31,
-    "gearPerDay": 0.16,
-    "coresPerDay": 0.04
+    "itemsPerDay": 5.8,
+    "gearPerDay": 0.3,
+    "coresPerDay": 0.07
    },
    "rd_23": {
     "chests": 1,
@@ -11243,51 +11267,51 @@
    },
    "rd_4": {
     "chests": 1,
-    "items": 5.5,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
+    "items": 8.425,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 11,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
+    "itemsPerDay": 8.425,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_5": {
-    "chests": 3,
-    "items": 13.9,
-    "gear": 0.35,
-    "cores": 0.095,
-    "coreL1": 0.095,
+    "chests": 4,
+    "items": 25.02,
+    "gear": 0.57,
+    "cores": 0.145,
+    "coreL1": 0.145,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 27.8,
-    "gearPerDay": 0.7,
-    "coresPerDay": 0.19
+    "itemsPerDay": 33.42,
+    "gearPerDay": 0.82,
+    "coresPerDay": 0.21
    },
    "rd_8": {
-    "chests": 4,
-    "items": 30.995,
-    "gear": 0.62,
-    "cores": 0.13,
-    "coreL1": 0.13,
+    "chests": 3,
+    "items": 20.996,
+    "gear": 0.46,
+    "cores": 0.09,
+    "coreL1": 0.09,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 30.995,
-    "gearPerDay": 0.62,
-    "coresPerDay": 0.13
+    "itemsPerDay": 20.996,
+    "gearPerDay": 0.46,
+    "coresPerDay": 0.09
    },
    "rd_9": {
     "chests": 1,
-    "items": 8.31,
-    "gear": 0.16,
-    "cores": 0.04,
-    "coreL1": 0.04,
+    "items": 2.9,
+    "gear": 0.15,
+    "cores": 0.035,
+    "coreL1": 0.035,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 8.31,
-    "gearPerDay": 0.16,
-    "coresPerDay": 0.04
+    "itemsPerDay": 5.8,
+    "gearPerDay": 0.3,
+    "coresPerDay": 0.07
    },
    "rd_a": {
     "chests": 2,
@@ -11302,28 +11326,28 @@
     "coresPerDay": 0.08
    },
    "rd_d": {
-    "chests": 3,
-    "items": 16.71,
-    "gear": 0.41,
-    "cores": 0.105,
-    "coreL1": 0.105,
+    "chests": 2,
+    "items": 16.735,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 25.11,
-    "gearPerDay": 0.66,
-    "coresPerDay": 0.17
+    "itemsPerDay": 16.735,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
    },
    "rd_h": {
     "chests": 3,
-    "items": 22.57,
-    "gear": 0.62,
-    "cores": 0.13,
-    "coreL1": 0.13,
+    "items": 20.996,
+    "gear": 0.46,
+    "cores": 0.09,
+    "coreL1": 0.09,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 22.57,
-    "gearPerDay": 0.62,
-    "coresPerDay": 0.13
+    "itemsPerDay": 20.996,
+    "gearPerDay": 0.46,
+    "coresPerDay": 0.09
    },
    "rd_i": {
     "chests": 1,
@@ -11351,15 +11375,15 @@
    },
    "rd_k": {
     "chests": 1,
-    "items": 8.425,
-    "gear": 0,
-    "cores": 0,
-    "coreL1": 0,
+    "items": 8.31,
+    "gear": 0.16,
+    "cores": 0.04,
+    "coreL1": 0.04,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 8.425,
-    "gearPerDay": 0,
-    "coresPerDay": 0
+    "itemsPerDay": 8.31,
+    "gearPerDay": 0.16,
+    "coresPerDay": 0.04
    },
    "rd_l": {
     "chests": 1,
@@ -11375,53 +11399,17 @@
    },
    "rd_m": {
     "chests": 1,
-    "items": 2.9,
-    "gear": 0.15,
-    "cores": 0.035,
-    "coreL1": 0.035,
+    "items": 5.5,
+    "gear": 0.1,
+    "cores": 0.03,
+    "coreL1": 0.03,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 5.8,
-    "gearPerDay": 0.3,
-    "coresPerDay": 0.07
+    "itemsPerDay": 11,
+    "gearPerDay": 0.2,
+    "coresPerDay": 0.06
    },
    "rd_n": {
-    "chests": 2,
-    "items": 13.925,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
-    "coreL2": 0,
-    "coreL3": 0,
-    "itemsPerDay": 19.425,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
-   },
-   "rd_r": {
-    "chests": 2,
-    "items": 13.925,
-    "gear": 0.1,
-    "cores": 0.03,
-    "coreL1": 0.03,
-    "coreL2": 0,
-    "coreL3": 0,
-    "itemsPerDay": 19.425,
-    "gearPerDay": 0.2,
-    "coresPerDay": 0.06
-   },
-   "rd_s": {
-    "chests": 4,
-    "items": 25.375,
-    "gear": 0.5,
-    "cores": 0.11,
-    "coreL1": 0.11,
-    "coreL2": 0,
-    "coreL3": 0,
-    "itemsPerDay": 36.375,
-    "gearPerDay": 0.7,
-    "coresPerDay": 0.17
-   },
-   "rd_u": {
     "chests": 1,
     "items": 8.425,
     "gear": 0,
@@ -11433,41 +11421,77 @@
     "gearPerDay": 0,
     "coresPerDay": 0
    },
-   "rd_w": {
+   "rd_r": {
     "chests": 2,
-    "items": 14.26,
-    "gear": 0.46,
-    "cores": 0.09,
-    "coreL1": 0.09,
+    "items": 8.4,
+    "gear": 0.25,
+    "cores": 0.065,
+    "coreL1": 0.065,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 14.26,
-    "gearPerDay": 0.46,
-    "coresPerDay": 0.09
+    "itemsPerDay": 16.8,
+    "gearPerDay": 0.5,
+    "coresPerDay": 0.13
+   },
+   "rd_s": {
+    "chests": 3,
+    "items": 19.31,
+    "gear": 0.36,
+    "cores": 0.1,
+    "coreL1": 0.1,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 30.31,
+    "gearPerDay": 0.56,
+    "coresPerDay": 0.16
+   },
+   "rd_u": {
+    "chests": 1,
+    "items": 5.95,
+    "gear": 0.3,
+    "cores": 0.05,
+    "coreL1": 0.05,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 5.95,
+    "gearPerDay": 0.3,
+    "coresPerDay": 0.05
+   },
+   "rd_w": {
+    "chests": 2,
+    "items": 13.471,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
+    "coreL2": 0,
+    "coreL3": 0,
+    "itemsPerDay": 13.471,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    },
    "rd_x": {
     "chests": 2,
-    "items": 11.325,
-    "gear": 0.15,
-    "cores": 0.035,
-    "coreL1": 0.035,
+    "items": 11.45,
+    "gear": 0.4,
+    "cores": 0.08,
+    "coreL1": 0.08,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 14.225,
-    "gearPerDay": 0.3,
-    "coresPerDay": 0.07
+    "itemsPerDay": 16.95,
+    "gearPerDay": 0.5,
+    "coresPerDay": 0.11
    },
    "rd_z": {
     "chests": 1,
-    "items": 8.31,
-    "gear": 0.16,
-    "cores": 0.04,
-    "coreL1": 0.04,
+    "items": 6.736,
+    "gear": 0,
+    "cores": 0,
+    "coreL1": 0,
     "coreL2": 0,
     "coreL3": 0,
-    "itemsPerDay": 8.31,
-    "gearPerDay": 0.16,
-    "coresPerDay": 0.04
+    "itemsPerDay": 6.736,
+    "gearPerDay": 0,
+    "coresPerDay": 0
    }
   },
   "bySpace": {

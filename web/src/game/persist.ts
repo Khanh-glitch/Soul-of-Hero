@@ -1,4 +1,5 @@
 import { G1B_VERSION, G1B_CHEST_SLOTS, G1B_SITES, G1B_FIXTURE_BY_ID, G1B_GATE_BY_ID, G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, g1bSeed, CORE_V2 } from './g1b';
+import { G1B_BATCH2_ECOLOGY } from './g1b-ecology-batch2.frozen';
 import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} from './airdrop';
 import { recoveryPlanFor, COMPONENT_RECIPES } from './recycler';
 import { combatKindOf } from './stimulus';
@@ -134,10 +135,30 @@ export function validate(raw: any): GameState | null {
   if (r.itemSetVersion !== undefined && (!integer(r.itemSetVersion) || r.itemSetVersion < 1 || r.itemSetVersion > ITEM_SET_VERSION)) return null;
   // Item set v3: the equipment container grew from head/body/back to head/body/back/legs/feet. Old slots keep their index.
   if (obj(r.custody) && obj(r.custody.eq) && Array.isArray(r.custody.eq.slots) && r.custody.eq.slots.length === 3) r.custody.eq.slots.push(null, null);
-  // G1B source-layout migration (batch 2). A run saved with the 130 round-1 sources is brought up to the current layout by
-  // ADDING the sources it has never had, closed and unrolled. Nothing it already has is touched (state, cycle, roll,
-  // contents, restock time), so the migration cannot re-roll or duplicate loot, and it runs once: the run is stamped.
-  // Only a save holding exactly the round-1 set is migrated; anything else is left for validation to reject.
+  // G1B source-layout migration (batch 2 → 3). A run is brought up to the current layout by ADDING the sources it has
+  // never had, closed and unrolled. Nothing it already has is touched (state, cycle, roll, contents, restock time), so
+  // the migration cannot re-roll or duplicate loot, and it runs once: the run is stamped. Three recognized schemas:
+  //   (a) unstamped, holding exactly the 130 round-1 chests → add the missing sources, stamp to the current revision;
+  //   (b) stamped layout=2, holding exactly the 557 Batch-2 chests (130 base + 427 frozen ecology) → add the 172 new
+  //       Batch-3 chests, stamp to layout=3. The frozen Batch-2 ecology roster is the recognized old schema: every id
+  //       and tile a Batch-2 save carries is kept verbatim, never moved or deleted;
+  //   (c) already the current revision → nothing to do.
+  // Anything else (foreign ids, a partial stamped set, an unknown / future revision) is left for validation to reject.
+  if (obj(r.g1b) && obj(r.g1b.far) && obj(r.entities) && obj(r.custody) && r.g1b.layout !== undefined && r.g1b.layout < G1B_LAYOUT_REVISION) {
+    try {
+      const had = new Set<string>(); for (const e of [...Object.values(r.entities), ...Object.values(r.g1b.far)] as any[]) if (obj(e) && obj(e.g1b) && typeof e.g1b.sid === 'string') { if (had.has(e.g1b.sid)) return null; had.add(e.g1b.sid); }
+      if (r.g1b.layout === 2) {
+        const batch2 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_BATCH2_ECOLOGY.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+        if (had.size !== batch2.length || !batch2.every(id => had.has(id))) return null;   // a Batch-2 save must carry exactly the recognized 557+6 set
+        g1bEnsureSources(r);
+      } else if (r.g1b.layout === 1) {
+        const round1 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+        if (had.size !== round1.length || !round1.every(id => had.has(id))) return null;
+        g1bEnsureSources(r);
+      } else return null;                                                                          // unknown / forged / future revision
+    } catch { return null; }
+  }
+  // unstamped save (written before the layout stamp existed): recognised by holding exactly the round-1 set
   if (obj(r.g1b) && r.g1b.layout === undefined && obj(r.g1b.far) && obj(r.entities) && obj(r.custody)) {
     try {
       const had = new Set<string>(); for (const e of [...Object.values(r.entities), ...Object.values(r.g1b.far)] as any[]) if (obj(e) && obj(e.g1b) && typeof e.g1b.sid === 'string') { if (had.has(e.g1b.sid)) return null; had.add(e.g1b.sid); }
