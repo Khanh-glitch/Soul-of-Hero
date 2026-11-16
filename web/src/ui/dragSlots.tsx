@@ -186,7 +186,7 @@ export function DSlot({ api, cid, slot, s, hotkey, active, quickTo, size = 22, a
     {hotkey && <span className="dslot__key">{hotkey}</span>}
     {active && <span className="dslot__active-pip" aria-hidden="true" />}
     {kbdPicked && <span className="dslot__hold">MOVE</span>}
-    {s && <Icon k={s.key} size={size - 6} />}
+    {s && <Icon k={s.key} size={size - 4} />}
     {s && s.qty > 1 && <span className="dslot__qty">{s.qty}</span>}
     {s && d?.charge && s.charge !== undefined && <span className="dslot__qty" style={{ color: s.charge ? 'var(--info)' : 'var(--bad)' }}>{s.charge}⚡</span>}
     {durF !== null && <span className="dslot__dur"><i style={{ width: `${durF * 100}%`, background: durF < 0.25 ? 'var(--bad)' : durF < 0.5 ? 'var(--warn)' : 'var(--good)' }} /></span>}

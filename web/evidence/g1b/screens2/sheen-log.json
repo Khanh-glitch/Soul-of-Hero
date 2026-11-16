@@ -1,6 +1,6 @@
 [
  {
-  "method": "The sweep lasts 0.9 s and a headless screenshot takes about 1 s, so the render clock (the requestAnimationFrame timestamp handed to the game renderer) was pinned at the listed sweep phases. Pixels are the game renderer's; crops are enlarged x4 nearest-neighbour in the sheet. Only open-air chests are shown."
+  "method": "One row per chest family (supply / toolbox / military / food / medical). Left = rest, then the sweep at phases 0.20 / 0.36 / 0.52 / 0.68. The 0.9 s sweep is slower than a headless screenshot, so the render clock (requestAnimationFrame timestamp) was pinned at each phase; pixels are the game renderer's, crops enlarged x4 nearest-neighbour."
  },
  {
   "shot": "sheen-supply_high-context.png",
@@ -10,22 +10,58 @@
   "sweepFrames": [
    {
     "phase": 0.2,
-    "pinnedRenderTimeMs": 25455,
+    "pinnedRenderTimeMs": 25452.59999999404,
     "differsFromRest": true
    },
    {
     "phase": 0.36,
-    "pinnedRenderTimeMs": 36865.19999998808,
+    "pinnedRenderTimeMs": 25591.20000000298,
     "differsFromRest": true
    },
    {
     "phase": 0.52,
-    "pinnedRenderTimeMs": 37009.5,
+    "pinnedRenderTimeMs": 25735.89999999106,
     "differsFromRest": true
    },
    {
     "phase": 0.68,
-    "pinnedRenderTimeMs": 37155.5,
+    "pinnedRenderTimeMs": 37155,
+    "differsFromRest": true
+   }
+  ],
+  "clip": {
+   "x": 290,
+   "y": 100,
+   "width": 60,
+   "height": 60
+  },
+  "scale": 1,
+  "saveValid": true
+ },
+ {
+  "shot": "sheen-toolbox_low-context.png",
+  "source": "veyra.g1b:po_pumphouse:toolbox_low:01",
+  "periodMs": 21056,
+  "framesSampled": 5,
+  "sweepFrames": [
+   {
+    "phase": 0.2,
+    "pinnedRenderTimeMs": 67796.70000000298,
+    "differsFromRest": true
+   },
+   {
+    "phase": 0.36,
+    "pinnedRenderTimeMs": 67940.29999999702,
+    "differsFromRest": true
+   },
+   {
+    "phase": 0.52,
+    "pinnedRenderTimeMs": 68085.5,
+    "differsFromRest": true
+   },
+   {
+    "phase": 0.68,
+    "pinnedRenderTimeMs": 68229.09999999404,
     "differsFromRest": true
    }
   ],
@@ -46,22 +82,22 @@
   "sweepFrames": [
    {
     "phase": 0.2,
-    "pinnedRenderTimeMs": 91862.29999999702,
+    "pinnedRenderTimeMs": 91854.70000000298,
     "differsFromRest": true
    },
    {
     "phase": 0.36,
-    "pinnedRenderTimeMs": 92003.39999999106,
+    "pinnedRenderTimeMs": 92002.89999999106,
     "differsFromRest": true
    },
    {
     "phase": 0.52,
-    "pinnedRenderTimeMs": 92151.79999999702,
+    "pinnedRenderTimeMs": 92143.09999999404,
     "differsFromRest": true
    },
    {
     "phase": 0.68,
-    "pinnedRenderTimeMs": 92292.09999999404,
+    "pinnedRenderTimeMs": 92294.39999999106,
     "differsFromRest": true
    }
   ],
@@ -75,6 +111,75 @@
   "saveValid": true
  },
  {
-  "pageErrors": []
+  "shot": "sheen-medical_low-context.png",
+  "source": "veyra.g1b:po_greywater:medical_low:01",
+  "periodMs": 22368,
+  "framesSampled": 5,
+  "sweepFrames": [
+   {
+    "phase": 0.2,
+    "pinnedRenderTimeMs": 90142.70000000298,
+    "differsFromRest": true
+   },
+   {
+    "phase": 0.36,
+    "pinnedRenderTimeMs": 90286.5,
+    "differsFromRest": true
+   },
+   {
+    "phase": 0.52,
+    "pinnedRenderTimeMs": 112799.59999999404,
+    "differsFromRest": true
+   },
+   {
+    "phase": 0.68,
+    "pinnedRenderTimeMs": 112939.29999999702,
+    "differsFromRest": true
+   }
+  ],
+  "clip": {
+   "x": 242,
+   "y": 148,
+   "width": 60,
+   "height": 60
+  },
+  "scale": 1,
+  "saveValid": true
+ },
+ {
+  "shot": "sheen-military_mid-context.png",
+  "source": "veyra.g1b:po_slag:military_mid:01",
+  "periodMs": 17334,
+  "framesSampled": 5,
+  "sweepFrames": [
+   {
+    "phase": 0.2,
+    "pinnedRenderTimeMs": 115633.20000000298,
+    "differsFromRest": true
+   },
+   {
+    "phase": 0.36,
+    "pinnedRenderTimeMs": 115781.70000000298,
+    "differsFromRest": true
+   },
+   {
+    "phase": 0.52,
+    "pinnedRenderTimeMs": 115926,
+    "differsFromRest": true
+   },
+   {
+    "phase": 0.68,
+    "pinnedRenderTimeMs": 116071.89999999106,
+    "differsFromRest": true
+   }
+  ],
+  "clip": {
+   "x": 242,
+   "y": 148,
+   "width": 60,
+   "height": 60
+  },
+  "scale": 1,
+  "saveValid": true
  }
 ]

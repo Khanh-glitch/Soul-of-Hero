@@ -58,7 +58,7 @@ function slotContext(api: Api, c: string, i: number, quickTo?: string) {
   else api.act('move', { from: c, fs: i, to: 'inv' });
 }
 function Grid({ api, cid, cols = 8, quickTo, hotRow = false }: { api: Api; cid: string; cols?: number; quickTo?: string; hotRow?: boolean }) {
-  return <DGrid api={api} cid={cid} cols={cols} quickTo={quickTo} hotRow={hotRow} size={22} />;
+  return <DGrid api={api} cid={cid} cols={cols} quickTo={quickTo} hotRow={hotRow} size={24} />;
 }
 function LegacyGrid({ api, cid, cols = 8, quickTo, hotRow = false }: { api: Api; cid: string; cols?: number; quickTo?: string; hotRow?: boolean }) {
   const c = C(api.gs.run!, cid); if (!c) return null;

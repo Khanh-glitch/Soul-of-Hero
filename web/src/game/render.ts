@@ -31,6 +31,7 @@ import * as vfxDirector from './vfx/director';
 import { drawG1bChest } from './g1b-art';
 import * as vfxStage from './vfx/stage';
 import { getArt, pixelText, mk, type Sprite } from './art';
+import { atlasIconCell } from './item-atlas';
 import { HERO_FRAMES } from './hero-art';
 import { drawAdventurer, drawAdventurerEquipment } from './avatar-presentation';
 import { gradeWorld, bloomAt, shakeScale, flashScale } from '../visual/direction';
@@ -388,7 +389,7 @@ function drawSource(g: CanvasRenderingContext2D, r: RunState, s: NonNullable<Ret
 function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: number, now: number) {
   const A = getArt(); const X = Math.round(e.x), Y = Math.round(e.y);
   switch (e.kind) {
-    case 'drop': { const s = C(r, e.c!)?.slots[0]; if (!s) return; const bob = Math.round(Math.sin(time / 250 + e.x) * 1.5); shadow(g, X, Y + 4, 4); const ic = A.icon[s.key]; g.drawImage(ic, X - 6, Y - 9 + bob, 12, 12); if (s.key === 'rcash' || ITEMS[s.key].cat === 'core' || ITEMS[s.key].cat === 'stone') if (hash2(Math.floor(time / 120), X, Y) > 0.7) { g.fillStyle = '#ffffff'; g.fillRect(X - 5 + (hash2(X, Y, Math.floor(time / 120)) * 10 | 0), Y - 8 + bob, 1, 1); } return; }
+    case 'drop': { const s = C(r, e.c!)?.slots[0]; if (!s) return; const bob = Math.round(Math.sin(time / 250 + e.x) * 1.5); shadow(g, X, Y + 4, 4); const cell = atlasIconCell(s.key); const ic = cell ?? A.icon[s.key]; g.imageSmoothingEnabled = false; g.drawImage(ic, X - 6, Y - 9 + bob, 12, 12); g.imageSmoothingEnabled = true; if (s.key === 'rcash' || ITEMS[s.key].cat === 'core' || ITEMS[s.key].cat === 'stone') if (hash2(Math.floor(time / 120), X, Y) > 0.7) { g.fillStyle = '#ffffff'; g.fillRect(X - 5 + (hash2(X, Y, Math.floor(time / 120)) * 10 | 0), Y - 8 + bob, 1, 1); } return; }
     case 'bag': { shadow(g, X, Y + 5, 5); g.drawImage(e.parcel ? A.st.parcel : A.st.bag, X - 8, Y - 10); const a = 0.5 + Math.sin(time / 300) * 0.3; g.fillStyle = `rgba(255,226,122,${a})`; g.fillRect(X, Y - 18 - Math.round(Math.sin(time / 300) * 2), 1, 4); g.fillRect(X - 1, Y - 15 - Math.round(Math.sin(time / 300) * 2), 3, 1); return; }
     case 'cart': { shadow(g, X, Y + 6, 11); g.drawImage(A.st.cart, X - 14, Y - 14); if (C(r, e.c!).slots.some(Boolean)) g.drawImage(A.st.cargo, X - 14, Y - 16); if (r.player.pulling === e.id) { g.fillStyle = '#c8a060'; const p = r.player; const n = 8; for (let i = 0; i <= n; i++) { const t = i / n; g.fillRect(Math.round(X + 12 + (p.x - X - 12) * t), Math.round(Y - 4 + (p.y - Y + 2) * t + Math.sin(t * Math.PI) * 2), 1, 1); } } return; }
     case 'vehicle': {
@@ -700,10 +701,10 @@ function drawPlayer(g: CanvasRenderingContext2D, gs: GameState, time: number, wo
   else spr = set['idle' + p.dir][Math.floor(time / 900) % HERO_FRAMES.idle];
   void pose;
   const blink = p.invuln > 0 && act?.kind !== 'roll' && Math.floor(time / 70) % 2 === 0;
-  const s = activeStack(r); const icon = s && (ITEMS[s.key].dmg || ITEMS[s.key].core || ITEMS[s.key].creatorCore || ITEMS[s.key].ranged) ? A.icon[s.key] : null;
+  const s = activeStack(r); const icon = s && (ITEMS[s.key].dmg || ITEMS[s.key].core || ITEMS[s.key].creatorCore || ITEMS[s.key].ranged) ? (atlasIconCell(s.key) ?? A.icon[s.key]) : null;
   const drawWeapon = () => { if (!icon || act?.kind === 'roll') return; let ang = p.aim; const d = ITEMS[s!.key];
     if (act?.kind === 'swing' && !d.ranged) { const arc = d.arc || 1.2; const t = act.t / act.dur; const k = act.t < (act.contact || 0) ? -0.5 - 0.15 * (act.t / (act.contact || 1)) : -0.5 + Math.min(1, (act.t - (act.contact || 0)) / 80); ang = p.aim + arc * k * (Math.cos(p.aim) >= 0 ? 1 : -1); void t; }
-    const hx = X + Math.cos(ang) * 5, hy = Y - 6 + Math.sin(ang) * 4; g.save(); g.translate(Math.round(hx), Math.round(hy)); g.rotate(ang + Math.PI / 4); if (d.core || d.creatorCore) g.rotate(-ang - Math.PI / 4); g.drawImage(icon, (d.core||d.creatorCore) ? -6 : -3, (d.core||d.creatorCore) ? -6 : -12, (d.core||d.creatorCore) ? 12 : 14, (d.core||d.creatorCore) ? 12 : 14); g.restore(); };
+    const hx = X + Math.cos(ang) * 5, hy = Y - 6 + Math.sin(ang) * 4; g.save(); g.translate(Math.round(hx), Math.round(hy)); g.rotate(ang + Math.PI / 4); if (d.core || d.creatorCore) g.rotate(-ang - Math.PI / 4); g.imageSmoothingEnabled = false; g.drawImage(icon, (d.core||d.creatorCore) ? -6 : -3, (d.core||d.creatorCore) ? -6 : -12, (d.core||d.creatorCore) ? 12 : 14, (d.core||d.creatorCore) ? 12 : 14); g.imageSmoothingEnabled = true; g.restore(); };
   if (p.dir === 3) drawWeapon();
   g.drawImage(blink ? white(spr) : spr, X - 8, Y - 19);
   drawAdventurerEquipment(g, r, X, Y, p.dir);

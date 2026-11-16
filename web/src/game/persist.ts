@@ -369,23 +369,8 @@ export function validate(raw: any): GameState | null {
   if (r.natureTrees !== undefined && (!Array.isArray(r.natureTrees) || r.natureTrees.length>100 || new Set(r.natureTrees.map((q:any)=>`${q.tx},${q.ty}`)).size!==r.natureTrees.length || r.natureTrees.some((q:any)=>!obj(q)||!integer(q.tx)||!integer(q.ty)||q.tx<0||q.ty<0||q.tx>=WW||q.ty>=WW||!finite(q.until)||q.until<=0))) return null;
   if(r.spiritTransit!==undefined && (!obj(r.spiritTransit)||!finite(r.spiritTransit.x)||!finite(r.spiritTransit.y)||r.spiritTransit.x<TILE||r.spiritTransit.y<TILE||r.spiritTransit.x>=(WW-1)*TILE||r.spiritTransit.y>=(WW-1)*TILE||!finite(r.spiritTransit.arriveAt)||r.spiritTransit.arriveAt<r.startedAt-r.qaOffset||r.spiritTransit.arriveAt>r.clock.lastSimAt+BAL.creatorCoreDemon.teleportMs||typeof r.spiritTransit.uid!=='string'||!/^s[0-9a-z]+$/.test(r.spiritTransit.uid)||!beforeNext(r.spiritTransit.uid,/^s([a-z0-9]+)$/)))return null;
   const uids = new Set<string>(), ownedContainers = new Set<string>(['inv', 'eq']); const g1bSeen = new Set<string>();
-  const stack = (s: any): s is Stack => {
-    if (!obj(s) || typeof s.uid !== 'string' || !s.uid || !beforeNext(s.uid, /^s([a-z0-9]+)$/) || uids.has(s.uid) || typeof s.key !== 'string' || !has(ITEMS, s.key) || !integer(s.qty) || s.qty < 1 || s.qty > ITEMS[s.key].max) return false;
-    if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return false;
-    if((s.key==='keycard'||isAccessCard(s.key)) && s.charge!==undefined && (!integer(s.charge)||s.charge<1||s.charge>100||s.qty!==1))return false;
-    if(s.key==='motorbike_kit' && (!finite(s.dur)||s.dur<0||s.dur>BAL.motorbike.maxHp))return false;
-    if (s.owed !== undefined && (!ITEMS[s.key].creatorCore || !obj(s.owed) || !Object.keys(s.owed).length || Object.entries(s.owed).some(([k, v]) => !['energy_basic', 'energy_refined', `essence_${ITEMS[s.key].essence}`].includes(k) || !integer(v) || (v as number) < 1 || (v as number) > 56))) return false;
-    if (s.reserves !== undefined && (!ITEMS[s.key].creatorCore || !obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k]))) return false;
-    // Core V2: level, durability, three ready-at stamps and at most one running upgrade live on the physical instance.
-    if (ITEMS[s.key].creatorCore) {
-      if (![1, 2, 3].includes(s.lvl) || !finite(s.dur) || s.dur < 0 || s.dur > CORE_V2.maxDur) return false;
-      if (s.reserves !== undefined) return false; // no magazine in V2: a pre-V2 bank is converted to `owed` before validation
-      if (s.cd !== undefined && (!obj(s.cd) || Object.entries(s.cd).some(([k, v]) => !['basic', 'refined', 'signature'].includes(k) || !finite(v) || (v as number) < 0))) return false;
-      if (s.upg !== undefined && (!obj(s.upg) || s.upg.to !== s.lvl + 1 || !finite(s.upg.readyAt))) return false;
-    } else if (s.lvl !== undefined || s.cd !== undefined || s.upg !== undefined) return false;
-    if ((s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) || (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) || (s.meta !== undefined && typeof s.meta !== 'string') || (s.key === 'blueprint' && (!s.meta || (!has(RECIPES, s.meta) && !hasLegacyDefinition(s.meta))))) return false;
-    uids.add(s.uid); return true;
-  };
+  const stack = (s: any): s is Stack => stackInvariant(s, uids, beforeNext) === null;
+
   for (const [id, c] of Object.entries(r.custody) as [string, any][]) {
     if (!obj(c) || c.id !== id || (id !== 'inv' && id !== 'eq' && !beforeNext(id, /^c([a-z0-9]+)$/)) || !['inv','eq','drop','bag','cart','vehicle','loot','cash','chest','fuel','out','rest'].includes(c.kind) || !Array.isArray(c.slots)) return null;
     for (let i = 0; i < c.slots.length; i++) { const s = c.slots[i]; if (s !== null && (!stack(s) || (c.kind === 'eq' && ITEMS[s.key].slot !== EQ_SLOTS[i]) || (c.kind === 'fuel' && !ITEMS[s.key].fuel))) return null; }
@@ -879,15 +864,44 @@ export interface SaveOutcome {
 let lastOutcome: SaveOutcome | null = null; const warnedSave = new Set<string>();
 export function lastSaveOutcome(): SaveOutcome | null { return lastOutcome; }
 /** Bounded classification of why a game state is not a valid save. Returns a class name, never values from the save. */
+/**
+ * The exact stack invariant `validate` enforces, as a reason string (null = the stack is well formed). Shared by
+ * `validate` and `diagnoseInvalidState` so a refused save names the precise rule that failed instead of returning a
+ * generic 'other' — e.g. a blueprint minted without a recipe meta, a Core with no durability, or a duplicate UID.
+ */
+export function stackInvariant(s: any, uids: Set<string>, beforeNext: (id: string, re: RegExp) => boolean): string | null {
+  if (!obj(s)) return 'not-a-stack';
+  if (typeof s.uid !== 'string' || !s.uid) return 'no-uid';
+  if (!beforeNext(s.uid, /^s([a-z0-9]+)$/)) return `uid-not-before-nextid:${s.uid}`;
+  if (uids.has(s.uid)) return `duplicate-uid:${s.uid}`;
+  if (typeof s.key !== 'string' || !has(ITEMS, s.key)) return 'unknown-item';
+  if (!integer(s.qty) || s.qty < 1) return 'bad-qty';
+  if (s.qty > ITEMS[s.key].max) return `over-max:${s.key}`;
+  if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return 'bad-upgrade';
+  if ((s.key === 'keycard' || isAccessCard(s.key)) && s.charge !== undefined && (!integer(s.charge) || s.charge < 1 || s.charge > 100 || s.qty !== 1)) return 'bad-card-charge';
+  if (s.key === 'motorbike_kit' && (!finite(s.dur) || s.dur < 0 || s.dur > BAL.motorbike.maxHp)) return 'bad-motorbike-dur';
+  if (s.owed !== undefined && (!ITEMS[s.key].creatorCore || !obj(s.owed) || !Object.keys(s.owed).length || Object.entries(s.owed).some(([k, v]) => !['energy_basic', 'energy_refined', `essence_${ITEMS[s.key].essence}`].includes(k) || !integer(v) || (v as number) < 1 || (v as number) > 56))) return 'bad-owed';
+  if (s.reserves !== undefined && (!ITEMS[s.key].creatorCore || !obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k]))) return 'bad-reserves';
+  if (ITEMS[s.key].creatorCore) {
+    if (![1, 2, 3].includes(s.lvl) || !finite(s.dur) || s.dur < 0 || s.dur > CORE_V2.maxDur) return 'core-bad-lvl-or-dur';
+    if (s.reserves !== undefined) return 'core-reserves-in-v2';
+    if (s.cd !== undefined && (!obj(s.cd) || Object.entries(s.cd).some(([k, v]) => !['basic', 'refined', 'signature'].includes(k) || !finite(v) || (v as number) < 0))) return 'core-bad-cd';
+    if (s.upg !== undefined && (!obj(s.upg) || s.upg.to !== s.lvl + 1 || !finite(s.upg.readyAt))) return 'core-bad-upg';
+  } else if (s.lvl !== undefined || s.cd !== undefined || s.upg !== undefined) return 'non-core-with-core-fields';
+  if (s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) return 'bad-dur';
+  if (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) return 'bad-charge';
+  if (s.meta !== undefined && typeof s.meta !== 'string') return 'bad-meta-type';
+  if (s.key === 'blueprint' && (!s.meta || (!has(RECIPES, s.meta) && !hasLegacyDefinition(s.meta)))) return `blueprint-without-recipe:${s.meta ?? 'none'}`;
+  uids.add(s.uid); return null;
+}
+
 export function diagnoseInvalidState(gs: GameState): string {
   const r = gs.run; if (!r) return 'no-run';
   const seen = new Set<string>();
+  const beforeNext = (id: string, re: RegExp) => { const m = re.exec(id); return !m || parseInt(m[1], 36) < r.nextId; };
   for (const c of Object.values(r.custody) as any[]) for (const s of (c?.slots ?? []) as any[]) {
     if (!s) continue;
-    if (!ITEMS[s.key]) return 'unknown-item';
-    if (!Number.isInteger(s.qty) || s.qty < 1) return 'bad-qty';
-    if (s.qty > ITEMS[s.key].max) return `over-max:${s.key}`;
-    if (seen.has(s.uid)) return 'duplicate-uid'; seen.add(s.uid);
+    const why = stackInvariant(s, seen, beforeNext); if (why) return why;
   }
   return 'other';
 }

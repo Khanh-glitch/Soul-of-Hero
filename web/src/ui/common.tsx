@@ -39,7 +39,7 @@ export function Slot({ s, sel, active, onClick, onContext, hotkey, title, slotIn
     title={title ?? (d ? `${d.name}${s!.meta ? ' — ' + s!.meta : ''}${s!.qty > 1 ? ` ×${s!.qty}` : ''}` : hotkey ? `Quickbar ${hotkey} (empty)` : '')}>
     {hotkey && <span className="k">{hotkey}</span>}
     {active && <span className="slot__pip" aria-hidden="true" />}
-    {s && <Icon k={s.key} size={18} style={{ position: 'absolute', left: 2, top: 2 }} />}
+    {s && <Icon k={s.key} size={18} style={{ position: 'absolute', left: 1, top: 1 }} />}
     {s && s.dur === 0 && d?.repair && <span className="q" style={{ color: '#ff7a6a' }}>!</span>}
     {s && s.qty > 1 && <span className="q">{s.qty}</span>}
     {s && d?.charge && s.charge !== undefined && <span className="q" style={{ color: s.charge ? '#9ae0ff' : '#ff7a6a' }}>{s.charge}⚡</span>}

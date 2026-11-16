@@ -1,153 +1,151 @@
-# G1B — every road, bridge, landing and fork of Veyra and its chest opportunities
+# G1B — every road feature (batch 3 census)
 
-_Generated from `G1B_SPACE_CENSUS.json`. Do not edit by hand._
+Generated from `G1B_SPACE_CENSUS.json` (roads).
 
-Road tiles are U=0.5 runtime tiles. "open" = tiles outside every site footprint (a road inside a site is served by the site's own chests and is not counted twice). Interval = open tiles per chest.
-
-| route | kind | tiles | open | chests before → after | interval | what is there | why |
-|---|---|---:|---:|---:|---:|---|---|
-| Gulf–Mossbrook Freight Trunk (1) (`rd_0`) | cart | 382 | 260 | 0 → 1 | 260 | roadside wreck / dropped load @2136,1624 | cart road, 382 tiles (260 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Gulf–Mossbrook Freight Trunk (2) (`rd_1`) | cart | 832 | 560 | 0 → 3 | 187 | roadside wreck / dropped load @2230,1280; roadside wreck / dropped load @2233,1144; roadside wreck / dropped load @2143,949 | cart road, 832 tiles (560 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| East Ore Freight (1) (`rd_2`) | cart | 423 | 264 | 2 → 2 | 132 | — | cart road, 423 tiles (264 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| East Ore Freight (2) (`rd_3`) | cart | 216 | 76 | 2 → 2 | 38 | — | cart road, 216 tiles (76 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| East Ore Freight (2) (`rd_4`) | cart | 232 | 128 | 0 → 1 | 128 | roadside wreck / dropped load @2451,1220 | cart road, 232 tiles (128 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| East Ore Freight (3) (`rd_5`) | cart | 762 | 612 | 0 → 4 | 153 | roadside wreck / dropped load @2551,1583; roadside wreck / dropped load @2585,1372; roadside wreck / dropped load @2601,1199; roadside wreck / dropped load @2574,1056 | cart road, 762 tiles (612 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Gulf Coast Freight (1) (`rd_6`) | cart | 320 | 176 | 4 → 4 | 44 | — | cart road, 320 tiles (176 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Gulf Coast Freight (2) (`rd_7`) | cart | 82 | 82 | 0 → 0 | — | — | cart road, 82 tiles (82 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Hook Road (`rd_8`) | cart | 637 | 516 | 0 → 3 | 172 | roadside wreck / dropped load (harsh ground: grade raised) @2480,851; roadside wreck / dropped load (harsh ground: grade raised) @2375,727; roadside wreck / dropped load @2484,623 | cart road, 637 tiles (516 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Greywater Cross Freight (1) (`rd_9`) | cart | 356 | 144 | 0 → 1 | 144 | roadside wreck / dropped load @1837,1265 | cart road, 356 tiles (144 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Greywater Cross Freight (2) (`rd_a`) | cart | 426 | 308 | 0 → 2 | 154 | roadside wreck / dropped load (harsh ground: grade raised) @1890,1119; roadside wreck / dropped load (harsh ground: grade raised) @2006,1001 | cart road, 426 tiles (308 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| West Forest Freight (1) (`rd_b`) | cart | 273 | 152 | 4 → 4 | 38 | — | cart road, 273 tiles (152 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| West Forest Freight (1) (`rd_c`) | cart | 28 | 0 | 0 → 0 | — | — | cart road, 28 tiles (0 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| West Forest Freight (2) (`rd_d`) | cart | 1033 | 736 | 0 → 2 | 368 | roadside wreck / dropped load (harsh ground: grade raised) @1444,1119; roadside wreck / dropped load @1114,1233 | cart road, 1033 tiles (736 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Falls Road (1) (`rd_e`) | cart | 41 | 0 | 0 → 0 | — | — | cart road, 41 tiles (0 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Falls Road (2) (`rd_f`) | cart | 167 | 84 | 0 → 0 | — | — | cart road, 167 tiles (84 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Falls Road (3) (`rd_g`) | foot | 48 | 8 | 0 → 0 | — | — | foot road, 48 tiles (8 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| North Road (`rd_h`) | cart | 625 | 524 | 0 → 3 | 175 | roadside wreck / dropped load (harsh ground: grade raised) @1898,950; roadside wreck / dropped load (harsh ground: grade raised) @1786,789; roadside wreck / dropped load (harsh ground: grade raised) @1809,638 | cart road, 625 tiles (524 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Lantern Road (1) (`rd_i`) | cart | 329 | 232 | 0 → 1 | 232 | roadside wreck / dropped load (harsh ground: grade raised) @1972,565 | cart road, 329 tiles (232 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Lantern Road (2) (`rd_j`) | cart | 262 | 220 | 0 → 1 | 220 | roadside wreck / dropped load (harsh ground: grade raised) @2196,692 | cart road, 262 tiles (220 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Bone Road (1) (`rd_k`) | cart | 303 | 164 | 0 → 1 | 164 | roadside wreck / dropped load (harsh ground: grade raised) @1369,2120 | cart road, 303 tiles (164 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Bone Road (2) (`rd_l`) | cart | 155 | 76 | 0 → 0 | — | — | cart road, 155 tiles (76 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Bone Road (3) (`rd_m`) | cart | 366 | 140 | 0 → 1 | 140 | roadside wreck / dropped load @1614,1948 | cart road, 366 tiles (140 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Bone Road (1) (`rd_n`) | cart | 442 | 248 | 0 → 1 | 248 | roadside wreck / dropped load @1941,1626 | cart road, 442 tiles (248 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Bone Road (2) (`rd_o`) | cart | 24 | 0 | 0 → 0 | — | — | cart road, 24 tiles (0 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Old Pump Link (1) (`rd_p`) | cart | 11 | 0 | 0 → 0 | — | — | cart road, 11 tiles (0 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Old Pump Link (2) (`rd_q`) | cart | 24 | 0 | 0 → 0 | — | — | cart road, 24 tiles (0 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| West Coast Road (1) (`rd_r`) | cart | 425 | 292 | 0 → 2 | 146 | roadside wreck / dropped load @793,1228; roadside wreck / dropped load @842,1427 | cart road, 425 tiles (292 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| West Coast Road (1) (`rd_s`) | cart | 587 | 556 | 0 → 3 | 185 | roadside wreck / dropped load @883,1216; roadside wreck / dropped load @1047,1064; roadside wreck / dropped load (harsh ground: grade raised) @1179,970 | cart road, 587 tiles (556 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| West Coast Road (2) (`rd_t`) | cart | 26 | 0 | 0 → 0 | — | — | cart road, 26 tiles (0 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Southfoot Freight (`rd_u`) | cart | 293 | 184 | 0 → 1 | 184 | roadside wreck / dropped load (harsh ground: grade raised) @2368,2002 | cart road, 293 tiles (184 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Silo Link (`rd_v`) | foot | 92 | 12 | 0 → 0 | — | — | foot road, 92 tiles (12 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Cinder Freight (1) (`rd_w`) | foot | 332 | 192 | 0 → 2 | 96 | trail cache (harsh ground: grade raised) @3130,1695; trail cache (harsh ground: grade raised) @3226,1600 | foot road, 332 tiles (192 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Cinder Freight (2) (`rd_x`) | foot | 587 | 316 | 0 → 2 | 158 | trail cache (harsh ground: grade raised) @3251,1882; cargo lost at the ford @3341,1913 | foot road, 587 tiles (316 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; the road fords a river: one lost-cargo crate at the crossing |
-| Cinder Freight (3) (`rd_y`) | foot | 47 | 0 | 0 → 0 | — | — | foot road, 47 tiles (0 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Saltwick Freight (1) (`rd_z`) | cart | 217 | 88 | 0 → 1 | 88 | roadside wreck / dropped load @3216,678 | cart road, 217 tiles (88 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Saltwick Freight (2) (`rd_10`) | cart | 150 | 100 | 0 → 0 | — | — | cart road, 150 tiles (100 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Ironholm Freight (1) (`rd_11`) | cart | 182 | 44 | 2 → 2 | 22 | — | cart road, 182 tiles (44 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Ironholm Freight (2) (`rd_12`) | cart | 100 | 8 | 0 → 0 | — | — | cart road, 100 tiles (8 outside any site); a cache about every 180 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Elderwood Trail (1) (`rd_13`) | trail | 231 | 24 | 2 → 2 | 12 | — | trail road, 231 tiles (24 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Elderwood Trail (3) (`rd_14`) | trail | 132 | 72 | 0 → 0 | — | — | trail road, 132 tiles (72 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Sap Grove Trail (1) (`rd_15`) | trail | 73 | 32 | 0 → 0 | — | — | trail road, 73 tiles (32 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Kilns Trail (1) (`rd_16`) | trail | 229 | 112 | 2 → 2 | 56 | — | trail road, 229 tiles (112 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Kilns Trail (2) (`rd_17`) | trail | 120 | 56 | 0 → 0 | — | — | trail road, 120 tiles (56 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Typhon Approach (2) (`rd_18`) | trail | 311 | 252 | 0 → 1 | 252 | trail cache (harsh ground: grade raised) @1165,890 | trail road, 311 tiles (252 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Academy Trail (1) (`rd_19`) | trail | 29 | 0 | 2 → 2 | — | — | trail road, 29 tiles (0 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Academy Trail (2) (`rd_1a`) | trail | 194 | 132 | 2 → 2 | 66 | — | trail road, 194 tiles (132 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Archive Trail (1) (`rd_1b`) | trail | 31 | 0 | 2 → 2 | — | — | trail road, 31 tiles (0 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Archive Trail (2) (`rd_1c`) | trail | 170 | 52 | 2 → 2 | 26 | — | trail road, 170 tiles (52 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Lantern Trail (`rd_1d`) | trail | 205 | 112 | 0 → 1 | 112 | trail cache (harsh ground: grade raised) @2015,304 | trail road, 205 tiles (112 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Kestrel Trail (`rd_1e`) | trail | 407 | 364 | 0 → 2 | 182 | trail cache (harsh ground: grade raised) @1685,650; trail cache (harsh ground: grade raised) @1531,636 | trail road, 407 tiles (364 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Dune Rim Trail (1) (`rd_1f`) | trail | 167 | 96 | 0 → 0 | — | — | trail road, 167 tiles (96 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Dune Rim Trail (2) (`rd_1g`) | trail | 264 | 224 | 0 → 1 | 224 | trail cache (harsh ground: grade raised) @1101,1961 | trail road, 264 tiles (224 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Tomb West Trail (1) (`rd_1h`) | trail | 116 | 80 | 0 → 0 | — | — | trail road, 116 tiles (80 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Tomb West Trail (2) (`rd_1i`) | trail | 135 | 100 | 0 → 0 | — | — | trail road, 135 tiles (100 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Rapids Portage Trail (1) (`rd_1j`) | trail | 140 | 100 | 0 → 0 | — | — | trail road, 140 tiles (100 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Rapids Portage Trail (2) (`rd_1k`) | trail | 198 | 140 | 0 → 0 | — | — | trail road, 198 tiles (140 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Dune Trail (`rd_1l`) | trail | 181 | 120 | 0 → 1 | 120 | trail cache (harsh ground: grade raised) @1225,2011 | trail road, 181 tiles (120 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Tomb Trail (1) (`rd_1m`) | trail | 38 | 38 | 0 → 0 | — | — | trail road, 38 tiles (38 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Hook Mere Trail (`rd_1n`) | trail | 110 | 64 | 0 → 0 | — | — | trail road, 110 tiles (64 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Delta Levee Path (`rd_1o`) | foot | 56 | 0 | 0 → 0 | — | — | foot road, 56 tiles (0 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Fish Camp Path (`rd_1p`) | foot | 264 | 160 | 0 → 1 | 160 | trail cache @806,1559 | foot road, 264 tiles (160 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Wreck Isle Path (`rd_1q`) | foot | 100 | 8 | 0 → 0 | — | — | foot road, 100 tiles (8 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Threshold Path (`rd_1r`) | foot | 122 | 16 | 0 → 0 | — | — | foot road, 122 tiles (16 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Ember Watch Trail (1) (`rd_1s`) | trail | 182 | 140 | 0 → 1 | 140 | trail cache @3187,1536 | trail road, 182 tiles (140 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Ember Watch Trail (1) (`rd_1t`) | trail | 86 | 0 | 0 → 0 | — | — | trail road, 86 tiles (0 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Ember Watch Trail (2) (`rd_1u`) | trail | 139 | 0 | 0 → 0 | — | — | trail road, 139 tiles (0 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Salt Light Trail (`rd_1v`) | trail | 216 | 128 | 0 → 1 | 128 | trail cache @3444,634 | trail road, 216 tiles (128 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Greywater–Mill Forest Detour (1) (`rd_1w`) | trail | 112 | 24 | 0 → 0 | — | — | trail road, 112 tiles (24 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Greywater–Mill Forest Detour (2) (`rd_1x`) | trail | 34 | 0 | 0 → 0 | — | — | trail road, 34 tiles (0 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Falls–Kestrel Ridge Detour (`rd_1y`) | foot | 341 | 296 | 0 → 2 | 148 | trail cache (harsh ground: grade raised) @1561,865; trail cache (harsh ground: grade raised) @1546,740 | foot road, 341 tiles (296 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Coast Detour (`rd_1z`) | foot | 25 | 0 | 0 → 0 | — | — | foot road, 25 tiles (0 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Greywater West Bank Path (`rd_20`) | riverside | 618 | 488 | 0 → 1 | 488 | trail cache @1720,1218 | riverside road, 618 tiles (488 outside any site); a cache about every 170 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Eastwater North Bank Path (`rd_21`) | riverside | 223 | 223 | 0 → 1 | 223 | trail cache @2500,1044 | riverside road, 223 tiles (223 outside any site); a cache about every 170 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Lối ra bến Hook Quay (`rd_22`) | trail | 250 | 164 | 0 → 1 | 164 | trail cache @2731,681 | trail road, 250 tiles (164 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Lối ra bến Saltwick East Landing (`rd_23`) | trail | 93 | 93 | 0 → 0 | — | — | trail road, 93 tiles (93 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Lối ra bến Gull Isle Dock (`rd_24`) | trail | 70 | 0 | 0 → 0 | — | — | trail road, 70 tiles (0 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Lối ra bến Ironholm Harbor Dock (`rd_25`) | trail | 104 | 0 | 0 → 0 | — | — | trail road, 104 tiles (0 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Lối ra bến Wreck Isle Dock (`rd_26`) | trail | 98 | 56 | 0 → 0 | — | — | trail road, 98 tiles (56 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Lối ra bến Beacon Rock Landing (`rd_27`) | trail | 42 | 0 | 0 → 0 | — | — | trail road, 42 tiles (0 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Lối ra bến Gulfhead Quay (`rd_28`) | trail | 154 | 0 | 0 → 0 | — | — | trail road, 154 tiles (0 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Lối ra bến Greywater North Landing (`rd_29`) | trail | 109 | 109 | 0 → 0 | — | — | trail road, 109 tiles (109 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Lối ra bến Verdant North Landing (`rd_2a`) | trail | 142 | 142 | 0 → 1 | 142 | trail cache (harsh ground: grade raised) @1993,645 | trail road, 142 tiles (142 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge |
-| Lối ra bến Delta Sluice Dock (`rd_2b`) | trail | 69 | 69 | 0 → 0 | — | — | trail road, 69 tiles (69 outside any site); a cache about every 140 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its chests are the sites’ own, none added |
-| Cầu Mossbrook (`br_0`) | bridge | 0 | 0 | 0 → 0 | — | — | bridge inside a site footprint: covered by the site |
-| Cầu Timber Cut Canal (`br_1`) | bridge | 0 | 0 | 0 → 0 | — | — | bridge inside a site footprint: covered by the site |
-| Cầu Eastwater River (`br_2`) | bridge | 0 | 0 | 0 → 0 | — | — | no free verge tile at either bridgehead: none placed |
-| Cầu Greywater River (`br_3`) | bridge | 0 | 0 | 0 → 0 | — | — | bridge inside a site footprint: covered by the site |
-| Cầu Silverrun (`br_4`) | bridge | 0 | 0 | 0 → 0 | — | — | bridge inside a site footprint: covered by the site |
-| Cầu Greywater River (`br_5`) | bridge | 0 | 0 | 0 → 0 | — | — | no free verge tile at either bridgehead: none placed |
-| Cầu Mossbrook (`br_6`) | bridge | 0 | 0 | 0 → 0 | — | — | bridge inside a site footprint: covered by the site |
-| Cầu Salt Brook (`br_7`) | bridge | 0 | 0 | 0 → 0 | — | — | no free verge tile at either bridgehead: none placed |
-| Cầu Eastwater River (`br_8`) | bridge | 0 | 0 | 0 → 0 | — | — | bridge inside a site footprint: covered by the site |
-| Cầu Greywater River (thượng lưu) (`br_9`) | bridge | 0 | 0 | 0 → 1 | — | bridgehead repair cache @1548,911 | a crossing is a natural stop and choke point: one repair cache at the bridgehead |
-| Cầu Silverrun (`br_a`) | bridge | 0 | 0 | 0 → 1 | — | bridgehead repair cache @1764,1290 | a crossing is a natural stop and choke point: one repair cache at the bridgehead |
-| Cầu Delta East Channel (`br_b`) | bridge | 0 | 0 | 0 → 0 | — | — | bridge inside a site footprint: covered by the site |
-| Westmouth Pier (`dk_westmouth`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Emberport Quay (`dk_emberport`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Cinder Camp Dock (`dk_cinder`) | dock | 0 | 0 | 0 → 0 | — | — | no road verge at this landing in the compiled runtime: none placed |
-| Hook Quay (`dk_hook`) | dock | 0 | 0 | 0 → 1 | — | landing cache @2823,741 | free-standing landing: one cache where boats unload |
-| Saltwick Harbor Dock (`dk_saltwick`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Saltwick East Landing (`dk_saltwick_e`) | dock | 0 | 0 | 0 → 1 | — | landing cache @3541,653 | free-standing landing: one cache where boats unload |
-| Gull Isle Dock (`dk_gull`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Southfoot Dock (`dk_southfoot`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Ironholm Harbor Dock (`dk_ironholm`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Drowned Pier Dock (`dk_threshold`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Wreck Isle Dock (`dk_wreck`) | dock | 0 | 0 | 0 → 1 | — | landing cache (harsh ground: grade raised) @460,1736 | free-standing landing: one cache where boats unload |
-| Beacon Rock Landing (`dk_beacon`) | dock | 0 | 0 | 0 → 0 | — | — | no road verge at this landing in the compiled runtime: none placed |
-| Fish Camp Pier (`dk_fishcamp`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Sandgate Dock (`dk_sandgate`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Gulfhead Quay (`dk_gulfhead`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Westbank Landing Dock (`dk_westbank`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Strait Landing Dock (`dk_strait`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Greywater North Landing (`dk_grey_n`) | dock | 0 | 0 | 0 → 1 | — | landing cache @1601,999 | free-standing landing: one cache where boats unload |
-| Greywater Hamlet Dock (`dk_grey_s`) | dock | 0 | 0 | 0 → 0 | — | — | no road verge at this landing in the compiled runtime: none placed |
-| Timberyard Dock (`dk_verdant_s`) | dock | 0 | 0 | 0 → 0 | — | — | no road verge at this landing in the compiled runtime: none placed |
-| Verdant North Landing (`dk_verdant_n`) | dock | 0 | 0 | 0 → 1 | — | landing cache @1970,714 | free-standing landing: one cache where boats unload |
-| Mossbrook Mill Dock (`dk_moss`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Confluence Landing (`dk_confl`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Mirage Pool Landing (`dk_mirage`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Hook Mere Pier Dock (`dk_mere`) | dock | 0 | 0 | 0 → 0 | — | — | dock inside a site footprint: covered by the site |
-| Delta Sluice Dock (`dk_delta`) | dock | 0 | 0 | 0 → 1 | — | landing cache @1933,1760 | free-standing landing: one cache where boats unload |
-| Saddle Lock Basin (`dk_canal`) | dock | 0 | 0 | 0 → 0 | — | — | no road verge at this landing in the compiled runtime: none placed |
-| Junction of rd_0 + rd_1 (`jn_00`) | junction | 0 | 0 | 0 → 1 | — | waypoint cache at the fork @2101,1566 | roads meet away from any site: a waypoint cache at the fork |
-| Junction of rd_6 + rd_7 (`jn_01`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_2 + rd_7 (`jn_02`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_9 + rd_a (`jn_03`) | junction | 0 | 0 | 0 → 1 | — | waypoint cache at the fork @1807,1213 | roads meet away from any site: a waypoint cache at the fork |
-| Junction of rd_b + rd_d (`jn_04`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_8 + rd_j (`jn_05`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_0 + rd_n + rd_v (`jn_06`) | junction | 0 | 0 | 0 → 1 | — | waypoint cache at the fork @2042,1533 | roads meet away from any site: a waypoint cache at the fork |
-| Junction of rd_r + rd_s (`jn_07`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_18 + rd_s (`jn_08`) | junction | 0 | 0 | 0 → 1 | — | waypoint cache at the fork (harsh ground: grade raised) @1243,930 | roads meet away from any site: a waypoint cache at the fork |
-| Junction of rd_1a + rd_1c (`jn_09`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_1e + rd_h (`jn_10`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_1f + rd_1g (`jn_11`) | junction | 0 | 0 | 0 → 1 | — | waypoint cache at the fork (harsh ground: grade raised) @1195,1937 | roads meet away from any site: a waypoint cache at the fork |
-| Junction of rd_1h + rd_1i (`jn_12`) | junction | 0 | 0 | 0 → 1 | — | waypoint cache at the fork (harsh ground: grade raised) @935,2096 | roads meet away from any site: a waypoint cache at the fork |
-| Junction of rd_1 + rd_1j (`jn_13`) | junction | 0 | 0 | 0 → 1 | — | waypoint cache at the fork @2183,995 | roads meet away from any site: a waypoint cache at the fork |
-| Junction of rd_1k + rd_8 (`jn_14`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_1f + rd_1l (`jn_15`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_1s + rd_w (`jn_16`) | junction | 0 | 0 | 0 → 1 | — | waypoint cache at the fork @3162,1641 | roads meet away from any site: a waypoint cache at the fork |
-| Junction of rd_1e + rd_1y (`jn_17`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_21 + rd_5 (`jn_18`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_1v + rd_23 (`jn_19`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_1y + rd_29 (`jn_20`) | junction | 0 | 0 | 0 → 0 | — | — | a road chest already stands within 60 tiles or there is no free verge: none placed |
-| Junction of rd_2a + rd_i (`jn_21`) | junction | 0 | 0 | 0 → 1 | — | waypoint cache at the fork (harsh ground: grade raised) @2026,593 | roads meet away from any site: a waypoint cache at the fork |
+| road | kind | tiles | outside POI | harsh | base | added | rationale |
+|---|---|---:|---:|---:|---:|---:|---|
+| Gulf–Mossbrook Freight Trunk (1) | cart | 382 | 260 | 0 | 0 | 1 | cart road, 382 tiles (260 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Gulf–Mossbrook Freight Trunk (2) | cart | 832 | 560 | 0 | 0 | 3 | cart road, 832 tiles (560 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| East Ore Freight (1) | cart | 423 | 264 | 0 | 2 | 0 | cart road, 423 tiles (264 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| East Ore Freight (2) | cart | 216 | 76 | 0 | 2 | 0 | cart road, 216 tiles (76 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| East Ore Freight (2) | cart | 232 | 128 | 0 | 0 | 1 | cart road, 232 tiles (128 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| East Ore Freight (3) | cart | 762 | 612 | 0 | 0 | 3 | cart road, 762 tiles (612 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Gulf Coast Freight (1) | cart | 320 | 176 | 0 | 4 | 0 | cart road, 320 tiles (176 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Gulf Coast Freight (2) | cart | 82 | 82 | 0 | 0 | 0 | cart road, 82 tiles (82 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Hook Road | cart | 637 | 516 | 0 | 0 | 4 | cart road, 637 tiles (516 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Greywater Cross Freight (1) | cart | 356 | 144 | 0 | 0 | 1 | cart road, 356 tiles (144 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Greywater Cross Freight (2) | cart | 426 | 308 | 0 | 0 | 2 | cart road, 426 tiles (308 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| West Forest Freight (1) | cart | 273 | 152 | 0 | 4 | 0 | cart road, 273 tiles (152 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| West Forest Freight (1) | cart | 28 | 0 | 0 | 0 | 0 | cart road, 28 tiles (0 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its che |
+| West Forest Freight (2) | cart | 1033 | 736 | 0 | 0 | 3 | cart road, 1033 tiles (736 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Falls Road (1) | cart | 41 | 0 | 0 | 0 | 0 | cart road, 41 tiles (0 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its che |
+| Falls Road (2) | cart | 167 | 84 | 0 | 0 | 0 | cart road, 167 tiles (84 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Falls Road (3) | foot | 48 | 8 | 0 | 0 | 0 | foot road, 48 tiles (8 outside any site); a cache about every 130 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its che |
+| North Road | cart | 625 | 524 | 0 | 0 | 3 | cart road, 625 tiles (524 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Lantern Road (1) | cart | 329 | 232 | 0 | 0 | 1 | cart road, 329 tiles (232 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Lantern Road (2) | cart | 262 | 220 | 0 | 0 | 1 | cart road, 262 tiles (220 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Bone Road (1) | cart | 303 | 164 | 0 | 0 | 1 | cart road, 303 tiles (164 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Bone Road (2) | cart | 155 | 76 | 0 | 0 | 1 | cart road, 155 tiles (76 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Bone Road (3) | cart | 366 | 140 | 0 | 0 | 1 | cart road, 366 tiles (140 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Bone Road (1) | cart | 442 | 248 | 0 | 0 | 2 | cart road, 442 tiles (248 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Bone Road (2) | cart | 24 | 0 | 0 | 0 | 0 | cart road, 24 tiles (0 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its che |
+| Old Pump Link (1) | cart | 11 | 0 | 0 | 0 | 0 | cart road, 11 tiles (0 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its che |
+| Old Pump Link (2) | cart | 24 | 0 | 0 | 0 | 0 | cart road, 24 tiles (0 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its che |
+| West Coast Road (1) | cart | 425 | 292 | 0 | 0 | 2 | cart road, 425 tiles (292 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| West Coast Road (1) | cart | 587 | 556 | 0 | 0 | 4 | cart road, 587 tiles (556 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| West Coast Road (2) | cart | 26 | 0 | 0 | 0 | 0 | cart road, 26 tiles (0 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its che |
+| Southfoot Freight | cart | 293 | 184 | 0 | 0 | 1 | cart road, 293 tiles (184 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Silo Link | foot | 92 | 12 | 0 | 0 | 0 | foot road, 92 tiles (12 outside any site); a cache about every 130 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its ch |
+| Cinder Freight (1) | foot | 332 | 192 | 0 | 0 | 2 | foot road, 332 tiles (192 outside any site); a cache about every 130 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Cinder Freight (2) | foot | 587 | 316 | 0 | 0 | 2 | foot road, 587 tiles (316 outside any site); a cache about every 130 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Cinder Freight (3) | foot | 47 | 0 | 0 | 0 | 0 | foot road, 47 tiles (0 outside any site); a cache about every 130 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its che |
+| Saltwick Freight (1) | cart | 217 | 88 | 0 | 0 | 1 | cart road, 217 tiles (88 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Saltwick Freight (2) | cart | 150 | 100 | 0 | 0 | 0 | cart road, 150 tiles (100 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Ironholm Freight (1) | cart | 182 | 44 | 0 | 2 | 0 | cart road, 182 tiles (44 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its c |
+| Ironholm Freight (2) | cart | 100 | 8 | 0 | 0 | 0 | cart road, 100 tiles (8 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its ch |
+| Elderwood Trail (1) | trail | 231 | 24 | 0 | 2 | 0 | trail road, 231 tiles (24 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its  |
+| Elderwood Trail (3) | trail | 132 | 72 | 0 | 0 | 0 | trail road, 132 tiles (72 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Sap Grove Trail (1) | trail | 73 | 32 | 0 | 0 | 0 | trail road, 73 tiles (32 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its c |
+| Kilns Trail (1) | trail | 229 | 112 | 0 | 2 | 0 | trail road, 229 tiles (112 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Kilns Trail (2) | trail | 120 | 56 | 0 | 0 | 0 | trail road, 120 tiles (56 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its  |
+| Typhon Approach (2) | trail | 311 | 252 | 0 | 0 | 2 | trail road, 311 tiles (252 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Academy Trail (1) | trail | 29 | 0 | 0 | 2 | 0 | trail road, 29 tiles (0 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its ch |
+| Academy Trail (2) | trail | 194 | 132 | 0 | 2 | 0 | trail road, 194 tiles (132 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Archive Trail (1) | trail | 31 | 0 | 0 | 2 | 0 | trail road, 31 tiles (0 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its ch |
+| Archive Trail (2) | trail | 170 | 52 | 0 | 2 | 0 | trail road, 170 tiles (52 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its  |
+| Lantern Trail | trail | 205 | 112 | 0 | 0 | 1 | trail road, 205 tiles (112 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Kestrel Trail | trail | 407 | 364 | 0 | 0 | 2 | trail road, 407 tiles (364 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Dune Rim Trail (1) | trail | 167 | 96 | 0 | 0 | 0 | trail road, 167 tiles (96 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Dune Rim Trail (2) | trail | 264 | 224 | 0 | 0 | 1 | trail road, 264 tiles (224 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Tomb West Trail (1) | trail | 116 | 80 | 0 | 0 | 0 | trail road, 116 tiles (80 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Tomb West Trail (2) | trail | 135 | 100 | 0 | 0 | 1 | trail road, 135 tiles (100 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Rapids Portage Trail (1) | trail | 140 | 100 | 0 | 0 | 0 | trail road, 140 tiles (100 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Rapids Portage Trail (2) | trail | 198 | 140 | 0 | 0 | 0 | trail road, 198 tiles (140 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Dune Trail | trail | 181 | 120 | 0 | 0 | 1 | trail road, 181 tiles (120 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Tomb Trail (1) | trail | 38 | 38 | 0 | 0 | 0 | trail road, 38 tiles (38 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its c |
+| Hook Mere Trail | trail | 110 | 64 | 0 | 0 | 0 | trail road, 110 tiles (64 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its  |
+| Delta Levee Path | foot | 56 | 0 | 0 | 0 | 0 | foot road, 56 tiles (0 outside any site); a cache about every 130 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its che |
+| Fish Camp Path | foot | 264 | 160 | 0 | 0 | 1 | foot road, 264 tiles (160 outside any site); a cache about every 130 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Wreck Isle Path | foot | 100 | 8 | 0 | 0 | 0 | foot road, 100 tiles (8 outside any site); a cache about every 130 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its ch |
+| Threshold Path | foot | 122 | 16 | 0 | 0 | 0 | foot road, 122 tiles (16 outside any site); a cache about every 130 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its c |
+| Ember Watch Trail (1) | trail | 182 | 140 | 0 | 0 | 1 | trail road, 182 tiles (140 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Ember Watch Trail (1) | trail | 86 | 0 | 0 | 0 | 0 | trail road, 86 tiles (0 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its ch |
+| Ember Watch Trail (2) | trail | 139 | 0 | 0 | 0 | 0 | trail road, 139 tiles (0 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its c |
+| Salt Light Trail | trail | 216 | 128 | 0 | 0 | 1 | trail road, 216 tiles (128 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Greywater–Mill Forest Detour (1) | trail | 112 | 24 | 0 | 0 | 0 | trail road, 112 tiles (24 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its  |
+| Greywater–Mill Forest Detour (2) | trail | 34 | 0 | 0 | 0 | 0 | trail road, 34 tiles (0 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its ch |
+| Falls–Kestrel Ridge Detour | foot | 341 | 296 | 0 | 0 | 2 | foot road, 341 tiles (296 outside any site); a cache about every 130 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Coast Detour | foot | 25 | 0 | 0 | 0 | 0 | foot road, 25 tiles (0 outside any site); a cache about every 130 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its che |
+| Greywater West Bank Path | riverside | 618 | 488 | 0 | 0 | 1 | riverside road, 618 tiles (488 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Eastwater North Bank Path | riverside | 223 | 223 | 0 | 0 | 1 | riverside road, 223 tiles (223 outside any site); a cache about every 150 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Lối ra bến Hook Quay | trail | 250 | 164 | 0 | 0 | 1 | trail road, 250 tiles (164 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Lối ra bến Saltwick East Landing | trail | 93 | 93 | 0 | 0 | 1 | trail road, 93 tiles (93 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Lối ra bến Gull Isle Dock | trail | 70 | 0 | 0 | 0 | 0 | trail road, 70 tiles (0 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its ch |
+| Lối ra bến Ironholm Harbor Dock | trail | 104 | 0 | 0 | 0 | 0 | trail road, 104 tiles (0 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its c |
+| Lối ra bến Wreck Isle Dock | trail | 98 | 56 | 0 | 0 | 0 | trail road, 98 tiles (56 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its c |
+| Lối ra bến Beacon Rock Landing | trail | 42 | 0 | 0 | 0 | 0 | trail road, 42 tiles (0 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its ch |
+| Lối ra bến Gulfhead Quay | trail | 154 | 0 | 0 | 0 | 0 | trail road, 154 tiles (0 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its c |
+| Lối ra bến Greywater North Landing | trail | 109 | 109 | 0 | 0 | 1 | trail road, 109 tiles (109 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Lối ra bến Verdant North Landing | trail | 142 | 142 | 0 | 0 | 1 | trail road, 142 tiles (142 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge |
+| Lối ra bến Delta Sluice Dock | trail | 69 | 69 | 0 | 0 | 0 | trail road, 69 tiles (69 outside any site); a cache about every 115 tiles of open road, jittered ±25% and moved off the grid by the real verge; almost the whole road lies inside site footprints: its c |
+| Cầu Mossbrook | bridge | 0 | 0 | 0 | 0 | 0 | bridge inside a site footprint: covered by the site |
+| Cầu Timber Cut Canal | bridge | 0 | 0 | 0 | 0 | 0 | bridge inside a site footprint: covered by the site |
+| Cầu Eastwater River | bridge | 0 | 0 | 0 | 0 | 1 | a crossing is a natural stop and choke point: one repair cache at the bridgehead |
+| Cầu Greywater River | bridge | 0 | 0 | 0 | 0 | 0 | bridge inside a site footprint: covered by the site |
+| Cầu Silverrun | bridge | 0 | 0 | 0 | 0 | 0 | bridge inside a site footprint: covered by the site |
+| Cầu Greywater River | bridge | 0 | 0 | 0 | 0 | 1 | a crossing is a natural stop and choke point: one repair cache at the bridgehead |
+| Cầu Mossbrook | bridge | 0 | 0 | 0 | 0 | 0 | bridge inside a site footprint: covered by the site |
+| Cầu Salt Brook | bridge | 0 | 0 | 0 | 0 | 1 | a crossing is a natural stop and choke point: one repair cache at the bridgehead |
+| Cầu Eastwater River | bridge | 0 | 0 | 0 | 0 | 0 | bridge inside a site footprint: covered by the site |
+| Cầu Greywater River (thượng lưu) | bridge | 0 | 0 | 0 | 0 | 1 | a crossing is a natural stop and choke point: one repair cache at the bridgehead |
+| Cầu Silverrun | bridge | 0 | 0 | 0 | 0 | 1 | a crossing is a natural stop and choke point: one repair cache at the bridgehead |
+| Cầu Delta East Channel | bridge | 0 | 0 | 0 | 0 | 0 | bridge inside a site footprint: covered by the site |
+| Westmouth Pier | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Emberport Quay | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Cinder Camp Dock | dock | 0 | 0 | 0 | 0 | 0 | no road verge at this landing in the compiled runtime: none placed |
+| Hook Quay | dock | 0 | 0 | 0 | 0 | 1 | free-standing landing: one cache where boats unload |
+| Saltwick Harbor Dock | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Saltwick East Landing | dock | 0 | 0 | 0 | 0 | 0 | no road verge at this landing in the compiled runtime: none placed |
+| Gull Isle Dock | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Southfoot Dock | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Ironholm Harbor Dock | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Drowned Pier Dock | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Wreck Isle Dock | dock | 0 | 0 | 0 | 0 | 1 | free-standing landing: one cache where boats unload |
+| Beacon Rock Landing | dock | 0 | 0 | 0 | 0 | 0 | no road verge at this landing in the compiled runtime: none placed |
+| Fish Camp Pier | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Sandgate Dock | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Gulfhead Quay | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Westbank Landing Dock | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Strait Landing Dock | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Greywater North Landing | dock | 0 | 0 | 0 | 0 | 1 | free-standing landing: one cache where boats unload |
+| Greywater Hamlet Dock | dock | 0 | 0 | 0 | 0 | 0 | no road verge at this landing in the compiled runtime: none placed |
+| Timberyard Dock | dock | 0 | 0 | 0 | 0 | 0 | no road verge at this landing in the compiled runtime: none placed |
+| Verdant North Landing | dock | 0 | 0 | 0 | 0 | 1 | free-standing landing: one cache where boats unload |
+| Mossbrook Mill Dock | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Confluence Landing | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Mirage Pool Landing | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Hook Mere Pier Dock | dock | 0 | 0 | 0 | 0 | 0 | dock inside a site footprint: covered by the site |
+| Delta Sluice Dock | dock | 0 | 0 | 0 | 0 | 1 | free-standing landing: one cache where boats unload |
+| Saddle Lock Basin | dock | 0 | 0 | 0 | 0 | 0 | no road verge at this landing in the compiled runtime: none placed |
+| Junction of rd_0 + rd_1 | junction | 0 | 0 | 0 | 0 | 1 | roads meet away from any site: a waypoint cache at the fork |
+| Junction of rd_6 + rd_7 | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_2 + rd_7 | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_9 + rd_a | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_b + rd_d | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_8 + rd_j | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_0 + rd_n + rd_v | junction | 0 | 0 | 0 | 0 | 1 | roads meet away from any site: a waypoint cache at the fork |
+| Junction of rd_r + rd_s | junction | 0 | 0 | 0 | 0 | 1 | roads meet away from any site: a waypoint cache at the fork |
+| Junction of rd_18 + rd_s | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_1a + rd_1c | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_1e + rd_h | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_1f + rd_1g | junction | 0 | 0 | 0 | 0 | 1 | roads meet away from any site: a waypoint cache at the fork |
+| Junction of rd_1h + rd_1i | junction | 0 | 0 | 0 | 0 | 1 | roads meet away from any site: a waypoint cache at the fork |
+| Junction of rd_1 + rd_1j | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_1k + rd_8 | junction | 0 | 0 | 0 | 0 | 1 | roads meet away from any site: a waypoint cache at the fork |
+| Junction of rd_1f + rd_1l | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_1s + rd_w | junction | 0 | 0 | 0 | 0 | 1 | roads meet away from any site: a waypoint cache at the fork |
+| Junction of rd_1e + rd_1y | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_21 + rd_5 | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_1v + rd_23 | junction | 0 | 0 | 0 | 0 | 1 | roads meet away from any site: a waypoint cache at the fork |
+| Junction of rd_1y + rd_29 | junction | 0 | 0 | 0 | 0 | 0 | a road chest already stands within 60 tiles or there is no free verge: none placed |
+| Junction of rd_2a + rd_i | junction | 0 | 0 | 0 | 0 | 1 | roads meet away from any site: a waypoint cache at the fork |

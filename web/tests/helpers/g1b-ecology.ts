@@ -153,6 +153,33 @@ function ownerOf(rooms: any[], x: number, y: number): any {
 }
 const inRing = (pts: number[][], x: number, y: number) => { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const xi = pts[i][0], yi = pts[i][1], xj = pts[j][0], yj = pts[j][1]; if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c; } return c; };
 
+/** Chest candidate tiles in a space: standable, against a wall or cover, off thresholds / stairs / objects, and never plugging a lane. */
+function chestCandidates(s: Site, lv: number, reach: [number, number][], reachAll: Set<string>, taken: Set<string>, all: { lv: number; gx: number; gy: number }[]): [number, number, number, [number, number], number][] {
+  const out: [number, number, number, [number, number], number][] = [];
+  for (const [x, y] of reach) {
+    if (taken.has(`${lv}:${x},${y}`) || s.isStairEnd(lv, x, y)) continue;
+    if (N4.some(([dx, dy]) => s.isDoor(lv, x + dx, y + dy) || s.isStairEnd(lv, x + dx, y + dy))) continue;
+    let near = false; for (let dy = -2; dy <= 2 && !near; dy++) for (let dx = -2; dx <= 2; dx++) if (s.isDoor(lv, x + dx, y + dy)) { near = true; break; } if (near) continue;
+    if (lv === 0) { let bad = false; for (let dy = -1; dy <= 1 && !bad; dy++) for (let dx = -1; dx <= 1; dx++) if (s.src3(x + dx, y + dy)) { bad = true; break; } if (bad || !s.prot(x, y)) continue; }
+    const solid = (dx: number, dy: number) => !s.pass(lv, x + dx, y + dy) && !s.isDoor(lv, x + dx, y + dy);
+    const north = solid(0, -1), side = solid(-1, 0) || solid(1, 0), south = solid(0, 1);
+    if (!north && !side && !south) continue;
+    const ap = keepsJoined(s, lv, taken, x, y); if (!ap) continue;
+    const apr = N4.map(([dx, dy]) => [x + dx, y + dy] as [number, number]).find(([ax, ay]) => reachAll.has(`${lv}:${ax},${ay}`) && s.pass(lv, ax, ay) && !taken.has(`${lv}:${ax},${ay}`)); if (!apr) continue;
+    const solids = (north ? 1 : 0) + (side ? (solid(-1, 0) && solid(1, 0) ? 2 : 1) : 0) + (south ? 1 : 0);
+    out.push([x, y, (north ? 0 : side ? 1 : 2) + ((north && side) ? -0.5 : 0) + u01(`${x},${y}`) * 0.4, apr, solids]);
+  }
+  return out;
+}
+/** Wall-backed candidate tiles grouped into pockets: tiles within two tiles of each other are one pocket. */
+function pocketCount(cands: [number, number, number, [number, number], number][]): number {
+  const pts = cands.map(q => [q[0], q[1]] as [number, number]); const seen = new Set<string>(); let n = 0;
+  for (const [x, y] of pts) { const k = `${x},${y}`; if (seen.has(k)) continue; n++; const q: [number, number][] = [[x, y]]; seen.add(k); let head = 0;
+    while (head < q.length) { const [ax, ay] = q[head++]; for (const [bx, by] of pts) { const bk = `${bx},${by}`; if (seen.has(bk)) continue; if (Math.max(Math.abs(bx - ax), Math.abs(by - ay)) <= 2) { seen.add(bk); q.push([bx, by]); } } }
+  }
+  return n;
+}
+
 /* ───────────── the POI census ───────────── */
 export function buildEcology(log: (s: string) => void = () => {}): Ecology {
   setG1bFurnitureReservation(false);
@@ -215,7 +242,7 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
       if (row.kind === 'shell') { R.push('vendor / evacuation / recycler shell owned by another system: no G1B source'); continue; }
       if (row.kind === 'arena') { R.push('Primordial combat floor: a solid chest would change the fight, and its reward belongs to the encounter owner: no G1B source'); continue; }
       if (!row.reachable) { R.push(row.usable ? 'no walking route from the open ground reaches this space in the compiled runtime (reported, not deleted): no source until it is reachable' : 'no standable tile in the compiled runtime'); continue; }
-      if (row.kind === 'transit') { R.push('circulation (lane / stair landing / threshold / catwalk): a chest here would stand in the walking line and the space stores nothing'); continue; }
+      if (row.kind === 'transit') { R.push('circulation lane: the first pass places nothing in the walking line; the physical pass below places only where the geometry gives a real wall pocket, alcove or platform'); continue; }
       if (reach.length < 12 && !row.secret) { R.push(`only ${reach.length} standable tiles: too small to keep a chest and a clear lane`); continue; }
       const [fam, why] = famOf(row.name, row.struct, row.arche);
       let family: Family = fam; let n = 0;
@@ -274,12 +301,67 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
         if (!keepsJoined(s, lv, taken, x, y)) { cand.splice(cand.indexOf(ok[0]), 1); k--; continue; }
         let f1: Family = (row as any)._first && !row.added.length && !row.base.length ? (row as any)._first : family;
         // Military is the Core lever: an ungated ground room that is not behind a card, a hidden wall or a climb holds at most ONE case
-        if (f1 === 'military' && row.danger + row.access < 4 && (row.added.length || row.base.length)) { f1 = 'supply'; if (!R.some(q => q.startsWith('one Military Case'))) R.push('one Military Case only (the room is neither gated, hidden nor on another storey): the other chest is Supply'); }
+        if (f1 === 'military' && (row.danger < 3 || (row.danger + row.access < 4 && (row.added.length || row.base.length)))) { f1 = 'supply'; if (!R.some(q => q.startsWith('one Military Case'))) R.push('one Military Case only (the room is neither gated, hidden nor on another storey, nor danger-3+): the other chest is Supply'); }
         const variant = `${f1}_${gradeOf(f1, score, false)}`;
         const id = mkId(poi, variant, `${lv < 0 ? 'b' + -lv : 'f' + lv}.${row.id.split('/')[2].toLowerCase().replace(/[^a-z0-9_]/g, '_')}`);
         taken.add(`${lv}:${x},${y}`); all.push({ lv, gx: x, gy: y }); mine.push([x, y]);
         sources.push({ id, site: poi, zone: row.gate ? 'CARD_ROOM' : 'POI', variant, gx: x, gy: y, level: lv as any, place: `${row.kind}:${row.name}`, space: row.id, ...(row.gate ? { gate: row.gate } : {}), ax: apr[0], ay: apr[1] });
         row.added.push(id);
+      }
+    }
+    /* ───────── batch 3: physical capacity pass ─────────
+       Runs after the round-2 pass, so every source id and tile placed above is unchanged. It adds chests where the
+       space's real geometry (wall-backed pockets, area, storeys, gates, hazards) allows more than the round-2 heuristic
+       gave — and gives transit lanes a chest only inside a genuine alcove / platform / wall pocket, never in the line. */
+    for (const row of rows) {
+      const R = row.reasons; const reach: [number, number][] = (row as any)._reach; const lv = row.level;
+      if (row.kind === 'arena' || row.kind === 'shell' || !row.reachable) continue;   // the first pass already declined these; never add here
+      const big = reach.length;
+      const candsAll = chestCandidates(s, lv, reach, reachAll, taken, all);
+      const cands = row.kind === 'transit' ? candsAll.filter(q => q[4] >= 2) : candsAll;
+      const pockets = pocketCount(cands);
+      const have = row.base.length + row.added.length;
+      let cap = 0; const dscr = `${big} standable tiles, ${pockets} wall-backed pocket(s)`;
+      if (row.kind === 'transit') {
+        const fn = /platform|landing|alcove|shelter|stop|rest area|dock|bay|perch|gallery|arcade|colonnade|cloisters?|vestibule|ante|niche|spur|fork|crossing|passing|gatehouse|watch|sentry|lookout|overlook|beacon|relay|cache|store|shed|booth|stall|hut|cabin|lodge|house|annex|office|hall|room|work|shop|market|yard|court|plaza|square|forecourt|apron|quay|wharf|pier|jetty|deck|terrace|balcony|veranda|loggia|steps|stair|stairs|ramp|climb|summit|peak|ridge|crest|bastion|rampart|bulwark|parapet|wall|rim|ledge|cliff|escarpment|bridge|span|trestle|viaduct|causeway|ford|wayhouse|waystation|station|avenue|promenade|boulevard|street|road|lane|\bway\b|path|walk|route|corridor|processional|procession/i.test(row.name);
+        cap = fn && pockets ? Math.min(pockets, Math.max(1, Math.round(big / 420))) : 0;
+        if (!cap) R.push(pockets ? 'circulation with no functional stop in its name: the lane stays clear' : 'open span with no wall, alcove or platform to stand a chest against: the lane stays clear');
+      } else if (row.kind === 'yard' || (row.kind === 'roof' && row.open) || (row.kind === 'upper' && row.open)) {
+        const generalGround = /paving|grounds|\bcommon\b|green|square|clearing|labyrinth|terraces|\bwings\b|promenade|avenue|court|plaza/i.test(row.name) && !/work|freight|ore|market|fish|net|date|caravan|sorting|cargo|loading|transfer|receiving|quay|wharf|dock|plots|garden|salt|mill|forge|kiln|pump|filter|saw|smelt/i.test(row.name);
+        if (generalGround) { cap = pockets >= 2 && row.danger >= 3 ? 1 : 0; R.push(cap ? `general open ground in a danger-${row.danger} site: one cache against cover, the rest is crossed` : 'general open ground (paving / green / common): people cross it, nothing is stored in the open'); }
+        else if (!YARD_FUNCTION.test(row.name) && pockets < 2) { cap = 0; R.push('open ground with no working function in its name and no covered pocket: nothing is stored in the open'); }
+        else { cap = Math.min(pockets, Math.max(1, Math.round(big / 260))); R.push(`working ground (${dscr}): up to ${cap} chest${cap === 1 ? '' : 's'} against cover`); }
+      } else {
+        cap = Math.max(1, Math.round(big / 180));
+        if (row.danger + row.access >= 4 && pockets >= 2) cap += 1;
+        if (row.danger >= 4 && big >= 400 && pockets >= 3) cap += 1;
+        cap = Math.min(cap, pockets, 5);
+        R.push(`${row.kind} (${dscr}): physical capacity ${cap} chest${cap === 1 ? '' : 's'} (size, wall pockets, danger ${row.danger} + access ${row.access})`);
+      }
+      row.want = Math.max(row.want, cap);
+      const need2 = Math.max(0, cap - have);
+      if (!need2) continue;
+      const [fam, why] = row.family ? [row.family as Family, 'the room’s function'] as [Family, string] : famOf(row.name, row.struct, row.arche);
+      let family: Family = fam;
+      const score = Math.min(6, row.danger + row.access);
+      const grade = gradeOf(family, score, WRECKED.test(row.name) || WRECKED.test(row.poiName));
+      row.family = row.family ?? family; row.grade = row.grade ?? grade;
+      const mine: [number, number][] = row.base.map(id => { const b = BASE.find(q => q.id === id)!; return [b.gx, b.gy]; })
+        .concat(row.added.map(id => sources.find(q => q.id === id)!).map(q => [q.gx, q.gy] as [number, number]));
+      for (let k = 0; k < need2; k++) {
+        const ok = cands.filter(([x, y]) => !taken.has(`${lv}:${x},${y}`) && all.every(o => o.lv !== lv || Math.max(Math.abs(o.gx - x), Math.abs(o.gy - y)) >= 3));
+        if (!ok.length) { R.push(`no free wall tile for chest ${have + k + 1} without moving furniture: left out`); break; }
+        ok.sort((u, v) => { if (mine.length) { const du = Math.min(...mine.map(m => Math.abs(m[0] - u[0]) + Math.abs(m[1] - u[1]))), dv = Math.min(...mine.map(m => Math.abs(m[0] - v[0]) + Math.abs(m[1] - v[1]))); if (du !== dv) return dv - du; } return u[2] - v[2] || u[1] - v[1] || u[0] - v[0]; });
+        const [x, y, , apr, solids] = ok[0];
+        if (!keepsJoined(s, lv, taken, x, y)) { cands.splice(cands.indexOf(ok[0]), 1); k--; continue; }
+        let f1: Family = family;
+        if (f1 === 'military' && (row.danger < 3 || (row.danger + row.access < 4 && (row.added.length || row.base.length)))) { f1 = 'supply'; if (!R.some(q => q.startsWith('one Military Case'))) R.push('one Military Case only (the room is neither gated, hidden nor on another storey, nor danger-3+): the other chest is Supply'); }
+        const variant = `${f1}_${gradeOf(f1, score, false)}`;
+        const id = mkId(poi, variant, `${lv < 0 ? 'b' + -lv : 'f' + lv}.${row.id.split('/')[2].toLowerCase().replace(/[^a-z0-9_]/g, '_')}`);
+        taken.add(`${lv}:${x},${y}`); all.push({ lv, gx: x, gy: y }); mine.push([x, y]);
+        sources.push({ id, site: poi, zone: row.gate ? 'CARD_ROOM' : 'POI', variant, gx: x, gy: y, level: lv as any, place: `${row.kind}:${row.name}`, space: row.id, ...(row.gate ? { gate: row.gate } : {}), ax: apr[0], ay: apr[1] });
+        row.added.push(id);
+        R.push(`physical placement: chest ${have + k + 1} of ${cap} against a wall pocket (${solids} solid sides)`);
       }
     }
     for (const row of rows) { delete (row as any)._cells; delete (row as any)._reach; delete (row as any)._first; spaces.push(row); }
@@ -333,7 +415,7 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
     const seg: number[] = []; let total = 0; for (let i = 0; i < pts.length - 1; i++) { const d = Math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][1] - pts[i][1]); seg.push(d); total += d; }
     const at = (d: number): [number, number] => { for (let i = 0; i < seg.length; i++) { if (d <= seg[i]) { const t = seg[i] ? d / seg[i] : 0; return [Math.round(pts[i][0] + (pts[i + 1][0] - pts[i][0]) * t), Math.round(pts[i][1] + (pts[i + 1][1] - pts[i][1]) * t)]; } d -= seg[i]; } return [Math.round(pts[pts.length - 1][0]), Math.round(pts[pts.length - 1][1])]; };
     row.tiles = Math.round(total); let out = 0; for (let d = 0; d <= total; d += 4) { const [x, y] = at(d); if (!inPoi(x, y)) { out += 4; row.remoteMax = Math.max(row.remoteMax, Math.round(poiDist(x, y))); } } row.tilesOutsidePoi = Math.min(row.tiles, out);
-    const base = r.kind === 'cart' ? 180 : r.kind === 'trail' ? 140 : r.kind === 'riverside' ? 170 : 150;
+    const base = r.kind === 'cart' ? 150 : r.kind === 'trail' ? 115 : r.kind === 'riverside' ? 150 : 130;
     row.reasons.push(`${r.kind} road, ${row.tiles} tiles (${row.tilesOutsidePoi} outside any site); a cache about every ${base} tiles of open road, jittered ±25% and moved off the grid by the real verge`);
     if (row.tilesOutsidePoi < 70) { row.reasons.push('almost the whole road lies inside site footprints: its chests are the sites’ own, none added'); roads.push(row); continue; }
     let d = base * (0.45 + 0.4 * u01(r.id + '|start')), military = false, n = 0;
@@ -354,13 +436,13 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
   }
   const feat = (id: string, name: string, kind: string): RoadRow => { const row: RoadRow = { id, name, kind, tiles: 0, tilesOutsidePoi: 0, harshShare: 0, remoteMax: 0, base: [], added: [], features: [], reasons: [] }; roads.push(row); return row; };
   for (const b of P.bridges as any[]) { const x = Math.round(b.at[0] * 2), y = Math.round(b.at[1] * 2); const row = feat(b.id, b.name, 'bridge'); if (inPoi(x, y, 6)) { row.reasons.push('bridge inside a site footprint: covered by the site'); continue; }
-    let ok = false; for (const [dx, dy] of [[0, 0], [10, 0], [-10, 0], [0, 10], [0, -10], [14, 14], [-14, -14], [14, -14], [-14, 14]]) if (place(row, b.id, x + dx, y + dy, 'toolbox_damaged', 'head', 'bridgehead repair cache', 45)) { ok = true; break; }
+    let ok = false; for (const [dx, dy] of [[0, 0], [10, 0], [-10, 0], [0, 10], [0, -10], [14, 14], [-14, -14], [14, -14], [-14, 14], [20, 0], [-20, 0], [0, 20], [0, -20]]) if (place(row, b.id, x + dx, y + dy, 'toolbox_damaged', 'head', 'bridgehead repair cache', 40)) { ok = true; break; }
     row.reasons.push(ok ? 'a crossing is a natural stop and choke point: one repair cache at the bridgehead' : 'no free verge tile at either bridgehead: none placed'); }
   for (const dk of P.docks as any[]) { const x = Math.round(dk.at[0] * 2), y = Math.round(dk.at[1] * 2); const row = feat(dk.id, dk.name, 'dock'); if (inPoi(x, y, 6)) { row.reasons.push('dock inside a site footprint: covered by the site'); continue; }
-    let ok = false; for (const [dx, dy] of [[0, 0], [8, 0], [-8, 0], [0, 8], [0, -8], [12, 12], [-12, -12], [12, -12], [-12, 12]]) if (place(row, dk.id, x + dx, y + dy, u01(dk.id) < 0.5 ? 'supply_low' : 'food_low', 'landing', 'landing cache', 45)) { ok = true; break; }
+    let ok = false; for (const [dx, dy] of [[0, 0], [8, 0], [-8, 0], [0, 8], [0, -8], [12, 12], [-12, -12], [12, -12], [-12, 12], [16, 0], [-16, 0], [0, 16], [0, -16]]) if (place(row, dk.id, x + dx, y + dy, u01(dk.id) < 0.5 ? 'supply_low' : 'food_low', 'landing', 'landing cache', 40)) { ok = true; break; }
     row.reasons.push(ok ? 'free-standing landing: one cache where boats unload' : 'no road verge at this landing in the compiled runtime: none placed'); }
   junctions.forEach((j, i) => { const row = feat(`jn_${String(i).padStart(2, '0')}`, `Junction of ${j.roads.join(' + ')}`, 'junction');
-    const ok = place(row, row.id, j.x, j.y, 'supply_low', 'fork', 'waypoint cache at the fork', 60); row.reasons.push(ok ? 'roads meet away from any site: a waypoint cache at the fork' : 'a road chest already stands within 60 tiles or there is no free verge: none placed'); });
+    const ok = place(row, row.id, j.x, j.y, 'supply_low', 'fork', 'waypoint cache at the fork', 50); row.reasons.push(ok ? 'roads meet away from any site: a waypoint cache at the fork' : 'a road chest already stands within 60 tiles or there is no free verge: none placed'); });
   setG1bFurnitureReservation(true);
   return { sources, spaces, roads, notes, baseLevels: baseSpace };
 }

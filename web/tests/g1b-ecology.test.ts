@@ -49,8 +49,12 @@ describe('G1B ecology (frozen data)', () => {
     for (const r of [...C.spaces, ...C.roads]) for (const id of r.added) owned.set(id, (owned.get(id) ?? 0) + 1);
     for (const s of G1B_ECOLOGY_SOURCES) expect(owned.get(s.id), s.id).toBe(1);
     expect(owned.size).toBe(G1B_ECOLOGY_SOURCES.length);
-    // no source in a space the survey calls circulation, a combat floor, another owner's shell, or unreachable
-    for (const r of C.spaces) if (['transit', 'arena', 'shell'].includes(r.kind) || !r.reachable) expect(r.added.length, r.id).toBe(0);
+    // no source in a combat floor, another owner's shell, or an unreachable space; a transit lane may hold a chest
+    // ONLY where the survey recorded a real wall pocket / alcove (batch 3 physical pass), never in the walking line
+    for (const r of C.spaces) {
+      if (['arena', 'shell'].includes(r.kind) || !r.reachable) expect(r.added.length, r.id).toBe(0);
+      if (r.kind === 'transit' && r.added.length) expect(r.reasons.some(q => /wall pocket|physical placement/.test(q)), r.id).toBe(true);
+    }
     // every space that holds a chest explains itself
     for (const r of C.spaces) if (r.added.length) expect(r.reasons.length, r.id).toBeGreaterThan(1);
   });

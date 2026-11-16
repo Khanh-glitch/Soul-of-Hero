@@ -14,10 +14,14 @@ export const hasApprovedIcon = (key: string): boolean => Object.prototype.hasOwn
 export const ITEMS_WITHOUT_APPROVED_ICON: readonly string[] = Object.keys(ITEMS).filter(k => !hasApprovedIcon(k)).sort();
 
 const urls: Record<string, string> = {};
+/** The decoded 32×32 cell canvases (the world renderer draws these; the UI uses the data URLs). */
+const cells: Record<string, HTMLCanvasElement> = {};
 let state: 'idle' | 'loading' | 'ready' | 'failed' = 'idle';
 export const itemAtlasState = () => state;
 /** Data URL of the untouched 32×32 cell, or '' while the atlas is not decoded / for an id outside the 157. */
 export const atlasIconUrl = (key: string): string => urls[key] || '';
+/** Decoded 32×32 cell for the canvas renderer, or null while the atlas is not ready / for an id outside the 157. */
+export const atlasIconCell = (key: string): HTMLCanvasElement | null => cells[key] || null;
 
 export function loadItemAtlas(timeoutMs = 6000): Promise<boolean> {
   if (state === 'ready') return Promise.resolve(true);
@@ -32,7 +36,7 @@ export function loadItemAtlas(timeoutMs = 6000): Promise<boolean> {
         for (const [key, f] of Object.entries(ITEM_ATLAS.frames)) {
           const c = document.createElement('canvas'); c.width = f.w; c.height = f.h;
           const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; g.drawImage(img, f.x, f.y, f.w, f.h, 0, 0, f.w, f.h);
-          urls[key] = c.toDataURL('image/png');
+          urls[key] = c.toDataURL('image/png'); cells[key] = c;
         }
         done(true);
       } catch { done(false); }
