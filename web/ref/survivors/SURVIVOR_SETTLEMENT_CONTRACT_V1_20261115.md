@@ -99,7 +99,7 @@ Every resident can have a profession and a single active assignment + bounded st
 - Existing owner semantics of a bed/chest/station/cabinet are reused; player can revoke assignment and use station normally after committed job settles/cancels with proper refunds. Non-resident visitor has no implicit permission to consume home stock.
 - Keep 157-item master and Rev 6 recipe integrity; any later gameplay-driven item/recipe changes require separate Item V2 revision and migration, not hidden within NPC feature work.
 
-## 10. Implementation acceptance slices — no global redesign
+## 10. Implementation acceptance slices — diagnostic gates inside full-world feature (scope corrected by Creator 2026-11-16)
 
 **S0 DESIGN/ARCHITECTURE:** document actual engine seams and Veyra coordinates, show unchanged solo New Game/loot/POI/recipes, one sample survivor source authority, and authored job ownership model. No new geometry.
 **S1 ENCOUNTER + CUSTODY:** one transient and one recruitable at existing accessible coordinates, genuine one-click speak/trade with exact stock receipts, save/reload idempotency and no chest replacement. No long NPC AI.
@@ -290,7 +290,7 @@ This section is a precise implementation audit against **PR #61 HEAD `ad189d9e`*
 7. **Current dynamic F interaction has no person target.** `sim.ts:1855-1894` branches for drop, loot, vendor, door, structures and other entities, but does not support a persistent human conversation/ownership state. A living person is met by movement, observation and optional F conversation/trade. Melee/projectile/Core strikes must target humans physically without a new mandatory dialogue-to-fight step. Show wounded/fleeing/armed silhouettes and retaliation through actual game frames.
 8. **Map proof and source autonomy.** `web/src/veyra05/arch/sites.ts` already authors different floors/rooms/stairs/roof deck in Greywater; use actual navigable graph and real surface evidence, not the POI center. Relocation/recruitment must not duplicate the source resident at their old village; actor deaths are run-local and final. A community revenge response must stem from surviving **authored** humans who witness or receive concrete news; no new reinforcement wave sourced from reputation.
 
-**One convincing creator-playable diagnostic before broader roll-out:** meet one actually armed neutral adult with a costly tradeable/retained unique item -> decline/attempt barter -> try to rob -> observe real risk of player death, human downed-versus-dead, exactly-once item transfer -> see a real ally discover/treat or a lone human recover -> leave the region -> return and meet local hostility OR demonstrate bounded pursuit following real evidence toward a reachable player-built base. Show negative branch where the track breaks (e.g. non-trace substrate/motorbike) and no home coordinate leaks. Prove same actors, stocks, injuries and knowledge across window shift and process restart. This is a **technical acceptance target**, not a new mandatory player quest or automatic success sequence.
+**One required creator-playable diagnostic among full-world acceptance, not a limited pilot delivery:** meet one actually armed neutral adult with a costly tradeable/retained unique item -> decline/attempt barter -> try to rob -> observe real risk of player death, human downed-versus-dead, exactly-once item transfer -> see a real ally discover/treat or a lone human recover -> leave the region -> return and meet local hostility OR demonstrate bounded pursuit following real evidence toward a reachable player-built base. Show negative branch where the track breaks (e.g. non-trace substrate/motorbike) and no home coordinate leaks. Prove same actors, stocks, injuries and knowledge across window shift and process restart. This is a **technical acceptance target**, not a new mandatory player quest or automatic success sequence.
 
 **Current status:** TECH_GAPS_IDENTIFIED. No implementation or experience is accepted by this note. Revise the same contract after creator discussion rather than creating a separate NPC Bible.
 
@@ -399,3 +399,156 @@ Events never require running a newly invented quest log. Situation state = alrea
 **Lifecycle:** All new actor, arrival, Core provenance, robbery, source harvest, companion and criminal-memory records are run-local under K8 and erased at the exact existing run reset. Profile secured Ragnarok Cash and separately authorized historical achievements are unchanged.
 
 **Scope discipline:** Nothing here says the NPC code already exists or gameplay has been accepted. Implementable state, authoritative resource events and user-observed gameplay remain separate proof layers.
+
+## 25. Full-world production NPC system: combat, health, roles, consent and coverage (design review 2026-11-16)
+
+**Scope correction from Creator:** The feature is not a three-NPC demonstration followed by an open-ended corrective cycle. Greywater, Slagworks and a roadside actor remain diagnostic scenarios, but the **intended product is a complete, general system operating across all relevant traversable Veyra spaces and route networks** in the same production New Game. A few authored characters, tests or screenshots are not a substitute for population coverage, equipment, injury, combat, occupation, daily autonomy, communities, recruitment, expedition companions, migration, robbery, response, revenge and offline continuity. Static content census and targeted tests are required quality gates **inside** full implementation, not excuses to postpone half the approved feature. Exact density is derived from place and source; not 1 NPC per POI, not a mandatory number of people.
+
+**Creator approval:** companions have individual will (choice B): a recruited person can refuse to assault an uninvolved neutral civilian, choose to defend their own acquaintances, or willingly join a robbery, based on coherent identity and observed facts. This does not authorize an unreliable free-form LLM or a random re-roll on each command. **The algorithm below is a testable CONTROL_TOWER_DESIGN_PROPOSAL**, not proof of bug-free code.
+
+**Basis verified at PR #61 SHA 176cdd19:** BAL.player.maxHp=100; stamina=100; speed=72 px/s. ITEMS use explicit damage, range, arc, swing duration and durability: Stone Axe 11/420 ms, Wood Spear 15/380 ms, Cleaver 17/330 ms, Bow 16/520 ms, Reinforced Spear 23/390 ms, Machete 24/330 ms. Shared armor equipment adds reductions capped at ARMOR_CAP=0.60 (wornProtection); e.g. Leather Jerkin 20%, Scrap Helm 10%, Iron Plate Helmet/Chest/Legs/Boots 14/28/8/4%. Creatures range from regular 24–82 HP to side bosses 210–260 HP. Creator Core V2: 300 durability, +75 repair, Lv1 LMB/Lv2 Q/Lv3 E, each Core's three wear/cooldown amounts in g1b.ts, direct Basic/Refined Energy plus elemental Essence from holder's pack. **These are actual runtime reference points, not imagined Last Island values.**
+
+### 25.1 One human, five independent axes: no 'eight professions = eight health classes'
+
+A Survivor is an independent persistent adult combat-capable K5 actor, not an invulnerable quest object or a skin over a loot crate. Its gameplay can be understood through **five orthogonal axes**:
+1. **Livelihood/occupation**: one main specialty among the eight approved jobs, plus ordinary learned affordances. 'Vendor', 'traveler', 'bandit' and 'resident' are social/encounter conditions, **not** ninth through twelfth item-producing profession systems.
+2. **Combat capability**: physical conditioning, equipment UID, armor, weapon proficiency, line-of-sight and tactics. An unarmored Guard can be weak; a Cook may fight proficiently if correctly equipped; Core ownership is gear, not a HP class.
+3. **Disposition/relationships**: protective, nonviolent, opportunistic or predatory tendencies and bounded actual personal relationships; community membership and known recent facts affect what the actor is willing to do. Do not add morality currency, faction XP or a universal reputation bar.
+4. **Needs/condition**: current HP, wound severity, rest, stamina, food/water, temperature/radiation/status and perceived local threat. This controls activity capability, not magical invisible rank bonuses.
+5. **Custody/schedule**: global location/floor, unique item UIDs, known physical sources, active order, route, last observed threat and timestamp; no duplication between world windows.
+
+**Required data schema, as interfaces not a separate economy:** actorId/runId/sourceId; origin/arrival source; current global x,y,floor; home and bed/worksite; occupation and capabilities; baseline hpMax/staminaMax/speed and current HP/stamina/status/wounds; exact five equipment slots + carry pack; weapon and proficiency; Core UID/level/durability/cooldowns and carried Energy/Essence; community/member links; disposition, known and protected people; relationships and incident ledger; job authorization/queue/source/output; path and observed stimuli; hostile/revenge intent; residence/party state; downed/dead/evacuated; lastCommittedEvent/lastSimAt. Version and migrate additive save fields. One authoritative actor record, one render projection.
+
+### 25.2 First-pass quantitative NPC combat balance (SOH_PROVISIONAL, not Creator-locked)
+
+**Reference rule:** Start with actual player 100 HP and actual item weapon damage instead of invented 'NPC damage × class multiplier'. The table is a **concrete baseline for complete implementation**, then adjust only with measured actual fight durations and source economy, as a documented revision. These are authored physical/experience profiles, **not** fixed occupational bonuses:
+
+| Physical/combat profile | Max HP | Max stamina | Walk speed px/s | Example use | Combat posture |
+|---|---:|---:|---:|---|---|
+| Civilian, untrained | 80 | 85 | 68 | inhabitant, patient, unarmed seller | seeks cover, flees when threatened |
+| Laborer / artisan | 95 | 100 | 70 | mechanic, cook, miner, builder, medic | defend self with actual equipped tool |
+| Traveler / scout | 90 | 105 | 76 | independent courier, pathfinder | avoid, reposition, flee or skirmish |
+| Community guard | 110 | 110 | 72 | patrol/escort/defender | hold safe angles, cover others |
+| Raider / robber | 105 | 110 | 76 | dangerous roadside human | approach with purpose, threaten, fight/retreat |
+| Veteran / skilled fighter | 125 | 120 | 72 | exceptional guarded character | disciplined stance, tactical weapon/Core use |
+
+An actor's actual assigned profile must be justified by origin/training/condition and recorded. A rare item does not grant +300 HP. A very powerful unique human can be stronger through equipment, proficiency, supported combat tactics and allies, rather than boss-inflated HP. Numeric profiles may be tuned using actual time-to-defeat and player feedback; no undisclosed adaptive scaling by player inventory, day or desire to steal the actor's item.
+
+**Damage authority (all actors):** use the very same item damage, swing interval, hit arc/range, actual collision, LOS/floor checks, stamina/weapon wear, ammo, status and worn armor cap as player combat, with an item-authorized source event exactly once per hit. Provisional training modifiers may change handling speed/aim/reaction within measured bounds, **not silently multiply item damage**. No fake ranged hit at distance, no shoots through solid walls/closed gates/roof levels, no invulnerability for essential merchants. If the body has no weapon, a weak unarmed hit may use a documented low provisional damage such as 4 at 650 ms swing, not a magical hidden sword. Do not introduce a firearm class unless it has a legitimate item definition/source. Hostile humans also damage each other, defenders, creatures and authorized destructible structures via actual attack effects, subject to friendly-fire rules and actual hostility.
+
+**Illustrative breakpoints, not guaranteed fight duration:** At 24 base Machete damage per valid hit, an unarmored 80 HP civilian takes 4 hits, 95 HP artisan 4; a 90 HP traveler with Scrap Helm (-10%) takes approximately 5; 110 HP guard with Leather Jerkin + Scrap Helm (-30%) takes approximately 7; a 125 HP veteran wearing a complete Iron Plate set (-54%) takes approximately 12. Player with 100 HP and no armor can be downed after about 5 valid 24-damage hits from an armed NPC. Positioning, swing timing, dodging, multiple attackers, wounds and gear durability can dramatically alter actual outcomes. **This is why testing only whether a damage number appears is inadequate.**
+
+**Proficiency 0–3 (provisional, not a level treadmill):** untrained 1.15× item attack windup/recovery; trained 1.0×; skilled 0.92×; specialist 0.85×, provided animation and authoritative cooldown have not already encoded the modifier. Track proficiency per weapon family, not as global damage scaling or an XP bar automatically gained for every AI tick. A Guard may specialize in Bow, an artisan in hand tool, and a Core-bearing veteran in the particular Core's targeting; role never magically grants ammo, energy or higher Core level. Attacks need visible anticipatory frames (weapon draw/aim/stance), hit and recovery; NPC combat must be readable at 640×360 and survivable by a skilled, cautious early-game player where appropriate.
+
+**Thresholds from condition, not duplicate classes:** >50% HP can act normally if otherwise fit; at 25–50%, wounded movement/attack handling and willingness to fight decline; <25% means critical risk, so many civilians/raiders retreat or surrender, while a determined guard may hold a position. Exact movement/aim penalties belong to tuneable balance, not secret hardcoded changes per occupation. No normal dialogue/trade/craft while downed.
+
+### 25.3 Downed, injury, healing, death and physical looting
+
+All human actors share a **non-binary** survival state: healthy/wounded -> critical -> DOWNED (alive, incapacitated, physical body) -> rescued/stabilized/recovering OR final DEAD if a genuinely lethal follow-up/wound/hazard occurs. An ordinary single hit that crosses zero HP can down rather than automatically kill; exceptionally destructive valid hits and persistent hazards may be genuinely fatal under a **documented common rule**. The existing monster kill-at-zero function is NOT reusable unchanged for humans.
+
+The first down receipt stores hit event, attacker/source, position/floor, injury severity and initial downed condition. Downed bodies do not stand, flee, cast or report crimes magically. Bleeding must have a **clocked severity event chain** and a medically observable treatment window; an illustrative first balance is 8 real minutes to stabilize a critical bleeding wound and up to 20 minutes before fatal untreated escalation under the right injury conditions. These numbers are SOH_PROVISIONAL and must be validated against 336h actual survival, 24-minute fictional day/night and available medicine. If an actor had a nonbleeding injury, do not kill them simply because 20 minutes elapsed. Valid additional hits, live fire, poison and other existing hazards may kill if their documented combat rules apply. No synthetic remote fatality on login without events and known conditions.
+
+A present Medic, player or other capable rescuer may treat real bleeding with actual authorized Bandage/Medkit/Syringe and accessible time/LOS, and may help a stabilized actor move to legitimate shelter. If the patient is left in place, their global position/floor persists while window streams and through separate-process reload. A recovered victim retains wounds, missing equipment, memory and relationships. They do not instantly regain full HP or get new copies of lost gear; the community needs a supply source to heal or replace it.
+
+**Robbery does NOT require death:** an incapacitated or surrendered human can lose specific accessible, physically owned equipped/pack item UIDs via an atomic transfer. That same item is removed from their record, not re-rolled from a body. Robbery may occur under combat threat and be resisted; it creates an incident with actor identity, property source, time, location and observation. On actual final death only, one persistent recoverable bag is made from **remaining carried property**; no duplicate bag after returning/reload/kill. No automatic spill of merchant shop stock, profile secured Ragnarok cash or unrelated G1B chest contents.
+
+### 25.4 Eight real occupations: required functional coverage, independent of fighter skill
+
+| Approved occupation | Real repeatable activity / item handling | Required tools, stations and cost authority | Normal interruption |
+|---|---|---|---|
+| Salvager | pick authorized local scrap; recycle assigned item UID to exact existing yield | eligible UID, Recycler, fuel/time/source custody | unassigned/unique item, tool broken, full output |
+| Mechanic | repair specific damaged tool/structure-compatible device; maintain paid job | Workbench level, existing BOM, replacement Parts, item UID | target full, insufficient BOM, unavailable bench |
+| Cook | prepare legal recipe into output store; may feed other residents from allocated food | ingredients, real water/fuel, Campfire/station, learned recipe | fire off, exhausted ingredients, full store |
+| Gardener | plant, water, tend, harvest and replant assigned plots when ready | seeds, water, plot, season/growth, storage and time | no seed/water, climate, harvest not ready |
+| Medic | triage, stabilize bleeding and treat reachable patient | real Bandage/Medkit/Syringe and treatment eligibility | patient unreachable/dead, no medicine |
+| Guard | observe, patrol, escort, defend, retreat or rest | actual weapon UID, Bow/Arrow/Core energy, armor, LOS/path | wounds, depleted ammo, loss of post, blocked path |
+| Engineer | operate and maintain actual powered/industrial device | fuel/power, electronic Parts, machine condition and permitted authority | disconnected network, no parts, destroyed device |
+| Builder | repair and maintain authorized built structures | paid physical materials, structure ID, ownership, access | no material, damaged path, structure lost |
+
+**Professions are skill affordances**, not item generators or exclusive combat classes. A Cook can hold a Machete and a Guard can craft a basic known item when physically allowed. A trader is a commerce capability; a traveler is a route state; a raider is a social/disposition/combat posture; a recruit is a consent relationship. None of those automatically creates a new recipe registry. Research aide stays a later optional capability, not compulsory ninth base occupation. For the full world, every one of the eight roles needs an actual known physical use case, blocked case, economic input/output case and survival/combat interruption case.
+
+**Continuing work (Creator B2):** an authorized resident gets one standing work order with explicit budget, accessible input stores, reserved units, output store, minimum emergency stock, valid station and repeat limits. The next unit starts only after the preceding unit pays and completes legally; player and NPC cannot process the same job twice. An NPC traveling with the party cannot also work at home. Independent non-recruited villagers can do the same kinds of physically authorized work with their own home/tool/source ownership, not free player cabinet access.
+
+### 25.5 Willful companions: deterministic, explainable, no random moral roulette (Creator choice B)
+
+**The desired quality is a stable character decision, not simulated free-form thought.** Give each actor a compact, authored/seeded but persistent disposition:
+- Protects: their own known family/community, their current committed home and specific real prior relationships.
+- Violence policy: avoids unprovoked violence / conditional opportunist / predatory; distinct from being brave or skilled.
+- Risk posture: cautious/ordinary/bold, relative to **perceived** (not omniscient) target power and available cover/gear.
+- Loyalty/consent: what the person explicitly agreed to when joining, and known subsequent real events; not a universal XP-based affection meter.
+
+**A single order is resolved once** from actor snapshot + visible target + known relationships + item/equipment + event history + stable orderId. Persist answer and reason for that order; do not reroll randomly every tick, scene entry, or reload. When world state materially changes (target attacks, actor wounded, rescuer intervenes), cancel/reconsider at an explicit new event boundary, not in an infinite evaluation loop. Order results are **OBEY / REFUSE_WITH_REASON / PROTECT_TARGET / RETREAT_OR_HOLD / CANNOT_EXECUTE**.
+
+~~~text
+evaluateCompanionOrder(actor, order, observedWorld):
+  if actor.dead/downed/physically unreachable: CANNOT_EXECUTE
+  if target cannot be identified or hit by current weapon/floor/LOS: CANNOT_EXECUTE
+  if order targets actor's protected family/community/known close ally:
+       REFUSE; if a protected person is under actual attack, PROTECT_TARGET
+  if target is visibly attacking player/companion and no protected-person conflict:
+       defend player if actor can do so; else retreat/cover with reason
+  if player commands an unprovoked strike on a neutral person:
+       if actor.violencePolicy forbids this: REFUSE
+       else if actor.perceivedRisk too high for actor.riskPosture: RETREAT_OR_HOLD
+       else: OBEY (actor knowingly joins a physical assault and its consequences)
+  if order targets a known actual hostile and has valid reachable combat route:
+       OBEY if physically able and within understood risk
+  otherwise: REFUSE_WITH_REASON or CANNOT_EXECUTE; no silent arbitrary change
+~~~
+
+**Important variants:** a Greywater resident can refuse to attack their own known neighbor and may intervene; a hired opportunistic fighter may agree to rob a stranger; a Medic may prioritize stabilizing a downed patient over a vindictive attack; a guard may defend the player from a genuine robber but balk at attacking a passive merchant. A selfish mercenary can abandon a suicidal fight and physically withdraw. **Do not treat actor profile as infallible omniscient psychology**: only actual observed and remembered facts can affect the decision. Show one concise contextual line: 'I won't hurt my neighbor', 'I have no arrows', 'I cannot reach that floor', 'That fight will kill us', or 'I'll help'. Character identity should remain consistent even when the user reloads.
+
+**Technical zero-bug aspiration, not a guarantee:** exhaustively test an ordered decision matrix for all 5 result codes; same input+seed+orderId yields same response after restart; changing distant unseen world variables cannot alter the choice; protected relation overrides robbery enthusiasm; defender reaction needs actual aggression; no ally shoots its protected target through AOE without handling friendly-fire; command processing never mints item/damage/knowledge. Use property-based multi-seed tests and adversarial interactions as pre-release proof, not a 'we can fix it later' strategy.
+
+### 25.6 Other social and combat roles: things people do, not mandatory ninth profession
+
+- **Civilian/pacifist:** may speak, trade personal goods if willing, work and flee; owns real possessions, not always easy to rob if protected.
+- **Scout/traveler:** has path, destination, carried goods and fatigue; can see threats, inform acquaintances and escape; not guaranteed to be recruitable.
+- **Guard/protector:** watches a physically defined post/person/route, uses real equipment; may be armed/armored and is not invulnerable.
+- **Trader:** has finite sale lots with actual source/custody; personal gear is separate; can refuse, bargain with actual items or abandon shop.
+- **Raider/opportunist:** may threaten or strike first only after perception and physical approach; real gear, fatigue, risk, retreat and a one-time human source budget. Can also be downed, robbed, recruited only if consent makes sense.
+- **Veteran/Core wielder:** trained weapon/Core user with a legitimately owned source-bound Core and carried Energy/Essence; can cast only at right level and with actual wear/cooldown, not an elite HP aura.
+- **Medic/support:** can rescue a real downed ally and may not want to kill passersby. Medicine comes from a real stock.
+- **Expedition companion:** one of the above who voluntarily accompanies player, with Follow/Hold/Defend/Engage/Retreat/Return/Home/Help carry commands; combat, work, custody and return operate on the same actor.
+
+NPC-to-NPC violence, rescue, bargaining, trade, theft and information sharing all obey the same range/custody/knowledge rules as player interactions. A bandit stealing a cart-load cannot teleport it to a loot pool; a guard killing bandit cannot mint extra bounty. Actor strength derives from inventory and skill, not social labels alone.
+
+### 25.7 Populate the *entire* playable world with meaningful ecology, not a three-location pilot
+
+**Required coverage source:** compiled physical Veyra geometry and actual road graph. Survey every one of the existing ~81 authored POI identities and **all traversable independent rooms, buildings, floors, courtyards, outdoor upper levels and connected route segments**. Classify each as inhabitable/occupied, working, transient stop, hostile human territory, currently empty/abandoned or physically unreachable. An empty ruined room may correctly have no NPC; a settlement with many houses should not be reduced to one looping vendor. Do not invent artificial empty villages to stay under an arbitrary actor budget. The chest source population remains separate and is not removed to make room for NPCs.
+
+For each inhabited space, supply: community/home ID; human source slots with distinct identity, personal owned gear and practical schedule; bed/food/water and authorized work; safe local paths, doors and floors; threat and migration candidates; same persistent world projection after camera/window shifts. For each road segment: actual travel time/passability, linked origin/destination, eligible travelers/traders/guards/robbers, traffic reason and alternate return. Determine NPC **density from capacity, access and needs, not one NPC per POI or a hardcoded percent chance every time a window enters**. Physical sources and 336h supply production must support the people who actually live there.
+
+**Every general system must work everywhere it is eligible:** talk/trade, combat, Core casting, wound/downed/recovery, stealing items, witness/revenge, pathing/floors, migration and party navigation are reusable engine rules, not Slagworks-only scripts. Every occupation and attitude needs representative **actual** location with genuine input and outcome. World Situations are recurring intersections between those capabilities and authored environmental facts, not a quest registry. Greywater, Slagworks, Ironholm, Argus, Delta and Falls are six important authored content families to reconcile with existing machine states, plus travelers and bandits in relevant roads; no 'fix pump' action unless the pump has a real operational state.
+
+**Avoid three specific false completions:** (a) 81 map metadata rows but humans physically appear only in 3 places, (b) seeded NPC sprites on every POI with no needs/stock/collision and no behavior, (c) one large procedural NPC population whose unrelated activities are simulated via background RNG and materialize gear/food or raids while offscreen.
+
+### 25.8 Calendar, needs, world budget and implementation risk
+
+SOH has a **336 real-hour** run, last 72h Ragnarok, plus a **fictional 24-minute day/night** cycle and roughly two fictional years/eight seasons per run. Do not mechanically equate one fictional sunrise with 24 real hours of food, hydration or bed consumption. Human metabolism and paid production need a consistent timestamp/consumption model that can scale over 336 real hours, with explicit resource budgets and offline catch-up; sleep **presentation** can follow the faster fictional day/night rhythm without making villagers eat an entire 24-hour ration every 24 minutes.
+
+**Needs tuning is a joint economy problem, not a missing blank to hide:** track HP/wound/healing, stamina/rest, hunger and water on consistent clock; show when unfit for work; measure 336h food/water/medical/crafting throughput per actual village population, season and travel cost. Initial candidate rates must be tied to currently available food recipes, water sources, crop cycles and K5 player needs, then adjusted together. Never let a settlement of dozens of actors silently starve while offline because the world has no valid water action, and never give them an infinite uncharged pantry. Any documented unsupported source => honest blocked/no-work condition, not a grant.
+
+**Finite global source budget:** profile all authored NPC personal inventories, initial Core UIDs, finite arrival candidates, NPC production sources and ordinary G1B/source regeneration. Sum expected new discoverable/stealable equipment and Core stock alongside approved chest economy, without changing the 16 loot pools/odds to conceal item inflation. Check spawn viability in multiple regions, not just one adult in Greywater.
+
+**Offscreen event proof:** independent work needs a known reachable source, funded action, finite interval and exact source outcome. Cross-map pursuit requires durable world-coordinate trace evidence and route knowledge; current r.traces is local-window and pruned on shift. If a human seeks vengeance but cannot truly trace the base, the grievance continues while pursuit fails legitimately. If distant combat is not provable, mark contact/pending with last known time/location and retain actual items/health until physical proof; do not mint a successful raid, fatality or miraculous safe home. Make the player able to understand what did and did not happen while absent.
+
+### 25.9 Production-wide acceptance contract: complete functionality before declaring game-feature done
+
+**Mandatory breadth census, not NPC quota:** every existing POI/site and all road segments classified with why there are humans or none; all actual populated rooms/levels connected to bed/work/food/routes; all six major authored situation contexts assessed; no 3-NPC-only gameplay. Targeted scenario checks are **quality gates inside full-world construction**, never the entire deliverable.
+
+**Functional matrix — each must operate in current New Game, same build:**
+1. Player 100 HP comparator vs the six proposed human physical profiles, real weapons and armor. Weapon damage/swing/hit geometry, human-human and human-creature combat, group threat, projectile/los/cover, Core cast wear/energy/status, floor boundaries and structure damage.
+2. Civilian/trader/guard/raider/veteran/traveler/medic behaviors with purpose, sensing, retreat and no blind global enemy knowledge. One NPC can be stronger than early player without cheat stats.
+3. A single human survives defeat as DOWNED, can be stabilized by real supplies, robbed or die, and retains original memory/UID, through save/reload/moving window. Dead stays dead.
+4. Eight approved occupations produce their exact existing station/job outputs or stop for a concrete reason, repeat only under source/budget authorizations, and suspend correctly for sleep, attack, wounds, party departure and offline ordering.
+5. Neutral talk/trade/refusal, scarcity, costly offer, legitimate item theft and exactly-once possession/corpse custody. NPC-owned Creator Core must have provenance, correct level, energy, wear, cooldown, and physical transfer, no extra drop roll.
+6. Community signaling, isolated witness negative case, grievance, re-encounter, pursuit, cross-window evidence, real discovery of player home or lost-track negative case; actual attackers and physical base theft with no invisible mob wave.
+7. Willful companion 5-way decision result, protected relations, dangerous target, opportunistic attack, player-defense exception, member desertion; no repeated random outcome or duplicate actor after commands.
+8. Traveling party path across world windows, ground/upper/roof/basement floors and locked gates, no teleporting stragglers, actual carrying/loading, downed rescue, death bag, player death recovery. Home work stops when member leaves.
+9. True finite arrivals, old deaths never respawn, village stock/depletion and local ecology remain changed; no hidden mass immigration or automatic role replenishment.
+10. 336h deterministic cause-aware online/offline, threat/wounds, work/input/output, crops/water/food, run end/reset, no actor/Core/property/crime memory across runs, no profile secured-cash exploit.
+
+**Pre-release engineering safeguards:** TypeScript structure and schema revisions; deterministic state transitions with receipts; uniqueness invariants for actor/source/Core/item UIDs; source/accounting conservation; migration of legacy vendor/shop and run entities; property-based multi-seed spatial and decision testing; hostile multi-actor and cross-floor pathing tests; concurrency test player+workers+shop; 336h offline stress and two-run reset; realistic performance/memory and readability in 640×360; native inputs, screenshots of actual scenes and complete player-visible accessible routes. No claim that tests guarantee zero bugs, but implementation must actively prevent the known failures before end-user correction.
+
+**Source reality:** THIS SECTION IS DESIGN-PREPARATION, NOT ACCEPTANCE. Nothing in the reviewed repository currently proves the six profile numbers, downed human actor, NPC-owned Core, willful companion or full-wide human population are already implemented. Source of calibrated combat defaults is current catalog/balance; exact NPC numbers and policies above remain SOH_PROVISIONAL until approved and measured in integrated gameplay.
