@@ -315,7 +315,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
       if (wx < cx - 40 || wx > cx + VIEW_W + 40 || wy < cy - 40 || wy > cy + VIEW_H + 60) continue;
       if (life.undergroundHides(r, wx, wy)) continue;
       const moving = h.state === 'MOVING' || (h.intent?.route?.length ?? 0) > 0;
-      list.push({ y: wy + 4, f: () => { drawNpcShadow(g, wx, wy + 2, 6, 3, 0.32); drawNpcSprite(g, h, wx, wy, r.clock.simMs / 1000, moving); } });
+      list.push({ y: wy + 4, f: () => { drawNpcShadow(g, wx, wy + 2, 6, 3, 0.32); drawNpcSprite(g, h, wx, wy, now / 1000, moving); } });
     }
   }
   // While mounted the rider is composited onto the bike sprite (vehicle case); skip the standalone player to avoid a double draw.

@@ -41,8 +41,10 @@ export const NPC_DIRECTIONS = ['down', 'left', 'right', 'up'] as const;
 export function resolveNpcClip(h: HumanRecord, simSec: number, moving: boolean): NpcAnimClip {
   if (h.state === 'DEAD') return 'dead';
   if (h.state === 'DOWNED') return 'downed';
-  if (h.wounds.some(w => w.bleeding && !w.treated) || (h as any).flash > 45) return 'hurt';
-  if (h.state === 'FIGHTING') return 'attack';
+  const now = simSec * 1000;
+  if (h.lastDamageAt !== undefined && now >= h.lastDamageAt && now - h.lastDamageAt < 180) return 'hurt';
+  if (moving) return 'walk';
+  if (h.lastAttackAt !== undefined && now >= h.lastAttackAt && now - h.lastAttackAt < 240) return 'attack';
   if (h.state === 'WORKING' && h.intent?.kind === 'work' && h.intent.target?.startsWith('harvest:')) return 'use';
   return moving ? 'walk' : 'idle';
 }
@@ -150,7 +152,7 @@ function drawNpcActionMark(g: CanvasRenderingContext2D, h: HumanRecord, X: numbe
       g.fillStyle = '#9e7847'; g.fillRect(hx, hy, 1, 5);
       g.fillStyle = '#e3dfca'; g.fillRect(hx + fx * 2, hy + fy * 2, 2, 1);
     }
-    if (Math.floor(simSec * 12) % 2 === 0) {
+    if (h.lastAttackAt !== undefined && simSec * 1000 - h.lastAttackAt < 90) {
       g.fillStyle = '#ffc468'; g.fillRect(X + 8 + fx * 10, Y + 17 + fy * 5, 2, 2);
       g.fillStyle = '#fff0bb'; g.fillRect(X + 8 + fx * 12, Y + 16 + fy * 6, 1, 1);
     }

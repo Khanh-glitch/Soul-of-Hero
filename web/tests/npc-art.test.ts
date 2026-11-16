@@ -16,6 +16,8 @@ const modes: { clip: 'idle' | 'walk' | 'use' | 'attack' | 'hurt' | 'downed' | 'd
 function human(appearance: number, dir: Dir, mode: typeof modes[number]): HumanRecord {
   return {
     appearance, dir, state: mode.state, intent: mode.intent, wounds: mode.wounds ?? [],
+    lastDamageAt: mode.clip === 'hurt' ? 200 : undefined,
+    lastAttackAt: mode.clip === 'attack' ? 200 : undefined,
     equip: { head: null, body: null, legs: null, feet: null, weapon: null },
   } as unknown as HumanRecord;
 }
@@ -43,6 +45,17 @@ describe('MetroCity NPC body continuity', () => {
       expect(left.row).toBe(2); expect(right.row).toBe(2);
       expect(left.mirrorX).toBe(true); expect(right.mirrorX).toBe(false);
     }
+  });
+
+  it('does not freeze a bleeding walker in a permanent hit pose or animate attacks without contact', () => {
+    const h = human(0, 3, modes[1]);
+    h.wounds = [{ bleeding: true, severity: 0.7, treated: false }]; h.lastDamageAt = 0;
+    expect(resolveNpcClip(h, 1, true)).toBe('walk');
+    h.state = 'FIGHTING';
+    expect(resolveNpcClip(h, 1, false)).toBe('idle');
+    h.lastAttackAt = 1000;
+    expect(resolveNpcClip(h, 1.05, false)).toBe('attack');
+    expect(resolveNpcClip(h, 1.5, false)).toBe('idle');
   });
 
   it('cycles the six authored walk poses while idle holds the proper base stance', () => {

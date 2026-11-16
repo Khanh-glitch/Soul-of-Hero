@@ -240,6 +240,11 @@ describe('NPC P0 corrective', () => {
       target = { x, y, i: s.i }; break;
     }
     expect(target).not.toBeNull();
+    // Capacity is exercised by an actor actually present at the source, not a remote caller.
+    const o = r.sourceMap?.veyra?.originAu;
+    h.gx = (o ? Math.round(o[0] / 0.5) : 0) + target!.x;
+    h.gy = (o ? Math.round(o[1] / 0.5) : 0) + target!.y;
+    h.floor = r.veyraFloor ?? 0;
     const beforeStock = sourceAt(r, target!.x, target!.y, T0)!.stock;
     expect(humanHarvest(r, hw, h, target!.x, target!.y, T0 + 1000)).toMatchObject({ result: 'yield', got: 0 });
     const admitted = humanHarvest(r, hw, h, target!.x, target!.y, T0 + 2000);

@@ -591,6 +591,19 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
 // ---------------------------------------------------------------------------
 // Survival needs — REAL-hour clock (no 24-minute-sunrise ration).
 // ---------------------------------------------------------------------------
+/** A custody chest is not a sleeping slot. Assignment must resolve to one actual bed,
+ * with a single living claimant physically resting beside it on the same floor. */
+function usingHumanBed(r: RunState, hw: HumanWorld, h: HumanRecord): boolean {
+  if (h.state !== 'IDLE' || !h.bedId || h.floor !== (r.veyraFloor ?? 0)) return false;
+  const bed = r.entities[h.bedId];
+  if (!bed || bed.type !== 'bed' || (bed.floor ?? 0) !== h.floor || (bed.hp ?? 1) <= 0) return false;
+  if (Object.values(hw.people).some(other => other !== h && other.bedId === h.bedId && other.state !== 'DEAD' && other.state !== 'EVACUATED')) return false;
+  const o = r.sourceMap?.veyra?.originAu;
+  const x = (h.gx - (o ? Math.round(o[0] / 0.5) : 0) + 0.5) * TILE;
+  const y = (h.gy - (o ? Math.round(o[1] / 0.5) : 0) + 0.5) * TILE;
+  return Math.hypot(x - bed.x, y - bed.y) <= TILE * 1.5 && clearPhysicalLine(r, { x, y }, bed, true);
+}
+
 /** Advance hunger/thirst/rest/wounds for every active human by elapsed real time. */
 export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
   const lastNeedsAt = hw.lastNeedsAt ?? hw.lastResolvedAt;
@@ -609,21 +622,21 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
     h.warmth = clamp(h.warmth - (isSheltered(r, h.gx * TILE + 8, h.gy * TILE + 8) ? 0 : 0.4 * hours), 20, 100);
     if (h.hunger <= 0 || h.thirst <= 0) {
       // starvation / dehydration: HP drain, work stops
-      const drain = (h.hunger <= 0 ? BAL.player.starveDamagePerMin : 0 + (h.thirst <= 0 ? BAL.player.starveDamagePerMin : 0)) * (dtMs / 60000);
-      if (drain > 0) applyDamage(r, hw, h, drain, 0, now, 'starvation');
+      const drain = ((h.hunger <= 0 ? BAL.player.starveDamagePerMin : 0) + (h.thirst <= 0 ? BAL.player.starveDamagePerMin : 0)) * (dtMs / 60000);
+      if (drain > 0) applyDamage(r, hw, h, drain, 0, now, 'starvation', undefined, h.floor);
       if (h.hunger <= 0 || h.thirst <= 0) {
         if (h.intent?.kind === 'work') { h.intent.blockReason = h.hunger <= 0 ? 'too hungry to work' : 'too thirsty to work'; }
       }
     }
     // rest debt: grows when not resting on a bed
-    if (!(h.state === 'IDLE' && h.bedId)) h.rest = clamp(h.rest + dtMs / HOUR / 8, 0, 1);
+    if (!usingHumanBed(r, hw, h)) h.rest = clamp(h.rest + dtMs / HOUR / 8, 0, 1);
     else h.rest = clamp(h.rest - dtMs / HOUR / 4, 0, 1);
     // bleeding escalation (provisional: 8 min stabilize window, ~20 min fatal)
     for (const w of h.wounds) {
       if (w.bleeding && !w.treated && w.bleedingUntil && now > w.bleedingUntil) {
         // untreated severe bleeding escalates
         if (now - (w.bleedingUntil - 8 * 60000) > 20 * 60000) {
-          applyDamage(r, hw, h, 60, 0, now, 'untreated_bleeding');
+          applyDamage(r, hw, h, 60, 0, now, 'untreated_bleeding', undefined, h.floor);
           w.bleeding = false;
         }
       }
@@ -634,23 +647,35 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
   hw.lastResolvedAt = now;
 }
 
+/** Permission is not physical access. Distant logistics must deliver goods via real routes. */
+function reachableHumanStores(r: RunState, hw: HumanWorld, h: HumanRecord): Container[] {
+  const comm = h.community ? hw.communities[h.community] : undefined;
+  if (!comm?.storeEntityId || h.floor !== (r.veyraFloor ?? 0)) return [];
+  const e = r.entities[comm.storeEntityId];
+  if (!e || !e.c || !comm.foodStores.includes(e.c) || (e.floor ?? 0) !== h.floor) return [];
+  const o = r.sourceMap?.veyra?.originAu;
+  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  const from = { x: (h.gx - ox + 0.5) * TILE, y: (h.gy - oy + 0.5) * TILE };
+  if (Math.hypot(from.x - e.x, from.y - e.y) > TILE * 1.5 || !clearPhysicalLine(r, from, e, true)) return [];
+  return r.custody[e.c] ? [r.custody[e.c]] : [];
+}
+
 /** Eat/drink from carried or community stock (real item custody).
  *  Water is consumed by CHARGE (a flask holds N drinks), not by qty; an empty flask grants no thirst. */
 export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 'food' | 'water', now: number): boolean {
+  if (h.state === 'DEAD' || h.state === 'DOWNED' || h.state === 'EVACUATED' || (kind === 'food' ? h.hunger : h.thirst) >= 100) return false;
   const containers: Container[] = [humanPack(r, h)];
-  if (h.community && hw.communities[h.community]) {
-    for (const id of hw.communities[h.community].foodStores) { const c = r.custody[id]; if (c) containers.push(c); }
-  }
+  containers.push(...reachableHumanStores(r, hw, h));
   for (const c of containers) {
     for (const s of c.slots) {
-      if (!s) continue;
+      if (!s || s.qty <= 0) continue;
       const d = ITEMS[s.key];
       if (kind === 'food' && d.food?.hunger) {
         const want = 100 - h.hunger;
-        const got = Math.min(want, d.food.hunger * s.qty);
+        const got = Math.min(want, d.food.hunger);
         h.hunger = clamp(h.hunger + got, 0, 100);
-        if (d.food.thirst) h.thirst = clamp(h.thirst + d.food.thirst * s.qty, 0, 100);
-        if (d.food.hp) h.hp = clamp(h.hp + d.food.hp * s.qty, 0, h.maxHp);
+        if (d.food.thirst) h.thirst = clamp(h.thirst + d.food.thirst, 0, 100);
+        if (d.food.hp) h.hp = clamp(h.hp + d.food.hp, 0, h.maxHp);
         s.qty--; if (s.qty <= 0) { const i = c.slots.indexOf(s); c.slots[i] = null; }
         receipt(r, now, 'human.eat', `${h.actorId}:${s.key}`);
         return true;
@@ -662,7 +687,8 @@ export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 
         const per = d.food?.thirst ?? 30;
         const got = Math.min(want, per);
         h.thirst = clamp(h.thirst + got, 0, 100);
-        if (d.charge != null) { s.charge = Math.max(0, (s.charge ?? 0) - 1); if (s.charge <= 0) { const i = c.slots.indexOf(s); c.slots[i] = null; } }
+        if (d.charge != null) s.charge = Math.max(0, (s.charge ?? 0) - 1);
+        else { s.qty--; if (s.qty <= 0) c.slots[c.slots.indexOf(s)] = null; }
         receipt(r, now, 'human.drink', `${h.actorId}:${s.key}`);
         return true;
       }
@@ -699,10 +725,18 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   if (!s) return { result: 'none', reason: 'source unavailable' };
   // PLAYER_EXPLORATION sources are never depleted by NPC autonomous scavenging.
   if (isPlayerExplorationSource(r, s.key, tx, ty)) return { result: 'blocked', key: s.key, reason: 'player-exploration cache protected' };
+  const o = r.sourceMap?.veyra?.originAu;
+  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  const from = { x: (h.gx - ox + 0.5) * TILE, y: (h.gy - oy + 0.5) * TILE };
+  const to = { x: (tx + 0.5) * TILE, y: (ty + 0.5) * TILE };
+  if (h.floor !== (r.veyraFloor ?? 0) || tx < 0 || ty < 0 || tx >= WW || ty >= WH ||
+      Math.hypot(from.x - to.x, from.y - to.y) > TILE * 1.5 || !clearPhysicalLine(r, from, to, true, true))
+    return { result: 'blocked', key: s.key, reason: 'source is not physically reachable on this floor' };
   const st = r.sources[s.i] || (r.sources[s.i] = { stock: s.stock, hp: s.hp });
   if (st.stock <= 0) return { result: 'empty', key: s.key, reason: 'source depleted' };
   const tool = h.equip.weapon;
   const toolKey = tool?.key;
+  if (h.stamina < 2 || tool?.dur !== undefined && tool.dur <= 0) return { result: 'blocked', key: s.key, reason: 'exhausted or broken tool' };
   // Hand-gatherable plants are real shared sources; solid timber/ore/scrap still require an equipped tool.
   const power = s.def.harvestBy ? (toolKey ? (s.def.harvestBy[toolKey] ?? 0) : 0) : (toolKey ? (ITEMS[toolKey]?.power?.[s.def.mat] ?? 0) : s.def.mat === 'plant' ? 1 : 0);
   if (power <= 0) return { result: 'blocked', key: s.key, reason: 'required tool is unavailable' };
@@ -716,6 +750,7 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   if (potentialUnits <= 0) {
     // A valid strike advances real source damage but releases no item yet. No stock or pack output is claimed.
     st.hp = Math.max(0, st.hp - power);
+    h.stamina -= 2;
     if (tool?.dur !== undefined) { tool.dur = Math.max(0, tool.dur - 1); if (tool.dur === 0) h.equip.weapon = null; }
     receipt(r, now, 'human.work', `${h.actorId}:strike:${s.key}@${tx},${ty}`);
     return { result: 'yield', got: 0, key: s.key };
@@ -744,6 +779,7 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
     got += Math.ceil(q * liveItemPer(k));
   }
   st.stock -= units;
+  h.stamina -= 2;
   if (tool?.dur !== undefined) { tool.dur = Math.max(0, tool.dur - 1); if (tool.dur === 0) h.equip.weapon = null; }
   if (st.stock <= 0 && s.def.regrow) { st.regrowFrom = now; st.regrowAcc = 0; }
   receipt(r, now, 'human.harvest', `${h.actorId}:${s.key}@${tx},${ty}:-${units}`);
@@ -788,6 +824,7 @@ export type DamageSource = 'player' | 'enemy' | 'human' | 'hazard' | 'starvation
  *  Floor verification: the target must be on the SAME floor as the active window floor (or the
  *  attacker's floor when the attacker is a creature on a different storey). */
 export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: number, angle: number, now: number, source: DamageSource, attackerId?: string, attackerFloor?: number): boolean {
+  if (!Number.isFinite(dmg) || dmg <= 0) return false;
   if (h.state === 'DEAD' || h.state === 'EVACUATED') return false;
   const activeFloor = r.veyraFloor ?? 0;
   const sourceFloor = attackerFloor ?? activeFloor;
@@ -795,6 +832,7 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
   const worn = humanArmor(h);
   dmg = Math.max(1, Math.round(dmg * (1 - worn.armor)));
   h.hp -= dmg;
+  h.lastDamageAt = now;
   if (attackerId && attackerId !== h.actorId) {
     recordIncident(r, hw, {
       kind: 'assault', victim: h.actorId, aggressor: attackerId, witnesses: [], at: now,
@@ -802,7 +840,10 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
     }, now);
     formGrievance(r, hw, h, attackerId, now);
   }
-  if (h.hp <= 0 && h.state !== 'DOWNED') downHuman(r, hw, h, now, source, attackerId);
+  if (h.hp <= 0) {
+    if (h.state === 'DOWNED') killHuman(r, hw, h, now, source);
+    else downHuman(r, hw, h, now, source, attackerId);
+  }
   return true;
 }
 
@@ -812,6 +853,8 @@ export function downHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
   if (h.state === 'DOWNED' || h.state === 'DEAD') return;
   h.state = 'DOWNED';
   h.downedAt = now;
+  h.motion = undefined;
+  h.intent = undefined;
   h.hp = Math.max(1, h.hp);
   h.wounds.push({ severity: 0.7, bleeding: source === 'enemy' || source === 'human', bleedingUntil: now + 20 * 60000, treated: false });
   receipt(r, now, 'human.down', `${h.actorId} by ${source}${attackerId ? ':' + attackerId : ''}`);
@@ -821,9 +864,7 @@ export function downHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
 export function treatHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { ok: boolean; reason?: string } {
   if (h.state !== 'DOWNED') return { ok: false, reason: 'not downed' };
   const containers: Container[] = [humanPack(r, h)];
-  if (h.community && hw.communities[h.community]) {
-    for (const id of hw.communities[h.community].foodStores) { const c = r.custody[id]; if (c) containers.push(c); }
-  }
+  containers.push(...reachableHumanStores(r, hw, h));
   let used = false;
   for (const c of containers) {
     for (const s of c.slots) {
@@ -850,6 +891,7 @@ export function killHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
   if (h.state === 'DEAD') return;
   h.state = 'DEAD';
   h.deadAt = now;
+  h.motion = undefined; h.intent = undefined;
   h.hp = 0;
   h.outcome = 'DEAD';
   // One recoverable corpse bag entity (kind 'bag') with its own custody container.
@@ -858,8 +900,8 @@ export function killHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
   const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
   const lx = h.gx - ox, ly = h.gy - oy;
   const bag: Entity = { id: uid(r, 'e'), kind: 'bag', x: lx * TILE + 8, y: ly * TILE + 8, tx: lx, ty: ly, c: corpseC.id, born: now };
-  if (r.veyraFloor) (bag as any).floor = r.veyraFloor;
-  if (lx >= 1 && ly >= 1 && lx < WW - 1 && ly < WH - 1) r.entities[bag.id] = bag;
+  bag.floor = h.floor;
+  if (h.floor === (r.veyraFloor ?? 0) && lx >= 1 && ly >= 1 && lx < WW - 1 && ly < WH - 1) r.entities[bag.id] = bag;
   else (r.veyraOffscreenEntities ??= {})[bag.id] = { ...bag, x: h.gx * TILE + 8, y: h.gy * TILE + 8, tx: h.gx, ty: h.gy };
   {
     // Transfer carried/equipped stacks by moving the same object and UID. addStack is
@@ -1283,9 +1325,7 @@ export function advanceElderPressure(r: RunState, hw: HumanWorld, now: number): 
       elder.awakenedAt = now;
       receipt(r, now, 'elder.awaken', elder.elderId);
     }
-    if (elder.awakenedAt && hours >= 312) {
-      elder.lastAttackAt = now;
-    }
+    // Awakening is not an attack; only physical contact can stamp lastAttackAt.
   }
 }
 
@@ -1304,8 +1344,7 @@ export function defeatElder(r: RunState, hw: HumanWorld, elderId: string, now: n
 export interface HumanOutcomeSummary { total: number; evacuated: number; survived: number; dead: number; unresolved: number; }
 
 /** Finalize every human's terminal outcome before the run wipe. No double-counting.
- *  SURVIVED_ON_ISLAND requires a PROVEN safe outcome (sheltered in a community that was never
- *  assaulted); otherwise the outcome stays UNRESOLVED — never a default "everyone survived". */
+ *  SURVIVED_ON_ISLAND requires causal survival evidence through h336; otherwise the outcome stays UNRESOLVED — never a default "everyone survived". */
 export function finalizeHumanOutcomes(r: RunState, hw: HumanWorld, now: number): HumanOutcomeSummary {
   const summary: HumanOutcomeSummary = { total: 0, evacuated: 0, survived: 0, dead: 0, unresolved: 0 };
   for (const h of Object.values(hw.people)) {
@@ -1321,14 +1360,9 @@ export function finalizeHumanOutcomes(r: RunState, hw: HumanWorld, now: number):
     else if (h.state === 'DEAD') { h.outcome = 'DEAD'; summary.dead++; }
     else if (h.state === 'DOWNED') { h.outcome = 'UNRESOLVED'; summary.unresolved++; }
     else {
-      // Proven safe: sheltered in a community that recorded no assault incident against it.
-      const comm = h.community ? hw.communities[h.community] : null;
-      const assaulted = comm ? Object.values(hw.incidents).some(inc => inc.place.tx === h.gx && inc.place.ty === h.gy && inc.injury) : false;
-      if (comm && comm.class !== 'HOSTILE_OR_DANGEROUS' && !assaulted && h.wounds.every(w => w.treated || !w.bleeding)) {
-        h.outcome = 'SURVIVED_ON_ISLAND'; summary.survived++;
-      } else {
-        h.outcome = 'UNRESOLVED'; summary.unresolved++;
-      }
+      // Absence of damage is NOT proof of surviving the final assault interval.
+      // Until the assault authority supplies causal interval coverage, remain unresolved.
+      h.outcome = 'UNRESOLVED'; summary.unresolved++;
     }
   }
   receipt(r, now, 'human.finalize', `total=${summary.total} evac=${summary.evacuated} surv=${summary.survived} dead=${summary.dead} unres=${summary.unresolved}`);
@@ -1428,6 +1462,9 @@ function canHumanOccupy(r: RunState, h: HumanRecord, gx: number, gy: number, gri
   if (h.floor !== (r.veyraFloor ?? 0) || occupied.has(humanCellKey(h.floor, gx, gy))) return false;
   const lx = gx - ox, ly = gy - oy;
   if (lx < 0 || ly < 0 || lx >= WW || ly >= WH) return false;
+  const px = (lx + 0.5) * TILE, py = (ly + 0.5) * TILE;
+  if (!r.player.dead && Math.hypot(px - r.player.x, py - r.player.y) < TILE * 0.7) return false;
+  if (r.creatures.some(m => m.state !== 'dead' && (m.floor ?? 0) === h.floor && Math.hypot(px - m.x, py - m.y) < TILE * 0.7)) return false;
   const cell = grid[ly * WW + lx];
   return cell === 0 || cell === 4;
 }
@@ -1456,9 +1493,23 @@ function plannerSources(r: RunState): Set<string> {
 function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>, protectedTiles: Set<string>): void {
   if (h.following || h.state !== 'IDLE' || h.intent || (h.nextThinkAt ?? 0) > now) return;
   h.nextThinkAt = now + 6000;
-  if (h.floor !== (r.veyraFloor ?? 0) || h.hunger < 25 || h.thirst < 25 || h.hp < 30 || h.stamina < 12) return;
+  if (h.floor !== (r.veyraFloor ?? 0) || h.hp < 30 || h.stamina < 12) return;
   if (!h.community) return;
   const comm = hw.communities[h.community]; if (!comm) return;
+  const need = h.thirst < 40 ? 'drink' : h.hunger < 40 ? 'eat' : undefined;
+  if (need && comm.storeTile) {
+    const stock = comm.foodStores.flatMap(id => r.custody[id]?.slots ?? []);
+    const hasSupply = stock.some(s => s && (need === 'eat' ? (ITEMS[s.key].food?.hunger ?? 0) > 0 : (ITEMS[s.key].food?.thirst ?? 0) > 0 && (ITEMS[s.key].charge == null || (s.charge ?? 0) > 0)));
+    if (hasSupply && !reachableHumanStores(r, hw, h).length) {
+      const route = humanRouteToAdjacent(r, h, comm.storeTile[0], comm.storeTile[1], grid, ox, oy, occupied);
+      if (route?.length) {
+        h.intent = { intentId: `supply:${h.actorId}:${now}`, actorId: h.actorId, kind: need, target: comm.storeEntityId, preconditions: ['authorized finite stock'], reserved: [], startAt: now, dueAt: now, route };
+        h.state = 'MOVING'; return;
+      }
+      h.lastWorkBlock = 'I need supplies, but cannot reach our store.';
+    }
+  }
+  if (h.hunger < 25 || h.thirst < 25) return;
   const pack = humanPack(r, h);
   if (h.workOutputs && Object.values(h.workOutputs).some(q => q > 0) && comm.storeTile) {
     const route = humanRouteToAdjacent(r, h, comm.storeTile[0], comm.storeTile[1], grid, ox, oy, occupied);
@@ -1515,14 +1566,16 @@ function performHumanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, now: n
 function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): void {
   if (!h.community || !h.workOutputs) return;
   const comm = r.humanWorld?.communities[h.community]; if (!comm) return;
+  if (!reachableHumanStores(r, r.humanWorld!, h).length) return;
   const dstId = comm.storeContainers.find(id => r.custody[id]); if (!dstId) return;
   const pack = humanPack(r, h), dst = r.custody[dstId]; let moved = 0;
   for (const [stackUid, qty] of Object.entries(h.workOutputs)) {
     const i = pack.slots.findIndex(s => s?.uid === stackUid); if (i < 0 || qty <= 0) { delete h.workOutputs[stackUid]; continue; }
     const s = pack.slots[i]!; const take = Math.min(qty, s.qty);
     const transfer = take === s.qty ? s : { ...s, uid: uid(r, 's'), qty: take };
-    if (!addStack(r, dstId, transfer)) continue;
-    if (take === s.qty) pack.slots[i] = null; else s.qty -= take;
+    const whole = take === s.qty;
+    if (whole) pack.slots[i] = null; else s.qty -= take;
+    if (!addStack(r, dstId, transfer)) { if (whole) pack.slots[i] = s; else s.qty += take; continue; }
     moved += take; if (qty <= take) delete h.workOutputs[stackUid]; else h.workOutputs[stackUid] = qty - take;
   }
   if (moved) receipt(r, now, 'human.store', `${h.actorId}:${moved}`);
@@ -1534,7 +1587,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   hw.lastStepAt = now;
   const actors = Object.values(hw.people);
   const wantsPlan = now >= (hw.plannerAt ?? 0) && actors.some(h => !h.following && h.state === 'IDLE' && !h.intent && (h.nextThinkAt ?? 0) <= now);
-  const hasMovement = actors.some(h => h.state === 'MOVING' && !!h.intent?.route?.length) || actors.some(h => h.following && h.state === 'IDLE') || wantsPlan;
+  const hasMovement = actors.some(h => h.state === 'MOVING' && !!h.intent?.route?.length) || actors.some(h => h.following && h.state === 'IDLE') || wantsPlan || actors.some(h => h.state === 'FIGHTING');
   const grid = hasMovement ? blockGrid(r) : new Uint8Array(0);
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
@@ -1552,6 +1605,31 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
       cursor = (i + 1) % actors.length;
     }
     hw.plannerCursor = cursor; hw.plannerAt = now + 1000;
+  }
+  // Combat locomotion uses the same cardinal route executor and occupancy as work/follow.
+  // Limit new searches per update; do not perform an island-wide BFS per hostile per frame.
+  let combatRoutes = 0;
+  for (const h of actors) {
+    if (h.state !== 'FIGHTING' || h.intent?.kind !== 'fight' || h.floor !== (r.veyraFloor ?? 0)) continue;
+    const enemy = h.intent.target === 'player' ? (r.player.dead ? null : r.player)
+      : r.creatures.find(m => m.id === h.intent?.target && m.state !== 'dead' && (m.floor ?? 0) === h.floor);
+    if (!enemy) { h.intent.blockReason = 'target is no longer visible on this floor'; continue; }
+    faceHumanToward(h, ox + enemy.x / TILE, oy + enemy.y / TILE);
+    const weapon = humanWeapon(h);
+    if (!weapon) { h.intent.blockReason = 'no usable weapon'; continue; }
+    const distance = Math.hypot((h.gx - ox + 0.5) * TILE - enemy.x, (h.gy - oy + 0.5) * TILE - enemy.y);
+    if (distance <= weapon.reach + 8) continue;
+    if ((h.nextThinkAt ?? 0) > now || combatRoutes >= 4) continue;
+    h.nextThinkAt = now + 750; combatRoutes++;
+    // No psychic pursuit: the approach must begin with actual line of sight.
+    if (distance > TILE * 18 || !clearPhysicalLine(r, { x: (h.gx - ox + 0.5) * TILE, y: (h.gy - oy + 0.5) * TILE }, enemy, true)) {
+      h.intent.blockReason = 'lost sight of the target'; continue;
+    }
+    const route = humanRouteToAdjacent(r, h, ox + Math.floor(enemy.x / TILE), oy + Math.floor(enemy.y / TILE), grid, ox, oy, occupied);
+    if (!route?.length) { h.intent.blockReason = 'no accessible approach'; continue; }
+    // One step at a time prevents chasing a stale destination after the target moves.
+    h.intent.route = route.slice(0, 1); h.intent.startAt = now;
+    h.intent.blockReason = undefined; h.state = 'MOVING';
   }
   for (const h of actors) {
     if (!h.following || h.state !== 'IDLE' || h.intent?.kind !== 'follow') continue;
@@ -1588,9 +1666,10 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
       if (!h.motion) {
         const dx = next.tx - h.gx, dy = next.ty - h.gy;
         const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
-        if (Math.abs(dx) + Math.abs(dy) !== 1 || !canHumanOccupy(r, h, next.tx, next.ty, grid, ox, oy, occupied)) {
+        if (next.floor !== h.floor || Math.abs(dx) + Math.abs(dy) !== 1 || !canHumanOccupy(r, h, next.tx, next.ty, grid, ox, oy, occupied)) {
           occupied.add(key); moveIntent.blockReason = 'blocked by a wall, closed door, or another survivor';
           if (moveIntent.kind === 'follow') moveRoute.length = 0;
+          else if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.motion = undefined; moveRoute.length = 0; h.nextThinkAt = now + 750; }
           else { h.intent = undefined; h.state = 'IDLE'; h.nextThinkAt = now + 3000; }
         } else {
           const intentStart = Number.isFinite(moveIntent.startAt) ? Math.max(lastStepAt, moveIntent.startAt) : lastStepAt;
@@ -1609,7 +1688,8 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
           h.gx = h.motion.toGx; h.gy = h.motion.toGy; h.motion = undefined; moveRoute.shift();
           h.lastSimAt = now; occupied.add(humanCellKey(h.floor, h.gx, h.gy));
           if (!moveRoute.length) {
-            if (moveIntent.kind === 'follow') { h.state = 'IDLE'; moveRoute.length = 0; }
+            if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.nextThinkAt = now; }
+            else if (moveIntent.kind === 'follow') { h.state = 'IDLE'; moveRoute.length = 0; }
             else if (moveIntent.kind === 'work' && moveIntent.target?.startsWith('harvest:')) {
               const target = moveIntent.target.match(/^harvest:(\d+),(\d+)$/);
               if (target) faceHumanToward(h, Number(target[1]) + ox, Number(target[2]) + oy);
@@ -1630,7 +1710,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
 // Human combat integration — real damage routes, not an unattached function.
 // ---------------------------------------------------------------------------
 /** Resolve human combat for one tick: creatures in range damage nearby humans (applyDamage
- *  with the creature's floor), and fighting humans strike back at nearby creatures/player.
+ *  with the creature's floor), and fighting humans strike their selected creature/player target.
  *  This is the bidirectional combat law the main K5 routes call into. */
 export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void, hitPlayer?: (attacker: HumanRecord, damage: number, angle: number) => void): void {
   const activeFloor = r.veyraFloor ?? 0;
@@ -1638,26 +1718,32 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
   // 1. Creatures damage humans in their attack range.
   for (const m of r.creatures) {
-    if (m.state !== 'attack' && m.state !== 'chase') continue;
+    if (m.state !== 'attack') continue;
     const cFloor = m.floor ?? activeFloor;
     const cDmg = CREATURES[m.type]?.dmg ?? 10;
     for (const h of Object.values(hw.people)) {
-      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== cFloor || now - (h.lastDamageAt ?? -Infinity) < 500) continue;
+      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== cFloor || m.atk?.humanVictims?.includes(h.actorId)) continue;
       const dx = (h.gx + 0.5) * TILE - ox * TILE - m.x, dy = (h.gy + 0.5) * TILE - oy * TILE - m.y;
       const reach = (CREATURES[m.type]?.r ?? 16) + TILE * 0.5;
       const from = { x: m.x, y: m.y }, to = { x: m.x + dx, y: m.y + dy };
       if (Math.hypot(dx, dy) <= reach && clearPhysicalLine(r, from, to, true)) {
         const landed = applyDamage(r, hw, h, cDmg, Math.atan2(dy, dx), now, 'enemy', m.id, cFloor);
-        if (landed) h.lastDamageAt = now;
+        if (landed) {
+          h.lastDamageAt = now;
+          m.atk ??= {}; (m.atk.humanVictims ??= []).push(h.actorId);
+        }
       }
     }
   }
   // 2. Humans use the same physical range/cone/LOS and weapon cadence as player melee.
   for (const h of Object.values(hw.people)) {
-    if (h.state !== 'FIGHTING' || h.floor !== activeFloor) continue;
+    if (h.state !== 'FIGHTING' || h.floor !== activeFloor || h.stamina < 3) continue;
     const w = humanWeapon(h); if (!w) continue;
     if (now - (h.lastAttackAt ?? -Infinity) < w.swing * proficiencyMul(h.combatProficiency)) continue;
     const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
+    const seenTarget = h.intent?.target === 'player' ? (r.player.dead ? undefined : r.player)
+      : r.creatures.find(m => m.id === h.intent?.target && m.state !== 'dead' && (m.floor ?? activeFloor) === h.floor);
+    if (seenTarget && clearPhysicalLine(r, { x: hx, y: hy }, seenTarget, true)) faceHumanToward(h, ox + seenTarget.x / TILE, oy + seenTarget.y / TILE);
     const facing = h.dir === 0 ? Math.PI / 2 : h.dir === 1 ? Math.PI : h.dir === 2 ? 0 : -Math.PI / 2;
     if (h.intent?.target === 'player') {
       const dx = r.player.x - hx, dy = r.player.y - hy, distance = Math.hypot(dx, dy), angle = Math.atan2(dy, dx);
@@ -1669,7 +1755,7 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
       }
       continue;
     }
-    const target = r.creatures.filter(m => m.state !== 'dead' && (m.floor ?? activeFloor) === h.floor)
+    const target = r.creatures.filter(m => m.state !== 'dead' && (m.floor ?? activeFloor) === h.floor && (!h.intent?.target || h.intent.target === m.id))
       .map(m => ({ m, dx: m.x - hx, dy: m.y - hy, d: Math.hypot(m.x - hx, m.y - hy) }))
       .filter(v => v.d <= w.reach + (CREATURES[v.m.type]?.r ?? 6) && Math.abs(Math.atan2(Math.sin(Math.atan2(v.dy, v.dx) - facing), Math.cos(Math.atan2(v.dy, v.dx) - facing))) <= w.arc / 2 + 0.15 && clearPhysicalLine(r, { x: hx, y: hy }, v.m, true))
       .sort((a, b) => a.d - b.d)[0];
