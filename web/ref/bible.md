@@ -7,6 +7,16 @@
 >
 > **Ưu tiên:** (1) quyết định Creator mới nhất; (2) [CHỐT] của Bible; (3) Gold/asset có thẩm quyền và hành vi code ở đúng SHA; (4) Atlas v1–v11 để nghiên cứu LI có version/mode/provenance; (5) Git lịch sử. Không tự suy ra chủ sở hữu công việc từ PR/work order cũ. Nếu thật sự xung đột luật, ghi rõ chứ không tự đổi Creator.
 
+## [CHỐT — CREATOR 2026-11-16] FANTASY NỀN: HÒN ĐẢO CUỐI CÙNG CỦA NHÂN LOẠI
+
+**Veyra là hòn đảo cư trú cuối cùng của loài người trên Trái Đất**, sau khi phần còn lại của thế giới bị các thế lực Elder xâm chiếm, tàn phá. Chính trên hòn đảo cuối cùng này Elder cũng hiện diện, trú ngụ và chuẩn bị tai họa cuối cùng nhằm chấm dứt phần nhân loại còn lại. Người chơi là một người sống sót có quyền tự chọn đường sinh tồn, và có thể trở thành **người quy tụ/leader bằng hành động** cùng những người còn lại **tái thiết cuộc sống trước tận thế**. Đây là định hướng cốt lõi cho dân cư, xã hội, âm thanh, mỹ thuật, môi trường, tình huống và chu kỳ 336 giờ; không phải quyết định thêm 7th Elder hay một chiến dịch quest bắt buộc.
+
+**Cảm giác được yêu cầu:** hy vọng mong manh trong thế giới đã tan vỡ. Có nơi còn người lao động, chăm sóc, bảo vệ, cãi vã, đổi hàng và xây dựng; có cộng đồng sống phụ thuộc nguồn/đường tiếp tế, có nơi đang suy yếu, nơi gần như hoang tàn hoặc bị các thế lực Elder uy hiếp. Không được thiết kế làng thành một nơi yên ổn đầy đủ hàng hóa/nguồn vô hạn, cũng không script toàn bộ làng chết vì đăng nhập muộn. Mỗi người sống có danh tính, nghề hoặc vai trò, nhu cầu, đồ đạc, người thân, ý chí và hậu quả thật. Người chơi có thể giúp, bỏ qua, tuyển, cướp, cứu hoặc giết; người bị hại/đồng minh chỉ biết và truy đuổi từ thông tin, hành động và đường đi vật lý thật.
+
+**Luật không đổi:** 336 giờ thật, cuối 72 giờ Ragnarok và cuối run full reset K8; các nhánh sáu Elder / sáu đá, sơ tán bình thường, solo không NPC và cash escrow vẫn độc lập. Xây dựng cộng đồng là lựa chọn gameplay tự do, không hệ nhiệm vụ mới, không Leader XP, không transfer nhân vật hay vật tư qua run. NPC phải có art/animation thật trong Web 640×360, không chỉ AI logic/test xanh. Chỉ người chơi Creator có quyền nghiệm thu cảm giác nhân loại cuối cùng, chất lượng tái thiết và mỹ thuật; không cho bot test experience thay người chơi.
+
+**Đặc tả đầy đủ duy nhất:** [SURVIVOR_SETTLEMENT_CONTRACT_V1_20261115.md](survivors/SURVIVOR_SETTLEMENT_CONTRACT_V1_20261115.md), đặc biệt §§28–37. Các lựa chọn NPC cũ đang ghi OPEN nhưng đã được Creator quyết định (real-hour needs A, companion will B, cộng đồng Hướng 2) không được dùng để hỏi lại hay tự thay luật.
+
 ## 0. ĐỌC NHƯ THẾ NÀO — VAI TRÒ VÀ RANH GIỚI
 
 **Thực thi gameplay:** Một Gameplay Agent hiện hành chịu trách nhiệm đầu-cuối về source→action→cost→world→save→UI/POI. Các mảng Map, Gold/VFX, HUD, Godot là hợp đồng tích hợp, không phải viện dẫn để chờ agent đã ngừng. Không tự đổi [CHỐT], không tự bịa nguồn Gold hay địa lý.
