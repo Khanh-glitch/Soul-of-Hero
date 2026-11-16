@@ -552,3 +552,49 @@ SOH has a **336 real-hour** run, last 72h Ragnarok, plus a **fictional 24-minute
 **Pre-release engineering safeguards:** TypeScript structure and schema revisions; deterministic state transitions with receipts; uniqueness invariants for actor/source/Core/item UIDs; source/accounting conservation; migration of legacy vendor/shop and run entities; property-based multi-seed spatial and decision testing; hostile multi-actor and cross-floor pathing tests; concurrency test player+workers+shop; 336h offline stress and two-run reset; realistic performance/memory and readability in 640×360; native inputs, screenshots of actual scenes and complete player-visible accessible routes. No claim that tests guarantee zero bugs, but implementation must actively prevent the known failures before end-user correction.
 
 **Source reality:** THIS SECTION IS DESIGN-PREPARATION, NOT ACCEPTANCE. Nothing in the reviewed repository currently proves the six profile numbers, downed human actor, NPC-owned Core, willful companion or full-wide human population are already implemented. Source of calibrated combat defaults is current catalog/balance; exact NPC numbers and policies above remain SOH_PROVISIONAL until approved and measured in integrated gameplay.
+
+## 26. AI robustness and time-base dependency (design review 2026-11-16)
+
+**Do not overpromise:** a deterministic design and tests reduce risk; no implementation can honestly be guaranteed 'without bugs' prior to execution. Build for explainability, idempotence, small bounded state and static data validation. No LLM deciding moment-to-moment combat, no changing a neutral/hostile decision each frame, no local-only actor identity tied to window frames.
+
+### 26.1 Hybrid hierarchy for production-scale humans (CT technical proposal)
+
+**Layer 1, immutable rights/identity:** unique actorId, sourceId, equipment UID, home and relations. One run-owned durable actor state. All item/source/damage commits require unique intent IDs and timestamp, durable receipt.
+**Layer 2, hard event priority:** dead/downed → immediate peril/escape → emergency treatment → defend/protect known person → shelter/hunger/rest → committed job/party order → self-selected livelihood/travel → idle/social. One active intent; interrupt and release pending work reservation by existing station rules.
+**Layer 3, goal choice among legal options:** deterministic utility score from ONLY locally sensed facts and remembered events, plus authored disposition. Candidate goals are small physical acts (go to known workbench; fetch from authorized source; check injured friend; follow player; watch known road; investigate heard combat). Invalid rights/inputs/path/floor → goal cannot enter the candidate set. Stable ties by actorId and goalId; decision cache updated at meaningful events, not every frame.
+**Layer 4, action execution:** reusable navigation/LOS/equipment/station/health/custody actions with precondition → reservation → progress → commit receipt → observation. Each work/cast/transfer/attack event independently enforces permissions again immediately before the action; stale planning is not authorization.
+**Layer 5, distant actor projection:** when unseen, store the last true global position, floor, intent, authorized route, inventory, work budget and pending contacts; advance only deterministically resolvable actions. The local sprite can disappear without deleting the real person, item source or vendetta. Combat that has no physical model/evidence remains pending, not a fabricated death/base raid.
+
+**Illustrative companion refusal function from §25.5:** hard constraints and close-ally protection must be resolved before risk/obedience. A changed fact requires a specific knowledge/event update; the same command+observed world cannot yield a different decision on reload or nearby camera movement. The player sees a short explicit reason, not a hidden morale slider. A willing opportunist can join a crime; a Greywater resident can refuse or intervene against harming a neighbor. The algorithm is deterministic but not uniformly obedient.
+
+**Observable adult activity:** role-specific animations/sound mirror only real actions; a vendor can idly talk without output, but a claimed repair/cast/harvest must consume item/time/energy and produce a receipt. Actors at different floors cannot overlap and deal damage through floor separation. All 81 POI/classified rooms and routes use identical action law.
+
+### 26.2 Failure-mode matrix to prevent 'fix it after players find it'
+
+| Risk / potential exploit | Preventive invariant | Negative test before human acceptance |
+|---|---|---|
+| Actor clones after slide, floor switch, relaunch | source+actor ID uniquely owns one materialization | shift window 10×, restart, kill/loot once |
+| One NPC both cooks at home and escorts | one active task; station automation does not imply worker remains | enlist/cancel mid-queue and check funded output |
+| NPC knows unobserved attacker/home | knowledge origin = sight/sound/communicated fact/valid trail with time | erase footprints, motorbike departure, LOS blocked, no retaliatory GPS |
+| Companion stochastic obedience | hard vetoes first, persistent order decision and reason | same input thousands of evaluations/reloads and multiple seeds |
+| Friend/neutral AoE exploit | target eligibility, real damage friendly-fire and incident origin logged | fire Core near allies, verify no silent automatic forgiveness |
+| Wounded person instantly respawns with gear | persisted downed body and single UID custody | wound→rob→rescue→kill→relaunch |
+| NPC crafted/looted goods appear twice | event reservation with source budget, UID, transaction receipt | concurrent player/NPC harvest, cancel/far replay |
+| Rare NPC Core farm through immigration | finite actor/core minted source IDs with durable arrival ledger | kill arriving bearer, switch window, simulate next arrival |
+| Bandits magically spawn or ambush near home | origin+route+observation+travel/capability all required | initial game, no hostile knowledge, check no artificial raid |
+| Locked shop/escrow stolen by aura | physical access, item-permission and profile-cash immunity | try theft through blocked door / from non-carried stock |
+| 336h village starvation or infinite food | unified needs/food/water/crop/clock budget with source receipts | simulate full run for multiple actual community sizes |
+| 640×360 overcrowded HUD/actor overlap | bounded local rendering and clear hitboxes, no NPC sprite invisibility | dense village plus combat/trade at 1× |
+| NPC-owned gear vanished during finalization | one finalization receipt wipes all run-local actors/gear, not profile secured cash | two runs, before/after profile/UID audit |
+
+### 26.3 Necessary time-base decision (OPEN, **not Creator-decided**)
+
+Verified current run = 336 real hours. BAL.dayNight.dayLengthMinutes=24, yielding **840 in-game day/night cycles in 336 real hours**. Bible also compresses approximately two fictional years/eight seasons into one run. A metabolic model consuming three normal meals per fictional day would require ~2520 meals **per NPC** in one 14-day real-world run (about 75,600 meals for a hypothetical 30-person population) before modeling farm yields, water, sleep and death. This cannot be smuggled in as 'realism' or papered over by free stock. Conversely, only 14 real-world days' needs alongside 840 fiction days is an intentional gameplay time abstraction.
+
+**Creator choice must clarify the authority before numeric hunger/water/rest and immigration/production rates are locked:**
+- **A — real-time economic needs:** NPC consumes based on measured real elapsed time (same 336h absolute clock family as funded production); fictional 24-minute day/night drives **visible shift/routine rhythm**, not literal 3 entire meals per sunrise. Economy can sustain meaningful villages within a 14-day run without multiplying item consumption by 840.
+- **B — full fictional-day physiology:** NPC eats/drinks/sleeps each fictional day and associated agricultural/food/medicine sources must produce enough for ~840 days. This requires a separate comprehensive per-season resource rebalancing of NPC and potentially player survival. This should be approved only intentionally, not assumed from the weather/calendar system.
+
+**CT provisional recommendation: A**, provided human hunger and supply sinks remain physical and meaningful. This decision does **not** change that time flows while offline, does not freeze work/growth or skip winter, and does not exempt NPC from danger. Once chosen, derive numerical hunger/water periods from actual food item effects, water access, village size and crop production, and publish one 336h supply-demand table for normal, isolated and low-resource communities. Do not silently reinterpret A as NPCs never eating.
+
+**Status:** the full-world implementation rights, six creator B decisions and companion consent B are design-authorized; **the A/B time-base branch remains open**. All numerical NPC stats in §25 are SOH_PROVISIONAL first-pass values, not a Creator-signed balance lock.
