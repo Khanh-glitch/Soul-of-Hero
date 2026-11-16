@@ -761,6 +761,11 @@ export function validate(raw: any): GameState | null {
     if (!Number.isFinite(hw.lastResolvedAt) || hw.lastResolvedAt <= 0 || hw.lastResolvedAt > r.clock.lastSimAt) {
       hw.lastResolvedAt = r.clock.lastSimAt;
     }
+    // Split the old shared clock: needs and movement must each advance once per world timestamp.
+    // Old saves inherit their previous resolved point; malformed/future clocks re-anchor safely.
+    for (const key of ['lastNeedsAt', 'lastStepAt'] as const) {
+      if (!Number.isFinite(hw[key]) || hw[key] < 0 || hw[key] > r.clock.lastSimAt) hw[key] = hw.lastResolvedAt;
+    }
     // Schema validation: every human record must carry the required identity fields.
     const seenUids = new Set<string>();
     for (const h of Object.values(hw.people ?? {}) as any[]) {
@@ -778,6 +783,8 @@ export function validate(raw: any): GameState | null {
       for (const c of [h?.inv?.packId, h?.inv?.cartId]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
     }
     for (const comm of Object.values(hw.communities ?? {}) as any[]) {
+      // P0.2: old abstract stock mirrors could mint items during work ticks. Physical custody is canonical.
+      if (comm && typeof comm === 'object') delete comm.stock;
       for (const c of [...(comm?.storeContainers ?? []), ...(comm?.foodStores ?? []), ...(comm?.homeBeds ?? [])]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
     }
   }

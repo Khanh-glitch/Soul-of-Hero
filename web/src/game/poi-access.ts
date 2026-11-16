@@ -32,7 +32,10 @@ export function interiorRelease(r:RunState,e:Entity,d:PoiDoorContract):boolean {
 export function doorwayOccupied(r:RunState,e:Entity):boolean {
   if(r.entities[e.id]!==e || ((e as any).floor??0)!==(r.veyraFloor??0)) return false;
   const inDoor=(o:{x:number;y:number})=>Math.abs(o.x-e.x)<TILE*.75&&Math.abs(o.y-e.y)<TILE*.75;
-  return (!r.player.dead&&inDoor(r.player)) || r.creatures.some(c=>c.state!=='dead'&&((c as any).floor??0)===(r.veyraFloor??0)&&inDoor(c)) || Object.values(r.entities).some(o=>((o as any).floor??0)===(r.veyraFloor??0)&&(o.kind==='cart'||o.kind==='vehicle')&&inDoor(o));
+  const [ox,oy] = r.sourceMap?.veyra?.originAu ? [Math.round(r.sourceMap.veyra.originAu[0] / 0.5), Math.round(r.sourceMap.veyra.originAu[1] / 0.5)] : [0,0];
+  const humans = Object.values((r as any).humanWorld?.people ?? {}) as {gx:number;gy:number;floor:number;state:string}[];
+  const humanInDoor = humans.some(h => h.state !== 'DEAD' && h.state !== 'EVACUATED' && h.floor === (r.veyraFloor ?? 0) && Math.abs((h.gx-ox+0.5)*TILE-e.x)<TILE*.75 && Math.abs((h.gy-oy+0.5)*TILE-e.y)<TILE*.75);
+  return (!r.player.dead&&inDoor(r.player)) || r.creatures.some(c=>c.state!=='dead'&&((c as any).floor??0)===(r.veyraFloor??0)&&inDoor(c)) || Object.values(r.entities).some(o=>((o as any).floor??0)===(r.veyraFloor??0)&&(o.kind==='cart'||o.kind==='vehicle')&&inDoor(o)) || humanInDoor;
 }
 /** Idempotent chronological expiry; an occupied aperture remains open until clear. */
 export function advancePoiAccess(r:RunState,now:number):{closed:string[];expired:string[]} {

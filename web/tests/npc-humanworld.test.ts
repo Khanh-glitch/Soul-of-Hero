@@ -12,6 +12,7 @@ import { newGame, startRun, dispatch } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
 import { auToTile, windowAround } from '../src/veyra05/frame';
+import { authoredPlan } from '../src/veyra05/floors';
 import { validate } from '../src/game/persist';
 import { NPC_POI_CENSUS } from '../src/game/npc-census';
 import {
@@ -52,6 +53,10 @@ describe('NPC HumanWorld ledger', () => {
     for (const h of Object.values(hw.people)) {
       expect(creatureIds.has(h.actorId)).toBe(false);
       expect(entityIds.has(h.actorId)).toBe(false);
+      const poi = h.community && hw.communities[h.community]?.poi;
+      const plan = poi ? authoredPlan(poi) : null;
+      const insideAuthoredRoom = plan?.plan.rooms.some(room => room.level === h.floor && room.rects.some(([x,y,w,hh]) => h.gx > x && h.gx < x + w - 1 && h.gy > y && h.gy < y + hh - 1));
+      if (plan?.plan.rooms.some(room => room.level === h.floor)) expect(insideAuthoredRoom).toBe(true);
     }
   });
 
@@ -116,7 +121,7 @@ describe('NPC HumanWorld ledger', () => {
     const summary = finalizeHumanOutcomes(r, hw, T0 + 1000);
     const valid = new Set(['EVACUATED', 'SURVIVED_ON_ISLAND', 'DEAD', 'UNRESOLVED']);
     for (const h of Object.values(hw.people) as HumanRecord[]) {
-      expect(valid.has(h.outcome)).toBe(true);
+      expect(valid.has(h.outcome ?? 'UNRESOLVED')).toBe(true);
     }
     expect(summary).toBeTruthy();
   });

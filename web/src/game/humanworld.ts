@@ -158,7 +158,6 @@ export interface Community {
   workStations: string[];     // station entity ids
   storeContainers: string[];  // community store container ids
   memberIds: string[];
-  stock: Record<string, number>;  // finite community stock ledger (key->qty)
   threat: number;             // 0..1 local threat level
 }
 export interface ArrivalToken {
@@ -204,7 +203,11 @@ export interface HumanWorld {
   elderPressure: Record<string, ElderAssault>;
   events: Record<string, HumanEvent>;
   incidents: Record<string, HumanIncident>;
+  /** Legacy needs-clock field retained for save compatibility. */
   lastResolvedAt: number;
+  /** Independent clocks prevent needs advancement from suppressing autonomous movement. */
+  lastNeedsAt?: number;
+  lastStepAt?: number;
   nextActorSeq: number;
 }
 
@@ -230,6 +233,8 @@ export function newHumanWorld(runId: string, now: number): HumanWorld {
     events: {},
     incidents: {},
     lastResolvedAt: now,
+    lastNeedsAt: now,
+    lastStepAt: now,
     nextActorSeq: 1,
   };
 }
@@ -244,9 +249,16 @@ export function seedEvacTrips(hw: HumanWorld, positions: Record<string, [number,
 }
 
 /** Seed the six canonical Elder assault authorities from the catalog. */
-export function seedElderPressure(hw: HumanWorld, lairGx: number, lairGy: number, lairFloor: number): void {
-  for (const [id, p] of Object.entries(PRIMORDIAL_ELDERS)) {
-    hw.elderPressure[id] = { elderId: id, alive: true, lairGx, lairGy, lairFloor, routeTargets: [] };
+export function seedElderPressure(
+  hw: HumanWorld,
+  lairGx: number,
+  lairGy: number,
+  lairFloor: number,
+  lairs?: Record<string, { gx: number; gy: number; floor: number }>,
+): void {
+  for (const id of Object.keys(PRIMORDIAL_ELDERS)) {
+    const loc = lairs?.[id] ?? { gx: lairGx, gy: lairGy, floor: lairFloor };
+    hw.elderPressure[id] = { elderId: id, alive: true, lairGx: loc.gx, lairGy: loc.gy, lairFloor: loc.floor, routeTargets: [] };
   }
 }
 
@@ -442,27 +454,30 @@ function communityStock(cls: SiteClass, rooms: number): Record<string, number> {
   return s;
 }
 
-/** Classify a POI from its archetype name and seed a community + finite humans.
- *  `sites` carries the POI's global tile bounding box (from the G1B source roster footprint —
- *  the chests sit inside the POI's rooms, so the bbox is the POI's physical footprint). */
-export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string; name: string; archetype: string; rooms: number; bbox: [number, number, number, number] }[]): void {
-  // Evac boarding tiles: resolve from the real evac entities on the map (the evac POIs carry no
-  // G1B chests, so their tile comes from the beacon entity, not a chest bbox).
-  const evacPositions: Record<string, [number, number]> = {};
-  const evacEntities = Object.values(r.entities).filter(e => e.kind === 'evac' && e.tx !== undefined && e.ty !== undefined);
-  const siteList = ['po_evac_west', 'po_evac_south', 'po_evac_hook'] as const;
-  evacEntities.forEach((e, i) => { if (siteList[i]) evacPositions[siteList[i]] = [e.tx!, e.ty!]; });
+/** Classify a POI from its archetype and seed a finite community.
+ *  `sites` carries authored global bounds plus walkable room-interior spawn tiles. */
+export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string; name: string; archetype: string; rooms: number; bbox: [number, number, number, number]; spawnTiles?: [number, number][] }[], elderLairs?: Record<string, { gx: number; gy: number; floor: number }>, authoredEvacPositions?: Record<string, [number, number]>): void {
+  // Boarding coordinates are global and keyed by authored POI identity, never active-window order.
+  const evacPositions: Record<string, [number, number]> = { ...(authoredEvacPositions ?? {}) };
+  if (!authoredEvacPositions) {
+    const o = r.sourceMap?.veyra?.originAu;
+    const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+    for (const e of Object.values(r.entities)) {
+      if (e.kind === 'evac' && e.poi && e.tx !== undefined && e.ty !== undefined) evacPositions[e.poi] = [e.tx + ox, e.ty + oy];
+    }
+  }
   seedEvacTrips(hw, evacPositions);
   // Elder lair: use a real elder_site POI bbox center when present, else a fixed lair.
   const elderSite = sites.find(s => s.archetype === 'elder_site');
   const lair = elderSite ? [Math.round((elderSite.bbox[0] + elderSite.bbox[2]) / 2), Math.round((elderSite.bbox[1] + elderSite.bbox[3]) / 2), 0] : [0, 0, 0];
-  seedElderPressure(hw, lair[0], lair[1], lair[2]);
+  seedElderPressure(hw, lair[0], lair[1], lair[2], elderLairs);
   const rng = mulberry(r.seed ^ 0x9e3779b9);
+  const occupiedSpawnTiles = new Set<string>();
   for (const site of sites) {
     const cls = ARCH_CLASS[site.archetype] ?? 'INACCESSIBLE_OR_UNVERIFIED';
     if (cls === 'ABANDONED' || cls === 'INACCESSIBLE_OR_UNVERIFIED') {
       // Legitimate empty: record the classification, no population, no stock.
-      hw.communities[site.id] = { id: site.id, poi: site.id, class: cls, homeBeds: [], waterSources: [], foodStores: [], workStations: [], storeContainers: [], memberIds: [], stock: {}, threat: 0 };
+      hw.communities[site.id] = { id: site.id, poi: site.id, class: cls, homeBeds: [], waterSources: [], foodStores: [], workStations: [], storeContainers: [], memberIds: [], threat: 0 };
       continue;
     }
     // Community store (finite stock, registered origin) + a bed container (home).
@@ -473,10 +488,10 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
     for (const [k, q] of Object.entries(stock)) addItem(r, store.id, k, q);
     const comm: Community = {
       id: communityId, poi: site.id, class: cls, homeBeds: [bed.id],
-      waterSources: [store.id],  // water access is real: community stock holds charged water_flasks
+      waterSources: [store.id],  // physical container custody is the only stock authority
       foodStores: [store.id],
-      workStations: [],           // real stations are scanned at runtime; work blocks honestly if none
-      storeContainers: [store.id], memberIds: [], stock, threat: cls === 'HOSTILE_OR_DANGEROUS' ? 0.7 : 0.2,
+      workStations: [],           // work blocks honestly until a physical station/recipe is authored
+      storeContainers: [store.id], memberIds: [], threat: cls === 'HOSTILE_OR_DANGEROUS' ? 0.7 : 0.2,
     };
     hw.communities[communityId] = comm;
     // Seed humans at a tile inside the POI bbox (ground floor).
@@ -484,8 +499,16 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
     const [bx0, by0, bx1, by1] = site.bbox;
     let placed = 0;
     for (const member of roster) {
-      const gx = bx0 + 2 + Math.floor(rng() * Math.max(1, (bx1 - bx0 - 4)));
-      const gy = by0 + 2 + Math.floor(rng() * Math.max(1, (by1 - by0 - 4)));
+      let spawn: [number, number] | undefined;
+      const tiles = site.spawnTiles ?? [];
+      for (let attempt = 0; attempt < 24 && tiles.length; attempt++) {
+        const candidate = tiles[Math.floor(rng() * tiles.length)];
+        if (!occupiedSpawnTiles.has(`${candidate[0]},${candidate[1]}`)) { spawn = candidate; break; }
+      }
+      if (tiles.length && !spawn) continue; // do not stack people when a physical room has no free cell
+      const gx = spawn?.[0] ?? (bx0 + 2 + Math.floor(rng() * Math.max(1, (bx1 - bx0 - 4))));
+      const gy = spawn?.[1] ?? (by0 + 2 + Math.floor(rng() * Math.max(1, (by1 - by0 - 4))));
+      occupiedSpawnTiles.add(`${gx},${gy}`);
       const srcId = `${site.id}:human:${placed}`;
       const g = startingGear(member.occ, member.profile);
       const equip: Partial<HumanEquipSlots> = {};
@@ -509,7 +532,8 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
 // ---------------------------------------------------------------------------
 /** Advance hunger/thirst/rest/wounds for every active human by elapsed real time. */
 export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
-  const dtMs = now - hw.lastResolvedAt;
+  const lastNeedsAt = hw.lastNeedsAt ?? hw.lastResolvedAt;
+  const dtMs = now - lastNeedsAt;
   if (dtMs <= 0) return;
   const hours = dtMs / HOUR;
   const hungerRate = BAL.player.offlineHungerPerHour;
@@ -544,6 +568,8 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
       }
     }
   }
+  hw.lastNeedsAt = now;
+  // Keep the legacy serialized clock monotonic for older readers and migrations.
   hw.lastResolvedAt = now;
 }
 
@@ -632,68 +658,15 @@ function isPlayerExplorationSource(r: RunState, key: string, tx: number, ty: num
   return false;
 }
 
-/** Occupation production: real input (from community store) → output (to community store).
- *  Guards do not produce (their work is protection). Every recipe is bounded and finite. */
-type Recipe = { in: [string, number][]; out: [string, number][] };
-const WORK_RECIPE: Partial<Record<Occupation, Recipe>> = {
-  gardener: { in: [['seed', 1]], out: [['berries', 3]] },
-  cook: { in: [['berries', 3]], out: [['charcoal', 1]] },
-  mechanic: { in: [['spares', 1], ['charcoal', 1]], out: [['spares', 2]] },
-  engineer: { in: [['spares', 2]], out: [['spares', 3]] },
-  builder: { in: [['wood', 2]], out: [['wood', 3]] },
-  salvager: { in: [['spares', 1]], out: [['spares', 2]] },
-  medic: { in: [], out: [['herb', 1], ['bandage', 1]] },
-};
-
-/** One work tick for a human: validate capability, consume real community stock, produce real
- *  output, commit once per interval. Blocks honestly when inputs are unavailable. */
-export function humanWorkTick(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { done: boolean; reason?: string } {
+/** Work is deliberately fail-closed until the occupation has an authored physical
+ * station, real input bill, and output contract. Never mint items from an abstract stock mirror. */
+export function humanWorkTick(_r: RunState, hw: HumanWorld, h: HumanRecord, _now: number): { done: boolean; reason?: string } {
   if (!h.intent || h.intent.kind !== 'work') return { done: false, reason: 'no work order' };
   if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED') return { done: false, reason: 'incapacitated' };
   if (h.hunger <= 5 || h.thirst <= 5) return { done: false, reason: h.hunger <= 5 ? 'too hungry' : 'too thirsty' };
   const comm = h.community ? hw.communities[h.community] : null;
   if (!comm) return { done: false, reason: 'no community' };
-  const recipe = WORK_RECIPE[h.occupation];
-  if (!recipe) return { done: false, reason: 'no production for this occupation' }; // guard etc.
-  // Commit once per 60s interval.
-  const dt = now - h.lastCommittedAt;
-  if (dt < 60000) return { done: false };
-  // Check inputs are available in the community store.
-  for (const [k, q] of recipe.in) {
-    const have = comm.stock[k] ?? 0;
-    if (have < q) return { done: false, reason: `no ${k} in community stock` };
-  }
-  // Consume inputs, produce output (real custody through the community store).
-  for (const [k, q] of recipe.in) comm.stock[k] = (comm.stock[k] ?? 0) - q;
-  for (const [k, q] of recipe.out) comm.stock[k] = (comm.stock[k] ?? 0) + q;
-  // Reflect stock changes into the actual store container custody.
-  syncCommunityStock(r, comm);
-  h.lastCommittedAt = now;
-  h.stamina = clamp(h.stamina - 2, 0, h.maxStamina);
-  receipt(r, now, 'human.work', `${h.actorId}:${h.occupation}:${recipe.out[0][0]}+${recipe.out[0][1]}`);
-  return { done: true };
-}
-
-/** Reconcile a community's stock ledger into its real store container custody (add/remove to match). */
-function syncCommunityStock(r: RunState, comm: Community): void {
-  const store = comm.storeContainers[0]; if (!store) return;
-  const c = r.custody[store]; if (!c) return;
-  // Build a count map of what's physically in the store.
-  const have: Record<string, number> = {};
-  for (const s of c.slots) if (s) have[s.key] = (have[s.key] ?? 0) + s.qty;
-  // Remove surplus, add deficit to match the ledger.
-  for (const [k, q] of Object.entries(comm.stock)) {
-    const diff = (q ?? 0) - (have[k] ?? 0);
-    if (diff > 0) addItem(r, store, k, diff);
-    else if (diff < 0) {
-      let toRemove = -diff;
-      for (let i = 0; i < c.slots.length && toRemove > 0; i++) {
-        const s = c.slots[i]; if (!s || s.key !== k) continue;
-        const take = Math.min(toRemove, s.qty); s.qty -= take; toRemove -= take;
-        if (s.qty <= 0) c.slots[i] = null;
-      }
-    }
-  }
+  return { done: false, reason: comm.workStations.length ? 'no authored physical recipe for this station' : `no physical work station for ${h.occupation}` };
 }
 
 // ---------------------------------------------------------------------------
@@ -968,7 +941,9 @@ export function playerEvacuate(r: RunState, hw: HumanWorld, tripId: string, now:
   if (!trip) return { ok: false, reason: 'no such trip' };
   if (trip.departed) return { ok: false, reason: 'trip has departed' };
   // Player position check: must be within boarding range of the real boarding tile.
-  const px = Math.floor(r.player.x / TILE), py = Math.floor(r.player.y / TILE);
+  const o = r.sourceMap?.veyra?.originAu;
+  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  const px = ox + Math.floor(r.player.x / TILE), py = oy + Math.floor(r.player.y / TILE);
   const dx = (px + 0.5) - trip.siteGx, dy = (py + 0.5) - trip.siteGy;
   if (Math.hypot(dx, dy) > 6) return { ok: false, reason: 'not at the boarding site' };
   trip.boarded.push('player');
@@ -1060,9 +1035,25 @@ function countOutcomes(hw: HumanWorld): HumanOutcomeSummary {
 // ---------------------------------------------------------------------------
 /** Advance every human's autonomous behavior for one tick. Does NOT touch player XP or
  *  player-exploration loot. Movement is tile-step toward an intent target (no teleport). */
+function humanCellKey(floor: number, gx: number, gy: number): string { return `${floor}:${gx}:${gy}`; }
+function canHumanOccupy(r: RunState, h: HumanRecord, gx: number, gy: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): boolean {
+  if (h.floor !== (r.veyraFloor ?? 0) || occupied.has(humanCellKey(h.floor, gx, gy))) return false;
+  const lx = gx - ox, ly = gy - oy;
+  if (lx < 0 || ly < 0 || lx >= WW || ly >= WH) return false;
+  const cell = grid[ly * WW + lx];
+  return cell === 0 || cell === 4;
+}
 export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
-  const dtMs = now - hw.lastResolvedAt;
+  const lastStepAt = hw.lastStepAt ?? hw.lastResolvedAt;
+  const dtMs = now - lastStepAt;
   if (dtMs <= 0) return;
+  hw.lastStepAt = now;
+  const actors = Object.values(hw.people);
+  const hasMovement = actors.some(h => h.state === 'MOVING' && !!h.intent?.route?.length);
+  const grid = hasMovement ? blockGrid(r) : new Uint8Array(0);
+  const o = r.sourceMap?.veyra?.originAu;
+  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  const occupied = hasMovement ? new Set(actors.filter(h => h.state !== 'DEAD' && h.state !== 'EVACUATED').map(h => humanCellKey(h.floor, h.gx, h.gy))) : new Set<string>();
   for (const h of Object.values(hw.people)) {
     if (h.state === 'DEAD' || h.state === 'EVACUATED') continue;
     // 1. Survival consume: eat when hungry, drink when thirsty.
@@ -1091,11 +1082,29 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
         h.intent.route.shift();
         if (h.intent.route.length === 0) { h.state = 'IDLE'; h.intent = undefined; }
       } else {
-        // step one tile toward target
-        const sx = Math.sign(next.tx - h.gx), sy = Math.sign(next.ty - h.gy);
-        h.gx += sx; h.gy += sy;
-        h.dir = sx === 0 ? (sy > 0 ? 0 : 3) : (sx > 0 ? 2 : 1);
-        h.lastSimAt = now;
+        // Cardinal tile step only: respect the compiled active-floor collision grid, window
+        // bounds, and other living bodies. Closed doors/solid props remain blockers.
+        const dxTile = next.tx - h.gx, dyTile = next.ty - h.gy;
+        const primary: [number, number] = Math.abs(dxTile) >= Math.abs(dyTile) ? [Math.sign(dxTile), 0] : [0, Math.sign(dyTile)];
+        const secondary: [number, number] = primary[0] ? [0, Math.sign(dyTile)] : [Math.sign(dxTile), 0];
+        const key = humanCellKey(h.floor, h.gx, h.gy);
+        occupied.delete(key);
+        const candidates = [primary, secondary].filter(([sx, sy]) => sx !== 0 || sy !== 0);
+        let moved = false;
+        for (const [sx, sy] of candidates) {
+          const nx = h.gx + sx, ny = h.gy + sy;
+          if (!canHumanOccupy(r, h, nx, ny, grid, ox, oy, occupied)) continue;
+          h.gx = nx; h.gy = ny;
+          h.dir = sx === 0 ? (sy > 0 ? 0 : 3) : (sx > 0 ? 2 : 1);
+          h.lastSimAt = now;
+          occupied.add(humanCellKey(h.floor, h.gx, h.gy));
+          moved = true;
+          break;
+        }
+        if (!moved) {
+          occupied.add(key);
+          if (h.intent) h.intent.blockReason = 'blocked by a wall, closed door, or another survivor';
+        }
       }
     }
     // Stamina regen when idle.

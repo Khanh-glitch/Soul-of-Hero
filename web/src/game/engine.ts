@@ -27,17 +27,17 @@ import { globalWindowOrigins, unverifiedOffshoreExcluded } from '../veyra05/glob
 import { localSpawnScreen } from '../veyra05/global-spawn-eligibility';
 import { FRAME_W, FRAME_H, globalIndex } from '../veyra05/frame';
 import { getWindowWorld, getWindowWorldForGlobalTile, resetWindowToGround, setVeyraPlacementRules, syncVeyraPlacement } from '../veyra05/window';
-import { activeFloor, applyFloor, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
+import { activeFloor, applyFloor, authoredGlobalStatic, authoredPlan, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
 import { windowOrigin } from '../veyra05/continuity';
 import {
   commitDailyLedgerReroll, computeAuthoritativeDailyPoints, dailySaltFor, dateKey,
   generateDaily, isValidDateKey, MAX_DAILY_LEDGER_DAYS, measureDailyObjectiveProgress,
   recordDailyReceipt, resolveRerollReplacement, syncRunDailyLedger,
 } from './journey';
-import { syncVeyraEcosystemActors } from '../veyra05/ecosystem';
+import { syncVeyraEcosystemActors, VEYRA_PRIMORDIAL_SITES, resolvePrimordialGlobalTile } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
-import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, finalizeHumanOutcomes, humanHistoryAggregate, playerEvacuate, type HumanWorld } from './humanworld';
+import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerEvacuate, type HumanWorld } from './humanworld';
 import { NPC_POI_CENSUS } from './npc-census';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
@@ -1526,13 +1526,18 @@ function seedG1b(r: RunState) {
   g1bEnsureSources(r);
 }
 
-/** Derive global tile bounding boxes for the 81 census POIs from the G1B source sites.
- *  The census is geometry input only (no population quota); the bbox is the footprint of
- *  that site's source placements on the ground storey, used to place a finite human roster. */
+/** Derive global tile bounds from the authored POI architecture. G1B sites remain a
+ *  compatibility fallback for un-authored spaces; source placement is not a building footprint. */
 function derivePoiBboxes(): Record<string, [number, number, number, number]> {
   const bx: Record<string, [number, number, number, number]> = {};
+  for (const poi of NPC_POI_CENSUS) {
+    const plan = authoredPlan(poi.id);
+    if (!plan) continue;
+    const [x, y, w, h] = plan.bounds;
+    bx[poi.id] = [x, y, x + w - 1, y + h - 1];
+  }
   for (const s of G1B_SOURCE_SITES) {
-    const site = s.site; if (s.zone !== 'POI') continue;
+    const site = s.site; if (s.zone !== 'POI' || authoredPlan(site)) continue;
     const cur = bx[site];
     const gx = s.gx, gy = s.gy;
     if (cur) { cur[0] = Math.min(cur[0], gx); cur[1] = Math.min(cur[1], gy); cur[2] = Math.max(cur[2], gx); cur[3] = Math.max(cur[3], gy); }
@@ -1548,8 +1553,35 @@ export function seedHumanWorld(r: RunState): void {
   const bboxes = derivePoiBboxes();
   const sites = NPC_POI_CENSUS
     .filter(p => bboxes[p.id])
-    .map(p => ({ id: p.id, name: p.name, archetype: p.archetype, rooms: p.spaces, bbox: bboxes[p.id]! }));
-  seedPopulation(r, hw, sites);
+    .map(p => {
+      const compiled = authoredPlan(p.id);
+      const blocked = new Set<string>();
+      if (compiled) {
+        for (const v of [...compiled.plan.props, ...compiled.plan.doors, ...compiled.plan.stairs]) {
+          if ('level' in v && v.level !== 0) continue;
+          if ('from' in v && v.from !== 0 && v.to !== 0) continue;
+          blocked.add(`${v.x},${v.y}`);
+          if ('tx' in v && 'ty' in v) blocked.add(`${v.tx},${v.ty}`);
+        }
+      }
+      const spawnTiles: [number, number][] = [];
+      for (const room of compiled?.plan.rooms ?? []) {
+        if (room.level !== 0) continue;
+        for (const [x, y, w, h] of room.rects) for (let gy = y + 1; gy < y + h - 1; gy += 2) for (let gx = x + 1; gx < x + w - 1; gx += 2) {
+          if (!blocked.has(`${gx},${gy}`)) spawnTiles.push([gx, gy]);
+        }
+      }
+      return { id: p.id, name: p.name, archetype: p.archetype, rooms: p.spaces, bbox: bboxes[p.id]!, spawnTiles };
+    });
+  const elderLairs = Object.fromEntries(VEYRA_PRIMORDIAL_SITES.map(site => {
+    const loc = resolvePrimordialGlobalTile(site);
+    return [site.key, { gx: loc.gx, gy: loc.gy, floor: loc.floor }];
+  }));
+  const evacSites = Object.fromEntries(['po_evac_west', 'po_evac_south', 'po_evac_hook'].flatMap(id => {
+    const pos = authoredGlobalStatic(id, 'evac');
+    return pos ? [[id, pos]] : [];
+  }));
+  seedPopulation(r, hw, sites, elderLairs, evacSites);
 }
 /**
  * Brings a run up to the current source layout: every approved source id that the run does not have yet is created
@@ -1808,7 +1840,9 @@ export function killCreature(gs: GameState, m: Creature, now: number) {
     if (!d) return;
     spawnDrop(r, d.stone, 1, m.x, m.y, now);
     spawnDrop(r, 'spares', 6, m.x, m.y, now); spawnDrop(r, 'crystal', 2, m.x, m.y, now);
-    receipt(r, now, 'elder.defeat', m.elder.key); pushLog(r, now, `${d.name} falls. Its stone lies in the dust.`, 'gold'); award(gs, 'elder_1', now);
+    if (r.humanWorld) defeatElder(r, r.humanWorld as HumanWorld, m.elder.key, now);
+    else receipt(r, now, 'elder.defeat', m.elder.key);
+    pushLog(r, now, `${d.name} falls. Its stone lies in the dust.`, 'gold'); award(gs, 'elder_1', now);
   } else {
     const d = CREATURES[m.type]; if (!d) return;
     // Journey: additive audit receipt only (no outcome change) so combat progress is receipt-backed.
@@ -3166,11 +3200,13 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       // Real transport: the player must board a trip at the beacon; only a successful boarding
       // departs the island and ends the run.
       if (r.humanWorld) {
-        let tripId: string | null = null;
+        let tripId: string | null = e.poi && r.humanWorld.evacuation[`evac:${e.poi}`] ? `evac:${e.poi}` : null;
         let best = Infinity;
+        const [ox, oy] = windowOrigin(r);
+        const egx = ox + Math.floor(e.x / TILE), egy = oy + Math.floor(e.y / TILE);
         for (const t of Object.values(r.humanWorld.evacuation)) {
-          const dx = (Math.floor(e.x / TILE) + 0.5) - t.siteGx, dy = (Math.floor(e.y / TILE) + 0.5) - t.siteGy;
-          const d = Math.hypot(dx, dy); if (d < best) { best = d; tripId = t.tripId; }
+          const dx = (egx + 0.5) - t.siteGx, dy = (egy + 0.5) - t.siteGy;
+          const d = Math.hypot(dx, dy); if (!tripId && d < best) { best = d; tripId = t.tripId; }
         }
         if (tripId) {
           const res = playerEvacuate(r, r.humanWorld, tripId, now);

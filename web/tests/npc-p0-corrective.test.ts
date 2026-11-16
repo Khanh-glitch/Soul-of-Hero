@@ -7,16 +7,19 @@
  */
 import { describe, expect, it } from 'vitest';
 import { WW, TILE } from '../src/game/core';
-import { newGame, startRun, dispatch, C, addItem } from '../src/game/engine';
+import { newGame, startRun, dispatch, C, addItem, blockGrid } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
 import { auToTile, windowAround } from '../src/veyra05/frame';
+import { VEYRA_PRIMORDIAL_SITES, resolvePrimordialGlobalTile } from '../src/veyra05/ecosystem';
+import { authoredGlobalStatic } from '../src/veyra05/floors';
+import { doorwayOccupied } from '../src/game/poi-access';
 import { validate } from '../src/game/persist';
 import { T0 } from './helpers/g1b-kit';
 import {
   tickNeeds, stepHumans, tradeWithHuman, lootHuman, killHuman, applyDamage, downHuman,
   treatHuman, boardEvac, resolveOrder, setFollowing, finalizeHumanOutcomes,
-  humanPack, humanHistoryAggregate,
+  humanPack, humanHistoryAggregate, humanWorkTick,
 } from '../src/game/humanworld';
 
 function startAt(ax: number, ay: number, seed = 7606) {
@@ -47,6 +50,82 @@ describe('NPC P0 corrective', () => {
       expect(after[i].state).not.toBe('DOWNED');
     }
     void before;
+  });
+
+  it('seeds distinct Primordial lairs and all evacuation trips from authored global POI statics', () => {
+    const gs = startAt(921, 259);
+    const hw = gs.run!.humanWorld!;
+    const lairCoords = new Set<string>();
+    for (const site of VEYRA_PRIMORDIAL_SITES) {
+      const expected = resolvePrimordialGlobalTile(site);
+      const actual = hw.elderPressure[site.key];
+      expect(actual).toMatchObject({ lairGx: expected.gx, lairGy: expected.gy, lairFloor: expected.floor });
+      lairCoords.add(`${expected.gx},${expected.gy},${expected.floor}`);
+    }
+    expect(lairCoords.size).toBe(VEYRA_PRIMORDIAL_SITES.length);
+    for (const site of ['po_evac_west', 'po_evac_south', 'po_evac_hook']) {
+      const expected = authoredGlobalStatic(site, 'evac');
+      expect(expected).not.toBeNull();
+      expect(hw.evacuation[`evac:${site}`]).toMatchObject({ siteGx: expected![0], siteGy: expected![1] });
+    }
+  });
+
+  it('doorway occupation includes a survivor body in global-to-window coordinates', () => {
+    const gs = startAt(921, 259);
+    const r = gs.run!;
+    const people = Object.values(r.humanWorld!.people);
+    const h = people[0];
+    for (const other of people.slice(1)) other.state = 'DEAD';
+    const origin = r.sourceMap?.veyra?.originAu;
+    const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+    const tx = Math.min(WW - 8, Math.floor(r.player.x / TILE) + 10), ty = Math.floor(r.player.y / TILE);
+    const door = { id: 'test-human-door', kind: 'door' as const, x: tx * TILE + 8, y: ty * TILE + 8, tx, ty };
+    r.entities[door.id] = door;
+    h.gx = ox + tx; h.gy = oy + ty; h.floor = r.veyraFloor ?? 0;
+    expect(doorwayOccupied(r, door)).toBe(true);
+    h.state = 'DEAD';
+    expect(doorwayOccupied(r, door)).toBe(false);
+  });
+
+  it('needs advancement does not suppress autonomous human movement at the same timestamp', () => {
+    const gs = startAt(921, 259);
+    const r = gs.run!;
+    const hw = r.humanWorld!;
+    const h = Object.values(hw.people)[0];
+    const origin = r.sourceMap?.veyra?.originAu;
+    const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+    const grid = blockGrid(r);
+    const occupied = new Set(Object.values(hw.people).filter(p => p.actorId !== h.actorId).map(p => `${p.gx},${p.gy}`));
+    let start: [number, number] | null = null;
+    for (let y = 10; y < WW - 10 && !start; y++) for (let x = 10; x < WW - 11; x++) {
+      const gx = ox + x, gy = oy + y;
+      if ((grid[y * WW + x] === 0 || grid[y * WW + x] === 4) && (grid[y * WW + x + 1] === 0 || grid[y * WW + x + 1] === 4) && !occupied.has(`${gx},${gy}`) && !occupied.has(`${gx + 1},${gy}`)) { start = [gx, gy]; break; }
+    }
+    expect(start).not.toBeNull();
+    h.gx = start![0]; h.gy = start![1]; h.floor = r.veyraFloor ?? 0;
+    h.state = 'MOVING';
+    h.intent = { kind: 'move', route: [{ tx: h.gx + 4, ty: h.gy }] } as any;
+    const before = h.gx;
+    const at = T0 + 60000;
+    tickNeeds(r, hw, at);
+    stepHumans(r, hw, at);
+    expect(h.gx).toBeGreaterThan(before);
+    expect(hw.lastStepAt).toBe(at);
+  });
+
+  it('P0.2: work never mints from a stale abstract community stock mirror', () => {
+    const gs = startAt(921, 259);
+    const r = gs.run!;
+    const hw = r.humanWorld!;
+    const h = Object.values(hw.people)[0];
+    const comm = hw.communities[h.community!];
+    const store = r.custody[comm.storeContainers[0]];
+    const countBefore = store.slots.reduce((n, s) => n + (s?.key === 'spares' ? s.qty : 0), 0);
+    h.intent = { kind: 'work' } as any;
+    (comm as any).stock = { spares: 9999 }; // legacy/corrupt mirror must not authorize a craft
+    expect(humanWorkTick(r, hw, h, T0 + 60000)).toMatchObject({ done: false });
+    const countAfter = store.slots.reduce((n, s) => n + (s?.key === 'spares' ? s.qty : 0), 0);
+    expect(countAfter).toBe(countBefore);
   });
 
   it('P0.3: custody survives JSON round-trip with owner + UID stock conservation', () => {

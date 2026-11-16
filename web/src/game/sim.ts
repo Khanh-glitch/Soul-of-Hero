@@ -12,14 +12,14 @@ import { calendarAt, climateAt, calendarEventV1, phaseBoundaryAt, seasonTransiti
 import { LADDER_CLIMB_SPEED, ITEMS, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable, wornProtection } from './catalog';
 import { g1bChestName, G1B_SITES } from './g1b';
 import { getWorld } from './world';
-import { maybeSlideVeyraWindow } from '../veyra05/continuity';
+import { maybeSlideVeyraWindow, windowOrigin } from '../veyra05/continuity';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { tickNeeds, advanceElderPressure, stepHumans, stepHumanCombat } from './humanworld';
+import { tickNeeds, advanceElderPressure, stepHumans, stepHumanCombat, applyDamage as applyHumanDamage } from './humanworld';
 import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -504,6 +504,21 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
     if (dd > R) continue; const ang = Math.atan2(m.y - p.y, m.x - p.x); if (dd > 6 && Math.abs(angDiff(ang, a)) > A / 2 + 0.15) continue;
     if (!los(r, p.x, p.y, m.x, m.y)) continue;
     if (damageCreature(gs, m, d.dmg, a, now)) hitAny = true;
+  }
+  // Humans share the physical swing geometry and clear-line check with creature targets.
+  // Their positions are global tiles, so project them through the active window origin.
+  if (r.humanWorld) {
+    const [ox, oy] = windowOrigin(r);
+    for (const h of Object.values(r.humanWorld.people)) {
+      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== activeFloor(r)) continue;
+      const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
+      const dd = dist(p.x, p.y, hx, hy) - 8;
+      if (dd > R) continue;
+      const ang = Math.atan2(hy - p.y, hx - p.x);
+      if (dd > 6 && Math.abs(angDiff(ang, a)) > A / 2 + 0.15) continue;
+      if (!los(r, p.x, p.y, hx, hy)) continue;
+      if (applyHumanDamage(r, r.humanWorld, h, d.dmg, a, now, 'player', 'player', activeFloor(r))) hitAny = true;
+    }
   }
   const summonHits = damagePrimordialSummonsMelee(
     r,
@@ -1211,6 +1226,7 @@ function blockedAtTurret(r: RunState,x:number,y:number) { const b=blockGrid(r)[t
 function impactRock(gs:GameState,pr:Proj,now:number){if((pr as any).exploded)return;(pr as any).exploded=true;const r=gs.run!,fl=activeFloor(r);for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&dist(m.x,m.y,pr.x,pr.y)<BAL.creatorCoreEarthmother.rockRadius&&clearPhysicalLine(r,pr,m,true))damageCreature(gs,m,pr.dmg,Math.atan2(m.y-pr.y,m.x-pr.x),now,190);damagePrimordialSummonsAoE(r,pr.x,pr.y,BAL.creatorCoreEarthmother.rockRadius,pr.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true));fx('rockhit',{x:pr.x,y:pr.y});fx('chip',{x:pr.x,y:pr.y,mat:'stone'});}
 function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?: boolean }) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const g = blockGrid(r);
+  const [humanOx, humanOy] = r.humanWorld ? windowOrigin(r) : [0, 0];
   for (let i = PROJ.length - 1; i >= 0; i--) {
     const pr = PROJ[i];
     // R5.1 P1-D committed-projectile policy: hostile projectiles aimed at the absent player are
@@ -1242,6 +1258,16 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
             if (pr.kind === 'nature_rock') impactRock(gs, pr, now);
             else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now);
             else { damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); if (pr.kind === 'elsa_shard' && m.hp > 0 && rngNext(r) < BAL.creatorCoreElsa.freezeChance) m.frozenUntil = now + BAL.creatorCoreElsa.enemyMs; }
+            break;
+          }
+        }
+        if (!dead && pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado' && r.humanWorld) {
+          for (const h of Object.values(r.humanWorld.people)) {
+            if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== activeFloor(r)) continue;
+            const hx = (h.gx - humanOx + 0.5) * TILE, hy = (h.gy - humanOy + 0.5) * TILE;
+            if (Math.hypot(x - hx, y - hy) >= 8 + pr.r) continue;
+            pr.x = x; pr.y = y; dead = true;
+            applyHumanDamage(r, r.humanWorld, h, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 'player', 'player', activeFloor(r));
             break;
           }
         }
@@ -1311,6 +1337,14 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
 function explode(gs: GameState, pr: Proj, now: number) {
   const r = gs.run!, fl = activeFloor(r); if ((pr as any).exploded) return; (pr as any).exploded = true; fx('boom', { x: pr.x, y: pr.y }); fx('shake', { m: 4 });
   for (const m of r.creatures) if (m.state !== 'dead' && ((m as any).floor ?? 0) === fl && dist(pr.x, pr.y, m.x, m.y) < 30 && los(r, pr.x, pr.y, m.x, m.y)) damageCreature(gs, m, pr.dmg, Math.atan2(m.y - pr.y, m.x - pr.x), now, 160);
+  if (r.humanWorld) {
+    const [ox, oy] = windowOrigin(r);
+    for (const h of Object.values(r.humanWorld.people)) {
+      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== fl) continue;
+      const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
+      if (dist(pr.x, pr.y, hx, hy) < 30 && los(r, pr.x, pr.y, hx, hy)) applyHumanDamage(r, r.humanWorld, h, pr.dmg, Math.atan2(hy - pr.y, hx - pr.x), now, 'player', 'player', fl);
+    }
+  }
   damagePrimordialSummonsAoE(r, pr.x, pr.y, 30, pr.dmg, (ax, ay, bx, by) => los(r, ax, ay, bx, by));
   const cx = tileOf(pr.x), cy = tileOf(pr.y); for (let y = cy - 1; y <= cy + 1; y++) for (let x = cx - 1; x <= cx + 1; x++) ignite(gs, x, y, now);
 }

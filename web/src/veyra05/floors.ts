@@ -439,6 +439,14 @@ function globalExtraStatics(c: CompiledPlan): GlobalExtraStatic[] {
   return out;
 }
 
+/** Resolve generated global POI statics even when the corresponding window is not active. */
+export function authoredGlobalStatic(poi: string, kind: StaticEnt['kind']): [number, number] | null {
+  const plan = authoredPlan(poi);
+  if (!plan) return null;
+  const hit = globalExtraStatics(plan).find(v => v.spec.kind === kind && v.spec.poi === poi);
+  return hit ? [hit.gx, hit.gy] : null;
+}
+
 /** Build every floor layer for one window from the authored plans it contains. */
 export function buildFloorStack(ww: WindowWorld): FloorStack {
   const { win, world } = ww;
