@@ -7,7 +7,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import { probe } from './helpers/g1b-resolve';
-import { G1B_SOURCE_SITES, G1B_GATES, G1B_FIXTURES, G1B_VARIANCES } from '../src/game/g1b-sources.generated';
+// the frozen round-1 geometry: the 130 base sources (the batch-2 ecology is audited by tests/g1b-ecology*.test.ts)
+import { G1B_BASE_SOURCE_SITES as G1B_SOURCE_SITES, G1B_GATES, G1B_FIXTURES, G1B_VARIANCES } from '../src/game/g1b-sources.generated';
 import { FRAME_W, FRAME_H } from '../src/veyra05/frame';
 
 type P = ReturnType<typeof probe>;

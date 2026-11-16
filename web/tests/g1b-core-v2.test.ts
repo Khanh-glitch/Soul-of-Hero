@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 import { TILE, type Entity, type Stack } from '../src/game/core';
 import { ITEMS } from '../src/game/catalog';
-import { C, coreCastBlock, coreCastCommit, mkContainer, mkStack, settleCore } from '../src/game/engine';
+import { C, coreCastBlock, coreCastCommit, mkContainer, mkStack, settleCore, settleCoreOwed } from '../src/game/engine';
 import { CORE_SPECS, CORE_V2, CORE_REPAIR_BILL, G1B_CORE_TIERS, coreAmmo, coreLevel, coreReadout } from '../src/game/g1b';
 import { serializeSnapshot, validate } from '../src/game/persist';
 import { G1bRun, count } from './helpers/g1b-kit';
@@ -71,11 +71,6 @@ describe('Core V2 casting', () => {
     expect(coreCastCommit(k.r, a, 'basic', k.now)).toBe(true); expect(coreCastBlock(k.r, a, 'basic', k.now)).toMatch(/recharging/); expect(coreCastBlock(k.r, b, 'basic', k.now)).toBeNull(); expect(a.uid).not.toBe(b.uid);
   });
 
-  it('durability never goes below zero and the last cast is still paid for in full', () => {
-    const k = fresh(); const s = hold(k, 'core_dragon', 3); const sp = CORE_SPECS.core_dragon; put(k, 1, 'energy_refined', 5); put(k, 2, essence('core_dragon'), 5);
-    s.dur = 3; expect(sp.wear.signature).toBeGreaterThan(3); expect(coreCastCommit(k.r, s, 'signature', k.now)).toBe(true); expect(s.dur).toBe(0);
-    expect(coreCastCommit(k.r, s, 'refined', k.now)).toBe(false); expect(count(k.r, 'energy_refined')).toBe(4);
-  });
 
   it('through the real sim: holding LMB with a Lv1 Core spends Basic Energy and wears the Core; with none it does nothing', () => {
     const k = fresh(); const s = hold(k, 'core_blast'); const p = k.r.player;
@@ -136,20 +131,72 @@ describe('Core V2 upgrade and repair', () => {
 });
 
 describe('Core V2 save migration', () => {
-  it('a pre-V2 Core (reserves, no level) loads as Lv3 300/300 with the same UID; its stored energy is spent first and never refilled', () => {
+  it('a pre-V2 Core loads as Lv3 300/300 with the same UID and cooldowns; its loaded energy comes back as items exactly once, never as a magazine', () => {
     const k = fresh(); const s = hold(k, 'core_demon'); const uid = s.uid;
-    const raw = JSON.parse(JSON.stringify(k.gs)); const old = raw.run.custody.inv.slots[0]; delete old.lvl; delete old.dur; old.reserves = { basic: 2, refined: 0, signature: 1 };
-    const empty = JSON.parse(JSON.stringify(old)); empty.uid = uid + '-b'; empty.reserves = { basic: 0, refined: 0, signature: 0 }; raw.run.custody.inv.slots[5] = empty;
-    const gs = validate(raw)!; expect(gs, 'legacy save loads').not.toBeNull(); const m = gs.run!.custody.inv.slots[0]!, m2 = gs.run!.custody.inv.slots[5]!;
-    expect([m.uid, m.lvl, m.dur, m.reserves]).toEqual([uid, 3, 300, { basic: 2, refined: 0, signature: 1 }]); expect([m2.lvl, m2.dur, m2.reserves]).toEqual([3, 300, undefined]);
-    // idempotent
+    const raw = JSON.parse(JSON.stringify(k.gs)); const old = raw.run.custody.inv.slots[0]; delete old.lvl; delete old.dur; old.reserves = { basic: 2, refined: 3, signature: 1 }; old.cd = { refined: k.now + 9000 };
+    const empty = JSON.parse(JSON.stringify(old)); empty.uid = uid + '-b'; empty.reserves = { basic: 0, refined: 0, signature: 0 }; delete empty.cd; raw.run.custody.inv.slots[5] = empty;
+    const gs = validate(raw)!; expect(gs, 'legacy save loads').not.toBeNull(); const r = gs.run!; const m = r.custody.inv.slots[0]!, m2 = r.custody.inv.slots[5]!;
+    // one-time conversion: 2 LMB + 3 Q + 1 E charges = 2 Basic, 3+1 Refined, 1 Spirit Essence; the magazine is gone
+    expect([m.uid, m.lvl, m.dur, m.reserves, m.cd]).toEqual([uid, 3, 300, undefined, { refined: k.now + 9000 }]);
+    expect(m.owed).toEqual({ energy_basic: 2, energy_refined: 4, essence_spirit: 1 });
+    expect([m2.lvl, m2.dur, m2.reserves, m2.owed]).toEqual([3, 300, undefined, undefined]);
+    // idempotent: loading again converts nothing twice
     const again = validate(JSON.parse(JSON.stringify(gs)))!; expect(again.run!.custody.inv.slots[0]).toEqual(m);
-    // stored energy first (pack untouched), then the pack; the bank is deleted when dry
-    const r = gs.run!; r.custody.inv.slots[1] = mkStack(r, 'energy_basic', 5); const t = k.now; const cd = CORE_SPECS.core_demon.cooldownMs.basic;
-    expect(coreCastCommit(r, m, 'basic', t)).toBe(true); expect(coreCastCommit(r, m, 'basic', t + cd)).toBe(true); expect(m.reserves).toEqual({ basic: 0, refined: 0, signature: 1 }); expect(r.custody.inv.slots[1]!.qty).toBe(5);
-    expect(coreCastCommit(r, m, 'basic', t + 2 * cd)).toBe(true); expect(r.custody.inv.slots[1]!.qty).toBe(4);
-    expect(coreCastCommit(r, m, 'signature', t)).toBe(true); expect(m.reserves).toBeUndefined();
-    expect(validate(JSON.parse(JSON.stringify(gs)))).not.toBeNull();
+    // nothing is cast from what is owed: with an empty pack LMB is refused and nothing changes
+    const before = { b: count(r, 'energy_basic'), q: count(r, 'energy_refined'), e: count(r, 'essence_spirit') };
+    expect(coreCastBlock(r, m, 'basic', k.now)).toMatch(/No Basic Energy/); expect(coreCastCommit(r, m, 'basic', k.now)).toBe(false); expect(m.owed).toEqual({ energy_basic: 2, energy_refined: 4, essence_spirit: 1 });
+    // a full pack keeps the debt on the Core (no loss); room pays it out
+    const inv = r.custody.inv; const filler: number[] = []; inv.slots.forEach((x, i) => { if (!x) { inv.slots[i] = mkStack(r, 'stone', 1); filler.push(i); } });
+    expect(settleCoreOwed(r, k.now + 1)).toBe(0); expect(m.owed).toEqual({ energy_basic: 2, energy_refined: 4, essence_spirit: 1 });
+    inv.slots[filler[0]] = null; // one free slot: one kind fits
+    expect(settleCoreOwed(r, k.now + 5000)).toBeGreaterThan(0); expect(Object.keys(m.owed!).length).toBe(2);
+    inv.slots[filler[1]] = null; inv.slots[filler[2]] = null;
+    settleCoreOwed(r, k.now + 10000); expect(m.owed).toBeUndefined();
+    expect([count(r, 'energy_basic') - before.b, count(r, 'energy_refined') - before.q, count(r, 'essence_spirit') - before.e]).toEqual([2, 4, 1]);
+    // exactly once: more settling and another save/load add nothing
+    settleCoreOwed(r, k.now + 20000); const back = validate(JSON.parse(JSON.stringify(gs)))!; settleCoreOwed(back.run!, k.now + 30000);
+    expect([count(back.run!, 'energy_basic') - before.b, count(back.run!, 'energy_refined') - before.q, count(back.run!, 'essence_spirit') - before.e]).toEqual([2, 4, 1]);
+    expect(r.receipts.filter(x => x.kind === 'core.legacy.refund').map(x => x.detail).join('|')).toContain(uid);
+    // the returned items are ordinary ammunition: the cast now spends one from the pack
+    expect(coreCastCommit(r, m, 'basic', k.now + 40000)).toBe(true); expect(count(r, 'energy_basic') - before.b).toBe(1);
+  });
+
+  it('a legacy Core lying in another container keeps its debt there and is paid only once it is in the pack', () => {
+    const k = fresh(); const s = hold(k, 'core_dragon', 3); const r = k.r; s.owed = { energy_refined: 3, essence_fire: 3 };
+    // put the Core into a world chest's custody (any container that is not the pack)
+    const chest = Object.values(r.entities).find(e => e.g1b?.kind === 'chest')!; const box = C(r, chest.c!); box.slots[0] = s; C(r, 'inv').slots[0] = null;
+    const stock = () => box.slots.filter(Boolean).map(v => `${v!.key}x${v!.qty}`).join(',');
+    const before = stock(); expect(settleCoreOwed(r, k.now + 5000)).toBe(0); expect(stock(), 'the container is never written to').toBe(before);
+    expect(s.owed).toEqual({ energy_refined: 3, essence_fire: 3 }); expect(count(r, 'energy_refined')).toBe(0);
+    // the player takes it: now it pays into the pack, once
+    box.slots[0] = null; C(r, 'inv').slots[0] = s;
+    expect(settleCoreOwed(r, k.now + 10000)).toBe(6); expect(s.owed).toBeUndefined(); expect([count(r, 'energy_refined'), count(r, 'essence_fire')]).toEqual([3, 3]);
+    expect(settleCoreOwed(r, k.now + 20000)).toBe(0); expect([count(r, 'energy_refined'), count(r, 'essence_fire')]).toEqual([3, 3]);
+  });
+
+  it('a save written by the first V2 build (level AND a leftover bank) is converted the same way; a hand-made bank on a V2 Core is not accepted as a magazine', () => {
+    const k = fresh(); const s = hold(k, 'core_blast'); const raw = JSON.parse(JSON.stringify(k.gs)); raw.run.custody.inv.slots[0].lvl = 3; raw.run.custody.inv.slots[0].reserves = { basic: 0, refined: 0, signature: 2 };
+    const gs = validate(raw)!; expect(gs).not.toBeNull(); const m = gs.run!.custody.inv.slots[0]!;
+    expect([m.uid, m.reserves, m.owed]).toEqual([s.uid, undefined, { energy_refined: 2, essence_fire: 2 }]);
+    for (const owed of [{ energy_basic: 0 }, { stone: 3 }, { essence_water: 1 }, {}, { energy_basic: 999 }]) { const bad = JSON.parse(JSON.stringify(k.gs)); bad.run.custody.inv.slots[0].owed = owed; expect(validate(bad), JSON.stringify(owed)).toBeNull(); }
+  });
+
+  it('a Core whose durability is below the wear of a skill refuses that skill and spends nothing', () => {
+    const k = fresh(); const s = hold(k, 'core_dragon'); s.lvl = 3; s.dur = 3; const r = k.r; // E wears 16
+    k.give('energy_basic', 5); k.give('energy_refined', 5); k.give('essence_fire', 5);
+    const snap = () => [s.dur, JSON.stringify(s.cd ?? {}), count(r, 'energy_basic'), count(r, 'energy_refined'), count(r, 'essence_fire')];
+    const before = snap();
+    expect(CORE_SPECS.core_dragon.wear).toEqual({ basic: 1, refined: 6, signature: 16 });
+    expect(coreCastBlock(r, s, 'signature', k.now)).toMatch(/too worn for E: needs 16 durability, 3 left/); expect(coreCastCommit(r, s, 'signature', k.now)).toBe(false);
+    expect(coreCastBlock(r, s, 'refined', k.now)).toMatch(/too worn for Q: needs 6 durability, 3 left/); expect(coreCastCommit(r, s, 'refined', k.now)).toBe(false);
+    expect(snap()).toEqual(before);
+    // LMB (1 wear) is still payable three times, then the Core is worn out; durability never goes below zero
+    for (let i = 0; i < 3; i++) expect(coreCastCommit(r, s, 'basic', k.now + i * 5000)).toBe(true);
+    expect(s.dur).toBe(0); expect(coreCastCommit(r, s, 'basic', k.now + 60000)).toBe(false); expect(s.dur).toBe(0);
+    // exact boundary: 16 left pays E in full
+    s.dur = 16; delete s.cd; expect(coreCastCommit(r, s, 'signature', k.now + 90000)).toBe(true); expect(s.dur).toBe(0);
+    // every Core, every skill: one point short is refused
+    for (const [key, sp] of Object.entries(CORE_SPECS)) for (const mode of ['basic', 'refined', 'signature'] as const) { const t = mkStack(r, key, 1); t.lvl = 3; t.dur = sp.wear[mode] - 1; expect(coreCastCommit(r, t, mode, k.now), `${key} ${mode}`).toBe(false); expect(t.dur).toBe(sp.wear[mode] - 1); }
   });
 
   it('a V2 Core with an impossible level, durability or upgrade is rejected by the save validator', () => {

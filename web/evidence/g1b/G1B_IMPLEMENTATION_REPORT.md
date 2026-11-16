@@ -1,5 +1,7 @@
 # G1B — implementation report (runtime, not a lab)
 
+> Round 1. Placement counts (130 chests, 14285 props) and the Core legacy model here are superseded by `G1B_BATCH2_REPORT.md`.
+
 Contract: `approved/APPROVAL_README.md`, `approved/G1B_CREATOR_APPROVED_DESIGN_20261115.md`, `approved/g1b-approved-runtime-contract-v1.json`.
 
 ## What a player can do in a New Game on Veyra

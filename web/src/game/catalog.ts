@@ -55,7 +55,7 @@ export const ITEMS: Record<string, ItemDef> = {
   essence_nature: I({ name:'Nature Essence', cat:'res', icon:'crystal', c1:'#43813e', c2:'#c6ee80', w:0.1, max:30, desc:'Nature Signature loading material.' }),
   essence_water: I({ name:'Water Essence', cat:'res', icon:'crystal', c1:'#468da5', c2:'#b9f5ff', w:0.1, max:30, desc:'Water Signature loading material.' }),
   essence_spirit: I({ name:'Spirit Essence', cat:'res', icon:'crystal', c1:'#8954ac', c2:'#efd8ff', w:0.1, max:30, desc:'Spirit Signature loading material.' }),
-  core_blast: I({ name:"Big Bang", vi:'Vụ nổ lớn', cat:'core', icon:'core', c1:'#b63c21', c2:'#ffcb6a', w:0.3, max:1, desc:'Common Fire Core. Reload each reserve with Basic, Refined or Refined plus Fire Essence.', creatorCore:'blast', essence:'fire' }),
+  core_blast: I({ name:"Big Bang", vi:'Vụ nổ lớn', cat:'core', icon:'core', c1:'#b63c21', c2:'#ffcb6a', w:0.3, max:1, desc:'Common Fire Core: fire bolt, blast and big bang. Each cast spends Energy from the pack.', creatorCore:'blast', essence:'fire' }),
   core_meteor: I({ name:"Meteor", vi:'Thiên thạch', cat:'core', icon:'core', c1:'#b64b30', c2:'#ffe695', w:0.3, max:1, desc:'Rare Fire Core. A fireball, targeted meteor and ten-meteor storm.', creatorCore:'meteor', essence:'fire' }),
   core_dragon: I({ name:"Dragon's Breath", vi:'Hơi thở của rồng', cat:'core', icon:'core', c1:'#96332b', c2:'#ffda79', w:0.3, max:1, desc:'Top-tier Fire Core: flamethrower, fire tornado and dragon dive.', creatorCore:'dragon', essence:'fire' }),
   core_elsa: I({ name:"Elsa's Sword", vi:'Gươm Elsa', cat:'core', icon:'core', c1:'#5c9fc5', c2:'#d9ffff', w:0.3, max:1, desc:'Rare Water Core: ice projectile, one-second self-freeze and viewport freeze.', creatorCore:'elsa', essence:'water' }),

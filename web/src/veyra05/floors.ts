@@ -21,8 +21,17 @@ import { FRAME_W, U, type WindowSpec } from './frame';
 import { sampleTile } from './reader';
 import { compilePlan, roomAt, type ArchPlan, type CompiledPlan, type CompiledRoom, type Level, type StairSpec } from './arch/plan';
 import { AUTHORED_SITES } from './arch/sites';
-import { G1B_SOURCE_SITES, G1B_FIXTURES } from '../game/g1b-sources.generated';
-const G1B_OBJECT_TILES: readonly [number, number][] = [...G1B_SOURCE_SITES, ...G1B_FIXTURES].map(v => [v.gx, v.gy]);
+import { G1B_BASE_SOURCE_SITES, G1B_FIXTURES } from '../game/g1b-sources.generated';
+import { G1B_ECOLOGY_SOURCES } from '../game/g1b-ecology.generated';
+/** Tiles procedural furniture must leave alone, per storey: each chest / fixture tile and ONE approach tile beside it.
+ *  (Round 1 cleared all four neighbours, which cost 95 props; one approach tile is enough to reach and open a chest.) */
+const G1B_KEEP_CLEAR = new Map<number, [number, number][]>();
+{
+  const add = (lv: number, x: number, y: number) => { let a = G1B_KEEP_CLEAR.get(lv); if (!a) G1B_KEEP_CLEAR.set(lv, a = []); a.push([x, y]); };
+  for (const v of G1B_BASE_SOURCE_SITES) { add(0, v.gx, v.gy); add(0, v.gx, v.gy + 1); }   // round-1 chests were resolved with a free south tile
+  for (const v of G1B_FIXTURES) { add(0, v.gx, v.gy); add(0, v.gx, v.gy + 1); }
+  for (const v of G1B_ECOLOGY_SOURCES) { add(v.level ?? 0, v.gx, v.gy); if (v.ax !== undefined && v.ay !== undefined) add(v.level ?? 0, v.ax, v.ay); }
+}
 let g1bReservation = true;
 /** Tooling only (tests/g1b-resolve.test.ts): the resolver must measure the world as it is WITHOUT the chests it is about
  *  to place, otherwise its answer would depend on its own previous answer. The game never calls this. */
@@ -198,8 +207,8 @@ function buildLayerPlacementContext(layer: FloorLayer, ox: number, oy: number): 
   // window. Procedural furniture is dressed per window, so without this the same global tile could hold a crate stack
   // in one window and nothing in the next, burying a chest or its only approach.
   const g1bReserved = new Set<number>();
-  if (g1bReservation && layer.level === 0) for (const [gx, gy] of G1B_OBJECT_TILES) for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) {
-    const lx = gx - ox + dx, ly = gy - oy + dy; if (lx >= 0 && ly >= 0 && lx < WW && ly < WH) g1bReserved.add(ly * WW + lx);
+  if (g1bReservation) for (const [gx, gy] of G1B_KEEP_CLEAR.get(layer.level) ?? []) {
+    const lx = gx - ox, ly = gy - oy; if (lx >= 0 && ly >= 0 && lx < WW && ly < WH) g1bReserved.add(ly * WW + lx);
   }
 
   const isPassable = (tx: number, ty: number) => {

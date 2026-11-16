@@ -3,10 +3,11 @@
  * The 130 approved G1B source ids, the three finite card cases, the circuit generators and the gated doors, resolved
  * onto REAL Veyra tiles (global U=0.5 tile coordinates) measured from the compiled window worlds.
  */
-export interface G1bSourceSite { id: string; site: string; zone: 'POI' | 'ROAD' | 'CARD_ROOM'; variant: string; gx: number; gy: number; place: string; gate?: string }
+/** `level` (storey, default 0), `space` (census space id) and `ax,ay` (the approach tile kept clear) are set by the batch-2 room ecology. */
+export interface G1bSourceSite { id: string; site: string; zone: 'POI' | 'ROAD' | 'CARD_ROOM'; variant: string; gx: number; gy: number; place: string; gate?: string; level?: -1 | 0 | 1 | 2; space?: string; ax?: number; ay?: number }
 export interface G1bGate { id: string; site: string; building: string; door: [number, number]; interior: [number, number]; card?: 'green' | 'blue' | 'purple'; power?: string; ppe?: boolean }
 export interface G1bFixture { id: string; kind: 'card' | 'gen'; site: string; gx: number; gy: number; card?: string; place: string }
-export const G1B_SOURCE_SITES: readonly G1bSourceSite[] = [
+export const G1B_BASE_SOURCE_SITES: readonly G1bSourceSite[] = [
   {"id": "veyra.g1b:po_greywater:supply_low:01", "site": "po_greywater", "zone": "POI", "variant": "supply_low", "gx": 1664, "gy": 1167, "place": "interior:po_greywater@1660,1169"},
   {"id": "veyra.g1b:po_greywater:supply_low:02", "site": "po_greywater", "zone": "POI", "variant": "supply_low", "gx": 1636, "gy": 1179, "place": "yard"},
   {"id": "veyra.g1b:po_greywater:food_low:01", "site": "po_greywater", "zone": "POI", "variant": "food_low", "gx": 1603, "gy": 1167, "place": "interior:po_greywater@1600,1173"},

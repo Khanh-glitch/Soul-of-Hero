@@ -9,7 +9,10 @@
  * Airdrop / Harpoon, Ragnarok cash or NPC stock. Field Cores and Essences never appear in a chest.
  */
 import contract from '../../evidence/g1b/approved/g1b-approved-runtime-contract-v1.json';
-import { G1B_SOURCE_SITES, G1B_GATES, G1B_FIXTURES, type G1bSourceSite, type G1bGate, type G1bFixture } from './g1b-sources.generated';
+import { G1B_BASE_SOURCE_SITES, G1B_GATES, G1B_FIXTURES, type G1bSourceSite, type G1bGate, type G1bFixture } from './g1b-sources.generated';
+import { G1B_ECOLOGY_SOURCES, G1B_LAYOUT_REVISION } from './g1b-ecology.generated';
+/** Every chest source of the run: the 130 round-1 ids (unchanged ids and tiles) followed by the room / floor / road ecology. */
+const G1B_SOURCE_SITES: readonly G1bSourceSite[] = Object.freeze([...G1B_BASE_SOURCE_SITES, ...G1B_ECOLOGY_SOURCES]);
 
 export const G1B_VERSION = 'g1b-v1' as const;
 /** Loot-table revision stored with every roll. Bump only with a new approved contract. */
@@ -41,7 +44,7 @@ export const G1B_SITES: Readonly<Record<string, G1bSourceSite>> = Object.freeze(
 export const G1B_FIXTURE_BY_ID: Readonly<Record<string, G1bFixture>> = Object.freeze(Object.fromEntries(G1B_FIXTURES.map(f => [f.id, f])));
 export const G1B_GATE_BY_ID: Readonly<Record<string, G1bGate>> = Object.freeze(Object.fromEntries(G1B_GATES.map(g => [g.id, g])));
 export const g1bGateAtDoor = (gx: number, gy: number): G1bGate | undefined => G1B_GATES.find(g => g.door[0] === gx && g.door[1] === gy);
-export { G1B_SOURCE_SITES, G1B_GATES, G1B_FIXTURES };
+export { G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_ECOLOGY_SOURCES, G1B_LAYOUT_REVISION, G1B_GATES, G1B_FIXTURES };
 export type { G1bSourceSite, G1bGate, G1bFixture };
 
 /** Refresh hours of one physical source (contract `refresh_hours_base` of that slot). */

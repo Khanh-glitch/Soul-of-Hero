@@ -29,7 +29,7 @@ import { DGrid, DSlot, DragGhost } from './dragSlots';
 
 const have = (api: Api) => (k: string) => countItem(api.gs.run!, 'inv', k);
 /** Core V2 service card: the same physical Core is upgraded (Lv1→2→3) and repaired at the player's own Workbench. */
-function CoreService({ api, s }: { api: Api; s: Stack }) {
+export function CoreService({ api, s }: { api: Api; s: Stack }) {
   const r = api.gs.run!; const v = coreReadout(s, Date.now()); const sp = CORE_SPECS[s.key]; if (!sp) return null;
   const bill = (b: [string, number][]) => b.map(([k, q]) => { const n = countItem(r, 'inv', k); return <span key={k} className="chip" style={{ color: n >= q ? 'var(--good)' : 'var(--bad)' }}>{ITEMS[k]?.name ?? k} {Math.min(n, q)}/{q}</span>; });
   const next = v.lvl < 3 ? (v.lvl + 1) as 2 | 3 : null;
@@ -97,7 +97,7 @@ export function ItemInfo({ s, known }: { s: Stack | null; known: string[] }) {
         {d.food?.rad ? <StatChip g="rad" v={`${d.food.rad > 0 ? '+' : ''}${d.food.rad}`} c={d.food.rad > 0 ? 'var(--bad)' : 'var(--good)'} title="Radiation" /> : null}
         {d.power ? Object.entries(d.power).map(([m, p]) => <span key={m} className="chip" style={{ color: 'var(--paper)' }} title={`Work power on ${m}`}>{m} {p}</span>) : null}
         {s.charge !== undefined && d.charge ? <span className="chip" style={{ color: s.charge ? 'var(--info)' : 'var(--bad)' }}>{s.charge}/{d.charge}⚡</span> : null}
-        {d.creatorCore ? <><span className="chip" style={{ color: 'var(--brassLit)' }}>Lv {s.lvl ?? 3}/3</span><span className="chip" style={{ color: (s.dur ?? 300) > 0 ? 'var(--good)' : 'var(--bad)' }}>Dur {s.dur ?? 300}/300</span>{s.reserves && s.reserves.basic + s.reserves.refined + s.reserves.signature > 0 ? <span className="chip" style={{ color: 'var(--muted)' }} title="Energy loaded before the Core rework. Spent first, never refilled.">Stored {s.reserves.basic}/{s.reserves.refined}/{s.reserves.signature}</span> : null}</> : null}
+        {d.creatorCore ? <><span className="chip" style={{ color: 'var(--brassLit)' }}>Lv {s.lvl ?? 3}/3</span><span className="chip" style={{ color: (s.dur ?? 300) > 0 ? 'var(--good)' : 'var(--bad)' }}>Dur {s.dur ?? 300}/300</span>{s.owed ? <span className="chip" data-testid="core-owed" style={{ color: 'var(--warn)' }} title="Energy that was loaded into this Core before the rework. It returns as items to the container holding the Core as soon as there is room.">Owed {Object.entries(s.owed).map(([k, q]) => `${q} ${ITEMS[k]?.name ?? k}`).join(' · ')} · make room</span> : null}</> : null}
         <StatChip g="weight" v={`${(d.w * s.qty).toFixed(1)}kg`} c="var(--muted)" title="Weight carried" />
       </div>
       {dur !== null && <div className="durbar" title={`Durability ${s.dur}/${d.dur}`}><i style={{ width: `${dur * 100}%`, background: dur < 0.25 ? 'var(--bad)' : dur < 0.5 ? 'var(--warn)' : 'var(--good)' }} />{dur <= 0 && <b>BROKEN</b>}</div>}

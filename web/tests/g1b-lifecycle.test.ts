@@ -12,6 +12,7 @@ import { G1B_SOURCE_SITES, G1B_FIXTURES, G1B_GATES, G1B_LOOT_REVISION, G1B_CHEST
 import { serializeSnapshot, validate } from '../src/game/persist';
 import { shiftVeyraWindowBy } from '../src/veyra05/continuity';
 import { G1bRun, HOUR, count } from './helpers/g1b-kit';
+const N_OBJECTS = G1B_SOURCE_SITES.length + G1B_FIXTURES.length;
 
 const src = (variant: string, pred: (s: typeof G1B_SOURCE_SITES[number]) => boolean = s => !s.gate) => G1B_SOURCE_SITES.find(s => s.variant === variant && pred(s))!;
 const stacks = (k: G1bRun, cid: string) => C(k.r, cid).slots.filter(Boolean).map(s => `${s!.key}x${s!.qty}${s!.lvl ? ':lv' + s!.lvl : ''}`);
@@ -20,9 +21,9 @@ const roundTrip = (k: G1bRun) => { const env = JSON.parse(serializeSnapshot(k.gs
 const clearPack = (k: G1bRun) => { C(k.r, 'inv').slots.fill(null); };
 
 describe('G1B seeding', () => {
-  it('a new Veyra run carries all 130 chests, 3 card cases and 3 generators exactly once, CLOSED and unrolled', () => {
+  it('a new Veyra run carries every chest source, 3 card cases and 3 generators exactly once, CLOSED and unrolled', () => {
     const k = new G1bRun(101); const all = g1bEntities(k.r);
-    expect(all).toHaveLength(136); expect(new Set(all.map(e => e.g1b!.sid))).toEqual(new Set([...G1B_SOURCE_SITES.map(s => s.id), ...G1B_FIXTURES.map(f => f.id)]));
+    expect(all).toHaveLength(N_OBJECTS); expect(new Set(all.map(e => e.g1b!.sid))).toEqual(new Set([...G1B_SOURCE_SITES.map(s => s.id), ...G1B_FIXTURES.map(f => f.id)]));
     for (const e of all) {
       const g = e.g1b!, c = k.r.custody[e.c!];
       if (g.kind === 'chest') { expect(g.state).toBe('closed'); expect(g.cycle).toBe(0); expect(g.roll).toBeUndefined(); expect(c.slots.some(Boolean), 'no loot exists before the first open').toBe(false); expect(c.slots).toHaveLength(12); }
@@ -32,7 +33,7 @@ describe('G1B seeding', () => {
     // the objects outside the streamed window wait in their own table and never enter the structure table
     expect(Object.values(k.r.g1b!.far).every(e => !!e.g1b)).toBe(true);
     expect(Object.values(k.r.veyraOffscreenEntities || {}).some(e => !!e.g1b)).toBe(false);
-    expect(Object.values(k.r.entities).filter(e => e.g1b).length + Object.keys(k.r.g1b!.far).length).toBe(136);
+    expect(Object.values(k.r.entities).filter(e => e.g1b).length + Object.keys(k.r.g1b!.far).length).toBe(N_OBJECTS);
     expect(allRunEntities(k.r).some(e => !!e.g1b && !k.r.entities[e.id])).toBe(false);
     expect(k.valid()).toBe(true); roundTrip(k);
   });
@@ -72,7 +73,7 @@ describe('G1B chest lifecycle', () => {
     expect(shiftVeyraWindowBy(k.gs, 150, 0, markDirty)).toBe(true); expect(Object.values(k.r.entities).some(v => v.g1b?.sid === s.id), 'chest left the window').toBe(false);
     expect(k.ent(s.id).tx).toBe(s.gx); expect(k.valid(), 'parked chest validates').toBe(true); roundTrip(k);
     expect(shiftVeyraWindowBy(k.gs, -150, 0, markDirty)).toBe(true); const back = k.live(s.id); const [ox, oy] = k.origin(); expect([back.tx! + ox, back.ty! + oy]).toEqual([s.gx, s.gy]); expect(back.x).toBe(back.tx! * TILE + 8);
-    expect(stacks(k, back.c!)).toEqual(left); expect(g1bEntities(k.r)).toHaveLength(136);
+    expect(stacks(k, back.c!)).toEqual(left); expect(g1bEntities(k.r)).toHaveLength(N_OBJECTS);
 
     // take the rest → EMPTY, one timer of the approved length, one receipt
     k.standBy(s.gx, s.gy); takeAll(k, back.c!); const t0 = k.now; k.step();

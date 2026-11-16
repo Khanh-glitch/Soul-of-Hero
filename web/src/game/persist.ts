@@ -1,4 +1,4 @@
-import { G1B_VERSION, G1B_CHEST_SLOTS, G1B_SITES, G1B_FIXTURE_BY_ID, G1B_GATE_BY_ID, G1B_SOURCE_SITES, G1B_FIXTURES, g1bSeed, CORE_V2 } from './g1b';
+import { G1B_VERSION, G1B_CHEST_SLOTS, G1B_SITES, G1B_FIXTURE_BY_ID, G1B_GATE_BY_ID, G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, g1bSeed, CORE_V2 } from './g1b';
 import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} from './airdrop';
 import { recoveryPlanFor, COMPONENT_RECIPES } from './recycler';
 import { combatKindOf } from './stimulus';
@@ -15,8 +15,9 @@ const veyraRun = (r: any) => typeof r?.layoutId === 'string' && isVeyra05Layout(
 /** G1B chest / card case / generator: a real approved source id at its resolved tile, one instance, coherent lifecycle. */
 function g1bEntityOk(r: any, e: any, offscreen: boolean, seen: Set<string>): boolean {
   const g = e.g1b; const isObj = (v: any) => v !== null && typeof v === 'object' && !Array.isArray(v);
-  if (!isObj(r.g1b) || !isObj(g) || e.kind !== 'loot' || typeof g.sid !== 'string' || seen.has(g.sid) || (e.floor ?? 0) !== 0) return false;
+  if (!isObj(r.g1b) || !isObj(g) || e.kind !== 'loot' || typeof g.sid !== 'string' || seen.has(g.sid)) return false;
   const site = G1B_SITES[g.sid], fx = G1B_FIXTURE_BY_ID[g.sid]; const at = site ?? fx; if (!at) return false;
+  if ((e.floor ?? 0) !== (site?.level ?? 0) || (e.floor === 0 && 'floor' in e)) return false; // a chest lives on the storey it was surveyed on
   if (g.kind !== (site ? 'chest' : fx!.kind) || !['closed', 'opened', 'empty'].includes(g.state) || !Number.isSafeInteger(g.cycle) || g.cycle < 0) return false;
   const o = r.sourceMap?.veyra?.originAu; const ox = offscreen || !o ? 0 : Math.round(o[0] / 0.5), oy = offscreen || !o ? 0 : Math.round(o[1] / 0.5);
   if (e.tx !== at.gx - ox || e.ty !== at.gy - oy || e.x !== e.tx * 16 + 8 || e.y !== e.ty * 16 + 8) return false;
@@ -36,7 +37,7 @@ const oilAuthorityOk = (r: any, a: unknown) => a === 'test-fixture-v1' ? r.oilTe
 import { LADDER_SPAN, POWERED_DOOR_HOSTS, EQ_SLOTS, starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
 import { RETIRED_RECIPES, hasLegacyDefinition } from './recipe-migration';
 import { ITEM_SET_VERSION, isAccessCard, isRetiredLive, RETIRED_ITEM_IDS, liveItemId, liveItemPer, liveRecipeId, RECIPE_SUCCESSOR } from './final-item-set';
-import { newGame, renewableLoot, markDirty } from './engine';
+import { newGame, renewableLoot, markDirty, g1bEnsureSources } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
 import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
 import { getWorld, hasLayout, setActiveLayout, VEYRA_RECYCLER_SITE, webRecyclerSite } from './world';
@@ -133,15 +134,38 @@ export function validate(raw: any): GameState | null {
   if (r.itemSetVersion !== undefined && (!integer(r.itemSetVersion) || r.itemSetVersion < 1 || r.itemSetVersion > ITEM_SET_VERSION)) return null;
   // Item set v3: the equipment container grew from head/body/back to head/body/back/legs/feet. Old slots keep their index.
   if (obj(r.custody) && obj(r.custody.eq) && Array.isArray(r.custody.eq.slots) && r.custody.eq.slots.length === 3) r.custody.eq.slots.push(null, null);
+  // G1B source-layout migration (batch 2). A run saved with the 130 round-1 sources is brought up to the current layout by
+  // ADDING the sources it has never had, closed and unrolled. Nothing it already has is touched (state, cycle, roll,
+  // contents, restock time), so the migration cannot re-roll or duplicate loot, and it runs once: the run is stamped.
+  // Only a save holding exactly the round-1 set is migrated; anything else is left for validation to reject.
+  if (obj(r.g1b) && r.g1b.layout === undefined && obj(r.g1b.far) && obj(r.entities) && obj(r.custody)) {
+    try {
+      const had = new Set<string>(); for (const e of [...Object.values(r.entities), ...Object.values(r.g1b.far)] as any[]) if (obj(e) && obj(e.g1b) && typeof e.g1b.sid === 'string') { if (had.has(e.g1b.sid)) return null; had.add(e.g1b.sid); }
+      const round1 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+      if (had.size === G1B_SOURCE_SITES.length + G1B_FIXTURES.length) r.g1b.layout = G1B_LAYOUT_REVISION;      // written by this build before the stamp existed
+      else if (had.size === round1.length && round1.every(id => had.has(id))) g1bEnsureSources(r);
+      else return null;
+    } catch { return null; }
+  }
   // G1B — Creator Core V2 migration (idempotent, in place, same UID). A Core minted before V2 owned all three skills
-  // and had no durability: it becomes Lv3 at full durability so nothing the player held is lost. Its unspent reserve is
-  // kept as a bank the Core spends before touching the pack (never refilled, never duplicated); an empty bank is dropped.
+  // and had no durability: it becomes Lv3 at full durability so nothing the player held is lost. V2 has no magazine, so
+  // the energy loaded into it is converted ONCE into `owed` — the exact items it was loaded from (1 Basic Energy per
+  // LMB charge, 1 Refined Energy per Q charge, 1 Refined Energy + 1 Essence per E charge) — and `reserves` is removed.
+  // The engine hands `owed` back into the Core's own container as room allows; a cast never draws on it.
   if (obj(r.custody)) for (const c of Object.values(r.custody) as any[]) {
     if (!obj(c) || !Array.isArray(c.slots)) continue;
     for (const st of c.slots) {
-      if (!obj(st) || typeof st.key !== 'string' || !has(ITEMS, st.key) || !ITEMS[st.key].creatorCore || st.lvl !== undefined) continue;
-      st.lvl = 3; if (st.dur === undefined) st.dur = CORE_V2.maxDur;
-      if (obj(st.reserves) && !['basic', 'refined', 'signature'].some(k => st.reserves[k] > 0)) delete st.reserves;
+      if (!obj(st) || typeof st.key !== 'string' || !has(ITEMS, st.key) || !ITEMS[st.key].creatorCore) continue;
+      if (st.lvl === undefined) { st.lvl = 3; if (st.dur === undefined) st.dur = CORE_V2.maxDur; }
+      // (also a save written by the first V2 build, which still kept the bank beside a level)
+      if (obj(st.reserves)) {
+        // a bank no real Core could have held (old capacities 40 / 12 / 4) is a forged save, not energy to hand out
+        if (Object.keys(st.reserves).sort().join(',') !== 'basic,refined,signature' || (['basic', 'refined', 'signature'] as const).some(k => !integer(st.reserves[k]) || st.reserves[k] < 0 || st.reserves[k] > ({ basic: 40, refined: 12, signature: 4 })[k])) return null;
+        const n = (k: string) => (integer(st.reserves[k]) && st.reserves[k] > 0 ? st.reserves[k] : 0) as number;
+        const owed: Record<string, number> = {}; const add = (k: string, q: number) => { if (q > 0) owed[k] = (owed[k] ?? 0) + q; };
+        add('energy_basic', n('basic')); add('energy_refined', n('refined') + n('signature')); add(`essence_${ITEMS[st.key].essence}`, n('signature'));
+        delete st.reserves; if (Object.keys(owed).length) st.owed = owed;
+      }
     }
   }
   let retiredItems = 0;
@@ -350,10 +374,12 @@ export function validate(raw: any): GameState | null {
     if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return false;
     if((s.key==='keycard'||isAccessCard(s.key)) && s.charge!==undefined && (!integer(s.charge)||s.charge<1||s.charge>100||s.qty!==1))return false;
     if(s.key==='motorbike_kit' && (!finite(s.dur)||s.dur<0||s.dur>BAL.motorbike.maxHp))return false;
+    if (s.owed !== undefined && (!ITEMS[s.key].creatorCore || !obj(s.owed) || !Object.keys(s.owed).length || Object.entries(s.owed).some(([k, v]) => !['energy_basic', 'energy_refined', `essence_${ITEMS[s.key].essence}`].includes(k) || !integer(v) || (v as number) < 1 || (v as number) > 56))) return false;
     if (s.reserves !== undefined && (!ITEMS[s.key].creatorCore || !obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k]))) return false;
     // Core V2: level, durability, three ready-at stamps and at most one running upgrade live on the physical instance.
     if (ITEMS[s.key].creatorCore) {
       if (![1, 2, 3].includes(s.lvl) || !finite(s.dur) || s.dur < 0 || s.dur > CORE_V2.maxDur) return false;
+      if (s.reserves !== undefined) return false; // no magazine in V2: a pre-V2 bank is converted to `owed` before validation
       if (s.cd !== undefined && (!obj(s.cd) || Object.entries(s.cd).some(([k, v]) => !['basic', 'refined', 'signature'].includes(k) || !finite(v) || (v as number) < 0))) return false;
       if (s.upg !== undefined && (!obj(s.upg) || s.upg.to !== s.lvl + 1 || !finite(s.upg.readyAt))) return false;
     } else if (s.lvl !== undefined || s.cd !== undefined || s.upg !== undefined) return false;
@@ -703,6 +729,7 @@ export function validate(raw: any): GameState | null {
   }
   // G1B: a run either carries the whole approved chest system (every source id exactly once) or none of it.
   if (r.g1b !== undefined) {
+    if (r.g1b.layout !== undefined && (!integer(r.g1b.layout) || r.g1b.layout !== G1B_LAYOUT_REVISION)) return null;
     if (!obj(r.g1b) || r.g1b.version !== G1B_VERSION || typeof r.g1b.rev !== 'string' || !veyraRun(r) || !obj(r.g1b.doors) || Object.entries(r.g1b.doors).some(([k, v]: [string, any]) => !G1B_GATE_BY_ID[k] || !obj(v) || !finite(v.closeAt))) return null;
     if (!obj(r.g1b.far)) return null;
     for (const [oid, oe] of Object.entries(r.g1b.far) as [string, any][]) {

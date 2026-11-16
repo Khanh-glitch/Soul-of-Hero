@@ -1,0 +1,256 @@
+[
+ {
+  "shot": "eco-upper-0-ground-at-stair.png",
+  "source": "veyra.g1b:po_greywater:supply_low:f1.loft.01",
+  "storey": 1,
+  "stair": {
+   "x": 1608,
+   "y": 1171,
+   "tx": 1608,
+   "ty": 1169,
+   "from": 0,
+   "to": 1,
+   "label": "Loft Stair"
+  },
+  "floorNow": 0,
+  "note": "QA placement beside the real stair; chest is on another storey and is not drawn / not usable here"
+ },
+ {
+  "tag": "eco-upper",
+  "floorAfterF": 1,
+  "toasts": [
+   "✓Entered Loft Stair · floor 1",
+   "✓Entered Loft Stair · floor 1",
+   "✓"
+  ]
+ },
+ {
+  "shot": "eco-upper-1-closed.png",
+  "source": "veyra.g1b:po_greywater:supply_low:f1.loft.01",
+  "variant": "supply_low",
+  "place": "upper:Long House · Sleeping Loft",
+  "space": "po_greywater/1/loft",
+  "storey": 1,
+  "global": [
+   1595,
+   1169
+  ],
+  "floorNow": 1,
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Supply Crate",
+   "eid": "e80"
+  },
+  "entity": {
+   "eid": "e80",
+   "live": true,
+   "floor": 1,
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  }
+ },
+ {
+  "shot": "eco-upper-2-opened-ui.png",
+  "source": "veyra.g1b:po_greywater:supply_low:f1.loft.01",
+  "entity": {
+   "eid": "e80",
+   "live": true,
+   "floor": 1,
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "iron_orex3",
+    "clothx1"
+   ]
+  },
+  "icons": {
+   "atlas157": 6,
+   "drawn": [],
+   "sizes": [
+    "16x16/32",
+    "8x8/32"
+   ],
+   "rendering": [
+    "pixelated"
+   ]
+  },
+  "receipts": [
+   "g1b.roll veyra.g1b:po_greywater:supply_low:f1.loft.01:g1b-approved-v1:cycle0:seed737617870:slot0:iron_orex3:sx3",
+   "g1b.roll veyra.g1b:po_greywater:supply_low:f1.loft.01:g1b-approved-v1:cycle0:seed737617870:slot1:clothx1:sx4",
+   "g1b.open veyra.g1b:po_greywater:supply_low:f1.loft.01:cycle0"
+  ]
+ },
+ {
+  "tag": "eco-upper",
+  "backOnFloor": 0
+ },
+ {
+  "shot": "eco-cellar-0-ground-at-stair.png",
+  "source": "veyra.g1b:po_greywater:supply_low:b1.lh_cellar.01",
+  "storey": -1,
+  "stair": {
+   "x": 1596,
+   "y": 1172,
+   "tx": 1596,
+   "ty": 1172,
+   "from": 0,
+   "to": -1,
+   "label": "Cellar Hatch"
+  },
+  "floorNow": 0,
+  "note": "QA placement beside the real stair; chest is on another storey and is not drawn / not usable here"
+ },
+ {
+  "tag": "eco-cellar",
+  "floorAfterF": -1,
+  "toasts": [
+   "✓Entered Cellar Hatch · floor -1",
+   "✓Entered Cellar Hatch · floor -1",
+   "✓"
+  ]
+ },
+ {
+  "shot": "eco-cellar-1-closed.png",
+  "source": "veyra.g1b:po_greywater:supply_low:b1.lh_cellar.01",
+  "variant": "supply_low",
+  "place": "cellar:Long House Cellar",
+  "space": "po_greywater/-1/lh_cellar",
+  "storey": -1,
+  "global": [
+   1600,
+   1169
+  ],
+  "floorNow": -1,
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Supply Crate",
+   "eid": "e7g"
+  },
+  "entity": {
+   "eid": "e7g",
+   "live": true,
+   "floor": -1,
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  }
+ },
+ {
+  "shot": "eco-cellar-2-opened-ui.png",
+  "source": "veyra.g1b:po_greywater:supply_low:b1.lh_cellar.01",
+  "entity": {
+   "eid": "e7g",
+   "live": true,
+   "floor": -1,
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "sparesx2",
+    "iron_orex3",
+    "woodx5"
+   ]
+  },
+  "icons": {
+   "atlas157": 7,
+   "drawn": [],
+   "sizes": [
+    "16x16/32",
+    "8x8/32"
+   ],
+   "rendering": [
+    "pixelated"
+   ]
+  },
+  "receipts": [
+   "g1b.roll veyra.g1b:po_greywater:supply_low:b1.lh_cellar.01:g1b-approved-v1:cycle0:seed1873553629:slot1:iron_orex3:sxb",
+   "g1b.roll veyra.g1b:po_greywater:supply_low:b1.lh_cellar.01:g1b-approved-v1:cycle0:seed1873553629:slot2:woodx5:sxc",
+   "g1b.open veyra.g1b:po_greywater:supply_low:b1.lh_cellar.01:cycle0"
+  ]
+ },
+ {
+  "tag": "eco-cellar",
+  "backOnFloor": 0
+ },
+ {
+  "tag": "eco-roof",
+  "note": "no direct ground stair to this storey",
+  "st": {
+   "none": 0
+  }
+ },
+ {
+  "tag": "eco-roof",
+  "floorAfterF": 2,
+  "toasts": [
+   "✓Entered Roof Ladder · floor 2",
+   "✓Entered Roof Ladder · floor 2",
+   "✓"
+  ]
+ },
+ {
+  "shot": "eco-roof-1-closed.png",
+  "source": "veyra.g1b:po_greywater:food_low:f2.deck.01",
+  "variant": "food_low",
+  "place": "roof:Granary Roof Lookout",
+  "space": "po_greywater/2/deck",
+  "storey": 2,
+  "global": [
+   1657,
+   1167
+  ],
+  "floorNow": 2,
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Food Box",
+   "eid": "e84"
+  },
+  "entity": {
+   "eid": "e84",
+   "live": true,
+   "floor": 2,
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  }
+ },
+ {
+  "shot": "eco-roof-2-opened-ui.png",
+  "source": "veyra.g1b:po_greywater:food_low:f2.deck.01",
+  "entity": {
+   "eid": "e84",
+   "live": true,
+   "floor": 2,
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "berriesx7",
+    "meatx1",
+    "water_flaskx1"
+   ]
+  },
+  "icons": {
+   "atlas157": 7,
+   "drawn": [],
+   "sizes": [
+    "16x16/32",
+    "8x8/32"
+   ],
+   "rendering": [
+    "pixelated"
+   ]
+  },
+  "receipts": [
+   "g1b.roll veyra.g1b:po_greywater:food_low:f2.deck.01:g1b-approved-v1:cycle0:seed3192339844:slot1:meatx1:sxx",
+   "g1b.roll veyra.g1b:po_greywater:food_low:f2.deck.01:g1b-approved-v1:cycle0:seed3192339844:slot2:water_flaskx1:sxy",
+   "g1b.open veyra.g1b:po_greywater:food_low:f2.deck.01:cycle0"
+  ]
+ },
+ {
+  "tag": "eco-roof",
+  "backOnFloor": 0
+ },
+ {
+  "pageErrors": []
+ }
+]

@@ -1,6 +1,6 @@
 import { landingStimulus } from './stimulus';
 import { VFX_TEST_KIT, VFX_TEST_CORES } from './vfx/testkit';
-import { G1B_VERSION, G1B_LOOT_REVISION, G1B_CHEST_SLOTS, G1B_SOURCE_SITES, G1B_FIXTURES, G1B_GATES, G1B_SITES, G1B_FIXTURE_BY_ID, g1bGateAtDoor, g1bRoll, g1bRefreshHours, g1bChestName, CORE_V2, CORE_SPECS, CORE_REPAIR_BILL, coreAmmo, coreLevel, coreDur, type CoreMode, type G1bGate } from './g1b';
+import { G1B_VERSION, G1B_LOOT_REVISION, G1B_CHEST_SLOTS, G1B_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, G1B_GATES, G1B_SITES, G1B_FIXTURE_BY_ID, g1bGateAtDoor, g1bRoll, g1bRefreshHours, g1bChestName, CORE_V2, CORE_SPECS, CORE_REPAIR_BILL, coreAmmo, coreLevel, coreDur, type CoreMode, type G1bGate } from './g1b';
 import { supportsAirdrops, airdropArea, airdropTimes, airdropRewards, chooseAirdropSite, airdropStaticEligible } from './airdrop';
 import { recoveryPlan, recoveryPlanFor, recoveryFits, COMPONENT_RECIPES } from './recycler';
 import { recordIntel, gateKey, placeOfPoi } from './expedition-intel';
@@ -1520,16 +1520,31 @@ export function g1bEntities(r: RunState): Entity[] {
 }
 function seedG1b(r: RunState) {
   r.g1b = { version: G1B_VERSION, rev: G1B_LOOT_REVISION, doors: {}, far: {} };
-  const o = r.sourceMap?.veyra?.originAu; const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
-  const put = (sid: string, kind: 'chest' | 'card' | 'gen', gx: number, gy: number, label: string, slots: number, fill?: string) => {
+  g1bEnsureSources(r);
+}
+/**
+ * Brings a run up to the current source layout: every approved source id that the run does not have yet is created
+ * CLOSED at cycle 0 (never rolled). Sources the run already has are not touched — their state, cycle, roll, contents and
+ * restock time stay exactly as saved — so a new game, a reload and a layout migration can never re-roll or duplicate a
+ * chest. Returns how many sources were added.
+ */
+export function g1bEnsureSources(r: RunState): number {
+  if (!r.g1b) return 0;
+  const have = new Set<string>(); for (const e of Object.values(r.entities)) if (e.g1b) have.add(e.g1b.sid); for (const e of Object.values(r.g1b.far)) if (e.g1b) have.add(e.g1b.sid);
+  const o = r.sourceMap?.veyra?.originAu; const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0; let added = 0;
+  const put = (sid: string, kind: 'chest' | 'card' | 'gen', gx: number, gy: number, level: number, label: string, slots: number, fill?: string) => {
+    if (have.has(sid)) return; added++;
     const c = mkContainer(r, 'loot', slots); if (fill) c.slots[0] = mkStack(r, fill, 1);
     const e: Entity = { id: uid(r, 'e'), kind: 'loot', x: gx * TILE + 8, y: gy * TILE + 8, tx: gx, ty: gy, c: c.id, label, g1b: { sid, kind, state: kind === 'card' ? 'opened' : 'closed', cycle: 0 } };
+    if (level) (e as any).floor = level;                 // cellar / upper storey / roof: only drawn, solid and usable on its own storey
     const lx = gx - ox, ly = gy - oy;
     if (lx >= 1 && ly >= 1 && lx < WW - 1 && ly < WH - 1) { e.x = lx * TILE + 8; e.y = ly * TILE + 8; e.tx = lx; e.ty = ly; r.entities[e.id] = e; }
     else r.g1b!.far[e.id] = e;
   };
-  for (const s of G1B_SOURCE_SITES) put(s.id, 'chest', s.gx, s.gy, g1bChestName(s.variant), G1B_CHEST_SLOTS);
-  for (const f of G1B_FIXTURES) put(f.id, f.kind, f.gx, f.gy, f.kind === 'card' ? 'Access-card case' : 'Circuit generator', 1, f.kind === 'card' ? f.card : undefined);
+  for (const s of G1B_SOURCE_SITES) put(s.id, 'chest', s.gx, s.gy, s.level ?? 0, g1bChestName(s.variant), G1B_CHEST_SLOTS);
+  for (const f of G1B_FIXTURES) put(f.id, f.kind, f.gx, f.gy, 0, f.kind === 'card' ? 'Access-card case' : 'Circuit generator', 1, f.kind === 'card' ? f.card : undefined);
+  r.g1b.layout = G1B_LAYOUT_REVISION; G1B_ID_CACHE.delete(r); G1B_BUSY.delete(r); if (added) markDirty();
+  return added;
 }
 function g1bWindowOrigin(r: RunState): [number, number] { const o = r.sourceMap?.veyra?.originAu; return o ? [Math.round(o[0] / 0.5), Math.round(o[1] / 0.5)] : [0, 0]; }
 /** The gate contract of a real POI door entity, by its global tile. Only runs that carry the chest system have gates. */
@@ -1548,9 +1563,20 @@ export function g1bDoorLabel(r: RunState, e: Entity, gate: G1bGate, now: number)
   return `Sealed door · ${need.join(' · ')}`;
 }
 /** Run-clock settlement (online and offline share it): EMPTY starts one timer; one refill; never a catch-up or a reroll. */
+/**
+ * Derived, never saved: the few sources that can change by time alone (opened, or empty and waiting to restock). A
+ * closed chest cannot, so the per-slice settlement does not walk all of them. Rebuilt from the entities whenever a
+ * chest is opened, the source set changes, or ten game minutes have passed.
+ */
+const G1B_BUSY = new WeakMap<RunState, { ids: string[]; at: number }>();
+const g1bBusyState = (g: NonNullable<Entity['g1b']>) => g.kind !== 'gen' && (g.state === 'opened' || (g.state === 'empty' && g.kind === 'chest' && g.refillAt !== undefined));
 export function stepG1b(r: RunState, now: number) {
   if (!r.g1b) return;
-  for (const e of g1bEntities(r)) {
+  let busy = G1B_BUSY.get(r);
+  if (!busy || now < busy.at || now - busy.at >= 600_000) { busy = { ids: g1bEntities(r).filter(e => g1bBusyState(e.g1b!)).map(e => e.id), at: now }; G1B_BUSY.set(r, busy); }
+  const far = r.g1b.far; let settled = false;
+  for (const id of busy.ids) {
+    const e = r.entities[id] || far?.[id]; if (!e?.g1b) { settled = true; continue; }
     const g = e.g1b!; if (g.kind === 'gen') continue;
     if (g.state === 'opened' && !r.custody[e.c!]?.slots.some(Boolean)) {
       g.state = 'empty';
@@ -1560,7 +1586,9 @@ export function stepG1b(r: RunState, now: number) {
     if (g.state === 'empty' && g.kind === 'chest' && g.refillAt !== undefined && now >= g.refillAt) {
       g.state = 'closed'; g.cycle += 1; delete g.refillAt; delete g.roll; receipt(r, now, 'g1b.refill', `${g.sid}:cycle${g.cycle}`);
     }
+    if (!g1bBusyState(g)) settled = true;
   }
+  if (settled) G1B_BUSY.delete(r);
   const pending = Object.entries(r.g1b.doors); if (!pending.length) return;
   const [ox, oy] = g1bWindowOrigin(r);
   for (const [id, d] of pending) {
@@ -1583,20 +1611,45 @@ export function coreCastBlock(r: RunState, s: Stack, mode: CoreMode, now: number
   if (s.upg) return `${d.name} is being upgraded: ${Math.ceil((s.upg.readyAt - now) / 1000)}s left.`;
   if (coreLevel(s) < CORE_V2.modeLevel[mode]) return `${mode === 'refined' ? 'Q' : 'E'} needs ${d.name} Lv${CORE_V2.modeLevel[mode]}. Upgrade it at a Workbench.`;
   if (coreDur(s) <= 0) return `${d.name} is worn out. Repair it at a Workbench.`;
+  // the whole wear of the skill must be payable: 3 points left never buys a 16-point cast
+  const wear = CORE_SPECS[s.key]?.wear[mode] ?? 0; if (!VFX_TEST_KIT && coreDur(s) < wear) return `${d.name} is too worn for ${mode === 'basic' ? 'LMB' : mode === 'refined' ? 'Q' : 'E'}: needs ${wear} durability, ${coreDur(s)} left. Repair it at a Workbench.`;
   const ready = s.cd?.[mode] ?? 0; if (ready > now) return `${mode === 'basic' ? 'LMB' : mode === 'refined' ? 'Q' : 'E'} recharging: ${((ready - now) / 1000).toFixed(1)}s.`;
-  if (VFX_TEST_KIT || (s.reserves?.[mode] ?? 0) > 0) return null;
+  if (VFX_TEST_KIT) return null;
   const missing = coreAmmo(mode, d.essence).filter(([k, q]) => countItem(r, 'inv', k) < q);
   return missing.length ? `No ${missing.map(([k]) => ITEMS[k]?.name ?? k).join(' or ')} in your pack.` : null;
+}
+/**
+ * Pre-V2 saves: a Core that had energy loaded carries `owed`, the exact items that energy was loaded from. They are
+ * handed back into the PACK while the Core is carried there, as room allows, each unit exactly once, with a receipt
+ * per transfer. A Core lying anywhere else (an unopened loot site, a storage box, a corpse) keeps its `owed` and is
+ * paid when the player picks it up: no other container is ever written to. Nothing is cast from `owed`; nothing can
+ * add to it.
+ */
+const CORE_OWED_RETRY = new WeakMap<RunState, number>();
+export function settleCoreOwed(r: RunState, now: number): number {
+  const inv = r.custody.inv; if (!inv || !inv.slots.some(s => s?.owed)) return 0;
+  if (now < (CORE_OWED_RETRY.get(r) ?? 0)) return 0;
+  let moved = 0;
+  for (const s of inv.slots) {
+    if (!s?.owed) continue;
+    for (const [k, q] of Object.entries(s.owed)) {
+      const left = addItem(r, 'inv', k, q), paid = q - left;
+      if (paid > 0) { moved += paid; receipt(r, now, 'core.legacy.refund', `${s.uid}:${k}x${paid}->inv${left ? `:owed=${left}` : ''}`); }
+      if (left > 0) s.owed[k] = left; else delete s.owed[k];
+    }
+    if (!Object.keys(s.owed).length) delete s.owed;
+  }
+  CORE_OWED_RETRY.set(r, now + 2000); if (moved) markDirty();
+  return moved;
 }
 /** The accepted cast: ammunition, wear and the per-UID cooldown are charged together, or not at all. */
 export function coreCastCommit(r: RunState, s: Stack, mode: CoreMode, now: number): boolean {
   if (coreCastBlock(r, s, mode, now)) return false;
   const d = ITEMS[s.key], sp = CORE_SPECS[s.key];
   if (!VFX_TEST_KIT) {
-    if ((s.reserves?.[mode] ?? 0) > 0) { s.reserves![mode]--; if (!s.reserves!.basic && !s.reserves!.refined && !s.reserves!.signature) delete s.reserves; } // pre-V2 bank is spent first, never refilled
-    else for (const [k, q] of coreAmmo(mode, d.essence)) removeItem(r, 'inv', k, q);
+    for (const [k, q] of coreAmmo(mode, d.essence)) removeItem(r, 'inv', k, q);
   }
-  if (sp) { if (!VFX_TEST_KIT) s.dur = Math.max(0, coreDur(s) - sp.wear[mode]); (s.cd ??= {})[mode] = now + sp.cooldownMs[mode]; }
+  if (sp) { if (!VFX_TEST_KIT) s.dur = coreDur(s) - sp.wear[mode]; (s.cd ??= {})[mode] = now + sp.cooldownMs[mode]; }
   return true;
 }
 
@@ -2293,8 +2346,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     }
     case 'g1bOpen': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'loot' || !e.g1b || !r.g1b) return fail('No chest here.');
-      if (!near(r, e, 2.8) || !clearInteraction(r, e)) return fail('Chest is out of reach or blocked.');
-      stepG1b(r, now);
+      if (!onActiveFloor(r, e) || !near(r, e, 2.8) || !clearInteraction(r, e)) return fail('Chest is out of reach or blocked.');
+      G1B_BUSY.delete(r); stepG1b(r, now); // exact at the moment of interaction
       const g = e.g1b, c = C(r, e.c!);
       if (g.kind === 'gen') return fail('That is a generator.');
       if (g.state === 'empty') return fail(g.refillAt ? `Empty. Restocks in ${g1bEta(g.refillAt - now)}.` : 'Empty.');
@@ -2303,7 +2356,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         const roll = g1bRoll(r.id, g.sid, g.cycle, key => ITEMS[liveItemId(key)]?.max ?? 1);
         if (!roll.stacks.length || roll.stacks.length > c.slots.length) return fail('Chest contract missing for this source.');
         roll.stacks.forEach((st, i) => { const stack = mkStack(r, st.key, st.qty); if (st.level) stack.lvl = st.level; c.slots[i] = stack; receipt(r, now, 'g1b.roll', `${g.sid}:${G1B_LOOT_REVISION}:cycle${g.cycle}:seed${roll.seed}:slot${i}:${stack.key}${st.level ? ':lv' + st.level : ''}x${stack.qty}:${stack.uid}`); });
-        g.state = 'opened'; g.roll = { rev: G1B_LOOT_REVISION, seed: roll.seed, at: now };
+        g.state = 'opened'; g.roll = { rev: G1B_LOOT_REVISION, seed: roll.seed, at: now }; G1B_BUSY.delete(r);
         return ok('g1b.open', `${g.sid}:cycle${g.cycle}`);
       }
       return ok('g1b.search', g.sid);

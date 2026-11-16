@@ -1,0 +1,66 @@
+[
+ {
+  "tag": "eco-road_trail",
+  "failed": "bring"
+ },
+ {
+  "shot": "eco-road_wreck-1-closed.png",
+  "source": "veyra.g1b:rd_0:toolbox_damaged:k0138.01",
+  "variant": "toolbox_damaged",
+  "place": "roadside wreck / dropped load",
+  "space": "road/rd_0",
+  "storey": 0,
+  "global": [
+   2136,
+   1624
+  ],
+  "floorNow": 0,
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Damaged Toolbox",
+   "eid": "err"
+  },
+  "entity": {
+   "eid": "err",
+   "live": true,
+   "floor": 0,
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  }
+ },
+ {
+  "shot": "eco-road_wreck-2-opened-ui.png",
+  "source": "veyra.g1b:rd_0:toolbox_damaged:k0138.01",
+  "entity": {
+   "eid": "err",
+   "live": true,
+   "floor": 0,
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "sparesx1",
+    "iron_ingotx1"
+   ]
+  },
+  "icons": {
+   "atlas157": 6,
+   "drawn": [],
+   "sizes": [
+    "16x16/32",
+    "8x8/32"
+   ],
+   "rendering": [
+    "pixelated"
+   ]
+  },
+  "receipts": [
+   "g1b.roll veyra.g1b:rd_0:toolbox_damaged:k0138.01:g1b-approved-v1:cycle0:seed3511443253:slot0:sparesx1:sxq",
+   "g1b.roll veyra.g1b:rd_0:toolbox_damaged:k0138.01:g1b-approved-v1:cycle0:seed3511443253:slot1:iron_ingotx1:sxr",
+   "g1b.open veyra.g1b:rd_0:toolbox_damaged:k0138.01:cycle0"
+  ]
+ },
+ {
+  "pageErrors": []
+ }
+]

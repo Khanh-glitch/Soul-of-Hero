@@ -9,7 +9,7 @@ import { Icon, iconUrl, type Api } from './common';
 import { Glyph, useVisualPrefs } from './hud';
 import { resolveUiLayout } from '../visual/direction';
 import { DSlot, DGrid, KeyboardMoveBanner } from './dragSlots';
-import { ItemInfo } from './panels';
+import { ItemInfo, CoreService } from './panels';
 
 // ============================================================================
 // SURVIVOR SCREEN — pack and crafting on one full-screen surface.
@@ -162,6 +162,7 @@ export function SurvivorScreen({
         <KeyboardMoveBanner />
         <DGrid api={api} cid="inv" cols={8} hotRow size={28} />
         <ItemInfo s={selStack} known={r.knowledge.recipes} />
+        {selStack && ITEMS[selStack.key]?.creatorCore && api.sel?.c === 'inv' && <CoreService api={api} s={selStack} />}
         {selStack && api.sel && <div className="sv-itemacts">
           {api.sel.c === 'eq'
             ? <button className="btn sm" onClick={() => { api.act('move', { from: 'eq', fs: api.sel!.slot, to: 'inv' }); api.setSel(null); }}>Unequip</button>

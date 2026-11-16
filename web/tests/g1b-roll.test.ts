@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import contract from '../evidence/g1b/approved/g1b-approved-runtime-contract-v1.json';
 import { ITEMS } from '../src/game/catalog';
 import { liveItemId } from '../src/game/final-item-set';
-import { G1B_CHESTS, G1B_CORE_TIERS, G1B_SOURCE_SITES, G1B_SITES, G1B_CHEST_SLOTS, g1bCoreOutcomes, g1bPositivePairs, g1bRefreshHours, g1bRoll, g1bSeed, type G1bPoolRow } from '../src/game/g1b';
+import { G1B_CHESTS, G1B_CORE_TIERS, G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_SITES, G1B_CHEST_SLOTS, g1bCoreOutcomes, g1bPositivePairs, g1bRefreshHours, g1bRoll, g1bSeed, type G1bPoolRow } from '../src/game/g1b';
 import { ITEM_DESIGN } from '../src/game/item-crafting-design';
 
 const C = contract as any;
@@ -16,12 +16,15 @@ const meanQty = (rows: G1bPoolRow[], item: string) => { const r = rows.find(v =>
 const CORES = new Set(Object.values(G1B_CORE_TIERS).flat());
 
 describe('G1B approved contract', () => {
-  it('has exactly the 16 approved chest variants and 130 source ids', () => {
+  it('has exactly the 16 approved chest variants; the 130 approved source ids are all present, unchanged', () => {
     expect(Object.keys(G1B_CHESTS)).toHaveLength(16); expect(C.chests).toHaveLength(16);
-    expect(G1B_SOURCE_SITES).toHaveLength(130); expect(new Set(G1B_SOURCE_SITES.map(s => s.id)).size).toBe(130);
-    expect(new Set(G1B_SOURCE_SITES.map(s => s.id))).toEqual(new Set(C.sourceSlots.map((s: any) => s.source_id)));
+    // the 130 approved slots are the BASE of the layout (kept id for id); batch 2 adds room / floor / road sources on top
+    expect(G1B_BASE_SOURCE_SITES).toHaveLength(130); expect(new Set(G1B_BASE_SOURCE_SITES.map(s => s.id)).size).toBe(130);
+    expect(new Set(G1B_BASE_SOURCE_SITES.map(s => s.id))).toEqual(new Set(C.sourceSlots.map((s: any) => s.source_id)));
+    expect(G1B_SOURCE_SITES.length).toBeGreaterThan(130); expect(new Set(G1B_SOURCE_SITES.map(s => s.id)).size).toBe(G1B_SOURCE_SITES.length);
+    for (const s of G1B_SOURCE_SITES) { expect(G1B_CHESTS[s.variant], s.id).toBeTruthy(); expect(g1bRefreshHours(s.id), s.id).toBe(G1B_CHESTS[s.variant].refresh_hours); }
     for (const s of C.sourceSlots) { expect(G1B_SITES[s.source_id].variant, s.source_id).toBe(s.variant); expect(g1bRefreshHours(s.source_id), s.source_id).toBe(Number(s.refresh_hours_base)); }
-    const zones: Record<string, number> = {}; for (const s of G1B_SOURCE_SITES) zones[s.zone] = (zones[s.zone] || 0) + 1;
+    const zones: Record<string, number> = {}; for (const s of G1B_BASE_SOURCE_SITES) zones[s.zone] = (zones[s.zone] || 0) + 1;
     expect(zones).toEqual({ POI: 85, ROAD: 26, CARD_ROOM: 19 });
   });
 

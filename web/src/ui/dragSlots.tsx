@@ -35,7 +35,7 @@ function acceptsUI(r: RunState, c: Container, slot: number, s: Stack): boolean {
   return true;
 }
 function mergeableUI(a: Stack, b: Stack): boolean {
-  return a.key === b.key && ITEMS[a.key].max > 1 && a.meta === b.meta && a.dur === b.dur && a.charge === b.charge && !a.reserves && !b.reserves && a.lvl === undefined && b.lvl === undefined;
+  return a.key === b.key && ITEMS[a.key].max > 1 && a.meta === b.meta && a.dur === b.dur && a.charge === b.charge && !a.reserves && !b.reserves && !a.owed && !b.owed && a.lvl === undefined && b.lvl === undefined;
 }
 
 /** Read-only mirror of engine `move` validation for live drop-target feedback. */

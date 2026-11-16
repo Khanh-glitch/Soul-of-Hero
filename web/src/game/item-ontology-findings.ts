@@ -214,12 +214,12 @@ function p10(p: ItemOntologyProjection) {
     const d = ITEMS[id], rc = RECIPES[id], it = byId.get(id)!;
     return {
       id, name: d.name, vi: d.vi ?? null, kind: d.creatorCore ? 'CREATOR_CORE' : 'LEGACY_CORE',
-      mechanic: d.creatorCore ? `creatorCore="${d.creatorCore}": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves)` : `core="${d.core}": one ability, ${d.charge} charges, one charge debited per cast (Stack.charge)`,
+      mechanic: d.creatorCore ? `creatorCore="${d.creatorCore}": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine` : `core="${d.core}": one ability, ${d.charge} charges, one charge debited per cast (Stack.charge)`,
       recipe: rc ? `${rc.ins.map(([k, q]) => `${q} ${k}`).join(' + ')} @ workbench L${rc.stationLevel ?? 1}, ${rc.secs}s, tier ${rc.tier}${rc.base ? ', known at start' : ''}` : 'none',
       parts_cost: rc?.ins.find(([k]) => k === 'spares')?.[1] ?? 0,
       learned_by: rc?.base ? 'starter knowledge' : CORE_STUDY[id] ? 'studying the Core itself at a Research Table, or a blueprint' : 'blueprint / research',
       sources: it.sources.map((s) => `${s.kind} ${s.from} (${s.layer})`), reachability: it.runtime_reachability,
-      save_fields: d.creatorCore ? 'key, uid, reserves{basic,refined,signature}' : 'key, uid, charge',
+      save_fields: d.creatorCore ? 'key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy)' : 'key, uid, charge',
       gold_ui: 'tooltip uses the gold Core frame (panels.tsx: isCore = core || creatorCore)',
       ...(LEGACY_EFFECT[id] ? { ...LEGACY_EFFECT[id], effect: `${d.desc} [${LEGACY_EFFECT[id].effect}]` } : {}),
     };
@@ -230,7 +230,7 @@ function p10(p: ItemOntologyProjection) {
   return {
     legacy, creator, creator_loot_markers: markers,
     conclusion: [
-      'The two families are different mechanics, not duplicates: a legacy core is a single-effect CHARGE tool (Stack.charge, 3–4 casts, re-charged as an item), a Creator Core is a three-ability RESERVE weapon (Stack.reserves) fed by the Energy/Essence economy.',
+      'The two families are different mechanics, not duplicates: a legacy core is a single-effect CHARGE tool (Stack.charge, 3–4 casts, re-charged as an item), a Creator Core is a three-ability weapon with durability and levels (Stack.dur / Stack.lvl) whose casts spend Energy/Essence from the pack.',
       'Two legacy effects have no Creator counterpart: Quake Core breaks rock into yield (harvest), Rime Core makes shallow water walkable (traversal). Ember and Storm overlap a Creator ability (fireball; lightning) but keep one distinct rule each (ignites vegetation; stronger in rain).',
       `The legacy cores are load-bearing for the Creator Cores themselves: CREATOR_LOOT_V1 finds the crate that holds a Creator Core by the legacy core in it (${markers.join('; ')}). Removing the legacy items from those crates silently removes three Creator Core sources.`,
       'Cost check: legacy cores cost 8–10 Parts at a level-1 Workbench but are tier-3 knowledge; the two common Creator Cores cost 4 Parts and are known from the start. The legacy four are not a cheaper path into the Creator line.',

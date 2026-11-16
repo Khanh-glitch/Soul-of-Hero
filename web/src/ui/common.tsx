@@ -1,15 +1,18 @@
 import React from 'react';
 import { ITEMS } from '../game/catalog';
 import { getArt } from '../game/art';
+import { atlasIconUrl } from '../game/item-atlas';
 import type { Stack, GameState } from '../game/core';
 import type { Intent, Result } from '../game/engine';
 
 let iconUrls: Record<string, string> | null = null;
-export function iconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || ''; }
+function drawnIconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || ''; }
+/** Item icon: the approved 157-atlas cell for every mapped id; the drawn icon only for ids outside the 157 and for `st:` structure art. */
+export function iconUrl(key: string) { return atlasIconUrl(key) || drawnIconUrl(key); }
 export function Icon({ k, size = 16, style }: { k: string; size?: number; style?: React.CSSProperties }) {
-  const src = iconUrl(k);
+  const approved = atlasIconUrl(k), src = approved || drawnIconUrl(k);
   if (!src) return <span className="px" style={{ display: 'inline-block', width: size, height: size, ...style }} aria-hidden="true" />;
-  return <img className="px" src={src} width={size} height={size} style={{ width: size, height: size, ...style }} draggable={false} alt="" />;
+  return <img className="px" src={src} width={size} height={size} data-icon={approved ? 'atlas157' : 'drawn'} data-item={k} style={{ width: size, height: size, ...style }} draggable={false} alt="" />;
 }
 
 export interface Api {

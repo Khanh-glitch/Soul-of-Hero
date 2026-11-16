@@ -19,7 +19,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { stepG1b, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
+import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -1442,7 +1442,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   syncPoi(t); syncHome(t);
   commitSeasonBoundaries(r, t, t);
   resolveFires(gs, t, visual);
-  stepLootRespawn(r, t); stepG1b(r, t);
+  stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
   syncDrops(t);
   stepNatureTrees(r,t);
   while (t < end) {
@@ -1510,7 +1510,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     // ground from there. Only the entries expiring in this slice are visited (no world scan).
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { const ci = +k; settleRegrowthAt(r, ci % WW, Math.floor(ci / WW), m.untilAt ?? t); delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
-    stepLootRespawn(r, t); stepG1b(r, t);
+    stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
     syncDrops(t);
     stepNatureTrees(r,t);
   }

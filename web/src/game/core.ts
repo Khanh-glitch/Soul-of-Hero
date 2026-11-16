@@ -50,8 +50,9 @@ export const TERRAIN_NAME = ['deep', 'shallow', 'sand', 'grass', 'meadow', 'fore
 // ---------- Items & custody ----------
 export interface CoreReserve { basic: number; refined: number; signature: number }
 /** Creator Core V2 (G1B): `lvl` 1-3 lives on the physical instance, `cd` holds the three per-UID ready-at timestamps,
- *  `upg` is a running same-UID upgrade. `reserves` survives only as the unspent pre-V2 bank of an old Core. */
-export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
+ *  `upg` is a running same-UID upgrade. `reserves` exists only in pre-V2 saves and is converted on load into `owed`: the exact items that energy was
+ *  loaded from, handed back to the Core's own container as soon as there is room. A cast never draws on it. */
+export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; owed?: Record<string, number>; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
 export interface Container { id: string; kind: string; slots: (Stack | null)[] }
 
 export type Dir = 0 | 1 | 2 | 3; // down, left, right, up
@@ -273,7 +274,7 @@ export interface RunState {
   /** G1B approved chest system. `far` holds the chests / card cases / generators outside the streamed window, in
    *  GLOBAL tile coordinates. It is a table of its own (not `veyraOffscreenEntities`) so the 136 world objects never
    *  enter the structure scans that run inside every settlement slice. */
-  g1b?: { version: 'g1b-v1'; rev: string; doors: Record<string, { closeAt: number }>; far: Record<string, Entity> };
+  g1b?: { version: 'g1b-v1'; rev: string; /** source-layout revision the run was last brought up to (absent = 1: the 130 round-1 sources) */ layout?: number; doors: Record<string, { closeAt: number }>; far: Record<string, Entity> };
   natureTrees?: {tx:number;ty:number;until:number}[];
   spiritTransit?: { x:number; y:number; arriveAt:number; uid:string };
   terrain: Record<number, { t: number; until?: number; untilAt?: number }>; // K2 terrain mutations (burns, ice)
