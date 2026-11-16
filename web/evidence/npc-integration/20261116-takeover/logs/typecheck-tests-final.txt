@@ -1,0 +1,90 @@
+
+> react-vite-tailwind@0.0.0 typecheck:tests
+> tsc --noEmit -p tsconfig.test.json
+
+tests/arena1-round2-mechanics.test.ts(204,94): error TS2339: Property 'reason' does not exist on type 'Result'.
+  Property 'reason' does not exist on type '{ ok: true; receipt: string; msg?: string | undefined; }'.
+tests/arena1-round2-mechanics.test.ts(204,109): error TS2339: Property 'message' does not exist on type 'Result'.
+  Property 'message' does not exist on type '{ ok: true; receipt: string; msg?: string | undefined; }'.
+tests/b1-storage.test.ts(28,144): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+tests/final-item-set.test.ts(206,125): error TS2367: This comparison appears to be unintentional because the types '"none" | "empty" | "yield" | "nopower"' and '"depleted"' have no overlap.
+tests/g1b-ecology.test.ts(60,73): error TS7006: Parameter 'q' implicitly has an 'any' type.
+tests/g1b-historical-save.test.ts(142,37): error TS2345: Argument of type 'GameState | null' is not assignable to parameter of type 'GameState'.
+  Type 'null' is not assignable to type 'GameState'.
+tests/g1b-historical-save.test.ts(145,37): error TS2345: Argument of type 'GameState | null' is not assignable to parameter of type 'GameState'.
+  Type 'null' is not assignable to type 'GameState'.
+tests/g1b-historical-save.test.ts(148,37): error TS2345: Argument of type 'GameState | null' is not assignable to parameter of type 'GameState'.
+  Type 'null' is not assignable to type 'GameState'.
+tests/g1b-layout-migration.test.ts(54,22): error TS2339: Property 'g1b' does not exist on type '{}'.
+tests/g1b-layout-migration.test.ts(56,31): error TS2339: Property 'c' does not exist on type '{}'.
+tests/g1b-layout-migration.test.ts(57,50): error TS2339: Property 'c' does not exist on type '{}'.
+tests/g1b-layout-migration.test.ts(72,5): error TS18048: 'chest.g1b' is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(72,33): error TS18048: 'chest.g1b' is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(72,54): error TS18048: 'chest.g1b' is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(72,117): error TS18048: 'chest.g1b' is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(73,25): error TS2538: Type 'undefined' cannot be used as an index type.
+tests/g1b-layout-migration.test.ts(74,5): error TS18048: 'chest.g1b' is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(96,37): error TS18048: 'chest.g1b' is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(99,44): error TS18048: 'chest.g1b' is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(101,22): error TS2538: Type 'undefined' cannot be used as an index type.
+tests/g1b-layout-migration.test.ts(122,5): error TS18048: 'chest.g1b' is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(122,32): error TS18048: 'chest.g1b' is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(122,53): error TS18048: 'chest.g1b' is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(133,22): error TS18048: 'chest.g1b' is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(158,99): error TS2339: Property 'g1b' does not exist on type '{}'.
+tests/g1b-layout-migration.test.ts(158,125): error TS2339: Property 'g1b' does not exist on type '{}'.
+tests/g1b-layout-migration.test.ts(158,156): error TS2339: Property 'c' does not exist on type '{}'.
+tests/g1b-layout-migration.test.ts(163,12): error TS2531: Object is possibly 'null'.
+tests/g1b-layout-migration.test.ts(163,12): error TS2532: Object is possibly 'undefined'.
+tests/g1b-layout-migration.test.ts(173,12): error TS2531: Object is possibly 'null'.
+tests/g1b-layout-migration.test.ts(173,12): error TS2532: Object is possibly 'undefined'.
+tests/g1b-reachability.test.ts(36,47): error TS2339: Property 'reachable' does not exist on type 'Row'.
+tests/helpers/g1b-ecology.ts(128,37): error TS2345: Argument of type 'number' is not assignable to parameter of type 'Level'.
+tests/helpers/g1b-ecology.ts(263,51): error TS2339: Property 'push' does not exist on type 'readonly G1bSourceSite[]'.
+tests/helpers/g1b-ecology.ts(264,26): error TS2339: Property 'push' does not exist on type 'readonly G1bSourceSite[]'.
+tests/helpers/g1b-ecology.ts(395,13): error TS2322: Type 'number[][]' is not assignable to type '[number, number][]'.
+  Type 'number[]' is not assignable to type '[number, number]'.
+    Target requires 2 element(s) but source may have fewer.
+tests/helpers/newgame-bot.ts(96,103): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'Partial<Record<Mat, number>>'.
+  No index signature with a parameter of type 'string' was found on type 'Partial<Record<Mat, number>>'.
+tests/npc-p0-corrective.test.ts(359,18): error TS2339: Property 'msg' does not exist on type 'Result'.
+  Property 'msg' does not exist on type '{ ok: false; reason: string; dup?: boolean | undefined; }'.
+tests/npc-p0-corrective.test.ts(363,19): error TS2339: Property 'reason' does not exist on type 'Result'.
+  Property 'reason' does not exist on type '{ ok: true; receipt: string; msg?: string | undefined; }'.
+tests/pa1-deploy-custody.test.ts(121,72): error TS2339: Property 'msg' does not exist on type 'Result'.
+  Property 'msg' does not exist on type '{ ok: false; reason: string; dup?: boolean | undefined; }'.
+tests/pa1-device-repair-loop.test.ts(61,45): error TS2339: Property 'msg' does not exist on type 'Result'.
+  Property 'msg' does not exist on type '{ ok: false; reason: string; dup?: boolean | undefined; }'.
+tests/pa1-recipe-migration.test.ts(253,17): error TS2339: Property 'reason' does not exist on type 'Result'.
+  Property 'reason' does not exist on type '{ ok: true; receipt: string; msg?: string | undefined; }'.
+tests/pa1-recipe-migration.test.ts(479,16): error TS2339: Property 'reason' does not exist on type 'Result'.
+  Property 'reason' does not exist on type '{ ok: true; receipt: string; msg?: string | undefined; }'.
+tests/pa1-recipe-migration.test.ts(507,20): error TS2339: Property 'reason' does not exist on type 'Result'.
+  Property 'reason' does not exist on type '{ ok: true; receipt: string; msg?: string | undefined; }'.
+tests/pa1-recipe-migration.test.ts(544,18): error TS2339: Property 'reason' does not exist on type 'Result'.
+  Property 'reason' does not exist on type '{ ok: true; receipt: string; msg?: string | undefined; }'.
+tests/pa1-recipe-migration.test.ts(547,48): error TS2339: Property 'reason' does not exist on type 'Result'.
+  Property 'reason' does not exist on type '{ ok: true; receipt: string; msg?: string | undefined; }'.
+tests/pa1-research-console.test.tsx(175,5): error TS2322: Type '{ families: string[]; recipeRev: number; } | { families: string[]; }' is not assignable to type '{ families: string[]; recipeRev: number; } | undefined'.
+  Property 'recipeRev' is missing in type '{ families: string[]; }' but required in type '{ families: string[]; recipeRev: number; }'.
+tests/pa1-rev1-queued-jobs.test.ts(51,56): error TS2345: Argument of type '(s: Stack) => string' is not assignable to parameter of type '(value: Stack | null, index: number, array: (Stack | null)[]) => string'.
+  Types of parameters 's' and 'value' are incompatible.
+    Type 'Stack | null' is not assignable to type 'Stack'.
+      Type 'null' is not assignable to type 'Stack'.
+tests/pa1-rev1-queued-jobs.test.ts(158,71): error TS18047: 'x' is possibly 'null'.
+tests/pa1-rev1-queued-jobs.test.ts(158,80): error TS18047: 'x' is possibly 'null'.
+tests/pa1-rev1-queued-jobs.test.ts(161,60): error TS18047: 'x' is possibly 'null'.
+tests/pa1-rev1-queued-jobs.test.ts(161,69): error TS18047: 'x' is possibly 'null'.
+tests/pa1-rev1-queued-jobs.test.ts(297,55): error TS2339: Property 'station' does not exist on type '{}'.
+tests/pa1-rev1-queued-jobs.test.ts(298,57): error TS2339: Property 'station' does not exist on type '{}'.
+tests/pa1-rev1-queued-jobs.test.ts(298,97): error TS2345: Argument of type '(s: Stack) => string' is not assignable to parameter of type '(value: Stack | null, index: number, array: (Stack | null)[]) => string'.
+  Types of parameters 's' and 'value' are incompatible.
+    Type 'Stack | null' is not assignable to type 'Stack'.
+      Type 'null' is not assignable to type 'Stack'.
+tests/pa1-rev1-queued-jobs.test.ts(299,57): error TS2339: Property 'station' does not exist on type '{}'.
+tests/pa1-rev1-queued-jobs.test.ts(299,97): error TS2345: Argument of type '(s: Stack) => string' is not assignable to parameter of type '(value: Stack | null, index: number, array: (Stack | null)[]) => string'.
+  Types of parameters 's' and 'value' are incompatible.
+    Type 'Stack | null' is not assignable to type 'Stack'.
+      Type 'null' is not assignable to type 'Stack'.
+tests/pa1-rev1-queued-jobs.test.ts(314,85): error TS7006: Parameter 's' implicitly has an 'any' type.

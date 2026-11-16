@@ -13,3 +13,11 @@ These screenshots verify New Game, runtime rendering, and save/reload only. They
 The earlier browser probe that reported `shipping` was not reproduced. A clean headless Chromium run on the current build selected `VEYRA · Unified World`, began a fresh run, and inspected the persisted run payload: `run.layoutId` was a `veyra05-at-…` streamed window and the HUD showed `VEYRA · U=0.5`. The 200×200 collision grid is the active local streamed window; it is not the dimensions of the authored unified world (the title UI describes the full 4000×2800-tile world). This confirms selection/layout activation for that run, but not traversal of all global regions.
 
 A real 640×360 local web preview is available while the Vite process is running (current dev server on port 5174). The produced single-file build is `web/dist/index.html`; it is generated output and intentionally not committed.
+
+## 2026-11-16 takeover correction (not final NPC acceptance)
+
+See [takeover status and exact verification boundaries](20261116-takeover/STATUS.md).
+The production build runs, but the complete Last Humanity release contract remains **PARTIAL**.
+Earlier captures and integration claims do not certify eight occupations, global offline life,
+Elder assaults or physical evacuation. The new evidence explicitly separates these gaps from
+mutation-boundary fixes and the limited real production browser smoke.

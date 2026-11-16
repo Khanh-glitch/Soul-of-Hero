@@ -1,0 +1,21 @@
+{
+  "snapshot": {
+    "runId": "run_ya6na4_mwjmmr51",
+    "people": 286,
+    "states": {
+      "IDLE": 286
+    },
+    "origin": [
+      1056,
+      544
+    ]
+  },
+  "frames": {
+    "samples": 300,
+    "mean": 79.05266666666667,
+    "p95": 116.59999999999854,
+    "p99": 166.70000000000437
+  },
+  "errors": [],
+  "scope": "Fresh random spawn only. No NPC scenario or comparative performance claim."
+}

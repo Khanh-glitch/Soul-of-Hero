@@ -1,0 +1,20 @@
+{
+  "snapshot": {
+    "title": "Soul of Hero — VEYRA Living World",
+    "canvas": [
+      {
+        "width": 640,
+        "height": 360
+      }
+    ],
+    "qaMutableStatePresent": false
+  },
+  "frames": {
+    "samples": 300,
+    "mean": 97.16266666666668,
+    "p95": 133.39999999999782,
+    "p99": 166.6999999999971
+  },
+  "errors": [],
+  "scope": "Production build d853540: title to fresh Veyra run through ordinary controls. No NPC scenario or comparative performance claim."
+}

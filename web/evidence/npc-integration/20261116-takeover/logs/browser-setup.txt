@@ -1,0 +1,2 @@
+npm error Cannot read properties of null (reading 'edgesOut')
+npm error A complete log of this run can be found in: /home/user/.npm/_logs/2026-11-16T18_55_04_278Z-debug-0.log
