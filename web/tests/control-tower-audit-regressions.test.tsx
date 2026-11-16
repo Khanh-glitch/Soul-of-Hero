@@ -563,7 +563,7 @@ describe('Phase B — Independent Gameplay & Gold-Seam Defect Regressions', () =
       kind: 'chest',
       slots: [{ uid: 's_upk', key: 'wood', qty: 50 }, { uid: 's_upk_st', key: 'stone', qty: 50 }, ...Array(22).fill(null)],
     };
-    r.custody[fuelC] = { id: fuelC, kind: 'fuel', slots: [{ uid: 's_coal', key: 'coal', qty: 5 }, null, null] };
+    r.custody[fuelC] = { id: fuelC, kind: 'fuel', slots: [{ uid: 's_coal', key: 'charcoal', qty: 5 }, null, null] };   // item set v3: Coal is retired into Charcoal
     r.custody[outC] = { id: outC, kind: 'out', slots: Array(6).fill(null) };
     r.entities[floorId] = { id: floorId, kind: 'struct', type: 'floor_wood', tx: 140, ty: 100, x: 140 * TILE + 8, y: 100 * TILE + 8, hp: 200, maxHp: 200 };
     r.entities[cabId] = { id: cabId, kind: 'struct', type: 'claim', tx: 140, ty: 100, x: 140 * TILE + 8, y: 100 * TILE + 8, hp: 300, maxHp: 300, c: cabC, cabinet: { credit: {}, legacy: false } };

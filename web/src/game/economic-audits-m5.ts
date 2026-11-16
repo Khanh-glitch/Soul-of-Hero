@@ -43,7 +43,7 @@ import { BUTCHER_YIELDS, HUSBANDRY_YIELDS } from './husbandry';
 import { expand, ieValue, integerTree, proveItem } from './industrial-proof';
 import { DAILY_MILESTONES, milestoneRewardSpec } from './journey';
 import { LOOT_B04_ROLES, LOOT_B05_TOOLBOX_GRADE, LOOT_CLASSES } from './loot-ecology';
-import { COMPONENT_RECIPES, componentRuleSnapshot, recoveryPlan, recoveryPlanFor } from './recycler';
+import { COMPONENT_RECIPES, RECYCLER_V4_SECONDS, componentRuleSnapshot, recoveryPlan, recoveryPlanFor, recyclerV4Rules } from './recycler';
 import { getActiveLayout, getWorld, setActiveLayout } from './world';
 import { authoredPlan } from '../veyra05/floors';
 import {
@@ -474,7 +474,8 @@ function sourceKeysForItem(itemId: string): string[] {
       keys.push(sk);
     }
   }
-  if (itemId === 'salvaged_oil' && !keys.includes('wreck')) keys.push('wreck');
+  // Item set v3: wrecks no longer leak oil (the chance is 0), so the wreck is only reported as an oil source while it is one.
+  if (itemId === 'salvaged_oil' && SALVAGED_OIL_WRECK_CHANCE > 0 && !keys.includes('wreck')) keys.push('wreck');
   return keys;
 }
 
@@ -1023,7 +1024,8 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
       'RECYCLE_DRIVE',
       'FOCUS_IRON_PARTS_SPARES',
       'poi_recycler(Foundry / po_slag)',
-      'LIVE_ACTIVE_PLAN',
+      // Item set v3: the Damaged Drive is retired into Parts and can no longer be held, so no NEW job can use this rule.
+      recoveryPlan({ uid: 'audit-probe', key: 'damaged_drive', qty: 1 } as any) ? 'LIVE_ACTIVE_PLAN' : 'HISTORICAL_SAVED_JOBS_ONLY',
       'damaged_drive:1',
       'spares:2',
       'salvage_only_finite_wreck_drop',
@@ -1040,6 +1042,7 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
   );
 
   for (const [ver, tbl, secs] of [
+    ['X:recover-v4', recyclerV4Rules(), RECYCLER_V4_SECONDS],
     ['X:recover-v3', BAL.recyclerV3.rules, BAL.recyclerV3.seconds],
     ['X:recover-v2', BAL.recyclerV2.rules, BAL.recyclerV2.seconds],
     ['X:recover-v1', BAL.recyclerV1.rules, BAL.recyclerV1.seconds],
@@ -1048,9 +1051,10 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
       const pr = proveItem(itemKey, ver);
       const over = pr.rows.some((rw: any) => rw.verdict === 'OVER_RETURN');
       const craftEx = integerTree(itemKey, 1);
-      const isSuperseded =
-        (ver === 'X:recover-v1' && (Object.prototype.hasOwnProperty.call(BAL.recyclerV2.rules, itemKey) || Object.prototype.hasOwnProperty.call(BAL.recyclerV3.rules, itemKey))) ||
-        (ver === 'X:recover-v2' && Object.prototype.hasOwnProperty.call(BAL.recyclerV3.rules, itemKey));
+      // Liveness comes from the Recycler itself: a table is LIVE for an item only while a NEW job would select it.
+      // Since item set v3 that is X:recover-v4 for every tool; v1-v3 stay readable for stored jobs only.
+      const liveVer = recoveryPlan({ uid: 'audit-probe', key: itemKey, qty: 1, dur: ITEMS[itemKey]?.dur } as any)?.recipe ?? null;
+      const isSuperseded = liveVer !== ver;
       lines.push(
         csvRow([
           `${ver}:${itemKey}`,
@@ -1063,9 +1067,9 @@ export function generateRecipeRouteAuditCsv(): { csv: string; rowCount: number }
           craftEx ? `${formatVec(craftEx.vec)} (IE_craft=${Math.round(ieValue(craftEx.vec) * 1000) / 1000})` : 'UNEXPANDABLE',
           secs,
           '0s_fuel(POI_recycler_batch)',
-          over ? 'OVER_RETURN(HISTORICAL_V2_SUPERSEDED)' : 'NET_LOSS_VERIFIED_ALL_TIERS',
+          over ? (isSuperseded ? 'OVER_RETURN(HISTORICAL_SUPERSEDED)' : 'OVER_RETURN') : 'NET_LOSS_VERIFIED_ALL_TIERS',
           Math.round((60 / secs) * 100) / 100,
-          isSuperseded ? 'SUPERSEDED_BY_V3' : 'NONE',
+          isSuperseded ? (liveVer ? `SUPERSEDED_BY_${liveVer}` : 'ITEM_RETIRED_NO_NEW_JOB') : 'NONE',
           isSuperseded ? 'COMPAT_ONLY' : 'BOTH_LIVE(Shipping_Foundry&Veyra_po_slag_D5)',
           isSuperseded ? 'KEEP_PINNED_IMMUTABLE' : 'D5_VERIFIED_PHYSICAL_RECYCLER_AT_PO_SLAG',
           `balance.v1.json:${ver}.${itemKey}`,

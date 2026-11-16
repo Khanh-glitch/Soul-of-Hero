@@ -1,0 +1,162 @@
+[
+ {
+  "atlasState": "idle",
+  "mappedCatalogIds": 156,
+  "catalogIdsWithoutApprovedArt": [
+   "brick",
+   "coal",
+   "damaged_drive",
+   "fasteners",
+   "field_repair_kit",
+   "fuel_briquette",
+   "herb_roast",
+   "iron_sword",
+   "keycard",
+   "lubricant",
+   "mechanical_parts",
+   "raw_salt",
+   "root_broth",
+   "salted_meat",
+   "salvaged_oil",
+   "scrap",
+   "seed",
+   "stone_bog",
+   "stone_frost",
+   "stone_grove",
+   "stone_magma",
+   "stone_rust",
+   "stone_tide",
+   "treated_canvas",
+   "vehicle_drive"
+  ],
+  "atlasIdsNotInCatalog": [
+   "door_powered"
+  ]
+ },
+ {
+  "shot": "icons-pack-page-1-of-7.png",
+  "items": [
+   "energy_basic",
+   "energy_refined",
+   "essence_fire",
+   "essence_nature",
+   "essence_water",
+   "essence_spirit",
+   "core_blast",
+   "core_meteor",
+   "core_dragon",
+   "core_elsa",
+   "core_earthmother",
+   "core_mjolnir",
+   "core_demon",
+   "crude_petroleum",
+   "trail_pack",
+   "trail_canteen",
+   "wood",
+   "plank",
+   "stone",
+   "fiber",
+   "iron_ore",
+   "rich_iron_ore",
+   "charcoal",
+   "crystal"
+  ],
+  "saveValid": true
+ },
+ {
+  "shot": "icons-pack-page-2-of-7.png",
+  "items": [
+   "sulfur",
+   "spares",
+   "iron_ingot",
+   "rope",
+   "hide",
+   "leather",
+   "fur",
+   "chitin",
+   "shell",
+   "gland",
+   "cloth",
+   "glass",
+   "berries",
+   "meat",
+   "cooked_meat",
+   "mushroom",
+   "herb",
+   "crop",
+   "stew",
+   "water_flask",
+   "bandage",
+   "medkit",
+   "antirad",
+   "knife"
+  ],
+  "saveValid": true
+ },
+ {
+  "shot": "icons-pack-page-3-of-7.png",
+  "items": [
+   "stone_axe",
+   "stone_pick",
+   "iron_axe",
+   "iron_pick",
+   "industrial_pick",
+   "industrial_axe",
+   "wood_spear",
+   "bow",
+   "reinforced_spear",
+   "arrow",
+   "torch",
+   "leather_armor",
+   "chitin_armor",
+   "fur_cloak",
+   "gas_mask",
+   "scrap_helm",
+   "core_fire",
+   "core_earth",
+   "core_storm",
+   "core_frost",
+   "blueprint",
+   "wolf_fang",
+   "crawler_optic",
+   "boar_tusk"
+  ],
+  "saveValid": "Error: Refusing to save invalid game state.",
+  "saveDiag": [
+   [
+    "asis",
+    false
+   ]
+  ]
+ },
+ {
+  "shot": "icons-pack-page-7-of-7.png",
+  "items": [
+   "deploy_barricade",
+   "deploy_claim",
+   "deploy_research",
+   "deploy_arrow_turret",
+   "deploy_torch_post",
+   "deploy_garden",
+   "deploy_farm_controller",
+   "deploy_barrel",
+   "deploy_feed_trough",
+   "seed_sunroot",
+   "seed_bitterleaf",
+   "seed_wildberry"
+  ],
+  "saveValid": true
+ },
+ {
+  "itemsShownWithAtlasArtInThePack": 156,
+  "missingFromPackDom": [],
+  "drawnFallbackSeen": []
+ },
+ {
+  "shot": "icons-hotbar-in-world.png",
+  "saveValid": true
+ },
+ {
+  "pageErrors": []
+ }
+]

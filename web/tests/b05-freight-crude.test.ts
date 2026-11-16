@@ -116,10 +116,10 @@ describe('B05-R B1: crude petroleum conserved through pump → inventory → mot
     const bench: Entity = { id: 'b1-bench', kind: 'struct', type: 'workbench', x: ref.x, y: ref.y, tx: rx, ty: ry, hp: 160, maxHp: 160, station: { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id, level: 2 } as any };
     r.entities[bench.id] = bench;
     addItem(r, ref.station!.fuelC, 'wood', 2); addItem(r, 'inv', 'glass', 1);
-    expect(act(g, 'craft', { recipe: 'refinery_crude', eid: ref.id }).ok).toBe(true);
-    expect(crudeTotal(g)).toBe(0);                                       // reserved into the job: consumed, not duplicated
-    stepStations(g, BAL.oilRefineryV1.recipes.crude.secs * 1000, t + 10_000);
+    expect(act(g, 'craft', { recipe: 'refinery_fuel', eid: ref.id }).ok).toBe(true);   // item set v3: 3 crude + glass (was refinery_crude, 4)
+    expect(crudeTotal(g)).toBe(1);                                       // 3 of the 4 reserved into the job: consumed, not duplicated
+    stepStations(g, BAL.oilRefineryV1.recipes.single.secs * 1000, t + 10_000);
     expect(countItem(r, ref.station!.outC, 'fuel_can')).toBe(1);
-    expect(crudeStacks(g).length).toBe(0);
+    expect(crudeStacks(g).reduce((n, s) => n + s.qty, 0)).toBe(1);        // the fourth unit is still held, once
   });
 });

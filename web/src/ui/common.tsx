@@ -1,15 +1,18 @@
 import React from 'react';
 import { ITEMS } from '../game/catalog';
 import { getArt } from '../game/art';
+import { atlasIconUrl } from '../game/item-atlas';
 import type { Stack, GameState } from '../game/core';
 import type { Intent, Result } from '../game/engine';
 
 let iconUrls: Record<string, string> | null = null;
-export function iconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || ''; }
+function drawnIconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || ''; }
+/** Item icon: the approved 157-atlas cell for every mapped id; the drawn icon only for ids outside the 157 and for `st:` structure art. */
+export function iconUrl(key: string) { return atlasIconUrl(key) || drawnIconUrl(key); }
 export function Icon({ k, size = 16, style }: { k: string; size?: number; style?: React.CSSProperties }) {
-  const src = iconUrl(k);
+  const approved = atlasIconUrl(k), src = approved || drawnIconUrl(k);
   if (!src) return <span className="px" style={{ display: 'inline-block', width: size, height: size, ...style }} aria-hidden="true" />;
-  return <img className="px" src={src} width={size} height={size} style={{ width: size, height: size, ...style }} draggable={false} alt="" />;
+  return <img className="px" src={src} width={size} height={size} data-icon={approved ? 'atlas157' : 'drawn'} data-item={k} style={{ width: size, height: size, ...style }} draggable={false} alt="" />;
 }
 
 export interface Api {
@@ -28,7 +31,7 @@ export const mkIntent = (type: string, p: Record<string, any> = {}): Intent => (
 
 export function Slot({ s, sel, active, onClick, onContext, hotkey, title, slotIndex }: { s: Stack | null; sel?: boolean; active?: boolean; onClick?: (e: React.MouseEvent) => void; onContext?: (e: React.MouseEvent) => void; hotkey?: string; title?: string; slotIndex?: number }) {
   const d = s ? ITEMS[s.key] : null;
-  const depleted = s && ((d?.charge && (s.charge ?? 0) <= 0) || (d?.creatorCore && s.reserves && (s.reserves.basic + s.reserves.refined + s.reserves.signature) <= 0) || (s.dur === 0 && d?.repair));
+  const depleted = s && ((d?.charge && (s.charge ?? 0) <= 0) || (d?.creatorCore && s.dur === 0) || (s.dur === 0 && d?.repair));
   return <div className={`slot ${sel ? 'sel' : ''} ${active ? 'active' : ''} ${s ? 'filled' : 'empty'} ${depleted ? 'depleted' : ''}`}
     data-hotbar-slot={slotIndex}
     onMouseDown={e => { if (e.button === 0) onClick?.(e); }}
@@ -36,16 +39,14 @@ export function Slot({ s, sel, active, onClick, onContext, hotkey, title, slotIn
     title={title ?? (d ? `${d.name}${s!.meta ? ' — ' + s!.meta : ''}${s!.qty > 1 ? ` ×${s!.qty}` : ''}` : hotkey ? `Quickbar ${hotkey} (empty)` : '')}>
     {hotkey && <span className="k">{hotkey}</span>}
     {active && <span className="slot__pip" aria-hidden="true" />}
-    {s && <Icon k={s.key} size={18} style={{ position: 'absolute', left: 2, top: 2 }} />}
+    {s && <Icon k={s.key} size={18} style={{ position: 'absolute', left: 1, top: 1 }} />}
     {s && s.dur === 0 && d?.repair && <span className="q" style={{ color: '#ff7a6a' }}>!</span>}
     {s && s.qty > 1 && <span className="q">{s.qty}</span>}
     {s && d?.charge && s.charge !== undefined && <span className="q" style={{ color: s.charge ? '#9ae0ff' : '#ff7a6a' }}>{s.charge}⚡</span>}
-    {s && d?.creatorCore && s.reserves && <span className="slot__res" aria-hidden="true">
-      <i style={{ background: s.reserves.basic > 0 ? 'var(--paper)' : '#3a2222' }} />
-      <i style={{ background: s.reserves.refined > 0 ? 'var(--info)' : '#3a2222' }} />
-      <i style={{ background: s.reserves.signature > 0 ? 'var(--brassLit)' : '#3a2222' }} />
+    {s && d?.creatorCore && <span className="slot__res" aria-hidden="true">
+      {[1, 2, 3].map(n => <i key={n} style={{ background: (s.lvl ?? 3) >= n ? (n === 1 ? 'var(--paper)' : n === 2 ? 'var(--info)' : 'var(--brassLit)') : '#3a2222' }} />)}
     </span>}
-    {s && s.dur !== undefined && d?.dur && <span className="dur"><i style={{ width: `${(s.dur / d.dur) * 100}%`, background: s.dur / d.dur < 0.25 ? '#ff5a3a' : s.dur / d.dur < 0.5 ? '#e8b23c' : '#7aff6a' }} /></span>}
+    {s && s.dur !== undefined && (d?.dur || d?.creatorCore) && (() => { const f = s.dur / (d.creatorCore ? 300 : d.dur!); return <span className="dur"><i style={{ width: `${f * 100}%`, background: f < 0.25 ? '#ff5a3a' : f < 0.5 ? '#e8b23c' : '#7aff6a' }} /></span>; })()}
   </div>;
 }
 export function Panel({ title, children, style, onClose, className = '', testId }: { title: React.ReactNode; children: React.ReactNode; style?: React.CSSProperties; onClose?: () => void; className?: string; testId?: string }) {

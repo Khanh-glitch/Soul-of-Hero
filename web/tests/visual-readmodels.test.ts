@@ -61,23 +61,27 @@ describe('same live readiness on recipe tile, detail, and station', () => {
     expect(high.station!.queue).toHaveLength(1); expect(low.station!.queue).toHaveLength(0);
   });
   it('distinguishes accepting a queued job from actually working without fuel', () => {
-    const { g, r } = fixture(); materials(r, 'refinery_industrial');
+    const { g, r } = fixture(); materials(r, 'refinery_fuel_batch');
     const ref = station(r, 'refinery');
-    const v = craftReadiness(r, 'refinery_industrial', NOW + 10, ref.id);
+    const v = craftReadiness(r, 'refinery_fuel_batch', NOW + 10, ref.id);
     expect(v.state).toBe('waiting'); expect(v.code).toBe('fuel'); expect(v.canSubmit).toBe(true); expect(v.canWork).toBe(false);
-    expect(action(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(true);
+    expect(action(g, 'craft', { recipe: 'refinery_fuel_batch', eid: ref.id }).ok).toBe(true);
     expect(ref.station!.queue).toHaveLength(1);
   });
-  it('blocks a full queue and a multi-output batch that cannot land as a whole', () => {
-    const { g, r } = fixture(); materials(r, 'refinery_industrial'); const ref = station(r, 'refinery'); ref.station!.burn = 60000;
-    ref.station!.queue = Array.from({ length: 6 }, (_, i) => ({ id: `j${i}`, recipe: 'refinery_industrial', left: 10000, total: 10000, reserved: [] }));
-    expect(craftReadiness(r, 'refinery_industrial', NOW + 10, ref.id).code).toBe('queue');
-    expect(action(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(false);
+  it('blocks a full queue; a batch against a full output is accepted and marked waiting (single product since item set v3)', () => {
+    const { g, r } = fixture(); materials(r, 'refinery_fuel_batch'); const ref = station(r, 'refinery'); ref.station!.burn = 60000;
+    ref.station!.queue = Array.from({ length: 6 }, (_, i) => ({ id: `j${i}`, recipe: 'refinery_fuel_batch', left: 10000, total: 10000, reserved: [] }));
+    expect(craftReadiness(r, 'refinery_fuel_batch', NOW + 10, ref.id).code).toBe('queue');
+    expect(action(g, 'craft', { recipe: 'refinery_fuel_batch', eid: ref.id }).ok).toBe(false);
     ref.station!.queue = [];
     C(r, ref.station!.outC).slots = Array(6).fill(null).map(() => mkStack(r, 'stone', ITEMS.stone.max));
-    const v = craftReadiness(r, 'refinery_industrial', NOW + 10, ref.id);
-    expect(v.code).toBe('output'); expect(v.canSubmit).toBe(false);
-    expect(action(g, 'craft', { recipe: 'refinery_industrial', eid: ref.id }).ok).toBe(false);
+    const v = craftReadiness(r, 'refinery_fuel_batch', NOW + 10, ref.id);
+    // item set v3: Lubricant is retired, so the batch is single-product like every other recipe (no recipe declares
+    // `outs` any more). A single product may queue against a full output: it is paid, finishes, and is HELD until room exists.
+    expect(Object.values(RECIPES).some((rc) => (rc.outs?.length ?? 0) > 1)).toBe(false);
+    expect(v.code).toBe('output'); expect(v.state).toBe('waiting'); expect(v.canSubmit).toBe(true);
+    expect(action(g, 'craft', { recipe: 'refinery_fuel_batch', eid: ref.id }).ok).toBe(true);
+    expect(ref.station!.queue).toHaveLength(1);
   });
   it('single-output job may queue with full output, explicitly marked waiting', () => {
     const { g, r } = fixture(); materials(r, 'refinery_fuel'); const ref = station(r, 'refinery'); ref.station!.burn = 60000;

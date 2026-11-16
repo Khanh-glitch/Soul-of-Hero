@@ -73,38 +73,50 @@ function craftOnce(gs: GameState, e: Entity, recipe: string, fuelKey?: string) {
 }
 
 describe('PA1 R1 contract freeze — live catalog vs recovered paper v1.1 + v1.2 correction', () => {
-  it('applies exactly the four source-backed BOM changes', () => {
-    expect(RECIPES.metal_pipe.qty).toBe(2);                                                 // 2 refined + 1 parts -> TWO sections
-    expect(RECIPES.metal_pipe.ins).toEqual([['refined_iron_ingot', 2], ['mechanical_parts', 1]]);
-    expect(RECIPES.mechanical_gear.ins).toEqual([['refined_iron_ingot', 1], ['iron_ingot', 1], ['mechanical_parts', 2], ['fasteners', 1]]);
-    expect(RECIPES.iron_plate.ins).toEqual([['refined_iron_ingot', 2], ['fasteners', 1]]);
+  it('applies exactly the four source-backed BOM changes (PA1 rows frozen; item set v3 re-priced them in live ids at rev 5)', () => {
+    expect(RECIPES.metal_pipe.qty).toBe(2);                                                 // still TWO sections per craft
+    // PA1 (rev 2) rows, now frozen: they price any job queued under revisions 2..4.
+    expect(LEGACY_RECIPES['metal_pipe@4'].ins).toEqual([['refined_iron_ingot', 2], ['mechanical_parts', 1]]);
+    expect(LEGACY_RECIPES['mechanical_gear@4'].ins).toEqual([['refined_iron_ingot', 1], ['iron_ingot', 1], ['mechanical_parts', 2], ['fasteners', 1]]);
+    expect(LEGACY_RECIPES['iron_plate@4'].ins).toEqual([['refined_iron_ingot', 2], ['fasteners', 1]]);
+    for (const id of ['metal_pipe', 'mechanical_gear', 'iron_plate']) { expect(recipeForJob(id, 2)!.ins, id).toEqual(LEGACY_RECIPES[id + '@4'].ins); expect(recipeForJob(id, 4)!.ins, id).toEqual(LEGACY_RECIPES[id + '@4'].ins); }
+    // Item set v3 (rev 5): Machine Parts and Fasteners are retired; the live rows pay Parts.
+    expect(RECIPES.metal_pipe.ins).toEqual([['refined_iron_ingot', 2], ['spares', 2]]);
+    expect(RECIPES.mechanical_gear.ins).toEqual([['iron_ingot', 2], ['spares', 3]]);
+    expect(RECIPES.iron_plate.ins).toEqual([['refined_iron_ingot', 2], ['spares', 2]]);
     expect(RECIPES.iron_plate.qty).toBe(2);
-    expect(RECIPES.motorbike_kit.ins).toEqual([['vehicle_frame', 1], ['vehicle_drive', 1], ['iron_plate', 2], ['fasteners', 2]]);
-    for (const id of ['metal_pipe', 'mechanical_gear', 'iron_plate', 'motorbike_kit']) expect(RECIPES[id].rev, id).toBe(2);
+    // Final item set (rev 4) superseded the PA1 kit row: no Motor Drive, LI-shaped frame + gears + plates + refined iron.
+    // The PA1 row is frozen as motorbike_kit@3 and still prices any job queued under it.
+    expect(LEGACY_RECIPES['motorbike_kit@3'].ins).toEqual([['vehicle_frame', 1], ['vehicle_drive', 1], ['iron_plate', 2], ['fasteners', 2]]);
+    expect(RECIPES.motorbike_kit.ins).toEqual([['vehicle_frame', 1], ['mechanical_gear', 2], ['iron_plate', 3], ['refined_iron_ingot', 4]]); expect(RECIPES.motorbike_kit.rev).toBe(4);
+    for (const id of ['metal_pipe', 'mechanical_gear', 'iron_plate']) expect(RECIPES[id].rev, id).toBe(5);
     // The frozen predecessor of each changed row is still resolvable and untouched.
     expect(LEGACY_RECIPES['metal_pipe@1'].qty).toBe(1);
     expect(LEGACY_RECIPES['iron_plate@1'].ins).toEqual([['refined_iron_ingot', 2], ['metal_pipe', 1], ['mechanical_parts', 1]]);
     expect(LEGACY_RECIPES['motorbike_kit@1'].ins).toContainEqual(['iron_ingot', 2]);
   });
-  it('leaves the two rows the paper says already match untouched', () => {
-    expect(RECIPES.refined_iron_ingot.ins).toEqual([['iron_ingot', 3], ['coal', 1]]);
+  it('the two rows the paper said already matched are frozen as written; item set v3 swaps only their retired inputs', () => {
+    expect(LEGACY_RECIPES['refined_iron_ingot@4'].ins).toEqual([['iron_ingot', 3], ['coal', 1]]);
+    expect(RECIPES.refined_iron_ingot.ins).toEqual([['iron_ingot', 3], ['charcoal', 2]]);   // Coal retired: 1 coal = 1.5 charcoal, rounded up
     expect(RECIPES.refined_iron_ingot.qty).toBe(2);
-    expect(RECIPES.refined_iron_ingot.rev).toBeUndefined();
-    expect(RECIPES.refinery_fuel.ins).toEqual([['salvaged_oil', 3], ['glass', 1]]);
+    expect(RECIPES.refined_iron_ingot.rev).toBe(5);
+    expect(LEGACY_RECIPES['refinery_fuel@4'].ins).toEqual([['salvaged_oil', 3], ['glass', 1]]);
+    expect(RECIPES.refinery_fuel.ins).toEqual([['crude_petroleum', 3], ['glass', 1]]);       // Salvaged Oil retired 1:1
     expect(RECIPES.refinery_fuel.out).toBe('fuel_can');
-    expect(BALTxt.oilRefineryV1.recipes.single.ins).toEqual([['salvaged_oil', 3], ['glass', 1]]);
+    expect(BALTxt.oilRefineryV1.recipes.single.ins).toEqual([['crude_petroleum', 3], ['glass', 1]]);
   });
   it('does NOT implement paper-only or unapproved rows: no steel id, no lubricant BOM rewrite', () => {
     expect(RECIPES.steel_ingot).toBeUndefined();
     expect(ITEMS.steel_ingot).toBeUndefined();
     // Recovered paper wanted 1 oil + 2 meat + 1 raw_salt at the refinery. BAL stays the single
     // authority until the food/oil economy is validated end to end (CT WP2: isolate lubricant).
-    expect(RECIPES.refinery_lubricant.ins).toEqual([['salvaged_oil', 2]]);
-    expect(RECIPES.refinery_lubricant.rev).toBeUndefined();
+    // Item set v3: Lubricant is retired outright, so there is no lubricant formula of any shape; the frozen row stays.
+    expect(RECIPES.refinery_lubricant).toBeUndefined(); expect(RETIRED_RECIPES).toContain('refinery_lubricant');
+    expect(LEGACY_RECIPES['refinery_lubricant@4'].ins).toEqual([['salvaged_oil', 2]]);
     // `fuel_briquette_legacy` is a retirement MARKER in the paper, not a live extra recipe; the
     // live Packed Fuel Briquette is a different SOH item and is deliberately kept.
     expect(RECIPES.fuel_briquette_legacy).toBeUndefined();
-    expect(RECIPES.fuel_briquette).toBeDefined();
+    expect(RECIPES.fuel_briquette, 'retired by the final item set (rev 4); frozen as fuel_briquette@3').toBeUndefined(); expect(LEGACY_RECIPES['fuel_briquette@3']).toBeDefined();
   });
   it('retires the improvised bench Fuel Canister formula and its dangling study pointer', () => {
     expect(RECIPES.fuel_can).toBeUndefined();
@@ -119,25 +131,27 @@ describe('PA1 R1 contract freeze — live catalog vs recovered paper v1.1 + v1.2
     // as a whole item, not generic kindling for a campfire or furnace. The cutover kept that rule.
     expect(stationBurnable('fuel_can')).toBe(false);
     expect(stationBurnable('wood')).toBe(true);
-    // Salvaged oil still teaches the FURNACE route: the surviving non-refinery way to make a can.
-    expect(ITEMS.salvaged_oil.specimen).toBe('refine_salvaged_oil');
-    expect(RECIPES.refine_salvaged_oil.out).toBe('fuel_can');
-    expect(RECIPES.refine_salvaged_oil.rev).toBeUndefined();
+    // Item set v3: the furnace oil route is retired with Salvaged Oil. A can is made at the Refinery (crude) or from
+    // rendered fat; neither item teaches a formula any more.
+    expect(ITEMS.salvaged_oil.specimen).toBeUndefined(); expect(ITEMS.crude_petroleum.specimen).toBeUndefined();
+    expect(RECIPES.refine_salvaged_oil).toBeUndefined(); expect(RETIRED_RECIPES).toContain('refine_salvaged_oil');
+    expect(LEGACY_RECIPES['refine_salvaged_oil@4'].out).toBe('fuel_can');
     expect(validateGameplayCatalog()).toBe(true);
   });
   it('census moves by ID set, not by ambition: minus one recipe, items and ontology unchanged', () => {
     const recipeIds = Object.keys(RECIPES);
     expect(new Set(recipeIds).size).toBe(recipeIds.length);
-    expect(recipeIds).toHaveLength(112);                       // 113 live at the base SHA minus the retired canister
+    expect(recipeIds).toHaveLength(114); /* rev 6: −1, the dominated reinforced_spear_blade alias. item set v3 (rev 5): 119 at rev 4, −14 retired with the twelve ids, +10 (ladders, large furnace, leg and foot armour, pump/refinery rows) */                       // 113 at the base SHA, −1 retired canister (rev 2), −1 vehicle_frame_piped (rev 3); final item set (rev 4): −9 retired, +17 LI-shaped
+    expect(recipeIds).not.toContain('vehicle_frame_piped');
     expect(recipeIds).not.toContain('fuel_can');
     expect(recipeIds).toContain('refinery_fuel');              // still exactly ONE refinery fuel recipe id
-    expect(Object.keys(RECIPES).filter(k => RECIPES[k].out === 'fuel_can')).toEqual(['refine_salvaged_oil', 'refinery_fuel', 'refinery_fuel_batch', 'refinery_industrial', 'refinery_crude']);
-    expect(Object.keys(ITEMS)).toHaveLength(147);              // no phantom steel item was added
+    expect(Object.keys(RECIPES).filter(k => RECIPES[k].out === 'fuel_can')).toEqual(['refinery_fuel', 'refinery_fuel_batch', 'low_quality_fuel']); // + rendered-fat canister (final item set)
+    expect(Object.keys(ITEMS)).toHaveLength(147 + 34);         // no phantom steel item; +34 = exactly the new ids of the 15/11 final roster (final-item-set.test.ts)
     expect(PA1_BASE_GEOMETRY).toHaveLength(15);
     expect(DEPLOYABLE_TYPES).toHaveLength(24);
     expect(ALWAYS_KNOWN_RECIPES.filter(k => k.startsWith('deploy_'))).toHaveLength(24); // nothing is withheld in this build
     expect(starterKnowledge().filter(k => k.startsWith('deploy_'))).toHaveLength(24);
-    expect(RECIPE_REVISION).toBe(2);
+    expect(RECIPE_REVISION).toBe(6);                           // 3 = Item Ontology V2 cutover; 4 = final item set; 5 = item set v3 (all 19 retired); 6 = crafting master
   });
 });
 
@@ -156,8 +170,8 @@ describe('PA1 R1 migration ledger — a cutover may not brick or re-price a save
   });
   it('a pre-cutover pipe job (no stamp) still pays ONE pipe for the old price', () => {
     const gs = fresh(), bench = station(gs, 'workbench', 2);
-    give(gs, 'refined_iron_ingot', 2); give(gs, 'mechanical_parts', 1);
-    const refined = invStack(gs, 'refined_iron_ingot')!, parts = invStack(gs, 'mechanical_parts')!;
+    give(gs, 'refined_iron_ingot', 2); give(gs, 'spares', 2);   // 1 Machine Part = 2 Parts: the old bill, as a migrated save holds it
+    const refined = invStack(gs, 'refined_iron_ingot')!, parts = invStack(gs, 'spares')!;
     expect(act(gs, 'craft', { eid: bench.id, recipe: 'metal_pipe' }).ok).toBe(true);
     const job = bench.station!.queue[0];
     expect(job.rv, 'a new job carries the live revision').toBe(RECIPE_REVISION);
@@ -178,7 +192,7 @@ describe('PA1 R1 migration ledger — a cutover may not brick or re-price a save
   });
   it('two legacy pipe jobs pay 1 each — never the new pair twice', () => {
     const gs = fresh(), bench = station(gs, 'workbench', 2);
-    give(gs, 'refined_iron_ingot', 4); give(gs, 'mechanical_parts', 2);
+    give(gs, 'refined_iron_ingot', 4); give(gs, 'spares', 4);
     expect(act(gs, 'craft', { eid: bench.id, recipe: 'metal_pipe' }).ok).toBe(true);
     expect(act(gs, 'craft', { eid: bench.id, recipe: 'metal_pipe' }).ok).toBe(true);
     const saved = raw(gs); for (const j of saved.run.entities[bench.id].station.queue) j.rv = 1;
@@ -288,7 +302,8 @@ describe('PA1 R1 recycler conservation — the pipe cut needs a matching return'
     expect(snap['X:pipe-v2'].outputs).toEqual([['refined_iron_ingot', 1], ['mechanical_parts', 1]]);   // still frozen
     expect(snap['X:pipe-v1'].outputs).toEqual([['refined_iron_ingot', 1]]);
     const mirror = (BALTxt as any).recyclerV4.components;
-    for (const recipe of ['X:pipe-v3', 'X:gear-v1', 'X:blade-v1']) {
+    // The balance mirror documents the LIVE rule of every component (item set v3: gear-v2, blade-v2, pipe-v3, plate-v1).
+    for (const recipe of ['X:pipe-v3', 'X:gear-v2', 'X:blade-v2', 'X:plate-v1']) {
       const rule = snap[recipe as keyof typeof snap];
       const row = mirror[rule.key];
       expect(row.recipe, rule.key).toBe(recipe);
@@ -303,18 +318,23 @@ describe('PA1 R1 recycler conservation — the pipe cut needs a matching return'
     expect(proveItem('metal_pipe', 'X:pipe-v3').rows.map(r => r.verdict)).toEqual(['OK']);
     expect(proveItem('metal_pipe', 'X:pipe-v2').rows.map(r => r.verdict)).toEqual(['OVER_RETURN']);
     expect(proveItem('metal_pipe', 'X:pipe-v1').rows.map(r => r.verdict)).toEqual(['OK']);
-    expect(proveItem('mechanical_gear', 'X:gear-v1').rows.map(r => r.verdict)).toEqual(['OK']);
-    expect(proveItem('metal_blade', 'X:blade-v1').rows.map(r => r.verdict)).toEqual(['OK']);
-    expect(recoveryPlan({ uid: 'x', key: 'mechanical_gear', qty: 1 } as any)?.recipe).toBe('X:gear-v1');
+    // Item set v3: gear-v1 / blade-v1 pay Machine Parts, which now reach the player as 2 Parts each. Read through that
+    // ratio they over-return, so new jobs use gear-v2 / blade-v2 (priced OK); v1 stays only for a job already queued.
+    expect(proveItem('mechanical_gear', 'X:gear-v2').rows.map(r => r.verdict)).toEqual(['OK']);
+    expect(proveItem('metal_blade', 'X:blade-v2').rows.map(r => r.verdict)).toEqual(['OK']);
+    expect(proveItem('mechanical_gear', 'X:gear-v1').rows.map(r => r.verdict)).toEqual(['OVER_RETURN']);
+    expect(proveItem('metal_blade', 'X:blade-v1').rows.map(r => r.verdict)).toEqual(['OVER_RETURN']);
+    expect(recoveryPlan({ uid: 'x', key: 'mechanical_gear', qty: 1 } as any)?.recipe).toBe('X:gear-v2');
+    expect(recoveryPlan({ uid: 'x', key: 'metal_blade', qty: 1 } as any)?.recipe).toBe('X:blade-v2');
   });
   it('a real pipe pair recycles to two refined ingots, which cannot buy another cycle', () => {
     const gs = fresh(), bench = station(gs, 'workbench', 2);
     const rc = Object.values(gs.run!.entities).find(e => e.kind === 'recycler');
     expect(rc, 'the Foundry Recycler exists on this layout').toBeTruthy();
-    give(gs, 'refined_iron_ingot', 2); give(gs, 'mechanical_parts', 1);
+    give(gs, 'refined_iron_ingot', 2); give(gs, 'spares', 2);
     craftOnce(gs, bench, 'metal_pipe');
     expect(outOf(gs, bench, 'metal_pipe')).toBe(2);
-    expect(invCount(gs, 'mechanical_parts')).toBe(0);                    // the one part is inside the batch
+    expect(invCount(gs, 'spares')).toBe(0);                              // the Parts are inside the batch
     const pipeSlot = C(gs.run!, outC(gs, bench)).slots.findIndex(s => s?.key === 'metal_pipe');
     expect(pipeSlot).toBeGreaterThanOrEqual(0);
     expect(act(gs, 'move', { from: outC(gs, bench), fs: pipeSlot, to: 'inv' }).ok).toBe(true);
@@ -334,7 +354,7 @@ describe('PA1 R1 recycler conservation — the pipe cut needs a matching return'
       stepStations(gs, 11_000, T0 + 600_000 + k * 20_000);
     }
     expect(countItem(gs.run!, rc!.station!.outC, 'refined_iron_ingot')).toBe(2);
-    expect(countItem(gs.run!, rc!.station!.outC, 'mechanical_parts'), 'no parts are minted back').toBe(0);
+    expect(countItem(gs.run!, rc!.station!.outC, 'spares'), 'no parts are minted back').toBe(0);
     // Re-crafting from the recovered ingots is impossible without paying parts again.
     expect(act(gs, 'craft', { eid: bench.id, recipe: 'metal_pipe' }).ok).toBe(false);
     expect(validate(gs)).not.toBeNull();
@@ -351,14 +371,14 @@ describe('PA1 v1.2 dry Motorbike Kit — first fuel is paid separately, never tw
     // the paid BOM, the dry package and the separate first fill.
     gs.run!.knowledge.recipes.push('motorbike_kit');
     const bench = station(gs, 'workbench', 3);
-    give(gs, 'vehicle_frame', 1); give(gs, 'vehicle_drive', 1); give(gs, 'iron_plate', 2); give(gs, 'fasteners', 2);
+    give(gs, 'vehicle_frame', 1); give(gs, 'mechanical_gear', 2); give(gs, 'iron_plate', 3); give(gs, 'refined_iron_ingot', 4); // rev-4 BOM
     const plate = invStack(gs, 'iron_plate')!;
     expect(invStack(gs, 'fuel_can'), 'nothing flammable is part of this recipe').toBeUndefined();
     craftOnce(gs, bench, 'motorbike_kit');
     expect(outOf(gs, bench, 'motorbike_kit')).toBe(1);
     expect(outOf(gs, bench, 'fuel_can'), 'no canister is packaged with it').toBe(0);
     expect(countItem(gs.run!, outC(gs, bench), 'iron_plate')).toBe(0);
-    expect(plate.qty, 'both plates went into the kit, none were re-priced').toBe(2);
+    expect(plate.qty, 'all three plates went into the kit, none were re-priced').toBe(3);
     expect(invCount(gs, 'iron_ingot')).toBe(0);                          // v1.1's 2 raw ingots are gone
     const kitSlot = C(gs.run!, outC(gs, bench)).slots.findIndex(s => s?.key === 'motorbike_kit');
     expect(act(gs, 'move', { from: outC(gs, bench), fs: kitSlot, to: 'inv' }).ok).toBe(true);
@@ -408,8 +428,7 @@ describe('PA1 WP3 research families — recorded ledger, priced ENERGY study, en
     // cannot collect anything from a player, and membership alone withholds nothing today.
     expect(familyMembers('ENERGY')).toEqual([
       'deploy_base_generator', 'deploy_oil_pump', 'deploy_refinery',
-      'pump_crude', 'refinery_crude', 'refinery_fuel', 'refinery_fuel_batch',
-      'refinery_industrial', 'refinery_lubricant',
+      'pump_crude', 'refinery_fuel', 'refinery_fuel_batch',   // item set v3: the crude, co-product and lubricant runs are retired
     ]);
     for (const id of familyMembers('ENERGY')) {
       expect(familyOfRecipe(id), id).toBe('ENERGY');
@@ -438,11 +457,11 @@ describe('PA1 WP3 research families — recorded ledger, priced ENERGY study, en
     }
     // P1: the fuel chain is equally ungated today — a fresh run can already pump and refine.
     for (const id of familyMembers('ENERGY')) expect(r.knowledge.recipes, id).toContain(id);
-    give(gs, 'iron_ingot', 8); give(gs, 'mechanical_parts', 6); give(gs, 'spares', 12); give(gs, 'brick', 12); give(gs, 'glass', 4);
+    for (const [k, q] of RECIPES.deploy_refinery.ins) give(gs, k, q + 1);
     expect(act(gs, 'craft', { recipe: 'deploy_refinery' }).ok, 'no study may be required today').toBe(true);
     expect(countItem(gs.run!, 'inv', 'deploy_refinery')).toBe(1);
     // The pack is bought with ITS OWN material cost — exactly once, in materials.
-    const paid: Record<string, number> = { iron_ingot: 8, mechanical_parts: 6, spares: 12, brick: 12, glass: 4 };
+    const paid: Record<string, number> = Object.fromEntries(RECIPES.deploy_refinery.ins.map(([k, q]) => [k, q + 1]));
     for (const [k, q] of RECIPES.deploy_refinery.ins) {
       expect(invCount(gs, k), `${k} paid once`).toBe(paid[k] - q);
       expect(paid[k], `${k} is not over-charged`).toBeGreaterThanOrEqual(q);
@@ -469,9 +488,10 @@ describe('PA1 WP3 research families — recorded ledger, priced ENERGY study, en
         expect(gs.run!.knowledge.recipes, id).not.toContain(id);   // the study is now the authority
         expect(RECIPES[id].base, id).toBe(true);                   // but the pack is still a physical craft
       }
-      give(gs, 'iron_ingot', 8); give(gs, 'mechanical_parts', 6); give(gs, 'spares', 12); give(gs, 'brick', 12); give(gs, 'glass', 4);
+      for (const [k, q] of RECIPES.deploy_refinery.ins) give(gs, k, q + 1);
+      const sparesHeld = invCount(gs, 'spares');
       expect(act(gs, 'craft', { recipe: 'deploy_refinery' }).ok).toBe(false);
-      expect(invCount(gs, 'spares'), 'a locked formula spends nothing').toBe(12);
+      expect(invCount(gs, 'spares'), 'a locked formula spends nothing').toBe(sparesHeld);
       //  random and directed research cannot hand out a withheld formula
       for (let i = 0; i < 30; i++) {
         give(gs, 'spares', BAL.research.randomSparesCost);
@@ -510,7 +530,7 @@ describe('PA1 WP3 research families — recorded ledger, priced ENERGY study, en
       for (const id of familyMembers('ENERGY')) expect(grant.detail).toContain(id);
       expect(validate(mid)).not.toBeNull();
       // and now the pack is craftable through the real path, paying materials only
-      give(mid, 'iron_ingot', 8); give(mid, 'mechanical_parts', 6); give(mid, 'spares', 12); give(mid, 'brick', 12); give(mid, 'glass', 4);
+      for (const [k, q] of RECIPES.deploy_refinery.ins) give(mid, k, q + 1);
       expect(act(mid, 'craft', { recipe: 'deploy_refinery' }).ok).toBe(true);
       expect(countItem(mid.run!, 'inv', 'deploy_refinery')).toBe(1);
       expect(act(mid, 'unlockFamily', { family: 'ENERGY', eid: table.id }).ok, 'already studied').toBe(false);
@@ -546,9 +566,10 @@ describe('PA1 WP3 research families — recorded ledger, priced ENERGY study, en
       expect(back.run!.knowledge.recipes).toContain('deploy_base_generator');
       // the save-time re-grant must not hand out a second family formula either
       expect(back.run!.knowledge.recipes).not.toContain('deploy_refinery');
-      give(back, 'iron_ingot', 3); give(back, 'mechanical_parts', 3); give(back, 'spares', 4); give(back, 'wood', 6);
+      const before = Object.fromEntries(RECIPES.deploy_base_generator.ins.map(([k]) => [k, invCount(back, k)]));
+      for (const [k, q] of RECIPES.deploy_base_generator.ins) give(back, k, q);
       expect(act(back, 'craft', { recipe: 'deploy_base_generator' }).ok, 'no retroactive paywall').toBe(true);
-      expect(invCount(back, 'iron_ingot') + invCount(back, 'spares') + invCount(back, 'wood')).toBe(0);
+      for (const [k] of RECIPES.deploy_base_generator.ins) expect(invCount(back, k), k + ' paid exactly once').toBe(before[k]);
       expect(validate(back)).not.toBeNull();
     });
     expect(fresh().run!.knowledge.recipes).toContain('deploy_refinery');             // outside the flip, nothing is withheld

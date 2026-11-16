@@ -50,7 +50,7 @@ export function StationService({ api, e }: { api: Api; e: Entity }) {
       </div>
 
       <div className="service-line">
-        <div className="service-heading"><Icon k="field_repair_kit" size={13} /><b>Equipment on your person</b><span>{gear.length}</span></div>
+        <div className="service-heading"><Icon k="spares" size={13} /><b>Equipment on your person</b><span>{gear.length}</span></div>
         {!gear.length && <span className="service-hint">Carry damaged tools, salvageable equipment or a worn packed device to service them here.</span>}
         {gear.map(({ s, slot }) => { const item = s!; const d = ITEMS[item.key]; const busy = r.player.action?.slot === slot;
           // A repair rule names the ONE station that accepts it (`maintainItem` compares e.type), so the

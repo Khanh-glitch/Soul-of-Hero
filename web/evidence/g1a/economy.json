@@ -1,0 +1,811 @@
+{
+ "note": "Stock-weighted expectation if every unit of every counted node is harvested (arithmetic on world-census.json and the source tables; not measured play). Legacy = Roadside Scrap + Car Wreck (wreck Parts bonus 0.7 as the engine applies it). SOH_PROVISIONAL.",
+ "counts": {
+  "legacyRoadside": {
+   "scrap": 3225,
+   "wreck": 542
+  },
+  "g1aRoadside": {
+   "road_salvage_bale": 1785,
+   "road_relay_wreck": 755,
+   "road_fuel_rack": 422
+  },
+  "g1aPoi": {
+   "road_salvage_bale": 123,
+   "road_relay_wreck": 63,
+   "road_fuel_rack": 61
+  }
+ },
+ "legacyRoadsideExpected": {
+  "spares": 20271.2,
+  "tin_can": 5382.2,
+  "needle_tube": 1290,
+  "metal_pipe": 346.9,
+  "iron_plate": 260.2,
+  "electronic_parts": 650.4,
+  "electric_resistor": 520.3,
+  "mechanical_gear": 346.9,
+  "fuel_can": 260.2
+ },
+ "candidates": {
+  "committed 3b0926de (Parts x1, fuel 6%)": {
+   "roadside": {
+    "spares": 7957.6,
+    "tin_can": 2182.8,
+    "needle_tube": 374.9,
+    "metal_pipe": 267.8,
+    "iron_plate": 214.2,
+    "electronic_parts": 339.8,
+    "electric_resistor": 271.8,
+    "mechanical_gear": 135.9,
+    "fuel_can": 50.6
+   },
+   "roadsideVsLegacyPct": {
+    "spares": -60.7,
+    "tin_can": -59.4,
+    "needle_tube": -70.9,
+    "metal_pipe": -22.8,
+    "iron_plate": -17.7,
+    "electronic_parts": -47.8,
+    "electric_resistor": -47.8,
+    "mechanical_gear": -60.8,
+    "fuel_can": -80.6
+   },
+   "roadsidePlusPoi": {
+    "spares": 8564.4,
+    "tin_can": 2397,
+    "needle_tube": 400.7,
+    "metal_pipe": 286.2,
+    "iron_plate": 229,
+    "electronic_parts": 368.1,
+    "electric_resistor": 294.5,
+    "mechanical_gear": 147.2,
+    "fuel_can": 58
+   },
+   "roadsidePlusPoiVsLegacyPct": {
+    "spares": -57.8,
+    "tin_can": -55.5,
+    "needle_tube": -68.9,
+    "metal_pipe": -17.5,
+    "iron_plate": -12,
+    "electronic_parts": -43.4,
+    "electric_resistor": -43.4,
+    "mechanical_gear": -57.6,
+    "fuel_can": -77.7
+   },
+   "fuelRack": {
+    "fuelCansPer100Racks": 12,
+    "chanceOfAtLeastOnePerRack": 0.1164,
+    "chanceOfNone": 0.8836,
+    "partsPer100Racks": 80
+   }
+  },
+  "A: Bale+Relay Parts x2, rack unchanged": {
+   "roadside": {
+    "spares": 15577.6,
+    "tin_can": 2182.8,
+    "needle_tube": 374.9,
+    "metal_pipe": 267.8,
+    "iron_plate": 214.2,
+    "electronic_parts": 339.8,
+    "electric_resistor": 271.8,
+    "mechanical_gear": 135.9,
+    "fuel_can": 50.6
+   },
+   "roadsideVsLegacyPct": {
+    "spares": -23.2,
+    "tin_can": -59.4,
+    "needle_tube": -70.9,
+    "metal_pipe": -22.8,
+    "iron_plate": -17.7,
+    "electronic_parts": -47.8,
+    "electric_resistor": -47.8,
+    "mechanical_gear": -60.8,
+    "fuel_can": -80.6
+   },
+   "roadsidePlusPoi": {
+    "spares": 16742.4,
+    "tin_can": 2397,
+    "needle_tube": 400.7,
+    "metal_pipe": 286.2,
+    "iron_plate": 229,
+    "electronic_parts": 368.1,
+    "electric_resistor": 294.5,
+    "mechanical_gear": 147.2,
+    "fuel_can": 58
+   },
+   "roadsidePlusPoiVsLegacyPct": {
+    "spares": -17.4,
+    "tin_can": -55.5,
+    "needle_tube": -68.9,
+    "metal_pipe": -17.5,
+    "iron_plate": -12,
+    "electronic_parts": -43.4,
+    "electric_resistor": -43.4,
+    "mechanical_gear": -57.6,
+    "fuel_can": -77.7
+   },
+   "fuelRack": {
+    "fuelCansPer100Racks": 12,
+    "chanceOfAtLeastOnePerRack": 0.1164,
+    "chanceOfNone": 0.8836,
+    "partsPer100Racks": 80
+   }
+  },
+  "A + fuel 10%": {
+   "roadside": {
+    "spares": 15577.6,
+    "tin_can": 2182.8,
+    "needle_tube": 374.9,
+    "metal_pipe": 267.8,
+    "iron_plate": 214.2,
+    "electronic_parts": 339.8,
+    "electric_resistor": 271.8,
+    "mechanical_gear": 135.9,
+    "fuel_can": 84.4
+   },
+   "roadsideVsLegacyPct": {
+    "spares": -23.2,
+    "tin_can": -59.4,
+    "needle_tube": -70.9,
+    "metal_pipe": -22.8,
+    "iron_plate": -17.7,
+    "electronic_parts": -47.8,
+    "electric_resistor": -47.8,
+    "mechanical_gear": -60.8,
+    "fuel_can": -67.6
+   },
+   "roadsidePlusPoi": {
+    "spares": 16742.4,
+    "tin_can": 2397,
+    "needle_tube": 400.7,
+    "metal_pipe": 286.2,
+    "iron_plate": 229,
+    "electronic_parts": 368.1,
+    "electric_resistor": 294.5,
+    "mechanical_gear": 147.2,
+    "fuel_can": 96.6
+   },
+   "roadsidePlusPoiVsLegacyPct": {
+    "spares": -17.4,
+    "tin_can": -55.5,
+    "needle_tube": -68.9,
+    "metal_pipe": -17.5,
+    "iron_plate": -12,
+    "electronic_parts": -43.4,
+    "electric_resistor": -43.4,
+    "mechanical_gear": -57.6,
+    "fuel_can": -62.9
+   },
+   "fuelRack": {
+    "fuelCansPer100Racks": 20,
+    "chanceOfAtLeastOnePerRack": 0.19,
+    "chanceOfNone": 0.81,
+    "partsPer100Racks": 80
+   }
+  },
+  "A + fuel 15%": {
+   "roadside": {
+    "spares": 15577.6,
+    "tin_can": 2182.8,
+    "needle_tube": 374.9,
+    "metal_pipe": 267.8,
+    "iron_plate": 214.2,
+    "electronic_parts": 339.8,
+    "electric_resistor": 271.8,
+    "mechanical_gear": 135.9,
+    "fuel_can": 126.6
+   },
+   "roadsideVsLegacyPct": {
+    "spares": -23.2,
+    "tin_can": -59.4,
+    "needle_tube": -70.9,
+    "metal_pipe": -22.8,
+    "iron_plate": -17.7,
+    "electronic_parts": -47.8,
+    "electric_resistor": -47.8,
+    "mechanical_gear": -60.8,
+    "fuel_can": -51.3
+   },
+   "roadsidePlusPoi": {
+    "spares": 16742.4,
+    "tin_can": 2397,
+    "needle_tube": 400.7,
+    "metal_pipe": 286.2,
+    "iron_plate": 229,
+    "electronic_parts": 368.1,
+    "electric_resistor": 294.5,
+    "mechanical_gear": 147.2,
+    "fuel_can": 144.9
+   },
+   "roadsidePlusPoiVsLegacyPct": {
+    "spares": -17.4,
+    "tin_can": -55.5,
+    "needle_tube": -68.9,
+    "metal_pipe": -17.5,
+    "iron_plate": -12,
+    "electronic_parts": -43.4,
+    "electric_resistor": -43.4,
+    "mechanical_gear": -57.6,
+    "fuel_can": -44.3
+   },
+   "fuelRack": {
+    "fuelCansPer100Racks": 30,
+    "chanceOfAtLeastOnePerRack": 0.2775,
+    "chanceOfNone": 0.7225,
+    "partsPer100Racks": 80
+   }
+  },
+  "A + fuel 20%": {
+   "roadside": {
+    "spares": 15577.6,
+    "tin_can": 2182.8,
+    "needle_tube": 374.9,
+    "metal_pipe": 267.8,
+    "iron_plate": 214.2,
+    "electronic_parts": 339.8,
+    "electric_resistor": 271.8,
+    "mechanical_gear": 135.9,
+    "fuel_can": 168.8
+   },
+   "roadsideVsLegacyPct": {
+    "spares": -23.2,
+    "tin_can": -59.4,
+    "needle_tube": -70.9,
+    "metal_pipe": -22.8,
+    "iron_plate": -17.7,
+    "electronic_parts": -47.8,
+    "electric_resistor": -47.8,
+    "mechanical_gear": -60.8,
+    "fuel_can": -35.1
+   },
+   "roadsidePlusPoi": {
+    "spares": 16742.4,
+    "tin_can": 2397,
+    "needle_tube": 400.7,
+    "metal_pipe": 286.2,
+    "iron_plate": 229,
+    "electronic_parts": 368.1,
+    "electric_resistor": 294.5,
+    "mechanical_gear": 147.2,
+    "fuel_can": 193.2
+   },
+   "roadsidePlusPoiVsLegacyPct": {
+    "spares": -17.4,
+    "tin_can": -55.5,
+    "needle_tube": -68.9,
+    "metal_pipe": -17.5,
+    "iron_plate": -12,
+    "electronic_parts": -43.4,
+    "electric_resistor": -43.4,
+    "mechanical_gear": -57.6,
+    "fuel_can": -25.7
+   },
+   "fuelRack": {
+    "fuelCansPer100Racks": 40,
+    "chanceOfAtLeastOnePerRack": 0.36,
+    "chanceOfNone": 0.64,
+    "partsPer100Racks": 80
+   }
+  },
+  "A + fuel 25%": {
+   "roadside": {
+    "spares": 15577.6,
+    "tin_can": 2182.8,
+    "needle_tube": 374.9,
+    "metal_pipe": 267.8,
+    "iron_plate": 214.2,
+    "electronic_parts": 339.8,
+    "electric_resistor": 271.8,
+    "mechanical_gear": 135.9,
+    "fuel_can": 211
+   },
+   "roadsideVsLegacyPct": {
+    "spares": -23.2,
+    "tin_can": -59.4,
+    "needle_tube": -70.9,
+    "metal_pipe": -22.8,
+    "iron_plate": -17.7,
+    "electronic_parts": -47.8,
+    "electric_resistor": -47.8,
+    "mechanical_gear": -60.8,
+    "fuel_can": -18.9
+   },
+   "roadsidePlusPoi": {
+    "spares": 16742.4,
+    "tin_can": 2397,
+    "needle_tube": 400.7,
+    "metal_pipe": 286.2,
+    "iron_plate": 229,
+    "electronic_parts": 368.1,
+    "electric_resistor": 294.5,
+    "mechanical_gear": 147.2,
+    "fuel_can": 241.5
+   },
+   "roadsidePlusPoiVsLegacyPct": {
+    "spares": -17.4,
+    "tin_can": -55.5,
+    "needle_tube": -68.9,
+    "metal_pipe": -17.5,
+    "iron_plate": -12,
+    "electronic_parts": -43.4,
+    "electric_resistor": -43.4,
+    "mechanical_gear": -57.6,
+    "fuel_can": -7.2
+   },
+   "fuelRack": {
+    "fuelCansPer100Racks": 50,
+    "chanceOfAtLeastOnePerRack": 0.4375,
+    "chanceOfNone": 0.5625,
+    "partsPer100Racks": 80
+   }
+  },
+  "A + fuel 20% + rack Parts certain (= R1)": {
+   "roadside": {
+    "spares": 16084,
+    "tin_can": 2182.8,
+    "needle_tube": 374.9,
+    "metal_pipe": 267.8,
+    "iron_plate": 214.2,
+    "electronic_parts": 339.8,
+    "electric_resistor": 271.8,
+    "mechanical_gear": 135.9,
+    "fuel_can": 168.8
+   },
+   "roadsideVsLegacyPct": {
+    "spares": -20.7,
+    "tin_can": -59.4,
+    "needle_tube": -70.9,
+    "metal_pipe": -22.8,
+    "iron_plate": -17.7,
+    "electronic_parts": -47.8,
+    "electric_resistor": -47.8,
+    "mechanical_gear": -60.8,
+    "fuel_can": -35.1
+   },
+   "roadsidePlusPoi": {
+    "spares": 17322,
+    "tin_can": 2397,
+    "needle_tube": 400.7,
+    "metal_pipe": 286.2,
+    "iron_plate": 229,
+    "electronic_parts": 368.1,
+    "electric_resistor": 294.5,
+    "mechanical_gear": 147.2,
+    "fuel_can": 193.2
+   },
+   "roadsidePlusPoiVsLegacyPct": {
+    "spares": -14.5,
+    "tin_can": -55.5,
+    "needle_tube": -68.9,
+    "metal_pipe": -17.5,
+    "iron_plate": -12,
+    "electronic_parts": -43.4,
+    "electric_resistor": -43.4,
+    "mechanical_gear": -57.6,
+    "fuel_can": -25.7
+   },
+   "fuelRack": {
+    "fuelCansPer100Racks": 40,
+    "chanceOfAtLeastOnePerRack": 0.36,
+    "chanceOfNone": 0.64,
+    "partsPer100Racks": 200
+   }
+  },
+  "A + rack B (fuel 6%, Parts 100%, pipe 15%)": {
+   "roadside": {
+    "spares": 16084,
+    "tin_can": 2182.8,
+    "needle_tube": 374.9,
+    "metal_pipe": 394.4,
+    "iron_plate": 214.2,
+    "electronic_parts": 339.8,
+    "electric_resistor": 271.8,
+    "mechanical_gear": 135.9,
+    "fuel_can": 50.6
+   },
+   "roadsideVsLegacyPct": {
+    "spares": -20.7,
+    "tin_can": -59.4,
+    "needle_tube": -70.9,
+    "metal_pipe": 13.7,
+    "iron_plate": -17.7,
+    "electronic_parts": -47.8,
+    "electric_resistor": -47.8,
+    "mechanical_gear": -60.8,
+    "fuel_can": -80.6
+   },
+   "roadsidePlusPoi": {
+    "spares": 17322,
+    "tin_can": 2397,
+    "needle_tube": 400.7,
+    "metal_pipe": 431.1,
+    "iron_plate": 229,
+    "electronic_parts": 368.1,
+    "electric_resistor": 294.5,
+    "mechanical_gear": 147.2,
+    "fuel_can": 58
+   },
+   "roadsidePlusPoiVsLegacyPct": {
+    "spares": -14.5,
+    "tin_can": -55.5,
+    "needle_tube": -68.9,
+    "metal_pipe": 24.3,
+    "iron_plate": -12,
+    "electronic_parts": -43.4,
+    "electric_resistor": -43.4,
+    "mechanical_gear": -57.6,
+    "fuel_can": -77.7
+   },
+   "fuelRack": {
+    "fuelCansPer100Racks": 12,
+    "chanceOfAtLeastOnePerRack": 0.1164,
+    "chanceOfNone": 0.8836,
+    "partsPer100Racks": 200
+   }
+  },
+  "R1 as coded now": {
+   "roadside": {
+    "spares": 16084,
+    "tin_can": 2182.8,
+    "needle_tube": 374.9,
+    "metal_pipe": 267.8,
+    "iron_plate": 214.2,
+    "electronic_parts": 566.3,
+    "electric_resistor": 453,
+    "mechanical_gear": 317.1,
+    "fuel_can": 168.8
+   },
+   "roadsideVsLegacyPct": {
+    "spares": -20.7,
+    "tin_can": -59.4,
+    "needle_tube": -70.9,
+    "metal_pipe": -22.8,
+    "iron_plate": -17.7,
+    "electronic_parts": -12.9,
+    "electric_resistor": -12.9,
+    "mechanical_gear": -8.6,
+    "fuel_can": -35.1
+   },
+   "roadsidePlusPoi": {
+    "spares": 17322,
+    "tin_can": 2397,
+    "needle_tube": 400.7,
+    "metal_pipe": 286.2,
+    "iron_plate": 229,
+    "electronic_parts": 613.5,
+    "electric_resistor": 490.8,
+    "mechanical_gear": 343.6,
+    "fuel_can": 193.2
+   },
+   "roadsidePlusPoiVsLegacyPct": {
+    "spares": -14.5,
+    "tin_can": -55.5,
+    "needle_tube": -68.9,
+    "metal_pipe": -17.5,
+    "iron_plate": -12,
+    "electronic_parts": -5.7,
+    "electric_resistor": -5.7,
+    "mechanical_gear": -1,
+    "fuel_can": -25.7
+   },
+   "fuelRack": {
+    "fuelCansPer100Racks": 40,
+    "chanceOfAtLeastOnePerRack": 0.36,
+    "chanceOfNone": 0.64,
+    "partsPer100Racks": 200
+   }
+  }
+ },
+ "per100Sources": {
+  "legacy": {
+   "spares": 538.1,
+   "tin_can": 142.9,
+   "needle_tube": 34.2,
+   "metal_pipe": 9.2,
+   "iron_plate": 6.9,
+   "electronic_parts": 17.3,
+   "electric_resistor": 13.8,
+   "mechanical_gear": 9.2,
+   "fuel_can": 6.9
+  },
+  "committed": {
+   "spares": 268.7,
+   "tin_can": 73.7,
+   "needle_tube": 12.7,
+   "metal_pipe": 9,
+   "iron_plate": 7.2,
+   "electronic_parts": 11.5,
+   "electric_resistor": 9.2,
+   "mechanical_gear": 4.6,
+   "fuel_can": 1.7
+  },
+  "r1": {
+   "spares": 543,
+   "tin_can": 73.7,
+   "needle_tube": 12.7,
+   "metal_pipe": 9,
+   "iron_plate": 7.2,
+   "electronic_parts": 19.1,
+   "electric_resistor": 15.3,
+   "mechanical_gear": 10.7,
+   "fuel_can": 5.7
+  }
+ },
+ "per100Hits": {
+  "legacy": {
+   "note": "legacy nodes use the material power table (Knife 1, Stone Axe 1): one hit = one HP",
+   "scrap": {
+    "hitsPerSource": 8,
+    "partsPer100Hits": 50
+   },
+   "wreck": {
+    "hitsPerSource": 30,
+    "partsPer100Hits": 45.3
+   }
+  },
+  "committed": {
+   "stone_axe": {
+    "road_salvage_bale": {
+     "hitsPerSource": 9,
+     "partsPer100Hits": 33.3
+    },
+    "road_relay_wreck": {
+     "hitsPerSource": 12,
+     "partsPer100Hits": 25
+    },
+    "road_fuel_rack": {
+     "hitsPerSource": 12,
+     "partsPer100Hits": 6.7
+    }
+   },
+   "knife": {
+    "road_salvage_bale": {
+     "hitsPerSource": 5,
+     "partsPer100Hits": 60
+    },
+    "road_relay_wreck": {
+     "hitsPerSource": 6,
+     "partsPer100Hits": 50
+    },
+    "road_fuel_rack": {
+     "hitsPerSource": 6,
+     "partsPer100Hits": 13.3
+    }
+   },
+   "cleaver": {
+    "road_salvage_bale": {
+     "hitsPerSource": 3,
+     "partsPer100Hits": 100
+    },
+    "road_relay_wreck": {
+     "hitsPerSource": 4,
+     "partsPer100Hits": 75
+    },
+    "road_fuel_rack": {
+     "hitsPerSource": 4,
+     "partsPer100Hits": 20
+    }
+   },
+   "machete": {
+    "road_salvage_bale": {
+     "hitsPerSource": 3,
+     "partsPer100Hits": 100
+    },
+    "road_relay_wreck": {
+     "hitsPerSource": 3,
+     "partsPer100Hits": 100
+    },
+    "road_fuel_rack": {
+     "hitsPerSource": 3,
+     "partsPer100Hits": 26.7
+    }
+   }
+  },
+  "r1": {
+   "stone_axe": {
+    "road_salvage_bale": {
+     "hitsPerSource": 9,
+     "partsPer100Hits": 66.7
+    },
+    "road_relay_wreck": {
+     "hitsPerSource": 12,
+     "partsPer100Hits": 50
+    },
+    "road_fuel_rack": {
+     "hitsPerSource": 12,
+     "partsPer100Hits": 16.7
+    }
+   },
+   "knife": {
+    "road_salvage_bale": {
+     "hitsPerSource": 5,
+     "partsPer100Hits": 120
+    },
+    "road_relay_wreck": {
+     "hitsPerSource": 6,
+     "partsPer100Hits": 100
+    },
+    "road_fuel_rack": {
+     "hitsPerSource": 6,
+     "partsPer100Hits": 33.3
+    }
+   },
+   "cleaver": {
+    "road_salvage_bale": {
+     "hitsPerSource": 3,
+     "partsPer100Hits": 200
+    },
+    "road_relay_wreck": {
+     "hitsPerSource": 4,
+     "partsPer100Hits": 150
+    },
+    "road_fuel_rack": {
+     "hitsPerSource": 4,
+     "partsPer100Hits": 50
+    }
+   },
+   "machete": {
+    "road_salvage_bale": {
+     "hitsPerSource": 3,
+     "partsPer100Hits": 200
+    },
+    "road_relay_wreck": {
+     "hitsPerSource": 3,
+     "partsPer100Hits": 200
+    },
+    "road_fuel_rack": {
+     "hitsPerSource": 3,
+     "partsPer100Hits": 66.7
+    }
+   }
+  }
+ },
+ "partsDemand": {
+  "researchTable": [
+   [
+    "wood",
+    10
+   ],
+   [
+    "spares",
+    6
+   ],
+   [
+    "iron_ingot",
+    1
+   ]
+  ],
+  "workbenchL2": [
+   [
+    "iron_ingot",
+    2
+   ],
+   [
+    "spares",
+    4
+   ]
+  ],
+  "gear": [
+   [
+    "iron_ingot",
+    2
+   ],
+   [
+    "spares",
+    3
+   ]
+  ],
+  "pipeX2": [
+   [
+    "refined_iron_ingot",
+    2
+   ],
+   [
+    "spares",
+    2
+   ]
+  ],
+  "plateX2": [
+   [
+    "refined_iron_ingot",
+    2
+   ],
+   [
+    "spares",
+    2
+   ]
+  ],
+  "note": "first industrial step used by the oil route: 33 Parts (table 6, Glass study 9, bench L2 4, Gear 3, two Pipe jobs 4, pump 2, refinery 5)"
+ },
+ "fuelCanisterOtherRoutes": {
+  "refinery": [
+   {
+    "recipe": "fuel_can",
+    "station": "refinery",
+    "ins": [
+     [
+      "crude_petroleum",
+      3
+     ],
+     [
+      "glass",
+      1
+     ]
+    ],
+    "qty": 1,
+    "secs": 14
+   },
+   {
+    "recipe": "fuel_can",
+    "station": "refinery",
+    "ins": [
+     [
+      "crude_petroleum",
+      5
+     ],
+     [
+      "glass",
+      1
+     ]
+    ],
+    "qty": 2,
+    "secs": 22
+   },
+   {
+    "recipe": "Fuel Canister (rendered fat)",
+    "station": "furnace",
+    "ins": [
+     [
+      "animal_fat",
+      6
+     ],
+     [
+      "cloth",
+      1
+     ]
+    ],
+    "qty": 1,
+    "secs": 24
+   }
+  ]
+ },
+ "weights": {
+  "spares": {
+   "kg": 0.3,
+   "stack": 60
+  },
+  "tin_can": {
+   "kg": 0.15,
+   "stack": 30
+  },
+  "needle_tube": {
+   "kg": 0.05,
+   "stack": 30
+  },
+  "metal_pipe": {
+   "kg": 1.2,
+   "stack": 20
+  },
+  "iron_plate": {
+   "kg": 1.5,
+   "stack": 20
+  },
+  "electronic_parts": {
+   "kg": 0.2,
+   "stack": 40
+  },
+  "electric_resistor": {
+   "kg": 0.1,
+   "stack": 30
+  },
+  "mechanical_gear": {
+   "kg": 0.8,
+   "stack": 20
+  },
+  "fuel_can": {
+   "kg": 1.5,
+   "stack": 5
+  }
+ }
+}

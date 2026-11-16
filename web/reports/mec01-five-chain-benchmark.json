@@ -1,13 +1,14 @@
 {
   "version": "mec01-five-chain-benchmark-v2",
-  "numeraire": "1 iron_ingot = 1 iron_ore (furnace) = 3 scrap (scrap_ingot); other atoms compared per material",
+  "numeraire": "1 iron_ingot = 1 iron_ore (furnace); other atoms (incl. Parts) compared per material",
   "salvageOnly": [
-    "damaged_drive"
+    "spares"
   ],
   "recyclerVersions": {
     "v1": "immutable saved-job table",
     "v2": "pinned saved-job table (four keys over-returned)",
-    "v3": "new jobs, corrected four keys"
+    "v3": "saved-job table (retired ids)",
+    "v4": "new jobs, live ids"
   },
   "structuresNote": "workbench Workbench level 2 for the chain recipes; motorbike_kit needs level 3",
   "furnace": {
@@ -23,18 +24,6 @@
         "outQty": 1
       }
     },
-    "scrap_ingot": {
-      "fromScrap": {
-        "secs": 12,
-        "ins": [
-          [
-            "scrap",
-            3
-          ]
-        ],
-        "outQty": 1
-      }
-    },
     "refined_iron_ingot": {
       "secs": 20,
       "ins": [
@@ -43,19 +32,29 @@
           3
         ],
         [
-          "coal",
-          1
+          "charcoal",
+          2
         ]
       ],
       "outQty": 2
     }
   },
   "gearRecycleV4": {
-    "recipe": "X:gear-v1",
+    "recipe": "X:gear-v2",
     "seconds": 15,
+    "craftInputs": [
+      [
+        "iron_ingot",
+        2
+      ],
+      [
+        "spares",
+        3
+      ]
+    ],
     "outputs": [
       [
-        "mechanical_parts",
+        "spares",
         2
       ],
       [
@@ -63,14 +62,20 @@
         1
       ]
     ],
-    "craftIngotEq": 3.111,
-    "returnIngotEq": 2.667,
-    "netLossIngotEq": 0.444,
-    "basis": "1 ingot = 1 ore; scrap = 1/3 ingot (scrap_ingot); MP and fastener from their authored recipes; no durability so no condition tiers",
-    "sourceStatus": "SOH_PROVISIONAL (recyclerV4); LI per-item yield ORIGINAL_UNKNOWN",
+    "netLossPerMaterial": {
+      "iron_ingot": 1,
+      "spares": 1
+    },
+    "basis": "per material; Parts carry no ingot conversion; no durability so no condition tiers",
+    "sourceStatus": "SOH_PROVISIONAL / SOH_TRIAL_UNVERIFIED (recyclerV4); LI per-item yield ORIGINAL_UNKNOWN",
     "consumersOfGear": [
-      "vehicle_drive_geared",
-      "industrial_pick_geared"
+      "deploy_arrow_turret",
+      "deploy_bear_trap",
+      "deploy_farm_controller",
+      "deploy_oil_pump",
+      "industrial_pick_geared",
+      "motorbike_kit",
+      "steel_folding_ladder"
     ]
   },
   "chains": [
@@ -85,23 +90,22 @@
       "cheapestCraft": {
         "route": "metal_blade",
         "atomsPerUnit": {
-          "iron_ingot": 4.5,
-          "scrap": 1
+          "iron_ingot": 3,
+          "spares": 1
         },
-        "ingotEqPerUnit": 4.833,
-        "treeSeconds": 22,
+        "ingotEqPerUnit": 3,
+        "treeSeconds": 16,
         "model": "amortized per output unit"
       },
       "integerTreePerUnit": {
         "atoms": {
-          "iron_ingot": 5,
-          "scrap": 2
+          "iron_ingot": 3,
+          "spares": 1
         },
-        "ingotEq": 5.667,
-        "treeSeconds": 28,
+        "ingotEq": 3,
+        "treeSeconds": 16,
         "crafts": {
-          "metal_blade": 1,
-          "mechanical_parts": 1
+          "metal_blade": 1
         },
         "rule": "whole craft batches at every node; overshoot is surplus, never fractional crafts; alternative to the amortized cheapestCraft model"
       },
@@ -116,21 +120,21 @@
           "ins": [
             [
               "iron_ingot",
-              4
+              3
             ],
             [
-              "mechanical_parts",
+              "spares",
               1
             ]
           ],
           "salvageDependent": false,
           "rawPerOutputUnit": {
             "atoms": {
-              "iron_ingot": 4.5,
-              "scrap": 1
+              "iron_ingot": 3,
+              "spares": 1
             },
-            "ingotEq": 4.833,
-            "treeSeconds": 22,
+            "ingotEq": 3,
+            "treeSeconds": 16,
             "model": "amortized per output unit"
           },
           "integerBatch": {
@@ -138,8 +142,8 @@
             "crafts": 1,
             "outputs": 1,
             "consumed": {
-              "iron_ingot": 4,
-              "mechanical_parts": 1
+              "iron_ingot": 3,
+              "spares": 1
             },
             "seconds": 16,
             "surplusOutputs": 0
@@ -172,8 +176,10 @@
       },
       "finiteCacheCanSupply": false,
       "consumers": [
-        "iron_sword_blade (Iron Sword (blade refit))",
-        "reinforced_spear_blade (Reinforced Spear (blade))"
+        "cleaver",
+        "industrial_axe",
+        "machete",
+        "reinforced_spear"
       ],
       "recycler": {
         "source": "iron_sword",
@@ -188,8 +194,8 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 5,
+              "ingotEqRecovered": 0,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -205,8 +211,8 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
-              "ingotEqCraft": 5,
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -220,14 +226,10 @@
                 [
                   "iron_ingot",
                   1
-                ],
-                [
-                  "leather",
-                  1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
-              "ingotEqCraft": 5,
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             }
@@ -241,8 +243,8 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 5,
+              "ingotEqRecovered": 0,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -262,10 +264,10 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 6.167,
-              "ingotEqCraft": 5,
+              "ingotEqRecovered": 4,
+              "ingotEqCraft": 13,
               "minted": [],
-              "verdict": "OVER_RETURN"
+              "verdict": "OK"
             },
             {
               "tier": "high",
@@ -283,18 +285,14 @@
                   1
                 ],
                 [
-                  "leather",
-                  1
-                ],
-                [
                   "metal_blade",
                   1
                 ]
               ],
-              "ingotEqRecovered": 11,
-              "ingotEqCraft": 5,
+              "ingotEqRecovered": 7,
+              "ingotEqCraft": 13,
               "minted": [],
-              "verdict": "OVER_RETURN"
+              "verdict": "OK"
             }
           ],
           "v3": [
@@ -306,8 +304,8 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 5,
+              "ingotEqRecovered": 0,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -323,8 +321,8 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
-              "ingotEqCraft": 5,
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             },
@@ -342,14 +340,63 @@
                 [
                   "iron_ingot",
                   1
-                ],
+                ]
+              ],
+              "ingotEqRecovered": 2,
+              "ingotEqCraft": 13,
+              "minted": [],
+              "verdict": "OK"
+            }
+          ],
+          "v4": [
+            {
+              "tier": "base",
+              "outputs": [
                 [
-                  "leather",
+                  "iron_ingot",
                   1
                 ]
               ],
-              "ingotEqRecovered": 2.333,
-              "ingotEqCraft": 5,
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 13,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 2,
+              "ingotEqCraft": 13,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 3,
+              "ingotEqCraft": 13,
               "minted": [],
               "verdict": "OK"
             }
@@ -380,26 +427,25 @@
       "cheapestCraft": {
         "route": "metal_pipe",
         "atomsPerUnit": {
-          "iron_ingot": 1.75,
-          "coal": 0.5,
-          "scrap": 0.5
+          "iron_ingot": 1.5,
+          "charcoal": 1,
+          "spares": 1
         },
-        "ingotEqPerUnit": 1.917,
-        "treeSeconds": 22,
+        "ingotEqPerUnit": 1.5,
+        "treeSeconds": 19,
         "model": "amortized per output unit"
       },
       "integerTreePerUnit": {
         "atoms": {
-          "iron_ingot": 4,
-          "coal": 1,
-          "scrap": 2
+          "iron_ingot": 3,
+          "charcoal": 2,
+          "spares": 2
         },
-        "ingotEq": 4.667,
-        "treeSeconds": 50,
+        "ingotEq": 3,
+        "treeSeconds": 38,
         "crafts": {
           "metal_pipe": 1,
-          "refined_iron_ingot": 1,
-          "mechanical_parts": 1
+          "refined_iron_ingot": 1
         },
         "rule": "whole craft batches at every node; overshoot is surplus, never fractional crafts; alternative to the amortized cheapestCraft model"
       },
@@ -417,19 +463,19 @@
               2
             ],
             [
-              "mechanical_parts",
-              1
+              "spares",
+              2
             ]
           ],
           "salvageDependent": false,
           "rawPerOutputUnit": {
             "atoms": {
-              "iron_ingot": 1.75,
-              "coal": 0.5,
-              "scrap": 0.5
+              "iron_ingot": 1.5,
+              "charcoal": 1,
+              "spares": 1
             },
-            "ingotEq": 1.917,
-            "treeSeconds": 22,
+            "ingotEq": 1.5,
+            "treeSeconds": 19,
             "model": "amortized per output unit"
           },
           "integerBatch": {
@@ -438,7 +484,7 @@
             "outputs": 2,
             "consumed": {
               "refined_iron_ingot": 2,
-              "mechanical_parts": 1
+              "spares": 2
             },
             "seconds": 18,
             "surplusOutputs": 1
@@ -471,6 +517,24 @@
           "eligibleForRepeatableLoop": true,
           "cooldownHours": 24,
           "stockClock": "24h cooldown (authored spec)"
+        },
+        {
+          "kind": "source-bonus-chance",
+          "where": "wreck",
+          "qty": 0.08,
+          "stockClass": "world-node",
+          "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "probabilityPerRoll": 0.08
+        },
+        {
+          "kind": "source-bonus-chance",
+          "where": "road_salvage_bale",
+          "qty": 0.05,
+          "stockClass": "world-node",
+          "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "probabilityPerRoll": 0.05
         }
       ],
       "lootCacheStock": {
@@ -479,12 +543,16 @@
           "shipping.factory.exterior.industrial-toolbox",
           "shipping.tp.bow-cache.standard-toolbox"
         ],
-        "worldNode": 0,
+        "worldNode": 2,
         "unknown": 0
       },
       "finiteCacheCanSupply": false,
       "consumers": [
-        "vehicle_frame_piped (Utility Frame (piped))"
+        "deploy_oil_pump",
+        "deploy_refinery",
+        "industrial_axe",
+        "industrial_pick",
+        "vehicle_frame"
       ],
       "recycler": {
         "source": "iron_pick",
@@ -499,10 +567,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
+              "ingotEqRecovered": 0,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "mid",
@@ -516,10 +586,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
+              "ingotEqRecovered": 1,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "high",
@@ -537,10 +609,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
+              "ingotEqRecovered": 1,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             }
           ],
           "v2": [
@@ -552,10 +626,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
+              "ingotEqRecovered": 0,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "mid",
@@ -569,10 +645,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
+              "ingotEqRecovered": 1,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "high",
@@ -594,10 +672,11 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 4.25,
+              "ingotEqRecovered": 3.5,
               "ingotEqCraft": 3,
               "minted": [
-                "coal:+0.5"
+                "spares:+2",
+                "charcoal:+1"
               ],
               "verdict": "OVER_RETURN"
             }
@@ -611,10 +690,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
+              "ingotEqRecovered": 0,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "mid",
@@ -628,10 +709,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
+              "ingotEqRecovered": 1,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "high",
@@ -649,7 +732,62 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 2.333,
+              "ingotEqRecovered": 2,
+              "ingotEqCraft": 3,
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
+            }
+          ],
+          "v4": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "wood",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "wood",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "wood",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 2,
               "ingotEqCraft": 3,
               "minted": [],
               "verdict": "OK"
@@ -681,27 +819,22 @@
       "cheapestCraft": {
         "route": "mechanical_gear",
         "atomsPerUnit": {
-          "iron_ingot": 3.833,
-          "coal": 0.5,
-          "scrap": 2.333
+          "iron_ingot": 2,
+          "spares": 3
         },
-        "ingotEqPerUnit": 4.611,
-        "treeSeconds": 45.333,
+        "ingotEqPerUnit": 2,
+        "treeSeconds": 20,
         "model": "amortized per output unit"
       },
       "integerTreePerUnit": {
         "atoms": {
-          "iron_ingot": 6,
-          "coal": 1,
-          "scrap": 3
+          "iron_ingot": 2,
+          "spares": 3
         },
-        "ingotEq": 7,
-        "treeSeconds": 62,
+        "ingotEq": 2,
+        "treeSeconds": 20,
         "crafts": {
-          "mechanical_gear": 1,
-          "refined_iron_ingot": 1,
-          "mechanical_parts": 1,
-          "fasteners": 1
+          "mechanical_gear": 1
         },
         "rule": "whole craft batches at every node; overshoot is surplus, never fractional crafts; alternative to the amortized cheapestCraft model"
       },
@@ -715,31 +848,22 @@
           "secs": 20,
           "ins": [
             [
-              "refined_iron_ingot",
-              1
-            ],
-            [
               "iron_ingot",
-              1
-            ],
-            [
-              "mechanical_parts",
               2
             ],
             [
-              "fasteners",
-              1
+              "spares",
+              3
             ]
           ],
           "salvageDependent": false,
           "rawPerOutputUnit": {
             "atoms": {
-              "iron_ingot": 3.833,
-              "coal": 0.5,
-              "scrap": 2.333
+              "iron_ingot": 2,
+              "spares": 3
             },
-            "ingotEq": 4.611,
-            "treeSeconds": 45.333,
+            "ingotEq": 2,
+            "treeSeconds": 20,
             "model": "amortized per output unit"
           },
           "integerBatch": {
@@ -747,10 +871,8 @@
             "crafts": 1,
             "outputs": 1,
             "consumed": {
-              "refined_iron_ingot": 1,
-              "iron_ingot": 1,
-              "mechanical_parts": 2,
-              "fasteners": 1
+              "iron_ingot": 2,
+              "spares": 3
             },
             "seconds": 20,
             "surplusOutputs": 0
@@ -783,6 +905,24 @@
           "eligibleForRepeatableLoop": true,
           "cooldownHours": 24,
           "stockClock": "24h cooldown (authored spec)"
+        },
+        {
+          "kind": "source-bonus-chance",
+          "where": "wreck",
+          "qty": 0.08,
+          "stockClass": "world-node",
+          "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "probabilityPerRoll": 0.08
+        },
+        {
+          "kind": "source-bonus-chance",
+          "where": "road_relay_wreck",
+          "qty": 0.06,
+          "stockClass": "world-node",
+          "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "probabilityPerRoll": 0.06
         }
       ],
       "lootCacheStock": {
@@ -791,15 +931,18 @@
           "shipping.factory.exterior.industrial-toolbox",
           "shipping.tp.bow-cache.standard-toolbox"
         ],
-        "worldNode": 0,
+        "worldNode": 2,
         "unknown": 0
       },
       "finiteCacheCanSupply": false,
       "consumers": [
+        "deploy_arrow_turret",
         "deploy_bear_trap",
-        "deploy_ir_sensor",
+        "deploy_farm_controller",
+        "deploy_oil_pump",
         "industrial_pick_geared (Salvager Pick (geared))",
-        "vehicle_drive_geared (Motor Drive (geared))"
+        "motorbike_kit",
+        "steel_folding_ladder"
       ],
       "recycler": {
         "source": "industrial_axe",
@@ -814,8 +957,8 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 4.667,
+              "ingotEqRecovered": 0,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -831,8 +974,8 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
-              "ingotEqCraft": 4.667,
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -852,10 +995,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 2.167,
-              "ingotEqCraft": 4.667,
-              "minted": [],
-              "verdict": "OK"
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 10.5,
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             }
           ],
           "v2": [
@@ -867,8 +1012,8 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 4.667,
+              "ingotEqRecovered": 0,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -888,10 +1033,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 2.167,
-              "ingotEqCraft": 4.667,
-              "minted": [],
-              "verdict": "OK"
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 10.5,
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "high",
@@ -917,10 +1064,10 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 7.611,
-              "ingotEqCraft": 4.667,
+              "ingotEqRecovered": 3,
+              "ingotEqCraft": 10.5,
               "minted": [
-                "coal:+0.5"
+                "spares:+6"
               ],
               "verdict": "OVER_RETURN"
             }
@@ -934,8 +1081,8 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
-              "ingotEqCraft": 4.667,
+              "ingotEqRecovered": 0,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             },
@@ -955,10 +1102,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 2.167,
-              "ingotEqCraft": 4.667,
-              "minted": [],
-              "verdict": "OK"
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 10.5,
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "high",
@@ -980,8 +1129,63 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 3,
-              "ingotEqCraft": 4.667,
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 10.5,
+              "minted": [
+                "spares:+3"
+              ],
+              "verdict": "OVER_RETURN"
+            }
+          ],
+          "v4": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 10.5,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 2,
+              "ingotEqCraft": 10.5,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "refined_iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 3.5,
+              "ingotEqCraft": 10.5,
               "minted": [],
               "verdict": "OK"
             }
@@ -1012,26 +1216,25 @@
       "cheapestCraft": {
         "route": "iron_plate",
         "atomsPerUnit": {
-          "iron_ingot": 1.667,
-          "coal": 0.5,
-          "scrap": 0.167
+          "iron_ingot": 1.5,
+          "charcoal": 1,
+          "spares": 1
         },
-        "ingotEqPerUnit": 1.722,
-        "treeSeconds": 20.667,
+        "ingotEqPerUnit": 1.5,
+        "treeSeconds": 19,
         "model": "amortized per output unit"
       },
       "integerTreePerUnit": {
         "atoms": {
-          "iron_ingot": 4,
-          "coal": 1,
-          "scrap": 1
+          "iron_ingot": 3,
+          "charcoal": 2,
+          "spares": 2
         },
-        "ingotEq": 4.333,
-        "treeSeconds": 48,
+        "ingotEq": 3,
+        "treeSeconds": 38,
         "crafts": {
           "iron_plate": 1,
-          "refined_iron_ingot": 1,
-          "fasteners": 1
+          "refined_iron_ingot": 1
         },
         "rule": "whole craft batches at every node; overshoot is surplus, never fractional crafts; alternative to the amortized cheapestCraft model"
       },
@@ -1049,19 +1252,19 @@
               2
             ],
             [
-              "fasteners",
-              1
+              "spares",
+              2
             ]
           ],
           "salvageDependent": false,
           "rawPerOutputUnit": {
             "atoms": {
-              "iron_ingot": 1.667,
-              "coal": 0.5,
-              "scrap": 0.167
+              "iron_ingot": 1.5,
+              "charcoal": 1,
+              "spares": 1
             },
-            "ingotEq": 1.722,
-            "treeSeconds": 20.667,
+            "ingotEq": 1.5,
+            "treeSeconds": 19,
             "model": "amortized per output unit"
           },
           "integerBatch": {
@@ -1070,7 +1273,7 @@
             "outputs": 2,
             "consumed": {
               "refined_iron_ingot": 2,
-              "fasteners": 1
+              "spares": 2
             },
             "seconds": 18,
             "surplusOutputs": 1
@@ -1103,6 +1306,24 @@
           "eligibleForRepeatableLoop": true,
           "cooldownHours": 24,
           "stockClock": "24h cooldown (authored spec)"
+        },
+        {
+          "kind": "source-bonus-chance",
+          "where": "wreck",
+          "qty": 0.06,
+          "stockClass": "world-node",
+          "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "probabilityPerRoll": 0.06
+        },
+        {
+          "kind": "source-bonus-chance",
+          "where": "road_salvage_bale",
+          "qty": 0.04,
+          "stockClass": "world-node",
+          "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
+          "probabilityPerRoll": 0.04
         }
       ],
       "lootCacheStock": {
@@ -1111,11 +1332,17 @@
           "shipping.factory.exterior.industrial-toolbox",
           "shipping.tp.bow-cache.standard-toolbox"
         ],
-        "worldNode": 0,
+        "worldNode": 2,
         "unknown": 0
       },
       "finiteCacheCanSupply": false,
       "consumers": [
+        "deploy_pressure_switch",
+        "iron_plate_boots",
+        "iron_plate_chest",
+        "iron_plate_helmet",
+        "iron_plate_pants",
+        "large_furnace",
         "motorbike_kit"
       ],
       "recycler": {
@@ -1131,10 +1358,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
+              "ingotEqRecovered": 0,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "mid",
@@ -1148,10 +1377,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
+              "ingotEqRecovered": 1,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "high",
@@ -1169,10 +1400,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
+              "ingotEqRecovered": 1,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             }
           ],
           "v2": [
@@ -1184,10 +1417,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
+              "ingotEqRecovered": 0,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "mid",
@@ -1201,10 +1436,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
+              "ingotEqRecovered": 1,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "high",
@@ -1226,10 +1463,11 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 3.889,
+              "ingotEqRecovered": 2.5,
               "ingotEqCraft": 3,
               "minted": [
-                "coal:+0.5"
+                "spares:+4",
+                "charcoal:+1"
               ],
               "verdict": "OVER_RETURN"
             }
@@ -1243,10 +1481,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 0.333,
+              "ingotEqRecovered": 0,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "mid",
@@ -1260,10 +1500,12 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 1.333,
+              "ingotEqRecovered": 1,
               "ingotEqCraft": 3,
-              "minted": [],
-              "verdict": "OK"
+              "minted": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN"
             },
             {
               "tier": "high",
@@ -1281,7 +1523,62 @@
                   1
                 ]
               ],
-              "ingotEqRecovered": 2.167,
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 3,
+              "minted": [
+                "spares:+3"
+              ],
+              "verdict": "OVER_RETURN"
+            }
+          ],
+          "v4": [
+            {
+              "tier": "base",
+              "outputs": [
+                [
+                  "wood",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 0,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "mid",
+              "outputs": [
+                [
+                  "wood",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 1,
+              "ingotEqCraft": 3,
+              "minted": [],
+              "verdict": "OK"
+            },
+            {
+              "tier": "high",
+              "outputs": [
+                [
+                  "wood",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ],
+                [
+                  "iron_ingot",
+                  1
+                ]
+              ],
+              "ingotEqRecovered": 2,
               "ingotEqCraft": 3,
               "minted": [],
               "verdict": "OK"
@@ -1313,25 +1610,26 @@
       "cheapestCraft": {
         "route": "vehicle_frame",
         "atomsPerUnit": {
-          "iron_ingot": 4,
-          "scrap": 2,
-          "spares": 2
+          "iron_ingot": 8.5,
+          "charcoal": 3,
+          "spares": 5
         },
-        "ingotEqPerUnit": 4.667,
-        "treeSeconds": 37,
+        "ingotEqPerUnit": 8.5,
+        "treeSeconds": 61,
         "model": "amortized per output unit"
       },
       "integerTreePerUnit": {
         "atoms": {
-          "iron_ingot": 4,
-          "scrap": 2,
-          "spares": 2
+          "iron_ingot": 10,
+          "charcoal": 4,
+          "spares": 6
         },
-        "ingotEq": 4.667,
-        "treeSeconds": 37,
+        "ingotEq": 10,
+        "treeSeconds": 80,
         "crafts": {
           "vehicle_frame": 1,
-          "mechanical_parts": 1
+          "metal_pipe": 1,
+          "refined_iron_ingot": 2
         },
         "rule": "whole craft batches at every node; overshoot is surplus, never fractional crafts; alternative to the amortized cheapestCraft model"
       },
@@ -1339,52 +1637,6 @@
         {
           "recipe": "vehicle_frame",
           "alias": null,
-          "outQty": 1,
-          "station": "workbench",
-          "stationLevel": 2,
-          "secs": 25,
-          "ins": [
-            [
-              "iron_ingot",
-              3
-            ],
-            [
-              "mechanical_parts",
-              2
-            ],
-            [
-              "spares",
-              2
-            ]
-          ],
-          "salvageDependent": false,
-          "rawPerOutputUnit": {
-            "atoms": {
-              "iron_ingot": 4,
-              "scrap": 2,
-              "spares": 2
-            },
-            "ingotEq": 4.667,
-            "treeSeconds": 37,
-            "model": "amortized per output unit"
-          },
-          "integerBatch": {
-            "rule": "integer craft batches (whole crafts only; overshoot is surplus output, never fractional crafts)",
-            "crafts": 1,
-            "outputs": 1,
-            "consumed": {
-              "iron_ingot": 3,
-              "mechanical_parts": 2,
-              "spares": 2
-            },
-            "seconds": 25,
-            "surplusOutputs": 0
-          },
-          "chosenByCheapestRule": true
-        },
-        {
-          "recipe": "vehicle_frame_piped",
-          "alias": "Utility Frame (piped)",
           "outQty": 1,
           "station": "workbench",
           "stationLevel": 2,
@@ -1396,27 +1648,26 @@
             ],
             [
               "iron_ingot",
-              2
+              4
             ],
             [
-              "mechanical_parts",
+              "refined_iron_ingot",
               2
             ],
             [
               "spares",
-              2
+              4
             ]
           ],
           "salvageDependent": false,
           "rawPerOutputUnit": {
             "atoms": {
-              "iron_ingot": 4.75,
-              "coal": 0.5,
-              "scrap": 2.5,
-              "spares": 2
+              "iron_ingot": 8.5,
+              "charcoal": 3,
+              "spares": 5
             },
-            "ingotEq": 5.583,
-            "treeSeconds": 56,
+            "ingotEq": 8.5,
+            "treeSeconds": 61,
             "model": "amortized per output unit"
           },
           "integerBatch": {
@@ -1425,14 +1676,14 @@
             "outputs": 1,
             "consumed": {
               "metal_pipe": 1,
-              "iron_ingot": 2,
-              "mechanical_parts": 2,
-              "spares": 2
+              "iron_ingot": 4,
+              "refined_iron_ingot": 2,
+              "spares": 4
             },
             "seconds": 22,
             "surplusOutputs": 0
           },
-          "chosenByCheapestRule": false
+          "chosenByCheapestRule": true
         }
       ],
       "researchCost": "base (known at start, no research)",
@@ -1454,30 +1705,27 @@
         "motorbike_kit": {
           "route": "motorbike_kit",
           "atomsPerKit": {
-            "iron_ingot": 11.667,
-            "scrap": 5.667,
-            "spares": 5,
-            "coal": 1
+            "iron_ingot": 23,
+            "charcoal": 10,
+            "spares": 14
           },
-          "ingotEqPerKit": 13.556,
-          "treeSeconds": 168.667,
+          "ingotEqPerKit": 23,
+          "treeSeconds": 238,
           "integerTreePerKit": {
             "atoms": {
-              "iron_ingot": 13,
-              "scrap": 7,
-              "spares": 5,
-              "coal": 1
+              "iron_ingot": 26,
+              "charcoal": 12,
+              "spares": 16
             },
-            "ingotEq": 15.333,
-            "treeSeconds": 182,
+            "ingotEq": 26,
+            "treeSeconds": 276,
             "crafts": {
               "motorbike_kit": 1,
               "vehicle_frame": 1,
-              "mechanical_parts": 2,
-              "vehicle_drive": 1,
-              "fasteners": 3,
-              "iron_plate": 1,
-              "refined_iron_ingot": 1
+              "metal_pipe": 1,
+              "refined_iron_ingot": 6,
+              "mechanical_gear": 2,
+              "iron_plate": 2
             }
           },
           "stationLevel": 3,
@@ -1507,20 +1755,20 @@
       "shipping.factory.vault.advanced-keycard"
     ],
     "salvageExcluded": [
-      "damaged_drive (non-repeatable wreck input; never a craft-cost input — SALVAGE_ONLY)"
+      "spares (Parts: finite wreck/scrap salvage — SALVAGE_ONLY; damaged_drive is retired into it)"
     ],
     "note": "authored-cache hits are spec-matched via specForSite and tagged per hit; toolbox grammar hits carry the authored spec stock class; vault (finite) can never underwrite a repeatable route claim"
   },
   "unpricedAtoms": {
     "atoms": [
-      "coal",
+      "charcoal",
       "wood",
       "stone",
       "leather",
       "spares",
       "crystal"
     ],
-    "mode": "per-material comparison only; no numeraire conversion is invented for these; only iron_ingot/iron_ore/scrap carry one"
+    "mode": "per-material comparison only; no numeraire conversion is invented for these; only iron_ingot/iron_ore carry one"
   },
   "separateChannels": {
     "sourceProbability": "probabilityPerRoll per hit (grammar fixed = 1; grammar pool = 1/pool.length; bonus chance as authored)",
@@ -1532,12 +1780,12 @@
     {
       "tool": "iron_sword",
       "v2_pinned": {
-        "resourceOverReturn": true,
-        "netIngotEqPerLoop": 6,
+        "resourceOverReturn": false,
+        "netIngotEqPerLoop": 7,
         "mintedNonNumeraire": []
       },
       "repeatableLoop": {
-        "netIngotEqPerLoop": 6,
+        "netIngotEqPerLoop": 7,
         "consumesRepeatableInputsOnly": "ORIGINAL_UNKNOWN (wood/leather source stock unverified — no renewable proof in this benchmark)",
         "realizable": "ORIGINAL_UNKNOWN (no renewable-input proof for wood/leather)",
         "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
@@ -1551,60 +1799,52 @@
       "tool": "iron_pick",
       "v2_pinned": {
         "resourceOverReturn": true,
-        "netIngotEqPerLoop": 1.25,
+        "netIngotEqPerLoop": 0.5,
         "mintedNonNumeraire": [
-          "coal:+0.5"
+          "spares:+2",
+          "charcoal:+1"
         ]
       },
       "repeatableLoop": {
-        "netIngotEqPerLoop": 1.25,
+        "netIngotEqPerLoop": 0.5,
         "consumesRepeatableInputsOnly": "ORIGINAL_UNKNOWN (wood/leather source stock unverified — no renewable proof in this benchmark)",
         "realizable": "ORIGINAL_UNKNOWN (no renewable-input proof for wood/leather)",
         "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
       },
       "salvageWindfall": "none",
       "v3_new": {
-        "resourceOverReturn": false
+        "resourceOverReturn": true
       }
     },
     {
       "tool": "iron_axe",
       "v2_pinned": {
         "resourceOverReturn": true,
-        "netIngotEqPerLoop": 0.889,
+        "netIngotEqPerLoop": -0.5,
         "mintedNonNumeraire": [
-          "coal:+0.5"
+          "spares:+4",
+          "charcoal:+1"
         ]
       },
-      "repeatableLoop": {
-        "netIngotEqPerLoop": 0.889,
-        "consumesRepeatableInputsOnly": "ORIGINAL_UNKNOWN (wood/leather source stock unverified — no renewable proof in this benchmark)",
-        "realizable": "ORIGINAL_UNKNOWN (no renewable-input proof for wood/leather)",
-        "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
-      },
+      "repeatableLoop": "none",
       "salvageWindfall": "none",
       "v3_new": {
-        "resourceOverReturn": false
+        "resourceOverReturn": true
       }
     },
     {
       "tool": "industrial_axe",
       "v2_pinned": {
         "resourceOverReturn": true,
-        "netIngotEqPerLoop": 2.944,
+        "netIngotEqPerLoop": -7.5,
         "mintedNonNumeraire": [
-          "coal:+0.5"
+          "spares:+6"
         ]
       },
-      "repeatableLoop": {
-        "netIngotEqPerLoop": 2.944,
-        "consumesRepeatableInputsOnly": "ORIGINAL_UNKNOWN (wood/leather source stock unverified — no renewable proof in this benchmark)",
-        "realizable": "ORIGINAL_UNKNOWN (no renewable-input proof for wood/leather)",
-        "note": "craft is at full durability, so high-tier recovery is always reachable for a fresh tool"
-      },
+      "repeatableLoop": "none",
       "salvageWindfall": "none in table (damaged_drive is a wreck-only input, not consumed by these tools)",
       "v3_new": {
-        "resourceOverReturn": false
+        "resourceOverReturn": true
       }
     },
     {

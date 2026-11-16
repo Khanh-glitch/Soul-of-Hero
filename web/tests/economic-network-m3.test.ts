@@ -34,7 +34,9 @@ describe('SOH M3 Counterfactual Study (DESIGN_PROPOSED / Non-Authoritative) & Au
 
     // Existing counterfactual metrics remain reproducible
     const brickCitadel = res.territoryStressBeforeAfter.find((r) => r.preset === 'Brick_Citadel_6x6_Armed')!;
-    expect(brickCitadel.before.autonomyHours24Slot).toBe(31.22);
+    // Derived from the LIVE build bills. Item set v3 changed them (Brick retired into Stone, Powered Door bill with
+    // Electric Resistors), so the 24-slot figure moved 31.22 -> 27.04 h. Still far below the weighted-cabinet proposal.
+    expect(brickCitadel.before.autonomyHours24Slot).toBe(27.04);
     expect(brickCitadel.after.autonomyHours32SlotWeighted).toBeGreaterThanOrEqual(168);
     expect(res.exploitAndConservationChecks.recyclerAntiArbitrage.overReturnsAfter).toBe(0);
   });

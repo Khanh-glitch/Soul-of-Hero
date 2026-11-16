@@ -1,4 +1,5 @@
 import { combatStimulus, pushCombatStimulus, type CombatKind } from './stimulus';
+import { syncVeyraPlacement } from '../veyra05/window';
 import { airdropBoundary, stepAirdrops } from './engine';
 import { airdropView } from './airdrop';
 import { advancePoiAccess, poiDoorLabel, poiGenLabel } from './poi-access';
@@ -8,8 +9,8 @@ import { LOOT_CLASSES, lootClass } from './loot-ecology';
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInReach, coldDamageActive } from './thermal';
 import { calendarAt, climateAt, calendarEventV1, phaseBoundaryAt, seasonTransitionsBetween, normalizeCalendarLedger, type Season, type PrecipWeather } from './calendar';
-import { ITEMS, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable } from './catalog';
-import { VFX_TEST_KIT, VFX_TEST_CAPS } from './vfx/testkit';
+import { LADDER_CLIMB_SPEED, ITEMS, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable, wornProtection } from './catalog';
+import { g1bChestName, G1B_SITES } from './g1b';
 import { getWorld } from './world';
 import { maybeSlideVeyraWindow } from '../veyra05/continuity';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
@@ -18,7 +19,8 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
+import { tickNeeds, advanceElderPressure, stepHumans, stepHumanCombat } from './humanworld';
+import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -64,6 +66,7 @@ function solidFor(r: RunState, x: number, y: number, who: 'player' | 'creature' 
   const w = getWorld(); const i=ty*WW+tx;
   if (who === 'cart' && (w.packageContract || w.enforceMasks) && !w.economyMap.cargoPassable[i] && !w.statics.some(s=>s.kind==='door' && s.tx===tx && s.ty===ty)) return true;
   if (b === 4) return who === 'cart' || (who === 'creature' && false);
+  if (b === 6) return who !== 'player' || !!r.player.vehicle;
   return b === 1 || b === 2 || b === 3 || b === 5;
 }
 function moveBody(r: RunState, o: { x: number; y: number }, dx: number, dy: number, rad: number, who: 'player' | 'creature' | 'cart') {
@@ -86,16 +89,18 @@ function observePlayer(r: RunState, m: Creature, now: number, range: number, eli
 export function rayLen(r: RunState, x: number, y: number, a: number, max: number) { const g = blockGrid(r); for (let d = 8; d < max; d += 4) { const tx=tileOf(x+Math.cos(a)*d),ty=tileOf(y+Math.sin(a)*d); if(tx<0||ty<0||tx>=WW||ty>=WH)return d; const b=g[ty*WW+tx]; if (b === 1 || b === 2 || b === 3 || b === 5) return d; } return max; }
 
 // ---------- player damage ----------
-export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number, cause: string, now: number, kb = 140) {
+export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number, cause: string, now: number, kb = 140, groundHit = cause === 'fire' || cause === 'lava') {
   const r = gs.run!; const p = r.player; if (p.dead) return false;
   if ((r.spiritTransit && now < r.spiritTransit.arriveAt) || p.invuln > 0 || (p.iceUntil !== undefined && now < p.iceUntil) || p.action?.kind === 'roll') { fx('dodge', { x: p.x, y: p.y }); return false; }
-  let armor = 0; for (const s of C(r, 'eq').slots) if (s) armor += ITEMS[s.key].armor || 0;
-  const d = Math.max(1, Math.round(dmg * (1 - Math.min(0.6, armor))));
+  // Item set v3 armour model: head + body + legs + feet add into the capped general reduction; boots additionally cut
+  // damage that comes from the ground, and leg armour cuts knock-back and the hurt stagger.
+  const worn = wornProtection(C(r, 'eq').slots); kb *= 1 - worn.steady;
+  const d = Math.max(1, Math.round(dmg * (1 - worn.armor) * (groundHit ? 1 - worn.ground : 1)));
   if((p.channelUntil||0)>now){delete p.channelUntil;fx('fizzle',{x:p.x,y:p.y});}
   p.hp -= d; p.invuln = 520; const a = Math.atan2(p.y - fy0, p.x - fx0);
   moveBody(r, p, Math.cos(a) * kb * 0.06, Math.sin(a) * kb * 0.06, 4, 'player');
   if (p.action?.kind === 'cast') { fx('fizzle', { x: p.x, y: p.y }); dispatch(gs, { id: 'cc' + now + Math.random(), type: 'castCancel' }, now); }
-  p.action = { kind: 'hurt', t: 0, dur: 220, angle: a };
+  p.action = { kind: 'hurt', t: 0, dur: Math.round(220 * (1 - worn.steady)), angle: a };
   fx('phit', { x: p.x, y: p.y, n: d, a }); fx('shake', { m: Math.min(4, 1 + d / 8) });
   if (p.hp <= 0) { killPlayer(gs, now, cause); fx('pdeath', { x: p.x, y: p.y }); }
   return true;
@@ -276,11 +281,13 @@ export function spiritDestination(r:RunState,x:number,y:number):string|null {
 /** The physical UID captured at windup must still occupy the same slot at commit. */
 function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: string, mode: 'basic'|'refined'|'signature', a: number, aim: Input) {
   const r = gs.run!, p = r.player, s = C(r, 'inv').slots[slot];
-  if (!s || p.active !== slot || s.uid !== uid0 || !ITEMS[s.key]?.creatorCore || !s.reserves || s.reserves[mode] <= 0) { fx('fizzle', {x:p.x,y:p.y}); return; }
+  if (!s || p.active !== slot || s.uid !== uid0 || !ITEMS[s.key]?.creatorCore || coreCastBlock(r, s, mode, now)) { fx('fizzle', {x:p.x,y:p.y}); return; }
   let grove:{tx:number;ty:number;d:number}[] | undefined;
   if(ITEMS[s.key].creatorCore==='earthmother' && mode==='refined') { const len=Math.min(BAL.creatorCoreEarthmother.groveRange,dist(p.x,p.y,aim.mx,aim.my),rayLen(r,p.x,p.y,a,BAL.creatorCoreEarthmother.groveRange));grove=groveCells(r,p.x+Math.cos(a)*len,p.y+Math.sin(a)*len);if(grove.length!==BAL.creatorCoreEarthmother.treeCount || (r.natureTrees?.length||0)+grove.length>100){fx('toast',{text:'Need open ground for all ten trees.'});return;} }
   if(ITEMS[s.key].creatorCore==='demon'&&mode==='signature'){const reason=spiritDestination(r,aim.mx,aim.my);if(reason){fx('toast',{text:reason});return;}}
-  s.reserves[mode]--; if (VFX_TEST_KIT && s.reserves[mode] <= 0) s.reserves[mode] = VFX_TEST_CAPS[mode]; receipt(r, now, 'core.commit', `${s.uid}:${mode}:${s.reserves[mode]}`); award(gs,'first_core',now);
+  // Core V2: every refusal above this line (no ammunition, worn out, recharging, no ground for the grove, blocked teleport) cost nothing.
+  if (!coreCastCommit(r, s, mode, now)) { fx('fizzle', {x:p.x,y:p.y}); return; }
+  receipt(r, now, 'core.commit', `${s.uid}:${mode}:dur=${s.dur}`); award(gs,'first_core',now);
   const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
   const visualCore=ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire';
   fx('cast',{x:hx,y:hy,core:visualCore,a,ck:ITEMS[s.key].creatorCore,mode,tx:aim.mx,ty:aim.my});
@@ -363,13 +370,14 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   } else if (inp.cancel && act?.kind === 'cast') { dispatch(gs, { id: 'cc' + now, type: 'castCancel' }, now); p.action = null; fx('fizzle', { x: p.x, y: p.y }); }
   else if (!p.vehicle && !selfFrozen && inp.skill && !p.action) {
     const s = activeStack(r), mode=inp.skill, chosen=inp.skillAim;
-    if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && s.reserves && s.reserves[mode]>0) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,dur:380,contact:300,angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire',ck:ITEMS[s.key].creatorCore,mode,a:Math.atan2(ty-p.y,tx-p.x)}); }
-    else fx('toast',{text:'Creator Core reserve empty — reload with R.'});
+    const why = s && ITEMS[s.key]?.creatorCore ? coreCastBlock(r, s, mode, now) : 'Hold a Creator Core.';
+    if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && !why) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,dur:380,contact:300,angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire',ck:ITEMS[s.key].creatorCore,mode,a:Math.atan2(ty-p.y,tx-p.x)}); }
+    else fx('toast',{text:why || 'That Core is no longer in hand.'});
   }
   else if (!p.vehicle && !selfFrozen && (inp.attackPressed || inp.attack) && !p.action) {
     const s = activeStack(r); const d = s ? ITEMS[s.key] : null;
     if (d?.repair && s?.dur !== undefined && s.dur <= 0) { if (inp.attackPressed) fx('toast', { text: `${d.name} is broken. Repair it at a workbench.` }); }
-    else if (d?.creatorCore) { if (s!.reserves && s!.reserves.basic>0) { p.action={kind:'cast',t:0,dur:d.creatorCore==='meteor'?400:d.creatorCore==='dragon'?280:180,contact:d.creatorCore==='meteor'?300:d.creatorCore==='dragon'?170:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed) fx('toast',{text:'Basic reserve empty — press R to reload.'}); }
+    else if (d?.creatorCore) { const why = coreCastBlock(r, s!, 'basic', now); if (!why) { p.action={kind:'cast',t:0,dur:d.creatorCore==='meteor'?400:d.creatorCore==='dragon'?280:180,contact:d.creatorCore==='meteor'?300:d.creatorCore==='dragon'?170:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed && !why.startsWith('LMB recharging')) fx('toast',{text:why}); }
     else if (d?.core) { if ((s!.charge ?? 0) > 0) { p.action = { kind: 'cast', t: 0, dur: 520, contact: 460, angle: p.aim, slot: p.active }; fx('windup', { x: p.x, y: p.y, core: d.core }); } else if (inp.attackPressed) fx('toast', { text: 'This Core is spent. Study it at a Research Table.' }); }
     else if (d && d.food && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx(res.ok ? 'eat' : 'toast', { x: p.x, y: p.y, text: res.ok ? '' : (res as any).reason }); }
     else if (d && d.cat === 'bp' && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx('toast', { text: res.ok ? res.msg : (res as any).reason }); }
@@ -392,6 +400,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   const t = effTile(r, tileOf(p.x), tileOf(p.y));
   if ((p.iceUntil||0)>now || (p.channelUntil||0)>now || r.spiritTransit) speedMul=0;
   let sp = B.speed * (BAL.terrainSpeed[SPEED_KEY[t]] ?? 1) * speedMul;
+  if (blockGrid(r)[tileOf(p.y) * WW + tileOf(p.x)] === 6) sp *= LADDER_CLIMB_SPEED; // item set v3: climbing a ladder
   const w = invWeight(r), limit = carryLimit(r), personalLoad = w > limit ? Math.max(0.35, 1 - (w - limit) / limit) : 1;
   let condition = 1;
   if (slowTimer > 0) { condition *= 0.5; slowTimer -= dtMs; }
@@ -524,7 +533,7 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
   }
   best ||= exhausted;
   if (best) {
-    const res = harvestHit(gs, best.tx, best.ty, d.power || {}, now, p.x, p.y, { extraction: 'playerTool' });
+    const res = harvestHit(gs, best.tx, best.ty, d.power || {}, now, p.x, p.y, { extraction: 'playerTool', tool: s?.key });
     const x = best.tx * TILE + 8, y = best.ty * TILE + 8;
     const ignited = s?.key === 'torch' && ignite(gs, best.tx, best.ty, now);
     if (res.result === 'yield') { fx('chip', { x, y, mat: res.mat, key: res.key, depleted: res.depleted, rich: (res.quality ?? 0) > 0 }); hitAny = true; if (res.depleted) fx('fell', { x, y, key: res.key }); }
@@ -1351,7 +1360,7 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
     }
     else {
       const dot = h.kind === 'pool' || h.effect === 'dot' || h.kind === 'sweep' || h.style === 'burn';
-      if (dot) { h.tickAcc = (h.tickAcc || 0) - dtMs; if (h.tickAcc <= 0 && inHaz(h, p.x, p.y)) { h.tickAcc = h.kind === 'pool' ? 500 : 220; hurtPlayer(gs, h.kind === 'pool' ? 5 : h.dmg * 0.45, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, 30); if (h.kind === 'pool') p.rad = Math.min(100, p.rad + 4); } }
+      if (dot) { h.tickAcc = (h.tickAcc || 0) - dtMs; if (h.tickAcc <= 0 && inHaz(h, p.x, p.y)) { h.tickAcc = h.kind === 'pool' ? 500 : 220; hurtPlayer(gs, h.kind === 'pool' ? 5 : h.dmg * 0.45, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, 30, h.kind === 'pool' || h.style === 'burn'); if (h.kind === 'pool') p.rad = Math.min(100, p.rad + 4); } }
       else if (!h.hit && inHaz(h, p.x, p.y)) { if (hurtPlayer(gs, h.dmg, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, h.effect === 'knock' ? 320 : 140)) { h.hit = true; if (h.effect === 'slow') slowTimer = 2200; if (h.effect === 'root') rootTimer = 900; if (h.effect === 'pull') { const a = Math.atan2(h.y - p.y, h.x - p.x); moveBody(r, p, Math.cos(a) * 14, Math.sin(a) * 14, 4, 'player'); } } }
     }
     if (h.t >= h.tell + h.dur) HAZ.splice(i, 1);
@@ -1434,7 +1443,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   syncPoi(t); syncHome(t);
   commitSeasonBoundaries(r, t, t);
   resolveFires(gs, t, visual);
-  stepLootRespawn(r, t);
+  stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
   syncDrops(t);
   stepNatureTrees(r,t);
   while (t < end) {
@@ -1502,7 +1511,8 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     // ground from there. Only the entries expiring in this slice are visited (no world scan).
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { const ci = +k; settleRegrowthAt(r, ci % WW, Math.floor(ci / WW), m.untilAt ?? t); delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
-    stepLootRespawn(r, t);
+    stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
+    if (r.humanWorld) { tickNeeds(r, r.humanWorld, t); advanceElderPressure(r, r.humanWorld, t); stepHumans(r, r.humanWorld, t); stepHumanCombat(r, r.humanWorld, t); }
     syncDrops(t);
     stepNatureTrees(r,t);
   }
@@ -1558,6 +1568,7 @@ function tickDragonDive(gs: GameState, dtMs: number, now: number) {
 
 // ---------- main tick ----------
 export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
+  syncVeyraPlacement(gs.run);
   const r = gs.run; if (!r || r.ended) return;
   bindCombat(r);
   r.clock.defenseFrames = 0;   // the fine-defense budget is per absence window; presence online refreshes it
@@ -1565,6 +1576,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (!syncWorld(gs, now)) { if (!gs.run) fx('banner', { text: 'The run has ended', sub: 'Ragnarok consumed the island.' }); return; }
   // Resting hands the online clock to the same chronological settlement used offline (no online drain while asleep).
   if (r.rest) { settle(gs, now, true); return; }
+  ensureOilSeeps(r); // item set v3: Veyra crude seeps exist from the first frame, pump or no pump
   const ph = phaseOf(r, now);
   if (ph !== 'calm' && ragAnnounced !== r.id + ph) { ragAnnounced = r.id + ph; if (ph === 'danger') { award(gs, 'ragnarok', now); fx('banner', { text: 'RAGNAROK', sub: 'The final 72 hours. Sealed chests can now be opened.' }); } if (ph === 'awakening') fx('banner', { text: 'DAY 14', sub: 'The six Elders awaken.' }); }
   const weather = weatherAt(r, now);
@@ -1584,7 +1596,8 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   for (const e of Object.values(r.entities)) {
     if (e.kind !== 'drop' || !onActiveFloor(r, e)) continue;
     if (e.vx || e.vy) { e.x += e.vx! * dtMs / 1000; e.y += e.vy! * dtMs / 1000; e.vx! *= 0.88; e.vy! *= 0.88; if (Math.abs(e.vx!) + Math.abs(e.vy!) < 2) { e.vx = 0; e.vy = 0; } }
-    if (p.dead) continue; const d = dist(e.x, e.y, p.x, p.y); const age = now - (e.born || 0);
+    if (p.dead || e.manual) continue; // G1B: something put down on purpose stays put; F picks it up
+    const d = dist(e.x, e.y, p.x, p.y); const age = now - (e.born || 0);
     if (age > 380 && d < 30) { const s = C(r, e.c!)?.slots[0]; if (!s) continue; const full = ITEMS[s.key].max > 1 && !s.meta ? false : !C(r, 'inv').slots.includes(null);
       if (full) continue; e.x += (p.x - e.x) * Math.min(1, dtMs / 90); e.y += (p.y - e.y) * Math.min(1, dtMs / 90);
       if (d < 9) { const key = s.key, q = s.qty; const res = dispatch(gs, { id: 'ap_' + e.id + '_' + q, type: 'pickup', eid: e.id }, now); if (res.ok) fx('pickup', { x: p.x, y: p.y, key, q }); else e.born = now + 1500; } }
@@ -1706,8 +1719,8 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     }
     if ((p.iceUntil||0)>t) dtMs=Math.min(dtMs,p.iceUntil!-t);
     const activeFire = !isWet(weatherAt(r,t)) && Object.entries(r.sources).some(([key,st])=>!!st.fire && st.fire>r.clock.simMs && dist(p.x,p.y,(+key%WW)*TILE+8,Math.floor(+key/WW)*TILE+8)<18);
-    const armor = C(r,'eq').slots.reduce((n,s)=>n+(s ? ITEMS[s.key].armor||0 : 0),0);
-    const fireRate = activeFire && (p.iceUntil||0)<=t ? Math.max(1,Math.round(B.offlineFireHitDamage*(1-Math.min(0.6,armor))))/B.offlineFireHitMs : 0;
+    const worn = wornProtection(C(r,'eq').slots);
+    const fireRate = activeFire && (p.iceUntil||0)<=t ? Math.max(1,Math.round(B.offlineFireHitDamage*(1-worn.armor)*(1-worn.ground)))/B.offlineFireHitMs : 0;
     const unit = B.offlineDrainFactor / 60000;
     const hungerRate = B.offlineHungerPerHour / HOUR;
     // CAL-01: summer heat/dryness at THIS Map cell raises water demand, exactly as the
@@ -1845,14 +1858,22 @@ export function findInteract(gs: GameState, now: number): Interact | null {
   const r = gs.run!; const p = r.player; if (p.dead) return null; let best: Interact | null = null; let bd = 30;
   const fx0 = p.x + Math.cos(p.aim) * 6, fy0 = p.y + Math.sin(p.aim) * 6;
   for (const e of Object.values(r.entities)) {
-    if (e.kind === 'drop' || !onActiveFloor(r, e)) continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
+    if ((e.kind === 'drop' && !e.manual) || !onActiveFloor(r, e)) continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
     let label = ''; let kind = e.kind as string;
+    if (e.kind === 'drop') { const s0 = C(r, e.c!)?.slots[0]; if (!s0) continue; label = `Pick up ${ITEMS[s0.key].name}${s0.qty > 1 ? ' ×' + s0.qty : ''}`; bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y }; continue; }
+    if (e.kind === 'loot' && e.g1b) {
+      const g = e.g1b; kind = 'g1b:' + g.kind;
+      if (g.kind === 'gen') label = (g.poweredUntil ?? 0) > now ? `Circuit generator · running ${Math.ceil((g.poweredUntil! - now) / 1000)}s` : 'Circuit generator · add 1 Fuel Canister';
+      else if (g.kind === 'card') label = g.state === 'empty' ? 'Access-card case · empty' : 'Open access-card case';
+      else { const name = g1bChestName(G1B_SITES[g.sid]?.variant); label = g.state === 'closed' ? `Open ${name}` : g.state === 'opened' ? `Search ${name}` : `${name} · empty${g.refillAt ? ' · restocks in ' + g1bEta(g.refillAt - now) : ''}`; }
+      bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y }; continue;
+    }
     if (e.kind === 'bag') { if (!C(r,e.c!).slots.some(Boolean) && !e.legacyJobs?.queue.length) continue; label = `Open ${e.label || 'bag'}`; }
     else if (e.kind === 'airdrop') { if(!e.airdrop || ['signal','descending'].includes(e.airdrop.phase))continue; const v=airdropView(e.airdrop,e.tx!,e.ty!,now,C(r,e.c!).slots.filter(Boolean).length); label = v.key==='locked' ? `Airdrop locked · opens in ${v.lockedRemainS}s` : v.key==='emptied' ? 'Airdrop empty' : v.key==='partial' ? 'Airdrop partly claimed · take only' : v.key==='expiring' ? `Airdrop expiring · take only` : 'Search airdrop · take only'; }
     else if (e.kind === 'loot') { const site=r.lootEcology && getWorld(r.layoutId||'shipping').statics.find(s=>s.kind==='loot'&&s.tx===e.tx&&s.ty===e.ty);const cls=site && lootClass(site);label=C(r,e.c!).slots.some(Boolean) ? `Search ${cls ? LOOT_CLASSES[cls].name : 'crate'}` : 'Empty crate'; }
     else if (e.kind === 'cash') label = isRagnarok(r, now) ? (e.minted ? 'Ragnarok chest' : 'Break the Ragnarok seal') : 'Sealed Ragnarok chest';
     else if (e.kind === 'vendor') label = `Trade with ${e.label}`;
-    else if (e.kind === 'door') label = e.locked || e.poiDoor ? poiDoorLabel(r,e,now) : e.open ? 'Close door' : 'Open door';
+    else if (e.kind === 'door') { const gate = g1bGateOf(r, e); label = gate ? g1bDoorLabel(r, e, gate, now) : e.locked || e.poiDoor ? poiDoorLabel(r,e,now) : e.open ? 'Close door' : 'Open door'; }
     else if (e.kind === 'recycler') label = 'Use Foundry Recycler';
     else if (e.kind === 'gen') label = poiGenLabel(r,e,now);
     else if (e.type === 'ir_sensor') label = `Infrared sensor ${e.irSensor?.enabled ? 'ON' : 'OFF'}: ${irSensorStatus(r, e)}${irSensorDownstream(r, e)} (E toggles)`;

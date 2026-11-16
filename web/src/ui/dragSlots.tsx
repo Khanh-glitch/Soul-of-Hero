@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ITEMS, stationBurnable } from '../game/catalog';
+import { ITEMS, stationBurnable, EQ_SLOTS } from '../game/catalog';
 import { BAL, type RunState, type Stack, type Container } from '../game/core';
 import { C, cartWeight, isStationFuel } from '../game/engine';
 import { Icon, type Api } from './common';
@@ -27,7 +27,6 @@ function useSlotStore() {
   useEffect(() => { const s = () => f(v => v + 1); store.subs.add(s); return () => { store.subs.delete(s); }; }, []);
 }
 
-const EQ_SLOTS = ['head', 'body', 'back'] as const;
 function acceptsUI(r: RunState, c: Container, slot: number, s: Stack): boolean {
   if (['loot', 'cash', 'out'].includes(c.kind)) return false;
   if (isStationFuel(r, c.id)) return stationBurnable(s.key);
@@ -36,7 +35,7 @@ function acceptsUI(r: RunState, c: Container, slot: number, s: Stack): boolean {
   return true;
 }
 function mergeableUI(a: Stack, b: Stack): boolean {
-  return a.key === b.key && ITEMS[a.key].max > 1 && a.meta === b.meta && a.dur === b.dur && a.charge === b.charge && !a.reserves && !b.reserves;
+  return a.key === b.key && ITEMS[a.key].max > 1 && a.meta === b.meta && a.dur === b.dur && a.charge === b.charge && !a.reserves && !b.reserves && !a.owed && !b.owed && a.lvl === undefined && b.lvl === undefined;
 }
 
 /** Read-only mirror of engine `move` validation for live drop-target feedback. */
@@ -187,7 +186,7 @@ export function DSlot({ api, cid, slot, s, hotkey, active, quickTo, size = 22, a
     {hotkey && <span className="dslot__key">{hotkey}</span>}
     {active && <span className="dslot__active-pip" aria-hidden="true" />}
     {kbdPicked && <span className="dslot__hold">MOVE</span>}
-    {s && <Icon k={s.key} size={size - 6} />}
+    {s && <Icon k={s.key} size={size - 4} />}
     {s && s.qty > 1 && <span className="dslot__qty">{s.qty}</span>}
     {s && d?.charge && s.charge !== undefined && <span className="dslot__qty" style={{ color: s.charge ? 'var(--info)' : 'var(--bad)' }}>{s.charge}⚡</span>}
     {durF !== null && <span className="dslot__dur"><i style={{ width: `${durF * 100}%`, background: durF < 0.25 ? 'var(--bad)' : durF < 0.5 ? 'var(--warn)' : 'var(--good)' }} /></span>}

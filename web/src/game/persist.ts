@@ -1,3 +1,6 @@
+import { G1B_VERSION, G1B_CHEST_SLOTS, G1B_SITES, G1B_FIXTURE_BY_ID, G1B_GATE_BY_ID, G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, g1bSeed, CORE_V2 } from './g1b';
+import { G1B_BATCH2_ECOLOGY } from './g1b-ecology-batch2.frozen';
+import { G1B_BATCH3_ECOLOGY } from './g1b-ecology-batch3.frozen';
 import {supportsAirdrops, airdropTimes, airdropRewards, airdropStaticEligible} from './airdrop';
 import { recoveryPlanFor, COMPONENT_RECIPES } from './recycler';
 import { combatKindOf } from './stimulus';
@@ -9,9 +12,34 @@ import { validIntel } from './expedition-intel';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
 import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
-import { starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
+import { OIL_SEEP_AUTHORITY, SEEP_CELL } from './oil-seeps';
+const veyraRun = (r: any) => typeof r?.layoutId === 'string' && isVeyra05Layout(r.layoutId);
+/** G1B chest / card case / generator: a real approved source id at its resolved tile, one instance, coherent lifecycle. */
+function g1bEntityOk(r: any, e: any, offscreen: boolean, seen: Set<string>): boolean {
+  const g = e.g1b; const isObj = (v: any) => v !== null && typeof v === 'object' && !Array.isArray(v);
+  if (!isObj(r.g1b) || !isObj(g) || e.kind !== 'loot' || typeof g.sid !== 'string' || seen.has(g.sid)) return false;
+  const site = G1B_SITES[g.sid], fx = G1B_FIXTURE_BY_ID[g.sid]; const at = site ?? fx; if (!at) return false;
+  if ((e.floor ?? 0) !== (site?.level ?? 0) || (e.floor === 0 && 'floor' in e)) return false; // a chest lives on the storey it was surveyed on
+  if (g.kind !== (site ? 'chest' : fx!.kind) || !['closed', 'opened', 'empty'].includes(g.state) || !Number.isSafeInteger(g.cycle) || g.cycle < 0) return false;
+  const o = r.sourceMap?.veyra?.originAu; const ox = offscreen || !o ? 0 : Math.round(o[0] / 0.5), oy = offscreen || !o ? 0 : Math.round(o[1] / 0.5);
+  if (e.tx !== at.gx - ox || e.ty !== at.gy - oy || e.x !== e.tx * 16 + 8 || e.y !== e.ty * 16 + 8) return false;
+  const c = r.custody?.[e.c]; if (!isObj(c) || !Array.isArray(c.slots) || c.slots.length !== (g.kind === 'chest' ? G1B_CHEST_SLOTS : 1)) return false;
+  const filled = c.slots.filter(Boolean).length;
+  if (g.refillAt !== undefined && (g.kind !== 'chest' || g.state !== 'empty' || !Number.isFinite(g.refillAt))) return false;
+  if (g.state === 'empty' && g.kind === 'chest' && g.refillAt === undefined) return false;
+  if (g.state !== 'opened' && filled) return false; // CLOSED is unrolled, EMPTY holds nothing
+  if (g.roll !== undefined && (g.state !== 'opened' && g.state !== 'empty' || !isObj(g.roll) || typeof g.roll.rev !== 'string' || !Number.isSafeInteger(g.roll.seed) || !Number.isFinite(g.roll.at))) return false;
+  if (g.kind === 'chest' && g.state === 'opened' && (!g.roll || g.roll.seed !== g1bSeed(r.id, g.sid, g.cycle))) return false;
+  if (g.poweredUntil !== undefined && (g.kind !== 'gen' || !Number.isFinite(g.poweredUntil))) return false;
+  if (g.kind === 'gen' && (g.state !== 'closed' || filled)) return false;
+  if (g.kind === 'card' && (g.state === 'closed' || c.slots.some((s: any) => s && s.key !== fx!.card))) return false;
+  seen.add(g.sid); return true;
+}
+const oilAuthorityOk = (r: any, a: unknown) => a === 'test-fixture-v1' ? r.oilTestFixture === true : a === OIL_SEEP_AUTHORITY ? veyraRun(r) : false;
+import { LADDER_SPAN, POWERED_DOOR_HOSTS, EQ_SLOTS, starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
 import { RETIRED_RECIPES, hasLegacyDefinition } from './recipe-migration';
-import { newGame, renewableLoot, markDirty } from './engine';
+import { ITEM_SET_VERSION, isAccessCard, isRetiredLive, RETIRED_ITEM_IDS, liveItemId, liveItemPer, liveRecipeId, RECIPE_SUCCESSOR } from './final-item-set';
+import { newGame, renewableLoot, markDirty, g1bEnsureSources } from './engine';
 import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
 import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
 import { getWorld, hasLayout, setActiveLayout, VEYRA_RECYCLER_SITE, webRecyclerSite } from './world';
@@ -20,7 +48,7 @@ import { sourceDigest } from './world-economy';
 import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { FRAME_W, FRAME_H } from '../veyra05/frame';
-import { getWindowWorld } from '../veyra05/window';
+import { getWindowWorld, syncVeyraPlacement } from '../veyra05/window';
 import { activeFloor, onActiveFloor, syncFloor } from '../veyra05/floors';
 
 const testMode = import.meta.env.VITE_FX_TEST === '1';
@@ -62,6 +90,9 @@ export function validate(raw: any): GameState | null {
   if (!obj(r) || typeof r.id !== 'string' || !r.id || !integer(r.nextId) || r.nextId < 1 || !finite(r.startedAt) || !finite(r.qaOffset) || !integer(r.seed) || !integer(r.rng) || !integer(r.seq) || !obj(r.player) || !obj(r.custody) || !obj(r.entities) || !obj(r.clock)) return null;
   if (r.sourceLayoutVersion !== undefined && r.sourceLayoutVersion !== 2 && r.sourceLayoutVersion !== 3) return null;
   const layout = r.layoutId || 'shipping'; if (typeof layout !== 'string' || !hasLayout(layout)) return null;
+  // G1A: resolve the window world under the placement rules this run was created with (3 = legacy scrap/wreck, 4 = industrial salvage).
+  // The digest check below is unchanged and still fails closed; rules 4 exists only for Veyra U=0.5 layouts.
+  if (isVeyra05Layout(layout)) { if (r.sourceLayoutVersion === 3 && obj(r.sourceMap) && r.sourceMap.rules !== 3 && r.sourceMap.rules !== 4) return null; syncVeyraPlacement(r); }
   const world = getWorld(layout), fingerprint = mapDigest(world);
   // Snapshots written before mapDigest existed are accepted only against the
   // exact built-in geometry which shipped with PR #44, never an imported map.
@@ -72,7 +103,7 @@ export function validate(raw: any): GameState | null {
   const activeSources = veyraActiveLayer ? veyraActiveLayer.sources : world.sourceV3;
   const activeStatics = veyraActiveLayer ? veyraActiveLayer.statics : world.statics;
   if (r.sourceLayoutVersion === 3) {
-    const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || m.rules !== 3 || m.seed !== world.economyMap.seed || m.digest !== expectedSourceDigest) return null;
+    const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || (m.rules !== 3 && !(m.rules === 4 && isVeyra05Layout(layout))) || m.seed !== world.economyMap.seed || m.digest !== expectedSourceDigest) return null;
     if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) return null;
     if (world.veyra && JSON.stringify(m.veyra)!==JSON.stringify(world.veyra)) return null;
     if (world.randomSpawn && (!obj(r.spawnChoice) || r.spawnChoice.contract!=='seeded-geographic-v1' || !Number.isInteger(r.spawnChoice.x) || !Number.isInteger(r.spawnChoice.y) || r.spawnChoice.x<1 || r.spawnChoice.y<1 || r.spawnChoice.x>=199 || r.spawnChoice.y>=199)) return null;
@@ -89,6 +120,108 @@ export function validate(raw: any): GameState | null {
   // that studied the canister as a specimen). Knowledge is pruned explicitly and the run is
   // flagged so the player is told what happened; a queued job or blueprint for the same
   // formula stays resolvable through the frozen migration ledger and is NOT touched here.
+  // ARENA 1 — FINAL ITEM SET v2 migration (Bible §0.2a, roster rule 6). Runs BEFORE structural validation, on every
+  // custody container of the run (pack, equipment, chests, station slots, drops, bags, vehicles — they all live in
+  // `run.custody`), and is idempotent: a second load finds nothing to convert.
+  //   * a stack of a LIVE-retired id becomes its 1:1 successor IN PLACE — same uid, same count, same slot. Nothing is
+  //     deleted and nothing is minted, so the conversion cannot be farmed (the old id can no longer be obtained).
+  //   * durability carries over as the same FRACTION of the successor's maximum; a stale charge/meta the successor
+  //     does not use is dropped. An over-full stack is clamped to the successor's stack size only if the successor is
+  //     smaller (never the case for the seven ids of this revision; pinned by tests/final-item-set.test.ts).
+  //   * a blueprint naming a retired formula is re-pointed to the successor formula when one exists.
+  //   * learned / studied knowledge of a retired formula is replaced by the successor (or pruned below).
+  //   * queued jobs are NOT touched: they resolve through the frozen `@3` ledger and pay out through `mkStack`,
+  //     which mints the successor.
+  // A save stamped with a NEWER item set than this build fails closed.
+  if (r.itemSetVersion !== undefined && (!integer(r.itemSetVersion) || r.itemSetVersion < 1 || r.itemSetVersion > ITEM_SET_VERSION)) return null;
+  // Item set v3: the equipment container grew from head/body/back to head/body/back/legs/feet. Old slots keep their index.
+  if (obj(r.custody) && obj(r.custody.eq) && Array.isArray(r.custody.eq.slots) && r.custody.eq.slots.length === 3) r.custody.eq.slots.push(null, null);
+  // G1B source-layout migration (batch 2 → 3). A run is brought up to the current layout by ADDING the sources it has
+  // never had, closed and unrolled. Nothing it already has is touched (state, cycle, roll, contents, restock time), so
+  // the migration cannot re-roll or duplicate loot, and it runs once: the run is stamped. Three recognized schemas:
+  //   (a) unstamped, holding exactly the 130 round-1 chests → add the missing sources, stamp to the current revision;
+  //   (b) stamped layout=2, holding exactly the 557 Batch-2 chests (130 base + 427 frozen ecology) → add the 172 new
+  //       Batch-3 chests, stamp to layout=3. The frozen Batch-2 ecology roster is the recognized old schema: every id
+  //       and tile a Batch-2 save carries is kept verbatim, never moved or deleted;
+  //   (c) already the current revision → nothing to do.
+  // Anything else (foreign ids, a partial stamped set, an unknown / future revision) is left for validation to reject.
+  if (obj(r.g1b) && obj(r.g1b.far) && obj(r.entities) && obj(r.custody) && r.g1b.layout !== undefined && r.g1b.layout < G1B_LAYOUT_REVISION) {
+    try {
+      const had = new Set<string>(); for (const e of [...Object.values(r.entities), ...Object.values(r.g1b.far)] as any[]) if (obj(e) && obj(e.g1b) && typeof e.g1b.sid === 'string') { if (had.has(e.g1b.sid)) return null; had.add(e.g1b.sid); }
+      if (r.g1b.layout === 2) {
+        const batch2 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_BATCH2_ECOLOGY.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+        if (had.size !== batch2.length || !batch2.every(id => had.has(id))) return null;   // a Batch-2 save must carry exactly the recognized 557+6 set
+        g1bEnsureSources(r);
+      } else if (r.g1b.layout === 1) {
+        const round1 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+        if (had.size !== round1.length || !round1.every(id => had.has(id))) return null;
+        g1bEnsureSources(r);
+      } else if (r.g1b.layout === 3) {
+        // Batch-3 layout: exactly the 130 base + 599 Batch-3 ecology + fixtures. P2 batch-3.2 adds the
+        // justified physical chests; every id the Batch-3 save carries is kept verbatim.
+        const batch3 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_BATCH3_ECOLOGY.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+        if (had.size !== batch3.length || !batch3.every(id => had.has(id))) return null;
+        g1bEnsureSources(r);
+      } else return null;                                                                          // unknown / forged / future revision
+    } catch { return null; }
+  }
+  // unstamped save (written before the layout stamp existed): recognised by holding exactly the round-1 set
+  if (obj(r.g1b) && r.g1b.layout === undefined && obj(r.g1b.far) && obj(r.entities) && obj(r.custody)) {
+    try {
+      const had = new Set<string>(); for (const e of [...Object.values(r.entities), ...Object.values(r.g1b.far)] as any[]) if (obj(e) && obj(e.g1b) && typeof e.g1b.sid === 'string') { if (had.has(e.g1b.sid)) return null; had.add(e.g1b.sid); }
+      const round1 = [...G1B_BASE_SOURCE_SITES.map(q => q.id), ...G1B_FIXTURES.map(q => q.id)];
+      if (had.size === G1B_SOURCE_SITES.length + G1B_FIXTURES.length) r.g1b.layout = G1B_LAYOUT_REVISION;      // written by this build before the stamp existed
+      else if (had.size === round1.length && round1.every(id => had.has(id))) g1bEnsureSources(r);
+      else return null;
+    } catch { return null; }
+  }
+  // G1B — Creator Core V2 migration (idempotent, in place, same UID). A Core minted before V2 owned all three skills
+  // and had no durability: it becomes Lv3 at full durability so nothing the player held is lost. V2 has no magazine, so
+  // the energy loaded into it is converted ONCE into `owed` — the exact items it was loaded from (1 Basic Energy per
+  // LMB charge, 1 Refined Energy per Q charge, 1 Refined Energy + 1 Essence per E charge) — and `reserves` is removed.
+  // The engine hands `owed` back into the Core's own container as room allows; a cast never draws on it.
+  if (obj(r.custody)) for (const c of Object.values(r.custody) as any[]) {
+    if (!obj(c) || !Array.isArray(c.slots)) continue;
+    for (const st of c.slots) {
+      if (!obj(st) || typeof st.key !== 'string' || !has(ITEMS, st.key) || !ITEMS[st.key].creatorCore) continue;
+      if (st.lvl === undefined) { st.lvl = 3; if (st.dur === undefined) st.dur = CORE_V2.maxDur; }
+      // (also a save written by the first V2 build, which still kept the bank beside a level)
+      if (obj(st.reserves)) {
+        // a bank no real Core could have held (old capacities 40 / 12 / 4) is a forged save, not energy to hand out
+        if (Object.keys(st.reserves).sort().join(',') !== 'basic,refined,signature' || (['basic', 'refined', 'signature'] as const).some(k => !integer(st.reserves[k]) || st.reserves[k] < 0 || st.reserves[k] > ({ basic: 40, refined: 12, signature: 4 })[k])) return null;
+        const n = (k: string) => (integer(st.reserves[k]) && st.reserves[k] > 0 ? st.reserves[k] : 0) as number;
+        const owed: Record<string, number> = {}; const add = (k: string, q: number) => { if (q > 0) owed[k] = (owed[k] ?? 0) + q; };
+        add('energy_basic', n('basic')); add('energy_refined', n('refined') + n('signature')); add(`essence_${ITEMS[st.key].essence}`, n('signature'));
+        delete st.reserves; if (Object.keys(owed).length) st.owed = owed;
+      }
+    }
+  }
+  let retiredItems = 0;
+  if (obj(r.custody)) for (const c of Object.values(r.custody) as any[]) {
+    if (!obj(c) || !Array.isArray(c.slots)) continue;
+    for (const st of c.slots) {
+      if (!obj(st) || typeof st.key !== 'string') continue;
+      if (st.key === 'blueprint' && typeof st.meta === 'string' && Object.prototype.hasOwnProperty.call(RECIPE_SUCCESSOR, st.meta) && liveRecipeId(st.meta)) { st.meta = liveRecipeId(st.meta); retiredItems++; continue; }
+      if (!isRetiredLive(st.key) || !has(ITEMS, st.key)) continue;
+      const from = ITEMS[st.key], toKey = liveItemId(st.key), to = ITEMS[toKey];
+      if (!to) return null;
+      if (to.dur) st.dur = from.dur && finite(st.dur) ? Math.max(1, Math.min(to.dur, Math.round(st.dur / from.dur * to.dur))) : to.dur; else delete st.dur;
+      if (!to.charge && !isAccessCard(toKey)) delete st.charge;
+      delete st.meta;
+      // Value-preserving: the count is multiplied where one successor is worth less (final-item-set `per`). A converted
+      // stack that could not fit its successor's stack size would be a silent loss, so that fails closed instead.
+      if (!integer(st.qty) || st.qty < 1) return null;
+      st.qty = Math.ceil(st.qty * liveItemPer(st.key)); if (st.qty > to.max) return null;
+      st.key = toKey; retiredItems++;
+    }
+  }
+  if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) for (const list of [r.knowledge.recipes, r.knowledge.studied]) {
+    if (!stringArray(list)) continue;
+    for (const k of [...list]) { const live = liveRecipeId(k); if (live && live !== k && has(RECIPES, live) && !list.includes(live)) list.push(live); }
+  }
+  if (retiredItems > 0) r.migrated = { ...(obj(r.migrated) ? r.migrated : {}), retiredRecipes: integer(r.migrated?.retiredRecipes) ? r.migrated.retiredRecipes : 0, retiredItems: (integer(r.migrated?.retiredItems) ? r.migrated.retiredItems : 0) + retiredItems, /* the conversion is new information: re-arm the one-shot receipt */ retiredNoticeShown: undefined, retiredItemsUnseen: retiredItems };
+  if (retiredItems > 0) delete r.migrated.retiredNoticeShown;
+  r.itemSetVersion = ITEM_SET_VERSION;
   let retiredKnowledge = 0;
   if (obj(r.knowledge) && stringArray(r.knowledge.recipes)) {
     const live = r.knowledge.recipes.filter((k: string) => !RETIRED_RECIPES.includes(k));
@@ -101,8 +234,8 @@ export function validate(raw: any): GameState | null {
   }
   // PA1 R1 ledgers are additive: absent on an older run, validated when present.
   // The counter is durable evidence; `retiredNoticeShown` is the one-shot player notice.
-  if (r.migrated !== undefined && (!obj(r.migrated) || !integer(r.migrated.retiredRecipes) ||
-    (r.migrated.retiredNoticeShown !== undefined && r.migrated.retiredNoticeShown !== true))) return null;
+  if (r.migrated !== undefined && (!obj(r.migrated) || !integer(r.migrated.retiredRecipes) || (r.migrated.retiredItems !== undefined && (!integer(r.migrated.retiredItems) || r.migrated.retiredItems < 0)) ||
+    (r.migrated.retiredNoticeShown !== undefined && r.migrated.retiredNoticeShown !== true) || (r.migrated.retiredItemsUnseen !== undefined && (!integer(r.migrated.retiredItemsUnseen) || r.migrated.retiredItemsUnseen < 0)))) return null;
   if (r.tech !== undefined && (!obj(r.tech) || !stringArray(r.tech.families) || new Set(r.tech.families).size !== r.tech.families.length ||
     !r.tech.families.every((f: string) => !!RESEARCH_FAMILIES[f]) || !integer(r.tech.recipeRev) || r.tech.recipeRev < 1 || r.tech.recipeRev > RECIPE_REVISION)) return null;
   if (r.intel !== undefined && !validIntel(r.intel)) return null;
@@ -120,7 +253,7 @@ export function validate(raw: any): GameState | null {
     const def=SOURCES[st.burnt ? 'deadtree' : activeSources[i]!];
     if (!def || !finite(st.stock) || !Number.isInteger(st.stock) || st.stock<0 || st.stock>def.stock || !finite(st.hp) || st.hp<0 || st.hp>def.hp || (st.burnt!==undefined && typeof st.burnt!=='boolean') || (st.regrowAt!==undefined && (!finite(st.regrowAt)||st.regrowAt<0)) || ((st.regrowFrom!==undefined || st.regrowAcc!==undefined || st.regrowDoneAt!==undefined) && (!def.regrow || (st.regrowFrom!==undefined && (!finite(st.regrowFrom)||st.regrowFrom<0)) || (st.regrowAcc!==undefined && (!finite(st.regrowAcc)||st.regrowAcc<0)) || (st.regrowDoneAt!==undefined && !finite(st.regrowDoneAt)))) || (st.fire!==undefined && (!finite(st.fire)||st.fire<0)) || (st.fireSpreadAt!==undefined && (!finite(st.fireSpreadAt)||st.fireSpreadAt<0 || !st.fire || st.fireSpreadAt>st.fire)) || (st.fireDepth!==undefined && (!Number.isInteger(st.fireDepth)||st.fireDepth<0||st.fireDepth>BAL.fire.maxSpreadDepth))) return null;
   }
-  if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || (r.custody.inv.slots?.length !== 24 && !(testMode && r.qaUsed === true && r.custody.inv.slots?.length === 128)) || r.custody.eq.slots?.length !== 3) return null;
+  if (!r.custody.inv || !r.custody.eq || r.custody.inv.kind !== 'inv' || r.custody.eq.kind !== 'eq' || (r.custody.inv.slots?.length !== 24 && !(testMode && r.qaUsed === true && r.custody.inv.slots?.length === 128)) || r.custody.eq.slots?.length !== EQ_SLOTS.length) return null;
   if (!Number.isInteger(r.player.active) || r.player.active < 0 || r.player.active > 7 || !['vx','vy','dir','aim','invuln','deadT','stepAcc','lastTraceX','lastTraceY'].every(k => finite(r.player[k])) || !['gather','combat','craft','survival'].every(k => finite(r.player.skills[k]))) return null;
   const beforeNext = (id: string, re: RegExp) => { const m = re.exec(id); return !m || parseInt(m[1], 36) < r.nextId; };
   // Versioned Elder schema validation & deterministic v1 -> v2 migration on Veyra saves (fails closed on unknown schema version or unknown Elder key).
@@ -263,24 +396,17 @@ export function validate(raw: any): GameState | null {
   if (r.dragonDive !== undefined && (!obj(r.dragonDive) || !Array.isArray(r.dragonDive.ids) || new Set(r.dragonDive.ids).size !== r.dragonDive.ids.length || r.dragonDive.ids.some((id: any) => typeof id !== 'string' || !id) || !finite(r.dragonDive.x) || !finite(r.dragonDive.y) || !finite(r.dragonDive.left) || r.dragonDive.left <= 0 || r.dragonDive.left > BAL.creatorCoreDragon.collectMs || (r.dragonDive.route !== undefined && (!Array.isArray(r.dragonDive.route) || r.dragonDive.route.length>500 || r.dragonDive.route.length!==r.dragonDive.ids.length || r.dragonDive.route.some((q:any,i:number)=>!obj(q)||q.id!==r.dragonDive.ids[i]||!finite(q.x)||!finite(q.y)) || !Number.isInteger(r.dragonDive.index) || r.dragonDive.index<0 || r.dragonDive.index>r.dragonDive.route.length || !finite(r.dragonDive.dragonX) || !finite(r.dragonDive.dragonY) || !['traverse','gather','dive'].includes(r.dragonDive.phase) || !Array.isArray(r.dragonDive.hitIds) || new Set(r.dragonDive.hitIds).size!==r.dragonDive.hitIds.length || r.dragonDive.hitIds.some((id:any)=>!r.dragonDive.ids.includes(id)))))) return null;
   if (r.natureTrees !== undefined && (!Array.isArray(r.natureTrees) || r.natureTrees.length>100 || new Set(r.natureTrees.map((q:any)=>`${q.tx},${q.ty}`)).size!==r.natureTrees.length || r.natureTrees.some((q:any)=>!obj(q)||!integer(q.tx)||!integer(q.ty)||q.tx<0||q.ty<0||q.tx>=WW||q.ty>=WW||!finite(q.until)||q.until<=0))) return null;
   if(r.spiritTransit!==undefined && (!obj(r.spiritTransit)||!finite(r.spiritTransit.x)||!finite(r.spiritTransit.y)||r.spiritTransit.x<TILE||r.spiritTransit.y<TILE||r.spiritTransit.x>=(WW-1)*TILE||r.spiritTransit.y>=(WW-1)*TILE||!finite(r.spiritTransit.arriveAt)||r.spiritTransit.arriveAt<r.startedAt-r.qaOffset||r.spiritTransit.arriveAt>r.clock.lastSimAt+BAL.creatorCoreDemon.teleportMs||typeof r.spiritTransit.uid!=='string'||!/^s[0-9a-z]+$/.test(r.spiritTransit.uid)||!beforeNext(r.spiritTransit.uid,/^s([a-z0-9]+)$/)))return null;
-  const uids = new Set<string>(), ownedContainers = new Set<string>(['inv', 'eq']);
-  const stack = (s: any): s is Stack => {
-    if (!obj(s) || typeof s.uid !== 'string' || !s.uid || !beforeNext(s.uid, /^s([a-z0-9]+)$/) || uids.has(s.uid) || typeof s.key !== 'string' || !has(ITEMS, s.key) || !integer(s.qty) || s.qty < 1 || s.qty > ITEMS[s.key].max) return false;
-    if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return false;
-    if(s.key==='keycard' && s.charge!==undefined && (!integer(s.charge)||s.charge<1||s.charge>100||s.qty!==1))return false;
-    if(s.key==='motorbike_kit' && (!finite(s.dur)||s.dur<0||s.dur>BAL.motorbike.maxHp))return false;
-    if (ITEMS[s.key].creatorCore ? (!obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k])) : s.reserves !== undefined) return false;
-    if ((s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) || (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) || (s.meta !== undefined && typeof s.meta !== 'string') || (s.key === 'blueprint' && (!s.meta || (!has(RECIPES, s.meta) && !hasLegacyDefinition(s.meta))))) return false;
-    uids.add(s.uid); return true;
-  };
+  const uids = new Set<string>(), ownedContainers = new Set<string>(['inv', 'eq']); const g1bSeen = new Set<string>();
+  const stack = (s: any): s is Stack => stackInvariant(s, uids, beforeNext) === null;
+
   for (const [id, c] of Object.entries(r.custody) as [string, any][]) {
     if (!obj(c) || c.id !== id || (id !== 'inv' && id !== 'eq' && !beforeNext(id, /^c([a-z0-9]+)$/)) || !['inv','eq','drop','bag','cart','vehicle','loot','cash','chest','fuel','out','rest'].includes(c.kind) || !Array.isArray(c.slots)) return null;
-    for (let i = 0; i < c.slots.length; i++) { const s = c.slots[i]; if (s !== null && (!stack(s) || (c.kind === 'eq' && ITEMS[s.key].slot !== ['head','body','back'][i]) || (c.kind === 'fuel' && !ITEMS[s.key].fuel))) return null; }
+    for (let i = 0; i < c.slots.length; i++) { const s = c.slots[i]; if (s !== null && (!stack(s) || (c.kind === 'eq' && ITEMS[s.key].slot !== EQ_SLOTS[i]) || (c.kind === 'fuel' && !ITEMS[s.key].fuel))) return null; }
   }
   const jobIds = new Set<string>();
   const jobs = (queue: any, station: string): boolean => Array.isArray(queue) && queue.every((j: any) => {
     if (!obj(j) || typeof j.id !== 'string' || !j.id || jobIds.has(j.id) || !beforeNext(j.id, /^j([a-z0-9]+)$/) || typeof j.recipe !== 'string') return false;
-    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'||j.recipe==='X:recover-v3'||COMPONENT_RECIPES.includes(j.recipe)){
+    if(j.recipe==='X:recover-v1'||j.recipe==='X:recover-v2'||j.recipe==='X:recover-v3'||j.recipe==='X:recover-v4'||COMPONENT_RECIPES.includes(j.recipe)){
       if(station!=='recycler'||!finite(j.left)||!finite(j.total)||j.left<0||j.left>j.total||!Array.isArray(j.reserved)||j.reserved.length!==1)return false;
       const plan=recoveryPlanFor(j.reserved[0],j.recipe);if(!plan||plan.recipe!==j.recipe||j.total!==plan.total||!j.reserved.every(stack))return false;
       jobIds.add(j.id);return true;
@@ -342,6 +468,8 @@ export function validate(raw: any): GameState | null {
       if (!raw.profile.profileReceipts.includes(`spend:${r.id}:${e.parcel.purchaseId}:${VENDOR_SECURED[e.parcel.item].price}`)) return null;
     }
     if (!['drop','struct','bag','cart','vehicle','loot','cash','vendor','evac','door','gen','recycler','airdrop'].includes(e.kind)) return null;
+    if (e.g1b !== undefined && !g1bEntityOk(r, e, false, g1bSeen)) return null;
+    if (e.manual !== undefined && (e.manual !== true || e.kind !== 'drop')) return null;
     if (e.kind === 'struct' && !has(STRUCTS, e.type)) return null;
     if(e.kind==='airdrop'){
       const a=e.airdrop,d=r.airdrops;
@@ -380,6 +508,9 @@ export function validate(raw: any): GameState | null {
     }
     if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!obj(e.bearTrap)||e.bearTrap.version!=='trap-v1'||!bearTrapStateValid(e.bearTrap.state,e.bearTrap.uses)||(e.bearTrap.snapAt!==undefined&&!(Number.isSafeInteger(e.bearTrap.snapAt)&&e.bearTrap.snapAt>=0))))return null;
     if(e.type==='bear_trap'&&e.bearTrap===undefined)return null;
+    // Item set v3: a ladder record only on a ladder, a unit direction, and a reach its type allows; a fitted lock module names a real host door.
+    if(e.ladder!==undefined&&(!LADDER_SPAN[e.type]||!obj(e.ladder)||!Array.isArray(e.ladder.dir)||e.ladder.dir.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===e.ladder.dir[0]&&v[1]===e.ladder.dir[1])||!integer(e.ladder.len)||e.ladder.len<1||e.ladder.len>LADDER_SPAN[e.type]))return null;
+    if(e.poweredHost!==undefined&&(e.type!=='door_powered'||!POWERED_DOOR_HOSTS.includes(e.poweredHost)))return null;
     if(e.irSensor!==undefined&&(e.type!=='ir_sensor'||!obj(e.irSensor)||e.irSensor.version!=='ir-v1'||typeof e.irSensor.enabled!=='boolean'))return null;
     if(e.type==='ir_sensor'&&e.irSensor===undefined)return null;
     if(e.wireSwitch!==undefined&&e.type!=='power_switch'||e.electricDoor!==undefined&&e.type!=='door_powered')return null;
@@ -390,12 +521,12 @@ export function validate(raw: any): GameState | null {
     if (e.turret !== undefined && (!obj(e.turret) || e.type !== 'arrow_turret' || typeof e.turret.enabled !== 'boolean' || !finite(e.turret.cooldown) || e.turret.cooldown < 0 || !finite(e.turret.angle) || (e.turret.tracking !== undefined && typeof e.turret.tracking !== 'boolean') || (e.turret.generatorId !== undefined && (typeof e.turret.generatorId !== 'string' || !e.turret.generatorId)) || !e.c)) return null;
     if (e.type === 'base_generator' && !e.basePower || e.type === 'arrow_turret' && !e.turret) return null;
     if(e.garden?.coldFrame !== undefined && (e.type !== 'garden' || e.garden.coldFrame !== true)) return null;
-    if(e.farm !== undefined && (!obj(e.farm) || e.kind!=='struct' || e.type!=='farm_controller' || !e.c || r.custody[e.c]?.slots.length!==3 || typeof e.farm.enabled!=='boolean' || !['crop','herb'].includes(e.farm.crop) || !finite(e.farm.energy) || e.farm.energy<0 || e.farm.energy>90000 || ['gardenId','barrelId','chestId'].some(k=>e.farm[k]!==undefined && (typeof e.farm[k]!=='string'||!e.farm[k])) || (e.farm.lastCode!==undefined && (typeof e.farm.lastCode!=='string' || e.farm.lastCode.length>24))))return null;
+    if(e.farm !== undefined && (!obj(e.farm) || e.kind!=='struct' || e.type!=='farm_controller' || !e.c || r.custody[e.c]?.slots.length!==3 || typeof e.farm.enabled!=='boolean' || !['crop','herb','berry'].includes(e.farm.crop) || !finite(e.farm.energy) || e.farm.energy<0 || e.farm.energy>90000 || ['gardenId','barrelId','chestId'].some(k=>e.farm[k]!==undefined && (typeof e.farm[k]!=='string'||!e.farm[k])) || (e.farm.lastCode!==undefined && (typeof e.farm.lastCode!=='string' || e.farm.lastCode.length>24))))return null;
     if(e.type==='farm_controller' && !e.farm)return null;
     if (e.station?.upgrade !== undefined && (e.type !== 'furnace' || e.station.upgrade !== 'kiln_lining')) return null;
     if (e.type === 'refinery' && (e.kind !== 'struct' || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.refinery.hp || !e.station || e.station.level !== undefined)) return null;
     // B05-R oil pump: a pump must stand on a registered test-fixture oil source at its own tile; stock may be 0 (depleted) but never negative.
-    if (e.type === 'oil_pump') { const src = r.oilSources?.[`oil:${e.tx}:${e.ty}`]; if (e.kind !== 'struct' || !e.station || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.oil_pump.hp || !src || src.authority !== 'test-fixture-v1' || src.tx !== e.tx || src.ty !== e.ty || !integer(src.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; }
+    if (e.type === 'oil_pump') { const src = r.oilSources?.[`oil:${e.tx}:${e.ty}`]; if (e.kind !== 'struct' || !e.station || !finite(e.hp) || e.hp < 0 || e.hp > STRUCTS.oil_pump.hp || !src || !oilAuthorityOk(r, src.authority) || src.tx !== e.tx || src.ty !== e.ty || !integer(src.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; }
     // Identity binds the station type: a refinery cannot be emptied and relabeled, and a non-refinery cannot claim refinery identity.
     if ((e.identity !== undefined && e.identity !== 'refinery-v1') || (e.identity === 'refinery-v1' && e.type !== 'refinery') || (e.type === 'refinery' && e.identity !== 'refinery-v1')) return null;
     if (e.station?.level !== undefined && (e.type !== 'workbench' || ![1, 2, 3].includes(e.station.level))) return null;
@@ -410,8 +541,11 @@ export function validate(raw: any): GameState | null {
   const allValidatedEntities = [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})] as any[];
   for(const g of allValidatedEntities) if(g.basePower&&g.basePower.network!=='wire-v1'){const links=allValidatedEntities.filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
   // B05-R oil sources: registry keyed by tile; only the labelled test-fixture authority is accepted (production oil sites are not authorized).
-  if (r.oilSources !== undefined && r.oilTestFixture !== true) return null;   // domain separation: fixture sources need the fixture marker
-  if (r.oilSources !== undefined) { if (!obj(r.oilSources)) return null; for (const [key, src] of Object.entries(r.oilSources) as any[]) { if (key !== `oil:${src?.tx}:${src?.ty}` || !integer(src?.tx) || !integer(src?.ty) || src?.authority !== 'test-fixture-v1' || !integer(src?.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; } }
+  // domain separation: a fixture row needs the fixture marker; a seep row needs a Veyra run and a ledger row at the same global tile that never holds less than the live row (a pump only draws down)
+  if (r.oilSeeps !== undefined) { if (!obj(r.oilSeeps) || !veyraRun(r)) return null; for (const [key, row] of Object.entries(r.oilSeeps) as any[]) { if (!obj(row) || !integer(row.gx) || !integer(row.gy) || key !== Math.floor(row.gx / SEEP_CELL) + ':' + Math.floor(row.gy / SEEP_CELL) || !integer(row.stock) || row.stock < 0 || row.stock > BAL.oilPumpV1.seepStock) return null; } }
+  if (r.oilSeepWindow !== undefined && (typeof r.oilSeepWindow !== 'string' || !/^-?\d+,-?\d+$/.test(r.oilSeepWindow) || !veyraRun(r))) return null;
+  if (r.oilSources !== undefined && obj(r.oilSources)) { for (const src of Object.values(r.oilSources) as any[]) { if (src?.authority !== OIL_SEEP_AUTHORITY) continue; if (!r.oilSeepWindow || !r.oilSeeps) return null; const [sox, soy] = r.oilSeepWindow.split(',').map(Number); const gx = sox + src.tx, gy = soy + src.ty; const row = r.oilSeeps[Math.floor(gx / SEEP_CELL) + ':' + Math.floor(gy / SEEP_CELL)]; if (!row || row.gx !== gx || row.gy !== gy || src.stock > row.stock) return null; } }
+  if (r.oilSources !== undefined) { if (!obj(r.oilSources)) return null; for (const [key, src] of Object.entries(r.oilSources) as any[]) { if (key !== `oil:${src?.tx}:${src?.ty}` || !integer(src?.tx) || !integer(src?.ty) || !oilAuthorityOk(r, src?.authority) || !integer(src?.stock) || src.stock < 0 || src.stock > BAL.oilPumpV1.maxSourceStock) return null; } }
   if (r.wreckEconomy !== undefined && r.wreckEconomy !== 'direct-v1' && r.wreckEconomy !== 'recycler-v1') return null;
   if (r.wreckEconomy === 'recycler-v1' && !hasAuthorizedRecycler(r)) return null;
   // A retired site must be a real authored public loot site and cannot also
@@ -421,6 +555,7 @@ export function validate(raw: any): GameState | null {
     for (const [oid, oe] of Object.entries(r.veyraOffscreenEntities) as [string, any][]) {
       if (!obj(oe) || oe.id !== oid || r.entities[oid] || !beforeNext(oid, /^(?:cart|[ebd])([a-z0-9]+)$/) || typeof oe.kind !== 'string' || !finite(oe.x) || !finite(oe.y)) return null;
       if (oe.kind === 'struct' && !has(STRUCTS, oe.type)) return null;
+      if (oe.g1b !== undefined) return null; // G1B objects live in r.g1b.far, never in the structure table
       if (oe.kind === 'recycler') {
         if (webRecyclerSite(world, r.layoutId) || oe.tx !== VEYRA_RECYCLER_SITE.tx || oe.ty !== VEYRA_RECYCLER_SITE.ty || oe.x !== VEYRA_RECYCLER_SITE.tx * 16 + 8 || oe.y !== VEYRA_RECYCLER_SITE.ty * 16 + 8 || oe.poi !== 'factory' || oe.type !== undefined || !obj(oe.station) || !finite(oe.station.burn) || oe.station.burn < 0 || r.custody[oe.station.fuelC]?.kind !== 'fuel' || r.custody[oe.station.outC]?.kind !== 'out' || !jobs(oe.station.queue, 'recycler') || oe.station.queue?.length > 1) return null;
       }
@@ -436,8 +571,8 @@ export function validate(raw: any): GameState | null {
       if (oe.type === 'base_generator' && !oe.basePower || oe.type === 'arrow_turret' && !oe.turret) return null;
       if (oe.industrial !== undefined && (!obj(oe.industrial) || oe.type !== 'workbench' || !oe.station || typeof oe.industrial.enabled !== 'boolean' || (oe.industrial.generatorId !== undefined && (typeof oe.industrial.generatorId !== 'string' || !oe.industrial.generatorId)))) return null;
       if (oe.turret !== undefined && (!obj(oe.turret) || oe.type !== 'arrow_turret' || typeof oe.turret.enabled !== 'boolean' || !finite(oe.turret.cooldown) || oe.turret.cooldown < 0 || !finite(oe.turret.angle) || (oe.turret.tracking !== undefined && typeof oe.turret.tracking !== 'boolean') || (oe.turret.generatorId !== undefined && (typeof oe.turret.generatorId !== 'string' || !oe.turret.generatorId)) || !oe.c)) return null;
-      if (oe.garden !== undefined && (oe.type !== 'garden' || !obj(oe.garden) || (oe.garden.crop !== null && !['crop', 'herb'].includes(oe.garden.crop)) || !finite(oe.garden.growth) || oe.garden.growth < 0 || oe.garden.growth > 1 || !finite(oe.garden.water) || oe.garden.water < 0 || oe.garden.water > 3 || (oe.garden.coldFrame !== undefined && oe.garden.coldFrame !== true))) return null;
-      if (oe.farm !== undefined && (!obj(oe.farm) || oe.kind !== 'struct' || oe.type !== 'farm_controller' || !oe.c || r.custody[oe.c]?.slots.length !== 3 || typeof oe.farm.enabled !== 'boolean' || !['crop', 'herb'].includes(oe.farm.crop) || !finite(oe.farm.energy) || oe.farm.energy < 0 || oe.farm.energy > 90000 || ['gardenId', 'barrelId', 'chestId'].some(k => oe.farm[k] !== undefined && (typeof oe.farm[k] !== 'string' || !oe.farm[k])) || (oe.farm.lastCode !== undefined && (typeof oe.farm.lastCode !== 'string' || oe.farm.lastCode.length > 24)))) return null;
+      if (oe.garden !== undefined && (oe.type !== 'garden' || !obj(oe.garden) || (oe.garden.crop !== null && !['crop', 'herb', 'berry'].includes(oe.garden.crop)) || !finite(oe.garden.growth) || oe.garden.growth < 0 || oe.garden.growth > 1 || !finite(oe.garden.water) || oe.garden.water < 0 || oe.garden.water > 3 || (oe.garden.coldFrame !== undefined && oe.garden.coldFrame !== true))) return null;
+      if (oe.farm !== undefined && (!obj(oe.farm) || oe.kind !== 'struct' || oe.type !== 'farm_controller' || !oe.c || r.custody[oe.c]?.slots.length !== 3 || typeof oe.farm.enabled !== 'boolean' || !['crop', 'herb', 'berry'].includes(oe.farm.crop) || !finite(oe.farm.energy) || oe.farm.energy < 0 || oe.farm.energy > 90000 || ['gardenId', 'barrelId', 'chestId'].some(k => oe.farm[k] !== undefined && (typeof oe.farm[k] !== 'string' || !oe.farm[k])) || (oe.farm.lastCode !== undefined && (typeof oe.farm.lastCode !== 'string' || oe.farm.lastCode.length > 24)))) return null;
       if (oe.type === 'farm_controller' && !oe.farm) return null;
       const orefs = [oe.c, oe.station?.fuelC, oe.station?.outC].filter((v: any) => v !== undefined);
       for (const cid of orefs) {
@@ -600,9 +735,50 @@ export function validate(raw: any): GameState | null {
       } else {
         const cycle=r.lootEcology?.cycles[lootSiteIndex(site)] || 0;
         const base=r.lootEcology && lootClass(site) && cycle>0 ? renewableLoot(site) : site.loot || [];
-        const available = new Map<string,number>(); for(const [k,q] of [...base,...lootRoll(r,site,cycle)]) available.set(k,(available.get(k)||0)+q); const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
+        const available = new Map<string,number>(); /* Item set v2: authored loot tables may still NAME a retired id (their signatures are digest-pinned); what the crate physically holds is the successor, so the allowance is counted in live ids. */ const liveLootKey=(k:string)=>k.startsWith('blueprint:')?`blueprint:${liveRecipeId(k.slice(10))??k.slice(10)}`:liveItemId(k); for(const [k0,q] of [...base,...lootRoll(r,site,cycle)]) { const k=liveLootKey(k0); available.set(k,(available.get(k)||0)+Math.ceil(q*liveItemPer(k0))); } const unique=r.creatorLootV1 && !r.renewedLootSites?.includes(site.ty*WW+site.tx) && creatorLootV1(site);if(unique)available.set(unique,1);
         for(const stack of slots){if(!stack)continue;const key=stack.key==='blueprint'?`blueprint:${stack.meta}`:stack.key;const left=(available.get(key)||0)-stack.qty;if(left<0)return null;available.set(key,left);}
       }
+    }
+  }
+  // G1B: a run either carries the whole approved chest system (every source id exactly once) or none of it.
+  if (r.g1b !== undefined) {
+    if (r.g1b.layout !== undefined && (!integer(r.g1b.layout) || r.g1b.layout !== G1B_LAYOUT_REVISION)) return null;
+    if (!obj(r.g1b) || r.g1b.version !== G1B_VERSION || typeof r.g1b.rev !== 'string' || !veyraRun(r) || !obj(r.g1b.doors) || Object.entries(r.g1b.doors).some(([k, v]: [string, any]) => !G1B_GATE_BY_ID[k] || !obj(v) || !finite(v.closeAt))) return null;
+    if (!obj(r.g1b.far)) return null;
+    for (const [oid, oe] of Object.entries(r.g1b.far) as [string, any][]) {
+      if (!obj(oe) || oe.id !== oid || r.entities[oid] || r.veyraOffscreenEntities?.[oid] || !/^e[a-z0-9]+$/.test(oid) || !beforeNext(oid, /^e([a-z0-9]+)$/) || !finite(oe.x) || !finite(oe.y)) return null;
+      if (Object.keys(oe).some(k => !['id', 'kind', 'x', 'y', 'tx', 'ty', 'c', 'label', 'g1b', 'floor'].includes(k))) return null;
+      if (!g1bEntityOk(r, oe, true, g1bSeen)) return null;
+      if (typeof oe.c !== 'string' || !r.custody[oe.c] || ownedContainers.has(oe.c)) return null; ownedContainers.add(oe.c);
+    }
+    if (g1bSeen.size !== G1B_SOURCE_SITES.length + G1B_FIXTURES.length) return null;
+  } else if (g1bSeen.size) return null;
+  // HumanWorld: migrate + validate the authoritative human ledger on load.
+  if (r.humanWorld) {
+    const hw = r.humanWorld as any;
+    // P0.1 migration: a ledger seeded with lastResolvedAt=0 (or stale) is re-anchored to the
+    // run clock so the first tick after load never computes a catastrophic time delta.
+    if (!Number.isFinite(hw.lastResolvedAt) || hw.lastResolvedAt <= 0 || hw.lastResolvedAt > r.clock.lastSimAt) {
+      hw.lastResolvedAt = r.clock.lastSimAt;
+    }
+    // Schema validation: every human record must carry the required identity fields.
+    const seenUids = new Set<string>();
+    for (const h of Object.values(hw.people ?? {}) as any[]) {
+      if (!h || typeof h.actorId !== 'string' || !h.actorId || typeof h.sourceId !== 'string' || !h.sourceId) return null;
+      if (typeof h.inv?.packId !== 'string' || typeof h.inv?.cartId !== 'string') return null;
+      // Embedded equipment UIDs must be unique across the run (no duplicate claimant).
+      for (const slot of ['weapon', 'body', 'head', 'legs', 'feet'] as const) {
+        const st = h.equip?.[slot]; if (st && typeof st.uid === 'string' && st.uid) {
+          if (seenUids.has(st.uid)) return null; seenUids.add(st.uid);
+        }
+      }
+    }
+    // Human-owned custody: mark personal pack/cart + community store containers as owned.
+    for (const h of Object.values(hw.people ?? {}) as any[]) {
+      for (const c of [h?.inv?.packId, h?.inv?.cartId]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
+    }
+    for (const comm of Object.values(hw.communities ?? {}) as any[]) {
+      for (const c of [...(comm?.storeContainers ?? []), ...(comm?.foodStores ?? []), ...(comm?.homeBeds ?? [])]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
     }
   }
   if (Object.keys(r.custody).some(id => !ownedContainers.has(id))) return null;
@@ -692,6 +868,7 @@ export async function load(): Promise<LoadResult> {
   const m = migrate(selected.gs); const r = m.gs?.run;
   if (r && !r.wreckEconomy) r.wreckEconomy = wreckEconomy(r);
   if (r?.layoutId && isVeyra05Layout(r.layoutId)) {
+    syncVeyraPlacement(r);
     setActiveLayout(r.layoutId);
     const ww = getWindowWorld(r.layoutId);
     syncFloor(m.gs!, ww, ww.floors, markDirty);
@@ -725,8 +902,10 @@ export async function load(): Promise<LoadResult> {
   // Say it once per run, not on every boot: the flag is consumed here and persisted by the next save.
   const retiredNotice = !!r?.migrated?.retiredRecipes && !r.migrated.retiredNoticeShown;
   const retired = retiredNotice ? r.migrated!.retiredRecipes! : 0;
-  if (retiredNotice) r!.migrated = { ...r!.migrated, retiredNoticeShown: true };
-  const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : '', retired ? `Recipe revision: ${retired} retired Fuel Canister formula${retired === 1 ? ' was' : 's were'} removed from your known recipes. Anything already queued or written on paper for it was kept; canisters now come from refining real oil.` : ''].filter(Boolean);
+  // Item set v2 receipt: how many stacks were swapped for their successor on this load. Shown once, then cleared.
+  const swapped = r?.migrated?.retiredItemsUnseen || 0;
+  if (retiredNotice || swapped) { r!.migrated = { ...r!.migrated!, retiredNoticeShown: true }; delete r!.migrated.retiredItemsUnseen; }
+  const notes = [selected.bad.length ? 'A damaged save copy was quarantined; a valid copy was recovered, but it may be older.' : '', selected.legacyAlternate !== null ? 'An older save copy was preserved; the later same-run snapshot was continued.' : '', !idbReadable || !localReadable ? 'A browser storage copy could not be read and will not be overwritten this session.' : '', m.note || '', legacy ? 'Older queued jobs have no recorded inputs: finish them before cancellation or reclaim; destroyed jobs can be resumed from their recovery bag.' : '', retired ? `Recipe revision: ${retired} retired Fuel Canister formula${retired === 1 ? ' was' : 's were'} removed from your known recipes. Anything already queued or written on paper for it was kept; canisters now come from refining real oil.` : '', swapped ? `Item update: ${swapped} stack${swapped === 1 ? '' : 's'} of retired items ${swapped === 1 ? 'was' : 'were'} exchanged for the replacement (${RETIRED_ITEM_IDS.filter(k => liveItemId(k) !== k).map(k => `${ITEMS[k]?.name ?? k} → ${liveItemPer(k) > 1 ? liveItemPer(k) + ' ' : ''}${ITEMS[liveItemId(k)]?.name ?? liveItemId(k)}`).join(', ')}). Nothing was removed.` : ''].filter(Boolean);
   return { gs: m.gs, note: notes.join(' ') || undefined };
 }
 let writeTail: Promise<unknown> = Promise.resolve();
@@ -741,15 +920,44 @@ export interface SaveOutcome {
 let lastOutcome: SaveOutcome | null = null; const warnedSave = new Set<string>();
 export function lastSaveOutcome(): SaveOutcome | null { return lastOutcome; }
 /** Bounded classification of why a game state is not a valid save. Returns a class name, never values from the save. */
+/**
+ * The exact stack invariant `validate` enforces, as a reason string (null = the stack is well formed). Shared by
+ * `validate` and `diagnoseInvalidState` so a refused save names the precise rule that failed instead of returning a
+ * generic 'other' — e.g. a blueprint minted without a recipe meta, a Core with no durability, or a duplicate UID.
+ */
+export function stackInvariant(s: any, uids: Set<string>, beforeNext: (id: string, re: RegExp) => boolean): string | null {
+  if (!obj(s)) return 'not-a-stack';
+  if (typeof s.uid !== 'string' || !s.uid) return 'no-uid';
+  if (!beforeNext(s.uid, /^s([a-z0-9]+)$/)) return `uid-not-before-nextid:${s.uid}`;
+  if (uids.has(s.uid)) return `duplicate-uid:${s.uid}`;
+  if (typeof s.key !== 'string' || !has(ITEMS, s.key)) return 'unknown-item';
+  if (!integer(s.qty) || s.qty < 1) return 'bad-qty';
+  if (s.qty > ITEMS[s.key].max) return `over-max:${s.key}`;
+  if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return 'bad-upgrade';
+  if ((s.key === 'keycard' || isAccessCard(s.key)) && s.charge !== undefined && (!integer(s.charge) || s.charge < 1 || s.charge > 100 || s.qty !== 1)) return 'bad-card-charge';
+  if (s.key === 'motorbike_kit' && (!finite(s.dur) || s.dur < 0 || s.dur > BAL.motorbike.maxHp)) return 'bad-motorbike-dur';
+  if (s.owed !== undefined && (!ITEMS[s.key].creatorCore || !obj(s.owed) || !Object.keys(s.owed).length || Object.entries(s.owed).some(([k, v]) => !['energy_basic', 'energy_refined', `essence_${ITEMS[s.key].essence}`].includes(k) || !integer(v) || (v as number) < 1 || (v as number) > 56))) return 'bad-owed';
+  if (s.reserves !== undefined && (!ITEMS[s.key].creatorCore || !obj(s.reserves) || Object.keys(s.reserves).sort().join(',') !== 'basic,refined,signature' || !['basic','refined','signature'].every(k => integer(s.reserves[k]) && s.reserves[k] >= 0 && s.reserves[k] <= ({basic:40,refined:12,signature:4} as any)[k]))) return 'bad-reserves';
+  if (ITEMS[s.key].creatorCore) {
+    if (![1, 2, 3].includes(s.lvl) || !finite(s.dur) || s.dur < 0 || s.dur > CORE_V2.maxDur) return 'core-bad-lvl-or-dur';
+    if (s.reserves !== undefined) return 'core-reserves-in-v2';
+    if (s.cd !== undefined && (!obj(s.cd) || Object.entries(s.cd).some(([k, v]) => !['basic', 'refined', 'signature'].includes(k) || !finite(v) || (v as number) < 0))) return 'core-bad-cd';
+    if (s.upg !== undefined && (!obj(s.upg) || s.upg.to !== s.lvl + 1 || !finite(s.upg.readyAt))) return 'core-bad-upg';
+  } else if (s.lvl !== undefined || s.cd !== undefined || s.upg !== undefined) return 'non-core-with-core-fields';
+  if (s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) return 'bad-dur';
+  if (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) return 'bad-charge';
+  if (s.meta !== undefined && typeof s.meta !== 'string') return 'bad-meta-type';
+  if (s.key === 'blueprint' && (!s.meta || (!has(RECIPES, s.meta) && !hasLegacyDefinition(s.meta)))) return `blueprint-without-recipe:${s.meta ?? 'none'}`;
+  uids.add(s.uid); return null;
+}
+
 export function diagnoseInvalidState(gs: GameState): string {
   const r = gs.run; if (!r) return 'no-run';
   const seen = new Set<string>();
+  const beforeNext = (id: string, re: RegExp) => { const m = re.exec(id); return !m || parseInt(m[1], 36) < r.nextId; };
   for (const c of Object.values(r.custody) as any[]) for (const s of (c?.slots ?? []) as any[]) {
     if (!s) continue;
-    if (!ITEMS[s.key]) return 'unknown-item';
-    if (!Number.isInteger(s.qty) || s.qty < 1) return 'bad-qty';
-    if (s.qty > ITEMS[s.key].max) return `over-max:${s.key}`;
-    if (seen.has(s.uid)) return 'duplicate-uid'; seen.add(s.uid);
+    const why = stackInvariant(s, seen, beforeNext); if (why) return why;
   }
   return 'other';
 }

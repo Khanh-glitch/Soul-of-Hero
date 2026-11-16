@@ -55,7 +55,7 @@ for (const k of ['frames1280', 'frames640']) {
 const seen = r.families || [];
 if (seen.length < FAMS.length) bad.push(`only ${seen.length} of ${FAMS.length} families read from the screen`);
 for (const fam of FAMS) if (!seen.includes(fam)) bad.push(`${fam} never appeared on screen`);
-if (!/cost recorded \(5 Spares \+ 2 Iron Ingot\)/.test(r.energyRow || '')) bad.push('the ENERGY cost row is not in the captured text');
+if (!/cost recorded \(5 Parts \+ 2 Iron Ingot\)/.test(r.energyRow || '')) bad.push('the ENERGY cost row is not in the captured text');
 if (!/nothing withheld in this build/.test(r.energyRow || '')) bad.push('the unapproved ENERGY family does not state that nothing is withheld');
 if ((r.leakCheck || []).length !== 3) bad.push('the leak check did not cover all three tabs');
 if (r.purchaseControls && (r.purchaseControls.pane || r.purchaseControls.energyRow)) bad.push('an unapproved family presented a purchase control');

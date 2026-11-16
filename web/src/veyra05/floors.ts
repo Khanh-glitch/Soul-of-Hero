@@ -15,11 +15,27 @@
  */
 import { BAL, T, TILE, WW, WH, uid, hash2, type GameState, type RunState, type Entity, type Stack, type Container } from '../game/core';
 import { ITEMS } from '../game/catalog';
+import { isAccessCard, liveItemId, liveItemPer, liveRecipeId } from '../game/final-item-set';
 import type { Building, StaticEnt, World } from '../game/world';
 import { FRAME_W, U, type WindowSpec } from './frame';
 import { sampleTile } from './reader';
 import { compilePlan, roomAt, type ArchPlan, type CompiledPlan, type CompiledRoom, type Level, type StairSpec } from './arch/plan';
 import { AUTHORED_SITES } from './arch/sites';
+import { G1B_BASE_SOURCE_SITES, G1B_FIXTURES } from '../game/g1b-sources.generated';
+import { G1B_ECOLOGY_SOURCES } from '../game/g1b-ecology.generated';
+/** Tiles procedural furniture must leave alone, per storey: each chest / fixture tile and ONE approach tile beside it.
+ *  (Round 1 cleared all four neighbours, which cost 95 props; one approach tile is enough to reach and open a chest.) */
+const G1B_KEEP_CLEAR = new Map<number, [number, number][]>();
+{
+  const add = (lv: number, x: number, y: number) => { let a = G1B_KEEP_CLEAR.get(lv); if (!a) G1B_KEEP_CLEAR.set(lv, a = []); a.push([x, y]); };
+  for (const v of G1B_BASE_SOURCE_SITES) { add(0, v.gx, v.gy); add(0, v.gx, v.gy + 1); }   // round-1 chests were resolved with a free south tile
+  for (const v of G1B_FIXTURES) { add(0, v.gx, v.gy); add(0, v.gx, v.gy + 1); }
+  for (const v of G1B_ECOLOGY_SOURCES) { add(v.level ?? 0, v.gx, v.gy); if (v.ax !== undefined && v.ay !== undefined) add(v.level ?? 0, v.ax, v.ay); }
+}
+let g1bReservation = true;
+/** Tooling only (tests/g1b-resolve.test.ts): the resolver must measure the world as it is WITHOUT the chests it is about
+ *  to place, otherwise its answer would depend on its own previous answer. The game never calls this. */
+export function setG1bFurnitureReservation(on: boolean) { g1bReservation = on; }
 import { detailInteriors } from './arch/interior';
 import type { WindowWorld } from './window';
 import { syncVeyraEcosystemActors } from './ecosystem';
@@ -187,6 +203,14 @@ function buildLayerPlacementContext(layer: FloorLayer, ox: number, oy: number): 
     }
   }
 
+  // G1B: a creator-approved chest / card case / generator owns its ground tile and the four tiles around it in EVERY
+  // window. Procedural furniture is dressed per window, so without this the same global tile could hold a crate stack
+  // in one window and nothing in the next, burying a chest or its only approach.
+  const g1bReserved = new Set<number>();
+  if (g1bReservation) for (const [gx, gy] of G1B_KEEP_CLEAR.get(layer.level) ?? []) {
+    const lx = gx - ox, ly = gy - oy; if (lx >= 0 && ly >= 0 && lx < WW && ly < WH) g1bReserved.add(ly * WW + lx);
+  }
+
   const isPassable = (tx: number, ty: number) => {
     if (tx < 0 || ty < 0 || tx >= WW || ty >= WH) return false;
     const i = ty * WW + tx;
@@ -272,7 +296,7 @@ function buildLayerPlacementContext(layer: FloorLayer, ox: number, oy: number): 
       const cx = x + dx, cy = y + dy;
       if (cx <= 1 || cy <= 1 || cx >= WW - 2 || cy >= WH - 2) return false;
       const i = cy * WW + cx;
-      if (solid[i] || protectedThreshold.has(i) || layer.sources[i] || !isPassable(cx, cy)) return false;
+      if (solid[i] || protectedThreshold.has(i) || g1bReserved.has(i) || layer.sources[i] || !isPassable(cx, cy)) return false;
       cells.push([cx, cy]);
     }
     return !wouldSeverFootprint(cells);
@@ -554,14 +578,16 @@ export const onActiveFloor = (r: RunState, e: Entity) => entityFloor(e) === acti
 
 function makeValidStack(r: RunState, rawKey: string, qty: number): Stack {
   const isBp = rawKey.startsWith('blueprint:');
-  const key = isBp ? 'blueprint' : rawKey;
-  const meta = isBp ? rawKey.slice(10) : undefined;
+  /* Item set v3: second minting point (interior loot). Same rule as engine.mkStack — a retired id can never be issued. */
+  const key = isBp ? 'blueprint' : liveItemId(rawKey);
+  if (!isBp) qty = Math.ceil(qty * liveItemPer(rawKey));
+  const meta = isBp ? (liveRecipeId(rawKey.slice(10)) ?? rawKey.slice(10)) : undefined;
   const d = ITEMS[key];
   const s: Stack = { uid: uid(r, 's'), key, qty: isBp ? 1 : qty };
-  if (d?.creatorCore) s.reserves = { basic: 0, refined: 0, signature: 0 };
+  if (d?.creatorCore) { s.lvl = 1; s.dur = 300; } // Core V2 (G1B): Lv1, full durability, no magazine
   if (d?.dur) s.dur = d.dur;
   if (d?.charge) s.charge = d.initialCharge ?? d.charge;
-  if (key === 'keycard' && s.qty === 1 && r.poiAccessVersion === 'poi-access-v1') s.charge = BAL.poiAccess.cardUses;
+  if (isAccessCard(key) && s.qty === 1 && r.poiAccessVersion === 'poi-access-v1') s.charge = BAL.poiAccess.cardUses;
   if (meta) s.meta = meta;
   return s;
 }

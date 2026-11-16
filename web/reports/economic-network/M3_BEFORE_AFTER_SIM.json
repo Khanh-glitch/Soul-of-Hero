@@ -208,19 +208,19 @@
       "before": {
         "upkeepFractionPerDay": 0.25,
         "cabinetSlots": 24,
-        "upkeepMaterialTypes": 9,
-        "autonomyHours24Slot": 33.98,
-        "total14dItems": 2155,
-        "roundingOverchargeItems": 2.5
+        "upkeepMaterialTypes": 7,
+        "autonomyHours24Slot": 37.24,
+        "total14dItems": 2339,
+        "roundingOverchargeItems": 1
       },
       "after": {
         "upkeepFractionPerDay": 0.1,
         "cabinetSlots": 32,
-        "upkeepMaterialTypes": 6,
-        "autonomyHours32SlotWeighted": 637.17,
-        "total14dItems": 841,
-        "deltaPercentConsumption": -60.97,
-        "autonomyMultiplier": 18.75
+        "upkeepMaterialTypes": 5,
+        "autonomyHours32SlotWeighted": 651.72,
+        "total14dItems": 919,
+        "deltaPercentConsumption": -60.71,
+        "autonomyMultiplier": 17.5
       }
     },
     {
@@ -229,19 +229,19 @@
       "before": {
         "upkeepFractionPerDay": 0.25,
         "cabinetSlots": 24,
-        "upkeepMaterialTypes": 9,
-        "autonomyHours24Slot": 31.22,
-        "total14dItems": 2809,
-        "roundingOverchargeItems": 2
+        "upkeepMaterialTypes": 7,
+        "autonomyHours24Slot": 27.04,
+        "total14dItems": 3183,
+        "roundingOverchargeItems": 1.5
       },
       "after": {
         "upkeepFractionPerDay": 0.1,
         "cabinetSlots": 32,
         "upkeepMaterialTypes": 5,
-        "autonomyHours32SlotWeighted": 496.55,
-        "total14dItems": 1016,
-        "deltaPercentConsumption": -63.83,
-        "autonomyMultiplier": 15.9
+        "autonomyHours32SlotWeighted": 473.24,
+        "total14dItems": 1239,
+        "deltaPercentConsumption": -61.07,
+        "autonomyMultiplier": 17.5
       }
     },
     {
@@ -250,19 +250,19 @@
       "before": {
         "upkeepFractionPerDay": 0.25,
         "cabinetSlots": 24,
-        "upkeepMaterialTypes": 7,
-        "autonomyHours24Slot": 161.5,
-        "total14dItems": 681,
-        "roundingOverchargeItems": 2
+        "upkeepMaterialTypes": 5,
+        "autonomyHours24Slot": 181.42,
+        "total14dItems": 691,
+        "roundingOverchargeItems": 1.5
       },
       "after": {
         "upkeepFractionPerDay": 0.1,
         "cabinetSlots": 32,
-        "upkeepMaterialTypes": 4,
-        "autonomyHours32SlotWeighted": 2287.85,
-        "total14dItems": 250,
-        "deltaPercentConsumption": -63.29,
-        "autonomyMultiplier": 14.17
+        "upkeepMaterialTypes": 3,
+        "autonomyHours32SlotWeighted": 2344.19,
+        "total14dItems": 262,
+        "deltaPercentConsumption": -62.08,
+        "autonomyMultiplier": 12.92
       }
     }
   ],
@@ -271,24 +271,24 @@
       "fuelCanRuntimeSec": 60,
       "idleZeroLoadDrainPer24hCans": 1440,
       "idleCampfire10MinWoodLoss": 30,
-      "shippingOilPlusCrudeCans": 19.6,
-      "shippingTotalActiveTurretHours": 0.33,
+      "shippingOilPlusCrudeCans": 8.4,
+      "shippingTotalActiveTurretHours": 0.14,
       "veyraOilPlusCrudeCans": 11,
       "veyraTotalActiveTurretHours": 0.18,
       "shipping24hDemandCansOneLoad": 1440,
-      "shipping14dDeficitFactor": 1028.57
+      "shipping14dDeficitFactor": 2400
     },
     "after": {
       "fuelCanRuntimeSec": 360,
       "idleZeroLoadDrainPer24hCans": 0,
       "idleCampfire10MinWoodLoss": 0,
-      "shippingOilPlusCrudeCans": 139.6,
-      "shippingTotalActiveTurretHours": 13.96,
+      "shippingOilPlusCrudeCans": 128.4,
+      "shippingTotalActiveTurretHours": 12.84,
       "veyraOilPlusCrudeCans": 161,
       "veyraTotalActiveTurretHours": 16.1,
       "shipping24hDemandCansOneLoad": 240,
-      "shipping14dDeficitFactor": 24.07,
-      "activeRuntimeGainFactor": 42.3
+      "shipping14dDeficitFactor": 26.17,
+      "activeRuntimeGainFactor": 91.71
     }
   },
   "currencyAndResearchBeforeAfter": {
@@ -311,21 +311,21 @@
       "before": {
         "sparesToFirstCoreDist": {
           "n": 400,
-          "min": 104,
-          "p10": 104,
-          "p50": 104,
-          "p90": 104,
-          "max": 104,
-          "mean": 104
+          "min": 132,
+          "p10": 132,
+          "p50": 132,
+          "p90": 132,
+          "max": 132,
+          "mean": 132
         },
         "totalSparesAllRecipesDist": {
           "n": 400,
-          "min": 136,
-          "p10": 136,
-          "p50": 136,
-          "p90": 136,
-          "max": 136,
-          "mean": 136
+          "min": 164,
+          "p10": 164,
+          "p50": 164,
+          "p90": 164,
+          "max": 164,
+          "mean": 164
         }
       },
       "after": {
@@ -333,19 +333,19 @@
           "n": 400,
           "min": 20,
           "p10": 20,
-          "p50": 32,
-          "p90": 56,
-          "max": 84,
-          "mean": 35.15
+          "p50": 36,
+          "p90": 64,
+          "max": 112,
+          "mean": 39.02
         },
         "totalSparesAllRecipesDist": {
           "n": 400,
-          "min": 136,
-          "p10": 136,
-          "p50": 136,
-          "p90": 136,
-          "max": 136,
-          "mean": 136
+          "min": 164,
+          "p10": 164,
+          "p50": 164,
+          "p90": 164,
+          "max": 164,
+          "mean": 164
         }
       }
     }
@@ -454,7 +454,7 @@
       "afterMissingDefenseKeys": []
     },
     "repairParity": {
-      "beforeQty1OverchargePairs": 2,
+      "beforeQty1OverchargePairs": 4,
       "afterQty1OverchargePairs": 0
     },
     "recyclerAntiArbitrage": {
@@ -551,7 +551,7 @@
     {
       "findingId": "M2-F13",
       "severity": "LOW",
-      "beforeMetric": "2 structure-material pairs bill 100% on 25% HP repair",
+      "beforeMetric": "4 structure-material pairs bill 100% on 25% HP repair",
       "afterMetric": "A3 REJECTED: free qty=1 <50% repair creates infinite repair exploit",
       "status": "CANON_REJECTED"
     },

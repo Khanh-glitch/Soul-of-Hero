@@ -1,14 +1,36 @@
 {
   "meta": {
     "schema": "soh-runtime-item-formula-atlas-v1",
-    "sourceSHA": "fd9390609f0a6675894166b2dc8716390a32f4de",
+    "sourceSHA": "3f80bf4f6e570dc5a8588880cf14cd87c4ba1531",
     "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
     "recipeCensusNote": "Counts the LIVE RECIPES table only. Retired formulas are excluded, and frozen revision definitions are never added back as active routes.",
     "retiredRecipes": [
-      "fuel_can"
+      "fuel_can",
+      "vehicle_frame_piped",
+      "vehicle_drive",
+      "vehicle_drive_geared",
+      "fuel_briquette",
+      "root_broth",
+      "poached_eggs",
+      "herb_roast",
+      "salted_meat",
+      "iron_sword",
+      "iron_sword_blade",
+      "refine_salvaged_oil",
+      "refinery_industrial",
+      "refinery_lubricant",
+      "refinery_crude",
+      "fasteners",
+      "treated_canvas",
+      "field_repair_kit",
+      "recover_drive",
+      "mechanical_parts",
+      "scrap_ingot",
+      "brick",
+      "reinforced_spear_blade"
     ],
-    "recipeRevision": 2,
-    "exportedAt": "2026-11-13T17:22:35.758Z",
+    "recipeRevision": 6,
+    "exportedAt": "2026-11-15T10:55:05.006Z",
     "project": "Soul of Heroes — WEB Veyra runtime",
     "authority": [
       "web/src/game/catalog.ts",
@@ -76,7 +98,7 @@
     },
     "core_blast": {
       "id": "core_blast",
-      "name": "Vụ nổ lớn",
+      "name": "Big Bang",
       "cat": "core",
       "desc": "Common Fire Core. Reload each reserve with Basic, Refined or Refined plus Fire Essence.",
       "w": 0.3,
@@ -86,7 +108,7 @@
     },
     "core_meteor": {
       "id": "core_meteor",
-      "name": "Thiên thạch",
+      "name": "Meteor",
       "cat": "core",
       "desc": "Rare Fire Core. A fireball, targeted meteor and ten-meteor storm.",
       "w": 0.3,
@@ -96,7 +118,7 @@
     },
     "core_dragon": {
       "id": "core_dragon",
-      "name": "Hơi thở của rồng",
+      "name": "Dragon's Breath",
       "cat": "core",
       "desc": "Top-tier Fire Core: flamethrower, fire tornado and dragon dive.",
       "w": 0.3,
@@ -106,7 +128,7 @@
     },
     "core_elsa": {
       "id": "core_elsa",
-      "name": "Gươm Elsa",
+      "name": "Elsa's Sword",
       "cat": "core",
       "desc": "Rare Water Core: ice projectile, one-second self-freeze and viewport freeze.",
       "w": 0.3,
@@ -116,7 +138,7 @@
     },
     "core_earthmother": {
       "id": "core_earthmother",
-      "name": "Hơi thở đất mẹ",
+      "name": "Earth Mother's Breath",
       "cat": "core",
       "desc": "Common Nature Core: rock, grove and binding roots.",
       "w": 0.3,
@@ -136,7 +158,7 @@
     },
     "core_demon": {
       "id": "core_demon",
-      "name": "Lõi quỷ",
+      "name": "Demon Core",
       "cat": "core",
       "desc": "Rare Spirit Core: directed rays, a stationary beam and a map-selected teleport.",
       "w": 0.3,
@@ -148,7 +170,7 @@
       "id": "crude_petroleum",
       "name": "Crude Petroleum",
       "cat": "res",
-      "desc": "Raw petroleum drawn from an authorized oil source. Refine at an Oil Refinery (4 crude + glass).",
+      "desc": "Raw petroleum. Pumped from an oil seep with an Oil Pump; an Oil Refinery turns it into Fuel Canisters.",
       "w": 0.8,
       "max": 30
     },
@@ -156,16 +178,15 @@
       "id": "salvaged_oil",
       "name": "Salvaged Oil",
       "cat": "res",
-      "desc": "Recovered from car wrecks. Study a sample to learn furnace refining into generator canisters.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 0.7,
-      "max": 30,
-      "specimen": "refine_salvaged_oil"
+      "max": 30
     },
     "lubricant": {
       "id": "lubricant",
       "name": "Machine Lubricant",
       "cat": "res",
-      "desc": "Refined from Salvaged Oil at an Oil Refinery. Service a motorbike within reach to halve wear for a limited distance.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 0.6,
       "max": 20
     },
@@ -173,15 +194,15 @@
       "id": "damaged_drive",
       "name": "Damaged Drive",
       "cat": "res",
-      "desc": "Finite wreck salvage. At a workbench: 1 drive + 1 scrap → 1 Mechanical Parts. Or carry to the Foundry Recycler: 1 drive → 2 Spares. The same drive is spent either way.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 3,
       "max": 1
     },
     "mechanical_parts": {
       "id": "mechanical_parts",
-      "name": "Mechanical Parts",
+      "name": "Machine Parts",
       "cat": "res",
-      "desc": "Found in industrial wrecks or made at a bench. Improve tools or maintain equipment.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 0.5,
       "max": 30
     },
@@ -189,28 +210,25 @@
       "id": "fasteners",
       "name": "Forged Fasteners",
       "cat": "res",
-      "desc": "Found on wrecks or made from iron and scrap. Used for field repairs, packs and canteens.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 0.2,
-      "max": 30,
-      "studyRecipe": "fasteners"
+      "max": 30
     },
     "treated_canvas": {
       "id": "treated_canvas",
       "name": "Treated Canvas",
       "cat": "res",
-      "desc": "Cloth treated with salt and Bitterleaf at a fire. Competes with food and medicine.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 0.3,
-      "max": 30,
-      "studyRecipe": "treated_canvas"
+      "max": 30
     },
     "field_repair_kit": {
       "id": "field_repair_kit",
       "name": "Field Repair Kit",
       "cat": "kit",
-      "desc": "Consume one from the pack to restore up to 100 durability to a repairable carried tool, away from a bench.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 0.5,
-      "max": 10,
-      "studyRecipe": "field_repair_kit"
+      "max": 10
     },
     "trail_pack": {
       "id": "trail_pack",
@@ -288,7 +306,7 @@
       "id": "rich_iron_ore",
       "name": "Rich Iron Ore",
       "cat": "res",
-      "desc": "High-grade ore from an iron vein. One of these with one coal makes two refined ingots.",
+      "desc": "High-grade ore from an iron vein. One of these with two charcoal makes two refined ingots.",
       "w": 2,
       "max": 40
     },
@@ -296,10 +314,9 @@
       "id": "coal",
       "name": "Coal",
       "cat": "res",
-      "desc": "Dense fuel. Burns long.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 1,
-      "max": 40,
-      "fuel": 80
+      "max": 40
     },
     "charcoal": {
       "id": "charcoal",
@@ -322,7 +339,7 @@
       "id": "raw_salt",
       "name": "Raw Salt",
       "cat": "res",
-      "desc": "Mineral crust chipped from coastal salt shale. Seasons a hearty roast.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 0.25,
       "max": 40
     },
@@ -330,7 +347,7 @@
       "id": "root_broth",
       "name": "Root Broth",
       "cat": "food",
-      "desc": "Cooked garden sunroot and Bitterleaf: restorative food with moisture.",
+      "desc": "Warm broth simmered with Bitterleaf from garden Sunroot or from Grouse Eggs: restorative food with moisture.",
       "w": 0.5,
       "max": 10,
       "food": {
@@ -378,15 +395,15 @@
       "id": "scrap",
       "name": "Scrap Metal",
       "cat": "res",
-      "desc": "Salvage from wrecks. Melts into iron.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 1,
       "max": 60
     },
     "spares": {
       "id": "spares",
-      "name": "Spares",
+      "name": "Parts",
       "cat": "res",
-      "desc": "Run-local components. Research currency and advanced parts.",
+      "desc": "Progression resource. Cannot be crafted: found in loot and wrecks or recovered at the Recycler. Pays for research and trader barter and goes into Cores and powered machines. Run-local.",
       "w": 0.3,
       "max": 60
     },
@@ -424,9 +441,9 @@
     },
     "fur": {
       "id": "fur",
-      "name": "Wolf Fur",
+      "name": "Fur",
       "cat": "res",
-      "desc": "Warm pelt.",
+      "desc": "Warm pelt from a fox or hare, wild or penned. Sewn into a Fur Cloak.",
       "w": 0.6,
       "max": 30
     },
@@ -458,7 +475,7 @@
       "id": "brick",
       "name": "Brick",
       "cat": "res",
-      "desc": "Fired stone brick.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 1,
       "max": 40
     },
@@ -485,6 +502,382 @@
       "desc": "Plant in a garden plot.",
       "w": 0.05,
       "max": 40
+    },
+    "seed_sunroot": {
+      "id": "seed_sunroot",
+      "name": "Sunroot Seed",
+      "cat": "res",
+      "desc": "Plant in a garden plot for Sunroot. Wants the warm season. A harvest returns the one seed you planted, never more.",
+      "w": 0.05,
+      "max": 40
+    },
+    "seed_bitterleaf": {
+      "id": "seed_bitterleaf",
+      "name": "Bitterleaf Seed",
+      "cat": "res",
+      "desc": "Plant in a garden plot for Bitterleaf. Tolerates cold better than Sunroot. A harvest returns the one seed you planted.",
+      "w": 0.05,
+      "max": 40
+    },
+    "seed_wildberry": {
+      "id": "seed_wildberry",
+      "name": "Wild Berry Seed",
+      "cat": "res",
+      "desc": "Plant in a garden plot for berries, or mix into fodder. A harvest returns the one seed you planted.",
+      "w": 0.05,
+      "max": 40
+    },
+    "animal_fat": {
+      "id": "animal_fat",
+      "name": "Animal Fat",
+      "cat": "res",
+      "desc": "Rendered from large game. Furnace-render it with cloth into a Fuel Canister, or use it in a Syringe.",
+      "w": 0.3,
+      "max": 40
+    },
+    "tin_can": {
+      "id": "tin_can",
+      "name": "Tin Can",
+      "cat": "res",
+      "desc": "Empty food tin pulled from wrecks and roadside scrap. Cannot be crafted. Needed for canned meat, soup, jam and wine.",
+      "w": 0.15,
+      "max": 30
+    },
+    "electronic_parts": {
+      "id": "electronic_parts",
+      "name": "Electronic Parts",
+      "cat": "res",
+      "desc": "Salvaged boards and relays. Cannot be crafted: taken from Scrap Crawlers and car wrecks. Goes into switches, pressure plates and infrared sensors.",
+      "w": 0.2,
+      "max": 40
+    },
+    "electric_resistor": {
+      "id": "electric_resistor",
+      "name": "Resistor Wire",
+      "cat": "res",
+      "desc": "Resistance wire for the lock coil of a Powered Door. Stripped from Car Wrecks.",
+      "w": 0.1,
+      "max": 30
+    },
+    "needle_tube": {
+      "id": "needle_tube",
+      "name": "Needle Tube",
+      "cat": "res",
+      "desc": "Empty injector body from roadside scrap or a Blood Archivist. Cannot be crafted. Fill at a workbench to make a Syringe.",
+      "w": 0.05,
+      "max": 30
+    },
+    "needle_thread": {
+      "id": "needle_thread",
+      "name": "Needle and Thread",
+      "cat": "res",
+      "desc": "Sewing kit made from cloth and iron. Stitches hide onto plate for iron and refined-iron armour.",
+      "w": 0.05,
+      "max": 40
+    },
+    "syringe": {
+      "id": "syringe",
+      "name": "Syringe",
+      "cat": "food",
+      "desc": "Fast field injection: restores health and stamina at once.",
+      "w": 0.15,
+      "max": 10,
+      "food": {
+        "hp": 35,
+        "stamina": 20
+      }
+    },
+    "dried_meat": {
+      "id": "dried_meat",
+      "name": "Dried Meat",
+      "cat": "food",
+      "desc": "Slow-dried at a campfire. Half the weight of a roast: trail food, less filling.",
+      "w": 0.2,
+      "max": 40,
+      "food": {
+        "hunger": 26,
+        "hp": 2
+      }
+    },
+    "canned_meat": {
+      "id": "canned_meat",
+      "name": "Canned Meat",
+      "cat": "food",
+      "desc": "Three cuts sealed in one tin. A whole meal in a single slot.",
+      "w": 0.6,
+      "max": 10,
+      "food": {
+        "hunger": 70,
+        "hp": 8
+      }
+    },
+    "grilled_mushroom": {
+      "id": "grilled_mushroom",
+      "name": "Grilled Mushroom",
+      "cat": "food",
+      "desc": "Marsh Cap cooked through: the toxin is gone.",
+      "w": 0.1,
+      "max": 20,
+      "food": {
+        "hunger": 12
+      }
+    },
+    "mushroom_soup": {
+      "id": "mushroom_soup",
+      "name": "Mushroom Soup",
+      "cat": "food",
+      "desc": "Warm tinned soup. Feeds, hydrates and warms.",
+      "w": 0.5,
+      "max": 10,
+      "food": {
+        "hunger": 36,
+        "thirst": 22,
+        "hp": 6,
+        "warmth": 12
+      }
+    },
+    "fruit_juice": {
+      "id": "fruit_juice",
+      "name": "Fruit Juice",
+      "cat": "food",
+      "desc": "Pressed berries. Mostly a drink.",
+      "w": 0.3,
+      "max": 10,
+      "food": {
+        "thirst": 26,
+        "hunger": 6
+      }
+    },
+    "fruit_wine": {
+      "id": "fruit_wine",
+      "name": "Fruit Wine",
+      "cat": "food",
+      "desc": "Fermented in a tin by the fire. Warms you through; quenches little.",
+      "w": 0.4,
+      "max": 10,
+      "food": {
+        "thirst": 12,
+        "warmth": 24,
+        "hp": 4
+      }
+    },
+    "jam": {
+      "id": "jam",
+      "name": "Jam",
+      "cat": "food",
+      "desc": "Berries boiled down and sealed under cloth. Dense energy for a long haul.",
+      "w": 0.4,
+      "max": 10,
+      "food": {
+        "hunger": 40,
+        "stamina": 30
+      }
+    },
+    "wood_club": {
+      "id": "wood_club",
+      "name": "Wood Club",
+      "cat": "weapon",
+      "desc": "A heavy branch. Crude, hand-made, wears out fast.",
+      "w": 1.2,
+      "max": 1,
+      "power": {
+        "plant": 1
+      },
+      "dmg": 12,
+      "dur": 120,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "wood",
+            3
+          ]
+        ]
+      }
+    },
+    "cleaver": {
+      "id": "cleaver",
+      "name": "Cleaver",
+      "cat": "weapon",
+      "desc": "Short heavy blade. Quick chops at close reach; clears brush.",
+      "w": 0.9,
+      "max": 1,
+      "power": {
+        "plant": 3
+      },
+      "dmg": 17,
+      "dur": 260,
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      }
+    },
+    "machete": {
+      "id": "machete",
+      "name": "Machete",
+      "cat": "weapon",
+      "desc": "Fast, wide cuts. The iron long blade.",
+      "w": 1.4,
+      "max": 1,
+      "power": {
+        "plant": 3
+      },
+      "dmg": 24,
+      "dur": 350,
+      "studyRecipe": "machete",
+      "repair": {
+        "station": "workbench",
+        "cost": [
+          [
+            "iron_ingot",
+            1
+          ],
+          [
+            "metal_blade",
+            1
+          ]
+        ]
+      },
+      "salvage": {
+        "station": "workbench",
+        "yields": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      }
+    },
+    "iron_plate_helmet": {
+      "id": "iron_plate_helmet",
+      "name": "Iron Plate Helmet",
+      "cat": "armor",
+      "desc": "-14% damage.",
+      "w": 1.8,
+      "max": 1,
+      "slot": "head"
+    },
+    "iron_plate_chest": {
+      "id": "iron_plate_chest",
+      "name": "Iron Plate Chest",
+      "cat": "armor",
+      "desc": "-28% damage. Heavy.",
+      "w": 5.5,
+      "max": 1,
+      "slot": "body"
+    },
+    "iron_plate_pants": {
+      "id": "iron_plate_pants",
+      "name": "Iron Plate Pants",
+      "cat": "armor",
+      "desc": "Leg armour. -8% damage; a blow knocks you back and staggers you 30% less.",
+      "w": 3.5,
+      "max": 1,
+      "slot": "legs"
+    },
+    "iron_plate_boots": {
+      "id": "iron_plate_boots",
+      "name": "Iron Plate Boots",
+      "cat": "armor",
+      "desc": "Foot armour. -4% damage; fire, lava and pools underfoot hurt 35% less.",
+      "w": 2,
+      "max": 1,
+      "slot": "feet"
+    },
+    "refined_iron_helmet": {
+      "id": "refined_iron_helmet",
+      "name": "Refined Iron Helmet",
+      "cat": "armor",
+      "desc": "-20% damage.",
+      "w": 2.2,
+      "max": 1,
+      "slot": "head"
+    },
+    "refined_iron_chest": {
+      "id": "refined_iron_chest",
+      "name": "Refined Iron Chest",
+      "cat": "armor",
+      "desc": "-36% damage. The heaviest crafted body armour.",
+      "w": 6.5,
+      "max": 1,
+      "slot": "body"
+    },
+    "refined_iron_legs": {
+      "id": "refined_iron_legs",
+      "name": "Refined Iron Legs",
+      "cat": "armor",
+      "desc": "Leg armour. -10% damage; a blow knocks you back and staggers you 45% less.",
+      "w": 4,
+      "max": 1,
+      "slot": "legs"
+    },
+    "refined_iron_boots": {
+      "id": "refined_iron_boots",
+      "name": "Refined Iron Boots",
+      "cat": "armor",
+      "desc": "Foot armour. -6% damage; fire, lava and pools underfoot hurt 50% less.",
+      "w": 2.4,
+      "max": 1,
+      "slot": "feet"
+    },
+    "green_card": {
+      "id": "green_card",
+      "name": "Green Card",
+      "cat": "misc",
+      "desc": "Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.",
+      "w": 0.05,
+      "max": 5
+    },
+    "blue_card": {
+      "id": "blue_card",
+      "name": "Blue Card",
+      "cat": "misc",
+      "desc": "Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.",
+      "w": 0.05,
+      "max": 5
+    },
+    "purple_card": {
+      "id": "purple_card",
+      "name": "Purple Card",
+      "cat": "misc",
+      "desc": "Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.",
+      "w": 0.05,
+      "max": 5
+    },
+    "wooden_ladder": {
+      "id": "wooden_ladder",
+      "name": "Wooden Ladder",
+      "cat": "kit",
+      "desc": "Lean it on a cliff face one tile thick to climb across on foot. Carts, bikes and creatures cannot follow. Pick it up again to reuse it.",
+      "w": 4,
+      "max": 1,
+      "dur": 60,
+      "place": "ladder_wood"
+    },
+    "steel_folding_ladder": {
+      "id": "steel_folding_ladder",
+      "name": "Steel Folding Ladder",
+      "cat": "kit",
+      "desc": "Unfolds across a cliff up to three tiles thick. On foot only. Folds back into your pack.",
+      "w": 6,
+      "max": 1,
+      "dur": 240,
+      "place": "ladder_steel"
+    },
+    "large_furnace": {
+      "id": "large_furnace",
+      "name": "Large Furnace",
+      "cat": "kit",
+      "desc": "Packed Large Furnace. Runs every Furnace formula twice as fast on the same fire, so each load costs half the fuel. Holds 12 output stacks.",
+      "w": 30,
+      "max": 1,
+      "dur": 520,
+      "place": "large_furnace"
     },
     "berries": {
       "id": "berries",
@@ -638,7 +1031,7 @@
         "station": "workbench",
         "cost": [
           [
-            "scrap",
+            "stone",
             1
           ],
           [
@@ -726,7 +1119,7 @@
             1
           ],
           [
-            "mechanical_parts",
+            "wood",
             1
           ]
         ]
@@ -754,7 +1147,7 @@
             1
           ],
           [
-            "mechanical_parts",
+            "wood",
             1
           ]
         ]
@@ -778,11 +1171,7 @@
         "station": "workbench",
         "cost": [
           [
-            "iron_ingot",
-            1
-          ],
-          [
-            "mechanical_parts",
+            "refined_iron_ingot",
             1
           ],
           [
@@ -810,11 +1199,7 @@
         "station": "workbench",
         "cost": [
           [
-            "iron_ingot",
-            1
-          ],
-          [
-            "mechanical_parts",
+            "refined_iron_ingot",
             1
           ],
           [
@@ -841,7 +1226,7 @@
       "id": "iron_sword",
       "name": "Iron Sword",
       "cat": "weapon",
-      "desc": "Fast, wide cuts.",
+      "desc": "Retired with the final item set: every Iron Sword is now a Machete. Row kept only so old saves and frozen recipes still parse.",
       "w": 1.4,
       "max": 1,
       "power": {
@@ -849,7 +1234,6 @@
       },
       "dmg": 24,
       "dur": 350,
-      "studyRecipe": "iron_sword",
       "repair": {
         "station": "workbench",
         "cost": [
@@ -858,7 +1242,7 @@
             1
           ],
           [
-            "mechanical_parts",
+            "wood",
             1
           ]
         ]
@@ -917,7 +1301,7 @@
             1
           ],
           [
-            "mechanical_parts",
+            "wood",
             1
           ]
         ]
@@ -1051,7 +1435,7 @@
       "desc": "Study at a research table.",
       "w": 0.1,
       "max": 10,
-      "specimen": "iron_sword"
+      "specimen": "machete"
     },
     "beetle_horn": {
       "id": "beetle_horn",
@@ -1066,7 +1450,7 @@
       "id": "keycard",
       "name": "Vault Keycard",
       "cat": "misc",
-      "desc": "A physical Vault Keycard. New cards have limited scans; legacy cards retain one use.",
+      "desc": "Retired with the final item set (round 2). Row kept only so old saves and frozen recipes still parse; nothing issues or consumes it.",
       "w": 0.05,
       "max": 5
     },
@@ -1074,7 +1458,7 @@
       "id": "fuel_can",
       "name": "Fuel Canister",
       "cat": "misc",
-      "desc": "Fuels generators and motorbikes. Refined from real oil at a furnace or Oil Refinery. NOT station kindling — a campfire, furnace, refinery or research table burns solid fuel, never a canister. PA1 v1.2: the improvised bench formula is retired, so a motorbike always pays for its first can separately.",
+      "desc": "Fuels generators and motorbikes. Refined from Crude Petroleum at an Oil Refinery. NOT station kindling — a campfire, furnace, refinery or research table burns solid fuel, never a canister. A packed motorbike ships dry: its first canister is made separately.",
       "w": 1.5,
       "max": 5,
       "fuel": 60
@@ -1083,13 +1467,13 @@
       "id": "rcash",
       "name": "Ragnarok Cash",
       "cat": "cash",
-      "desc": "Physical, unsecured. Can be lost. Deposit in an owned Rương ký gửi.",
+      "desc": "Physical, unsecured. Can be lost. Deposit in an owned Escrow Chest.",
       "w": 0.01,
       "max": 999
     },
     "escrow_chest": {
       "id": "escrow_chest",
-      "name": "Rương ký gửi",
+      "name": "Escrow Chest",
       "cat": "kit",
       "desc": "Escrow chest. Place on owned land, then deposit physical Ragnarok cash into your profile.",
       "w": 4,
@@ -1124,7 +1508,7 @@
       "id": "metal_pipe",
       "name": "Metal Pipe",
       "cat": "res",
-      "desc": "Pipe section for the piped utility frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Mechanical Part spent to make it is NOT returned — so pipe never loops. PA1 v1.1: the recovered BOM removed Iron Plate as a pipe sink.",
+      "desc": "Pipe section: the tubing of every Utility Frame. One paid bench cycle makes TWO sections. Recyclable at the Foundry Recycler: one section back into 1 Refined Iron Ingot, and the Machine Part spent to make it is NOT returned — so pipe never loops.",
       "w": 1.2,
       "max": 20
     },
@@ -1132,7 +1516,7 @@
       "id": "metal_blade",
       "name": "Metal Blade",
       "cat": "res",
-      "desc": "Cut blade stock for sword refits.",
+      "desc": "Cut blade stock: the edge of the Salvager Axe, and an optional refit for the Iron Sword and Reinforced Spear.",
       "w": 0.8,
       "max": 20
     },
@@ -1156,7 +1540,7 @@
       "id": "motorbike_kit",
       "name": "Utility Motorbike (packed)",
       "cat": "kit",
-      "desc": "PA1 v1.2 dry kit: frame, drive, two iron plates and two fastener sets. No fuel is packaged — place it, then refuel with a real Fuel Canister.",
+      "desc": "Packed dry: frame, two gears, three iron plates and refined-iron stock. No fuel is packaged — place it, then refuel with a real Fuel Canister.",
       "w": 12,
       "max": 1,
       "dur": 200,
@@ -1271,7 +1655,7 @@
       "id": "lead_rope",
       "name": "Taming Lead",
       "cat": "tool",
-      "desc": "SOH_PROVISIONAL: Calm and lead a tamable wild animal (Boar, Deer, Hare, or Black Grouse) into an enclosed pen.",
+      "desc": "Calm and lead a tamable wild animal (Boar, Deer, Hare, or Black Grouse) into an enclosed pen.",
       "w": 0.35,
       "max": 5
     },
@@ -1279,7 +1663,7 @@
       "id": "animal_feed",
       "name": "Fodder Bundle",
       "cat": "res",
-      "desc": "SOH_PROVISIONAL: Bundled fiber and seeds for penned livestock in a Feed & Water Trough.",
+      "desc": "Bundled fiber and seeds for penned livestock in a Feed & Water Trough.",
       "w": 0.25,
       "max": 40
     },
@@ -1287,7 +1671,7 @@
       "id": "feather",
       "name": "Grouse Feather",
       "cat": "res",
-      "desc": "SOH_PROVISIONAL: Flight feather shed by Black Grouse; improves arrow fletching.",
+      "desc": "Flight feather shed by Black Grouse; improves arrow fletching.",
       "w": 0.03,
       "max": 60
     },
@@ -1295,7 +1679,7 @@
       "id": "grouse_egg",
       "name": "Grouse Egg",
       "cat": "food",
-      "desc": "SOH_PROVISIONAL: Nutritious speckled egg laid by fed penned Black Grouse.",
+      "desc": "Nutritious speckled egg laid by fed penned Black Grouse.",
       "w": 0.12,
       "max": 20,
       "food": {
@@ -1308,7 +1692,7 @@
       "id": "relic_shaleheart",
       "name": "Shaleheart Coreplate",
       "cat": "armor",
-      "desc": "SOH_PROVISIONAL: Run-local crystal-veined quarry carapace taken from Greyback Shaleheart (-38% damage).",
+      "desc": "Run-local crystal-veined quarry carapace taken from Greyback Shaleheart (-38% damage).",
       "w": 3.2,
       "max": 1,
       "slot": "body"
@@ -1317,7 +1701,7 @@
       "id": "ronin_nodachi",
       "name": "Oathless Nodachi",
       "cat": "weapon",
-      "desc": "SOH_PROVISIONAL: Run-local long-bladed nodachi claimed from the Oathless Ronin.",
+      "desc": "Run-local long-bladed nodachi claimed from the Oathless Ronin.",
       "w": 1.8,
       "max": 1,
       "power": {
@@ -1343,7 +1727,7 @@
       "id": "tidemarshal_trident",
       "name": "Saltwick Trident",
       "cat": "weapon",
-      "desc": "SOH_PROVISIONAL: Run-local brine-tempered polearm of the Saltwick Tidemarshal.",
+      "desc": "Run-local brine-tempered polearm of the Saltwick Tidemarshal.",
       "w": 1.9,
       "max": 1,
       "power": {
@@ -1359,7 +1743,7 @@
             2
           ],
           [
-            "raw_salt",
+            "shell",
             2
           ]
         ]
@@ -1369,7 +1753,7 @@
       "id": "custodian_lantern",
       "name": "Archive Lantern",
       "cat": "tool",
-      "desc": "SOH_PROVISIONAL: Run-local silver-violet ward lantern of the Pale Custodian. Steady wide light.",
+      "desc": "Run-local silver-violet ward lantern of the Pale Custodian. Steady wide light.",
       "w": 0.6,
       "max": 1,
       "dmg": 12,
@@ -1521,7 +1905,7 @@
       "name": "Oil Pump",
       "cat": "place",
       "desc": "Packed Oil Pump. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
-      "w": 6.6,
+      "w": 6.8,
       "max": 1,
       "dur": 160,
       "repair": {
@@ -1532,15 +1916,15 @@
             1
           ],
           [
-            "mechanical_parts",
+            "mechanical_gear",
+            1
+          ],
+          [
+            "metal_pipe",
             1
           ],
           [
             "spares",
-            1
-          ],
-          [
-            "brick",
             1
           ]
         ]
@@ -1551,7 +1935,7 @@
       "name": "Oil Refinery",
       "cat": "place",
       "desc": "Packed Oil Refinery. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
-      "w": 13.8,
+      "w": 20.7,
       "max": 1,
       "dur": 280,
       "repair": {
@@ -1559,18 +1943,18 @@
         "cost": [
           [
             "iron_ingot",
-            1
+            2
           ],
           [
-            "mechanical_parts",
+            "wood",
+            2
+          ],
+          [
+            "metal_pipe",
             1
           ],
           [
             "spares",
-            2
-          ],
-          [
-            "brick",
             2
           ],
           [
@@ -1655,7 +2039,7 @@
       "name": "Garden Tender",
       "cat": "place",
       "desc": "Packed Garden Tender. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
-      "w": 16.7,
+      "w": 15.8,
       "max": 1,
       "dur": 140,
       "repair": {
@@ -1670,11 +2054,11 @@
             1
           ],
           [
-            "mechanical_parts",
+            "mechanical_gear",
             1
           ],
           [
-            "fasteners",
+            "electronic_parts",
             1
           ],
           [
@@ -1737,7 +2121,7 @@
       "name": "Field Generator",
       "cat": "place",
       "desc": "Packed Field Generator. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
-      "w": 11.7,
+      "w": 7.6,
       "max": 1,
       "dur": 180,
       "repair": {
@@ -1748,16 +2132,16 @@
             1
           ],
           [
-            "mechanical_parts",
+            "refined_iron_ingot",
+            1
+          ],
+          [
+            "electronic_parts",
             1
           ],
           [
             "spares",
             1
-          ],
-          [
-            "wood",
-            2
           ]
         ]
       }
@@ -1789,7 +2173,7 @@
       "name": "Power Switch",
       "cat": "place",
       "desc": "Packed Power Switch. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
-      "w": 1.5,
+      "w": 1.7,
       "max": 1,
       "dur": 100,
       "repair": {
@@ -1800,7 +2184,7 @@
             1
           ],
           [
-            "fasteners",
+            "electronic_parts",
             1
           ],
           [
@@ -1815,7 +2199,7 @@
       "name": "Pressure Switch",
       "cat": "place",
       "desc": "Packed Pressure Switch. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
-      "w": 1.7,
+      "w": 4.2,
       "max": 1,
       "dur": 100,
       "repair": {
@@ -1826,11 +2210,15 @@
             1
           ],
           [
-            "mechanical_parts",
+            "spares",
             1
           ],
           [
-            "fasteners",
+            "electronic_parts",
+            1
+          ],
+          [
+            "iron_plate",
             1
           ]
         ]
@@ -1841,22 +2229,22 @@
       "name": "Infrared Sensor",
       "cat": "place",
       "desc": "Packed Infrared Sensor. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
-      "w": 2.2,
+      "w": 1.7,
       "max": 1,
       "dur": 90,
       "repair": {
         "station": "workbench",
         "cost": [
           [
-            "mechanical_gear",
-            1
-          ],
-          [
             "iron_ingot",
             1
           ],
           [
-            "fasteners",
+            "electronic_parts",
+            1
+          ],
+          [
+            "spares",
             1
           ]
         ]
@@ -1882,11 +2270,11 @@
             1
           ],
           [
-            "mechanical_parts",
+            "mechanical_gear",
             1
           ],
           [
-            "fasteners",
+            "rope",
             1
           ]
         ]
@@ -1897,7 +2285,7 @@
       "name": "Bear Trap",
       "cat": "place",
       "desc": "Packed Bear Trap. Craft before placement; pack into inventory or a container. Placement does not consume raw materials again. A worn pack re-forges at the Workbench for a quarter of its materials.",
-      "w": 3.2,
+      "w": 2.8,
       "max": 1,
       "dur": 60,
       "repair": {
@@ -1909,10 +2297,6 @@
           ],
           [
             "iron_ingot",
-            1
-          ],
-          [
-            "fasteners",
             1
           ]
         ]
@@ -1984,51 +2368,28 @@
       "qty": 1,
       "ins": [
         [
-          "iron_ingot",
-          3
+          "metal_pipe",
+          1
         ],
         [
-          "mechanical_parts",
+          "iron_ingot",
+          4
+        ],
+        [
+          "refined_iron_ingot",
           2
         ],
         [
           "spares",
-          2
+          4
         ]
       ],
       "station": "workbench",
       "stationLevel": 2,
-      "secs": 25,
+      "secs": 22,
       "base": true,
-      "tier": 1
-    },
-    "vehicle_drive": {
-      "id": "vehicle_drive",
-      "out": "vehicle_drive",
-      "qty": 1,
-      "ins": [
-        [
-          "iron_ingot",
-          2
-        ],
-        [
-          "mechanical_parts",
-          2
-        ],
-        [
-          "fasteners",
-          2
-        ],
-        [
-          "spares",
-          3
-        ]
-      ],
-      "station": "workbench",
-      "stationLevel": 2,
-      "secs": 25,
-      "base": true,
-      "tier": 1
+      "tier": 1,
+      "rev": 5
     },
     "motorbike_kit": {
       "id": "motorbike_kit",
@@ -2040,41 +2401,23 @@
           1
         ],
         [
-          "vehicle_drive",
-          1
+          "mechanical_gear",
+          2
         ],
         [
           "iron_plate",
-          2
+          3
         ],
         [
-          "fasteners",
-          2
+          "refined_iron_ingot",
+          4
         ]
       ],
       "station": "workbench",
       "stationLevel": 3,
       "secs": 40,
       "tier": 2,
-      "rev": 2
-    },
-    "refine_salvaged_oil": {
-      "id": "refine_salvaged_oil",
-      "out": "fuel_can",
-      "qty": 1,
-      "ins": [
-        [
-          "salvaged_oil",
-          3
-        ],
-        [
-          "glass",
-          1
-        ]
-      ],
-      "station": "furnace",
-      "secs": 18,
-      "tier": 1
+      "rev": 4
     },
     "refinery_fuel": {
       "id": "refinery_fuel",
@@ -2082,7 +2425,7 @@
       "qty": 1,
       "ins": [
         [
-          "salvaged_oil",
+          "crude_petroleum",
           3
         ],
         [
@@ -2101,7 +2444,7 @@
       "qty": 2,
       "ins": [
         [
-          "salvaged_oil",
+          "crude_petroleum",
           5
         ],
         [
@@ -2111,69 +2454,6 @@
       ],
       "station": "refinery",
       "secs": 22,
-      "base": true,
-      "tier": 1
-    },
-    "refinery_industrial": {
-      "id": "refinery_industrial",
-      "out": "fuel_can",
-      "qty": 2,
-      "outs": [
-        [
-          "fuel_can",
-          2
-        ],
-        [
-          "lubricant",
-          1
-        ]
-      ],
-      "ins": [
-        [
-          "salvaged_oil",
-          6
-        ],
-        [
-          "glass",
-          1
-        ]
-      ],
-      "station": "refinery",
-      "secs": 26,
-      "base": true,
-      "tier": 1
-    },
-    "refinery_lubricant": {
-      "id": "refinery_lubricant",
-      "out": "lubricant",
-      "qty": 1,
-      "ins": [
-        [
-          "salvaged_oil",
-          2
-        ]
-      ],
-      "station": "refinery",
-      "secs": 12,
-      "base": true,
-      "tier": 1
-    },
-    "refinery_crude": {
-      "id": "refinery_crude",
-      "out": "fuel_can",
-      "qty": 1,
-      "ins": [
-        [
-          "crude_petroleum",
-          4
-        ],
-        [
-          "glass",
-          1
-        ]
-      ],
-      "station": "refinery",
-      "secs": 16,
       "base": true,
       "tier": 1
     },
@@ -2260,7 +2540,7 @@
           2
         ],
         [
-          "coal",
+          "charcoal",
           1
         ]
       ],
@@ -2268,7 +2548,8 @@
       "stationLevel": 2,
       "secs": 16,
       "base": true,
-      "tier": 2
+      "tier": 2,
+      "rev": 5
     },
     "essence_nature": {
       "id": "essence_nature",
@@ -2280,7 +2561,7 @@
           2
         ],
         [
-          "seed",
+          "seed_bitterleaf",
           2
         ]
       ],
@@ -2288,7 +2569,8 @@
       "stationLevel": 2,
       "secs": 16,
       "base": true,
-      "tier": 2
+      "tier": 2,
+      "rev": 4
     },
     "essence_water": {
       "id": "essence_water",
@@ -2394,14 +2676,15 @@
           4
         ],
         [
-          "mechanical_parts",
+          "electronic_parts",
           2
         ]
       ],
       "station": "workbench",
       "stationLevel": 2,
       "secs": 50,
-      "tier": 2
+      "tier": 2,
+      "rev": 5
     },
     "core_demon": {
       "id": "core_demon",
@@ -2511,79 +2794,21 @@
       "secs": 45,
       "tier": 2
     },
-    "fasteners": {
-      "id": "fasteners",
-      "out": "fasteners",
-      "qty": 3,
-      "ins": [
-        [
-          "iron_ingot",
-          1
-        ],
-        [
-          "scrap",
-          1
-        ]
-      ],
-      "station": "workbench",
-      "secs": 10,
-      "tier": 1
-    },
-    "treated_canvas": {
-      "id": "treated_canvas",
-      "out": "treated_canvas",
-      "qty": 2,
-      "ins": [
-        [
-          "cloth",
-          1
-        ],
-        [
-          "raw_salt",
-          1
-        ],
-        [
-          "herb",
-          1
-        ]
-      ],
-      "station": "campfire",
-      "secs": 12,
-      "tier": 1
-    },
-    "field_repair_kit": {
-      "id": "field_repair_kit",
-      "out": "field_repair_kit",
-      "qty": 1,
-      "ins": [
-        [
-          "fasteners",
-          2
-        ],
-        [
-          "cloth",
-          1
-        ]
-      ],
-      "station": "workbench",
-      "secs": 12,
-      "tier": 1
-    },
     "trail_pack": {
       "id": "trail_pack",
       "out": "trail_pack",
       "qty": 1,
       "ins": [
         [
-          "treated_canvas",
-          1
+          "cloth",
+          2
         ],
         [
           "leather",
           2
         ],
         [
-          "fasteners",
+          "needle_thread",
           2
         ],
         [
@@ -2594,7 +2819,8 @@
       "station": "workbench",
       "stationLevel": 2,
       "secs": 22,
-      "tier": 2
+      "tier": 2,
+      "rev": 5
     },
     "trail_canteen": {
       "id": "trail_canteen",
@@ -2602,7 +2828,7 @@
       "qty": 1,
       "ins": [
         [
-          "treated_canvas",
+          "cloth",
           2
         ],
         [
@@ -2614,71 +2840,15 @@
           1
         ],
         [
-          "fasteners",
+          "needle_thread",
           1
         ]
       ],
       "station": "workbench",
       "stationLevel": 2,
       "secs": 20,
-      "tier": 2
-    },
-    "fuel_briquette": {
-      "id": "fuel_briquette",
-      "out": "fuel_briquette",
-      "qty": 1,
-      "ins": [
-        [
-          "charcoal",
-          2
-        ],
-        [
-          "fiber",
-          1
-        ]
-      ],
-      "station": "workbench",
-      "stationLevel": 2,
-      "secs": 10,
-      "tier": 2
-    },
-    "recover_drive": {
-      "id": "recover_drive",
-      "out": "mechanical_parts",
-      "qty": 1,
-      "ins": [
-        [
-          "damaged_drive",
-          1
-        ],
-        [
-          "scrap",
-          1
-        ]
-      ],
-      "station": "workbench",
-      "secs": 12,
-      "base": true,
-      "tier": 1
-    },
-    "mechanical_parts": {
-      "id": "mechanical_parts",
-      "out": "mechanical_parts",
-      "qty": 2,
-      "ins": [
-        [
-          "scrap",
-          2
-        ],
-        [
-          "iron_ingot",
-          1
-        ]
-      ],
-      "station": "workbench",
-      "secs": 12,
-      "base": true,
-      "tier": 1
+      "tier": 2,
+      "rev": 5
     },
     "industrial_pick": {
       "id": "industrial_pick",
@@ -2690,18 +2860,19 @@
           1
         ],
         [
-          "mechanical_parts",
+          "refined_iron_ingot",
           2
         ],
         [
-          "spares",
-          2
+          "metal_pipe",
+          1
         ]
       ],
       "station": "workbench",
       "stationLevel": 2,
       "secs": 25,
-      "tier": 2
+      "tier": 2,
+      "rev": 5
     },
     "industrial_axe": {
       "id": "industrial_axe",
@@ -2713,18 +2884,23 @@
           1
         ],
         [
-          "mechanical_parts",
+          "metal_blade",
+          1
+        ],
+        [
+          "refined_iron_ingot",
           2
         ],
         [
-          "spares",
-          2
+          "metal_pipe",
+          1
         ]
       ],
       "station": "workbench",
       "stationLevel": 2,
       "secs": 25,
-      "tier": 2
+      "tier": 2,
+      "rev": 5
     },
     "reinforced_spear": {
       "id": "reinforced_spear",
@@ -2732,11 +2908,11 @@
       "qty": 1,
       "ins": [
         [
-          "iron_ingot",
-          2
+          "metal_blade",
+          1
         ],
         [
-          "mechanical_parts",
+          "iron_ingot",
           1
         ],
         [
@@ -2746,8 +2922,10 @@
       ],
       "station": "workbench",
       "stationLevel": 2,
-      "secs": 20,
-      "tier": 2
+      "secs": 16,
+      "base": true,
+      "tier": 2,
+      "rev": 6
     },
     "metal_pipe": {
       "id": "metal_pipe",
@@ -2759,8 +2937,8 @@
           2
         ],
         [
-          "mechanical_parts",
-          1
+          "spares",
+          2
         ]
       ],
       "station": "workbench",
@@ -2768,7 +2946,7 @@
       "secs": 18,
       "base": true,
       "tier": 2,
-      "rev": 2
+      "rev": 5
     },
     "metal_blade": {
       "id": "metal_blade",
@@ -2777,10 +2955,10 @@
       "ins": [
         [
           "iron_ingot",
-          4
+          3
         ],
         [
-          "mechanical_parts",
+          "spares",
           1
         ]
       ],
@@ -2788,7 +2966,8 @@
       "stationLevel": 2,
       "secs": 16,
       "base": true,
-      "tier": 2
+      "tier": 2,
+      "rev": 6
     },
     "mechanical_gear": {
       "id": "mechanical_gear",
@@ -2796,20 +2975,12 @@
       "qty": 1,
       "ins": [
         [
-          "refined_iron_ingot",
-          1
-        ],
-        [
           "iron_ingot",
-          1
-        ],
-        [
-          "mechanical_parts",
           2
         ],
         [
-          "fasteners",
-          1
+          "spares",
+          3
         ]
       ],
       "station": "workbench",
@@ -2817,7 +2988,7 @@
       "secs": 20,
       "base": true,
       "tier": 2,
-      "rev": 2
+      "rev": 5
     },
     "iron_plate": {
       "id": "iron_plate",
@@ -2829,8 +3000,8 @@
           2
         ],
         [
-          "fasteners",
-          1
+          "spares",
+          2
         ]
       ],
       "station": "workbench",
@@ -2838,86 +3009,7 @@
       "secs": 18,
       "base": true,
       "tier": 2,
-      "rev": 2
-    },
-    "iron_sword_blade": {
-      "id": "iron_sword_blade",
-      "out": "iron_sword",
-      "qty": 1,
-      "alias": "Iron Sword (blade refit)",
-      "ins": [
-        [
-          "metal_blade",
-          1
-        ],
-        [
-          "iron_ingot",
-          2
-        ],
-        [
-          "leather",
-          1
-        ]
-      ],
-      "station": "workbench",
-      "stationLevel": 2,
-      "secs": 14,
-      "base": true,
-      "tier": 2
-    },
-    "vehicle_frame_piped": {
-      "id": "vehicle_frame_piped",
-      "out": "vehicle_frame",
-      "qty": 1,
-      "alias": "Utility Frame (piped)",
-      "ins": [
-        [
-          "metal_pipe",
-          1
-        ],
-        [
-          "iron_ingot",
-          2
-        ],
-        [
-          "mechanical_parts",
-          2
-        ],
-        [
-          "spares",
-          2
-        ]
-      ],
-      "station": "workbench",
-      "stationLevel": 2,
-      "secs": 22,
-      "base": true,
-      "tier": 2
-    },
-    "reinforced_spear_blade": {
-      "id": "reinforced_spear_blade",
-      "out": "reinforced_spear",
-      "qty": 1,
-      "alias": "Reinforced Spear (blade)",
-      "ins": [
-        [
-          "metal_blade",
-          1
-        ],
-        [
-          "iron_ingot",
-          1
-        ],
-        [
-          "wood",
-          2
-        ]
-      ],
-      "station": "workbench",
-      "stationLevel": 2,
-      "secs": 16,
-      "base": true,
-      "tier": 2
+      "rev": 5
     },
     "industrial_pick_geared": {
       "id": "industrial_pick_geared",
@@ -2944,34 +3036,518 @@
       "base": true,
       "tier": 2
     },
-    "vehicle_drive_geared": {
-      "id": "vehicle_drive_geared",
-      "out": "vehicle_drive",
+    "wood_club": {
+      "id": "wood_club",
+      "out": "wood_club",
       "qty": 1,
-      "alias": "Motor Drive (geared)",
       "ins": [
         [
-          "mechanical_gear",
-          1
-        ],
+          "wood",
+          12
+        ]
+      ],
+      "station": null,
+      "secs": 3,
+      "base": true,
+      "tier": 0,
+      "rev": 4
+    },
+    "cleaver": {
+      "id": "cleaver",
+      "out": "cleaver",
+      "qty": 1,
+      "ins": [
         [
           "iron_ingot",
           1
         ],
         [
-          "fasteners",
-          2
+          "metal_blade",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 14,
+      "tier": 1,
+      "rev": 4
+    },
+    "machete": {
+      "id": "machete",
+      "out": "machete",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_ingot",
+          4
         ],
         [
-          "spares",
-          2
+          "metal_blade",
+          3
         ]
       ],
       "station": "workbench",
       "stationLevel": 2,
       "secs": 22,
+      "tier": 2,
+      "rev": 4
+    },
+    "needle_thread": {
+      "id": "needle_thread",
+      "out": "needle_thread",
+      "qty": 2,
+      "ins": [
+        [
+          "cloth",
+          2
+        ],
+        [
+          "iron_ingot",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 10,
+      "tier": 1,
+      "rev": 4
+    },
+    "syringe": {
+      "id": "syringe",
+      "out": "syringe",
+      "qty": 1,
+      "ins": [
+        [
+          "needle_tube",
+          1
+        ],
+        [
+          "animal_fat",
+          2
+        ],
+        [
+          "iron_ingot",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 14,
+      "tier": 2,
+      "rev": 4
+    },
+    "low_quality_fuel": {
+      "id": "low_quality_fuel",
+      "out": "fuel_can",
+      "qty": 1,
+      "alias": "Fuel Canister (rendered fat)",
+      "ins": [
+        [
+          "animal_fat",
+          6
+        ],
+        [
+          "cloth",
+          1
+        ]
+      ],
+      "station": "furnace",
+      "secs": 24,
+      "tier": 1,
+      "rev": 4
+    },
+    "iron_plate_helmet": {
+      "id": "iron_plate_helmet",
+      "out": "iron_plate_helmet",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_plate",
+          1
+        ],
+        [
+          "hide",
+          3
+        ],
+        [
+          "needle_thread",
+          3
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 24,
+      "tier": 2,
+      "rev": 4
+    },
+    "iron_plate_chest": {
+      "id": "iron_plate_chest",
+      "out": "iron_plate_chest",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_plate",
+          3
+        ],
+        [
+          "hide",
+          4
+        ],
+        [
+          "needle_thread",
+          3
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 30,
+      "tier": 2,
+      "rev": 4
+    },
+    "refined_iron_helmet": {
+      "id": "refined_iron_helmet",
+      "out": "refined_iron_helmet",
+      "qty": 1,
+      "ins": [
+        [
+          "refined_iron_ingot",
+          3
+        ],
+        [
+          "hide",
+          5
+        ],
+        [
+          "needle_thread",
+          6
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 30,
+      "tier": 2,
+      "rev": 4
+    },
+    "refined_iron_chest": {
+      "id": "refined_iron_chest",
+      "out": "refined_iron_chest",
+      "qty": 1,
+      "ins": [
+        [
+          "refined_iron_ingot",
+          5
+        ],
+        [
+          "hide",
+          5
+        ],
+        [
+          "needle_thread",
+          8
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 38,
+      "tier": 2,
+      "rev": 4
+    },
+    "wooden_ladder": {
+      "id": "wooden_ladder",
+      "out": "wooden_ladder",
+      "qty": 1,
+      "ins": [
+        [
+          "wood",
+          12
+        ],
+        [
+          "rope",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "secs": 14,
+      "tier": 1,
+      "rev": 5
+    },
+    "steel_folding_ladder": {
+      "id": "steel_folding_ladder",
+      "out": "steel_folding_ladder",
+      "qty": 1,
+      "ins": [
+        [
+          "refined_iron_ingot",
+          6
+        ],
+        [
+          "wooden_ladder",
+          1
+        ],
+        [
+          "mechanical_gear",
+          1
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 30,
+      "tier": 2,
+      "rev": 5
+    },
+    "large_furnace": {
+      "id": "large_furnace",
+      "out": "large_furnace",
+      "qty": 1,
+      "ins": [
+        [
+          "stone",
+          36
+        ],
+        [
+          "iron_ingot",
+          8
+        ],
+        [
+          "iron_plate",
+          4
+        ],
+        [
+          "charcoal",
+          4
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 40,
+      "tier": 2,
+      "rev": 5
+    },
+    "iron_plate_pants": {
+      "id": "iron_plate_pants",
+      "out": "iron_plate_pants",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_plate",
+          2
+        ],
+        [
+          "hide",
+          3
+        ],
+        [
+          "needle_thread",
+          3
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 26,
+      "tier": 2,
+      "rev": 5
+    },
+    "iron_plate_boots": {
+      "id": "iron_plate_boots",
+      "out": "iron_plate_boots",
+      "qty": 1,
+      "ins": [
+        [
+          "iron_plate",
+          1
+        ],
+        [
+          "hide",
+          3
+        ],
+        [
+          "needle_thread",
+          3
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 22,
+      "tier": 2,
+      "rev": 5
+    },
+    "refined_iron_legs": {
+      "id": "refined_iron_legs",
+      "out": "refined_iron_legs",
+      "qty": 1,
+      "ins": [
+        [
+          "refined_iron_ingot",
+          3
+        ],
+        [
+          "hide",
+          5
+        ],
+        [
+          "needle_thread",
+          6
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 32,
+      "tier": 2,
+      "rev": 5
+    },
+    "refined_iron_boots": {
+      "id": "refined_iron_boots",
+      "out": "refined_iron_boots",
+      "qty": 1,
+      "ins": [
+        [
+          "refined_iron_ingot",
+          3
+        ],
+        [
+          "hide",
+          5
+        ],
+        [
+          "needle_thread",
+          6
+        ]
+      ],
+      "station": "workbench",
+      "stationLevel": 2,
+      "secs": 28,
+      "tier": 2,
+      "rev": 5
+    },
+    "dried_meat": {
+      "id": "dried_meat",
+      "out": "dried_meat",
+      "qty": 1,
+      "ins": [
+        [
+          "meat",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 20,
       "base": true,
-      "tier": 2
+      "tier": 0,
+      "rev": 4
+    },
+    "grilled_mushroom": {
+      "id": "grilled_mushroom",
+      "out": "grilled_mushroom",
+      "qty": 1,
+      "ins": [
+        [
+          "mushroom",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 6,
+      "base": true,
+      "tier": 0,
+      "rev": 4
+    },
+    "mushroom_soup": {
+      "id": "mushroom_soup",
+      "out": "mushroom_soup",
+      "qty": 1,
+      "ins": [
+        [
+          "mushroom",
+          5
+        ],
+        [
+          "tin_can",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 14,
+      "base": true,
+      "tier": 0,
+      "rev": 4
+    },
+    "canned_meat": {
+      "id": "canned_meat",
+      "out": "canned_meat",
+      "qty": 1,
+      "ins": [
+        [
+          "meat",
+          3
+        ],
+        [
+          "tin_can",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 18,
+      "base": true,
+      "tier": 0,
+      "rev": 4
+    },
+    "fruit_juice": {
+      "id": "fruit_juice",
+      "out": "fruit_juice",
+      "qty": 1,
+      "ins": [
+        [
+          "berries",
+          3
+        ]
+      ],
+      "station": null,
+      "secs": 2,
+      "base": true,
+      "tier": 0,
+      "rev": 4
+    },
+    "fruit_wine": {
+      "id": "fruit_wine",
+      "out": "fruit_wine",
+      "qty": 1,
+      "ins": [
+        [
+          "berries",
+          5
+        ],
+        [
+          "tin_can",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 30,
+      "base": true,
+      "tier": 0,
+      "rev": 4
+    },
+    "jam": {
+      "id": "jam",
+      "out": "jam",
+      "qty": 1,
+      "ins": [
+        [
+          "berries",
+          10
+        ],
+        [
+          "cloth",
+          1
+        ],
+        [
+          "tin_can",
+          1
+        ]
+      ],
+      "station": "campfire",
+      "secs": 20,
+      "base": true,
+      "tier": 0,
+      "rev": 4
     },
     "rope": {
       "id": "rope",
@@ -3017,14 +3593,15 @@
           3
         ],
         [
-          "seed",
+          "seed_wildberry",
           1
         ]
       ],
       "station": null,
       "secs": 2,
       "base": true,
-      "tier": 0
+      "tier": 0,
+      "rev": 4
     },
     "arrow_fletched": {
       "id": "arrow_fletched",
@@ -3168,64 +3745,6 @@
       "base": true,
       "tier": 0
     },
-    "root_broth": {
-      "id": "root_broth",
-      "out": "root_broth",
-      "qty": 1,
-      "ins": [
-        [
-          "crop",
-          2
-        ],
-        [
-          "herb",
-          1
-        ]
-      ],
-      "station": "campfire",
-      "secs": 12,
-      "base": true,
-      "tier": 1
-    },
-    "poached_eggs": {
-      "id": "poached_eggs",
-      "out": "root_broth",
-      "qty": 1,
-      "alias": "Root Broth (grouse eggs)",
-      "ins": [
-        [
-          "grouse_egg",
-          2
-        ],
-        [
-          "herb",
-          1
-        ]
-      ],
-      "station": "campfire",
-      "secs": 8,
-      "base": true,
-      "tier": 0
-    },
-    "herb_roast": {
-      "id": "herb_roast",
-      "out": "herb_roast",
-      "qty": 1,
-      "ins": [
-        [
-          "meat",
-          1
-        ],
-        [
-          "herb",
-          1
-        ]
-      ],
-      "station": "campfire",
-      "secs": 10,
-      "base": true,
-      "tier": 0
-    },
     "cooked_meat": {
       "id": "cooked_meat",
       "out": "cooked_meat",
@@ -3238,25 +3757,6 @@
       ],
       "station": "campfire",
       "secs": 8,
-      "base": true,
-      "tier": 0
-    },
-    "salted_meat": {
-      "id": "salted_meat",
-      "out": "salted_meat",
-      "qty": 1,
-      "ins": [
-        [
-          "meat",
-          1
-        ],
-        [
-          "raw_salt",
-          1
-        ]
-      ],
-      "station": "campfire",
-      "secs": 10,
       "base": true,
       "tier": 0
     },
@@ -3322,14 +3822,15 @@
           3
         ],
         [
-          "coal",
-          1
+          "charcoal",
+          2
         ]
       ],
       "station": "furnace",
       "secs": 20,
       "base": true,
-      "tier": 1
+      "tier": 1,
+      "rev": 5
     },
     "refined_iron_rich": {
       "id": "refined_iron_rich",
@@ -3341,43 +3842,15 @@
           1
         ],
         [
-          "coal",
-          1
+          "charcoal",
+          2
         ]
       ],
       "station": "furnace",
       "secs": 14,
       "base": true,
-      "tier": 1
-    },
-    "scrap_ingot": {
-      "id": "scrap_ingot",
-      "out": "iron_ingot",
-      "qty": 1,
-      "ins": [
-        [
-          "scrap",
-          3
-        ]
-      ],
-      "station": "furnace",
-      "secs": 12,
-      "base": true,
-      "tier": 0
-    },
-    "brick": {
-      "id": "brick",
-      "out": "brick",
-      "qty": 2,
-      "ins": [
-        [
-          "stone",
-          3
-        ]
-      ],
-      "station": "furnace",
-      "secs": 10,
-      "tier": 1
+      "tier": 1,
+      "rev": 5
     },
     "shell_glass": {
       "id": "shell_glass",
@@ -3466,6 +3939,7 @@
       ],
       "station": "workbench",
       "secs": 5,
+      "base": true,
       "tier": 1
     },
     "bow": {
@@ -3546,24 +4020,6 @@
       "secs": 15,
       "base": true,
       "tier": 1
-    },
-    "iron_sword": {
-      "id": "iron_sword",
-      "out": "iron_sword",
-      "qty": 1,
-      "ins": [
-        [
-          "iron_ingot",
-          5
-        ],
-        [
-          "leather",
-          1
-        ]
-      ],
-      "station": "workbench",
-      "secs": 18,
-      "tier": 2
     },
     "leather_armor": {
       "id": "leather_armor",
@@ -3647,8 +4103,8 @@
       "qty": 1,
       "ins": [
         [
-          "scrap",
-          6
+          "iron_ingot",
+          2
         ],
         [
           "leather",
@@ -3657,7 +4113,8 @@
       ],
       "station": "workbench",
       "secs": 12,
-      "tier": 1
+      "tier": 1,
+      "rev": 5
     },
     "medkit": {
       "id": "medkit",
@@ -3921,15 +4378,15 @@
           3
         ],
         [
-          "mechanical_parts",
+          "mechanical_gear",
+          1
+        ],
+        [
+          "metal_pipe",
           2
         ],
         [
           "spares",
-          2
-        ],
-        [
-          "brick",
           2
         ]
       ],
@@ -3945,19 +4402,19 @@
       "ins": [
         [
           "iron_ingot",
-          4
+          8
         ],
         [
-          "mechanical_parts",
-          3
+          "wood",
+          8
+        ],
+        [
+          "metal_pipe",
+          2
         ],
         [
           "spares",
           5
-        ],
-        [
-          "brick",
-          6
         ],
         [
           "glass",
@@ -4044,12 +4501,12 @@
           2
         ],
         [
-          "mechanical_parts",
-          3
+          "mechanical_gear",
+          1
         ],
         [
-          "fasteners",
-          3
+          "electronic_parts",
+          2
         ],
         [
           "spares",
@@ -4110,19 +4567,19 @@
       "ins": [
         [
           "iron_ingot",
-          3
+          4
         ],
         [
-          "mechanical_parts",
-          3
+          "refined_iron_ingot",
+          2
+        ],
+        [
+          "electronic_parts",
+          2
         ],
         [
           "spares",
           4
-        ],
-        [
-          "wood",
-          6
         ]
       ],
       "station": null,
@@ -4159,8 +4616,8 @@
           1
         ],
         [
-          "fasteners",
-          1
+          "electronic_parts",
+          2
         ],
         [
           "spares",
@@ -4179,14 +4636,18 @@
       "ins": [
         [
           "iron_ingot",
+          2
+        ],
+        [
+          "spares",
           1
         ],
         [
-          "mechanical_parts",
-          1
+          "electronic_parts",
+          2
         ],
         [
-          "fasteners",
+          "iron_plate",
           1
         ]
       ],
@@ -4201,16 +4662,16 @@
       "qty": 1,
       "ins": [
         [
-          "mechanical_gear",
-          1
-        ],
-        [
           "iron_ingot",
           1
         ],
         [
-          "fasteners",
+          "electronic_parts",
           2
+        ],
+        [
+          "spares",
+          1
         ]
       ],
       "station": null,
@@ -4232,11 +4693,11 @@
           2
         ],
         [
-          "mechanical_parts",
-          2
+          "mechanical_gear",
+          1
         ],
         [
-          "fasteners",
+          "rope",
           2
         ]
       ],
@@ -4256,10 +4717,6 @@
         ],
         [
           "iron_ingot",
-          2
-        ],
-        [
-          "fasteners",
           2
         ]
       ],
@@ -4534,18 +4991,22 @@
     },
     "wall_brick": {
       "id": "wall_brick",
-      "name": "Brick Wall",
+      "name": "Iron-braced Wall",
       "cost": [
         [
-          "brick",
-          6
+          "stone",
+          9
+        ],
+        [
+          "iron_ingot",
+          1
         ]
       ],
       "hp": 600,
       "need": "any",
       "block": true,
       "layer": "wall",
-      "desc": "Fired brick. Strongest wall."
+      "desc": "Dressed stone braced with iron. Strongest wall."
     },
     "door_wood": {
       "id": "door_wood",
@@ -4683,11 +5144,11 @@
     },
     "roof_tile": {
       "id": "roof_tile",
-      "name": "Tile Roof",
+      "name": "Stone Tile Roof",
       "cost": [
         [
-          "brick",
-          3
+          "stone",
+          5
         ]
       ],
       "hp": 200,
@@ -4810,15 +5271,15 @@
           3
         ],
         [
-          "mechanical_parts",
+          "mechanical_gear",
+          1
+        ],
+        [
+          "metal_pipe",
           2
         ],
         [
           "spares",
-          2
-        ],
-        [
-          "brick",
           2
         ]
       ],
@@ -4828,7 +5289,7 @@
       "layer": "obj",
       "station": "oil_pump",
       "light": 0,
-      "desc": "Draws Crude Petroleum from an authorized oil site. Needs fuel to run; output waits in its slots. Placement needs an authorized source.",
+      "desc": "Draws Crude Petroleum from a crude seep: a dark, shining pool on open ground. It stands only on a seep and stops when the seep runs dry.",
       "item": "deploy_oil_pump"
     },
     "refinery": {
@@ -4837,19 +5298,19 @@
       "cost": [
         [
           "iron_ingot",
-          4
+          8
         ],
         [
-          "mechanical_parts",
-          3
+          "wood",
+          8
+        ],
+        [
+          "metal_pipe",
+          2
         ],
         [
           "spares",
           5
-        ],
-        [
-          "brick",
-          6
         ],
         [
           "glass",
@@ -4862,7 +5323,7 @@
       "layer": "obj",
       "station": "refinery",
       "light": 40,
-      "desc": "Converts finite Salvaged Oil into Fuel Canisters and Machine Lubricant. Needs a level-2 Workbench nearby and fuel to run. The industrial batch yields fuel and lubricant together.",
+      "desc": "Refines Crude Petroleum into Fuel Canisters. Needs a level-2 Workbench nearby and fuel to run. The batch run is more oil-efficient.",
       "item": "deploy_refinery"
     },
     "workbench": {
@@ -4908,7 +5369,7 @@
       "block": true,
       "layer": "obj",
       "station": "research",
-      "desc": "Spend Spares or study specimens to unlock recipes.",
+      "desc": "Spend Parts or study specimens to unlock recipes.",
       "item": "deploy_research"
     },
     "garden": {
@@ -4944,12 +5405,12 @@
           2
         ],
         [
-          "mechanical_parts",
-          3
+          "mechanical_gear",
+          1
         ],
         [
-          "fasteners",
-          3
+          "electronic_parts",
+          2
         ],
         [
           "spares",
@@ -5006,7 +5467,7 @@
       "block": true,
       "layer": "obj",
       "slots": 6,
-      "desc": "SOH_PROVISIONAL: 6-slot livestock trough. Stock fodder/crops/berries and filled water flasks (or rain/barrel) inside an enclosed pen.",
+      "desc": "6-slot livestock trough. Stock fodder/crops/berries and filled water flasks (or rain/barrel) inside an enclosed pen.",
       "item": "deploy_feed_trough"
     },
     "base_generator": {
@@ -5015,19 +5476,19 @@
       "cost": [
         [
           "iron_ingot",
-          3
+          4
         ],
         [
-          "mechanical_parts",
-          3
+          "refined_iron_ingot",
+          2
+        ],
+        [
+          "electronic_parts",
+          2
         ],
         [
           "spares",
           4
-        ],
-        [
-          "wood",
-          6
         ]
       ],
       "hp": 180,
@@ -5067,8 +5528,8 @@
           1
         ],
         [
-          "fasteners",
-          1
+          "electronic_parts",
+          2
         ],
         [
           "spares",
@@ -5088,14 +5549,18 @@
       "cost": [
         [
           "iron_ingot",
+          2
+        ],
+        [
+          "spares",
           1
         ],
         [
-          "mechanical_parts",
-          1
+          "electronic_parts",
+          2
         ],
         [
-          "fasteners",
+          "iron_plate",
           1
         ]
       ],
@@ -5111,16 +5576,16 @@
       "name": "Infrared Sensor",
       "cost": [
         [
-          "mechanical_gear",
-          1
-        ],
-        [
           "iron_ingot",
           1
         ],
         [
-          "fasteners",
+          "electronic_parts",
           2
+        ],
+        [
+          "spares",
+          1
         ]
       ],
       "hp": 90,
@@ -5136,26 +5601,30 @@
       "cost": [
         [
           "iron_ingot",
-          4
-        ],
-        [
-          "mechanical_parts",
           2
         ],
         [
-          "fasteners",
-          3
+          "electronic_parts",
+          2
         ],
         [
-          "spares",
-          3
+          "mechanical_gear",
+          1
+        ],
+        [
+          "iron_plate",
+          2
+        ],
+        [
+          "electric_resistor",
+          2
         ]
       ],
       "hp": 350,
       "need": "any",
       "block": true,
       "layer": "wall",
-      "desc": "Powered opening; place from the outside to set the interior emergency handle."
+      "desc": "Lock module fitted into a door you own. Stand outside when you fit it: the side you stand on needs power, the other side keeps a hand release."
     },
     "arrow_turret": {
       "id": "arrow_turret",
@@ -5170,11 +5639,11 @@
           2
         ],
         [
-          "mechanical_parts",
-          2
+          "mechanical_gear",
+          1
         ],
         [
-          "fasteners",
+          "rope",
           2
         ]
       ],
@@ -5196,10 +5665,6 @@
         ],
         [
           "iron_ingot",
-          2
-        ],
-        [
-          "fasteners",
           2
         ]
       ],
@@ -5263,9 +5728,60 @@
       "desc": "Permanent light.",
       "item": "deploy_torch_post"
     },
+    "ladder_wood": {
+      "id": "ladder_wood",
+      "name": "Wooden Ladder",
+      "cost": [
+        [
+          "wooden_ladder",
+          1
+        ]
+      ],
+      "hp": 60,
+      "need": "any",
+      "block": false,
+      "layer": "obj",
+      "desc": "Climbs a cliff face one tile thick. On foot only.",
+      "item": "wooden_ladder"
+    },
+    "ladder_steel": {
+      "id": "ladder_steel",
+      "name": "Steel Folding Ladder",
+      "cost": [
+        [
+          "steel_folding_ladder",
+          1
+        ]
+      ],
+      "hp": 240,
+      "need": "any",
+      "block": false,
+      "layer": "obj",
+      "desc": "Climbs a cliff up to three tiles thick. On foot only.",
+      "item": "steel_folding_ladder"
+    },
+    "large_furnace": {
+      "id": "large_furnace",
+      "name": "Large Furnace",
+      "cost": [
+        [
+          "large_furnace",
+          1
+        ]
+      ],
+      "hp": 520,
+      "need": "any",
+      "block": true,
+      "layer": "obj",
+      "station": "furnace",
+      "light": 60,
+      "warmth": 1,
+      "desc": "Smelts twice as fast as a Furnace on the same fire. 12 output stacks.",
+      "item": "large_furnace"
+    },
     "escrow": {
       "id": "escrow",
-      "name": "Rương ký gửi",
+      "name": "Escrow Chest",
       "cost": [
         [
           "escrow_chest",
@@ -5291,12 +5807,6 @@
         [
           "wood",
           1
-        ]
-      ],
-      "bonus": [
-        [
-          "seed",
-          0.25
         ]
       ],
       "block": true,
@@ -5449,14 +5959,20 @@
     },
     "coalv": {
       "id": "coalv",
-      "name": "Coal Seam",
+      "name": "Pyrite Seam",
       "mat": "ore",
       "hp": 20,
       "stock": 5,
       "yields": [
         [
-          "coal",
+          "iron_ore",
           1
+        ]
+      ],
+      "bonus": [
+        [
+          "sulfur",
+          0.5
         ]
       ],
       "block": true,
@@ -5479,14 +5995,20 @@
     },
     "salt_shale": {
       "id": "salt_shale",
-      "name": "Salt Shale",
+      "name": "Shell Shale",
       "mat": "ore",
       "hp": 12,
       "stock": 4,
       "yields": [
         [
-          "raw_salt",
+          "stone",
           1
+        ]
+      ],
+      "bonus": [
+        [
+          "shell",
+          0.25
         ]
       ],
       "block": true,
@@ -5527,7 +6049,7 @@
       ],
       "bonus": [
         [
-          "seed",
+          "seed_wildberry",
           0.3
         ]
       ],
@@ -5546,6 +6068,12 @@
         [
           "fiber",
           1
+        ]
+      ],
+      "bonus": [
+        [
+          "seed_sunroot",
+          0.08
         ]
       ],
       "block": false,
@@ -5582,6 +6110,12 @@
           1
         ]
       ],
+      "bonus": [
+        [
+          "seed_bitterleaf",
+          0.3
+        ]
+      ],
       "block": false,
       "regrow": 600,
       "regrowClass": "herb",
@@ -5612,14 +6146,18 @@
       "stock": 4,
       "yields": [
         [
-          "scrap",
+          "spares",
           1
         ]
       ],
       "bonus": [
         [
-          "spares",
-          0.55
+          "tin_can",
+          0.35
+        ],
+        [
+          "needle_tube",
+          0.1
         ]
       ],
       "block": false,
@@ -5633,7 +6171,7 @@
       "stock": 8,
       "yields": [
         [
-          "scrap",
+          "spares",
           1
         ]
       ],
@@ -5643,28 +6181,150 @@
           0.3
         ],
         [
-          "damaged_drive",
-          0.2
+          "mechanical_gear",
+          0.08
         ],
         [
           "fuel_can",
           0.06
         ],
         [
-          "mechanical_parts",
+          "metal_pipe",
           0.08
         ],
         [
-          "fasteners",
-          0.12
+          "iron_plate",
+          0.06
         ],
         [
-          "field_repair_kit",
-          0.04
+          "tin_can",
+          0.2
+        ],
+        [
+          "electronic_parts",
+          0.15
+        ],
+        [
+          "electric_resistor",
+          0.12
         ]
       ],
       "block": true,
       "art": "wreck"
+    },
+    "road_salvage_bale": {
+      "id": "road_salvage_bale",
+      "name": "Salvage Bale",
+      "mat": "scrap",
+      "hp": 9,
+      "stock": 3,
+      "yields": [
+        [
+          "spares",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "tin_can",
+          0.25
+        ],
+        [
+          "needle_tube",
+          0.07
+        ],
+        [
+          "metal_pipe",
+          0.05
+        ],
+        [
+          "iron_plate",
+          0.04
+        ]
+      ],
+      "block": true,
+      "art": "salvage_bale",
+      "harvestBy": {
+        "stone_axe": 1,
+        "stone_pick": 1,
+        "knife": 2,
+        "cleaver": 3,
+        "machete": 4,
+        "iron_pick": 1,
+        "industrial_pick": 1
+      }
+    },
+    "road_relay_wreck": {
+      "id": "road_relay_wreck",
+      "name": "Relay Wreck",
+      "mat": "scrap",
+      "hp": 12,
+      "stock": 3,
+      "yields": [
+        [
+          "spares",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "electronic_parts",
+          0.15
+        ],
+        [
+          "electric_resistor",
+          0.12
+        ],
+        [
+          "mechanical_gear",
+          0.06
+        ]
+      ],
+      "block": true,
+      "art": "relay_wreck",
+      "harvestBy": {
+        "stone_axe": 1,
+        "stone_pick": 1,
+        "knife": 2,
+        "cleaver": 3,
+        "machete": 4,
+        "iron_pick": 1,
+        "industrial_pick": 1
+      }
+    },
+    "road_fuel_rack": {
+      "id": "road_fuel_rack",
+      "name": "Fuel Rack",
+      "mat": "scrap",
+      "hp": 12,
+      "stock": 2,
+      "yields": [
+        [
+          "tin_can",
+          1
+        ]
+      ],
+      "bonus": [
+        [
+          "spares",
+          0.4
+        ],
+        [
+          "fuel_can",
+          0.06
+        ]
+      ],
+      "block": true,
+      "art": "fuel_rack",
+      "harvestBy": {
+        "stone_axe": 1,
+        "stone_pick": 1,
+        "knife": 2,
+        "cleaver": 3,
+        "machete": 4,
+        "iron_pick": 1,
+        "industrial_pick": 1
+      }
     }
   },
   "creatures": {
@@ -5686,6 +6346,11 @@
           "hide",
           1,
           1
+        ],
+        [
+          "animal_fat",
+          1,
+          0.8
         ],
         [
           "boar_tusk",
@@ -5765,13 +6430,13 @@
       "drops": [
         [
           "spares",
-          2,
+          3,
           1
         ],
         [
-          "scrap",
-          2,
-          1
+          "electronic_parts",
+          1,
+          0.5
         ],
         [
           "crawler_optic",
@@ -5894,6 +6559,11 @@
           "crystal",
           1,
           0.45
+        ],
+        [
+          "needle_tube",
+          1,
+          0.4
         ]
       ],
       "biome": "ruin",
@@ -5950,8 +6620,8 @@
       "sight": 105,
       "drops": [
         [
-          "scrap",
-          2,
+          "spares",
+          1,
           0.9
         ],
         [
@@ -5963,6 +6633,11 @@
           "meat",
           1,
           0.5
+        ],
+        [
+          "electronic_parts",
+          1,
+          0.3
         ]
       ],
       "biome": "scrap",
@@ -5981,8 +6656,8 @@
       "sight": 120,
       "drops": [
         [
-          "scrap",
-          2,
+          "spares",
+          1,
           0.9
         ],
         [
@@ -6022,17 +6697,17 @@
           0.9
         ],
         [
-          "coal",
+          "charcoal",
           1,
           0.7
         ],
         [
-          "scrap",
-          2,
+          "spares",
+          1,
           0.75
         ],
         [
-          "fasteners",
+          "iron_ingot",
           1,
           0.4
         ]
@@ -6061,11 +6736,6 @@
           "berries",
           2,
           0.6
-        ],
-        [
-          "raw_salt",
-          1,
-          0.45
         ]
       ],
       "biome": "lake",
@@ -6120,7 +6790,7 @@
           0.9
         ],
         [
-          "coal",
+          "charcoal",
           2,
           0.8
         ],
@@ -6154,6 +6824,11 @@
           "hide",
           2,
           1
+        ],
+        [
+          "animal_fat",
+          1,
+          0.6
         ]
       ],
       "biome": "meadow",
@@ -6320,13 +6995,8 @@
       "sight": 155,
       "drops": [
         [
-          "raw_salt",
-          4,
-          1
-        ],
-        [
           "shell",
-          4,
+          6,
           1
         ],
         [
@@ -6672,12 +7342,12 @@
       "toLevel": 2,
       "cost": [
         [
-          "mechanical_parts",
+          "iron_ingot",
           2
         ],
         [
-          "iron_ingot",
-          1
+          "spares",
+          4
         ]
       ]
     },
@@ -6685,15 +7355,15 @@
       "toLevel": 3,
       "cost": [
         [
-          "mechanical_parts",
-          6
+          "mechanical_gear",
+          2
+        ],
+        [
+          "iron_plate",
+          2
         ],
         [
           "iron_ingot",
-          8
-        ],
-        [
-          "fasteners",
           8
         ],
         [
@@ -6705,15 +7375,11 @@
     "furnace_lining": {
       "cost": [
         [
-          "brick",
-          2
+          "stone",
+          6
         ],
         [
-          "fasteners",
-          3
-        ],
-        [
-          "mechanical_parts",
+          "iron_plate",
           1
         ]
       ],
@@ -6722,16 +7388,16 @@
     "generator_capacity": {
       "cost": [
         [
-          "mechanical_parts",
-          4
+          "electronic_parts",
+          2
+        ],
+        [
+          "mechanical_gear",
+          1
         ],
         [
           "iron_ingot",
-          2
-        ],
-        [
-          "fasteners",
-          2
+          3
         ],
         [
           "spares",
@@ -6743,12 +7409,12 @@
     "freight_cart": {
       "cost": [
         [
-          "mechanical_parts",
-          4
+          "iron_plate",
+          2
         ],
         [
           "iron_ingot",
-          2
+          3
         ],
         [
           "spares",
@@ -6760,20 +7426,16 @@
     "industrial_module": {
       "cost": [
         [
-          "mechanical_parts",
-          3
-        ],
-        [
-          "fasteners",
-          3
+          "mechanical_gear",
+          2
         ],
         [
           "spares",
-          4
+          6
         ],
         [
           "iron_ingot",
-          2
+          3
         ]
       ],
       "benchLevel": 2
@@ -6804,7 +7466,7 @@
       "name": "Sunroot",
       "inputs": [
         [
-          "seed",
+          "seed_sunroot",
           1
         ]
       ],
@@ -6814,8 +7476,8 @@
           3
         ],
         [
-          "seed",
-          2
+          "seed_sunroot",
+          1
         ]
       ],
       "seconds": 300
@@ -6824,11 +7486,7 @@
       "name": "Bitterleaf",
       "inputs": [
         [
-          "seed",
-          1
-        ],
-        [
-          "herb",
+          "seed_bitterleaf",
           1
         ]
       ],
@@ -6838,11 +7496,31 @@
           3
         ],
         [
-          "seed",
+          "seed_bitterleaf",
           1
         ]
       ],
       "seconds": 600
+    },
+    "berry": {
+      "name": "Wild Berry",
+      "inputs": [
+        [
+          "seed_wildberry",
+          1
+        ]
+      ],
+      "output": [
+        [
+          "berries",
+          4
+        ],
+        [
+          "seed_wildberry",
+          1
+        ]
+      ],
+      "seconds": 300
     }
   },
   "recycler": {
@@ -6906,6 +7584,40 @@
           [
             "mechanical_parts",
             1
+          ]
+        ]
+      },
+      "X:plate-v1": {
+        "key": "iron_plate",
+        "seconds": 10,
+        "outputs": [
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      },
+      "X:gear-v2": {
+        "key": "mechanical_gear",
+        "seconds": 15,
+        "outputs": [
+          [
+            "spares",
+            2
+          ],
+          [
+            "iron_ingot",
+            1
+          ]
+        ]
+      },
+      "X:blade-v2": {
+        "key": "metal_blade",
+        "seconds": 14,
+        "outputs": [
+          [
+            "iron_ingot",
+            2
           ]
         ]
       }
@@ -7253,9 +7965,9 @@
         "qty": 2,
         "stock": 5
       },
-      "coal": {
+      "charcoal": {
         "price": 3,
-        "qty": 2,
+        "qty": 3,
         "stock": 4
       },
       "glass": {
@@ -7263,7 +7975,7 @@
         "qty": 1,
         "stock": 3
       },
-      "salvaged_oil": {
+      "crude_petroleum": {
         "price": 5,
         "qty": 1,
         "stock": 4
@@ -7308,12 +8020,12 @@
     "core_demon": "core_demon"
   },
   "counts": {
-    "items": 147,
-    "recipes": 112,
-    "structures": 47,
-    "sourceTypes": 19,
+    "items": 181,
+    "recipes": 114,
+    "structures": 50,
+    "sourceTypes": 22,
     "creatures": 23,
-    "recipeInputs": 273,
-    "recipeOutputVariants": 1
+    "recipeInputs": 280,
+    "recipeOutputVariants": 0
   }
 }

@@ -1,0 +1,3052 @@
+{
+  "schema": "soh.itemset.final.copy_first.three_groups.v1",
+  "date": "2026-11-15",
+  "authority": "Creator three-bucket direction 2026-11-15 + current Bible K1-K8 (new decision supersedes incompatible Item V2 proposals); draft implementation only",
+  "policy": {
+    "A": "LI original roles and recipes/loot where sourced; no ad-hoc cost rebalance",
+    "B": "Functional replacement when needed by Bible and user intent; no duplicate LI gun/ammo economy",
+    "C": "Genuinely SOH-specific mechanics: crops, husbandry, climate, Primordial, Ragnarok and local monsters",
+    "status": "Final DESIGN scope. NOT production migration, not native acceptance."
+  },
+  "stats": {
+    "final_total": 157,
+    "A": 78,
+    "B": 42,
+    "C": 37,
+    "current_catalog": 123,
+    "current_technical_packs": 24,
+    "retired_current": 19,
+    "legacy_current": 6,
+    "li_source_union": 139,
+    "li_a_keep": 63,
+    "li_new_active_ids": 31,
+    "li_source_decision_count": {
+      "REPLACED_WEAPON_FAMILY": 32,
+      "HISTORICAL_VARIANT": 7,
+      "A_KEEP_LI": 63,
+      "SOH_ROLE_REPLACEMENT": 17,
+      "RETIRE_PVP_OR_ORPHAN": 8,
+      "EVENT_ARCHIVE": 6,
+      "NOT_APPLICABLE_IN_SOH": 5,
+      "LI_ALIAS_COLLAPSE": 1
+    },
+    "new_soh_design_ids": 4,
+    "source_citation_warning": "63 LI kept rows derive from mixed-era source audit, not a verified complete LI version roster."
+  },
+  "final_items": [
+    {
+      "id": "energy_basic",
+      "name": "Basic Energy",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Kho đạn Core cơ bản; thay đạn súng LI"
+    },
+    {
+      "id": "energy_refined",
+      "name": "Refined Energy",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Kho đạn kỹ thuật Creator Core; thay đạn cao cấp LI"
+    },
+    {
+      "id": "essence_fire",
+      "name": "Fire Essence",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Nhiên liệu Signature của Creator Core lửa"
+    },
+    {
+      "id": "essence_nature",
+      "name": "Nature Essence",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Nhiên liệu Signature của Creator Core thiên nhiên"
+    },
+    {
+      "id": "essence_water",
+      "name": "Water Essence",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Nhiên liệu Signature của Creator Core nước"
+    },
+    {
+      "id": "essence_spirit",
+      "name": "Spirit Essence",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Nhiên liệu Signature của Creator Core linh hồn"
+    },
+    {
+      "id": "core_blast",
+      "name": "Big Bang",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Core đặc thù thay vũ khí nóng LI; giữ nguyên luật Creator/Field Core Bible"
+    },
+    {
+      "id": "core_meteor",
+      "name": "Meteor",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Core đặc thù thay vũ khí nóng LI; giữ nguyên luật Creator/Field Core Bible"
+    },
+    {
+      "id": "core_dragon",
+      "name": "Dragon's Breath",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Core đặc thù thay vũ khí nóng LI; giữ nguyên luật Creator/Field Core Bible"
+    },
+    {
+      "id": "core_elsa",
+      "name": "Elsa's Sword",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Core đặc thù thay vũ khí nóng LI; giữ nguyên luật Creator/Field Core Bible"
+    },
+    {
+      "id": "core_earthmother",
+      "name": "Earth Mother's Breath",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Core đặc thù thay vũ khí nóng LI; giữ nguyên luật Creator/Field Core Bible"
+    },
+    {
+      "id": "core_mjolnir",
+      "name": "Mjolnir",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Core đặc thù thay vũ khí nóng LI; giữ nguyên luật Creator/Field Core Bible"
+    },
+    {
+      "id": "core_demon",
+      "name": "Demon Core",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Core đặc thù thay vũ khí nóng LI; giữ nguyên luật Creator/Field Core Bible"
+    },
+    {
+      "id": "crude_petroleum",
+      "name": "Crude Petroleum",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "crude_oil",
+      "reason": "Giữ item và vai trò LI crude_oil, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "trail_pack",
+      "name": "Trail Pack",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Túi đi loot; đổi quyền chở hàng và ô lưng K7"
+    },
+    {
+      "id": "trail_canteen",
+      "name": "Trail Canteen",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Bình nước nhiều lượt phục vụ tuyến xa K7"
+    },
+    {
+      "id": "wood",
+      "name": "Wood",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "wood",
+      "reason": "Giữ item và vai trò LI wood, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "plank",
+      "name": "Plank",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Ván qua gia công thật cho nhà (Bible K4), cần cấu trúc sử dụng được"
+    },
+    {
+      "id": "stone",
+      "name": "Stone",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá gốc LI xác nhận bởi hướng dẫn sinh tồn 2019, thiếu trong tập 139"
+    },
+    {
+      "id": "fiber",
+      "name": "Plant Fiber",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Sợi thực vật hỗ trợ thủ công LI và nhịp sinh tồn tự do"
+    },
+    {
+      "id": "iron_ore",
+      "name": "Iron Ore",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "raw_iron_ore",
+      "reason": "Giữ item và vai trò LI raw_iron_ore, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "rich_iron_ore",
+      "name": "Rich Iron Ore",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "refined_iron_ore",
+      "reason": "Giữ item và vai trò LI refined_iron_ore, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "charcoal",
+      "name": "Charcoal",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "charcoal",
+      "reason": "Giữ item và vai trò LI charcoal, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "crystal",
+      "name": "Frost Crystal",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Quặng tinh thể đặc thù dùng Core, thay nhánh năng lượng LI"
+    },
+    {
+      "id": "sulfur",
+      "name": "Sulfur",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Khoáng lưu huỳnh SOH phục vụ Essence/Core; không làm hệ đạn thuốc súng"
+    },
+    {
+      "id": "spares",
+      "name": "Parts",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "parts",
+      "reason": "Giữ item và vai trò LI parts, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "iron_ingot",
+      "name": "Iron Ingot",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "iron_ingot",
+      "reason": "Giữ item và vai trò LI iron_ingot, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "rope",
+      "name": "Rope",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "rope",
+      "reason": "Giữ item và vai trò LI rope, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "hide",
+      "name": "Raw Hide",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "animal_hide",
+      "reason": "Giữ item và vai trò LI animal_hide, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "leather",
+      "name": "Leather",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Gia công da thú dùng công cụ, trang bị/đồ đựng"
+    },
+    {
+      "id": "fur",
+      "name": "Fur",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Khí hậu tám mùa: giữ ấm / động vật địa phương"
+    },
+    {
+      "id": "chitin",
+      "name": "Ash Chitin",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Sinh vật Veyra: nguyên liệu giáp vỏ; cần thêm nguồn thật"
+    },
+    {
+      "id": "shell",
+      "name": "Crab Shell",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Động vật vùng nước và Essence nước"
+    },
+    {
+      "id": "gland",
+      "name": "Mire Gland",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Quái vùng độc và thuốc chống phơi nhiễm"
+    },
+    {
+      "id": "cloth",
+      "name": "Cloth",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "cloth",
+      "reason": "Giữ item và vai trò LI cloth, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "glass",
+      "name": "Glass",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Kính cửa sổ, mặt nạ, vật dụng sinh tồn Veyra"
+    },
+    {
+      "id": "berries",
+      "name": "Berries",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "wild_berry",
+      "reason": "Giữ item và vai trò LI wild_berry, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "meat",
+      "name": "Raw Meat",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "animal_meat",
+      "reason": "Giữ item và vai trò LI animal_meat, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "cooked_meat",
+      "name": "Roast Meat",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Thịt nấu ở campfire trong LI (nguồn 2019), thiếu trong tập 139"
+    },
+    {
+      "id": "mushroom",
+      "name": "Marsh Cap",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "mushroom",
+      "reason": "Giữ item và vai trò LI mushroom, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "herb",
+      "name": "Bitterleaf",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Bitterleaf: thảo dược nuôi trồng phụ thuộc mùa"
+    },
+    {
+      "id": "crop",
+      "name": "Sunroot",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Sunroot: nông sản do vườn SOH tạo ra"
+    },
+    {
+      "id": "stew",
+      "name": "Root Stew",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Món hầm tạo giá trị thức ăn + nhiệt khi có mùa lạnh"
+    },
+    {
+      "id": "water_flask",
+      "name": "Water Flask",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Bình nước khởi đầu dùng nước thật K5"
+    },
+    {
+      "id": "bandage",
+      "name": "Bandage",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "bandage",
+      "reason": "Giữ item và vai trò LI bandage, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "medkit",
+      "name": "Field Medkit",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "medkit",
+      "reason": "Giữ item và vai trò LI medkit, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "antirad",
+      "name": "Purge Tonic",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Thuốc giảm phơi nhiễm theo hazard K2/K5"
+    },
+    {
+      "id": "knife",
+      "name": "Survival Knife",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Dao sinh tồn ban đầu đa chức năng, vẫn tự vệ khi chưa có Core"
+    },
+    {
+      "id": "stone_axe",
+      "name": "Stone Axe",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Rìu đá đầu game gốc LI (nguồn 2019), thiếu trong tập 139"
+    },
+    {
+      "id": "stone_pick",
+      "name": "Stone Pickaxe",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Cuốc đá chuyên khai mỏ trong world K3"
+    },
+    {
+      "id": "iron_axe",
+      "name": "Iron Axe",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "iron_axe",
+      "reason": "Giữ item và vai trò LI iron_axe, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "iron_pick",
+      "name": "Iron Pickaxe",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Cuốc sắt nâng khai thác quặng"
+    },
+    {
+      "id": "industrial_pick",
+      "name": "Salvager Pick",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Cuốc khai thác nâng cao; dùng chất lượng công cụ, không bắt Gear vô cớ"
+    },
+    {
+      "id": "industrial_axe",
+      "name": "Salvager Axe",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "refined_iron_axe",
+      "reason": "Giữ item và vai trò LI refined_iron_axe, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "wood_spear",
+      "name": "Fire-hardened Spear",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Giáo đầu run tạo tầm đánh khác LI Wood Club"
+    },
+    {
+      "id": "bow",
+      "name": "Hunting Bow",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Vũ khí bắn xa tiêu Arrow cho đường PvE không Core"
+    },
+    {
+      "id": "reinforced_spear",
+      "name": "Reinforced Spear",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Giáo cao cấp cho tuyến PvE không Core, có tầm đánh riêng"
+    },
+    {
+      "id": "arrow",
+      "name": "Arrow",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đạn cho Bow và Arrow Turret, không giữ ammo súng"
+    },
+    {
+      "id": "torch",
+      "name": "Torch",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đuốc sinh tồn LI (nguồn 2019), thiếu trong tập 139"
+    },
+    {
+      "id": "leather_armor",
+      "name": "Leather Jerkin",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Giáp nhẹ đầu run dùng sinh vật thay tuyến giáp đắt LI"
+    },
+    {
+      "id": "chitin_armor",
+      "name": "Chitin Plate",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Giáp sinh học từ Ash Chitin; phải có quái nguồn"
+    },
+    {
+      "id": "fur_cloak",
+      "name": "Fur Cloak",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Áo chịu lạnh chiếm vị trí lưng khi thời tiết theo mùa"
+    },
+    {
+      "id": "gas_mask",
+      "name": "Filter Mask",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Mặt nạ phòng phóng xạ LI 2019, thiếu trong tập 139"
+    },
+    {
+      "id": "scrap_helm",
+      "name": "Scrap Helm",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Mũ bảo hộ rẻ dành cho sinh tồn PvE đầu run"
+    },
+    {
+      "id": "core_fire",
+      "name": "Ember Core",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Core đặc thù thay vũ khí nóng LI; giữ nguyên luật Creator/Field Core Bible"
+    },
+    {
+      "id": "core_earth",
+      "name": "Quake Core",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Core đặc thù thay vũ khí nóng LI; giữ nguyên luật Creator/Field Core Bible"
+    },
+    {
+      "id": "core_storm",
+      "name": "Storm Core",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Core đặc thù thay vũ khí nóng LI; giữ nguyên luật Creator/Field Core Bible"
+    },
+    {
+      "id": "core_frost",
+      "name": "Rime Core",
+      "group": "B",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Core đặc thù thay vũ khí nóng LI; giữ nguyên luật Creator/Field Core Bible"
+    },
+    {
+      "id": "blueprint",
+      "name": "Blueprint",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Bản vẽ LI học công thức, dữ liệu 139 phản ánh Drawing Bench nhưng thiếu generic Blueprint ID"
+    },
+    {
+      "id": "wolf_fang",
+      "name": "Wolf Fang (specimen)",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Vật mẫu quái để học công thức Fur Cloak"
+    },
+    {
+      "id": "crawler_optic",
+      "name": "Crawler Optic (specimen)",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Vật mẫu quái vùng nguy hiểm để nghiên cứu"
+    },
+    {
+      "id": "boar_tusk",
+      "name": "Boar Tusk (specimen)",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Vật mẫu từ heo rừng để nghiên cứu"
+    },
+    {
+      "id": "beetle_horn",
+      "name": "Beetle Horn (specimen)",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Vật mẫu bọ để nghiên cứu giáp"
+    },
+    {
+      "id": "fuel_can",
+      "name": "Fuel Canister",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "low_quality_fuel",
+      "reason": "Giữ item và vai trò LI low_quality_fuel, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "rcash",
+      "name": "Ragnarok Cash",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Tiền vật lý Ragnarok chỉ từ rương POI hữu hạn cuối72h"
+    },
+    {
+      "id": "escrow_chest",
+      "name": "Escrow Chest",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Rương tự mua bằng Ragnarok Cash, đặt ở nhà rồi gửi tiền hợp lệ"
+    },
+    {
+      "id": "vehicle_frame",
+      "name": "Utility Frame",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "vehicle_frame",
+      "reason": "Giữ item và vai trò LI vehicle_frame, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "refined_iron_ingot",
+      "name": "Refined Iron Ingot",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "refined_iron_ingot",
+      "reason": "Giữ item và vai trò LI refined_iron_ingot, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "metal_pipe",
+      "name": "Metal Pipe",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "metal_pipe",
+      "reason": "Giữ item và vai trò LI metal_pipe, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "metal_blade",
+      "name": "Metal Blade",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "metal_blade",
+      "reason": "Giữ item và vai trò LI metal_blade, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "mechanical_gear",
+      "name": "Mechanical Gear",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "mechanical_gear",
+      "reason": "Giữ item và vai trò LI mechanical_gear, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "iron_plate",
+      "name": "Iron Plate",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "iron_plate",
+      "reason": "Giữ item và vai trò LI iron_plate, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "motorbike_kit",
+      "name": "Utility Motorbike (packed)",
+      "group": "A",
+      "origin": "SOH_CURRENT",
+      "li_id": "motorcycle",
+      "reason": "Giữ item và vai trò LI motorcycle, khôi phục recipe/source LI có chứng cứ"
+    },
+    {
+      "id": "cart_kit",
+      "name": "Hand Cart (packed)",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Xe kéo phục vụ vận tải hàng thật không xăng (Bible K7)"
+    },
+    {
+      "id": "stone_surtur",
+      "name": "Stone of Surtur",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá duy nhất của Primordial Surtur trong run"
+    },
+    {
+      "id": "stone_typhon",
+      "name": "Stone of Typhon",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá duy nhất của Primordial Typhon trong run"
+    },
+    {
+      "id": "stone_aion",
+      "name": "Stone of Aion",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá duy nhất của Primordial Aion trong run"
+    },
+    {
+      "id": "stone_atlas",
+      "name": "Stone of Atlas",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá duy nhất của Primordial Atlas trong run"
+    },
+    {
+      "id": "stone_argus",
+      "name": "Stone of Argus",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá duy nhất của Primordial Argus trong run"
+    },
+    {
+      "id": "stone_anubis",
+      "name": "Stone of Anubis",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá duy nhất của Primordial Anubis trong run"
+    },
+    {
+      "id": "lead_rope",
+      "name": "Taming Lead",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Thuần/dắt thú từ world đến chuồng vật lý"
+    },
+    {
+      "id": "animal_feed",
+      "name": "Fodder Bundle",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Thức ăn thật cho chuồng; không tự sinh sản lượng offline"
+    },
+    {
+      "id": "feather",
+      "name": "Grouse Feather",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Sản phẩm chăn nuôi Grouse, dùng mũi tên"
+    },
+    {
+      "id": "grouse_egg",
+      "name": "Grouse Egg",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Sản phẩm chăn nuôi Grouse; thức ăn tái tạo có nguồn"
+    },
+    {
+      "id": "relic_shaleheart",
+      "name": "Shaleheart Coreplate",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Vật phẩm độc nhất từ side boss Shaleheart"
+    },
+    {
+      "id": "ronin_nodachi",
+      "name": "Oathless Nodachi",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Vũ khí độc nhất từ side boss Oathless Ronin"
+    },
+    {
+      "id": "tidemarshal_trident",
+      "name": "Saltwick Trident",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Vũ khí độc nhất từ side boss Tidemarshal"
+    },
+    {
+      "id": "custodian_lantern",
+      "name": "Archive Lantern",
+      "group": "C",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đồ hiếm từ side boss Custodian"
+    },
+    {
+      "id": "animal_fat",
+      "name": "Animal Fat",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "animal_fat",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "blue_card",
+      "name": "Blue Card",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "blue_card",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade INDIRECT"
+    },
+    {
+      "id": "canned_meat",
+      "name": "Canned Meat",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "canned_meat",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "cleaver",
+      "name": "Cleaver",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "cleaver",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "dried_meat",
+      "name": "Dried Meat",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "dried_meat",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "electric_resistor",
+      "name": "POI Electrical Resistor",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "electric_resistor",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "electronic_parts",
+      "name": "Electronic Parts",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "electronic_parts",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "fruit_juice",
+      "name": "Fruit Juice",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "fruit_juice",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "fruit_wine",
+      "name": "Fruit Wine",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "fruit_wine",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "green_card",
+      "name": "Green Card",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "green_card",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade INDIRECT"
+    },
+    {
+      "id": "grilled_mushroom",
+      "name": "Grilled Mushroom",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "grilled_mushroom",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "iron_plate_boots",
+      "name": "Iron Plate Boots",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "iron_plate_boots",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade LEGACY_CLAIM"
+    },
+    {
+      "id": "iron_plate_chest",
+      "name": "Iron Plate Chest",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "iron_plate_chest",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade LEGACY_CLAIM"
+    },
+    {
+      "id": "iron_plate_helmet",
+      "name": "Iron Plate Helmet",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "iron_plate_helmet",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade LEGACY_CLAIM"
+    },
+    {
+      "id": "iron_plate_pants",
+      "name": "Iron Plate Pants",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "iron_plate_pants",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade LEGACY_CLAIM"
+    },
+    {
+      "id": "jam",
+      "name": "Jam",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "jam",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "large_furnace",
+      "name": "Large Furnace",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "large_furnace",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade INDIRECT"
+    },
+    {
+      "id": "machete",
+      "name": "Machete",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "machete",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "mushroom_soup",
+      "name": "Mushroom Soup",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "mushroom_soup",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "needle_thread",
+      "name": "Needle Thread",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "needle_thread",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade LEGACY_CLAIM"
+    },
+    {
+      "id": "needle_tube",
+      "name": "Needle Tube",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "needle_tube",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "purple_card",
+      "name": "Purple Card",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "purple_card",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade INDIRECT"
+    },
+    {
+      "id": "refined_iron_boots",
+      "name": "Refined Iron Boots",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "refined_iron_boots",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade LEGACY_CLAIM"
+    },
+    {
+      "id": "refined_iron_chest",
+      "name": "Refined Iron Chest",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "refined_iron_chest",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade LEGACY_CLAIM"
+    },
+    {
+      "id": "refined_iron_helmet",
+      "name": "Refined Iron Helmet",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "refined_iron_helmet",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade LEGACY_CLAIM"
+    },
+    {
+      "id": "refined_iron_legs",
+      "name": "Refined Iron Legs",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "refined_iron_legs",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade LEGACY_CLAIM"
+    },
+    {
+      "id": "steel_folding_ladder",
+      "name": "Steel Folding Ladder",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "steel_folding_ladder",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "syringe",
+      "name": "Syringe",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "syringe",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "tin_can",
+      "name": "Tin Can",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "tin_can",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "wood_club",
+      "name": "Wood Club",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "wood_club",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "wooden_ladder",
+      "name": "Wooden Ladder",
+      "group": "A",
+      "origin": "LI_IMPORTED",
+      "li_id": "wooden_ladder",
+      "reason": "Giữ item và recipe/source LI theo edition đã ghi; source grade DIRECT"
+    },
+    {
+      "id": "deploy_bed_straw",
+      "name": "bed_straw",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_chest_small",
+      "name": "chest_small",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_chest_large",
+      "name": "chest_large",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_campfire",
+      "name": "campfire",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_furnace",
+      "name": "furnace",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_oil_pump",
+      "name": "oil_pump",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_refinery",
+      "name": "refinery",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": "oil_refinery",
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_workbench",
+      "name": "workbench",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_base_generator",
+      "name": "base_generator",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": "fuel_generator",
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_power_cable",
+      "name": "power_cable",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_power_switch",
+      "name": "power_switch",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": "switch",
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_pressure_switch",
+      "name": "pressure_switch",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": "pressure_switch",
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_ir_sensor",
+      "name": "ir_sensor",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": "infrared_switch",
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_bear_trap",
+      "name": "bear_trap",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": "bear_trap",
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_spikes",
+      "name": "spikes",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": "wood_spikes",
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_barricade",
+      "name": "barricade",
+      "group": "A",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Gói placeable có UID thuộc run; giữ công trình/cost LI nếu có nguồn; không thêm một bản sao LI"
+    },
+    {
+      "id": "deploy_claim",
+      "name": "claim",
+      "group": "B",
+      "origin": "STRUCT_PACK",
+      "li_id": "territory_cabinet",
+      "reason": "Tủ lãnh địa theo Bible K6 (không PvP; nền thật; upkeep; 24 ô)"
+    },
+    {
+      "id": "deploy_research",
+      "name": "research",
+      "group": "B",
+      "origin": "STRUCT_PACK",
+      "li_id": "drawing_bench",
+      "reason": "Nghiên cứu K4 hợp nhất theo run"
+    },
+    {
+      "id": "deploy_arrow_turret",
+      "name": "arrow_turret",
+      "group": "B",
+      "origin": "STRUCT_PACK",
+      "li_id": "auto_rifle_turret",
+      "reason": "Phòng thủ quái dùng Arrow, thay toàn bộ tháp súng LI"
+    },
+    {
+      "id": "deploy_torch_post",
+      "name": "torch_post",
+      "group": "B",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Đèn trụ hiển thị tầm nhìn thật K2"
+    },
+    {
+      "id": "deploy_garden",
+      "name": "garden",
+      "group": "C",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Luống trồng thủ công có đất/nước/mùa"
+    },
+    {
+      "id": "deploy_farm_controller",
+      "name": "farm_controller",
+      "group": "C",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Thiết bị thu hoạch-trồng lại theo input điện/nước/giống thật K4"
+    },
+    {
+      "id": "deploy_barrel",
+      "name": "barrel",
+      "group": "C",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Bể nước mưa làm nguồn tưới có custody thật"
+    },
+    {
+      "id": "deploy_feed_trough",
+      "name": "feed_trough",
+      "group": "C",
+      "origin": "STRUCT_PACK",
+      "li_id": null,
+      "reason": "Máng thức ăn nước cho thú nuôi vật lý"
+    },
+    {
+      "id": "door_powered",
+      "name": "Powered Door",
+      "group": "B",
+      "origin": "SOH_APPROVED_DESIGN_NEW",
+      "li_id": "electric_door",
+      "reason": "Cửa điện kiểu LI nhưng khóa quyền/thoát hiểm theo K6; hiện MODULE_PENDING"
+    },
+    {
+      "id": "seed_sunroot",
+      "name": "Sunroot Seed",
+      "group": "C",
+      "origin": "SOH_APPROVED_DESIGN_NEW",
+      "li_id": null,
+      "reason": "Hạt riêng loài Sunroot, không spawn cùng giống loại khác"
+    },
+    {
+      "id": "seed_bitterleaf",
+      "name": "Bitterleaf Seed",
+      "group": "C",
+      "origin": "SOH_APPROVED_DESIGN_NEW",
+      "li_id": null,
+      "reason": "Hạt riêng loài Bitterleaf; thời vụ, đất và nước đúng K4"
+    },
+    {
+      "id": "seed_wildberry",
+      "name": "Wild Berry Seed",
+      "group": "C",
+      "origin": "SOH_APPROVED_DESIGN_NEW",
+      "li_id": null,
+      "reason": "Giống bụi Berry cho vườn SOH, tách nguồn hái dại LI"
+    }
+  ],
+  "retired_soh_ids": [
+    {
+      "id": "salvaged_oil",
+      "name": "Salvaged Oil",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "lubricant",
+      "name": "Machine Lubricant",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "damaged_drive",
+      "name": "Damaged Drive",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "mechanical_parts",
+      "name": "Machine Parts",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "fasteners",
+      "name": "Forged Fasteners",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "treated_canvas",
+      "name": "Treated Canvas",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "field_repair_kit",
+      "name": "Field Repair Kit",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "fuel_briquette",
+      "name": "Packed Fuel Briquette",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "coal",
+      "name": "Coal",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "raw_salt",
+      "name": "Raw Salt",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "root_broth",
+      "name": "Root Broth",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "herb_roast",
+      "name": "Herb Roast",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "salted_meat",
+      "name": "Salted Roast",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "scrap",
+      "name": "Scrap Metal",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "brick",
+      "name": "Brick",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "seed",
+      "name": "Wild Seeds",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "iron_sword",
+      "name": "Iron Sword",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "keycard",
+      "name": "Vault Keycard",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    },
+    {
+      "id": "vehicle_drive",
+      "name": "Motor Drive",
+      "group": "RETIRE",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Không có lý do giữ sau khi copy LI; migrate/save có bảo toàn"
+    }
+  ],
+  "legacy_soh_ids": [
+    {
+      "id": "stone_frost",
+      "name": "Stone of Rime",
+      "group": "LEGACY",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá Elder schema cũ, lưu chuyển đổi save, không spawn ở run mới"
+    },
+    {
+      "id": "stone_magma",
+      "name": "Stone of Cinder",
+      "group": "LEGACY",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá Elder schema cũ, lưu chuyển đổi save, không spawn ở run mới"
+    },
+    {
+      "id": "stone_bog",
+      "name": "Stone of Mire",
+      "group": "LEGACY",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá Elder schema cũ, lưu chuyển đổi save, không spawn ở run mới"
+    },
+    {
+      "id": "stone_grove",
+      "name": "Stone of Roots",
+      "group": "LEGACY",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá Elder schema cũ, lưu chuyển đổi save, không spawn ở run mới"
+    },
+    {
+      "id": "stone_tide",
+      "name": "Stone of Tides",
+      "group": "LEGACY",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá Elder schema cũ, lưu chuyển đổi save, không spawn ở run mới"
+    },
+    {
+      "id": "stone_rust",
+      "name": "Stone of Rust",
+      "group": "LEGACY",
+      "origin": "SOH_CURRENT",
+      "li_id": null,
+      "reason": "Đá Elder schema cũ, lưu chuyển đổi save, không spawn ở run mới"
+    }
+  ],
+  "li_source_audit": [
+    {
+      "li_id": "akm",
+      "name": "Akm",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://a.4399.cn/gl/020918173_115226.html",
+      "recipe": {
+        "rifle_body": 1,
+        "refined_iron_ingot": 50,
+        "metal_pipe": 2,
+        "torsion_spring": 4
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_12g",
+      "name": "Ammo 12G",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3279791.html",
+      "recipe": {
+        "iron_ingot": 5,
+        "gunpowder": 10
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_12g_ap",
+      "name": "Ammo 12G Ap",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3279791.html",
+      "recipe": {
+        "iron_ingot": 5,
+        "gunpowder": 10,
+        "sulfur_powder": 20
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_556",
+      "name": "Ammo 556",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_556_base",
+      "name": "Ammo 556 Base",
+      "decision": "HISTORICAL_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "recipe": {
+        "iron_ingot": 10,
+        "gunpowder": 5
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_556_he",
+      "name": "Ammo 556 He",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_556_he_old",
+      "name": "Ammo 556 He Old",
+      "decision": "HISTORICAL_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "recipe": {
+        "iron_ingot": 10,
+        "gunpowder": 20,
+        "sulfur_powder": 10
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_762",
+      "name": "Ammo 762",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_762_base",
+      "name": "Ammo 762 Base",
+      "decision": "HISTORICAL_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "recipe": {
+        "iron_ingot": 10,
+        "gunpowder": 5
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_762_he",
+      "name": "Ammo 762 He",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_762_he_old",
+      "name": "Ammo 762 He Old",
+      "decision": "HISTORICAL_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "recipe": {
+        "iron_ingot": 10,
+        "gunpowder": 20,
+        "sulfur_powder": 10
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_8mm_handmade",
+      "name": "Ammo 8Mm Handmade",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "recipe": {
+        "iron_ingot": 5,
+        "gunpowder": 3
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_9mm",
+      "name": "Ammo 9Mm",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "ammo_9mm_base",
+      "name": "Ammo 9Mm Base",
+      "decision": "HISTORICAL_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "recipe": {
+        "iron_ingot": 10,
+        "gunpowder": 5
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "animal_fat",
+      "name": "Animal Fat",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "animal_hide",
+      "name": "Animal Hide",
+      "decision": "A_KEEP_LI",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "animal_meat",
+      "name": "Animal Meat",
+      "decision": "A_KEEP_LI",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "auto_rifle_turret",
+      "name": "Auto Rifle Turret",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://m.duote.com/tech/wmcq/135566.html",
+      "recipe": {
+        "electronic_parts": 10,
+        "iron_ingot": 50,
+        "semi_auto_rifle": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "auto_shotgun_turret",
+      "name": "Auto Shotgun Turret",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.hiwifi.com/news/gaoshou/156918.html",
+      "recipe": {
+        "iron_ingot": 50,
+        "mechanical_gear": 6,
+        "rope": 1,
+        "single_shot_shotgun": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "bandage",
+      "name": "Bandage",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "recipe": {
+        "cloth": 5
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "barrel_bomb",
+      "name": "Barrel Bomb",
+      "decision": "RETIRE_PVP_OR_ORPHAN",
+      "source_support": "INDIRECT",
+      "source_url": "https://www.biubiu001.com/wpzzwmcq/39025.html",
+      "recipe": {
+        "gunpowder": 60,
+        "iron_ingot": 20
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "bear_trap",
+      "name": "Bear Trap",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.onlinedown.net/article/10012371.htm",
+      "recipe": {
+        "iron_ingot": 50,
+        "mechanical_gear": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "birthday_cake_2022",
+      "name": "Birthday Cake 2022",
+      "decision": "EVENT_ARCHIVE",
+      "source_support": "DIRECT",
+      "source_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "recipe": {
+        "cream": 10,
+        "egg": 10,
+        "flour": 10
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "bizon_smg",
+      "name": "Bizon SMG",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "blue_card",
+      "name": "Blue Card",
+      "decision": "A_KEEP_LI",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "canned_meat",
+      "name": "Canned Meat",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "recipe": {
+        "animal_meat": 10,
+        "tin_can": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "charcoal",
+      "name": "Charcoal",
+      "decision": "A_KEEP_LI",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "cleaver",
+      "name": "Cleaver",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.dlyybbs.com/t28",
+      "recipe": {
+        "iron_ingot": 15,
+        "metal_blade": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "cloth",
+      "name": "Cloth",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "cream",
+      "name": "Cream",
+      "decision": "EVENT_ARCHIVE",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "crude_oil",
+      "name": "Crude Oil",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "dirt_grenade",
+      "name": "Dirt Grenade",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "double_barrel_shotgun",
+      "name": "Double Barrel Shotgun",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.dlyybbs.com/t28",
+      "recipe": {
+        "shotgun_body": 1,
+        "refined_iron_ingot": 20,
+        "metal_pipe": 2,
+        "torsion_spring": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "drawing_bench",
+      "name": "Drawing Bench",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3786502.html",
+      "recipe": {
+        "iron_ingot": 200,
+        "parts": 75
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "dried_meat",
+      "name": "Dried Meat",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "recipe": {
+        "animal_meat": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "egg",
+      "name": "Egg",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "egg_flour",
+      "name": "Egg Flour",
+      "decision": "EVENT_ARCHIVE",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "electric_door",
+      "name": "Electric Door",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3336352.html",
+      "recipe": {
+        "iron_ingot": 50,
+        "electronic_parts": 5,
+        "mechanical_gear": 1,
+        "iron_plate": 10
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "electric_resistor",
+      "name": "POI Electrical Resistor",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "electronic_parts",
+      "name": "Electronic Parts",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "energy_extractor",
+      "name": "Energy Extractor",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "DIRECT",
+      "source_url": "https://www.biubiu001.com/wpzzwmcq/38708.html",
+      "recipe": {
+        "refined_iron_ingot": 30,
+        "metal_pipe": 5,
+        "electronic_parts": 10,
+        "mechanical_gear": 10
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "energy_refinery",
+      "name": "Energy Refinery",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "DIRECT",
+      "source_url": "https://www.biubiu001.com/wpzzwmcq/38708.html",
+      "recipe": {
+        "refined_iron_ingot": 200,
+        "parts": 500,
+        "electronic_parts": 50
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "explosive_material",
+      "name": "Explosive Material",
+      "decision": "RETIRE_PVP_OR_ORPHAN",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.biubiu001.com/wpzzwmcq/39025.html",
+      "recipe": {
+        "gunpowder": 50,
+        "iron_ingot": 10,
+        "low_quality_fuel": 3
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "famas",
+      "name": "Famas",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.dlyybbs.com/t28",
+      "recipe": {
+        "smg_body": 1,
+        "refined_iron_ingot": 15,
+        "torsion_spring": 2
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "flamethrower",
+      "name": "Flamethrower",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": {},
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "flamethrower_gas_ammo",
+      "name": "Burning Gas",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "flour",
+      "name": "Flour",
+      "decision": "EVENT_ARCHIVE",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "fruit_juice",
+      "name": "Fruit Juice",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "recipe": {
+        "wild_berry": 3
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "fruit_wine",
+      "name": "Fruit Wine",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "recipe": {
+        "wild_berry": 5,
+        "tin_can": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "fuel_generator",
+      "name": "Fuel Generator",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3336352.html",
+      "recipe": {
+        "refined_iron_ingot": 20,
+        "iron_ingot": 100,
+        "electronic_parts": 30,
+        "parts": 100
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "glider_legacy",
+      "name": "Glider Legacy",
+      "decision": "NOT_APPLICABLE_IN_SOH",
+      "source_support": "INDIRECT",
+      "source_url": "https://www.9game.cn/news/5709048.html",
+      "recipe": {
+        "refined_iron_ingot": 50,
+        "mechanical_gear": 10,
+        "iron_plate": 10
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "green_card",
+      "name": "Green Card",
+      "decision": "A_KEEP_LI",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "grilled_mushroom",
+      "name": "Grilled Mushroom",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "recipe": {
+        "mushroom": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "gunpowder",
+      "name": "Gunpowder",
+      "decision": "RETIRE_PVP_OR_ORPHAN",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": {
+        "charcoal": 30,
+        "sulfur_powder": 20
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "gunpowder_legacy",
+      "name": "Gunpowder Legacy",
+      "decision": "HISTORICAL_VARIANT",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3271154.html",
+      "recipe": {
+        "charcoal": 30,
+        "sulfur_powder": 20
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "handgun_body",
+      "name": "Handgun Body",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "handmade_explosive_pack",
+      "name": "Handmade Explosive Pack",
+      "decision": "RETIRE_PVP_OR_ORPHAN",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.biubiu001.com/wpzzwmcq/39025.html",
+      "recipe": {
+        "explosive_material": 5,
+        "rope": 2
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "handmade_explosives",
+      "name": "Handmade Explosives",
+      "decision": "RETIRE_PVP_OR_ORPHAN",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "improved_grenade",
+      "name": "Improved Grenade",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "inferno_chariot",
+      "name": "Inferno Chariot",
+      "decision": "NOT_APPLICABLE_IN_SOH",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "inferno_chariot_blueprint",
+      "name": "Inferno Chariot Blueprint",
+      "decision": "NOT_APPLICABLE_IN_SOH",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "infrared_switch",
+      "name": "Infrared Switch",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3336352.html",
+      "recipe": {
+        "iron_ingot": 30,
+        "electronic_parts": 10,
+        "parts": 15
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_axe",
+      "name": "Iron Axe",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.aspxhome.com/youxi/2023/397622.htm",
+      "recipe": {
+        "iron_ingot": 75,
+        "wood": 100
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_folding_ladder",
+      "name": "Iron Folding Ladder",
+      "decision": "HISTORICAL_VARIANT",
+      "source_support": "INDIRECT",
+      "source_url": "https://www.9game.cn/news/3334137.html",
+      "recipe": {
+        "iron_ingot": 300,
+        "mechanical_gear": 3,
+        "wooden_ladder": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_ingot",
+      "name": "Iron Ingot",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_plate",
+      "name": "Iron Plate",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3334146.html",
+      "recipe": {
+        "refined_iron_ingot": 5,
+        "parts": 30
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_plate_boots",
+      "name": "Iron Plate Boots",
+      "decision": "A_KEEP_LI",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/news/3459098.html",
+      "recipe": {
+        "iron_plate": 1,
+        "animal_hide": 30,
+        "needle_thread": 3
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_plate_chest",
+      "name": "Iron Plate Chest",
+      "decision": "A_KEEP_LI",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/news/3459098.html",
+      "recipe": {
+        "iron_plate": 3,
+        "animal_hide": 40,
+        "needle_thread": 3
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_plate_helmet",
+      "name": "Iron Plate Helmet",
+      "decision": "A_KEEP_LI",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/news/3459098.html",
+      "recipe": {
+        "iron_plate": 1,
+        "animal_hide": 30,
+        "needle_thread": 3
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "iron_plate_pants",
+      "name": "Iron Plate Pants",
+      "decision": "A_KEEP_LI",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/news/3459098.html",
+      "recipe": {
+        "iron_plate": 2,
+        "animal_hide": 30,
+        "needle_thread": 3
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "jam",
+      "name": "Jam",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "recipe": {
+        "wild_berry": 10,
+        "cloth": 5,
+        "tin_can": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "k31",
+      "name": "K31",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.dlyybbs.com/t28",
+      "recipe": {
+        "sniper_body": 1,
+        "refined_iron_ingot": 20,
+        "metal_pipe": 1,
+        "torsion_spring": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "large_furnace",
+      "name": "Large Furnace",
+      "decision": "A_KEEP_LI",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "launcher_mechanism",
+      "name": "Launcher Mechanism",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "low_quality_fuel",
+      "name": "Low Quality Fuel",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3448709.html",
+      "recipe": {
+        "animal_fat": 3,
+        "cloth": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "low_quality_fuel_can",
+      "name": "Low Quality Fuel Can",
+      "decision": "LI_ALIAS_COLLAPSE",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "m24",
+      "name": "M24",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.dlyybbs.com/t28",
+      "recipe": {
+        "sniper_body": 1,
+        "refined_iron_ingot": 50,
+        "metal_pipe": 2,
+        "torsion_spring": 4
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "machete",
+      "name": "Machete",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3298149.html",
+      "recipe": {
+        "iron_ingot": 100,
+        "metal_blade": 3
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "mechanical_gear",
+      "name": "Mechanical Gear",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3279007.html",
+      "recipe": {
+        "iron_ingot": 50,
+        "parts": 65
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "medkit",
+      "name": "Medkit",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "recipe": {
+        "syringe": 2,
+        "low_quality_fuel": 50,
+        "wood": 100,
+        "iron_ingot": 2
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "metal_blade",
+      "name": "Metal Blade",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3294352.html",
+      "recipe": {
+        "iron_ingot": 30,
+        "parts": 15
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "metal_pipe",
+      "name": "Metal Pipe",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.aspxhome.com/youxi/2023/388245.htm",
+      "recipe": {
+        "refined_iron_ingot": 5,
+        "parts": 30
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "mg4",
+      "name": "Mg4",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3270545.html",
+      "recipe": {
+        "launcher_mechanism": 1,
+        "refined_iron_ingot": 80,
+        "metal_pipe": 6,
+        "torsion_spring": 5
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "military_c4",
+      "name": "Military C4",
+      "decision": "RETIRE_PVP_OR_ORPHAN",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "molotov_cocktail",
+      "name": "Molotov Cocktail",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": {},
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "motorcycle",
+      "name": "Motorcycle",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3676549.html",
+      "recipe": {
+        "refined_iron_ingot": 200,
+        "vehicle_frame": 1,
+        "mechanical_gear": 30,
+        "iron_plate": 30
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "mountain_bicycle_blueprint",
+      "name": "Mountain Bicycle Blueprint",
+      "decision": "NOT_APPLICABLE_IN_SOH",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "mushroom",
+      "name": "Mushroom",
+      "decision": "A_KEEP_LI",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "mushroom_soup",
+      "name": "Mushroom Soup",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "recipe": {
+        "mushroom": 5,
+        "tin_can": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "needle_thread",
+      "name": "Needle Thread",
+      "decision": "A_KEEP_LI",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/news/3459098.html",
+      "recipe": {
+        "cloth": 10,
+        "iron_ingot": 5
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "needle_tube",
+      "name": "Needle Tube",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "nettle",
+      "name": "Nettle",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "nettle_seed",
+      "name": "Nettle Seed",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "oil_refinery",
+      "name": "Oil Refinery",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3448709.html",
+      "recipe": {
+        "iron_ingot": 500,
+        "wood": 200,
+        "low_quality_fuel": 250
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "old_military_mine",
+      "name": "Old Military Mine",
+      "decision": "RETIRE_PVP_OR_ORPHAN",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "parts",
+      "name": "Parts",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "pressure_switch",
+      "name": "Pressure Switch",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3336352.html",
+      "recipe": {
+        "iron_ingot": 50,
+        "parts": 15,
+        "electronic_parts": 10,
+        "iron_plate": 2
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "purple_card",
+      "name": "Purple Card",
+      "decision": "A_KEEP_LI",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "qbz97",
+      "name": "Qbz97",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.dlyybbs.com/t28",
+      "recipe": {
+        "rifle_body": 1,
+        "refined_iron_ingot": 50,
+        "metal_pipe": 2,
+        "torsion_spring": 4
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "raw_iron_ore",
+      "name": "-",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "ATLAS_INDEX_ONLY"
+    },
+    {
+      "li_id": "red_bean_paste",
+      "name": "Red Bean Paste",
+      "decision": "EVENT_ARCHIVE",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_axe",
+      "name": "Refined Iron Axe",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/4515476.html",
+      "recipe": {
+        "refined_iron_ingot": 2,
+        "metal_blade": 5,
+        "metal_pipe": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_boots",
+      "name": "Refined Iron Boots",
+      "decision": "A_KEEP_LI",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/news/3342093.html",
+      "recipe": {
+        "animal_hide": 50,
+        "needle_thread": 6,
+        "refined_iron_ingot": 15
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_chest",
+      "name": "Refined Iron Chest",
+      "decision": "A_KEEP_LI",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/news/3342093.html",
+      "recipe": {
+        "animal_hide": 50,
+        "needle_thread": 8,
+        "refined_iron_ingot": 25
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_helmet",
+      "name": "Refined Iron Helmet",
+      "decision": "A_KEEP_LI",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/news/3342093.html",
+      "recipe": {
+        "animal_hide": 50,
+        "needle_thread": 6,
+        "refined_iron_ingot": 15
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_ingot",
+      "name": "Refined Iron Ingot",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_legs",
+      "name": "Refined Iron Legs",
+      "decision": "A_KEEP_LI",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.9game.cn/news/3342093.html",
+      "recipe": {
+        "animal_hide": 50,
+        "needle_thread": 6,
+        "refined_iron_ingot": 15
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "refined_iron_ore",
+      "name": "-",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "ATLAS_INDEX_ONLY"
+    },
+    {
+      "li_id": "reunion_mooncake_lottery_pack",
+      "name": "Reunion Mooncake Lottery Pack",
+      "decision": "EVENT_ARCHIVE",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://hero.yingxiong.com/info/2026/0922/15022.html",
+      "recipe": {
+        "egg_flour": 2,
+        "red_bean_paste": 2
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "rifle_body",
+      "name": "Rifle Body",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "rocket_ammo",
+      "name": "Rocket Ammo",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "INDIRECT",
+      "source_url": "https://www.9game.cn/news/3431000.html",
+      "recipe": {
+        "explosive_material": 15,
+        "metal_pipe": 2
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "rocket_launcher",
+      "name": "Rocket Launcher",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.aspxhome.com/youxi/2023/388245.htm",
+      "recipe": {
+        "refined_iron_ingot": 50,
+        "metal_pipe": 6,
+        "torsion_spring": 5,
+        "launcher_mechanism": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "rocket_turret",
+      "name": "Rocket Turret",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.aspxhome.com/youxi/2022/399928.htm",
+      "recipe": {
+        "electronic_parts": 20,
+        "iron_ingot": 50,
+        "mechanical_gear": 10,
+        "rocket_launcher": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "rope",
+      "name": "Rope",
+      "decision": "A_KEEP_LI",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": {
+        "nettle": 10
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "self_revive_defibrillator",
+      "name": "Self-revive Defibrillator",
+      "decision": "NOT_APPLICABLE_IN_SOH",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "semi_auto_pistol",
+      "name": "Semi Auto Pistol",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.dlyybbs.com/t28",
+      "recipe": {
+        "handgun_body": 1,
+        "refined_iron_ingot": 4,
+        "metal_pipe": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "semi_auto_rifle",
+      "name": "Semi Auto Rifle",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3425504.html",
+      "recipe": {
+        "iron_ingot": 450,
+        "refined_iron_ingot": 30,
+        "torsion_spring": 2
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "shotgun_body",
+      "name": "Shotgun Body",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "simple_revolver",
+      "name": "Simple Revolver",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.dlyybbs.com/t28",
+      "recipe": {
+        "iron_ingot": 125,
+        "cloth": 25,
+        "metal_pipe": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "single_shot_shotgun",
+      "name": "Single Shot Shotgun",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.dlyybbs.com/t28",
+      "recipe": {
+        "refined_iron_ingot": 15,
+        "iron_ingot": 30,
+        "torsion_spring": 1,
+        "metal_pipe": 1
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "smg",
+      "name": "Smg",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.dlyybbs.com/t28",
+      "recipe": {
+        "iron_ingot": 30,
+        "refined_iron_ingot": 12,
+        "torsion_spring": 2
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "smg_body",
+      "name": "Smg Body",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "sniper_body",
+      "name": "Sniper Body",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "steel_folding_ladder",
+      "name": "Steel Folding Ladder",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3442605.html",
+      "recipe": {
+        "refined_iron_ingot": 30,
+        "wooden_ladder": 1,
+        "mechanical_gear": 3
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "suicide_robot",
+      "name": "Self-destruct Robot",
+      "decision": "RETIRE_PVP_OR_ORPHAN",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "sulfur_powder",
+      "name": "Sulfur Powder",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "switch",
+      "name": "Switch",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3336352.html",
+      "recipe": {
+        "iron_ingot": 10,
+        "electronic_parts": 2,
+        "parts": 10
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "syringe",
+      "name": "Syringe",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "recipe": {
+        "needle_tube": 1,
+        "low_quality_fuel": 10,
+        "iron_ingot": 10
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "territory_cabinet",
+      "name": "Territory Cabinet",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "INDIRECT",
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254056.html",
+      "recipe": {
+        "wood": 1000
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "tin_can",
+      "name": "Tin Can",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "torsion_spring",
+      "name": "Torsion Spring",
+      "decision": "REPLACED_WEAPON_FAMILY",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3305575.html",
+      "recipe": {
+        "refined_iron_ingot": 5,
+        "parts": 65
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "tracking_auto_turret",
+      "name": "Tracking Auto Turret",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "LEGACY_CLAIM",
+      "source_url": "https://www.aspxhome.com/youxi/2023/388310.htm",
+      "recipe": {
+        "akm": 1,
+        "iron_ingot": 50,
+        "mechanical_gear": 6
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "vehicle_frame",
+      "name": "Vehicle Frame",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://shouyou.3dmgame.com/gl/135015.html",
+      "recipe": {
+        "iron_ingot": 100,
+        "refined_iron_ingot": 30,
+        "parts": 50
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "wild_berry",
+      "name": "Wild Berry",
+      "decision": "A_KEEP_LI",
+      "source_support": "INDIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "wild_berry_seed",
+      "name": "Wild Berry Seed",
+      "decision": "SOH_ROLE_REPLACEMENT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "wood",
+      "name": "Wood",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "recipe": null,
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "wood_club",
+      "name": "Wood Club",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.dlyybbs.com/t28",
+      "recipe": {
+        "wood": 300
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "wood_spikes",
+      "name": "Wood Spikes",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.onlinedown.net/article/10012371.htm",
+      "recipe": {
+        "wood": 300
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    },
+    {
+      "li_id": "wooden_ladder",
+      "name": "Wooden Ladder",
+      "decision": "A_KEEP_LI",
+      "source_support": "DIRECT",
+      "source_url": "https://www.9game.cn/news/3442605.html",
+      "recipe": {
+        "wood": 300,
+        "rope": 3
+      },
+      "source_edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)"
+    }
+  ]
+}

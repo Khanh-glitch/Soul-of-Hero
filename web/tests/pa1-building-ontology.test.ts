@@ -58,7 +58,8 @@ describe('PA1 building geometry vs physical device custody',()=>{
       expect(BUILD_ORDER).toContain(key);
     }
     for(const type of PA1_UPGRADE_ONLY_GEOMETRY)expect(BUILD_ORDER).not.toContain(type);
-    expect(BUILD_ORDER).not.toContain('door_powered');
+    expect(BUILD_ORDER).toContain('door_powered');   // item set v3: approved module, fitted into an owned door
+    expect(STRUCTS.door_powered.item).toBeUndefined();
     expect(STRUCTURE_UPGRADES.wall_stone).toBeUndefined(); // brick must never impersonate steel
   });
 

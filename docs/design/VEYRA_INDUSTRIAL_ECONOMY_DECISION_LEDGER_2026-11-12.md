@@ -1005,3 +1005,129 @@ The general rule this turn produced, worth carrying: a pin that counts consumers
 **Rules this round leaves behind.** (1) A UI claim is pinned to painted geometry — viewport *and* container boxes *and* a hit test on the element — or it is pinned nowhere. (2) The stage size is a hard bound on every panel: `VIEW_W/VIEW_H` is 640×360 and a console that overflows it is unreadable at every window size. (3) Rendered text includes what CSS did to it. (4) A scroll is player-visible state; a gate that scrolls must reset before it measures. (5) A test helper takes the state under test as an argument whenever the test is about a state transition. (6) Nothing that decides a verdict may live inside a YAML string. (7) Evidence goes to the thread that owns the branch — and the channel must be one the reader can actually reach.
 
 *Still HOLD, unchanged by this round:* ENERGY `enforce:false` — no enforcement is approved; the `ceil(0.25 × buildCost)` re-forge price on all 24 packed devices is **PROVISIONAL, awaiting a Creator balance decision**, derived from structure-patch arithmetic and not byte-verified Creator/Last Island law (no fictitious LI ratio backfill); `PA1_REV1_CAPTURE.md`'s "independent new runtime process opening/re-saving a persisted live profile on disk" stays **PARTIAL**; the QA full-gear `Known 112/112` sandbox is valid for routing/UI only, never for human tech-unlock progression; 336h and Last Island building parity are not complete, and neither is PA1.
+
+## 29. Item Ontology V2 — audit on the PA1 head, safe fixes shipped, ten proposals awaiting a decision (2026-11-14)
+
+**Baseline.** Taken on `feature/pa1-building-ontology-20261113` at `934f4471326116737f206d2fb2d9a84ba77328da` (draft PR #56). PR #60 was rejected and is not an ancestor of this work; its 213-line graph module was not copied. Everything below is a projection of the existing multigraph (`web/src/game/economic-graph.ts`), not a second graph.
+
+**Where it lives.** One generated appendix, [`web/ref/item-ontology-v2/APPENDIX.md`](../../web/ref/item-ontology-v2/APPENDIX.md), with its data siblings in the same folder (`ontology.json`, `manifest.csv`, `li-crosswalk.csv`, `index.html`). All five are written by `web/tests/item-ontology-v2.test.ts` from one data object and the test fails when a committed copy drifts from the live game. Regenerate with `SOH_WRITE_ONTOLOGY=1`.
+
+**Shipped in this round (no mechanic, recipe, id, source or save change).**
+
+1. *Audit defect.* The reachability solver never added the physical `blueprint` item, so both layouts reported Blueprint as unreachable although 28 static blueprint containers and paid research mint it. Fixed in the solver; shipping-unreachable 12 → 11, Veyra-unreachable 15 → 14.
+2. *Projection.* `item-ontology.ts` derives, per item, `craft_depth`, `station_tier`, `research_tier`, `acquisition_types` per layout and `runtime_reachability` as five separate facts; `rarity` is always `null` because the game has no rarity stat. Research and vendor spends routed through `currency:spares` are attributed to `spares`.
+3. *Grouping.* The inventory chip no longer says "MATERIAL" for 53 unrelated items; `item-class.ts` gives each a class (ORE, SALVAGE, PARTS, METAL, COMPONENT, …). `ItemDef.cat` is untouched and still drives every runtime branch.
+4. *Descriptions.* "Wolf Fur" → "Fur" (it drops from fox and hare, never from wolves); the literal `SOH_PROVISIONAL:` prefix and PA1 changelog sentences removed from player-facing text (the provenance moved to `SOH_PROVISIONAL_ITEMS`); Root Broth names both of its routes.
+
+**Not shipped — awaiting the Creator.** P1 Parts naming (Option A, recommended), P2 merge Fasteners into Machine Parts (this would reverse part of §26), P3 Pipe gets a required job, P4 Blade becomes the Salvager Axe edge, P5 Recycler rule for Iron Plate, P6 retire Plank, P7 one display language, P8 Veyra source gaps (HOLD), P9 Crude Petroleum (HOLD), P10 legacy cores (HOLD). Each has before/after recipes and a migration plan in the appendix; a test pins that every "before" equals the live catalog and that none of them is implemented.
+
+**What was run.** `tests/item-ontology-v2.test.ts` (projection, classes, decisions, drift) and `tests/item-ontology-v2-routes.test.ts` (engine intents on granted stock: scrap → Machine Parts, research refused without Spares, Damaged Drive → 2 Spares at the Recycler; ore → ingot at a fuelled Furnace → bench products; Pipe/Gear/Blade recycle to their versioned returns and an Iron Plate is refused). Browser evidence was **not** produced: the sandbox cannot download a Playwright browser. `tests/economic-network-m2.test.ts` Suites 2 and 8 fail identically at `934f447` without these changes.
+
+## 30. Item Ontology V2, round 2 — five proposals executed at recipe revision 3, two ruled out, three still open (2026-11-14)
+
+**Authority.** Control Tower ruling on draft PR #61: P1, P3 (Utility Frame only), P4, P5, P7 approved; P2 and P6 not authorised (analysis only); P8, P9, P10 stay unimplemented but must end in a concrete conclusion. Same branch, same PR, still Draft. **Item V2 is not complete.**
+
+**Executed (recipe revision 2 → 3).**
+
+| | Change | Save / migration |
+|---|---|---|
+| P1 | `spares` shown as **Parts** (VN *Linh kiện*); `mechanical_parts` shown as **Machine Parts** (VN *Bộ phận máy*). Ids, sources, research prices, trader, Recycler rights unchanged. Parts still has no recipe. | none (display) |
+| P3 | `vehicle_frame` = 1 Metal Pipe + 2 Iron Ingot + 2 Machine Parts + 2 Parts, 22 s. `vehicle_frame_piped` retired. **Oil Pump and Refinery costs untouched.** | `vehicle_frame@2`, `vehicle_frame_piped@2` frozen; queued rev-2 jobs finish and refund under the old BOM |
+| P4 | `industrial_axe` = Iron Axe + 1 Metal Blade + 1 Machine Part + 2 Parts. | `industrial_axe@2` frozen. No Recycler rule added or edited |
+| P5 | New Recycler rule `X:plate-v1`: 1 Iron Plate → 1 Iron Ingot, 10 s. | new key only; existing rules byte-identical |
+| P7 | English display names for six Creator Cores and the Escrow Chest; Vietnamese canon names kept as `ItemDef.vi` and shown as a subtitle in the item info box. | none (display) |
+
+**Round-1 statements withdrawn.** (1) "The Recycler is the only mint of Parts" was wrong: Parts come from authored loot and wrecks, machine creatures and the Recycler; the Recycler is the only *conversion* into Parts. (2) "The Salvager Axe needs a new Recycler rule" was wrong: the existing `X:recover-v3` return is already no larger than what the rev-3 axe embeds. (3) Plank was counted as having a consumer; see P6 below.
+
+**Measured cost of the changes** (`web/evidence/item-ontology-v2/round2-simulations.json`; ANALYTIC = arithmetic over the recipe table at each revision, INTENT = real engine dispatch on FIXTURE-granted atoms; neither is natural play, and no human played it):
+
+- Bare hands → one Utility Motorbike kit, rev 2 → rev 3: iron ore 29 → 32, coal 1 → 2, scrap 17 → 19, Parts 41 → 41, station time 543 s → 620 s. One Metal Pipe and one Machine Part are left over (the pipe recipe makes two). The INTENT run consumed exactly the analytic bill.
+- Salvager Axe: +4 iron ore, +56 s station time, Parts unchanged. The axe is refused without a Blade.
+- Loops: plate craft → recycle loses 1 Iron Ingot + 1 coal + 1 Fastener per turn; blade craft → recycle loses 2 Iron Ingot; axe craft → recycle returns less of every material than went in. Recycler jobs survive save/restart and pay once; a forged rule key is rejected.
+
+**Not executed — conclusions** (`web/ref/item-ontology-v2/ROUND2_FINDINGS.md`, generated from the live catalog):
+
+- *P2 Fasteners (ruled out).* 22 live consumers. Replacing n Fasteners with ceil(n/2) Machine Parts raises scrap on every consumer, 1.5× at best and 3× on the twelve one-fastener consumers; no integer mapping avoids it. Fasteners stay; disposition is now KEEP.
+- *P6 Plank (ruled out).* The 240 HP Plank Wall is upgrade-only geometry and no entry of `STRUCTURE_UPGRADES` leads to it, so a player cannot obtain it; the Brick Wall (600 HP) is in the same state. Plank therefore has no reachable consumer today. This is a building-ontology decision (make the tier reachable), not an item retirement. Disposition DEFER.
+- *P8 Veyra sources (open).* Six of the eight named items have no Veyra source: chitin, crawler_optic, wolf_fang, beetle_horn (creatures behind the Shipping spawner), keycard and core_demon (Shipping/Dev crates only). Spirit Essence drops on Veyra but its recipe is blocked there. No source was invented.
+- *P9 Crude Petroleum (open).* Fixture-only on both layouts; item and Oil Pump texts are quoted in the findings for wording review. No UI change made.
+- *P10 legacy cores (open).* Different mechanic from the seven (charge tool vs reserve weapon); Quake and Rime have effects no Creator Core has; three Creator Core crates are located by the legacy core inside them. Proposed canon decision: keep the four as a named minor class ("Field Core"), outside the seven. Needs the owner.
+- *Last Island 86 vs 137.* The atlas in the repository yields 86 unique item ids and 51 recipe entries. 86 + 51 = 137 is the only match found, and it is a hypothesis, not a finding: the 137-entry research summary itself was **not located** in the repository or in the connected Drive.
+
+**Also fixed while taking the screenshots.** At the 640×360 stage the item info box on the Survivor screen showed no item name at all (the name row collapsed to zero height); this predates the PR. `index.css`: the name row no longer shrinks and the box clips its last row instead of spilling onto the action buttons. Consequence: at that stage size the "used in" icon row can be cut off.
+
+## 31. Item Ontology V2, round 3 — no proposal left open; two handed to their owners unrepaired (2026-11-14)
+
+**Authority.** Control Tower "close the real gaps" ruling on draft PR #61. Same branch, same PR, still Draft. Recipe revision stays 3; no recipe, cost, loot table, creature placement or probability changed in this round. **Item V2 is not complete** while P6 and P8 are unrepaired in the world.
+
+| | Status | What is true in the build now |
+|---|---|---|
+| P1, P4, P5, P7 | IMPLEMENTED (round 2) | unchanged |
+| P3 | IMPLEMENTED_PARTIAL | Utility Frame only; Oil Pump and Refinery costs untouched |
+| P2 Fasteners | **CLOSED — KEEP** | Fasteners and Machine Parts stay separate items with separate roles. No merge, no recipe rewrite. Not to be reopened without new evidence. |
+| P10 legacy cores | **IMPLEMENTED** | Two named classes. *Creator Core* (seven): three skills on B / Q / E energy reserves. *Field Core* (Ember, Quake, Storm, Rime): one ability, fixed charges (3 / 3 / 4 / 3), no reserve, **no reload exists in code**. The class is derived from the fields the engine already uses (`creatorCore`, `core`); ids, recipes, charge rules, saves and loot are byte-identical. The three Creator Core crates located by a Field Core are pinned by a regression test. |
+| P9 Crude Petroleum | IMPLEMENTED_PARTIAL (text only) | Every player-facing string now distinguishes "no oil site exists in this world yet" from "not standing on the site" and "site is dry", and names the route that works (Salvaged Oil → Fuel Can). Crude Petroleum is still FIXTURE-only; the Oil Pump is still not runnable in natural play. |
+| P6 Plank / wall tiers | **HANDED OFF, not repaired** | Plank Wall (240 HP) and Brick Wall (600 HP) remain unobtainable. Proposal for the building-ontology owner (PR #56): `docs/design/PA1_BUILDING_ONTOLOGY_WALL_TIER_HANDOFF_2026-11-14.md`. No building code was changed in PR #61. |
+| P8 Veyra sources | **HANDED OFF, not repaired** | Ash Chitin, Crawler Optic, Wolf Fang and Beetle Horn still have no source on Veyra; Demon Core has none either. Veyra has 0 keycard doors, so Keycard needs no repair. Repair order for the Veyra ecology/map owner: `docs/design/VEYRA_WORLD_SOURCE_REPAIR_ORDER_2026-11-14.md`. Nothing was invented. On Veyra a recipe line that needs Ash Chitin or Crawler Optic now reads "has no source on Veyra yet". |
+
+**UI.** The Survivor screen item box at the 640×360 stage was re-laid-out (the round-2 clip is removed): name, class chip, rule line, description and action buttons are all visible with no clipping and no inner scroll. Measured in a real browser for all 147 catalog items and for the 63 items of the three QA presets (`web/evidence/item-ontology-v2/round3-layout-*.json`), plus the touch layout for three items.
+
+**Last Island 86 vs 137 — BLOCKED.** `LI_137_ITEM_HISTORICAL_ATLAS_AUDIT.csv` is not in the repository, in any PR head, or in the connected Drive. The round-2 "86 + 51" guess is withdrawn (the owner states 137 distinct item ids). No crosswalk was written; none can be until the file is delivered.
+
+**Not proven.** Godot was not run. No human played this build. Natural-play reachability of the Oil Pump, the wall tiers and the four Veyra materials is, by the table above, known to be absent.
+
+## 32. Item Ontology V2 — round 3 accepted as a scoped increment; owner dispatch and acceptance tracker (2026-11-14)
+
+**Authority.** Control Tower accepted PR #61 at `7b78a554` as a scoped implementation and evidence increment. PR #61 stays Draft, unmerged, undeployed. No fourth audit round. P1–P5, P7, P10 are not to be reworked; P2 is not to be reopened without new evidence.
+
+**Three acceptance states, kept apart** (`web/src/game/item-ontology-tracker.ts`, rendered in `web/ref/item-ontology-v2/APPENDIX.md` §6a and the explorer; enforced by test): `IMPLEMENTED_AND_VERIFIED` (code at a named SHA, gate passed), `HANDOFF_ACKNOWLEDGED` (dispatched to an owner; **not a fix**, no SHA), `BLOCKED_OR_UNRESOLVED`. A document never makes a row verified.
+
+- **Verified at `7b78a554` (Item V2, PR #61):** P1, P2 (closed, keep), P3 (frame only), P4, P5, P7, P10, P9 wording.
+- **Handoff acknowledged, unrepaired:** wall tiers → PA1 Building, PR #56. Ash Chitin / Crawler Optic sources and the Wolf Fang / Beetle Horn research routes → Veyra World / Ecology (no PR named). Runnable Oil Pump → Oil / World Production (PR #59 where applicable). Veyra gets no Keycards.
+- **Blocked or unresolved:** the 137-id Last Island crosswalk (inputs still not delivered to the repository, the session or the Drive); 15 browser drivers quarantined in `web/e2e/QUARANTINE.json`; the 179 inherited Vitest failures (PR #56); and one integration defect: PR #61 + PR #59 merge cleanly as text but the merged tree fails `wp3-veyra-recycler-integration` because that route crafts the Utility Frame without the Metal Pipe that recipe revision 3 requires.
+
+**The Web suite is not green.** PR #61 shows only that it adds no failure to the 179 it inherited.
+
+## 33. Item Ontology V2 — tracker corrected, PR #59 integration fix prepared, Last Island inputs still unreadable (2026-11-14)
+
+- **Tracker rule tightened.** `HANDOFF_ACKNOWLEDGED` now requires a named PR and a receipt on that PR. Only the wall tiers (PR #56) qualify. The Veyra source work (P8) has no confirmed owner or PR and is `BLOCKED_OR_UNRESOLVED`; so is the runnable Oil Pump (a notice on PR #59 that nobody accepted). No row changed to verified.
+- **PR #59 integration.** Recipe revision 3 is kept. A zero-injection Metal Pipe route for PR #59's `wp3-veyra-recycler-integration` test is delivered as `docs/integration/PR59_x_PR61_wp3_metal_pipe_route.patch` and measured on a local probe merge (`web/evidence/item-ontology-v2/integration-pr59.md`). It is **not landed**: PR #59's branch was not touched, so the defect stays unresolved until its owner applies it.
+- **Last Island 137.** Both Drive file ids supplied by Control Tower return 404 to the connected account. Content, counts and SHA-256 could not be checked; no crosswalk was written.
+
+## 34. Item Ontology V2 — Last Island 137-vs-86 historical crosswalk completed (2026-11-14)
+
+**Inputs.** Control Tower shared both Drive files with the connected account. Both were downloaded and match the published values byte for byte; they are stored reference-only in `web/ref/item-ontology-v2/li-historical/` and a test pins their hashes.
+
+| File | Bytes | Lines | SHA-256 |
+|---|---|---|---|
+| `LI_137_ITEM_HISTORICAL_ATLAS_AUDIT.csv` | 36,494 | 138 | `e4a1b066429d7afc8b9e91dc024ceed317058738e45163f02662d6315a4570c5` |
+| `LI_137_VS_86_ITEM_DIFF_20261114.txt` | 9,323 | 79 | `67b8fb988ddda6039fee6d21f048f527dc6931eebc54cbc80271aca572430d04` |
+
+**Rule.** The 137 ids are historical, multi-version evidence about another game. They are not a parity target. No SOH item, recipe, id, price or mechanic was added or changed. Recipe revision 3 is untouched.
+
+**Result** (`web/ref/item-ontology-v2/LI_HISTORICAL_CROSSWALK.md`, `li-historical-crosswalk.csv`; generator `web/src/game/item-ontology-li-historical.ts`):
+
+- 139 rows, one decision per id: 137 historical (84 shared with the atlas, 53 historical-only) + 2 atlas-only (`raw_iron_ore`, `refined_iron_ore`, naming differences).
+- Provenance: all 84 shared ids are `ATLAS_INDEXED`; the 53 historical-only ids are 45 `EXTERNAL_CRAFT_OR_INPUT` + 8 `OFFICIAL_MODERN`. The withdrawn "86 + 51" reading is now recorded as a coincidence.
+- The 53 historical-only ids: 7 version variants of atlas ids, 1 alias of an atlas id, 3 aliases of things SOH already has (`animal_hide` → `hide`, `charcoal`, `territory_cabinet` → `claim`), 6 event-only, 8 later official additions, 28 separate historical items.
+- By gameplay role, those 53 are: 29 with no SOH mechanic to use them, 15 whose role SOH already has (5 same, 10 in a different shape), 6 event-only, 1 declined as redundant, **2 genuinely missing roles**.
+- *(Wording superseded by §35: these are design candidates, not established gaps.)* The two genuine gaps, recorded for their owners and **not added**: a second head-armour tier (`refined_iron_helmet`; SOH has one head armour piece) and a fuel-free personal vehicle (`mountain_bicycle_blueprint`; SOH has Hand Cart and fuelled Motorbike only).
+- The five omissions the diff asked about: `charcoal`, `animal_hide` already exist in SOH; `egg` exists as Grouse Egg; `large_furnace` is covered by the in-place furnace lining; `electric_resistor` has no SOH mechanic.
+- The historical `match_soh` column disagrees with the crosswalk on 9 of 137 ids; each is explained in the artifact and the crosswalk verdict stands.
+- Unsupported figures stay UNKNOWN: 19 UNKNOWN benches and the empty recipes are reproduced as such. The `year_mode` column is one generic note on every row, so no id is dated by the source.
+
+**Unchanged.** PR #59 integration patch still pending owner acceptance (local probe merge only, not CI at an integrated SHA). P6 wall tiers unrepaired (PR #56). P8 Veyra sources unowned and unrepaired. Oil Pump not functional. The Web suite is not green.
+
+## 35. Item Ontology V2 — Last Island reference-quality correction (2026-11-14)
+
+Control Tower accepted the 139-id coverage at `7307442c` and asked for one bounded correction. No item, recipe, loot, balance, save or Core change. Recipe revision stays 3. The two raw inputs are unchanged and still hash-pinned.
+
+- **Source support is now derived per row** (`source_support_status`, `support_basis`, `citation_check`, `verified_source_url`, `evidence_date`, `source_note` in `li-historical-crosswalk.csv`). Of 137 historical rows: 76 DIRECT, 23 INDIRECT, 23 LEGACY_CLAIM (cited page not re-read), 15 UNSUPPORTED_CITATION.
+- **Defective citations, reproduced and flagged, not hidden.** 26 non-atlas rows cite `ATLAS_v2.json` (18 `EXTERNAL_CRAFT_OR_INPUT`, 8 `OFFICIAL_MODERN`). None is an atlas id; 22 do not occur in the file at all and 4 occur only inside another name or in prose.
+- **Official notice of 2022-11-09** (https://hero.yingxiong.com/info/2022/1109/13052.html) was read and is applied to the 14 ids it documents: 7 documented (Mountain Bicycle blueprint, Self-revive Defibrillator, resistor as a toolbox drop, the event cake and its three inputs) and 7 named in passing. No other row receives a date.
+- **`OFFICIAL_MODERN` is an inherited label.** 3 of its 8 ids are backed by the notice; 5 have no opened source (`bizon_smg`, `flamethrower_gas_ammo`, `inferno_chariot`, `inferno_chariot_blueprint`, `suicide_robot`).
+- **Design candidates, not gaps.** `mountain_bicycle_blueprint`: pedalling consumes the rider's lung air and exhaustion costs HP, so it is an exertion-for-speed vehicle, not simply fuel-free. `refined_iron_helmet`: an additional head-armour tier; SOH already has head protection. Neither is approved.
+- **Catalog vs live** (`soh_live_status`). `electric_door` → `door_powered` is MODULE_PENDING: catalog only, not live. `crude_oil` → Salvaged Oil is live, but pumped crude is not, and the row does not establish a working Oil Pump. `green_card` → Keycard and `refined_iron_chest` → Chitin Plate are Shipping-only.
+- **Tracker.** `T-LI-137` stays verified for coverage. New row `T-LI-SOURCES` (blocked): source attribution needs sources from the research owner.
+
+Item V2 development pauses here. Open gates are unchanged and belong to others: PR #59 × #61 WP3 integration (patch pending owner acceptance), P6 wall tiers (PR #56), P8 Veyra sources (no owner), Oil Pump production.

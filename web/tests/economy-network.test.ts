@@ -14,7 +14,8 @@ const input=(x:number,y:number):Input=>({up:false,down:false,left:false,right:fa
 describe('connected economy',()=>{
  it('adds finite physical found parts and shore shell furnace alternative without a boss prerequisite',()=>{
   expect(getWorld('shipping').statics.some(e=>e.poi==='factory'&&e.loot?.some(([k,q])=>k==='mechanical_parts'&&q===2))).toBe(true);
-  expect(SOURCES.wreck.bonus).toContainEqual(['mechanical_parts',0.08]);
+  // item set v3: the authored cache row keeps its original id (digest-pinned) and is ISSUED as Parts; the wreck table itself is in live ids
+  expect(SOURCES.wreck.bonus).toContainEqual(['mechanical_gear',0.08]);expect(SOURCES.wreck.bonus!.some(([k])=>k==='mechanical_parts')).toBe(false);
   expect(CREATURES.crab.drops).toContainEqual(['shell',1,1]);expect(RECIPES.shell_glass.ins).toEqual([['stone',2],['shell',2]]);expect(RECIPES.gas_mask.ins).toContainEqual(['glass',1]);
   expect(RECIPES.industrial_pick.stationLevel).toBe(2);expect(ITEMS.industrial_pick.power!.ore!).toBeGreaterThan(ITEMS.iron_pick.power!.ore!);expect(ITEMS.industrial_axe.power!.wood!).toBeGreaterThan(ITEMS.iron_axe.power!.wood!);
  });
@@ -22,7 +23,7 @@ describe('connected economy',()=>{
   const g=fresh(),r=g.run!,w=getWorld(),i=w.sourceV3.findIndex(k=>k==='wreck');expect(i).toBeGreaterThanOrEqual(0);
   r.rng=4;const tx=i%200,ty=Math.floor(i/200),x=tx*16+8,y=ty*16+8;r.player.x=x-15;r.player.y=y;
   const result=harvestHit(g,tx,ty,{scrap:100},T+10,r.player.x,r.player.y);expect(result.depleted).toBe(true);
-  const pieces=Object.values(r.entities).filter(e=>e.kind==='drop').flatMap(e=>C(r,e.c!).slots.filter(s=>s?.key==='mechanical_parts'));expect(pieces.length).toBeGreaterThan(0);expect(pieces.length).toBeLessThanOrEqual(SOURCES.wreck.stock);
+  const pieces=Object.values(r.entities).filter(e=>e.kind==='drop').flatMap(e=>C(r,e.c!).slots.filter(s=>s?.key==='spares'));expect(pieces.length).toBeGreaterThan(0);const parts=pieces.reduce((a,s)=>a+s!.qty,0);expect(parts).toBeGreaterThanOrEqual(SOURCES.wreck.stock);expect(parts).toBeLessThanOrEqual(SOURCES.wreck.stock*2); /* item set v3: 1 Part per stock unit + at most one bonus Part per unit; never Machine Parts */expect(Object.values(r.entities).filter(e=>e.kind==='drop').some(e=>C(r,e.c!).slots.some(s=>s?.key==='mechanical_parts'||s?.key==='scrap'))).toBe(false);
   expect(harvestHit(g,tx,ty,{scrap:100},T+11,r.player.x,r.player.y).result).toBe('empty');expect(validate(g)).toBeTruthy();
  });
  it('retains broken repairable UID, blocks attacks, survives save and pays for repair',()=>{
@@ -33,17 +34,17 @@ describe('connected economy',()=>{
   expect(s.dur).toBe(0);expect(C(r,'inv').slots[0]?.uid).toBe(id);const hp=m.hp;
   p.action=null;for(let k=6;k<=10;k++)tick(g,controls,50,T+k*50);expect(m.hp).toBe(hp);
   const saved=JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;expect(validate(saved)).toBeTruthy();
-  const bench=station(saved,'workbench');give(saved,'scrap');give(saved,'fiber');expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1000).ok).toBe(true);
-  expect(C(saved.run!,'inv').slots[0]).toMatchObject({uid:id,dur:300});expect(countItem(saved.run!,'inv','scrap')).toBe(0);expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1001)).toMatchObject({ok:false,dup:true});
+  const bench=station(saved,'workbench');give(saved,'stone');give(saved,'fiber');const stone0=countItem(saved.run!,'inv','stone'); /* item set v3: the knife is honed with Stone + Fibre (Scrap retired) */expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1000).ok).toBe(true);
+  expect(C(saved.run!,'inv').slots[0]).toMatchObject({uid:id,dur:300});expect(countItem(saved.run!,'inv','stone')).toBe(stone0-1);expect(act(saved,'maintainItem',{eid:bench.id,slot:0,uid:id,mode:'repair'},'broken-repair',T+1001)).toMatchObject({ok:false,dup:true});
  });
  it('level 2 and knowledge gate industrial jobs; reserve and cancel returns exact tool identity and durability',()=>{
-  const g=fresh(),r=g.run!,e=station(g,'workbench');give(g,'iron_pick');give(g,'mechanical_parts',2);give(g,'spares',2);
+  const g=fresh(),r=g.run!,e=station(g,'workbench');give(g,'iron_pick');for(const [k,q] of RECIPES.industrial_pick.ins)if(k!=='iron_pick')give(g,k,q*2); /* two bills of the live recipe: one is cancelled, one is finished */
   const pick=C(r,'inv').slots.find(s=>s?.key==='iron_pick')!;pick.dur=99;r.knowledge.recipes.push('industrial_pick');
   expect(act(g,'craft',{eid:e.id,recipe:'industrial_pick'}).ok).toBe(false);e.station!.level=2;
   r.player.action={kind:'swing',slot:C(r,'inv').slots.indexOf(pick),t:0,dur:300,angle:0};expect(act(g,'craft',{eid:e.id,recipe:'industrial_pick'}).ok).toBe(false);r.player.action=null;
   expect(act(g,'craft',{eid:e.id,recipe:'industrial_pick'}).ok).toBe(true);const job=e.station!.queue[0];expect(job.reserved).toContainEqual(pick);
   const saved=JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;expect(validate(saved)).toBeTruthy();expect(act(saved,'cancelJob',{eid:e.id,jobId:job.id}).ok).toBe(true);
-  expect(C(saved.run!,'inv').slots.find(s=>s?.uid===pick.uid)).toMatchObject({key:'iron_pick',dur:99});expect(countItem(saved.run!,'inv','mechanical_parts')).toBe(2);
+  expect(C(saved.run!,'inv').slots.find(s=>s?.uid===pick.uid)).toMatchObject({key:'iron_pick',dur:99});for(const [k,q] of RECIPES.industrial_pick.ins)if(k!=='iron_pick')expect(countItem(saved.run!,'inv',k),k).toBe(q*2); /* cancel returned exactly what was reserved */
   expect(act(saved,'craft',{eid:e.id,recipe:'industrial_pick'}).ok).toBe(true);stepStations(saved,25000,T+25000);expect(C(saved.run!,saved.run!.entities[e.id].station!.outC).slots.some(s=>s?.key==='industrial_pick')).toBe(true);
  });
  it('fuelled shell glass stalls without fuel, consumes inputs, settles offline once and enables mask',()=>{
@@ -52,16 +53,18 @@ describe('connected economy',()=>{
   addItem(r,e.station!.fuelC,'wood',1);const saved=JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;settle(saved,T+30000);const out=C(saved.run!,saved.run!.entities[e.id].station!.outC);expect(out.slots.filter(s=>s?.key==='glass')).toHaveLength(1);settle(saved,T+30000);expect(out.slots.filter(s=>s?.key==='glass')).toHaveLength(1);
  });
  it('funded crop and herb broth is timed physical home food',()=>{
-  const g=fresh(),r=g.run!,e=station(g,'campfire');give(g,'crop',2);give(g,'herb');addItem(r,e.station!.fuelC,'wood',1);
-  expect(act(g,'craft',{eid:e.id,recipe:'root_broth'}).ok).toBe(true);expect(countItem(r,'inv','crop')).toBe(0);
-  const saved=JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;settle(saved,T+15000);const out=C(saved.run!,saved.run!.entities[e.id].station!.outC);expect(out.slots.some(s=>s?.key==='root_broth')).toBe(true);expect(ITEMS.root_broth.food!.thirst).toBeGreaterThan(0);
+  const g=fresh(),r=g.run!,e=station(g,'campfire');give(g,'mushroom',5);give(g,'tin_can');addItem(r,e.station!.fuelC,'wood',1); // rev 4: Root Broth retired → LI Mushroom Soup
+  expect(act(g,'craft',{eid:e.id,recipe:'mushroom_soup'}).ok).toBe(true);expect(countItem(r,'inv','mushroom')).toBe(0);
+  const saved=JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;settle(saved,T+15000);const out=C(saved.run!,saved.run!.entities[e.id].station!.outC);expect(out.slots.some(s=>s?.key==='mushroom_soup')).toBe(true);expect(ITEMS.mushroom_soup.food!.thirst).toBeGreaterThan(0);
  });
  it('real seed and flask water grow a crop that can fund a timed meal',()=>{
   const g=fresh(),r=g.run!,p=r.player,e=station(g,'campfire');
-  const plot:Entity={id:'fixture-garden',kind:'struct',type:'garden',x:p.x+8,y:p.y+8,tx:Math.floor(p.x/16),ty:Math.floor(p.y/16),hp:60,maxHp:60,garden:{crop:null,growth:0,water:0}};r.entities[plot.id]=plot;markDirty();give(g,'seed');
-  expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);expect(countItem(r,'inv','seed')).toBe(0);expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);
+  const plot:Entity={id:'fixture-garden',kind:'struct',type:'garden',x:p.x+8,y:p.y+8,tx:Math.floor(p.x/16),ty:Math.floor(p.y/16),hp:60,maxHp:60,garden:{crop:null,growth:0,water:0}};r.entities[plot.id]=plot;markDirty();give(g,'seed_sunroot');
+  expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);expect(countItem(r,'inv','seed_sunroot')).toBe(0);expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);
   stepGardensBarrels(g,300000,false);expect(plot.garden!.growth).toBe(1);expect(act(g,'garden',{eid:plot.id}).ok).toBe(true);expect(countItem(r,'inv','crop')).toBe(3);
-  give(g,'herb');addItem(r,e.station!.fuelC,'wood',1);expect(act(g,'craft',{eid:e.id,recipe:'root_broth'}).ok).toBe(true);stepStations(g,12000,T+12000);expect(C(r,e.station!.outC).slots.some(s=>s?.key==='root_broth')).toBe(true);
+  // rev 4: with Root Broth retired the only meal Sunroot funds is Root Stew, a LEARNED formula (not starter knowledge).
+  expect(act(g,'craft',{eid:e.id,recipe:'stew'}).ok,'stew is not known at run start').toBe(false);r.knowledge.recipes.push('stew');markDirty();
+  give(g,'herb');give(g,'meat');addItem(r,e.station!.fuelC,'wood',1);expect(act(g,'craft',{eid:e.id,recipe:'stew'}).ok).toBe(true);stepStations(g,15000,T+15000);expect(C(r,e.station!.outC).slots.some(s=>s?.key==='stew')).toBe(true);
  });
  it('the real equipped gas mask reduces foundry exposure during offline settlement',()=>{
   const unprotected=fresh(), protectedRun=structuredClone(unprotected), w=getWorld('shipping');
@@ -72,8 +75,8 @@ describe('connected economy',()=>{
   expect(unprotected.run!.player.rad).toBeGreaterThan(2);expect(protectedRun.run!.player.rad).toBeLessThan(unprotected.run!.player.rad/2);
  });
  it('salvage output is bounded below ingredient costs and no reciprocal crafting cycle is added',()=>{
-  expect(ITEMS.iron_sword.salvage!.yields).toEqual([['iron_ingot',1]]);
-  expect(RECIPES.iron_sword.ins.find(([k])=>k==='iron_ingot')![1]).toBeGreaterThan(1);
+  expect(ITEMS.machete.salvage!.yields).toEqual([['iron_ingot',1]]);
+  expect(RECIPES.machete.ins.find(([k])=>k==='iron_ingot')![1]).toBeGreaterThan(1);
   expect(ITEMS.industrial_pick.salvage).toBeUndefined();expect(ITEMS.industrial_axe.salvage).toBeUndefined();
  });
  /** A placed structure that is NOT a packed device: the only thing the engine lets you patch with raw

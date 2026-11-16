@@ -10,6 +10,8 @@
  * clean while Vitest / CLI harnesses inject live compiled `World` & Veyra floor snapshots.
  */
 
+import { liveItemId, liveItemPer, liveRecipeId } from './final-item-set';
+import { OIL_SEEP_AUTHORITY, SEEP_CELL } from './oil-seeps';
 import {
   ACHIEVEMENTS,
   ALWAYS_KNOWN_RECIPES,
@@ -320,6 +322,16 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
 
   let seq = 0;
   const addEdge = (edge: Omit<EconEdge, 'id' | 'authority'> & { id?: string }) => {
+    // Item set v3: an authored table may still NAME a retired item (loot signatures are digest-pinned). What the world
+    // physically issues is the successor at the roster ratio (engine mkStack / floors makeValidStack), so that is the
+    // node the edge lands on. The authored id is kept in the note.
+    if (edge.to.startsWith('item:')) {
+      const authored = edge.to.slice(5), live = liveItemId(authored);
+      if (live !== authored) {
+        const per = liveItemPer(authored);
+        edge = { ...edge, to: `item:${live}`, ...(typeof edge.qtyOut === 'number' ? { qtyOut: Math.ceil(edge.qtyOut * per) } : {}), notes: `${edge.notes ? edge.notes + ' ' : ''}[authored as ${authored}; issued as ${live} x${per}]` };
+      }
+    }
     const id =
       edge.id ??
       `E:${edge.kind}:${edge.from}->${edge.to}:${++seq}`;
@@ -513,6 +525,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     if (def.fuel) {
       if (stationBurnable(key)) {
         for (const st of ['campfire', 'furnace', 'furnace_lined', 'refinery', 'oil_pump']) {
+          // Item set v3 (round 2): the Oil Pump is no longer fixture-only. It works where an authorized oil source exists,
+          // which in a New Game is a Veyra crude seep (oil-seeps.ts, veyra-seep-v1). Shipping has none.
           const isFixture = st === 'oil_pump';
           addEdge({
             kind: 'STATION_FUEL',
@@ -520,9 +534,9 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
             to: `station:${st}`,
             qtyIn: 1,
             durationSec: st === 'furnace_lined' ? def.fuel / BAL.fuel.linedFurnaceFuelMultiplier : def.fuel,
-            gateIds: isFixture ? ['gate:station_fuel_non_canister', 'gate:oil_test_fixture'] : ['gate:station_fuel_non_canister'],
-            layerScope: isFixture ? 'test_fixture' : 'shared',
-            runtimeStatus: isFixture ? 'TEST_FIXTURE_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+            gateIds: isFixture ? ['gate:station_fuel_non_canister', 'gate:oil_seep_veyra'] : ['gate:station_fuel_non_canister'],
+            layerScope: isFixture ? 'veyra05' : 'shared',
+            runtimeStatus: isFixture ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
             codeRef: 'catalog.ts:stationBurnable',
           });
         }
@@ -888,8 +902,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
       id: `structure:${sKey}`,
       kind: 'structure',
       label: sDef.name,
-      layerScope: isFixture ? 'test_fixture' : 'shared',
-      runtimeStatus: isFixture ? 'TEST_FIXTURE_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+      layerScope: isFixture ? 'veyra05' : 'shared',
+      runtimeStatus: isFixture ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
       meta: {
         hp: sDef.hp,
         layer: sDef.layer,
@@ -907,9 +921,9 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
         to: `structure:${sKey}`,
         qtyIn: qty,
         qtyOut: 1,
-        gateIds: isFixture ? ['gate:oil_test_fixture'] : sDef.need === 'claim' ? ['gate:claim_2_limit'] : [],
-        layerScope: isFixture ? 'test_fixture' : 'shared',
-        runtimeStatus: isFixture ? 'TEST_FIXTURE_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+        gateIds: isFixture ? ['gate:oil_seep_veyra'] : sDef.need === 'claim' ? ['gate:claim_2_limit'] : [],
+        layerScope: isFixture ? 'veyra05' : 'shared',
+        runtimeStatus: isFixture ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
         codeRef: `catalog.ts:STRUCTS.${sKey}.cost`,
       });
       if ((BAL.territory.materials as readonly string[]).includes(mat)) {
@@ -920,8 +934,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
           ratePerUnit: qty * BAL.territory.upkeepFractionPerDay,
           periodSec: 24 * 3600,
           gateIds: ['gate:claim_2_limit'],
-          layerScope: isFixture ? 'test_fixture' : 'shared',
-          runtimeStatus: isFixture ? 'TEST_FIXTURE_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+          layerScope: isFixture ? 'veyra05' : 'shared',
+          runtimeStatus: isFixture ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
           codeRef: 'balance.v1.json:territory.upkeepFractionPerDay',
         });
         addEdge({
@@ -931,8 +945,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
           ratePerUnit: qty * BAL.territory.upkeepFractionPerDay,
           periodSec: 24 * 3600,
           gateIds: ['gate:claim_2_limit'],
-          layerScope: isFixture ? 'test_fixture' : 'shared',
-          runtimeStatus: isFixture ? 'TEST_FIXTURE_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+          layerScope: isFixture ? 'veyra05' : 'shared',
+          runtimeStatus: isFixture ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
           codeRef: 'engine.ts:stepTerritory',
         });
       }
@@ -945,8 +959,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
           qtyIn: 1,
           qtyOut: refund,
           gateIds: [],
-          layerScope: isFixture ? 'test_fixture' : 'shared',
-          runtimeStatus: isFixture ? 'TEST_FIXTURE_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+          layerScope: isFixture ? 'veyra05' : 'shared',
+          runtimeStatus: isFixture ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
           codeRef: 'engine.ts:reclaim',
         });
       }
@@ -957,8 +971,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
           to: 'sink:structure_reclaim_loss',
           ratePerUnit: qty - refund,
           gateIds: [],
-          layerScope: isFixture ? 'test_fixture' : 'shared',
-          runtimeStatus: isFixture ? 'TEST_FIXTURE_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+          layerScope: isFixture ? 'veyra05' : 'shared',
+          runtimeStatus: isFixture ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
           codeRef: 'engine.ts:reclaim',
         });
       }
@@ -1139,7 +1153,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
 
   // 4. RECIPES & BLUEPRINTS & RESEARCH
   for (const [rKey, rDef] of Object.entries(RECIPES)) {
-    const isCrude = rKey === 'pump_crude' || rKey === 'refinery_crude';
+    const isCrude = rKey === 'pump_crude';   // seep-gated (Veyra only); the refinery formulas are ordinary shared recipes
     const isKnownAtStart = ALWAYS_KNOWN_RECIPES.includes(rKey);
     const stationNode =
       rDef.station === null
@@ -1153,15 +1167,15 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     } else if (rDef.station && rDef.station !== 'oil_pump') {
       gateIds.push(`gate:station_${rDef.station}`);
     }
-    if (isCrude) gateIds.push('gate:oil_test_fixture');
+    if (isCrude) gateIds.push('gate:oil_seep_veyra');
     if (rDef.station === 'refinery') gateIds.push('gate:wb_l2');
 
     addNode({
       id: `recipe:${rKey}`,
       kind: 'recipe',
       label: rDef.alias ?? `${ITEMS[rDef.out]?.name ?? rDef.out} (${rKey})`,
-      layerScope: isCrude ? 'test_fixture' : 'shared',
-      runtimeStatus: isCrude ? 'TEST_FIXTURE_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+      layerScope: isCrude ? 'veyra05' : 'shared',
+      runtimeStatus: isCrude ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
       meta: {
         out: rDef.out,
         qty: rDef.qty,
@@ -1182,8 +1196,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
         to: `recipe:${rKey}`,
         qtyOut: 1,
         gateIds: [],
-        layerScope: isCrude ? 'test_fixture' : 'shared',
-        runtimeStatus: isCrude ? 'TEST_FIXTURE_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+        layerScope: isCrude ? 'veyra05' : 'shared',
+        runtimeStatus: isCrude ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
         codeRef: 'catalog.ts:ALWAYS_KNOWN_RECIPES',
         notes: 'Seeded in r.knowledge.recipes at run start',
       });
@@ -1257,8 +1271,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
         qtyIn: qty,
         durationSec: rDef.secs,
         gateIds,
-        layerScope: isCrude ? 'test_fixture' : 'shared',
-        runtimeStatus: isCrude ? 'TEST_FIXTURE_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+        layerScope: isCrude ? 'veyra05' : 'shared',
+        runtimeStatus: isCrude ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
         codeRef: `catalog.ts:RECIPES.${rKey}.ins`,
       });
     }
@@ -1271,8 +1285,8 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
         qtyOut: qty,
         durationSec: rDef.secs,
         gateIds,
-        layerScope: isCrude ? 'test_fixture' : 'shared',
-        runtimeStatus: isCrude ? 'TEST_FIXTURE_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+        layerScope: isCrude ? 'veyra05' : 'shared',
+        runtimeStatus: isCrude ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
         codeRef: `catalog.ts:RECIPES.${rKey}.out`,
       });
     }
@@ -1542,6 +1556,26 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     layerScope: 'test_fixture',
     runtimeStatus: 'TEST_FIXTURE_ONLY',
     meta: { authority: BAL.oilPumpV1.fixtureAuthority, maxSourceStock: BAL.oilPumpV1.maxSourceStock },
+  });
+  addNode({
+    id: 'world_source:oil_seep_veyra',
+    kind: 'world_source',
+    label: 'Crude Seep (Veyra, finite)',
+    layerScope: 'veyra05',
+    runtimeStatus: 'LIVE_VEYRA_ONLY',
+    meta: { authority: OIL_SEEP_AUTHORITY, cellTiles: SEEP_CELL, stockPerSeep: BAL.oilPumpV1.seepStock, refills: false },
+  });
+  addEdge({
+    kind: 'HARVEST_YIELD',
+    from: 'world_source:oil_seep_veyra',
+    to: 'station:oil_pump',
+    qtyIn: 1,
+    qtyOut: 1,
+    durationSec: BAL.oilPumpV1.secs,
+    gateIds: ['gate:oil_seep_veyra', 'gate:wb_l2'],
+    layerScope: 'veyra05',
+    runtimeStatus: 'LIVE_VEYRA_ONLY',
+    codeRef: 'oil-seeps.ts:syncOilSeeps / engine.ts:stepStations.oil_pump',
   });
   addEdge({
     kind: 'HARVEST_YIELD',
@@ -1849,7 +1883,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     });
     if (s.kind === 'loot') {
       for (const [rawKey, qty] of s.loot ?? []) {
-        const target = rawKey.startsWith('blueprint:') ? `blueprint:${rawKey.slice(10)}` : `item:${rawKey}`;
+        const target = rawKey.startsWith('blueprint:') ? `blueprint:${liveRecipeId(rawKey.slice(10)) ?? rawKey.slice(10)}` : `item:${rawKey}`; // authored id may be retired: the crate issues the successor blueprint
         addEdge({
           kind: 'LOOT_STATIC_FIXED',
           from: containerId,
@@ -2220,7 +2254,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
       });
       if (st.kind === 'loot') {
         for (const [rawKey, qty] of st.loot ?? []) {
-          const target = rawKey.startsWith('blueprint:') ? `blueprint:${rawKey.slice(10)}` : `item:${rawKey}`;
+          const target = rawKey.startsWith('blueprint:') ? `blueprint:${liveRecipeId(rawKey.slice(10)) ?? rawKey.slice(10)}` : `item:${rawKey}`; // authored id may be retired: the crate issues the successor blueprint
           addEdge({
             kind: 'LOOT_STATIC_FIXED',
             from: cid,
@@ -2465,6 +2499,13 @@ function computeReachabilityDiagnostics(nodes: EconNode[], edges: EconEdge[]): E
               knownRecipes.add(rk);
               changed = true;
             }
+            // Item Ontology V2 audit fix: a looted `blueprint:<recipe>` IS the physical `blueprint`
+            // item (engine.ts mkStack(r,'blueprint',1,<recipe>)). Recording only the knowledge made
+            // the diagnostics report item:blueprint as unreachable on every layout.
+            if (!items.has('blueprint')) {
+              items.add('blueprint');
+              changed = true;
+            }
           } else if (e.to.startsWith('currency:')) {
             const ck = e.to.slice(9);
             if (!currencies.has(ck)) {
@@ -2503,6 +2544,11 @@ function computeReachabilityDiagnostics(nodes: EconNode[], edges: EconEdge[]): E
           const rk = e.to.slice(7);
           if (!knownRecipes.has(rk)) {
             knownRecipes.add(rk);
+            changed = true;
+          }
+          // The research table's output slot receives a physical blueprint (engine.ts stepStations 'R:' jobs).
+          if (!items.has('blueprint')) {
+            items.add('blueprint');
             changed = true;
           }
         }
@@ -2630,6 +2676,7 @@ function buildGates(): Record<string, EconGate> {
     { id: 'gate:loot_ecology_w06', kind: 'layout', layerScope: 'shipping', rule: 'Enabled only on shipping_fresh / dev_delta_fresh; absent on Veyra', codeRef: 'engine.ts:190' },
     { id: 'gate:airdrop_v1', kind: 'layout', layerScope: 'shipping', rule: 'supportsAirdrops() allows shipping_fresh / dev_delta_fresh only', codeRef: 'airdrop.ts:supportsAirdrops' },
     { id: 'gate:recycler_site', kind: 'layout', layerScope: 'shared', rule: 'webRecyclerSite() authorizes Foundry Yard on shipping_fresh/dev_delta_fresh and VEYRA_RECYCLER_SITE (po_slag) on isVeyra05Layout (null on legacy static Veyra layouts)', codeRef: 'world.ts:webRecyclerSite' },
+    { id: 'gate:oil_seep_veyra', kind: 'layout', layerScope: 'veyra05', rule: 'An Oil Pump works only beside an authorized oil source; in a New Game that is a finite Veyra crude seep (veyra-seep-v1). Shipping has none.', codeRef: 'oil-seeps.ts / engine.ts:anyAuthorizedOilSource' },
     { id: 'gate:oil_test_fixture', kind: 'fixture', layerScope: 'test_fixture', rule: 'Requires r.oilTestFixture === true with authority test-fixture-v1', codeRef: 'engine.ts:1414' },
     { id: 'gate:poi_keycard', kind: 'poi_access', layerScope: 'shipping', rule: 'Requires physical keycard (3 charges); absent from Veyra loot tables', codeRef: 'engine.ts:poiAccess' },
     { id: 'gate:poi_power', kind: 'poi_access', layerScope: 'shipping', rule: 'Requires POI generator + fuel_can (180s runtime); absent from Veyra POIs', codeRef: 'engine.ts:poiAccess' },

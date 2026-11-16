@@ -1,0 +1,157 @@
+{
+ "what": "Browser drivers whose strings were edited in Item Ontology V2 round 2 and which could NOT be run to completion. QUARANTINED means: the edit is unverified, the driver proves nothing about PR #61, and nobody may cite it as evidence until it passes.",
+ "measured": "2026-11-14, real Chromium, head = PR #61 round 3 (7b78a554 + tracker commit), base = 934f4471 (PR #56 head). Both sides run with the same command against a QA dev server.",
+ "verified_pass": [
+  {
+   "driver": "e2e/pa1-research-visible.mjs",
+   "note": "edited in round 2; PASS on head; reads \"ENERGY cost recorded (5 Parts + 2 Iron Ingot)\""
+  },
+  {
+   "driver": "e2e/pa1-deploy-custody.mjs",
+   "note": "edited in round 3 (oil wording); PASS on head"
+  },
+  {
+   "driver": "e2e/pa1-building-palette.mjs",
+   "note": "not edited; PASS on head"
+  }
+ ],
+ "quarantined": [
+  {
+   "driver": "e2e/m-core-03-utility.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByRole('button', { name: /Continue —/ })",
+   "stops_on_base": "getByRole('button', { name: /Continue —/ })",
+   "same_step": true,
+   "reason": "needs a saved game in the persistent browser profile /tmp/m-core-03-browser-profile, written by an earlier natural-play driver of the same chain; that chain was not reproduced",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/m-core-03-utility-continue.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByRole('button', { name: /Continue —/ })",
+   "stops_on_base": "getByRole('button', { name: /Continue —/ })",
+   "same_step": true,
+   "reason": "needs a saved game in the persistent browser profile /tmp/m-core-03-browser-profile, written by an earlier natural-play driver of the same chain; that chain was not reproduced",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/m-core-03-final-ui.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByRole('button', { name: /Continue —/ })",
+   "stops_on_base": "getByRole('button', { name: /Continue —/ })",
+   "same_step": true,
+   "reason": "needs a saved game in the persistent browser profile /tmp/m-core-03-browser-profile, written by an earlier natural-play driver of the same chain; that chain was not reproduced",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/m-core-03r-research-loot.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByRole('button', { name: /Continue —/ })",
+   "stops_on_base": "getByRole('button', { name: /Continue —/ })",
+   "same_step": true,
+   "reason": "needs a saved game in the persistent browser profile /tmp/m-core-03-browser-profile, written by an earlier natural-play driver of the same chain; that chain was not reproduced",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/m-core-03r-research-finish.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByRole('button', { name: /Continue —/ })",
+   "stops_on_base": "getByRole('button', { name: /Continue —/ })",
+   "same_step": true,
+   "reason": "needs a saved game in the persistent browser profile /tmp/m-core-03-browser-profile, written by an earlier natural-play driver of the same chain; that chain was not reproduced",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/m-core-03r-research-resume.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByRole('button', { name: /Continue —/ })",
+   "stops_on_base": "getByRole('button', { name: /Continue —/ })",
+   "same_step": true,
+   "reason": "needs a saved game in the persistent browser profile /tmp/m-core-03-browser-profile, written by an earlier natural-play driver of the same chain; that chain was not reproduced",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/m-core-03r-cloth-start.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByRole('button', { name: /Continue —/ })",
+   "stops_on_base": "getByRole('button', { name: /Continue —/ })",
+   "same_step": true,
+   "reason": "needs a saved game in the persistent browser profile /tmp/m-core-03-browser-profile, written by an earlier natural-play driver of the same chain; that chain was not reproduced",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/m-core-03s-core-source.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByRole('button', { name: /Continue —/ })",
+   "stops_on_base": "getByRole('button', { name: /Continue —/ })",
+   "same_step": true,
+   "reason": "needs a saved game in the persistent browser profile /tmp/m-core-03-browser-profile, written by an earlier natural-play driver of the same chain; that chain was not reproduced",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/m-core-03s-ingot-loot.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByRole('button', { name: /Continue —/ })",
+   "stops_on_base": "getByRole('button', { name: /Continue —/ })",
+   "same_step": true,
+   "reason": "needs a saved game in the persistent browser profile /tmp/m-core-03-browser-profile, written by an earlier natural-play driver of the same chain; that chain was not reproduced",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/m-core-03s-spares-loot.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByRole('button', { name: /Continue —/ })",
+   "stops_on_base": "getByRole('button', { name: /Continue —/ })",
+   "same_step": true,
+   "reason": "needs a saved game in the persistent browser profile /tmp/m-core-03-browser-profile, written by an earlier natural-play driver of the same chain; that chain was not reproduced",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/s12-airdrop-fixture.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": ".slot[title=\"Machine Parts\"]",
+   "stops_on_base": ".slot[title=\"Mechanical Parts\"]",
+   "same_step": true,
+   "reason": "stops at the same step on base (same slot, old name): the airdrop panel no longer exposes that slot the way the driver expects. One of three head runs stopped one step earlier (panel not yet visible), i.e. the driver is also timing-sensitive.",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/w06-loot-fixture.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "Toolbox panel [title=\"Parts\"]",
+   "stops_on_base": "Toolbox panel [title=\"Spares\"]",
+   "same_step": true,
+   "reason": "stops at the same step on base (same element, old name): driver is stale against the current loot panel.",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/integrated-smoke.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByRole('button', { name: 'Workbench', exact: true })",
+   "stops_on_base": "getByRole('button', { name: 'Workbench', exact: true })",
+   "same_step": true,
+   "reason": "stale on base: no \"Workbench\" build button since PA1 moved devices to packed-device deploy.",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/v17-market-assisted.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "getByTestId('layout-shipping-fresh')",
+   "stops_on_base": "getByTestId('layout-shipping-fresh')",
+   "same_step": true,
+   "reason": "stale on base: the title screen has no layout-shipping-fresh control in this build.",
+   "ci_workflow": null
+  },
+  {
+   "driver": "e2e/veyra-economy-wp4.mjs",
+   "round2_edit": "display-name string (Spares→Parts / Mechanical Parts→Machine Parts)",
+   "stops_on_head": "not started: prerequisite tests/wp3-veyra-recycler-integration.test.ts fails (\"Need an intact packed device.\") so the snapshots it loads are never written",
+   "stops_on_base": "same",
+   "same_step": false,
+   "reason": "blocked by a base failure owned by PR #56; PR #59 edits that test.",
+   "ci_workflow": ".github/workflows/veyra-economy-wp4.yml",
+   "on_probe_merge_with_pr59": "2026-11-14: with PR #59 merged and the Metal Pipe patch applied, the prerequisite snapshots are written and the driver starts; at 1280x720 it stops in Phase A waiting for a \"Greywater South Shore\" button. Still not passing."
+  }
+ ],
+ "release_rule": "A driver leaves this file only by passing on the head it is cited for. Reverting the string edit is not an exit: the old names no longer exist in the UI."
+}

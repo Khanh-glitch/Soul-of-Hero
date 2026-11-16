@@ -12,6 +12,7 @@ import Inspector from './veyra05/inspector/Inspector';
 import { resetRenderCaches, cam } from './game/render';
 import { setVolume, initAudio } from './game/audio';
 import { mkIntent } from './ui/common';
+import { ITEMS } from './game/catalog';
 import { buildQaSandbox, resetQaSandboxFlags, type QaPresetId } from './game/qa-sandbox';
 import Title from './ui/Title';
 import Game from './ui/Game';
@@ -167,7 +168,7 @@ export default function App() {
               const initial = inv.slots.filter(Boolean);
               inv.slots = Array(128).fill(null);
               let i = 0;
-              for (const k of keys) for (let n = 0; n < 10; n++) { const s = mkStack(r, k, 1); if (s.reserves) s.reserves = { basic: 40, refined: 12, signature: 4 }; inv.slots[i++] = s; }
+              for (const k of keys) for (let n = 0; n < 10; n++) { const s = mkStack(r, k, 1); if (ITEMS[k]?.creatorCore) s.lvl = 3; inv.slots[i++] = s; }
               for (const item of initial) inv.slots[i++] = item;
               r.qaUsed = true;
             }

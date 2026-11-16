@@ -1,0 +1,193 @@
+{
+ "schema": "soh.g1b.reachability-classification.v1",
+ "layoutRevision": 4,
+ "count": 30,
+ "byClass": {
+  "INTENTIONAL_INACCESSIBLE": 6,
+  "MAP_COLLISION_DEFECT": 9,
+  "UNRESOLVED_WITH_EVIDENCE": 10,
+  "MISSING_ROUTE_OR_STAIRS": 5
+ },
+ "spaces": [
+  {
+   "id": "po_academy/1/skybridge",
+   "name": "Skybridge",
+   "cls": "INTENTIONAL_INACCESSIBLE",
+   "evidence": "usable=28 doors=0 stairs=0 gate=- locked=false open=false storey=Upper ; structural span / platform with a standable span but no walking approach by design"
+  },
+  {
+   "id": "po_hook/0/garden_cottage",
+   "name": "Garden Cottage",
+   "cls": "MAP_COLLISION_DEFECT",
+   "evidence": "usable=69 doors=1 stairs=0 gate=- locked=false open=false storey=Ground ; standable interior + door exist but the flood cannot reach the space (door exterior disconnected)"
+  },
+  {
+   "id": "po_oasis/0/wash_house",
+   "name": "Laundry & Bath Shed",
+   "cls": "MAP_COLLISION_DEFECT",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=false storey=Ground ; room with no standable floor tile in the compiled runtime (floor not walkable)"
+  },
+  {
+   "id": "po_oasis/0/wash_house_apron",
+   "name": "Laundry & Bath Shed Apron",
+   "cls": "UNRESOLVED_WITH_EVIDENCE",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=true storey=Ground ; no standable tile on a transit / yard / apron space (structural gap, confirm intent)"
+  },
+  {
+   "id": "po_westbank/0/double_wharf",
+   "name": "Two-face unloading wharf",
+   "cls": "UNRESOLVED_WITH_EVIDENCE",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=true storey=Ground ; no standable tile on a transit / yard / apron space (structural gap, confirm intent)"
+  },
+  {
+   "id": "po_dpier/0/shattered_first",
+   "name": "Surviving Old Pier Approach",
+   "cls": "INTENTIONAL_INACCESSIBLE",
+   "evidence": "usable=1 doors=0 stairs=1 gate=- locked=false open=true storey=Ground ; storey reached only by stairs that do not connect to the reachable set"
+  },
+  {
+   "id": "po_dpier/0/stranded_head",
+   "name": "Drowned Pier Far Platform",
+   "cls": "INTENTIONAL_INACCESSIBLE",
+   "evidence": "usable=2 doors=0 stairs=1 gate=- locked=false open=true storey=Ground ; storey reached only by stairs that do not connect to the reachable set"
+  },
+  {
+   "id": "po_dpier/0/tide_rake",
+   "name": "Thin Salvage Tide Rake",
+   "cls": "INTENTIONAL_INACCESSIBLE",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=true storey=Ground ; no standable tile (drowned / shattered / structural span only)"
+  },
+  {
+   "id": "po_dpier/1/standing_truss",
+   "name": "Old Pier Upper Truss",
+   "cls": "INTENTIONAL_INACCESSIBLE",
+   "evidence": "usable=1 doors=0 stairs=1 gate=- locked=false open=true storey=Upper ; storey reached only by stairs that do not connect to the reachable set"
+  },
+  {
+   "id": "po_gulfhead/0/quay_watch",
+   "name": "Customs and Quay Watch",
+   "cls": "MAP_COLLISION_DEFECT",
+   "evidence": "usable=96 doors=1 stairs=0 gate=- locked=false open=false storey=Ground ; standable interior + door exist but the flood cannot reach the space (door exterior disconnected)"
+  },
+  {
+   "id": "po_gulfhead/0/quay_watch_apron",
+   "name": "Customs and Quay Watch entrance apron",
+   "cls": "MAP_COLLISION_DEFECT",
+   "evidence": "usable=5 doors=1 stairs=0 gate=- locked=false open=true storey=Ground ; standable interior + door exist but the flood cannot reach the space (door exterior disconnected)"
+  },
+  {
+   "id": "po_westmouth/0/canal_lodge",
+   "name": "River Gatehouse",
+   "cls": "MISSING_ROUTE_OR_STAIRS",
+   "evidence": "usable=122 doors=0 stairs=0 gate=- locked=false open=false storey=Ground ; enclosed room with standable tiles but no door and no stairs (missing route)"
+  },
+  {
+   "id": "po_westmouth/0/canal_lodge_apron",
+   "name": "River Gatehouse entrance apron",
+   "cls": "UNRESOLVED_WITH_EVIDENCE",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=true storey=Ground ; no standable tile on a transit / yard / apron space (structural gap, confirm intent)"
+  },
+  {
+   "id": "po_ironharbor/0/north_barge",
+   "name": "Ore Transfer Platform",
+   "cls": "UNRESOLVED_WITH_EVIDENCE",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=true storey=Ground ; no standable tile on a transit / yard / apron space (structural gap, confirm intent)"
+  },
+  {
+   "id": "po_ember/0/coal_boom",
+   "name": "Outer Stack Transfer Stage",
+   "cls": "UNRESOLVED_WITH_EVIDENCE",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=true storey=Ground ; no standable tile on a transit / yard / apron space (structural gap, confirm intent)"
+  },
+  {
+   "id": "po_sandgate/0/repair",
+   "name": "Tidal Sluice Repair Shop",
+   "cls": "MISSING_ROUTE_OR_STAIRS",
+   "evidence": "usable=179 doors=0 stairs=0 gate=- locked=false open=false storey=Ground ; enclosed room with standable tiles but no door and no stairs (missing route)"
+  },
+  {
+   "id": "po_sandgate/0/repair_apron",
+   "name": "Tidal Sluice Repair Shop entrance apron",
+   "cls": "UNRESOLVED_WITH_EVIDENCE",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=true storey=Ground ; no standable tile on a transit / yard / apron space (structural gap, confirm intent)"
+  },
+  {
+   "id": "po_pumphouse/0/intake_shack",
+   "name": "Reservoir Gatehouse",
+   "cls": "MAP_COLLISION_DEFECT",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=false storey=Ground ; room with no standable floor tile in the compiled runtime (floor not walkable)"
+  },
+  {
+   "id": "po_pumphouse/0/intake_shack_threshold",
+   "name": "Reservoir Gatehouse threshold",
+   "cls": "UNRESOLVED_WITH_EVIDENCE",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=true storey=Ground ; no standable tile on a transit / yard / apron space (structural gap, confirm intent)"
+  },
+  {
+   "id": "po_lantern/0/reading_hall",
+   "name": "Instrument and Record Hall",
+   "cls": "MISSING_ROUTE_OR_STAIRS",
+   "evidence": "usable=8 doors=0 stairs=1 gate=- locked=false open=false storey=Ground ; storey reached only by stairs that do not connect to the reachable set"
+  },
+  {
+   "id": "po_lantern/0/side_office",
+   "name": "Lightkeeper Store",
+   "cls": "MAP_COLLISION_DEFECT",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=false storey=Ground ; room with no standable floor tile in the compiled runtime (floor not walkable)"
+  },
+  {
+   "id": "po_lantern/0/side_office_threshold",
+   "name": "Lightkeeper Store entrance approach",
+   "cls": "UNRESOLVED_WITH_EVIDENCE",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=true storey=Ground ; no standable tile on a transit / yard / apron space (structural gap, confirm intent)"
+  },
+  {
+   "id": "po_lantern/1/upper_gallery",
+   "name": "Stone Viewing Gallery",
+   "cls": "MISSING_ROUTE_OR_STAIRS",
+   "evidence": "usable=3 doors=0 stairs=2 gate=- locked=false open=false storey=Upper ; storey reached only by stairs that do not connect to the reachable set"
+  },
+  {
+   "id": "po_lantern/2/signal_perch",
+   "name": "Open Instrument Perch",
+   "cls": "INTENTIONAL_INACCESSIBLE",
+   "evidence": "usable=1 doors=0 stairs=1 gate=- locked=false open=true storey=Roof ; storey reached only by stairs that do not connect to the reachable set"
+  },
+  {
+   "id": "po_lanternstn/0/side_office",
+   "name": "Field Records Annex",
+   "cls": "MAP_COLLISION_DEFECT",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=false storey=Ground ; room with no standable floor tile in the compiled runtime (floor not walkable)"
+  },
+  {
+   "id": "po_lanternstn/0/side_office_threshold",
+   "name": "Field Records Annex entrance approach",
+   "cls": "UNRESOLVED_WITH_EVIDENCE",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=true storey=Ground ; no standable tile on a transit / yard / apron space (structural gap, confirm intent)"
+  },
+  {
+   "id": "po_confluence/0/supply",
+   "name": "Travelers Supply Shelter",
+   "cls": "MISSING_ROUTE_OR_STAIRS",
+   "evidence": "usable=24 doors=0 stairs=0 gate=- locked=false open=false storey=Ground ; enclosed room with standable tiles but no door and no stairs (missing route)"
+  },
+  {
+   "id": "po_confluence/0/supply_threshold",
+   "name": "Travelers Supply Shelter entrance approach",
+   "cls": "UNRESOLVED_WITH_EVIDENCE",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=true storey=Ground ; no standable tile on a transit / yard / apron space (structural gap, confirm intent)"
+  },
+  {
+   "id": "po_rapids/0/wayhouse",
+   "name": "Wayfarer Shelter",
+   "cls": "MAP_COLLISION_DEFECT",
+   "evidence": "usable=89 doors=1 stairs=0 gate=- locked=false open=false storey=Ground ; standable interior + door exist but the flood cannot reach the space (door exterior disconnected)"
+  },
+  {
+   "id": "po_beacon/0/relay_shed",
+   "name": "Signal Relay Cabin",
+   "cls": "MAP_COLLISION_DEFECT",
+   "evidence": "usable=0 doors=0 stairs=0 gate=- locked=false open=false storey=Ground ; room with no standable floor tile in the compiled runtime (floor not walkable)"
+  }
+ ]
+}

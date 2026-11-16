@@ -90,7 +90,11 @@ describe('B01 B: intermediates have real producers and consumers',()=>{
     // metal pipe. A bare ">=2" would have hidden that retirement; pin the set instead, so adding or
     // removing a pipe sink shows up here as a named change rather than as a passing number.
     const pipeConsumers=Object.entries(RECIPES).filter(([,rc])=>rc.ins.some(([i])=>i==='metal_pipe')).map(([k])=>k).sort();
-    expect(pipeConsumers).toEqual(['vehicle_frame_piped']);
+    // Item Ontology V2 P3 (rev 3): the piped BOM is now THE frame recipe; the alias id is retired.
+    // Item set v3 (rev 5): Fasteners are retired, and the pipe is what took their place as the handle of the
+    // industrial tools and as the pump's riser. Five named sinks (two tools, the frame, the pump and the refinery).
+    expect(pipeConsumers).toEqual(['deploy_oil_pump','deploy_refinery','industrial_axe','industrial_pick','vehicle_frame']);
+    expect(RECIPES.vehicle_frame_piped).toBeUndefined();
     expect(RECIPES.iron_plate.ins.some(([i])=>i==='metal_pipe')).toBe(false);
     // Recovery is a recycler route, not a craft consumer: one pipe -> one refined iron, no MP minted.
     const pipePlan=recoveryPlan({uid:'b01-pin',key:'metal_pipe',qty:1})!;
@@ -100,8 +104,14 @@ describe('B01 B: intermediates have real producers and consumers',()=>{
     expect(Object.values(RECIPES).filter(rc=>rc.ins.some(([i])=>i==='metal_blade')).length).toBeGreaterThanOrEqual(2);
   });
   it('alias recipes share an output with a base recipe but keep their own tier and station level',()=>{
-    expect(RECIPES.vehicle_frame_piped.out).toBe(RECIPES.vehicle_frame.out);expect(RECIPES.vehicle_frame_piped.alias).toBeTruthy();
-    expect(RECIPES.vehicle_frame_piped.stationLevel).toBe(2);expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
+    // Item Ontology V2 P3: the frame alias was retired at rev 3 (frozen as vehicle_frame_piped@2); the blade refit is the alias pinned here.
+    // Final item set (rev 4): the Iron Sword and its blade refit were retired; the spear's blade alias carries the same pin.
+    expect(RECIPES.iron_sword_blade).toBeUndefined();expect(RECIPES.iron_sword).toBeUndefined();
+    // Recipe revision 6 (ITEM_CRAFTING_MASTER): the spear's blade alias dominated the researched bill and was folded into it.
+    // The alias pattern itself stays live on the Salvager Pick (a Parts-heavy route beside the refined-iron route).
+    expect(RECIPES.reinforced_spear_blade).toBeUndefined();expect(RECIPES.reinforced_spear.base).toBe(true);
+    expect(RECIPES.industrial_pick_geared.out).toBe(RECIPES.industrial_pick.out);expect(RECIPES.industrial_pick_geared.alias).toBeTruthy();
+    expect(RECIPES.industrial_pick_geared.stationLevel).toBe(2);expect(RECIPES.vehicle_frame.stationLevel).toBe(2);
     expect(RECIPES.refined_iron_ingot.station).toBe('furnace');
   });
   it('a real station craft pays time and yields a physical metal blade into the output container',()=>{
@@ -127,10 +137,14 @@ describe('B01 C: recycler v2 versioning and multi-output',()=>{
   const sword=(dur:number)=>({uid:'u-sword',key:'iron_sword',qty:1,dur});
   it('new jobs use the current version for tools listed in it (MEC-01 P1: v3 for the four over-returning keys) and keep v1 for the rest',()=>{
     // MEC-01 P1: recyclerV2 over-returned for these keys; new jobs now use recyclerV3. Saved v2 jobs stay on v2 (next test).
-    expect(recoveryPlan(sword(300) as any)?.recipe).toBe('X:recover-v3');
-    expect(recoveryPlan(sword(300) as any)?.outputs).toEqual([['scrap',1],['iron_ingot',1],['iron_ingot',1],['leather',1]]);
-    expect(recoveryPlan({uid:'u-pick',key:'iron_pick',qty:1,dur:400} as any)?.recipe).toBe('X:recover-v3');
-    expect(recoveryPlan({uid:'u-spear',key:'reinforced_spear',qty:1,dur:200} as any)?.recipe).toBe('X:recover-v1');
+    // Item set v3: Scrap Metal and Machine Parts are retired, so no frozen table can price a NEW job. Every tool now
+    // starts on X:recover-v4 (live ids, no Parts out). An Iron Sword cannot be held any more, so it has no new plan.
+    expect(recoveryPlan(sword(300) as any)).toBeNull();
+    expect(recoveryPlan({uid:'u-m',key:'machete',qty:1,dur:300} as any)).toMatchObject({recipe:'X:recover-v4',outputs:[['iron_ingot',1],['iron_ingot',1],['iron_ingot',1]]});
+    expect(recoveryPlan({uid:'u-pick',key:'iron_pick',qty:1,dur:400} as any)).toMatchObject({recipe:'X:recover-v4',outputs:[['wood',1],['iron_ingot',1],['iron_ingot',1]]});
+    expect(recoveryPlan({uid:'u-spear',key:'reinforced_spear',qty:1,dur:200} as any)?.recipe).toBe('X:recover-v4');
+    // the frozen v3 rule still resolves for a job that was stored under it
+    expect(recoveryPlanFor(sword(300) as any,'X:recover-v3')?.outputs).toEqual([['scrap',1],['iron_ingot',1],['iron_ingot',1],['leather',1]]);
   });
   it('a queued v1 job keeps v1 outputs after v2 exists, identical to the pre-B01 table',()=>{
     expect(recoveryPlanFor(sword(300) as any,'X:recover-v1')?.outputs).toEqual([['scrap',1],['iron_ingot',1],['leather',1]]);
@@ -142,10 +156,10 @@ describe('B01 C: recycler v2 versioning and multi-output',()=>{
   it('the same selected UID cannot be used by a v2 recycle and a craft at once (reservation removes it)',()=>{
     const {g,r}=fresh();const machine=Object.values(r.entities).find(e=>e.kind==='recycler')!;
     r.player.x=machine.x+TILE;r.player.y=machine.y;markDirty();
-    addItem(r,'inv','iron_sword',1,{dur:300});const i=C(r,'inv').slots.findIndex(s=>s?.key==='iron_sword');const s=C(r,'inv').slots[i]!;
+    addItem(r,'inv','machete',1,{dur:300});const i=C(r,'inv').slots.findIndex(s=>s?.key==='machete');const s=C(r,'inv').slots[i]!;
     expect(dispatch(g,{id:'b01-rec-'+ ++n,type:'recycleItem',eid:machine.id,slot:i,uid:s.uid},T).ok).toBe(true);
     expect(C(r,'inv').slots[i]).toBeNull();
-    expect(countItem(r,'inv','iron_sword')).toBe(0);
+    expect(countItem(r,'inv','machete')).toBe(0);
   });
   it('a stored v2 job with an out-of-table key is rejected by save validation (no silent repricing)',()=>{
     const {g,r}=fresh();const machine=Object.values(r.entities).find(e=>e.kind==='recycler')!;
@@ -253,24 +267,24 @@ describe('B01-R1 C: recycler v2 condition, cancel, capacity, offline and UID inv
     expect(hi.outputs).toEqual([['scrap',1],['iron_ingot',1],['metal_blade',1],['leather',1],['metal_blade',1]]);
   });
   it('no free condition upgrade: recycling never raises the reserved stack condition',()=>{
-    const {g,r,m}=rig();const max=ITEMS.iron_sword.dur!;addItem(r,'inv','iron_sword',1,{dur:Math.floor(max*0.1)});
-    const i=C(r,'inv').slots.findIndex((x:any)=>x?.key==='iron_sword');const st=C(r,'inv').slots[i]!;const before=st.dur;
+    const {g,r,m}=rig();const max=ITEMS.machete.dur!;addItem(r,'inv','machete',1,{dur:Math.floor(max*0.1)});
+    const i=C(r,'inv').slots.findIndex((x:any)=>x?.key==='machete');const st=C(r,'inv').slots[i]!;const before=st.dur;
     expect(dispatch(g,{id:'v2-rec-'+ ++n,type:'recycleItem',eid:m.id,slot:i,uid:st.uid},T).ok).toBe(true);
-    const job=m.station.queue[0];expect(job.recipe).toBe('X:recover-v3');expect(job.reserved[0].dur).toBe(before);
+    const job=m.station.queue[0];expect(job.recipe).toBe('X:recover-v4');expect(job.reserved[0].dur).toBe(before);
     expect(job.reserved[0].uid).toBe(st.uid);
   });
   it('cancel of a v2 job returns the same UID and no outputs',()=>{
-    const {g,r,m}=rig();const max=ITEMS.iron_sword.dur!;addItem(r,'inv','iron_sword',1,{dur:Math.floor(max*0.5)});
-    const i=C(r,'inv').slots.findIndex((x:any)=>x?.key==='iron_sword');const uid=C(r,'inv').slots[i]!.uid;
+    const {g,r,m}=rig();const max=ITEMS.machete.dur!;addItem(r,'inv','machete',1,{dur:Math.floor(max*0.5)});
+    const i=C(r,'inv').slots.findIndex((x:any)=>x?.key==='machete');const uid=C(r,'inv').slots[i]!.uid;
     expect(dispatch(g,{id:'v2-rec-'+ ++n,type:'recycleItem',eid:m.id,slot:i,uid},T).ok).toBe(true);
     const jobId=m.station.queue[0].id;
     expect(dispatch(g,{id:'v2-cancel-'+ ++n,type:'cancelJob',eid:m.id,jobId},T).ok).toBe(true);
-    const back=C(r,'inv').slots.find((x:any)=>x?.uid===uid);expect(back?.key).toBe('iron_sword');
+    const back=C(r,'inv').slots.find((x:any)=>x?.uid===uid);expect(back?.key).toBe('machete');
     expect(countItem(r,m.station.outC,'metal_blade')).toBe(0);expect(m.station.queue.length).toBe(0);
   });
   it('atomic output fit: a full output container commits nothing; the input stays reserved until room exists',()=>{
-    const {g,r,m}=rig();const max=ITEMS.iron_sword.dur!;addItem(r,'inv','iron_sword',1,{dur:Math.floor(max*0.95)});
-    const i=C(r,'inv').slots.findIndex((x:any)=>x?.key==='iron_sword');const uid=C(r,'inv').slots[i]!.uid;
+    const {g,r,m}=rig();const max=ITEMS.machete.dur!;addItem(r,'inv','machete',1,{dur:Math.floor(max*0.95)});
+    const i=C(r,'inv').slots.findIndex((x:any)=>x?.key==='machete');const uid=C(r,'inv').slots[i]!.uid;
     expect(dispatch(g,{id:'v2-rec-'+ ++n,type:'recycleItem',eid:m.id,slot:i,uid},T).ok).toBe(true);
     const out=C(r,m.station.outC);for(let k=0;k<out.slots.length;k++)out.slots[k]=null;
     for(const key of ['rope','fiber','wood','stone'])addItem(r,m.station.outC,key,1);
@@ -282,8 +296,8 @@ describe('B01-R1 C: recycler v2 condition, cancel, capacity, offline and UID inv
     void uid;
   });
   it('chunked offline advancement equals direct advancement for v2 outputs and receipts',()=>{
-    const {g,r,m}=rig();const max=ITEMS.iron_sword.dur!;addItem(r,'inv','iron_sword',1,{dur:Math.floor(max*0.95)});
-    const i=C(r,'inv').slots.findIndex((x:any)=>x?.key==='iron_sword');
+    const {g,r,m}=rig();const max=ITEMS.machete.dur!;addItem(r,'inv','machete',1,{dur:Math.floor(max*0.95)});
+    const i=C(r,'inv').slots.findIndex((x:any)=>x?.key==='machete');
     expect(dispatch(g,{id:'v2-rec-'+ ++n,type:'recycleItem',eid:m.id,slot:i,uid:C(r,'inv').slots[i]!.uid},T).ok).toBe(true);
     const a=copyG(g),b=copyG(g);
     settle(a,T+60000,true);for(let t=1000;t<=60000;t+=1000)syncWorld(b,T+t);
@@ -291,13 +305,13 @@ describe('B01-R1 C: recycler v2 condition, cancel, capacity, offline and UID inv
     expect(a.run!.receipts.filter(q=>q.kind==='job.done').map(q=>q.at)).toEqual(b.run!.receipts.filter(q=>q.kind==='job.done').map(q=>q.at));
   });
   it('UID anti-clone: the same UID cannot be submitted twice, and completion yields exactly one plan',()=>{
-    const {g,r,m}=rig();const max=ITEMS.iron_sword.dur!;addItem(r,'inv','iron_sword',1,{dur:Math.floor(max*0.5)});
-    const i=C(r,'inv').slots.findIndex((x:any)=>x?.key==='iron_sword');const uid=C(r,'inv').slots[i]!.uid;
+    const {g,r,m}=rig();const max=ITEMS.machete.dur!;addItem(r,'inv','machete',1,{dur:Math.floor(max*0.5)});
+    const i=C(r,'inv').slots.findIndex((x:any)=>x?.key==='machete');const uid=C(r,'inv').slots[i]!.uid;
     expect(dispatch(g,{id:'v2-rec-'+ ++n,type:'recycleItem',eid:m.id,slot:i,uid},T).ok).toBe(true);
-    expect(countItem(r,'inv','iron_sword')).toBe(0);
+    expect(countItem(r,'inv','machete')).toBe(0);
     expect(dispatch(g,{id:'v2-rec-'+ ++n,type:'recycleItem',eid:m.id,slot:i,uid},T).ok).toBe(false);
     settle(g,T+60000,true);
-    expect(countItem(r,m.station.outC,'iron_ingot')).toBe(1);expect(countItem(r,m.station.outC,'metal_blade')).toBe(0); // v3 mid: no blade
-    expect(countItem(r,'inv','iron_sword')).toBe(0);
+    expect(countItem(r,m.station.outC,'iron_ingot')).toBe(2);expect(countItem(r,m.station.outC,'metal_blade')).toBe(0);expect(countItem(r,m.station.outC,'spares')).toBe(0); // v4 base + mid: two ingots, no blade, no Parts
+    expect(countItem(r,'inv','machete')).toBe(0);
   });
 });

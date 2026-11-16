@@ -1,0 +1,140 @@
+{
+  "schema": "soh-g1b-chests-assets-v1",
+  "status": "ASSET_CANDIDATE_NOT_GAMEPLAY_ACCEPTED",
+  "originalUserZip": "new-chat.zip",
+  "originalUserZipSha256": "2aa20347913d65d64becc5f05cf6c4338c8da5f0259829e75ab6049a5752ad73",
+  "assetSource": "Studio export with lossless palette-optimized base atlas; surface mask unchanged",
+  "spriteSize": {
+    "w": 48,
+    "h": 48
+  },
+  "atlas": {
+    "w": 240,
+    "h": 144,
+    "columns": [
+      "supply_crate",
+      "toolbox",
+      "military_crate",
+      "food_crate",
+      "medical_crate"
+    ],
+    "rows": [
+      "CLOSED",
+      "OPENED",
+      "EMPTY"
+    ],
+    "base": "soh_crates_atlas_5x3.png",
+    "surfaceMask": "soh_crates_surface_mask_5x3.png",
+    "anchor": {
+      "x": 24,
+      "y": 42
+    }
+  },
+  "families": {
+    "supply_crate": {
+      "grades": [
+        "Damaged",
+        "Low",
+        "Mid",
+        "High"
+      ],
+      "collisionBox": {
+        "x": 7,
+        "y": 27,
+        "w": 34,
+        "h": 16
+      }
+    },
+    "toolbox": {
+      "grades": [
+        "Damaged",
+        "Low",
+        "High"
+      ],
+      "collisionBox": {
+        "x": 8,
+        "y": 27,
+        "w": 32,
+        "h": 16
+      }
+    },
+    "military_crate": {
+      "grades": [
+        "Low",
+        "Mid",
+        "High"
+      ],
+      "collisionBox": {
+        "x": 5,
+        "y": 27,
+        "w": 38,
+        "h": 16
+      }
+    },
+    "food_crate": {
+      "grades": [
+        "Low",
+        "Mid",
+        "High"
+      ],
+      "collisionBox": {
+        "x": 10,
+        "y": 27,
+        "w": 28,
+        "h": 16
+      }
+    },
+    "medical_crate": {
+      "grades": [
+        "Low",
+        "Mid",
+        "High"
+      ],
+      "collisionBox": {
+        "x": 11,
+        "y": 27,
+        "w": 26,
+        "h": 16
+      }
+    }
+  },
+  "gradeVisuals": {
+    "Damaged": {
+      "scale": 0.96,
+      "cycleSec": 7.4,
+      "durationSec": 0.95,
+      "intensity": 0.48
+    },
+    "Low": {
+      "scale": 0.98,
+      "cycleSec": 5.8,
+      "durationSec": 0.9,
+      "intensity": 0.72
+    },
+    "Mid": {
+      "scale": 1,
+      "cycleSec": 4.5,
+      "durationSec": 0.85,
+      "intensity": 0.92
+    },
+    "High": {
+      "scale": 1.04,
+      "cycleSec": 3.4,
+      "durationSec": 0.8,
+      "intensity": 1.12
+    }
+  },
+  "sheenMaskChannels": {
+    "R": "materialId*28",
+    "G": "planeId*28",
+    "B": "bevelCurvature (0..255)",
+    "A": "strictObjectMask (0 or 255)"
+  },
+  "constraints": [
+    "Use only listed 16 family-grade variants",
+    "All 15 base sprites are atlas crops 48x48",
+    "Use pixel snapped sheen on object pixels only; no aura/glow",
+    "The original source studio ZIP is NOT contained in this asset directory",
+    "No changes to loot balance, source rules, or gameplay are implied by this upload"
+  ]
+}

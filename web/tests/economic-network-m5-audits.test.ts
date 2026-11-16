@@ -85,9 +85,10 @@ describe('SOH M5 Complete Item Function & Recipe Route Audits', () => {
     expect(byId.get('crop')![12]).toContain('CONDITIONAL_GARDEN');
     expect(byId.get('crop')![12]).not.toContain('MISSING_VEYRA_SOURCE');
 
-    expect(byId.get('salvaged_oil')![11]).toContain('PHYSICALLY_REACHABLE(src=');
-    expect(byId.get('salvaged_oil')![12]).toContain('PHYSICALLY_REACHABLE(src=');
-    expect(byId.get('salvaged_oil')![12]).toContain('vendor_spares');
+    // Item set v3: Salvaged Oil is retired into Crude Petroleum. Wrecks no longer leak oil and the vendor sells crude.
+    expect(byId.get('salvaged_oil')![11]).not.toContain('source:wreck');
+    expect(byId.get('salvaged_oil')![12]).not.toContain('vendor_spares');
+    expect(byId.get('crude_petroleum')!.join('|')).toContain('vendor_spares');
 
     expect(byId.get('blueprint')![11]).toContain('PHYSICALLY_REACHABLE(static_blueprints=');
     expect(byId.get('blueprint')![12]).toContain('PHYSICALLY_REACHABLE(static_blueprints=');
@@ -169,9 +170,14 @@ describe('SOH M5 Complete Item Function & Recipe Route Audits', () => {
     // PA1 R1: the component table grew (X:pipe-v3 is the live pipe rule), but the LIVE set did
     // not — X:pipe-v2 is now reported as superseded, so it cannot hide an over-return by being
     // counted as active. Liveness comes from recoveryPlan(), not from a hardcoded rule id.
+    // Item Ontology V2 P5: X:plate-v1 is one more LIVE component rule (10 -> 11).
+    // Item set v3: 4 live component rules (pipe-v3, gear-v2, blade-v2, plate-v1) + the 6 X:recover-v4 tool rows. The
+    // Damaged Drive rule and every v1-v3 tool row are stored-job-only now.
     expect(activeRecycleRows.length).toBe(10);
+    expect(activeRecycleRows.map((r) => r[0]).filter((id) => id.startsWith('X:recover-')).every((id) => id.startsWith('X:recover-v4:'))).toBe(true);
+    expect(byRoute.get('X:drive')![4]).toBe('HISTORICAL_SAVED_JOBS_ONLY');
     const historicalPipeRows = rows.filter((r) => r[1] === 'RECYCLE_COMPONENT' && r[4] === 'HISTORICAL_SAVED_JOBS_ONLY').map((r) => r[0]).sort();
-    expect(historicalPipeRows).toEqual(['X:pipe-v1', 'X:pipe-v2']);
+    expect(historicalPipeRows).toEqual(['X:blade-v1', 'X:gear-v1', 'X:pipe-v1', 'X:pipe-v2']);
     for (const r of activeRecycleRows) {
       expect(r[10]).not.toMatch(/OVER_RETURN\(HISTORICAL|^\s*OVER_RETURN/);
       if (r[1] !== 'RECYCLE_DRIVE') expect(r[10]).toContain('NET_LOSS_VERIFIED');

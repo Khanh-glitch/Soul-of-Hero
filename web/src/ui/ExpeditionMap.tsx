@@ -3,6 +3,7 @@ import { T, TILE, WW, WH, type RunState } from '../game/core';
 import { getMapCanvas } from '../game/render';
 import { getWorld, ZONES } from '../game/world';
 import { effTile, runHours, territoryForecast, cartWeight, cartLimit } from '../game/engine';
+import { ITEMS } from '../game/catalog';
 import { spiritDestination } from '../game/sim';
 import { deathBagView } from '../game/death-view';
 import { expeditionNotes, type PlaceNote } from '../game/expedition-intel';
@@ -762,7 +763,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
                 {inspected.poiIntel.gates.map((g, i) => (
                   <div key={i} className="map-gate">
                     <Icon k={g.item} size={12} />
-                    <span>{g.requirement === 'power' ? 'Power gate' : `${g.cardClass ?? 'Vault'} keycard`} · <b>{g.have}/{g.need}</b> {g.carried ? 'carried' : g.craft ? 'craftable' : 'missing'}</span>
+                    <span>{g.requirement === 'power' ? 'Power gate' : ({ vault: 'Green Card', green: 'Green Card', blue: 'Blue Card', purple: 'Purple Card' } as Record<string, string>)[g.cardClass ?? 'vault'] ?? 'Access card'} · <b>{g.have}/{g.need}</b> {g.carried ? 'carried' : g.craft ? 'craftable' : 'missing'}</span>
                     {g.craft && !g.carried && <button className="btn sm" onClick={() => api.open({ kind: 'craft', recipe: g.craft!.recipe })}>Recipe</button>}
                   </div>
                 ))}
@@ -856,7 +857,7 @@ export function ExpeditionMap({ api, onTeleportSelect, teleportTarget, qaSession
                 <b>{n.name} · observed</b>
                 {canJump && <button className="btn sm ghost" onClick={() => inspectTile(site!.tx, site!.ty, true)}>Locate</button>}
               </div>
-              {n.gates.map((g, i) => <div className="map-gate" key={i}><Icon k={g.item} size={12} /><span>{g.requirement === 'power' ? 'Power access' : 'Keycard access'}<small>{g.have}/{g.need} carried · {g.carried ? 'in pack' : g.craft ? 'recipe known' : 'find it'}</small></span>
+              {n.gates.map((g, i) => <div className="map-gate" key={i}><Icon k={g.item} size={12} /><span>{g.requirement === 'power' ? 'Power access' : `${ITEMS[g.item]?.name ?? 'Card'} access`}<small>{g.have}/{g.need} carried · {g.carried ? 'in pack' : g.craft ? 'recipe known' : 'find it'}</small></span>
                 {g.craft && !g.carried && <button className="btn sm" onClick={() => api.open({ kind: 'craft', recipe: g.craft!.recipe })}>Recipe</button>}</div>)}
               {n.blueprints.map(b => <div key={b.recipe} className="map-gate"><Icon k="blueprint" size={11} /><span>{b.name}<small>{b.state === 'seen' ? 'seen earlier · may be gone' : b.state === 'owned' ? 'in pack · not learned' : 'learned'}</small></span></div>)}
             </div>;

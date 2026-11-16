@@ -106,7 +106,6 @@
     "_status": "TUNABLE_BALANCE fuel seconds per item",
     "wood": 20,
     "charcoal": 55,
-    "coal": 80,
     "fiber": 4,
     "linedFurnaceFuelMultiplier": 0.8
   },
@@ -174,20 +173,7 @@
     "unprotectedCollapseHours": 12,
     "unfundedCollapseHours": 12,
     "upkeepFractionPerDay": 0.25,
-    "materials": [
-      "wood",
-      "plank",
-      "stone",
-      "fiber",
-      "rope",
-      "brick",
-      "iron_ingot",
-      "scrap",
-      "glass",
-      "spares",
-      "mechanical_parts",
-      "fasteners"
-    ],
+    "materials": ["wood", "plank", "stone", "fiber", "rope", "iron_ingot", "glass", "spares"],
     "_tuning": "W08 2026-11-06 SOH_PROVISIONAL: unprotectedCollapseHours and unfundedCollapseHours 2 -> 12 (reversible). Evidence: evidence/sys07-w08/absence-benchmark.json. 2h removed every uncovered/unfunded structure before an 8h overnight; 12h keeps a full-HP shelter through 8h (~47-48 HP mean) and still collapses it by 24h. upkeepFractionPerDay 0.25 UNCHANGED: real acquisition rates not measured. Before: 2/2/0.25."
   },
   "research": {
@@ -369,126 +355,9 @@
     "version": "oil-refinery-v1",
     "hp": 280,
     "need": "any",
-    "cost": [
-      [
-        "iron_ingot",
-        4
-      ],
-      [
-        "mechanical_parts",
-        3
-      ],
-      [
-        "spares",
-        5
-      ],
-      [
-        "brick",
-        6
-      ],
-      [
-        "glass",
-        2
-      ]
-    ],
+    "cost": [["iron_ingot", 8], ["wood", 8], ["metal_pipe", 2], ["spares", 5], ["glass", 2]],
     "requiresWorkbenchLevel": 2,
-    "recipes": {
-      "single": {
-        "ins": [
-          [
-            "salvaged_oil",
-            3
-          ],
-          [
-            "glass",
-            1
-          ]
-        ],
-        "outs": [
-          [
-            "fuel_can",
-            1
-          ]
-        ],
-        "secs": 14
-      },
-      "batch": {
-        "ins": [
-          [
-            "salvaged_oil",
-            5
-          ],
-          [
-            "glass",
-            1
-          ]
-        ],
-        "outs": [
-          [
-            "fuel_can",
-            2
-          ]
-        ],
-        "secs": 22
-      },
-      "industrial": {
-        "ins": [
-          [
-            "salvaged_oil",
-            6
-          ],
-          [
-            "glass",
-            1
-          ]
-        ],
-        "outs": [
-          [
-            "fuel_can",
-            2
-          ],
-          [
-            "lubricant",
-            1
-          ]
-        ],
-        "secs": 26
-      },
-      "lube": {
-        "ins": [
-          [
-            "salvaged_oil",
-            2
-          ]
-        ],
-        "outs": [
-          [
-            "lubricant",
-            1
-          ]
-        ],
-        "secs": 12
-      },
-      "crude": {
-        "ins": [
-          [
-            "crude_petroleum",
-            4
-          ],
-          [
-            "glass",
-            1
-          ]
-        ],
-        "outs": [
-          [
-            "fuel_can",
-            1
-          ]
-        ],
-        "secs": 16
-      }
-    },
+    "recipes": {"single": {"ins": [["crude_petroleum", 3], ["glass", 1]], "outs": [["fuel_can", 1]], "secs": 14}, "batch": {"ins": [["crude_petroleum", 5], ["glass", 1]], "outs": [["fuel_can", 2]], "secs": 22}},
     "lubricantWearReduction": 0.5,
     "lubricantDistancePx": 12000,
     "lubricantOverCapFactor": 1.5
@@ -511,52 +380,9 @@
         1
       ]
     ],
-    "switchCost": [
-      [
-        "iron_ingot",
-        1
-      ],
-      [
-        "fasteners",
-        1
-      ],
-      [
-        "spares",
-        1
-      ]
-    ],
-    "plateCost": [
-      [
-        "iron_ingot",
-        1
-      ],
-      [
-        "mechanical_parts",
-        1
-      ],
-      [
-        "fasteners",
-        1
-      ]
-    ],
-    "doorCost": [
-      [
-        "iron_ingot",
-        4
-      ],
-      [
-        "mechanical_parts",
-        2
-      ],
-      [
-        "fasteners",
-        3
-      ],
-      [
-        "spares",
-        3
-      ]
-    ],
+    "switchCost": [["iron_ingot", 1], ["electronic_parts", 2], ["spares", 1]],
+    "plateCost": [["iron_ingot", 2], ["spares", 1], ["electronic_parts", 2], ["iron_plate", 1]],
+    "doorCost": [["iron_ingot", 2], ["electronic_parts", 2], ["mechanical_gear", 1], ["iron_plate", 2], ["electric_resistor", 2]],
     "cableHp": 60,
     "switchHp": 100,
     "plateHp": 100,
@@ -899,15 +725,15 @@
     }
   },
   "recyclerV4": {
-    "_status": "SOH_PROVISIONAL MEC-01 R2 A1/A2 + PA1 R1 DOCUMENTATION MIRROR. Runtime rules are immutable constants in recycler.ts (COMPONENT_RULES); a test asserts equality. New jobs only: X:gear-v1 (gear->2 MP+1 ingot, 15s), X:pipe-v3 (pipe->1 refined, 10s), X:blade-v1 (blade->2 ingot+1 MP, 14s). X:pipe-v1 and X:pipe-v2 stay in code for stored jobs forever. X:pipe-v3 replaces v2 for NEW jobs the moment the PA1 pipe recipe began yielding 2 per craft: 2 refined + 1 MP in, 2 refined + 2 MP out was a repeatable parts mint (bible.md K4). Returns are below craft cost (no loop). LI per-item yields: ORIGINAL_UNKNOWN; the 1 pipe -> 1 refined ingot figure is the recovered v1.1 paper return.",
+    "_status": "SOH_PROVISIONAL MEC-01 R2 A1/A2 + PA1 R1 DOCUMENTATION MIRROR. Runtime rules are immutable constants in recycler.ts (COMPONENT_RULES); a test asserts equality. ITEM SET V3: new jobs only: X:gear-v2 (gear->2 Parts+1 ingot, 15s), X:pipe-v3 (pipe->1 refined, 10s), X:blade-v2 (blade->2 ingot, 14s). X:gear-v1, X:blade-v1, X:pipe-v1 and X:pipe-v2 stay in code for stored jobs forever. X:pipe-v3 replaces v2 for NEW jobs the moment the PA1 pipe recipe began yielding 2 per craft: 2 refined + 1 MP in, 2 refined + 2 MP out was a repeatable parts mint (bible.md K4). Returns are below craft cost (no loop). LI per-item yields: ORIGINAL_UNKNOWN; the 1 pipe -> 1 refined ingot figure is the recovered v1.1 paper return.",
     "seconds": 15,
     "components": {
       "mechanical_gear": {
-        "recipe": "X:gear-v1",
+        "recipe": "X:gear-v2",
         "seconds": 15,
         "outputs": [
           [
-            "mechanical_parts",
+            "spares",
             2
           ],
           [
@@ -927,15 +753,21 @@
         ]
       },
       "metal_blade": {
-        "recipe": "X:blade-v1",
+        "recipe": "X:blade-v2",
         "seconds": 14,
         "outputs": [
           [
             "iron_ingot",
             2
-          ],
+          ]
+        ]
+      },
+      "iron_plate": {
+        "recipe": "X:plate-v1",
+        "seconds": 10,
+        "outputs": [
           [
-            "mechanical_parts",
+            "iron_ingot",
             1
           ]
         ]
@@ -954,40 +786,14 @@
     "lifetimeSeconds": 5400,
     "clearanceTiles": 1,
     "maxSlope": 0.35,
-    "fixed": [
-      [
-        "mechanical_parts",
-        2
-      ],
-      [
-        "fasteners",
-        2
-      ]
-    ],
+    "fixed": [["spares", 4], ["electronic_parts", 1]],
     "weights": [
       1,
       1,
       1,
       1
     ],
-    "options": [
-      [
-        "fuel_can",
-        1
-      ],
-      [
-        "energy_refined",
-        2
-      ],
-      [
-        "iron_ingot",
-        2
-      ],
-      [
-        "iron_sword",
-        1
-      ]
-    ]
+    "options": [["fuel_can", 1], ["energy_refined", 2], ["iron_ingot", 2], ["machete", 1]]
   },
   "worldStimulusV1": {
     "_status": "SOH_PROVISIONAL; ORIGINAL_UNKNOWN sensory ranges, duration and species sensitivity. W09: no home-proximity exclusion (Creator-approved). signature 320 px (10 tiles) is provisional and stays well inside BAL.ai.activeRadiusTiles (30 tiles) so the creature consumer can process it.",
@@ -1038,37 +844,11 @@
     ],
     "offlineCreatures": "excluded (no synthetic offline detection)",
     "lineOfSight": "clearPhysicalLine, walls and solid blocks stop detection",
-    "cost": [
-      [
-        "mechanical_gear",
-        1
-      ],
-      [
-        "iron_ingot",
-        1
-      ],
-      [
-        "fasteners",
-        2
-      ]
-    ]
+    "cost": [["iron_ingot", 1], ["electronic_parts", 2], ["spares", 1]]
   },
   "bearTrapV1": {
     "_status": "SOH_PROVISIONAL B02-P1-B (trap-v1). ORIGINAL_UNKNOWN for historical LI bear trap damage, durability and cost; the LI-v5 example (50 iron ingot + 1 gear) is historical context only, not an SOH default.",
-    "cost": [
-      [
-        "mechanical_gear",
-        1
-      ],
-      [
-        "iron_ingot",
-        2
-      ],
-      [
-        "fasteners",
-        2
-      ]
-    ],
+    "cost": [["mechanical_gear", 1], ["iron_ingot", 2]],
     "armCost": [
       [
         "iron_plate",
@@ -1089,31 +869,17 @@
     "offline": "never triggers during offline settlement"
   },
   "oilPumpV1": {
-    "_status": "SOH_PROVISIONAL oil-pump-v1. Physical extraction adapter. LI pump rate, power and crude yield are ORIGINAL_UNKNOWN. Production placement is DISABLED: a pump needs an authorized oil site (Map owner); the only accepted source authority today is the labelled test fixture.",
+    "_status": "SOH_PROVISIONAL oil-pump-v1. Physical extraction adapter. LI pump rate, power and crude yield are ORIGINAL_UNKNOWN. Item set v3: on Veyra a pump stands on a crude seep (authority veyra-seep-v1, oil-seeps.ts): about one seep per two 64x64-tile cells of open ground, 60 Crude each, never refilled. Seep density and stock are SOH_PROVISIONAL / SOH_TRIAL_UNVERIFIED. Other maps have no oil site; the labelled test fixture stays test-only.",
     "version": "oil-pump-v1",
     "hp": 160,
     "need": "any",
-    "cost": [
-      [
-        "iron_ingot",
-        3
-      ],
-      [
-        "mechanical_parts",
-        2
-      ],
-      [
-        "spares",
-        2
-      ],
-      [
-        "brick",
-        2
-      ]
-    ],
+    "cost": [["iron_ingot", 3], ["mechanical_gear", 1], ["metal_pipe", 2], ["spares", 2]],
     "requiresWorkbenchLevel": 2,
     "secs": 12,
     "fixtureAuthority": "test-fixture-v1",
+    "seepAuthority": "veyra-seep-v1",
+    "seepOneInCells": 2,
+    "seepStock": 60,
     "maxSourceStock": 200
   },
   "calendar": {
@@ -1201,7 +967,7 @@
     "hearth": {
       "points": 50,
       "securedCash": 0,
-      "items": [["medkit", 2], ["mechanical_parts", 3]]
+      "items": [["medkit", 2], ["spares", 6]]
     },
     "beacon": {
       "points": 75,

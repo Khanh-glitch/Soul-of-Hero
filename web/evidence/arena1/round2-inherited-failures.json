@@ -1,0 +1,1079 @@
+{
+ "note": "Failures present on the round-1 head 4e5d3bc3 and still present after round 2 (full run D, before the final route-test commits). Not caused by round 2: compared test-by-test against the baseline run. Listed, not triaged by root cause.",
+ "count": 179,
+ "byFile": [
+  [
+   "tests/mec01-r12-departure.test.ts",
+   18
+  ],
+  [
+   "tests/rest-supply.test.ts",
+   14
+  ],
+  [
+   "tests/b02-ir-sensor.test.ts",
+   12
+  ],
+  [
+   "tests/home-production.test.ts",
+   12
+  ],
+  [
+   "tests/s06-circuits.test.ts",
+   11
+  ],
+  [
+   "tests/b03-return.test.ts",
+   9
+  ],
+  [
+   "tests/b04-p3-world.test.ts",
+   9
+  ],
+  [
+   "tests/b02-bear-trap.test.ts",
+   8
+  ],
+  [
+   "tests/b03-production.test.ts",
+   7
+  ],
+  [
+   "tests/b03-thermal.test.ts",
+   7
+  ],
+  [
+   "tests/mec01-c2-delivery.test.ts",
+   6
+  ],
+  [
+   "tests/mec01-r8e-plank-upkeep.test.ts",
+   6
+  ],
+  [
+   "tests/mec01-r4-score-once.test.ts",
+   5
+  ],
+  [
+   "tests/soh.test.ts",
+   5
+  ],
+  [
+   "tests/w08-home-status.test.ts",
+   5
+  ],
+  [
+   "tests/b04-p4-world.test.ts",
+   4
+  ],
+  [
+   "tests/cal01-world-calendar.test.ts",
+   4
+  ],
+  [
+   "tests/mec01-foundry-drive-chain.test.ts",
+   3
+  ],
+  [
+   "tests/w07-power-offline-parity.test.ts",
+   3
+  ],
+  [
+   "tests/wp2-power-global-obstacles.test.ts",
+   3
+  ],
+  [
+   "tests/control-tower-corrective-wp1-wp2.test.ts",
+   2
+  ],
+  [
+   "tests/control-tower-journey-durability.test.tsx",
+   2
+  ],
+  [
+   "tests/mec01-r3-causal-integrity.test.ts",
+   2
+  ],
+  [
+   "tests/mec01-r8b-plank.test.ts",
+   2
+  ],
+  [
+   "tests/control-tower-audit-regressions.test.tsx",
+   1
+  ],
+  [
+   "tests/d1-d5-corrective.test.tsx",
+   1
+  ],
+  [
+   "tests/escrow-route-physical.test.ts",
+   1
+  ],
+  [
+   "tests/home-sites-physical.test.ts",
+   1
+  ],
+  [
+   "tests/k6-spatial.test.ts",
+   1
+  ],
+  [
+   "tests/lr02-shipping-access.test.ts",
+   1
+  ],
+  [
+   "tests/mec01-c1-motorbike-chain.test.ts",
+   1
+  ],
+  [
+   "tests/mec01-c3-offline-resume.test.ts",
+   1
+  ],
+  [
+   "tests/mec01-f3-joined.test.ts",
+   1
+  ],
+  [
+   "tests/mec01-r2-c1-motorbike-chain.test.ts",
+   1
+  ],
+  [
+   "tests/pa1-recipe-migration.test.ts",
+   1
+  ],
+  [
+   "tests/pa1-research-visible-gate.test.ts",
+   1
+  ],
+  [
+   "tests/s10-oil-refinery.test.ts",
+   1
+  ],
+  [
+   "tests/sys07-w08-absence.test.ts",
+   1
+  ],
+  [
+   "tests/world-economy-runtime.test.ts",
+   1
+  ],
+  [
+   "tests/wp3-veyra-recycler-integration.test.ts",
+   1
+  ],
+  [
+   "src/veyra05/audit-closure.test.ts",
+   1
+  ],
+  [
+   "src/veyra05/ecosystem-full.test.ts",
+   1
+  ],
+  [
+   "src/veyra05/integrated-lifecycle.test.ts",
+   1
+  ],
+  [
+   "src/veyra05/item-network-export.audit.test.ts",
+   1
+  ]
+ ],
+ "failures": [
+  {
+   "file": "tests/b02-bear-trap.test.ts",
+   "test": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn costs gear, ingots and fasteners; placed unarmed, so a creature stepping on it is not hit",
+   "firstLine": "AssertionError: expected [ [ 'mechanical_gear', 1 ], \u2026(1) ] to deeply equal [ [ 'mechanical_gear', 1 ], \u2026(2) ]"
+  },
+  {
+   "file": "tests/b02-bear-trap.test.ts",
+   "test": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn arming consumes exactly one Iron Plate; refused without one and the state stays unarmed",
+   "firstLine": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-bear-trap.test.ts",
+   "test": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn one paid hit per arming: armed trigger damages and stuns once, becomes spent, and does not re",
+   "firstLine": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-bear-trap.test.ts",
+   "test": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn rearm is paid (one plate) and worn after the third hit: no further arming, reclaim only",
+   "firstLine": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-bear-trap.test.ts",
+   "test": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn a sleeping creature on the plate does not trigger, and an adjacent creature cannot reach thro",
+   "firstLine": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-bear-trap.test.ts",
+   "test": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn live only: offline settlement with a creature on the armed trap never fires it (no offline ki",
+   "firstLine": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-bear-trap.test.ts",
+   "test": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn reclaim of a used trap returns at most the bounded refund of its build cost, never more",
+   "firstLine": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-bear-trap.test.ts",
+   "test": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn persists armed/spent state and uses across save and reload; corrupt trap state is refused",
+   "firstLine": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded costs real parts (mechanical gear, iron, fasteners), is owned, and build is refused without the parts",
+   "firstLine": "AssertionError: expected [ [ 'iron_ingot', 1 ], \u2026(2) ] to deeply equal [ [ 'mechanical_gear', 1 ], \u2026(2) ]"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded sensor off: no conduction even with a visible player; toggling on conducts and feeds the door",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded no through-wall detection: a solid wall in the line stops conduction and the status says so",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded bounded range: a player beyond 6 tiles is not sensed",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded empty fuel and off generator: no conduction, no capacity claimed, and the status says why",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded capacity: a single-slot generator is consumed by the sensor, so the door is starved until reinforced",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded second consumer: an arrow turret wired through the sensor is powered only while the sensor sees a targe",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded sleeping and offline-unresolved creatures are never sensed (no synthetic offline detection)",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded disabled, destroyed or unpowered sensors cannot conduct; sensor fuel is drawn while enabled",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded persists enabled state, status and door power across save and reload",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded rejects corrupt sensor state at save time (no silent acceptance)",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b02-ir-sensor.test.ts",
+   "test": "B02-P1-A infrared sensor: physical, paid, wired, bounded offline settle with the sensor enabled and a target absent is deterministic and burns the same fuel as ",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b03-production.test.ts",
+   "test": "B03-B living production: explicit state, pauses and physical custody an unattended ripe plot is never auto-harvested offline or online",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-production.test.ts",
+   "test": "B03-B living production: explicit state, pauses and physical custody a full output chest pauses the ripe crop (no loss, no minting) and resumes once space exist",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-production.test.ts",
+   "test": "B03-B living production: explicit state, pauses and physical custody exhausted seeds and a dry barrel pause planting with a distinct reason and no fabricated ou",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-production.test.ts",
+   "test": "B03-B living production: explicit state, pauses and physical custody a depleted fuel store pauses planting; no seed or water is spent while paused",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-production.test.ts",
+   "test": "B03-B living production: explicit state, pauses and physical custody transition receipts are written only on real changes and do not repeat after reload",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-production.test.ts",
+   "test": "B03-B living production: explicit state, pauses and physical custody one 30-minute settle and thirty 1-minute settles produce the same tender state, stock and r",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-production.test.ts",
+   "test": "B03-B living production: explicit state, pauses and physical custody water is one physical custody: a barrel the player drinks from cannot also irrigate the plo",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-return.test.ts",
+   "test": "B03-C typed return report (receipt-derived, no invented rewards) groups real production receipts with their supporting receipt ids and physical location",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-return.test.ts",
+   "test": "B03-C typed return report (receipt-derived, no invented rewards) 8-hour outcome: harvests and planting in the report equal the real chest and seed stock changes",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-return.test.ts",
+   "test": "B03-C typed return report (receipt-derived, no invented rewards) a repeated Continue at the same time adds no duplicate rows or receipts",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-return.test.ts",
+   "test": "B03-C typed return report (receipt-derived, no invented rewards) a paused Garden Tender appears as a next physical action with its location, not as a remote act",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-return.test.ts",
+   "test": "B03-C typed return report (receipt-derived, no invented rewards) a death while away is reported in the Body group with the real bag location",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-return.test.ts",
+   "test": "B03-C typed return report (receipt-derived, no invented rewards) known-world rows contain only public or local facts; no enemy coordinates or hidden monster pos",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-return.test.ts",
+   "test": "B03-C typed return report (receipt-derived, no invented rewards) the legacy string route is still produced for old callers, and an expired run is reported as en",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-return.test.ts",
+   "test": "B03-C return privacy: ownership and visibility of stationary state an unseen, non-owned POI station with stock never appears; the owned workbench with the same ",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-return.test.ts",
+   "test": "B03-C return privacy: ownership and visibility of stationary state a surviving Tender station reads state only from its own owned farm; a fabricated unowned far",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-thermal.test.ts",
+   "test": "B03-A comfortV1 physical thermal evaluator snow cold alone gives base 19; a burning campfire in line of sight adds 13.5 (0.75 per score)",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-thermal.test.ts",
+   "test": "B03-A comfortV1 physical thermal evaluator no paid fuel means no heat; a sheltered shelter alone gives +6; stacked score is capped at 40",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-thermal.test.ts",
+   "test": "B03-A comfortV1 physical thermal evaluator a wall between player and campfire blocks the heat; a destroyed heater contributes nothing",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-thermal.test.ts",
+   "test": "B03-A comfortV1 physical thermal evaluator warmth integrator is exact exponential approach and the cold boundary splits the slice",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-thermal.test.ts",
+   "test": "B03-A offline chronology and save custody one 2h settle equals eight 15-minute partitions for warmth, HP, fuel stock and the exact heat-out receipt",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-thermal.test.ts",
+   "test": "B03-A offline chronology and save custody save and reload keeps the thermal state; a repeated settle at the same time adds no second heat-out receipt",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b03-thermal.test.ts",
+   "test": "B03-A offline chronology and save custody a live survival tick with a burning fire warms the player toward the physical target, not to a fixed 100",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/b04-p3-world.test.ts",
+   "test": "B04-P3 B02 bear trap: paid transitions, invariants, offline vs live a forged save with an impossible trap pairing is rejected; a legitimate placed trap is accep",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p3-world.test.ts",
+   "test": "B04-P3 B02 bear trap: paid transitions, invariants, offline vs live arm and rearm each cost exactly one Iron Plate; three real hits go armed3\u2192spent2\u2192armed2\u2192spen",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p3-world.test.ts",
+   "test": "B04-P3 B02 bear trap: paid transitions, invariants, offline vs live live physical contact on the armed tile fires once and debits the trap, not the player bank;",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p3-world.test.ts",
+   "test": "B04-P3 B02 bear trap: paid transitions, invariants, offline vs live the E prompt names the real trap state and the cost of the next paid action",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p3-world.test.ts",
+   "test": "B04-P3 SYS15 local heat readout a fuelled campfire in reach is shown as burning with its real contribution, and the target matches the evaluator",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p3-world.test.ts",
+   "test": "B04-P3 SYS15 local heat readout a fire that goes out (no paid fuel) is shown as burned out and drops the target; an idle furnace is shown as idle",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p3-world.test.ts",
+   "test": "B04-P3 SYS15 local heat readout a wall between player and fire is shown as blocked by wall and contributes nothing",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p3-world.test.ts",
+   "test": "B04-P3 SYS15 local heat readout worn cold gear changes the displayed insulation and the exposure reduction, and never waives exposure",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p3-world.test.ts",
+   "test": "B04-P3 SYS15 local heat readout shelter and map snow both appear as real sources; no free heat appears with no fuel",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p4-world.test.ts",
+   "test": "B04-P4 F1 IR downstream is scoped to the sensor own generator network a powered door on a different generator is not reported as powered by this sensor",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p4-world.test.ts",
+   "test": "B04-P4 live bear trap contact through the real tick() loop an eligible creature physically on an armed trap is hit once in tick(); spent traps do not re-fire",
+   "firstLine": "AssertionError: bear_trap: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p4-world.test.ts",
+   "test": "B04-P4 IR sensor visual state mirrors the prompt rule (sprite key source) off -> unpowered (no fuel) -> ready -> detecting; wall in line -> blocked",
+   "firstLine": "AssertionError: base_generator: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/b04-p4-world.test.ts",
+   "test": "B04-P4 snapAt persistence: optional and bounded (older saves stay valid) a trap without snapAt validates; a malformed snapAt is rejected at save-validation time",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/cal01-world-calendar.test.ts",
+   "test": "CAL-01 E \u2014 seasonal gardening with real structures, costs and receipts a cold frame costs real materials and changes the winter outcome on the same plot and see",
+   "firstLine": "AssertionError: expected 'Need an intact packed device.' to be null"
+  },
+  {
+   "file": "tests/cal01-world-calendar.test.ts",
+   "test": "CAL-01 E \u2014 seasonal gardening with real structures, costs and receipts offline winter: the framed plot really produces where the exposed plot is stalled, with n",
+   "firstLine": "AssertionError: expected 'Need an intact packed device.' to be null"
+  },
+  {
+   "file": "tests/cal01-world-calendar.test.ts",
+   "test": "CAL-01 E \u2014 seasonal gardening with real structures, costs and receipts water: an exposed plot loses its reserve faster in a hot dry season than in the neutral s",
+   "firstLine": "AssertionError: expected 'Need an intact packed device.' to be null"
+  },
+  {
+   "file": "tests/cal01-world-calendar.test.ts",
+   "test": "CAL-01 E \u2014 seasonal gardening with real structures, costs and receipts the Garden Tender keeps its receipts single-shot across a season boundary (no duplicate h",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/control-tower-audit-regressions.test.tsx",
+   "test": "Phase B \u2014 Independent Gameplay & Gold-Seam Defect Regressions B7: Gold SurvivorScreen and ContainerPanel InvSide resolve every category & equipment ghost icon w",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/control-tower-corrective-wp1-wp2.test.ts",
+   "test": "WP2 \u2014 Complete Veyra Offscreen Garden Tender (B6 Corrective) WP2-1..5 & 8 (RED->GREEN): completes full offscreen plant->grow->harvest->chest-transfer->replant c",
+   "firstLine": "AssertionError: build: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/control-tower-corrective-wp1-wp2.test.ts",
+   "test": "WP2 \u2014 Complete Veyra Offscreen Garden Tender (B6 Corrective) WP2-6,7,9 (RED->GREEN): enforces exact onscreen vs offscreen parity (Map climate, soil, cold-frame,",
+   "firstLine": "AssertionError: build: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/control-tower-journey-durability.test.tsx",
+   "test": "Final Journey Durability Corrective \u2014 Durable Run-Authoritative Daily Ledger RED-2: keeps Day 2+ objective slate unchanged when run.start is evicted and gated c",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/control-tower-journey-durability.test.tsx",
+   "test": "Final Journey Durability Corrective \u2014 Durable Run-Authoritative Daily Ledger enforces bounded <=32 ledger days across multi-day UTC rollovers and preserves offl",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/d1-d5-corrective.test.tsx",
+   "test": "D4 Corrective: Offscreen/Boundary-Straddling Wire-v1 Power Parity & 12h Decay Copy allocates loads, powers doors/stations/turrets, and drains generator fuel acr",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/escrow-route-physical.test.ts",
+   "test": "short physical nonboss cash to escrow route walks using collision-resolved ticks, opens any unlocked doors, purchases, builds and deposits",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological pays real build and upgrade materials and consumes connected inputs into an atomic harvest/replant",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological stops at full output, no seed, no water and no fuel without spending or minting; resumes after supply",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological offline matches many online intervals, preserves saved progress and does not repeat at same time",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological stops when a linked structure is destroyed and preserves fuel custody in wreckage",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological physically collects the chest harvest and spends it in the existing fuelled cooking station",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological requires explicit local owned links and honors stop across restart",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological pours a real carried water charge into the nearby barrel without overflow or duplication",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological matches frame-by-frame online and offline completion for a nearly ripe crop",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological harvests at the framed snow growth boundary, not the old base-time boundary",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological waits for rain to fill the barrel before planting at the correct offline time",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological a new wall interrupts the physical chest link without consuming a ripe crop",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-production.test.ts",
+   "test": "home production, funded and chronological expires with the run and does not promote machine stock to profile",
+   "firstLine": "AssertionError: expected { ok: false, \u2026(1) } to match object { ok: true }"
+  },
+  {
+   "file": "tests/home-sites-physical.test.ts",
+   "test": "physical owned home choices reaches and claims three distinct clear sites, then places owned storage",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/k6-spatial.test.ts",
+   "test": "K6 paid structural lifecycle upgrades in place at preserved condition, pays exactly once, and reloads",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/lr02-shipping-access.test.ts",
+   "test": "LR02 seeded sandbox and authoritative wall access uses a paid owned bed without spawning inside an adjacent wall; death custody remains singular",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-c1-motorbike-chain.test.ts",
+   "test": "MEC-01 R2 C1: factory source -> furnace -> workbench L2 -> paid L3 -> research -> packed Motorbike Kit walks the whole paid chain with real intents, preserves U",
+   "firstLine": "TypeError: Cannot read properties of undefined (reading 'c')"
+  },
+  {
+   "file": "tests/mec01-c2-delivery.test.ts",
+   "test": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes delivers the full crate by walking (inventory carry)",
+   "firstLine": "Error: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)"
+  },
+  {
+   "file": "tests/mec01-c2-delivery.test.ts",
+   "test": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes delivers the full crate by hand cart on the same route class",
+   "firstLine": "Error: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)"
+  },
+  {
+   "file": "tests/mec01-c2-delivery.test.ts",
+   "test": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes delivers the full crate by motorbike with measured fuel and wear",
+   "firstLine": "Error: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)"
+  },
+  {
+   "file": "tests/mec01-c2-delivery.test.ts",
+   "test": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes the same cargo UIDs left the crate in all three runs (same seed, same wor",
+   "firstLine": "AssertionError: expected +0 to be 3 // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-c2-delivery.test.ts",
+   "test": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes delivers the full crate to the SAME far depot in all three modes (long co",
+   "firstLine": "Error: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)"
+  },
+  {
+   "file": "tests/mec01-c2-delivery.test.ts",
+   "test": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes writes the delivery evidence JSON (SIM_FIXTURE_MEASUREMENT timing; real c",
+   "firstLine": "AssertionError: expected +0 to be 3 // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-c3-offline-resume.test.ts",
+   "test": "MEC-01 R2 C3: funded furnace+workbench offline -> separate-process resume -> exact UID custody produces and retrieves exactly the queued outputs after a restart",
+   "firstLine": "Error: no legal tiles for furnace"
+  },
+  {
+   "file": "tests/mec01-f3-joined.test.ts",
+   "test": "F3 joined: deposit -> evacuate -> save/reload -> run 2 carries the real deposit receipt through evacuation and reload into run 2 with zero run-local cash",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-foundry-drive-chain.test.ts",
+   "test": "MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared) full natural-intent chain with save/reload at each step",
+   "firstLine": "AssertionError: mechanical_parts: expected -1 to be greater than or equal to 0"
+  },
+  {
+   "file": "tests/mec01-foundry-drive-chain.test.ts",
+   "test": "MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared) refused without the gear: no drive is made from nothing; refused craft consumes nothing",
+   "firstLine": "Error: no legal workbench tile"
+  },
+  {
+   "file": "tests/mec01-foundry-drive-chain.test.ts",
+   "test": "MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared) refused below Level 2 (honest refusal) even with every input carried",
+   "firstLine": "Error: no legal workbench tile"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 departure readiness: read-only contract repeated views and forecasts do not mutate the run (no state, grants or claims)",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 departure readiness: read-only contract every section carries provenance and a scope note; no certified survival hour is claimed",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 departure readiness: read-only contract bounded horizon: 24 h, or the remaining run when it is shorter",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 departure readiness: read-only contract exact-slot vs post-slot leakage: inside the known slot the scenario choice cannot change the answer",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 forecast agrees with the real settle() (same frozen state) dry window: forecast warmth equals settle() warmth at 5/15/30/60 min",
+   "firstLine": "AssertionError: {\"ok\":false,\"reason\":\"Need an intact packed device.\"}: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 forecast agrees with the real settle() (same frozen state) cold crossing time agrees with settle(): settle is warm just before the forecast crossing ",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 forecast agrees with the real settle() (same frozen state) season transition: a forecast window crossing the phase boundary agrees with settle()",
+   "firstLine": "AssertionError: {\"ok\":false,\"reason\":\"Need an intact packed device.\"}: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 heat: paid fuel, idle furnace, job, station loss heater paid vs unpaid: paid fuel gives a fuel limit and a later cold crossing; no fuel gives none",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 heat: paid fuel, idle furnace, job, station loss paid fuel ends and the target falls back: the post-supply target is the no-heat target, never a prom",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 heat: paid fuel, idle furnace, job, station loss idle furnace is \"not heating\" even with fuel; a queued job makes it heat until the job or the fuel e",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 heat: paid fuel, idle furnace, job, station loss nearby station: output full is shown as paused, with the free output slot count",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 heat: paid fuel, idle furnace, job, station loss station loss: a destroyed campfire is no longer a heat source and no fuel limit is reported",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 shelter, insulation, position, home, choices cold gear: the cloak is the same insulation law as settle (cold 18 -> base +54 on snow)",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 shelter, insulation, position, home, choices position change: a non-snow tile far from the campfire has no snow exposure, no fire and no cold crossin",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 shelter, insulation, position, home, choices no home: the read model says so plainly, with no penalty",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 shelter, insulation, position, home, choices partial home: a real built wall is listed with its HP; a damaged one shows HP below max; no invented rep",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 shelter, insulation, position, home, choices choices are grounded: refuel is offered only when the fuel is physically carried and the heater is out",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r12-departure.test.ts",
+   "test": "MEC-01 R12 causal before/after (real intents, labelled staging) \u2192 evidence writes the before/after table of the J10 fields for each cause",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r2-c1-motorbike-chain.test.ts",
+   "test": "MEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + FIXTURE stock + INTENT freight) chain: gear and drive, frame, L3 bench, Motorbike Kit, plac",
+   "firstLine": "Error: no legal workbench tile"
+  },
+  {
+   "file": "tests/mec01-r3-causal-integrity.test.ts",
+   "test": "R3 P2: one physical item cannot serve two consumers two L2 workbenches race a single found Mechanical Gear; the loser is refused before any reservation, and the",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r3-causal-integrity.test.ts",
+   "test": "R3 P2: one physical item cannot serve two consumers recycler holds the gear: the workbench is refused; and the winner held through a full craft\u2192settle leaves th",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r4-score-once.test.ts",
+   "test": "C20 score-once (R4 N1): the award() achievement-key guard is the ONLY score door deposit: one transfer, one credit; exact-intent replay refused; a FRESH intent ",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r4-score-once.test.ts",
+   "test": "C20 score-once (R4 N1): the award() achievement-key guard is the ONLY score door reload across the deposit boundary: resume pays out again, credit still cannot ",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r4-score-once.test.ts",
+   "test": "C20 score-once (R4 N1): the award() achievement-key guard is the ONLY score door evacuation with six stones: evacuated + six_stones credit once; replays cannot ",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r4-score-once.test.ts",
+   "test": "C20 score-once (R4 N1): the award() achievement-key guard is the ONLY score door run transition: a fresh run re-earns per-run credit legitimately; profile marke",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r4-score-once.test.ts",
+   "test": "C20 score-once (R4 N1): the award() achievement-key guard is the ONLY score door full-arc spam cannot fabricate score: re-clicks on deposit/evacuate credit noth",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/mec01-r8b-plank.test.ts",
+   "test": "MEC-01 R8B plank chain two wood make one plank at the bench, after 6 real seconds; too little wood is refused with no change",
+   "firstLine": "Error: no legal tile for workbench"
+  },
+  {
+   "file": "tests/mec01-r8b-plank.test.ts",
+   "test": "MEC-01 R8B plank chain a plank wall needs three real planks: with two it is refused and nothing is spent; with three it builds at 240 HP",
+   "firstLine": "Error: no legal tile for workbench"
+  },
+  {
+   "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+   "test": "MEC-01 R8E K6 upkeep for processed planks a wall_plank contributes 0.75 plank per day to its cabinet (3 x 25%), as wood walls contribute their wood",
+   "firstLine": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet."
+  },
+  {
+   "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+   "test": "MEC-01 R8E K6 upkeep for processed planks negative: without planks in the cabinet the plank wall makes the cabinet unfunded; with 3 planks it is funded",
+   "firstLine": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet."
+  },
+  {
+   "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+   "test": "MEC-01 R8E K6 upkeep for processed planks settled upkeep debits real planks, with fractional credit: removed - credit = 0.75 x days, never more",
+   "firstLine": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet."
+  },
+  {
+   "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+   "test": "MEC-01 R8E K6 upkeep for processed planks save/reload keeps the same plank forecast and does not re-bill: the validated copy plans identically",
+   "firstLine": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet."
+  },
+  {
+   "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+   "test": "MEC-01 R8E K6 upkeep for processed planks repair of a plank wall takes one plank (ceil(3 x 25%)), and a raw-wood wall keeps its wood repair",
+   "firstLine": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet."
+  },
+  {
+   "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+   "test": "MEC-01 R8E K6 upkeep for processed planks a raw-wood shelter is unchanged: a wood-only cabinet bills wood and has no plank rate",
+   "firstLine": "Error: claim: Need an intact packed device."
+  },
+  {
+   "file": "tests/pa1-recipe-migration.test.ts",
+   "test": "PA1 R1 recycler conservation \u2014 the pipe cut needs a matching return new pipe jobs use the recovered paper return; superseded rules stay frozen for stored jobs",
+   "firstLine": "AssertionError: mechanical_gear: expected 'X:gear-v2' to be 'X:gear-v1' // Object.is equality"
+  },
+  {
+   "file": "tests/pa1-research-visible-gate.test.ts",
+   "test": "PA1 research-visible browser gate \u2014 legibility, not DOM presence wires the proof into CI as a real file, not as a YAML-embedded string",
+   "firstLine": "Error: ENOENT: no such file or directory, open '/tmp/snapd/.github/workflows/pa1-building-browser.yml'"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "supplied bed rest (real intents, physical custody) starts from a real bed intent and moves the exact chosen UIDs into locked reserve custody",
+   "firstLine": "AssertionError: expected { s: 'bed_straw', tx: 143, \u2026(2) } to deeply equal { s: 'bed_straw', tx: 143, \u2026(2) }"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "supplied bed rest (real intents, physical custody) refuses raw meat, unknown UIDs, bad durations, too many stacks and a bed beyond reach",
+   "firstLine": "AssertionError: expected { s: 'bed_straw', tx: 143, \u2026(2) } to deeply equal { s: 'bed_straw', tx: 143, \u2026(2) }"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "supplied bed rest (real intents, physical custody) a legitimate 8 h interval consumes real food and flask charge at the trigger and wakes exactly on time",
+   "firstLine": "AssertionError: expected { s: 'bed_straw', tx: 143, \u2026(2) } to deeply equal { s: 'bed_straw', tx: 143, \u2026(2) }"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "supplied bed rest (real intents, physical custody) shared online/offline chronology: a partitioned settle equals one long settle, and hunger is never frozen",
+   "firstLine": "AssertionError: expected { s: 'bed_straw', tx: 143, \u2026(2) } to deeply equal { s: 'bed_straw', tx: 143, \u2026(2) }"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "supplied bed rest (real intents, physical custody) save and reload mid-rest keeps the same reserve custody, charge, and resumes to the same wake",
+   "firstLine": "AssertionError: expected { s: 'bed_straw', tx: 143, \u2026(2) } to deeply equal { s: 'bed_straw', tx: 143, \u2026(2) }"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "supplied bed rest (real intents, physical custody) an explicit cancel wakes at once and returns leftovers to the same chest with the same UIDs",
+   "firstLine": "AssertionError: expected { s: 'bed_straw', tx: 143, \u2026(2) } to deeply equal { s: 'bed_straw', tx: 143, \u2026(2) }"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "supplied bed rest (real intents, physical custody) destroying the bed ends rest and returns every reserved UID; losing the chest sends them to a bag at the bed",
+   "firstLine": "AssertionError: expected { s: 'bed_straw', tx: 143, \u2026(2) } to deeply equal { s: 'bed_straw', tx: 143, \u2026(2) }"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "supplied bed rest (real intents, physical custody) death ends the rest before the bag forms, so no reserved item is stranded",
+   "firstLine": "AssertionError: expected { s: 'bed_straw', tx: 143, \u2026(2) } to deeply equal { s: 'bed_straw', tx: 143, \u2026(2) }"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "supplied bed rest (real intents, physical custody) the forecast is the same arithmetic the simulator uses: food-limited rest wakes when food runs out",
+   "firstLine": "AssertionError: expected { s: 'bed_straw', tx: 143, \u2026(2) } to deeply equal { s: 'bed_straw', tx: 143, \u2026(2) }"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "homeStatus external coverage (audit fix) a foundation on the horizontal neighbour is external coverage and not idle",
+   "firstLine": "AssertionError: expected 'Need an intact packed device.' to be '' // Object.is equality"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "homeStatus external coverage (audit fix) a foundation on the vertical neighbour is external coverage and not idle",
+   "firstLine": "AssertionError: expected 'Need an intact packed device.' to be '' // Object.is equality"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "homeStatus external coverage (audit fix) a foundation on the diagonal neighbour is external coverage and not idle",
+   "firstLine": "AssertionError: expected 'Need an intact packed device.' to be '' // Object.is equality"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "homeStatus external coverage (audit fix) a lone self-only Cabinet on its own tile is still idle (self does not count)",
+   "firstLine": "AssertionError: expected 'Need an intact packed device.' to be '' // Object.is equality"
+  },
+  {
+   "file": "tests/rest-supply.test.ts",
+   "test": "rest V1 in a frigid unheated shelter (lawful exposure death, exact custody) an 8 h unheated rest in a frigid site ends in exposure death at a real time, with ev",
+   "firstLine": "AssertionError: expected { s: 'bed_straw', tx: 153, \u2026(2) } to deeply equal { s: 'bed_straw', tx: 153, \u2026(2) }"
+  },
+  {
+   "file": "tests/s06-circuits.test.ts",
+   "test": "S06 paid physical home circuits uses build custody, distinct UIDs, real switch/plate and no diagonal or consumer bridging",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/s06-circuits.test.ts",
+   "test": "S06 paid physical home circuits requires payment, prevents replay, repairs and severs destroyed nodes",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/s06-circuits.test.ts",
+   "test": "S06 paid physical home circuits door collision, outage closure, occupied safety and timed interior release",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/s06-circuits.test.ts",
+   "test": "S06 paid physical home circuits persists wiring, rejects corrupt special state, and burns finite fuel at the chronological outage",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/s06-circuits.test.ts",
+   "test": "S06 paid physical home circuits shares capacity with a paid industrial job and preserves reserved inputs offline",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/s06-circuits.test.ts",
+   "test": "S06 paid physical home circuits legacy direct links remain until an explicit local conversion",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/s06-circuits.test.ts",
+   "test": "S06 paid physical home circuits a physically wired armed turret competes and never fires offline",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/s06-circuits.test.ts",
+   "test": "S06 paid physical home circuits splits a held plate circuit at the exact fuel boundary and survives a run wipe",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/s06-circuits.test.ts",
+   "test": "S06 paid physical home circuits obstacles, damage and reclaim physically sever a cable without gifting a replacement",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/s06-circuits.test.ts",
+   "test": "S06 paid physical home circuits fires only through a powered wire route at a visible hostile and debits real arrows",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/s06-circuits.test.ts",
+   "test": "S06 paid physical home circuits sliced and single offline settlement agree on a powered door fuel boundary",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/s10-oil-refinery.test.ts",
+   "test": "SYS10-R1 oil refinery \u2014 canonical balance, industrial co-products, validation builds the refinery on valid terrain with a level-2 Workbench and NO territory cab",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/soh.test.ts",
+   "test": "salt-shale source + dried meat content chain validates definitions, harvests a world-placed source, rejects wrong tool/missing input, then cooks and collects ph",
+   "firstLine": "AssertionError: expected [ [ 'stone', 1 ] ] to deeply equal [ [ 'raw_salt', 1 ] ]"
+  },
+  {
+   "file": "tests/soh.test.ts",
+   "test": "C07 build / reclaim custody invalid build never debits; valid build debits exactly; duplicate intent ignored",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/soh.test.ts",
+   "test": "C06/C09 stations, fuel, offline furnace output stops exactly at fuel exhaustion during offline settlement",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/soh.test.ts",
+   "test": "C04 research specimen study \u2192 physical blueprint \u2192 learned once; a second copy is refused without consumption",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/soh.test.ts",
+   "test": "C15\u2013C18, C22\u2013C23 Ragnarok cash, escrow, evacuation, run 2 zero wallet \u2192 finite cash (only in last 72h) \u2192 vendor escrow chest \u2192 owned placement \u2192 atomic deposits",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/sys07-w08-absence.test.ts",
+   "test": "W08 absence benchmark (controlled fixtures) current provisional tuning: 8/24/48/72h outcomes are measured and cabinet coverage is real",
+   "firstLine": "Error: build claim 3,-2: Need an intact packed device."
+  },
+  {
+   "file": "tests/w07-power-offline-parity.test.ts",
+   "test": "W07 Network A: offline power allocation = online allocation same armed-turret state: fuel and allocation after 25 s match between 1 s online steps and one offli",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/w07-power-offline-parity.test.ts",
+   "test": "W07-R truthful return report for standby turret draw an armed wired turret with arrows is reported as reserving power while away and not firing",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/w07-power-offline-parity.test.ts",
+   "test": "W07-R truthful return report for standby turret draw a disarmed turret produces no standby line and no draw",
+   "firstLine": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/w08-home-status.test.ts",
+   "test": "W08 homeStatus (controlled fixtures) an unfunded cabinet covers structures, funding changes state to funded, and protection does not heal damage",
+   "firstLine": "Error: claim: Need an intact packed device."
+  },
+  {
+   "file": "tests/w08-home-status.test.ts",
+   "test": "W08 homeStatus (controlled fixtures) nearestHomeStructure is bounded, deterministic and ignores items on the ground",
+   "firstLine": "Error: claim: Need an intact packed device."
+  },
+  {
+   "file": "tests/w08-home-status.test.ts",
+   "test": "W08 homeStatus (controlled fixtures) destroying the cabinet demotes covered structures to unfunded and never restores lost stock",
+   "firstLine": "Error: claim: Need an intact packed device."
+  },
+  {
+   "file": "tests/w08-home-status.test.ts",
+   "test": "W08 homeStatus (controlled fixtures) a Cabinet standing alone is idle (no external coverage), not unreachable; billing for itself is unchanged",
+   "firstLine": "Error: claim: Need an intact packed device."
+  },
+  {
+   "file": "tests/w08-home-status.test.ts",
+   "test": "W08 homeStatus (controlled fixtures) a Cabinet funded only by its own upkeep does not count as covered structures",
+   "firstLine": "Error: claim: Need an intact packed device."
+  },
+  {
+   "file": "tests/world-economy-runtime.test.ts",
+   "test": "versioned economy in the real engine allows a physical claim closer than the old 10-tile landmark radius, but protects roads and POI geometry",
+   "firstLine": "AssertionError: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/wp2-power-global-obstacles.test.ts",
+   "test": "WP2: Global / Multi-Floor / Offscreen Power Obstacles, Circuits, Persistence & Scale enforces physical & Map-owned obstacles on non-wire connectedPower across w",
+   "firstLine": "AssertionError: base_generator at (62,56): Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/wp2-power-global-obstacles.test.ts",
+   "test": "WP2: Global / Multi-Floor / Offscreen Power Obstacles, Circuits, Persistence & Scale enforces wireNodeOn offscreen switches/obstacles, closes offscreen electric",
+   "firstLine": "AssertionError: base_generator at (20,20): Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/wp2-power-global-obstacles.test.ts",
+   "test": "WP2: Global / Multi-Floor / Offscreen Power Obstacles, Circuits, Persistence & Scale scales cleanly in O(N) on large wire-v1 networks (400+ nodes across generat",
+   "firstLine": "AssertionError: base_generator at (20,61): Need an intact packed device.: expected false to be true // Object.is equality"
+  },
+  {
+   "file": "tests/wp3-veyra-recycler-integration.test.ts",
+   "test": "WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> Floor -1 -> Save/Reload Integration Proof harvests natural Veyra wrecks/resources (zero ite",
+   "firstLine": "AssertionError: expected 0 to be greater than or equal to 3"
+  },
+  {
+   "file": "src/veyra05/audit-closure.test.ts",
+   "test": "Veyra Audit Closure & Cross-System Guarantees (#48) P0-4 & P1-5: enforces biologically grounded yields, opposite-sex (\u2640+\u2642) breeding, and full offscreen pen pari",
+   "firstLine": "AssertionError: expected undefined to be defined"
+  },
+  {
+   "file": "src/veyra05/ecosystem-full.test.ts",
+   "test": "Phase C/D/E/F \u2014 Veyra Full Creature, Husbandry, Side-Boss & 6-Primordial Ecosystem preserves ALWAYS_KNOWN_RECIPES invariant while exposing new base husbandry & ",
+   "firstLine": "AssertionError: expected 37 to be 14 // Object.is equality"
+  },
+  {
+   "file": "src/veyra05/integrated-lifecycle.test.ts",
+   "test": "single canonical VEYRA runtime save, traversal and floors new run stays save-valid before/after a real world window shift",
+   "firstLine": "AssertionError: expected 'veyra05-at-1408-960' to be 'veyra05-world' // Object.is equality"
+  },
+  {
+   "file": "src/veyra05/item-network-export.audit.test.ts",
+   "test": "Source-exact formula atlas export exports actual authoritative catalog values with complete record keys",
+   "firstLine": "AssertionError: expected 'unspecified' to match /^[0-9a-f]{40}$/"
+  }
+ ]
+}

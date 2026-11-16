@@ -3,6 +3,7 @@ import { BAL, TILE, WW, type Entity, type GameState, type RunState, type Creatur
 import { ITEMS, ELDERS, lookupElderDef, CREATURES, STRUCTS } from '../game/catalog';
 import { C, countItem, runHours, phaseOf, isRagnarok } from '../game/engine';
 import { activeStack } from '../game/sim';
+import { coreReadout, coreAmmo } from '../game/g1b';
 import { airdropView } from '../game/airdrop';
 import { getArt } from '../game/art';
 import { Icon, Panel, type Api } from './common';
@@ -155,7 +156,7 @@ export function CoreDiscoveryCard({ coreKey, onClose }: { coreKey: string; onClo
         <div style={{ lineHeight: 1.1 }}>
           <div className="lbl" style={{ fontSize: 8, color: m.col, letterSpacing: 0.7 }}>{m.tier} · {m.essence} ESSENCE</div>
           <div className="title-font" style={{ fontSize: 13, color: 'var(--brassLit)' }}>{d.name}</div>
-          <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>Usable immediately · reload with R / Shift+R / Alt+R</div>
+          <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>Lv1 · LMB spends 1 Energy Cell · upgrade at your Workbench</div>
         </div>
       </div>
       <div className="rule" style={{ margin: '4px 0' }} />
@@ -168,19 +169,18 @@ export function CoreDiscoveryCard({ coreKey, onClose }: { coreKey: string; onClo
   );
 }
 
-/** Compact reserve bar shown right above the hotbar whenever a Creator Core is held. */
+/** Compact Core V2 bar (level, casts left in the pack, cooldowns, durability) shown right above the hotbar whenever a Creator Core is held. */
 export function CoreReserveStrip({ r }: { r: RunState }) {
   const s = activeStack(r);
-  if (!s || !ITEMS[s.key]?.creatorCore || !s.reserves) return null;
-  const m = CORE_MODES[s.key];
-  const { basic, refined, signature } = s.reserves;
+  if (!s || !ITEMS[s.key]?.creatorCore) return null;
+  const m = CORE_MODES[s.key]; const v = coreReadout(s, Date.now()); const names = [m?.b ?? 'Basic', m?.q ?? 'Refined', m?.e ?? 'Signature']; const col = ['var(--paper)', 'var(--info)', 'var(--brassLit)'];
   return (
-    <div className="plate" style={{ padding: '2px 6px', display: 'flex', alignItems: 'center', gap: 8, borderColor: m?.col || 'var(--brass)' }}>
+    <div className="plate" data-testid="core-strip" style={{ padding: '2px 6px', display: 'flex', alignItems: 'center', gap: 8, borderColor: m?.col || 'var(--brass)' }}>
       <Icon k={s.key} size={12} />
-      <span className="lbl" style={{ fontSize: 8, color: 'var(--paper)' }}>[LMB] {m?.b ?? 'Basic'} <b>{basic}/40</b></span>
-      <span className="lbl" style={{ fontSize: 8, color: 'var(--info)' }}>[Q] {m?.q ?? 'Refined'} <b>{refined}/12</b></span>
-      <span className="lbl" style={{ fontSize: 8, color: 'var(--brassLit)' }}>[E] {m?.e ?? 'Signature'} <b>{signature}/4</b></span>
-      <span className="lbl" style={{ fontSize: 7, color: 'var(--muted)' }}>R reload</span>
+      <span className="lbl" style={{ fontSize: 8, color: 'var(--brassLit)' }}>Lv<b>{v.lvl}</b></span>
+      {v.modes.map((x, i) => { const n = Math.min(...coreAmmo(x.mode, ITEMS[s.key].essence).map(([k, q]) => Math.floor(countItem(r, 'inv', k) / q)));
+        return <span key={x.key} className="lbl" style={{ fontSize: 8, color: x.unlocked ? col[i] : 'var(--muted)' }}>[{x.key}] {names[i]} <b>{!x.unlocked ? `Lv${x.needLvl}` : x.cdLeftMs > 0 ? `${Math.ceil(x.cdLeftMs / 1000)}s` : `×${n}`}</b></span>; })}
+      <span className="lbl" style={{ fontSize: 7, color: v.dur <= 0 ? 'var(--bad)' : 'var(--muted)' }}>{v.upgradingTo ? `→Lv${v.upgradingTo} ${Math.ceil(v.upgradeLeftMs / 1000)}s` : `${v.dur}/${v.maxDur}`}</span>
     </div>
   );
 }

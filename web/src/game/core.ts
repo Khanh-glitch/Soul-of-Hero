@@ -49,7 +49,10 @@ export const TERRAIN_NAME = ['deep', 'shallow', 'sand', 'grass', 'meadow', 'fore
 
 // ---------- Items & custody ----------
 export interface CoreReserve { basic: number; refined: number; signature: number }
-export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve }
+/** Creator Core V2 (G1B): `lvl` 1-3 lives on the physical instance, `cd` holds the three per-UID ready-at timestamps,
+ *  `upg` is a running same-UID upgrade. `reserves` exists only in pre-V2 saves and is converted on load into `owed`: the exact items that energy was
+ *  loaded from, handed back to the Core's own container as soon as there is room. A cast never draws on it. */
+export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; owed?: Record<string, number>; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
 export interface Container { id: string; kind: string; slots: (Stack | null)[] }
 
 export type Dir = 0 | 1 | 2 | 3; // down, left, right, up
@@ -116,8 +119,12 @@ export interface Entity {
   open?: boolean; locked?: string; poi?: string; label?: string; stock?: Record<string, number>;
   station?: { queue: Job[]; burn: number; fuelC: string; outC: string; level?: 1 | 2 | 3; upgrade?: 'kiln_lining'; stateCode?: string };
   garden?: { crop: string | null; growth: number; water: number; coldFrame?: boolean };
-  farm?: { enabled: boolean; crop: 'crop' | 'herb'; energy: number; gardenId?: string; barrelId?: string; chestId?: string; lastCode?: string };
+  farm?: { enabled: boolean; crop: 'crop' | 'herb' | 'berry'; energy: number; gardenId?: string; barrelId?: string; chestId?: string; lastCode?: string };
   irSensor?: { version: 'ir-v1'; enabled: boolean };
+  /** Item set v3: a placed ladder covers `len` cliff tiles from its own tile in direction `dir`. */
+  ladder?: { dir: [number, number]; len: number };
+  /** Item set v3: the door type a Powered Door module was fitted into (reclaim hands that door back). */
+  poweredHost?: string;
   bearTrap?: { version: 'trap-v1'; state: 'unarmed' | 'armed' | 'spent' | 'worn'; uses: number; snapAt?: number };
   basePower?: { enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production'; network?: 'wire-v1' };
   wireSwitch?: {version:'wire-v1'; on:boolean};
@@ -130,6 +137,10 @@ export interface Entity {
   power?: number; fire?: number;
   /** The original deployable instance, retained until reclaim or destruction. */
   deployed?: Stack;
+  /** G1B: a creator-approved world chest, access-card case or circuit generator (kind 'loot'; never an authored Shipping cache). */
+  g1b?: { sid: string; kind: 'chest' | 'card' | 'gen'; state: 'closed' | 'opened' | 'empty'; cycle: number; refillAt?: number; roll?: { rev: string; seed: number; at: number }; poweredUntil?: number };
+  /** G1B: put down on purpose by the player; never magnet-collected, picked up with F. */
+  manual?: boolean;
   vehicle?: { fuel:number; angle:number; odometer:number; geometry:'vehicle-geometry-v1'; lube?: number };
   /** Deterministic local identity marker for station types that must not be relabeled (refinery-v1). */
   identity?: 'refinery-v1';
@@ -214,7 +225,7 @@ export interface RunState {
   /** Run-pinned additive source overlay; absent legacy runs keep v1 placements. */
   sourceLayoutVersion?: 2 | 3;
   /** Source map identity is mandatory for v3; older runs retain their own layout. */
-  sourceMap?: { id: string; revision: number; seed: number; rules: 3; digest: string; mapDigest?: string; veyra?: import('./veyra/projection').VeyraViewIdentity };
+  sourceMap?: { id: string; revision: number; seed: number; /** 3 = legacy placement (scrap/wreck); 4 = G1A Veyra placement (three industrial salvage sources + POI slots). */ rules: 3 | 4; digest: string; mapDigest?: string; veyra?: import('./veyra/projection').VeyraViewIdentity };
   /** Additive, pinned when a run is created or first resumed/saved. */
   airdrops?: {version:'airdrop-v1'; mapDigest:string; seed:number; runId:string; startedAt:number; nextIndex:number};
   wreckEconomy?: 'direct-v1' | 'recycler-v1';
@@ -239,7 +250,11 @@ export interface RunState {
   spawnRegion: number; ended: null | string;
   player: Player; creatures: Creature[];
   /** B05-R: oil sources keyed `oil:tx:ty`. Only a labelled test fixture authority exists today; production Map oil sites are NOT authorized (see balance oilPumpV1). */
-  oilSources?: Record<string, { tx: number; ty: number; stock: number; authority: 'test-fixture-v1' }>;
+  oilSources?: Record<string, { tx: number; ty: number; stock: number; authority: 'test-fixture-v1' | 'veyra-seep-v1' }>;
+  /** Item set v3: Veyra crude seeps by seep cell (`cx:cy`), in GLOBAL tiles. The chosen tile and the stock left; see oil-seeps.ts. */
+  oilSeeps?: Record<string, { gx: number; gy: number; stock: number }>;
+  /** Window origin (`ox,oy`) the `veyra-seep-v1` rows of `oilSources` are projected for. */
+  oilSeepWindow?: string;
   /** Domain marker: set ONLY by the test-only fixture registrar. A run without it cannot hold or validate oil sources.
    *  Future production sources must bind to a versioned Map site + map revision (authority not yet defined). */
   oilTestFixture?: true;
@@ -255,6 +270,13 @@ export interface RunState {
   lootEcology?: { version: 'w06-v1'; cycles: Record<string,number>; /** B01 family×grade grammar; absent on pre-B01 runs (no reroll). */ grammar?: 'b01-v1' | 'b04-v1' | 'b05-v1'; /** B05 only: digest-pinned physical source contract measured at run start. */ sourceContract?: import('./loot-source-spec').LootSourceContract };
   poiAccessVersion?: 'poi-access-v1';
   poiAccessDigest?: string;
+  /** G1B chest system of this run (absent on every older save: no chest is retro-fitted). `doors` = pending auto-close of gated doors. */
+  /** G1B approved chest system. `far` holds the chests / card cases / generators outside the streamed window, in
+   *  GLOBAL tile coordinates. It is a table of its own (not `veyraOffscreenEntities`) so the 136 world objects never
+   *  enter the structure scans that run inside every settlement slice. */
+  g1b?: { version: 'g1b-v1'; rev: string; /** source-layout revision the run was last brought up to (absent = 1: the 130 round-1 sources) */ layout?: number; doors: Record<string, { closeAt: number }>; far: Record<string, Entity> };
+  /** THE LAST HUMANITY: authoritative run-local human society ledger (additive; absent = legacy solo run). */
+  humanWorld?: import('./humanworld').HumanWorld;
   natureTrees?: {tx:number;ty:number;until:number}[];
   spiritTransit?: { x:number; y:number; arriveAt:number; uid:string };
   terrain: Record<number, { t: number; until?: number; untilAt?: number }>; // K2 terrain mutations (burns, ice)
@@ -266,7 +288,9 @@ export interface RunState {
   tech?: { families: string[]; recipeRev: number };
   /** PA1 R1 (additive): count of knowledge entries removed by an explicit save migration,
    *  so the load note can tell the player what changed. Never a material grant. */
-  migrated?: { retiredRecipes?: number; retiredNoticeShown?: true };
+  migrated?: { retiredRecipes?: number; retiredNoticeShown?: true; /** Item set v2: stacks converted from a retired id on load (durable evidence). */ retiredItems?: number; /** not yet reported to the player; cleared by the load receipt */ retiredItemsUnseen?: number };
+  /** Final item set stamp (final-item-set.ts). Absent = written before the cutover; converted once on load. */
+  itemSetVersion?: number;
   traces: Trace[];
   /** Bounded, ephemeral real event impulses; absent in legacy runs. */
   worldStimuli?: WorldStimulus[];

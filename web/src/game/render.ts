@@ -4,6 +4,7 @@ import * as comp from './compositor';
 import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
 import { STRUCTS, ELDERS, PRIMORDIAL_ELDERS, lookupElderDef, CREATURES, ITEMS } from './catalog';
 import { hasCreatureAtlas, preloadCreatureAtlases, drawCreatureAtlasSprite, creatureHeadTopY } from './creature-sprites';
+import { drawNpcSprite, drawNpcShadow, preloadNpcArt, resolveNpcClip } from './npc-art';
 import { isCreatureRenderedByPrimordialRig, renderPrimordialOverlay } from './primordials/host-bridge';
 import { getFrame as getPrimordialRasterFrame, frameRGBA } from './primordials/art/sprites';
 import { getWorld, getActiveLayout, SRC_KEYS, fbm } from './world';
@@ -11,7 +12,7 @@ import { isVeyra05Layout } from '../veyra05/scenes';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
 import { observeVeyraDecor } from '../veyra05/decor-client';
 import { drawArchitecturalBuilding } from '../veyra05/building-art';
-import { onVeyraWindowShift } from '../veyra05/continuity';
+import { onVeyraWindowShift, windowOrigin } from '../veyra05/continuity';
 import * as life from '../veyra05/living/life';
 import { oakArt, pineArt, palmArt, willowArt, rockArt, bushArt, type TreeArt } from '../veyra05/living/flora';
 import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
@@ -28,8 +29,10 @@ function lootFamilySprite(r: RunState, e: Entity): string | null {
 }
 import { FX, PROJ, HAZ, activeStack } from './sim';
 import * as vfxDirector from './vfx/director';
+import { drawG1bChest } from './g1b-art';
 import * as vfxStage from './vfx/stage';
 import { getArt, pixelText, mk, type Sprite } from './art';
+import { atlasIconCell } from './item-atlas';
 import { HERO_FRAMES } from './hero-art';
 import { drawAdventurer, drawAdventurerEquipment } from './avatar-presentation';
 import { gradeWorld, bloomAt, shakeScale, flashScale } from '../visual/direction';
@@ -154,6 +157,9 @@ const add = (p: Partial<Part>) => { if (PARTS.length < 900) PARTS.push({ x: 0, y
 const burst = (x: number, y: number, n: number, cols: string[], sp = 60, g = 120, life = 450, s = 1) => { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = sp * (0.3 + Math.random()); add({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - sp * 0.5, col: cols[i % cols.length], max: life * (0.6 + Math.random() * 0.6), g, s }); } };
 /** R8D: gold flecks for a rare ore strike, distinct from ordinary ore dust. */
 const RICH_CHIP = ['#f0c040', '#fff3b0', '#4f4560'];
+// G1A hit feedback per archetype: bale = steel shards + strap flecks, relay = board/wire sparks, fuel rack = rust + can paint.
+const G1A_CHIP: Record<string, string[]> = { road_salvage_bale: ['#c4cad2', '#b8862e', '#6b6f76'], road_relay_wreck: ['#9be07a', '#e8c040', '#9be0ff', '#d04a3a'], road_fuel_rack: ['#b8845a', '#c8a030', '#5d6a3a'] };
+const G1A_FELL: Record<string, string[]> = { road_salvage_bale: ['#a3a9b1', '#565a61', '#b8862e'], road_relay_wreck: ['#566270', '#2f8a55', '#e0c040'], road_fuel_rack: ['#8a5a3a', '#c8a030', '#4a6a86'] };
 const MATC: Record<string, string[]> = { wood: ['#c9935a', '#8a5a32', '#e0b070', '#6aa84a'], stone: ['#b9bcc4', '#7d8088', '#ffffff'], ore: ['#d08a5a', '#7d8088', '#ffe0a0'], plant: ['#8ac25a', '#5a9a3c', '#e05a7a'], scrap: ['#c0a07a', '#ffd070', '#6f7378', '#ffffff'] };
 const SURFC: Record<number, string[]> = { [T.SNOW]: ['#ffffff', '#c8d8e8'], [T.SAND]: ['#e8d8a0', '#c4aa74'], [T.MARSH]: ['#4a3e2a', '#3a5a5a'], [T.SHALLOW]: ['#a0d0ff', '#ffffff'], [T.RIVER]: ['#a0d0ff', '#ffffff'], [T.ASH]: ['#6a5a5a', '#3a3236'], [T.ROAD]: ['#b89470', '#9a7a58'] };
 export let shake = 0; export let flash = 0; export const banners: { text: string; sub: string; t: number }[] = [];
@@ -167,8 +173,8 @@ export function consumeFX(onFx: (e: any) => void) {
     const e = FX.shift(); onFx(e);
     switch (e.type) {
       case 'slash': ARCS.push({ x: e.x, y: e.y, a: e.a, reach: e.reach, arc: e.arc, life: 0, max: 150, key: e.key } as Part); break;
-      case 'chip': burst(e.x, e.y - 6, e.depleted ? 14 : 7, e.rich ? RICH_CHIP : (MATC[e.mat] || MATC.wood), 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
-      case 'fell': burst(e.x, e.y - 14, 16, ['#6aa84a', '#3f7a32', '#c9935a'], 70, 60, 900); break;
+      case 'chip': if (G1A_CHIP[e.key]) burst(e.x, e.y - 8, e.depleted ? 8 : 4, G1A_CHIP[e.key], 70, 120, 420); burst(e.x, e.y - 6, e.depleted ? 14 : 7, e.rich ? RICH_CHIP : (MATC[e.mat] || MATC.wood), 55, 160, 500); shakeT.set(Math.floor(e.x / 16) + Math.floor(e.y / 16) * WW, 160); break;
+      case 'fell': burst(e.x, e.y - 14, 16, G1A_FELL[e.key] || ['#6aa84a', '#3f7a32', '#c9935a'], 70, 60, 900); break;
       case 'clank': burst(e.x, e.y - 6, e.soft ? 2 : 5, ['#ffffff', '#ffe070'], 80, 200, 220); break;
       case 'turretshot': burst(e.x, e.y - 4, 7, ['#fff6b5', '#ffc653', '#ffffff'], 50, 100, 350); break;
       case 'mhit': burst(e.x, e.y - 6, e.big ? 12 : 8, ['#ffffff', '#ff5a4a', '#a01e1e'], 90, 220, 380); TEXTS.push({ x: e.x, y: e.y - 14, vx: 0, vy: -28, life: 0, max: 700, col: '#ffffff', text: String(e.n) } as Part); break;
@@ -243,7 +249,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   const sx = shk > 0.3 ? Math.round((Math.random() - 0.5) * shk) : 0, sy = shk > 0.3 ? Math.round((Math.random() - 0.5) * shk) : 0;
   const cx = Math.round(cam.x) + sx, cy = Math.round(cam.y) + sy;
   g.save(); g.translate(-cx, -cy);
-  if (!creatureAtlasesBooted && typeof Image !== 'undefined') { creatureAtlasesBooted = true; preloadCreatureAtlases(); }
+  if (!creatureAtlasesBooted && typeof Image !== 'undefined') { creatureAtlasesBooted = true; preloadCreatureAtlases(); preloadNpcArt(); }
   life.setRun(r); life.beginFrame(r, now, time, cx, cy, dtMs); upgradeLivingArt(A);
   // terrain chunks
   const c0 = Math.floor(cx / (CH * TILE)), c1 = Math.floor((cx + VIEW_W) / (CH * TILE)), r0 = Math.floor(cy / (CH * TILE)), r1 = Math.floor((cy + VIEW_H) / (CH * TILE));
@@ -276,6 +282,13 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     if (e.type === 'garden' && e.garden?.coldFrame) { g.strokeStyle='#c5e5df';g.lineWidth=1;g.strokeRect(e.x-7.5,e.y-7.5,15,13);g.fillStyle='rgba(156,211,203,.24)';g.fillRect(e.x-7,e.y-7,14,12); }
     if (e.type === 'spikes') g.drawImage(A.st.spikes, e.x - 8, e.y - 8);
   }
+  // Item set v3: crude seeps — a dark pool with a slow sheen, drawn on the ground under any pump.
+  if (activeFloor(r) === 0) for (const s of Object.values(r.oilSources ?? {})) {
+    const sx = s.tx * 16 + 8, sy = s.ty * 16 + 8; if (sx < cx - 16 || sx > cx + VIEW_W + 16 || sy < cy - 16 || sy > cy + VIEW_H + 16) continue;
+    g.fillStyle = s.stock > 0 ? '#14110f' : '#3a342c'; g.beginPath(); g.ellipse(sx, sy + 1, 7, 5, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = s.stock > 0 ? '#2a2420' : '#4a443a'; g.beginPath(); g.ellipse(sx - 1, sy, 5, 3, 0, 0, Math.PI * 2); g.fill();
+    if (s.stock > 0) { const k = Math.floor(time / 500) % 4; g.fillStyle = ['#6a5a8a', '#4a7a8a', '#8a7a4a', '#4a7a8a'][k]; g.fillRect(sx - 3 + k, sy - 1, 2, 1); g.fillRect(sx + 1 - k, sy + 2, 1, 1); }
+  }
   vfxDirector.sync(gs,now,HAZ,PROJ);pfx.syncHazards(HAZ.filter(h=>!vfxDirector.ownsHaz(h)),p);
   // hazard telegraphs (ground)
   for (const h of HAZ) if (!vfxDirector.ownsHaz(h) || (h.owner !== 'player' && h.t < h.tell)) drawHaz(g, h, time);
@@ -290,6 +303,19 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
   for(const q of r.natureTrees||[]){const x=q.tx*TILE,y=q.ty*TILE;if(!life.undergroundHides(r,x+8,y+8)&&x>=cx-32&&x<cx+VIEW_W+32&&y>=cy-32&&y<cy+VIEW_H+32)list.push({y:y+14,f:()=>{const ta=LIVING_TREES.oak[(q.tx+q.ty)%LIVING_TREES.oak.length];life.drawLivingTree(g,ta,x+8,y+16,q.tx*7+q.ty,1,false);}});}
   for (const m of r.creatures) { if (((m as any).floor ?? 0) !== activeFloor(r)) continue; if (life.undergroundHides(r, m.x, m.y)) continue; if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, r, m, time, now) }); }
+  // Humans — projected from the authoritative HumanWorld ledger, drawn once per actor.
+  if (r.humanWorld) {
+    const [ox, oy] = isVeyra05Layout(r.layoutId || '') ? windowOrigin(r) : [0, 0];
+    for (const h of Object.values(r.humanWorld.people)) {
+      if (h.state === 'EVACUATED') continue;
+      if (h.floor !== activeFloor(r)) continue;
+      const wx = (h.gx - ox) * TILE + 8, wy = (h.gy - oy) * TILE + 8;
+      if (wx < cx - 40 || wx > cx + VIEW_W + 40 || wy < cy - 40 || wy > cy + VIEW_H + 60) continue;
+      if (life.undergroundHides(r, wx, wy)) continue;
+      const moving = h.state === 'MOVING' || (h.intent?.route?.length ?? 0) > 0;
+      list.push({ y: wy + 4, f: () => { drawNpcShadow(g, wx, wy + 2, 6, 3, 0.32); drawNpcSprite(g, h, wx, wy, r.clock.simMs / 1000, moving); } });
+    }
+  }
   // While mounted the rider is composited onto the bike sprite (vehicle case); skip the standalone player to avoid a double draw.
   if(!r.spiritTransit && r.player.vehicle == null)list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time, o.working) });
   const dragon=r.dragonDive;if(!vfxDirector.ownsDragon() && dragon?.phase && dragon.dragonX!==undefined && dragon.dragonY!==undefined) list.push({y:dragon.dragonY+4,f:()=>{const x=dragon.dragonX!,y=dragon.dragonY!;g.save();g.translate(x,y);g.fillStyle='#70241e';g.beginPath();g.moveTo(-19,-12);g.lineTo(-7,-22);g.lineTo(0,-14);g.lineTo(10,-21);g.lineTo(18,-10);g.lineTo(7,-12);g.lineTo(3,-3);g.lineTo(-5,-3);g.lineTo(-9,-11);g.closePath();g.fill();g.fillStyle='#ff8c2b';g.fillRect(-7,-14,14,6);g.fillStyle='#ffe6a0';g.fillRect(3,-13,2,2);g.restore();}});
@@ -361,6 +387,13 @@ function drawSource(g: CanvasRenderingContext2D, r: RunState, s: NonNullable<Ret
   if (art === 'bush') spr = depleted ? A.src.bush_empty[v % 2] : A.src.bush[v % 2];
   else if (['grass', 'reed', 'herb', 'mush'].includes(art)) { if (depleted) { g.drawImage(A.src.picked[0], X, Y); return; } const arr = A.src[art]; spr = arr[v % arr.length];
     const sway = Math.round(Math.sin(time / 600 + tx * 0.8 + ty * 0.3) * 1); g.drawImage(spr, 0, 0, 16, 9, X + sway + jx, Y - 2, 16, 9); g.drawImage(spr, 0, 9, 16, 7, X + jx, Y + 7, 16, 7); return; }
+  else if (art === 'salvage_bale' || art === 'relay_wreck' || art === 'fuel_rack') {
+    // G1A industrial salvage: intact / half-broken / depleted debris, anchored bottom-centre so the sprite stays on its tile.
+    const stage = depleted ? 2 : s.hp <= s.def.hp / 2 ? 1 : 0; spr = A.src[art][stage];
+    shadow(g, X + 8, Y + 14, depleted ? 4 : art === 'salvage_bale' ? 8 : 6);
+    g.drawImage(spr, X + 8 - (spr.width >> 1) + jx, Y + 16 - spr.height);
+    if (art === 'relay_wreck' && !depleted && hash2(tx, ty, Math.floor(time / 140)) < 0.04) add({ x: X + 9, y: Y + 4, vx: (Math.random() - 0.5) * 30, vy: -20, col: '#9be0ff', max: 220, s: 1 } as any);
+    return; }
   else if (art === 'scrap') { if (depleted) return; spr = A.src.scrap[v % 2]; }
   else if (art === 'wreck') { spr = A.src.wreck[v % 2]; shadow(g, X + 8, Y + 13, 13); if (depleted) g.globalAlpha = 0.7; g.drawImage(spr, X + 8 - 16 + jx, Y + 14 - 20); g.globalAlpha = 1; return; }
   else { if (depleted) { g.drawImage(A.src.rubble[0], X, Y); return; } const arr = A.src[art] || A.src.rock; spr = arr[v % arr.length]; if (art === 'sulfur' && Math.random() < 0.05) add({ x: X + 8, y: Y + 4, vx: 0, vy: -12, col: '#e8e0a0', max: 1200, s: 1, g: -4 }); if (art === 'crystal' && hash2(tx, ty, Math.floor(time / 500)) > 0.9) add({ x: X + 4 + Math.random() * 8, y: Y + 4 + Math.random() * 6, vx: 0, vy: 0, col: '#ffffff', max: 300, s: 1, g: 0 }); }
@@ -370,7 +403,7 @@ function drawSource(g: CanvasRenderingContext2D, r: RunState, s: NonNullable<Ret
 function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: number, now: number) {
   const A = getArt(); const X = Math.round(e.x), Y = Math.round(e.y);
   switch (e.kind) {
-    case 'drop': { const s = C(r, e.c!)?.slots[0]; if (!s) return; const bob = Math.round(Math.sin(time / 250 + e.x) * 1.5); shadow(g, X, Y + 4, 4); const ic = A.icon[s.key]; g.drawImage(ic, X - 6, Y - 9 + bob, 12, 12); if (s.key === 'rcash' || ITEMS[s.key].cat === 'core' || ITEMS[s.key].cat === 'stone') if (hash2(Math.floor(time / 120), X, Y) > 0.7) { g.fillStyle = '#ffffff'; g.fillRect(X - 5 + (hash2(X, Y, Math.floor(time / 120)) * 10 | 0), Y - 8 + bob, 1, 1); } return; }
+    case 'drop': { const s = C(r, e.c!)?.slots[0]; if (!s) return; const bob = Math.round(Math.sin(time / 250 + e.x) * 1.5); shadow(g, X, Y + 4, 4); const cell = atlasIconCell(s.key); const ic = cell ?? A.icon[s.key]; g.imageSmoothingEnabled = false; g.drawImage(ic, X - 6, Y - 9 + bob, 12, 12); g.imageSmoothingEnabled = true; if (s.key === 'rcash' || ITEMS[s.key].cat === 'core' || ITEMS[s.key].cat === 'stone') if (hash2(Math.floor(time / 120), X, Y) > 0.7) { g.fillStyle = '#ffffff'; g.fillRect(X - 5 + (hash2(X, Y, Math.floor(time / 120)) * 10 | 0), Y - 8 + bob, 1, 1); } return; }
     case 'bag': { shadow(g, X, Y + 5, 5); g.drawImage(e.parcel ? A.st.parcel : A.st.bag, X - 8, Y - 10); const a = 0.5 + Math.sin(time / 300) * 0.3; g.fillStyle = `rgba(255,226,122,${a})`; g.fillRect(X, Y - 18 - Math.round(Math.sin(time / 300) * 2), 1, 4); g.fillRect(X - 1, Y - 15 - Math.round(Math.sin(time / 300) * 2), 3, 1); return; }
     case 'cart': { shadow(g, X, Y + 6, 11); g.drawImage(A.st.cart, X - 14, Y - 14); if (C(r, e.c!).slots.some(Boolean)) g.drawImage(A.st.cargo, X - 14, Y - 16); if (r.player.pulling === e.id) { g.fillStyle = '#c8a060'; const p = r.player; const n = 8; for (let i = 0; i <= n; i++) { const t = i / n; g.fillRect(Math.round(X + 12 + (p.x - X - 12) * t), Math.round(Y - 4 + (p.y - Y + 2) * t + Math.sin(t * Math.PI) * 2), 1, 1); } } return; }
     case 'vehicle': {
@@ -453,7 +486,18 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       for(let k=0;k<3;k++){g.fillStyle=k<stacks?'#f0d060':'#3a2a2a';g.fillRect(X-5+k*4,Y+3,2,2);}
       g.fillStyle=lampCol;g.fillRect(X+5,Y-16,3,3);g.fillStyle='#120c18';g.fillRect(X+5,Y-16,3,1);
       return; }
-    case 'loot': { const empty = !C(r, e.c!).slots.some(Boolean); const fam = lootFamilySprite(r, e); shadow(g, X, Y + 5, 7); g.drawImage(fam ? A.st[fam] : (empty ? A.st.loot_open : A.st.loot), X - 8, Y - 10); return; }
+    case 'loot': {
+      if (e.g1b) {
+        const gb = e.g1b; shadow(g, X, Y + 5, gb.kind === 'chest' ? 11 : 7);
+        if (gb.kind === 'chest') { if (!drawG1bChest(g, gb.sid, gb.state, X, Y + 6, time)) g.drawImage(gb.state === 'closed' ? A.st.loot : A.st.loot_open, X - 8, Y - 10); return; }
+        if (gb.kind === 'gen') { const run = (gb.poweredUntil ?? 0) > now; g.drawImage(A.st.gen, X - 8 + (run ? Math.round(Math.sin(time / 40)) : 0), Y - 10); g.fillStyle = run ? '#7aff6a' : '#ff5a3a'; g.fillRect(X + 4, Y - 8, 2, 2); return; }
+        // access-card case: a small lock-box whose stripe is the colour of the card it holds; dark when taken
+        const col = gb.sid.endsWith('green') ? '#5fd67a' : gb.sid.endsWith('blue') ? '#5aa8ff' : '#b47aff';
+        g.fillStyle = '#17131d'; g.fillRect(X - 6, Y - 9, 12, 13); g.fillStyle = '#5b6470'; g.fillRect(X - 5, Y - 8, 10, 11); g.fillStyle = '#8a95a1'; g.fillRect(X - 5, Y - 8, 10, 1);
+        g.fillStyle = gb.state === 'empty' ? '#2a2630' : col; g.fillRect(X - 4, Y - 5, 8, 3); g.fillStyle = '#17131d'; g.fillRect(X - 1, Y, 2, 2);
+        return;
+      }
+      const empty = !C(r, e.c!).slots.some(Boolean); const fam = lootFamilySprite(r, e); shadow(g, X, Y + 5, 7); g.drawImage(fam ? A.st[fam] : (empty ? A.st.loot_open : A.st.loot), X - 8, Y - 10); return; }
     case 'cash': { const rag = isRagnarok(r, now); shadow(g, X, Y + 5, 7); g.drawImage(e.minted && !C(r, e.c!).slots.some(Boolean) ? A.st.cash_open : A.st.cash, X - 8, Y - 10); if (rag && !e.minted) { const a = 0.4 + Math.sin(time / 200) * 0.3; g.fillStyle = `rgba(255,208,64,${a})`; g.fillRect(X - 7, Y - 12, 14, 1); if (Math.random() < 0.2) add({ x: X - 6 + Math.random() * 12, y: Y - 8, vx: 0, vy: -16, col: '#ffe27a', max: 700, s: 1, g: -4 }); } return; }
     case 'vendor': { shadow(g, X, Y + 6, 5); const bob = Math.floor(time / 600) % 2; g.drawImage(A.st.vendor, X - 8, Y - 18 + bob); return; }
     case 'recycler': {
@@ -494,6 +538,16 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       if (e.type === 'ir_sensor') spr = A.st['ir_sensor_' + (({ off: 'off', unpowered: 'unpowered', ready: 'ready', detect: 'detect', blocked: 'blocked' } as const)[irSensorVisual(r, e)])];
       if (e.type!.startsWith('door') && e.type!=='door_powered' && e.open) spr = A.st[e.type + '_open'];
       if (e.type === 'furnace' && e.station && e.station.burn > 0 && e.station.queue.length) spr = A.st.furnace_lit;
+      if (e.type === 'large_furnace' && e.station && e.station.burn > 0 && e.station.queue.length) spr = A.st.large_furnace_lit;
+      if (e.ladder) {
+        // Item set v3: rails and rungs across every cliff tile the ladder covers, along its direction.
+        const steel = e.type === 'ladder_steel', rail = steel ? '#71c3c6' : '#7a5a32', rung = steel ? '#e4f4f4' : '#c9a064';
+        const [dx, dy] = e.ladder.dir, L = e.ladder.len * 16;
+        if (dx) { const x0 = dx > 0 ? X - 8 : X + 8 - L; g.fillStyle = rail; g.fillRect(x0, Y - 4, L, 2); g.fillRect(x0, Y + 2, L, 2); g.fillStyle = rung; for (let k = 2; k < L; k += 4) g.fillRect(x0 + k, Y - 2, 1, 4); }
+        else { const y0 = dy > 0 ? Y - 8 : Y + 8 - L; g.fillStyle = rail; g.fillRect(X - 4, y0, 2, L); g.fillRect(X + 2, y0, 2, L); g.fillStyle = rung; for (let k = 2; k < L; k += 4) g.fillRect(X - 2, y0 + k, 4, 1); }
+        if (steel) { g.fillStyle = '#2c4a52'; g.fillRect(X - 1, Y - 1, 2, 2); }
+        return;
+      }
       if (!spr) return; if (d.layer !== 'wall') shadow(g, X, Y + 5, 7);
       g.drawImage(spr, X - spr.width / 2, Y + 8 - spr.height);
       if(e.electricDoor){g.fillStyle='#e2bf52';g.fillRect(X+3,Y-7,3,3);}
@@ -661,10 +715,10 @@ function drawPlayer(g: CanvasRenderingContext2D, gs: GameState, time: number, wo
   else spr = set['idle' + p.dir][Math.floor(time / 900) % HERO_FRAMES.idle];
   void pose;
   const blink = p.invuln > 0 && act?.kind !== 'roll' && Math.floor(time / 70) % 2 === 0;
-  const s = activeStack(r); const icon = s && (ITEMS[s.key].dmg || ITEMS[s.key].core || ITEMS[s.key].creatorCore || ITEMS[s.key].ranged) ? A.icon[s.key] : null;
+  const s = activeStack(r); const icon = s && (ITEMS[s.key].dmg || ITEMS[s.key].core || ITEMS[s.key].creatorCore || ITEMS[s.key].ranged) ? (atlasIconCell(s.key) ?? A.icon[s.key]) : null;
   const drawWeapon = () => { if (!icon || act?.kind === 'roll') return; let ang = p.aim; const d = ITEMS[s!.key];
     if (act?.kind === 'swing' && !d.ranged) { const arc = d.arc || 1.2; const t = act.t / act.dur; const k = act.t < (act.contact || 0) ? -0.5 - 0.15 * (act.t / (act.contact || 1)) : -0.5 + Math.min(1, (act.t - (act.contact || 0)) / 80); ang = p.aim + arc * k * (Math.cos(p.aim) >= 0 ? 1 : -1); void t; }
-    const hx = X + Math.cos(ang) * 5, hy = Y - 6 + Math.sin(ang) * 4; g.save(); g.translate(Math.round(hx), Math.round(hy)); g.rotate(ang + Math.PI / 4); if (d.core || d.creatorCore) g.rotate(-ang - Math.PI / 4); g.drawImage(icon, (d.core||d.creatorCore) ? -6 : -3, (d.core||d.creatorCore) ? -6 : -12, (d.core||d.creatorCore) ? 12 : 14, (d.core||d.creatorCore) ? 12 : 14); g.restore(); };
+    const hx = X + Math.cos(ang) * 5, hy = Y - 6 + Math.sin(ang) * 4; g.save(); g.translate(Math.round(hx), Math.round(hy)); g.rotate(ang + Math.PI / 4); if (d.core || d.creatorCore) g.rotate(-ang - Math.PI / 4); g.imageSmoothingEnabled = false; g.drawImage(icon, (d.core||d.creatorCore) ? -6 : -3, (d.core||d.creatorCore) ? -6 : -12, (d.core||d.creatorCore) ? 12 : 14, (d.core||d.creatorCore) ? 12 : 14); g.imageSmoothingEnabled = true; g.restore(); };
   if (p.dir === 3) drawWeapon();
   g.drawImage(blink ? white(spr) : spr, X - 8, Y - 19);
   drawAdventurerEquipment(g, r, X, Y, p.dir);
