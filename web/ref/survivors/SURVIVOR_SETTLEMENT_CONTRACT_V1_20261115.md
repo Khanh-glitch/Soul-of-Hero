@@ -117,7 +117,7 @@ Minimal deterministic tests per risky seam: `unique_actor_after_reload`, `single
 - Guard near a purple-card compound: all seven historical-model room chests remain authorized where physically possible. Guard may have their own motive, may provide information, may refuse. Helping them does not replace High Military crate or grant a rare Core. Their later defense uses actual weapon, senses, path and ammunition.
 
 
-## 12. Creator decisions B/B/B (16 Nov 2026) — rules-first, no Agent prompt yet
+## 12. Creator decisions B/B/B (16 Nov 2026) — preserved foundational rights
 
 **Authority and scope:** Creator explicitly chose (B1) a *naturally populated* world with small communities and credible travelers, not scarce decorative figures; (B2) residents may *continue authorized work within limits* without a new click per unit; (B3) the player may *attack and rob neutral human NPCs*, who may resist, flee, remember and cause genuine consequences. These three RIGHTS are **CREATOR_DECIDED**. The detailed causal policy below is **CONTROL_TOWER_DESIGN_INTERPRETATION**, not three additional secretly approved balancing numbers. This document remains the ONE survivor/situations contract under Bible K1–K8. **The Creator has since resolved the later design forks at §§27–37; §21's older review boundary is historical, not an outstanding questionnaire.** Agent activation still requires a NEW explicit Creator instruction, proper initial asset access and a corrected G1B save integration baseline. No NPC feature is claimed playable by editing this file.
 
@@ -191,9 +191,9 @@ Minimal deterministic tests per risky seam: `unique_actor_after_reload`, `single
 
 **No synthetic consequences:** No random 'villager anger raid', hostile NPC teleport to player's home, global heat timer, guards omniscient to an unseen crime, mob waves after theft, permanent crime jail that locks solo progression, or forced quest. A pursuing NPC must have true information, travel and real line of attack. Player death does not reset witnessed history within the same run; finalize erases run-local crime ledger together with residents under K8.
 
-## 17. World Situations: three distinct physical pilots, including criminal branch
+## 17. Historical diagnostic examples — not a three-site rollout limit
 
-A World Situation is an **observable physical state with interventions and causal outcomes**, not a quest, quest marker, extra reward pool or dialogue flag. Every case must document: actual room/anchor and floor; existing objects/stock IDs; actor origin and permission; initial machine/world state; what player sees **before F**; authorized independent actions; physical ledger and timeline result; possible ignore/leave/violence outcomes; save/restart and offline extension. A POI must still be worth exploring in a no-NPC baseline.
+**HISTORICAL EXAMPLES (three diagnostic cases only):** The Creator later required full-world eligible humans and all six authored context clusters; current §§34–38 control rollout. The examples below remain useful tests, NOT scope limits or completed machine claims. A World Situation is an **observable physical state with interventions and causal outcomes**, not a quest, quest marker, extra reward pool or dialogue flag. Every case must document: actual room/anchor and floor; existing objects/stock IDs; actor origin and permission; initial machine/world state; what player sees **before F**; authorized independent actions; physical ledger and timeline result; possible ignore/leave/violence outcomes; save/restart and offline extension. A POI must still be worth exploring in a no-NPC baseline.
 
 **WS-GW / Greywater 'people still live here':** Authored Long House, well with new rope, homes, smithy, loft and connecting cellar routes remain. Population pilot should show several distinct inhabitants moving among their real sites (some non-recruitable). One person may draw or carry water **only if** a valid K2 water source and water item custody are implemented; otherwise show a clearly ambient visual with *no hidden drinking/supply claim*. Player can loot ordinary legal G1B chests, explore cellars, trade from finite held goods, ignore villagers or recruit one consenting person; none of those requires a 'help well' dialogue. **B3 branch:** open theft/assault causes actual victim flight, loss of carried goods, witnessed protection and fewer working hands; do not spawn an infinite rescue task or respawn the killed character. Existing village stocks remain with their rightful physical owners.
 
@@ -201,7 +201,7 @@ A World Situation is an **observable physical state with interventions and causa
 
 **WS-RD / roadside actor and broken cart:** Put one truly navigable traveler with finite carried supplies and legitimate destination by an existing road/cart, not a fake NPC in every road sector. The player can observe and pass, trade, attempt repair *only if real cart/vehicle repair action and cost exist*, recruit if one person is eligible/consents, or steal held goods with real retaliation/detection. Breaking the cart or hurting traveler must not duplicate their goods or turn the person into a replenishable roadside source.
 
-**Reserved, NOT claimed implemented:** Ironholm (flooded mine and alternate hatches; real water and pump mechanics prerequisite), Argus (three separate Academy/Observatory/Archive POIs; readable authored information but no free bypass to deep card rooms), Delta (real water-system states prerequisite), Falls (electric machine/door and Core source under existing laws). Do not bake five independently scripted 'bring item -> get reward' events. The order of physical interventions can differ; solving an object before talking counts, and ignoring all three situations must not block survival, chest loot, Core crafting, research or Ragnarok non-boss routes.
+**Other four canonical clusters, also mandatory physical integration rather than optional backlog:** Ironholm (flooded mine and alternate hatches; real water and pump mechanics prerequisite), Argus (three separate Academy/Observatory/Archive POIs; readable authored information but no free bypass to deep card rooms), Delta (real water-system states prerequisite), Falls (electric machine/door and Core source under existing laws). Do not bake five independently scripted 'bring item -> get reward' events. The order of physical interventions can differ; solving an object before talking counts, and ignoring all six authored clusters must not block survival, chest loot, Core crafting, research or Ragnarok non-boss routes.
 
 ## 18. Cross-system seams and conflict matrix
 
@@ -228,7 +228,7 @@ Player can see why a worker stopped without a management spreadsheet: worker pre
 
 **Player-facing tests:** New Game permits a complete solo loot loop while ignoring every NPC; Greywater has activity before speaking; Slagworks mechanic does something physical; obtaining/recruiting resident requires own valid route/bed; ordered work outputs physically appear after actual inputs/time; theft/attack from an observed angle produces an understandable response and persists through restart; unwitnessed theft is not known magically; no loss/dupe of carried/shop stock. Human must see and play, not only pass scripts.
 
-## 20. Non-negotiable acceptance scenarios (not Agent handoff yet)
+## 20. Historical engineering acceptance cases (supplemented by §§35–38)
 
 | Case | Real action and measurable evidence | Hard FAIL |
 |---|---|---|
@@ -268,11 +268,11 @@ Test implementation must use current running Web Veyra and true player input for
 
 **Release condition:** demonstrate the encounter → desired rare possession → hard barter or refused deal → attempted robbery → credible combat/downed survival → witnessed community response → later hostile zone OR legitimate pursuit/ambush/home threat. Show the same actor and equipment survived reload. Do not launch a full Agent implementation only from this design text; first produce a clear scoped work order, active code seams and acceptance evidence.
 
-## 22. Reserved tuning / policy review boundary
+## 22. Historical tuning inventory — NOT an outstanding Creator questionnaire
 
 **LOCKED NOW:** living community A; voluntary optional recruitment, home in player-built base, genuine work/needs/defense, physical escort, actual item/input economy, offline causality, run-local reset, full chest preservation, no new map terrain mandate.
-**MEASURE LATER:** encountered NPC density, unique count per run, bed-to-worker limits beyond one bed each, hunger/thirst per hour, work shifts, job-time adjustments, senses, guard retreat thresholds, escort speed/spacing, rescue time window, rarity per source, source refresh, whether resident rescue grants *any* score (default NO), optional wider personality/social arcs.
-**NOT SCOPE V1:** city management or immigration waves, romance/marriage/children, NPC expeditions to unopened far-world POIs, unconstrained autonomous mining, AI freeform chat, fully simulated offscreen large-scale tactical combat, permanent cross-run companions, PvP human factions, extra maps/biomes, new resource IDs.
+**ENGINEERING TUNING (not Creator questions):** encountered NPC density, unique count per run, actual bed and job capacity, hunger/thirst per real hour, work schedules, reaction ranges, escort spacing, source budget and item scarcity. Rescue is tracked in run history with NO newly minted score/cash/leader currency. Extra psychological biographies/social arcs are out of scope by latest Creator direction. Concrete numbers must be tied to item economy and actual risk, with playtest tuning owned by engineering/Creator experience respectively.
+**NOT SCOPE V1:** mandatory city-management minigame or spontaneous infinite immigration, romance/marriage/children, NPC trips that bypass actual locked world access, unconstrained source-free autonomous mining, AI freeform chat, cosmetic 60fps rendering of the entire world while offline, permanent cross-run companions, PvP human factions, extra maps/biomes or resource IDs. **Creator 2B/6B remain in scope:** source-backed independent NPC work and companion expeditions; **Creator Ragnarok remains in scope:** bounded deterministic offscreen Elder impacts on humans. The exclusions cannot be cited to block those rights.
 
 **Closure rule:** this contract is SPEC_LOCKED, not code acceptance. No agent may report a real resident economy, home guard, survival AI or offline functionality as implemented without exact code SHA, physical source custody proof, focused tests and native/human observation.
 
