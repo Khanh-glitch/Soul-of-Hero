@@ -275,6 +275,8 @@ export interface RunState {
    *  GLOBAL tile coordinates. It is a table of its own (not `veyraOffscreenEntities`) so the 136 world objects never
    *  enter the structure scans that run inside every settlement slice. */
   g1b?: { version: 'g1b-v1'; rev: string; /** source-layout revision the run was last brought up to (absent = 1: the 130 round-1 sources) */ layout?: number; doors: Record<string, { closeAt: number }>; far: Record<string, Entity> };
+  /** THE LAST HUMANITY: authoritative run-local human society ledger (additive; absent = legacy solo run). */
+  humanWorld?: import('./humanworld').HumanWorld;
   natureTrees?: {tx:number;ty:number;until:number}[];
   spiritTransit?: { x:number; y:number; arriveAt:number; uid:string };
   terrain: Record<number, { t: number; until?: number; untilAt?: number }>; // K2 terrain mutations (burns, ice)

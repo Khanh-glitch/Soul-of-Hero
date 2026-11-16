@@ -37,6 +37,8 @@ import {
 import { syncVeyraEcosystemActors } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
+import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, finalizeHumanOutcomes, type HumanWorld } from './humanworld';
+import { NPC_POI_CENSUS } from './npc-census';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
 
@@ -355,6 +357,7 @@ export function startRun(gs: GameState, character: 'male' | 'female', now: numbe
     (r.veyraOffscreenEntities ??= {})[e.id]=e;
   }
   if (isVeyra05Layout(activeLayoutName)) seedG1b(r);
+  if (isVeyra05Layout(activeLayoutName)) seedHumanWorld(r);
   // B05 (loot-source-v2): measure physical access once from the real collision grid, record it, then roll initial stock.
   if (r.lootEcology?.grammar === LOOT_GRAMMAR_CURRENT) r.lootEcology.sourceContract = buildLootSourceContract(w, site => lootSiteAccess(r, site));
   for (const [s, c] of pendingRolls) {
@@ -1522,6 +1525,32 @@ function seedG1b(r: RunState) {
   r.g1b = { version: G1B_VERSION, rev: G1B_LOOT_REVISION, doors: {}, far: {} };
   g1bEnsureSources(r);
 }
+
+/** Derive global tile bounding boxes for the 81 census POIs from the G1B source sites.
+ *  The census is geometry input only (no population quota); the bbox is the footprint of
+ *  that site's source placements on the ground storey, used to place a finite human roster. */
+function derivePoiBboxes(): Record<string, [number, number, number, number]> {
+  const bx: Record<string, [number, number, number, number]> = {};
+  for (const s of G1B_SOURCE_SITES) {
+    const site = s.site; if (s.zone !== 'POI') continue;
+    const cur = bx[site];
+    const gx = s.gx, gy = s.gy;
+    if (cur) { cur[0] = Math.min(cur[0], gx); cur[1] = Math.min(cur[1], gy); cur[2] = Math.max(cur[2], gx); cur[3] = Math.max(cur[3], gy); }
+    else bx[site] = [gx, gy, gx, gy];
+  }
+  return bx;
+}
+
+/** Create and seed the authoritative run-local HumanWorld ledger from the 81-POI census. */
+export function seedHumanWorld(r: RunState): void {
+  const hw = newHumanWorld(r.id);
+  r.humanWorld = hw;
+  const bboxes = derivePoiBboxes();
+  const sites = NPC_POI_CENSUS
+    .filter(p => bboxes[p.id])
+    .map(p => ({ id: p.id, name: p.name, archetype: p.archetype, rooms: p.spaces, bbox: bboxes[p.id]! }));
+  seedPopulation(r, hw, sites);
+}
 /**
  * Brings a run up to the current source layout: every approved source id that the run does not have yet is created
  * CLOSED at cycle 0 (never rolled). Sources the run already has are not touched — their state, cycle, roll, contents and
@@ -2001,6 +2030,7 @@ export function endRun(gs: GameState, ending: 'evacuated' | 'abandoned' | 'expir
   const r = gs.run; if (!r || r.ended) return { ok: false, reason: 'No active run.' };
   if (ending === 'evacuated') award(gs, 'evacuated', now);
   if (ending === 'evacuated' && r.elderStones.length >= 6) award(gs, 'six_stones', now);
+  if (r.humanWorld) finalizeHumanOutcomes(r, r.humanWorld, now);
   r.ended = ending;
   gs.profile.history.unshift({ runId: r.id, character: r.character, startedAt: r.startedAt, endedAt: now, ending, score: r.score, stones: countStones(r), deposited: r.deposited, achievements: [...r.achievements], qa: r.qaUsed, verified: 'LOCAL/UNVERIFIED' });
   gs.profile.profileReceipts.push(`end:${r.id}:${ending}`);

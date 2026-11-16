@@ -753,6 +753,17 @@ export function validate(raw: any): GameState | null {
     }
     if (g1bSeen.size !== G1B_SOURCE_SITES.length + G1B_FIXTURES.length) return null;
   } else if (g1bSeen.size) return null;
+  // HumanWorld ownership: a human's personal pack/cart and a community's store containers are
+  // legitimate custody held by human actors (not entities). Mark them owned so the every-container
+  // invariant below is satisfied without weakening the entity-ownership rule.
+  if (r.humanWorld) {
+    for (const h of Object.values(r.humanWorld.people) as any[]) {
+      for (const c of [h?.inv?.pack?.id, h?.inv?.cart?.id]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
+    }
+    for (const comm of Object.values(r.humanWorld.communities) as any[]) {
+      for (const c of [...(comm?.storeContainers ?? []), ...(comm?.foodStores ?? [])]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
+    }
+  }
   if (Object.keys(r.custody).some(id => !ownedContainers.has(id))) return null;
   // CAL-01 world_calendar_v1 persistence policy — ONE explicit rule for every stored record:
   //   absent (pre-season save) -> reconstructed from the run clock, nothing granted;
