@@ -242,6 +242,34 @@ describe('NPC P0 corrective', () => {
     }
   });
 
+  it('accepted recruitment creates a real collision-aware companion follow route', () => {
+    const gs = startAt(921, 259);
+    const r = gs.run!;
+    const hw = r.humanWorld!;
+    const grid = blockGrid(r);
+    const o = r.sourceMap?.veyra?.originAu;
+    const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+    let lane: [number, number] | null = null;
+    for (let y = 10; y < WW - 10 && !lane; y++) for (let x = 10; x < WW - 18; x++) {
+      if (Array.from({ length: 8 }, (_, i) => grid[y * WW + x + i]).every(v => v === 0 || v === 4)) { lane = [x, y]; break; }
+    }
+    expect(lane).not.toBeNull();
+    const h = Object.values(hw.people)[0];
+    for (const other of Object.values(hw.people)) if (other !== h) other.state = 'DEAD';
+    h.gx = ox + lane![0]; h.gy = oy + lane![1]; h.floor = r.veyraFloor ?? 0; h.state = 'IDLE';
+    r.player.x = (lane![0] + 7.5) * TILE; r.player.y = (lane![1] + 0.5) * TILE;
+    setFollowing(r, hw, h, true, T0 + 1000);
+    const start = h.gx;
+    for (let i = 0; i < 20; i++) stepHumans(r, hw, T0 + (i + 1) * 60000);
+    expect(h.following).toBe(true);
+    expect(h.gx).toBeGreaterThan(start);
+    expect(Math.abs(h.gx - (ox + Math.floor(r.player.x / TILE))) + Math.abs(h.gy - (oy + Math.floor(r.player.y / TILE)))).toBe(1);
+    expect(h.intent?.kind).toBe('follow');
+    expect(dispatch(gs, { id: 'human-dismiss-test', type: 'humanDismiss', actorId: h.actorId }, T0 + 1200001).ok).toBe(true);
+    expect(h.following).toBe(false);
+    expect(h.intent).toBeUndefined();
+  });
+
   it('P0.7: companion refusal is deterministic across reload for the same orderId', () => {
     const gs = startAt(921, 259);
     const r = gs.run!;

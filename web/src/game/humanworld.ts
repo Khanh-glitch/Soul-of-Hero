@@ -914,7 +914,14 @@ export function recruitHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: n
 
 export function setFollowing(r: RunState, hw: HumanWorld, h: HumanRecord, follow: boolean, now: number): void {
   h.following = follow;
-  if (!follow) h.followOrder = undefined;
+  if (follow) {
+    h.state = 'IDLE';
+    h.intent = { intentId: `follow:${h.actorId}:${now}`, actorId: h.actorId, kind: 'follow', preconditions: ['accepted companion recruitment'], reserved: [], startAt: now, dueAt: now, route: [] };
+  } else {
+    h.followOrder = undefined;
+    if (h.intent?.kind === 'follow') h.intent = undefined;
+    if (h.state === 'MOVING') h.state = 'IDLE';
+  }
   receipt(r, now, 'human.follow', `${h.actorId}:${follow ? 'on' : 'off'}`);
 }
 
@@ -1129,6 +1136,33 @@ function countOutcomes(hw: HumanWorld): HumanOutcomeSummary {
 /** Advance every human's autonomous behavior for one tick. Does NOT touch player XP or
  *  player-exploration loot. Movement is tile-step toward an intent target (no teleport). */
 function humanCellKey(floor: number, gx: number, gy: number): string { return `${floor}:${gx}:${gy}`; }
+function companionRoute(r: RunState, h: HumanRecord, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): { tx: number; ty: number; floor: number }[] | null {
+  const floor = r.veyraFloor ?? 0;
+  if (h.floor !== floor) return null;
+  const sx = h.gx - ox, sy = h.gy - oy;
+  const px = Math.floor(r.player.x / TILE), py = Math.floor(r.player.y / TILE);
+  if (sx < 0 || sy < 0 || sx >= WW || sy >= WH || px < 0 || py < 0 || px >= WW || py >= WH) return null;
+  const size = WW * WH, parent = new Int32Array(size); parent.fill(-2);
+  const queue = new Int32Array(size); let head = 0, tail = 0;
+  const start = sy * WW + sx; parent[start] = -1; queue[tail++] = start;
+  let goal = -1;
+  while (head < tail) {
+    const at = queue[head++], x = at % WW, y = Math.floor(at / WW);
+    if (Math.abs(x - px) + Math.abs(y - py) === 1) { goal = at; break; }
+    for (const [dx, dy] of [[0,-1],[1,0],[0,1],[-1,0]] as const) {
+      const nx = x + dx, ny = y + dy;
+      if (nx < 1 || ny < 1 || nx >= WW - 1 || ny >= WH - 1) continue;
+      const ni = ny * WW + nx;
+      if (parent[ni] !== -2 || !(grid[ni] === 0 || grid[ni] === 4) || occupied.has(humanCellKey(floor, ox + nx, oy + ny))) continue;
+      parent[ni] = at; queue[tail++] = ni;
+    }
+  }
+  if (goal < 0 || goal === start) return goal === start ? [] : null;
+  const path: number[] = [];
+  for (let at = goal; at !== start; at = parent[at]) path.push(at);
+  path.reverse();
+  return path.map(i => ({ tx: ox + i % WW, ty: oy + Math.floor(i / WW), floor }));
+}
 function canHumanOccupy(r: RunState, h: HumanRecord, gx: number, gy: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): boolean {
   if (h.floor !== (r.veyraFloor ?? 0) || occupied.has(humanCellKey(h.floor, gx, gy))) return false;
   const lx = gx - ox, ly = gy - oy;
@@ -1142,11 +1176,20 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   if (dtMs <= 0) return;
   hw.lastStepAt = now;
   const actors = Object.values(hw.people);
-  const hasMovement = actors.some(h => h.state === 'MOVING' && !!h.intent?.route?.length);
+  const hasMovement = actors.some(h => h.state === 'MOVING' && !!h.intent?.route?.length) || actors.some(h => h.following && h.state === 'IDLE');
   const grid = hasMovement ? blockGrid(r) : new Uint8Array(0);
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
   const occupied = hasMovement ? new Set(actors.filter(h => h.state !== 'DEAD' && h.state !== 'EVACUATED').map(h => humanCellKey(h.floor, h.gx, h.gy))) : new Set<string>();
+  const playerGx = ox + Math.floor(r.player.x / TILE), playerGy = oy + Math.floor(r.player.y / TILE);
+  for (const h of actors) {
+    if (!h.following || h.state !== 'IDLE' || h.intent?.kind !== 'follow') continue;
+    if (h.floor !== (r.veyraFloor ?? 0)) { h.intent.blockReason = 'cannot follow across floors yet'; continue; }
+    if (Math.abs(h.gx - playerGx) + Math.abs(h.gy - playerGy) <= 1) { h.intent.route = []; h.intent.blockReason = undefined; continue; }
+    const route = companionRoute(r, h, grid, ox, oy, occupied);
+    if (!route) { h.intent.blockReason = 'no walkable route to the player in this window'; continue; }
+    h.intent.route = route; h.state = route.length ? 'MOVING' : 'IDLE'; h.intent.blockReason = undefined;
+  }
   for (const h of Object.values(hw.people)) {
     if (h.state === 'DEAD' || h.state === 'EVACUATED') continue;
     // 1. Survival consume: eat when hungry, drink when thirsty.
@@ -1170,10 +1213,13 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
     // 4. Movement: step toward intent route target (tile-by-tile, no teleport).
     if (h.state === 'MOVING' && h.intent?.route && h.intent.route.length) {
       const next = h.intent.route[0];
-      const dx = (h.gx + 0.5) - next.tx, dy = (h.gy + 0.5) - next.ty;
-      if (Math.hypot(dx, dy) <= 1.0) {
+      if (h.gx === next.tx && h.gy === next.ty) {
         h.intent.route.shift();
-        if (h.intent.route.length === 0) { h.state = 'IDLE'; h.intent = undefined; }
+        if (h.intent.route.length === 0) {
+          h.state = 'IDLE';
+          if (h.intent.kind === 'follow') h.intent.route = [];
+          else h.intent = undefined;
+        }
       } else {
         // Cardinal tile step only: respect the compiled active-floor collision grid, window
         // bounds, and other living bodies. Closed doors/solid props remain blockers.

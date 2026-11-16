@@ -21,7 +21,7 @@ export function HumanPanel({ api, actorId, onClose }: { api: Api; actorId: strin
     <div style={{ display: 'flex', gap: 3, marginBottom: 5 }}>
       <button className="btn sm" onClick={() => act('humanTalk')}>Talk</button>
       <button className="btn sm" onClick={() => act('humanThreaten')}>Threaten</button>
-      <button className="btn sm" onClick={() => act('humanRecruit')}>{h.following ? 'Companion' : 'Recruit'}</button>
+      <button className="btn sm" onClick={() => act(h.following ? 'humanDismiss' : 'humanRecruit')}>{h.following ? 'Dismiss' : 'Recruit'}</button>
     </div>
     {isDown ? <button className="btn sm" style={{ width: '100%', marginBottom: 4 }} onClick={() => act('humanLoot')}>Recover carried items</button> : <>
       <div style={{ fontWeight: 700, margin: '3px 0' }}>Barter · swap one whole stack each</div>
