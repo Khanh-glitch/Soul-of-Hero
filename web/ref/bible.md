@@ -21,7 +21,7 @@
 
 **Kết thúc run:** bảo toàn sơ tán player, sáu đá, Ragnarok Cash/Rương ký gửi và luật K8 full wipe. Kết quả NPC (đã sơ tán, sống sót tới cuối, chết, chưa xác nhận) là trạng thái/ghi nhận trong run, không mang người/Core/vật phẩm qua run, không tự phát sinh điểm/xu, leaderboard hay hệ nhiệm vụ khác. Cơ chế kết quả cần tương thích `endRun` hiện hành, nơi player sơ tán đang kết thúc run ngay.
 
-**Đặc tả NPC duy nhất:** [SURVIVOR_SETTLEMENT_CONTRACT_V1_20261115.md](survivors/SURVIVOR_SETTLEMENT_CONTRACT_V1_20261115.md), đặc biệt §§27–37. Các đề xuất cũ về tiểu sử từng người, gia đình, animation riêng từng công việc hoặc chỉ một phương án cứu người bị thay thế bởi quyết định mới. Điều khoản cần tự tính (NPC count/HP/hunger/route budget) thuộc Control Tower/Agent, **không gửi Creator bảng số để duyệt thay**. GAMEPLAY CHƯA IMPLEMENTED, chưa được Creator chấp nhận trải nghiệm, và PR #64 vẫn Draft.
+**Đặc tả NPC duy nhất:** [SURVIVOR_SETTLEMENT_CONTRACT_V1_20261115.md](survivors/SURVIVOR_SETTLEMENT_CONTRACT_V1_20261115.md), đặc biệt §§27–38. Các đề xuất cũ về tiểu sử từng người, gia đình, animation riêng từng công việc hoặc chỉ một phương án cứu người bị thay thế bởi quyết định mới. Điều khoản cần tự tính (NPC count/HP/hunger/route budget) thuộc Control Tower/Agent, **không gửi Creator bảng số để duyệt thay**. GAMEPLAY CHƯA IMPLEMENTED, chưa được Creator chấp nhận trải nghiệm, và PR #64 vẫn Draft.
 
 ## 0. ĐỌC NHƯ THẾ NÀO — VAI TRÒ VÀ RANH GIỚI
 
