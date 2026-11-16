@@ -37,7 +37,7 @@ import {
 import { syncVeyraEcosystemActors, VEYRA_PRIMORDIAL_SITES, resolvePrimordialGlobalTile } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
-import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerEvacuate, type HumanWorld } from './humanworld';
+import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerEvacuate, talkToHuman, threatenHuman, recruitHuman, exchangeHumanStacks, lootHuman, type HumanWorld } from './humanworld';
 import { NPC_POI_CENSUS } from './npc-census';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
@@ -1571,7 +1571,9 @@ export function seedHumanWorld(r: RunState): void {
           if (!blocked.has(`${gx},${gy}`)) spawnTiles.push([gx, gy]);
         }
       }
-      return { id: p.id, name: p.name, archetype: p.archetype, rooms: p.spaces, bbox: bboxes[p.id]!, spawnTiles };
+      const stationByProp: Record<string, string> = { hearth: 'campfire', forge: 'furnace', furnace_big: 'large_furnace', anvil: 'workbench' };
+      const stationTiles = compiled?.plan.props.filter(v => v.level === 0 && stationByProp[v.kind]).map(v => ({ gx: v.x, gy: v.y, struct: stationByProp[v.kind] })) ?? [];
+      return { id: p.id, name: p.name, archetype: p.archetype, rooms: p.spaces, bbox: bboxes[p.id]!, spawnTiles, stationTiles };
     });
   const elderLairs = Object.fromEntries(VEYRA_PRIMORDIAL_SITES.map(site => {
     const loc = resolvePrimordialGlobalTile(site);
@@ -2334,6 +2336,24 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
   const p = r.player; const ok = (kind: string, detail: string, msg?: string): Result => ({ ok: true, receipt: receipt(r, now, kind, detail), msg });
   if (p.dead && !['respawn', 'abandon', 'qaAdvance'].includes(it.type)) return fail('You are dead.');
   switch (it.type) {
+    case 'humanTalk': case 'humanThreaten': case 'humanRecruit': case 'humanExchange': case 'humanLoot': {
+      const hw = r.humanWorld as HumanWorld | undefined;
+      const h = hw?.people[it.actorId];
+      if (!hw || !h) return fail('Survivor is no longer here.');
+      const [ox, oy] = windowOrigin(r);
+      const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
+      if (h.floor !== activeFloor(r) || Math.hypot(p.x - hx, p.y - hy) > 3.2 * TILE || !clearWallLine(r, p, { x: hx, y: hy })) return fail('Move closer; the survivor is not reachable from here.');
+      const latestReceipt = () => r.receipts.at(-1)?.id ?? it.id;
+      if (it.type === 'humanTalk') { const msg = talkToHuman(r, hw, h, now); return { ok: true, receipt: latestReceipt(), msg }; }
+      if (it.type === 'humanThreaten') { const out = threatenHuman(r, hw, h, now); return out.ok ? { ok: true, receipt: latestReceipt(), msg: 'They will remember this.' } : fail(out.reason ?? 'Threat failed.'); }
+      if (it.type === 'humanRecruit') { const out = recruitHuman(r, hw, h, now); return out.ok ? { ok: true, receipt: latestReceipt(), msg: `${h.name} joined you.` } : fail(out.reason ?? 'Recruitment refused.'); }
+      if (it.type === 'humanExchange') {
+        const out = exchangeHumanStacks(r, hw, h, Number(it.playerSlot), Number(it.humanSlot), now);
+        return out.ok ? { ok: true, receipt: latestReceipt(), msg: 'Items exchanged; both stack identities were preserved.' } : fail(out.reason ?? 'Trade refused.');
+      }
+      const out = lootHuman(r, hw, h, now, 'inv');
+      return out.taken ? { ok: true, receipt: latestReceipt(), msg: `Recovered ${out.taken} item${out.taken === 1 ? '' : 's'}.` } : fail(out.reason ?? 'Nothing recovered.');
+    }
     case 'respawn': return respawn(gs, now);
     case 'restStart': return startRest(gs, it, now);
     case 'restCancel': { if (!r.rest) return { ok: false, reason: 'You are not resting.' }; endRest(r, now, 'woke by choice'); return { ok: true, receipt: receipt(r, now, 'rest.cancel', it.id), msg: 'You wake up.' }; }

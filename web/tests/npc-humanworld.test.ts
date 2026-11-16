@@ -44,9 +44,22 @@ describe('NPC HumanWorld ledger', () => {
     expect(Object.keys(hw.people).length).toBeLessThan(300);
     // Every seeded community maps back to a census POI id.
     const poiIds = new Set(NPC_POI_CENSUS.map(p => p.id));
+    const allEntities = { ...r.entities, ...(r.veyraOffscreenEntities ?? {}) };
     for (const comm of Object.values(hw.communities)) {
       expect(poiIds.has(comm.poi)).toBe(true);
+      if (comm.storeEntityId) {
+        const store = allEntities[comm.storeEntityId];
+        expect(store?.kind).toBe('bag');
+        expect(comm.storeContainers).toContain(store?.c);
+        expect(r.custody[store?.c ?? '']?.kind).toBe('bag');
+      }
+      for (const stationId of comm.workStations) {
+        expect(allEntities[stationId]?.kind).toBe('struct');
+        expect(allEntities[stationId]?.station).toBeTruthy();
+      }
     }
+    expect(Object.values(hw.communities).some(c => c.storeEntityId)).toBe(true);
+    expect(Object.values(hw.communities).some(c => c.workStations.length > 0)).toBe(true);
     // Every human is a ledger actor, NOT a creature and NOT an entity.
     const creatureIds = new Set(r.creatures.map(m => m.id));
     const entityIds = new Set(Object.keys(r.entities));

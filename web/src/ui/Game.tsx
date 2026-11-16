@@ -41,6 +41,7 @@ import { evaluateFieldNotes, readFieldNoteStore, writeFieldNoteStore, type Field
 import { FieldNoteCard, FieldNotesPanel } from './FieldNotes';
 import { ReturnDigest } from './ReturnChronicle';
 import { RestPanel } from './RestPanel';
+import { HumanPanel } from './HumanPanel';
 import { InventoryPanel, ContainerPanel, CraftPanel, BuildPanel, MapPanel, SkillsPanel, MenuPanel, VendorPanel, EscrowPanel, EvacPanel, ReportPanel } from './panels';
 import { deriveCues } from '../game/presentation-cues';
 import { experienceForPhase, experienceFromCue, stagedExperience, type ExperienceEvent } from '../game/experience';
@@ -345,6 +346,7 @@ export default function Game({
       case 'g1b:gen': act('g1bGenerator', { eid: t.eid }); return;
       case 'gen': act('generator', { eid: t.eid }); act('observeGate', { eid: t.eid }); return;
       case 'evac': setPanel({ kind: 'evac', eid: t.eid }); return;
+      case 'human': if (t.eid) setPanel({ kind: 'human', actorId: t.eid }); return;
     }
     if (e && e.kind === 'struct') {
       const d = STRUCTS[e.type!];
@@ -885,6 +887,7 @@ export default function Game({
       {panel?.kind === 'escrow' && panel.eid && <EscrowPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'rest' && panel.eid && <RestPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'evac' && panel.eid && <EvacPanel api={api} eid={panel.eid} />}
+      {panel?.kind === 'human' && panel.actorId && <HumanPanel api={api} actorId={panel.actorId} onClose={() => setPanel(null)} />}
       {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} report={panel.report ?? null} history={returnHistory} />}
       <DragGhost />
       {p.dead && <DeathRecoveryOverlay gs={gs} onRespawn={() => act('respawn')} />}

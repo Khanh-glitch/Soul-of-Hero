@@ -19,7 +19,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { tickNeeds, advanceElderPressure, stepHumans, stepHumanCombat, applyDamage as applyHumanDamage } from './humanworld';
+import { tickNeeds, advanceElderPressure, stepHumans, stepHumanCombat, applyDamage as applyHumanDamage, recordIncident } from './humanworld';
 import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -1362,6 +1362,17 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
     const h = HAZ[i]; if(h.expiresSimMs!==undefined && r.clock.simMs>=h.expiresSimMs){HAZ.splice(i,1);continue;} h.t += dtMs; if (h.t < h.tell) continue;
     const first = !h.done; h.done = true;
     if (first) onHazActivate(gs, h, now);
+    if (h.owner === 'player' && h.dmg > 0 && r.humanWorld) {
+      const [ox, oy] = windowOrigin(r);
+      for (const person of Object.values(r.humanWorld.people)) {
+        if (person.state === 'DEAD' || person.state === 'EVACUATED' || person.floor !== fl || (h as any)[`human_${person.actorId}`]) continue;
+        const hx = (person.gx - ox + 0.5) * TILE, hy = (person.gy - oy + 0.5) * TILE;
+        if (inHaz(h, hx, hy) && clearPhysicalLine(r, h, { x: hx, y: hy }, true)) {
+          (h as any)[`human_${person.actorId}`] = 1;
+          applyHumanDamage(r, r.humanWorld, person, h.dmg, Math.atan2(hy - h.y, hx - h.x), now, 'player', 'player', fl);
+        }
+      }
+    }
     if(h.owner==='player' && h.effect==='spiritBeam'){if(p.dead || (p.channelUntil||0)<=now){HAZ.splice(i,1);continue;}for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)&&now>=(m.beamHitNext||0)){m.beamHitNext=now+BAL.creatorCoreDemon.beamTickMs;if(damageCreature(gs,m,h.dmg,h.angle||0,now,0))fx('spiritHit',{x:m.x,y:m.y});}if(now>=((h as any).summonTickNext||0)){(h as any).summonTickNext=now+BAL.creatorCoreDemon.beamTickMs;damagePrimordialSummonsAoE(r,h.x,h.y,h.len||0,h.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true),(sx,sy)=>inHaz(h,sx,sy));}}
     else if(h.owner==='player' && h.effect==='mjolnirPull'){for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){const a=Math.atan2(h.y-m.y,h.x-m.x),step=Math.min(dist(h.x,h.y,m.x,m.y),BAL.creatorCoreMjolnir.attractSpeed*dtMs/1000*(m.elder?0.15:1));moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}}
     else if(h.owner==='player' && h.effect==='natureRoot'){for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){m.rootedUntil=Math.max(m.rootedUntil||0,Math.min(now+150,now+Math.max(0,h.tell+h.dur-h.t)));if(now >= (m.rootHitNext||0)){m.rootHitNext=now+BAL.creatorCoreEarthmother.rootTickMs;damageCreature(gs,m,h.dmg,0,now,0);}}if(now>=((h as any).summonRootNext||0)){(h as any).summonRootNext=now+BAL.creatorCoreEarthmother.rootTickMs;damagePrimordialSummonsAoE(r,h.x,h.y,h.r||0,h.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true),(sx,sy)=>inHaz(h,sx,sy));}}
@@ -1546,7 +1557,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { const ci = +k; settleRegrowthAt(r, ci % WW, Math.floor(ci / WW), m.untilAt ?? t); delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
     stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
-    if (r.humanWorld) { tickNeeds(r, r.humanWorld, t); advanceElderPressure(r, r.humanWorld, t); stepHumans(r, r.humanWorld, t); stepHumanCombat(r, r.humanWorld, t); }
+    if (r.humanWorld) { tickNeeds(r, r.humanWorld, t); advanceElderPressure(r, r.humanWorld, t); stepHumans(r, r.humanWorld, t); if (visual) stepHumanCombat(r, r.humanWorld, t, (m, dmg, angle) => damageCreature(gs, m, dmg, angle, t)); }
     syncDrops(t);
     stepNatureTrees(r,t);
   }
@@ -1601,6 +1612,29 @@ function tickDragonDive(gs: GameState, dtMs: number, now: number) {
 }
 
 // ---------- main tick ----------
+function tickHumanHostility(gs: GameState, now: number): void {
+  const r = gs.run, hw = r?.humanWorld;
+  if (!r || !hw || r.player.dead) return;
+  const [ox, oy] = windowOrigin(r), floor = activeFloor(r);
+  for (const h of Object.values(hw.people)) {
+    if (h.state !== 'FIGHTING' || h.intent?.target !== 'player' || h.floor !== floor) continue;
+    const w = h.equip.weapon ? ITEMS[h.equip.weapon.key] : undefined;
+    const reach = w?.reach ?? 20, cadence = w?.swing ?? 450;
+    if (now - (h.lastAttackAt ?? -Infinity) < cadence) continue;
+    const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
+    const dx = r.player.x - hx, dy = r.player.y - hy, d = Math.hypot(dx, dy);
+    if (d > reach + 8 || !clearPhysicalLine(r, { x: hx, y: hy }, r.player, true)) continue;
+    const facing = h.dir === 0 ? Math.PI / 2 : h.dir === 1 ? Math.PI : h.dir === 2 ? 0 : -Math.PI / 2;
+    const angle = Math.atan2(dy, dx), delta = Math.abs(Math.atan2(Math.sin(angle - facing), Math.cos(angle - facing)));
+    if (delta > (w?.arc ?? 1.4) / 2 + 0.2) continue;
+    h.lastAttackAt = now;
+    if (!hurtPlayer(gs, w?.dmg ?? 4, hx, hy, 'human assault', now, 90)) continue;
+    if (h.equip.weapon?.dur !== undefined) { h.equip.weapon.dur = Math.max(0, h.equip.weapon.dur - 1); if (h.equip.weapon.dur === 0) h.equip.weapon = null; }
+    h.trust = 0;
+    recordIncident(r, hw, { kind: 'assault', victim: 'player', aggressor: h.actorId, witnesses: [], at: now, place: { tx: h.gx, ty: h.gy, floor: h.floor }, injury: true, resolved: false }, now);
+  }
+}
+
 export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   syncVeyraPlacement(gs.run);
   const r = gs.run; if (!r || r.ended) return;
@@ -1619,6 +1653,8 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   tickPlayer(gs, inp, dtMs, now);
   if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
   tickCreatures(gs, dtMs, now);
+  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle) => damageCreature(gs, m, dmg, angle, now));
+  tickHumanHostility(gs, now);
   tickDragonDive(gs, dtMs, now);
   tickTurrets(gs, dtMs, now);
   tickProj(gs, dtMs, now);
@@ -1919,6 +1955,17 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     else continue;
     if((e.kind==='door'||e.kind==='gen') && (effTile(r,tileOf(p.x),tileOf(p.y))===T.TOXIC || (getWorld().zone[tileOf(p.y)*WW+tileOf(p.x)]===7 && effTile(r,tileOf(p.x),tileOf(p.y))===T.FLOOR)))label+=' · radiation exposure';
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };
+  }
+  if (r.humanWorld) {
+    const [ox, oy] = windowOrigin(r);
+    for (const h of Object.values(r.humanWorld.people)) {
+      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== activeFloor(r)) continue;
+      const x = (h.gx - ox + 0.5) * TILE, y = (h.gy - oy + 0.5) * TILE;
+      const d = dist(fx0, fy0, x, y);
+      if (d > bd || !clearInteraction(r, { x, y })) continue;
+      bd = d;
+      best = { kind: 'human', label: `${h.name} · ${h.state.toLowerCase()} · F talk`, eid: h.actorId, x, y };
+    }
   }
   for (const key in r.sources) { const st=r.sources[key]; if(!st.fire || st.fire<=r.clock.simMs)continue; const i=+key,x=(i%WW)*TILE+8,y=Math.floor(i/WW)*TILE+8,d=dist(fx0,fy0,x,y); if(d<bd && dist(p.x,p.y,x,y)<=2.2*TILE && clearInteraction(r,{x,y})){bd=d;best={kind:'fire',label:'Douse burning tree (1 flask water)',x,y};} }
   if (!best) { const w = getWorld(); for (const [dx, dy] of [[0, 0], [Math.cos(p.aim) * 14, Math.sin(p.aim) * 14], [0, 12], [0, -12], [12, 0], [-12, 0]]) { const tx = tileOf(p.x + dx), ty = tileOf(p.y + dy); if (w.fresh[ty * WW + tx] && effTile(r, tx, ty) !== T.ICE && [T.SHALLOW, T.RIVER].includes(effTile(r, tx, ty))) return { kind: 'water', label: 'Drink fresh water', x: tx * TILE + 8, y: ty * TILE + 8 }; } }

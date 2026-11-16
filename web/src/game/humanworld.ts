@@ -18,9 +18,9 @@
  *  - Legacy runs without `humanWorld` remain solo-compatible; new runs seed finite source-authorized
  *    humans. No retroactive population/loot mint on old saves.
  */
-import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir } from './core';
+import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
 import { ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, isSheltered, roofRoom } from './engine';
+import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 
@@ -147,6 +147,10 @@ export interface HumanRecord {
   // companion
   following?: boolean;
   followOrder?: { orderId: string; result: OrderResult; reason: string; at: number };
+  /** Persistent social standing with the player; changes only through witnessed social acts. */
+  trust?: number;
+  lastAttackAt?: number;
+  lastDamageAt?: number;
 }
 export interface Community {
   id: string;
@@ -157,6 +161,9 @@ export interface Community {
   foodStores: string[];       // container ids
   workStations: string[];     // station entity ids
   storeContainers: string[];  // community store container ids
+  /** Global tile backing the physical store entity and access check. */
+  storeTile?: [number, number];
+  storeEntityId?: string;
   memberIds: string[];
   threat: number;             // 0..1 local threat level
 }
@@ -313,6 +320,7 @@ export function makeHuman(r: RunState, hw: HumanWorld, opts: {
     core: opts.core,
     disposition_known: { observedSources: [], witnesses: [], incidents: [], knownPeople: [], playerHomeKnown: false },
     protectedPeople: opts.protectedPeople ?? [],
+    trust: 50,
     lastCommittedAt: r.clock.lastSimAt, lastSimAt: r.clock.lastSimAt,
   };
   hw.people[id] = h;
@@ -456,7 +464,7 @@ function communityStock(cls: SiteClass, rooms: number): Record<string, number> {
 
 /** Classify a POI from its archetype and seed a finite community.
  *  `sites` carries authored global bounds plus walkable room-interior spawn tiles. */
-export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string; name: string; archetype: string; rooms: number; bbox: [number, number, number, number]; spawnTiles?: [number, number][] }[], elderLairs?: Record<string, { gx: number; gy: number; floor: number }>, authoredEvacPositions?: Record<string, [number, number]>): void {
+export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string; name: string; archetype: string; rooms: number; bbox: [number, number, number, number]; spawnTiles?: [number, number][]; stationTiles?: { gx: number; gy: number; struct: string }[] }[], elderLairs?: Record<string, { gx: number; gy: number; floor: number }>, authoredEvacPositions?: Record<string, [number, number]>): void {
   // Boarding coordinates are global and keyed by authored POI identity, never active-window order.
   const evacPositions: Record<string, [number, number]> = { ...(authoredEvacPositions ?? {}) };
   if (!authoredEvacPositions) {
@@ -480,9 +488,16 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
       hw.communities[site.id] = { id: site.id, poi: site.id, class: cls, homeBeds: [], waterSources: [], foodStores: [], workStations: [], storeContainers: [], memberIds: [], threat: 0 };
       continue;
     }
-    // Community store (finite stock, registered origin) + a bed container (home).
+    const tiles = site.spawnTiles ?? [];
+    const storeTile = tiles.find(([gx, gy]) => !occupiedSpawnTiles.has(`${gx},${gy}`));
+    if (!storeTile) {
+      hw.communities[site.id] = { id: site.id, poi: site.id, class: 'INACCESSIBLE_OR_UNVERIFIED', homeBeds: [], waterSources: [], foodStores: [], workStations: [], storeContainers: [], memberIds: [], threat: 0 };
+      continue;
+    }
+    occupiedSpawnTiles.add(`${storeTile[0]},${storeTile[1]}`);
+    // Community store (finite stock, registered origin) is a real container on a real POI tile.
     const communityId = `com:${site.id}`;
-    const store = mkContainer(r, 'loot', 10);
+    const store = mkContainer(r, 'bag', 10);
     const bed = mkContainer(r, 'chest', 4);
     const stock = communityStock(cls, site.rooms);
     for (const [k, q] of Object.entries(stock)) addItem(r, store.id, k, q);
@@ -490,11 +505,45 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
       id: communityId, poi: site.id, class: cls, homeBeds: [bed.id],
       waterSources: [store.id],  // physical container custody is the only stock authority
       foodStores: [store.id],
-      workStations: [],           // work blocks honestly until a physical station/recipe is authored
-      storeContainers: [store.id], memberIds: [], threat: cls === 'HOSTILE_OR_DANGEROUS' ? 0.7 : 0.2,
+      workStations: [],
+      storeContainers: [store.id], storeTile, memberIds: [], threat: cls === 'HOSTILE_OR_DANGEROUS' ? 0.7 : 0.2,
     };
+    const storeEntityId = uid(r, 'e');
+    comm.storeEntityId = storeEntityId;
+    const origin = r.sourceMap?.veyra?.originAu;
+    const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+    const lx = storeTile[0] - ox, ly = storeTile[1] - oy;
+    const storeEntity: Entity = { id: storeEntityId, kind: 'bag', x: storeTile[0] * TILE + 8, y: storeTile[1] * TILE + 8, tx: storeTile[0], ty: storeTile[1], c: store.id, label: `${site.name} Community Store`, poi: site.id };
+    if (lx >= 1 && ly >= 1 && lx < WW - 1 && ly < WH - 1) {
+      storeEntity.x = lx * TILE + 8; storeEntity.y = ly * TILE + 8; storeEntity.tx = lx; storeEntity.ty = ly;
+      r.entities[storeEntity.id] = storeEntity;
+    } else {
+      (r.veyraOffscreenEntities ??= {})[storeEntity.id] = storeEntity;
+    }
     hw.communities[communityId] = comm;
-    // Seed humans at a tile inside the POI bbox (ground floor).
+    // Materialize each authored production prop as a real, finite station entity with
+    // its own custody; NPC work and player craft use the same station authority.
+    for (const authored of site.stationTiles ?? []) {
+      const key = `${authored.gx},${authored.gy}`;
+      if (occupiedSpawnTiles.has(key)) continue;
+      if (!['campfire', 'furnace', 'large_furnace', 'workbench'].includes(authored.struct)) continue;
+      occupiedSpawnTiles.add(key);
+      const stationId = uid(r, 'e');
+      const station: Entity = {
+        id: stationId, kind: 'struct', type: authored.struct, tx: authored.gx, ty: authored.gy,
+        x: authored.gx * TILE + 8, y: authored.gy * TILE + 8, hp: 180, maxHp: 180,
+        poi: site.id, label: `${site.name} ${authored.struct.replace('_', ' ')}`,
+        station: { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id },
+      };
+      const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+      const lx = authored.gx - ox, ly = authored.gy - oy;
+      if (lx >= 1 && ly >= 1 && lx < WW - 1 && ly < WH - 1) {
+        station.tx = lx; station.ty = ly; station.x = lx * TILE + 8; station.y = ly * TILE + 8;
+        r.entities[stationId] = station;
+      } else (r.veyraOffscreenEntities ??= {})[stationId] = station;
+      comm.workStations.push(stationId);
+    }
+    // Seed humans at walkable room-interior tiles on the ground floor.
     const roster = rosterFor(cls, site.rooms, rng);
     const [bx0, by0, bx1, by1] = site.bbox;
     let placed = 0;
@@ -745,19 +794,18 @@ export function killHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
   h.hp = 0;
   h.outcome = 'DEAD';
   // One recoverable corpse bag entity (kind 'bag') with its own custody container.
-  const corpseC = mkContainer(r, 'bag', 8);
+  const corpseC = mkContainer(r, 'bag', humanPack(r, h).slots.length + 5);
   const bag: Entity = { id: uid(r, 'e'), kind: 'bag', x: h.gx * TILE + 8, y: h.gy * TILE + 8, tx: h.gx, ty: h.gy, c: corpseC.id, born: now };
   if (r.veyraFloor) (bag as any).floor = r.veyraFloor;
   r.entities[bag.id] = bag;
   {
-    // Transfer carried pack stacks by UID (K1: a whole stack keeps its UID on move).
-    for (const s of [...humanPack(r, h).slots]) {
-      if (s) { if (!addStack(r, corpseC.id, s)) { /* no room: leave on the ground bag */ } }
-    }
-    // Equipped items also drop (weapon + armor) — they are physical possessions.
-    for (const slot of ['weapon', 'body', 'head', 'legs', 'feet'] as const) {
-      const st = h.equip[slot]; if (st && !addStack(r, corpseC.id, st)) { /* keep if no room */ }
-    }
+    // Transfer carried/equipped stacks by moving the same object and UID. addStack is
+    // intentionally unsuitable here because K1 correctly rejects a UID still owned
+    // by the source container.
+    const sources: (Stack | null)[] = [...humanPack(r, h).slots];
+    for (const slot of ['weapon', 'body', 'head', 'legs', 'feet'] as const) sources.push(h.equip[slot]);
+    let dest = 0;
+    for (const stack of sources) if (stack) corpseC.slots[dest++] = stack;
   }
   humanPack(r, h).slots.fill(null);
   h.equip = { head: null, body: null, legs: null, feet: null, weapon: null };
@@ -769,6 +817,21 @@ export function killHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
 // Trade — real item exchange through K1 custody; refusal by state.
 // ---------------------------------------------------------------------------
 export type TradeResult = { ok: boolean; reason?: string; transferred?: number };
+
+/** Equal-stack barter. Both stacks move by identity; neither side mints or destroys stock. */
+export function exchangeHumanStacks(r: RunState, hw: HumanWorld, h: HumanRecord, playerSlot: number, humanSlot: number, now: number): TradeResult {
+  if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'FIGHTING') return { ok: false, reason: 'not safe to trade' };
+  const player = r.custody.inv, pack = humanPack(r, h);
+  if (!player || playerSlot < 0 || humanSlot < 0 || playerSlot >= player.slots.length || humanSlot >= pack.slots.length) return { ok: false, reason: 'stale trade selection' };
+  const offered = player.slots[playerSlot], requested = pack.slots[humanSlot];
+  if (!offered || !requested) return { ok: false, reason: 'selected stack is gone' };
+  // Atomic slot-for-slot swap: same two Stack objects, same UIDs, no intermediate duplicate.
+  player.slots[playerSlot] = requested; pack.slots[humanSlot] = offered;
+  h.trust = clamp((h.trust ?? 50) + 4, 0, 100);
+  recordIncident(r, hw, { kind: 'trade', victim: h.actorId, aggressor: 'player', witnesses: [], at: now, place: { tx: h.gx, ty: h.gy, floor: h.floor }, property: [offered.uid, requested.uid], resolved: true }, now);
+  receipt(r, now, 'human.exchange', `${h.actorId}:${offered.uid}<->${requested.uid}`);
+  return { ok: true, transferred: offered.qty + requested.qty };
+}
 
 /** Offer an item to a human (sell/give). The player's offered stacks are DEBITED from the
  *  player's custody and transferred to the human's pack by UID (K1 conservation — no free mint).
@@ -788,8 +851,8 @@ export function tradeWithHuman(r: RunState, hw: HumanWorld, h: HumanRecord, from
       src.slots[i] = null;
     } else {
       const split: Stack = { ...s, uid: uid(r, 's'), qty: take };
-      s.qty -= take;
       if (!addStack(r, humanPack(r, h).id, split)) return { ok: false, reason: 'no carrying capacity' };
+      s.qty -= take;
     }
     qty -= take; transferred += take;
   }
@@ -812,13 +875,43 @@ export function lootHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
     if (addStack(r, dst.id, s)) { pack.slots[i] = null; taken += s.qty; }
     // If addStack refused (no room / non-mergeable), the stack stays in the pack — identity preserved.
   }
-  receipt(r, now, 'human.loot', `${h.actorId}:-${taken}`);
+  if (taken > 0) receipt(r, now, 'human.loot', `${h.actorId}:-${taken}`);
   return { taken };
 }
 
 // ---------------------------------------------------------------------------
 // Companion — consent, follow, orders, 5-way resolution, carrying.
 // ---------------------------------------------------------------------------
+export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): string {
+  if (h.state === 'DEAD' || h.state === 'EVACUATED') return 'No response.';
+  if (!h.disposition_known.knownPeople.includes('player')) h.disposition_known.knownPeople.push('player');
+  h.trust = clamp((h.trust ?? 50) + 1, 0, 100);
+  receipt(r, now, 'human.talk', `${h.actorId}:trust=${h.trust}`);
+  return `${h.name} · ${h.occupation} · ${h.community ? hw.communities[h.community]?.poi ?? 'traveler' : 'traveler'}`;
+}
+
+export function threatenHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { ok: boolean; reason?: string } {
+  if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'DOWNED') return { ok: false, reason: 'cannot threaten this survivor' };
+  h.trust = clamp((h.trust ?? 50) - 25, 0, 100);
+  const comm = h.community ? hw.communities[h.community] : null;
+  if (comm) comm.threat = clamp(comm.threat + 0.2, 0, 1);
+  const witnesses = Object.values(hw.people).filter(other => other.actorId !== h.actorId && other.state !== 'DEAD' && other.state !== 'EVACUATED' && Math.hypot(other.gx - h.gx, other.gy - h.gy) <= 8).map(other => other.actorId);
+  recordIncident(r, hw, { kind: 'assault', victim: h.actorId, aggressor: 'player', witnesses, at: now, place: { tx: h.gx, ty: h.gy, floor: h.floor }, injury: false, resolved: false }, now);
+  h.state = 'FIGHTING';
+  h.intent = { intentId: `retaliate:${h.actorId}:${now}`, actorId: h.actorId, kind: 'fight', target: 'player', preconditions: ['player threatened survivor'], reserved: [], startAt: now, dueAt: now };
+  receipt(r, now, 'human.threaten', `${h.actorId}:trust=${h.trust}`);
+  return { ok: true };
+}
+
+export function recruitHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { ok: boolean; reason?: string } {
+  if (h.following) return { ok: false, reason: 'already a companion' };
+  if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'FIGHTING') return { ok: false, reason: 'not available to recruit' };
+  if (h.disposition === 'predatory') return { ok: false, reason: 'this survivor will not join you' };
+  if ((h.trust ?? 50) < 55) return { ok: false, reason: 'needs a reason to trust you: trade or talk first' };
+  setFollowing(r, hw, h, true, now);
+  return { ok: true };
+}
+
 export function setFollowing(r: RunState, hw: HumanWorld, h: HumanRecord, follow: boolean, now: number): void {
   h.following = follow;
   if (!follow) h.followOrder = undefined;
@@ -1118,40 +1211,43 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
 /** Resolve human combat for one tick: creatures in range damage nearby humans (applyDamage
  *  with the creature's floor), and fighting humans strike back at nearby creatures/player.
  *  This is the bidirectional combat law the main K5 routes call into. */
-export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number): void {
+export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void): void {
   const activeFloor = r.veyraFloor ?? 0;
+  const o = r.sourceMap?.veyra?.originAu;
+  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
   // 1. Creatures damage humans in their attack range.
   for (const m of r.creatures) {
     if (m.state !== 'attack' && m.state !== 'chase') continue;
     const cFloor = m.floor ?? activeFloor;
     const cDmg = CREATURES[m.type]?.dmg ?? 10;
     for (const h of Object.values(hw.people)) {
-      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== cFloor) continue;
-      const dx = (h.gx + 0.5) * TILE - m.x, dy = (h.gy + 0.5) * TILE - m.y;
+      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== cFloor || now - (h.lastDamageAt ?? -Infinity) < 500) continue;
+      const dx = (h.gx + 0.5) * TILE - ox * TILE - m.x, dy = (h.gy + 0.5) * TILE - oy * TILE - m.y;
       const reach = (CREATURES[m.type]?.r ?? 16) + TILE * 0.5;
-      if (Math.hypot(dx, dy) <= reach) {
-        const dmg = cDmg * 0.6; // creature strike against a human
-        applyDamage(r, hw, h, dmg, 0, now, 'enemy', m.id, cFloor);
+      const from = { x: m.x, y: m.y }, to = { x: m.x + dx, y: m.y + dy };
+      if (Math.hypot(dx, dy) <= reach && clearPhysicalLine(r, from, to, true)) {
+        const landed = applyDamage(r, hw, h, cDmg, Math.atan2(dy, dx), now, 'enemy', m.id, cFloor);
+        if (landed) h.lastDamageAt = now;
       }
     }
   }
-  // 2. Fighting humans strike nearby creatures with their equipped weapon.
+  // 2. Humans use the same physical range/cone/LOS and weapon cadence as player melee.
   for (const h of Object.values(hw.people)) {
-    if (h.state !== 'FIGHTING') continue;
-    if (h.floor !== activeFloor) continue;
+    if (h.state !== 'FIGHTING' || h.intent?.target === 'player' || h.floor !== activeFloor) continue;
     const w = humanWeapon(h); if (!w) continue;
-    const hx = (h.gx + 0.5) * TILE, hy = (h.gy + 0.5) * TILE;
-    for (const m of r.creatures) {
-      const mFloor = m.floor ?? activeFloor;
-      if (mFloor !== h.floor) continue;
-      const dx = m.x - hx, dy = m.y - hy;
-      if (Math.hypot(dx, dy) <= w.reach) {
-        // Human weapon damage to creature (creature armor handled by its own damage route).
-        m.hp -= Math.max(1, Math.round(w.dmg * 0.7));
-        h.stamina = clamp(h.stamina - 3, 0, h.maxStamina);
-        break;
-      }
-    }
+    if (now - (h.lastAttackAt ?? -Infinity) < w.swing * proficiencyMul(h.combatProficiency)) continue;
+    const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
+    const facing = h.dir === 0 ? Math.PI / 2 : h.dir === 1 ? Math.PI : h.dir === 2 ? 0 : -Math.PI / 2;
+    const target = r.creatures.filter(m => m.state !== 'dead' && (m.floor ?? activeFloor) === h.floor)
+      .map(m => ({ m, dx: m.x - hx, dy: m.y - hy, d: Math.hypot(m.x - hx, m.y - hy) }))
+      .filter(v => v.d <= w.reach + (CREATURES[v.m.type]?.r ?? 6) && Math.abs(Math.atan2(Math.sin(Math.atan2(v.dy, v.dx) - facing), Math.cos(Math.atan2(v.dy, v.dx) - facing))) <= w.arc / 2 + 0.15 && clearPhysicalLine(r, { x: hx, y: hy }, v.m, true))
+      .sort((a, b) => a.d - b.d)[0];
+    if (!target) continue;
+    h.lastAttackAt = now;
+    h.stamina = clamp(h.stamina - 3, 0, h.maxStamina);
+    const weapon = h.equip.weapon!;
+    if (weapon.dur !== undefined) { weapon.dur = Math.max(0, weapon.dur - 1); if (weapon.dur === 0) h.equip.weapon = null; }
+    hitCreature?.(target.m, w.dmg, Math.atan2(target.dy, target.dx), h);
   }
 }
 

@@ -128,6 +128,45 @@ describe('NPC P0 corrective', () => {
     expect(countAfter).toBe(countBefore);
   });
 
+  it('human talk and barter commit through dispatch; save/reload preserves trust, memory and both UIDs', () => {
+    const gs = startAt(921, 259);
+    const r = gs.run!;
+    const hw = r.humanWorld!;
+    const origin = r.sourceMap?.veyra?.originAu;
+    const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+    const h = Object.values(hw.people).find(v => v.floor === (r.veyraFloor ?? 0) && v.gx - ox >= 0 && v.gy - oy >= 0 && v.gx - ox < WW && v.gy - oy < WW)!;
+    expect(h).toBeTruthy();
+    r.player.x = (h.gx - ox + 0.5) * TILE; r.player.y = (h.gy - oy + 0.5) * TILE;
+    addItem(r, 'inv', 'wood', 1);
+    addItem(r, humanPack(r, h).id, 'berries', 1);
+    const pSlot = r.custody.inv.slots.findIndex(Boolean);
+    const hSlot = humanPack(r, h).slots.findIndex(Boolean);
+    const pUid = r.custody.inv.slots[pSlot]!.uid, hUid = humanPack(r, h).slots[hSlot]!.uid;
+    expect(dispatch(gs, { id: 'human-talk-test', type: 'humanTalk', actorId: h.actorId }, T0 + 1000).ok).toBe(true);
+    expect(dispatch(gs, { id: 'human-trade-test', type: 'humanExchange', actorId: h.actorId, playerSlot: pSlot, humanSlot: hSlot }, T0 + 1001).ok).toBe(true);
+    expect(r.custody.inv.slots[pSlot]!.uid).toBe(hUid);
+    expect(humanPack(r, h).slots[hSlot]!.uid).toBe(pUid);
+    expect(h.trust).toBeGreaterThan(50);
+    expect(h.disposition_known.knownPeople).toContain('player');
+    const loaded = validate(JSON.parse(JSON.stringify(gs)))!;
+    const h2 = loaded.run!.humanWorld!.people[h.actorId];
+    expect(h2.trust).toBe(h.trust);
+    expect(humanPack(loaded.run!, h2).slots[hSlot]!.uid).toBe(pUid);
+  });
+
+  it('rejects remote human social actions without success receipts or state changes', () => {
+    const gs = startAt(921, 259);
+    const r = gs.run!;
+    const h = Object.values(r.humanWorld!.people)[0];
+    const trust = h.trust;
+    const seq = r.seq;
+    const res = dispatch(gs, { id: 'human-remote-threat-test', type: 'humanThreaten', actorId: h.actorId }, T0 + 1000);
+    expect(res.ok).toBe(false);
+    expect(h.trust).toBe(trust);
+    expect(h.state).not.toBe('FIGHTING');
+    expect(r.seq).toBe(seq);
+  });
+
   it('P0.3: custody survives JSON round-trip with owner + UID stock conservation', () => {
     const gs = startAt(921, 259);
     const r = gs.run!;
@@ -196,7 +235,7 @@ describe('NPC P0 corrective', () => {
     expect(h.equip.weapon).toBeNull(); // equipped weapon transferred to corpse
     if (weaponUid) {
       // The corpse bag (a drop entity) should carry the weapon UID.
-      const drop = Object.values(r.entities).find(e => e.kind === 'bag');
+      const drop = Object.values(r.entities).find(e => e.kind === 'bag' && e.born === T0 + 1000);
       const corpse = drop ? r.custody[(drop as any).c] : null;
       const found = corpse?.slots.some(s => s?.uid === weaponUid);
       expect(found).toBe(true);
