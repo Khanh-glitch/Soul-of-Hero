@@ -7,7 +7,9 @@
  */
 import { describe, expect, it } from 'vitest';
 import { WW, TILE } from '../src/game/core';
-import { newGame, startRun, dispatch, C, addItem, blockGrid, mkStack, markDirty } from '../src/game/engine';
+import { ITEMS } from '../src/game/catalog';
+import { sourceAt } from '../src/game/engine';
+import { newGame, startRun, dispatch, C, addItem, addStack, blockGrid, clearPhysicalLine, mkStack, markDirty } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
 import { auToTile, windowAround } from '../src/veyra05/frame';
@@ -19,7 +21,8 @@ import { T0 } from './helpers/g1b-kit';
 import {
   tickNeeds, stepHumans, tradeWithHuman, lootHuman, killHuman, applyDamage, downHuman,
   treatHuman, boardEvac, resolveOrder, setFollowing, finalizeHumanOutcomes,
-  humanPack, humanHistoryAggregate, humanWorkTick, stepHumanCombat,
+  humanPack, humanHistoryAggregate, humanWorkTick, stepHumanCombat, humanWorldPosition,
+  type HumanRecord,
 } from '../src/game/humanworld';
 
 function startAt(ax: number, ay: number, seed = 7606) {
@@ -104,13 +107,18 @@ describe('NPC P0 corrective', () => {
     expect(start).not.toBeNull();
     h.gx = start![0]; h.gy = start![1]; h.floor = r.veyraFloor ?? 0;
     h.state = 'MOVING';
-    h.intent = { kind: 'move', route: [{ tx: h.gx + 4, ty: h.gy }] } as any;
-    const before = h.gx;
-    const at = T0 + 60000;
-    tickNeeds(r, hw, at);
+    h.intent = { kind: 'move', route: [{ tx: h.gx + 1, ty: h.gy, floor: h.floor }] } as any;
+    const before = humanWorldPosition(h);
+    const at = T0 + 100;
     stepHumans(r, hw, at);
-    expect(h.gx).toBeGreaterThan(before);
-    expect(hw.lastStepAt).toBe(at);
+    const halfway = humanWorldPosition(h);
+    const pxMoved = Math.hypot(halfway.gx - before.gx, halfway.gy - before.gy) * TILE;
+    expect(pxMoved).toBeGreaterThan(6);
+    expect(pxMoved).toBeLessThan(8);
+    expect(h.gx).toBe(start![0]); // logical tile occupancy stays discrete during interpolation
+    stepHumans(r, hw, T0 + 300);
+    expect(h.gx).toBe(start![0] + 1);
+    expect(hw.lastStepAt).toBe(T0 + 300);
   });
 
   it('P0.2: work never mints from a stale abstract community stock mirror', () => {
@@ -126,6 +134,36 @@ describe('NPC P0 corrective', () => {
     expect(humanWorkTick(r, hw, h, T0 + 60000)).toMatchObject({ done: false });
     const countAfter = store.slots.reduce((n, s) => n + (s?.key === 'spares' ? s.qty : 0), 0);
     expect(countAfter).toBe(countBefore);
+  });
+
+  it('autonomous builder selects a real shared wood source, routes legally, harvests, and carries real output', () => {
+    const gs = startAt(921, 259), r = gs.run!, hw = r.humanWorld!;
+    const [ox, oy] = r.sourceMap?.veyra?.originAu ? r.sourceMap.veyra.originAu.map(v => Math.round(v / 0.5)) as [number, number] : [0, 0];
+    const grid = blockGrid(r); const h = Object.values(hw.people)[0];
+    for (const other of Object.values(hw.people)) if (other !== h) other.state = 'DEAD';
+    h.occupation = 'builder'; h.equip.weapon = mkStack(r, 'iron_axe', 1); h.state = 'IDLE'; h.intent = undefined; h.following = false; h.nextThinkAt = 0;
+    let choice: { x: number; y: number; tx: number; ty: number; stock: number } | null = null;
+    for (let y = 4; y < WW - 4 && !choice; y++) for (let x = 4; x < WW - 4; x++) {
+      const s = sourceAt(r, x, y, T0); if (!s || s.stock <= 0 || s.def.mat !== 'wood' || !(ITEMS.iron_axe.power?.wood)) continue;
+      if (Object.values(r.entities).some(e => e.tx === x && e.ty === y && (e.g1b || e.kind === 'loot'))) continue;
+      const spot = [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]].find(([sx, sy]) => sx > 1 && sy > 1 && sx < WW - 1 && sy < WW - 1 && (grid[sy * WW + sx] === 0 || grid[sy * WW + sx] === 4));
+      if (!spot) continue;
+      h.gx = ox + spot[0]; h.gy = oy + spot[1]; h.floor = r.veyraFloor ?? 0;
+      choice = { x: spot[0], y: spot[1], tx: x, ty: y, stock: s.stock }; break;
+    }
+    expect(choice).not.toBeNull();
+    stepHumans(r, hw, T0 + 1000);
+    const working = h as HumanRecord;
+    expect(working.intent?.kind).toBe('work'); expect(h.state).toBe('WORKING');
+    const target = working.intent!.target!.match(/^harvest:(\d+),(\d+)$/)!;
+    const targetTx = Number(target[1]), targetTy = Number(target[2]);
+    const stockBefore = sourceAt(r, targetTx, targetTy, T0 + 1000)!.stock;
+    stepHumans(r, hw, T0 + 3000);
+    const source = sourceAt(r, targetTx, targetTy, T0 + 3000)!;
+    expect(source.stock).toBeLessThan(stockBefore);
+    expect(humanPack(r, h).slots.some(s => s?.key === 'wood')).toBe(true);
+    expect(r.receipts.some(x => x.kind === 'human.harvest' && x.detail.includes(h.actorId))).toBe(true);
+    expect(Object.values(h.workOutputs ?? {}).reduce((n, q) => n + q, 0)).toBeGreaterThan(0); // real output is tracked for later physical-store transfer
   });
 
   it('human talk and barter commit through dispatch; save/reload preserves trust, memory and both UIDs', () => {
@@ -144,8 +182,11 @@ describe('NPC P0 corrective', () => {
     const pStack = r.custody.inv.slots[pSlot]!, hStack = humanPack(r, h).slots[hSlot]!;
     pStack.meta = 'player-lot:one'; hStack.meta = 'survivor-lot:two';
     const pUid = pStack.uid, hUid = hStack.uid, pQty = pStack.qty, hQty = hStack.qty;
+    const trustBeforeTalk = h.trust;
     expect(dispatch(gs, { id: 'human-talk-test', type: 'humanTalk', actorId: h.actorId }, T0 + 1000).ok).toBe(true);
-    expect(dispatch(gs, { id: 'human-trade-test', type: 'humanExchange', actorId: h.actorId, playerSlot: pSlot, humanSlot: hSlot }, T0 + 1001).ok).toBe(true);
+    for (let i = 0; i < 5; i++) expect(dispatch(gs, { id: `human-talk-repeat-${i}`, type: 'humanTalk', actorId: h.actorId }, T0 + 1001 + i).ok).toBe(true);
+    expect(h.trust).toBe(trustBeforeTalk); // repeated status queries are not social currency
+    expect(dispatch(gs, { id: 'human-trade-test', type: 'humanExchange', actorId: h.actorId, playerSlot: pSlot, humanSlot: hSlot }, T0 + 1010).ok).toBe(true);
     expect(r.custody.inv.slots[pSlot]).toMatchObject({ uid: hUid, qty: hQty, meta: 'survivor-lot:two' });
     expect(humanPack(r, h).slots[hSlot]).toMatchObject({ uid: pUid, qty: pQty, meta: 'player-lot:one' });
     expect(h.trust).toBeGreaterThan(50);
@@ -154,6 +195,72 @@ describe('NPC P0 corrective', () => {
     const h2 = loaded.run!.humanWorld!.people[h.actorId];
     expect(h2.trust).toBe(h.trust);
     expect(humanPack(loaded.run!, h2).slots[hSlot]!.uid).toBe(pUid);
+  });
+
+  it('refuses a trivial barter for a carried rare Core without moving either UID', () => {
+    const gs = startAt(921, 259), r = gs.run!, hw = r.humanWorld!;
+    const h = Object.values(hw.people)[0];
+    const origin = r.sourceMap?.veyra?.originAu;
+    const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+    r.player.x = (h.gx - ox + 0.5) * TILE; r.player.y = (h.gy - oy + 0.5) * TILE;
+    addItem(r, 'inv', 'wood', 1);
+    const core = mkStack(r, 'core_meteor', 1); expect(addStack(r, humanPack(r, h).id, core)).toBe(true);
+    const offerSlot = r.custody.inv.slots.findIndex(s => s?.key === 'wood');
+    const coreSlot = humanPack(r, h).slots.findIndex(s => s?.uid === core.uid);
+    const trust = h.trust, playerUid = r.custody.inv.slots[offerSlot]!.uid;
+    const res = dispatch(gs, { id: 'barter-core-refusal', type: 'humanExchange', actorId: h.actorId, playerSlot: offerSlot, humanSlot: coreSlot }, T0 + 1000);
+    expect(res.ok).toBe(false);
+    expect(r.custody.inv.slots[offerSlot]!.uid).toBe(playerUid);
+    expect(humanPack(r, h).slots[coreSlot]!.uid).toBe(core.uid);
+    expect(h.trust).toBe(trust);
+  });
+
+  it('confrontation compliance physically transfers the demanded carried stack and records evidenced witnesses only', () => {
+    const gs = startAt(921, 259), r = gs.run!, hw = r.humanWorld!;
+    const h = Object.values(hw.people)[0];
+    const witness = Object.values(hw.people).find(other => other !== h)!;
+    for (const other of Object.values(hw.people)) if (other !== h && other !== witness) other.state = 'DEAD';
+    witness.state = 'IDLE'; witness.floor = h.floor + 1; witness.gx = h.gx + 1; witness.gy = h.gy;
+    h.state = 'IDLE'; h.equip.weapon = null; h.protectedPeople = [];
+    const origin = r.sourceMap?.veyra?.originAu;
+    const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+    r.player.x = (h.gx - ox + 0.5) * TILE; r.player.y = (h.gy - oy + 0.5) * TILE;
+    addItem(r, humanPack(r, h).id, 'wood', 1);
+    const stack = humanPack(r, h).slots.find(s => s?.key === 'wood')!;
+    const hash = (s: string) => { let n = 2166136261; for (let i = 0; i < s.length; i++) n = Math.imul(n ^ s.charCodeAt(i), 16777619); return n >>> 0; };
+    const at = Array.from({ length: 200 }, (_, i) => T0 + i + 1).find(t => hash(`${h.actorId}:${t}:item:${stack.uid}`) % 100 < 78)!;
+    const res = dispatch(gs, { id: 'human-demand-stack', type: 'humanThreaten', actorId: h.actorId, demand: 'item', stackUid: stack.uid }, at);
+    if (!res.ok) throw new Error(res.reason);
+    expect(res.msg).toMatch(/Hands over/);
+    expect(r.custody.inv.slots.some(s => s?.uid === stack.uid)).toBe(true);
+    expect(humanPack(r, h).slots.some(s => s?.uid === stack.uid)).toBe(false);
+    const incident = Object.values(hw.incidents).at(-1)!;
+    expect(incident.witnesses).toEqual([]);
+  });
+
+  it('a survivor who chooses FIGHT lands a timed, facing- and LOS-gated K5 hit on the player', () => {
+    const gs = startAt(921, 259), r = gs.run!, hw = r.humanWorld!;
+    const h = Object.values(hw.people)[0];
+    for (const other of Object.values(hw.people)) if (other !== h) other.state = 'DEAD';
+    h.state = 'IDLE'; h.disposition = 'predatory'; h.combatProficiency = 0; h.intent = undefined;
+    h.equip.weapon = mkStack(r, 'wood_club', 1);
+    const origin = r.sourceMap?.veyra?.originAu;
+    const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+    const grid = blockGrid(r); let cell: [number, number] | null = null;
+    for (let y = 10; y < WW - 10 && !cell; y++) for (let x = 10; x < WW - 11; x++) if ((grid[y * WW + x] === 0 || grid[y * WW + x] === 4) && (grid[y * WW + x + 1] === 0 || grid[y * WW + x + 1] === 4)) { cell = [x, y]; break; }
+    expect(cell).not.toBeNull();
+    h.gx = ox + cell![0]; h.gy = oy + cell![1]; h.floor = r.veyraFloor ?? 0; h.dir = 2;
+    r.player.x = (cell![0] + 1.5) * TILE; r.player.y = (cell![1] + 0.5) * TILE;
+    expect(clearPhysicalLine(r, { x: (cell![0] + 0.5) * TILE, y: (cell![1] + 0.5) * TILE }, r.player, true)).toBe(true);
+    const hash = (s: string) => { let n = 2166136261; for (let i = 0; i < s.length; i++) n = Math.imul(n ^ s.charCodeAt(i), 16777619); return n >>> 0; };
+    const at = Array.from({ length: 200 }, (_, i) => T0 + i + 1).find(t => { const v = hash(`${h.actorId}:${t}:back_off:`) % 100; return v >= 10 && v < 68; })!;
+    const confrontation = dispatch(gs, { id: 'human-fight-branch', type: 'humanThreaten', actorId: h.actorId, demand: 'back_off' }, at);
+    if (!confrontation.ok) throw new Error(confrontation.reason);
+    expect(confrontation.msg).toMatch(/fights back/);
+    let hits = 0;
+    stepHumanCombat(r, hw, at + 500, undefined, () => hits++);
+    expect(hits).toBe(1);
+    expect(h.equip.weapon?.dur).toBe(119);
   });
 
   it('rejects remote human social actions without success receipts or state changes', () => {

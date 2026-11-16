@@ -19,7 +19,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { tickNeeds, advanceElderPressure, stepHumans, stepHumanCombat, applyDamage as applyHumanDamage, recordIncident } from './humanworld';
+import { tickNeeds, advanceElderPressure, stepHumans, stepHumanCombat, applyDamage as applyHumanDamage, recordIncident, humanWorldPosition } from './humanworld';
 import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -1557,7 +1557,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { const ci = +k; settleRegrowthAt(r, ci % WW, Math.floor(ci / WW), m.untilAt ?? t); delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
     stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
-    if (r.humanWorld) { tickNeeds(r, r.humanWorld, t); advanceElderPressure(r, r.humanWorld, t); stepHumans(r, r.humanWorld, t); if (visual) stepHumanCombat(r, r.humanWorld, t, (m, dmg, angle) => damageCreature(gs, m, dmg, angle, t)); }
+    if (r.humanWorld) { tickNeeds(r, r.humanWorld, t); advanceElderPressure(r, r.humanWorld, t); stepHumans(r, r.humanWorld, t); if (visual) stepHumanCombat(r, r.humanWorld, t, (m, dmg, angle) => damageCreature(gs, m, dmg, angle, t), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, t, 200); }); }
     syncDrops(t);
     stepNatureTrees(r,t);
   }
@@ -1653,7 +1653,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   tickPlayer(gs, inp, dtMs, now);
   if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
   tickCreatures(gs, dtMs, now);
-  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle) => damageCreature(gs, m, dmg, angle, now));
+  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle) => damageCreature(gs, m, dmg, angle, now), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); });
   tickHumanHostility(gs, now);
   tickDragonDive(gs, dtMs, now);
   tickTurrets(gs, dtMs, now);
@@ -1960,7 +1960,8 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     const [ox, oy] = windowOrigin(r);
     for (const h of Object.values(r.humanWorld.people)) {
       if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== activeFloor(r)) continue;
-      const x = (h.gx - ox + 0.5) * TILE, y = (h.gy - oy + 0.5) * TILE;
+      const pos = humanWorldPosition(h);
+      const x = (pos.gx - ox) * TILE, y = (pos.gy - oy) * TILE;
       const d = dist(fx0, fy0, x, y);
       if (d > bd || !clearInteraction(r, { x, y })) continue;
       bd = d;

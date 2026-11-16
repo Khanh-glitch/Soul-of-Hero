@@ -151,6 +151,11 @@ export interface HumanRecord {
   trust?: number;
   lastAttackAt?: number;
   lastDamageAt?: number;
+  /** Throttled autonomous planner; movement interpolation is presentation of the tile-legal route. */
+  nextThinkAt?: number;
+  motion?: { fromGx: number; fromGy: number; toGx: number; toGy: number; elapsedMs: number };
+  workOutputs?: Record<string, number>;
+  lastTalkAt?: number;
 }
 export interface Community {
   id: string;
@@ -215,6 +220,8 @@ export interface HumanWorld {
   /** Independent clocks prevent needs advancement from suppressing autonomous movement. */
   lastNeedsAt?: number;
   lastStepAt?: number;
+  plannerCursor?: number;
+  plannerAt?: number;
   nextActorSeq: number;
 }
 
@@ -675,7 +682,8 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   if (st.stock <= 0) return { result: 'empty', key: s.key };
   const tool = h.equip.weapon;
   const toolKey = tool?.key;
-  const power = s.def.harvestBy ? (toolKey ? (s.def.harvestBy[toolKey] ?? 0) : 0) : (toolKey ? (ITEMS[toolKey]?.power?.[s.def.mat] ?? 0) : 0);
+  // Hand-gatherable plants are real shared sources; solid timber/ore/scrap still require an equipped tool.
+  const power = s.def.harvestBy ? (toolKey ? (s.def.harvestBy[toolKey] ?? 0) : 0) : (toolKey ? (ITEMS[toolKey]?.power?.[s.def.mat] ?? 0) : s.def.mat === 'plant' ? 1 : 0);
   if (power <= 0) return { result: 'blocked', key: s.key };
   const per = s.def.hp / s.def.stock;
   const before = Math.ceil(st.hp / per - 1e-9);
@@ -830,6 +838,16 @@ export function exchangeHumanStacks(r: RunState, hw: HumanWorld, h: HumanRecord,
   if (!player || playerSlot < 0 || humanSlot < 0 || playerSlot >= player.slots.length || humanSlot >= pack.slots.length) return { ok: false, reason: 'stale trade selection' };
   const offered = player.slots[playerSlot], requested = pack.slots[humanSlot];
   if (!offered || !requested) return { ok: false, reason: 'selected stack is gone' };
+  const baseValue = (s: Stack) => {
+    const d = ITEMS[s.key], count = Math.max(1, Math.min(8, s.qty));
+    const unit = d?.creatorCore ? 80 + (s.lvl ?? 1) * 18 + (s.dur ?? 100) * 0.1 : d?.dmg ? 8 + d.dmg * 0.8 : d?.food?.thirst ? 7 : d?.food?.hunger ? 5 : d?.repair || d?.salvage ? 8 : 2;
+    const condition = d?.creatorCore ? Math.max(0.15, Math.min(1, (s.dur ?? 100) / 100)) : 1;
+    return unit * count * condition;
+  };
+  const offeredValue = baseValue(offered) * (ITEMS[offered.key]?.food?.hunger && h.hunger < 40 ? 2.5 : 1) * (ITEMS[offered.key]?.food?.thirst && h.thirst < 40 ? 2.5 : 1);
+  const askValue = baseValue(requested) * (ITEMS[requested.key]?.food?.hunger && h.hunger < 40 ? 0.35 : 1) * (ITEMS[requested.key]?.food?.thirst && h.thirst < 40 ? 0.35 : 1);
+  if (ITEMS[requested.key]?.creatorCore && !ITEMS[offered.key]?.creatorCore && offeredValue < askValue * 0.9) return { ok: false, reason: 'they refuse to trade away a Creator Core for an ordinary item.' };
+  if (offeredValue < askValue * 0.35) return { ok: false, reason: `${h.name} refuses: the offer is not useful enough for what they would give up.` };
   // Atomic slot-for-slot swap: same two Stack objects, same UIDs, no intermediate duplicate.
   player.slots[playerSlot] = requested; pack.slots[humanSlot] = offered;
   h.trust = clamp((h.trust ?? 50) + 4, 0, 100);
@@ -889,23 +907,108 @@ export function lootHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
 // ---------------------------------------------------------------------------
 export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): string {
   if (h.state === 'DEAD' || h.state === 'EVACUATED') return 'No response.';
+  if (h.state === 'DOWNED') return `${h.name} is down and cannot answer.`;
   if (!h.disposition_known.knownPeople.includes('player')) h.disposition_known.knownPeople.push('player');
-  h.trust = clamp((h.trust ?? 50) + 1, 0, 100);
-  receipt(r, now, 'human.talk', `${h.actorId}:trust=${h.trust}`);
-  return `${h.name} · ${h.occupation} · ${h.community ? hw.communities[h.community]?.poi ?? 'traveler' : 'traveler'}`;
+  h.lastTalkAt = now;
+  const facts: string[] = [`${h.name} · ${h.occupation} · ${h.community ? hw.communities[h.community]?.poi ?? 'traveler' : 'traveler'}`];
+  if (h.intent?.kind === 'work' && h.intent.target?.startsWith('harvest:')) {
+    const m = h.intent.target.match(/^harvest:(\d+),(\d+)$/);
+    const s = m ? sourceAt(r, Number(m[1]), Number(m[2]), now) : null;
+    facts.push(h.state === 'WORKING' ? `Working at ${s?.def.name ?? 'a shared source'}.` : `Heading to ${s?.def.name ?? 'a shared source'}${h.intent.blockReason ? ` · ${h.intent.blockReason}` : '.'}`);
+  } else if (h.following) facts.push(h.state === 'MOVING' ? 'Keeping pace with you.' : 'Waiting nearby for your next move.');
+  else if (h.intent?.blockReason) facts.push(`Cannot continue: ${h.intent.blockReason}.`);
+  else if (h.state === 'WORKING') facts.push(`Currently working as a ${h.occupation}.`);
+  if (h.hunger < 35) facts.push(`Hungry (${Math.round(h.hunger)}%).`);
+  if (h.thirst < 35) facts.push(`Thirsty (${Math.round(h.thirst)}%).`);
+  if (h.hp < h.maxHp * 0.5) facts.push(`Injured (${Math.round(h.hp)}/${h.maxHp} HP).`);
+  const carried = humanPack(r, h).slots.filter((s): s is Stack => !!s).slice(0, 3).map(s => `${ITEMS[s.key]?.name ?? s.key} ×${s.qty}`);
+  if (carried.length) facts.push(`Carrying: ${carried.join(', ')}.`);
+  const knownIncidents = h.disposition_known.incidents.map(id => hw.incidents[id]).filter((x): x is HumanIncident => !!x);
+  if (knownIncidents.length) facts.push(`Known incident: ${knownIncidents[knownIncidents.length - 1].kind}.`);
+  receipt(r, now, 'human.talk', `${h.actorId}:status`);
+  return facts.join(' ');
 }
 
-export function threatenHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { ok: boolean; reason?: string } {
-  if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'DOWNED') return { ok: false, reason: 'cannot threaten this survivor' };
-  h.trust = clamp((h.trust ?? 50) - 25, 0, 100);
-  const comm = h.community ? hw.communities[h.community] : null;
-  if (comm) comm.threat = clamp(comm.threat + 0.2, 0, 1);
-  const witnesses = Object.values(hw.people).filter(other => other.actorId !== h.actorId && other.state !== 'DEAD' && other.state !== 'EVACUATED' && Math.hypot(other.gx - h.gx, other.gy - h.gy) <= 8).map(other => other.actorId);
-  recordIncident(r, hw, { kind: 'assault', victim: h.actorId, aggressor: 'player', witnesses, at: now, place: { tx: h.gx, ty: h.gy, floor: h.floor }, injury: false, resolved: false }, now);
-  h.state = 'FIGHTING';
-  h.intent = { intentId: `retaliate:${h.actorId}:${now}`, actorId: h.actorId, kind: 'fight', target: 'player', preconditions: ['player threatened survivor'], reserved: [], startAt: now, dueAt: now };
-  receipt(r, now, 'human.threaten', `${h.actorId}:trust=${h.trust}`);
-  return { ok: true };
+export type HumanDemand = 'item' | 'disarm' | 'back_off' | 'stop_attack';
+export type ConfrontationResult = { ok: boolean; reason?: string; reaction?: 'COMPLY' | 'NEGOTIATE' | 'REFUSE' | 'FLEE' | 'CALL_FOR_HELP' | 'FIGHT'; msg?: string };
+function retreatHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): boolean {
+  const origin = r.sourceMap?.veyra?.originAu;
+  const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+  const px = ox + Math.floor(r.player.x / TILE), py = oy + Math.floor(r.player.y / TILE);
+  const grid = blockGrid(r), occupied = new Set(Object.values(hw.people).filter(v => v.actorId !== h.actorId && v.state !== 'DEAD' && v.state !== 'EVACUATED').map(v => humanCellKey(v.floor, v.gx, v.gy)));
+  const dx = Math.sign(h.gx - px) || (h.actorId.charCodeAt(1) % 2 ? 1 : -1), dy = Math.sign(h.gy - py);
+  const options = [[dx * 6, dy * 6], [dx * 5, dy * 3], [dx * 4, dy * -2], [dx * 7, 0], [0, dy * 7]];
+  for (const [sx, sy] of options) {
+    const gx = h.gx + sx, gy = h.gy + sy, lx = gx - ox, ly = gy - oy;
+    if (lx < 1 || ly < 1 || lx >= WW - 1 || ly >= WH - 1 || !(grid[ly * WW + lx] === 0 || grid[ly * WW + lx] === 4)) continue;
+    const route = humanRouteToAdjacent(r, h, gx, gy, grid, ox, oy, occupied);
+    if (!route?.length) continue;
+    h.following = false; h.state = 'MOVING';
+    h.intent = { intentId: `flee:${h.actorId}:${now}`, actorId: h.actorId, kind: 'move', target: 'retreat:player', preconditions: ['actor chose an open legal retreat path'], reserved: [], startAt: now, dueAt: now, route };
+    return true;
+  }
+  return false;
+}
+export function threatenHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, demand: HumanDemand = 'back_off', stackUid?: string): ConfrontationResult {
+  if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'DOWNED') return { ok: false, reason: 'This person cannot answer a confrontation.' };
+  const pack = humanPack(r, h);
+  const demanded = demand === 'item' ? pack.slots.find(s => s?.uid === stackUid) ?? null : demand === 'disarm' ? h.equip.weapon : null;
+  if (demand === 'item' && !demanded) return { ok: false, reason: 'That carried item is no longer accessible.' };
+  if (demand === 'disarm' && !h.equip.weapon) return { ok: false, reason: 'They are not carrying an equipped weapon.' };
+  if (demand === 'stop_attack' && h.state !== 'FIGHTING') return { ok: false, reason: 'They are not attacking anyone right now.' };
+  const origin = r.sourceMap?.veyra?.originAu;
+  const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
+  const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
+  const witnesses = Object.values(hw.people).filter(other => {
+    if (other.actorId === h.actorId || other.state === 'DEAD' || other.state === 'EVACUATED' || other.state === 'DOWNED' || other.floor !== h.floor) return false;
+    const wx = (other.gx - ox + 0.5) * TILE, wy = (other.gy - oy + 0.5) * TILE;
+    return Math.hypot(other.gx - h.gx, other.gy - h.gy) <= 8 && clearPhysicalLine(r, { x: wx, y: wy }, { x: hx, y: hy }, true);
+  }).map(other => other.actorId);
+  const playerWeapon = r.custody.inv.slots[r.player.active];
+  const playerThreat = (playerWeapon ? ITEMS[playerWeapon.key]?.dmg ?? 0 : 0) + (r.player.hp < 30 ? 0 : 5);
+  const valuable = demanded ? (ITEMS[demanded.key]?.creatorCore ? 50 : demanded.key.includes('weapon') || ITEMS[demanded.key]?.dmg ? 18 : ITEMS[demanded.key]?.food ? 7 : 3) * Math.max(1, Math.min(5, demanded.qty)) : 0;
+  const resolve = (h.equip.weapon ? 20 : 0) + h.combatProficiency * 7 + (h.disposition === 'predatory' ? 10 : h.disposition === 'protective' ? 4 : 0) + witnesses.length * 8 + h.protectedPeople.length * 2 + (h.hp < h.maxHp * 0.35 ? -16 : 0) + ((h.trust ?? 50) - 50) * 0.2;
+  const pressure = playerThreat + (demand === 'item' ? 20 + valuable : demand === 'disarm' ? 22 : 18);
+  const roll = hashInt(`${h.actorId}:${now}:${demand}:${stackUid ?? ''}`) % 100;
+  let reaction: ConfrontationResult['reaction'];
+  if (pressure - resolve >= 18 && (demand !== 'item' || valuable < 18) && roll < 78) reaction = 'COMPLY';
+  else if (pressure - resolve >= 5 && roll < 42) reaction = 'NEGOTIATE';
+  else if (witnesses.length && h.disposition === 'protective' && roll < 62) reaction = 'CALL_FOR_HELP';
+  else if ((h.hp < h.maxHp * 0.45 || !h.equip.weapon) && roll < 70) reaction = 'FLEE';
+  else if (h.equip.weapon && roll < 68) reaction = 'FIGHT';
+  else reaction = 'REFUSE';
+  // A failed capacity check is negotiation, not a deleted or duplicated UID.
+  if (reaction === 'COMPLY' && demanded) {
+    if (demand === 'item') {
+      const i = pack.slots.indexOf(demanded); pack.slots[i] = null;
+      if (!addStack(r, 'inv', demanded)) { pack.slots[i] = demanded; reaction = 'NEGOTIATE'; }
+    } else if (!addStack(r, pack.id, demanded)) reaction = 'NEGOTIATE';
+    else h.equip.weapon = null;
+  }
+  if (reaction === 'COMPLY' && (demand === 'back_off' || demand === 'stop_attack')) {
+    if (demand === 'stop_attack') { h.state = 'IDLE'; h.intent = undefined; }
+    else if (!retreatHuman(r, hw, h, now)) reaction = 'REFUSE';
+  }
+  if (reaction === 'FLEE' && !retreatHuman(r, hw, h, now)) reaction = 'REFUSE';
+  if (reaction === 'FIGHT') { h.following = false; h.state = 'FIGHTING'; h.intent = { intentId: `retaliate:${h.actorId}:${now}`, actorId: h.actorId, kind: 'fight', target: 'player', preconditions: ['chose to resist this confrontation'], reserved: [], startAt: now, dueAt: now }; }
+  if (reaction === 'COMPLY' || reaction === 'NEGOTIATE' || reaction === 'REFUSE' || reaction === 'CALL_FOR_HELP' || reaction === 'FIGHT' || reaction === 'FLEE') {
+    h.trust = clamp((h.trust ?? 50) - (reaction === 'COMPLY' ? 8 : 22), 0, 100);
+    const comm = h.community ? hw.communities[h.community] : null; if (comm) comm.threat = clamp(comm.threat + 0.12, 0, 1);
+    recordIncident(r, hw, { kind: reaction === 'COMPLY' && demand === 'item' ? 'robbery' : 'assault', victim: h.actorId, aggressor: 'player', witnesses, at: now, place: { tx: h.gx, ty: h.gy, floor: h.floor }, property: reaction === 'COMPLY' && demanded ? [demanded.uid] : undefined, injury: false, resolved: reaction === 'COMPLY' }, now);
+    if (reaction === 'CALL_FOR_HELP') for (const id of witnesses) {
+      const ally = hw.people[id];
+      if (!ally?.equip.weapon || (ally.community !== h.community && !ally.protectedPeople.includes(h.actorId))) continue;
+      ally.state = 'FIGHTING'; ally.intent = { intentId: `help:${ally.actorId}:${now}`, actorId: ally.actorId, kind: 'fight', target: 'player', preconditions: [`witnessed confrontation with ${h.actorId}`], reserved: [], startAt: now, dueAt: now };
+    }
+    const reasons: Record<NonNullable<ConfrontationResult['reaction']>, string> = {
+      COMPLY: demand === 'item' ? `Hands over ${ITEMS[demanded!.key]?.name ?? demanded!.key}.` : demand === 'disarm' ? 'Puts the equipped weapon away.' : demand === 'stop_attack' ? 'Stops the attack.' : 'Backs away along an open route.',
+      NEGOTIATE: `Refuses the demand for now; ${demanded ? `${ITEMS[demanded.key]?.name ?? demanded.key} is valuable to them.` : 'they are weighing the risk.'}`,
+      REFUSE: 'Refuses and holds position.', FLEE: 'Retreats along an open route.', CALL_FOR_HELP: `Calls out to ${witnesses.length} visible ally/allies.`, FIGHT: 'Raises their weapon and fights back.',
+    };
+    receipt(r, now, 'human.threaten', `${h.actorId}:${demand}:${reaction}`);
+    return { ok: true, reaction, msg: reasons[reaction] };
+  }
+  return { ok: false, reason: 'No feasible response.' };
 }
 
 export function recruitHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { ok: boolean; reason?: string } {
@@ -1141,6 +1244,39 @@ function countOutcomes(hw: HumanWorld): HumanOutcomeSummary {
 /** Advance every human's autonomous behavior for one tick. Does NOT touch player XP or
  *  player-exploration loot. Movement is tile-step toward an intent target (no teleport). */
 function humanCellKey(floor: number, gx: number, gy: number): string { return `${floor}:${gx}:${gy}`; }
+/** Render/query position in global tile coordinates. Logical occupancy remains tile-authoritative. */
+export function humanWorldPosition(h: HumanRecord): { gx: number; gy: number } {
+  const m = h.motion;
+  if (!m) return { gx: h.gx + 0.5, gy: h.gy + 0.5 };
+  const t = clamp(m.elapsedMs / (TILE / PROFILES[h.profile].speed * 1000), 0, 1);
+  return { gx: m.fromGx + 0.5 + (m.toGx - m.fromGx) * t, gy: m.fromGy + 0.5 + (m.toGy - m.fromGy) * t };
+}
+function humanRouteToAdjacent(r: RunState, h: HumanRecord, targetGx: number, targetGy: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): { tx: number; ty: number; floor: number }[] | null {
+  const floor = r.veyraFloor ?? 0;
+  if (h.floor !== floor) return null;
+  const sx = h.gx - ox, sy = h.gy - oy, tx = targetGx - ox, ty = targetGy - oy;
+  if (sx < 0 || sy < 0 || tx < 0 || ty < 0 || sx >= WW || tx >= WW || sy >= WH || ty >= WH) return null;
+  const size = WW * WH, parent = new Int32Array(size); parent.fill(-2);
+  const queue = new Int32Array(size); let head = 0, tail = 0;
+  const start = sy * WW + sx; parent[start] = -1; queue[tail++] = start;
+  let goal = -1;
+  while (head < tail) {
+    const at = queue[head++], x = at % WW, y = Math.floor(at / WW);
+    if (Math.abs(x - tx) + Math.abs(y - ty) <= 1) { goal = at; break; }
+    for (const [dx, dy] of [[0,-1],[1,0],[0,1],[-1,0]] as const) {
+      const nx = x + dx, ny = y + dy;
+      if (nx < 1 || ny < 1 || nx >= WW - 1 || ny >= WH - 1) continue;
+      const ni = ny * WW + nx;
+      if (parent[ni] !== -2 || !(grid[ni] === 0 || grid[ni] === 4) || occupied.has(humanCellKey(floor, ox + nx, oy + ny))) continue;
+      parent[ni] = at; queue[tail++] = ni;
+    }
+  }
+  if (goal < 0 || goal === start) return goal === start ? [] : null;
+  const path: number[] = [];
+  for (let at = goal; at !== start; at = parent[at]) path.push(at);
+  path.reverse();
+  return path.map(i => ({ tx: ox + i % WW, ty: oy + Math.floor(i / WW), floor }));
+}
 function companionRoute(r: RunState, h: HumanRecord, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): { tx: number; ty: number; floor: number }[] | null {
   const floor = r.veyraFloor ?? 0;
   if (h.floor !== floor) return null;
@@ -1175,18 +1311,126 @@ function canHumanOccupy(r: RunState, h: HumanRecord, gx: number, gy: number, gri
   const cell = grid[ly * WW + lx];
   return cell === 0 || cell === 4;
 }
+function occupationCanHarvest(h: HumanRecord, key: string, mat: string): boolean {
+  if (h.occupation === 'guard') return false;
+  if (h.occupation === 'salvager') return mat === 'scrap' || key === 'scrap' || key === 'wreck' || key.startsWith('road_');
+  if (h.occupation === 'mechanic' || h.occupation === 'engineer') return mat === 'scrap' || mat === 'ore';
+  if (h.occupation === 'builder') return mat === 'wood' || mat === 'stone';
+  if (h.occupation === 'cook') return ['bush', 'herb', 'mushroom'].includes(key);
+  if (h.occupation === 'gardener') return ['bush', 'grass', 'reed', 'herb', 'mushroom'].includes(key);
+  if (h.occupation === 'medic') return ['herb', 'mushroom'].includes(key);
+  return false;
+}
+function canHarvestSource(h: HumanRecord, s: NonNullable<ReturnType<typeof sourceAt>>): boolean {
+  const tool = h.equip.weapon?.key;
+  if (!tool) return s.def.mat === 'plant' && occupationCanHarvest(h, s.key, s.def.mat);
+  const power = s.def.harvestBy ? (s.def.harvestBy[tool] ?? 0) : (ITEMS[tool]?.power?.[s.def.mat] ?? 0);
+  return power > 0 && occupationCanHarvest(h, s.key, s.def.mat);
+}
+function plannerSources(r: RunState): Set<string> {
+  const protectedTiles = new Set<string>();
+  for (const e of Object.values(r.entities)) if (e.tx !== undefined && e.ty !== undefined && (e.g1b || (e.kind === 'loot' && !e.g1b))) protectedTiles.add(`${e.tx}:${e.ty}`);
+  for (const e of Object.values(r.g1b?.far ?? {})) if (e.g1b && e.tx !== undefined && e.ty !== undefined) protectedTiles.add(`${e.tx}:${e.ty}`);
+  return protectedTiles;
+}
+function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>, protectedTiles: Set<string>): void {
+  if (h.following || h.state !== 'IDLE' || h.intent || (h.nextThinkAt ?? 0) > now) return;
+  h.nextThinkAt = now + 6000;
+  if (h.floor !== (r.veyraFloor ?? 0) || h.hunger < 25 || h.thirst < 25 || h.hp < 30 || h.stamina < 12) return;
+  if (!h.community) return;
+  const comm = hw.communities[h.community]; if (!comm) return;
+  const pack = humanPack(r, h);
+  if (h.workOutputs && Object.values(h.workOutputs).some(q => q > 0) && comm.storeTile) {
+    const route = humanRouteToAdjacent(r, h, comm.storeTile[0], comm.storeTile[1], grid, ox, oy, occupied);
+    if (!route) return;
+    h.intent = { intentId: `store:${h.actorId}:${now}`, actorId: h.actorId, kind: 'work', target: 'store', preconditions: ['carry output from shared harvest', 'physical community store'], reserved: [], startAt: now, dueAt: now, route };
+    h.state = route.length ? 'MOVING' : 'IDLE';
+    if (!route.length) { depositHumanOutputs(r, h, now); h.intent = undefined; h.nextThinkAt = now + 6000; }
+    return;
+  }
+  if (!pack.slots.some(s => !s)) return;
+  const lx = h.gx - ox, ly = h.gy - oy;
+  if (lx < 1 || ly < 1 || lx >= WW - 1 || ly >= WH - 1) return;
+  let best: { tx: number; ty: number; score: number } | null = null;
+  for (let y = Math.max(1, ly - 24); y <= Math.min(WH - 2, ly + 24); y++) for (let x = Math.max(1, lx - 24); x <= Math.min(WW - 2, lx + 24); x++) {
+    const s = sourceAt(r, x, y, now);
+    if (!s || s.stock <= 0 || protectedTiles.has(`${x}:${y}`) || !canHarvestSource(h, s)) continue;
+    const score = Math.abs(x - lx) + Math.abs(y - ly) + (s.stock <= 1 ? 4 : 0);
+    if (!best || score < best.score) best = { tx: x, ty: y, score };
+  }
+  if (!best) return;
+  const targetGx = ox + best.tx, targetGy = oy + best.ty;
+  const route = humanRouteToAdjacent(r, h, targetGx, targetGy, grid, ox, oy, occupied);
+  if (!route) return;
+  h.intent = { intentId: `work:${h.actorId}:${now}`, actorId: h.actorId, kind: 'work', target: `harvest:${best.tx},${best.ty}`, preconditions: ['shared source in active window', 'occupation and equipped tool can extract source', 'pack has room', 'player-exploration caches excluded'], reserved: [], startAt: now, dueAt: now, route };
+  h.state = route.length ? 'MOVING' : 'WORKING';
+  if (!route.length) h.intent.dueAt = now + 1500;
+}
+function performHumanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): boolean {
+  const m = h.intent?.target?.match(/^harvest:(\d+),(\d+)$/);
+  if (!m) return false;
+  const tx = Number(m[1]), ty = Number(m[2]);
+  const before = new Map(humanPack(r, h).slots.filter((s): s is Stack => !!s).map(s => [s.uid, s.qty]));
+  const result = humanHarvest(r, hw, h, tx, ty, now);
+  if (result.result !== 'yield') { h.intent = undefined; h.state = 'IDLE'; h.nextThinkAt = now + 10000; return false; }
+  if ((result.got ?? 0) <= 0) {
+    // The source took a real strike, but no whole stock unit crossed the extraction threshold yet.
+    // Continue the same work commitment; do not record output or claim production.
+    if (h.intent) { h.intent.dueAt = now + 900; h.intent.blockReason = 'working the source; no full unit released yet'; }
+    return false;
+  }
+  h.workOutputs ??= {};
+  for (const s of humanPack(r, h).slots) if (s) {
+    const delta = s.qty - (before.get(s.uid) ?? 0);
+    if (delta > 0) h.workOutputs[s.uid] = (h.workOutputs[s.uid] ?? 0) + delta;
+  }
+  h.lastCommittedAt = now;
+  h.state = 'IDLE';
+  h.intent = undefined;
+  receipt(r, now, 'human.work', `${h.actorId}:harvest:${result.key}:${result.got}`);
+  return true;
+}
+function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): void {
+  if (!h.community || !h.workOutputs) return;
+  const comm = r.humanWorld?.communities[h.community]; if (!comm) return;
+  const dstId = comm.storeContainers.find(id => r.custody[id]); if (!dstId) return;
+  const pack = humanPack(r, h), dst = r.custody[dstId]; let moved = 0;
+  for (const [stackUid, qty] of Object.entries(h.workOutputs)) {
+    const i = pack.slots.findIndex(s => s?.uid === stackUid); if (i < 0 || qty <= 0) { delete h.workOutputs[stackUid]; continue; }
+    const s = pack.slots[i]!; const take = Math.min(qty, s.qty);
+    const transfer = take === s.qty ? s : { ...s, uid: uid(r, 's'), qty: take };
+    if (!addStack(r, dstId, transfer)) continue;
+    if (take === s.qty) pack.slots[i] = null; else s.qty -= take;
+    moved += take; if (qty <= take) delete h.workOutputs[stackUid]; else h.workOutputs[stackUid] = qty - take;
+  }
+  if (moved) receipt(r, now, 'human.store', `${h.actorId}:${moved}`);
+}
 export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   const lastStepAt = hw.lastStepAt ?? hw.lastResolvedAt;
   const dtMs = now - lastStepAt;
   if (dtMs <= 0) return;
   hw.lastStepAt = now;
   const actors = Object.values(hw.people);
-  const hasMovement = actors.some(h => h.state === 'MOVING' && !!h.intent?.route?.length) || actors.some(h => h.following && h.state === 'IDLE');
+  const wantsPlan = now >= (hw.plannerAt ?? 0) && actors.some(h => !h.following && h.state === 'IDLE' && !h.intent && (h.nextThinkAt ?? 0) <= now);
+  const hasMovement = actors.some(h => h.state === 'MOVING' && !!h.intent?.route?.length) || actors.some(h => h.following && h.state === 'IDLE') || wantsPlan;
   const grid = hasMovement ? blockGrid(r) : new Uint8Array(0);
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
   const occupied = hasMovement ? new Set(actors.filter(h => h.state !== 'DEAD' && h.state !== 'EVACUATED').map(h => humanCellKey(h.floor, h.gx, h.gy))) : new Set<string>();
   const playerGx = ox + Math.floor(r.player.x / TILE), playerGy = oy + Math.floor(r.player.y / TILE);
+  if (wantsPlan) {
+    const protectedTiles = plannerSources(r);
+    let cursor = (hw.plannerCursor ?? 0) % Math.max(1, actors.length), planned = 0;
+    for (let n = 0; n < actors.length && planned < 8; n++) {
+      const i = (cursor + n) % actors.length, h = actors[i];
+      if (!h.following && h.state === 'IDLE' && !h.intent && (h.nextThinkAt ?? 0) <= now) {
+        planAutonomousWork(r, hw, h, now, grid, ox, oy, occupied, protectedTiles);
+        if ((h.nextThinkAt ?? 0) > now) planned++;
+      }
+      cursor = (i + 1) % actors.length;
+    }
+    hw.plannerCursor = cursor; hw.plannerAt = now + 1000;
+  }
   for (const h of actors) {
     if (!h.following || h.state !== 'IDLE' || h.intent?.kind !== 'follow') continue;
     if (h.floor !== (r.veyraFloor ?? 0)) { h.intent.blockReason = 'cannot follow across floors yet'; continue; }
@@ -1200,12 +1444,10 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
     // 1. Survival consume: eat when hungry, drink when thirsty.
     if (h.hunger < 40) humanConsume(r, hw, h, 'food', now);
     if (h.thirst < 40) humanConsume(r, hw, h, 'water', now);
-    // 2. Work: if carrying a work intent and capable, run the work tick.
-    if (h.state === 'WORKING' || (h.intent?.kind === 'work' && h.state === 'IDLE')) {
-      if (h.intent?.kind === 'work') {
-        const w = humanWorkTick(r, hw, h, now);
-        if (!w.done && w.reason && h.intent) h.intent.blockReason = w.reason;
-      }
+    // 2. A work action commits only after arrival and a visible work duration; no output is animated or minted in transit.
+    if (h.state === 'WORKING' && h.intent?.kind === 'work' && h.intent.target?.startsWith('harvest:') && now >= h.intent.dueAt) performHumanHarvest(r, hw, h, now);
+    if (h.intent?.kind === 'work' && h.intent.target === 'store' && h.state === 'IDLE') {
+      depositHumanOutputs(r, h, now); h.intent = undefined; h.nextThinkAt = now + 6000;
     }
     // 3. Evacuation: if intent is evacuate and near a boarding site, board.
     if (h.intent?.kind === 'evacuate' && h.state === 'IDLE') {
@@ -1215,43 +1457,40 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
         if (Math.hypot(dx, dy) <= 6) { boardEvac(r, hw, h, trip.tripId, now); h.intent = undefined; break; }
       }
     }
-    // 4. Movement: step toward intent route target (tile-by-tile, no teleport).
-    if (h.state === 'MOVING' && h.intent?.route && h.intent.route.length) {
-      const next = h.intent.route[0];
-      if (h.gx === next.tx && h.gy === next.ty) {
-        h.intent.route.shift();
-        if (h.intent.route.length === 0) {
-          h.state = 'IDLE';
-          if (h.intent.kind === 'follow') h.intent.route = [];
-          else h.intent = undefined;
+    // 4. Continuous movement along a legal cardinal tile route. Logical occupancy changes only
+    // at tile boundaries; rendered motion advances at the profile's physical px/s speed.
+    const moveIntent = h.intent, moveRoute = moveIntent?.route;
+    if (h.state === 'MOVING' && moveIntent && moveRoute?.length) {
+      const next = moveRoute[0];
+      if (!h.motion) {
+        const dx = next.tx - h.gx, dy = next.ty - h.gy;
+        const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
+        if (Math.abs(dx) + Math.abs(dy) !== 1 || !canHumanOccupy(r, h, next.tx, next.ty, grid, ox, oy, occupied)) {
+          occupied.add(key); moveIntent.blockReason = 'blocked by a wall, closed door, or another survivor';
+          if (moveIntent.kind === 'follow') moveRoute.length = 0;
+          else { h.intent = undefined; h.state = 'IDLE'; h.nextThinkAt = now + 3000; }
+        } else {
+          h.motion = { fromGx: h.gx, fromGy: h.gy, toGx: next.tx, toGy: next.ty, elapsedMs: 0 };
+          h.dir = dy > 0 ? 0 : dy < 0 ? 3 : dx > 0 ? 2 : 1;
         }
-      } else {
-        // Cardinal tile step only: respect the compiled active-floor collision grid, window
-        // bounds, and other living bodies. Closed doors/solid props remain blockers.
-        const dxTile = next.tx - h.gx, dyTile = next.ty - h.gy;
-        const primary: [number, number] = Math.abs(dxTile) >= Math.abs(dyTile) ? [Math.sign(dxTile), 0] : [0, Math.sign(dyTile)];
-        const secondary: [number, number] = primary[0] ? [0, Math.sign(dyTile)] : [Math.sign(dxTile), 0];
-        const key = humanCellKey(h.floor, h.gx, h.gy);
-        occupied.delete(key);
-        const candidates = [primary, secondary].filter(([sx, sy]) => sx !== 0 || sy !== 0);
-        let moved = false;
-        for (const [sx, sy] of candidates) {
-          const nx = h.gx + sx, ny = h.gy + sy;
-          if (!canHumanOccupy(r, h, nx, ny, grid, ox, oy, occupied)) continue;
-          h.gx = nx; h.gy = ny;
-          h.dir = sx === 0 ? (sy > 0 ? 0 : 3) : (sx > 0 ? 2 : 1);
-          h.lastSimAt = now;
-          occupied.add(humanCellKey(h.floor, h.gx, h.gy));
-          moved = true;
-          break;
-        }
-        if (!moved) {
-          occupied.add(key);
-          if (h.intent) h.intent.blockReason = 'blocked by a wall, closed door, or another survivor';
+      }
+      if (h.motion) {
+        h.motion.elapsedMs += Math.min(dtMs, 250);
+        const travelMs = TILE / PROFILES[h.profile].speed * 1000;
+        if (h.motion.elapsedMs >= travelMs) {
+          const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
+          h.gx = h.motion.toGx; h.gy = h.motion.toGy; h.motion = undefined; moveRoute.shift();
+          h.lastSimAt = now; occupied.add(humanCellKey(h.floor, h.gx, h.gy));
+          if (!moveRoute.length) {
+            if (moveIntent.kind === 'follow') { h.state = 'IDLE'; moveRoute.length = 0; }
+            else if (moveIntent.kind === 'work' && moveIntent.target?.startsWith('harvest:')) { h.state = 'WORKING'; moveIntent.dueAt = now + 1500; }
+            else if (moveIntent.kind === 'work' && moveIntent.target === 'store') { h.state = 'IDLE'; depositHumanOutputs(r, h, now); h.intent = undefined; h.nextThinkAt = now + 6000; }
+            else { h.state = 'IDLE'; h.intent = undefined; }
+          }
         }
       }
     }
-    // Stamina regen when idle.
+    // Stamina recovers while actually idle/resting.
     if (h.state === 'IDLE') h.stamina = clamp(h.stamina + dtMs / HOUR * 4, 0, h.maxStamina);
   }
 }
@@ -1262,7 +1501,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
 /** Resolve human combat for one tick: creatures in range damage nearby humans (applyDamage
  *  with the creature's floor), and fighting humans strike back at nearby creatures/player.
  *  This is the bidirectional combat law the main K5 routes call into. */
-export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void): void {
+export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void, hitPlayer?: (attacker: HumanRecord, damage: number, angle: number) => void): void {
   const activeFloor = r.veyraFloor ?? 0;
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
@@ -1284,11 +1523,21 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
   }
   // 2. Humans use the same physical range/cone/LOS and weapon cadence as player melee.
   for (const h of Object.values(hw.people)) {
-    if (h.state !== 'FIGHTING' || h.intent?.target === 'player' || h.floor !== activeFloor) continue;
+    if (h.state !== 'FIGHTING' || h.floor !== activeFloor) continue;
     const w = humanWeapon(h); if (!w) continue;
     if (now - (h.lastAttackAt ?? -Infinity) < w.swing * proficiencyMul(h.combatProficiency)) continue;
     const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
     const facing = h.dir === 0 ? Math.PI / 2 : h.dir === 1 ? Math.PI : h.dir === 2 ? 0 : -Math.PI / 2;
+    if (h.intent?.target === 'player') {
+      const dx = r.player.x - hx, dy = r.player.y - hy, distance = Math.hypot(dx, dy), angle = Math.atan2(dy, dx);
+      const inArc = Math.abs(Math.atan2(Math.sin(angle - facing), Math.cos(angle - facing))) <= w.arc / 2 + 0.15;
+      if (distance <= w.reach + 8 && inArc && clearPhysicalLine(r, { x: hx, y: hy }, r.player, true)) {
+        h.lastAttackAt = now; h.stamina = clamp(h.stamina - 3, 0, h.maxStamina);
+        const weapon = h.equip.weapon!; if (weapon.dur !== undefined) { weapon.dur = Math.max(0, weapon.dur - 1); if (weapon.dur === 0) h.equip.weapon = null; }
+        hitPlayer?.(h, w.dmg, angle);
+      }
+      continue;
+    }
     const target = r.creatures.filter(m => m.state !== 'dead' && (m.floor ?? activeFloor) === h.floor)
       .map(m => ({ m, dx: m.x - hx, dy: m.y - hy, d: Math.hypot(m.x - hx, m.y - hy) }))
       .filter(v => v.d <= w.reach + (CREATURES[v.m.type]?.r ?? 6) && Math.abs(Math.atan2(Math.sin(Math.atan2(v.dy, v.dx) - facing), Math.cos(Math.atan2(v.dy, v.dx) - facing))) <= w.arc / 2 + 0.15 && clearPhysicalLine(r, { x: hx, y: hy }, v.m, true))

@@ -1,0 +1,35 @@
+{
+  "run": "run_c29kl_mwjhinwl",
+  "layout": "veyra05-at-1503-1068",
+  "simMs": 22146,
+  "actor": {
+    "id": "h2",
+    "name": "Salvager Meridian",
+    "occupation": "cook",
+    "state": "MOVING",
+    "global": [
+      1580,
+      1165
+    ],
+    "screen": [
+      -28.20210642068946,
+      138
+    ],
+    "direction": 3,
+    "routeRemaining": 6,
+    "targetLocal": [
+      80,
+      93
+    ],
+    "targetScreen": [
+      19.79789357931054,
+      74
+    ],
+    "source": {
+      "key": "bush",
+      "name": "Berry Bush",
+      "stock": 3
+    },
+    "sourceAuthority": "SHARED_HARVEST"
+  }
+}

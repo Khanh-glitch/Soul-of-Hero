@@ -5,6 +5,7 @@ import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, typ
 import { STRUCTS, ELDERS, PRIMORDIAL_ELDERS, lookupElderDef, CREATURES, ITEMS } from './catalog';
 import { hasCreatureAtlas, preloadCreatureAtlases, drawCreatureAtlasSprite, creatureHeadTopY } from './creature-sprites';
 import { drawNpcSprite, drawNpcShadow, preloadNpcArt, resolveNpcClip } from './npc-art';
+import { humanWorldPosition } from './humanworld';
 import { isCreatureRenderedByPrimordialRig, renderPrimordialOverlay } from './primordials/host-bridge';
 import { getFrame as getPrimordialRasterFrame, frameRGBA } from './primordials/art/sprites';
 import { getWorld, getActiveLayout, SRC_KEYS, fbm } from './world';
@@ -309,7 +310,8 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
     for (const h of Object.values(r.humanWorld.people)) {
       if (h.state === 'EVACUATED') continue;
       if (h.floor !== activeFloor(r)) continue;
-      const wx = (h.gx - ox) * TILE + 8, wy = (h.gy - oy) * TILE + 8;
+      const pos = humanWorldPosition(h);
+      const wx = (pos.gx - ox) * TILE, wy = (pos.gy - oy) * TILE;
       if (wx < cx - 40 || wx > cx + VIEW_W + 40 || wy < cy - 40 || wy > cy + VIEW_H + 60) continue;
       if (life.undergroundHides(r, wx, wy)) continue;
       const moving = h.state === 'MOVING' || (h.intent?.route?.length ?? 0) > 0;
