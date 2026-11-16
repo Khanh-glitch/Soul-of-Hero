@@ -753,15 +753,32 @@ export function validate(raw: any): GameState | null {
     }
     if (g1bSeen.size !== G1B_SOURCE_SITES.length + G1B_FIXTURES.length) return null;
   } else if (g1bSeen.size) return null;
-  // HumanWorld ownership: a human's personal pack/cart and a community's store containers are
-  // legitimate custody held by human actors (not entities). Mark them owned so the every-container
-  // invariant below is satisfied without weakening the entity-ownership rule.
+  // HumanWorld: migrate + validate the authoritative human ledger on load.
   if (r.humanWorld) {
-    for (const h of Object.values(r.humanWorld.people) as any[]) {
-      for (const c of [h?.inv?.pack?.id, h?.inv?.cart?.id]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
+    const hw = r.humanWorld as any;
+    // P0.1 migration: a ledger seeded with lastResolvedAt=0 (or stale) is re-anchored to the
+    // run clock so the first tick after load never computes a catastrophic time delta.
+    if (!Number.isFinite(hw.lastResolvedAt) || hw.lastResolvedAt <= 0 || hw.lastResolvedAt > r.clock.lastSimAt) {
+      hw.lastResolvedAt = r.clock.lastSimAt;
     }
-    for (const comm of Object.values(r.humanWorld.communities) as any[]) {
-      for (const c of [...(comm?.storeContainers ?? []), ...(comm?.foodStores ?? [])]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
+    // Schema validation: every human record must carry the required identity fields.
+    const seenUids = new Set<string>();
+    for (const h of Object.values(hw.people ?? {}) as any[]) {
+      if (!h || typeof h.actorId !== 'string' || !h.actorId || typeof h.sourceId !== 'string' || !h.sourceId) return null;
+      if (typeof h.inv?.packId !== 'string' || typeof h.inv?.cartId !== 'string') return null;
+      // Embedded equipment UIDs must be unique across the run (no duplicate claimant).
+      for (const slot of ['weapon', 'body', 'head', 'legs', 'feet'] as const) {
+        const st = h.equip?.[slot]; if (st && typeof st.uid === 'string' && st.uid) {
+          if (seenUids.has(st.uid)) return null; seenUids.add(st.uid);
+        }
+      }
+    }
+    // Human-owned custody: mark personal pack/cart + community store containers as owned.
+    for (const h of Object.values(hw.people ?? {}) as any[]) {
+      for (const c of [h?.inv?.packId, h?.inv?.cartId]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
+    }
+    for (const comm of Object.values(hw.communities ?? {}) as any[]) {
+      for (const c of [...(comm?.storeContainers ?? []), ...(comm?.foodStores ?? []), ...(comm?.homeBeds ?? [])]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
     }
   }
   if (Object.keys(r.custody).some(id => !ownedContainers.has(id))) return null;

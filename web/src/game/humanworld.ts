@@ -18,9 +18,9 @@
  *  - Legacy runs without `humanWorld` remain solo-compatible; new runs seed finite source-authorized
  *    humans. No retroactive population/loot mint on old saves.
  */
-import { BAL, TILE, WW, WH, HOUR, clamp, type RunState, type Stack, type Container, type Dir } from './core';
+import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir } from './core';
 import { ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import { addItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, isSheltered, roofRoom } from './engine';
+import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, isSheltered, roofRoom } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 
@@ -63,7 +63,13 @@ export type HumanDisposition = 'protective' | 'neutral' | 'opportunistic' | 'pre
 export type TerminalOutcome = 'EVACUATED' | 'SURVIVED_ON_ISLAND' | 'DEAD' | 'UNRESOLVED';
 
 export interface HumanEquipSlots { head: Stack | null; body: Stack | null; legs: Stack | null; feet: Stack | null; weapon: Stack | null; }
-export interface HumanInventory { pack: Container; cart: Container; }
+/** Humans store only container IDs in the ledger — the containers themselves live in run custody.
+ *  This keeps ONE reference after JSON save/reload (never two distinct objects that desync). */
+export interface HumanInventory { packId: string; cartId: string; }
+/** Resolve a human's pack container from run custody (the single authoritative reference). */
+export function humanPack(r: RunState, h: HumanRecord): Container { return r.custody[h.inv.packId]!; }
+/** Resolve a human's cart container from run custody. */
+export function humanCart(r: RunState, h: HumanRecord): Container { return r.custody[h.inv.cartId]!; }
 export interface HumanCore { uid: string; lvl: 1 | 2 | 3; dur: number; cd: { basic?: number; refined?: number; signature?: number }; }
 export interface HumanWound { severity: number; bleeding: boolean; bleedingUntil?: number; treated: boolean; }
 export interface HumanKnowledge {
@@ -165,6 +171,7 @@ export interface EvacTrip {
   tripId: string;
   site: 'po_evac_west' | 'po_evac_south' | 'po_evac_hook';
   capacity: number;
+  siteGx: number; siteGy: number;   // real boarding tile (from the POI bbox center)
   boarded: string[];          // actorIds
   departAt?: number;
   departed: boolean;
@@ -209,7 +216,9 @@ export type OrderResult = 'OBEY' | 'REFUSE_WITH_REASON' | 'PROTECT_TARGET' | 'RE
 // ---------------------------------------------------------------------------
 // Ledger construction
 // ---------------------------------------------------------------------------
-export function newHumanWorld(runId: string): HumanWorld {
+export function newHumanWorld(runId: string, now: number): HumanWorld {
+  // lastResolvedAt is seeded from the run-authoritative timestamp so the FIRST tick does not
+  // compute a catastrophic (now - 0) delta that instantly zeroes hunger/thirst and downs people.
   return {
     version: HUMAN_WORLD_VERSION,
     sourceLayout: 1,
@@ -220,16 +229,17 @@ export function newHumanWorld(runId: string): HumanWorld {
     elderPressure: {},
     events: {},
     incidents: {},
-    lastResolvedAt: 0,
+    lastResolvedAt: now,
     nextActorSeq: 1,
   };
 }
 
-/** Seed the three evacuation trips (one per service site). */
-export function seedEvacTrips(hw: HumanWorld): void {
+/** Seed the three evacuation trips (one per service site) with their real boarding tiles. */
+export function seedEvacTrips(hw: HumanWorld, positions: Record<string, [number, number]>): void {
   for (const site of ['po_evac_west', 'po_evac_south', 'po_evac_hook'] as const) {
     const tripId = `evac:${site}`;
-    hw.evacuation[tripId] = { tripId, site, capacity: 6, boarded: [], departed: false };
+    const [gx, gy] = positions[site] ?? [0, 0];
+    hw.evacuation[tripId] = { tripId, site, capacity: 6, siteGx: gx, siteGy: gy, boarded: [], departed: false };
   }
 }
 
@@ -287,7 +297,7 @@ export function makeHuman(r: RunState, hw: HumanWorld, opts: {
     hunger: 80, thirst: 80, warmth: 100, rad: 0, rest: 0,
     wounds: [], state: 'IDLE',
     home: opts.home, bedId: opts.bedId, community: opts.community, origin: opts.sourceId,
-    equip, inv: { pack: invPack, cart: invCart },
+    equip, inv: { packId: invPack.id, cartId: invCart.id },
     core: opts.core,
     disposition_known: { observedSources: [], witnesses: [], incidents: [], knownPeople: [], playerHomeKnown: false },
     protectedPeople: opts.protectedPeople ?? [],
@@ -321,22 +331,40 @@ export { OCCUPATIONS_LIST };
 // compiled census geometry + the physical-audit archetype. Density derives from
 // real settlement function, capacity and danger — NOT one NPC per POI.
 // ---------------------------------------------------------------------------
+/** Full physical classification of every census archetype (24 observed). Each maps to a
+ *  settlement FUNCTION, not a population quota. ABANDONED / INACCESSIBLE_OR_UNVERIFIED are
+ *  legitimate empties — they are NOT defaulted-to-empty by an unrecognized archetype. */
 const ARCH_CLASS: Record<string, SiteClass> = {
+  // settlements
   village: 'HABITABLE_COMMUNITY',
+  hamlet: 'HABITABLE_COMMUNITY',
+  grove: 'HABITABLE_COMMUNITY',
+  // trade & transit
   port: 'TRADE_OR_TRANSIT',
-  coast: 'TRADE_OR_TRANSIT',
+  pier: 'TRADE_OR_TRANSIT',
+  warehouse: 'TRADE_OR_TRANSIT',
+  roadstop: 'TRADE_OR_TRANSIT',
+  chest_vendor: 'TRADE_OR_TRANSIT',
+  gate: 'TRADE_OR_TRANSIT',
+  evac: 'TRADE_OR_TRANSIT',
+  // work sites
   mine: 'WORK_SITE',
-  industrial: 'WORK_SITE',
-  factory: 'WORK_SITE',
+  quarry: 'WORK_SITE',
+  smelter: 'WORK_SITE',
+  sawmill: 'WORK_SITE',
+  mill: 'WORK_SITE',
+  powerplant: 'WORK_SITE',
+  facility: 'WORK_SITE',
   research: 'WORK_SITE',
-  archive: 'WORK_SITE',
-  signal: 'TRADE_OR_TRANSIT',
-  way: 'TRADE_OR_TRANSIT',
-  wild: 'HABITABLE_COMMUNITY',
-  crypt: 'HOSTILE_OR_DANGEROUS',
-  rupture: 'ABANDONED',
-  utility: 'WORK_SITE',
-  service: 'TRADE_OR_TRANSIT',
+  observatory: 'WORK_SITE',
+  // hostile / dangerous
+  tomb: 'HOSTILE_OR_DANGEROUS',
+  elder_site: 'HOSTILE_OR_DANGEROUS',
+  // abandoned
+  ruins: 'ABANDONED',
+  ragnarok_cache: 'ABANDONED',
+  // unverified / inaccessible
+  filter: 'INACCESSIBLE_OR_UNVERIFIED',
 };
 
 /** A deterministic community roster template by site class. Each site class gets a
@@ -379,7 +407,8 @@ function rosterFor(cls: SiteClass, rooms: number, rng: () => number): { occ: Occ
   return list;
 }
 
-/** Starting personal gear per occupation — finite, registered, physically justified. */
+/** Starting personal gear per occupation — finite, registered, physically justified.
+ *  All item ids are LIVE catalog ids. Water flasks start with full charge (4 drinks). */
 function startingGear(occ: Occupation, profile: ProfileKey): { equip?: Partial<HumanEquipSlots>; pack?: [string, number][] } {
   const gear: Record<Occupation, { equip?: Partial<HumanEquipSlots>; pack?: [string, number][] }> = {
     salvager: { equip: { weapon: null }, pack: [['knife', 1], ['cloth', 2], ['spares', 2]] },
@@ -387,7 +416,7 @@ function startingGear(occ: Occupation, profile: ProfileKey): { equip?: Partial<H
     cook: { pack: [['berries', 4], ['charcoal', 2]] },
     gardener: { pack: [['seed', 3], ['water_flask', 1]] },
     medic: { pack: [['herb', 4], ['bandage', 2]] },
-    guard: { equip: { weapon: { uid: '', key: 'wood_club', qty: 1, dur: 100 } as any, body: { uid: '', key: 'leather_jerkin', qty: 1 } as any }, pack: [['arrow', 6]] },
+    guard: { equip: { weapon: { uid: '', key: 'wood_club', qty: 1, dur: 100 } as any, body: { uid: '', key: 'leather_armor', qty: 1 } as any }, pack: [['arrow', 6]] },
     engineer: { equip: { weapon: { uid: '', key: 'stone_pick', qty: 1, dur: 120 } as any }, pack: [['spares', 4], ['charcoal', 2]] },
     builder: { equip: { weapon: { uid: '', key: 'stone_axe', qty: 1, dur: 120 } as any }, pack: [['wood', 4], ['stone', 2]] },
   };
@@ -395,31 +424,62 @@ function startingGear(occ: Occupation, profile: ProfileKey): { equip?: Partial<H
   return gear[occ];
 }
 
+/** Class-appropriate finite starting stock for a community. Varies by settlement function —
+ *  NOT one identical pantry for every site. Water access is real (water_flask charge). */
+function communityStock(cls: SiteClass, rooms: number): Record<string, number> {
+  const base: Record<SiteClass, Record<string, number>> = {
+    HABITABLE_COMMUNITY: { berries: 14, charcoal: 8, spares: 5, water_flask: 3, seed: 5, herb: 3, bandage: 2 },
+    WORK_SITE: { spares: 10, charcoal: 8, water_flask: 4, wood: 6, stone: 4 },
+    TRADE_OR_TRANSIT: { spares: 6, water_flask: 4, berries: 6, cloth: 3 },
+    HOSTILE_OR_DANGEROUS: { water_flask: 2, berries: 4, arrow: 8 },
+    ABANDONED: {},
+    INACCESSIBLE_OR_UNVERIFIED: {},
+  };
+  const s = { ...base[cls] };
+  // scale food/water stock mildly with room count (bounded, finite)
+  const m = Math.min(2, Math.floor(rooms / 12));
+  if (m > 0) { s.berries = (s.berries ?? 0) + 2 * m; s.water_flask = (s.water_flask ?? 0) + m; }
+  return s;
+}
+
 /** Classify a POI from its archetype name and seed a community + finite humans.
- *  `poiBox` is the POI's global tile bounding box (from the census). */
+ *  `sites` carries the POI's global tile bounding box (from the G1B source roster footprint —
+ *  the chests sit inside the POI's rooms, so the bbox is the POI's physical footprint). */
 export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string; name: string; archetype: string; rooms: number; bbox: [number, number, number, number] }[]): void {
-  seedEvacTrips(hw);
-  // Elder lair: use the first canonical elder's POI if present, else a fixed lair.
-  seedElderPressure(hw, 0, 0, 0);
+  // Evac boarding tiles: resolve from the real evac entities on the map (the evac POIs carry no
+  // G1B chests, so their tile comes from the beacon entity, not a chest bbox).
+  const evacPositions: Record<string, [number, number]> = {};
+  const evacEntities = Object.values(r.entities).filter(e => e.kind === 'evac' && e.tx !== undefined && e.ty !== undefined);
+  const siteList = ['po_evac_west', 'po_evac_south', 'po_evac_hook'] as const;
+  evacEntities.forEach((e, i) => { if (siteList[i]) evacPositions[siteList[i]] = [e.tx!, e.ty!]; });
+  seedEvacTrips(hw, evacPositions);
+  // Elder lair: use a real elder_site POI bbox center when present, else a fixed lair.
+  const elderSite = sites.find(s => s.archetype === 'elder_site');
+  const lair = elderSite ? [Math.round((elderSite.bbox[0] + elderSite.bbox[2]) / 2), Math.round((elderSite.bbox[1] + elderSite.bbox[3]) / 2), 0] : [0, 0, 0];
+  seedElderPressure(hw, lair[0], lair[1], lair[2]);
   const rng = mulberry(r.seed ^ 0x9e3779b9);
   for (const site of sites) {
-    const cls = ARCH_CLASS[site.archetype] ?? 'ABANDONED';
+    const cls = ARCH_CLASS[site.archetype] ?? 'INACCESSIBLE_OR_UNVERIFIED';
     if (cls === 'ABANDONED' || cls === 'INACCESSIBLE_OR_UNVERIFIED') {
-      // Some areas are appropriately empty. Record the classification.
+      // Legitimate empty: record the classification, no population, no stock.
       hw.communities[site.id] = { id: site.id, poi: site.id, class: cls, homeBeds: [], waterSources: [], foodStores: [], workStations: [], storeContainers: [], memberIds: [], stock: {}, threat: 0 };
       continue;
     }
-    // Create a community record with finite starting stock (registered origin).
+    // Community store (finite stock, registered origin) + a bed container (home).
     const communityId = `com:${site.id}`;
-    const store = mkContainer(r, 'loot', 8);
-    const stock: Record<string, number> = { berries: 12, charcoal: 6, spares: 4, water_flask: 2, seed: 4 };
+    const store = mkContainer(r, 'loot', 10);
+    const bed = mkContainer(r, 'chest', 4);
+    const stock = communityStock(cls, site.rooms);
     for (const [k, q] of Object.entries(stock)) addItem(r, store.id, k, q);
     const comm: Community = {
-      id: communityId, poi: site.id, class: cls, homeBeds: [], waterSources: [], foodStores: [store.id],
-      workStations: [], storeContainers: [store.id], memberIds: [], stock, threat: cls === 'HOSTILE_OR_DANGEROUS' ? 0.7 : 0.2,
+      id: communityId, poi: site.id, class: cls, homeBeds: [bed.id],
+      waterSources: [store.id],  // water access is real: community stock holds charged water_flasks
+      foodStores: [store.id],
+      workStations: [],           // real stations are scanned at runtime; work blocks honestly if none
+      storeContainers: [store.id], memberIds: [], stock, threat: cls === 'HOSTILE_OR_DANGEROUS' ? 0.7 : 0.2,
     };
     hw.communities[communityId] = comm;
-    // Seed humans at a standable tile inside the POI bbox (ground floor).
+    // Seed humans at a tile inside the POI bbox (ground floor).
     const roster = rosterFor(cls, site.rooms, rng);
     const [bx0, by0, bx1, by1] = site.bbox;
     let placed = 0;
@@ -428,15 +488,14 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
       const gy = by0 + 2 + Math.floor(rng() * Math.max(1, (by1 - by0 - 4)));
       const srcId = `${site.id}:human:${placed}`;
       const g = startingGear(member.occ, member.profile);
-      // assign a unique uid to equip stacks
       const equip: Partial<HumanEquipSlots> = {};
       if (g.equip) for (const k of Object.keys(g.equip) as (keyof HumanEquipSlots)[]) {
-        const st = (g.equip as any)[k]; if (st) { st.uid = `eq${hw.nextActorSeq}${placed}${k.length}`; (equip as any)[k] = st; }
+        const st = (g.equip as any)[k]; if (st) { st.uid = uid(r, 's'); (equip as any)[k] = st; }
       }
       const h = makeHuman(r, hw, {
         sourceId: srcId, gx, gy, floor: 0, profile: member.profile,
         occupation: member.occ, disposition: member.disp, proficiency: member.prof,
-        community: communityId, home: communityId,
+        community: communityId, home: communityId, bedId: bed.id,
         equip, startingPack: g.pack,
       });
       comm.memberIds.push(h.actorId);
@@ -488,10 +547,13 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
   hw.lastResolvedAt = now;
 }
 
-/** Eat/drink from carried or community stock (real item custody). */
+/** Eat/drink from carried or community stock (real item custody).
+ *  Water is consumed by CHARGE (a flask holds N drinks), not by qty; an empty flask grants no thirst. */
 export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 'food' | 'water', now: number): boolean {
-  const containers: Container[] = [h.inv.pack];
-  if (h.community && hw.communities[h.community]) containers.push(...hw.communities[h.community].foodStores.map(id => r.custody[id]).filter(Boolean) as Container[]);
+  const containers: Container[] = [humanPack(r, h)];
+  if (h.community && hw.communities[h.community]) {
+    for (const id of hw.communities[h.community].foodStores) { const c = r.custody[id]; if (c) containers.push(c); }
+  }
   for (const c of containers) {
     for (const s of c.slots) {
       if (!s) continue;
@@ -507,11 +569,13 @@ export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 
         return true;
       }
       if (kind === 'water' && (d.food?.thirst || d.waterContainer)) {
+        // A water container grants thirst only while it has charge.
+        if (d.charge != null && (s.charge ?? 0) <= 0) continue;
         const want = 100 - h.thirst;
-        const got = Math.min(want, (d.food?.thirst ?? 30) * s.qty);
+        const per = d.food?.thirst ?? 30;
+        const got = Math.min(want, per);
         h.thirst = clamp(h.thirst + got, 0, 100);
         if (d.charge != null) { s.charge = Math.max(0, (s.charge ?? 0) - 1); if (s.charge <= 0) { const i = c.slots.indexOf(s); c.slots[i] = null; } }
-        else { s.qty--; if (s.qty <= 0) { const i = c.slots.indexOf(s); c.slots[i] = null; } }
         receipt(r, now, 'human.drink', `${h.actorId}:${s.key}`);
         return true;
       }
@@ -545,47 +609,91 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   st.stock -= units;
   let got = 0;
   for (let u = 0; u < units; u++) {
-    for (const [k, q] of s.def.yields) { addItem(r, h.inv.pack.id, k, q); got += q; }
+    for (const [k, q] of s.def.yields) { addItem(r, humanPack(r, h).id, k, q); got += q; }
   }
   if (st.stock <= 0) { if (s.def.regrow) { st.regrowFrom = now; st.regrowAcc = 0; } }
   receipt(r, now, 'human.harvest', `${h.actorId}:${s.key}@${tx},${ty}:-${units}`);
   return { result: 'yield', got, key: s.key };
 }
 
-/** Whether a source is a PLAYER_EXPLORATION authority (G1B chests + authored caches). */
+/** Whether a source is a PLAYER_EXPLORATION authority (G1B chests + authored static loot caches).
+ *  NPCs never deplete these — they are the player's exploration reward, not a shared harvest node. */
 function isPlayerExplorationSource(r: RunState, key: string, tx: number, ty: number): boolean {
   // G1B chest sources are keyed by their g1b sid; any source sitting on a G1B chest tile is protected.
   for (const e of Object.values(r.entities)) {
     if (e.g1b && e.tx === tx && e.ty === ty) return true;
+    // Authored static loot caches (kind 'loot', not G1B-derived) are also player exploration.
+    if (e.kind === 'loot' && !e.g1b && e.tx === tx && e.ty === ty) return true;
   }
   for (const e of Object.values(r.g1b?.far ?? {})) {
     if (e.g1b && e.tx === tx && e.ty === ty) return true;
   }
-  // Authored static loot caches (kind 'loot') are also player exploration.
-  void key; void r;
+  void key;
   return false;
 }
 
-/** One work tick for a human at a station: validate, reserve, advance, commit once. */
+/** Occupation production: real input (from community store) → output (to community store).
+ *  Guards do not produce (their work is protection). Every recipe is bounded and finite. */
+type Recipe = { in: [string, number][]; out: [string, number][] };
+const WORK_RECIPE: Partial<Record<Occupation, Recipe>> = {
+  gardener: { in: [['seed', 1]], out: [['berries', 3]] },
+  cook: { in: [['berries', 3]], out: [['charcoal', 1]] },
+  mechanic: { in: [['spares', 1], ['charcoal', 1]], out: [['spares', 2]] },
+  engineer: { in: [['spares', 2]], out: [['spares', 3]] },
+  builder: { in: [['wood', 2]], out: [['wood', 3]] },
+  salvager: { in: [['spares', 1]], out: [['spares', 2]] },
+  medic: { in: [], out: [['herb', 1], ['bandage', 1]] },
+};
+
+/** One work tick for a human: validate capability, consume real community stock, produce real
+ *  output, commit once per interval. Blocks honestly when inputs are unavailable. */
 export function humanWorkTick(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { done: boolean; reason?: string } {
   if (!h.intent || h.intent.kind !== 'work') return { done: false, reason: 'no work order' };
   if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED') return { done: false, reason: 'incapacitated' };
   if (h.hunger <= 5 || h.thirst <= 5) return { done: false, reason: h.hunger <= 5 ? 'too hungry' : 'too thirsty' };
-  // occupation-specific: the human tends its real station/source. For the integrated minimum,
-  // a worker at a community store consumes nothing and produces nothing without a real station;
-  // blocked honestly when no authorized station/source is reachable.
   const comm = h.community ? hw.communities[h.community] : null;
-  if (!comm || comm.workStations.length === 0) {
-    h.intent.blockReason = 'no authorized work station reachable';
-    return { done: false, reason: h.intent.blockReason };
-  }
-  // Advance work progress on the real clock; commit output once per interval.
+  if (!comm) return { done: false, reason: 'no community' };
+  const recipe = WORK_RECIPE[h.occupation];
+  if (!recipe) return { done: false, reason: 'no production for this occupation' }; // guard etc.
+  // Commit once per 60s interval.
   const dt = now - h.lastCommittedAt;
   if (dt < 60000) return { done: false };
+  // Check inputs are available in the community store.
+  for (const [k, q] of recipe.in) {
+    const have = comm.stock[k] ?? 0;
+    if (have < q) return { done: false, reason: `no ${k} in community stock` };
+  }
+  // Consume inputs, produce output (real custody through the community store).
+  for (const [k, q] of recipe.in) comm.stock[k] = (comm.stock[k] ?? 0) - q;
+  for (const [k, q] of recipe.out) comm.stock[k] = (comm.stock[k] ?? 0) + q;
+  // Reflect stock changes into the actual store container custody.
+  syncCommunityStock(r, comm);
   h.lastCommittedAt = now;
   h.stamina = clamp(h.stamina - 2, 0, h.maxStamina);
-  receipt(r, now, 'human.work', `${h.actorId}:${h.occupation}`);
+  receipt(r, now, 'human.work', `${h.actorId}:${h.occupation}:${recipe.out[0][0]}+${recipe.out[0][1]}`);
   return { done: true };
+}
+
+/** Reconcile a community's stock ledger into its real store container custody (add/remove to match). */
+function syncCommunityStock(r: RunState, comm: Community): void {
+  const store = comm.storeContainers[0]; if (!store) return;
+  const c = r.custody[store]; if (!c) return;
+  // Build a count map of what's physically in the store.
+  const have: Record<string, number> = {};
+  for (const s of c.slots) if (s) have[s.key] = (have[s.key] ?? 0) + s.qty;
+  // Remove surplus, add deficit to match the ledger.
+  for (const [k, q] of Object.entries(comm.stock)) {
+    const diff = (q ?? 0) - (have[k] ?? 0);
+    if (diff > 0) addItem(r, store, k, diff);
+    else if (diff < 0) {
+      let toRemove = -diff;
+      for (let i = 0; i < c.slots.length && toRemove > 0; i++) {
+        const s = c.slots[i]; if (!s || s.key !== k) continue;
+        const take = Math.min(toRemove, s.qty); s.qty -= take; toRemove -= take;
+        if (s.qty <= 0) c.slots[i] = null;
+      }
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -595,10 +703,14 @@ export type DamageSource = 'player' | 'enemy' | 'human' | 'hazard' | 'starvation
 
 /** Apply damage to a human with the same armor/floor/weapon law as player combat.
  *  Returns true if the hit landed. A hit that crosses zero HP DOWNS the human (not auto-kill);
- *  only a genuinely lethal follow-up or untreated severe wound finalizes DEAD. */
-export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: number, angle: number, now: number, source: DamageSource, attackerId?: string): boolean {
+ *  only a genuinely lethal follow-up or untreated severe wound finalizes DEAD.
+ *  Floor verification: the target must be on the SAME floor as the active window floor (or the
+ *  attacker's floor when the attacker is a creature on a different storey). */
+export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: number, angle: number, now: number, source: DamageSource, attackerId?: string, attackerFloor?: number): boolean {
   if (h.state === 'DEAD' || h.state === 'EVACUATED') return false;
-  if (h.floor !== (r.veyraFloor ?? 0) && source !== 'hazard') return false;
+  const activeFloor = r.veyraFloor ?? 0;
+  const sourceFloor = attackerFloor ?? activeFloor;
+  if (h.floor !== sourceFloor && source !== 'hazard') return false;
   const worn = humanArmor(h);
   dmg = Math.max(1, Math.round(dmg * (1 - worn.armor)));
   h.hp -= dmg;
@@ -607,16 +719,18 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
       kind: 'assault', victim: h.actorId, aggressor: attackerId, witnesses: [], at: now,
       place: { tx: h.gx, ty: h.gy, floor: h.floor }, injury: true, resolved: false,
     }, now);
+    formGrievance(r, hw, h, attackerId, now);
   }
   if (h.hp <= 0 && h.state !== 'DOWNED') downHuman(r, hw, h, now, source, attackerId);
   return true;
 }
 
-/** DOWN a human: alive, incapacitated, one corpse-bag custody from carried stock. */
+/** DOWN a human: alive, incapacitated, one corpse-bag custody from carried stock.
+ *  Timestamps use real `now` (ms) consistently with wound/bleeding logic. */
 export function downHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, source: DamageSource, attackerId?: string): void {
   if (h.state === 'DOWNED' || h.state === 'DEAD') return;
   h.state = 'DOWNED';
-  h.downedAt = r.clock.simMs / 1000;
+  h.downedAt = now;
   h.hp = Math.max(1, h.hp);
   h.wounds.push({ severity: 0.7, bleeding: source === 'enemy' || source === 'human', bleedingUntil: now + 20 * 60000, treated: false });
   receipt(r, now, 'human.down', `${h.actorId} by ${source}${attackerId ? ':' + attackerId : ''}`);
@@ -625,8 +739,10 @@ export function downHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
 /** Stabilize / treat a downed human with real medicine (Medic/player approach + item custody). */
 export function treatHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { ok: boolean; reason?: string } {
   if (h.state !== 'DOWNED') return { ok: false, reason: 'not downed' };
-  const containers: Container[] = [h.inv.pack];
-  if (h.community && hw.communities[h.community]) containers.push(...hw.communities[h.community].foodStores.map(id => r.custody[id]).filter(Boolean) as Container[]);
+  const containers: Container[] = [humanPack(r, h)];
+  if (h.community && hw.communities[h.community]) {
+    for (const id of hw.communities[h.community].foodStores) { const c = r.custody[id]; if (c) containers.push(c); }
+  }
   let used = false;
   for (const c of containers) {
     for (const s of c.slots) {
@@ -647,19 +763,31 @@ export function treatHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: num
   return { ok: true };
 }
 
-/** Final death: permanent for the run. One recoverable corpse/bag with carried items. */
+/** Final death: permanent for the run. One recoverable corpse/bag with carried + equipped items.
+ *  Uses addStack so every stack keeps its UID (no re-mint); equipped weapon/armor transfer too. */
 export function killHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, cause: string): void {
   if (h.state === 'DEAD') return;
   h.state = 'DEAD';
-  h.deadAt = r.clock.simMs / 1000;
+  h.deadAt = now;
   h.hp = 0;
   h.outcome = 'DEAD';
-  const bag = spawnDrop(r, 'bag', 0, h.gx * TILE + 8, h.gy * TILE + 8, now);
-  bag.c = mkContainer(r, 'bag', 8).id;
-  for (const s of [...h.inv.pack.slots]) {
-    if (s) addItem(r, bag.c!, s.key, s.qty, { dur: s.dur, charge: s.charge, lvl: s.lvl, meta: s.meta });
+  // One recoverable corpse bag entity (kind 'bag') with its own custody container.
+  const corpseC = mkContainer(r, 'bag', 8);
+  const bag: Entity = { id: uid(r, 'e'), kind: 'bag', x: h.gx * TILE + 8, y: h.gy * TILE + 8, tx: h.gx, ty: h.gy, c: corpseC.id, born: now };
+  if (r.veyraFloor) (bag as any).floor = r.veyraFloor;
+  r.entities[bag.id] = bag;
+  {
+    // Transfer carried pack stacks by UID (K1: a whole stack keeps its UID on move).
+    for (const s of [...humanPack(r, h).slots]) {
+      if (s) { if (!addStack(r, corpseC.id, s)) { /* no room: leave on the ground bag */ } }
+    }
+    // Equipped items also drop (weapon + armor) — they are physical possessions.
+    for (const slot of ['weapon', 'body', 'head', 'legs', 'feet'] as const) {
+      const st = h.equip[slot]; if (st && !addStack(r, corpseC.id, st)) { /* keep if no room */ }
+    }
   }
-  h.inv.pack.slots.fill(null);
+  humanPack(r, h).slots.fill(null);
+  h.equip = { head: null, body: null, legs: null, feet: null, weapon: null };
   receipt(r, now, 'human.death', `${h.actorId}:${cause}`);
   pushLog(r, now, `${h.name} has fallen.`, 'red');
 }
@@ -669,26 +797,47 @@ export function killHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
 // ---------------------------------------------------------------------------
 export type TradeResult = { ok: boolean; reason?: string; transferred?: number };
 
-/** Offer an item to a human (sell/give). Transfers via custody; the human's pack must have room. */
-export function tradeWithHuman(r: RunState, hw: HumanWorld, h: HumanRecord, key: string, qty: number, now: number): TradeResult {
+/** Offer an item to a human (sell/give). The player's offered stacks are DEBITED from the
+ *  player's custody and transferred to the human's pack by UID (K1 conservation — no free mint).
+ *  `fromCid` is the player's source container id. */
+export function tradeWithHuman(r: RunState, hw: HumanWorld, h: HumanRecord, fromCid: string, key: string, qty: number, now: number): TradeResult {
   if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED') return { ok: false, reason: 'incapacitated' };
   if (h.state === 'FIGHTING') return { ok: false, reason: 'too dangerous to trade' };
-  const left = addItem(r, h.inv.pack.id, key, qty);
-  if (left > 0) return { ok: false, reason: 'no carrying capacity' };
-  receipt(r, now, 'human.trade', `${h.actorId}:+${qty}:${key}`);
-  return { ok: true, transferred: qty };
+  const src = r.custody[fromCid]; if (!src) return { ok: false, reason: 'no source custody' };
+  let transferred = 0;
+  // Collect the player's stacks of this key and move them by UID into the human's pack.
+  for (let i = 0; i < src.slots.length && qty > 0; i++) {
+    const s = src.slots[i]; if (!s || s.key !== key) continue;
+    const take = Math.min(qty, s.qty);
+    const whole = take === s.qty;
+    if (whole) {
+      if (!addStack(r, humanPack(r, h).id, s)) return { ok: false, reason: 'no carrying capacity' };
+      src.slots[i] = null;
+    } else {
+      const split: Stack = { ...s, uid: uid(r, 's'), qty: take };
+      s.qty -= take;
+      if (!addStack(r, humanPack(r, h).id, split)) return { ok: false, reason: 'no carrying capacity' };
+    }
+    qty -= take; transferred += take;
+  }
+  if (transferred === 0) return { ok: false, reason: 'nothing to trade' };
+  receipt(r, now, 'human.trade', `${h.actorId}:+${transferred}:${key}`);
+  return { ok: true, transferred };
 }
 
-/** Take an accessible item from a human's carried pack (robbery / loot). */
+/** Take an accessible item from a human's carried pack (robbery / loot).
+ *  Transfers by UID via addStack (K1 conservation); a stack that cannot fit keeps its identity
+ *  in the human's pack (never re-minted, never silently dropped). */
 export function lootHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, intoContainerId: string): { taken: number; reason?: string } {
   if (h.state === 'DEAD' || h.state === 'EVACUATED') return { taken: 0, reason: 'no corpse here' };
   if (h.state !== 'DOWNED') return { taken: 0, reason: 'must be downed to loot' };
+  const dst = r.custody[intoContainerId]; if (!dst) return { taken: 0, reason: 'no destination custody' };
+  const pack = humanPack(r, h);
   let taken = 0;
-  for (let i = 0; i < h.inv.pack.slots.length; i++) {
-    const s = h.inv.pack.slots[i]; if (!s) continue;
-    const left = addItem(r, intoContainerId, s.key, s.qty, { dur: s.dur, charge: s.charge, lvl: s.lvl, meta: s.meta });
-    taken += s.qty - left;
-    h.inv.pack.slots[i] = null;
+  for (let i = 0; i < pack.slots.length; i++) {
+    const s = pack.slots[i]; if (!s) continue;
+    if (addStack(r, dst.id, s)) { pack.slots[i] = null; taken += s.qty; }
+    // If addStack refused (no room / non-mergeable), the stack stays in the pack — identity preserved.
   }
   receipt(r, now, 'human.loot', `${h.actorId}:-${taken}`);
   return { taken };
@@ -712,12 +861,20 @@ export function resolveOrder(r: RunState, hw: HumanWorld, h: HumanRecord, orderI
     return { result: 'PROTECT_TARGET', reason: `refuses to harm ${targetActorId}, whom they protect` };
   }
   if (order === 'home' && !h.home) return { result: 'CANNOT_EXECUTE', reason: 'no home to return to' };
-  if (order === 'carry' && h.inv.cart.slots.every(s => s)) return { result: 'CANNOT_EXECUTE', reason: 'cart full' };
+  if (order === 'carry' && humanCart(r, h).slots.every(s => s)) return { result: 'CANNOT_EXECUTE', reason: 'cart full' };
   if (order === 'engage' && h.disposition === 'protective' && !h.protectedPeople.includes(targetActorId ?? '')) {
     if (h.community && hw.communities[h.community]?.threat < 0.5) return { result: 'RETREAT_OR_HOLD', reason: 'cautious; holds position' };
   }
-  if (order === 'engage' && h.disposition === 'neutral' && rngNext(r) < 0.3) {
-    return { result: 'REFUSE_WITH_REASON', reason: 'unwilling to attack a stranger' };
+  // Deterministic refusal: stable hash of orderId+actorId+target — NOT global RNG.
+  // A neutral's engage refusal is decided once per orderId and persists (no per-frame reroll).
+  if (order === 'engage' && h.disposition === 'neutral' && !h.protectedPeople.includes(targetActorId ?? '')) {
+    const verdict = hashInt(`${h.actorId}:${orderId}:${targetActorId ?? ''}`) % 100;
+    if (verdict < 30) {
+      const res: OrderResult = 'REFUSE_WITH_REASON';
+      h.followOrder = { orderId, result: res, reason: 'unwilling to attack a stranger', at: now };
+      receipt(r, now, 'human.order', `${h.actorId}:${order}:${res}`);
+      return { result: res, reason: 'unwilling to attack a stranger' };
+    }
   }
   const result: OrderResult = 'OBEY';
   const reason = 'accepts the order';
@@ -765,9 +922,16 @@ export function boardEvac(r: RunState, hw: HumanWorld, h: HumanRecord, tripId: s
   const trip = hw.evacuation[tripId];
   if (!trip) return { ok: false, reason: 'no such trip' };
   if (trip.departed) return { ok: false, reason: 'trip has departed' };
-  if (trip.boarded.includes(h.actorId)) return { ok: false, reason: 'already boarded' };
+  // One person, one trip: reject if already boarded anywhere.
+  for (const t of Object.values(hw.evacuation)) {
+    if (t.boarded.includes(h.actorId)) return { ok: false, reason: 'already boarded on another trip' };
+  }
+  // Position check: the human must be within boarding range of the trip's real boarding tile.
+  const dx = (h.gx + 0.5) - trip.siteGx, dy = (h.gy + 0.5) - trip.siteGy;
+  if (Math.hypot(dx, dy) > 6) return { ok: false, reason: 'not at the boarding site' };
   if (trip.boarded.length >= trip.capacity) return { ok: false, reason: 'trip full' };
   if (h.state === 'DEAD') return { ok: false, reason: 'cannot board a corpse' };
+  if (h.state === 'DOWNED') return { ok: false, reason: 'too injured to board' };
   trip.boarded.push(h.actorId);
   receipt(r, now, 'human.board', `${h.actorId}:${tripId}`);
   return { ok: true };
@@ -797,11 +961,16 @@ export function departEvac(r: RunState, hw: HumanWorld, tripId: string, now: num
   return { ok: true };
 }
 
-/** Player evacuation: lawful departure triggers endRun only AFTER the player actually boards. */
+/** Player evacuation: the player must be AT the boarding site. On boarding, the trip departs
+ *  and the run ends via the existing endRun('evacuated') path (integrated in engine.ts). */
 export function playerEvacuate(r: RunState, hw: HumanWorld, tripId: string, now: number): { ok: boolean; reason?: string } {
   const trip = hw.evacuation[tripId];
   if (!trip) return { ok: false, reason: 'no such trip' };
   if (trip.departed) return { ok: false, reason: 'trip has departed' };
+  // Player position check: must be within boarding range of the real boarding tile.
+  const px = Math.floor(r.player.x / TILE), py = Math.floor(r.player.y / TILE);
+  const dx = (px + 0.5) - trip.siteGx, dy = (py + 0.5) - trip.siteGy;
+  if (Math.hypot(dx, dy) > 6) return { ok: false, reason: 'not at the boarding site' };
   trip.boarded.push('player');
   return departEvac(r, hw, tripId, now);
 }
@@ -839,23 +1008,32 @@ export function defeatElder(r: RunState, hw: HumanWorld, elderId: string, now: n
 // ---------------------------------------------------------------------------
 export interface HumanOutcomeSummary { total: number; evacuated: number; survived: number; dead: number; unresolved: number; }
 
-/** Finalize every human's terminal outcome before the run wipe. No double-counting. */
+/** Finalize every human's terminal outcome before the run wipe. No double-counting.
+ *  SURVIVED_ON_ISLAND requires a PROVEN safe outcome (sheltered in a community that was never
+ *  assaulted); otherwise the outcome stays UNRESOLVED — never a default "everyone survived". */
 export function finalizeHumanOutcomes(r: RunState, hw: HumanWorld, now: number): HumanOutcomeSummary {
-  const hours = runHours(r, now);
   const summary: HumanOutcomeSummary = { total: 0, evacuated: 0, survived: 0, dead: 0, unresolved: 0 };
   for (const h of Object.values(hw.people)) {
     summary.total++;
     if (h.outcome) {
       if (h.outcome === 'EVACUATED') summary.evacuated++;
       else if (h.outcome === 'DEAD') summary.dead++;
+      else if (h.outcome === 'SURVIVED_ON_ISLAND') summary.survived++;
+      else summary.unresolved++;
       continue;
     }
     if (h.state === 'EVACUATED') { h.outcome = 'EVACUATED'; summary.evacuated++; }
     else if (h.state === 'DEAD') { h.outcome = 'DEAD'; summary.dead++; }
-    else if (hours >= 336 && h.state !== 'DOWNED') {
-      h.outcome = 'SURVIVED_ON_ISLAND'; summary.survived++;
-    } else {
-      h.outcome = 'UNRESOLVED'; summary.unresolved++;
+    else if (h.state === 'DOWNED') { h.outcome = 'UNRESOLVED'; summary.unresolved++; }
+    else {
+      // Proven safe: sheltered in a community that recorded no assault incident against it.
+      const comm = h.community ? hw.communities[h.community] : null;
+      const assaulted = comm ? Object.values(hw.incidents).some(inc => inc.place.tx === h.gx && inc.place.ty === h.gy && inc.injury) : false;
+      if (comm && comm.class !== 'HOSTILE_OR_DANGEROUS' && !assaulted && h.wounds.every(w => w.treated || !w.bleeding)) {
+        h.outcome = 'SURVIVED_ON_ISLAND'; summary.survived++;
+      } else {
+        h.outcome = 'UNRESOLVED'; summary.unresolved++;
+      }
     }
   }
   receipt(r, now, 'human.finalize', `total=${summary.total} evac=${summary.evacuated} surv=${summary.survived} dead=${summary.dead} unres=${summary.unresolved}`);
@@ -874,6 +1052,98 @@ function countOutcomes(hw: HumanWorld): HumanOutcomeSummary {
     if (o === 'EVACUATED') s.evacuated++; else if (o === 'DEAD') s.dead++; else if (o === 'SURVIVED_ON_ISLAND') s.survived++; else s.unresolved++;
   }
   return s;
+}
+
+// ---------------------------------------------------------------------------
+// Integrated human simulation step — consume, work, move, evacuate.
+// Called once per sim tick from sim.ts. Actor-aware, no player XP, no teleport.
+// ---------------------------------------------------------------------------
+/** Advance every human's autonomous behavior for one tick. Does NOT touch player XP or
+ *  player-exploration loot. Movement is tile-step toward an intent target (no teleport). */
+export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
+  const dtMs = now - hw.lastResolvedAt;
+  if (dtMs <= 0) return;
+  for (const h of Object.values(hw.people)) {
+    if (h.state === 'DEAD' || h.state === 'EVACUATED') continue;
+    // 1. Survival consume: eat when hungry, drink when thirsty.
+    if (h.hunger < 40) humanConsume(r, hw, h, 'food', now);
+    if (h.thirst < 40) humanConsume(r, hw, h, 'water', now);
+    // 2. Work: if carrying a work intent and capable, run the work tick.
+    if (h.state === 'WORKING' || (h.intent?.kind === 'work' && h.state === 'IDLE')) {
+      if (h.intent?.kind === 'work') {
+        const w = humanWorkTick(r, hw, h, now);
+        if (!w.done && w.reason && h.intent) h.intent.blockReason = w.reason;
+      }
+    }
+    // 3. Evacuation: if intent is evacuate and near a boarding site, board.
+    if (h.intent?.kind === 'evacuate' && h.state === 'IDLE') {
+      for (const trip of Object.values(hw.evacuation)) {
+        if (trip.departed) continue;
+        const dx = (h.gx + 0.5) - trip.siteGx, dy = (h.gy + 0.5) - trip.siteGy;
+        if (Math.hypot(dx, dy) <= 6) { boardEvac(r, hw, h, trip.tripId, now); h.intent = undefined; break; }
+      }
+    }
+    // 4. Movement: step toward intent route target (tile-by-tile, no teleport).
+    if (h.state === 'MOVING' && h.intent?.route && h.intent.route.length) {
+      const next = h.intent.route[0];
+      const dx = (h.gx + 0.5) - next.tx, dy = (h.gy + 0.5) - next.ty;
+      if (Math.hypot(dx, dy) <= 1.0) {
+        h.intent.route.shift();
+        if (h.intent.route.length === 0) { h.state = 'IDLE'; h.intent = undefined; }
+      } else {
+        // step one tile toward target
+        const sx = Math.sign(next.tx - h.gx), sy = Math.sign(next.ty - h.gy);
+        h.gx += sx; h.gy += sy;
+        h.dir = sx === 0 ? (sy > 0 ? 0 : 3) : (sx > 0 ? 2 : 1);
+        h.lastSimAt = now;
+      }
+    }
+    // Stamina regen when idle.
+    if (h.state === 'IDLE') h.stamina = clamp(h.stamina + dtMs / HOUR * 4, 0, h.maxStamina);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Human combat integration — real damage routes, not an unattached function.
+// ---------------------------------------------------------------------------
+/** Resolve human combat for one tick: creatures in range damage nearby humans (applyDamage
+ *  with the creature's floor), and fighting humans strike back at nearby creatures/player.
+ *  This is the bidirectional combat law the main K5 routes call into. */
+export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number): void {
+  const activeFloor = r.veyraFloor ?? 0;
+  // 1. Creatures damage humans in their attack range.
+  for (const m of r.creatures) {
+    if (m.state !== 'attack' && m.state !== 'chase') continue;
+    const cFloor = m.floor ?? activeFloor;
+    const cDmg = CREATURES[m.type]?.dmg ?? 10;
+    for (const h of Object.values(hw.people)) {
+      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== cFloor) continue;
+      const dx = (h.gx + 0.5) * TILE - m.x, dy = (h.gy + 0.5) * TILE - m.y;
+      const reach = (CREATURES[m.type]?.r ?? 16) + TILE * 0.5;
+      if (Math.hypot(dx, dy) <= reach) {
+        const dmg = cDmg * 0.6; // creature strike against a human
+        applyDamage(r, hw, h, dmg, 0, now, 'enemy', m.id, cFloor);
+      }
+    }
+  }
+  // 2. Fighting humans strike nearby creatures with their equipped weapon.
+  for (const h of Object.values(hw.people)) {
+    if (h.state !== 'FIGHTING') continue;
+    if (h.floor !== activeFloor) continue;
+    const w = humanWeapon(h); if (!w) continue;
+    const hx = (h.gx + 0.5) * TILE, hy = (h.gy + 0.5) * TILE;
+    for (const m of r.creatures) {
+      const mFloor = m.floor ?? activeFloor;
+      if (mFloor !== h.floor) continue;
+      const dx = m.x - hx, dy = m.y - hy;
+      if (Math.hypot(dx, dy) <= w.reach) {
+        // Human weapon damage to creature (creature armor handled by its own damage route).
+        m.hp -= Math.max(1, Math.round(w.dmg * 0.7));
+        h.stamina = clamp(h.stamina - 3, 0, h.maxStamina);
+        break;
+      }
+    }
+  }
 }
 
 

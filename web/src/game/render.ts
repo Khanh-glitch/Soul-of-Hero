@@ -4,6 +4,7 @@ import * as comp from './compositor';
 import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, type RunState, type Creature, type Entity } from './core';
 import { STRUCTS, ELDERS, PRIMORDIAL_ELDERS, lookupElderDef, CREATURES, ITEMS } from './catalog';
 import { hasCreatureAtlas, preloadCreatureAtlases, drawCreatureAtlasSprite, creatureHeadTopY } from './creature-sprites';
+import { drawNpcSprite, drawNpcShadow, preloadNpcArt, resolveNpcClip } from './npc-art';
 import { isCreatureRenderedByPrimordialRig, renderPrimordialOverlay } from './primordials/host-bridge';
 import { getFrame as getPrimordialRasterFrame, frameRGBA } from './primordials/art/sprites';
 import { getWorld, getActiveLayout, SRC_KEYS, fbm } from './world';
@@ -11,7 +12,7 @@ import { isVeyra05Layout } from '../veyra05/scenes';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
 import { observeVeyraDecor } from '../veyra05/decor-client';
 import { drawArchitecturalBuilding } from '../veyra05/building-art';
-import { onVeyraWindowShift } from '../veyra05/continuity';
+import { onVeyraWindowShift, windowOrigin } from '../veyra05/continuity';
 import * as life from '../veyra05/living/life';
 import { oakArt, pineArt, palmArt, willowArt, rockArt, bushArt, type TreeArt } from '../veyra05/living/flora';
 import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
@@ -248,7 +249,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   const sx = shk > 0.3 ? Math.round((Math.random() - 0.5) * shk) : 0, sy = shk > 0.3 ? Math.round((Math.random() - 0.5) * shk) : 0;
   const cx = Math.round(cam.x) + sx, cy = Math.round(cam.y) + sy;
   g.save(); g.translate(-cx, -cy);
-  if (!creatureAtlasesBooted && typeof Image !== 'undefined') { creatureAtlasesBooted = true; preloadCreatureAtlases(); }
+  if (!creatureAtlasesBooted && typeof Image !== 'undefined') { creatureAtlasesBooted = true; preloadCreatureAtlases(); preloadNpcArt(); }
   life.setRun(r); life.beginFrame(r, now, time, cx, cy, dtMs); upgradeLivingArt(A);
   // terrain chunks
   const c0 = Math.floor(cx / (CH * TILE)), c1 = Math.floor((cx + VIEW_W) / (CH * TILE)), r0 = Math.floor(cy / (CH * TILE)), r1 = Math.floor((cy + VIEW_H) / (CH * TILE));
@@ -302,6 +303,19 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   for (const e of ents) { if (e.x < cx - 40 || e.x > cx + VIEW_W + 40 || e.y < cy - 20 || e.y > cy + VIEW_H + 60) continue; if (e.kind === 'struct' && ['floor', 'roof'].includes(STRUCTS[e.type!].layer)) continue; if (e.type === 'garden' || e.type === 'spikes') continue; list.push({ y: e.y + (e.kind === 'drop' ? -2 : 6), f: () => drawEntity(g, r, e, time, now) }); }
   for(const q of r.natureTrees||[]){const x=q.tx*TILE,y=q.ty*TILE;if(!life.undergroundHides(r,x+8,y+8)&&x>=cx-32&&x<cx+VIEW_W+32&&y>=cy-32&&y<cy+VIEW_H+32)list.push({y:y+14,f:()=>{const ta=LIVING_TREES.oak[(q.tx+q.ty)%LIVING_TREES.oak.length];life.drawLivingTree(g,ta,x+8,y+16,q.tx*7+q.ty,1,false);}});}
   for (const m of r.creatures) { if (((m as any).floor ?? 0) !== activeFloor(r)) continue; if (life.undergroundHides(r, m.x, m.y)) continue; if (m.x < cx - 40 || m.x > cx + VIEW_W + 40 || m.y < cy - 40 || m.y > cy + VIEW_H + 60) continue; list.push({ y: m.y + 4, f: () => drawCreature(g, r, m, time, now) }); }
+  // Humans — projected from the authoritative HumanWorld ledger, drawn once per actor.
+  if (r.humanWorld) {
+    const [ox, oy] = isVeyra05Layout(r.layoutId || '') ? windowOrigin(r) : [0, 0];
+    for (const h of Object.values(r.humanWorld.people)) {
+      if (h.state === 'EVACUATED') continue;
+      if (h.floor !== activeFloor(r)) continue;
+      const wx = (h.gx - ox) * TILE + 8, wy = (h.gy - oy) * TILE + 8;
+      if (wx < cx - 40 || wx > cx + VIEW_W + 40 || wy < cy - 40 || wy > cy + VIEW_H + 60) continue;
+      if (life.undergroundHides(r, wx, wy)) continue;
+      const moving = h.state === 'MOVING' || (h.intent?.route?.length ?? 0) > 0;
+      list.push({ y: wy + 4, f: () => { drawNpcShadow(g, wx, wy + 2, 6, 3, 0.32); drawNpcSprite(g, h, wx, wy, r.clock.simMs / 1000, moving); } });
+    }
+  }
   // While mounted the rider is composited onto the bike sprite (vehicle case); skip the standalone player to avoid a double draw.
   if(!r.spiritTransit && r.player.vehicle == null)list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time, o.working) });
   const dragon=r.dragonDive;if(!vfxDirector.ownsDragon() && dragon?.phase && dragon.dragonX!==undefined && dragon.dragonY!==undefined) list.push({y:dragon.dragonY+4,f:()=>{const x=dragon.dragonX!,y=dragon.dragonY!;g.save();g.translate(x,y);g.fillStyle='#70241e';g.beginPath();g.moveTo(-19,-12);g.lineTo(-7,-22);g.lineTo(0,-14);g.lineTo(10,-21);g.lineTo(18,-10);g.lineTo(7,-12);g.lineTo(3,-3);g.lineTo(-5,-3);g.lineTo(-9,-11);g.closePath();g.fill();g.fillStyle='#ff8c2b';g.fillRect(-7,-14,14,6);g.fillStyle='#ffe6a0';g.fillRect(3,-13,2,2);g.restore();}});

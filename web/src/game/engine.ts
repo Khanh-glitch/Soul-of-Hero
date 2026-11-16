@@ -37,7 +37,7 @@ import {
 import { syncVeyraEcosystemActors } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
-import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, finalizeHumanOutcomes, type HumanWorld } from './humanworld';
+import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, finalizeHumanOutcomes, humanHistoryAggregate, playerEvacuate, type HumanWorld } from './humanworld';
 import { NPC_POI_CENSUS } from './npc-census';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
@@ -1543,7 +1543,7 @@ function derivePoiBboxes(): Record<string, [number, number, number, number]> {
 
 /** Create and seed the authoritative run-local HumanWorld ledger from the 81-POI census. */
 export function seedHumanWorld(r: RunState): void {
-  const hw = newHumanWorld(r.id);
+  const hw = newHumanWorld(r.id, r.clock.lastSimAt);
   r.humanWorld = hw;
   const bboxes = derivePoiBboxes();
   const sites = NPC_POI_CENSUS
@@ -2030,7 +2030,12 @@ export function endRun(gs: GameState, ending: 'evacuated' | 'abandoned' | 'expir
   const r = gs.run; if (!r || r.ended) return { ok: false, reason: 'No active run.' };
   if (ending === 'evacuated') award(gs, 'evacuated', now);
   if (ending === 'evacuated' && r.elderStones.length >= 6) award(gs, 'six_stones', now);
-  if (r.humanWorld) finalizeHumanOutcomes(r, r.humanWorld, now);
+  if (r.humanWorld) {
+    const summary = finalizeHumanOutcomes(r, r.humanWorld, now);
+    const agg = humanHistoryAggregate(r.humanWorld);
+    // Preserve the human outcome summary across the K8 wipe in profile history.
+    (gs.profile as any).humanRunHistory = [...((gs.profile as any).humanRunHistory ?? []), { runId: r.id, ending, outcomes: summary, schema: agg.schema }].slice(-20);
+  }
   r.ended = ending;
   gs.profile.history.unshift({ runId: r.id, character: r.character, startedAt: r.startedAt, endedAt: now, ending, score: r.score, stones: countStones(r), deposited: r.deposited, achievements: [...r.achievements], qa: r.qaUsed, verified: 'LOCAL/UNVERIFIED' });
   gs.profile.profileReceipts.push(`end:${r.id}:${ending}`);
@@ -3158,6 +3163,20 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'grabCart': { if(p.vehicle)return fail('Exit the vehicle first.'); const e = r.entities[it.eid]; if (!e || e.kind !== 'cart' || !owned(e) || !near(r, e, 2)) return fail('Out of reach.'); p.pulling = p.pulling === e.id ? null : e.id; return ok('cart.grab', `${e.id}:${!!p.pulling}`); }
     case 'evacuate': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'evac' || !near(r, e, 2.5)) return fail('You must be at the evacuation beacon.');
+      // Real transport: the player must board a trip at the beacon; only a successful boarding
+      // departs the island and ends the run.
+      if (r.humanWorld) {
+        let tripId: string | null = null;
+        let best = Infinity;
+        for (const t of Object.values(r.humanWorld.evacuation)) {
+          const dx = (Math.floor(e.x / TILE) + 0.5) - t.siteGx, dy = (Math.floor(e.y / TILE) + 0.5) - t.siteGy;
+          const d = Math.hypot(dx, dy); if (d < best) { best = d; tripId = t.tripId; }
+        }
+        if (tripId) {
+          const res = playerEvacuate(r, r.humanWorld, tripId, now);
+          if (!res.ok) return fail(res.reason ?? 'cannot evacuate');
+        }
+      }
       return endRun(gs, 'evacuated', now);
     }
     case 'abandon': return endRun(gs, 'abandoned', now);
