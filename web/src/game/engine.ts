@@ -2670,7 +2670,6 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (d.slots) e.c = mkContainer(r, 'chest', d.slots).id;
       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
       if (d.station === 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id };
-      restoreStationHardware(e);
       if (it.struct === 'refinery') e.identity = 'refinery-v1';
       if (it.struct === 'claim') e.cabinet = {credit:{},legacy:false};
       if (it.struct === 'base_generator') e.basePower = { enabled: false, energy: 0, network:'wire-v1' };
@@ -2687,6 +2686,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (it.struct === 'farm_controller') e.farm = { enabled:false, crop:'crop', energy:0 };
       if (it.struct === 'garden') e.garden = { crop: null, growth: 0, water: 0 };
       if (it.struct === 'barrel') e.water = 0;
+      restoreStationHardware(e); // after each device's empty runtime state is initialized
       if (it.struct.startsWith('door')) e.open = false;
       const cl = claimAt(r, it.tx, it.ty); if (cl) e.claim = cl.id;
       if (r.veyraFloor) (e as any).floor = r.veyraFloor;

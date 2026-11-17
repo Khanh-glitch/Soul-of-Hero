@@ -9,6 +9,8 @@ export function validStationHardware(key: string, value: unknown): value is Stat
   if (key === 'deploy_workbench') return Object.keys(h).every(k => ['version','level','industrial'].includes(k)) &&
     (h.level === 2 || h.level === 3) && (h.industrial === undefined || h.industrial === true);
   if (key === 'deploy_furnace') return Object.keys(h).every(k => ['version','lining'].includes(k)) && h.lining === true;
+  if (key === 'deploy_base_generator') return Object.keys(h).every(k => ['version','generatorCapacity'].includes(k)) && h.generatorCapacity === 2;
+  if (key === 'deploy_garden') return Object.keys(h).every(k => ['version','coldFrame'].includes(k)) && h.coldFrame === true;
   return false;
 }
 
@@ -17,14 +19,20 @@ export function packedStationHardware(e: Entity): StationHardware | undefined {
     return { version:'station-hardware-v1', level:e.station.level, ...(e.industrial ? {industrial:true as const} : {}) };
   if (e.type === 'furnace' && e.station?.upgrade === 'kiln_lining')
     return { version:'station-hardware-v1', lining:true };
+  if (e.type === 'base_generator' && e.basePower?.capacity === 2)
+    return { version:'station-hardware-v1', generatorCapacity:2 };
+  if (e.type === 'garden' && e.garden?.coldFrame)
+    return { version:'station-hardware-v1', coldFrame:true };
   return undefined;
 }
 
 export function restoreStationHardware(e: Entity) {
   const h=e.deployed?.stationHardware;
-  if (!h || !e.station || !validStationHardware(e.deployed!.key,h)) return;
-  if (e.type === 'workbench') {
+  if (!h || !validStationHardware(e.deployed!.key,h)) return;
+  if (e.type === 'workbench' && e.station) {
     e.station.level=h.level;
     if (h.industrial) e.industrial={enabled:false}; // a new site must be explicitly rewired
-  } else if (e.type === 'furnace' && h.lining) e.station.upgrade='kiln_lining';
+  } else if (e.type === 'furnace' && e.station && h.lining) e.station.upgrade='kiln_lining';
+  else if (e.type === 'base_generator' && e.basePower && h.generatorCapacity === 2) e.basePower.capacity=2;
+  else if (e.type === 'garden' && e.garden && h.coldFrame) e.garden.coldFrame=true;
 }

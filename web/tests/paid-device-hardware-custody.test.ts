@@ -1,6 +1,6 @@
 import {afterEach,describe,expect,it} from 'vitest';
 import {type GameState} from '../src/game/core';
-import {FURNACE_LINING,INDUSTRIAL_MODULE,WORKBENCH_UPGRADE,WORKBENCH_UPGRADE_III} from '../src/game/catalog';
+import {FURNACE_LINING,GENERATOR_CAPACITY_UPGRADE,GARDEN_FRAME_COST,INDUSTRIAL_MODULE,WORKBENCH_UPGRADE,WORKBENCH_UPGRADE_III} from '../src/game/catalog';
 import {addItem,C,countItem,newGame,markDirty} from '../src/game/engine';
 import {setActiveLayout} from '../src/game/world';
 import {beside,command,reload} from './support/current-industry';
@@ -89,6 +89,71 @@ describe('paid device hardware follows its one physical packed UID',()=>{
     expect(countItem(r,'inv','deploy_workbench')).toBe(1);
     const saved=reload(g),moved=buildCarriedFromPack(saved,'workbench');
     expect(moved.deployed!.uid).toBe(pack.uid);expect(moved.station!.level).toBe(2);
+  });
+
+  it('keeps a paid generator capacity upgrade, but not fuel, energy, enabled state or old wiring',()=>{
+    const g=start(),r=g.run!,bench=paidL2(g),gen=station(g,'base_generator'),id=gen.deployed!.uid;
+    r.player.x=(bench.x+gen.x)/2;r.player.y=(bench.y+gen.y)/2;markDirty();
+    pay(g,GENERATOR_CAPACITY_UPGRADE.cost);
+    expect(command(g,'upgradeGenerator',{eid:gen.id,benchId:bench.id},NOW+21)).toMatchObject({ok:true});
+    gen.hp=93;gen.basePower!.energy=1500;gen.basePower!.enabled=true;gen.basePower!.priority='production';
+    addItem(r,gen.c!,'wood',3);const fuelUid=C(r,gen.c!).slots.find(Boolean)!.uid;
+    beside(g,gen.tx!-1,gen.ty!);
+    expect(command(g,'reclaim',{eid:gen.id},NOW+22)).toMatchObject({ok:true});
+    const saved=reload(g),rebuilt=buildCarriedFromPack(saved,'base_generator');
+    expect(rebuilt.deployed!.uid).toBe(id);expect(rebuilt.hp).toBe(93);
+    expect(rebuilt.basePower).toEqual({enabled:false,energy:0,network:'wire-v1',capacity:2});
+    expect(C(saved.run!,rebuilt.c!).slots.every(s=>s===null)).toBe(true);
+    expect(Object.values(saved.run!.custody).flatMap(c=>c.slots).filter(s=>s?.uid===fuelUid)).toHaveLength(1);
+    const copy=reload(saved);expect(copy.run!.entities[rebuilt.id].basePower!.capacity).toBe(2);
+    const ordinary=station(copy,'base_generator');expect(ordinary.basePower!.capacity).toBeUndefined();
+  });
+  it('keeps the paid cold frame without smuggling crops/water; dismantling it then packing cannot restore it',()=>{
+    const g=start(),r=g.run!,plot=station(g,'garden'),id=plot.deployed!.uid;
+    pay(g,GARDEN_FRAME_COST);beside(g,plot.tx!-1,plot.ty!);
+    expect(command(g,'gardenFrame',{eid:plot.id},NOW+21)).toMatchObject({ok:true});
+    plot.garden!.water=3;plot.garden!.crop='crop';plot.garden!.growth=.6;plot.hp=34;
+    expect(command(g,'reclaim',{eid:plot.id},NOW+22)).toMatchObject({ok:true});
+    const saved=reload(g),rebuilt=buildCarriedFromPack(saved,'garden');
+    expect(rebuilt.deployed!.uid).toBe(id);expect(rebuilt.hp).toBe(34);
+    expect(rebuilt.garden).toEqual({crop:null,growth:0,water:0,coldFrame:true});
+    expect(reload(saved).run!.entities[rebuilt.id].garden!.coldFrame).toBe(true);
+    beside(saved,rebuilt.tx!-1,rebuilt.ty!);
+    expect(command(saved,'gardenFrame',{eid:rebuilt.id,remove:true},NOW+23)).toMatchObject({ok:true});
+    expect(command(saved,'reclaim',{eid:rebuilt.id},NOW+24)).toMatchObject({ok:true});
+    const again=buildCarriedFromPack(reload(saved),'garden');
+    expect(again.deployed!.uid).toBe(id);expect(again.garden!.coldFrame).toBeUndefined();
+  });
+
+  it.each([
+    ['base_generator',{version:'station-hardware-v1',generatorCapacity:3}],
+    ['base_generator',{version:'station-hardware-v1',generatorCapacity:2,energy:999}],
+    ['base_generator',{version:'station-hardware-v1',generatorCapacity:2,enabled:true}],
+    ['base_generator',{version:'station-hardware-v1',coldFrame:true}],
+    ['garden',{version:'station-hardware-v1',generatorCapacity:2}],
+    ['garden',{version:'station-hardware-v1',coldFrame:true,water:99}],
+    ['garden',{version:'station-hardware-v1',coldFrame:false}],
+  ])('refuses malformed %s hardware before moving a pack or accepting a save', (type,bad)=>{
+    const g=start(),r=g.run!,e=station(g,type as string);beside(g,e.tx!-1,e.ty!);
+    expect(command(g,'reclaim',{eid:e.id},NOW+30)).toMatchObject({ok:true});
+    const pack=C(r,'inv').slots.find(s=>s?.uid===e.deployed!.uid)!;
+    (pack as any).stationHardware=bad;
+    const inv=JSON.stringify(C(r,'inv')),entities=JSON.stringify(r.entities);
+    expect(command(g,'build',{struct:type,tx:e.tx,ty:e.ty},NOW+31)).toMatchObject({ok:false});
+    expect(JSON.stringify(C(r,'inv'))).toBe(inv);expect(JSON.stringify(r.entities)).toBe(entities);
+    expect(validate(structuredClone(g))).toBeNull();
+  });
+  it('migrates a historical raw-paid reinforced generator once, not on every reload',()=>{
+    const g=start(),r=g.run!,e=station(g,'base_generator');
+    delete e.deployed;e.basePower!.capacity=2; // historical shape, already purchased hardware
+    expect(validate(structuredClone(g))).not.toBeNull();beside(g,e.tx!-1,e.ty!);
+    expect(command(g,'reclaim',{eid:e.id},NOW+30)).toMatchObject({ok:true});
+    const saved=reload(g),pack=C(saved.run!,'inv').slots.find(s=>s?.key==='deploy_base_generator')!;
+    expect(pack.stationHardware).toEqual({version:'station-hardware-v1',generatorCapacity:2});
+    const rebuilt=buildCarriedFromPack(saved,'base_generator');
+    expect(rebuilt.deployed!.uid).toBe(pack.uid);expect(rebuilt.basePower!.capacity).toBe(2);
+    expect(command(saved,'reclaim',{eid:e.id},NOW+31)).toMatchObject({ok:false});
+    expect(reload(saved).run!.receipts.filter(x=>x.kind==='pa1.legacy.unpack')).toHaveLength(1);
   });
 
 });
