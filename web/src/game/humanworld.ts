@@ -168,7 +168,7 @@ export interface HumanRecord {
   routeSearch?: {status:'FOUND'|'PENDING_SEARCH'|'NO_PATH'|'SEARCH_LIMIT';target:string;expanded:number};
   motion?: { fromGx: number; fromGy: number; toGx: number; toGy: number; toFloor?: number; elapsedMs: number; updatedAt?: number };
   workOutputs?: Record<string, number>;
-  workOutputSources?:Record<string,{sourceId:string;jobId:string}>;
+  workOutputSources?:Record<string,{sourceId?:string;jobId:string;recipe?:string;inputs?:{uid:string;key:string;qty:number;containerId:string}[];stationId?:string}>;
   harvestJob?: {id:string;sourceId:string;gx:number;gy:number;floor:number;key:string;phase:'source'|'delivery';storeId?:string;startedAt:number};
   knownRecipes?: string[];
   patrolPostIndex?: number;
@@ -190,7 +190,7 @@ export interface Community {
   waterSources: string[];     // source ids
   foodStores: string[];       // container ids
   workStations: string[];     // station entity ids
-  cargoLedger?:Record<string,{at:number;jobId:string;sourceId?:string;workerId:string;fromUid:string;intoUid:string;qty:number;key:string}[]>;
+  cargoLedger?:Record<string,{at:number;jobId:string;sourceId?:string;recipe?:string;inputs?:{uid:string;key:string;qty:number;containerId:string}[];stationId?:string;workerId:string;fromUid:string;intoUid:string;qty:number;key:string}[]>;
   storeContainers: string[];  // community store container ids
   /** Global tile backing the physical store entity and access check. */
   storeTile?: [number, number];
@@ -1677,6 +1677,10 @@ function commitHumanWater(r:RunState,h:HumanRecord,now:number):boolean {
  h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+1000;return true;
 }
 function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>, protectedTiles: Set<string>): void {return timedWorldWork('planAutonomousWork',()=>{
+  if(h.state==='IDLE'&&Object.values(h.workOutputs??{}).some(q=>q>0)){
+    if(h.intent?.work?.phase==='travel'){receipt(r,now,'human.work.defer',`${h.actorId}:${h.intent.intentId}:deliver committed output first`);h.intent=undefined;}
+    if(h.harvestJob?.phase==='source'){receipt(r,now,'human.harvest.cancel',`${h.harvestJob.id}:deliver prior committed output first`);delete h.harvestJob;}
+  }
   if (h.intent?.work?.phase === 'travel' && h.state === 'IDLE') {
     planHumanOccupation(r, hw, h, now, (gx,gy,floor) => humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied,floor));
     h.nextThinkAt = now + 3000; return;
@@ -1721,10 +1725,20 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     h.lastWorkBlock='My sleeping place is missing or unreachable.';
   }
   if (planHumanOccupation(r,hw,h,now,(gx,gy,floor)=>humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied,floor))) return;
-  const allowed=new Set(Object.keys(SOURCES).filter(key=>canHarvestSource(h,{key,def:SOURCES[key]} as NonNullable<ReturnType<typeof sourceAt>>)));
+  let allowed=new Set(Object.keys(SOURCES).filter(key=>canHarvestSource(h,{key,def:SOURCES[key]} as NonNullable<ReturnType<typeof sourceAt>>)));
+  const ordinarySources=allowed;
+  // A trained cook's known station recipe gives ingredient purpose to lawful
+  // gathering. Still bounded to the existing known catchment; never invent stock.
+  if(h.occupation==='cook'&&comm.workStations.some(id=>findRunEntity(r,id)?.type==='campfire')){
+    const wanted=new Set((h.knownRecipes??[]).flatMap(k=>RECIPES[k]?.ins.length===1?RECIPES[k].ins.map(([key])=>key):[]));
+    const ingredientSources=new Set([...allowed].filter(k=>SOURCES[k].yields.some(([key])=>wanted.has(key))));
+    if(ingredientSources.size)allowed=ingredientSources;
+  }
   countWorldWork('sourceIndexReads');
   const local=h.gx>=ox&&h.gy>=oy&&h.gx<ox+WW&&h.gy<oy+WH;
-  const candidates=globalSourceCandidates(h.gx,h.gy,h.floor,r.sourceMap?.rules===4?4:3,allowed,local?r.layoutId:undefined);
+  let candidates=globalSourceCandidates(h.gx,h.gy,h.floor,r.sourceMap?.rules===4?4:3,allowed,local?r.layoutId:undefined);
+  if(!candidates.length&&allowed!==ordinarySources){h.lastWorkBlock='Known recipe ingredients absent from bounded catchment; continuing lawful general food gathering.';candidates=globalSourceCandidates(h.gx,h.gy,h.floor,r.sourceMap?.rules===4?4:3,ordinarySources,local?r.layoutId:undefined);}
+  if(h.occupation==='cook'&&!candidates.length)h.lastWorkBlock='No known harvestable recipe ingredient in the bounded catchment; no food or station was fabricated.';
   for(const p of candidates){
     const s=globalSourceAt(r,p.gx,p.gy,h.floor,now);if(!s||s.protected||s.stock<=0||!canHarvestSource(h,s))continue;
     if(!simulateHumanOutput(pack.slots.map(v=>v?{...v}:null),s.def.yields,{jobId:'admission',workerId:h.actorId}))continue;
@@ -1798,16 +1812,16 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
   for (const [stackUid, qty] of Object.entries(h.workOutputs)) {
     const i = pack.slots.findIndex(s => s?.uid === stackUid); if (i < 0 || qty <= 0) { delete h.workOutputs[stackUid]; continue; }
     const s = pack.slots[i]!;
-    const ownedHarvest=s.production?.workerId===h.actorId&&!!h.workOutputSources?.[s.uid];
-    const room=dst.slots.includes(null)?s.qty:((s.production&&!ownedHarvest)||s.meta!==undefined||s.dur!==undefined||s.charge!==undefined?0:spaceFor(r,dstId,s.key));
+    const ownedOutput=s.production?.workerId===h.actorId&&!!h.workOutputSources?.[s.uid];
+    const room=dst.slots.includes(null)?s.qty:((s.production&&!ownedOutput)||s.meta!==undefined||s.dur!==undefined||s.charge!==undefined?0:spaceFor(r,dstId,s.key));
     const take=Math.min(qty,s.qty,room);if(take<=0){h.lastWorkBlock='Reached output store is full; cargo remains in my pack.';continue;}
-    const transfer=take===s.qty&&!ownedHarvest?s:{...s,uid:take===s.qty?s.uid:uid(r,'s'),qty:take,...(ownedHarvest?{production:undefined}:{})};
+    const transfer=take===s.qty&&!ownedOutput?s:{...s,uid:take===s.qty?s.uid:uid(r,'s'),qty:take,...(ownedOutput?{production:undefined}:{})};
     const whole = take === s.qty;
     const destinationBefore=new Map(dst.slots.filter((v):v is Stack=>!!v).map(v=>[v.uid,v.qty]));
     if (whole) pack.slots[i] = null; else s.qty -= take;
     if (!addStack(r, dstId, transfer)) { if (whole) pack.slots[i] = s; else s.qty += take; continue; }
     const origin=h.workOutputSources?.[stackUid];
-    const lineage=dst.slots.filter((v):v is Stack=>!!v).flatMap(v=>{const qty=v.qty-(destinationBefore.get(v.uid)??0);return qty>0?[{at:now,jobId:origin?.jobId??h.harvestJob?.id??'work',sourceId:origin?.sourceId,workerId:h.actorId,fromUid:stackUid,intoUid:v.uid,qty,key:v.key}]:[];});
+    const lineage=dst.slots.filter((v):v is Stack=>!!v).flatMap(v=>{const qty=v.qty-(destinationBefore.get(v.uid)??0);return qty>0?[{at:now,jobId:origin?.jobId??h.harvestJob?.id??'work',sourceId:origin?.sourceId,recipe:origin?.recipe,inputs:origin?.inputs?.map(v=>({...v})),stationId:origin?.stationId,workerId:h.actorId,fromUid:stackUid,intoUid:v.uid,qty,key:v.key}]:[];});
     (comm.cargoLedger??={})[transfer.uid]=[...(comm.cargoLedger?.[transfer.uid]??[]),...lineage];
     receipt(r,now,'human.cargo.lineage',JSON.stringify({containerId:dstId,transferUid:transfer.uid,lineage}));
     receipt(r,now,'human.cargo.deliver',`${h.harvestJob?.id??'work'}:${h.actorId}:${stackUid}>${transfer.uid}:${dstId}:${take}`);

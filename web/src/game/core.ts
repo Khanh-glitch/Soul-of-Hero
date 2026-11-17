@@ -52,7 +52,7 @@ export interface CoreReserve { basic: number; refined: number; signature: number
 /** Creator Core V2 (G1B): `lvl` 1-3 lives on the physical instance, `cd` holds the three per-UID ready-at timestamps,
  *  `upg` is a running same-UID upgrade. `reserves` exists only in pre-V2 saves and is converted on load into `owed`: the exact items that energy was
  *  loaded from, handed back to the Core's own container as soon as there is room. A cast never draws on it. */
-export interface Stack { production?: { jobId: string; workerId: string }; uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; owed?: Record<string, number>; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
+export interface Stack { production?: { jobId: string; workerId: string; recipe?:string; inputs?:{uid:string;key:string;qty:number;containerId:string}[]; stationId?:string }; uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; owed?: Record<string, number>; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
 export interface Container { id: string; kind: string; slots: (Stack | null)[]; origin?: { authority: 'REGIONAL_HUMAN_ECONOMY'; sourceId: string } }
 
 export type Dir = 0 | 1 | 2 | 3; // down, left, right, up
@@ -156,7 +156,7 @@ export interface Entity {
 /** PA1 R1: `rv` pins the catalog revision the job was paid under, so a later recipe
  *  cutover can neither reject the save nor change what the job pays out. Absent = a save
  *  from before stamping; the migration ledger resolves those to revision 1. */
-export interface Job { workerId?: string; id: string; recipe: string; left: number; total: number; reserved?: Stack[]; rv?: number }
+export interface Job { inputProvenance?:{uid:string;key:string;qty:number;containerId:string}[]; workerId?: string; id: string; recipe: string; left: number; total: number; reserved?: Stack[]; rv?: number }
 
 export interface WorldStimulus { version:'world-stimulus-v1'; id:string; sourceId:string; eventIndex:number; kind:'airdrop-landing'|'combat-sound'; modality:'sound'; eligibility:'audible-landing-v1'|'audible-ranged-v1'|'audible-melee-v1'; x:number; y:number; at:number; expiresAt:number; range:number; strength:number }
 

@@ -1419,12 +1419,12 @@ function portion(r: RunState, s: Stack, qty: number): Stack {
 export function recipeOutputs(rc: { out: string; qty: number; outs?: [string, number][] }): [string, number][] {
   return rc.outs ?? [[rc.out, rc.qty]];
 }
-export function reserveInputs(r: RunState, ins: [string, number][], cid = 'inv'): Stack[] {
+export function reserveInputs(r: RunState, ins: [string, number][], cid = 'inv', unclaimedOnly=false): Stack[] {
   const c = C(r, cid); const reserved: Stack[] = [];
   for (const [key, amount] of ins) {
     let left = amount;
     for (let i = c.slots.length - 1; i >= 0 && left > 0; i--) {
-      const s = c.slots[i]; if (!s || s.key !== key) continue;
+      const s = c.slots[i]; if (!s || (unclaimedOnly&&s.production) || s.key !== key) continue;
       const n = Math.min(left, s.qty);
       if (n === s.qty) { reserved.push(s); c.slots[i] = null; }
       else { reserved.push(portion(r, s, n)); s.qty -= n; }
@@ -3438,15 +3438,19 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
 export function productionFits(r: RunState, cid: string, outputs: [string,number][]): boolean {
   return outputs.reduce((n,[key,qty])=>n+Math.ceil(Math.ceil(qty*liveItemPer(key))/ITEMS[liveItemId(key)].max),0)<=C(r,cid).slots.filter(s=>!s).length;
 }
-export function queuePaidRecipe(r: RunState, e: Entity, cid: string, recipe: string, workerId?: string): { ok: boolean; reason?: string; jobId?: string } {
+export function queuePaidRecipe(r: RunState, e: Entity, cid: string, recipe: string, workerId?: string, now=r.clock.lastSimAt): { ok: boolean; reason?: string; jobId?: string } {
   const rc = RECIPES[recipe], st = e.station;
   if (!rc?.station || !st || STRUCTS[e.type!]?.station !== rc.station) return { ok: false, reason: 'wrong physical station' };
   if ((st.level ?? 1) < requiredStationLevel(rc) || st.queue.length >= 6) return { ok: false, reason: 'station level or queue blocked' };
   const ins = rc.ins.filter(([,q]) => q > 0);
   if (!hasAll(r, cid, ins)) return { ok: false, reason: 'missing recipe inputs' };
   if (workerId ? !productionFits(r,st.outC,recipeOutputs(rc)) : rc.outs && !recoveryFits(C(r, st.outC), rc.outs)) return { ok: false, reason: 'output full' };
-  const reserved = reserveInputs(r, ins, cid), jobId = uid(r, 'j');
-  st.queue.push({ id: jobId, recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved, rv: RECIPE_REVISION, ...(workerId ? { workerId } : {}) });
+  if(ins.some(([key,q])=>C(r,cid).slots.reduce((n,s)=>n+(s?.key===key&&!s.production?s.qty:0),0)<q))return {ok:false,reason:'inputs owned by another production order'};
+  const before=C(r,cid).slots.filter((s):s is Stack=>!!s).map(s=>({uid:s.uid,key:s.key,qty:s.qty,containerId:cid}));
+  const reserved = reserveInputs(r, ins, cid,true), jobId = uid(r, 'j');
+  const inputs=before.flatMap(s=>{const qty=s.qty-(C(r,cid).slots.find(v=>v?.uid===s.uid)?.qty??0);return qty>0?[{...s,qty}]:[];});
+  if(workerId)receipt(r,now,'human.production.pay',JSON.stringify({workerId,jobId,recipe,stationId:e.id,inputs,totalMs:rc.secs*1000}));
+  st.queue.push({ id: jobId, recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved, rv: RECIPE_REVISION, ...(workerId ? { workerId, inputProvenance:inputs } : {}) });
   return { ok: true, jobId };
 }
 
@@ -3540,12 +3544,14 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
             note('Research table: that study was already complete — materials returned.');
             const worker = job.workerId ? r.humanWorld?.people[job.workerId] : undefined;
         if (worker?.intent?.work?.machineJobId === job.id) worker.intent.work.readyAt = at;
+        if(job.workerId)receipt(r,at,'human.production.finish',JSON.stringify({workerId:job.workerId,jobId:job.id,recipe:job.recipe,stationId:e.id,totalMs:job.total,outputs:C(r,st.outC).slots.filter(s=>s?.production?.jobId===job.id).map(s=>({uid:s!.uid,key:s!.key,qty:s!.qty}))}));
         receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
           }
           completeFamilyStudy(r, fam, at, e.id);
           note(`Research table: ${fam} study complete. ${recipesOfFamily(fam).length} formula${recipesOfFamily(fam).length === 1 ? '' : 's'} available to craft.`);
           const worker = job.workerId ? r.humanWorld?.people[job.workerId] : undefined;
         if (worker?.intent?.work?.machineJobId === job.id) worker.intent.work.readyAt = at;
+        if(job.workerId)receipt(r,at,'human.production.finish',JSON.stringify({workerId:job.workerId,jobId:job.id,recipe:job.recipe,stationId:e.id,totalMs:job.total,outputs:C(r,st.outC).slots.filter(s=>s?.production?.jobId===job.id).map(s=>({uid:s!.uid,key:s!.key,qty:s!.qty}))}));
         receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
         } else if (job.recipe.startsWith('R:')) {
           const k = job.recipe.slice(2);
@@ -3562,12 +3568,13 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
           // Single-output recipes keep their original capacity rule. Multi-output bundles are
           // preflighted as a whole: either every co-product is committed or none is.
           if (job.workerId ? !productionFits(r,st.outC,outs) : rc.outs ? !recoveryFits(C(r, st.outC), outs) : spaceFor(r, st.outC, rc.out) < rc.qty) { blocked = true; note(`${STRUCTS[e.type!].name}: output slots full.`); stationState(r,e,'output_full',at); continue; }
-          for (const [key, qty] of outs) addItem(r, st.outC, key, qty,job.workerId?{production:{jobId:job.id,workerId:job.workerId}}:undefined);
+          for (const [key, qty] of outs) addItem(r, st.outC, key, qty,job.workerId?{production:{jobId:job.id,workerId:job.workerId,recipe:job.recipe,stationId:e.id,inputs:job.inputProvenance}}:undefined);
           if (outs.some(([key]) => key === 'iron_ingot')) award(gs, 'first_ingot', at);
           note(`${STRUCTS[e.type!].name} finished ${outs.map(([key, qty]) => `${qty} ${ITEMS[key].name}`).join(', ')}.`);
         }
         const worker = job.workerId ? r.humanWorld?.people[job.workerId] : undefined;
         if (worker?.intent?.work?.machineJobId === job.id) worker.intent.work.readyAt = at;
+        if(job.workerId)receipt(r,at,'human.production.finish',JSON.stringify({workerId:job.workerId,jobId:job.id,recipe:job.recipe,stationId:e.id,totalMs:job.total,outputs:C(r,st.outC).slots.filter(s=>s?.production?.jobId===job.id).map(s=>({uid:s!.uid,key:s!.key,qty:s!.qty}))}));
         receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
       }
       if (blocked && kind !== 'campfire') break;
@@ -3580,7 +3587,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
           // burn per 12–26 s cycle; burning them lets a station pay for its own output (a self-feeding loop). Generators and motorbikes still use them.
           const fc = C(r, st.fuelC); const fi = fc.slots.findIndex(s => s && stationBurnable(s.key));
           if (fi < 0) { if (job) { const key = job.recipe.startsWith('R:') ? job.recipe.slice(2) : job.recipe; const paused = recipeForJob(key, job.rv); note(`${STRUCTS[e.type!].name}: fuel ran out — ${paused ? ITEMS[paused.out].name : 'the queued job'} paused.`); stationState(r,e,'fuel_out',now-t); } break; }
-          const s = fc.slots[fi]!; st.burn += ITEMS[s.key].fuel! * 1000; s.qty--; if (s.qty <= 0) fc.slots[fi] = null;
+          const s = fc.slots[fi]!; if(job?.workerId)receipt(r,now-t,'human.production.fuel',JSON.stringify({workerId:job.workerId,jobId:job.id,stationId:e.id,containerId:fc.id,uid:s.uid,key:s.key,qty:1,burnMs:ITEMS[s.key].fuel!*1000})); st.burn += ITEMS[s.key].fuel! * 1000; s.qty--; if (s.qty <= 0) fc.slots[fi] = null;
         }
       }
       if (job && kind !== 'campfire') stationState(r,e,'running',now-t);
