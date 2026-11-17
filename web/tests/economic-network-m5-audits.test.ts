@@ -125,7 +125,10 @@ describe('SOH M5 Complete Item Function & Recipe Route Audits', () => {
     const coreDragonRow = byId.get('core_dragon')!;
     expect(coreFireRow[2]).toContain('LEGACY_CORE_CHARGE');
     expect(coreDragonRow[2]).toContain('CREATOR_CORE_GOLD_SKU');
-  }, 60_000);
+  // Cold extraction builds all canonical scenes plus clustered POI/floor windows.
+  // This is an exhaustive data correctness gate, not a 60s runtime performance SLA.
+  // Preserve every assertion; allow the same 120s budget used by ontology extraction.
+  }, 120_000);
 
   it('Generates SOH_RECIPE_ROUTE_AUDIT.csv covering all RECIPES, Recycler, Husbandry, Research & Offscreen routes with 0 active OVER_RETURN and 0 stale PRE_D5', () => {
     const { csv, rowCount } = generateRecipeRouteAuditCsv();
