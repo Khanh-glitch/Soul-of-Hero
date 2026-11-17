@@ -5,44 +5,24 @@
 
 ## P2 — Fasteners: every consumer, before and after a merge
 
-Unit prices. Fasteners: 1 iron_ingot + 1 scrap → 3 (researched: base=false). Machine Parts: 2 scrap + 1 iron_ingot → 2 (base=true).
+Unit prices. Fasteners: RETIRED — no live formula. Machine Parts: RETIRED — no live formula.
 
 | Consumer | Kind | Live | Fasteners | Before iron | Before scrap | M1 Machine Parts | M1 iron | M1 scrap | M1 scrap × | M2 iron | M2 scrap | M2 × |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| field_repair_kit | recipe | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
-| trail_pack | recipe | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
-| trail_canteen | recipe | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| mechanical_gear | recipe | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| iron_plate | recipe | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| farm_controller | structure | yes | 3 | 1 | 1 | 2 | 1 | 2 | 2 | 1 | 1 | 1 |
-| door_powered | structure | NO | 3 | 1 | 1 | 2 | 1 | 2 | 2 | 1 | 1 | 1 |
-| arrow_turret | structure | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
-| bear_trap | structure | yes | 2 | 0.667 | 0.667 | 1 | 0.5 | 1 | 1.5 | 1 | 1 | 1.5 |
-| deploy_farm_controller | repair | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| deploy_arrow_turret | repair | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| deploy_bear_trap | repair | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
-| workbench → level 3 | upgrade | yes | 8 | 2.667 | 2.667 | 4 | 2 | 4 | 1.5 | 3 | 3 | 1.125 |
-| vehicleRepair (motorbike, engine.ts) | action | yes | 1 | 0.333 | 0.333 | 1 | 0.5 | 1 | 3 | 1 | 1 | 3 |
 
-Totals over 13 live consumers — before: 8.666 iron / 8.666 scrap · M1: 8.5 / 17 · M2: 15 / 15.
+Totals over 0 live consumers — before: undefined iron / undefined scrap · M1: undefined / undefined · M2: undefined / undefined.
 
 **Other measured facts**
 
-- Fasteners is a RESEARCHED formula (item.studyRecipe = fasteners); Machine Parts is known from the start. Removing the recipe deletes one research step from the Workbench III and motorbike routes.
-- Fasteners also arrive without crafting: creature drop from orc_3 and authored industrial loot. A merge has to convert or strand those stacks.
-- door_powered consumer is listed but not buildable today (module pending) and is excluded from the totals.
+- P2 is superseded by the current item-set retirement ledger; saved jobs retain their frozen rules.
 
 **Conclusion**
 
-- M1 (n Fasteners → ceil(n/2) Machine Parts) is NOT cost-neutral for a single consumer. Total iron is about unchanged (8.666 → 8.5) but scrap rises on every row: best case 1.5×, worst case 3× (the 7 one-fastener consumers). Across all 13 live consumers scrap goes 8.666 → 17.
-- M2 (write the batch ratio into the consumer: ceil(n/3) ingot + ceil(n/3) scrap) costs exactly what one fastener batch costs today for an isolated craft, but removes leftover sharing: pooled cost rises up to 3× on one-fastener consumers (8.666 → 15 scrap overall).
-- No integer mapping removes Fasteners without a cost jump on the one- and two-fastener consumers. That is the blocker; it is arithmetic, not taste.
+- No live Fasteners/Machine Parts merge comparison applies. Current Parts consumers must be read from the live graph.
 
 **Resolution path**
 
-- RULING APPLIED: Fasteners stay. The Round 1 disposition MERGE_CANDIDATE is withdrawn (now KEEP).
-- If the twin signal is to be removed later, do it by DIFFERENTIATION, not by merge: Fasteners = researched joining stock for assemblies and field repair; Machine Parts = base mechanism stock. That needs no recipe change.
-- A future merge is only admissible with a replacement that is priced per consumer in thirds (i.e. keeps a 3-per-batch unit) — which is Fasteners under another name. Close P2 unless a new mechanic is proposed.
+- Do not restore retired recipes or quote Round-2 hypothetical ratios as current economy.
 
 ## P6 — Plank and the 240 HP wall
 
@@ -51,14 +31,14 @@ Totals over 13 live consumers — before: 8.666 iron / 8.666 scrap · M1: 8.5 / 
 | wall_wood | 160 | 5 wood | yes | nothing | yes |
 | wall_plank | 240 | 3 plank | no (upgrade-only) | nothing | **NO** |
 | wall_stone | 380 | 8 stone + 1 wood | no (upgrade-only) | wall_wood | yes |
-| wall_brick | 600 | 6 brick | no (upgrade-only) | nothing | **NO** |
+| wall_brick | 600 | 9 stone + 1 iron_ingot | no (upgrade-only) | nothing | **NO** |
 
 Plank: 2 wood → 1 @ workbench, 6s. Listed consumers: structure:wall_plank. Creature drops: orc_2. Upgrade map: floor_wood → floor_stone, wall_wood → wall_stone, door_wood → door_iron, roof_thatch → roof_tile, chest_small → chest_large.
 
 | Unobtainable structure | HP | Cost |
 | --- | --- | --- |
 | wall_plank (Plank Wall) | 240 | 3 plank |
-| wall_brick (Brick Wall) | 600 | 6 brick |
+| wall_brick (Iron-braced Wall) | 600 | 9 stone + 1 iron_ingot |
 
 **Conclusion**
 
@@ -84,15 +64,15 @@ Plank: 2 wood → 1 @ workbench, 6s. Listed consumers: structure:wall_plank. Cre
 | wolf_fang (Wolf Fang (specimen)) | SHIPPING_ONLY | CREATURE_DROP creature:wolf p=0.4 [gate:shipping_spawner] | **none** | not craftable | fur_cloak | NO_VEYRA_SOURCE |
 | beetle_horn (Beetle Horn (specimen)) | SHIPPING_ONLY | CREATURE_DROP creature:beetle p=0.3 [gate:shipping_spawner] | **none** | not craftable | chitin_armor | NO_VEYRA_SOURCE |
 | boar_tusk (Boar Tusk (specimen)) | SHIPPING_AND_VEYRA | CREATURE_DROP creature:boar p=0.3; HUSBANDRY_BUTCHER husbandry:boar | CREATURE_DROP creature:boar p=0.3; HUSBANDRY_BUTCHER husbandry:boar | not craftable | machete | HAS_VEYRA_SOURCE |
-| keycard (Vault Keycard) | SHIPPING_ONLY | LOOT_STATIC_FIXED container:dev_delta:delta_relay:4; LOOT_STATIC_FIXED container:shipping:watch:21 | **none** | not craftable | - | NO_VEYRA_SOURCE |
+| keycard (Vault Keycard) | UNREACHABLE | none | **none** | not craftable | - | NO_VEYRA_SOURCE |
 | core_demon (Demon Core) | SHIPPING_ONLY | CREATOR_LOOT_UNIQUE container:shipping:factory_vault:9 [gate:poi_keycard,gate:creator_loot_v1] | **none** | core_demon: 4 iron_ingot + 12 spares + 5 crystal + 2 crawler_optic — BLOCKED on Veyra | - | NO_VEYRA_SOURCE |
 | essence_spirit (Spirit Essence) | SHIPPING_AND_VEYRA | none | CREATURE_DROP creature:boss_custodian [gate:veyra_spawner]; CREATURE_DROP creature:vampire_3 p=0.35 [gate:veyra_spawner] | essence_spirit: 1 crawler_optic + 1 crystal — BLOCKED on Veyra | - | VEYRA_DROP_ONLY_CRAFT_BLOCKED |
 
 **Conclusion**
 
 - No Veyra source at all (6 of 8): chitin, crawler_optic, wolf_fang, beetle_horn, keycard, core_demon.
-- Cause, by item. Dropped only by creatures behind the Shipping spawner: chitin, crawler_optic, wolf_fang, beetle_horn. Held only in authored Shipping/Dev containers: keycard, core_demon. The creatures and crates exist; the Veyra layout has no placement for them.
-- Veyra-blocked recipes and the input that blocks each: chitin_armor (needs chitin); core_demon (needs crawler_optic); essence_spirit (needs crawler_optic); pump_crude (needs a blocked input); refinery_crude (needs crude_petroleum).
+- Cause, by item. Dropped only by creatures behind the Shipping spawner: chitin, crawler_optic, wolf_fang, beetle_horn. Held only in authored Shipping/Dev containers: core_demon. The creatures and crates exist; the Veyra layout has no placement for them.
+- Veyra-blocked recipes and the input that blocks each: chitin_armor (needs chitin); core_demon (needs crawler_optic); essence_spirit (needs crawler_optic).
 - Reachable on Veyra by drop but not by craft: essence_spirit (CREATURE_DROP creature:boss_custodian [gate:veyra_spawner]; CREATURE_DROP creature:vampire_3 p=0.35 [gate:veyra_spawner]). For these the recipe is dead weight on Veyra while the item itself is obtainable.
 - Has a Veyra source: boar_tusk.
 - Specimens also carry a research route (crawler_optic → gas_mask; wolf_fang → fur_cloak; beetle_horn → chitin_armor; boar_tusk → machete): without the specimen the formula can only come from a blueprint or paid study.
@@ -105,21 +85,21 @@ Plank: 2 wood → 1 @ workbench, 6s. Listed consumers: structure:wall_plank. Cre
 
 ## P9 — Crude Petroleum
 
-Reachability: `FIXTURE_ONLY`. Produced by: pump_crude. Consumed by: refinery_crude.
+Reachability: `SHIPPING_AND_VEYRA`. Produced by: pump_crude. Consumed by: refinery_fuel, refinery_fuel_batch.
 
-Item text shown to the player: "Raw petroleum pumped from an oil site. No oil site exists in this world yet, so none can be obtained today. Fuel comes from Salvaged Oil."
+Item text shown to the player: "Raw petroleum. Pumped from an oil seep with an Oil Pump; an Oil Refinery turns it into Fuel Canisters."
 
-Oil Pump text shown to the player: "Draws Crude Petroleum from an oil site. No oil site exists in this world yet, so the pump cannot be placed today. Fuel comes from Salvaged Oil at an Oil Refinery."
+Oil Pump text shown to the player: "Draws Crude Petroleum from a crude seep: a dark, shining pool on open ground. It stands only on a seep and stops when the seep runs dry."
 
 **Conclusion**
 
-- Crude Petroleum stays FIXTURE_ONLY: the only oil source the engine accepts is one registered by the test fixture (registerTestOilSource), so pump_crude and refinery_crude cannot run on either live layout.
-- UI rule: no player-facing text may describe Crude Petroleum as something that can be pumped today. The item description and the Oil Pump description are quoted above so the wording can be reviewed against that rule.
+- Current graph reachability: SHIPPING_AND_VEYRA. Production formulas: pump_crude; consumers: refinery_fuel, refinery_fuel_batch. This projection is not a physical-access certificate.
+- The engine authorizes finite Veyra seeps separately from test-fixture sites. Check the active map and physical access before presenting a pump opportunity; do not carry forward the old fixture-only blanket conclusion.
 
 **Resolution path**
 
 - Keep the id, the pump and the recipes (the oil-mobility work depends on them). No removal.
-- Display fix to schedule with the pump work, not here: mark the two recipes and the Oil Pump as "no oil seep on this map" when the layout has no authored source, instead of offering a machine that can never start. Salvaged Oil → Fuel Can at the Furnace remains the one live fuel route.
+- Keep current map-specific seep gating and paid refinery recipes; Salvaged Oil and its old Furnace formula are retired, not a fallback production route.
 
 ## P10 — the four legacy cores beside the seven Creator Cores
 
@@ -132,19 +112,19 @@ Oil Pump text shown to the player: "Draws Crude Petroleum from an oil site. No o
 
 | Creator Core | VN name | Mechanic | Recipe | Parts | Learned by | Reachability | Save fields |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| core_blast (Big Bang) | Vụ nổ lớn | creatorCore="blast": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves) | 2 iron_ingot + 4 spares + 1 crystal @ workbench L1, 30s, tier 1, known at start | 4 | starter knowledge | SHIPPING_AND_VEYRA | key, uid, reserves{basic,refined,signature} |
-| core_meteor (Meteor) | Thiên thạch | creatorCore="meteor": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves) | 4 iron_ingot + 8 spares + 3 crystal + 3 sulfur @ workbench L2, 45s, tier 2 | 8 | studying the Core itself at a Research Table, or a blueprint | SHIPPING_AND_VEYRA | key, uid, reserves{basic,refined,signature} |
-| core_dragon (Dragon's Breath) | Hơi thở của rồng | creatorCore="dragon": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves) | 8 iron_ingot + 16 spares + 6 crystal + 6 sulfur @ workbench L3, 75s, tier 3 | 16 | studying the Core itself at a Research Table, or a blueprint | SHIPPING_AND_VEYRA | key, uid, reserves{basic,refined,signature} |
-| core_elsa (Elsa's Sword) | Gươm Elsa | creatorCore="elsa": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves) | 3 iron_ingot + 8 spares + 4 crystal + 3 shell @ workbench L2, 45s, tier 2 | 8 | studying the Core itself at a Research Table, or a blueprint | SHIPPING_AND_VEYRA | key, uid, reserves{basic,refined,signature} |
-| core_earthmother (Earth Mother's Breath) | Hơi thở đất mẹ | creatorCore="earthmother": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves) | 2 iron_ingot + 4 spares + 1 crystal @ workbench L1, 30s, tier 1, known at start | 4 | starter knowledge | SHIPPING_AND_VEYRA | key, uid, reserves{basic,refined,signature} |
-| core_mjolnir (Mjolnir) | - | creatorCore="mjolnir": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves) | 4 iron_ingot + 9 spares + 4 crystal + 2 mechanical_parts @ workbench L2, 50s, tier 2 | 9 | studying the Core itself at a Research Table, or a blueprint | SHIPPING_AND_VEYRA | key, uid, reserves{basic,refined,signature} |
-| core_demon (Demon Core) | Lõi quỷ | creatorCore="demon": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves) | 4 iron_ingot + 12 spares + 5 crystal + 2 crawler_optic @ workbench L2, 55s, tier 2 | 12 | studying the Core itself at a Research Table, or a blueprint | SHIPPING_ONLY | key, uid, reserves{basic,refined,signature} |
+| core_blast (Big Bang) | Vụ nổ lớn | creatorCore="blast": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine | 2 iron_ingot + 4 spares + 1 crystal @ workbench L1, 30s, tier 1, known at start | 4 | starter knowledge | SHIPPING_AND_VEYRA | key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy) |
+| core_meteor (Meteor) | Thiên thạch | creatorCore="meteor": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine | 4 iron_ingot + 8 spares + 3 crystal + 3 sulfur @ workbench L2, 45s, tier 2 | 8 | studying the Core itself at a Research Table, or a blueprint | SHIPPING_AND_VEYRA | key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy) |
+| core_dragon (Dragon's Breath) | Hơi thở của rồng | creatorCore="dragon": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine | 8 iron_ingot + 16 spares + 6 crystal + 6 sulfur @ workbench L3, 75s, tier 3 | 16 | studying the Core itself at a Research Table, or a blueprint | SHIPPING_AND_VEYRA | key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy) |
+| core_elsa (Elsa's Sword) | Gươm Elsa | creatorCore="elsa": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine | 3 iron_ingot + 8 spares + 4 crystal + 3 shell @ workbench L2, 45s, tier 2 | 8 | studying the Core itself at a Research Table, or a blueprint | SHIPPING_AND_VEYRA | key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy) |
+| core_earthmother (Earth Mother's Breath) | Hơi thở đất mẹ | creatorCore="earthmother": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine | 2 iron_ingot + 4 spares + 1 crystal @ workbench L1, 30s, tier 1, known at start | 4 | starter knowledge | SHIPPING_AND_VEYRA | key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy) |
+| core_mjolnir (Mjolnir) | - | creatorCore="mjolnir": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine | 4 iron_ingot + 9 spares + 4 crystal + 2 electronic_parts @ workbench L2, 50s, tier 2 | 9 | studying the Core itself at a Research Table, or a blueprint | SHIPPING_AND_VEYRA | key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy) |
+| core_demon (Demon Core) | Lõi quỷ | creatorCore="demon": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine | 4 iron_ingot + 12 spares + 5 crystal + 2 crawler_optic @ workbench L2, 55s, tier 2 | 12 | studying the Core itself at a Research Table, or a blueprint | SHIPPING_ONLY | key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy) |
 
 Gold UI today: all eleven use the same gold Core tooltip frame.
 
 **Conclusion**
 
-- The two families are different mechanics, not duplicates: a legacy core is a single-effect CHARGE tool (Stack.charge, 3–4 casts, re-charged as an item), a Creator Core is a three-ability RESERVE weapon (Stack.reserves) fed by the Energy/Essence economy.
+- The two families are different mechanics, not duplicates: a legacy core is a single-effect CHARGE tool (Stack.charge, 3–4 casts, re-charged as an item), a Creator Core is a three-ability weapon with durability and levels (Stack.dur / Stack.lvl) whose casts spend Energy/Essence from the pack.
 - Two legacy effects have no Creator counterpart: Quake Core breaks rock into yield (harvest), Rime Core makes shallow water walkable (traversal). Ember and Storm overlap a Creator ability (fireball; lightning) but keep one distinct rule each (ignites vegetation; stronger in rain).
 - The legacy cores are load-bearing for the Creator Cores themselves: CREATOR_LOOT_V1 finds the crate that holds a Creator Core by the legacy core in it (factory_vault/core_fire → core_dragon; light_top/core_storm → core_meteor; wreck/core_frost → core_elsa). Removing the legacy items from those crates silently removes three Creator Core sources.
 - Cost check: legacy cores cost 8–10 Parts at a level-1 Workbench but are tier-3 knowledge; the two common Creator Cores cost 4 Parts and are known from the start. The legacy four are not a cheaper path into the Creator line.

@@ -2,342 +2,22 @@
  "scope": "ANALYSIS ONLY — not implemented. Generated from the live catalog, the graph projection and ATLAS_v2.json.",
  "P2": {
   "unit": {
-   "fasteners_recipe": "1 iron_ingot + 1 scrap → 3 (researched: base=false)",
-   "machine_parts_recipe": "2 scrap + 1 iron_ingot → 2 (base=true)",
-   "per_fastener": {
-    "iron": 0.333,
-    "scrap": 0.333
-   },
-   "per_machine_part": {
-    "iron": 0.5,
-    "scrap": 1
-   }
+   "fasteners_recipe": "RETIRED — no live formula",
+   "machine_parts_recipe": "RETIRED — no live formula"
   },
-  "rows": [
-   {
-    "consumer": "field_repair_kit",
-    "kind": "recipe",
-    "live": true,
-    "fasteners": 2,
-    "before": {
-     "iron": 0.667,
-     "scrap": 0.667
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 1.5,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 1.5
-   },
-   {
-    "consumer": "trail_pack",
-    "kind": "recipe",
-    "live": true,
-    "fasteners": 2,
-    "before": {
-     "iron": 0.667,
-     "scrap": 0.667
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 1.5,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 1.5
-   },
-   {
-    "consumer": "trail_canteen",
-    "kind": "recipe",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   },
-   {
-    "consumer": "mechanical_gear",
-    "kind": "recipe",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   },
-   {
-    "consumer": "iron_plate",
-    "kind": "recipe",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   },
-   {
-    "consumer": "farm_controller",
-    "kind": "structure",
-    "live": true,
-    "fasteners": 3,
-    "before": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m1_machine_parts": 2,
-    "m1": {
-     "iron": 1,
-     "scrap": 2
-    },
-    "m1_scrap_ratio": 2,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 1
-   },
-   {
-    "consumer": "door_powered",
-    "kind": "structure",
-    "live": false,
-    "fasteners": 3,
-    "before": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m1_machine_parts": 2,
-    "m1": {
-     "iron": 1,
-     "scrap": 2
-    },
-    "m1_scrap_ratio": 2,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 1
-   },
-   {
-    "consumer": "arrow_turret",
-    "kind": "structure",
-    "live": true,
-    "fasteners": 2,
-    "before": {
-     "iron": 0.667,
-     "scrap": 0.667
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 1.5,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 1.5
-   },
-   {
-    "consumer": "bear_trap",
-    "kind": "structure",
-    "live": true,
-    "fasteners": 2,
-    "before": {
-     "iron": 0.667,
-     "scrap": 0.667
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 1.5,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 1.5
-   },
-   {
-    "consumer": "deploy_farm_controller",
-    "kind": "repair",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   },
-   {
-    "consumer": "deploy_arrow_turret",
-    "kind": "repair",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   },
-   {
-    "consumer": "deploy_bear_trap",
-    "kind": "repair",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   },
-   {
-    "consumer": "workbench → level 3",
-    "kind": "upgrade",
-    "live": true,
-    "fasteners": 8,
-    "before": {
-     "iron": 2.667,
-     "scrap": 2.667
-    },
-    "m1_machine_parts": 4,
-    "m1": {
-     "iron": 2,
-     "scrap": 4
-    },
-    "m1_scrap_ratio": 1.5,
-    "m2": {
-     "iron": 3,
-     "scrap": 3
-    },
-    "m2_ratio": 1.125
-   },
-   {
-    "consumer": "vehicleRepair (motorbike, engine.ts)",
-    "kind": "action",
-    "live": true,
-    "fasteners": 1,
-    "before": {
-     "iron": 0.333,
-     "scrap": 0.333
-    },
-    "m1_machine_parts": 1,
-    "m1": {
-     "iron": 0.5,
-     "scrap": 1
-    },
-    "m1_scrap_ratio": 3,
-    "m2": {
-     "iron": 1,
-     "scrap": 1
-    },
-    "m2_ratio": 3
-   }
-  ],
+  "rows": [],
   "totals": {
-   "consumers": 14,
-   "live_consumers": 13,
-   "single_fastener_consumers": 7,
-   "before_iron": 8.666,
-   "before_scrap": 8.666,
-   "m1_iron": 8.5,
-   "m1_scrap": 17,
-   "m2_iron": 15,
-   "m2_scrap": 15,
-   "m1_worst_scrap_ratio": 3,
-   "m1_best_scrap_ratio": 1.5,
-   "m2_worst_ratio": 3,
-   "m2_best_ratio": 1
+   "consumers": 0,
+   "live_consumers": 0
   },
   "other_facts": [
-   "Fasteners is a RESEARCHED formula (item.studyRecipe = fasteners); Machine Parts is known from the start. Removing the recipe deletes one research step from the Workbench III and motorbike routes.",
-   "Fasteners also arrive without crafting: creature drop from orc_3 and authored industrial loot. A merge has to convert or strand those stacks.",
-   "door_powered consumer is listed but not buildable today (module pending) and is excluded from the totals."
+   "P2 is superseded by the current item-set retirement ledger; saved jobs retain their frozen rules."
   ],
   "conclusion": [
-   "M1 (n Fasteners → ceil(n/2) Machine Parts) is NOT cost-neutral for a single consumer. Total iron is about unchanged (8.666 → 8.5) but scrap rises on every row: best case 1.5×, worst case 3× (the 7 one-fastener consumers). Across all 13 live consumers scrap goes 8.666 → 17.",
-   "M2 (write the batch ratio into the consumer: ceil(n/3) ingot + ceil(n/3) scrap) costs exactly what one fastener batch costs today for an isolated craft, but removes leftover sharing: pooled cost rises up to 3× on one-fastener consumers (8.666 → 15 scrap overall).",
-   "No integer mapping removes Fasteners without a cost jump on the one- and two-fastener consumers. That is the blocker; it is arithmetic, not taste."
+   "No live Fasteners/Machine Parts merge comparison applies. Current Parts consumers must be read from the live graph."
   ],
   "resolution": [
-   "RULING APPLIED: Fasteners stay. The Round 1 disposition MERGE_CANDIDATE is withdrawn (now KEEP).",
-   "If the twin signal is to be removed later, do it by DIFFERENTIATION, not by merge: Fasteners = researched joining stock for assemblies and field repair; Machine Parts = base mechanism stock. That needs no recipe change.",
-   "A future merge is only admissible with a replacement that is priced per consumer in thirds (i.e. keeps a 3-per-batch unit) — which is Fasteners under another name. Close P2 unless a new mechanic is proposed."
+   "Do not restore retired recipes or quote Round-2 hypothetical ratios as current economy."
   ]
  },
  "P6": {
@@ -392,8 +72,12 @@
     "hp": 600,
     "cost": [
      [
-      "brick",
-      6
+      "stone",
+      9
+     ],
+     [
+      "iron_ingot",
+      1
      ]
     ],
     "buildable_directly": false,
@@ -473,12 +157,16 @@
    },
    {
     "id": "wall_brick",
-    "name": "Brick Wall",
+    "name": "Iron-braced Wall",
     "hp": 600,
     "cost": [
      [
-      "brick",
-      6
+      "stone",
+      9
+     ],
+     [
+      "iron_ingot",
+      1
      ]
     ]
    }
@@ -592,11 +280,8 @@
    {
     "id": "keycard",
     "name": "Vault Keycard",
-    "reachability": "SHIPPING_ONLY",
-    "shipping_sources": [
-     "LOOT_STATIC_FIXED container:dev_delta:delta_relay:4",
-     "LOOT_STATIC_FIXED container:shipping:watch:21"
-    ],
+    "reachability": "UNREACHABLE",
+    "shipping_sources": [],
     "veyra_sources": [],
     "other_layer_sources": [],
     "recipes": [],
@@ -683,14 +368,12 @@
   "veyra_blocked_recipes": [
    "chitin_armor",
    "core_demon",
-   "essence_spirit",
-   "pump_crude",
-   "refinery_crude"
+   "essence_spirit"
   ],
   "conclusion": [
    "No Veyra source at all (6 of 8): chitin, crawler_optic, wolf_fang, beetle_horn, keycard, core_demon.",
-   "Cause, by item. Dropped only by creatures behind the Shipping spawner: chitin, crawler_optic, wolf_fang, beetle_horn. Held only in authored Shipping/Dev containers: keycard, core_demon. The creatures and crates exist; the Veyra layout has no placement for them.",
-   "Veyra-blocked recipes and the input that blocks each: chitin_armor (needs chitin); core_demon (needs crawler_optic); essence_spirit (needs crawler_optic); pump_crude (needs a blocked input); refinery_crude (needs crude_petroleum).",
+   "Cause, by item. Dropped only by creatures behind the Shipping spawner: chitin, crawler_optic, wolf_fang, beetle_horn. Held only in authored Shipping/Dev containers: core_demon. The creatures and crates exist; the Veyra layout has no placement for them.",
+   "Veyra-blocked recipes and the input that blocks each: chitin_armor (needs chitin); core_demon (needs crawler_optic); essence_spirit (needs crawler_optic).",
    "Reachable on Veyra by drop but not by craft: essence_spirit (CREATURE_DROP creature:boss_custodian [gate:veyra_spawner]; CREATURE_DROP creature:vampire_3 p=0.35 [gate:veyra_spawner]). For these the recipe is dead weight on Veyra while the item itself is obtainable.",
    "Has a Veyra source: boar_tusk.",
    "Specimens also carry a research route (crawler_optic → gas_mask; wolf_fang → fur_cloak; beetle_horn → chitin_armor; boar_tusk → machete): without the specimen the formula can only come from a blueprint or paid study."
@@ -702,32 +385,29 @@
   ]
  },
  "P9": {
-  "reachability": "FIXTURE_ONLY",
+  "reachability": "SHIPPING_AND_VEYRA",
   "produced_by": [
    "pump_crude"
   ],
   "consumed_by": [
-   "refinery_crude"
+   "refinery_fuel",
+   "refinery_fuel_batch"
   ],
-  "description_shown_to_player": "Raw petroleum pumped from an oil site. No oil site exists in this world yet, so none can be obtained today. Fuel comes from Salvaged Oil.",
-  "oil_pump_description": "Draws Crude Petroleum from an oil site. No oil site exists in this world yet, so the pump cannot be placed today. Fuel comes from Salvaged Oil at an Oil Refinery.",
+  "description_shown_to_player": "Raw petroleum. Pumped from an oil seep with an Oil Pump; an Oil Refinery turns it into Fuel Canisters.",
+  "oil_pump_description": "Draws Crude Petroleum from a crude seep: a dark, shining pool on open ground. It stands only on a seep and stops when the seep runs dry.",
   "blocked_on": {
-   "veyra": [
-    "pump_crude",
-    "refinery_crude"
-   ],
+   "veyra": [],
    "shipping": [
-    "pump_crude",
-    "refinery_crude"
+    "pump_crude"
    ]
   },
   "conclusion": [
-   "Crude Petroleum stays FIXTURE_ONLY: the only oil source the engine accepts is one registered by the test fixture (registerTestOilSource), so pump_crude and refinery_crude cannot run on either live layout.",
-   "UI rule: no player-facing text may describe Crude Petroleum as something that can be pumped today. The item description and the Oil Pump description are quoted above so the wording can be reviewed against that rule."
+   "Current graph reachability: SHIPPING_AND_VEYRA. Production formulas: pump_crude; consumers: refinery_fuel, refinery_fuel_batch. This projection is not a physical-access certificate.",
+   "The engine authorizes finite Veyra seeps separately from test-fixture sites. Check the active map and physical access before presenting a pump opportunity; do not carry forward the old fixture-only blanket conclusion."
   ],
   "resolution": [
    "Keep the id, the pump and the recipes (the oil-mobility work depends on them). No removal.",
-   "Display fix to schedule with the pump work, not here: mark the two recipes and the Oil Pump as \"no oil seep on this map\" when the layout has no authored source, instead of offering a machine that can never start. Salvaged Oil → Fuel Can at the Furnace remains the one live fuel route."
+   "Keep current map-specific seep gating and paid refinery recipes; Salvaged Oil and its old Furnace formula are retired, not a fallback production route."
   ]
  },
  "P10": {
@@ -822,7 +502,7 @@
     "name": "Big Bang",
     "vi": "Vụ nổ lớn",
     "kind": "CREATOR_CORE",
-    "mechanic": "creatorCore=\"blast\": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves)",
+    "mechanic": "creatorCore=\"blast\": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine",
     "recipe": "2 iron_ingot + 4 spares + 1 crystal @ workbench L1, 30s, tier 1, known at start",
     "parts_cost": 4,
     "learned_by": "starter knowledge",
@@ -830,7 +510,7 @@
      "CRAFT_OUTPUT recipe:core_blast (BOTH)"
     ],
     "reachability": "SHIPPING_AND_VEYRA",
-    "save_fields": "key, uid, reserves{basic,refined,signature}",
+    "save_fields": "key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy)",
     "gold_ui": "tooltip uses the gold Core frame (panels.tsx: isCore = core || creatorCore)"
    },
    {
@@ -838,7 +518,7 @@
     "name": "Meteor",
     "vi": "Thiên thạch",
     "kind": "CREATOR_CORE",
-    "mechanic": "creatorCore=\"meteor\": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves)",
+    "mechanic": "creatorCore=\"meteor\": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine",
     "recipe": "4 iron_ingot + 8 spares + 3 crystal + 3 sulfur @ workbench L2, 45s, tier 2",
     "parts_cost": 8,
     "learned_by": "studying the Core itself at a Research Table, or a blueprint",
@@ -847,7 +527,7 @@
      "CREATOR_LOOT_UNIQUE container:shipping:light_top:15 (SHIPPING)"
     ],
     "reachability": "SHIPPING_AND_VEYRA",
-    "save_fields": "key, uid, reserves{basic,refined,signature}",
+    "save_fields": "key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy)",
     "gold_ui": "tooltip uses the gold Core frame (panels.tsx: isCore = core || creatorCore)"
    },
    {
@@ -855,7 +535,7 @@
     "name": "Dragon's Breath",
     "vi": "Hơi thở của rồng",
     "kind": "CREATOR_CORE",
-    "mechanic": "creatorCore=\"dragon\": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves)",
+    "mechanic": "creatorCore=\"dragon\": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine",
     "recipe": "8 iron_ingot + 16 spares + 6 crystal + 6 sulfur @ workbench L3, 75s, tier 3",
     "parts_cost": 16,
     "learned_by": "studying the Core itself at a Research Table, or a blueprint",
@@ -864,7 +544,7 @@
      "CREATOR_LOOT_UNIQUE container:shipping:factory_vault:8 (SHIPPING)"
     ],
     "reachability": "SHIPPING_AND_VEYRA",
-    "save_fields": "key, uid, reserves{basic,refined,signature}",
+    "save_fields": "key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy)",
     "gold_ui": "tooltip uses the gold Core frame (panels.tsx: isCore = core || creatorCore)"
    },
    {
@@ -872,7 +552,7 @@
     "name": "Elsa's Sword",
     "vi": "Gươm Elsa",
     "kind": "CREATOR_CORE",
-    "mechanic": "creatorCore=\"elsa\": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves)",
+    "mechanic": "creatorCore=\"elsa\": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine",
     "recipe": "3 iron_ingot + 8 spares + 4 crystal + 3 shell @ workbench L2, 45s, tier 2",
     "parts_cost": 8,
     "learned_by": "studying the Core itself at a Research Table, or a blueprint",
@@ -881,7 +561,7 @@
      "CREATOR_LOOT_UNIQUE container:shipping:wreck:18 (SHIPPING)"
     ],
     "reachability": "SHIPPING_AND_VEYRA",
-    "save_fields": "key, uid, reserves{basic,refined,signature}",
+    "save_fields": "key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy)",
     "gold_ui": "tooltip uses the gold Core frame (panels.tsx: isCore = core || creatorCore)"
    },
    {
@@ -889,7 +569,7 @@
     "name": "Earth Mother's Breath",
     "vi": "Hơi thở đất mẹ",
     "kind": "CREATOR_CORE",
-    "mechanic": "creatorCore=\"earthmother\": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves)",
+    "mechanic": "creatorCore=\"earthmother\": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine",
     "recipe": "2 iron_ingot + 4 spares + 1 crystal @ workbench L1, 30s, tier 1, known at start",
     "parts_cost": 4,
     "learned_by": "starter knowledge",
@@ -897,7 +577,7 @@
      "CRAFT_OUTPUT recipe:core_earthmother (BOTH)"
     ],
     "reachability": "SHIPPING_AND_VEYRA",
-    "save_fields": "key, uid, reserves{basic,refined,signature}",
+    "save_fields": "key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy)",
     "gold_ui": "tooltip uses the gold Core frame (panels.tsx: isCore = core || creatorCore)"
    },
    {
@@ -905,8 +585,8 @@
     "name": "Mjolnir",
     "vi": null,
     "kind": "CREATOR_CORE",
-    "mechanic": "creatorCore=\"mjolnir\": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves)",
-    "recipe": "4 iron_ingot + 9 spares + 4 crystal + 2 mechanical_parts @ workbench L2, 50s, tier 2",
+    "mechanic": "creatorCore=\"mjolnir\": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine",
+    "recipe": "4 iron_ingot + 9 spares + 4 crystal + 2 electronic_parts @ workbench L2, 50s, tier 2",
     "parts_cost": 9,
     "learned_by": "studying the Core itself at a Research Table, or a blueprint",
     "sources": [
@@ -914,7 +594,7 @@
      "CREATOR_LOOT_UNIQUE container:shipping:watch:21 (SHIPPING)"
     ],
     "reachability": "SHIPPING_AND_VEYRA",
-    "save_fields": "key, uid, reserves{basic,refined,signature}",
+    "save_fields": "key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy)",
     "gold_ui": "tooltip uses the gold Core frame (panels.tsx: isCore = core || creatorCore)"
    },
    {
@@ -922,7 +602,7 @@
     "name": "Demon Core",
     "vi": "Lõi quỷ",
     "kind": "CREATOR_CORE",
-    "mechanic": "creatorCore=\"demon\": three abilities fed by Basic / Refined / Signature energy reserves (Stack.reserves)",
+    "mechanic": "creatorCore=\"demon\": three abilities; every cast spends Energy / Essence straight from the pack and wears the Core (Stack.dur 300, Stack.lvl 1–3); no loaded magazine",
     "recipe": "4 iron_ingot + 12 spares + 5 crystal + 2 crawler_optic @ workbench L2, 55s, tier 2",
     "parts_cost": 12,
     "learned_by": "studying the Core itself at a Research Table, or a blueprint",
@@ -931,7 +611,7 @@
      "CREATOR_LOOT_UNIQUE container:shipping:factory_vault:9 (SHIPPING)"
     ],
     "reachability": "SHIPPING_ONLY",
-    "save_fields": "key, uid, reserves{basic,refined,signature}",
+    "save_fields": "key, uid, dur, lvl, cd, upg, owed (one-time refund of pre-V2 loaded energy)",
     "gold_ui": "tooltip uses the gold Core frame (panels.tsx: isCore = core || creatorCore)"
    }
   ],
@@ -941,7 +621,7 @@
    "wreck/core_frost → core_elsa"
   ],
   "conclusion": [
-   "The two families are different mechanics, not duplicates: a legacy core is a single-effect CHARGE tool (Stack.charge, 3–4 casts, re-charged as an item), a Creator Core is a three-ability RESERVE weapon (Stack.reserves) fed by the Energy/Essence economy.",
+   "The two families are different mechanics, not duplicates: a legacy core is a single-effect CHARGE tool (Stack.charge, 3–4 casts, re-charged as an item), a Creator Core is a three-ability weapon with durability and levels (Stack.dur / Stack.lvl) whose casts spend Energy/Essence from the pack.",
    "Two legacy effects have no Creator counterpart: Quake Core breaks rock into yield (harvest), Rime Core makes shallow water walkable (traversal). Ember and Storm overlap a Creator ability (fireball; lightning) but keep one distinct rule each (ignites vegetation; stronger in rain).",
    "The legacy cores are load-bearing for the Creator Cores themselves: CREATOR_LOOT_V1 finds the crate that holds a Creator Core by the legacy core in it (factory_vault/core_fire → core_dragon; light_top/core_storm → core_meteor; wreck/core_frost → core_elsa). Removing the legacy items from those crates silently removes three Creator Core sources.",
    "Cost check: legacy cores cost 8–10 Parts at a level-1 Workbench but are tier-3 knowledge; the two common Creator Cores cost 4 Parts and are known from the start. The legacy four are not a cheaper path into the Creator line.",

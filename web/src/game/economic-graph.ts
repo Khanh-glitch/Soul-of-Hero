@@ -24,6 +24,8 @@ import {
   GARDEN_FRAME_COST,
   GENERATOR_CAPACITY_UPGRADE,
   INDUSTRIAL_MODULE,
+  MOTORBIKE_REPAIR_COST,
+  PA1_UPGRADE_ONLY_GEOMETRY,
   ITEMS,
   PRIMORDIAL_ELDERS,
   PRIMORDIAL_TO_LEGACY_DOMAIN,
@@ -409,7 +411,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     ['sink:tender_fuel_burn', 'Garden Tender (farm_controller) Energy Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', {}],
     ['sink:vehicle_fuel_burn', 'Motorbike Fuel Consumption Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', {}],
     ['sink:vehicle_hp_wear', 'Motorbike Chassis Wear Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { wearPerPixel: BAL.motorbike.wearPerPixel }],
-    ['sink:lubricant_consumption', 'Motorbike Lubricant Coating Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { distancePx: BAL.oilRefineryV1.lubricantDistancePx }],
+    ['sink:lubricant_consumption', 'Legacy Motorbike Lubricant Coating Sink', 'shared', 'HISTORICAL_INFLIGHT_ONLY', { distancePx: BAL.oilRefineryV1.lubricantDistancePx }],
     ['sink:turret_arrow_consumption', 'Arrow Turret Live & Offline Ammo Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', {}],
     ['sink:trap_arm_wear', 'Bear Trap Arming & Trigger Wear Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { uses: BAL.bearTrapV1.uses }],
     ['sink:territory_upkeep_24h', 'Territory Cabinet 25%/24h Structural Upkeep', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { fractionPerDay: BAL.territory.upkeepFractionPerDay }],
@@ -914,8 +916,19 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
       },
     });
 
+    // Device raw inputs buy the pack through its hand recipe. Placement spends that
+    // physical UID once; recovery returns that same damaged item, never half its raw bill.
+    if (sDef.item) {
+      addEdge({kind:'BUILD_COST',from:`item:${sDef.item}`,to:`structure:${sKey}`,qtyIn:1,qtyOut:1,
+        gateIds:isFixture?['gate:oil_seep_veyra']:sDef.need==='claim'?['gate:claim_2_limit']:[],
+        layerScope:isFixture?'veyra05':'shared',runtimeStatus:isFixture?'LIVE_VEYRA_ONLY':'LIVE_SHIPPING_AND_VEYRA',
+        codeRef:'engine.ts:build',notes:'Consumes original packed UID; raw inputs paid only by the craft recipe.'});
+      addEdge({kind:'RECLAIM_REFUND',from:`structure:${sKey}`,to:`item:${sDef.item}`,qtyIn:1,qtyOut:1,
+        gateIds:[],layerScope:isFixture?'veyra05':'shared',runtimeStatus:isFixture?'LIVE_VEYRA_ONLY':'LIVE_SHIPPING_AND_VEYRA',
+        codeRef:'engine.ts:reclaim',notes:'Same UID and remaining HP/mechanism, not a source of new supply.'});
+    }
     for (const [mat, qty] of sDef.cost) {
-      addEdge({
+      if (!sDef.item) addEdge({
         kind: 'BUILD_COST',
         from: `item:${mat}`,
         to: `structure:${sKey}`,
@@ -923,7 +936,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
         qtyOut: 1,
         gateIds: isFixture ? ['gate:oil_seep_veyra'] : sDef.need === 'claim' ? ['gate:claim_2_limit'] : [],
         layerScope: isFixture ? 'veyra05' : 'shared',
-        runtimeStatus: isFixture ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+        runtimeStatus: (PA1_UPGRADE_ONLY_GEOMETRY as readonly string[]).includes(sKey) ? 'PARTIAL_STUB' : isFixture ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
         codeRef: `catalog.ts:STRUCTS.${sKey}.cost`,
       });
       if ((BAL.territory.materials as readonly string[]).includes(mat)) {
@@ -951,7 +964,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
         });
       }
       const refund = Math.floor(qty * BAL.economy.reclaimRefund);
-      if (refund > 0) {
+      if (!sDef.item && refund > 0) {
         addEdge({
           kind: 'RECLAIM_REFUND',
           from: `structure:${sKey}`,
@@ -964,7 +977,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
           codeRef: 'engine.ts:reclaim',
         });
       }
-      if (qty - refund > 0) {
+      if (!sDef.item && qty - refund > 0) {
         addEdge({
           kind: 'RECLAIM_REFUND',
           from: `item:${mat}`,
@@ -1116,27 +1129,10 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     codeRef: 'engine.ts:vehicleRefuel',
     notes: `+${BAL.motorbike.canFuel} tank units (tank max ${BAL.motorbike.tank})`,
   });
-  addEdge({
-    kind: 'VEHICLE_WEAR_REPAIR',
-    from: 'item:mechanical_parts',
-    to: 'station:motorbike',
-    qtyIn: 1,
-    ratePerUnit: BAL.motorbike.repairHp,
-    gateIds: [],
-    layerScope: 'shared',
-    runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
-    codeRef: 'engine.ts:vehicleRepair',
-  });
-  addEdge({
-    kind: 'VEHICLE_WEAR_REPAIR',
-    from: 'item:fasteners',
-    to: 'station:motorbike',
-    qtyIn: 1,
-    ratePerUnit: BAL.motorbike.repairHp,
-    gateIds: [],
-    layerScope: 'shared',
-    runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
-    codeRef: 'engine.ts:vehicleRepair',
+  for(const [key,qty] of MOTORBIKE_REPAIR_COST) addEdge({
+    kind:'VEHICLE_WEAR_REPAIR',from:`item:${key}`,to:'station:motorbike',qtyIn:qty,
+    ratePerUnit:BAL.motorbike.repairHp,gateIds:[],layerScope:'shared',runtimeStatus:'LIVE_SHIPPING_AND_VEYRA',
+    codeRef:'catalog.ts:MOTORBIKE_REPAIR_COST / engine.ts:vehicleRepair',
   });
   addEdge({
     kind: 'VEHICLE_LUBRICATE',
@@ -1146,9 +1142,9 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     ratePerUnit: BAL.oilRefineryV1.lubricantDistancePx,
     gateIds: [],
     layerScope: 'shared',
-    runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
+    runtimeStatus: 'HISTORICAL_INFLIGHT_ONLY',
     codeRef: 'engine.ts:vehicleLubricate',
-    notes: `Halves wear over ${BAL.oilRefineryV1.lubricantDistancePx} px (cap 1.5x)`,
+    notes: `Legacy coating only (new vehicleLubricate commands are refused). Halves wear over ${BAL.oilRefineryV1.lubricantDistancePx} px (cap 1.5x)`,
   });
 
   // 4. RECIPES & BLUEPRINTS & RESEARCH

@@ -12,6 +12,8 @@ export interface SourcePlacementRule { terrain: 'sand' | 'marsh' | 'ash' | 'snow
 export interface RecipeDef { out: string; qty: number; /** Optional co-products committed atomically with the job (industrial batches). Absent = single output `out`×`qty`. */ outs?: [string, number][]; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery' | 'oil_pump'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3; /** B01: distinct display name for an alternate recipe whose output item is shared with another recipe. */ alias?: string; rev?: number }
 
 // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
+/** Current motorbike field repair bill; shared by dispatch and economic extraction. */
+export const MOTORBIKE_REPAIR_COST: [string, number][] = [['spares', 3]];
 export const INDUSTRIAL_MODULE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_gear', 2], ['spares', 6], ['iron_ingot', 3]], benchLevel: 2 }; // SOH_NEW_TUNED provisional; no equivalent LI numerical table established
 export const FURNACE_LINING: { cost: [string, number][]; benchLevel: number } = { cost: [['stone', 6], ['iron_plate', 1]], benchLevel: 2 };
 export const GENERATOR_CAPACITY_UPGRADE: { cost: [string, number][]; benchLevel: number } = { cost: [['electronic_parts', 2], ['mechanical_gear', 1], ['iron_ingot', 3], ['spares', 4]], benchLevel: 2 }; // SOH_NEW_TUNED v1

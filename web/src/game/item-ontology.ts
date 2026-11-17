@@ -499,8 +499,8 @@ export function projectItemOntology(graph: SohEconomicGraph): ItemOntologyProjec
   // Upgrade-only geometry that no upgrade path leads to cannot exist in a live world, so a cost paid
   // into it is not a real consumer (round 2, P6: this is how Plank looked "used" in round 1).
   for (const it of items) {
-    const dead = it.consumer_targets.filter((t) => t.startsWith('structure:') && UNOBTAINABLE_STRUCTURES.includes(t.slice(10)));
-    if (dead.length && dead.length === it.consumer_targets.length && it.maintenance_targets.length === 0) it.signals.push(`NO_REACHABLE_CONSUMER:${dead.map((t) => t.slice(10)).join('+')}`);
+    const dead = [...new Set(it.consumers.map(c=>consumerTarget(c.to)))].filter((t) => t.startsWith('structure:') && UNOBTAINABLE_STRUCTURES.includes(t.slice(10))); // report declared but unobtainable consumers too; excluding non-live costs must not hide the gap
+    if (dead.length && it.consumer_targets.every(t=>dead.includes(t)) && it.maintenance_targets.length === 0) it.signals.push(`NO_REACHABLE_CONSUMER:${dead.map((t) => t.slice(10)).join('+')}`);
     else for (const t of dead) it.signals.push(`CONSUMER_UNOBTAINABLE:${t.slice(10)}`);
   }
   for (const d of dominated) if (d.verdict === 'STRICTLY_DOMINATED') {

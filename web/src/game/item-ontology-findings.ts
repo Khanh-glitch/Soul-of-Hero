@@ -29,6 +29,15 @@ export interface P2Row {
 }
 function p2(): { unit: Record<string, unknown>; rows: P2Row[]; totals: Record<string, number>; other_facts: string[]; conclusion: string[]; resolution: string[] } {
   const f = RECIPES.fasteners, mp = RECIPES.mechanical_parts;
+  // Final item-set authority retired both formulas. Do not resurrect them (or
+  // their obsolete vehicle-repair consumer) to make a historical comparison run.
+  if (!f || !mp) return {
+    unit: { fasteners_recipe: 'RETIRED — no live formula', machine_parts_recipe: 'RETIRED — no live formula' },
+    rows: [], totals: { consumers: 0, live_consumers: 0 },
+    other_facts: ['P2 is superseded by the current item-set retirement ledger; saved jobs retain their frozen rules.'],
+    conclusion: ['No live Fasteners/Machine Parts merge comparison applies. Current Parts consumers must be read from the live graph.'],
+    resolution: ['Do not restore retired recipes or quote Round-2 hypothetical ratios as current economy.'],
+  };
   const fIron = f.ins.find(([k]) => k === 'iron_ingot')![1] / f.qty, fScrap = f.ins.find(([k]) => k === 'scrap')![1] / f.qty;
   const mIron = mp.ins.find(([k]) => k === 'iron_ingot')![1] / mp.qty, mScrap = mp.ins.find(([k]) => k === 'scrap')![1] / mp.qty;
   const rows: P2Row[] = [];
@@ -191,12 +200,12 @@ function p9(p: ItemOntologyProjection) {
     reachability: it.runtime_reachability, produced_by: makers, consumed_by: users, description_shown_to_player: ITEMS.crude_petroleum.desc,
     oil_pump_description: STRUCTS.oil_pump.desc, blocked_on: { veyra: p.veyra_blocked_recipes.filter((x) => makers.includes(x) || users.includes(x)), shipping: p.shipping_blocked_recipes.filter((x) => makers.includes(x) || users.includes(x)) },
     conclusion: [
-      `Crude Petroleum stays FIXTURE_ONLY: the only oil source the engine accepts is one registered by the test fixture (registerTestOilSource), so ${makers.join(', ')} and ${users.join(', ')} cannot run on either live layout.`,
-      'UI rule: no player-facing text may describe Crude Petroleum as something that can be pumped today. The item description and the Oil Pump description are quoted above so the wording can be reviewed against that rule.',
+      `Current graph reachability: ${it.runtime_reachability}. Production formulas: ${makers.join(', ') || 'none'}; consumers: ${users.join(', ') || 'none'}. This projection is not a physical-access certificate.`,
+      'The engine authorizes finite Veyra seeps separately from test-fixture sites. Check the active map and physical access before presenting a pump opportunity; do not carry forward the old fixture-only blanket conclusion.',
     ],
     resolution: [
       'Keep the id, the pump and the recipes (the oil-mobility work depends on them). No removal.',
-      'Display fix to schedule with the pump work, not here: mark the two recipes and the Oil Pump as "no oil seep on this map" when the layout has no authored source, instead of offering a machine that can never start. Salvaged Oil → Fuel Can at the Furnace remains the one live fuel route.',
+      'Keep current map-specific seep gating and paid refinery recipes; Salvaged Oil and its old Furnace formula are retired, not a fallback production route.',
     ],
   };
 }

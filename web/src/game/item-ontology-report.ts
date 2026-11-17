@@ -14,7 +14,7 @@ import {
   decisionFor, type Disposition, type Domain, type Proposal, type RecipeLine, type StructLine,
 } from './item-ontology-decisions';
 
-/** The commit the audit was taken on (PR #56 head). Authored, so the artifacts are stable across commits. */
+/** Historical design baseline only, NOT the provenance of a current regeneration. */
 export const ONTOLOGY_BASELINE = {
   repo: 'Khanh-glitch/Soul-of-Hero',
   branch: 'feature/pa1-building-ontology-20261113',
@@ -205,7 +205,7 @@ export function appendixMd(d: OntologyData): string {
   o.push('');
   o.push('## 1. Baseline');
   o.push('');
-  o.push(`Audited on \`${d.baseline.repo}\` branch \`${d.baseline.branch}\` at \`${d.baseline.sha}\` (head of draft PR #${d.baseline.pr}); round 2 changes are measured against that same base. PR #${d.baseline.rejected_pr} was not used as a base and its graph module was not copied.`);
+  o.push(`Historical design baseline: \`${d.baseline.repo}\` branch \`${d.baseline.branch}\` at \`${d.baseline.sha}\` (head of draft PR #${d.baseline.pr}); round 2 design records refer to that base, not the current catalog. Current tables use the runtime recipe revision shown below; no physical-access or exact source-SHA certificate is implied. PR #${d.baseline.rejected_pr} was not used as a base and its graph module was not copied.`);
   o.push('');
   o.push(table(['Measure', 'Value', 'Where it comes from'], [
     ['Runtime item ids', String(c.items), '`ITEMS` in `catalog.ts`'],
@@ -393,7 +393,7 @@ const chip=(t,c)=>'<span class="chip '+(c||'')+'">'+esc(t)+'</span>';
 const M=Object.fromEntries(D.manifest.map(m=>[m.old_id,m]));
 const tbl=(head,rows)=>'<div class="wrap"><table><thead><tr>'+head.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.join('')+'</tbody></table></div>';
 const tr=cells=>'<tr>'+cells.map(c=>'<td>'+c+'</td>').join('')+'</tr>';
-document.getElementById('sub').innerHTML='Generated from the live economic multigraph at <code>'+D.baseline.sha.slice(0,9)+'</code> ('+esc(D.baseline.branch)+'). '+D.counts.items+' items · '+D.counts.recipes+' recipes · '+D.counts.graph_nodes+' nodes / '+D.counts.graph_edges+' edges. Round 3: each proposal carries its status — implemented, closed and kept, or handed to the owner who must fix it.';
+document.getElementById('sub').innerHTML='Live catalog projection (recipe revision '+D.counts.recipe_revision+'); historical design baseline <code>'+D.baseline.sha.slice(0,9)+'</code>, NOT export provenance. '+D.counts.items+' items · '+D.counts.recipes+' recipes · '+D.counts.graph_nodes+' nodes / '+D.counts.graph_edges+' edges. Round 3: each proposal carries its status — implemented, closed and kept, or handed to the owner who must fix it.';
 const TABS={Overview:overview,Items:items,Recipes:recipes,'Proposals and status':changes,'Parts decision':parts,'Last Island':li,Findings:findings};
 const nav=document.getElementById('nav'),main=document.getElementById('main');
 Object.keys(TABS).forEach((t,i)=>{const b=document.createElement('button');b.textContent=t;b.setAttribute('role','tab');b.onclick=()=>show(t);nav.appendChild(b)});

@@ -1,3 +1,4 @@
+import { fundBuild } from './support/paid-build';
 // CAL-01 — world_calendar_v1: two-year / eight-season calendar, seasonal ecology,
 // seasonal gardening and chronological offline settlement.
 //
@@ -443,7 +444,8 @@ describe('CAL-01 E — seasonal gardening with real structures, costs and receip
     const r = g.run!; r.creatures = [];
     const cell = opts.cell ?? openCell(r);
     r.player.x = cell.x * TILE + 8; r.player.y = cell.y * TILE + 8; markDirty();
-    put(r, 'wood', 40); put(r, 'fiber', 40); put(r, 'glass', 4); put(r, 'herb', 4); put(r, 'seed', 10);
+    put(r, 'wood', 40); put(r, 'fiber', 40); put(r, 'glass', 4); put(r, 'herb', 4); put(r, opts.crop==='herb'?'seed_bitterleaf':'seed_sunroot', 10);
+    fundBuild(g,'garden',at);
     expect(buildReason(g, 'garden', cell.x, cell.y)).toBeNull();
     expect(act(g, 'build', { struct: 'garden', tx: cell.x, ty: cell.y }, at).ok).toBe(true);
     const e = Object.values(r.entities).find(x => x.type === 'garden' && x.tx === cell.x && x.ty === cell.y)!;
@@ -521,26 +523,31 @@ describe('CAL-01 E — seasonal gardening with real structures, costs and receip
     const cell = openCell(r);
     r.player.x = cell.x * TILE + 8; r.player.y = cell.y * TILE + 8; markDirty();
     put(r, 'wood', 200); put(r, 'fiber', 100); put(r, 'glass', 8); put(r, 'herb', 8);
-    put(r, 'stone', 60); put(r, 'rope', 8); put(r, 'iron_ingot', 12); put(r, 'mechanical_parts', 16); put(r, 'fasteners', 16); put(r, 'spares', 16);
+    put(r, 'stone', 60); put(r, 'rope', 8); put(r, 'iron_ingot', 12); put(r, 'mechanical_gear', 16); put(r, 'iron_plate', 16); put(r, 'spares', 16);
     // A level-2 workbench is the engine's real prerequisite for a Garden Tender.
     const bench = Object.values(r.entities).find(e => e.type === 'workbench');
     if (bench) expect(act(g, 'upgradeStation', { eid: bench.id }).ok).toBe(true);
     else {
+      fundBuild(g,'workbench',T0);
       expect(act(g, 'build', { struct: 'workbench', tx: cell.x + 2, ty: cell.y }).ok).toBe(true);
       const b = Object.values(r.entities).find(e => e.type === 'workbench' && e.tx === cell.x + 2)!;
       expect(act(g, 'upgradeStation', { eid: b.id }).ok).toBe(true);
     }
+    fundBuild(g,'garden',T0);
     expect(act(g, 'build', { struct: 'garden', tx: cell.x, ty: cell.y }).ok).toBe(true);
     const garden = Object.values(r.entities).find(e => e.type === 'garden' && e.tx === cell.x && e.ty === cell.y)!;
+    fundBuild(g,'barrel',T0);
     expect(act(g, 'build', { struct: 'barrel', tx: cell.x + 1, ty: cell.y }).ok).toBe(true);
     const barrel = Object.values(r.entities).find(e => e.type === 'barrel' && e.tx === cell.x + 1 && e.ty === cell.y)!;
+    fundBuild(g,'farm_controller',T0);
     expect(act(g, 'build', { struct: 'farm_controller', tx: cell.x, ty: cell.y + 1 }).ok).toBe(true);
     const tender = Object.values(r.entities).find(e => e.type === 'farm_controller')!;
+    fundBuild(g,'chest_small',T0);
     expect(act(g, 'build', { struct: 'chest_small', tx: cell.x - 1, ty: cell.y }).ok).toBe(true);
     const chest = Object.values(r.entities).find(e => e.type === 'chest_small' && e.tx === cell.x - 1 && e.ty === cell.y)!;
     for (const [field, e] of [['gardenId', garden], ['barrelId', barrel], ['chestId', chest]] as const)
       expect(act(g, 'farmConfigure', { eid: tender.id, field, value: e.id }).ok).toBe(true);
-    expect(addItem(r, chest.c!, 'seed', 6)).toBe(0); expect(addItem(r, tender.c!, 'wood', 6)).toBe(0); barrel.water = 12;
+    expect(addItem(r, chest.c!, 'seed_sunroot', 6)).toBe(0); expect(addItem(r, tender.c!, 'wood', 6)).toBe(0); barrel.water = 12;
     expect(act(g, 'farmConfigure', { eid: tender.id, field: 'enabled', value: true }).ok).toBe(true);
     stepTenders(g, r.clock.lastSimAt);
     const planted = r.receipts.filter(x => x.kind === 'tender.plant').length;

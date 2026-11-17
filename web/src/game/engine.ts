@@ -16,7 +16,7 @@ import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dis
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { OIL_SEEP_AUTHORITY, syncOilSeeps } from './oil-seeps';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
-import { LADDER_SPAN, LARGE_FURNACE, POWERED_DOOR_HOSTS, EQ_SLOTS, ALWAYS_KNOWN_RECIPES, isGardenCrop, gardenClimateClass, type GardenCrop, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
+import { LADDER_SPAN, LARGE_FURNACE, POWERED_DOOR_HOSTS, EQ_SLOTS, ALWAYS_KNOWN_RECIPES, isGardenCrop, gardenClimateClass, type GardenCrop, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, MOTORBIKE_REPAIR_COST, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
 import { liveItemId, liveItemPer, liveRecipeId, ITEM_SET_VERSION, isAccessCard, isRetiredLive, cardItemForClass } from './final-item-set';
 import { latestLegacyDefinition, RETIRED_RECIPES, purchasableFamilies } from './recipe-migration';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
@@ -2722,7 +2722,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'vehicleRepair': {
       const e=r.entities[it.eid];if(!e||e.kind!=='vehicle'||!e.vehicle||!e.deployed||!owned(e)||!near(r,e,2)||p.vehicle)return fail('Dismount near your motorbike.');
       if((e.hp??0)>=BAL.motorbike.maxHp)return fail('Motorbike is already sound.');
-      const cost:[string,number][]=[['spares',3]]; /* item set v3: was 1 Machine Part + 1 Fastener = 2 + 1 Parts at the retirement ratios */ if(!hasAll(r,'inv',cost))return fail('Repair needs 3 Parts.');
+      const cost=MOTORBIKE_REPAIR_COST; if(!hasAll(r,'inv',cost))return fail('Repair needs 3 Parts.');
       for(const [key,qty] of cost)removeItem(r,'inv',key,qty);const before=e.hp||0;e.hp=Math.min(BAL.motorbike.maxHp,before+BAL.motorbike.repairHp);e.deployed.dur=e.hp;
       return ok('vehicle.repair',`${e.deployed.uid}:${before.toFixed(2)}->${e.hp.toFixed(2)}:sparesx3`);
     }
