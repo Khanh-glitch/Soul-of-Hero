@@ -11,7 +11,7 @@ import { creatorLootV1 } from './creator-loot';
 import { validIntel } from './expedition-intel';
 // Local-first snapshots: one serialized profile + run + receipts per write.
 // Checksums detect accidental damage, not malicious edits or rollback of all copies.
-import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
+import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type RunState, type Stack } from './core';
 import { OIL_SEEP_AUTHORITY, SEEP_CELL } from './oil-seeps';
 const veyraRun = (r: any) => typeof r?.layoutId === 'string' && isVeyra05Layout(r.layoutId);
 /** G1B chest / card case / generator: a real approved source id at its resolved tile, one instance, coherent lifecycle. */
@@ -44,6 +44,7 @@ import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
 import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
 import { getWorld, hasLayout, setActiveLayout, VEYRA_RECYCLER_SITE, webRecyclerSite } from './world';
 import { mapDigest } from './map-package';
+import { preHookPartitionDigest, recoverHookPartitionActors } from '../veyra05/hook-compat';
 import { sourceDigest } from './world-economy';
 import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
 import { isVeyra05Layout } from '../veyra05/scenes';
@@ -102,9 +103,15 @@ export function validate(raw: any): GameState | null {
   const expectedSourceDigest = veyraWw ? sourceDigest(veyraWw.floors.ground.sources) : sourceDigest(world.sourceV3);
   const activeSources = veyraActiveLayer ? veyraActiveLayer.sources : world.sourceV3;
   const activeStatics = veyraActiveLayer ? veyraActiveLayer.statics : world.statics;
+  let migrateHookPartition = false;
   if (r.sourceLayoutVersion === 3) {
     const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || (m.rules !== 3 && !(m.rules === 4 && isVeyra05Layout(layout))) || m.seed !== world.economyMap.seed || m.digest !== expectedSourceDigest) return null;
-    if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) return null;
+    if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) {
+      // Only the exact pre-7d00481 six-cell geometry is migratable. All source,
+      // provenance, custody and lifecycle validation still applies below.
+      if (!veyraWw || typeof m.mapDigest !== 'string' || m.mapDigest !== preHookPartitionDigest(veyraWw)) return null;
+      migrateHookPartition = true;
+    }
     if (world.veyra && JSON.stringify(m.veyra)!==JSON.stringify(world.veyra)) return null;
     if (world.randomSpawn && (!obj(r.spawnChoice) || r.spawnChoice.contract!=='seeded-geographic-v1' || !Number.isInteger(r.spawnChoice.x) || !Number.isInteger(r.spawnChoice.y) || r.spawnChoice.x<1 || r.spawnChoice.y<1 || r.spawnChoice.x>=199 || r.spawnChoice.y>=199)) return null;
     if (!world.veyra && m.veyra!==undefined) return null;
@@ -765,6 +772,10 @@ export function validate(raw: any): GameState | null {
     const cal = normalizeCalendarLedger(r.calendar, r, Math.max(r.clock.lastSimAt, r.startedAt));
     if (cal.changed) r.calendar = cal.ledger;
     if (r.calendar.version !== CALENDAR_VERSION) return null;
+  }
+  if (migrateHookPartition) {
+    if (!recoverHookPartitionActors(r as RunState, veyraWw!)) return null;
+    r.sourceMap.mapDigest = fingerprint;
   }
   return raw as GameState;
 }

@@ -1,0 +1,132 @@
+diff --git a/web/src/veyra05/arch/sites.ts b/web/src/veyra05/arch/sites.ts
+index 94b6f60..3e3b1c4 100644
+--- a/web/src/veyra05/arch/sites.ts
++++ b/web/src/veyra05/arch/sites.ts
+@@ -408,7 +408,7 @@ export function hookVillage(): ArchPlan {
+   b.prop(2574, 688, 0, 'anvil'); b.prop(2578, 690, 0, 'table'); b.prop(2572, 686, 0, 'bed');
+ 
+   addDwelling(b, { id: 'garden_cottage', name: 'Garden Cottage', rect: [2592, 690, 14, 9], mat: 'wood', roof: 'thatch', doorSide: 'N', grounds: 'grounds' });
+-  b.partition(2599, 691, 2599, 694, 0); b.door(2599, 693, 0, 'garden_cottage', 'Garden Cottage Partition', 'arch');
++  b.partition(2598, 691, 2598, 694, 0); b.door(2598, 693, 0, 'garden_cottage', 'Garden Cottage Partition', 'arch');
+   b.prop(2595, 694, 0, 'bed'); b.prop(2601, 692, 0, 'shelf'); b.prop(2596, 696, 0, 'grain_sack');
+ 
+   addDwelling(b, { id: 'boat_repair', name: 'Boat-Repair Shed', rect: [2632, 664, 14, 10], mat: 'wood', roof: 'hull', doorSide: 'W', grounds: 'grounds' });
+diff --git a/web/src/game/persist.ts b/web/src/game/persist.ts
+index cac56d2..83912f7 100644
+--- a/web/src/game/persist.ts
++++ b/web/src/game/persist.ts
+@@ -11,7 +11,7 @@ import { creatorLootV1 } from './creator-loot';
+ import { validIntel } from './expedition-intel';
+ // Local-first snapshots: one serialized profile + run + receipts per write.
+ // Checksums detect accidental damage, not malicious edits or rollback of all copies.
+-import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
++import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type RunState, type Stack } from './core';
+ import { OIL_SEEP_AUTHORITY, SEEP_CELL } from './oil-seeps';
+ const veyraRun = (r: any) => typeof r?.layoutId === 'string' && isVeyra05Layout(r.layoutId);
+ /** G1B chest / card case / generator: a real approved source id at its resolved tile, one instance, coherent lifecycle. */
+@@ -44,6 +44,7 @@ import { normalizeCalendarLedger, CALENDAR_VERSION } from './calendar';
+ import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
+ import { getWorld, hasLayout, setActiveLayout, VEYRA_RECYCLER_SITE, webRecyclerSite } from './world';
+ import { mapDigest } from './map-package';
++import { preHookPartitionDigest, recoverHookPartitionActors } from '../veyra05/hook-compat';
+ import { sourceDigest } from './world-economy';
+ import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
+ import { isVeyra05Layout } from '../veyra05/scenes';
+@@ -102,9 +103,15 @@ export function validate(raw: any): GameState | null {
+   const expectedSourceDigest = veyraWw ? sourceDigest(veyraWw.floors.ground.sources) : sourceDigest(world.sourceV3);
+   const activeSources = veyraActiveLayer ? veyraActiveLayer.sources : world.sourceV3;
+   const activeStatics = veyraActiveLayer ? veyraActiveLayer.statics : world.statics;
++  let migrateHookPartition = false;
+   if (r.sourceLayoutVersion === 3) {
+     const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || (m.rules !== 3 && !(m.rules === 4 && isVeyra05Layout(layout))) || m.seed !== world.economyMap.seed || m.digest !== expectedSourceDigest) return null;
+-    if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) return null;
++    if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) {
++      // Only the exact pre-7d00481 six-cell geometry is migratable. All source,
++      // provenance, custody and lifecycle validation still applies below.
++      if (!veyraWw || typeof m.mapDigest !== 'string' || m.mapDigest !== preHookPartitionDigest(veyraWw)) return null;
++      migrateHookPartition = true;
++    }
+     if (world.veyra && JSON.stringify(m.veyra)!==JSON.stringify(world.veyra)) return null;
+     if (world.randomSpawn && (!obj(r.spawnChoice) || r.spawnChoice.contract!=='seeded-geographic-v1' || !Number.isInteger(r.spawnChoice.x) || !Number.isInteger(r.spawnChoice.y) || r.spawnChoice.x<1 || r.spawnChoice.y<1 || r.spawnChoice.x>=199 || r.spawnChoice.y>=199)) return null;
+     if (!world.veyra && m.veyra!==undefined) return null;
+@@ -766,6 +773,10 @@ export function validate(raw: any): GameState | null {
+     if (cal.changed) r.calendar = cal.ledger;
+     if (r.calendar.version !== CALENDAR_VERSION) return null;
+   }
++  if (migrateHookPartition) {
++    if (!recoverHookPartitionActors(r as RunState, veyraWw!)) return null;
++    r.sourceMap.mapDigest = fingerprint;
++  }
+   return raw as GameState;
+ }
+ 
+diff --git a/web/src/veyra05/hook-compat.ts b/web/src/veyra05/hook-compat.ts
+new file mode 100644
+index 0000000..451bc5c
+--- /dev/null
++++ b/web/src/veyra05/hook-compat.ts
+@@ -0,0 +1,64 @@
++/** Exact compatibility bridge for 7d00481's six-cell Hook partition change.
++ * Reconstructs ONLY the previous ground fingerprint; never accepts an arbitrary
++ * mismatch or changes source IDs, stock, clocks, gates, or saved map provenance.
++ */
++import { T, TILE, WW, WH, type RunState } from '../game/core';
++import { mapDigest } from '../game/map-package';
++import type { World } from '../game/world';
++import type { WindowWorld } from './window';
++import { entityFloor } from './floors';
++
++const legacyDigests = new WeakMap<World, string | null>();
++export function preHookPartitionDigest(ww: WindowWorld): string | null {
++  if (legacyDigests.has(ww.world)) return legacyDigests.get(ww.world)!;
++  const { world: w, win, floors: { ground: g } } = ww;
++  const tiles = g.tiles.slice(), walkable = g.walkable.slice();
++  let changed = 0;
++  for (const gy of [691, 692, 694]) for (const gx of [2598, 2599]) {
++    const x = gx - win.originTx, y = gy - win.originTy;
++    // Match the compiler's interior-window clipping, including partial windows.
++    if (x < 1 || y < 1 || x >= WW - 1 || y >= WH - 1) continue;
++    const i = y * WW + x, current = gx === 2598 ? T.PWALL : T.FLOOR;
++    if (tiles[i] !== current || walkable[i] !== (current === T.PWALL ? 0 : 1)) {
++      legacyDigests.set(w, null); return null; // fail closed if the live geometry changes again
++    }
++    tiles[i] = gx === 2598 ? T.FLOOR : T.PWALL;
++    walkable[i] = gx === 2598 ? 1 : 0;
++    changed++;
++  }
++  // Ground arrays, not the mutable currently installed upper/cellar layer.
++  const digest = !changed ? null : mapDigest({ ...w, tiles, zone: g.zone, sourceV3: g.sources,
++    buildings: g.buildings, statics: g.statics,
++    economyMap: { ...w.economyMap, walkable, protected: g.protectedCells, buildable: g.buildable },
++  });
++  legacyDigests.set(w, digest);
++  return digest;
++}
++
++/** A legal old standing cell can become a wall. Plan bounded adjacent recovery
++ * first, apply atomically only if every affected actor has a legal destination.
++ * This is NOT a general teleport/un-stuck path and runs only for the exact old fingerprint.
++ */
++export function recoverHookPartitionActors(r: RunState, ww: WindowWorld): boolean {
++  const g = ww.floors.ground, { originTx: ox, originTy: oy } = ww.win;
++  const moves: { actor: { x: number; y: number }; x: number; y: number }[] = [];
++  const actors = [...((r.veyraFloor ?? 0) === 0 ? [r.player] : []),
++    ...r.creatures.filter(c => c.state !== 'dead' && (c.floor ?? 0) === 0)];
++  for (const actor of actors) {
++    const gx = Math.floor(actor.x / TILE) + ox, gy = Math.floor(actor.y / TILE) + oy;
++    if (gx !== 2598 || ![691, 692, 694].includes(gy)) continue;
++    if (actor === r.player && r.player.vehicle) return false; // do not detach a mounted player from their vehicle
++    let found = false;
++    // Prefer the original west side of the partition, never cross a closed door.
++    for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
++      const x = gx + dx - ox, y = gy + dy - oy, i = y * WW + x;
++      if (x < 1 || y < 1 || x >= WW - 1 || y >= WH - 1 || !g.walkable[i] || g.solidProps[i] || g.sources[i]) continue;
++      if (Object.values(r.entities).some(e => entityFloor(e) === 0 && e.tx === x && e.ty === y &&
++        (e.kind !== 'door' || !e.open))) continue;
++      moves.push({ actor, x: x * TILE + 8, y: y * TILE + 8 }); found = true; break;
++    }
++    if (!found) return false;
++  }
++  for (const { actor, x, y } of moves) { actor.x = x; actor.y = y; }
++  return true;
++}

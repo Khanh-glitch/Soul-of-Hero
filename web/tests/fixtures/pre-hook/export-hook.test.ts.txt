@@ -1,0 +1,27 @@
+import { it, expect } from 'vitest';
+import { writeFileSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
+import { layoutIdAt } from '../src/veyra05/scenes';
+import { getWorld, setActiveLayout } from '../src/game/world';
+import { startRun, newGame } from '../src/game/engine';
+import { getWindowWorld } from '../src/veyra05/window';
+import { serializeSnapshot, validate } from '../src/game/persist';
+import { mapDigest } from '../src/game/map-package';
+import { sourceDigest } from '../src/game/world-economy';
+it('exports actual pre-Hook source snapshots and fingerprints',()=>{
+ const snapshots: string[]=[], fingerprints: object[]=[];
+ for(const [ox,oy] of [[2500,600],[2496,608],[2598,600]]){
+  const layout=layoutIdAt(ox,oy);setActiveLayout(layout);const gs=newGame();
+  expect(startRun(gs,'male',Date.UTC(2026,10,17),null,101,{tx:Math.max(10,2603-ox),ty:87}).ok).toBe(true);
+  expect(validate(JSON.parse(JSON.stringify(gs)))).not.toBeNull();snapshots.push(serializeSnapshot(gs));
+  if(ox===2500){
+   const g=getWindowWorld(layout,4).floors.ground, gy=[691,692,694].find(y=>!g.solidProps[(y-oy)*200+2598-ox])!;
+   expect(gy).toBeDefined();const i=(gy-oy)*200+2598-ox;
+   expect(g.walkable[i]).toBe(1);expect(g.solidProps[i]).toBe(0);
+   gs.run!.player.x=(2598-ox)*16+8;gs.run!.player.y=(gy-oy)*16+8;
+   expect(validate(JSON.parse(JSON.stringify(gs)))).not.toBeNull();snapshots.push(serializeSnapshot(gs));
+  }
+  for(const rules of [3,4] as const){const ww=getWindowWorld(layout,rules);fingerprints.push({layout,rules,mapDigest:mapDigest(ww.world),sourceDigest:sourceDigest(ww.floors.ground.sources)});}
+ }
+ writeFileSync('/home/user/Soul-of-Hero/.cache/pre-hook-3682329.json.gz',gzipSync(JSON.stringify({commit:'3682329719b9cdd1eadaeed791f0ea8c29733714',snapshots,fingerprints})));
+},30000);
