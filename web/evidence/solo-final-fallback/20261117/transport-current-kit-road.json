@@ -1,0 +1,33 @@
+{
+  "labels": {
+    "crafted": "real craft/upgrade/build/research intents",
+    "fixture": "starter stock grants, cache-side position, one fuel canister",
+    "intent": "tick() road movement and vehicle intents"
+  },
+  "route": {
+    "startTile": [
+      120,
+      109
+    ],
+    "distanceTiles": 6,
+    "tickMs": 50
+  },
+  "motorbike": {
+    "ticks": 6,
+    "seconds": 0.30000000000000004,
+    "fuelUsed": 6.03,
+    "cargoIngots": 40
+  },
+  "walkingSameCargo": {
+    "ticks": 21,
+    "seconds": 1.05
+  },
+  "ratioWalkOverBike": 3.5,
+  "reading": "This six-tile controlled road leg measures both modes with the same cargo; compare recorded ticks/fuel/wear, not a frozen historical timing claim. This measured short fixture leg is not a claim of human preference or general superiority.",
+  "notClaimed": [
+    "natural walk from spawn",
+    "natural acquisition of grants",
+    "human play",
+    "cart comparison (covered by b05-freight-compare)"
+  ]
+}

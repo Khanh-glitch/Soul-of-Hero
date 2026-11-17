@@ -1,7 +1,8 @@
+import { fundBuild } from './support/paid-build';
 // MEC-01 R2 — C2: actual single-haul freight delivery, authorized Shipping source -> player field depot.
 // WHAT IS REAL HERE
 //   The source is the authored factory exterior industrial-toolbox crate (poi 'factory', signature
-//   scrapx6+sparesx3+iron_swordx1+mechanical_partsx2+fastenersx3 + B05-v1 high roll), an authorized loot-source-v2
+//   current mapped materials/Parts/Machete + authorized high roll), an authorized loot-source-v2
 //   cache. Cargo moves source -> transport container by real `move` intents (UIDs preserved byte-for-byte),
 //   the haul runs on the actual 200x200 map through tick() with held direction keys (no teleport between the ends,
 //   no invisible road), and unloading into the depot chest is again real `move` intents.
@@ -13,14 +14,14 @@
 //   [F2] The Hand Cart (cart_kit) / packed Motorbike (motorbike_kit) and three Fuel Canisters are fixture grants.
 //        A far haul outruns one 300-unit tank; the harness refuels through the engine's own vehicleRefuel intent
 //        (mounted, real receipts) exactly when the tank drops below 120 — the intended use of the granted cans.
-//        Producing the kit through the full chain is proven in tests/mec01-c1-motorbike-chain.test.ts; granting it
+//        Producing the kit through the full chain is proven in tests/mec01-r2-c1-motorbike-chain.test.ts; granting it
 //        here keeps the freight comparison isolated from the build test.
-//   [F3] Depot build materials (wood/ingot) are grants; the build itself is a real paid action.
+//   [F3] Current depot pack raw materials are grants; its hand craft and deployment are real paid actions.
 //   [F4] Creatures are NOT cleared: exposure (damage taken) is recorded per row, not neutralized.
 // ROUTE CLASSES: 'near' = depot in the [118..152]x[112..128] window (short haul); 'far' = whole-map scan, >=45 tiles from the
 //   factory, the SAME three-mode-feasible cell for walk/cart/bike (long-haul class; the map has only 97 vehicleGeometry road
 //   cells and a walk-reachable blob ~85 tiles across, so the far class is capped by geography, not by choice).
-// TIMING SCOPE: SIM_FIXTURE_MEASUREMENT - seconds come from tick(50 ms) with scripted held-key input, not a human hand.
+// TIMING SCOPE: SIM_FIXTURE_MEASUREMENT - seconds come from tick(50ms foot /16ms cart+bike) with scripted held-key input, not a human hand.
 //   This file proves source->container->route->container->destination custody with real UIDs on real map geometry;
 //   it is not a claim of human driving skill, balance enjoyment or NATURAL_INPUT play.
 import { describe, it, expect, afterEach } from 'vitest';
@@ -118,7 +119,8 @@ const itemW = (k: string) => ITEMS[k].w;
 function setupDepot(g: GameState, far = false) {
   const r = g.run!;
   const w = getWorld('shipping_fresh');
-  // far: pre-filter by the actual walk+bike reachable blobs (cart shares the walk block grid), so only real candidates are tried.
+  const paidPack=fundBuild(g,'chest_large',T0);
+  // far: pre-filter by the actual walk+bike reachable blobs (cart candidates are additionally checked by threeModeReachable against cargoPassable), so only real candidates are tried.
   // Among masked candidates, prefer cells within 2 tiles of the vehicleGeometry road network: the authorized long-haul
   // corridor (97 cells, x[101..176] y[14..120]) is what a freight run is FOR, and the bike's speed table only wins on road.
   // Fallback to the masked list if no road-adjacent buildable cell qualifies — measured either way, never hidden.
@@ -150,15 +152,14 @@ function setupDepot(g: GameState, far = false) {
   for (const cell of cells.slice(0, far ? 150 : undefined)) {   // cap the far scan even after masking
     if (!threeModeReachable(r, cell)) continue;   // no real build happens for a corridor-hostile cell
     r.player.x = cell.x * TILE + 8 + TILE; r.player.y = cell.y * TILE + 8;  // stand EAST of the chest tile, never on it
-    addItem(r, 'inv', 'wood', 12); addItem(r, 'inv', 'iron_ingot', 2);
     const why = buildReason(g, 'chest_large', cell.x, cell.y);               // real rule check with cost visible in inv
-    if (why) { removeItem(r, 'inv', 'wood', 12); removeItem(r, 'inv', 'iron_ingot', 2); continue; }
+    if (why) continue; // refused placement retains the same paid pack
     const res = act(g, 'build', { struct: 'chest_large', tx: cell.x, ty: cell.y });
     if (res.ok) {
       const chest = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'chest_large' && e.tx === cell.x && e.ty === cell.y)!;
-      return { chest, cell, builtWith: { wood: 12, iron_ingot: 2 } };
+      expect(chest.deployed?.uid).toBe(paidPack!.uid);
+      return { chest, cell, builtWith: { pack:paidPack!.key,uid:paidPack!.uid } };
     }
-    removeItem(r, 'inv', 'wood', 12); removeItem(r, 'inv', 'iron_ingot', 2);
   }
   throw new Error('no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)');
 }
@@ -269,7 +270,7 @@ function haul(mode: 'walk' | 'cart' | 'bike', far = false): ModeResult {
   // |dx| vs |dy| re-derives the wrong class the moment the cross-axis drift exceeds the along-axis error,
   // which suppressed the steering keys needed to close out a leg and froze the bike with fuel burning.
   const input = (dxRaw: number, dyRaw: number, ux: number, uy: number, mx: number, my: number, legHoriz: boolean): Input => {
-    if (mode !== 'bike') return { ...still, up: uy < -0.35, down: uy > 0.35, left: ux < -0.35, right: ux > 0.35, mx, my };
+    if (mode === 'walk') return { ...still, up: uy < -0.35, down: uy > 0.35, left: ux < -0.35, right: ux > 0.35, mx, my };
     const PERP = 2.0;   // raw px deadzone; the 12px box needs |perp| <= 2 to keep corners inside a 16px cell
     let k: Input = legHoriz
       ? { ...still, left: dxRaw < -0.1, right: dxRaw > 0.1, up: dyRaw < -PERP, down: dyRaw > PERP, mx, my }
@@ -288,12 +289,13 @@ function haul(mode: 'walk' | 'cart' | 'bike', far = false): ModeResult {
   // or is within 1.5 px of it. A radial window both overshoots on roads (6.25 px per tick) and advances too early for
   // corner-sensitive legs; the plane test is exact for axis-aligned vehicle legs and safe for walkers.
   const bikeEid = (r as any).player?.vehicle as string | undefined;
+  let refueledDuringHaul=0;
   while (cp < cps.length && ticks < 4000) {
     const p = posOf();
     if (mode === 'bike' && bikeEid) {
       const bn = (r.entities as any)[bikeEid]; const f = bn?.vehicle?.fuel ?? 0;
       const cans = (C(r, 'inv').slots as any[]).filter(sl => sl?.key === 'fuel_can').reduce((n: number, sl: any) => n + (sl.qty ?? 1), 0);
-      if (f < 120 && cans > 0) { const before = f; const res = act(g, 'vehicleRefuel', { eid: bikeEid }, t); console.warn(`[C2 refuel] tick=${ticks} fuel=${before.toFixed(1)} cans=${cans} -> ${JSON.stringify((res as any).ok !== false ? 'ok' : (res as any).reason)}`); }
+      if (f < 120 && cans > 0) { const before = f; const res = act(g, 'vehicleRefuel', { eid: bikeEid }, t); if(res.ok)refueledDuringHaul+=Math.max(0,bn.vehicle.fuel-before); console.warn(`[C2 refuel] tick=${ticks} fuel=${before.toFixed(1)} cans=${cans} -> ${JSON.stringify((res as any).ok !== false ? 'ok' : (res as any).reason)}`); }
     }
     const targetCp = cps[cp];
     const prevCp = cp > 0 ? cps[cp - 1] : startPos;
@@ -308,8 +310,8 @@ function haul(mode: 'walk' | 'cart' | 'bike', far = false): ModeResult {
     if (d < 1.5 || passed) { cp++; continue; }
     const inp = input(dx, dy, dx / d, dy / d, p.x + dx, p.y + dy, legHoriz) as any;
     // Bike steps at a 60 fps frame (16 ms): at the R6 road speed a 50 ms step moves ~20 px, past a 16 px corridor cell.
-    // Walkers and carts keep the 50 ms step. Time is still ticks x dt.
-    const dtMs = mode === 'bike' ? 16 : 50;
+    // Foot uses50ms; carts also need16ms to close sub-cell checkpoint residues without bang-bang oscillation. Time is accumulated from actual dt.
+    const dtMs = mode === 'walk' ? 50 : 16;
     tick(g, inp, dtMs, t);
     t += dtMs; ticks++;
     const nowP = posOf();
@@ -327,7 +329,7 @@ function haul(mode: 'walk' | 'cart' | 'bike', far = false): ModeResult {
   const endPos = posOf();
   const goalDist = Math.hypot(endPos.x - (depot.x * TILE + 8), endPos.y - (depot.y * TILE + 8));
   expect(goalDist).toBeLessThan(4 * TILE);
-  const seconds = ticks * (mode === 'bike' ? 0.016 : 0.05);
+  const seconds = ticks * (mode === 'walk' ? 0.05 : 0.016);
   // ---- exit + unload into the depot chest by real actions ----
   let exitReceipt: string | undefined;
   if (vehicle) { const res = act(g, 'vehicleExit', {}, t); expect(res.ok).toBe(true); exitReceipt = (res as any).receipt ? `${(res as any).receipt}` : undefined; }
@@ -355,7 +357,7 @@ function haul(mode: 'walk' | 'cart' | 'bike', far = false): ModeResult {
     deliveredStacks: delivered.map(s => ({ uid: s.uid, key: s.key, qty: s.qty })),
     totalQty: qty, totalKg: +kg.toFixed(2),
     pathPx: Math.round(pathLengthPx(full)), ticks, seconds: +seconds.toFixed(2),
-    fuelUsed: vehicle ? +(bikeStartFuel - vehicle.vehicle!.fuel).toFixed(2) : 0,
+    fuelUsed: vehicle ? +(bikeStartFuel + refueledDuringHaul - vehicle.vehicle!.fuel).toFixed(2) : 0,
     wearHp: vehicle ? +(bikeStartHp - vehicle.hp!).toFixed(2) : 0,
     odometerPx: vehicle ? +vehicle.vehicle!.odometer.toFixed(1) : undefined,
     cartWeightBefore: cart ? +cartKg.toFixed(2) : undefined,
@@ -423,7 +425,7 @@ describe('MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, thr
     const nearW = results.find(r => r.mode === 'walk'), nearC = results.find(r => r.mode === 'cart'), nearB = results.find(r => r.mode === 'bike');
     const farW = resultsFar.find(r => r.mode === 'walk'), farC = resultsFar.find(r => r.mode === 'cart'), farB = resultsFar.find(r => r.mode === 'bike');
     writeFileSync('evidence/mec01-c2/delivery.json', JSON.stringify({
-      note: 'REAL: same crate UID cargo -> real route on real shipping_fresh geometry -> real chest, per mode. TWO route classes: near (depot in the [118..152]x[112..128] window) and far (whole map, >=45 tiles from the factory, the SAME cell for all three modes, pre-checked for walk+cart+bike reachability). Timing is SIM_FIXTURE_MEASUREMENT (tick 50ms, scripted held keys), not human input. Creatures not cleared; weather/exposure recorded. Kit/fuel/cart granted as labelled fixtures (see test header).',
+      note: 'REAL: same crate UID cargo -> real route on real shipping_fresh geometry -> real chest, per mode. TWO route classes: near (depot in the [118..152]x[112..128] window) and far (whole map, >=45 tiles from the factory, the SAME cell for all three modes, pre-checked for walk+cart+bike reachability). Timing is SIM_FIXTURE_MEASUREMENT (tick50ms foot/16ms cart+bike, scripted held keys), not human input. Creatures not cleared; weather/exposure recorded. Kit/fuel/cart granted as labelled fixtures (see test header).',
       seed: SEED,
       source: 'factory exterior industrial-toolbox (authorized loot-source-v2)',
       destination: 'depot chest_large built by the player (real build action) at a buildable non-protected cell; class-consistent per table',

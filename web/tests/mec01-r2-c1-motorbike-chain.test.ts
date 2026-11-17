@@ -1,3 +1,4 @@
+import { fundBuild } from './support/paid-build';
 // MEC-01 R2 (C1/C2): physical industrial chain to a Motorbike Kit, then a real cargo trip to a player-built chest.
 // Labels:
 //   CRAFTED  = real craft/upgrade/build intents on the real bench (paid, timed, with reservations).
@@ -31,7 +32,7 @@ function legalTileNear(g:GameState,cx:number,cy:number,struct='workbench'):[numb
 function roadLine(g:GameState){const r=g.run!,w=getWorld(r.layoutId);for(let y=2;y<198;y++)for(let x=3;x<186;x++){let yes=true;for(let d=-1;d<=8;d++){const px=(x+d)*TILE+8,py=y*TILE+8;if(!w.economyMap.road[y*WW+x+d]||!vehicleClear(r,px,py)){yes=false;break;}}if(yes)return{x:x*TILE+8,y:y*TILE+8};}throw Error('no real road line');}
 /** Craft one recipe at the bench and move its output into the pack. Real intents, real time. */
 function craftOut(g:GameState,bench:Entity,recipe:string,at:number){
-  const r=g.run!;const rc=RECIPES[recipe];place(r,bench.tx!-1,bench.ty!);const pre=act(g,'craft',{eid:bench.id,recipe},at);expect(pre.ok,recipe+': '+(pre as any).reason+' inv='+JSON.stringify(['iron_ingot','fasteners','spares','mechanical_parts','vehicle_frame','vehicle_drive'].map(k=>[k,countItem(r,'inv',k)]))).toBe(true);
+  const r=g.run!;const rc=RECIPES[recipe];place(r,bench.tx!-1,bench.ty!);const pre=act(g,'craft',{eid:bench.id,recipe},at);expect(pre.ok,recipe+': '+(pre as any).reason+' inv='+JSON.stringify(['iron_ingot','refined_iron_ingot','spares','mechanical_gear','iron_plate','vehicle_frame'].map(k=>[k,countItem(r,'inv',k)]))).toBe(true);
   // Chronology: the job starts at `at`; stepStations(dt, now) uses now - remaining as the event time, so now must be start + dt.
   const out=bench.station!.outC!;const secs=rc.secs*1000;
   stepStations(g,secs-1000,at+secs-1000);                                   // NEGATIVE: one second before the real finish
@@ -41,17 +42,20 @@ function craftOut(g:GameState,bench:Entity,recipe:string,at:number){
   expect(act(g,'move',{from:out,fs:i,to:'inv'},at+secs+600).ok).toBe(true);
 }
 
-describe('MEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + FIXTURE stock + INTENT freight)',()=>{
-  it('chain: gear and drive, frame, L3 bench, Motorbike Kit, place, refuel, mount, carry 40 ingots, deliver to a chest', ()=>{
+describe('MEC-01 R2 C1: current paid kit chain, then a real cargo trip (CRAFTED + FIXTURE stock + INTENT freight)',()=>{
+  it('chain: current gears/plates/pipe/frame, paid L3 bench, Motorbike Kit, place, refuel, mount, carry 40 ingots, deliver to a chest', ()=>{
     const g=start();const r=g.run!;const c=cacheOf(r);place(r,c.tx!+1,c.ty!);
-    // FIXTURE starter stock: the amounts the whole chain needs (MP 12, iron 20, fasteners 14, spares 18), plus wood for bench and chest.
-    addItem(r,'inv','wood',40);addItem(r,'inv','stone',4);addItem(r,'inv','iron_ingot',20);addItem(r,'inv','mechanical_parts',12);
-    addItem(r,'inv','fasteners',14);addItem(r,'inv','spares',34);addItem(r,'inv','fuel_can',1);
+    // Controlled CURRENT raw stock (not a natural-input claim): exact bills for
+    // L2/L3, paid research, four gears, three plate batches, pipe/frame and dry kit.
+    for(const [key,qty] of [['iron_ingot',22],['refined_iron_ingot',14],['spares',49],['fuel_can',1]] as const)
+      expect(addItem(r,'inv',key,qty)).toBe(0);
+    fundBuild(g,'workbench',START+10);
     // CRAFTED: L1 bench built and upgraded to L2 (real build + paid upgrade).
     const sp=legalTileNear(g,c.tx!+1,c.ty!);expect(act(g,'build',{struct:'workbench',tx:sp[0],ty:sp[1]},START+20).ok).toBe(true);
     const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;
     expect(act(g,'upgradeStation',{eid:bench.id},START+21).ok).toBe(true);expect(bench.station!.level).toBe(2);
     // CRAFTED: a real Research Table (wood 10, spares 6, iron 1), then PAID directed research of the motorbike blueprint (9 spares, 45 s).
+    fundBuild(g,'research',START+29);
     const rp=legalTileNear(g,c.tx!+1,c.ty!,'research');expect(act(g,'build',{struct:'research',tx:rp[0],ty:rp[1]},START+30).ok).toBe(true);
     const table=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='research')!;
     place(r,table.tx!-1,table.ty!);
@@ -61,24 +65,30 @@ describe('MEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + F
     expect(act(g,'move',{from:tOut,fs:bp,to:'inv'},START+31+45600).ok).toBe(true);
     const bpi=C(r,'inv').slots.findIndex(s=>s?.key==='blueprint'&&s.meta==='motorbike_kit');
     expect(act(g,'useItem',{slot:bpi},START+31+45700).ok).toBe(true);
-    // CRAFTED: gear (2 iron + 2 MP + 1 fastener) -> geared drive; frame (3 iron + 2 MP + 2 spares).
-    // CHRONOLOGY: research completes at START+31+45500 (stepStations), blueprint moved at +45600 and learned at +45700.
-    // Crafts that depend on the learned recipe chain start only after that learn time.
+    // CRAFTED current chain; no retired drive or Fasteners/Machine Parts recipe.
     let t=START+45800;
-    craftOut(g,bench,'mechanical_gear',t);t+=40000;
-    craftOut(g,bench,'vehicle_drive_geared',t);t+=40000;
+    for(let i=0;i<4;i++){craftOut(g,bench,'mechanical_gear',t);t+=40000;}
+    for(let i=0;i<3;i++){craftOut(g,bench,'iron_plate',t);t+=40000;}
+    craftOut(g,bench,'metal_pipe',t);t+=40000;
     craftOut(g,bench,'vehicle_frame',t);t+=40000;
-    expect(countItem(r,'inv','vehicle_drive')).toBe(1);expect(countItem(r,'inv','vehicle_frame')).toBe(1);
-    // CRAFTED: paid upgrade to L3 (real intent, real cost). Then the kit (frame + drive + 2 iron + 2 fasteners), L3 only.
+    expect(countItem(r,'inv','mechanical_gear')).toBe(4);
+    expect(countItem(r,'inv','iron_plate')).toBe(6);
+    expect(countItem(r,'inv','vehicle_frame')).toBe(1);
+    // CRAFTED: paid upgrade to L3 (real intent, real cost). Then the current dry kit (frame + 2 gears + 3 plates + 4 refined), L3 only.
+    const billBefore=RECIPES.motorbike_kit.ins.map(([key])=>countItem(r,'inv',key));
+    expect(act(g,'craft',{eid:bench.id,recipe:'motorbike_kit'},t-1).ok).toBe(false);
+    expect(RECIPES.motorbike_kit.ins.map(([key])=>countItem(r,'inv',key))).toEqual(billBefore);
+    expect(bench.station!.queue).toHaveLength(0); // known + funded still cannot bypass L3
     for(const [k,q] of WORKBENCH_UPGRADE_III.cost)expect(countItem(r,'inv',k),k).toBeGreaterThanOrEqual(q);
     place(r,bench.tx!-1,bench.ty!);expect(act(g,'upgradeStation',{eid:bench.id},t).ok).toBe(true);expect(bench.station!.level).toBe(3);
     // blueprint must have been learned (run-local) before the kit craft is allowed
     craftOut(g,bench,'motorbike_kit',t+100);t+=60000;   // requires the learned recipe + L3
-    expect(countItem(r,'inv','motorbike_kit')).toBe(1);expect(countItem(r,'inv','vehicle_frame')).toBe(0);expect(countItem(r,'inv','vehicle_drive')).toBe(0);
+    expect(countItem(r,'inv','motorbike_kit')).toBe(1);expect(countItem(r,'inv','vehicle_frame')).toBe(0);expect(countItem(r,'inv','mechanical_gear')).toBe(0);expect(countItem(r,'inv','iron_plate')).toBe(1);
     // INTENT: place the kit on clear road (real placement rules), refuel from the carried canister, mount.
+    const kitUid=C(r,'inv').slots.find(s=>s?.key==='motorbike_kit')!.uid;
     const q=roadLine(g);place(r,q.x/TILE-1|0,q.y/TILE|0);
     expect(act(g,'placeMotorbike',q,t+200).ok).toBe(true);
-    const bike=Object.values(r.entities).find(e=>e.kind==='vehicle')!;expect(bike).toBeTruthy();
+    const bike=Object.values(r.entities).find(e=>e.kind==='vehicle')!;expect(bike).toBeTruthy();expect(bike.deployed?.uid).toBe(kitUid);expect(bike.vehicle!.fuel).toBe(0);
     expect(act(g,'vehicleRefuel',{eid:bike.id},t+201).ok).toBe(true);expect(countItem(r,'inv','fuel_can')).toBe(0);
     expect(act(g,'vehicleMount',{eid:bike.id},t+202).ok).toBe(true);
     // FIXTURE cargo: 40 ingots in one stack, moved into the hold by a real intent (the hold weight is checked by the engine).
@@ -111,6 +121,7 @@ describe('MEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + F
     expect(act(g,'vehicleExit',{eid:bike.id},now+10).ok).toBe(true);
     const ex=Math.floor(bike.x/TILE),ey=Math.floor(bike.y/TILE);
     // The player stands within reach of the motorbike (<=2 tiles), and the chest is placed within reach of that same spot.
+    fundBuild(g,'chest_small',now+11);
     let chestTile:[number,number]|null=null,stand:[number,number]|null=null;
     for(let py=-2;py<=2&&!chestTile;py++)for(let px=-2;px<=2&&!chestTile;px++){
       const sx=ex+px,sy=ey+py;
@@ -131,13 +142,15 @@ describe('MEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + F
     // Save validates and the UID survives a round trip.
     const back=validate(JSON.parse(JSON.stringify(JSON.parse(JSON.parse(serializeSnapshot(g)).payload))));
     expect(back).not.toBeNull();
+    expect(C(back!.run!,chest.c!).slots.some(s=>s?.uid===cargoUid&&s.qty===40)).toBe(true);
+    expect(back!.run!.entities[bike.id].deployed?.uid).toBe(kitUid);
     // Record the measured numbers (fixture route, not a human trip).
     const evidence={labels:{crafted:'real craft/upgrade/build/research intents',fixture:'starter stock grants, cache-side position, one fuel canister',intent:'tick() road movement and vehicle intents'},
       route:{startTile:[Math.floor(q.x/TILE),Math.floor(q.y/TILE)],distanceTiles:6,tickMs:50},
       motorbike:{ticks:driveTicks,seconds:driveTicks*0.05,fuelUsed:Math.round((fuelBefore-bike.vehicle!.fuel)*100)/100,cargoIngots:40},
       walkingSameCargo:{ticks:walkTicks,seconds:walkTicks*0.05},
       ratioWalkOverBike:Math.round((walkTicks/driveTicks)*100)/100,
-      reading:'Over this 6-tile road segment the motorbike saves about 0.15 s versus walking while spending fuel and wear; walking is close on short legs. The gap grows with distance and the outcome is not a claim of general superiority.',
+      reading:'This six-tile controlled road leg measures both modes with the same cargo; compare recorded ticks/fuel/wear, not a frozen historical timing claim. This measured short fixture leg is not a claim of human preference or general superiority.',
       notClaimed:['natural walk from spawn','natural acquisition of grants','human play','cart comparison (covered by b05-freight-compare)']};
     mkdirSync('evidence/c1-motorbike-chain',{recursive:true});writeFileSync('evidence/c1-motorbike-chain/measured.json',JSON.stringify(evidence,null,2)+'\n');
     expect(walkTicks/driveTicks).toBeGreaterThan(1);

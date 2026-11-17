@@ -3,7 +3,7 @@
 // direction keys in the test; nothing here teleports the player mid-haul, mutates the world or grants items.
 // Cost model mirrors the engine's own speed tables (BAL.terrainSpeed for walking; cart 1.36 road / 0.72 off / 0.42 rough
 // exactly as sim.ts applies it, WITHOUT the terrain table; motorbike 125 road / 52 ground / 35 rough on the authorized
-// vehicle geometry). Each mode therefore gets its own optimum route over the same physical map - no invented road.
+// vehicle geometry). Each mode therefore gets a deterministic legal fixture route over the same physical map (not a continuous-control optimum) - no invented road.
 import { TILE, WW, WH, T, BAL, type RunState } from '../src/game/core';
 import { blockGrid, effTile } from '../src/game/engine';
 import { vehicleCell, vehicleExitPoint } from '../src/game/motorbike';
@@ -35,11 +35,13 @@ export function cellSeconds(r: RunState, tx: number, ty: number, mode: Mode): nu
   if (b !== 0) return null;                                   // water(1)/tree(2)/structure(3)/wade(4)/lava(5): blocked for walkers and pulled carts
   if (BLOCKED_TILES.has(t)) return null;
   if (mode === 'walk') return 1 / (BAL.player.speed * (BAL.terrainSpeed[SURF[t]] ?? 1));
+  const world=getWorld(r.layoutId||'shipping');
+  if((world.packageContract||world.enforceMasks)&&!world.economyMap.cargoPassable[ty*WW+tx]&&!world.statics.some(s=>s.kind==='door'&&s.tx===tx&&s.ty===ty))return null; // actual cart solidFor law, NOT walker reachability
   const onRoad = t === T.ROAD || t === T.BRIDGE || t === T.FLOOR;
   return 1 / (BAL.player.speed * (onRoad ? BAL.cart.speedOnRoad : ROUGH.has(t) ? BAL.cart.speedRough : BAL.cart.speedOffRoad));
 }
 
-/** A* (8-dir, no corner cutting; 4-dir for the bike) on tile cells. Returns tile-center points in order, or null if unreachable.
+/** A* (8-dir foot, no corner cutting; 4-dir for pulled cart and bike) on tile cells. Returns tile-center points in order, or null if unreachable.
  *  Bike legs must be axis-aligned: the engine drives in 3 px sub-steps and every sub-step must clear vehicleClear AND
  *  vehicleExitPoint at its exact float position, which a 1-tile-wide corridor only allows straight through (corners clip otherwise). */
 export function astar(r: RunState, sx: number, sy: number, gx: number, gy: number, mode: Mode): { x: number; y: number }[] | null {
@@ -54,10 +56,10 @@ export function astar(r: RunState, sx: number, sy: number, gx: number, gy: numbe
   const came = new Int32Array(WW * WH).fill(-1);
   const closed = new Uint8Array(WW * WH);
   g[start] = 0; push(start, h(start));
-  // 8-dir for walkers and pulled carts. Vehicles are 4-dir: the bike is a 12 px box moving in 3 px sub-steps and its
+  // 8-dir for foot. Cart rope/box and bike use axis-aligned fixture legs: the bike is a 12 px box moving in 3 px sub-steps and its
   // corner clearance is only guaranteed on axis-aligned legs through cell centers - a diagonal leg, even between two
   // vehicleCell-passable cells, can clip a protruding edge (measured: stalls at two different diagonal legs, seed 4242).
-  const DIRS = mode === 'bike'
+  const DIRS = mode !== 'walk'
     ? [[1, 0, 1], [-1, 0, 1], [0, 1, 1], [0, -1, 1]] as const
     : [[1, 0, 1], [-1, 0, 1], [0, 1, 1], [0, -1, 1], [1, 1, Math.SQRT2], [1, -1, Math.SQRT2], [-1, 1, Math.SQRT2], [-1, -1, Math.SQRT2]] as const;
   while (nodes.length) {
