@@ -13,7 +13,7 @@ export interface HumanWorkTask {
   inputs: [string, number][]; duration: number;
   machineJobId?: string; readyAt?: number; outputs?: [string, number][];
 }
-type Router = (gx: number, gy: number) => { tx: number; ty: number; floor: number }[] | null;
+type Router = (gx: number, gy: number, floor: number) => { tx: number; ty: number; floor: number }[] | null;
 const pack = (r: RunState, h: HumanRecord) => C(r, h.inv.packId);
 export function humanEntityTile(r: RunState, e: Entity): [number, number] {
   const o = r.sourceMap?.veyra?.originAu;
@@ -49,7 +49,7 @@ function knownRecipe(h: HumanRecord, key: string) {
 }
 function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkTask[] {
   const comm = h.community ? hw.communities[h.community] : undefined; if (!comm) return [];
-  const entities = allRunEntities(r).filter(e => (e.floor ?? 0) === h.floor && (e.hp ?? 1) > 0 && (comm.workStations.includes(e.id) || e.poi === comm.poi && e.owner === comm.id || h.occupation==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)));
+  const entities = allRunEntities(r).filter(e => (e.hp ?? 1) > 0 && (comm.workStations.includes(e.id) || e.poi === comm.poi && e.owner === comm.id || h.occupation==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)));
   const tasks: HumanWorkTask[] = [], start = (kind: HumanJobKind, e: Entity | undefined, inputs: [string,number][], duration: number): HumanWorkTask => ({kind,entityId:e?.id,inputs,duration,phase:'travel'});
   const stores = comm.storeContainers.filter(c => r.custody[c]);
   const available = (key: string, n: number) => count(r,h.inv.packId,key) + stores.reduce((q,c) => q+count(r,c,key),0) >= n;
@@ -104,10 +104,13 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
   }
   return tasks;
 }
-function target(r: RunState, hw: HumanWorld, h: HumanRecord, task: HumanWorkTask): [number,number] | null {
-  if (task.phase==='fetch') { const c=h.community ? hw.communities[h.community] : undefined; return c?.storeTile ?? null; }
-  if (task.patientId) { const p=hw.people[task.patientId]; return p && p.floor===h.floor ? [p.gx,p.gy] : null; }
-  const e=task.entityId && findRunEntity(r,task.entityId); return e ? humanEntityTile(r,e) : null;
+function target(r: RunState, hw: HumanWorld, h: HumanRecord, task: HumanWorkTask): [number,number,number] | null {
+  if (task.phase==='fetch') {
+    const c=h.community ? hw.communities[h.community] : undefined,e=findRunEntity(r,c?.storeEntityId);
+    return e?[...humanEntityTile(r,e),e.floor??0]:null;
+  }
+  if (task.patientId) { const p=hw.people[task.patientId]; return p && p.floor===h.floor ? [p.gx,p.gy,p.floor] : null; }
+  const e=task.entityId && findRunEntity(r,task.entityId); return e ? [...humanEntityTile(r,e),e.floor??0] : null;
 }
 export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, route: Router): boolean {
   if (h.following || !h.community) return false;

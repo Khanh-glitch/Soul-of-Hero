@@ -1667,7 +1667,7 @@ function commitHumanWater(r:RunState,h:HumanRecord,now:number):boolean {
 }
 function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>, protectedTiles: Set<string>): void {
   if (h.intent?.work?.phase === 'travel' && h.state === 'IDLE') {
-    planHumanOccupation(r, hw, h, now, (gx,gy) => humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied));
+    planHumanOccupation(r, hw, h, now, (gx,gy,floor) => humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied,floor));
     h.nextThinkAt = now + 3000; return;
   }
   if (h.following || h.state !== 'IDLE' || h.intent || (h.nextThinkAt ?? 0) > now) return;
@@ -1708,7 +1708,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     }
     h.lastWorkBlock='My sleeping place is missing or unreachable.';
   }
-  if (planHumanOccupation(r,hw,h,now,(gx,gy)=>humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied))) return;
+  if (planHumanOccupation(r,hw,h,now,(gx,gy,floor)=>humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied,floor))) return;
   const lx = h.gx - ox, ly = h.gy - oy;
   if (lx < 1 || ly < 1 || lx >= WW - 1 || ly >= WH - 1) return;
   if(h.floor!==(r.veyraFloor??0)||h.gx<ox||h.gy<oy||h.gx>=ox+WW||h.gy>=oy+WH){h.lastWorkBlock='No certified shared-harvest action here yet.';return;}
