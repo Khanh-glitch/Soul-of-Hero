@@ -13,14 +13,22 @@
       "reload continue"
     ],
     "scope": "production single-file browser controls/save smoke; software renderer, serial, no concurrent build or test job; NO FPS or enjoyment certificate",
-    "selectionText": "CHOOSE YOUR ADVENTURER\nAdventurer ♀\nSurvival knife, a half-full flask, a few berries. No Core, no map, no orders.\nAdventurer ♂\nSurvival knife, a half-full flask, a few berries. No Core, no map, no orders.\nWorld\nVEYRA · Unified World\nClassic Island (R12)\nVEYRA · Unified World · 4000×2800 tiles (1 tile = 0.5 AU) · 81 POIs, livestock husbandry, 4 side bosses & 6 Primordials.\nStarting location\nRandom safe region\nSeeded random landing across source-verified mainland cells. No fixed four-region quota or starter shelter; offshore starts await proven sea transport.\nBack\nBegin the 14 days",
-    "worldText": "100\n100\n85\n84\n100\nVEYRA · U=0.5\nroad\nAU 1191,500 · F0\n07:29\nDay 1 / 14\nCALM\nCLEAR\nnext FOG\nsecured 0\nJourney [J]\nNotes [N]\nSFX\n☰\nSUGGESTED · LANDFALL\nGather by hand0/3\n❖\n×\nOak\n1\n2\n2⚡\n3\n3\n4\n5\n6\n7\n8\nSurvival Knife\ndmg 9 · tool · 100%\nI\n3/24",
-    "inventoryText": "100\n100\n85\n84\n100\nVEYRA · U=0.5\nroad\n07:33\nDay 1 / 14\nCALM\nCLEAR\nnext FOG\nsecured 0\nJourney [J]\nNotes [N]\nSFX\n☰\nSURVIVOR\ndrag\nmove\nEnter\npick/place\nEsc\ncancel\n1-8\nhotbar\n✕\nEsc\n◀\nNorth\n▶\n-0%\n+0\n0\n0\n1\n/60\nINVENTORY\n3/24\nSort Pack\nQUICKBAR · 1–8\nPROTECTED\n1\n2\n2⚡\n3\n3\n4\n5\n6\n7\n8\nBACKPACK · 0/16\nLMB\npick · place\nRMB\nuse\n⇧\nquick move\nAll\nTools\nGear\nFood & Med\nMaterials\nCores\nStations\nDevices\nwork now\n73 · 41 undiscovered\n2\n8\n12\n4\n2\n2\n2\n2\n2\n2\n3\n8\n2\n2\n6\n◆ Work now\n▤ Can queue · waits\n× Missing requirement\nFruit Juice\nPressed berries. Mostly a drink.\n3\n/3\n▶\n×1\nBy hand\n⏱ 2s\nCraft\n◆ Make now\nCraft from your pack",
+    "selectionText": "CHOOSE YOUR ADVENTURER\nAdventurer \u2640\nSurvival knife, a half-full flask, a few berries. No Core, no map, no orders.\nAdventurer \u2642\nSurvival knife, a half-full flask, a few berries. No Core, no map, no orders.\nWorld\nVEYRA \u00b7 Unified World\nClassic Island (R12)\nVEYRA \u00b7 Unified World \u00b7 4000\u00d72800 tiles (1 tile = 0.5 AU) \u00b7 81 POIs, livestock husbandry, 4 side bosses & 6 Primordials.\nStarting location\nRandom safe region\nSeeded random landing across source-verified mainland cells. No fixed four-region quota or starter shelter; offshore starts await proven sea transport.\nBack\nBegin the 14 days",
+    "worldText": "100\n100\n85\n84\n100\nVEYRA \u00b7 U=0.5\nroad\nAU 1191,500 \u00b7 F0\n07:29\nDay 1 / 14\nCALM\nCLEAR\nnext FOG\nsecured 0\nJourney [J]\nNotes [N]\nSFX\n\u2630\nSUGGESTED \u00b7 LANDFALL\nGather by hand0/3\n\u2756\n\u00d7\nOak\n1\n2\n2\u26a1\n3\n3\n4\n5\n6\n7\n8\nSurvival Knife\ndmg 9 \u00b7 tool \u00b7 100%\nI\n3/24",
+    "inventoryText": "100\n100\n85\n84\n100\nVEYRA \u00b7 U=0.5\nroad\n07:33\nDay 1 / 14\nCALM\nCLEAR\nnext FOG\nsecured 0\nJourney [J]\nNotes [N]\nSFX\n\u2630\nSURVIVOR\ndrag\nmove\nEnter\npick/place\nEsc\ncancel\n1-8\nhotbar\n\u2715\nEsc\n\u25c0\nNorth\n\u25b6\n-0%\n+0\n0\n0\n1\n/60\nINVENTORY\n3/24\nSort Pack\nQUICKBAR \u00b7 1\u20138\nPROTECTED\n1\n2\n2\u26a1\n3\n3\n4\n5\n6\n7\n8\nBACKPACK \u00b7 0/16\nLMB\npick \u00b7 place\nRMB\nuse\n\u21e7\nquick move\nAll\nTools\nGear\nFood & Med\nMaterials\nCores\nStations\nDevices\nwork now\n73 \u00b7 41 undiscovered\n2\n8\n12\n4\n2\n2\n2\n2\n2\n2\n3\n8\n2\n2\n6\n\u25c6 Work now\n\u25a4 Can queue \u00b7 waits\n\u00d7 Missing requirement\nFruit Juice\nPressed berries. Mostly a drink.\n3\n/3\n\u25b6\n\u00d71\nBy hand\n\u23f1 2s\nCraft\n\u25c6 Make now\nCraft from your pack",
     "saveKeys": [
       "soh.state.v3",
       "soh.field-notes.v1:run_wueakp_mwkdg3hs",
       "soh.journey.v1"
     ],
-    "verdict": "PASS_SMOKE"
+    "verdict": "PASS_SMOKE",
+    "httpWarnings": [
+      {
+        "url": "/pixelfx-assets/index.json",
+        "status": 404,
+        "classification": "optional full-pack manifest; initPfx catches failure and retains embedded PILOT_MANIFEST + OWNER_VFX. Not a proof all optional art is installed."
+      }
+    ],
+    "consoleQualification": "Original probe excluded HTTP404 console lines generally. Production server log specifically confirms the optional full-pack manifest404. PASS is normal-control/save smoke, not strict zero-resource-error or full asset certificate."
   }
 ]

@@ -1,5 +1,8 @@
 /**
- * SOH Full Economic Simulation & Structural Audit Engine (WP2 / M2).
+ * Economic simulation audit (WP2 / M2), PARTIALLY reconciled to current contracts.
+ * Suite5 reads current fuel/recipe/source definitions. Older archetype/Monte Carlo/
+ * finding probes elsewhere still require reconciliation; this file is NOT an RC
+ * certificate and its historical hypothesis text is not gameplay authority.
  *
  * Executes deterministic, code-grounded multi-day (0h–336h) runtime simulations,
  * territory upkeep stress matrices, offline settlement sweeps, fuel/power/vehicle
@@ -20,6 +23,7 @@ import {
   VENDOR_SPARES,
   stationBurnable,
 } from './catalog';
+import { isRetiredLive } from './final-item-set';
 import { BAL, HOUR, TILE, T, WW, WH, type GameState, type RunState, type Stack, mulberry } from './core';
 import {
   addItem,
@@ -86,7 +90,7 @@ export interface VeyraPoiAuditRecord {
   containers: VeyraPoiAuditContainer[];
 }
 
-export const M2_AUDIT_VERSION = 'soh.economic-sim-audit.v1' as const;
+export const M2_AUDIT_VERSION = 'soh.economic-sim-audit.v2' as const;
 export const BASE_AUDIT_NOW = Date.UTC(2026, 10, 11, 0, 0, 0);
 
 // ---------- Deterministic helpers ----------
@@ -500,9 +504,6 @@ function runSuite1WorldEndowments(onSub?: (label: string, ms: number) => void) {
     for (const [item, qty] of def.yields) expectedPrimary[item] = r2(stockUnits * qty);
     const expectedBonus: Record<string, number> = {};
     for (const [item, prob] of def.bonus ?? []) expectedBonus[item] = r2(stockUnits * prob);
-    if (srcKey === 'wreck') {
-      expectedBonus.salvaged_oil = r2(stockUnits * SALVAGED_OIL_WRECK_CHANCE);
-    }
     if (srcKey === 'iron' && def.qualityBonus) {
       expectedBonus['rich_iron_ore_ironPick(8%)'] = r2(stockUnits * 0.08);
       expectedBonus['rich_iron_ore_salvager(12%)'] = r2(stockUnits * 0.12);
@@ -569,6 +570,28 @@ function runSuite1WorldEndowments(onSub?: (label: string, ms: number) => void) {
   };
 }
 
+/** Controlled audit funding, NOT natural acquisition. A deployable must still be
+ * hand-crafted and dispatched through real placement, floor/host/reach rules.
+ * Supplies only missing CURRENT inputs; never restores retired formulas/packs. */
+function fundAuditPack(gs: GameState, type: string, now: number) {
+  const r=gs.run!, key=STRUCTS[type]?.item;
+  if(!key?.startsWith('deploy_')||countItem(r,'inv',key)>0)return;
+  const recipe=RECIPES[key];
+  if(!recipe||recipe.station!==null)throw new Error(`Audit pack is not a current hand recipe: ${type}`);
+  for(const [input,qty] of recipe.ins){
+    if(isRetiredLive(input))throw new Error(`Retired audit pack input: ${input}`);
+    const missing=Math.max(0,qty-countItem(r,'inv',input));
+    if(missing&&addItem(r,'inv',input,missing)!==0)throw new Error(`Audit pack capacity: ${input}`);
+  }
+  const paid=dispatch(gs,{id:nextIntentId(),type:'craft',recipe:key},now);
+  if(!paid.ok)throw new Error(`Audit pack craft refused: ${type}: ${paid.reason}`);
+}
+function auditBuild(gs: GameState, intent: Parameters<typeof dispatch>[1], now: number) {
+  if(intent.type!=='build')throw new Error('auditBuild accepts build only');
+  fundAuditPack(gs,intent.struct,now);
+  return dispatch(gs,intent,now);
+}
+
 // ---------- Suite 2: Live Multi-Day Engine Archetype Trajectories (0h -> 336h) ----------
 function setupBaseAndClaim(
   gs: GameState,
@@ -603,10 +626,10 @@ function setupBaseAndClaim(
     [ax + 1, ay],
   ];
   for (const [tx, ty] of shelterCells) {
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'floor_wood', tx, ty }, now).ok) placed++;
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'roof_thatch', tx, ty }, now).ok) placed++;
+    if (auditBuild(gs, { id: nextIntentId(), type: 'build', struct: 'floor_wood', tx, ty }, now).ok) placed++;
+    if (auditBuild(gs, { id: nextIntentId(), type: 'build', struct: 'roof_thatch', tx, ty }, now).ok) placed++;
   }
-  const cRes = dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'claim', tx: ax, ty: ay }, now);
+  const cRes = auditBuild(gs, { id: nextIntentId(), type: 'build', struct: 'claim', tx: ax, ty: ay }, now);
   if (cRes.ok) {
     placed++;
     claimId = Object.values(r.entities).find((e) => e.type === 'claim' && e.tx === ax && e.ty === ay)?.id ?? null;
@@ -614,12 +637,12 @@ function setupBaseAndClaim(
 
   if (options.addBedChest) {
     const [bx, by] = tiles[1] ?? [ax + 1, ay];
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'bed_straw', tx: bx, ty: by }, now).ok) {
+    if (auditBuild(gs, { id: nextIntentId(), type: 'build', struct: 'bed_straw', tx: bx, ty: by }, now).ok) {
       placed++;
       bedId = Object.values(r.entities).find((e) => e.type === 'bed_straw' && e.tx === bx && e.ty === by)?.id ?? null;
     }
     const [cx, cy] = tiles[2] ?? [ax + 2, ay];
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'chest_small', tx: cx, ty: cy }, now).ok) {
+    if (auditBuild(gs, { id: nextIntentId(), type: 'build', struct: 'chest_small', tx: cx, ty: cy }, now).ok) {
       placed++;
       chestId = Object.values(r.entities).find((e) => e.type === 'chest_small' && e.tx === cx && e.ty === cy)?.id ?? null;
     }
@@ -627,26 +650,26 @@ function setupBaseAndClaim(
 
   for (let i = 0; i < Math.min(options.walls, tiles.length - 4); i++) {
     const [wx, wy] = tiles[4 + i];
-    const wRes = dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'wall_wood', tx: wx, ty: wy }, now);
+    const wRes = auditBuild(gs, { id: nextIntentId(), type: 'build', struct: 'wall_wood', tx: wx, ty: wy }, now);
     if (wRes.ok) placed++;
   }
   if (options.addFurnace && tiles[12]) {
     const [fx, fy] = tiles[12];
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'furnace', tx: fx, ty: fy }, now).ok) {
+    if (auditBuild(gs, { id: nextIntentId(), type: 'build', struct: 'furnace', tx: fx, ty: fy }, now).ok) {
       placed++;
       furnaceId = Object.values(r.entities).find((e) => e.type === 'furnace' && e.tx === fx && e.ty === fy)?.id ?? null;
     }
   }
   if (options.addWorkbench && tiles[13]) {
     const [wx, wy] = tiles[13];
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'workbench', tx: wx, ty: wy }, now).ok) {
+    if (auditBuild(gs, { id: nextIntentId(), type: 'build', struct: 'workbench', tx: wx, ty: wy }, now).ok) {
       placed++;
       workbenchId = Object.values(r.entities).find((e) => e.type === 'workbench' && e.tx === wx && e.ty === wy)?.id ?? null;
     }
   }
   if (options.addResearch && tiles[14]) {
     const [rx, ry] = tiles[14];
-    if (dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'research', tx: rx, ty: ry }, now).ok) {
+    if (auditBuild(gs, { id: nextIntentId(), type: 'build', struct: 'research', tx: rx, ty: ry }, now).ok) {
       placed++;
       researchId = Object.values(r.entities).find((e) => e.type === 'research' && e.tx === rx && e.ty === ry)?.id ?? null;
     }
@@ -729,10 +752,10 @@ function runSuite2Archetypes() {
       addItem(rB, 'inv', 'spares', 30);
       addItem(rB, 'inv', 'glass', 10);
       addItem(rB, 'inv', 'wood', 40);
-      if (moreTiles[15]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'wall_brick', tx: moreTiles[15][0], ty: moreTiles[15][1] }, BASE_AUDIT_NOW);
-      if (moreTiles[16]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'door_iron', tx: moreTiles[16][0], ty: moreTiles[16][1] }, BASE_AUDIT_NOW);
-      if (moreTiles[17]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'base_generator', tx: moreTiles[17][0], ty: moreTiles[17][1] }, BASE_AUDIT_NOW);
-      if (moreTiles[18]) dispatch(gsB, { id: nextIntentId(), type: 'build', struct: 'arrow_turret', tx: moreTiles[18][0], ty: moreTiles[18][1] }, BASE_AUDIT_NOW);
+      if (moreTiles[15]) auditBuild(gsB, { id: nextIntentId(), type: 'build', struct: 'wall_brick', tx: moreTiles[15][0], ty: moreTiles[15][1] }, BASE_AUDIT_NOW);
+      if (moreTiles[16]) auditBuild(gsB, { id: nextIntentId(), type: 'build', struct: 'door_iron', tx: moreTiles[16][0], ty: moreTiles[16][1] }, BASE_AUDIT_NOW);
+      if (moreTiles[17]) auditBuild(gsB, { id: nextIntentId(), type: 'build', struct: 'base_generator', tx: moreTiles[17][0], ty: moreTiles[17][1] }, BASE_AUDIT_NOW);
+      if (moreTiles[18]) auditBuild(gsB, { id: nextIntentId(), type: 'build', struct: 'arrow_turret', tx: moreTiles[18][0], ty: moreTiles[18][1] }, BASE_AUDIT_NOW);
 
       const fcB = claimEntB ? territoryForecastSafe(rB, claimEntB) : null;
       const dailyUpkeepB: Record<string, number> = {};
@@ -1204,51 +1227,38 @@ function runSuite4OfflineMatrix() {
 }
 
 // ---------- Suite 5: Fuel, Oil Refinery, Generator & Motorbike Conservation ----------
-function runSuite5EnergyAndFuel(worldEndowments: ReturnType<typeof runSuite1WorldEndowments>) {
-  // 1. Compare fuel burn values per item and per crafting route
-  const fuelItems = Object.entries(ITEMS)
-    .filter(([, d]) => (d.fuel ?? 0) > 0)
-    .map(([key, d]) => ({
-      key,
-      name: d.name,
-      fuelSeconds: d.fuel!,
-      stationBurnable: stationBurnable(key),
-      maxStack: d.max,
-      stackFuelSeconds: d.fuel! * d.max,
-      threeSlotGeneratorCapacitySec: d.fuel! * d.max * 3,
-      threeSlotGeneratorAutonomyMinutes: r2((d.fuel! * d.max * 3) / 60),
-    }));
-
-  // 2. Refinery oil efficiency matrix
-  const oilPerBatch = {
-    furnace_single: { oilIn: 3, glassIn: 1, fuelCansOut: 1, lubeOut: 0, oilPerCan: 3, generatorSecPerOil: 60 / 3 },
-    refinery_single: { oilIn: 3, glassIn: 1, fuelCansOut: 1, lubeOut: 0, oilPerCan: 3, generatorSecPerOil: 60 / 3 },
-    refinery_batch: { oilIn: 5, glassIn: 1, fuelCansOut: 2, lubeOut: 0, oilPerCan: 2.5, generatorSecPerOil: (60 * 2) / 5 },
-    refinery_industrial: { oilIn: 6, glassIn: 1, fuelCansOut: 2, lubeOut: 1, oilPerCan: 3, generatorSecPerOil: (60 * 2) / 6 },
+export function runSuite5EnergyAndFuel(worldEndowments: {shipping: {
+  sourceYieldTotals: Record<string, {expectedPrimary: Record<string,number>; expectedBonus: Record<string,number>}>;
+  staticLootItems: Record<string,number>;
+}}) {
+  // Demand is a conditional service scenario, not a compulsory progression path.
+  const fuelItems = Object.entries(ITEMS).filter(([key,d])=>!isRetiredLive(key)&&(d.fuel??0)>0).map(([key,d])=>({
+    key,name:d.name,fuelSeconds:d.fuel!,stationBurnable:stationBurnable(key),maxStack:d.max,
+    stackFuelSeconds:d.fuel!*d.max,threeSlotGeneratorCapacitySec:d.fuel!*d.max*3,
+    threeSlotGeneratorAutonomyMinutes:r2(d.fuel!*d.max*3/60),
+  }));
+  const fuelProductionRoutes = Object.entries(RECIPES).filter(([,r])=>r.out==='fuel_can').map(([id,r])=>({
+    id,station:r.station,inputs:r.ins.map(([key,qty])=>({key,qty})),fuelCansOut:r.qty,seconds:r.secs,
+    crudePerCan:(r.ins.find(([key])=>key==='crude_petroleum')?.[1]??0)/r.qty,
+  }));
+  const refineryRatios = fuelProductionRoutes.filter(r=>r.station==='refinery');
+  const sourceExpected=(key:string)=>Object.values(worldEndowments.shipping.sourceYieldTotals)
+    .reduce((n,s)=>n+(s.expectedPrimary[key]??0)+(s.expectedBonus[key]??0),0);
+  const vendorCrude=VENDOR_SPARES.crude_petroleum.stock*VENDOR_SPARES.crude_petroleum.qty;
+  const totalCrude=sourceExpected('crude_petroleum')+vendorCrude+(worldEndowments.shipping.staticLootItems.crude_petroleum??0);
+  const crudeRatios=refineryRatios.filter(r=>r.crudePerCan>0);
+  const bestCrudeRatio=Math.min(...crudeRatios.map(r=>r.crudePerCan));
+  const fromCrude=Number.isFinite(bestCrudeRatio)?totalCrude/bestCrudeRatio:0;
+  const directFuel=sourceExpected('fuel_can')+(worldEndowments.shipping.staticLootItems.fuel_can??0);
+  const hypotheticalFuel=fromCrude+directFuel;
+  const shippingOilAndFuelBudget={
+    scope:'Expected finite source/vendor/static crude plus direct cans; fractional upper yield assumes paid containers and refinery access. EXCLUDES rendered-fat production, repeat loot and all unsampled sites. NOT whole-run fuel supply or physical-access proof.',
+    vendorCrudePetroleum:vendorCrude,totalCrudePetroleumExpected:r2(totalCrude),
+    directFuelCansExpected:r2(directFuel),fuelCansAssumingBestCurrentRefinery:r2(hypotheticalFuel),
+    maxLoadedRoadTilesFromThisSubset:Math.round(hypotheticalFuel*BAL.motorbike.canFuel/(BAL.motorbike.fuelPerPixel*(1+BAL.motorbike.loadFuelMultiplier))/TILE),
   };
-
-  // 3. Total Shipping oil budget (wrecks + vendor + static) vs Veyra sampled + static
-  const shipWreckStock = worldEndowments.shipping.sourceYieldTotals.wreck?.stockUnits ?? 0;
-  const shipExpectedOilFromWrecks = r2(shipWreckStock * SALVAGED_OIL_WRECK_CHANCE);
-  const shipDirectFuelCansFromWrecks = r2(shipWreckStock * 0.06);
-  const shipVendorOil = VENDOR_SPARES.salvaged_oil.stock * 1;
-  const shipStaticFuelCans = worldEndowments.shipping.staticLootItems.fuel_can ?? 0;
-  const shipStaticOil = worldEndowments.shipping.staticLootItems.salvaged_oil ?? 0;
-  const shipTotalOil = r2(shipExpectedOilFromWrecks + shipVendorOil + shipStaticOil);
-  const shipTotalFuelCansBatch = r2(shipDirectFuelCansFromWrecks + shipStaticFuelCans + (shipTotalOil / 5) * 2);
-
-  // Motorbike range per fuel canister and across full Shipping run
-  const roadLoadedFuelPerPx = BAL.motorbike.fuelPerPixel * (1 + BAL.motorbike.loadFuelMultiplier);
-  const pxPerCanister = BAL.motorbike.canFuel / roadLoadedFuelPerPx;
-  const shippingTotalKmEquivTiles = Math.round((shipTotalFuelCansBatch * pxPerCanister) / TILE);
-
-  // Generator continuous operation cost for 1 day & 14 days
-  const oneLoadSecondsPerDay = 86400;
-  const twoLoadsSecondsPerDay = 86400 * 2;
-  const fuelCansFor24hOneLoad = oneLoadSecondsPerDay / (ITEMS.fuel_can.fuel!);
-  const coalFor24hOneLoad = oneLoadSecondsPerDay / (ITEMS.coal.fuel!);
-  const briquettesFor24hOneLoad = oneLoadSecondsPerDay / (ITEMS.fuel_briquette.fuel!);
-  const woodFor24hOneLoad = oneLoadSecondsPerDay / (ITEMS.wood.fuel!);
+  const demand24hOneLoad=Object.fromEntries(fuelItems.map(f=>[f.key,86400/f.fuelSeconds]));
+  const fuelCansFor24hOneLoad=demand24hOneLoad.fuel_can;
 
   // Campfire idle burn test
   let campfireIdleWoodBurnedIn10Min = 0;
@@ -1270,36 +1280,16 @@ function runSuite5EnergyAndFuel(worldEndowments: ReturnType<typeof runSuite1Worl
 
   return {
     fuelItems,
-    refineryRatios: oilPerBatch,
-    shippingOilAndFuelBudget: {
-      wreckStockUnits: shipWreckStock,
-      expectedOilFromWrecks: shipExpectedOilFromWrecks,
-      vendorSalvagedOil: shipVendorOil,
-      staticSalvagedOil: shipStaticOil,
-      totalSalvagedOilExpected: shipTotalOil,
-      directFuelCansFromWrecks: shipDirectFuelCansFromWrecks,
-      staticFuelCans: shipStaticFuelCans,
-      totalFuelCansAssumingBatchRefinery: shipTotalFuelCansBatch,
-      maxMotorbikeLoadedRoadTilesFromRunOil: shippingTotalKmEquivTiles,
-    },
+    fuelProductionRoutes, refineryRatios, shippingOilAndFuelBudget,
     baseGeneratorDemandVsCapacity: {
-      poiGeneratorFuelRuntimeSec: BAL.poiAccess.fuelRuntimeMs / 1000,
-      baseGeneratorFuelCanRuntimeSec: ITEMS.fuel_can.fuel,
-      baseGeneratorBriquetteRuntimeSec: ITEMS.fuel_briquette.fuel,
-      baseGeneratorCoalRuntimeSec: ITEMS.coal.fuel,
-      ratioPoiToBaseGenFuelCan: r2((BAL.poiAccess.fuelRuntimeMs / 1000) / ITEMS.fuel_can.fuel!),
-      demand24hOneLoad: {
-        fuel_can: fuelCansFor24hOneLoad,
-        coal: coalFor24hOneLoad,
-        fuel_briquette: briquettesFor24hOneLoad,
-        wood: woodFor24hOneLoad,
-      },
-      demand24hTwoLoads: {
-        fuel_can: twoLoadsSecondsPerDay / ITEMS.fuel_can.fuel!,
-        coal: twoLoadsSecondsPerDay / ITEMS.coal.fuel!,
-      },
-      fuelCansNeededFor14dOneLoad: fuelCansFor24hOneLoad * 14,
-      shippingTotalOilDeficitFactorFor1Load14d: r2((fuelCansFor24hOneLoad * 14) / Math.max(1, shipTotalFuelCansBatch)),
+      scenario:'86400 seconds of uninterrupted one-load demand; not idle runtime and not required play',
+      poiGeneratorFuelRuntimeSec:BAL.poiAccess.fuelRuntimeMs/1000,
+      baseGeneratorFuelCanRuntimeSec:ITEMS.fuel_can.fuel,
+      baseGeneratorCharcoalRuntimeSec:ITEMS.charcoal.fuel,
+      ratioPoiToBaseGenFuelCan:r2(BAL.poiAccess.fuelRuntimeMs/1000/ITEMS.fuel_can.fuel!),
+      demand24hOneLoad,
+      demand24hTwoLoads:Object.fromEntries(Object.entries(demand24hOneLoad).map(([key,q])=>[key,q*2])),
+      fuelCansNeededFor14dOneLoad:fuelCansFor24hOneLoad*14,
     },
     idleFuelLeakProbe: {
       campfireIdleWoodBurnedIn10Min,
@@ -1692,11 +1682,12 @@ function runSuite8ExploitAndParityProbes(
           r.player.x = (tx + ox) * TILE + 8;
           r.player.y = (ty + oy) * TILE + 8;
           if (buildReason(gs, 'floor_wood', tx, ty) !== null) continue;
-          const bRes = dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'floor_wood', tx, ty }, BASE_AUDIT_NOW + 100);
+          const bRes = auditBuild(gs, { id: nextIntentId(), type: 'build', struct: 'floor_wood', tx, ty }, BASE_AUDIT_NOW + 100);
           if (!bRes.ok) continue;
+          fundAuditPack(gs,'claim',BASE_AUDIT_NOW+200);
           const claimErr = buildReason(gs, 'claim', tx, ty);
           if (claimErr === null) {
-            const cRes = dispatch(gs, { id: nextIntentId(), type: 'build', struct: 'claim', tx, ty }, BASE_AUDIT_NOW + 200);
+            const cRes = auditBuild(gs, { id: nextIntentId(), type: 'build', struct: 'claim', tx, ty }, BASE_AUDIT_NOW + 200);
             if (cRes.ok) {
               claimInsidePoiAllowed = true;
               minPoiClaimDistFound = r2(d);
@@ -1789,7 +1780,7 @@ function runSuite8ExploitAndParityProbes(
   const veyraSampledSulfur = worldEndowments.veyra.aggregateSceneSources.sulfur ?? 0;
   const veyraSampledCrystal = worldEndowments.veyra.aggregateSceneSources.crystal ?? 0;
 
-  // Compile structured finding ledger (machine-verified)
+  // Historical hypothesis inventory; stable IDs are NOT proof that old conclusions remain true.
   findings.push(
     {
       id: 'M2-F01',
@@ -1844,9 +1835,9 @@ function runSuite8ExploitAndParityProbes(
       id: 'M2-F05',
       severity: 'HIGH',
       category: 'ENERGY_ECONOMY_BROKEN',
-      title: 'Base Generator Burns 1 Fuel Canister in 60s (10x Faster Than POI Gen, Worse Than Coal/Briquette)',
+      title: 'Conditional continuous-load generator demand versus current fuel routes (not a whole-run deficit verdict)',
       codeRefs: ['web/src/game/engine.ts:867-874', 'web/src/game/catalog.ts:fuel_can', 'web/src/game/balance.v1.json:poiAccess'],
-      evidence: `base_generator consumes 1 fuel_can (3 salvaged_oil + 1 glass) in 60s per connected load (15 min full 3-slot capacity), while 1 coal lasts 80s and 1 fuel_briquette lasts 90s. Running 1 turret 24h requires 1,440 fuel_cans (~3,600 salvaged_oil), vs only ${fuelBudget.shippingOilAndFuelBudget.totalSalvagedOilExpected} salvaged_oil available in an entire Shipping run.`,
+      evidence: `Current continuous one-load scenario uses ${fuelBudget.baseGeneratorDemandVsCapacity.demand24hOneLoad.fuel_can} cans/day; recipes are ${fuelBudget.fuelProductionRoutes.map(r=>r.id).join(', ')}. The finite shipping subset has ${fuelBudget.shippingOilAndFuelBudget.totalCrudePetroleumExpected} expected Crude Petroleum and excludes rendered-fat/renewable production. No total-run deficit can be inferred from this subset. Retired Salvaged Oil/Coal/Briquette formulas are not current supply.`,
       verifiedMetrics: fuelBudget.baseGeneratorDemandVsCapacity,
     },
     {
@@ -1975,7 +1966,7 @@ function runSuite8ExploitAndParityProbes(
     oilPumpOffscreenSkipped,
     creatorCoreRefinedBudget: { shipSulfurStock, shipCrystalStock, shipMaxEnergyRefinedFromWild, veyraSampledSulfur, veyraSampledCrystal },
     structConservationIssues,
-    findings,
+    findings: findings.map(f=>({...f,authorityStatus:f.id==='M2-F05'?'CURRENT_CONDITIONAL_ACCOUNTING_NOT_DEFICIT_PROOF':'HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO'})),
   };
 }
 
@@ -1984,6 +1975,8 @@ export interface M2SimulationResults {
   meta: {
     version: string;
     generatedAtAuditAnchor: string;
+    authorityStatus: 'PARTIAL_CURRENT_CONTRACT_RECONCILIATION';
+    currentContractSuites: number[];
     maxRunHours: number;
     ragnarokFinalHours: number;
     runCountMonteCarlo: number;
@@ -2033,6 +2026,8 @@ export function runFullM2EconomicAudit(onProgress?: (label: string, ms: number) 
   return {
     meta: {
       version: M2_AUDIT_VERSION,
+      authorityStatus: 'PARTIAL_CURRENT_CONTRACT_RECONCILIATION',
+      currentContractSuites: [5],
       generatedAtAuditAnchor: new Date(BASE_AUDIT_NOW).toISOString(),
       maxRunHours: BAL.run.maxRunHours,
       ragnarokFinalHours: BAL.run.ragnarokFinalHours,

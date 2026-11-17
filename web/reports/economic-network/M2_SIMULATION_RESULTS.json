@@ -1,6 +1,10 @@
 {
   "meta": {
-    "version": "soh.economic-sim-audit.v1",
+    "version": "soh.economic-sim-audit.v2",
+    "authorityStatus": "PARTIAL_CURRENT_CONTRACT_RECONCILIATION",
+    "currentContractSuites": [
+      5
+    ],
     "generatedAtAuditAnchor": "2026-11-11T00:00:00.000Z",
     "maxRunHours": 336,
     "ragnarokFinalHours": 72,
@@ -87,10 +91,9 @@
           "nodes": 25,
           "stockUnits": 100,
           "expectedPrimary": {
-            "scrap": 100
+            "spares": 100
           },
           "expectedBonus": {
-            "spares": 55,
             "tin_can": 35,
             "needle_tube": 10
           }
@@ -99,9 +102,11 @@
           "nodes": 30,
           "stockUnits": 150,
           "expectedPrimary": {
-            "coal": 150
+            "iron_ore": 150
           },
-          "expectedBonus": {}
+          "expectedBonus": {
+            "sulfur": 75
+          }
         },
         "iron": {
           "nodes": 43,
@@ -155,9 +160,11 @@
           "nodes": 80,
           "stockUnits": 320,
           "expectedPrimary": {
-            "raw_salt": 320
+            "stone": 320
           },
-          "expectedBonus": {}
+          "expectedBonus": {
+            "shell": 80
+          }
         },
         "deadtree": {
           "nodes": 33,
@@ -171,18 +178,17 @@
           "nodes": 10,
           "stockUnits": 80,
           "expectedPrimary": {
-            "scrap": 80
+            "spares": 80
           },
           "expectedBonus": {
             "spares": 24,
-            "damaged_drive": 16,
+            "mechanical_gear": 6.4,
             "fuel_can": 4.8,
-            "mechanical_parts": 6.4,
-            "fasteners": 9.6,
-            "field_repair_kit": 3.2,
+            "metal_pipe": 6.4,
+            "iron_plate": 4.8,
             "tin_can": 16,
             "electronic_parts": 12,
-            "salvaged_oil": 28
+            "electric_resistor": 9.6
           }
         },
         "palm": {
@@ -299,7 +305,11 @@
         "elder_tide": 1,
         "elder_rust": 1
       },
-      "missingSources": [],
+      "missingSources": [
+        "road_salvage_bale",
+        "road_relay_wreck",
+        "road_fuel_rack"
+      ],
       "airdropsMaxEvents": 14
     },
     "veyra": {
@@ -321,27 +331,31 @@
         "toxic": 26485
       },
       "aggregateSceneSources": {
-        "oak": 14953,
+        "oak": 14884,
         "herb": 1636,
-        "rock": 5629,
+        "rock": 5632,
         "grass": 11111,
         "bush": 6624,
-        "scrap": 480,
-        "wreck": 96,
+        "road_salvage_bale": 322,
+        "road_fuel_rack": 78,
+        "road_relay_wreck": 133,
         "reed": 3188,
-        "willow": 1234,
+        "willow": 1229,
         "mushroom": 779,
         "salt_shale": 215,
         "palm": 66,
-        "snowpine": 3276,
+        "snowpine": 3259,
         "crystal": 468,
         "coalv": 741,
         "iron": 1307,
-        "pine": 1074,
-        "deadtree": 744,
+        "pine": 1075,
+        "deadtree": 742,
         "sulfur": 540
       },
-      "missingSampledSources": [],
+      "missingSampledSources": [
+        "scrap",
+        "wreck"
+      ],
       "sceneSamples": [
         {
           "id": "veyra05-greywater",
@@ -357,13 +371,14 @@
             "floor": 454
           },
           "sources": {
-            "oak": 1794,
+            "oak": 1776,
             "herb": 150,
             "rock": 140,
             "grass": 819,
             "bush": 564,
-            "scrap": 40,
-            "wreck": 7
+            "road_salvage_bale": 31,
+            "road_fuel_rack": 3,
+            "road_relay_wreck": 12
           },
           "coldTiles": 2503,
           "warmSandCoastTiles": 0,
@@ -392,13 +407,14 @@
             "floor": 396
           },
           "sources": {
-            "oak": 3694,
+            "oak": 3691,
             "bush": 1015,
             "grass": 1501,
             "rock": 272,
             "herb": 294,
-            "scrap": 8,
-            "wreck": 2
+            "road_salvage_bale": 17,
+            "road_fuel_rack": 3,
+            "road_relay_wreck": 2
           },
           "coldTiles": 0,
           "warmSandCoastTiles": 0,
@@ -435,11 +451,12 @@
             "grass": 2669,
             "rock": 472,
             "bush": 1340,
-            "oak": 691,
+            "oak": 689,
             "mushroom": 5,
+            "road_salvage_bale": 38,
             "salt_shale": 67,
-            "scrap": 51,
-            "wreck": 11,
+            "road_fuel_rack": 12,
+            "road_relay_wreck": 14,
             "palm": 17
           },
           "coldTiles": 0,
@@ -472,15 +489,16 @@
             "mushroom": 230,
             "reed": 820,
             "willow": 321,
-            "oak": 552,
+            "oak": 550,
             "grass": 751,
             "bush": 441,
-            "wreck": 5,
+            "road_salvage_bale": 19,
             "rock": 490,
             "herb": 135,
-            "scrap": 25,
-            "snowpine": 1189,
-            "crystal": 163
+            "snowpine": 1184,
+            "crystal": 163,
+            "road_relay_wreck": 5,
+            "road_fuel_rack": 1
           },
           "coldTiles": 16791,
           "warmSandCoastTiles": 0,
@@ -514,15 +532,16 @@
             "bush": 1017,
             "grass": 2066,
             "rock": 583,
-            "oak": 310,
+            "oak": 308,
             "herb": 68,
             "reed": 703,
             "willow": 301,
             "mushroom": 173,
-            "scrap": 37,
+            "road_fuel_rack": 6,
             "coalv": 75,
-            "wreck": 4,
+            "road_salvage_bale": 22,
             "iron": 195,
+            "road_relay_wreck": 7,
             "salt_shale": 40,
             "palm": 23
           },
@@ -553,12 +572,13 @@
           "sources": {
             "herb": 425,
             "bush": 742,
-            "oak": 3531,
+            "oak": 3504,
             "grass": 1080,
-            "rock": 217,
-            "scrap": 88,
-            "wreck": 24,
-            "willow": 402,
+            "rock": 218,
+            "road_fuel_rack": 14,
+            "road_salvage_bale": 51,
+            "road_relay_wreck": 34,
+            "willow": 397,
             "mushroom": 250,
             "reed": 1113
           },
@@ -591,15 +611,16 @@
             "floor": 85
           },
           "sources": {
-            "oak": 2899,
+            "oak": 2897,
             "bush": 1095,
             "grass": 1604,
             "rock": 429,
             "herb": 348,
             "pine": 1060,
+            "road_fuel_rack": 1,
+            "road_salvage_bale": 4,
             "coalv": 28,
-            "iron": 51,
-            "scrap": 1
+            "iron": 51
           },
           "coldTiles": 10342,
           "warmSandCoastTiles": 0,
@@ -662,15 +683,16 @@
             "water": 40
           },
           "sources": {
-            "snowpine": 2087,
+            "snowpine": 2075,
             "crystal": 305,
             "iron": 49,
-            "rock": 642,
+            "rock": 644,
             "coalv": 12,
-            "scrap": 48,
-            "wreck": 8,
-            "oak": 20,
-            "pine": 9,
+            "road_relay_wreck": 12,
+            "road_salvage_bale": 29,
+            "road_fuel_rack": 7,
+            "oak": 19,
+            "pine": 10,
             "bush": 6,
             "grass": 4,
             "herb": 1
@@ -698,8 +720,9 @@
           },
           "sources": {
             "rock": 302,
-            "scrap": 105,
-            "wreck": 24
+            "road_fuel_rack": 18,
+            "road_salvage_bale": 55,
+            "road_relay_wreck": 32
           },
           "coldTiles": 0,
           "warmSandCoastTiles": 0,
@@ -730,9 +753,10 @@
             "rock": 963,
             "coalv": 263,
             "grass": 4,
-            "deadtree": 431,
-            "scrap": 39,
-            "wreck": 5
+            "deadtree": 429,
+            "road_salvage_bale": 24,
+            "road_relay_wreck": 7,
+            "road_fuel_rack": 6
           },
           "coldTiles": 0,
           "warmSandCoastTiles": 0,
@@ -765,13 +789,14 @@
           "sources": {
             "grass": 605,
             "bush": 398,
-            "oak": 1454,
+            "oak": 1442,
             "rock": 544,
             "herb": 183,
             "coalv": 99,
             "iron": 251,
-            "scrap": 38,
-            "wreck": 6,
+            "road_salvage_bale": 32,
+            "road_fuel_rack": 7,
+            "road_relay_wreck": 8,
             "reed": 538,
             "mushroom": 121,
             "willow": 207,
@@ -3345,21 +3370,35 @@
   "archetypeSimulations": {
     "shipping_fresh": {
       "casualOffline14Day": {
-        "placedStructures": 9,
+        "placedStructures": 12,
         "deathsIn14DaysWithDaily2hPlay": 14,
-        "collapses": 7,
-        "totalUpkeepWood14d": 0,
-        "totalUpkeepStone14d": 0,
+        "collapses": 0,
+        "totalUpkeepWood14d": 182,
+        "totalUpkeepStone14d": 14,
         "finalHp": 0,
         "finalHunger": 28.69,
         "finalThirst": 0,
         "finalPhase": "expired"
       },
       "fortifier14Day": {
-        "coveredCount": 0,
-        "dailyUpkeepRates": {},
-        "cumulative14DayDebits": {},
-        "total14dItemsConsumed": 0
+        "coveredCount": 17,
+        "dailyUpkeepRates": {
+          "wood": 23.75,
+          "fiber": 5,
+          "stone": 6.75,
+          "spares": 2.5,
+          "iron_ingot": 1.75,
+          "rope": 0.5
+        },
+        "cumulative14DayDebits": {
+          "wood": 333,
+          "fiber": 70,
+          "stone": 95,
+          "spares": 35,
+          "iron_ingot": 25,
+          "rope": 7
+        },
+        "total14dItemsConsumed": 565
       },
       "motorbikeKinematics": {
         "wreckEconomy": "recycler-v1",
@@ -3371,13 +3410,11 @@
         "wearPerFullTankLoaded": 32
       },
       "researchAndCoreGate": {
-        "totalRecipes": 119,
-        "knownAtStart": 78,
+        "totalRecipes": 114,
+        "knownAtStart": 73,
         "unknownAtStart": 41,
         "unknownNonCore": 32,
         "unknownTier3NonCore": [
-          "refined_iron_helmet",
-          "refined_iron_chest",
           "chitin_armor"
         ],
         "unknownCores": [
@@ -3393,7 +3430,7 @@
         ],
         "sparesNeededBeforeFirstCoreRandom": 128,
         "totalRandomResearchSparesAll": 164,
-        "minSparesDirectedPlusRandom": 309
+        "minSparesDirectedPlusRandom": 319
       },
       "currencySplit": {
         "maxVendorSecuredSpendablePerRun": 76,
@@ -3412,21 +3449,33 @@
     },
     "veyra05-world": {
       "casualOffline14Day": {
-        "placedStructures": 9,
+        "placedStructures": 12,
         "deathsIn14DaysWithDaily2hPlay": 14,
-        "collapses": 7,
-        "totalUpkeepWood14d": 0,
-        "totalUpkeepStone14d": 0,
+        "collapses": 0,
+        "totalUpkeepWood14d": 182,
+        "totalUpkeepStone14d": 14,
         "finalHp": 0,
         "finalHunger": 28.69,
         "finalThirst": 0,
         "finalPhase": "expired"
       },
       "fortifier14Day": {
-        "coveredCount": 0,
-        "dailyUpkeepRates": {},
-        "cumulative14DayDebits": {},
-        "total14dItemsConsumed": 0
+        "coveredCount": 15,
+        "dailyUpkeepRates": {
+          "wood": 18.75,
+          "fiber": 5,
+          "stone": 6.75,
+          "iron_ingot": 1,
+          "spares": 1
+        },
+        "cumulative14DayDebits": {
+          "wood": 263,
+          "fiber": 70,
+          "stone": 95,
+          "iron_ingot": 14,
+          "spares": 14
+        },
+        "total14dItemsConsumed": 456
       },
       "motorbikeKinematics": {
         "wreckEconomy": "recycler-v1",
@@ -3438,13 +3487,11 @@
         "wearPerFullTankLoaded": 32
       },
       "researchAndCoreGate": {
-        "totalRecipes": 119,
-        "knownAtStart": 78,
+        "totalRecipes": 114,
+        "knownAtStart": 73,
         "unknownAtStart": 41,
         "unknownNonCore": 32,
         "unknownTier3NonCore": [
-          "refined_iron_helmet",
-          "refined_iron_chest",
           "chitin_armor"
         ],
         "unknownCores": [
@@ -3460,7 +3507,7 @@
         ],
         "sparesNeededBeforeFirstCoreRandom": 128,
         "totalRandomResearchSparesAll": 164,
-        "minSparesDirectedPlusRandom": 309
+        "minSparesDirectedPlusRandom": 319
       },
       "currencySplit": {
         "maxVendorSecuredSpendablePerRun": 76,
@@ -3556,149 +3603,133 @@
     {
       "preset": "Stone_Keep_5x5",
       "structureCount": 86,
-      "upkeepMaterialTypes": 9,
-      "cabinet24SlotMaxAutonomousHours": 33.98,
+      "upkeepMaterialTypes": 7,
+      "cabinet24SlotMaxAutonomousHours": 37.24,
       "initialBuildCost": {
-        "wood": 140,
-        "stone": 339,
-        "iron_ingot": 21,
-        "brick": 81,
+        "wood": 148,
+        "stone": 464,
+        "iron_ingot": 25,
         "spares": 11,
-        "mechanical_parts": 3,
+        "metal_pipe": 2,
         "glass": 2,
         "fiber": 16,
         "rope": 2
       },
       "dailyUpkeepExact": {
-        "wood": 35,
-        "stone": 84.75,
-        "iron_ingot": 5.25,
-        "brick": 20.25,
+        "wood": 37,
+        "stone": 116,
+        "iron_ingot": 6.25,
         "spares": 2.75,
-        "mechanical_parts": 0.75,
         "glass": 0.5,
         "fiber": 4,
         "rope": 0.5
       },
       "cumulative14DayExact": {
-        "wood": 490,
-        "stone": 1186.5,
-        "iron_ingot": 73.5,
-        "brick": 283.5,
+        "wood": 518,
+        "stone": 1624,
+        "iron_ingot": 87.5,
         "spares": 38.5,
-        "mechanical_parts": 10.5,
         "glass": 7,
         "fiber": 56,
         "rope": 7
       },
       "actual14DayEngineDebits": {
-        "wood": 490,
-        "stone": 1187,
-        "iron_ingot": 74,
-        "brick": 284,
+        "wood": 518,
+        "stone": 1624,
+        "iron_ingot": 88,
         "spares": 39,
-        "mechanical_parts": 11,
         "glass": 7,
         "fiber": 56,
         "rope": 7
       },
-      "overchargeRoundingCount": 2.5
+      "overchargeRoundingCount": 1
     },
     {
       "preset": "Brick_Citadel_6x6_Armed",
       "structureCount": 127,
-      "upkeepMaterialTypes": 9,
-      "cabinet24SlotMaxAutonomousHours": 31.22,
+      "upkeepMaterialTypes": 7,
+      "cabinet24SlotMaxAutonomousHours": 27.04,
       "initialBuildCost": {
-        "wood": 154,
-        "stone": 261,
-        "brick": 246,
-        "iron_ingot": 53,
-        "mechanical_parts": 24,
-        "fasteners": 21,
-        "spares": 29,
+        "wood": 150,
+        "stone": 639,
+        "iron_ingot": 77,
+        "electronic_parts": 14,
+        "mechanical_gear": 9,
+        "iron_plate": 4,
+        "electric_resistor": 4,
+        "spares": 23,
+        "metal_pipe": 2,
         "glass": 2,
+        "refined_iron_ingot": 4,
         "fiber": 10,
-        "electronic_parts": 4,
-        "mechanical_gear": 2
+        "rope": 8
       },
       "dailyUpkeepExact": {
-        "wood": 38.5,
-        "stone": 65.25,
-        "brick": 61.5,
-        "iron_ingot": 13.25,
-        "mechanical_parts": 6,
-        "fasteners": 5.25,
-        "spares": 7.25,
+        "wood": 37.5,
+        "stone": 159.75,
+        "iron_ingot": 19.25,
+        "spares": 5.75,
         "glass": 0.5,
-        "fiber": 2.5
+        "fiber": 2.5,
+        "rope": 2
       },
       "cumulative14DayExact": {
-        "wood": 539,
-        "stone": 913.5,
-        "brick": 861,
-        "iron_ingot": 185.5,
-        "mechanical_parts": 84,
-        "fasteners": 73.5,
-        "spares": 101.5,
+        "wood": 525,
+        "stone": 2236.5,
+        "iron_ingot": 269.5,
+        "spares": 80.5,
         "glass": 7,
-        "fiber": 35
+        "fiber": 35,
+        "rope": 28
       },
       "actual14DayEngineDebits": {
-        "wood": 539,
-        "stone": 914,
-        "brick": 861,
-        "iron_ingot": 186,
-        "mechanical_parts": 84,
-        "fasteners": 74,
-        "spares": 102,
+        "wood": 525,
+        "stone": 2237,
+        "iron_ingot": 270,
+        "spares": 81,
         "glass": 7,
-        "fiber": 35
+        "fiber": 35,
+        "rope": 28
       },
-      "overchargeRoundingCount": 2
+      "overchargeRoundingCount": 1.5
     },
     {
       "preset": "Solo_Outpost_Zero_Wood_CabinetOnly_Plus_Stations",
       "structureCount": 21,
-      "upkeepMaterialTypes": 7,
-      "cabinet24SlotMaxAutonomousHours": 161.5,
+      "upkeepMaterialTypes": 5,
+      "cabinet24SlotMaxAutonomousHours": 181.42,
       "initialBuildCost": {
-        "wood": 41,
-        "stone": 107,
-        "iron_ingot": 11,
-        "brick": 18,
-        "mechanical_parts": 6,
+        "wood": 43,
+        "stone": 127,
+        "iron_ingot": 16,
+        "metal_pipe": 2,
         "spares": 9,
-        "glass": 2
+        "glass": 2,
+        "refined_iron_ingot": 2,
+        "electronic_parts": 2
       },
       "dailyUpkeepExact": {
-        "wood": 10.25,
-        "stone": 26.75,
-        "iron_ingot": 2.75,
-        "brick": 4.5,
-        "mechanical_parts": 1.5,
+        "wood": 10.75,
+        "stone": 31.75,
+        "iron_ingot": 4,
         "spares": 2.25,
         "glass": 0.5
       },
       "cumulative14DayExact": {
-        "wood": 143.5,
-        "stone": 374.5,
-        "iron_ingot": 38.5,
-        "brick": 63,
-        "mechanical_parts": 21,
+        "wood": 150.5,
+        "stone": 444.5,
+        "iron_ingot": 56,
         "spares": 31.5,
         "glass": 7
       },
       "actual14DayEngineDebits": {
-        "wood": 144,
-        "stone": 375,
-        "iron_ingot": 39,
-        "brick": 63,
-        "mechanical_parts": 21,
+        "wood": 151,
+        "stone": 445,
+        "iron_ingot": 56,
         "spares": 32,
         "glass": 7
       },
-      "overchargeRoundingCount": 2
+      "overchargeRoundingCount": 1.5
     }
   ],
   "offlineSettlementMatrix": [
@@ -4426,16 +4457,6 @@
   "fuelAndPowerConservation": {
     "fuelItems": [
       {
-        "key": "fuel_briquette",
-        "name": "Packed Fuel Briquette",
-        "fuelSeconds": 90,
-        "stationBurnable": true,
-        "maxStack": 30,
-        "stackFuelSeconds": 2700,
-        "threeSlotGeneratorCapacitySec": 8100,
-        "threeSlotGeneratorAutonomyMinutes": 135
-      },
-      {
         "key": "wood",
         "name": "Wood",
         "fuelSeconds": 20,
@@ -4454,16 +4475,6 @@
         "stackFuelSeconds": 320,
         "threeSlotGeneratorCapacitySec": 960,
         "threeSlotGeneratorAutonomyMinutes": 16
-      },
-      {
-        "key": "coal",
-        "name": "Coal",
-        "fuelSeconds": 80,
-        "stationBurnable": true,
-        "maxStack": 40,
-        "stackFuelSeconds": 3200,
-        "threeSlotGeneratorCapacitySec": 9600,
-        "threeSlotGeneratorAutonomyMinutes": 160
       },
       {
         "key": "charcoal",
@@ -4486,69 +4497,122 @@
         "threeSlotGeneratorAutonomyMinutes": 15
       }
     ],
-    "refineryRatios": {
-      "furnace_single": {
-        "oilIn": 3,
-        "glassIn": 1,
+    "fuelProductionRoutes": [
+      {
+        "id": "refinery_fuel",
+        "station": "refinery",
+        "inputs": [
+          {
+            "key": "crude_petroleum",
+            "qty": 3
+          },
+          {
+            "key": "glass",
+            "qty": 1
+          }
+        ],
         "fuelCansOut": 1,
-        "lubeOut": 0,
-        "oilPerCan": 3,
-        "generatorSecPerOil": 20
+        "seconds": 14,
+        "crudePerCan": 3
       },
-      "refinery_single": {
-        "oilIn": 3,
-        "glassIn": 1,
+      {
+        "id": "refinery_fuel_batch",
+        "station": "refinery",
+        "inputs": [
+          {
+            "key": "crude_petroleum",
+            "qty": 5
+          },
+          {
+            "key": "glass",
+            "qty": 1
+          }
+        ],
+        "fuelCansOut": 2,
+        "seconds": 22,
+        "crudePerCan": 2.5
+      },
+      {
+        "id": "low_quality_fuel",
+        "station": "furnace",
+        "inputs": [
+          {
+            "key": "animal_fat",
+            "qty": 6
+          },
+          {
+            "key": "cloth",
+            "qty": 1
+          }
+        ],
         "fuelCansOut": 1,
-        "lubeOut": 0,
-        "oilPerCan": 3,
-        "generatorSecPerOil": 20
-      },
-      "refinery_batch": {
-        "oilIn": 5,
-        "glassIn": 1,
-        "fuelCansOut": 2,
-        "lubeOut": 0,
-        "oilPerCan": 2.5,
-        "generatorSecPerOil": 24
-      },
-      "refinery_industrial": {
-        "oilIn": 6,
-        "glassIn": 1,
-        "fuelCansOut": 2,
-        "lubeOut": 1,
-        "oilPerCan": 3,
-        "generatorSecPerOil": 20
+        "seconds": 24,
+        "crudePerCan": 0
       }
-    },
+    ],
+    "refineryRatios": [
+      {
+        "id": "refinery_fuel",
+        "station": "refinery",
+        "inputs": [
+          {
+            "key": "crude_petroleum",
+            "qty": 3
+          },
+          {
+            "key": "glass",
+            "qty": 1
+          }
+        ],
+        "fuelCansOut": 1,
+        "seconds": 14,
+        "crudePerCan": 3
+      },
+      {
+        "id": "refinery_fuel_batch",
+        "station": "refinery",
+        "inputs": [
+          {
+            "key": "crude_petroleum",
+            "qty": 5
+          },
+          {
+            "key": "glass",
+            "qty": 1
+          }
+        ],
+        "fuelCansOut": 2,
+        "seconds": 22,
+        "crudePerCan": 2.5
+      }
+    ],
     "shippingOilAndFuelBudget": {
-      "wreckStockUnits": 80,
-      "expectedOilFromWrecks": 28,
-      "vendorSalvagedOil": 4,
-      "staticSalvagedOil": 0,
-      "totalSalvagedOilExpected": 32,
-      "directFuelCansFromWrecks": 4.8,
-      "staticFuelCans": 2,
-      "totalFuelCansAssumingBatchRefinery": 19.6,
-      "maxMotorbikeLoadedRoadTilesFromRunOil": 1633
+      "scope": "Expected finite source/vendor/static crude plus direct cans; fractional upper yield assumes paid containers and refinery access. EXCLUDES rendered-fat production, repeat loot and all unsampled sites. NOT whole-run fuel supply or physical-access proof.",
+      "vendorCrudePetroleum": 4,
+      "totalCrudePetroleumExpected": 4,
+      "directFuelCansExpected": 6.8,
+      "fuelCansAssumingBestCurrentRefinery": 8.4,
+      "maxLoadedRoadTilesFromThisSubset": 700
     },
     "baseGeneratorDemandVsCapacity": {
+      "scenario": "86400 seconds of uninterrupted one-load demand; not idle runtime and not required play",
       "poiGeneratorFuelRuntimeSec": 180,
       "baseGeneratorFuelCanRuntimeSec": 60,
-      "baseGeneratorBriquetteRuntimeSec": 90,
-      "baseGeneratorCoalRuntimeSec": 80,
+      "baseGeneratorCharcoalRuntimeSec": 55,
       "ratioPoiToBaseGenFuelCan": 3,
       "demand24hOneLoad": {
-        "fuel_can": 1440,
-        "coal": 1080,
-        "fuel_briquette": 960,
-        "wood": 4320
+        "wood": 4320,
+        "fiber": 21600,
+        "charcoal": 1570.909090909091,
+        "fuel_can": 1440
       },
       "demand24hTwoLoads": {
-        "fuel_can": 2880,
-        "coal": 2160
+        "wood": 8640,
+        "fiber": 43200,
+        "charcoal": 3141.818181818182,
+        "fuel_can": 2880
       },
-      "fuelCansNeededFor14dOneLoad": 20160,
-      "shippingTotalOilDeficitFactorFor1Load14d": 1028.57
+      "fuelCansNeededFor14dOneLoad": 20160
     },
     "idleFuelLeakProbe": {
       "campfireIdleWoodBurnedIn10Min": 30,
@@ -4875,11 +4939,11 @@
       "airdropIronSword": {
         "n": 200,
         "min": 0,
-        "p10": 1,
-        "p50": 3,
-        "p90": 6,
-        "max": 9,
-        "mean": 3.45
+        "p10": 0,
+        "p50": 0,
+        "p90": 0,
+        "max": 0,
+        "mean": 0
       },
       "wreckSpares": {
         "n": 200,
@@ -4892,12 +4956,12 @@
       },
       "wreckSalvagedOil": {
         "n": 200,
-        "min": 17,
-        "p10": 22,
-        "p50": 28,
-        "p90": 34.1,
-        "max": 43,
-        "mean": 27.96
+        "min": 0,
+        "p10": 0,
+        "p50": 0,
+        "p90": 0,
+        "max": 0,
+        "mean": 0
       },
       "wreckDamagedDrives": {
         "n": 200,
@@ -5002,12 +5066,12 @@
       },
       "wreckSalvagedOil80Units": {
         "n": 200,
-        "min": 17,
-        "p10": 22,
-        "p50": 27,
-        "p90": 33.1,
-        "max": 40,
-        "mean": 27.91
+        "min": 0,
+        "p10": 0,
+        "p50": 0,
+        "p90": 0,
+        "max": 0,
+        "mean": 0
       },
       "wreckDamagedDrives80Units": {
         "n": 200,
@@ -5038,12 +5102,12 @@
       },
       "localSpawnWindowWreckNodes": {
         "n": 200,
-        "min": 4,
-        "p10": 4,
-        "p50": 6,
-        "p90": 11,
-        "max": 11,
-        "mean": 6.75
+        "min": 0,
+        "p10": 0,
+        "p50": 0,
+        "p90": 0,
+        "max": 0,
+        "mean": 0
       },
       "localSpawnWindowCreatures": {
         "n": 4,
@@ -5060,20 +5124,20 @@
     "recyclerProbes": [
       {
         "item": "iron_pick",
-        "liveRecipe": "X:recover-v3",
+        "liveRecipe": "X:recover-v4",
         "craftIe": 3,
-        "recoveredHighIe": 0.333,
+        "recoveredHighIe": 0,
         "overReturnDetected": false,
         "rows": [
           {
             "tier": "base",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "wood",
                 1
               ]
             ],
-            "ieRecovered": 0.333,
+            "ieRecovered": 0,
             "ieCraft": 3,
             "mintedNonNumeraire": [],
             "verdict": "OK",
@@ -5083,7 +5147,7 @@
             "tier": "mid",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "wood",
                 1
               ],
               [
@@ -5091,7 +5155,7 @@
                 1
               ]
             ],
-            "ieRecovered": 1.333,
+            "ieRecovered": 1,
             "ieCraft": 3,
             "mintedNonNumeraire": [],
             "verdict": "OK",
@@ -5101,7 +5165,7 @@
             "tier": "high",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "wood",
                 1
               ],
               [
@@ -5113,7 +5177,7 @@
                 1
               ]
             ],
-            "ieRecovered": 2.333,
+            "ieRecovered": 2,
             "ieCraft": 3,
             "mintedNonNumeraire": [],
             "verdict": "OK",
@@ -5123,20 +5187,20 @@
       },
       {
         "item": "iron_axe",
-        "liveRecipe": "X:recover-v3",
+        "liveRecipe": "X:recover-v4",
         "craftIe": 3,
-        "recoveredHighIe": 0.333,
+        "recoveredHighIe": 0,
         "overReturnDetected": false,
         "rows": [
           {
             "tier": "base",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "wood",
                 1
               ]
             ],
-            "ieRecovered": 0.333,
+            "ieRecovered": 0,
             "ieCraft": 3,
             "mintedNonNumeraire": [],
             "verdict": "OK",
@@ -5146,7 +5210,7 @@
             "tier": "mid",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "wood",
                 1
               ],
               [
@@ -5154,7 +5218,7 @@
                 1
               ]
             ],
-            "ieRecovered": 1.333,
+            "ieRecovered": 1,
             "ieCraft": 3,
             "mintedNonNumeraire": [],
             "verdict": "OK",
@@ -5164,7 +5228,7 @@
             "tier": "high",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "wood",
                 1
               ],
               [
@@ -5172,75 +5236,12 @@
                 1
               ],
               [
-                "mechanical_parts",
+                "iron_ingot",
                 1
               ]
             ],
-            "ieRecovered": 2.167,
+            "ieRecovered": 2,
             "ieCraft": 3,
-            "mintedNonNumeraire": [],
-            "verdict": "OK",
-            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
-          }
-        ]
-      },
-      {
-        "item": "iron_sword",
-        "liveRecipe": "X:recover-v3",
-        "craftIe": 18.5,
-        "recoveredHighIe": 0.333,
-        "overReturnDetected": false,
-        "rows": [
-          {
-            "tier": "base",
-            "cumulativeOutputs": [
-              [
-                "scrap",
-                1
-              ]
-            ],
-            "ieRecovered": 0.333,
-            "ieCraft": 18.5,
-            "mintedNonNumeraire": [],
-            "verdict": "OK",
-            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
-          },
-          {
-            "tier": "mid",
-            "cumulativeOutputs": [
-              [
-                "scrap",
-                1
-              ],
-              [
-                "iron_ingot",
-                1
-              ]
-            ],
-            "ieRecovered": 1.333,
-            "ieCraft": 18.5,
-            "mintedNonNumeraire": [],
-            "verdict": "OK",
-            "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
-          },
-          {
-            "tier": "high",
-            "cumulativeOutputs": [
-              [
-                "scrap",
-                1
-              ],
-              [
-                "iron_ingot",
-                1
-              ],
-              [
-                "iron_ingot",
-                1
-              ]
-            ],
-            "ieRecovered": 2.333,
-            "ieCraft": 18.5,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5249,21 +5250,21 @@
       },
       {
         "item": "industrial_pick",
-        "liveRecipe": "X:recover-v1",
-        "craftIe": 4.667,
-        "recoveredHighIe": 0.333,
+        "liveRecipe": "X:recover-v4",
+        "craftIe": 5,
+        "recoveredHighIe": 1,
         "overReturnDetected": false,
         "rows": [
           {
             "tier": "base",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "iron_ingot",
                 1
               ]
             ],
-            "ieRecovered": 0.333,
-            "ieCraft": 4.667,
+            "ieRecovered": 1,
+            "ieCraft": 5,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5272,7 +5273,7 @@
             "tier": "mid",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "iron_ingot",
                 1
               ],
               [
@@ -5280,8 +5281,8 @@
                 1
               ]
             ],
-            "ieRecovered": 1.333,
-            "ieCraft": 4.667,
+            "ieRecovered": 2,
+            "ieCraft": 5,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5290,7 +5291,7 @@
             "tier": "high",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "iron_ingot",
                 1
               ],
               [
@@ -5298,12 +5299,12 @@
                 1
               ],
               [
-                "mechanical_parts",
+                "iron_ingot",
                 1
               ]
             ],
-            "ieRecovered": 2.167,
-            "ieCraft": 4.667,
+            "ieRecovered": 3,
+            "ieCraft": 5,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5312,21 +5313,21 @@
       },
       {
         "item": "industrial_axe",
-        "liveRecipe": "X:recover-v3",
-        "craftIe": 8.667,
-        "recoveredHighIe": 0.333,
+        "liveRecipe": "X:recover-v4",
+        "craftIe": 10.5,
+        "recoveredHighIe": 1,
         "overReturnDetected": false,
         "rows": [
           {
             "tier": "base",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "iron_ingot",
                 1
               ]
             ],
-            "ieRecovered": 0.333,
-            "ieCraft": 8.667,
+            "ieRecovered": 1,
+            "ieCraft": 10.5,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5335,11 +5336,7 @@
             "tier": "mid",
             "cumulativeOutputs": [
               [
-                "scrap",
-                1
-              ],
-              [
-                "mechanical_parts",
+                "iron_ingot",
                 1
               ],
               [
@@ -5347,8 +5344,8 @@
                 1
               ]
             ],
-            "ieRecovered": 2.167,
-            "ieCraft": 8.667,
+            "ieRecovered": 2,
+            "ieCraft": 10.5,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5357,11 +5354,7 @@
             "tier": "high",
             "cumulativeOutputs": [
               [
-                "scrap",
-                1
-              ],
-              [
-                "mechanical_parts",
+                "iron_ingot",
                 1
               ],
               [
@@ -5369,12 +5362,12 @@
                 1
               ],
               [
-                "mechanical_parts",
+                "refined_iron_ingot",
                 1
               ]
             ],
-            "ieRecovered": 3,
-            "ieCraft": 8.667,
+            "ieRecovered": 3.5,
+            "ieCraft": 10.5,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5383,21 +5376,21 @@
       },
       {
         "item": "reinforced_spear",
-        "liveRecipe": "X:recover-v1",
-        "craftIe": 2.833,
-        "recoveredHighIe": 0.333,
+        "liveRecipe": "X:recover-v4",
+        "craftIe": 4,
+        "recoveredHighIe": 0,
         "overReturnDetected": false,
         "rows": [
           {
             "tier": "base",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "wood",
                 1
               ]
             ],
-            "ieRecovered": 0.333,
-            "ieCraft": 2.833,
+            "ieRecovered": 0,
+            "ieCraft": 4,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5406,7 +5399,7 @@
             "tier": "mid",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "wood",
                 1
               ],
               [
@@ -5414,8 +5407,8 @@
                 1
               ]
             ],
-            "ieRecovered": 1.333,
-            "ieCraft": 2.833,
+            "ieRecovered": 1,
+            "ieCraft": 4,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5424,7 +5417,7 @@
             "tier": "high",
             "cumulativeOutputs": [
               [
-                "scrap",
+                "wood",
                 1
               ],
               [
@@ -5432,12 +5425,12 @@
                 1
               ],
               [
-                "mechanical_parts",
+                "iron_ingot",
                 1
               ]
             ],
-            "ieRecovered": 2.167,
-            "ieCraft": 2.833,
+            "ieRecovered": 2,
+            "ieCraft": 4,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5446,16 +5439,16 @@
       },
       {
         "item": "mechanical_gear",
-        "liveRecipe": "X:gear-v1",
-        "craftIe": 4.611,
-        "recoveredHighIe": 2.667,
+        "liveRecipe": "X:gear-v2",
+        "craftIe": 2,
+        "recoveredHighIe": 1,
         "overReturnDetected": false,
         "rows": [
           {
             "tier": "single",
             "cumulativeOutputs": [
               [
-                "mechanical_parts",
+                "spares",
                 2
               ],
               [
@@ -5463,8 +5456,8 @@
                 1
               ]
             ],
-            "ieRecovered": 2.667,
-            "ieCraft": 4.611,
+            "ieRecovered": 1,
+            "ieCraft": 2,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5474,7 +5467,7 @@
       {
         "item": "metal_pipe",
         "liveRecipe": "X:pipe-v3",
-        "craftIe": 1.917,
+        "craftIe": 1.5,
         "recoveredHighIe": 1.5,
         "overReturnDetected": false,
         "rows": [
@@ -5487,7 +5480,7 @@
               ]
             ],
             "ieRecovered": 1.5,
-            "ieCraft": 1.917,
+            "ieCraft": 1.5,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5496,9 +5489,9 @@
       },
       {
         "item": "metal_blade",
-        "liveRecipe": "X:blade-v1",
-        "craftIe": 4.833,
-        "recoveredHighIe": 2.833,
+        "liveRecipe": "X:blade-v2",
+        "craftIe": 3,
+        "recoveredHighIe": 2,
         "overReturnDetected": false,
         "rows": [
           {
@@ -5507,14 +5500,10 @@
               [
                 "iron_ingot",
                 2
-              ],
-              [
-                "mechanical_parts",
-                1
               ]
             ],
-            "ieRecovered": 2.833,
-            "ieCraft": 4.833,
+            "ieRecovered": 2,
+            "ieCraft": 3,
             "mintedNonNumeraire": [],
             "verdict": "OK",
             "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5531,8 +5520,8 @@
           "craftRoute": "machete",
           "craftSeconds": 22,
           "craftVec": {
-            "iron_ingot": 17.5,
-            "scrap": 3
+            "iron_ingot": 13,
+            "spares": 3
           },
           "rows": [
             {
@@ -5543,8 +5532,8 @@
                   1
                 ]
               ],
-              "ieRecovered": 0.333,
-              "ieCraft": 18.5,
+              "ieRecovered": 0,
+              "ieCraft": 13,
               "mintedNonNumeraire": [],
               "verdict": "OK",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5565,8 +5554,8 @@
                   1
                 ]
               ],
-              "ieRecovered": 6.167,
-              "ieCraft": 18.5,
+              "ieRecovered": 4,
+              "ieCraft": 13,
               "mintedNonNumeraire": [],
               "verdict": "OK",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5591,8 +5580,8 @@
                   1
                 ]
               ],
-              "ieRecovered": 11,
-              "ieCraft": 18.5,
+              "ieRecovered": 7,
+              "ieCraft": 13,
               "mintedNonNumeraire": [],
               "verdict": "OK",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5605,8 +5594,8 @@
           "craftRoute": "machete",
           "craftSeconds": 22,
           "craftVec": {
-            "iron_ingot": 17.5,
-            "scrap": 3
+            "iron_ingot": 13,
+            "spares": 3
           },
           "rows": [
             {
@@ -5617,8 +5606,8 @@
                   1
                 ]
               ],
-              "ieRecovered": 0.333,
-              "ieCraft": 18.5,
+              "ieRecovered": 0,
+              "ieCraft": 13,
               "mintedNonNumeraire": [],
               "verdict": "OK",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5635,8 +5624,8 @@
                   1
                 ]
               ],
-              "ieRecovered": 1.333,
-              "ieCraft": 18.5,
+              "ieRecovered": 1,
+              "ieCraft": 13,
               "mintedNonNumeraire": [],
               "verdict": "OK",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5657,8 +5646,8 @@
                   1
                 ]
               ],
-              "ieRecovered": 2.333,
-              "ieCraft": 18.5,
+              "ieRecovered": 2,
+              "ieCraft": 13,
               "mintedNonNumeraire": [],
               "verdict": "OK",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5687,10 +5676,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 0.333,
+              "ieRecovered": 0,
               "ieCraft": 3,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "mintedNonNumeraire": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             },
             {
@@ -5705,10 +5696,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 1.333,
+              "ieRecovered": 1,
               "ieCraft": 3,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "mintedNonNumeraire": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             },
             {
@@ -5731,10 +5724,11 @@
                   1
                 ]
               ],
-              "ieRecovered": 4.25,
+              "ieRecovered": 3.5,
               "ieCraft": 3,
               "mintedNonNumeraire": [
-                "coal:+0.5"
+                "spares:+2",
+                "charcoal:+1"
               ],
               "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5760,10 +5754,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 0.333,
+              "ieRecovered": 0,
               "ieCraft": 3,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "mintedNonNumeraire": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             },
             {
@@ -5778,10 +5774,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 1.333,
+              "ieRecovered": 1,
               "ieCraft": 3,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "mintedNonNumeraire": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             },
             {
@@ -5800,10 +5798,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 2.333,
+              "ieRecovered": 2,
               "ieCraft": 3,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "mintedNonNumeraire": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             }
           ]
@@ -5830,10 +5830,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 0.333,
+              "ieRecovered": 0,
               "ieCraft": 3,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "mintedNonNumeraire": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             },
             {
@@ -5848,10 +5850,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 1.333,
+              "ieRecovered": 1,
               "ieCraft": 3,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "mintedNonNumeraire": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             },
             {
@@ -5874,10 +5878,11 @@
                   1
                 ]
               ],
-              "ieRecovered": 3.889,
+              "ieRecovered": 2.5,
               "ieCraft": 3,
               "mintedNonNumeraire": [
-                "coal:+0.5"
+                "spares:+4",
+                "charcoal:+1"
               ],
               "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5903,10 +5908,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 0.333,
+              "ieRecovered": 0,
               "ieCraft": 3,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "mintedNonNumeraire": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             },
             {
@@ -5921,10 +5928,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 1.333,
+              "ieRecovered": 1,
               "ieCraft": 3,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "mintedNonNumeraire": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             },
             {
@@ -5943,10 +5952,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 2.167,
+              "ieRecovered": 1,
               "ieCraft": 3,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "mintedNonNumeraire": [
+                "spares:+3"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             }
           ]
@@ -5960,11 +5971,11 @@
           "craftRoute": "industrial_axe",
           "craftSeconds": 25,
           "craftVec": {
-            "iron_ingot": 8,
+            "iron_ingot": 10.5,
             "wood": 2,
             "leather": 1,
-            "scrap": 2,
-            "spares": 2
+            "spares": 2,
+            "charcoal": 3
           },
           "rows": [
             {
@@ -5975,8 +5986,8 @@
                   1
                 ]
               ],
-              "ieRecovered": 0.333,
-              "ieCraft": 8.667,
+              "ieRecovered": 0,
+              "ieCraft": 10.5,
               "mintedNonNumeraire": [],
               "verdict": "OK",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -5997,10 +6008,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 2.167,
-              "ieCraft": 8.667,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "ieRecovered": 1,
+              "ieCraft": 10.5,
+              "mintedNonNumeraire": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             },
             {
@@ -6027,10 +6040,10 @@
                   1
                 ]
               ],
-              "ieRecovered": 7.611,
-              "ieCraft": 8.667,
+              "ieRecovered": 3,
+              "ieCraft": 10.5,
               "mintedNonNumeraire": [
-                "coal:+0.5"
+                "spares:+6"
               ],
               "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -6043,11 +6056,11 @@
           "craftRoute": "industrial_axe",
           "craftSeconds": 25,
           "craftVec": {
-            "iron_ingot": 8,
+            "iron_ingot": 10.5,
             "wood": 2,
             "leather": 1,
-            "scrap": 2,
-            "spares": 2
+            "spares": 2,
+            "charcoal": 3
           },
           "rows": [
             {
@@ -6058,8 +6071,8 @@
                   1
                 ]
               ],
-              "ieRecovered": 0.333,
-              "ieCraft": 8.667,
+              "ieRecovered": 0,
+              "ieCraft": 10.5,
               "mintedNonNumeraire": [],
               "verdict": "OK",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
@@ -6080,10 +6093,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 2.167,
-              "ieCraft": 8.667,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "ieRecovered": 1,
+              "ieCraft": 10.5,
+              "mintedNonNumeraire": [
+                "spares:+1"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             },
             {
@@ -6106,10 +6121,12 @@
                   1
                 ]
               ],
-              "ieRecovered": 3,
-              "ieCraft": 8.667,
-              "mintedNonNumeraire": [],
-              "verdict": "OK",
+              "ieRecovered": 1,
+              "ieCraft": 10.5,
+              "mintedNonNumeraire": [
+                "spares:+3"
+              ],
+              "verdict": "OVER_RETURN",
               "claim": "DIRECT_CRAFT_RECYCLE_LOSS_OR_GAIN (atom-level, one cycle; not a global anti-arbitrage proof)"
             }
           ]
@@ -6118,9 +6135,12 @@
     ],
     "claimMinDistFromPoiProbe": {
       "claimMinDistFromPoi": 10,
-      "claimInsidePoiAllowed": false,
-      "minPoiClaimDistFound": null,
-      "testPoiCoords": null
+      "claimInsidePoiAllowed": true,
+      "minPoiClaimDistFound": 9,
+      "testPoiCoords": [
+        100,
+        111
+      ]
     },
     "oilPumpOffscreenSkipped": true,
     "creatorCoreRefinedBudget": {
@@ -6140,12 +6160,28 @@
         "note": "Repairing 25% HP costs 100% of build cost (wood: 1/1), whereas reclaim refunds 0."
       },
       {
+        "struct": "wall_brick",
+        "material": "iron_ingot",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
+      },
+      {
         "struct": "door_wood",
         "material": "rope",
         "buildCost": 1,
         "repairCost25PctHp": 1,
         "reclaimRefund": 0,
         "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
+      },
+      {
+        "struct": "door_powered",
+        "material": "mechanical_gear",
+        "buildCost": 1,
+        "repairCost25PctHp": 1,
+        "reclaimRefund": 0,
+        "note": "Repairing 25% HP costs 100% of build cost (mechanical_gear: 1/1), whereas reclaim refunds 0."
       }
     ],
     "findings": [
@@ -6181,7 +6217,8 @@
             "beetle_horn",
             "crawler_optic"
           ]
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F02",
@@ -6200,7 +6237,8 @@
           "authoredExpected": 24,
           "archetypeMaterialized": 58,
           "missingAnomalies": []
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F03",
@@ -6241,7 +6279,8 @@
             "core_mjolnir",
             "water_flask"
           ]
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F04",
@@ -6267,38 +6306,41 @@
             "emberMsg": "3× Bandage, 3× Roast Meat",
             "securedAfter": 0
           }
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F05",
         "severity": "HIGH",
         "category": "ENERGY_ECONOMY_BROKEN",
-        "title": "Base Generator Burns 1 Fuel Canister in 60s (10x Faster Than POI Gen, Worse Than Coal/Briquette)",
+        "title": "Conditional continuous-load generator demand versus current fuel routes (not a whole-run deficit verdict)",
         "codeRefs": [
           "web/src/game/engine.ts:867-874",
           "web/src/game/catalog.ts:fuel_can",
           "web/src/game/balance.v1.json:poiAccess"
         ],
-        "evidence": "base_generator consumes 1 fuel_can (3 salvaged_oil + 1 glass) in 60s per connected load (15 min full 3-slot capacity), while 1 coal lasts 80s and 1 fuel_briquette lasts 90s. Running 1 turret 24h requires 1,440 fuel_cans (~3,600 salvaged_oil), vs only 32 salvaged_oil available in an entire Shipping run.",
+        "evidence": "Current continuous one-load scenario uses 1440 cans/day; recipes are refinery_fuel, refinery_fuel_batch, low_quality_fuel. The finite shipping subset has 4 expected Crude Petroleum and excludes rendered-fat/renewable production. No total-run deficit can be inferred from this subset. Retired Salvaged Oil/Coal/Briquette formulas are not current supply.",
         "verifiedMetrics": {
+          "scenario": "86400 seconds of uninterrupted one-load demand; not idle runtime and not required play",
           "poiGeneratorFuelRuntimeSec": 180,
           "baseGeneratorFuelCanRuntimeSec": 60,
-          "baseGeneratorBriquetteRuntimeSec": 90,
-          "baseGeneratorCoalRuntimeSec": 80,
+          "baseGeneratorCharcoalRuntimeSec": 55,
           "ratioPoiToBaseGenFuelCan": 3,
           "demand24hOneLoad": {
-            "fuel_can": 1440,
-            "coal": 1080,
-            "fuel_briquette": 960,
-            "wood": 4320
+            "wood": 4320,
+            "fiber": 21600,
+            "charcoal": 1570.909090909091,
+            "fuel_can": 1440
           },
           "demand24hTwoLoads": {
-            "fuel_can": 2880,
-            "coal": 2160
+            "wood": 8640,
+            "fiber": 43200,
+            "charcoal": 3141.818181818182,
+            "fuel_can": 2880
           },
-          "fuelCansNeededFor14dOneLoad": 20160,
-          "shippingTotalOilDeficitFactorFor1Load14d": 1028.57
-        }
+          "fuelCansNeededFor14dOneLoad": 20160
+        },
+        "authorityStatus": "CURRENT_CONDITIONAL_ACCOUNTING_NOT_DEFICIT_PROOF"
       },
       {
         "id": "M2-F06",
@@ -6311,13 +6353,11 @@
         ],
         "evidence": "Random research filters pool = unknown.filter(k => !k.startsWith('core_')). Since directed research blocks Tier 3, unlocking Tier-3 core_dragon (or any unfound core on Veyra) via research requires burning 128 spares across 32 non-core recipes first.",
         "verifiedMetrics": {
-          "totalRecipes": 119,
-          "knownAtStart": 78,
+          "totalRecipes": 114,
+          "knownAtStart": 73,
           "unknownAtStart": 41,
           "unknownNonCore": 32,
           "unknownTier3NonCore": [
-            "refined_iron_helmet",
-            "refined_iron_chest",
             "chitin_armor"
           ],
           "unknownCores": [
@@ -6333,8 +6373,9 @@
           ],
           "sparesNeededBeforeFirstCoreRandom": 128,
           "totalRandomResearchSparesAll": 164,
-          "minSparesDirectedPlusRandom": 309
-        }
+          "minSparesDirectedPlusRandom": 319
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F07",
@@ -6352,7 +6393,8 @@
             "bear_trap"
           ],
           "missingFromBuildOrder": []
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F08",
@@ -6363,13 +6405,17 @@
           "web/src/game/balance.v1.json:169",
           "web/src/game/engine.ts:1428-1458"
         ],
-        "evidence": "Live buildReason() probe placed floor_wood + Territory Cabinet at dist=N/A tiles (< claimMinDistFromPoi=10) from Crossroads Trading Post (N/A) with zero rejection.",
+        "evidence": "Live buildReason() probe placed floor_wood + Territory Cabinet at dist=9 tiles (< claimMinDistFromPoi=10) from Crossroads Trading Post (100,111) with zero rejection.",
         "verifiedMetrics": {
           "claimMinDistFromPoi": 10,
-          "claimInsidePoiAllowed": false,
-          "minPoiClaimDistFound": null,
-          "testPoiCoords": null
-        }
+          "claimInsidePoiAllowed": true,
+          "minPoiClaimDistFound": 9,
+          "testPoiCoords": [
+            100,
+            111
+          ]
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F09",
@@ -6398,7 +6444,8 @@
             "veyra05-saltwick"
           ],
           "veyraPalmNodes": 66
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F10",
@@ -6413,7 +6460,8 @@
         "verifiedMetrics": {
           "upkeepFractionPerDay": 0.25,
           "fullRunMultiplier": 3.5
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F11",
@@ -6431,7 +6479,8 @@
           "campfireIdleWood10Min": 30,
           "furnaceIdleWood10Min": 0,
           "actualCollapseHours": 12
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F12",
@@ -6449,7 +6498,8 @@
             "refinery_crude"
           ],
           "disabledInProd": true
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F13",
@@ -6460,9 +6510,9 @@
           "web/src/game/engine.ts:624",
           "web/src/game/balance.v1.json:economy"
         ],
-        "evidence": "structureRepairCost uses max(1, ceil(q * 0.25)) per material. On qty=1 costs (e.g. door_wood rope, wall_stone wood, chest_large iron/wood edges), repairing 25% HP charges 100% of that ingredient (2 structure-ingredient pairs affected).",
+        "evidence": "structureRepairCost uses max(1, ceil(q * 0.25)) per material. On qty=1 costs (e.g. door_wood rope, wall_stone wood, chest_large iron/wood edges), repairing 25% HP charges 100% of that ingredient (4 structure-ingredient pairs affected).",
         "verifiedMetrics": {
-          "affectedPairsCount": 2,
+          "affectedPairsCount": 4,
           "samplePairs": [
             {
               "struct": "wall_stone",
@@ -6473,15 +6523,32 @@
               "note": "Repairing 25% HP costs 100% of build cost (wood: 1/1), whereas reclaim refunds 0."
             },
             {
+              "struct": "wall_brick",
+              "material": "iron_ingot",
+              "buildCost": 1,
+              "repairCost25PctHp": 1,
+              "reclaimRefund": 0,
+              "note": "Repairing 25% HP costs 100% of build cost (iron_ingot: 1/1), whereas reclaim refunds 0."
+            },
+            {
               "struct": "door_wood",
               "material": "rope",
               "buildCost": 1,
               "repairCost25PctHp": 1,
               "reclaimRefund": 0,
               "note": "Repairing 25% HP costs 100% of build cost (rope: 1/1), whereas reclaim refunds 0."
+            },
+            {
+              "struct": "door_powered",
+              "material": "mechanical_gear",
+              "buildCost": 1,
+              "repairCost25PctHp": 1,
+              "reclaimRefund": 0,
+              "note": "Repairing 25% HP costs 100% of build cost (mechanical_gear: 1/1), whereas reclaim refunds 0."
             }
           ]
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F14",
@@ -6500,7 +6567,8 @@
             "iron_axe",
             "industrial_axe"
           ]
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F15",
@@ -6514,7 +6582,8 @@
         "evidence": "Live Veyra offscreen probe confirmed oil_pump in r.veyraOffscreenEntities produced 0 crude_petroleum over 5s while consuming 0 oil stock (oilPumpOffscreenSkipped=true), whereas furnaces, refineries, gardens, and livestock simulate offscreen.",
         "verifiedMetrics": {
           "oilPumpOffscreenSkipped": true
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       },
       {
         "id": "M2-F16",
@@ -6537,7 +6606,8 @@
           "shipMaxEnergyRefinedFromWild": 93,
           "veyraSampledSulfurNodes": 540,
           "veyraSampledCrystalNodes": 468
-        }
+        },
+        "authorityStatus": "HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO"
       }
     ]
   }

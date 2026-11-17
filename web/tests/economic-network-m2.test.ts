@@ -1,4 +1,5 @@
 import { describe, expect, it, beforeAll } from 'vitest';
+import {BAL} from '../src/game/core';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
@@ -10,7 +11,7 @@ import {
 const REPORTS_DIR = resolve(process.cwd(), 'reports', 'economic-network');
 const RESULTS_PATH = resolve(REPORTS_DIR, 'M2_SIMULATION_RESULTS.json');
 
-describe('SOH M2 Full Economic Simulation & Structural Audit', () => {
+describe('SOH M2 partial current-contract audit and controlled mechanical probes', () => {
   let cached: M2SimulationResults | null = null;
 
   function getResults(): M2SimulationResults {
@@ -29,6 +30,8 @@ describe('SOH M2 Full Economic Simulation & Structural Audit', () => {
   it('Suite 1: Audits global resource/loot endowment across shipping_fresh and all 12 Veyra scenes + 81 POIs', () => {
     const res = getResults();
     expect(res.meta.version).toBe(M2_AUDIT_VERSION);
+    expect(res.meta.authorityStatus).toBe('PARTIAL_CURRENT_CONTRACT_RECONCILIATION');
+    expect(res.meta.currentContractSuites).toEqual([5]);
     expect(res.worldEndowments.shipping.tilesTotal).toBe(40_000);
     expect(res.worldEndowments.veyra.sceneWindowCount).toBe(12);
     expect(res.worldEndowments.veyra.sampledTilesTotal).toBe(480_000);
@@ -43,7 +46,7 @@ describe('SOH M2 Full Economic Simulation & Structural Audit', () => {
     expect(res.worldEndowments.veyra.staticRcashTotal).toBe(275);
   });
 
-  it('Suite 2: Executes 5 multi-day (0h-336h) player archetypes across Shipping & Veyra', () => {
+  it('Suite 2: Controlled funded-base simulations produce actual upkeep debits and current research counts', () => {
     const res = getResults();
     for (const label of ['shipping_fresh', 'veyra05-world'] as const) {
       const arch = res.archetypeSimulations[label];
@@ -54,7 +57,8 @@ describe('SOH M2 Full Economic Simulation & Structural Audit', () => {
       expect(arch.currencySplit.maxVendorSparesSpendablePerRun).toBe(59);
       expect(arch.currencySplit.max14DayRequisitionSecured).toBe(0);
       expect(arch.currencySplit.liveProbeDay1.emberClaimOk).toBe(true);
-      expect(arch.researchAndCoreGate.sparesNeededBeforeFirstCoreRandom).toBe(104);
+      expect(arch.researchAndCoreGate.unknownNonCore).toBeGreaterThan(0);
+      expect(arch.researchAndCoreGate.sparesNeededBeforeFirstCoreRandom).toBe(arch.researchAndCoreGate.unknownNonCore*BAL.research.randomSparesCost);
     }
   });
 
@@ -90,8 +94,10 @@ describe('SOH M2 Full Economic Simulation & Structural Audit', () => {
     const res = getResults();
     const fc = res.fuelAndPowerConservation;
     expect(fc.baseGeneratorDemandVsCapacity.baseGeneratorFuelCanRuntimeSec).toBe(60);
-    expect(fc.baseGeneratorDemandVsCapacity.baseGeneratorCoalRuntimeSec).toBe(80);
-    expect(fc.baseGeneratorDemandVsCapacity.baseGeneratorBriquetteRuntimeSec).toBe(90);
+    expect(fc.baseGeneratorDemandVsCapacity.baseGeneratorCharcoalRuntimeSec).toBe(55);
+    expect(fc.fuelItems.some(f=>['coal','fuel_briquette'].includes(f.key))).toBe(false);
+    expect(fc.fuelProductionRoutes.map(r=>r.id)).toContain('low_quality_fuel');
+    expect(fc.refineryRatios.every(r=>r.inputs.some(i=>i.key==='crude_petroleum'))).toBe(true);
     expect(fc.baseGeneratorDemandVsCapacity.demand24hOneLoad.fuel_can).toBe(1440);
     expect(fc.idleFuelLeakProbe.campfireBurnsIdleForeverWhileLoaded).toBe(true);
     expect(fc.idleFuelLeakProbe.furnaceIdleWoodBurnedIn10Min).toBe(0);
@@ -110,7 +116,7 @@ describe('SOH M2 Full Economic Simulation & Structural Audit', () => {
     expect(res.husbandryAndGarden14Day.gardenSeasonalGrowth).toHaveLength(8);
   });
 
-  it('Suite 7: Runs N=400 seeded Monte Carlo distributions (200 Shipping + 200 Veyra)', () => {
+  it('Suite 7: Legacy Monte Carlo scaffold remains deterministic-sized (NOT current acquisition evidence)', () => {
     const res = getResults();
     expect(res.monteCarloRuns.shippingN).toBe(200);
     expect(res.monteCarloRuns.veyraN).toBe(200);
@@ -120,10 +126,11 @@ describe('SOH M2 Full Economic Simulation & Structural Audit', () => {
     expect(res.monteCarloRuns.veyraDistributions.airdropEvents.max).toBe(0);
   });
 
-  it('Suite 8: Proves all 16 structural findings, anti-arbitrage recycler integrity & determinism', () => {
+  it('Suite 8: Legacy hypothesis IDs remain traceable; measured probes are not a current findings certificate', () => {
     const res = getResults();
     const audit = res.exploitAndParityAudit;
     expect(audit.findings).toHaveLength(16);
+    expect(audit.findings.filter(f=>f.authorityStatus==='HISTORICAL_HYPOTHESIS_NEEDS_CURRENT_REPRO')).toHaveLength(15);
     expect(audit.recyclerProbes.filter((p) => p.overReturnDetected)).toHaveLength(0);
     expect(audit.claimMinDistFromPoiProbe.claimInsidePoiAllowed).toBe(true);
     expect(audit.oilPumpOffscreenSkipped).toBe(true);

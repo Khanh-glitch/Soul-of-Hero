@@ -145,19 +145,21 @@ A `HAVE_*` verdict says SOH defines something for the role. `soh_live_status` sa
 
 | SOH live status | Rows |
 |---|---|
-| LIVE_PLAYER_FUNCTION | 49 |
-| LIVE_WITH_LIMIT | 4 |
-| CATALOG_PRESENT_NOT_LIVE | 3 |
+| LIVE_PLAYER_FUNCTION | 47 |
+| CATALOG_PRESENT_NOT_LIVE | 7 |
+| LIVE_WITH_LIMIT | 2 |
 
 | Last Island id | SOH | Verdict | Live status | Note |
 |---|---|---|---|---|
 | `canned_meat` | `salted_meat` | HAVE_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: UNREACHABLE. |
-| `cleaver` | `iron_sword` | HAVE_SAME_ROLE | LIVE_WITH_LIMIT | Projection reachability: SHIPPING_ONLY. Not obtainable on the other world. |
-| `crude_oil` | `crude_petroleum` | HAVE_SAME_ROLE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: FIXTURE_ONLY. |
-| `green_card` | `keycard` | HAVE_DIFFERENT_SHAPE | LIVE_WITH_LIMIT | Projection reachability: SHIPPING_ONLY. Not obtainable on the other world. |
-| `machete` | `iron_sword` | HAVE_SAME_ROLE | LIVE_WITH_LIMIT | Projection reachability: SHIPPING_ONLY. Not obtainable on the other world. |
+| `cleaver` | `iron_sword` | HAVE_SAME_ROLE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: UNREACHABLE. |
+| `crude_oil` | `crude_petroleum` | HAVE_SAME_ROLE | LIVE_WITH_LIMIT | Crude Petroleum is the one raw oil since item set v3. Engine routes exist (Oil Pump on a Veyra crude seep; vendor stock) and are covered by engine tests only: no New-Game play-through has pumped oil yet, so this row does not establish a working Oil Pump in live play. |
+| `green_card` | `keycard` | HAVE_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: UNREACHABLE. |
+| `machete` | `iron_sword` | HAVE_SAME_ROLE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: UNREACHABLE. |
 | `mushroom_soup` | `root_broth` | HAVE_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: UNREACHABLE. |
+| `nettle_seed` | `seed` | HAVE_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: UNREACHABLE. |
 | `refined_iron_chest` | `chitin_armor` | HAVE_DIFFERENT_SHAPE | LIVE_WITH_LIMIT | Projection reachability: SHIPPING_ONLY. Not obtainable on the other world. |
+| `wild_berry_seed` | `seed` | HAVE_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE | Projection reachability: UNREACHABLE. |
 
 ## The five omissions the diff asked to investigate
 
@@ -222,10 +224,10 @@ The `year_mode` column is the same generic note on all 137 rows, so the source d
 | `blue_card` | EXTERNAL_CRAFT_OR_INPUT | INDIRECT | no | DISTINCT_HISTORICAL | green_card | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
 | `canned_meat` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `salted_meat` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE |
 | `charcoal` | EXTERNAL_CRAFT_OR_INPUT | UNSUPPORTED_CITATION | no | ALIAS_OF_SOH_ITEM | - | direct | `charcoal` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
-| `cleaver` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `iron_sword` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_WITH_LIMIT |
+| `cleaver` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `iron_sword` | HAVE_SAME_ROLE | ROLE_PRESENT | CATALOG_PRESENT_NOT_LIVE |
 | `cloth` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | direct | `cloth` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `cream` | EXTERNAL_CRAFT_OR_INPUT | DIRECT | no | EVENT_LIMITED | birthday_cake_2022 | missing | `-` | NOT_ADDED | EVENT_ONLY | NOT_APPLICABLE |
-| `crude_oil` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `crude_petroleum` | HAVE_SAME_ROLE | ROLE_PRESENT | CATALOG_PRESENT_NOT_LIVE |
+| `crude_oil` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `crude_petroleum` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_WITH_LIMIT |
 | `dirt_grenade` | ATLAS_INDEXED | INDIRECT | yes | EXACT_ID | - | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
 | `double_barrel_shotgun` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
 | `drawing_bench` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `deploy_research` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
@@ -246,7 +248,7 @@ The `year_mode` column is the same generic note on all 137 rows, so the source d
 | `fruit_wine` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
 | `fuel_generator` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `deploy_base_generator` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `glider_legacy` | EXTERNAL_CRAFT_OR_INPUT | INDIRECT | no | DISTINCT_HISTORICAL | - | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
-| `green_card` | EXTERNAL_CRAFT_OR_INPUT | INDIRECT | no | DISTINCT_HISTORICAL | - | analogy | `keycard` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | LIVE_WITH_LIMIT |
+| `green_card` | EXTERNAL_CRAFT_OR_INPUT | INDIRECT | no | DISTINCT_HISTORICAL | - | analogy | `keycard` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE |
 | `grilled_mushroom` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `-` | NOT_ADDED | DECLINED_REDUNDANT | NOT_APPLICABLE |
 | `gunpowder` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
 | `gunpowder_legacy` | EXTERNAL_CRAFT_OR_INPUT | LEGACY_CLAIM | no | VERSION_VARIANT | gunpowder | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
@@ -272,7 +274,7 @@ The `year_mode` column is the same generic note on all 137 rows, so the source d
 | `low_quality_fuel` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `fuel_can` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `low_quality_fuel_can` | EXTERNAL_CRAFT_OR_INPUT | UNSUPPORTED_CITATION | no | ALIAS_OF_ATLAS_ID | low_quality_fuel | analogy | `fuel_can` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `m24` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
-| `machete` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `iron_sword` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_WITH_LIMIT |
+| `machete` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `iron_sword` | HAVE_SAME_ROLE | ROLE_PRESENT | CATALOG_PRESENT_NOT_LIVE |
 | `mechanical_gear` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | direct | `mechanical_gear` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `medkit` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | direct | `medkit` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `metal_blade` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | direct | `metal_blade` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | LIVE_PLAYER_FUNCTION |
@@ -287,7 +289,7 @@ The `year_mode` column is the same generic note on all 137 rows, so the source d
 | `needle_thread` | EXTERNAL_CRAFT_OR_INPUT | LEGACY_CLAIM | no | DISTINCT_HISTORICAL | - | missing | `-` | NOT_ADDED | DECLINED_REDUNDANT | NOT_APPLICABLE |
 | `needle_tube` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | missing | `-` | NOT_ADDED | DECLINED_REDUNDANT | NOT_APPLICABLE |
 | `nettle` | EXTERNAL_CRAFT_OR_INPUT | INDIRECT | no | DISTINCT_HISTORICAL | - | analogy | `fiber` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
-| `nettle_seed` | EXTERNAL_CRAFT_OR_INPUT | UNSUPPORTED_CITATION | no | DISTINCT_HISTORICAL | nettle | missing | `seed` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | LIVE_PLAYER_FUNCTION |
+| `nettle_seed` | EXTERNAL_CRAFT_OR_INPUT | UNSUPPORTED_CITATION | no | DISTINCT_HISTORICAL | nettle | missing | `seed` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE |
 | `oil_refinery` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `deploy_refinery` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `old_military_mine` | EXTERNAL_CRAFT_OR_INPUT | UNSUPPORTED_CITATION | no | DISTINCT_HISTORICAL | - | missing | `deploy_bear_trap` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | LIVE_PLAYER_FUNCTION |
 | `parts` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `spares` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
@@ -329,7 +331,7 @@ The `year_mode` column is the same generic note on all 137 rows, so the source d
 | `tracking_auto_turret` | EXTERNAL_CRAFT_OR_INPUT | LEGACY_CLAIM | no | DISTINCT_HISTORICAL | auto_rifle_turret | missing | `-` | NOT_ADDED | NO_MECHANIC | NOT_APPLICABLE |
 | `vehicle_frame` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | direct | `vehicle_frame` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `wild_berry` | ATLAS_INDEXED | INDIRECT | yes | EXACT_ID | - | analogy | `berries` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
-| `wild_berry_seed` | EXTERNAL_CRAFT_OR_INPUT | UNSUPPORTED_CITATION | no | DISTINCT_HISTORICAL | wild_berry | analogy | `seed` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | LIVE_PLAYER_FUNCTION |
+| `wild_berry_seed` | EXTERNAL_CRAFT_OR_INPUT | UNSUPPORTED_CITATION | no | DISTINCT_HISTORICAL | wild_berry | analogy | `seed` | HAVE_DIFFERENT_SHAPE | ROLE_PRESENT_DIFFERENT_SHAPE | CATALOG_PRESENT_NOT_LIVE |
 | `wood` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | direct | `wood` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `wood_club` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `wood_spear` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
 | `wood_spikes` | ATLAS_INDEXED | DIRECT | yes | EXACT_ID | - | analogy | `deploy_spikes` | HAVE_SAME_ROLE | ROLE_PRESENT | LIVE_PLAYER_FUNCTION |
