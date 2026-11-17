@@ -1,3 +1,4 @@
+import { validStationHardware } from './station-hardware';
 import { G1B_VERSION, G1B_CHEST_SLOTS, G1B_SITES, G1B_FIXTURE_BY_ID, G1B_GATE_BY_ID, G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, g1bSeed, CORE_V2 } from './g1b';
 import { G1B_BATCH2_ECOLOGY } from './g1b-ecology-batch2.frozen';
 import { G1B_BATCH3_ECOLOGY } from './g1b-ecology-batch3.frozen';
@@ -910,6 +911,7 @@ export function stackInvariant(s: any, uids: Set<string>, beforeNext: (id: strin
   if (typeof s.key !== 'string' || !has(ITEMS, s.key)) return 'unknown-item';
   if (!integer(s.qty) || s.qty < 1) return 'bad-qty';
   if (s.qty > ITEMS[s.key].max) return `over-max:${s.key}`;
+  if (s.stationHardware !== undefined && !validStationHardware(s.key, s.stationHardware)) return 'bad-station-hardware';
   if (s.bearTrap !== undefined && (s.key !== 'deploy_bear_trap' || !validBearTrap(s.bearTrap))) return 'bad-packed-trap';
   if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return 'bad-upgrade';
   if ((s.key === 'keycard' || isAccessCard(s.key)) && s.charge !== undefined && (!integer(s.charge) || s.charge < 1 || s.charge > 100 || s.qty !== 1)) return 'bad-card-charge';

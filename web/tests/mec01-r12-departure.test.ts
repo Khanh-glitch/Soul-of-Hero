@@ -4,6 +4,7 @@ import '../tests/_evidenceFs';
 import { describe, it, expect } from 'vitest';
 import { mkdirSync } from 'node:fs';
 import { writeFileSync } from './_evidenceFs';
+import { STRUCTS } from '../src/game/catalog';
 import { BAL, HOUR, TILE, WW, T, type GameState, type RunState } from '../src/game/core';
 import { newGame, dispatch, addItem, blockGrid, effTile, markDirty, C, weatherAt, isWet, destroyStructure, roofRoom } from '../src/game/engine';
 import { settle } from '../src/game/sim';
@@ -16,6 +17,15 @@ import { readFileSync } from 'node:fs';
 const T0 = Date.UTC(2026, 0, 1);
 let seq = 0;
 const act = (g: GameState, type: string, data: object = {}, now = T0) => dispatch(g, { id: `r12-${++seq}`, type, ...data }, now);
+/** STAGED materials only: craft the current physical pack before placement, without adding stock.
+ * Geometry remains direct-paid. Every refused craft/build is surfaced, including evidence rows. */
+function buildPaid(g: GameState, data: {struct: string; tx: number; ty: number}, now = T0) {
+  const item = STRUCTS[data.struct].item;
+  if (item?.startsWith('deploy_')) expect(act(g, 'craft', {recipe: item}, now)).toMatchObject({ok:true});
+  const result = act(g, 'build', data, now);
+  expect(result, JSON.stringify(data)).toMatchObject({ok:true});
+  return result;
+}
 const copy = (g: GameState) => JSON.parse(JSON.parse(serializeSnapshot(g)).payload) as GameState;
 const expiryOf = (r: RunState) => r.startedAt - r.qaOffset + BAL.run.maxRunHours * HOUR;
 
@@ -41,7 +51,7 @@ function snowCamp(seed = 313, warmth = 60) {
   const s = snowSpot(r);
   addItem(r, 'inv', 'wood', 40); addItem(r, 'inv', 'stone', 20);
   r.player.x = s.x * TILE + 8; r.player.y = s.y * TILE + 8; markDirty();
-  expect(act(g, 'build', { struct: 'campfire', tx: s.x + 2, ty: s.y }).ok).toBe(true);
+  expect(buildPaid(g, { struct: 'campfire', tx: s.x + 2, ty: s.y }).ok).toBe(true);
   const fire = Object.values(r.entities).find(e => e.type === 'campfire')!;
   r.player.warmth = warmth; r.clock.lastSimAt = T0;
   return { g, r, fire, s };
@@ -63,7 +73,7 @@ function stagedAt(seed: number, from: number) {
   const s = snowSpot(r); // chosen AFTER the offline time: the departure-instant world decides what is free
   addItem(r, 'inv', 'wood', 40); addItem(r, 'inv', 'stone', 20);
   r.player.x = s.x * TILE + 8; r.player.y = s.y * TILE + 8; markDirty();
-  const built = act(g, 'build', { struct: 'campfire', tx: s.x + 2, ty: s.y }, from);
+  const built = buildPaid(g, { struct: 'campfire', tx: s.x + 2, ty: s.y }, from);
   expect(built.ok, JSON.stringify(built)).toBe(true);
   const fire = Object.values(r.entities).find(e => e.type === 'campfire')!;
   r.player.warmth = 60; r.clock.lastSimAt = from;
@@ -216,7 +226,7 @@ describe('MEC-01 R12 heat: paid fuel, idle furnace, job, station loss', () => {
     const x = s.x + 5, y = s.y;
     addItem(r, 'inv', 'stone', 40); addItem(r, 'inv', 'wood', 20); addItem(r, 'inv', 'iron_ore', 3);
     r.player.x = (x - 1) * TILE + 8; r.player.y = y * TILE + 8;
-    expect(act(g, 'build', { struct: 'furnace', tx: x, ty: y }).ok).toBe(true);
+    expect(buildPaid(g, { struct: 'furnace', tx: x, ty: y }).ok).toBe(true);
     const furnace = Object.values(r.entities).find(e => e.type === 'furnace')!;
     addItem(r, furnace.station!.fuelC, 'wood', 6);
     const idle = departureReadiness(r, T0);
@@ -239,7 +249,7 @@ describe('MEC-01 R12 heat: paid fuel, idle furnace, job, station loss', () => {
     const { g, r, s } = snowCamp(313, 60);
     addItem(r, 'inv', 'stone', 40); addItem(r, 'inv', 'wood', 20); addItem(r, 'inv', 'iron_ore', 3);
     r.player.x = (s.x + 4) * TILE + 8; r.player.y = s.y * TILE + 8;
-    expect(act(g, 'build', { struct: 'furnace', tx: s.x + 5, ty: s.y }).ok).toBe(true);
+    expect(buildPaid(g, { struct: 'furnace', tx: s.x + 5, ty: s.y }).ok).toBe(true);
     const furnace = Object.values(r.entities).find(e => e.type === 'furnace')!;
     addItem(r, furnace.station!.fuelC, 'wood', 4);
     expect(act(g, 'craft', { recipe: 'iron_ingot', eid: furnace.id }).ok).toBe(true);
@@ -271,7 +281,7 @@ describe('MEC-01 R12 shelter, insulation, position, home, choices', () => {
     const { x, y } = site(g);
     r.player.x = x * TILE + 8; r.player.y = (y + 1) * TILE + 8;
     addItem(r, 'inv', 'wood', 400); addItem(r, 'inv', 'fiber', 200); addItem(r, 'inv', 'stone', 60);
-    const build = (struct: string, tx: number, ty: number) => { const res = act(g, 'build', { struct, tx, ty }); expect({ struct, tx, ty, why: res.ok ? '' : (res as any).reason }).toEqual({ struct, tx, ty, why: '' }); };
+    const build = (struct: string, tx: number, ty: number) => { const res = buildPaid(g, { struct, tx, ty }); expect({ struct, tx, ty, why: res.ok ? '' : (res as any).reason }).toEqual({ struct, tx, ty, why: '' }); };
     for (let dx = 0; dx < 2; dx++) for (let dy = 0; dy < 2; dy++) build('floor_wood', x + dx, y + dy);
     for (let dx = -1; dx <= 2; dx++) for (let dy = -1; dy <= 2; dy++) {
       if (dx >= 0 && dx <= 1 && dy >= 0 && dy <= 1) continue;
@@ -335,7 +345,7 @@ describe('MEC-01 R12 shelter, insulation, position, home, choices', () => {
     const { g, r, s } = snowCamp(313, 60);
     addItem(r, 'inv', 'wood', 40);
     r.player.x = (s.x + 1) * TILE + 8; r.player.y = (s.y + 1) * TILE + 8; markDirty();
-    expect(act(g, 'build', { struct: 'wall_wood', tx: s.x + 4, ty: s.y + 1 }).ok).toBe(true);
+    expect(buildPaid(g, { struct: 'wall_wood', tx: s.x + 4, ty: s.y + 1 }).ok).toBe(true);
     const wall = Object.values(r.entities).find(e => e.type === 'wall_wood')!;
     const intact = departureReadiness(r, T0);
     expect(intact.home.damagedStructures).toEqual([]);
@@ -390,16 +400,16 @@ describe('MEC-01 R12 causal before/after (real intents, labelled staging) → ev
     const g2 = newGame(); act(g2, 'startRun', { character: 'female', region: 0, seed: 313 }); const r2 = g2.run!; r2.creatures = [];
     const st = site(g2); r2.player.x = st.x * TILE + 8; r2.player.y = (st.y + 1) * TILE + 8;
     addItem(r2, 'inv', 'wood', 400); addItem(r2, 'inv', 'fiber', 200); addItem(r2, 'inv', 'stone', 60);
-    for (let dx = 0; dx < 2; dx++) for (let dy = 0; dy < 2; dy++) act(g2, 'build', { struct: 'floor_wood', tx: st.x + dx, ty: st.y + dy });
+    for (let dx = 0; dx < 2; dx++) for (let dy = 0; dy < 2; dy++) buildPaid(g2, { struct: 'floor_wood', tx: st.x + dx, ty: st.y + dy });
     for (let dx = -1; dx <= 2; dx++) for (let dy = -1; dy <= 2; dy++) {
       if (dx >= 0 && dx <= 1 && dy >= 0 && dy <= 1) continue;
       const ox = dx < 0 ? -1 : dx > 1 ? 1 : 0, oy = dy < 0 ? -1 : dy > 1 ? 1 : 0;
       r2.player.x = (st.x + dx + ox) * TILE + 8; r2.player.y = (st.y + dy + oy) * TILE + 8;
-      act(g2, 'build', { struct: 'wall_wood', tx: st.x + dx, ty: st.y + dy });
+      buildPaid(g2, { struct: 'wall_wood', tx: st.x + dx, ty: st.y + dy });
     }
     r2.player.x = st.x * TILE + 8; r2.player.y = (st.y + 1) * TILE + 8;
     rows.push(pick('C2 BEFORE walls, no roof', departureReadiness(r2, T0)));
-    for (let dx = 0; dx < 2; dx++) for (let dy = 0; dy < 2; dy++) act(g2, 'build', { struct: 'roof_thatch', tx: st.x + dx, ty: st.y + dy });
+    for (let dx = 0; dx < 2; dx++) for (let dy = 0; dy < 2; dy++) buildPaid(g2, { struct: 'roof_thatch', tx: st.x + dx, ty: st.y + dy });
     rows.push(pick('C2 AFTER roof_thatch enclosure', departureReadiness(r2, T0)));
     // Cause 3: cold gear (worn cloak; STAGED placement into the worn slot)
     const c3 = snowCamp(313, 60);
@@ -409,7 +419,7 @@ describe('MEC-01 R12 causal before/after (real intents, labelled staging) → ev
     // Cause 4: furnace idle vs running a job
     const c4 = snowCamp(313, 60); addItem(c4.r, 'inv', 'stone', 40); addItem(c4.r, 'inv', 'wood', 20); addItem(c4.r, 'inv', 'iron_ore', 3);
     c4.r.player.x = (c4.s.x + 4) * TILE + 8; c4.r.player.y = c4.s.y * TILE + 8;
-    act(c4.g, 'build', { struct: 'furnace', tx: c4.s.x + 5, ty: c4.s.y });
+    buildPaid(c4.g, { struct: 'furnace', tx: c4.s.x + 5, ty: c4.s.y });
     const fu = Object.values(c4.r.entities).find(e => e.type === 'furnace')!;
     addItem(c4.r, fu.station!.fuelC, 'wood', 6);
     rows.push(pick('C4 BEFORE furnace fuelled, idle (no job)', departureReadiness(c4.r, T0)));

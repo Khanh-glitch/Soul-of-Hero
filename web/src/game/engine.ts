@@ -1,3 +1,4 @@
+import { packedStationHardware, restoreStationHardware, validStationHardware } from './station-hardware';
 import { validBearTrap } from './bear-trap-state';
 import { landingStimulus } from './stimulus';
 import { VFX_TEST_KIT, VFX_TEST_CORES } from './vfx/testkit';
@@ -2133,7 +2134,8 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   if (d.item && ITEMS[d.item]?.dur) {
     const packs=C(r,'inv').slots.filter(v=>v?.key===d.item);
     if (!packs.some(v=>v?.qty===1&&Number.isFinite(v.dur)&&(v.dur??0)>0&&(v.dur??0)<=d.hp&&
-      (v.bearTrap===undefined || type==='bear_trap'&&validBearTrap(v.bearTrap))))
+      (v.bearTrap===undefined || type==='bear_trap'&&validBearTrap(v.bearTrap))&&
+      (v.stationHardware===undefined || validStationHardware(v.key,v.stationHardware))))
       return 'Need an intact packed device.';
   }
   if (!hasAll(r, 'inv', cost)) return 'Missing materials: ' + cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ');
@@ -2657,7 +2659,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
           const v=inv.slots[i];
           if(v?.key===d.item&&v.qty===1&&
             (!ITEMS[d.item!].dur||(Number.isFinite(v.dur)&&v.dur!>0&&v.dur!<=d.hp))&&
-            (v.bearTrap===undefined || it.struct==='bear_trap'&&validBearTrap(v.bearTrap))){idx=i;break;}
+            (v.bearTrap===undefined || it.struct==='bear_trap'&&validBearTrap(v.bearTrap))&&
+            (v.stationHardware===undefined || validStationHardware(v.key,v.stationHardware))){idx=i;break;}
         }
         if(idx<0)return fail('No valid packed device in inventory.');
         deployed=inv.slots[idx]!;
@@ -2667,6 +2670,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (d.slots) e.c = mkContainer(r, 'chest', d.slots).id;
       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
       if (d.station === 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id };
+      restoreStationHardware(e);
       if (it.struct === 'refinery') e.identity = 'refinery-v1';
       if (it.struct === 'claim') e.cabinet = {credit:{},legacy:false};
       if (it.struct === 'base_generator') e.basePower = { enabled: false, energy: 0, network:'wire-v1' };
@@ -2819,6 +2823,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
           // One authentic UID survives inventory → placement → recovery. Damage
           // follows it; no reclaim/redeploy healing exploit.
           e.deployed.dur = e.hp;
+          const hardware=packedStationHardware(e);
+          if(hardware)e.deployed.stationHardware=hardware;else delete e.deployed.stationHardware;
           if (e.type==='bear_trap' && e.bearTrap) e.deployed.bearTrap={...e.bearTrap};
           returnReservations(r, [e.deployed], e.x, e.y, now);
         } else {
@@ -2827,7 +2833,11 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
           if(e.type==='bear_trap' && e.bearTrap){
             const pack=mkStack(r,d.item,1);pack.dur=e.hp;pack.bearTrap={...e.bearTrap};
             returnReservations(r,[pack],e.x,e.y,now);
-          } else giveOrDrop(r, d.item, 1, now, {dur:e.hp});
+          } else {
+            const pack=mkStack(r,d.item,1);pack.dur=e.hp;
+            const hardware=packedStationHardware(e);if(hardware)pack.stationHardware=hardware;
+            returnReservations(r,[pack],e.x,e.y,now);
+          }
           receipt(r,now,'pa1.legacy.unpack',e.id+':'+e.type);
         }
       }

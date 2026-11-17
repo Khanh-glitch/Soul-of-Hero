@@ -5,6 +5,8 @@
 // Provenance note: white-box variants of the UID-reservation race exist in b01-industrial-loot.test.ts
 // (a pushed reservation blocks a recycle); these probes drive the real dispatch path instead.
 import { describe, it, expect, afterEach } from 'vitest';
+import { fundBuild } from './support/paid-build';
+import { reload } from './support/current-industry';
 import { TILE, WW, BAL, type GameState, type RunState } from '../src/game/core';
 import { T } from '../src/game/core';
 import { addItem, C, countItem, dispatch, markDirty, newGame, stepStations, effTile, sourceAt } from '../src/game/engine';
@@ -42,6 +44,8 @@ function openSpots(g: GameState, count: number, spread = true): [number, number]
 }
 function buildL2Bench(g: GameState, spot: [number, number], at = T0 + 20) {
   const r = g.run!;
+  fundBuild(g, 'workbench', at - 1);
+  addItem(r, 'inv', 'iron_ingot', 2); addItem(r, 'inv', 'spares', 4); // current paid L2 bill, controlled stock
   place(r, spot[0] - 1, spot[1]);
   const built = act(g, 'build', { struct: 'workbench', tx: spot[0], ty: spot[1] }, at);
   if (!built.ok) console.log('BUILD-REASON@' + spot[0] + ',' + spot[1] + ': ' + (built as any).reason);
@@ -69,28 +73,28 @@ function stacksOf(g: GameState, key: string): string[] {
 afterEach(() => setActiveLayout('shipping'));
 
 describe('R3 P2: one physical item cannot serve two consumers', () => {
-  it('two L2 workbenches race a single found Mechanical Gear; the loser is refused before any reservation, and the gear exists exactly once afterwards', () => {
+  it('two L2 workbenches race a single controlled Mechanical Gear; the loser is refused before any reservation, and the gear exists exactly once afterwards', () => {
     const g = fresh(); const r = g.run!;
-    addItem(r, 'inv', 'mechanical_gear', 1); addItem(r, 'inv', 'iron_pick', 1); addItem(r, 'inv', 'iron_ingot', 1);
-    addItem(r, 'inv', 'fasteners', 2); addItem(r, 'inv', 'spares', 4); addItem(r, 'inv', 'wood', 40); addItem(r, 'inv', 'stone', 20); addItem(r, 'inv', 'mechanical_parts', 4); addItem(r, 'inv', 'iron_ingot', 3);   // FIXTURE grants (no loot walk claimed)
+    addItem(r, 'inv', 'mechanical_gear', 1); addItem(r, 'inv', 'iron_pick', 2);
+    addItem(r, 'inv', 'spares', 4); // two complete current tool bills except the single gear
     const [spotA, spotB] = openSpots(g, 2); const benchA = buildL2Bench(g, spotA); const benchB = buildL2Bench(g, spotB, T0 + 22);
     place(r, benchA.tx! - 1, benchA.ty!);
-    expect(act(g, 'craft', { eid: benchA.id, recipe: 'vehicle_drive_geared' }, T0 + 30).ok).toBe(true);   // winner keeps the gear
+    expect(act(g, 'craft', { eid: benchA.id, recipe: 'industrial_pick_geared' }, T0 + 30).ok).toBe(true);   // winner keeps the gear
     place(r, benchB.tx! - 1, benchB.ty!);
     const loser = act(g, 'craft', { eid: benchB.id, recipe: 'industrial_pick_geared' }, T0 + 31);
     expect(loser.ok).toBe(false);                                     // insufficient mechanical_gear — refused before queueing
     expect((loser as any).reason).toMatch(/Missing/);
     expect(stacksOf(g, 'mechanical_gear')).toHaveLength(1);            // exactly one instance, held as the winner's reservation
     expect(benchB.station!.queue).toHaveLength(0);
-    stepStations(g, 22_500, T0 + 60_000);
-    expect(countItem(r, benchA.station!.outC!, 'vehicle_drive')).toBe(1);
-    expect(countItem(r, 'inv', 'vehicle_drive')).toBe(0);          // the drive sits in the station output, not the pack
+    stepStations(g, 25_000, T0 + 60_000);
+    expect(countItem(r, benchA.station!.outC!, 'industrial_pick')).toBe(1);
+    expect(countItem(r, 'inv', 'industrial_pick')).toBe(0);          // the pick sits in the station output, not the pack
     const uids = allUidsEverywhere(g); expect(new Set(uids).size).toBe(uids.length);          // no UID minted twice
   });
 
   it('recycler holds the gear: the workbench is refused; and the winner held through a full craft→settle leaves the gear exactly once', () => {
     const g = fresh(); const r = g.run!;
-    addItem(r, 'inv', 'mechanical_gear', 1); addItem(r, 'inv', 'iron_ingot', 3); addItem(r, 'inv', 'fasteners', 2); addItem(r, 'inv', 'spares', 2); addItem(r, 'inv', 'wood', 40); addItem(r, 'inv', 'stone', 20); addItem(r, 'inv', 'mechanical_parts', 2);   // FIXTURE grants
+    addItem(r, 'inv', 'mechanical_gear', 1); addItem(r, 'inv', 'iron_pick', 1); addItem(r, 'inv', 'spares', 2); // controlled current tool bill
     const [spot] = openSpots(g, 1); const bench = buildL2Bench(g, spot);
     const rc = Object.values(r.entities).find(e => e.kind === 'recycler')!;
     place(r, rc.tx! - 1, rc.ty!);
@@ -98,14 +102,22 @@ describe('R3 P2: one physical item cannot serve two consumers', () => {
     const uid = r.custody.inv.slots[slot]!.uid;
     expect(act(g, 'recycleItem', { eid: rc.id, slot, uid }, T0 + 10).ok).toBe(true);           // recycler wins the gear
     place(r, bench.tx! - 1, bench.ty!);
-    const craft = act(g, 'craft', { eid: bench.id, recipe: 'vehicle_drive_geared' }, T0 + 11);
+    const craft = act(g, 'craft', { eid: bench.id, recipe: 'industrial_pick_geared' }, T0 + 11);
     expect(craft.ok).toBe(false);                                     // the reserved gear is not available to the bench
     expect((craft as any).reason).toMatch(/Missing/);
     expect(stacksOf(g, 'mechanical_gear')).toHaveLength(1);            // one instance, inside the recycler job
     expect(rc.station!.queue[0].reserved![0].uid).toBe(uid);
-    stepStations(g, 15_500, T0 + 25_000);                              // recycler v4 gear cycle = 15 s
+    const pending = reload(g);
+    expect(pending.run!.entities[rc.id].station!.queue[0].reserved![0].uid).toBe(uid);
+    stepStations(pending, 14999, T0 + 24999);
+    expect(countItem(pending.run!, rc.station!.outC!, 'spares')).toBe(0);
+    stepStations(pending, 1, T0 + 25000);
+    expect(countItem(pending.run!, rc.station!.outC!, 'spares')).toBe(2);
+    expect(countItem(pending.run!, rc.station!.outC!, 'iron_ingot')).toBe(1);
+    expect(pending.run!.entities[rc.id].station!.queue).toHaveLength(0);
+    stepStations(g, 15_000, T0 + 25000);                              // recycler v4 gear cycle = 15 s
     const uids = allUidsEverywhere(g); expect(new Set(uids).size).toBe(uids.length);          // conservation held through completion
-    expect(countItem(r, bench.station!.outC!, 'vehicle_drive')).toBe(0);                       // nothing was crafted from thin air
+    expect(countItem(r, bench.station!.outC!, 'industrial_pick')).toBe(0);                       // nothing was crafted from thin air
   });
 
   it('one Fuel Canister can serve one motorbike refuel only: a second dispatch is refused, the tank holds exactly one can and the pack is never negative', () => {

@@ -6,6 +6,7 @@ if (typeof (globalThis as any).document === 'undefined') {
 
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it } from 'vitest';
+import { STRUCTS } from '../src/game/catalog';
 import { BAL, TILE, WW, type GameState } from '../src/game/core';
 import {
   blockGrid, C, countItem, dispatch, harvestHit, newGame, sourceAt,
@@ -32,6 +33,15 @@ afterEach(() => {
   FX.length = 0;
   setActiveLayout('shipping');
 });
+
+/** No funding grants: only already harvested/picked materials may pay these packs. */
+function craftHarvestedPack(gs: GameState, type: string, now: number) {
+  const item = STRUCTS[type].item!;
+  expect(item).toMatch(/^deploy_/);
+  const before = countItem(gs.run!, 'inv', item);
+  expect(dispatch(gs, {id:`natural-pack-${type}-${now}`, type:'craft', recipe:item}, now)).toMatchObject({ok:true});
+  expect(countItem(gs.run!, 'inv', item)).toBe(before + 1);
+}
 
 function reloadViaSnapshot(gs: GameState): GameState {
   const snap = serializeSnapshot(gs);
@@ -439,11 +449,13 @@ describe('Final Journey Durability Corrective — Durable Run-Authoritative Dail
     r.player.x = (spots[0][0] + 1) * TILE + 8;
     r.player.y = spots[0][1] * TILE + 8;
     now += 200;
+    craftHarvestedPack(gs, 'workbench', now);
     expect(dispatch(gs, { id: 'red2-build-wb', type: 'build', struct: 'workbench', tx: spots[0][0], ty: spots[0][1] }, now).ok).toBe(true);
 
     r.player.x = (spots[1][0] + 1) * TILE + 8;
     r.player.y = spots[1][1] * TILE + 8;
     now += 200;
+    craftHarvestedPack(gs, 'bed_straw', now);
     expect(dispatch(gs, { id: 'red2-build-bed', type: 'build', struct: 'bed_straw', tx: spots[1][0], ty: spots[1][1] }, now).ok).toBe(true);
 
     // Also loot & learn real blueprint(s) from authored map loot crates after midnight so recipe-gated objectives unlock live too
@@ -729,6 +741,7 @@ describe('Final Journey Durability Corrective — Durable Run-Authoritative Dail
     r.player.x = (ftx + 1) * TILE + 8;
     r.player.y = fty * TILE + 8;
     now += 200;
+    craftHarvestedPack(gs, 'workbench', now);
     expect(dispatch(gs, { id: 'bound-build-bench', type: 'build', struct: 'workbench', tx: ftx, ty: fty }, now).ok).toBe(true);
     const bench = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'workbench')!;
     expect(bench).toBeDefined();
