@@ -1,3 +1,4 @@
+import {measureWorldWork} from '../src/game/world-work';
 import {describe,it,expect} from 'vitest';
 import {newGame,startRun,C,globalFreshWater,globalCellTileAndClass,allRunEntities} from '../src/game/engine';
 import {setActiveLayout} from '../src/game/world';
@@ -105,6 +106,22 @@ describe('global human route and source execution (engineering fixtures, not bro
   setVeyraPlacementRules(3);
   expect(getWindowWorldForGlobalTile(gx,gy,4)).toBe(w);
   expect(globalBaseWaterCell(x,y,4)).toEqual(base);setVeyraPlacementRules(4);
+ });
+ it('watches source solidity only on a failed route boundary, ignoring unrelated food stocks',()=>{
+  const r=scene().run!,h=Object.values(r.humanWorld!.people)[0],w=getWindowWorldForGlobalTile(1000,1000,4),nav=humanNavigation(r);
+  let pick:{x:number;y:number}|undefined;
+  for(let i=0;i<w.floors.ground.sources.length;i++){
+   const source=w.floors.ground.sources[i];if(!source||source==='wreck'||!SOURCES[source].block)continue;
+   const x=w.win.originTx+i%200,y=w.win.originTy+Math.floor(i/200);
+   if([-1,1,2].every(dx=>nav.free({tx:x+dx,ty:y,floor:0},h,true))){pick={x,y};break;}
+  }
+  expect(pick).toBeTruthy();const {x,y}=pick!;h.gx=x-1;h.gy=y;h.floor=0;
+  for(const [dx,dy]of [[-1,0],[0,1],[0,-1]])(r.veyraGlobalTerrain??={})[(y+dy)*FRAME_W+x-1+dx]={t:T.PWALL};
+  const target={tx:x+2,ty:y,floor:0};expect(humanNavigation(r).route(h,target)).toBeNull();expect(h.routeSearch?.status).toBe('NO_PATH');
+  const expanded=h.routeSearch!.expanded;(r.veyraGlobalSources??={})[(y+30)*FRAME_W+x]={stock:0,hp:0};
+  const unchanged=measureWorldWork(()=>humanNavigation(r).route(h,target,0));expect(unchanged.result).toBeNull();expect(h.routeSearch?.expanded).toBe(expanded);expect(unchanged.counts.routeBoundaryChecks).toBe(0);
+  r.veyraGlobalSources[y*FRAME_W+x]={stock:0,hp:0};expect(humanNavigation(r).route(h,target)).not.toBeNull();
+  r.veyraGlobalSources[y*FRAME_W+x].stock=1;expect(humanNavigation(r).enter(h,{tx:x,ty:y,floor:0},T0)).toBe(false);
  });
  it('never caches mutable remote stock, terrain or entity obstruction as base geometry',()=>{
   const r=scene().run!,w=getWindowWorldForGlobalTile(1000,1000,r.sourceMap?.rules===4?4:3),layer=w.floors.ground;
