@@ -1,0 +1,32 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90m/home/user/Soul-of-Hero/web[39m
+
+ [32m✓[39m tests/npc-p0-corrective.test.ts [2m([22m[2m27 tests[22m[2m)[22m[33m 5293[2mms[22m[39m
+     [33m[2m✓[22m[39m P0.1: first tick after startRun does not zero hunger/thirst or down humans [33m 1661[2mms[22m[39m
+     [33m[2m✓[22m[39m human melee uses K5 reach, floor and cadence gates and wears its equipped weapon [33m 316[2mms[22m[39m
+     [33m[2m✓[22m[39m P0.6: stepHumans runs consume/work/move without corrupting state [33m 1665[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 3750[2mms[22m[39m
+     [33m[2m✓[22m[39m derived sorted entity views observe direct add/delete/replacement/archive changes immediately [33m 1527[2mms[22m[39m
+     [33m[2m✓[22m[39m walks a real offscreen cardinal route with saved partial tile time and no repeated settlement [33m 308[2mms[22m[39m
+     [33m[2m✓[22m[39m reads cached distant freshwater through live ice/expiry and pins map placement to the run [33m 1397[2mms[22m[39m
+ [32m✓[39m tests/npc-residential-ownership.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 2363[2mms[22m[39m
+     [33m[2m✓[22m[39m cargo moves the same UID once and a full destination restores the original source slot [33m 1756[2mms[22m[39m
+ [32m✓[39m tests/npc-causal-needs.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 2299[2mms[22m[39m
+     [33m[2m✓[22m[39m does not impose a minute tick when the next physical threshold is hours away [33m 1694[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps bounded fair reviews for every actor with no eligible action, without removing anyone [33m 347[2mms[22m[39m
+ [32m✓[39m tests/npc-paid-work.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 1907[2mms[22m[39m
+   [33m[2m✓[22m[39m cook spends carried canonical inputs and fuel, waits for real station, and collects once across reload [33m 1870[2mms[22m[39m
+ [32m✓[39m tests/economy-reachable-union.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 768[2mms[22m[39m
+   [33m[2m✓[22m[39m multi-source walkability is exactly the old union, including separated islands, blocked/duplicate/edge starts [33m 324[2mms[22m[39m
+   [33m[2m✓[22m[39m compiled road proximity preserves the original exact0..3 stencil eligibility, including unreachable/cargo-denied roads [33m 426[2mms[22m[39m
+ [32m✓[39m tests/world-economy.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 169[2mms[22m[39m
+[90mstdout[2m | tests/veyra-coast-query.test.ts[2m > [22m[2mdeduplicated coast candidates preserve exact distances at authored edges, bucket seams, inland and sea
+[22m[39m{"case":"exact-coast-segment-union","samples":2582,"referenceMs":14.013530000000003,"optimizedMs":11.122930999999994}
+
+ [32m✓[39m tests/veyra-coast-query.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 67[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+[2m      Tests [22m [1m[32m63 passed[39m[22m[90m (63)[39m
+[2m   Start at [22m 03:36:16
+[2m   Duration [22m 25.16s[2m (transform 3.73s, setup 0ms, import 7.47s, tests 16.62s, environment 1ms)[22m
+

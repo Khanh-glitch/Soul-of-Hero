@@ -1,0 +1,169 @@
+[
+  {
+    "function": "reachable",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/world-economy.ts",
+    "line": 68
+  },
+  {
+    "function": "compileEconomy",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/world-economy.ts",
+    "line": 232
+  },
+  {
+    "function": "buildWindowWorld",
+    "file": "file:///home/user/Soul-of-Hero/web/src/veyra05/window.ts",
+    "line": 456
+  },
+  {
+    "function": "getWindowWorld",
+    "file": "file:///home/user/Soul-of-Hero/web/src/veyra05/window.ts",
+    "line": 626
+  },
+  {
+    "function": "globalBaseGeometry",
+    "file": "file:///home/user/Soul-of-Hero/web/src/veyra05/window.ts",
+    "line": 644
+  },
+  {
+    "function": "globalCellTileAndClass",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+    "line": 5007
+  },
+  {
+    "function": "cell",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/human-navigation.ts",
+    "line": 72
+  },
+  {
+    "function": "free",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/human-navigation.ts",
+    "line": 86
+  },
+  {
+    "function": "route",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/human-navigation.ts",
+    "line": 197
+  },
+  {
+    "function": "humanRouteToAdjacent",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/humanworld.ts",
+    "line": 1373
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/humanworld.ts",
+    "line": 1593
+  },
+  {
+    "function": "planHumanOccupation",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/human-jobs.ts",
+    "line": 151
+  },
+  {
+    "function": "planAutonomousWork",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/humanworld.ts",
+    "line": 1593
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/humanworld.ts",
+    "line": 1747
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/human-navigation.ts",
+    "line": 41
+  },
+  {
+    "function": "withRunEntityRead",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+    "line": 4821
+  },
+  {
+    "function": "withHumanNavigationRead",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/human-navigation.ts",
+    "line": 38
+  },
+  {
+    "function": "stepHumans",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/humanworld.ts",
+    "line": 1732
+  },
+  {
+    "function": "advanceWorld",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/sim.ts",
+    "line": 2674,
+    "value": {
+      "type": "object",
+      "subtype": "error",
+      "className": "ReferenceError",
+      "description": "ReferenceError: Cannot access 'dt' from debugger\n    at eval (eval at reachable (/home/user/Soul-of-Hero/web/src/game/world-economy.ts:47:98), <anonymous>:1:23)\n    at reachable (/home/user/Soul-of-Hero/web/src/game/world-economy.ts:47:98)\n    at compileEconomy (/home/user/Soul-of-Hero/web/src/game/world-economy.ts:119:81)\n    at buildWindowWorld (/home/user/Soul-of-Hero/web/src/veyra05/window.ts:356:23)\n    at getWindowWorld (/home/user/Soul-of-Hero/web/src/veyra05/window.ts:510:9)\n    at globalBaseGeometry (/home/user/Soul-of-Hero/web/src/veyra05/window.ts:546:13)\n    at globalCellTileAndClass (/home/user/Soul-of-Hero/web/src/game/engine.ts:3765:14)\n    at cell (/home/user/Soul-of-Hero/web/src/game/human-navigation.ts:54:76)\n    at free (/home/user/Soul-of-Hero/web/src/game/human-navigation.ts:64:11)\n    at Object.route (/home/user/Soul-of-Hero/web/src/game/human-navigation.ts:106:34)",
+      "objectId": "-2896347422909578821.1.181"
+    }
+  },
+  {
+    "function": "settle",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/sim.ts",
+    "line": 2999
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/tests/npc-runtime-throughput.test.ts",
+    "line": 19
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 302
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 1903
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2326
+  },
+  {
+    "function": "runWithCancel",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2323
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2305
+  },
+  {
+    "function": "runWithTimeout",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2272
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2956
+  },
+  {
+    "function": "run",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 1150
+  },
+  {
+    "function": "limiterFn",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 1162
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2956
+  },
+  {
+    "function": "$",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/vitest/dist/chunks/traces.DT5aQ62U.js",
+    "line": 142
+  }
+]
