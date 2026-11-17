@@ -47,6 +47,18 @@ export function reachable(m: EconomyMap, x:number,y:number, maxSteps=Infinity): 
   while(h<t){const i=q[h++],px=i%m.width,py=Math.floor(i/m.width); if(dist[i]>=maxSteps)continue;for(const [dx,dy] of OFFSETS){const nx=px+dx,ny=py+dy;if(nx<0||ny<0||nx>=m.width||ny>=m.height)continue;const j=ny*m.width+nx;if(dist[j]<0&&m.walkable[j]){dist[j]=dist[i]+1;q[t++]=j;}}}return dist;
 }
 
+/** Exact union of unlimited walkability floods from all authored starts. This
+ * query does not need distances: enqueue each reachable cell ONCE, rather than
+ * traversing the same component once per start. Blocked starts contribute none. */
+export function reachableUnion(m:EconomyMap):Uint8Array {
+  const n=m.width*m.height,seen=new Uint8Array(n),q=new Int32Array(n);let head=0,tail=0;
+  for(const s of m.starts){if(s.x<0||s.y<0||s.x>=m.width||s.y>=m.height)continue;const i=s.y*m.width+s.x;if(m.walkable[i]&&!seen[i]){seen[i]=1;q[tail++]=i;}}
+  while(head<tail){const i=q[head++],x=i%m.width,y=Math.floor(i/m.width);
+    for(const [dx,dy]of OFFSETS){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=m.width||ny>=m.height)continue;const j=ny*m.width+nx;if(!seen[j]&&m.walkable[j]){seen[j]=1;q[tail++]=j;}}
+  }
+  return seen;
+}
+
 /** Stable independently keyed random streams, with explicit weighted competition per cell.
  * A source's presence does not depend on insertion order in the source catalog. */
 /** G1A: roadside split of the legacy salvage share. Same cells win, only the archetype changes. */
@@ -63,7 +75,8 @@ export function pickWeighted(weights: readonly [string, number][], u: number): s
 export const G1A_YIELDING_TREES: ReadonlySet<string> = new Set(['oak','pine','snowpine','palm','willow','deadtree']);
 export function compileEconomy(m: EconomyMap, rules: 3 | 4 = 3): EconomyPlacement {
   const errors=validateEconomyMap(m); const n=m.width*m.height; if(errors.length) return {sources:[],errors};
-  const reached=new Uint8Array(n); for(const s of m.starts){const d=reachable(m,s.x,s.y);if(d[s.y*m.width+s.x]<0) errors.push(`start ${s.id} is not walkable`);for(let i=0;i<n;i++)if(d[i]>=0)reached[i]=1;}
+  for(const s of m.starts)if(!m.walkable[s.y*m.width+s.x])errors.push(`start ${s.id} is not walkable`);
+  const reached=reachableUnion(m);
   const out:(string|null)[]=Array(n).fill(null), salt=stableHash(`${m.id}/${m.revision}/v3`) ^ m.seed;
   const nearRoad=(x:number,y:number)=>{let best=99;for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=m.width||ny>=m.height)continue;if(m.road[ny*m.width+nx] && reached[ny*m.width+nx] && m.cargoPassable[ny*m.width+nx])best=Math.min(best,Math.abs(dx)+Math.abs(dy));}return best;};
   const fromWreck=new Uint8Array(n); // G1A-R1: cells the legacy rules gave a (solid) Wreck, as opposed to (walk-over) Roadside Scrap
@@ -116,7 +129,7 @@ export function compileEconomy(m: EconomyMap, rules: 3 | 4 = 3): EconomyPlacemen
   // Remove candidates which became physically isolated by the combined source
   // layout. Never synthesize a fallback source or alter map geometry.
   const pass = new Uint8Array(n); for (let i=0;i<n;i++) pass[i] = +(!!m.walkable[i] && !(out[i] && SOURCES[out[i]!]?.block));
-  const accessible = new Uint8Array(n); for (const start of m.starts) { const d=reachable({...m,walkable:pass},start.x,start.y); for(let i=0;i<n;i++) if(d[i]>=0) accessible[i]=1; }
+  const accessible=reachableUnion({...m,walkable:pass});
   for(let i=0;i<n;i++) if(out[i] && !accessible[i]) { const x=i%m.width,y=Math.floor(i/m.width); if(!OFFSETS.some(([dx,dy])=>x+dx>=0&&y+dy>=0&&x+dx<m.width&&y+dy<m.height&&accessible[(y+dy)*m.width+x+dx])) out[i]=null; }
   return {sources:out,errors};
 }

@@ -15,7 +15,7 @@
  */
 import { T, TILE, WW, WH } from '../game/core';
 import type { World, Place } from '../game/world';
-import { compileEconomy, reachable, type Biome, type EconomyMap } from '../game/world-economy';
+import { compileEconomy, reachableUnion, type Biome, type EconomyMap } from '../game/world-economy';
 import { mapDigest } from '../game/map-package';
 import type { VeyraViewIdentity } from '../game/veyra/projection';
 import { MAP_SOURCE_SHA, BODY_SHA } from '../game/veyra/intake';
@@ -357,11 +357,7 @@ export function buildWindowWorld(layoutId: string, rules: VeyraPlacementRules = 
     if (pCompiled.errors.length) throw Error(`Veyra U=0.5 padded compiler: ${pCompiled.errors.join('; ')}`);
     sourceV3 = new Array(n).fill(null);
     // Verify 200x200 reachability so every source inside the window is reachable from window anchors
-    const wReached = new Uint8Array(n);
-    for (const a of anchors) {
-      const d = reachable(economyMap, a.x, a.y);
-      for (let i = 0; i < n; i++) if (d[i] >= 0) wReached[i] = 1;
-    }
+    const wReached=reachableUnion(economyMap);
     for (let y = 0; y < WH; y++) {
       for (let x = 0; x < WW; x++) {
         const i = y * WW + x, pi = (y + PAD) * PW + (x + PAD);
