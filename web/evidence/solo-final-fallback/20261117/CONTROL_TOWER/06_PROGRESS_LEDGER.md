@@ -58,6 +58,31 @@ Status: source / engineering / Web / native / human / scope. Never self-declare 
 Commit integrity: clean/dirty, branch, full SHA, pushed vs local only.
 
 ## Resume exactly
+
+### 2026-11-17 arena/340bd7c4-soul-of-hero 7d00481
+Objective: Unblock `po_hook/0/garden_cottage` North exterior door (`x=2599, y=690`) which was immediately blocked by its interior partition (`x=2599, y=691..694`).
+Canonical source: `web/src/veyra05/arch/sites.ts` (`po_hook` / `garden_cottage`) and `web/evidence/g1b/census/G1B_REACHABILITY_CLASSIFICATION.json`.
+Impact: Shifting the partition and arch 1 tile west (`x=2598`) opens `(2599, 691)` so the player can enter `garden_cottage` from the North door.
+Source edit: `web/src/veyra05/arch/sites.ts` (lines 410-411).
+Evidence: Source-level geometry inspection of `rect: [2592, 690, 14, 9]`, `doorSide: 'N'` (door at `x=2599, y=690`). `g1b-geometry.test.ts` timed out at 60s due to full Veyra world compilation.
+Port status: SAFE_COMMON (`web/src/veyra05/arch/sites.ts`).
+Remaining required work: Inspect remaining G1B reachability defects (`po_gulfhead/0/quay_watch`, `po_rapids/0/wayhouse`, 5 `usable=0` rooms, 5 `MISSING_ROUTE_OR_STAIRS` rooms) and `typecheck:tests` errors.
+Next source action: Inspect `quay_watch` (`c01.ts`) and `wayhouse` (`rest48.ts`) door-exterior connectivity, and `typecheck:tests` errors.
+Status: engineering checkpoint (committed & pushed to `arena/340bd7c4-soul-of-hero`).
+Commit integrity: clean, `arena/340bd7c4-soul-of-hero`, `7d00481`, pushed to origin.
+
+### 2026-11-17 arena/340bd7c4-soul-of-hero 368232914084b53cb1041251c48d88ef60899838
+Objective: Eliminate 157 synchronous `toDataURL('image/png')` calls from `loadItemAtlas()` before React mounts, encoding PNG data URLs lazily on first `atlasIconUrl(key)` access instead.
+Canonical source: `web/src/game/item-atlas.ts` (`loadItemAtlas`, `atlasIconUrl`) and `web/src/main.tsx`.
+Impact: Removes 157 upfront PNG encodings from the critical startup path before first React render while preserving `cells[key]` for the canvas renderer, all 157 approved item mappings, and 640×360 rendering.
+Source edit: `web/src/game/item-atlas.ts` (`atlasIconUrl`, `loadItemAtlas`).
+Evidence: `npm run typecheck` (0 errors), `npx vitest run tests/item-atlas-157.test.ts tests/g1b-icon-audit.test.ts` (2/2 files, 3/3 tests passed), `npm run build` (`dist/index.html` built in 15.27s).
+Performance: Upfront `toDataURL('image/png')` calls at startup reduced from 157 to 0; browser runtime FPS/frame-time benchmark not yet run in headless Chromium (Playwright browser binary not installed in sandbox).
+Port status: SAFE_COMMON (`web/src/game/item-atlas.ts` is self-contained).
+Remaining required work: Inspect G1B reachability (`G1B_REACHABILITY_CLASSIFICATION.json` / `g1b-reachability.test.ts`) for real source-level collision/route defects; inspect `typecheck:tests` errors and other Solo backlog seams.
+Next source action: Inspect `G1B_REACHABILITY_CLASSIFICATION.json` and `web/src/game/g1b.ts` / `world.ts` for actual unreachable player content.
+Status: engineering checkpoint (committed & pushed to `arena/340bd7c4-soul-of-hero`).
+Commit integrity: clean, `arena/340bd7c4-soul-of-hero`, `368232914084b53cb1041251c48d88ef60899838`, pushed to origin.
 After context ends: agent starts from HEAD, latest ledger entry and diff, rechecks Creator/authority, selects first highest leverage unresolved *source* task, implements, verifies, commits, updates ledger, continues. It does not require another prompt, repeated user go-ahead or chat-assistant acceptance for each package. A platform stopped session is not background execution. A genuine conflict requiring Creator choice is stated precisely with alternatives while independent work continues.
 
 ## Critical safety review before each commit
