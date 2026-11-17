@@ -1,3 +1,4 @@
+import { validBearTrap } from './bear-trap-state';
 import { landingStimulus } from './stimulus';
 import { VFX_TEST_KIT, VFX_TEST_CORES } from './vfx/testkit';
 import { G1B_VERSION, G1B_LOOT_REVISION, G1B_CHEST_SLOTS, G1B_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, G1B_GATES, G1B_SITES, G1B_FIXTURE_BY_ID, g1bGateAtDoor, g1bRoll, g1bRefreshHours, g1bChestName, CORE_V2, CORE_SPECS, CORE_REPAIR_BILL, coreAmmo, coreLevel, coreDur, type CoreMode, type G1bGate } from './g1b';
@@ -2131,7 +2132,8 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
   // Reject damaged or spoofed packed devices *before* reserveInputs can spend.
   if (d.item && ITEMS[d.item]?.dur) {
     const packs=C(r,'inv').slots.filter(v=>v?.key===d.item);
-    if (!packs.some(v=>v?.qty===1&&Number.isFinite(v.dur)&&(v.dur??0)>0&&(v.dur??0)<=d.hp))
+    if (!packs.some(v=>v?.qty===1&&Number.isFinite(v.dur)&&(v.dur??0)>0&&(v.dur??0)<=d.hp&&
+      (v.bearTrap===undefined || type==='bear_trap'&&validBearTrap(v.bearTrap))))
       return 'Need an intact packed device.';
   }
   if (!hasAll(r, 'inv', cost)) return 'Missing materials: ' + cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ');
@@ -2582,6 +2584,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         if (!hasAll(r, 'inv', rule.cost)) return fail('Missing repair materials.');
         for (const [key, qty] of rule.cost) removeItem(r, 'inv', key, qty);
         const old = item.dur; item.dur = def.dur;
+        if(item.key==='deploy_bear_trap') delete item.bearTrap; // paid re-forge renews the worn mechanism
         return ok('item.repair', `${item.uid}:${old}->${item.dur}`, `${def.name} repaired to ${item.dur}/${def.dur}.`);
       }
       if (it.mode === 'salvage') {
@@ -2653,7 +2656,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         for(let i=inv.slots.length-1;i>=0;i--){
           const v=inv.slots[i];
           if(v?.key===d.item&&v.qty===1&&
-            (!ITEMS[d.item!].dur||(Number.isFinite(v.dur)&&v.dur!>0&&v.dur!<=d.hp))){idx=i;break;}
+            (!ITEMS[d.item!].dur||(Number.isFinite(v.dur)&&v.dur!>0&&v.dur!<=d.hp))&&
+            (v.bearTrap===undefined || it.struct==='bear_trap'&&validBearTrap(v.bearTrap))){idx=i;break;}
         }
         if(idx<0)return fail('No valid packed device in inventory.');
         deployed=inv.slots[idx]!;
@@ -2670,7 +2674,10 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (it.struct === 'ir_sensor') e.irSensor={version:'ir-v1',enabled:false};
       if (LADDER_SPAN[it.struct]) { const plan = ladderPlan(r, it.struct, it.tx, it.ty); if (typeof plan !== 'string') e.ladder = plan; }
       if (it.struct === 'large_furnace' && e.station) { delete r.custody[e.station.outC]; e.station.outC = mkContainer(r, 'out', LARGE_FURNACE.outSlots).id; }
-      if (it.struct === 'bear_trap') e.bearTrap={version:'trap-v1',state:'unarmed',uses:BAL.bearTrapV1.uses};
+      if (it.struct === 'bear_trap') {
+        e.bearTrap=deployed?.bearTrap ? {...deployed.bearTrap} : {version:'trap-v1',state:'unarmed',uses:BAL.bearTrapV1.uses};
+        if (deployed) delete deployed.bearTrap; // placed entity is now the sole mechanism authority
+      }
       if (it.struct === 'door_powered') {const dx=p.x-e.x,dy=p.y-e.y;const outside:[number,number]=Math.abs(dx)>Math.abs(dy)?[Math.sign(dx)||1,0]:[0,Math.sign(dy)||1];e.electricDoor={version:'wire-v1',interior:[outside[0] ? -outside[0] : 0,outside[1] ? -outside[1] : 0]};}
       if (it.struct === 'arrow_turret') e.turret = { enabled: false, cooldown: 0, angle: 0 };
       if (it.struct === 'farm_controller') e.farm = { enabled:false, crop:'crop', energy:0 };
@@ -2812,11 +2819,15 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
           // One authentic UID survives inventory → placement → recovery. Damage
           // follows it; no reclaim/redeploy healing exploit.
           e.deployed.dur = e.hp;
+          if (e.type==='bear_trap' && e.bearTrap) e.deployed.bearTrap={...e.bearTrap};
           returnReservations(r, [e.deployed], e.x, e.y, now);
         } else {
           // Historical raw-paid saves have no deployed identity. Mint exactly
           // one explicit migration recovery item only when that entity is removed.
-          giveOrDrop(r, d.item, 1, now, {dur:e.hp});
+          if(e.type==='bear_trap' && e.bearTrap){
+            const pack=mkStack(r,d.item,1);pack.dur=e.hp;pack.bearTrap={...e.bearTrap};
+            returnReservations(r,[pack],e.x,e.y,now);
+          } else giveOrDrop(r, d.item, 1, now, {dur:e.hp});
           receipt(r,now,'pa1.legacy.unpack',e.id+':'+e.type);
         }
       }

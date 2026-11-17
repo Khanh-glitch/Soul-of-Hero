@@ -49,10 +49,12 @@ export const TERRAIN_NAME = ['deep', 'shallow', 'sand', 'grass', 'meadow', 'fore
 
 // ---------- Items & custody ----------
 export interface CoreReserve { basic: number; refined: number; signature: number }
+/** Physical mechanism travels with a packed trap's UID; only paid re-forge renews it. */
+export interface BearTrapState { version: 'trap-v1'; state: 'unarmed' | 'armed' | 'spent' | 'worn'; uses: number; snapAt?: number }
 /** Creator Core V2 (G1B): `lvl` 1-3 lives on the physical instance, `cd` holds the three per-UID ready-at timestamps,
  *  `upg` is a running same-UID upgrade. `reserves` exists only in pre-V2 saves and is converted on load into `owed`: the exact items that energy was
  *  loaded from, handed back to the Core's own container as soon as there is room. A cast never draws on it. */
-export interface Stack { uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; owed?: Record<string, number>; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
+export interface Stack { bearTrap?: BearTrapState; uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; owed?: Record<string, number>; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
 export interface Container { id: string; kind: string; slots: (Stack | null)[] }
 
 export type Dir = 0 | 1 | 2 | 3; // down, left, right, up
@@ -125,7 +127,7 @@ export interface Entity {
   ladder?: { dir: [number, number]; len: number };
   /** Item set v3: the door type a Powered Door module was fitted into (reclaim hands that door back). */
   poweredHost?: string;
-  bearTrap?: { version: 'trap-v1'; state: 'unarmed' | 'armed' | 'spent' | 'worn'; uses: number; snapAt?: number };
+  bearTrap?: BearTrapState;
   basePower?: { enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production'; network?: 'wire-v1' };
   wireSwitch?: {version:'wire-v1'; on:boolean};
   electricDoor?: {version:'wire-v1'; interior:[number,number]; releaseUntil?:number};

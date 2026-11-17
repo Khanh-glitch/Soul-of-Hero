@@ -111,6 +111,7 @@ function trapSetup() {
   const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); };
   const build = (tx: number, ty: number) => {
     pos(tx, ty + 1); for (const [k, q] of STRUCTS.bear_trap.cost) addItem(r, 'inv', k, q);
+    expect(act(g, 'craft', { recipe: STRUCTS.bear_trap.item! }, T0).ok).toBe(true);
     expect(act(g, 'build', { struct: 'bear_trap', tx, ty }, T0).ok).toBe(true);
     return Object.values(r.entities).find(e => e.type === 'bear_trap' && e.tx === tx && e.ty === ty)!;
   };
@@ -194,6 +195,7 @@ function campSetup() {
   if (!s) throw new Error('no snow spot');
   addItem(r, 'inv', 'wood', 40); addItem(r, 'inv', 'stone', 20);
   r.player.x = s.x * TILE + 8; r.player.y = s.y * TILE + 8; markDirty();
+  expect(act(g, 'craft', { recipe: STRUCTS.campfire.item! }, T0).ok).toBe(true);
   expect(act(g, 'build', { struct: 'campfire', tx: s.x + 2, ty: s.y }, T0).ok).toBe(true);
   const fire = Object.values(r.entities).find(e => e.type === 'campfire' && e.tx === s!.x + 2 && e.ty === s!.y)!;
   return { g, r, s, fire };

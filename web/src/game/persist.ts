@@ -74,14 +74,8 @@ const has = (catalog: object, key: unknown) => typeof key === 'string' && Object
 /** Fail closed on broken references and duplicate physical/reserved identities. */
 /** B04-P3 trap-v1 reachable pairs (build=unarmed/3; arm/rearm spend a plate; each hit: 3->2 spent, 2->1 spent, 1->0 worn).
  * unarmed:3 · armed:1..3 · spent:1..2 · worn:0. Any other pairing is a forged or corrupt save. */
-export function bearTrapStateValid(state:any, uses:any):boolean {
-  if(!Number.isInteger(uses))return false;
-  if(state==='unarmed')return uses===3;
-  if(state==='armed')return uses>=1&&uses<=3;
-  if(state==='spent')return uses>=1&&uses<=2;
-  if(state==='worn')return uses===0;
-  return false;
-}
+export { bearTrapStateValid } from './bear-trap-state';
+import { validBearTrap } from './bear-trap-state';
 export function validate(raw: any): GameState | null {
   if (!obj(raw) || !integer(raw.version) || raw.version > SAVE_VERSION || !integer(raw.revision)) return null;
   const p = raw.profile;
@@ -513,7 +507,7 @@ export function validate(raw: any): GameState | null {
       if(e.type==='power_switch'&&(!obj(e.wireSwitch)||e.wireSwitch.version!=='wire-v1'||typeof e.wireSwitch.on!=='boolean'))return null;
       if(e.type==='door_powered'&&(!obj(e.electricDoor)||e.electricDoor.version!=='wire-v1'||!Array.isArray(e.electricDoor.interior)||e.electricDoor.interior.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===e.electricDoor.interior[0]&&v[1]===e.electricDoor.interior[1])||(e.electricDoor.releaseUntil!==undefined&&(!finite(e.electricDoor.releaseUntil)||e.electricDoor.releaseUntil<r.startedAt))))return null;
     }
-    if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!obj(e.bearTrap)||e.bearTrap.version!=='trap-v1'||!bearTrapStateValid(e.bearTrap.state,e.bearTrap.uses)||(e.bearTrap.snapAt!==undefined&&!(Number.isSafeInteger(e.bearTrap.snapAt)&&e.bearTrap.snapAt>=0))))return null;
+    if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!validBearTrap(e.bearTrap)))return null;
     if(e.type==='bear_trap'&&e.bearTrap===undefined)return null;
     // Item set v3: a ladder record only on a ladder, a unit direction, and a reach its type allows; a fitted lock module names a real host door.
     if(e.ladder!==undefined&&(!LADDER_SPAN[e.type]||!obj(e.ladder)||!Array.isArray(e.ladder.dir)||e.ladder.dir.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===e.ladder.dir[0]&&v[1]===e.ladder.dir[1])||!integer(e.ladder.len)||e.ladder.len<1||e.ladder.len>LADDER_SPAN[e.type]))return null;
@@ -916,6 +910,7 @@ export function stackInvariant(s: any, uids: Set<string>, beforeNext: (id: strin
   if (typeof s.key !== 'string' || !has(ITEMS, s.key)) return 'unknown-item';
   if (!integer(s.qty) || s.qty < 1) return 'bad-qty';
   if (s.qty > ITEMS[s.key].max) return `over-max:${s.key}`;
+  if (s.bearTrap !== undefined && (s.key !== 'deploy_bear_trap' || !validBearTrap(s.bearTrap))) return 'bad-packed-trap';
   if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return 'bad-upgrade';
   if ((s.key === 'keycard' || isAccessCard(s.key)) && s.charge !== undefined && (!integer(s.charge) || s.charge < 1 || s.charge > 100 || s.qty !== 1)) return 'bad-card-charge';
   if (s.key === 'motorbike_kit' && (!finite(s.dur) || s.dur < 0 || s.dur > BAL.motorbike.maxHp)) return 'bad-motorbike-dur';
