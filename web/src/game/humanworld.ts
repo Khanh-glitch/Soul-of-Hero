@@ -1,3 +1,4 @@
+import {globalSourceCandidates} from '../veyra05/window';
 import {countWorldWork} from './world-work';
 /**
  * Soul of Hero — THE LAST HUMANITY: authoritative run-local human society.
@@ -20,11 +21,11 @@ import {countWorldWork} from './world-work';
  *    humans. No retroactive population/loot mint on old saves.
  */
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
-import { STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, globalFreshWater, globalSourceAt } from './engine';
+import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
+import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
-import { humanEntityTile, executeHumanWork, planHumanOccupation, type HumanWorkTask } from './human-jobs';
+import { humanCanUseEntity, humanEntityTile, executeHumanWork, planHumanOccupation, type HumanWorkTask } from './human-jobs';
 import { withHumanNavigationRead, humanNavigation } from './human-navigation';
 import { humanShelter, humanShelterContext, type HumanShelterContext } from './human-shelter';
 import { liveItemId, liveItemPer } from './final-item-set';
@@ -166,6 +167,8 @@ export interface HumanRecord {
   routeSearch?: {status:'FOUND'|'PENDING_SEARCH'|'NO_PATH'|'SEARCH_LIMIT';target:string;expanded:number};
   motion?: { fromGx: number; fromGy: number; toGx: number; toGy: number; toFloor?: number; elapsedMs: number; updatedAt?: number };
   workOutputs?: Record<string, number>;
+  workOutputSources?:Record<string,{sourceId:string;jobId:string}>;
+  harvestJob?: {id:string;sourceId:string;gx:number;gy:number;floor:number;key:string;phase:'source'|'delivery';storeId?:string;startedAt:number};
   knownRecipes?: string[];
   patrolPostIndex?: number;
   lastWatchAt?: number;
@@ -186,6 +189,7 @@ export interface Community {
   waterSources: string[];     // source ids
   foodStores: string[];       // container ids
   workStations: string[];     // station entity ids
+  cargoLedger?:Record<string,{at:number;jobId:string;sourceId?:string;workerId:string;fromUid:string;intoUid:string;qty:number;key:string}[]>;
   storeContainers: string[];  // community store container ids
   /** Global tile backing the physical store entity and access check. */
   storeTile?: [number, number];
@@ -544,7 +548,7 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
     const origin = r.sourceMap?.veyra?.originAu;
     const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
     const lx = storeTile[0] - ox, ly = storeTile[1] - oy;
-    const storeEntity: Entity = { id: storeEntityId, kind: 'bag', x: storeTile[0] * TILE + 8, y: storeTile[1] * TILE + 8, tx: storeTile[0], ty: storeTile[1], c: store.id, label: `${site.name} Community Store`, poi: site.id };
+    const storeEntity: Entity = { id: storeEntityId, owner:communityId, floor:0, kind: 'bag', x: storeTile[0] * TILE + 8, y: storeTile[1] * TILE + 8, tx: storeTile[0], ty: storeTile[1], c: store.id, label: `${site.name} Community Store`, poi: site.id };
     if (lx >= 1 && ly >= 1 && lx < WW - 1 && ly < WH - 1) {
       storeEntity.x = lx * TILE + 8; storeEntity.y = ly * TILE + 8; storeEntity.tx = lx; storeEntity.ty = ly;
       r.entities[storeEntity.id] = storeEntity;
@@ -698,13 +702,13 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
 /** Permission is not physical access. Distant logistics must deliver goods via real routes. */
 function reachableHumanStores(r: RunState, hw: HumanWorld, h: HumanRecord): Container[] {
   const comm = h.community ? hw.communities[h.community] : undefined;
-  if (!comm?.storeEntityId) return [];
-  const e = findRunEntity(r,comm.storeEntityId);
-  if (!e?.c || !comm.foodStores.includes(e.c) || (e.floor ?? 0)!==h.floor) return [];
-  const [gx,gy]=humanEntityTile(r,e);
-  if(Math.abs(h.gx-gx)+Math.abs(h.gy-gy)>1)return [];
-
-  return r.custody[e.c] ? [r.custody[e.c]] : [];
+  if (!comm?.storeEntityId||['DEAD','DOWNED','EVACUATED'].includes(h.state)) return [];
+  const e=findRunEntity(r,comm.storeEntityId);
+  if(!e?.c||!comm.storeContainers.includes(e.c)||!comm.foodStores.includes(e.c)||!r.custody[e.c]||!humanCanUseEntity(r,h,e))return [];
+  if(e.owner?e.owner!==h.community:r.custody[e.c].origin?.sourceId!==`regional-human-economy:${comm.poi}`)return [];
+  const nav=humanNavigation(r),[gx,gy]=humanEntityTile(r,e);
+  if(!nav.free({tx:h.gx,ty:h.gy,floor:h.floor},h,true)||[1,5].includes(nav.cell({tx:gx,ty:gy,floor:h.floor}).cls))return [];
+  return [r.custody[e.c]];
 }
 
 /** Eat/drink from carried or community stock (real item custody).
@@ -726,6 +730,7 @@ export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 
         s.qty--; if (s.qty <= 0) { const i = c.slots.indexOf(s); c.slots[i] = null; }
         h.blockedPlanCount=0;h.nextThinkAt=now;
         receipt(r, now, 'human.eat', `${h.actorId}:${s.key}`);
+        receipt(r,now,'human.consume',JSON.stringify({actorId:h.actorId,uid:s.uid,key:s.key,containerId:c.id,qty:1}));
         return true;
       }
       if (kind === 'water' && (d.food?.thirst || d.waterContainer)) {
@@ -782,7 +787,7 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   if(Math.hypot(h.gx-targetGx,h.gy-targetGy)>1.5)return unavailable();
   if(global){
     const nav=humanNavigation(r);
-    if(!nav.free({tx:h.gx,ty:h.gy,floor:h.floor},h,true))return unavailable();
+    if(!nav.free({tx:h.gx,ty:h.gy,floor:h.floor},h,true)||[1,3,5].includes(nav.cell({tx:targetGx,ty:targetGy,floor:h.floor}).cls))return unavailable();
     if(h.gx!==targetGx&&h.gy!==targetGy&&(!nav.free({tx:h.gx,ty:targetGy,floor:h.floor},h,true)||!nav.free({tx:targetGx,ty:h.gy,floor:h.floor},h,true)))return unavailable();
   } else {
     const from={x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE},to={x:(localX+.5)*TILE,y:(localY+.5)*TILE};
@@ -837,6 +842,7 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
     got += Math.ceil(q * liveItemPer(k));
   }
   st.stock -= units;
+  if(st.stock<=0)markDirty();
   h.stamina -= 2;
   if (tool?.dur !== undefined) { tool.dur = Math.max(0, tool.dur - 1); if (tool.dur === 0) h.equip.weapon = null; }
   if (st.stock <= 0 && s.def.regrow) { st.regrowFrom = now; st.regrowAcc = 0; }
@@ -951,6 +957,7 @@ export function killHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
   if (h.state === 'DEAD') return;
   h.state = 'DEAD';
   h.deadAt = now;
+  if(h.harvestJob){receipt(r,now,'human.harvest.cancel',`${h.harvestJob.id}:worker died; cargo stays with corpse`);delete h.harvestJob;}
   h.motion = undefined; h.intent = undefined;
   h.hp = 0;
   h.outcome = 'DEAD';
@@ -1134,9 +1141,9 @@ export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   if (!h.disposition_known.knownPeople.includes('player')) h.disposition_known.knownPeople.push('player');
   h.lastTalkAt = now;
   const facts: string[] = [`${h.name} · ${h.occupation} · ${h.community ? hw.communities[h.community]?.poi ?? 'traveler' : 'traveler'}`];
-  if (h.intent?.kind === 'work' && h.intent.target?.startsWith('harvest:')) {
-    const m = h.intent.target.match(/^harvest:(\d+),(\d+)$/);
-    const s = m ? sourceAt(r, Number(m[1]), Number(m[2]), now) : null;
+  if (h.intent?.kind === 'work' && h.intent.target?.match(/^(global-harvest|harvest):/)) {
+    const m=h.intent.target.match(/^(?:global-harvest:(-?\d+):|harvest:)(\d+),(\d+)$/);
+    const s=m?(m[1]!==undefined?globalSourceAt(r,Number(m[2]),Number(m[3]),Number(m[1]),now):sourceAt(r,Number(m[2]),Number(m[3]),now)):null;
     facts.push(h.state === 'WORKING' ? `Working at ${s?.def.name ?? 'a shared source'}.` : `Heading to ${s?.def.name ?? 'a shared source'}${h.intent.blockReason ? ` · ${h.intent.blockReason}` : '.'}`);
   } else if (h.following) facts.push(h.state === 'MOVING' ? 'Keeping pace with you.' : 'Waiting nearby for your next move.');
   else if (h.intent?.blockReason) facts.push(`Cannot continue: ${h.intent.blockReason}.`);
@@ -1660,6 +1667,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     planHumanOccupation(r, hw, h, now, (gx,gy,floor) => humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied,floor));
     h.nextThinkAt = now + 3000; return;
   }
+  if(h.harvestJob && !h.following && h.state==='IDLE' && !h.intent){resumeHarvestJob(r,hw,h,now,occupied);return;}
   if (h.following || h.state !== 'IDLE' || h.intent || (h.nextThinkAt ?? 0) > now) return;
   h.nextThinkAt = now + 6000;
   if (h.hp < 30 || h.stamina < 12) return;
@@ -1686,7 +1694,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     if (!route) return;
     h.intent = { intentId: `store:${h.actorId}:${now}`, actorId: h.actorId, kind: 'work', target: 'store', preconditions: ['carry output from shared harvest', 'physical community store'], reserved: [], startAt: now, dueAt: now, route };
     h.state = route.length ? 'MOVING' : 'IDLE';
-    if (!route.length) { depositHumanOutputs(r, h, now); h.intent = undefined; h.nextThinkAt = now + 6000; }
+    if (!route.length) { depositHumanOutputs(r, h, now); if((h as HumanRecord).state!=='MOVING')h.intent = undefined; h.nextThinkAt = Math.max(h.nextThinkAt??0,now + 6000); }
     return;
   }
   if(h.rest>=.5 && h.bedId) {
@@ -1699,33 +1707,48 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     h.lastWorkBlock='My sleeping place is missing or unreachable.';
   }
   if (planHumanOccupation(r,hw,h,now,(gx,gy,floor)=>humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied,floor))) return;
-  const lx = h.gx - ox, ly = h.gy - oy;
-  if (lx < 1 || ly < 1 || lx >= WW - 1 || ly >= WH - 1) return;
-  if(h.floor!==(r.veyraFloor??0)||h.gx<ox||h.gy<oy||h.gx>=ox+WW||h.gy>=oy+WH){h.lastWorkBlock='No certified shared-harvest action here yet.';return;}
-  let best: { tx: number; ty: number; score: number } | null = null, spaceBlocked = false;
-  for (let y = Math.max(1, ly - 24); y <= Math.min(WH - 2, ly + 24); y++) for (let x = Math.max(1, lx - 24); x <= Math.min(WW - 2, lx + 24); x++) {
-    const s = sourceAt(r, x, y, now);
-    if (!s || s.stock <= 0 || protectedTiles.has(`${x}:${y}`) || !canHarvestSource(h, s)) continue;
-    if (!simulateHumanOutput(pack.slots.map(v => v ? { ...v } : null), s.def.yields)) { spaceBlocked = true; continue; }
-    const score = Math.abs(x - lx) + Math.abs(y - ly) + (s.stock <= 1 ? 4 : 0);
-    if (!best || score < best.score) best = { tx: x, ty: y, score };
+  const allowed=new Set(Object.keys(SOURCES).filter(key=>canHarvestSource(h,{key,def:SOURCES[key]} as NonNullable<ReturnType<typeof sourceAt>>)));
+  countWorldWork('sourceIndexReads');
+  const local=h.gx>=ox&&h.gy>=oy&&h.gx<ox+WW&&h.gy<oy+WH;
+  const candidates=globalSourceCandidates(h.gx,h.gy,h.floor,r.sourceMap?.rules===4?4:3,allowed,local?r.layoutId:undefined);
+  for(const p of candidates){
+    const s=globalSourceAt(r,p.gx,p.gy,h.floor,now);if(!s||s.protected||s.stock<=0||!canHarvestSource(h,s))continue;
+    if(!simulateHumanOutput(pack.slots.map(v=>v?{...v}:null),s.def.yields))continue;
+    h.harvestJob={id:uid(r,'hj'),sourceId:s.sourceId,gx:p.gx,gy:p.gy,floor:h.floor,key:s.key,phase:'source',startedAt:now};
+    receipt(r,now,'human.harvest.select',`${h.harvestJob.id}:${h.actorId}:${s.sourceId}:${s.key}`);
+    resumeHarvestJob(r,hw,h,now,occupied);return;
   }
-  if (!best) { if (spaceBlocked) h.lastWorkBlock = 'My pack is full; I cannot take another source unit until I make room.'; return; }
-  const targetGx = ox + best.tx, targetGy = oy + best.ty;
-  const route = humanRouteToAdjacent(r, h, targetGx, targetGy, grid, ox, oy, occupied);
-  if (!route) { h.lastWorkBlock = 'I cannot reach a suitable shared source by a legal route from here.'; return; }
-  h.lastWorkBlock = undefined;
-  h.intent = { intentId: `work:${h.actorId}:${now}`, actorId: h.actorId, kind: 'work', target: `harvest:${best.tx},${best.ty}`, preconditions: ['shared source in active window', 'occupation and equipped tool can extract source', 'pack has room', 'player-exploration caches excluded'], reserved: [], startAt: now, dueAt: now, route };
-  h.state = route.length ? 'MOVING' : 'WORKING';
-  if (!route.length) h.intent.dueAt = now + 1500;
 }
-function performHumanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): boolean {
-  const m = h.intent?.target?.match(/^harvest:(\d+),(\d+)$/);
+function resumeHarvestJob(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occupied:Set<string>):void {
+  const job=h.harvestJob;if(!job)return;
+  h.nextThinkAt=now+3000;
+  if(job.phase==='source'){
+    const s=globalSourceAt(r,job.gx,job.gy,job.floor,now);
+    if(h.floor!==job.floor||!s||s.key!==job.key||s.protected||s.stock<=0||!canHarvestSource(h,s)||h.stamina<2){receipt(r,now,'human.harvest.cancel',`${job.id}:source/tool/access changed`);delete h.harvestJob;return;}
+    if(!simulateHumanOutput(humanPack(r,h).slots.map(v=>v?{...v}:null),s.def.yields)){h.lastWorkBlock='Pack full before extraction';delete h.harvestJob;return;}
+    const route=humanNavigation(r,occupied,true).route(h,{tx:job.gx,ty:job.gy,floor:job.floor});if(!route){if(h.routeSearch?.status==='NO_PATH'){receipt(r,now,'human.harvest.cancel',`${job.id}:no legal route`);delete h.harvestJob;}return;}
+    h.intent={intentId:job.id,actorId:h.actorId,kind:'work',target:`global-harvest:${job.floor}:${job.gx},${job.gy}`,preconditions:['known source','timed physical shared harvest'],reserved:[job.sourceId],startAt:now,dueAt:now+1500,route};
+    h.state=route.length?'MOVING':'WORKING';
+  }else{
+    const comm=h.community?hw.communities[h.community]:undefined,store=comm?.storeEntityId?findRunEntity(r,comm.storeEntityId):undefined;
+    if(!store?.c||!comm?.storeContainers.includes(store.c)||(store.owner&&store.owner!==h.community)||(store.hp??1)<=0){h.lastWorkBlock='Authorized output store unavailable';return;}
+    job.storeId=store.id;
+    const [gx,gy]=humanEntityTile(r,store),route=humanNavigation(r,occupied,true).route(h,{tx:gx,ty:gy,floor:store.floor??0});if(!route)return;
+    h.lastWorkBlock=undefined;
+    h.intent={intentId:job.id,actorId:h.actorId,kind:'work',target:'store',preconditions:['owned output','exact destination contact'],reserved:[],startAt:now,dueAt:now,route};h.state=route.length?'MOVING':'IDLE';
+    if(!route.length){depositHumanOutputs(r,h,now);if((h as HumanRecord).state!=='MOVING')h.intent=undefined;h.nextThinkAt=Math.max(h.nextThinkAt??0,now+10000);}
+  }
+}
+
+function performHumanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, occupied=new Set<string>()): boolean {
+  const m = h.intent?.target?.match(/^(?:global-harvest:(-?\d+):|harvest:)(\d+),(\d+)$/);
   if (!m) return false;
-  const tx = Number(m[1]), ty = Number(m[2]);
+  const global=m[1]!==undefined,tx=Number(m[2]),ty=Number(m[3]);
+  if(global&&h.floor!==Number(m[1])){h.intent=undefined;h.state='IDLE';delete h.harvestJob;return false;}
+  if(global&&h.harvestJob){const s=globalSourceAt(r,tx,ty,h.floor,now);if(!s||s.key!==h.harvestJob.key||!canHarvestSource(h,s)){delete h.harvestJob;h.intent=undefined;h.state='IDLE';return false;}}
   const before = new Map(humanPack(r, h).slots.filter((s): s is Stack => !!s).map(s => [s.uid, s.qty]));
-  const result = humanHarvest(r, hw, h, tx, ty, now);
-  if (result.result !== 'yield') { h.lastWorkBlock = result.reason; h.intent = undefined; h.state = 'IDLE'; h.nextThinkAt = now + 10000; return false; }
+  const result = humanHarvest(r, hw, h, tx, ty, now,global);
+  if (result.result !== 'yield') { h.lastWorkBlock = result.reason; h.intent = undefined; h.state = 'IDLE'; h.nextThinkAt = now + 10000; delete h.harvestJob;return false; }
   if ((result.got ?? 0) <= 0) {
     // The source took a real strike, but no whole stock unit crossed the extraction threshold yet.
     // Continue the same work commitment; do not record output or claim production.
@@ -1736,30 +1759,55 @@ function performHumanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, now: n
   h.workOutputs ??= {};
   for (const s of humanPack(r, h).slots) if (s) {
     const delta = s.qty - (before.get(s.uid) ?? 0);
-    if (delta > 0) h.workOutputs[s.uid] = (h.workOutputs[s.uid] ?? 0) + delta;
+    if (delta > 0){h.workOutputs[s.uid] = (h.workOutputs[s.uid] ?? 0) + delta;
+      if(h.harvestJob){(h.workOutputSources??={})[s.uid]={sourceId:h.harvestJob.sourceId,jobId:h.harvestJob.id};receipt(r,now,'human.harvest.output',JSON.stringify({jobId:h.harvestJob.id,sourceId:h.harvestJob.sourceId,workerId:h.actorId,uid:s.uid,key:s.key,qty:delta}));}
+    }
   }
+  if(h.harvestJob)h.harvestJob.phase='delivery';
   h.lastCommittedAt = now;
   h.state = 'IDLE';
   h.intent = undefined;
+  h.nextThinkAt=now;
   receipt(r, now, 'human.work', `${h.actorId}:harvest:${result.key}:${result.got}`);
+  // Arrival/work completion is already a scheduled event: begin the bounded
+  // return search now, rather than queue cargo behind a fresh island census.
+  if(h.harvestJob)resumeHarvestJob(r,hw,h,now,occupied);
   return true;
 }
-function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): void {
-  if (!h.community || !h.workOutputs) return;
+export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): void {
+  if (!h.community || !h.workOutputs||['DOWNED','DEAD','EVACUATED'].includes(h.state)) return;
   const comm = r.humanWorld?.communities[h.community]; if (!comm) return;
-  if (!reachableHumanStores(r, r.humanWorld!, h).length) return;
-  const dstId = comm.storeContainers.find(id => r.custody[id]); if (!dstId) return;
+  const reached=reachableHumanStores(r,r.humanWorld!,h)[0];if(!reached)return;
+  if(h.harvestJob?.storeId&&h.harvestJob.storeId!==comm.storeEntityId)return;
+  const dstId=reached.id;
   const pack = humanPack(r, h), dst = r.custody[dstId]; let moved = 0;
   for (const [stackUid, qty] of Object.entries(h.workOutputs)) {
     const i = pack.slots.findIndex(s => s?.uid === stackUid); if (i < 0 || qty <= 0) { delete h.workOutputs[stackUid]; continue; }
-    const s = pack.slots[i]!; const take = Math.min(qty, s.qty);
+    const s = pack.slots[i]!;
+    const room=dst.slots.includes(null)?s.qty:(s.production||s.meta!==undefined||s.dur!==undefined||s.charge!==undefined?0:spaceFor(r,dstId,s.key));
+    const take=Math.min(qty,s.qty,room);if(take<=0){h.lastWorkBlock='Reached output store is full; cargo remains in my pack.';continue;}
     const transfer = take === s.qty ? s : { ...s, uid: uid(r, 's'), qty: take };
     const whole = take === s.qty;
+    const destinationBefore=new Map(dst.slots.filter((v):v is Stack=>!!v).map(v=>[v.uid,v.qty]));
     if (whole) pack.slots[i] = null; else s.qty -= take;
     if (!addStack(r, dstId, transfer)) { if (whole) pack.slots[i] = s; else s.qty += take; continue; }
-    moved += take; if (qty <= take) delete h.workOutputs[stackUid]; else h.workOutputs[stackUid] = qty - take;
+    const origin=h.workOutputSources?.[stackUid];
+    const lineage=dst.slots.filter((v):v is Stack=>!!v).flatMap(v=>{const qty=v.qty-(destinationBefore.get(v.uid)??0);return qty>0?[{at:now,jobId:origin?.jobId??h.harvestJob?.id??'work',sourceId:origin?.sourceId,workerId:h.actorId,fromUid:stackUid,intoUid:v.uid,qty,key:v.key}]:[];});
+    (comm.cargoLedger??={})[transfer.uid]=lineage;
+    receipt(r,now,'human.cargo.lineage',JSON.stringify({containerId:dstId,transferUid:transfer.uid,lineage}));
+    receipt(r,now,'human.cargo.deliver',`${h.harvestJob?.id??'work'}:${h.actorId}:${stackUid}>${transfer.uid}:${dstId}:${take}`);
+    moved += take; if (qty <= take){delete h.workOutputs[stackUid];if(h.workOutputSources)delete h.workOutputSources[stackUid];} else h.workOutputs[stackUid] = qty - take;
   }
   if (moved) receipt(r, now, 'human.store', `${h.actorId}:${moved}`);
+  if(h.harvestJob?.phase==='delivery'&&Object.values(h.workOutputs).some(q=>q>0)&&!moved){
+    h.nextThinkAt=now+30000;
+    const e=comm.storeEntityId?findRunEntity(r,comm.storeEntityId):undefined;
+    if(e){const [sx,sy]=humanEntityTile(r,e),occupied=new Set(Object.values(r.humanWorld!.people).filter(p=>p.actorId!==h.actorId&&!['DEAD','EVACUATED'].includes(p.state)).map(p=>humanCellKey(p.floor,p.gx,p.gy))),nav=humanNavigation(r,occupied);
+      const step=[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({tx:h.gx+dx,ty:h.gy+dy,floor:h.floor})).find(p=>Math.abs(p.tx-sx)+Math.abs(p.ty-sy)>=2&&nav.legalEdge(h,p));
+      if(step){h.intent={intentId:h.harvestJob.id,actorId:h.actorId,kind:'move',target:'store-wait',preconditions:['full store; carry goods while leaving access clear'],reserved:[],startAt:now,dueAt:now,route:[step]};h.state='MOVING';}
+    }
+  }
+  if(h.harvestJob?.phase==='delivery'&&!Object.values(h.workOutputs).some(q=>q>0)){receipt(r,now,'human.harvest.complete',`${h.harvestJob.id}:${h.actorId}:${dstId}`);delete h.harvestJob;}
 }
 function humanCombatTarget(r:RunState,hw:HumanWorld,id:string|undefined,floor:number): {x:number;y:number;human?:HumanRecord}|null {
   if(id==='player')return r.player.dead?null:r.player;
@@ -1783,6 +1831,12 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   hw.lastStepAt = now;
   stepPlayerHumanAid(r,hw,now);
   const actors = Object.values(hw.people);
+  for(const h of actors){const m=h.intent?.target?.match(/^harvest:(\d+),(\d+)$/);if(!m)continue;
+    const o=r.sourceMap?.veyra?.originAu,gx=Number(m[1])+(o?o[0]*2:0),gy=Number(m[2])+(o?o[1]*2:0),source=globalSourceAt(r,gx,gy,h.floor,now);
+    if(!source){h.intent=undefined;h.motion=undefined;h.state='IDLE';continue;}
+    h.harvestJob??={id:h.intent!.intentId,sourceId:source.sourceId,gx,gy,floor:h.floor,key:source.key,phase:'source',startedAt:h.intent!.startAt};
+    h.intent!.target=`global-harvest:${h.floor}:${gx},${gy}`;
+  }
   const wantsPlan = now >= (hw.plannerAt ?? 0) && actors.some(h => !h.following && h.state === 'IDLE' && (!h.intent || h.intent.work?.phase === 'travel') && (h.nextThinkAt ?? 0) <= now);
   const hasMovement = actors.some(h => h.state === 'MOVING' && !!h.intent?.route?.length) || actors.some(h => h.following && h.state === 'IDLE') || wantsPlan || actors.some(h => h.state === 'FIGHTING');
   const grid = hasMovement ? blockGrid(r) : new Uint8Array(0);
@@ -1862,9 +1916,9 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
     if(h.state==='WORKING'&&h.intent?.kind==='drink'&&h.intent.target?.startsWith('water:'))commitHumanWater(r,h,now);
     if (h.state === 'WORKING' && h.intent?.work) humanWorkTick(r, hw, h, now);
     // 2. A work action commits only after arrival and a visible work duration; no output is animated or minted in transit.
-    if (h.state === 'WORKING' && h.intent?.kind === 'work' && h.intent.target?.startsWith('harvest:') && now >= h.intent.dueAt) performHumanHarvest(r, hw, h, now);
+    if (h.state === 'WORKING' && h.intent?.kind === 'work' && h.intent.target?.match(/^(global-harvest|harvest):/) && now >= h.intent.dueAt) performHumanHarvest(r, hw, h, now,occupied);
     if (h.intent?.kind === 'work' && h.intent.target === 'store' && h.state === 'IDLE') {
-      depositHumanOutputs(r, h, now); h.intent = undefined; h.nextThinkAt = now + 6000;
+      depositHumanOutputs(r, h, now); if((h as HumanRecord).state!=='MOVING')h.intent = undefined; h.nextThinkAt = Math.max(h.nextThinkAt??0,now + 6000);
     }
     // 3. Evacuation: if intent is evacuate and near a boarding site, board.
     if (h.intent?.kind === 'evacuate' && h.state === 'IDLE') {
@@ -1915,12 +1969,12 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
             else if (moveIntent.kind === 'follow') { h.state = 'IDLE'; moveRoute.length = 0; }
             else if(moveIntent.kind==='drink'&&moveIntent.target?.startsWith('water:')){h.state='WORKING';moveIntent.dueAt=now+2000;}
             else if (moveIntent.work) { h.state = 'WORKING'; moveIntent.dueAt = now + (moveIntent.work.phase === 'fetch' ? 800 : moveIntent.work.duration); }
-            else if (moveIntent.kind === 'work' && moveIntent.target?.startsWith('harvest:')) {
-              const target = moveIntent.target.match(/^harvest:(\d+),(\d+)$/);
-              if (target) faceHumanToward(h, Number(target[1]) + ox, Number(target[2]) + oy);
+            else if (moveIntent.kind === 'work' && moveIntent.target?.match(/^(global-harvest|harvest):/)) {
+              const target = moveIntent.target.match(/^(?:global-harvest:(-?\d+):|harvest:)(\d+),(\d+)$/);
+              if (target) faceHumanToward(h, Number(target[2])+(target[1]===undefined?ox:0),Number(target[3])+(target[1]===undefined?oy:0));
               h.state = 'WORKING'; moveIntent.dueAt = now + 1500;
             }
-            else if (moveIntent.kind === 'work' && moveIntent.target === 'store') { h.state = 'IDLE'; depositHumanOutputs(r, h, now); h.intent = undefined; h.nextThinkAt = now + 6000; }
+            else if (moveIntent.kind === 'work' && moveIntent.target === 'store') { h.state = 'IDLE'; depositHumanOutputs(r, h, now); if((h as HumanRecord).state!=='MOVING')h.intent = undefined; h.nextThinkAt = Math.max(h.nextThinkAt??0,now + 6000); }
             else { if(moveIntent.target==='home')h.following=false; h.state = 'IDLE'; h.intent = undefined; }
           }
         }

@@ -33,7 +33,7 @@ interface ComponentFailure {access:string;checked:string;points:Set<string>;bloc
 // one actor's failure. Equivalent access can reuse that proof at any cell inside
 // it. SEARCH_LIMIT is never promoted to a component/no-path certificate.
 const componentFailures=new WeakMap<RunState,ComponentFailure[]>();
-interface NavigationRead { all:Entity[]; blockMap:Map<string,number>; at:Map<string,Entity[]>;physical:string }
+interface NavigationRead { all:Entity[]; blockMap:Map<string,number>; at:Map<string,Entity[]>;physical:()=>string }
 const planningReads=new WeakMap<RunState,NavigationRead>();
 /** Synchronous planning read only; never retained across work, save or external edits. */
 export function withHumanNavigationRead<T>(r:RunState,read:()=>T):T {
@@ -49,12 +49,13 @@ function navigationRead(r:RunState):NavigationRead {
  for(const e of all){const local=r.entities[e.id]===e;const p={tx:(e.tx??Math.floor(e.x/TILE))+(local?ox:0),ty:(e.ty??Math.floor(e.y/TILE))+(local?oy:0),floor:e.floor??0};const k=key(p);const list=at.get(k);if(list)list.push(e);else at.set(k,[e]);}
  const stock=(states:RunState['sources']|undefined)=>Object.entries(states??{}).map(([k,s])=>[k,s.stock>0,!!s.burnt,s.regrowDoneAt!==undefined&&s.regrowDoneAt<=r.clock.lastSimAt]);
  const terrain=(states:RunState['terrain']|undefined)=>Object.entries(states??{}).map(([k,s])=>[k,s.t,!s.until||s.until>r.clock.simMs]);
- const physical=JSON.stringify([r.layoutId,r.veyraFloor,r.sourceMap?.rules,o,[...blockMap],all.filter(e=>e.kind==='door'||e.type?.startsWith('door')).map(e=>[e.id,e.owner,e.locked,!!e.g1b,!!e.poiDoor,!!e.electricDoor]),terrain(r.terrain),terrain(r.veyraGlobalTerrain),stock(r.sources),stock(r.veyraGlobalSources),r.veyraGlobalDoors,r.veyraGlobalDepletedLoot,r.natureTrees,Object.entries(r.veyraFloorState??{}).map(([f,s])=>[f,s.doors,stock(s.sources)]),Object.entries(r.veyraGlobalFloorState??{}).map(([f,s])=>[f,s.doors,stock(s.sources)])]);
+ let fingerprint:string|undefined;
+ const physical=()=>fingerprint??=JSON.stringify([r.layoutId,r.veyraFloor,r.sourceMap?.rules,o,[...blockMap],all.filter(e=>e.kind==='door'||e.type?.startsWith('door')).map(e=>[e.id,e.owner,e.locked,!!e.g1b,!!e.poiDoor,!!e.electricDoor]),terrain(r.terrain),terrain(r.veyraGlobalTerrain),stock(r.sources),stock(r.veyraGlobalSources),r.veyraGlobalDoors,r.veyraGlobalDepletedLoot,r.natureTrees,Object.entries(r.veyraFloorState??{}).map(([f,s])=>[f,s.doors,stock(s.sources)]),Object.entries(r.veyraGlobalFloorState??{}).map(([f,s])=>[f,s.doors,stock(s.sources)])]);
  return {all,blockMap,at,physical};
 }
-export function humanNavigation(r:RunState,occupied=new Set<string>()){
+export function humanNavigation(r:RunState,occupied=new Set<string>(),avoidCrowding=false){
  indexArchitecture();
- const {all,blockMap,at,physical}=planningReads.get(r)??navigationRead(r);
+ const {all,blockMap,at,physical:readPhysical}=planningReads.get(r)??navigationRead(r);
  const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
  const cells=new Map<string,ReturnType<typeof globalCellTileAndClass>>();
  const cell=(p:HumanWaypoint)=>{const k=key(p);let c=cells.get(k);if(!c){c=globalCellTileAndClass(r,p.tx,p.ty,p.floor,all,blockMap);cells.set(k,c);}return c;};
@@ -87,9 +88,10 @@ export function humanNavigation(r:RunState,occupied=new Set<string>()){
   return true;
  };
  return {cell,free,legalEdge,enter,route(h:HumanRecord,target:HumanWaypoint,maxVisited=256):HumanWaypoint[]|null{
+  const physical=readPhysical();
   const start={tx:h.gx,ty:h.gy,floor:h.floor},startKey=key(start);
   // Binary heap avoids repeated sorting of the search frontier. Every request has an explicit work bound.
-  const searchKey=`${r.layoutId}:${r.sourceMap?.rules}:${h.actorId}:${h.community??''}:${!!h.following}:${startKey}>${key(target)}`;
+  const searchKey=`${avoidCrowding}:${r.layoutId}:${r.sourceMap?.rules}:${h.actorId}:${h.community??''}:${!!h.following}:${startKey}>${key(target)}`;
   const status=(status:NonNullable<HumanRecord['routeSearch']>['status'],expanded:number)=>{h.routeSearch={status,target:key(target),expanded};};
   const access=`${r.layoutId}:${r.sourceMap?.rules}:${h.community??''}:${!!h.following}`;
   const components=componentFailures.get(r)??[];
@@ -121,7 +123,7 @@ export function humanNavigation(r:RunState,occupied=new Set<string>()){
    const neighbors=[{...n.p,tx:n.p.tx+1},{...n.p,tx:n.p.tx-1},{...n.p,ty:n.p.ty+1},{...n.p,ty:n.p.ty-1},...(stairs.get(k)??[])];
    // Occupants are not permanent walls: retain a lawful static route and
    // reserve/revalidate its NEXT edge against actual bodies at execution time.
-   for(const p of neighbors){if(!free(p,h,true)){state.blocked.set(key(p),p);continue;}const nk=key(p),g=n.g+1;if(g>=(costs.get(nk)??Infinity))continue;costs.set(nk,g);parent.set(nk,k);points.set(nk,p);push({p,g,score:g+estimate(p)});}
+   for(const p of neighbors){if(!free(p,h,true)){state.blocked.set(key(p),p);continue;}const nk=key(p),g=n.g+1+(avoidCrowding&&occupied.has(`${p.floor}:${p.tx}:${p.ty}`)?4:0);if(g>=(costs.get(nk)??Infinity))continue;costs.set(nk,g);parent.set(nk,k);points.set(nk,p);push({p,g,score:g+estimate(p)});}
   }
   if(!heap.length||state.expanded>=48000){
    if(!heap.length){components.push({access,checked:physical,points:new Set(points.keys()),blocked:[...state.blocked.values()],expanded:state.expanded});if(components.length>64)components.shift();componentFailures.set(r,components);}

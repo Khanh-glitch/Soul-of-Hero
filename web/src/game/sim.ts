@@ -1531,12 +1531,16 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       for (const due of Object.values(r.lootRespawnAt || {})) if (due > t) dt = Math.min(dt, due - t);
       for (const st of Object.values(r.sources)) { if (st.fire && st.fire > r.clock.simMs) dt = Math.min(dt, st.fire - r.clock.simMs); if(st.fireSpreadAt && st.fireSpreadAt > r.clock.simMs) dt = Math.min(dt, st.fireSpreadAt - r.clock.simMs); }
       for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
-    }); // pure boundary read ends before station/entity/terrain mutations
+      if (!(dt > 0)) return;
+      dt = Math.min(end - t, Math.max(dt, 0.001));
+      // These device updates mutate fuel/jobs/crops, never entity membership.
+      // Retain the same membership snapshot; end before territory destruction,
+      // loot spawns, human death/cargo or any archive/projection transaction.
+      stepBasePower(r, dt, t + dt, visual);
+      stepStations(gs, dt, t + dt, report, powered);
+      stepGardensBarrels(gs, dt, isWet(weather), t);
+    });
     if (!(dt > 0)) break;
-    dt = Math.min(end - t, Math.max(dt, 0.001)); // avoid sub-millisecond timestamp stalls
-    stepBasePower(r, dt, t + dt, visual);
-    stepStations(gs, dt, t + dt, report, powered);
-    stepGardensBarrels(gs, dt, isWet(weather), t);
     stepHusbandry(gs, dt / 1000, t + dt, isWet(weather));
     decayTraces(r, dt, weather, t);
     if(stepTerritory(r,dt,t+dt,report)) offlineStructureChange++;

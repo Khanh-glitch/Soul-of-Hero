@@ -550,6 +550,7 @@ const GLOBAL_EXPLORATION_SOURCE_CELLS=new Set(G1B_SOURCE_SITES.map(e=>`${e.level
  * active camera delegates to sourceAt, never a second stock authority. This read
  * can advance canonical regrowth; extraction still needs an actor transaction. */
 export function globalSourceAt(r:RunState,gx:number,gy:number,floor:number,now:number){
+  countWorldWork('sourceLookups');
   const [ox,oy]=windowOrigin(r),lx=gx-ox,ly=gy-oy,inside=lx>=0&&ly>=0&&lx<WW&&ly<WH;
   const protectedAt=(statics:readonly {kind:string;tx:number;ty:number}[],x:number,y:number)=>
     GLOBAL_EXPLORATION_SOURCE_CELLS.has(`${floor}:${gx},${gy}`)||statics.some(e=>e.kind==='loot'&&e.tx===x&&e.ty===y)||

@@ -571,6 +571,17 @@ export function globalBaseGeometry(gx:number,gy:number,floor:number,rules:VeyraP
   const i=y*WW+x;
   return {originTx:region.originTx,originTy:region.originTy,tile:region.tiles[i],walkable:!!region.walkable[i],source:region.sources.get(i)??null,solidProp:!!region.solidProps[i],fresh:!!region.fresh?.[i],statics:region.statics.get(i)??[],biome:region.climate.biome[i],temperature:region.climate.temperature[i],moisture:region.climate.moisture[i],slope:region.climate.slope[i]};
 }
+/** Bounded known-catchment discovery over the compiled sparse source index.
+ * No per-cell geometry queries, stock copies or render materialization. */
+export function globalSourceCandidates(gx:number,gy:number,floor:number,rules:VeyraPlacementRules,allowed:ReadonlySet<string>,layout?:string){
+  globalBaseGeometry(gx,gy,floor,rules,layout);
+  const ox=Math.max(0,Math.min(FRAME_W-WW,Math.floor((gx-68)/64)*64)),oy=Math.max(0,Math.min(FRAME_H-WH,Math.floor((gy-68)/64)*64));
+  const region=geometryRegions.get(`${rules}:${layout??layoutIdAt(ox,oy)}:${floor}`);
+  if(!region)return [];
+  const out:{gx:number;gy:number;key:string;distance:number}[]=[];
+  for(const [i,key]of region.sources){if(!allowed.has(key))continue;const x=region.originTx+i%WW,y=region.originTy+Math.floor(i/WW),distance=Math.abs(x-gx)+Math.abs(y-gy);if(distance<=24)out.push({gx:x,gy:y,key,distance});}
+  out.sort((a,b)=>a.distance-b.distance||a.gy-b.gy||a.gx-b.gx);return out.slice(0,32);
+}
 /** Same compiler freshwater mask as player; transient ice is read by engine. */
 export function globalBaseWaterCell(gx:number,gy:number,rules:VeyraPlacementRules): {fresh:boolean;tile:number} {
   if(gx<0||gy<0||gx>=FRAME_W||gy>=FRAME_H)return {fresh:false,tile:T.CLIFF};

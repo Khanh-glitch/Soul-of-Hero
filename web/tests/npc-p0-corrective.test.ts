@@ -1,3 +1,4 @@
+import {FRAME_W} from '../src/veyra05/frame';
 /**
  * NPC P0 CORRECTIVE — fault-targeted invariant tests (Control Tower acceptance order).
  *
@@ -8,7 +9,7 @@
 import { describe, expect, it } from 'vitest';
 import { WW, TILE } from '../src/game/core';
 import { ITEMS } from '../src/game/catalog';
-import { sourceAt } from '../src/game/engine';
+import { sourceAt,globalSourceAt } from '../src/game/engine';
 import { newGame, startRun, dispatch, C, addItem, addStack, blockGrid, clearPhysicalLine, mkStack, markDirty } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
@@ -165,11 +166,13 @@ describe('NPC P0 corrective', () => {
     stepHumans(r, hw, T0 + 1000);
     const working = h as HumanRecord;
     expect(working.intent?.kind).toBe('work'); expect(h.state).toBe('WORKING');
-    const target = working.intent!.target!.match(/^harvest:(\d+),(\d+)$/)!;
-    const targetTx = Number(target[1]), targetTy = Number(target[2]);
-    const stockBefore = sourceAt(r, targetTx, targetTy, T0 + 1000)!.stock;
+    const target = working.intent!.target!.match(/^global-harvest:(-?\d+):(\d+),(\d+)$/)!;
+    expect(target).not.toBeNull();expect(Number(target[1])).toBe(h.floor);
+    const targetTx = Number(target[2]), targetTy = Number(target[3]);
+    expect(working.harvestJob?.sourceId).toBe(`${h.floor}:${targetTy*FRAME_W+targetTx}`);
+    const stockBefore = globalSourceAt(r,targetTx,targetTy,h.floor,T0+1000)!.stock;
     stepHumans(r, hw, T0 + 3000);
-    const source = sourceAt(r, targetTx, targetTy, T0 + 3000)!;
+    const source = globalSourceAt(r,targetTx,targetTy,h.floor,T0+3000)!;
     expect(source.stock).toBeLessThan(stockBefore);
     expect(humanPack(r, h).slots.some(s => s?.key === 'wood')).toBe(true);
     expect(r.receipts.some(x => x.kind === 'human.harvest' && x.detail.includes(h.actorId))).toBe(true);
