@@ -2,6 +2,8 @@
  * No camera-relative coordinate is ever persisted as an actor location. */
 import { T, TILE, WW, WH, type RunState } from './core';
 import { roofRoom } from './engine';
+import {STRUCTS} from './catalog';
+import {getWorld} from './world';
 import { authoredPlan, authoredPoiIds } from '../veyra05/floors';
 import { FRAME_W } from '../veyra05/frame';
 import type { Level, CompiledPlan, CompiledLevel } from '../veyra05/arch/plan';
@@ -22,6 +24,7 @@ export interface HumanShelterContext { results:Map<string,boolean>;remoteResults
 // Archived enclosure queries depend on authored roofs and physical door/terrain
 // deltas, NOT actor needs, stock quantities or planner timestamps. Local rooms
 // deliberately retain their transaction lifetime (player construction is live).
+const localEnclosures=new WeakMap<RunState,{physical:string;results:Map<string,boolean>}>();
 const archivedEnclosures=new WeakMap<RunState,{physical:string;results:Map<string,boolean>}>();
 const layerDoors=new WeakMap<CompiledLevel,Map<number,CompiledLevel['doors'][number]>>();
 export function humanShelterContext(r:RunState):HumanShelterContext {
@@ -31,7 +34,14 @@ export function humanShelterContext(r:RunState):HumanShelterContext {
     Object.entries(r.veyraGlobalFloorState??{}).map(([floor,state])=>[floor,state.doors]),
     Object.entries(r.veyraFloorState??{}).map(([floor,state])=>[floor,state.doors]),r.veyraGlobalTerrain]);
   let memo=archivedEnclosures.get(r);if(memo?.physical!==physical){memo={physical,results:new Map()};archivedEnclosures.set(r,memo);}
-  return {results:new Map(),remoteResults:memo.results,liveDoors};
+  // The new procurement traffic changes actor positions on every physical
+  // substep, not room topology. Reuse exact room results until an actual local
+  // wall/roof/door/terrain/window change, detecting direct mutations as well.
+  const localPhysical=JSON.stringify([r.layoutId,r.veyraFloor,r.sourceMap?.veyra?.originAu,getWorld().buildings,
+    Object.values(r.entities).filter(e=>e.kind==='door'||e.kind==='struct'&&(STRUCTS[e.type!]?.shelter||STRUCTS[e.type!]?.layer==='wall')).map(e=>[e.id,e.kind,e.type,e.tx,e.ty,e.floor,e.x,e.y,!!e.open]),
+    Object.entries(r.terrain).map(([k,t])=>[k,!t.until||t.until>r.clock.simMs?t.t:undefined])]);
+  let local=localEnclosures.get(r);if(local?.physical!==localPhysical){local={physical:localPhysical,results:new Map()};localEnclosures.set(r,local);}
+  return {results:local.results,remoteResults:memo.results,liveDoors};
 }
 export function humanShelter(r: RunState, gx: number, gy: number, floor: number, context?:HumanShelterContext): boolean {
   const o = r.sourceMap?.veyra?.originAu;
@@ -40,7 +50,7 @@ export function humanShelter(r: RunState, gx: number, gy: number, floor: number,
   if (floor === (r.veyraFloor ?? 0) && lx >= 0 && ly >= 0 && lx < WW && ly < WH) {
     const cacheKey=`local:${floor}:${ly*WW+lx}`,cached=context?.results.get(cacheKey);
     if(cached!==undefined)return cached;
-    const room=roofRoom(r,(lx+.5)*TILE,(ly+.5)*TILE);
+    const room=roofRoom(r,(lx+.5)*TILE,(ly+.5)*TILE,true);
     // A whole connected component has one enclosure result, including an open
     // component. The read context never survives a door/roof/world transaction.
     if(context){context.results.set(cacheKey,room.enclosed);for(const cell of room.cells)context.results.set(`local:${floor}:${cell}`,room.enclosed);}

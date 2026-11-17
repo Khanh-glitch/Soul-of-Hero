@@ -903,9 +903,10 @@ function roomWall(r: RunState, x: number, y: number) {
 let roomCache: { run: RunState; start: number; cells: Set<number>; enclosed: boolean } | null = null;
 /** Roofed connected room, bounded by world cells rather than an arbitrary size limit.
  * Closed physical walls/doors split rooms; open doors connect or expose them. */
-export function roofRoom(r: RunState, px: number, py: number) {
+export function roofRoom(r: RunState, px: number, py: number, fresh=false) {
+  if(fresh)tileIndex=null; // explicit physical read after direct room-topology edits
   const sx = Math.floor(px / TILE), sy = Math.floor(py / TILE), start = sy * WW + sx;
-  if (roomCache?.run === r && roomCache.start === start) return roomCache;
+  if (!fresh && roomCache?.run === r && roomCache.start === start) return roomCache;
   const cells = new Set<number>(); let enclosed = roofAt(r, sx, sy) && !roomWall(r, sx, sy);
   if (enclosed) {
     const queue = [start]; cells.add(start);

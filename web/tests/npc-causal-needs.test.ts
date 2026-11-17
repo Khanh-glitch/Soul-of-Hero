@@ -1,12 +1,28 @@
+import {humanShelter,humanShelterContext} from '../src/game/human-shelter';
+import {roofRoom} from '../src/game/engine';
 import {describe,it,expect} from 'vitest';
 import {newGame,startRun,findRunEntity} from '../src/game/engine';
 import {setActiveLayout} from '../src/game/world';
 import {tickNeeds,humanEventBoundary,humanNeedsContext,usingHumanBed,finishHumanPlanReview,stepHumans} from '../src/game/humanworld';
 import {humanEntityTile} from '../src/game/human-jobs';
-import {BAL,HOUR} from '../src/game/core';
+import {T,WW,TILE,BAL,HOUR} from '../src/game/core';
 import {T0} from './helpers/g1b-kit';
 function scene(){setActiveLayout('veyra05-greywater');const gs=newGame();expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(true);return gs.run!;}
 describe('causal human biology and transaction-scoped housing (fixtures)',()=>{
+ it('reuses exact local enclosure reads but detects direct door, roof and expiring terrain edits',()=>{
+  const r=scene(),o=r.sourceMap!.veyra!.originAu,x=60,y=60;
+  // Explicit 1-cell room fixture. No production source/item is granted.
+  for(const [dx,dy]of [[0,0],[1,0],[-1,0],[0,1],[0,-1],[2,0]])r.terrain[(y+dy)*WW+x+dx]={t:T.MEADOW};
+  r.entities['fixture-roof']={id:'fixture-roof',kind:'struct',type:'roof_thatch',tx:x,ty:y,x:x*TILE+8,y:y*TILE+8};
+  for(const [dx,dy]of [[-1,0],[0,1],[0,-1]]){const id=`wall:${dx}:${dy}`;r.entities[id]={id,kind:'struct',type:'wall_wood',tx:x+dx,ty:y+dy,x:(x+dx)*TILE+8,y:(y+dy)*TILE+8};}
+  const door=r.entities['fixture-door']={id:'fixture-door',kind:'struct' as const,type:'door_wood',tx:x+1,ty:y,x:(x+1)*TILE+8,y:y*TILE+8,open:false};
+  const read=()=>humanShelter(r,o[0]*2+x,o[1]*2+y,0,humanShelterContext(r));
+  expect(read()).toBe(true);const first=humanShelterContext(r);expect(humanShelterContext(r).results).toBe(first.results);
+  door.open=true;expect(read()).toBe(false);expect(read()).toBe(roofRoom(r,(x+.5)*TILE,(y+.5)*TILE,true).enclosed);
+  door.open=false;expect(read()).toBe(true);delete r.entities['fixture-roof'];expect(read()).toBe(false);
+  r.entities['fixture-roof']={id:'fixture-roof',kind:'struct',type:'roof_thatch',tx:x,ty:y,x:x*TILE+8,y:y*TILE+8};door.open=true;
+  r.terrain[y*WW+x+1]={t:T.PWALL,until:r.clock.simMs+1000};expect(read()).toBe(true);r.clock.simMs+=1000;expect(read()).toBe(false);
+ });
  it('does not impose a minute tick when the next physical threshold is hours away',()=>{
   const r=scene(),hw=r.humanWorld!,h=Object.values(hw.people)[0];hw.people={[h.actorId]:h};
   h.state='IDLE';h.following=true;h.hunger=h.thirst=100;h.rest=0;h.wounds=[];
