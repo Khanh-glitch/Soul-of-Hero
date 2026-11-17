@@ -1,3 +1,4 @@
+import {shiftVeyraWindowBy} from '../src/veyra05/continuity';
 import {it,expect} from 'vitest';
 import {newGame,startRun,beginReceiptSink,endReceiptSink,markDirty} from '../src/game/engine';
 import {setActiveLayout} from '../src/game/world';
@@ -16,6 +17,7 @@ it('normal population naturally selects real harvest and delivers exact physical
   settle(gs,T0+ms,true);
   for(const h of Object.values(gs.run!.humanWorld!.people))if(h.harvestJob)stages.add(h.state==='MOVING'?(h.harvestJob.phase==='delivery'?'delivery':'travel'):h.state==='WORKING'?'work':'planning');
   const snapshot=JSON.parse(JSON.stringify(gs)),loaded=validate(snapshot);expect(loaded).not.toBeNull();gs=loaded!;r=gs.run!;hw=r.humanWorld!;
+  if(ms===5000){const jobs=JSON.stringify(Object.values(hw.people).filter(h=>h.harvestJob).map(h=>[h.actorId,h.gx,h.gy,h.harvestJob]));expect(shiftVeyraWindowBy(gs,64,0,markDirty)).toBe(true);expect(JSON.stringify(Object.values(hw.people).filter(h=>h.harvestJob).map(h=>[h.actorId,h.gx,h.gy,h.harvestJob]))).toBe(jobs);}
   if(ms===20000){const w=getWindowWorld(r.layoutId!);expect(applyFloor(gs,w,w.floors,1,undefined,markDirty)).toBe(true);}
   if(ms===65000){const w=getWindowWorld(r.layoutId!);expect(applyFloor(gs,w,w.floors,0,undefined,markDirty)).toBe(true);}
  }

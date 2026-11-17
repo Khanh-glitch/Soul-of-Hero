@@ -1,3 +1,4 @@
+import {timedWorldWork} from './world-work';
 import {countWorldWork} from './world-work';
 /** Global physical navigation. Routes contain actual cardinal steps or authored stair edges.
  * No map-window mutation, source grants or assumed access to locked doors. */
@@ -43,7 +44,7 @@ export function withHumanNavigationRead<T>(r:RunState,read:()=>T):T {
   try{return read();}finally{planningReads.delete(r);}
  });
 }
-function navigationRead(r:RunState):NavigationRead {
+function navigationRead(r:RunState):NavigationRead {return timedWorldWork('navigationRead',()=>{
  const all=allRunEntities(r),blockMap=buildEntityBlockMap(r,all),at=new Map<string,Entity[]>();
  const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
  for(const e of all){const local=r.entities[e.id]===e;const p={tx:(e.tx??Math.floor(e.x/TILE))+(local?ox:0),ty:(e.ty??Math.floor(e.y/TILE))+(local?oy:0),floor:e.floor??0};const k=key(p);const list=at.get(k);if(list)list.push(e);else at.set(k,[e]);}
@@ -52,7 +53,7 @@ function navigationRead(r:RunState):NavigationRead {
  let fingerprint:string|undefined;
  const physical=()=>fingerprint??=JSON.stringify([r.layoutId,r.veyraFloor,r.sourceMap?.rules,o,[...blockMap],all.filter(e=>e.kind==='door'||e.type?.startsWith('door')).map(e=>[e.id,e.owner,e.locked,!!e.g1b,!!e.poiDoor,!!e.electricDoor]),terrain(r.terrain),terrain(r.veyraGlobalTerrain),stock(r.sources),stock(r.veyraGlobalSources),r.veyraGlobalDoors,r.veyraGlobalDepletedLoot,r.natureTrees,Object.entries(r.veyraFloorState??{}).map(([f,s])=>[f,s.doors,stock(s.sources)]),Object.entries(r.veyraGlobalFloorState??{}).map(([f,s])=>[f,s.doors,stock(s.sources)])]);
  return {all,blockMap,at,physical};
-}
+});}
 export function humanNavigation(r:RunState,occupied=new Set<string>(),avoidCrowding=false){
  indexArchitecture();
  const {all,blockMap,at,physical:readPhysical}=planningReads.get(r)??navigationRead(r);

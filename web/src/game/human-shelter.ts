@@ -52,7 +52,7 @@ export function humanShelter(r: RunState, gx: number, gy: number, floor: number,
   const results=context?.remoteResults??context?.results;
   const cached=results?.get(cacheKey);if(cached!==undefined)return cached;
   const p = plansByCell.get(cacheKey);
-  const layer = p?.levels.get(floor as Level); if (!layer) return false;
+  const layer = p?.levels.get(floor as Level); if (!layer){results?.set(cacheKey,false);return false;}
   let roof = layerRoofs.get(layer);
   if (!roof) {
     roof = new Set<number>();
@@ -60,7 +60,7 @@ export function humanShelter(r: RunState, gx: number, gy: number, floor: number,
     for (const d of layer.doors) if (p!.plan.structures.some(s=>s.id===d.struct && !!s.roof && !s.open)) roof.add(d.y*FRAME_W+d.x);
     layerRoofs.set(layer,roof);
   }
-  if (!roof.has(start)) return false;
+  if (!roof.has(start)){results?.set(cacheKey,false);return false;}
   // Archived floor/door deltas take precedence over authored default-closed doors.
   let doors=layerDoors.get(layer);if(!doors){doors=new Map(layer.doors.map(d=>[d.y*FRAME_W+d.x,d]));layerDoors.set(layer,doors);}
   const liveDoors = context?.liveDoors ?? humanShelterContext(r).liveDoors;

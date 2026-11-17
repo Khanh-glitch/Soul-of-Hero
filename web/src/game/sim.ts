@@ -1,4 +1,4 @@
-import {countWorldWork} from './world-work';
+import {countWorldWork,timedWorldWork} from './world-work';
 import { combatStimulus, pushCombatStimulus, type CombatKind } from './stimulus';
 import { syncVeyraPlacement } from '../veyra05/window';
 import { airdropBoundary, stepAirdrops } from './engine';
@@ -1480,7 +1480,7 @@ export function commitSeasonBoundaries(r: RunState, from: number, to: number): n
 }
 /** Advance existing autonomous helpers at weather and finite fire/terrain boundaries.
  * Physical actors, spread, damage, lightning and player input are deliberately not replayed. */
-function advanceWorld(gs: GameState, start: number, end: number, report?: string[], visual = true) {
+function advanceWorld(gs: GameState, start: number, end: number, report?: string[], visual = true) {return timedWorldWork('advanceWorld',()=>{
   const r = gs.run!; let t = start; const slotMs = BAL.weather.slotMinutes * 60000;
   initializeCabinets(r);
   const syncPoi=(at:number)=>{const events=advancePoiAccess(r,at);if(events.closed.length)markDirty();for(const id of events.expired)receipt(r,at,'poi.power.expire',id);for(const id of events.closed)receipt(r,at,'poi.door.close',id);};
@@ -1573,7 +1573,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   }
   stepTenders(gs, end);
   stepTenderStates(r, end);
-}
+});}
 
 /** Bring the single run clock forward before a frame or an input transaction. */
 export function syncWorld(gs: GameState, now: number): boolean {

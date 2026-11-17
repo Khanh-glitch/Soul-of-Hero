@@ -18,7 +18,7 @@ import { ITEMS } from '../game/catalog';
 import { isAccessCard, liveItemId, liveItemPer, liveRecipeId } from '../game/final-item-set';
 import type { Building, StaticEnt, World } from '../game/world';
 import { FRAME_W, U, type WindowSpec } from './frame';
-import { sampleTile } from './reader';
+import { sampleTile, authoredDryTile } from './reader';
 import { compilePlan, roomAt, type ArchPlan, type CompiledPlan, type CompiledRoom, type Level, type StairSpec } from './arch/plan';
 import { AUTHORED_SITES } from './arch/sites';
 import { G1B_BASE_SOURCE_SITES, G1B_FIXTURES } from '../game/g1b-sources.generated';
@@ -324,7 +324,7 @@ function buildLayerPlacementContext(layer: FloorLayer, ox: number, oy: number): 
 }
 export interface FloorStack { levels: Level[]; layers: Map<Level, FloorLayer>; pois: string[]; ground: FloorLayer }
 
-const dry = (gx: number, gy: number) => { const s = sampleTile(gx, gy); return s.land && !s.river && !s.lake; };
+const dry=authoredDryTile;
 
 const RCASH_BY_POI: Record<string, number> = {
   po_rc_meridian: 45,

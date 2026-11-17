@@ -1,3 +1,4 @@
+import {timedWorldWork} from './world-work';
 import {globalSourceCandidates} from '../veyra05/window';
 import {countWorldWork} from './world-work';
 /**
@@ -650,7 +651,7 @@ export function usingHumanBed(r: RunState, hw: HumanWorld, h: HumanRecord, conte
 }
 
 /** Advance hunger/thirst/rest/wounds for every active human by elapsed real time. */
-export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
+export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {return timedWorldWork('tickNeeds',()=>{
   const lastNeedsAt = hw.lastNeedsAt ?? hw.lastResolvedAt;
   const dtMs = now - lastNeedsAt;
   if (dtMs <= 0) return; // every physical interval is integrated before an actor changes activity
@@ -666,7 +667,7 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
     const hungerBefore=h.hunger, thirstBefore=h.thirst;
     h.hunger = clamp(h.hunger - hungerRate * hours * m, 0, 100);
     h.thirst = clamp(h.thirst - thirstRate * hours * m, 0, 100);
-    if ([40,25,5].some(q => hungerBefore>q&&h.hunger<=q || thirstBefore>q&&h.thirst<=q)) {
+    if ((hungerBefore>40&&h.hunger<=40)||(hungerBefore>25&&h.hunger<=25)||(hungerBefore>5&&h.hunger<=5)||(thirstBefore>40&&h.thirst<=40)||(thirstBefore>25&&h.thirst<=25)||(thirstBefore>5&&h.thirst<=5)) {
       h.nextThinkAt=now; h.blockedPlanCount=0;
     }
     h.warmth = clamp(h.warmth - (humanShelter(r, h.gx, h.gy, h.floor,shelterContext) ? 0 : 0.4 * hours), 20, 100);
@@ -697,7 +698,7 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
   hw.lastNeedsAt = now;
   // Keep the legacy serialized clock monotonic for older readers and migrations.
   hw.lastResolvedAt = now;
-}
+});}
 
 /** Permission is not physical access. Distant logistics must deliver goods via real routes. */
 function reachableHumanStores(r: RunState, hw: HumanWorld, h: HumanRecord): Container[] {
@@ -716,10 +717,16 @@ function reachableHumanStores(r: RunState, hw: HumanWorld, h: HumanRecord): Cont
 export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 'food' | 'water', now: number): boolean {
   if (h.state === 'DEAD' || h.state === 'DOWNED' || h.state === 'EVACUATED' || (kind === 'food' ? h.hunger : h.thirst) >= 100) return false;
   const containers: Container[] = [humanPack(r, h)];
-  containers.push(...reachableHumanStores(r, hw, h));
+  // Do not construct physical navigation for a stock that cannot satisfy this
+  // need. This is a live custody read each call, not a stale failed-plan cache.
+  const edible=(s:Stack|null)=>!!s&&!s.production&&s.qty>0&&(kind==='food'?!!ITEMS[s.key].food?.hunger:!!(ITEMS[s.key].food?.thirst||ITEMS[s.key].waterContainer)&&(ITEMS[s.key].charge==null||(s.charge??0)>0));
+  if(!containers[0].slots.some(edible)){
+    const comm=h.community?hw.communities[h.community]:undefined;
+    if(comm?.foodStores.some(id=>r.custody[id]?.slots.some(edible)))containers.push(...reachableHumanStores(r,hw,h));
+  }
   for (const c of containers) {
     for (const s of c.slots) {
-      if (!s || s.qty <= 0) continue;
+      if (!s || s.production || s.qty <= 0) continue;
       const d = ITEMS[s.key];
       if (kind === 'food' && d.food?.hunger) {
         const want = 100 - h.hunger;
@@ -843,7 +850,7 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
     got += Math.ceil(q * liveItemPer(k));
   }
   st.stock -= units;
-  if(st.stock<=0)markDirty();
+  if(st.stock<=0&&s.def.block)markDirty();
   h.stamina -= 2;
   if (tool?.dur !== undefined) { tool.dur = Math.max(0, tool.dur - 1); if (tool.dur === 0) h.equip.weapon = null; }
   if (st.stock <= 0 && s.def.regrow) { st.regrowFrom = now; st.regrowAcc = 0; }
@@ -931,7 +938,7 @@ export function downHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
 export function treatHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { ok: boolean; reason?: string } {
   if (h.state !== 'DOWNED') return { ok: false, reason: 'not downed' };
   const containers: Container[] = [humanPack(r, h)];
-  containers.push(...reachableHumanStores(r, hw, h));
+  containers.push(...reachableHumanStores(r,hw,h));
   let used = false;
   for (const c of containers) {
     for (const s of c.slots) {
@@ -1276,6 +1283,7 @@ export function recruitHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: n
 }
 
 export function setFollowing(r: RunState, hw: HumanWorld, h: HumanRecord, follow: boolean, now: number): void {
+  if(h.harvestJob){receipt(r,now,'human.harvest.cancel',`${h.harvestJob.id}:companion assignment changed; owned cargo retained`);delete h.harvestJob;}
   h.following = follow; h.motion=undefined;
   if (follow) {
     h.state = 'IDLE';
@@ -1614,15 +1622,19 @@ function plannerSources(r: RunState): Set<string> {
 }
 /** Next proven human event bounds the shared world integrator; distant movement uses
  * the same tile duration as visible movement, never one tile per weather slot. */
-export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:number):number {
+export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:number):number {return timedWorldWork('humanEventBoundary',()=>{
  let dt=maximum;
  for(const h of Object.values(hw.people)){
-  if(['DEAD','EVACUATED'].includes(h.state))continue;
+  if(h.state==='DEAD'||h.state==='EVACUATED')continue;
   // These are causal thresholds, not an arbitrary periodic needs tick. Continuous
   // rates are integrated by tickNeeds before movement/work can change the rate.
-  const m=['WORKING','FIGHTING','MOVING'].includes(h.state)?1.25:1;
-  for(const [value,rate] of [[h.hunger,BAL.player.offlineHungerPerHour*m],[h.thirst,BAL.player.offlineThirstPerHour*m]])
-   if(rate>0)for(const threshold of [40,25,5,0])if(value>threshold)dt=Math.min(dt,(value-threshold)/rate*HOUR);
+  const m=(h.state==='WORKING'||h.state==='FIGHTING'||h.state==='MOVING')?1.25:1;
+  // Only the nearest lower threshold can be the next boundary. Avoid
+  // constructing eight temporary tuples/arrays per actor on every move slice.
+  const hungerThreshold=h.hunger>40?40:h.hunger>25?25:h.hunger>5?5:0;
+  const thirstThreshold=h.thirst>40?40:h.thirst>25?25:h.thirst>5?5:0;
+  if(h.hunger>0&&BAL.player.offlineHungerPerHour>0)dt=Math.min(dt,(h.hunger-hungerThreshold)/(BAL.player.offlineHungerPerHour*m)*HOUR);
+  if(h.thirst>0&&BAL.player.offlineThirstPerHour>0)dt=Math.min(dt,(h.thirst-thirstThreshold)/(BAL.player.offlineThirstPerHour*m)*HOUR);
   const starving=(h.hunger<=0?1:0)+(h.thirst<=0?1:0);
   if(starving&&BAL.player.starveDamagePerMin>0)dt=Math.min(dt,Math.max(1,h.hp)/(starving*BAL.player.starveDamagePerMin)*60000);
   for(const w of h.wounds)if(w.bleeding&&!w.treated&&w.bleedingUntil){const due=w.bleedingUntil+12*60000;if(due>at)dt=Math.min(dt,due-at);}
@@ -1634,17 +1646,18 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
   }
  }
  return dt;
-}
+});}
 function planHumanWater(r:RunState,h:HumanRecord,now:number,occupied:Set<string>):boolean {
  if(h.floor!==0 || h.thirst>=40)return false;
  const candidates:{gx:number;gy:number;distance:number}[]=[];
  // A local known catchment, not psychic island-wide water knowledge. Search and travel are separate.
- for(let dy=-24;dy<=24;dy++)for(let dx=-24;dx<=24;dx++){
-  if(Math.abs(dx)+Math.abs(dy)>24)continue;
-  const gx=h.gx+dx,gy=h.gy+dy;
-  if(globalFreshWater(r,gx,gy,h.floor))candidates.push({gx,gy,distance:Math.abs(dx)+Math.abs(dy)});
+ waterSearch:for(let distance=0;distance<=24;distance++)for(let dy=-distance;dy<=distance;dy++){
+  const dx=distance-Math.abs(dy);
+  for(let side=0;side<(dx?2:1);side++){
+   const gx=h.gx+(side?dx:-dx),gy=h.gy+dy;
+   if(globalFreshWater(r,gx,gy,h.floor)){candidates.push({gx,gy,distance});if(candidates.length===8)break waterSearch;}
+  }
  }
- candidates.sort((a,b)=>a.distance-b.distance||a.gy-b.gy||a.gx-b.gx);
  const nav=humanNavigation(r,occupied);
  for(const p of candidates.slice(0,8)){
   const route=nav.route(h,{tx:p.gx,ty:p.gy,floor:0},3000);if(!route)continue;
@@ -1663,7 +1676,7 @@ function commitHumanWater(r:RunState,h:HumanRecord,now:number):boolean {
  receipt(r,now,'human.water',`${h.actorId}:${gx},${gy}:${flask?.uid??'direct-drink'}`);
  h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+1000;return true;
 }
-function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>, protectedTiles: Set<string>): void {
+function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>, protectedTiles: Set<string>): void {return timedWorldWork('planAutonomousWork',()=>{
   if (h.intent?.work?.phase === 'travel' && h.state === 'IDLE') {
     planHumanOccupation(r, hw, h, now, (gx,gy,floor) => humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied,floor));
     h.nextThinkAt = now + 3000; return;
@@ -1719,8 +1732,8 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     receipt(r,now,'human.harvest.select',`${h.harvestJob.id}:${h.actorId}:${s.sourceId}:${s.key}`);
     resumeHarvestJob(r,hw,h,now,occupied);return;
   }
-}
-function resumeHarvestJob(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occupied:Set<string>):void {
+});}
+function resumeHarvestJob(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occupied:Set<string>):void {return timedWorldWork('resumeHarvestJob',()=>{
   const job=h.harvestJob;if(!job)return;
   h.nextThinkAt=now+3000;
   if(job.phase==='source'){
@@ -1739,7 +1752,7 @@ function resumeHarvestJob(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occu
     h.intent={intentId:job.id,actorId:h.actorId,kind:'work',target:'store',preconditions:['owned output','exact destination contact'],reserved:[],startAt:now,dueAt:now,route};h.state=route.length?'MOVING':'IDLE';
     if(!route.length){depositHumanOutputs(r,h,now);if((h as HumanRecord).state!=='MOVING')h.intent=undefined;h.nextThinkAt=Math.max(h.nextThinkAt??0,now+10000);}
   }
-}
+});}
 
 function performHumanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, occupied=new Set<string>()): boolean {
   const m = h.intent?.target?.match(/^(?:global-harvest:(-?\d+):|harvest:)(\d+),(\d+)$/);
@@ -1775,7 +1788,7 @@ function performHumanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, now: n
   if(h.harvestJob)resumeHarvestJob(r,hw,h,now,occupied);
   return true;
 }
-export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): void {
+export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): void {return timedWorldWork('depositHumanOutputs',()=>{
   if (!h.community || !h.workOutputs||['DOWNED','DEAD','EVACUATED'].includes(h.state)) return;
   const comm = r.humanWorld?.communities[h.community]; if (!comm) return;
   const reached=reachableHumanStores(r,r.humanWorld!,h)[0];if(!reached)return;
@@ -1795,7 +1808,7 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
     if (!addStack(r, dstId, transfer)) { if (whole) pack.slots[i] = s; else s.qty += take; continue; }
     const origin=h.workOutputSources?.[stackUid];
     const lineage=dst.slots.filter((v):v is Stack=>!!v).flatMap(v=>{const qty=v.qty-(destinationBefore.get(v.uid)??0);return qty>0?[{at:now,jobId:origin?.jobId??h.harvestJob?.id??'work',sourceId:origin?.sourceId,workerId:h.actorId,fromUid:stackUid,intoUid:v.uid,qty,key:v.key}]:[];});
-    (comm.cargoLedger??={})[transfer.uid]=lineage;
+    (comm.cargoLedger??={})[transfer.uid]=[...(comm.cargoLedger?.[transfer.uid]??[]),...lineage];
     receipt(r,now,'human.cargo.lineage',JSON.stringify({containerId:dstId,transferUid:transfer.uid,lineage}));
     receipt(r,now,'human.cargo.deliver',`${h.harvestJob?.id??'work'}:${h.actorId}:${stackUid}>${transfer.uid}:${dstId}:${take}`);
     moved += take; if (qty <= take){delete h.workOutputs[stackUid];if(h.workOutputSources)delete h.workOutputSources[stackUid];} else h.workOutputs[stackUid] = qty - take;
@@ -1810,7 +1823,7 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
     }
   }
   if(h.harvestJob?.phase==='delivery'&&!Object.values(h.workOutputs).some(q=>q>0)){receipt(r,now,'human.harvest.complete',`${h.harvestJob.id}:${h.actorId}:${dstId}`);delete h.harvestJob;}
-}
+});}
 function humanCombatTarget(r:RunState,hw:HumanWorld,id:string|undefined,floor:number): {x:number;y:number;human?:HumanRecord}|null {
   if(id==='player')return r.player.dead?null:r.player;
   const h=id?hw.people[id]:undefined;
@@ -1826,14 +1839,14 @@ export function finishHumanPlanReview(h:HumanRecord,now:number):void {
   h.blockedPlanCount=Math.min(7,(h.blockedPlanCount??0)+1);
   h.nextThinkAt=Math.max(h.nextThinkAt??now,now+Math.min(300000,6000*2**(h.blockedPlanCount-1)));
 }
-export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
+export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {return timedWorldWork('stepHumans',()=>{
   const lastStepAt = hw.lastStepAt ?? hw.lastResolvedAt;
   const dtMs = now - lastStepAt;
   if (dtMs <= 0) return;
   hw.lastStepAt = now;
   stepPlayerHumanAid(r,hw,now);
   const actors = Object.values(hw.people);
-  for(const h of actors){const m=h.intent?.target?.match(/^harvest:(\d+),(\d+)$/);if(!m)continue;
+  for(const h of actors){if(!h.intent?.target?.startsWith('harvest:'))continue;const m=h.intent.target.match(/^harvest:(\d+),(\d+)$/);if(!m)continue;
     const o=r.sourceMap?.veyra?.originAu,gx=Number(m[1])+(o?o[0]*2:0),gy=Number(m[2])+(o?o[1]*2:0),source=globalSourceAt(r,gx,gy,h.floor,now);
     if(!source){h.intent=undefined;h.motion=undefined;h.state='IDLE';continue;}
     h.harvestJob??={id:h.intent!.intentId,sourceId:source.sourceId,gx,gy,floor:h.floor,key:source.key,phase:'source',startedAt:h.intent!.startAt};
@@ -1844,7 +1857,8 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   const grid = hasMovement ? blockGrid(r) : new Uint8Array(0);
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
-  const occupied = hasMovement ? new Set(actors.filter(h => h.state !== 'DEAD' && h.state !== 'EVACUATED').flatMap(h => [humanCellKey(h.floor,h.gx,h.gy),...(h.motion?[humanCellKey(h.motion.toFloor??h.floor,h.motion.toGx,h.motion.toGy)]:[])])) : new Set<string>();
+  const occupied=new Set<string>();
+  if(hasMovement)for(const h of actors){if(h.state==='DEAD'||h.state==='EVACUATED')continue;occupied.add(humanCellKey(h.floor,h.gx,h.gy));if(h.motion)occupied.add(humanCellKey(h.motion.toFloor??h.floor,h.motion.toGx,h.motion.toGy));}
   const playerGx = ox + Math.floor(r.player.x / TILE), playerGy = oy + Math.floor(r.player.y / TILE);
   for(const h of actors) {
     if(h.occupation!=='guard' || h.floor!==(r.veyraFloor??0) || h.following || ['DOWNED','DEAD','EVACUATED','FIGHTING'].includes(h.state) || (h.nextPerceptionAt??0)>now)continue;
@@ -1910,7 +1924,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
     h.intent.route = route; h.state = route.length ? 'MOVING' : 'IDLE'; h.intent.blockReason = undefined;
   }
   let navigation: ReturnType<typeof humanNavigation>|undefined;
-  for (const h of Object.values(hw.people)) {
+  for (const h of actors) {
     if (h.state === 'DEAD' || h.state === 'EVACUATED') continue;
     // 1. Survival consume: eat when hungry, drink when thirsty.
     if (h.hunger < 40) humanConsume(r, hw, h, 'food', now);
@@ -1985,7 +1999,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
     // Stamina recovers while actually idle/resting.
     if (h.state === 'IDLE') h.stamina = clamp(h.stamina + dtMs / HOUR * 4, 0, h.maxStamina);
   }
-}
+});}
 
 // ---------------------------------------------------------------------------
 // Human combat integration — real damage routes, not an unattached function.

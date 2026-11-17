@@ -1,3 +1,4 @@
+import {timedWorldWork} from './world-work';
 import {countWorldWork} from './world-work';
 import { landingStimulus } from './stimulus';
 import { VFX_TEST_KIT, VFX_TEST_CORES } from './vfx/testkit';
@@ -27,7 +28,7 @@ import { U05_WORLD_LAYOUT_ID, isVeyra05Layout, layoutIdAt } from '../veyra05/sce
 import { globalWindowOrigins, unverifiedOffshoreExcluded } from '../veyra05/global-start-discovery';
 import { localSpawnScreen } from '../veyra05/global-spawn-eligibility';
 import { FRAME_W, FRAME_H, globalIndex } from '../veyra05/frame';
-import { globalBaseGeometry, globalBaseWaterCell, getWindowWorld, resetWindowToGround, setVeyraPlacementRules, syncVeyraPlacement } from '../veyra05/window';
+import { globalBaseGeometry, globalBaseWaterCell, globalBaseFreshMask, getWindowWorld, resetWindowToGround, setVeyraPlacementRules, syncVeyraPlacement } from '../veyra05/window';
 import { activeFloor, applyFloor, authoredGlobalStatic, authoredPlan, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
 import { windowOrigin } from '../veyra05/continuity';
 import {
@@ -545,16 +546,23 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
   }
   return { i, key, def, stock, hp, st, fire: (st as any)?.fire as number | undefined };
 }
+const protectedReadAnchors=new WeakMap<RunState,Set<string>>();
+function protectedSourceAnchor(r:RunState,gx:number,gy:number,floor:number){
+ let anchors=protectedReadAnchors.get(r);
+ if(!anchors){anchors=new Set<string>();for(const e of allRunEntities(r))if(e.g1b||e.kind==='loot'){const p=entityGlobalCoords(r,e);anchors.add(`${p.floor}:${p.gtx},${p.gty}`);}
+   if(scopedEntityViews.has(r))protectedReadAnchors.set(r,anchors);
+ }
+ return anchors.has(`${floor}:${gx},${gy}`);
+}
 const GLOBAL_EXPLORATION_SOURCE_CELLS=new Set(G1B_SOURCE_SITES.map(e=>`${e.level??0}:${e.gx},${e.gy}`));
 /** Global source ledger adapter. Coordinates are always physical/global; the
  * active camera delegates to sourceAt, never a second stock authority. This read
  * can advance canonical regrowth; extraction still needs an actor transaction. */
-export function globalSourceAt(r:RunState,gx:number,gy:number,floor:number,now:number){
+export function globalSourceAt(r:RunState,gx:number,gy:number,floor:number,now:number){return timedWorldWork('globalSourceAt',()=>{
   countWorldWork('sourceLookups');
   const [ox,oy]=windowOrigin(r),lx=gx-ox,ly=gy-oy,inside=lx>=0&&ly>=0&&lx<WW&&ly<WH;
   const protectedAt=(statics:readonly {kind:string;tx:number;ty:number}[],x:number,y:number)=>
-    GLOBAL_EXPLORATION_SOURCE_CELLS.has(`${floor}:${gx},${gy}`)||statics.some(e=>e.kind==='loot'&&e.tx===x&&e.ty===y)||
-    allRunEntities(r).some(e=>{if(!(e.g1b||e.kind==='loot'))return false;const p=entityGlobalCoords(r,e);return p.floor===floor&&p.gtx===gx&&p.gty===gy;});
+    GLOBAL_EXPLORATION_SOURCE_CELLS.has(`${floor}:${gx},${gy}`)||statics.some(e=>e.kind==='loot'&&e.tx===x&&e.ty===y)||protectedSourceAnchor(r,gx,gy,floor);
   if(inside&&floor===activeFloor(r)&&r.layoutId===getActiveLayout()){
     const s=sourceAt(r,lx,ly,now);if(!s)return null;
     return {...s,sourceId:`${floor}:${gy*FRAME_W+gx}`,states:r.sources,localSources:undefined as RunState['sources']|undefined,localIndex:s.i,protected:protectedAt(getWorld().statics,lx,ly)};
@@ -587,7 +595,7 @@ export function globalSourceAt(r:RunState,gx:number,gy:number,floor:number,now:n
     else if(st.regrowFrom!==undefined){advanceRegrowth(r,st,def,x,y,now,{terrain,rate});if(st.regrowDoneAt!==undefined&&now>=st.regrowDoneAt&&!suppressed(now)&&siteFree())refill();}
   }
   return {i:gi,sourceId:`${floor}:${gi}`,key,def,stock:st?.stock??def.stock,hp:st?.hp??def.hp,st,states,localSources,localIndex:i,fire:st?.fire,protected:protectedAt(base.statics,x,y)};
-}
+});}
 // collision cache — rebuilt when structures/sources/terrain change
 // B04-P4: keyed by the RunState object itself (not run.id), like entsAt: a copied run with the same id must never reuse another copy's collision grid.
 let blockCache: { run: RunState; layout: string; sourceVersion: number; floor: number; arr: Uint8Array } | null = null; let blockDirty = true;
@@ -1309,7 +1317,7 @@ export function turretStatus(r: RunState, e: Entity): string {
   if(!powerAllocation(r,g).includes(e))return 'Capacity allocated elsewhere'; return 'Ready';
 }
 /** Split the common timeline at the next generator fuel boundary. */
-export function basePowerBoundary(r: RunState, limit: number, online = true): number {
+export function basePowerBoundary(r: RunState, limit: number, online = true): number {return timedWorldWork('basePowerBoundary',()=>{
   let result = limit;
   const all = allRunEntities(r);
   let blockMap: Map<string, number> | undefined;
@@ -1333,9 +1341,9 @@ export function basePowerBoundary(r: RunState, limit: number, online = true): nu
     }
   }
   return result;
-}
+});}
 /** Fuel is consumed exactly once over each chronological interval. */
-export function stepBasePower(r: RunState, dt: number, now: number, online = true) {
+export function stepBasePower(r: RunState, dt: number, now: number, online = true) {return timedWorldWork('stepBasePower',()=>{
   const all = allRunEntities(r);
   const gens = all.filter(e => e.basePower?.enabled && !!e.c);
   if (!gens.length) return;
@@ -1369,7 +1377,7 @@ export function stepBasePower(r: RunState, dt: number, now: number, online = tru
     }
     if (!hasPowerFuel(r, e)) dirtyFloors.add(fl);
   }
-}
+});}
 
 // ---------------- custody (K1) ----------------
 export const C = (r: RunState, id: string): Container => typeof id === 'string' && Object.prototype.hasOwnProperty.call(r.custody, id) ? r.custody[id] : undefined as unknown as Container;
@@ -1686,7 +1694,7 @@ export function g1bDoorLabel(r: RunState, e: Entity, gate: G1bGate, now: number)
  */
 const G1B_BUSY = new WeakMap<RunState, { ids: string[]; at: number }>();
 const g1bBusyState = (g: NonNullable<Entity['g1b']>) => g.kind !== 'gen' && (g.state === 'opened' || (g.state === 'empty' && g.kind === 'chest' && g.refillAt !== undefined));
-export function stepG1b(r: RunState, now: number) {
+export function stepG1b(r: RunState, now: number) {return timedWorldWork('stepG1b',()=>{
   if (!r.g1b) return;
   let busy = G1B_BUSY.get(r);
   if (!busy || now < busy.at || now - busy.at >= 600_000) { busy = { ids: g1bEntities(r).filter(e => g1bBusyState(e.g1b!)).map(e => e.id), at: now }; G1B_BUSY.set(r, busy); }
@@ -1715,7 +1723,7 @@ export function stepG1b(r: RunState, now: number) {
     if (doorwayOccupied(r, e)) continue; // never closes on a body; retried at the next settlement
     e.open = false; markDirty(); delete r.g1b.doors[id]; receipt(r, now, 'g1b.door.close', id);
   }
-}
+});}
 
 // ---------- Creator Core V2 ----------
 /** Finish a same-UID upgrade whose real-time timer has elapsed (also while the game was closed). */
@@ -1811,7 +1819,7 @@ export function migrateLootRespawn(r: RunState, now: number) {
   }
 }
 /** Called by the same run-clock settlement path for online and offline time. */
-export function stepLootRespawn(r: RunState, now: number) {
+export function stepLootRespawn(r: RunState, now: number) {return timedWorldWork('stepLootRespawn',()=>{
   if (!r.depletedLootSites?.length) return;
   const world = getWorld(r.layoutId || 'shipping');
   for (const index of [...r.depletedLootSites]) {
@@ -1837,7 +1845,7 @@ export function stepLootRespawn(r: RunState, now: number) {
     }
     markDirty(); receipt(r, now, 'loot.respawn', `${index}:${e.id}`);
   }
-}
+});}
 /** Destruction and reclaim share the same custody transition. */
 export function destroyStructure(r: RunState, e: Entity, now: number) {
   if (e.kind !== 'struct') return null;
@@ -3492,7 +3500,7 @@ function stationState(r: RunState, e: Entity, code: string, at: number) {
   const prev = st.stateCode; st.stateCode = code;
   if (prev !== undefined) receipt(r, at, 'station.state', `${e.id}:${prev}>${code}`);
 }
-export function stepStations(gs: GameState, dtMs: number, now: number, report?: string[], powered:ReadonlySet<string>=new Set()) {
+export function stepStations(gs: GameState, dtMs: number, now: number, report?: string[], powered:ReadonlySet<string>=new Set()) {return timedWorldWork('stepStations',()=>{
   const r = gs.run!;
   const note = (message: string) => { if (report && !report.includes(message)) report.push(message); };
   for (const e of [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})]) {
@@ -3584,7 +3592,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
       if (job) job.left = Math.max(0, job.left - step * speed);
     }
   }
-}
+});}
 function entityIdSortKey(id: string): number {
   const m = /^[a-z]+([0-9a-z]+)$/i.exec(id);
   const n = m ? Number.parseInt(m[1], 36) : NaN;
@@ -3600,7 +3608,7 @@ const scopedEntityViews=new WeakMap<RunState,Entity[]>();
 export function withRunEntityRead<T>(r:RunState,read:()=>T):T {
   if(scopedEntityViews.has(r))return read();
   scopedEntityViews.set(r,allRunEntities(r));
-  try{return read();}finally{scopedEntityViews.delete(r);}
+  try{return read();}finally{scopedEntityViews.delete(r);protectedReadAnchors.delete(r);}
 }
 const entityViews = new WeakMap<RunState,{live:Entity[];off:Entity[];ids:string[];sorted:Entity[]}>();
 export function allRunEntities(r: RunState): Entity[] {
@@ -3756,9 +3764,8 @@ export function globalFreshWater(r:RunState,gx:number,gy:number,floor:number):bo
   const [ox,oy]=windowOrigin(r),lx=gx-ox,ly=gy-oy;
   if(lx>=0&&ly>=0&&lx<WW&&ly<WH && activeFloor(r)===0 && r.layoutId===getActiveLayout())return !!getWorld().fresh[ly*WW+lx]&&effTile(r,lx,ly)!==T.ICE;
   if(gx<0||gy<0||gx>=FRAME_W||gy>=FRAME_H)return false;
-  const base=globalBaseWaterCell(gx,gy,r.sourceMap?.rules===4?4:3),delta=r.veyraGlobalTerrain?.[globalIndex(gx,gy)];
-  const tile=delta&&(!delta.until||delta.until>r.clock.simMs)?delta.t:base.tile;
-  return base.fresh&&tile!==T.ICE;
+  const delta=r.veyraGlobalTerrain?.[globalIndex(gx,gy)];
+  return globalBaseFreshMask(gx,gy)&&!(delta&&(!delta.until||delta.until>r.clock.simMs)&&delta.t===T.ICE);
 }
 
 export function globalCellTileAndClass(
@@ -3905,7 +3912,7 @@ function clearTenderSegment(r: RunState, a: Entity, b: Entity, entities: Entity[
   return clearGlobalPhysicalLine(r, a, b, entities, entityBlockMap);
 }
 
-export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean, at: number = gs.run!.clock.lastSimAt) {
+export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean, at: number = gs.run!.clock.lastSimAt) {return timedWorldWork('stepGardensBarrels',()=>{
   const r = gs.run!; const G = BAL.garden;
   const entities = allRunEntities(r);
   for (const e of entities) {
@@ -3924,7 +3931,7 @@ export function stepGardensBarrels(gs: GameState, dtMs: number, wet: boolean, at
     }
     if (e.type === 'barrel' && rain) e.water = Math.min(12, (e.water || 0) + dtMs / 20000);
   }
-}
+});}
 /** Local normalized climate/soil inputs are Map-owned. CAL-01 adds the seasonal
  * DEVIATION to the Map's own temperature/moisture (`climateAt` / `climateFromCell`), never new terrain:
  * a cold frame stays a real paid structure that protects against the seasonal cold
@@ -4025,17 +4032,17 @@ function tenderCode(r:RunState,e:Entity, entities?: Entity[]):TenderCode {
 }
 /** Transition receipts only on a real state change (never per tick). The last coded state is persisted on the
  * tender, so a reload or a repeated Continue cannot repeat it. The first observation of a tender is silent. */
-export function stepTenderStates(r:RunState,now:number) {
+export function stepTenderStates(r:RunState,now:number) {return timedWorldWork('stepTenderStates',()=>{
   const entities = allRunEntities(r);
   for(const e of entities){ if(!e.farm) continue;
     const code = tenderCode(r, e, entities), paused = TENDER_PAUSED.has(code), prev = e.farm.lastCode;
     if(prev===undefined){ e.farm.lastCode=code; continue; }
     if(prev!==code){ e.farm.lastCode=code; receipt(r,now,'tender.state',`${e.id}:${prev}>${code}:${paused?'paused':'running'}`); }
   }
-}
+});}
 /** Instantaneous events at the current world timestamp; order is harvest,
  * planting, then irrigation. Fuel is only consumed on an actual operation. */
-export function stepTenders(gs:GameState,now:number) {
+export function stepTenders(gs:GameState,now:number) {return timedWorldWork('stepTenders',()=>{
   const r=gs.run!;
   const entities = allRunEntities(r);
   for(const e of entities) {const f=e.farm;if(!f?.enabled)continue;const links=tenderLinks(r,e,entities);if(!links)continue;const {garden,barrel,chest}=links,g=garden.garden!,cid=chest.c!;
@@ -4044,12 +4051,12 @@ export function stepTenders(gs:GameState,now:number) {
     if(!g.crop){const rule=GARDEN_CROPS[f.crop];if(!hasAll(r,cid,rule.inputs)||(g.water<1&&(barrel.water||0)<1)||!tenderSpend(r,e,BAL.garden.tenderPlantEnergySeconds*1000))continue;for(const [key,qty] of rule.inputs)removeItem(r,cid,key,qty);if(g.water<1){barrel.water!-=1;g.water=Math.min(3,g.water+1);}g.crop=f.crop;g.growth=0;receipt(r,now,'tender.plant',`${e.id}:${f.crop}`);}
     if(g.crop&&g.growth<1&&g.water<=1e-10&&(barrel.water||0)>=1&&tenderSpend(r,e,BAL.garden.tenderPumpEnergySeconds*1000)){barrel.water!-=1;g.water+=1;receipt(r,now,'tender.water',e.id);}
   }
-}
+});}
 /** Earliest maturity, dry-out or rain-fed barrel refill for a linked plot.
  * CAL-01: the slice limits use the SAME seasonal evaporation and liquid-precipitation
  * catch as stepGardensBarrels/gardenEnvironment, so a seasonal boundary can never
  * make an offline slice overshoot maturity or under-count water loss. */
-export function tenderBoundary(r:RunState,wet:boolean,limit:number,at:number = r.clock.lastSimAt):number {
+export function tenderBoundary(r:RunState,wet:boolean,limit:number,at:number = r.clock.lastSimAt):number {return timedWorldWork('tenderBoundary',()=>{
   const entities = allRunEntities(r);
   let dt=limit;for(const e of entities){if(!e.farm?.enabled)continue;const l=tenderLinks(r,e,entities);if(!l)continue;
     const g=l.garden.garden!;
@@ -4059,4 +4066,4 @@ export function tenderBoundary(r:RunState,wet:boolean,limit:number,at:number = r
     if(g.crop&&g.growth<1&&(g.water>1e-10||incoming>=use)){dt=Math.min(dt,(1-g.growth)*GARDEN_CROPS[g.crop as GardenCrop].seconds*1000/env.rate);if(use>incoming&&g.water>1e-10)dt=Math.min(dt,g.water/(use-incoming));}
     if(wet&&!isEntityRoofed(r,l.barrel,entities)&&(l.barrel.water||0)<1&&env.catch>0)dt=Math.min(dt,(1-(l.barrel.water||0))*20000);
   }return dt;
-}
+});}

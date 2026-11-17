@@ -46,7 +46,7 @@ const SMOOTHABLE = new Set<number>([T.MEADOW, T.GRASS, T.FOREST, T.MARSH, T.SAND
 const isWater = (t: number) => t === T.DEEP || t === T.SHALLOW || t === T.RIVER;
 
 // ---------- bounded LRU ----------
-export const MAX_RESIDENT = 160;                   // ~160 x 9 KB ≈ 1.4 MB of layers; never the frame
+export const MAX_RESIDENT = 1024;                   // ~1024 x 9 KB ≈ 9 MB of layers; accommodates distributed actor catchments; never the frame
 const resident = new Map<string, Chunk>();
 let tick = 0, builds = 0, hits = 0, evictions = 0, buildMs = 0;
 export const streamStats = () => ({ resident: resident.size, maxResident: MAX_RESIDENT, builds, hits, evictions, buildMs: Math.round(buildMs), chunkTiles: CHUNK, frameChunks: [Math.ceil(FRAME_W / CHUNK), Math.ceil(FRAME_H / CHUNK)], fullFrameMaterialised: false });

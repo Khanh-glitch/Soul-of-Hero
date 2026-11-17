@@ -31,8 +31,8 @@ export function validateEconomyMap(m: EconomyMap): string[] {
     const flags=['freshwater','coast','walkable','buildable','cargoPassable','road','protected','industrial'] as const;
     for (let i=0;i<n;i++) {
       if(!biomes.has(m.biome[i])) {e.push(`unknown biome at cell ${i}`);break;}
-      if(!Number.isFinite(m.elevation[i])||!Number.isFinite(m.slope[i])||m.slope[i]<0||![m.moisture[i],m.temperature[i]].every(v=>Number.isFinite(v)&&v>=0&&v<=1)) {e.push(`invalid terrain or climate at cell ${i}`);break;}
-      if(flags.some(k=>m[k][i]!==0&&m[k][i]!==1)) {e.push(`invalid geographic mask at cell ${i}`);break;}
+      if(!Number.isFinite(m.elevation[i])||!Number.isFinite(m.slope[i])||m.slope[i]<0||(!Number.isFinite(m.moisture[i])||m.moisture[i]<0||m.moisture[i]>1||!Number.isFinite(m.temperature[i])||m.temperature[i]<0||m.temperature[i]>1)) {e.push(`invalid terrain or climate at cell ${i}`);break;}
+      if((m.freshwater[i]!==0&&m.freshwater[i]!==1)||(m.coast[i]!==0&&m.coast[i]!==1)||(m.walkable[i]!==0&&m.walkable[i]!==1)||(m.buildable[i]!==0&&m.buildable[i]!==1)||(m.cargoPassable[i]!==0&&m.cargoPassable[i]!==1)||(m.road[i]!==0&&m.road[i]!==1)||(m.protected[i]!==0&&m.protected[i]!==1)||(m.industrial[i]!==0&&m.industrial[i]!==1)) {e.push(`invalid geographic mask at cell ${i}`);break;}
     }
   }
   if(!Array.isArray(m.starts)||!m.starts.length) e.push('at least one authored start required');
