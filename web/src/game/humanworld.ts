@@ -19,12 +19,12 @@
  *    humans. No retroactive population/loot mint on old saves.
  */
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
-import { RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom } from './engine';
+import { STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
+import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
-import { executeHumanWork, planHumanOccupation, type HumanWorkTask } from './human-jobs';
-import { humanShelter } from './human-shelter';
+import { humanEntityTile, executeHumanWork, planHumanOccupation, type HumanWorkTask } from './human-jobs';
+import { humanShelter, humanShelterContext, type HumanShelterContext } from './human-shelter';
 import { liveItemId, liveItemPer } from './final-item-set';
 
 export const HUMAN_WORLD_VERSION = 'human-world-v1';
@@ -63,6 +63,7 @@ export type SiteClass = 'HABITABLE_COMMUNITY' | 'WORK_SITE' | 'TRADE_OR_TRANSIT'
 // ---------------------------------------------------------------------------
 export type HumanState = 'IDLE' | 'MOVING' | 'WORKING' | 'FIGHTING' | 'DOWNED' | 'DEAD' | 'EVACUATED' | 'BLOCKED';
 export type HumanDisposition = 'protective' | 'neutral' | 'opportunistic' | 'predatory';
+export type CompanionCommand = 'follow' | 'hold' | 'defend' | 'engage' | 'retreat' | 'home' | 'carry';
 export type TerminalOutcome = 'EVACUATED' | 'SURVIVED_ON_ISLAND' | 'DEAD' | 'UNRESOLVED';
 
 export interface HumanEquipSlots { head: Stack | null; body: Stack | null; legs: Stack | null; feet: Stack | null; weapon: Stack | null; }
@@ -150,7 +151,8 @@ export interface HumanRecord {
   lastSimAt: number;
   // companion
   following?: boolean;
-  followOrder?: { orderId: string; result: OrderResult; reason: string; at: number };
+  followOrder?: { orderId: string; result: OrderResult; reason: string; at: number; order?: CompanionCommand; target?: string };
+  orderDecisions?: Record<string, {orderId:string;result:OrderResult;reason:string;at:number;order:CompanionCommand;target?:string}>;
   /** Persistent social standing with the player; changes only through witnessed social acts. */
   trust?: number;
   lastAttackAt?: number;
@@ -167,13 +169,15 @@ export interface HumanRecord {
   lastTalkAt?: number;
   lastWorkBlock?: string;
   tradeTrustReceipts?: Record<string, number>;
+  helpTrustReceipts?: Partial<Record<'food'|'water'|'medical',string>>;
   confrontationAttempt?: { scene: string; at: number; attempts: number; demand: string; reaction: string; message: string };
 }
 export interface Community {
   id: string;
   poi: string;
   class: SiteClass;
-  homeBeds: string[];         // bed container ids assigned
+  homeBeds: string[];         // actual single-sleeper bed ENTITY ids (never a chest)
+  legacyHouseholdContainers?: string[];
   waterSources: string[];     // source ids
   foodStores: string[];       // container ids
   workStations: string[];     // station entity ids
@@ -218,6 +222,7 @@ export interface HumanEvent {
   resolved: boolean;
 }
 export interface HumanWorld {
+  playerAid?: {id:string;actorId:string;stackUid:string;kind:'food'|'water'|'medical';startedAt:number;dueAt:number;floor:number;px:number;py:number;hp:number};
   version: string;
   sourceLayout: number;
   people: Record<string, HumanRecord>;
@@ -355,7 +360,7 @@ export function humanArmor(h: HumanRecord): { armor: number; steady: number; gro
 
 /** Effective weapon damage/swing for a human's equipped weapon (same item law as player). */
 export function humanWeapon(h: HumanRecord): { dmg: number; reach: number; arc: number; swing: number; dur: number } | null {
-  const w = h.equip.weapon; if (!w) return null;
+  const w = h.equip.weapon; if (!w || w.dur===0) return null;
   const d = ITEMS[w.key]; if (!d || d.dmg == null) return null;
   return { dmg: d.dmg, reach: d.reach ?? 22, arc: d.arc ?? 1.4, swing: d.swing ?? 400, dur: d.dur ?? 200 };
 }
@@ -370,7 +375,7 @@ export { OCCUPATIONS_LIST };
 // ---------------------------------------------------------------------------
 // Population seeding — deterministic classification of the 81 POIs from the
 // compiled census geometry + the physical-audit archetype. Density derives from
-// real settlement function, capacity and danger — NOT one NPC per POI.
+// site function templates; capacity/supply certification is still outstanding, NOT one NPC per POI.
 // ---------------------------------------------------------------------------
 /** Full physical classification of every census archetype (24 observed). Each maps to a
  *  settlement FUNCTION, not a population quota. ABANDONED / INACCESSIBLE_OR_UNVERIFIED are
@@ -485,7 +490,7 @@ function communityStock(cls: SiteClass, rooms: number): Record<string, number> {
 
 /** Classify a POI from its archetype and seed a finite community.
  *  `sites` carries authored global bounds plus walkable room-interior spawn tiles. */
-export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string; name: string; archetype: string; rooms: number; bbox: [number, number, number, number]; spawnTiles?: [number, number][]; stationTiles?: { gx: number; gy: number; struct: string }[] }[], elderLairs?: Record<string, { gx: number; gy: number; floor: number }>, authoredEvacPositions?: Record<string, [number, number]>): void {
+export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string; name: string; archetype: string; rooms: number; bbox: [number, number, number, number]; spawnTiles?: [number, number][]; stationTiles?: { gx: number; gy: number; struct: string }[]; bedTiles?: {gx:number;gy:number;floor:number;approach:[number,number]}[] }[], elderLairs?: Record<string, { gx: number; gy: number; floor: number }>, authoredEvacPositions?: Record<string, [number, number]>): void {
   // Boarding coordinates are global and keyed by authored POI identity, never active-window order.
   const evacPositions: Record<string, [number, number]> = { ...(authoredEvacPositions ?? {}) };
   if (!authoredEvacPositions) {
@@ -520,11 +525,10 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
     const communityId = `com:${site.id}`;
     const store = mkContainer(r, 'bag', 10);
     store.origin = { authority: 'REGIONAL_HUMAN_ECONOMY', sourceId: `regional-human-economy:${site.id}` };
-    const bed = mkContainer(r, 'chest', 4);
     const stock = communityStock(cls, site.rooms);
     for (const [k, q] of Object.entries(stock)) addItem(r, store.id, k, q);
     const comm: Community = {
-      id: communityId, poi: site.id, class: cls, homeBeds: [bed.id],
+      id: communityId, poi: site.id, class: cls, homeBeds: [],
       waterSources: [store.id],  // physical container custody is the only stock authority
       foodStores: [store.id],
       workStations: [],
@@ -543,6 +547,16 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
       (r.veyraOffscreenEntities ??= {})[storeEntity.id] = storeEntity;
     }
     hw.communities[communityId] = comm;
+    // Functional registration of actual authored bed props, not a residential quota.
+    // A resident without an available slot remains unhoused; no invisible rest credit.
+    for (const slot of site.bedTiles ?? []) {
+      const id=uid(r,'e'),lx=slot.gx-ox,ly=slot.gy-oy;
+      const bed:Entity={id,kind:'struct',type:'bed_straw',floor:slot.floor,tx:slot.gx,ty:slot.gy,x:slot.gx*TILE+8,y:slot.gy*TILE+8,hp:STRUCTS.bed_straw.hp,maxHp:STRUCTS.bed_straw.hp,owner:communityId,poi:site.id,label:`${site.name} sleeping place`};
+      if(lx>=1&&ly>=1&&lx<WW-1&&ly<WH-1){bed.tx=lx;bed.ty=ly;bed.x=lx*TILE+8;bed.y=ly*TILE+8;r.entities[id]=bed;}
+      else(r.veyraOffscreenEntities??={})[id]=bed;
+      comm.homeBeds.push(id);
+    }
+
     // Materialize each authored production prop as a real, finite station entity with
     // its own custody; NPC work and player craft use the same station authority.
     for (const authored of site.stationTiles ?? []) {
@@ -554,7 +568,7 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
       const station: Entity = {
         id: stationId, kind: 'struct', type: authored.struct, tx: authored.gx, ty: authored.gy,
         x: authored.gx * TILE + 8, y: authored.gy * TILE + 8, hp: 180, maxHp: 180,
-        poi: site.id, label: `${site.name} ${authored.struct.replace('_', ' ')}`,
+        owner: communityId, poi: site.id, label: `${site.name} ${authored.struct.replace('_', ' ')}`,
         station: { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id },
       };
       const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
@@ -589,7 +603,7 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
       const h = makeHuman(r, hw, {
         sourceId: srcId, gx, gy, floor: 0, profile: member.profile,
         occupation: member.occ, disposition: member.disp, proficiency: member.prof,
-        community: communityId, home: communityId, bedId: bed.id,
+        community: communityId, home: communityId, bedId: comm.homeBeds[placed],
         equip, startingPack: g.pack,
       });
       comm.memberIds.push(h.actorId);
@@ -603,15 +617,18 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
 // ---------------------------------------------------------------------------
 /** A custody chest is not a sleeping slot. Assignment must resolve to one actual bed,
  * with a single living claimant physically resting beside it on the same floor. */
-function usingHumanBed(r: RunState, hw: HumanWorld, h: HumanRecord): boolean {
-  if (h.state !== 'IDLE' || !h.bedId || h.floor !== (r.veyraFloor ?? 0)) return false;
-  const bed = r.entities[h.bedId];
-  if (!bed || bed.type !== 'bed' || (bed.floor ?? 0) !== h.floor || (bed.hp ?? 1) <= 0) return false;
+export function usingHumanBed(r: RunState, hw: HumanWorld, h: HumanRecord, context?:HumanShelterContext): boolean {
+  if (h.state !== 'IDLE' || h.following || !h.bedId) return false;
+  const bed = findRunEntity(r,h.bedId);
+  if (!bed || bed.type !== 'bed_straw' || (bed.floor ?? 0) !== h.floor || (bed.hp ?? 0) <= 0 || bed.owner!==h.community) return false;
   if (Object.values(hw.people).some(other => other !== h && other.bedId === h.bedId && other.state !== 'DEAD' && other.state !== 'EVACUATED')) return false;
-  const o = r.sourceMap?.veyra?.originAu;
-  const x = (h.gx - (o ? Math.round(o[0] / 0.5) : 0) + 0.5) * TILE;
-  const y = (h.gy - (o ? Math.round(o[1] / 0.5) : 0) + 0.5) * TILE;
-  return Math.hypot(x - bed.x, y - bed.y) <= TILE * 1.5 && clearPhysicalLine(r, { x, y }, bed, true);
+  const [gx,gy]=humanEntityTile(r,bed);
+  if(Math.hypot(h.gx-gx,h.gy-gy)>1.5 || !humanShelter(r,h.gx,h.gy,h.floor,context))return false;
+  const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
+  if(r.entities[bed.id]===bed && h.floor===(r.veyraFloor??0)) return clearPhysicalLine(r,{x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE},bed,true);
+  // Outside the camera, the sleeper must be cardinally adjacent to the same real
+  // bed and inside its actual enclosure. No distance-free community rest.
+  return Math.abs(h.gx-gx)+Math.abs(h.gy-gy)<=1;
 }
 
 /** Advance hunger/thirst/rest/wounds for every active human by elapsed real time. */
@@ -619,6 +636,7 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
   const lastNeedsAt = hw.lastNeedsAt ?? hw.lastResolvedAt;
   const dtMs = now - lastNeedsAt;
   if (dtMs < 1000) return; // biological events accrue exactly; resolve at one-second boundaries, not render frequency
+  const shelterContext=humanShelterContext(r);
   const hours = dtMs / HOUR;
   const hungerRate = BAL.player.offlineHungerPerHour;
   const thirstRate = BAL.player.offlineThirstPerHour;
@@ -629,7 +647,7 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
     const m = active ? 1.25 : 1.0;
     h.hunger = clamp(h.hunger - hungerRate * hours * m, 0, 100);
     h.thirst = clamp(h.thirst - thirstRate * hours * m, 0, 100);
-    h.warmth = clamp(h.warmth - (humanShelter(r, h.gx, h.gy, h.floor) ? 0 : 0.4 * hours), 20, 100);
+    h.warmth = clamp(h.warmth - (humanShelter(r, h.gx, h.gy, h.floor,shelterContext) ? 0 : 0.4 * hours), 20, 100);
     if (h.hunger <= 0 || h.thirst <= 0) {
       // starvation / dehydration: HP drain, work stops
       const drain = ((h.hunger <= 0 ? BAL.player.starveDamagePerMin : 0) + (h.thirst <= 0 ? BAL.player.starveDamagePerMin : 0)) * (dtMs / 60000);
@@ -639,7 +657,7 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
       }
     }
     // rest debt: grows when not resting on a bed
-    if (!usingHumanBed(r, hw, h)) h.rest = clamp(h.rest + dtMs / HOUR / 8, 0, 1);
+    if (!usingHumanBed(r, hw, h,shelterContext)) h.rest = clamp(h.rest + dtMs / HOUR / 8, 0, 1);
     else h.rest = clamp(h.rest - dtMs / HOUR / 4, 0, 1);
     // bleeding escalation (provisional: 8 min stabilize window, ~20 min fatal)
     for (const w of h.wounds) {
@@ -849,6 +867,9 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
     }, now);
     formGrievance(r, hw, h, attackerId, now, incident.id);
   }
+  if(h.hp>0 && attackerId && (source==='human'||source==='player'||source==='enemy') && h.state!=='DOWNED' && humanWeapon(h)) {
+    h.motion=undefined;h.state='FIGHTING';h.intent={intentId:`defend:${h.actorId}:${now}`,actorId:h.actorId,kind:'fight',target:attackerId,preconditions:['direct physical assault'],reserved:[],startAt:now,dueAt:now};
+  }
   if (h.hp <= 0) {
     if (h.state === 'DOWNED') killHuman(r, hw, h, now, source);
     else downHuman(r, hw, h, now, source, attackerId);
@@ -904,7 +925,7 @@ export function killHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
   h.hp = 0;
   h.outcome = 'DEAD';
   // One recoverable corpse bag entity (kind 'bag') with its own custody container.
-  const corpseC = mkContainer(r, 'bag', humanPack(r, h).slots.length + 5);
+  const corpseC = mkContainer(r, 'bag', humanPack(r, h).slots.length + humanCart(r,h).slots.length + 5);
   const origin = r.sourceMap?.veyra?.originAu;
   const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
   const lx = h.gx - ox, ly = h.gy - oy;
@@ -916,12 +937,12 @@ export function killHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
     // Transfer carried/equipped stacks by moving the same object and UID. addStack is
     // intentionally unsuitable here because K1 correctly rejects a UID still owned
     // by the source container.
-    const sources: (Stack | null)[] = [...humanPack(r, h).slots];
+    const sources: (Stack | null)[] = [...humanPack(r, h).slots,...humanCart(r,h).slots];
     for (const slot of ['weapon', 'body', 'head', 'legs', 'feet'] as const) sources.push(h.equip[slot]);
     let dest = 0;
     for (const stack of sources) if (stack) corpseC.slots[dest++] = stack;
   }
-  humanPack(r, h).slots.fill(null);
+  humanPack(r, h).slots.fill(null);humanCart(r,h).slots.fill(null);
   h.equip = { head: null, body: null, legs: null, feet: null, weapon: null };
   receipt(r, now, 'human.death', `${h.actorId}:${cause}`);
   pushLog(r, now, `${h.name} has fallen.`, 'red');
@@ -1041,6 +1062,39 @@ function faceTowardPlayer(r: RunState, h: HumanRecord): void {
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
   faceHumanToward(h, ox + r.player.x / TILE, oy + r.player.y / TILE);
+}
+export function startHumanAid(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,stackUid:string,now:number): {ok:boolean;reason?:string;msg?:string} {
+  if(hw.playerAid)return {ok:false,reason:'Finish or cancel your current aid first.'};
+  if(['DEAD','EVACUATED','FIGHTING'].includes(h.state))return {ok:false,reason:'It is not safe to help right now.'};
+  const s=C(r,'inv').slots.find(s=>s?.uid===stackUid);if(!s)return {ok:false,reason:'Choose supplies from your own pack.'};
+  const d=ITEMS[s.key];
+  const kind=(['bandage','herb'].includes(s.key)&&(h.state==='DOWNED'||h.wounds.some(w=>!w.treated)))?'medical':d.waterContainer&&(s.charge??0)>0&&h.thirst<35?'water':d.food?.hunger&&h.hunger<35&&h.state!=='DOWNED'?'food':undefined;
+  if(!kind)return {ok:false,reason:'That item does not meet a current urgent need.'};
+  if(h.state==='DOWNED'&&kind!=='medical')return {ok:false,reason:'Stabilize the patient before feeding them.'};
+  hw.playerAid={id,actorId:h.actorId,stackUid,kind,startedAt:now,dueAt:now+(kind==='medical'?6000:1500),floor:h.floor,px:r.player.x,py:r.player.y,hp:r.player.hp};
+  receipt(r,now,'human.aid.start',`${id}:${h.actorId}:${kind}:${stackUid}`);
+  return {ok:true,msg:kind==='medical'?'Treating · stay beside the patient for six seconds.':'Offering supplies · stay nearby.'};
+}
+export function stepPlayerHumanAid(r:RunState,hw:HumanWorld,now:number):void {
+  const a=hw.playerAid;if(!a)return;
+  const h=hw.people[a.actorId],s=C(r,'inv').slots.find(s=>s?.uid===a.stackUid);
+  const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
+  const dest=h?{x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE}:undefined;
+  if(!h||!s||r.player.dead||r.player.hp<a.hp||['DEAD','EVACUATED','FIGHTING'].includes(h.state)||h.floor!==(r.veyraFloor??0)||a.floor!==h.floor||Math.hypot(r.player.x-a.px,r.player.y-a.py)>TILE||!dest||Math.hypot(r.player.x-dest.x,r.player.y-dest.y)>TILE*3.2||!clearPhysicalLine(r,r.player,dest,true)){
+    delete hw.playerAid;receipt(r,now,'human.aid.cancel',a.id);return;
+  }
+  if(now<a.dueAt)return;
+  delete hw.playerAid;
+  const d=ITEMS[s.key];let useful=false;
+  if(a.kind==='medical'&&['bandage','herb'].includes(s.key)&&(h.state==='DOWNED'||h.wounds.some(w=>!w.treated))){h.wounds.forEach(w=>{w.treated=true;w.bleeding=false;});h.hp=Math.min(h.maxHp,h.hp+30);h.state='IDLE';h.downedAt=undefined;useful=true;}
+  if(a.kind==='water'&&d.waterContainer&&(s.charge??0)>0&&h.thirst<35){h.thirst=Math.min(100,h.thirst+(d.food?.thirst??30));s.charge!--;useful=true;}
+  if(a.kind==='food'&&d.food?.hunger&&h.hunger<35&&h.state!=='DOWNED'){h.hunger=Math.min(100,h.hunger+d.food.hunger);h.thirst=Math.min(100,h.thirst+(d.food.thirst??0));useful=true;}
+  if(!useful){receipt(r,now,'human.aid.cancel',`${a.id}:need changed`);return;}
+  if(a.kind!=='water'&&--s.qty===0)C(r,'inv').slots[C(r,'inv').slots.indexOf(s)]=null;
+  const selfCaused=h.disposition_known.incidents.some(id=>{const i=hw.incidents[id];return i?.aggressor==='player'&&i.kind!=='trade';});
+  h.helpTrustReceipts??={};
+  if(!selfCaused&&!h.helpTrustReceipts[a.kind]){h.trust=clamp((h.trust??50)+(a.kind==='medical'?5:3),0,100);h.helpTrustReceipts[a.kind]=a.id;}
+  receipt(r,now,'human.aid.commit',`${a.id}:${h.actorId}:${a.kind}:${s.uid}`);
 }
 export type HumanTalkTopic = 'activity' | 'needs' | 'place' | 'goods' | 'accompany';
 export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, topic?: HumanTalkTopic): string {
@@ -1184,13 +1238,13 @@ export function recruitHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: n
 }
 
 export function setFollowing(r: RunState, hw: HumanWorld, h: HumanRecord, follow: boolean, now: number): void {
-  h.following = follow;
+  h.following = follow; h.motion=undefined;
   if (follow) {
     h.state = 'IDLE';
     h.intent = { intentId: `follow:${h.actorId}:${now}`, actorId: h.actorId, kind: 'follow', preconditions: ['accepted companion recruitment'], reserved: [], startAt: now, dueAt: now, route: [] };
   } else {
     h.followOrder = undefined;
-    if (h.intent?.kind === 'follow') h.intent = undefined;
+    h.intent = undefined;
     if (h.state === 'MOVING') h.state = 'IDLE';
   }
   receipt(r, now, 'human.follow', `${h.actorId}:${follow ? 'on' : 'off'}`);
@@ -1198,33 +1252,76 @@ export function setFollowing(r: RunState, hw: HumanWorld, h: HumanRecord, follow
 
 /** Resolve one companion order. Hard physical impossibility and protected relations are checked
  *  BEFORE risk/obedience. The decision persists for one orderId (no per-frame reroll). */
-export function resolveOrder(r: RunState, hw: HumanWorld, h: HumanRecord, orderId: string, order: 'follow' | 'hold' | 'defend' | 'engage' | 'retreat' | 'home' | 'carry', now: number, targetActorId?: string): { result: OrderResult; reason: string } {
-  if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED') return { result: 'CANNOT_EXECUTE', reason: 'incapacitated' };
-  if (!h.following) return { result: 'REFUSE_WITH_REASON', reason: 'not a companion' };
-  if ((order === 'engage' || order === 'defend') && targetActorId && h.protectedPeople.includes(targetActorId)) {
-    return { result: 'PROTECT_TARGET', reason: `refuses to harm ${targetActorId}, whom they protect` };
+export function resolveOrder(r: RunState, hw: HumanWorld, h: HumanRecord, orderId: string, order: CompanionCommand, now: number, targetActorId?: string): { result: OrderResult; reason: string } {
+  const prior=h.orderDecisions?.[orderId];
+  if(prior)return {result:prior.result,reason:prior.reason};
+  const finish=(result:OrderResult,reason:string)=>{
+    const decision={orderId,order,target:targetActorId,result,reason,at:now};
+    (h.orderDecisions??={})[orderId]=decision;h.followOrder=decision;
+    receipt(r,now,'human.order',`${h.actorId}:${orderId}:${order}:${result}:${reason}`);
+    return {result,reason};
+  };
+  if (['DOWNED','DEAD','EVACUATED'].includes(h.state)) return finish('CANNOT_EXECUTE','incapacitated');
+  if (!h.following) return finish('REFUSE_WITH_REASON','not a companion');
+  if (order === 'home' && !h.home) return finish('CANNOT_EXECUTE','no home to return to');
+  if (order === 'carry' && humanCart(r,h).slots.every(Boolean)) return finish('CANNOT_EXECUTE','cart full');
+  if(order==='engage'||order==='defend') {
+    const p=targetActorId ? hw.people[targetActorId] : undefined;
+    const m=r.creatures.find(m=>m.id===targetActorId && m.state!=='dead');
+    if(!p&&!m)return finish('CANNOT_EXECUTE','identify a visible target first');
+    const floor=p?.floor ?? m!.floor ?? r.veyraFloor ?? 0;
+    if(floor!==h.floor || h.floor!==(r.veyraFloor??0))return finish('CANNOT_EXECUTE','cannot reach that floor');
+    const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
+    const origin={x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE};
+    const dest=p?{x:(p.gx-ox+.5)*TILE,y:(p.gy-oy+.5)*TILE}:m!;
+    if(Math.hypot(dest.x-origin.x,dest.y-origin.y)>TILE*10 || !clearPhysicalLine(r,origin,dest,true))return finish('CANNOT_EXECUTE','target is not in sight');
+    if(p && (h.protectedPeople.includes(p.actorId)||!!h.community&&p.community===h.community))return finish('PROTECT_TARGET',"I will not harm someone I protect.");
+    if(p && ['DOWNED','DEAD','EVACUATED'].includes(p.state))return finish('REFUSE_WITH_REASON','I will not attack an incapacitated person.');
+    const weapon=humanWeapon(h);
+    if(!weapon || h.equip.weapon?.dur===0)return finish('CANNOT_EXECUTE','no usable weapon');
+    const d=ITEMS[h.equip.weapon!.key];
+    if(h.equip.weapon!.key==='bow' && !humanPack(r,h).slots.some(s=>s?.key==='arrow'))return finish('CANNOT_EXECUTE','no ammunition');
+    const knownAttack=p ? p.intent?.kind==='fight' && (p.intent.target==='player'||p.intent.target===h.actorId||h.protectedPeople.includes(p.intent.target??'')) || h.disposition_known.incidents.some(id=>{const i=hw.incidents[id];return i?.aggressor===p.actorId && (i.victim===h.actorId||i.victim==='player'||h.protectedPeople.includes(i.victim??''));}) : ['attack','chase'].includes(m!.state);
+    if(!knownAttack && (h.disposition==='neutral'||h.disposition==='protective'))return finish('REFUSE_WITH_REASON','I will not start a fight with someone who has not threatened us.');
+    if(h.hp<h.maxHp*.3 || h.stamina<6 || h.rest>.9)return finish('RETREAT_OR_HOLD','I cannot survive that fight in this condition.');
+    if(p && p.hp>h.hp*2 && h.combatProficiency<2 && h.disposition!=='predatory')return finish('RETREAT_OR_HOLD','That opponent is too strong for me.');
   }
-  if (order === 'home' && !h.home) return { result: 'CANNOT_EXECUTE', reason: 'no home to return to' };
-  if (order === 'carry' && humanCart(r, h).slots.every(s => s)) return { result: 'CANNOT_EXECUTE', reason: 'cart full' };
-  if (order === 'engage' && h.disposition === 'protective' && !h.protectedPeople.includes(targetActorId ?? '')) {
-    if (h.community && hw.communities[h.community]?.threat < 0.5) return { result: 'RETREAT_OR_HOLD', reason: 'cautious; holds position' };
+  return finish('OBEY','accepts the order');
+}
+
+/** Commit the resolved command to the same locomotion/combat intent as autonomous actors. */
+export function commandHuman(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,order:CompanionCommand,now:number,target?:string): {ok:boolean;reason?:string;msg?:string} {
+  if(h.orderDecisions?.[id]){const d=h.orderDecisions[id];return {ok:d.result==='OBEY',reason:d.reason,msg:d.reason};}
+  const result=resolveOrder(r,hw,h,id,order,now,target);
+  const hold=()=>{h.motion=undefined;h.intent=undefined;h.state='IDLE';};
+  if(result.result!=='OBEY') {
+    if(h.following && !['DOWNED','DEAD','EVACUATED'].includes(h.state) && ['PROTECT_TARGET','RETREAT_OR_HOLD'].includes(result.result))hold();
+    return {ok:false,reason:result.reason};
   }
-  // Deterministic refusal: stable hash of orderId+actorId+target — NOT global RNG.
-  // A neutral's engage refusal is decided once per orderId and persists (no per-frame reroll).
-  if (order === 'engage' && h.disposition === 'neutral' && !h.protectedPeople.includes(targetActorId ?? '')) {
-    const verdict = hashInt(`${h.actorId}:${orderId}:${targetActorId ?? ''}`) % 100;
-    if (verdict < 30) {
-      const res: OrderResult = 'REFUSE_WITH_REASON';
-      h.followOrder = { orderId, result: res, reason: 'unwilling to attack a stranger', at: now };
-      receipt(r, now, 'human.order', `${h.actorId}:${order}:${res}`);
-      return { result: res, reason: 'unwilling to attack a stranger' };
-    }
+  const begin=(kind:HumanIntent['kind'],target?:string,route:HumanIntent['route']=[])=>{h.motion=undefined;h.intent={intentId:id,actorId:h.actorId,kind,target,route,preconditions:['consented companion command'],reserved:[],startAt:now,dueAt:now};h.state=route?.length?'MOVING':kind==='fight'?'FIGHTING':'IDLE';};
+  if(order==='follow'||order==='carry'){begin('follow');return {ok:true,msg:order==='carry'?'Ready to carry your supplies; use the cargo transfer below.':'Following by the open path.'};}
+  if(order==='hold'){hold();return {ok:true,msg:'Holding this position.'};}
+  if(order==='engage'||order==='defend'){begin('fight',target);return {ok:true,msg:'Approaching the visible threat.'};}
+  const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
+  const grid=blockGrid(r),occupied=new Set(Object.values(hw.people).filter(p=>p!==h&&p.state!=='DEAD'&&p.state!=='EVACUATED').map(p=>humanCellKey(p.floor,p.gx,p.gy)));
+  let route:HumanIntent['route']|null=null;
+  if(order==='home') {
+    const bed=findRunEntity(r,h.bedId),comm=h.home?hw.communities[h.home]:undefined;
+    const dest=bed?humanEntityTile(r,bed):comm?.storeTile;
+    if(dest && (!bed||(bed.floor??0)===h.floor))route=humanRouteToAdjacent(r,h,dest[0],dest[1],grid,ox,oy,occupied);
+  } else {
+    // Retreat is a real walk to a reachable nearby tile farther from perceived danger.
+    const threats=r.creatures.filter(m=>['attack','chase'].includes(m.state)&&(m.floor??0)===h.floor);
+    const score=(gx:number,gy:number)=>threats.length?Math.min(...threats.map(m=>Math.hypot(gx-ox-m.x/TILE,gy-oy-m.y/TILE))):Math.hypot(gx-ox-r.player.x/TILE,gy-oy-r.player.y/TILE);
+    const current=score(h.gx,h.gy);
+    const options=[] as {gx:number;gy:number;score:number}[];
+    for(let dy=-5;dy<=5;dy++)for(let dx=-5;dx<=5;dx++){if(Math.abs(dx)+Math.abs(dy)<3)continue;const gx=h.gx+dx,gy=h.gy+dy;if(canHumanOccupy(r,h,gx,gy,grid,ox,oy,occupied)&&score(gx,gy)>current+2)options.push({gx,gy,score:score(gx,gy)});}
+    options.sort((a,b)=>b.score-a.score);
+    for(const p of options.slice(0,8)){route=humanRouteToAdjacent(r,h,p.gx,p.gy,grid,ox,oy,occupied);if(route?.length)break;}
   }
-  const result: OrderResult = 'OBEY';
-  const reason = 'accepts the order';
-  h.followOrder = { orderId, result, reason, at: now };
-  receipt(r, now, 'human.order', `${h.actorId}:${order}:${result}`);
-  return { result, reason };
+  if(!route){hold();const d=h.orderDecisions![id];d.result='CANNOT_EXECUTE';d.reason='No legal route to that destination is currently known.';receipt(r,now,'human.order.blocked',`${h.actorId}:${id}:${order}`);return {ok:false,reason:d.reason};}
+  begin('move',order,route);
+  return {ok:true,msg:order==='home'?'Walking home; I will resume my own duties when I arrive.':'Withdrawing along an open route.'};
 }
 
 // ---------------------------------------------------------------------------
@@ -1529,6 +1626,15 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     if (!route.length) { depositHumanOutputs(r, h, now); h.intent = undefined; h.nextThinkAt = now + 6000; }
     return;
   }
+  if(h.rest>=.5 && h.bedId) {
+    if(usingHumanBed(r,hw,h)){h.nextThinkAt=now+10000;return;}
+    const bed=findRunEntity(r,h.bedId);
+    if(bed && (bed.floor??0)===h.floor && (bed.hp??0)>0) {
+      const [gx,gy]=humanEntityTile(r,bed),route=humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied);
+      if(route){h.intent={intentId:`rest:${h.actorId}:${now}`,actorId:h.actorId,kind:'rest',target:bed.id,preconditions:['owned physical sleeping slot'],reserved:[],startAt:now,dueAt:now,route};h.state=route.length?'MOVING':'IDLE';if(!route.length)h.intent=undefined;return;}
+    }
+    h.lastWorkBlock='My sleeping place is missing or unreachable.';
+  }
   if (planHumanOccupation(r,hw,h,now,(gx,gy)=>humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied))) return;
   const lx = h.gx - ox, ly = h.gy - oy;
   if (lx < 1 || ly < 1 || lx >= WW - 1 || ly >= WH - 1) return;
@@ -1591,11 +1697,18 @@ function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): void {
   }
   if (moved) receipt(r, now, 'human.store', `${h.actorId}:${moved}`);
 }
+function humanCombatTarget(r:RunState,hw:HumanWorld,id:string|undefined,floor:number): {x:number;y:number;human?:HumanRecord}|null {
+  if(id==='player')return r.player.dead?null:r.player;
+  const h=id?hw.people[id]:undefined;
+  if(h){if(h.floor!==floor||['DEAD','EVACUATED','DOWNED'].includes(h.state))return null;const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;return {x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE,human:h};}
+  return r.creatures.find(m=>m.id===id && m.state!=='dead' && (m.floor??0)===floor)??null;
+}
 export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   const lastStepAt = hw.lastStepAt ?? hw.lastResolvedAt;
   const dtMs = now - lastStepAt;
   if (dtMs <= 0) return;
   hw.lastStepAt = now;
+  stepPlayerHumanAid(r,hw,now);
   const actors = Object.values(hw.people);
   const wantsPlan = now >= (hw.plannerAt ?? 0) && actors.some(h => !h.following && h.state === 'IDLE' && (!h.intent || h.intent.work?.phase === 'travel') && (h.nextThinkAt ?? 0) <= now);
   const hasMovement = actors.some(h => h.state === 'MOVING' && !!h.intent?.route?.length) || actors.some(h => h.following && h.state === 'IDLE') || wantsPlan || actors.some(h => h.state === 'FIGHTING');
@@ -1631,9 +1744,8 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   let combatRoutes = 0;
   for (const h of actors) {
     if (h.state !== 'FIGHTING' || h.intent?.kind !== 'fight' || h.floor !== (r.veyraFloor ?? 0)) continue;
-    const enemy = h.intent.target === 'player' ? (r.player.dead ? null : r.player)
-      : r.creatures.find(m => m.id === h.intent?.target && m.state !== 'dead' && (m.floor ?? 0) === h.floor);
-    if (!enemy) { h.intent.blockReason = 'target is no longer visible on this floor'; continue; }
+    const enemy=humanCombatTarget(r,hw,h.intent.target,h.floor);
+    if (!enemy) { h.intent= h.following?{intentId:`follow:${h.actorId}:${now}`,actorId:h.actorId,kind:'follow',preconditions:[],reserved:[],startAt:now,dueAt:now}:undefined;h.state='IDLE';continue; }
     faceHumanToward(h, ox + enemy.x / TILE, oy + enemy.y / TILE);
     const weapon = humanWeapon(h);
     if (!weapon) { h.intent.blockReason = 'no usable weapon'; continue; }
@@ -1718,7 +1830,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
               h.state = 'WORKING'; moveIntent.dueAt = now + 1500;
             }
             else if (moveIntent.kind === 'work' && moveIntent.target === 'store') { h.state = 'IDLE'; depositHumanOutputs(r, h, now); h.intent = undefined; h.nextThinkAt = now + 6000; }
-            else { h.state = 'IDLE'; h.intent = undefined; }
+            else { if(moveIntent.target==='home')h.following=false; h.state = 'IDLE'; h.intent = undefined; }
           }
         }
       }
@@ -1760,17 +1872,28 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
   // 2. Humans use the same physical range/cone/LOS and weapon cadence as player melee.
   for (const h of Object.values(hw.people)) {
     if (h.state !== 'FIGHTING' || h.floor !== activeFloor || h.stamina < 3) continue;
+    if(ITEMS[h.equip.weapon?.key??'']?.ranged && !humanPack(r,h).slots.some(s=>s?.key==='arrow')){if(h.intent)h.intent.blockReason='no arrows';continue;}
     const w = humanWeapon(h); if (!w) continue;
     if (now - (h.lastAttackAt ?? -Infinity) < w.swing * proficiencyMul(h.combatProficiency)) continue;
     const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
-    const seenTarget = h.intent?.target === 'player' ? (r.player.dead ? undefined : r.player)
-      : r.creatures.find(m => m.id === h.intent?.target && m.state !== 'dead' && (m.floor ?? activeFloor) === h.floor);
+    const seenTarget=humanCombatTarget(r,hw,h.intent?.target,h.floor);
     if (seenTarget && clearPhysicalLine(r, { x: hx, y: hy }, seenTarget, true)) faceHumanToward(h, ox + seenTarget.x / TILE, oy + seenTarget.y / TILE);
     const facing = h.dir === 0 ? Math.PI / 2 : h.dir === 1 ? Math.PI : h.dir === 2 ? 0 : -Math.PI / 2;
+    if(seenTarget?.human) {
+      const victim=seenTarget.human;
+      if(h.protectedPeople.includes(victim.actorId) || !!h.community&&victim.community===h.community){h.intent=undefined;h.state='IDLE';continue;}
+      const dx=seenTarget.x-hx,dy=seenTarget.y-hy,angle=Math.atan2(dy,dx);
+      if(Math.hypot(dx,dy)>w.reach+8 || Math.abs(Math.atan2(Math.sin(angle-facing),Math.cos(angle-facing)))>w.arc/2+.15 || !clearPhysicalLine(r,{x:hx,y:hy},seenTarget,true))continue;
+      if(ITEMS[h.equip.weapon!.key].ranged){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
+      h.lastAttackAt=now;h.stamina=Math.max(0,h.stamina-3);const weapon=h.equip.weapon!;if(weapon.dur!==undefined)weapon.dur=Math.max(0,weapon.dur-1);
+      applyDamage(r,hw,victim,w.dmg,angle,now,'human',h.actorId,h.floor);
+      continue;
+    }
     if (h.intent?.target === 'player') {
       const dx = r.player.x - hx, dy = r.player.y - hy, distance = Math.hypot(dx, dy), angle = Math.atan2(dy, dx);
       const inArc = Math.abs(Math.atan2(Math.sin(angle - facing), Math.cos(angle - facing))) <= w.arc / 2 + 0.15;
       if (distance <= w.reach + 8 && inArc && clearPhysicalLine(r, { x: hx, y: hy }, r.player, true)) {
+        if(ITEMS[h.equip.weapon!.key]?.ranged){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
         h.lastAttackAt = now; h.stamina = clamp(h.stamina - 3, 0, h.maxStamina);
         const weapon = h.equip.weapon!; if (weapon.dur !== undefined) { weapon.dur = Math.max(0, weapon.dur - 1); if (weapon.dur === 0) h.equip.weapon = null; }
         hitPlayer?.(h, w.dmg, angle);
@@ -1782,6 +1905,7 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
       .filter(v => v.d <= w.reach + (CREATURES[v.m.type]?.r ?? 6) && Math.abs(Math.atan2(Math.sin(Math.atan2(v.dy, v.dx) - facing), Math.cos(Math.atan2(v.dy, v.dx) - facing))) <= w.arc / 2 + 0.15 && clearPhysicalLine(r, { x: hx, y: hy }, v.m, true))
       .sort((a, b) => a.d - b.d)[0];
     if (!target) continue;
+    if(ITEMS[h.equip.weapon!.key]?.ranged){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
     h.lastAttackAt = now;
     h.stamina = clamp(h.stamina - 3, 0, h.maxStamina);
     const weapon = h.equip.weapon!;

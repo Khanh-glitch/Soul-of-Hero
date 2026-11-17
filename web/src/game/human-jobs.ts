@@ -2,7 +2,7 @@
  * item repair rules, garden laws and physical structures. No work output loot table. */
 import { TILE, uid, type RunState, type Entity, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, GARDEN_CROPS, isGardenCrop, stationBurnable } from './catalog';
-import { C, hasAll, removeItem, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, clearPhysicalLine } from './engine';
+import { C, hasAll, removeItem, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, clearPhysicalLine, productionFits } from './engine';
 import { recoveryPlan, recoveryFits } from './recycler';
 import type { HumanRecord, HumanWorld } from './humanworld';
 export type HumanJobKind = 'cook' | 'recycle' | 'repair_item' | 'garden' | 'medical' | 'engineer' | 'build' | 'guard';
@@ -28,14 +28,15 @@ export function humanCanUseEntity(r: RunState, h: HumanRecord, e: Entity): boole
   return clearPhysicalLine(r, { x: (h.gx - ox + .5) * TILE, y: (h.gy - oy + .5) * TILE }, e, true, true);
 }
 /** Whole-stack transfers preserve UID; partial transfers create a distinct child only on admission. */
-export function moveHumanGoods(r: RunState, from: string, into: string, key: string, qty: number): number {
+export function moveHumanGoods(r: RunState, from: string, into: string, key: string, qty: number, claim?: {jobId:string;workerId:string}): number {
   const src = C(r, from); let moved = 0;
   for (let i = 0; i < src.slots.length && moved < qty; i++) {
-    const s = src.slots[i]; if (!s || s.key !== key) continue;
+    const s = src.slots[i]; if (!s || s.key !== key || (claim ? s.production?.jobId!==claim.jobId || s.production.workerId!==claim.workerId : !!s.production)) continue;
     const n = Math.min(s.qty, qty - moved), whole = n === s.qty;
     const transfer: Stack = whole ? s : { ...s, uid: uid(r, 's'), qty: n };
     if (whole) src.slots[i] = null; else s.qty -= n;
     if (!addStack(r, into, transfer)) { if (whole) src.slots[i] = s; else s.qty += n; break; }
+    delete transfer.production;
     moved += n;
   }
   return moved;
@@ -52,9 +53,23 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
   const stores = comm.storeContainers.filter(c => r.custody[c]);
   const available = (key: string, n: number) => count(r,h.inv.packId,key) + stores.reduce((q,c) => q+count(r,c,key),0) >= n;
   for (const e of entities) {
+    // Completed paid work outlives a temporary combat/recruitment intent. The
+    // physical stack's claim is sufficient to recover it, never a matching item key.
+    if(e.station) {
+      const claims=new Map<string,[string,number][]>();
+      for(const s of C(r,e.station.outC).slots)if(s?.production?.workerId===h.actorId){const outputs=claims.get(s.production.jobId)??[];outputs.push([s.key,s.qty]);claims.set(s.production.jobId,outputs);}
+      for(const [jobId,outputs]of claims)tasks.push({...start(h.occupation==='salvager'?'recycle':'cook',e,[],800),phase:'collect',machineJobId:jobId,outputs});
+    }
     if (h.occupation === 'cook' && e.station && STRUCTS[e.type!]?.station === 'campfire') {
       for (const [recipe, rc] of Object.entries(RECIPES)) if (rc.station === 'campfire' && ITEMS[rc.out]?.food && knownRecipe(h,recipe) && rc.ins.every(([k,q])=>available(k,q))) {
-        const task = start('cook',e,rc.ins.map(([k,q])=>[k,q]),1200); task.recipe=recipe; task.outputs=rc.outs ?? [[rc.out,rc.qty]]; tasks.push(task);
+        const ins=rc.ins.map(([k,q])=>[k,q] as [string,number]);
+        if(e.station.burn<=0&&!C(r,e.station.fuelC).slots.some(s=>s&&stationBurnable(s.key))){
+          const fuel=[...pack(r,h).slots,...stores.flatMap(c=>C(r,c).slots)].find(s=>s&&stationBurnable(s.key));
+          if(!fuel)continue;
+          const existing=ins.find(([k])=>k===fuel.key);if(existing)existing[1]++;else ins.push([fuel.key,1]);
+          if(!ins.every(([k,q])=>available(k,q)))continue;
+        }
+        const task = start('cook',e,ins,1200); task.recipe=recipe; task.outputs=rc.outs ?? [[rc.out,rc.qty]]; tasks.push(task);
       }
     }
     if (h.occupation === 'salvager' && e.kind === 'recycler' && e.station && !e.station.queue.length) {
@@ -99,7 +114,7 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
   if (!task) {
     for (const candidate of taskCandidates(r,hw,h)) {
       const needs=candidate.inputs.some(([k,q])=>count(r,h.inv.packId,k)<q);
-      candidate.phase=needs?'fetch':'travel';
+      candidate.phase=needs?'fetch':candidate.machineJobId?'collect':'travel';
       const dest=target(r,hw,h,candidate); if(!dest)continue;
       const path=route(...dest); if(!path)continue;
       task=candidate;
@@ -119,7 +134,7 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
   if (!intent || !task || h.following || h.state!=='WORKING') return {done:false,reason:'no physical occupation commitment'};
   if(now<intent.dueAt)return {done:false,reason:'work in progress'};
   const role = { cook:'cook',recycle:'salvager',repair_item:'mechanic',garden:'gardener',medical:'medic',engineer:'engineer',build:'builder',guard:'guard' } as const;
-  if(role[task.kind]!==h.occupation)return {done:false,reason:'occupation no longer assigned'};
+  if(task.phase!=='collect' && role[task.kind]!==h.occupation)return {done:false,reason:'occupation no longer assigned'};
   const comm=h.community ? hw.communities[h.community] : undefined; if(!comm)return {done:false,reason:'no community permission'};
   const fail=(reason:string)=>{h.lastWorkBlock=reason;intent.blockReason=reason;return {done:false,reason};};
   const beforeOutput = new Map(pack(r,h).slots.filter((s):s is Stack=>!!s).map(s=>[s.uid,s.qty]));
@@ -158,7 +173,7 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
     else if(task.phase==='collect') {
       if(!e.station)return fail('station lost');
       let remaining=false;
-      for(const output of task.outputs??[]) { const n=moveHumanGoods(r,e.station.outC,h.inv.packId,output[0],output[1]); output[1]-=n;if(output[1]>0)remaining=true; }
+      for(const output of task.outputs??[]) { const n=moveHumanGoods(r,e.station.outC,h.inv.packId,output[0],output[1],{jobId:task.machineJobId!,workerId:h.actorId}); output[1]-=n;if(output[1]>0)remaining=true; }
       recordOutputs();
       if(remaining)return fail('output missing or pack full');
     } else if(task.kind==='cook') {
@@ -173,7 +188,7 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       receipt(r,now,'human.work.start',`${h.actorId}:${intent.intentId}:${task.recipe}:${queued.jobId}`);return {done:false,reason:'machine running'};
     } else if(task.kind==='recycle') {
       const i=pack(r,h).slots.findIndex(s=>s?.uid===task.itemUid),s=pack(r,h).slots[i], plan=s&&recoveryPlan(s);
-      if(!s || !plan || e.kind!=='recycler' || !e.station || e.station.queue.length || !recoveryFits(C(r,e.station.outC),plan.outputs))return fail('recycler input, queue or output blocked');
+      if(!s || !plan || e.kind!=='recycler' || !e.station || e.station.queue.length || !productionFits(r,e.station.outC,plan.outputs))return fail('recycler input, queue or output blocked');
       pack(r,h).slots[i]=null;const id=uid(r,'j');e.station.queue.push({id,recipe:plan.recipe,left:plan.total,total:plan.total,reserved:[s],workerId:h.actorId});
       task.machineJobId=id;task.phase='machine';intent.reserved=[id];return {done:false,reason:'recycler running'};
     } else if(task.kind==='repair_item') {

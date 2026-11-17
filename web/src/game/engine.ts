@@ -37,7 +37,7 @@ import {
 import { syncVeyraEcosystemActors, VEYRA_PRIMORDIAL_SITES, resolvePrimordialGlobalTile } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
-import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerEvacuate, talkToHuman, threatenHuman, recruitHuman, setFollowing, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
+import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerEvacuate, startHumanAid, commandHuman, talkToHuman, threatenHuman, recruitHuman, setFollowing, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
 import { NPC_POI_CENSUS } from './npc-census';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
@@ -1331,14 +1331,14 @@ export function stepBasePower(r: RunState, dt: number, now: number, online = tru
 export const C = (r: RunState, id: string): Container => typeof id === 'string' && Object.prototype.hasOwnProperty.call(r.custody, id) ? r.custody[id] : undefined as unknown as Container;
 export function countItem(r: RunState, cid: string, key: string) { return C(r, cid).slots.reduce((a, s) => a + (s && s.key === key ? s.qty : 0), 0); }
 export function spaceFor(r: RunState, cid: string, key: string) {
-  const d = ITEMS[key]; const uniqueCard=isAccessCard(key)&&r.poiAccessVersion==='poi-access-v1'; let n = 0; for (const s of C(r, cid).slots) { if (!s) n += uniqueCard?1:d.max; else if (!uniqueCard && s.key === key && d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined && !d.dur && !d.charge) n += d.max - s.qty; } return n;
+  const d = ITEMS[key]; const uniqueCard=isAccessCard(key)&&r.poiAccessVersion==='poi-access-v1'; let n = 0; for (const s of C(r, cid).slots) { if (!s) n += uniqueCard?1:d.max; else if (!uniqueCard && s.key === key && d.max > 1 && s.production === undefined && s.meta === undefined && s.dur === undefined && s.charge === undefined && !d.dur && !d.charge) n += d.max - s.qty; } return n;
 }
 /** Adds qty; returns leftover that did not fit (caller decides what to do — never silently deleted). */
 export function addItem(r: RunState, cid: string, key: string, qty: number, tmpl?: Partial<Stack>): number {
   qty = Math.ceil(qty * liveItemPer(key)); key = liveItemId(key);
   const d = ITEMS[key]; const c = C(r, cid);
-  if (!(isAccessCard(key)&&r.poiAccessVersion==='poi-access-v1') && d.max > 1 && !d.dur && !d.charge && tmpl?.meta === undefined && tmpl?.dur === undefined && tmpl?.charge === undefined) for (const s of c.slots) if (s && s.key === key && s.meta === undefined && s.dur === undefined && s.charge === undefined && s.qty < d.max && qty > 0) { const m = Math.min(qty, d.max - s.qty); s.qty += m; qty -= m; }
-  for (let i = 0; i < c.slots.length && qty > 0; i++) if (!c.slots[i]) { const m = Math.min(qty, isAccessCard(key)&&r.poiAccessVersion==='poi-access-v1'?1:d.max); const s = mkStack(r, key, m, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[i] = s; qty -= m; }
+  if (!(isAccessCard(key)&&r.poiAccessVersion==='poi-access-v1') && d.max > 1 && !d.dur && !d.charge && tmpl?.production === undefined && tmpl?.meta === undefined && tmpl?.dur === undefined && tmpl?.charge === undefined) for (const s of c.slots) if (s && s.key === key && s.production === undefined && s.meta === undefined && s.dur === undefined && s.charge === undefined && s.qty < d.max && qty > 0) { const m = Math.min(qty, d.max - s.qty); s.qty += m; qty -= m; }
+  for (let i = 0; i < c.slots.length && qty > 0; i++) if (!c.slots[i]) { const m = Math.min(qty, isAccessCard(key)&&r.poiAccessVersion==='poi-access-v1'?1:d.max); const s = mkStack(r, key, m, tmpl?.meta); if (tmpl?.production) s.production = { ...tmpl.production }; if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[i] = s; qty -= m; }
   return qty;
 }
 /** K1 custody law: a whole stack moved into an EMPTY slot keeps its UID — the move is one custody
@@ -1351,12 +1351,12 @@ export function addStack(r: RunState, cid: string, s: Stack): boolean {
   if (i >= 0) { c.slots[i] = s; return true; }
   // No empty slot: legitimate merge-lineage for stackable stacks (exact material conservation;
   // the source stack is consumed by the caller after this returns true).
-  if (!isAccessCard(s.key) && d.max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined) { const room = spaceFor(r, cid, s.key); if (room >= s.qty) { addItem(r, cid, s.key, s.qty); return true; } }
+  if (!isAccessCard(s.key) && d.max > 1 && s.production === undefined && s.meta === undefined && s.dur === undefined && s.charge === undefined) { const room = spaceFor(r, cid, s.key); if (room >= s.qty) { addItem(r, cid, s.key, s.qty); return true; } }
   return false;
 }
 // Unique or stateful stacks must never be merged into a different instance.
 function mergeable(a: Stack, b: Stack) {
-  return a.key === b.key && !isAccessCard(a.key) && ITEMS[a.key].max > 1 && a.meta === undefined && b.meta === undefined &&
+  return a.key === b.key && !isAccessCard(a.key) && ITEMS[a.key].max > 1 && a.production === undefined && b.production === undefined && a.meta === undefined && b.meta === undefined &&
     a.dur === undefined && b.dur === undefined && a.charge === undefined && b.charge === undefined;
 }
 function portion(r: RunState, s: Stack, qty: number): Stack {
@@ -1415,7 +1415,7 @@ export function spawnDrop(r: RunState, key: string, qty: number, x: number, y: n
   qty = Math.ceil(qty * liveItemPer(key)); key = liveItemId(key);
   const max = isAccessCard(key)&&r.poiAccessVersion==='poi-access-v1' ? 1 : ITEMS[key].max;
   if (qty > max) { const first = spawnDrop(r, key, max, x, y, now, tmpl, burst); spawnDrop(r, key, qty - max, x, y, now, tmpl, burst); return first; }
-  const c = mkContainer(r, 'drop', 1); const s = mkStack(r, key, qty, tmpl?.meta); if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[0] = s;
+  const c = mkContainer(r, 'drop', 1); const s = mkStack(r, key, qty, tmpl?.meta); if (tmpl?.production) s.production = { ...tmpl.production }; if (tmpl?.charge !== undefined) s.charge = tmpl.charge; if (tmpl?.dur !== undefined) s.dur = tmpl.dur; c.slots[0] = s;
   const a = rngNext(r) * Math.PI * 2, sp = burst ? 30 + rngNext(r) * 40 : 0;
   const e: Entity = { id: uid(r, 'd'), kind: 'drop', x, y, c: c.id, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, born: now }; if (r.veyraFloor) (e as any).floor = r.veyraFloor; r.entities[e.id] = e; return e;
 }
@@ -1435,6 +1435,7 @@ export function bagStation(r: RunState, e: Entity, now: number, label: string) {
   const legacy = queue.filter(j => j.reserved === undefined);
   const bag = bagContainers(r, [e.c, e.station?.fuelC, e.station?.outC].filter(Boolean) as string[], e.x, e.y + 4, now, label, reserved,
     legacy.length ? { stationType: e.type!, queue: legacy } : undefined);
+  if (bag?.c) for(const s of C(r,bag.c).slots) if(s) delete s.production;
   if (e.station) e.station.queue = [];
   return bag;
 }
@@ -1573,7 +1574,15 @@ export function seedHumanWorld(r: RunState): void {
       }
       const stationByProp: Record<string, string> = { hearth: 'campfire', forge: 'furnace', furnace_big: 'large_furnace', anvil: 'workbench' };
       const stationTiles = compiled?.plan.props.filter(v => v.level === 0 && stationByProp[v.kind]).map(v => ({ gx: v.x, gy: v.y, struct: stationByProp[v.kind] })) ?? [];
-      return { id: p.id, name: p.name, archetype: p.archetype, rooms: p.spaces, bbox: bboxes[p.id]!, spawnTiles, stationTiles };
+      const bedTiles = (compiled?.plan.props ?? []).filter(v=>v.kind==='bed').flatMap(v=>{
+        const layer=compiled!.levels.get(v.level);
+        const cell=v.y*FRAME_W+v.x;
+        const room=layer?.rooms.find(q=>q.cells.includes(cell) && q.roof && !q.open && !q.hazard);
+        const walkable=(x:number,y:number)=>{ const t=layer?.tiles.get(y*FRAME_W+x);return t!==undefined && ![T.PWALL,T.CLIFF,T.DEEP,T.SHALLOW,T.RIVER].includes(t) && !compiled!.plan.props.some(q=>q.level===v.level && q.x===x && q.y===y) && !layer!.doors.some(q=>q.x===x&&q.y===y); };
+        const approach=[[v.x-1,v.y],[v.x+1,v.y],[v.x,v.y-1],[v.x,v.y+1]].find(([x,y])=>walkable(x,y));
+        return room&&approach ? [{gx:v.x,gy:v.y,floor:v.level,approach:approach as [number,number]}] : [];
+      });
+      return { id: p.id, name: p.name, archetype: p.archetype, rooms: p.spaces, bbox: bboxes[p.id]!, spawnTiles, stationTiles, bedTiles };
     });
   const elderLairs = Object.fromEntries(VEYRA_PRIMORDIAL_SITES.map(site => {
     const loc = resolvePrimordialGlobalTile(site);
@@ -2336,7 +2345,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
   const p = r.player; const ok = (kind: string, detail: string, msg?: string): Result => ({ ok: true, receipt: receipt(r, now, kind, detail), msg });
   if (p.dead && !['respawn', 'abandon', 'qaAdvance'].includes(it.type)) return fail('You are dead.');
   switch (it.type) {
-    case 'humanTalk': case 'humanThreaten': case 'humanRecruit': case 'humanDismiss': case 'humanExchange': case 'humanLoot': {
+    case 'humanAid': case 'humanOrder': case 'humanCargo': case 'humanTalk': case 'humanThreaten': case 'humanRecruit': case 'humanDismiss': case 'humanExchange': case 'humanLoot': {
       const hw = r.humanWorld as HumanWorld | undefined;
       const h = hw?.people[it.actorId];
       if (!hw || !h) return fail('Survivor is no longer here.');
@@ -2344,6 +2353,24 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
       if (h.floor !== activeFloor(r) || Math.hypot(p.x - hx, p.y - hy) > 3.2 * TILE || !clearWallLine(r, p, { x: hx, y: hy })) return fail('Move closer; the survivor is not reachable from here.');
       const latestReceipt = () => r.receipts.at(-1)?.id ?? it.id;
+      if(it.type==='humanAid') {
+        const out=startHumanAid(r,hw,h,it.id,typeof it.stackUid==='string'?it.stackUid:'',now);
+        return out.ok?{ok:true,receipt:latestReceipt(),msg:out.msg}:fail(out.reason??'Cannot help.');
+      }
+      if(it.type==='humanOrder') {
+        if(!['follow','hold','defend','engage','retreat','home','carry'].includes(it.order))return fail('Unknown companion order.');
+        const out=commandHuman(r,hw,h,it.id,it.order,now,typeof it.target==='string'?it.target:undefined);
+        return out.ok?{ok:true,receipt:latestReceipt(),msg:out.msg}:fail(out.reason??'Cannot execute.');
+      }
+      if(it.type==='humanCargo') {
+        if(!h.following || ['DOWNED','DEAD','EVACUATED','FIGHTING'].includes(h.state))return fail('Companion cannot transfer cargo now.');
+        const from=it.direction==='return'?C(r,h.inv.cartId):C(r,'inv'),to=it.direction==='return'?C(r,'inv'):C(r,h.inv.cartId);
+        const s=from.slots.find(s=>s?.uid===it.stackUid);
+        if(!s || s.production)return fail('That carried item is no longer available.');
+        if(!addStack(r,to.id,s))return fail('Destination is full.');
+        from.slots[from.slots.indexOf(s)]=null;
+        return ok('human.cargo',`${h.actorId}:${from.id}:${to.id}:${s.uid}:${s.qty}`,'Cargo transferred.');
+      }
       if (it.type === 'humanTalk') { const topic = (['activity', 'needs', 'place', 'goods', 'accompany'] as string[]).includes(it.topic) ? it.topic as HumanTalkTopic : undefined; const msg = talkToHuman(r, hw, h, now, topic); return { ok: true, receipt: latestReceipt(), msg }; }
       if (it.type === 'humanDismiss') {
         if (!h.following) return fail('This survivor is not your companion.');
@@ -2433,7 +2460,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'drop' || !owned(e)) return fail('Nothing to pick up.');
       if (!near(r, e, 2.5)) return fail('Too far.');
       const s = C(r, e.c!).slots[0]; if (!s) return fail('Empty.');
-      const room = ITEMS[s.key].max > 1 && s.meta === undefined && s.dur === undefined && s.charge === undefined ? spaceFor(r, 'inv', s.key) : (C(r, 'inv').slots.includes(null) ? s.qty : 0);
+      const room = ITEMS[s.key].max > 1 && s.production === undefined && s.meta === undefined && s.dur === undefined && s.charge === undefined ? spaceFor(r, 'inv', s.key) : (C(r, 'inv').slots.includes(null) ? s.qty : 0);
       if (room <= 0) return fail('Inventory full.');
       if (room >= s.qty) { if (!addStack(r, 'inv', s)) return fail('Inventory full.'); removeEntity(r, e); return ok('pickup', `${s.key}x${s.qty}`); }
       addItem(r, 'inv', s.key, room); s.qty -= room; return ok('pickup', `${s.key}x${room} (partial)`);
@@ -2495,6 +2522,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (!from || !to || !canAccess(r, it.from) || !canAccess(r, it.to)) return fail('Invalid or out of reach container.');
       if (!validSlot(from, it.fs) || (it.ts !== undefined && !validSlot(to, it.ts))) return fail('Invalid slot.');
       const s = from.slots[it.fs]; if (!s) return fail('Empty slot.');
+      if (s.production || (it.ts !== undefined && to.slots[it.ts]?.production)) return fail('Reserved production belongs to its worker; it is not public station output.');
       if (isStationFuel(r, to.id) && !stationBurnable(s.key)) return fail(s.key === 'fuel_can' ? 'Fuel Canisters are not station fuel: the station never burns them. Carry them to a generator or motorbike.' : 'That is not station fuel.');
       if (it.qty !== undefined && (!Number.isSafeInteger(it.qty) || it.qty <= 0 || it.qty > s.qty)) return fail('Invalid quantity.');
       const qty = it.qty ?? s.qty;
@@ -3354,13 +3382,16 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
 
 /** Shared paid station admission. Caller supplies knowledge, permission and physical actor
  * access; this authority owns recipe revision, input custody, level/queue/output constraints. */
+export function productionFits(r: RunState, cid: string, outputs: [string,number][]): boolean {
+  return outputs.reduce((n,[key,qty])=>n+Math.ceil(Math.ceil(qty*liveItemPer(key))/ITEMS[liveItemId(key)].max),0)<=C(r,cid).slots.filter(s=>!s).length;
+}
 export function queuePaidRecipe(r: RunState, e: Entity, cid: string, recipe: string, workerId?: string): { ok: boolean; reason?: string; jobId?: string } {
   const rc = RECIPES[recipe], st = e.station;
   if (!rc?.station || !st || STRUCTS[e.type!]?.station !== rc.station) return { ok: false, reason: 'wrong physical station' };
   if ((st.level ?? 1) < requiredStationLevel(rc) || st.queue.length >= 6) return { ok: false, reason: 'station level or queue blocked' };
   const ins = rc.ins.filter(([,q]) => q > 0);
   if (!hasAll(r, cid, ins)) return { ok: false, reason: 'missing recipe inputs' };
-  if (rc.outs && !recoveryFits(C(r, st.outC), rc.outs)) return { ok: false, reason: 'output full' };
+  if (workerId ? !productionFits(r,st.outC,recipeOutputs(rc)) : rc.outs && !recoveryFits(C(r, st.outC), rc.outs)) return { ok: false, reason: 'output full' };
   const reserved = reserveInputs(r, ins, cid), jobId = uid(r, 'j');
   st.queue.push({ id: jobId, recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved, rv: RECIPE_REVISION, ...(workerId ? { workerId } : {}) });
   return { ok: true, jobId };
@@ -3432,9 +3463,9 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
         if (job.recipe==='X:drive'||job.recipe==='X:recover-v1'||job.recipe==='X:recover-v2'||job.recipe==='X:recover-v3'||job.recipe==='X:recover-v4'||COMPONENT_RECIPES.includes(job.recipe)) {
           // Outputs are fixed by the job's stored recipe version (v1 jobs never change when v2 is added).
           const plan=job.reserved?.length===1?recoveryPlanFor(job.reserved[0],job.recipe):null;
-          if(e.kind!=='recycler'||!plan||plan.recipe!==job.recipe||!recoveryFits(C(r,st.outC),plan.outputs)){blocked=true;note('Recycler: output full or invalid reservation.');stationState(r,e,'output_full',at);continue;}
+          if(e.kind!=='recycler'||!plan||plan.recipe!==job.recipe||!(job.workerId ? productionFits(r,st.outC,plan.outputs) : recoveryFits(C(r,st.outC),plan.outputs))){blocked=true;note('Recycler: output full or invalid reservation.');stationState(r,e,'output_full',at);continue;}
           // Capacity was checked for the whole set before any output is committed.
-          for(const [key,qty] of plan.outputs)addItem(r,st.outC,key,qty);
+          for(const [key,qty] of plan.outputs)addItem(r,st.outC,key,qty,job.workerId?{production:{jobId:job.id,workerId:job.workerId}}:undefined);
           if(job.recipe!=='X:drive')receipt(r,at,'recycle.finish',`${job.reserved![0].uid}:${job.reserved![0].key}:${plan.outputs.map(([key,qty])=>`${key}x${qty}`).join(',')}`);
           note(`Recycler finished: ${plan.outputs.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(', ')} in output.`);
         } else if (job.recipe === 'pump_crude') {
@@ -3477,8 +3508,8 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
           const outs = recipeOutputs(rc);
           // Single-output recipes keep their original capacity rule. Multi-output bundles are
           // preflighted as a whole: either every co-product is committed or none is.
-          if (rc.outs ? !recoveryFits(C(r, st.outC), outs) : spaceFor(r, st.outC, rc.out) < rc.qty) { blocked = true; note(`${STRUCTS[e.type!].name}: output slots full.`); stationState(r,e,'output_full',at); continue; }
-          for (const [key, qty] of outs) addItem(r, st.outC, key, qty);
+          if (job.workerId ? !productionFits(r,st.outC,outs) : rc.outs ? !recoveryFits(C(r, st.outC), outs) : spaceFor(r, st.outC, rc.out) < rc.qty) { blocked = true; note(`${STRUCTS[e.type!].name}: output slots full.`); stationState(r,e,'output_full',at); continue; }
+          for (const [key, qty] of outs) addItem(r, st.outC, key, qty,job.workerId?{production:{jobId:job.id,workerId:job.workerId}}:undefined);
           if (outs.some(([key]) => key === 'iron_ingot')) award(gs, 'first_ingot', at);
           note(`${STRUCTS[e.type!].name} finished ${outs.map(([key, qty]) => `${qty} ${ITEMS[key].name}`).join(', ')}.`);
         }

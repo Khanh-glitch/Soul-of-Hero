@@ -766,6 +766,10 @@ export function validate(raw: any): GameState | null {
     for (const key of ['lastNeedsAt', 'lastStepAt'] as const) {
       if (!Number.isFinite(hw[key]) || hw[key] < 0 || hw[key] > r.clock.lastSimAt) hw[key] = hw.lastResolvedAt;
     }
+    if(hw.playerAid!==undefined) {
+      const a=hw.playerAid;
+      if(!obj(a)||typeof a.id!=='string'||typeof a.actorId!=='string'||!hw.people?.[a.actorId]||typeof a.stackUid!=='string'||!['food','water','medical'].includes(a.kind)||![a.startedAt,a.dueAt,a.px,a.py,a.hp].every(finite)||!integer(a.floor)||a.dueAt<a.startedAt||a.dueAt-a.startedAt>6000)return null;
+    }
     // Schema validation: every human record must carry the required identity fields.
     const seenUids = new Set<string>();
     for (const h of Object.values(hw.people ?? {}) as any[]) {
@@ -783,6 +787,16 @@ export function validate(raw: any): GameState | null {
       for (const c of [h?.inv?.packId, h?.inv?.cartId]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
     }
     for (const comm of Object.values(hw.communities ?? {}) as any[]) {
+      // Pre-residential saves stored an empty chest ID as a bed. Preserve its custody,
+      // but remove the false sleeping entitlement. Never create furniture on load.
+      if(Array.isArray(comm?.homeBeds)) {
+        const legacy=comm.homeBeds.filter((id:unknown)=>typeof id==='string' && r.custody[id]?.kind==='chest');
+        if(legacy.length) {
+          comm.legacyHouseholdContainers=[...new Set([...(comm.legacyHouseholdContainers??[]),...legacy])];
+          comm.homeBeds=comm.homeBeds.filter((id:string)=>!legacy.includes(id));
+          for(const h of Object.values(hw.people??{}) as any[])if(legacy.includes(h.bedId))delete h.bedId;
+        }
+      }
       // P0.2: old abstract stock mirrors could mint items during work ticks. Physical custody is canonical.
       if (comm && typeof comm === 'object') delete comm.stock;
       if (comm?.storeEntityId !== undefined) {
@@ -790,7 +804,7 @@ export function validate(raw: any): GameState | null {
         const store = comm.storeContainers?.length === 1 ? r.custody[comm.storeContainers[0]] : null;
         if (typeof comm.poi !== 'string' || comm.id !== `com:${comm.poi}` || typeof comm.storeEntityId !== 'string' || !storeEntity || storeEntity.kind !== 'bag' || storeEntity.poi !== comm.poi || storeEntity.c !== store?.id || store?.kind !== 'bag' || store.origin?.authority !== 'REGIONAL_HUMAN_ECONOMY' || store.origin.sourceId !== `regional-human-economy:${comm.poi}` || !Array.isArray(comm.storeTile) || comm.storeTile.length !== 2 || !comm.storeTile.every(integer)) return null;
       }
-      for (const c of [...(comm?.storeContainers ?? []), ...(comm?.foodStores ?? []), ...(comm?.homeBeds ?? [])]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
+      for (const c of [...(comm?.storeContainers ?? []), ...(comm?.foodStores ?? []), ...(comm?.legacyHouseholdContainers ?? [])]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
     }
     for (const [cid, c] of Object.entries(r.custody) as [string, any][]) if (c?.origin !== undefined) {
       const owners = Object.values(hw.communities ?? {}) as any[];
@@ -962,6 +976,7 @@ export function stackInvariant(s: any, uids: Set<string>, beforeNext: (id: strin
   } else if (s.lvl !== undefined || s.cd !== undefined || s.upg !== undefined) return 'non-core-with-core-fields';
   if (s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) return 'bad-dur';
   if (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) return 'bad-charge';
+  if (s.production !== undefined && (!obj(s.production) || typeof s.production.jobId!=='string' || !/^j[a-z0-9]+$/.test(s.production.jobId) || typeof s.production.workerId!=='string' || !/^h[a-z0-9]+$/.test(s.production.workerId))) return 'bad-production-claim';
   if (s.meta !== undefined && typeof s.meta !== 'string') return 'bad-meta-type';
   if (s.key === 'blueprint' && (!s.meta || (!has(RECIPES, s.meta) && !hasLegacyDefinition(s.meta)))) return `blueprint-without-recipe:${s.meta ?? 'none'}`;
   uids.add(s.uid); return null;

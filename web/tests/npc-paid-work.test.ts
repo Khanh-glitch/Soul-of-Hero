@@ -11,7 +11,7 @@ it('cook spends carried canonical inputs and fuel, waits for real station, and c
  C(r,h.inv.packId).slots.fill(null);addItem(r,h.inv.packId,'meat',1);addItem(r,h.inv.packId,'wood',2);
  const e:Entity={id:'work-test',kind:'struct',type:'campfire',tx:101,ty:100,x:1624,y:1608,station:{queue:[],burn:0,fuelC:mkContainer(r,'fuel',3).id,outC:mkContainer(r,'out',6).id}};
  r.entities[e.id]=e;hw.communities[h.community!].workStations.push(e.id);
- h.intent={intentId:'cook-test',actorId:h.actorId,kind:'work',target:e.id,preconditions:[],reserved:[],startAt:T0,dueAt:T0,work:{kind:'cook',phase:'act',entityId:e.id,gx:h.gx+1,gy:h.gy,floor:0,inputs:[['meat',1]],recipe:'cooked_meat',duration:1000,outputs:[['cooked_meat',1]]}};h.state='WORKING';
+ h.intent={intentId:'cook-test',actorId:h.actorId,kind:'work',target:e.id,preconditions:[],reserved:[],startAt:T0,dueAt:T0,work:{kind:'cook',phase:'act',entityId:e.id,inputs:[['meat',1]],recipe:'cooked_meat',duration:1000,outputs:[['cooked_meat',1]]}};h.state='WORKING';
  expect(executeHumanWork(r,hw,h,T0).reason).toBe('machine running');expect(e.station!.queue).toHaveLength(1);
  expect(C(r,h.inv.packId).slots.some(s=>s?.key==='meat')).toBe(false);
  r=JSON.parse(JSON.stringify(r));hw=r.humanWorld!;h=hw.people[h.actorId];

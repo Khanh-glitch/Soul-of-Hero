@@ -1,0 +1,21 @@
+{
+  "snapshot": {
+    "title": "Soul of Hero — VEYRA Living World",
+    "canvas": [
+      {
+        "width": 640,
+        "height": 360
+      }
+    ],
+    "qaMutableStatePresent": false
+  },
+  "frames": {
+    "samples": 60,
+    "mean": 149.71666666666667,
+    "p95": 216.59999999999854,
+    "p99": 216.70000000000073
+  },
+  "errors": [],
+  "failedRequests": [],
+  "scope": "Integration working tree: title to fresh Veyra run through ordinary controls. No NPC scenario or comparative performance claim."
+}

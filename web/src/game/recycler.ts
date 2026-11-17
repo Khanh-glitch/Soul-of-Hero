@@ -107,7 +107,7 @@ export function recoveryPlanFor(s:Stack, recipe:string):RecoveryPlan|null {
 export function recoveryFits(container:Container,outputs:Output[]):boolean {
   const slots=container.slots.map(s=>s?{...s}:null);
   for(const [key,amount] of outputs){const def=ITEMS[key];if(!def||!Number.isSafeInteger(amount)||amount<=0||def.dur||def.charge)return false;let left=amount;
-    for(const s of slots)if(s&&s.key===key&&s.meta===undefined&&s.dur===undefined&&s.charge===undefined){const n=Math.min(left,def.max-s.qty);s.qty+=n;left-=n;}
+    for(const s of slots)if(s&&!s.production&&s.key===key&&s.meta===undefined&&s.dur===undefined&&s.charge===undefined){const n=Math.min(left,def.max-s.qty);s.qty+=n;left-=n;}
     for(let i=0;i<slots.length&&left>0;i++)if(!slots[i]){const n=Math.min(left,def.max);slots[i]={uid:'preview',key,qty:n};left-=n;}
     if(left>0)return false;
   }return true;
