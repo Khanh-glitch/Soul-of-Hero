@@ -79,7 +79,8 @@ interface Site {
   pass: (lv: number, x: number, y: number) => boolean; tile: (lv: number, x: number, y: number) => number;
   isDoor: (lv: number, x: number, y: number) => boolean; isStairEnd: (lv: number, x: number, y: number) => boolean; nearStatic: (lv: number, x: number, y: number, rad: number) => boolean;
   src3: (x: number, y: number) => boolean; prot: (x: number, y: number) => boolean; inb: (x: number, y: number) => boolean;
-  flood: (blocked?: Set<string>) => Set<string>; stairs: any[]; doors: { lv: number; x: number; y: number; locked?: string; label?: string }[]; legacyLoot: { lv: number; x: number; y: number }[];
+  playerPass: (lv: number, x: number, y: number) => boolean;
+  flood: (blocked?: Set<string>, allowWading?: boolean) => Set<string>; stairs: any[]; doors: { lv: number; x: number; y: number; locked?: string; label?: string }[]; legacyLoot: { lv: number; x: number; y: number }[];
 }
 export const __openSite = (cx: number, cy: number) => openSite(cx, cy);
 function openSite(cx: number, cy: number): Site | null {
@@ -98,23 +99,27 @@ function openSite(cx: number, cy: number): Site | null {
   }
   const tile = (lv: number, x: number, y: number) => inb(x, y) ? a.floors.layers.get(lv as any)!.tiles[li(x, y)] : T.CLIFF;
   const isDoor = (lv: number, x: number, y: number) => inb(x, y) && door.get(lv)!.has(li(x, y));
-  const pass = (lv: number, x: number, y: number) => {
+  const pass = (lv: number, x: number, y: number, allowWading = false) => {
     if (!inb(x, y)) return false; const L = a.floors.layers.get(lv as any); if (!L) return false; const i = li(x, y);
     if (door.get(lv)!.has(i)) return true;
-    return !BAD.has(L.tiles[i]) && !!L.walkable[i] && !L.solidProps[i] && !L.sources[i] && !stat.get(lv)!.has(i);
+    // Source placement/resolution stays DRY by default. Runtime player reach may
+    // also use class-4 ground water, as sim.solidFor does even when walkable=0.
+    const wading = allowWading && lv === 0 && (L.tiles[i] === T.RIVER || L.tiles[i] === T.SHALLOW);
+    return (wading || (!BAD.has(L.tiles[i]) && !!L.walkable[i])) && !L.solidProps[i] && !L.sources[i] && !stat.get(lv)!.has(i);
   };
   const isStairEnd = (lv: number, x: number, y: number) => inb(x, y) && stairEnd.get(lv)!.has(li(x, y));
   const nearStatic = (lv: number, x: number, y: number, rad: number) => { for (let dy = -rad; dy <= rad; dy++) for (let dx = -rad; dx <= rad; dx++) if (inb(x + dx, y + dy) && stat.get(lv)!.has(li(x + dx, y + dy))) return true; return false; };
   const src3 = (x: number, y: number) => inb(x, y) && !!(b.world.sourceV3[li(x, y)] || a.floors.ground.sources[li(x, y)]);
   const prot = (x: number, y: number) => inb(x, y) && !!a.floors.ground.protectedCells[li(x, y)];
   /** Everything a player on foot can stand on, across storeys, starting from the open ground. Keys "lv:x,y". */
-  const flood = (blocked?: Set<string>): Set<string> => {
+  const flood = (blocked?: Set<string>, allowWading = false): Set<string> => {
+    const traversable = (lv: number, x: number, y: number) => pass(lv, x, y, allowWading);
     // seed: every large connected ground region (the open world), measured without crossing any door
     const seenG = new Uint8Array(WW * WH); const best: number[] = [];
     for (let y = oy + 2; y < oy + WH - 2; y += 3) for (let x = ox + 2; x < ox + WW - 2; x += 3) {
-      if (seenG[li(x, y)] || !pass(0, x, y) || isDoor(0, x, y)) continue;
+      if (seenG[li(x, y)] || !traversable(0, x, y) || isDoor(0, x, y)) continue;
       const comp: number[] = []; const q: [number, number][] = [[x, y]]; seenG[li(x, y)] = 1;
-      while (q.length) { const [ax, ay] = q.pop()!; comp.push(li(ax, ay)); for (const [dx, dy] of N4) { const nx = ax + dx, ny = ay + dy; if (!inb(nx, ny) || seenG[li(nx, ny)] || !pass(0, nx, ny) || isDoor(0, nx, ny)) continue; seenG[li(nx, ny)] = 1; q.push([nx, ny]); } }
+      while (q.length) { const [ax, ay] = q.pop()!; comp.push(li(ax, ay)); for (const [dx, dy] of N4) { const nx = ax + dx, ny = ay + dy; if (!inb(nx, ny) || seenG[li(nx, ny)] || !traversable(0, nx, ny) || isDoor(0, nx, ny)) continue; seenG[li(nx, ny)] = 1; q.push([nx, ny]); } }
       if (comp.length >= 800) for (const i of comp) best.push(i);   // every sizeable landmass in the window is open world (banks join by bridges beyond it)
     }
     const seen = new Set<string>(); const q: [Level, number, number][] = [];
@@ -122,7 +127,7 @@ function openSite(cx: number, cy: number): Site | null {
     let head = 0;
     while (head < q.length) {
       const [lv, ax, ay] = q[head++];
-      for (const [dx, dy] of N4) { const nx = ax + dx, ny = ay + dy, k = `${lv}:${nx},${ny}`; if (seen.has(k) || !pass(lv, nx, ny) || blocked?.has(k)) continue; seen.add(k); q.push([lv, nx, ny]); }
+      for (const [dx, dy] of N4) { const nx = ax + dx, ny = ay + dy, k = `${lv}:${nx},${ny}`; if (seen.has(k) || !traversable(lv, nx, ny) || blocked?.has(k)) continue; seen.add(k); q.push([lv, nx, ny]); }
       for (const st of stairs) {
         let to: [Level, number, number] | null = null;
         if (st.from === lv && st.x === ax && st.y === ay) to = [st.to, st.tx, st.ty]; else if (st.to === lv && st.tx === ax && st.ty === ay) to = [st.from, st.x, st.y];
@@ -131,7 +136,7 @@ function openSite(cx: number, cy: number): Site | null {
     }
     return seen;
   };
-  return { ox, oy, levels, pass, tile, isDoor, isStairEnd, nearStatic, src3, prot, inb, flood, stairs, doors, legacyLoot };
+  return { ox, oy, levels, pass, playerPass: (lv: number, x: number, y: number) => pass(lv, x, y, true), tile, isDoor, isStairEnd, nearStatic, src3, prot, inb, flood, stairs, doors, legacyLoot };
 }
 
 /** Blocking (x,y) on `lv` must leave its free neighbours joined to each other (the chest never plugs a lane). */

@@ -78,7 +78,7 @@ describe('G1B ecology in the runtime', () => {
 });
 
 describe.runIf(process.env.G1B_ECOLOGY === '1')('G1B ecology reachability (furniture dressed, two window origins per site)', () => {
-  it('every added chest stands on a free tile with a walkable approach joined to the open ground', async () => {
+  it('every added chest has player-passable terrain and an approach joined to the open ground', async () => {
     const { __openSite } = await import('./helpers/g1b-ecology');
     const bySite = new Map<string, typeof G1B_ECOLOGY_SOURCES[number][]>(); for (const s of G1B_ECOLOGY_SOURCES) { const k = s.zone === 'ROAD' ? `road:${Math.floor(s.gx / 64)},${Math.floor(s.gy / 64)}` : s.site; if (!bySite.has(k)) bySite.set(k, []); bySite.get(k)!.push(s); }
     const bad: string[] = []; let checked = 0;
@@ -86,15 +86,17 @@ describe.runIf(process.env.G1B_ECOLOGY === '1')('G1B ecology reachability (furni
       const cx = list.reduce((n, s) => n + s.gx, 0) / list.length, cy = list.reduce((n, s) => n + s.gy, 0) / list.length;
       for (const [dx, dy] of [[0, 0], [17, 9]]) {
         const site = __openSite(cx + dx, cy + dy); if (!site) { bad.push(`${list[0].site}: window does not compile`); continue; }
-        const reach = site.flood();
+        const reach = site.flood(undefined, true); // player foot access includes lawful ground-level wading
         for (const s of list) {
           const lv = s.level ?? 0; if (!site.inb(s.gx, s.gy) || !site.inb(s.ax!, s.ay!)) continue; checked++;
-          if (!site.pass(lv, s.gx, s.gy)) bad.push(`${s.id}: chest tile ${s.gx},${s.gy} is not free at origin +${dx},${dy}`);
-          else if (!site.pass(lv, s.ax!, s.ay!) || !reach.has(`${lv}:${s.ax},${s.ay}`)) bad.push(`${s.id}: approach ${s.ax},${s.ay} not reachable at origin +${dx},${dy}`);
+          if (!site.playerPass(lv, s.gx, s.gy)) bad.push(`${s.id}: chest tile ${s.gx},${s.gy} is not free at origin +${dx},${dy}`);
+          else if (!site.playerPass(lv, s.ax!, s.ay!) || !reach.has(`${lv}:${s.ax},${s.ay}`)) bad.push(`${s.id}: approach ${s.ax},${s.ay} not reachable at origin +${dx},${dy}`);
         }
       }
     }
     expect(checked).toBeGreaterThanOrEqual(G1B_ECOLOGY_SOURCES.length);
-    expect(bad).toEqual([]);
+    // JSON reporters otherwise retain only “expected [Array] to equal []”,
+    // hiding the actual source IDs needed for a bounded physical reproduction.
+    expect(bad, bad.join('\n')).toEqual([]);
   }, 1800000);
 });

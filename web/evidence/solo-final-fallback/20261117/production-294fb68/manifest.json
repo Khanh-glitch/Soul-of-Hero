@@ -1,0 +1,39 @@
+{
+  "head": "294fb68a9c2563ba102d3e06935503bb8b676ae4",
+  "htmlSha256": "83b5b486f9cd3ab0bee5773d7f33e2b7834f08eed49ed3c31dbf058c22e2cd0d",
+  "scope": "PRODUCTION_ORDINARY_UI_640_SAVE_FRESH_BROWSER_ONLY; software GPU; not FPS/human/progression acceptance",
+  "errors": [],
+  "steps": [
+    "fresh menu start",
+    "ordinary inventory input",
+    "normal save and quit",
+    "fresh browser process actual-storage continuation"
+  ],
+  "initial": {
+    "id": "run_x4fud1_mwkmrb2k",
+    "seed": 2002841461,
+    "layout": "veyra05-at-1920-512",
+    "digest": "605bed7f",
+    "qaUsed": false,
+    "x": 1160,
+    "y": 2296
+  },
+  "saved": {
+    "seed": 2002841461,
+    "layout": "veyra05-at-1920-512",
+    "digest": "605bed7f",
+    "qaUsed": false,
+    "x": 1160,
+    "y": 2296
+  },
+  "resumed": {
+    "id": "run_x4fud1_mwkmrb2k",
+    "seed": 2002841461,
+    "layout": "veyra05-at-1920-512",
+    "digest": "605bed7f",
+    "qaUsed": false,
+    "x": 1160,
+    "y": 2296
+  },
+  "status": "PASS_TECHNICAL_SMOKE_ONLY"
+}
