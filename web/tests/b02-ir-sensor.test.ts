@@ -1,8 +1,8 @@
 // B02-P1-A infrared sensor (ir-v1). Mechanics and negative proofs; no bot play, no offline enemy kills.
 import {describe,it,expect} from 'vitest';
 import {TILE,WW,T,type Entity} from '../src/game/core';
-import {STRUCTS} from '../src/game/catalog';
-import {newGame,dispatch,addItem,countItem,markDirty,electricDoorPowered,irSensorStatus,irSensorConducts,powerAllocation,turretStatus,mkCreature} from '../src/game/engine';
+import {STRUCTS,RECIPES} from '../src/game/catalog';
+import {newGame,dispatch,addItem,countItem,C,markDirty,electricDoorPowered,irSensorStatus,irSensorConducts,powerAllocation,turretStatus,mkCreature} from '../src/game/engine';
 import {settle} from '../src/game/sim';
 import {getWorld} from '../src/game/world';
 import {serializeSnapshot,selectSnapshots} from '../src/game/persist';
@@ -12,19 +12,48 @@ function setup(){const g=newGame();expect(dispatch(g,{id:'ir-start'+ ++n,type:'s
   markDirty();
   const pos=(tx:number,ty:number)=>{r.player.x=tx*TILE+8;r.player.y=ty*TILE+8;markDirty();};
   const act=(type:string,args:object={},now=T0)=>dispatch(g,{id:'ir-'+ ++n,type,...args},now);
-  const build=(type:string,tx:number,ty:number,px=tx,py=ty+1)=>{pos(px,py);for(const [k,q] of STRUCTS[type].cost)addItem(r,'inv',k,q);const res=act('build',{struct:type,tx,ty});expect(res.ok,`${type}: ${(res as any).reason}`).toBe(true);return Object.values(r.entities).find(e=>e.kind==='struct'&&e.tx===tx&&e.ty===ty&&e.type===type)!;};
+  // Controlled paid mechanics: only raw ingredients are supplied; real hand recipes create the device UID.
+  const build=(type:string,tx:number,ty:number,px=tx,py=ty+1)=>{
+    pos(px,py);const d=STRUCTS[type];for(const [k,q] of d.cost)addItem(r,'inv',k,q);
+    let uid:string|undefined;
+    if(d.item?.startsWith('deploy_')){
+      expect(RECIPES[d.item].station).toBeNull();expect(act('craft',{recipe:d.item}).ok).toBe(true);
+      uid=C(r,'inv').slots.find(s=>s?.key===d.item)!.uid;
+    }
+    const res=act('build',{struct:type,tx,ty});expect(res.ok,`${type}: ${(res as any).reason}`).toBe(true);
+    const placed=Object.values(r.entities).find(e=>e.kind==='struct'&&e.tx===tx&&e.ty===ty&&e.type===type)!;
+    if(uid){expect(placed.deployed!.uid).toBe(uid);expect(C(r,'inv').slots.some(s=>s?.uid===uid)).toBe(false);}
+    return placed;
+  };
   return {g,r,x,y,pos,act,build};}
 /** generator (fuelled, capacity 2 like a reinforced generator) -> cable -> sensor -> door */
-function rig(on=true){const o=setup(),{x,y,build,act,pos,r}=o;const gen=build('base_generator',x,y),cable=build('power_cable',x+1,y),sensor=build('ir_sensor',x+2,y),door=build('door_powered',x+3,y,x+4,y);
+function rig(on=true){const o=setup(),{x,y,build,act,pos,r}=o;const gen=build('base_generator',x,y),cable=build('power_cable',x+1,y),sensor=build('ir_sensor',x+2,y);
+  const host=build('door_wood',x+3,y,x+4,y),door=build('door_powered',x+3,y,x+4,y);expect(door.id).toBe(host.id);
   gen.basePower!.capacity=2;addItem(r,gen.c!,'wood',2);pos(x,y+1);expect(act('basePower',{eid:gen.id,enabled:true}).ok).toBe(true);
   if(on){pos(x+2,y+1);expect(act('irSensorToggle',{eid:sensor.id}).ok).toBe(true);}
   return {...o,gen,cable,sensor,door};}
 describe('B02-P1-A infrared sensor: physical, paid, wired, bounded',()=>{
-  it('costs real parts (mechanical gear, iron, fasteners), is owned, and build is refused without the parts',()=>{
+  it('requires its actual crafted pack, pays the live electronic-parts bill once and retains its UID',()=>{
     const o=setup();o.pos(o.x,o.y+1);expect(o.act('build',{struct:'ir_sensor',tx:o.x+2,ty:o.y}).ok).toBe(false);
-    expect(STRUCTS.ir_sensor.cost).toEqual([['mechanical_gear',1],['iron_ingot',1],['fasteners',2]]);
-    const s=o.build('ir_sensor',o.x+2,o.y);expect(s.irSensor).toEqual({version:'ir-v1',enabled:false});expect(s.hp).toBe(STRUCTS.ir_sensor.hp);
-    expect(countItem(o.r,'inv','mechanical_gear')).toBe(0);
+    expect(STRUCTS.ir_sensor.cost).toEqual([['iron_ingot',1],['electronic_parts',2],['spares',1]]);
+    for(const [k,q] of STRUCTS.ir_sensor.cost)addItem(o.r,'inv',k,q);
+    const before=JSON.stringify(C(o.r,'inv'));
+    expect(o.act('build',{struct:'ir_sensor',tx:o.x+2,ty:o.y}).ok).toBe(false);
+    expect(JSON.stringify(C(o.r,'inv'))).toBe(before);
+    const paid=setup(); // separate clean fixture; failed raw placement keeps all its materials
+    const s=paid.build('ir_sensor',paid.x+2,paid.y);expect(s.irSensor).toEqual({version:'ir-v1',enabled:false});expect(s.hp).toBe(STRUCTS.ir_sensor.hp);
+    for(const [k] of STRUCTS.ir_sensor.cost)expect(countItem(paid.r,'inv',k)).toBe(0);
+  });
+  it('powered lock fitting needs a real host and preserves both payment on refusal and host identity on success',()=>{
+    const o=setup();o.pos(o.x+4,o.y);
+    for(const [k,q] of STRUCTS.door_powered.cost)addItem(o.r,'inv',k,q);
+    const before=JSON.stringify(C(o.r,'inv'));
+    expect(o.act('build',{struct:'door_powered',tx:o.x+3,ty:o.y}).ok).toBe(false);
+    expect(JSON.stringify(C(o.r,'inv'))).toBe(before);
+    const host=o.build('door_wood',o.x+3,o.y,o.x+4,o.y);
+    expect(o.act('build',{struct:'door_powered',tx:o.x+3,ty:o.y}).ok).toBe(true);
+    expect(o.r.entities[host.id]).toMatchObject({type:'door_powered',poweredHost:'door_wood'});
+    for(const [k] of STRUCTS.door_powered.cost)expect(countItem(o.r,'inv',k)).toBe(0);
   });
   it('sensor off: no conduction even with a visible player; toggling on conducts and feeds the door',()=>{
     const o=rig(false),{r,x,y,sensor,door,act,pos}=o;
