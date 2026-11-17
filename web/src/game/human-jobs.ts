@@ -132,7 +132,7 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
     }
     return false;
   }
-  if (task.phase!=='travel') return false;
+  if (!['travel','fetch','machine','collect'].includes(task.phase)) return false;
   const dest=target(r,hw,h,task); if(!dest)return false;
   const path=route(...dest); if(!path)return false;
   h.intent!.route=path; h.intent!.startAt=now; h.intent!.dueAt=now+task.duration;

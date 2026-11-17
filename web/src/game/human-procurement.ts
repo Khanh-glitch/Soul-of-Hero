@@ -33,7 +33,7 @@ export function observeRecipeSources(r:RunState,h:HumanRecord,now:number){
 }
 export function serviceRecipeBoard(r:RunState,hw:HumanWorld,h:HumanRecord,now:number):boolean {
  const c=h.community?hw.communities[h.community]:undefined,e=c?.storeEntityId?findRunEntity(r,c.storeEntityId):undefined;
- if(!c||!e||e.owner!==c.id||!humanCanUseEntity(r,h,e)||!e.c||!c.storeContainers.includes(e.c))return false;
+ if(['DEAD','DOWNED','EVACUATED'].includes(h.state)||!c||!c.memberIds.includes(h.actorId)||!e||e.owner!==c.id||!humanCanUseEntity(r,h,e)||!e.c||!c.storeContainers.includes(e.c))return false;
  // Workers may withdraw one real charged water vessel for field duty. This
  // finite personal safety ration also frees pantry slots; no capacity is added.
  if(!C(r,h.inv.packId).slots.some(s=>s&&ITEMS[s.key]?.waterContainer)){

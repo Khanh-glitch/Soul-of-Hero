@@ -1779,6 +1779,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   for(const p of candidates){
     if(Object.values(hw.people).some(other=>other.actorId!==h.actorId&&other.harvestJob?.phase==='source'&&other.harvestJob.gx===p.gx&&other.harvestJob.gy===p.gy&&other.harvestJob.floor===h.floor&&!['DEAD','EVACUATED','DOWNED'].includes(other.state)))continue;
     const s=globalSourceAt(r,p.gx,p.gy,h.floor,now);if(!s||s.protected||s.stock<=0||!canHarvestSource(h,s))continue;
+    if(!comm.storeContainers.some(cid=>r.custody[cid]&&simulateHumanOutput(r.custody[cid].slots.map(v=>v?{...v}:null),s.def.yields)))continue;
     if(!simulateHumanOutput(pack.slots.map(v=>v?{...v}:null),s.def.yields,{jobId:'admission',workerId:h.actorId}))continue;
     h.harvestJob={id:uid(r,'hj'),sourceId:s.sourceId,gx:p.gx,gy:p.gy,floor:h.floor,key:s.key,phase:'source',startedAt:now};
     receipt(r,now,'human.harvest.select',`${h.harvestJob.id}:${h.actorId}:${s.sourceId}:${s.key}`);
@@ -1907,8 +1908,15 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
   // A selected physical commitment owns its retry deadline. Do not enqueue an
   // interrupted delivery/source/board visit behind another complete census of
   // discretionary jobs. Same route authority and physical entry checks apply.
-  const commitments=actors.filter(h=>h.state==='IDLE'&&!h.intent&&!h.following&&(h.nextThinkAt??0)<=now&&(h.harvestJob||h.recipeBoardPending));
+  const commitments=actors.filter(h=>h.state==='IDLE'&&(!h.intent||!!h.intent.work)&&!h.following&&(h.nextThinkAt??0)<=now&&(h.harvestJob||h.recipeBoardPending||!!h.intent?.work||Object.values(h.workOutputs??{}).some(q=>q>0)));
   if(commitments.length)withHumanNavigationRead(r,()=>{for(const h of commitments){
+   if(h.intent?.work){h.nextThinkAt=now+3000;planHumanOccupation(r,hw,h,now,(gx,gy,floor)=>humanNavigation(r).route(h,{tx:gx,ty:gy,floor}));continue;}
+   if(!h.harvestJob&&Object.values(h.workOutputs??{}).some(q=>q>0)){
+    h.nextThinkAt=now+3000;const c=h.community?hw.communities[h.community]:undefined,e=c?.storeEntityId?findRunEntity(r,c.storeEntityId):undefined;
+    if(!e||(e.hp??1)<=0)continue;const [gx,gy]=humanEntityTile(r,e),route=humanNavigation(r).route(h,{tx:gx,ty:gy,floor:e.floor??0});
+    if(route){h.intent={intentId:`store:${h.actorId}:${now}`,actorId:h.actorId,kind:'work',target:'store',preconditions:['deliver committed paid output'],reserved:[],startAt:now,dueAt:now,route};h.state=route.length?'MOVING':'IDLE';if(!route.length){depositHumanOutputs(r,h,now);h.intent=undefined;}}
+    continue;
+   }
    if(h.harvestJob){resumeHarvestJob(r,hw,h,now,new Set(actors.filter(p=>p.actorId!==h.actorId&&!['DEAD','EVACUATED'].includes(p.state)).map(p=>humanCellKey(p.floor,p.gx,p.gy))));continue;}
    const comm=h.community?hw.communities[h.community]:undefined,store=comm?.storeEntityId?findRunEntity(r,comm.storeEntityId):undefined;
    h.nextThinkAt=now+3000;
@@ -2030,7 +2038,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
 
           if (moveIntent.kind === 'follow') moveRoute.length = 0;
           else if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.motion = undefined; moveRoute.length = 0; h.nextThinkAt = now + 750; }
-          else { h.intent = undefined; h.state = 'IDLE'; h.nextThinkAt = now + 3000; }
+          else { if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000; }
         } else {
           const intentStart = Number.isFinite(moveIntent.startAt) ? Math.max(lastStepAt, moveIntent.startAt) : lastStepAt;
           const initialElapsed = clamp(now - intentStart, 0, TILE / PROFILES[h.profile].speed * 1000);
@@ -2047,7 +2055,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
         if (h.motion.elapsedMs >= travelMs) {
           const destinationKey=humanCellKey(next.floor,next.tx,next.ty);occupied.delete(destinationKey);
           if(!(navigation??=humanNavigation(r,occupied)).enter(h,next,now)){
-            h.motion=undefined;h.state='IDLE';moveIntent.blockReason='The physical step became blocked before arrival.';h.lastWorkBlock=moveIntent.blockReason;h.intent=undefined;h.nextThinkAt=now+3000;
+            h.motion=undefined;h.state='IDLE';moveIntent.blockReason='The physical step became blocked before arrival.';h.lastWorkBlock=moveIntent.blockReason;if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.nextThinkAt=now+3000;
             continue;
           }
           const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
