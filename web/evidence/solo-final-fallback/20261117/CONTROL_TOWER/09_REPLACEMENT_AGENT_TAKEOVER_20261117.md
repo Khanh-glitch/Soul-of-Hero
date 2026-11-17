@@ -1,0 +1,43 @@
+# 09 — REPLACEMENT AGENT TAKEOVER / PRODUCTION ENGINEER HANDOFF
+Date 2026-11-17. Source checked against remote GitHub. This is a handoff supplement, NOT a new gameplay law or Creator acceptance.
+New independent takeover branch: feature/solo-takeover-20261117, initially branched from former agent's pushed HEAD 8e466bd3ad763274743f734efd44e44cb888eb99. The former work branch arena/340bd7c4-soul-of-hero is preserved at its current head and should not be reset or edited.
+Baseline shared Solo branch before patches: feature/solo-foundation-final-20261117 @ e964bc078189684a6afff701f7d67ca3bc1a724c. Protected PRE-NPC G1B backup: backup/pre-npc-g1b-738-20261116 @ e93982f87bd23805d300b464f05ccf23c04a32c0.
+Independent NPC work branch: arena/9025bfde-soul-of-hero; its HEAD had reached fdcd0be4321521eea24bbcd90c2c2a60dbcb06c5 when this takeover was drafted; check latest again before any integration proposal. NEVER merge/force-push into NPC or production without authorization.
+
+## Why this branch replaces the previous agent
+The prior agent committed narrow valid source changes but repeatedly ended its assignment after 1–2 patches and a "next source action" report, despite broader authorized production work. The new agent must not reimplement K1–K8, 157 items, 114 recipes or seven Creator Core action families. It must read 08_RUNTIME_FIRST_CORRECTION.md and other control-tower docs, inspect actual current source, and repair objective unresolved defects in a dependency-aware series of production changes. Complete an engineering release candidate, not a specified number of commits or an audit.
+A platform session can still terminate at external limits; commit durable progress and exact next work when this happens. The agent may not claim to run background work outside its active sessions.
+
+## Exact inherited production changes (both are SOURCE IMPLEMENTED, NOT fully engineering verified)
+P1: commit 3682329719b9cdd1eadaeed791f0ea8c29733714, web/src/game/item-atlas.ts
+- Removes 157 eager synchronous canvas.toDataURL('image/png') calls during loadItemAtlas before React mounts; moves PNG URL encoding to first atlasIconUrl(key) call, caches result. Does NOT remove 157 startup canvas allocations and drawImage crops. Does NOT prove a steady-state FPS improvement; it may move first-usage cost to opening an inventory/crafting UI.
+- Historical reported checks: app typecheck PASS; tests/item-atlas-157.test.ts + tests/g1b-icon-audit.test.ts 3/3 PASS; build PASS. These are former agent claims, not an independent benchmark by the current takeover reviewer. Need browser cold-start and first-use hitch before/after under equivalent conditions. Preserve exact approved pixel mappings and old fallback.
+
+P2: commit 7d0048126841620909a5e24a3fa82154b6eee271, web/src/veyra05/arch/sites.ts
+- Hook Village garden_cottage authored dwelling [2592,690,14,9], North door is reported at (2599,690); source partition originally at x2599, y691..694, arch door (2599,693). Agent moved partition and arch door to x2598, opening (2599,691) behind entrance. The patch is two coordinate replacements in a single line, NOT a proven playability fix.
+- Its own ledger explicitly states web/tests/g1b-geometry.test.ts TIMED OUT at 60 seconds (full Veyra world compile), and NO actual compiled-map active-floor path proof was produced. Geometry change may affect interior partitions, furniture, roof/collision and intended world. Treat as UNVERIFIED_SOURCE_PATCH; inspect authored compiler and construct a focused bounded reproduction for exact room source ID and its exterior/door/interior route. If defective, repair/undo specifically on takeover branch, not by resetting other work.
+- Prior G1B_REACHABILITY_CLASSIFICATION.json counts 9 MAP_COLLISION_DEFECT, 5 MISSING_ROUTE_OR_STAIRS, 10 UNRESOLVED_WITH_EVIDENCE, 6 INTENTIONAL_INACCESSIBLE across 30 classified spaces. This test recomputes categories using heuristics from census and even writes a classification JSON, so category count and a unit PASS do not prove a particular POI accessible. Validate real geometry/map rights before editing further sites. Do NOT blindly open all 14 or reconfigure the whole Veyra island.
+- Test proof target: player-accessible exterior ground to the physical North door, legal open/blocked state, interior reachable standable tile behind door, ability to reach actual room source under current floor, no wall/PPE/card bypass, save/reload, no G1B source relocation or new spawn. Compare before/after and changed collision only in authorized cells.
+
+P3: commit 8e466bd3ad763274743f734efd44e44cb888eb99 only updated 06_PROGRESS_LEDGER.md with above entries; source reality is two patches. This ledger reports possible test TypeScript errors not resolved; rerun typecheck:tests at current source and FIX actual errors instead of inheriting unclear status.
+Current takeover branch created from 8e466bd and handoff doc added independently; inspect actual HEAD before work.
+
+## Before any feature code, classify the defect
+SOURCE_DEFECT_REPRODUCED / INTEGRATION_SEAM_BROKEN / ACCESS_OR_CONTENT_GAP / ENGINEERING_EVIDENCE_GAP / HUMAN_EXPERIENCE_GAP / CREATOR_DECISION_OPEN / NPC_ONLY_SCOPE. Do not call a system absent because Atlas v11 lists it, or a player experience good because a bot script passes. The live e939 source already implements physically paid inventories/UID, 114 recipes, 7x3 Core actions, eight seasons, equipment/industry/energy/transport, G1B, player end-run and persistence. Repair actual late-stage defects, not remake the product.
+
+## Independent engineering autonomy
+- Each session: inspect current code/HEAD + last ledger, list highest risk/centrality existing defects, implement the most compelling source fix with negative and change-specific tests, measure and commit. Continue to the next feasible source defect within available execution capacity, rather than ending after reporting "next source action."
+- BUT never enforce a mechanical commit quota or rush unsafe edits. A complex source defect can require a long root-cause trace; claim only what is proved. No docs-only/test-only work presented as completed game content.
+- For FPS, measure first interactive frame, image decode/toDataURL totals, opening inventory for first time vs repeat, P95 frame time, GC and GPU backend; same code, device, scene, screen size. PNG file format and Veyra island size cannot be blamed without evidence.
+- For geometry, use focused actual compiled source ID and linked legal route; avoid spending every round on 60-second full island test timeouts. Fix real access defects and classify intentionally inaccessible world correctly.
+- Preserve original G1B 738 chest source IDs, 16 pools, migration, save/UID, Core/Gold, 640×360 imagery, non-linear player freedom, solo compatibility and NPC selective porting.
+- Maintain portable source diffs and NPC_HEAD crosscheck in 06_PROGRESS_LEDGER.md. Keep both old branches untouched; implement exclusively on takeover branch. No unauthorized production/NPC merge.
+
+## High-priority source questions at takeover
+1. Did P1 make startup meaningfully faster or just move PNG encoding to first UI interaction? Is eager 157 canvas crop itself costly? Does any fallback drawnIconUrl still generate all procedural icons when first missing key is touched? What is visible on first load and under atlas load failure/retry?
+2. Did P2 make po_hook/0/garden_cottage truly reachable under compiled geometry and openable doors? Can a focused isolated compiler fixture reproduce the room without full island generation? Can the current map test be bounded so it doesn't time out? Is source-data classification inaccurate for some intentionally unreachable rooms?
+3. Does npm run typecheck:tests currently pass? Was previous test timeout a source compiler bug or just too-broad test method? Establish direct evidence.
+4. Which actual remaining physics/UID/recipe/endgame/Gold/native cross-system defect has most player impact once these are settled? Inspect source, implement targeted fixes and continue; do not invent an entirely new subsystem.
+
+## Honest terminal status
+On takeover, SOLO game remains PARTIAL for final release certification. Two source patches exist; no valid independent browser FPS proof, no actual post-fix Hook Village reachability proof, no fully classified regressions/Godot/S4 human feedback. Agent should aim for independently verifiable engineering release candidate then supply Creator review package. If a running session ends, a detailed checkpoint plus actual source commits are acceptable partial evidence, not a declaration of final project completion.
