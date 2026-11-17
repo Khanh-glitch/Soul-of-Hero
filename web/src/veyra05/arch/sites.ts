@@ -408,7 +408,7 @@ export function hookVillage(): ArchPlan {
   b.prop(2574, 688, 0, 'anvil'); b.prop(2578, 690, 0, 'table'); b.prop(2572, 686, 0, 'bed');
 
   addDwelling(b, { id: 'garden_cottage', name: 'Garden Cottage', rect: [2592, 690, 14, 9], mat: 'wood', roof: 'thatch', doorSide: 'N', grounds: 'grounds' });
-  b.partition(2599, 691, 2599, 694, 0); b.door(2599, 693, 0, 'garden_cottage', 'Garden Cottage Partition', 'arch');
+  b.partition(2598, 691, 2598, 694, 0); b.door(2598, 693, 0, 'garden_cottage', 'Garden Cottage Partition', 'arch');
   b.prop(2595, 694, 0, 'bed'); b.prop(2601, 692, 0, 'shelf'); b.prop(2596, 696, 0, 'grain_sack');
 
   addDwelling(b, { id: 'boat_repair', name: 'Boat-Repair Shed', rect: [2632, 664, 14, 10], mat: 'wood', roof: 'hull', doorSide: 'W', grounds: 'grounds' });
