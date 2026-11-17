@@ -19,7 +19,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { tickNeeds, advanceElderPressure, stepHumans, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition } from './humanworld';
+import { tickNeeds, advanceElderPressure, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition } from './humanworld';
 import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -1516,6 +1516,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
       if (fuelled) dt = Math.min(dt, fuel);
       if (job && job.left > 0) dt = Math.min(dt, job.left / (powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1));
     }
+    if(r.humanWorld)dt=humanEventBoundary(r,r.humanWorld,t,dt);
     dt = airdropBoundary(r,t,dt);
     dt = basePowerBoundary(r, dt, visual);
     dt = territoryBoundary(r, dt);

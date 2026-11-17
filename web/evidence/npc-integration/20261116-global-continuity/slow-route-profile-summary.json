@@ -1,0 +1,156 @@
+{
+  "durationMicroseconds": 5097817,
+  "top": [
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/sim.ts",
+      "function": "advanceWorld",
+      "line": 2551,
+      "samples": 293
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/humanworld.ts",
+      "function": "tickNeeds",
+      "line": 461,
+      "samples": 259
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "entityIdSortKey",
+      "line": 4798,
+      "samples": 230
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "entityIdSortKey",
+      "line": 4798,
+      "samples": 228
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "entityIdSortKey",
+      "line": 4798,
+      "samples": 219
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/human-shelter.ts",
+      "function": "humanShelter",
+      "line": 22,
+      "samples": 212
+    },
+    {
+      "file": "",
+      "function": "(garbage collector)",
+      "line": 0,
+      "samples": 199
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "entityIdSortKey",
+      "line": 4798,
+      "samples": 193
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/humanworld.ts",
+      "function": "stepHumans",
+      "line": 1543,
+      "samples": 176
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "allRunEntities",
+      "line": 4803,
+      "samples": 153
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "allRunEntities",
+      "line": 4803,
+      "samples": 146
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "entityIdSortKey",
+      "line": 4798,
+      "samples": 132
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "allRunEntities",
+      "line": 4803,
+      "samples": 130
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "allRunEntities",
+      "line": 4803,
+      "samples": 129
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "entityIdSortKey",
+      "line": 4798,
+      "samples": 120
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "entityIdSortKey",
+      "line": 4798,
+      "samples": 112
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "entityIdSortKey",
+      "line": 4798,
+      "samples": 107
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "allRunEntities",
+      "line": 4803,
+      "samples": 92
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "stepStations",
+      "line": 4652,
+      "samples": 82
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "allRunEntities",
+      "line": 4803,
+      "samples": 75
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "allRunEntities",
+      "line": 4803,
+      "samples": 74
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "allRunEntities",
+      "line": 4803,
+      "samples": 69
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/humanworld.ts",
+      "function": "stepHumanCombat",
+      "line": 1731,
+      "samples": 63
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/sim.ts",
+      "function": "tick",
+      "line": 2761,
+      "samples": 52
+    },
+    {
+      "file": "file:///home/user/Soul-of-Hero/web/src/game/engine.ts",
+      "function": "planTerritory",
+      "line": 1021,
+      "samples": 42
+    }
+  ],
+  "scope": "Original full-suite worker, captured before derived-view optimization; no comparable FPS claim."
+}

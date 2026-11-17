@@ -2,7 +2,7 @@
  * item repair rules, garden laws and physical structures. No work output loot table. */
 import { TILE, uid, type RunState, type Entity, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, GARDEN_CROPS, isGardenCrop, stationBurnable } from './catalog';
-import { C, hasAll, removeItem, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, clearPhysicalLine, productionFits } from './engine';
+import { C, hasAll, removeItem, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, clearPhysicalLine, productionFits, findRunEntity, allRunEntities } from './engine';
 import { recoveryPlan, recoveryFits } from './recycler';
 import type { HumanRecord, HumanWorld } from './humanworld';
 export type HumanJobKind = 'cook' | 'recycle' | 'repair_item' | 'garden' | 'medical' | 'engineer' | 'build' | 'guard';
@@ -21,9 +21,10 @@ export function humanEntityTile(r: RunState, e: Entity): [number, number] {
   return r.entities[e.id] === e ? [ox + (e.tx ?? Math.floor(e.x / TILE)), oy + (e.ty ?? Math.floor(e.y / TILE))] : [e.tx ?? Math.floor(e.x / TILE), e.ty ?? Math.floor(e.y / TILE)];
 }
 export function humanCanUseEntity(r: RunState, h: HumanRecord, e: Entity): boolean {
-  if ((e.floor ?? 0) !== h.floor || h.floor !== (r.veyraFloor ?? 0) || r.entities[e.id] !== e || (e.hp ?? 1) <= 0) return false;
+  if ((e.floor ?? 0) !== h.floor || (e.hp ?? 1) <= 0) return false;
   const [gx, gy] = humanEntityTile(r, e);
-  if (Math.hypot(h.gx - gx, h.gy - gy) > 1.5) return false;
+  if (Math.abs(h.gx - gx)+Math.abs(h.gy - gy) > 1) return false;
+  if(r.entities[e.id]!==e || h.floor!==(r.veyraFloor??0))return true; // exact cardinal contact, no intermediate cell can hide a wall
   const o = r.sourceMap?.veyra?.originAu, ox = o ? Math.round(o[0] / .5) : 0, oy = o ? Math.round(o[1] / .5) : 0;
   return clearPhysicalLine(r, { x: (h.gx - ox + .5) * TILE, y: (h.gy - oy + .5) * TILE }, e, true, true);
 }
@@ -48,7 +49,7 @@ function knownRecipe(h: HumanRecord, key: string) {
 }
 function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkTask[] {
   const comm = h.community ? hw.communities[h.community] : undefined; if (!comm) return [];
-  const entities = Object.values(r.entities).filter(e => (e.floor ?? 0) === h.floor && (e.hp ?? 1) > 0 && (comm.workStations.includes(e.id) || e.poi === comm.poi && e.owner === comm.id || h.occupation==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)));
+  const entities = allRunEntities(r).filter(e => (e.floor ?? 0) === h.floor && (e.hp ?? 1) > 0 && (comm.workStations.includes(e.id) || e.poi === comm.poi && e.owner === comm.id || h.occupation==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)));
   const tasks: HumanWorkTask[] = [], start = (kind: HumanJobKind, e: Entity | undefined, inputs: [string,number][], duration: number): HumanWorkTask => ({kind,entityId:e?.id,inputs,duration,phase:'travel'});
   const stores = comm.storeContainers.filter(c => r.custody[c]);
   const available = (key: string, n: number) => count(r,h.inv.packId,key) + stores.reduce((q,c) => q+count(r,c,key),0) >= n;
@@ -106,7 +107,7 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
 function target(r: RunState, hw: HumanWorld, h: HumanRecord, task: HumanWorkTask): [number,number] | null {
   if (task.phase==='fetch') { const c=h.community ? hw.communities[h.community] : undefined; return c?.storeTile ?? null; }
   if (task.patientId) { const p=hw.people[task.patientId]; return p && p.floor===h.floor ? [p.gx,p.gy] : null; }
-  const e=task.entityId && r.entities[task.entityId]; return e ? humanEntityTile(r,e) : null;
+  const e=task.entityId && findRunEntity(r,task.entityId); return e ? humanEntityTile(r,e) : null;
 }
 export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, route: Router): boolean {
   if (h.following || !h.community) return false;
@@ -139,9 +140,9 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
   const fail=(reason:string)=>{h.lastWorkBlock=reason;intent.blockReason=reason;return {done:false,reason};};
   const beforeOutput = new Map(pack(r,h).slots.filter((s):s is Stack=>!!s).map(s=>[s.uid,s.qty]));
   const recordOutputs=()=>{ h.workOutputs ??= {}; for(const s of pack(r,h).slots) if(s){const n=s.qty-(beforeOutput.get(s.uid)??0);if(n>0)h.workOutputs[s.uid]=(h.workOutputs[s.uid]??0)+n;beforeOutput.set(s.uid,s.qty);} };
-  const e=task.entityId ? r.entities[task.entityId] : undefined;
+  const e=task.entityId ? findRunEntity(r,task.entityId) : undefined;
   if(task.phase==='fetch') {
-    const store=comm.storeEntityId && r.entities[comm.storeEntityId];
+    const store=comm.storeEntityId && findRunEntity(r,comm.storeEntityId);
     if(!store || !store.c || !humanCanUseEntity(r,h,store))return fail('cannot reach authorized store');
     for(const [key,qty] of task.inputs) {
       const need=Math.max(0,qty-count(r,h.inv.packId,key));

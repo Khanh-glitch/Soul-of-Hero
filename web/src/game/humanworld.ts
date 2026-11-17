@@ -20,10 +20,11 @@
  */
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
 import { STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity } from './engine';
+import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, globalFreshWater } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import { humanEntityTile, executeHumanWork, planHumanOccupation, type HumanWorkTask } from './human-jobs';
+import { humanNavigation } from './human-navigation';
 import { humanShelter, humanShelterContext, type HumanShelterContext } from './human-shelter';
 import { liveItemId, liveItemPer } from './final-item-set';
 
@@ -159,7 +160,7 @@ export interface HumanRecord {
   lastDamageAt?: number;
   /** Throttled autonomous planner; movement interpolation is presentation of the tile-legal route. */
   nextThinkAt?: number;
-  motion?: { fromGx: number; fromGy: number; toGx: number; toGy: number; elapsedMs: number; updatedAt?: number };
+  motion?: { fromGx: number; fromGy: number; toGx: number; toGy: number; toFloor?: number; elapsedMs: number; updatedAt?: number };
   workOutputs?: Record<string, number>;
   knownRecipes?: string[];
   patrolPostIndex?: number;
@@ -678,13 +679,12 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
 /** Permission is not physical access. Distant logistics must deliver goods via real routes. */
 function reachableHumanStores(r: RunState, hw: HumanWorld, h: HumanRecord): Container[] {
   const comm = h.community ? hw.communities[h.community] : undefined;
-  if (!comm?.storeEntityId || h.floor !== (r.veyraFloor ?? 0)) return [];
-  const e = r.entities[comm.storeEntityId];
-  if (!e || !e.c || !comm.foodStores.includes(e.c) || (e.floor ?? 0) !== h.floor) return [];
-  const o = r.sourceMap?.veyra?.originAu;
-  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
-  const from = { x: (h.gx - ox + 0.5) * TILE, y: (h.gy - oy + 0.5) * TILE };
-  if (Math.hypot(from.x - e.x, from.y - e.y) > TILE * 1.5 || !clearPhysicalLine(r, from, e, true)) return [];
+  if (!comm?.storeEntityId) return [];
+  const e = findRunEntity(r,comm.storeEntityId);
+  if (!e?.c || !comm.foodStores.includes(e.c) || (e.floor ?? 0)!==h.floor) return [];
+  const [gx,gy]=humanEntityTile(r,e);
+  if(Math.abs(h.gx-gx)+Math.abs(h.gy-gy)>1)return [];
+
   return r.custody[e.c] ? [r.custody[e.c]] : [];
 }
 
@@ -1308,7 +1308,7 @@ export function commandHuman(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,or
   if(order==='home') {
     const bed=findRunEntity(r,h.bedId),comm=h.home?hw.communities[h.home]:undefined;
     const dest=bed?humanEntityTile(r,bed):comm?.storeTile;
-    if(dest && (!bed||(bed.floor??0)===h.floor))route=humanRouteToAdjacent(r,h,dest[0],dest[1],grid,ox,oy,occupied);
+    if(dest)route=humanRouteToAdjacent(r,h,dest[0],dest[1],grid,ox,oy,occupied,bed?.floor??h.floor);
   } else {
     // Retreat is a real walk to a reachable nearby tile farther from perceived danger.
     const threats=r.creatures.filter(m=>['attack','chase'].includes(m.state)&&(m.floor??0)===h.floor);
@@ -1508,10 +1508,11 @@ function faceHumanToward(h: HumanRecord, gx: number, gy: number): void {
   const dx = gx - (h.gx + 0.5), dy = gy - (h.gy + 0.5);
   h.dir = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 1 : 2) : (dy < 0 ? 3 : 0);
 }
-function humanRouteToAdjacent(r: RunState, h: HumanRecord, targetGx: number, targetGy: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): { tx: number; ty: number; floor: number }[] | null {
+function humanRouteToAdjacent(r: RunState, h: HumanRecord, targetGx: number, targetGy: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>, targetFloor = h.floor): { tx: number; ty: number; floor: number }[] | null {
   const floor = r.veyraFloor ?? 0;
-  if (h.floor !== floor) return null;
   const sx = h.gx - ox, sy = h.gy - oy, tx = targetGx - ox, ty = targetGy - oy;
+  if (h.floor !== floor || targetFloor !== floor || sx < 0 || sy < 0 || tx < 0 || ty < 0 || sx >= WW || tx >= WW || sy >= WH || ty >= WH)
+    return humanNavigation(r,occupied).route(h,{tx:targetGx,ty:targetGy,floor:targetFloor});
   if (sx < 0 || sy < 0 || tx < 0 || ty < 0 || sx >= WW || tx >= WW || sy >= WH || ty >= WH) return null;
   const size = WW * WH, parent = new Int32Array(size); parent.fill(-2);
   const queue = new Int32Array(size); let head = 0, tail = 0;
@@ -1528,7 +1529,7 @@ function humanRouteToAdjacent(r: RunState, h: HumanRecord, targetGx: number, tar
       parent[ni] = at; queue[tail++] = ni;
     }
   }
-  if (goal < 0 || goal === start) return goal === start ? [] : null;
+  if (goal < 0 || goal === start) return goal === start ? [] : humanNavigation(r,occupied).route(h,{tx:targetGx,ty:targetGy,floor:targetFloor});
   const path: number[] = [];
   for (let at = goal; at !== start; at = parent[at]) path.push(at);
   path.reverse();
@@ -1536,7 +1537,7 @@ function humanRouteToAdjacent(r: RunState, h: HumanRecord, targetGx: number, tar
 }
 function companionRoute(r: RunState, h: HumanRecord, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): { tx: number; ty: number; floor: number }[] | null {
   const floor = r.veyraFloor ?? 0;
-  if (h.floor !== floor) return null;
+  if (h.floor !== floor || h.gx < ox || h.gy < oy || h.gx >= ox+WW || h.gy >= oy+WH) return humanNavigation(r,occupied).route(h,{tx:ox+Math.floor(r.player.x/TILE),ty:oy+Math.floor(r.player.y/TILE),floor});
   const sx = h.gx - ox, sy = h.gy - oy;
   const px = Math.floor(r.player.x / TILE), py = Math.floor(r.player.y / TILE);
   if (sx < 0 || sy < 0 || sx >= WW || sy >= WH || px < 0 || py < 0 || px >= WW || py >= WH) return null;
@@ -1555,16 +1556,16 @@ function companionRoute(r: RunState, h: HumanRecord, grid: Uint8Array, ox: numbe
       parent[ni] = at; queue[tail++] = ni;
     }
   }
-  if (goal < 0 || goal === start) return goal === start ? [] : null;
+  if (goal < 0 || goal === start) return goal === start ? [] : humanNavigation(r,occupied).route(h,{tx:ox+px,ty:oy+py,floor});
   const path: number[] = [];
   for (let at = goal; at !== start; at = parent[at]) path.push(at);
   path.reverse();
   return path.map(i => ({ tx: ox + i % WW, ty: oy + Math.floor(i / WW), floor }));
 }
 function canHumanOccupy(r: RunState, h: HumanRecord, gx: number, gy: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): boolean {
-  if (h.floor !== (r.veyraFloor ?? 0) || occupied.has(humanCellKey(h.floor, gx, gy))) return false;
+  if (occupied.has(humanCellKey(h.floor, gx, gy))) return false;
   const lx = gx - ox, ly = gy - oy;
-  if (lx < 0 || ly < 0 || lx >= WW || ly >= WH) return false;
+  if (h.floor !== (r.veyraFloor??0) || lx < 0 || ly < 0 || lx >= WW || ly >= WH) return true; // caller checked the global collision adapter
   const px = (lx + 0.5) * TILE, py = (ly + 0.5) * TILE;
   if (!r.player.dead && Math.hypot(px - r.player.x, py - r.player.y) < TILE * 0.7) return false;
   if (r.creatures.some(m => m.state !== 'dead' && (m.floor ?? 0) === h.floor && Math.hypot(px - m.x, py - m.y) < TILE * 0.7)) return false;
@@ -1593,6 +1594,49 @@ function plannerSources(r: RunState): Set<string> {
   for (const e of Object.values(r.g1b?.far ?? {})) if (e.g1b && e.tx !== undefined && e.ty !== undefined) protectedTiles.add(`${e.tx}:${e.ty}`);
   return protectedTiles;
 }
+/** Next proven human event bounds the shared world integrator; distant movement uses
+ * the same tile duration as visible movement, never one tile per weather slot. */
+export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:number):number {
+ let dt=maximum;
+ for(const h of Object.values(hw.people)){
+  if(['DEAD','EVACUATED'].includes(h.state))continue;
+  dt=Math.min(dt,60000); // bounded biological re-evaluation, not a second simulation clock
+  if(h.state==='MOVING'&&h.intent?.route?.length)dt=Math.min(dt,Math.max(.001,TILE/PROFILES[h.profile].speed*1000-(h.motion?.elapsedMs??0)));
+  if(h.state==='WORKING'&&h.intent&&h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
+  if(!h.following&&h.state==='IDLE'&&(!h.intent||h.intent.work?.phase==='travel')){
+   const due=Math.max(hw.plannerAt??at,h.nextThinkAt??at);dt=Math.min(dt,Math.max(1,due-at));
+  }
+ }
+ return dt;
+}
+function planHumanWater(r:RunState,h:HumanRecord,now:number,occupied:Set<string>):boolean {
+ if(h.floor!==0 || h.thirst>=40)return false;
+ const candidates:{gx:number;gy:number;distance:number}[]=[];
+ // A local known catchment, not psychic island-wide water knowledge. Search and travel are separate.
+ for(let dy=-24;dy<=24;dy++)for(let dx=-24;dx<=24;dx++){
+  if(Math.abs(dx)+Math.abs(dy)>24)continue;
+  const gx=h.gx+dx,gy=h.gy+dy;
+  if(globalFreshWater(r,gx,gy,h.floor))candidates.push({gx,gy,distance:Math.abs(dx)+Math.abs(dy)});
+ }
+ candidates.sort((a,b)=>a.distance-b.distance||a.gy-b.gy||a.gx-b.gx);
+ const nav=humanNavigation(r,occupied);
+ for(const p of candidates.slice(0,8)){
+  const route=nav.route(h,{tx:p.gx,ty:p.gy,floor:0},3000);if(!route)continue;
+  h.intent={intentId:`water:${h.actorId}:${now}`,actorId:h.actorId,kind:'drink',target:`water:${p.gx},${p.gy}`,preconditions:['actual mapped potable source','physical bank contact','timed drink/refill'],reserved:[],startAt:now,dueAt:now+2000,route};
+  h.state=route.length?'MOVING':'WORKING';return true;
+ }
+ h.lastWorkBlock='I need water; no reachable potable bank was found in my local catchment.';return false;
+}
+function commitHumanWater(r:RunState,h:HumanRecord,now:number):boolean {
+ const intent=h.intent,m=intent?.target?.match(/^water:(\d+),(\d+)$/);if(!intent||!m||now<intent.dueAt)return false;
+ const gx=Number(m[1]),gy=Number(m[2]);
+ if(h.floor!==0||Math.abs(h.gx-gx)+Math.abs(h.gy-gy)>1||!globalFreshWater(r,gx,gy,0)){h.lastWorkBlock='Water access changed before the drink completed.';h.intent=undefined;h.state='IDLE';return false;}
+ h.thirst=Math.min(100,h.thirst+25);
+ const flask=humanPack(r,h).slots.find(s=>s&&ITEMS[s.key].waterContainer&&(s.charge??0)<ITEMS[s.key].charge!);
+ if(flask)flask.charge=ITEMS[flask.key].charge!;
+ receipt(r,now,'human.water',`${h.actorId}:${gx},${gy}:${flask?.uid??'direct-drink'}`);
+ h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+1000;return true;
+}
 function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>, protectedTiles: Set<string>): void {
   if (h.intent?.work?.phase === 'travel' && h.state === 'IDLE') {
     planHumanOccupation(r, hw, h, now, (gx,gy) => humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied));
@@ -1600,7 +1644,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   }
   if (h.following || h.state !== 'IDLE' || h.intent || (h.nextThinkAt ?? 0) > now) return;
   h.nextThinkAt = now + 6000;
-  if (h.floor !== (r.veyraFloor ?? 0) || h.hp < 30 || h.stamina < 12) return;
+  if (h.hp < 30 || h.stamina < 12) return;
   if (!h.community) return;
   const comm = hw.communities[h.community]; if (!comm) return;
   const need = h.thirst < 40 ? 'drink' : h.hunger < 40 ? 'eat' : undefined;
@@ -1608,7 +1652,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     const stock = comm.foodStores.flatMap(id => r.custody[id]?.slots ?? []);
     const hasSupply = stock.some(s => s && (need === 'eat' ? (ITEMS[s.key].food?.hunger ?? 0) > 0 : (ITEMS[s.key].food?.thirst ?? 0) > 0 && (ITEMS[s.key].charge == null || (s.charge ?? 0) > 0)));
     if (hasSupply && !reachableHumanStores(r, hw, h).length) {
-      const route = humanRouteToAdjacent(r, h, comm.storeTile[0], comm.storeTile[1], grid, ox, oy, occupied);
+      const route = humanRouteToAdjacent(r, h, comm.storeTile[0], comm.storeTile[1], grid, ox, oy, occupied,findRunEntity(r,comm.storeEntityId)?.floor??0);
       if (route?.length) {
         h.intent = { intentId: `supply:${h.actorId}:${now}`, actorId: h.actorId, kind: need, target: comm.storeEntityId, preconditions: ['authorized finite stock'], reserved: [], startAt: now, dueAt: now, route };
         h.state = 'MOVING'; return;
@@ -1616,10 +1660,11 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
       h.lastWorkBlock = 'I need supplies, but cannot reach our store.';
     }
   }
+  if(planHumanWater(r,h,now,occupied))return;
   if (h.hunger < 25 || h.thirst < 25) return;
   const pack = humanPack(r, h);
   if (h.workOutputs && Object.values(h.workOutputs).some(q => q > 0) && comm.storeTile) {
-    const route = humanRouteToAdjacent(r, h, comm.storeTile[0], comm.storeTile[1], grid, ox, oy, occupied);
+    const route = humanRouteToAdjacent(r, h, comm.storeTile[0], comm.storeTile[1], grid, ox, oy, occupied,findRunEntity(r,comm.storeEntityId)?.floor??0);
     if (!route) return;
     h.intent = { intentId: `store:${h.actorId}:${now}`, actorId: h.actorId, kind: 'work', target: 'store', preconditions: ['carry output from shared harvest', 'physical community store'], reserved: [], startAt: now, dueAt: now, route };
     h.state = route.length ? 'MOVING' : 'IDLE';
@@ -1629,8 +1674,8 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   if(h.rest>=.5 && h.bedId) {
     if(usingHumanBed(r,hw,h)){h.nextThinkAt=now+10000;return;}
     const bed=findRunEntity(r,h.bedId);
-    if(bed && (bed.floor??0)===h.floor && (bed.hp??0)>0) {
-      const [gx,gy]=humanEntityTile(r,bed),route=humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied);
+    if(bed && (bed.hp??0)>0) {
+      const [gx,gy]=humanEntityTile(r,bed),route=humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied,bed.floor??0);
       if(route){h.intent={intentId:`rest:${h.actorId}:${now}`,actorId:h.actorId,kind:'rest',target:bed.id,preconditions:['owned physical sleeping slot'],reserved:[],startAt:now,dueAt:now,route};h.state=route.length?'MOVING':'IDLE';if(!route.length)h.intent=undefined;return;}
     }
     h.lastWorkBlock='My sleeping place is missing or unreachable.';
@@ -1638,6 +1683,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   if (planHumanOccupation(r,hw,h,now,(gx,gy)=>humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied))) return;
   const lx = h.gx - ox, ly = h.gy - oy;
   if (lx < 1 || ly < 1 || lx >= WW - 1 || ly >= WH - 1) return;
+  if(h.floor!==(r.veyraFloor??0)||h.gx<ox||h.gy<oy||h.gx>=ox+WW||h.gy>=oy+WH){h.lastWorkBlock='No certified shared-harvest action here yet.';return;}
   let best: { tx: number; ty: number; score: number } | null = null, spaceBlocked = false;
   for (let y = Math.max(1, ly - 24); y <= Math.min(WH - 2, ly + 24); y++) for (let x = Math.max(1, lx - 24); x <= Math.min(WW - 2, lx + 24); x++) {
     const s = sourceAt(r, x, y, now);
@@ -1715,7 +1761,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   const grid = hasMovement ? blockGrid(r) : new Uint8Array(0);
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
-  const occupied = hasMovement ? new Set(actors.filter(h => h.state !== 'DEAD' && h.state !== 'EVACUATED').map(h => humanCellKey(h.floor, h.gx, h.gy))) : new Set<string>();
+  const occupied = hasMovement ? new Set(actors.filter(h => h.state !== 'DEAD' && h.state !== 'EVACUATED').flatMap(h => [humanCellKey(h.floor,h.gx,h.gy),...(h.motion?[humanCellKey(h.motion.toFloor??h.floor,h.motion.toGx,h.motion.toGy)]:[])])) : new Set<string>();
   const playerGx = ox + Math.floor(r.player.x / TILE), playerGy = oy + Math.floor(r.player.y / TILE);
   for(const h of actors) {
     if(h.occupation!=='guard' || h.floor!==(r.veyraFloor??0) || h.following || ['DOWNED','DEAD','EVACUATED','FIGHTING'].includes(h.state) || (h.nextPerceptionAt??0)>now)continue;
@@ -1728,14 +1774,18 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   }
   if (wantsPlan) {
     const protectedTiles = plannerSources(r);
-    let cursor = (hw.plannerCursor ?? 0) % Math.max(1, actors.length), planned = 0;
+    let cursor = (hw.plannerCursor ?? 0) % Math.max(1, actors.length), planned = 0, distantPlanned=0;
+    const startCursor=cursor;
     for (let n = 0; n < actors.length && planned < 8; n++) {
-      const i = (cursor + n) % actors.length, h = actors[i];
+      const i = (startCursor + n) % actors.length, h = actors[i];
       if (!h.following && h.state === 'IDLE' && (!h.intent || h.intent.work?.phase === 'travel') && (h.nextThinkAt ?? 0) <= now) {
+        const distant=h.floor!==(r.veyraFloor??0)||h.gx<ox||h.gy<oy||h.gx>=ox+WW||h.gy>=oy+WH;
+        if(distant&&distantPlanned>=1)continue;
+        if(distant)distantPlanned++;
         planAutonomousWork(r, hw, h, now, grid, ox, oy, occupied, protectedTiles);
         if ((h.nextThinkAt ?? 0) > now) planned++;
+        cursor = (i + 1) % actors.length;
       }
-      cursor = (i + 1) % actors.length;
     }
     hw.plannerCursor = cursor; hw.plannerAt = now + 1000;
   }
@@ -1765,17 +1815,18 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   }
   for (const h of actors) {
     if (!h.following || h.state !== 'IDLE' || h.intent?.kind !== 'follow') continue;
-    if (h.floor !== (r.veyraFloor ?? 0)) { h.intent.blockReason = 'cannot follow across floors yet'; continue; }
-    if (Math.abs(h.gx - playerGx) + Math.abs(h.gy - playerGy) <= 1) { h.intent.route = []; h.intent.blockReason = undefined; continue; }
+    if (h.floor===(r.veyraFloor??0) && Math.abs(h.gx - playerGx) + Math.abs(h.gy - playerGy) <= 1) { h.intent.route = []; h.intent.blockReason = undefined; continue; }
     const route = companionRoute(r, h, grid, ox, oy, occupied);
-    if (!route) { h.intent.blockReason = 'no walkable route to the player in this window'; continue; }
+    if (!route) { h.intent.blockReason = 'No certified physical route to the player within the current search budget.'; continue; }
     h.intent.route = route; h.state = route.length ? 'MOVING' : 'IDLE'; h.intent.blockReason = undefined;
   }
+  let navigation: ReturnType<typeof humanNavigation>|undefined;
   for (const h of Object.values(hw.people)) {
     if (h.state === 'DEAD' || h.state === 'EVACUATED') continue;
     // 1. Survival consume: eat when hungry, drink when thirsty.
     if (h.hunger < 40) humanConsume(r, hw, h, 'food', now);
     if (h.thirst < 40) humanConsume(r, hw, h, 'water', now);
+    if(h.state==='WORKING'&&h.intent?.kind==='drink'&&h.intent.target?.startsWith('water:'))commitHumanWater(r,h,now);
     if (h.state === 'WORKING' && h.intent?.work) humanWorkTick(r, hw, h, now);
     // 2. A work action commits only after arrival and a visible work duration; no output is animated or minted in transit.
     if (h.state === 'WORKING' && h.intent?.kind === 'work' && h.intent.target?.startsWith('harvest:') && now >= h.intent.dueAt) performHumanHarvest(r, hw, h, now);
@@ -1799,30 +1850,37 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
       if (!h.motion) {
         const dx = next.tx - h.gx, dy = next.ty - h.gy;
         const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
-        if (next.floor !== h.floor || Math.abs(dx) + Math.abs(dy) !== 1 || !canHumanOccupy(r, h, next.tx, next.ty, grid, ox, oy, occupied)) {
+        if (!((navigation??=humanNavigation(r,occupied)).enter(h,next,now)) || (next.floor===h.floor && !canHumanOccupy(r, h, next.tx, next.ty, blockGrid(r), ox, oy, occupied))) {
           occupied.add(key); moveIntent.blockReason = 'blocked by a wall, closed door, or another survivor';
           if (moveIntent.kind === 'follow') moveRoute.length = 0;
           else if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.motion = undefined; moveRoute.length = 0; h.nextThinkAt = now + 750; }
           else { h.intent = undefined; h.state = 'IDLE'; h.nextThinkAt = now + 3000; }
         } else {
           const intentStart = Number.isFinite(moveIntent.startAt) ? Math.max(lastStepAt, moveIntent.startAt) : lastStepAt;
-          const initialElapsed = clamp(now - intentStart, 0, 250);
-          h.motion = { fromGx: h.gx, fromGy: h.gy, toGx: next.tx, toGy: next.ty, elapsedMs: initialElapsed, updatedAt: now };
+          const initialElapsed = clamp(now - intentStart, 0, TILE / PROFILES[h.profile].speed * 1000);
+          h.motion = { fromGx: h.gx, fromGy: h.gy, toGx: next.tx, toGy: next.ty, toFloor:next.floor, elapsedMs: initialElapsed, updatedAt: now };
+          occupied.add(key);occupied.add(humanCellKey(next.floor,next.tx,next.ty));
           beganStep = true;
           h.dir = dy > 0 ? 0 : dy < 0 ? 3 : dx > 0 ? 2 : 1;
         }
       }
       if (h.motion) {
-        if (!beganStep) h.motion.elapsedMs += Math.min(dtMs, 250);
+        if (!beganStep) h.motion.elapsedMs += dtMs;
         h.motion.updatedAt = now;
         const travelMs = TILE / PROFILES[h.profile].speed * 1000;
         if (h.motion.elapsedMs >= travelMs) {
+          const destinationKey=humanCellKey(next.floor,next.tx,next.ty);occupied.delete(destinationKey);
+          if(!(navigation??=humanNavigation(r,occupied)).enter(h,next,now)){
+            h.motion=undefined;h.state='IDLE';moveIntent.blockReason='The physical step became blocked before arrival.';h.nextThinkAt=now+3000;
+            continue;
+          }
           const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
-          h.gx = h.motion.toGx; h.gy = h.motion.toGy; h.motion = undefined; moveRoute.shift();
+          h.gx = h.motion.toGx; h.gy = h.motion.toGy; h.floor = h.motion.toFloor ?? h.floor; h.motion = undefined; moveRoute.shift();
           h.lastSimAt = now; occupied.add(humanCellKey(h.floor, h.gx, h.gy));
           if (!moveRoute.length) {
             if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.nextThinkAt = now; }
             else if (moveIntent.kind === 'follow') { h.state = 'IDLE'; moveRoute.length = 0; }
+            else if(moveIntent.kind==='drink'&&moveIntent.target?.startsWith('water:')){h.state='WORKING';moveIntent.dueAt=now+2000;}
             else if (moveIntent.work) { h.state = 'WORKING'; moveIntent.dueAt = now + (moveIntent.work.phase === 'fetch' ? 800 : moveIntent.work.duration); }
             else if (moveIntent.kind === 'work' && moveIntent.target?.startsWith('harvest:')) {
               const target = moveIntent.target.match(/^harvest:(\d+),(\d+)$/);

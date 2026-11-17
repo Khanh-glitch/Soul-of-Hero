@@ -3549,15 +3549,22 @@ function entityIdSortKey(id: string): number {
 
 /** Deterministic deduplicated view across onscreen `r.entities` and Veyra `r.veyraOffscreenEntities`
  *  so straddled or offscreen structures execute in the exact same order without duplicate processing. */
+const entityViews = new WeakMap<RunState,{live:Entity[];off:Entity[];ids:string[];sorted:Entity[]}>();
 export function allRunEntities(r: RunState): Entity[] {
-  const off = r.veyraOffscreenEntities;
-  if (!off || !Object.keys(off).length) return Object.values(r.entities);
-  const seen = new Set<string>();
-  const out: Entity[] = [];
-  for (const e of Object.values(r.entities)) { seen.add(e.id); out.push(e); }
-  for (const e of Object.values(off)) { if (e && !seen.has(e.id)) { seen.add(e.id); out.push(e); } }
-  out.sort((a, b) => entityIdSortKey(a.id) - entityIdSortKey(b.id) || a.id.localeCompare(b.id));
-  return out;
+  const live=Object.values(r.entities),off=Object.values(r.veyraOffscreenEntities??{});
+  if(!off.length)return live;
+  const previous=entityViews.get(r);
+  // Verify membership, object identity AND ID on every query. No markDirty convention is
+  // needed: direct fixture/world/archive edits invalidate this derived sort immediately.
+  if(previous&&live.length===previous.live.length&&off.length===previous.off.length&&
+    live.every((e,i)=>e===previous.live[i]&&e.id===previous.ids[i])&&
+    off.every((e,i)=>e===previous.off[i]&&e.id===previous.ids[live.length+i]))return previous.sorted.slice();
+  const seen = new Set<string>(),out:Entity[]=[];
+  for(const e of [...live,...off])if(e&&!seen.has(e.id)){seen.add(e.id);out.push(e);}
+  const keys = new Map(out.map(e => [e.id, entityIdSortKey(e.id)]));
+  out.sort((a, b) => keys.get(a.id)! - keys.get(b.id)! || a.id.localeCompare(b.id));
+  entityViews.set(r,{live,off,ids:[...live,...off].map(e=>e.id),sorted:out});
+  return out.slice();
 }
 
 export function findRunEntity(r: RunState, id: string | undefined): Entity | undefined {
@@ -3673,7 +3680,7 @@ function resolveGardenMapCell(r: RunState, e: Entity): {
   };
 }
 
-function buildEntityBlockMap(r: RunState, entities: Entity[]): Map<string, number> {
+export function buildEntityBlockMap(r: RunState, entities: Entity[]): Map<string, number> {
   const map = new Map<string, number>();
   for (const o of entities) {
     const op = entityGlobalCoords(r, o);
@@ -3697,7 +3704,17 @@ function buildEntityBlockMap(r: RunState, entities: Entity[]): Map<string, numbe
   return map;
 }
 
-function globalCellTileAndClass(
+/** Same potable map mask as the ordinary player drink action, with physical ice veto. */
+export function globalFreshWater(r:RunState,gx:number,gy:number,floor:number):boolean {
+  if(floor!==0)return false;
+  const [ox,oy]=windowOrigin(r),lx=gx-ox,ly=gy-oy;
+  if(lx>=0&&ly>=0&&lx<WW&&ly<WH && activeFloor(r)===0 && r.layoutId===getActiveLayout())return !!getWorld().fresh[ly*WW+lx]&&effTile(r,lx,ly)!==T.ICE;
+  if(gx<0||gy<0||gx>=FRAME_W||gy>=FRAME_H)return false;
+  const w=getWindowWorldForGlobalTile(gx,gy),i=(gy-w.win.originTy)*WW+gx-w.win.originTx;
+  return !!w.world.fresh[i]&&(r.veyraGlobalTerrain?.[globalIndex(gx,gy)]?.t??w.floors.ground.tiles[i])!==T.ICE;
+}
+
+export function globalCellTileAndClass(
   r: RunState,
   gtx: number,
   gty: number,
