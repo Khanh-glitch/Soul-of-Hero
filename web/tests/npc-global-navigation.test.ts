@@ -30,6 +30,17 @@ describe('global human route and source execution (engineering fixtures, not bro
   expect([lh.gx,lh.gy,lh.floor]).toEqual([p.tx,p.ty,p.floor]);const before=JSON.stringify(lh);stepHumans(lr,lr.humanWorld!,T0+travel);expect(JSON.stringify(lh)).toBe(before);
   stepHumans(r,hw,T0+travel);expect([h.gx,h.gy,h.floor,h.state]).toEqual([lh.gx,lh.gy,lh.floor,lh.state]);
  });
+ it('reports pending search separately from found geometry and admits no occupied physical edge',()=>{
+  const r=scene().run!,h=Object.values(r.humanWorld!.people).find(h=>h.gx>300)!,nav=humanNavigation(r);
+  const next=[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({tx:h.gx+dx,ty:h.gy+dy,floor:h.floor})).find(p=>nav.free(p,h))!;
+  expect(next).toBeTruthy();const occupied=new Set([`${next.floor}:${next.tx}:${next.ty}`]);
+  const admission=humanNavigation(r,occupied);expect(admission.enter(h,next,T0)).toBe(false);
+  expect(admission.route(h,{tx:next.tx+(next.tx-h.gx),ty:next.ty+(next.ty-h.gy),floor:h.floor},0)).toBeNull();
+  expect(h.routeSearch?.status).toBe('PENDING_SEARCH');expect(h.routeSearch?.expanded).toBe(0);
+  const path=admission.route(h,{tx:next.tx+(next.tx-h.gx),ty:next.ty+(next.ty-h.gy),floor:h.floor});
+  expect(path).toEqual([next]);expect(h.routeSearch?.status).toBe('FOUND');
+  expect(admission.enter(h,next,T0)).toBe(false);occupied.clear();expect(admission.enter(h,next,T0)).toBe(true);
+ });
  it('crosses only a real authored stair edge; a forged floor hop fails',()=>{
   const r=scene().run!,hw=r.humanWorld!,h=Object.values(hw.people)[0],nav=humanNavigation(r);
   let edge:{x:number;y:number;from:number;tx:number;ty:number;to:number}|undefined;

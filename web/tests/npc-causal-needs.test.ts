@@ -1,7 +1,7 @@
 import {describe,it,expect} from 'vitest';
 import {newGame,startRun,findRunEntity} from '../src/game/engine';
 import {setActiveLayout} from '../src/game/world';
-import {tickNeeds,humanEventBoundary,humanNeedsContext,usingHumanBed} from '../src/game/humanworld';
+import {tickNeeds,humanEventBoundary,humanNeedsContext,usingHumanBed,finishHumanPlanReview,stepHumans} from '../src/game/humanworld';
 import {humanEntityTile} from '../src/game/human-jobs';
 import {BAL,HOUR} from '../src/game/core';
 import {T0} from './helpers/g1b-kit';
@@ -40,4 +40,24 @@ describe('causal human biology and transaction-scoped housing (fixtures)',()=>{
   h.state='DOWNED';h.hunger=h.thirst=0;h.hp=1;h.wounds=[];
   expect(humanEventBoundary(r,hw,T0,HOUR)).toBeCloseTo(60000/(2*BAL.player.starveDamagePerMin));
  });
+ it('backs off unavailable livelihood reviews but not pending routes; biological urgency wakes the actor',()=>{
+  const r=scene(),hw=r.humanWorld!,h=Object.values(hw.people)[0];
+  h.state='IDLE';h.intent=undefined;h.following=false;h.nextThinkAt=T0;
+  for(let n=0;n<9;n++)finishHumanPlanReview(h,T0+n*300000);
+  expect(h.nextThinkAt).toBe(T0+9*300000);expect(h.blockedPlanCount).toBe(7);
+  const at=T0+8*300000;hw.lastNeedsAt=at;h.hunger=40.001;h.thirst=100;
+  tickNeeds(r,hw,at+60000);expect(h.nextThinkAt).toBe(at+60000);expect(h.blockedPlanCount).toBe(0);
+  h.routeSearch={status:'PENDING_SEARCH',target:'0:1,1',expanded:256};h.nextThinkAt=at+66000;
+  finishHumanPlanReview(h,at+60000);expect(h.nextThinkAt).toBe(at+66000);
+ });
+ it('keeps bounded fair reviews for every actor with no eligible action, without removing anyone',()=>{
+  const r=scene(),hw=r.humanWorld!,actors=Object.values(hw.people);expect(actors.length).toBeGreaterThan(200);
+  // Explicit exhausted-actor fixture: no harvesting/jobs can start, no actor is deleted/frozen.
+  for(const h of actors){h.state='IDLE';h.intent=undefined;h.following=false;h.hunger=h.thirst=100;h.stamina=0;h.nextThinkAt=T0;h.nextPerceptionAt=T0+HOUR;}
+  for(let n=1;n<=actors.length+1;n++)stepHumans(r,hw,T0+n*1000);
+  expect(Object.values(hw.people)).toHaveLength(actors.length);
+  expect(actors.filter(h=>!(h.blockedPlanCount??0)).map(h=>({id:h.actorId,state:h.state,next:h.nextThinkAt,stamina:h.stamina}))).toEqual([]);
+  expect(actors.every(h=>(h.nextThinkAt??0)<=T0+(actors.length+1)*1000+300000)).toBe(true);
+ });
+
 });

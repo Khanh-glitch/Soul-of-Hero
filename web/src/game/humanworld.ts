@@ -160,6 +160,9 @@ export interface HumanRecord {
   lastDamageAt?: number;
   /** Throttled autonomous planner; movement interpolation is presentation of the tile-legal route. */
   nextThinkAt?: number;
+  /** Consecutive unavailable livelihood reviews; bounded retry, never a frozen actor. */
+  blockedPlanCount?: number;
+  routeSearch?: {status:'FOUND'|'PENDING_SEARCH'|'NO_PATH'|'SEARCH_LIMIT';target:string;expanded:number};
   motion?: { fromGx: number; fromGy: number; toGx: number; toGy: number; toFloor?: number; elapsedMs: number; updatedAt?: number };
   workOutputs?: Record<string, number>;
   knownRecipes?: string[];
@@ -658,6 +661,9 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
     const hungerBefore=h.hunger, thirstBefore=h.thirst;
     h.hunger = clamp(h.hunger - hungerRate * hours * m, 0, 100);
     h.thirst = clamp(h.thirst - thirstRate * hours * m, 0, 100);
+    if ([40,25,5].some(q => hungerBefore>q&&h.hunger<=q || thirstBefore>q&&h.thirst<=q)) {
+      h.nextThinkAt=now; h.blockedPlanCount=0;
+    }
     h.warmth = clamp(h.warmth - (humanShelter(r, h.gx, h.gy, h.floor,shelterContext) ? 0 : 0.4 * hours), 20, 100);
     if (h.hunger <= 0 || h.thirst <= 0) {
       // starvation / dehydration: HP drain, work stops
@@ -717,6 +723,7 @@ export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 
         if (d.food.thirst) h.thirst = clamp(h.thirst + d.food.thirst, 0, 100);
         if (d.food.hp) h.hp = clamp(h.hp + d.food.hp, 0, h.maxHp);
         s.qty--; if (s.qty <= 0) { const i = c.slots.indexOf(s); c.slots[i] = null; }
+        h.blockedPlanCount=0;h.nextThinkAt=now;
         receipt(r, now, 'human.eat', `${h.actorId}:${s.key}`);
         return true;
       }
@@ -729,6 +736,7 @@ export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 
         h.thirst = clamp(h.thirst + got, 0, 100);
         if (d.charge != null) s.charge = Math.max(0, (s.charge ?? 0) - 1);
         else { s.qty--; if (s.qty <= 0) c.slots[c.slots.indexOf(s)] = null; }
+        h.blockedPlanCount=0;h.nextThinkAt=now;
         receipt(r, now, 'human.drink', `${h.actorId}:${s.key}`);
         return true;
       }
@@ -1769,6 +1777,15 @@ function humanCombatTarget(r:RunState,hw:HumanWorld,id:string|undefined,floor:nu
   if(h){if(h.floor!==floor||['DEAD','EVACUATED','DOWNED'].includes(h.state))return null;const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;return {x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE,human:h};}
   return r.creatures.find(m=>m.id===id && m.state!=='dead' && (m.floor??0)===floor)??null;
 }
+/** A failed resource/path review is not a new physical event every six seconds.
+ * Pending searches keep their short bounded service slot; genuinely unavailable
+ * livelihoods back off to at most five real minutes. Needs thresholds and actual
+ * successful intake reset the wait. Motion, wounds and work never use this delay. */
+export function finishHumanPlanReview(h:HumanRecord,now:number):void {
+  if(h.state!=='IDLE'||h.intent||h.routeSearch?.status==='PENDING_SEARCH') {h.blockedPlanCount=0;return;}
+  h.blockedPlanCount=Math.min(7,(h.blockedPlanCount??0)+1);
+  h.nextThinkAt=Math.max(h.nextThinkAt??now,now+Math.min(300000,6000*2**(h.blockedPlanCount-1)));
+}
 export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   const lastStepAt = hw.lastStepAt ?? hw.lastResolvedAt;
   const dtMs = now - lastStepAt;
@@ -1795,19 +1812,23 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   if (wantsPlan) withHumanNavigationRead(r,()=>{
     const protectedTiles = plannerSources(r);
     let cursor = (hw.plannerCursor ?? 0) % Math.max(1, actors.length), planned = 0, distantPlanned=0;
-    const startCursor=cursor;
+    const startCursor=cursor;let deferredCursor:number|undefined;
     for (let n = 0; n < actors.length && planned < 8; n++) {
       const i = (startCursor + n) % actors.length, h = actors[i];
       if (!h.following && h.state === 'IDLE' && (!h.intent || h.intent.work?.phase === 'travel') && (h.nextThinkAt ?? 0) <= now) {
         const distant=h.floor!==(r.veyraFloor??0)||h.gx<ox||h.gy<oy||h.gx>=ox+WW||h.gy>=oy+WH;
-        if(distant&&distantPlanned>=1)continue;
+        if(distant&&distantPlanned>=1){deferredCursor??=i;continue;}
         if(distant)distantPlanned++;
+        h.routeSearch=undefined;
         planAutonomousWork(r, hw, h, now, grid, ox, oy, occupied, protectedTiles);
+        finishHumanPlanReview(h,now);
         if ((h.nextThinkAt ?? 0) > now) planned++;
         cursor = (i + 1) % actors.length;
       }
     }
-    hw.plannerCursor = cursor; hw.plannerAt = now + 1000;
+    // The earliest quota-deferred actor owns the next turn; a later local actor
+    // must not move the cursor past a whole remote region indefinitely.
+    hw.plannerCursor = deferredCursor??cursor; hw.plannerAt = now + 1000;
   });
   // Combat locomotion uses the same cardinal route executor and occupancy as work/follow.
   // Limit new searches per update; do not perform an island-wide BFS per hostile per frame.
@@ -1891,7 +1912,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
         if (h.motion.elapsedMs >= travelMs) {
           const destinationKey=humanCellKey(next.floor,next.tx,next.ty);occupied.delete(destinationKey);
           if(!(navigation??=humanNavigation(r,occupied)).enter(h,next,now)){
-            h.motion=undefined;h.state='IDLE';moveIntent.blockReason='The physical step became blocked before arrival.';h.nextThinkAt=now+3000;
+            h.motion=undefined;h.state='IDLE';moveIntent.blockReason='The physical step became blocked before arrival.';h.lastWorkBlock=moveIntent.blockReason;h.intent=undefined;h.nextThinkAt=now+3000;
             continue;
           }
           const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);

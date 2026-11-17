@@ -53,8 +53,8 @@ export function humanNavigation(r:RunState,occupied=new Set<string>()){
   if(door)return !door.locked&&!door.g1b&&!door.poiDoor&&!door.electricDoor&&(!door.owner||door.owner===h.community||door.owner==='player'&&h.following);
   return doors.has(key(p));
  };
- const free=(p:HumanWaypoint,h:HumanRecord)=>{
-  if(occupied.has(`${p.floor}:${p.tx}:${p.ty}`))return false;
+ const free=(p:HumanWaypoint,h:HumanRecord,ignoreActors=false)=>{
+  if(!ignoreActors&&occupied.has(`${p.floor}:${p.tx}:${p.ty}`))return false;
   const c=cell(p);return c.cls===0||c.cls===4||((c.cls===1||c.cls===3)&&doorAllowed(p,h));
  };
  const legalEdge=(h:HumanRecord,p:HumanWaypoint)=>{
@@ -77,7 +77,8 @@ export function humanNavigation(r:RunState,occupied=new Set<string>()){
  return {cell,free,legalEdge,enter,route(h:HumanRecord,target:HumanWaypoint,maxVisited=256):HumanWaypoint[]|null{
   const start={tx:h.gx,ty:h.gy,floor:h.floor},startKey=key(start);
   // Binary heap avoids repeated sorting of the search frontier. Every request has an explicit work bound.
-  const searchKey=`${h.actorId}:${startKey}>${key(target)}`;
+  const searchKey=`${h.actorId}:${h.community??''}:${!!h.following}:${startKey}>${key(target)}`;
+  const status=(status:NonNullable<HumanRecord['routeSearch']>['status'],expanded:number)=>{h.routeSearch={status,target:key(target),expanded};};
   let pending=searches.get(r);if(!pending){pending=new Map();searches.set(r,pending);}
   let state=pending.get(searchKey);
   if(!state){state={heap:[],costs:new Map([[startKey,0]]),parent:new Map(),points:new Map([[startKey,start]]),expanded:0};pending.set(searchKey,state);if(pending.size>512)pending.delete(pending.keys().next().value!);}
@@ -88,12 +89,14 @@ export function humanNavigation(r:RunState,occupied=new Set<string>()){
   const estimate=(p:HumanWaypoint)=>p.floor===target.floor&&p.floor===0?Math.max(0,Math.abs(p.tx-target.tx)+Math.abs(p.ty-target.ty)-1):0;
   if(!heap.length&&state.expanded===0)push({p:start,g:0,score:estimate(start)});let visited=0;
   while(heap.length&&visited++<Math.min(maxVisited,256)){const n=pop(),k=key(n.p);state.expanded++;if(n.g!==costs.get(k))continue;
-   if(n.p.floor===target.floor&&Math.abs(n.p.tx-target.tx)+Math.abs(n.p.ty-target.ty)<=1){const result:HumanWaypoint[]=[];for(let q=k;q!==startKey;q=parent.get(q)!)result.push(points.get(q)!);pending.delete(searchKey);const path=result.reverse();if(!path.every(p=>free(p,h))){h.lastWorkBlock='Route changed during planning; checking again.';return null;}return path;}
+   if(n.p.floor===target.floor&&Math.abs(n.p.tx-target.tx)+Math.abs(n.p.ty-target.ty)<=1){const result:HumanWaypoint[]=[];for(let q=k;q!==startKey;q=parent.get(q)!)result.push(points.get(q)!);pending.delete(searchKey);const path=result.reverse();if(!path.every(p=>free(p,h,true))){status('PENDING_SEARCH',state.expanded);h.lastWorkBlock='Route changed during planning; checking again.';return null;}status('FOUND',state.expanded);return path;}
    const neighbors=[{...n.p,tx:n.p.tx+1},{...n.p,tx:n.p.tx-1},{...n.p,ty:n.p.ty+1},{...n.p,ty:n.p.ty-1},...(stairs.get(k)??[])];
-   for(const p of neighbors){if(!free(p,h))continue;const nk=key(p),g=n.g+1;if(g>=(costs.get(nk)??Infinity))continue;costs.set(nk,g);parent.set(nk,k);points.set(nk,p);push({p,g,score:g+estimate(p)});}
+   // Occupants are not permanent walls: retain a lawful static route and
+   // reserve/revalidate its NEXT edge against actual bodies at execution time.
+   for(const p of neighbors){if(!free(p,h,true))continue;const nk=key(p),g=n.g+1;if(g>=(costs.get(nk)??Infinity))continue;costs.set(nk,g);parent.set(nk,k);points.set(nk,p);push({p,g,score:g+estimate(p)});}
   }
-  if(!heap.length||state.expanded>=48000){pending.delete(searchKey);h.lastWorkBlock=!heap.length?'No legal path through the currently known geometry.':'Physical route search limit reached; destination remains unconfirmed.';}
-  else h.lastWorkBlock=`Checking physical route (${state.expanded} cells examined; no travel claimed).`;
+  if(!heap.length||state.expanded>=48000){status(!heap.length?'NO_PATH':'SEARCH_LIMIT',state.expanded);pending.delete(searchKey);h.lastWorkBlock=!heap.length?'No legal path through the currently known geometry.':'Physical route search limit reached; destination remains unconfirmed.';}
+  else {status('PENDING_SEARCH',state.expanded);h.lastWorkBlock=`Checking physical route (${state.expanded} cells examined; no travel claimed).`;}
   return null;
  }};
 }
