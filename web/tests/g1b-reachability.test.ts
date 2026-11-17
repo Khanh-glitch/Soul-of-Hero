@@ -26,7 +26,7 @@ import { resolve } from 'node:path';
 const DIR = resolve(__dirname, '../evidence/g1b/census');
 
 type Class = 'INTENTIONAL_INACCESSIBLE' | 'LEGITIMATE_LOCKED_ACCESS' | 'MAP_COLLISION_DEFECT' | 'MISSING_ROUTE_OR_STAIRS' | 'UNRESOLVED_WITH_EVIDENCE';
-interface Row { id: string; name: string; kind: string; storey: string; level: number; usable: number; doors: number; stairs: number; gate: string | null; lockedDoor: boolean; open: boolean; reasons: string[]; }
+interface Row { reachable:boolean; id: string; name: string; kind: string; storey: string; level: number; usable: number; doors: number; stairs: number; gate: string | null; lockedDoor: boolean; open: boolean; reasons: string[]; }
 
 const STRUCTURAL = /skybridge|skywalk|skyway|drowned|shattered|tide|rake|perch|truss|old pier|surviving/i;
 

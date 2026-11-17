@@ -1,0 +1,71 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ tests/final-item-set.test.ts (24 tests) 31925ms
+     ✓ the minting choke point: mkStack, addItem and spawnDrop can no longer create a retired stack  3601ms
+     ✓ surveys all twelve regions and the spawn tables; every loot/drop source of a new id exists on Veyra  16410ms
+     ✓ S1 knife survival, spawn A: grass gives fiber and — sometimes — a Sunroot seed; wood becomes a club; no Core needed  1672ms
+     ✓ S1b spawn B: a boar pays fat, the fat renders into a canister at a furnace, and a second spawn point works the same  1804ms
+     ✓ S3 LI food chain at a campfire: dried meat, grilled mushroom, tinned soup / meat / wine / jam, hand-pressed juice — and eating them  401ms
+     ✓ S3b armour chain: cloth + iron -> needle thread -> iron plate helmet and chest; worn, they cut damage; legs and boots cannot be made  370ms
+     ✓ S6 garden: each cultivar takes its own seed and returns exactly that one seed — replanting never multiplies seed  1271ms
+     ✓ every minting point hands out the successor: stack, container add, ground drop  2688ms
+     ✓ a fresh run on either map holds no retired stack anywhere: pockets, crates, vendor, ground  2599ms
+     ✓ converts every retired stack in place — same uid, same slot, count × its preservation ratio — once, and a second load changes nothing  444ms
+     ✓ fails closed on a save stamped by a newer item set  301ms
+ ✓ tests/arena1-round2-mechanics.test.ts (11 tests) 19252ms
+     ✓ equips into slots 3 and 4 through the real use intent and never into another slot  7441ms
+     ✓ armour adds up under one cap; leg plates cut knock-back; boots cut ground damage only  2458ms
+     ✓ a save written with three worn slots loads with five and loses nothing  326ms
+     ✓ a wooden ladder crosses one cliff tile, slowly, and comes back as the same item  1528ms
+     ✓ a wooden ladder refuses a thick cliff; the steel folding ladder spans three tiles  1263ms
+     ✓ finishes a smelt in half the time and burns half the fuel a Furnace does  982ms
+     ✓ is refused on bare ground, converts an owned door in place, consumes Resistor Wire, and comes out again  483ms
+     ✓ a new run has seeps in its window; a pump on one draws it down; the refinery turns crude into fuel  4206ms
+     ✓ a seep runs dry and stays dry: the pump stops, the tile reports SITE_DRY  473ms
+stderr | tests/b1-storage.test.ts > selects latest local snapshot after an interrupted IDB write, quarantines corrupt bytes, and reports dual-write failure
+[save] idb-transaction
+
+stderr | tests/b1-storage.test.ts > uses readable local fallback if IDB read fails, without writing the unreadable store
+[save] ok:idb-init
+
+stderr | tests/b1-storage.test.ts > continues from local storage when IndexedDB cannot open, leaving its contents untouched
+[save] ok:idb-init
+
+ ✓ tests/b1-storage.test.ts (10 tests) 13098ms
+   ✓ selects latest local snapshot after an interrupted IDB write, quarantines corrupt bytes, and reports dual-write failure  1538ms
+   ✓ continues an actual original save with its profile, inventory and queued job intact through autosave and catch-up  1466ms
+   ✓ continues a real same-revision legacy pair, preserving the alternative (later is local: true)  1491ms
+   ✓ continues a real same-revision legacy pair, preserving the alternative (later is local: false)  1425ms
+   ✓ uses readable local fallback if IDB read fails, without writing the unreadable store  1405ms
+   ✓ continues from local storage when IndexedDB cannot open, leaving its contents untouched  1471ms
+   ✓ uses readable IDB if local storage cannot be read, without touching local storage  1408ms
+   ✓ leaves genuinely ambiguous same-time copies untouched and starts new only when both stores are empty  1383ms
+   ✓ does not overwrite the alternate legacy copy when preservation fails  1399ms
+ ✓ tests/npc-p0-corrective.test.ts (27 tests) 5066ms
+     ✓ P0.1: first tick after startRun does not zero hunger/thirst or down humans  2580ms
+     ✓ human melee uses K5 reach, floor and cadence gates and wears its equipped weapon  329ms
+ ✓ tests/g1b-layout-migration.test.ts (5 tests) 2946ms
+     ✓ a stamped Batch-2 save (557 chests, layout=2) migrates to the full 729-source layout=3  2572ms
+ ✓ tests/pa1-recipe-migration.test.ts (22 tests) 2297ms
+     ✓ a pre-cutover pipe job (no stamp) still pays ONE pipe for the old price  1496ms
+ ✓ tests/pa1-deploy-custody.test.ts (4 tests) 1870ms
+     ✓ for every device: raw materials alone never read as prepared, and the engine refuses too  1412ms
+     ✓ for every device: an intact pack flips the projection green and placement spends only the pack  381ms
+ ✓ tests/pa1-device-repair-loop.test.ts (6 tests) 2035ms
+     ✓ no module is pending; the powered door is a direct module with a bill and no packed identity  1480ms
+     ✓ full loop, measured  321ms
+ ✓ tests/g1b-historical-save.test.ts (4 tests) 1833ms
+     ✓ the current engine migrates the genuine fixture to layout=3, preserving every Batch-2 possession  1726ms
+ ✓ tests/pa1-research-console.test.tsx (7 tests) 1923ms
+     ✓ builds without throwing, and grants a pack key that is a real item  1494ms
+ ✓ tests/pa1-rev1-queued-jobs.test.ts (10 tests) 1702ms
+     ✓ loads with three un-stamped jobs and the exact stacks the save reserved  1428ms
+ ✓ tests/g1b-ecology.test.ts (3 tests | 1 skipped) 178ms
+ ✓ tests/g1b-reachability.test.ts (1 test) 13ms
+
+ Test Files  13 passed (13)
+      Tests  133 passed | 1 skipped (134)
+   Start at  01:33:37
+   Duration  100.72s (transform 6.59s, setup 0ms, import 14.49s, tests 84.14s, environment 1ms)
+

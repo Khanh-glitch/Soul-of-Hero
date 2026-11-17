@@ -356,11 +356,11 @@ describe('NPC P0 corrective', () => {
     chooseActorHash(hw, h, actorId => stableHash(`${actorId}:${confrontationScene(h, r)}:back_off::1`) % 100 >= 78);
     const first = dispatch(gs, { id: 'human-repeat-threat-1', type: 'humanThreaten', actorId: h.actorId, demand: 'back_off' }, T0 + 1001);
     expect(first.ok).toBe(true);
-    expect(first.msg).toMatch(/Refuses/);
+    expect(first.ok ? first.msg : first.reason).toMatch(/Refuses/);
     const trust = h.trust, incidents = Object.keys(hw.incidents).length;
     const repeat = dispatch(gs, { id: 'human-repeat-threat-2', type: 'humanThreaten', actorId: h.actorId, demand: 'back_off' }, T0 + 1002);
     expect(repeat.ok).toBe(false);
-    expect(repeat.reason).toMatch(/already answered/);
+    expect(repeat.ok ? repeat.msg : repeat.reason).toMatch(/already answered/);
     expect(h.trust).toBe(trust);
     expect(Object.keys(hw.incidents)).toHaveLength(incidents);
   });

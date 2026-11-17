@@ -1,3 +1,4 @@
+import { RECIPE_REVISION } from '../src/game/catalog';
 // No-op canvas stub for static markup rendering in Node (matches gold-intake-integration.test.tsx).
 const noop: any = new Proxy(function () {}, { get: (_t, k) => (k === 'getImageData' ? () => ({ data: new Uint8ClampedArray(4) }) : noop), apply: () => noop, set: () => true });
 if (typeof (globalThis as any).document === 'undefined') {
@@ -172,7 +173,7 @@ describe('PA1 P1: the shipped router reaches the technology-family ledger', () =
     // Same rows, other side of the rule: ownership must change the wording, and nothing may invent a
     // buy button while enforcement is unapproved (ledger: no family is withheld in this build).
     const { gs, r, table } = fixture();
-    r.tech = { ...(r.tech ?? { families: [] }), families: [...((r.tech?.families) ?? []), 'ENERGY'] };
+    r.tech = { ...(r.tech ?? { families: [], recipeRev: RECIPE_REVISION }), families: [...((r.tech?.families) ?? []), 'ENERGY'] };
     const html = renderStation(gs, table.id, 'families');
     const text = plain(html);
     // item set v3 retired three refinery formulas from this family (9 -> 6); the count is read from the registry

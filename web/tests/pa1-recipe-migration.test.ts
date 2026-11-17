@@ -250,7 +250,7 @@ describe('PA1 R1 migration ledger — a cutover may not brick or re-price a save
     const slot = C(again.run!, cid).slots.findIndex(s => s?.key === 'blueprint');
     const read = act(again, 'useItem', { c: cid, slot });
     expect(read.ok, 'reading a retired blueprint is refused').toBe(false);
-    expect(read.reason!).toMatch(/retired/);
+    expect((read.ok?read.msg:read.reason)).toMatch(/retired/);
     expect(C(again.run!, cid).slots[slot]?.meta, 'the physical paper is not destroyed').toBe('fuel_can');
     expect(again.run!.knowledge.recipes).not.toContain('fuel_can');
   });
@@ -476,7 +476,7 @@ describe('PA1 WP3 research families — recorded ledger, priced ENERGY study, en
     give(gs, 'spares', 5); give(gs, 'iron_ingot', 2);
     const res = act(gs, 'unlockFamily', { family: 'ENERGY', eid: table.id });
     expect(res.ok).toBe(false);
-    expect(res.reason!, 'the player is told why, not silently charged').toMatch(/nothing is withheld/i);
+    expect((res.ok?res.msg:res.reason), 'the player is told why, not silently charged').toMatch(/nothing is withheld/i);
     expect(invCount(gs, 'spares')).toBe(5);
     expect(invCount(gs, 'iron_ingot')).toBe(2);
     expect(table.station!.queue).toHaveLength(0);
@@ -504,7 +504,7 @@ describe('PA1 WP3 research families — recorded ledger, priced ENERGY study, en
         give(gs, 'spares', BAL.research.directedSparesCost);
         const res = act(gs, 'research', { mode: 'directed', recipe: id, eid: table.id });
         expect(res.ok, id).toBe(false);
-        expect(res.reason!, id).toMatch(/ENERGY study/);
+        expect((res.ok?res.msg:res.reason), id).toMatch(/ENERGY study/);
       }
       const spent = { spares: invCount(gs, 'spares'), iron: invCount(gs, 'iron_ingot') };
       expect(act(gs, 'unlockFamily', { family: 'ENERGY', eid: table.id }).ok, 'paid at the table').toBe(true);
@@ -541,10 +541,10 @@ describe('PA1 WP3 research families — recorded ledger, priced ENERGY study, en
     for (const fam of ['STEEL', 'MOBILITY', 'ELECTRICAL', 'ARMORY', 'CORE_SPECIFIC']) {
       const res = act(gs, 'unlockFamily', { family: fam, eid: table.id });
       expect(res.ok, fam).toBe(false);
-      expect(res.reason!, fam).toMatch(/no authorized cost|Nothing is withheld/);
+      expect((res.ok?res.msg:res.reason), fam).toMatch(/no authorized cost|Nothing is withheld/);
     }
     const bogus = act(gs, 'unlockFamily', { family: 'NOT_A_FAMILY', eid: table.id });
-    expect(bogus.ok).toBe(false); expect(bogus.reason!).toMatch(/Unknown research family/);
+    expect(bogus.ok).toBe(false); expect((bogus.ok?bogus.msg:bogus.reason)).toMatch(/Unknown research family/);
     expect(table.station!.queue).toHaveLength(0);
     const forged = raw(gs); forged.run.tech = { families: ['NOT_A_FAMILY'], recipeRev: RECIPE_REVISION };
     expect(validate(forged), 'an unknown research family is not a legal save').toBeNull();

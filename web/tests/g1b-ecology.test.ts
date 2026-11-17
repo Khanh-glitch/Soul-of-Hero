@@ -57,7 +57,7 @@ describe('G1B ecology (frozen data)', () => {
     // ONLY where the survey recorded a real wall pocket / alcove (batch 3 physical pass), never in the walking line
     for (const r of C.spaces) {
       if (['arena', 'shell'].includes(r.kind) || !r.reachable) expect([...r.base, ...r.added].length, r.id).toBe(0);
-      if (r.kind === 'transit' && r.added.length) expect(r.reasons.some(q => /wall pocket|physical placement/.test(q)), r.id).toBe(true);
+      if (r.kind === 'transit' && r.added.length) expect(r.reasons.some((q: string) => /wall pocket|physical placement/.test(q)), r.id).toBe(true);
     }
     // every space that holds a chest explains itself
     for (const r of C.spaces) if ([...r.base, ...r.added].length) expect(r.reasons.length, r.id).toBeGreaterThan(1);

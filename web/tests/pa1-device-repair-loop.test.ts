@@ -58,7 +58,7 @@ function setup(){
       used.add(key);
       r.player.x=tx*TILE+8;r.player.y=(ty+1)*TILE+8;markDirty();
       const res=act(g,'build',{struct:type,tx,ty});
-      expect(res.ok,type+' placement: '+res.msg).toBe(true);
+      expect(res.ok,type+' placement: '+(res.ok?res.msg:res.reason)).toBe(true);
       return Object.values(r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===tx&&e.ty===ty)!;
     }
     throw new Error('no legal tile for '+type);

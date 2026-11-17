@@ -93,7 +93,7 @@ export class Bot {
   }
   bestTool(mat: string): string | null {
     let best: string | null = null, bp = 0;
-    for (const s of C(this.r, 'inv').slots) if (s && (s.dur === undefined || s.dur > 0)) { const pw = ITEMS[s.key].power?.[mat] ?? 0; if (pw > bp) { bp = pw; best = s.key; } }
+    for (const s of C(this.r, 'inv').slots) if (s && (s.dur === undefined || s.dur > 0)) { const pw = (ITEMS[s.key].power as Partial<Record<string,number>>|undefined)?.[mat] ?? 0; if (pw > bp) { bp = pw; best = s.key; } }
     return best;
   }
 

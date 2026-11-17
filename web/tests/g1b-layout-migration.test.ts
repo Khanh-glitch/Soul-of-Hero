@@ -15,7 +15,7 @@
  *   - reject foreign ids, a deliberately-missing old source, and a forged / future revision.
  */
 import { describe, expect, it } from 'vitest';
-import { WW, WH, TILE } from '../src/game/core';
+import { WW, WH, TILE, type Entity } from '../src/game/core';
 import { newGame, startRun, mkContainer, mkStack, g1bEntities, markDirty } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
@@ -50,9 +50,10 @@ function startAt(ax: number, ay: number, seed = 8801) {
 function forgeBatch2Save(gs: any): any {
   const r = gs.run;
   const strip = (container: any) => {
-    for (const [id, e] of Object.entries(container)) {
+    for (const [id, e] of Object.entries(container) as [string, Entity][]) {
       const sid = e?.g1b?.sid;
       if (sid && !BATCH2_IDS.has(sid)) {
+        if(!e.c)throw new Error('Source fixture has no custody container');
         const c = r.custody[e.c]; if (c) { for (const s of c.slots) s && (s.qty = 0, delete s.key); }
         delete container[id]; delete r.custody[e.c];
       }
@@ -69,9 +70,9 @@ describe('G1B P0 — Batch-2 → Batch-3 layout migration', () => {
     const r: any = gs.run!;
     // a partially-looted, opened chest with a pending refill, a Core in the pack, and a saved inventory
     const chest = g1bEntities(r).find((e: any) => e.g1b!.sid && BATCH2_IDS.has(e.g1b.sid) && e.g1b.kind === 'chest')!;
-    chest.g1b.state = 'opened'; chest.g1b.cycle = 2; chest.g1b.roll = { rev: 'g1b-approved-v1', seed: g1bSeed(r.id, chest.g1b.sid, 2), at: T0 };
-    const c = r.custody[chest.c]; c.slots[0] = mkStack(r, 'metal_pipe', 3);
-    chest.g1b.refillAt = undefined;
+    chest.g1b!.state = 'opened'; chest.g1b!.cycle = 2; chest.g1b!.roll = { rev: 'g1b-approved-v1', seed: g1bSeed(r.id, chest.g1b!.sid, 2), at: T0 };
+    const c = r.custody[chest.c!]; c.slots[0] = mkStack(r, 'metal_pipe', 3);
+    chest.g1b!.refillAt = undefined;
     r.custody.inv.slots[0] = Object.assign(mkStack(r, 'core_meteor', 1), { lvl: 2, dur: 250 });
     r.custody.inv.slots[1] = mkStack(r, 'energy_basic', 5);
     const forged = forgeBatch2Save(gs);
@@ -93,13 +94,13 @@ describe('G1B P0 — Batch-2 → Batch-3 layout migration', () => {
     const bySid = new Map<string, any>();
     for (const e of [...Object.values(mr.entities), ...Object.values(mr.g1b.far)] as any[]) if (e?.g1b?.sid) bySid.set(e.g1b.sid, e);
     for (const id of BATCH2_IDS) expect(bySid.has(id), id).toBe(true);
-    const migratedChest = bySid.get(chest.g1b.sid)!;
-    expect(migratedChest.g1b.state).toBe('opened');
-    expect(migratedChest.g1b.cycle).toBe(2);
-    expect(migratedChest.g1b.roll).toEqual(chest.g1b.roll);
-    expect(migratedChest.g1b.refillAt).toBeUndefined();
-    expect(r.custody[chest.c].slots[0].qty).toBe(3);
-    expect(migratedChest.g1b.state).toBe('opened');
+    const migratedChest = bySid.get(chest.g1b!.sid)!;
+    expect(migratedChest.g1b!.state).toBe('opened');
+    expect(migratedChest.g1b!.cycle).toBe(2);
+    expect(migratedChest.g1b!.roll).toEqual(chest.g1b!.roll);
+    expect(migratedChest.g1b!.refillAt).toBeUndefined();
+    expect(r.custody[chest.c!].slots[0].qty).toBe(3);
+    expect(migratedChest.g1b!.state).toBe('opened');
     // the 172 new chests were added CLOSED, cycle=0, unrolled, empty
     for (const id of NEW_IDS) {
       const e = bySid.get(id)!;
@@ -119,7 +120,7 @@ describe('G1B P0 — Batch-2 → Batch-3 layout migration', () => {
     const gs = startAt(921, 259);
     const r: any = gs.run!;
     const chest = g1bEntities(r).find((e: any) => e.g1b!.sid && BATCH2_IDS.has(e.g1b.sid) && e.g1b.kind === 'chest')!;
-    chest.g1b.state = 'empty'; chest.g1b.cycle = 4; chest.g1b.refillAt = T0 + 72 * 3600_000;
+    chest.g1b!.state = 'empty'; chest.g1b!.cycle = 4; chest.g1b!.refillAt = T0 + 72 * 3600_000;
     const forged = forgeBatch2Save(gs);
     const once = validate(JSON.parse(JSON.stringify(forged)));
     expect(once).not.toBeNull();
@@ -130,7 +131,7 @@ describe('G1B P0 — Batch-2 → Batch-3 layout migration', () => {
     const mr: any = twice!.run;
     const bySid = new Map<string, any>();
     for (const e of [...Object.values(mr.entities), ...Object.values(mr.g1b.far)] as any[]) if (e?.g1b?.sid) bySid.set(e.g1b.sid, e);
-    expect(bySid.get(chest.g1b.sid).g1b.refillAt).toBe(T0 + 72 * 3600_000);   // timer untouched
+    expect(bySid.get(chest.g1b!.sid).g1b.refillAt).toBe(T0 + 72 * 3600_000);   // timer untouched
   }, 180000);
 
   it('rejects a forged / future revision, foreign ids, and a deliberately-missing old source', () => {
@@ -155,12 +156,12 @@ describe('G1B P0 — Batch-2 → Batch-3 layout migration', () => {
     const r: any = gs.run!;
     // strip every non-round-1 chest and unstamp
     const round1 = new Set<string>([...G1B_BASE_SOURCE_SITES.map((q: any) => q.id), ...G1B_FIXTURES.map((q: any) => q.id)]);
-    const strip = (container: any) => { for (const [id, e] of Object.entries(container)) { if (e?.g1b?.sid && !round1.has(e.g1b.sid)) { delete r.custody[e.c]; delete container[id]; } } };
+    const strip = (container: any) => { for (const [id, e] of Object.entries(container) as [string, Entity][]) { if (e?.g1b?.sid && !round1.has(e.g1b.sid)) { if(!e.c)throw new Error('Source fixture has no custody container'); delete r.custody[e.c]; delete container[id]; } } };
     strip(r.entities); strip(r.g1b.far); delete r.g1b.layout;
     const save = JSON.parse(JSON.stringify(gs));
     const migrated = validate(save);
     expect(migrated).not.toBeNull();
-    expect(migrated!.run.g1b.layout).toBe(G1B_LAYOUT_REVISION);
+    expect(migrated!.run!.g1b!.layout).toBe(G1B_LAYOUT_REVISION);
   }, 180000);
 
   it('a current (layout=3) save validates and persists without migration', () => {
@@ -170,6 +171,6 @@ describe('G1B P0 — Batch-2 → Batch-3 layout migration', () => {
     const snap = serializeSnapshot(JSON.parse(JSON.stringify(gs)));
     const loaded = validate(JSON.parse(JSON.parse(snap).payload));
     expect(loaded).not.toBeNull();
-    expect(loaded!.run.g1b.layout).toBe(G1B_LAYOUT_REVISION);
+    expect(loaded!.run!.g1b!.layout).toBe(G1B_LAYOUT_REVISION);
   }, 180000);
 });

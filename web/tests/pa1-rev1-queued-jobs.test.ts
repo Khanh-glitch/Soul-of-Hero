@@ -15,7 +15,7 @@ import { wreckEconomy } from '../src/game/wreck-economy';
 import { setActiveLayout } from '../src/game/world';
 import { settle } from '../src/game/sim';
 import { dispatch, countItem, C, markDirty, addItem } from '../src/game/engine';
-import type { GameState, Stack } from '../src/game/core';
+import type { GameState, Stack, Entity } from '../src/game/core';
 
 const FX = JSON.parse(readFileSync(new URL('./fixtures/pa1-rev1-queued-jobs.json', import.meta.url), 'utf8')) as {
   source: any;
@@ -48,7 +48,7 @@ const beside = (g: GameState, e: any) => {
   r.player.x = e.tx * 16 + 8; r.player.y = (e.ty + 1) * 16 + 8; markDirty();
 };
 const outKeys = (g: GameState, e: any) =>
-  C(g.run!, e.station!.outC).slots.filter(Boolean).map((s: Stack) => `${s.qty}x${s.key}`).sort();
+  C(g.run!, e.station!.outC).slots.filter((s):s is Stack=>s!==null).map((s: Stack) => `${s.qty}x${s.key}`).sort();
 const tick = (g: GameState, ms: number) => settle(g, (g.run!.clock.lastSimAt ?? 0) + ms);
 /** Move every queued job's own duration, so each one finishes exactly as it would have. */
 const finishAll = (g: GameState, e: any) => {
@@ -155,10 +155,10 @@ describe('PA1 P0b — the pre-cutover save keeps its own rules', () => {
     const r = g.run!;
     // Inputs were paid when the old engine queued the jobs, so finishing must move NOTHING out of
     // the pack: the only change is product appearing in the station output.
-    const invBefore = C(r, 'inv').slots.filter(Boolean).map((x) => `${x.qty}x${x.key}`).sort();
+    const invBefore = C(r, 'inv').slots.filter((s):s is Stack=>s!==null).map((x) => `${x.qty}x${x.key}`).sort();
     finishAll(g, bench);
     expect(outKeys(g, bench)).toEqual(['1xfuel_can', '1xmechanical_gear', '2xiron_plate']);
-    expect(C(r, 'inv').slots.filter(Boolean).map((x) => `${x.qty}x${x.key}`).sort()).toEqual(invBefore);
+    expect(C(r, 'inv').slots.filter((s):s is Stack=>s!==null).map((x) => `${x.qty}x${x.key}`).sort()).toEqual(invBefore);
     beside(g, bench);
     for (let i = 0; i < 3; i++) {
       const slot = C(r, bench.station!.outC).slots.findIndex((x) => x);
@@ -292,11 +292,11 @@ describe('PA1 P0b — the pre-cutover save keeps its own rules', () => {
     const bench = benchOf(g), table = tableOf(g);
     tick(g, 60_000);
     const older = FX.later.run;
-    const oldBench = Object.values(older.entities).find((e: any) => e.type === 'workbench')!;
-    const oldTable = Object.values(older.entities).find((e: any) => e.type === 'research')!;
-    expect(bench.station!.queue.length).toBe(oldBench.station.queue.length);
-    expect(outKeys(g, bench)).toEqual(C(older, oldBench.station.outC).slots.filter(Boolean).map((s: Stack) => `${s.qty}x${s.key}`).sort());
-    expect(outKeys(g, table)).toEqual(C(older, oldTable.station.outC).slots.filter(Boolean).map((s: Stack) => `${s.qty}x${s.key}`).sort());
+    const oldBench = (Object.values(older.entities) as Entity[]).find((e: any) => e.type === 'workbench')!;
+    const oldTable = (Object.values(older.entities) as Entity[]).find((e: any) => e.type === 'research')!;
+    expect(bench.station!.queue.length).toBe(oldBench.station!.queue.length);
+    expect(outKeys(g, bench)).toEqual(C(older, oldBench.station!.outC).slots.filter((s):s is Stack=>s!==null).map((s: Stack) => `${s.qty}x${s.key}`).sort());
+    expect(outKeys(g, table)).toEqual(C(older, oldTable.station!.outC).slots.filter((s):s is Stack=>s!==null).map((s: Stack) => `${s.qty}x${s.key}`).sort());
     expect(older.knowledge.recipes).toContain('fuel_can');
   });
 
@@ -311,7 +311,7 @@ describe('PA1 P0b — the pre-cutover save keeps its own rules', () => {
     const proj = (x: GameState) => {
       const b = benchOf(x);
       return JSON.stringify({
-        queue: b.station!.queue.map((j: any) => [j.recipe, j.left, j.reserved!.map((s) => `${s.uid}:${s.key}:${s.qty}`)]),
+        queue: b.station!.queue.map((j: any) => [j.recipe, j.left, j.reserved!.map((s:Stack) => `${s.uid}:${s.key}:${s.qty}`)]),
         out: C(x.run!, b.station!.outC).slots.map((s) => (s ? `${s.uid}:${s.key}:${s.qty}` : null)),
         inv: C(x.run!, 'inv').slots.map((s) => (s ? `${s.uid}:${s.key}:${s.qty}` : null)),
         known: x.run!.knowledge.recipes.length,

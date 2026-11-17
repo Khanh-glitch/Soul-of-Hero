@@ -30,3 +30,7 @@ BROWSER VERIFIED: production New Game and a real movement key, native 640×360; 
 CREATOR VISUAL/EXPERIENCE ACCEPTANCE: not awarded.
 
 Full-suite working-tree run began before the final edits and remains diagnostic only, not final-SHA acceptance. Its exit and classification must be completed before release. Smoke timings ran concurrently with regression work on SwiftShader and are NOT an isolated or comparable benchmark. All broad PARTIAL gaps in the prior STATUS files still apply.
+
+## Subsequent regression recovery checkpoint
+
+`npm run typecheck:tests` now PASS after typed-fixture repairs (no compiler suppression or test exclusion). Exact removed diagnostics are retained in test-typescript-fingerprints.json. Changes narrow Result success/failure fields; require non-null migrated historical snapshots; type legacy entity fixtures and current tuple/readonly APIs; supply recipeRev in the research-console fixture; use the current harvest result `empty` rather than nonexistent `depleted`. No item, recipe, source cost or Creator rule changed. The 13 affected executable suites pass: 133 passed, 1 pre-existing skip. This does not classify the full-suite failures or establish real separate-process persistence; the historical round-trip suite uses an in-process stand-in despite its old title.

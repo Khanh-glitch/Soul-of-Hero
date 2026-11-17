@@ -201,7 +201,7 @@ describe('Powered Door: a lock module fitted into a door you own', () => {
     expect(inv(gs, 'electric_resistor')).toBe(0);
     expect(validate(snapshot(gs))).toBeTruthy();
     // outside, with no generator: refused. This is the mechanic the item exists for.
-    const open = act(gs, 'door', { eid: door.id }); expect(open.ok).toBe(false); expect(open.reason ?? open.message ?? JSON.stringify(open)).toMatch(/power/i);
+    const open = act(gs, 'door', { eid: door.id }); expect(open.ok).toBe(false); expect(open.ok ? open.msg : open.reason).toMatch(/power/i);
     const out = act(gs, 'reclaim', { eid: door.id }); expect(out.ok, JSON.stringify(out)).toBe(true);
     expect(door.type).toBe('door_wood'); expect(door.electricDoor).toBeUndefined(); expect(r.entities[door.id]).toBe(door);
     expect(inv(gs, 'electric_resistor')).toBe(Math.floor(2 * BAL.economy.reclaimRefund));

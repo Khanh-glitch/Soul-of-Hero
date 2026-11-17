@@ -203,7 +203,7 @@ describe('VI — engine scenarios on the Veyra world (two spawns, real intents, 
     const src = ww.floors.ground.sources;
     for (let i = 0; i < src.length && seeds < 1; i++) if (src[i] === 'grass') {
       const tx = i % WW, ty = Math.floor(i / WW);
-      for (let k = 0; k < 6; k++) { const h = harvestHit(gs, tx, ty, knife, T0 + (++hits) * 400, tx * TILE, ty * TILE); if (h.result === 'depleted' || h.result === 'none') break; }
+      for (let k = 0; k < 6; k++) { const h = harvestHit(gs, tx, ty, knife, T0 + (++hits) * 400, tx * TILE, ty * TILE); if (h.result === 'empty' || h.result === 'none') break; }
       for (const e of Object.values(r.entities)) if (e.kind === 'drop' && e.c) { const s = C(r, e.c).slots[0]; if (s) { addItem(r, 'inv', s.key, s.qty); C(r, e.c).slots[0] = null; } }
       seeds = inv(gs, 'seed_sunroot'); fiber = inv(gs, 'fiber') + 0;
       if (fiber > 30) { /* keep the pack from filling with fiber */ const sl = C(r, 'inv').slots.findIndex(s => s?.key === 'fiber'); C(r, 'inv').slots[sl] = null; }

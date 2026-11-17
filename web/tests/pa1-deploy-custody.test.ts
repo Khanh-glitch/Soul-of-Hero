@@ -118,7 +118,7 @@ describe('PA1 device custody — every Deploy row states what placement really s
       if(!tile){sourceGated.push(k);continue;}                     // e.g. oil_pump needs an authorized site
       const before={pack:countItem(r,'inv',pack),mats:d.cost.map(([i])=>countItem(r,'inv',i))};
       const res=act(o.g,'build',{struct:k,tx:o.x+tile.dx,ty:o.y+tile.dy});
-      expect(res.ok,k+' placement of an armed pack must succeed: '+res.msg).toBe(true);
+      expect(res.ok,k+' placement of an armed pack must succeed: '+(res.ok?res.msg:res.reason)).toBe(true);
       used.add((o.x+tile.dx)+','+(o.y+tile.dy));
       expect(countItem(r,'inv',pack),k+' placement must consume the pack').toBe(before.pack-1);
       expect(d.cost.map(([i])=>countItem(r,'inv',i)),k+' placement must not re-pay materials').toEqual(before.mats);

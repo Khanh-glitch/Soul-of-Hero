@@ -49,6 +49,8 @@ function loadFixture(): any {
   return JSON.parse(JSON.parse(snap).payload);   // serializeSnapshot envelope: payload is a string
 }
 
+function requireValid(raw:unknown) { const gs=validate(JSON.parse(JSON.stringify(raw))); if(!gs)throw new Error('Historical fixture failed current validation'); return gs; }
+
 describe('G1B P0 — genuine historical Batch-2 save fixture', () => {
   it('the fixture is a real stamped layout=2 Batch-2 save with persistent conditions', () => {
     const state = loadFixture();
@@ -139,13 +141,13 @@ describe('G1B P0 — genuine historical Batch-2 save fixture', () => {
 
   it('saving and relaunching in separate processes is stable across 2 reloads (no reroll, no dup)', () => {
     // first load + migrate + save (process A stand-in: persist + re-serialize)
-    const snap1 = serializeSnapshot(validate(JSON.parse(JSON.stringify(loadFixture()))));
+    const snap1 = serializeSnapshot(requireValid(loadFixture()));
     const st1 = JSON.parse(JSON.parse(snap1).payload);
     // second relaunch (process B): load the persisted snapshot, then re-save
-    const snap2 = serializeSnapshot(validate(JSON.parse(JSON.stringify(st1))));
+    const snap2 = serializeSnapshot(requireValid(st1));
     const st2 = JSON.parse(JSON.parse(snap2).payload);
     // third relaunch (process C): same again
-    const snap3 = serializeSnapshot(validate(JSON.parse(JSON.stringify(st2))));
+    const snap3 = serializeSnapshot(requireValid(st2));
     const st3 = JSON.parse(JSON.parse(snap3).payload);
 
     const sids = (s: any) => { const m = new Set<string>(); for (const e of [...Object.values(s.run.entities), ...Object.values(s.run.g1b.far)] as any[]) if (e?.g1b?.sid) m.add(e.g1b.sid); return m; };
