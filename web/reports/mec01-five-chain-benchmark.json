@@ -918,11 +918,11 @@
         {
           "kind": "source-bonus-chance",
           "where": "road_relay_wreck",
-          "qty": 0.06,
+          "qty": 0.14,
           "stockClass": "world-node",
           "eligibleForRepeatableLoop": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
           "stockClock": "ORIGINAL_UNKNOWN (node respawn clock not modelled in Web)",
-          "probabilityPerRoll": 0.06
+          "probabilityPerRoll": 0.14
         }
       ],
       "lootCacheStock": {

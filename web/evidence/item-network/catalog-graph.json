@@ -1,7 +1,7 @@
 {
   "meta": {
     "schema": "soh-runtime-item-formula-atlas-v1",
-    "sourceSHA": "3f80bf4f6e570dc5a8588880cf14cd87c4ba1531",
+    "sourceSHA": "70501168620a421dbda1a9beb06729a35d890363",
     "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
     "recipeCensusNote": "Counts the LIVE RECIPES table only. Retired formulas are excluded, and frozen revision definitions are never added back as active routes.",
     "retiredRecipes": [
@@ -30,7 +30,7 @@
       "reinforced_spear_blade"
     ],
     "recipeRevision": 6,
-    "exportedAt": "2026-11-15T10:55:05.006Z",
+    "exportedAt": "2026-11-17T10:39:24.133Z",
     "project": "Soul of Heroes — WEB Veyra runtime",
     "authority": [
       "web/src/game/catalog.ts",
@@ -52,7 +52,7 @@
       "id": "energy_basic",
       "name": "Basic Energy",
       "cat": "res",
-      "desc": "Load into a Creator Core for its primary attack.",
+      "desc": "A Creator Core spends one from your pack for each primary attack (LMB).",
       "w": 0.04,
       "max": 100
     },
@@ -60,7 +60,7 @@
       "id": "energy_refined",
       "name": "Refined Energy",
       "cat": "res",
-      "desc": "Load for techniques or combine with matching essence for Signature.",
+      "desc": "A Creator Core spends one per Q technique, or one plus a matching Essence per E signature.",
       "w": 0.06,
       "max": 100
     },
@@ -100,7 +100,7 @@
       "id": "core_blast",
       "name": "Big Bang",
       "cat": "core",
-      "desc": "Common Fire Core. Reload each reserve with Basic, Refined or Refined plus Fire Essence.",
+      "desc": "Common Fire Core: fire bolt, blast and big bang. Each cast spends Energy from the pack.",
       "w": 0.3,
       "max": 1,
       "creatorCore": "blast",
@@ -829,7 +829,7 @@
       "id": "green_card",
       "name": "Green Card",
       "cat": "misc",
-      "desc": "Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.",
+      "desc": "Access card with a fixed number of scans. One is kept in a card case at Kestrel; it opens the Academy records room on Veyra.",
       "w": 0.05,
       "max": 5
     },
@@ -837,7 +837,7 @@
       "id": "blue_card",
       "name": "Blue Card",
       "cat": "misc",
-      "desc": "Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.",
+      "desc": "Access card with a fixed number of scans. One is kept in a card case at the Freightyard; it opens the Meridian dispensary on Veyra.",
       "w": 0.05,
       "max": 5
     },
@@ -845,7 +845,7 @@
       "id": "purple_card",
       "name": "Purple Card",
       "cat": "misc",
-      "desc": "Last Island access card. No door on this map asks for a card colour yet, so nothing issues it.",
+      "desc": "Access card with a fixed number of scans. One is kept in a card case at the Slag works; it opens the Archive annex and reading court on Veyra.",
       "w": 0.05,
       "max": 5
     },
@@ -6221,7 +6221,7 @@
       "yields": [
         [
           "spares",
-          1
+          2
         ]
       ],
       "bonus": [
@@ -6263,21 +6263,21 @@
       "yields": [
         [
           "spares",
-          1
+          2
         ]
       ],
       "bonus": [
         [
           "electronic_parts",
-          0.15
+          0.25
         ],
         [
           "electric_resistor",
-          0.12
+          0.2
         ],
         [
           "mechanical_gear",
-          0.06
+          0.14
         ]
       ],
       "block": true,
@@ -6302,16 +6302,16 @@
         [
           "tin_can",
           1
+        ],
+        [
+          "spares",
+          1
         ]
       ],
       "bonus": [
         [
-          "spares",
-          0.4
-        ],
-        [
           "fuel_can",
-          0.06
+          0.2
         ]
       ],
       "block": true,

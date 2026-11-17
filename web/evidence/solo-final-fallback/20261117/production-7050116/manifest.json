@@ -1,0 +1,39 @@
+{
+  "head": "70501168620a421dbda1a9beb06729a35d890363",
+  "htmlSha256": "6dfc0c4db1ad82ce790226c61a41df4137cb80ec319a7dfaed2fa1e35f79be05",
+  "scope": "PRODUCTION_ORDINARY_UI_640_SAVE_FRESH_BROWSER_ONLY; software GPU; not FPS/human/progression acceptance",
+  "errors": [],
+  "steps": [
+    "fresh menu start",
+    "ordinary inventory input",
+    "normal save and quit",
+    "fresh browser process actual-storage continuation"
+  ],
+  "initial": {
+    "id": "run_x2hauj_mwkkcivm",
+    "seed": 1999550251,
+    "layout": "veyra05-at-1280-704",
+    "digest": "3eccbc4d",
+    "qaUsed": false,
+    "x": 1400,
+    "y": 1784
+  },
+  "saved": {
+    "seed": 1999550251,
+    "layout": "veyra05-at-1280-704",
+    "digest": "3eccbc4d",
+    "qaUsed": false,
+    "x": 1400,
+    "y": 1784
+  },
+  "resumed": {
+    "id": "run_x2hauj_mwkkcivm",
+    "seed": 1999550251,
+    "layout": "veyra05-at-1280-704",
+    "digest": "3eccbc4d",
+    "qaUsed": false,
+    "x": 1400,
+    "y": 1784
+  },
+  "status": "PASS_TECHNICAL_SMOKE_ONLY"
+}
