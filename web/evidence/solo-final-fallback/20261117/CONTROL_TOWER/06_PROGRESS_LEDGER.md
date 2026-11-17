@@ -1,3 +1,7 @@
+IMPORTANT RUNTIME CORRECTION (2026-11-17) — READ FIRST: 08_RUNTIME_FIRST_CORRECTION.md is the controlling source-grounded implementation inventory. K1–K8, 18 Atlas groups and 214 research rows are NOT a backlog of 8+18+214 features to implement. The pre-NPC runtime already integrates item custody, 114 catalog recipes, 7×3 Creator Core branches, eight seasons, machine/farm/power/transport, G1B, offline/endgame, etc. Any older instruction sounding like “implement K1–K8” means AUDIT EXISTING CODE, repair precisely reproduced defects, validate and ship. Do not reimplement existing runtime or produce a checklist-only session. 08 takes priority over ambiguous earlier plans.
+
+NEW SOURCE-AUDIT OVERRIDE: prior PARTIAL labels are certification states, NOT assertions that components are absent. Read 08 for live implemented caller inventory before choosing work.
+
 # 06 — LIVING SOLO FOUNDATION LEDGER + RESUME PROCEDURE
 **INITIAL STATUS ONLY, 2026-11-17; this document must be updated by agent after each meaningful production commit.** THIS PLAN IS DOCUMENTATION-ONLY, NO CURRENT SOLO PRODUCTION IMPLEMENTATION CERTIFIED.
 
