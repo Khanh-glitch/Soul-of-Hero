@@ -1,0 +1,42 @@
+{
+  "baseline": "9c73c8d652c204e3e5b1e01d46c61c626bffe310",
+  "runtimeUnderCurrentShards": "f5a8d75",
+  "failures": [
+    {
+      "file": "tests/mec01-c1-motorbike-chain.test.ts",
+      "test": "MEC-01 R2 C1: factory source -> furnace -> workbench L2 -> paid L3 -> research -> packed Motorbike Kit walks the whole paid chain with real intents, preserves UIDs through save/reload, and keeps survival kit-free of it",
+      "message": "TypeError: Cannot read properties of undefined (reading 'c')",
+      "classification": "REPRODUCED_ON_ARCHIVED_9c73c8d",
+      "status": "UNREPAIRED"
+    },
+    {
+      "file": "tests/w07-power-offline-parity.test.ts",
+      "test": "W07 Network A: offline power allocation = online allocation same armed-turret state: fuel and allocation after 25 s match between 1 s online steps and one offline settlement",
+      "message": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality",
+      "classification": "REPRODUCED_ON_ARCHIVED_9c73c8d",
+      "status": "UNREPAIRED"
+    },
+    {
+      "file": "tests/w07-power-offline-parity.test.ts",
+      "test": "W07-R truthful return report for standby turret draw an armed wired turret with arrows is reported as reserving power while away and not firing",
+      "message": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality",
+      "classification": "REPRODUCED_ON_ARCHIVED_9c73c8d",
+      "status": "UNREPAIRED"
+    },
+    {
+      "file": "tests/w07-power-offline-parity.test.ts",
+      "test": "W07-R truthful return report for standby turret draw a disarmed turret produces no standby line and no draw",
+      "message": "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality",
+      "classification": "REPRODUCED_ON_ARCHIVED_9c73c8d",
+      "status": "UNREPAIRED"
+    },
+    {
+      "file": "tests/wp3-veyra-recycler-integration.test.ts",
+      "test": "WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> Floor -1 -> Save/Reload Integration Proof harvests natural Veyra wrecks/resources (zero item injection), recycles damaged_drive at po_slag into spares, spends spares in real craft/build, and survives mandatory Floor -1 reload",
+      "message": "AssertionError: expected 0 to be greater than or equal to 3",
+      "classification": "REPRODUCED_ON_ARCHIVED_9c73c8d",
+      "status": "UNREPAIRED"
+    }
+  ],
+  "caveat": "Only these exact assertion/error fingerprints reproduced here; no blanket inherited classification. Historical independent reproductions remain separately documented."
+}
