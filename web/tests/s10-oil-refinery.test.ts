@@ -5,7 +5,7 @@ import { getWorld, setActiveLayout } from '../src/game/world';
 import { vehicleClear } from '../src/game/motorbike';
 import { serializeSnapshot, validate } from '../src/game/persist';
 import { tick, settle, type Input } from '../src/game/sim';
-import { ITEMS, RECIPES } from '../src/game/catalog';
+import { ITEMS, RECIPES, STRUCTS } from '../src/game/catalog';
 import { RECIPE_REVISION } from '../src/game/recipe-migration';
 
 // SYS10-R1 fixtures. Stations, injected stock and the motorbike kit are CONTROLLED FIXTURES
@@ -77,17 +77,21 @@ describe('SYS10-R1 oil refinery — canonical balance, industrial co-products, v
 
   it('builds the refinery on valid terrain with a level-2 Workbench and NO territory cabinet (K6)', () => {
     const g = setup(), r = g.run!;
-    for (const [k, q] of BAL.oilRefineryV1.cost as [string, number][]) addItem(r, 'inv', k, q);
+    // Controlled paid-pack fixture: raw recipe inputs alone no longer deploy devices.
+    const pack = STRUCTS.refinery.item!; addItem(r, 'inv', pack, 1);
+    const packUid = C(r, 'inv').slots.find(s => s?.key === pack)!.uid;
     const p = r.player, tx = Math.floor(p.x / TILE) + 1, ty = Math.floor(p.y / TILE);
     // Without any workbench: refused.
     expect(act(g, 'build', { struct: 'refinery', tx, ty }).ok).toBe(false);
     // A level-1 workbench is not enough.
     const bench1 = fixtureStation(g, 'workbench', 1); bench1.x = p.x - TILE; bench1.tx = Math.floor(bench1.x / TILE);
     expect(act(g, 'build', { struct: 'refinery', tx, ty }).ok).toBe(false);
+    expect(countItem(r, 'inv', pack)).toBe(1); // both denied attempts preserve the physical pack
     bench1.station!.level = 2 as any; bench1.type = 'workbench';
     markDirty();
     expect(act(g, 'build', { struct: 'refinery', tx, ty }).ok).toBe(true);
     const ref = Object.values(r.entities).find(e => e.type === 'refinery')!;
+    expect(ref.deployed?.uid).toBe(packUid); expect(countItem(r, 'inv', pack)).toBe(0);
     expect(ref.station?.fuelC).toBeTruthy();
     expect(ref.hp).toBe(BAL.oilRefineryV1.hp);
     expect(Object.values(r.entities).some(e => e.type === 'claim')).toBe(false);

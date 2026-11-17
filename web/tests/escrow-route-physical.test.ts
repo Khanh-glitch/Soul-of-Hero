@@ -4,6 +4,7 @@ import {getWorld,setActiveLayout} from '../src/game/world';
 import {newGame,dispatch,blockGrid,markDirty,addItem,C,countItem,buildReason} from '../src/game/engine';
 import {tick,type Input} from '../src/game/sim';
 import {serializeSnapshot,validate} from '../src/game/persist';
+import {STRUCTS} from '../src/game/catalog';
 const T=Date.UTC(2026,10,3);
 const neutral:Input={up:false,down:false,left:false,right:false,mx:0,my:0,attack:false,attackPressed:false,roll:false,cancel:false};
 
@@ -24,7 +25,16 @@ describe('short physical nonboss cash to escrow route',()=>{
   walkTo(cash);expect(act('openCash',{eid:cash.id}).ok).toBe(true);const slot=C(r,cash.c!).slots.findIndex(s=>s?.key==='rcash');expect(slot).toBeGreaterThanOrEqual(0);expect(act('move',{from:cash.c,fs:slot,to:'inv'}).ok).toBe(true);expect(countItem(r,'inv','rcash')).toBe(36);
   walkTo(vendor);expect(act('buy',{eid:vendor.id,item:'escrow_chest'}).ok).toBe(true);expect(countItem(r,'inv','rcash')).toBe(6);
   // Walk out of the trading post before looking for a lawful build site.
-  const post=w.buildings.find(b=>b.id==='b_tp')!;walkTo({x:(post.x+5)*TILE+8,y:(post.y+post.h+4)*TILE+8} as Entity); const px=Math.floor(r.player.x/TILE),py=Math.floor(r.player.y/TILE);let claim: [number,number]|undefined;for(let y=py-4;y<=py+4&&!claim;y++)for(let x=px-4;x<=px+4&&!claim;x++)if(!buildReason(g,'floor_wood',x,y))claim=[x,y];expect(claim).toBeDefined();expect(act('build',{struct:'floor_wood',tx:claim![0],ty:claim![1]}).ok).toBe(true);expect(act('build',{struct:'claim',tx:claim![0],ty:claim![1]}).ok).toBe(true);
+  const post=w.buildings.find(b=>b.id==='b_tp')!;walkTo({x:(post.x+5)*TILE+8,y:(post.y+post.h+4)*TILE+8} as Entity); const px=Math.floor(r.player.x/TILE),py=Math.floor(r.player.y/TILE);let claim: [number,number]|undefined;for(let y=py-4;y<=py+4&&!claim;y++)for(let x=px-4;x<=px+4&&!claim;x++)if(!buildReason(g,'floor_wood',x,y))claim=[x,y];expect(claim).toBeDefined();expect(act('build',{struct:'floor_wood',tx:claim![0],ty:claim![1]}).ok).toBe(true);
+  // The approved item set deploys a paid packed cabinet, not raw ore/wood at placement.
+  // Acquisition remains an explicit fixture here (like the claim inputs above), not natural crafting proof.
+  const noPack=act('build',{struct:'claim',tx:claim![0],ty:claim![1]});
+  expect(noPack.ok).toBe(false); expect(!noPack.ok && noPack.reason).toMatch(/intact packed device/);
+  const cabinetPack=STRUCTS.claim.item!;addItem(r,'inv',cabinetPack,1);
+  const cabinetUid=C(r,'inv').slots.find(s=>s?.key===cabinetPack)!.uid;
+  expect(act('build',{struct:'claim',tx:claim![0],ty:claim![1]}).ok).toBe(true);
+  expect(Object.values(r.entities).find(e=>e.type==='claim')!.deployed!.uid).toBe(cabinetUid);
+  expect(countItem(r,'inv',cabinetPack)).toBe(0);
   let spot:[number,number]|undefined;for(let y=py-4;y<=py+4&&!spot;y++)for(let x=px-4;x<=px+4&&!spot;x++)if(!buildReason(g,'escrow',x,y))spot=[x,y];expect(spot).toBeDefined();expect(act('build',{struct:'escrow',tx:spot![0],ty:spot![1]}).ok).toBe(true);const escrow=Object.values(r.entities).find(e=>e.type==='escrow')!;if(Math.hypot(escrow.x-r.player.x,escrow.y-r.player.y)>2.6*TILE)walkTo(escrow);expect(act('deposit',{eid:escrow.id}).ok).toBe(true);expect(g.profile.securedCash).toBe(6);expect(countItem(r,'inv','rcash')).toBe(0);const snap=JSON.parse(JSON.parse(serializeSnapshot(g)).payload);expect(validate(snap)).toBeTruthy();expect(snap.profile.securedCash).toBe(6);snap.run.entities[cash.id].stock.cash=36;expect(validate(snap)).toBeNull();
  });
 });
