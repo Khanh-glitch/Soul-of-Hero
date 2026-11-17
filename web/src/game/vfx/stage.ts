@@ -62,7 +62,7 @@ function rec(u: string): Rec | null {
     const img = new Image(); const nr: Rec = { img, ok: false, v: new Map() }; r = nr;
     img.onload = () => { nr.ok = true; (img as any).decode?.().catch(() => { }); };
     recs.set(u, nr);
-    if (u.charCodeAt(0) === 35) { const b64 = packed(u.slice(1)); if (b64) img.src = 'data:image/png;base64,' + b64; }
+    if (u.charCodeAt(0) === 35) { const b64 = packed(u.slice(1)); if (b64) img.src = b64.startsWith('asset:') ? `${import.meta.env.BASE_URL}${b64.slice(6)}` : 'data:image/png;base64,' + b64; }
     else img.src = u;
   }
   return r;

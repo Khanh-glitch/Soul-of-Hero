@@ -19,10 +19,12 @@
  *    humans. No retroactive population/loot mint on old saves.
  */
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
-import { ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
+import { RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
 import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
+import { executeHumanWork, planHumanOccupation, type HumanWorkTask } from './human-jobs';
+import { humanShelter } from './human-shelter';
 import { liveItemId, liveItemPer } from './final-item-set';
 
 export const HUMAN_WORLD_VERSION = 'human-world-v1';
@@ -81,6 +83,7 @@ export interface HumanKnowledge {
   playerHomeKnown: boolean;   // whether the actor has physically observed the player's base
 }
 export interface HumanIntent {
+  work?: HumanWorkTask;
   intentId: string;
   actorId: string;
   kind: 'work' | 'move' | 'trade' | 'fight' | 'rest' | 'eat' | 'drink' | 'follow' | 'idle' | 'evacuate' | 'pursue';
@@ -156,6 +159,11 @@ export interface HumanRecord {
   nextThinkAt?: number;
   motion?: { fromGx: number; fromGy: number; toGx: number; toGy: number; elapsedMs: number; updatedAt?: number };
   workOutputs?: Record<string, number>;
+  knownRecipes?: string[];
+  patrolPostIndex?: number;
+  lastWatchAt?: number;
+  guardedEntityId?: string;
+  nextPerceptionAt?: number;
   lastTalkAt?: number;
   lastWorkBlock?: string;
   tradeTrustReceipts?: Record<string, number>;
@@ -227,6 +235,7 @@ export interface HumanWorld {
   plannerCursor?: number;
   plannerAt?: number;
   nextActorSeq: number;
+  nextIncidentSeq?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -332,6 +341,7 @@ export function makeHuman(r: RunState, hw: HumanWorld, opts: {
     disposition_known: { observedSources: [], witnesses: [], incidents: [], knownPeople: [], playerHomeKnown: false },
     protectedPeople: opts.protectedPeople ?? [],
     trust: 50,
+    knownRecipes: opts.occupation === 'cook' ? Object.keys(RECIPES).filter(k => RECIPES[k].station === 'campfire' && RECIPES[k].tier <= 1 && ITEMS[RECIPES[k].out]?.food) : [],
     lastCommittedAt: r.clock.lastSimAt, lastSimAt: r.clock.lastSimAt,
   };
   hw.people[id] = h;
@@ -608,7 +618,7 @@ function usingHumanBed(r: RunState, hw: HumanWorld, h: HumanRecord): boolean {
 export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
   const lastNeedsAt = hw.lastNeedsAt ?? hw.lastResolvedAt;
   const dtMs = now - lastNeedsAt;
-  if (dtMs <= 0) return;
+  if (dtMs < 1000) return; // biological events accrue exactly; resolve at one-second boundaries, not render frequency
   const hours = dtMs / HOUR;
   const hungerRate = BAL.player.offlineHungerPerHour;
   const thirstRate = BAL.player.offlineThirstPerHour;
@@ -619,7 +629,7 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
     const m = active ? 1.25 : 1.0;
     h.hunger = clamp(h.hunger - hungerRate * hours * m, 0, 100);
     h.thirst = clamp(h.thirst - thirstRate * hours * m, 0, 100);
-    h.warmth = clamp(h.warmth - (isSheltered(r, h.gx * TILE + 8, h.gy * TILE + 8) ? 0 : 0.4 * hours), 20, 100);
+    h.warmth = clamp(h.warmth - (humanShelter(r, h.gx, h.gy, h.floor) ? 0 : 0.4 * hours), 20, 100);
     if (h.hunger <= 0 || h.thirst <= 0) {
       // starvation / dehydration: HP drain, work stops
       const drain = ((h.hunger <= 0 ? BAL.player.starveDamagePerMin : 0) + (h.thirst <= 0 ? BAL.player.starveDamagePerMin : 0)) * (dtMs / 60000);
@@ -804,13 +814,11 @@ function isPlayerExplorationSource(r: RunState, key: string, tx: number, ty: num
 
 /** Work is deliberately fail-closed until the occupation has an authored physical
  * station, real input bill, and output contract. Never mint items from an abstract stock mirror. */
-export function humanWorkTick(_r: RunState, hw: HumanWorld, h: HumanRecord, _now: number): { done: boolean; reason?: string } {
+export function humanWorkTick(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { done: boolean; reason?: string } {
   if (!h.intent || h.intent.kind !== 'work') return { done: false, reason: 'no work order' };
   if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED') return { done: false, reason: 'incapacitated' };
   if (h.hunger <= 5 || h.thirst <= 5) return { done: false, reason: h.hunger <= 5 ? 'too hungry' : 'too thirsty' };
-  const comm = h.community ? hw.communities[h.community] : null;
-  if (!comm) return { done: false, reason: 'no community' };
-  return { done: false, reason: comm.workStations.length ? 'no authored physical recipe for this station' : `no physical work station for ${h.occupation}` };
+  return executeHumanWork(r, hw, h, now);
 }
 
 // ---------------------------------------------------------------------------
@@ -830,15 +838,16 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
   const sourceFloor = attackerFloor ?? activeFloor;
   if (h.floor !== sourceFloor && source !== 'hazard') return false;
   const worn = humanArmor(h);
-  dmg = Math.max(1, Math.round(dmg * (1 - worn.armor)));
+  const biological = source === 'starvation' || source === 'untreated_bleeding';
+  dmg = biological ? dmg : Math.max(1, Math.round(dmg * (1 - worn.armor)));
   h.hp -= dmg;
   h.lastDamageAt = now;
   if (attackerId && attackerId !== h.actorId) {
-    recordIncident(r, hw, {
+    const incident = recordIncident(r, hw, {
       kind: 'assault', victim: h.actorId, aggressor: attackerId, witnesses: [], at: now,
       place: { tx: h.gx, ty: h.gy, floor: h.floor }, injury: true, resolved: false,
     }, now);
-    formGrievance(r, hw, h, attackerId, now);
+    formGrievance(r, hw, h, attackerId, now, incident.id);
   }
   if (h.hp <= 0) {
     if (h.state === 'DOWNED') killHuman(r, hw, h, now, source);
@@ -1221,9 +1230,9 @@ export function resolveOrder(r: RunState, hw: HumanWorld, h: HumanRecord, orderI
 // ---------------------------------------------------------------------------
 // Crime, witnesses, retaliation — bounded incident ledger (no GPS, no morale currency).
 // ---------------------------------------------------------------------------
-let incidentSeq = 0;
 export function recordIncident(r: RunState, hw: HumanWorld, inc: Omit<HumanIncident, 'id'>, now: number): HumanIncident {
-  const id = `inc${(incidentSeq++).toString(36)}${(hw.nextActorSeq++).toString(36)}`;
+  let id: string;
+  do { const n = hw.nextIncidentSeq ?? 0; hw.nextIncidentSeq = n + 1; id = `inc:${r.id}:${n}`; } while (hw.incidents[id]);
   const full: HumanIncident = { id, ...inc };
   hw.incidents[id] = full;
   if (inc.victim && hw.people[inc.victim]) {
@@ -1241,12 +1250,9 @@ export function recordIncident(r: RunState, hw: HumanWorld, inc: Omit<HumanIncid
 }
 
 /** A directly attacked/wounded survivor forms a persistent retaliatory intent. */
-export function formGrievance(r: RunState, hw: HumanWorld, h: HumanRecord, aggressorId: string, now: number): void {
-  if (h.state === 'DEAD') return;
-  const inc = recordIncident(r, hw, {
-    kind: 'assault', victim: h.actorId, aggressor: aggressorId,
-    witnesses: [], at: now, place: { tx: h.gx, ty: h.gy, floor: h.floor }, injury: true, resolved: false,
-  }, now);
+export function formGrievance(_r: RunState, hw: HumanWorld, h: HumanRecord, aggressorId: string, _now: number, incidentId: string): void {
+  const inc = hw.incidents[incidentId];
+  if (!inc || inc.victim !== h.actorId || inc.aggressor !== aggressorId || h.state === 'DEAD') return;
   if (!h.disposition_known.incidents.includes(inc.id)) h.disposition_known.incidents.push(inc.id);
 }
 
@@ -1491,6 +1497,10 @@ function plannerSources(r: RunState): Set<string> {
   return protectedTiles;
 }
 function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>, protectedTiles: Set<string>): void {
+  if (h.intent?.work?.phase === 'travel' && h.state === 'IDLE') {
+    planHumanOccupation(r, hw, h, now, (gx,gy) => humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied));
+    h.nextThinkAt = now + 3000; return;
+  }
   if (h.following || h.state !== 'IDLE' || h.intent || (h.nextThinkAt ?? 0) > now) return;
   h.nextThinkAt = now + 6000;
   if (h.floor !== (r.veyraFloor ?? 0) || h.hp < 30 || h.stamina < 12) return;
@@ -1519,6 +1529,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     if (!route.length) { depositHumanOutputs(r, h, now); h.intent = undefined; h.nextThinkAt = now + 6000; }
     return;
   }
+  if (planHumanOccupation(r,hw,h,now,(gx,gy)=>humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied))) return;
   const lx = h.gx - ox, ly = h.gy - oy;
   if (lx < 1 || ly < 1 || lx >= WW - 1 || ly >= WH - 1) return;
   let best: { tx: number; ty: number; score: number } | null = null, spaceBlocked = false;
@@ -1586,19 +1597,28 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
   if (dtMs <= 0) return;
   hw.lastStepAt = now;
   const actors = Object.values(hw.people);
-  const wantsPlan = now >= (hw.plannerAt ?? 0) && actors.some(h => !h.following && h.state === 'IDLE' && !h.intent && (h.nextThinkAt ?? 0) <= now);
+  const wantsPlan = now >= (hw.plannerAt ?? 0) && actors.some(h => !h.following && h.state === 'IDLE' && (!h.intent || h.intent.work?.phase === 'travel') && (h.nextThinkAt ?? 0) <= now);
   const hasMovement = actors.some(h => h.state === 'MOVING' && !!h.intent?.route?.length) || actors.some(h => h.following && h.state === 'IDLE') || wantsPlan || actors.some(h => h.state === 'FIGHTING');
   const grid = hasMovement ? blockGrid(r) : new Uint8Array(0);
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
   const occupied = hasMovement ? new Set(actors.filter(h => h.state !== 'DEAD' && h.state !== 'EVACUATED').map(h => humanCellKey(h.floor, h.gx, h.gy))) : new Set<string>();
   const playerGx = ox + Math.floor(r.player.x / TILE), playerGy = oy + Math.floor(r.player.y / TILE);
+  for(const h of actors) {
+    if(h.occupation!=='guard' || h.floor!==(r.veyraFloor??0) || h.following || ['DOWNED','DEAD','EVACUATED','FIGHTING'].includes(h.state) || (h.nextPerceptionAt??0)>now)continue;
+    h.nextPerceptionAt=now+1000;
+    const p={x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE};
+    const enemy=r.creatures.find(m=>!m.husbandry?.tamed && (m.floor??0)===h.floor && ['attack','chase'].includes(m.state) && Math.hypot(m.x-p.x,m.y-p.y)<TILE*8 && clearPhysicalLine(r,p,m,true));
+    if(!enemy)continue;
+    h.motion=undefined;
+    h.intent={intentId:`defend:${h.actorId}:${now}`,actorId:h.actorId,kind:'fight',target:enemy.id,preconditions:['direct sight of nearby threat'],reserved:[],startAt:now,dueAt:now};h.state='FIGHTING';
+  }
   if (wantsPlan) {
     const protectedTiles = plannerSources(r);
     let cursor = (hw.plannerCursor ?? 0) % Math.max(1, actors.length), planned = 0;
     for (let n = 0; n < actors.length && planned < 8; n++) {
       const i = (cursor + n) % actors.length, h = actors[i];
-      if (!h.following && h.state === 'IDLE' && !h.intent && (h.nextThinkAt ?? 0) <= now) {
+      if (!h.following && h.state === 'IDLE' && (!h.intent || h.intent.work?.phase === 'travel') && (h.nextThinkAt ?? 0) <= now) {
         planAutonomousWork(r, hw, h, now, grid, ox, oy, occupied, protectedTiles);
         if ((h.nextThinkAt ?? 0) > now) planned++;
       }
@@ -1644,6 +1664,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
     // 1. Survival consume: eat when hungry, drink when thirsty.
     if (h.hunger < 40) humanConsume(r, hw, h, 'food', now);
     if (h.thirst < 40) humanConsume(r, hw, h, 'water', now);
+    if (h.state === 'WORKING' && h.intent?.work) humanWorkTick(r, hw, h, now);
     // 2. A work action commits only after arrival and a visible work duration; no output is animated or minted in transit.
     if (h.state === 'WORKING' && h.intent?.kind === 'work' && h.intent.target?.startsWith('harvest:') && now >= h.intent.dueAt) performHumanHarvest(r, hw, h, now);
     if (h.intent?.kind === 'work' && h.intent.target === 'store' && h.state === 'IDLE') {
@@ -1690,6 +1711,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
           if (!moveRoute.length) {
             if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.nextThinkAt = now; }
             else if (moveIntent.kind === 'follow') { h.state = 'IDLE'; moveRoute.length = 0; }
+            else if (moveIntent.work) { h.state = 'WORKING'; moveIntent.dueAt = now + (moveIntent.work.phase === 'fetch' ? 800 : moveIntent.work.duration); }
             else if (moveIntent.kind === 'work' && moveIntent.target?.startsWith('harvest:')) {
               const target = moveIntent.target.match(/^harvest:(\d+),(\d+)$/);
               if (target) faceHumanToward(h, Number(target[1]) + ox, Number(target[2]) + oy);

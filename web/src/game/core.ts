@@ -156,7 +156,7 @@ export interface Entity {
 /** PA1 R1: `rv` pins the catalog revision the job was paid under, so a later recipe
  *  cutover can neither reject the save nor change what the job pays out. Absent = a save
  *  from before stamping; the migration ledger resolves those to revision 1. */
-export interface Job { id: string; recipe: string; left: number; total: number; reserved?: Stack[]; rv?: number }
+export interface Job { workerId?: string; id: string; recipe: string; left: number; total: number; reserved?: Stack[]; rv?: number }
 
 export interface WorldStimulus { version:'world-stimulus-v1'; id:string; sourceId:string; eventIndex:number; kind:'airdrop-landing'|'combat-sound'; modality:'sound'; eligibility:'audible-landing-v1'|'audible-ranged-v1'|'audible-melee-v1'; x:number; y:number; at:number; expiresAt:number; range:number; strength:number }
 

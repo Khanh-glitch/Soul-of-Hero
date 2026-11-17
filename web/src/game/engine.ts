@@ -1367,8 +1367,8 @@ function portion(r: RunState, s: Stack, qty: number): Stack {
 export function recipeOutputs(rc: { out: string; qty: number; outs?: [string, number][] }): [string, number][] {
   return rc.outs ?? [[rc.out, rc.qty]];
 }
-function reserveInputs(r: RunState, ins: [string, number][]): Stack[] {
-  const c = C(r, 'inv'); const reserved: Stack[] = [];
+export function reserveInputs(r: RunState, ins: [string, number][], cid = 'inv'): Stack[] {
+  const c = C(r, cid); const reserved: Stack[] = [];
   for (const [key, amount] of ins) {
     let left = amount;
     for (let i = c.slots.length - 1; i >= 0 && left > 0; i--) {
@@ -3347,11 +3347,23 @@ function craft(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: stri
   if (st.station!.queue.length >= 6) return fail('Station queue is full.');
   // Multi-output bundles are preflighted at queue time too, so no paid inputs are reserved for a batch that cannot land.
   if (rc.outs && !recoveryFits(C(r, st.station!.outC), rc.outs)) return fail('Refinery output cannot hold the whole batch; collect items first.');
-  const reserved = reserveInputs(r, ins);
-  // PA1 R1: the job carries the catalog revision it was paid under. A later recipe
-  // cutover can never re-price a queued job in either direction.
-  st.station!.queue.push({ id: uid(r, 'j'), recipe: it.recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved, rv: RECIPE_REVISION });
+  const queued = queuePaidRecipe(r, st, 'inv', it.recipe);
+  if (!queued.ok) return fail(queued.reason!);
   return ok('job.queue', `${it.recipe}@${st.id}`, `${recipeOutputs(rc).map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ')} queued at ${STRUCTS[st.type!].name}.`);
+}
+
+/** Shared paid station admission. Caller supplies knowledge, permission and physical actor
+ * access; this authority owns recipe revision, input custody, level/queue/output constraints. */
+export function queuePaidRecipe(r: RunState, e: Entity, cid: string, recipe: string, workerId?: string): { ok: boolean; reason?: string; jobId?: string } {
+  const rc = RECIPES[recipe], st = e.station;
+  if (!rc?.station || !st || STRUCTS[e.type!]?.station !== rc.station) return { ok: false, reason: 'wrong physical station' };
+  if ((st.level ?? 1) < requiredStationLevel(rc) || st.queue.length >= 6) return { ok: false, reason: 'station level or queue blocked' };
+  const ins = rc.ins.filter(([,q]) => q > 0);
+  if (!hasAll(r, cid, ins)) return { ok: false, reason: 'missing recipe inputs' };
+  if (rc.outs && !recoveryFits(C(r, st.outC), rc.outs)) return { ok: false, reason: 'output full' };
+  const reserved = reserveInputs(r, ins, cid), jobId = uid(r, 'j');
+  st.queue.push({ id: jobId, recipe, left: rc.secs * 1000, total: rc.secs * 1000, reserved, rv: RECIPE_REVISION, ...(workerId ? { workerId } : {}) });
+  return { ok: true, jobId };
 }
 
 function research(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
@@ -3442,11 +3454,15 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
             if (job.reserved) returnReservations(r, job.reserved, e.x, e.y, at);
             receipt(r, at, 'research.family.duplicate', fam);
             note('Research table: that study was already complete — materials returned.');
-            receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
+            const worker = job.workerId ? r.humanWorld?.people[job.workerId] : undefined;
+        if (worker?.intent?.work?.machineJobId === job.id) worker.intent.work.readyAt = at;
+        receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
           }
           completeFamilyStudy(r, fam, at, e.id);
           note(`Research table: ${fam} study complete. ${recipesOfFamily(fam).length} formula${recipesOfFamily(fam).length === 1 ? '' : 's'} available to craft.`);
-          receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
+          const worker = job.workerId ? r.humanWorld?.people[job.workerId] : undefined;
+        if (worker?.intent?.work?.machineJobId === job.id) worker.intent.work.readyAt = at;
+        receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
         } else if (job.recipe.startsWith('R:')) {
           const k = job.recipe.slice(2);
           // PA1 R1: a retired formula still resolves through the migration ledger, so an
@@ -3466,6 +3482,8 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
           if (outs.some(([key]) => key === 'iron_ingot')) award(gs, 'first_ingot', at);
           note(`${STRUCTS[e.type!].name} finished ${outs.map(([key, qty]) => `${qty} ${ITEMS[key].name}`).join(', ')}.`);
         }
+        const worker = job.workerId ? r.humanWorld?.people[job.workerId] : undefined;
+        if (worker?.intent?.work?.machineJobId === job.id) worker.intent.work.readyAt = at;
         receipt(r, at, 'job.done', `${e.id}:${job.recipe}`); st.queue.shift(); continue;
       }
       if (blocked && kind !== 'campfire') break;

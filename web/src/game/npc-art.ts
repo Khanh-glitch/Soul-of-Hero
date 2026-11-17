@@ -45,7 +45,7 @@ export function resolveNpcClip(h: HumanRecord, simSec: number, moving: boolean):
   if (h.lastDamageAt !== undefined && now >= h.lastDamageAt && now - h.lastDamageAt < 180) return 'hurt';
   if (moving) return 'walk';
   if (h.lastAttackAt !== undefined && now >= h.lastAttackAt && now - h.lastAttackAt < 240) return 'attack';
-  if (h.state === 'WORKING' && h.intent?.kind === 'work' && h.intent.target?.startsWith('harvest:')) return 'use';
+  if (h.state === 'WORKING' && h.intent?.kind === 'work' && (h.intent.target?.startsWith('harvest:') || !!h.intent.work && h.intent.work.phase !== 'machine')) return 'use';
   return moving ? 'walk' : 'idle';
 }
 
