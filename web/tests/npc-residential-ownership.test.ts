@@ -1,13 +1,25 @@
 import {describe,it,expect} from 'vitest';
-import {newGame,startRun,findRunEntity,mkContainer,addItem,C,queuePaidRecipe,stepStations,mkStack,blockGrid} from '../src/game/engine';
+import {newGame,startRun,findRunEntity,mkContainer,addItem,C,queuePaidRecipe,stepStations,mkStack,blockGrid,dispatch} from '../src/game/engine';
 import {setActiveLayout} from '../src/game/world';
 import {usingHumanBed,resolveOrder,commandHuman,stepHumans,stepHumanCombat,startHumanAid,stepPlayerHumanAid,killHuman} from '../src/game/humanworld';
 import {humanEntityTile,moveHumanGoods} from '../src/game/human-jobs';
 import {validate} from '../src/game/persist';
 import {T0} from './helpers/g1b-kit';
-import {type Entity} from '../src/game/core';
+import {TILE,type Entity} from '../src/game/core';
 function scene(){setActiveLayout('veyra05-greywater');const gs=newGame();expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(true);return gs;}
 describe('physical housing and production rights',()=>{
+ it('cargo moves the same UID once and a full destination restores the original source slot',()=>{
+  const gs=scene(),r=gs.run!,h=Object.values(r.humanWorld!.people)[0];
+  const o=r.sourceMap!.veyra!.originAu;
+  h.gx=Math.round(o[0]/.5)+Math.floor(r.player.x/TILE);h.gy=Math.round(o[1]/.5)+Math.floor(r.player.y/TILE);h.floor=r.veyraFloor??0;h.following=true;h.state='IDLE';
+  const cart=C(r,h.inv.cartId),inv=C(r,'inv');cart.slots.fill(null);
+  const stack=inv.slots.find(s=>s&&!s.production)!;const slot=inv.slots.indexOf(stack),uid=stack.uid;
+  const send=(direction:'return'|'load',id:string)=>dispatch(gs,{type:'humanCargo',actorId:h.actorId,direction,stackUid:uid,id} as any,T0+100);
+  expect(send('load','cargo-load').ok).toBe(true);expect(inv.slots[slot]).toBeNull();expect(cart.slots.filter(s=>s?.uid===uid)).toHaveLength(1);
+  expect(send('return','cargo-return').ok).toBe(true);expect(inv.slots.some(s=>s?.uid===uid)).toBe(true);expect(cart.slots.some(s=>s?.uid===uid)).toBe(false);
+  for(let i=0;i<cart.slots.length;i++)cart.slots[i]=mkStack(r,'knife',1);
+  const before=JSON.stringify(inv.slots);expect(send('load','cargo-full').ok).toBe(false);expect(JSON.stringify(inv.slots)).toBe(before);
+ });
  it('beds are unique real furniture, never custody chests; shortages do not mint or remove people',()=>{
   const gs=scene(),r=gs.run!,hw=r.humanWorld!,assigned=Object.values(hw.people).filter(h=>h.bedId);
   expect(assigned.length).toBeGreaterThan(0);

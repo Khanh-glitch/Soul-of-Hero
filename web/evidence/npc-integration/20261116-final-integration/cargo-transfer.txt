@@ -1,0 +1,11 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ tests/npc-residential-ownership.test.ts (8 tests) 3189ms
+     ✓ cargo moves the same UID once and a full destination restores the original source slot  2457ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  01:40:46
+   Duration  8.34s (transform 4.31s, setup 0ms, import 5.02s, tests 3.19s, environment 0ms)
+

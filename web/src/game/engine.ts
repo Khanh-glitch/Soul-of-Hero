@@ -2367,8 +2367,9 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         const from=it.direction==='return'?C(r,h.inv.cartId):C(r,'inv'),to=it.direction==='return'?C(r,'inv'):C(r,h.inv.cartId);
         const s=from.slots.find(s=>s?.uid===it.stackUid);
         if(!s || s.production)return fail('That carried item is no longer available.');
-        if(!addStack(r,to.id,s))return fail('Destination is full.');
-        from.slots[from.slots.indexOf(s)]=null;
+        const sourceSlot=from.slots.indexOf(s);
+        from.slots[sourceSlot]=null;
+        if(!addStack(r,to.id,s)){from.slots[sourceSlot]=s;return fail('Destination is full.');}
         return ok('human.cargo',`${h.actorId}:${from.id}:${to.id}:${s.uid}:${s.qty}`,'Cargo transferred.');
       }
       if (it.type === 'humanTalk') { const topic = (['activity', 'needs', 'place', 'goods', 'accompany'] as string[]).includes(it.topic) ? it.topic as HumanTalkTopic : undefined; const msg = talkToHuman(r, hw, h, now, topic); return { ok: true, receipt: latestReceipt(), msg }; }

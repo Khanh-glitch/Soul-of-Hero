@@ -34,3 +34,11 @@ Full-suite working-tree run began before the final edits and remains diagnostic 
 ## Subsequent regression recovery checkpoint
 
 `npm run typecheck:tests` now PASS after typed-fixture repairs (no compiler suppression or test exclusion). Exact removed diagnostics are retained in test-typescript-fingerprints.json. Changes narrow Result success/failure fields; require non-null migrated historical snapshots; type legacy entity fixtures and current tuple/readonly APIs; supply recipeRev in the research-console fixture; use the current harvest result `empty` rather than nonexistent `depleted`. No item, recipe, source cost or Creator rule changed. The 13 affected executable suites pass: 133 passed, 1 pre-existing skip. This does not classify the full-suite failures or establish real separate-process persistence; the historical round-trip suite uses an in-process stand-in despite its old title.
+
+## Cargo transaction and additional inherited-failure reproduction
+
+Cargo dispatch now removes the source slot before adding the stack and restores that exact slot on capacity failure. Actual `addStack` inspection did NOT confirm the earlier suspected UID-invariant rejection; this is atomic custody hardening, not evidence that old transfers always failed. Dispatch fixtures verify same UID load/return, no source clone, and full-destination rollback (residential suite 8/8). Both app and test TypeScript checks PASS after this correction.
+
+The archived inherited 9c73c8d checkout independently reproduces WP3 recycler integration failure at tests/wp3-veyra-recycler-integration.test.ts:303, damaged_drive inventory expected >=3, actual 0; see baseline-wp3.txt. This classifies that exact assertion as reproducible inherited behavior, NOT all WP3 routes, all historical failures, nor a repaired natural-source chain.
+
+Full-suite worker was inspected, paused momentarily through Node inspector and resumed without mutation: it was executing arena1-round2-newgame-routes.test.ts through newgame-bot.wait -> tick -> syncWorld -> advanceWorld -> stepG1b. It remains running, not an empty-banner success or an assumed completed run. Synchronous test work can prevent the nominal testTimeout from firing; final counts remain unavailable.
