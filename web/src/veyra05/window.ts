@@ -28,7 +28,7 @@ import { layoutIdAt, windowForLayout, isVeyra05Layout, U05_WORLD_LAYOUT_ID, type
 import { hash2 } from '../game/core';
 import { SOURCES, isIndustrialSalvage } from '../game/catalog';
 import { pickWeighted } from '../game/world-economy';
-import { buildFloorStack, type FloorStack } from './floors';
+import { buildFloorStack, type FloorStack, type FloorLayer } from './floors';
 
 const CODE_BIOME: Biome[] = ['meadow', 'forest', 'forest', 'forest', 'marsh', 'sand', 'hill', 'hill', 'snow', 'ash', 'toxic', 'sand'];
 const TILE_BIOME: Partial<Record<number, Biome>> = {
@@ -517,8 +517,52 @@ export function getWindowWorld(layoutId: string, rules: VeyraPlacementRules = pl
 /** Resolve a canonical cached `WindowWorld` covering global tile `(gx, gy)` so offscreen
  *  homesteads read the exact same Map-owned `economyMap`, `floors`, `sources`, and `solidProps`
  *  as when onscreen, while sharing one cached window per 64-tile region. */
-export function getWindowWorldForGlobalTile(gx: number, gy: number): WindowWorld {
+export function getWindowWorldForGlobalTile(gx: number, gy: number, rules: VeyraPlacementRules = placementRules): WindowWorld {
   const ox = Math.max(0, Math.min(FRAME_W - WW, Math.floor((gx - 68) / 64) * 64));
   const oy = Math.max(0, Math.min(FRAME_H - WH, Math.floor((gy - 68) / 64) * 64));
-  return getWindowWorld(layoutIdAt(ox, oy));
+  return getWindowWorld(layoutIdAt(ox, oy),rules);
+}
+
+interface GlobalBaseCell {
+  originTx:number;originTy:number;tile:number;walkable:boolean;source:string|null;
+  solidProp:boolean;fresh:boolean;statics:FloorLayer['statics'];
+}
+interface GeometryRegion {
+  originTx:number;originTy:number;tiles:Uint8Array;walkable:Uint8Array;solidProps:Uint8Array;
+  fresh?:Uint8Array;sources:Map<number,string>;statics:Map<number,FloorLayer['statics']>;
+}
+// Only query geometry, NOT compiled render/economy worlds, is retained. Three
+// masks + sparse source/static records per queried floor; bounded128 regions.
+// This avoids the 16-view render cache thrashing across81 inhabited sites.
+const geometryRegions=new Map<string,GeometryRegion|null>();
+/** Immutable compiler output only. All door/source/terrain/entity deltas remain
+ * RunState reads in the caller. Never cache a mutable stock or access decision. */
+export function globalBaseGeometry(gx:number,gy:number,floor:number,rules:VeyraPlacementRules,layout?:string):GlobalBaseCell|null {
+  const ox=Math.max(0,Math.min(FRAME_W-WW,Math.floor((gx-68)/64)*64));
+  const oy=Math.max(0,Math.min(FRAME_H-WH,Math.floor((gy-68)/64)*64));
+  const id=layout??layoutIdAt(ox,oy),key=`${rules}:${id}:${floor}`;
+  let region=geometryRegions.get(key);
+  if(region===undefined){
+    const w=getWindowWorld(id,rules),layer=floor===0?w.floors.ground:w.floors.layers.get(floor as -1|0|1|2);
+    region=null;
+    if(layer){
+      const sources=new Map<number,string>(),statics=new Map<number,FloorLayer['statics']>();
+      for(let i=0;i<layer.sources.length;i++)if(layer.sources[i])sources.set(i,layer.sources[i]!);
+      for(const s of layer.statics){const k=s.ty*WW+s.tx,list=statics.get(k);if(list)list.push(s);else statics.set(k,[s]);}
+      region={originTx:w.win.originTx,originTy:w.win.originTy,tiles:layer.tiles.slice(),walkable:layer.walkable.slice(),solidProps:layer.solidProps.slice(),fresh:floor===0?w.world.fresh.slice():undefined,sources,statics};
+    }
+    geometryRegions.set(key,region);
+    if(geometryRegions.size>128)geometryRegions.delete(geometryRegions.keys().next().value!);
+  } else {geometryRegions.delete(key);geometryRegions.set(key,region);}
+  if(!region)return null;
+  const x=gx-region.originTx,y=gy-region.originTy;
+  if(x<0||y<0||x>=WW||y>=WH)return null;
+  const i=y*WW+x;
+  return {originTx:region.originTx,originTy:region.originTy,tile:region.tiles[i],walkable:!!region.walkable[i],source:region.sources.get(i)??null,solidProp:!!region.solidProps[i],fresh:!!region.fresh?.[i],statics:region.statics.get(i)??[]};
+}
+/** Same compiler freshwater mask as player; transient ice is read by engine. */
+export function globalBaseWaterCell(gx:number,gy:number,rules:VeyraPlacementRules): {fresh:boolean;tile:number} {
+  if(gx<0||gy<0||gx>=FRAME_W||gy>=FRAME_H)return {fresh:false,tile:T.CLIFF};
+  const cell=globalBaseGeometry(gx,gy,0,rules);
+  return {fresh:cell?.fresh??false,tile:cell?.tile??T.CLIFF};
 }

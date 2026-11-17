@@ -26,7 +26,7 @@ import { U05_WORLD_LAYOUT_ID, isVeyra05Layout, layoutIdAt } from '../veyra05/sce
 import { globalWindowOrigins, unverifiedOffshoreExcluded } from '../veyra05/global-start-discovery';
 import { localSpawnScreen } from '../veyra05/global-spawn-eligibility';
 import { FRAME_W, FRAME_H, globalIndex } from '../veyra05/frame';
-import { getWindowWorld, getWindowWorldForGlobalTile, resetWindowToGround, setVeyraPlacementRules, syncVeyraPlacement } from '../veyra05/window';
+import { globalBaseGeometry, globalBaseWaterCell, getWindowWorld, getWindowWorldForGlobalTile, resetWindowToGround, setVeyraPlacementRules, syncVeyraPlacement } from '../veyra05/window';
 import { activeFloor, applyFloor, authoredGlobalStatic, authoredPlan, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
 import { windowOrigin } from '../veyra05/continuity';
 import {
@@ -3549,8 +3549,18 @@ function entityIdSortKey(id: string): number {
 
 /** Deterministic deduplicated view across onscreen `r.entities` and Veyra `r.veyraOffscreenEntities`
  *  so straddled or offscreen structures execute in the exact same order without duplicate processing. */
+/** Explicit synchronous READ phase. The caller must end this scope before an
+ * entity/identity/archive mutation. Ordinary queries retain conservative direct-
+ * mutation detection; no global markDirty convention is assumed. */
+const scopedEntityViews=new WeakMap<RunState,Entity[]>();
+export function withRunEntityRead<T>(r:RunState,read:()=>T):T {
+  if(scopedEntityViews.has(r))return read();
+  scopedEntityViews.set(r,allRunEntities(r));
+  try{return read();}finally{scopedEntityViews.delete(r);}
+}
 const entityViews = new WeakMap<RunState,{live:Entity[];off:Entity[];ids:string[];sorted:Entity[]}>();
 export function allRunEntities(r: RunState): Entity[] {
+  const scoped=scopedEntityViews.get(r);if(scoped)return scoped.slice();
   const live=Object.values(r.entities),off=Object.values(r.veyraOffscreenEntities??{});
   if(!off.length)return live;
   const previous=entityViews.get(r);
@@ -3661,7 +3671,7 @@ function resolveGardenMapCell(r: RunState, e: Entity): {
       effTileVal,
     };
   }
-  const cww = getWindowWorldForGlobalTile(gtx, gty);
+  const cww = getWindowWorldForGlobalTile(gtx, gty,r.sourceMap?.rules===4?4:3);
   const cx = clamp(gtx - cww.win.originTx, 0, WW - 1), cy = clamp(gty - cww.win.originTy, 0, WH - 1);
   const ci = cy * WW + cx, m = cww.world.economyMap;
   const layer = fl === 0 ? cww.floors.ground : (cww.floors.layers.get(fl as -1 | 0 | 1 | 2) ?? cww.floors.ground);
@@ -3710,8 +3720,9 @@ export function globalFreshWater(r:RunState,gx:number,gy:number,floor:number):bo
   const [ox,oy]=windowOrigin(r),lx=gx-ox,ly=gy-oy;
   if(lx>=0&&ly>=0&&lx<WW&&ly<WH && activeFloor(r)===0 && r.layoutId===getActiveLayout())return !!getWorld().fresh[ly*WW+lx]&&effTile(r,lx,ly)!==T.ICE;
   if(gx<0||gy<0||gx>=FRAME_W||gy>=FRAME_H)return false;
-  const w=getWindowWorldForGlobalTile(gx,gy),i=(gy-w.win.originTy)*WW+gx-w.win.originTx;
-  return !!w.world.fresh[i]&&(r.veyraGlobalTerrain?.[globalIndex(gx,gy)]?.t??w.floors.ground.tiles[i])!==T.ICE;
+  const base=globalBaseWaterCell(gx,gy,r.sourceMap?.rules===4?4:3),delta=r.veyraGlobalTerrain?.[globalIndex(gx,gy)];
+  const tile=delta&&(!delta.until||delta.until>r.clock.simMs)?delta.t:base.tile;
+  return base.fresh&&tile!==T.ICE;
 }
 
 export function globalCellTileAndClass(
@@ -3750,26 +3761,23 @@ export function globalCellTileAndClass(
     }
     return { tile: effTile(r, lx, ly), cls };
   }
-  const cww = inCurrentWindow ? getWindowWorld(r.layoutId) : getWindowWorldForGlobalTile(gtx, gty);
-  const cx = inCurrentWindow ? lx : gtx - cww.win.originTx;
-  const cy = inCurrentWindow ? ly : gty - cww.win.originTy;
-  if (cx < 0 || cy < 0 || cx >= WW || cy >= WH) return { tile: T.CLIFF, cls: 1 };
-  const ci = cy * WW + cx;
-  const layer = fl === 0 ? cww.floors.ground : cww.floors.layers.get(fl as -1 | 0 | 1 | 2);
-  if (!layer) return { tile: T.CLIFF, cls: 1 };
+  const rules=r.sourceMap?.rules===4?4:3;
+  const base=globalBaseGeometry(gtx,gty,fl,rules,inCurrentWindow?r.layoutId:undefined);
+  if(!base)return {tile:T.CLIFF,cls:1};
+  const cx=gtx-base.originTx,cy=gty-base.originTy,ci=cy*WW+cx;
   const gi = globalIndex(gtx, gty);
   const localFs = inCurrentWindow && fl !== activeFloor(r) ? r.veyraFloorState?.[fl] : undefined;
   const activeRunDirect = inCurrentWindow && fl === activeFloor(r);
   const tm = activeRunDirect
     ? r.terrain[ci]
     : (fl === 0 ? r.veyraGlobalTerrain?.[gi] : undefined);
-  const baseTile = layer.tiles[ci];
+  const baseTile = base.tile;
   const tile = tm && (!tm.until || tm.until > r.clock.simMs) ? tm.t : baseTile;
   let cls = tileClass(tile);
-  const isAuthoredDoor = layer.statics.some(s => s.kind === 'door' && s.tx === cx && s.ty === cy);
-  if (cls === 0 && !(tile === T.ICE && [T.DEEP, T.SHALLOW, T.RIVER].includes(baseTile)) && !layer.walkable[ci] && !isAuthoredDoor) cls = 1;
+  const isAuthoredDoor = base.statics.some(s => s.kind === 'door');
+  if (cls === 0 && !(tile === T.ICE && [T.DEEP, T.SHALLOW, T.RIVER].includes(baseTile)) && !base.walkable && !isAuthoredDoor) cls = 1;
   if (cls === 0) {
-    let srcKey = layer.sources[ci];
+    let srcKey = base.source;
     const sst = activeRunDirect
       ? r.sources[ci]
       : (localFs?.sources?.[ci] ?? (fl === 0 ? r.veyraGlobalSources?.[gi] : r.veyraGlobalFloorState?.[fl]?.sources?.[gi]));
@@ -3780,9 +3788,9 @@ export function globalCellTileAndClass(
       if (def?.block && (stock > 0 || srcKey === 'wreck')) cls = 2;
     }
   }
-  if ((cls === 0 || cls === 4) && layer.solidProps[ci]) cls = 2;
+  if ((cls === 0 || cls === 4) && base.solidProp) cls = 2;
   if (fl === 0 && activeRunDirect && (r.natureTrees || []).some(t => t.tx === cx && t.ty === cy)) cls = 2;
-  for (const st of layer.statics) {
+  for (const st of base.statics) {
     if (st.tx !== cx || st.ty !== cy) continue;
     if (st.kind === 'door') {
       const open = localFs?.doors && `${cx},${cy}` in localFs.doors

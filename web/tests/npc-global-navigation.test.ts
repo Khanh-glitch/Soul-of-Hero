@@ -4,7 +4,10 @@ import {setActiveLayout} from '../src/game/world';
 import {humanNavigation} from '../src/game/human-navigation';
 import {stepHumans,PROFILES,humanEventBoundary,humanConsume} from '../src/game/humanworld';
 import {authoredPlan,authoredPoiIds} from '../src/veyra05/floors';
-import {TILE} from '../src/game/core';
+import {TILE,T} from '../src/game/core';
+import {getWindowWorldForGlobalTile,globalBaseWaterCell,setVeyraPlacementRules} from '../src/veyra05/window';
+import {FRAME_W} from '../src/veyra05/frame';
+import {SOURCES} from '../src/game/catalog';
 import {validate} from '../src/game/persist';
 import {T0} from './helpers/g1b-kit';
 function scene(){setActiveLayout('veyra05-greywater');const gs=newGame();expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(true);return gs;}
@@ -41,6 +44,18 @@ describe('global human route and source execution (engineering fixtures, not bro
   expect(path).toEqual([next]);expect(h.routeSearch?.status).toBe('FOUND');
   expect(admission.enter(h,next,T0)).toBe(false);occupied.clear();expect(admission.enter(h,next,T0)).toBe(true);
  });
+ it('does not restart a proven failed search until physical topology changes',()=>{
+  const r=scene().run!,h=Object.values(r.humanWorld!.people)[0];
+  // Unsupported floor fixture: no materialized layer, no legal exit and no floor hop.
+  h.floor=3;const target={tx:h.gx+8,ty:h.gy,floor:3};
+  expect(humanNavigation(r).route(h,target)).toBeNull();expect(h.routeSearch?.status).toBe('NO_PATH');
+  expect(humanNavigation(r).route(h,target,0)).toBeNull();expect(h.routeSearch?.status).toBe('NO_PATH');
+  const before=h.routeSearch?.expanded;r.clock.lastSimAt+=1000;
+  humanNavigation(r).route(h,target,0);expect(h.routeSearch?.expanded).toBe(before);expect(h.routeSearch?.status).toBe('NO_PATH');
+  // A real mutable door delta invalidates derived failures even without markDirty.
+  (r.veyraGlobalDoors??={})[h.gy*FRAME_W+h.gx]=true;
+  humanNavigation(r).route(h,target,0);expect(h.routeSearch?.status).toBe('PENDING_SEARCH');
+ });
  it('crosses only a real authored stair edge; a forged floor hop fails',()=>{
   const r=scene().run!,hw=r.humanWorld!,h=Object.values(hw.people)[0],nav=humanNavigation(r);
   let edge:{x:number;y:number;from:number;tx:number;ty:number;to:number}|undefined;
@@ -73,6 +88,32 @@ describe('global human route and source execution (engineering fixtures, not bro
   stepHumans(r,hw,T0+2000);expect(h.thirst).toBe(30);
   stepHumans(r,hw,T0+2001);expect(h.thirst).toBe(55);expect(r.receipts.filter(e=>e.kind==='human.water')).toHaveLength(1);
   stepHumans(r,hw,T0+2001);expect(h.thirst).toBe(55);expect(water).toBeTruthy();
+ });
+ it('reads cached distant freshwater through live ice/expiry and pins map placement to the run',()=>{
+  const r=scene().run!,gx=1000,gy=1000,w=getWindowWorldForGlobalTile(gx,gy,4);
+  const i=w.world.fresh.findIndex(v=>v>0);expect(i).toBeGreaterThanOrEqual(0);
+  const x=w.win.originTx+i%200,y=w.win.originTy+Math.floor(i/200),gi=y*FRAME_W+x;
+  const base=globalBaseWaterCell(x,y,4);expect(base.fresh).toBe(true);expect(globalFreshWater(r,x,y,0)).toBe(true);
+  (r.veyraGlobalTerrain??={})[gi]={t:T.ICE,until:r.clock.simMs+1000};
+  expect(globalFreshWater(r,x,y,0)).toBe(false);r.clock.simMs+=1000;
+  expect(globalFreshWater(r,x,y,0)).toBe(true);expect(globalFreshWater(r,x,y,1)).toBe(false);
+  setVeyraPlacementRules(3);
+  expect(getWindowWorldForGlobalTile(gx,gy,4)).toBe(w);
+  expect(globalBaseWaterCell(x,y,4)).toEqual(base);setVeyraPlacementRules(4);
+ });
+ it('never caches mutable remote stock, terrain or entity obstruction as base geometry',()=>{
+  const r=scene().run!,w=getWindowWorldForGlobalTile(1000,1000,r.sourceMap?.rules===4?4:3),layer=w.floors.ground;
+  const i=layer.sources.findIndex((key,i)=>!!key&&key!=='wreck'&&!!SOURCES[key]?.block&&!!layer.walkable[i]&&!layer.solidProps[i]&&layer.tiles[i]!==T.PWALL);
+  expect(i).toBeGreaterThanOrEqual(0);const x=w.win.originTx+i%200,y=w.win.originTy+Math.floor(i/200),gi=y*FRAME_W+x;
+  const read=()=>globalCellTileAndClass(r,x,y,0,[],new Map());
+  expect(read().cls).toBe(2);
+  (r.veyraGlobalSources??={})[gi]={stock:0,hp:0};expect(read().cls).toBe(0);
+  r.veyraGlobalSources[gi].stock=1;expect(read().cls).toBe(2);
+  (r.veyraGlobalTerrain??={})[gi]={t:T.PWALL};expect(read().cls).toBe(1);
+  delete r.veyraGlobalTerrain[gi];expect(read().cls).toBe(2);
+  r.veyraGlobalSources[gi].stock=0;
+  expect(globalCellTileAndClass(r,x,y,0,[],new Map([[`0:${x},${y}`,3]])).cls).toBe(3);
+  expect(read().cls).toBe(0);
  });
  it('does not classify sea, ice, or an upstairs well icon as potable water',()=>{
   const r=scene().run!;expect(globalFreshWater(r,-1,-1,0)).toBe(false);expect(globalFreshWater(r,100,100,1)).toBe(false);
