@@ -25,7 +25,7 @@ const liveCustody = (custody: Record<string, { kind?: string; slots: ({ key: str
   const out = structuredClone(custody); let swapped = 0;
   for (const c of Object.values(out)) for (const st of c.slots) if (st && liveItemId(st.key) !== st.key) { st.qty = Math.ceil(st.qty * liveItemPer(st.key)); st.key = liveItemId(st.key); swapped++; }
   // a blueprint that teaches a retired formula now teaches its successor (Brick -> Glass): counted as one more exchange
-  for (const c of Object.values(out)) for (const st of c.slots) if (st?.key === 'blueprint' && st.meta && liveRecipeId(st.meta) !== st.meta) { st.meta = liveRecipeId(st.meta); swapped++; }
+  for (const c of Object.values(out)) for (const st of c.slots) if (st?.key === 'blueprint' && st.meta && liveRecipeId(st.meta) !== st.meta) { st.meta = liveRecipeId(st.meta) ?? undefined; swapped++; }
   // armour v3: the equipment container grew from 3 to 5 slots (legs, feet)
   for (const c of Object.values(out)) if (c.kind === 'eq') while (c.slots.length < EQ_SLOTS.length) c.slots.push(null);
   return { out, swapped };

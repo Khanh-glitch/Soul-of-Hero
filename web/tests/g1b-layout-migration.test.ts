@@ -15,7 +15,7 @@
  *   - reject foreign ids, a deliberately-missing old source, and a forged / future revision.
  */
 import { describe, expect, it } from 'vitest';
-import { WW, WH, TILE } from '../src/game/core';
+import { WW, WH, TILE, type Entity, type GameState } from '../src/game/core';
 import { newGame, startRun, mkContainer, mkStack, g1bEntities, markDirty } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
@@ -24,6 +24,12 @@ import { validate, serializeSnapshot } from '../src/game/persist';
 import { G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_FIXTURES, G1B_CHEST_SLOTS, G1B_LAYOUT_REVISION, g1bSeed } from '../src/game/g1b';
 import { G1B_BATCH2_ECOLOGY } from '../src/game/g1b-ecology-batch2.frozen';
 import { T0 } from './helpers/g1b-kit';
+
+function batch2Chest(gs: GameState) {
+  const chest = g1bEntities(gs.run!).find(e => e.g1b?.kind === 'chest' && BATCH2_IDS.has(e.g1b.sid));
+  if (!chest?.g1b || !chest.c) throw new Error('expected Batch-2 chest with custody');
+  return chest as Entity & { g1b: NonNullable<Entity['g1b']>; c: string };
+}
 
 const BATCH2_IDS = new Set<string>([
   ...G1B_BASE_SOURCE_SITES.map((q: any) => q.id),
@@ -47,19 +53,19 @@ function startAt(ax: number, ay: number, seed = 8801) {
 }
 
 /** Strip the 172 Batch-3-only chests from a current run and stamp it as a Batch-2 save. */
-function forgeBatch2Save(gs: any): any {
-  const r = gs.run;
-  const strip = (container: any) => {
+function forgeBatch2Save(gs: GameState): any {
+  const r = gs.run!;
+  const strip = (container: Record<string, Entity>) => {
     for (const [id, e] of Object.entries(container)) {
       const sid = e?.g1b?.sid;
       if (sid && !BATCH2_IDS.has(sid)) {
-        const c = r.custody[e.c]; if (c) { for (const s of c.slots) s && (s.qty = 0, delete s.key); }
-        delete container[id]; delete r.custody[e.c];
+        if (e.c) delete r.custody[e.c];
+        delete container[id];
       }
     }
   };
-  strip(r.entities); strip(r.g1b.far);
-  r.g1b.layout = 2;
+  strip(r.entities); strip(r.g1b!.far);
+  r.g1b!.layout = 2;
   return JSON.parse(JSON.stringify(gs));
 }
 
@@ -68,7 +74,7 @@ describe('G1B P0 — Batch-2 → Batch-3 layout migration', () => {
     const gs = startAt(921, 259);
     const r: any = gs.run!;
     // a partially-looted, opened chest with a pending refill, a Core in the pack, and a saved inventory
-    const chest = g1bEntities(r).find((e: any) => e.g1b!.sid && BATCH2_IDS.has(e.g1b.sid) && e.g1b.kind === 'chest')!;
+    const chest = batch2Chest(gs);
     chest.g1b.state = 'opened'; chest.g1b.cycle = 2; chest.g1b.roll = { rev: 'g1b-approved-v1', seed: g1bSeed(r.id, chest.g1b.sid, 2), at: T0 };
     const c = r.custody[chest.c]; c.slots[0] = mkStack(r, 'metal_pipe', 3);
     chest.g1b.refillAt = undefined;
@@ -118,7 +124,7 @@ describe('G1B P0 — Batch-2 → Batch-3 layout migration', () => {
   it('the migration is idempotent: re-loading the migrated save adds nothing and refreshes no chest', () => {
     const gs = startAt(921, 259);
     const r: any = gs.run!;
-    const chest = g1bEntities(r).find((e: any) => e.g1b!.sid && BATCH2_IDS.has(e.g1b.sid) && e.g1b.kind === 'chest')!;
+    const chest = batch2Chest(gs);
     chest.g1b.state = 'empty'; chest.g1b.cycle = 4; chest.g1b.refillAt = T0 + 72 * 3600_000;
     const forged = forgeBatch2Save(gs);
     const once = validate(JSON.parse(JSON.stringify(forged)));
@@ -155,12 +161,12 @@ describe('G1B P0 — Batch-2 → Batch-3 layout migration', () => {
     const r: any = gs.run!;
     // strip every non-round-1 chest and unstamp
     const round1 = new Set<string>([...G1B_BASE_SOURCE_SITES.map((q: any) => q.id), ...G1B_FIXTURES.map((q: any) => q.id)]);
-    const strip = (container: any) => { for (const [id, e] of Object.entries(container)) { if (e?.g1b?.sid && !round1.has(e.g1b.sid)) { delete r.custody[e.c]; delete container[id]; } } };
+    const strip = (container: Record<string, Entity>) => { for (const [id, e] of Object.entries<Entity>(container)) { if (e?.g1b?.sid && !round1.has(e.g1b.sid)) { if (e.c) delete r.custody[e.c]; delete container[id]; } } };
     strip(r.entities); strip(r.g1b.far); delete r.g1b.layout;
     const save = JSON.parse(JSON.stringify(gs));
     const migrated = validate(save);
     expect(migrated).not.toBeNull();
-    expect(migrated!.run.g1b.layout).toBe(G1B_LAYOUT_REVISION);
+    expect(migrated!.run!.g1b!.layout).toBe(G1B_LAYOUT_REVISION);
   }, 180000);
 
   it('a current (layout=3) save validates and persists without migration', () => {
@@ -170,6 +176,6 @@ describe('G1B P0 — Batch-2 → Batch-3 layout migration', () => {
     const snap = serializeSnapshot(JSON.parse(JSON.stringify(gs)));
     const loaded = validate(JSON.parse(JSON.parse(snap).payload));
     expect(loaded).not.toBeNull();
-    expect(loaded!.run.g1b.layout).toBe(G1B_LAYOUT_REVISION);
+    expect(loaded!.run!.g1b!.layout).toBe(G1B_LAYOUT_REVISION);
   }, 180000);
 });

@@ -9,7 +9,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { afterAll, describe, expect, it } from 'vitest';
 import { setActiveLayout } from '../src/game/world';
 import { buildQaSandbox, resetQaSandboxFlags } from '../src/game/qa-sandbox';
-import { ITEMS, STRUCTS, familyMembers } from '../src/game/catalog';
+import { ITEMS, STRUCTS, familyMembers, RECIPE_REVISION } from '../src/game/catalog';
 import { TILE } from '../src/game/core';
 import { recipesOfFamily } from '../src/game/engine';
 import { ContainerPanel } from '../src/ui/panels';
@@ -172,7 +172,7 @@ describe('PA1 P1: the shipped router reaches the technology-family ledger', () =
     // Same rows, other side of the rule: ownership must change the wording, and nothing may invent a
     // buy button while enforcement is unapproved (ledger: no family is withheld in this build).
     const { gs, r, table } = fixture();
-    r.tech = { ...(r.tech ?? { families: [] }), families: [...((r.tech?.families) ?? []), 'ENERGY'] };
+    r.tech = { ...(r.tech ?? { families: [], recipeRev: RECIPE_REVISION }), families: [...((r.tech?.families) ?? []), 'ENERGY'] };
     const html = renderStation(gs, table.id, 'families');
     const text = plain(html);
     // item set v3 retired three refinery formulas from this family (9 -> 6); the count is read from the registry

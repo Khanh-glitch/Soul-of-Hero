@@ -7,6 +7,7 @@
 // It never calls addItem/mkStack/mkContainer, never writes an entity, never edits terrain, never removes creatures.
 // It is an ENGINE-LEVEL bot, not a browser play-through: no rendering, no HUD, no human pacing. Every proof built on
 // it is labelled that way.
+import type { Mat } from '../../src/game/catalog';
 import { ITEMS, RECIPES, STRUCTS } from '../../src/game/catalog';
 import { TILE, WW, WH, type Entity, type GameState, type RunState } from '../../src/game/core';
 import { C, blockGrid, buildReason, countItem, dispatch, newGame, sourceAt, startRun } from '../../src/game/engine';
@@ -79,7 +80,7 @@ export class Bot {
   }
   weapon(): string { let best = 'knife', bd = 0; for (const s of C(this.r, 'inv').slots) if (s && (s.dur === undefined || s.dur > 0)) { const d = ITEMS[s.key].dmg ?? 0; if (d > bd && !ITEMS[s.key].ranged) { bd = d; best = s.key; } } return best; }
   /** G1A: a source with its own harvest table is struck with whatever carried tool that table rates highest. */
-  toolFor(def: { mat: string; harvestBy?: Record<string, number> }): string | null {
+  toolFor(def: { mat: Mat; harvestBy?: Record<string, number> }): string | null {
     if (!def.harvestBy) return this.bestTool(def.mat);
     // A player keeps an edge on the knife (it is also the weapon and what stone tools are re-cut with): below a fifth
     // of its life the bot stops spending it on salvage and falls back to a stone tool, which it can remake by hand.
@@ -91,7 +92,7 @@ export class Bot {
     }
     return best;
   }
-  bestTool(mat: string): string | null {
+  bestTool(mat: Mat): string | null {
     let best: string | null = null, bp = 0;
     for (const s of C(this.r, 'inv').slots) if (s && (s.dur === undefined || s.dur > 0)) { const pw = ITEMS[s.key].power?.[mat] ?? 0; if (pw > bp) { bp = pw; best = s.key; } }
     return best;

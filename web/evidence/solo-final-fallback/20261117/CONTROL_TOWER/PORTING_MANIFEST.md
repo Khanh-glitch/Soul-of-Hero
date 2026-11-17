@@ -8,3 +8,5 @@ Shared origin: e93982f87bd23805d300b464f05ccf23c04a32c0. NPC HEAD checked 2026-1
 | inherited 7d00481 | SAFE_COMMON candidate, `arch/sites.ts` Hook partition | x2599→2598, focused compiled/tick/door/reload proof PASS (2 tests) | Geometry only, no source ID or sourceMap digest edit intended | NPC still has original partition; focused Solo proof passes; NPC collision suite still required before port. |
 
 Replay procedure: fetch actual NPC HEAD; archive its source into ignored workspace (no branch switch), apply selected patch with `git apply --check`, add new focused tests, run NPC app typecheck and impacted tests. Re-check if NPC HEAD changes. Full HumanWorld custody/offscreen/save/visual tests required by integration owner before merge. Never cherry-pick entire Solo branch.
+
+Test-source gate follow-up (after 594d5cd): 14 test/helper files corrected, no production behavior edits. SAFE_COMMON test maintenance only, compare NPC's existing tests individually before selectively porting; NPC full test typecheck NOT certified by Solo pass. Solo full test typecheck and 13 impacted files /108 passed /1 skipped now pass. Does not change runtime integration patch above.

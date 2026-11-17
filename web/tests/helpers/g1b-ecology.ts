@@ -7,6 +7,7 @@
  *
  * The 130 round-1 sources keep their ids and tiles; they are counted against the space they physically stand in.
  */
+import type { Level } from '../../src/veyra05/arch/plan';
 import { T, WW, WH } from '../../src/game/core';
 import { getWindowWorld } from '../../src/veyra05/window';
 import { layoutIdAt } from '../../src/veyra05/scenes';
@@ -116,14 +117,14 @@ function openSite(cx: number, cy: number): Site | null {
       while (q.length) { const [ax, ay] = q.pop()!; comp.push(li(ax, ay)); for (const [dx, dy] of N4) { const nx = ax + dx, ny = ay + dy; if (!inb(nx, ny) || seenG[li(nx, ny)] || !pass(0, nx, ny) || isDoor(0, nx, ny)) continue; seenG[li(nx, ny)] = 1; q.push([nx, ny]); } }
       if (comp.length >= 800) for (const i of comp) best.push(i);   // every sizeable landmass in the window is open world (banks join by bridges beyond it)
     }
-    const seen = new Set<string>(); const q: [number, number, number][] = [];
+    const seen = new Set<string>(); const q: [Level, number, number][] = [];
     for (const i of best) { const x = (i % WW) + ox, y = ((i / WW) | 0) + oy; seen.add(`0:${x},${y}`); q.push([0, x, y]); }
     let head = 0;
     while (head < q.length) {
       const [lv, ax, ay] = q[head++];
       for (const [dx, dy] of N4) { const nx = ax + dx, ny = ay + dy, k = `${lv}:${nx},${ny}`; if (seen.has(k) || !pass(lv, nx, ny) || blocked?.has(k)) continue; seen.add(k); q.push([lv, nx, ny]); }
       for (const st of stairs) {
-        let to: [number, number, number] | null = null;
+        let to: [Level, number, number] | null = null;
         if (st.from === lv && st.x === ax && st.y === ay) to = [st.to, st.tx, st.ty]; else if (st.to === lv && st.tx === ax && st.ty === ay) to = [st.from, st.x, st.y];
         if (!to || !levels.includes(to[0]) || !inb(to[1], to[2])) continue; const k = `${to[0]}:${to[1]},${to[2]}`; if (seen.has(k) || blocked?.has(k)) continue; seen.add(k); q.push(to);
       }
@@ -255,7 +256,7 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
     // happens to overlap the road tile; a base source that falls outside every room's cells (an open yard / forecourt
     // not authored as a room) is attributed to the nearest reachable space so the census owns it exactly once.
     // Only base sources whose site is THIS poi are considered here (a base source belongs to exactly one site).
-    const unmatchedBase: typeof BASE = [];
+    const unmatchedBase: (typeof BASE)[number][] = [];
     for (const b of BASE) {
       if (b.site !== poi) continue;
       const row = rows.find(q => q.level === 0 && (q as any)._cells.some((p: number[]) => p[0] === b.gx && p[1] === b.gy));
@@ -327,7 +328,7 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
         const apr = N4.map(([dx, dy]) => [x + dx, y + dy] as [number, number]).find(([ax, ay]) => reachAll.has(`${lv}:${ax},${ay}`) && s.pass(lv, ax, ay) && !taken.has(`${lv}:${ax},${ay}`)); if (!apr) continue;
         cand.push([x, y, (north ? 0 : side ? 1 : 2) + ((north && side) ? -0.5 : 0) + u01(`${row.id}|${x},${y}`) * 0.4, apr]);
       }
-      const mine: [number, number][] = row.base.map(id => { const b = BASE.find(q => q.id === id)!; return [b.gx, b.gy]; });
+      const mine: [number, number][] = row.base.map(id => { const b = BASE.find(q => q.id === id)!; return [b.gx, b.gy] as [number, number]; });
       for (let k = 0; k < need; k++) {
         const ok = cand.filter(([x, y]) => !taken.has(`${lv}:${x},${y}`) && all.every(o => o.lv !== lv || Math.max(Math.abs(o.gx - x), Math.abs(o.gy - y)) >= 3));
         if (!ok.length) { R.push(`no free wall tile for chest ${row.base.length + k + 1} without moving furniture: left out`); break; }
@@ -392,7 +393,7 @@ export function buildEcology(log: (s: string) => void = () => {}): Ecology {
       const score = Math.min(6, row.danger + row.access);
       const grade = gradeOf(family, score, WRECKED.test(row.name) || WRECKED.test(row.poiName));
       row.family = row.family ?? family; row.grade = row.grade ?? grade;
-      const mine: [number, number][] = row.base.map(id => { const b = BASE.find(q => q.id === id)!; return [b.gx, b.gy]; })
+      const mine: [number, number][] = row.base.map(id => { const b = BASE.find(q => q.id === id)!; return [b.gx, b.gy] as [number, number]; })
         .concat(row.added.map(id => sources.find(q => q.id === id)!).map(q => [q.gx, q.gy] as [number, number]));
       for (let k = 0; k < need2; k++) {
         const ok = cands.filter(([x, y]) => !taken.has(`${lv}:${x},${y}`) && all.every(o => o.lv !== lv || Math.max(Math.abs(o.gx - x), Math.abs(o.gy - y)) >= 3));
