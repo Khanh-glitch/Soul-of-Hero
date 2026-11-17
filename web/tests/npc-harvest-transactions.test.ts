@@ -53,8 +53,9 @@ it('delivered food is subsequently debited by biological hunger consumption, not
 });
 it('appends multi-worker multi-source receiving UID history across partial retries, consumption and reload',()=>{
  let {gs,r,hw,h,comm,store,s}=delivery();let dst=C(r,store.c!);const receiving=mkStack(r,s.key,ITEMS[s.key].max-1);dst.slots=[receiving];
+ s.production={jobId:'hj1',workerId:h.actorId};
  const firstUid=s.uid;depositHumanOutputs(r,h,T0); // one admitted; two remain
- receiving.qty--; // canonical warehouse consumption delta (no delivery history removal)
+ h.hunger=0;expect(humanConsume(r,hw,h,'food',T0)).toBe(true); // real biological debit of warehouse UID; owned cargo is ineligible
  depositHumanOutputs(r,h,T0); // same timestamp is a legitimate second delta after new capacity
  expect(Object.values(comm.cargoLedger!).flat().reduce((n,l)=>n+l.qty,0)).toBe(2);
  const loaded=validate(JSON.parse(JSON.stringify(gs)));expect(loaded).not.toBeNull();gs=loaded!;r=gs.run!;hw=r.humanWorld!;h=hw.people[h.actorId];comm=hw.communities[h.community!];dst=C(r,store.c!);
