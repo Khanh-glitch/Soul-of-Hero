@@ -15,7 +15,7 @@ describe('causal human biology and transaction-scoped housing (fixtures)',()=>{
   for(const [dx,dy]of [[0,0],[1,0],[-1,0],[0,1],[0,-1],[2,0]])r.terrain[(y+dy)*WW+x+dx]={t:T.MEADOW};
   r.entities['fixture-roof']={id:'fixture-roof',kind:'struct',type:'roof_thatch',tx:x,ty:y,x:x*TILE+8,y:y*TILE+8};
   for(const [dx,dy]of [[-1,0],[0,1],[0,-1]]){const id=`wall:${dx}:${dy}`;r.entities[id]={id,kind:'struct',type:'wall_wood',tx:x+dx,ty:y+dy,x:(x+dx)*TILE+8,y:(y+dy)*TILE+8};}
-  const door=r.entities['fixture-door']={id:'fixture-door',kind:'struct' as const,type:'door_wood',tx:x+1,ty:y,x:(x+1)*TILE+8,y:y*TILE+8,open:false};
+  const door=r.entities['fixture-door']={id:'fixture-door',kind:'struct' as const,type:'door_wood',tx:x+1,ty:y,x:(x+1)*TILE+8,y:y*TILE+8,open:false as boolean};
   const read=()=>humanShelter(r,o[0]*2+x,o[1]*2+y,0,humanShelterContext(r));
   expect(read()).toBe(true);const first=humanShelterContext(r);expect(humanShelterContext(r).results).toBe(first.results);
   door.open=true;expect(read()).toBe(false);expect(read()).toBe(roofRoom(r,(x+.5)*TILE,(y+.5)*TILE,true).enclosed);

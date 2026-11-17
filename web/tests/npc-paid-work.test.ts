@@ -94,3 +94,29 @@ it('recovered paid job physically fetches fuel without paying recipe inputs twic
  h.intent={intentId:'lost-station',actorId:h.actorId,kind:'work',preconditions:[],reserved:[],startAt:T0,dueAt:T0,work:{kind:'cook',phase:'act',entityId:e.id,inputs:[],duration:1,recipe:'jam'}};h.state='WORKING';e.hp=0;
  expect(executeHumanWork(r,hw,h,T0+45000).done).toBe(false);expect(h.state).toBe('IDLE');expect(h.intent).toBeUndefined();
 });
+
+it('missing or claimed recipe inputs and two cooks competing for one bill never double debit across reload',()=>{
+ setActiveLayout('veyra05-greywater');let gs=newGame();expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(true);
+ let r=gs.run!;const hw=r.humanWorld!,h=Object.values(hw.people).find(h=>h.occupation==='cook')!,comm=hw.communities[h.community!];
+ const stationId=comm.workStations.find(id=>findRunEntity(r,id)?.type==='campfire')!;
+ let e=findRunEntity(r,stationId)!;
+ // Explicit transaction fixture, not natural supply: one canonical jam bill.
+ const cid=h.inv.packId;C(r,cid).slots.fill(null);C(r,e.station!.outC).slots.fill(null);
+ addItem(r,cid,'berries',10);addItem(r,cid,'cloth',1);
+ const missing=JSON.stringify([C(r,cid),e.station]);
+ expect(queuePaidRecipe(r,e,cid,'jam',h.actorId,T0).ok).toBe(false);
+ expect(JSON.stringify([C(r,cid),e.station])).toBe(missing);
+ addItem(r,cid,'tin_can',1);const tin=C(r,cid).slots.find(s=>s?.key==='tin_can')!;
+ tin.production={jobId:'fixture-existing-claim',workerId:'another-worker'};
+ const claimed=JSON.stringify([C(r,cid),e.station]);
+ expect(queuePaidRecipe(r,e,cid,'jam',h.actorId,T0+1).ok).toBe(false);
+ expect(JSON.stringify([C(r,cid),e.station])).toBe(claimed);delete tin.production;
+ const uid=tin.uid,first=queuePaidRecipe(r,e,cid,'jam',h.actorId,T0+2);expect(first.ok).toBe(true);
+ expect(e.station!.queue).toHaveLength(1);expect(e.station!.queue[0].inputProvenance?.find(s=>s.key==='tin_can')).toMatchObject({uid,qty:1,containerId:cid});
+ gs=validate(JSON.parse(JSON.stringify(gs)))!;expect(gs).toBeTruthy();r=gs.run!;e=findRunEntity(r,stationId)!;
+ const once=JSON.stringify([C(r,cid),e.station]);
+ expect(queuePaidRecipe(r,e,cid,'jam','second-cook',T0+3).ok).toBe(false);
+ expect(queuePaidRecipe(r,e,cid,'jam',h.actorId,T0+3).ok).toBe(false);
+ expect(JSON.stringify([C(r,cid),e.station])).toBe(once);
+ expect(e.station!.queue[0].id).toBe(first.jobId);
+});

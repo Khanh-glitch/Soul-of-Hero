@@ -1786,6 +1786,9 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   for(const p of candidates){
     if(Object.values(hw.people).some(other=>other.actorId!==h.actorId&&other.harvestJob?.phase==='source'&&other.harvestJob.gx===p.gx&&other.harvestJob.gy===p.gy&&other.harvestJob.floor===h.floor&&!['DEAD','EVACUATED','DOWNED'].includes(other.state)))continue;
     const s=globalSourceAt(r,p.gx,p.gy,h.floor,now);if(!s||s.protected||s.stock<=0||!canHarvestSource(h,s))continue;
+    // Carry admission is immediate; warehouse admission is checked at physical
+    // delivery. A full warehouse must retain/wait on real cargo, not prevent
+    // otherwise legal professional source work before any output exists.
     if(!simulateHumanOutput(pack.slots.map(v=>v?{...v}:null),s.def.yields,{jobId:'admission',workerId:h.actorId}))continue;
     h.harvestJob={id:uid(r,'hj'),sourceId:s.sourceId,gx:p.gx,gy:p.gy,floor:h.floor,key:s.key,phase:'source',startedAt:now};
     receipt(r,now,'human.harvest.select',`${h.harvestJob.id}:${h.actorId}:${s.sourceId}:${s.key}`);
