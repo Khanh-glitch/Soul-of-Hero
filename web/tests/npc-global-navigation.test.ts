@@ -52,9 +52,14 @@ describe('global human route and source execution (engineering fixtures, not bro
   expect(humanNavigation(r).route(h,target,0)).toBeNull();expect(h.routeSearch?.status).toBe('NO_PATH');
   const before=h.routeSearch?.expanded;r.clock.lastSimAt+=1000;
   humanNavigation(r).route(h,target,0);expect(h.routeSearch?.expanded).toBe(before);expect(h.routeSearch?.status).toBe('NO_PATH');
-  // A real mutable door delta invalidates derived failures even without markDirty.
+  // Equivalent access may reuse the exhausted component, not just an actor ID.
+  const peer:typeof h={...h,actorId:`${h.actorId}:component-peer`,routeSearch:undefined};
+  humanNavigation(r).route(peer,target,0);expect(peer.routeSearch?.status).toBe('NO_PATH');
+  const outsider:typeof h={...peer,community:'different-access',actorId:`${peer.actorId}:other`,routeSearch:undefined};
+  humanNavigation(r).route(outsider,target,0);expect(outsider.routeSearch?.status).toBe('PENDING_SEARCH');
+  // Updated P0 law: an unrelated ground door does NOT invalidate a floor3 failure.
   (r.veyraGlobalDoors??={})[h.gy*FRAME_W+h.gx]=true;
-  humanNavigation(r).route(h,target,0);expect(h.routeSearch?.status).toBe('PENDING_SEARCH');
+  humanNavigation(r).route(h,target,0);expect(h.routeSearch?.status).toBe('NO_PATH');
  });
  it('crosses only a real authored stair edge; a forged floor hop fails',()=>{
   const r=scene().run!,hw=r.humanWorld!,h=Object.values(hw.people)[0],nav=humanNavigation(r);

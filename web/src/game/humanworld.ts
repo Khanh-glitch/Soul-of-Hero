@@ -1,3 +1,4 @@
+import {countWorldWork} from './world-work';
 /**
  * Soul of Hero — THE LAST HUMANITY: authoritative run-local human society.
  *
@@ -1529,32 +1530,12 @@ function faceHumanToward(h: HumanRecord, gx: number, gy: number): void {
   h.dir = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 1 : 2) : (dy < 0 ? 3 : 0);
 }
 function humanRouteToAdjacent(r: RunState, h: HumanRecord, targetGx: number, targetGy: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>, targetFloor = h.floor): { tx: number; ty: number; floor: number }[] | null {
-  const floor = r.veyraFloor ?? 0;
-  const sx = h.gx - ox, sy = h.gy - oy, tx = targetGx - ox, ty = targetGy - oy;
-  if (h.floor !== floor || targetFloor !== floor || sx < 0 || sy < 0 || tx < 0 || ty < 0 || sx >= WW || tx >= WW || sy >= WH || ty >= WH)
-    return humanNavigation(r,occupied).route(h,{tx:targetGx,ty:targetGy,floor:targetFloor});
-  if (sx < 0 || sy < 0 || tx < 0 || ty < 0 || sx >= WW || tx >= WW || sy >= WH || ty >= WH) return null;
-  const size = WW * WH, parent = new Int32Array(size); parent.fill(-2);
-  const queue = new Int32Array(size); let head = 0, tail = 0;
-  const start = sy * WW + sx; parent[start] = -1; queue[tail++] = start;
-  let goal = -1;
-  while (head < tail) {
-    const at = queue[head++], x = at % WW, y = Math.floor(at / WW);
-    if (Math.abs(x - tx) + Math.abs(y - ty) <= 1) { goal = at; break; }
-    for (const [dx, dy] of [[0,-1],[1,0],[0,1],[-1,0]] as const) {
-      const nx = x + dx, ny = y + dy;
-      if (nx < 1 || ny < 1 || nx >= WW - 1 || ny >= WH - 1) continue;
-      const ni = ny * WW + nx;
-      if (parent[ni] !== -2 || !(grid[ni] === 0 || grid[ni] === 4) || occupied.has(humanCellKey(floor, ox + nx, oy + ny))) continue;
-      parent[ni] = at; queue[tail++] = ni;
-    }
-  }
-  if (goal < 0 || goal === start) return goal === start ? [] : humanNavigation(r,occupied).route(h,{tx:targetGx,ty:targetGy,floor:targetFloor});
-  const path: number[] = [];
-  for (let at = goal; at !== start; at = parent[at]) path.push(at);
-  path.reverse();
-  return path.map(i => ({ tx: ox + i % WW, ty: oy + Math.floor(i / WW), floor }));
+  // Camera placement must not select a second, unbounded 40,000-cell BFS.
+  // Use the same resumable physical search, access rules and component proofs
+  // for local workers as for archived workers. Bodies are admitted at execution.
+  return humanNavigation(r,occupied).route(h,{tx:targetGx,ty:targetGy,floor:targetFloor});
 }
+
 function companionRoute(r: RunState, h: HumanRecord, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): { tx: number; ty: number; floor: number }[] | null {
   const floor = r.veyraFloor ?? 0;
   if (h.floor !== floor || h.gx < ox || h.gy < oy || h.gx >= ox+WW || h.gy >= oy+WH) return humanNavigation(r,occupied).route(h,{tx:ox+Math.floor(r.player.x/TILE),ty:oy+Math.floor(r.player.y/TILE),floor});
@@ -1810,6 +1791,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
     h.intent={intentId:`defend:${h.actorId}:${now}`,actorId:h.actorId,kind:'fight',target:enemy.id,preconditions:['direct sight of nearby threat'],reserved:[],startAt:now,dueAt:now};h.state='FIGHTING';
   }
   if (wantsPlan) withHumanNavigationRead(r,()=>{
+    countWorldWork('plannerActivations');
     const protectedTiles = plannerSources(r);
     let cursor = (hw.plannerCursor ?? 0) % Math.max(1, actors.length), planned = 0, distantPlanned=0;
     const startCursor=cursor;let deferredCursor:number|undefined;
@@ -1819,6 +1801,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
         const distant=h.floor!==(r.veyraFloor??0)||h.gx<ox||h.gy<oy||h.gx>=ox+WW||h.gy>=oy+WH;
         if(distant&&distantPlanned>=1){deferredCursor??=i;continue;}
         if(distant)distantPlanned++;
+        countWorldWork('actorPlans');
         h.routeSearch=undefined;
         planAutonomousWork(r, hw, h, now, grid, ox, oy, occupied, protectedTiles);
         finishHumanPlanReview(h,now);

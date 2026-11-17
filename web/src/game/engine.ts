@@ -1,3 +1,4 @@
+import {countWorldWork} from './world-work';
 import { landingStimulus } from './stimulus';
 import { VFX_TEST_KIT, VFX_TEST_CORES } from './vfx/testkit';
 import { G1B_VERSION, G1B_LOOT_REVISION, G1B_CHEST_SLOTS, G1B_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, G1B_GATES, G1B_SITES, G1B_FIXTURE_BY_ID, g1bGateAtDoor, g1bRoll, g1bRefreshHours, g1bChestName, CORE_V2, CORE_SPECS, CORE_REPAIR_BILL, coreAmmo, coreLevel, coreDur, type CoreMode, type G1bGate } from './g1b';
@@ -26,7 +27,7 @@ import { U05_WORLD_LAYOUT_ID, isVeyra05Layout, layoutIdAt } from '../veyra05/sce
 import { globalWindowOrigins, unverifiedOffshoreExcluded } from '../veyra05/global-start-discovery';
 import { localSpawnScreen } from '../veyra05/global-spawn-eligibility';
 import { FRAME_W, FRAME_H, globalIndex } from '../veyra05/frame';
-import { globalBaseGeometry, globalBaseWaterCell, getWindowWorld, getWindowWorldForGlobalTile, resetWindowToGround, setVeyraPlacementRules, syncVeyraPlacement } from '../veyra05/window';
+import { globalBaseGeometry, globalBaseWaterCell, getWindowWorld, resetWindowToGround, setVeyraPlacementRules, syncVeyraPlacement } from '../veyra05/window';
 import { activeFloor, applyFloor, authoredGlobalStatic, authoredPlan, onActiveFloor, syncDepletedLootToGlobal } from '../veyra05/floors';
 import { windowOrigin } from '../veyra05/continuity';
 import {
@@ -3561,6 +3562,7 @@ export function withRunEntityRead<T>(r:RunState,read:()=>T):T {
 const entityViews = new WeakMap<RunState,{live:Entity[];off:Entity[];ids:string[];sorted:Entity[]}>();
 export function allRunEntities(r: RunState): Entity[] {
   const scoped=scopedEntityViews.get(r);if(scoped)return scoped.slice();
+  countWorldWork('entityScans');
   const live=Object.values(r.entities),off=Object.values(r.veyraOffscreenEntities??{});
   if(!off.length)return live;
   const previous=entityViews.get(r);
@@ -3671,23 +3673,14 @@ function resolveGardenMapCell(r: RunState, e: Entity): {
       effTileVal,
     };
   }
-  const cww = getWindowWorldForGlobalTile(gtx, gty,r.sourceMap?.rules===4?4:3);
-  const cx = clamp(gtx - cww.win.originTx, 0, WW - 1), cy = clamp(gty - cww.win.originTy, 0, WH - 1);
-  const ci = cy * WW + cx, m = cww.world.economyMap;
-  const layer = fl === 0 ? cww.floors.ground : (cww.floors.layers.get(fl as -1 | 0 | 1 | 2) ?? cww.floors.ground);
-  const baseTile = layer.tiles[ci];
-  const gi = globalIndex(gtx, gty);
-  const tm = fl === 0 ? r.veyraGlobalTerrain?.[gi] : undefined;
-  const effTileVal = tm && (!tm.until || tm.until > r.clock.simMs) ? tm.t : baseTile;
-  return {
-    cacheKey: `veyra-g|${gi}`,
-    biome: m.biome[ci],
-    mapTemperature: m.temperature[ci],
-    mapMoisture: m.moisture[ci],
-    slope: m.slope[ci],
-    baseTile,
-    effTileVal,
-  };
+  const rules=r.sourceMap?.rules===4?4:3;
+  // Exact same canonical climate/floor arrays as the onscreen compiler. Never
+  // churn the 16-view render cache once per archived farm per movement slice.
+  const c=globalBaseGeometry(gtx,gty,fl,rules)??globalBaseGeometry(gtx,gty,0,rules);
+  if(!c)throw new Error('No walkable terrain for archived garden');
+  const gi=globalIndex(gtx,gty),tm=fl===0?r.veyraGlobalTerrain?.[gi]:undefined;
+  return {cacheKey:`veyra-g|${gi}`,biome:c.biome,mapTemperature:c.temperature,mapMoisture:c.moisture,slope:c.slope,baseTile:c.tile,
+    effTileVal:tm&&(!tm.until||tm.until>r.clock.simMs)?tm.t:c.tile};
 }
 
 export function buildEntityBlockMap(r: RunState, entities: Entity[]): Map<string, number> {

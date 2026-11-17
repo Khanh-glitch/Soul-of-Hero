@@ -18,11 +18,20 @@ function indexPlans() {
   }
 }
 /** Short-lived read context; create once per needs transaction, never across world mutation. */
-export interface HumanShelterContext { results:Map<string,boolean>;liveDoors:Map<string,boolean> }
+export interface HumanShelterContext { results:Map<string,boolean>;remoteResults?:Map<string,boolean>;liveDoors:Map<string,boolean> }
+// Archived enclosure queries depend on authored roofs and physical door/terrain
+// deltas, NOT actor needs, stock quantities or planner timestamps. Local rooms
+// deliberately retain their transaction lifetime (player construction is live).
+const archivedEnclosures=new WeakMap<RunState,{physical:string;results:Map<string,boolean>}>();
+const layerDoors=new WeakMap<CompiledLevel,Map<number,CompiledLevel['doors'][number]>>();
 export function humanShelterContext(r:RunState):HumanShelterContext {
   const liveDoors=new Map<string,boolean>();
   for(const e of Object.values(r.entities))if(e.kind==='door')liveDoors.set(`${e.floor??0}:${e.tx},${e.ty}`,!!e.open);
-  return {results:new Map(),liveDoors};
+  const physical=JSON.stringify([r.layoutId,r.veyraFloor,r.sourceMap?.veyra?.originAu,[...liveDoors],r.veyraGlobalDoors,
+    Object.entries(r.veyraGlobalFloorState??{}).map(([floor,state])=>[floor,state.doors]),
+    Object.entries(r.veyraFloorState??{}).map(([floor,state])=>[floor,state.doors]),r.veyraGlobalTerrain]);
+  let memo=archivedEnclosures.get(r);if(memo?.physical!==physical){memo={physical,results:new Map()};archivedEnclosures.set(r,memo);}
+  return {results:new Map(),remoteResults:memo.results,liveDoors};
 }
 export function humanShelter(r: RunState, gx: number, gy: number, floor: number, context?:HumanShelterContext): boolean {
   const o = r.sourceMap?.veyra?.originAu;
@@ -40,7 +49,8 @@ export function humanShelter(r: RunState, gx: number, gy: number, floor: number,
   if (!o) return false;
   indexPlans();
   const start = gy * FRAME_W + gx, cacheKey=`${floor}:${start}`;
-  const cached=context?.results.get(cacheKey);if(cached!==undefined)return cached;
+  const results=context?.remoteResults??context?.results;
+  const cached=results?.get(cacheKey);if(cached!==undefined)return cached;
   const p = plansByCell.get(cacheKey);
   const layer = p?.levels.get(floor as Level); if (!layer) return false;
   let roof = layerRoofs.get(layer);
@@ -52,7 +62,7 @@ export function humanShelter(r: RunState, gx: number, gy: number, floor: number,
   }
   if (!roof.has(start)) return false;
   // Archived floor/door deltas take precedence over authored default-closed doors.
-  const doors = new Map(layer.doors.map(d => [d.y * FRAME_W + d.x, d]));
+  let doors=layerDoors.get(layer);if(!doors){doors=new Map(layer.doors.map(d=>[d.y*FRAME_W+d.x,d]));layerDoors.set(layer,doors);}
   const liveDoors = context?.liveDoors ?? humanShelterContext(r).liveDoors;
   const doorOpen = (k: number): boolean => {
     const x = k % FRAME_W, y = Math.floor(k / FRAME_W), tx = x - ox, ty = y - oy;
@@ -64,7 +74,7 @@ export function humanShelter(r: RunState, gx: number, gy: number, floor: number,
     return global ?? false;
   };
   const seen = new Set([start]), queue = [start];
-  const result=(enclosed:boolean)=>{if(context)for(const cell of seen)context.results.set(`${floor}:${cell}`,enclosed);return enclosed;};
+  const result=(enclosed:boolean)=>{if(results)for(const cell of seen)results.set(`${floor}:${cell}`,enclosed);return enclosed;};
   for (let i = 0; i < queue.length; i++) {
     const k = queue[i];
     for (const next of [k - 1, k + 1, k - FRAME_W, k + FRAME_W]) {

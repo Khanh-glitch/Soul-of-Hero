@@ -448,7 +448,8 @@ export function authoredGlobalStatic(poi: string, kind: StaticEnt['kind']): [num
 }
 
 /** Build every floor layer for one window from the authored plans it contains. */
-export function buildFloorStack(ww: WindowWorld): FloorStack {
+export type FloorGeometryInput = Pick<WindowWorld,'win'|'poiIds'|'landmarks'> & {world:Pick<World,'tiles'|'zone'|'economyMap'|'sourceV3'|'buildings'|'statics'>};
+export function buildFloorStack(ww: FloorGeometryInput): FloorStack {
   const { win, world } = ww;
   const base = world;
   const plans = ww.poiIds.map(authoredPlan).filter((p): p is CompiledPlan => !!p);
