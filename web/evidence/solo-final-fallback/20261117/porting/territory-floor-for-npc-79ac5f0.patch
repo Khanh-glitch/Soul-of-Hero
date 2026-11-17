@@ -1,0 +1,28 @@
+diff --git a/web/src/game/engine.ts b/web/src/game/engine.ts
+index 4ba0866..93529af 100644
+--- a/web/src/game/engine.ts
++++ b/web/src/game/engine.ts
+@@ -645,8 +645,11 @@ export function claimAt(r: RunState, tx: number, ty: number) {
+ }
+ /** Synchronize legacy ownership hints with the same geometric coverage authority. */
+ export function refreshTerritoryLinks(r:RunState) {
++  // Ownership hints describe the structure's own floor, not the player's current
++  // view. Use exactly the same global/floor assignment as upkeep and decay.
++  const plan=planTerritory(r);
+   for(const e of Object.values(r.entities)) if(e.kind==='struct' && owned(e) && e.tx!==undefined && e.ty!==undefined) {
+-    const c=claimAt(r,e.tx,e.ty); if(c && c.id!==e.id)e.claim=c.id; else delete e.claim;
++    const c=plan.assigned.get(e.id); if(c && c.id!==e.id)e.claim=c.id; else delete e.claim;
+   }
+ }
+ /** Add empty storage to existing totems without moving a single old stack. */
+@@ -2793,8 +2796,9 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
+     }
+     case 'cabinetRepair': {
+       const c=r.entities[it.eid]; if(!c || !cabinetSupported(r,c) || !c.c || !near(r,c,2.2) || !clearInteraction(r,c))return fail('Use your supported cabinet within reach.');
++      const plan=planTerritory(r);
+       let repaired=0; for(const e of Object.values(r.entities).sort((a,b)=>a.id.localeCompare(b.id))) {
+-        if(e.kind!=='struct'||!owned(e)||!e.hp||!e.maxHp||e.hp>=e.maxHp||STRUCTS[e.type!]?.item||claimAt(r,e.tx!,e.ty!)?.id!==c.id)continue;
++        if(e.kind!=='struct'||!owned(e)||!e.hp||!e.maxHp||e.hp>=e.maxHp||STRUCTS[e.type!]?.item||plan.assigned.get(e.id)?.id!==c.id)continue;
+         const cost=structureRepairCost(e);if(!cost.length||!hasAll(r,c.c,cost))continue;
+         for(const [k,q] of cost)removeItem(r,c.c,k,q);const before=e.hp;e.hp=Math.min(e.maxHp,e.hp+Math.ceil(e.maxHp/4));repaired++;receipt(r,now,'territory.repair',`${e.id}:${before}->${e.hp}:${cost.map(([k,q])=>`${k}x${q}`).join(',')}`);
+       }

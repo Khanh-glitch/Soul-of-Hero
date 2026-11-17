@@ -41,7 +41,7 @@ try{
   },epoch);await boot.close();
   // ABBA order; same app/modules, only historical eager atlas encoding is reconstructed for B.
   for(const [index,variant]of (process.env.SOH_PERF_VARIANTS?.split(',')||['current','eager-atlas-only','eager-atlas-only','current']).entries()){
-    if(!['current','eager-atlas-only','procedural-cached-ui','procedural-png-ui','procedural-readback','procedural-software-copy','legacy-procedural-encode'].includes(variant))throw Error('Unknown variant '+variant);
+    if(!['current','eager-atlas-only','procedural-cached-ui','procedural-png-ui','procedural-readback','procedural-software-copy','legacy-procedural-encode','baked-drawn-ui'].includes(variant))throw Error('Unknown variant '+variant);
     const ctx=await browser.newContext({viewport:{width:640,height:360},deviceScaleFactor:1}),page=await ctx.newPage(),errors=[],resources=[];
     page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)resources.push({url:r.url(),status:r.status()});});
     await page.addInitScript(({snapshot,epoch,light})=>{
@@ -88,6 +88,11 @@ try{
     if(['procedural-cached-ui','procedural-png-ui'].includes(variant))await page.route(/\/src\/ui\/common\.tsx(?:\?.*)?$/,async route=>{
       const res=await route.fetch();let text=await res.text();const target='c.toDataURL()';if(!text.includes(target))throw Error('drawnIconUrl changed');
       if(!text.includes('import { getArt }'))throw Error('getArt import changed');text=text.replace('import { getArt }','import { getArt, __profileSpriteURL }').replace(target,'__profileSpriteURL(c)');await route.fulfill({response:res,body:text});
+    });
+    if(variant==='baked-drawn-ui')await page.route(/\/src\/ui\/common\.tsx(?:\?.*)?$/,async route=>{
+      const res=await route.fetch();let text=await res.text();const target='c.toDataURL()';if(!text.includes(target))throw Error('drawnIconUrl changed');
+      text='import __baked from "/e2e/support/drawn-icons-experiment.json";\n'+text.replace(target,'(__baked.icons[key]?.url || c.toDataURL())');
+      await route.fulfill({response:res,body:text});
     });
     const cdp=await ctx.newCDPSession(page);if(!light){await cdp.send('Profiler.enable');await cdp.send('Profiler.setSamplingInterval',{interval:1000});}
     const started=Date.now();await page.goto(base,{waitUntil:'domcontentloaded',timeout:120000});
