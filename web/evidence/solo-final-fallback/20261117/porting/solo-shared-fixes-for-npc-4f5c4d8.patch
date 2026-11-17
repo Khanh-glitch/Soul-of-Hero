@@ -1,0 +1,590 @@
+diff --git a/web/src/game/item-atlas.ts b/web/src/game/item-atlas.ts
+--- a/web/src/game/item-atlas.ts
++++ b/web/src/game/item-atlas.ts
+@@ -13,36 +13,60 @@
+ export const hasApprovedIcon = (key: string): boolean => Object.prototype.hasOwnProperty.call(ITEM_ATLAS.frames, key);
+ export const ITEMS_WITHOUT_APPROVED_ICON: readonly string[] = Object.keys(ITEMS).filter(k => !hasApprovedIcon(k)).sort();
+ 
+-const urls: Record<string, string> = {};
++const urls: Record<string, string> = Object.create(null);
+ /** The decoded 32×32 cell canvases (the world renderer draws these; the UI uses the data URLs). */
+-const cells: Record<string, HTMLCanvasElement> = {};
++let cells: Record<string, HTMLCanvasElement> = Object.create(null);
++let pending: Promise<boolean> | null = null;
+ let state: 'idle' | 'loading' | 'ready' | 'failed' = 'idle';
+ export const itemAtlasState = () => state;
+ /** Data URL of the untouched 32×32 cell, or '' while the atlas is not decoded / for an id outside the 157. */
+-export const atlasIconUrl = (key: string): string => urls[key] || '';
++export const atlasIconUrl = (key: string): string => {
++  if (key in urls) return urls[key];
++  const c = cells[key];
++  if (!c) return '';
++  const url = c.toDataURL('image/png');
++  urls[key] = url;
++  return url;
++};
+ /** Decoded 32×32 cell for the canvas renderer, or null while the atlas is not ready / for an id outside the 157. */
+ export const atlasIconCell = (key: string): HTMLCanvasElement | null => cells[key] || null;
+ 
+ export function loadItemAtlas(timeoutMs = 6000): Promise<boolean> {
+   if (state === 'ready') return Promise.resolve(true);
+   if (typeof Image === 'undefined' || typeof document === 'undefined') { state = 'failed'; return Promise.resolve(false); }
++  // One decode/crop job for all callers. A failed attempt can be retried, but a
++  // timed-out image must never publish cells or settle a later attempt.
++  if (pending) return pending;
+   state = 'loading';
+-  return new Promise<boolean>(resolve => {
+-    const done = (ok: boolean) => { if (state !== 'loading') return; state = ok ? 'ready' : 'failed'; if (!ok) console.warn('[soh] 157-item atlas unavailable: drawn icons are shown'); resolve(ok); };
++  pending = new Promise<boolean>(resolve => {
+     const img = new Image();
++    let finished = false;
++    const done = (ok: boolean) => {
++      if (finished) return;
++      finished = true;
++      clearTimeout(timer);
++      img.onload = null; img.onerror = null;
++      state = ok ? 'ready' : 'failed';
++      if (!ok) console.warn('[soh] 157-item atlas unavailable: drawn icons are shown');
++      resolve(ok);
++    };
++    const timer = setTimeout(() => done(false), timeoutMs);
+     img.onload = () => {
++      if (finished) return;
+       try {
+         if (img.naturalWidth !== ITEM_ATLAS.width || img.naturalHeight !== ITEM_ATLAS.height) return done(false);
++        const next: Record<string, HTMLCanvasElement> = Object.create(null);
+         for (const [key, f] of Object.entries(ITEM_ATLAS.frames)) {
+           const c = document.createElement('canvas'); c.width = f.w; c.height = f.h;
+-          const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; g.drawImage(img, f.x, f.y, f.w, f.h, 0, 0, f.w, f.h);
+-          urls[key] = c.toDataURL('image/png'); cells[key] = c;
++          const g = c.getContext('2d', { willReadFrequently: true })!; g.imageSmoothingEnabled = false; g.drawImage(img, f.x, f.y, f.w, f.h, 0, 0, f.w, f.h);
++          next[key] = c;
+         }
++        cells = next;
+         done(true);
+       } catch { done(false); }
+     };
+     img.onerror = () => done(false);
+-    setTimeout(() => done(false), timeoutMs);
+     img.src = `${import.meta.env.BASE_URL}${ITEM_ATLAS.image.replace(/^\//, '')}`;
+-  });
++  }).finally(() => { pending = null; });
++  return pending;
+ }
+diff --git a/web/src/ui/common.tsx b/web/src/ui/common.tsx
+--- a/web/src/ui/common.tsx
++++ b/web/src/ui/common.tsx
+@@ -5,8 +5,17 @@
+ import type { Stack, GameState } from '../game/core';
+ import type { Intent, Result } from '../game/engine';
+ 
+-let iconUrls: Record<string, string> | null = null;
+-function drawnIconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || ''; }
++const iconUrls: Record<string, string> = Object.create(null);
++function drawnIconUrl(key: string) {
++  if (key in iconUrls) return iconUrls[key];
++  const A = getArt();
++  const sprites = key.startsWith('st:') ? A.st : A.icon;
++  const id = key.startsWith('st:') ? key.slice(3) : key;
++  const c = Object.prototype.hasOwnProperty.call(sprites, id) ? sprites[id] : null;
++  // A single legacy icon must not PNG-encode every item and structure (including
++  // the 156 items already covered by the approved atlas) on first pack open.
++  return iconUrls[key] = c ? c.toDataURL() : '';
++}
+ /** Item icon: the approved 157-atlas cell for every mapped id; the drawn icon only for ids outside the 157 and for `st:` structure art. */
+ export function iconUrl(key: string) { return atlasIconUrl(key) || drawnIconUrl(key); }
+ export function Icon({ k, size = 16, style }: { k: string; size?: number; style?: React.CSSProperties }) {
+diff --git a/web/src/veyra05/arch/sites.ts b/web/src/veyra05/arch/sites.ts
+--- a/web/src/veyra05/arch/sites.ts
++++ b/web/src/veyra05/arch/sites.ts
+@@ -408,7 +408,7 @@
+   b.prop(2574, 688, 0, 'anvil'); b.prop(2578, 690, 0, 'table'); b.prop(2572, 686, 0, 'bed');
+ 
+   addDwelling(b, { id: 'garden_cottage', name: 'Garden Cottage', rect: [2592, 690, 14, 9], mat: 'wood', roof: 'thatch', doorSide: 'N', grounds: 'grounds' });
+-  b.partition(2599, 691, 2599, 694, 0); b.door(2599, 693, 0, 'garden_cottage', 'Garden Cottage Partition', 'arch');
++  b.partition(2598, 691, 2598, 694, 0); b.door(2598, 693, 0, 'garden_cottage', 'Garden Cottage Partition', 'arch');
+   b.prop(2595, 694, 0, 'bed'); b.prop(2601, 692, 0, 'shelf'); b.prop(2596, 696, 0, 'grain_sack');
+ 
+   addDwelling(b, { id: 'boat_repair', name: 'Boat-Repair Shed', rect: [2632, 664, 14, 10], mat: 'wood', roof: 'hull', doorSide: 'W', grounds: 'grounds' });
+diff --git a/web/src/game/persist.ts b/web/src/game/persist.ts
+--- a/web/src/game/persist.ts
++++ b/web/src/game/persist.ts
+@@ -11,7 +11,7 @@
+ import { validIntel } from './expedition-intel';
+ // Local-first snapshots: one serialized profile + run + receipts per write.
+ // Checksums detect accidental damage, not malicious edits or rollback of all copies.
+-import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type Stack } from './core';
++import { BAL, SAVE_VERSION, WW, WH, TILE, type GameState, type RunState, type Stack } from './core';
+ import { OIL_SEEP_AUTHORITY, SEEP_CELL } from './oil-seeps';
+ const veyraRun = (r: any) => typeof r?.layoutId === 'string' && isVeyra05Layout(r.layoutId);
+ /** G1B chest / card case / generator: a real approved source id at its resolved tile, one instance, coherent lifecycle. */
+@@ -44,6 +44,7 @@
+ import { DAILY_BY_ID, DAILY_MILESTONES, dateKey, isValidDateKey, MAX_DAILY_LEDGER_DAYS } from './journey';
+ import { getWorld, hasLayout, setActiveLayout, VEYRA_RECYCLER_SITE, webRecyclerSite } from './world';
+ import { mapDigest } from './map-package';
++import { preHookPartitionDigest, recoverHookPartitionActors } from '../veyra05/hook-compat';
+ import { sourceDigest } from './world-economy';
+ import { hasAuthorizedRecycler, wreckEconomy } from './wreck-economy';
+ import { isVeyra05Layout } from '../veyra05/scenes';
+@@ -73,14 +74,8 @@
+ /** Fail closed on broken references and duplicate physical/reserved identities. */
+ /** B04-P3 trap-v1 reachable pairs (build=unarmed/3; arm/rearm spend a plate; each hit: 3->2 spent, 2->1 spent, 1->0 worn).
+  * unarmed:3 · armed:1..3 · spent:1..2 · worn:0. Any other pairing is a forged or corrupt save. */
+-export function bearTrapStateValid(state:any, uses:any):boolean {
+-  if(!Number.isInteger(uses))return false;
+-  if(state==='unarmed')return uses===3;
+-  if(state==='armed')return uses>=1&&uses<=3;
+-  if(state==='spent')return uses>=1&&uses<=2;
+-  if(state==='worn')return uses===0;
+-  return false;
+-}
++export { bearTrapStateValid } from './bear-trap-state';
++import { validBearTrap } from './bear-trap-state';
+ export function validate(raw: any): GameState | null {
+   if (!obj(raw) || !integer(raw.version) || raw.version > SAVE_VERSION || !integer(raw.revision)) return null;
+   const p = raw.profile;
+@@ -102,9 +97,15 @@
+   const expectedSourceDigest = veyraWw ? sourceDigest(veyraWw.floors.ground.sources) : sourceDigest(world.sourceV3);
+   const activeSources = veyraActiveLayer ? veyraActiveLayer.sources : world.sourceV3;
+   const activeStatics = veyraActiveLayer ? veyraActiveLayer.statics : world.statics;
++  let migrateHookPartition = false;
+   if (r.sourceLayoutVersion === 3) {
+     const m=r.sourceMap; if (!obj(m) || m.id !== world.economyMap.id || m.revision !== world.economyMap.revision || (m.rules !== 3 && !(m.rules === 4 && isVeyra05Layout(layout))) || m.seed !== world.economyMap.seed || m.digest !== expectedSourceDigest) return null;
+-    if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) return null;
++    if (m.mapDigest === undefined ? baseline[layout] !== fingerprint : m.mapDigest !== fingerprint) {
++      // Only the exact pre-7d00481 six-cell geometry is migratable. All source,
++      // provenance, custody and lifecycle validation still applies below.
++      if (!veyraWw || typeof m.mapDigest !== 'string' || m.mapDigest !== preHookPartitionDigest(veyraWw)) return null;
++      migrateHookPartition = true;
++    }
+     if (world.veyra && JSON.stringify(m.veyra)!==JSON.stringify(world.veyra)) return null;
+     if (world.randomSpawn && (!obj(r.spawnChoice) || r.spawnChoice.contract!=='seeded-geographic-v1' || !Number.isInteger(r.spawnChoice.x) || !Number.isInteger(r.spawnChoice.y) || r.spawnChoice.x<1 || r.spawnChoice.y<1 || r.spawnChoice.x>=199 || r.spawnChoice.y>=199)) return null;
+     if (!world.veyra && m.veyra!==undefined) return null;
+@@ -506,7 +507,7 @@
+       if(e.type==='power_switch'&&(!obj(e.wireSwitch)||e.wireSwitch.version!=='wire-v1'||typeof e.wireSwitch.on!=='boolean'))return null;
+       if(e.type==='door_powered'&&(!obj(e.electricDoor)||e.electricDoor.version!=='wire-v1'||!Array.isArray(e.electricDoor.interior)||e.electricDoor.interior.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===e.electricDoor.interior[0]&&v[1]===e.electricDoor.interior[1])||(e.electricDoor.releaseUntil!==undefined&&(!finite(e.electricDoor.releaseUntil)||e.electricDoor.releaseUntil<r.startedAt))))return null;
+     }
+-    if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!obj(e.bearTrap)||e.bearTrap.version!=='trap-v1'||!bearTrapStateValid(e.bearTrap.state,e.bearTrap.uses)||(e.bearTrap.snapAt!==undefined&&!(Number.isSafeInteger(e.bearTrap.snapAt)&&e.bearTrap.snapAt>=0))))return null;
++    if(e.bearTrap!==undefined&&(e.type!=='bear_trap'||!validBearTrap(e.bearTrap)))return null;
+     if(e.type==='bear_trap'&&e.bearTrap===undefined)return null;
+     // Item set v3: a ladder record only on a ladder, a unit direction, and a reach its type allows; a fitted lock module names a real host door.
+     if(e.ladder!==undefined&&(!LADDER_SPAN[e.type]||!obj(e.ladder)||!Array.isArray(e.ladder.dir)||e.ladder.dir.length!==2||![[1,0],[-1,0],[0,1],[0,-1]].some(v=>v[0]===e.ladder.dir[0]&&v[1]===e.ladder.dir[1])||!integer(e.ladder.len)||e.ladder.len<1||e.ladder.len>LADDER_SPAN[e.type]))return null;
+@@ -824,6 +825,10 @@
+     if (cal.changed) r.calendar = cal.ledger;
+     if (r.calendar.version !== CALENDAR_VERSION) return null;
+   }
++  if (migrateHookPartition) {
++    if (!recoverHookPartitionActors(r as RunState, veyraWw!)) return null;
++    r.sourceMap.mapDigest = fingerprint;
++  }
+   return raw as GameState;
+ }
+ 
+@@ -963,6 +968,7 @@
+   if (typeof s.key !== 'string' || !has(ITEMS, s.key)) return 'unknown-item';
+   if (!integer(s.qty) || s.qty < 1) return 'bad-qty';
+   if (s.qty > ITEMS[s.key].max) return `over-max:${s.key}`;
++  if (s.bearTrap !== undefined && (s.key !== 'deploy_bear_trap' || !validBearTrap(s.bearTrap))) return 'bad-packed-trap';
+   if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return 'bad-upgrade';
+   if ((s.key === 'keycard' || isAccessCard(s.key)) && s.charge !== undefined && (!integer(s.charge) || s.charge < 1 || s.charge > 100 || s.qty !== 1)) return 'bad-card-charge';
+   if (s.key === 'motorbike_kit' && (!finite(s.dur) || s.dur < 0 || s.dur > BAL.motorbike.maxHp)) return 'bad-motorbike-dur';
+diff --git a/web/src/veyra05/hook-compat.ts b/web/src/veyra05/hook-compat.ts
+new file mode 100644
+--- /dev/null
++++ b/web/src/veyra05/hook-compat.ts
+@@ -0,0 +1,64 @@
++/** Exact compatibility bridge for 7d00481's six-cell Hook partition change.
++ * Reconstructs ONLY the previous ground fingerprint; never accepts an arbitrary
++ * mismatch or changes source IDs, stock, clocks, gates, or saved map provenance.
++ */
++import { T, TILE, WW, WH, type RunState } from '../game/core';
++import { mapDigest } from '../game/map-package';
++import type { World } from '../game/world';
++import type { WindowWorld } from './window';
++import { entityFloor } from './floors';
++
++const legacyDigests = new WeakMap<World, string | null>();
++export function preHookPartitionDigest(ww: WindowWorld): string | null {
++  if (legacyDigests.has(ww.world)) return legacyDigests.get(ww.world)!;
++  const { world: w, win, floors: { ground: g } } = ww;
++  const tiles = g.tiles.slice(), walkable = g.walkable.slice();
++  let changed = 0;
++  for (const gy of [691, 692, 694]) for (const gx of [2598, 2599]) {
++    const x = gx - win.originTx, y = gy - win.originTy;
++    // Match the compiler's interior-window clipping, including partial windows.
++    if (x < 1 || y < 1 || x >= WW - 1 || y >= WH - 1) continue;
++    const i = y * WW + x, current = gx === 2598 ? T.PWALL : T.FLOOR;
++    if (tiles[i] !== current || walkable[i] !== (current === T.PWALL ? 0 : 1)) {
++      legacyDigests.set(w, null); return null; // fail closed if the live geometry changes again
++    }
++    tiles[i] = gx === 2598 ? T.FLOOR : T.PWALL;
++    walkable[i] = gx === 2598 ? 1 : 0;
++    changed++;
++  }
++  // Ground arrays, not the mutable currently installed upper/cellar layer.
++  const digest = !changed ? null : mapDigest({ ...w, tiles, zone: g.zone, sourceV3: g.sources,
++    buildings: g.buildings, statics: g.statics,
++    economyMap: { ...w.economyMap, walkable, protected: g.protectedCells, buildable: g.buildable },
++  });
++  legacyDigests.set(w, digest);
++  return digest;
++}
++
++/** A legal old standing cell can become a wall. Plan bounded adjacent recovery
++ * first, apply atomically only if every affected actor has a legal destination.
++ * This is NOT a general teleport/un-stuck path and runs only for the exact old fingerprint.
++ */
++export function recoverHookPartitionActors(r: RunState, ww: WindowWorld): boolean {
++  const g = ww.floors.ground, { originTx: ox, originTy: oy } = ww.win;
++  const moves: { actor: { x: number; y: number }; x: number; y: number }[] = [];
++  const actors = [...((r.veyraFloor ?? 0) === 0 ? [r.player] : []),
++    ...r.creatures.filter(c => c.state !== 'dead' && (c.floor ?? 0) === 0)];
++  for (const actor of actors) {
++    const gx = Math.floor(actor.x / TILE) + ox, gy = Math.floor(actor.y / TILE) + oy;
++    if (gx !== 2598 || ![691, 692, 694].includes(gy)) continue;
++    if (actor === r.player && r.player.vehicle) return false; // do not detach a mounted player from their vehicle
++    let found = false;
++    // Prefer the original west side of the partition, never cross a closed door.
++    for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
++      const x = gx + dx - ox, y = gy + dy - oy, i = y * WW + x;
++      if (x < 1 || y < 1 || x >= WW - 1 || y >= WH - 1 || !g.walkable[i] || g.solidProps[i] || g.sources[i]) continue;
++      if (Object.values(r.entities).some(e => entityFloor(e) === 0 && e.tx === x && e.ty === y &&
++        (e.kind !== 'door' || !e.open))) continue;
++      moves.push({ actor, x: x * TILE + 8, y: y * TILE + 8 }); found = true; break;
++    }
++    if (!found) return false;
++  }
++  for (const { actor, x, y } of moves) { actor.x = x; actor.y = y; }
++  return true;
++}
+diff --git a/web/src/game/bear-trap-state.ts b/web/src/game/bear-trap-state.ts
+new file mode 100644
+--- /dev/null
++++ b/web/src/game/bear-trap-state.ts
+@@ -0,0 +1,17 @@
++import { BAL, type BearTrapState } from './core';
++
++/** One reachable-state grammar for placed traps and their packed UID. */
++export function bearTrapStateValid(state: unknown, uses: unknown): boolean {
++  if (typeof uses !== 'number' || !Number.isInteger(uses)) return false;
++  if (state === 'unarmed') return uses === BAL.bearTrapV1.uses;
++  if (state === 'armed') return uses >= 1 && uses <= BAL.bearTrapV1.uses;
++  if (state === 'spent') return uses >= 1 && uses < BAL.bearTrapV1.uses;
++  if (state === 'worn') return uses === 0;
++  return false;
++}
++export function validBearTrap(value: unknown): value is BearTrapState {
++  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
++  const b = value as BearTrapState;
++  return b.version === 'trap-v1' && bearTrapStateValid(b.state, b.uses) &&
++    (b.snapAt === undefined || (Number.isSafeInteger(b.snapAt) && b.snapAt >= 0));
++}
+diff --git a/web/src/game/core.ts b/web/src/game/core.ts
+--- a/web/src/game/core.ts
++++ b/web/src/game/core.ts
+@@ -52,7 +52,8 @@
+ /** Creator Core V2 (G1B): `lvl` 1-3 lives on the physical instance, `cd` holds the three per-UID ready-at timestamps,
+  *  `upg` is a running same-UID upgrade. `reserves` exists only in pre-V2 saves and is converted on load into `owed`: the exact items that energy was
+  *  loaded from, handed back to the Core's own container as soon as there is room. A cast never draws on it. */
+-export interface Stack { production?: { jobId: string; workerId: string; recipe?:string; inputs?:{uid:string;key:string;qty:number;containerId:string}[]; stationId?:string }; uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; owed?: Record<string, number>; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
++export interface BearTrapState { version: 'trap-v1'; state: 'unarmed' | 'armed' | 'spent' | 'worn'; uses: number; snapAt?: number }
++export interface Stack { bearTrap?: BearTrapState; production?: { jobId: string; workerId: string; recipe?:string; inputs?:{uid:string;key:string;qty:number;containerId:string}[]; stationId?:string }; uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; owed?: Record<string, number>; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
+ export interface Container { id: string; kind: string; slots: (Stack | null)[]; origin?: { authority: 'REGIONAL_HUMAN_ECONOMY'; sourceId: string } }
+ 
+ export type Dir = 0 | 1 | 2 | 3; // down, left, right, up
+@@ -127,7 +128,7 @@
+   ladder?: { dir: [number, number]; len: number };
+   /** Item set v3: the door type a Powered Door module was fitted into (reclaim hands that door back). */
+   poweredHost?: string;
+-  bearTrap?: { version: 'trap-v1'; state: 'unarmed' | 'armed' | 'spent' | 'worn'; uses: number; snapAt?: number };
++  bearTrap?: BearTrapState;
+   basePower?: { enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production'; network?: 'wire-v1' };
+   wireSwitch?: {version:'wire-v1'; on:boolean};
+   electricDoor?: {version:'wire-v1'; interior:[number,number]; releaseUntil?:number};
+diff --git a/web/src/game/engine.ts b/web/src/game/engine.ts
+--- a/web/src/game/engine.ts
++++ b/web/src/game/engine.ts
+@@ -1,3 +1,4 @@
++import { validBearTrap } from './bear-trap-state';
+ import {timedWorldWork} from './world-work';
+ import {countWorldWork} from './world-work';
+ import { landingStimulus } from './stimulus';
+@@ -17,7 +18,7 @@
+   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
+ import { OIL_SEEP_AUTHORITY, syncOilSeeps } from './oil-seeps';
+ import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
+-import { LADDER_SPAN, LARGE_FURNACE, POWERED_DOOR_HOSTS, EQ_SLOTS, ALWAYS_KNOWN_RECIPES, isGardenCrop, gardenClimateClass, type GardenCrop, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
++import { LADDER_SPAN, LARGE_FURNACE, POWERED_DOOR_HOSTS, EQ_SLOTS, ALWAYS_KNOWN_RECIPES, isGardenCrop, gardenClimateClass, type GardenCrop, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, MOTORBIKE_REPAIR_COST, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
+ import { liveItemId, liveItemPer, liveRecipeId, ITEM_SET_VERSION, isAccessCard, isRetiredLive, cardItemForClass } from './final-item-set';
+ import { latestLegacyDefinition, RETIRED_RECIPES, purchasableFamilies } from './recipe-migration';
+ import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
+@@ -2263,7 +2264,8 @@
+   // Reject damaged or spoofed packed devices *before* reserveInputs can spend.
+   if (d.item && ITEMS[d.item]?.dur) {
+     const packs=C(r,'inv').slots.filter(v=>v?.key===d.item);
+-    if (!packs.some(v=>v?.qty===1&&Number.isFinite(v.dur)&&(v.dur??0)>0&&(v.dur??0)<=d.hp))
++    if (!packs.some(v=>v?.qty===1&&Number.isFinite(v.dur)&&(v.dur??0)>0&&(v.dur??0)<=d.hp&&
++      (v.bearTrap===undefined || type==='bear_trap'&&validBearTrap(v.bearTrap))))
+       return 'Need an intact packed device.';
+   }
+   if (!hasAll(r, 'inv', cost)) return 'Missing materials: ' + cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ');
+@@ -2757,6 +2759,7 @@
+         if (!hasAll(r, 'inv', rule.cost)) return fail('Missing repair materials.');
+         for (const [key, qty] of rule.cost) removeItem(r, 'inv', key, qty);
+         const old = item.dur; item.dur = def.dur;
++        if(item.key==='deploy_bear_trap') delete item.bearTrap; // paid re-forge renews the worn mechanism
+         return ok('item.repair', `${item.uid}:${old}->${item.dur}`, `${def.name} repaired to ${item.dur}/${def.dur}.`);
+       }
+       if (it.mode === 'salvage') {
+@@ -2828,7 +2831,8 @@
+         for(let i=inv.slots.length-1;i>=0;i--){
+           const v=inv.slots[i];
+           if(v?.key===d.item&&v.qty===1&&
+-            (!ITEMS[d.item!].dur||(Number.isFinite(v.dur)&&v.dur!>0&&v.dur!<=d.hp))){idx=i;break;}
++            (!ITEMS[d.item!].dur||(Number.isFinite(v.dur)&&v.dur!>0&&v.dur!<=d.hp))&&
++            (v.bearTrap===undefined || it.struct==='bear_trap'&&validBearTrap(v.bearTrap))){idx=i;break;}
+         }
+         if(idx<0)return fail('No valid packed device in inventory.');
+         deployed=inv.slots[idx]!;
+@@ -2845,7 +2849,10 @@
+       if (it.struct === 'ir_sensor') e.irSensor={version:'ir-v1',enabled:false};
+       if (LADDER_SPAN[it.struct]) { const plan = ladderPlan(r, it.struct, it.tx, it.ty); if (typeof plan !== 'string') e.ladder = plan; }
+       if (it.struct === 'large_furnace' && e.station) { delete r.custody[e.station.outC]; e.station.outC = mkContainer(r, 'out', LARGE_FURNACE.outSlots).id; }
+-      if (it.struct === 'bear_trap') e.bearTrap={version:'trap-v1',state:'unarmed',uses:BAL.bearTrapV1.uses};
++      if (it.struct === 'bear_trap') {
++        e.bearTrap=deployed?.bearTrap ? {...deployed.bearTrap} : {version:'trap-v1',state:'unarmed',uses:BAL.bearTrapV1.uses};
++        if (deployed) delete deployed.bearTrap; // placed entity is now the sole mechanism authority
++      }
+       if (it.struct === 'door_powered') {const dx=p.x-e.x,dy=p.y-e.y;const outside:[number,number]=Math.abs(dx)>Math.abs(dy)?[Math.sign(dx)||1,0]:[0,Math.sign(dy)||1];e.electricDoor={version:'wire-v1',interior:[outside[0] ? -outside[0] : 0,outside[1] ? -outside[1] : 0]};}
+       if (it.struct === 'arrow_turret') e.turret = { enabled: false, cooldown: 0, angle: 0 };
+       if (it.struct === 'farm_controller') e.farm = { enabled:false, crop:'crop', energy:0 };
+@@ -2890,7 +2897,7 @@
+     case 'vehicleRepair': {
+       const e=r.entities[it.eid];if(!e||e.kind!=='vehicle'||!e.vehicle||!e.deployed||!owned(e)||!near(r,e,2)||p.vehicle)return fail('Dismount near your motorbike.');
+       if((e.hp??0)>=BAL.motorbike.maxHp)return fail('Motorbike is already sound.');
+-      const cost:[string,number][]=[['spares',3]]; /* item set v3: was 1 Machine Part + 1 Fastener = 2 + 1 Parts at the retirement ratios */ if(!hasAll(r,'inv',cost))return fail('Repair needs 3 Parts.');
++      const cost=MOTORBIKE_REPAIR_COST; if(!hasAll(r,'inv',cost))return fail('Repair needs 3 Parts.');
+       for(const [key,qty] of cost)removeItem(r,'inv',key,qty);const before=e.hp||0;e.hp=Math.min(BAL.motorbike.maxHp,before+BAL.motorbike.repairHp);e.deployed.dur=e.hp;
+       return ok('vehicle.repair',`${e.deployed.uid}:${before.toFixed(2)}->${e.hp.toFixed(2)}:sparesx3`);
+     }
+@@ -2987,11 +2994,15 @@
+           // One authentic UID survives inventory → placement → recovery. Damage
+           // follows it; no reclaim/redeploy healing exploit.
+           e.deployed.dur = e.hp;
++          if (e.type==='bear_trap' && e.bearTrap) e.deployed.bearTrap={...e.bearTrap};
+           returnReservations(r, [e.deployed], e.x, e.y, now);
+         } else {
+           // Historical raw-paid saves have no deployed identity. Mint exactly
+           // one explicit migration recovery item only when that entity is removed.
+-          giveOrDrop(r, d.item, 1, now, {dur:e.hp});
++          if(e.type==='bear_trap' && e.bearTrap){
++            const pack=mkStack(r,d.item,1);pack.dur=e.hp;pack.bearTrap={...e.bearTrap};
++            returnReservations(r,[pack],e.x,e.y,now);
++          } else giveOrDrop(r, d.item, 1, now, {dur:e.hp});
+           receipt(r,now,'pa1.legacy.unpack',e.id+':'+e.type);
+         }
+       }
+diff --git a/web/src/game/catalog.ts b/web/src/game/catalog.ts
+--- a/web/src/game/catalog.ts
++++ b/web/src/game/catalog.ts
+@@ -12,6 +12,8 @@
+ export interface RecipeDef { out: string; qty: number; /** Optional co-products committed atomically with the job (industrial batches). Absent = single output `out`×`qty`. */ outs?: [string, number][]; ins: [string, number][]; station: null | 'campfire' | 'furnace' | 'workbench' | 'refinery' | 'oil_pump'; secs: number; base?: boolean; tier: number; stationLevel?: 1 | 2 | 3; /** B01: distinct display name for an alternate recipe whose output item is shared with another recipe. */ alias?: string; rev?: number }
+ 
+ // TUNABLE: a capability upgrade, not a learned recipe. The cart itself remains physical.
++/** Current motorbike field repair bill; shared by dispatch and economic extraction. */
++export const MOTORBIKE_REPAIR_COST: [string, number][] = [['spares', 3]];
+ export const INDUSTRIAL_MODULE: { cost: [string, number][]; benchLevel: number } = { cost: [['mechanical_gear', 2], ['spares', 6], ['iron_ingot', 3]], benchLevel: 2 }; // SOH_NEW_TUNED provisional; no equivalent LI numerical table established
+ export const FURNACE_LINING: { cost: [string, number][]; benchLevel: number } = { cost: [['stone', 6], ['iron_plate', 1]], benchLevel: 2 };
+ export const GENERATOR_CAPACITY_UPGRADE: { cost: [string, number][]; benchLevel: number } = { cost: [['electronic_parts', 2], ['mechanical_gear', 1], ['iron_ingot', 3], ['spares', 4]], benchLevel: 2 }; // SOH_NEW_TUNED v1
+diff --git a/web/src/game/economic-graph.ts b/web/src/game/economic-graph.ts
+--- a/web/src/game/economic-graph.ts
++++ b/web/src/game/economic-graph.ts
+@@ -24,6 +24,8 @@
+   GARDEN_FRAME_COST,
+   GENERATOR_CAPACITY_UPGRADE,
+   INDUSTRIAL_MODULE,
++  MOTORBIKE_REPAIR_COST,
++  PA1_UPGRADE_ONLY_GEOMETRY,
+   ITEMS,
+   PRIMORDIAL_ELDERS,
+   PRIMORDIAL_TO_LEGACY_DOMAIN,
+@@ -409,7 +411,7 @@
+     ['sink:tender_fuel_burn', 'Garden Tender (farm_controller) Energy Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', {}],
+     ['sink:vehicle_fuel_burn', 'Motorbike Fuel Consumption Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', {}],
+     ['sink:vehicle_hp_wear', 'Motorbike Chassis Wear Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { wearPerPixel: BAL.motorbike.wearPerPixel }],
+-    ['sink:lubricant_consumption', 'Motorbike Lubricant Coating Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { distancePx: BAL.oilRefineryV1.lubricantDistancePx }],
++    ['sink:lubricant_consumption', 'Legacy Motorbike Lubricant Coating Sink', 'shared', 'HISTORICAL_INFLIGHT_ONLY', { distancePx: BAL.oilRefineryV1.lubricantDistancePx }],
+     ['sink:turret_arrow_consumption', 'Arrow Turret Live & Offline Ammo Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', {}],
+     ['sink:trap_arm_wear', 'Bear Trap Arming & Trigger Wear Sink', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { uses: BAL.bearTrapV1.uses }],
+     ['sink:territory_upkeep_24h', 'Territory Cabinet 25%/24h Structural Upkeep', 'shared', 'LIVE_SHIPPING_AND_VEYRA', { fractionPerDay: BAL.territory.upkeepFractionPerDay }],
+@@ -914,8 +916,19 @@
+       },
+     });
+ 
++    // Device raw inputs buy the pack through its hand recipe. Placement spends that
++    // physical UID once; recovery returns that same damaged item, never half its raw bill.
++    if (sDef.item) {
++      addEdge({kind:'BUILD_COST',from:`item:${sDef.item}`,to:`structure:${sKey}`,qtyIn:1,qtyOut:1,
++        gateIds:isFixture?['gate:oil_seep_veyra']:sDef.need==='claim'?['gate:claim_2_limit']:[],
++        layerScope:isFixture?'veyra05':'shared',runtimeStatus:isFixture?'LIVE_VEYRA_ONLY':'LIVE_SHIPPING_AND_VEYRA',
++        codeRef:'engine.ts:build',notes:'Consumes original packed UID; raw inputs paid only by the craft recipe.'});
++      addEdge({kind:'RECLAIM_REFUND',from:`structure:${sKey}`,to:`item:${sDef.item}`,qtyIn:1,qtyOut:1,
++        gateIds:[],layerScope:isFixture?'veyra05':'shared',runtimeStatus:isFixture?'LIVE_VEYRA_ONLY':'LIVE_SHIPPING_AND_VEYRA',
++        codeRef:'engine.ts:reclaim',notes:'Same UID and remaining HP/mechanism, not a source of new supply.'});
++    }
+     for (const [mat, qty] of sDef.cost) {
+-      addEdge({
++      if (!sDef.item) addEdge({
+         kind: 'BUILD_COST',
+         from: `item:${mat}`,
+         to: `structure:${sKey}`,
+@@ -923,7 +936,7 @@
+         qtyOut: 1,
+         gateIds: isFixture ? ['gate:oil_seep_veyra'] : sDef.need === 'claim' ? ['gate:claim_2_limit'] : [],
+         layerScope: isFixture ? 'veyra05' : 'shared',
+-        runtimeStatus: isFixture ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
++        runtimeStatus: (PA1_UPGRADE_ONLY_GEOMETRY as readonly string[]).includes(sKey) ? 'PARTIAL_STUB' : isFixture ? 'LIVE_VEYRA_ONLY' : 'LIVE_SHIPPING_AND_VEYRA',
+         codeRef: `catalog.ts:STRUCTS.${sKey}.cost`,
+       });
+       if ((BAL.territory.materials as readonly string[]).includes(mat)) {
+@@ -951,7 +964,7 @@
+         });
+       }
+       const refund = Math.floor(qty * BAL.economy.reclaimRefund);
+-      if (refund > 0) {
++      if (!sDef.item && refund > 0) {
+         addEdge({
+           kind: 'RECLAIM_REFUND',
+           from: `structure:${sKey}`,
+@@ -964,7 +977,7 @@
+           codeRef: 'engine.ts:reclaim',
+         });
+       }
+-      if (qty - refund > 0) {
++      if (!sDef.item && qty - refund > 0) {
+         addEdge({
+           kind: 'RECLAIM_REFUND',
+           from: `item:${mat}`,
+@@ -1116,27 +1129,10 @@
+     codeRef: 'engine.ts:vehicleRefuel',
+     notes: `+${BAL.motorbike.canFuel} tank units (tank max ${BAL.motorbike.tank})`,
+   });
+-  addEdge({
+-    kind: 'VEHICLE_WEAR_REPAIR',
+-    from: 'item:mechanical_parts',
+-    to: 'station:motorbike',
+-    qtyIn: 1,
+-    ratePerUnit: BAL.motorbike.repairHp,
+-    gateIds: [],
+-    layerScope: 'shared',
+-    runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
+-    codeRef: 'engine.ts:vehicleRepair',
+-  });
+-  addEdge({
+-    kind: 'VEHICLE_WEAR_REPAIR',
+-    from: 'item:fasteners',
+-    to: 'station:motorbike',
+-    qtyIn: 1,
+-    ratePerUnit: BAL.motorbike.repairHp,
+-    gateIds: [],
+-    layerScope: 'shared',
+-    runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
+-    codeRef: 'engine.ts:vehicleRepair',
++  for(const [key,qty] of MOTORBIKE_REPAIR_COST) addEdge({
++    kind:'VEHICLE_WEAR_REPAIR',from:`item:${key}`,to:'station:motorbike',qtyIn:qty,
++    ratePerUnit:BAL.motorbike.repairHp,gateIds:[],layerScope:'shared',runtimeStatus:'LIVE_SHIPPING_AND_VEYRA',
++    codeRef:'catalog.ts:MOTORBIKE_REPAIR_COST / engine.ts:vehicleRepair',
+   });
+   addEdge({
+     kind: 'VEHICLE_LUBRICATE',
+@@ -1146,9 +1142,9 @@
+     ratePerUnit: BAL.oilRefineryV1.lubricantDistancePx,
+     gateIds: [],
+     layerScope: 'shared',
+-    runtimeStatus: 'LIVE_SHIPPING_AND_VEYRA',
++    runtimeStatus: 'HISTORICAL_INFLIGHT_ONLY',
+     codeRef: 'engine.ts:vehicleLubricate',
+-    notes: `Halves wear over ${BAL.oilRefineryV1.lubricantDistancePx} px (cap 1.5x)`,
++    notes: `Legacy coating only (new vehicleLubricate commands are refused). Halves wear over ${BAL.oilRefineryV1.lubricantDistancePx} px (cap 1.5x)`,
+   });
+ 
+   // 4. RECIPES & BLUEPRINTS & RESEARCH
+diff --git a/web/src/game/item-ontology.ts b/web/src/game/item-ontology.ts
+--- a/web/src/game/item-ontology.ts
++++ b/web/src/game/item-ontology.ts
+@@ -499,8 +499,8 @@
+   // Upgrade-only geometry that no upgrade path leads to cannot exist in a live world, so a cost paid
+   // into it is not a real consumer (round 2, P6: this is how Plank looked "used" in round 1).
+   for (const it of items) {
+-    const dead = it.consumer_targets.filter((t) => t.startsWith('structure:') && UNOBTAINABLE_STRUCTURES.includes(t.slice(10)));
+-    if (dead.length && dead.length === it.consumer_targets.length && it.maintenance_targets.length === 0) it.signals.push(`NO_REACHABLE_CONSUMER:${dead.map((t) => t.slice(10)).join('+')}`);
++    const dead = [...new Set(it.consumers.map(c=>consumerTarget(c.to)))].filter((t) => t.startsWith('structure:') && UNOBTAINABLE_STRUCTURES.includes(t.slice(10))); // report declared but unobtainable consumers too; excluding non-live costs must not hide the gap
++    if (dead.length && it.consumer_targets.every(t=>dead.includes(t)) && it.maintenance_targets.length === 0) it.signals.push(`NO_REACHABLE_CONSUMER:${dead.map((t) => t.slice(10)).join('+')}`);
+     else for (const t of dead) it.signals.push(`CONSUMER_UNOBTAINABLE:${t.slice(10)}`);
+   }
+   for (const d of dominated) if (d.verdict === 'STRICTLY_DOMINATED') {
+diff --git a/web/src/game/item-ontology-findings.ts b/web/src/game/item-ontology-findings.ts
+--- a/web/src/game/item-ontology-findings.ts
++++ b/web/src/game/item-ontology-findings.ts
+@@ -29,6 +29,15 @@
+ }
+ function p2(): { unit: Record<string, unknown>; rows: P2Row[]; totals: Record<string, number>; other_facts: string[]; conclusion: string[]; resolution: string[] } {
+   const f = RECIPES.fasteners, mp = RECIPES.mechanical_parts;
++  // Final item-set authority retired both formulas. Do not resurrect them (or
++  // their obsolete vehicle-repair consumer) to make a historical comparison run.
++  if (!f || !mp) return {
++    unit: { fasteners_recipe: 'RETIRED — no live formula', machine_parts_recipe: 'RETIRED — no live formula' },
++    rows: [], totals: { consumers: 0, live_consumers: 0 },
++    other_facts: ['P2 is superseded by the current item-set retirement ledger; saved jobs retain their frozen rules.'],
++    conclusion: ['No live Fasteners/Machine Parts merge comparison applies. Current Parts consumers must be read from the live graph.'],
++    resolution: ['Do not restore retired recipes or quote Round-2 hypothetical ratios as current economy.'],
++  };
+   const fIron = f.ins.find(([k]) => k === 'iron_ingot')![1] / f.qty, fScrap = f.ins.find(([k]) => k === 'scrap')![1] / f.qty;
+   const mIron = mp.ins.find(([k]) => k === 'iron_ingot')![1] / mp.qty, mScrap = mp.ins.find(([k]) => k === 'scrap')![1] / mp.qty;
+   const rows: P2Row[] = [];
+@@ -191,12 +200,12 @@
+     reachability: it.runtime_reachability, produced_by: makers, consumed_by: users, description_shown_to_player: ITEMS.crude_petroleum.desc,
+     oil_pump_description: STRUCTS.oil_pump.desc, blocked_on: { veyra: p.veyra_blocked_recipes.filter((x) => makers.includes(x) || users.includes(x)), shipping: p.shipping_blocked_recipes.filter((x) => makers.includes(x) || users.includes(x)) },
+     conclusion: [
+-      `Crude Petroleum stays FIXTURE_ONLY: the only oil source the engine accepts is one registered by the test fixture (registerTestOilSource), so ${makers.join(', ')} and ${users.join(', ')} cannot run on either live layout.`,
+-      'UI rule: no player-facing text may describe Crude Petroleum as something that can be pumped today. The item description and the Oil Pump description are quoted above so the wording can be reviewed against that rule.',
++      `Current graph reachability: ${it.runtime_reachability}. Production formulas: ${makers.join(', ') || 'none'}; consumers: ${users.join(', ') || 'none'}. This projection is not a physical-access certificate.`,
++      'The engine authorizes finite Veyra seeps separately from test-fixture sites. Check the active map and physical access before presenting a pump opportunity; do not carry forward the old fixture-only blanket conclusion.',
+     ],
+     resolution: [
+       'Keep the id, the pump and the recipes (the oil-mobility work depends on them). No removal.',
+-      'Display fix to schedule with the pump work, not here: mark the two recipes and the Oil Pump as "no oil seep on this map" when the layout has no authored source, instead of offering a machine that can never start. Salvaged Oil → Fuel Can at the Furnace remains the one live fuel route.',
++      'Keep current map-specific seep gating and paid refinery recipes; Salvaged Oil and its old Furnace formula are retired, not a fallback production route.',
+     ],
+   };
+ }
+diff --git a/web/src/game/item-ontology-report.ts b/web/src/game/item-ontology-report.ts
+--- a/web/src/game/item-ontology-report.ts
++++ b/web/src/game/item-ontology-report.ts
+@@ -14,7 +14,7 @@
+   decisionFor, type Disposition, type Domain, type Proposal, type RecipeLine, type StructLine,
+ } from './item-ontology-decisions';
+ 
+-/** The commit the audit was taken on (PR #56 head). Authored, so the artifacts are stable across commits. */
++/** Historical design baseline only, NOT the provenance of a current regeneration. */
+ export const ONTOLOGY_BASELINE = {
+   repo: 'Khanh-glitch/Soul-of-Hero',
+   branch: 'feature/pa1-building-ontology-20261113',
+@@ -205,7 +205,7 @@
+   o.push('');
+   o.push('## 1. Baseline');
+   o.push('');
+-  o.push(`Audited on \`${d.baseline.repo}\` branch \`${d.baseline.branch}\` at \`${d.baseline.sha}\` (head of draft PR #${d.baseline.pr}); round 2 changes are measured against that same base. PR #${d.baseline.rejected_pr} was not used as a base and its graph module was not copied.`);
++  o.push(`Historical design baseline: \`${d.baseline.repo}\` branch \`${d.baseline.branch}\` at \`${d.baseline.sha}\` (head of draft PR #${d.baseline.pr}); round 2 design records refer to that base, not the current catalog. Current tables use the runtime recipe revision shown below; no physical-access or exact source-SHA certificate is implied. PR #${d.baseline.rejected_pr} was not used as a base and its graph module was not copied.`);
+   o.push('');
+   o.push(table(['Measure', 'Value', 'Where it comes from'], [
+     ['Runtime item ids', String(c.items), '`ITEMS` in `catalog.ts`'],
+@@ -393,7 +393,7 @@
+ const M=Object.fromEntries(D.manifest.map(m=>[m.old_id,m]));
+ const tbl=(head,rows)=>'<div class="wrap"><table><thead><tr>'+head.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.join('')+'</tbody></table></div>';
+ const tr=cells=>'<tr>'+cells.map(c=>'<td>'+c+'</td>').join('')+'</tr>';
+-document.getElementById('sub').innerHTML='Generated from the live economic multigraph at <code>'+D.baseline.sha.slice(0,9)+'</code> ('+esc(D.baseline.branch)+'). '+D.counts.items+' items · '+D.counts.recipes+' recipes · '+D.counts.graph_nodes+' nodes / '+D.counts.graph_edges+' edges. Round 3: each proposal carries its status — implemented, closed and kept, or handed to the owner who must fix it.';
++document.getElementById('sub').innerHTML='Live catalog projection (recipe revision '+D.counts.recipe_revision+'); historical design baseline <code>'+D.baseline.sha.slice(0,9)+'</code>, NOT export provenance. '+D.counts.items+' items · '+D.counts.recipes+' recipes · '+D.counts.graph_nodes+' nodes / '+D.counts.graph_edges+' edges. Round 3: each proposal carries its status — implemented, closed and kept, or handed to the owner who must fix it.';
+ const TABS={Overview:overview,Items:items,Recipes:recipes,'Proposals and status':changes,'Parts decision':parts,'Last Island':li,Findings:findings};
+ const nav=document.getElementById('nav'),main=document.getElementById('main');
+ Object.keys(TABS).forEach((t,i)=>{const b=document.createElement('button');b.textContent=t;b.setAttribute('role','tab');b.onclick=()=>show(t);nav.appendChild(b)});
