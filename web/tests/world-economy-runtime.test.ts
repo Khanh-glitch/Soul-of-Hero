@@ -1,3 +1,4 @@
+import { fundBuild } from './support/paid-build';
 import { describe, expect, it } from 'vitest';
 import { BAL, TILE, WW, WORLD_SEED } from '../src/game/core';
 import { getWorld, setActiveLayout, SRC_KEYS } from '../src/game/world';
@@ -31,7 +32,7 @@ describe('versioned economy in the real engine',()=>{
   const old=structuredClone(restored);delete old.run.sourceLayoutVersion;delete old.run.sources[i];expect(validate(old)).toBeTruthy();expect(sourceAt(old.run,x,y)).toBeNull();
  });
  it('allows a physical claim closer than the old 10-tile landmark radius, but protects roads and POI geometry',()=>{
-  const g=make(),r=g.run!,w=getWorld();addItem(r,'inv','wood',14);addItem(r,'inv','stone',5);
+  const g=make(),r=g.run!,w=getWorld();addItem(r,'inv','wood',14);addItem(r,'inv','stone',5);fundBuild(g,'claim',now);
   const p=w.places.find(q=>q.id==='tp')!;let spot:{x:number,y:number}|undefined;
   for(let y=p.ty-9;y<=p.ty+9&&!spot;y++)for(let x=p.tx-9;x<=p.tx+9&&!spot;x++)if(Math.hypot(x-p.tx,y-p.ty)<10){r.player.x=(x+1)*TILE+8;r.player.y=y*TILE+8;if(!buildReason(g,'floor_wood',x,y))spot={x,y};}
   expect(spot).toBeDefined();expect(dispatch(g,{id:`floor-${++n}`,type:'build',struct:'floor_wood',tx:spot!.x,ty:spot!.y},now).ok).toBe(true);expect(dispatch(g,{id:`claim-${++n}`,type:'build',struct:'claim',tx:spot!.x,ty:spot!.y},now+1).ok).toBe(true);

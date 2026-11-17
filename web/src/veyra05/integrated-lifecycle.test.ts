@@ -14,7 +14,8 @@ describe('single canonical VEYRA runtime save, traversal and floors',()=>{
     const gs=newGame();
     const res=startRun(gs,'female',Date.now(),null,20261109);
     expect(res.ok).toBe(true);
-    expect(gs.run?.layoutId).toBe(U05_WORLD_LAYOUT_ID);
+    expect(gs.run?.layoutId).toMatch(/^veyra05-at-/); // current global-safe selector, not the retired fixed window
+    expect(gs.run?.sourceMap?.rules).toBe(4);
     expect(validate(gs)).not.toBeNull();
     const shifted=shiftVeyraWindowBy(gs,64,0,()=>{});
     expect(shifted).toBe(true);

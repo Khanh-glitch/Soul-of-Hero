@@ -1,3 +1,4 @@
+import { fundBuild } from './support/paid-build';
 // Control Tower Phase A + Phase B — Failing-First Reproduction & Regression Suite
 // Covers:
 //   A1: journeyRequisition authoritative progress, UTC date, replay, duplicate & QA-taint validation
@@ -659,6 +660,7 @@ describe('Phase B — Independent Gameplay & Gold-Seam Defect Regressions', () =
     r.player.x = tx * TILE + 8;
     r.player.y = ty * TILE + 8;
     addItem(r, 'inv', 'wood', 30);
+    fundBuild(gs,'chest_small',NOW+10);
     expect(dispatch(gs, { id: 'b7-chest', type: 'build', struct: 'chest_small', tx: tx + 1, ty }, NOW + 10).ok).toBe(true);
     const chest = Object.values(r.entities).find(e => e.type === 'chest_small')!;
 

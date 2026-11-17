@@ -1,0 +1,21 @@
+[
+  {
+    "sha": "5ef0c92",
+    "viewport": [
+      1280,
+      720
+    ],
+    "errors": [
+      "Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "steps": [
+      "title",
+      "begin"
+    ],
+    "scope": "production single-file browser controls/save smoke; software renderer, concurrent regression load; NO FPS or enjoyment certificate",
+    "selectionText": "CHOOSE YOUR ADVENTURER\nAdventurer ♀\nSurvival knife, a half-full flask, a few berries. No Core, no map, no orders.\nAdventurer ♂\nSurvival knife, a half-full flask, a few berries. No Core, no map, no orders.\nWorld\nVEYRA · Unified World\nClassic Island (R12)\nVEYRA · Unified World · 4000×2800 tiles (1 tile = 0.5 AU) · 81 POIs, livestock husbandry, 4 side bosses & 6 Primordials.\nStarting location\nRandom safe region\nSeeded random landing across source-verified mainland cells. No fixed four-region quota or starter shelter; offshore starts await proven sea transport.\nBack\nBegin the 14 days",
+    "worldText": "100\n100\n84\n84\n100\nVEYRA · U=0.5\nmeadow\nAU 1312,363 · F0\n08:05\nDay 1 / 14\nCALM\nCLOUD\nnext RAIN\nsecured 0\nJourney [J]\nNotes [N]\nSFX\n☰\nSUGGESTED · LANDFALL\nGather by hand0/3\n❖\n×\nOak\n1\n2\n2⚡\n3\n3\n4\n5\n6\n7\n8\nSurvival Knife\ndmg 9 · tool · 100%\nI\n3/24",
+    "verdict": "FAIL",
+    "failure": "TimeoutError: page.screenshot: Timeout 30000ms exceeded.\nCall log:\n  - taking page screenshot\n  - waiting for fonts to load...\n  - fonts loaded\n"
+  }
+]

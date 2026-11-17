@@ -1,0 +1,629 @@
+{
+  "source": "5ef0c92",
+  "command": "web/node_modules/.bin/vitest run --root web --maxWorkers=2 --testTimeout=120000 (cwd REPOSITORY ROOT, not canonical web/)",
+  "scopeWarning": "Full inventory completed but five file failures are harness cwd-dependent, not runtime. NOT a passing canonical full gate. Do not compare headline totals as a pure runtime delta. Focused canonical reruns follow separately.",
+  "durationSeconds": 1357.65,
+  "files": 193,
+  "passedFiles": 163,
+  "failedFiles": 30,
+  "passedTests": 1211,
+  "failedTests": 68,
+  "pendingTests": 27,
+  "rows": [
+    {
+      "file": "web/tests/b05-loot-matrix.test.ts",
+      "initialClassification": "HARNESS_CWD_NOT_RUNTIME",
+      "failures": [
+        {
+          "title": "B05-R C1 loot \u2192 industry matrix (real rolls, real consumers) every engine-action consumer of Fuel Canister exists in engine.ts source; producer stations never burn it",
+          "messages": [
+            "Error: ENOENT: no such file or directory, open 'src/game/engine.ts'\n    at readFileSync (node:fs:440:20)\n    at /home/user/Soul-of-Hero/web/tests/b05-loot-matrix.test.ts:80:17\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/b06-presentation-cues.test.ts",
+      "initialClassification": "HARNESS_CWD_NOT_RUNTIME",
+      "failures": [
+        {
+          "title": "B06 presentation cue contract (receipts only) every mapped kind is a real engine kind that appears as a literal receipt call",
+          "messages": [
+            "AssertionError: job.done: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/b06-presentation-cues.test.ts:33:77\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/control-tower-audit-regressions.test.tsx",
+      "initialClassification": "CURRENT_CONTRACT_FIXTURE_FIXED_FOCUSED",
+      "failures": [
+        {
+          "title": "Phase B \u2014 Independent Gameplay & Gold-Seam Defect Regressions B7: Gold SurvivorScreen and ContainerPanel InvSide resolve every category & equipment ghost icon without empty src=\"\"",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/control-tower-audit-regressions.test.tsx:662:113\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/control-tower-corrective-wp1-wp2.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "WP2 \u2014 Complete Veyra Offscreen Garden Tender (B6 Corrective) WP2-1..5 & 8 (RED->GREEN): completes full offscreen plant->grow->harvest->chest-transfer->replant cycles across repeated window shifts, save/reload, overnight settle, and full storage",
+          "messages": [
+            "AssertionError: build: Need an intact packed device.: expected false to be true // Object.is equality\n    at act (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:375:61)\n    at buildAt (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:393:5)\n    at buildRealVeyraHomestead (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:398:19)\n    at /home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:453:15\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20"
+          ]
+        },
+        {
+          "title": "WP2 \u2014 Complete Veyra Offscreen Garden Tender (B6 Corrective) WP2-6,7,9 (RED->GREEN): enforces exact onscreen vs offscreen parity (Map climate, soil, cold-frame, roof, evaporation, links across window edge)",
+          "messages": [
+            "AssertionError: build: Need an intact packed device.: expected false to be true // Object.is equality\n    at act (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:375:61)\n    at buildAt (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:393:5)\n    at buildRealVeyraHomestead (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:398:19)\n    at /home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:560:18\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/control-tower-journey-durability.test.tsx",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "Final Journey Durability Corrective \u2014 Durable Run-Authoritative Daily Ledger RED-2: keeps Day 2+ objective slate unchanged when run.start is evicted and gated capabilities are built/learned after midnight",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/control-tower-journey-durability.test.tsx:442:129\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        },
+        {
+          "title": "Final Journey Durability Corrective \u2014 Durable Run-Authoritative Daily Ledger enforces bounded <=32 ledger days across multi-day UTC rollovers and preserves offlineOk station completions past >250 receipt eviction",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/control-tower-journey-durability.test.tsx:732:117\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/d1-d5-corrective.test.tsx",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "D4 Corrective: Offscreen/Boundary-Straddling Wire-v1 Power Parity & 12h Decay Copy allocates loads, powers doors/stations/turrets, and drains generator fuel across offscreen window boundaries with online/offline parity",
+          "messages": [
+            "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality\n    at buildAt (/home/user/Soul-of-Hero/web/tests/d1-d5-corrective.test.tsx:367:59)\n    at /home/user/Soul-of-Hero/web/tests/d1-d5-corrective.test.tsx:371:19\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/economic-network-m1.test.ts",
+      "initialClassification": "HARNESS_CWD_NOT_RUNTIME",
+      "failures": [
+        {
+          "title": "WP1 / Milestone M1 \u2014 SOH Economic Multigraph & LI Crosswalk extracts a complete, valid, deterministic multigraph across Shipping, dev_delta, and all 81 Veyra POIs, and generates M1 deliverables",
+          "messages": [
+            "Error: ENOENT: no such file or directory, open '/home/user/Soul-of-Hero/ref/atlas/extracted/ATLAS_v2.json'\n    at readFileSync (node:fs:440:20)\n    at buildCrosswalkRows (/home/user/Soul-of-Hero/web/tests/economic-network-m1.test.ts:125:28)\n    at /home/user/Soul-of-Hero/web/tests/economic-network-m1.test.ts:408:20\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/economic-network-m2.test.ts",
+      "initialClassification": "KNOWN_M2_STALE_SETUP_NOT_EXECUTED_ASSERTIONS",
+      "failures": [],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/final-item-set.test.ts",
+      "initialClassification": "HARNESS_CWD_NOT_RUNTIME",
+      "failures": [],
+      "suiteMessage": "ENOENT: no such file or directory, open 'ref/last-island-copy-first/FINAL_THREE_GROUP_ITEM_SET_20261115.json'"
+    },
+    {
+      "file": "web/tests/home-sites-physical.test.ts",
+      "initialClassification": "CURRENT_CONTRACT_FIXTURE_FIXED_FOCUSED",
+      "failures": [
+        {
+          "title": "physical owned home choices reaches and claims three distinct clear sites, then places owned storage",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/home-sites-physical.test.ts:15:170\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/item-ontology-v2-li-historical.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "generated historical crosswalk artifacts have not drifted li-historical-crosswalk.csv and LI_HISTORICAL_CROSSWALK.md",
+          "messages": [
+            "AssertionError: li-historical-crosswalk.csv drifted: regenerate with SOH_WRITE_ONTOLOGY=1: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/item-ontology-v2-li-historical.test.ts:257:108\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/k6-spatial.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "K6 paid structural lifecycle upgrades in place at preserved condition, pays exactly once, and reloads",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/k6-spatial.test.ts:17:552\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/lr02-shipping-access.test.ts",
+      "initialClassification": "CURRENT_CONTRACT_FIXTURE_FIXED_FOCUSED",
+      "failures": [
+        {
+          "title": "LR02 seeded sandbox and authoritative wall access uses a paid owned bed without spawning inside an adjacent wall; death custody remains singular",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/lr02-shipping-access.test.ts:29:249\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/mec01-c1-motorbike-chain.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "MEC-01 R2 C1: factory source -> furnace -> workbench L2 -> paid L3 -> research -> packed Motorbike Kit walks the whole paid chain with real intents, preserves UIDs through save/reload, and keeps survival kit-free of it",
+          "messages": [
+            "TypeError: Cannot read properties of undefined (reading 'c')\n    at /home/user/Soul-of-Hero/web/tests/mec01-c1-motorbike-chain.test.ts:64:36\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/mec01-c2-delivery.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes delivers the full crate by walking (inventory carry)",
+          "messages": [
+            "Error: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)\n    at setupDepot (/home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:163:9)\n    at haul (/home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:194:34)\n    at /home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:374:17\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        },
+        {
+          "title": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes delivers the full crate by hand cart on the same route class",
+          "messages": [
+            "Error: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)\n    at setupDepot (/home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:163:9)\n    at haul (/home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:194:34)\n    at /home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:381:17\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        },
+        {
+          "title": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes delivers the full crate by motorbike with measured fuel and wear",
+          "messages": [
+            "Error: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)\n    at setupDepot (/home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:163:9)\n    at haul (/home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:194:34)\n    at /home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:387:17\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        },
+        {
+          "title": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes the same cargo UIDs left the crate in all three runs (same seed, same world)",
+          "messages": [
+            "AssertionError: expected +0 to be 3 // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:394:28\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        },
+        {
+          "title": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes delivers the full crate to the SAME far depot in all three modes (long corridor route class)",
+          "messages": [
+            "Error: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)\n    at setupDepot (/home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:163:9)\n    at haul (/home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:194:34)\n    at /home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:402:15\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        },
+        {
+          "title": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes writes the delivery evidence JSON (SIM_FIXTURE_MEASUREMENT timing; real custody)",
+          "messages": [
+            "AssertionError: expected +0 to be 3 // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/mec01-c2-delivery.test.ts:436:28\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/mec01-c3-offline-resume.test.ts",
+      "initialClassification": "CURRENT_CONTRACT_FIXTURE_FIXED_FOCUSED",
+      "failures": [
+        {
+          "title": "MEC-01 R2 C3: funded furnace+workbench offline -> separate-process resume -> exact UID custody produces and retrieves exactly the queued outputs after a restart-like process boundary",
+          "messages": [
+            "Error: no legal tiles for furnace\n    at legalTilesNear (/home/user/Soul-of-Hero/web/tests/mec01-c3-offline-resume.test.ts:49:33)\n    at /home/user/Soul-of-Hero/web/tests/mec01-c3-offline-resume.test.ts:62:22\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/mec01-f3-joined.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "F3 joined: deposit -> evacuate -> save/reload -> run 2 carries the real deposit receipt through evacuation and reload into run 2 with zero run-local cash",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/mec01-f3-joined.test.ts:27:517\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/mec01-foundry-drive-chain.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared) full natural-intent chain with save/reload at each step",
+          "messages": [
+            "AssertionError: mechanical_parts: expected -1 to be greater than or equal to 0\n    at /home/user/Soul-of-Hero/web/tests/mec01-foundry-drive-chain.test.ts:43:76\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        },
+        {
+          "title": "MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared) refused without the gear: no drive is made from nothing; refused craft consumes nothing",
+          "messages": [
+            "Error: no legal workbench tile\n    at legalTileNear (/home/user/Soul-of-Hero/web/tests/mec01-foundry-drive-chain.test.ts:24:9)\n    at /home/user/Soul-of-Hero/web/tests/mec01-foundry-drive-chain.test.ts:83:19\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared) refused below Level 2 (honest refusal) even with every input carried",
+          "messages": [
+            "Error: no legal workbench tile\n    at legalTileNear (/home/user/Soul-of-Hero/web/tests/mec01-foundry-drive-chain.test.ts:24:9)\n    at /home/user/Soul-of-Hero/web/tests/mec01-foundry-drive-chain.test.ts:97:19\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/mec01-r12-departure.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "MEC-01 R12 departure readiness: read-only contract repeated views and forecasts do not mutate the run (no state, grants or claims)",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:83:22\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 departure readiness: read-only contract every section carries provenance and a scope note; no certified survival hour is claimed",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:90:19\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 departure readiness: read-only contract bounded horizon: 24 h, or the remaining run when it is shorter",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:102:19\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 departure readiness: read-only contract exact-slot vs post-slot leakage: inside the known slot the scenario choice cannot change the answer",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:121:19\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 forecast agrees with the real settle() (same frozen state) dry window: forecast warmth equals settle() warmth at 5/15/30/60 min",
+          "messages": [
+            "AssertionError: {\"ok\":false,\"reason\":\"Need an intact packed device.\"}: expected false to be true // Object.is equality\n    at stagedAt (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:67:43)\n    at agree (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:144:28)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:160:22\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 forecast agrees with the real settle() (same frozen state) cold crossing time agrees with settle(): settle is warm just before the forecast crossing and cold just after",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:166:28\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 forecast agrees with the real settle() (same frozen state) season transition: a forecast window crossing the phase boundary agrees with settle()",
+          "messages": [
+            "AssertionError: {\"ok\":false,\"reason\":\"Need an intact packed device.\"}: expected false to be true // Object.is equality\n    at stagedAt (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:67:43)\n    at agree (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:144:28)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:185:22\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 heat: paid fuel, idle furnace, job, station loss heater paid vs unpaid: paid fuel gives a fuel limit and a later cold crossing; no fuel gives none",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:192:20\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 heat: paid fuel, idle furnace, job, station loss paid fuel ends and the target falls back: the post-supply target is the no-heat target, never a promise of warmth",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:206:25\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 heat: paid fuel, idle furnace, job, station loss idle furnace is \"not heating\" even with fuel; a queued job makes it heat until the job or the fuel ends",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:215:25\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 heat: paid fuel, idle furnace, job, station loss nearby station: output full is shown as paused, with the free output slot count",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:239:25\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 heat: paid fuel, idle furnace, job, station loss station loss: a destroyed campfire is no longer a heat source and no fuel limit is reported",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:257:25\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 shelter, insulation, position, home, choices cold gear: the cloak is the same insulation law as settle (cold 18 -> base +54 on snow)",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:299:19\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 shelter, insulation, position, home, choices position change: a non-snow tile far from the campfire has no snow exposure, no fire and no cold crossing in the 24 h horizon",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:310:19\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 shelter, insulation, position, home, choices no home: the read model says so plainly, with no penalty",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:327:19\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 shelter, insulation, position, home, choices partial home: a real built wall is listed with its HP; a damaged one shows HP below max; no invented repair task without state",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:335:25\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 shelter, insulation, position, home, choices choices are grounded: refuel is offered only when the fuel is physically carried and the heater is out",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:353:25\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R12 causal before/after (real intents, labelled staging) \u2192 evidence writes the before/after table of the J10 fields for each cause",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at snowCamp (/home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:44:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r12-departure.test.ts:385:16\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/mec01-r2-c1-motorbike-chain.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "MEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + FIXTURE stock + INTENT freight) chain: gear and drive, frame, L3 bench, Motorbike Kit, place, refuel, mount, carry 40 ingots, deliver to a chest",
+          "messages": [
+            "Error: no legal workbench tile\n    at legalTileNear (/home/user/Soul-of-Hero/web/tests/mec01-r2-c1-motorbike-chain.test.ts:29:9)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r2-c1-motorbike-chain.test.ts:51:14\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/mec01-r3-causal-integrity.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "R3 P2: one physical item cannot serve two consumers two L2 workbenches race a single found Mechanical Gear; the loser is refused before any reservation, and the gear exists exactly once afterwards",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at buildL2Bench (/home/user/Soul-of-Hero/web/tests/mec01-r3-causal-integrity.test.ts:48:20)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r3-causal-integrity.test.ts:76:60\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "R3 P2: one physical item cannot serve two consumers recycler holds the gear: the workbench is refused; and the winner held through a full craft\u2192settle leaves the gear exactly once",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at buildL2Bench (/home/user/Soul-of-Hero/web/tests/mec01-r3-causal-integrity.test.ts:48:20)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r3-causal-integrity.test.ts:94:51\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/mec01-r4-score-once.test.ts",
+      "initialClassification": "CURRENT_CONTRACT_FIXTURE_FIXED_FOCUSED",
+      "failures": [
+        {
+          "title": "C20 score-once (R4 N1): the award() achievement-key guard is the ONLY score door deposit: one transfer, one credit; exact-intent replay refused; a FRESH intent id re-transfers but never re-credits",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at buildOwnedClaim (/home/user/Soul-of-Hero/web/tests/mec01-r4-score-once.test.ts:57:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r4-score-once.test.ts:98:5\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "C20 score-once (R4 N1): the award() achievement-key guard is the ONLY score door reload across the deposit boundary: resume pays out again, credit still cannot double",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at buildOwnedClaim (/home/user/Soul-of-Hero/web/tests/mec01-r4-score-once.test.ts:57:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r4-score-once.test.ts:116:5\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "C20 score-once (R4 N1): the award() achievement-key guard is the ONLY score door evacuation with six stones: evacuated + six_stones credit once; replays cannot double-credit; run ends once",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at buildOwnedClaim (/home/user/Soul-of-Hero/web/tests/mec01-r4-score-once.test.ts:57:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r4-score-once.test.ts:132:5\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "C20 score-once (R4 N1): the award() achievement-key guard is the ONLY score door run transition: a fresh run re-earns per-run credit legitimately; profile markers stay single-attributed; run-1 receipts stay burned in run 2",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at buildOwnedClaim (/home/user/Soul-of-Hero/web/tests/mec01-r4-score-once.test.ts:57:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r4-score-once.test.ts:157:5\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "C20 score-once (R4 N1): the award() achievement-key guard is the ONLY score door full-arc spam cannot fabricate score: re-clicks on deposit/evacuate credit nothing beyond the once-each arc",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at buildOwnedClaim (/home/user/Soul-of-Hero/web/tests/mec01-r4-score-once.test.ts:57:76)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r4-score-once.test.ts:202:5\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/mec01-r8b-plank.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "MEC-01 R8B plank chain two wood make one plank at the bench, after 6 real seconds; too little wood is refused with no change",
+          "messages": [
+            "Error: no legal tile for workbench\n    at legalTileNear (/home/user/Soul-of-Hero/web/tests/mec01-r8b-plank.test.ts:18:9)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8b-plank.test.ts:36:14\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        },
+        {
+          "title": "MEC-01 R8B plank chain a plank wall needs three real planks: with two it is refused and nothing is spent; with three it builds at 240 HP",
+          "messages": [
+            "Error: no legal tile for workbench\n    at legalTileNear (/home/user/Soul-of-Hero/web/tests/mec01-r8b-plank.test.ts:18:9)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8b-plank.test.ts:61:14\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/mec01-r8e-plank-upkeep.test.ts",
+      "initialClassification": "CREATOR_CONTENT_GAP_OR_OBSOLETE_DIRECT_GEOMETRY_CONTRACT",
+      "failures": [
+        {
+          "title": "MEC-01 R8E K6 upkeep for processed planks a wall_plank contributes 0.75 plank per day to its cabinet (3 x 25%), as wood walls contribute their wood",
+          "messages": [
+            "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at homeWithPlankWall (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:34:43)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:41:13\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        },
+        {
+          "title": "MEC-01 R8E K6 upkeep for processed planks negative: without planks in the cabinet the plank wall makes the cabinet unfunded; with 3 planks it is funded",
+          "messages": [
+            "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at homeWithPlankWall (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:34:43)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:48:13\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        },
+        {
+          "title": "MEC-01 R8E K6 upkeep for processed planks settled upkeep debits real planks, with fractional credit: removed - credit = 0.75 x days, never more",
+          "messages": [
+            "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at homeWithPlankWall (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:34:43)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:60:13\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        },
+        {
+          "title": "MEC-01 R8E K6 upkeep for processed planks save/reload keeps the same plank forecast and does not re-bill: the validated copy plans identically",
+          "messages": [
+            "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at homeWithPlankWall (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:34:43)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:72:13\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        },
+        {
+          "title": "MEC-01 R8E K6 upkeep for processed planks repair of a plank wall takes one plank (ceil(3 x 25%)), and a raw-wood wall keeps its wood repair",
+          "messages": [
+            "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at homeWithPlankWall (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:34:43)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:83:13\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+          ]
+        },
+        {
+          "title": "MEC-01 R8E K6 upkeep for processed planks a raw-wood shelter is unchanged: a wood-only cabinet bills wood and has no plank rate",
+          "messages": [
+            "Error: claim: Need an intact packed device.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:92:99\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/soh.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "salt-shale source + dried meat content chain validates definitions, harvests a world-placed source, rejects wrong tool/missing input, then cooks and collects physical output",
+          "messages": [
+            "AssertionError: expected [ [ 'stone', 1 ] ] to deeply equal [ [ 'raw_salt', 1 ] ]\n    at /home/user/Soul-of-Hero/web/tests/soh.test.ts:115:85\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        },
+        {
+          "title": "C07 build / reclaim custody invalid build never debits; valid build debits exactly; duplicate intent ignored",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/soh.test.ts:198:104\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        },
+        {
+          "title": "C06/C09 stations, fuel, offline furnace output stops exactly at fuel exhaustion during offline settlement",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/soh.test.ts:217:169\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        },
+        {
+          "title": "C04 research specimen study \u2192 physical blueprint \u2192 learned once; a second copy is refused without consumption",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/soh.test.ts:304:170\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        },
+        {
+          "title": "C15\u2013C18, C22\u2013C23 Ragnarok cash, escrow, evacuation, run 2 zero wallet \u2192 finite cash (only in last 72h) \u2192 vendor escrow chest \u2192 owned placement \u2192 atomic deposits \u2192 evacuate \u2192 run-2 spend",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/soh.test.ts:332:87\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/tests/veyra-intake.test.ts",
+      "initialClassification": "HARNESS_CWD_NOT_RUNTIME",
+      "failures": [],
+      "suiteMessage": "ENOENT: no such file or directory, open '/home/user/Soul-of-Hero/geography/veyra-lr01/world_lab/lr01/output/geography_package.v1.json'"
+    },
+    {
+      "file": "web/tests/world-economy-runtime.test.ts",
+      "initialClassification": "CURRENT_CONTRACT_FIXTURE_FIXED_FOCUSED",
+      "failures": [
+        {
+          "title": "versioned economy in the real engine allows a physical claim closer than the old 10-tile landmark radius, but protects roads and POI geometry",
+          "messages": [
+            "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/world-economy-runtime.test.ts:37:242\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/src/veyra05/audit-closure.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "Veyra Audit Closure & Cross-System Guarantees (#48) P0-4 & P1-5: enforces biologically grounded yields, opposite-sex (\u2640+\u2642) breeding, and full offscreen pen parity across window shifts",
+          "messages": [
+            "AssertionError: expected undefined to be defined\n    at /home/user/Soul-of-Hero/web/src/veyra05/audit-closure.test.ts:273:34\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/src/veyra05/ecosystem-full.test.ts",
+      "initialClassification": "PENDING_SOURCE_CLASSIFICATION",
+      "failures": [
+        {
+          "title": "Phase C/D/E/F \u2014 Veyra Full Creature, Husbandry, Side-Boss & 6-Primordial Ecosystem preserves ALWAYS_KNOWN_RECIPES invariant while exposing new base husbandry & fletching recipes",
+          "messages": [
+            "AssertionError: expected 37 to be 14 // Object.is equality\n    at /home/user/Soul-of-Hero/web/src/veyra05/ecosystem-full.test.ts:122:41\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    },
+    {
+      "file": "web/src/veyra05/integrated-lifecycle.test.ts",
+      "initialClassification": "CURRENT_CONTRACT_FIXTURE_FIXED_FOCUSED",
+      "failures": [
+        {
+          "title": "single canonical VEYRA runtime save, traversal and floors new run stays save-valid before/after a real world window shift",
+          "messages": [
+            "AssertionError: expected 'veyra05-at-1408-960' to be 'veyra05-world' // Object.is equality\n    at /home/user/Soul-of-Hero/web/src/veyra05/integrated-lifecycle.test.ts:17:30\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+          ]
+        }
+      ],
+      "suiteMessage": ""
+    }
+  ]
+}

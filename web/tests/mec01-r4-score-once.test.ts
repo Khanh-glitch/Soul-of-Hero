@@ -1,3 +1,4 @@
+import { fundBuild } from './support/paid-build';
 // MEC-01 R4 P0-N1: C20 score-once semantics — the achievement-key guard, source-event credit separation,
 // replay, restart and run-transition axes. The ONLY score door in the engine is award() (engine.ts);
 // score credit = one achievement key, at most once per run; profile markers set once per profile.
@@ -54,6 +55,7 @@ function buildOwnedClaim(gs: GameState, at = T0 + 1) {
   const fb = act(gs, 'build', { struct: 'floor_wood', tx: bx, ty: by }, at);
   if (!fb.ok) console.log('FLOOR-REASON@' + bx + ',' + by + ': ' + (fb as any).reason);
   expect(fb.ok).toBe(true);
+  fundBuild(gs,'claim',at+1);
   expect(act(gs, 'build', { struct: 'claim', tx: bx, ty: by }, at + 1).ok).toBe(true);
   return Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'claim' && e.tx === bx && e.ty === by)!;
 }
