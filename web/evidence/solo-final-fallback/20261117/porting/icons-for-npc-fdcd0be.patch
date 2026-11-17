@@ -1,0 +1,98 @@
+diff --git a/web/src/game/item-atlas.ts b/web/src/game/item-atlas.ts
+index 5a6afce..16e197a 100644
+--- a/web/src/game/item-atlas.ts
++++ b/web/src/game/item-atlas.ts
+@@ -13,36 +13,60 @@ export const ITEM_ATLAS = atlas as { image: string; width: number; height: numbe
+ export const hasApprovedIcon = (key: string): boolean => Object.prototype.hasOwnProperty.call(ITEM_ATLAS.frames, key);
+ export const ITEMS_WITHOUT_APPROVED_ICON: readonly string[] = Object.keys(ITEMS).filter(k => !hasApprovedIcon(k)).sort();
+ 
+-const urls: Record<string, string> = {};
++const urls: Record<string, string> = Object.create(null);
+ /** The decoded 32×32 cell canvases (the world renderer draws these; the UI uses the data URLs). */
+-const cells: Record<string, HTMLCanvasElement> = {};
++let cells: Record<string, HTMLCanvasElement> = Object.create(null);
++let pending: Promise<boolean> | null = null;
+ let state: 'idle' | 'loading' | 'ready' | 'failed' = 'idle';
+ export const itemAtlasState = () => state;
+ /** Data URL of the untouched 32×32 cell, or '' while the atlas is not decoded / for an id outside the 157. */
+-export const atlasIconUrl = (key: string): string => urls[key] || '';
++export const atlasIconUrl = (key: string): string => {
++  if (key in urls) return urls[key];
++  const c = cells[key];
++  if (!c) return '';
++  const url = c.toDataURL('image/png');
++  urls[key] = url;
++  return url;
++};
+ /** Decoded 32×32 cell for the canvas renderer, or null while the atlas is not ready / for an id outside the 157. */
+ export const atlasIconCell = (key: string): HTMLCanvasElement | null => cells[key] || null;
+ 
+ export function loadItemAtlas(timeoutMs = 6000): Promise<boolean> {
+   if (state === 'ready') return Promise.resolve(true);
+   if (typeof Image === 'undefined' || typeof document === 'undefined') { state = 'failed'; return Promise.resolve(false); }
++  // One decode/crop job for all callers. A failed attempt can be retried, but a
++  // timed-out image must never publish cells or settle a later attempt.
++  if (pending) return pending;
+   state = 'loading';
+-  return new Promise<boolean>(resolve => {
+-    const done = (ok: boolean) => { if (state !== 'loading') return; state = ok ? 'ready' : 'failed'; if (!ok) console.warn('[soh] 157-item atlas unavailable: drawn icons are shown'); resolve(ok); };
++  pending = new Promise<boolean>(resolve => {
+     const img = new Image();
++    let finished = false;
++    const done = (ok: boolean) => {
++      if (finished) return;
++      finished = true;
++      clearTimeout(timer);
++      img.onload = null; img.onerror = null;
++      state = ok ? 'ready' : 'failed';
++      if (!ok) console.warn('[soh] 157-item atlas unavailable: drawn icons are shown');
++      resolve(ok);
++    };
++    const timer = setTimeout(() => done(false), timeoutMs);
+     img.onload = () => {
++      if (finished) return;
+       try {
+         if (img.naturalWidth !== ITEM_ATLAS.width || img.naturalHeight !== ITEM_ATLAS.height) return done(false);
++        const next: Record<string, HTMLCanvasElement> = Object.create(null);
+         for (const [key, f] of Object.entries(ITEM_ATLAS.frames)) {
+           const c = document.createElement('canvas'); c.width = f.w; c.height = f.h;
+-          const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; g.drawImage(img, f.x, f.y, f.w, f.h, 0, 0, f.w, f.h);
+-          urls[key] = c.toDataURL('image/png'); cells[key] = c;
++          const g = c.getContext('2d', { willReadFrequently: true })!; g.imageSmoothingEnabled = false; g.drawImage(img, f.x, f.y, f.w, f.h, 0, 0, f.w, f.h);
++          next[key] = c;
+         }
++        cells = next;
+         done(true);
+       } catch { done(false); }
+     };
+     img.onerror = () => done(false);
+-    setTimeout(() => done(false), timeoutMs);
+     img.src = `${import.meta.env.BASE_URL}${ITEM_ATLAS.image.replace(/^\//, '')}`;
+-  });
++  }).finally(() => { pending = null; });
++  return pending;
+ }
+diff --git a/web/src/ui/common.tsx b/web/src/ui/common.tsx
+index 85b0542..ba48e0d 100644
+--- a/web/src/ui/common.tsx
++++ b/web/src/ui/common.tsx
+@@ -5,8 +5,17 @@ import { atlasIconUrl } from '../game/item-atlas';
+ import type { Stack, GameState } from '../game/core';
+ import type { Intent, Result } from '../game/engine';
+ 
+-let iconUrls: Record<string, string> | null = null;
+-function drawnIconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || ''; }
++const iconUrls: Record<string, string> = Object.create(null);
++function drawnIconUrl(key: string) {
++  if (key in iconUrls) return iconUrls[key];
++  const A = getArt();
++  const sprites = key.startsWith('st:') ? A.st : A.icon;
++  const id = key.startsWith('st:') ? key.slice(3) : key;
++  const c = Object.prototype.hasOwnProperty.call(sprites, id) ? sprites[id] : null;
++  // A single legacy icon must not PNG-encode every item and structure (including
++  // the 156 items already covered by the approved atlas) on first pack open.
++  return iconUrls[key] = c ? c.toDataURL() : '';
++}
+ /** Item icon: the approved 157-atlas cell for every mapped id; the drawn icon only for ids outside the 157 and for `st:` structure art. */
+ export function iconUrl(key: string) { return atlasIconUrl(key) || drawnIconUrl(key); }
+ export function Icon({ k, size = 16, style }: { k: string; size?: number; style?: React.CSSProperties }) {
