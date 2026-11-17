@@ -1,3 +1,4 @@
+import { fundBuild } from './support/paid-build';
 // B03 Deliverable A: shared physical thermal rules (online tick and offline settle).
 import { describe, it, expect } from 'vitest';
 import { BAL, TILE, WW, T, type GameState, type RunState } from '../src/game/core';
@@ -26,6 +27,7 @@ function campSetup(seed = 313, fuelWood = 0) {
   const s = snowSpot(r);
   addItem(r, 'inv', 'wood', 40); addItem(r, 'inv', 'stone', 20);
   r.player.x = s.x * TILE + 8; r.player.y = s.y * TILE + 8; markDirty();
+  fundBuild(g,'campfire',T0);
   const built = act(g, 'build', { struct: 'campfire', tx: s.x + 2, ty: s.y });
   expect(built).toMatchObject({ ok: true });
   const fire = Object.values(r.entities).find(e => e.type === 'campfire' && e.tx === s.x + 2 && e.ty === s.y)!;
@@ -66,6 +68,7 @@ describe('B03-A comfortV1 physical thermal evaluator', () => {
     // Second fire on a free tile whose line of sight to the player is clear (physical LOS is required).
     let f2: any = null;
     for (const [dx, dy] of [[0, 2], [-2, 0], [0, -2], [-1, 2], [-2, 2], [2, -2], [-2, -2], [-3, 0], [0, 3]]) {
+      if(!C(r,'inv').slots.some(s=>s?.key==='deploy_campfire'))fundBuild(g,'campfire',T0);
       if (!act(g, 'build', { struct: 'campfire', tx: s.x + dx, ty: s.y + dy }).ok) continue;
       const cand = Object.values(r.entities).find(e => e.type === 'campfire' && e.tx === s.x + dx && e.ty === s.y + dy)!;
       addItem(r, cand.station!.fuelC, 'wood', 1);
@@ -170,7 +173,7 @@ function shelter(seed:number){
   const {x,y}=site(g);
   r.player.x=x*TILE+8;r.player.y=(y+1)*TILE+8;
   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'inv','stone',60);
-  const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"build",{struct,tx,ty});expect({s:struct,tx,ty,why:res.ok?"":(res as any).reason}).toEqual({s:struct,tx,ty,why:""});};
+  const build=(struct:string,tx:number,ty:number)=>{fundBuild(g,struct,T0);const res=act(g,"build",{struct,tx,ty});expect({s:struct,tx,ty,why:res.ok?"":(res as any).reason}).toEqual({s:struct,tx,ty,why:""});};
   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+dx,y+dy);
   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+dx,y+dy);
   // Walls are placed from just outside each ring tile (line of sight from inside would cross the ring).
