@@ -33,6 +33,7 @@ describe('MEC-01 R8B plank chain', () => {
   it('two wood make one plank at the bench, after 6 real seconds; too little wood is refused with no change', () => {
     const g=start();const r=g.run!;
     addItem(r,'inv','wood',14);addItem(r,'inv','stone',4);
+    expect(act(g,'craft',{recipe:'deploy_workbench'},START+19).ok).toBe(true);
     const sp=legalTileNear(g,r.player.x/TILE|0,r.player.y/TILE|0,'workbench');
     expect(act(g,'build',{struct:'workbench',tx:sp[0],ty:sp[1]},START+20).ok).toBe(true);
     const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;
@@ -58,6 +59,7 @@ describe('MEC-01 R8B plank chain', () => {
   it('a plank wall needs three real planks: with two it is refused and nothing is spent; with three it builds at 240 HP', () => {
     const g=start();const r=g.run!;
     addItem(r,'inv','wood',14);addItem(r,'inv','stone',4);
+    expect(act(g,'craft',{recipe:'deploy_workbench'},START+19).ok).toBe(true);
     const sp=legalTileNear(g,r.player.x/TILE|0,r.player.y/TILE|0,'workbench');
     act(g,'build',{struct:'workbench',tx:sp[0],ty:sp[1]},START+20);
     const bench=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='workbench')!;

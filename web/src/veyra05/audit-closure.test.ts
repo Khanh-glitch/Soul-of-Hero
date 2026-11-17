@@ -1,9 +1,10 @@
+import {fundBuild} from '../../tests/support/paid-build';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { TILE, WW, WH, HOUR, T, clamp, type Creature } from '../game/core';
 import {
-  ALWAYS_KNOWN_RECIPES,
+  ITEMS, ALWAYS_KNOWN_RECIPES,
   PRIMORDIAL_ELDERS,
   CREATURES,
   RECIPES,
@@ -270,8 +271,9 @@ describe('Veyra Audit Closure & Cross-System Guarantees (#48)', () => {
     expect(HUSBANDRY_YIELDS.grouse.secondary?.[0]).toBe('feather');
     expect(BUTCHER_YIELDS.deer.adult.some(([k]) => k === 'hide')).toBe(true);
     expect(BUTCHER_YIELDS.boar.adult.some(([k]) => k === 'boar_tusk')).toBe(true);
-    expect(RECIPES.poached_eggs).toBeDefined();
-    expect(ALWAYS_KNOWN_RECIPES.length).toBe(14);
+    expect(RECIPES.poached_eggs).toBeUndefined(); // retired, egg remains directly edible
+    expect(ITEMS.grouse_egg.food?.hunger).toBeGreaterThan(0);
+    expect(ALWAYS_KNOWN_RECIPES).toHaveLength(37);
 
     // 2. Build an enclosed 5x5 pen on Veyra with a Feed & Water Trough + Rain Barrel
     const gs = startVeyraAtAu(812, 592, 7404);
@@ -323,7 +325,9 @@ describe('Veyra Audit Closure & Cross-System Guarantees (#48)', () => {
     }
     r.player.x = (penX + 2) * TILE + 8;
     r.player.y = (penY + 2) * TILE + 8;
+    fundBuild(gs,'feed_trough',T0+19);
     expect(dispatch(gs, { id: 'btrough', type: 'build', struct: 'feed_trough', tx: penX + 1, ty: penY + 1 }, T0 + 20).ok).toBe(true);
+    fundBuild(gs,'barrel',T0+24);
     expect(dispatch(gs, { id: 'bbarrel', type: 'build', struct: 'barrel', tx: penX + 3, ty: penY + 1 }, T0 + 25).ok).toBe(true);
     const trough = Object.values(r.entities).find(e => e.type === 'feed_trough')!;
     const barrel = Object.values(r.entities).find(e => e.type === 'barrel')!;

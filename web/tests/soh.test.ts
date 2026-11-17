@@ -11,6 +11,8 @@ const T0 = Date.UTC(2026, 10, 1, 12);
 let n = 0; const id = () => 'it' + (++n);
 const idle = (mx = 0, my = 0): Input => ({ up: false, down: false, left: false, right: false, mx, my, attack: false, attackPressed: false, roll: false, cancel: false });
 function fresh(region = 0): GameState { const gs = newGame(); markDirty(); const r = dispatch(gs, { id: id(), type: 'startRun', character: 'female', region, seed: 1234 + region }, T0); expect(r.ok).toBe(true); HAZ.length = 0; PROJ.length = 0; return gs; }
+/** Controlled stock already carried in these mechanical fixtures; never grant at placement. */
+function pack(gs:GameState,type:string,at:number){const item=STRUCTS[type].item!;expect(dispatch(gs,{id:id(),type:'craft',recipe:item},at)).toMatchObject({ok:true});}
 function totalItems(gs: GameState, key: string) { let s = 0; for (const c of Object.values(gs.run!.custody)) for (const st of c.slots) if (st?.key === key) s += st.qty; return s; }
 function tp(gs: GameState, x: number, y: number) { gs.run!.player.x = x; gs.run!.player.y = y; }
 function buildSpot(gs: GameState) {
@@ -106,13 +108,11 @@ describe('catalog validation rejects broken content before play', () => {
   });
 });
 
-// Final item set (rev 4): Salted Roast is retired (→ Dried Meat) and Raw Salt is ordered retired but still PENDING —
-// its Salt Shale nodes are placed on the map, so the source half of this chain is still live and still tested here.
-// The cooking half is now LI Dried Meat: meat only, no salt.
-describe('salt-shale source + dried meat content chain', () => {
+// Current Shell Shale yields stone (not retired salt). Dried Meat uses meat only.
+describe('shell-shale source + paid dried meat content chain', () => {
   it('validates definitions, harvests a world-placed source, rejects wrong tool/missing input, then cooks and collects physical output', () => {
     expect(validateGameplayCatalog()).toBe(true);
-    expect(ITEMS.raw_salt.name).toBe('Raw Salt'); expect(SOURCES.salt_shale.yields).toEqual([['raw_salt', 1]]);
+    expect(SOURCES.salt_shale.yields).toEqual([['stone', 1]]);
     expect(RECIPES.salted_meat).toBeUndefined(); expect(RECIPES.dried_meat).toMatchObject({ out: 'dried_meat', ins: [['meat', 1]], station: 'campfire', base: true });
     const gs = fresh(); const r = gs.run!; const w = getWorld();
     const sourceIndex = w.sourceV3.findIndex(k => k === 'salt_shale');
@@ -125,31 +125,32 @@ describe('salt-shale source + dried meat content chain', () => {
     swing(T0); // starting knife cannot harvest ore
     expect(sourceAt(r, tx, ty)?.stock).toBe(SOURCES.salt_shale.stock); // wrong tool did not debit source
     addItem(r, 'inv', 'stone_pick', 1); const pickSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'stone_pick'); r.player.active = pickSlot;
-    for (let hit = 0; hit < 6 && !Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'raw_salt'); hit++) swing(T0 + 1000 * (hit + 1));
-    expect(Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'raw_salt')).toBe(true);
-    const drop = Object.values(r.entities).find(e => e.kind === 'drop' && C(r, e.c!).slots[0]?.key === 'raw_salt')!;
+    for (let hit = 0; hit < 6 && !Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'stone'); hit++) swing(T0 + 1000 * (hit + 1));
+    expect(Object.values(r.entities).some(e => e.kind === 'drop' && e.c && C(r, e.c).slots[0]?.key === 'stone')).toBe(true);
+    const drop = Object.values(r.entities).find(e => e.kind === 'drop' && C(r, e.c!).slots[0]?.key === 'stone')!;
     tp(gs, drop.x, drop.y); const afterHarvest=r.clock.lastSimAt;
     expect(dispatch(gs, { id: id(), type: 'pickup', eid: drop.id }, afterHarvest + 1).ok).toBe(true);
-    expect(countItem(r, 'inv', 'raw_salt')).toBe(1);
+    expect(countItem(r, 'inv', 'stone')).toBe(1);
 
     const { tx: bx, ty: by } = buildSpot(gs); tp(gs, bx * TILE + 8, (by + 2) * TILE + 8);
     addItem(r, 'inv', 'wood', 8); addItem(r, 'inv', 'stone', 4); addItem(r, 'inv', 'meat', 1);
+    pack(gs,'campfire',afterHarvest+2);
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'campfire', tx: bx, ty: by }, afterHarvest + 2).ok).toBe(true);
     const fire = Object.values(r.entities).find(e => e.type === 'campfire')!;
     expect(dispatch(gs, { id: id(), type: 'craft', recipe: 'dried_meat', eid: fire.id }, afterHarvest + 3).ok).toBe(true);
-    expect(countItem(r, 'inv', 'raw_salt'), 'no live food formula takes salt any more').toBe(1); expect(countItem(r, 'inv', 'meat')).toBe(0);
+    expect(countItem(r, 'inv', 'raw_salt'), 'retired salt is neither harvested nor cooked').toBe(0); expect(countItem(r, 'inv', 'meat')).toBe(0);
     expect(dispatch(gs, { id: id(), type: 'move', from: 'inv', fs: C(r, 'inv').slots.findIndex(s => s?.key === 'wood'), to: fire.station!.fuelC }, afterHarvest + 4).ok).toBe(true);
-    stepStations(gs, RECIPES.dried_meat.secs * 1000 + 1000, afterHarvest + 11_004);
+    stepStations(gs, RECIPES.dried_meat.secs * 1000 + 1000, afterHarvest + 2 + RECIPES.dried_meat.secs*1000 + 1000);
     const output = C(r, fire.station!.outC); const slot = output.slots.findIndex(s => s?.key === 'dried_meat');
     expect(slot).toBeGreaterThanOrEqual(0); // physically waiting in station output
-    expect(dispatch(gs, { id: id(), type: 'move', from: fire.station!.outC, fs: slot, to: 'inv' }, afterHarvest + 11_005).ok).toBe(true);
+    expect(dispatch(gs, { id: id(), type: 'move', from: fire.station!.outC, fs: slot, to: 'inv' }, afterHarvest + 2 + RECIPES.dried_meat.secs*1000 + 1001).ok).toBe(true);
     expect(countItem(r, 'inv', 'dried_meat')).toBe(1);
     const restored = JSON.parse(JSON.stringify(gs)) as GameState;
     expect(restored.version).toBe(SAVE_VERSION); // additive content needs no destructive save migration
     expect(totalItems(restored, 'dried_meat')).toBe(1);
     expect(restored.run!.sources[ty * WW + tx].stock).toBe(sourceAt(r, tx, ty)?.stock);
     r.player.hunger = 40; const mealSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'dried_meat');
-    expect(dispatch(gs, { id: id(), type: 'useItem', slot: mealSlot }, afterHarvest + 11_006).ok).toBe(true);
+    expect(dispatch(gs, { id: id(), type: 'useItem', slot: mealSlot }, afterHarvest + 2 + RECIPES.dried_meat.secs*1000 + 1002).ok).toBe(true);
     expect(r.player.hunger).toBe(40 + ITEMS.dried_meat.food!.hunger!); expect(countItem(r, 'inv', 'dried_meat')).toBe(0);
   });
 });
@@ -195,10 +196,12 @@ describe('C07 build / reclaim custody', () => {
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'claim', tx, ty }, T0).ok).toBe(false); // foundation required
     expect(countItem(r, 'inv', 'wood')).toBe(40);
     expect(dispatch(gs,{id:id(),type:'build',struct:'floor_wood',tx,ty},T0).ok).toBe(true);
+    pack(gs,'claim',T0);
     const bid = id(); expect(dispatch(gs, { id: bid, type: 'build', struct: 'claim', tx, ty }, T0).ok).toBe(true);
     expect(countItem(r, 'inv', 'wood')).toBe(26); expect(countItem(r, 'inv', 'stone')).toBe(15);
     expect(dispatch(gs, { id: bid, type: 'build', struct: 'claim', tx, ty }, T0)).toMatchObject({ ok: false, dup: true });
     expect(countItem(r, 'inv', 'wood')).toBe(26);
+    pack(gs,'chest_small',T0);
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'chest_small', tx: tx + 1, ty }, T0).ok).toBe(true);
     const chest = Object.values(r.entities).find(e => e.type === 'chest_small')!;
     addItem(r, 'inv', 'berries', 7); const bi = C(r, 'inv').slots.findIndex(s => s?.key === 'berries');
@@ -214,7 +217,7 @@ describe('C06/C09 stations, fuel, offline', () => {
   it('furnace output stops exactly at fuel exhaustion during offline settlement', () => {
     const gs = fresh(); const r = gs.run!; const { tx, ty } = buildSpot(gs); tp(gs, tx * TILE + 8, (ty + 2) * TILE + 8);
     addItem(r, 'inv', 'wood', 40); addItem(r, 'inv', 'stone', 30); addItem(r, 'inv', 'iron_ore', 5);
-    dispatch(gs, { id: id(), type: 'build', struct: 'claim', tx, ty }, T0); expect(dispatch(gs, { id: id(), type: 'build', struct: 'furnace', tx: tx + 1, ty }, T0).ok).toBe(true);
+    pack(gs,'furnace',T0); expect(dispatch(gs, { id: id(), type: 'build', struct: 'furnace', tx: tx + 1, ty }, T0).ok).toBe(true);
     const f = Object.values(r.entities).find(e => e.type === 'furnace')!; const wi = C(r, 'inv').slots.findIndex(s => s?.key === 'wood');
     expect(dispatch(gs, { id: id(), type: 'move', from: 'inv', fs: wi, to: f.station!.fuelC, qty: 1 }, T0).ok).toBe(true);
     for (let k = 0; k < 5; k++) expect(dispatch(gs, { id: id(), type: 'craft', recipe: 'iron_ingot', eid: f.id }, T0).ok).toBe(true);
@@ -301,7 +304,7 @@ describe('C04 research', () => {
   it('specimen study → physical blueprint → learned once; a second copy is refused without consumption', () => {
     const gs = fresh(); const r = gs.run!; const { tx, ty } = buildSpot(gs); tp(gs, tx * TILE + 8, (ty + 2) * TILE + 8);
     addItem(r, 'inv', 'wood', 40); addItem(r, 'inv', 'stone', 10); addItem(r, 'inv', 'spares', 10); addItem(r, 'inv', 'iron_ingot', 2); addItem(r, 'inv', 'wolf_fang', 1);
-    dispatch(gs, { id: id(), type: 'build', struct: 'claim', tx, ty }, T0); expect(dispatch(gs, { id: id(), type: 'build', struct: 'research', tx: tx + 1, ty }, T0).ok).toBe(true);
+    pack(gs,'research',T0); expect(dispatch(gs, { id: id(), type: 'build', struct: 'research', tx: tx + 1, ty }, T0).ok).toBe(true);
     const tbl = Object.values(r.entities).find(e => e.type === 'research')!; const si = C(r, 'inv').slots.findIndex(s => s?.key === 'wolf_fang');
     expect(dispatch(gs, { id: id(), type: 'research', mode: 'specimen', slot: si, eid: tbl.id }, T0).ok).toBe(true);
     settle(gs, T0 + 60000); const out = C(r, tbl.station!.outC); const bpI = out.slots.findIndex(s => s?.key === 'blueprint'); expect(out.slots[bpI]!.meta).toBe('fur_cloak');
@@ -329,6 +332,7 @@ describe('C15–C18, C22–C23 Ragnarok cash, escrow, evacuation, run 2', () => 
     const { tx, ty } = buildSpot(gs); tp(gs, tx * TILE + 8, (ty + 2) * TILE + 8); addItem(r, 'inv', 'wood', 14); addItem(r, 'inv', 'stone', 5);
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'escrow', tx: tx + 1, ty }, T0).ok).toBe(false); // not owned land
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'floor_wood', tx, ty }, T0).ok).toBe(true);
+    pack(gs,'claim',T0);
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'claim', tx, ty }, T0).ok).toBe(true);
     expect(dispatch(gs, { id: id(), type: 'build', struct: 'escrow', tx: tx + 1, ty }, T0).ok).toBe(true);
     const esc = Object.values(r.entities).find(e => e.type === 'escrow')!; expect(claimAt(r, esc.tx!, esc.ty!)).toBeTruthy();

@@ -1,0 +1,130 @@
+diff --git a/web/src/game/core.ts b/web/src/game/core.ts
+index 4a94ece..c64fceb 100644
+--- a/web/src/game/core.ts
++++ b/web/src/game/core.ts
+@@ -51,10 +51,12 @@ export const TERRAIN_NAME = ['deep', 'shallow', 'sand', 'grass', 'meadow', 'fore
+ export interface CoreReserve { basic: number; refined: number; signature: number }
+ /** Physical mechanism travels with a packed trap's UID; only paid re-forge renews it. */
+ export interface BearTrapState { version: 'trap-v1'; state: 'unarmed' | 'armed' | 'spent' | 'worn'; uses: number; snapAt?: number }
++/** Paid permanent station hardware travels with the packed chassis, not its old site/wiring/jobs. */
++export interface StationHardware { version: 'station-hardware-v1'; level?: 2 | 3; industrial?: true; lining?: true }
+ /** Creator Core V2 (G1B): `lvl` 1-3 lives on the physical instance, `cd` holds the three per-UID ready-at timestamps,
+  *  `upg` is a running same-UID upgrade. `reserves` exists only in pre-V2 saves and is converted on load into `owed`: the exact items that energy was
+  *  loaded from, handed back to the Core's own container as soon as there is room. A cast never draws on it. */
+-export interface Stack { bearTrap?: BearTrapState; uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; owed?: Record<string, number>; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
++export interface Stack { stationHardware?: StationHardware; bearTrap?: BearTrapState; uid: string; key: string; qty: number; dur?: number; charge?: number; meta?: string; upgrade?: 'freight'; reserves?: CoreReserve; owed?: Record<string, number>; lvl?: 1 | 2 | 3; cd?: { basic?: number; refined?: number; signature?: number }; upg?: { to: 2 | 3; readyAt: number } }
+ export interface Container { id: string; kind: string; slots: (Stack | null)[] }
+ 
+ export type Dir = 0 | 1 | 2 | 3; // down, left, right, up
+diff --git a/web/src/game/engine.ts b/web/src/game/engine.ts
+index 6e8ed21..f5930ab 100644
+--- a/web/src/game/engine.ts
++++ b/web/src/game/engine.ts
+@@ -1,3 +1,4 @@
++import { packedStationHardware, restoreStationHardware, validStationHardware } from './station-hardware';
+ import { validBearTrap } from './bear-trap-state';
+ import { landingStimulus } from './stimulus';
+ import { VFX_TEST_KIT, VFX_TEST_CORES } from './vfx/testkit';
+@@ -2133,7 +2134,8 @@ export function buildReason(gs: GameState, type: string, tx: number, ty: number)
+   if (d.item && ITEMS[d.item]?.dur) {
+     const packs=C(r,'inv').slots.filter(v=>v?.key===d.item);
+     if (!packs.some(v=>v?.qty===1&&Number.isFinite(v.dur)&&(v.dur??0)>0&&(v.dur??0)<=d.hp&&
+-      (v.bearTrap===undefined || type==='bear_trap'&&validBearTrap(v.bearTrap))))
++      (v.bearTrap===undefined || type==='bear_trap'&&validBearTrap(v.bearTrap))&&
++      (v.stationHardware===undefined || validStationHardware(v.key,v.stationHardware))))
+       return 'Need an intact packed device.';
+   }
+   if (!hasAll(r, 'inv', cost)) return 'Missing materials: ' + cost.filter(([k, q]) => countItem(r, 'inv', k) < q).map(([k, q]) => `${ITEMS[k].name} ${countItem(r, 'inv', k)}/${q}`).join(', ');
+@@ -2657,7 +2659,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
+           const v=inv.slots[i];
+           if(v?.key===d.item&&v.qty===1&&
+             (!ITEMS[d.item!].dur||(Number.isFinite(v.dur)&&v.dur!>0&&v.dur!<=d.hp))&&
+-            (v.bearTrap===undefined || it.struct==='bear_trap'&&validBearTrap(v.bearTrap))){idx=i;break;}
++            (v.bearTrap===undefined || it.struct==='bear_trap'&&validBearTrap(v.bearTrap))&&
++            (v.stationHardware===undefined || validStationHardware(v.key,v.stationHardware))){idx=i;break;}
+         }
+         if(idx<0)return fail('No valid packed device in inventory.');
+         deployed=inv.slots[idx]!;
+@@ -2667,6 +2670,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
+       if (d.slots) e.c = mkContainer(r, 'chest', d.slots).id;
+       if (d.station && d.station !== 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 3).id, outC: mkContainer(r, 'out', 6).id };
+       if (d.station === 'research') e.station = { queue: [], burn: 0, fuelC: mkContainer(r, 'fuel', 0).id, outC: mkContainer(r, 'out', 4).id };
++      restoreStationHardware(e);
+       if (it.struct === 'refinery') e.identity = 'refinery-v1';
+       if (it.struct === 'claim') e.cabinet = {credit:{},legacy:false};
+       if (it.struct === 'base_generator') e.basePower = { enabled: false, energy: 0, network:'wire-v1' };
+@@ -2819,6 +2823,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
+           // One authentic UID survives inventory → placement → recovery. Damage
+           // follows it; no reclaim/redeploy healing exploit.
+           e.deployed.dur = e.hp;
++          const hardware=packedStationHardware(e);
++          if(hardware)e.deployed.stationHardware=hardware;else delete e.deployed.stationHardware;
+           if (e.type==='bear_trap' && e.bearTrap) e.deployed.bearTrap={...e.bearTrap};
+           returnReservations(r, [e.deployed], e.x, e.y, now);
+         } else {
+@@ -2827,7 +2833,11 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
+           if(e.type==='bear_trap' && e.bearTrap){
+             const pack=mkStack(r,d.item,1);pack.dur=e.hp;pack.bearTrap={...e.bearTrap};
+             returnReservations(r,[pack],e.x,e.y,now);
+-          } else giveOrDrop(r, d.item, 1, now, {dur:e.hp});
++          } else {
++            const pack=mkStack(r,d.item,1);pack.dur=e.hp;
++            const hardware=packedStationHardware(e);if(hardware)pack.stationHardware=hardware;
++            returnReservations(r,[pack],e.x,e.y,now);
++          }
+           receipt(r,now,'pa1.legacy.unpack',e.id+':'+e.type);
+         }
+       }
+diff --git a/web/src/game/persist.ts b/web/src/game/persist.ts
+index 96cf24c..c3837b3 100644
+--- a/web/src/game/persist.ts
++++ b/web/src/game/persist.ts
+@@ -1,3 +1,4 @@
++import { validStationHardware } from './station-hardware';
+ import { G1B_VERSION, G1B_CHEST_SLOTS, G1B_SITES, G1B_FIXTURE_BY_ID, G1B_GATE_BY_ID, G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, g1bSeed, CORE_V2 } from './g1b';
+ import { G1B_BATCH2_ECOLOGY } from './g1b-ecology-batch2.frozen';
+ import { G1B_BATCH3_ECOLOGY } from './g1b-ecology-batch3.frozen';
+@@ -910,6 +911,7 @@ export function stackInvariant(s: any, uids: Set<string>, beforeNext: (id: strin
+   if (typeof s.key !== 'string' || !has(ITEMS, s.key)) return 'unknown-item';
+   if (!integer(s.qty) || s.qty < 1) return 'bad-qty';
+   if (s.qty > ITEMS[s.key].max) return `over-max:${s.key}`;
++  if (s.stationHardware !== undefined && !validStationHardware(s.key, s.stationHardware)) return 'bad-station-hardware';
+   if (s.bearTrap !== undefined && (s.key !== 'deploy_bear_trap' || !validBearTrap(s.bearTrap))) return 'bad-packed-trap';
+   if (s.upgrade !== undefined && (s.key !== 'cart_kit' || s.upgrade !== 'freight')) return 'bad-upgrade';
+   if ((s.key === 'keycard' || isAccessCard(s.key)) && s.charge !== undefined && (!integer(s.charge) || s.charge < 1 || s.charge > 100 || s.qty !== 1)) return 'bad-card-charge';
+diff --git a/web/src/game/station-hardware.ts b/web/src/game/station-hardware.ts
+new file mode 100644
+index 0000000..4b2736c
+--- /dev/null
++++ b/web/src/game/station-hardware.ts
+@@ -0,0 +1,30 @@
++import type { Entity, StationHardware } from './core';
++
++/** Shared live-placement/save grammar. This is hardware only: no energy, queue,
++ * output, remote generator ID or enabled production setting can ride in a pack. */
++export function validStationHardware(key: string, value: unknown): value is StationHardware {
++  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
++  const h = value as StationHardware;
++  if (h.version !== 'station-hardware-v1') return false;
++  if (key === 'deploy_workbench') return Object.keys(h).every(k => ['version','level','industrial'].includes(k)) &&
++    (h.level === 2 || h.level === 3) && (h.industrial === undefined || h.industrial === true);
++  if (key === 'deploy_furnace') return Object.keys(h).every(k => ['version','lining'].includes(k)) && h.lining === true;
++  return false;
++}
++
++export function packedStationHardware(e: Entity): StationHardware | undefined {
++  if (e.type === 'workbench' && (e.station?.level === 2 || e.station?.level === 3))
++    return { version:'station-hardware-v1', level:e.station.level, ...(e.industrial ? {industrial:true as const} : {}) };
++  if (e.type === 'furnace' && e.station?.upgrade === 'kiln_lining')
++    return { version:'station-hardware-v1', lining:true };
++  return undefined;
++}
++
++export function restoreStationHardware(e: Entity) {
++  const h=e.deployed?.stationHardware;
++  if (!h || !e.station || !validStationHardware(e.deployed!.key,h)) return;
++  if (e.type === 'workbench') {
++    e.station.level=h.level;
++    if (h.industrial) e.industrial={enabled:false}; // a new site must be explicitly rewired
++  } else if (e.type === 'furnace' && h.lining) e.station.upgrade='kiln_lining';
++}

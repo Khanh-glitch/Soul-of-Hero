@@ -119,7 +119,9 @@ describe('Phase C/D/E/F — Veyra Full Creature, Husbandry, Side-Boss & 6-Primor
   });
 
   it('preserves ALWAYS_KNOWN_RECIPES invariant while exposing new base husbandry & fletching recipes', () => {
-    expect(ALWAYS_KNOWN_RECIPES.length).toBe(14);
+    expect(ALWAYS_KNOWN_RECIPES).toHaveLength(37); // final rev6: 13 standing formulas + 24 physical packs
+    expect(new Set(ALWAYS_KNOWN_RECIPES).size).toBe(37);
+    expect(ALWAYS_KNOWN_RECIPES).toEqual(expect.arrayContaining(['deploy_workbench','deploy_research','deploy_feed_trough']));
     expect(ALWAYS_KNOWN_RECIPES).not.toContain('lead_rope');
     expect(ALWAYS_KNOWN_RECIPES).not.toContain('animal_feed');
     expect(ALWAYS_KNOWN_RECIPES).not.toContain('arrow_fletched');

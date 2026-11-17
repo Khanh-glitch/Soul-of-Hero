@@ -19,7 +19,7 @@ function setup(){
 }
 function buildAt(o:ReturnType<typeof setup>,type:string,dx:number,dy:number){
   const px=o.r.player.x,py=o.r.player.y;o.r.player.x=(o.x+dx)*TILE+8;o.r.player.y=(o.y+dy+2)*TILE+8;markDirty();
-  try{const res=dispatch(o.gs,{id:'hs'+ ++serial,type:'build',struct:type,tx:o.x+dx,ty:o.y+dy},o.r.clock.lastSimAt);if(!res.ok) throw new Error(`${type}: ${res.reason}`);return Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===o.x+dx&&e.ty===o.y+dy)!;}
+  try{if(STRUCTS[type].item?.startsWith('deploy_'))expect(dispatch(o.gs,{id:'hs-pack'+ ++serial,type:'craft',recipe:STRUCTS[type].item},o.r.clock.lastSimAt)).toMatchObject({ok:true});const res=dispatch(o.gs,{id:'hs'+ ++serial,type:'build',struct:type,tx:o.x+dx,ty:o.y+dy},o.r.clock.lastSimAt);if(!res.ok) throw new Error(`${type}: ${res.reason}`);return Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===o.x+dx&&e.ty===o.y+dy)!;}
   finally{o.r.player.x=px;o.r.player.y=py;markDirty();}
 }
 function homeWithCabinet(){

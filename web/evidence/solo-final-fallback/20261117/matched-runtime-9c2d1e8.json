@@ -1,0 +1,6136 @@
+{
+  "head": "9c2d1e86e7ef97a48ff9442ce4de10dcd93dffce",
+  "at": "2026-11-17T08:43:06.338Z",
+  "viewport": [
+    640,
+    360
+  ],
+  "samples": [
+    {
+      "index": 0,
+      "variant": "current",
+      "titleMs": 7728,
+      "scene": {
+        "seed": 901,
+        "layout": "shipping_fresh",
+        "player": [
+          1624,
+          1000
+        ],
+        "creatures": 156
+      },
+      "phases": [
+        {
+          "phase": "idle",
+          "inputToDOMMs": 0,
+          "selfSampleMs": {
+            "other/native/idle": 3204.878000000004,
+            "Canvas/world JS": 70.707,
+            "simulation/world": 173.46099999999998,
+            "React": 572.5870000000002,
+            "GC": 52.404,
+            "VFX": 6.051
+          },
+          "topSelf": [
+            [
+              "(idle) @ :0",
+              1478.6430000000032
+            ],
+            [
+              "(program) @ :0",
+              1123.2950000000005
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              429.516
+            ],
+            [
+              "drawImage @ :0",
+              171.70200000000003
+            ],
+            [
+              "window.__timed @ :5",
+              156.20799999999994
+            ],
+            [
+              "now @ :0",
+              74.35199999999998
+            ],
+            [
+              "(garbage collector) @ :0",
+              52.404
+            ],
+            [
+              "__profile_draw @ http://127.0.0.1:5173/src/game/render.ts:587",
+              44.20400000000001
+            ],
+            [
+              "fillRect @ :0",
+              37.782000000000004
+            ],
+            [
+              "drawWaterTile @ http://127.0.0.1:5173/src/veyra05/living/life.ts:211",
+              33.32300000000001
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              30.391000000000002
+            ],
+            [
+              "createTask @ :0",
+              25.656
+            ],
+            [
+              "save @ :0",
+              17.109
+            ],
+            [
+              "h2 @ http://127.0.0.1:5173/src/veyra05/living/hpaint.ts:38",
+              16.588
+            ],
+            [
+              "wind @ http://127.0.0.1:5173/src/veyra05/living/life.ts:10",
+              15.522000000000002
+            ],
+            [
+              "Game @ http://127.0.0.1:5173/src/ui/Game.tsx:58",
+              14.649000000000001
+            ],
+            [
+              "steer @ http://127.0.0.1:5173/src/game/sim.ts:1015",
+              12.573
+            ],
+            [
+              "sourceDigest @ http://127.0.0.1:5173/src/game/world-economy.ts:8",
+              11.015
+            ],
+            [
+              "effTile @ http://127.0.0.1:5173/src/game/engine.ts:572",
+              10.861999999999998
+            ],
+            [
+              "resolveTrack @ http://127.0.0.1:5173/src/game/journey.ts:839",
+              10.463999999999999
+            ]
+          ]
+        },
+        {
+          "phase": "inventory-first",
+          "inputToDOMMs": 19750,
+          "selfSampleMs": {
+            "other/native/idle": 22182.233999999644,
+            "React": 1320.140000000001,
+            "simulation/world": 148.61899999999994,
+            "Canvas/world JS": 55.868,
+            "GC": 134.298,
+            "item-atlas": 2.125,
+            "VFX": 5.41
+          },
+          "topSelf": [
+            [
+              "toDataURL @ :0",
+              19536.563999999544
+            ],
+            [
+              "(program) @ :0",
+              1045.191
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              940.9070000000014
+            ],
+            [
+              "(idle) @ :0",
+              932.5640000000005
+            ],
+            [
+              "drawImage @ :0",
+              159.9950000000001
+            ],
+            [
+              "window.__timed @ :5",
+              150.9399999999999
+            ],
+            [
+              "(garbage collector) @ :0",
+              134.298
+            ],
+            [
+              "now @ :0",
+              73.98599999999999
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              72.95599999999999
+            ],
+            [
+              "fillRect @ :0",
+              42.36
+            ],
+            [
+              "__profile_draw @ http://127.0.0.1:5173/src/game/render.ts:587",
+              32.399
+            ],
+            [
+              "drawWaterTile @ http://127.0.0.1:5173/src/veyra05/living/life.ts:211",
+              24.939
+            ],
+            [
+              "createTask @ :0",
+              22.336
+            ],
+            [
+              "drawAir @ http://127.0.0.1:5173/src/veyra05/living/life.ts:112",
+              21.746
+            ],
+            [
+              "updateProperties @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:14786",
+              21.121
+            ],
+            [
+              "run @ :0",
+              19.944000000000003
+            ],
+            [
+              "react_stack_bottom_frame @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:18505",
+              19.203000000000003
+            ],
+            [
+              "validateProperty @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:2345",
+              17.044999999999998
+            ],
+            [
+              "runWithFiberInDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:993",
+              14.782
+            ],
+            [
+              "warnUnknownProperties @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:2538",
+              14.086000000000002
+            ]
+          ]
+        },
+        {
+          "phase": "inventory-repeat",
+          "inputToDOMMs": 154,
+          "selfSampleMs": {
+            "other/native/idle": 3166.779000000003,
+            "simulation/world": 94.051,
+            "React": 943.5899999999993,
+            "Canvas/world JS": 11.918000000000001,
+            "GC": 38.476
+          },
+          "topSelf": [
+            [
+              "(idle) @ :0",
+              2305.7990000000036
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              745.0559999999997
+            ],
+            [
+              "(program) @ :0",
+              472.04800000000023
+            ],
+            [
+              "drawImage @ :0",
+              94.782
+            ],
+            [
+              "window.__timed @ :5",
+              91.498
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              40.257000000000005
+            ],
+            [
+              "(garbage collector) @ :0",
+              38.476
+            ],
+            [
+              "run @ :0",
+              29.606
+            ],
+            [
+              "now @ :0",
+              28.070999999999998
+            ],
+            [
+              "fillRect @ :0",
+              20.386
+            ],
+            [
+              "astar @ http://127.0.0.1:5173/src/game/sim.ts:978",
+              15.229000000000001
+            ],
+            [
+              "countItem @ http://127.0.0.1:5173/src/game/engine.ts:1596",
+              12.884
+            ],
+            [
+              "drawWaterTile @ http://127.0.0.1:5173/src/veyra05/living/life.ts:211",
+              12.336
+            ],
+            [
+              "createTask @ :0",
+              12.309000000000001
+            ],
+            [
+              "(anonymous) @ http://127.0.0.1:5173/src/ui/SurvivorScreen.tsx:511",
+              12.243000000000002
+            ],
+            [
+              "CanvasRenderingContext2D.<computed> @ :9",
+              10.655999999999999
+            ],
+            [
+              "jsxDEVImpl @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:168",
+              10.475
+            ],
+            [
+              "validateProperty @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:2345",
+              9.171999999999999
+            ],
+            [
+              "lightPolygon @ http://127.0.0.1:5173/src/veyra05/living/life.ts:411",
+              9.107000000000001
+            ],
+            [
+              "commitMount @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:15873",
+              8.597000000000001
+            ]
+          ]
+        }
+      ],
+      "metrics": {
+        "timings": {
+          "startup/canvas.drawImage": {
+            "count": 43241,
+            "totalMs": 120.59999997541308,
+            "maxMs": 6.300000000745058
+          },
+          "startup/canvas.fillRect": {
+            "count": 194625,
+            "totalMs": 149.59999996237457,
+            "maxMs": 7
+          },
+          "startup/canvas.getImageData": {
+            "count": 719,
+            "totalMs": 3548.700000042096,
+            "maxMs": 642.4000000003725
+          },
+          "startup/canvas.putImageData": {
+            "count": 703,
+            "totalMs": 17.199999997392297,
+            "maxMs": 1.400000000372529
+          },
+          "startup/canvas.fill": {
+            "count": 425,
+            "totalMs": 0.9000000022351742,
+            "maxMs": 0.10000000149011612
+          },
+          "startup/canvas.encode": {
+            "count": 4,
+            "totalMs": 0.6000000014901161,
+            "maxMs": 0.30000000074505806
+          },
+          "startup//src/game/sim.ts:tick": {
+            "count": 105,
+            "totalMs": 100.30000000447035,
+            "maxMs": 48.59999999962747
+          },
+          "startup//src/game/pixelfx.ts:update": {
+            "count": 105,
+            "totalMs": 0.3000000026077032,
+            "maxMs": 0.10000000149011612
+          },
+          "startup//src/game/vfx/director.ts:update": {
+            "count": 105,
+            "totalMs": 0.19999999925494194,
+            "maxMs": 0.19999999925494194
+          },
+          "startup//src/game/vfx/director.ts:onEvent": {
+            "count": 2,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "startup//src/game/vfx/director.ts:sync": {
+            "count": 105,
+            "totalMs": 2.0000000074505806,
+            "maxMs": 0.7999999988824129
+          },
+          "startup//src/game/pixelfx.ts:drawAuras": {
+            "count": 105,
+            "totalMs": 4.300000000745058,
+            "maxMs": 4
+          },
+          "startup//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 105,
+            "totalMs": 0.2999999988824129,
+            "maxMs": 0.19999999925494194
+          },
+          "startup//src/game/pixelfx.ts:drawScreen": {
+            "count": 105,
+            "totalMs": 0.5,
+            "maxMs": 0.10000000149011612
+          },
+          "startup//src/game/pixelfx.ts:drawPostNight": {
+            "count": 105,
+            "totalMs": 0.2000000011175871,
+            "maxMs": 0.10000000149011612
+          },
+          "startup//src/game/render.ts:draw": {
+            "count": 105,
+            "totalMs": 1541.9999999906868,
+            "maxMs": 1122.1000000014901
+          },
+          "idle//src/game/sim.ts:tick": {
+            "count": 218,
+            "totalMs": 76.4000000320375,
+            "maxMs": 12.299999998882413
+          },
+          "idle//src/game/pixelfx.ts:update": {
+            "count": 218,
+            "totalMs": 0.3999999985098839,
+            "maxMs": 0.09999999962747097
+          },
+          "idle//src/game/vfx/director.ts:update": {
+            "count": 218,
+            "totalMs": 0.8999999985098839,
+            "maxMs": 0.40000000037252903
+          },
+          "idle/canvas.drawImage": {
+            "count": 87636,
+            "totalMs": 231.40000003017485,
+            "maxMs": 9.599999999627471
+          },
+          "idle/canvas.fillRect": {
+            "count": 257058,
+            "totalMs": 180.39999996870756,
+            "maxMs": 3.299999998882413
+          },
+          "idle//src/game/vfx/director.ts:sync": {
+            "count": 218,
+            "totalMs": 6.100000008940697,
+            "maxMs": 3.599999999627471
+          },
+          "idle//src/game/pixelfx.ts:drawAuras": {
+            "count": 218,
+            "totalMs": 0.5,
+            "maxMs": 0.10000000149011612
+          },
+          "idle//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 218,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "idle//src/game/pixelfx.ts:drawScreen": {
+            "count": 218,
+            "totalMs": 0.19999999925494194,
+            "maxMs": 0.09999999962747097
+          },
+          "idle/canvas.fill": {
+            "count": 872,
+            "totalMs": 0.7999999988824129,
+            "maxMs": 0.10000000149011612
+          },
+          "idle//src/game/pixelfx.ts:drawPostNight": {
+            "count": 218,
+            "totalMs": 0.49999999813735485,
+            "maxMs": 0.09999999962747097
+          },
+          "idle//src/game/render.ts:draw": {
+            "count": 218,
+            "totalMs": 756.8999999836087,
+            "maxMs": 39.09999999962747
+          },
+          "inventory-first/canvas.encode": {
+            "count": 77,
+            "totalMs": 19535.100000003353,
+            "maxMs": 19471.5
+          },
+          "inventory-first//src/game/sim.ts:tick": {
+            "count": 226,
+            "totalMs": 52.29999999329448,
+            "maxMs": 2.899999998509884
+          },
+          "inventory-first//src/game/pixelfx.ts:update": {
+            "count": 226,
+            "totalMs": 0.8000000007450581,
+            "maxMs": 0.2999999988824129
+          },
+          "inventory-first//src/game/vfx/director.ts:update": {
+            "count": 226,
+            "totalMs": 0.8999999966472387,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-first/canvas.drawImage": {
+            "count": 91706,
+            "totalMs": 225.39999994449317,
+            "maxMs": 2.599999999627471
+          },
+          "inventory-first/canvas.fillRect": {
+            "count": 268079,
+            "totalMs": 178.80000002868474,
+            "maxMs": 3.600000001490116
+          },
+          "inventory-first//src/game/vfx/director.ts:sync": {
+            "count": 226,
+            "totalMs": 3.0000000055879354,
+            "maxMs": 0.2000000011175871
+          },
+          "inventory-first//src/game/pixelfx.ts:drawAuras": {
+            "count": 226,
+            "totalMs": 0.40000000037252903,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 226,
+            "totalMs": 0.9000000022351742,
+            "maxMs": 0.5
+          },
+          "inventory-first//src/game/pixelfx.ts:drawScreen": {
+            "count": 226,
+            "totalMs": 0.599999999627471,
+            "maxMs": 0.19999999925494194
+          },
+          "inventory-first/canvas.fill": {
+            "count": 904,
+            "totalMs": 0.5,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first//src/game/pixelfx.ts:drawPostNight": {
+            "count": 226,
+            "totalMs": 0.8000000026077032,
+            "maxMs": 0.30000000074505806
+          },
+          "inventory-first//src/game/render.ts:draw": {
+            "count": 226,
+            "totalMs": 730.9999999962747,
+            "maxMs": 19.90000000037253
+          },
+          "inventory-repeat//src/game/sim.ts:tick": {
+            "count": 90,
+            "totalMs": 48.600000001490116,
+            "maxMs": 3.399999998509884
+          },
+          "inventory-repeat//src/game/pixelfx.ts:update": {
+            "count": 90,
+            "totalMs": 0.2999999988824129,
+            "maxMs": 0.19999999925494194
+          },
+          "inventory-repeat//src/game/vfx/director.ts:update": {
+            "count": 90,
+            "totalMs": 0.30000000074505806,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat/canvas.drawImage": {
+            "count": 36444,
+            "totalMs": 119.49999998696148,
+            "maxMs": 3.299999998882413
+          },
+          "inventory-repeat/canvas.fillRect": {
+            "count": 107155,
+            "totalMs": 81.9999999795109,
+            "maxMs": 3.900000000372529
+          },
+          "inventory-repeat//src/game/vfx/director.ts:sync": {
+            "count": 90,
+            "totalMs": 0.7999999988824129,
+            "maxMs": 0.30000000074505806
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawAuras": {
+            "count": 90,
+            "totalMs": 0.40000000037252903,
+            "maxMs": 0.30000000074505806
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 90,
+            "totalMs": 0.30000000074505806,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawScreen": {
+            "count": 90,
+            "totalMs": 0.5,
+            "maxMs": 0.40000000037252903
+          },
+          "inventory-repeat/canvas.fill": {
+            "count": 360,
+            "totalMs": 0.5,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawPostNight": {
+            "count": 90,
+            "totalMs": 0.5000000018626451,
+            "maxMs": 0.40000000037252903
+          },
+          "inventory-repeat//src/game/render.ts:draw": {
+            "count": 90,
+            "totalMs": 319.2999999951571,
+            "maxMs": 12.300000000745058
+          }
+        },
+        "encodes": [
+          {
+            "at": 8141.199999999255,
+            "ms": 0.30000000074505806,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 8144.699999999255,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 8145.5,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 8146,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 16396,
+            "ms": 0.30000000074505806,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 16396.5,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 16396.599999999627,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 16396.699999999255,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 16396.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 16397.5,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 16397.699999999255,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 16398,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 16398.099999999627,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 16398.099999999627,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 16398.400000000373,
+            "ms": 19471.5,
+            "phase": "inventory-first",
+            "w": 16,
+            "h": 16
+          },
+          {
+            "at": 35870.09999999963,
+            "ms": 55.5,
+            "phase": "inventory-first",
+            "w": 16,
+            "h": 16
+          },
+          {
+            "at": 35941.5,
+            "ms": 0.30000000074505806,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35952.699999999255,
+            "ms": 0.5,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35953.40000000037,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35953.699999999255,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35954.199999999255,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35954.5,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35954.699999999255,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35955.09999999963,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35955.40000000037,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35955.59999999963,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35955.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35956.09999999963,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35956.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35956.5,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35956.699999999255,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35957.09999999963,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35957.199999999255,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35957.40000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35957.699999999255,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35957.90000000037,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35958,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35958.199999999255,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35958.40000000037,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35958.59999999963,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35958.90000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35959.09999999963,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35959.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35959.59999999963,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35959.699999999255,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35960,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35960.300000000745,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35960.5,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35961,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35961.40000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35961.800000000745,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35962.09999999963,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35962.40000000037,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35962.5,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35962.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35963.09999999963,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35963.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35963.5,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35963.59999999963,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35963.800000000745,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35964,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35964.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35964.40000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35964.699999999255,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35964.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35965.09999999963,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35965.40000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35965.59999999963,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35965.90000000037,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35966,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35966.09999999963,
+            "ms": 0.2000000011175871,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35966.40000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35966.699999999255,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35966.90000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35967.199999999255,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35967.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35967.5,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35968.300000000745,
+            "ms": 0.5,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35969.199999999255,
+            "ms": 0.2000000011175871,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35969.699999999255,
+            "ms": 0.2000000011175871,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 35970.09999999963,
+            "ms": 0.2000000011175871,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          }
+        ],
+        "longTasks": [
+          {
+            "at": 3246.5,
+            "ms": 582
+          },
+          {
+            "at": 3914.0999999996275,
+            "ms": 3056
+          },
+          {
+            "at": 6987.5999999996275,
+            "ms": 662
+          },
+          {
+            "at": 8075.4000000003725,
+            "ms": 123
+          },
+          {
+            "at": 8217.099999999627,
+            "ms": 1184
+          },
+          {
+            "at": 9424.199999999255,
+            "ms": 53
+          },
+          {
+            "at": 9602.199999999255,
+            "ms": 110
+          },
+          {
+            "at": 9712.300000000745,
+            "ms": 75
+          },
+          {
+            "at": 9814.699999999255,
+            "ms": 51
+          },
+          {
+            "at": 9987.400000000373,
+            "ms": 52
+          },
+          {
+            "at": 15034.800000000745,
+            "ms": 59
+          },
+          {
+            "at": 15958.400000000373,
+            "ms": 59
+          },
+          {
+            "at": 16045.300000000745,
+            "ms": 51
+          },
+          {
+            "at": 16097.599999999627,
+            "ms": 80
+          },
+          {
+            "at": 16377.599999999627,
+            "ms": 19610
+          },
+          {
+            "at": 36237.09999999963,
+            "ms": 56
+          },
+          {
+            "at": 37140.699999999255,
+            "ms": 54
+          },
+          {
+            "at": 38589.5,
+            "ms": 70
+          },
+          {
+            "at": 38841.40000000037,
+            "ms": 53
+          },
+          {
+            "at": 40188.90000000037,
+            "ms": 74
+          },
+          {
+            "at": 40722.90000000037,
+            "ms": 63
+          },
+          {
+            "at": 41236.699999999255,
+            "ms": 62
+          },
+          {
+            "at": 41703,
+            "ms": 52
+          },
+          {
+            "at": 42102.199999999255,
+            "ms": 60
+          },
+          {
+            "at": 43132,
+            "ms": 57
+          },
+          {
+            "at": 43255.09999999963,
+            "ms": 52
+          },
+          {
+            "at": 43371.5,
+            "ms": 55
+          },
+          {
+            "at": 44269.90000000037,
+            "ms": 59
+          },
+          {
+            "at": 44369.59999999963,
+            "ms": 56
+          }
+        ],
+        "frameStats": {
+          "idle": {
+            "count": 218,
+            "p50": 16.69999999999891,
+            "p95": 16.799999999999272,
+            "p99": 66.60000000000036
+          },
+          "inventory-first": {
+            "count": 226,
+            "p50": 16.69999999999709,
+            "p95": 49.900000000001455,
+            "p99": 150.09999999999854
+          },
+          "inventory-repeat": {
+            "count": 90,
+            "p50": 16.69999999999709,
+            "p95": 83.30000000000291,
+            "p99": 816.5999999999985
+          }
+        },
+        "heapBytes": 269000000,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "errors": [],
+      "resources": []
+    },
+    {
+      "index": 1,
+      "variant": "eager-atlas-only",
+      "titleMs": 6615,
+      "scene": {
+        "seed": 901,
+        "layout": "shipping_fresh",
+        "player": [
+          1624,
+          1000
+        ],
+        "creatures": 156
+      },
+      "phases": [
+        {
+          "phase": "idle",
+          "inputToDOMMs": 0,
+          "selfSampleMs": {
+            "other/native/idle": 3271.3570000000072,
+            "VFX": 11.381,
+            "Canvas/world JS": 81.50200000000001,
+            "simulation/world": 139.416,
+            "React": 572.7509999999999,
+            "GC": 46.646,
+            "item-atlas": 1.099
+          },
+          "topSelf": [
+            [
+              "(program) @ :0",
+              1309.5760000000018
+            ],
+            [
+              "(idle) @ :0",
+              1274.4430000000011
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              387.3260000000003
+            ],
+            [
+              "drawImage @ :0",
+              218.83200000000008
+            ],
+            [
+              "window.__timed @ :5",
+              173.95800000000003
+            ],
+            [
+              "now @ :0",
+              57.26500000000001
+            ],
+            [
+              "(garbage collector) @ :0",
+              46.646
+            ],
+            [
+              "fillRect @ :0",
+              45.167
+            ],
+            [
+              "drawWaterTile @ http://127.0.0.1:5173/src/veyra05/living/life.ts:211",
+              44.718999999999994
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              41.272
+            ],
+            [
+              "__profile_draw @ http://127.0.0.1:5173/src/game/render.ts:587",
+              32.034000000000006
+            ],
+            [
+              "Game @ http://127.0.0.1:5173/src/ui/Game.tsx:58",
+              25.653000000000006
+            ],
+            [
+              "save @ :0",
+              23.225999999999996
+            ],
+            [
+              "measure @ :0",
+              21.371
+            ],
+            [
+              "createTask @ :0",
+              20.483
+            ],
+            [
+              "f @ http://127.0.0.1:5173/src/game/render.ts:732",
+              17.087
+            ],
+            [
+              "requestAnimationFrame @ :0",
+              12.051
+            ],
+            [
+              "sourceAt @ http://127.0.0.1:5173/src/game/engine.ts:640",
+              11.237
+            ],
+            [
+              "react_stack_bottom_frame @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:18505",
+              11.017999999999999
+            ],
+            [
+              "(anonymous) @ :9",
+              10.149999999999999
+            ]
+          ]
+        },
+        {
+          "phase": "inventory-first",
+          "inputToDOMMs": 19008,
+          "selfSampleMs": {
+            "other/native/idle": 21492.620999999748,
+            "React": 1296.0840000000017,
+            "simulation/world": 111.14699999999996,
+            "VFX": 8.824,
+            "GC": 121.65800000000002,
+            "Canvas/world JS": 42.442,
+            "item-atlas": 1.076
+          },
+          "topSelf": [
+            [
+              "toDataURL @ :0",
+              18863.41399999976
+            ],
+            [
+              "(program) @ :0",
+              1359.482999999999
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              904.5350000000007
+            ],
+            [
+              "(idle) @ :0",
+              540.9770000000001
+            ],
+            [
+              "drawImage @ :0",
+              208.35000000000002
+            ],
+            [
+              "window.__timed @ :5",
+              167.10700000000008
+            ],
+            [
+              "(garbage collector) @ :0",
+              121.65800000000002
+            ],
+            [
+              "now @ :0",
+              71.67099999999996
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              61.872000000000014
+            ],
+            [
+              "fillRect @ :0",
+              35.230999999999995
+            ],
+            [
+              "run @ :0",
+              25.626
+            ],
+            [
+              "updateProperties @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:14786",
+              24.348
+            ],
+            [
+              "commitUpdate @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:15887",
+              24.22
+            ],
+            [
+              "createTask @ :0",
+              23.634999999999998
+            ],
+            [
+              "react_stack_bottom_frame @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:18505",
+              18.778
+            ],
+            [
+              "validatePropertiesInDevelopment @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:14116",
+              17.936
+            ],
+            [
+              "jsxDEVImpl @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:168",
+              17.916
+            ],
+            [
+              "craftReadiness @ http://127.0.0.1:5173/src/game/action-readiness.ts:24",
+              17.404999999999998
+            ],
+            [
+              "(anonymous) @ http://127.0.0.1:5173/src/ui/SurvivorScreen.tsx:140",
+              16.96
+            ],
+            [
+              "drawWaterTile @ http://127.0.0.1:5173/src/veyra05/living/life.ts:211",
+              16.543
+            ]
+          ]
+        },
+        {
+          "phase": "inventory-repeat",
+          "inputToDOMMs": 186,
+          "selfSampleMs": {
+            "other/native/idle": 3278.388000000008,
+            "Canvas/world JS": 29.444999999999997,
+            "React": 869.2829999999999,
+            "GC": 73.456,
+            "simulation/world": 72.32399999999998,
+            "VFX": 2.373
+          },
+          "topSelf": [
+            [
+              "(idle) @ :0",
+              2150.229999999999
+            ],
+            [
+              "(program) @ :0",
+              748.8409999999994
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              705.0529999999998
+            ],
+            [
+              "drawImage @ :0",
+              104.45800000000001
+            ],
+            [
+              "window.__timed @ :5",
+              82.539
+            ],
+            [
+              "(garbage collector) @ :0",
+              73.456
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              37.826
+            ],
+            [
+              "now @ :0",
+              24.543
+            ],
+            [
+              "validateProperty @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:2345",
+              22.549
+            ],
+            [
+              "run @ :0",
+              22.02
+            ],
+            [
+              "createTask @ :0",
+              21.137000000000004
+            ],
+            [
+              "drawWaterTile @ http://127.0.0.1:5173/src/veyra05/living/life.ts:211",
+              19.988000000000003
+            ],
+            [
+              "fillRect @ :0",
+              16.582
+            ],
+            [
+              "__profile_draw @ http://127.0.0.1:5173/src/game/render.ts:587",
+              13.751000000000003
+            ],
+            [
+              "SurvivorScreen @ http://127.0.0.1:5173/src/ui/SurvivorScreen.tsx:98",
+              9.806999999999999
+            ],
+            [
+              "runWithFiberInDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:993",
+              8.224
+            ],
+            [
+              "wind @ http://127.0.0.1:5173/src/veyra05/living/life.ts:10",
+              6.932
+            ],
+            [
+              "updatedAncestorInfoDev @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:1991",
+              6.738999999999999
+            ],
+            [
+              "(anonymous) @ http://127.0.0.1:5173/src/ui/SurvivorScreen.tsx:511",
+              6.401999999999999
+            ],
+            [
+              "react_stack_bottom_frame @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:18505",
+              5.491
+            ]
+          ]
+        }
+      ],
+      "metrics": {
+        "timings": {
+          "startup/canvas.drawImage": {
+            "count": 42487,
+            "totalMs": 147.70000002533197,
+            "maxMs": 12.600000001490116
+          },
+          "startup/canvas.encode": {
+            "count": 157,
+            "totalMs": 18.400000009685755,
+            "maxMs": 3.099999999627471
+          },
+          "startup/canvas.fillRect": {
+            "count": 187963,
+            "totalMs": 157.49999995715916,
+            "maxMs": 6.299999998882413
+          },
+          "startup/canvas.getImageData": {
+            "count": 719,
+            "totalMs": 2089.9000000320375,
+            "maxMs": 259.8999999985099
+          },
+          "startup/canvas.putImageData": {
+            "count": 703,
+            "totalMs": 18.300000000745058,
+            "maxMs": 1.200000001117587
+          },
+          "startup/canvas.fill": {
+            "count": 417,
+            "totalMs": 1.299999998882413,
+            "maxMs": 0.19999999925494194
+          },
+          "startup//src/game/sim.ts:tick": {
+            "count": 103,
+            "totalMs": 125.19999998621643,
+            "maxMs": 53.40000000037253
+          },
+          "startup//src/game/pixelfx.ts:update": {
+            "count": 103,
+            "totalMs": 0.40000000037252903,
+            "maxMs": 0.10000000149011612
+          },
+          "startup//src/game/vfx/director.ts:update": {
+            "count": 103,
+            "totalMs": 0.5,
+            "maxMs": 0.19999999925494194
+          },
+          "startup//src/game/vfx/director.ts:onEvent": {
+            "count": 2,
+            "totalMs": 0.30000000074505806,
+            "maxMs": 0.30000000074505806
+          },
+          "startup//src/game/vfx/director.ts:sync": {
+            "count": 103,
+            "totalMs": 3.099999999627471,
+            "maxMs": 0.5
+          },
+          "startup//src/game/pixelfx.ts:drawAuras": {
+            "count": 103,
+            "totalMs": 0.2999999988824129,
+            "maxMs": 0.09999999962747097
+          },
+          "startup//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 103,
+            "totalMs": 0.40000000037252903,
+            "maxMs": 0.10000000149011612
+          },
+          "startup//src/game/pixelfx.ts:drawScreen": {
+            "count": 103,
+            "totalMs": 0.09999999962747097,
+            "maxMs": 0.09999999962747097
+          },
+          "startup//src/game/pixelfx.ts:drawPostNight": {
+            "count": 103,
+            "totalMs": 0.5000000018626451,
+            "maxMs": 0.10000000149011612
+          },
+          "startup//src/game/render.ts:draw": {
+            "count": 103,
+            "totalMs": 1161.7000000067055,
+            "maxMs": 696.8000000007451
+          },
+          "idle//src/game/sim.ts:tick": {
+            "count": 237,
+            "totalMs": 55.59999999590218,
+            "maxMs": 1.199999999254942
+          },
+          "idle//src/game/pixelfx.ts:update": {
+            "count": 237,
+            "totalMs": 1.0999999959021807,
+            "maxMs": 0.2999999988824129
+          },
+          "idle//src/game/vfx/director.ts:update": {
+            "count": 237,
+            "totalMs": 0.6999999992549419,
+            "maxMs": 0.10000000149011612
+          },
+          "idle/canvas.drawImage": {
+            "count": 95319,
+            "totalMs": 252.89999996311963,
+            "maxMs": 6.199999999254942
+          },
+          "idle/canvas.fillRect": {
+            "count": 285090,
+            "totalMs": 176.5999999847263,
+            "maxMs": 2.900000000372529
+          },
+          "idle//src/game/vfx/director.ts:sync": {
+            "count": 237,
+            "totalMs": 6.100000007078052,
+            "maxMs": 1.300000000745058
+          },
+          "idle//src/game/pixelfx.ts:drawAuras": {
+            "count": 237,
+            "totalMs": 0.2999999988824129,
+            "maxMs": 0.09999999962747097
+          },
+          "idle//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 237,
+            "totalMs": 0.8999999985098839,
+            "maxMs": 0.10000000149011612
+          },
+          "idle//src/game/pixelfx.ts:drawScreen": {
+            "count": 237,
+            "totalMs": 1.299999998882413,
+            "maxMs": 1.099999999627471
+          },
+          "idle/canvas.fill": {
+            "count": 948,
+            "totalMs": 1.1999999973922968,
+            "maxMs": 0.19999999925494194
+          },
+          "idle//src/game/pixelfx.ts:drawPostNight": {
+            "count": 237,
+            "totalMs": 0.20000000298023224,
+            "maxMs": 0.10000000149011612
+          },
+          "idle//src/game/render.ts:draw": {
+            "count": 237,
+            "totalMs": 815.2999999988824,
+            "maxMs": 14.5
+          },
+          "inventory-first//src/game/sim.ts:tick": {
+            "count": 227,
+            "totalMs": 58.09999997727573,
+            "maxMs": 4.5
+          },
+          "inventory-first//src/game/pixelfx.ts:update": {
+            "count": 227,
+            "totalMs": 0.2999999988824129,
+            "maxMs": 0.19999999925494194
+          },
+          "inventory-first//src/game/vfx/director.ts:update": {
+            "count": 227,
+            "totalMs": 1.3999999985098839,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first/canvas.drawImage": {
+            "count": 92013,
+            "totalMs": 257.30000004172325,
+            "maxMs": 6.800000000745058
+          },
+          "inventory-first/canvas.fillRect": {
+            "count": 265777,
+            "totalMs": 163.20000002719462,
+            "maxMs": 3.299999998882413
+          },
+          "inventory-first//src/game/vfx/director.ts:sync": {
+            "count": 227,
+            "totalMs": 4,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first//src/game/pixelfx.ts:drawAuras": {
+            "count": 227,
+            "totalMs": 0.5,
+            "maxMs": 0.19999999925494194
+          },
+          "inventory-first//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 227,
+            "totalMs": 0.599999999627471,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first//src/game/pixelfx.ts:drawScreen": {
+            "count": 227,
+            "totalMs": 0.49999999813735485,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-first/canvas.fill": {
+            "count": 908,
+            "totalMs": 0.7000000011175871,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first//src/game/pixelfx.ts:drawPostNight": {
+            "count": 227,
+            "totalMs": 1.3000000026077032,
+            "maxMs": 0.599999999627471
+          },
+          "inventory-first//src/game/render.ts:draw": {
+            "count": 227,
+            "totalMs": 723.2000000160187,
+            "maxMs": 22.09999999962747
+          },
+          "inventory-first/canvas.encode": {
+            "count": 2,
+            "totalMs": 18863,
+            "maxMs": 18824.199999999255
+          },
+          "inventory-repeat//src/game/sim.ts:tick": {
+            "count": 103,
+            "totalMs": 28.799999995157123,
+            "maxMs": 3.899999998509884
+          },
+          "inventory-repeat//src/game/pixelfx.ts:update": {
+            "count": 103,
+            "totalMs": 0.19999999925494194,
+            "maxMs": 0.19999999925494194
+          },
+          "inventory-repeat//src/game/vfx/director.ts:update": {
+            "count": 103,
+            "totalMs": 0.5,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat/canvas.drawImage": {
+            "count": 41565,
+            "totalMs": 121.89999999292195,
+            "maxMs": 4.300000000745058
+          },
+          "inventory-repeat/canvas.fillRect": {
+            "count": 120210,
+            "totalMs": 77.30000000074506,
+            "maxMs": 1.1000000014901161
+          },
+          "inventory-repeat//src/game/vfx/director.ts:sync": {
+            "count": 103,
+            "totalMs": 2.099999997764826,
+            "maxMs": 0.40000000037252903
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawAuras": {
+            "count": 103,
+            "totalMs": 0.2000000011175871,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 103,
+            "totalMs": 0.19999999925494194,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawScreen": {
+            "count": 103,
+            "totalMs": 0.2000000011175871,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat/canvas.fill": {
+            "count": 412,
+            "totalMs": 0.19999999925494194,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawPostNight": {
+            "count": 103,
+            "totalMs": 0.09999999962747097,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-repeat//src/game/render.ts:draw": {
+            "count": 103,
+            "totalMs": 329.1999999899417,
+            "maxMs": 9
+          }
+        },
+        "encodes": [
+          {
+            "at": 3773.0999999996275,
+            "ms": 3.099999999627471,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3776.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3776.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3776.7999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3777,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3777.199999999255,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3777.5,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3777.699999999255,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3777.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3778.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3778.199999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3778.5,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3778.5999999996275,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3778.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3779,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3779.2999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3779.5,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3779.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3779.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3779.89999999851,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3780.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3780.2999999988824,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3780.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3780.5999999996275,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3780.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3780.7999999988824,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3781.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3781.199999999255,
+            "ms": 0.30000000074505806,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3781.5999999996275,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3781.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3781.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3782.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3782.199999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3782.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3782.5999999996275,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3782.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3782.89999999851,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3783,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3783.2999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3783.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3783.5,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3783.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3783.7999999988824,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3784,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3784.199999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3784.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3784.5,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3784.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3784.7999999988824,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3785,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3785.0999999996275,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3785.2999999988824,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3785.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3785.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3785.699999999255,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3785.89999999851,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3786,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3786.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3786.199999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3786.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3786.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3786.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3786.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3787.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3787.2999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3787.5,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3787.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3787.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3787.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3788,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3788.199999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3788.39999999851,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3788.5,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3788.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3788.7999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3788.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3789.0999999996275,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3789.2999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3789.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3789.5,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3789.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3789.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3790.0999999996275,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3790.199999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3790.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3790.5,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3790.7999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3790.89999999851,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3791.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3791.2999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3791.5,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3791.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3791.7999999988824,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3791.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3792.0999999996275,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3792.199999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3792.2999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3792.5999999996275,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3792.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3792.89999999851,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3793,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3793.199999999255,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3793.2999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3793.5,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3793.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3793.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3793.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3794,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3794.199999999255,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3794.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3794.5,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3794.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3794.7999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3794.89999999851,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3795.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3795.2999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3795.39999999851,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3795.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3795.89999999851,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3795.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3796.199999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3796.2999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3796.5,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3796.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3796.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3797.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3797.199999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3797.39999999851,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3797.5,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3797.7999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3797.89999999851,
+            "ms": 0.30000000074505806,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3798.199999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3798.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3798.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3798.7999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3799,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3799.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3799.2999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3799.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3799.5999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3799.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3800,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3800.199999999255,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3800.199999999255,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3800.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3800.5,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3800.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3800.89999999851,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3801.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3801.2999999988824,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3801.39999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3801.5,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3801.699999999255,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3801.89999999851,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3802.0999999996275,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3802.2999999988824,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 3802.39999999851,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 14940.5,
+            "ms": 18824.099999999627,
+            "phase": "inventory-first",
+            "w": 16,
+            "h": 16
+          },
+          {
+            "at": 33764.89999999851,
+            "ms": 38.80000000074506,
+            "phase": "inventory-first",
+            "w": 16,
+            "h": 16
+          }
+        ],
+        "longTasks": [
+          {
+            "at": 3169,
+            "ms": 589
+          },
+          {
+            "at": 3832.0999999996275,
+            "ms": 1986
+          },
+          {
+            "at": 5838.89999999851,
+            "ms": 708
+          },
+          {
+            "at": 7004.5999999996275,
+            "ms": 142
+          },
+          {
+            "at": 7195.299999998882,
+            "ms": 757
+          },
+          {
+            "at": 8190.799999998882,
+            "ms": 68
+          },
+          {
+            "at": 9154.799999998882,
+            "ms": 128
+          },
+          {
+            "at": 10465.89999999851,
+            "ms": 51
+          },
+          {
+            "at": 14292.199999999255,
+            "ms": 50
+          },
+          {
+            "at": 14929.699999999255,
+            "ms": 18922
+          },
+          {
+            "at": 34385.39999999851,
+            "ms": 51
+          },
+          {
+            "at": 35545.39999999851,
+            "ms": 61
+          },
+          {
+            "at": 38468.5,
+            "ms": 59
+          },
+          {
+            "at": 38563.79999999888,
+            "ms": 57
+          },
+          {
+            "at": 38957.39999999851,
+            "ms": 63
+          },
+          {
+            "at": 39855,
+            "ms": 60
+          },
+          {
+            "at": 40238.29999999888,
+            "ms": 60
+          },
+          {
+            "at": 41418.29999999888,
+            "ms": 50
+          }
+        ],
+        "frameStats": {
+          "idle": {
+            "count": 237,
+            "p50": 16.69999999999891,
+            "p95": 16.80000000000109,
+            "p99": 33.400000000001455
+          },
+          "inventory-first": {
+            "count": 227,
+            "p50": 16.69999999999709,
+            "p95": 33.400000000001455,
+            "p99": 66.59999999999854
+          },
+          "inventory-repeat": {
+            "count": 103,
+            "p50": 16.69999999999709,
+            "p95": 83.29999999999563,
+            "p99": 816.5999999999985
+          }
+        },
+        "heapBytes": 254000000,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "errors": [],
+      "resources": []
+    },
+    {
+      "index": 2,
+      "variant": "eager-atlas-only",
+      "titleMs": 6920,
+      "scene": {
+        "seed": 901,
+        "layout": "shipping_fresh",
+        "player": [
+          1624,
+          1000
+        ],
+        "creatures": 156
+      },
+      "phases": [
+        {
+          "phase": "idle",
+          "inputToDOMMs": 0,
+          "selfSampleMs": {
+            "other/native/idle": 3222.4829999999974,
+            "React": 574.3439999999997,
+            "simulation/world": 161.6180000000001,
+            "VFX": 9.141,
+            "Canvas/world JS": 91.10499999999996,
+            "GC": 37.449999999999996
+          },
+          "topSelf": [
+            [
+              "(idle) @ :0",
+              1299.165
+            ],
+            [
+              "(program) @ :0",
+              1266.4559999999988
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              407.55700000000024
+            ],
+            [
+              "window.__timed @ :5",
+              187.90800000000004
+            ],
+            [
+              "drawImage @ :0",
+              184.47199999999992
+            ],
+            [
+              "now @ :0",
+              74.98599999999998
+            ],
+            [
+              "fillRect @ :0",
+              39.50900000000001
+            ],
+            [
+              "(garbage collector) @ :0",
+              37.449999999999996
+            ],
+            [
+              "__profile_draw @ http://127.0.0.1:5173/src/game/render.ts:587",
+              28.641
+            ],
+            [
+              "save @ :0",
+              25.651999999999997
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              23.09
+            ],
+            [
+              "drawWaterTile @ http://127.0.0.1:5173/src/veyra05/living/life.ts:211",
+              19.256
+            ],
+            [
+              "drawAir @ http://127.0.0.1:5173/src/veyra05/living/life.ts:112",
+              18.291000000000004
+            ],
+            [
+              "createTask @ :0",
+              17.576
+            ],
+            [
+              "requestAnimationFrame @ :0",
+              15.472000000000001
+            ],
+            [
+              "wind @ http://127.0.0.1:5173/src/veyra05/living/life.ts:10",
+              14.421999999999999
+            ],
+            [
+              "(anonymous) @ http://127.0.0.1:5173/src/game/render.ts:2178",
+              14.39
+            ],
+            [
+              "effTile @ http://127.0.0.1:5173/src/game/engine.ts:572",
+              12.88
+            ],
+            [
+              "f @ http://127.0.0.1:5173/src/game/render.ts:732",
+              12.317
+            ],
+            [
+              "drawSource @ http://127.0.0.1:5173/src/game/render.ts:874",
+              12.154
+            ]
+          ]
+        },
+        {
+          "phase": "inventory-first",
+          "inputToDOMMs": 19979,
+          "selfSampleMs": {
+            "other/native/idle": 22182.082999999737,
+            "React": 1509.4850000000004,
+            "simulation/world": 110.16799999999996,
+            "GC": 186.22099999999998,
+            "VFX": 6.645,
+            "Canvas/world JS": 55.09599999999999,
+            "item-atlas": 2.176
+          },
+          "topSelf": [
+            [
+              "toDataURL @ :0",
+              19821.84299999966
+            ],
+            [
+              "(program) @ :0",
+              1067.898
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              1018.5490000000004
+            ],
+            [
+              "(idle) @ :0",
+              686.6390000000007
+            ],
+            [
+              "(garbage collector) @ :0",
+              186.22099999999998
+            ],
+            [
+              "window.__timed @ :5",
+              143.4530000000001
+            ],
+            [
+              "drawImage @ :0",
+              127.62999999999998
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              90.34299999999998
+            ],
+            [
+              "now @ :0",
+              48.42099999999999
+            ],
+            [
+              "fillRect @ :0",
+              35.314
+            ],
+            [
+              "react_stack_bottom_frame @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:18505",
+              23.262
+            ],
+            [
+              "createTask @ :0",
+              22.084
+            ],
+            [
+              "evaluateFieldNotes @ http://127.0.0.1:5173/src/game/field-notes.ts:167",
+              17.542
+            ],
+            [
+              "runWithFiberInDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:993",
+              17.249000000000002
+            ],
+            [
+              "validateProperty @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:2345",
+              16.808
+            ],
+            [
+              "run @ :0",
+              16.009000000000004
+            ],
+            [
+              "save @ :0",
+              14.456
+            ],
+            [
+              "beginWork @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:8416",
+              14.409
+            ],
+            [
+              "SurvivorScreen @ http://127.0.0.1:5173/src/ui/SurvivorScreen.tsx:98",
+              14.315
+            ],
+            [
+              "jsxDEVImpl @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:168",
+              13.868
+            ]
+          ]
+        },
+        {
+          "phase": "inventory-repeat",
+          "inputToDOMMs": 178,
+          "selfSampleMs": {
+            "other/native/idle": 3340.9549999999904,
+            "React": 814.3950000000004,
+            "GC": 32.43,
+            "Canvas/world JS": 20.495,
+            "simulation/world": 77.32799999999999
+          },
+          "topSelf": [
+            [
+              "(idle) @ :0",
+              2538.902000000003
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              640.1830000000003
+            ],
+            [
+              "(program) @ :0",
+              518.278
+            ],
+            [
+              "window.__timed @ :5",
+              63.274999999999984
+            ],
+            [
+              "drawImage @ :0",
+              63.208999999999975
+            ],
+            [
+              "now @ :0",
+              42.941
+            ],
+            [
+              "(garbage collector) @ :0",
+              32.43
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              28.534
+            ],
+            [
+              "drawWaterTile @ http://127.0.0.1:5173/src/veyra05/living/life.ts:211",
+              21.058999999999997
+            ],
+            [
+              "run @ :0",
+              14.857
+            ],
+            [
+              "setProp @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:14173",
+              14.552000000000001
+            ],
+            [
+              "createTask @ :0",
+              12.256
+            ],
+            [
+              "fillRect @ :0",
+              11.753
+            ],
+            [
+              "astar @ http://127.0.0.1:5173/src/game/sim.ts:978",
+              11.634
+            ],
+            [
+              "CanvasRenderingContext2D.<computed> @ :9",
+              10.888000000000002
+            ],
+            [
+              "steer @ http://127.0.0.1:5173/src/game/sim.ts:1015",
+              10.57
+            ],
+            [
+              "commitUpdate @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:15887",
+              10.017
+            ],
+            [
+              "setValueForStyles @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:2232",
+              9.591000000000001
+            ],
+            [
+              "save @ :0",
+              7.741999999999999
+            ],
+            [
+              "drawSource @ http://127.0.0.1:5173/src/game/render.ts:874",
+              7.586
+            ]
+          ]
+        }
+      ],
+      "metrics": {
+        "timings": {
+          "startup/canvas.drawImage": {
+            "count": 44992,
+            "totalMs": 136.0000000335276,
+            "maxMs": 13.799999998882413
+          },
+          "startup/canvas.encode": {
+            "count": 157,
+            "totalMs": 20.89999999292195,
+            "maxMs": 3.400000000372529
+          },
+          "startup/canvas.fillRect": {
+            "count": 197081,
+            "totalMs": 168.89999996684492,
+            "maxMs": 6.400000000372529
+          },
+          "startup/canvas.getImageData": {
+            "count": 719,
+            "totalMs": 2167.300000017509,
+            "maxMs": 247.90000000037253
+          },
+          "startup/canvas.putImageData": {
+            "count": 703,
+            "totalMs": 20.299999989569187,
+            "maxMs": 1.400000000372529
+          },
+          "startup/canvas.fill": {
+            "count": 441,
+            "totalMs": 0.5999999977648258,
+            "maxMs": 0.09999999962747097
+          },
+          "startup//src/game/sim.ts:tick": {
+            "count": 109,
+            "totalMs": 108.50000000372529,
+            "maxMs": 50.40000000037253
+          },
+          "startup//src/game/pixelfx.ts:update": {
+            "count": 109,
+            "totalMs": 0.6000000014901161,
+            "maxMs": 0.10000000149011612
+          },
+          "startup//src/game/vfx/director.ts:update": {
+            "count": 109,
+            "totalMs": 0.6000000014901161,
+            "maxMs": 0.10000000149011612
+          },
+          "startup//src/game/vfx/director.ts:onEvent": {
+            "count": 2,
+            "totalMs": 0.09999999962747097,
+            "maxMs": 0.09999999962747097
+          },
+          "startup//src/game/vfx/director.ts:sync": {
+            "count": 109,
+            "totalMs": 4.600000001490116,
+            "maxMs": 1.900000000372529
+          },
+          "startup//src/game/pixelfx.ts:drawAuras": {
+            "count": 109,
+            "totalMs": 0.8000000007450581,
+            "maxMs": 0.10000000149011612
+          },
+          "startup//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 109,
+            "totalMs": 0.5,
+            "maxMs": 0.19999999925494194
+          },
+          "startup//src/game/pixelfx.ts:drawScreen": {
+            "count": 109,
+            "totalMs": 0.2999999988824129,
+            "maxMs": 0.09999999962747097
+          },
+          "startup//src/game/pixelfx.ts:drawPostNight": {
+            "count": 109,
+            "totalMs": 0.7999999988824129,
+            "maxMs": 0.5
+          },
+          "startup//src/game/render.ts:draw": {
+            "count": 109,
+            "totalMs": 1217.599999992177,
+            "maxMs": 809.5
+          },
+          "idle//src/game/sim.ts:tick": {
+            "count": 234,
+            "totalMs": 70.09999999590218,
+            "maxMs": 5.599999999627471
+          },
+          "idle//src/game/pixelfx.ts:update": {
+            "count": 234,
+            "totalMs": 0.6000000014901161,
+            "maxMs": 0.2000000011175871
+          },
+          "idle//src/game/vfx/director.ts:update": {
+            "count": 234,
+            "totalMs": 0.9000000022351742,
+            "maxMs": 0.10000000149011612
+          },
+          "idle/canvas.drawImage": {
+            "count": 94068,
+            "totalMs": 246.40000004135072,
+            "maxMs": 2.299999998882413
+          },
+          "idle/canvas.fillRect": {
+            "count": 281669,
+            "totalMs": 193.79999996349216,
+            "maxMs": 7.700000001117587
+          },
+          "idle//src/game/vfx/director.ts:sync": {
+            "count": 234,
+            "totalMs": 8.40000000782311,
+            "maxMs": 4.199999999254942
+          },
+          "idle//src/game/pixelfx.ts:drawAuras": {
+            "count": 234,
+            "totalMs": 0.7000000029802322,
+            "maxMs": 0.10000000149011612
+          },
+          "idle//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 234,
+            "totalMs": 0.5,
+            "maxMs": 0.10000000149011612
+          },
+          "idle//src/game/pixelfx.ts:drawScreen": {
+            "count": 234,
+            "totalMs": 0.2999999988824129,
+            "maxMs": 0.09999999962747097
+          },
+          "idle/canvas.fill": {
+            "count": 936,
+            "totalMs": 3.100000001490116,
+            "maxMs": 1.800000000745058
+          },
+          "idle//src/game/pixelfx.ts:drawPostNight": {
+            "count": 234,
+            "totalMs": 0.2999999988824129,
+            "maxMs": 0.09999999962747097
+          },
+          "idle//src/game/render.ts:draw": {
+            "count": 234,
+            "totalMs": 816.7000000048429,
+            "maxMs": 14.400000000372529
+          },
+          "inventory-first//src/game/sim.ts:tick": {
+            "count": 216,
+            "totalMs": 52.499999994412065,
+            "maxMs": 3.400000000372529
+          },
+          "inventory-first//src/game/pixelfx.ts:update": {
+            "count": 216,
+            "totalMs": 0.8000000007450581,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first//src/game/vfx/director.ts:update": {
+            "count": 216,
+            "totalMs": 0.49999999813735485,
+            "maxMs": 0.19999999925494194
+          },
+          "inventory-first/canvas.drawImage": {
+            "count": 87514,
+            "totalMs": 210.60000001452863,
+            "maxMs": 3.900000000372529
+          },
+          "inventory-first/canvas.fillRect": {
+            "count": 254204,
+            "totalMs": 153.79999998025596,
+            "maxMs": 4.799999998882413
+          },
+          "inventory-first//src/game/vfx/director.ts:sync": {
+            "count": 216,
+            "totalMs": 6.100000003352761,
+            "maxMs": 0.7999999988824129
+          },
+          "inventory-first//src/game/pixelfx.ts:drawAuras": {
+            "count": 216,
+            "totalMs": 0.5000000018626451,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 216,
+            "totalMs": 0.8999999985098839,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first//src/game/pixelfx.ts:drawScreen": {
+            "count": 216,
+            "totalMs": 0.7000000029802322,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first/canvas.fill": {
+            "count": 864,
+            "totalMs": 0.6999999992549419,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first//src/game/pixelfx.ts:drawPostNight": {
+            "count": 216,
+            "totalMs": 0.6000000014901161,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first//src/game/render.ts:draw": {
+            "count": 216,
+            "totalMs": 679.8000000026077,
+            "maxMs": 19.59999999962747
+          },
+          "inventory-first/canvas.encode": {
+            "count": 2,
+            "totalMs": 19822.300000000745,
+            "maxMs": 19792
+          },
+          "inventory-repeat//src/game/sim.ts:tick": {
+            "count": 104,
+            "totalMs": 56.80000000074506,
+            "maxMs": 9.5
+          },
+          "inventory-repeat//src/game/pixelfx.ts:update": {
+            "count": 104,
+            "totalMs": 0.10000000149011612,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat//src/game/vfx/director.ts:update": {
+            "count": 104,
+            "totalMs": 0.30000000074505806,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat/canvas.drawImage": {
+            "count": 42108,
+            "totalMs": 104.90000001713634,
+            "maxMs": 2.900000000372529
+          },
+          "inventory-repeat/canvas.fillRect": {
+            "count": 123723,
+            "totalMs": 66.90000000968575,
+            "maxMs": 1.099999999627471
+          },
+          "inventory-repeat//src/game/vfx/director.ts:sync": {
+            "count": 104,
+            "totalMs": 1.0000000037252903,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawAuras": {
+            "count": 104,
+            "totalMs": 0.10000000149011612,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 104,
+            "totalMs": 0.5,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawScreen": {
+            "count": 104,
+            "totalMs": 0.10000000149011612,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat/canvas.fill": {
+            "count": 416,
+            "totalMs": 0.599999999627471,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawPostNight": {
+            "count": 104,
+            "totalMs": 0.09999999962747097,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-repeat//src/game/render.ts:draw": {
+            "count": 104,
+            "totalMs": 309.39999998919666,
+            "maxMs": 8.299999998882413
+          }
+        },
+        "encodes": [
+          {
+            "at": 4035.800000000745,
+            "ms": 3.300000000745058,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4039.2000000011176,
+            "ms": 0.2999999988824129,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4039.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4039.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4040.2000000011176,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4040.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4040.800000000745,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4041.10000000149,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4041.2000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4041.4000000003725,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4041.7000000011176,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4041.800000000745,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4042,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4042.300000000745,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4042.4000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4042.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4042.7000000011176,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4042.9000000003725,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4043.10000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4043.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4043.4000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4043.60000000149,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4043.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4043.9000000003725,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4044.2000000011176,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4044.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4044.4000000003725,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4044.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4044.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4045,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4045.2000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4045.4000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4045.5,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4045.7000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4045.9000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4046.10000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4046.2000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4046.4000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4046.5,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4046.800000000745,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4047,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4047.2000000011176,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4047.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4047.5,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4047.7000000011176,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4047.9000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4048.10000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4048.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4048.5,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4048.7000000011176,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4048.9000000003725,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4049.10000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4049.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4049.5,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4049.60000000149,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4049.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4050,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4050.10000000149,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4050.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4050.5,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4050.800000000745,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4050.9000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4051.10000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4051.2000000011176,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4051.4000000003725,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4051.7000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4051.9000000003725,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4052.2000000011176,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4052.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4052.5,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4052.60000000149,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4052.9000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4053.10000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4053.2000000011176,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4053.5,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4053.7000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4053.9000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4054,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4054.2000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4054.4000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4054.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4054.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4055.10000000149,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4055.2000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4055.4000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4055.7000000011176,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4055.800000000745,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4056.10000000149,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4056.300000000745,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4056.5,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4056.7000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4056.9000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4057.10000000149,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4057.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4057.5,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4057.7000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4057.9000000003725,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4058.10000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4058.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4058.5,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4058.7000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4058.9000000003725,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4059.10000000149,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4059.2000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4059.4000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4059.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4059.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4060,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4060.2000000011176,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4060.300000000745,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4060.7000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4060.9000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4061.10000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4061.300000000745,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4061.4000000003725,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4061.7000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4061.9000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4062.10000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4062.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4062.4000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4062.7000000011176,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4063,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4063.2000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4063.300000000745,
+            "ms": 0.30000000074505806,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4063.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4064,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4064.2000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4064.4000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4064.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4064.800000000745,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4065.10000000149,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4065.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4065.5,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4065.7000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4065.800000000745,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4066.10000000149,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4066.2000000011176,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4066.4000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4066.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4066.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4067,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4067.2000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4067.4000000003725,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4067.60000000149,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4067.800000000745,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4067.9000000003725,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4068.10000000149,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4068.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4068.5,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4068.60000000149,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4068.9000000003725,
+            "ms": 0,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4069,
+            "ms": 0.10000000149011612,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4069.2000000011176,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4069.4000000003725,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4069.60000000149,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4069.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 4069.9000000003725,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15294,
+            "ms": 19792,
+            "phase": "inventory-first",
+            "w": 16,
+            "h": 16
+          },
+          {
+            "at": 35086.300000000745,
+            "ms": 30.300000000745058,
+            "phase": "inventory-first",
+            "w": 16,
+            "h": 16
+          }
+        ],
+        "longTasks": [
+          {
+            "at": 3391.800000000745,
+            "ms": 623
+          },
+          {
+            "at": 4101.800000000745,
+            "ms": 2080
+          },
+          {
+            "at": 6198.200000001118,
+            "ms": 657
+          },
+          {
+            "at": 7302.10000000149,
+            "ms": 147
+          },
+          {
+            "at": 7487,
+            "ms": 868
+          },
+          {
+            "at": 8511.900000000373,
+            "ms": 82
+          },
+          {
+            "at": 8649.900000000373,
+            "ms": 58
+          },
+          {
+            "at": 15283.60000000149,
+            "ms": 19884
+          },
+          {
+            "at": 35273.20000000112,
+            "ms": 90
+          },
+          {
+            "at": 35433.60000000149,
+            "ms": 61
+          },
+          {
+            "at": 35853,
+            "ms": 58
+          },
+          {
+            "at": 36850.300000000745,
+            "ms": 63
+          },
+          {
+            "at": 36924.20000000112,
+            "ms": 66
+          },
+          {
+            "at": 37012.20000000112,
+            "ms": 63
+          },
+          {
+            "at": 38283.20000000112,
+            "ms": 69
+          },
+          {
+            "at": 38741.800000000745,
+            "ms": 74
+          },
+          {
+            "at": 39116.70000000112,
+            "ms": 54
+          },
+          {
+            "at": 39757.10000000149,
+            "ms": 83
+          },
+          {
+            "at": 40133.40000000037,
+            "ms": 57
+          },
+          {
+            "at": 40206.20000000112,
+            "ms": 62
+          },
+          {
+            "at": 42083.60000000149,
+            "ms": 51
+          },
+          {
+            "at": 43102.5,
+            "ms": 62
+          }
+        ],
+        "frameStats": {
+          "idle": {
+            "count": 234,
+            "p50": 16.69999999999891,
+            "p95": 16.80000000000109,
+            "p99": 33.399999999999636
+          },
+          "inventory-first": {
+            "count": 216,
+            "p50": 16.69999999999709,
+            "p95": 50,
+            "p99": 83.30000000000291
+          },
+          "inventory-repeat": {
+            "count": 104,
+            "p50": 16.69999999999709,
+            "p95": 66.70000000000437,
+            "p99": 833.2999999999956
+          }
+        },
+        "heapBytes": 286000000,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "errors": [],
+      "resources": []
+    },
+    {
+      "index": 3,
+      "variant": "current",
+      "titleMs": 7471,
+      "scene": {
+        "seed": 901,
+        "layout": "shipping_fresh",
+        "player": [
+          1624,
+          1000
+        ],
+        "creatures": 156
+      },
+      "phases": [
+        {
+          "phase": "idle",
+          "inputToDOMMs": 0,
+          "selfSampleMs": {
+            "other/native/idle": 3172.7650000000017,
+            "Canvas/world JS": 72.54999999999998,
+            "React": 656.8510000000001,
+            "simulation/world": 148.11899999999994,
+            "VFX": 17.974,
+            "GC": 22.495
+          },
+          "topSelf": [
+            [
+              "(program) @ :0",
+              1366.094000000002
+            ],
+            [
+              "(idle) @ :0",
+              1123.2069999999997
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              456.32699999999954
+            ],
+            [
+              "window.__timed @ :5",
+              196.48399999999995
+            ],
+            [
+              "drawImage @ :0",
+              178.02899999999994
+            ],
+            [
+              "now @ :0",
+              101.351
+            ],
+            [
+              "fillRect @ :0",
+              44.974000000000004
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              44.528
+            ],
+            [
+              "__profile_draw @ http://127.0.0.1:5173/src/game/render.ts:587",
+              35.44500000000001
+            ],
+            [
+              "save @ :0",
+              25.357
+            ],
+            [
+              "(garbage collector) @ :0",
+              22.495
+            ],
+            [
+              "drawWaterTile @ http://127.0.0.1:5173/src/veyra05/living/life.ts:211",
+              19.102
+            ],
+            [
+              "effTile @ http://127.0.0.1:5173/src/game/engine.ts:572",
+              15.640000000000002
+            ],
+            [
+              "createTask @ :0",
+              14.335999999999999
+            ],
+            [
+              "sourceAt @ http://127.0.0.1:5173/src/game/engine.ts:640",
+              13.356
+            ],
+            [
+              "react_stack_bottom_frame @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:18505",
+              13.215999999999998
+            ],
+            [
+              "Game @ http://127.0.0.1:5173/src/ui/Game.tsx:58",
+              12.918999999999999
+            ],
+            [
+              "CanvasRenderingContext2D.<computed> @ :9",
+              11.958
+            ],
+            [
+              "addObjectDiffToProperties @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:3081",
+              11.919999999999998
+            ],
+            [
+              "useCallback @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:19063",
+              11.692
+            ]
+          ]
+        },
+        {
+          "phase": "inventory-first",
+          "inputToDOMMs": 20702,
+          "selfSampleMs": {
+            "other/native/idle": 23003.565999999522,
+            "simulation/world": 170.03999999999996,
+            "React": 1462.044000000001,
+            "GC": 102.47099999999999,
+            "Canvas/world JS": 51.57500000000001,
+            "VFX": 13.016000000000002,
+            "item-atlas": 1.071
+          },
+          "topSelf": [
+            [
+              "toDataURL @ :0",
+              20529.333999999508
+            ],
+            [
+              "(program) @ :0",
+              1145.0599999999995
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              1029.6090000000022
+            ],
+            [
+              "(idle) @ :0",
+              596.1929999999996
+            ],
+            [
+              "drawImage @ :0",
+              171.52
+            ],
+            [
+              "window.__timed @ :5",
+              140.0569999999999
+            ],
+            [
+              "(garbage collector) @ :0",
+              102.47099999999999
+            ],
+            [
+              "now @ :0",
+              71.67699999999999
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              66.99300000000002
+            ],
+            [
+              "fillRect @ :0",
+              42.194
+            ],
+            [
+              "run @ :0",
+              38.007000000000005
+            ],
+            [
+              "react_stack_bottom_frame @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:18505",
+              32.62
+            ],
+            [
+              "createTask @ :0",
+              31.936
+            ],
+            [
+              "craftReadiness @ http://127.0.0.1:5173/src/game/action-readiness.ts:24",
+              28.63
+            ],
+            [
+              "astar @ http://127.0.0.1:5173/src/game/sim.ts:978",
+              22.475
+            ],
+            [
+              "validateProperty @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:2345",
+              22.200999999999997
+            ],
+            [
+              "drawWaterTile @ http://127.0.0.1:5173/src/veyra05/living/life.ts:211",
+              20.935999999999996
+            ],
+            [
+              "updateProperties @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:14786",
+              20.293000000000003
+            ],
+            [
+              "Game @ http://127.0.0.1:5173/src/ui/Game.tsx:58",
+              19.776
+            ],
+            [
+              "__profile_draw @ http://127.0.0.1:5173/src/game/render.ts:587",
+              19.764
+            ]
+          ]
+        },
+        {
+          "phase": "inventory-repeat",
+          "inputToDOMMs": 138,
+          "selfSampleMs": {
+            "other/native/idle": 3179.1409999999955,
+            "React": 957.4110000000011,
+            "simulation/world": 92.26899999999996,
+            "GC": 30.54800000000001,
+            "Canvas/world JS": 12.221999999999998,
+            "VFX": 2.205
+          },
+          "topSelf": [
+            [
+              "(idle) @ :0",
+              1969.0060000000008
+            ],
+            [
+              "(program) @ :0",
+              784.3600000000001
+            ],
+            [
+              "exports.jsxDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:239",
+              721.7040000000005
+            ],
+            [
+              "drawImage @ :0",
+              108.27799999999998
+            ],
+            [
+              "window.__timed @ :5",
+              93.516
+            ],
+            [
+              "ReactElement @ http://127.0.0.1:5173/node_modules/.vite/deps/react_jsx-dev-runtime.js:127",
+              63.21300000000001
+            ],
+            [
+              "now @ :0",
+              42.354
+            ],
+            [
+              "(garbage collector) @ :0",
+              30.54800000000001
+            ],
+            [
+              "run @ :0",
+              24.968999999999998
+            ],
+            [
+              "createTask @ :0",
+              23.862000000000005
+            ],
+            [
+              "astar @ http://127.0.0.1:5173/src/game/sim.ts:978",
+              20.712
+            ],
+            [
+              "fillRect @ :0",
+              20.381999999999998
+            ],
+            [
+              "drawWaterTile @ http://127.0.0.1:5173/src/veyra05/living/life.ts:211",
+              14.521
+            ],
+            [
+              "runWithFiberInDEV @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:993",
+              13.943999999999997
+            ],
+            [
+              "addObjectDiffToProperties @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:3081",
+              12.7
+            ],
+            [
+              "updateProperties @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:14786",
+              10.876999999999999
+            ],
+            [
+              "validateProperty @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:2345",
+              10.067
+            ],
+            [
+              "setValueForStyles @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:2232",
+              9.754
+            ],
+            [
+              "warnUnknownProperties @ http://127.0.0.1:5173/node_modules/.vite/deps/react-dom_client.js:2538",
+              9.112
+            ],
+            [
+              "evaluateFieldNotes @ http://127.0.0.1:5173/src/game/field-notes.ts:167",
+              8.73
+            ]
+          ]
+        }
+      ],
+      "metrics": {
+        "timings": {
+          "startup/canvas.drawImage": {
+            "count": 44895,
+            "totalMs": 125.8999999947846,
+            "maxMs": 6.799999998882413
+          },
+          "startup/canvas.fillRect": {
+            "count": 199357,
+            "totalMs": 155.89999997615814,
+            "maxMs": 6.899999998509884
+          },
+          "startup/canvas.getImageData": {
+            "count": 719,
+            "totalMs": 3045.9999999552965,
+            "maxMs": 344.90000000037253
+          },
+          "startup/canvas.putImageData": {
+            "count": 703,
+            "totalMs": 16.09999999962747,
+            "maxMs": 1.199999999254942
+          },
+          "startup/canvas.fill": {
+            "count": 441,
+            "totalMs": 0.8000000007450581,
+            "maxMs": 0.19999999925494194
+          },
+          "startup/canvas.encode": {
+            "count": 4,
+            "totalMs": 1.099999999627471,
+            "maxMs": 0.5
+          },
+          "startup//src/game/sim.ts:tick": {
+            "count": 109,
+            "totalMs": 179.0000000037253,
+            "maxMs": 46.80000000074506
+          },
+          "startup//src/game/pixelfx.ts:update": {
+            "count": 109,
+            "totalMs": 0.2000000011175871,
+            "maxMs": 0.10000000149011612
+          },
+          "startup//src/game/vfx/director.ts:update": {
+            "count": 109,
+            "totalMs": 0.6999999973922968,
+            "maxMs": 0.09999999962747097
+          },
+          "startup//src/game/vfx/director.ts:onEvent": {
+            "count": 2,
+            "totalMs": 0,
+            "maxMs": 0
+          },
+          "startup//src/game/vfx/director.ts:sync": {
+            "count": 109,
+            "totalMs": 6.600000005215406,
+            "maxMs": 3.699999999254942
+          },
+          "startup//src/game/pixelfx.ts:drawAuras": {
+            "count": 109,
+            "totalMs": 0.3999999985098839,
+            "maxMs": 0.09999999962747097
+          },
+          "startup//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 109,
+            "totalMs": 0.5,
+            "maxMs": 0.19999999925494194
+          },
+          "startup//src/game/pixelfx.ts:drawScreen": {
+            "count": 109,
+            "totalMs": 0.09999999962747097,
+            "maxMs": 0.09999999962747097
+          },
+          "startup//src/game/pixelfx.ts:drawPostNight": {
+            "count": 109,
+            "totalMs": 0.3999999985098839,
+            "maxMs": 0.09999999962747097
+          },
+          "startup//src/game/render.ts:draw": {
+            "count": 109,
+            "totalMs": 1162.699999999255,
+            "maxMs": 747.5999999996275
+          },
+          "idle//src/game/sim.ts:tick": {
+            "count": 235,
+            "totalMs": 65.29999999515712,
+            "maxMs": 3.199999999254942
+          },
+          "idle//src/game/pixelfx.ts:update": {
+            "count": 235,
+            "totalMs": 0.9999999981373549,
+            "maxMs": 0.10000000149011612
+          },
+          "idle//src/game/vfx/director.ts:update": {
+            "count": 235,
+            "totalMs": 1.4000000022351742,
+            "maxMs": 0.10000000149011612
+          },
+          "idle/canvas.drawImage": {
+            "count": 94610,
+            "totalMs": 245.0000000204891,
+            "maxMs": 2.200000001117587
+          },
+          "idle/canvas.fillRect": {
+            "count": 283099,
+            "totalMs": 192.00000003166497,
+            "maxMs": 2.199999999254942
+          },
+          "idle//src/game/vfx/director.ts:sync": {
+            "count": 235,
+            "totalMs": 9.399999998509884,
+            "maxMs": 4.900000000372529
+          },
+          "idle//src/game/pixelfx.ts:drawAuras": {
+            "count": 235,
+            "totalMs": 1,
+            "maxMs": 0.40000000037252903
+          },
+          "idle//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 235,
+            "totalMs": 0.8000000007450581,
+            "maxMs": 0.10000000149011612
+          },
+          "idle//src/game/pixelfx.ts:drawScreen": {
+            "count": 235,
+            "totalMs": 0.3000000026077032,
+            "maxMs": 0.10000000149011612
+          },
+          "idle/canvas.fill": {
+            "count": 940,
+            "totalMs": 1.5000000018626451,
+            "maxMs": 0.19999999925494194
+          },
+          "idle//src/game/pixelfx.ts:drawPostNight": {
+            "count": 235,
+            "totalMs": 0.09999999962747097,
+            "maxMs": 0.09999999962747097
+          },
+          "idle//src/game/render.ts:draw": {
+            "count": 235,
+            "totalMs": 836.8000000156462,
+            "maxMs": 22
+          },
+          "inventory-first//src/game/sim.ts:tick": {
+            "count": 212,
+            "totalMs": 111.0999999884516,
+            "maxMs": 6.599999999627471
+          },
+          "inventory-first//src/game/pixelfx.ts:update": {
+            "count": 212,
+            "totalMs": 0.8000000044703484,
+            "maxMs": 0.30000000074505806
+          },
+          "inventory-first//src/game/vfx/director.ts:update": {
+            "count": 212,
+            "totalMs": 0.6999999992549419,
+            "maxMs": 0.19999999925494194
+          },
+          "inventory-first/canvas.drawImage": {
+            "count": 85852,
+            "totalMs": 231.49999998696148,
+            "maxMs": 3.399999998509884
+          },
+          "inventory-first/canvas.fillRect": {
+            "count": 251693,
+            "totalMs": 164.99999997019768,
+            "maxMs": 5.300000000745058
+          },
+          "inventory-first//src/game/vfx/director.ts:sync": {
+            "count": 212,
+            "totalMs": 7.2000000067055225,
+            "maxMs": 2.5
+          },
+          "inventory-first//src/game/pixelfx.ts:drawAuras": {
+            "count": 212,
+            "totalMs": 1.799999998882413,
+            "maxMs": 1.099999999627471
+          },
+          "inventory-first//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 212,
+            "totalMs": 0.2999999988824129,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-first//src/game/pixelfx.ts:drawScreen": {
+            "count": 212,
+            "totalMs": 0.5,
+            "maxMs": 0.19999999925494194
+          },
+          "inventory-first/canvas.fill": {
+            "count": 848,
+            "totalMs": 0.900000000372529,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-first//src/game/pixelfx.ts:drawPostNight": {
+            "count": 212,
+            "totalMs": 0.19999999925494194,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-first//src/game/render.ts:draw": {
+            "count": 212,
+            "totalMs": 713.2000000011176,
+            "maxMs": 17.199999999254942
+          },
+          "inventory-first/canvas.encode": {
+            "count": 77,
+            "totalMs": 20528.099999997765,
+            "maxMs": 20510.800000000745
+          },
+          "inventory-repeat//src/game/sim.ts:tick": {
+            "count": 115,
+            "totalMs": 56.00000000745058,
+            "maxMs": 3.199999999254942
+          },
+          "inventory-repeat//src/game/pixelfx.ts:update": {
+            "count": 115,
+            "totalMs": 0.09999999962747097,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-repeat//src/game/vfx/director.ts:update": {
+            "count": 115,
+            "totalMs": 0.09999999962747097,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-repeat/canvas.drawImage": {
+            "count": 46572,
+            "totalMs": 120.89999998547137,
+            "maxMs": 1.299999998882413
+          },
+          "inventory-repeat/canvas.fillRect": {
+            "count": 136684,
+            "totalMs": 83.49999999627471,
+            "maxMs": 1.5
+          },
+          "inventory-repeat//src/game/vfx/director.ts:sync": {
+            "count": 115,
+            "totalMs": 1.5,
+            "maxMs": 0.2000000011175871
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawAuras": {
+            "count": 115,
+            "totalMs": 0.2000000011175871,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawWarpPass": {
+            "count": 115,
+            "totalMs": 0.19999999925494194,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawScreen": {
+            "count": 115,
+            "totalMs": 0.40000000037252903,
+            "maxMs": 0.10000000149011612
+          },
+          "inventory-repeat/canvas.fill": {
+            "count": 460,
+            "totalMs": 8.199999999254942,
+            "maxMs": 7.800000000745058
+          },
+          "inventory-repeat//src/game/pixelfx.ts:drawPostNight": {
+            "count": 115,
+            "totalMs": 0.19999999925494194,
+            "maxMs": 0.09999999962747097
+          },
+          "inventory-repeat//src/game/render.ts:draw": {
+            "count": 115,
+            "totalMs": 354.29999999143183,
+            "maxMs": 10.400000000372529
+          }
+        },
+        "encodes": [
+          {
+            "at": 7942,
+            "ms": 0.40000000037252903,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 7946.9000000003725,
+            "ms": 0.2000000011175871,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 7947.700000001118,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 7948.300000000745,
+            "ms": 0.19999999925494194,
+            "phase": "startup",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15810.800000000745,
+            "ms": 0.6999999992549419,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15811.900000000373,
+            "ms": 0.7000000011175871,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15812.700000001118,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15812.900000000373,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15813,
+            "ms": 0.2000000011175871,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15814.800000000745,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15814.900000000373,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15815.10000000149,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15815.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15815.400000000373,
+            "ms": 0.30000000074505806,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 15816,
+            "ms": 20510.800000000745,
+            "phase": "inventory-first",
+            "w": 16,
+            "h": 16
+          },
+          {
+            "at": 36327,
+            "ms": 7.5,
+            "phase": "inventory-first",
+            "w": 16,
+            "h": 16
+          },
+          {
+            "at": 36351.70000000112,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36361.5,
+            "ms": 0.2000000011175871,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36361.90000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36362.20000000112,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36362.60000000149,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36363,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36363.20000000112,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36363.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36363.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36364,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36364.20000000112,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36364.5,
+            "ms": 0.2000000011175871,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36364.70000000112,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36364.90000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36365.20000000112,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36365.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36365.90000000037,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36366.10000000149,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36366.300000000745,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36366.5,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36366.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36366.90000000037,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36367.10000000149,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36367.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36367.5,
+            "ms": 0.2000000011175871,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36367.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36368,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36368.300000000745,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36368.40000000037,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36368.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36368.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36369.10000000149,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36369.5,
+            "ms": 0.2000000011175871,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36369.90000000037,
+            "ms": 0.40000000037252903,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36370.70000000112,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36371.10000000149,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36371.800000000745,
+            "ms": 0.30000000074505806,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36372.40000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36372.70000000112,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36372.90000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36373.10000000149,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36373.40000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36373.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36373.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36374,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36374.300000000745,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36374.40000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36374.70000000112,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36374.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36375.5,
+            "ms": 0.2000000011175871,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36375.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36376,
+            "ms": 0.10000000149011612,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36376.800000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36377.10000000149,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36377.300000000745,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36377.5,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36377.60000000149,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36378,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36378.20000000112,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36378.40000000037,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36378.60000000149,
+            "ms": 0.09999999962747097,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36378.70000000112,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36379.20000000112,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36379.300000000745,
+            "ms": 0.19999999925494194,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          },
+          {
+            "at": 36379.60000000149,
+            "ms": 0,
+            "phase": "inventory-first",
+            "w": 32,
+            "h": 32
+          }
+        ],
+        "longTasks": [
+          {
+            "at": 3233.300000000745,
+            "ms": 599
+          },
+          {
+            "at": 3887.7000000011176,
+            "ms": 2854
+          },
+          {
+            "at": 6758.5,
+            "ms": 648
+          },
+          {
+            "at": 7876.4000000003725,
+            "ms": 952
+          },
+          {
+            "at": 9018.800000000745,
+            "ms": 54
+          },
+          {
+            "at": 9137.300000000745,
+            "ms": 57
+          },
+          {
+            "at": 15367.400000000373,
+            "ms": 93
+          },
+          {
+            "at": 15785,
+            "ms": 20610
+          },
+          {
+            "at": 36727.10000000149,
+            "ms": 50
+          },
+          {
+            "at": 36843.60000000149,
+            "ms": 53
+          },
+          {
+            "at": 37101.60000000149,
+            "ms": 55
+          },
+          {
+            "at": 37679.300000000745,
+            "ms": 56
+          },
+          {
+            "at": 37810.20000000112,
+            "ms": 54
+          },
+          {
+            "at": 37926.5,
+            "ms": 51
+          },
+          {
+            "at": 38744.300000000745,
+            "ms": 56
+          },
+          {
+            "at": 38976.800000000745,
+            "ms": 57
+          },
+          {
+            "at": 39140.20000000112,
+            "ms": 55
+          },
+          {
+            "at": 39650.20000000112,
+            "ms": 64
+          },
+          {
+            "at": 39786.800000000745,
+            "ms": 66
+          },
+          {
+            "at": 41108.70000000112,
+            "ms": 62
+          },
+          {
+            "at": 41831.20000000112,
+            "ms": 55
+          },
+          {
+            "at": 42060.10000000149,
+            "ms": 65
+          },
+          {
+            "at": 42181.40000000037,
+            "ms": 59
+          },
+          {
+            "at": 42976.60000000149,
+            "ms": 51
+          },
+          {
+            "at": 44872.20000000112,
+            "ms": 52
+          }
+        ],
+        "frameStats": {
+          "idle": {
+            "count": 235,
+            "p50": 16.69999999999891,
+            "p95": 16.799999999999272,
+            "p99": 33.30000000000109
+          },
+          "inventory-first": {
+            "count": 212,
+            "p50": 16.69999999999709,
+            "p95": 50,
+            "p99": 66.69999999999709
+          },
+          "inventory-repeat": {
+            "count": 115,
+            "p50": 16.69999999999709,
+            "p95": 50.10000000000582,
+            "p99": 666.5999999999985
+          }
+        },
+        "heapBytes": 269000000,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "errors": [],
+      "resources": []
+    }
+  ],
+  "limitations": [
+    "Dev modules, software ANGLE/SwiftShader if recorded as such; not native/hardware FPS.",
+    "Same legitimate seeded snapshot, frozen wall time; idle/inventory only, not combat/Core VFX stress or enjoyment.",
+    "CPU samples are exclusive self samples; named timings are inclusive and overlap Canvas calls. Native/GPU asynchronous work is not isolated.",
+    "Per-call Canvas timers and CDP add overhead equally to ABBA samples. No uninstrumented hardware baseline; frame times are diagnostic only.",
+    "Eager variant reconstructs only historical atlas encoding, not an old complete game/NPC build. No map-size causal conclusion."
+  ]
+}

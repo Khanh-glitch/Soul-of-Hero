@@ -1,3 +1,4 @@
+import {fundBuild} from './support/paid-build';
 import { describe, expect, it } from 'vitest';
 import { BAL, TILE, WW, type GameState } from '../src/game/core';
 import { ITEMS } from '../src/game/catalog';
@@ -381,8 +382,8 @@ function buildRealVeyraHomestead(seed = 404) {
 
   for (const [k, n] of [
     ['wood', 100], ['stone', 40], ['fiber', 30], ['rope', 8],
-    ['iron_ingot', 10], ['mechanical_parts', 10], ['fasteners', 8], ['spares', 8],
-    ['seed', 6],
+    ['iron_ingot', 10], ['spares', 12],
+    ['seed_sunroot', 6],
   ] as const) {
     addItem(r, 'inv', k, n);
   }
@@ -390,13 +391,14 @@ function buildRealVeyraHomestead(seed = 404) {
   const buildAt = (struct: string, dx: number, dy: number) => {
     r.player.x = hx * TILE + 8;
     r.player.y = hy * TILE + 8;
+    fundBuild(gs, struct, now); // controlled paid current pack, NOT natural harvest
     act('build', { struct, tx: hx + dx, ty: hy + dy });
     return Object.values(r.entities).find(e => e.type === struct && e.tx === hx + dx && e.ty === hy + dy)!;
   };
 
   buildAt('floor_wood', -2, -2);
   const cabinet = buildAt('claim', -2, -2);
-  for (const [k, n] of [['wood', 80], ['stone', 80], ['fiber', 40], ['rope', 20], ['iron_ingot', 20], ['spares', 20], ['mechanical_parts', 20], ['fasteners', 20]] as const) {
+  for (const [k, n] of [['wood', 80], ['stone', 80], ['fiber', 40], ['rope', 20], ['iron_ingot', 20], ['spares', 20]] as const) {
     addItem(r, cabinet.c!, k, n);
   }
 
@@ -408,7 +410,7 @@ function buildRealVeyraHomestead(seed = 404) {
   const barrel = buildAt('barrel', 0, 2);
   const chest = buildAt('chest_small', 1, 1);
 
-  const seedSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'seed');
+  const seedSlot = C(r, 'inv').slots.findIndex(s => s?.key === 'seed_sunroot');
   expect(seedSlot).toBeGreaterThanOrEqual(0);
   r.player.x = chest.x; r.player.y = chest.y - TILE;
   act('move', { from: 'inv', fs: seedSlot, to: chest.c!, qty: 6 });
@@ -455,7 +457,7 @@ describe('WP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)', () =>
     let now = h.now;
 
     expect(r.entities[ids.garden].garden?.crop).toBe('crop');
-    expect(countItem(r, containers.chestC, 'seed')).toBe(5);
+    expect(countItem(r, containers.chestC, 'seed_sunroot')).toBe(5);
 
     // Install cold frame before leaving so rain cannot water the plot directly — every cycle MUST pump physical barrel water!
     addItem(r, 'inv', 'glass', 1);
@@ -485,7 +487,7 @@ describe('WP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)', () =>
     const plantsAfterOnline = r.receipts.filter(rc => rc.kind === 'tender.plant').length;
     expect(harvestsAfterOnline, `offscreen plot growth=${r.veyraOffscreenEntities![ids.garden].garden?.growth}, chestCrop=${countItem(r, containers.chestC, 'crop')}`).toBeGreaterThanOrEqual(2);
     expect(countItem(r, containers.chestC, 'crop')).toBe(harvestsAfterOnline * 3);
-    expect(countItem(r, containers.chestC, 'seed')).toBe(6 - plantsAfterOnline + harvestsAfterOnline * 2);
+    expect(countItem(r, containers.chestC, 'seed_sunroot')).toBe(6 - plantsAfterOnline + harvestsAfterOnline);
     expect(r.receipts.filter(rc => rc.kind === 'tender.water').length).toBeGreaterThanOrEqual(1);
     expect(countItem(r, containers.tenderC, 'wood')).toBeLessThan(5);
 
@@ -615,7 +617,7 @@ describe('WP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)', () =>
       const r = g.run!;
       return {
         crop: countItem(r, containers.chestC, 'crop'),
-        seed: countItem(r, containers.chestC, 'seed'),
+        seed: countItem(r, containers.chestC, 'seed_sunroot'),
         wood: countItem(r, containers.tenderC, 'wood'),
         energy: r.entities[ids.tender].farm!.energy,
         barrelWater: r.entities[ids.barrel].water,
@@ -633,7 +635,14 @@ describe('WP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)', () =>
     const sStraddle = summarize(straddleGs);
 
     expect(sStay.crop).toBeGreaterThanOrEqual(6);
-    expect(sAway).toEqual(sStay);
-    expect(sStraddle).toEqual(sStay);
+    // Integration partitions can differ by a few ULPs in continuous water/growth arithmetic.
+    // Physical items/energy and the entire timestamped event sequence remain EXACT.
+    const {plotWater,plotGrowth,...physical}=sStay;
+    for(const other of [sAway,sStraddle]){
+      const {plotWater:water,plotGrowth:growth,...otherPhysical}=other;
+      expect(otherPhysical).toEqual(physical);
+      expect(water).toBeCloseTo(plotWater,12);
+      expect(growth).toBeCloseTo(plotGrowth,12);
+    }
   }, 30_000);
 });

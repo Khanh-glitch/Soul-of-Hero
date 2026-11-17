@@ -1,3 +1,4 @@
+import {fundBuild} from './support/paid-build';
 // Corrective D1-D5 Verification & Negative-Contract Suite
 // Covers:
 //   D1: Journey requisition securedCash === 0 (never mints off-map, never touches pre-existing escrow securedCash, overflows pack cleanly to bag)
@@ -362,7 +363,8 @@ describe('D4 Corrective: Offscreen/Boundary-Straddling Wire-v1 Power Parity & 12
       const buildAt = (type: string, tx: number, ty: number) => {
         r.player.x = tx * TILE + 8;
         r.player.y = (ty + 1) * TILE + 8;
-        for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q);
+        if(type==='door_powered')buildAt('door_wood',tx,ty); // actual paid host, no free-standing module
+        fundBuild(gs,type,NOW); // controlled current pack/material bill, not a natural-source claim
         const res = dispatch(gs, { id: `b-${type}-${tx}-${ty}`, type: 'build', struct: type, tx, ty }, NOW);
         expect(res.ok, `${type}: ${(res as any).reason}`).toBe(true);
         return Object.values(r.entities).find((e) => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!;

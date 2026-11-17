@@ -1,0 +1,334 @@
+{
+  "source": "9c2d1e86e7ef97a48ff9442ce4de10dcd93dffce",
+  "sourceNote": "Runtime and tests identical to this commit throughout completed run; initial launch preceded the commit, no source/test edits occurred during it.",
+  "cwd": "web",
+  "command": "npx vitest run --maxWorkers=2 --testTimeout=120000 --reporter=default --reporter=json --outputFile=../.cache/full-regression-hardware-current.json",
+  "verdict": "FAIL_NOT_RC",
+  "files": 195,
+  "passedFiles": 186,
+  "failedFiles": 9,
+  "passedTests": 1300,
+  "failedTests": 20,
+  "pendingTests": 19,
+  "durationSeconds": 1147.203,
+  "classificationScope": "Each observed failed assertion is classified. Stale setup failure is NOT proof that blocked integration behavior works. No tests were skipped/suppressed to obtain this result. Pending tests retain upstream status; not counted PASS. No pure headline delta comparison to prior root-cwd gate.",
+  "rows": [
+    {
+      "file": "web/tests/control-tower-corrective-wp1-wp2.test.ts",
+      "test": "WP2 \u2014 Complete Veyra Offscreen Garden Tender (B6 Corrective) WP2-1..5 & 8 (RED->GREEN): completes full offscreen plant->grow->harvest->chest-transfer->replant cycles across repeated window shifts, save/reload, overnight settle, and full storage",
+      "status": "FAILED",
+      "classification": "STALE_PACK_FIXTURE_BLOCKS_INTEGRATION",
+      "sourceReason": "buildRealVeyraHomestead raw-builds claim before crafting deploy_claim (line398). Current buildReason requires paid packed devices. Later crop/seed/output expectations also predate current cultivars; offscreen parity assertions have NOT executed.",
+      "nextAction": "Craft current packs from labelled controlled stock, use seed_sunroot and actual GARDEN_CROPS outputs, then investigate any remaining lifecycle/parity failure.",
+      "failureMessages": [
+        "AssertionError: build: Need an intact packed device.: expected false to be true // Object.is equality\n    at act (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:375:61)\n    at buildAt (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:393:5)\n    at buildRealVeyraHomestead (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:398:19)\n    at /home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:453:15\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20"
+      ]
+    },
+    {
+      "file": "web/tests/control-tower-corrective-wp1-wp2.test.ts",
+      "test": "WP2 \u2014 Complete Veyra Offscreen Garden Tender (B6 Corrective) WP2-6,7,9 (RED->GREEN): enforces exact onscreen vs offscreen parity (Map climate, soil, cold-frame, roof, evaporation, links across window edge)",
+      "status": "FAILED",
+      "classification": "STALE_PACK_FIXTURE_BLOCKS_INTEGRATION",
+      "sourceReason": "buildRealVeyraHomestead raw-builds claim before crafting deploy_claim (line398). Current buildReason requires paid packed devices. Later crop/seed/output expectations also predate current cultivars; offscreen parity assertions have NOT executed.",
+      "nextAction": "Craft current packs from labelled controlled stock, use seed_sunroot and actual GARDEN_CROPS outputs, then investigate any remaining lifecycle/parity failure.",
+      "failureMessages": [
+        "AssertionError: build: Need an intact packed device.: expected false to be true // Object.is equality\n    at act (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:375:61)\n    at buildAt (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:393:5)\n    at buildRealVeyraHomestead (/home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:398:19)\n    at /home/user/Soul-of-Hero/web/tests/control-tower-corrective-wp1-wp2.test.ts:560:18\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20"
+      ]
+    },
+    {
+      "file": "web/tests/d1-d5-corrective.test.tsx",
+      "test": "D4 Corrective: Offscreen/Boundary-Straddling Wire-v1 Power Parity & 12h Decay Copy allocates loads, powers doors/stations/turrets, and drains generator fuel across offscreen window boundaries with online/offline parity",
+      "status": "FAILED",
+      "classification": "STALE_PACK_AND_HOST_FIXTURE_BLOCKS_INTEGRATION",
+      "sourceReason": "D4 raw-builds base_generator at line371, refused intact-pack check. Later powered door requires a real owned host. D5 Recycler test PASSED; do not resurrect X:drive for D4.",
+      "nextAction": "Pay actual packs/upgrade/module and wooden-door host; re-run active/offscreen power parity and classify any subsequent failure.",
+      "failureMessages": [
+        "AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality\n    at buildAt (/home/user/Soul-of-Hero/web/tests/d1-d5-corrective.test.tsx:367:59)\n    at /home/user/Soul-of-Hero/web/tests/d1-d5-corrective.test.tsx:371:19\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+      ]
+    },
+    {
+      "file": "web/tests/k6-spatial.test.ts",
+      "test": "K6 paid structural lifecycle upgrades in place at preserved condition, pays exactly once, and reloads",
+      "status": "FAILED",
+      "classification": "STALE_OWNERSHIP_FIXTURE",
+      "sourceReason": "The upgrading wall stores claim=\"claim-fixture\" but there is no real supported Territory Cabinet. upgradeStructure uses claimAt/cabinetSupported, not an arbitrary claim string.",
+      "nextAction": "Build a paid supported cabinet and keep exact cost, HP fraction, repeat and reload assertions.",
+      "failureMessages": [
+        "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/k6-spatial.test.ts:17:552\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:20"
+      ]
+    },
+    {
+      "file": "web/tests/mec01-f3-joined.test.ts",
+      "test": "F3 joined: deposit -> evacuate -> save/reload -> run 2 carries the real deposit receipt through evacuation and reload into run 2 with zero run-local cash",
+      "status": "FAILED",
+      "classification": "STALE_PACK_FIXTURE_BLOCKS_FINANCIAL_INTEGRATION",
+      "sourceReason": "At line27 the foundation is paid but claim is raw-built without deploy_claim. The actual deposit/evac/run2 assertions are blocked, NOT certified by this failure.",
+      "nextAction": "Craft paid claim from controlled carried stock, preserve no-wallet cash source/vendor/escrow/deposit/evac/reset checks.",
+      "failureMessages": [
+        "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/mec01-f3-joined.test.ts:27:517\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+      ]
+    },
+    {
+      "file": "web/tests/mec01-r8b-plank.test.ts",
+      "test": "MEC-01 R8B plank chain two wood make one plank at the bench, after 6 real seconds; too little wood is refused with no change",
+      "status": "FAILED",
+      "classification": "STALE_PACK_FIXTURE",
+      "sourceReason": "Both tests stop scanning Workbench sites without first crafting the required pack. Separately, wall_plank is upgrade-only and has no inbound upgrade target. Final157 keeps Plank and requires a usable consumer; 14-Nov handoff is a proposal, not authority to retire Plank or force a new wall path.",
+      "nextAction": "Pay the bench pack to expose downstream tests; retain unresolved wall-consumer failure. Seek/trace owner-approved topology; do not direct-build the tier or skip assertions.",
+      "failureMessages": [
+        "Error: no legal tile for workbench\n    at legalTileNear (/home/user/Soul-of-Hero/web/tests/mec01-r8b-plank.test.ts:18:9)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8b-plank.test.ts:36:14\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+      ]
+    },
+    {
+      "file": "web/tests/mec01-r8b-plank.test.ts",
+      "test": "MEC-01 R8B plank chain a plank wall needs three real planks: with two it is refused and nothing is spent; with three it builds at 240 HP",
+      "status": "FAILED",
+      "classification": "STALE_PACK_FIXTURE_AND_CREATOR_CONSUMER_GAP",
+      "sourceReason": "Both tests stop scanning Workbench sites without first crafting the required pack. Separately, wall_plank is upgrade-only and has no inbound upgrade target. Final157 keeps Plank and requires a usable consumer; 14-Nov handoff is a proposal, not authority to retire Plank or force a new wall path.",
+      "nextAction": "Pay the bench pack to expose downstream tests; retain unresolved wall-consumer failure. Seek/trace owner-approved topology; do not direct-build the tier or skip assertions.",
+      "failureMessages": [
+        "Error: no legal tile for workbench\n    at legalTileNear (/home/user/Soul-of-Hero/web/tests/mec01-r8b-plank.test.ts:18:9)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8b-plank.test.ts:61:14\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+      ]
+    },
+    {
+      "file": "web/tests/mec01-r8e-plank-upkeep.test.ts",
+      "test": "MEC-01 R8E K6 upkeep for processed planks a wall_plank contributes 0.75 plank per day to its cabinet (3 x 25%), as wood walls contribute their wood",
+      "status": "FAILED",
+      "classification": "ACCESS_OR_CONTENT_GAP_CREATOR_TOPOLOGY_OPEN",
+      "sourceReason": "Direct wall_plank build is correctly refused by current upgrade-only guard, but no upgrade target leads to it. The upkeep fixture never reaches a naturally obtainable wall.",
+      "nextAction": "Do not label this PASS or historical coverage. Preserve failure; resolve approved Plank consumer/access path, then prove paid ownership/upkeep/reload.",
+      "failureMessages": [
+        "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at homeWithPlankWall (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:34:43)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:41:13\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+      ]
+    },
+    {
+      "file": "web/tests/mec01-r8e-plank-upkeep.test.ts",
+      "test": "MEC-01 R8E K6 upkeep for processed planks negative: without planks in the cabinet the plank wall makes the cabinet unfunded; with 3 planks it is funded",
+      "status": "FAILED",
+      "classification": "ACCESS_OR_CONTENT_GAP_CREATOR_TOPOLOGY_OPEN",
+      "sourceReason": "Direct wall_plank build is correctly refused by current upgrade-only guard, but no upgrade target leads to it. The upkeep fixture never reaches a naturally obtainable wall.",
+      "nextAction": "Do not label this PASS or historical coverage. Preserve failure; resolve approved Plank consumer/access path, then prove paid ownership/upkeep/reload.",
+      "failureMessages": [
+        "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at homeWithPlankWall (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:34:43)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:48:13\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+      ]
+    },
+    {
+      "file": "web/tests/mec01-r8e-plank-upkeep.test.ts",
+      "test": "MEC-01 R8E K6 upkeep for processed planks settled upkeep debits real planks, with fractional credit: removed - credit = 0.75 x days, never more",
+      "status": "FAILED",
+      "classification": "ACCESS_OR_CONTENT_GAP_CREATOR_TOPOLOGY_OPEN",
+      "sourceReason": "Direct wall_plank build is correctly refused by current upgrade-only guard, but no upgrade target leads to it. The upkeep fixture never reaches a naturally obtainable wall.",
+      "nextAction": "Do not label this PASS or historical coverage. Preserve failure; resolve approved Plank consumer/access path, then prove paid ownership/upkeep/reload.",
+      "failureMessages": [
+        "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at homeWithPlankWall (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:34:43)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:60:13\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+      ]
+    },
+    {
+      "file": "web/tests/mec01-r8e-plank-upkeep.test.ts",
+      "test": "MEC-01 R8E K6 upkeep for processed planks save/reload keeps the same plank forecast and does not re-bill: the validated copy plans identically",
+      "status": "FAILED",
+      "classification": "ACCESS_OR_CONTENT_GAP_CREATOR_TOPOLOGY_OPEN",
+      "sourceReason": "Direct wall_plank build is correctly refused by current upgrade-only guard, but no upgrade target leads to it. The upkeep fixture never reaches a naturally obtainable wall.",
+      "nextAction": "Do not label this PASS or historical coverage. Preserve failure; resolve approved Plank consumer/access path, then prove paid ownership/upkeep/reload.",
+      "failureMessages": [
+        "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at homeWithPlankWall (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:34:43)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:72:13\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+      ]
+    },
+    {
+      "file": "web/tests/mec01-r8e-plank-upkeep.test.ts",
+      "test": "MEC-01 R8E K6 upkeep for processed planks repair of a plank wall takes one plank (ceil(3 x 25%)), and a raw-wood wall keeps its wood repair",
+      "status": "FAILED",
+      "classification": "ACCESS_OR_CONTENT_GAP_CREATOR_TOPOLOGY_OPEN",
+      "sourceReason": "Direct wall_plank build is correctly refused by current upgrade-only guard, but no upgrade target leads to it. The upkeep fixture never reaches a naturally obtainable wall.",
+      "nextAction": "Do not label this PASS or historical coverage. Preserve failure; resolve approved Plank consumer/access path, then prove paid ownership/upkeep/reload.",
+      "failureMessages": [
+        "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at homeWithPlankWall (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:34:43)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:83:13\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)"
+      ]
+    },
+    {
+      "file": "web/tests/mec01-r8e-plank-upkeep.test.ts",
+      "test": "MEC-01 R8E K6 upkeep for processed planks a raw-wood shelter is unchanged: a wood-only cabinet bills wood and has no plank rate",
+      "status": "FAILED",
+      "classification": "STALE_PACK_FIXTURE",
+      "sourceReason": "Raw wood control reaches claim placement without deploy_claim.",
+      "nextAction": "Craft a paid cabinet and retain no-Plank raw-wood control.",
+      "failureMessages": [
+        "Error: claim: Need an intact packed device.\n    at buildAt (/home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:22:135)\n    at /home/user/Soul-of-Hero/web/tests/mec01-r8e-plank-upkeep.test.ts:92:99\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)"
+      ]
+    },
+    {
+      "file": "web/tests/soh.test.ts",
+      "test": "salt-shale source + dried meat content chain validates definitions, harvests a world-placed source, rejects wrong tool/missing input, then cooks and collects physical output",
+      "status": "FAILED",
+      "classification": "STALE_RETIRED_SOURCE_PIN",
+      "sourceReason": "Line115 expects salt_shale -> raw_salt; current table yields stone. raw_salt is retired, and live food recipes no longer take salt.",
+      "nextAction": "Reconcile actual source/recipe/campfire pack; retain missing-input/wrong-tool/exact output and UID negatives.",
+      "failureMessages": [
+        "AssertionError: expected [ [ 'stone', 1 ] ] to deeply equal [ [ 'raw_salt', 1 ] ]\n    at /home/user/Soul-of-Hero/web/tests/soh.test.ts:115:85\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+      ]
+    },
+    {
+      "file": "web/tests/soh.test.ts",
+      "test": "C07 build / reclaim custody invalid build never debits; valid build debits exactly; duplicate intent ignored",
+      "status": "FAILED",
+      "classification": "STALE_PACK_FIXTURE_BLOCKS_INTEGRATION",
+      "sourceReason": "Raw build fails before the asserted workflow: campfire (line198), furnace (line217), research (line304) or claim (line332). These devices require actual paid packs. Downstream semantics are untested by this failed attempt.",
+      "nextAction": "Pay current packs without bypassing cost/host/ownership; rerun exact replay/refusal/custody/time/research/cash invariants.",
+      "failureMessages": [
+        "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/soh.test.ts:198:104\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+      ]
+    },
+    {
+      "file": "web/tests/soh.test.ts",
+      "test": "C06/C09 stations, fuel, offline furnace output stops exactly at fuel exhaustion during offline settlement",
+      "status": "FAILED",
+      "classification": "STALE_PACK_FIXTURE_BLOCKS_INTEGRATION",
+      "sourceReason": "Raw build fails before the asserted workflow: campfire (line198), furnace (line217), research (line304) or claim (line332). These devices require actual paid packs. Downstream semantics are untested by this failed attempt.",
+      "nextAction": "Pay current packs without bypassing cost/host/ownership; rerun exact replay/refusal/custody/time/research/cash invariants.",
+      "failureMessages": [
+        "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/soh.test.ts:217:169\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+      ]
+    },
+    {
+      "file": "web/tests/soh.test.ts",
+      "test": "C04 research specimen study \u2192 physical blueprint \u2192 learned once; a second copy is refused without consumption",
+      "status": "FAILED",
+      "classification": "STALE_PACK_FIXTURE_BLOCKS_INTEGRATION",
+      "sourceReason": "Raw build fails before the asserted workflow: campfire (line198), furnace (line217), research (line304) or claim (line332). These devices require actual paid packs. Downstream semantics are untested by this failed attempt.",
+      "nextAction": "Pay current packs without bypassing cost/host/ownership; rerun exact replay/refusal/custody/time/research/cash invariants.",
+      "failureMessages": [
+        "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/soh.test.ts:304:170\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+      ]
+    },
+    {
+      "file": "web/tests/soh.test.ts",
+      "test": "C15\u2013C18, C22\u2013C23 Ragnarok cash, escrow, evacuation, run 2 zero wallet \u2192 finite cash (only in last 72h) \u2192 vendor escrow chest \u2192 owned placement \u2192 atomic deposits \u2192 evacuate \u2192 run-2 spend",
+      "status": "FAILED",
+      "classification": "STALE_PACK_FIXTURE_BLOCKS_INTEGRATION",
+      "sourceReason": "Raw build fails before the asserted workflow: campfire (line198), furnace (line217), research (line304) or claim (line332). These devices require actual paid packs. Downstream semantics are untested by this failed attempt.",
+      "nextAction": "Pay current packs without bypassing cost/host/ownership; rerun exact replay/refusal/custody/time/research/cash invariants.",
+      "failureMessages": [
+        "AssertionError: expected false to be true // Object.is equality\n    at /home/user/Soul-of-Hero/web/tests/soh.test.ts:332:87\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+      ]
+    },
+    {
+      "file": "web/src/veyra05/audit-closure.test.ts",
+      "test": "Veyra Audit Closure & Cross-System Guarantees (#48) P0-4 & P1-5: enforces biologically grounded yields, opposite-sex (\u2640+\u2642) breeding, and full offscreen pen parity across window shifts",
+      "status": "FAILED",
+      "classification": "STALE_RETIRED_RECIPE_PIN_BLOCKS_INTEGRATION",
+      "sourceReason": "The first failing assertion is RECIPES.poached_eggs.toBeDefined at line273. Current final recipe set no longer defines it. Animal biology assertions before it passed; subsequent pen/breeding assertions have NOT executed.",
+      "nextAction": "Reconcile current live egg recipe and starter knowledge, then execute paid pen devices and keep parity/sex/yield negatives.",
+      "failureMessages": [
+        "AssertionError: expected undefined to be defined\n    at /home/user/Soul-of-Hero/web/src/veyra05/audit-closure.test.ts:273:34\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+      ]
+    },
+    {
+      "file": "web/src/veyra05/ecosystem-full.test.ts",
+      "test": "Phase C/D/E/F \u2014 Veyra Full Creature, Husbandry, Side-Boss & 6-Primordial Ecosystem preserves ALWAYS_KNOWN_RECIPES invariant while exposing new base husbandry & fletching recipes",
+      "status": "FAILED",
+      "classification": "STALE_STARTER_KNOWLEDGE_PIN",
+      "sourceReason": "Line122 hardcodes 14 starter recipes; current catalog returns37. Current packs are starters; final157/114 contract tests passed. No instruction authorizes deleting current starter recipes to satisfy this pin.",
+      "nextAction": "Assert current authoritative starter membership/base/gating contract, not the historic cardinality; keep husbandry and fletching recipe checks.",
+      "failureMessages": [
+        "AssertionError: expected 37 to be 14 // Object.is equality\n    at /home/user/Soul-of-Hero/web/src/veyra05/ecosystem-full.test.ts:122:41\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)\n    at file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64"
+      ]
+    }
+  ],
+  "pending": [
+    {
+      "file": "web/tests/g1a-industrial-salvage.test.ts",
+      "test": "G1A distribution report writes evidence/g1a/distribution.json",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/g1a-r1-census.test.ts",
+      "test": "G1A-R1 whole-map census writes evidence/g1a/world-census.json",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/g1a-r1-play.test.ts",
+      "test": "G1A-R1 before / after expected value per candidate table -> evidence/g1a/economy.json",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/g1a-r1-play.test.ts",
+      "test": "G1A-R1 before / after three representative starts, same bot, three salvage layers -> evidence/g1a/play-compare.json",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/g1b-ecology-runtime.test.ts",
+      "test": "G1B ecology reachability (furniture dressed, two window origins per site) every added chest stands on a free tile with a walkable approach joined to the open ground",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/g1b-ecology.test.ts",
+      "test": "G1B ecology (survey of the compiled runtime) re-surveys Veyra and reproduces the frozen ecology",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/g1b-resolve.test.ts",
+      "test": "G1B resolver (slow, opt-in) re-measuring the real world reproduces the frozen data exactly",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/item-ontology-v2-round2.test.ts",
+      "test": "G \u2014 migration ledger: exactly one revision bump, history stored a rev-2 save keeps its queued jobs, reserved UIDs, stock, crafted frames and a held retired blueprint (INTENT on FIXTURE stock)",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/item-ontology-v2-round2.test.ts",
+      "test": "P3 \u2014 the Utility Frame takes a Metal Pipe (frame only) ANALYTIC: bare hands \u2192 one Utility Motorbike, material and station time before (rev 2) vs after (rev 3)",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/item-ontology-v2-round2.test.ts",
+      "test": "P4 \u2014 the Salvager Axe takes a Metal Blade ANALYTIC: cost and time before vs after; the Blade needs nothing the old axe did not already need",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/item-ontology-v2-round3.test.tsx",
+      "test": "migration and restart \u2014 rev-1, rev-2 and rev-3 saves with queued Frame / Axe work and a Recycler job a rev-1 save: Frame + Axe + Recycler jobs keep UIDs and stock, survive two restarts mid-job, pay out once under rev-1 economics (INTENT on FIXTURE stock)",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/item-ontology-v2-round3.test.tsx",
+      "test": "migration and restart \u2014 rev-1, rev-2 and rev-3 saves with queued Frame / Axe work and a Recycler job a rev-2 save: Frame + Axe + Recycler jobs keep UIDs and stock, survive two restarts mid-job, pay out once under rev-2 economics (INTENT on FIXTURE stock)",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/item-ontology-v2-round3.test.tsx",
+      "test": "migration and restart \u2014 rev-1, rev-2 and rev-3 saves with queued Frame / Axe work and a Recycler job a rev-3 save: Frame + Axe + Recycler jobs keep UIDs and stock, survive two restarts mid-job, pay out once under rev-3 economics (INTENT on FIXTURE stock)",
+      "status": "skipped"
+    },
+    {
+      "file": "web/tests/mec01-c3-offline-child.test.ts",
+      "test": "MEC-01 C3 child (separate process resume) settles the offline clock from the on-disk save and reports exact output UIDs",
+      "status": "skipped"
+    },
+    {
+      "file": "web/src/veyra05/full-world-spawn-industrial.audit.test.ts",
+      "test": "VEYRA full-world terrain and industrial spawn audit (bounded chunk streaming) scans all 11.2M global terrain tiles + 4-neighbour terrain components",
+      "status": "skipped"
+    },
+    {
+      "file": "web/src/veyra05/full-world-spawn-industrial.audit.test.ts",
+      "test": "VEYRA full-world terrain and industrial spawn audit (bounded chunk streaming) probes actual source-compiled windows and seeded startRun across geography",
+      "status": "skipped"
+    },
+    {
+      "file": "web/src/veyra05/spawn-candidate-reasons.audit.test.ts",
+      "test": "Veyra candidate-level spawn reason trace categorizes failure conditions on exact previously failed Westmouth window",
+      "status": "skipped"
+    },
+    {
+      "file": "web/src/veyra05/spawn-failure-cause.audit.test.ts",
+      "test": "Veyra source geometry: spawn rejection diagnostic (read-only) measures authored water markers vs actual freshwater and nearby source options",
+      "status": "skipped"
+    },
+    {
+      "file": "web/src/veyra05/spawn-failure-cause.audit.test.ts",
+      "test": "Veyra source geometry: spawn rejection diagnostic (read-only) smoke-tests four implementation start windows, not a canonical spawn count",
+      "status": "skipped"
+    }
+  ]
+}
