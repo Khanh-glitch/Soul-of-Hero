@@ -67,7 +67,7 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
       for(const [jobId,outputs]of claims)tasks.push({...start(h.occupation==='salvager'?'recycle':'cook',e,[],800),phase:'collect',machineJobId:jobId,outputs});
     }
     if (h.occupation === 'cook' && foodNeed && !Object.values(h.workOutputs??{}).some(q=>q>0) && e.station && !e.station.queue.length && STRUCTS[e.type!]?.station === 'campfire') {
-      for (const [recipe, rc] of Object.entries(RECIPES)) if (rc.station === 'campfire' && ITEMS[rc.out]?.food && knownRecipe(h,recipe) && rc.ins.every(([k,q])=>available(k,q))) {
+      for (const [recipe, rc] of Object.entries(RECIPES)) if (rc.station === 'campfire' && (ITEMS[rc.out]?.food?.hunger??0)>0 && knownRecipe(h,recipe) && rc.ins.every(([k,q])=>available(k,q))) {
         const ins=rc.ins.map(([k,q])=>[k,q] as [string,number]);
         if(e.station.burn<=0&&!C(r,e.station.fuelC).slots.some(s=>s&&!s.production&&stationBurnable(s.key))){
           const fuel=[...pack(r,h).slots,...stores.flatMap(c=>C(r,c).slots)].find(s=>s&&!s.production&&stationBurnable(s.key));
