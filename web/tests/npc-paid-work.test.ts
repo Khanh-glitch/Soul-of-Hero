@@ -1,6 +1,6 @@
 import {it,expect} from 'vitest';
 import {newGame,startRun,mkContainer,mkStack,findRunEntity,addItem,C,stepStations,queuePaidRecipe} from '../src/game/engine';
-import {depositHumanOutputs,humanConsume,setFollowing} from '../src/game/humanworld';
+import {depositHumanOutputs,humanConsume,setFollowing,stepHumans} from '../src/game/humanworld';
 import {humanEntityTile} from '../src/game/human-jobs';
 import {humanNavigation} from '../src/game/human-navigation';
 import {ITEMS} from '../src/game/catalog';
@@ -35,9 +35,9 @@ it('cook spends carried canonical inputs and fuel, waits for real station, and c
  h.gx=bank[0];h.gy=bank[1];h.floor=store.floor??0;h.state='IDLE';h.hunger=0;
  expect(humanConsume(r,hw,h,'food',T0+20001)).toBe(true); // warehouse meal, NOT owned output
  expect(outputs()).toBe(1);receiver.qty=ITEMS.cooked_meat.max;
- depositHumanOutputs(r,h,T0+20002);expect(outputs()).toBe(1);expect(cooked.production?.workerId).toBe(h.actorId);
+ depositHumanOutputs(r,h,T0+20002);expect(h.deliveryWait?.containerId).toBe(store.c);expect(h.nextThinkAt).toBe(Number.MAX_SAFE_INTEGER);expect(outputs()).toBe(1);expect(cooked.production?.workerId).toBe(h.actorId);
  const restored=validate(JSON.parse(JSON.stringify(gs)));expect(restored).not.toBeNull();gs.run=restored!.run;r=gs.run!;hw=r.humanWorld!;h=hw.people[h.actorId];
- C(r,store.c!).slots[0]!.qty--;depositHumanOutputs(r,h,T0+20003);expect(outputs()).toBe(0);
+ h.hunger=100;C(r,store.c!).slots[0]!.qty--;stepHumans(r,hw,T0+20003);expect(h.deliveryWait).toBeUndefined();expect(outputs()).toBe(0);
  const history=Object.values(hw.communities[h.community!].cargoLedger!).flat();expect(history).toHaveLength(1);expect(history[0]).toMatchObject({fromUid:cooked.uid,intoUid:receiver.uid,workerId:h.actorId,recipe:'cooked_meat',qty:1,stationId:e.id});expect(history[0].sourceId).toBeUndefined();expect(history[0].inputs?.[0]).toMatchObject({key:'meat',qty:1});
  const before=JSON.stringify(r.custody);depositHumanOutputs(r,h,T0+20003);expect(JSON.stringify(r.custody)).toBe(before);
  h.hunger=0;const prior=C(r,store.c!).slots[0]!.qty;humanConsume(r,hw,h,'food',T0+20004);expect(C(r,store.c!).slots[0]!.qty).toBe(prior-1);
@@ -76,4 +76,21 @@ it('controlled authored campfire pauses on exhausted fuel across reload and keep
  expect(moveHumanGoods(r,e.station!.outC,h.inv.packId,out.key,1)).toBe(0);expect(moveHumanGoods(r,e.station!.outC,h.inv.packId,out.key,1,{jobId:paid.jobId!,workerId:'other'})).toBe(0);
  expect(moveHumanGoods(r,e.station!.outC,h.inv.packId,out.key,1,{jobId:paid.jobId!,workerId:h.actorId})).toBe(1);expect(C(r,h.inv.packId).slots[0]!.uid).toBe(out.uid);expect(C(r,h.inv.packId).slots[0]!.production?.jobId).toBe(paid.jobId);
  expect(moveHumanGoods(r,e.station!.outC,h.inv.packId,out.key,1,{jobId:paid.jobId!,workerId:h.actorId})).toBe(0);
+});
+it('recovered paid job physically fetches fuel without paying recipe inputs twice; missing station releases the actor',async()=>{
+ const {planHumanOccupation}=await import('../src/game/human-jobs');
+ setActiveLayout('veyra05-greywater');let gs=newGame();expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(true);
+ let r=gs.run!,hw=r.humanWorld!,h=hw.people.h1,comm=hw.communities[h.community!],e=comm.workStations.map(id=>findRunEntity(r,id)!).find(e=>e.type==='campfire')!;
+ // Controlled bill; actual authored station and finite original warehouse fuel.
+ C(r,h.inv.packId).slots.fill(null);addItem(r,h.inv.packId,'berries',5);addItem(r,h.inv.packId,'tin_can',1);addItem(r,e.station!.fuelC,'wood',1);
+ const paid=queuePaidRecipe(r,e,h.inv.packId,'fruit_wine',h.actorId,T0);expect(paid.ok).toBe(true);stepStations(gs,30000,T0+30000);expect(e.station!.queue[0].left).toBe(10000);
+ const store=findRunEntity(r,comm.storeEntityId)!,[sx,sy]=humanEntityTile(r,store);h.gx=sx+1;h.gy=sy;h.floor=store.floor??0;h.state='IDLE';h.intent=undefined;
+ const originalFuel=C(r,store.c!).slots.filter(s=>s?.key==='charcoal').reduce((n,s)=>n+s!.qty,0);
+ expect(planHumanOccupation(r,hw,h,T0+30001,()=>[])).toBe(true);expect(h.intent!.work!.phase).toBe('fetch');expect(executeHumanWork(r,hw,h,T0+32001).done).toBe(false);expect(h.intent!.work!.phase).toBe('machine');expect(C(r,store.c!).slots.filter(s=>s?.key==='charcoal').reduce((n,s)=>n+s!.qty,0)).toBe(originalFuel-1);
+ const [gx,gy]=humanEntityTile(r,e),nav=humanNavigation(r),p=[[gx+1,gy],[gx-1,gy],[gx,gy+1],[gx,gy-1]].find(([tx,ty])=>nav.free({tx,ty,floor:e.floor??0},h,true))!;h.gx=p[0];h.gy=p[1];h.floor=e.floor??0;
+ expect(planHumanOccupation(r,hw,h,T0+32002,()=>[])).toBe(true);executeHumanWork(r,hw,h,T0+34002);expect(e.station!.queue).toHaveLength(1);expect(e.station!.queue[0].id).toBe(paid.jobId);expect(e.station!.queue[0].left).toBe(10000);
+ stepStations(gs,10000,T0+44002);expect(executeHumanWork(r,hw,h,T0+44003).done).toBe(true);expect(C(r,h.inv.packId).slots.find(s=>s?.key==='fruit_wine')?.production?.jobId).toBe(paid.jobId);
+ // A subsequently destroyed target must not leave an immortal WORKING intent.
+ h.intent={intentId:'lost-station',actorId:h.actorId,kind:'work',preconditions:[],reserved:[],startAt:T0,dueAt:T0,work:{kind:'cook',phase:'act',entityId:e.id,inputs:[],duration:1,recipe:'jam'}};h.state='WORKING';e.hp=0;
+ expect(executeHumanWork(r,hw,h,T0+45000).done).toBe(false);expect(h.state).toBe('IDLE');expect(h.intent).toBeUndefined();
 });

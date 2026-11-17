@@ -169,6 +169,7 @@ export interface HumanRecord {
   routeSearch?: {status:'FOUND'|'PENDING_SEARCH'|'NO_PATH'|'SEARCH_LIMIT';target:string;expanded:number};
   motion?: { fromGx: number; fromGy: number; toGx: number; toGy: number; toFloor?: number; elapsedMs: number; updatedAt?: number };
   workOutputs?: Record<string, number>;
+  deliveryWait?:{containerId:string;signature:string};
   workOutputSources?:Record<string,{sourceId?:string;jobId:string;recipe?:string;inputs?:{uid:string;key:string;qty:number;containerId:string}[];stationId?:string}>;
   harvestJob?: {id:string;sourceId:string;gx:number;gy:number;floor:number;key:string;phase:'source'|'delivery';storeId?:string;startedAt:number};
   knownRecipes?: string[];
@@ -1664,7 +1665,7 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
   if(h.rest<.5)dt=Math.min(dt,(.5-h.rest)*8*HOUR);
   if(h.state==='MOVING'&&h.intent?.route?.length)dt=Math.min(dt,Math.max(.001,TILE/PROFILES[h.profile].speed*1000-(h.motion?.elapsedMs??0)));
   if(h.state==='WORKING'&&h.intent&&h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
-  if(!h.following&&h.state==='IDLE'&&(!h.intent||h.intent.work?.phase==='travel')){
+  if(!h.following&&h.state==='IDLE'&&(!h.intent||!!h.intent.work)){
    const due=Math.max(hw.plannerAt??at,h.nextThinkAt??at);dt=Math.min(dt,Math.max(1,due-at));
   }
  }
@@ -1708,7 +1709,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     planHumanOccupation(r, hw, h, now, (gx,gy,floor) => humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied,floor));
     h.nextThinkAt = now + 3000; return;
   }
-  if(h.harvestJob && !h.following && h.state==='IDLE' && !h.intent){resumeHarvestJob(r,hw,h,now,occupied);return;}
+  if(h.harvestJob && !h.deliveryWait && !h.following && h.state==='IDLE' && !h.intent){resumeHarvestJob(r,hw,h,now,occupied);return;}
   if (h.following || h.state !== 'IDLE' || h.intent || (h.nextThinkAt ?? 0) > now) return;
   h.nextThinkAt = now + 6000;
   if (h.hp < 30 || h.stamina < 12) return;
@@ -1729,6 +1730,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   }
   if(planHumanWater(r,h,now,occupied))return;
   if (h.hunger < 25 || h.thirst < 25) return;
+  if(h.deliveryWait){h.nextThinkAt=Number.MAX_SAFE_INTEGER;return;}
   const pack = humanPack(r, h);
   if(!h.equip.weapon||h.equip.weapon.dur===0){const tool=pack.slots.find(s=>s&&!s.production&&s.dur!==0&&!!ITEMS[s.key]?.power);if(tool)equipHumanTool(r,h,tool.uid,now);}
   if (h.workOutputs && Object.values(h.workOutputs).some(q => q > 0) && comm.storeTile) {
@@ -1800,7 +1802,7 @@ function resumeHarvestJob(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occu
     const comm=h.community?hw.communities[h.community]:undefined,store=comm?.storeEntityId?findRunEntity(r,comm.storeEntityId):undefined;
     if(!store?.c||!comm?.storeContainers.includes(store.c)||(store.owner&&store.owner!==h.community)||(store.hp??1)<=0){h.lastWorkBlock='Authorized output store unavailable';return;}
     job.storeId=store.id;
-    const [gx,gy]=humanEntityTile(r,store),route=humanNavigation(r,occupied,true).route(h,{tx:gx,ty:gy,floor:store.floor??0});if(!route)return;
+    const [gx,gy]=humanEntityTile(r,store),route=humanNavigation(r,occupied,true).route(h,{tx:gx,ty:gy,floor:store.floor??0});if(!route){if(h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')h.nextThinkAt=now+30000;return;}
     h.lastWorkBlock=undefined;
     h.intent={intentId:job.id,actorId:h.actorId,kind:'work',target:'store',preconditions:['owned output','exact destination contact'],reserved:[],startAt:now,dueAt:now,route};h.state=route.length?'MOVING':'IDLE';
     if(!route.length){depositHumanOutputs(r,h,now);if((h as HumanRecord).state!=='MOVING')h.intent=undefined;h.nextThinkAt=Math.max(h.nextThinkAt??0,now+10000);}
@@ -1867,8 +1869,9 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
     moved += take; if (qty <= take){delete h.workOutputs[stackUid];if(h.workOutputSources)delete h.workOutputSources[stackUid];} else h.workOutputs[stackUid] = qty - take;
   }
   if (moved) receipt(r, now, 'human.store', `${h.actorId}:${moved}`);
+  if(Object.values(h.workOutputs).some(q=>q>0)&&!moved){h.deliveryWait={containerId:dstId,signature:JSON.stringify(dst.slots)};h.nextThinkAt=Number.MAX_SAFE_INTEGER;}else delete h.deliveryWait;
   if(h.harvestJob?.phase==='delivery'&&Object.values(h.workOutputs).some(q=>q>0)&&!moved){
-    h.nextThinkAt=now+30000;
+    h.nextThinkAt=Number.MAX_SAFE_INTEGER;
     const e=comm.storeEntityId?findRunEntity(r,comm.storeEntityId):undefined;
     if(e){const [sx,sy]=humanEntityTile(r,e),occupied=new Set(Object.values(r.humanWorld!.people).filter(p=>p.actorId!==h.actorId&&!['DEAD','EVACUATED'].includes(p.state)).map(p=>humanCellKey(p.floor,p.gx,p.gy))),nav=humanNavigation(r,occupied);
       const step=[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({tx:h.gx+dx,ty:h.gy+dy,floor:h.floor})).find(p=>Math.abs(p.tx-sx)+Math.abs(p.ty-sy)>=2&&nav.legalEdge(h,p));
@@ -1905,10 +1908,14 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     h.harvestJob??={id:h.intent!.intentId,sourceId:source.sourceId,gx,gy,floor:h.floor,key:source.key,phase:'source',startedAt:h.intent!.startAt};
     h.intent!.target=`global-harvest:${h.floor}:${gx},${gy}`;
   }
+  // Full-store work is waiting on a custody change, not a physical action every
+  // thirty seconds. Direct edits, consumption and restored saves all re-read the
+  // actual container; urgent needs continue to own their biological boundaries.
+  for(const h of actors)if(h.deliveryWait){const wait=h.deliveryWait,c=r.custody[wait.containerId],comm=h.community?hw.communities[h.community]:undefined,e=comm?.storeEntityId?findRunEntity(r,comm.storeEntityId):undefined;if(!c||!comm?.storeContainers.includes(wait.containerId)||!e||e.owner!==comm.id||(e.hp??1)<=0||JSON.stringify(c.slots)!==wait.signature){delete h.deliveryWait;h.nextThinkAt=now;}}
   // A selected physical commitment owns its retry deadline. Do not enqueue an
   // interrupted delivery/source/board visit behind another complete census of
   // discretionary jobs. Same route authority and physical entry checks apply.
-  const commitments=actors.filter(h=>h.state==='IDLE'&&(!h.intent||!!h.intent.work)&&!h.following&&(h.nextThinkAt??0)<=now&&(h.harvestJob||h.recipeBoardPending||!!h.intent?.work||Object.values(h.workOutputs??{}).some(q=>q>0)));
+  const commitments=actors.filter(h=>h.state==='IDLE'&&(!h.intent||!!h.intent.work)&&!h.deliveryWait&&!h.following&&(h.nextThinkAt??0)<=now&&(h.harvestJob||h.recipeBoardPending||!!h.intent?.work||Object.values(h.workOutputs??{}).some(q=>q>0)));
   if(commitments.length)withHumanNavigationRead(r,()=>{for(const h of commitments){
    if(h.intent?.work){h.nextThinkAt=now+3000;planHumanOccupation(r,hw,h,now,(gx,gy,floor)=>humanNavigation(r).route(h,{tx:gx,ty:gy,floor}));continue;}
    if(!h.harvestJob&&Object.values(h.workOutputs??{}).some(q=>q>0)){
