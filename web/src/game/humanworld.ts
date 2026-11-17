@@ -756,17 +756,17 @@ export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 
 // ---------------------------------------------------------------------------
 /** Actor-aware harvest: decrements real source stock, attaches output to the actor's pack,
  *  does NOT award player gather XP (the player-only `harvestHit` is never reused for humans). */
-function simulateHumanOutput(slots: (Stack | null)[], yields: [string, number][]): boolean {
+function simulateHumanOutput(slots: (Stack | null)[], yields: [string, number][],claim?:{jobId:string;workerId:string}): boolean {
   const trial = slots.map(s => s ? { ...s } : null);
   for (const [rawKey, rawQty] of yields) {
     const key = liveItemId(rawKey), d = ITEMS[key]; let qty = Math.ceil(rawQty * liveItemPer(rawKey));
-    const mergeable = d.max > 1 && !d.dur && !d.charge;
+    const mergeable = !claim && d.max > 1 && !d.dur && !d.charge;
     if (mergeable) for (const s of trial) {
       if (!s || s.key !== key || s.meta !== undefined || s.dur !== undefined || s.charge !== undefined || qty <= 0) continue;
       const moved = Math.min(qty, d.max - s.qty); s.qty += moved; qty -= moved;
     }
     for (let i = 0; i < trial.length && qty > 0; i++) if (!trial[i]) {
-      const moved = Math.min(qty, d.max); trial[i] = { uid: 'capacity-probe', key, qty: moved }; qty -= moved;
+      const moved = Math.min(qty, d.max); trial[i] = { uid: 'capacity-probe', key, qty: moved,production:claim }; qty -= moved;
     }
     if (qty > 0) return false;
   }
@@ -803,10 +803,11 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   // Hand-gatherable plants are real shared sources; solid timber/ore/scrap still require an equipped tool.
   const power = s.def.harvestBy ? (toolKey ? (s.def.harvestBy[toolKey] ?? 0) : 0) : (toolKey ? (ITEMS[toolKey]?.power?.[s.def.mat] ?? 0) : s.def.mat === 'plant' ? 1 : 0);
   if (power <= 0) return { result: 'blocked', key: s.key, reason: 'required tool is unavailable' };
+  const claim=global&&h.harvestJob?{jobId:h.harvestJob.id,workerId:h.actorId}:undefined;
   const per = s.def.hp / s.def.stock;
   const pack = humanPack(r, h);
   const oneUnitProbe = pack.slots.map(s => s ? { ...s } : null);
-  if (!simulateHumanOutput(oneUnitProbe, s.def.yields.map(([k, q]) => [k, q] as [string, number]))) return { result: 'blocked', key: s.key, reason: 'pack full; no harvest was taken' };
+  if (!simulateHumanOutput(oneUnitProbe, s.def.yields.map(([k, q]) => [k, q] as [string, number]),claim)) return { result: 'blocked', key: s.key, reason: 'pack full; no harvest was taken' };
   const before = Math.ceil(st.hp / per - 1e-9);
   const wouldAfter = Math.ceil(Math.max(0, st.hp - power) / per - 1e-9);
   const potentialUnits = Math.min(st.stock, before - wouldAfter);
@@ -823,7 +824,7 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   // physical output is committed exactly once below, after source damage is bounded.
   const capacityProbe = pack.slots.map(s => s ? { ...s } : null);
   for (let n = 1; n <= potentialUnits; n++) {
-    if (!simulateHumanOutput(capacityProbe, s.def.yields.map(([k, q]) => [k, q] as [string, number]))) break;
+    if (!simulateHumanOutput(capacityProbe, s.def.yields.map(([k, q]) => [k, q] as [string, number]),claim)) break;
     acceptedUnits++;
   }
   if (acceptedUnits <= 0) return { result: 'blocked', key: s.key, reason: 'pack full; no harvest was taken' };
@@ -837,7 +838,7 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   // The capacity simulation is against the same normalized addItem laws. Any mismatch is an invariant failure.
   let got = 0;
   for (let u = 0; u < units; u++) for (const [k, q] of s.def.yields) {
-    const left = addItem(r, pack.id, k, q);
+    const left = addItem(r, pack.id, k, q,claim?{production:claim}:undefined);
     if (left > 0) throw new Error(`human harvest capacity invariant: ${left} ${k} could not enter ${pack.id}`);
     got += Math.ceil(q * liveItemPer(k));
   }
@@ -1713,7 +1714,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   const candidates=globalSourceCandidates(h.gx,h.gy,h.floor,r.sourceMap?.rules===4?4:3,allowed,local?r.layoutId:undefined);
   for(const p of candidates){
     const s=globalSourceAt(r,p.gx,p.gy,h.floor,now);if(!s||s.protected||s.stock<=0||!canHarvestSource(h,s))continue;
-    if(!simulateHumanOutput(pack.slots.map(v=>v?{...v}:null),s.def.yields))continue;
+    if(!simulateHumanOutput(pack.slots.map(v=>v?{...v}:null),s.def.yields,{jobId:'admission',workerId:h.actorId}))continue;
     h.harvestJob={id:uid(r,'hj'),sourceId:s.sourceId,gx:p.gx,gy:p.gy,floor:h.floor,key:s.key,phase:'source',startedAt:now};
     receipt(r,now,'human.harvest.select',`${h.harvestJob.id}:${h.actorId}:${s.sourceId}:${s.key}`);
     resumeHarvestJob(r,hw,h,now,occupied);return;
@@ -1725,7 +1726,7 @@ function resumeHarvestJob(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occu
   if(job.phase==='source'){
     const s=globalSourceAt(r,job.gx,job.gy,job.floor,now);
     if(h.floor!==job.floor||!s||s.key!==job.key||s.protected||s.stock<=0||!canHarvestSource(h,s)||h.stamina<2){receipt(r,now,'human.harvest.cancel',`${job.id}:source/tool/access changed`);delete h.harvestJob;return;}
-    if(!simulateHumanOutput(humanPack(r,h).slots.map(v=>v?{...v}:null),s.def.yields)){h.lastWorkBlock='Pack full before extraction';delete h.harvestJob;return;}
+    if(!simulateHumanOutput(humanPack(r,h).slots.map(v=>v?{...v}:null),s.def.yields,{jobId:job.id,workerId:h.actorId})){h.lastWorkBlock='Pack full before extraction';delete h.harvestJob;return;}
     const route=humanNavigation(r,occupied,true).route(h,{tx:job.gx,ty:job.gy,floor:job.floor});if(!route){if(h.routeSearch?.status==='NO_PATH'){receipt(r,now,'human.harvest.cancel',`${job.id}:no legal route`);delete h.harvestJob;}return;}
     h.intent={intentId:job.id,actorId:h.actorId,kind:'work',target:`global-harvest:${job.floor}:${job.gx},${job.gy}`,preconditions:['known source','timed physical shared harvest'],reserved:[job.sourceId],startAt:now,dueAt:now+1500,route};
     h.state=route.length?'MOVING':'WORKING';
@@ -1784,9 +1785,10 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
   for (const [stackUid, qty] of Object.entries(h.workOutputs)) {
     const i = pack.slots.findIndex(s => s?.uid === stackUid); if (i < 0 || qty <= 0) { delete h.workOutputs[stackUid]; continue; }
     const s = pack.slots[i]!;
-    const room=dst.slots.includes(null)?s.qty:(s.production||s.meta!==undefined||s.dur!==undefined||s.charge!==undefined?0:spaceFor(r,dstId,s.key));
+    const ownedHarvest=s.production?.workerId===h.actorId&&!!h.workOutputSources?.[s.uid];
+    const room=dst.slots.includes(null)?s.qty:((s.production&&!ownedHarvest)||s.meta!==undefined||s.dur!==undefined||s.charge!==undefined?0:spaceFor(r,dstId,s.key));
     const take=Math.min(qty,s.qty,room);if(take<=0){h.lastWorkBlock='Reached output store is full; cargo remains in my pack.';continue;}
-    const transfer = take === s.qty ? s : { ...s, uid: uid(r, 's'), qty: take };
+    const transfer=take===s.qty&&!ownedHarvest?s:{...s,uid:take===s.qty?s.uid:uid(r,'s'),qty:take,...(ownedHarvest?{production:undefined}:{})};
     const whole = take === s.qty;
     const destinationBefore=new Map(dst.slots.filter((v):v is Stack=>!!v).map(v=>[v.uid,v.qty]));
     if (whole) pack.slots[i] = null; else s.qty -= take;

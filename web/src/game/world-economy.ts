@@ -85,6 +85,27 @@ export function pickWeighted(weights: readonly [string, number][], u: number): s
  *  the three industrial salvage archetypes (60/25/15, keyed by global coordinates). No density is added. */
 /** Timber (the most abundant solid, tens of thousands of trees): the only natural solids a G1A salvage node may displace in the blocker competition. */
 export const G1A_YIELDING_TREES: ReadonlySet<string> = new Set(['oak','pine','snowpine','palm','willow','deadtree']);
+const rateTables=new Map<number,readonly (readonly [string,number,number])[]>();
+const BIOME_RATE_INDEX:Record<Biome,number>={water:0,sand:1,grass:2,meadow:3,forest:4,marsh:5,hill:6,snow:7,ash:8,toxic:9,road:10,floor:11,wall:12,lava:13};
+/** The exact legacy insertion order/rate arithmetic, compiled once per physical
+ * biome/climate/road class. Hash key salts are immutable, not new RNG draws. */
+function placementRates(biome:Biome,cold:boolean,warm:boolean,moist:number,nearRoad:boolean,industrial:boolean,coast:boolean){
+ const signature=(BIOME_RATE_INDEX[biome]<<6)|(+cold)|(+warm<<1)|(+ (moist>.5)<<2)|(+nearRoad<<3)|(+industrial<<4)|(+coast<<5);
+ const hit=rateTables.get(signature);if(hit)return hit;
+  const rates:Record<string,number>={};
+    if(biome==='forest'){rates[cold?'pine':'oak']=.28; rates.bush=.035;rates.grass=.045;rates.herb=.015;rates.rock=.012;}
+    if(biome==='grass'){rates.oak=.045;rates.bush=.04;rates.grass=.075;rates.herb=.01;rates.rock=.02;}
+    if(biome==='meadow'){rates.oak=.018;rates.bush=.055;rates.grass=.115;rates.rock=.02;}
+    if(biome==='snow'){rates.snowpine=.12;rates.rock=.035;rates.crystal=.018;}
+    if(biome==='hill'){rates.rock=.10;rates.iron=.065;rates.coalv=.027;if(cold)rates.crystal=.014;}
+    if(biome==='sand'){if(warm && coast)rates.palm=.06;rates.rock=.012;if(coast)rates.salt_shale=.16;}
+    if(biome==='marsh'){rates.willow=.06;rates.reed=moist>.5?.14:.07;rates.mushroom=.035;rates.herb=.014;}
+    if(biome==='ash'){rates.sulfur=.035;rates.rock=.04;rates.deadtree=.02;rates.coalv=.018;}
+    if(biome==='toxic'){rates.deadtree=.02;rates.iron=.008;}
+    if(nearRoad){rates.scrap=.075;rates.wreck=.015;}
+    if(industrial){rates.scrap=(rates.scrap||0)+.035;rates.wreck=(rates.wreck||0)+.012;}
+ const out=Object.entries(rates).map(([key,p])=>[key,p,stableHash(key)] as const);rateTables.set(signature,out);return out;
+}
 export function compileEconomy(m: EconomyMap, rules: 3 | 4 = 3): EconomyPlacement {
   const errors=validateEconomyMap(m); const n=m.width*m.height; if(errors.length) return {sources:[],errors};
   for(const s of m.starts)if(!m.walkable[s.y*m.width+s.x])errors.push(`start ${s.id} is not walkable`);
@@ -96,21 +117,10 @@ export function compileEconomy(m: EconomyMap, rules: 3 | 4 = 3): EconomyPlacemen
     const i=y*m.width+x, biome=m.biome[i]; if(!m.walkable[i]||!reached[i]||m.protected[i]||m.road[i]||['water','road','floor','wall','lava'].includes(biome)||m.slope[i]>.6)continue;
     const roadDist=roadDistances[i], cold=m.temperature[i]<.3, warm=m.temperature[i]>.55, moist=m.moisture[i];
     // All weights are per eligible tile; expected total is proportional to suitable area.
-    const rates:Record<string,number>={};
-    if(biome==='forest'){rates[cold?'pine':'oak']=.28; rates.bush=.035;rates.grass=.045;rates.herb=.015;rates.rock=.012;}
-    if(biome==='grass'){rates.oak=.045;rates.bush=.04;rates.grass=.075;rates.herb=.01;rates.rock=.02;}
-    if(biome==='meadow'){rates.oak=.018;rates.bush=.055;rates.grass=.115;rates.rock=.02;}
-    if(biome==='snow'){rates.snowpine=.12;rates.rock=.035;rates.crystal=.018;}
-    if(biome==='hill'){rates.rock=.10;rates.iron=.065;rates.coalv=.027;if(cold)rates.crystal=.014;}
-    if(biome==='sand'){if(warm && m.coast[i])rates.palm=.06;rates.rock=.012;if(m.coast[i])rates.salt_shale=.16;}
-    if(biome==='marsh'){rates.willow=.06;rates.reed=moist>.5?.14:.07;rates.mushroom=.035;rates.herb=.014;}
-    if(biome==='ash'){rates.sulfur=.035;rates.rock=.04;rates.deadtree=.02;rates.coalv=.018;}
-    if(biome==='toxic'){rates.deadtree=.02;rates.iron=.008;}
-    if(roadDist>=2&&roadDist<=3){rates.scrap=.075;rates.wreck=.015;}
-    if(m.industrial[i]){rates.scrap=(rates.scrap||0)+.035;rates.wreck=(rates.wreck||0)+.012;}
+    const rates=placementRates(biome,cold,warm,moist,roadDist>=2&&roadDist<=3,!!m.industrial[i],!!m.coast[i]);
     let choice:string|null=null,best=Infinity;
     const gx=x+(m.origin?.x??0),gy=y+(m.origin?.y??0);
-    for(const [key,p] of Object.entries(rates)){ const u=Math.max(hash2(gx,gy,salt ^ stableHash(key)),1e-9);const score=-Math.log(u)/p;if(score<best){best=score;choice=key;} }
+    for(const [key,p,keyHash] of rates){ const u=Math.max(hash2(gx,gy,salt ^ keyHash),1e-9);const score=-Math.log(u)/p;if(score<best){best=score;choice=key;} }
     if(best<1) out[i]=choice;
     if(rules===4 && out[i]==='wreck') fromWreck[i]=1;
     if(rules===4 && (out[i]==='scrap'||out[i]==='wreck')){
@@ -135,8 +145,8 @@ export function compileEconomy(m: EconomyMap, rules: 3 | 4 = 3): EconomyPlacemen
   // prevents touching solid nodes from forming artificial one-tile walls.
   const blockers:number[]=[];for(let i=0;i<n;i++)if(out[i]&&SOURCES[out[i]!]?.block)blockers.push(i);
   const ox=m.origin?.x??0,oy=m.origin?.y??0;
-  const prio=(a:number)=>hash2(ox+(a%m.width),oy+Math.floor(a/m.width),salt ^ 0x275e)-(rules===4&&isIndustrialSalvage(out[a])&&!contested[a]?1:0); // G1A: salvage keeps its cell, so the Parts share is not thinned away by neighbouring trees
-  blockers.sort((a,b)=>prio(a)-prio(b)||a-b);
+  const priorities=new Float64Array(n);for(const a of blockers)priorities[a]=hash2(ox+(a%m.width),oy+Math.floor(a/m.width),salt ^ 0x275e)-(rules===4&&isIndustrialSalvage(out[a])&&!contested[a]?1:0); // G1A: salvage keeps its cell, so the Parts share is not thinned away by neighbouring trees
+  blockers.sort((a,b)=>priorities[a]-priorities[b]||a-b);
   const accepted=new Uint8Array(n);for(const i of blockers){const x=i%m.width,y=Math.floor(i/m.width);if(OFFSETS.some(([dx,dy])=>accepted[(y+dy)*m.width+x+dx]))out[i]=null;else accepted[i]=1;}
   // Remove candidates which became physically isolated by the combined source
   // layout. Never synthesize a fallback source or alter map geometry.

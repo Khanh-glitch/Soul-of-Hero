@@ -16,7 +16,7 @@
  */
 import { T, TILE, WW, WH } from '../../src/game/core';
 import type { World, Place } from '../../src/game/world';
-import { compileEconomy, reachableUnion, type Biome, type EconomyMap } from '../../src/game/world-economy';
+import { compileEconomy, reachableUnion, type Biome, type EconomyMap } from './world-economy-16b0cb9';
 import { mapDigest } from '../../src/game/map-package';
 import type { VeyraViewIdentity } from '../../src/game/veyra/projection';
 import { MAP_SOURCE_SHA, BODY_SHA } from '../../src/game/veyra/intake';
@@ -28,7 +28,7 @@ import { slicePoisForWindow, getPoiLayout, type PoiLandmarkProp } from '../../sr
 import { layoutIdAt, windowForLayout, isVeyra05Layout, U05_WORLD_LAYOUT_ID, type Veyra05Scene } from '../../src/veyra05/scenes';
 import { hash2 } from '../../src/game/core';
 import { SOURCES, isIndustrialSalvage } from '../../src/game/catalog';
-import { pickWeighted } from '../../src/game/world-economy';
+import { pickWeighted } from './world-economy-16b0cb9';
 import { buildFloorStack, type FloorStack, type FloorLayer } from '../../src/veyra05/floors';
 
 const CODE_BIOME: Biome[] = ['meadow', 'forest', 'forest', 'forest', 'marsh', 'sand', 'hill', 'hill', 'snow', 'ash', 'toxic', 'sand'];

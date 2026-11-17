@@ -105,7 +105,20 @@ for (const r of [...LAND_OUTER, ...LAND_HOLES]) for (let i = 0, j = r.pts.length
   for (let bx = Math.floor(x0 / BUCKET); bx <= Math.floor(x1 / BUCKET); bx++) for (let by = Math.floor(y0 / BUCKET); by <= Math.floor(y1 / BUCKET); by++) { const k = bk(bx, by); let c = COAST_BUCKETS.get(k); if (!c) COAST_BUCKETS.set(k, c = []); c.push(edge); }
 }
 
-function inside(pts: Pt[], x: number, y: number) { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const xi = pts[i][0], yi = pts[i][1], xj = pts[j][0], yj = pts[j][1]; if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c; } return c; }
+// Tile-centre sampling reuses the SAME ordinate across many cells/chunks.
+// Compile exact ray intersections once per ordinate; binary parity is identical
+// to the original edge-order XOR, including strict boundary comparisons.
+const polygonRays=new WeakMap<Pt[],Map<number,readonly number[]>>();
+function inside(pts:Pt[],x:number,y:number){
+  let rows=polygonRays.get(pts);if(!rows){rows=new Map();polygonRays.set(pts,rows);}
+  let crossings=rows.get(y);
+  if(!crossings){const values:number[]=[];
+    for(let i=0,j=pts.length-1;i<pts.length;j=i++){const xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1];if((yi>y)!==(yj>y))values.push(((xj-xi)*(y-yi))/(yj-yi)+xi);}
+    values.sort((a,b)=>a-b);crossings=values;rows.set(y,crossings);if(rows.size>256)rows.delete(rows.keys().next().value!);
+  }
+  let lo=0,hi=crossings.length;while(lo<hi){const mid=(lo+hi)>>>1;if(x<crossings[mid])hi=mid;else lo=mid+1;}
+  return !!((crossings.length-lo)&1);
+}
 const inRing = (r: Ring, x: number, y: number) => x >= r.minX && x <= r.maxX && y >= r.minY && y <= r.maxY && inside(r.pts, x, y);
 function dSeg(x: number, y: number, a: Pt, b: Pt) { const dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy; let t = l2 ? ((x - a[0]) * dx + (y - a[1]) * dy) / l2 : 0; t = t < 0 ? 0 : t > 1 ? 1 : t; return Math.hypot(x - (a[0] + t * dx), y - (a[1] + t * dy)); }
 const coastCandidates=new Map<number,readonly [Pt,Pt][]>();

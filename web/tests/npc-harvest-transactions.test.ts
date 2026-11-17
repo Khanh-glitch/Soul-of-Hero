@@ -44,3 +44,10 @@ it('player and two NPCs race one actual plant unit in all first-claim orders wit
  expect(Object.values(outcomes).filter(q=>q>0)).toHaveLength(1);expect(outcomes[first]).toBeGreaterThan(0);expect(sourceAt(r,p.x,p.y,T0)!.stock).toBe(0);
  }
 });
+it('delivered food is subsequently debited by biological hunger consumption, not a stock mirror',()=>{
+ const {r,hw,h,store,s}=delivery();const dst=C(r,store.c!);dst.slots.fill(null);depositHumanOutputs(r,h,T0);
+ expect(C(r,h.inv.packId).slots[0]).toBeNull();expect(dst.slots.find(v=>v?.uid===s.uid)?.qty).toBe(3);
+ h.hunger=0;h.thirst=100;humanConsume(r,hw,h,'food',T0+1);
+ expect(h.hunger).toBeGreaterThan(0);expect(dst.slots.find(v=>v?.uid===s.uid)?.qty).toBe(2);
+ expect(r.receipts.some(e=>e.kind==='human.consume'&&e.detail.includes(s.uid))).toBe(true);
+});

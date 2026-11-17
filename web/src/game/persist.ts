@@ -976,7 +976,7 @@ export function stackInvariant(s: any, uids: Set<string>, beforeNext: (id: strin
   } else if (s.lvl !== undefined || s.cd !== undefined || s.upg !== undefined) return 'non-core-with-core-fields';
   if (s.dur !== undefined && (!finite(s.dur) || s.dur < 0)) return 'bad-dur';
   if (s.charge !== undefined && (!finite(s.charge) || s.charge < 0)) return 'bad-charge';
-  if (s.production !== undefined && (!obj(s.production) || typeof s.production.jobId!=='string' || !/^j[a-z0-9]+$/.test(s.production.jobId) || typeof s.production.workerId!=='string' || !/^h[a-z0-9]+$/.test(s.production.workerId))) return 'bad-production-claim';
+  if (s.production !== undefined && (!obj(s.production) || typeof s.production.jobId!=='string' || !/^(?:j|hj)[a-z0-9]+$/.test(s.production.jobId) || typeof s.production.workerId!=='string' || !/^h[a-z0-9]+$/.test(s.production.workerId))) return 'bad-production-claim';
   if (s.meta !== undefined && typeof s.meta !== 'string') return 'bad-meta-type';
   if (s.key === 'blueprint' && (!s.meta || (!has(RECIPES, s.meta) && !hasLegacyDefinition(s.meta)))) return `blueprint-without-recipe:${s.meta ?? 'none'}`;
   uids.add(s.uid); return null;
