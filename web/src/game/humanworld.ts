@@ -21,7 +21,7 @@ import {countWorldWork} from './world-work';
  */
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
 import { STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, globalFreshWater } from './engine';
+import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, globalFreshWater, globalSourceAt } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import { humanEntityTile, executeHumanWork, planHumanOccupation, type HumanWorkTask } from './human-jobs';
@@ -768,20 +768,29 @@ function simulateHumanOutput(slots: (Stack | null)[], yields: [string, number][]
   slots.splice(0, slots.length, ...trial);
   return true;
 }
-export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: number, ty: number, now: number): { result: 'yield' | 'empty' | 'none' | 'blocked'; got?: number; key?: string; reason?: string } {
+export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: number, ty: number, now: number, global=false): { result: 'yield' | 'empty' | 'none' | 'blocked'; got?: number; key?: string; reason?: string } {
   if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED') return { result: 'blocked', reason: 'actor unavailable' };
-  const s = sourceAt(r, tx, ty, now);
+  const s = global?globalSourceAt(r,tx,ty,h.floor,now):sourceAt(r, tx, ty, now);
   if (!s) return { result: 'none', reason: 'source unavailable' };
   // PLAYER_EXPLORATION sources are never depleted by NPC autonomous scavenging.
-  if (isPlayerExplorationSource(r, s.key, tx, ty)) return { result: 'blocked', key: s.key, reason: 'player-exploration cache protected' };
+  if ((global&&'protected' in s&&s.protected)||(!global&&isPlayerExplorationSource(r,s.key,tx,ty))) return { result: 'blocked', key: s.key, reason: 'player-exploration cache protected' };
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
-  const from = { x: (h.gx - ox + 0.5) * TILE, y: (h.gy - oy + 0.5) * TILE };
-  const to = { x: (tx + 0.5) * TILE, y: (ty + 0.5) * TILE };
-  if (h.floor !== (r.veyraFloor ?? 0) || tx < 0 || ty < 0 || tx >= WW || ty >= WH ||
-      Math.hypot(from.x - to.x, from.y - to.y) > TILE * 1.5 || !clearPhysicalLine(r, from, to, true, true))
-    return { result: 'blocked', key: s.key, reason: 'source is not physically reachable on this floor' };
-  const st = r.sources[s.i] || (r.sources[s.i] = { stock: s.stock, hp: s.hp });
+  const targetGx=global?tx:ox+tx,targetGy=global?ty:oy+ty;
+  const localX=targetGx-ox,localY=targetGy-oy;
+  const unavailable=()=>({ result:'blocked' as const,key:s.key,reason:'source is not physically reachable on this floor'});
+  if(Math.hypot(h.gx-targetGx,h.gy-targetGy)>1.5)return unavailable();
+  if(global){
+    const nav=humanNavigation(r);
+    if(!nav.free({tx:h.gx,ty:h.gy,floor:h.floor},h,true))return unavailable();
+    if(h.gx!==targetGx&&h.gy!==targetGy&&(!nav.free({tx:h.gx,ty:targetGy,floor:h.floor},h,true)||!nav.free({tx:targetGx,ty:h.gy,floor:h.floor},h,true)))return unavailable();
+  } else {
+    const from={x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE},to={x:(localX+.5)*TILE,y:(localY+.5)*TILE};
+    if(h.floor!==(r.veyraFloor??0)||localX<0||localY<0||localX>=WW||localY>=WH||!clearPhysicalLine(r,from,to,true,true))return unavailable();
+  }
+  const states='states' in s?s.states:r.sources;
+  const st=states[s.i]??(states[s.i]={stock:s.stock,hp:s.hp});
+  if('localSources' in s&&s.localSources)s.localSources[s.localIndex]=st;
   if (st.stock <= 0) return { result: 'empty', key: s.key, reason: 'source depleted' };
   const tool = h.equip.weapon;
   const toolKey = tool?.key;

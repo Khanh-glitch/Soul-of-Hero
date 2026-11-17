@@ -499,15 +499,15 @@ export function wildRegrowRate(r: RunState, tx: number, ty: number, def: SourceD
 function regrowSiteFree(r: RunState, tx: number, ty: number) { return entsAt(r, tx, ty).length === 0; }
 /** R9: integrate the growth rate piecewise over season boundaries from `st.regrowFrom` to `now`. Exact because the rate is
  *  constant inside one phase. Idempotent and additive: any number or pattern of reads gives the same completion instant. */
-function advanceRegrowth(r: RunState, st: { regrowFrom?: number; regrowAcc?: number; regrowDoneAt?: number }, def: SourceDef, tx: number, ty: number, now: number) {
+function advanceRegrowth(r: RunState, st: { regrowFrom?: number; regrowAcc?: number; regrowDoneAt?: number }, def: SourceDef, tx: number, ty: number, now: number, spatial?: {terrain:RunState['terrain'][number]|undefined;rate:(at:number)=>number}) {
   if (st.regrowDoneAt !== undefined || st.regrowFrom === undefined || !(now > st.regrowFrom)) return;
   const need = def.regrow! * 1000; let acc = st.regrowAcc ?? 0, t = st.regrowFrom;
-  const tm = r.terrain[ty * WW + tx];
+  const tm = spatial?spatial.terrain:r.terrain[ty * WW + tx];
   const termCut = tm && tm.untilAt !== undefined && tm.untilAt > st.regrowFrom && tm.untilAt < now ? [tm.untilAt] : [];
   const cuts = [...seasonTransitionsBetween(r, st.regrowFrom, now).map(x => x.at), ...termCut].sort((a, b) => a - b);
   for (const b of [...cuts, now]) {
     if (!(b > t)) continue;
-    const rate = wildRegrowRate(r, tx, ty, def, t), gain = rate * (b - t);
+    const rate = spatial?spatial.rate(t):wildRegrowRate(r, tx, ty, def, t), gain = rate * (b - t);
     if (rate > 0 && acc + gain >= need) { st.regrowDoneAt = t + (need - acc) / rate; st.regrowAcc = need; st.regrowFrom = now; return; }
     acc += gain; t = b;
   }
@@ -544,6 +544,48 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
     if (st.stock !== stock) { stock = st.stock; hp = st.hp; }
   }
   return { i, key, def, stock, hp, st, fire: (st as any)?.fire as number | undefined };
+}
+const GLOBAL_EXPLORATION_SOURCE_CELLS=new Set(G1B_SOURCE_SITES.map(e=>`${e.level??0}:${e.gx},${e.gy}`));
+/** Global source ledger adapter. Coordinates are always physical/global; the
+ * active camera delegates to sourceAt, never a second stock authority. This read
+ * can advance canonical regrowth; extraction still needs an actor transaction. */
+export function globalSourceAt(r:RunState,gx:number,gy:number,floor:number,now:number){
+  const [ox,oy]=windowOrigin(r),lx=gx-ox,ly=gy-oy,inside=lx>=0&&ly>=0&&lx<WW&&ly<WH;
+  const protectedAt=(statics:readonly {kind:string;tx:number;ty:number}[],x:number,y:number)=>
+    GLOBAL_EXPLORATION_SOURCE_CELLS.has(`${floor}:${gx},${gy}`)||statics.some(e=>e.kind==='loot'&&e.tx===x&&e.ty===y)||
+    allRunEntities(r).some(e=>{if(!(e.g1b||e.kind==='loot'))return false;const p=entityGlobalCoords(r,e);return p.floor===floor&&p.gtx===gx&&p.gty===gy;});
+  if(inside&&floor===activeFloor(r)&&r.layoutId===getActiveLayout()){
+    const s=sourceAt(r,lx,ly,now);if(!s)return null;
+    return {...s,sourceId:`${floor}:${gy*FRAME_W+gx}`,states:r.sources,localSources:undefined as RunState['sources']|undefined,localIndex:s.i,protected:protectedAt(getWorld().statics,lx,ly)};
+  }
+  if(gx<0||gy<0||gx>=FRAME_W||gy>=FRAME_H||r.sourceLayoutVersion!==3)return null;
+  const base=globalBaseGeometry(gx,gy,floor,r.sourceMap?.rules===4?4:3,inside?r.layoutId:undefined);
+  if(!base?.source)return null;
+  const x=gx-base.originTx,y=gy-base.originTy,i=y*WW+x,gi=gy*FRAME_W+gx;
+  const localSources=inside?r.veyraFloorState?.[floor]?.sources:undefined;
+  const states=floor===0?(r.veyraGlobalSources??={}):((r.veyraGlobalFloorState??={})[floor]??={sources:{},doors:{}}).sources;
+  const st=localSources?.[i]??states[gi];
+  // Preserve the same object when a saved inactive local floor also has a
+  // global record. A source cannot have independently debit-able copies.
+  if(st){states[gi]=st;if(localSources)localSources[i]=st;}
+  const key=st?.burnt?'deadtree':base.source,def=SOURCES[key];if(!def)return null;
+  const terrain=floor===0?r.veyraGlobalTerrain?.[gi]:undefined;
+  const tileAt=(at:number)=>terrain&&(terrain.untilAt!==undefined?at<terrain.untilAt:!terrain.until||terrain.until>r.clock.simMs)?terrain.t:base.tile;
+  const suppressed=(at:number)=>[T.ICE,T.PWALL,T.LAVA,T.BURNT].includes(tileAt(at));
+  const rate=(at:number)=>{
+    const cls=def.regrowClass;if(!cls||suppressed(at))return 0;
+    const cfg=BAL.wildRegrowth,band=cfg.temperatureBand[cls];
+    const local=climateFromCell(r,{cacheKey:`veyra-g|${gi}`,biome:base.biome,mapTemperature:base.temperature,mapMoisture:base.moisture,tile:base.tile},at,'clear'),t=local.temperature;
+    const climate=Math.max(cfg.climateFloor,Math.min(1,t<band.low?1-(band.low-t)*cfg.coldSlope:t>band.high?1-(t-band.high)*cfg.heatSlope:1));
+    return Math.max(cfg.minRate,climate*cropSeasonFactor(local.season,cls))*soilFertility(base.biome,local.moisture,base.slope,0);
+  };
+  const siteFree=()=>!base.statics.length&&!base.solidProp&&!allRunEntities(r).some(e=>{const p=entityGlobalCoords(r,e);return p.floor===floor&&p.gtx===gx&&p.gty===gy;});
+  if(st&&st.stock<=0&&def.regrow){
+    const refill=()=>{st.stock=def.stock;st.hp=def.hp;delete st.regrowAt;delete st.regrowFrom;delete st.regrowAcc;delete st.regrowDoneAt;};
+    if(st.regrowFrom===undefined&&st.regrowAt!==undefined){if(now>=st.regrowAt&&!suppressed(now)&&siteFree())refill();}
+    else if(st.regrowFrom!==undefined){advanceRegrowth(r,st,def,x,y,now,{terrain,rate});if(st.regrowDoneAt!==undefined&&now>=st.regrowDoneAt&&!suppressed(now)&&siteFree())refill();}
+  }
+  return {i:gi,sourceId:`${floor}:${gi}`,key,def,stock:st?.stock??def.stock,hp:st?.hp??def.hp,st,states,localSources,localIndex:i,fire:st?.fire,protected:protectedAt(base.statics,x,y)};
 }
 // collision cache — rebuilt when structures/sources/terrain change
 // B04-P4: keyed by the RunState object itself (not run.id), like entsAt: a copied run with the same id must never reuse another copy's collision grid.
