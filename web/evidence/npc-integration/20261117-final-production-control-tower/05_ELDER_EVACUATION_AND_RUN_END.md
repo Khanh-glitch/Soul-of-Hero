@@ -1,0 +1,53 @@
+# 05 — RAGNAROK, ALL SIX ELDER ASSAULTS, REAL EVACUATION, TWO RESCUE ROUTES, K8 FINALIZATION
+**Baseline gate BLOCKED / NOT IMPLEMENTED.** Authoritative source: Bible last-island lock and K8; Survivor §§28,31–32,35,38; web/src/game/humanworld.ts seedElderPressure/advanceElderPressure/defeatElder/seedEvacTrips/boardEvac/departEvac/playerEvacuate/finalizeHumanOutcomes; sim.ts canonical Elder awaken/tickElder/castPattern, primordials/host-bridge.ts; engine.ts endRun/evacuate, K5/projectile/hazard and global world.
+Time: 336 REAL-hour run; danger from h264, final Elder awaken h312; final assault h312→h336. Existing 24-minute fictional day/night and two-year visual seasons are distinct.
+
+## A. CURRENT SOURCE-VERIFIED DEFICITS
+advanceElderPressure around line 1422 marks awakenedAt receipt; NO global physical movement/contact/attacks yet. The six canonical Elder entries exist (Surtur, Typhon, Aion, Atlas, Argus, Anubis) with lair sources; this is not proof of their impacts on 81 POIs.
+boardEvac checks radius≤6 and capacity, appends actorId; it does not assign a protected passenger/transit state preventing further work/combat. departEvac sets trip.departed, timestamps, marks people EVACUATED and pushes 'vessel departs' log directly without completed operating vehicle, boarding animation/occupancy, route and arrival authority. playerEvacuate pushes 'player' then calls departEvac and existing engine ends run. A trip record is not a ship. finalizeHumanOutcomes intentionally leaves unproven live humans UNRESOLVED; no source currently certifies island defended survival through actual h312–h336 attack. DO NOT paper over this.
+Existing six interactive boss battles and source HP belong to canonical combat authority; no second boss health/energy/skill RNG table may be created for the global layer.
+
+## B. ONE GLOBAL ELDER STATE/ACTIVITY TIMELINE
+Identify canonical six Elder actor/source objects, original lair positions, state/damage, abilities and defeat ledger. Make ONE authoritative identity for each; active boss scene and remote world projections share HP/death/skills/current position and time source. If canonical mechanics require environmental/AoE reach, model their actual authorized influence geometry and travel/contact—no Elder teleport.
+Timeline: h264 pre-existing escalation/region danger, h312 individual awaken, attack planning and causal world contact, event deadlines until h336. Persist unique event source IDs + start, target, position/area, route/ability, launch/arrival/contact, damage source, affected people/buildings and outcome, including failed/blocked contacts. Generate from actual geometry and threat behavior; use region graph/source-gated paths, barriers/doors/PPE/physical speed or canonical area propagation as appropriate. If source cannot reach an object, do not damage it.
+A defeated Elder cancels only its own future eligible events from confirmed defeat time. Do not invent automatic global peace or script everyone survives. Player may defeat a lair source before/after awaken and reduce that particular threat lawfully. Active-local combat and distant events must not apply the same Elder skill damage twice when player streams into site during attack. Cross-window authority must hand off one pending event, not two simulators.
+
+## C. COMMUNITY ASSAULT AND DEFENSE RESOLUTION
+For each eligible attacked settlement, derive targetable roof/doors/walls/guards/power/defense, water/food/medicine, human bodies and their real global/floor state. Resolve actual skill/weapon/structure effects under shared K5 and K6, with time and LOS/collision/area. Guards expend owned ammunition, armor wears, people suffer wounds, are protected/sheltered, treated, flee or die. Power devices require real fuel/wire/ammo. Defense may fail; survivors may escape or retreat to other lawful locations. Destroyed store/bed impacts ecology and next days' work. No blanket random % casualties, no automatic offscreen victory/defeat/invulnerability, no averted attack just because camera elsewhere.
+If a distant attack needs unknown geometry, record precise PENDING_CONTACT with source and missing evidence, and continue any other determinable events. Do not use unresolved as permanent excuse: implement the real missing contact system before FULL.
+Test event arrival while player offscreen, revisit in mid-attack, reload, defeat Elder after scheduled projectile, break last valid defense, destroy a bridge, and confirm causal outcomes and no repeated damage. Human survivors must retain same actor IDs, gear and wound receipts.
+
+## D. THREE APPROVED PHYSICAL EVACUATION SERVICES
+Only approved sites: po_evac_west, po_evac_south, po_evac_hook. Ground each in real authored POI/evac entity/tile/floor, actual reachable vehicle/dock, capacity, operating prerequisites and scheduled service. Do not invent additional evacuation POIs or infinite seats. A physical escape service must exist on actual source geometry; author a lawful vessel/transport entity + state where missing, rather than treating button log as vehicle.
+Finite trip state machine: IDLE_AVAILABLE → APPROACHING/BOARDING → SEALED/READY → DEPARTING → IN_TRANSIT → ARRIVED_SAFE or FAILED/CANCELLED, with source-specific schedule, capacity, real route/geometry or canonical sea passage, actual service cost/fuel/crew/route constraints where applicable, passenger and cargo manifests, saveable timestamps and idempotent event receipts.
+Boarding procedure:
+1. Agent/player knows service and reaches dock/legal boarding tile via actual route/stair/door, within genuine physical boarding radius and allowed phase.
+2. Confirm vehicle exists/is operating, seat/cargo capacity, person's state and exact cargo/UID, person not already boarded/dead/evacuated, and no player double boarding. Commit an embark event once.
+3. Actor moves into explicit BOARDED/ON_VEHICLE state or equivalent single persisted physical transit record; remove from world movement/work/combat eligibility while protected/on vehicle, but remain alive with needs/risk appropriate to physical service.
+4. Depart only when boarding window/vehicle availability/operation satisfied, record one manifest. Animate visible boarding and vessel departure at 640×360; remote legitimate departure commits in same state machine.
+5. Transit obeys actual journey duration, failure/attack rules and capacity. Determine precisely under approved law whether safe outcome is guaranteed at confirmed physical departure or only destination arrival; choose a consistent source-grounded success boundary and prove it. Prefer arrival proof where genuinely required. No early EVACUATED flag due solely to boarding.
+6. A passenger's independent home work, grievance combat and on-island body must not continue during transit.
+7. NPC evacuation does NOT call endRun; player can remain and fight, evacuate separately when an available service exists, or play completely solo.
+8. Failure/cancel releases living people at physically legitimate location/vehicle, not teleport back home. Persist route and passengers through separate-process save/reload.
+
+## E. BOTH RESCUE PATHS MUST COEXIST
+Defended island route: physically prepared food/water/shelter/repairs/guards/power, genuine Elder attack contact, survival through h336. Evacuation route: physical boarded departure and valid success boundary. Same run can have community A survive on island, community B evacuate, community C suffer deaths and a separate player ending. No mandatory NPC quest, core/boss kill or town-level threshold to activate either rescue option. Early player evacuation/abandon does not automatically certify people left behind.
+Write a threat-coverage ledger per human: actual h312 entry status; region/Elder reachable contact events; defense/shelter/treatment; time through h336; no unresolved attack active at final proof. Being alive at an arbitrary snapshot is insufficient.
+
+## F. TERMINAL OUTCOMES / K8 WIPE
+Exactly one outcome per actor/run ID: EVACUATED / SURVIVED_ON_ISLAND / DEAD / UNRESOLVED, with source receipts/time and proof. EVACUATED from actual confirmed successful trip. SURVIVED_ON_ISLAND only after confirmed final assault survival through h336. DEAD from physical lethal transition. UNRESOLVED for early end or genuinely undetermined contact. Once terminal, actor cannot work/board/fight or receive second status. Count totals must reconcile distinct initial+finite arrival human identities, not double count dead/recruited/evacuees.
+Finalization exactly once BEFORE K8 run wipe. Keep permitted profile summary/history only; erase run-local actor records, physical humans, inventories, Cores, stations/structures, property, claims, trust, grievance and unsecured cash per existing K8 law. No new rescue→Ragnarok Cash/rank/reward path without Creator approval. Run 2 obtains clean finite new population according to legitimate new-run sources; nothing physically inherited from run 1.
+
+## G. OBJECTIVE TESTS AND REAL WALKTHROUGH
+R01 six Elder identities uniquely reference canonical source HP/lair and defeat events; no seventh and no duplicate global boss HP.
+R02 h264,h312,h336 exact real-hour boundaries, no fictional 24min clock confusion; event idempotence after reload.
+R03 natural geographic contact to an eligible community with real damage to a guard and structure, medicine, shelter and power/weapon consumption; blocked reach shows no damage.
+R04 enter/leave loaded window during Elder assault; one skill/contact receipt and identical authoritative results after replay.
+R05 kill Elder before scheduled activity; only its future contacts cease, other threats remain.
+R06 genuine successful island defense, real losses, no everyone-safe default, no speculative SURVIVED outcome.
+R07 physical boarding at EACH of three sites; overcapacity, missing vehicle, inactive service, no route, dead/downed, already boarded and duplicate departure all fail correctly.
+R08 NPC vessel departs while player stays in same run; player has separate real solo ending, no auto player exit.
+R09 reload mid-boarding/mid-transit; manifest/UID/vehicle/time persist; terminal only after real successful boundary; invalid double outcome impossible.
+R10 final h336 same-run EVACUATED, SURVIVED_ON_ISLAND, DEAD and UNRESOLVED cases supported by distinct evidence; run 2 K8 cleanup and protected profile history.
+R11 actual normal-control 640×360 capture from community threat, physical defense, embark, departure and terminal report; QA time skip may accelerate h312 but not fabricate actual contact/boarded state.
+**DONE:** both rescue paths actually completed through the ONE global simulator, shared K5/transport, all six threatening the island as permitted, no percentage wipes or fake boat flags.
