@@ -28,8 +28,15 @@ export function humanShelter(r: RunState, gx: number, gy: number, floor: number,
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / .5) : 0, oy = o ? Math.round(o[1] / .5) : 0;
   const lx = gx - ox, ly = gy - oy;
-  if (floor === (r.veyraFloor ?? 0) && lx >= 0 && ly >= 0 && lx < WW && ly < WH)
-    return roofRoom(r, (lx + .5) * TILE, (ly + .5) * TILE).enclosed;
+  if (floor === (r.veyraFloor ?? 0) && lx >= 0 && ly >= 0 && lx < WW && ly < WH) {
+    const cacheKey=`local:${floor}:${ly*WW+lx}`,cached=context?.results.get(cacheKey);
+    if(cached!==undefined)return cached;
+    const room=roofRoom(r,(lx+.5)*TILE,(ly+.5)*TILE);
+    // A whole connected component has one enclosure result, including an open
+    // component. The read context never survives a door/roof/world transaction.
+    if(context){context.results.set(cacheKey,room.enclosed);for(const cell of room.cells)context.results.set(`local:${floor}:${cell}`,room.enclosed);}
+    return room.enclosed;
+  }
   if (!o) return false;
   indexPlans();
   const start = gy * FRAME_W + gx, cacheKey=`${floor}:${start}`;

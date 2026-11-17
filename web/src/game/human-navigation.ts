@@ -26,11 +26,24 @@ type SearchState={heap:SearchNode[];costs:Map<string,number>;parent:Map<string,s
 // Search progress is derived, not an economic authority. Reload reconstructs it from the
 // same physical origin; persisted actors/routes/items never depend on a hidden completion.
 const searches=new WeakMap<RunState,Map<string,SearchState>>();
-export function humanNavigation(r:RunState,occupied=new Set<string>()){
- indexArchitecture();
+interface NavigationRead { all:Entity[]; blockMap:Map<string,number>; at:Map<string,Entity[]> }
+const planningReads=new WeakMap<RunState,NavigationRead>();
+/** Synchronous planning read only; never retained across work, save or external edits. */
+export function withHumanNavigationRead<T>(r:RunState,read:()=>T):T {
+ if(planningReads.has(r))return read();
+ planningReads.set(r,navigationRead(r));
+ try{return read();}finally{planningReads.delete(r);}
+}
+function navigationRead(r:RunState):NavigationRead {
  const all=allRunEntities(r),blockMap=buildEntityBlockMap(r,all),at=new Map<string,Entity[]>();
  const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
- for(const e of all){const local=r.entities[e.id]===e;const p={tx:(e.tx??Math.floor(e.x/TILE))+(local?ox:0),ty:(e.ty??Math.floor(e.y/TILE))+(local?oy:0),floor:e.floor??0};const k=key(p);at.set(k,[...(at.get(k)??[]),e]);}
+ for(const e of all){const local=r.entities[e.id]===e;const p={tx:(e.tx??Math.floor(e.x/TILE))+(local?ox:0),ty:(e.ty??Math.floor(e.y/TILE))+(local?oy:0),floor:e.floor??0};const k=key(p);const list=at.get(k);if(list)list.push(e);else at.set(k,[e]);}
+ return {all,blockMap,at};
+}
+export function humanNavigation(r:RunState,occupied=new Set<string>()){
+ indexArchitecture();
+ const {all,blockMap,at}=planningReads.get(r)??navigationRead(r);
+ const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
  const cells=new Map<string,ReturnType<typeof globalCellTileAndClass>>();
  const cell=(p:HumanWaypoint)=>{const k=key(p);let c=cells.get(k);if(!c){c=globalCellTileAndClass(r,p.tx,p.ty,p.floor,all,blockMap);cells.set(k,c);}return c;};
  const doorAllowed=(p:HumanWaypoint,h:HumanRecord)=>{

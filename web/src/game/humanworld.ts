@@ -24,7 +24,7 @@ import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import { humanEntityTile, executeHumanWork, planHumanOccupation, type HumanWorkTask } from './human-jobs';
-import { humanNavigation } from './human-navigation';
+import { withHumanNavigationRead, humanNavigation } from './human-navigation';
 import { humanShelter, humanShelterContext, type HumanShelterContext } from './human-shelter';
 import { liveItemId, liveItemPer } from './final-item-set';
 
@@ -616,13 +616,22 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
 // ---------------------------------------------------------------------------
 // Survival needs — REAL-hour clock (no 24-minute-sunrise ration).
 // ---------------------------------------------------------------------------
+/** A needs read transaction owns a single bed-claim index. It is deliberately not
+ * retained across calls: migration/tests can edit assignments without markDirty. */
+export interface HumanNeedsContext { shelter: HumanShelterContext; bedClaims: Map<string, number> }
+export function humanNeedsContext(r: RunState, hw: HumanWorld): HumanNeedsContext {
+  const bedClaims = new Map<string, number>();
+  for (const h of Object.values(hw.people)) if (h.bedId && h.state !== 'DEAD' && h.state !== 'EVACUATED')
+    bedClaims.set(h.bedId, (bedClaims.get(h.bedId) ?? 0) + 1);
+  return { shelter: humanShelterContext(r), bedClaims };
+}
 /** A custody chest is not a sleeping slot. Assignment must resolve to one actual bed,
  * with a single living claimant physically resting beside it on the same floor. */
-export function usingHumanBed(r: RunState, hw: HumanWorld, h: HumanRecord, context?:HumanShelterContext): boolean {
+export function usingHumanBed(r: RunState, hw: HumanWorld, h: HumanRecord, context?:HumanShelterContext, claims?:Map<string,number>): boolean {
   if (h.state !== 'IDLE' || h.following || !h.bedId) return false;
   const bed = findRunEntity(r,h.bedId);
   if (!bed || bed.type !== 'bed_straw' || (bed.floor ?? 0) !== h.floor || (bed.hp ?? 0) <= 0 || bed.owner!==h.community) return false;
-  if (Object.values(hw.people).some(other => other !== h && other.bedId === h.bedId && other.state !== 'DEAD' && other.state !== 'EVACUATED')) return false;
+  if ((claims ?? humanNeedsContext(r,hw).bedClaims).get(h.bedId) !== 1) return false;
   const [gx,gy]=humanEntityTile(r,bed);
   if(Math.hypot(h.gx-gx,h.gy-gy)>1.5 || !humanShelter(r,h.gx,h.gy,h.floor,context))return false;
   const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
@@ -636,8 +645,8 @@ export function usingHumanBed(r: RunState, hw: HumanWorld, h: HumanRecord, conte
 export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
   const lastNeedsAt = hw.lastNeedsAt ?? hw.lastResolvedAt;
   const dtMs = now - lastNeedsAt;
-  if (dtMs < 1000) return; // biological events accrue exactly; resolve at one-second boundaries, not render frequency
-  const shelterContext=humanShelterContext(r);
+  if (dtMs <= 0) return; // every physical interval is integrated before an actor changes activity
+  const context=humanNeedsContext(r,hw),shelterContext=context.shelter;
   const hours = dtMs / HOUR;
   const hungerRate = BAL.player.offlineHungerPerHour;
   const thirstRate = BAL.player.offlineThirstPerHour;
@@ -646,25 +655,28 @@ export function tickNeeds(r: RunState, hw: HumanWorld, now: number): void {
     // Active humans consume faster when working/fighting; distant use the baseline rate.
     const active = h.state === 'WORKING' || h.state === 'FIGHTING' || h.state === 'MOVING';
     const m = active ? 1.25 : 1.0;
+    const hungerBefore=h.hunger, thirstBefore=h.thirst;
     h.hunger = clamp(h.hunger - hungerRate * hours * m, 0, 100);
     h.thirst = clamp(h.thirst - thirstRate * hours * m, 0, 100);
     h.warmth = clamp(h.warmth - (humanShelter(r, h.gx, h.gy, h.floor,shelterContext) ? 0 : 0.4 * hours), 20, 100);
     if (h.hunger <= 0 || h.thirst <= 0) {
       // starvation / dehydration: HP drain, work stops
-      const drain = ((h.hunger <= 0 ? BAL.player.starveDamagePerMin : 0) + (h.thirst <= 0 ? BAL.player.starveDamagePerMin : 0)) * (dtMs / 60000);
+      // Charge only the elapsed portion AFTER exhaustion, never the whole offline interval.
+      const exhaustedMs=(before:number,rate:number)=>Math.max(0,dtMs-(before<=0?0:rate>0?before/rate*HOUR:Infinity));
+      const drain = BAL.player.starveDamagePerMin / 60000 * (exhaustedMs(hungerBefore,hungerRate*m)+exhaustedMs(thirstBefore,thirstRate*m));
       if (drain > 0) applyDamage(r, hw, h, drain, 0, now, 'starvation', undefined, h.floor);
       if (h.hunger <= 0 || h.thirst <= 0) {
         if (h.intent?.kind === 'work') { h.intent.blockReason = h.hunger <= 0 ? 'too hungry to work' : 'too thirsty to work'; }
       }
     }
     // rest debt: grows when not resting on a bed
-    if (!usingHumanBed(r, hw, h,shelterContext)) h.rest = clamp(h.rest + dtMs / HOUR / 8, 0, 1);
+    if (!usingHumanBed(r, hw, h,shelterContext,context.bedClaims)) h.rest = clamp(h.rest + dtMs / HOUR / 8, 0, 1);
     else h.rest = clamp(h.rest - dtMs / HOUR / 4, 0, 1);
     // bleeding escalation (provisional: 8 min stabilize window, ~20 min fatal)
     for (const w of h.wounds) {
-      if (w.bleeding && !w.treated && w.bleedingUntil && now > w.bleedingUntil) {
+      if (w.bleeding && !w.treated && w.bleedingUntil && now >= w.bleedingUntil) {
         // untreated severe bleeding escalates
-        if (now - (w.bleedingUntil - 8 * 60000) > 20 * 60000) {
+        if (now - (w.bleedingUntil - 8 * 60000) >= 20 * 60000) {
           applyDamage(r, hw, h, 60, 0, now, 'untreated_bleeding', undefined, h.floor);
           w.bleeding = false;
         }
@@ -1600,7 +1612,15 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
  let dt=maximum;
  for(const h of Object.values(hw.people)){
   if(['DEAD','EVACUATED'].includes(h.state))continue;
-  dt=Math.min(dt,60000); // bounded biological re-evaluation, not a second simulation clock
+  // These are causal thresholds, not an arbitrary periodic needs tick. Continuous
+  // rates are integrated by tickNeeds before movement/work can change the rate.
+  const m=['WORKING','FIGHTING','MOVING'].includes(h.state)?1.25:1;
+  for(const [value,rate] of [[h.hunger,BAL.player.offlineHungerPerHour*m],[h.thirst,BAL.player.offlineThirstPerHour*m]])
+   if(rate>0)for(const threshold of [40,25,5,0])if(value>threshold)dt=Math.min(dt,(value-threshold)/rate*HOUR);
+  const starving=(h.hunger<=0?1:0)+(h.thirst<=0?1:0);
+  if(starving&&BAL.player.starveDamagePerMin>0)dt=Math.min(dt,Math.max(1,h.hp)/(starving*BAL.player.starveDamagePerMin)*60000);
+  for(const w of h.wounds)if(w.bleeding&&!w.treated&&w.bleedingUntil){const due=w.bleedingUntil+12*60000;if(due>at)dt=Math.min(dt,due-at);}
+  if(h.rest<.5)dt=Math.min(dt,(.5-h.rest)*8*HOUR);
   if(h.state==='MOVING'&&h.intent?.route?.length)dt=Math.min(dt,Math.max(.001,TILE/PROFILES[h.profile].speed*1000-(h.motion?.elapsedMs??0)));
   if(h.state==='WORKING'&&h.intent&&h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
   if(!h.following&&h.state==='IDLE'&&(!h.intent||h.intent.work?.phase==='travel')){
@@ -1772,7 +1792,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
     h.motion=undefined;
     h.intent={intentId:`defend:${h.actorId}:${now}`,actorId:h.actorId,kind:'fight',target:enemy.id,preconditions:['direct sight of nearby threat'],reserved:[],startAt:now,dueAt:now};h.state='FIGHTING';
   }
-  if (wantsPlan) {
+  if (wantsPlan) withHumanNavigationRead(r,()=>{
     const protectedTiles = plannerSources(r);
     let cursor = (hw.plannerCursor ?? 0) % Math.max(1, actors.length), planned = 0, distantPlanned=0;
     const startCursor=cursor;
@@ -1788,7 +1808,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {
       }
     }
     hw.plannerCursor = cursor; hw.plannerAt = now + 1000;
-  }
+  });
   // Combat locomotion uses the same cardinal route executor and occupancy as work/follow.
   // Limit new searches per update; do not perform an island-wide BFS per hostile per frame.
   let combatRoutes = 0;
