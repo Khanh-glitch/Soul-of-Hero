@@ -59,6 +59,18 @@ export function reachableUnion(m:EconomyMap):Uint8Array {
   return seen;
 }
 
+/** Source-placement proximity ONLY, never a walking route. The original7x7
+ * stencil only used distances0..3; distances4..6 all rejected roadside salvage.
+ * Propagate Manhattan distance through cells without inventing road access. */
+export function placementRoadDistance(m:EconomyMap,reached:Uint8Array):Uint8Array {
+  const n=m.width*m.height,dist=new Uint8Array(n).fill(99),q=new Int32Array(n);let head=0,tail=0;
+  for(let i=0;i<n;i++)if(m.road[i]&&reached[i]&&m.cargoPassable[i]){dist[i]=0;q[tail++]=i;}
+  while(head<tail){const i=q[head++];if(dist[i]>=3)continue;const x=i%m.width,y=Math.floor(i/m.width);
+    for(const [dx,dy]of OFFSETS){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=m.width||ny>=m.height)continue;const j=ny*m.width+nx;if(dist[j]===99){dist[j]=dist[i]+1;q[tail++]=j;}}
+  }
+  return dist;
+}
+
 /** Stable independently keyed random streams, with explicit weighted competition per cell.
  * A source's presence does not depend on insertion order in the source catalog. */
 /** G1A: roadside split of the legacy salvage share. Same cells win, only the archetype changes. */
@@ -78,11 +90,11 @@ export function compileEconomy(m: EconomyMap, rules: 3 | 4 = 3): EconomyPlacemen
   for(const s of m.starts)if(!m.walkable[s.y*m.width+s.x])errors.push(`start ${s.id} is not walkable`);
   const reached=reachableUnion(m);
   const out:(string|null)[]=Array(n).fill(null), salt=stableHash(`${m.id}/${m.revision}/v3`) ^ m.seed;
-  const nearRoad=(x:number,y:number)=>{let best=99;for(let dy=-3;dy<=3;dy++)for(let dx=-3;dx<=3;dx++){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=m.width||ny>=m.height)continue;if(m.road[ny*m.width+nx] && reached[ny*m.width+nx] && m.cargoPassable[ny*m.width+nx])best=Math.min(best,Math.abs(dx)+Math.abs(dy));}return best;};
+  const roadDistances=placementRoadDistance(m,reached);
   const fromWreck=new Uint8Array(n); // G1A-R1: cells the legacy rules gave a (solid) Wreck, as opposed to (walk-over) Roadside Scrap
   for(let y=1;y<m.height-1;y++)for(let x=1;x<m.width-1;x++){
     const i=y*m.width+x, biome=m.biome[i]; if(!m.walkable[i]||!reached[i]||m.protected[i]||m.road[i]||['water','road','floor','wall','lava'].includes(biome)||m.slope[i]>.6)continue;
-    const roadDist=nearRoad(x,y), cold=m.temperature[i]<.3, warm=m.temperature[i]>.55, moist=m.moisture[i];
+    const roadDist=roadDistances[i], cold=m.temperature[i]<.3, warm=m.temperature[i]>.55, moist=m.moisture[i];
     // All weights are per eligible tile; expected total is proportional to suitable area.
     const rates:Record<string,number>={};
     if(biome==='forest'){rates[cold?'pine':'oak']=.28; rates.bush=.035;rates.grass=.045;rates.herb=.015;rates.rock=.012;}
