@@ -54,13 +54,15 @@ describe('physical housing and production rights',()=>{
   const e:Entity={id:'test-station',kind:'struct',type:'campfire',x:1608,y:1608,station:{burn:30000,queue:[],fuelC:mkContainer(r,'fuel',3).id,outC:mkContainer(r,'out',6).id}};r.entities[e.id]=e;
   C(r,h.inv.packId).slots.fill(null);addItem(r,h.inv.packId,'meat',1);addItem(r,'inv','meat',1);
   addItem(r,e.station!.outC,'cooked_meat',2);const publicUid=C(r,e.station!.outC).slots[0]!.uid;
+  const inputUid=C(r,h.inv.packId).slots.find(s=>s?.key==='meat')!.uid;
   const npcJob=queuePaidRecipe(r,e,h.inv.packId,'cooked_meat',h.actorId);expect(npcJob.ok).toBe(true);
   expect(queuePaidRecipe(r,e,'inv','cooked_meat').ok).toBe(true);stepStations(gs,20000,T0+20000);
   const output=C(r,e.station!.outC);expect(output.slots.find(s=>s?.uid===publicUid)?.qty).toBe(3);
-  const claimed=output.slots.find(s=>s?.production)!;expect(claimed.production).toEqual({jobId:npcJob.jobId,workerId:h.actorId});
+  const claimed=output.slots.find(s=>s?.production)!;expect(claimed.production).toEqual({jobId:npcJob.jobId,workerId:h.actorId,recipe:'cooked_meat',stationId:e.id,inputs:[{uid:inputUid,key:'meat',qty:1,containerId:h.inv.packId}]});
   expect(moveHumanGoods(r,e.station!.outC,other.inv.packId,'cooked_meat',5,{jobId:npcJob.jobId!,workerId:other.actorId})).toBe(0);
   expect(moveHumanGoods(r,e.station!.outC,h.inv.packId,'cooked_meat',5,{jobId:npcJob.jobId!,workerId:h.actorId})).toBe(1);
-  expect(C(r,h.inv.packId).slots.find(s=>s?.uid===claimed.uid)?.production).toBeUndefined();
+  // Collection is not settlement delivery: retain the exact claim/provenance.
+  expect(C(r,h.inv.packId).slots.find(s=>s?.uid===claimed.uid)?.production).toEqual(claimed.production);
   expect(moveHumanGoods(r,e.station!.outC,h.inv.packId,'cooked_meat',5,{jobId:npcJob.jobId!,workerId:h.actorId})).toBe(0);
   expect(output.slots.find(s=>s?.uid===publicUid)?.qty).toBe(3);
  });
