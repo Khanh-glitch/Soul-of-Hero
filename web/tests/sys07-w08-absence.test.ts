@@ -1,3 +1,4 @@
+import { fundBuild } from './support/paid-build';
 // W08 absence benchmark. Controlled fixtures: stock is injected into the real
 // build/cabinet containers and time is advanced through the real settle() path.
 // Writes evidence/sys07-w08/absence-benchmark.json when SOH_WRITE_EVIDENCE=1.
@@ -24,6 +25,7 @@ function setup(){
   return {gs,r,x,y};
 }
 function build(o:ReturnType<typeof setup>,type:string,dx:number,dy:number){
+  fundBuild(o.gs,type,o.r.clock.lastSimAt);
   const res=dispatch(o.gs,{id:'ab'+ ++serial,type:'build',struct:type,tx:o.x+dx,ty:o.y+dy},o.r.clock.lastSimAt);
   if(!res.ok) throw new Error(`build ${type} ${dx},${dy}: ${res.reason}`);
   return Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===o.x+dx&&e.ty===o.y+dy)!;
@@ -32,7 +34,7 @@ function stockFor(cost:[string,number][]) {return cost;}
 /** Place a structure from a tile two steps away (controlled construction stand-point; the player is restored afterward). */
 function buildAt(o:ReturnType<typeof setup>,type:string,dx:number,dy:number){
   const px=o.r.player.x,py=o.r.player.y;o.r.player.x=(o.x+dx)*TILE+8;o.r.player.y=(o.y+dy+2)*TILE+8;markDirty();
-  try{const res=dispatch(o.gs,{id:'ab'+ ++serial,type:'build',struct:type,tx:o.x+dx,ty:o.y+dy},o.r.clock.lastSimAt);if(!res.ok) throw new Error(`build ${type} ${dx},${dy}: ${res.reason}`);return Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===o.x+dx&&e.ty===o.y+dy)!;}
+  try{fundBuild(o.gs,type,o.r.clock.lastSimAt);const res=dispatch(o.gs,{id:'ab'+ ++serial,type:'build',struct:type,tx:o.x+dx,ty:o.y+dy},o.r.clock.lastSimAt);if(!res.ok) throw new Error(`build ${type} ${dx},${dy}: ${res.reason}`);return Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===o.x+dx&&e.ty===o.y+dy)!;}
   finally{o.r.player.x=px;o.r.player.y=py;markDirty();}
 }
 /** Build one of the four scenarios. Materials are injected as controlled-fixture inventory. */

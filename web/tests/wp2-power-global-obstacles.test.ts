@@ -1,3 +1,4 @@
+import { fundBuild } from './support/paid-build';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   addItem,
@@ -100,7 +101,8 @@ function buildAt(
   const r = gs.run!;
   r.player.x = tx * TILE + 8;
   r.player.y = (ty + 1) * TILE + 8;
-  for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q);
+  if(type==='door_powered'){fundBuild(gs,'door_wood',now);expect(dispatch(gs,{id:`host-${tx}-${ty}-${now}`,type:'build',struct:'door_wood',tx,ty},now).ok).toBe(true);}
+  fundBuild(gs,type,now);
   const res = dispatch(gs, { id: `b-${type}-${tx}-${ty}-${now}`, type: 'build', struct: type, tx, ty }, now);
   expect(res.ok, `${type} at (${tx},${ty}): ${(res as any).reason}`).toBe(true);
   return Object.values(r.entities).find((e) => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!;

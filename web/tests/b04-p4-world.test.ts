@@ -1,3 +1,4 @@
+import { fundBuild } from './support/paid-build';
 // B04-P4: adversarial cache identity, IR downstream network scoping, live bear-trap contact through tick().
 import { describe, it, expect } from 'vitest';
 import { TILE, WW, T, type GameState } from '../src/game/core';
@@ -19,7 +20,7 @@ function setup(seed = 97) {
   markDirty();
   const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); };
   const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => {
-    pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q);
+    pos(px, py); if(type==='door_powered'){fundBuild(g,'door_wood',T0);expect(act(g, 'build',{struct:'door_wood',tx,ty}).ok).toBe(true);}fundBuild(g,type,T0);
     expect(act(g, 'build', { struct: type, tx, ty }).ok, type).toBe(true);
     return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!;
   };
@@ -52,7 +53,7 @@ describe('B04-P4 F1 IR downstream is scoped to the sensor own generator network'
     for (let yy = y - 6; yy <= y + 6; yy++) for (let xx = x - 6; xx <= x + 8; xx++) { const i = yy * WW + xx; r.terrain[i] = { t: T.GRASS }; if (getWorld().sourceV3[i]) r.sources[i] = { stock: 0, hp: 0 }; }
     markDirty();
     const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); };
-    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); const res = act(g, 'build', { struct: type, tx, ty }); expect(res.ok, `${type}: ${(res as any).reason}`).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
+    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); if(type==='door_powered'){fundBuild(g,'door_wood',T0);expect(act(g, 'build',{struct:'door_wood',tx,ty}).ok).toBe(true);}fundBuild(g,type,T0); const res = act(g, 'build', { struct: type, tx, ty }); expect(res.ok, `${type}: ${(res as any).reason}`).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
     // network A: generator -> cable -> sensor -> door
     const genA = build('base_generator', x, y), cableA = build('power_cable', x + 1, y), sensor = build('ir_sensor', x + 2, y), doorA = build('door_powered', x + 3, y, x + 4, y);
     genA.basePower!.capacity = 2; addItem(r, genA.c!, 'wood', 2); pos(x, y + 1); expect(act(g, 'basePower', { eid: genA.id, enabled: true }).ok).toBe(true);
@@ -103,7 +104,7 @@ describe('B04-P4 IR sensor visual state mirrors the prompt rule (sprite key sour
     for (let yy = y - 6; yy <= y + 6; yy++) for (let xx = x - 6; xx <= x + 8; xx++) { const i = yy * WW + xx; r.terrain[i] = { t: T.GRASS }; if (getWorld().sourceV3[i]) r.sources[i] = { stock: 0, hp: 0 }; }
     markDirty();
     const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; markDirty(); };
-    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); expect(act(g, 'build', { struct: type, tx, ty }).ok, type).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
+    const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); if(type==='door_powered'){fundBuild(g,'door_wood',T0);expect(act(g, 'build',{struct:'door_wood',tx,ty}).ok).toBe(true);}fundBuild(g,type,T0); expect(act(g, 'build', { struct: type, tx, ty }).ok, type).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
     const gen = build('base_generator', x, y), cable = build('power_cable', x + 1, y), sensor = build('ir_sensor', x + 2, y), door = build('door_powered', x + 3, y, x + 4, y);
     void door; void cable;
     expect(irSensorVisual(r, sensor)).toBe('off');
@@ -183,7 +184,7 @@ describe('B04-P4 snapAt persistence: optional and bounded (older saves stay vali
     for (let yy = y - 2; yy <= y + 2; yy++) for (let xx = x - 2; xx <= x + 12; xx++) { const i = yy * WW + xx; r.terrain[i] = { t: T.GRASS }; if (w.sourceV3[i]) r.sources[i] = { stock: 0, hp: 0 }; }
     markDirty();
     r.player.x = (x + 1) * TILE + 8; r.player.y = (y + 1) * TILE + 8; markDirty();
-    for (const [k, q] of STRUCTS.bear_trap.cost) addItem(r, 'inv', k, q);
+    fundBuild(g,'bear_trap',T0);
     expect(act(g, 'build', { struct: 'bear_trap', tx: x + 2, ty: y }).ok).toBe(true);
     const t = Object.values(r.entities).find(e => e.type === 'bear_trap')!;
     t.bearTrap = { version: 'trap-v1', state: 'unarmed', uses: 3 } as any;

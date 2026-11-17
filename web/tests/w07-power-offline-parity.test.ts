@@ -1,3 +1,4 @@
+import { fundBuild } from './support/paid-build';
 // W07 Network A proof: the same powered state must give the same chronological result online and offline.
 // Fixtures: a placed base generator, cable, armed arrow turret, powered door (same build helpers as s06-circuits).
 import { describe, it, expect } from 'vitest';
@@ -17,7 +18,7 @@ function setup() {
   markDirty();
   const pos = (tx: number, ty: number) => { r.player.x = tx * TILE + 8; r.player.y = ty * TILE + 8; };
   const act = (type: string, args: object = {}, now = T0) => dispatch(g, { id: 'w07-' + ++n, type, ...args }, now);
-  const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q); const res = act('build', { struct: type, tx, ty }); expect(res.ok, `${type}: ${(res as any).reason}`).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
+  const build = (type: string, tx: number, ty: number, px = tx, py = ty + 1) => { pos(px, py); if(type==='door_powered'){fundBuild(g,'door_wood',T0);expect(act('build',{struct:'door_wood',tx,ty}).ok).toBe(true);}fundBuild(g,type,T0); const res = act('build', { struct: type, tx, ty }); expect(res.ok, `${type}: ${(res as any).reason}`).toBe(true); return Object.values(r.entities).find(e => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!; };
   return { g, r, x, y, pos, act, build };
 }
 /** gen(x) — cable(x+1) — turret(x+2, armed, 2 arrows) ; door(x+1..x+1,y+1..y+2) is a second consumer only when wired. */

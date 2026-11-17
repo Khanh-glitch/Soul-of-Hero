@@ -1,3 +1,4 @@
+import { fundBuild } from './support/paid-build';
 import {describe,it,expect} from 'vitest';
 import {BAL,HOUR,TILE,WW,T as TILE_T,type GameState,type RunState} from '../src/game/core';
 import {getWorld} from '../src/game/world';
@@ -36,7 +37,7 @@ function shelter(seed:number,pred?:(r:RunState,x:number,y:number)=>boolean){
   const {x,y}=site(g,pred);
   r.player.x=x*TILE+8;r.player.y=(y+1)*TILE+8;
   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'inv','stone',60);
-  const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"build",{struct,tx,ty});expect({s:struct,tx,ty,why:res.ok?"":(res as any).reason}).toEqual({s:struct,tx,ty,why:""});};
+  const build=(struct:string,tx:number,ty:number)=>{fundBuild(g,struct,T);const res=act(g,"build",{struct,tx,ty});expect({s:struct,tx,ty,why:res.ok?"":(res as any).reason}).toEqual({s:struct,tx,ty,why:""});};
   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+dx,y+dy);
   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+dx,y+dy);
   // Walls are placed from just outside each ring tile (line of sight from inside would cross the ring).
@@ -206,6 +207,7 @@ describe('homeStatus external coverage (audit fix)',()=>{
     r.player.x=(x-2)*TILE+8;r.player.y=y*TILE+8;
     addItem(r,'inv','wood',200);addItem(r,'inv','stone',80);addItem(r,'inv','fiber',60);addItem(r,'inv','rope',20);addItem(r,'inv','iron_ingot',40);addItem(r,'inv','spares',40);addItem(r,'inv','mechanical_parts',40);addItem(r,'inv','fasteners',40);
     expect(why(act(g,'build',{struct:'floor_wood',tx:x,ty:y}))).toBe('');
+    fundBuild(g,'claim',T);
     expect(why(act(g,'build',{struct:'claim',tx:x,ty:y}))).toBe('');
     const cab=Object.values(r.entities).find(e=>e.type==='claim')!;
     expect(why(act(g,'build',{struct:'floor_wood',tx:x+dx,ty:y+dy}))).toBe('');
@@ -235,6 +237,7 @@ describe('homeStatus external coverage (audit fix)',()=>{
     const r=g.run!;r.creatures=[];const {x,y}=site(g);r.player.x=(x-2)*TILE+8;r.player.y=y*TILE+8;
     addItem(r,'inv','wood',200);addItem(r,'inv','stone',80);addItem(r,'inv','fiber',60);addItem(r,'inv','rope',20);addItem(r,'inv','iron_ingot',40);addItem(r,'inv','spares',40);addItem(r,'inv','mechanical_parts',40);addItem(r,'inv','fasteners',40);
     expect(why(act(g,'build',{struct:'floor_wood',tx:x,ty:y}))).toBe('');
+    fundBuild(g,'claim',T);
     expect(why(act(g,'build',{struct:'claim',tx:x,ty:y}))).toBe('');
     const cab=Object.values(r.entities).find(e=>e.type==='claim')!;
     expect(homeStatus(r).cabinets.find(c=>c.id===cab.id)!.state).toBe('idle');
