@@ -29,31 +29,28 @@ Totals over 0 live consumers — before: undefined iron / undefined scrap · M1:
 | Wall | HP | Cost | Placeable directly | Upgrade from | Obtainable today |
 | --- | --- | --- | --- | --- | --- |
 | wall_wood | 160 | 5 wood | yes | nothing | yes |
-| wall_plank | 240 | 3 plank | no (upgrade-only) | nothing | **NO** |
-| wall_stone | 380 | 8 stone + 1 wood | no (upgrade-only) | wall_wood | yes |
+| wall_plank | 240 | 3 plank | no (upgrade-only) | wall_wood | yes |
+| wall_stone | 380 | 8 stone + 1 wood | no (upgrade-only) | wall_wood, wall_plank | yes |
 | wall_brick | 600 | 9 stone + 1 iron_ingot | no (upgrade-only) | nothing | **NO** |
 
-Plank: 2 wood → 1 @ workbench, 6s. Listed consumers: structure:wall_plank. Creature drops: orc_2. Upgrade map: floor_wood → floor_stone, wall_wood → wall_stone, door_wood → door_iron, roof_thatch → roof_tile, chest_small → chest_large.
+Plank: 2 wood → 1 @ workbench, 6s. Listed consumers: structure:wall_plank. Creature drops: orc_2. Upgrade map: floor_wood → floor_stone, wall_wood → wall_stone, door_wood → door_iron, roof_thatch → roof_tile, chest_small → chest_large, wall_plank → wall_stone.
 
 | Unobtainable structure | HP | Cost |
 | --- | --- | --- |
-| wall_plank (Plank Wall) | 240 | 3 plank |
 | wall_brick (Iron-braced Wall) | 600 | 9 stone + 1 iron_ingot |
 
 **Conclusion**
 
-- MEASURED BLOCKER: a player cannot obtain the 240 HP Plank Wall in the live build. It is upgrade-only geometry (buildReason refuses to place it), and no entry of STRUCTURE_UPGRADES leads to it (wall_wood upgrades straight to wall_stone). The "240 HP wall route" the question asks about does not exist at this base.
-- The same test finds every structure in that state: wall_plank (240 HP), wall_brick (600 HP). The Brick Wall is affected exactly like the Plank Wall.
-- Consequence: Plank has 1 listed consumer (structure:wall_plank) and zero REACHABLE consumers. It is craftable (6s at a Workbench) and drops from orc_2, but nothing a player can do spends it. The Round 1 projection counted the structure cost as a consumer; that was an over-count.
-- If the tier were reachable, removing the Workbench step would leave the wood bill unchanged (11 wood cumulative) and save 18s of bench time per wall plus the one-time Workbench. HP per wood: Wood Wall 32, Plank Wall cumulative 21.818 — the plank tier is LESS wood-efficient than the wood wall, so the bench step is not what protects the wood tier.
+- The 240 HP Plank Wall is obtainable.
+- Structures still without an access path: wall_brick (600 HP). No Brick/steel upgrade path is invented by the Plank repair.
+- Current access: pay the full 3 Plank bill to upgrade an owned Wood Wall under a supported Territory Cabinet. The default Wood-to-Stone route stays available without Plank.
+- HYPOTHETICAL ONLY (not implemented): removing the Workbench step would leave the wood bill unchanged (11 wood cumulative) and save 18s of bench time per wall plus the one-time Workbench. HP per wood: Wood Wall 32, Plank Wall cumulative 21.818 — the plank tier is LESS wood-efficient than the wood wall, so the bench step is not what protects the wood tier.
 
 **Resolution path**
 
-- RULING APPLIED: Plank stays; nothing is retired. The Round 1 disposition RETIRE_CANDIDATE is withdrawn (now DEFER, flagged NO_REACHABLE_CONSUMER).
-- Option A — intermediate tier: route wall_wood → wall_plank → wall_stone. Measured side effect: the Stone Wall route gains one upgrade step (+6 wood, +18s) unless STRUCTURE_UPGRADES is taught to branch. That is a cost change on a live route and needs approval.
-- Option B — move the processing step: let a placed Wood Wall be upgraded to Plank Wall as an OPTIONAL side branch (map becomes one-to-many), Stone route untouched. No existing cost moves; this is the cheapest way to make Plank live.
-- Option C — retire the Plank Wall tier and the item together. Rejected for this round by the ruling.
-- Recommended next action: decide A or B in the building ontology PR (#56 line), because the upgrade map lives there; then re-run this section — it will flip to "obtainable" on its own.
+- IMPLEMENTED ACCESS REPAIR: optional Wood Wall → Plank Wall for the unchanged 3 Plank bill; existing Wood → Stone default remains, and Plank → Stone pays the full existing target bill.
+- Plank and its 2 Wood / 6-second Workbench recipe remain live. No direct placement, compulsory tier ladder, new recipe, cheaper Wood substitute or Brick/steel path.
+- This is engineering closure of the existing source/consumer gap, not adoption of the historical proposal to retire Plank or subjective player acceptance.
 
 ## P8 — Veyra source-access matrix
 

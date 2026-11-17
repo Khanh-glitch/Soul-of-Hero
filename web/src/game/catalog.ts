@@ -681,8 +681,17 @@ for (const type of DEPLOYABLE_TYPES) {
 // stone→brick historical path is frozen; do not pretend that brick is steel.
 export const STRUCTURE_UPGRADES: Record<string, string> = {
   floor_wood:'floor_stone',wall_wood:'wall_stone',door_wood:'door_iron',
-  roof_thatch:'roof_tile',chest_small:'chest_large'
+  roof_thatch:'roof_tile',chest_small:'chest_large',wall_plank:'wall_stone'
 };
+/** Optional access to the existing processed-Plank wall. The default wood→stone
+ * path and all full target bills/HP stay unchanged; no compulsory tier ladder. */
+export const STRUCTURE_UPGRADE_OPTIONS: Readonly<Record<string, readonly string[]>> = {
+  wall_wood: ['wall_stone','wall_plank'],
+};
+export function upgradeTargets(type: string): readonly string[] {
+  return Object.prototype.hasOwnProperty.call(STRUCTURE_UPGRADE_OPTIONS,type) ? STRUCTURE_UPGRADE_OPTIONS[type]
+    : Object.prototype.hasOwnProperty.call(STRUCTURE_UPGRADES,type) ? [STRUCTURE_UPGRADES[type]] : [];
+}
 export const BUILD_ORDER = [...PA1_BASE_GEOMETRY, 'claim','bed_straw','chest_small','chest_large','campfire','furnace','refinery','oil_pump','workbench','research','garden','barrel','feed_trough','farm_controller','base_generator','power_cable','power_switch','pressure_switch','ir_sensor','bear_trap','arrow_turret','spikes','barricade','torch_post','escrow','large_furnace','ladder_wood','ladder_steel','door_powered'];
 
 // Run-2 vendor stock purchasable with SECURED profile cash (PROPOSED prices) → run-local items

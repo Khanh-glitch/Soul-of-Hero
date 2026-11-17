@@ -1,0 +1,64 @@
+diff --git a/web/src/game/art.ts b/web/src/game/art.ts
+index 907aa57..69194ed 100644
+--- a/web/src/game/art.ts
++++ b/web/src/game/art.ts
+@@ -1,3 +1,4 @@
++import { rgbaPngUrl } from './rgba-png';
+ // Original pixel art for Soul of Hero, painted pixel-by-pixel into offscreen canvases at boot.
+ import { drawParcel, drawRefinery, drawLubricantJug, drawOilPump, drawCrudeDrum } from './industrial-art';
+ // VISUAL ARENA: reconstructed hero animation + motorbike silhouettes.
+@@ -11,6 +12,13 @@ import { ITEMS } from './catalog';
+ type G = CanvasRenderingContext2D;
+ export type Sprite = HTMLCanvasElement;
+ const OUT = '#140c14';
++// outlineCanvas already reads these exact GPU-rendered pixels. Reuse that snapshot
++// for immutable UI icons instead of synchronously flushing the GPU on first pack open.
++let uiPixels = new WeakMap<Sprite, ImageData>();
++export function drawnSpriteUrl(c: Sprite): string {
++  const pixels = uiPixels.get(c);
++  return pixels ? rgbaPngUrl(c.width, c.height, pixels.data) : c.toDataURL();
++}
+ export function mk(w: number, h: number, fn: (g: G) => void, outline: string | null = OUT): Sprite {
+   const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; fn(g); if (outline) outlineCanvas(c, outline); return c;
+ }
+@@ -21,6 +29,7 @@ export function outlineCanvas(c: Sprite, col: string) {
+   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const i = y * W + x; if (src[i]) continue;
+     if ((x > 0 && src[i - 1]) || (x < W - 1 && src[i + 1]) || (y > 0 && src[i - W]) || (y < H - 1 && src[i + W])) { a[i * 4] = r; a[i * 4 + 1] = gg; a[i * 4 + 2] = b; a[i * 4 + 3] = 255; } }
+   g.putImageData(d, 0, 0);
++  uiPixels.set(c, d);
+ }
+ export function hex(c: string): [number, number, number] { const n = parseInt(c.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+ const P = (g: G, x: number, y: number, c: string) => { g.fillStyle = c; g.fillRect(x | 0, y | 0, 1, 1); };
+@@ -584,5 +593,11 @@ export function getArt(): ArtSet {
+   ART = { hero: { male: buildHero(false), female: buildHero(true) }, cre: {}, elder: {}, src: buildSources(), st: buildStructs(), icon: buildIcons() };
+   for (const k of Object.keys(CRE_DRAW)) ART.cre[k] = buildCreature(k);
+   for (const k of Object.keys(ELDER_DRAW)) ART.elder[k] = buildElder(k);
++  // Keep only UI source snapshots (286 small surfaces), not creature/hero frames.
++  const retained = new WeakMap<Sprite, ImageData>();
++  for (const c of [...Object.values(ART.st), ...Object.values(ART.icon)]) {
++    const pixels = uiPixels.get(c); if (pixels) retained.set(c, pixels);
++  }
++  uiPixels = retained;
+   return ART;
+ }
+diff --git a/web/src/ui/common.tsx b/web/src/ui/common.tsx
+index ba48e0d..501b234 100644
+--- a/web/src/ui/common.tsx
++++ b/web/src/ui/common.tsx
+@@ -1,6 +1,6 @@
+ import React from 'react';
+ import { ITEMS } from '../game/catalog';
+-import { getArt } from '../game/art';
++import { getArt, drawnSpriteUrl } from '../game/art';
+ import { atlasIconUrl } from '../game/item-atlas';
+ import type { Stack, GameState } from '../game/core';
+ import type { Intent, Result } from '../game/engine';
+@@ -14,7 +14,7 @@ function drawnIconUrl(key: string) {
+   const c = Object.prototype.hasOwnProperty.call(sprites, id) ? sprites[id] : null;
+   // A single legacy icon must not PNG-encode every item and structure (including
+   // the 156 items already covered by the approved atlas) on first pack open.
+-  return iconUrls[key] = c ? c.toDataURL() : '';
++  return iconUrls[key] = c ? drawnSpriteUrl(c) : '';
+ }
+ /** Item icon: the approved 157-atlas cell for every mapped id; the drawn icon only for ids outside the 157 and for `st:` structure art. */
+ export function iconUrl(key: string) { return atlasIconUrl(key) || drawnIconUrl(key); }

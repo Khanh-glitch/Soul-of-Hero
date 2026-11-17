@@ -1,0 +1,29 @@
+{
+  "head": "cc951906b0596cc829aa64851cc2f1cf67de806c",
+  "fixture": "controlled stock, paid packs, position; actual normal UI input",
+  "viewport": [
+    640,
+    360
+  ],
+  "result": {
+    "wall": {
+      "id": "e8l",
+      "kind": "struct",
+      "type": "wall_plank",
+      "tx": 116,
+      "ty": 105,
+      "x": 1864,
+      "y": 1688,
+      "hp": 120,
+      "maxHp": 240,
+      "born": 1794908677818,
+      "claim": "e8i"
+    },
+    "planks": 0
+  },
+  "errors": [],
+  "limitations": [
+    "Vite dev/SwiftShader, not production/native/human review",
+    "No natural-source journey or FPS claim"
+  ]
+}

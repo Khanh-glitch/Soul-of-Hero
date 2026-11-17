@@ -115,9 +115,9 @@ describe('projection is an adapter over the existing multigraph, not a second ca
     // P2 not authorised: the twin is still there and still reported, not hidden.
     expect(RECIPES.mechanical_parts).toBeUndefined();expect(RECIPES.fasteners).toBeUndefined();
     expect(p.twin_intermediates.some((t) => t.a === 'mechanical_parts' && t.b === 'fasteners')).toBe(false);
-    // P6: Plank's only listed consumer cannot exist in a live world.
-    expect(UNOBTAINABLE_STRUCTURES).toContain('wall_plank');
-    expect(item('plank').signals).toContain('NO_REACHABLE_CONSUMER:wall_plank');
+    // Current optional paid upgrade repairs Plank access; historical brick gap remains explicit.
+    expect(UNOBTAINABLE_STRUCTURES).not.toContain('wall_plank');
+    expect(item('plank').signals).not.toContain('NO_REACHABLE_CONSUMER:wall_plank');
     // Under a merged Parts resource the Recycler would mint research currency from an Iron Axe.
     expect(p.recycle_loops.find((l) => l.item === 'iron_axe')!.merged_parts_verdict).toBe('PARTS_NEGATIVE');
   });
@@ -217,13 +217,13 @@ describe('decisions', () => {
     expect(rules['X:pipe-v3'].outputs).toEqual([['refined_iron_ingot',1]]);
     expect(rules['X:plate-v1'].outputs).toEqual([['iron_ingot',1]]);
     expect(PROPOSALS.find(x=>x.id==='P6')!.status).toBe('HANDED_OFF');
-    expect(UNOBTAINABLE_STRUCTURES).toContain('wall_plank'); // unresolved, not silently certified
+    expect(UNOBTAINABLE_STRUCTURES).not.toContain('wall_plank'); // current optional paid path, not the historical handoff
   });
 
   it('round 2 findings are computed from the live game and say what they measured', () => {
     expect(findings.P2.rows).toEqual([]);expect(findings.P2.unit.fasteners_recipe).toContain('RETIRED');
-    // P6: the 240 HP wall is not obtainable today.
-    expect(findings.P6.tiers.find((t) => t.id === 'wall_plank')).toMatchObject({ hp: 240, buildable_directly: false, upgrade_from: [], obtainable: false });
+    // P6: the optional current upgrade reaches 240 HP; direct building stays refused.
+    expect(findings.P6.tiers.find((t) => t.id === 'wall_plank')).toMatchObject({ hp: 240, buildable_directly: false, upgrade_from: ['wall_wood'], obtainable: true });
     expect(findings.P6.tiers.find((t) => t.id === 'wall_stone')!.obtainable).toBe(true);
     // P8: the matrix covers the eight named items and agrees with the blocked-recipe list.
     expect(findings.P8.rows.map((x) => x.id)).toEqual(['chitin', 'crawler_optic', 'wolf_fang', 'beetle_horn', 'boar_tusk', 'keycard', 'core_demon', 'essence_spirit']);
@@ -331,8 +331,9 @@ describe('ROUND 3 — P8 world source repair is handed off, not papered over', (
       expect(pr.handoff, pr.id).toBeTruthy();
       expect(existsSync(resolve(__dirname, '../..', pr.handoff!)), pr.handoff).toBe(true);
     }
-    // P6 is still a live defect: both walls remain unobtainable until the building owner ships the fix
-    expect([...UNOBTAINABLE_STRUCTURES].sort()).toEqual(expect.arrayContaining(['wall_brick', 'wall_plank']));
+    // Current code repairs Plank only; no unapproved Brick/steel path is introduced.
+    expect(UNOBTAINABLE_STRUCTURES).toContain('wall_brick');
+    expect(UNOBTAINABLE_STRUCTURES).not.toContain('wall_plank');
   });
 });
 

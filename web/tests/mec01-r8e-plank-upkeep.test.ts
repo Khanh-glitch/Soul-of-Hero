@@ -29,10 +29,11 @@ function homeWithCabinet(){
 }
 
 function homeWithPlankWall(){
-  const o=setup();
-  for(const [k,q] of [['wood',200],['stone',80],['fiber',20],['plank',3]] as const) addItem(o.r,'inv',k,q);   // FIXTURE: 3 planks for one wall_plank
-  buildAt(o,'floor_wood',0,0);const plank=buildAt(o,'wall_plank',1,0);buildAt(o,'floor_wood',3,-2);const cab=buildAt(o,'claim',3,-2);
-  return {...o,plank,cab};
+  const o=homeWithCabinet();
+  addItem(o.r,'inv','plank',3); // controlled stock; pays the existing optional full target bill
+  o.r.player.x=(o.wall.tx!-1)*TILE+8;o.r.player.y=o.wall.y;markDirty();
+  expect(dispatch(o.gs,{id:'hs-upgrade'+ ++serial,type:'upgradeStructure',eid:o.wall.id,target:'wall_plank'},T0)).toMatchObject({ok:true});
+  return {...o,plank:o.wall};
 }
 const cabOf=(o:ReturnType<typeof homeWithPlankWall>)=>o.r.entities[o.cab.id];
 

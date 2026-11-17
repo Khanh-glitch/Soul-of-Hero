@@ -32,7 +32,7 @@ import {
   RECIPES,
   SALVAGED_OIL_WRECK_CHANCE,
   SOURCES,
-  STRUCTURE_UPGRADES,
+  STRUCTURE_UPGRADES, upgradeTargets,
   STRUCTS,
   VENDOR_SECURED,
   VENDOR_SPARES,
@@ -1007,7 +1007,7 @@ export function buildSohEconomicGraph(input: EconomicExtractionInput): SohEconom
     }
   }
 
-  for (const [fromStruct, toStruct] of Object.entries(STRUCTURE_UPGRADES)) {
+  for (const fromStruct of Object.keys(STRUCTURE_UPGRADES)) for (const toStruct of upgradeTargets(fromStruct)) {
     const targetCost = STRUCTS[toStruct]?.cost ?? [];
     for (const [mat, qty] of targetCost) {
       addEdge({

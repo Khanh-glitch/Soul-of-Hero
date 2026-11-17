@@ -30,7 +30,7 @@ import {
   SALVAGED_OIL_WRECK_CHANCE,
   SOURCES,
   STRUCTS,
-  STRUCTURE_UPGRADES,
+  STRUCTURE_UPGRADES, upgradeTargets,
   VENDOR_SECURED,
   VENDOR_SPARES,
   WORKBENCH_UPGRADE,
@@ -328,7 +328,7 @@ function collectDeviceConsumers(itemId: string): string[] {
     const q = st.cost.find(([k]) => k === itemId)?.[1];
     if (q) list.push(`build:${sk}x${q}${BUILD_ORDER.includes(sk) ? '' : '(UI_MISSING_FROM_BUILD_ORDER)'}`);
   }
-  for (const [from, to] of Object.entries(STRUCTURE_UPGRADES)) {
+  for (const from of Object.keys(STRUCTURE_UPGRADES)) for (const to of upgradeTargets(from)) {
     const q = STRUCTS[to]?.cost.find(([k]) => k === itemId)?.[1];
     if (q) list.push(`upgrade_struct:${from}->${to}x${q}`);
   }

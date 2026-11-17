@@ -1,3 +1,4 @@
+import {StructureUpgradeChoice,selectedStructureUpgrade} from './StructureUpgradeChoice';
 import './journey.css';
 import { airdropView } from '../game/airdrop';
 import SpiritVfxEditor from './SpiritVfxEditor';
@@ -88,6 +89,7 @@ export default function Game({
   const [fieldNoteStore, setFieldNoteStore] = useState<FieldNoteStore>(() => gs.run ? readFieldNoteStore(gs.run, qaMode) : { dismissed: [], resolved: [], triggered: [], muted: false });
   const fieldActionsRef = useRef<Set<string>>(new Set());
   const [sel, setSel] = useState<{ c: string; slot: number } | null>(null);
+  const [upgradePreference,setUpgradePreference]=useState<string|null>(null);
   const [buildType, setBuildType] = useState<string | null>(null); const [reclaim, setReclaim] = useState(false); const [repairMode, setRepairMode] = useState(false); const [upgradeMode, setUpgradeMode] = useState(false);
   const [editLayer, setEditLayer] = useState('auto');
   const [toasts, setToasts] = useState<{ id: number; text: string; tone?: string; t: number }[]>([]);
@@ -591,7 +593,7 @@ export default function Game({
       const order = ['wall', 'obj', 'roof', 'floor'];
       const ents = entsAt(r, tx, ty).filter(x => x.kind === 'struct' && (editLayer === 'auto' || STRUCTS[x.type!].layer === editLayer) && (!upgradeMode || !!STRUCTURE_UPGRADES[x.type!]));
       ents.sort((a,b)=>order.indexOf(STRUCTS[a.type!].layer)-order.indexOf(STRUCTS[b.type!].layer));
-      if (ents[0]) act(upgradeMode ? 'upgradeStructure' : repairMode ? 'repairStructure' : 'reclaim', repairMode ? { eid: ents[0].id, material: shiftHeld ? 'iron_plate' : undefined } : { eid: ents[0].id });
+      if (ents[0]) act(upgradeMode ? 'upgradeStructure' : repairMode ? 'repairStructure' : 'reclaim', repairMode ? { eid: ents[0].id, material: shiftHeld ? 'iron_plate' : undefined } : { eid: ents[0].id, ...(upgradeMode ? {target:selectedStructureUpgrade(ents[0].type!,upgradePreference)} : {}) });
       else if (reclaim && editLayer === 'auto') { const cart=Object.values(r.entities).find(x=>x.kind==='cart'&&Math.hypot(x.x-wx,x.y-wy)<12); if(cart) act('reclaim',{eid:cart.id}); else toast('No matching structure there.'); }
       else toast('No matching structure there. Use G to change layer.'); return;
     }
@@ -718,6 +720,7 @@ export default function Game({
   const zone = veyraWw && activeFloor(r) !== 0 ? storeyLabel(veyraWw.floors, r) : (getWorld().zoneNames || ZONES)[getWorld().zone[Math.floor(p.y / 16) * WW + Math.floor(p.x / 16)]];
   const hoverX=Math.floor((mouse.current.x+Math.round(cam.x))/TILE), hoverY=Math.floor((mouse.current.y+Math.round(cam.y))/TILE);
   const layers=['wall','obj','roof','floor']; const hover=entsAt(r,hoverX,hoverY).filter(e=>e.kind==='struct'&&(editLayer==='auto'||STRUCTS[e.type!].layer===editLayer)&&(!upgradeMode||!!STRUCTURE_UPGRADES[e.type!])).sort((a,b)=>layers.indexOf(STRUCTS[a.type!].layer)-layers.indexOf(STRUCTS[b.type!].layer))[0];
+  const hoverUpgrade=hover?selectedStructureUpgrade(hover.type!,upgradePreference):undefined;
   const placementReason=buildType?buildReason(gs,buildType,hoverX,hoverY):null;
   const heldCash = countItem(r, 'inv', 'rcash'); const surf = SPEED_KEY[effTile(r, Math.floor(p.x / 16), Math.floor(p.y / 16))] || '';
   // ---------------- HUD ARBITRATION ----------------
@@ -837,7 +840,8 @@ export default function Game({
       </div>}
 
       {/* build helper */}
-      {!buildMode && (buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 38, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {(STRUCTS[buildType].item ? [[STRUCTS[buildType].item!,1] as [string,number]] : STRUCTS[buildType].cost).map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||(buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:`Placement allowed · unprotected, decays in ~${BAL.territory.unprotectedCollapseHours}h`)} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && STRUCTURE_UPGRADES[hover.type!] ? ` → ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].name}: ${STRUCTS[STRUCTURE_UPGRADES[hover.type!]].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
+      {!panel && upgradeMode && <StructureUpgradeChoice preferred={upgradePreference} onChange={setUpgradePreference} />}
+      {!buildMode && (buildType || reclaim || repairMode || upgradeMode) && <div className="panel absolute" style={{ left: 145, bottom: 38, width: 350, padding: '3px 6px', fontSize: 11, textAlign: 'center',lineHeight:1.1 }} onMouseDown={e => e.stopPropagation()}>{buildType ? <><b style={{color:'#ffd98a'}}>Place {STRUCTS[buildType].name}</b> · {(STRUCTS[buildType].item ? [[STRUCTS[buildType].item!,1] as [string,number]] : STRUCTS[buildType].cost).map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(' · ')}<br/><span style={{color:placementReason?'#ff9a8a':'#9ae0a0'}}>{placementReason||(buildType==='claim'?'Placement allowed':claimAt(r,hoverX,hoverY)?`Placement allowed · cabinet coverage ${territoryForecast(r,claimAt(r,hoverX,hoverY)!).funded?'funded':'unfunded'}`:`Placement allowed · unprotected, decays in ~${BAL.territory.unprotectedCollapseHours}h`)} · RMB/Esc stop</span></> : <><b>{upgradeMode?'Upgrade':repairMode?'Repair':'Dismantle'}</b> · G layer: {editLayer} · RMB/Esc stop<br/>{hover ? <span>{STRUCTS[hover.type!].name} · HP {Math.ceil(hover.hp||0)}/{hover.maxHp} · {hover.owner && hover.owner!=='player'?'not owned':'owned'}{upgradeMode && hoverUpgrade ? ` → ${STRUCTS[hoverUpgrade].name}: ${STRUCTS[hoverUpgrade].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${q}`).join(', ')}` : ''}{repairMode ? ` · Repair: ${STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${countItem(r,'inv',k)}/${Math.max(1,Math.ceil(q/4))}`).join(', ')}` : ''}{reclaim ? ` · Refund: ${STRUCTS[hover.type!].item ? ITEMS[STRUCTS[hover.type!].item!].name : STRUCTS[hover.type!].cost.map(([k,q])=>`${ITEMS[k].name} ${Math.floor(q*BAL.economy.reclaimRefund)}`).join(', ')}` : ''}</span> : 'Point at a structure; click to act.'}</>}</div>}
 
       {/* cargo + bottom-left event feed */}
       {(bike || cart) && !fullScreen && <div className="hud" style={{ left: 4, bottom: 32 }} onMouseDown={e => e.stopPropagation()}><RigStatus r={r} /></div>}

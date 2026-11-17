@@ -40,7 +40,7 @@
    "reinforced_spear_blade"
   ],
   "graph_nodes": 705,
-  "graph_edges": 2317,
+  "graph_edges": 2320,
   "by_reachability": {
    "SHIPPING_AND_VEYRA": 137,
    "SHIPPING_ONLY": 13,
@@ -785,8 +785,8 @@
    "level": "L1",
    "domain": "BUILDING",
    "source": "craft[plank]; CREATURE_DROP(veyra only)",
-   "consumer": "no craft/build consumer",
-   "action": "none",
+   "consumer": "1 target(s): structure:wall_plank",
+   "action": "ingredient",
    "role": "PROCESSED",
    "LI_reference": "none",
    "decision": "DEFER",
@@ -7395,7 +7395,7 @@
      "to": "structure:wall_stone",
      "layer": "BOTH",
      "qty": 1,
-     "count": 1
+     "count": 2
     }
    ],
    "derived_sinks": [
@@ -7844,6 +7844,13 @@
      "layer": "STUB",
      "qty": 3,
      "count": 1
+    },
+    {
+     "kind": "UPGRADE_COST",
+     "to": "structure:wall_plank",
+     "layer": "BOTH",
+     "qty": 3,
+     "count": 1
     }
    ],
    "derived_sinks": [
@@ -7873,7 +7880,9 @@
     "plank"
    ],
    "consumed_by": [],
-   "consumer_targets": [],
+   "consumer_targets": [
+    "structure:wall_plank"
+   ],
    "maintenance_targets": [],
    "direct_use": [],
    "recycle": null,
@@ -7886,9 +7895,7 @@
     "wood": 2
    },
    "signals": [
-    "PASS_THROUGH_INTERMEDIATE",
-    "NO_CONSUMER_NO_USE",
-    "NO_REACHABLE_CONSUMER:wall_plank"
+    "PASS_THROUGH_INTERMEDIATE"
    ]
   },
   {
@@ -8201,7 +8208,7 @@
      "to": "structure:wall_stone",
      "layer": "BOTH",
      "qty": 8,
-     "count": 1
+     "count": 2
     }
    ],
    "derived_sinks": [
@@ -26913,8 +26920,7 @@
    "signals": [
     "TWIN_INTERMEDIATE:vehicle_frame",
     "TWIN_INTERMEDIATE:metal_pipe",
-    "CONSUMER_UNOBTAINABLE:wall_brick",
-    "CONSUMER_UNOBTAINABLE:wall_plank"
+    "CONSUMER_UNOBTAINABLE:wall_brick"
    ]
   },
   {

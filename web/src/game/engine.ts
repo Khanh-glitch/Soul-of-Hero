@@ -17,7 +17,7 @@ import { BAL, TILE, WW, WH, HOUR, SAVE_VERSION, WORLD_SEED, T, uid, rngNext, dis
   type GameState, type Profile, type RunState, type Stack, type Container, type Entity, type Creature } from './core';
 import { OIL_SEEP_AUTHORITY, syncOilSeeps } from './oil-seeps';
 import { qualityTierFor, type ExtractionCapability, type SourceDef } from './catalog';
-import { LADDER_SPAN, LARGE_FURNACE, POWERED_DOOR_HOSTS, EQ_SLOTS, ALWAYS_KNOWN_RECIPES, isGardenCrop, gardenClimateClass, type GardenCrop, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, MOTORBIKE_REPAIR_COST, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
+import { LADDER_SPAN, LARGE_FURNACE, POWERED_DOOR_HOSTS, EQ_SLOTS, ALWAYS_KNOWN_RECIPES, isGardenCrop, gardenClimateClass, type GardenCrop, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, MOTORBIKE_REPAIR_COST, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, upgradeTargets, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
 import { liveItemId, liveItemPer, liveRecipeId, ITEM_SET_VERSION, isAccessCard, isRetiredLive, cardItemForClass } from './final-item-set';
 import { latestLegacyDefinition, RETIRED_RECIPES, purchasableFamilies } from './recipe-migration';
 import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
@@ -2465,8 +2465,10 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'upgradeStructure': {
       const e = r.entities[it.eid];
       if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');
-      const target = STRUCTURE_UPGRADES[e.type!], next = target && STRUCTS[target];
-      const structural = (PA1_BASE_GEOMETRY as readonly string[]).includes(e.type!);
+      const target = it.target === undefined ? STRUCTURE_UPGRADES[e.type!] : it.target;
+      if (typeof target !== 'string' || !upgradeTargets(e.type!).includes(target)) return fail('No such upgrade for this structure.');
+      const next = STRUCTS[target];
+      const structural = (PA1_BASE_GEOMETRY as readonly string[]).includes(e.type!) || (PA1_UPGRADE_ONLY_GEOMETRY as readonly string[]).includes(e.type!);
       if (structural && (!Number.isInteger(e.tx) || !Number.isInteger(e.ty) ||
         !claimAt(r,e.tx!,e.ty!) || !cabinetSupported(r,claimAt(r,e.tx!,e.ty!)!)))
         return fail('Upgrade wooden construction only through a valid Territory Cabinet within its claim.');

@@ -15,7 +15,7 @@ Historical design baseline: `Khanh-glitch/Soul-of-Hero` branch `feature/pa1-buil
 | — generated `deploy_*` recipes | 24 | cost copied from `STRUCTS` |
 | Recipe revision | 6 | `recipe-migration.ts` |
 | Retired recipes | fuel_can, vehicle_frame_piped, vehicle_drive, vehicle_drive_geared, fuel_briquette, root_broth, poached_eggs, herb_roast, salted_meat, iron_sword, iron_sword_blade, refine_salvaged_oil, refinery_industrial, refinery_lubricant, refinery_crude, fasteners, treated_canvas, field_repair_kit, recover_drive, mechanical_parts, scrap_ingot, brick, reinforced_spear_blade | `RETIRED_RECIPES` (item kept) |
-| Multigraph | 705 nodes / 2317 edges | `buildSohEconomicGraph` |
+| Multigraph | 705 nodes / 2320 edges | `buildSohEconomicGraph` |
 
 ## 2. Six different things the old audit called "level"
 
@@ -106,7 +106,7 @@ A `PARTS_POSITIVE` row is harmless today (Machine Parts are not a currency) and 
 | treated_canvas | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
 | field_repair_kit | L0 | UNREACHABLE_EVERYWHERE |
 | fuel_briquette | L0 | UNREACHABLE_EVERYWHERE |
-| plank | L1 | PASS_THROUGH_INTERMEDIATE, NO_CONSUMER_NO_USE, NO_REACHABLE_CONSUMER:wall_plank |
+| plank | L1 | PASS_THROUGH_INTERMEDIATE |
 | stone | L0 | CONSUMER_UNOBTAINABLE:wall_brick |
 | coal | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
 | raw_salt | L0 | UNREACHABLE_EVERYWHERE, NO_CONSUMER_NO_USE |
@@ -132,7 +132,7 @@ A `PARTS_POSITIVE` row is harmless today (Machine Parts are not a currency) and 
 | metal_pipe | L3 | TWIN_INTERMEDIATE:vehicle_frame, TWIN_INTERMEDIATE:iron_plate |
 | metal_blade | L2 | TWIN_INTERMEDIATE:mechanical_gear |
 | mechanical_gear | L2 | TWIN_INTERMEDIATE:metal_blade |
-| iron_plate | L3 | TWIN_INTERMEDIATE:vehicle_frame, TWIN_INTERMEDIATE:metal_pipe, CONSUMER_UNOBTAINABLE:wall_brick, CONSUMER_UNOBTAINABLE:wall_plank |
+| iron_plate | L3 | TWIN_INTERMEDIATE:vehicle_frame, TWIN_INTERMEDIATE:metal_pipe, CONSUMER_UNOBTAINABLE:wall_brick |
 | relic_shaleheart | L0 | NOT_REACHABLE_ON_SHIPPING |
 | ronin_nodachi | L0 | NOT_REACHABLE_ON_SHIPPING |
 | tidemarshal_trident | L0 | NOT_REACHABLE_ON_SHIPPING |

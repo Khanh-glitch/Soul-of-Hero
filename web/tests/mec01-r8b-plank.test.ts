@@ -1,3 +1,5 @@
+import {fundBuild} from './support/paid-build';
+import {buildCarried,beside} from './support/current-industry';
 // MEC-01 R8B: wood -> plank -> plank wall (K4 "gỗ→ván→nhà"). SOH_PROVISIONAL numbers, no LI plank figure exists.
 // CRAFTED = real craft/build/move intents with real stepStations timing. FIXTURE = granted wood/stone for the bench and walls.
 // Not claimed: natural harvest of this wood, natural play, human play, or native Godot behaviour.
@@ -56,7 +58,7 @@ describe('MEC-01 R8B plank chain', () => {
     expect(JSON.stringify(back)).toContain('"plank"');
   });
 
-  it('a plank wall needs three real planks: with two it is refused and nothing is spent; with three it builds at 240 HP', () => {
+  it('a plank wall needs three real planks: with two it is refused and nothing is spent; with three it upgrades an owned wooden wall to 240 HP', () => {
     const g=start();const r=g.run!;
     addItem(r,'inv','wood',14);addItem(r,'inv','stone',4);
     expect(act(g,'craft',{recipe:'deploy_workbench'},START+19).ok).toBe(true);
@@ -68,16 +70,22 @@ describe('MEC-01 R8B plank chain', () => {
     expect(countItem(r,'inv','plank')).toBe(2);
     // Per wood: plank wall 240/6 = 40 HP per wood; log wall 160/5 = 32 HP per wood
     expect(STRUCTS.wall_plank.hp/(STRUCTS.wall_plank.cost[0][1]*2)).toBeGreaterThan(STRUCTS.wall_wood.hp/STRUCTS.wall_wood.cost[0][1]);
-    const wp=legalTileNear(g,r.player.x/TILE|0,r.player.y/TILE|0,'wall_plank');
+    // Real supported cabinet authority; no direct-build permission for a higher-tier wall.
+    fundBuild(g,'floor_wood',START+80);const floor=buildCarried(g,'floor_wood',START+80);
+    fundBuild(g,'claim',START+81);beside(g,floor.tx!-1,floor.ty!);
+    expect(act(g,'build',{struct:'claim',tx:floor.tx,ty:floor.ty},START+82).ok).toBe(true);
+    fundBuild(g,'wall_wood',START+83);const base=buildCarried(g,'wall_wood',START+83);
+    beside(g,base.tx!-1,base.ty!);
     // NEGATIVE: two planks are not enough; refused, no plank spent, no wall entity
     const before=countItem(r,'inv','plank');
-    const refused=act(g,'build',{struct:'wall_plank',tx:wp[0],ty:wp[1]},START+100);
+    const refused=act(g,'upgradeStructure',{eid:base.id,target:'wall_plank'},START+100);
     expect(refused.ok).toBe(false);
     expect(countItem(r,'inv','plank')).toBe(before);
     expect(Object.values(r.entities).some(e=>e.type==='wall_plank')).toBe(false);
-    // CRAFTED third plank, then the build spends exactly three
+    // CRAFTED third plank, then the optional upgrade spends exactly three
     craftPlank(g,bench,START+200);
-    expect(act(g,'build',{struct:'wall_plank',tx:wp[0],ty:wp[1]},START+300).ok).toBe(true);
+    beside(g,base.tx!-1,base.ty!);
+    expect(act(g,'upgradeStructure',{eid:base.id,target:'wall_plank'},START+300).ok).toBe(true);
     const wall=Object.values(r.entities).find(e=>e.kind==='struct'&&e.type==='wall_plank')!;
     expect(wall.maxHp).toBe(240);
     expect(countItem(r,'inv','plank')).toBe(0);

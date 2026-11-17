@@ -8,7 +8,7 @@
  * P8–P10 stay unimplemented but must end in a concrete conclusion and a resolution path.
  */
 import {
-  CREATURES, ITEMS, MODULE_PENDING_STRUCTURES, PA1_UPGRADE_ONLY_GEOMETRY, RECIPES, STRUCTS, STRUCTURE_UPGRADES,
+  CREATURES, ITEMS, MODULE_PENDING_STRUCTURES, PA1_UPGRADE_ONLY_GEOMETRY, RECIPES, STRUCTS, STRUCTURE_UPGRADES, upgradeTargets,
   WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CORE_STUDY, DEPLOYABLE_TYPES,
 } from './catalog';
 import { CREATOR_LOOT_V1 } from './creator-loot';
@@ -105,7 +105,7 @@ function p6() {
   const cost = (id: string) => STRUCTS[id].cost as Bom;
   const tiers = ['wall_wood', 'wall_plank', 'wall_stone', 'wall_brick'].map((id) => {
     const direct = !(PA1_UPGRADE_ONLY_GEOMETRY as readonly string[]).includes(id);
-    const upgradedFrom = Object.entries(STRUCTURE_UPGRADES).filter(([, to]) => to === id).map(([from]) => from);
+    const upgradedFrom = Object.keys(STRUCTURE_UPGRADES).filter(from => upgradeTargets(from).includes(id));
     return { id, hp: STRUCTS[id].hp, cost: cost(id), buildable_directly: direct, upgrade_from: upgradedFrom, obtainable: direct || upgradedFrom.length > 0 };
   });
   const plankWood = RECIPES.plank.ins.find(([k]) => k === 'wood')![1] / RECIPES.plank.qty;
@@ -125,17 +125,21 @@ function p6() {
   };
   return {
     tiers, plank: { recipe: `${RECIPES.plank.ins.map(([k, q]) => `${q} ${k}`).join(' + ')} → ${RECIPES.plank.qty} @ ${RECIPES.plank.station}, ${RECIPES.plank.secs}s`, consumers: plankConsumers, creature_drops: drops },
-    structure_upgrades: { ...STRUCTURE_UPGRADES }, upgrade_only: [...PA1_UPGRADE_ONLY_GEOMETRY], route,
+    structure_upgrades: { ...STRUCTURE_UPGRADES }, structure_upgrade_options: Object.fromEntries(Object.keys(STRUCTURE_UPGRADES).map(k=>[k,[...upgradeTargets(k)]])), upgrade_only: [...PA1_UPGRADE_ONLY_GEOMETRY], route,
     unobtainable_structures: UNOBTAINABLE_STRUCTURES.map((id) => ({ id, name: STRUCTS[id].name, hp: STRUCTS[id].hp, cost: cost(id) })),
     conclusion: [
       wp.obtainable
         ? 'The 240 HP Plank Wall is obtainable.'
         : `MEASURED BLOCKER: a player cannot obtain the 240 HP Plank Wall in the live build. It is upgrade-only geometry (buildReason refuses to place it), and no entry of STRUCTURE_UPGRADES leads to it (wall_wood upgrades straight to ${STRUCTURE_UPGRADES.wall_wood}). The "240 HP wall route" the question asks about does not exist at this base.`,
-      `The same test finds every structure in that state: ${UNOBTAINABLE_STRUCTURES.map((id) => `${id} (${STRUCTS[id].hp} HP)`).join(', ')}. The Brick Wall is affected exactly like the Plank Wall.`,
-      `Consequence: Plank has ${plankConsumers.length} listed consumer (${plankConsumers.join(', ')}) and zero REACHABLE consumers. It is craftable (${RECIPES.plank.secs}s at a Workbench) and drops from ${drops.join(', ') || 'nothing'}, but nothing a player can do spends it. The Round 1 projection counted the structure cost as a consumer; that was an over-count.`,
-      `If the tier were reachable, removing the Workbench step would leave the wood bill unchanged (${route.today_if_reachable.wood} wood cumulative) and save ${route.today_if_reachable.bench_seconds}s of bench time per wall plus the one-time Workbench. HP per wood: Wood Wall ${route.hp_per_wood.wall_wood}, Plank Wall cumulative ${route.hp_per_wood.wall_plank_cumulative} — the plank tier is LESS wood-efficient than the wood wall, so the bench step is not what protects the wood tier.`,
+      `Structures still without an access path: ${UNOBTAINABLE_STRUCTURES.map((id) => `${id} (${STRUCTS[id].hp} HP)`).join(', ')}. No Brick/steel upgrade path is invented by the Plank repair.`,
+      wp.obtainable ? 'Current access: pay the full 3 Plank bill to upgrade an owned Wood Wall under a supported Territory Cabinet. The default Wood-to-Stone route stays available without Plank.' : `Consequence: Plank has ${plankConsumers.length} listed consumer (${plankConsumers.join(', ')}) and zero REACHABLE consumers. It is craftable (${RECIPES.plank.secs}s at a Workbench) and drops from ${drops.join(', ') || 'nothing'}, but nothing a player can do spends it. The Round 1 projection counted the structure cost as a consumer; that was an over-count.`,
+      `HYPOTHETICAL ONLY (not implemented): removing the Workbench step would leave the wood bill unchanged (${route.today_if_reachable.wood} wood cumulative) and save ${route.today_if_reachable.bench_seconds}s of bench time per wall plus the one-time Workbench. HP per wood: Wood Wall ${route.hp_per_wood.wall_wood}, Plank Wall cumulative ${route.hp_per_wood.wall_plank_cumulative} — the plank tier is LESS wood-efficient than the wood wall, so the bench step is not what protects the wood tier.`,
     ],
-    resolution: [
+    resolution: wp.obtainable ? [
+      'IMPLEMENTED ACCESS REPAIR: optional Wood Wall → Plank Wall for the unchanged 3 Plank bill; existing Wood → Stone default remains, and Plank → Stone pays the full existing target bill.',
+      'Plank and its 2 Wood / 6-second Workbench recipe remain live. No direct placement, compulsory tier ladder, new recipe, cheaper Wood substitute or Brick/steel path.',
+      'This is engineering closure of the existing source/consumer gap, not adoption of the historical proposal to retire Plank or subjective player acceptance.',
+    ] : [
       'RULING APPLIED: Plank stays; nothing is retired. The Round 1 disposition RETIRE_CANDIDATE is withdrawn (now DEFER, flagged NO_REACHABLE_CONSUMER).',
       'Option A — intermediate tier: route wall_wood → wall_plank → wall_stone. Measured side effect: the Stone Wall route gains one upgrade step (+' + planks * plankWood + ' wood, +' + planks * RECIPES.plank.secs + 's) unless STRUCTURE_UPGRADES is taught to branch. That is a cost change on a live route and needs approval.',
       'Option B — move the processing step: let a placed Wood Wall be upgraded to Plank Wall as an OPTIONAL side branch (map becomes one-to-many), Stone route untouched. No existing cost moves; this is the cheapest way to make Plank live.',

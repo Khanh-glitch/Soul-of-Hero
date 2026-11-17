@@ -28,7 +28,7 @@ import {
   starterKnowledge,
   type Recipe,
 } from './catalog';
-import { PA1_UPGRADE_ONLY_GEOMETRY, STRUCTURE_UPGRADES } from './catalog';
+import { PA1_UPGRADE_ONLY_GEOMETRY, STRUCTURE_UPGRADES, upgradeTargets } from './catalog';
 import { BAL, type Stack } from './core';
 import type { EconEdge, EdgeKind, RuntimeStatus, SohEconomicGraph } from './economic-graph';
 import { itemClass, type ItemClass } from './item-class';
@@ -567,4 +567,4 @@ export function projectItemOntology(graph: SohEconomicGraph): ItemOntologyProjec
 
 /** Structures that can neither be placed (upgrade-only) nor reached by any in-place upgrade. */
 export const UNOBTAINABLE_STRUCTURES: readonly string[] = (PA1_UPGRADE_ONLY_GEOMETRY as readonly string[])
-  .filter((id) => !Object.values(STRUCTURE_UPGRADES).includes(id));
+  .filter((id) => !Object.keys(STRUCTURE_UPGRADES).some(from => upgradeTargets(from).includes(id)));
