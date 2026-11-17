@@ -19,7 +19,14 @@ const cells: Record<string, HTMLCanvasElement> = {};
 let state: 'idle' | 'loading' | 'ready' | 'failed' = 'idle';
 export const itemAtlasState = () => state;
 /** Data URL of the untouched 32×32 cell, or '' while the atlas is not decoded / for an id outside the 157. */
-export const atlasIconUrl = (key: string): string => urls[key] || '';
+export const atlasIconUrl = (key: string): string => {
+  if (key in urls) return urls[key];
+  const c = cells[key];
+  if (!c) return '';
+  const url = c.toDataURL('image/png');
+  urls[key] = url;
+  return url;
+};
 /** Decoded 32×32 cell for the canvas renderer, or null while the atlas is not ready / for an id outside the 157. */
 export const atlasIconCell = (key: string): HTMLCanvasElement | null => cells[key] || null;
 
@@ -36,7 +43,7 @@ export function loadItemAtlas(timeoutMs = 6000): Promise<boolean> {
         for (const [key, f] of Object.entries(ITEM_ATLAS.frames)) {
           const c = document.createElement('canvas'); c.width = f.w; c.height = f.h;
           const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; g.drawImage(img, f.x, f.y, f.w, f.h, 0, 0, f.w, f.h);
-          urls[key] = c.toDataURL('image/png'); cells[key] = c;
+          cells[key] = c;
         }
         done(true);
       } catch { done(false); }
