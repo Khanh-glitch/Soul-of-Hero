@@ -25,7 +25,7 @@ S5 LONGITUDINAL: several sessions/strategies through relevant late72/336h and ru
 4. Core: all seven Creator three-action identities + four Field, UID/durability/energy, actual K2/K5 contact, Gold/terrain event timing, blocked/cancel/reload/legacy migration and no free item source.
 5. Independent player world: K2 climates and eight fictional seasons, K5 creature perception and attack, K6 home/roof/bed/upkeep, K7 cargo/vehicles, K8 offline timing. Unique death bag and actual long-run recovery.
 6. Ragnarok: h264/h312/h336 correct real-hour transitions, optional six distinct Elder and optional no-boss path, physical unique cash source, first escrow acquired at secured wallet=0 using lawful unsecured cash, repeated deposits, player evacuation/abandon/expiry separate, run2 profile-only persistence.
-7. Endpoints: production Web and relevant native Godot build/controls/render/save and consistency; healthy images/assets/480? No: native logical resolution remains 640×360. Real matching FPS and 336h CPU metrics separately.
+7. Endpoints: production Web and relevant native Godot build/controls/render/save and consistency; preserved image fidelity and native logical resolution 640×360. Real matching FPS and 336h CPU metrics separately.
 8. Data continuity: genuine G1B Batch2/3/4, older Core/wallet/items/stations, version/migration, snapshots in separate processes, no rewritten binary accepted because tests changed. NPC-aware forward compatibility when preparing selective port.
 
 ## D. Tiered effort: never let testing become whole deliverable
