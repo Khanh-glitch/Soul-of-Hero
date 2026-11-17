@@ -1752,12 +1752,17 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   }
   if (planHumanOccupation(r,hw,h,now,(gx,gy,floor)=>humanRouteToAdjacent(r,h,gx,gy,grid,ox,oy,occupied,floor))) return;
   observeRecipeSources(r,h,now);
-  const board=recipeBoardDestination(r,hw,h,now);
-  if(board){
+  const visitBoard=()=>{
+   const board=recipeBoardDestination(r,hw,h,now);if(!board)return false;
    h.recipeBoardPending=true;
-   if(serviceRecipeBoard(r,hw,h,now)) {h.recipeBoardPending=false;}
-   else {const route=humanRouteToAdjacent(r,h,board.gx,board.gy,grid,ox,oy,occupied,board.floor);if(route){h.intent={intentId:`board:${h.actorId}:${now}`,actorId:h.actorId,kind:'work',target:'recipe-board',preconditions:['physical community request board'],reserved:[],startAt:now,dueAt:now,route};h.state=route.length?'MOVING':'IDLE';return;}if(h.routeSearch?.status==='PENDING_SEARCH')return;}
-  }
+   if(serviceRecipeBoard(r,hw,h,now)){h.recipeBoardPending=false;return true;}
+   const route=humanRouteToAdjacent(r,h,board.gx,board.gy,grid,ox,oy,occupied,board.floor);
+   if(route){h.intent={intentId:`board:${h.actorId}:${now}`,actorId:h.actorId,kind:'work',target:'recipe-board',preconditions:['physical community request board'],reserved:[],startAt:now,dueAt:now,route};h.state=route.length?'MOVING':'IDLE';return true;}
+   return h.routeSearch?.status==='PENDING_SEARCH';
+  };
+  // Procurement complements each profession; it must not displace an already
+  // available lawful local task merely to force a particular food trajectory.
+  if(h.occupation==='cook'&&visitBoard())return;
 
   h.procurementSourceKeys=[];
   let allowed=new Set(Object.keys(SOURCES).filter(key=>canHarvestSource(h,{key,def:SOURCES[key]} as NonNullable<ReturnType<typeof sourceAt>>)));
@@ -1781,12 +1786,12 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   for(const p of candidates){
     if(Object.values(hw.people).some(other=>other.actorId!==h.actorId&&other.harvestJob?.phase==='source'&&other.harvestJob.gx===p.gx&&other.harvestJob.gy===p.gy&&other.harvestJob.floor===h.floor&&!['DEAD','EVACUATED','DOWNED'].includes(other.state)))continue;
     const s=globalSourceAt(r,p.gx,p.gy,h.floor,now);if(!s||s.protected||s.stock<=0||!canHarvestSource(h,s))continue;
-    if(!comm.storeContainers.some(cid=>r.custody[cid]&&simulateHumanOutput(r.custody[cid].slots.map(v=>v?{...v}:null),s.def.yields)))continue;
     if(!simulateHumanOutput(pack.slots.map(v=>v?{...v}:null),s.def.yields,{jobId:'admission',workerId:h.actorId}))continue;
     h.harvestJob={id:uid(r,'hj'),sourceId:s.sourceId,gx:p.gx,gy:p.gy,floor:h.floor,key:s.key,phase:'source',startedAt:now};
     receipt(r,now,'human.harvest.select',`${h.harvestJob.id}:${h.actorId}:${s.sourceId}:${s.key}`);
     resumeHarvestJob(r,hw,h,now,occupied);return;
   }
+  if(h.occupation!=='cook')visitBoard();
 });}
 function resumeHarvestJob(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occupied:Set<string>):void {return timedWorldWork('resumeHarvestJob',()=>{
   const job=h.harvestJob;if(!job)return;
@@ -1868,7 +1873,7 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
     receipt(r,now,'human.cargo.deliver',`${h.harvestJob?.id??'work'}:${h.actorId}:${stackUid}>${transfer.uid}:${dstId}:${take}`);
     moved += take; if (qty <= take){delete h.workOutputs[stackUid];if(h.workOutputSources)delete h.workOutputSources[stackUid];} else h.workOutputs[stackUid] = qty - take;
   }
-  if (moved) receipt(r, now, 'human.store', `${h.actorId}:${moved}`);
+  if (moved) {receipt(r, now, 'human.store', `${h.actorId}:${moved}`);serviceRecipeBoard(r,r.humanWorld!,h,now);}
   if(Object.values(h.workOutputs).some(q=>q>0)&&!moved){h.deliveryWait={containerId:dstId,signature:JSON.stringify(dst.slots)};h.nextThinkAt=Number.MAX_SAFE_INTEGER;}else delete h.deliveryWait;
   if(h.harvestJob?.phase==='delivery'&&Object.values(h.workOutputs).some(q=>q>0)&&!moved){
     h.nextThinkAt=Number.MAX_SAFE_INTEGER;

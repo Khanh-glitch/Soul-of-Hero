@@ -30,8 +30,9 @@ it('normal population physically procures and delivers a positive-hunger paid re
  if(!input){
   const paid=events.filter(e=>e.kind==='human.production.pay').map(e=>JSON.parse(e.detail!));expect(paid.length).toBeGreaterThan(0);
   for(const d of deliveries)for(const s of d.lineage){expect(s.recipe).toBeTruthy();expect((ITEMS[s.key].food?.hunger??0)>0).toBe(true);expect(paid.some(p=>p.jobId===s.jobId)).toBe(true);expect(C(r,d.containerId).slots.some(v=>v!==null&&v.uid===s.intoUid&&v.qty>=s.qty)).toBe(true);}
-  const tin=events.filter(e=>e.kind==='human.harvest.output').map(e=>JSON.parse(e.detail!)).find(e=>e.key==='tin_can');expect(tin).toBeTruthy();
-  const transfer=events.filter(e=>e.kind==='human.cargo.lineage').map(e=>JSON.parse(e.detail!)).flatMap(d=>d.lineage).find(v=>v.fromUid===tin.uid&&v.sourceId===tin.sourceId);expect(transfer).toBeTruthy();
+  const paidTin=paid.flatMap(p=>p.inputs).find(v=>v.key==='tin_can');expect(paidTin).toBeTruthy();
+  const tin=events.filter(e=>e.kind==='human.harvest.output').map(e=>JSON.parse(e.detail!)).find(e=>e.uid===paidTin.uid&&e.key==='tin_can');expect(tin).toBeTruthy();
+  const transfer=events.filter(e=>e.kind==='human.cargo.lineage').map(e=>JSON.parse(e.detail!)).flatMap(d=>d.lineage).find(v=>v.fromUid===tin.uid&&v.intoUid===paidTin.uid&&v.sourceId===tin.sourceId);expect(transfer).toBeTruthy();
   expect(events.some(e=>e.kind==='human.procurement.contribute'&&JSON.parse(e.detail!).key==='cloth')).toBe(true);
  }
  const snapshot=JSON.stringify(r);settle(gs,r.clock.lastSimAt,true);expect(JSON.stringify(r)).toBe(snapshot);
