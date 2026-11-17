@@ -134,13 +134,15 @@ function composeFeature(s: TileSample, t: number, tx: number, ty: number, c: Ctx
   }
   if (t === T.ROAD) { if (r < 0.08) return F.RUT; if (r < 0.085 && (tx + ty) % 9 === 0) return F.MILESTONE; return F.NONE; }
   if (c.nearRoad && !isWater(t) && t !== T.CLIFF && r < 0.12) return F.ROADSIDE_GRASS;
-  const dens = standDensity(tx, ty), wet = wetField(tx, ty), rock = rockField(tx, ty);
+  // These pure noise fields are only relevant to one branch each. Procurement
+  // now touches many real source regions: do not evaluate seven FBM octaves
+  // for every sea/road/meadow tile merely to discard all three results.
   switch (t) {
     case T.FOREST: {
       const cold = s.cold >= 2 || s.biome === 3;
       if (c.interior) { if (r < 0.18) return cold ? F.MOSS_ROCK : F.FERN_LARGE; if (r < 0.34) return F.FERN; if (r < 0.40) return F.LEAF_LITTER; if (r < 0.43) return F.LOG; if (r < 0.45) return F.STUMP; if (r < 0.52) return F.ROOTS; return F.NONE; }
       if (c.forestEdge) { if (r < 0.14) return F.SAPLING; if (r < 0.22) return cold ? F.FROSTED_SHRUB : F.FERN; if (r < 0.27) return F.BIRCH_SAPLING; if (r < 0.33) return F.GRASS_TUFT; return F.NONE; }
-      if (r < 0.12) return F.FERN; if (r < 0.17) return F.LEAF_LITTER; if (r < 0.20) return F.LOG; if (r < 0.22) return F.MOSS_ROCK; if (r < 0.25 && dens > 0.5) return F.ROOTS; return F.NONE;
+      if (r < 0.12) return F.FERN; if (r < 0.17) return F.LEAF_LITTER; if (r < 0.20) return F.LOG; if (r < 0.22) return F.MOSS_ROCK; if (r < 0.25 && standDensity(tx, ty) > 0.5) return F.ROOTS; return F.NONE;
     }
     case T.GRASS: case T.MEADOW: {
       if (c.clearing) { if (r < 0.10) return F.WILDFLOWERS; if (r < 0.16) return F.STUMP; if (r < 0.22) return F.LOG; if (r < 0.34) return F.GRASS_TUFT; if (r < 0.38) return F.SAPLING; return F.NONE; }
@@ -149,13 +151,13 @@ function composeFeature(s: TileSample, t: number, tx: number, ty: number, c: Ctx
     }
     case T.MARSH: {
       if (c.nearWater) { if (r < 0.30) return F.CATTAIL; if (r < 0.42) return F.REED_CLUMP; if (r < 0.48) return F.PUDDLE; return F.NONE; }
-      if (wet > 0.62) { if (r < 0.20) return F.PUDDLE; if (r < 0.30) return F.CATTAIL; if (r < 0.34) return F.LOG; return F.NONE; }
+      if (wetField(tx, ty) > 0.62) { if (r < 0.20) return F.PUDDLE; if (r < 0.30) return F.CATTAIL; if (r < 0.34) return F.LOG; return F.NONE; }
       if (r < 0.10) return F.DEAD_REED; if (r < 0.15) return F.MUD_CRACK; if (r < 0.19) return F.REED_CLUMP; if (r < 0.21) return F.MOSS_ROCK; return F.NONE;
     }
     case T.SHALLOW: case T.RIVER: { if (s.lake && !c.nearRoad && r < 0.06 && c.ring8.every(isWater)) return F.LILYPAD; if (!s.land && r < 0.0) return F.KELP; return F.NONE; }
     case T.HILL: {
       const dry = s.biome === 6;
-      if (rock > 0.60) { if (r < 0.16) return F.SMALL_BOULDER; if (r < 0.30) return F.SCREE; if (r < 0.36) return F.ROCK_CRACK; return F.NONE; }
+      if (rockField(tx, ty) > 0.60) { if (r < 0.16) return F.SMALL_BOULDER; if (r < 0.30) return F.SCREE; if (r < 0.36) return F.ROCK_CRACK; return F.NONE; }
       if (r < 0.10) return F.PEBBLES; if (r < 0.18) return dry ? F.DRY_TUFT : F.GRASS_TUFT; if (r < 0.21) return F.SMALL_BOULDER; if (r < 0.23) return F.ROCK_CRACK; return F.NONE;
     }
     case T.SAND: {
