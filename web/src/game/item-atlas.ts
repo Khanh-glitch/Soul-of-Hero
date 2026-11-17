@@ -13,9 +13,10 @@ export const ITEM_ATLAS = atlas as { image: string; width: number; height: numbe
 export const hasApprovedIcon = (key: string): boolean => Object.prototype.hasOwnProperty.call(ITEM_ATLAS.frames, key);
 export const ITEMS_WITHOUT_APPROVED_ICON: readonly string[] = Object.keys(ITEMS).filter(k => !hasApprovedIcon(k)).sort();
 
-const urls: Record<string, string> = {};
+const urls: Record<string, string> = Object.create(null);
 /** The decoded 32×32 cell canvases (the world renderer draws these; the UI uses the data URLs). */
-const cells: Record<string, HTMLCanvasElement> = {};
+let cells: Record<string, HTMLCanvasElement> = Object.create(null);
+let pending: Promise<boolean> | null = null;
 let state: 'idle' | 'loading' | 'ready' | 'failed' = 'idle';
 export const itemAtlasState = () => state;
 /** Data URL of the untouched 32×32 cell, or '' while the atlas is not decoded / for an id outside the 157. */
@@ -33,23 +34,39 @@ export const atlasIconCell = (key: string): HTMLCanvasElement | null => cells[ke
 export function loadItemAtlas(timeoutMs = 6000): Promise<boolean> {
   if (state === 'ready') return Promise.resolve(true);
   if (typeof Image === 'undefined' || typeof document === 'undefined') { state = 'failed'; return Promise.resolve(false); }
+  // One decode/crop job for all callers. A failed attempt can be retried, but a
+  // timed-out image must never publish cells or settle a later attempt.
+  if (pending) return pending;
   state = 'loading';
-  return new Promise<boolean>(resolve => {
-    const done = (ok: boolean) => { if (state !== 'loading') return; state = ok ? 'ready' : 'failed'; if (!ok) console.warn('[soh] 157-item atlas unavailable: drawn icons are shown'); resolve(ok); };
+  pending = new Promise<boolean>(resolve => {
     const img = new Image();
+    let finished = false;
+    const done = (ok: boolean) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      img.onload = null; img.onerror = null;
+      state = ok ? 'ready' : 'failed';
+      if (!ok) console.warn('[soh] 157-item atlas unavailable: drawn icons are shown');
+      resolve(ok);
+    };
+    const timer = setTimeout(() => done(false), timeoutMs);
     img.onload = () => {
+      if (finished) return;
       try {
         if (img.naturalWidth !== ITEM_ATLAS.width || img.naturalHeight !== ITEM_ATLAS.height) return done(false);
+        const next: Record<string, HTMLCanvasElement> = Object.create(null);
         for (const [key, f] of Object.entries(ITEM_ATLAS.frames)) {
           const c = document.createElement('canvas'); c.width = f.w; c.height = f.h;
-          const g = c.getContext('2d')!; g.imageSmoothingEnabled = false; g.drawImage(img, f.x, f.y, f.w, f.h, 0, 0, f.w, f.h);
-          cells[key] = c;
+          const g = c.getContext('2d', { willReadFrequently: true })!; g.imageSmoothingEnabled = false; g.drawImage(img, f.x, f.y, f.w, f.h, 0, 0, f.w, f.h);
+          next[key] = c;
         }
+        cells = next;
         done(true);
       } catch { done(false); }
     };
     img.onerror = () => done(false);
-    setTimeout(() => done(false), timeoutMs);
     img.src = `${import.meta.env.BASE_URL}${ITEM_ATLAS.image.replace(/^\//, '')}`;
-  });
+  }).finally(() => { pending = null; });
+  return pending;
 }

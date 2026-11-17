@@ -5,8 +5,17 @@ import { atlasIconUrl } from '../game/item-atlas';
 import type { Stack, GameState } from '../game/core';
 import type { Intent, Result } from '../game/engine';
 
-let iconUrls: Record<string, string> | null = null;
-function drawnIconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || ''; }
+const iconUrls: Record<string, string> = Object.create(null);
+function drawnIconUrl(key: string) {
+  if (key in iconUrls) return iconUrls[key];
+  const A = getArt();
+  const sprites = key.startsWith('st:') ? A.st : A.icon;
+  const id = key.startsWith('st:') ? key.slice(3) : key;
+  const c = Object.prototype.hasOwnProperty.call(sprites, id) ? sprites[id] : null;
+  // A single legacy icon must not PNG-encode every item and structure (including
+  // the 156 items already covered by the approved atlas) on first pack open.
+  return iconUrls[key] = c ? c.toDataURL() : '';
+}
 /** Item icon: the approved 157-atlas cell for every mapped id; the drawn icon only for ids outside the 157 and for `st:` structure art. */
 export function iconUrl(key: string) { return atlasIconUrl(key) || drawnIconUrl(key); }
 export function Icon({ k, size = 16, style }: { k: string; size?: number; style?: React.CSSProperties }) {

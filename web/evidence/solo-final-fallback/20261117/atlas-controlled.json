@@ -1,0 +1,78 @@
+{
+  "browser": "153.0.8010.0",
+  "note": "Isolated decoded 157-cell workload; eager and inherited variants reconstructed by intercepting this same Vite module only. Software SwiftShader; excludes App/world startup, not device FPS certification.",
+  "samples": [
+    {
+      "variant": "inherited-lazy",
+      "i": 0,
+      "loadMs": 14.399999999906868,
+      "firstFourMs": 118.90000000002328,
+      "remainingMs": 91.80000000004657,
+      "mismatches": []
+    },
+    {
+      "variant": "inherited-lazy",
+      "i": 1,
+      "loadMs": 14.399999999906868,
+      "firstFourMs": 12.20000000006985,
+      "remainingMs": 85.69999999995343,
+      "mismatches": []
+    },
+    {
+      "variant": "inherited-lazy",
+      "i": 2,
+      "loadMs": 14,
+      "firstFourMs": 11.900000000023283,
+      "remainingMs": 113,
+      "mismatches": []
+    },
+    {
+      "variant": "pre-P1-eager",
+      "i": 0,
+      "loadMs": 129.40000000002328,
+      "firstFourMs": 0,
+      "remainingMs": 0.19999999995343387,
+      "mismatches": []
+    },
+    {
+      "variant": "pre-P1-eager",
+      "i": 1,
+      "loadMs": 125.5,
+      "firstFourMs": 0,
+      "remainingMs": 0,
+      "mismatches": []
+    },
+    {
+      "variant": "pre-P1-eager",
+      "i": 2,
+      "loadMs": 131.30000000004657,
+      "firstFourMs": 0,
+      "remainingMs": 0.09999999997671694,
+      "mismatches": []
+    },
+    {
+      "variant": "readback-lazy",
+      "i": 0,
+      "loadMs": 14,
+      "firstFourMs": 3.5,
+      "remainingMs": 11.20000000006985,
+      "mismatches": []
+    },
+    {
+      "variant": "readback-lazy",
+      "i": 1,
+      "loadMs": 14.300000000046566,
+      "firstFourMs": 3.099999999976717,
+      "remainingMs": 11.599999999976717,
+      "mismatches": []
+    },
+    {
+      "variant": "readback-lazy",
+      "i": 2,
+      "loadMs": 15.399999999906868,
+      "firstFourMs": 3,
+      "remainingMs": 12.399999999906868,
+      "mismatches": []
+    }
+  ]
+}
