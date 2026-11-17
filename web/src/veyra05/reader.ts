@@ -101,14 +101,29 @@ for (const n of NODES) for (let bx = Math.floor((n.at[0] - n.r) / BUCKET); bx <=
 // land edge segments bucketed for coast distance
 const COAST_BUCKETS = new Map<number, [Pt, Pt][]>();
 for (const r of [...LAND_OUTER, ...LAND_HOLES]) for (let i = 0, j = r.pts.length - 1; i < r.pts.length; j = i++) {
-  const a = r.pts[j], b = r.pts[i]; const x0 = Math.min(a[0], b[0]) - 8, y0 = Math.min(a[1], b[1]) - 8, x1 = Math.max(a[0], b[0]) + 8, y1 = Math.max(a[1], b[1]) + 8;
-  for (let bx = Math.floor(x0 / BUCKET); bx <= Math.floor(x1 / BUCKET); bx++) for (let by = Math.floor(y0 / BUCKET); by <= Math.floor(y1 / BUCKET); by++) { const k = bk(bx, by); let c = COAST_BUCKETS.get(k); if (!c) COAST_BUCKETS.set(k, c = []); c.push([a, b]); }
+  const a = r.pts[j], b = r.pts[i], edge:[Pt,Pt]=[a,b]; const x0 = Math.min(a[0], b[0]) - 8, y0 = Math.min(a[1], b[1]) - 8, x1 = Math.max(a[0], b[0]) + 8, y1 = Math.max(a[1], b[1]) + 8;
+  for (let bx = Math.floor(x0 / BUCKET); bx <= Math.floor(x1 / BUCKET); bx++) for (let by = Math.floor(y0 / BUCKET); by <= Math.floor(y1 / BUCKET); by++) { const k = bk(bx, by); let c = COAST_BUCKETS.get(k); if (!c) COAST_BUCKETS.set(k, c = []); c.push(edge); }
 }
 
 function inside(pts: Pt[], x: number, y: number) { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const xi = pts[i][0], yi = pts[i][1], xj = pts[j][0], yj = pts[j][1]; if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c; } return c; }
 const inRing = (r: Ring, x: number, y: number) => x >= r.minX && x <= r.maxX && y >= r.minY && y <= r.maxY && inside(r.pts, x, y);
 function dSeg(x: number, y: number, a: Pt, b: Pt) { const dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy; let t = l2 ? ((x - a[0]) * dx + (y - a[1]) * dy) / l2 : 0; t = t < 0 ? 0 : t > 1 ? 1 : t; return Math.hypot(x - (a[0] + t * dx), y - (a[1] + t * dy)); }
-function coastDistance(x: number, y: number) { let best = Infinity; const bx = Math.floor(x / BUCKET), by = Math.floor(y / BUCKET); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const c = COAST_BUCKETS.get(bk(bx + i, by + j)); if (!c) continue; for (const [a, b] of c) { const d = dSeg(x, y, a, b); if (d < best) best = d; } } return best; }
+const coastCandidates=new Map<number,readonly [Pt,Pt][]>();
+/** Same exact authored segments and Math.hypot projection as the original reader.
+ * An edge can occupy all nine neighboring buckets; testing it nine times per tile
+ * is redundant. Compile the union once for a spatial bucket, not per tile sample. */
+export function coastDistanceAtAu(x:number,y:number):number {
+  const bx=Math.floor(x/BUCKET),by=Math.floor(y/BUCKET),k=bk(bx,by);
+  let candidates=coastCandidates.get(k);
+  if(!candidates){
+    const unique=new Set<[Pt,Pt]>();
+    for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++)for(const edge of COAST_BUCKETS.get(bk(bx+i,by+j))??[])unique.add(edge);
+    candidates=[...unique];coastCandidates.set(k,candidates);
+    if(coastCandidates.size>2048)coastCandidates.delete(coastCandidates.keys().next().value!);
+  }
+  let best=Infinity;for(const [a,b]of candidates){const d=dSeg(x,y,a,b);if(d<best)best=d;}
+  return best;
+}
 
 export const BIOME_NAMES = ['meadow', 'forest', 'ancient', 'conifer', 'marsh', 'desert', 'scrub_dry_steppe', 'rock', 'snow', 'volcanic', 'toxic', 'beach'] as const;
 /** WMP-04R1 code -> existing SOH tile. Same mapping as the live WMP-04R1 scenes (no new tileset). */
@@ -138,7 +153,7 @@ export function sampleTile(tx: number, ty: number): TileSample {
   let poi = -1; for (const r of POI_RINGS) if (inRing(r, ax, ay)) { poi = r.idx; break; }
   let zone = -1; for (const r of ZONES) if (inRing(r, ax, ay)) { zone = r.idx; break; }
   let elder = -1; for (const r of ELDER_RINGS) if (inRing(r, ax, ay)) { elder = r.idx; break; }
-  const coastDist = coastDistance(ax, ay);
+  const coastDist = coastDistanceAtAu(ax, ay);
   const biome = biomeCodeAt(ax, ay, tx, ty);
   let node: GoldNode | null = null, bridgeNode: GoldNode | null = null, dockNode: GoldNode | null = null;
   const nodes = NODE_BUCKETS.get(bk(Math.floor(ax / BUCKET), Math.floor(ay / BUCKET)));
