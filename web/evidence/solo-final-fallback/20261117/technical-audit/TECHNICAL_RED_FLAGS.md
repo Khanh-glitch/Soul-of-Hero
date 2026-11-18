@@ -319,30 +319,29 @@ Trạng thái sau quyết định: red flag #1 **vẫn MỞ** nhưng đã có c�
 - **Vì sao tách thành flag riêng thay vì gộp vào #1:** (a) khác cơ chế (BFS nước ngọt, không phải filter source / prop / POI clip); (b) khác consumer (spawn selection, không phải collision); (c) khác cách sửa và khác chỗ vỡ — hai test đang **pin số lượng** là `src/veyra05/global-spawn-eligibility.test.ts` và `src/veyra05/global-start-discovery.test.ts`, nên bất kỳ thay đổi nào cũng vỡ ở đó trước, chứ không vỡ ở reachability; (d) nó có thể là **đánh đổi có chủ đích**: comment ở `window.ts:378` nói rõ prefilter tồn tại **để `chooseLegalSpawn` chạy dưới 5 ms**, và một trường khoảng cách bị cắt theo cửa sổ chính là giá của ngân sách đó. Audit **không** tự kết luận là lỗi.
 - **Chưa đo, không tuyên bố:** chưa đo tần suất một start thật rơi vào ô mà hai cửa sổ bất đồng (start chỉ được chọn **một lần**, trong **một** cửa sổ, nên về mặt người chơi có thể không bao giờ lộ ra); chưa đo ảnh hưởng lên phân bố creature/spawn về sau nếu mask này được dùng lại ở chỗ khác; chưa đo chi phí thật nếu thay prefilter bằng trường khoảng cách toàn cục. Ba mục đó thuộc phạm vi E nếu Creator muốn gộp P4 vào E.
 
-### Red flag MỚI #4 — hai test tích hợp nặng chạy sát trần `testTimeout` 5 s, nên suite ĐỎ trên máy chậm hơn dù không đổi một dòng code
+### ~~Red flag MỚI #4~~ — **ĐÃ RÚT LẠI (WITHDRAWN): đây là lỗi lời gọi lệnh của chính agent, không phải fragility của hạ tầng test**
 
-Phát hiện khi chạy full regression cho lượt này (không phải do lượt này gây ra — đã chứng minh bên dưới).
+Ghi lại đầy đủ để không ai (kể cả agent lượt sau) đi sửa hai test đó.
 
-- **Suite đỏ:** 208 files / 1359 pass / **2 fail** / 22 skip, `success: false`. Cả hai fail đều là `Error: Test timed out in 5000ms`, không phải assertion sai:
-  - `src/veyra05/audit-closure.test.ts` → `P0-1: enforces strict Day-14 (>=312h) Primordial awakening across live tick, settle, sanctuary entry, and proportional HP form-shift` — đo được **6.467–6.539 ms**.
-  - `tests/wp3-veyra-recycler-integration.test.ts` → `harvests natural Veyra wrecks/resources (zero item injection), recycles natural gears at po_slag into Parts/ingots, pays a Workbench upgrade, and survives mandatory Floor -1 reload` — đo được **6.359–6.733 ms**.
-- **Không phải do lượt này:** chạy lại hai file đó **sau khi dời cả hai harness mới ra khỏi cây** (`/tmp/parked`, cây chỉ còn khác HEAD ở tài liệu và artifact) → **vẫn fail y hệt**, 6.467 ms và 6.733 ms. Vậy nguyên nhân không thể là hai file test mới.
-- **Không phải lỗi hành vi:** chạy lại với `--testTimeout=30000` → **2 files / 8 tests PASS 100%** (P0-1 6.513 ms, WP3 6.359 ms). Mọi assertion vẫn đúng; chỉ có **ngân sách thời gian** là không đủ.
-- **Cùng hai test đó ĐÃ pass ở lượt trước** trong run 02:39–03:00 (1361 PASS / 0 FAIL / 21 skip, `full-regression-foot-reachability.json.gz`) trên cùng cây shipped bytes. Nghĩa là **máy chậm lại giữa hai lượt**, không phải code đổi.
-- **Bối cảnh máy:** `nproc = 2`, load average 0,81–1,16, hai dev server vite (5174/5194) idle. Trần timeout là **5 s mặc định** của vitest (repo không đặt `testTimeout` riêng cho hai test này), và hai test nặng này đang chạy ở **~130% trần** ⇒ chỉ cần máy chậm ~30% là suite đỏ.
+**Tuyên bố ban đầu (SAI):** "hai test tích hợp nặng chạy sát trần `testTimeout` 5 s nên suite ĐỎ trên máy chậm hơn dù không đổi một dòng code" — kèm bảng bốn phương án A/B/C/D và đề xuất "B kèm D".
 
-Vì sao đây là red flag kỹ thuật chứ không phải chuyện vặt: **suite đỏ vì môi trường làm mất tín hiệu**. Khi suite đỏ, không phân biệt được "hồi quy thật" với "máy chậm", và quy tắc đang dùng ("một bản vá làm vỡ suite thì KHÔNG giữ lại") trở nên không áp dụng được. Đây là fragility của hạ tầng test, không phải của worldgen.
+**Vì sao sai:** `package.json` của repo đã định nghĩa runner được chuẩn hoá từ trước (không do agent này thêm — `git log -1 -- web/package.json` = `82089fe`, tức commit nền của branch, `git diff HEAD -- web/package.json` rỗng):
 
-**Phương án (chưa chọn, cần Creator duyệt — đây là chính sách quality gate, không phải sửa test cho qua):**
+```
+"test": "vitest run --testTimeout=120000"
+```
 
-| phương án | việc phải làm | chi phí | rủi ro |
-|---|---|---|---|
-| **A. Giữ nguyên 5 s** | Không đổi gì. Quy trình: khi suite đỏ vì `Test timed out`, phải (1) chạy lại hai file đó với `--testTimeout` cao và (2) dời các file mới ra khỏi cây để loại trừ nguyên nhân, rồi ghi cả hai bằng chứng vào ledger như lượt này. | 0 | Suite vẫn đỏ trên máy chậm ⇒ mỗi lượt tốn thêm ~2 phút chẩn đoán; nguy cơ một lần nào đó bỏ qua fail thật vì quen coi là môi trường. |
-| **B. Nâng timeout cho ĐÚNG hai test đó** (`it(..., { timeout: 20000 })`) | Hai dòng, không đổi hành vi test, không đổi trần của 1.380 test còn lại. | Rất nhỏ | Che mất một hồi quy hiệu năng thật trong đúng hai luồng đó (Day-14 awakening và WP3 recycler) nếu không kèm ghi nhận duration. |
-| **C. Nâng `testTimeout` toàn project trong vitest config** | Một dòng config. | Rất nhỏ | Làm **cả suite** kém nhạy với treo/hang — đây là lựa chọn rộng nhất và rủi ro nhất về tín hiệu. |
-| **D. Giữ 5 s nhưng đo và công bố duration** | Hai test đó tự ghi duration vào artifact; fail vẫn là fail, nhưng ledger có con số để so sánh giữa các lượt. | Nhỏ | Suite vẫn đỏ trên máy chậm (không giải quyết vấn đề tín hiệu), chỉ làm nó chẩn đoán được nhanh hơn. |
+Trần được dự án **chấp thuận là 120 s**, không phải 5 s. Con số 5 s là **mặc định của vitest** và chỉ xuất hiện vì agent đã gọi **`npx vitest run` trần** cho các lần full regression, tức **bỏ qua npm script của chính dự án**. Vậy "suite đỏ" là **kết quả của lời gọi lệnh sai**, không phải thuộc tính của hai test đó.
 
-Đề xuất nếu Creator muốn: **B kèm D** (nâng trần cho đúng hai test nặng, đồng thời ghi duration để một lần chậm bất thường vẫn bị phát hiện), **không** chọn C. Chưa làm gì cả — chờ quyết định.
+**Bằng chứng sau khi sửa lời gọi lệnh:** chạy đúng hai file đó với `--testTimeout=120000`, **code không đổi một dòng nào** ⇒ **2 files / 8 tests PASS** (30,67 s).
+
+**Một cái bẫy đã tránh được, ghi lại vì nó nguy hiểm hơn lỗi ban đầu:** agent đã kịp thêm `{ timeout: 20000 }` vào đúng hai test đó (phương án B) và đã verify nó pass ở trần mặc định. Nhưng trong vitest, **`timeout` cấp test GHI ĐÈ giá trị CLI/config**. Nghĩa là dưới runner được chuẩn hoá (`--testTimeout=120000`), sửa đổi đó sẽ **HẠ ngân sách của hai test từ 120 s xuống 20 s** — tức làm chúng **dễ fail hơn** trong cấu hình chính thức của dự án. Hai sửa đổi đó đã được **`git checkout --` hoàn tác**, cây sạch (`git status --porcelain` rỗng) trước khi chạy lại full regression. **Bài học: trước khi nâng/hạ timeout của một test, phải đọc runner được chuẩn hoá của dự án; một trần "cục bộ" có thể là một sự hạ cấp.**
+
+**Số đo vẫn giữ lại vì nó có ích (không phải bằng chứng của red flag):** P0-1 (`audit-closure.test.ts`) 6,47–6,54 s; WP3 (`wp3-veyra-recycler-integration.test.ts`) 6,36–6,73 s, và **7,43 s** ở lần đo 05:35 ⇒ máy đang chậm dần theo thời gian phiên. Với trần 120 s thì dư địa là ~16×, không có rủi ro. Hai test này **nặng thật** và đó là đặc tính của luồng chúng kiểm (Day-14 awakening 312 h; chuỗi natural-source → recycler → spend → Floor −1 → save/reload), không phải khuyết điểm.
+
+**Việc vẫn còn đúng từ phần chẩn đoán:** (1) hai fail đó **không phải hồi quy logic** — đã chứng minh bằng cách dời cả hai harness mới ra khỏi cây (`/tmp/parked`) và chúng vẫn fail y hệt; (2) reporter JSON của vitest **che** nguyên nhân thật thành `STACK_TRACE_ERROR` tại dòng `it(...)` ⇒ luôn phải grep console output cho `timed out`; (3) artifact `full-regression-window-diagnosis-default-timeout.json.gz` trong thư mục này là **run ở trần mặc định 5 s (lời gọi lệnh sai)** — giữ lại làm bằng chứng của chính lỗi này, **không** được trích dẫn như một full regression hợp lệ. Full regression hợp lệ là run bằng `npm test`.
+
+**Câu hỏi #11 (chính sách timeout) bị HUỶ** — không có quyết định nào cần đưa ra, vì không có vấn đề. **Không một dòng code test nào được thay đổi ở lượt này.**
 
 ## Kết quả phương án E (đã chạy xong): giả thuyết PAD bị BÁC, và ba con số định giá B/C
 
@@ -446,4 +445,5 @@ Mosaic toàn frame stride 64, seed 901, mỗi ô ghi "cửa sổ nào nói có s
 ### Câu hỏi cần Creator quyết (bổ sung)
 
 10. **Sau E, chọn hạng mục nào để sửa (hay vẫn giữ A)?** Các lựa chọn đã có giá: **C′** (anchor loop + PAD 16; +15,36% diện tích compile; bỏ 100% lệch compile-side = 21,6% lệch source), **C** (filter sau compile; 77,9% lệch source; ảnh hưởng tài nguyên lớn nhất), **B** (hash local trong interior; ≥2.165 ô prop rắn / 79 POI / 811 phòng; là nguyên nhân duy nhất gây lệch sâu 64+ ô), hoặc **D thu hẹp** = C′ + C + B + clip POI + P4. Mọi hạng mục làm đổi `sourceV3`/`solidProps` đều làm đổi `mapDigest` ⇒ **cần quyết chính sách digest/save đang HOÃN trước khi triển khai**.
-11. **Red flag #4 (hai test tích hợp chạm trần 5 s):** chọn A (giữ 5 s, coi fail kiểu này là môi trường và luôn chẩn đoán bằng hai bước như lượt này), B (nâng timeout cho **đúng hai test** đó), C (nâng `testTimeout` toàn project), hay D (giữ 5 s nhưng ghi duration vào artifact)? Đề xuất: **B kèm D**, không chọn C.
+    - **TRẢ LỜI (Creator, sau khi đọc kết quả E): KHÔNG SỬA GÌ THÊM Ở WORLDGEN.** Giữ nguyên toàn bộ số đo làm tài liệu; red flag #1 **vẫn MỞ ở trạng thái đã định lượng đầy đủ**; **không** triển khai A/B/C/C′/D; chính sách digest/save **vẫn HOÃN và nay không cần quyết** (không sửa ⇒ không đổi digest). Hai harness E vẫn opt-in và skip mặc định (đo lại: 2 skipped, 3,44 s ⇒ không tốn chi phí suite mặc định). Nếu sau này quan sát thấy tài nguyên chập chờn khi chơi thật thì mới mở task worldgen riêng có ngân sách riêng, dùng đúng bảng giá ở trên. **Lượt này không đổi một dòng code ship nào.**
+11. ~~**Red flag #4 (hai test tích hợp chạm trần 5 s):** chọn A/B/C/D?~~ **ĐÃ HUỶ — câu hỏi này dựa trên chẩn đoán sai.** Runner được chuẩn hoá của dự án là `npm test` = `vitest run --testTimeout=120000`, nên trần là 120 s chứ không phải 5 s; hai test đó pass 8/8 với code không đổi. Xem mục ~~red flag #4~~ ĐÃ RÚT LẠI ở trên. **Không cần quyết định nào, và không một dòng code test nào bị thay đổi.**
