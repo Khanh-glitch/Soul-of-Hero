@@ -1,0 +1,3461 @@
+{
+  "schema": "veyra-window-invariance-followup-v1",
+  "executedAt": "2026-11-18T04:37:07.893Z",
+  "engineRevision": "working tree",
+  "scope": "READ-ONLY follow-up diagnosis (Creator option E). No worldgen, engine, map, law or shipped-data change; no option chosen; no fix implemented.",
+  "config": {
+    "seeds": "901",
+    "e1Pairs": 24,
+    "padShipped": 8,
+    "padSweep": "8,16,24,32",
+    "slideStep": 64,
+    "placementRules": 4,
+    "e3": {
+      "enabled": true,
+      "stride": 64,
+      "seed": 901
+    }
+  },
+  "notes": [
+    "Windows are entered through a QA inspection landing (qaUsed=true) purely so a real RunState and therefore the real blockGrid/source layer exist. QA landings are never playable evidence.",
+    "E1 reconstructs only the two inputs of the compile eligibility flood (padded walkable, padded anchors) and never re-runs source drawing, because the draw is global-keyed and therefore cannot differ per window. The reconstruction is validated before it is believed.",
+    "E2 reads every authored POI in the frame, so its blast-radius counts are complete for authored compounds and make no claim about procedural (non-authored) POIs beyond what it measures."
+  ],
+  "quotes": {
+    "compileReachedGate": {
+      "file": "src/game/world-economy.ts",
+      "line": 71,
+      "text": "const i=y*m.width+x, biome=m.biome[i]; if(!m.walkable[i]||!reached[i]||m.protected[i]||m.road[i]||['water','road','floor','wall','lava'].includes(biome)||m.slope[i]>.6)continue;"
+    },
+    "compileReachedIsUnionOfAnchorFloods": {
+      "file": "src/game/world-economy.ts",
+      "line": 66,
+      "text": "const reached=new Uint8Array(n); for(const s of m.starts){const d=reachable(m,s.x,s.y);if(d[s.y*m.width+s.x]<0) errors.push(`start ${s.id} is not walkable`);for(let i=0;i<n;i++)if(d[i]>=0)reached[i]=1;}"
+    },
+    "compileDrawIsGlobalKeyed": {
+      "file": "src/game/world-economy.ts",
+      "line": 87,
+      "text": "const gx=x+(m.origin?.x??0),gy=y+(m.origin?.y??0);"
+    },
+    "compileDrawHashUsesGlobal": {
+      "file": "src/game/world-economy.ts",
+      "line": 88,
+      "text": "for(const [key,p] of Object.entries(rates)){ const u=Math.max(hash2(gx,gy,salt ^ stableHash(key)),1e-9);const score=-Math.log(u)/p;if(score<best){best=score;choice=key;} }"
+    },
+    "compileBlockerCompetitionIsExtentBound": {
+      "file": "src/game/world-economy.ts",
+      "line": 115,
+      "text": "const accepted=new Uint8Array(n);for(const i of blockers){const x=i%m.width,y=Math.floor(i/m.width);if(OFFSETS.some(([dx,dy])=>accepted[(y+dy)*m.width+x+dx]))out[i]=null;else accepted[i]=1;}"
+    },
+    "compileIsolationCleanupFloodsFromStarts": {
+      "file": "src/game/world-economy.ts",
+      "line": 119,
+      "text": "const accessible = new Uint8Array(n); for (const start of m.starts) { const d=reachable({...m,walkable:pass},start.x,start.y); for(let i=0;i<n;i++) if(d[i]>=0) accessible[i]=1; }"
+    },
+    "padConstant": {
+      "file": "src/veyra05/window.ts",
+      "line": 188,
+      "text": "const PAD = 8, PW = WW + PAD * 2, PH = WH + PAD * 2, PN = PW * PH;"
+    },
+    "pAnchorLoopIsClippedToInnerRect": {
+      "file": "src/veyra05/window.ts",
+      "line": 308,
+      "text": "for (let py = 8; py < PH - 8; py++) {"
+    },
+    "pAnchorGlobalLatticeRule": {
+      "file": "src/veyra05/window.ts",
+      "line": 310,
+      "text": "if ((gy & 31) !== 16) continue;"
+    },
+    "pAnchorRequiresWalkable": {
+      "file": "src/veyra05/window.ts",
+      "line": 314,
+      "text": "if (pWalk[py * PW + px]) pAnchors.push({ id: `g_${gx}_${gy}`, x: px, y: py });"
+    },
+    "pWalkDefinition": {
+      "file": "src/veyra05/window.ts",
+      "line": 229,
+      "text": "pWalk[pi] = +(!water && !isCliff);"
+    },
+    "paddedPoiTileClip": {
+      "file": "src/veyra05/window.ts",
+      "line": 199,
+      "text": "if (px >= 0 && py >= 0 && px < PW && py < PH) paddedPoiTiles.set(py * PW + px, t);"
+    },
+    "paddedOrigin": {
+      "file": "src/veyra05/window.ts",
+      "line": 189,
+      "text": "const paddedWin: WindowSpec = { originTx: win.originTx - PAD, originTy: win.originTy - PAD, w: PW, h: PH };"
+    },
+    "postCompileFilter": {
+      "file": "src/veyra05/window.ts",
+      "line": 369,
+      "text": "if (sk && wReached[i]) sourceV3[i] = sk;"
+    },
+    "interiorHashIsLocal": {
+      "file": "src/veyra05/arch/interior.ts",
+      "line": 19,
+      "text": "const hash = (x: number, y: number, s = 0) => { let h = (x * 374761393 + y * 668265263 + s * 2246822519) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); h ^= h >>> 16; return (h >>> 0) / 4294967296; };"
+    },
+    "interiorLocalKey": {
+      "file": "src/veyra05/arch/interior.ts",
+      "line": 18,
+      "text": "const KEY = (x: number, y: number) => y * WW + x;"
+    },
+    "landmarkRejectedNearBorder": {
+      "file": "src/veyra05/floors.ts",
+      "line": 297,
+      "text": "if (cx <= 1 || cy <= 1 || cx >= WW - 2 || cy >= WH - 2) return false;"
+    },
+    "floorStackCopiesWorldTiles": {
+      "file": "src/veyra05/floors.ts",
+      "line": 453,
+      "text": "const tiles = Uint8Array.from(base.tiles);"
+    },
+    "spawnEligibleIsTheOnlyConsumer": {
+      "file": "src/game/engine.ts",
+      "line": 147,
+      "text": "const mask=candidateMask ?? w.spawnEligible;"
+    },
+    "solidPropMakesClass2": {
+      "file": "src/game/engine.ts",
+      "line": 579,
+      "text": "if (layer.solidProps[i]) c = 2;"
+    }
+  },
+  "e1": {
+    "pairsPlanned": 24,
+    "pairsRead": 24,
+    "pairsFailed": 0,
+    "validation": {
+      "windowsValidated": 48,
+      "nonSalvageSources": 212804,
+      "sourcesOnUnreachedCells": 0,
+      "sourcesOnUnreachedCellsExamples": [],
+      "sourcesRejectedByReconstructedPostFilter": 0,
+      "sourcesRejectedByReconstructedPostFilterExamples": [],
+      "innerAnchorsPerWindow": [
+        4,
+        8,
+        12,
+        15,
+        15,
+        14,
+        16,
+        16,
+        13,
+        16,
+        16,
+        16,
+        16,
+        14,
+        15,
+        15,
+        16,
+        13,
+        10,
+        7,
+        13,
+        15,
+        15,
+        13,
+        16,
+        16,
+        15,
+        15,
+        16,
+        15,
+        11,
+        13,
+        15,
+        15,
+        16,
+        14,
+        11,
+        13,
+        13,
+        15,
+        16,
+        16,
+        16,
+        13,
+        15,
+        16,
+        11,
+        6
+      ],
+      "innerWalkableCells": 1920000,
+      "innerWalkableDisagreements": 11551,
+      "innerWalkableDisagreementsOnAuthoredStamps": 11551,
+      "innerWalkableUnexplained": 0,
+      "innerWalkableUnexplainedExamples": []
+    },
+    "anchors": {
+      "perWindow": [
+        15,
+        22,
+        29,
+        32,
+        31,
+        33,
+        35,
+        35,
+        30,
+        35,
+        36,
+        36,
+        33,
+        34,
+        33,
+        28,
+        31,
+        24,
+        16,
+        12,
+        32,
+        34,
+        34,
+        35,
+        34,
+        33,
+        34,
+        33,
+        34,
+        32,
+        30,
+        26,
+        36,
+        36,
+        36,
+        36,
+        29,
+        31,
+        31,
+        34,
+        36,
+        35,
+        32,
+        22,
+        32,
+        34,
+        22,
+        10
+      ],
+      "latticeSpanLocal": [
+        16,
+        176
+      ],
+      "anchorFreeBandLow": 16,
+      "anchorFreeBandHigh": 23
+    },
+    "sourceDisagreements": 1105,
+    "residueIdenticalSlice": 439,
+    "byExplanation": {
+      "step1_compileSideFloodDiffers": 239,
+      "step2_postCompileFilterDiffers": 861,
+      "step3_neitherSoALaterPassInsideTheCompileDiffers": 5
+    },
+    "counterfactual": {
+      "scoredOn": "every sampled non-salvage source disagreement cell, as a 2x2 against the shipped policy",
+      "cellsWhereShippedCompileFloodDiffers": 239,
+      "policies": {
+        "shipped_innerOnly_pad8": {
+          "pad": 8,
+          "anchorLoopClippedToInnerRect": true,
+          "anchorsPerWindowMedianA": 32,
+          "anchorsPerWindowMedianB": 33,
+          "compileAreaCells": 46656,
+          "compileAreaGrowthVsShippedPct": 0,
+          "shippedDiffersAndPolicyStillDiffers": 239,
+          "shippedDiffersButPolicyAgrees": 0,
+          "shippedAgreesButPolicyDiffers": 0,
+          "shareOfShippedDifferencesRemovedPct": 0
+        },
+        "fullPaddedRect_pad8": {
+          "pad": 8,
+          "anchorLoopClippedToInnerRect": false,
+          "anchorsPerWindowMedianA": 32,
+          "anchorsPerWindowMedianB": 33,
+          "compileAreaCells": 46656,
+          "compileAreaGrowthVsShippedPct": 0,
+          "shippedDiffersAndPolicyStillDiffers": 239,
+          "shippedDiffersButPolicyAgrees": 0,
+          "shippedAgreesButPolicyDiffers": 0,
+          "shareOfShippedDifferencesRemovedPct": 0
+        },
+        "fullPaddedRect_pad16": {
+          "pad": 16,
+          "anchorLoopClippedToInnerRect": false,
+          "anchorsPerWindowMedianA": 57,
+          "anchorsPerWindowMedianB": 58,
+          "compileAreaCells": 53824,
+          "compileAreaGrowthVsShippedPct": 15.36,
+          "shippedDiffersAndPolicyStillDiffers": 0,
+          "shippedDiffersButPolicyAgrees": 239,
+          "shippedAgreesButPolicyDiffers": 0,
+          "shareOfShippedDifferencesRemovedPct": 100
+        },
+        "fullPaddedRect_pad24": {
+          "pad": 24,
+          "anchorLoopClippedToInnerRect": false,
+          "anchorsPerWindowMedianA": 57,
+          "anchorsPerWindowMedianB": 58,
+          "compileAreaCells": 61504,
+          "compileAreaGrowthVsShippedPct": 31.82,
+          "shippedDiffersAndPolicyStillDiffers": 0,
+          "shippedDiffersButPolicyAgrees": 239,
+          "shippedAgreesButPolicyDiffers": 0,
+          "shareOfShippedDifferencesRemovedPct": 100
+        },
+        "fullPaddedRect_pad32": {
+          "pad": 32,
+          "anchorLoopClippedToInnerRect": false,
+          "anchorsPerWindowMedianA": 57,
+          "anchorsPerWindowMedianB": 58,
+          "compileAreaCells": 69696,
+          "compileAreaGrowthVsShippedPct": 49.38,
+          "shippedDiffersAndPolicyStillDiffers": 0,
+          "shippedDiffersButPolicyAgrees": 239,
+          "shippedAgreesButPolicyDiffers": 0,
+          "shareOfShippedDifferencesRemovedPct": 100
+        }
+      },
+      "reading": "This scores only the COMPILE-SIDE flood, which the ladder below shows is the smaller part of the problem. A policy that removes a compile-side flood difference does not by itself guarantee identical output: the per-cell draw is global-keyed, but the blocker competition and the isolation cleanup inside compileEconomy remain extent-bound."
+    },
+    "byBand": {
+      "insideAnchorLattice": 298,
+      "inAnchorFreeBand": 807
+    },
+    "paddedMarginOfDisagreements": {
+      "8-10": 302,
+      "11-15": 324,
+      "16-23": 321,
+      "24-31": 98,
+      "32+": 60
+    },
+    "padSweep": {
+      "8": {
+        "paddedRectCells": 46656,
+        "growthVsShippedPct": 0,
+        "reachedDiffers": 239,
+        "disagreementsStillUnexplained": 866
+      },
+      "16": {
+        "paddedRectCells": 53824,
+        "growthVsShippedPct": 15.36,
+        "reachedDiffers": 239,
+        "disagreementsStillUnexplained": 866
+      },
+      "24": {
+        "paddedRectCells": 61504,
+        "growthVsShippedPct": 31.82,
+        "reachedDiffers": 239,
+        "disagreementsStillUnexplained": 866
+      },
+      "32": {
+        "paddedRectCells": 69696,
+        "growthVsShippedPct": 49.38,
+        "reachedDiffers": 239,
+        "disagreementsStillUnexplained": 866
+      }
+    },
+    "examples": [
+      {
+        "globalTile": [
+          1730,
+          1024
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          194,
+          0
+        ],
+        "localB": [
+          130,
+          0
+        ],
+        "sourceA": null,
+        "sourceB": "rock",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 8,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1732,
+          1024
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          196,
+          0
+        ],
+        "localB": [
+          132,
+          0
+        ],
+        "sourceA": null,
+        "sourceB": "rock",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 8,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1715,
+          1025
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          179,
+          1
+        ],
+        "localB": [
+          115,
+          1
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 9,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1717,
+          1025
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          181,
+          1
+        ],
+        "localB": [
+          117,
+          1
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 9,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1723,
+          1025
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          187,
+          1
+        ],
+        "localB": [
+          123,
+          1
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 9,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1726,
+          1026
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          190,
+          2
+        ],
+        "localB": [
+          126,
+          2
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 10,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1730,
+          1026
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          194,
+          2
+        ],
+        "localB": [
+          130,
+          2
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 10,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1714,
+          1027
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          178,
+          3
+        ],
+        "localB": [
+          114,
+          3
+        ],
+        "sourceA": null,
+        "sourceB": "pine",
+        "tile": "forest",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 11,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1728,
+          1027
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          192,
+          3
+        ],
+        "localB": [
+          128,
+          3
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 11,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1715,
+          1028
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          179,
+          4
+        ],
+        "localB": [
+          115,
+          4
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 12,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1724,
+          1028
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          188,
+          4
+        ],
+        "localB": [
+          124,
+          4
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 12,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1727,
+          1028
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          191,
+          4
+        ],
+        "localB": [
+          127,
+          4
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 12,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1733,
+          1028
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          197,
+          4
+        ],
+        "localB": [
+          133,
+          4
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 10,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1715,
+          1030
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          179,
+          6
+        ],
+        "localB": [
+          115,
+          6
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 14,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1717,
+          1030
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          181,
+          6
+        ],
+        "localB": [
+          117,
+          6
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 14,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1729,
+          1030
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          193,
+          6
+        ],
+        "localB": [
+          129,
+          6
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 14,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1731,
+          1030
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          195,
+          6
+        ],
+        "localB": [
+          131,
+          6
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 12,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1716,
+          1031
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          180,
+          7
+        ],
+        "localB": [
+          116,
+          7
+        ],
+        "sourceA": null,
+        "sourceB": "pine",
+        "tile": "forest",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 15,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1724,
+          1031
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          188,
+          7
+        ],
+        "localB": [
+          124,
+          7
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 15,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1717,
+          1032
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          181,
+          8
+        ],
+        "localB": [
+          117,
+          8
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 16,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1719,
+          1032
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          183,
+          8
+        ],
+        "localB": [
+          119,
+          8
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 16,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1727,
+          1032
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          191,
+          8
+        ],
+        "localB": [
+          127,
+          8
+        ],
+        "sourceA": null,
+        "sourceB": "crystal",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 16,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1730,
+          1032
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          194,
+          8
+        ],
+        "localB": [
+          130,
+          8
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 13,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      },
+      {
+        "globalTile": [
+          1716,
+          1033
+        ],
+        "stratum": "scene:Greywater Hamlet",
+        "samePoiSlice": true,
+        "windowA": "veyra05-at-1536-1024",
+        "windowB": "veyra05-at-1600-1024",
+        "localA": [
+          180,
+          9
+        ],
+        "localB": [
+          116,
+          9
+        ],
+        "sourceA": null,
+        "sourceB": "snowpine",
+        "tile": "snow",
+        "classA": 0,
+        "classB": 2,
+        "insideAnchorLattice": false,
+        "paddedMargin": 17,
+        "reachedExplainedAtPad": null,
+        "poiIdsA": [
+          "po_greywater",
+          "po_pumphouse"
+        ],
+        "poiIdsB": [
+          "po_greywater",
+          "po_pumphouse"
+        ]
+      }
+    ],
+    "totalMs": 28727.2
+  },
+  "e2": {
+    "authoredPoisInFrame": 81,
+    "poisRead": 81,
+    "poisFailed": 0,
+    "roomsTotal": 811,
+    "propsTotal": 740,
+    "planLevelsTotal": 190,
+    "bboxCellsTotal": 448463,
+    "solidPropsCellsThatMove": 2165,
+    "shareOfBboxCellsThatMovePct": 0.483,
+    "poisWithAnyMovingProp": 79,
+    "deepestMarginOfMovingCells": 67,
+    "perPoi": [
+      {
+        "poi": "po_hook",
+        "name": "Hook Village",
+        "arche": "village",
+        "atTile": [
+          2600,
+          670
+        ],
+        "bbox": [
+          2547,
+          626,
+          2652,
+          713
+        ],
+        "windows": [
+          "veyra05-at-2496-512",
+          "veyra05-at-2560-512"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 28,
+        "authoredProps": 33,
+        "bboxCellsInsideWindowA": 7998,
+        "solidPropsCellsThatMove": 111,
+        "sharePct": 1.39,
+        "deepestMarginOfMovingCells": 66
+      },
+      {
+        "poi": "po_gulfhead",
+        "name": "Gulfhead",
+        "arche": "port",
+        "atTile": [
+          2104,
+          1756
+        ],
+        "bbox": [
+          2053,
+          1719,
+          2154,
+          1792
+        ],
+        "windows": [
+          "veyra05-at-1984-1600",
+          "veyra05-at-2048-1600"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 33,
+        "authoredProps": 25,
+        "bboxCellsInsideWindowA": 7548,
+        "solidPropsCellsThatMove": 94,
+        "sharePct": 1.25,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_westmouth",
+        "name": "Westmouth",
+        "arche": "port",
+        "atTile": [
+          704,
+          1112
+        ],
+        "bbox": [
+          656,
+          1073,
+          751,
+          1150
+        ],
+        "windows": [
+          "veyra05-at-576-960",
+          "veyra05-at-640-960"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 31,
+        "authoredProps": 24,
+        "bboxCellsInsideWindowA": 7488,
+        "solidPropsCellsThatMove": 91,
+        "sharePct": 1.22,
+        "deepestMarginOfMovingCells": 64
+      },
+      {
+        "poi": "po_saltharbor",
+        "name": "Saltwick Harbor",
+        "arche": "port",
+        "atTile": [
+          3092,
+          668
+        ],
+        "bbox": [
+          3042,
+          626,
+          3141,
+          709
+        ],
+        "windows": [
+          "veyra05-at-2944-512",
+          "veyra05-at-3008-512"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 30,
+        "authoredProps": 24,
+        "bboxCellsInsideWindowA": 8400,
+        "solidPropsCellsThatMove": 83,
+        "sharePct": 0.99,
+        "deepestMarginOfMovingCells": 58
+      },
+      {
+        "poi": "po_sandgate",
+        "name": "Sandgate",
+        "arche": "port",
+        "atTile": [
+          1408,
+          2248
+        ],
+        "bbox": [
+          1358,
+          2205,
+          1457,
+          2290
+        ],
+        "windows": [
+          "veyra05-at-1280-2112",
+          "veyra05-at-1344-2112"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 27,
+        "authoredProps": 19,
+        "bboxCellsInsideWindowA": 8600,
+        "solidPropsCellsThatMove": 82,
+        "sharePct": 0.95,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_cindercamp",
+        "name": "Cinder Camp",
+        "arche": "village",
+        "atTile": [
+          3192,
+          1768
+        ],
+        "bbox": [
+          3145,
+          1733,
+          3238,
+          1802
+        ],
+        "windows": [
+          "veyra05-at-3072-1664",
+          "veyra05-at-3136-1664"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 26,
+        "authoredProps": 31,
+        "bboxCellsInsideWindowA": 6580,
+        "solidPropsCellsThatMove": 70,
+        "sharePct": 1.06,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_ironharbor",
+        "name": "Ironholm Harbor",
+        "arche": "port",
+        "atTile": [
+          2216,
+          2528
+        ],
+        "bbox": [
+          2168,
+          2489,
+          2263,
+          2566
+        ],
+        "windows": [
+          "veyra05-at-2112-2368",
+          "veyra05-at-2176-2368"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 28,
+        "authoredProps": 21,
+        "bboxCellsInsideWindowA": 6864,
+        "solidPropsCellsThatMove": 59,
+        "sharePct": 0.86,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_academy",
+        "name": "Argus Academy",
+        "arche": "research",
+        "atTile": [
+          1872,
+          524
+        ],
+        "bbox": [
+          1827,
+          490,
+          1916,
+          557
+        ],
+        "windows": [
+          "veyra05-at-1728-384",
+          "veyra05-at-1792-384"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 22,
+        "authoredProps": 33,
+        "bboxCellsInsideWindowA": 6120,
+        "solidPropsCellsThatMove": 58,
+        "sharePct": 0.95,
+        "deepestMarginOfMovingCells": 64
+      },
+      {
+        "poi": "po_greywater",
+        "name": "Greywater Hamlet",
+        "arche": "village",
+        "atTile": [
+          1624,
+          1184
+        ],
+        "bbox": [
+          1571,
+          1138,
+          1676,
+          1229
+        ],
+        "windows": [
+          "veyra05-at-1472-1024",
+          "veyra05-at-1536-1024"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 23,
+        "authoredProps": 36,
+        "bboxCellsInsideWindowA": 8686,
+        "solidPropsCellsThatMove": 56,
+        "sharePct": 0.64,
+        "deepestMarginOfMovingCells": 56
+      },
+      {
+        "poi": "po_ember",
+        "name": "Emberport",
+        "arche": "port",
+        "atTile": [
+          2488,
+          1676
+        ],
+        "bbox": [
+          2442,
+          1641,
+          2533,
+          1710
+        ],
+        "windows": [
+          "veyra05-at-2368-1536",
+          "veyra05-at-2432-1536"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 27,
+        "authoredProps": 20,
+        "bboxCellsInsideWindowA": 6440,
+        "solidPropsCellsThatMove": 55,
+        "sharePct": 0.85,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_oasis",
+        "name": "Mirage Camp",
+        "arche": "village",
+        "atTile": [
+          1336,
+          1968
+        ],
+        "bbox": [
+          1289,
+          1933,
+          1382,
+          2002
+        ],
+        "windows": [
+          "veyra05-at-1216-1856",
+          "veyra05-at-1280-1856"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 27,
+        "authoredProps": 32,
+        "bboxCellsInsideWindowA": 6580,
+        "solidPropsCellsThatMove": 51,
+        "sharePct": 0.78,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_southfoot",
+        "name": "Southfoot Landing",
+        "arche": "port",
+        "atTile": [
+          2392,
+          2140
+        ],
+        "bbox": [
+          2346,
+          2104,
+          2437,
+          2175
+        ],
+        "windows": [
+          "veyra05-at-2240-1984",
+          "veyra05-at-2304-1984"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 9,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 6624,
+        "solidPropsCellsThatMove": 50,
+        "sharePct": 0.75,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_slag",
+        "name": "Slagworks Foundry",
+        "arche": "smelter",
+        "atTile": [
+          2380,
+          1872
+        ],
+        "bbox": [
+          2336,
+          1840,
+          2423,
+          1903
+        ],
+        "windows": [
+          "veyra05-at-2240-1728",
+          "veyra05-at-2304-1728"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 13,
+        "authoredProps": 8,
+        "bboxCellsInsideWindowA": 5632,
+        "solidPropsCellsThatMove": 48,
+        "sharePct": 0.85,
+        "deepestMarginOfMovingCells": 50
+      },
+      {
+        "poi": "po_sulfur",
+        "name": "Sulfur Works",
+        "arche": "mine",
+        "atTile": [
+          3536,
+          1764
+        ],
+        "bbox": [
+          3484,
+          1721,
+          3587,
+          1806
+        ],
+        "windows": [
+          "veyra05-at-3392-1664",
+          "veyra05-at-3456-1664"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 10,
+        "authoredProps": 11,
+        "bboxCellsInsideWindowA": 8944,
+        "solidPropsCellsThatMove": 46,
+        "sharePct": 0.51,
+        "deepestMarginOfMovingCells": 53
+      },
+      {
+        "poi": "po_hall_eyes",
+        "name": "Hall of Eyes",
+        "arche": "elder_site",
+        "atTile": [
+          1984,
+          424
+        ],
+        "bbox": [
+          1923,
+          379,
+          2044,
+          468
+        ],
+        "windows": [
+          "veyra05-at-1856-320",
+          "veyra05-at-1920-320"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 10,
+        "authoredProps": 12,
+        "bboxCellsInsideWindowA": 10980,
+        "solidPropsCellsThatMove": 42,
+        "sharePct": 0.38,
+        "deepestMarginOfMovingCells": 58
+      },
+      {
+        "poi": "po_strait",
+        "name": "Strait Landing",
+        "arche": "port",
+        "atTile": [
+          2536,
+          980
+        ],
+        "bbox": [
+          2489,
+          942,
+          2582,
+          1017
+        ],
+        "windows": [
+          "veyra05-at-2432-832",
+          "veyra05-at-2496-832"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 9,
+        "authoredProps": 5,
+        "bboxCellsInsideWindowA": 6612,
+        "solidPropsCellsThatMove": 42,
+        "sharePct": 0.64,
+        "deepestMarginOfMovingCells": 62
+      },
+      {
+        "poi": "po_sawaion",
+        "name": "Aion Edge Sawmill",
+        "arche": "sawmill",
+        "atTile": [
+          1496,
+          1336
+        ],
+        "bbox": [
+          1454,
+          1303,
+          1537,
+          1368
+        ],
+        "windows": [
+          "veyra05-at-1344-1216",
+          "veyra05-at-1408-1216"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 12,
+        "authoredProps": 8,
+        "bboxCellsInsideWindowA": 5544,
+        "solidPropsCellsThatMove": 40,
+        "sharePct": 0.72,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_typhon",
+        "name": "Typhon's Fracture",
+        "arche": "elder_site",
+        "atTile": [
+          1112,
+          704
+        ],
+        "bbox": [
+          1048,
+          654,
+          1175,
+          753
+        ],
+        "windows": [
+          "veyra05-at-960-576",
+          "veyra05-at-1024-576"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 8,
+        "authoredProps": 12,
+        "bboxCellsInsideWindowA": 11200,
+        "solidPropsCellsThatMove": 39,
+        "sharePct": 0.35,
+        "deepestMarginOfMovingCells": 58
+      },
+      {
+        "poi": "po_rc_sandgate",
+        "name": "Sandgate Customs Strongbox",
+        "arche": "ragnarok_cache",
+        "atTile": [
+          1436,
+          2212
+        ],
+        "bbox": [
+          1406,
+          2186,
+          1465,
+          2237
+        ],
+        "windows": [
+          "veyra05-at-1280-2112",
+          "veyra05-at-1344-2112"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 2,
+        "bboxCellsInsideWindowA": 3120,
+        "solidPropsCellsThatMove": 37,
+        "sharePct": 1.19,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_oldpump",
+        "name": "Old Pumping Plant",
+        "arche": "facility",
+        "atTile": [
+          1700,
+          1970
+        ],
+        "bbox": [
+          1641,
+          1923,
+          1758,
+          2016
+        ],
+        "windows": [
+          "veyra05-at-1600-1856",
+          "veyra05-at-1664-1856"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 12,
+        "authoredProps": 10,
+        "bboxCellsInsideWindowA": 8930,
+        "solidPropsCellsThatMove": 36,
+        "sharePct": 0.4,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_kestrel",
+        "name": "Kestrel Radio Tower",
+        "arche": "facility",
+        "atTile": [
+          1400,
+          600
+        ],
+        "bbox": [
+          1339,
+          549,
+          1460,
+          650
+        ],
+        "windows": [
+          "veyra05-at-1280-448",
+          "veyra05-at-1344-448"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 7,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 11583,
+        "solidPropsCellsThatMove": 34,
+        "sharePct": 0.29,
+        "deepestMarginOfMovingCells": 61
+      },
+      {
+        "poi": "po_rc_salt",
+        "name": "Saltwick Harbor Safe",
+        "arche": "ragnarok_cache",
+        "atTile": [
+          3120,
+          644
+        ],
+        "bbox": [
+          3092,
+          622,
+          3147,
+          665
+        ],
+        "windows": [
+          "veyra05-at-3008-512",
+          "veyra05-at-3072-512"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 2,
+        "bboxCellsInsideWindowA": 2464,
+        "solidPropsCellsThatMove": 34,
+        "sharePct": 1.38,
+        "deepestMarginOfMovingCells": 60
+      },
+      {
+        "poi": "po_siloc",
+        "name": "Grain Silo Complex",
+        "arche": "warehouse",
+        "atTile": [
+          2180,
+          1520
+        ],
+        "bbox": [
+          2143,
+          1492,
+          2216,
+          1547
+        ],
+        "windows": [
+          "veyra05-at-2048-1408",
+          "veyra05-at-2112-1408"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 9,
+        "authoredProps": 4,
+        "bboxCellsInsideWindowA": 4144,
+        "solidPropsCellsThatMove": 32,
+        "sharePct": 0.77,
+        "deepestMarginOfMovingCells": 66
+      },
+      {
+        "poi": "po_ridgestop",
+        "name": "Ridge Pass Station",
+        "arche": "roadstop",
+        "atTile": [
+          2356,
+          1156
+        ],
+        "bbox": [
+          2329,
+          1132,
+          2382,
+          1179
+        ],
+        "windows": [
+          "veyra05-at-2240-1024",
+          "veyra05-at-2304-1024"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 6,
+        "authoredProps": 4,
+        "bboxCellsInsideWindowA": 2592,
+        "solidPropsCellsThatMove": 30,
+        "sharePct": 1.16,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_geo",
+        "name": "Geothermal Station",
+        "arche": "powerplant",
+        "atTile": [
+          3472,
+          1832
+        ],
+        "bbox": [
+          3426,
+          1792,
+          3517,
+          1871
+        ],
+        "windows": [
+          "veyra05-at-3328-1728",
+          "veyra05-at-3392-1728"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 8,
+        "authoredProps": 5,
+        "bboxCellsInsideWindowA": 7360,
+        "solidPropsCellsThatMove": 30,
+        "sharePct": 0.41,
+        "deepestMarginOfMovingCells": 60
+      },
+      {
+        "poi": "po_observatory",
+        "name": "Argus Observatory",
+        "arche": "observatory",
+        "atTile": [
+          1916,
+          340
+        ],
+        "bbox": [
+          1888,
+          318,
+          1943,
+          361
+        ],
+        "windows": [
+          "veyra05-at-1792-192",
+          "veyra05-at-1856-192"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 7,
+        "authoredProps": 6,
+        "bboxCellsInsideWindowA": 2464,
+        "solidPropsCellsThatMove": 28,
+        "sharePct": 1.14,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_gate",
+        "name": "Threshold Gate",
+        "arche": "gate",
+        "atTile": [
+          336,
+          1024
+        ],
+        "bbox": [
+          292,
+          988,
+          379,
+          1059
+        ],
+        "windows": [
+          "veyra05-at-192-896",
+          "veyra05-at-256-896"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 12,
+        "authoredProps": 15,
+        "bboxCellsInsideWindowA": 6336,
+        "solidPropsCellsThatMove": 28,
+        "sharePct": 0.44,
+        "deepestMarginOfMovingCells": 56
+      },
+      {
+        "poi": "po_greyquarry",
+        "name": "Greyback Quarry",
+        "arche": "quarry",
+        "atTile": [
+          1012,
+          1304
+        ],
+        "bbox": [
+          955,
+          1255,
+          1068,
+          1352
+        ],
+        "windows": [
+          "veyra05-at-896-1152",
+          "veyra05-at-960-1152"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 12,
+        "authoredProps": 12,
+        "bboxCellsInsideWindowA": 10573,
+        "solidPropsCellsThatMove": 26,
+        "sharePct": 0.25,
+        "deepestMarginOfMovingCells": 56
+      },
+      {
+        "poi": "po_westwood",
+        "name": "Westwood Hamlet",
+        "arche": "hamlet",
+        "atTile": [
+          848,
+          1484
+        ],
+        "bbox": [
+          817,
+          1458,
+          878,
+          1509
+        ],
+        "windows": [
+          "veyra05-at-704-1344",
+          "veyra05-at-768-1344"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 8,
+        "authoredProps": 4,
+        "bboxCellsInsideWindowA": 3224,
+        "solidPropsCellsThatMove": 26,
+        "sharePct": 0.81,
+        "deepestMarginOfMovingCells": 61
+      },
+      {
+        "poi": "po_obsq",
+        "name": "Obsidian Quarry",
+        "arche": "quarry",
+        "atTile": [
+          3300,
+          1552
+        ],
+        "bbox": [
+          3243,
+          1502,
+          3356,
+          1601
+        ],
+        "windows": [
+          "veyra05-at-3200-1408",
+          "veyra05-at-3264-1408"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 12,
+        "authoredProps": 12,
+        "bboxCellsInsideWindowA": 9300,
+        "solidPropsCellsThatMove": 25,
+        "sharePct": 0.27,
+        "deepestMarginOfMovingCells": 66
+      },
+      {
+        "poi": "po_ironvein",
+        "name": "Ironvein Mine",
+        "arche": "mine",
+        "atTile": [
+          2410,
+          1310
+        ],
+        "bbox": [
+          2360,
+          1271,
+          2459,
+          1348
+        ],
+        "windows": [
+          "veyra05-at-2304-1152",
+          "veyra05-at-2368-1152"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 5,
+        "authoredProps": 4,
+        "bboxCellsInsideWindowA": 7176,
+        "solidPropsCellsThatMove": 24,
+        "sharePct": 0.33,
+        "deepestMarginOfMovingCells": 64
+      },
+      {
+        "poi": "po_necropolis",
+        "name": "Necropolis of the Hollow Sun",
+        "arche": "elder_site",
+        "atTile": [
+          1208,
+          2084
+        ],
+        "bbox": [
+          1146,
+          2038,
+          1269,
+          2129
+        ],
+        "windows": [
+          "veyra05-at-1088-1984",
+          "veyra05-at-1152-1984"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 10,
+        "authoredProps": 15,
+        "bboxCellsInsideWindowA": 10856,
+        "solidPropsCellsThatMove": 24,
+        "sharePct": 0.22,
+        "deepestMarginOfMovingCells": 62
+      },
+      {
+        "poi": "po_saltlight",
+        "name": "Saltwick Light",
+        "arche": "observatory",
+        "atTile": [
+          3464,
+          524
+        ],
+        "bbox": [
+          3436,
+          503,
+          3491,
+          544
+        ],
+        "windows": [
+          "veyra05-at-3328-384",
+          "veyra05-at-3392-384"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 6,
+        "authoredProps": 2,
+        "bboxCellsInsideWindowA": 2352,
+        "solidPropsCellsThatMove": 24,
+        "sharePct": 1.02,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_falls",
+        "name": "Falls Powerhouse",
+        "arche": "powerplant",
+        "atTile": [
+          1444,
+          876
+        ],
+        "bbox": [
+          1404,
+          847,
+          1483,
+          904
+        ],
+        "windows": [
+          "veyra05-at-1344-768",
+          "veyra05-at-1408-768"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 13,
+        "authoredProps": 9,
+        "bboxCellsInsideWindowA": 4408,
+        "solidPropsCellsThatMove": 23,
+        "sharePct": 0.52,
+        "deepestMarginOfMovingCells": 65
+      },
+      {
+        "poi": "po_ironmine",
+        "name": "Ironholm Mine",
+        "arche": "mine",
+        "atTile": [
+          2372,
+          2580
+        ],
+        "bbox": [
+          2320,
+          2537,
+          2423,
+          2622
+        ],
+        "windows": [
+          "veyra05-at-2240-2432",
+          "veyra05-at-2304-2432"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 20,
+        "authoredProps": 25,
+        "bboxCellsInsideWindowA": 8944,
+        "solidPropsCellsThatMove": 23,
+        "sharePct": 0.26,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_archive",
+        "name": "Argus Archive Vaults",
+        "arche": "facility",
+        "atTile": [
+          2036,
+          452
+        ],
+        "bbox": [
+          1978,
+          405,
+          2093,
+          498
+        ],
+        "windows": [
+          "veyra05-at-1920-320",
+          "veyra05-at-1984-320"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 6,
+        "authoredProps": 6,
+        "bboxCellsInsideWindowA": 10340,
+        "solidPropsCellsThatMove": 22,
+        "sharePct": 0.21,
+        "deepestMarginOfMovingCells": 66
+      },
+      {
+        "poi": "po_fracquarry",
+        "name": "Fracture Quarry",
+        "arche": "quarry",
+        "atTile": [
+          1200,
+          1050
+        ],
+        "bbox": [
+          1143,
+          1001,
+          1256,
+          1098
+        ],
+        "windows": [
+          "veyra05-at-1088-896",
+          "veyra05-at-1152-896"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 11,
+        "authoredProps": 9,
+        "bboxCellsInsideWindowA": 9975,
+        "solidPropsCellsThatMove": 22,
+        "sharePct": 0.22,
+        "deepestMarginOfMovingCells": 53
+      },
+      {
+        "poi": "po_timberyard",
+        "name": "Verdant Timberyard",
+        "arche": "sawmill",
+        "atTile": [
+          2044,
+          908
+        ],
+        "bbox": [
+          1998,
+          869,
+          2089,
+          946
+        ],
+        "windows": [
+          "veyra05-at-1920-768",
+          "veyra05-at-1984-768"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 13,
+        "authoredProps": 7,
+        "bboxCellsInsideWindowA": 7176,
+        "solidPropsCellsThatMove": 22,
+        "sharePct": 0.31,
+        "deepestMarginOfMovingCells": 66
+      },
+      {
+        "poi": "po_emberwatch",
+        "name": "Ember Watch",
+        "arche": "observatory",
+        "atTile": [
+          3240,
+          1492
+        ],
+        "bbox": [
+          3212,
+          1471,
+          3267,
+          1512
+        ],
+        "windows": [
+          "veyra05-at-3136-1344",
+          "veyra05-at-3200-1344"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 7,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 2352,
+        "solidPropsCellsThatMove": 22,
+        "sharePct": 0.94,
+        "deepestMarginOfMovingCells": 45
+      },
+      {
+        "poi": "po_vend_gulf",
+        "name": "Gulfhead Trading House [ĐỀ XUẤT]",
+        "arche": "chest_vendor",
+        "atTile": [
+          2132,
+          1788
+        ],
+        "bbox": [
+          2105,
+          1767,
+          2158,
+          1808
+        ],
+        "windows": [
+          "veyra05-at-1984-1664",
+          "veyra05-at-2048-1664"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 2,
+        "bboxCellsInsideWindowA": 2268,
+        "solidPropsCellsThatMove": 21,
+        "sharePct": 0.93,
+        "deepestMarginOfMovingCells": 60
+      },
+      {
+        "poi": "po_rapids",
+        "name": "Rapids Portage Hut",
+        "arche": "roadstop",
+        "atTile": [
+          2300,
+          924
+        ],
+        "bbox": [
+          2275,
+          905,
+          2324,
+          942
+        ],
+        "windows": [
+          "veyra05-at-2176-768",
+          "veyra05-at-2240-768"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 5,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 1900,
+        "solidPropsCellsThatMove": 20,
+        "sharePct": 1.05,
+        "deepestMarginOfMovingCells": 62
+      },
+      {
+        "poi": "po_surtur",
+        "name": "Foundry of the First Fire",
+        "arche": "elder_site",
+        "atTile": [
+          3388,
+          1652
+        ],
+        "bbox": [
+          3319,
+          1593,
+          3456,
+          1710
+        ],
+        "windows": [
+          "veyra05-at-3264-1536",
+          "veyra05-at-3328-1536"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 11,
+        "authoredProps": 14,
+        "bboxCellsInsideWindowA": 15222,
+        "solidPropsCellsThatMove": 20,
+        "sharePct": 0.13,
+        "deepestMarginOfMovingCells": 53
+      },
+      {
+        "poi": "po_rc_meridian",
+        "name": "Meridian Archive Cache",
+        "arche": "ragnarok_cache",
+        "atTile": [
+          2276,
+          1336
+        ],
+        "bbox": [
+          2246,
+          1311,
+          2305,
+          1360
+        ],
+        "windows": [
+          "veyra05-at-2176-1216",
+          "veyra05-at-2240-1216"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 4,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 3000,
+        "solidPropsCellsThatMove": 20,
+        "sharePct": 0.67,
+        "deepestMarginOfMovingCells": 42
+      },
+      {
+        "poi": "po_gullwreck",
+        "name": "Gull Isle Wreck",
+        "arche": "ruins",
+        "atTile": [
+          3772,
+          892
+        ],
+        "bbox": [
+          3724,
+          852,
+          3819,
+          931
+        ],
+        "windows": [
+          "veyra05-at-3648-768",
+          "veyra05-at-3712-768"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 4,
+        "authoredProps": 5,
+        "bboxCellsInsideWindowA": 7680,
+        "solidPropsCellsThatMove": 19,
+        "sharePct": 0.25,
+        "deepestMarginOfMovingCells": 56
+      },
+      {
+        "poi": "po_tombs",
+        "name": "Dune Tombs",
+        "arche": "tomb",
+        "atTile": [
+          1040,
+          2172
+        ],
+        "bbox": [
+          999,
+          2141,
+          1080,
+          2202
+        ],
+        "windows": [
+          "veyra05-at-896-2048",
+          "veyra05-at-960-2048"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 4,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 5084,
+        "solidPropsCellsThatMove": 18,
+        "sharePct": 0.35,
+        "deepestMarginOfMovingCells": 65
+      },
+      {
+        "poi": "po_gullpier",
+        "name": "Tern Hut Pier",
+        "arche": "pier",
+        "atTile": [
+          3724,
+          940
+        ],
+        "bbox": [
+          3702,
+          922,
+          3745,
+          957
+        ],
+        "windows": [
+          "veyra05-at-3584-832",
+          "veyra05-at-3648-832"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 14,
+        "authoredProps": 18,
+        "bboxCellsInsideWindowA": 1584,
+        "solidPropsCellsThatMove": 18,
+        "sharePct": 1.14,
+        "deepestMarginOfMovingCells": 62
+      },
+      {
+        "poi": "po_rc_kestrel",
+        "name": "Kestrel Tower Safe",
+        "arche": "ragnarok_cache",
+        "atTile": [
+          1416,
+          636
+        ],
+        "bbox": [
+          1385,
+          609,
+          1446,
+          662
+        ],
+        "windows": [
+          "veyra05-at-1280-512",
+          "veyra05-at-1344-512"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 2,
+        "bboxCellsInsideWindowA": 3348,
+        "solidPropsCellsThatMove": 18,
+        "sharePct": 0.54,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_bonestop",
+        "name": "Bone Road Waystation",
+        "arche": "roadstop",
+        "atTile": [
+          1504,
+          1950
+        ],
+        "bbox": [
+          1480,
+          1931,
+          1527,
+          1968
+        ],
+        "windows": [
+          "veyra05-at-1344-1792",
+          "veyra05-at-1408-1792"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 5,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 1824,
+        "solidPropsCellsThatMove": 16,
+        "sharePct": 0.88,
+        "deepestMarginOfMovingCells": 32
+      },
+      {
+        "poi": "po_rc_dam",
+        "name": "Falls Dam Vault",
+        "arche": "ragnarok_cache",
+        "atTile": [
+          1508,
+          908
+        ],
+        "bbox": [
+          1479,
+          884,
+          1536,
+          931
+        ],
+        "windows": [
+          "veyra05-at-1408-768",
+          "veyra05-at-1472-768"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 4,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 2784,
+        "solidPropsCellsThatMove": 16,
+        "sharePct": 0.57,
+        "deepestMarginOfMovingCells": 42
+      },
+      {
+        "poi": "po_evac_west",
+        "name": "Westmouth Evac Pier",
+        "arche": "evac",
+        "atTile": [
+          684,
+          1160
+        ],
+        "bbox": [
+          653,
+          1136,
+          714,
+          1183
+        ],
+        "windows": [
+          "veyra05-at-576-1024",
+          "veyra05-at-640-1024"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 2,
+        "bboxCellsInsideWindowA": 2976,
+        "solidPropsCellsThatMove": 16,
+        "sharePct": 0.54,
+        "deepestMarginOfMovingCells": 50
+      },
+      {
+        "poi": "po_westbank",
+        "name": "Westbank Landing",
+        "arche": "pier",
+        "atTile": [
+          1836,
+          1860
+        ],
+        "bbox": [
+          1815,
+          1843,
+          1856,
+          1876
+        ],
+        "windows": [
+          "veyra05-at-1728-1728",
+          "veyra05-at-1792-1728"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 21,
+        "authoredProps": 24,
+        "bboxCellsInsideWindowA": 1428,
+        "solidPropsCellsThatMove": 15,
+        "sharePct": 1.05,
+        "deepestMarginOfMovingCells": 63
+      },
+      {
+        "poi": "po_vend_strait",
+        "name": "Strait Landing Counter [ĐỀ XUẤT]",
+        "arche": "chest_vendor",
+        "atTile": [
+          2572,
+          1000
+        ],
+        "bbox": [
+          2542,
+          974,
+          2601,
+          1025
+        ],
+        "windows": [
+          "veyra05-at-2432-896",
+          "veyra05-at-2496-896"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 2,
+        "bboxCellsInsideWindowA": 3120,
+        "solidPropsCellsThatMove": 15,
+        "sharePct": 0.48,
+        "deepestMarginOfMovingCells": 66
+      },
+      {
+        "poi": "po_mill",
+        "name": "Mossbrook Mill",
+        "arche": "mill",
+        "atTile": [
+          2004,
+          1460
+        ],
+        "bbox": [
+          1973,
+          1437,
+          2034,
+          1482
+        ],
+        "windows": [
+          "veyra05-at-1856-1344",
+          "veyra05-at-1920-1344"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 12,
+        "authoredProps": 6,
+        "bboxCellsInsideWindowA": 2852,
+        "solidPropsCellsThatMove": 14,
+        "sharePct": 0.49,
+        "deepestMarginOfMovingCells": 57
+      },
+      {
+        "poi": "po_cairns",
+        "name": "Sunken Cairns",
+        "arche": "ruins",
+        "atTile": [
+          940,
+          1980
+        ],
+        "bbox": [
+          891,
+          1939,
+          988,
+          2020
+        ],
+        "windows": [
+          "veyra05-at-832-1856",
+          "veyra05-at-896-1856"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 4,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 7626,
+        "solidPropsCellsThatMove": 14,
+        "sharePct": 0.18,
+        "deepestMarginOfMovingCells": 52
+      },
+      {
+        "poi": "po_rc_ironvein",
+        "name": "Foreman's Strongbox",
+        "arche": "ragnarok_cache",
+        "atTile": [
+          2444,
+          1352
+        ],
+        "bbox": [
+          2417,
+          1332,
+          2470,
+          1371
+        ],
+        "windows": [
+          "veyra05-at-2304-1216",
+          "veyra05-at-2368-1216"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 2,
+        "bboxCellsInsideWindowA": 2160,
+        "solidPropsCellsThatMove": 14,
+        "sharePct": 0.65,
+        "deepestMarginOfMovingCells": 66
+      },
+      {
+        "poi": "po_evac_south",
+        "name": "Southfoot Evac Beach",
+        "arche": "evac",
+        "atTile": [
+          2356,
+          2180
+        ],
+        "bbox": [
+          2324,
+          2155,
+          2387,
+          2204
+        ],
+        "windows": [
+          "veyra05-at-2240-2048",
+          "veyra05-at-2304-2048"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 2,
+        "bboxCellsInsideWindowA": 3200,
+        "solidPropsCellsThatMove": 14,
+        "sharePct": 0.44,
+        "deepestMarginOfMovingCells": 58
+      },
+      {
+        "poi": "po_fishcamp",
+        "name": "Fish Camp",
+        "arche": "hamlet",
+        "atTile": [
+          704,
+          1692
+        ],
+        "bbox": [
+          675,
+          1669,
+          732,
+          1714
+        ],
+        "windows": [
+          "veyra05-at-576-1536",
+          "veyra05-at-640-1536"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 4,
+        "authoredProps": 4,
+        "bboxCellsInsideWindowA": 2668,
+        "solidPropsCellsThatMove": 13,
+        "sharePct": 0.49,
+        "deepestMarginOfMovingCells": 33
+      },
+      {
+        "poi": "po_racks",
+        "name": "Kelp Racks",
+        "arche": "hamlet",
+        "atTile": [
+          3380,
+          708
+        ],
+        "bbox": [
+          3351,
+          684,
+          3408,
+          731
+        ],
+        "windows": [
+          "veyra05-at-3264-576",
+          "veyra05-at-3328-576"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 4,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 2784,
+        "solidPropsCellsThatMove": 12,
+        "sharePct": 0.43,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_wreck",
+        "name": "Wreck Isle Salvage",
+        "arche": "ruins",
+        "atTile": [
+          368,
+          1744
+        ],
+        "bbox": [
+          321,
+          1707,
+          414,
+          1780
+        ],
+        "windows": [
+          "veyra05-at-256-1600",
+          "veyra05-at-320-1600"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 4,
+        "authoredProps": 5,
+        "bboxCellsInsideWindowA": 6956,
+        "solidPropsCellsThatMove": 11,
+        "sharePct": 0.16,
+        "deepestMarginOfMovingCells": 67
+      },
+      {
+        "poi": "po_netcamp",
+        "name": "Gull Net Camp",
+        "arche": "hamlet",
+        "atTile": [
+          280,
+          1696
+        ],
+        "bbox": [
+          250,
+          1671,
+          309,
+          1720
+        ],
+        "windows": [
+          "veyra05-at-128-1536",
+          "veyra05-at-192-1536"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 3000,
+        "solidPropsCellsThatMove": 11,
+        "sharePct": 0.37,
+        "deepestMarginOfMovingCells": 38
+      },
+      {
+        "poi": "po_saltpans",
+        "name": "Salt Pans",
+        "arche": "quarry",
+        "atTile": [
+          3280,
+          644
+        ],
+        "bbox": [
+          3226,
+          602,
+          3333,
+          685
+        ],
+        "windows": [
+          "veyra05-at-3136-512",
+          "veyra05-at-3200-512"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 4,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 9072,
+        "solidPropsCellsThatMove": 11,
+        "sharePct": 0.12,
+        "deepestMarginOfMovingCells": 46
+      },
+      {
+        "poi": "po_confluence",
+        "name": "Confluence Waystation",
+        "arche": "roadstop",
+        "atTile": [
+          1836,
+          1336
+        ],
+        "bbox": [
+          1809,
+          1313,
+          1862,
+          1358
+        ],
+        "windows": [
+          "veyra05-at-1728-1216",
+          "veyra05-at-1792-1216"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 5,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 2484,
+        "solidPropsCellsThatMove": 10,
+        "sharePct": 0.4,
+        "deepestMarginOfMovingCells": 64
+      },
+      {
+        "poi": "po_glade",
+        "name": "Mosslight Glade",
+        "arche": "grove",
+        "atTile": [
+          1564,
+          1410
+        ],
+        "bbox": [
+          1531,
+          1384,
+          1596,
+          1435
+        ],
+        "windows": [
+          "veyra05-at-1408-1280",
+          "veyra05-at-1472-1280"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 4,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 3432,
+        "solidPropsCellsThatMove": 10,
+        "sharePct": 0.29,
+        "deepestMarginOfMovingCells": 32
+      },
+      {
+        "poi": "po_ironwh",
+        "name": "Ironholm Depot",
+        "arche": "warehouse",
+        "atTile": [
+          2472,
+          2580
+        ],
+        "bbox": [
+          2430,
+          2543,
+          2513,
+          2616
+        ],
+        "windows": [
+          "veyra05-at-2368-2432",
+          "veyra05-at-2432-2432"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 4,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 6068,
+        "solidPropsCellsThatMove": 10,
+        "sharePct": 0.16,
+        "deepestMarginOfMovingCells": 46
+      },
+      {
+        "poi": "po_evac_hook",
+        "name": "Hook Evac Point",
+        "arche": "evac",
+        "atTile": [
+          2784,
+          748
+        ],
+        "bbox": [
+          2752,
+          723,
+          2815,
+          772
+        ],
+        "windows": [
+          "veyra05-at-2624-640",
+          "veyra05-at-2688-640"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 2,
+        "bboxCellsInsideWindowA": 3200,
+        "solidPropsCellsThatMove": 10,
+        "sharePct": 0.31,
+        "deepestMarginOfMovingCells": 46
+      },
+      {
+        "poi": "po_lanternstn",
+        "name": "Lantern Cove Station",
+        "arche": "roadstop",
+        "atTile": [
+          2154,
+          624
+        ],
+        "bbox": [
+          2128,
+          602,
+          2180,
+          645
+        ],
+        "windows": [
+          "veyra05-at-2048-512",
+          "veyra05-at-2112-512"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 5,
+        "authoredProps": 4,
+        "bboxCellsInsideWindowA": 2332,
+        "solidPropsCellsThatMove": 9,
+        "sharePct": 0.39,
+        "deepestMarginOfMovingCells": 39
+      },
+      {
+        "poi": "po_viaduct",
+        "name": "Crushed Viaduct",
+        "arche": "ruins",
+        "atTile": [
+          1310,
+          896
+        ],
+        "bbox": [
+          1261,
+          855,
+          1358,
+          936
+        ],
+        "windows": [
+          "veyra05-at-1152-768",
+          "veyra05-at-1216-768"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 5,
+        "authoredProps": 4,
+        "bboxCellsInsideWindowA": 7462,
+        "solidPropsCellsThatMove": 9,
+        "sharePct": 0.12,
+        "deepestMarginOfMovingCells": 22
+      },
+      {
+        "poi": "po_sapgrove",
+        "name": "Sap Grove",
+        "arche": "grove",
+        "atTile": [
+          1920,
+          1280
+        ],
+        "bbox": [
+          1887,
+          1254,
+          1952,
+          1305
+        ],
+        "windows": [
+          "veyra05-at-1792-1152",
+          "veyra05-at-1856-1152"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 3432,
+        "solidPropsCellsThatMove": 9,
+        "sharePct": 0.26,
+        "deepestMarginOfMovingCells": 61
+      },
+      {
+        "poi": "po_kilns",
+        "name": "Charcoal Kilns",
+        "arche": "smelter",
+        "atTile": [
+          1810,
+          1570
+        ],
+        "bbox": [
+          1777,
+          1545,
+          1842,
+          1594
+        ],
+        "windows": [
+          "veyra05-at-1664-1408",
+          "veyra05-at-1728-1408"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 9,
+        "authoredProps": 10,
+        "bboxCellsInsideWindowA": 3300,
+        "solidPropsCellsThatMove": 8,
+        "sharePct": 0.24,
+        "deepestMarginOfMovingCells": 54
+      },
+      {
+        "poi": "po_ranger",
+        "name": "Ranger Hut",
+        "arche": "hamlet",
+        "atTile": [
+          1600,
+          1520
+        ],
+        "bbox": [
+          1569,
+          1494,
+          1630,
+          1545
+        ],
+        "windows": [
+          "veyra05-at-1472-1408",
+          "veyra05-at-1536-1408"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 4,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 3224,
+        "solidPropsCellsThatMove": 8,
+        "sharePct": 0.25,
+        "deepestMarginOfMovingCells": 61
+      },
+      {
+        "poi": "po_beacon",
+        "name": "Beacon Rock Light",
+        "arche": "observatory",
+        "atTile": [
+          536,
+          1312
+        ],
+        "bbox": [
+          507,
+          1289,
+          564,
+          1334
+        ],
+        "windows": [
+          "veyra05-at-384-1152",
+          "veyra05-at-448-1152"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 7,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 2668,
+        "solidPropsCellsThatMove": 8,
+        "sharePct": 0.3,
+        "deepestMarginOfMovingCells": 56
+      },
+      {
+        "poi": "po_gullnest",
+        "name": "Seabird Nesting Cliffs",
+        "arche": "grove",
+        "atTile": [
+          3744,
+          856
+        ],
+        "bbox": [
+          3710,
+          827,
+          3777,
+          884
+        ],
+        "windows": [
+          "veyra05-at-3584-704",
+          "veyra05-at-3648-704"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 4,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 3944,
+        "solidPropsCellsThatMove": 8,
+        "sharePct": 0.2,
+        "deepestMarginOfMovingCells": 29
+      },
+      {
+        "poi": "po_filter",
+        "name": "Delta Sluice & Filter Station",
+        "arche": "filter",
+        "atTile": [
+          1868,
+          1736
+        ],
+        "bbox": [
+          1835,
+          1710,
+          1900,
+          1761
+        ],
+        "windows": [
+          "veyra05-at-1728-1600",
+          "veyra05-at-1792-1600"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 9,
+        "authoredProps": 5,
+        "bboxCellsInsideWindowA": 3432,
+        "solidPropsCellsThatMove": 7,
+        "sharePct": 0.2,
+        "deepestMarginOfMovingCells": 38
+      },
+      {
+        "poi": "po_dpier",
+        "name": "Drowned Pier",
+        "arche": "pier",
+        "atTile": [
+          452,
+          1040
+        ],
+        "bbox": [
+          431,
+          1024,
+          472,
+          1055
+        ],
+        "windows": [
+          "veyra05-at-320-896",
+          "veyra05-at-384-896"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 17,
+        "authoredProps": 21,
+        "bboxCellsInsideWindowA": 1344,
+        "solidPropsCellsThatMove": 6,
+        "sharePct": 0.45,
+        "deepestMarginOfMovingCells": 65
+      },
+      {
+        "poi": "po_freightyard",
+        "name": "Shattered Freight Yard",
+        "arche": "ruins",
+        "atTile": [
+          1380,
+          1000
+        ],
+        "bbox": [
+          1335,
+          966,
+          1424,
+          1033
+        ],
+        "windows": [
+          "veyra05-at-1280-896",
+          "veyra05-at-1344-896"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 5,
+        "authoredProps": 4,
+        "bboxCellsInsideWindowA": 5508,
+        "solidPropsCellsThatMove": 5,
+        "sharePct": 0.09,
+        "deepestMarginOfMovingCells": 62
+      },
+      {
+        "poi": "po_pumphouse",
+        "name": "Greywater Pumphouse",
+        "arche": "filter",
+        "atTile": [
+          1700,
+          1112
+        ],
+        "bbox": [
+          1668,
+          1086,
+          1731,
+          1137
+        ],
+        "windows": [
+          "veyra05-at-1600-960",
+          "veyra05-at-1664-960"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 12,
+        "authoredProps": 10,
+        "bboxCellsInsideWindowA": 3328,
+        "solidPropsCellsThatMove": 4,
+        "sharePct": 0.12,
+        "deepestMarginOfMovingCells": 52
+      },
+      {
+        "poi": "po_meridian",
+        "name": "Meridian Research Station",
+        "arche": "research",
+        "atTile": [
+          2240,
+          1380
+        ],
+        "bbox": [
+          2195,
+          1346,
+          2284,
+          1413
+        ],
+        "windows": [
+          "veyra05-at-2112-1280",
+          "veyra05-at-2176-1280"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 4,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 6120,
+        "solidPropsCellsThatMove": 4,
+        "sharePct": 0.07,
+        "deepestMarginOfMovingCells": 56
+      },
+      {
+        "poi": "po_tidecamp",
+        "name": "Tidepool Fishing Camp",
+        "arche": "hamlet",
+        "atTile": [
+          340,
+          1096
+        ],
+        "bbox": [
+          313,
+          1076,
+          366,
+          1115
+        ],
+        "windows": [
+          "veyra05-at-192-960",
+          "veyra05-at-256-960"
+        ],
+        "axis": "x",
+        "levels": 1,
+        "rooms": 3,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 2160,
+        "solidPropsCellsThatMove": 3,
+        "sharePct": 0.14,
+        "deepestMarginOfMovingCells": 42
+      },
+      {
+        "poi": "po_mere",
+        "name": "Hook Mere Pier",
+        "arche": "pier",
+        "atTile": [
+          2500,
+          736
+        ],
+        "bbox": [
+          2478,
+          718,
+          2521,
+          753
+        ],
+        "windows": [
+          "veyra05-at-2368-576",
+          "veyra05-at-2432-576"
+        ],
+        "axis": "x",
+        "levels": 2,
+        "rooms": 7,
+        "authoredProps": 3,
+        "bboxCellsInsideWindowA": 1584,
+        "solidPropsCellsThatMove": 2,
+        "sharePct": 0.13,
+        "deepestMarginOfMovingCells": 48
+      },
+      {
+        "poi": "po_lantern",
+        "name": "Lantern Light",
+        "arche": "observatory",
+        "atTile": [
+          2100,
+          304
+        ],
+        "bbox": [
+          2069,
+          277,
+          2130,
+          330
+        ],
+        "windows": [
+          "veyra05-at-1984-192",
+          "veyra05-at-2048-192"
+        ],
+        "axis": "x",
+        "levels": 3,
+        "rooms": 7,
+        "authoredProps": 6,
+        "bboxCellsInsideWindowA": 3348,
+        "solidPropsCellsThatMove": 0,
+        "sharePct": 0,
+        "deepestMarginOfMovingCells": 0
+      },
+      {
+        "poi": "po_elderwood",
+        "name": "Heart of the Elderwood",
+        "arche": "elder_site",
+        "atTile": [
+          1736,
+          1424
+        ],
+        "bbox": [
+          1668,
+          1366,
+          1803,
+          1481
+        ],
+        "windows": [
+          "veyra05-at-1600-1280",
+          "veyra05-at-1664-1280"
+        ],
+        "axis": "x",
+        "levels": 4,
+        "rooms": 6,
+        "authoredProps": 13,
+        "bboxCellsInsideWindowA": 15048,
+        "solidPropsCellsThatMove": 0,
+        "sharePct": 0,
+        "deepestMarginOfMovingCells": 0
+      }
+    ],
+    "ms": 66752.3
+  },
+  "e3": {
+    "stride": 64,
+    "seed": 901,
+    "windowsPlanned": 2562,
+    "windowsRead": 1421,
+    "windowsUnreadable": 1141,
+    "cellsCovered": 7127680,
+    "cellsUncovered": 4072320,
+    "sourceKeyAlphabet": [
+      "salt_shale",
+      "grass",
+      "bush",
+      "palm",
+      "oak",
+      "rock",
+      "snowpine",
+      "crystal",
+      "road_salvage_bale",
+      "road_fuel_rack",
+      "road_relay_wreck",
+      "coalv",
+      "iron",
+      "pine",
+      "herb",
+      "reed",
+      "mushroom",
+      "willow",
+      "deadtree",
+      "sulfur"
+    ],
+    "start": {
+      "layoutId": "veyra05-at-2560-704",
+      "playerGlobalTile": [
+        2568,
+        716
+      ],
+      "windowOrigin": [
+        2560,
+        704
+      ],
+      "qaUsed": false
+    },
+    "frame": {
+      "cellsWithAnySource": 490206,
+      "cellsContested": 36523,
+      "contestedPresentVsAbsent": 21916,
+      "contestedDifferentKeys": 14607
+    },
+    "component": {
+      "optimisticCells": 2997383,
+      "conservativeCells": 2967698,
+      "startPassableOptimistic": true,
+      "startPassableConservative": true,
+      "sourcesUncontestedInsideOptimisticComponent": 117400,
+      "sourcesUncontestedInsideConservativeComponent": 117400,
+      "optimisticSourceCellsInsideComponent": 148733,
+      "contestedSourceCellsInsideComponent": 31333,
+      "contestedBlockingSourceCellsInsideComponent": 10891,
+      "contestedShareOfComponentSourcesPct": 21.067
+    },
+    "contestedByMaterial": {
+      "mixed-keys": 11576,
+      "wood": 8116,
+      "ore": 933,
+      "plant": 8866,
+      "stone": 1644,
+      "scrap": 198
+    },
+    "contestedBlockingByMaterial": {
+      "wood": 8116,
+      "ore": 933,
+      "stone": 1644,
+      "scrap": 198
+    },
+    "ms": 490578.1
+  }
+}
