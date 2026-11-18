@@ -126,3 +126,72 @@ Nguồn trong cửa sổ (giải thích vì sao nới gate trước cũng chưa 
 ### Câu hỏi cần Creator quyết (bổ sung mục "Quyết định cần bàn")
 
 4. **Đường vào hai vùng hazard:** giữ nguyên như hiện nay (Slag Flats/Cinder Isle chỉ tới được bằng di chuyển trong world liên tục, và Cinder chờ sea transport thật được chứng nhận), hay cần một đường vào thường được kiểm soát trước khi nghiệm thu POI/elder ở đó? Nếu giữ nguyên, các bằng chứng luật ở hai vùng này phải luôn ghi rõ là **vào bằng QA landing (`qaUsed: true`)**, không phải đường chơi thường.
+
+## Cập nhật lượt sau (đi bộ toàn frame): trả lời câu hỏi #4 bằng số đo, kèm HAI red flag mới
+
+Câu hỏi để mở của lượt trước — "người chơi từ một legal start có **đi bộ** tới được Slag Flats / Cinder Isle không?" (`NOT_RUN`) — nay đã đo read-only bằng `src/veyra05/global-foot-reachability.audit.test.ts` (opt-in `SOH_FOOT_REACHABILITY=1`, raw `../../../veyra-foot-reachability/manifest.json`, 476 s). Không đổi map, không đổi luật, không đổi spawn contract; thay đổi dữ liệu duy nhất là dòng `purple_card` trong `final-item-ledger.ts` theo đúng quyết định của Creator ("update the ledger note to match runtime").
+
+### Cách đo (để số liệu không bị đọc quá tay)
+
+- **Start là đường chơi thật**: `startRun(gs,'female',EPOCH,null,seed)` trên layout mặc định của Title `veyra05-world` → `chooseGlobalVeyraStart`. Seed 901 vào cửa sổ `veyra05-at-2560-704`, ô toàn cục `(2568,716)`, `qaUsed: false`. Ba seed 901/902/903 đều **cùng một thành phần liên thông** (cách nhau 0 / 1240 / 61 ô), nên kết luận không phải của riêng một seed.
+- **Lattice là lattice thật của game**: `continuity.ts` trượt cửa sổ 200×200 theo bước `SLIDE_STEP = 64` khi người chơi vào within `EDGE_MARGIN = 24` ô của mép, origin clamp trong frame. Audit đọc hai hằng số đó ra từ chính source text (đổi là audit đỏ), và **gọi thật** `maybeSlideVeyraWindow`: origin `(2560,704) → (2496,640)` (−64,−64), `playerGlobalTile` delta `(0,0)`, `layoutId` thành `veyra05-at-2496-640`.
+- **Mosaic 2460 cửa sổ** phủ 100% frame 4000×2800 (11.200.000 ô), stride 64 = đúng bước trượt. Mỗi ô đọc qua `blockGrid` của một run thật trong cửa sổ phủ nó; ô nào nhiều cửa sổ phủ thì giữ **đọc từ cửa sổ mà ô nằm sâu nhất** (xa mép nhất). 1055 cửa sổ **không compile được** (`No walkable terrain in this Veyra U=0.5 window` — lát toàn nước, đúng lý do `chooseGlobalVeyraStart` cũng try/catch) → 4.076.416 ô bị đánh dấu **không đi được** (bảo thủ, không bao giờ tự cho là đi được).
+- **Predicate đi bộ = chính luật di chuyển của engine**: `blockedAt(r,x,y) === (class ∈ {1,2,3,5,6})`, đối chiếu runtime trên 37.636 ô → **0 lệch**; `class 4` (shallow/river) **không** bị chặn, tức lội nước là di chuyển hợp lệ. Ba biến thể: `foot` (class 0 hoặc 4 — đúng predicate `spawnWindowExitReachMask` của engine), `dry` (class 0 và tile không phải DEEP/SHALLOW/RIVER), `footDoors` (foot cộng ô class 3 là cửa POI thật — người chơi mở được cửa).
+- **Mọi tuyến đều tính hai cận**: `optimistic` (ô đi được nếu **bất kỳ** cửa sổ nào phủ nó nói vậy) và `conservative` (chỉ khi **mọi** cửa sổ phủ nó đều nói vậy). Lý do có hai cận nằm ở red flag mới ngay bên dưới.
+
+### Red flag MỚI #1 — cùng một ô toàn cục compile ra nội dung KHÁC nhau tuỳ cửa sổ (chưa từng đo được trước đây)
+
+Đây chính là câu hỏi "chưa so sánh được ô-theo-ô" treo từ các lượt trước. Đã so sánh: **49.076.416 cặp đọc chồng lấn → 59.320 lệch class = 0,1209%**. Kiểm chứng độc lập trên 6 cặp cửa sổ neighbour thật theo stride 64 (163.200 ô, overlap đầy đủ 136 ô): 240 lệch = 0,1471%.
+
+| lệch theo khoảng cách tới mép cửa sổ | 0–2 | 3–7 | 8–23 | 24–63 | 64+ |
+|---|---:|---:|---:|---:|---:|
+| số ô | 7.698 | 11.160 | 21.980 | 17.446 | 1.036 |
+
+→ **Không phải artefact mép cửa sổ**: ô nằm sâu 64+ ô trong hai cửa sổ vẫn compile khác nhau. Thành phần lệch: `class 2 ↔ 0` = **56.922 (96%)** — một **source chắn đường** có trong compile này, không có trong compile kia; `class 1 ↔ 0` = 2.212 — **tường POI** chỉ có ở một compile; `class 3 ↔ 0/2` = 110, và ~110 đó là **entity G1B của chính harness** (mỗi run chỉ deploy fixture trong cửa sổ của nó) — hiệu ứng tự gây, đã định lượng, không phải worldgen. Terrain hai bên hầu như **giống nhau** (`floor↔floor` 21.093, `forest↔forest` 13.819, `snow↔snow` 6.734, `hill↔hill` 4.001): nghĩa là **nội dung được đặt** (source, prop, tường) khác nhau, không phải địa hình.
+
+Hệ quả thực tế cho người chơi: đi lại đúng một ô đó theo hai hướng khác nhau có thể gặp/không gặp một cây, một tảng đá hoặc một bức tường. Audit **không tự sửa** (đây là worldgen law); nó **chặn hệ quả** bằng hai cận optimistic/conservative ở trên, và chốt bằng assertion rằng các tuyến kết luận không phụ thuộc ô contested.
+
+### Red flag MỚI #2 — test obtainability không nhìn thấy loot fixture G1B
+
+`tests/final-item-set.test.ts` dựng tập "lấy được" (`have`) từ `SOURCES.yields/bonus` + `CREATURES.drops` + `GARDEN_CROPS.output` + bao đóng `RECIPES`. Loot fixture G1B (`g1bEnsureSources`) **không thuộc bất kỳ nguồn nào trong đó**, nên assertion "`purple_card` must not be issued while blocked" vẫn **xanh** trong khi engine **có** phát thẻ này trong world; và vì `purple_card ∈ NEW_IDS`, dòng "nếu status ≠ BLOCKED thì `have.has(id)` phải đúng" **khoá cứng** status của cả ba thẻ ở `BLOCKED`. Muốn nâng status thẻ thì phải dạy test đó biết về fixture deployment trước — đây là thay đổi phạm vi tuyên bố, **chưa làm**, chỉ ghi lại.
+
+### Kết quả đi bộ (từ legal start seed 901; optimistic, và conservative khớp về kết luận)
+
+| Đích | foot | dry | ô gần nhất tới đích | tuyến (ô) | AU | slide cửa sổ | ô lội | ô hazard trên tuyến |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| `veyra.g1b:card:purple` (2402,1843) | **tới được** | **KHÔNG** | cách 1 ô (2403,1844) | 1.317 | 658,5 | 19 | **19** | 0 |
+| `po_slag` (2380,1872) | tới được | KHÔNG | cách 1 ô | 1.342 | 671 | 19 | 19 | 20 |
+| focus `veyra05-slag` (2350,1990) | tới được (đúng ô focus) | KHÔNG | 0 ô | 1.492 | 746 | 21 | 19 | **163 toxic** |
+| `veyra.g1b:gate:po_archive:room_purple` (2047,443) | tới được | **tới được** | cách 1 ô | 792 (dry 802) | 396 | 11 | 92 (dry 0) | 0 |
+| `veyra.g1b:gate:po_archive:deep` (2035,443) | tới được | **tới được** | cách 1 ô | 804 (dry 814) | 402 | 11 | 92 (dry 0) | 0 |
+| `po_archive` (2036,452) | tới được | tới được | 0 ô | 796 | 398 | 11 | 92 | 0 |
+| `veyra.g1b:card:green` (1390,613) | tới được | tới được | cách 1 ô | 1.279 (dry 1.475) | 640 | 19 | 98 (dry 0) | 0 |
+| `veyra.g1b:card:blue` (1408,989) | tới được | tới được | 0 ô | 1.433 (dry 2.269) | 717 | 20 | 198 (dry 0) | 0 |
+| focus `veyra05-cinder` (3400,1730) | **KHÔNG** | KHÔNG | — | — | — | — | — | — |
+| `po_surtur` (3388,1652) | **KHÔNG** | KHÔNG | — | — | — | — | — | — |
+| `po_obsq` (3300,1552) | **KHÔNG** | KHÔNG | — | — | — | — | — | — |
+| focus `veyra05-greywater` (control) | tới được | tới được | 0 ô | 1.372 | 686 | 20 | 61 | 0 |
+
+Thành phần liên thông của legal start: foot **2.997.383 ô = 26,76%** frame (conservative 2.967.698 = 26,50%), trong đó **35.096 ô hazard** và **118.538 ô lội**; dry 2.280.771 ô = 20,36%. Không ô `class 9` (cửa sổ không compile được) nào lọt vào thành phần → cận bảo thủ thật sự bảo thủ.
+
+### Trả lời câu hỏi #4 (đã đo, không còn là giả định)
+
+1. **"Không start được" ≠ "không tới được" — với Slag Flats thì đúng là tới được.** Focus Slag Flats đi bộ tới được từ legal start (1.492 ô, 21 lần trượt cửa sổ), và purple card case cũng vậy (cách 1 ô). Nhưng **chỉ bằng đường lội**: mọi tuyến tới thẻ tím và tới po_slag đều đi qua **19 ô shallow**, và **không có** tuyến dry nào (cả hai cận). Tuyến ngắn nhất tìm được đi qua **0 ô hazard**, nhưng tuyến vào đúng focus bãi độc thì ăn **163 ô toxic** — tức hazard exposure là thật, chỉ là tuỳ đường.
+2. **Cinder Isle thì KHÔNG tới được bằng đường bộ**, ở cả ba predicate × hai cận: `po_surtur`, `po_obsq` và focus cinder đều ngoài thành phần liên thông. Khớp đúng veto offshore trong `chooseGlobalVeyraStart` ("Until a real vehicle/ferry/evac and return route passes, no offshore landmass may become a random starting destination"). Vậy luật test mount Surtur bằng QA landing vẫn **không** phải bằng chứng người chơi tới được — và lần này là **đã chứng minh không tới được bằng chân**, chứ không chỉ "chưa biết".
+3. **Thẻ tím là thẻ duy nhất cần lội.** Green và blue đều dry-reachable; purple thì không. Nếu đây không phải chủ ý (một lối vào ướt cho vùng bãi độc), nó là một điểm cần Creator xác nhận.
+4. **Chuỗi purple khép lại về mặt hình học ở cả hai đầu**: thẻ tới được (1.317 ô, lội) và **hai cửa khoá tím ở po_archive cũng tới được** (792–814 ô, có cả tuyến dry, 11 lần trượt cửa sổ). Kiểm tra runtime trong run QA-entered: cả ba case là entity `loot` floor 0, `g1bState: opened`, slot 0 đúng thẻ ×1, và `findInteract` thật trả về `kind 'g1b:card'`, label **"Open access-card case"**, `clearInteraction: true` từ ô đứng kề; cả hai gate tím resolve qua `g1bGateOf` trên door entity thật (card `purple`, power `veyra.g1b:gen:po_archive`, `ppe: true`).
+5. **Vì vậy `final-item-ledger.ts` đã được sửa đúng một dòng** (`purple_card`) theo quyết định của Creator: text cũ "no source and no door on any map" mâu thuẫn với engine đang ship. `grade` **giữ `INDIRECT`** vì đó là field provenance của Last Island, không có fact LI nào thay đổi; status **vẫn `BLOCKED`** vì lý do cơ học ở red flag #2. Hai dòng `green_card`/`blue_card` mang cùng tuyên bố cũ nhưng **không được sửa** vì ngoài phạm vi cho phép — chỉ ghi chú cạnh đó và nêu ở đây.
+
+### Không tuyên bố
+
+- **Chỉ là hình học.** Tuyến tới được chứng minh đồ thị va chạm nối hai ô; **không** chứng minh sống sót: không mô hình hunger/thirst/warmth/radiation, không sát thương TOXIC/ASH/LAVA, không creature, không stamina, không đồng hồ 14 ngày, không vehicle/ferry, không nhiên liệu. Ước lượng ~270–293 s đi bộ là **số học** từ `BAL.player.speed = 72 px/s` trên tuyến ngắn nhất (không slowdown khi lội, không rẽ, không nghỉ).
+- Đồ thị vô hướng nên về mặt hình học **đường về là cùng đường đó**, nhưng "về được" ≠ "sống sót về được".
+- Mosaic đọc cửa sổ **pristine** (không delta của run). Đi bộ thật sẽ ghi delta (cạn nguồn, sửa terrain, mở cửa, fog) — chưa đánh giá.
+- Các cửa sổ trong mosaic vào bằng **QA landing** chỉ để có `blockGrid` thật; `qaUsed: true` không bao giờ là bằng chứng chơi được. Fact đường chơi duy nhất là legal start.
+- Một phiên, một seed chính (901) cho BFS, ba seed cho start; môi trường test software-rendered, không phải release readiness.
+
+### Câu hỏi cần Creator quyết (bổ sung)
+
+5. **Cinder Isle / Surtur không có đường bộ.** Giữ nguyên (đảo chờ sea transport/vehicle thật được chứng nhận, và elder site ở đó chưa phải nội dung người chơi với tới) hay cần một tuyến đất/cầu/evac trước khi nghiệm thu POI/elder vùng này? `po_obsq` (Obsidian Quarry — một điểm tài nguyên) cũng cùng tình trạng.
+6. **Nội dung phụ thuộc cửa sổ (0,1209% ô chồng lấn, 96% là source chắn đường, phần còn lại là tường POI).** Chấp nhận như đặc tính của streaming (và các tuyên bố reachability phải luôn kèm hai cận optimistic/conservative như audit này), hay yêu cầu một ô toàn cục phải compile ra **một** kết quả duy nhất bất kể cửa sổ nào phủ nó? Nếu chọn hướng sau, đây là việc worldgen cần giao riêng, không phải tối ưu hiệu năng.
+7. **Thẻ tím bắt buộc lội** (19 ô shallow, không có tuyến dry) trong khi green/blue đều có tuyến khô. Đó là chủ ý thiết kế cho vùng bãi độc, hay cần một lối khô?

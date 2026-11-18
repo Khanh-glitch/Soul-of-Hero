@@ -1,7 +1,7 @@
 {
   "meta": {
     "schema": "soh-runtime-item-formula-atlas-v1",
-    "sourceSHA": "a596720ed307f00dfaa483039d91289da213e6ef",
+    "sourceSHA": "41bc17b9db6b362f32c47cacbdfe91e27c74529e",
     "sourceSHAProvenance": "git rev-parse HEAD (working tree at export time)",
     "recipeCensusNote": "Counts the LIVE RECIPES table only. Retired formulas are excluded, and frozen revision definitions are never added back as active routes.",
     "retiredRecipes": [
@@ -30,7 +30,7 @@
       "reinforced_spear_blade"
     ],
     "recipeRevision": 6,
-    "exportedAt": "2026-11-18T01:26:05.277Z",
+    "exportedAt": "2026-11-18T03:00:42.941Z",
     "project": "Soul of Heroes — WEB Veyra runtime",
     "authority": [
       "web/src/game/catalog.ts",

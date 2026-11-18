@@ -17,6 +17,12 @@
  *   3. Whether hazard regions should also be normal-startable is a Creator law decision,
  *      not an engineering fix; nothing here changes the spawn contract.
  *
+ * The separate question this audit deliberately left open — can a player WALK there from a legal
+ * start? — is now measured by `global-foot-reachability.audit.test.ts` (opt-in
+ * SOH_FOOT_REACHABILITY=1), which builds a global foot-passability mosaic of the whole 4000x2800
+ * frame from the engine's own collision grids on the real 64-tile slide lattice and BFS-es from a
+ * genuine normal start. Result: Slag Flats is walk-reachable (wading only), Cinder Isle is not.
+ *
  * The per-candidate predicate below is a TRACED COPY of engine.ts `chooseLegalSpawn`
  * (safe cell, 3x3 safe neighbourhood, spawnEligible prefilter, then a 30-step walk BFS
  * requiring wood + stone + food + freshwater + >=9 build sites). It is pinned to the
@@ -61,14 +67,14 @@ const manifest: Entry = {
   evidence: {
     source: 'actual compiled Veyra 200x200 windows via getWindowWorld + real startRun/blockGrid/sourceAt',
     starts: 'normal (player-route) startRun only; QA landing used solely to build a RunState for diagnosis',
-    fullWorldTravel: 'NOT_RUN',
+    fullWorldTravel: 'MEASURED_SEPARATELY (src/veyra05/global-foot-reachability.audit.test.ts)',
     movement: 'NOT_RUN',
   },
   notes: [
     'A QA inspection landing sets qaUsed=true and is NEVER playable or legal-start evidence; it is used here only so the real collision grid can be read in a window where the normal start fails.',
     'The traced predicate is a copy of engine.ts chooseLegalSpawn pinned to the recorded engine revision; it is validated against the engine outcome for every window in this audit.',
     'No physical map, source stock, spawn contract, hazard rule or gameplay code is modified. Read-only window data plus startRun outcomes.',
-    'This audit does NOT prove or disprove that a player can WALK to these regions from a legal start inside the continuous unified world; global travel reachability is a separate, unrun question.',
+    'This audit does NOT prove or disprove that a player can WALK to these regions from a legal start; that was a separate, then-unrun question and is now measured read-only by src/veyra05/global-foot-reachability.audit.test.ts (evidence/veyra-foot-reachability/manifest.json): the Slag Flats focus IS foot-reachable from a legal normal start (1492 tiles, 21 window slides, crossing 163 toxic tiles, and only by wading — never dry-reachable), while Cinder Isle, po_surtur and po_obsq stay unreachable on foot under every predicate, consistent with the offshore veto. Geometry only: no survival claim.',
   ],
   windows: [] as Entry[],
 };
