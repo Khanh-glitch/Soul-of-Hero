@@ -19,8 +19,12 @@ const samplingIntervalUs=Number(process.env.SOH_FRAME_CDP_INTERVAL||200);
 const idleMs=Number(process.env.SOH_FRAME_IDLE_MS||8000),scenarioMs=Number(process.env.SOH_FRAME_SCENARIO_MS||24000),settleMs=Number(process.env.SOH_FRAME_SETTLE_MS||8000);
 assert(['before','after'].includes(variant),'render variant must be before|after');
 mkdirSync('.cache/frame-baseline',{recursive:true});
+// HEAD moved when the render optimisation was committed: the `before` variant pins the ref the
+// recorded evidence used and refuses a byte-identical (vacuous) self-comparison.
+const renderBaseRef=execFileSync('git',['rev-parse',process.env.SOH_BASE_REF||'53c168808e4264c39625ad3bd409211de005dfa7'],{encoding:'utf8'}).trim();
 if(variant==='before'){
- const head=execFileSync('git',['show','HEAD:web/src/game/render.ts'],{encoding:'utf8'});
+ const head=execFileSync('git',['show',renderBaseRef+':web/src/game/render.ts'],{encoding:'utf8'});
+ if(head===readFileSync('src/game/render.ts','utf8'))throw Error(`vacuous comparison: render.ts at SOH_BASE_REF ${renderBaseRef} is byte-identical to the working tree; pass a pre-patch ref`);
  writeFileSync('.cache/frame-baseline/render.ts',head.replace(/(['"])\.\.\/([^'"]+)(['"])/g,(_,q,p,r)=>q+'/src/'+p+r).replace(/(['"])\.\/([^'"]+)(['"])/g,(_,q,p,r)=>q+'/src/game/'+p+r));
 }
 const launch=()=>chromium.launch({executablePath:process.env.CHROMIUM_EXECUTABLE_PATH||undefined,headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--js-flags=--max-old-space-size=3072']});
@@ -165,7 +169,7 @@ try{
   results.push({scenario,variant,countedSeams:[...countedSeams],fixture:{layout:fixture.layout,seed:fixture.seed,source:fixture.source},aim,inputLog,metrics,counterDeltas,phases,state,errors,badResources});
   console.log(JSON.stringify({scenario,variant,metrics:Object.fromEntries(Object.entries(metrics).map(([p,v])=>[p,{frames:v.frames,tick:v.calls.tick,draw:v.calls.draw,longTasks:v.longTasks.length}])),counterDeltas,state,errors}));
   mkdirSync(out.slice(0,out.lastIndexOf('/')),{recursive:true});
-  writeFileSync(out,JSON.stringify({scope:'Real-play CPU attribution on a seeded Veyra fixture. Dev build, software SwiftShader, timing wrappers and CDP sampling add small overhead; NOT physical-GPU FPS, natural-acquisition or experience evidence. before=HEAD render.ts served from cache, after=current working tree.',samplingIntervalUs,idleMs,scenarioMs,settleMs,sourceSHA256:Object.fromEntries(['src/game/engine.ts','src/game/render.ts','src/game/sim.ts','src/game/persist.ts','src/ui/Game.tsx'].map(p=>[p,createHash('sha256').update(readFileSync(p)).digest('hex')])),results},null,2)+'\n');
+  writeFileSync(out,JSON.stringify({renderBaseRef,scope:'Real-play CPU attribution on a seeded Veyra fixture. Dev build, software SwiftShader, timing wrappers and CDP sampling add small overhead; NOT physical-GPU FPS, natural-acquisition or experience evidence. before=render.ts at renderBaseRef served from cache, after=current working tree.',samplingIntervalUs,idleMs,scenarioMs,settleMs,sourceSHA256:Object.fromEntries(['src/game/engine.ts','src/game/render.ts','src/game/sim.ts','src/game/persist.ts','src/ui/Game.tsx'].map(p=>[p,createHash('sha256').update(readFileSync(p)).digest('hex')])),results},null,2)+'\n');
   await context.close();
  }
 }finally{await browser.close();}

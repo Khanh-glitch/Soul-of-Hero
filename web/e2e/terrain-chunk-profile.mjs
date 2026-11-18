@@ -7,8 +7,11 @@ import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {posix} from 'node:path';
 import assert from 'node:assert/strict';
-const base=process.env.SOH_BASE_URL||'http://127.0.0.1:5193',out='evidence/solo-final-fallback/20261117/frame-work/terrain-chunks.json',baselineRef=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+const base=process.env.SOH_BASE_URL||'http://127.0.0.1:5193',out='evidence/solo-final-fallback/20261117/frame-work/terrain-chunks.json',baselineRef=execFileSync('git',['rev-parse',process.env.SOH_BASE_REF||'53c168808e4264c39625ad3bd409211de005dfa7'],{encoding:'utf8'}).trim(),headRef=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 const oldSource=execFileSync('git',['show',baselineRef+':web/src/game/render.ts'],{encoding:'utf8'}),newSource=readFileSync('src/game/render.ts','utf8');
+// HEAD moved when the render optimisation was committed, so the baseline is pinned, not HEAD, and a
+// byte-identical before/after pair would be a vacuous (self) comparison rather than a green result.
+if(oldSource===newSource)throw Error(`vacuous comparison: render.ts at SOH_BASE_REF ${baselineRef} is byte-identical to the working tree; pass a pre-patch ref`);
 mkdirSync('.cache/terrain-profile',{recursive:true});
 for(const [name,source] of [['before',oldSource],['after',newSource]])writeFileSync(`.cache/terrain-profile/${name}.ts`,source.replace(/(from\s*['"])(\.[^'"]+)(['"])/g,(_,a,p,b)=>a+posix.resolve('/src/game',p)+b)+'\nexport {renderChunk as __chunk};\n');
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_EXECUTABLE_PATH||undefined,headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});

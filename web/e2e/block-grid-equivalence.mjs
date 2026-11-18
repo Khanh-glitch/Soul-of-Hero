@@ -10,9 +10,15 @@ import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 const base=process.env.SOH_BASE_URL||'http://127.0.0.1:5194';
 const out=process.env.SOH_GRID_OUT||'evidence/solo-final-fallback/20261117/frame-work/block-grid-equivalence.json';
+/** Baseline git ref for before/after harnesses. HEAD moved when the optimisation was committed, so
+ * `HEAD` is NO LONGER a pre-patch baseline: these harnesses pin the ref the recorded evidence was
+ * measured against and refuse to run a vacuous (byte-identical) comparison. Override with
+ * SOH_BASE_REF when a later round needs a new baseline. */
+const baseRef=execFileSync('git',['rev-parse',process.env.SOH_BASE_REF||'53c168808e4264c39625ad3bd409211de005dfa7'],{encoding:'utf8'}).trim();
 const headRef=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
-const headSource=execFileSync('git',['show',headRef+':web/src/game/engine.ts'],{encoding:'utf8'});
+const headSource=execFileSync('git',['show',baseRef+':web/src/game/engine.ts'],{encoding:'utf8'});
 const newSource=readFileSync('src/game/engine.ts','utf8');
+if(headSource===newSource)throw Error(`vacuous comparison: engine.ts at SOH_BASE_REF ${baseRef} is byte-identical to the working tree; pass a pre-patch ref`);
 mkdirSync('.cache/block-grid-baseline',{recursive:true});
 writeFileSync('.cache/block-grid-baseline/engine.ts',headSource
   .replace(/(from\s*['"])\.\/([^'"]+)(['"])/g,(_,a,p,b)=>a+'/src/game/'+p+b)
@@ -128,7 +134,7 @@ try{
  assert.deepEqual(errors,[],'page errors');
  const bad=report.results.flatMap(e=>(e.checks||[]).filter(c=>c.mismatches>0).map(c=>({layout:e.layout,...c})));
  const summary=report.results.map(e=>({layout:e.layout,status:e.status,version:e.version,statics:e.statics,checks:(e.checks||[]).length,mismatches:(e.checks||[]).reduce((n,c)=>n+c.mismatches,0),rebuild:e.rebuild}));
- const payload={headRef,sourceSHA256:{head:createHash('sha256').update(headSource).digest('hex'),optimised:createHash('sha256').update(newSource).digest('hex')},layouts,summary,mismatchingChecks:bad,detail:report.results,errors,limitations:'Two module instances of engine.ts (HEAD from git, optimised from the working tree) sharing one world/run state in a dev browser. Cell-by-cell equality of blockGrid plus synchronous rebuild timing. Software GPU; no physical-GPU FPS, natural-acquisition or experience claim.'};
+ const payload={baseRef,headRef,sourceSHA256:{base:createHash('sha256').update(headSource).digest('hex'),optimised:createHash('sha256').update(newSource).digest('hex')},layouts,summary,mismatchingChecks:bad,detail:report.results,errors,limitations:`Two module instances of engine.ts (baseline ref ${baseRef} from git, optimised from the working tree at ${headRef}) sharing one world/run state in a dev browser. Cell-by-cell equality of blockGrid plus synchronous rebuild timing. Software GPU; no physical-GPU FPS, natural-acquisition or experience claim. Artifacts written before the optimisation was committed used headRef/sourceSHA256.head to mean the BASELINE ref.`};
  mkdirSync(out.slice(0,out.lastIndexOf('/')),{recursive:true});writeFileSync(out,JSON.stringify(payload,null,2)+'\n');
  console.log(JSON.stringify({summary,mismatchingChecks:bad,errors},null,1));
  assert.deepEqual(bad,[],'collision grid must be cell-identical to HEAD');

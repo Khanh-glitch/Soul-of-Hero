@@ -7,8 +7,14 @@ import {mkdirSync,writeFileSync,readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 const base=process.env.SOH_BASE_URL||'http://127.0.0.1:5194';
 const outFile=process.env.SOH_SPAWN_OUT||'evidence/solo-final-fallback/20261117/frame-work/spawn-start-parity.json';
+/** Baseline git ref for before/after harnesses. HEAD moved when the optimisation was committed, so
+ * `HEAD` is NO LONGER a pre-patch baseline: these harnesses pin the ref the recorded evidence was
+ * measured against and refuse to run a vacuous (byte-identical) comparison. Override with
+ * SOH_BASE_REF when a later round needs a new baseline. */
+const baseRef=execFileSync('git',['rev-parse',process.env.SOH_BASE_REF||'53c168808e4264c39625ad3bd409211de005dfa7'],{encoding:'utf8'}).trim();
 const headRef=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
-const headSource=execFileSync('git',['show',headRef+':web/src/game/engine.ts'],{encoding:'utf8'});
+const headSource=execFileSync('git',['show',baseRef+':web/src/game/engine.ts'],{encoding:'utf8'});
+if(headSource===readFileSync('src/game/engine.ts','utf8'))throw Error(`vacuous comparison: engine.ts at SOH_BASE_REF ${baseRef} is byte-identical to the working tree; pass a pre-patch ref`);
 mkdirSync('.cache/block-grid-baseline',{recursive:true});
 writeFileSync('.cache/block-grid-baseline/engine.ts',headSource
   .replace(/(from\s*['\"])\.\/([^'\"]+)(['\"])/g,(_,a,p,b)=>a+'/src/game/'+p+b)
@@ -16,7 +22,7 @@ writeFileSync('.cache/block-grid-baseline/engine.ts',headSource
 const layouts=(process.env.SOH_SPAWN_LAYOUTS||'veyra05-slag,veyra05-cinder,veyra05-greywater,shipping').split(',');
 const seeds=(process.env.SOH_SPAWN_SEEDS||'901,902,903,1234,7,424242').split(',').map(Number);
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_EXECUTABLE_PATH||undefined,headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
-const out={headRef,layouts,seeds,rows:[],errors:[]};
+const out={baseRef,headRef,layouts,seeds,rows:[],errors:[]};
 try{
  const page=await browser.newPage();page.setDefaultTimeout(300000);page.on('pageerror',e=>out.errors.push(e.message));
  await page.route('**/__spawn',r=>r.fulfill({contentType:'text/html',body:'<!doctype html>'}));
