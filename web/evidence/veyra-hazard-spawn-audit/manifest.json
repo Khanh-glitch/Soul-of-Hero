@@ -1,0 +1,465 @@
+{
+  "schema": "veyra-hazard-window-spawn-v1",
+  "executedAt": "2026-11-18T01:13:15.825Z",
+  "engineRevision": "working tree",
+  "seeds": [
+    901,
+    902,
+    903,
+    1234,
+    7,
+    424242,
+    8801,
+    9101
+  ],
+  "candidateBudget": 800,
+  "evidence": {
+    "source": "actual compiled Veyra 200x200 windows via getWindowWorld + real startRun/blockGrid/sourceAt",
+    "starts": "normal (player-route) startRun only; QA landing used solely to build a RunState for diagnosis",
+    "fullWorldTravel": "NOT_RUN",
+    "movement": "NOT_RUN"
+  },
+  "notes": [
+    "A QA inspection landing sets qaUsed=true and is NEVER playable or legal-start evidence; it is used here only so the real collision grid can be read in a window where the normal start fails.",
+    "The traced predicate is a copy of engine.ts chooseLegalSpawn pinned to the recorded engine revision; it is validated against the engine outcome for every window in this audit.",
+    "No physical map, source stock, spawn contract, hazard rule or gameplay code is modified. Read-only window data plus startRun outcomes.",
+    "This audit does NOT prove or disprove that a player can WALK to these regions from a legal start inside the continuous unified world; global travel reachability is a separate, unrun question."
+  ],
+  "windows": [
+    {
+      "id": "veyra05-slag",
+      "role": "hazard-toxic",
+      "short": "Slag Flats",
+      "biome": "toxic flats (hazard)",
+      "firstHour": false,
+      "focusAu": [
+        1175,
+        995
+      ],
+      "focusTile": [
+        2350,
+        1990
+      ],
+      "insideGlobalFrame": true,
+      "mainlandGateAllowsRandomStart": true,
+      "playerSelectableSpawnLayout": false,
+      "unifiedWorldLayoutIsThePlayerDefault": true,
+      "normalStarts": [
+        {
+          "seed": 901,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 902,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 903,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 1234,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 7,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 424242,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 8801,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 9101,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        }
+      ],
+      "normalStartOk": 0,
+      "normalStartReasons": [
+        "No safe, resource-accessible spawn in this region."
+      ],
+      "composition": {
+        "cells": 40000,
+        "walkable": 39927,
+        "buildable": 38069,
+        "freshwaterCells": 0,
+        "spawnEligibleCells": 0,
+        "hazardTiles": 24144,
+        "woodSourceCells": 0,
+        "foodSourceCells": 0,
+        "stoneSourceCells": 963,
+        "tileHistogram": {
+          "hill": 14245,
+          "toxic": 24144,
+          "road": 1227,
+          "meadow": 27,
+          "deep": 11,
+          "wall": 49,
+          "floor": 274,
+          "sand": 23
+        },
+        "sourceHistogram": {
+          "iron": 761,
+          "rock": 963,
+          "coalv": 263,
+          "grass": 4,
+          "deadtree": 429,
+          "road_salvage_bale": 24,
+          "road_relay_wreck": 7,
+          "road_fuel_rack": 6
+        }
+      },
+      "qaLanding": {
+        "ok": true,
+        "reason": null,
+        "landing": {
+          "tx": 100,
+          "ty": 100
+        },
+        "qaUsed": true
+      },
+      "candidateTrace": {
+        "rejectionStage": "freshwaterPrefilter:windowHasNoEligibleCell",
+        "prefilterCells": 0,
+        "safeCell": 0,
+        "safeNeighbourhood": 0,
+        "traced": 0,
+        "budgetExhausted": false,
+        "fullyPassingCandidates": 0,
+        "firstMissingGateHistogram": {},
+        "examples": []
+      }
+    },
+    {
+      "id": "veyra05-cinder",
+      "role": "hazard-ash",
+      "short": "Cinder Isle",
+      "biome": "volcanic ash (hazard)",
+      "firstHour": false,
+      "focusAu": [
+        1700,
+        865
+      ],
+      "focusTile": [
+        3400,
+        1730
+      ],
+      "insideGlobalFrame": true,
+      "mainlandGateAllowsRandomStart": false,
+      "playerSelectableSpawnLayout": false,
+      "unifiedWorldLayoutIsThePlayerDefault": true,
+      "normalStarts": [
+        {
+          "seed": 901,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 902,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 903,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 1234,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 7,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 424242,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 8801,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        },
+        {
+          "seed": 9101,
+          "ok": false,
+          "reason": "No safe, resource-accessible spawn in this region.",
+          "layoutId": null,
+          "qaUsed": null
+        }
+      ],
+      "normalStartOk": 0,
+      "normalStartReasons": [
+        "No safe, resource-accessible spawn in this region."
+      ],
+      "composition": {
+        "cells": 40000,
+        "walkable": 33437,
+        "buildable": 24860,
+        "freshwaterCells": 245,
+        "spawnEligibleCells": 10,
+        "hazardTiles": 27938,
+        "woodSourceCells": 13,
+        "foodSourceCells": 6,
+        "stoneSourceCells": 575,
+        "tileHistogram": {
+          "ash": 26895,
+          "road": 3608,
+          "floor": 180,
+          "cliff": 6246,
+          "shallow": 245,
+          "wall": 57,
+          "toxic": 1043,
+          "forest": 546,
+          "hill": 954,
+          "grass": 178,
+          "meadow": 48
+        },
+        "sourceHistogram": {
+          "coalv": 264,
+          "deadtree": 313,
+          "rock": 575,
+          "sulfur": 540,
+          "pine": 5,
+          "bush": 6,
+          "grass": 8,
+          "herb": 3,
+          "oak": 8
+        }
+      },
+      "qaLanding": {
+        "ok": true,
+        "reason": null,
+        "landing": {
+          "tx": 100,
+          "ty": 100
+        },
+        "qaUsed": true
+      },
+      "candidateTrace": {
+        "rejectionStage": "safe3x3Neighbourhood:noIsolatedSafeCellHasSafeNeighbours",
+        "prefilterCells": 10,
+        "safeCell": 7,
+        "safeNeighbourhood": 0,
+        "traced": 0,
+        "budgetExhausted": false,
+        "fullyPassingCandidates": 0,
+        "firstMissingGateHistogram": {},
+        "examples": []
+      }
+    },
+    {
+      "id": "veyra05-greywater",
+      "role": "control-first-hour",
+      "short": "Greywater Hamlet",
+      "biome": "temperate meadow / lakeshore village",
+      "firstHour": true,
+      "focusAu": [
+        814,
+        574
+      ],
+      "focusTile": [
+        1628,
+        1148
+      ],
+      "insideGlobalFrame": true,
+      "mainlandGateAllowsRandomStart": true,
+      "playerSelectableSpawnLayout": false,
+      "unifiedWorldLayoutIsThePlayerDefault": true,
+      "normalStarts": [
+        {
+          "seed": 901,
+          "ok": true,
+          "reason": null,
+          "layoutId": "veyra05-greywater",
+          "qaUsed": false
+        },
+        {
+          "seed": 902,
+          "ok": true,
+          "reason": null,
+          "layoutId": "veyra05-greywater",
+          "qaUsed": false
+        },
+        {
+          "seed": 903,
+          "ok": true,
+          "reason": null,
+          "layoutId": "veyra05-greywater",
+          "qaUsed": false
+        },
+        {
+          "seed": 1234,
+          "ok": true,
+          "reason": null,
+          "layoutId": "veyra05-greywater",
+          "qaUsed": false
+        },
+        {
+          "seed": 7,
+          "ok": true,
+          "reason": null,
+          "layoutId": "veyra05-greywater",
+          "qaUsed": false
+        },
+        {
+          "seed": 424242,
+          "ok": true,
+          "reason": null,
+          "layoutId": "veyra05-greywater",
+          "qaUsed": false
+        },
+        {
+          "seed": 8801,
+          "ok": true,
+          "reason": null,
+          "layoutId": "veyra05-greywater",
+          "qaUsed": false
+        },
+        {
+          "seed": 9101,
+          "ok": true,
+          "reason": null,
+          "layoutId": "veyra05-greywater",
+          "qaUsed": false
+        }
+      ],
+      "normalStartOk": 8,
+      "normalStartReasons": [],
+      "composition": {
+        "cells": 40000,
+        "walkable": 23208,
+        "buildable": 16343,
+        "freshwaterCells": 16347,
+        "spawnEligibleCells": 1837,
+        "hazardTiles": 1138,
+        "woodSourceCells": 1776,
+        "foodSourceCells": 564,
+        "stoneSourceCells": 140,
+        "tileHistogram": {
+          "shallow": 16221,
+          "forest": 11552,
+          "snow": 1138,
+          "grass": 2008,
+          "road": 4745,
+          "floor": 683,
+          "meadow": 3193,
+          "wall": 460
+        },
+        "sourceHistogram": {
+          "oak": 1776,
+          "herb": 150,
+          "rock": 140,
+          "grass": 819,
+          "bush": 564,
+          "road_salvage_bale": 31,
+          "road_fuel_rack": 3,
+          "road_relay_wreck": 12
+        }
+      },
+      "qaLanding": {
+        "ok": true,
+        "reason": null,
+        "landing": {
+          "tx": 100,
+          "ty": 100
+        },
+        "qaUsed": true
+      },
+      "candidateTrace": {
+        "rejectionStage": "none:traceFoundAPassingCandidate",
+        "prefilterCells": 1837,
+        "safeCell": 1389,
+        "safeNeighbourhood": 826,
+        "traced": 800,
+        "budgetExhausted": true,
+        "fullyPassingCandidates": 737,
+        "firstMissingGateHistogram": {
+          "freshwater+stone": 33,
+          "buildSites>=9+freshwater+stone+wood": 2,
+          "buildSites>=9+food+freshwater+stone+wood": 12,
+          "food+freshwater+stone": 2,
+          "freshwater": 14
+        },
+        "examples": [
+          {
+            "tx": 133,
+            "ty": 87,
+            "reachedCells": 325,
+            "sites": 245
+          },
+          {
+            "tx": 101,
+            "ty": 89,
+            "reachedCells": 46,
+            "sites": 32
+          },
+          {
+            "tx": 105,
+            "ty": 89,
+            "reachedCells": 36,
+            "sites": 19
+          },
+          {
+            "tx": 92,
+            "ty": 90,
+            "reachedCells": 38,
+            "sites": 27
+          },
+          {
+            "tx": 100,
+            "ty": 90,
+            "reachedCells": 27,
+            "sites": 17
+          }
+        ]
+      }
+    }
+  ]
+}

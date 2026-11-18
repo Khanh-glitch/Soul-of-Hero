@@ -94,3 +94,35 @@ Raw: `storage-faults.json`, script `e2e/solo-storage-fault-audit.mjs`. Không ch
 1. **Ưu tiên kỹ thuật đề xuất:** chặn22–24giây khi mã hóa icon dự phòng lúc mởInventory. Có thể nghiên cứu bỏ công việc đồng bộ mà không đổi ảnh/luật; chỉ nhận phương án có đối chứng không làm xấu sustained tails.
 2. **Cần bạn xác nhận luật input:** ô đang chọn vừa nhận vật liệu thì giữLMB có tiếp tục thu hoạch tay không hay phải nhấp lại? Chưa thay hành vi trước quyết định.
 3. Chưa có kết luận experience, mục tiêu của người chơi, vui/khó hay tuyến chơi; những việc đó nằm ngoài audit này theo yêu cầu.
+
+## Cập nhật lượt sau (tối ưu lưới va chạm): red flag spawn ở hai cửa sổ hazard — đã phân loại, KHÔNG phải hồi quy
+
+Trong harness đối chứng lưới va chạm, `veyra05-slag` và `veyra05-cinder` trả về `"No safe, resource-accessible spawn in this region."` với **mọi seed** thử, trong khi `veyra05-greywater` vào run bình thường. Hai bước đã làm:
+
+1. **Loại trừ hồi quy**: `startRun` của engine HEAD (`53c1688`) và engine đã vá cho kết quả **giống hệt nhau 24/24 lần thử** (4 layout × 6 seed: ok, lý do, `layoutId` thực tế, tọa độ, `sourceLayoutVersion`) — `../frame-work/spawn-start-parity.json`. Hai cửa sổ này thất bại **cùng một lý do ở cả hai bản**, nên không phải do lượt tối ưu.
+2. **Audit nguyên nhân, read-only**: `src/veyra05/hazard-window-spawn.audit.test.ts`, chạy opt-in `SOH_HAZARD_SPAWN_AUDIT=1`. Không đổi map, không đổi stock, không đổi spawn contract. Raw `../../../veyra-hazard-spawn-audit/manifest.json`. Predicate từng ứng viên là **bản sao có truy vết** của `chooseLegalSpawn` trong `engine.ts` (ô safe → neighbourhood 3×3 → prefilter `spawnEligible` → BFS 30 bước đòi wood + stone + food + freshwater + ≥9 build site), và bản sao đó **được kiểm chứng chống lại chính engine**: cửa sổ nào trace tìm ra ứng viên đạt trọn mà `startRun` lại thất bại (hoặc ngược lại) thì audit đỏ.
+
+| Cửa sổ | biome authored | `firstHour` | mainland gate | ô freshwater | ô `spawnEligible` | ô safe | safe 3×3 | ứng viên đạt trọn | start thường | Gate từ chối |
+|---|---|---|---|---:|---:|---:|---:|---:|---:|---|
+| veyra05-slag | toxic flats (hazard) | false | **cho phép** | **0** | **0** | 0 | 0 | 0 | **0/8 seed** | `freshwaterPrefilter` |
+| veyra05-cinder | volcanic ash (hazard) | false | **veto (offshore)** | 245 | 10 | 7 | **0** | 0 | **0/8 seed** | `safe3x3Neighbourhood` |
+| veyra05-greywater (control) | temperate meadow / lakeshore | true | cho phép | 16.347 | 1.837 | 1.389 | 826 | **737**/800 traced | **8/8 seed** | không (trace khớp engine) |
+
+Nguồn trong cửa sổ (giải thích vì sao nới gate trước cũng chưa đủ): slag có `wood 0` (chỉ 429 `deadtree`), `food 0`, `stone 963`; cinder `wood 13`, `food 6`, `stone 575`; control `wood 1.776`, `food 564`, `stone 140`.
+
+### Phân loại
+
+1. **Không phải lỗi người chơi đối mặt.** Title chỉ offer `veyra05-world` (mặc định) và `shipping`; cả hai scene hazard có `firstHour: false` và **không nằm trong `VEYRA_SPAWN_LAYOUTS`**, nên không tồn tại đường chơi nào yêu cầu legal spawn ở đó.
+2. **Là giới hạn của đường vào QA/harness.** Cả hai cửa sổ vẫn vào được bằng QA inspection landing (`inspectAt`) — audit xác nhận `ok: true` ở cả ba cửa sổ, kèm `qaUsed: true`. Nghĩa là các test luật đang mount sanctuary/POI trong cinder (ví dụ R2-CLOSURE-2 với Surtur) vào bằng **đường QA**, và bằng chứng đó **không phải** bằng chứng người chơi tới được.
+3. **Cơ chế khớp đúng nội dung authored.** Slag Flats là bãi độc **không có một ô nước ngọt nào** trong cửa sổ, mà prefilter `spawnEligible` đòi khoảng cách freshwater 10–42 → `spawnEligible.fill(0)` → không tồn tại ứng viên. Cinder Isle là **đảo** núi lửa: mainland gate veto nó khỏi random start (đúng dòng chữ Title "offshore starts await proven sea transport"), và 7 ô safe còn lại đều **cô lập** (hàng xóm là ash/cliff/toxic/nước) nên không có neighbourhood 3×3 nào.
+4. **Sai sót công cụ của chính audit này, đã sửa và ghi lại.** Bản đầu ghi boolean của `unverifiedOffshoreExcluded` dưới tên `offshoreExcludedAsRandomStart` — **ngược polarity**. Đọc nguồn và caller: hàm trả `true` khi ô nằm **trong** polygon mainland và không thuộc hole nước, còn `chooseGlobalVeyraStart` viết `if(!unverifiedOffshoreExcluded(...))continue;` → `true` nghĩa là mainland gate **cho phép**. Field đã đổi tên thành `mainlandGateAllowsRandomStart` kèm ghi chú polarity, và có assertion chốt (slag `true`, cinder `false`). Bằng chứng cho việc đổi tên là cần thiết: greywater cũng `true`, nên với nhãn cũ thì cả control lẫn hazard đều "bị loại offshore" và field vô nghĩa.
+
+### Chưa chạy / không tuyên bố
+
+- **Chưa chứng minh** người chơi từ một legal start có thể **đi bộ** tới hai vùng này trong world liên tục (global travel reachability: `NOT_RUN` trong manifest). Cả hai cửa sổ có đất đi được (slag 39.927 ô walkable / 40.000, cinder 33.437) và focus nằm trong frame, nhưng "nội dung tồn tại" ≠ "tới được".
+- Không kết luận đây là design mong muốn hay cần nới. Audit chỉ đo và phân loại; **không** tự đổi spawn contract, hazard rule hay offshore policy.
+- Một phiên audit, ba cửa sổ, 8 seed, ngân sách trace 800 ứng viên (control bị `budgetExhausted: true` — tức còn nhiều ứng viên đạt trọn chưa trace hết, không ảnh hưởng kết luận vì chỉ cần >0).
+
+### Câu hỏi cần Creator quyết (bổ sung mục "Quyết định cần bàn")
+
+4. **Đường vào hai vùng hazard:** giữ nguyên như hiện nay (Slag Flats/Cinder Isle chỉ tới được bằng di chuyển trong world liên tục, và Cinder chờ sea transport thật được chứng nhận), hay cần một đường vào thường được kiểm soát trước khi nghiệm thu POI/elder ở đó? Nếu giữ nguyên, các bằng chứng luật ở hai vùng này phải luôn ghi rõ là **vào bằng QA landing (`qaUsed: true`)**, không phải đường chơi thường.
