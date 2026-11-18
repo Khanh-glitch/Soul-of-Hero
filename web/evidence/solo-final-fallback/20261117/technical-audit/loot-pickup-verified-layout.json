@@ -1,0 +1,354 @@
+{
+  "head": "53c168808e4264c39625ad3bd409211de005dfa7",
+  "sourceSHA256": {
+    "src/game/engine.ts": "b1cc97c8b56a6b4b31306887b08555b7ebadccee2773ca84a77f95461011edb4",
+    "src/game/sim.ts": "26b268574ec9b4b341f47598282c5545783f595d66793613dea6338abf830e1e"
+  },
+  "samples": [
+    {
+      "variant": "old",
+      "layout": "veyra05-at-1920-512",
+      "seed": 901,
+      "phases": [
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 1,
+          "tick": {
+            "count": 12,
+            "first": 4.199999999254942,
+            "p50": 0.3999999985098839,
+            "p95": 4.199999999254942,
+            "max": 4.199999999254942,
+            "total": 8.600000001490116
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 35.80000000074506,
+            "p50": 27,
+            "p95": 35.80000000074506,
+            "max": 35.80000000074506,
+            "total": 333.2999999932945
+          },
+          "collisionRebuildsDuringTickAndQuery": 12,
+          "invalidatedAfterTick": 12,
+          "qty": 12,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "7859dbac83ce85b547f587c161202eea133ab8ffab43ffba0d4464cb7d84f038"
+        },
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 8,
+          "tick": {
+            "count": 12,
+            "first": 206,
+            "p50": 223,
+            "p95": 270.19999999925494,
+            "max": 270.19999999925494,
+            "total": 2709.0999999940395
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 29.699999999254942,
+            "p50": 32.100000001490116,
+            "p95": 45.099999997764826,
+            "max": 45.099999997764826,
+            "total": 399.3999999947846
+          },
+          "collisionRebuildsDuringTickAndQuery": 96,
+          "invalidatedAfterTick": 12,
+          "qty": 96,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "372e622ed64dc3192ed54cfb9bae2a869f44b7b2dcdf366dbe347ef09f35d2ae"
+        },
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 32,
+          "tick": {
+            "count": 12,
+            "first": 974.4000000022352,
+            "p50": 921,
+            "p95": 997.8000000007451,
+            "max": 997.8000000007451,
+            "total": 10946.500000003725
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 27.299999997019768,
+            "p50": 29.400000002235174,
+            "p95": 33.30000000074506,
+            "max": 33.30000000074506,
+            "total": 345.4000000022352
+          },
+          "collisionRebuildsDuringTickAndQuery": 384,
+          "invalidatedAfterTick": 12,
+          "qty": 384,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "50d9d7ef0de0e3421ae383f1a4b0726a56ee3cef789a6b6bad4c6d9cebd69524"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "variant": "current",
+      "layout": "veyra05-at-1920-512",
+      "seed": 901,
+      "phases": [
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 1,
+          "tick": {
+            "count": 12,
+            "first": 3.900000002235174,
+            "p50": 0.3999999985098839,
+            "p95": 3.900000002235174,
+            "max": 3.900000002235174,
+            "total": 7.399999998509884
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 0,
+            "p50": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "collisionRebuildsDuringTickAndQuery": 0,
+          "invalidatedAfterTick": 0,
+          "qty": 12,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "7859dbac83ce85b547f587c161202eea133ab8ffab43ffba0d4464cb7d84f038"
+        },
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 8,
+          "tick": {
+            "count": 12,
+            "first": 0.30000000074505806,
+            "p50": 0.30000000074505806,
+            "p95": 0.5999999977648258,
+            "max": 0.5999999977648258,
+            "total": 4.300000004470348
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 0,
+            "p50": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "collisionRebuildsDuringTickAndQuery": 0,
+          "invalidatedAfterTick": 0,
+          "qty": 96,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "372e622ed64dc3192ed54cfb9bae2a869f44b7b2dcdf366dbe347ef09f35d2ae"
+        },
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 32,
+          "tick": {
+            "count": 12,
+            "first": 1,
+            "p50": 1.0999999977648258,
+            "p95": 1.3999999985098839,
+            "max": 1.3999999985098839,
+            "total": 13.099999990314245
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 0,
+            "p50": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "collisionRebuildsDuringTickAndQuery": 0,
+          "invalidatedAfterTick": 0,
+          "qty": 384,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "50d9d7ef0de0e3421ae383f1a4b0726a56ee3cef789a6b6bad4c6d9cebd69524"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "variant": "current",
+      "layout": "veyra05-at-1920-512",
+      "seed": 901,
+      "phases": [
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 1,
+          "tick": {
+            "count": 12,
+            "first": 3.699999999254942,
+            "p50": 0.30000000074505806,
+            "p95": 3.699999999254942,
+            "max": 3.699999999254942,
+            "total": 7.199999999254942
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 0,
+            "p50": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "collisionRebuildsDuringTickAndQuery": 0,
+          "invalidatedAfterTick": 0,
+          "qty": 12,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "7859dbac83ce85b547f587c161202eea133ab8ffab43ffba0d4464cb7d84f038"
+        },
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 8,
+          "tick": {
+            "count": 12,
+            "first": 0.5,
+            "p50": 0.30000000074505806,
+            "p95": 0.5,
+            "max": 0.5,
+            "total": 4.199999999254942
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 0,
+            "p50": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "collisionRebuildsDuringTickAndQuery": 0,
+          "invalidatedAfterTick": 0,
+          "qty": 96,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "372e622ed64dc3192ed54cfb9bae2a869f44b7b2dcdf366dbe347ef09f35d2ae"
+        },
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 32,
+          "tick": {
+            "count": 12,
+            "first": 0.6999999992549419,
+            "p50": 1,
+            "p95": 1.800000000745058,
+            "max": 1.800000000745058,
+            "total": 12.599999997764826
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 0,
+            "p50": 0,
+            "p95": 0,
+            "max": 0,
+            "total": 0
+          },
+          "collisionRebuildsDuringTickAndQuery": 0,
+          "invalidatedAfterTick": 0,
+          "qty": 384,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "50d9d7ef0de0e3421ae383f1a4b0726a56ee3cef789a6b6bad4c6d9cebd69524"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "variant": "old",
+      "layout": "veyra05-at-1920-512",
+      "seed": 901,
+      "phases": [
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 1,
+          "tick": {
+            "count": 12,
+            "first": 3.900000002235174,
+            "p50": 0.3999999985098839,
+            "p95": 3.900000002235174,
+            "max": 3.900000002235174,
+            "total": 8.100000001490116
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 27.800000000745058,
+            "p50": 29,
+            "p95": 33.399999998509884,
+            "max": 33.399999998509884,
+            "total": 351.0999999977648
+          },
+          "collisionRebuildsDuringTickAndQuery": 12,
+          "invalidatedAfterTick": 12,
+          "qty": 12,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "7859dbac83ce85b547f587c161202eea133ab8ffab43ffba0d4464cb7d84f038"
+        },
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 8,
+          "tick": {
+            "count": 12,
+            "first": 187,
+            "p50": 222.89999999850988,
+            "p95": 247.80000000074506,
+            "max": 247.80000000074506,
+            "total": 2573.1999999955297
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 29.399999998509884,
+            "p50": 31.599999997764826,
+            "p95": 33.899999998509884,
+            "max": 33.899999998509884,
+            "total": 360.3999999985099
+          },
+          "collisionRebuildsDuringTickAndQuery": 96,
+          "invalidatedAfterTick": 12,
+          "qty": 96,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "372e622ed64dc3192ed54cfb9bae2a869f44b7b2dcdf366dbe347ef09f35d2ae"
+        },
+        {
+          "actualLayout": "veyra05-at-1920-512",
+          "burst": 32,
+          "tick": {
+            "count": 12,
+            "first": 990.8999999985099,
+            "p50": 1068.1000000014901,
+            "p95": 1249.199999999255,
+            "max": 1249.199999999255,
+            "total": 12770.89999999851
+          },
+          "nextCollisionQuery": {
+            "count": 12,
+            "first": 26.400000002235174,
+            "p50": 33.899999998509884,
+            "p95": 56.899999998509884,
+            "max": 56.899999998509884,
+            "total": 422.7999999932945
+          },
+          "collisionRebuildsDuringTickAndQuery": 384,
+          "invalidatedAfterTick": 12,
+          "qty": 384,
+          "sameCustody": true,
+          "remainingDrops": 0,
+          "stateSHA256": "50d9d7ef0de0e3421ae383f1a4b0726a56ee3cef789a6b6bad4c6d9cebd69524"
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "limitations": "Controlled Veyra loose-drop waves at player; real tick, dispatcher and next collision query. No rendering/UI, natural farming, physical GPU or full-release claim. Old reconstructs unconditional removeEntity markDirty only."
+}

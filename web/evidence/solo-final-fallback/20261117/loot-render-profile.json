@@ -1,0 +1,506 @@
+{
+  "head": "53c168808e4264c39625ad3bd409211de005dfa7",
+  "dwell": 12000,
+  "samples": [
+    {
+      "variant": "cells",
+      "atlasLoadMs": 25.600000001490116,
+      "atlasCanvasCount": 157,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "seed": 901,
+      "layout": "shipping_fresh",
+      "phases": [
+        {
+          "mode": "isolated",
+          "count": 40,
+          "cpu": {
+            "count": 590,
+            "p50": 0.19999999925494194,
+            "p95": 0.4000000022351742,
+            "p99": 0.6000000014901161,
+            "max": 2224.900000002235,
+            "total": 2364.9000000096858
+          },
+          "frame": {
+            "count": 589,
+            "p50": 16.69999999999891,
+            "p95": 16.799999999999272,
+            "p99": 16.80000000000109,
+            "max": 2216.5999999999995,
+            "total": 12016.199999999993
+          },
+          "encodes": 0,
+          "canvases": 696
+        },
+        {
+          "mode": "isolated",
+          "count": 160,
+          "cpu": {
+            "count": 720,
+            "p50": 0.5,
+            "p95": 0.8999999985098839,
+            "p99": 1,
+            "max": 1.2000000029802322,
+            "total": 406.80000003427267
+          },
+          "frame": {
+            "count": 719,
+            "p50": 16.700000000000728,
+            "p95": 16.700000000000728,
+            "p99": 16.80000000000291,
+            "max": 33.19999999999709,
+            "total": 11999.5
+          },
+          "encodes": 0,
+          "canvases": 0
+        },
+        {
+          "mode": "world",
+          "count": 0,
+          "cpu": {
+            "count": 478,
+            "p50": 1.300000000745058,
+            "p95": 2.199999999254942,
+            "p99": 5.099999997764826,
+            "max": 1138.0999999977648,
+            "total": 1844.5999999530613
+          },
+          "frame": {
+            "count": 477,
+            "p50": 16.69999999999709,
+            "p95": 16.799999999999272,
+            "p99": 800,
+            "max": 1133.300000000003,
+            "total": 12766.200000000004
+          },
+          "encodes": 0,
+          "canvases": 43
+        },
+        {
+          "mode": "world",
+          "count": 40,
+          "cpu": {
+            "count": 209,
+            "p50": 1.300000000745058,
+            "p95": 2.2000000029802322,
+            "p99": 3,
+            "max": 7.600000001490116,
+            "total": 306.10000002011657
+          },
+          "frame": {
+            "count": 208,
+            "p50": 16.69999999999709,
+            "p95": 733.4000000000015,
+            "p99": 833.2999999999956,
+            "max": 850,
+            "total": 12182.900000000001
+          },
+          "encodes": 0,
+          "canvases": 0
+        },
+        {
+          "mode": "world",
+          "count": 160,
+          "cpu": {
+            "count": 187,
+            "p50": 1.699999999254942,
+            "p95": 2.899999998509884,
+            "p99": 5.5,
+            "max": 9.899999998509884,
+            "total": 353.70000000298023
+          },
+          "frame": {
+            "count": 186,
+            "p50": 16.69999999999709,
+            "p95": 816.5999999999985,
+            "p99": 966.5999999999985,
+            "max": 1916.5,
+            "total": 12849.5
+          },
+          "encodes": 0,
+          "canvases": 0
+        }
+      ],
+      "custodyUnchanged": true,
+      "errors": []
+    },
+    {
+      "variant": "sheet",
+      "atlasLoadMs": 20.699999999254942,
+      "atlasCanvasCount": 157,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "seed": 901,
+      "layout": "shipping_fresh",
+      "phases": [
+        {
+          "mode": "isolated",
+          "count": 40,
+          "cpu": {
+            "count": 603,
+            "p50": 0.20000000298023224,
+            "p95": 0.5,
+            "p99": 0.5999999977648258,
+            "max": 1998.5,
+            "total": 2163.8999999575317
+          },
+          "frame": {
+            "count": 602,
+            "p50": 16.69999999999891,
+            "p95": 16.799999999999272,
+            "p99": 16.80000000000109,
+            "max": 1983.3000000000002,
+            "total": 11999.599999999991
+          },
+          "encodes": 0,
+          "canvases": 696
+        },
+        {
+          "mode": "isolated",
+          "count": 160,
+          "cpu": {
+            "count": 718,
+            "p50": 0.5,
+            "p95": 0.9000000022351742,
+            "p99": 1.2999999970197678,
+            "max": 6.699999999254942,
+            "total": 420.4000000320375
+          },
+          "frame": {
+            "count": 717,
+            "p50": 16.700000000000728,
+            "p95": 16.799999999999272,
+            "p99": 16.80000000000291,
+            "max": 33.30000000000291,
+            "total": 11999.5
+          },
+          "encodes": 0,
+          "canvases": 0
+        },
+        {
+          "mode": "world",
+          "count": 0,
+          "cpu": {
+            "count": 440,
+            "p50": 1.3999999985098839,
+            "p95": 2.399999998509884,
+            "p99": 6.200000002980232,
+            "max": 1226.5,
+            "total": 1919.4000000022352
+          },
+          "frame": {
+            "count": 439,
+            "p50": 16.69999999999709,
+            "p95": 16.799999999995634,
+            "p99": 783.3000000000029,
+            "max": 1233.2999999999993,
+            "total": 12099.5
+          },
+          "encodes": 0,
+          "canvases": 43
+        },
+        {
+          "mode": "world",
+          "count": 40,
+          "cpu": {
+            "count": 207,
+            "p50": 1.5,
+            "p95": 2.600000001490116,
+            "p99": 5.199999999254942,
+            "max": 7.800000000745058,
+            "total": 349.69999998807907
+          },
+          "frame": {
+            "count": 206,
+            "p50": 16.69999999999709,
+            "p95": 783.2999999999956,
+            "p99": 850,
+            "max": 866.5999999999985,
+            "total": 12299.5
+          },
+          "encodes": 0,
+          "canvases": 0
+        },
+        {
+          "mode": "world",
+          "count": 160,
+          "cpu": {
+            "count": 188,
+            "p50": 1.699999999254942,
+            "p95": 3,
+            "p99": 6.199999999254942,
+            "max": 9.699999999254942,
+            "total": 357.3999999985099
+          },
+          "frame": {
+            "count": 187,
+            "p50": 16.69999999999709,
+            "p95": 833.2999999999956,
+            "p99": 916.5999999999985,
+            "max": 1849.8999999999942,
+            "total": 12649.5
+          },
+          "encodes": 0,
+          "canvases": 0
+        }
+      ],
+      "custodyUnchanged": true,
+      "errors": []
+    },
+    {
+      "variant": "sheet",
+      "atlasLoadMs": 18.5,
+      "atlasCanvasCount": 157,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "seed": 901,
+      "layout": "shipping_fresh",
+      "phases": [
+        {
+          "mode": "isolated",
+          "count": 40,
+          "cpu": {
+            "count": 603,
+            "p50": 0.30000000074505806,
+            "p95": 0.6999999992549419,
+            "p99": 0.8000000007450581,
+            "max": 1988.199999999255,
+            "total": 2185.899999987334
+          },
+          "frame": {
+            "count": 602,
+            "p50": 16.69999999999891,
+            "p95": 16.799999999999272,
+            "p99": 16.80000000000109,
+            "max": 1983.2000000000007,
+            "total": 11999.5
+          },
+          "encodes": 0,
+          "canvases": 696
+        },
+        {
+          "mode": "isolated",
+          "count": 160,
+          "cpu": {
+            "count": 721,
+            "p50": 0.5,
+            "p95": 0.9000000022351742,
+            "p99": 1.2000000029802322,
+            "max": 7,
+            "total": 433.99999994039536
+          },
+          "frame": {
+            "count": 720,
+            "p50": 16.700000000000728,
+            "p95": 16.700000000000728,
+            "p99": 16.799999999999272,
+            "max": 16.80000000000291,
+            "total": 11999.599999999999
+          },
+          "encodes": 0,
+          "canvases": 0
+        },
+        {
+          "mode": "world",
+          "count": 0,
+          "cpu": {
+            "count": 459,
+            "p50": 1.3999999985098839,
+            "p95": 2.300000000745058,
+            "p99": 4.100000001490116,
+            "max": 1229.5,
+            "total": 1948.599999934435
+          },
+          "frame": {
+            "count": 458,
+            "p50": 16.69999999999709,
+            "p95": 16.799999999999272,
+            "p99": 783.1999999999971,
+            "max": 1216.7000000000007,
+            "total": 12432.8
+          },
+          "encodes": 0,
+          "canvases": 43
+        },
+        {
+          "mode": "world",
+          "count": 40,
+          "cpu": {
+            "count": 206,
+            "p50": 1.4000000022351742,
+            "p95": 2.300000000745058,
+            "p99": 2.900000002235174,
+            "max": 4.600000001490116,
+            "total": 320.80000003799796
+          },
+          "frame": {
+            "count": 205,
+            "p50": 16.69999999999709,
+            "p95": 816.5999999999985,
+            "p99": 916.5999999999985,
+            "max": 933.2000000000044,
+            "total": 12832.699999999997
+          },
+          "encodes": 0,
+          "canvases": 0
+        },
+        {
+          "mode": "world",
+          "count": 160,
+          "cpu": {
+            "count": 184,
+            "p50": 1.699999999254942,
+            "p95": 3.100000001490116,
+            "p99": 6.300000000745058,
+            "max": 11.5,
+            "total": 359.10000002384186
+          },
+          "frame": {
+            "count": 183,
+            "p50": 16.69999999999709,
+            "p95": 833.3000000000029,
+            "p99": 966.5999999999985,
+            "max": 1949.9000000000015,
+            "total": 12882.800000000003
+          },
+          "encodes": 0,
+          "canvases": 0
+        }
+      ],
+      "custodyUnchanged": true,
+      "errors": []
+    },
+    {
+      "variant": "cells",
+      "atlasLoadMs": 17.099999997764826,
+      "atlasCanvasCount": 157,
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "seed": 901,
+      "layout": "shipping_fresh",
+      "phases": [
+        {
+          "mode": "isolated",
+          "count": 40,
+          "cpu": {
+            "count": 607,
+            "p50": 0.30000000074505806,
+            "p95": 0.6999999992549419,
+            "p99": 0.9000000022351742,
+            "max": 1926.5999999977648,
+            "total": 2150.799999985844
+          },
+          "frame": {
+            "count": 606,
+            "p50": 16.69999999999891,
+            "p95": 16.700000000000728,
+            "p99": 16.80000000000109,
+            "max": 1916.6000000000004,
+            "total": 11999.5
+          },
+          "encodes": 0,
+          "canvases": 696
+        },
+        {
+          "mode": "isolated",
+          "count": 160,
+          "cpu": {
+            "count": 721,
+            "p50": 0.5,
+            "p95": 0.9000000022351742,
+            "p99": 1.300000000745058,
+            "max": 2,
+            "total": 435.5000000037253
+          },
+          "frame": {
+            "count": 720,
+            "p50": 16.700000000000728,
+            "p95": 16.799999999999272,
+            "p99": 16.80000000000291,
+            "max": 16.80000000000291,
+            "total": 11999.5
+          },
+          "encodes": 0,
+          "canvases": 0
+        },
+        {
+          "mode": "world",
+          "count": 0,
+          "cpu": {
+            "count": 442,
+            "p50": 1.2000000029802322,
+            "p95": 2.199999999254942,
+            "p99": 6.599999997764826,
+            "max": 1199.1000000014901,
+            "total": 1828.5999999940395
+          },
+          "frame": {
+            "count": 441,
+            "p50": 16.69999999999709,
+            "p95": 16.799999999995634,
+            "p99": 983.2999999999956,
+            "max": 1200,
+            "total": 12732.800000000003
+          },
+          "encodes": 0,
+          "canvases": 43
+        },
+        {
+          "mode": "world",
+          "count": 40,
+          "cpu": {
+            "count": 179,
+            "p50": 1.3999999985098839,
+            "p95": 1.800000000745058,
+            "p99": 2.899999998509884,
+            "max": 6.399999998509884,
+            "total": 252.10000000149012
+          },
+          "frame": {
+            "count": 178,
+            "p50": 16.69999999999709,
+            "p95": 950,
+            "p99": 1066.5999999999985,
+            "max": 1066.7000000000044,
+            "total": 11999.5
+          },
+          "encodes": 0,
+          "canvases": 0
+        },
+        {
+          "mode": "world",
+          "count": 160,
+          "cpu": {
+            "count": 141,
+            "p50": 1.699999999254942,
+            "p95": 2.800000000745058,
+            "p99": 3.100000001490116,
+            "max": 5.5,
+            "total": 256.7000000067055
+          },
+          "frame": {
+            "count": 140,
+            "p50": 16.69999999999709,
+            "p95": 1033.2000000000044,
+            "p99": 1183.300000000003,
+            "max": 2483.399999999994,
+            "total": 12549.5
+          },
+          "encodes": 0,
+          "canvases": 0
+        }
+      ],
+      "custodyUnchanged": true,
+      "errors": []
+    }
+  ],
+  "limitations": "Matched diagnostic fixture. Software SwiftShader, no native/physicalGPU FPS or natural loot acquisition claim. Cells branch reconstructs original drop draw only; atlas loader/art/physics unchanged.",
+  "sourceProvenance": {
+    "baseHead": "53c168808e4264c39625ad3bd409211de005dfa7",
+    "measuredWorkingTree": true,
+    "note": "head is the base commit, not the uncommitted runtime patch. engine hash below identifies the final tested cache fix; renderer, loader and atlas remain byte-identical to base. Render-only rejected experiment was measured before the engine fix; simulation was not stepped in it.",
+    "finalSourceSHA256": {
+      "src/game/engine.ts": "b1cc97c8b56a6b4b31306887b08555b7ebadccee2773ca84a77f95461011edb4",
+      "src/game/render.ts": "f9186529473b01a64cbb10844cd5383340c1e27cfa5fbdbaf637b1699bf850e7",
+      "src/game/item-atlas.ts": "1aece2d0f4d31bc007ce985b9ca0c687acd4e70f03d5f4165f25b4053b7327fd",
+      "public/assets/atlas/soh_items_157_atlas.png": "fd1e29f70d8754253366d3f209b7cf4f5a1dc12938af4992c58be23c5517c4d1"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "head": "53c168808e4264c39625ad3bd409211de005dfa7",
+  "htmlSha256": "5f6ac3605a840bb4ddff354eb9ab7072c7ede02e6537ba2ce65223cf04f0d3bb",
+  "scope": "PRODUCTION_ORDINARY_UI_640_SAVE_FRESH_BROWSER_ONLY; software GPU; not FPS/human/progression acceptance",
+  "errors": [],
+  "steps": [
+    "fresh menu start",
+    "ordinary inventory input",
+    "normal save and quit",
+    "fresh browser process actual-storage continuation"
+  ],
+  "initial": {
+    "id": "run_x9k2px_mwkrl9j0",
+    "seed": 2011436997,
+    "layout": "veyra05-at-2112-1024",
+    "digest": "addb6708",
+    "qaUsed": false,
+    "x": 1320,
+    "y": 1288
+  },
+  "inventoryInputToDOMMs": 224,
+  "uiIconNodes": {
+    "atlasImages": 91,
+    "drawnCanvases": 2
+  },
+  "saved": {
+    "seed": 2011436997,
+    "layout": "veyra05-at-2112-1024",
+    "digest": "addb6708",
+    "qaUsed": false,
+    "x": 1320,
+    "y": 1288
+  },
+  "resumed": {
+    "id": "run_x9k2px_mwkrl9j0",
+    "seed": 2011436997,
+    "layout": "veyra05-at-2112-1024",
+    "digest": "addb6708",
+    "qaUsed": false,
+    "x": 1320,
+    "y": 1288
+  },
+  "status": "PASS_TECHNICAL_SMOKE_ONLY",
+  "sourceProvenance": {
+    "measuredWorkingTree": true,
+    "baseHead": "53c168808e4264c39625ad3bd409211de005dfa7",
+    "sourceSHA256": {
+      "src/ui/common.tsx": "119890d969694f9e3e274d21451731d9a23df7aceba87d015853746ddd472202",
+      "src/ui/SurvivorScreen.tsx": "962b8f2c8e612bd16940d256d2872c81895000cd7056d173adcdeaccd91edb51",
+      "src/ui/panels.tsx": "921ab0932e0b603512accb2de91b67da5c83506cdb8c11e23f1a2b9cdef46554",
+      "src/ui/BuildBar.tsx": "1a869505e9360065a8687988c576b7c58f686aea73b5d209e9aee619cf4bdffc",
+      "src/ui/VehicleConsole.tsx": "d63fb0cd40b7bad0095239726529c3ea1e9016f38f986c075654b92e4ba35c19",
+      "src/index.css": "ece1115abaeb04385afd04a2a5fdc4da9d4743f034345c58d74e6de93163c693",
+      "src/game/engine.ts": "b1cc97c8b56a6b4b31306887b08555b7ebadccee2773ca84a77f95461011edb4"
+    }
+  }
+}

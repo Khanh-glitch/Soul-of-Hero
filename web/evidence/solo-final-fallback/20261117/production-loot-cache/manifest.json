@@ -1,0 +1,50 @@
+{
+  "head": "53c168808e4264c39625ad3bd409211de005dfa7",
+  "htmlSha256": "8c28204f56bb505f7b8d8f76fd3f6d601a3efcd674f1cdc5b1edc08e305de5d2",
+  "scope": "PRODUCTION_ORDINARY_UI_640_SAVE_FRESH_BROWSER_ONLY; software GPU; not FPS/human/progression acceptance",
+  "errors": [],
+  "steps": [
+    "fresh menu start",
+    "ordinary inventory input",
+    "normal save and quit",
+    "fresh browser process actual-storage continuation"
+  ],
+  "initial": {
+    "id": "run_x7zcq7_mwkou2dy",
+    "seed": 2008790575,
+    "layout": "veyra05-at-2048-1024",
+    "digest": "36932a5d",
+    "qaUsed": false,
+    "x": 1720,
+    "y": 2024
+  },
+  "saved": {
+    "seed": 2008790575,
+    "layout": "veyra05-at-2048-1024",
+    "digest": "36932a5d",
+    "qaUsed": false,
+    "x": 1720,
+    "y": 2024
+  },
+  "resumed": {
+    "id": "run_x7zcq7_mwkou2dy",
+    "seed": 2008790575,
+    "layout": "veyra05-at-2048-1024",
+    "digest": "36932a5d",
+    "qaUsed": false,
+    "x": 1720,
+    "y": 2024
+  },
+  "status": "PASS_TECHNICAL_SMOKE_ONLY",
+  "sourceProvenance": {
+    "baseHead": "53c168808e4264c39625ad3bd409211de005dfa7",
+    "measuredWorkingTree": true,
+    "note": "head is the base commit, not the uncommitted runtime patch. engine hash below identifies the final tested cache fix; renderer, loader and atlas remain byte-identical to base. Render-only rejected experiment was measured before the engine fix; simulation was not stepped in it.",
+    "finalSourceSHA256": {
+      "src/game/engine.ts": "b1cc97c8b56a6b4b31306887b08555b7ebadccee2773ca84a77f95461011edb4",
+      "src/game/render.ts": "f9186529473b01a64cbb10844cd5383340c1e27cfa5fbdbaf637b1699bf850e7",
+      "src/game/item-atlas.ts": "1aece2d0f4d31bc007ce985b9ca0c687acd4e70f03d5f4165f25b4053b7327fd",
+      "public/assets/atlas/soh_items_157_atlas.png": "fd1e29f70d8754253366d3f209b7cf4f5a1dc12938af4992c58be23c5517c4d1"
+    }
+  }
+}

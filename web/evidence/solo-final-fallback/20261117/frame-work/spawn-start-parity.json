@@ -1,0 +1,558 @@
+{
+  "headRef": "53c168808e4264c39625ad3bd409211de005dfa7",
+  "layouts": [
+    "veyra05-slag",
+    "veyra05-cinder",
+    "veyra05-greywater",
+    "shipping"
+  ],
+  "seeds": [
+    901,
+    902,
+    903,
+    1234,
+    7,
+    424242
+  ],
+  "rows": [
+    {
+      "layout": "veyra05-slag",
+      "seed": 901,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-slag",
+      "seed": 902,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-slag",
+      "seed": 903,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-slag",
+      "seed": 1234,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-slag",
+      "seed": 7,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-slag",
+      "seed": 424242,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-cinder",
+      "seed": 901,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-cinder",
+      "seed": 902,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-cinder",
+      "seed": 903,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-cinder",
+      "seed": 1234,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-cinder",
+      "seed": 7,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-cinder",
+      "seed": 424242,
+      "head": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "optimised": {
+        "ok": false,
+        "reason": "No safe, resource-accessible spawn in this region.",
+        "layoutId": null,
+        "player": null,
+        "version": null
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-greywater",
+      "seed": 901,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          952,
+          1480
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          952,
+          1480
+        ],
+        "version": 3
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-greywater",
+      "seed": 902,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          984,
+          1592
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          984,
+          1592
+        ],
+        "version": 3
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-greywater",
+      "seed": 903,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          1096,
+          1560
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          1096,
+          1560
+        ],
+        "version": 3
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-greywater",
+      "seed": 1234,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          1016,
+          1752
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          1016,
+          1752
+        ],
+        "version": 3
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-greywater",
+      "seed": 7,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          1272,
+          1624
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          1272,
+          1624
+        ],
+        "version": 3
+      },
+      "same": true
+    },
+    {
+      "layout": "veyra05-greywater",
+      "seed": 424242,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          1704,
+          1800
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "veyra05-greywater",
+        "player": [
+          1704,
+          1800
+        ],
+        "version": 3
+      },
+      "same": true
+    },
+    {
+      "layout": "shipping",
+      "seed": 901,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          1624,
+          1000
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          1624,
+          1000
+        ],
+        "version": 3
+      },
+      "same": true
+    },
+    {
+      "layout": "shipping",
+      "seed": 902,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          1000,
+          1864
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          1000,
+          1864
+        ],
+        "version": 3
+      },
+      "same": true
+    },
+    {
+      "layout": "shipping",
+      "seed": 903,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          1288,
+          1864
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          1288,
+          1864
+        ],
+        "version": 3
+      },
+      "same": true
+    },
+    {
+      "layout": "shipping",
+      "seed": 1234,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          2296,
+          1640
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          2296,
+          1640
+        ],
+        "version": 3
+      },
+      "same": true
+    },
+    {
+      "layout": "shipping",
+      "seed": 7,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          1128,
+          1048
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          1128,
+          1048
+        ],
+        "version": 3
+      },
+      "same": true
+    },
+    {
+      "layout": "shipping",
+      "seed": 424242,
+      "head": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          2600,
+          1176
+        ],
+        "version": 3
+      },
+      "optimised": {
+        "ok": true,
+        "reason": null,
+        "layoutId": "shipping_fresh",
+        "player": [
+          2600,
+          1176
+        ],
+        "version": 3
+      },
+      "same": true
+    }
+  ],
+  "errors": [],
+  "diverged": [],
+  "summary": {
+    "attempts": 24,
+    "identical": 24,
+    "diverged": 0,
+    "startOk": {
+      "head": 12,
+      "optimised": 12
+    }
+  }
+}

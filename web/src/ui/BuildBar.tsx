@@ -1,7 +1,7 @@
 import { ITEMS, STRUCTS, PA1_BUILD_PAGES, PA1_BASE_GEOMETRY } from '../game/catalog';
 import { countItem, buildReason } from '../game/engine';
 import type { GameState } from '../game/core';
-import { Icon, iconUrl } from './common';
+import { Icon, ArtImage } from './common';
 
 /** 15 non-inventory wooden geometry shapes, grouped by their actual job.
  * Devices never enter these pages: Craft → inventory → Place is separate.
@@ -46,7 +46,7 @@ export function BuildBar({ gs, tool, onPick, hoverX, hoverY }: {
         return <button key={key} className={`bslot ${tool===key?'on':''} ${affordable?'':'no'}`}
           onClick={()=>onPick(key as BuildTool)}
           title={`${i+1}: ${d.name} — ${d.cost.map(([item,n])=>ITEMS[item].name+' ×'+n).join(', ')}`}>
-          <span className="bslot__key">{KEYS[i]}</span><img className="px" src={iconUrl('st:'+key)} alt={d.name}/>
+          <span className="bslot__key">{KEYS[i]}</span><ArtImage className="px" k={'st:'+key} alt={d.name}/>
         </button>;
       })}
       <i className="buildbar__div"/>

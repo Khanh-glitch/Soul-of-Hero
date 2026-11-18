@@ -45,3 +45,9 @@ vuvvu_lyric_video/
 
 # local HTTP build output
 web/dist-http/
+
+# Harness scratch under web/.cache/: baseline module copies materialised from
+# `git show HEAD:...` for before/after equivalence harnesses, ad-hoc probes and
+# profile copies. Reproducible and never imported by production code.
+web/.cache/*
+!web/.cache/pending.txt

@@ -1,0 +1,354 @@
+{
+  "headRef": "53c168808e4264c39625ad3bd409211de005dfa7",
+  "sourceSHA256": {
+    "head": "525d3ff3ae424677ad1cda2769c622e7f64d118082c0339540d5619bf0ae8b4f",
+    "optimised": "c822e01eefc4af712d8bffaf70734018221f102f01ad20620b35dbb63136ac66"
+  },
+  "layouts": [
+    "shipping",
+    "shipping_fresh",
+    "dev_delta",
+    "veyra05-greywater",
+    "veyra05-cinder",
+    "veyra05-at-1920-512"
+  ],
+  "summary": [
+    {
+      "layout": "shipping",
+      "status": "layout-mismatch",
+      "checks": 0,
+      "mismatches": 0
+    },
+    {
+      "layout": "shipping_fresh",
+      "status": "compared",
+      "version": 3,
+      "statics": 26,
+      "checks": 5,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 2.5,
+          "minMs": 2.100000001490116,
+          "maxMs": 15.5
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0,
+          "minMs": 0,
+          "maxMs": 0.10000000149011612
+        }
+      }
+    },
+    {
+      "layout": "dev_delta",
+      "status": "layout-mismatch",
+      "checks": 0,
+      "mismatches": 0
+    },
+    {
+      "layout": "veyra05-greywater",
+      "status": "compared",
+      "version": 3,
+      "statics": 10,
+      "checks": 8,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 10.900000005960464,
+          "minMs": 9.599999994039536,
+          "maxMs": 12.5
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0,
+          "minMs": 0,
+          "maxMs": 0.10000000149011612
+        }
+      }
+    },
+    {
+      "layout": "veyra05-cinder",
+      "status": "start-failed",
+      "checks": 0,
+      "mismatches": 0
+    },
+    {
+      "layout": "veyra05-at-1920-512",
+      "status": "compared",
+      "version": 3,
+      "statics": 0,
+      "checks": 7,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 19.400000005960464,
+          "minMs": 18.200000002980232,
+          "maxMs": 20.700000002980232
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.10000000149011612,
+          "minMs": 0,
+          "maxMs": 0.10000000149011612
+        }
+      }
+    }
+  ],
+  "mismatchingChecks": [],
+  "detail": [
+    {
+      "layout": "shipping",
+      "status": "layout-mismatch",
+      "actual": "shipping_fresh"
+    },
+    {
+      "layout": "shipping_fresh",
+      "seed": 901,
+      "version": 3,
+      "statics": 26,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "snowpine",
+            "rock",
+            "crystal",
+            "grass",
+            "scrap"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 13,
+          "doorStatics": 2,
+          "ladders": 0
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 2.5,
+          "minMs": 2.100000001490116,
+          "maxMs": 15.5
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0,
+          "minMs": 0,
+          "maxMs": 0.10000000149011612
+        }
+      },
+      "status": "compared"
+    },
+    {
+      "layout": "dev_delta",
+      "status": "layout-mismatch",
+      "actual": "dev_delta_fresh"
+    },
+    {
+      "layout": "veyra05-greywater",
+      "seed": 901,
+      "version": 3,
+      "statics": 10,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "oak",
+            "herb",
+            "rock",
+            "grass",
+            "bush"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 13,
+          "doorStatics": 4,
+          "ladders": 0
+        },
+        {
+          "label": "after-ground-reset",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "revisionBumped": true
+        },
+        {
+          "label": "after-storey-switch",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": -1,
+          "layers": 4
+        },
+        {
+          "label": "after-floor-sync",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": -1
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 10.900000005960464,
+          "minMs": 9.599999994039536,
+          "maxMs": 12.5
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0,
+          "minMs": 0,
+          "maxMs": 0.10000000149011612
+        }
+      },
+      "status": "compared"
+    },
+    {
+      "layout": "veyra05-cinder",
+      "status": "start-failed",
+      "reason": "{\"ok\":false,\"reason\":\"No safe, resource-accessible spawn in this region.\"}"
+    },
+    {
+      "layout": "veyra05-at-1920-512",
+      "seed": 901,
+      "version": 3,
+      "statics": 0,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "snowpine",
+            "rock",
+            "crystal"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 12,
+          "doorStatics": 0,
+          "ladders": 0
+        },
+        {
+          "label": "after-ground-reset",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "revisionBumped": true
+        },
+        {
+          "label": "after-floor-sync",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": 0
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 19.400000005960464,
+          "minMs": 18.200000002980232,
+          "maxMs": 20.700000002980232
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.10000000149011612,
+          "minMs": 0,
+          "maxMs": 0.10000000149011612
+        }
+      },
+      "status": "compared"
+    }
+  ],
+  "errors": [],
+  "limitations": "Two module instances of engine.ts (HEAD from git, optimised from the working tree) sharing one world/run state in a dev browser. Cell-by-cell equality of blockGrid plus synchronous rebuild timing. Software GPU; no physical-GPU FPS, natural-acquisition or experience claim.",
+  "artifactStatus": "SUPERSEDED / HISTORICAL ONLY: measured against the abandoned content-keyed static-grid cache draft (engine.ts sha256 c822e01eefc4af71...), not the shipped code (engine.ts sha256 857c89fa6be444e9...). That draft was rejected because in-place world rewrites invalidated by markDirty() alone were served stale (review-r2-acceptance P0-2 and R2-CLOSURE-2 went red). The shipped-code artifact is block-grid-equivalence-wide.json."
+}

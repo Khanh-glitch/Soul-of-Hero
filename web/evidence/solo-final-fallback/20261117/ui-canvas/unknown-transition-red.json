@@ -1,0 +1,14 @@
+{
+  "checked": 286,
+  "mismatches": [],
+  "initialCopies": 286,
+  "rerenderCopies": 0,
+  "sourceChangeExact": true,
+  "unknownCleared": false,
+  "encodes": 0,
+  "emptyAfterUnmount": true,
+  "atlasReady": true,
+  "approvedImg": true,
+  "errors": [],
+  "scope": "Native RGBA equality for every procedural structure/item; real React layout effects, unchanged-source rerenders, changed-source reuse/unmount, then approved atlas priority. Pixel readbacks after render, not FPS evidence."
+}

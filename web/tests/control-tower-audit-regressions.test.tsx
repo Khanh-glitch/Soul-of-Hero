@@ -169,6 +169,7 @@ import { getWindowWorld, resetWindowToGround } from '../src/veyra05/window';
 import { activeFloor, applyFloor } from '../src/veyra05/floors';
 import { shiftVeyraWindowBy } from '../src/veyra05/continuity';
 import { POIS } from '../src/veyra05/reader';
+import { getArt } from '../src/game/art';
 import { auToTile } from '../src/veyra05/frame';
 
 const NOW = Date.UTC(2026, 10, 9, 12, 0, 0); // 2026-11-09T12:00:00Z
@@ -645,7 +646,7 @@ describe('Phase B — Independent Gameplay & Gold-Seam Defect Regressions', () =
     resetWindowToGround(wwAfter);
   });
 
-  it('B7: Gold SurvivorScreen and ContainerPanel InvSide resolve every category & equipment ghost icon without empty src=""', () => {
+  it('B7: Gold SurvivorScreen and ContainerPanel InvSide resolve every category & equipment ghost icon as an image or native canvas', () => {
     setActiveLayout('shipping_fresh');
     const gs = newGame();
     expect(dispatch(gs, { id: 'b7-start', type: 'startRun', character: 'female', seed: 99 }, NOW).ok).toBe(true);
@@ -684,9 +685,20 @@ describe('Phase B — Independent Gameplay & Gold-Seam Defect Regressions', () =
           </div>,
         );
       });
-      const imgs = container.findAll(n => n.tagName === 'IMG');
-      expect(imgs.length).toBeGreaterThan(5);
-      expect(imgs.filter(n => !n.getAttribute('src'))).toHaveLength(0);
+      const icons = container.findAll(n => n.tagName === 'IMG' || n.tagName === 'CANVAS' && n.dataset.icon === 'drawn');
+      expect(icons.length).toBeGreaterThan(5);
+      const art = getArt();
+      for (const icon of icons) {
+        if (icon.tagName === 'IMG') { expect(icon.getAttribute('src')).toBeTruthy(); continue; }
+        // UI now copies procedural art without PNG encoding. A blank canvas
+        // must NOT satisfy this gate: resolve its real source and native size.
+        const key = icon.dataset.item;
+        expect(key).toBeTruthy();
+        const sprites = key.startsWith('st:') ? art.st : art.icon, id = key.startsWith('st:') ? key.slice(3) : key;
+        expect(Object.prototype.hasOwnProperty.call(sprites, id), key).toBe(true);
+        expect(Number(icon.getAttribute('width'))).toBe(sprites[id].width);
+        expect(Number(icon.getAttribute('height'))).toBe(sprites[id].height);
+      }
     } finally {
       act(() => root.unmount());
       miniDoc.body.removeChild(container);

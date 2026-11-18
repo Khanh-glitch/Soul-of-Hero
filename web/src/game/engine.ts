@@ -20,7 +20,7 @@ import { qualityTierFor, type ExtractionCapability, type SourceDef } from './cat
 import { LADDER_SPAN, LARGE_FURNACE, POWERED_DOOR_HOSTS, EQ_SLOTS, ALWAYS_KNOWN_RECIPES, isGardenCrop, gardenClimateClass, type GardenCrop, starterKnowledge, stationBurnable, ITEMS, SOURCES, RECIPES, STRUCTS, CREATURES, ELDERS, lookupElderDef, elderStoneDomain, VENDOR_SECURED, VENDOR_SPARES, SALVAGED_OIL_WRECK_CHANCE, ACHIEVEMENTS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, MOTORBIKE_REPAIR_COST, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, STRUCTURE_UPGRADES, upgradeTargets, PA1_UPGRADE_ONLY_GEOMETRY, PA1_BASE_GEOMETRY, permitsDirectedResearch, requiredStationLevel, isRecipeKnown, recipeForJob, RECIPE_REVISION, familyOfRecipe, familyMembers, RESEARCH_FAMILIES, RECIPE_FAMILY } from './catalog';
 import { liveItemId, liveItemPer, liveRecipeId, ITEM_SET_VERSION, isAccessCard, isRetiredLive, cardItemForClass } from './final-item-set';
 import { latestLegacyDefinition, RETIRED_RECIPES, purchasableFamilies } from './recipe-migration';
-import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt } from './world';
+import { getWorld, getActiveLayout, setActiveLayout, SRC_KEYS, tileAt, VEYRA_RECYCLER_SITE, webRecyclerSite, type StaticEnt, type World } from './world';
 import { sourceDigest } from './world-economy';
 import { wreckBonuses, wreckEconomy } from './wreck-economy';
 import { mapDigest } from './map-package';
@@ -546,13 +546,32 @@ export function sourceAt(r: RunState, tx: number, ty: number, now?: number) {
 // collision cache — rebuilt when structures/sources/terrain change
 // B04-P4: keyed by the RunState object itself (not run.id), like entsAt: a copied run with the same id must never reuse another copy's collision grid.
 let blockCache: { run: RunState; layout: string; sourceVersion: number; floor: number; arr: Uint8Array } | null = null; let blockDirty = true;
-export function markDirty() { blockDirty = true; tileIndex = null; roomCache = null; }
+/** Invalidation generation. Every spatial invalidation path already funnels through `markDirty()`,
+ * so indexes derived from world content key on it instead of guessing which mutation site changed
+ * what. Content rewritten in place (typed arrays, `statics`) is therefore never served stale. */
+let blockGen = 0;
+export function markDirty() { blockDirty = true; blockGen++; tileIndex = null; roomCache = null; }
 /** 0 free, 1 terrain wall, 2 source, 3 structure, 4 shallow/river (wade), 5 lava, 6 ladder over a cliff (foot only) */
 let baseGrid: Uint8Array | null = null; let baseGridLayout = '';
 function tileClass(t: number) { return (t === T.DEEP || t === T.CLIFF || t === T.PWALL) ? 1 : t === T.LAVA ? 5 : (t === T.SHALLOW || t === T.RIVER) ? 4 : 0; }
+/** Door tile indices of the CURRENT world content. VEYRA replaces `w.statics` wholesale on every
+ * ground reset, storey switch and window slide, and construction only ever appends, so
+ * (identity, length, invalidation generation) is an exact content token. The scan itself is
+ * O(statics) and `cellClass` used to repeat it for every masked, non-walkable cell — up to
+ * 40,000 scans per collision-grid rebuild, and five per rendered tile. */
+const doorIndexCache = new WeakMap<object, { statics: readonly StaticEnt[]; len: number; gen: number; set: Set<number> }>();
+export function doorTiles(w: World): Set<number> {
+  const hit = doorIndexCache.get(w);
+  if (hit && hit.statics === w.statics && hit.len === w.statics.length && hit.gen === blockGen) return hit.set;
+  const set = new Set<number>();
+  for (const s of w.statics) if (s.kind === 'door') set.add(s.ty * WW + s.tx);
+  doorIndexCache.set(w, { statics: w.statics, len: w.statics.length, gen: blockGen, set });
+  return set;
+}
 function cellClass(r: RunState | null, tx: number, ty: number) {
   const w = getWorld(); const i = ty * WW + tx; const t = r ? effTile(r, tx, ty) : w.tiles[i]; let c = tileClass(t);
-  if (c === 0 && !(t === T.ICE && [T.DEEP,T.SHALLOW,T.RIVER].includes(w.tiles[i])) && (w.packageContract || w.enforceMasks) && !w.economyMap.walkable[i] && !w.statics.some(s => s.kind === 'door' && s.tx === tx && s.ty === ty)) c = 1;
+  const base = w.tiles[i];
+  if (c === 0 && !(t === T.ICE && (base === T.DEEP || base === T.SHALLOW || base === T.RIVER)) && (w.packageContract || w.enforceMasks) && !w.economyMap.walkable[i] && !doorTiles(w).has(i)) c = 1;
   if (c === 0) { if (r) { const s = sourceAt(r, tx, ty); if (s && s.def.block && (s.stock > 0 || s.key === 'wreck')) c = 2; } else if (w.src[i] >= 0 && SOURCES[SRC_KEYS[w.src[i]]].block) c = 2; }
   if ((c === 0 || c === 4) && r?.layoutId && isVeyra05Layout(r.layoutId)) {
     const ww = getWindowWorld(r.layoutId);
@@ -561,13 +580,52 @@ function cellClass(r: RunState | null, tx: number, ty: number) {
   }
   return c;
 }
+/** Run-independent cell classes for source-layout v3 (VEYRA) worlds. Tiles, walk masks, doors,
+ * STATIC source blocking and solid props never read the run's own `terrain`/`sources` edits, so for
+ * every cell the run has not touched they equal `cellClass(r, ...)` exactly. This is recomputed from
+ * LIVE world content on every collision invalidation — nothing is cached across a mutation, so an
+ * in-place world rewrite (`tiles.set(...)`, `solidProps[i] = 1`, `statics` replaced) can never be
+ * served stale — but the per-cell lookups are hoisted: no `getWorld()`/`effTile()`/`sourceAt()`/
+ * `getWindowWorld()` call and no O(statics) door scan per cell. `blockGrid` then reclassifies only
+ * the cells the run edited, instead of paying that whole chain 40,000 times per rebuild. */
+type Level = ReturnType<typeof activeFloor>;
+function fillStaticClasses(arr: Uint8Array, r: RunState, version: number, veyra: boolean, fl: Level) {
+  const w = getWorld();
+  const masks = !!(w.packageContract || w.enforceMasks);
+  const doors = masks ? doorTiles(w) : null;
+  const walkable = w.economyMap.walkable as Uint8Array;
+  const tiles = w.tiles, src = w.src, overlay = w.sourceOverlayV2, v3src = w.sourceV3;
+  let solidProps: Uint8Array | null = null;
+  if (veyra) {
+    const ww = getWindowWorld(r.layoutId!);
+    solidProps = (ww.floors.layers.get(fl) ?? ww.floors.ground).solidProps;
+  }
+  for (let i = 0; i < arr.length; i++) {
+    const t = tiles[i]; let c = tileClass(t);
+    // cellClass() also guards "an ICE terrain override standing on a water base tile"; with no run
+    // override the effective tile IS the base tile, so that guard is provably false and drops out.
+    if (c === 0 && masks && !walkable[i] && !doors!.has(i)) c = 1;
+    if (c === 0) {
+      // Same source law as sourceAt() with no run state: stock/hp fall back to the definition and
+      // the regrowth branch cannot run (cellClass never passes `now`).
+      const sk = src[i] >= 0 ? src[i] : version === 2 ? overlay[i] : -1;
+      const key = version === 3 ? v3src[i] : sk >= 0 ? SRC_KEYS[sk] : null;
+      if (key) { const def = SOURCES[key]; if (def.block && (def.stock > 0 || key === 'wreck')) c = 2; }
+    }
+    if ((c === 0 || c === 4) && solidProps && solidProps[i]) c = 2;
+    arr[i] = c;
+  }
+}
 export function blockGrid(r: RunState) {
   const layout = getActiveLayout(), fl = activeFloor(r);
   if (blockCache && blockCache.run === r && blockCache.layout === layout && blockCache.sourceVersion === (r.sourceLayoutVersion ?? 1) && blockCache.floor === fl && !blockDirty) return blockCache.arr;
-  if (!baseGrid || baseGridLayout !== layout) { baseGrid = new Uint8Array(WW * WH); for (let i = 0; i < WW * WH; i++) baseGrid[i] = cellClass(null, i % WW, (i / WW) | 0); baseGridLayout = layout; }
-  const arr = r.sourceLayoutVersion === 3 ? new Uint8Array(WW * WH) : baseGrid.slice();
-  if (r.sourceLayoutVersion === 3) { for (let i = 0; i < arr.length; i++) arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
-  if (r.sourceLayoutVersion === 2) { const overlay = getWorld().sourceOverlayV2; for (let i = 0; i < overlay.length; i++) if (overlay[i] >= 0) arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
+  const w = getWorld(), v3 = r.sourceLayoutVersion === 3;
+  // The legacy base grid is only read by v1/v2 runs; v3 classifies live content below.
+  if (!v3 && (!baseGrid || baseGridLayout !== layout)) { baseGrid = new Uint8Array(WW * WH); for (let i = 0; i < WW * WH; i++) baseGrid[i] = cellClass(null, i % WW, (i / WW) | 0); baseGridLayout = layout; }
+  const arr = new Uint8Array(WW * WH);
+  if (v3) fillStaticClasses(arr, r, r.sourceLayoutVersion ?? 1, !!r.layoutId && isVeyra05Layout(r.layoutId), fl);
+  else arr.set(baseGrid!);
+  if (r.sourceLayoutVersion === 2) { const overlay = w.sourceOverlayV2; for (let i = 0; i < overlay.length; i++) if (overlay[i] >= 0) arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const k in r.terrain) { const i = +k; arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const k in r.sources) { const i = +k; arr[i] = cellClass(r, i % WW, (i / WW) | 0); }
   for (const tree of r.natureTrees || []) arr[tree.ty * WW + tree.tx] = 2;
@@ -575,7 +633,7 @@ export function blockGrid(r: RunState) {
     if (!onActiveFloor(r, e) || e.tx === undefined) continue; const i = e.ty! * WW + e.tx;
     if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.block && !(e.type!.startsWith('door') && e.open)) arr[i] = 3;
       if (e.ladder && (e.hp ?? 0) > 0) for (const j of ladderTiles(e)) if (arr[j] === 1) arr[j] = 6; }
-    else if (e.kind === 'door') { if (!e.open) arr[i] = 3; else if (!r.terrain[i] && getWorld().tiles[i]===T.PWALL && getWorld().statics.some(s=>s.kind==='door'&&s.tx===e.tx&&s.ty===e.ty)) arr[i]=0; }
+    else if (e.kind === 'door') { if (!e.open) arr[i] = 3; else if (!r.terrain[i] && w.tiles[i]===T.PWALL && doorTiles(w).has(i)) arr[i]=0; }
     else if (e.kind === 'airdrop' && (e.airdrop?.phase==='locked'||e.airdrop?.phase==='open'||e.airdrop?.phase==='partial')) arr[i] = 3;
     else if (e.kind === 'loot' || e.kind === 'cash' || e.kind === 'vendor' || e.kind === 'gen' || e.kind === 'evac' || e.kind === 'recycler') arr[i] = 3;
   }
@@ -1440,7 +1498,24 @@ export function bagStation(r: RunState, e: Entity, now: number, label: string) {
   if (e.station) e.station.queue = [];
   return bag;
 }
-function removeEntity(r: RunState, e: Entity) {  if (r.rest && (e.id === r.rest.bedId || e.id === r.rest.chestId)) endRest(r, r.clock.lastSimAt, 'bed or chest removed');  for(const other of allRunEntities(r)) if(other.maintenance?.chestId===e.id) { delete other.maintenance.chestId; other.maintenance.enabled=false; } if(e.basePower)for(const other of allRunEntities(r)){if(other.turret?.generatorId===e.id)delete other.turret.generatorId;if(other.industrial?.generatorId===e.id)delete other.industrial.generatorId;} delete r.entities[e.id]; for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid]; if(e.type==='claim' || STRUCTS[e.type!]?.layer==='floor')refreshTerritoryLinks(r); markDirty(); }
+function removeEntity(r: RunState, e: Entity) {
+  if (r.rest && (e.id === r.rest.bedId || e.id === r.rest.chestId)) endRest(r, r.clock.lastSimAt, 'bed or chest removed');
+  for (const other of allRunEntities(r)) if (other.maintenance?.chestId === e.id) {
+    delete other.maintenance.chestId; other.maintenance.enabled = false;
+  }
+  if (e.basePower) for (const other of allRunEntities(r)) {
+    if (other.turret?.generatorId === e.id) delete other.turret.generatorId;
+    if (other.industrial?.generatorId === e.id) delete other.industrial.generatorId;
+  }
+  delete r.entities[e.id];
+  for (const cid of [e.c, e.station?.fuelC, e.station?.outC]) if (cid) delete r.custody[cid];
+  if (e.type === 'claim' || STRUCTS[e.type!]?.layer === 'floor') refreshTerritoryLinks(r);
+  // Loose drops never contribute to blockGrid, entsAt or roofRoom. Picking one
+  // up must not invalidate/rebuild the whole source-v3 collision map (40k
+  // tiles) on the next movement/render query. Other entity removals keep the
+  // conservative spatial invalidation, including walls/doors/loot containers.
+  if (e.kind !== 'drop') markDirty();
+}
 
 /** Chronological event authority shared by online and offline advancement. */
 export function airdropBoundary(r:RunState,t:number,dt:number):number {

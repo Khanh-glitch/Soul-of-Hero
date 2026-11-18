@@ -1,0 +1,6146 @@
+{
+  "baseHead": "53c168808e4264c39625ad3bd409211de005dfa7",
+  "dwell": 30000,
+  "sourceSHA256": {
+    "src/ui/common.tsx": "119890d969694f9e3e274d21451731d9a23df7aceba87d015853746ddd472202",
+    "src/index.css": "ece1115abaeb04385afd04a2a5fdc4da9d4743f034345c58d74e6de93163c693",
+    "src/game/art.ts": "7e813dd986c9bd44c98978d1028dcd6d0842534fa4b83851b6eb7b3b4c83509d",
+    "src/game/render.ts": "f9186529473b01a64cbb10844cd5383340c1e27cfa5fbdbaf637b1699bf850e7",
+    "src/ui/SurvivorScreen.tsx": "962b8f2c8e612bd16940d256d2872c81895000cd7056d173adcdeaccd91edb51",
+    "src/ui/panels.tsx": "921ab0932e0b603512accb2de91b67da5c83506cdb8c11e23f1a2b9cdef46554",
+    "src/ui/BuildBar.tsx": "1a869505e9360065a8687988c576b7c58f686aea73b5d209e9aee619cf4bdffc",
+    "src/ui/VehicleConsole.tsx": "d63fb0cd40b7bad0095239726529c3ea1e9016f38f986c075654b92e4ba35c19"
+  },
+  "samples": [
+    {
+      "variant": "png",
+      "scene": {
+        "layout": "veyra05-at-1920-512",
+        "seed": 901,
+        "player": [
+          1160,
+          2792
+        ]
+      },
+      "phases": [
+        {
+          "phase": "idle",
+          "inputToDOMMs": 0
+        },
+        {
+          "phase": "inventory-first",
+          "inputToDOMMs": 19371
+        },
+        {
+          "phase": "inventory-repeat",
+          "inputToDOMMs": 147
+        }
+      ],
+      "metrics": {
+        "phases": {
+          "idle": {
+            "frames": {
+              "count": 544,
+              "p50": 16.69999999999891,
+              "p95": 33.30000000000109,
+              "p99": 1183.2999999999993,
+              "max": 1283.2999999999993
+            },
+            "tail10s": {
+              "count": 111,
+              "p50": 16.69999999999709,
+              "p95": 1083.2999999999993,
+              "p99": 1216.6000000000022,
+              "max": 1249.8999999999978
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 259,
+                "p50": 16.69999999999891,
+                "p95": 16.799999999999272,
+                "p99": 50.100000000000364,
+                "max": 233.39999999999964
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 63,
+                "p50": 16.700000000000728,
+                "p95": 966.5999999999985,
+                "p99": 1183.2999999999993,
+                "max": 1183.2999999999993
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 48,
+                "p50": 16.69999999999709,
+                "p95": 1066.6000000000022,
+                "p99": 1133.300000000003,
+                "max": 1133.300000000003
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 63,
+                "p50": 16.700000000000728,
+                "p95": 1049.8999999999978,
+                "p99": 1283.2999999999993,
+                "max": 1283.2999999999993
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 48,
+                "p50": 16.69999999999709,
+                "p95": 1083.2999999999993,
+                "p99": 1249.8999999999978,
+                "max": 1249.8999999999978
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 63,
+                "p50": 16.69999999999709,
+                "p95": 1000,
+                "p99": 1166.5999999999985,
+                "max": 1166.5999999999985
+              }
+            ],
+            "encodes": [],
+            "copies": []
+          },
+          "inventory-first": {
+            "frames": {
+              "count": 292,
+              "p50": 16.69999999999709,
+              "p95": 50,
+              "p99": 950,
+              "max": 18732.5
+            },
+            "tail10s": {
+              "count": 257,
+              "p50": 16.69999999999709,
+              "p95": 33.400000000001455,
+              "p99": 883.4000000000015,
+              "max": 950
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 1,
+                "p50": 1116.699999999997,
+                "p95": 1116.699999999997,
+                "p99": 1116.699999999997,
+                "max": 1116.699999999997
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 0,
+                "p50": null,
+                "p95": null,
+                "p99": null,
+                "max": null
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 0,
+                "p50": null,
+                "p95": null,
+                "p99": null,
+                "max": null
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 31,
+                "p50": 16.69999999999709,
+                "p95": 50.10000000000582,
+                "p99": 18732.5,
+                "max": 18732.5
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 206,
+                "p50": 16.69999999999709,
+                "p95": 33.400000000001455,
+                "p99": 50,
+                "max": 850
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 51,
+                "p50": 16.69999999999709,
+                "p95": 883.4000000000015,
+                "p99": 950,
+                "max": 950
+              }
+            ],
+            "encodes": [
+              {
+                "p": "inventory-first",
+                "ms": 0.30000000074505806,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 19199.900000002235,
+                "w": 16,
+                "h": 16
+              },
+              {
+                "p": "inventory-first",
+                "ms": 55.19999999925494,
+                "w": 16,
+                "h": 16
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.20000000298023224,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              }
+            ],
+            "copies": []
+          },
+          "inventory-repeat": {
+            "frames": {
+              "count": 338,
+              "p50": 16.69999999999709,
+              "p95": 866.6999999999971,
+              "p99": 966.6000000000058,
+              "max": 1566.699999999997
+            },
+            "tail10s": {
+              "count": 114,
+              "p50": 16.69999999999709,
+              "p95": 850,
+              "p99": 949.8999999999942,
+              "max": 966.6000000000058
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 55,
+                "p50": 16.69999999999709,
+                "p95": 916.6999999999971,
+                "p99": 999.8999999999942,
+                "max": 999.8999999999942
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 63,
+                "p50": 16.69999999999709,
+                "p95": 783.3000000000029,
+                "p99": 966.5999999999913,
+                "max": 966.5999999999913
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 62,
+                "p50": 16.69999999999709,
+                "p95": 900,
+                "p99": 966.6000000000058,
+                "max": 966.6000000000058
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 44,
+                "p50": 16.69999999999709,
+                "p95": 866.5999999999913,
+                "p99": 1566.699999999997,
+                "max": 1566.699999999997
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 59,
+                "p50": 16.69999999999709,
+                "p95": 866.6999999999971,
+                "p99": 916.6000000000058,
+                "max": 916.6000000000058
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 55,
+                "p50": 16.69999999999709,
+                "p95": 850,
+                "p99": 966.6000000000058,
+                "max": 966.6000000000058
+              }
+            ],
+            "encodes": [],
+            "copies": []
+          }
+        },
+        "tasks": [
+          {
+            "at": 2756.89999999851,
+            "ms": 514
+          },
+          {
+            "at": 3319.39999999851,
+            "ms": 2217
+          },
+          {
+            "at": 5551.60000000149,
+            "ms": 777
+          },
+          {
+            "at": 6706.699999999255,
+            "ms": 117
+          },
+          {
+            "at": 6848.800000000745,
+            "ms": 1111
+          },
+          {
+            "at": 8055.199999999255,
+            "ms": 61
+          },
+          {
+            "at": 8225.199999999255,
+            "ms": 53
+          },
+          {
+            "at": 22800.5,
+            "ms": 52
+          },
+          {
+            "at": 39018,
+            "ms": 19300
+          },
+          {
+            "at": 69249.10000000149,
+            "ms": 51
+          },
+          {
+            "at": 70308.69999999925,
+            "ms": 67
+          },
+          {
+            "at": 71529.60000000149,
+            "ms": 54
+          },
+          {
+            "at": 71637.60000000149,
+            "ms": 52
+          },
+          {
+            "at": 72814.80000000075,
+            "ms": 56
+          },
+          {
+            "at": 73906.30000000075,
+            "ms": 58
+          },
+          {
+            "at": 96010.80000000075,
+            "ms": 58
+          }
+        ],
+        "heap": 269000000,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "ui": {
+        "checked": 0,
+        "mismatches": [],
+        "geometry": [
+          {
+            "key": "rcash",
+            "marker": "atlas157",
+            "w": 8,
+            "h": 8,
+            "x": 17,
+            "y": 250.75
+          },
+          {
+            "key": "knife",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 107,
+            "y": 75
+          },
+          {
+            "key": "water_flask",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 137,
+            "y": 76
+          },
+          {
+            "key": "berries",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 167,
+            "y": 76
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 101.5
+          },
+          {
+            "key": "vehicle_frame",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 101.5
+          },
+          {
+            "key": "fuel_can",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 101.5
+          },
+          {
+            "key": "fuel_can",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 101.5
+          },
+          {
+            "key": "crude_petroleum",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 101.5
+          },
+          {
+            "key": "energy_basic",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 101.5
+          },
+          {
+            "key": "energy_refined",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 101.5
+          },
+          {
+            "key": "energy_refined",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 134.5
+          },
+          {
+            "key": "essence_fire",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 134.5
+          },
+          {
+            "key": "essence_nature",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 134.5
+          },
+          {
+            "key": "essence_water",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 134.5
+          },
+          {
+            "key": "essence_spirit",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 134.5
+          },
+          {
+            "key": "core_blast",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 134.5
+          },
+          {
+            "key": "core_earthmother",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 134.5
+          },
+          {
+            "key": "reinforced_spear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 167.5
+          },
+          {
+            "key": "metal_pipe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 167.5
+          },
+          {
+            "key": "metal_blade",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 167.5
+          },
+          {
+            "key": "mechanical_gear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 167.5
+          },
+          {
+            "key": "iron_plate",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 167.5
+          },
+          {
+            "key": "industrial_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 167.5
+          },
+          {
+            "key": "wood_club",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 167.5
+          },
+          {
+            "key": "dried_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 200.5
+          },
+          {
+            "key": "grilled_mushroom",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 200.5
+          },
+          {
+            "key": "mushroom_soup",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 200.5
+          },
+          {
+            "key": "canned_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 200.5
+          },
+          {
+            "key": "fruit_wine",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 200.5
+          },
+          {
+            "key": "jam",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 200.5
+          },
+          {
+            "key": "rope",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 200.5
+          },
+          {
+            "key": "lead_rope",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 233.5
+          },
+          {
+            "key": "animal_feed",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 233.5
+          },
+          {
+            "key": "arrow",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 233.5
+          },
+          {
+            "key": "torch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 233.5
+          },
+          {
+            "key": "stone_axe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 233.5
+          },
+          {
+            "key": "stone_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 233.5
+          },
+          {
+            "key": "wood_spear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 233.5
+          },
+          {
+            "key": "bandage",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 266.5
+          },
+          {
+            "key": "water_flask",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 266.5
+          },
+          {
+            "key": "cooked_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 266.5
+          },
+          {
+            "key": "charcoal",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 266.5
+          },
+          {
+            "key": "iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 266.5
+          },
+          {
+            "key": "refined_iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 266.5
+          },
+          {
+            "key": "refined_iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 266.5
+          },
+          {
+            "key": "glass",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 299.5
+          },
+          {
+            "key": "leather",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 299.5
+          },
+          {
+            "key": "cloth",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 299.5
+          },
+          {
+            "key": "arrow",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 299.5
+          },
+          {
+            "key": "plank",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 299.5
+          },
+          {
+            "key": "iron_axe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 299.5
+          },
+          {
+            "key": "iron_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 299.5
+          },
+          {
+            "key": "deploy_claim",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_bed_straw",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_chest_small",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_chest_large",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_campfire",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_furnace",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_oil_pump",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_refinery",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_workbench",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_research",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_garden",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_farm_controller",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_barrel",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_feed_trough",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_base_generator",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_power_cable",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_power_switch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_pressure_switch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_ir_sensor",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_arrow_turret",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_bear_trap",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_spikes",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 431.5
+          },
+          {
+            "key": "deploy_barricade",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 431.5
+          },
+          {
+            "key": "deploy_torch_post",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 431.5
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 380,
+            "y": 235.375
+          },
+          {
+            "key": "berries",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 378,
+            "y": 274
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 18,
+            "h": 18,
+            "x": 429.625,
+            "y": 273
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "variant": "canvas",
+      "scene": {
+        "layout": "veyra05-at-1920-512",
+        "seed": 901,
+        "player": [
+          1160,
+          2792
+        ]
+      },
+      "phases": [
+        {
+          "phase": "idle",
+          "inputToDOMMs": 0
+        },
+        {
+          "phase": "inventory-first",
+          "inputToDOMMs": 205
+        },
+        {
+          "phase": "inventory-repeat",
+          "inputToDOMMs": 64
+        }
+      ],
+      "metrics": {
+        "phases": {
+          "idle": {
+            "frames": {
+              "count": 546,
+              "p50": 16.69999999999891,
+              "p95": 33.30000000000109,
+              "p99": 1199.8999999999996,
+              "max": 1316.5
+            },
+            "tail10s": {
+              "count": 110,
+              "p50": 16.69999999999709,
+              "p95": 1049.9000000000015,
+              "p99": 1166.5,
+              "max": 1199.9000000000015
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 256,
+                "p50": 16.69999999999891,
+                "p95": 33.29999999999927,
+                "p99": 33.399999999999636,
+                "max": 466.59999999999854
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 62,
+                "p50": 16.69999999999891,
+                "p95": 16.799999999999272,
+                "p99": 1199.8999999999996,
+                "max": 1199.8999999999996
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 64,
+                "p50": 16.700000000000728,
+                "p95": 983.2999999999993,
+                "p99": 1300,
+                "max": 1300
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 48,
+                "p50": 16.700000000000728,
+                "p95": 1266.5999999999985,
+                "p99": 1316.5,
+                "max": 1316.5
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 62,
+                "p50": 16.69999999999709,
+                "p95": 1049.9000000000015,
+                "p99": 1166.5,
+                "max": 1166.5
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 48,
+                "p50": 16.69999999999709,
+                "p95": 983.4000000000015,
+                "p99": 1199.9000000000015,
+                "max": 1199.9000000000015
+              }
+            ],
+            "encodes": [],
+            "copies": []
+          },
+          "inventory-first": {
+            "frames": {
+              "count": 307,
+              "p50": 16.69999999999709,
+              "p95": 933.2999999999956,
+              "p99": 1183.199999999997,
+              "max": 1616.5999999999985
+            },
+            "tail10s": {
+              "count": 103,
+              "p50": 16.69999999999709,
+              "p95": 833.3999999999942,
+              "p99": 983.4000000000015,
+              "max": 1616.5999999999985
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 39,
+                "p50": 16.700000000004366,
+                "p95": 1133.2999999999956,
+                "p99": 1383.4000000000015,
+                "max": 1383.4000000000015
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 51,
+                "p50": 16.69999999999709,
+                "p95": 1066.699999999997,
+                "p99": 1183.199999999997,
+                "max": 1183.199999999997
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 60,
+                "p50": 16.69999999999709,
+                "p95": 1066.699999999997,
+                "p99": 1166.5999999999985,
+                "max": 1166.5999999999985
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 53,
+                "p50": 16.69999999999709,
+                "p95": 1050,
+                "p99": 1183.4000000000015,
+                "max": 1183.4000000000015
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 39,
+                "p50": 16.700000000004366,
+                "p95": 983.4000000000015,
+                "p99": 1616.5999999999985,
+                "max": 1616.5999999999985
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 64,
+                "p50": 16.69999999999709,
+                "p95": 833.3999999999942,
+                "p99": 933.1999999999971,
+                "max": 933.1999999999971
+              }
+            ],
+            "encodes": [
+              {
+                "p": "inventory-first",
+                "ms": 0.30000000074505806,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.29999999701976776,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.30000000074505806,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.20000000298023224,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.20000000298023224,
+                "w": 32,
+                "h": 32
+              }
+            ],
+            "copies": [
+              {
+                "p": "inventory-first",
+                "ms": 2.800000000745058,
+                "key": "st:workbench"
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "key": "st:base_generator"
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "key": "st:workbench"
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "key": "st:base_generator"
+              }
+            ]
+          },
+          "inventory-repeat": {
+            "frames": {
+              "count": 336,
+              "p50": 16.69999999999709,
+              "p95": 816.6999999999971,
+              "p99": 1033.300000000003,
+              "max": 1966.5999999999913
+            },
+            "tail10s": {
+              "count": 102,
+              "p50": 16.69999999999709,
+              "p95": 816.6000000000058,
+              "p99": 916.6000000000058,
+              "max": 1733.300000000003
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 56,
+                "p50": 16.69999999999709,
+                "p95": 816.6999999999971,
+                "p99": 1016.6999999999971,
+                "max": 1016.6999999999971
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 64,
+                "p50": 16.69999999999709,
+                "p95": 616.6000000000058,
+                "p99": 1966.5999999999913,
+                "max": 1966.5999999999913
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 50,
+                "p50": 16.69999999999709,
+                "p95": 883.3000000000029,
+                "p99": 950,
+                "max": 950
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 64,
+                "p50": 16.69999999999709,
+                "p95": 883.3000000000029,
+                "p99": 1533.199999999997,
+                "max": 1533.199999999997
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 46,
+                "p50": 16.69999999999709,
+                "p95": 866.5999999999913,
+                "p99": 1733.300000000003,
+                "max": 1733.300000000003
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 56,
+                "p50": 16.69999999999709,
+                "p95": 783.3000000000029,
+                "p99": 916.6000000000058,
+                "max": 916.6000000000058
+              }
+            ],
+            "encodes": [],
+            "copies": [
+              {
+                "p": "inventory-repeat",
+                "ms": 2.5,
+                "key": "st:workbench"
+              },
+              {
+                "p": "inventory-repeat",
+                "ms": 0,
+                "key": "st:base_generator"
+              },
+              {
+                "p": "inventory-repeat",
+                "ms": 0,
+                "key": "st:workbench"
+              },
+              {
+                "p": "inventory-repeat",
+                "ms": 0,
+                "key": "st:base_generator"
+              }
+            ]
+          }
+        },
+        "tasks": [
+          {
+            "at": 2690.099999997765,
+            "ms": 536
+          },
+          {
+            "at": 3279.2999999970198,
+            "ms": 2156
+          },
+          {
+            "at": 5452.199999999255,
+            "ms": 733
+          },
+          {
+            "at": 6635.599999997765,
+            "ms": 108
+          },
+          {
+            "at": 6753.79999999702,
+            "ms": 880
+          },
+          {
+            "at": 38659.599999997765,
+            "ms": 68
+          },
+          {
+            "at": 41770.39999999851,
+            "ms": 64
+          },
+          {
+            "at": 53557.099999997765,
+            "ms": 50
+          },
+          {
+            "at": 61717.89999999851,
+            "ms": 53
+          },
+          {
+            "at": 68867.59999999776,
+            "ms": 50
+          },
+          {
+            "at": 71620.09999999776,
+            "ms": 52
+          },
+          {
+            "at": 79697.19999999925,
+            "ms": 52
+          },
+          {
+            "at": 82933.69999999925,
+            "ms": 52
+          },
+          {
+            "at": 90412.29999999702,
+            "ms": 60
+          }
+        ],
+        "heap": 269000000,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "ui": {
+        "checked": 2,
+        "mismatches": [],
+        "geometry": [
+          {
+            "key": "scrap_helm",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 19,
+            "y": 39
+          },
+          {
+            "key": "leather_armor",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 19,
+            "y": 68
+          },
+          {
+            "key": "fur_cloak",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 19,
+            "y": 97
+          },
+          {
+            "key": "iron_plate_pants",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 48,
+            "y": 39
+          },
+          {
+            "key": "iron_plate_boots",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 48,
+            "y": 68
+          },
+          {
+            "key": "rcash",
+            "marker": "atlas157",
+            "w": 8,
+            "h": 8,
+            "x": 17,
+            "y": 250.75
+          },
+          {
+            "key": "knife",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 107,
+            "y": 75
+          },
+          {
+            "key": "water_flask",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 137,
+            "y": 76
+          },
+          {
+            "key": "berries",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 167,
+            "y": 76
+          },
+          {
+            "key": "mechanical_gear",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 375.25,
+            "y": 38
+          },
+          {
+            "key": "stone_axe",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 401.75,
+            "y": 38
+          },
+          {
+            "key": "leather_armor",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 428.25,
+            "y": 38
+          },
+          {
+            "key": "stew",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 462,
+            "y": 38
+          },
+          {
+            "key": "iron_ingot",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 503,
+            "y": 38
+          },
+          {
+            "key": "core_blast",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 536.75,
+            "y": 38
+          },
+          {
+            "key": "st:workbench",
+            "marker": "drawn",
+            "w": 14,
+            "h": 14,
+            "x": 569,
+            "y": 38
+          },
+          {
+            "key": "st:base_generator",
+            "marker": "drawn",
+            "w": 14,
+            "h": 14,
+            "x": 604,
+            "y": 38
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 101.5
+          },
+          {
+            "key": "vehicle_frame",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 101.5
+          },
+          {
+            "key": "fuel_can",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 101.5
+          },
+          {
+            "key": "fuel_can",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 101.5
+          },
+          {
+            "key": "crude_petroleum",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 101.5
+          },
+          {
+            "key": "energy_basic",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 101.5
+          },
+          {
+            "key": "energy_refined",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 101.5
+          },
+          {
+            "key": "energy_refined",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 134.5
+          },
+          {
+            "key": "essence_fire",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 134.5
+          },
+          {
+            "key": "essence_nature",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 134.5
+          },
+          {
+            "key": "essence_water",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 134.5
+          },
+          {
+            "key": "essence_spirit",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 134.5
+          },
+          {
+            "key": "core_blast",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 134.5
+          },
+          {
+            "key": "core_earthmother",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 134.5
+          },
+          {
+            "key": "reinforced_spear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 167.5
+          },
+          {
+            "key": "metal_pipe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 167.5
+          },
+          {
+            "key": "metal_blade",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 167.5
+          },
+          {
+            "key": "mechanical_gear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 167.5
+          },
+          {
+            "key": "iron_plate",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 167.5
+          },
+          {
+            "key": "industrial_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 167.5
+          },
+          {
+            "key": "wood_club",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 167.5
+          },
+          {
+            "key": "dried_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 200.5
+          },
+          {
+            "key": "grilled_mushroom",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 200.5
+          },
+          {
+            "key": "mushroom_soup",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 200.5
+          },
+          {
+            "key": "canned_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 200.5
+          },
+          {
+            "key": "fruit_wine",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 200.5
+          },
+          {
+            "key": "jam",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 200.5
+          },
+          {
+            "key": "rope",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 200.5
+          },
+          {
+            "key": "lead_rope",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 233.5
+          },
+          {
+            "key": "animal_feed",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 233.5
+          },
+          {
+            "key": "arrow",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 233.5
+          },
+          {
+            "key": "torch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 233.5
+          },
+          {
+            "key": "stone_axe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 233.5
+          },
+          {
+            "key": "stone_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 233.5
+          },
+          {
+            "key": "wood_spear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 233.5
+          },
+          {
+            "key": "bandage",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 266.5
+          },
+          {
+            "key": "water_flask",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 266.5
+          },
+          {
+            "key": "cooked_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 266.5
+          },
+          {
+            "key": "charcoal",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 266.5
+          },
+          {
+            "key": "iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 266.5
+          },
+          {
+            "key": "refined_iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 266.5
+          },
+          {
+            "key": "refined_iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 266.5
+          },
+          {
+            "key": "glass",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 299.5
+          },
+          {
+            "key": "leather",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 299.5
+          },
+          {
+            "key": "cloth",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 299.5
+          },
+          {
+            "key": "arrow",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 299.5
+          },
+          {
+            "key": "plank",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 299.5
+          },
+          {
+            "key": "iron_axe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 299.5
+          },
+          {
+            "key": "iron_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 299.5
+          },
+          {
+            "key": "deploy_claim",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_bed_straw",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_chest_small",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_chest_large",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_campfire",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_furnace",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_oil_pump",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_refinery",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_workbench",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_research",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_garden",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_farm_controller",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_barrel",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_feed_trough",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_base_generator",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_power_cable",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_power_switch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_pressure_switch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_ir_sensor",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_arrow_turret",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_bear_trap",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_spikes",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 431.5
+          },
+          {
+            "key": "deploy_barricade",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 431.5
+          },
+          {
+            "key": "deploy_torch_post",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 431.5
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 380,
+            "y": 235.375
+          },
+          {
+            "key": "berries",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 378,
+            "y": 274
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 18,
+            "h": 18,
+            "x": 429.625,
+            "y": 273
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "variant": "canvas",
+      "scene": {
+        "layout": "veyra05-at-1920-512",
+        "seed": 901,
+        "player": [
+          1160,
+          2792
+        ]
+      },
+      "phases": [
+        {
+          "phase": "idle",
+          "inputToDOMMs": 0
+        },
+        {
+          "phase": "inventory-first",
+          "inputToDOMMs": 109
+        },
+        {
+          "phase": "inventory-repeat",
+          "inputToDOMMs": 64
+        }
+      ],
+      "metrics": {
+        "phases": {
+          "idle": {
+            "frames": {
+              "count": 537,
+              "p50": 16.69999999999891,
+              "p95": 33.399999999999636,
+              "p99": 1216.6000000000058,
+              "max": 1266.7000000000007
+            },
+            "tail10s": {
+              "count": 110,
+              "p50": 16.69999999999709,
+              "p95": 1116.5999999999985,
+              "p99": 1216.6000000000058,
+              "max": 1216.7000000000044
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 256,
+                "p50": 16.69999999999891,
+                "p95": 16.80000000000109,
+                "p99": 66.60000000000036,
+                "max": 500
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 59,
+                "p50": 16.700000000000728,
+                "p95": 1116.6000000000004,
+                "p99": 1266.7000000000007,
+                "max": 1266.7000000000007
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 61,
+                "p50": 16.700000000000728,
+                "p95": 1016.5999999999985,
+                "p99": 1266.5999999999985,
+                "max": 1266.5999999999985
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 50,
+                "p50": 16.700000000000728,
+                "p95": 1200,
+                "p99": 1233.2000000000007,
+                "max": 1233.2000000000007
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 57,
+                "p50": 16.69999999999709,
+                "p95": 1150,
+                "p99": 1216.7000000000044,
+                "max": 1216.7000000000044
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 53,
+                "p50": 16.69999999999709,
+                "p95": 1116.5999999999985,
+                "p99": 1216.6000000000058,
+                "max": 1216.6000000000058
+              }
+            ],
+            "encodes": [],
+            "copies": []
+          },
+          "inventory-first": {
+            "frames": {
+              "count": 297,
+              "p50": 16.69999999999709,
+              "p95": 1033.2000000000044,
+              "p99": 1249.8999999999942,
+              "max": 1499.7999999999956
+            },
+            "tail10s": {
+              "count": 112,
+              "p50": 16.69999999999709,
+              "p95": 833.3000000000029,
+              "p99": 983.3000000000029,
+              "max": 1499.7999999999956
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 44,
+                "p50": 16.69999999999709,
+                "p95": 1150,
+                "p99": 1249.8999999999942,
+                "max": 1249.8999999999942
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 40,
+                "p50": 16.69999999999709,
+                "p95": 1166.5999999999985,
+                "p99": 1216.7000000000044,
+                "max": 1216.7000000000044
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 61,
+                "p50": 16.69999999999709,
+                "p95": 50.10000000000582,
+                "p99": 1266.5999999999985,
+                "max": 1266.5999999999985
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 40,
+                "p50": 16.69999999999709,
+                "p95": 1183.2999999999956,
+                "p99": 1183.300000000003,
+                "max": 1183.300000000003
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 50,
+                "p50": 16.69999999999709,
+                "p95": 833.3000000000029,
+                "p99": 1499.7999999999956,
+                "max": 1499.7999999999956
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 62,
+                "p50": 16.69999999999709,
+                "p95": 816.5999999999985,
+                "p99": 983.3000000000029,
+                "max": 983.3000000000029
+              }
+            ],
+            "encodes": [
+              {
+                "p": "inventory-first",
+                "ms": 0.7000000029802322,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.5,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.5,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.8999999985098839,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              }
+            ],
+            "copies": [
+              {
+                "p": "inventory-first",
+                "ms": 2.600000001490116,
+                "key": "st:workbench"
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "key": "st:base_generator"
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "key": "st:workbench"
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "key": "st:base_generator"
+              }
+            ]
+          },
+          "inventory-repeat": {
+            "frames": {
+              "count": 349,
+              "p50": 16.69999999999709,
+              "p95": 833.4000000000087,
+              "p99": 1050,
+              "max": 1750
+            },
+            "tail10s": {
+              "count": 128,
+              "p50": 16.69999999999709,
+              "p95": 816.6999999999971,
+              "p99": 1000,
+              "max": 1750
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 56,
+                "p50": 16.69999999999709,
+                "p95": 899.8999999999942,
+                "p99": 1183.300000000003,
+                "max": 1183.300000000003
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 65,
+                "p50": 16.69999999999709,
+                "p95": 833.3000000000029,
+                "p99": 916.6999999999971,
+                "max": 916.6999999999971
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 50,
+                "p50": 16.69999999999709,
+                "p95": 900,
+                "p99": 1050,
+                "max": 1050
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 50,
+                "p50": 16.69999999999709,
+                "p95": 833.1999999999971,
+                "p99": 1433.199999999997,
+                "max": 1433.199999999997
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 55,
+                "p50": 16.69999999999709,
+                "p95": 933.1999999999971,
+                "p99": 1750,
+                "max": 1750
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 73,
+                "p50": 16.69999999999709,
+                "p95": 783.3000000000029,
+                "p99": 1000,
+                "max": 1000
+              }
+            ],
+            "encodes": [],
+            "copies": [
+              {
+                "p": "inventory-repeat",
+                "ms": 1.8999999985098839,
+                "key": "st:workbench"
+              },
+              {
+                "p": "inventory-repeat",
+                "ms": 0.10000000149011612,
+                "key": "st:base_generator"
+              },
+              {
+                "p": "inventory-repeat",
+                "ms": 0,
+                "key": "st:workbench"
+              },
+              {
+                "p": "inventory-repeat",
+                "ms": 0,
+                "key": "st:base_generator"
+              }
+            ]
+          }
+        },
+        "tasks": [
+          {
+            "at": 2531.89999999851,
+            "ms": 538
+          },
+          {
+            "at": 3112.60000000149,
+            "ms": 2075
+          },
+          {
+            "at": 5199.5,
+            "ms": 739
+          },
+          {
+            "at": 6392.60000000149,
+            "ms": 94
+          },
+          {
+            "at": 6498.39999999851,
+            "ms": 979
+          },
+          {
+            "at": 7955.300000000745,
+            "ms": 110
+          },
+          {
+            "at": 38534.300000000745,
+            "ms": 68
+          },
+          {
+            "at": 40265.300000000745,
+            "ms": 57
+          },
+          {
+            "at": 51626.60000000149,
+            "ms": 50
+          },
+          {
+            "at": 67158,
+            "ms": 54
+          },
+          {
+            "at": 68751.30000000075,
+            "ms": 54
+          },
+          {
+            "at": 70526.39999999851,
+            "ms": 64
+          },
+          {
+            "at": 71634,
+            "ms": 62
+          },
+          {
+            "at": 79586.69999999925,
+            "ms": 62
+          },
+          {
+            "at": 82923.30000000075,
+            "ms": 50
+          },
+          {
+            "at": 83926.89999999851,
+            "ms": 60
+          },
+          {
+            "at": 87906.19999999925,
+            "ms": 66
+          },
+          {
+            "at": 90307.80000000075,
+            "ms": 58
+          },
+          {
+            "at": 93660.10000000149,
+            "ms": 65
+          },
+          {
+            "at": 96090.19999999925,
+            "ms": 56
+          }
+        ],
+        "heap": 254000000,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "ui": {
+        "checked": 2,
+        "mismatches": [],
+        "geometry": [
+          {
+            "key": "scrap_helm",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 19,
+            "y": 39
+          },
+          {
+            "key": "leather_armor",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 19,
+            "y": 68
+          },
+          {
+            "key": "fur_cloak",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 19,
+            "y": 97
+          },
+          {
+            "key": "iron_plate_pants",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 48,
+            "y": 39
+          },
+          {
+            "key": "iron_plate_boots",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 48,
+            "y": 68
+          },
+          {
+            "key": "rcash",
+            "marker": "atlas157",
+            "w": 8,
+            "h": 8,
+            "x": 17,
+            "y": 250.75
+          },
+          {
+            "key": "knife",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 107,
+            "y": 75
+          },
+          {
+            "key": "water_flask",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 137,
+            "y": 76
+          },
+          {
+            "key": "berries",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 167,
+            "y": 76
+          },
+          {
+            "key": "mechanical_gear",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 375.25,
+            "y": 38
+          },
+          {
+            "key": "stone_axe",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 401.75,
+            "y": 38
+          },
+          {
+            "key": "leather_armor",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 428.25,
+            "y": 38
+          },
+          {
+            "key": "stew",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 462,
+            "y": 38
+          },
+          {
+            "key": "iron_ingot",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 503,
+            "y": 38
+          },
+          {
+            "key": "core_blast",
+            "marker": "atlas157",
+            "w": 14,
+            "h": 14,
+            "x": 536.75,
+            "y": 38
+          },
+          {
+            "key": "st:workbench",
+            "marker": "drawn",
+            "w": 14,
+            "h": 14,
+            "x": 569,
+            "y": 38
+          },
+          {
+            "key": "st:base_generator",
+            "marker": "drawn",
+            "w": 14,
+            "h": 14,
+            "x": 604,
+            "y": 38
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 101.5
+          },
+          {
+            "key": "vehicle_frame",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 101.5
+          },
+          {
+            "key": "fuel_can",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 101.5
+          },
+          {
+            "key": "fuel_can",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 101.5
+          },
+          {
+            "key": "crude_petroleum",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 101.5
+          },
+          {
+            "key": "energy_basic",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 101.5
+          },
+          {
+            "key": "energy_refined",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 101.5
+          },
+          {
+            "key": "energy_refined",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 134.5
+          },
+          {
+            "key": "essence_fire",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 134.5
+          },
+          {
+            "key": "essence_nature",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 134.5
+          },
+          {
+            "key": "essence_water",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 134.5
+          },
+          {
+            "key": "essence_spirit",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 134.5
+          },
+          {
+            "key": "core_blast",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 134.5
+          },
+          {
+            "key": "core_earthmother",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 134.5
+          },
+          {
+            "key": "reinforced_spear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 167.5
+          },
+          {
+            "key": "metal_pipe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 167.5
+          },
+          {
+            "key": "metal_blade",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 167.5
+          },
+          {
+            "key": "mechanical_gear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 167.5
+          },
+          {
+            "key": "iron_plate",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 167.5
+          },
+          {
+            "key": "industrial_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 167.5
+          },
+          {
+            "key": "wood_club",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 167.5
+          },
+          {
+            "key": "dried_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 200.5
+          },
+          {
+            "key": "grilled_mushroom",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 200.5
+          },
+          {
+            "key": "mushroom_soup",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 200.5
+          },
+          {
+            "key": "canned_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 200.5
+          },
+          {
+            "key": "fruit_wine",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 200.5
+          },
+          {
+            "key": "jam",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 200.5
+          },
+          {
+            "key": "rope",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 200.5
+          },
+          {
+            "key": "lead_rope",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 233.5
+          },
+          {
+            "key": "animal_feed",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 233.5
+          },
+          {
+            "key": "arrow",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 233.5
+          },
+          {
+            "key": "torch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 233.5
+          },
+          {
+            "key": "stone_axe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 233.5
+          },
+          {
+            "key": "stone_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 233.5
+          },
+          {
+            "key": "wood_spear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 233.5
+          },
+          {
+            "key": "bandage",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 266.5
+          },
+          {
+            "key": "water_flask",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 266.5
+          },
+          {
+            "key": "cooked_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 266.5
+          },
+          {
+            "key": "charcoal",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 266.5
+          },
+          {
+            "key": "iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 266.5
+          },
+          {
+            "key": "refined_iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 266.5
+          },
+          {
+            "key": "refined_iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 266.5
+          },
+          {
+            "key": "glass",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 299.5
+          },
+          {
+            "key": "leather",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 299.5
+          },
+          {
+            "key": "cloth",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 299.5
+          },
+          {
+            "key": "arrow",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 299.5
+          },
+          {
+            "key": "plank",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 299.5
+          },
+          {
+            "key": "iron_axe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 299.5
+          },
+          {
+            "key": "iron_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 299.5
+          },
+          {
+            "key": "deploy_claim",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_bed_straw",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_chest_small",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_chest_large",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_campfire",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_furnace",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_oil_pump",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_refinery",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_workbench",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_research",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_garden",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_farm_controller",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_barrel",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_feed_trough",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_base_generator",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_power_cable",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_power_switch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_pressure_switch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_ir_sensor",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_arrow_turret",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_bear_trap",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_spikes",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 431.5
+          },
+          {
+            "key": "deploy_barricade",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 431.5
+          },
+          {
+            "key": "deploy_torch_post",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 431.5
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 380,
+            "y": 235.375
+          },
+          {
+            "key": "berries",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 378,
+            "y": 274
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 18,
+            "h": 18,
+            "x": 429.625,
+            "y": 273
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "variant": "png",
+      "scene": {
+        "layout": "veyra05-at-1920-512",
+        "seed": 901,
+        "player": [
+          1160,
+          2792
+        ]
+      },
+      "phases": [
+        {
+          "phase": "idle",
+          "inputToDOMMs": 0
+        },
+        {
+          "phase": "inventory-first",
+          "inputToDOMMs": 19310
+        },
+        {
+          "phase": "inventory-repeat",
+          "inputToDOMMs": 39
+        }
+      ],
+      "metrics": {
+        "phases": {
+          "idle": {
+            "frames": {
+              "count": 541,
+              "p50": 16.69999999999891,
+              "p95": 33.29999999999927,
+              "p99": 1199.7999999999956,
+              "max": 1350
+            },
+            "tail10s": {
+              "count": 111,
+              "p50": 16.69999999999709,
+              "p95": 1166.6000000000022,
+              "p99": 1266.5999999999985,
+              "max": 1350
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 260,
+                "p50": 16.69999999999891,
+                "p95": 16.80000000000109,
+                "p99": 33.399999999999636,
+                "max": 516.7000000000007
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 57,
+                "p50": 16.69999999999891,
+                "p95": 1100,
+                "p99": 1133.300000000001,
+                "max": 1133.300000000001
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 64,
+                "p50": 16.700000000000728,
+                "p95": 949.9000000000015,
+                "p99": 1183.199999999997,
+                "max": 1183.199999999997
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 48,
+                "p50": 16.700000000000728,
+                "p95": 1100,
+                "p99": 1216.5999999999985,
+                "max": 1216.5999999999985
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 62,
+                "p50": 16.700000000000728,
+                "p95": 1166.6000000000022,
+                "p99": 1266.5999999999985,
+                "max": 1266.5999999999985
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 49,
+                "p50": 16.69999999999709,
+                "p95": 1133.2999999999956,
+                "p99": 1350,
+                "max": 1350
+              }
+            ],
+            "encodes": [],
+            "copies": []
+          },
+          "inventory-first": {
+            "frames": {
+              "count": 296,
+              "p50": 16.69999999999709,
+              "p95": 50,
+              "p99": 983.3000000000029,
+              "max": 18999.199999999997
+            },
+            "tail10s": {
+              "count": 257,
+              "p50": 16.69999999999709,
+              "p95": 33.400000000001455,
+              "p99": 900,
+              "max": 983.3000000000029
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 1,
+                "p50": 1133.300000000003,
+                "p95": 1133.300000000003,
+                "p99": 1133.300000000003,
+                "max": 1133.300000000003
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 0,
+                "p50": null,
+                "p95": null,
+                "p99": null,
+                "max": null
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 0,
+                "p50": null,
+                "p95": null,
+                "p99": null,
+                "max": null
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 38,
+                "p50": 16.69999999999709,
+                "p95": 66.70000000000437,
+                "p99": 18999.199999999997,
+                "max": 18999.199999999997
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 205,
+                "p50": 16.69999999999709,
+                "p95": 33.299999999995634,
+                "p99": 83.29999999999563,
+                "max": 766.6999999999971
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 52,
+                "p50": 16.69999999999709,
+                "p95": 900,
+                "p99": 983.3000000000029,
+                "max": 983.3000000000029
+              }
+            ],
+            "encodes": [
+              {
+                "p": "inventory-first",
+                "ms": 0.3999999985098839,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 19121.300000000745,
+                "w": 16,
+                "h": 16
+              },
+              {
+                "p": "inventory-first",
+                "ms": 39.899999998509884,
+                "w": 16,
+                "h": 16
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.29999999701976776,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.30000000074505806,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.19999999925494194,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.20000000298023224,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.09999999776482582,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0.10000000149011612,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              },
+              {
+                "p": "inventory-first",
+                "ms": 0,
+                "w": 32,
+                "h": 32
+              }
+            ],
+            "copies": []
+          },
+          "inventory-repeat": {
+            "frames": {
+              "count": 338,
+              "p50": 16.69999999999709,
+              "p95": 899.8999999999942,
+              "p99": 1016.6000000000058,
+              "max": 1183.300000000003
+            },
+            "tail10s": {
+              "count": 104,
+              "p50": 16.69999999999709,
+              "p95": 899.8999999999942,
+              "p99": 949.9000000000087,
+              "max": 1016.6000000000058
+            },
+            "windows": [
+              {
+                "seconds": [
+                  0,
+                  5
+                ],
+                "count": 58,
+                "p50": 16.69999999999709,
+                "p95": 916.6999999999971,
+                "p99": 1049.8999999999942,
+                "max": 1049.8999999999942
+              },
+              {
+                "seconds": [
+                  5,
+                  10
+                ],
+                "count": 52,
+                "p50": 16.69999999999709,
+                "p95": 900,
+                "p99": 949.8999999999942,
+                "max": 949.8999999999942
+              },
+              {
+                "seconds": [
+                  10,
+                  15
+                ],
+                "count": 63,
+                "p50": 16.69999999999709,
+                "p95": 849.8999999999942,
+                "p99": 1033.3999999999942,
+                "max": 1033.3999999999942
+              },
+              {
+                "seconds": [
+                  15,
+                  20
+                ],
+                "count": 61,
+                "p50": 16.69999999999709,
+                "p95": 749.9000000000087,
+                "p99": 1183.300000000003,
+                "max": 1183.300000000003
+              },
+              {
+                "seconds": [
+                  20,
+                  25
+                ],
+                "count": 52,
+                "p50": 16.69999999999709,
+                "p95": 899.8999999999942,
+                "p99": 949.9000000000087,
+                "max": 949.9000000000087
+              },
+              {
+                "seconds": [
+                  25,
+                  30
+                ],
+                "count": 52,
+                "p50": 16.69999999999709,
+                "p95": 933.1999999999971,
+                "p99": 1016.6000000000058,
+                "max": 1016.6000000000058
+              }
+            ],
+            "encodes": [],
+            "copies": []
+          }
+        },
+        "tasks": [
+          {
+            "at": 2688.400000002235,
+            "ms": 490
+          },
+          {
+            "at": 3223,
+            "ms": 2154
+          },
+          {
+            "at": 5394.900000002235,
+            "ms": 720
+          },
+          {
+            "at": 6580.199999999255,
+            "ms": 100
+          },
+          {
+            "at": 6690.800000000745,
+            "ms": 780
+          },
+          {
+            "at": 8137.5,
+            "ms": 64
+          },
+          {
+            "at": 38525,
+            "ms": 19215
+          },
+          {
+            "at": 57889.699999999255,
+            "ms": 51
+          },
+          {
+            "at": 63075.10000000149,
+            "ms": 58
+          },
+          {
+            "at": 68861.19999999925,
+            "ms": 50
+          },
+          {
+            "at": 73207.69999999925,
+            "ms": 53
+          },
+          {
+            "at": 87616.10000000149,
+            "ms": 56
+          },
+          {
+            "at": 90840.90000000224,
+            "ms": 51
+          },
+          {
+            "at": 96683.19999999925,
+            "ms": 59
+          }
+        ],
+        "heap": 286000000,
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "ui": {
+        "checked": 0,
+        "mismatches": [],
+        "geometry": [
+          {
+            "key": "rcash",
+            "marker": "atlas157",
+            "w": 8,
+            "h": 8,
+            "x": 17,
+            "y": 250.75
+          },
+          {
+            "key": "knife",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 107,
+            "y": 75
+          },
+          {
+            "key": "water_flask",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 137,
+            "y": 76
+          },
+          {
+            "key": "berries",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 167,
+            "y": 76
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 101.5
+          },
+          {
+            "key": "vehicle_frame",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 101.5
+          },
+          {
+            "key": "fuel_can",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 101.5
+          },
+          {
+            "key": "fuel_can",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 101.5
+          },
+          {
+            "key": "crude_petroleum",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 101.5
+          },
+          {
+            "key": "energy_basic",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 101.5
+          },
+          {
+            "key": "energy_refined",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 101.5
+          },
+          {
+            "key": "energy_refined",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 134.5
+          },
+          {
+            "key": "essence_fire",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 134.5
+          },
+          {
+            "key": "essence_nature",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 134.5
+          },
+          {
+            "key": "essence_water",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 134.5
+          },
+          {
+            "key": "essence_spirit",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 134.5
+          },
+          {
+            "key": "core_blast",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 134.5
+          },
+          {
+            "key": "core_earthmother",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 134.5
+          },
+          {
+            "key": "reinforced_spear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 167.5
+          },
+          {
+            "key": "metal_pipe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 167.5
+          },
+          {
+            "key": "metal_blade",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 167.5
+          },
+          {
+            "key": "mechanical_gear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 167.5
+          },
+          {
+            "key": "iron_plate",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 167.5
+          },
+          {
+            "key": "industrial_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 167.5
+          },
+          {
+            "key": "wood_club",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 167.5
+          },
+          {
+            "key": "dried_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 200.5
+          },
+          {
+            "key": "grilled_mushroom",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 200.5
+          },
+          {
+            "key": "mushroom_soup",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 200.5
+          },
+          {
+            "key": "canned_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 200.5
+          },
+          {
+            "key": "fruit_wine",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 200.5
+          },
+          {
+            "key": "jam",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 200.5
+          },
+          {
+            "key": "rope",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 200.5
+          },
+          {
+            "key": "lead_rope",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 233.5
+          },
+          {
+            "key": "animal_feed",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 233.5
+          },
+          {
+            "key": "arrow",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 233.5
+          },
+          {
+            "key": "torch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 233.5
+          },
+          {
+            "key": "stone_axe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 233.5
+          },
+          {
+            "key": "stone_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 233.5
+          },
+          {
+            "key": "wood_spear",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 233.5
+          },
+          {
+            "key": "bandage",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 266.5
+          },
+          {
+            "key": "water_flask",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 266.5
+          },
+          {
+            "key": "cooked_meat",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 266.5
+          },
+          {
+            "key": "charcoal",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 266.5
+          },
+          {
+            "key": "iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 266.5
+          },
+          {
+            "key": "refined_iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 266.5
+          },
+          {
+            "key": "refined_iron_ingot",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 266.5
+          },
+          {
+            "key": "glass",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 299.5
+          },
+          {
+            "key": "leather",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 299.5
+          },
+          {
+            "key": "cloth",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 299.5
+          },
+          {
+            "key": "arrow",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 299.5
+          },
+          {
+            "key": "plank",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 299.5
+          },
+          {
+            "key": "iron_axe",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 299.5
+          },
+          {
+            "key": "iron_pick",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 299.5
+          },
+          {
+            "key": "deploy_claim",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_bed_straw",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_chest_small",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_chest_large",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_campfire",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_furnace",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_oil_pump",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 332.5
+          },
+          {
+            "key": "deploy_refinery",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_workbench",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_research",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_garden",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_farm_controller",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_barrel",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_feed_trough",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 365.5
+          },
+          {
+            "key": "deploy_base_generator",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_power_cable",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_power_switch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_pressure_switch",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 477,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_ir_sensor",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 510,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_arrow_turret",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 543,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_bear_trap",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 576,
+            "y": 398.5
+          },
+          {
+            "key": "deploy_spikes",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 378,
+            "y": 431.5
+          },
+          {
+            "key": "deploy_barricade",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 411,
+            "y": 431.5
+          },
+          {
+            "key": "deploy_torch_post",
+            "marker": "atlas157",
+            "w": 20,
+            "h": 20,
+            "x": 444,
+            "y": 431.5
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 24,
+            "h": 24,
+            "x": 380,
+            "y": 235.375
+          },
+          {
+            "key": "berries",
+            "marker": "atlas157",
+            "w": 16,
+            "h": 16,
+            "x": 378,
+            "y": 274
+          },
+          {
+            "key": "fruit_juice",
+            "marker": "atlas157",
+            "w": 18,
+            "h": 18,
+            "x": 429.625,
+            "y": 273
+          }
+        ]
+      },
+      "errors": []
+    }
+  ],
+  "limitations": "Dev build, software SwiftShader, no physicalGPU/native/FPS/experience claim. Same verified Veyra seed snapshot, serial ABBA. Phase deadlines measured from input start so cold stall cannot change relative phase ages. Pixel reads performed only AFTER timing phases. Baseline UI from HEAD; same current engine and CSS selectors (img selectors broadened only).",
+  "baselineUIRef": "53c168808e4264c39625ad3bd409211de005dfa7"
+}

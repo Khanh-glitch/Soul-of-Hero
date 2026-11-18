@@ -26,7 +26,9 @@ try{
   await page.locator('canvas').first().waitFor();await page.waitForTimeout(1200);
   record.initial=await inspect(page);assert(record.initial);assert.equal(record.initial.qaUsed,false);record.steps.push('fresh menu start');
   await page.screenshot({path:out+'/spawn-640x360.png',timeout:120000});
-  await page.keyboard.press('KeyI');await page.getByRole('button',{name:'Sort Pack',exact:true}).waitFor();
+  const inventoryInputAt=Date.now();await page.keyboard.press('KeyI');await page.getByRole('button',{name:'Sort Pack',exact:true}).waitFor();
+  record.inventoryInputToDOMMs=Date.now()-inventoryInputAt;
+  record.uiIconNodes=await page.evaluate(()=>({atlasImages:document.querySelectorAll('img[data-icon="atlas157"]').length,drawnCanvases:document.querySelectorAll('canvas[data-icon="drawn"]').length}));
   await page.screenshot({path:out+'/inventory-640x360.png',timeout:120000});record.steps.push('ordinary inventory input');
   await page.keyboard.press('KeyI');await page.keyboard.press('Escape');
   await page.getByRole('button',{name:'Save & quit to title',exact:true}).click();await page.getByRole('button',{name:/^Continue/}).waitFor();

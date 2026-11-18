@@ -20,7 +20,7 @@ import { recipeOutputs } from '../game/engine';
 const bundleLabel = (rc: { out: string; qty: number; outs?: [string, number][] }) => recipeOutputs(rc).map(([k, q]) => `${q} ${ITEMS[k].name}`).join(' + ');
 import { getMapCanvas } from '../game/render';
 import { setVolume } from '../game/audio';
-import { Panel, Slot, Icon, Cost, iconUrl, type Api } from './common';
+import { Panel, Slot, Icon, Cost, ArtImage, type Api } from './common';
 import { Glyph } from './hud';
 import { getArt } from '../game/art';
 import { ExpeditionMap } from './ExpeditionMap';
@@ -141,7 +141,7 @@ export function InventoryPanel({ api, quickTo, x = 404, top = 54, onClose, backT
         <div className="doll-slots">
           {EQ_SLOTS.map((sl, i) => <div key={sl} className={`eqslot ${C(r, 'eq').slots[i] ? '' : 'empty'}`} title={sl}>
             <DSlot api={api} cid="eq" slot={i} s={C(r, 'eq').slots[i]} size={22} />
-            {!C(r, 'eq').slots[i] && <img className="px ghost-ico" src={iconUrl(SLOT_G[i])} alt="" />}
+            {!C(r, 'eq').slots[i] && <ArtImage className="px ghost-ico" k={SLOT_G[i]} alt="" />}
           </div>)}
         </div>
         <HeroDoll r={r} />
@@ -416,7 +416,7 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
       {/* station rail: icons, lamp = a usable station is in reach */}
       <div className="rail">
         {CRAFT_GROUPS.map(g => { const near = g.station ? !!nearSt(g.station) : true; return <button key={g.id} className={`railbtn ${category === g.id && !q ? 'on' : ''}`} title={g.id} onClick={() => { setCategory(g.id); setSearch(''); setSelectedRecipe(null); }}>
-          <img className="px" src={iconUrl(g.icon)} alt={g.id} /><i className="lamp round" style={{ color: near ? 'var(--good)' : 'var(--edge)' }} />
+          <ArtImage className="px" k={g.icon} alt={g.id} /><i className="lamp round" style={{ color: near ? 'var(--good)' : 'var(--edge)' }} />
         </button>; })}
       </div>
       <div className="craft-main">
@@ -439,7 +439,7 @@ export function CraftPanel({ api, focusRecipe }: { api: Api; focusRecipe?: strin
             <div className="outs">{recipeOutputs(rc).map(([k, qq]) => <span key={k} className="out" title={ITEMS[k].name}><Icon k={k} size={16} /><b>×{qq}</b></span>)}</div>
           </div>
           <div className="recipe-meta">
-            {rc.station ? <span className="chip" style={{ color: stationReady ? 'var(--good)' : 'var(--bad)' }}><img className="px" src={iconUrlSt(rc.station)} alt="" />{STRUCTS[rc.station].name}{rc.stationLevel ? ` L${rc.stationLevel}` : ''}</span> : <span className="chip" style={{ color: 'var(--paper)' }}>by hand</span>}
+            {rc.station ? <span className="chip" style={{ color: stationReady ? 'var(--good)' : 'var(--bad)' }}><ArtImage className="px" k={'st:' + rc.station} alt="" />{STRUCTS[rc.station].name}{rc.stationLevel ? ` L${rc.stationLevel}` : ''}</span> : <span className="chip" style={{ color: 'var(--paper)' }}>by hand</span>}
             <span className="chip" style={{ color: 'var(--paper)' }}>⏱ {rc.secs}s</span>
             {fuelNeeded && <span className="chip" style={{ color: fuelReady ? 'var(--good)' : 'var(--warn)' }}><Glyph k="fuel" c="currentColor" s={7} />{fuelReady ? 'fuel' : 'no fuel'}</span>}
             {st && <span className="chip" style={{ color: queueFull ? 'var(--bad)' : 'var(--muted)' }}>queue {st.station!.queue.length}/6</span>}
@@ -478,13 +478,13 @@ export function BuildPanel({ api }: { api: Api }) {
   const place = (k: string) => { api.setBuild(k); api.setReclaim(false); api.setRepairMode(false); api.setUpgradeMode(false); api.open(null); };
   return <Panel title="Build" className="build" style={{ left: 20, top: 30, width: 392, height: 302 }} onClose={() => api.open(null)}>
     <div className="build-top">
-      {Object.keys(BUILD_GROUPS).map(k => <button key={k} className={`tab ${category === k && !q ? 'on' : ''}`} onClick={() => { setCategory(k); setQuery(''); }}><img className="px" src={iconUrl(BUILD_TAB_ICON[k])} alt="" />{k}</button>)}
+      {Object.keys(BUILD_GROUPS).map(k => <button key={k} className={`tab ${category === k && !q ? 'on' : ''}`} onClick={() => { setCategory(k); setQuery(''); }}><ArtImage className="px" k={BUILD_TAB_ICON[k]} alt="" />{k}</button>)}
       <input aria-label="Find structure" placeholder="find…" value={query} onChange={e => setQuery(e.target.value)} />
     </div>
     <div className="build-body">
       <div className="btiles scroll">
         {keys.map(k => { const d = STRUCTS[k]; const costs=costToPlace(k); const ok = costs.every(([i, qq]) => have(i) >= qq); const locked = buildLocked(r, k); return <button key={k} className={`btile ${ok && !locked ? 'ok' : 'no'} ${focus === k ? 'on' : ''}`} disabled={locked} data-testid={k === 'oil_pump' ? 'build-oil-pump' : undefined} onMouseEnter={() => setHover(k)} onFocus={() => setHover(k)} onClick={() => place(k)} title={d.name}>
-          <span className="ground" /><img className="px" src={iconUrlSt(k)} alt="" />
+          <span className="ground" /><ArtImage className="px" k={'st:' + k} alt="" />
           {locked && <span className="lock">🔒</span>}
           <span className="nm">{d.name}</span>
           <span className="cost">{costs.map(([i, qq]) => <span key={i} className={have(i) >= qq ? 'ok' : 'no'} title={`${ITEMS[i].name} ${have(i)}/${qq}`}><Icon k={i} size={8} />{qq}</span>)}</span>
@@ -492,7 +492,7 @@ export function BuildPanel({ api }: { api: Api }) {
         {!keys.length && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', padding: 6 }}>nothing matches</div>}
       </div>
       {focus && fd && <div className="bdetail">
-        <div className="bdetail-head"><img className="px" src={iconUrlSt(focus)} alt="" /><div><b>{fd.name}</b><div className="lbl meta">{fd.layer.toUpperCase()}{fd.shelter ? ' · SHELTER' : ''}{fd.station ? ' · STATION' : ''}{fd.slots ? ` · ${fd.slots} SLOTS` : ''}{fd.light ? ' · LIGHT' : ''}</div></div></div>
+        <div className="bdetail-head"><ArtImage className="px" k={'st:' + focus} alt="" /><div><b>{fd.name}</b><div className="lbl meta">{fd.layer.toUpperCase()}{fd.shelter ? ' · SHELTER' : ''}{fd.station ? ' · STATION' : ''}{fd.slots ? ` · ${fd.slots} SLOTS` : ''}{fd.light ? ' · LIGHT' : ''}</div></div></div>
         <div className="lbl desc">{fd.desc}</div>
         {fd.item && <div className="why" style={{ color: 'var(--warn)' }}>Craft {ITEMS[fd.item].name} in Survivor first; placing consumes that physical item, not its materials again.</div>}
         <div className="bcost">{costToPlace(focus).map(([i, qq]) => { const h = have(i); return <span key={i} className={`need ${h >= qq ? 'ok' : 'no'}`} title={ITEMS[i].name}><Icon k={i} size={14} /><b>{h}</b><small>/{qq}</small></span>; })}<span className="chip" style={{ color: 'var(--muted)', marginLeft: 'auto' }}><Glyph k="hp" c="currentColor" s={7} />{fd.hp}</span></div>
@@ -508,7 +508,6 @@ export function BuildPanel({ api }: { api: Api }) {
     </div>
   </Panel>;
 }
-const iconUrlSt = (k: string) => iconUrl('st:' + (k === 'escrow' ? 'escrow' : k));
 
 export function MapPanel({ api, onTeleportSelect, teleportTarget, qaSession = false }: { api: Api; onTeleportSelect?: (x:number,y:number)=>void; teleportTarget?: {x:number;y:number} | null; qaSession?: boolean }) {
   return <ExpeditionMap api={api} onTeleportSelect={onTeleportSelect} teleportTarget={teleportTarget} qaSession={qaSession} />;

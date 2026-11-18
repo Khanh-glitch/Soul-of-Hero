@@ -5,7 +5,7 @@ import { C, countItem, invWeight, carryLimit, recipeOutputs } from '../game/engi
 import { craftReadiness, structurePreparation, type CraftReadiness } from '../game/action-readiness';
 import { getArt } from '../game/art';
 import { drawAdventurer } from '../game/avatar-presentation';
-import { Icon, iconUrl, type Api } from './common';
+import { Icon, ArtImage, type Api } from './common';
 import { Glyph, useVisualPrefs } from './hud';
 import { resolveUiLayout } from '../visual/direction';
 import { DSlot, DGrid, KeyboardMoveBanner } from './dragSlots';
@@ -143,7 +143,7 @@ export function SurvivorScreen({
           <div className="sv-eq">
             {EQ_SLOTS.map((sl, i) => <div key={i} className="sv-eqcell" title={sl} data-eq-slot={sl}>
               <DSlot api={api} cid="eq" slot={i} s={C(r, 'eq').slots[i]} size={26} />
-              {!C(r, 'eq').slots[i] && <img className="px sv-ghost" src={iconUrl(EQ_GHOST[i])} alt="" />}
+              {!C(r, 'eq').slots[i] && <ArtImage className="px sv-ghost" k={EQ_GHOST[i]} alt="" />}
             </div>)}
           </div>
           <Doll r={r} />
@@ -177,7 +177,7 @@ export function SurvivorScreen({
       <section className="sv-right">
         <div className="sv-cats">
           {CATS.map(c => <button key={c.id} className={`sv-cat ${cat === c.id ? 'on' : ''}`} onClick={() => { setCat(c.id); setPick(null); }} title={c.label}>
-            <img className="px" src={iconUrl(c.icon)} alt="" /><span>{c.label}</span>
+            <ArtImage className="px" k={c.icon} alt="" /><span>{c.label}</span>
           </button>)}
         </div>
         <div className="sv-filter">
@@ -187,7 +187,7 @@ export function SurvivorScreen({
         </div>
         <div className="sv-tiles scroll">
           {shown.map(e => <button key={e.id} className={`sv-tile ${sel === e.id ? 'on' : ''} ${e.status === 'ready' ? 'ok' : e.status === 'waiting' || e.status === 'prepared' ? 'wait' : 'no'}`} data-recipe={e.id} data-state={e.status} onClick={() => setPick(e.id)} title={`${e.name} · ${e.short}`} aria-label={`${e.name}: ${e.status === 'ready' ? 'Work now' : e.status === 'waiting' ? 'Can queue; will wait' : e.status === 'prepared' ? 'Materials prepared; select legal site' : 'Blocked'}; ${e.short}`}>
-            {e.out.startsWith('st:') ? <img className="px" src={iconUrl(e.out)} alt="" /> : <Icon k={e.out} size={20} />}
+            {e.out.startsWith('st:') ? <ArtImage className="px" k={e.out} alt="" /> : <Icon k={e.out} size={20} />}
             {!e.out.startsWith('st:') && RECIPES[e.id]?.qty > 1 && <b>{RECIPES[e.id].qty}</b>}
             <i className="dot" aria-hidden="true" />
           </button>)}
@@ -211,7 +211,7 @@ function RecipeDetail({ api, k, readiness }: { api: Api; k: string; readiness: C
       <div className="outs">{recipeOutputs(rc).map(([i, n]) => <span key={i} className="out" title={ITEMS[i].name}><Icon k={i} size={18} /><b>×{n}</b></span>)}</div>
     </div>
     <div className="sv-dfoot">
-      {rc.station ? <span className="chip" style={{ color: readiness.station ? readiness.level >= (rc.stationLevel ?? 1) ? 'var(--good)' : 'var(--bad)' : 'var(--warn)' }} title={readiness.station ? `Station at ${readiness.station.tx},${readiness.station.ty}, level ${readiness.level}` : 'No reachable station'}><img className="px" src={iconUrl(`st:${rc.station}`)} alt="" />{STRUCTS[rc.station].name}{rc.stationLevel ? ` L${rc.stationLevel}` : ''}</span> : <span className="chip" style={{ color: 'var(--paper)' }}>By hand</span>}
+      {rc.station ? <span className="chip" style={{ color: readiness.station ? readiness.level >= (rc.stationLevel ?? 1) ? 'var(--good)' : 'var(--bad)' : 'var(--warn)' }} title={readiness.station ? `Station at ${readiness.station.tx},${readiness.station.ty}, level ${readiness.level}` : 'No reachable station'}><ArtImage className="px" k={`st:${rc.station}`} alt="" />{STRUCTS[rc.station].name}{rc.stationLevel ? ` L${rc.stationLevel}` : ''}</span> : <span className="chip" style={{ color: 'var(--paper)' }}>By hand</span>}
       <span className="chip" style={{ color: 'var(--paper)' }}>⏱ {rc.secs}s</span>
       {readiness.fuel !== 'not-needed' && readiness.station && <span className="chip" style={{ color: readiness.fuel !== 'empty' ? 'var(--good)' : 'var(--warn)' }}><Glyph k="fuel" c="currentColor" s={7} />{readiness.fuel === 'empty' ? 'No fuel' : readiness.fuel === 'burning' ? 'Burning' : 'Fuel stored'}</span>}
       {readiness.station && <span className="chip" style={{ color: readiness.queue >= 6 ? 'var(--bad)' : 'var(--muted)' }}>Queue {readiness.queue}/6</span>}
@@ -229,12 +229,12 @@ function StructDetail({ api, k }: { api: Api; k: string }) {
   const ok = prep.materials && !prep.sourceBlocked;
   const reforge = prep.pack?.reforge;
   return <div className="sv-detail">
-    <div className="sv-dhead"><div className="sv-dico"><img className="px" src={iconUrl(`st:${k}`)} alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} /></div><div><b>{d.name}</b><div className="sv-ddesc">{d.desc}</div></div></div>
+    <div className="sv-dhead"><div className="sv-dico"><ArtImage className="px" k={`st:${k}`} alt="" style={{ width: 24, height: 24, objectFit: 'contain' }} /></div><div><b>{d.name}</b><div className="sv-ddesc">{d.desc}</div></div></div>
     <div className="sv-diagram">
       {/* A device placement consumes the CRAFTED PACK; its material list is the craft cost, paid once at the bench. */}
       <div className="ins">{(prep.pack ? ([[prep.pack.key, 1]] as [string, number][]) : d.cost).map(([i, n]) => <span key={i} className={`need ${have(i) >= n ? 'ok' : 'no'}`} title={prep.pack ? `Packed ${d.name} — placement spends this item` : ITEMS[i].name}><Icon k={i} size={16} /><b>{have(i)}</b><small>/{n}</small></span>)}</div>
       <span className="arrow">▶</span>
-      <div className="outs"><span className="out"><img className="px" src={iconUrl(`st:${k}`)} alt="" style={{ width: 18, height: 18, objectFit: 'contain' }} /><b>{prep.pack ? (prep.pack.intact ? `place at ${prep.pack.dur}/${prep.pack.max}` : 'cannot place') : 'place'}</b></span></div>
+      <div className="outs"><span className="out"><ArtImage className="px" k={`st:${k}`} alt="" style={{ width: 18, height: 18, objectFit: 'contain' }} /><b>{prep.pack ? (prep.pack.intact ? `place at ${prep.pack.dur}/${prep.pack.max}` : 'cannot place') : 'place'}</b></span></div>
     </div>
     <div className="sv-dfoot">
       <span className="chip" style={{ color: 'var(--muted)' }}><Glyph k="hp" c="currentColor" s={7} />{d.hp}</span>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { ITEMS } from '../game/catalog';
 import { getArt } from '../game/art';
 import { atlasIconUrl } from '../game/item-atlas';
@@ -16,12 +16,42 @@ function drawnIconUrl(key: string) {
   // the 156 items already covered by the approved atlas) on first pack open.
   return iconUrls[key] = c ? c.toDataURL() : '';
 }
-/** Item icon: the approved 157-atlas cell for every mapped id; the drawn icon only for ids outside the 157 and for `st:` structure art. */
+/** Legacy URL API for callers needing a URL; React UI uses ArtImage below. */
 export function iconUrl(key: string) { return atlasIconUrl(key) || drawnIconUrl(key); }
+
+/** Canvas-to-canvas copies keep procedural art on the rendering path: no
+ * synchronous GPU readback/PNG encode while opening a panel. The backing store
+ * stays at the source resolution; CSS scales it exactly like the former img. */
+type ArtImageProps = {
+  k: string; className?: string; width?: number; height?: number;
+  style?: React.CSSProperties; alt?: string; title?: string;
+};
+function DrawnImage({ source, k, className = 'px', width, height, style, alt = '', title }: ArtImageProps & { source: HTMLCanvasElement | null }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useLayoutEffect(() => {
+    const c = ref.current, g = c?.getContext('2d');
+    if (!c || !g) return;
+    g.clearRect(0, 0, c.width, c.height);
+    if (!source) return; // A missing replacement must not retain the previous icon.
+    g.imageSmoothingEnabled = false;
+    g.drawImage(source, 0, 0);
+  }, [source]);
+  return <canvas ref={ref} className={className} width={source?.width ?? 16} height={source?.height ?? 16}
+    data-icon="drawn" data-item={k} style={{ width, height, ...style }}
+    role={alt ? 'img' : undefined} aria-label={alt || undefined} aria-hidden={alt ? undefined : true} title={title} />;
+}
+/** UI art: approved item atlas keeps priority; procedural items/structures are
+ * copied once per mounted source, not encoded or redrawn on the game RAF. */
+export function ArtImage({ k, className = 'px', width, height, style, alt = '', title }: ArtImageProps) {
+  const approved = atlasIconUrl(k);
+  if (approved) return <img className={className} src={approved} width={width} height={height} data-icon="atlas157" data-item={k} style={style} draggable={false} alt={alt} title={title} />;
+  const A = getArt(), sprites = k.startsWith('st:') ? A.st : A.icon, id = k.startsWith('st:') ? k.slice(3) : k;
+  const source = Object.prototype.hasOwnProperty.call(sprites, id) ? sprites[id] : null;
+  return <DrawnImage source={source} k={k} className={className} width={width} height={height} style={style} alt={alt} title={title} />;
+}
+/** Item icon keeps the existing dimensions and atlas/drawn audit markers. */
 export function Icon({ k, size = 16, style }: { k: string; size?: number; style?: React.CSSProperties }) {
-  const approved = atlasIconUrl(k), src = approved || drawnIconUrl(k);
-  if (!src) return <span className="px" style={{ display: 'inline-block', width: size, height: size, ...style }} aria-hidden="true" />;
-  return <img className="px" src={src} width={size} height={size} data-icon={approved ? 'atlas157' : 'drawn'} data-item={k} style={{ width: size, height: size, ...style }} draggable={false} alt="" />;
+  return <ArtImage k={k} width={size} height={size} style={{ width: size, height: size, ...style }} />;
 }
 
 export interface Api {

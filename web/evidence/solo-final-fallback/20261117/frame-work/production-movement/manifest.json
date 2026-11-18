@@ -1,0 +1,124 @@
+{
+  "head": "53c168808e4264c39625ad3bd409211de005dfa7",
+  "htmlSha256": "51e1d7b22935363fa0aeeb091406b16b8a7ae9735659d8396ac10f5f2b4afd1a",
+  "sourceSHA256": {
+    "src/game/engine.ts": "857c89fa6be444e9dba4d506437de929c5fd6a6a9411db63489ebd734b68004c",
+    "src/game/render.ts": "284c8395fa6fcc8f66e07760669b036ee0912ea52ec88b9f6802ae795e95d53a",
+    "src/game/sim.ts": "26b268574ec9b4b341f47598282c5545783f595d66793613dea6338abf830e1e",
+    "src/game/world.ts": "0d6ca21b8020fda98e2cf0ebff84bf935d3845e6425f0c4e8066c2fda3823a0c",
+    "src/veyra05/scenes.ts": "31b65d66e267697b94f9baf89919ffecf90b490467febfed346a492dcb4e068a",
+    "src/veyra05/window.ts": "8fe9d4b6022e7ecda816ba750c5c1d393af35c6728e773594c9b4ff2f12d7d51",
+    "src/veyra05/floors.ts": "f24015d179235347a57eca5309b96f580c4dc484e74b9e5d6a9722ff9eb34e7e",
+    "src/ui/Game.tsx": "7d9737e75cda70a61609977cbc452886360a09589129cafc3e78ecbeee201d53"
+  },
+  "scope": "PRODUCTION_BUNDLE_ORDINARY_INPUT_ONLY; software GPU; not FPS/human/progression acceptance",
+  "errors": [],
+  "badResources": [],
+  "steps": [
+    "fresh menu start, no injected state",
+    "held D then S (ordinary movement)",
+    "no interactable found by the sweep: held LMB at screen centre instead",
+    "saved, quit, resumed in a fresh browser process"
+  ],
+  "phases": {
+    "idle": {
+      "wallMs": 8003,
+      "frames": 321,
+      "p50": 16.69999999999709,
+      "p95": 16.799999999999272,
+      "max": 666.7000000000007,
+      "longTasks": []
+    },
+    "movement": {
+      "wallMs": 11819,
+      "frames": 229,
+      "p50": 16.700000000000728,
+      "p95": 599.8999999999978,
+      "max": 783.3999999999978,
+      "longTasks": [
+        72
+      ]
+    },
+    "harvest-no-target": {
+      "wallMs": 12023,
+      "frames": 209,
+      "p50": 16.69999999999709,
+      "p95": 600,
+      "max": 766.5999999999985,
+      "longTasks": []
+    }
+  },
+  "run": {
+    "id": "run_wcn7jx_mwl06yis",
+    "seed": 1956155901,
+    "layout": "veyra05-at-2048-1280",
+    "digest": "277590c5",
+    "qaUsed": false,
+    "player": [
+      1272,
+      1000
+    ]
+  },
+  "harvestTarget": null,
+  "harvestAim": null,
+  "after": {
+    "player": [
+      1291,
+      1150
+    ],
+    "movedPx": 151,
+    "harvestReceipts": 2,
+    "receiptKinds": [
+      "run.start",
+      "stimulus.emit",
+      "harvest",
+      "pickup"
+    ],
+    "drops": 0,
+    "entities": 0,
+    "inventory": [
+      [
+        "knife",
+        1
+      ],
+      [
+        "water_flask",
+        1
+      ],
+      [
+        "berries",
+        3
+      ],
+      [
+        "berries",
+        1
+      ],
+      [
+        "berries",
+        1
+      ],
+      [
+        "seed_wildberry",
+        1
+      ],
+      [
+        "berries",
+        1
+      ]
+    ],
+    "qaUsed": false
+  },
+  "resumed": {
+    "id": "run_wcn7jx_mwl06yis",
+    "seed": 1956155901,
+    "layout": "veyra05-at-2048-1280",
+    "digest": "277590c5",
+    "qaUsed": false,
+    "player": [
+      1291,
+      1150
+    ],
+    "harvestReceipts": 2
+  },
+  "status": "PASS_TECHNICAL_SMOKE_ONLY"
+}

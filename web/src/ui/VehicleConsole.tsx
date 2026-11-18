@@ -1,7 +1,7 @@
 import { BAL, TILE, type Entity } from '../game/core';
 import { C, cartWeight, countItem } from '../game/engine';
 import { vehicleVisualKey } from '../game/industrial-art';
-import { Icon, iconUrl, type Api } from './common';
+import { Icon, ArtImage, type Api } from './common';
 
 /** Physical vehicle readout: engine decides every action, UI explains what's possible now. */
 export function VehicleConsole({ api, e }: { api: Api; e: Entity }) {
@@ -21,7 +21,7 @@ export function VehicleConsole({ api, e }: { api: Api; e: Entity }) {
   const stranded = state !== 'ok';
   return <div className={`vehicle-console vehicle-console--${state}`}>
     <div className="vehicle-console__top">
-      <img className="px" src={iconUrl(`st:vehicle_side_${state}`)} width={48} height={32} alt="" />
+      <ArtImage className="px" k={`st:vehicle_side_${state}`} width={48} height={32} alt="" />
       <div><b>{state === 'broken' ? 'BROKEN' : state === 'empty' ? 'OUT OF FUEL' : 'READY'}</b><span>{e.deployed?.uid ? `Bike ${e.deployed.uid}` : 'Utility motorbike'}</span></div>
       <i className={`lamp ${state === 'broken' ? 'diamond' : 'round'}`} style={{ color: state === 'ok' ? 'var(--good)' : 'var(--bad)' }} />
     </div>

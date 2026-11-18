@@ -1,0 +1,1195 @@
+{
+  "headRef": "53c168808e4264c39625ad3bd409211de005dfa7",
+  "sourceSHA256": {
+    "head": "525d3ff3ae424677ad1cda2769c622e7f64d118082c0339540d5619bf0ae8b4f",
+    "optimised": "857c89fa6be444e9dba4d506437de929c5fd6a6a9411db63489ebd734b68004c"
+  },
+  "layouts": [
+    "shipping",
+    "dev_delta",
+    "shipping_fresh",
+    "dev_delta_fresh",
+    "veyra05-greywater",
+    "veyra05-elderwood",
+    "veyra05-hook",
+    "veyra05-argus",
+    "veyra05-at-1920-512",
+    "veyra05-slag",
+    "veyra05-cinder"
+  ],
+  "summary": [
+    {
+      "layout": "shipping",
+      "status": "compared",
+      "version": 3,
+      "statics": 26,
+      "checks": 7,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 2.2000000029802322,
+          "minMs": 2.0999999940395355,
+          "maxMs": 3
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.3999999985098839,
+          "minMs": 0.3999999985098839,
+          "maxMs": 0.5
+        }
+      }
+    },
+    {
+      "layout": "dev_delta",
+      "status": "compared",
+      "version": 3,
+      "statics": 32,
+      "checks": 7,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 2.2999999970197678,
+          "minMs": 2.100000001490116,
+          "maxMs": 3.1999999955296516
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.5,
+          "minMs": 0.30000000447034836,
+          "maxMs": 0.6000000014901161
+        }
+      }
+    },
+    {
+      "layout": "shipping_fresh",
+      "status": "compared",
+      "version": 3,
+      "statics": 26,
+      "checks": 7,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 2.5,
+          "minMs": 2.0999999940395355,
+          "maxMs": 3
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.3999999985098839,
+          "minMs": 0.29999999701976776,
+          "maxMs": 0.6000000014901161
+        }
+      }
+    },
+    {
+      "layout": "dev_delta_fresh",
+      "status": "compared",
+      "version": 3,
+      "statics": 32,
+      "checks": 7,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 2,
+          "minMs": 1.8999999985098839,
+          "maxMs": 2.100000001490116
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.3999999985098839,
+          "minMs": 0.30000000447034836,
+          "maxMs": 0.5
+        }
+      }
+    },
+    {
+      "layout": "veyra05-greywater",
+      "status": "compared",
+      "version": 3,
+      "statics": 10,
+      "checks": 12,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 13.200000002980232,
+          "minMs": 13,
+          "maxMs": 13.899999998509884
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.30000000447034836,
+          "minMs": 0.29999999701976776,
+          "maxMs": 0.3999999985098839
+        }
+      }
+    },
+    {
+      "layout": "veyra05-elderwood",
+      "status": "compared",
+      "version": 3,
+      "statics": 4,
+      "checks": 12,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 15.899999998509884,
+          "minMs": 13.299999997019768,
+          "maxMs": 17.700000002980232
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.3999999985098839,
+          "minMs": 0.30000000447034836,
+          "maxMs": 0.6000000014901161
+        }
+      }
+    },
+    {
+      "layout": "veyra05-hook",
+      "status": "compared",
+      "version": 3,
+      "statics": 12,
+      "checks": 12,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 9.699999995529652,
+          "minMs": 9.200000002980232,
+          "maxMs": 10.600000001490116
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.29999999701976776,
+          "minMs": 0.20000000298023224,
+          "maxMs": 0.30000000447034836
+        }
+      }
+    },
+    {
+      "layout": "veyra05-argus",
+      "status": "compared",
+      "version": 3,
+      "statics": 9,
+      "checks": 12,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 10.100000001490116,
+          "minMs": 9.799999997019768,
+          "maxMs": 10.100000001490116
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.3999999985098839,
+          "minMs": 0.19999999552965164,
+          "maxMs": 0.3999999985098839
+        }
+      }
+    },
+    {
+      "layout": "veyra05-at-1920-512",
+      "status": "compared",
+      "version": 3,
+      "statics": 0,
+      "checks": 11,
+      "mismatches": 0,
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 32.29999999701977,
+          "minMs": 26.69999999552965,
+          "maxMs": 37.5
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.5,
+          "minMs": 0.5,
+          "maxMs": 0.6000000014901161
+        }
+      }
+    },
+    {
+      "layout": "veyra05-slag",
+      "status": "start-failed",
+      "checks": 0,
+      "mismatches": 0
+    },
+    {
+      "layout": "veyra05-cinder",
+      "status": "start-failed",
+      "checks": 0,
+      "mismatches": 0
+    }
+  ],
+  "mismatchingChecks": [],
+  "detail": [
+    {
+      "layout": "shipping",
+      "requestedLayout": "shipping",
+      "actualLayout": "shipping_fresh",
+      "seed": 901,
+      "version": 3,
+      "statics": 26,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "snowpine",
+            "rock",
+            "crystal",
+            "grass",
+            "scrap"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 13,
+          "doorStatics": 2,
+          "ladders": 0
+        },
+        {
+          "label": "tiles-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "tiles-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "canary": {
+        "written": 15,
+        "seenByBothEngines": 15
+      },
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 2.2000000029802322,
+          "minMs": 2.0999999940395355,
+          "maxMs": 3
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.3999999985098839,
+          "minMs": 0.3999999985098839,
+          "maxMs": 0.5
+        }
+      },
+      "status": "compared"
+    },
+    {
+      "layout": "dev_delta",
+      "requestedLayout": "dev_delta",
+      "actualLayout": "dev_delta_fresh",
+      "seed": 901,
+      "version": 3,
+      "statics": 32,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "crystal",
+            "snowpine",
+            "scrap",
+            "grass",
+            "rock"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 13,
+          "doorStatics": 4,
+          "ladders": 0
+        },
+        {
+          "label": "tiles-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "tiles-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "canary": {
+        "written": 15,
+        "seenByBothEngines": 15
+      },
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 2.2999999970197678,
+          "minMs": 2.100000001490116,
+          "maxMs": 3.1999999955296516
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.5,
+          "minMs": 0.30000000447034836,
+          "maxMs": 0.6000000014901161
+        }
+      },
+      "status": "compared"
+    },
+    {
+      "layout": "shipping_fresh",
+      "requestedLayout": "shipping_fresh",
+      "actualLayout": "shipping_fresh",
+      "seed": 901,
+      "version": 3,
+      "statics": 26,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "snowpine",
+            "rock",
+            "crystal",
+            "grass",
+            "scrap"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 13,
+          "doorStatics": 2,
+          "ladders": 0
+        },
+        {
+          "label": "tiles-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "tiles-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "canary": {
+        "written": 15,
+        "seenByBothEngines": 15
+      },
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 2.5,
+          "minMs": 2.0999999940395355,
+          "maxMs": 3
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.3999999985098839,
+          "minMs": 0.29999999701976776,
+          "maxMs": 0.6000000014901161
+        }
+      },
+      "status": "compared"
+    },
+    {
+      "layout": "dev_delta_fresh",
+      "requestedLayout": "dev_delta_fresh",
+      "actualLayout": "dev_delta_fresh",
+      "seed": 901,
+      "version": 3,
+      "statics": 32,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "crystal",
+            "snowpine",
+            "scrap",
+            "grass",
+            "rock"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 13,
+          "doorStatics": 4,
+          "ladders": 0
+        },
+        {
+          "label": "tiles-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "tiles-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "canary": {
+        "written": 15,
+        "seenByBothEngines": 15
+      },
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 2,
+          "minMs": 1.8999999985098839,
+          "maxMs": 2.100000001490116
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.3999999985098839,
+          "minMs": 0.30000000447034836,
+          "maxMs": 0.5
+        }
+      },
+      "status": "compared"
+    },
+    {
+      "layout": "veyra05-greywater",
+      "requestedLayout": "veyra05-greywater",
+      "actualLayout": "veyra05-greywater",
+      "seed": 901,
+      "version": 3,
+      "statics": 10,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "oak",
+            "herb",
+            "rock",
+            "grass",
+            "bush"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 13,
+          "doorStatics": 4,
+          "ladders": 0
+        },
+        {
+          "label": "after-ground-reset",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "revisionBumped": true
+        },
+        {
+          "label": "after-storey-switch",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": -1,
+          "layers": 4
+        },
+        {
+          "label": "after-floor-sync",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": -1
+        },
+        {
+          "label": "tiles-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "tiles-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "solid-props-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "propCells": 79
+        },
+        {
+          "label": "solid-props-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "propCells": 79
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "canary": {
+        "written": 15,
+        "seenByBothEngines": 15
+      },
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 13.200000002980232,
+          "minMs": 13,
+          "maxMs": 13.899999998509884
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.30000000447034836,
+          "minMs": 0.29999999701976776,
+          "maxMs": 0.3999999985098839
+        }
+      },
+      "status": "compared"
+    },
+    {
+      "layout": "veyra05-elderwood",
+      "requestedLayout": "veyra05-elderwood",
+      "actualLayout": "veyra05-elderwood",
+      "seed": 901,
+      "version": 3,
+      "statics": 4,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "oak",
+            "bush",
+            "grass",
+            "rock",
+            "herb"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 12,
+          "doorStatics": 3,
+          "ladders": 0
+        },
+        {
+          "label": "after-ground-reset",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "revisionBumped": true
+        },
+        {
+          "label": "after-storey-switch",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": 1,
+          "layers": 2
+        },
+        {
+          "label": "after-floor-sync",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": 1
+        },
+        {
+          "label": "tiles-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "tiles-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "solid-props-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "propCells": 79
+        },
+        {
+          "label": "solid-props-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "propCells": 79
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "canary": {
+        "written": 15,
+        "seenByBothEngines": 15
+      },
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 15.899999998509884,
+          "minMs": 13.299999997019768,
+          "maxMs": 17.700000002980232
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.3999999985098839,
+          "minMs": 0.30000000447034836,
+          "maxMs": 0.6000000014901161
+        }
+      },
+      "status": "compared"
+    },
+    {
+      "layout": "veyra05-hook",
+      "requestedLayout": "veyra05-hook",
+      "actualLayout": "veyra05-hook",
+      "seed": 901,
+      "version": 3,
+      "statics": 12,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "mushroom",
+            "reed",
+            "willow",
+            "oak",
+            "grass",
+            "bush",
+            "road_salvage_bale",
+            "rock",
+            "herb"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 13,
+          "doorStatics": 4,
+          "ladders": 0
+        },
+        {
+          "label": "after-ground-reset",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "revisionBumped": true
+        },
+        {
+          "label": "after-storey-switch",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": -1,
+          "layers": 3
+        },
+        {
+          "label": "after-floor-sync",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": -1
+        },
+        {
+          "label": "tiles-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "tiles-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "solid-props-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "propCells": 79
+        },
+        {
+          "label": "solid-props-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "propCells": 79
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "canary": {
+        "written": 15,
+        "seenByBothEngines": 15
+      },
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 9.699999995529652,
+          "minMs": 9.200000002980232,
+          "maxMs": 10.600000001490116
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.29999999701976776,
+          "minMs": 0.20000000298023224,
+          "maxMs": 0.30000000447034836
+        }
+      },
+      "status": "compared"
+    },
+    {
+      "layout": "veyra05-argus",
+      "requestedLayout": "veyra05-argus",
+      "actualLayout": "veyra05-argus",
+      "seed": 901,
+      "version": 3,
+      "statics": 9,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "snowpine",
+            "crystal",
+            "iron",
+            "rock",
+            "coalv"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 13,
+          "doorStatics": 4,
+          "ladders": 1
+        },
+        {
+          "label": "after-ground-reset",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "revisionBumped": true
+        },
+        {
+          "label": "after-storey-switch",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": -1,
+          "layers": 4
+        },
+        {
+          "label": "after-floor-sync",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": -1
+        },
+        {
+          "label": "tiles-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "tiles-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "solid-props-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "propCells": 79
+        },
+        {
+          "label": "solid-props-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "propCells": 79
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "canary": {
+        "written": 15,
+        "seenByBothEngines": 15
+      },
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 10.100000001490116,
+          "minMs": 9.799999997019768,
+          "maxMs": 10.100000001490116
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.3999999985098839,
+          "minMs": 0.19999999552965164,
+          "maxMs": 0.3999999985098839
+        }
+      },
+      "status": "compared"
+    },
+    {
+      "layout": "veyra05-at-1920-512",
+      "requestedLayout": "veyra05-at-1920-512",
+      "actualLayout": "veyra05-at-1920-512",
+      "seed": 901,
+      "version": 3,
+      "statics": 0,
+      "checks": [
+        {
+          "label": "pristine",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 0
+        },
+        {
+          "label": "terrain-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "terrainCells": 202
+        },
+        {
+          "label": "source-edits",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "sourceCells": 60,
+          "keys": [
+            "snowpine",
+            "rock",
+            "crystal"
+          ]
+        },
+        {
+          "label": "entities",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "entities": 12,
+          "doorStatics": 0,
+          "ladders": 0
+        },
+        {
+          "label": "after-ground-reset",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "revisionBumped": true
+        },
+        {
+          "label": "after-floor-sync",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "floor": 0
+        },
+        {
+          "label": "tiles-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "tiles-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "rewrittenCells": 108
+        },
+        {
+          "label": "solid-props-rewritten-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "propCells": 79
+        },
+        {
+          "label": "solid-props-restored-in-place",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": [],
+          "propCells": 79
+        },
+        {
+          "label": "restored",
+          "cells": 40000,
+          "mismatches": 0,
+          "first": []
+        }
+      ],
+      "canary": {
+        "written": 15,
+        "seenByBothEngines": 15
+      },
+      "rebuild": {
+        "head": {
+          "rounds": 6,
+          "medianMs": 32.29999999701977,
+          "minMs": 26.69999999552965,
+          "maxMs": 37.5
+        },
+        "optimised": {
+          "rounds": 6,
+          "medianMs": 0.5,
+          "minMs": 0.5,
+          "maxMs": 0.6000000014901161
+        }
+      },
+      "status": "compared"
+    },
+    {
+      "layout": "veyra05-slag",
+      "status": "start-failed",
+      "reason": "{\"ok\":false,\"reason\":\"No safe, resource-accessible spawn in this region.\"}"
+    },
+    {
+      "layout": "veyra05-cinder",
+      "status": "start-failed",
+      "reason": "{\"ok\":false,\"reason\":\"No safe, resource-accessible spawn in this region.\"}"
+    }
+  ],
+  "errors": [],
+  "limitations": "Two module instances of engine.ts (HEAD from git, optimised from the working tree) sharing one world/run state in a dev browser. Cell-by-cell equality of blockGrid plus synchronous rebuild timing. Software GPU; no physical-GPU FPS, natural-acquisition or experience claim."
+}

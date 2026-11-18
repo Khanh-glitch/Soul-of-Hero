@@ -14,7 +14,7 @@ import { drawArchitecturalBuilding } from '../veyra05/building-art';
 import { onVeyraWindowShift } from '../veyra05/continuity';
 import * as life from '../veyra05/living/life';
 import { oakArt, pineArt, palmArt, willowArt, rockArt, bushArt, type TreeArt } from '../veyra05/living/flora';
-import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
+import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual, doorTiles } from './engine';
 import { airdropView } from './airdrop';
 import { lootSpriteKey } from './loot-ecology';
 import { vehicleView, vehicleVisualKey, refineryStateKey, pumpStateKey } from './industrial-art';
@@ -112,7 +112,9 @@ function texel(t: number, wx: number, wy: number, tx: number, ty: number, r: Run
 function renderChunk(r: RunState, cx: number, cy: number) {
   const cv = document.createElement('canvas'); cv.width = CH * TILE; cv.height = CH * TILE; const g = cv.getContext('2d')!;
   const img = g.createImageData(cv.width, cv.height); const buf = new Uint32Array(img.data.buffer); const w = getWorld();
-  const tt = (x: number, y: number) => { if(x<0||y<0||x>=WW||y>=WH)return T.DEEP;const t=effTile(r,x,y);return t===T.PWALL&&!r.terrain[y*WW+x]&&w.statics.some(s=>s.kind==='door'&&s.tx===x&&s.ty===y)?T.FLOOR:t; };
+  // Door lookup is an index (cached per world content), not an O(statics) scan five times per tile.
+  const doors = doorTiles(w);
+  const tt = (x: number, y: number) => { if(x<0||y<0||x>=WW||y>=WH)return T.DEEP;const t=effTile(r,x,y);return t===T.PWALL&&!r.terrain[y*WW+x]&&doors.has(y*WW+x)?T.FLOOR:t; };
   const ctxD = (x: number, y: number) => tt(x, y);
   for (let j = 0; j < CH; j++) for (let i = 0; i < CH; i++) {
     const tx = cx * CH + i, ty = cy * CH + j; const t = tt(tx, ty);
@@ -120,11 +122,18 @@ function renderChunk(r: RunState, cx: number, cy: number) {
     const pr = PRIO[t] ?? 0; const nb: [number, number][] = [[ctx.w, 0], [ctx.e, 1], [ctx.n, 2], [ctx.s, 3]];
     const tallN = ctx.n === T.CLIFF || ctx.n === T.PWALL;
     const cNW = ctxD(tx - 1, ty - 1), cNE = ctxD(tx + 1, ty - 1), cSW = ctxD(tx - 1, ty + 1), cSE = ctxD(tx + 1, ty + 1);
+    // Eligibility is tile-owned, not pixel-owned. Preserve original traversal/tie
+    // order, but don't allocate/test eight neighbours or evaluate blend noise
+    // 256 times when none can affect this tile (the common interior case).
+    const edges = nb.filter(([nt]) => (PRIO[nt] ?? -1) > pr);
+    const corners = ([[cNW, 0, 0], [cNE, 1, 0], [cSW, 0, 1], [cSE, 1, 1]] as const)
+      .filter(([nt]) => (PRIO[nt] ?? -1) > pr && nt !== T.ROAD);
+    const blend = pr >= 0 && (edges.length > 0 || corners.length > 0);
     for (let py = 0; py < 16; py++) for (let px = 0; px < 16; px++) {
       const wx = tx * 16 + px, wy = ty * 16 + py; let use = t, uc = ctx;
-      if (pr >= 0) { const ds = [px, 15 - px, py, 15 - py]; let bd = 99; const warp = (fbm(wx / 7, wy / 7, 913, 2) - 0.5) * 9 + (hash2(wx, wy, 5) - 0.5) * 1.5;
-        for (const [nt, k] of nb) { const np = PRIO[nt] ?? -1; if (np <= pr) continue; const reach = nt === T.ROAD ? 3.5 : 6; const d = ds[k] + warp * (nt === T.ROAD ? 0.55 : 1); if (d < reach && d < bd) { use = nt; bd = d; } }
-        for (const [cnt, ax, ay] of [[cNW, px, py], [cNE, 15 - px, py], [cSW, px, 15 - py], [cSE, 15 - px, 15 - py]] as [number, number, number][]) { const np = PRIO[cnt] ?? -1; if (np <= pr || cnt === T.ROAD) continue; const d = Math.hypot(ax, ay) + warp; if (d < 6 && d < bd) { use = cnt; bd = d; } }
+      if (blend) { const ds = [px, 15 - px, py, 15 - py]; let bd = 99; const warp = (fbm(wx / 7, wy / 7, 913, 2) - 0.5) * 9 + (hash2(wx, wy, 5) - 0.5) * 1.5;
+        for (const [nt, k] of edges) { const reach = nt === T.ROAD ? 3.5 : 6; const d = ds[k] + warp * (nt === T.ROAD ? 0.55 : 1); if (d < reach && d < bd) { use = nt; bd = d; } }
+        for (const [cnt, flipX, flipY] of corners) { const d = Math.hypot(flipX ? 15 - px : px, flipY ? 15 - py : py) + warp; if (d < 6 && d < bd) { use = cnt; bd = d; } }
         if (use !== t) uc = { ...ctx, n: use, s: use, e: use, w: use };
       }
       let c = texel(use, wx, wy, tx, ty, r, uc);
@@ -315,9 +324,8 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   // roofs — existing game geometry with VEYRA's already authored 2.5D painter.
   const room = roofRoom(r, p.x, p.y);
   const isCanonicalVeyra = !!r.layoutId && isVeyra05Layout(r.layoutId);
-  const doorSet = isCanonicalVeyra
-    ? new Set(w.statics.filter(q => q.kind === 'door').map(q => q.ty * WW + q.tx))
-    : null;
+  // Same set the collision grid uses; rebuilt only when the world content changes, not every frame.
+  const doorSet = isCanonicalVeyra ? doorTiles(w) : null;
   for (const b of w.buildings) {
     if ((b.x + b.w) * 16 < cx || b.x * 16 > cx + VIEW_W || (b.y + b.h) * 16 < cy - 16 || b.y * 16 > cy + VIEW_H) continue;
     if (isCanonicalVeyra) {

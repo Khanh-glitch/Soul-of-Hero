@@ -1,0 +1,3392 @@
+{
+  "scope": "Real-play CPU attribution on a seeded Veyra fixture. Dev build, software SwiftShader, timing wrappers and CDP sampling add small overhead; NOT physical-GPU FPS, natural-acquisition or experience evidence. before=HEAD render.ts served from cache, after=current working tree.",
+  "samplingIntervalUs": 200,
+  "idleMs": 8000,
+  "scenarioMs": 24000,
+  "settleMs": 8000,
+  "sourceSHA256": {
+    "src/game/render.ts": "40d19465716f46300581c5846ce5810ac466cbc36cc57d177d8ab4f703e70769",
+    "src/game/sim.ts": "26b268574ec9b4b341f47598282c5545783f595d66793613dea6338abf830e1e",
+    "src/game/persist.ts": "07ec9a878c990e19dcbe38eb7311451bc27728d78d774452673dca79c9997f23",
+    "src/ui/Game.tsx": "7d9737e75cda70a61609977cbc452886360a09589129cafc3e78ecbeee201d53"
+  },
+  "results": [
+    {
+      "scenario": "harvest",
+      "variant": "after",
+      "countedSeams": [
+        "cellClass",
+        "blockGrid",
+        "sourceAt",
+        "effTile",
+        "getWorld",
+        "windowForLayout",
+        "getWindowWorld",
+        "getWindowWorldForGlobalTile"
+      ],
+      "fixture": {
+        "layout": "veyra05-at-1920-512",
+        "seed": 901,
+        "source": {
+          "tx": 38,
+          "ty": 115,
+          "key": "bush",
+          "stock": 3,
+          "yields": [
+            [
+              "berries",
+              1
+            ]
+          ],
+          "x": 600,
+          "y": 1848
+        }
+      },
+      "aim": {
+        "x": 336,
+        "y": 186
+      },
+      "inputLog": [
+        {
+          "at": "harvest",
+          "action": "mouse.move+down",
+          "aim": {
+            "x": 336,
+            "y": 186
+          }
+        },
+        {
+          "action": "held LMB then repeated clicks on the same real source"
+        }
+      ],
+      "metrics": {
+        "boot": {
+          "frames": {
+            "count": 226,
+            "p50": 16.700000000000045,
+            "p95": 100,
+            "p99": 733.3999999999996,
+            "max": 2283.2,
+            "total": 11366.099999999991
+          },
+          "calls": {
+            "tick": {
+              "count": 46,
+              "p50": 36.100000001490116,
+              "p95": 72.89999999850988,
+              "p99": 110.09999999776483,
+              "max": 110.09999999776483,
+              "total": 1618.2000000029802
+            },
+            "draw": {
+              "count": 46,
+              "p50": 3.199999999254942,
+              "p95": 34.69999999925494,
+              "p99": 1041.800000000745,
+              "max": 1041.800000000745,
+              "total": 1286.0000000111759
+            },
+            "findInteract": {
+              "count": 46,
+              "p50": 0,
+              "p95": 0.10000000149011612,
+              "p99": 0.6000000014901161,
+              "max": 0.6000000014901161,
+              "total": 1.6000000052154064
+            },
+            "consumeFX": {
+              "count": 46,
+              "p50": 0,
+              "p95": 0.09999999776482582,
+              "p99": 0.4000000022351742,
+              "max": 0.4000000022351742,
+              "total": 0.6000000014901161
+            },
+            "serializeSnapshot": {
+              "count": 1,
+              "p50": 6.199999999254942,
+              "p95": 6.199999999254942,
+              "p99": 6.199999999254942,
+              "max": 6.199999999254942,
+              "total": 6.199999999254942
+            }
+          },
+          "longTasks": [
+            559,
+            2284,
+            751,
+            196,
+            1161,
+            72,
+            73,
+            51,
+            61,
+            64,
+            93,
+            87,
+            77,
+            76,
+            59,
+            78,
+            59,
+            78,
+            58,
+            50,
+            68,
+            94,
+            59,
+            80,
+            88
+          ],
+          "heap": 286000000
+        },
+        "idle": {
+          "frames": {
+            "count": 41,
+            "p50": 33.30000000000109,
+            "p95": 1283.2000000000007,
+            "p99": 14749.5,
+            "max": 14749.5,
+            "total": 21065.800000000003
+          },
+          "calls": {
+            "tick": {
+              "count": 41,
+              "p50": 1,
+              "p95": 142.80000000074506,
+              "p99": 2203.39999999851,
+              "max": 2203.39999999851,
+              "total": 3362.0999999940395
+            },
+            "draw": {
+              "count": 41,
+              "p50": 3.100000001490116,
+              "p95": 82.10000000149012,
+              "p99": 7143.89999999851,
+              "max": 7143.89999999851,
+              "total": 8143.600000005215
+            },
+            "findInteract": {
+              "count": 41,
+              "p50": 0,
+              "p95": 0.10000000149011612,
+              "p99": 0.6000000014901161,
+              "max": 0.6000000014901161,
+              "total": 1.0000000074505806
+            },
+            "consumeFX": {
+              "count": 41,
+              "p50": 0,
+              "p95": 0,
+              "p99": 0,
+              "max": 0,
+              "total": 0
+            },
+            "serializeSnapshot": {
+              "count": 0,
+              "p50": null,
+              "p95": null,
+              "p99": null,
+              "max": null,
+              "total": 0
+            }
+          },
+          "longTasks": [
+            76,
+            51,
+            66,
+            131,
+            161,
+            60,
+            56,
+            69,
+            51,
+            56,
+            133,
+            257,
+            1820,
+            125,
+            103,
+            1407,
+            12692,
+            146,
+            161,
+            182,
+            969,
+            85
+          ],
+          "heap": 286000000
+        },
+        "harvest": {
+          "frames": {
+            "count": 352,
+            "p50": 16.700000000004366,
+            "p95": 100,
+            "p99": 1266.6000000000058,
+            "max": 2249.9000000000015,
+            "total": 23515.799999999996
+          },
+          "calls": {
+            "tick": {
+              "count": 352,
+              "p50": 0.30000000074505806,
+              "p95": 56.5,
+              "p99": 72.5,
+              "max": 100.30000000074506,
+              "total": 3949.400000013411
+            },
+            "draw": {
+              "count": 352,
+              "p50": 3.399999998509884,
+              "p95": 9.699999999254942,
+              "p99": 16.300000000745058,
+              "max": 56,
+              "total": 1602.4000000059605
+            },
+            "findInteract": {
+              "count": 352,
+              "p50": 0,
+              "p95": 0.10000000149011612,
+              "p99": 0.29999999701976776,
+              "max": 1.5,
+              "total": 6.899999987334013
+            },
+            "consumeFX": {
+              "count": 352,
+              "p50": 0,
+              "p95": 0.5,
+              "p99": 6,
+              "max": 11.199999999254942,
+              "total": 60.399999994784594
+            },
+            "serializeSnapshot": {
+              "count": 5,
+              "p50": 10,
+              "p95": 25,
+              "p99": 25,
+              "max": 25,
+              "total": 63.600000001490116
+            }
+          },
+          "longTasks": [
+            59,
+            51,
+            62,
+            107,
+            81,
+            61,
+            51,
+            70,
+            52,
+            52,
+            51,
+            66,
+            52,
+            58,
+            83,
+            51,
+            56,
+            78,
+            64,
+            67,
+            63,
+            66,
+            61,
+            81,
+            100,
+            63,
+            60,
+            69,
+            93,
+            51,
+            74,
+            70,
+            64,
+            54,
+            61,
+            64,
+            69,
+            64,
+            74,
+            108,
+            82,
+            76,
+            72,
+            73,
+            53,
+            63,
+            89,
+            67,
+            59,
+            100,
+            66,
+            73,
+            53,
+            66,
+            62,
+            65,
+            58,
+            62,
+            63,
+            53,
+            74,
+            77
+          ],
+          "heap": 286000000
+        },
+        "settle": {
+          "frames": {
+            "count": 77,
+            "p50": 83.30000000000291,
+            "p95": 1783.2999999999956,
+            "p99": 2733.2000000000044,
+            "max": 2733.2000000000044,
+            "total": 24132.300000000003
+          },
+          "calls": {
+            "tick": {
+              "count": 77,
+              "p50": 49.19999999925494,
+              "p95": 348.8999999985099,
+              "p99": 590.3999999985099,
+              "max": 590.3999999985099,
+              "total": 5646.499999970198
+            },
+            "draw": {
+              "count": 77,
+              "p50": 5.699999999254942,
+              "p95": 305.6000000014901,
+              "p99": 433.30000000074506,
+              "max": 433.30000000074506,
+              "total": 3041.5
+            },
+            "findInteract": {
+              "count": 77,
+              "p50": 0,
+              "p95": 0.10000000149011612,
+              "p99": 4.599999997764826,
+              "max": 4.599999997764826,
+              "total": 7.199999999254942
+            },
+            "consumeFX": {
+              "count": 77,
+              "p50": 0,
+              "p95": 0,
+              "p99": 0.10000000149011612,
+              "max": 0.10000000149011612,
+              "total": 0.10000000149011612
+            },
+            "serializeSnapshot": {
+              "count": 1,
+              "p50": 154.40000000223517,
+              "p95": 154.40000000223517,
+              "p99": 154.40000000223517,
+              "max": 154.40000000223517,
+              "total": 154.40000000223517
+            }
+          },
+          "longTasks": [
+            259,
+            195,
+            88,
+            63,
+            136,
+            61,
+            57,
+            97,
+            92,
+            94,
+            71,
+            62,
+            56,
+            84,
+            54,
+            74,
+            68,
+            68,
+            65,
+            75,
+            84,
+            50,
+            51,
+            57,
+            85,
+            66,
+            50,
+            81,
+            85,
+            58,
+            106,
+            106,
+            75,
+            76,
+            91,
+            88,
+            114,
+            199,
+            167,
+            67,
+            1497,
+            130,
+            165,
+            1257,
+            123,
+            856,
+            113,
+            412,
+            1481,
+            135,
+            1325
+          ],
+          "heap": 286000000
+        }
+      },
+      "counterDeltas": {
+        "idle": {
+          "chunkMs": 0,
+          "chunkCalls": 0,
+          "chunkInvalidations": 0,
+          "syncMs": 0.3,
+          "syncCalls": 38,
+          "sigRebuilds": 8,
+          "calls": {
+            "windowForLayout": 2066690,
+            "getWindowWorld": 2638596,
+            "getWindowWorldForGlobalTile": 0,
+            "getWorld": 2066690,
+            "cellClass": 640000,
+            "blockGrid": 494,
+            "blockRebuilds": 16,
+            "blockRebuildMs": 2326.2000000029802,
+            "sourceAt": 676487,
+            "effTile": 749396
+          }
+        },
+        "harvest": {
+          "chunkMs": 0,
+          "chunkCalls": 0,
+          "chunkInvalidations": 0,
+          "syncMs": 0.3,
+          "syncCalls": 352,
+          "sigRebuilds": 39,
+          "calls": {
+            "windowForLayout": 11109496,
+            "getWindowWorld": 14005170,
+            "getWindowWorldForGlobalTile": 0,
+            "getWorld": 11109466,
+            "cellClass": 3240076,
+            "blockGrid": 7292,
+            "blockRebuilds": 81,
+            "blockRebuildMs": 3741.1000000350177,
+            "sourceAt": 3607732,
+            "effTile": 4253418
+          }
+        },
+        "settle": {
+          "chunkMs": 0,
+          "chunkCalls": 0,
+          "chunkInvalidations": 0,
+          "syncMs": 0.3,
+          "syncCalls": 66,
+          "sigRebuilds": 14,
+          "calls": {
+            "windowForLayout": 5101682,
+            "getWindowWorld": 6567191,
+            "getWindowWorldForGlobalTile": 0,
+            "getWorld": 5101682,
+            "cellClass": 1640041,
+            "blockGrid": 858,
+            "blockRebuilds": 41,
+            "blockRebuildMs": 2185.5,
+            "sourceAt": 1684459,
+            "effTile": 1775457
+          }
+        }
+      },
+      "phases": [
+        {
+          "phase": "idle",
+          "cpu": {
+            "topEdges": [
+              [
+                "(root) @:0  ->  loop @ui/Game.tsx:838",
+                10468.642999999996
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  draw @game/render.ts:2175",
+                8069.011999999998
+              ],
+              [
+                "draw @game/render.ts:2175  ->  window.__timed @:6",
+                8068.248999999997
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/render.ts:2175",
+                8057.382999999997
+              ],
+              [
+                "(anonymous) @game/render.ts:2175  ->  __timed_draw @game/render.ts:584",
+                8040.699999999998
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349  ->  commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                7930.278000000034
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398  ->  recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                7930.278000000034
+              ],
+              [
+                "(root) @:0  ->  (program) @:0",
+                5456.845999999996
+              ],
+              [
+                "__timed_draw @game/render.ts:584  ->  f @game/render.ts:729",
+                4247.539000000001
+              ],
+              [
+                "f @game/render.ts:729  ->  drawSource @game/render.ts:871",
+                3938.665000000001
+              ],
+              [
+                "tick @game/sim.ts:3127  ->  window.__timed @:6",
+                2382.159999999996
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  tick @game/sim.ts:3127",
+                2382.159999999996
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127  ->  __timed_tick @game/sim.ts:2667",
+                2376.683999999996
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/sim.ts:3127",
+                2376.683999999996
+              ],
+              [
+                "drawSource @game/render.ts:871  ->  drawLivingTree @living/life.ts:95",
+                2206.574999999997
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667  ->  tickPlayer @game/sim.ts:616",
+                1748.5939999999991
+              ],
+              [
+                "tickPlayer @game/sim.ts:616  ->  blockGrid @game/engine.ts:707",
+                1608.7309999999995
+              ],
+              [
+                "blockGrid @game/engine.ts:707  ->  cellClass @game/engine.ts:688",
+                1535.2749999999994
+              ],
+              [
+                "(root) @:0  ->  performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                1528.9650000000008
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16  ->  performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                1461.583
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489  ->  performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                1461.048
+              ],
+              [
+                "__timed_draw @game/render.ts:584  ->  f @game/render.ts:748",
+                1257.4099999999999
+              ],
+              [
+                "f @game/render.ts:748  ->  drawCreature @game/render.ts:1375",
+                1249.576
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993  ->  run @:0",
+                1194.9850000000001
+              ],
+              [
+                "drawSource @game/render.ts:871  ->  shadow @game/render.ts:523",
+                1053.6650000000004
+              ],
+              [
+                "shadow @game/render.ts:523  ->  drawImage @:0",
+                1048.517
+              ],
+              [
+                "drawLivingTree @living/life.ts:95  ->  castShadow @living/life.ts:85",
+                993.7609999999999
+              ],
+              [
+                "__timed_draw @game/render.ts:584  ->  drawLight @game/render.ts:2082",
+                960.0000000000001
+              ],
+              [
+                "getWorld @game/world.ts:89  ->  windowForLayout @veyra05/scenes.ts:21",
+                923.0190000000002
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706  ->  commitRootWhenReady @deps/react-dom_client.js?v=ca232f1b:11973",
+                864.1069999999999
+              ]
+            ],
+            "durationMs": 19180.506,
+            "samples": 7803,
+            "topSelf": [
+              [
+                "(program) @:0",
+                5456.846
+              ],
+              [
+                "drawImage @:0",
+                4487.309
+              ],
+              [
+                "windowForLayout @veyra05/scenes.ts:21",
+                924.286
+              ],
+              [
+                "(garbage collector) @:0",
+                744.283
+              ],
+              [
+                "__timed_draw @game/render.ts:584",
+                542.899
+              ],
+              [
+                "getWindowWorld @veyra05/window.ts:598",
+                537.4
+              ],
+              [
+                "fillRect @:0",
+                430.412
+              ],
+              [
+                "(idle) @:0",
+                319.801
+              ],
+              [
+                "f @game/render.ts:729",
+                308.874
+              ],
+              [
+                "wind @living/life.ts:10",
+                304.204
+              ],
+              [
+                "restore @:0",
+                282.412
+              ],
+              [
+                "drawCreature @game/render.ts:1375",
+                271.214
+              ],
+              [
+                "settle @game/sim.ts:2792",
+                251.102
+              ],
+              [
+                "exports.jsxDEV @deps/react_jsx-dev-runtime.js?v=ca232f1b:239",
+                238.37399999999994
+              ],
+              [
+                "drawLivingTree @living/life.ts:95",
+                235.008
+              ],
+              [
+                "clearRect @:0",
+                217.726
+              ],
+              [
+                "setValueForStyle @deps/react-dom_client.js?v=ca232f1b:2209",
+                146.744
+              ],
+              [
+                "getTransform @:0",
+                145.14
+              ],
+              [
+                "tickPlayer @game/sim.ts:616",
+                138.447
+              ],
+              [
+                "entsAt @game/engine.ts:794",
+                134.682
+              ],
+              [
+                "drawSource @game/render.ts:871",
+                134.359
+              ],
+              [
+                "validateProperty @deps/react-dom_client.js?v=ca232f1b:2345",
+                121.65499999999999
+              ],
+              [
+                "Waymark @ui/Waymark.tsx:9",
+                120.987
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993",
+                120.20800000000001
+              ],
+              [
+                "creatureHeadTopY @game/creature-sprites.ts:369",
+                119.277
+              ],
+              [
+                "react_stack_bottom_frame @deps/react-dom_client.js?v=ca232f1b:18505",
+                119.239
+              ],
+              [
+                "setProp @deps/react-dom_client.js?v=ca232f1b:14173",
+                114.63100000000001
+              ],
+              [
+                "updateProperties @deps/react-dom_client.js?v=ca232f1b:14786",
+                114.20700000000001
+              ],
+              [
+                "darkness @game/engine.ts:78",
+                111.163
+              ],
+              [
+                "findInstanceBlockingTarget @deps/react-dom_client.js?v=ca232f1b:16851",
+                108.131
+              ]
+            ],
+            "topTotal": [
+              [
+                "(root) @:0",
+                19180.506
+              ],
+              [
+                "loop @ui/Game.tsx:838",
+                10468.643
+              ],
+              [
+                "window.__timed @:6",
+                10451.501
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                8674.061999999998
+              ],
+              [
+                "draw @game/render.ts:2175",
+                8069.012
+              ],
+              [
+                "(anonymous) @game/render.ts:2175",
+                8057.383
+              ],
+              [
+                "__timed_draw @game/render.ts:584",
+                8040.7
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                7930.277999999998
+              ],
+              [
+                "(program) @:0",
+                5456.846
+              ],
+              [
+                "drawImage @:0",
+                4487.309
+              ],
+              [
+                "f @game/render.ts:729",
+                4247.539
+              ],
+              [
+                "drawSource @game/render.ts:871",
+                3938.665
+              ],
+              [
+                "tick @game/sim.ts:3127",
+                2382.16
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667",
+                2376.684
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127",
+                2376.684
+              ],
+              [
+                "drawLivingTree @living/life.ts:95",
+                2206.575
+              ],
+              [
+                "tickPlayer @game/sim.ts:616",
+                1748.594
+              ],
+              [
+                "blockGrid @game/engine.ts:707",
+                1608.731
+              ],
+              [
+                "cellClass @game/engine.ts:688",
+                1535.275
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                1528.965
+              ],
+              [
+                "getWorld @game/world.ts:89",
+                1463.436
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                1461.583
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                1461.048
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993",
+                1316.241
+              ],
+              [
+                "f @game/render.ts:748",
+                1257.41
+              ]
+            ],
+            "selfMsByFile": {
+              "other:": 12400.321999999995,
+              "veyra05": 1526.5539999999999,
+              "react-dom": 1525.361000000001,
+              "game/render": 1381.5520000000004,
+              "living/life": 617.5110000000001,
+              "game/sim": 442.65199999999993,
+              "game/engine": 434.4539999999999,
+              "other:deps/react_jsx-dev-runtime.js?v=ca232f1b": 256.60099999999994,
+              "ui/": 255.61199999999994,
+              "other:game/creature-sprites.ts": 205.578,
+              "other:game/journey.ts": 38.005,
+              "visual/direction": 30.458000000000002,
+              "game/world": 26.625,
+              "other:game/thermal.ts": 17.453,
+              "other:game/audio.ts": 11.303,
+              "other:vfx/director.ts": 1.82,
+              "other:vfx/stage.ts": 1.425,
+              "other:living/hpaint.ts": 1.344,
+              "game/compositor": 1.216,
+              "other:game/attention.ts": 1.143,
+              "other:primordials/host-bridge.ts": 0.99,
+              "other:game/core.ts": 0.891,
+              "other:game/field-notes.ts": 0.6499999999999999,
+              "other:game/calendar.ts": 0.587,
+              "game/pixelfx": 0.333,
+              "other:127.0.0.1": 0.066
+            }
+          }
+        },
+        {
+          "phase": "harvest",
+          "cpu": {
+            "topEdges": [
+              [
+                "(root) @:0  ->  (idle) @:0",
+                13624.796999999704
+              ],
+              [
+                "(root) @:0  ->  loop @ui/Game.tsx:838",
+                5432.278000000076
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  tick @game/sim.ts:3127",
+                3763.4340000000193
+              ],
+              [
+                "tick @game/sim.ts:3127  ->  window.__timed @:6",
+                3762.5460000000194
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/sim.ts:3127",
+                3757.6920000000187
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127  ->  __timed_tick @game/sim.ts:2667",
+                3755.527000000019
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667  ->  tickPlayer @game/sim.ts:616",
+                3598.325000000013
+              ],
+              [
+                "blockGrid @game/engine.ts:707  ->  cellClass @game/engine.ts:688",
+                3477.0400000000163
+              ],
+              [
+                "tickPlayer @game/sim.ts:616  ->  blockGrid @game/engine.ts:707",
+                3006.8710000000174
+              ],
+              [
+                "(root) @:0  ->  (program) @:0",
+                2146.572000000006
+              ],
+              [
+                "(root) @:0  ->  performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                1854.9480000000003
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398  ->  recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                1778.1739999999902
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349  ->  commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                1759.8279999999907
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16  ->  performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                1743.7679999999996
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489  ->  performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                1737.0879999999997
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993  ->  run @:0",
+                1680.508999999999
+              ],
+              [
+                "getWorld @game/world.ts:89  ->  windowForLayout @veyra05/scenes.ts:21",
+                1646.723999999998
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706  ->  renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366",
+                1550.8639999999991
+              ],
+              [
+                "renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366  ->  workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423",
+                1539.118999999999
+              ],
+              [
+                "workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423  ->  performUnitOfWork @deps/react-dom_client.js?v=ca232f1b:12559",
+                1537.759999999999
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  draw @game/render.ts:2175",
+                1511.232999999999
+              ],
+              [
+                "draw @game/render.ts:2175  ->  window.__timed @:6",
+                1510.886999999999
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/render.ts:2175",
+                1508.5799999999992
+              ],
+              [
+                "performUnitOfWork @deps/react-dom_client.js?v=ca232f1b:12559  ->  runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993",
+                1485.9499999999994
+              ],
+              [
+                "run @:0  ->  beginWork @deps/react-dom_client.js?v=ca232f1b:8416",
+                1475.5379999999989
+              ],
+              [
+                "(anonymous) @game/render.ts:2175  ->  __timed_draw @game/render.ts:584",
+                1448.3520000000008
+              ],
+              [
+                "beginWork @deps/react-dom_client.js?v=ca232f1b:8416  ->  updateFunctionComponent @deps/react-dom_client.js?v=ca232f1b:7457",
+                1415.781999999998
+              ],
+              [
+                "updateFunctionComponent @deps/react-dom_client.js?v=ca232f1b:7457  ->  renderWithHooks @deps/react-dom_client.js?v=ca232f1b:5638",
+                1406.0129999999974
+              ],
+              [
+                "getWorld @game/world.ts:89  ->  getWindowWorld @veyra05/window.ts:598",
+                1205.8089999999972
+              ],
+              [
+                "effTile @game/engine.ts:572  ->  getWorld @game/world.ts:89",
+                1160.8489999999983
+              ]
+            ],
+            "durationMs": 23652.527,
+            "samples": 58436,
+            "topSelf": [
+              [
+                "(idle) @:0",
+                13624.797
+              ],
+              [
+                "(program) @:0",
+                2146.572
+              ],
+              [
+                "windowForLayout @veyra05/scenes.ts:21",
+                1646.7240000000004
+              ],
+              [
+                "getWindowWorld @veyra05/window.ts:598",
+                1487.106
+              ],
+              [
+                "exports.jsxDEV @deps/react_jsx-dev-runtime.js?v=ca232f1b:239",
+                1129.3990000000001
+              ],
+              [
+                "(garbage collector) @:0",
+                401.305
+              ],
+              [
+                "drawImage @:0",
+                338.951
+              ],
+              [
+                "(anonymous) @veyra05/scenes.ts:23",
+                201.92300000000006
+              ],
+              [
+                "cellClass @game/engine.ts:688",
+                162.10899999999998
+              ],
+              [
+                "getWorld @game/world.ts:89",
+                155.532
+              ],
+              [
+                "sourceAt @game/engine.ts:640",
+                133.679
+              ],
+              [
+                "blockGrid @game/engine.ts:707",
+                97.169
+              ],
+              [
+                "__timed_draw @game/render.ts:584",
+                90.715
+              ],
+              [
+                "effTile @game/engine.ts:572",
+                85.56899999999999
+              ],
+              [
+                "fillRect @:0",
+                81.82
+              ],
+              [
+                "wind @living/life.ts:10",
+                71.64
+              ],
+              [
+                "(anonymous) @game/render.ts:2175",
+                59.311
+              ],
+              [
+                "drawAir @living/life.ts:112",
+                58.597
+              ],
+              [
+                "ReactElement @deps/react_jsx-dev-runtime.js?v=ca232f1b:127",
+                52.67999999999999
+              ],
+              [
+                "tileAt @game/world.ts:566",
+                48.31800000000001
+              ],
+              [
+                "Game @ui/Game.tsx:59",
+                48.160000000000004
+              ],
+              [
+                "save @:0",
+                40.916
+              ],
+              [
+                "validate @game/persist.ts:89",
+                35.135000000000005
+              ],
+              [
+                "items @veyra05/decor-client.ts:586",
+                34.76
+              ],
+              [
+                "run @:0",
+                32.566
+              ],
+              [
+                "createTask @:0",
+                28.400999999999996
+              ],
+              [
+                "measure @:0",
+                25.828
+              ],
+              [
+                "isVeyra05Layout @veyra05/scenes.ts:20",
+                25.143
+              ],
+              [
+                "__timed_serializeSnapshot @game/persist.ts:743",
+                24.253
+              ],
+              [
+                "sourceDigest @game/world-economy.ts:8",
+                24.083
+              ]
+            ],
+            "topTotal": [
+              [
+                "(root) @:0",
+                23652.527
+              ],
+              [
+                "(idle) @:0",
+                13624.797
+              ],
+              [
+                "loop @ui/Game.tsx:838",
+                5432.278
+              ],
+              [
+                "window.__timed @:6",
+                5401.946
+              ],
+              [
+                "tick @game/sim.ts:3127",
+                3763.434
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127",
+                3757.692
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667",
+                3755.856
+              ],
+              [
+                "tickPlayer @game/sim.ts:616",
+                3598.325
+              ],
+              [
+                "blockGrid @game/engine.ts:707",
+                3578.784
+              ],
+              [
+                "cellClass @game/engine.ts:688",
+                3479.085
+              ],
+              [
+                "getWorld @game/world.ts:89",
+                3010.6809999999987
+              ],
+              [
+                "(program) @:0",
+                2146.572
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                1931.081
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                1854.948
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                1778.1739999999995
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                1743.768
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                1737.088
+              ],
+              [
+                "run @:0",
+                1727.8369999999998
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993",
+                1692.6499999999999
+              ],
+              [
+                "windowForLayout @veyra05/scenes.ts:21",
+                1646.7240000000004
+              ],
+              [
+                "renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366",
+                1550.864
+              ],
+              [
+                "workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423",
+                1539.119
+              ],
+              [
+                "performUnitOfWork @deps/react-dom_client.js?v=ca232f1b:12559",
+                1537.76
+              ],
+              [
+                "draw @game/render.ts:2175",
+                1511.233
+              ],
+              [
+                "(anonymous) @game/render.ts:2175",
+                1508.58
+              ]
+            ],
+            "selfMsByFile": {
+              "other:": 16946.953999999994,
+              "veyra05": 3424.9800000000005,
+              "other:deps/react_jsx-dev-runtime.js?v=ca232f1b": 1229.8660000000002,
+              "game/engine": 556.5069999999998,
+              "react-dom": 410.63099999999986,
+              "game/render": 246.448,
+              "game/world": 231.30300000000003,
+              "living/life": 192.09199999999998,
+              "game/sim": 99.01,
+              "other:game/persist.ts": 93.983,
+              "ui/": 91.846,
+              "other:game/audio.ts": 17.659999999999997,
+              "other:living/hpaint.ts": 13.924,
+              "other:game/journey.ts": 13.901999999999997,
+              "other:game/thermal.ts": 10.703000000000001,
+              "other:game/creature-sprites.ts": 10.62,
+              "visual/direction": 8.193999999999999,
+              "other:game/field-notes.ts": 7.126,
+              "other:game/attention.ts": 7.012,
+              "other:game/calendar.ts": 6.090000000000001,
+              "other:game/core.ts": 4.737,
+              "game/compositor": 4.341,
+              "other:vfx/stage.ts": 3.804,
+              "other:game/poi-access.ts": 3.702,
+              "other:vfx/director.ts": 3.1900000000000004,
+              "other:game/death-view.ts": 2.9160000000000004,
+              "other:game/stimulus.ts": 1.943,
+              "game/pixelfx": 1.319,
+              "other:primordials/host-bridge.ts": 1.276,
+              "other:game/presentation-cues.ts": 1.251,
+              "other:game/husbandry.ts": 1.161,
+              "other:game/wreck-economy.ts": 1.084,
+              "other:deps/chunk-ONBSLKPD.js?v=ca232f1b": 0.978,
+              "other:game/recipe-migration.ts": 0.661,
+              "game/item-atlas": 0.392,
+              "other:game/catalog.ts": 0.339,
+              "game/art": 0.339,
+              "other:game/avatar-presentation.ts": 0.243
+            }
+          }
+        },
+        {
+          "phase": "settle",
+          "cpu": {
+            "topEdges": [
+              [
+                "(root) @:0  ->  (idle) @:0",
+                3609.046999999996
+              ],
+              [
+                "(root) @:0  ->  loop @ui/Game.tsx:838",
+                2662.4490000000064
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  tick @game/sim.ts:3127",
+                2136.402999999989
+              ],
+              [
+                "tick @game/sim.ts:3127  ->  window.__timed @:6",
+                2135.904999999989
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/sim.ts:3127",
+                2134.217999999988
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127  ->  __timed_tick @game/sim.ts:2667",
+                2133.871999999988
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667  ->  tickPlayer @game/sim.ts:616",
+                2059.9159999999897
+              ],
+              [
+                "tickPlayer @game/sim.ts:616  ->  blockGrid @game/engine.ts:707",
+                2049.8289999999893
+              ],
+              [
+                "blockGrid @game/engine.ts:707  ->  cellClass @game/engine.ts:688",
+                1992.2479999999891
+              ],
+              [
+                "(root) @:0  ->  (program) @:0",
+                1264.263999999997
+              ],
+              [
+                "getWorld @game/world.ts:89  ->  windowForLayout @veyra05/scenes.ts:21",
+                856.9330000000007
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398  ->  recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                765.1079999999972
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349  ->  commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                760.4699999999979
+              ],
+              [
+                "getWorld @game/world.ts:89  ->  getWindowWorld @veyra05/window.ts:598",
+                634.1579999999983
+              ],
+              [
+                "cellClass @game/engine.ts:688  ->  sourceAt @game/engine.ts:640",
+                583.2810000000002
+              ],
+              [
+                "cellClass @game/engine.ts:688  ->  effTile @game/engine.ts:572",
+                569.7999999999981
+              ],
+              [
+                "effTile @game/engine.ts:572  ->  getWorld @game/world.ts:89",
+                549.5359999999981
+              ],
+              [
+                "(root) @:0  ->  performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                539.0870000000003
+              ],
+              [
+                "cellClass @game/engine.ts:688  ->  getWorld @game/world.ts:89",
+                533.7210000000005
+              ],
+              [
+                "draw @game/render.ts:2175  ->  window.__timed @:6",
+                493.7269999999996
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  draw @game/render.ts:2175",
+                493.7269999999996
+              ],
+              [
+                "sourceAt @game/engine.ts:640  ->  getWorld @game/world.ts:89",
+                493.58300000000025
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/render.ts:2175",
+                491.5189999999996
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489  ->  performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                487.6540000000003
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16  ->  performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                487.6540000000003
+              ],
+              [
+                "(anonymous) @game/render.ts:2175  ->  __timed_draw @game/render.ts:584",
+                474.27399999999966
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993  ->  run @:0",
+                441.5510000000004
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706  ->  renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366",
+                394.9700000000002
+              ],
+              [
+                "workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423  ->  performUnitOfWork @deps/react-dom_client.js?v=ca232f1b:12559",
+                382.08800000000014
+              ],
+              [
+                "renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366  ->  workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423",
+                382.08800000000014
+              ]
+            ],
+            "durationMs": 8308.729,
+            "samples": 20191,
+            "topSelf": [
+              [
+                "(idle) @:0",
+                3609.047
+              ],
+              [
+                "(program) @:0",
+                1264.264
+              ],
+              [
+                "windowForLayout @veyra05/scenes.ts:21",
+                856.9330000000002
+              ],
+              [
+                "getWindowWorld @veyra05/window.ts:598",
+                817.175
+              ],
+              [
+                "exports.jsxDEV @deps/react_jsx-dev-runtime.js?v=ca232f1b:239",
+                226.73499999999996
+              ],
+              [
+                "(garbage collector) @:0",
+                140.461
+              ],
+              [
+                "drawImage @:0",
+                128.136
+              ],
+              [
+                "sourceAt @game/engine.ts:640",
+                95.21100000000001
+              ],
+              [
+                "(anonymous) @veyra05/scenes.ts:23",
+                92.04199999999999
+              ],
+              [
+                "getWorld @game/world.ts:89",
+                90.44900000000001
+              ],
+              [
+                "cellClass @game/engine.ts:688",
+                74.149
+              ],
+              [
+                "blockGrid @game/engine.ts:707",
+                54.612
+              ],
+              [
+                "gradeWorld @visual/direction.ts:170",
+                42.097
+              ],
+              [
+                "effTile @game/engine.ts:572",
+                34.544
+              ],
+              [
+                "fillRect @:0",
+                26.56
+              ],
+              [
+                "drawWaterTile @living/life.ts:211",
+                22.84
+              ],
+              [
+                "tileAt @game/world.ts:566",
+                21.814999999999994
+              ],
+              [
+                "ReactElement @deps/react_jsx-dev-runtime.js?v=ca232f1b:127",
+                21.111000000000004
+              ],
+              [
+                "wind @living/life.ts:10",
+                19.529999999999998
+              ],
+              [
+                "queueMicrotask @:0",
+                19.081000000000003
+              ],
+              [
+                "isVeyra05Layout @veyra05/scenes.ts:20",
+                19.07
+              ],
+              [
+                "run @:0",
+                16.983
+              ],
+              [
+                "(anonymous) @game/render.ts:2175",
+                16.859
+              ],
+              [
+                "setValueForStyle @deps/react-dom_client.js?v=ca232f1b:2209",
+                16.445
+              ],
+              [
+                "__timed_draw @game/render.ts:584",
+                16.186
+              ],
+              [
+                "advanceRegrowth @game/engine.ts:610",
+                15.187
+              ],
+              [
+                "measure @:0",
+                14.206999999999999
+              ],
+              [
+                "items @veyra05/decor-client.ts:586",
+                12.245
+              ],
+              [
+                "react_stack_bottom_frame @deps/react-dom_client.js?v=ca232f1b:18505",
+                11.666
+              ],
+              [
+                "autoResolve @game/field-notes.ts:52",
+                11.548
+              ]
+            ],
+            "topTotal": [
+              [
+                "(root) @:0",
+                8308.729
+              ],
+              [
+                "(idle) @:0",
+                3609.047
+              ],
+              [
+                "loop @ui/Game.tsx:838",
+                2662.449
+              ],
+              [
+                "window.__timed @:6",
+                2630.329
+              ],
+              [
+                "tick @game/sim.ts:3127",
+                2136.403
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127",
+                2134.218
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667",
+                2133.872
+              ],
+              [
+                "tickPlayer @game/sim.ts:616",
+                2059.916
+              ],
+              [
+                "blockGrid @game/engine.ts:707",
+                2049.829
+              ],
+              [
+                "cellClass @game/engine.ts:688",
+                1994.075
+              ],
+              [
+                "getWorld @game/world.ts:89",
+                1581.54
+              ],
+              [
+                "(program) @:0",
+                1264.264
+              ],
+              [
+                "windowForLayout @veyra05/scenes.ts:21",
+                856.9330000000002
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                837.9590000000002
+              ],
+              [
+                "getWindowWorld @veyra05/window.ts:598",
+                817.175
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                765.1080000000002
+              ],
+              [
+                "sourceAt @game/engine.ts:640",
+                640.2539999999999
+              ],
+              [
+                "effTile @game/engine.ts:572",
+                635.726
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                539.087
+              ],
+              [
+                "draw @game/render.ts:2175",
+                493.727
+              ],
+              [
+                "(anonymous) @game/render.ts:2175",
+                491.519
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                487.654
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                487.654
+              ],
+              [
+                "__timed_draw @game/render.ts:584",
+                474.274
+              ],
+              [
+                "run @:0",
+                470.331
+              ]
+            ],
+            "selfMsByFile": {
+              "other:": 5300.852000000001,
+              "veyra05": 1799.932,
+              "game/engine": 307.479,
+              "other:deps/react_jsx-dev-runtime.js?v=ca232f1b": 254.72899999999996,
+              "react-dom": 210.3519999999999,
+              "game/world": 112.26400000000001,
+              "living/life": 61.276999999999994,
+              "game/render": 52.68399999999999,
+              "ui/": 44.156000000000006,
+              "visual/direction": 42.097,
+              "game/sim": 37.68499999999999,
+              "other:game/journey.ts": 17.407,
+              "other:game/creature-sprites.ts": 16.408,
+              "other:game/field-notes.ts": 15.379,
+              "other:game/thermal.ts": 7.990000000000001,
+              "game/pixelfx": 4.499,
+              "other:game/audio.ts": 3.7279999999999998,
+              "other:@vite/client": 3.35,
+              "other:vfx/director.ts": 3.264,
+              "other:primordials/host-bridge.ts": 2.767,
+              "other:game/core.ts": 2.205,
+              "other:living/hpaint.ts": 1.782,
+              "other:game/calendar.ts": 1.32,
+              "other:game/return-report.ts": 1.188,
+              "other:game/husbandry.ts": 1.077,
+              "game/art": 0.832,
+              "other:game/catalog.ts": 0.731,
+              "other:game/presentation-cues.ts": 0.663,
+              "game/compositor": 0.338,
+              "other:deps/chunk-ONBSLKPD.js?v=ca232f1b": 0.294
+            }
+          }
+        }
+      ],
+      "state": {
+        "layout": "veyra05-at-1920-512",
+        "seed": 901,
+        "player": [
+          600,
+          1848
+        ],
+        "sourceStock": 0,
+        "harvestReceipts": 3,
+        "drops": 0,
+        "qaUsed": false
+      },
+      "errors": [],
+      "badResources": []
+    },
+    {
+      "scenario": "movement",
+      "variant": "after",
+      "countedSeams": [
+        "cellClass",
+        "blockGrid",
+        "sourceAt",
+        "effTile",
+        "getWorld",
+        "windowForLayout",
+        "getWindowWorld",
+        "getWindowWorldForGlobalTile"
+      ],
+      "fixture": {
+        "layout": "veyra05-at-1920-512",
+        "seed": 901,
+        "source": {
+          "tx": 38,
+          "ty": 115,
+          "key": "bush",
+          "stock": 3,
+          "yields": [
+            [
+              "berries",
+              1
+            ]
+          ],
+          "x": 600,
+          "y": 1848
+        }
+      },
+      "aim": {
+        "x": 336,
+        "y": 186
+      },
+      "inputLog": [
+        {
+          "action": "hold KeyD",
+          "ms": 6000
+        },
+        {
+          "action": "hold KeyS",
+          "ms": 6000
+        },
+        {
+          "action": "hold KeyA",
+          "ms": 6000
+        },
+        {
+          "action": "hold KeyW",
+          "ms": 6000
+        }
+      ],
+      "metrics": {
+        "boot": {
+          "frames": {
+            "count": 241,
+            "p50": 16.699999999999818,
+            "p95": 83.39999999999964,
+            "p99": 633.1999999999998,
+            "max": 2299.8999999999996,
+            "total": 10832.99999999999
+          },
+          "calls": {
+            "tick": {
+              "count": 44,
+              "p50": 28.5,
+              "p95": 84.10000000149012,
+              "p99": 112.69999999925494,
+              "max": 112.69999999925494,
+              "total": 1182.6999999843538
+            },
+            "draw": {
+              "count": 44,
+              "p50": 2.699999999254942,
+              "p95": 11.100000001490116,
+              "p99": 1063.2000000029802,
+              "max": 1063.2000000029802,
+              "total": 1224.1000000163913
+            },
+            "findInteract": {
+              "count": 44,
+              "p50": 0,
+              "p95": 0.10000000149011612,
+              "p99": 0.29999999701976776,
+              "max": 0.29999999701976776,
+              "total": 0.6999999955296516
+            },
+            "consumeFX": {
+              "count": 44,
+              "p50": 0,
+              "p95": 0,
+              "p99": 0.29999999701976776,
+              "max": 0.29999999701976776,
+              "total": 0.3999999985098839
+            },
+            "serializeSnapshot": {
+              "count": 1,
+              "p50": 5.300000000745058,
+              "p95": 5.300000000745058,
+              "p99": 5.300000000745058,
+              "max": 5.300000000745058,
+              "total": 5.300000000745058
+            }
+          },
+          "longTasks": [
+            590,
+            2283,
+            657,
+            161,
+            1191,
+            83,
+            94,
+            56,
+            68,
+            77,
+            58,
+            79,
+            70,
+            131,
+            76,
+            52,
+            65,
+            54,
+            89,
+            80
+          ],
+          "heap": 269000000
+        },
+        "idle": {
+          "frames": {
+            "count": 264,
+            "p50": 16.69999999999891,
+            "p95": 83.30000000000109,
+            "p99": 4183.200000000001,
+            "max": 8632.900000000001,
+            "total": 46248
+          },
+          "calls": {
+            "tick": {
+              "count": 264,
+              "p50": 0.19999999925494194,
+              "p95": 62.80000000074506,
+              "p99": 776.8000000007451,
+              "max": 1440.2999999970198,
+              "total": 8405.300000019372
+            },
+            "draw": {
+              "count": 264,
+              "p50": 2.899999998509884,
+              "p95": 12,
+              "p99": 1404.9000000022352,
+              "max": 2241.300000000745,
+              "total": 10643.400000009686
+            },
+            "findInteract": {
+              "count": 264,
+              "p50": 0,
+              "p95": 0.10000000149011612,
+              "p99": 3,
+              "max": 114.09999999776483,
+              "total": 127.09999999403954
+            },
+            "consumeFX": {
+              "count": 264,
+              "p50": 0,
+              "p95": 0,
+              "p99": 0.10000000149011612,
+              "max": 0.19999999925494194,
+              "total": 0.6000000014901161
+            },
+            "serializeSnapshot": {
+              "count": 1,
+              "p50": 12.399999998509884,
+              "p95": 12.399999998509884,
+              "p99": 12.399999998509884,
+              "max": 12.399999998509884,
+              "total": 12.399999998509884
+            }
+          },
+          "longTasks": [
+            56,
+            77,
+            76,
+            75,
+            51,
+            61,
+            62,
+            55,
+            74,
+            58,
+            53,
+            61,
+            50,
+            52,
+            456,
+            1324,
+            117,
+            3220,
+            864,
+            2765,
+            116,
+            4312,
+            398,
+            563,
+            3737,
+            116,
+            2983,
+            112,
+            3154,
+            155,
+            3376,
+            2383,
+            2499,
+            5416,
+            169
+          ],
+          "heap": 269000000
+        },
+        "movement": {
+          "frames": {
+            "count": 459,
+            "p50": 16.69999999999709,
+            "p95": 916.6000000000058,
+            "p99": 3766.399999999994,
+            "max": 7716.400000000009,
+            "total": 78880.2
+          },
+          "calls": {
+            "tick": {
+              "count": 459,
+              "p50": 0.19999999925494194,
+              "p95": 116.10000000149012,
+              "p99": 842.3999999985099,
+              "max": 1461.5,
+              "total": 14988.700000029057
+            },
+            "draw": {
+              "count": 459,
+              "p50": 2.600000001490116,
+              "p95": 35.30000000074506,
+              "p99": 960.2999999970198,
+              "max": 1568.5999999977648,
+              "total": 13910.199999980628
+            },
+            "findInteract": {
+              "count": 459,
+              "p50": 0,
+              "p95": 0.10000000149011612,
+              "p99": 0.5,
+              "max": 110,
+              "total": 125.80000000819564
+            },
+            "consumeFX": {
+              "count": 459,
+              "p50": 0,
+              "p95": 0.19999999925494194,
+              "p99": 6,
+              "max": 9.800000000745058,
+              "total": 48.50000000745058
+            },
+            "serializeSnapshot": {
+              "count": 2,
+              "p50": 13.800000000745058,
+              "p95": 13.800000000745058,
+              "p99": 13.800000000745058,
+              "max": 13.800000000745058,
+              "total": 26.199999999254942
+            }
+          },
+          "longTasks": [
+            271,
+            2124,
+            3094,
+            115,
+            282,
+            2515,
+            105,
+            1732,
+            5495,
+            149,
+            106,
+            162,
+            526,
+            3788,
+            521,
+            359,
+            726,
+            105,
+            693,
+            122,
+            990,
+            687,
+            135,
+            1036,
+            129,
+            1251,
+            140,
+            1317,
+            1895,
+            555,
+            3631,
+            2295,
+            3543,
+            429,
+            395,
+            661,
+            2127,
+            103,
+            82,
+            89,
+            155,
+            60,
+            136,
+            60,
+            57,
+            57,
+            62,
+            58,
+            121,
+            106,
+            100,
+            64,
+            89,
+            70,
+            58,
+            98,
+            54,
+            76,
+            80,
+            150,
+            155,
+            99,
+            65,
+            87,
+            85,
+            58,
+            59,
+            78,
+            62,
+            173,
+            61,
+            149,
+            64,
+            60,
+            80,
+            50,
+            59,
+            56,
+            220,
+            102,
+            85,
+            323,
+            229,
+            100,
+            635,
+            441,
+            675,
+            1345,
+            139,
+            625,
+            1593,
+            123,
+            1548,
+            1459,
+            116,
+            2419,
+            825,
+            1530
+          ],
+          "heap": 269000000
+        },
+        "settle": {
+          "frames": {
+            "count": 25,
+            "p50": 883.2999999999884,
+            "p95": 5416.5,
+            "p99": 9249.600000000006,
+            "max": 9249.600000000006,
+            "total": 36148.600000000006
+          },
+          "calls": {
+            "tick": {
+              "count": 25,
+              "p50": 203.80000000074506,
+              "p95": 723.1000000014901,
+              "p99": 1503.3999999985099,
+              "max": 1503.3999999985099,
+              "total": 7177.5
+            },
+            "draw": {
+              "count": 25,
+              "p50": 30.5,
+              "p95": 288.5,
+              "p99": 4585.400000002235,
+              "max": 4585.400000002235,
+              "total": 6141.7000000067055
+            },
+            "findInteract": {
+              "count": 25,
+              "p50": 0,
+              "p95": 3.399999998509884,
+              "p99": 16.199999999254942,
+              "max": 16.199999999254942,
+              "total": 19.99999999627471
+            },
+            "consumeFX": {
+              "count": 25,
+              "p50": 0,
+              "p95": 0.09999999776482582,
+              "p99": 4.5,
+              "max": 4.5,
+              "total": 4.599999997764826
+            },
+            "serializeSnapshot": {
+              "count": 0,
+              "p50": null,
+              "p95": null,
+              "p99": null,
+              "max": null,
+              "total": 0
+            }
+          },
+          "longTasks": [
+            1226,
+            150,
+            1204,
+            1147,
+            2022,
+            510,
+            266,
+            439,
+            129,
+            279,
+            118,
+            204,
+            584,
+            136,
+            342,
+            945,
+            501,
+            531,
+            128,
+            447,
+            139,
+            289,
+            118,
+            357,
+            348,
+            575,
+            112,
+            401,
+            645,
+            317,
+            607,
+            123,
+            562,
+            531,
+            391,
+            118,
+            133,
+            762,
+            530,
+            108,
+            503,
+            516,
+            271,
+            174,
+            8523,
+            127,
+            127,
+            154
+          ],
+          "heap": 269000000
+        }
+      },
+      "counterDeltas": {
+        "idle": {
+          "chunkMs": 0,
+          "chunkCalls": 0,
+          "chunkInvalidations": 0,
+          "syncMs": 0.8,
+          "syncCalls": 257,
+          "sigRebuilds": 22,
+          "calls": {
+            "windowForLayout": 3480157,
+            "getWindowWorld": 4266832,
+            "getWindowWorldForGlobalTile": 0,
+            "getWorld": 3480151,
+            "cellClass": 880000,
+            "blockGrid": 3331,
+            "blockRebuilds": 22,
+            "blockRebuildMs": 3116.2000000029802,
+            "sourceAt": 1188698,
+            "effTile": 1406744
+          }
+        },
+        "movement": {
+          "chunkMs": 61.4,
+          "chunkCalls": 2,
+          "chunkInvalidations": 0,
+          "syncMs": 4,
+          "syncCalls": 450,
+          "sigRebuilds": 55,
+          "calls": {
+            "windowForLayout": 9930773,
+            "getWindowWorld": 12469045,
+            "getWindowWorldForGlobalTile": 0,
+            "getWorld": 9930761,
+            "cellClass": 2840000,
+            "blockGrid": 7516,
+            "blockRebuilds": 71,
+            "blockRebuildMs": 7575.100000005215,
+            "sourceAt": 3338373,
+            "effTile": 3741435
+          }
+        },
+        "settle": {
+          "chunkMs": 0,
+          "chunkCalls": 0,
+          "chunkInvalidations": 0,
+          "syncMs": 0.1,
+          "syncCalls": 19,
+          "sigRebuilds": 19,
+          "calls": {
+            "windowForLayout": 2329817,
+            "getWindowWorld": 3008906,
+            "getWindowWorldForGlobalTile": 0,
+            "getWorld": 2329817,
+            "cellClass": 760000,
+            "blockGrid": 237,
+            "blockRebuilds": 19,
+            "blockRebuildMs": 2763.2000000029802,
+            "sourceAt": 770022,
+            "effTile": 799094
+          }
+        }
+      },
+      "phases": [
+        {
+          "phase": "idle",
+          "cpu": {
+            "topEdges": [
+              [
+                "(root) @:0  ->  loop @ui/Game.tsx:838",
+                5475.360000000003
+              ],
+              [
+                "(root) @:0  ->  (program) @:0",
+                5435.705000000008
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  tick @game/sim.ts:3127",
+                2332.402000000006
+              ],
+              [
+                "tick @game/sim.ts:3127  ->  window.__timed @:6",
+                2331.0950000000053
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/sim.ts:3127",
+                2087.1180000000036
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127  ->  __timed_tick @game/sim.ts:2667",
+                2086.2700000000036
+              ],
+              [
+                "draw @game/render.ts:2175  ->  window.__timed @:6",
+                2038.666999999999
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  draw @game/render.ts:2175",
+                2038.666999999999
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/render.ts:2175",
+                2031.730999999999
+              ],
+              [
+                "(anonymous) @game/render.ts:2175  ->  __timed_draw @game/render.ts:584",
+                2016.0839999999987
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398  ->  recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                1966.299999999995
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349  ->  commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                1965.216999999995
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667  ->  tickPlayer @game/sim.ts:616",
+                1917.9820000000004
+              ],
+              [
+                "(root) @:0  ->  performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                1566.292
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16  ->  performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                1507.7309999999998
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489  ->  performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                1507.5879999999997
+              ],
+              [
+                "tickPlayer @game/sim.ts:616  ->  blockGrid @game/engine.ts:707",
+                1503.068
+              ],
+              [
+                "(root) @:0  ->  (idle) @:0",
+                1468.6300000000024
+              ],
+              [
+                "blockGrid @game/engine.ts:707  ->  cellClass @game/engine.ts:688",
+                1423.0329999999994
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993  ->  run @:0",
+                1173.2080000000003
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706  ->  renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366",
+                1161.1210000000003
+              ],
+              [
+                "workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423  ->  performUnitOfWork @deps/react-dom_client.js?v=ca232f1b:12559",
+                1117.7190000000007
+              ],
+              [
+                "renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366  ->  workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423",
+                1117.7190000000007
+              ],
+              [
+                "performUnitOfWork @deps/react-dom_client.js?v=ca232f1b:12559  ->  runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993",
+                1106.7680000000007
+              ],
+              [
+                "run @:0  ->  beginWork @deps/react-dom_client.js?v=ca232f1b:8416",
+                995.9370000000007
+              ],
+              [
+                "getWorld @game/world.ts:89  ->  windowForLayout @veyra05/scenes.ts:21",
+                881.0070000000005
+              ],
+              [
+                "beginWork @deps/react-dom_client.js?v=ca232f1b:8416  ->  updateFunctionComponent @deps/react-dom_client.js?v=ca232f1b:7457",
+                872.6530000000007
+              ],
+              [
+                "updateFunctionComponent @deps/react-dom_client.js?v=ca232f1b:7457  ->  renderWithHooks @deps/react-dom_client.js?v=ca232f1b:5638",
+                868.7250000000006
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  tickMusic @game/audio.ts:254",
+                705.2950000000001
+              ],
+              [
+                "tickMusic @game/audio.ts:254  ->  tone @game/audio.ts:104",
+                701.045
+              ]
+            ],
+            "durationMs": 14565.589,
+            "samples": 13966,
+            "topSelf": [
+              [
+                "(program) @:0",
+                5435.705
+              ],
+              [
+                "(idle) @:0",
+                1468.63
+              ],
+              [
+                "windowForLayout @veyra05/scenes.ts:21",
+                883.058
+              ],
+              [
+                "drawImage @:0",
+                645.6030000000001
+              ],
+              [
+                "getWindowWorld @veyra05/window.ts:598",
+                636.784
+              ],
+              [
+                "exports.jsxDEV @deps/react_jsx-dev-runtime.js?v=ca232f1b:239",
+                535.534
+              ],
+              [
+                "(garbage collector) @:0",
+                439.863
+              ],
+              [
+                "window.__timed @:6",
+                353.20099999999996
+              ],
+              [
+                "linearRampToValueAtTime @:0",
+                278.994
+              ],
+              [
+                "tickPlayer @game/sim.ts:616",
+                255.073
+              ],
+              [
+                "fillRect @:0",
+                162.528
+              ],
+              [
+                "markRootFinished @deps/react-dom_client.js?v=ca232f1b:1205",
+                158.853
+              ],
+              [
+                "drawPixelContactShadow @game/creature-sprites.ts:450",
+                148.051
+              ],
+              [
+                "react_stack_bottom_frame @deps/react-dom_client.js?v=ca232f1b:18505",
+                141.162
+              ],
+              [
+                "createOscillator @:0",
+                136.496
+              ],
+              [
+                "dirFromAngle @game/core.ts:69",
+                129.329
+              ],
+              [
+                "tone @game/audio.ts:104",
+                126.849
+              ],
+              [
+                "items @veyra05/decor-client.ts:586",
+                120.272
+              ],
+              [
+                "route @game/audio.ts:85",
+                111.59
+              ],
+              [
+                "resolveUpdatePriority @deps/react-dom_client.js?v=ca232f1b:1315",
+                110.528
+              ],
+              [
+                "commitTextUpdate @deps/react-dom_client.js?v=ca232f1b:15894",
+                109.067
+              ],
+              [
+                "drawFx @game/render.ts:1909",
+                108.203
+              ],
+              [
+                "postMessage @:0",
+                106.245
+              ],
+              [
+                "updatedAncestorInfoDev @deps/react-dom_client.js?v=ca232f1b:1991",
+                103.833
+              ],
+              [
+                "attemptEarlyBailoutIfNoScheduledUpdate @deps/react-dom_client.js?v=ca232f1b:8310",
+                100.714
+              ],
+              [
+                "save @:0",
+                84.99300000000001
+              ],
+              [
+                "__timed_draw @game/render.ts:584",
+                77.919
+              ],
+              [
+                "blockGrid @game/engine.ts:707",
+                77.729
+              ],
+              [
+                "(anonymous) @veyra05/scenes.ts:23",
+                65.60699999999999
+              ],
+              [
+                "drawWaterTile @living/life.ts:211",
+                53.708999999999996
+              ]
+            ],
+            "topTotal": [
+              [
+                "(root) @:0",
+                14565.589
+              ],
+              [
+                "loop @ui/Game.tsx:838",
+                5475.36
+              ],
+              [
+                "(program) @:0",
+                5435.705
+              ],
+              [
+                "window.__timed @:6",
+                4497.897999999999
+              ],
+              [
+                "tick @game/sim.ts:3127",
+                2332.402
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                2140.635
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127",
+                2087.118
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667",
+                2086.27
+              ],
+              [
+                "draw @game/render.ts:2175",
+                2038.667
+              ],
+              [
+                "(anonymous) @game/render.ts:2175",
+                2031.731
+              ],
+              [
+                "__timed_draw @game/render.ts:584",
+                2016.084
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                1966.3
+              ],
+              [
+                "tickPlayer @game/sim.ts:616",
+                1917.982
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                1566.292
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                1507.731
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                1507.588
+              ],
+              [
+                "blockGrid @game/engine.ts:707",
+                1503.068
+              ],
+              [
+                "(idle) @:0",
+                1468.63
+              ],
+              [
+                "getWorld @game/world.ts:89",
+                1467.63
+              ],
+              [
+                "cellClass @game/engine.ts:688",
+                1451.079
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993",
+                1284.5609999999997
+              ],
+              [
+                "run @:0",
+                1232.5399999999997
+              ],
+              [
+                "renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366",
+                1161.121
+              ],
+              [
+                "performUnitOfWork @deps/react-dom_client.js?v=ca232f1b:12559",
+                1117.719
+              ],
+              [
+                "workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423",
+                1117.719
+              ]
+            ],
+            "selfMsByFile": {
+              "other:": 9364.929,
+              "veyra05": 1730.022,
+              "react-dom": 980.7750000000003,
+              "other:deps/react_jsx-dev-runtime.js?v=ca232f1b": 590.641,
+              "game/sim": 357.6180000000001,
+              "game/render": 291.5540000000001,
+              "other:game/audio.ts": 245.32500000000005,
+              "game/engine": 221.84500000000008,
+              "living/life": 185.529,
+              "other:game/creature-sprites.ts": 166.98499999999999,
+              "other:game/core.ts": 140.27800000000002,
+              "ui/": 78.65099999999998,
+              "game/world": 46.45,
+              "other:game/thermal.ts": 41.55400000000001,
+              "other:game/journey.ts": 39.372,
+              "other:game/persist.ts": 28.017999999999997,
+              "game/pixelfx": 15.450999999999999,
+              "visual/direction": 14.894,
+              "other:game/return-report.ts": 6.712,
+              "other:living/hpaint.ts": 4.355,
+              "other:game/husbandry.ts": 3.747,
+              "other:vfx/director.ts": 3.085,
+              "other:game/calendar.ts": 2.72,
+              "other:game/field-notes.ts": 1.701,
+              "game/compositor": 1.028,
+              "other:game/death-view.ts": 0.678,
+              "other:game/attention.ts": 0.469,
+              "other:game/avatar-presentation.ts": 0.442,
+              "other:primordials/host-bridge.ts": 0.343,
+              "other:game/poi-access.ts": 0.308,
+              "other:deps/chunk-ONBSLKPD.js?v=ca232f1b": 0.11
+            }
+          }
+        },
+        {
+          "phase": "movement",
+          "cpu": {
+            "topEdges": [
+              [
+                "(root) @:0  ->  loop @ui/Game.tsx:838",
+                10596.178999999931
+              ],
+              [
+                "(root) @:0  ->  (program) @:0",
+                9998.801999999967
+              ],
+              [
+                "(root) @:0  ->  (idle) @:0",
+                7753.69200000003
+              ],
+              [
+                "recursivelyTraversePassiveMountEffects @deps/react-dom_client.js?v=ca232f1b:11006  ->  commitPassiveMountOnFiber @deps/react-dom_client.js?v=ca232f1b:11020",
+                4979.85800000003
+              ],
+              [
+                "commitPassiveMountOnFiber @deps/react-dom_client.js?v=ca232f1b:11020  ->  recursivelyTraversePassiveMountEffects @deps/react-dom_client.js?v=ca232f1b:11006",
+                4979.85800000003
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  tick @game/sim.ts:3127",
+                4887.95799999999
+              ],
+              [
+                "tick @game/sim.ts:3127  ->  window.__timed @:6",
+                4887.045999999989
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/sim.ts:3127",
+                4874.87499999999
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127  ->  __timed_tick @game/sim.ts:2667",
+                4874.1539999999895
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  draw @game/render.ts:2175",
+                4858.895999999984
+              ],
+              [
+                "draw @game/render.ts:2175  ->  window.__timed @:6",
+                4858.580999999984
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/render.ts:2175",
+                4843.3709999999855
+              ],
+              [
+                "(anonymous) @game/render.ts:2175  ->  __timed_draw @game/render.ts:584",
+                4812.317999999986
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667  ->  tickPlayer @game/sim.ts:616",
+                4511.801999999991
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398  ->  recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                4496.157999999986
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349  ->  commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                4492.558999999981
+              ],
+              [
+                "tickPlayer @game/sim.ts:616  ->  blockGrid @game/engine.ts:707",
+                3979.6480000000042
+              ],
+              [
+                "blockGrid @game/engine.ts:707  ->  cellClass @game/engine.ts:688",
+                3623.050000000003
+              ],
+              [
+                "(root) @:0  ->  performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                3593.1149999999952
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16  ->  performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                2803.907999999998
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489  ->  performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                2799.545999999998
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993  ->  run @:0",
+                2392.506999999998
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706  ->  renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366",
+                2221.6839999999943
+              ],
+              [
+                "renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366  ->  workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423",
+                2154.6629999999955
+              ],
+              [
+                "workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423  ->  performUnitOfWork @deps/react-dom_client.js?v=ca232f1b:12559",
+                2153.3949999999954
+              ],
+              [
+                "performUnitOfWork @deps/react-dom_client.js?v=ca232f1b:12559  ->  runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993",
+                2125.792999999995
+              ],
+              [
+                "run @:0  ->  beginWork @deps/react-dom_client.js?v=ca232f1b:8416",
+                2117.8049999999953
+              ],
+              [
+                "beginWork @deps/react-dom_client.js?v=ca232f1b:8416  ->  updateFunctionComponent @deps/react-dom_client.js?v=ca232f1b:7457",
+                2080.930999999994
+              ],
+              [
+                "updateFunctionComponent @deps/react-dom_client.js?v=ca232f1b:7457  ->  renderWithHooks @deps/react-dom_client.js?v=ca232f1b:5638",
+                2062.5479999999948
+              ],
+              [
+                "getWorld @game/world.ts:89  ->  windowForLayout @veyra05/scenes.ts:21",
+                1846.3900000000076
+              ]
+            ],
+            "durationMs": 34573.54,
+            "samples": 44338,
+            "topSelf": [
+              [
+                "(program) @:0",
+                9998.802
+              ],
+              [
+                "(idle) @:0",
+                7753.692
+              ],
+              [
+                "windowForLayout @veyra05/scenes.ts:21",
+                1850.1139999999998
+              ],
+              [
+                "drawImage @:0",
+                1690.9560000000001
+              ],
+              [
+                "getWindowWorld @veyra05/window.ts:598",
+                1454.7530000000004
+              ],
+              [
+                "(garbage collector) @:0",
+                1417.049
+              ],
+              [
+                "exports.jsxDEV @deps/react_jsx-dev-runtime.js?v=ca232f1b:239",
+                1297.826
+              ],
+              [
+                "measure @:0",
+                416.72399999999993
+              ],
+              [
+                "drawSource @game/render.ts:871",
+                381.411
+              ],
+              [
+                "blockGrid @game/engine.ts:707",
+                348.176
+              ],
+              [
+                "cellClass @game/engine.ts:688",
+                308.899
+              ],
+              [
+                "drawLivingTree @living/life.ts:95",
+                274.802
+              ],
+              [
+                "up @ui/Game.tsx:707",
+                255.724
+              ],
+              [
+                "tickPlayer @game/sim.ts:616",
+                248.651
+              ],
+              [
+                "moveBody @game/sim.ts:70",
+                245.193
+              ],
+              [
+                "drawPixelContactShadow @game/creature-sprites.ts:450",
+                222.182
+              ],
+              [
+                "fillRect @:0",
+                199.88600000000002
+              ],
+              [
+                "save @:0",
+                183.731
+              ],
+              [
+                "(anonymous) @veyra05/scenes.ts:23",
+                180.80499999999998
+              ],
+              [
+                "drawWaterTile @living/life.ts:211",
+                168.327
+              ],
+              [
+                "react_stack_bottom_frame @deps/react-dom_client.js?v=ca232f1b:18505",
+                159.234
+              ],
+              [
+                "createTask @:0",
+                153.02699999999996
+              ],
+              [
+                "addObjectDiffToProperties @deps/react-dom_client.js?v=ca232f1b:3081",
+                139.839
+              ],
+              [
+                "createOscillator @:0",
+                139.759
+              ],
+              [
+                "commitReconciliationEffects @deps/react-dom_client.js?v=ca232f1b:10768",
+                136.57899999999998
+              ],
+              [
+                "syncPlayer @vfx/director.ts:696",
+                135.394
+              ],
+              [
+                "shadow @game/render.ts:523",
+                134.968
+              ],
+              [
+                "translate @:0",
+                134.728
+              ],
+              [
+                "Game @ui/Game.tsx:59",
+                134.215
+              ],
+              [
+                "__timed_draw @game/render.ts:584",
+                133.117
+              ]
+            ],
+            "topTotal": [
+              [
+                "(root) @:0",
+                34573.54
+              ],
+              [
+                "loop @ui/Game.tsx:838",
+                10596.179
+              ],
+              [
+                "(program) @:0",
+                9998.802
+              ],
+              [
+                "window.__timed @:6",
+                9938.588
+              ],
+              [
+                "(idle) @:0",
+                7753.692
+              ],
+              [
+                "commitPassiveMountOnFiber @deps/react-dom_client.js?v=ca232f1b:11020",
+                5614.282000000002
+              ],
+              [
+                "recursivelyTraversePassiveMountEffects @deps/react-dom_client.js?v=ca232f1b:11006",
+                4979.858000000002
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                4891.611999999999
+              ],
+              [
+                "tick @game/sim.ts:3127",
+                4887.958
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127",
+                4874.875
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667",
+                4874.154
+              ],
+              [
+                "draw @game/render.ts:2175",
+                4858.896
+              ],
+              [
+                "(anonymous) @game/render.ts:2175",
+                4843.371
+              ],
+              [
+                "__timed_draw @game/render.ts:584",
+                4812.318
+              ],
+              [
+                "tickPlayer @game/sim.ts:616",
+                4511.802
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                4496.512
+              ],
+              [
+                "blockGrid @game/engine.ts:707",
+                3979.648
+              ],
+              [
+                "cellClass @game/engine.ts:688",
+                3625.2160000000003
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                3593.115
+              ],
+              [
+                "getWorld @game/world.ts:89",
+                3211.6509999999985
+              ],
+              [
+                "run @:0",
+                2894.295
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                2803.908
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                2799.546
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993",
+                2400.75
+              ],
+              [
+                "renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366",
+                2221.684
+              ]
+            ],
+            "selfMsByFile": {
+              "other:": 23179.537999999986,
+              "veyra05": 3555.078,
+              "other:deps/react_jsx-dev-runtime.js?v=ca232f1b": 1495.5490000000002,
+              "react-dom": 1408.3919999999998,
+              "game/render": 1033.9060000000002,
+              "game/engine": 1003.3609999999999,
+              "game/sim": 779.4329999999999,
+              "living/life": 624.9939999999999,
+              "ui/": 600.9549999999998,
+              "other:game/creature-sprites.ts": 241.22599999999997,
+              "other:game/audio.ts": 170.18500000000003,
+              "other:vfx/director.ts": 144.818,
+              "game/world": 142.563,
+              "other:game/persist.ts": 44.985,
+              "visual/direction": 33.782999999999994,
+              "other:game/thermal.ts": 25.489999999999995,
+              "other:game/field-notes.ts": 14.887999999999998,
+              "game/pixelfx": 13.666,
+              "other:game/journey.ts": 13.541,
+              "other:game/core.ts": 11.503,
+              "other:@vite/client": 8.499,
+              "other:living/hpaint.ts": 6.891,
+              "other:game/calendar.ts": 6.327999999999999,
+              "other:primordials/host-bridge.ts": 3.985,
+              "other:game/death-view.ts": 2.3850000000000002,
+              "game/compositor": 1.646,
+              "other:vfx/stage.ts": 1.362,
+              "other:game/husbandry.ts": 0.79,
+              "other:deps/chunk-ONBSLKPD.js?v=ca232f1b": 0.687,
+              "other:127.0.0.1": 0.684,
+              "other:game/catalog.ts": 0.626,
+              "other:game/map-package.ts": 0.413,
+              "other:game/attention.ts": 0.41,
+              "other:game/poi-access.ts": 0.346,
+              "other:game/presentation-cues.ts": 0.321,
+              "game/art": 0.313
+            }
+          }
+        },
+        {
+          "phase": "settle",
+          "cpu": {
+            "topEdges": [
+              [
+                "(root) @:0  ->  (program) @:0",
+                5949.48299999998
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349  ->  commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                4069.3520000000003
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398  ->  recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                4069.3520000000003
+              ],
+              [
+                "(root) @:0  ->  loop @ui/Game.tsx:838",
+                2796.9770000000044
+              ],
+              [
+                "tick @game/sim.ts:3127  ->  window.__timed @:6",
+                1956.7949999999985
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  tick @game/sim.ts:3127",
+                1956.7949999999985
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127  ->  __timed_tick @game/sim.ts:2667",
+                1948.4789999999985
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/sim.ts:3127",
+                1948.4789999999985
+              ],
+              [
+                "recursivelyTraversePassiveMountEffects @deps/react-dom_client.js?v=ca232f1b:11006  ->  commitPassiveMountOnFiber @deps/react-dom_client.js?v=ca232f1b:11020",
+                1905.485000000002
+              ],
+              [
+                "commitPassiveMountOnFiber @deps/react-dom_client.js?v=ca232f1b:11020  ->  recursivelyTraversePassiveMountEffects @deps/react-dom_client.js?v=ca232f1b:11006",
+                1905.485000000002
+              ],
+              [
+                "(root) @:0  ->  performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                1630.4929999999986
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667  ->  tickPlayer @game/sim.ts:616",
+                1248.5729999999971
+              ],
+              [
+                "tickPlayer @game/sim.ts:616  ->  blockGrid @game/engine.ts:707",
+                1198.1209999999987
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16  ->  performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                1122.336
+              ],
+              [
+                "blockGrid @game/engine.ts:707  ->  cellClass @game/engine.ts:688",
+                1115.7859999999994
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489  ->  performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                1110.3200000000002
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993  ->  run @:0",
+                794.1180000000012
+              ],
+              [
+                "getWorld @game/world.ts:89  ->  windowForLayout @veyra05/scenes.ts:21",
+                765.1749999999994
+              ],
+              [
+                "(root) @:0  ->  (garbage collector) @:0",
+                731.5259999999997
+              ],
+              [
+                "draw @game/render.ts:2175  ->  window.__timed @:6",
+                670.2129999999997
+              ],
+              [
+                "loop @ui/Game.tsx:838  ->  draw @game/render.ts:2175",
+                670.2129999999997
+              ],
+              [
+                "window.__timed @:6  ->  (anonymous) @game/render.ts:2175",
+                668.3269999999998
+              ],
+              [
+                "(anonymous) @game/render.ts:2175  ->  __timed_draw @game/render.ts:584",
+                663.2849999999997
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706  ->  renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366",
+                618.4700000000004
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667  ->  syncWorld @game/sim.ts:2587",
+                556.1670000000006
+              ],
+              [
+                "syncWorld @game/sim.ts:2587  ->  settle @game/sim.ts:2792",
+                547.1300000000005
+              ],
+              [
+                "sourceAt @game/engine.ts:640  ->  getWorld @game/world.ts:89",
+                512.2209999999999
+              ],
+              [
+                "renderRootSync @deps/react-dom_client.js?v=ca232f1b:12366  ->  workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423",
+                482.36499999999995
+              ],
+              [
+                "workLoopSync @deps/react-dom_client.js?v=ca232f1b:12423  ->  performUnitOfWork @deps/react-dom_client.js?v=ca232f1b:12559",
+                479.64399999999995
+              ],
+              [
+                "performUnitOfWork @deps/react-dom_client.js?v=ca232f1b:12559  ->  runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993",
+                476.1689999999999
+              ]
+            ],
+            "durationMs": 11558.473,
+            "samples": 7940,
+            "topSelf": [
+              [
+                "(program) @:0",
+                5949.483
+              ],
+              [
+                "windowForLayout @veyra05/scenes.ts:21",
+                765.8140000000001
+              ],
+              [
+                "(garbage collector) @:0",
+                731.526
+              ],
+              [
+                "getWindowWorld @veyra05/window.ts:598",
+                338.11
+              ],
+              [
+                "settle @game/sim.ts:2792",
+                256.28
+              ],
+              [
+                "drawImage @:0",
+                245.17299999999997
+              ],
+              [
+                "FieldNoteCard @ui/FieldNotes.tsx:14",
+                142.59099999999998
+              ],
+              [
+                "gradeWorld @visual/direction.ts:170",
+                138.561
+              ],
+              [
+                "addObjectDiffToProperties @deps/react-dom_client.js?v=ca232f1b:3081",
+                132.37200000000004
+              ],
+              [
+                "darkness @game/engine.ts:78",
+                130.957
+              ],
+              [
+                "send @:0",
+                126.861
+              ],
+              [
+                "setTextContent @deps/react-dom_client.js?v=ca232f1b:2194",
+                124.248
+              ],
+              [
+                "measure @:0",
+                119.97500000000001
+              ],
+              [
+                "prepareFreshStack @deps/react-dom_client.js?v=ca232f1b:12095",
+                119.457
+              ],
+              [
+                "postMessage @:0",
+                117.087
+              ],
+              [
+                "dateKey @game/journey.ts:282",
+                116.59700000000001
+              ],
+              [
+                "createOscillator @:0",
+                116.238
+              ],
+              [
+                "validateTextNesting @deps/react-dom_client.js?v=ca232f1b:2171",
+                110.161
+              ],
+              [
+                "commitRoot @deps/react-dom_client.js?v=ca232f1b:12716",
+                109.101
+              ],
+              [
+                "requestAnimationFrame @:0",
+                106.969
+              ],
+              [
+                "(anonymous) @deps/react-dom_client.js?v=ca232f1b:12773",
+                105.77
+              ],
+              [
+                "tickCreatures @game/sim.ts:1270",
+                103.762
+              ],
+              [
+                "depthItems @veyra05/decor-client.ts:805",
+                101.599
+              ],
+              [
+                "blockGrid @game/engine.ts:707",
+                80.477
+              ],
+              [
+                "exports.jsxDEV @deps/react_jsx-dev-runtime.js?v=ca232f1b:239",
+                78.38899999999997
+              ],
+              [
+                "(idle) @:0",
+                56.976
+              ],
+              [
+                "(anonymous) @veyra05/scenes.ts:23",
+                43.202999999999996
+              ],
+              [
+                "drawWaterTile @living/life.ts:211",
+                41.727
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667",
+                33.039
+              ],
+              [
+                "cellClass @game/engine.ts:688",
+                32.915
+              ]
+            ],
+            "topTotal": [
+              [
+                "(root) @:0",
+                11558.473
+              ],
+              [
+                "(program) @:0",
+                5949.483
+              ],
+              [
+                "commitMutationEffectsOnFiber @deps/react-dom_client.js?v=ca232f1b:10398",
+                4407.816000000002
+              ],
+              [
+                "recursivelyTraverseMutationEffects @deps/react-dom_client.js?v=ca232f1b:10349",
+                4069.3520000000008
+              ],
+              [
+                "loop @ui/Game.tsx:838",
+                2796.977
+              ],
+              [
+                "window.__timed @:6",
+                2627.008
+              ],
+              [
+                "commitPassiveMountOnFiber @deps/react-dom_client.js?v=ca232f1b:11020",
+                2180.162000000001
+              ],
+              [
+                "tick @game/sim.ts:3127",
+                1956.795
+              ],
+              [
+                "__timed_tick @game/sim.ts:2667",
+                1948.479
+              ],
+              [
+                "(anonymous) @game/sim.ts:3127",
+                1948.479
+              ],
+              [
+                "recursivelyTraversePassiveMountEffects @deps/react-dom_client.js?v=ca232f1b:11006",
+                1905.4850000000006
+              ],
+              [
+                "performWorkUntilDeadline @deps/react-dom_client.js?v=ca232f1b:16",
+                1630.493
+              ],
+              [
+                "tickPlayer @game/sim.ts:616",
+                1248.573
+              ],
+              [
+                "blockGrid @game/engine.ts:707",
+                1198.121
+              ],
+              [
+                "performWorkOnRootViaSchedulerTask @deps/react-dom_client.js?v=ca232f1b:13489",
+                1122.336
+              ],
+              [
+                "cellClass @game/engine.ts:688",
+                1116.45
+              ],
+              [
+                "performWorkOnRoot @deps/react-dom_client.js?v=ca232f1b:11706",
+                1110.32
+              ],
+              [
+                "getWorld @game/world.ts:89",
+                1085.0870000000002
+              ],
+              [
+                "run @:0",
+                933.5259999999998
+              ],
+              [
+                "runWithFiberInDEV @deps/react-dom_client.js?v=ca232f1b:993",
+                818.0629999999999
+              ],
+              [
+                "windowForLayout @veyra05/scenes.ts:21",
+                765.8140000000001
+              ],
+              [
+                "(garbage collector) @:0",
+                731.526
+              ],
+              [
+                "draw @game/render.ts:2175",
+                670.213
+              ],
+              [
+                "(anonymous) @game/render.ts:2175",
+                668.327
+              ],
+              [
+                "__timed_draw @game/render.ts:584",
+                663.285
+              ]
+            ],
+            "selfMsByFile": {
+              "other:": 7769.365000000002,
+              "veyra05": 1262.483,
+              "react-dom": 1027.103,
+              "game/sim": 441.16399999999993,
+              "game/engine": 315.256,
+              "ui/": 192.48799999999994,
+              "visual/direction": 138.561,
+              "other:game/journey.ts": 136.371,
+              "other:deps/react_jsx-dev-runtime.js?v=ca232f1b": 119.87699999999997,
+              "living/life": 54.36399999999999,
+              "game/render": 38.881,
+              "game/world": 17.695,
+              "other:game/core.ts": 17.351,
+              "other:game/thermal.ts": 10.039000000000001,
+              "game/pixelfx": 5.9430000000000005,
+              "other:game/return-report.ts": 3.058,
+              "other:game/field-notes.ts": 2.764,
+              "other:@vite/client": 1.965,
+              "other:game/audio.ts": 1.663,
+              "other:vfx/director.ts": 0.982,
+              "other:living/hpaint.ts": 0.589,
+              "other:primordials/host-bridge.ts": 0.511
+            }
+          }
+        }
+      ],
+      "state": {
+        "layout": "veyra05-at-1920-512",
+        "seed": 901,
+        "player": [
+          455,
+          1828
+        ],
+        "sourceStock": null,
+        "harvestReceipts": 0,
+        "drops": 0,
+        "qaUsed": false
+      },
+      "errors": [],
+      "badResources": []
+    }
+  ]
+}

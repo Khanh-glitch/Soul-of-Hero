@@ -1,0 +1,170 @@
+{
+  "scope": "TECHNICAL_STORAGE_ONLY; fixture materials, simulated write failures, real localStorage/IndexedDB, actual page reload. Not experience, multi-device, endurance or release acceptance.",
+  "persistSHA256": "07ec9a878c990e19dcbe38eb7311451bc27728d78d774452673dca79c9997f23",
+  "results": [
+    {
+      "actualLayout": "veyra05-at-1920-512",
+      "fault": "healthy-concurrent",
+      "outcomes": [
+        {
+          "ok": true,
+          "category": "ok",
+          "revision": 3,
+          "localStatus": "ok",
+          "idbStatus": "ok"
+        },
+        {
+          "ok": true,
+          "category": "ok",
+          "revision": 4,
+          "localStatus": "ok",
+          "idbStatus": "ok"
+        }
+      ],
+      "elapsedMs": 29.599999997764826,
+      "writes": 4,
+      "expected": 3,
+      "priorLocalPreserved": false,
+      "bytes": 291385,
+      "recovered": {
+        "loaded": true,
+        "wood": 3,
+        "note": null,
+        "valid": true
+      },
+      "errors": [],
+      "status": "PASS"
+    },
+    {
+      "actualLayout": "veyra05-at-1920-512",
+      "fault": "local-quota",
+      "outcomes": [
+        {
+          "ok": true,
+          "category": "ok",
+          "revision": 3,
+          "localStatus": "local-write",
+          "idbStatus": "ok"
+        }
+      ],
+      "elapsedMs": 21.600000001490116,
+      "writes": 2,
+      "expected": 2,
+      "priorLocalPreserved": true,
+      "bytes": 291385,
+      "recovered": {
+        "loaded": true,
+        "wood": 2,
+        "note": null,
+        "valid": true
+      },
+      "errors": [],
+      "status": "PASS"
+    },
+    {
+      "actualLayout": "veyra05-at-1920-512",
+      "fault": "idb-write",
+      "outcomes": [
+        {
+          "ok": true,
+          "category": "ok",
+          "revision": 3,
+          "localStatus": "ok",
+          "idbStatus": "idb-transaction"
+        }
+      ],
+      "elapsedMs": 21.5,
+      "writes": 2,
+      "expected": 2,
+      "priorLocalPreserved": false,
+      "bytes": 291385,
+      "recovered": {
+        "loaded": true,
+        "wood": 2,
+        "note": null,
+        "valid": true
+      },
+      "errors": [],
+      "status": "PASS"
+    },
+    {
+      "actualLayout": "veyra05-at-1920-512",
+      "fault": "both-write",
+      "outcomes": [
+        {
+          "ok": false,
+          "category": "idb-transaction",
+          "revision": null,
+          "localStatus": "local-write",
+          "idbStatus": "idb-transaction"
+        }
+      ],
+      "elapsedMs": 16.200000002980232,
+      "writes": 2,
+      "expected": 1,
+      "priorLocalPreserved": true,
+      "bytes": 291385,
+      "recovered": {
+        "loaded": true,
+        "wood": 1,
+        "note": null,
+        "valid": true
+      },
+      "errors": [],
+      "status": "PASS"
+    },
+    {
+      "actualLayout": "veyra05-at-1920-512",
+      "fault": "invalid-uid",
+      "outcomes": [
+        {
+          "ok": false,
+          "category": "invalid-state",
+          "revision": null,
+          "localStatus": "skipped",
+          "idbStatus": "skipped",
+          "invariant": "duplicate-uid:s15m"
+        }
+      ],
+      "elapsedMs": 2.199999999254942,
+      "writes": 0,
+      "expected": 1,
+      "priorLocalPreserved": true,
+      "bytes": 291385,
+      "recovered": {
+        "loaded": true,
+        "wood": 1,
+        "note": null,
+        "valid": true
+      },
+      "errors": [],
+      "status": "PASS"
+    },
+    {
+      "actualLayout": "veyra05-at-1920-512",
+      "fault": "readback-conflict",
+      "outcomes": [
+        {
+          "ok": true,
+          "category": "ok",
+          "revision": 3,
+          "localStatus": "readback-conflict",
+          "idbStatus": "ok"
+        }
+      ],
+      "elapsedMs": 23.699999999254942,
+      "writes": 2,
+      "expected": 2,
+      "priorLocalPreserved": false,
+      "bytes": 291385,
+      "recovered": {
+        "loaded": true,
+        "wood": 2,
+        "note": null,
+        "valid": true
+      },
+      "errors": [],
+      "status": "PASS"
+    }
+  ]
+}
