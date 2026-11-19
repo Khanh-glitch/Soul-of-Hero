@@ -2674,7 +2674,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     if (!route) return;
     h.intent = { intentId: `store:${h.actorId}:${now}`, actorId: h.actorId, kind: 'work', target: 'store', preconditions: ['carry output from shared harvest', 'physical community store'], reserved: [], startAt: now, dueAt: now, route };
     h.state = route.length ? 'MOVING' : 'IDLE';
-    if (!route.length) { depositHumanOutputs(r, h, now); if((h as HumanRecord).state!=='MOVING')h.intent = undefined; h.nextThinkAt = Math.max(h.nextThinkAt??0,now + 6000); }
+    if (!route.length) { depositHumanOutputs(r, h, now); if((h as HumanRecord).state==='IDLE')h.intent = undefined; h.nextThinkAt = Math.max(h.nextThinkAt??0,now + 6000); }
     return;
   }
   if(h.rest>=.5 && h.bedId) {
@@ -2698,7 +2698,8 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   };
   // Procurement complements each profession; it must not displace an already
   // available lawful local task merely to force a particular food trajectory.
-  if(h.occupation==='cook'&&visitBoard())return;
+  // A repeat board visit must not starve a cook's own ingredient run.
+
 
   h.procurementSourceKeys=[];
   let allowed=new Set(Object.keys(SOURCES).filter(key=>canHarvestSource(h,{key,def:SOURCES[key]} as NonNullable<ReturnType<typeof sourceAt>>)));
@@ -2715,13 +2716,28 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   countWorldWork('sourceIndexReads');
   const local=h.gx>=ox&&h.gy>=oy&&h.gx<ox+WW&&h.gy<oy+WH;
   let candidates=globalSourceCandidates(h.gx,h.gy,h.floor,r.sourceMap?.rules===4?4:3,allowed,local?r.layoutId:undefined);
+  // Check the adjoining field catchments for a known kitchen ingredient. Each
+  // survey is a sparse geometry query, not a stock read or a player window load.
+  // The live ledger, protection, reservation and route are checked below.
+  if (!candidates.length && (allowed !== ordinarySources || h.occupation === 'gardener' && wantedGoods.size)) {
+    const ingredients = allowed !== ordinarySources ? allowed : new Set([...allowed].filter(k=>SOURCES[k].yields.some(([key])=>wantedGoods.has(key))));
+    for (const [dx,dy] of [[-24,0],[0,-24],[24,0],[0,24]]) {
+      const gx=h.gx+dx, gy=h.gy+dy;
+      if (!inFrame(gx,gy)) continue;
+      const inside=gx>=ox && gy>=oy && gx<ox+WW && gy<oy+WH;
+      candidates.push(...globalSourceCandidates(gx,gy,h.floor,r.sourceMap?.rules===4?4:3,ingredients,inside?r.layoutId:undefined)
+        .map(p=>({...p,distance:Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)})));
+    }
+  }
+  if(h.occupation==='cook' && (!candidates.length || allowed===ordinarySources) && visitBoard())return;
   if(!candidates.length&&allowed!==ordinarySources){h.lastWorkBlock='Known recipe ingredients absent from bounded catchment; continuing lawful general food gathering.';candidates=globalSourceCandidates(h.gx,h.gy,h.floor,r.sourceMap?.rules===4?4:3,ordinarySources,local?r.layoutId:undefined);}
   if(h.occupation==='cook'&&!candidates.length)h.lastWorkBlock='No known harvestable recipe ingredient in the bounded catchment; no food or station was fabricated.';
   const reports=requestedSourceReports(r,hw,h).filter(p=>allowed.has(p.key)).map(p=>({...p,distance:Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)}));
   candidates=[...reports,...candidates].sort((a,b)=>Number(!SOURCES[a.key].yields.some(([k])=>wantedGoods.has(k)))-Number(!SOURCES[b.key].yields.some(([k])=>wantedGoods.has(k)))||a.distance-b.distance);
   for(const p of candidates){
     if(Object.values(hw.people).some(other=>other.actorId!==h.actorId&&other.harvestJob?.phase==='source'&&other.harvestJob.gx===p.gx&&other.harvestJob.gy===p.gy&&other.harvestJob.floor===h.floor&&!['DEAD','EVACUATED','DOWNED'].includes(other.state)))continue;
-    const s=globalSourceAt(r,p.gx,p.gy,h.floor,now);if(!s||s.protected||s.stock<=0||!canHarvestSource(h,s))continue;
+    const s=globalSourceAt(r,p.gx,p.gy,h.floor,now);if(!s||s.key!==p.key||s.protected||!canHarvestSource(h,s))continue;
+    if(s.stock<=0){h.lastWorkBlock='Known source is depleted';continue;}
     // Carry admission is immediate; warehouse admission is checked at physical
     // delivery. A full warehouse must retain/wait on real cargo, not prevent
     // otherwise legal professional source work before any output exists.
@@ -2730,7 +2746,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     receipt(r,now,'human.harvest.select',`${h.harvestJob.id}:${h.actorId}:${s.sourceId}:${s.key}`);
     resumeHarvestJob(r,hw,h,now,occupied);return;
   }
-  if(h.occupation!=='cook')visitBoard();
+  visitBoard();
 });}
 function resumeHarvestJob(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occupied:Set<string>):void {return timedWorldWork('resumeHarvestJob',()=>{
   const job=h.harvestJob;if(!job)return;
@@ -2749,7 +2765,7 @@ function resumeHarvestJob(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occu
     const [gx,gy]=humanEntityTile(r,store),route=humanNavigation(r,occupied,true).route(h,{tx:gx,ty:gy,floor:store.floor??0});if(!route){if(h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')h.nextThinkAt=now+30000;return;}
     h.lastWorkBlock=undefined;
     h.intent={intentId:job.id,actorId:h.actorId,kind:'work',target:'store',preconditions:['owned output','exact destination contact'],reserved:[],startAt:now,dueAt:now,route};h.state=route.length?'MOVING':'IDLE';
-    if(!route.length){depositHumanOutputs(r,h,now);if((h as HumanRecord).state!=='MOVING')h.intent=undefined;h.nextThinkAt=Math.max(h.nextThinkAt??0,now+10000);}
+    if(!route.length){depositHumanOutputs(r,h,now);if(h.state==='IDLE')h.intent=undefined;h.nextThinkAt=Math.max(h.nextThinkAt??0,now+10000);}
   }
 });}
 
@@ -2792,6 +2808,9 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
   const comm = r.humanWorld?.communities[h.community]; if (!comm) return;
   const reached=reachableHumanStores(r,r.humanWorld!,h)[0];if(!reached)return;
   if(h.harvestJob?.storeId&&h.harvestJob.storeId!==comm.storeEntityId)return;
+  // At its board the cook may collect the ordinary field ration before unloading.
+  // This uses a real flask and the normal admission rules, not extra pantry slots.
+  if(h.occupation==='cook' && h.harvestJob?.phase==='delivery' && !reached.slots.includes(null))serviceRecipeBoard(r,r.humanWorld!,h,now);
   const dstId=reached.id;
   const pack = humanPack(r, h), dst = r.custody[dstId]; let moved = 0;
   for (const [stackUid, qty] of Object.entries(h.workOutputs)) {
@@ -2822,7 +2841,15 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
       if(step){h.intent={intentId:h.harvestJob.id,actorId:h.actorId,kind:'move',target:'store-wait',preconditions:['full store; carry goods while leaving access clear'],reserved:[],startAt:now,dueAt:now,route:[step]};h.state='MOVING';}
     }
   }
-  if(h.harvestJob?.phase==='delivery'&&!Object.values(h.workOutputs).some(q=>q>0)){receipt(r,now,'human.harvest.complete',`${h.harvestJob.id}:${h.actorId}:${dstId}`);delete h.harvestJob;}
+  if(h.harvestJob?.phase==='delivery'&&!Object.values(h.workOutputs).some(q=>q>0)){receipt(r,now,'human.harvest.complete',`${h.harvestJob.id}:${h.actorId}:${dstId}`);delete h.harvestJob;
+    // An arrived ingredient is a physical planning event, not a timer. The
+    // forager at the store can fetch the next paid bill without waiting for
+    // another island-wide discretionary turn.
+    if(h.occupation==='cook' && moved && h.state==='IDLE'){
+      h.intent=undefined;
+      planHumanOccupation(r,r.humanWorld!,h,now,(tx,ty,floor)=>humanNavigation(r).route(h,{tx,ty,floor}));
+    }
+  }
 });}
 function humanCombatTarget(r:RunState,hw:HumanWorld,id:string|undefined,floor:number): {x:number;y:number;human?:HumanRecord}|null {
   if(id==='player')return r.player.dead?null:r.player;
@@ -2959,7 +2986,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     // 2. A work action commits only after arrival and a visible work duration; no output is animated or minted in transit.
     if (h.state === 'WORKING' && h.intent?.kind === 'work' && h.intent.target?.match(/^(global-harvest|harvest):/) && now >= h.intent.dueAt) performHumanHarvest(r, hw, h, now,occupied);
     if (h.intent?.kind === 'work' && h.intent.target === 'store' && h.state === 'IDLE') {
-      depositHumanOutputs(r, h, now); if((h as HumanRecord).state!=='MOVING')h.intent = undefined; h.nextThinkAt = Math.max(h.nextThinkAt??0,now + 6000);
+      depositHumanOutputs(r, h, now); if((h as HumanRecord).state==='IDLE')h.intent = undefined; h.nextThinkAt = Math.max(h.nextThinkAt??0,now + 6000);
     }
     // 3. Evacuation: the named service must actually be berthed and taking passengers, and the
     //    body must stand at its berth. A closed window is an honest failure, never a silent seat.
@@ -3026,7 +3053,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
             }
             else if(moveIntent.kind==='evacuate'){h.state='IDLE';const tid=moveIntent.target;const trip=tid?hw.evacuation[tid]:undefined;const boarded=trip?boardEvac(r,hw,h,tid!,now):{ok:false,reason:'the service closed before you arrived'};h.intent=undefined;if(!boarded.ok){h.lastWorkBlock=boarded.reason??'cannot board';h.nextThinkAt=now+2000;}}
             else if(moveIntent.target==='recipe-board'){h.state='IDLE';h.intent=undefined;serviceRecipeBoard(r,hw,h,now);h.recipeBoardPending=false;h.nextThinkAt=now;}
-            else if (moveIntent.kind === 'work' && moveIntent.target === 'store') { h.state = 'IDLE'; depositHumanOutputs(r, h, now); if((h as HumanRecord).state!=='MOVING')h.intent = undefined; h.nextThinkAt = Math.max(h.nextThinkAt??0,now + 6000); }
+            else if (moveIntent.kind === 'work' && moveIntent.target === 'store') { h.state = 'IDLE'; depositHumanOutputs(r, h, now); if((h as HumanRecord).state==='IDLE')h.intent = undefined; h.nextThinkAt = Math.max(h.nextThinkAt??0,now + 6000); }
             else { if(moveIntent.target==='home')h.following=false; h.state = 'IDLE'; h.intent = undefined; }
           }
         }
