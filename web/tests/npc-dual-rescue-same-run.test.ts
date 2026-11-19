@@ -55,16 +55,17 @@ describe('dual rescue in one run (NOT RUN — authored for the post-implementati
     advanceEvacuation(r, hw, trip.arriveAt!);
     for (const h of sailing) { expect(h.state).toBe('EVACUATED'); expect(h.outcome).toBe('EVACUATED'); }
 
+    // The evacuation leg ran the schedule clock forward with qaOffset; the assault leg is timed in
+    // real `now` values, so the offset is cleared rather than counted twice.
+    r.qaOffset = 0;
+
     // ---- Route B: another community is physically struck and must live through it ----
     const survivors = Object.values(hw.people)
       .filter(h => h.state !== 'DEAD' && h.state !== 'EVACUATED' && h.floor === 0)
       .slice(0, 4);
     // walk the assault forward from the canonical hour to the final hour through the real authority
-    for (let hour = 312; hour <= 336; hour++) {
-      const at = T0 + 1000 + hour * HOUR;
-      r.qaOffset = hour * HOUR;
-      advanceElderPressure(r, hw, at);
-    }
+    // Time advances only through `now` here; setting qaOffset as well would double-count the clock.
+    for (let hour = 312; hour <= 336; hour++) advanceElderPressure(r, hw, T0 + 1000 + hour * HOUR);
     // Every wave must be resolved (contact or a recorded unreachable/final-hour refusal).
     expect(elderCoverage(hw).complete).toBe(true);
     const struck = Object.values(hw.people).filter(h => (h.threat?.waves ?? 0) > 0);
@@ -72,7 +73,6 @@ describe('dual rescue in one run (NOT RUN — authored for the post-implementati
     expect(struck.length).toBeGreaterThan(0);
 
     // ---- Same-run ending: both outcomes coexist, and nobody is auto-certified ----
-    r.qaOffset = 336 * HOUR;
     const summary = finalizeHumanOutcomes(r, hw, T0 + 1000 + 336 * HOUR);
     expect(summary.evacuated).toBe(sailing.length);
     expect(summary.survived).toBeGreaterThan(0);

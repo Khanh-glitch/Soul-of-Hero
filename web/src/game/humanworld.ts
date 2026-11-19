@@ -1,6 +1,7 @@
 import {observeRecipeSources,serviceRecipeBoard,recipeBoardDestination,requestedSourceReports,communityFoodDeficit,type FoodRequest,type SourceReport} from './human-procurement';
 import {timedWorldWork} from './world-work';
 import {globalSourceCandidates, globalBaseGeometry} from '../veyra05/window';
+import {inFrame} from '../veyra05/frame';
 import {isVeyra05Layout} from '../veyra05/scenes';
 import {countWorldWork} from './world-work';
 /**
@@ -25,7 +26,7 @@ import {countWorldWork} from './world-work';
  */
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
 import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
+import { addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import { humanCanUseEntity, humanEntityTile, executeHumanWork, planHumanOccupation, type HumanWorkTask } from './human-jobs';
@@ -1887,7 +1888,9 @@ function elderWaveHours(): number { return 4; }
 function elderImpactTiles(): number { return 8; }
 function elderAwakenHour(): number { return (BAL.run.eldersAwakenDay - 1) * 24; }
 
-function elderTargetInBounds(toGx: number, toGy: number): boolean { return toGx > 0 && toGy > 0 && toGx < WW - 1 && toGy < WH - 1; }
+/** Bounds are the GLOBAL canonical frame, never the loaded window: settlements and lairs are
+ *  addressed in global tiles, and a window-sized bound silently excluded the whole island. */
+function elderTargetInBounds(toGx: number, toGy: number): boolean { return inFrame(toGx, toGy); }
 /** An Elder may only strike a settlement it can actually cross to. The corridor is sampled on the
  *  canonical compiled terrain query (the same geometry the world is built from); unknown geometry
  *  is treated as NOT crossable, so nothing is fabricated. */
@@ -1905,18 +1908,71 @@ function elderCrossingOpen(r: RunState, fromGx: number, fromGy: number, toGx: nu
   return true;
 }
 
+/** A bounded 4-neighbour search over the compiled canonical terrain. The Elder walks ground, so a
+ *  dog-leg around a wall is a lawful crossing — but an unwalkable or unknown corridor never is. The
+ *  search is capped, and exhaustion is a refusal, not an optimistic yes. */
+function elderRouteExists(r: RunState, fromGx: number, fromGy: number, toGx: number, toGy: number, budget = 3000, maxSteps = 160): boolean {
+  if (!r.sourceMap || !isVeyra05Layout(r.layoutId || '')) return true;   // legacy island: no global geometry
+  const rules = r.sourceMap.rules === 4 ? 4 : 3;
+  const walkable = (x: number, y: number): boolean => {
+    if (!elderTargetInBounds(x, y)) return false;
+    const c = globalBaseGeometry(x, y, 0, rules);
+    return !!c && c.walkable;
+  };
+  const reached = (x: number, y: number) => Math.abs(x - toGx) <= 1 && Math.abs(y - toGy) <= 1;
+  const h = (x: number, y: number) => Math.max(Math.abs(x - toGx), Math.abs(y - toGy));
+  const key = (x: number, y: number) => (y + 4096) * 100000 + (x + 4096);
+  const g = new Map<number, number>([[key(fromGx, fromGy), 0]]);
+  const open: { k: number; x: number; y: number; f: number }[] = [
+    { k: key(fromGx, fromGy), x: fromGx, y: fromGy, f: h(fromGx, fromGy) },
+  ];
+  let expanded = 0;
+  while (open.length && expanded < budget) {
+    let bi = 0;
+    for (let i = 1; i < open.length; i++) if (open[i].f < open[bi].f) bi = i;
+    const n = open[bi]; open[bi] = open[open.length - 1]; open.pop();
+    const gn = g.get(n.k) ?? 0;
+    if (gn > (g.get(n.k) ?? gn)) continue;
+    expanded++;
+    if (reached(n.x, n.y)) return true;
+    if (gn >= maxSteps) continue;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+      const x = n.x + dx, y = n.y + dy;
+      if (!walkable(x, y)) continue;
+      const k = key(x, y), ng = gn + 1;
+      if (ng >= (g.get(k) ?? Infinity)) continue;
+      g.set(k, ng);
+      open.push({ k, x, y, f: ng + h(x, y) });
+    }
+  }
+  return false;
+}
+
 /** Launch one physical approach wave toward the nearest reachable inhabited settlement. */
 function launchElderWave(r: RunState, hw: HumanWorld, elder: ElderAssault, now: number, wave: number, finalAt: number): void {
-  const fromGx = elder.gx ?? elder.lairGx, fromGy = elder.gy ?? elder.lairGy;
+  // The canonical body is the position authority. The ledger only records where that body has
+  // actually been, so a deferred move can never make the ledger claim ground the body never took.
+  const body = elderCanonicalCreature(r, elder.elderId);
+  const bodyAt = body && body.state !== 'dead' ? canonicalElderGlobalTile(r, body) : undefined;
+  const fromGx = bodyAt?.gx ?? elder.gx ?? elder.lairGx, fromGy = bodyAt?.gy ?? elder.gy ?? elder.lairGy;
   const reach = elderReachTiles();
   const candidates = Object.values(hw.communities)
     .map(c => {
-      const tile = c.storeTile;
-      if (!tile) return null;
-      const living = c.memberIds.filter(id => { const h = hw.people[id]; return h && h.state !== 'DEAD' && h.state !== 'EVACUATED'; });
+      // The wave walks toward PEOPLE, not toward a storehouse tile: members drift tens of tiles from
+      // their community's store while working, and a strike on an empty tile would hit nobody.
+      const living = c.memberIds
+        .map(id => hw.people[id])
+        .filter((h): h is HumanRecord => !!h && h.state !== 'DEAD' && h.state !== 'EVACUATED' && h.state !== 'ON_VESSEL' && h.floor === 0);
       if (!living.length) return null;
-      const d = Math.abs(tile[0] - fromGx) + Math.abs(tile[1] - fromGy);
-      return { poi: c.poi, gx: tile[0], gy: tile[1], d, living: living.length };
+      // Medoid of the living members: the densest inhabited point of that settlement today.
+      let centre = living[0], best = Infinity;
+      for (const a of living) {
+        let sum = 0;
+        for (const b of living) sum += Math.abs(a.gx - b.gx) + Math.abs(a.gy - b.gy);
+        if (sum < best) { best = sum; centre = a; }
+      }
+      const d = Math.abs(centre.gx - fromGx) + Math.abs(centre.gy - fromGy);
+      return { poi: c.poi, gx: centre.gx, gy: centre.gy, d, living: living.length };
     })
     .filter((c): c is { poi: string; gx: number; gy: number; d: number; living: number } => !!c && c.d <= reach)
     .sort((a, b) => a.d - b.d || (a.poi < b.poi ? -1 : 1));
@@ -1925,7 +1981,7 @@ function launchElderWave(r: RunState, hw: HumanWorld, elder: ElderAssault, now: 
     launchedAt: now, fromGx, fromGy, targetGx: fromGx, targetGy: fromGy,
     arriveAt: now, state: 'BLOCKED',
   };
-  const target = candidates.find(c => elderTargetInBounds(c.gx, c.gy) && elderCrossingOpen(r, fromGx, fromGy, c.gx, c.gy));
+  const target = candidates.slice(0, 3).find(c => elderTargetInBounds(c.gx, c.gy) && elderRouteExists(r, fromGx, fromGy, c.gx, c.gy));
   if (!target) {
     event.blockReason = candidates.length
       ? 'every settlement in range is behind terrain this Elder cannot cross'
@@ -1952,17 +2008,84 @@ function launchElderWave(r: RunState, hw: HumanWorld, elder: ElderAssault, now: 
   receipt(r, now, 'elder.assault.launch', `${elder.elderId}:${wave}:${target.poi}:arrive@${Math.round(event.arriveAt)}`);
 }
 
+/** After a contact the settlement's guards do the real work a garrison does: treat their wounded
+ *  from supplies somebody actually made, and refill empty quivers from the community store. Every
+ *  unit moved is removed from a real container, so nothing is granted out of nothing. */
+function guardAfterContact(r: RunState, hw: HumanWorld, elder: ElderAssault, ev: ElderAssaultEvent, now: number, touched: HumanRecord[]): void {
+  const comm = ev.targetPoi ? hw.communities[ev.targetPoi] : undefined;
+  const defenders = new Map<string, HumanRecord>();
+  for (const h of touched) if (h.occupation === 'guard') defenders.set(h.actorId, h);
+  if (comm) for (const id of comm.memberIds) {
+    const h = hw.people[id];
+    if (!h || h.occupation !== 'guard') continue;
+    if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'ON_VESSEL') continue;
+    if (h.floor !== 0 || Math.hypot(h.gx - ev.targetGx, h.gy - ev.targetGy) > 24) continue;
+    defenders.set(h.actorId, h);
+  }
+  const list = [...defenders.values()].sort((a, b) => (a.actorId < b.actorId ? -1 : 1));
+  const wounded = (h: HumanRecord) => h.state === 'DOWNED' || h.hp < h.maxHp * 0.7 || h.wounds.some(w => w.bleeding && !w.treated);
+  const supplyOf = (h: HumanRecord, key: string) => humanPack(r, h).slots.reduce((n, s) => n + (s?.key === key ? s.qty : 0), 0);
+  // Treatment first: a standing guard treats a downed comrade beside them, otherwise tends itself.
+  for (const patient of list) {
+    if (!wounded(patient)) continue;
+    const treater = patient.state === 'DOWNED'
+      ? list.find(g => g.actorId !== patient.actorId && g.state !== 'DOWNED' && Math.hypot(g.gx - patient.gx, g.gy - patient.gy) <= 2 && (supplyOf(g, 'bandage') > 0 || supplyOf(g, 'herb') > 0))
+      : (supplyOf(patient, 'bandage') > 0 || supplyOf(patient, 'herb') > 0 ? patient : undefined);
+    if (!treater) continue;
+    const key = supplyOf(treater, 'bandage') > 0 ? 'bandage' : 'herb';
+    const pack = humanPack(r, treater);
+    const stack = pack.slots.find(s => s?.key === key && s.qty > 0);
+    if (!stack || stack.qty <= 0) continue;
+    stack.qty--; if (stack.qty <= 0) pack.slots[pack.slots.indexOf(stack)] = null;
+    patient.wounds.forEach(w => { w.treated = true; w.bleeding = false; });
+    patient.hp = Math.min(patient.maxHp, patient.hp + 30);
+    if (patient.state === 'DOWNED') { patient.state = 'IDLE'; patient.downedAt = undefined; }
+    receipt(r, now, 'human.guard.treat', `${treater.actorId}->${patient.actorId}:${key}:${Math.round(patient.hp)}hp`);
+  }
+  // Then resupply: empty quivers draw from the settlement's own store, never from nowhere.
+  for (const g of list) {
+    if (g.state === 'DOWNED' || g.state === 'DEAD') continue;
+    const weapon = humanWeapon(g);
+    if (!weapon || !ITEMS[g.equip.weapon?.key ?? '']?.ranged) continue;
+    const have = supplyOf(g, 'arrow');
+    if (have >= 6) continue;
+    let want = 6 - have;
+    for (const cid of comm?.storeContainers ?? []) {
+      if (want <= 0) break;
+      const c = C(r, cid); if (!c) continue;
+      const avail = c.slots.reduce((n, s) => n + (s?.key === 'arrow' ? s.qty : 0), 0);
+      if (avail <= 0) continue;
+      const qty = Math.min(want, avail);
+      if (!addStack(r, humanPack(r, g).id, mkStack(r, 'arrow', qty))) break;   // pack full: no teleport
+      removeItem(r, cid, 'arrow', qty);
+      want -= qty;
+      receipt(r, now, 'human.guard.resupply', `${elder.elderId}:${g.actorId}:${qty}arrow:${cid}`);
+    }
+  }
+}
+
 /** Resolve one arrival: real bodies, real structures, real receipts, one time only. */
 function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, ev: ElderAssaultEvent, now: number, onVolley?: (elderId: string, dmg: number, now: number, guardIds: string[]) => void): void {
-  ev.state = 'CONTACT';
-  elder.gx = ev.targetGx; elder.gy = ev.targetGy; elder.lastAttackAt = now;
   const def = PRIMORDIAL_ELDERS[elder.elderId];
   const dmg = def?.dmg ?? 18;
   const radius = elderImpactTiles();
   // If the canonical boss body is loaded in the active window, local combat owns the loaded area:
   // the same swing must not be applied twice to a body the player can see.
   const canonical = elderCanonicalCreature(r, elder.elderId);
-  if (canonical && canonical.state !== 'dead') syncCanonicalElderPosition(r, canonical, ev.targetGx, ev.targetGy, now, elder.elderId);
+  const moved = canonical && canonical.state !== 'dead'
+    ? syncCanonicalElderPosition(r, canonical, ev.targetGx, ev.targetGy, now, elder.elderId) : 'moved';
+  if (moved === 'deferred') {
+    // The canonical body cannot be expressed at this settlement in the active window, so the world
+    // has no lawful source for a strike here. Refuse it rather than damage a place the body is not.
+    ev.state = 'BLOCKED';
+    ev.blockReason = 'canonical body cannot be represented at the target in the active window';
+    elder.lastAttackAt = undefined;
+    receipt(r, now, 'elder.contact.deferred', `${elder.elderId}:${ev.wave}:${ev.targetGx},${ev.targetGy}`);
+    pushLog(r, now, `${def?.name ?? elder.elderId} cannot close on ${ev.targetPoi ?? 'the settlement'}.`, 'dim');
+    return;
+  }
+  ev.state = 'CONTACT';
+  elder.gx = ev.targetGx; elder.gy = ev.targetGy; elder.lastAttackAt = now;
   // Only a body loaded in the ACTIVE window hands authority to local combat; an archived body does not.
   const localBody = r.creatures.find(m => m.elder?.key === elder.elderId && m.state !== 'dead');
   const o = r.sourceMap?.veyra?.originAu;
@@ -1985,8 +2108,9 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
   const volleyGuards: string[] = [];
   // Guards standing in the blast interpose: each armed guard covers one civilian and pays for it
   // with their own body and one OWNED ranged round. A guard with no arrow cannot cover anyone.
+  const able = (g: HumanRecord) => g.hp > g.maxHp * 0.3;
   const guards = inBlast.filter(h => h.occupation === 'guard' && h.state !== 'DOWNED' && !!humanWeapon(h))
-    .sort((a, b) => (a.actorId < b.actorId ? -1 : 1));
+    .sort((a, b) => (Number(able(b)) - Number(able(a))) || (b.hp - a.hp) || (a.actorId < b.actorId ? -1 : 1));
   const spentGuards = new Set<string>();
   for (const civilian of inBlast) {
     if (civilian.occupation === 'guard' || civilian.state === 'DOWNED') continue;
@@ -2003,6 +2127,9 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
     }
     spentGuards.add(guard.actorId);
     interposed++;
+    // A wounded guard is not ordered forward while a fit body is still standing. When the line is
+    // spent, the last body holds it — and that decision is recorded, not hidden.
+    if (!able(guard)) receipt(r, now, 'human.guard.withdraw', `${guard.actorId}:last-line:${elder.elderId}`);
     if (ranged) {
       // A volley needs the canonical body within a real ranged reach of THIS guard; an Elder whose
       // body is provably elsewhere cannot be shot from here.
@@ -2010,6 +2137,8 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
       const reach = 40;
       if (!body || Math.hypot(body.gx - guard.gx, body.gy - guard.gy) > reach) {
         receipt(r, now, 'elder.volley.out_of_range', `${elder.elderId}:${guard.actorId}:${body ? `${body.gx},${body.gy}` : 'no-body'}`);
+      } else if (!elderCrossingOpen(r, guard.gx, guard.gy, body.gx, body.gy)) {
+        receipt(r, now, 'elder.volley.no_line', `${elder.elderId}:${guard.actorId}:terrain`);
       } else { volleyDmg += weapon.dmg * proficiencyMul(guard.combatProficiency); volleyGuards.push(guard.actorId); }
     }
     (civilian.threat ??= { waves: 1, hit: 0, guarded: 0 }).guarded++;
@@ -2051,6 +2180,7 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
     if (e.hp <= 0) { destroyStructure(r, e, now); receipt(r, now, 'elder.structure.destroyed', `${elder.elderId}:${e.id}`); }
     structures++;
   }
+  guardAfterContact(r, hw, elder, ev, now, inBlast);
   ev.affected = { humans, structures, downed, skippedLocal, interposed, ammoSpent };
   ev.contactReceipt = `elder.contact:${elder.elderId}:${ev.wave}:${Math.round(now)}:${humans}h/${structures}s`;
   receipt(r, now, 'elder.contact', `${elder.elderId}:wave${ev.wave}:${ev.targetPoi ?? ''}:${humans}hurt/${downed}downed/${structures}structures/${interposed}interposed/${ammoSpent}ammo/${skippedLocal}local`);

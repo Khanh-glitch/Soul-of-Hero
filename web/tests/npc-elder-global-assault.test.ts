@@ -163,18 +163,17 @@ describe('global six-Elder assault (NOT RUN — authored for the post-implementa
     expect(ev.affected?.interposed).toBe(1);
     expect(ev.affected?.ammoSpent).toBe(1);
     expect(civ.hp).toBe(before);                                  // the covered civilian is unhurt
-    expect(guard.hp < guard.maxHp || guard.state === 'DOWNED').toBe(true);
+    expect(guard.hp < guard.maxHp || (guard.state as string) === 'DOWNED').toBe(true);
     expect(humanPack(r, guard).slots.some(x => x?.key === 'arrow')).toBe(false);
     // A second identical arrival cannot spend another round or land another blow.
     advanceElderPressure(r, hw, ev.arriveAt);
     expect(ev.affected?.ammoSpent).toBe(1);
   });
 
-  it('certifies SURVIVED_ON_ISLAND only at h336 with full coverage, and UNRESOLVED otherwise', () => {
+  it('refuses to certify anyone at h336 while one assault wave is still unresolved', () => {
     const gs = runAt();
     const r = gs.run!; const hw = r.humanWorld!;
     const body = Object.values(hw.people).find(h => h.state !== 'DEAD')!;
-    // An unresolved approach at the final instant must NOT certify anyone.
     const e = assault(gs);
     e.alive = true; e.awakenedAt = T0 + 312 * HOUR;
     (e.events ??= []).push({
@@ -182,14 +181,37 @@ describe('global six-Elder assault (NOT RUN — authored for the post-implementa
       targetGx: 10, targetGy: 10, arriveAt: T0 + 400 * HOUR, state: 'APPROACH',
     });
     expect(elderCoverage(hw).complete).toBe(false);
+    // The run ends ONCE. Ending it with a wave in flight leaves these people genuinely unresolved,
+    // and a later "all clear" cannot retro-certify a run that already ended.
     const early = finalizeHumanOutcomes(r, hw, T0 + 336 * HOUR + 1000);
     expect(early.survived).toBe(0);
-    expect(body.outcome === undefined || body.outcome === 'UNRESOLVED').toBe(true);
-    // Resolve every wave, then the same instant certifies the living body.
-    for (const elder of Object.values(hw.elderPressure)) for (const ev of elder.events ?? []) if (ev.state === 'APPROACH') ev.state = 'CONTACT';
+    expect(body.outcome).toBe('UNRESOLVED');
+    const again = finalizeHumanOutcomes(r, hw, T0 + 336 * HOUR + 2000);
+    expect(again.survived).toBe(0);
+    expect(body.outcome).toBe('UNRESOLVED');
+  });
+
+  it('certifies SURVIVED_ON_ISLAND at h336 only when every wave is resolved', () => {
+    const gs = runAt();
+    const r = gs.run!; const hw = r.humanWorld!;
+    const body = Object.values(hw.people).find(h => h.state !== 'DEAD')!;
+    const e = assault(gs);
+    e.alive = true; e.awakenedAt = T0 + 312 * HOUR;
+    atHour(gs, 313);
+    // Resolve real waves through the real pressure loop until nothing is in flight.
+    for (let i = 0; i < 8; i++) {
+      atHour(gs, 314 + i * 4);
+      advanceElderPressure(r, hw, T0 + (314 + i * 4) * HOUR);
+      if (elderCoverage(hw).complete) break;
+    }
+    // Whatever the terrain allowed, no APPROACH may remain at the final instant.
+    for (const elder of Object.values(hw.elderPressure)) for (const ev of elder.events ?? []) {
+      if (ev.state === 'APPROACH') ev.state = 'CONTACT';   // arrived, resolved this instant
+    }
     expect(elderCoverage(hw).complete).toBe(true);
     const done = finalizeHumanOutcomes(r, hw, T0 + 336 * HOUR + 2000);
     expect(done.survived).toBeGreaterThan(0);
     expect(body.outcome).toBe('SURVIVED_ON_ISLAND');
+    expect(r.receipts.some(x => x.kind === 'human.survive')).toBe(true);
   });
 });

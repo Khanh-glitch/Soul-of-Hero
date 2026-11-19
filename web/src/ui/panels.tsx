@@ -714,6 +714,30 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
         : <button className="btn danger" style={{ flex: 1 }} onClick={() => api.act('evacuate', { eid })}>Board the Vessel</button>}
       <button className="btn ghost" onClick={() => api.open(null)}>Stay on Island</button>
     </div>}
+    {hw && <div style={{ borderTop: '1px solid var(--line)', marginTop: 6, paddingTop: 4 }}>
+      <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>Island ledger — this run, from records already written</div>
+      {(() => {
+        const people = Object.values(hw.people);
+        const lost = people.filter(h => h.state === 'DEAD').length;
+        const sailed = people.filter(h => h.state === 'EVACUATED' || h.state === 'ON_VESSEL').length;
+        const ashore = people.filter(h => h.state !== 'DEAD' && h.state !== 'EVACUATED' && h.state !== 'ON_VESSEL').length;
+        const met = people.filter(h => (h.threat?.waves ?? 0) > 0).length;
+        return <div className="lbl" style={{ fontSize: 8, color: 'var(--paper)' }}>
+          Ashore {ashore} · sailed {sailed} · lost {lost} · met an Elder {met}
+        </div>;
+      })()}
+      {Object.values(hw.elderPressure).length === 0
+        ? <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)' }}>No Elder is walking yet.</div>
+        : Object.values(hw.elderPressure).map(e => {
+          const contacts = (e.events ?? []).filter(ev => ev.state === 'CONTACT');
+          const last = contacts[contacts.length - 1];
+          return <div key={e.elderId} className="lbl" style={{ fontSize: 8, color: contacts.length ? 'var(--bad)' : 'var(--muted)' }}>
+            {e.elderId}: {last
+              ? `struck ${last.targetPoi ?? 'a settlement'} — ${last.affected?.humans ?? 0} hurt, ${last.affected?.downed ?? 0} down, ${last.affected?.structures ?? 0} structures`
+              : `${(e.events ?? []).length} wave(s) launched, no contact`}
+          </div>;
+        })}
+    </div>}
   </Panel>;
 }
 
