@@ -318,6 +318,19 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
       list.push({ y: wy + 4, f: () => { drawNpcShadow(g, wx, wy + 2, 6, 3, 0.32); drawNpcSprite(g, h, wx, wy, now / 1000, moving); } });
     }
   }
+  // Evacuation vessels: a real hull at the authored berth while it is actually there. A vessel
+  // at sea is NOT drawn on the island (it is offshore), so the picture cannot lie about transit.
+  if (r.humanWorld) {
+    const [vox, voy] = isVeyra05Layout(r.layoutId || '') ? windowOrigin(r) : [0, 0];
+    for (const trip of Object.values(r.humanWorld.evacuation)) {
+      if (trip.phase !== 'BOARDING' && trip.phase !== 'BERTHED') continue;
+      const wx = (trip.siteGx - vox) * TILE, wy = (trip.siteGy - voy) * TILE;
+      if (wx < cx - 60 || wx > cx + VIEW_W + 60 || wy < cy - 60 || wy > cy + VIEW_H + 60) continue;
+      if (life.undergroundHides(r, wx, wy)) continue;
+      const aboard = (trip.manifest ?? []).length;
+      list.push({ y: wy + 8, f: () => drawEvacVessel(g, wx, wy, time, aboard, trip.capacity) });
+    }
+  }
   // While mounted the rider is composited onto the bike sprite (vehicle case); skip the standalone player to avoid a double draw.
   if(!r.spiritTransit && r.player.vehicle == null)list.push({ y: p.y + 4, f: () => drawPlayer(g, gs, time, o.working) });
   const dragon=r.dragonDive;if(!vfxDirector.ownsDragon() && dragon?.phase && dragon.dragonX!==undefined && dragon.dragonY!==undefined) list.push({y:dragon.dragonY+4,f:()=>{const x=dragon.dragonX!,y=dragon.dragonY!;g.save();g.translate(x,y);g.fillStyle='#70241e';g.beginPath();g.moveTo(-19,-12);g.lineTo(-7,-22);g.lineTo(0,-14);g.lineTo(10,-21);g.lineTo(18,-10);g.lineTo(7,-12);g.lineTo(3,-3);g.lineTo(-5,-3);g.lineTo(-9,-11);g.closePath();g.fill();g.fillStyle='#ff8c2b';g.fillRect(-7,-14,14,6);g.fillStyle='#ffe6a0';g.fillRect(3,-13,2,2);g.restore();}});
@@ -797,6 +810,22 @@ function drawFx(g: CanvasRenderingContext2D, dtMs: number, time: number) {
     const steps = 18; const half = a.arc! / 2; const sweep = Math.min(1, f * 2.2); for (let k = 0; k <= steps; k++) { const t = k / steps; if (t > sweep) break; const ang = a.a! - half + a.arc! * t; const fade = 1 - f; for (let d = 0; d < 3; d++) { const rr = a.reach! - d * 2.2; g.fillStyle = d === 0 ? `rgba(255,255,255,${fade})` : d === 1 ? `rgba(220,235,255,${fade * 0.7})` : `rgba(160,190,255,${fade * 0.35})`; g.fillRect(Math.round(a.x + Math.cos(ang) * rr), Math.round(a.y + Math.sin(ang) * rr), 1, 1); } } }
   for (let i = TEXTS.length - 1; i >= 0; i--) { const t = TEXTS[i]; t.life += dtMs; if (t.life >= t.max) { TEXTS.splice(i, 1); continue; } t.y += t.vy * dt; t.vy *= 0.94; const X = Math.round(t.x), Y = Math.round(t.y);
     if (t.key) { const ic = getArt().icon[t.key]; if (ic) g.drawImage(ic, X - 12, Y - 3, 8, 8); pixelText(g, t.text!, X - 2, Y, t.col); } else pixelText(g, t.text!, X - t.text!.length * 2, Y, t.col); }
+}
+// ---------- evacuation vessels ----------
+/** A berthed evacuation hull. Purely a projection of the trip record: the berth tile, the
+ *  current phase and the real seat count. It never mutates state and is not an authority. */
+function drawEvacVessel(g: CanvasRenderingContext2D, X: number, Y: number, time: number, aboard: number, capacity: number) {
+  const bob = Math.round(Math.sin(time / 420));
+  g.fillStyle = 'rgba(0,0,0,.28)'; g.fillRect(X - 17, Y + 5, 34, 3);
+  g.fillStyle = '#2a1d16'; g.fillRect(X - 16, Y + 2 + bob, 32, 3);
+  g.fillStyle = '#3a2a20'; g.fillRect(X - 15, Y - 4 + bob, 30, 7);
+  g.fillStyle = '#6b4a2e'; g.fillRect(X - 13, Y - 7 + bob, 26, 4);
+  g.fillStyle = '#8a6a44'; g.fillRect(X - 11, Y - 8 + bob, 22, 2);
+  g.fillStyle = '#4a3524'; g.fillRect(X - 1, Y - 21 + bob, 2, 13);
+  for (let i = 0; i < aboard && i < capacity; i++) { g.fillStyle = i % 2 ? '#cfd6e6' : '#a8b3c8'; g.fillRect(X - 12 + i * 4, Y - 11 + bob, 2, 3); }
+  const lamp = aboard >= capacity ? '#e8c060' : '#7fd8ff';
+  g.fillStyle = lamp; g.fillRect(X - 4, Y - 24 + bob, 8, 3);
+  if (Math.floor(time / 600) % 2) { g.fillStyle = 'rgba(232,192,96,.55)'; g.fillRect(X - 2, Y - 23 + bob, 4, 1); }
 }
 // ---------- weather ----------
 const rain: { x: number; y: number; s: number }[] = Array.from({ length: 220 }, () => ({ x: Math.random() * VIEW_W, y: Math.random() * VIEW_H, s: 0.6 + Math.random() * 0.6 }));

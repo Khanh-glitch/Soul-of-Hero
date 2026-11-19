@@ -21,7 +21,7 @@ import { validate } from '../src/game/persist';
 import { T0 } from './helpers/g1b-kit';
 import {
   tickNeeds, stepHumans, humanHarvest, tradeWithHuman, lootHuman, killHuman, applyDamage, downHuman,
-  treatHuman, boardEvac, resolveOrder, setFollowing, finalizeHumanOutcomes,
+  treatHuman, boardEvac, advanceEvacuation, resolveOrder, setFollowing, finalizeHumanOutcomes,
   humanPack, humanHistoryAggregate, humanWorkTick, stepHumanCombat, humanWorldPosition,
   type HumanRecord,
 } from '../src/game/humanworld';
@@ -606,7 +606,7 @@ describe('NPC P0 corrective', () => {
     if (treat.ok) expect(h.state).toBe('IDLE');
   });
 
-  it('P0.9: boardEvac rejects a distant actor and enforces one-trip-per-person', () => {
+  it('P0.9: boardEvac requires an operating berth at physical contact and one vessel per person', () => {
     const gs = startAt(921, 259);
     const r = gs.run!;
     const hw = r.humanWorld!;
@@ -617,20 +617,28 @@ describe('NPC P0 corrective', () => {
     trips[1].siteGx = 200; trips[1].siteGy = 200;
     trips[2].siteGx = 300; trips[2].siteGy = 300;
     const h = Object.values(hw.people)[0];
-    // Move the human far from all boarding sites.
+    h.state = 'IDLE';
+    // Standing ON the berth before the service opens must not grant a seat: no voyage, no transport.
+    h.gx = trips[0].siteGx; h.gy = trips[0].siteGy;
+    expect(boardEvac(r, hw, h, trips[0].tripId, T0 + 1000).ok).toBe(false);
+    // Open the lawful service window (h288) through the real clock authority, then retry.
+    r.qaOffset += 288 * 3600_000;
+    const at = T0 + 2000;
+    advanceEvacuation(r, hw, at);
+    expect(trips[0].phase).toBe('BOARDING');
+    // Distance is still a physical fact: nobody boards from across the island.
     h.gx = 0; h.gy = 0;
-    const far = trips.map(t => boardEvac(r, hw, h, t.tripId, T0 + 1000));
-    expect(far.every(x => !x.ok)).toBe(true); // all rejected: not at boarding site
-    // Place the human at a boarding site and board once.
-    const t0 = trips[0];
-    h.gx = t0.siteGx; h.gy = t0.siteGy;
-    const ok1 = boardEvac(r, hw, h, t0.tripId, T0 + 2000);
+    expect(trips.map(t => boardEvac(r, hw, h, t.tripId, at + 500)).every(x => !x.ok)).toBe(true);
+    // At contact, one seat is committed and the body becomes ON_VESSEL (not EVACUATED).
+    h.gx = trips[0].siteGx; h.gy = trips[0].siteGy;
+    const ok1 = boardEvac(r, hw, h, trips[0].tripId, at + 1000);
     expect(ok1.ok).toBe(true);
-    // Cannot board a SECOND trip.
-    const t1 = trips[1];
-    const ok2 = boardEvac(r, hw, h, t1.tripId, T0 + 3000);
+    expect(h.state).toBe('ON_VESSEL');
+    expect(h.transit?.tripId).toBe(trips[0].tripId);
+    // One person, one vessel.
+    const ok2 = boardEvac(r, hw, h, trips[1].tripId, at + 2000);
     expect(ok2.ok).toBe(false);
-    expect(ok2.reason).toContain('already boarded');
+    expect(ok2.reason).toContain('already aboard');
   });
 
   it('P0.9: finalizeHumanOutcomes does not default everyone to SURVIVED', () => {

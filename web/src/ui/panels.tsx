@@ -13,6 +13,7 @@ import { ReturnChronicle } from './ReturnChronicle';
 import { CabinetReadout } from './HomeStatus';
 import { StationConsole } from './StationConsole';
 import { ResearchFamilies } from './ResearchFamilies';
+import { nearestEvacTrip, evacBerthStatus } from '../game/humanworld';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { recipeOutputs } from '../game/engine';
@@ -652,8 +653,40 @@ export function EscrowPanel({ api, eid }: { api: Api; eid: string }) {
 
 export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const cash = countItem(r, 'inv', 'rcash'); const [sure, setSure] = useState(false);
-  return <Panel title="Evacuation Beacon — End Run" style={{ left: 160, top: 60, width: 320 }} onClose={() => api.open(null)}>
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5, marginBottom: 5 }}>
+  const hw = r.humanWorld;
+  const trip = (() => {
+    if (!hw) return undefined;
+    const e = r.entities[eid];
+    if (e?.poi && hw.evacuation[`evac:${e.poi}`]) return hw.evacuation[`evac:${e.poi}`];
+    if (!e) return undefined;
+    const o = r.sourceMap?.veyra?.originAu;
+    const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+    return nearestEvacTrip(hw, ox + Math.floor(e.x / TILE), oy + Math.floor(e.y / TILE));
+  })();
+  const aboard = (trip?.manifest ?? []).length;
+  const seatsLeft = trip ? Math.max(0, trip.capacity - aboard) : 0;
+  const playerAboard = !!trip?.playerAboard;
+  const S = BAL.evacuation ?? {};
+  const sailing = trip?.dockUntil !== undefined ? new Date(trip.dockUntil).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
+  return <Panel title="Evacuation Service" style={{ left: 160, top: 40, width: 340 }} onClose={() => api.open(null)}>
+    <div className="lbl" style={{ fontSize: 9, color: 'var(--info)', marginBottom: 3 }}>
+      {trip ? evacBerthStatus(trip) : 'No service is registered at this berth.'}
+    </div>
+    {trip && <>
+      <div className="lbl" style={{ fontSize: 8, color: 'var(--paper)' }}>Seats free: <b>{seatsLeft}</b> of {trip.capacity} · currently aboard: {aboard}</div>
+      <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>
+        {trip.phase === 'BOARDING'
+          ? `Sails at ${sailing} or the moment the last seat is taken. Arrival is only certified when the vessel reaches safe water (~${S.transitHours ?? 4} h at sea).`
+          : trip.phase === 'IN_TRANSIT'
+            ? 'The vessel is at sea. You are ashore; the berth is empty until it returns.'
+            : trip.phase === 'BERTHED'
+              ? `The vessel is on its way back; the berth reopens at ${sailing}.`
+              : trip.phase === 'STAGING'
+                ? `The service opens on day ${Math.floor((S.serviceOpensHour ?? 288) / 24)} of the run.`
+                : 'This service will not sail again in this run.'}
+      </div>
+    </>}
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5, margin: '5px 0' }}>
       <div className="console-col">
         <div className="console-h" style={{ color: 'var(--info)' }}>Preserved on Profile</div>
         <div className="lbl" style={{ fontSize: 9, color: 'var(--info)' }}>Secured Cash: <b>{api.gs.profile.securedCash}</b></div>
@@ -662,24 +695,25 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
         </div>
       </div>
       <div className="console-col">
-        <div className="console-h" style={{ color: 'var(--bad)' }}>Wiped on Departure</div>
+        <div className="console-h" style={{ color: 'var(--bad)' }}>Wiped at Run End</div>
         <div className="lbl" style={{ fontSize: 9, color: cash ? 'var(--bad)' : 'var(--muted)' }}>
           Unsecured Cash: <b>{cash}</b>{cash > 0 ? ' (LOST!)' : ''}
         </div>
-        <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>
-          All gear, Cores, recipes, structures &amp; cargo.
-        </div>
+        <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>Gear, Cores, recipes, structures &amp; cargo.</div>
       </div>
     </div>
     {cash > 0 && <div className="lbl" style={{ fontSize: 8, color: 'var(--warn)', marginBottom: 4 }}>
-      Warning: You are carrying {cash} unsecured coin{cash === 1 ? '' : 's'}. Deposit them in your Escrow Chest first if you want to keep them!
+      You are carrying {cash} unsecured coin{cash === 1 ? '' : 's'}. Deposit them in your Escrow Chest before the run ends.
     </div>}
-    <div className="flex gap-1">
+    {playerAboard ? <div className="flex gap-1">
+      <div className="lbl" style={{ flex: 1, fontSize: 8, color: 'var(--info)' }}>You hold a seat. The crossing ends the run only when the vessel arrives.</div>
+      <button className="btn ghost" onClick={() => { api.act('leaveEvac', { eid }); api.open(null); }}>Step ashore</button>
+    </div> : <div className="flex gap-1">
       {!sure
-        ? <button className="btn gold" style={{ flex: 1 }} onClick={() => setSure(true)}>Signal Evacuation Boat…</button>
-        : <button className="btn danger" style={{ flex: 1 }} onClick={() => api.act('evacuate', { eid })}>Confirm Departure &amp; End Run</button>}
+        ? <button className="btn gold" style={{ flex: 1 }} disabled={!trip || trip.phase !== 'BOARDING' || seatsLeft === 0} onClick={() => setSure(true)} title={!trip || trip.phase !== 'BOARDING' ? 'The berth is not taking passengers' : seatsLeft === 0 ? 'No free seat' : 'Take a physical seat'}>Request a Seat…</button>
+        : <button className="btn danger" style={{ flex: 1 }} onClick={() => api.act('evacuate', { eid })}>Board the Vessel</button>}
       <button className="btn ghost" onClick={() => api.open(null)}>Stay on Island</button>
-    </div>
+    </div>}
   </Panel>;
 }
 

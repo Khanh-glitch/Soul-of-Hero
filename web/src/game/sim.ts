@@ -20,7 +20,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { tickNeeds, advanceElderPressure, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition } from './humanworld';
+import { tickNeeds, advanceElderPressure, advanceEvacuation, playerAtSea, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition } from './humanworld';
 import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, withRunEntityRead, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -1567,7 +1567,15 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { const ci = +k; settleRegrowthAt(r, ci % WW, Math.floor(ci / WW), m.untilAt ?? t); delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
     stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
-    if (r.humanWorld) { tickNeeds(r, r.humanWorld, t); advanceElderPressure(r, r.humanWorld, t); stepHumans(r, r.humanWorld, t); }
+    if (r.humanWorld) {
+      tickNeeds(r, r.humanWorld, t);
+      advanceElderPressure(r, r.humanWorld, t);
+      const evac = advanceEvacuation(r, r.humanWorld, t);
+      // A confirmed arrival ashore is the only event that ends the player's run by sea; it stops
+      // this settlement slice so no later slice can act after the run is finalized.
+      if (evac.playerArrived) break;
+      stepHumans(r, r.humanWorld, t);
+    }
     syncDrops(t);
     stepNatureTrees(r,t);
   }
@@ -1585,6 +1593,8 @@ export function syncWorld(gs: GameState, now: number): boolean {
   if (activeStart > r.clock.lastSimAt) settle(gs, activeStart, true, false);
   if (!gs.run || r.clock.lastSimAt < activeStart) return false;
   advanceWorld(gs, r.clock.lastSimAt, now);
+  const evacArrivedAt = r.humanWorld?.playerEvacArrivedAt;
+  if (evacArrivedAt !== undefined && gs.run) { r.clock.lastSimAt = evacArrivedAt; endRun(gs, 'evacuated', evacArrivedAt); return false; }
   r.clock.lastSimAt = now;
   syncRunDailyLedger(r, dateKey(now));
   return true;
@@ -1638,7 +1648,8 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   const weather = weatherAt(r, now);
   const slot = Math.floor((now - r.startedAt + r.qaOffset) / (BAL.weather.slotMinutes * 60000));
   if (slot !== r.clock.weatherSlot) { r.clock.weatherSlot = slot; fx('weather', { w: weather }); }
-  tickPlayer(gs, inp, dtMs, now);
+  // A body aboard a vessel at sea cannot walk, roll or swing: the voyage owns its position.
+  tickPlayer(gs, playerAtSea(r) ? { ...inp, up: false, down: false, left: false, right: false, attack: false, attackPressed: false, roll: false, cancel: false, skill: undefined } : inp, dtMs, now);
   if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
   tickCreatures(gs, dtMs, now);
   if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle) => damageCreature(gs, m, dmg, angle, now), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); });
@@ -1812,6 +1823,10 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     const until = Math.min(end, nextWeather, t + Math.max(dtMs, 0.001)); dtMs = until - t;
     if (seasonClimate.wet) wetMs += dtMs;
     advanceWorld(gs, t, until, silent ? undefined : report, false);
+    // Offline voyages land at their own absolute arrival instant; the ending is not deferred to
+    // Continue and never certified by boarding alone.
+    const evacOfflineAt = r.humanWorld?.playerEvacArrivedAt;
+    if (evacOfflineAt !== undefined && gs.run) { endRun(gs, 'evacuated', evacOfflineAt); if (!silent) report.push('Your vessel reached safe water while you were away.'); return report; }
     // CAL-01: the season event for this slice was committed inside advanceWorld at its
     // exact boundary instant; the return report only reads it back.
     if (!silent && seasonTransitionsBetween(r, t, until).some(x => x.at === until)) {

@@ -810,6 +810,50 @@ export function validate(raw: any): GameState | null {
       const owners = Object.values(hw.communities ?? {}) as any[];
       if (!obj(c.origin) || c.kind !== 'bag' || c.origin.authority !== 'REGIONAL_HUMAN_ECONOMY' || typeof c.origin.sourceId !== 'string' || owners.filter(comm => comm?.storeContainers?.includes(cid) && comm.storeEntityId && c.origin.sourceId === `regional-human-economy:${comm.poi}`).length !== 1) return null;
     }
+    // Physical evacuation services: a seat exists only as a well-formed manifest entry on one of
+    // the three approved sites. A save cannot invent a berth, a fourth service, an anonymous seat,
+    // a duplicate seat, a passenger on two vessels, or a body "aboard" a vessel that is not carrying it.
+    const EVAC_PHASES = ['STAGING', 'BOARDING', 'BERTHED', 'DEPARTING', 'IN_TRANSIT', 'SERVICE_ENDED', 'FAILED'];
+    const seated = new Set<string>();
+    if (!obj(hw.evacuation)) return null;
+    for (const [tid, trip] of Object.entries(hw.evacuation) as [string, any][]) {
+      if (!obj(trip) || trip.tripId !== tid || !['po_evac_west', 'po_evac_south', 'po_evac_hook'].includes(trip.site) || tid !== `evac:${trip.site}`) return null;
+      if (!integer(trip.capacity) || trip.capacity < 1 || trip.capacity > 64 || !finite(trip.siteGx) || !finite(trip.siteGy)) return null;
+      if (!Array.isArray(trip.boarded) || trip.boarded.some((id: unknown) => typeof id !== 'string')) return null;
+      if (trip.phase !== undefined && !EVAC_PHASES.includes(trip.phase)) return null;
+      if (trip.dockUntil !== undefined && !finite(trip.dockUntil)) return null;
+      if (trip.arriveAt !== undefined && !finite(trip.arriveAt)) return null;
+      const manifest = trip.manifest ?? [];
+      if (!Array.isArray(manifest) || manifest.length > trip.capacity) return null;
+      const seats = new Set<number>();
+      for (const p of manifest as any[]) {
+        if (!obj(p) || typeof p.actorId !== 'string' || !p.actorId) return null;
+        if (p.actorId !== 'player' && !hw.people?.[p.actorId]) return null;
+        if (!integer(p.seat) || p.seat < 0 || p.seat >= trip.capacity || seats.has(p.seat)) return null;
+        seats.add(p.seat);
+        if (seated.has(p.actorId)) return null;
+        seated.add(p.actorId);
+        if (p.actorId === 'player' && trip.playerAboard !== true) return null;
+        if (p.actorId !== 'player') {
+          const body: any = hw.people[p.actorId];
+          if (body.state === 'DEAD' || body.state === 'EVACUATED') return null;
+          if (body.transit?.tripId !== tid) return null;
+        }
+      }
+      if (trip.playerAboard === true && !manifest.some((p: any) => p.actorId === 'player')) return null;
+      if (trip.departures !== undefined) {
+        if (!Array.isArray(trip.departures)) return null;
+        for (const d of trip.departures as any[]) {
+          if (!obj(d) || !integer(d.round) || !finite(d.departAt) || !finite(d.arriveAt) || typeof d.departedReceipt !== 'string' || !Array.isArray(d.passengers)) return null;
+          if (d.arrivedAt !== undefined && !finite(d.arrivedAt)) return null;
+        }
+      }
+    }
+    for (const [aid, body] of Object.entries(hw.people ?? {}) as [string, any][]) {
+      if (body.state !== 'ON_VESSEL') { if (body.transit !== undefined) return null; continue; }
+      if (!obj(body.transit) || typeof body.transit.tripId !== 'string' || !hw.evacuation[body.transit.tripId] || !seated.has(aid)) return null;
+    }
+    if (hw.playerEvacArrivedAt !== undefined && !finite(hw.playerEvacArrivedAt)) return null;
   }
   if (Object.keys(r.custody).some(id => !ownedContainers.has(id))) return null;
   // CAL-01 world_calendar_v1 persistence policy — ONE explicit rule for every stored record:

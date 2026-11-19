@@ -11,6 +11,16 @@
     "dangerStartsDay": 12,
     "eldersAwakenDay": 14
   },
+  "evacuation": {
+    "_status": "SOH_PROVISIONAL — no Bible number exists for the three approved services; the numbers below bound a one-way dying-island ferry so seats stay finite and every departure/arrival is physically timed. Change only against evidence.",
+    "serviceOpensHour": 288,
+    "lastDepartureHour": 324,
+    "transitHours": 4,
+    "returnHours": 2,
+    "seatsPerTrip": 6,
+    "boardingRadiusTiles": 1.5,
+    "playerBoardingRadiusTiles": 2.5
+  },
   "dayNight": {
     "_status": "TUNABLE_BALANCE (fictional clock, separate from run clock)",
     "dayLengthMinutes": 24,

@@ -39,7 +39,7 @@ import {
 import { syncVeyraEcosystemActors, VEYRA_PRIMORDIAL_SITES, resolvePrimordialGlobalTile } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
-import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerEvacuate, startHumanAid, commandHuman, talkToHuman, threatenHuman, recruitHuman, setFollowing, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
+import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerBoardEvac, leaveEvacBerth, nearestEvacTrip, startHumanAid, commandHuman, talkToHuman, threatenHuman, recruitHuman, setFollowing, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
 import { NPC_POI_CENSUS } from './npc-census';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
@@ -3304,8 +3304,9 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'grabCart': { if(p.vehicle)return fail('Exit the vehicle first.'); const e = r.entities[it.eid]; if (!e || e.kind !== 'cart' || !owned(e) || !near(r, e, 2)) return fail('Out of reach.'); p.pulling = p.pulling === e.id ? null : e.id; return ok('cart.grab', `${e.id}:${!!p.pulling}`); }
     case 'evacuate': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'evac' || !near(r, e, 2.5)) return fail('You must be at the evacuation beacon.');
-      // Real transport: the player must board a trip at the beacon; only a successful boarding
-      // departs the island and ends the run.
+      // Real transport: the player takes a physical seat at the authored berth. Boarding does NOT
+      // end the run — the vessel must cast off and actually arrive (see advanceEvacuation), so an
+      // early death at sea or a failed voyage cannot be certified as EVACUATED.
       if (r.humanWorld) {
         let tripId: string | null = e.poi && r.humanWorld.evacuation[`evac:${e.poi}`] ? `evac:${e.poi}` : null;
         let best = Infinity;
@@ -3315,12 +3316,22 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
           const dx = (egx + 0.5) - t.siteGx, dy = (egy + 0.5) - t.siteGy;
           const d = Math.hypot(dx, dy); if (!tripId && d < best) { best = d; tripId = t.tripId; }
         }
-        if (tripId) {
-          const res = playerEvacuate(r, r.humanWorld, tripId, now);
-          if (!res.ok) return fail(res.reason ?? 'cannot evacuate');
-        }
+        if (!tripId) return fail('No evacuation service is registered at this berth.');
+        const res = playerBoardEvac(r, r.humanWorld, tripId, now);
+        if (!res.ok) return fail(res.reason ?? 'cannot evacuate');
+        return ok('evac.board', `${tripId}:${r.player.hp}`, res.msg ?? 'You are aboard the evacuation vessel.');
       }
       return endRun(gs, 'evacuated', now);
+    }
+    case 'leaveEvac': {
+      const e = r.entities[it.eid]; if (!e || e.kind !== 'evac' || !near(r, e, 2.5)) return fail('You must be at the evacuation berth.');
+      if (!r.humanWorld) return fail('No evacuation service exists in this run.');
+      const [ox2, oy2] = windowOrigin(r);
+      const trip = nearestEvacTrip(r.humanWorld, ox2 + Math.floor(e.x / TILE), oy2 + Math.floor(e.y / TILE));
+      if (!trip) return fail('No evacuation service is registered here.');
+      const res = leaveEvacBerth(r, r.humanWorld, trip.tripId, now);
+      if (!res.ok) return fail(res.reason ?? 'cannot disembark');
+      return ok('evac.leave', trip.tripId, 'You step back onto the quay. The vessel is still here.');
     }
     case 'abandon': return endRun(gs, 'abandoned', now);
     case 'qaAdvance': { if (!Number.isFinite(it.hours) || it.hours < 0 || !Number.isFinite(r.qaOffset + it.hours * HOUR)) return fail('Invalid time advance.'); r.qaOffset += it.hours * HOUR; r.qaUsed = true; return ok('qa.advance', `+${it.hours}h (LOCAL/UNVERIFIED)`); }
