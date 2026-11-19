@@ -1,11 +1,17 @@
 /**
- * EIGHT OCCUPATIONS — natural coverage, no forced intents.
+ * EIGHT OCCUPATIONS — natural coverage across real settlements.
  *
- * This file runs the REAL world clock over a generated population and records what the survivors
- * actually did. Nothing here hands anyone an intent, a station, or an item: the only inputs are the
- * seed, the hours, and the physical entities the generator produced. It is deliberately a coverage
- * LEDGER, not a claim that all eight roles are complete — the assertion pins the roles that do
- * complete on their own, so a regression cannot quietly remove one.
+ * No forced intents, no injected stations, no injected items: the only inputs are the layout, the
+ * seed and the hours. Each village runs the real world clock (`stepHumans` + `stepStations`) and the
+ * ledger records which role produced or performed real, attributed work. Coverage is a UNION across
+ * villages, which the requirement allows ("need not complete in one village").
+ *
+ * Measured gap, recorded honestly: `cook` never reaches a queued recipe (campfires are unfuelled —
+ * the settlements hold a single unit of wood) and `medic` never treats anyone (no survivor is ever
+ * hurt by the natural ecology in these windows). Both roles DO appear in the ledger, but only as
+ * generic hauling (`human.harvest.complete`); their occupation-specific contracts never execute.
+ * So six roles are proven by profession-specific receipts and two are not. Both blockers are
+ * ecology gaps (fuel supply, injury source), not missing occupation contracts.
  */
 import { describe, expect, it } from 'vitest';
 import { newGame, startRun, stepStations } from '../src/game/engine';
@@ -13,44 +19,43 @@ import { stepHumans } from '../src/game/humanworld';
 import { setActiveLayout } from '../src/game/world';
 import { T0 } from './helpers/g1b-kit';
 
-describe('natural occupation coverage (6 sim hours, generated population)', () => {
-  it('records which occupations complete real work without anyone forcing an intent', () => {
-    setActiveLayout('veyra05-greywater');
-    const gs = newGame();
-    expect(startRun(gs, 'female', T0, null, 7606, { tx: 100, ty: 100 }).ok).toBe(true);
-    const r = gs.run!; const hw = r.humanWorld!;
-const occ: Record<string, number> = {};
-for (const h of Object.values(hw.people)) occ[h.occupation] = (occ[h.occupation] ?? 0) + 1;
-console.log('POP', Object.keys(hw.people).length, JSON.stringify(occ));
-const stations: Record<string, number> = {};
-for (const e of Object.values(r.entities)) if ((e as any).station) stations[e.type!] = (stations[e.type!] ?? 0) + 1;
-console.log('STATIONS', JSON.stringify(stations));
-const done: Record<string, number> = {};
-const start0 = Date.now();
-for (let t = 0; t < 360; t++) {
-  const now = T0 + t * 60000;
-  stepHumans(r, hw, now);
-  try { stepStations(gs, 60000, now); } catch { /* station probe */ }
-  if (t % 60 === 59) console.log('t', (t + 1) / 60, 'h', 'ms', Date.now() - start0);
-}
-for (const q of r.receipts) if (q.kind.startsWith('human.')) done[q.kind] = (done[q.kind] ?? 0) + 1;
-console.log('RECEIPTS', JSON.stringify(done));
-const workKinds: Record<string, number> = {};
-for (const q of r.receipts) if (q.kind === 'human.work.start') workKinds[q.detail.split(':')[2] ?? '?'] = (workKinds[q.detail.split(':')[2] ?? '?'] ?? 0) + 1;
-console.log('WORKSTART', JSON.stringify(workKinds));
-  const byOcc: Record<string, number> = {};
-  for (const q of r.receipts) if (q.kind === 'human.harvest' || q.kind === 'human.production.pickup' || q.kind === 'human.harvest.complete') {
-    const id = q.detail.split(/[:,{]/)[0]?.replace('{', '') ?? '?';
-    const w = hw.people[q.detail.match(/workerId"?:"?([^",]+)/)?.[1] ?? ''] ?? hw.people[id];
-    const k = w?.occupation ?? 'unknown';
-    byOcc[k] = (byOcc[k] ?? 0) + 1;
-  }
-  console.log('OCCUPATION COVERAGE', JSON.stringify(byOcc));
-  const producers = Object.keys(byOcc).filter(k => byOcc[k] > 0);
-  console.log('PRODUCING ROLES', producers.join(','));
-  expect(producers.length).toBeGreaterThanOrEqual(5);
-  for (const role of ['salvager', 'mechanic', 'builder', 'gardener', 'engineer']) {
-    expect(producers, `${role} produced real output naturally`).toContain(role);
-  }
-});
+const VILLAGES = ['veyra05-greywater', 'veyra05-saltwick', 'veyra05-cinder'];
+const HOURS = 6;
+
+describe('natural occupation coverage', () => {
+  it('records which roles work on their own in three real settlements', () => {
+    const union: Record<string, number> = {};
+    for (const layout of VILLAGES) {
+      setActiveLayout(layout);
+      const gs = newGame();
+      expect(startRun(gs, 'female', T0, null, 7606, { tx: 100, ty: 100 }).ok).toBe(true);
+      const r = gs.run!; const hw = r.humanWorld!;
+      for (let t = 0; t < HOURS * 60; t++) {
+        const now = T0 + t * 60000;
+        stepHumans(r, hw, now);
+        try { stepStations(gs, 60000, now); } catch { /* station probe: a broken station must not hide the rest */ }
+      }
+      const local: Record<string, number> = {};
+      for (const q of r.receipts) {
+        if (!['human.harvest', 'human.harvest.output', 'human.harvest.complete', 'human.guard.duty', 'human.treat', 'human.work.start', 'human.production.pickup'].includes(q.kind)) continue;
+        // Receipt grammars: `${actorId}:...` except harvest.complete `${jobId}:${actorId}:${dst}`.
+        const actorId = q.kind === 'human.harvest.complete' ? q.detail.split(':')[1] : q.detail.match(/workerId"?:"?([^",]+)/)?.[1] ?? q.detail.split(':')[0];
+        const who = hw.people[actorId];
+        if (!who) continue;
+        const k = `${who.occupation}:${q.kind}`;
+        local[k] = (local[k] ?? 0) + 1; union[k] = (union[k] ?? 0) + 1;
+      }
+      console.log('VILLAGE', layout, JSON.stringify(local));
+    }
+    const ROLES_SEEN = [...new Set(Object.keys(union).map(k => k.split(':')[0]))].sort();
+    // Profession-specific evidence only: hauling (`harvest.complete`) is generic labour, not a trade.
+    const SPECIFIC = new Set(['human.harvest', 'human.harvest.output', 'human.guard.duty', 'human.treat', 'human.work.start', 'human.production.pickup']);
+    const proven = [...new Set(Object.keys(union).filter(k => SPECIFIC.has(k.split(':')[1])).map(k => k.split(':')[0]))].sort();
+    console.log('ROLES IN LEDGER', ROLES_SEEN.join(','));
+    console.log('PROVEN BY THEIR OWN TRADE', proven.join(','));
+    const roles = proven;
+    console.log('UNION ROLES', roles.join(','));
+    // Roles proven to work on their own. cook and medic are named as the measured gap above.
+    expect(roles).toEqual(expect.arrayContaining(['builder', 'engineer', 'gardener', 'guard', 'mechanic', 'salvager']));
+  }, 600000);
 });

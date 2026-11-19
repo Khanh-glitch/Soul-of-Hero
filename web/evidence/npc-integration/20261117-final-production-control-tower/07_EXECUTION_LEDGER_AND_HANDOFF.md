@@ -374,3 +374,15 @@ If any answer indicates mandatory omission, mark PARTIAL and CONTINUE CODE, neve
 **Verdict on the gate:** **NOT COMPLETE** — 5/8 measured. This file is committed with an assertion that pins those five so they cannot silently regress; it is not a claim of eight.
 **Next exact task:** (a) give guard duty a real receipt so its duty is auditable; (b) drive the procurement chain long enough (24 h) for the campfire to be fed by real carried food; (c) run a window in which a real wound occurs so a medic treats it. Then the same fixture can assert 8/8 naturally.
 **Gate verdict:** SOURCE IMPLEMENTED (8 contracts) + ENGINEERING PARTIAL (5/8 measured). BROWSER/CREATOR: NOT VERIFIED.
+
+### 2026-11-19 (thirteenth package) / occupation coverage across three settlements
+**Production source diff (two real audit holes closed):**
+- `human-jobs.ts` — guard duty now writes `human.guard.duty` (`actorId:intentId:postId:sweepIndex`) on every completed watch. Duty previously mutated `lastWatchAt`/`guardedEntityId` and left NO receipt, so a guard's work was invisible to every audit.
+- `human-jobs.ts` — a completed treatment now writes `human.treat` (`medicId:patientId:medicine`). Treating wounds was likewise receipt-less.
+**Evidence (`tests/npc-occupation-coverage.test.ts`, green, 600 s budget):** three settlements (`greywater`, `saltwick`, `cinder`), 6 sim hours each, real clock, no forced intents/injections. Attribution fixed to the real receipt grammar (`human.harvest.complete` is `${jobId}:${actorId}:${dst}`).
+**Measured result: all EIGHT roles appear in the ledger, but only SIX are proven by their own trade:**
+- proven by profession-specific receipts — **builder, engineer, gardener, guard, mechanic, salvager**;
+- **cook** and **medic** appear only as generic hauling (`human.harvest.complete`), i.e. they carry loads; their own contracts (queued recipe / wound treatment) never execute.
+**Blockers, measured not guessed:** (1) every campfire is unfuelled and the settlements hold one unit of wood, so no cook ever queues a recipe (`human.work.start` = 0 across 18 village-hours); (2) no survivor is ever hurt by the natural ecology, so `human.treat` = 0 and nobody is DOWNED to treat. Both are ecology/supply gaps — the eight occupation contracts themselves are present and fail-closed.
+**Verdict:** requirement B = **6/8 proven naturally, 2/8 blocked on ecology**. The fixture pins the six so a regression cannot quietly remove one, and prints both role sets.
+**Next exact task (only two left for B):** (a) make wood/food supply actually reach the village campfires so a cook queues a paid recipe; (b) give the natural ecology a real injury source (predator attack or work accident) so a medic has a patient.

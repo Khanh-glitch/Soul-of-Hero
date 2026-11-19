@@ -179,10 +179,13 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
     if(!medicine.length || !hasAll(r,h.inv.packId,medicine))return fail('medicine missing');
     for(const [k,q]of medicine)removeItem(r,h.inv.packId,k,q);
     p.wounds.forEach(w=>{w.treated=true;w.bleeding=false;});p.hp=Math.min(p.maxHp,p.hp+30);p.downedAt=undefined;p.state='IDLE';
+    receipt(r,now,'human.treat',`${h.actorId}:${p.actorId}:${medicine.map(m=>m[0]).join('+')}`);
   } else {
     if(!e || !(comm.workStations.includes(e.id)||e.poi===comm.poi && e.owner===comm.id || task.kind==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)) || !humanCanUseEntity(r,h,e))return fail('work target inaccessible or unauthorized');
     if(task.kind==='guard') {
       h.lastWatchAt=now;h.guardedEntityId=e.id;h.patrolPostIndex=(h.patrolPostIndex??0)+1;
+      // Duty is a physical act on a real post: it leaves an auditable receipt like any other work.
+      receipt(r,now,'human.guard.duty',`${h.actorId}:${intent.intentId}:${e.id}:${h.patrolPostIndex}`);
     } else if(task.phase==='machine') {
       if(task.readyAt===undefined){
         if(!e.station?.queue.some(j=>j.id===task.machineJobId))return fail('job interrupted; no output claim');
