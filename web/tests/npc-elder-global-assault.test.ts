@@ -22,6 +22,7 @@ import { layoutIdAt } from '../src/veyra05/scenes';
 import { auToTile, windowAround } from '../src/veyra05/frame';
 import { T0 } from './helpers/g1b-kit';
 import { TILE } from '../src/game/core';
+
 import { validate } from '../src/game/persist';
 import {
   advanceElderPressure, defeatElder, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat,
@@ -295,4 +296,5 @@ describe('global six-Elder assault (NOT RUN — authored for the post-implementa
     expect(landed.some(d => Math.floor(d.x / TILE) === 100 && Math.floor(d.y / TILE) === 10)).toBe(true);
     expect(r.receipts.some(x => x.kind === 'elder.loot.landed')).toBe(true);
   });
+
 });

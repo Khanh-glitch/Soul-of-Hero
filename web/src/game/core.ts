@@ -12,7 +12,12 @@ export const SAVE_VERSION = 3;
 export const HOUR = 3600_000;
 
 // Committed physical combat effects are run-local and resume after an offline gap.
-export interface Proj { x: number; y: number; vx: number; vy: number; life: number; dmg: number; from: 'player' | 'enemy'; kind: string; r: number; delay?: number; homing?: number; owner?: string }
+/** `from` is the ORIGIN AUTHORITY of a projectile: the player's weapon, a creature, or a living
+ *  survivor's bow. A human arrow is identified by `owner` (the shooter's actorId) so no arrow can
+ *  be attributed to a body that did not fire it. */
+export interface Proj { x: number; y: number; vx: number; vy: number; life: number; dmg: number; from: 'player' | 'enemy' | 'human'; kind: string; r: number; delay?: number; homing?: number; owner?: string;
+  /** A survivor's declared victim: a human actorId, 'player', or a creature id. A shot that misses is a miss. */
+  victim?: string }
 export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; elder?: string; expiresSimMs?:number }
 
 // ---------- Seeded RNG ----------

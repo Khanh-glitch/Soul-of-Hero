@@ -2069,7 +2069,12 @@ function guardAfterContact(r: RunState, hw: HumanWorld, elder: ElderAssault, ev:
 }
 
 /** Resolve one arrival: real bodies, real structures, real receipts, one time only. */
-function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, ev: ElderAssaultEvent, now: number, onVolley?: (elderId: string, dmg: number, now: number, guardIds: string[]) => void): void {
+/** One committed ranged shot: who fired it, from where (GLOBAL tile), and the damage it carries. The
+ *  flight itself belongs to the projectile layer — this layer only proves the shot was lawful. */
+export interface ElderVolleyShot { guardId: string; gx: number; gy: number; dmg: number }
+type VolleyHandler = (elderId: string, shots: ElderVolleyShot[], now: number) => void;
+
+function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, ev: ElderAssaultEvent, now: number, onVolley?: VolleyHandler): void {
   const def = PRIMORDIAL_ELDERS[elder.elderId];
   const dmg = def?.dmg ?? 18;
   const radius = elderImpactTiles();
@@ -2108,8 +2113,7 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
     const cov = (h.threat ??= { waves: 0, hit: 0, guarded: 0 });
     cov.waves++; cov.lastThreatAt = now; cov.lastWaveId = ev.id;
   }
-  let volleyDmg = 0;
-  const volleyGuards: string[] = [];
+  const volleyShots: ElderVolleyShot[] = [];
   // Guards standing in the blast interpose: each armed guard covers one civilian and pays for it
   // with their own body and one OWNED ranged round. A guard with no arrow cannot cover anyone.
   const able = (g: HumanRecord) => g.hp > g.maxHp * 0.3;
@@ -2144,7 +2148,7 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
         receipt(r, now, 'elder.volley.out_of_range', `${elder.elderId}:${guard.actorId}:${body ? `${body.gx},${body.gy}` : 'no-body'}`);
       } else if (!elderCrossingOpen(r, guard.gx, guard.gy, body.gx, body.gy)) {
         receipt(r, now, 'elder.volley.no_line', `${elder.elderId}:${guard.actorId}:terrain`);
-      } else { volleyDmg += weapon.dmg * proficiencyMul(guard.combatProficiency); volleyGuards.push(guard.actorId); }
+      } else volleyShots.push({ guardId: guard.actorId, gx: guard.gx, gy: guard.gy, dmg: weapon.dmg * proficiencyMul(guard.combatProficiency) });
     }
     covered.add(civilian.actorId);
     (civilian.threat ??= { waves: 1, hit: 0, guarded: 0 }).guarded++;
@@ -2169,9 +2173,10 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
   }
   // Guard volleys are real ranged attacks by real armed bodies; the canonical Elder body and its
   // canonical death path stay the property of the engine (see sim.ts), never a second HP table.
-  if (volleyGuards.length && onVolley) {
-    onVolley(elder.elderId, Math.round(volleyDmg), now, volleyGuards);
-    receipt(r, now, 'elder.volley', `${elder.elderId}:${volleyGuards.length}guards:${Math.round(volleyDmg)}dmg:${volleyGuards.join(',')}`);
+  if (volleyShots.length && onVolley) {
+    // The world layer launches the actual arrows; damage only exists once a projectile lands.
+    onVolley(elder.elderId, volleyShots, now);
+    receipt(r, now, 'elder.volley', `${elder.elderId}:${volleyShots.length}guards:${Math.round(volleyShots.reduce((n, s) => n + s.dmg, 0))}dmg:${volleyShots.map(s => s.guardId).join(',')}`);
   }
   const impacted: Entity[] = [];
   for (const e of [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities ?? {})]) {
@@ -2239,7 +2244,7 @@ export function recordArchivedElderDefeat(r: RunState, hw: HumanWorld, elderId: 
 
 /** Advance Elder pressure: awakening at the canonical hour, timed approach waves to h336, real
  *  contact, and defeat driven by the canonical body — never a second Elder health table. */
-export function advanceElderPressure(r: RunState, hw: HumanWorld, now: number, onVolley?: (elderId: string, dmg: number, now: number, guardIds: string[]) => void): void {
+export function advanceElderPressure(r: RunState, hw: HumanWorld, now: number, onVolley?: VolleyHandler): void {
   const hours = runHours(r, now);
   const maxHours = BAL.run.maxRunHours;
   const awaken = elderAwakenHour();
@@ -2975,7 +2980,11 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
 /** Resolve human combat for one tick: creatures in range damage nearby humans (applyDamage
  *  with the creature's floor), and fighting humans strike their selected creature/player target.
  *  This is the bidirectional combat law the main K5 routes call into. */
-export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void, hitPlayer?: (attacker: HumanRecord, damage: number, angle: number) => void): void {
+/** A committed ranged attack by a survivor. The world layer turns it into a real projectile; damage
+ *  exists only on impact, so a shot can miss, be blocked, or be outrun. */
+export interface HumanShot { shooterId: string; gx: number; gy: number; dmg: number; victim: string; tx: number; ty: number }
+
+export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void, hitPlayer?: (attacker: HumanRecord, damage: number, angle: number) => void, spawnShot?: (shot: HumanShot) => boolean): void {
   const activeFloor = r.veyraFloor ?? 0;
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
@@ -3013,8 +3022,11 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
       if(h.protectedPeople.includes(victim.actorId) || !!h.community&&victim.community===h.community){h.intent=undefined;h.state='IDLE';continue;}
       const dx=seenTarget.x-hx,dy=seenTarget.y-hy,angle=Math.atan2(dy,dx);
       if(Math.hypot(dx,dy)>w.reach+8 || Math.abs(Math.atan2(Math.sin(angle-facing),Math.cos(angle-facing)))>w.arc/2+.15 || !clearPhysicalLine(r,{x:hx,y:hy},seenTarget,true))continue;
-      if(ITEMS[h.equip.weapon!.key].ranged){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
+      const rangedShot=!!ITEMS[h.equip.weapon!.key].ranged;
+      if(rangedShot){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
       h.lastAttackAt=now;h.stamina=Math.max(0,h.stamina-3);const weapon=h.equip.weapon!;if(weapon.dur!==undefined)weapon.dur=Math.max(0,weapon.dur-1);
+      // A bow shot leaves the body: the victim is only hurt when the arrow lands.
+      if(rangedShot&&spawnShot?.({shooterId:h.actorId,gx:h.gx,gy:h.gy,dmg:w.dmg,victim:victim.actorId,tx:seenTarget.x,ty:seenTarget.y}))continue;
       applyDamage(r,hw,victim,w.dmg,angle,now,'human',h.actorId,h.floor);
       continue;
     }
@@ -3022,9 +3034,11 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
       const dx = r.player.x - hx, dy = r.player.y - hy, distance = Math.hypot(dx, dy), angle = Math.atan2(dy, dx);
       const inArc = Math.abs(Math.atan2(Math.sin(angle - facing), Math.cos(angle - facing))) <= w.arc / 2 + 0.15;
       if (distance <= w.reach + 8 && inArc && clearPhysicalLine(r, { x: hx, y: hy }, r.player, true)) {
-        if(ITEMS[h.equip.weapon!.key]?.ranged){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
+        const rangedShot=!!ITEMS[h.equip.weapon!.key]?.ranged;
+        if(rangedShot){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
         h.lastAttackAt = now; h.stamina = clamp(h.stamina - 3, 0, h.maxStamina);
         const weapon = h.equip.weapon!; if (weapon.dur !== undefined) { weapon.dur = Math.max(0, weapon.dur - 1); if (weapon.dur === 0) h.equip.weapon = null; }
+        if(rangedShot&&spawnShot?.({shooterId:h.actorId,gx:h.gx,gy:h.gy,dmg:w.dmg,victim:'player',tx:r.player.x,ty:r.player.y}))continue;
         hitPlayer?.(h, w.dmg, angle);
       }
       continue;
@@ -3034,11 +3048,13 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
       .filter(v => v.d <= w.reach + (CREATURES[v.m.type]?.r ?? 6) && Math.abs(Math.atan2(Math.sin(Math.atan2(v.dy, v.dx) - facing), Math.cos(Math.atan2(v.dy, v.dx) - facing))) <= w.arc / 2 + 0.15 && clearPhysicalLine(r, { x: hx, y: hy }, v.m, true))
       .sort((a, b) => a.d - b.d)[0];
     if (!target) continue;
-    if(ITEMS[h.equip.weapon!.key]?.ranged){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
+    const rangedShot=!!ITEMS[h.equip.weapon!.key]?.ranged;
+    if(rangedShot){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
     h.lastAttackAt = now;
     h.stamina = clamp(h.stamina - 3, 0, h.maxStamina);
     const weapon = h.equip.weapon!;
     if (weapon.dur !== undefined) { weapon.dur = Math.max(0, weapon.dur - 1); if (weapon.dur === 0) h.equip.weapon = null; }
+    if(rangedShot&&spawnShot?.({shooterId:h.actorId,gx:h.gx,gy:h.gy,dmg:w.dmg,victim:target.m.id,tx:target.m.x,ty:target.m.y}))continue;
     hitCreature?.(target.m, w.dmg, Math.atan2(target.dy, target.dx), h);
   }
 }

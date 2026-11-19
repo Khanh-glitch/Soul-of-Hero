@@ -245,7 +245,12 @@ export function validate(raw: any): GameState | null {
   if (r.combat !== undefined) {
     const c = r.combat;
     if (!obj(c) || !Array.isArray(c.projectiles) || !Array.isArray(c.hazards) || c.projectiles.length > 5000 || c.hazards.length > 5000) return null;
-    if (c.projectiles.some((q: any) => !obj(q) || !['x','y','vx','vy','life','dmg','r'].every(k => finite(q[k])) || !['player','enemy'].includes(q.from) || typeof q.kind !== 'string' || (q.delay !== undefined && !finite(q.delay)) || (q.homing !== undefined && !finite(q.homing)))) return null;
+    if (c.projectiles.some((q: any) => !obj(q) || !['x','y','vx','vy','life','dmg','r'].every(k => finite(q[k])) || !['player','enemy','human'].includes(q.from) || typeof q.kind !== 'string' || (q.delay !== undefined && !finite(q.delay)) || (q.homing !== undefined && !finite(q.homing)))) return null;
+    // A survivor's arrow carries the body that fired it; an unattributed human arrow is not a lawful rule.
+    if (c.projectiles.some((q: any) => q.from === 'human' && (typeof q.owner !== 'string' || !q.owner || !raw.run?.humanWorld?.people?.[q.owner]))) return null;
+    // A survivor's shot names who it was aimed at; that name must be a body (or the player) in this run.
+    if (c.projectiles.some((q: any) => q.from === 'human' && (typeof q.victim !== 'string' || !q.victim ||
+      (q.victim !== 'player' && !raw.run?.humanWorld?.people?.[q.victim] && !(raw.run?.creatures ?? []).some((m: any) => m?.id === q.victim))))) return null;
     if (c.hazards.some((h: any) => !obj(h) || !['circle','line','ring','wave','sweep','pool'].includes(h.kind) || !['x','y','t','tell','dur','dmg'].every(k => finite(h[k])) || typeof h.style !== 'string' || (h.elder !== undefined && !lookupElderDef(h.elder)) || ['r','angle','len','w','tickAcc','a0','a1','expiresSimMs'].some(k => h[k] !== undefined && !finite(h[k])))) return null;
   }
   if (r.sourceLayoutVersion === 3) for (const [key, st] of Object.entries(r.sources) as [string, any][]) {

@@ -20,7 +20,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { tickNeeds, advanceElderPressure, advanceEvacuation, playerAtSea, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition } from './humanworld';
+import { tickNeeds, advanceElderPressure, advanceEvacuation, playerAtSea, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition, type ElderVolleyShot, type HumanShot } from './humanworld';
 import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, withRunEntityRead, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -1225,7 +1225,63 @@ function blockedAtTurret(r: RunState,x:number,y:number) { const b=blockGrid(r)[t
 
 // ---------- projectiles & hazards ----------
 function impactRock(gs:GameState,pr:Proj,now:number){if((pr as any).exploded)return;(pr as any).exploded=true;const r=gs.run!,fl=activeFloor(r);for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&dist(m.x,m.y,pr.x,pr.y)<BAL.creatorCoreEarthmother.rockRadius&&clearPhysicalLine(r,pr,m,true))damageCreature(gs,m,pr.dmg,Math.atan2(m.y-pr.y,m.x-pr.x),now,190);damagePrimordialSummonsAoE(r,pr.x,pr.y,BAL.creatorCoreEarthmother.rockRadius,pr.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true));fx('rockhit',{x:pr.x,y:pr.y});fx('chip',{x:pr.x,y:pr.y,mat:'stone'});}
-function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?: boolean }) {
+/**
+ * A committed guard volley becomes REAL arrows when the Elder's canonical body is loaded in the
+ * window: each shot flies, terrain can stop it, and damage exists only where it lands. When the body
+ * is archived (the struck settlement is outside the loaded window) there is no projectile plane to
+ * fly in, so the shot resolves regionally and its receipt says so — never an arrow drawn crossing
+ * ground the player cannot see, and never a second health table.
+ */
+/** A survivor's committed ranged attack becomes a real arrow that flies from the shooter's body.
+ *  The arrow carries its shooter and its intended victim, so attribution is never guessed at impact. */
+export function spawnHumanShot(gs: GameState, shot: HumanShot): boolean {
+  const r = gs.run!; if (!r) return false;
+  const [ox, oy] = windowOrigin(r);
+  const sx = (shot.gx - ox + 0.5) * TILE, sy = (shot.gy - oy + 0.5) * TILE;
+  const dx = shot.tx - sx, dy = shot.ty - sy;
+  const d = Math.max(1, Math.hypot(dx, dy));
+  PROJ.push({
+    x: sx, y: sy, vx: (dx / d) * 260, vy: (dy / d) * 260, life: d / 260 + 0.25,
+    dmg: shot.dmg, from: 'human', kind: 'arrow', r: 3, owner: shot.shooterId, victim: shot.victim,
+  });
+  receipt(r, r.clock.lastSimAt || r.startedAt, 'human.shot', `${shot.shooterId}->${shot.victim}:${Math.round(shot.dmg)}`);
+  return true;
+}
+
+export function resolveElderVolley(gs: GameState, elderId: string, shots: ElderVolleyShot[], at: number): void {
+  const r = gs.run!; if (!r) return;
+  const canonical = elderCanonicalCreature(r, elderId);
+  if (!canonical || canonical.state === 'dead') return;
+  const o = r.sourceMap?.veyra?.originAu;
+  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  const archived = elderBodyArchived(r, canonical);
+  let arrows = 0, regional = 0;
+  for (const shot of shots) {
+    const sx = (shot.gx - ox) * TILE + 8, sy = (shot.gy - oy) * TILE + 8;
+    const shooterLoaded = sx >= 0 && sy >= 0 && sx < WW * TILE && sy < WH * TILE;
+    if (!archived && shooterLoaded) {
+      const dx = canonical.x - sx, dy = canonical.y - sy;
+      const d = Math.max(1, Math.hypot(dx, dy));
+      PROJ.push({
+        x: sx, y: sy, vx: (dx / d) * 260, vy: (dy / d) * 260, life: d / 260 + 0.2,
+        dmg: shot.dmg, from: 'human', kind: 'arrow', r: 3, owner: shot.guardId,
+      });
+      arrows++;
+    } else regional += shot.dmg;
+  }
+  if (arrows) receipt(r, at, 'elder.volley.flight', `${elderId}:${arrows}arrows:${shots.map(s => s.guardId).join(',')}`);
+  if (!(regional > 0)) return;
+  canonical.hp -= Math.round(regional);
+  receipt(r, at, 'elder.wounded', `${elderId}:${Math.round(regional)}:hp${Math.max(0, Math.round(canonical.hp))}:${shots.map(s => s.guardId).join(',')}:regional`);
+  if (canonical.hp <= 0) {
+    // A body archived outside the loaded window has GLOBAL pixel coordinates, so the local drop path
+    // cannot be used; its defeat is booked and its bounty banked until that ground loads.
+    if (elderBodyArchived(r, canonical) && r.humanWorld) recordArchivedElderDefeat(r, r.humanWorld, elderId, canonical, at);
+    else killCreature(gs, canonical, at);
+  }
+}
+
+export function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?: boolean }) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const g = blockGrid(r);
   const [humanOx, humanOy] = r.humanWorld ? windowOrigin(r) : [0, 0];
   for (let i = PROJ.length - 1; i >= 0; i--) {
@@ -1249,7 +1305,7 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
       const x = ox + (nx - ox) * j / steps, y = oy + (ny - oy) * j / steps;
       b = g[tileOf(y) * WW + tileOf(x)];
       if (b === 1 || b === 2 || b === 3 || b === 5 || !clearPhysicalLine(r, pr, { x, y }, true)) { blocked = true; break; }
-      if (pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado') {
+      if ((pr.from === 'player' || pr.from === 'human') && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado') {
         for (const m of r.creatures) {
           if (m.state === 'dead' || ((m as any).floor ?? 0) !== activeFloor(r)) continue;
           const rr = m.elder ? (lookupElderDef(m.elder.key)?.r ?? 14) : 6;
@@ -1260,6 +1316,16 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
             else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now);
             else { damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); if (pr.kind === 'elsa_shard' && m.hp > 0 && rngNext(r) < BAL.creatorCoreElsa.freezeChance) m.frozenUntil = now + BAL.creatorCoreElsa.enemyMs; }
             break;
+          }
+        }
+        if (!dead && pr.from === 'human' && pr.victim && pr.victim !== 'player' && r.humanWorld) {
+          const victim = r.humanWorld.people[pr.victim];
+          if (victim && victim.state !== 'DEAD' && victim.state !== 'EVACUATED' && victim.floor === activeFloor(r)) {
+            const vx = (victim.gx - humanOx + 0.5) * TILE, vy = (victim.gy - humanOy + 0.5) * TILE;
+            if (Math.hypot(x - vx, y - vy) < 8 + pr.r) {
+              pr.x = x; pr.y = y; dead = true;
+              applyHumanDamage(r, r.humanWorld, victim, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 'human', pr.owner, activeFloor(r));
+            }
           }
         }
         if (!dead && pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado' && r.humanWorld) {
@@ -1322,6 +1388,7 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
     pr.life -= dt; dead = dead || pr.life <= 0;
     if (pr.kind === 'blast_bomb' && blocked && !dead) { pr.vx=0; pr.vy=0; blocked=false; }
     if (blocked) { dead = true; if(pr.kind==='nature_rock')impactRock(gs,pr,now); else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else fx('ping', { x: pr.x, y: pr.y, kind: pr.kind }); }
+    else if (pr.from === 'human' && pr.victim === 'player' && dist(pr.x, pr.y, p.x, p.y) < pr.r + 4) { dead = true; hurtPlayer(gs, pr.dmg, pr.x - pr.vx, pr.y - pr.vy, 'projectile', now, 60); }
     else if (pr.from === 'enemy' && dist(pr.x, pr.y, p.x, p.y) < pr.r + 4) { dead = true; if (pr.kind === 'mine') { fx('boom', { x: pr.x, y: pr.y, small: true }); } hurtPlayer(gs, pr.dmg, pr.x - pr.vx, pr.y - pr.vy, 'projectile', now, 100); }
     // player projectiles vs creatures are resolved inside the substep sweep above (R5.1 coarse-slice fix).
     if (dead && (pr.kind === 'fireball' || pr.kind === 'blast_signature') && pr.life <= 0) explode(gs, pr, now);
@@ -1569,20 +1636,7 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
     if (r.humanWorld) {
       tickNeeds(r, r.humanWorld, t);
-      advanceElderPressure(r, r.humanWorld, t, (elderId, dmg, at, guardIds) => {
-        // Guard volleys land on the CANONICAL Elder body through the canonical death path. This
-        // adds no second health table: it is one more attacker against the same creature.
-        const canonical = elderCanonicalCreature(r, elderId);
-        if (!canonical || canonical.state === 'dead' || !(dmg > 0)) return;
-        canonical.hp -= Math.round(dmg);
-        receipt(r, at, 'elder.wounded', `${elderId}:${Math.round(dmg)}:hp${Math.max(0, Math.round(canonical.hp))}:${guardIds.join(',')}`);
-        if (canonical.hp <= 0) {
-          // A body archived outside the loaded window has GLOBAL pixel coordinates, so the local drop
-          // path cannot be used; its defeat is booked and its bounty banked until that ground loads.
-          if (elderBodyArchived(r, canonical) && r.humanWorld) recordArchivedElderDefeat(r, r.humanWorld, elderId, canonical, at);
-          else killCreature(gs, canonical, at);
-        }
-      });
+      advanceElderPressure(r, r.humanWorld, t, (elderId, shots, at) => resolveElderVolley(gs, elderId, shots, at));
       const evac = advanceEvacuation(r, r.humanWorld, t);
       // A confirmed arrival ashore is the only event that ends the player's run by sea; it stops
       // this settlement slice so no later slice can act after the run is finalized.
@@ -1665,7 +1719,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   tickPlayer(gs, playerAtSea(r) ? { ...inp, up: false, down: false, left: false, right: false, attack: false, attackPressed: false, roll: false, cancel: false, skill: undefined } : inp, dtMs, now);
   if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
   tickCreatures(gs, dtMs, now);
-  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle) => damageCreature(gs, m, dmg, angle, now), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); });
+  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle) => damageCreature(gs, m, dmg, angle, now), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); }, (shot) => spawnHumanShot(gs, shot));
   tickDragonDive(gs, dtMs, now);
   tickTurrets(gs, dtMs, now);
   tickProj(gs, dtMs, now);
