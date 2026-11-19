@@ -1,6 +1,6 @@
 /** Occupation execution on real shared K1 custody, canonical recipes, station queues,
  * item repair rules, garden laws and physical structures. No work output loot table. */
-import { TILE, uid, type RunState, type Entity, type Stack } from './core';
+import { WW, WH, TILE, uid, type RunState, type Entity, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, GARDEN_CROPS, isGardenCrop, stationBurnable } from './catalog';
 import { C, hasAll, removeItem, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, clearPhysicalLine, productionFits, findRunEntity, allRunEntities } from './engine';
 import { recoveryPlan, recoveryFits } from './recycler';
@@ -122,6 +122,30 @@ function target(r: RunState, hw: HumanWorld, h: HumanRecord, task: HumanWorkTask
   if (task.patientId) { const p=hw.people[task.patientId]; return p && p.floor===h.floor ? [p.gx,p.gy,p.floor] : null; }
   const e=task.entityId && findRunEntity(r,task.entityId); return e ? [...humanEntityTile(r,e),e.floor??0] : null;
 }
+/** A casualty calls their community. Only a real route starts a response;
+ * a fetched dose remains in the responder's custody on interruption. */
+export function dispatchMedicalResponse(r:RunState,hw:HumanWorld,p:HumanRecord,now:number,route:(h:HumanRecord,...dest:[number,number,number])=>ReturnType<Router>){
+  const c=p.community && hw.communities[p.community];if(!c || p.state!=='DOWNED')return;
+  const distance=(h:HumanRecord)=>Math.abs(h.gx-p.gx)+Math.abs(h.gy-p.gy);
+  const helpers=c.memberIds.map(id=>hw.people[id]).filter(h=>h && h.community===p.community && h.floor===p.floor && !h.following && !h.motion && !h.intent?.work &&
+    (h.state==='IDLE'||(h.harvestJob?.phase==='source' && ['WORKING','MOVING'].includes(h.state))) && !h.transit && (!h.intent || h.intent.target?.startsWith('global-harvest:')))
+    .sort((a,b)=>Number(b.occupation==='medic')-Number(a.occupation==='medic') || distance(a)-distance(b) || a.actorId.localeCompare(b.actorId));
+  let hasDose=false;
+  for(const h of helpers){
+    const medicine=['bandage','herb'];let key=medicine.find(k=>count(r,h.inv.packId,k)>0),phase:HumanWorkTask['phase']='travel';
+    let dest:[number,number,number]=[p.gx,p.gy,p.floor];
+    if(!key && h.occupation==='medic'){
+      const store=findRunEntity(r,c.storeEntityId);
+      if(store?.c && store.owner===c.id && c.storeContainers.includes(store.c) && (store.hp??1)>0){
+        key=medicine.find(k=>count(r,store.c!,k)>0);phase='fetch';dest=[...humanEntityTile(r,store),store.floor??0];
+      }
+    }
+    if(!key)continue;hasDose=true;const path=route(h,...dest);if(!path)continue;
+    h.intent={intentId:uid(r,'hw'),actorId:h.actorId,kind:'work',target:'occupation:medical',reserved:[],preconditions:['community casualty','physical treatment and one dose'],startAt:now,dueAt:now+(phase==='fetch'?800:6000),route:path,work:{kind:'medical',phase,inputs:[[key,1]],duration:6000,patientId:p.actorId}};
+    h.state=path.length?'MOVING':'WORKING';receipt(r,now,'human.medical.respond',`${h.actorId}:${p.actorId}:${phase}:${path.length}`);return;
+  }
+  p.lastWorkBlock=hasDose?'No certified medical route yet.':'No available community responder with medicine.';
+}
 export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, route: Router): boolean {
   if (h.following || !h.community) return false;
   let task=h.intent?.work;
@@ -148,7 +172,7 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
   if (!intent || !task || h.following || h.state!=='WORKING') return {done:false,reason:'no physical occupation commitment'};
   if(now<intent.dueAt)return {done:false,reason:'work in progress'};
   const role = { cook:'cook',recycle:'salvager',repair_item:'mechanic',garden:'gardener',medical:'medic',engineer:'engineer',build:'builder',guard:'guard' } as const;
-  if(task.phase!=='collect' && task.phase!=='machine' && role[task.kind]!==h.occupation)return {done:false,reason:'occupation no longer assigned'};
+  if(task.phase!=='collect' && task.phase!=='machine' && task.kind!=='medical' && role[task.kind]!==h.occupation)return {done:false,reason:'occupation no longer assigned'};
   const comm=h.community ? hw.communities[h.community] : undefined; if(!comm)return {done:false,reason:'no community permission'};
   const fail=(reason:string)=>{h.lastWorkBlock=reason;intent.blockReason=reason;
     // Materials stay in custody; a paid queue/output claim is rediscovered from
@@ -171,13 +195,15 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
   }
   if(task.patientId) {
     const p=hw.people[task.patientId];
-    if(!p || p.floor!==h.floor || Math.hypot(p.gx-h.gx,p.gy-h.gy)>1.5 || p.state==='DEAD' || p.state==='EVACUATED')return fail('patient moved or cannot be treated');
+    if(!p || p.community!==h.community || p.floor!==h.floor || Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)>1 || p.state!=='DOWNED')return fail('patient moved or cannot be treated');
     const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
-    if(!clearPhysicalLine(r,{x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE},{x:(p.gx-ox+.5)*TILE,y:(p.gy-oy+.5)*TILE},true))return fail('patient obstructed');
+    if(p.floor===(r.veyraFloor??0) && p.gx>=ox && p.gx<ox+WW && p.gy>=oy && p.gy<oy+WH && !clearPhysicalLine(r,{x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE},{x:(p.gx-ox+.5)*TILE,y:(p.gy-oy+.5)*TILE},true))return fail('patient obstructed');
     if(p.state!=='DOWNED' && p.wounds.every(w=>w.treated))return fail('patient already treated');
     const medicine = task.inputs.length===1 && task.inputs[0][1]===1 && ['bandage','herb'].includes(task.inputs[0][0]) ? task.inputs : [];
     if(!medicine.length || !hasAll(r,h.inv.packId,medicine))return fail('medicine missing');
-    for(const [k,q]of medicine)removeItem(r,h.inv.packId,k,q);
+    const dose=pack(r,h).slots.find(s=>s?.key===medicine[0][0] && !s.production);if(!dose)return fail('medicine reserved');
+    if(--dose.qty===0)pack(r,h).slots[pack(r,h).slots.indexOf(dose)]=null;
+    delete p.nextMedicalReviewAt;delete p.lastWorkBlock;
     p.wounds.forEach(w=>{w.treated=true;w.bleeding=false;});p.hp=Math.min(p.maxHp,p.hp+30);p.downedAt=undefined;p.state='IDLE';
     receipt(r,now,'human.treat',`${h.actorId}:${p.actorId}:${medicine.map(m=>m[0]).join('+')}`);
   } else {

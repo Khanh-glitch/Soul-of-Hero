@@ -30,7 +30,7 @@ import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES,
 import { addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
-import { humanCanUseEntity, humanEntityTile, executeHumanWork, planHumanOccupation, type HumanWorkTask } from './human-jobs';
+import { humanCanUseEntity, humanEntityTile, executeHumanWork, dispatchMedicalResponse, planHumanOccupation, type HumanWorkTask } from './human-jobs';
 import { withHumanNavigationRead, humanNavigation } from './human-navigation';
 import { humanShelter, humanShelterContext, type HumanShelterContext } from './human-shelter';
 import { liveItemId, liveItemPer } from './final-item-set';
@@ -197,6 +197,7 @@ export interface HumanRecord {
   guardedEntityId?: string;
   nextPerceptionAt?: number;
   lastTalkAt?: number;
+  nextMedicalReviewAt?: number;
   lastWorkBlock?: string;
   tradeTrustReceipts?: Record<string, number>;
   helpTrustReceipts?: Partial<Record<'food'|'water'|'medical',string>>;
@@ -1049,6 +1050,7 @@ export function downHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
   releaseEvacSeat(r, hw, h, now, 'downed at the berth');
   h.state = 'DOWNED';
   h.downedAt = now;
+  h.nextMedicalReviewAt = now;
   h.motion = undefined;
   h.intent = undefined;
   h.hp = Math.max(1, h.hp);
@@ -2794,6 +2796,8 @@ function performHumanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, now: n
   }
   if(h.harvestJob)h.harvestJob.phase='delivery';
   h.lastCommittedAt = now;
+  // The strike released real cargo, but a crushed worker cannot walk it home.
+  if(h.state==='DOWNED')return true;
   h.state = 'IDLE';
   h.intent = undefined;
   h.nextThinkAt=now;
@@ -2873,6 +2877,14 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
   hw.lastStepAt = now;
   stepPlayerHumanAid(r,hw,now);
   const actors = Object.values(hw.people);
+  for(const patient of actors){
+    if(patient.state!=='DOWNED'||!patient.community||(patient.nextMedicalReviewAt??0)>now)continue;
+    patient.nextMedicalReviewAt=now+30000;
+    if(actors.some(h=>h.intent?.work?.patientId===patient.actorId))continue;
+    const occupied=new Set(actors.filter(h=>!['DEAD','EVACUATED','ON_VESSEL'].includes(h.state)).map(h=>humanCellKey(h.floor,h.gx,h.gy)));
+    const nav=humanNavigation(r,occupied,true);
+    dispatchMedicalResponse(r,hw,patient,now,(h,tx,ty,floor)=>nav.route(h,{tx,ty,floor}));
+  }
   for(const h of actors){if(!h.intent?.target?.startsWith('harvest:'))continue;const m=h.intent.target.match(/^harvest:(\d+),(\d+)$/);if(!m)continue;
     const o=r.sourceMap?.veyra?.originAu,gx=Number(m[1])+(o?o[0]*2:0),gy=Number(m[2])+(o?o[1]*2:0),source=globalSourceAt(r,gx,gy,h.floor,now);
     if(!source){h.intent=undefined;h.motion=undefined;h.state='IDLE';continue;}

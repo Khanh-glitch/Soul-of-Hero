@@ -44,6 +44,19 @@ describe('natural occupation coverage', () => {
         const k = `${who.occupation}:${q.kind}`;
         local[k] = (local[k] ?? 0) + 1; union[k] = (union[k] ?? 0) + 1;
       }
+      // Preserve the original six-hour production sample. Continue the same
+      // Cinder run to include the later natural accident, without injecting a patient.
+      if(layout==='veyra05-cinder'){
+        beginReceiptSink();
+        for(let t=HOURS*60;t<12*60;t++){
+          const now=T0+t*60000;stepHumans(r,hw,now);stepStations(gs,60000,now);
+        }
+        for(const q of endReceiptSink().filter(q=>q.kind==='human.treat')){
+          const [worker,patient]=q.detail.split(':');
+          if(hw.people[worker]?.occupation!=='medic'||!hw.people[patient]?.wounds.some(w=>w.treated))continue;
+          const k='medic:human.treat';local[k]=(local[k]??0)+1;union[k]=(union[k]??0)+1;
+        }
+      }
       console.log('VILLAGE', layout, JSON.stringify(local));
     }
     const ROLES_SEEN = [...new Set(Object.keys(union).map(k => k.split(':')[0]))].sort();
@@ -55,6 +68,7 @@ describe('natural occupation coverage', () => {
     const roles = proven;
     console.log('UNION ROLES', roles.join(','));
     // Roles proven to work on their own. cook and medic are named as the measured gap above.
+    expect(union['medic:human.treat']).toBeGreaterThan(0);
     expect(union['cook:human.work.start']).toBeGreaterThan(0);
     expect(cookedInCustody).toBe(true);
     expect(roles).toEqual(expect.arrayContaining(['builder', 'engineer', 'gardener', 'guard', 'mechanic', 'salvager']));
