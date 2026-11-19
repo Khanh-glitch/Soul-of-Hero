@@ -1802,7 +1802,7 @@ export interface ElderAssaultEvent {
   state: 'APPROACH' | 'CONTACT' | 'PENDING_LOCAL' | 'BLOCKED';
   blockReason?: string;
   contactReceipt?: string;
-  affected?: { humans: number; structures: number; downed: number; skippedLocal: number };
+  affected?: { humans: number; structures: number; downed: number; skippedLocal: number; interposed: number; ammoSpent: number };
 }
 /** Canonical Elder body for one identity — the single source of HP/death (never a second copy). */
 export function elderCanonicalCreature(r: RunState, elderId: string): Creature | undefined {
@@ -1884,12 +1884,45 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
   const canonical = r.creatures.find(m => m.elder?.key === elder.elderId && m.state !== 'dead');
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
-  let humans = 0, structures = 0, downed = 0, skippedLocal = 0;
+  let humans = 0, structures = 0, downed = 0, skippedLocal = 0, interposed = 0, ammoSpent = 0;
+  const inBlast: HumanRecord[] = [];
   for (const h of Object.values(hw.people)) {
-    if (h.state === 'DEAD' || h.state === 'EVACUATED') continue;
+    if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'ON_VESSEL') continue;
     if (h.floor !== 0) continue;
     if (Math.hypot(h.gx - ev.targetGx, h.gy - ev.targetGy) > radius) continue;
     if (canonical && h.gx >= ox && h.gy >= oy && h.gx < ox + WW && h.gy < oy + WH) { skippedLocal++; continue; }
+    inBlast.push(h);
+  }
+  // Guards standing in the blast interpose: each armed guard covers one civilian and pays for it
+  // with their own body and one OWNED ranged round. A guard with no arrow cannot cover anyone.
+  const guards = inBlast.filter(h => h.occupation === 'guard' && h.state !== 'DOWNED' && !!humanWeapon(h))
+    .sort((a, b) => (a.actorId < b.actorId ? -1 : 1));
+  const spentGuards = new Set<string>();
+  for (const civilian of inBlast) {
+    if (civilian.occupation === 'guard' || civilian.state === 'DOWNED') continue;
+    const guard = guards.find(g => !spentGuards.has(g.actorId) && g.hp > 0 && g.state !== 'DOWNED');
+    if (!guard) continue;
+    const weapon = humanWeapon(guard);
+    if (!weapon) continue;
+    const ranged = !!ITEMS[guard.equip.weapon?.key ?? '']?.ranged;
+    if (ranged) {
+      const round = humanPack(r, guard).slots.find(s => s?.key === 'arrow');
+      if (!round || round.qty <= 0) continue;            // no manufactured ammunition
+      round.qty--; ammoSpent++;
+      if (round.qty <= 0) { const i = humanPack(r, guard).slots.indexOf(round); humanPack(r, guard).slots[i] = null; }
+    }
+    spentGuards.add(guard.actorId);
+    interposed++;
+    const wasDownGuard = guard.state === 'DOWNED';
+    if (applyDamage(r, hw, guard, dmg, Math.atan2(ev.targetGy - guard.gy, ev.targetGx - guard.gx), now, 'enemy', `elder:${elder.elderId}`, 0)) {
+      humans++;
+      if (!wasDownGuard && guard.state === 'DOWNED') downed++;
+    }
+    receipt(r, now, 'elder.guard.interpose', `${elder.elderId}:${guard.actorId}:cover:${civilian.actorId}${ranged ? ':1arrow' : ':melee'}`);
+    civilian.lastWorkBlock = 'A guard took the blow that was meant for me.';
+  }
+  for (const h of inBlast) {
+    if (spentGuards.has(h.actorId)) continue;            // already struck while interposing
     const wasDown = h.state === 'DOWNED';
     if (applyDamage(r, hw, h, dmg, Math.atan2(ev.targetGy - h.gy, ev.targetGx - h.gx), now, 'enemy', `elder:${elder.elderId}`, 0)) {
       humans++;
@@ -1910,9 +1943,9 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
     if (e.hp <= 0) { destroyStructure(r, e, now); receipt(r, now, 'elder.structure.destroyed', `${elder.elderId}:${e.id}`); }
     structures++;
   }
-  ev.affected = { humans, structures, downed, skippedLocal };
+  ev.affected = { humans, structures, downed, skippedLocal, interposed, ammoSpent };
   ev.contactReceipt = `elder.contact:${elder.elderId}:${ev.wave}:${Math.round(now)}:${humans}h/${structures}s`;
-  receipt(r, now, 'elder.contact', `${elder.elderId}:wave${ev.wave}:${ev.targetPoi ?? ''}:${humans}hurt/${downed}downed/${structures}structures/${skippedLocal}local`);
+  receipt(r, now, 'elder.contact', `${elder.elderId}:wave${ev.wave}:${ev.targetPoi ?? ''}:${humans}hurt/${downed}downed/${structures}structures/${interposed}interposed/${ammoSpent}ammo/${skippedLocal}local`);
   if (humans > 0 || structures > 0) pushLog(r, now, `${def?.name ?? elder.elderId} strikes ${ev.targetPoi ?? 'the settlement'}.`, 'red');
 }
 

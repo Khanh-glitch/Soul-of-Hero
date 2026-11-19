@@ -870,7 +870,7 @@ export function validate(raw: any): GameState | null {
           if (!obj(ev) || typeof ev.id !== 'string' || !ev.id || ev.elderId !== eid || !integer(ev.wave)) return null;
           if (!['APPROACH', 'CONTACT', 'PENDING_LOCAL', 'BLOCKED'].includes(ev.state)) return null;
           if (!finite(ev.launchedAt) || !finite(ev.arriveAt) || !finite(ev.targetGx) || !finite(ev.targetGy)) return null;
-          if (ev.affected !== undefined && (!obj(ev.affected) || ![ev.affected.humans, ev.affected.structures, ev.affected.downed, ev.affected.skippedLocal].every(integer))) return null;
+          if (ev.affected !== undefined && (!obj(ev.affected) || ![ev.affected.humans, ev.affected.structures, ev.affected.downed, ev.affected.skippedLocal, ev.affected.interposed, ev.affected.ammoSpent].every(integer))) return null;
         }
       }
     }

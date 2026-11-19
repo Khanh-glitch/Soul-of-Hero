@@ -16,14 +16,14 @@
  */
 import { describe, expect, it } from 'vitest';
 import { HOUR, WW, type GameState } from '../src/game/core';
-import { newGame, startRun } from '../src/game/engine';
+import { newGame, startRun, addStack, mkStack } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
 import { auToTile, windowAround } from '../src/veyra05/frame';
 import { T0 } from './helpers/g1b-kit';
 import {
   advanceElderPressure, defeatElder, elderCanonicalCreature, elderCoverage,
-  finalizeHumanOutcomes, type ElderAssault,
+  finalizeHumanOutcomes, humanPack, type ElderAssault,
 } from '../src/game/humanworld';
 
 function runAt(ax = 921, ay = 259, seed = 7606): GameState {
@@ -139,6 +139,35 @@ describe('global six-Elder assault (NOT RUN — authored for the post-implementa
         }
       }
     }
+  });
+
+  it('an armed guard interposes for one civilian and spends exactly one owned round', () => {
+    const gs = runAt();
+    const r = gs.run!; const hw = r.humanWorld!;
+    const e = assault(gs);
+    atHour(gs, 313);
+    const ev = (e.events ?? []).find(x => x.state === 'APPROACH');
+    if (!ev) return;
+    const people = Object.values(hw.people).filter(h => h.state !== 'DEAD' && h.floor === 0 && h.state !== 'ON_VESSEL');
+    // everyone else is out of the blast so the counts are exact
+    for (const h of people.slice(2)) { h.state = 'IDLE'; h.gx = ev.targetGx + 40; h.gy = ev.targetGy + 40; }
+    const guard = people[0], civ = people[1];
+    guard.occupation = 'guard'; guard.state = 'IDLE'; guard.gx = ev.targetGx; guard.gy = ev.targetGy; guard.hp = guard.maxHp; guard.equip.weapon = null;
+    civ.occupation = 'salvager'; civ.state = 'IDLE'; civ.gx = ev.targetGx + 1; civ.gy = ev.targetGy; civ.hp = civ.maxHp;
+    // A real ranged weapon and exactly one owned round in the guard's OWN pack.
+    guard.equip.weapon = { uid: 'qa-bow', key: 'bow', qty: 1 } as any;
+    addStack(r, humanPack(r, guard).id, mkStack(r, 'arrow', 1));
+    const before = civ.hp;
+    advanceElderPressure(r, hw, ev.arriveAt);
+    expect(ev.state).toBe('CONTACT');
+    expect(ev.affected?.interposed).toBe(1);
+    expect(ev.affected?.ammoSpent).toBe(1);
+    expect(civ.hp).toBe(before);                                  // the covered civilian is unhurt
+    expect(guard.hp < guard.maxHp || guard.state === 'DOWNED').toBe(true);
+    expect(humanPack(r, guard).slots.some(x => x?.key === 'arrow')).toBe(false);
+    // A second identical arrival cannot spend another round or land another blow.
+    advanceElderPressure(r, hw, ev.arriveAt);
+    expect(ev.affected?.ammoSpent).toBe(1);
   });
 
   it('certifies SURVIVED_ON_ISLAND only at h336 with full coverage, and UNRESOLVED otherwise', () => {
