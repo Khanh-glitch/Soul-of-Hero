@@ -105,6 +105,13 @@ export interface HumanIntent {
   commitReceipt?: string;
   blockReason?: string;
 }
+export interface HumanThreatCoverage {
+  waves: number;        // assault waves that reached this body's settlement
+  hit: number;          // strikes that actually damaged this body
+  guarded: number;      // strikes a guard took on this body's behalf
+  lastThreatAt?: number;
+  lastWaveId?: string;
+}
 export interface HumanIncident {
   id: string;
   kind: 'assault' | 'theft' | 'robbery' | 'murder' | 'witness' | 'rescue' | 'trade';
@@ -191,6 +198,9 @@ export interface HumanRecord {
   tradeTrustReceipts?: Record<string, number>;
   helpTrustReceipts?: Partial<Record<'food'|'water'|'medical',string>>;
   confrontationAttempt?: { scene: string; at: number; attempts: number; demand: string; reaction: string; message: string };
+  /** Threat-coverage evidence: what this body actually lived through during the final assault
+   *  interval. Presence here never implies survival; it records reached threats and who absorbed them. */
+  threat?: HumanThreatCoverage;
   /** Physical seat on an operating evacuation service. Presence here is EVIDENCE of boarding,
    *  never an outcome: the human is still alive, still on this run's ledger and still carries
    *  their own pack until a confirmed arrival ashore. */
@@ -1876,7 +1886,7 @@ function launchElderWave(r: RunState, hw: HumanWorld, elder: ElderAssault, now: 
 }
 
 /** Resolve one arrival: real bodies, real structures, real receipts, one time only. */
-function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, ev: ElderAssaultEvent, now: number): void {
+function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, ev: ElderAssaultEvent, now: number, onVolley?: (elderId: string, dmg: number, now: number, guardIds: string[]) => void): void {
   ev.state = 'CONTACT';
   elder.gx = ev.targetGx; elder.gy = ev.targetGy; elder.lastAttackAt = now;
   const def = PRIMORDIAL_ELDERS[elder.elderId];
@@ -1896,6 +1906,13 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
     if (canonical && h.gx >= ox && h.gy >= oy && h.gx < ox + WW && h.gy < oy + WH) { skippedLocal++; continue; }
     inBlast.push(h);
   }
+  // Coverage evidence is stamped for every body the wave actually reached.
+  for (const h of inBlast) {
+    const cov = (h.threat ??= { waves: 0, hit: 0, guarded: 0 });
+    cov.waves++; cov.lastThreatAt = now; cov.lastWaveId = ev.id;
+  }
+  let volleyDmg = 0;
+  const volleyGuards: string[] = [];
   // Guards standing in the blast interpose: each armed guard covers one civilian and pays for it
   // with their own body and one OWNED ranged round. A guard with no arrow cannot cover anyone.
   const guards = inBlast.filter(h => h.occupation === 'guard' && h.state !== 'DOWNED' && !!humanWeapon(h))
@@ -1916,9 +1933,12 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
     }
     spentGuards.add(guard.actorId);
     interposed++;
+    if (ranged) { volleyDmg += weapon.dmg * proficiencyMul(guard.combatProficiency); volleyGuards.push(guard.actorId); }
+    (civilian.threat ??= { waves: 1, hit: 0, guarded: 0 }).guarded++;
     const wasDownGuard = guard.state === 'DOWNED';
     if (applyDamage(r, hw, guard, dmg, Math.atan2(ev.targetGy - guard.gy, ev.targetGx - guard.gx), now, 'enemy', `elder:${elder.elderId}`, 0)) {
       humans++;
+      (guard.threat ??= { waves: 1, hit: 0, guarded: 0 }).hit++;
       if (!wasDownGuard && guard.state === 'DOWNED') downed++;
     }
     receipt(r, now, 'elder.guard.interpose', `${elder.elderId}:${guard.actorId}:cover:${civilian.actorId}${ranged ? ':1arrow' : ':melee'}`);
@@ -1929,8 +1949,15 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
     const wasDown = h.state === 'DOWNED';
     if (applyDamage(r, hw, h, dmg, Math.atan2(ev.targetGy - h.gy, ev.targetGx - h.gx), now, 'enemy', `elder:${elder.elderId}`, 0)) {
       humans++;
+      (h.threat ??= { waves: 1, hit: 0, guarded: 0 }).hit++;
       if (!wasDown && h.state === 'DOWNED') downed++;
     }
+  }
+  // Guard volleys are real ranged attacks by real armed bodies; the canonical Elder body and its
+  // canonical death path stay the property of the engine (see sim.ts), never a second HP table.
+  if (volleyGuards.length && onVolley) {
+    onVolley(elder.elderId, Math.round(volleyDmg), now, volleyGuards);
+    receipt(r, now, 'elder.volley', `${elder.elderId}:${volleyGuards.length}guards:${Math.round(volleyDmg)}dmg:${volleyGuards.join(',')}`);
   }
   const impacted: Entity[] = [];
   for (const e of [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities ?? {})]) {
@@ -1954,7 +1981,7 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
 
 /** Advance Elder pressure: awakening at the canonical hour, timed approach waves to h336, real
  *  contact, and defeat driven by the canonical body — never a second Elder health table. */
-export function advanceElderPressure(r: RunState, hw: HumanWorld, now: number): void {
+export function advanceElderPressure(r: RunState, hw: HumanWorld, now: number, onVolley?: (elderId: string, dmg: number, now: number, guardIds: string[]) => void): void {
   const hours = runHours(r, now);
   const maxHours = BAL.run.maxRunHours;
   const awaken = elderAwakenHour();
@@ -1973,7 +2000,7 @@ export function advanceElderPressure(r: RunState, hw: HumanWorld, now: number): 
     if (elder.awakenedAt === undefined || hours >= maxHours) continue;
     // Resolve every arrival that is due, at its own absolute instant (idempotent).
     for (const ev of elder.events ?? []) {
-      if (ev.state === 'APPROACH' && now >= ev.arriveAt) resolveElderContact(r, hw, elder, ev, Math.max(now, ev.arriveAt));
+      if (ev.state === 'APPROACH' && now >= ev.arriveAt) resolveElderContact(r, hw, elder, ev, Math.max(now, ev.arriveAt), onVolley);
     }
     // One wave in flight per Elder; a defeated Elder never launches again.
     const inFlight = (elder.events ?? []).some(ev => ev.state === 'APPROACH');
@@ -2049,7 +2076,8 @@ export function finalizeHumanOutcomes(r: RunState, hw: HumanWorld, now: number):
       // Every scheduled assault wave was resolved (contact or recorded unreachable) by the final
       // instant, and the run actually reached h336: this body is proven to have survived it.
       h.outcome = 'SURVIVED_ON_ISLAND'; summary.survived++;
-      receipt(r, now, 'human.survive', `${h.actorId}:h336:${coverage.events}events`);
+      // The receipt carries what this body actually lived through, not a blanket "safe".
+      receipt(r, now, 'human.survive', `${h.actorId}:h336:${coverage.events}events:${h.threat?.waves ?? 0}waves/${h.threat?.hit ?? 0}hit/${h.threat?.guarded ?? 0}guarded`);
     }
     else {
       // Absence of damage is NOT proof of surviving the final assault interval.

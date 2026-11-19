@@ -775,6 +775,7 @@ export function validate(raw: any): GameState | null {
     for (const h of Object.values(hw.people ?? {}) as any[]) {
       if (!h || typeof h.actorId !== 'string' || !h.actorId || typeof h.sourceId !== 'string' || !h.sourceId) return null;
       if (typeof h.inv?.packId !== 'string' || typeof h.inv?.cartId !== 'string') return null;
+      if (h.threat !== undefined && (!obj(h.threat) || ![h.threat.waves, h.threat.hit, h.threat.guarded].every(integer))) return null;
       // Embedded equipment UIDs must be unique across the run (no duplicate claimant).
       for (const slot of ['weapon', 'body', 'head', 'legs', 'feet'] as const) {
         const st = h.equip?.[slot]; if (st && typeof st.uid === 'string' && st.uid) {

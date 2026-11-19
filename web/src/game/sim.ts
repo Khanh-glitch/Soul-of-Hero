@@ -20,7 +20,7 @@ import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
 import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
-import { tickNeeds, advanceElderPressure, advanceEvacuation, playerAtSea, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition } from './humanworld';
+import { tickNeeds, advanceElderPressure, advanceEvacuation, playerAtSea, elderCanonicalCreature, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition } from './humanworld';
 import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, withRunEntityRead, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
@@ -1569,7 +1569,15 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
     if (r.humanWorld) {
       tickNeeds(r, r.humanWorld, t);
-      advanceElderPressure(r, r.humanWorld, t);
+      advanceElderPressure(r, r.humanWorld, t, (elderId, dmg, at, guardIds) => {
+        // Guard volleys land on the CANONICAL Elder body through the canonical death path. This
+        // adds no second health table: it is one more attacker against the same creature.
+        const canonical = elderCanonicalCreature(r, elderId);
+        if (!canonical || canonical.state === 'dead' || !(dmg > 0)) return;
+        canonical.hp -= Math.round(dmg);
+        receipt(r, at, 'elder.wounded', `${elderId}:${Math.round(dmg)}:hp${Math.max(0, Math.round(canonical.hp))}:${guardIds.join(',')}`);
+        if (canonical.hp <= 0) killCreature(gs, canonical, at);
+      });
       const evac = advanceEvacuation(r, r.humanWorld, t);
       // A confirmed arrival ashore is the only event that ends the player's run by sea; it stops
       // this settlement slice so no later slice can act after the run is finalized.
