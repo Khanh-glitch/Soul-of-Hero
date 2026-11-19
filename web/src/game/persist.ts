@@ -835,6 +835,15 @@ export function validate(raw: any): GameState | null {
       if (trip.arriveAt !== undefined && !finite(trip.arriveAt)) return null;
       const manifest = trip.manifest ?? [];
       if (!Array.isArray(manifest) || manifest.length > trip.capacity) return null;
+      if(trip.vessel!==undefined){
+        const v=trip.vessel;
+        if(!obj(v)||typeof v.holdId!=='string'||r.custody[v.holdId]?.kind!=='bag'||r.custody[v.holdId].origin||ownedContainers.has(v.holdId)||!integer(v.hull)||v.hull>100)return null;
+        ownedContainers.add(v.holdId);
+        if(v.stranded!==undefined && (v.stranded!==true || trip.phase!=='FAILED'))return null;
+        if(trip.phase==='IN_TRANSIT'||trip.phase==='BERTHED'&&v.helm!==undefined||v.stranded){
+          if(!finite(v.wearAt)||v.wearAt<trip.departAt||v.wearAt>Math.max(trip.arriveAt??0,trip.dockUntil??0)||!manifest.some((p:any)=>p?.actorId===v.helm))return null;
+        }else if(v.helm!==undefined||v.wearAt!==undefined)return null;
+      }
       const seats = new Set<number>();
       for (const p of manifest as any[]) {
         if (!obj(p) || typeof p.actorId !== 'string' || !p.actorId) return null;

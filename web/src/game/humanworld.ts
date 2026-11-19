@@ -282,6 +282,7 @@ export interface EvacTrip {
   arrivalReceipt?: string;
   playerAboard?: boolean;
   failureReason?: string;
+  vessel?: { holdId:string; hull:number; helm?:string; wearAt?:number; stranded?:boolean };
 }
 export interface ElderAssault {
   elderId: string;            // Surtur/Typhon/Aion/Atlas/Argus/Anubis
@@ -384,7 +385,8 @@ export function seedEvacTrips(hw: HumanWorld, positions: Record<string, [number,
   const seats = evacSchedule().seats;
   for (const site of EVAC_SITES) {
     const tripId = `evac:${site}`;
-    const [gx, gy] = positions[site] ?? [0, 0];
+    if(!positions[site])continue;
+    const [gx, gy] = positions[site];
     hw.evacuation[tripId] = {
       tripId, site, capacity: seats, siteGx: gx, siteGy: gy, boarded: [], departed: false,
       phase: 'STAGING', round: 0, manifest: [], departures: [],
@@ -638,7 +640,17 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
     const store = mkContainer(r, 'bag', 10);
     store.origin = { authority: 'REGIONAL_HUMAN_ECONOMY', sourceId: `regional-human-economy:${site.id}` };
     const stock = communityStock(cls, site.rooms);
-    for (const [k, q] of Object.entries(stock)) addItem(r, store.id, k, q);
+    // At genesis the berth's regional allocation is stowed in two places.
+    // Rowing/sailing consumes travel rations, not anonymous fuel. No load path
+    // allocates a hull, a container or a missing ration to an older run.
+    const trip=hw.evacuation[`evac:${site.id}`];
+    if(trip){
+      const hold=mkContainer(r,'bag',6);trip.vessel={holdId:hold.id,hull:100};
+      for(const [key,limit] of [['berries',4],['water_flask',1],['spares',2]] as const){
+        const qty=Math.min(limit,stock[key]??0);if(qty){addItem(r,hold.id,key,qty);stock[key]-=qty;}
+      }
+    }
+    for (const [k, q] of Object.entries(stock)) if(q>0)addItem(r, store.id, k, q);
     const comm: Community = {
       id: communityId, poi: site.id, class: cls, homeBeds: [],
       waterSources: [store.id],  // physical container custody is the only stock authority
@@ -1018,7 +1030,7 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
   if (h.state === 'DEAD' || h.state === 'EVACUATED') return false;
   // A body aboard a vessel at sea is out of reach of island weapons. While berthed they are
   // still a physical target at the quay (no invulnerability is granted by boarding alone).
-  if (h.transit) { const trip = hw.evacuation[h.transit.tripId]; if (trip && trip.phase === 'IN_TRANSIT') return false; }
+  if (h.transit) { const trip = hw.evacuation[h.transit.tripId]; if (trip && (trip.phase === 'IN_TRANSIT'||trip.phase==='BERTHED'&&trip.vessel?.helm||trip.vessel?.stranded)) return false; }
   const activeFloor = r.veyraFloor ?? 0;
   const sourceFloor = attackerFloor ?? activeFloor;
   if (h.floor !== sourceFloor && source !== 'hazard') return false;
@@ -1682,7 +1694,7 @@ export function leaveEvacBerth(r: RunState, hw: HumanWorld, tripId: string, now:
   const trip = hw.evacuation[tripId];
   if (!trip) return { ok: false, reason: 'no such service' };
   ensureEvacPhase(r, trip, now);
-  if (trip.phase === 'IN_TRANSIT') return { ok: false, reason: 'The vessel is at sea.' };
+  if (trip.phase === 'IN_TRANSIT'||trip.vessel?.stranded) return { ok: false, reason: 'The vessel is at sea.' };
   const manifest = trip.manifest ?? [];
   const entry = manifest.find(p => p.actorId === 'player');
   if (!entry) return { ok: false, reason: 'You are not aboard.' };
@@ -1694,10 +1706,26 @@ export function leaveEvacBerth(r: RunState, hw: HumanWorld, tripId: string, now:
 }
 
 /** Cast off: one manifest, one departure receipt, one real transit duration. */
-function departEvacTrip(r: RunState, trip: EvacTrip, now: number): void {
+function departEvacTrip(r: RunState, hw:HumanWorld, trip: EvacTrip, now: number): boolean {
   const S = evacSchedule();
   const manifest = (trip.manifest ?? []).map(p => ({ ...p }));
   const round = trip.round ?? 1;
+  const vessel=trip.vessel,hold=vessel && r.custody[vessel.holdId];
+  const volunteers=manifest.filter(p=>hw.people[p.actorId]?.occupation==='guard');
+  const helm=[...volunteers,...manifest].find(p=>p.actorId==='player'?trip.playerAboard && !r.player.dead:hw.people[p.actorId]?.state==='ON_VESSEL' && hw.people[p.actorId].transit?.tripId===trip.tripId)?.actorId;
+  const reject=(why:string)=>{failEvacTrip(r,hw,trip.tripId,now,why);return false;};
+  if(!helm || !hold || !vessel)return reject('No physical helm or vessel stores at this berth.');
+  const food=hold.slots.find(s=>s?.key==='berries' && !s.production),water=hold.slots.find(s=>s?.key==='water_flask' && !s.production && (s.charge??0)>0);
+  if(!food||!water)return reject('Not enough rations or drinking water in the hold.');
+  if(vessel.hull<25){
+    const spare=hold.slots.find(s=>s?.key==='spares'&&!s.production);
+    if(!spare || vessel.hull<=0)return reject('Hull unseaworthy; repair material unavailable.');
+    if(--spare.qty===0)hold.slots[hold.slots.indexOf(spare)]=null;vessel.hull+=25;
+    receipt(r,now,'evac.repair',`${trip.tripId}:${helm}:${spare.uid}:${vessel.hull}`);
+  }
+  if(--food.qty===0)hold.slots[hold.slots.indexOf(food)]=null;water.charge!--;
+  vessel.helm=helm;vessel.wearAt=now;
+  receipt(r,now,'evac.provision',`${trip.tripId}:${round}:${helm}:${hold.id}:${food.uid}:${water.uid}`);
   const arriveAt = now + S.transitMs;
   const log: EvacDepartureLog = { round, departAt: now, arriveAt, departedReceipt: `evac.depart:${trip.tripId}:${round}:${Math.round(now)}`, passengers: manifest };
   (trip.departures ??= []).push(log);
@@ -1705,6 +1733,7 @@ function departEvacTrip(r: RunState, trip: EvacTrip, now: number): void {
   trip.departed = true; trip.receipt = log.departedReceipt;
   receipt(r, now, 'evac.depart', `${trip.tripId}:round${round}:${manifest.length}/${trip.capacity}:arrive@${Math.round(arriveAt)}`);
   pushLog(r, now, `An evacuation vessel leaves ${evacSiteName(trip.site)} with ${manifest.length} aboard.`, 'gold');
+  return true;
 }
 
 /** Land the vessel: every passenger still aboard becomes EVACUATED exactly once, at arrival. */
@@ -1712,9 +1741,15 @@ function arriveEvacTrip(r: RunState, hw: HumanWorld, trip: EvacTrip, now: number
   const S = evacSchedule();
   const logs = trip.departures ?? [];
   const log = [...logs].reverse().find(l => l.arrivedAt === undefined);
+  // A guard at the helm can volunteer to bring the ship back. If everybody
+  // disembarks there is no uncrewed return voyage and no more berths here.
+  const v=trip.vessel;
+  const returnPilot=v && log?.passengers.find(p=>p.actorId===v.helm && hw.people[p.actorId]?.occupation==='guard' &&
+    hw.people[p.actorId]?.state==='ON_VESSEL' && log.passengers.length>1 && runHours(r,now+S.returnMs)<S.lastDepartureHour);
   let playerLanded = false;
   if (log) {
     for (const p of log.passengers) {
+      if(returnPilot && p.actorId===returnPilot.actorId)continue;
       if (p.actorId === 'player') { playerLanded = true; continue; }
       const h = hw.people[p.actorId]; if (!h) continue;
       if (h.state === 'EVACUATED' || h.state === 'DEAD') { delete h.transit; continue; }
@@ -1734,10 +1769,12 @@ function arriveEvacTrip(r: RunState, hw: HumanWorld, trip: EvacTrip, now: number
   }
   trip.manifest = []; trip.boarded = []; trip.playerAboard = false; trip.departed = false;
   if (playerLanded) { hw.playerEvacArrivedAt ??= now; hw.playerEvacTripId = trip.tripId; }
+  if(trip.vessel){delete trip.vessel.helm;delete trip.vessel.wearAt;}
   // The vessel steams home empty. A further rotation is lawful only before the last sailing hour.
   const nextOpen = now + S.returnMs;
   trip.round = (trip.round ?? 1) + 1;
-  if (runHours(r, nextOpen) < S.lastDepartureHour) {
+  if ((!v || returnPilot) && runHours(r, nextOpen) < S.lastDepartureHour) {
+    if(v && returnPilot){trip.manifest=[returnPilot];trip.boarded=[returnPilot.actorId];v.helm=returnPilot.actorId;v.wearAt=now;}
     trip.phase = 'BERTHED'; trip.phaseAt = now; trip.dockUntil = nextOpen;
   } else {
     trip.phase = 'SERVICE_ENDED'; trip.phaseAt = now; trip.dockUntil = undefined;
@@ -1766,21 +1803,36 @@ export function advanceEvacuation(r: RunState, hw: HumanWorld, now: number): { p
       if (phase === 'BOARDING') {
         const manifest = trip.manifest!;
         const lastCall = trip.dockUntil !== undefined && now >= trip.dockUntil;
-        if (manifest.length >= trip.capacity) { departEvacTrip(r, trip, now); continue; }
+        if (manifest.length >= trip.capacity) { departEvacTrip(r, hw, trip, now); continue; }
         if (lastCall) {
-          if (manifest.length > 0) { departEvacTrip(r, trip, now); continue; }
+          if (manifest.length > 0) { departEvacTrip(r, hw, trip, now); continue; }
           trip.phase = 'SERVICE_ENDED'; trip.phaseAt = now; trip.dockUntil = undefined;
           receipt(r, now, 'evac.service.end', trip.tripId);
         }
         break;
       }
       if (phase === 'BERTHED') {
+        if(trip.vessel?.helm && trip.vessel.wearAt!==undefined && trip.dockUntil!==undefined){
+          const v=trip.vessel,hours=Math.floor((Math.min(now,trip.dockUntil)-v.wearAt!)/HOUR);
+          if(hours>0){v.hull=Math.max(0,v.hull-hours*4);v.wearAt!+=hours*HOUR;}
+          if(!v.hull){failEvacTrip(r,hw,trip.tripId,now,'Return hull lost at sea');break;}
+        }
         if (trip.dockUntil === undefined || now < trip.dockUntil) break;
+        if(trip.vessel?.helm){
+          const pilot=hw.people[trip.vessel.helm];if(pilot?.transit?.tripId===trip.tripId){delete pilot.transit;pilot.state='IDLE';pilot.nextThinkAt=now;}
+          delete trip.vessel.helm;delete trip.vessel.wearAt;trip.manifest=[];trip.boarded=[];
+        }
         trip.phase = 'BOARDING'; trip.phaseAt = now; trip.dockUntil = evacWindowAt(r, S.lastDepartureHour);
         receipt(r, now, 'evac.berth.open', `${trip.tripId}:round${trip.round}`);
         continue;
       }
       if (phase === 'IN_TRANSIT') {
+        const v=trip.vessel;
+        if(v && v.wearAt!==undefined && trip.arriveAt!==undefined){
+          const hours=Math.floor((Math.min(now,trip.arriveAt)-v.wearAt)/HOUR);
+          if(hours>0){v.hull=Math.max(0,v.hull-hours*4);v.wearAt+=hours*HOUR;}
+          if(!v.hull){failEvacTrip(r,hw,trip.tripId,now,'Hull lost at sea');break;}
+        }
         if (trip.arriveAt === undefined || now < trip.arriveAt) break;
         arriveEvacTrip(r, hw, trip, now);
         continue;
@@ -1796,11 +1848,10 @@ export function departEvac(r: RunState, hw: HumanWorld, tripId: string, now: num
   const trip = hw.evacuation[tripId];
   if (!trip) return { ok: false, reason: 'no such service' };
   ensureEvacPhase(r, trip, now);
-  if (trip.phase !== 'BOARDING' && trip.phase !== 'BERTHED') return { ok: false, reason: 'the vessel is not at the berth' };
+  if (trip.phase !== 'BOARDING') return { ok: false, reason: 'the vessel is not at the berth' };
   if ((trip.manifest ?? []).length === 0) return { ok: false, reason: 'nothing boarded' };
   trip.phase = 'BOARDING';
-  departEvacTrip(r, trip, now);
-  return { ok: true };
+  return departEvacTrip(r, hw, trip, now)?{ok:true}:{ok:false,reason:trip.failureReason};
 }
 
 /** A failed/cancelled voyage releases living passengers at the berth they boarded from.
@@ -1809,6 +1860,12 @@ export function failEvacTrip(r: RunState, hw: HumanWorld, tripId: string, now: n
   const trip = hw.evacuation[tripId];
   if (!trip) return { ok: false, released: 0 };
   ensureEvacPhase(r, trip, now);
+  if(trip.vessel?.stranded)return {ok:false,released:0};
+  if((trip.phase==='IN_TRANSIT'||trip.phase==='BERTHED'&&trip.vessel?.helm) && trip.vessel){
+    // No imaginary tow back to the quay. The failed voyage keeps its manifest.
+    trip.vessel.stranded=true;trip.phase='FAILED';trip.failureReason=reason;trip.phaseAt=now;
+    receipt(r,now,'evac.failed',`${tripId}:at sea:${reason}`);return {ok:true,released:0};
+  }
   let released = 0;
   for (const p of trip.manifest ?? []) {
     if (p.actorId === 'player') { delete hw.playerEvacArrivedAt; trip.playerAboard = false; released++; continue; }
@@ -1851,7 +1908,7 @@ export function nearestEvacTrip(hw: HumanWorld, gx: number, gy: number): EvacTri
 /** True while the player is physically aboard a vessel that is at sea (island input is suspended). */
 export function playerAtSea(r: RunState): boolean {
   const hw = r.humanWorld; if (!hw) return false;
-  for (const trip of Object.values(hw.evacuation)) if (trip.playerAboard && trip.phase === 'IN_TRANSIT') return true;
+  for (const trip of Object.values(hw.evacuation)) if (trip.playerAboard && (trip.phase === 'IN_TRANSIT'||trip.vessel?.stranded)) return true;
   return false;
 }
 
