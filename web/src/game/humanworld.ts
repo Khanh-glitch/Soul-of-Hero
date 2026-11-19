@@ -1398,6 +1398,9 @@ export function resolveOrder(r: RunState, hw: HumanWorld, h: HumanRecord, orderI
     return {result,reason};
   };
   if (['DOWNED','DEAD','EVACUATED'].includes(h.state)) return finish('CANNOT_EXECUTE','incapacitated');
+  // A companion aboard an evacuation vessel is physically at sea (or holding a seat at the quay):
+  // no order can be executed from there, and the honest answer says so.
+  if (h.state === 'ON_VESSEL' || h.transit) return finish('CANNOT_EXECUTE', 'aboard the evacuation vessel');
   if (!h.following) return finish('REFUSE_WITH_REASON','not a companion');
   if (order === 'home' && !h.home) return finish('CANNOT_EXECUTE','no home to return to');
   if (order === 'carry' && humanCart(r,h).slots.every(Boolean)) return finish('CANNOT_EXECUTE','cart full');
