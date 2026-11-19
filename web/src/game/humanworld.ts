@@ -24,7 +24,7 @@ import {countWorldWork} from './world-work';
  */
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
 import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt } from './engine';
+import { addItem, addStack, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import { humanCanUseEntity, humanEntityTile, executeHumanWork, planHumanOccupation, type HumanWorkTask } from './human-jobs';
@@ -276,6 +276,12 @@ export interface ElderAssault {
   routeTargets: { poi: string; gx: number; gy: number; floor: number; at: number }[];
   lastAttackAt?: number;
   defeatedAt?: number;
+  /** Current physical position: changes ONLY at a resolved arrival (no teleport). */
+  gx?: number; gy?: number;
+  /** Absolute instant of the next lawful approach wave. */
+  nextWaveAt?: number;
+  /** Timed approach/contact ledger (one entry per wave). Never a damage multiplier. */
+  events?: ElderAssaultEvent[];
 }
 export interface HumanEvent {
   id: string;
@@ -379,7 +385,7 @@ export function seedElderPressure(
 ): void {
   for (const id of Object.keys(PRIMORDIAL_ELDERS)) {
     const loc = lairs?.[id] ?? { gx: lairGx, gy: lairGy, floor: lairFloor };
-    hw.elderPressure[id] = { elderId: id, alive: true, lairGx: loc.gx, lairGy: loc.gy, lairFloor: loc.floor, routeTargets: [] };
+    hw.elderPressure[id] = { elderId: id, alive: true, lairGx: loc.gx, lairGy: loc.gy, lairFloor: loc.floor, routeTargets: [], gx: loc.gx, gy: loc.gy, events: [] };
   }
 }
 
@@ -1778,29 +1784,199 @@ export function evacBerthStatus(trip: EvacTrip): string {
 }
 
 // ---------------------------------------------------------------------------
-// Elder assault — one global authority per canonical Elder; causal offscreen advance.
+// Elder assault — ONE global authority per canonical Elder; causal offscreen advance.
+// The canonical creature (Creature.elder.key, catalog HP/patterns) is the ONLY health/identity
+// authority. This layer never stores a second Elder HP: it reads the canonical body, launches
+// timed approach waves from the Elder's current physical position, resolves contact with the
+// shared K5 damage law, and cancels only the defeated Elder's own future waves.
 // ---------------------------------------------------------------------------
-/** Advance Elder pressure: h312 awakening, h336 final. A defeated Elder cannot attack later. */
+export interface ElderAssaultEvent {
+  id: string;
+  elderId: string;
+  wave: number;
+  launchedAt: number;
+  fromGx: number; fromGy: number;
+  targetPoi?: string;
+  targetGx: number; targetGy: number;
+  arriveAt: number;
+  state: 'APPROACH' | 'CONTACT' | 'PENDING_LOCAL' | 'BLOCKED';
+  blockReason?: string;
+  contactReceipt?: string;
+  affected?: { humans: number; structures: number; downed: number; skippedLocal: number };
+}
+/** Canonical Elder body for one identity — the single source of HP/death (never a second copy). */
+export function elderCanonicalCreature(r: RunState, elderId: string): Creature | undefined {
+  const hit = r.creatures.find(m => m.elder?.key === elderId);
+  if (hit) return hit;
+  return Object.values(r.veyraOffscreenCreatures ?? {}).find(m => m.elder?.key === elderId);
+}
+/** SOH_PROVISIONAL threat reach: how far a walking Elder can lawfully threaten a settlement.
+ *  Bounded so no Elder "reaches" the whole island, and every corridor is sampled physically. */
+function elderReachTiles(): number { return 64; }
+function elderTravelTilesPerHour(): number { return 6; }
+function elderWaveHours(): number { return 4; }
+function elderImpactTiles(): number { return 8; }
+function elderAwakenHour(): number { return (BAL.run.eldersAwakenDay - 1) * 24; }
+
+/** KNOWN LIMIT (control-tower 07 ledger 2026-11-19): terrain occlusion of an Elder's own
+ *  crossing is NOT modelled yet. Reachability is a bounded physical distance from the Elder's
+ *  CURRENT position, and that position only advances at a resolved arrival, so an unwalkable
+ *  corridor cannot damage anyone today. A real terrain-graph crossing is a next source task, not
+ *  something this function pretends to have solved. */
+function elderTargetInBounds(toGx: number, toGy: number): boolean { return toGx > 0 && toGy > 0 && toGx < WW - 1 && toGy < WH - 1; }
+
+/** Launch one physical approach wave toward the nearest reachable inhabited settlement. */
+function launchElderWave(r: RunState, hw: HumanWorld, elder: ElderAssault, now: number, wave: number, finalAt: number): void {
+  const fromGx = elder.gx ?? elder.lairGx, fromGy = elder.gy ?? elder.lairGy;
+  const reach = elderReachTiles();
+  const candidates = Object.values(hw.communities)
+    .map(c => {
+      const tile = c.storeTile;
+      if (!tile) return null;
+      const living = c.memberIds.filter(id => { const h = hw.people[id]; return h && h.state !== 'DEAD' && h.state !== 'EVACUATED'; });
+      if (!living.length) return null;
+      const d = Math.abs(tile[0] - fromGx) + Math.abs(tile[1] - fromGy);
+      return { poi: c.poi, gx: tile[0], gy: tile[1], d, living: living.length };
+    })
+    .filter((c): c is { poi: string; gx: number; gy: number; d: number; living: number } => !!c && c.d <= reach)
+    .sort((a, b) => a.d - b.d || (a.poi < b.poi ? -1 : 1));
+  const event: ElderAssaultEvent = {
+    id: `elder-ev:${elder.elderId}:${wave}`, elderId: elder.elderId, wave,
+    launchedAt: now, fromGx, fromGy, targetGx: fromGx, targetGy: fromGy,
+    arriveAt: now, state: 'BLOCKED',
+  };
+  const target = candidates.find(c => elderTargetInBounds(c.gx, c.gy));
+  if (!target) {
+    event.blockReason = candidates.length
+      ? 'every reachable settlement is behind terrain this Elder cannot cross'
+      : `no inhabited settlement within ${reach} tiles of its current position`;
+    (elder.events ??= []).push(event);
+    elder.lastAttackAt = undefined; // no contact happened; nothing may look like an attack
+    receipt(r, now, 'elder.assault.blocked', `${elder.elderId}:${wave}:${event.blockReason}`);
+    return;
+  }
+  const distance = Math.max(1, Math.hypot(target.gx - fromGx, target.gy - fromGy));
+  const travelMs = Math.max(HOUR, distance / elderTravelTilesPerHour() * HOUR);
+  if (now + travelMs > finalAt) {
+    // An attack that cannot physically cross before the final hour is never launched: the world
+    // never leaves an unresolvable strike hanging over the ending.
+    event.blockReason = 'no time to cross before the final hour';
+    (elder.events ??= []).push(event);
+    receipt(r, now, 'elder.assault.blocked', `${elder.elderId}:${wave}:${event.blockReason}`);
+    return;
+  }
+  event.state = 'APPROACH';
+  event.targetPoi = target.poi; event.targetGx = target.gx; event.targetGy = target.gy;
+  event.arriveAt = now + travelMs;
+  (elder.events ??= []).push(event);
+  receipt(r, now, 'elder.assault.launch', `${elder.elderId}:${wave}:${target.poi}:arrive@${Math.round(event.arriveAt)}`);
+}
+
+/** Resolve one arrival: real bodies, real structures, real receipts, one time only. */
+function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, ev: ElderAssaultEvent, now: number): void {
+  ev.state = 'CONTACT';
+  elder.gx = ev.targetGx; elder.gy = ev.targetGy; elder.lastAttackAt = now;
+  const def = PRIMORDIAL_ELDERS[elder.elderId];
+  const dmg = def?.dmg ?? 18;
+  const radius = elderImpactTiles();
+  // If the canonical boss body is loaded in the active window, local combat owns the loaded area:
+  // the same swing must not be applied twice to a body the player can see.
+  const canonical = r.creatures.find(m => m.elder?.key === elder.elderId && m.state !== 'dead');
+  const o = r.sourceMap?.veyra?.originAu;
+  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  let humans = 0, structures = 0, downed = 0, skippedLocal = 0;
+  for (const h of Object.values(hw.people)) {
+    if (h.state === 'DEAD' || h.state === 'EVACUATED') continue;
+    if (h.floor !== 0) continue;
+    if (Math.hypot(h.gx - ev.targetGx, h.gy - ev.targetGy) > radius) continue;
+    if (canonical && h.gx >= ox && h.gy >= oy && h.gx < ox + WW && h.gy < oy + WH) { skippedLocal++; continue; }
+    const wasDown = h.state === 'DOWNED';
+    if (applyDamage(r, hw, h, dmg, Math.atan2(ev.targetGy - h.gy, ev.targetGx - h.gx), now, 'enemy', `elder:${elder.elderId}`, 0)) {
+      humans++;
+      if (!wasDown && h.state === 'DOWNED') downed++;
+    }
+  }
+  const impacted: Entity[] = [];
+  for (const e of [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities ?? {})]) {
+    if (e.kind !== 'struct' || e.hp === undefined || e.hp <= 0) continue;
+    if ((e.floor ?? 0) !== 0) continue;
+    if (e.tx === undefined || e.ty === undefined) continue;
+    if (Math.hypot(e.tx - ev.targetGx, e.ty - ev.targetGy) <= radius) impacted.push(e);
+  }
+  for (const e of impacted) {
+    const before = e.hp!;
+    e.hp = Math.max(0, before - dmg * 2);
+    receipt(r, now, 'elder.structure', `${elder.elderId}:${e.id}:${before}->${e.hp}`);
+    if (e.hp <= 0) { destroyStructure(r, e, now); receipt(r, now, 'elder.structure.destroyed', `${elder.elderId}:${e.id}`); }
+    structures++;
+  }
+  ev.affected = { humans, structures, downed, skippedLocal };
+  ev.contactReceipt = `elder.contact:${elder.elderId}:${ev.wave}:${Math.round(now)}:${humans}h/${structures}s`;
+  receipt(r, now, 'elder.contact', `${elder.elderId}:wave${ev.wave}:${ev.targetPoi ?? ''}:${humans}hurt/${downed}downed/${structures}structures/${skippedLocal}local`);
+  if (humans > 0 || structures > 0) pushLog(r, now, `${def?.name ?? elder.elderId} strikes ${ev.targetPoi ?? 'the settlement'}.`, 'red');
+}
+
+/** Advance Elder pressure: awakening at the canonical hour, timed approach waves to h336, real
+ *  contact, and defeat driven by the canonical body — never a second Elder health table. */
 export function advanceElderPressure(r: RunState, hw: HumanWorld, now: number): void {
   const hours = runHours(r, now);
+  const maxHours = BAL.run.maxRunHours;
+  const awaken = elderAwakenHour();
   for (const elder of Object.values(hw.elderPressure)) {
+    const canonical = elderCanonicalCreature(r, elder.elderId);
+    if (elder.alive && !elder.defeatedAt && canonical && canonical.state === 'dead') defeatElder(r, hw, elder.elderId, now);
     if (!elder.alive) continue;
     if (elder.defeatedAt) { elder.alive = false; continue; }
-    if (hours >= 312 && elder.awakenedAt === undefined) {
+    if (hours >= awaken && elder.awakenedAt === undefined) {
       elder.awakenedAt = now;
+      elder.nextWaveAt ??= now;
       receipt(r, now, 'elder.awaken', elder.elderId);
+      const def = PRIMORDIAL_ELDERS[elder.elderId];
+      pushLog(r, now, `${def?.name ?? elder.elderId} rises over ${def?.region ?? 'Veyra'}.`, 'red');
     }
-    // Awakening is not an attack; only physical contact can stamp lastAttackAt.
+    if (elder.awakenedAt === undefined || hours >= maxHours) continue;
+    // Resolve every arrival that is due, at its own absolute instant (idempotent).
+    for (const ev of elder.events ?? []) {
+      if (ev.state === 'APPROACH' && now >= ev.arriveAt) resolveElderContact(r, hw, elder, ev, Math.max(now, ev.arriveAt));
+    }
+    // One wave in flight per Elder; a defeated Elder never launches again.
+    const inFlight = (elder.events ?? []).some(ev => ev.state === 'APPROACH');
+    const nextWaveAt = elder.nextWaveAt ?? now;
+    if (!inFlight && now >= nextWaveAt && hours < maxHours) {
+      const wave = (elder.events ?? []).length + 1;
+      const finalAt = r.startedAt - (r.qaOffset ?? 0) + maxHours * HOUR;
+      launchElderWave(r, hw, elder, now, wave, finalAt);
+      elder.nextWaveAt = now + elderWaveHours() * HOUR;
+    }
   }
 }
 
-/** Mark an Elder defeated. Cancels future events for that source. */
+/** Mark an Elder defeated. Cancels future events for that source only. */
 export function defeatElder(r: RunState, hw: HumanWorld, elderId: string, now: number): void {
   const elder = hw.elderPressure[elderId];
   if (!elder || !elder.alive) return;
   elder.alive = false;
   elder.defeatedAt = now;
-  receipt(r, now, 'elder.defeat', elderId);
+  let cancelled = 0;
+  for (const ev of elder.events ?? []) if (ev.state === 'APPROACH') { ev.state = 'BLOCKED'; ev.blockReason = 'the Elder was destroyed before contact'; cancelled++; }
+  receipt(r, now, 'elder.defeat', `${elderId}:cancelled${cancelled}`);
+  const def = PRIMORDIAL_ELDERS[elderId];
+  pushLog(r, now, `${def?.name ?? elderId} is destroyed. Its threat ends.`, 'gold');
+}
+
+/** Threat-coverage ledger: is every scheduled assault resolved by this instant?
+ *  APPROACH still in flight ⇒ NOT covered (a person alive during an unresolved attack is not
+ *  proven to have survived it). BLOCKED is resolved WITH A REASON and never damages anyone. */
+export function elderCoverage(hw: HumanWorld): { complete: boolean; pending: string[]; events: number } {
+  const pending: string[] = [];
+  let events = 0;
+  for (const elder of Object.values(hw.elderPressure)) {
+    for (const ev of elder.events ?? []) {
+      events++;
+      if (ev.state === 'APPROACH') pending.push(ev.id);
+    }
+  }
+  return { complete: pending.length === 0, pending, events };
 }
 
 // ---------------------------------------------------------------------------
@@ -1812,6 +1988,10 @@ export interface HumanOutcomeSummary { total: number; evacuated: number; survive
  *  SURVIVED_ON_ISLAND requires causal survival evidence through h336; otherwise the outcome stays UNRESOLVED — never a default "everyone survived". */
 export function finalizeHumanOutcomes(r: RunState, hw: HumanWorld, now: number): HumanOutcomeSummary {
   const summary: HumanOutcomeSummary = { total: 0, evacuated: 0, survived: 0, dead: 0, unresolved: 0 };
+  // Survival on the island requires the run to have actually reached the 336-hour wall AND every
+  // assault wave to be resolved. An early end (evacuation/abandon) never certifies those left behind.
+  const atRunEnd = runHours(r, now) >= BAL.run.maxRunHours - 1e-9;
+  const coverage = elderCoverage(hw);
   for (const h of Object.values(hw.people)) {
     summary.total++;
     if (h.outcome) {
@@ -1825,9 +2005,14 @@ export function finalizeHumanOutcomes(r: RunState, hw: HumanWorld, now: number):
     else if (h.state === 'DEAD') { h.outcome = 'DEAD'; summary.dead++; }
     else if (h.state === 'DOWNED') { h.outcome = 'UNRESOLVED'; summary.unresolved++; }
     else if (h.state === 'ON_VESSEL') { h.outcome = 'UNRESOLVED'; summary.unresolved++; }
+    else if (atRunEnd && coverage.complete) {
+      // Every scheduled assault wave was resolved (contact or recorded unreachable) by the final
+      // instant, and the run actually reached h336: this body is proven to have survived it.
+      h.outcome = 'SURVIVED_ON_ISLAND'; summary.survived++;
+      receipt(r, now, 'human.survive', `${h.actorId}:h336:${coverage.events}events`);
+    }
     else {
       // Absence of damage is NOT proof of surviving the final assault interval.
-      // Until the assault authority supplies causal interval coverage, remain unresolved.
       h.outcome = 'UNRESOLVED'; summary.unresolved++;
     }
   }
@@ -1975,6 +2160,12 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
   if(!h.following&&h.state==='IDLE'&&(!h.intent||!!h.intent.work)){
    const due=Math.max(hw.plannerAt??at,h.nextThinkAt??at);dt=Math.min(dt,Math.max(1,due-at));
   }
+ }
+ // An Elder approach arrival or the next lawful wave is a causal instant of the same clock.
+ for(const elder of Object.values(hw.elderPressure ?? {})){
+  if(!elder.alive)continue;
+  for(const ev of elder.events ?? [])if(ev.state==='APPROACH'&&ev.arriveAt>at)dt=Math.min(dt,ev.arriveAt-at);
+  if(elder.awakenedAt!==undefined&&elder.nextWaveAt!==undefined&&elder.nextWaveAt>at)dt=Math.min(dt,elder.nextWaveAt-at);
  }
  // Vessel deadlines are causal instants of the same clock: a berth opening/closing or a voyage
  // arrival must be settled exactly at its own timestamp, including offline.

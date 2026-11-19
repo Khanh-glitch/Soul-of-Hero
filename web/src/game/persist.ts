@@ -854,6 +854,26 @@ export function validate(raw: any): GameState | null {
       if (!obj(body.transit) || typeof body.transit.tripId !== 'string' || !hw.evacuation[body.transit.tripId] || !seated.has(aid)) return null;
     }
     if (hw.playerEvacArrivedAt !== undefined && !finite(hw.playerEvacArrivedAt)) return null;
+    // Elder assault ledger: one entry per canonical Elder id, timed approach/contact records only.
+    // HP, defeat and patterns stay on the canonical Creature; a save cannot carry a second health.
+    if (!obj(hw.elderPressure)) return null;
+    for (const [eid, elder] of Object.entries(hw.elderPressure) as [string, any][]) {
+      if (!obj(elder) || elder.elderId !== eid || typeof elder.alive !== 'boolean') return null;
+      if (!finite(elder.lairGx) || !finite(elder.lairGy) || !integer(elder.lairFloor)) return null;
+      if (elder.gx !== undefined && (!finite(elder.gx) || !finite(elder.gy))) return null;
+      if (elder.awakenedAt !== undefined && !finite(elder.awakenedAt)) return null;
+      if (elder.defeatedAt !== undefined && !finite(elder.defeatedAt)) return null;
+      if (elder.nextWaveAt !== undefined && !finite(elder.nextWaveAt)) return null;
+      if (elder.events !== undefined) {
+        if (!Array.isArray(elder.events)) return null;
+        for (const ev of elder.events as any[]) {
+          if (!obj(ev) || typeof ev.id !== 'string' || !ev.id || ev.elderId !== eid || !integer(ev.wave)) return null;
+          if (!['APPROACH', 'CONTACT', 'PENDING_LOCAL', 'BLOCKED'].includes(ev.state)) return null;
+          if (!finite(ev.launchedAt) || !finite(ev.arriveAt) || !finite(ev.targetGx) || !finite(ev.targetGy)) return null;
+          if (ev.affected !== undefined && (!obj(ev.affected) || ![ev.affected.humans, ev.affected.structures, ev.affected.downed, ev.affected.skippedLocal].every(integer))) return null;
+        }
+      }
+    }
   }
   if (Object.keys(r.custody).some(id => !ownedContainers.has(id))) return null;
   // CAL-01 world_calendar_v1 persistence policy — ONE explicit rule for every stored record:
