@@ -1,6 +1,7 @@
 import {observeRecipeSources,serviceRecipeBoard,recipeBoardDestination,requestedSourceReports,communityFoodDeficit,type FoodRequest,type SourceReport} from './human-procurement';
 import {timedWorldWork} from './world-work';
-import {globalSourceCandidates} from '../veyra05/window';
+import {globalSourceCandidates, globalBaseGeometry} from '../veyra05/window';
+import {isVeyra05Layout} from '../veyra05/scenes';
 import {countWorldWork} from './world-work';
 /**
  * Soul of Hero — THE LAST HUMANITY: authoritative run-local human society.
@@ -1863,12 +1864,23 @@ function elderWaveHours(): number { return 4; }
 function elderImpactTiles(): number { return 8; }
 function elderAwakenHour(): number { return (BAL.run.eldersAwakenDay - 1) * 24; }
 
-/** KNOWN LIMIT (control-tower 07 ledger 2026-11-19): terrain occlusion of an Elder's own
- *  crossing is NOT modelled yet. Reachability is a bounded physical distance from the Elder's
- *  CURRENT position, and that position only advances at a resolved arrival, so an unwalkable
- *  corridor cannot damage anyone today. A real terrain-graph crossing is a next source task, not
- *  something this function pretends to have solved. */
 function elderTargetInBounds(toGx: number, toGy: number): boolean { return toGx > 0 && toGy > 0 && toGx < WW - 1 && toGy < WH - 1; }
+/** An Elder may only strike a settlement it can actually cross to. The corridor is sampled on the
+ *  canonical compiled terrain query (the same geometry the world is built from); unknown geometry
+ *  is treated as NOT crossable, so nothing is fabricated. */
+function elderCrossingOpen(r: RunState, fromGx: number, fromGy: number, toGx: number, toGy: number): boolean {
+  if (!r.sourceMap || !isVeyra05Layout(r.layoutId || '')) return true;   // legacy island: no global geometry
+  const rules = r.sourceMap.rules === 4 ? 4 : 3;
+  const steps = Math.max(1, Math.ceil(Math.max(Math.abs(toGx - fromGx), Math.abs(toGy - fromGy))));
+  for (let i = 1; i < steps; i++) {
+    const t = i / steps;
+    const gx = Math.round(fromGx + (toGx - fromGx) * t), gy = Math.round(fromGy + (toGy - fromGy) * t);
+    if (!elderTargetInBounds(gx, gy)) return false;
+    const cell = globalBaseGeometry(gx, gy, 0, rules);
+    if (!cell || !cell.walkable) return false;
+  }
+  return true;
+}
 
 /** Launch one physical approach wave toward the nearest reachable inhabited settlement. */
 function launchElderWave(r: RunState, hw: HumanWorld, elder: ElderAssault, now: number, wave: number, finalAt: number): void {
@@ -1890,10 +1902,10 @@ function launchElderWave(r: RunState, hw: HumanWorld, elder: ElderAssault, now: 
     launchedAt: now, fromGx, fromGy, targetGx: fromGx, targetGy: fromGy,
     arriveAt: now, state: 'BLOCKED',
   };
-  const target = candidates.find(c => elderTargetInBounds(c.gx, c.gy));
+  const target = candidates.find(c => elderTargetInBounds(c.gx, c.gy) && elderCrossingOpen(r, fromGx, fromGy, c.gx, c.gy));
   if (!target) {
     event.blockReason = candidates.length
-      ? 'every reachable settlement is behind terrain this Elder cannot cross'
+      ? 'every settlement in range is behind terrain this Elder cannot cross'
       : `no inhabited settlement within ${reach} tiles of its current position`;
     (elder.events ??= []).push(event);
     elder.lastAttackAt = undefined; // no contact happened; nothing may look like an attack

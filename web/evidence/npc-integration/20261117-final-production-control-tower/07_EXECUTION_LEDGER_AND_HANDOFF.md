@@ -273,3 +273,14 @@ If any answer indicates mandatory omission, mark PARTIAL and CONTINUE CODE, neve
 **Next autonomous action:** replace the distance-bounded crossing with a canonical terrain-query crossing (refuse unwalkable corridors with a reason, never a fabricated reach), then the natural-input two-route browser campaign.
 **Branch safety:** branch `arena/3bce0158-soul-of-hero`; committed on this branch only.
 **Gate verdict:** SOURCE IMPLEMENTED (position sync + volley gate). ENGINEERING/BROWSER/CREATOR: NOT VERIFIED. PARTIAL.
+
+### 2026-11-19 (sixth package) / Elder crossings use the canonical terrain query
+**Workstream/gate:** END/ELDER §B "do not damage what the source cannot reach" — closes the previous entry's stated defect (distance-only reach).
+**Actual source diff (`humanworld.ts::elderCrossingOpen`, used by `launchElderWave`)** — a candidate settlement is only accepted when the straight corridor from the Elder's CURRENT position is walkable on the canonical compiled geometry (`globalBaseGeometry(gx,gy,0,rules)` — the same query geometry the world is built from), sampled at most one tile apart, bounded by the existing 64-tile reach. Unknown geometry is treated as NOT crossable. Legacy non-Veyra layouts keep their previous behaviour (no global geometry exists there). When no candidate qualifies the wave is recorded `BLOCKED` with `every settlement in range is behind terrain this Elder cannot cross` and deals no damage.
+**Physical receipt path:** wave launch → corridor sampled on canonical terrain → refused/crossable recorded in `elder.assault.blocked` / `elder.assault.launch` → travel time from real distance → arrival contact (unchanged).
+**Cost note:** geometry queries only occur at wave launches (≤ one per Elder per 4 real hours, from h312, one candidate per settlement in range), not per slice or per human. This is a build-time compiler path and its interaction with the still-UNVERIFIED h1/long-run throughput gate is NOT measured.
+**Tests:** no new fixture this package; the existing Elder fixture's BLOCKED branch now exercises this refusal path once qualification begins. **Still NOT RUN.**
+**Remaining defects:** the corridor is a straight-line sample, not a graph search, so a dog-leg route around a wall is refused (conservative, not permissive); deferred canonical positions remain (see fifth package); volleys still abstract away projectile flight.
+**Next autonomous action:** natural-input browser campaign of both rescue routes in one run; in parallel the still-open non-Elder gates (eight-occupation natural completeness, multi-item barter/crime, NPC projectile/Core, 640×360 UX clarity) and the final-SHA qualification pass the Creator deferred until the plan closes.
+**Branch safety:** branch `arena/3bce0158-soul-of-hero`; committed on this branch only.
+**Gate verdict:** SOURCE IMPLEMENTED (crossing law). ENGINEERING/BROWSER/CREATOR: NOT VERIFIED. PARTIAL.
