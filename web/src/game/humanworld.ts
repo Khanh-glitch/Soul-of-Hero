@@ -663,7 +663,7 @@ export function seedPopulation(r: RunState, hw: HumanWorld, sites: { id: string;
     const origin = r.sourceMap?.veyra?.originAu;
     const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
     const lx = storeTile[0] - ox, ly = storeTile[1] - oy;
-    const storeEntity: Entity = { id: storeEntityId, owner:communityId, floor:0, kind: 'bag', x: storeTile[0] * TILE + 8, y: storeTile[1] * TILE + 8, tx: storeTile[0], ty: storeTile[1], c: store.id, label: `${site.name} Community Store`, poi: site.id };
+    const storeEntity: Entity = { id: storeEntityId, owner:communityId, floor:0, kind: 'bag', hp:60,maxHp:60, x: storeTile[0] * TILE + 8, y: storeTile[1] * TILE + 8, tx: storeTile[0], ty: storeTile[1], c: store.id, label: `${site.name} Community Store`, poi: site.id };
     if (lx >= 1 && ly >= 1 && lx < WW - 1 && ly < WH - 1) {
       storeEntity.x = lx * TILE + 8; storeEntity.y = ly * TILE + 8; storeEntity.tx = lx; storeEntity.ty = ly;
       r.entities[storeEntity.id] = storeEntity;
@@ -2177,7 +2177,8 @@ function guardAfterContact(r: RunState, hw: HumanWorld, elder: ElderAssault, ev:
     const have = supplyOf(g, 'arrow');
     if (have >= 6) continue;
     let want = 6 - have;
-    for (const cid of comm?.storeContainers ?? []) {
+    if(!comm || (findRunEntity(r,comm.storeEntityId)?.hp??1)<=0)continue;
+    for (const cid of comm.storeContainers) {
       if (want <= 0) break;
       const c = C(r, cid); if (!c) continue;
       const avail = c.slots.reduce((n, s) => n + (s?.key === 'arrow' ? s.qty : 0), 0);
@@ -2303,16 +2304,23 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
   }
   const impacted: Entity[] = [];
   for (const e of [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities ?? {})]) {
-    if (e.kind !== 'struct' || e.hp === undefined || e.hp <= 0) continue;
+    const isStore=e.kind==='bag' && !!e.owner && hw.communities[e.owner]?.storeEntityId===e.id;
+    if ((!isStore && e.kind!=='struct') || e.hp===undefined || e.hp<=0)continue;
     if ((e.floor ?? 0) !== 0) continue;
     if (e.tx === undefined || e.ty === undefined) continue;
-    if (Math.hypot(e.tx - ev.targetGx, e.ty - ev.targetGy) <= radius) impacted.push(e);
+    const [gx,gy]=humanEntityTile(r,e);
+    if (Math.hypot(gx - ev.targetGx, gy - ev.targetGy) <= radius) impacted.push(e);
   }
   for (const e of impacted) {
     const before = e.hp!;
     e.hp = Math.max(0, before - dmg * 2);
     receipt(r, now, 'elder.structure', `${elder.elderId}:${e.id}:${before}->${e.hp}`);
-    if (e.hp <= 0) { destroyStructure(r, e, now); receipt(r, now, 'elder.structure.destroyed', `${elder.elderId}:${e.id}`); }
+    if(e.hp===0 && e.kind==='bag' && e.owner){
+      // The collapsed store and its contents stay on their original tile. No
+      // remote rerouting of stacks: a builder must reach and brace it first.
+      receipt(r,now,'human.store.collapsed',`${e.owner}:${e.id}`);
+      for(const id of hw.communities[e.owner].memberIds){const h=hw.people[id];if(h?.occupation==='builder')h.nextThinkAt=now;}
+    }else if (e.hp <= 0) { destroyStructure(r, e, now); receipt(r, now, 'elder.structure.destroyed', `${elder.elderId}:${e.id}`); }
     structures++;
   }
   guardAfterContact(r, hw, elder, ev, now, inBlast);
@@ -2820,7 +2828,9 @@ function resumeHarvestJob(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occu
     h.state=route.length?'MOVING':'WORKING';
   }else{
     const comm=h.community?hw.communities[h.community]:undefined,store=comm?.storeEntityId?findRunEntity(r,comm.storeEntityId):undefined;
-    if(!store?.c||!comm?.storeContainers.includes(store.c)||(store.owner&&store.owner!==h.community)||(store.hp??1)<=0){h.lastWorkBlock='Authorized output store unavailable';return;}
+    if(!store?.c||!comm?.storeContainers.includes(store.c)||(store.owner&&store.owner!==h.community)||(store.hp??1)<=0){h.lastWorkBlock='Authorized output store unavailable';
+      if(store?.hp===0 && h.occupation==='builder')planHumanOccupation(r,hw,h,now,(tx,ty,floor)=>humanNavigation(r,occupied,true).route(h,{tx,ty,floor}));
+      return;}
     job.storeId=store.id;
     const [gx,gy]=humanEntityTile(r,store),route=humanNavigation(r,occupied,true).route(h,{tx:gx,ty:gy,floor:store.floor??0});if(!route){if(h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')h.nextThinkAt=now+30000;return;}
     h.lastWorkBlock=undefined;

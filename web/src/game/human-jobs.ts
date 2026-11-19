@@ -22,7 +22,10 @@ export function humanEntityTile(r: RunState, e: Entity): [number, number] {
   return r.entities[e.id] === e ? [ox + (e.tx ?? Math.floor(e.x / TILE)), oy + (e.ty ?? Math.floor(e.y / TILE))] : [e.tx ?? Math.floor(e.x / TILE), e.ty ?? Math.floor(e.y / TILE)];
 }
 export function humanCanUseEntity(r: RunState, h: HumanRecord, e: Entity): boolean {
-  if ((e.floor ?? 0) !== h.floor || (e.hp ?? 1) <= 0) return false;
+  return (e.hp??1)>0 && atWorksite(r,h,e);
+}
+function atWorksite(r:RunState,h:HumanRecord,e:Entity){
+  if ((e.floor ?? 0) !== h.floor) return false;
   const [gx, gy] = humanEntityTile(r, e);
   if (Math.abs(h.gx - gx)+Math.abs(h.gy - gy) > 1) return false;
   if(r.entities[e.id]!==e || h.floor!==(r.veyraFloor??0))return true; // exact cardinal contact, no intermediate cell can hide a wall
@@ -52,7 +55,13 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
   const comm = h.community ? hw.communities[h.community] : undefined; if (!comm) return [];
   const entities = allRunEntities(r).filter(e => (e.hp ?? 1) > 0 && (comm.workStations.includes(e.id) || e.poi === comm.poi && e.owner === comm.id || h.occupation==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)));
   const tasks: HumanWorkTask[] = [], start = (kind: HumanJobKind, e: Entity | undefined, inputs: [string,number][], duration: number): HumanWorkTask => ({kind,entityId:e?.id,inputs,duration,phase:'travel'});
-  const stores = comm.storeContainers.filter(c => r.custody[c]);
+  const warehouse=findRunEntity(r,comm.storeEntityId);
+  const collapsed=warehouse?.hp===0 && warehouse.kind==='bag' && warehouse.owner===comm.id;
+  if(collapsed && h.occupation==='builder'){
+    if(count(r,h.inv.packId,'wood')>=2)tasks.push(start('build',warehouse,[['wood',2]],8000));
+    else h.lastWorkBlock='Collapsed warehouse needs two carried wood for braces.';
+  }
+  const stores = collapsed?[]:comm.storeContainers.filter(c => r.custody[c]);
   const available = (key: string, n: number) => count(r,h.inv.packId,key) + stores.reduce((q,c) => q+count(r,c,key),0) >= n;
   const preparedKeys=new Set((h.knownRecipes??[]).flatMap(k=>RECIPES[k]?[RECIPES[k].out]:[]));
   const prepared=stores.reduce((n,cid)=>n+C(r,cid).slots.reduce((q,s)=>q+(s&&preparedKeys.has(s.key)?s.qty:0),0),0);
@@ -170,7 +179,13 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
     return false;
   }
   if (!['travel','fetch','machine','collect'].includes(task.phase)) return false;
-  const dest=target(r,hw,h,task); if(!dest)return false;
+  const dest=target(r,hw,h,task); if(!dest){
+    // A lost kitchen/patient isn't a destination to retry forever. Paid stock
+    // remains in its real pack/wreck; the next review can take another task.
+    h.lastWorkBlock='Worksite or patient unavailable; keeping carried materials.';
+    receipt(r,now,'human.work.blocked',`${h.actorId}:${h.intent!.intentId}:${h.lastWorkBlock}`);
+    h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000;return false;
+  }
   const path=route(...dest); if(!path)return false;
   h.intent!.route=path; h.intent!.startAt=now; h.intent!.dueAt=now+task.duration;
   h.state=path.length?'MOVING':'WORKING'; return true;
@@ -214,6 +229,14 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
     delete p.nextMedicalReviewAt;delete p.lastWorkBlock;
     p.wounds.forEach(w=>{w.treated=true;w.bleeding=false;});p.hp=Math.min(p.maxHp,p.hp+30);p.downedAt=undefined;p.state='IDLE';
     receipt(r,now,'human.treat',`${h.actorId}:${p.actorId}:${medicine.map(m=>m[0]).join('+')}`);
+  } else if(task.kind==='build' && e?.id===comm.storeEntityId && e?.kind==='bag'){
+    if(e.owner!==comm.id || e.hp!==0 || !e.maxHp || !atWorksite(r,h,e))return fail('warehouse no longer needs bracing or out of reach');
+    if(count(r,h.inv.packId,'wood')<2)return fail('Collapsed warehouse needs two carried wood for braces.');
+    let need=2;const used:{uid:string;qty:number}[]=[];
+    for(const [i,s] of pack(r,h).slots.entries())if(s?.key==='wood' && !s.production && need){
+      const n=Math.min(need,s.qty);need-=n;s.qty-=n;used.push({uid:s.uid,qty:n});if(!s.qty)pack(r,h).slots[i]=null;
+    }
+    e.hp=e.maxHp;receipt(r,now,'human.store.rebuilt',JSON.stringify({workerId:h.actorId,storeId:e.id,inputs:used}));
   } else if(task.kind==='guard' && task.itemUid){
     const claim=h.gameDrop;
     if(!claim || !e?.c || e.kind!=='drop' || e.id!==claim.entityId || !humanCanUseEntity(r,h,e))return fail('carcass moved or inaccessible');
