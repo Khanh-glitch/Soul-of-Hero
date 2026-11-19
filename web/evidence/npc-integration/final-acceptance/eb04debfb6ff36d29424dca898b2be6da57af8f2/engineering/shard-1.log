@@ -112,3 +112,829 @@
  [32m✓[39m tests/b2-perception.test.ts[2m > [22mbounded offline trace consequences[2m > [22mactual spikes can stop the tracker before it reaches the door[32m 87[2mms[22m[39m
  [32m✓[39m tests/b2-perception.test.ts[2m > [22mbounded offline trace consequences[2m > [22mpersists over-cap and previously sighted actors at their unresolved checkpoints[32m 166[2mms[22m[39m
  [32m✓[39m tests/b2-perception.test.ts[2m > [22mbounded offline trace consequences[2m > [22mexpired evidence cannot produce a later impact and hostile instruments at the boundary are discarded[32m 215[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mprojection is an adapter over the existing multigraph, not a second catalog[2m > [22mcovers every runtime item and recipe exactly once
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mprojection is an adapter over the existing multigraph, not a second catalog[2m > [22mkeeps craft depth, station tier, research tier, rarity, acquisition and reachability as separate facts
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mprojection is an adapter over the existing multigraph, not a second catalog[2m > [22mdoes not call an item reachable because a loot table mentions it
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mprojection is an adapter over the existing multigraph, not a second catalog[2m > [22maudit fix: the physical Blueprint is reachable on both layouts
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mprojection is an adapter over the existing multigraph, not a second catalog[2m > [22mtraces sources and consumers from graph edges
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mprojection is an adapter over the existing multigraph, not a second catalog[2m > [22mround 2 removed the fake-complexity cases it was allowed to, and still reports the rest
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mplayer-facing class (Group A, display only)[2m > [22mclassifies every `res` item explicitly and nothing stale
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mplayer-facing class (Group A, display only)[2m > [22mhas exactly one PARTS item, it is uncraftable, and no chip says MATERIAL any more
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mplayer-facing class (Group A, display only)[2m > [22magrees with the graph: SALVAGE/ORE/NATURAL are never crafted, COMPONENT/METAL always are
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mplayer-facing class (Group A, display only)[2m > [22mdescription fixes changed text only
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mdecisions[2m > [22mhas an explicit decision for every hand-written item and none for ids that no longer exist
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mdecisions[2m > [22mafter round 2 nothing is left as an unexecuted RENAME/REDESIGN/MERGE/RETIRE; every non-KEEP row points at a proposal
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mdecisions[2m > [22mproposal recipes are true: implemented ones match the frozen rev-2 ledger before and the live catalog after
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mdecisions[2m > [22mround 2 status: exactly the authorised proposals are live, and nothing else moved
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mdecisions[2m > [22mround 2 findings are computed from the live game and say what they measured
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mdecisions[2m > [22mno proposed recipe makes the research currency craftable
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mdecisions[2m > [22mcrosswalks every Last Island item id in the atlas, one row each
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mgenerated artifacts come from one data object and have not drifted[2m > [22mmanifest has the required columns in the required order, one row per item
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mgenerated artifacts come from one data object and have not drifted[2m > [22mthe HTML embeds exactly the data the CSV and appendix were built from
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mgenerated artifacts come from one data object and have not drifted[2m > [22mcommitted files equal a fresh generation
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mROUND 3 — P8 world source repair is handed off, not papered over[2m > [22mVEYRA_UNSOURCED_INPUTS is exactly the projection: recipe inputs with no Veyra source (shrinks when the world is fixed)
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mROUND 3 — P8 world source repair is handed off, not papered over[2m > [22mVeyra has no keycard door, so the missing Keycard source is correct by design
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mROUND 3 — P8 world source repair is handed off, not papered over[2m > [22mDemon Core and Spirit Essence: drop route and own-recipe route are separate facts
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mROUND 3 — P8 world source repair is handed off, not papered over[2m > [22mhanded-off proposals name a work order that exists in the repo
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mACCEPTANCE TRACKER — a handoff is never counted as a fix[2m > [22muses exactly the three Control Tower states and unique ids
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mACCEPTANCE TRACKER — a handoff is never counted as a fix[2m > [22ma verified row names a PR and a full SHA; a row without a SHA is not verified
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mACCEPTANCE TRACKER — a handoff is never counted as a fix[2m > [22mevery HANDED_OFF proposal is tracked, is not owned by Item V2, and is never verified
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mACCEPTANCE TRACKER — a handoff is never counted as a fix[2m > [22ma handoff counts as acknowledged only with a named PR and a receipt on that PR; unowned work is blocked
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mACCEPTANCE TRACKER — a handoff is never counted as a fix[2m > [22mevery proposal has a tracker row, and a partly implemented one also carries its unfinished half
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mE2E QUARANTINE — unverified browser drivers are named, not silently trusted[2m > [22mevery quarantined driver exists, is marked in its first line, and records where it stops on base and head
+ [2m[90m↓[39m[22m tests/item-ontology-v2.test.ts[2m > [22mE2E QUARANTINE — unverified browser drivers are named, not silently trusted[2m > [22mno driver carries the marker without being listed, and no verified driver is quarantined
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — offline consequence of a real player action (NATURAL world, shipping_fresh)[2m > [22m[NATURAL] real footsteps emit a connected trail into the homestead — before any settlement[33m 1364[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — offline consequence of a real player action (NATURAL world, shipping_fresh)[2m > [22m[NATURAL] a trail discovered after logout leads the boar back home: it tracks the path and batters the door[33m 420[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — offline consequence of a real player action (NATURAL world, shipping_fresh)[2m > [22m[NATURAL] powered, supplied, wired turret fires during settlement — real arrows, real order: bash (prov) precedes fire[32m 269[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — offline consequence of a real player action (NATURAL world, shipping_fresh)[2m > [22m[CONTROL] armed and supplied but UNPOWERED — the turret never fires; the bash is left to the door[33m 399[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — offline consequence of a real player action (NATURAL world, shipping_fresh)[2m > [22m[CONTROL] armed and powered but ARROWLESS — the turret never fires; arrows that do not exist cannot be spent[32m 290[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — offline consequence of a real player action (NATURAL world, shipping_fresh)[2m > [22m[CONTROL] armed, powered, supplied but SIGHT-BLOCKED — no shot through a wall (lawful LOS required)[32m 254[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — offline consequence of a real player action (NATURAL world, shipping_fresh)[2m > [22m[CONTROL] armed, powered, supplied but OUT OF RANGE — no shot beyond 96 px (the lawful engagement circle)[32m 274[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — offline consequence of a real player action (NATURAL world, shipping_fresh)[2m > [22m[CONTROL] no trail anywhere — nothing discovers, nothing bashed, nothing fired (true negative)[32m 92[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — offline consequence of a real player action (NATURAL world, shipping_fresh)[2m > [22m[CONTROL] the trail is rained away before logout — a lost scent dead-ends (no pursuit, no bash)[32m 150[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — settlement integrity across time partitioning, reload and replay (NATURAL scenario)[2m > [22ma single 6-minute settlement equals two 3-minute settlements (time-partition determinism)[33m 407[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — settlement integrity across time partitioning, reload and replay (NATURAL scenario)[2m > [22msave → reload mid-absence → resume settles to the identical outcome (no double damage, no double ammo)[33m 417[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — settlement integrity across time partitioning, reload and replay (NATURAL scenario)[2m > [22msettle() replayed with the same endpoint is a no-op — no duplicate damage, arrows or deaths[33m 322[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — settlement integrity across time partitioning, reload and replay (NATURAL scenario)[2m > [22m[NATURAL] the same lawful outcome offline and live-online: bashes happen, prov precedes fire, arrows are spent in both[33m 698[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — aftermath: the consequence survives and must be answered to (NATURAL scenario)[2m > [22mthe battered door can be repaired with real materials (online law via repairStructure), debited once[32m 244[2mms[22m[39m
+ [32m✓[39m tests/mec01-r5-offline-defense.test.ts[2m > [22mMEC-01 R5 — aftermath: the consequence survives and must be answered to (NATURAL scenario)[2m > [22mdestroyed wreckage is accounted exactly once — repair refuses a structure that is already gone[32m 230[2mms[22m[39m
+ [32m✓[39m tests/pa1-rev1-queued-jobs.test.ts[2m > [22mPA1 P0b — the pre-cutover save keeps its own rules[2m > [22mis a real capture from before the cutover, not a manufactured revision[32m 3[2mms[22m[39m
+ [32m✓[39m tests/pa1-rev1-queued-jobs.test.ts[2m > [22mPA1 P0b — the pre-cutover save keeps its own rules[2m > [22mthe paid inputs ARE the retired bill of materials, and the live table is different[32m 2[2mms[22m[39m
+ [32m✓[39m tests/pa1-rev1-queued-jobs.test.ts[2m > [22mPA1 P0b — the pre-cutover save keeps its own rules[2m > [22mloads with three un-stamped jobs and the exact stacks the save reserved[33m 1271[2mms[22m[39m
+ [32m✓[39m tests/pa1-rev1-queued-jobs.test.ts[2m > [22mPA1 P0b — the pre-cutover save keeps its own rules[2m > [22mqueued work finishes at the price it paid, including the retired formula[32m 95[2mms[22m[39m
+ [32m✓[39m tests/pa1-rev1-queued-jobs.test.ts[2m > [22mPA1 P0b — the pre-cutover save keeps its own rules[2m > [22mthe retired formula pays out old work but never starts new work, and says so[32m 37[2mms[22m[39m
+ [32m✓[39m tests/pa1-rev1-queued-jobs.test.ts[2m > [22mPA1 P0b — the pre-cutover save keeps its own rules[2m > [22mnew work after the load is priced by the approved revision, and carries the stamp[32m 65[2mms[22m[39m
+ [32m✓[39m tests/pa1-rev1-queued-jobs.test.ts[2m > [22mPA1 P0b — the pre-cutover save keeps its own rules[2m > [22ma cancelled revision-1 job returns the stacks it actually paid, not a revision-2 refund[32m 21[2mms[22m[39m
+ [32m✓[39m tests/pa1-rev1-queued-jobs.test.ts[2m > [22mPA1 P0b — the pre-cutover save keeps its own rules[2m > [22mrolling an old save back to its earlier copy keeps unfinished work unfinished[32m 18[2mms[22m[39m
+ [32m✓[39m tests/pa1-rev1-queued-jobs.test.ts[2m > [22mPA1 P0b — the pre-cutover save keeps its own rules[2m > [22mthe pre-cutover engine and this one agree on the same window[32m 7[2mms[22m[39m
+ [32m✓[39m tests/pa1-rev1-queued-jobs.test.ts[2m > [22mPA1 P0b — the pre-cutover save keeps its own rules[2m > [22mtwo restarts mid-flight leave the same unfinished work, not a re-priced one[32m 18[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 contract[2m > [22mall seven Cores have a spec; a newly minted Core is Lv1, 300/300, no magazine; approved repair and ammunition[33m 2570[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 contract[2m > [22mthe reload intent is gone: nothing can be loaded into a Core[33m 362[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 casting[2m > [22mrefuses for free: no ammunition, locked skill, cooldown, worn out — and charges ammo + wear + cooldown together when accepted[33m 365[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 casting[2m > [22mcooldown belongs to the physical Core: a second Core of the same kind is ready[33m 313[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 casting[2m > [22mthrough the real sim: holding LMB with a Lv1 Core spends Basic Energy and wears the Core; with none it does nothing[33m 2251[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 casting[2m > [22mthrough the real sim: Q on a Lv1 Core is refused without spending; on Lv2 it spends one Refined Energy[33m 992[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 upgrade and repair[2m > [22mupgrade keeps the UID, needs the right Workbench level and the whole bill, takes real time, and survives save/load[33m 461[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 upgrade and repair[2m > [22mrepair adds 75 up to 300 for the tier bill, at any owned Workbench, and never overfills[33m 361[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 save migration[2m > [22ma pre-V2 Core loads as Lv3 300/300 with the same UID and cooldowns; its loaded energy comes back as items exactly once, never as a magazine[33m 373[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 save migration[2m > [22ma legacy Core lying in another container keeps its debt there and is paid only once it is in the pack[32m 279[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 save migration[2m > [22ma save written by the first V2 build (level AND a leftover bank) is converted the same way; a hand-made bank on a V2 Core is not accepted as a magazine[33m 366[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 save migration[2m > [22ma Core whose durability is below the wear of a skill refuses that skill and spends nothing[32m 288[2mms[22m[39m
+ [32m✓[39m tests/g1b-core-v2.test.ts[2m > [22mCore V2 save migration[2m > [22ma V2 Core with an impossible level, durability or upgrade is rejected by the save validator[33m 392[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22mLast Island historical inputs are the delivered bytes[2m > [22mCSV and diff match the size and SHA-256 Control Tower published[32m 2[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22mLast Island historical inputs are the delivered bytes[2m > [22m137 distinct historical ids, graded 84 / 45 / 8[32m 1[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22m137-vs-86 crosswalk[2m > [22m84 shared, 53 historical-only, 2 atlas-only: 139 rows, one per id[32m 1[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22m137-vs-86 crosswalk[2m > [22mthe grade says where an id sits: every shared id is ATLAS_INDEXED, every historical-only id is not[32m 6[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22m137-vs-86 crosswalk[2m > [22mevery id has an explicit decision; the decision table is exactly the 53 historical-only ids[32m 1[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22m137-vs-86 crosswalk[2m > [22mshared ids keep the atlas verdict unchanged[32m 8[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22m137-vs-86 crosswalk[2m > [22mevery SOH equivalent named is a real item or structure; related ids are real ids on one side or the other[32m 3[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22m137-vs-86 crosswalk[2m > [22mevery disagreement with the historical match_soh column is explained[32m 0[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22m137-vs-86 crosswalk[2m > [22munsupported figures stay UNKNOWN: no bench or quantity is invented[32m 3[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22m137-vs-86 crosswalk[2m > [22mthe two open positions are DESIGN_CANDIDATEs, not approved adds, and are described accurately[32m 7[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22m137-vs-86 crosswalk[2m > [22mno production item, recipe or structure was created from a historical-only id[32m 4[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22m137-vs-86 crosswalk[2m > [22mthe historical files and this module are reference-only: nothing in the runtime imports them[32m 80[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22msource support is derived next to the raw file, never written into it[2m > [22mthe raw citation column is reproduced verbatim for all 137 rows[32m 4[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22msource support is derived next to the raw file, never written into it[2m > [22mevery row has exactly one of the four support classes[32m 0[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22msource support is derived next to the raw file, never written into it[2m > [22ma citation to ATLAS_v2.json is never counted as proof when the id is not in that file[32m 16[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22msource support is derived next to the raw file, never written into it[2m > [22mthe 2022-11-09 date is given only to ids the official notice documents[32m 7[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22msource support is derived next to the raw file, never written into it[2m > [22mOFFICIAL_MODERN is an inherited label: only the ids the notice documents are supported[32m 0[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22msource support is derived next to the raw file, never written into it[2m > [22munresolved citations are listed by name in the document[32m 7[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22mcatalog-defined is not the same as live[2m > [22melectric_door: the Powered Door is no longer MODULE_PENDING (item set v3 module route); the row follows the catalog[32m 1[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22mcatalog-defined is not the same as live[2m > [22mcrude_oil maps to Crude Petroleum (Salvaged Oil retired) and still does not claim a play-proven Oil Pump[32m 0[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22mcatalog-defined is not the same as live[2m > [22mevery HAVE_* row has a live status computed from the catalog; every other row has none[32m 2[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-li-historical.test.ts[2m > [22mgenerated historical crosswalk artifacts have not drifted[2m > [22mli-historical-crosswalk.csv and LI_HISTORICAL_CROSSWALK.md[32m 7[2mms[22m[39m
+ [32m✓[39m tests/motorbike.test.ts[2m > [22mphysical motorbike[2m > [22muses paid research and timed workbench reservations to assemble exactly one deployable unit[33m 1353[2mms[22m[39m
+ [32m✓[39m tests/motorbike.test.ts[2m > [22mphysical motorbike[2m > [22mconsumes physical fuel only on movement, retains identity/cargo across save, repairs and parks[32m 261[2mms[22m[39m
+ [32m✓[39m tests/motorbike.test.ts[2m > [22mphysical motorbike[2m > [22mblocks empty tanks, obstacles and invalid or unsafe map deployment without consuming goods[32m 165[2mms[22m[39m
+ [32m✓[39m tests/motorbike.test.ts[2m > [22mphysical motorbike[2m > [22mkeeps parked vehicle and cargo on death and removes them at run end[32m 72[2mms[22m[39m
+ [32m✓[39m tests/motorbike.test.ts[2m > [22mphysical motorbike[2m > [22mitem set v3: a wreck yields Parts and never oil; fuel for the bike is a physical canister[33m 787[2mms[22m[39m
+ [32m✓[39m tests/motorbike.test.ts[2m > [22mphysical motorbike[2m > [22menforces bounded freight, including swaps and forged saved fuel[32m 72[2mms[22m[39m
+ [32m✓[39m tests/motorbike.test.ts[2m > [22mphysical motorbike[2m > [22mcompares walking, empty hand cart, and empty versus loaded motorbike on the same real road[32m 212[2mms[22m[39m
+ [32m✓[39m tests/motorbike.test.ts[2m > [22mphysical motorbike[2m > [22mrejects deployment on uncontracted Veyra and failed/replayed transactions without a debit[33m 613[2mms[22m[39m
+ [32m✓[39m tests/motorbike.test.ts[2m > [22mphysical motorbike[2m > [22mcarries actual Foundry loot over a real road and spends the unloaded parts on vehicle repair[32m 85[2mms[22m[39m
+ [32m✓[39m tests/logistics-garden.test.ts[2m > [22mintegrated logistics and cultivation[2m > [22mpays for one upgrade at an owned level-2 bench; preserves cargo, UID and upgrade through pack, save and redeploy[33m 1427[2mms[22m[39m
+ [32m✓[39m tests/logistics-garden.test.ts[2m > [22mintegrated logistics and cultivation[2m > [22mupgrade rejects missing materials, distant bench and legacy deployed identity without spending[32m 125[2mms[22m[39m
+ [32m✓[39m tests/logistics-garden.test.ts[2m > [22mintegrated logistics and cultivation[2m > [22mchanges actual loaded movement at 300 kg but still has terrain and weight friction[32m 124[2mms[22m[39m
+ [32m✓[39m tests/logistics-garden.test.ts[2m > [22mintegrated logistics and cultivation[2m > [22mdoes not bypass personal overload while pulling a loaded cart[32m 98[2mms[22m[39m
+ [32m✓[39m tests/logistics-garden.test.ts[2m > [22mintegrated logistics and cultivation[2m > [22mfunds Bitterleaf with seed, specimen and three flask charges, waits wet time, harvests once and enables medicine[32m 86[2mms[22m[39m
+ [32m✓[39m tests/logistics-garden.test.ts[2m > [22mintegrated logistics and cultivation[2m > [22mdrops physical harvest when inventory is full without replaying it[32m 97[2mms[22m[39m
+ [32m✓[39m tests/logistics-garden.test.ts[2m > [22mintegrated logistics and cultivation[2m > [22msettles funded Bitterleaf only once across a saved offline interval and legacy garden intent still plants Sunroot[32m 147[2mms[22m[39m
+ [32m✓[39m tests/logistics-garden.test.ts[2m > [22mintegrated logistics and cultivation[2m > [22mlinks garden-funded tonic and freight custody to the finite hazardous foundry crate (position fixture, not route proof)[32m 148[2mms[22m[39m
+ [32m✓[39m tests/logistics-garden.test.ts[2m > [22mintegrated logistics and cultivation[2m > [22madds palms only to previously empty tiles on run-pinned v2; legacy source depletion and burns are unchanged[33m 1994[2mms[22m[39m
+ [32m✓[39m tests/mec01-b-consumer-choice.test.ts[2m > [22mB1: role × grade × access × stock — the three authorized sources differ on every axis, as authored[2m > [22mreads the spec directly: factory high/open/renewable/24h/cap3 vs tp mid/open/renewable/24h/cap2 vs vault high/poi-door/finite/48h/cap2[33m 1113[2mms[22m[39m
+ [32m✓[39m tests/mec01-b-consumer-choice.test.ts[2m > [22mB1: role × grade × access × stock — the three authorized sources differ on every axis, as authored[2m > [22mgrade determines the high-grade pool: gear/pipe/refined roll in factory toolbox + advanced vault; never in supply or military[32m 7[2mms[22m[39m
+ [32m✓[39m tests/mec01-b-consumer-choice.test.ts[2m > [22mB1: role × grade × access × stock — the three authorized sources differ on every axis, as authored[2m > [22mthe run contract stays valid (all three accesses as expected) and the b01 grammar still resolves[32m 200[2mms[22m[39m
+ [32m✓[39m tests/mec01-b-consumer-choice.test.ts[2m > [22mB2: consumer choice — the gear feeds two real paid recipes, the pipe feeds one craft sink plus a recovery route[2m > [22mthe retired drive formula is refused and the gear stack is left intact; the kit is the gear's other live consumer[32m 138[2mms[22m[39m
+ [32m✓[39m tests/mec01-b-consumer-choice.test.ts[2m > [22mB2: consumer choice — the gear feeds two real paid recipes, the pipe feeds one craft sink plus a recovery route[2m > [22mthe SAME gear stack instead feeds the salvager pick (the other live consumer) — one gear, one outcome, no duplication[32m 104[2mms[22m[39m
+ [32m✓[39m tests/mec01-b-consumer-choice.test.ts[2m > [22mB2: consumer choice — the gear feeds two real paid recipes, the pipe feeds one craft sink plus a recovery route[2m > [22mmetal_pipe feeds the piped frame (motorbike path) — the one surviving pipe sink[32m 105[2mms[22m[39m
+ [32m✓[39m tests/mec01-b-consumer-choice.test.ts[2m > [22mB2: consumer choice — the gear feeds two real paid recipes, the pipe feeds one craft sink plus a recovery route[2m > [22mthe plate is NOT a pipe sink any more: recovered BOM, and the plate still exists for walls/doors (repairStructure path)[32m 91[2mms[22m[39m
+ [32m✓[39m tests/mec01-b-consumer-choice.test.ts[2m > [22mB2: consumer choice — the gear feeds two real paid recipes, the pipe feeds one craft sink plus a recovery route[2m > [22mwrites the consumer-choice evidence with real UIDs and the sources B actually read[32m 81[2mms[22m[39m
+[90mstdout[2m | tests/mec01-r10-soil-regrowth.test.ts[2m > [22m[2mR10 two substrate states on the same plant[2m > [22m[2mfertile ground regrows faster than poor ground for the same bush and season; both complete (no permanent loss)
+[22m[39m[R10 MEASURE] same bush, neutral season: fertile soil=1.000 rate=1.0000 | poor soil=0.977 rate=0.9765 | cooldown fertile=420s poor=430s
+
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 soil authority (regression against the former garden formula)[2m > [22msoilFertility reproduces the garden table: biome substrate, moisture band, slope term, cold-frame bonus, clamp [0.3,1][32m 2[2mms[22m[39m
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 two substrate states on the same plant[2m > [22mfertile ground regrows faster than poor ground for the same bush and season; both complete (no permanent loss)[33m 1196[2mms[22m[39m
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 physical suppression and resume (terrain-state authority)[2m > [22mFIXTURE frozen ground: no accrual while ICE; resume after the terrain expires; completion = expiry + remaining/rate[32m 60[2mms[22m[39m
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 physical suppression and resume (terrain-state authority)[2m > [22mFIXTURE burnt override (permanent until restored): no regrowth while BURNT; resumes only when the override is removed[32m 52[2mms[22m[39m
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 physical suppression and resume (terrain-state authority)[2m > [22mread-independence across a freeze and a season boundary: frequent polling and one late read agree[32m 65[2mms[22m[39m
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 physical suppression and resume (terrain-state authority)[2m > [22mlegacy terrain (until only, no untilAt) is honoured against the sim clock[32m 60[2mms[22m[39m
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 save/reload and validation[2m > [22mmid-freeze save round-trips the absolute expiry; a non-finite untilAt is rejected[32m 67[2mms[22m[39m
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 rate bounds and output comparison[2m > [22mevery renewable wild site, every season, stays inside [0.15, 2][32m 102[2mms[22m[39m
+[90mstdout[2m | tests/mec01-r10-soil-regrowth.test.ts[2m > [22m[2mR10 rate bounds and output comparison[2m > [22m[2mdrought/poor soil vs fertile: output per day for one bush, two meaningful comparisons, nothing minted
+[22m[39m[R10 MEASURE] output/day bush: fertile(soil 1.00)=617.14 | poor(soil 0.98)=603.78 berries/day, stock per cycle 3
+
+[90mstdout[2m | tests/mec01-r10-soil-regrowth.test.ts[2m > [22m[2mR10 starter not starved[2m > [22m[2mmedian renewable wild rate stays usable in every season on the fixed Map (ground does not zero the starter economy)
+[22m[39m[R10 MEASURE] starter median renewable rate phase 0 spring: 1.000 (n=1533)
+[R10 MEASURE] starter median renewable rate phase 1 summer: 1.016 (n=1533)
+[R10 MEASURE] starter median renewable rate phase 2 autumn: 0.900 (n=1533)
+[R10 MEASURE] starter median renewable rate phase 3 winter: 0.550 (n=1533)
+
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 rate bounds and output comparison[2m > [22mdrought/poor soil vs fertile: output per day for one bush, two meaningful comparisons, nothing minted[32m 36[2mms[22m[39m
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 starter not starved[2m > [22mmedian renewable wild rate stays usable in every season on the fixed Map (ground does not zero the starter economy)[32m 106[2mms[22m[39m
+[90mstdout[2m | tests/mec01-r10-soil-regrowth.test.ts[2m > [22m[2mR10 measured comparison by season (fertile vs drought/poor ground)[2m > [22m[2mMEASURE: per-season bush output/day, top vs bottom soil quartile, and a summer drought check
+[22m[39m[R10 MEASURE] per-season output/day (bush, n=438, quartile=109)
+phase 0 spring: top-soil quartile 617.1 berries/day | bottom-soil quartile 612.0 | ratio 0.992
+phase 1 summer: top-soil quartile 638.7 berries/day | bottom-soil quartile 633.5 | ratio 0.992
+phase 2 autumn: top-soil quartile 555.4 berries/day | bottom-soil quartile 550.7 | ratio 0.992
+phase 3 winter: top-soil quartile 339.4 berries/day | bottom-soil quartile 307.5 | ratio 0.906
+
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 consumer chain (symbols only; no invented items or recipes)[2m > [22mbush → berries (food) and seed; herb → food and medkit input; garden crop/herb inputs use the same seed and herb[32m 5[2mms[22m[39m
+ [32m✓[39m tests/mec01-r10-soil-regrowth.test.ts[2m > [22mR10 measured comparison by season (fertile vs drought/poor ground)[2m > [22mMEASURE: per-season bush output/day, top vs bottom soil quartile, and a summer drought check[32m 51[2mms[22m[39m
+ [31m×[39m tests/mec01-r2-c1-motorbike-chain.test.ts[2m > [22mMEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + FIXTURE stock + INTENT freight)[2m > [22mchain: gear and drive, frame, L3 bench, Motorbike Kit, place, refuel, mount, carry 40 ingots, deliver to a chest[33m 6653[2mms[22m[39m
+[31m   → no legal workbench tile[39m
+ [32m✓[39m tests/economy-network.test.ts[2m > [22mconnected economy[2m > [22madds finite physical found parts and shore shell furnace alternative without a boss prerequisite[33m 1278[2mms[22m[39m
+ [32m✓[39m tests/economy-network.test.ts[2m > [22mconnected economy[2m > [22mwrecks produce rare physical parts only while finite source stock is harvested[33m 1365[2mms[22m[39m
+ [32m✓[39m tests/economy-network.test.ts[2m > [22mconnected economy[2m > [22mretains broken repairable UID, blocks attacks, survives save and pays for repair[32m 213[2mms[22m[39m
+ [32m✓[39m tests/economy-network.test.ts[2m > [22mconnected economy[2m > [22mlevel 2 and knowledge gate industrial jobs; reserve and cancel returns exact tool identity and durability[32m 158[2mms[22m[39m
+ [32m✓[39m tests/economy-network.test.ts[2m > [22mconnected economy[2m > [22mfuelled shell glass stalls without fuel, consumes inputs, settles offline once and enables mask[32m 93[2mms[22m[39m
+ [32m✓[39m tests/economy-network.test.ts[2m > [22mconnected economy[2m > [22mfunded crop and herb broth is timed physical home food[32m 97[2mms[22m[39m
+ [32m✓[39m tests/economy-network.test.ts[2m > [22mconnected economy[2m > [22mreal seed and flask water grow a crop that can fund a timed meal[32m 92[2mms[22m[39m
+ [32m✓[39m tests/economy-network.test.ts[2m > [22mconnected economy[2m > [22mthe real equipped gas mask reduces foundry exposure during offline settlement[32m 71[2mms[22m[39m
+ [32m✓[39m tests/economy-network.test.ts[2m > [22mconnected economy[2m > [22msalvage output is bounded below ingredient costs and no reciprocal crafting cycle is added[32m 1[2mms[22m[39m
+ [32m✓[39m tests/economy-network.test.ts[2m > [22mconnected economy[2m > [22mrepairs real owned geometry HP with bounded cost and rejects replay, range, ownership and full health[32m 89[2mms[22m[39m
+ [32m✓[39m tests/economy-network.test.ts[2m > [22mconnected economy[2m > [22mrefuses in-place material repair for a packed device, and spends nothing when it refuses[32m 88[2mms[22m[39m
+ [2m[90m↓[39m[22m src/veyra05/spawn-candidate-reasons.audit.test.ts[2m > [22mVeyra candidate-level spawn reason trace[2m > [22mcategorizes failure conditions on exact previously failed Westmouth window
+ [32m✓[39m tests/npc-global-navigation.test.ts[2m > [22mglobal human route and source execution (engineering fixtures, not browser acceptance)[2m > [22mderived sorted entity views observe direct add/delete/replacement/archive changes immediately[33m 2002[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts[2m > [22mglobal human route and source execution (engineering fixtures, not browser acceptance)[2m > [22mwalks a real offscreen cardinal route with saved partial tile time and no repeated settlement[33m 429[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts[2m > [22mglobal human route and source execution (engineering fixtures, not browser acceptance)[2m > [22mreports pending search separately from found geometry and admits no occupied physical edge[32m 94[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts[2m > [22mglobal human route and source execution (engineering fixtures, not browser acceptance)[2m > [22mdoes not restart a proven failed search until physical topology changes[32m 233[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts[2m > [22mglobal human route and source execution (engineering fixtures, not browser acceptance)[2m > [22mcrosses only a real authored stair edge; a forged floor hop fails[32m 126[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts[2m > [22mglobal human route and source execution (engineering fixtures, not browser acceptance)[2m > [22mallows community food only at physical cardinal contact, including outside the camera[32m 97[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts[2m > [22mglobal human route and source execution (engineering fixtures, not browser acceptance)[2m > [22ma thirsty actor independently chooses a real bank and drinks only after timed contact[32m 108[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts[2m > [22mglobal human route and source execution (engineering fixtures, not browser acceptance)[2m > [22mreads cached distant freshwater through live ice/expiry and pins map placement to the run[33m 871[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts[2m > [22mglobal human route and source execution (engineering fixtures, not browser acceptance)[2m > [22mwatches source solidity only on a failed route boundary, ignoring unrelated food stocks[32m 34[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts[2m > [22mglobal human route and source execution (engineering fixtures, not browser acceptance)[2m > [22mnever caches mutable remote stock, terrain or entity obstruction as base geometry[32m 18[2mms[22m[39m
+ [32m✓[39m tests/npc-global-navigation.test.ts[2m > [22mglobal human route and source execution (engineering fixtures, not browser acceptance)[2m > [22mdoes not classify sea, ice, or an upstairs well icon as potable water[32m 100[2mms[22m[39m
+ [32m✓[39m tests/progression.test.ts[2m > [22mphysical progression[2m > [22mdefinitions, source placement and bounded supply connect the proposed chain[33m 1070[2mms[22m[39m
+ [32m✓[39m tests/progression.test.ts[2m > [22mphysical progression[2m > [22mrepair keeps the physical UID, consumes exactly its typed cost and rejects replay/full repair[33m 1211[2mms[22m[39m
+ [32m✓[39m tests/progression.test.ts[2m > [22mphysical progression[2m > [22mrejects repair when target, distance, owner, type, action or costs are invalid without mutation[32m 76[2mms[22m[39m
+ [32m✓[39m tests/progression.test.ts[2m > [22mphysical progression[2m > [22mdestructive study reserves real equipment identity, cancels or finishes exactly once including full output[32m 67[2mms[22m[39m
+ [32m✓[39m tests/progression.test.ts[2m > [22mphysical progression[2m > [22mstation destruction and full pack preserve the reserved item in one physical bag[32m 73[2mms[22m[39m
+ [32m✓[39m tests/progression.test.ts[2m > [22mphysical progression[2m > [22msalvage consumes a single exact UID for bounded output, even with a full inventory[32m 51[2mms[22m[39m
+ [32m✓[39m tests/progression.test.ts[2m > [22mphysical progression[2m > [22mrequires a paid upgrade for the new recipe; old stations and queued jobs remain valid after restart[32m 104[2mms[22m[39m
+ [32m✓[39m tests/progression.test.ts[2m > [22mphysical progression[2m > [22mupgrades II to III once with paid materials and produces a real industrial energy batch without regating legacy recipes[32m 72[2mms[22m[39m
+ [32m✓[39m tests/progression.test.ts[2m > [22mphysical progression[2m > [22mfunded home job cooked_meat continues through persisted offline time, not free output[32m 104[2mms[22m[39m
+ [32m✓[39m tests/progression.test.ts[2m > [22mphysical progression[2m > [22mfunded home job dried_meat continues through persisted offline time, not free output[32m 89[2mms[22m[39m
+ [32m✓[39m tests/gold-intake-integration.test.tsx[2m > [22mStage A: Native 1:1 creature sprite grounding & head clearance[2m > [22mregisters measured 1:1 atlases (drawW===cellW, drawH===cellH) and non-floating head clearance for all 18 creature atlases[32m 5[2mms[22m[39m
+ [32m✓[39m tests/gold-intake-integration.test.tsx[2m > [22mStage B: VFX engine & QA sandbox isolation (VFX_TEST_KIT)[2m > [22mkeeps VFX_TEST_KIT disabled in normal survival runs and enables it only in vfx_showcase[33m 3858[2mms[22m[39m
+ [32m✓[39m tests/gold-intake-integration.test.tsx[2m > [22mStage C: Authoritative Journey Requisitions & Unified Veyra ExpeditionMap[2m > [22menforces threshold, credits securedCash + physical items, emits B06 cue, and blocks duplicate claims[32m 40[2mms[22m[39m
+ [32m✓[39m tests/gold-intake-integration.test.tsx[2m > [22mStage C: Authoritative Journey Requisitions & Unified Veyra ExpeditionMap[2m > [22mtracks creature.kill receipts in Journey and renders 4-ribbon JourneyLedger + unified Veyra ExpeditionMap[33m 500[2mms[22m[39m
+ [31m×[39m tests/mec01-c3-offline-resume.test.ts[2m > [22mMEC-01 R2 C3: funded furnace+workbench offline -> separate-process resume -> exact UID custody[2m > [22mproduces and retrieves exactly the queued outputs after a restart-like process boundary[33m 6620[2mms[22m[39m
+[31m   → no legal tiles for furnace[39m
+ [32m✓[39m tests/g1b-roll.test.ts[2m > [22mG1B approved contract[2m > [22mhas exactly the 16 approved chest variants; the 130 approved source ids are all present, unchanged[32m 34[2mms[22m[39m
+ [32m✓[39m tests/g1b-roll.test.ts[2m > [22mG1B approved contract[2m > [22mevery item a chest can issue is a live catalog item; no Field Core, no Essence, nothing retired[32m 40[2mms[22m[39m
+ [32m✓[39m tests/g1b-roll.test.ts[2m > [22mG1B approved contract[2m > [22mpositive (chest, item) pairs are exactly the 219 approved rows[32m 1[2mms[22m[39m
+ [32m✓[39m tests/g1b-roll.test.ts[2m > [22mG1B approved contract[2m > [22mper-item odds computed from the runtime pools equal the approved odds table (all 219 rows)[32m 1[2mms[22m[39m
+ [32m✓[39m tests/g1b-roll.test.ts[2m > [22mG1B approved contract[2m > [22mper-source Core odds (site theme included) equal all 373 approved rows and keep the tier total[32m 13[2mms[22m[39m
+ [32m✓[39m tests/g1b-roll.test.ts[2m > [22mG1B approved contract[2m > [22msource authority: the seven chest Cores are BOTH (crafted or found) and every issued item may legally come from the world[32m 13[2mms[22m[39m
+ [32m✓[39m tests/g1b-roll.test.ts[2m > [22mG1B roll law[2m > [22mis deterministic for (run, source, cycle) and changes with each of them[32m 1[2mms[22m[39m
+ [32m✓[39m tests/g1b-roll.test.ts[2m > [22mG1B roll law[2m > [22mevery source: 1 anchor + N regular + optional bonus + at most one Core; merged to stack caps, never truncated, fits the chest[33m 5706[2mms[22m[39m
+ [32m✓[39m tests/g1b-roll.test.ts[2m > [22mG1B roll law[2m > [22mmeasured bonus and Core rates over 30 000 rolls match the approved percentages[33m 459[2mms[22m[39m
+ [32m✓[39m tests/g1b-layout-migration.test.ts[2m > [22mG1B P0 — Batch-2 → Batch-3 layout migration[2m > [22ma stamped Batch-2 save (557 chests, layout=2) migrates to the full 729-source layout=3[33m 1896[2mms[22m[39m
+ [32m✓[39m tests/g1b-layout-migration.test.ts[2m > [22mG1B P0 — Batch-2 → Batch-3 layout migration[2m > [22mthe migration is idempotent: re-loading the migrated save adds nothing and refreshes no chest[32m 150[2mms[22m[39m
+ [32m✓[39m tests/g1b-layout-migration.test.ts[2m > [22mG1B P0 — Batch-2 → Batch-3 layout migration[2m > [22mrejects a forged / future revision, foreign ids, and a deliberately-missing old source[32m 78[2mms[22m[39m
+ [32m✓[39m tests/g1b-layout-migration.test.ts[2m > [22mG1B P0 — Batch-2 → Batch-3 layout migration[2m > [22man unstamped round-1 save (130 chests) still migrates to the current layout[32m 84[2mms[22m[39m
+ [32m✓[39m tests/g1b-layout-migration.test.ts[2m > [22mG1B P0 — Batch-2 → Batch-3 layout migration[2m > [22ma current (layout=3) save validates and persists without migration[32m 114[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R receipt-to-source identity (P0)[2m > [22mreceipt id, sequence, detail, stimulus sourceId and eventIndex agree exactly, across a snapshot[33m 1406[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R save provenance (P0)[2m > [22mrejects a combat source whose sequence belongs to an unrelated receipt[32m 126[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R save provenance (P0)[2m > [22mrejects receipt-backed knowledge whose coordinates differ from the committed emission[32m 114[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R save provenance (P0)[2m > [22mrejects a fabricated live signal whose coordinates disagree with its receipt[32m 90[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R save provenance (P0)[2m > [22mrejects a fake goal that is not an adjacent walkable approach tile of the source[32m 79[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R save provenance (P0)[2m > [22mrejects sequence numbers beyond the committed sequence[32m 80[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R save provenance (P0)[2m > [22mrejects a receipt with the right sequence but a different eligibility[32m 78[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R save provenance (P0)[2m > [22maccepts legitimate knowledge after its receipts were evicted from the bounded log[32m 90[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R home acoustics (P1)[2m > [22mW09: a shot within eight tiles of a player structure is heard (blanket exclusion removed), origin-only, struct not struck[32m 104[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R home acoustics (P1)[2m > [22ma shot in open terrain beyond eight tiles from any player structure is heard by the same creature[32m 120[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R home acoustics (P1)[2m > [22ma player structure does not disclose the player location: the creature knows only the emission point[32m 77[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R timing and coexistence (P1)[2m > [22mthe 4 s signal window bounds detection; no notice can be made after the signal expires[32m 125[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R timing and coexistence (P1)[2m > [22ma notice in the window keeps investigation memory for 24 s from the emission time[32m 91[2mms[22m[39m
+ [32m✓[39m tests/w08r-combat-provenance.test.ts[2m > [22mW08-R timing and coexistence (P1)[2m > [22mairdrop and combat signals coexist; combat overflow never evicts a still-valid airdrop[32m 46[2mms[22m[39m
+ [32m✓[39m tests/m-core-03.test.ts[2m > [22mphysical salvage choice[2m > [22mitem set v3: the Damaged Drive is retired into Parts; wreck stock stays finite and no recipe manufactures Parts[33m 1320[2mms[22m[39m
+ [32m✓[39m tests/m-core-03.test.ts[2m > [22mphysical salvage choice[2m > [22minstalls a public machine only at the existing Foundry, and input reserve, cancellation, completed output, reload and replay conserve the item (item set v3: a Mechanical Gear; the Damaged Drive is retired)[32m 167[2mms[22m[39m
+ [32m✓[39m tests/m-core-03.test.ts[2m > [22mphysical salvage choice[2m > [22mrejects distance, wall, full output, death-bag item, and supplies no duplicate output[32m 85[2mms[22m[39m
+ [32m✓[39m tests/m-core-03.test.ts[2m > [22mphysical salvage choice[2m > [22mthe retired bench route (recover_drive) starts no work and debits nothing[32m 64[2mms[22m[39m
+ [32m✓[39m tests/m-core-03.test.ts[2m > [22mphysical salvage choice[2m > [22mholds finished work when output fills after reservation and produces once when space is freed[32m 56[2mms[22m[39m
+ [32m✓[39m tests/m-core-03.test.ts[2m > [22mphysical salvage choice[2m > [22mrecover_drive cannot be researched or crafted anywhere; Parts are not a Recycler input[32m 75[2mms[22m[39m
+ [31m×[39m tests/sys07-w08-absence.test.ts[2m > [22mW08 absence benchmark (controlled fixtures)[2m > [22mcurrent provisional tuning: 8/24/48/72h outcomes are measured and cabinet coverage is real[33m 1462[2mms[22m[39m
+[31m   → build claim 3,-2: Need an intact packed device.[39m
+ [32m✓[39m tests/b05-freight-crude.test.ts[2m > [22mB05-R B1: crude petroleum conserved through pump → inventory → motorbike → bag → refinery → fuel[2m > [22mmoves four crude UID-stacks through the existing custody and produces one Fuel Canister, with no duplication[33m 1684[2mms[22m[39m
+ [31m×[39m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22man unattended ripe plot is never auto-harvested offline or online[33m 1365[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22ma full output chest pauses the ripe crop (no loss, no minting) and resumes once space exists[32m 89[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22mexhausted seeds and a dry barrel pause planting with a distinct reason and no fabricated output[32m 72[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22ma depleted fuel store pauses planting; no seed or water is spent while paused[32m 91[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22mtransition receipts are written only on real changes and do not repeat after reload[32m 77[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22mone 30-minute settle and thirty 1-minute settles produce the same tender state, stock and receipts[32m 68[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22mwater is one physical custody: a barrel the player drinks from cannot also irrigate the plot[32m 70[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [32m✓[39m tests/s08-world-stimulus.test.ts[2m > [22mS08 non-player event perception[2m > [22mcreates one source-local finite landing impulse, never on an aborted landing[33m 1428[2mms[22m[39m
+ [32m✓[39m tests/s08-world-stimulus.test.ts[2m > [22mS08 non-player event perception[2m > [22mnotices only source, physically moves and stops without player sight or tracking[32m 227[2mms[22m[39m
+ [32m✓[39m tests/s08-world-stimulus.test.ts[2m > [22mS08 non-player event perception[2m > [22mrejects passive species, out-of-range creatures, intervening walls and home proxy[33m 384[2mms[22m[39m
+ [32m✓[39m tests/s08-world-stimulus.test.ts[2m > [22mS08 non-player event perception[2m > [22mupgrades only after actual player sight and uses normal combat perception[32m 91[2mms[22m[39m
+ [32m✓[39m tests/s08-world-stimulus.test.ts[2m > [22mS08 non-player event perception[2m > [22ma locally encountered identified trace fixture replaces event knowledge without inventing a chain[32m 80[2mms[22m[39m
+ [32m✓[39m tests/s08-world-stimulus.test.ts[2m > [22mS08 non-player event perception[2m > [22mstops on newly blocked physical routes, without damaging the obstructions[32m 99[2mms[22m[39m
+ [32m✓[39m tests/s08-world-stimulus.test.ts[2m > [22mS08 non-player event perception[2m > [22mdoes not reacquire the same impact after save, arrival, expiry or repeated settlement[32m 228[2mms[22m[39m
+ [32m✓[39m tests/s08-world-stimulus.test.ts[2m > [22mS08 non-player event perception[2m > [22mrejects forged stimuli and forged investigation knowledge while retaining ordinary saves[32m 112[2mms[22m[39m
+ [32m✓[39m tests/s08-world-stimulus.test.ts[2m > [22mS08 non-player event perception[2m > [22msettles offline without inventing notices, motion, attacks or an indefinitely fresh cue[32m 82[2mms[22m[39m
+ [32m✓[39m tests/s08-world-stimulus.test.ts[2m > [22mS08 non-player event perception[2m > [22mdoes not move a previously investigating creature during absence; memory expires once[32m 90[2mms[22m[39m
+ [32m✓[39m tests/mec01-foundry-drive-chain.test.ts[2m > [22mMEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared)[2m > [22mthe authored cache is physically reachable from spawn, the contract is valid, and the gear comes from it at cycle 0[33m 1358[2mms[22m[39m
+ [31m×[39m tests/mec01-foundry-drive-chain.test.ts[2m > [22mMEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared)[2m > [22mfull natural-intent chain with save/reload at each step[32m 75[2mms[22m[39m
+[31m   → mechanical_parts: expected -1 to be greater than or equal to 0[39m
+ [31m×[39m tests/mec01-foundry-drive-chain.test.ts[2m > [22mMEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared)[2m > [22mrefused without the gear: no drive is made from nothing; refused craft consumes nothing[33m 3326[2mms[22m[39m
+[31m   → no legal workbench tile[39m
+ [31m×[39m tests/mec01-foundry-drive-chain.test.ts[2m > [22mMEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared)[2m > [22mrefused below Level 2 (honest refusal) even with every input carried[33m 3345[2mms[22m[39m
+[31m   → no legal workbench tile[39m
+ [32m✓[39m tests/mec01-r61-uid-custody.test.ts[2m > [22mR6.1 — K1 custody law for whole-stack pickup into empty slots[2m > [22mwhole stackable stack into an empty slot keeps its UID — never re-minted[33m 1277[2mms[22m[39m
+ [32m✓[39m tests/mec01-r61-uid-custody.test.ts[2m > [22mR6.1 — K1 custody law for whole-stack pickup into empty slots[2m > [22mcharged stateful stack (water_flask) moves whole — UID and charge preserved, never merged[32m 75[2mms[22m[39m
+ [32m✓[39m tests/mec01-r61-uid-custody.test.ts[2m > [22mR6.1 — K1 custody law for whole-stack pickup into empty slots[2m > [22mno empty slot, stackable with merge room: exact material conservation, source UID fully retired, receivers untouched[32m 94[2mms[22m[39m
+ [32m✓[39m tests/mec01-r61-uid-custody.test.ts[2m > [22mR6.1 — K1 custody law for whole-stack pickup into empty slots[2m > [22mpartial room: split keeps the remainder in the drop with the source UID; overflow fails closed without destroying it[32m 58[2mms[22m[39m
+ [31m×[39m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mcosts gear, ingots and fasteners; placed unarmed, so a creature stepping on it is not hit[33m 1285[2mms[22m[39m
+[31m   → expected [ [ 'mechanical_gear', 1 ], …(1) ] to deeply equal [ [ 'mechanical_gear', 1 ], …(2) ][39m
+ [31m×[39m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22marming consumes exactly one Iron Plate; refused without one and the state stays unarmed[32m 118[2mms[22m[39m
+[31m   → bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mone paid hit per arming: armed trigger damages and stuns once, becomes spent, and does not retrigger[32m 89[2mms[22m[39m
+[31m   → bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mrearm is paid (one plate) and worn after the third hit: no further arming, reclaim only[32m 70[2mms[22m[39m
+[31m   → bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22ma sleeping creature on the plate does not trigger, and an adjacent creature cannot reach through the footprint[32m 63[2mms[22m[39m
+[31m   → bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mlive only: offline settlement with a creature on the armed trap never fires it (no offline kill)[32m 64[2mms[22m[39m
+[31m   → bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mreclaim of a used trap returns at most the bounded refund of its build cost, never more[32m 59[2mms[22m[39m
+[31m   → bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mpersists armed/spent state and uses across save and reload; corrupt trap state is refused[32m 66[2mms[22m[39m
+[31m   → bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [32m✓[39m tests/b05-station-fuel-policy.test.ts[2m > [22mB05-R station fuel policy: one rule for burn, deposit and display[2m > [22mthe policy: wood and charcoal are station fuel; Fuel Canister and non-fuel are not[33m 1431[2mms[22m[39m
+ [32m✓[39m tests/b05-station-fuel-policy.test.ts[2m > [22mB05-R station fuel policy: one rule for burn, deposit and display[2m > [22ma station refuses a Fuel Canister deposit with a reason and consumes nothing[32m 70[2mms[22m[39m
+ [32m✓[39m tests/b05-station-fuel-policy.test.ts[2m > [22mB05-R station fuel policy: one rule for burn, deposit and display[2m > [22mlegitimate wood is accepted by the station and burns while a job runs[32m 66[2mms[22m[39m
+ [32m✓[39m tests/b05-station-fuel-policy.test.ts[2m > [22mB05-R station fuel policy: one rule for burn, deposit and display[2m > [22ma station holding only Fuel Canisters does not run; the canisters are kept[32m 44[2mms[22m[39m
+ [32m✓[39m tests/b05-station-fuel-policy.test.ts[2m > [22mB05-R station fuel policy: one rule for burn, deposit and display[2m > [22man older save with canisters in a station fuel input loads, and the canisters can be taken out to the pack[32m 74[2mms[22m[39m
+ [32m✓[39m tests/b05-station-fuel-policy.test.ts[2m > [22mB05-R station fuel policy: one rule for burn, deposit and display[2m > [22ma base generator still accepts and burns a Fuel Canister (consumer unchanged)[32m 56[2mms[22m[39m
+ [31m×[39m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22ma wall_plank contributes 0.75 plank per day to its cabinet (3 x 25%), as wood walls contribute their wood[33m 1425[2mms[22m[39m
+[31m   → wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.[39m
+ [31m×[39m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22mnegative: without planks in the cabinet the plank wall makes the cabinet unfunded; with 3 planks it is funded[32m 83[2mms[22m[39m
+[31m   → wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.[39m
+ [31m×[39m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22msettled upkeep debits real planks, with fractional credit: removed - credit = 0.75 x days, never more[32m 60[2mms[22m[39m
+[31m   → wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.[39m
+ [31m×[39m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22msave/reload keeps the same plank forecast and does not re-bill: the validated copy plans identically[32m 76[2mms[22m[39m
+[31m   → wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.[39m
+ [31m×[39m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22mrepair of a plank wall takes one plank (ceil(3 x 25%)), and a raw-wood wall keeps its wood repair[32m 62[2mms[22m[39m
+[31m   → wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.[39m
+ [31m×[39m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22ma raw-wood shelter is unchanged: a wood-only cabinet bills wood and has no plank rate[32m 100[2mms[22m[39m
+[31m   → claim: Need an intact packed device.[39m
+ [32m✓[39m tests/npc-projectile-flight.test.ts[2m > [22msurvivor projectile flight[2m > [22ma bow shot flies, spends one owned arrow, and hurts the victim only on impact[33m 2127[2mms[22m[39m
+ [32m✓[39m tests/npc-projectile-flight.test.ts[2m > [22msurvivor projectile flight[2m > [22ma bow with no arrow in the pack never fires and never hurts anyone[32m 55[2mms[22m[39m
+ [32m✓[39m tests/npc-dual-rescue-same-run.test.ts[2m > [22mdual rescue in one run (NOT RUN — authored for the post-implementation qualification gate)[2m > [22mevacuates one community by sea while another survives the final assault in the same run[33m 5926[2mms[22m[39m
+ [32m✓[39m tests/b04-p4-loot.test.ts[2m > [22mB04-P4 cache families are physically distinct and identifiable[2m > [22meach W06 class maps to its own sprite family; unclassed crates keep the generic art[32m 2[2mms[22m[39m
+ [32m✓[39m tests/b04-p4-loot.test.ts[2m > [22mB04-P4 roles and grades discriminate what each cache can hold (b04-v1, SOH_PROVISIONAL)[2m > [22madvanced grade always carries the high-grade medkit; toolbox never does[32m 6[2mms[22m[39m
+ [32m✓[39m tests/b04-p4-loot.test.ts[2m > [22mB04-P4 roles and grades discriminate what each cache can hold (b04-v1, SOH_PROVISIONAL)[2m > [22mtoolbox (metal role) and advanced draw physical metal sinks, with real variety across cycles[32m 5[2mms[22m[39m
+ [32m✓[39m tests/b04-p4-loot.test.ts[2m > [22mB04-P4 roles and grades discriminate what each cache can hold (b04-v1, SOH_PROVISIONAL)[2m > [22mno class ever emits a forbidden item, and every pool entry is a defined item[32m 86[2mms[22m[39m
+ [32m✓[39m tests/b04-p4-loot.test.ts[2m > [22mB04-P4 old saves keep their b01-v1 grammar; grammar versions are validated[2m > [22mb01-v1 runs never receive the new b04 metal/blade pools[32m 1[2mms[22m[39m
+ [32m✓[39m tests/b04-p4-loot.test.ts[2m > [22mB04-P4 old saves keep their b01-v1 grammar; grammar versions are validated[2m > [22mthe same run, source and cycle always produce the same physical stack (deterministic)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/b04-p4-loot.test.ts[2m > [22mB04-P4 old saves keep their b01-v1 grammar; grammar versions are validated[2m > [22munknown grammar strings are refused (no silent acceptance)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/w07r-refinery-chronology.test.ts[2m > [22mW07-R refinery chronology: online steps equal one offline settlement[2m > [22ma funded industrial batch with finite wood fuel gives identical fuel, output and job state[33m 1669[2mms[22m[39m
+ [32m✓[39m tests/w07r-refinery-chronology.test.ts[2m > [22mW07-R refinery chronology: online steps equal one offline settlement[2m > [22mfuel runs out mid-job: the job pauses at the same boundary online and offline, and resumes only with new fuel[32m 130[2mms[22m[39m
+ [32m✓[39m tests/world-economy.test.ts[2m > [22mmap-independent source rules v3[2m > [22mis deterministic and obeys bounds, road, protected, water and authored industrial semantics[32m 115[2mms[22m[39m
+ [32m✓[39m tests/world-economy.test.ts[2m > [22mmap-independent source rules v3[2m > [22mreports missing water and never invents industrial rewards on a map with no industry[32m 52[2mms[22m[39m
+ [32m✓[39m tests/world-economy.test.ts[2m > [22mmap-independent source rules v3[2m > [22mrejects incomplete map data rather than inventing missing semantics[32m 1[2mms[22m[39m
+ [32m✓[39m tests/world-economy.test.ts[2m > [22mfuture playable map contract[2m > [22mexplicitly rejects a raster-only handoff instead of inventing POIs, roads or endgame sites[32m 45[2mms[22m[39m
+ [32m✓[39m tests/world-economy.test.ts[2m > [22mdistinct topology: authored contract fixture[2m > [22mruns the same rules on a complete, materially different descriptor without coordinate patches[32m 70[2mms[22m[39m
+ [32m✓[39m tests/world-economy.test.ts[2m > [22msemantic input integrity[2m > [22mfails closed on invalid climate and malformed masks[32m 1[2mms[22m[39m
+ [32m✓[39m tests/b05-parcel-panel.test.tsx[2m > [22mParcelPanel (B05-R freight UI)[2m > [22mshows the paid good and the purchase identity, with no cart option when no cart is in reach[33m 1385[2mms[22m[39m
+ [32m✓[39m tests/b05-parcel-panel.test.tsx[2m > [22mParcelPanel (B05-R freight UI)[2m > [22moffers "Load into this cart" for a deployed cart the player can reach, enabled, with slot and weight[32m 84[2mms[22m[39m
+ [32m✓[39m tests/b05-parcel-panel.test.tsx[2m > [22mParcelPanel (B05-R freight UI)[2m > [22ma full cart reports "Cart full" and disables the load (paid goods stay in the parcel)[32m 56[2mms[22m[39m
+ [32m✓[39m tests/b05-parcel-panel.test.tsx[2m > [22mParcelPanel (B05-R freight UI)[2m > [22ma cart beyond 2.8 tiles is not offered (no remote teleport)[32m 68[2mms[22m[39m
+[90mstdout[2m | tests/g1b-gates.test.ts[2m > [22m[2mG1B gates on the real multi-storey geometry[2m > [22m[2mveyra.g1b:gate:po_falls:deep: no bypass by stairs, roof or cellar; every chest behind it is reachable once open
+[22m[39m[g1b-gate] veyra.g1b:gate:po_falls:deep: sealed 141 tiles on storey(s) 0; 2 chest(s) behind it
+
+ [32m✓[39m tests/g1b-gates.test.ts[2m > [22mG1B gates on the real multi-storey geometry[2m > [22mveyra.g1b:gate:po_falls:deep: no bypass by stairs, roof or cellar; every chest behind it is reachable once open[33m 1561[2mms[22m[39m
+[90mstdout[2m | tests/g1b-gates.test.ts[2m > [22m[2mG1B gates on the real multi-storey geometry[2m > [22m[2mveyra.g1b:gate:po_academy:room_green: no bypass by stairs, roof or cellar; every chest behind it is reachable once open
+[22m[39m[g1b-gate] veyra.g1b:gate:po_academy:room_green: sealed 260 tiles on storey(s) 0,1; 8 chest(s) behind it
+
+ [32m✓[39m tests/g1b-gates.test.ts[2m > [22mG1B gates on the real multi-storey geometry[2m > [22mveyra.g1b:gate:po_academy:room_green: no bypass by stairs, roof or cellar; every chest behind it is reachable once open[33m 1010[2mms[22m[39m
+[90mstdout[2m | tests/g1b-gates.test.ts[2m > [22m[2mG1B gates on the real multi-storey geometry[2m > [22m[2mveyra.g1b:gate:po_archive:room_purple: no bypass by stairs, roof or cellar; every chest behind it is reachable once open
+[22m[39m[g1b-gate] veyra.g1b:gate:po_archive:room_purple: sealed 81 tiles on storey(s) 0; 7 chest(s) behind it
+
+ [32m✓[39m tests/g1b-gates.test.ts[2m > [22mG1B gates on the real multi-storey geometry[2m > [22mveyra.g1b:gate:po_archive:room_purple: no bypass by stairs, roof or cellar; every chest behind it is reachable once open[33m 1134[2mms[22m[39m
+[90mstdout[2m | tests/g1b-gates.test.ts[2m > [22m[2mG1B gates on the real multi-storey geometry[2m > [22m[2mveyra.g1b:gate:po_archive:deep: no bypass by stairs, roof or cellar; every chest behind it is reachable once open
+[22m[39m[g1b-gate] veyra.g1b:gate:po_archive:deep: sealed 321 tiles on storey(s) -1,0; 3 chest(s) behind it
+
+ [32m✓[39m tests/g1b-gates.test.ts[2m > [22mG1B gates on the real multi-storey geometry[2m > [22mveyra.g1b:gate:po_archive:deep: no bypass by stairs, roof or cellar; every chest behind it is reachable once open[33m 513[2mms[22m[39m
+[90mstdout[2m | tests/g1b-gates.test.ts[2m > [22m[2mG1B gates on the real multi-storey geometry[2m > [22m[2mveyra.g1b:gate:po_meridian:room_blue: no bypass by stairs, roof or cellar; every chest behind it is reachable once open
+[22m[39m[g1b-gate] veyra.g1b:gate:po_meridian:room_blue: sealed 142 tiles on storey(s) 0,1; 8 chest(s) behind it
+
+ [32m✓[39m tests/g1b-gates.test.ts[2m > [22mG1B gates on the real multi-storey geometry[2m > [22mveyra.g1b:gate:po_meridian:room_blue: no bypass by stairs, roof or cellar; every chest behind it is reachable once open[33m 936[2mms[22m[39m
+ [32m✓[39m tests/b06-world-window.test.ts[2m > [22mB06 world-window seam (pure)[2m > [22mchunk identity is stable across the boundary and local coords stay inside one window[32m 2[2mms[22m[39m
+ [32m✓[39m tests/b06-world-window.test.ts[2m > [22mB06 world-window seam (pure)[2m > [22ma real player step across the chunk edge is reported as a window change; a step inside is not[32m 5[2mms[22m[39m
+ [32m✓[39m tests/b06-world-window.test.ts[2m > [22mB06 world-window seam (pure)[2m > [22mglobal cell keys are collision-free across the pending frame corners and reject out-of-frame cells[32m 2[2mms[22m[39m
+ [32m✓[39m tests/b06-world-window.test.ts[2m > [22mB06 world-window seam (pure)[2m > [22ma depleted resource keeps its depletion after the player leaves and returns (global store, not window-local)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/b06-world-window.test.ts[2m > [22mB06 world-window seam (pure)[2m > [22man owned cargo UID keeps its global location across save/reload with no duplicate record[32m 1[2mms[22m[39m
+ [32m✓[39m tests/b06-world-window.test.ts[2m > [22mB06 world-window seam (pure)[2m > [22mrejects malformed or duplicate persisted cell records instead of silently accepting them[32m 0[2mms[22m[39m
+ [32m✓[39m tests/b06-world-window.test.ts[2m > [22mB06 world-window seam (pure)[2m > [22ma window is accepted only for its authored map id, revision and digest[32m 1[2mms[22m[39m
+ [32m✓[39m tests/b06-world-window.test.ts[2m > [22mB06 world-window seam (pure)[2m > [22mwindow ids encode identity and chunk, so two windows never share an id[32m 0[2mms[22m[39m
+[90mstdout[2m | tests/npc-natural-harvest.test.ts[2m > [22m[2mnormal population naturally selects real harvest and delivers exact physical cargo
+[22m[39m{"case":"natural-harvest-120s","counts":{"routeBoundaryChecks":10061,"sourceLookups":482,"sourceIndexReads":120,"worldSlices":4733,"plannerActivations":120,"actorPlans":133,"regionCompilations":92,"renderCompilations":1,"routeExpansions":58952,"entityScans":24745},"elapsedMs":33111.955946,"completed":[{"id":"r57","at":1794729616758.147,"kind":"human.harvest.complete","detail":"hj2ua:he:c18z"},{"id":"r71","at":1794729618772.4329,"kind":"human.harvest.complete","detail":"hj2uc:hg:c18z"},{"id":"r78","at":1794729620743.8584,"kind":"human.harvest.complete","detail":"hj2ts:h4:c168"},{"id":"r86","at":1794729621086.7183,"kind":"human.harvest.complete","detail":"hj2tu:h9:c168"},{"id":"r122","at":1794729633801.0066,"kind":"human.harvest.complete","detail":"hj2tq:h2:c168"},{"id":"r128","at":1794729634715.2927,"kind":"human.harvest.complete","detail":"hj2up:hq:c1a4"},{"id":"r132","at":1794729635674.0417,"kind":"human.harvest.complete","detail":"hj2um:hn:c1a4"},{"id":"r163","at":1794729644758.1453,"kind":"human.harvest.complete","detail":"hj2v9:h1b:c1dt"},{"id":"r175","at":1794729647319.0461,"kind":"human.harvest.complete","detail":"hj2uh:hj:c1a4"},{"id":"r203","at":1794729651440.098,"kind":"human.harvest.complete","detail":"hj2v7:h16:c1dt"},{"id":"r208","at":1794729651511.5283,"kind":"human.harvest.complete","detail":"hj2vb:h1d:c1fu"},{"id":"r223","at":1794729653545.3616,"kind":"human.harvest.complete","detail":"hj2uj:hm:c1a4"},{"id":"r238","at":1794729654195.7383,"kind":"human.harvest.complete","detail":"hj2vf:h1i:c1h6"},{"id":"r246","at":1794729654558.8955,"kind":"human.harvest.complete","detail":"hj2vj:h1m:c1hu"},{"id":"r261","at":1794729657669.4229,"kind":"human.harvest.complete","detail":"hj2vh:h1k:c1h6"},{"id":"r285","at":1794729661874.6855,"kind":"human.harvest.complete","detail":"hj2vs:h1r:c1jb"},{"id":"r304","at":1794729665948.372,"kind":"human.harvest.complete","detail":"hj2ve:h1h:c1gi"},{"id":"r311","at":1794729668453.6367,"kind":"human.harvest.complete","detail":"hj2va:h1c:c1fu"},{"id":"r316","at":1794729668598.0017,"kind":"human.harvest.complete","detail":"hj2vl:h1o:c1im"},{"id":"r330","at":1794729670422.0547,"kind":"human.harvest.complete","detail":"hj2vw:h1t:c1jb"},{"id":"r355","at":1794729674411.5273,"kind":"human.harvest.complete","detail":"hj2w5:h23:c1m7"},{"id":"r364","at":1794729677369.4248,"kind":"human.harvest.complete","detail":"hj2vi:h1l:c1hu"},{"id":"r424","at":1794729688053.6357,"kind":"human.harvest.complete","detail":"hj2w4:h22:c1lh"},{"id":"r448","at":1794729690569.4248,"kind":"human.harvest.complete","detail":"hj2vz:h1w:c1k1"},{"id":"r457","at":1794729691572.4316,"kind":"human.harvest.complete","detail":"hj2wl:h2k:c1q5"},{"id":"r472","at":1794729693601.0068,"kind":"human.harvest.complete","detail":"hj2wc:h2c:c1od"},{"id":"r490","at":1794729697001.006,"kind":"human.harvest.complete","detail":"hj2wh:h2h:c1p9"},{"id":"r538","at":1794729705572.4343,"kind":"human.harvest.complete","detail":"hj2wm:h2l:c1q5"},{"id":"r571","at":1794729708886.716,"kind":"human.harvest.complete","detail":"hj2we:h2f:c1od"},{"id":"r580","at":1794729709181.9756,"kind":"human.harvest.complete","detail":"hj2wd:h2e:c1od"},{"id":"r585","at":1794729709867.6902,"kind":"human.harvest.complete","detail":"hj2wq:h2m:c1q5"},{"id":"r596","at":1794729711286.7227,"kind":"human.harvest.complete","detail":"hj2wk:h2j:c1p9"},{"id":"r604","at":1794729711972.4343,"kind":"human.harvest.complete","detail":"hj2x9:h2y:c1st"},{"id":"r619","at":1794729713543.8616,"kind":"human.harvest.complete","detail":"hj2x0:h2s:c1rx"},{"id":"r624","at":1794729714143.8613,"kind":"human.harvest.complete","detail":"hj2x1:h2t:c1rx"},{"id":"r636","at":1794729715372.4338,"kind":"human.harvest.complete","detail":"hj2xg:h33:c1tn"},{"id":"r645","at":1794729716058.1438,"kind":"human.harvest.complete","detail":"hj2wt:h2o:c1r1"},{"id":"r651","at":1794729717929.5781,"kind":"human.harvest.complete","detail":"hj2wi:h2i:c1p9"},{"id":"r659","at":1794729719172.435,"kind":"human.harvest.complete","detail":"hj2xa:h2z:c1st"},{"id":"r664","at":1794729719301.0073,"kind":"human.harvest.complete","detail":"hj2xc:h31:c1tn"},{"id":"r672","at":1794729719686.7231,"kind":"human.harvest.complete","detail":"hj2w3:h21:c1lh"}],"deliveries":[{"id":"r54","at":1794729616758.147,"kind":"human.cargo.deliver","detail":"hj2ua:he:s2un>s2un:c18z:2"},{"id":"r68","at":1794729618772.4329,"kind":"human.cargo.deliver","detail":"hj2uc:hg:s2uk>s2uk:c18z:2"},{"id":"r75","at":1794729620743.8584,"kind":"human.cargo.deliver","detail":"hj2ts:h4:s2ue>s2ue:c168:2"},{"id":"r83","at":1794729621086.7183,"kind":"human.cargo.deliver","detail":"hj2tu:h9:s2ud>s2ud:c168:1"},{"id":"r119","at":1794729633801.0066,"kind":"human.cargo.deliver","detail":"hj2tq:h2:s2ul>s2ul:c168:2"},{"id":"r126","at":1794729634715.2927,"kind":"human.cargo.deliver","detail":"hj2up:hq:s2v4>s2v4:c1a4:1"},{"id":"r130","at":1794729635674.0417,"kind":"human.cargo.deliver","detail":"hj2um:hn:s2uq>s2uq:c1a4:1"},{"id":"r160","at":1794729644758.1453,"kind":"human.cargo.deliver","detail":"hj2v9:h1b:s2vd>s2vd:c1dt:1"},{"id":"r172","at":1794729647319.0461,"kind":"human.cargo.deliver","detail":"hj2uh:hj:s2v1>s2v1:c1a4:1"},{"id":"r201","at":1794729651440.098,"kind":"human.cargo.deliver","detail":"hj2v7:h16:s2vc>s2vc:c1dt:1"},{"id":"r205","at":1794729651511.5283,"kind":"human.cargo.deliver","detail":"hj2vb:h1d:s2vg>s2vg:c1fu:2"},{"id":"r220","at":1794729653545.3616,"kind":"human.cargo.deliver","detail":"hj2uj:hm:s2v2>s2v2:c1a4:1"},{"id":"r235","at":1794729654195.7383,"kind":"human.cargo.deliver","detail":"hj2vf:h1i:s2vm>s2vm:c1h6:2"},{"id":"r243","at":1794729654558.8955,"kind":"human.cargo.deliver","detail":"hj2vj:h1m:s2vr>s2vr:c1hu:2"},{"id":"r256","at":1794729657669.4229,"kind":"human.cargo.deliver","detail":"hj2vh:h1k:s2vt>s2vt:c1h6:1"},{"id":"r258","at":1794729657669.4229,"kind":"human.cargo.deliver","detail":"hj2vh:h1k:s2vu>s2vu:c1h6:1"},{"id":"r282","at":1794729661874.6855,"kind":"human.cargo.deliver","detail":"hj2vs:h1r:s2w0>s2w0:c1jb:2"},{"id":"r301","at":1794729665948.372,"kind":"human.cargo.deliver","detail":"hj2ve:h1h:s2vk>s2vk:c1gi:2"},{"id":"r308","at":1794729668453.6367,"kind":"human.cargo.deliver","detail":"hj2va:h1c:s2vy>s2vy:c1fu:2"},{"id":"r313","at":1794729668598.0017,"kind":"human.cargo.deliver","detail":"hj2vl:h1o:s2vx>s2vx:c1im:2"},{"id":"r325","at":1794729670422.0547,"kind":"human.cargo.deliver","detail":"hj2vw:h1t:s2w1>s2w1:c1jb:1"},{"id":"r327","at":1794729670422.0547,"kind":"human.cargo.deliver","detail":"hj2vw:h1t:s2w2>s2w2:c1jb:1"},{"id":"r352","at":1794729674411.5273,"kind":"human.cargo.deliver","detail":"hj2w5:h23:s2w7>s2w7:c1m7:2"},{"id":"r361","at":1794729677369.4248,"kind":"human.cargo.deliver","detail":"hj2vi:h1l:s2vn>s2vn:c1hu:1"},{"id":"r419","at":1794729688053.6357,"kind":"human.cargo.deliver","detail":"hj2w4:h22:s2wa>s2wa:c1lh:1"},{"id":"r421","at":1794729688053.6357,"kind":"human.cargo.deliver","detail":"hj2w4:h22:s2wb>s2wb:c1lh:1"},{"id":"r445","at":1794729690569.4248,"kind":"human.cargo.deliver","detail":"hj2vz:h1w:s2wn>s2wn:c1k1:2"},{"id":"r454","at":1794729691572.4316,"kind":"human.cargo.deliver","detail":"hj2wl:h2k:s2ww>s2ww:c1q5:2"},{"id":"r469","at":1794729693601.0068,"kind":"human.cargo.deliver","detail":"hj2wc:h2c:s2wj>s2wj:c1od:2"},{"id":"r487","at":1794729697001.006,"kind":"human.cargo.deliver","detail":"hj2wh:h2h:s2wx>s2wx:c1p9:2"},{"id":"r533","at":1794729705572.4343,"kind":"human.cargo.deliver","detail":"hj2wm:h2l:s2x5>s2x5:c1q5:1"},{"id":"r535","at":1794729705572.4343,"kind":"human.cargo.deliver","detail":"hj2wm:h2l:s2x6>s2x6:c1q5:1"},{"id":"r564","at":1794729708143.8577,"kind":"human.cargo.deliver","detail":"hj2x1:h2t:s2xe>s2xe:c1rx:1"},{"id":"r568","at":1794729708886.716,"kind":"human.cargo.deliver","detail":"hj2we:h2f:s2wz>s2wz:c1od:2"},{"id":"r577","at":1794729709181.9756,"kind":"human.cargo.deliver","detail":"hj2wd:h2e:s2ws>s2ws:c1od:1"},{"id":"r582","at":1794729709867.6902,"kind":"human.cargo.deliver","detail":"hj2wq:h2m:s2x2>s2x2:c1q5:2"},{"id":"r593","at":1794729711286.7227,"kind":"human.cargo.deliver","detail":"hj2wk:h2j:s2wv>s2wv:c1p9:2"},{"id":"r601","at":1794729711972.4343,"kind":"human.cargo.deliver","detail":"hj2x9:h2y:s2xf>s2xf:c1st:2"},{"id":"r616","at":1794729713543.8616,"kind":"human.cargo.deliver","detail":"hj2x0:h2s:s2xb>s2xb:c1rx:1"},{"id":"r622","at":1794729714143.8613,"kind":"human.cargo.deliver","detail":"hj2x1:h2t:s2xd>s2xd:c1rx:1"},{"id":"r633","at":1794729715372.4338,"kind":"human.cargo.deliver","detail":"hj2xg:h33:s2xq>s2xq:c1tn:2"},{"id":"r642","at":1794729716058.1438,"kind":"human.cargo.deliver","detail":"hj2wt:h2o:s2x7>s2x7:c1r1:2"},{"id":"r648","at":1794729717929.5781,"kind":"human.cargo.deliver","detail":"hj2wi:h2i:s2wy>s2wy:c1p9:2"},{"id":"r656","at":1794729719172.435,"kind":"human.cargo.deliver","detail":"hj2xa:h2z:s2xh>s2xh:c1st:2"},{"id":"r661","at":1794729719301.0073,"kind":"human.cargo.deliver","detail":"hj2xc:h31:s2xp>s2xp:c1tn:2"},{"id":"r667","at":1794729719686.7231,"kind":"human.cargo.deliver","detail":"hj2w3:h21:s2wf>s2wf:c1lh:1"},{"id":"r669","at":1794729719686.7231,"kind":"human.cargo.deliver","detail":"hj2w3:h21:s2wg>s2wg:c1lh:1"}],"selected":[{"id":"r2","at":1794729600001,"kind":"human.harvest.select","detail":"hj2tq:h2:0:4625658:road_salvage_bale"},{"id":"r3","at":1794729600001,"kind":"human.harvest.select","detail":"hj2tr:h3:0:4749667:grass"},{"id":"r5","at":1794729600001,"kind":"human.harvest.select","detail":"hj2ts:h4:0:4769575:road_relay_wreck"},{"id":"r6","at":1794729601001,"kind":"human.harvest.select","detail":"hj2tu:h9:0:4633644:oak"},{"id":"r8","at":1794729603001,"kind":"human.harvest.select","detail":"hj2tw:hc:0:1977889:crystal"},{"id":"r9","at":1794729605001,"kind":"human.harvest.select","detail":"hj2ua:he:0:10202356:road_salvage_bale"},{"id":"r14","at":1794729607001,"kind":"human.harvest.select","detail":"hj2uc:hg:0:10242331:road_salvage_bale"},{"id":"r28","at":1794729610001,"kind":"human.harvest.select","detail":"hj2uh:hj:0:2662653:herb"}],"stages":["travel","delivery","planning","work"]}
+
+ [32m✓[39m tests/npc-natural-harvest.test.ts[2m > [22mnormal population naturally selects real harvest and delivers exact physical cargo[33m 35113[2mms[22m[39m
+ [31m×[39m tests/home-sites-physical.test.ts[2m > [22mphysical owned home choices[2m > [22mreaches and claims three distinct clear sites, then places owned storage[33m 1497[2mms[22m[39m
+[31m   → expected false to be true // Object.is equality[39m
+ [32m✓[39m tests/npc-hunt-meat-chain.test.ts[2m > [22monly a lethal guard strike drops meat, then the guard moves that UID into village custody[33m 3859[2mms[22m[39m
+ [32m✓[39m tests/offline-preparation.test.ts[2m > [22moffline preparation (fixtures, real elapsed timestamps)[2m > [22muses 100 hunger per 24 hours and provisional 1.5x thirst together, without free supplies[33m 1647[2mms[22m[39m
+ [32m✓[39m tests/offline-preparation.test.ts[2m > [22moffline preparation (fixtures, real elapsed timestamps)[2m > [22mmatches long and partitioned settlement and does not replay time[33m 658[2mms[22m[39m
+ [32m✓[39m tests/offline-preparation.test.ts[2m > [22moffline preparation (fixtures, real elapsed timestamps)[2m > [22mshelter cannot stop thirst death even when hunger is already empty[32m 91[2mms[22m[39m
+ [32m✓[39m tests/offline-preparation.test.ts[2m > [22moffline preparation (fixtures, real elapsed timestamps)[2m > [22mdoes not let hunger shelter protection cancel an already burning nearby source[32m 56[2mms[22m[39m
+ [32m✓[39m tests/creator-core-acquisition.test.ts[2m > [22mversioned unique Creator Core acquisition[2m > [22mplaces one initially charged rare body into each existing site and does not grant their recipes[33m 1304[2mms[22m[39m
+ [32m✓[39m tests/creator-core-acquisition.test.ts[2m > [22mversioned unique Creator Core acquisition[2m > [22mwithdraws the UID once, and ordinary replacement cannot respawn the unique body[33m 635[2mms[22m[39m
+ [32m✓[39m src/veyra05/integrated-world.test.ts[2m > [22msingle playable VEYRA game — latest canonical map source[2m > [22mexposes exactly ONE new-run map and no retired shipping/LR02 choices[32m 2[2mms[22m[39m
+ [32m✓[39m src/veyra05/integrated-world.test.ts[2m > [22msingle playable VEYRA game — latest canonical map source[2m > [22mthe SAME runtime source/overview contains all 81 canonical authored POIs[33m 1064[2mms[22m[39m
+ [32m✓[39m src/veyra05/integrated-world.test.ts[2m > [22msingle playable VEYRA game — latest canonical map source[2m > [22mstarts the game on U=0.5 GOLD, not the legacy engine-generated island[33m 926[2mms[22m[39m
+ [32m✓[39m src/veyra05/integrated-world.test.ts[2m > [22msingle playable VEYRA game — latest canonical map source[2m > [22msix lairs are discoverable through the SAME game world window loader[33m 3049[2mms[22m[39m
+ [32m✓[39m src/veyra05/global-spawn-eligibility.test.ts[2m > [22mVeyra exact local eligibility pre-screen[2m > [22mscreens Westmouth centroid out but retains Greywater legal cells[33m 5522[2mms[22m[39m
+ [32m✓[39m src/veyra05/global-spawn-eligibility.test.ts[2m > [22mVeyra exact local eligibility pre-screen[2m > [22mnever invents freshwater or 40k legal cells in Gulf West[33m 692[2mms[22m[39m
+[90mstdout[2m | tests/spirit-balance-probe.test.ts[2m > [22m[2mSpirit comparative controlled live-AI probe (not player balance acceptance)[2m > [22m[2mrecords equal three-second windows against one and three wolves
+[22m[39mSOH_V16_SPIRIT_COMBAT_PROBE [{"mode":"ray","count":1,"playerHp":91.18800000000023,"enemyHp":[68],"spent":3,"commits":3},{"mode":"beam","count":1,"playerHp":91.19600000000024,"enemyHp":[80],"spent":1,"commits":1},{"mode":"ray","count":3,"playerHp":82.18800000000023,"enemyHp":[68,100,100],"spent":3,"commits":3},{"mode":"beam","count":3,"playerHp":73.19600000000024,"enemyHp":[80,80,80],"spent":1,"commits":1}]
+
+ [32m✓[39m tests/spirit-balance-probe.test.ts[2m > [22mSpirit comparative controlled live-AI probe (not player balance acceptance)[2m > [22mrecords equal three-second windows against one and three wolves[33m 1850[2mms[22m[39m
+ [32m✓[39m tests/v17-core-contract.test.ts[2m > [22mversioned Creator acquisition contracts[2m > [22mbinds each guaranteed body to one real authored Shipping crate and its runtime recipe[33m 1340[2mms[22m[39m
+ [32m✓[39m tests/v17-core-contract.test.ts[2m > [22mversioned Creator acquisition contracts[2m > [22mdoes not advertise invented WMP site identities or unique rewards[33m 411[2mms[22m[39m
+ [32m✓[39m tests/npc-store-destroyed-replan.test.ts[2m > [22mbraces the collapsed store on site with two real carried wood; same custody reopens[33m 13763[2mms[22m[39m
+ [32m✓[39m tests/npc-store-destroyed-replan.test.ts[2m > [22mno wood or a lost load means no reconstruction and no phantom stock[33m 1554[2mms[22m[39m
+ [32m✓[39m tests/claim-reserve.test.ts[2m > [22mlegacy linked reserve migration[2m > [22mgrandfathers a bare totem, creates empty cabinet storage, and leaves the old chest and its UIDs alone[33m 1391[2mms[22m[39m
+ [32m✓[39m tests/veyra-intake.test.ts[2m > [22mpinned geography-only Stage 1[2m > [22mrecomputes exact revision, canon, all 79 payloads and 21 rasters and validates IDs[32m 209[2mms[22m[39m
+ [32m✓[39m tests/veyra-intake.test.ts[2m > [22mpinned geography-only Stage 1[2m > [22mrejects unknown identity, altered body, missing/corrupt bytes and duplicate IDs[32m 121[2mms[22m[39m
+ [32m✓[39m tests/veyra-intake.test.ts[2m > [22mpinned geography-only Stage 1[2m > [22mrejects malformed RLE rather than silently filling or wrapping[32m 4[2mms[22m[39m
+[90mstdout[2m | tests/veyra-ray-parity.test.ts[2m > [22m[2mexact scanline parity preserves every sample field at polygon edges and dense compiler rows
+[22m[39m{"case":"exact-authored-ray","samples":20900,"oldMs":77.46392400000013,"newMs":40.888007000000016}
+
+ [32m✓[39m tests/veyra-ray-parity.test.ts[2m > [22mexact scanline parity preserves every sample field at polygon edges and dense compiler rows[33m 1170[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Suites 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/item-ontology-v2.test.ts[2m [ tests/item-ontology-v2.test.ts ][22m
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'ins')[39m
+[36m [2m❯[22m p2 src/game/item-ontology-findings.ts:[2m32:19[22m[39m
+    [90m 30|[39m function p2(): { unit: Record<string, unknown>; rows: P2Row[]; totals:…
+    [90m 31|[39m   [35mconst[39m f [33m=[39m [33mRECIPES[39m[33m.[39mfasteners[33m,[39m mp [33m=[39m [33mRECIPES[39m[33m.[39mmechanical_parts[33m;[39m
+    [90m 32|[39m   const fIron = f.ins.find(([k]) => k === 'iron_ingot')![1] / f.qty, f…
+    [90m   |[39m                   [31m^[39m
+    [90m 33|[39m   const mIron = mp.ins.find(([k]) => k === 'iron_ingot')![1] / mp.qty,…
+    [90m 34|[39m   [35mconst[39m rows[33m:[39m [33mP2Row[39m[] [33m=[39m [][33m;[39m
+[90m [2m❯[22m buildRound2Findings src/game/item-ontology-findings.ts:[2m302:132[22m[39m
+[90m [2m❯[22m tests/item-ontology-v2.test.ts:[2m42:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/29]⎯[22m[39m
+
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 28 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mcosts gear, ingots and fasteners; placed unarmed, so a creature stepping on it is not hit
+[31m[1mAssertionError[22m: expected [ [ 'mechanical_gear', 1 ], …(1) ] to deeply equal [ [ 'mechanical_gear', 1 ], …(2) ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[33m@@ -5,10 +5,6 @@[39m
+[2m    ],[22m
+[2m    [[22m
+[2m      "iron_ingot",[22m
+[2m      2,[22m
+[2m    ],[22m
+[32m-   [[39m
+[32m-     "fasteners",[39m
+[32m-     2,[39m
+[32m-   ],[39m
+[2m  ][22m
+
+[36m [2m❯[22m tests/b02-bear-trap.test.ts:[2m20:52[22m[39m
+    [90m 18|[39m describe('B02-P1-B bear trap: physical arm, one paid hit, spent, rearm…
+    [90m 19|[39m   it('costs gear, ingots and fasteners; placed unarmed, so a creature …
+    [90m 20|[39m     const o=setup();expect(STRUCTS.bear_trap.cost).toEqual([['mechanic…
+    [90m   |[39m                                                    [31m^[39m
+    [90m 21|[39m     const t=o.build('bear_trap',o.x+2,o.y);expect(t.bearTrap).toEqual(…
+    [90m 22|[39m     const m=stepOn(o,o.x+2,o.y);triggerBearTrap(o.g,m,T0);expect(m.hp)…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22marming consumes exactly one Iron Plate; refused without one and the state stays unarmed
+[31m[1mAssertionError[22m: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m Object.build tests/b02-bear-trap.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m tests/b02-bear-trap.test.ts:[2m25:31[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mone paid hit per arming: armed trigger damages and stuns once, becomes spent, and does not retrigger
+[31m[1mAssertionError[22m: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m Object.build tests/b02-bear-trap.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m tests/b02-bear-trap.test.ts:[2m32:31[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mrearm is paid (one plate) and worn after the third hit: no further arming, reclaim only
+[31m[1mAssertionError[22m: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m Object.build tests/b02-bear-trap.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m tests/b02-bear-trap.test.ts:[2m38:31[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22ma sleeping creature on the plate does not trigger, and an adjacent creature cannot reach through the footprint
+[31m[1mAssertionError[22m: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m Object.build tests/b02-bear-trap.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m tests/b02-bear-trap.test.ts:[2m45:31[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mlive only: offline settlement with a creature on the armed trap never fires it (no offline kill)
+[31m[1mAssertionError[22m: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m Object.build tests/b02-bear-trap.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m tests/b02-bear-trap.test.ts:[2m50:31[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mreclaim of a used trap returns at most the bounded refund of its build cost, never more
+[31m[1mAssertionError[22m: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m Object.build tests/b02-bear-trap.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m tests/b02-bear-trap.test.ts:[2m56:31[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-bear-trap.test.ts[2m > [22mB02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn[2m > [22mpersists armed/spent state and uses across save and reload; corrupt trap state is refused
+[31m[1mAssertionError[22m: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m Object.build tests/b02-bear-trap.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m tests/b02-bear-trap.test.ts:[2m64:31[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22man unattended ripe plot is never auto-harvested offline or online
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/b03-production.test.ts:[2m11:117[22m[39m
+
+[90m [2m❯[22m setup tests/b03-production.test.ts:[2m12:42[22m[39m
+[90m [2m❯[22m tests/b03-production.test.ts:[2m21:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22ma full output chest pauses the ripe crop (no loss, no minting) and resumes once space exists
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/b03-production.test.ts:[2m11:117[22m[39m
+
+[90m [2m❯[22m setup tests/b03-production.test.ts:[2m12:42[22m[39m
+[90m [2m❯[22m tests/b03-production.test.ts:[2m30:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22mexhausted seeds and a dry barrel pause planting with a distinct reason and no fabricated output
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/b03-production.test.ts:[2m11:117[22m[39m
+
+[90m [2m❯[22m setup tests/b03-production.test.ts:[2m12:42[22m[39m
+[90m [2m❯[22m tests/b03-production.test.ts:[2m51:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22ma depleted fuel store pauses planting; no seed or water is spent while paused
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/b03-production.test.ts:[2m11:117[22m[39m
+
+[90m [2m❯[22m setup tests/b03-production.test.ts:[2m12:42[22m[39m
+[90m [2m❯[22m tests/b03-production.test.ts:[2m68:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22mtransition receipts are written only on real changes and do not repeat after reload
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/b03-production.test.ts:[2m11:117[22m[39m
+
+[90m [2m❯[22m setup tests/b03-production.test.ts:[2m12:42[22m[39m
+[90m [2m❯[22m tests/b03-production.test.ts:[2m77:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22mone 30-minute settle and thirty 1-minute settles produce the same tender state, stock and receipts
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/b03-production.test.ts:[2m11:117[22m[39m
+
+[90m [2m❯[22m setup tests/b03-production.test.ts:[2m12:42[22m[39m
+[90m [2m❯[22m tests/b03-production.test.ts:[2m90:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-production.test.ts[2m > [22mB03-B living production: explicit state, pauses and physical custody[2m > [22mwater is one physical custody: a barrel the player drinks from cannot also irrigate the plot
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/b03-production.test.ts:[2m11:117[22m[39m
+
+[90m [2m❯[22m setup tests/b03-production.test.ts:[2m12:42[22m[39m
+[90m [2m❯[22m tests/b03-production.test.ts:[2m103:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/home-sites-physical.test.ts[2m > [22mphysical owned home choices[2m > [22mreaches and claims three distinct clear sites, then places owned storage
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/home-sites-physical.test.ts:[2m15:170[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-c3-offline-resume.test.ts[2m > [22mMEC-01 R2 C3: funded furnace+workbench offline -> separate-process resume -> exact UID custody[2m > [22mproduces and retrieves exactly the queued outputs after a restart-like process boundary
+[31m[1mError[22m: no legal tiles for furnace[39m
+[36m [2m❯[22m legalTilesNear tests/mec01-c3-offline-resume.test.ts:[2m49:33[22m[39m
+    [90m 47|[39m     [35mif[39m ([33m![39m[34mbuildReason[39m(g[33m,[39m struct[33m,[39m tx[33m,[39m ty)) out[33m.[39m[34mpush[39m([tx[33m,[39m ty])[33m;[39m
+    [90m 48|[39m   }
+    [90m 49|[39m   if (out.length < count) throw new Error('no legal tiles for ' + stru…
+    [90m   |[39m                                 [31m^[39m
+    [90m 50|[39m   [35mreturn[39m out[33m;[39m
+    [90m 51|[39m }
+[90m [2m❯[22m tests/mec01-c3-offline-resume.test.ts:[2m62:22[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-foundry-drive-chain.test.ts[2m > [22mMEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared)[2m > [22mfull natural-intent chain with save/reload at each step
+[31m[1mAssertionError[22m: mechanical_parts: expected -1 to be greater than or equal to 0[39m
+[36m [2m❯[22m tests/mec01-foundry-drive-chain.test.ts:[2m43:76[22m[39m
+    [90m 41|[39m     [90m// NATURAL: take the parts from the cache with real move intents.[39m
+    [90m 42|[39m     for (const k of ['mechanical_gear','mechanical_parts','fasteners',…
+    [90m 43|[39m       const fs=r.custody[c.c!].slots.findIndex(s=>s?.key===k);expect(f…
+    [90m   |[39m                                                                            [31m^[39m
+    [90m 44|[39m       expect(dispatch(g,{id:'p3-mv-'+(++n),type:'move',from:c.c,fs,to:…
+    [90m 45|[39m     }
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-foundry-drive-chain.test.ts[2m > [22mMEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared)[2m > [22mrefused without the gear: no drive is made from nothing; refused craft consumes nothing
+[31m[1mError[22m: no legal workbench tile[39m
+[36m [2m❯[22m legalTileNear tests/mec01-foundry-drive-chain.test.ts:[2m24:9[22m[39m
+
+[90m [2m❯[22m tests/mec01-foundry-drive-chain.test.ts:[2m83:19[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-foundry-drive-chain.test.ts[2m > [22mMEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared)[2m > [22mrefused below Level 2 (honest refusal) even with every input carried
+[31m[1mError[22m: no legal workbench tile[39m
+[36m [2m❯[22m legalTileNear tests/mec01-foundry-drive-chain.test.ts:[2m24:9[22m[39m
+
+[90m [2m❯[22m tests/mec01-foundry-drive-chain.test.ts:[2m97:19[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-r2-c1-motorbike-chain.test.ts[2m > [22mMEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + FIXTURE stock + INTENT freight)[2m > [22mchain: gear and drive, frame, L3 bench, Motorbike Kit, place, refuel, mount, carry 40 ingots, deliver to a chest
+[31m[1mError[22m: no legal workbench tile[39m
+[36m [2m❯[22m legalTileNear tests/mec01-r2-c1-motorbike-chain.test.ts:[2m29:9[22m[39m
+
+[90m [2m❯[22m tests/mec01-r2-c1-motorbike-chain.test.ts:[2m51:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22ma wall_plank contributes 0.75 plank per day to its cabinet (3 x 25%), as wood walls contribute their wood
+[31m[1mError[22m: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.[39m
+[36m [2m❯[22m buildAt tests/mec01-r8e-plank-upkeep.test.ts:[2m22:135[22m[39m
+
+[90m [2m❯[22m homeWithPlankWall tests/mec01-r8e-plank-upkeep.test.ts:[2m34:43[22m[39m
+[90m [2m❯[22m tests/mec01-r8e-plank-upkeep.test.ts:[2m41:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22mnegative: without planks in the cabinet the plank wall makes the cabinet unfunded; with 3 planks it is funded
+[31m[1mError[22m: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.[39m
+[36m [2m❯[22m buildAt tests/mec01-r8e-plank-upkeep.test.ts:[2m22:135[22m[39m
+
+[90m [2m❯[22m homeWithPlankWall tests/mec01-r8e-plank-upkeep.test.ts:[2m34:43[22m[39m
+[90m [2m❯[22m tests/mec01-r8e-plank-upkeep.test.ts:[2m48:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22msettled upkeep debits real planks, with fractional credit: removed - credit = 0.75 x days, never more
+[31m[1mError[22m: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.[39m
+[36m [2m❯[22m buildAt tests/mec01-r8e-plank-upkeep.test.ts:[2m22:135[22m[39m
+
+[90m [2m❯[22m homeWithPlankWall tests/mec01-r8e-plank-upkeep.test.ts:[2m34:43[22m[39m
+[90m [2m❯[22m tests/mec01-r8e-plank-upkeep.test.ts:[2m60:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22msave/reload keeps the same plank forecast and does not re-bill: the validated copy plans identically
+[31m[1mError[22m: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.[39m
+[36m [2m❯[22m buildAt tests/mec01-r8e-plank-upkeep.test.ts:[2m22:135[22m[39m
+
+[90m [2m❯[22m homeWithPlankWall tests/mec01-r8e-plank-upkeep.test.ts:[2m34:43[22m[39m
+[90m [2m❯[22m tests/mec01-r8e-plank-upkeep.test.ts:[2m72:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22mrepair of a plank wall takes one plank (ceil(3 x 25%)), and a raw-wood wall keeps its wood repair
+[31m[1mError[22m: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.[39m
+[36m [2m❯[22m buildAt tests/mec01-r8e-plank-upkeep.test.ts:[2m22:135[22m[39m
+
+[90m [2m❯[22m homeWithPlankWall tests/mec01-r8e-plank-upkeep.test.ts:[2m34:43[22m[39m
+[90m [2m❯[22m tests/mec01-r8e-plank-upkeep.test.ts:[2m83:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-r8e-plank-upkeep.test.ts[2m > [22mMEC-01 R8E K6 upkeep for processed planks[2m > [22ma raw-wood shelter is unchanged: a wood-only cabinet bills wood and has no plank rate
+[31m[1mError[22m: claim: Need an intact packed device.[39m
+[36m [2m❯[22m buildAt tests/mec01-r8e-plank-upkeep.test.ts:[2m22:135[22m[39m
+
+[90m [2m❯[22m tests/mec01-r8e-plank-upkeep.test.ts:[2m92:99[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/29]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/sys07-w08-absence.test.ts[2m > [22mW08 absence benchmark (controlled fixtures)[2m > [22mcurrent provisional tuning: 8/24/48/72h outcomes are measured and cabinet coverage is real
+[31m[1mError[22m: build claim 3,-2: Need an intact packed device.[39m
+[36m [2m❯[22m buildAt tests/sys07-w08-absence.test.ts:[2m35:135[22m[39m
+
+[90m [2m❯[22m scenario tests/sys07-w08-absence.test.ts:[2m48:63[22m[39m
+[90m [2m❯[22m tests/sys07-w08-absence.test.ts:[2m109:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/29]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Errors [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Error [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+[31m[1mError[22m: [vitest-pool]: Worker forks emitted error.[39m
+[90m [2m❯[22m EventEmitter.onTaskError ../../../home/user/Soul-of-Hero/web/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:[2m3526:21[22m[39m
+[90m [2m❯[22m EventEmitter.emit node:events:[2m519:28[22m[39m
+[90m [2m❯[22m ChildProcess.emitUnexpectedExit ../../../home/user/Soul-of-Hero/web/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:[2m3092:22[22m[39m
+[90m [2m❯[22m ChildProcess.emit node:events:[2m519:28[22m[39m
+[90m [2m❯[22m Process.ChildProcess._handle.onexit node:internal/child_process:[2m293:12[22m[39m
+
+[31m[1mCaused by: Error[22m: Worker exited unexpectedly[39m
+[90m [2m❯[22m ChildProcess.emitUnexpectedExit ../../../home/user/Soul-of-Hero/web/node_modules/vitest/dist/chunks/cli-api.B0Pz1_R7.js:[2m3090:33[22m[39m
+[90m [2m❯[22m ChildProcess.emit node:events:[2m519:28[22m[39m
+[90m [2m❯[22m Process.ChildProcess._handle.onexit node:internal/child_process:[2m293:12[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+
+[2m Test Files [22m [1m[31m9 failed[39m[22m[2m | [22m[1m[32m45 passed[39m[22m[2m | [22m[33m1 skipped[39m[90m (56)[39m
+[2m      Tests [22m [1m[31m28 failed[39m[22m[2m | [22m[1m[32m360 passed[39m[22m[2m | [22m[33m32 skipped[39m[90m (427)[39m
+[2m     Errors [22m [1m[31m1 error[39m[22m
+[2m   Start at [22m 19:00:33
+[2m   Duration [22m 1685.99s[2m (transform 12.76s, setup 0ms, import 160.01s, tests 478.04s, environment 6ms)[22m
+
+JSON report written to /home/user/Soul-of-Hero/tmp/verification/full-eb04deb/shard-1.json

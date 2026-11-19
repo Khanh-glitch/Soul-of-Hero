@@ -34,3 +34,5 @@ Ngày 2026-11-19 · `arena/25e24231-soul-of-hero` · SHA nguồn và test: `eb04
 9. [Endurance/benchmark và giới hạn so sánh](endurance-performance.md).
 10. [Walkthrough và hướng dẫn A–I](walkthrough-vi.md).
 11. Bảng gate CODE/ENGINEERING/BROWSER/CREATOR ở đầu trang. **REVIEW REQUIRED; không merge.**
+
+**Cập nhật T9 lúc 19:32 UTC:** shard đầu tiên hoàn tất (index 1): 47 file qua, 9 lỗi; 360 assertion qua, 28 lỗi, 32 pending. Shard 0 hết watchdog 1800s. Tính cả phép đối chứng chọn lọc, **37 dấu lỗi** (gồm một lỗi cấp suite) khớp baseline; một assertion freight mới quan sát chưa phân loại. Không phải verdict cho 225 file. Xem [checkpoint có stack và từng file](engineering/regression-review.json).

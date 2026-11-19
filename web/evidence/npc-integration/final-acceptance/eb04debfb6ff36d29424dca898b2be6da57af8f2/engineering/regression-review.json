@@ -1,7 +1,7 @@
 {
   "measuredSHA": "eb04debfb6ff36d29424dca898b2be6da57af8f2",
   "sourceAndTestsSHA256": "fac5732de7846ff41dd26f83602bb9c63ff77d49a9121417986eecd6e200d9ad",
-  "asOf": "2026-11-19T19:20:02.987Z",
+  "asOf": "2026-11-19T19:32:46.550Z",
   "baselineSHA": "79ac5f0b2855ef44d5ca95ed32a19781fa66a045",
   "complete": false,
   "files": [
@@ -9,19 +9,21 @@
       "file": "src/veyra05/arch/elder-lairs.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "src/veyra05/audit-closure.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 0,
+      "skipped": 7
     },
     {
       "file": "src/veyra05/ecosystem-full.test.ts",
       "shard": 2,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 3
     },
     {
       "file": "src/veyra05/full-world-spawn-industrial.audit.test.ts",
@@ -33,13 +35,15 @@
       "file": "src/veyra05/global-production-start.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "src/veyra05/global-spawn-eligibility.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 2,
+      "skipped": 0
     },
     {
       "file": "src/veyra05/global-spawn-seed-stress.test.ts",
@@ -57,13 +61,15 @@
       "file": "src/veyra05/integrated-lifecycle.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "src/veyra05/integrated-world.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 4,
+      "skipped": 0
     },
     {
       "file": "src/veyra05/item-network-export.audit.test.ts",
@@ -81,13 +87,15 @@
       "file": "src/veyra05/review-r2-acceptance.test.ts",
       "shard": 0,
       "status": "PARTIAL_LOG",
-      "passedAssertionsSeen": 4
+      "passedAssertionsSeen": 4,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "src/veyra05/spawn-candidate-reasons.audit.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 0,
+      "skipped": 1
     },
     {
       "file": "src/veyra05/spawn-failure-cause.audit.test.ts",
@@ -111,13 +119,15 @@
       "file": "tests/b01-industrial-loot.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/b02-bear-trap.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "FAILED",
+      "passedAssertionsSeen": 0,
+      "skipped": 0
     },
     {
       "file": "tests/b02-card-class.test.ts",
@@ -135,13 +145,15 @@
       "file": "tests/b03-hunger-shelter.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/b03-production.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "FAILED",
+      "passedAssertionsSeen": 0,
+      "skipped": 0
     },
     {
       "file": "tests/b03-return.test.ts",
@@ -159,13 +171,15 @@
       "file": "tests/b04-p3-world.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/b04-p4-loot.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 7,
+      "skipped": 0
     },
     {
       "file": "tests/b04-p4-world.test.ts",
@@ -183,13 +197,15 @@
       "file": "tests/b05-freight-compare.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/b05-freight-crude.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 1,
+      "skipped": 0
     },
     {
       "file": "tests/b05-industrial-art.test.ts",
@@ -207,13 +223,15 @@
       "file": "tests/b05-oil-pump.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/b05-parcel-panel.test.tsx",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 4,
+      "skipped": 0
     },
     {
       "file": "tests/b05-parcel-persistence.test.ts",
@@ -231,13 +249,15 @@
       "file": "tests/b05-save-diagnostics.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/b05-station-fuel-policy.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 6,
+      "skipped": 0
     },
     {
       "file": "tests/b05-vendor-freight.test.ts",
@@ -255,13 +275,15 @@
       "file": "tests/b06-presentation-cues.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/b06-world-window.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 8,
+      "skipped": 0
     },
     {
       "file": "tests/b1-integrity.test.ts",
@@ -279,13 +301,15 @@
       "file": "tests/b2-chronology.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/b2-perception.test.ts",
       "shard": 1,
-      "status": "PARTIAL_LOG",
-      "passedAssertionsSeen": 37
+      "status": "PASSED",
+      "passedAssertionsSeen": 37,
+      "skipped": 0
     },
     {
       "file": "tests/c3-poi-power-feedback.test.ts",
@@ -296,26 +320,28 @@
     {
       "file": "tests/cal01-world-calendar.test.ts",
       "shard": 3,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 25
     },
     {
       "file": "tests/cal011-forecast.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/claim-reserve.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 1,
+      "skipped": 0
     },
     {
       "file": "tests/control-tower-audit-regressions.test.tsx",
       "shard": 2,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 11
     },
     {
       "file": "tests/control-tower-corrective-wp1-wp2.test.ts",
@@ -327,13 +353,15 @@
       "file": "tests/control-tower-journey-durability.test.tsx",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/creator-core-acquisition.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 2,
+      "skipped": 0
     },
     {
       "file": "tests/creator-core-foundation.test.ts",
@@ -351,13 +379,15 @@
       "file": "tests/earthmother-core.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/economic-network-m1.test.ts",
       "shard": 1,
-      "status": "PARTIAL_LOG",
-      "passedAssertionsSeen": 1
+      "status": "PASSED",
+      "passedAssertionsSeen": 1,
+      "skipped": 0
     },
     {
       "file": "tests/economic-network-m2.test.ts",
@@ -375,13 +405,15 @@
       "file": "tests/economic-network-m5-audits.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/economy-network.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 11,
+      "skipped": 0
     },
     {
       "file": "tests/economy-reachable-union.test.ts",
@@ -399,19 +431,21 @@
       "file": "tests/escrow-route-physical.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/final-item-set.test.ts",
       "shard": 1,
-      "status": "PARTIAL_LOG",
-      "passedAssertionsSeen": 24
+      "status": "PASSED",
+      "passedAssertionsSeen": 24,
+      "skipped": 0
     },
     {
       "file": "tests/g1a-industrial-salvage.test.ts",
       "shard": 2,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 14
     },
     {
       "file": "tests/g1a-r1-census.test.ts",
@@ -423,13 +457,15 @@
       "file": "tests/g1a-r1-play.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/g1b-core-v2.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 13,
+      "skipped": 0
     },
     {
       "file": "tests/g1b-ecology-runtime.test.ts",
@@ -447,13 +483,15 @@
       "file": "tests/g1b-economy.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/g1b-gates.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 5,
+      "skipped": 0
     },
     {
       "file": "tests/g1b-geometry.test.ts",
@@ -471,13 +509,15 @@
       "file": "tests/g1b-icon-audit.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/g1b-layout-migration.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 5,
+      "skipped": 0
     },
     {
       "file": "tests/g1b-lifecycle.test.ts",
@@ -495,13 +535,15 @@
       "file": "tests/g1b-resolve.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/g1b-roll.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 9,
+      "skipped": 0
     },
     {
       "file": "tests/g1b-save-triage.test.ts",
@@ -519,13 +561,15 @@
       "file": "tests/global-source-ledger.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/gold-intake-integration.test.tsx",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 4,
+      "skipped": 0
     },
     {
       "file": "tests/gp10r-expedition-intel.test.ts",
@@ -543,13 +587,15 @@
       "file": "tests/home-production.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/home-sites-physical.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "FAILED",
+      "passedAssertionsSeen": 0,
+      "skipped": 0
     },
     {
       "file": "tests/industrial-power.test.ts",
@@ -567,19 +613,21 @@
       "file": "tests/item-crafting-master.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/item-ontology-v2-li-historical.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 22,
+      "skipped": 0
     },
     {
       "file": "tests/item-ontology-v2-round2.test.ts",
       "shard": 2,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 12
     },
     {
       "file": "tests/item-ontology-v2-round3.test.tsx",
@@ -591,13 +639,15 @@
       "file": "tests/item-ontology-v2-routes.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/item-ontology-v2.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "FAILED",
+      "passedAssertionsSeen": 0,
+      "skipped": 31
     },
     {
       "file": "tests/k6-power.test.ts",
@@ -615,13 +665,15 @@
       "file": "tests/last-island-copy-first.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/logistics-garden.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 9,
+      "skipped": 0
     },
     {
       "file": "tests/loot-ecology.test.ts",
@@ -639,13 +691,15 @@
       "file": "tests/lr02-shipping-access.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/m-core-03.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 6,
+      "skipped": 0
     },
     {
       "file": "tests/m-core-03r-economy.test.ts",
@@ -663,13 +717,15 @@
       "file": "tests/mec01-a2-pipe-blade.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/mec01-b-consumer-choice.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 8,
+      "skipped": 0
     },
     {
       "file": "tests/mec01-c1-motorbike-chain.test.ts",
@@ -680,20 +736,22 @@
     {
       "file": "tests/mec01-c2-delivery.test.ts",
       "shard": 3,
-      "status": "UNINVESTIGATED",
+      "status": "PARTIAL_LOG",
       "passedAssertionsSeen": 0
     },
     {
       "file": "tests/mec01-c3-offline-child.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/mec01-c3-offline-resume.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "FAILED",
+      "passedAssertionsSeen": 0,
+      "skipped": 0
     },
     {
       "file": "tests/mec01-f3-evac-reset.test.ts",
@@ -711,13 +769,15 @@
       "file": "tests/mec01-five-chain-benchmark.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/mec01-foundry-drive-chain.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "FAILED",
+      "passedAssertionsSeen": 1,
+      "skipped": 0
     },
     {
       "file": "tests/mec01-gear-decision-network.test.ts",
@@ -735,13 +795,15 @@
       "file": "tests/mec01-loot-source-contract.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/mec01-r10-soil-regrowth.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 12,
+      "skipped": 0
     },
     {
       "file": "tests/mec01-r11-terrain-expiry-order.test.ts",
@@ -759,13 +821,15 @@
       "file": "tests/mec01-r12-departure.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/mec01-r2-c1-motorbike-chain.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "FAILED",
+      "passedAssertionsSeen": 0,
+      "skipped": 0
     },
     {
       "file": "tests/mec01-r3-causal-integrity.test.ts",
@@ -783,19 +847,21 @@
       "file": "tests/mec01-r4-score-once.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/mec01-r5-offline-defense.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 15,
+      "skipped": 0
     },
     {
       "file": "tests/mec01-r51-corrective.test.ts",
       "shard": 2,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 14
     },
     {
       "file": "tests/mec01-r6-freight-speed.test.ts",
@@ -807,13 +873,15 @@
       "file": "tests/mec01-r6-homecoming.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/mec01-r61-uid-custody.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 4,
+      "skipped": 0
     },
     {
       "file": "tests/mec01-r7-wear-maintenance.test.ts",
@@ -831,13 +899,15 @@
       "file": "tests/mec01-r8c-rich-iron.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/mec01-r8e-plank-upkeep.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "FAILED",
+      "passedAssertionsSeen": 0,
+      "skipped": 0
     },
     {
       "file": "tests/mec01-r9-wild-regrowth.test.ts",
@@ -855,13 +925,15 @@
       "file": "tests/mjolnir-core.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/motorbike.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 9,
+      "skipped": 0
     },
     {
       "file": "tests/npc-art.test.ts",
@@ -879,13 +951,15 @@
       "file": "tests/npc-causal-needs.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/npc-dual-rescue-same-run.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 1,
+      "skipped": 0
     },
     {
       "file": "tests/npc-elder-global-assault.test.ts",
@@ -903,13 +977,15 @@
       "file": "tests/npc-forage-cross-window.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/npc-global-navigation.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 11,
+      "skipped": 0
     },
     {
       "file": "tests/npc-harvest-transactions.test.ts",
@@ -927,13 +1003,15 @@
       "file": "tests/npc-humanworld.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/npc-hunt-meat-chain.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 1,
+      "skipped": 0
     },
     {
       "file": "tests/npc-medic-response.test.ts",
@@ -951,13 +1029,15 @@
       "file": "tests/npc-natural-food-consumer.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/npc-natural-harvest.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 1,
+      "skipped": 0
     },
     {
       "file": "tests/npc-natural-procurement.test.ts",
@@ -975,13 +1055,15 @@
       "file": "tests/npc-offline-matrix.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/npc-p0-corrective.test.ts",
       "shard": 1,
-      "status": "PARTIAL_LOG",
-      "passedAssertionsSeen": 27
+      "status": "PASSED",
+      "passedAssertionsSeen": 27,
+      "skipped": 0
     },
     {
       "file": "tests/npc-paid-work.test.ts",
@@ -999,13 +1081,15 @@
       "file": "tests/npc-procurement-transactions.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/npc-projectile-flight.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 2,
+      "skipped": 0
     },
     {
       "file": "tests/npc-residential-ownership.test.ts",
@@ -1023,13 +1107,15 @@
       "file": "tests/npc-shelter-incidents.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/npc-store-destroyed-replan.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 2,
+      "skipped": 0
     },
     {
       "file": "tests/npc-vessel-cost-and-hull.test.ts",
@@ -1047,13 +1133,15 @@
       "file": "tests/npc-world-budget.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/offline-preparation.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 4,
+      "skipped": 0
     },
     {
       "file": "tests/pa1-building-ontology.test.ts",
@@ -1071,13 +1159,15 @@
       "file": "tests/pa1-device-repair-loop.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/pa1-recipe-migration.test.ts",
       "shard": 1,
-      "status": "PARTIAL_LOG",
-      "passedAssertionsSeen": 22
+      "status": "PASSED",
+      "passedAssertionsSeen": 22,
+      "skipped": 0
     },
     {
       "file": "tests/pa1-research-console.test.tsx",
@@ -1095,13 +1185,15 @@
       "file": "tests/pa1-research-visible-gate.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/pa1-rev1-queued-jobs.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 10,
+      "skipped": 0
     },
     {
       "file": "tests/poi-access-s05.test.ts",
@@ -1119,13 +1211,15 @@
       "file": "tests/production-network.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/progression.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 10,
+      "skipped": 0
     },
     {
       "file": "tests/public-loot-lifecycle.test.ts",
@@ -1143,13 +1237,15 @@
       "file": "tests/s06-circuits.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/s08-world-stimulus.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 10,
+      "skipped": 0
     },
     {
       "file": "tests/s10-oil-refinery.test.ts",
@@ -1167,13 +1263,15 @@
       "file": "tests/soh.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/spirit-balance-probe.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 1,
+      "skipped": 0
     },
     {
       "file": "tests/spirit-core.test.ts",
@@ -1191,13 +1289,15 @@
       "file": "tests/sys03-recycler.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/sys07-w08-absence.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "FAILED",
+      "passedAssertionsSeen": 0,
+      "skipped": 0
     },
     {
       "file": "tests/technology-semantics.test.ts",
@@ -1215,13 +1315,15 @@
       "file": "tests/ui-5pillars.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/v17-core-contract.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 2,
+      "skipped": 0
     },
     {
       "file": "tests/v17-oil-chain.test.ts",
@@ -1239,13 +1341,15 @@
       "file": "tests/veyra-coast-query.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/veyra-intake.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 3,
+      "skipped": 0
     },
     {
       "file": "tests/veyra-lr02-patch.test.ts",
@@ -1263,13 +1367,15 @@
       "file": "tests/veyra-query-parity.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/veyra-ray-parity.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 1,
+      "skipped": 0
     },
     {
       "file": "tests/veyra-runtime.test.ts",
@@ -1287,13 +1393,15 @@
       "file": "tests/w07-power-offline-parity.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/w07r-refinery-chronology.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 2,
+      "skipped": 0
     },
     {
       "file": "tests/w08-combat-sound.test.ts",
@@ -1311,13 +1419,15 @@
       "file": "tests/w08-survival-unprovisioned.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/w08r-combat-provenance.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 14,
+      "skipped": 0
     },
     {
       "file": "tests/w09-core-signature-sound.test.ts",
@@ -1335,13 +1445,15 @@
       "file": "tests/world-economy-runtime.test.ts",
       "shard": 0,
       "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "passedAssertionsSeen": 0,
+      "watchdog": "SHARD_INTERRUPTED"
     },
     {
       "file": "tests/world-economy.test.ts",
       "shard": 1,
-      "status": "UNINVESTIGATED",
-      "passedAssertionsSeen": 0
+      "status": "PASSED",
+      "passedAssertionsSeen": 6,
+      "skipped": 0
     },
     {
       "file": "tests/wp2-power-global-obstacles.test.ts",
@@ -1357,6 +1469,229 @@
     }
   ],
   "failures": [
+    {
+      "file": "tests/item-ontology-v2.test.ts",
+      "assertion": "<suite>",
+      "message": "Cannot read properties of undefined (reading 'ins')",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b02-bear-trap.test.ts",
+      "assertion": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn costs gear, ingots and fasteners; placed unarmed, so a creature stepping on it is not hit",
+      "message": "AssertionError: expected [ [ 'mechanical_gear', 1 ], …(1) ] to deeply equal [ [ 'mechanical_gear', 1 ], …(2) ]",
+      "parent": "AssertionError: expected [ [ 'mechanical_gear', 1 ], …(1) ] to deeply equal [ [ 'mechanical_gear', 1 ], …(2) ]",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b02-bear-trap.test.ts",
+      "assertion": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn arming consumes exactly one Iron Plate; refused without one and the state stays unarmed",
+      "message": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "parent": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b02-bear-trap.test.ts",
+      "assertion": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn one paid hit per arming: armed trigger damages and stuns once, becomes spent, and does not retrigger",
+      "message": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "parent": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b02-bear-trap.test.ts",
+      "assertion": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn rearm is paid (one plate) and worn after the third hit: no further arming, reclaim only",
+      "message": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "parent": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b02-bear-trap.test.ts",
+      "assertion": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn a sleeping creature on the plate does not trigger, and an adjacent creature cannot reach through the footprint",
+      "message": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "parent": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b02-bear-trap.test.ts",
+      "assertion": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn live only: offline settlement with a creature on the armed trap never fires it (no offline kill)",
+      "message": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "parent": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b02-bear-trap.test.ts",
+      "assertion": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn reclaim of a used trap returns at most the bounded refund of its build cost, never more",
+      "message": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "parent": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b02-bear-trap.test.ts",
+      "assertion": "B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn persists armed/spent state and uses across save and reload; corrupt trap state is refused",
+      "message": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "parent": "AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b03-production.test.ts",
+      "assertion": "B03-B living production: explicit state, pauses and physical custody an unattended ripe plot is never auto-harvested offline or online",
+      "message": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "parent": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b03-production.test.ts",
+      "assertion": "B03-B living production: explicit state, pauses and physical custody a full output chest pauses the ripe crop (no loss, no minting) and resumes once space exists",
+      "message": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "parent": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b03-production.test.ts",
+      "assertion": "B03-B living production: explicit state, pauses and physical custody exhausted seeds and a dry barrel pause planting with a distinct reason and no fabricated output",
+      "message": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "parent": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b03-production.test.ts",
+      "assertion": "B03-B living production: explicit state, pauses and physical custody a depleted fuel store pauses planting; no seed or water is spent while paused",
+      "message": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "parent": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b03-production.test.ts",
+      "assertion": "B03-B living production: explicit state, pauses and physical custody transition receipts are written only on real changes and do not repeat after reload",
+      "message": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "parent": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b03-production.test.ts",
+      "assertion": "B03-B living production: explicit state, pauses and physical custody one 30-minute settle and thirty 1-minute settles produce the same tender state, stock and receipts",
+      "message": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "parent": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/b03-production.test.ts",
+      "assertion": "B03-B living production: explicit state, pauses and physical custody water is one physical custody: a barrel the player drinks from cannot also irrigate the plot",
+      "message": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "parent": "AssertionError: expected { ok: false, …(1) } to match object { ok: true }",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/home-sites-physical.test.ts",
+      "assertion": "physical owned home choices reaches and claims three distinct clear sites, then places owned storage",
+      "message": "AssertionError: expected false to be true // Object.is equality",
+      "parent": "AssertionError: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/mec01-c3-offline-resume.test.ts",
+      "assertion": "MEC-01 R2 C3: funded furnace+workbench offline -> separate-process resume -> exact UID custody produces and retrieves exactly the queued outputs after a restart-like process boundary",
+      "message": "Error: no legal tiles for furnace",
+      "parent": "Error: no legal tiles for furnace",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/mec01-foundry-drive-chain.test.ts",
+      "assertion": "MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared) full natural-intent chain with save/reload at each step",
+      "message": "AssertionError: mechanical_parts: expected -1 to be greater than or equal to 0",
+      "parent": "AssertionError: mechanical_parts: expected -1 to be greater than or equal to 0",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/mec01-foundry-drive-chain.test.ts",
+      "assertion": "MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared) refused without the gear: no drive is made from nothing; refused craft consumes nothing",
+      "message": "Error: no legal workbench tile",
+      "parent": "Error: no legal workbench tile",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/mec01-foundry-drive-chain.test.ts",
+      "assertion": "MEC-01 P3: Foundry Gear -> Workbench L2 -> Motor Drive (geared) refused below Level 2 (honest refusal) even with every input carried",
+      "message": "Error: no legal workbench tile",
+      "parent": "Error: no legal workbench tile",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/mec01-r2-c1-motorbike-chain.test.ts",
+      "assertion": "MEC-01 R2 C1: gather-to-kit chain, then a real cargo trip (CRAFTED + FIXTURE stock + INTENT freight) chain: gear and drive, frame, L3 bench, Motorbike Kit, place, refuel, mount, carry 40 ingots, deliver to a chest",
+      "message": "Error: no legal workbench tile",
+      "parent": "Error: no legal workbench tile",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+      "assertion": "MEC-01 R8E K6 upkeep for processed planks a wall_plank contributes 0.75 plank per day to its cabinet (3 x 25%), as wood walls contribute their wood",
+      "message": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.",
+      "parent": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+      "assertion": "MEC-01 R8E K6 upkeep for processed planks negative: without planks in the cabinet the plank wall makes the cabinet unfunded; with 3 planks it is funded",
+      "message": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.",
+      "parent": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+      "assertion": "MEC-01 R8E K6 upkeep for processed planks settled upkeep debits real planks, with fractional credit: removed - credit = 0.75 x days, never more",
+      "message": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.",
+      "parent": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+      "assertion": "MEC-01 R8E K6 upkeep for processed planks save/reload keeps the same plank forecast and does not re-bill: the validated copy plans identically",
+      "message": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.",
+      "parent": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+      "assertion": "MEC-01 R8E K6 upkeep for processed planks repair of a plank wall takes one plank (ceil(3 x 25%)), and a raw-wood wall keeps its wood repair",
+      "message": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.",
+      "parent": "Error: wall_plank: Build the wooden form first, then upgrade the placed piece through a Territory Cabinet.",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+      "assertion": "MEC-01 R8E K6 upkeep for processed planks a raw-wood shelter is unchanged: a wood-only cabinet bills wood and has no plank rate",
+      "message": "Error: claim: Need an intact packed device.",
+      "parent": "Error: claim: Need an intact packed device.",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/sys07-w08-absence.test.ts",
+      "assertion": "W08 absence benchmark (controlled fixtures) current provisional tuning: 8/24/48/72h outcomes are measured and cabinet coverage is real",
+      "message": "Error: build claim 3,-2: Need an intact packed device.",
+      "parent": "Error: build claim 3,-2: Need an intact packed device.",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/control-tower-audit-regressions.test.tsx",
+      "assertion": "Phase B — Independent Gameplay & Gold-Seam Defect Regressions B7: Gold SurvivorScreen and ContainerPanel InvSide resolve every category & equipment ghost icon without empty src=\"\"",
+      "message": "AssertionError: expected false to be true // Object.is equality",
+      "parent": "AssertionError: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/g1a-industrial-salvage.test.ts",
+      "assertion": "G1A interaction — real swings tool matrix: measured hits and time per archetype (Stone Axe 1 / Knife 2 / Cleaver 3 / Machete 4 / picks 1)",
+      "message": "AssertionError: cleaver on road_salvage_bale: expected 4 to be 3 // Object.is equality",
+      "parent": "AssertionError: cleaver on road_salvage_bale: expected 4 to be 3 // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "src/veyra05/ecosystem-full.test.ts",
+      "assertion": "Phase C/D/E/F — Veyra Full Creature, Husbandry, Side-Boss & 6-Primordial Ecosystem preserves ALWAYS_KNOWN_RECIPES invariant while exposing new base husbandry & fletching recipes",
+      "message": "AssertionError: expected 37 to be 14 // Object.is equality",
+      "parent": "AssertionError: expected 37 to be 14 // Object.is equality",
+      "class": "INHERITED"
+    },
     {
       "file": "tests/cal01-world-calendar.test.ts",
       "assertion": "CAL-01 E — seasonal gardening with real structures, costs and receipts a cold frame costs real materials and changes the winter outcome on the same plot and seed",
@@ -1386,24 +1721,16 @@
       "class": "INHERITED"
     },
     {
-      "file": "tests/control-tower-audit-regressions.test.tsx",
-      "assertion": "Phase B — Independent Gameplay & Gold-Seam Defect Regressions B7: Gold SurvivorScreen and ContainerPanel InvSide resolve every category & equipment ghost icon without empty src=\"\"",
-      "message": "AssertionError: expected false to be true // Object.is equality",
-      "parent": "AssertionError: expected false to be true // Object.is equality",
-      "class": "INHERITED"
+      "file": "tests/mec01-c2-delivery.test.ts",
+      "assertion": "MEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes > delivers the full crate by walking (inventory carry)",
+      "class": "UNINVESTIGATED",
+      "message": "Partial verbose log; JSON not yet available"
     },
     {
       "file": "tests/control-tower-journey-durability.test.tsx",
       "assertion": "Final Journey Durability Corrective — Durable Run-Authoritative Daily Ledger RED-2: keeps Day 2+ objective slate unchanged when run.start is evicted and gated capabilities are built/learned after midnight",
       "message": "AssertionError: expected false to be true // Object.is equality",
       "parent": "AssertionError: expected false to be true // Object.is equality",
-      "class": "INHERITED"
-    },
-    {
-      "file": "tests/g1a-industrial-salvage.test.ts",
-      "assertion": "G1A interaction — real swings tool matrix: measured hits and time per archetype (Stone Axe 1 / Knife 2 / Cleaver 3 / Machete 4 / picks 1)",
-      "message": "AssertionError: cleaver on road_salvage_bale: expected 4 to be 3 // Object.is equality",
-      "parent": "AssertionError: cleaver on road_salvage_bale: expected 4 to be 3 // Object.is equality",
       "class": "INHERITED"
     }
   ]
