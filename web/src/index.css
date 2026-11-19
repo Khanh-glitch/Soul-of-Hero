@@ -726,7 +726,7 @@ input::placeholder { color: #566872; }
 .chart-teleport-pill { position: absolute; left: 5px; bottom: 5px; padding: 2px 5px; background: rgba(34,16,52,.92); border: 1px solid #d9acff; color: #f0dbff; font: 8px 'Pixelify Sans', monospace; pointer-events: none; }
 .map-toolbar { display: flex; align-items: center; gap: 4px; min-height: 20px; }
 .map-toolbar .btn { font-size: 8px; padding: 2px 5px 3px; }
-.map-legend { display: flex; align-items: center; gap: 4px; margin-left: auto; font: 7px 'Pixelify Sans', monospace; color: var(--muted); }
+.map-legend { display: flex; align-items: center; gap: 3px; margin-left: auto; font: 9px 'Pixelify Sans', monospace; color: var(--muted); }
 .map-legend i { font-style: normal; margin-right: 1px; }
 .map-key { color: var(--muted); font: 8px 'Pixelify Sans', monospace; }
 .map-sidebar { display: flex; flex-direction: column; min-height: 0; background: #101b20ad; border-left: 1px solid #586568; padding-left: 7px; gap: 4px; }
