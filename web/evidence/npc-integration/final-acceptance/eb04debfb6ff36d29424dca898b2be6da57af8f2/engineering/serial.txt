@@ -1,0 +1,13 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ tests/npc-dual-rescue-same-run.test.ts > dual rescue in one run (NOT RUN — authored for the post-implementation qualification gate) > evacuates one community by sea while another survives the final assault in the same run 4175ms
+ ✓ tests/npc-world-budget.test.ts > accounts all 81 locations, actual beds and finite opening nutrition without calling deficits sustainable 1294ms
+ ✓ tests/npc-forage-cross-window.test.ts > walks to a real off-window Marsh Cap, resumes the same job on reload and delivers its UID once 20334ms
+ ✓ tests/mec01-f3-evac-reset.test.ts > evacuate keeps profile securedCash, resets run-local physical cash and learned recipes 1122ms
+ ✓ tests/mec01-f3-evac-reset.test.ts > negative: evacuate away from the beacon is refused and the run and cash stay intact 36ms
+
+ Test Files  4 passed (4)
+      Tests  5 passed (5)
+   Start at  19:20:10
+   Duration  33.69s (transform 3.41s, setup 0ms, import 6.12s, tests 26.97s, environment 1ms)

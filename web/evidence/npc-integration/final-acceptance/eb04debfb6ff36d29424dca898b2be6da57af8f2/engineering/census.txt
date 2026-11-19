@@ -1,0 +1,10 @@
+
+ RUN  v4.1.12 /tmp/soh-regression/web
+
+ ✓ tests/tmp-final-census.test.ts (1 test) 2653ms
+   ✓ accounts all 81 locations, actual beds and finite opening nutrition without calling deficits sustainable  2649ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:21:55
+   Duration  9.98s (transform 6.04s, setup 0ms, import 7.13s, tests 2.65s, environment 0ms)
