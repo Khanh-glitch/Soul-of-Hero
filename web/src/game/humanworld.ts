@@ -955,6 +955,24 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   if (tool?.dur !== undefined) { tool.dur = Math.max(0, tool.dur - 1); if (tool.dur === 0) h.equip.weapon = null; }
   if (st.stock <= 0 && s.def.regrow) { st.regrowFrom = now; st.regrowAcc = 0; }
   receipt(r, now, 'human.harvest', `${h.actorId}:${s.key}@${tx},${ty}:-${units}`);
+  // WORK ACCIDENT: solid material can hurt the hand that works it. Deterministic on the actor, the
+  // node and the moment (no Math.random in the sim), small, and it wounds rather than kills — so a
+  // real injury exists in the world that a real medic has to treat.
+  if (s.def.mat !== 'plant') {
+    let hash = 0x9e3779b9 ^ h.actorId.length;
+    for (const ch of `${h.actorId}:${tx},${ty}:${Math.floor(now / 60000)}`) hash = (hash * 31 + ch.charCodeAt(0)) | 0;
+    const roll = (hash >>> 0) % 23;
+    if (roll === 0) {
+      // Minor accident: a cut or a wrenched wrist.
+      applyDamage(r, hw, h, 6, 0, now, 'hazard', h.actorId, h.floor);
+      receipt(r, now, 'human.harvest.accident', `${h.actorId}:${s.key}@${tx},${ty}`);
+    } else if (roll === 1) {
+      // Serious accident: a slab or a load comes down on the worker. This downs them where they
+      // stand, which is the ONLY way a real untreated patient exists for a medic to reach.
+      applyDamage(r, hw, h, h.hp + 1, 0, now, 'hazard', h.actorId, h.floor);
+      receipt(r, now, 'human.harvest.crush', `${h.actorId}:${s.key}@${tx},${ty}`);
+    }
+  }
   return { result: 'yield', got, key: s.key };
 }
 
