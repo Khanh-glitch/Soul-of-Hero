@@ -1,0 +1,66 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90m/home/user/Soul-of-Hero/web[39m
+
+[90mstdout[2m | tests/npc-occupation-coverage.test.ts[2m > [22m[2mnatural occupation coverage[2m > [22m[2mrecords which roles work on their own in three real settlements
+[22m[39mVILLAGE veyra05-greywater {"guard:human.guard.duty":60,"gardener:human.harvest":16,"gardener:human.harvest.output":16,"builder:human.harvest":14,"builder:human.harvest.output":14,"mechanic:human.harvest":53,"mechanic:human.harvest.output":64,"salvager:human.harvest":41,"salvager:human.harvest.output":48,"engineer:human.harvest":17,"engineer:human.harvest.output":19,"engineer:human.harvest.complete":16,"medic:human.harvest":5,"medic:human.harvest.output":5,"salvager:human.harvest.complete":37,"cook:human.harvest":10,"cook:human.harvest.output":10,"builder:human.harvest.complete":11,"mechanic:human.harvest.complete":47,"gardener:human.harvest.complete":13,"cook:human.harvest.complete":10,"medic:human.harvest.complete":5,"cook:human.work.start":1,"cook:human.production.pickup":1}
+VILLAGE veyra05-saltwick {"salvager:human.harvest":45,"salvager:human.harvest.output":52,"engineer:human.harvest":17,"engineer:human.harvest.output":19,"mechanic:human.harvest":55,"mechanic:human.harvest.output":66,"guard:human.guard.duty":69,"mechanic:human.harvest.complete":47,"builder:human.harvest":12,"builder:human.harvest.output":12,"gardener:human.harvest":14,"gardener:human.harvest.output":14,"engineer:human.harvest.complete":15,"medic:human.harvest":5,"medic:human.harvest.output":5,"salvager:human.harvest.complete":41,"cook:human.harvest":11,"cook:human.harvest.output":11,"builder:human.harvest.complete":9,"gardener:human.harvest.complete":12,"cook:human.harvest.complete":10,"medic:human.harvest.complete":5,"cook:human.work.start":1,"cook:human.production.pickup":1}
+VILLAGE veyra05-cinder {"guard:human.guard.duty":220,"salvager:human.harvest":42,"salvager:human.harvest.output":49,"builder:human.harvest":12,"builder:human.harvest.output":12,"gardener:human.harvest":14,"gardener:human.harvest.output":14,"mechanic:human.harvest":49,"mechanic:human.harvest.output":59,"engineer:human.harvest":16,"engineer:human.harvest.output":18,"engineer:human.harvest.complete":15,"medic:human.harvest":5,"medic:human.harvest.output":5,"salvager:human.harvest.complete":37,"cook:human.harvest":11,"cook:human.harvest.output":11,"builder:human.harvest.complete":9,"mechanic:human.harvest.complete":42,"gardener:human.harvest.complete":12,"cook:human.harvest.complete":10,"medic:human.harvest.complete":5,"cook:human.work.start":1,"cook:human.production.pickup":1,"medic:human.treat":1}
+ROLES IN LEDGER builder,cook,engineer,gardener,guard,mechanic,medic,salvager
+PROVEN BY THEIR OWN TRADE builder,cook,engineer,gardener,guard,mechanic,medic,salvager
+UNION ROLES builder,cook,engineer,gardener,guard,mechanic,medic,salvager
+
+ [32m✓[39m tests/npc-occupation-coverage.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 105176[2mms[22m[39m
+     [33m[2m✓[22m[39m records which roles work on their own in three real settlements [33m 105171[2mms[22m[39m
+ [32m✓[39m tests/npc-offline-matrix.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 34618[2mms[22m[39m
+   [33m[2m✓[22m[39m loads historical shipping stock and jobs without adding a human society or duplicating custody [33m 1795[2mms[22m[39m
+   [33m[2m✓[22m[39m loads historical lr01 stock and jobs without adding a human society or duplicating custody [33m 938[2mms[22m[39m
+   [33m[2m✓[22m[39m loads historical industrial stock and jobs without adding a human society or duplicating custody [33m 1359[2mms[22m[39m
+   [33m[2m✓[22m[39m loads historical paid stock and jobs without adding a human society or duplicating custody [33m 1574[2mms[22m[39m
+   [33m[2m✓[22m[39m resumes a genuine browser save with harvesters walking; same instant never extracts twice [33m 21050[2mms[22m[39m
+   [33m[2m✓[22m[39m a resumed crossing settles its manifest once, with no second fare [33m 1948[2mms[22m[39m
+   [33m[2m✓[22m[39m a resumed Elder approach commits a single contact at the launched deadline [33m 5914[2mms[22m[39m
+ [32m✓[39m tests/npc-elder-global-assault.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 12116[2mms[22m[39m
+     [33m[2m✓[22m[39m does not awaken or strike before the canonical hour, then awakens exactly once [33m 10966[2mms[22m[39m
+ [32m✓[39m tests/npc-evac-physical-service.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 3992[2mms[22m[39m
+     [33m[2m✓[22m[39m refuses every boarding attempt while the service is still staged [33m 3402[2mms[22m[39m
+ [32m✓[39m tests/npc-projectile-flight.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 3685[2mms[22m[39m
+     [33m[2m✓[22m[39m a bow shot flies, spends one owned arrow, and hurts the victim only on impact [33m 3612[2mms[22m[39m
+ [32m✓[39m tests/global-source-ledger.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 4949[2mms[22m[39m
+   [33m[2m✓[22m[39m active global reads delegate to the identical finite player source object and never mint on repeat [33m 3338[2mms[22m[39m
+   [33m[2m✓[22m[39m inactive-floor regrowth uses the same seasonal integration as active sourceAt without render compilation [33m 483[2mms[22m[39m
+   [33m[2m✓[22m[39m remote stock is one shared mutable ledger across reload and wrong floors cannot synthesize sources [33m 1018[2mms[22m[39m
+ [32m✓[39m tests/npc-basket-trade.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 3478[2mms[22m[39m
+     [33m[2m✓[22m[39m moves every line of a basket and debits the source by exactly what landed [33m 3390[2mms[22m[39m
+ [31m❯[39m tests/npc-forage-cross-window.test.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 955509[2mms[22m[39m
+[31m   [31m×[31m walks to a real off-window Marsh Cap, resumes the same job on reload and delivers its UID once[39m[33m 955508[2mms[22m[39m
+ [32m✓[39m tests/npc-store-destroyed-replan.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 32597[2mms[22m[39m
+   [33m[2m✓[22m[39m braces the collapsed store on site with two real carried wood; same custody reopens [33m 29329[2mms[22m[39m
+   [33m[2m✓[22m[39m no wood or a lost load means no reconstruction and no phantom stock [33m 3265[2mms[22m[39m
+ [32m✓[39m tests/npc-medic-response.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 9339[2mms[22m[39m
+     [33m[2m✓[22m[39m walks to the downed body and spends exactly one carried dose after contact [33m 8848[2mms[22m[39m
+ [32m✓[39m tests/npc-hunt-meat-chain.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 5120[2mms[22m[39m
+   [33m[2m✓[22m[39m only a lethal guard strike drops meat, then the guard moves that UID into village custody [33m 5119[2mms[22m[39m
+ [32m✓[39m tests/npc-vessel-cost-and-hull.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 2823[2mms[22m[39m
+   [33m[2m✓[22m[39m pays in real food, water and repair parts; an embarked pilot and hull clock survive reload [33m 2666[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/npc-forage-cross-window.test.ts[2m > [22mwalks to a real off-window Marsh Cap, resumes the same job on reload and delivers its UID once
+[31m[1mError[22m: Test timed out in 180000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m tests/npc-forage-cross-window.test.ts:[2m8:1[22m[39m
+    [90m  6|[39m [35mimport[39m {[33mT0[39m} [35mfrom[39m [32m'./helpers/g1b-kit'[39m[33m;[39m
+    [90m  7|[39m
+    [90m  8|[39m it('walks to a real off-window Marsh Cap, resumes the same job on relo…
+    [90m   |[39m [31m^[39m
+    [90m  9|[39m   [34msetActiveLayout[39m([32m'veyra05-greywater'[39m)[33m;[39m [35mlet[39m gs[33m=[39m[34mnewGame[39m()[33m;[39m
+    [90m 10|[39m   expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(t…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m11 passed[39m[22m[90m (12)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m44 passed[39m[22m[90m (45)[39m
+[2m   Start at [22m 18:59:52
+[2m   Duration [22m 1200.40s[2m (transform 4.19s, setup 0ms, import 22.93s, tests 1173.40s, environment 1ms)[22m
+

@@ -1,0 +1,7 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90m/tmp/soh-regression/web[39m
+
+ [32m✓[39m src/veyra05/review-r2-acceptance.test.ts[2m > [22mReview Round 2 Acceptance — Negative-First & Zero-Shortcut Guarantees[2m > [22mP0-1: enforces directional arc, weapon reach, and wall/prop LOS on summon combat plus sanctuary wall occlusion on boss wake & hitEnemies[33m 8856[2mms[22m[39m
+ [32m✓[39m src/veyra05/review-r2-acceptance.test.ts[2m > [22mReview Round 2 Acceptance — Negative-First & Zero-Shortcut Guarantees[2m > [22mP0-2: guarantees full-footprint multi-tile prop solidity, zero ghost props across all 81 POIs × 4 storeys, and physical player/creature/motorbike wing collision[33m 50656[2mms[22m[39m
+ [32m✓[39m src/veyra05/review-r2-acceptance.test.ts[2m > [22mReview Round 2 Acceptance — Negative-First & Zero-Shortcut Guarantees[2m > [22mP1-3: enforces sex-specific grouse egg laying across live pens, offscreen window shifts, breeding, and wild drops[33m 16266[2mms[22m[39m
+ [32m✓[39m src/veyra05/review-r2-acceptance.test.ts[2m > [22mReview Round 2 Acceptance — Negative-First & Zero-Shortcut Guarantees[2m > [22mP1-4: defeats all 6 Primordials in BOTH Latent & Awakened forms (12 sanctuary fights), executes all 48 skills, and defeats all 4 Side Bosses via pure real-input combat[33m 41365[2mms[22m[39m

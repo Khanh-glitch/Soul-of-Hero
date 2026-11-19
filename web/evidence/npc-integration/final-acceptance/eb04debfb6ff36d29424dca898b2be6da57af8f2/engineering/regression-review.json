@@ -1,0 +1,1410 @@
+{
+  "measuredSHA": "eb04debfb6ff36d29424dca898b2be6da57af8f2",
+  "sourceAndTestsSHA256": "fac5732de7846ff41dd26f83602bb9c63ff77d49a9121417986eecd6e200d9ad",
+  "asOf": "2026-11-19T19:20:02.987Z",
+  "baselineSHA": "79ac5f0b2855ef44d5ca95ed32a19781fa66a045",
+  "complete": false,
+  "files": [
+    {
+      "file": "src/veyra05/arch/elder-lairs.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/audit-closure.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/ecosystem-full.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/full-world-spawn-industrial.audit.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/global-production-start.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/global-spawn-eligibility.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/global-spawn-seed-stress.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/global-start-discovery.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/integrated-lifecycle.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/integrated-world.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/item-network-export.audit.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/phase-b-contracts.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/review-r2-acceptance.test.ts",
+      "shard": 0,
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 4
+    },
+    {
+      "file": "src/veyra05/spawn-candidate-reasons.audit.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "src/veyra05/spawn-failure-cause.audit.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/arena1-round2-mechanics.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/arena1-round2-newgame-routes.test.ts",
+      "shard": 4,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b01-industrial-loot.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b02-bear-trap.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b02-card-class.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b02-ir-sensor.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b03-hunger-shelter.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b03-production.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b03-return.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b03-thermal.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b04-p3-world.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b04-p4-loot.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b04-p4-world.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b04-vehicle-unload.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05-freight-compare.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05-freight-crude.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05-industrial-art.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05-loot-matrix.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05-oil-pump.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05-parcel-panel.test.tsx",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05-parcel-persistence.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05-recycler-reload.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05-save-diagnostics.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05-station-fuel-policy.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05-vendor-freight.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b05r-oil-ui.test.tsx",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b06-presentation-cues.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b06-world-window.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b1-integrity.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b1-storage.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b2-chronology.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/b2-perception.test.ts",
+      "shard": 1,
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 37
+    },
+    {
+      "file": "tests/c3-poi-power-feedback.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/cal01-world-calendar.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/cal011-forecast.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/claim-reserve.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/control-tower-audit-regressions.test.tsx",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/control-tower-corrective-wp1-wp2.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/control-tower-journey-durability.test.tsx",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/creator-core-acquisition.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/creator-core-foundation.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/d1-d5-corrective.test.tsx",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/earthmother-core.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/economic-network-m1.test.ts",
+      "shard": 1,
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 1
+    },
+    {
+      "file": "tests/economic-network-m2.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/economic-network-m3.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/economic-network-m5-audits.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/economy-network.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/economy-reachable-union.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/emergent-fire.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/escrow-route-physical.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/final-item-set.test.ts",
+      "shard": 1,
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 24
+    },
+    {
+      "file": "tests/g1a-industrial-salvage.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1a-r1-census.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1a-r1-play.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-core-v2.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-ecology-runtime.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-ecology.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-economy.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-gates.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-geometry.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-historical-save.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-icon-audit.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-layout-migration.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-lifecycle.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-reachability.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-resolve.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-roll.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-save-triage.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/g1b-sheen.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/global-source-ledger.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/gold-intake-integration.test.tsx",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/gp10r-expedition-intel.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/home-ecology.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/home-production.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/home-sites-physical.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/industrial-power.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/item-atlas-157.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/item-crafting-master.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/item-ontology-v2-li-historical.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/item-ontology-v2-round2.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/item-ontology-v2-round3.test.tsx",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/item-ontology-v2-routes.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/item-ontology-v2.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/k6-power.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/k6-spatial.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/last-island-copy-first.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/logistics-garden.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/loot-ecology.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/loot-respawn.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/lr02-shipping-access.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/m-core-03.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/m-core-03r-economy.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/map-package.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-a2-pipe-blade.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-b-consumer-choice.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-c1-motorbike-chain.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-c2-delivery.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-c3-offline-child.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-c3-offline-resume.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-f3-evac-reset.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-f3-joined.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-five-chain-benchmark.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-foundry-drive-chain.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-gear-decision-network.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-industrial-graph.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-loot-source-contract.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r10-soil-regrowth.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r11-terrain-expiry-order.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r11-weather-outlook.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r12-departure.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r2-c1-motorbike-chain.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r3-causal-integrity.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r4-offline-defense.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r4-score-once.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r5-offline-defense.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r51-corrective.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r6-freight-speed.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r6-homecoming.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r61-uid-custody.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r7-wear-maintenance.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r8b-plank.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r8c-rich-iron.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r8e-plank-upkeep.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-r9-wild-regrowth.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mec01-runid-unique.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/mjolnir-core.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/motorbike.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-art.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-basket-trade.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-causal-needs.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-dual-rescue-same-run.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-elder-global-assault.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-evac-physical-service.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-forage-cross-window.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-global-navigation.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-harvest-transactions.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-hour-profile.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-humanworld.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-hunt-meat-chain.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-medic-response.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-natural-cook.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-natural-food-consumer.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-natural-harvest.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-natural-procurement.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-occupation-coverage.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-offline-matrix.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-p0-corrective.test.ts",
+      "shard": 1,
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 27
+    },
+    {
+      "file": "tests/npc-paid-work.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-physical-authority.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-procurement-transactions.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-projectile-flight.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-residential-ownership.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-runtime-throughput.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-shelter-incidents.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-store-destroyed-replan.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-vessel-cost-and-hull.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-work-counters.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/npc-world-budget.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/offline-preparation.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/pa1-building-ontology.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/pa1-deploy-custody.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/pa1-device-repair-loop.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/pa1-recipe-migration.test.ts",
+      "shard": 1,
+      "status": "PARTIAL_LOG",
+      "passedAssertionsSeen": 22
+    },
+    {
+      "file": "tests/pa1-research-console.test.tsx",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/pa1-research-proof.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/pa1-research-visible-gate.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/pa1-rev1-queued-jobs.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/poi-access-s05.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/poi-route-physical.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/production-network.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/progression.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/public-loot-lifecycle.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/rest-supply.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/s06-circuits.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/s08-world-stimulus.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/s10-oil-refinery.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/s12-airdrop.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/soh.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/spirit-balance-probe.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/spirit-core.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/spirit-vfx-editor.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/sys03-recycler.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/sys07-w08-absence.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/technology-semantics.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/territory-cabinet.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/ui-5pillars.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/v17-core-contract.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/v17-oil-chain.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/v17-spares-market.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/veyra-coast-query.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/veyra-intake.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/veyra-lr02-patch.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/veyra-procurement-chunk-parity.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/veyra-query-parity.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/veyra-ray-parity.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/veyra-runtime.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/visual-readmodels.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/w07-power-offline-parity.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/w07r-refinery-chronology.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/w08-combat-sound.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/w08-home-status.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/w08-survival-unprovisioned.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/w08r-combat-provenance.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/w09-core-signature-sound.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/wmp04r1-current.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/world-economy-runtime.test.ts",
+      "shard": 0,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/world-economy.test.ts",
+      "shard": 1,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/wp2-power-global-obstacles.test.ts",
+      "shard": 2,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    },
+    {
+      "file": "tests/wp3-veyra-recycler-integration.test.ts",
+      "shard": 3,
+      "status": "UNINVESTIGATED",
+      "passedAssertionsSeen": 0
+    }
+  ],
+  "failures": [
+    {
+      "file": "tests/cal01-world-calendar.test.ts",
+      "assertion": "CAL-01 E — seasonal gardening with real structures, costs and receipts a cold frame costs real materials and changes the winter outcome on the same plot and seed",
+      "message": "AssertionError: expected 'Need an intact packed device.' to be null",
+      "parent": "AssertionError: expected 'Need an intact packed device.' to be null",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/cal01-world-calendar.test.ts",
+      "assertion": "CAL-01 E — seasonal gardening with real structures, costs and receipts offline winter: the framed plot really produces where the exposed plot is stalled, with no free output",
+      "message": "AssertionError: expected 'Need an intact packed device.' to be null",
+      "parent": "AssertionError: expected 'Need an intact packed device.' to be null",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/cal01-world-calendar.test.ts",
+      "assertion": "CAL-01 E — seasonal gardening with real structures, costs and receipts water: an exposed plot loses its reserve faster in a hot dry season than in the neutral season",
+      "message": "AssertionError: expected 'Need an intact packed device.' to be null",
+      "parent": "AssertionError: expected 'Need an intact packed device.' to be null",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/cal01-world-calendar.test.ts",
+      "assertion": "CAL-01 E — seasonal gardening with real structures, costs and receipts the Garden Tender keeps its receipts single-shot across a season boundary (no duplicate harvest)",
+      "message": "AssertionError: expected false to be true // Object.is equality",
+      "parent": "AssertionError: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/control-tower-audit-regressions.test.tsx",
+      "assertion": "Phase B — Independent Gameplay & Gold-Seam Defect Regressions B7: Gold SurvivorScreen and ContainerPanel InvSide resolve every category & equipment ghost icon without empty src=\"\"",
+      "message": "AssertionError: expected false to be true // Object.is equality",
+      "parent": "AssertionError: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/control-tower-journey-durability.test.tsx",
+      "assertion": "Final Journey Durability Corrective — Durable Run-Authoritative Daily Ledger RED-2: keeps Day 2+ objective slate unchanged when run.start is evicted and gated capabilities are built/learned after midnight",
+      "message": "AssertionError: expected false to be true // Object.is equality",
+      "parent": "AssertionError: expected false to be true // Object.is equality",
+      "class": "INHERITED"
+    },
+    {
+      "file": "tests/g1a-industrial-salvage.test.ts",
+      "assertion": "G1A interaction — real swings tool matrix: measured hits and time per archetype (Stone Axe 1 / Knife 2 / Cleaver 3 / Machete 4 / picks 1)",
+      "message": "AssertionError: cleaver on road_salvage_bale: expected 4 to be 3 // Object.is equality",
+      "parent": "AssertionError: cleaver on road_salvage_bale: expected 4 to be 3 // Object.is equality",
+      "class": "INHERITED"
+    }
+  ]
+}
