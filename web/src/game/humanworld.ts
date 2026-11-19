@@ -1005,18 +1005,11 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
   h.hp -= dmg;
   h.lastDamageAt = now;
   if (attackerId && attackerId !== h.actorId) {
-    const ongoing = ongoingAssaultIncident(hw, h.actorId, attackerId, h.gx, h.gy, now);
-    if (ongoing) {
-      ongoing.injury = true;
-      receipt(r, now, 'human.incident.continued', `${ongoing.id}:${h.actorId}`);
-      formGrievance(r, hw, h, attackerId, now, ongoing.id);
-    } else {
-      const incident = recordIncident(r, hw, {
-        kind: 'assault', victim: h.actorId, aggressor: attackerId, witnesses: [], at: now,
-        place: { tx: h.gx, ty: h.gy, floor: h.floor }, injury: true, resolved: false,
-      }, now);
-      formGrievance(r, hw, h, attackerId, now, incident.id);
-    }
+    const incident = recordIncident(r, hw, {
+      kind: 'assault', victim: h.actorId, aggressor: attackerId, witnesses: [], at: now,
+      place: { tx: h.gx, ty: h.gy, floor: h.floor }, injury: true, resolved: false,
+    }, now);
+    formGrievance(r, hw, h, attackerId, now, incident.id);
   }
   if(h.hp>0 && attackerId && (source==='human'||source==='player'||source==='enemy') && h.state!=='DOWNED' && humanWeapon(h)) {
     h.motion=undefined;h.state='FIGHTING';h.intent={intentId:`defend:${h.actorId}:${now}`,actorId:h.actorId,kind:'fight',target:attackerId,preconditions:['direct physical assault'],reserved:[],startAt:now,dueAt:now};
@@ -1502,22 +1495,6 @@ export function recordIncident(r: RunState, hw: HumanWorld, inc: Omit<HumanIncid
   }
   receipt(r, now, 'human.incident', `${id}:${inc.kind}`);
   return full;
-}
-
-/** ONE incident per actual assault (Survivor/04 §D): repeated strikes inside the same bounded
- *  encounter reuse the original incident id, so witnesses, grievances and retaliation can never be
- *  multiplied by hit count. A different aggressor, a detached place or a later time is a new event. */
-function ongoingAssaultIncident(hw: HumanWorld, victimId: string, aggressorId: string, tx: number, ty: number, now: number): HumanIncident | undefined {
-  const known = hw.people[victimId]?.disposition_known.incidents ?? [];
-  for (let i = known.length - 1; i >= 0; i--) {
-    const inc = hw.incidents[known[i]];
-    if (!inc || inc.kind !== 'assault' || inc.resolved) continue;
-    if (inc.victim !== victimId || inc.aggressor !== aggressorId) continue;
-    if (!(now - inc.at <= 60_000)) continue;
-    if (Math.hypot(inc.place.tx - tx, inc.place.ty - ty) > 4) continue;
-    return inc;
-  }
-  return undefined;
 }
 
 /** A directly attacked/wounded survivor forms a persistent retaliatory intent. */
@@ -2112,6 +2089,7 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
   const guards = inBlast.filter(h => h.occupation === 'guard' && h.state !== 'DOWNED' && !!humanWeapon(h))
     .sort((a, b) => (Number(able(b)) - Number(able(a))) || (b.hp - a.hp) || (a.actorId < b.actorId ? -1 : 1));
   const spentGuards = new Set<string>();
+  const covered = new Set<string>();          // civilians a guard physically shielded this wave
   for (const civilian of inBlast) {
     if (civilian.occupation === 'guard' || civilian.state === 'DOWNED') continue;
     const guard = guards.find(g => !spentGuards.has(g.actorId) && g.hp > 0 && g.state !== 'DOWNED');
@@ -2141,6 +2119,7 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
         receipt(r, now, 'elder.volley.no_line', `${elder.elderId}:${guard.actorId}:terrain`);
       } else { volleyDmg += weapon.dmg * proficiencyMul(guard.combatProficiency); volleyGuards.push(guard.actorId); }
     }
+    covered.add(civilian.actorId);
     (civilian.threat ??= { waves: 1, hit: 0, guarded: 0 }).guarded++;
     const wasDownGuard = guard.state === 'DOWNED';
     if (applyDamage(r, hw, guard, dmg, Math.atan2(ev.targetGy - guard.gy, ev.targetGx - guard.gx), now, 'enemy', `elder:${elder.elderId}`, 0)) {
@@ -2153,6 +2132,7 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
   }
   for (const h of inBlast) {
     if (spentGuards.has(h.actorId)) continue;            // already struck while interposing
+    if (covered.has(h.actorId)) continue;                // a guard took this blow instead
     const wasDown = h.state === 'DOWNED';
     if (applyDamage(r, hw, h, dmg, Math.atan2(ev.targetGy - h.gy, ev.targetGx - h.gx), now, 'enemy', `elder:${elder.elderId}`, 0)) {
       humans++;
