@@ -21,9 +21,11 @@ import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
 import { auToTile, windowAround } from '../src/veyra05/frame';
 import { T0 } from './helpers/g1b-kit';
+import { TILE } from '../src/game/core';
+import { validate } from '../src/game/persist';
 import {
-  advanceElderPressure, defeatElder, elderCanonicalCreature, elderCoverage,
-  finalizeHumanOutcomes, humanPack, type ElderAssault,
+  advanceElderPressure, defeatElder, elderCanonicalCreature, elderBodyArchived, recordArchivedElderDefeat,
+  elderCoverage, finalizeHumanOutcomes, humanPack, type ElderAssault,
 } from '../src/game/humanworld';
 
 function runAt(ax = 921, ay = 259, seed = 7606): GameState {
@@ -213,5 +215,84 @@ describe('global six-Elder assault (NOT RUN — authored for the post-implementa
     expect(done.survived).toBeGreaterThan(0);
     expect(body.outcome).toBe('SURVIVED_ON_ISLAND');
     expect(r.receipts.some(x => x.kind === 'human.survive')).toBe(true);
+  });
+
+  it('archives the canonical body instead of refusing a far arrival, and keeps exactly one body', () => {
+    const gs = runAt();
+    const r = gs.run!; const hw = r.humanWorld!;
+    const e = assault(gs);
+    e.alive = true;
+    // Awakening gives the Elder exactly one canonical body, materialised in archived form.
+    advanceElderPressure(r, hw, T0 + 312 * HOUR);
+    expect(e.awakenedAt).toBe(T0 + 312 * HOUR);
+    e.events = []; e.nextWaveAt = T0 + 900 * HOUR;
+    const canonical = elderCanonicalCreature(r, e.elderId)!;
+    expect(canonical).toBeTruthy();
+    expect(Object.values(r.veyraOffscreenCreatures ?? {}).some(m => m.elder?.key === e.elderId)).toBe(true);
+    // Now stand it inside the LOADED window, as if the player were near its lair.
+    delete r.veyraOffscreenCreatures![canonical.id];
+    canonical.x = 40 * TILE + 8; canonical.y = 20 * TILE + 8; canonical.floor = 0;
+    canonical.homeX = canonical.x; canonical.homeY = canonical.y; canonical.tx = canonical.x; canonical.ty = canonical.y;
+    r.creatures.push(canonical);
+    e.gx = 900; e.gy = 300;
+    // A real arrival at ground the loaded window cannot express.
+    const at = T0 + 314 * HOUR;
+    (e.events ??= []).push({
+      id: 'qa-archive', elderId: e.elderId, wave: 77, launchedAt: at - HOUR, fromGx: 900, fromGy: 300,
+      targetGx: 3000, targetGy: 1600, targetPoi: 'po_faraway', arriveAt: at, state: 'APPROACH',
+    });
+    // The window stays where the run opened: the target (3000,1600) is far outside it.
+    advanceElderPressure(r, hw, at);
+    const ev = (e.events ?? []).find(x => x.id === 'qa-archive')!;
+    expect(ev.state).toBe('CONTACT');
+    // One body, archived, at the real target — never a second copy.
+    expect(elderBodyArchived(r, canonical)).toBe(true);
+    expect(r.creatures).not.toContain(canonical);
+    expect(r.veyraOffscreenCreatures?.[canonical.id]).toBe(canonical);
+    expect(Object.values(r.veyraOffscreenCreatures ?? {}).filter(m => m.elder?.key === e.elderId)).toHaveLength(1);
+    expect(Math.floor(canonical.x / TILE)).toBe(3000);
+    expect(Math.floor(canonical.y / TILE)).toBe(1600);
+    expect(e.gx).toBe(3000); expect(e.gy).toBe(1600);
+    expect(r.receipts.some(x => x.kind === 'elder.position.archived')).toBe(true);
+    expect(r.receipts.some(x => x.kind === 'elder.contact.deferred')).toBe(false);
+    expect(validate(JSON.parse(JSON.stringify(gs)))).not.toBeNull();
+  });
+
+  it('books an archived defeat once and lands the bounty when that ground is finally loaded', () => {
+    const gs = runAt();
+    const r = gs.run!; const hw = r.humanWorld!;
+    const e = assault(gs);
+    e.alive = true;
+    advanceElderPressure(r, hw, T0 + 312 * HOUR);
+    e.events = []; e.nextWaveAt = T0 + 900 * HOUR;
+    const canonical = elderCanonicalCreature(r, e.elderId)!;
+    // Archive it by hand at a known global tile far from the current window.
+    const liveAt = r.creatures.indexOf(canonical);
+    if (liveAt >= 0) r.creatures.splice(liveAt, 1);
+    canonical.x = 3000 * TILE + 8; canonical.y = 1600 * TILE + 8; canonical.floor = 0;
+    (r.veyraOffscreenCreatures ??= {})[canonical.id] = canonical;
+    canonical.hp = 0;
+    const at = T0 + 320 * HOUR;
+    recordArchivedElderDefeat(r, hw, e.elderId, canonical, at);
+    expect(canonical.state).toBe('dead');
+    expect(r.veyraOffscreenCreatures?.[canonical.id]).toBeUndefined();
+    expect(e.defeatedAt).toBe(at);
+    expect(e.pendingLoot?.gx).toBe(3000);
+    const stone = e.pendingLoot?.keys.find(([k]) => !['spares', 'crystal'].includes(k));
+    expect(stone).toBeTruthy();
+    const dropsBefore = Object.values(r.entities).filter(x => x.kind === 'drop').length;
+    // Replaying the same defeat changes nothing (exactly-once).
+    recordArchivedElderDefeat(r, hw, e.elderId, canonical, at);
+    expect(e.pendingLoot?.gx).toBe(3000);
+    expect(Object.values(r.entities).filter(x => x.kind === 'drop').length).toBe(dropsBefore);
+    expect(validate(JSON.parse(JSON.stringify(gs)))).not.toBeNull();
+    // Now the player's window covers that ground: the bounty becomes physical there.
+    r.sourceMap!.veyra!.originAu = [1450, 795];     // ox=2900, oy=1590 => tile (3000,1600) is inside
+    advanceElderPressure(r, hw, at + 1000);
+    expect(e.pendingLoot).toBeUndefined();
+    const landed = Object.values(r.entities).filter(x => x.kind === 'drop');
+    expect(landed.length).toBeGreaterThan(dropsBefore);
+    expect(landed.some(d => Math.floor(d.x / TILE) === 100 && Math.floor(d.y / TILE) === 10)).toBe(true);
+    expect(r.receipts.some(x => x.kind === 'elder.loot.landed')).toBe(true);
   });
 });

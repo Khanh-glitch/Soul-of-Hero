@@ -193,6 +193,26 @@ function makeVeyraActor(
   };
 }
 
+/** Ensure a canonical Elder body exists for `key` even when the loaded window does not cover its
+ *  lair. The body is created in the ARCHIVED (global pixel) representation at the same authored
+ *  dais the window seeder would use, so the assault ledger always has exactly one physical Elder
+ *  to move, damage and kill. Never duplicates an existing body and never revives a defeated one. */
+export function ensureArchivedElderActor(r: RunState, key: string): Creature | null {
+  const anywhere = [...r.creatures, ...Object.values(r.veyraOffscreenCreatures ?? {})].find(m => m.elder?.key === key);
+  if (anywhere) return anywhere;
+  const ps = VEYRA_PRIMORDIAL_SITES.find(s => s.key === key);
+  const pDef = PRIMORDIAL_ELDERS[key];
+  if (!ps || !pDef || isElderAlreadyDefeated(r, key)) return null;
+  const loc = resolvePrimordialGlobalTile(ps);
+  const actor = makeVeyraActor(`vy:elder:${key}`, `elder_${key}`, loc.gx, loc.gy, loc.floor, 30, {
+    maxHp: pDef.hpAwake,
+    elder: { key, awake: false, phase: 0, pattern: 0, special: 0 },
+  });
+  // GLOBAL pixels in the archived list: exactly what a window transition would have produced.
+  (r.veyraOffscreenCreatures ??= {})[actor.id] = actor;
+  return actor;
+}
+
 /** Archive off-window / off-floor actors into `r.veyraOffscreenCreatures` (global px) and restore matching actors,
  *  then seed newly entered habitat anchors, wildlife cells, side bosses, and Primordial Elders! */
 export function syncVeyraEcosystemActors(

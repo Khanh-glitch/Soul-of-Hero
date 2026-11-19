@@ -3,6 +3,7 @@ import {timedWorldWork} from './world-work';
 import {globalSourceCandidates, globalBaseGeometry} from '../veyra05/window';
 import {inFrame} from '../veyra05/frame';
 import {isVeyra05Layout} from '../veyra05/scenes';
+import {ensureArchivedElderActor} from '../veyra05/ecosystem';
 import {countWorldWork} from './world-work';
 /**
  * Soul of Hero — THE LAST HUMANITY: authoritative run-local human society.
@@ -294,6 +295,8 @@ export interface ElderAssault {
   nextWaveAt?: number;
   /** Timed approach/contact ledger (one entry per wave). Never a damage multiplier. */
   events?: ElderAssaultEvent[];
+  /** Bounty of a body that fell outside the loaded window; landed when that ground is loaded. */
+  pendingLoot?: ElderPendingLoot;
 }
 export interface HumanEvent {
   id: string;
@@ -1805,6 +1808,11 @@ export function evacBerthStatus(trip: EvacTrip): string {
 // timed approach waves from the Elder's current physical position, resolves contact with the
 // shared K5 damage law, and cancels only the defeated Elder's own future waves.
 // ---------------------------------------------------------------------------
+/** Loot that a fallen Elder still owes the world. Drops are physical entities in WINDOW pixels, so a
+ *  body that died outside the loaded window banks its bounty here and the world lands it the first
+ *  time that ground is actually loaded — no teleport, no silent loss. */
+export interface ElderPendingLoot { gx: number; gy: number; keys: [string, number][] }
+
 export interface ElderAssaultEvent {
   id: string;
   elderId: string;
@@ -1834,8 +1842,22 @@ function canonicalElderGlobalTile(r: RunState, m: Creature): { gx: number; gy: n
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
   return { gx: ox + Math.floor(m.x / TILE), gy: oy + Math.floor(m.y / TILE), archived };
 }
+/** Move a window-projected canonical body into the archived (GLOBAL pixel) list at `gx,gy`.
+ *  Streaming promotes it back into `r.creatures` when the player's window covers that ground, so
+ *  there is exactly one body at all times and no duplicate. */
+function archiveCanonicalElderBody(r: RunState, m: Creature, gx: number, gy: number, now: number, elderId: string): void {
+  const at = r.creatures.indexOf(m);
+  if (at >= 0) r.creatures.splice(at, 1);
+  const gxPx = gx * TILE + 8, gyPx = gy * TILE + 8;
+  m.x = gxPx; m.y = gyPx; m.tx = gxPx; m.ty = gyPx;
+  m.homeX = gxPx; m.homeY = gyPx;
+  m.floor = 0; m.path = null;
+  (r.veyraOffscreenCreatures ??= {})[m.id] = m;
+  receipt(r, now, 'elder.position.archived', `${elderId}:${gx},${gy}:${m.id}`);
+}
+
 /** The canonical body is the single position authority: it moves only at a resolved arrival, and
- *  only when the destination can be expressed without inventing a projection. */
+ *  a destination the loaded window cannot express is archived rather than invented. */
 function syncCanonicalElderPosition(r: RunState, m: Creature, gx: number, gy: number, now: number, elderId: string): 'moved' | 'deferred' {
   const at = canonicalElderGlobalTile(r, m);
   if (at.gx === gx && at.gy === gy) return 'moved';
@@ -1848,9 +1870,11 @@ function syncCanonicalElderPosition(r: RunState, m: Creature, gx: number, gy: nu
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
   const lx = gx - ox, ly = gy - oy;
   if (lx < 0 || ly < 0 || lx >= WW || ly >= WH) {
-    // The destination is outside the loaded window: leave the body where it physically is.
-    receipt(r, now, 'elder.position.deferred', `${elderId}:${gx},${gy}:outside active window`);
-    return 'deferred';
+    // The destination is outside the loaded window. The body does not stay behind and it does not
+    // get an invented pixel position: it is ARCHIVED at global pixels — the representation the
+    // window-streaming code already maintains — so the arrival is expressible and truthful.
+    archiveCanonicalElderBody(r, m, gx, gy, now, elderId);
+    return 'moved';
   }
   m.x = lx * TILE + 8; m.y = ly * TILE + 8; m.floor = 0;
   receipt(r, now, 'elder.position', `${elderId}:window:${at.gx},${at.gy}->${gx},${gy}`);
@@ -1928,8 +1952,11 @@ function elderRouteExists(r: RunState, fromGx: number, fromGy: number, toGx: num
 /** Launch one physical approach wave toward the nearest reachable inhabited settlement. */
 function launchElderWave(r: RunState, hw: HumanWorld, elder: ElderAssault, now: number, wave: number, finalAt: number): void {
   // The canonical body is the position authority. The ledger only records where that body has
-  // actually been, so a deferred move can never make the ledger claim ground the body never took.
-  const body = elderCanonicalCreature(r, elder.elderId);
+  // actually been, so a move can never make the ledger claim ground the body never took. If the
+  // window has never covered its lair the body is materialised in archived form, so an Elder that
+  // threatens the island always has exactly one physical body to threaten it with.
+  let body = elderCanonicalCreature(r, elder.elderId);
+  if (!body || body.state !== 'dead') body = body ?? ensureArchivedElderActor(r, elder.elderId) ?? body;
   const bodyAt = body && body.state !== 'dead' ? canonicalElderGlobalTile(r, body) : undefined;
   const fromGx = bodyAt?.gx ?? elder.gx ?? elder.lairGx, fromGy = bodyAt?.gy ?? elder.gy ?? elder.lairGy;
   const reach = elderReachTiles();
@@ -2167,12 +2194,56 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
   if (humans > 0 || structures > 0) pushLog(r, now, `${def?.name ?? elder.elderId} strikes ${ev.targetPoi ?? 'the settlement'}.`, 'red');
 }
 
+/** True when the canonical Elder body is currently in the archived (global-pixel) representation. */
+export function elderBodyArchived(r: RunState, m: Creature): boolean {
+  return Object.values(r.veyraOffscreenCreatures ?? {}).includes(m);
+}
+
+/** Land an archived Elder's bounty when the player's window finally covers the ground it fell on. */
+function materialiseElderLoot(r: RunState, hw: HumanWorld, now: number): void {
+  const o = r.sourceMap?.veyra?.originAu;
+  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  for (const elder of Object.values(hw.elderPressure)) {
+    const loot = elder.pendingLoot;
+    if (!loot) continue;
+    const lx = loot.gx - ox, ly = loot.gy - oy;
+    if (lx < 1 || ly < 1 || lx >= WW - 1 || ly >= WH - 1) continue;
+    for (const [key, qty] of loot.keys) {
+      if (!ITEMS[key] || !(qty > 0)) continue;
+      spawnDrop(r, key, qty, lx * TILE + 8, ly * TILE + 8, now, undefined, false);
+    }
+    delete elder.pendingLoot;
+    receipt(r, now, 'elder.loot.landed', `${elder.elderId}:${loot.gx},${loot.gy}:${loot.keys.map(([k, q]) => `${k}x${q}`).join('|')}`);
+    pushLog(r, now, `${PRIMORDIAL_ELDERS[elder.elderId]?.name ?? elder.elderId}'s remains are found where it fell.`, 'gold');
+  }
+}
+
+/** An archived canonical body cannot use the local drop path (it lives in global pixels), so its
+ *  defeat is booked here: the body dies once, the ledger records the defeat, and the bounty is
+ *  banked on the Elder until the ground is loaded. */
+export function recordArchivedElderDefeat(r: RunState, hw: HumanWorld, elderId: string, body: Creature, now: number): void {
+  if (body.state === 'dead') return;
+  const g = canonicalElderGlobalTile(r, body);      // read the GLOBAL tile while it is still archived
+  body.state = 'dead'; body.t = 0; body.deadAt = r.clock.simMs / 1000;
+  delete r.veyraOffscreenCreatures?.[body.id];
+  const def = lookupElderDef(elderId);
+  const keys: [string, number][] = [];
+  if (def?.stone) keys.push([def.stone, 1]);
+  keys.push(['spares', 6], ['crystal', 2]);
+  const elder = hw.elderPressure[elderId];
+  if (elder) elder.pendingLoot = { gx: g.gx, gy: g.gy, keys };
+  defeatElder(r, hw, elderId, now);
+  receipt(r, now, 'elder.defeat.archived', `${elderId}:${g.gx},${g.gy}:${keys.map(([k, q]) => `${k}x${q}`).join('|')}`);
+  pushLog(r, now, `${def?.name ?? elderId} falls where no one is standing to see it.`, 'gold');
+}
+
 /** Advance Elder pressure: awakening at the canonical hour, timed approach waves to h336, real
  *  contact, and defeat driven by the canonical body — never a second Elder health table. */
 export function advanceElderPressure(r: RunState, hw: HumanWorld, now: number, onVolley?: (elderId: string, dmg: number, now: number, guardIds: string[]) => void): void {
   const hours = runHours(r, now);
   const maxHours = BAL.run.maxRunHours;
   const awaken = elderAwakenHour();
+  materialiseElderLoot(r, hw, now);
   for (const elder of Object.values(hw.elderPressure)) {
     const canonical = elderCanonicalCreature(r, elder.elderId);
     if (elder.alive && !elder.defeatedAt && canonical && canonical.state === 'dead') defeatElder(r, hw, elder.elderId, now);
@@ -2181,6 +2252,9 @@ export function advanceElderPressure(r: RunState, hw: HumanWorld, now: number, o
     if (hours >= awaken && elder.awakenedAt === undefined) {
       elder.awakenedAt = now;
       elder.nextWaveAt ??= now;
+      // An awakened Elder always has exactly one physical body, materialised in archived form until
+      // the player's window covers its lair. No assault is ever booked against a body that is not.
+      ensureArchivedElderActor(r, elder.elderId);
       receipt(r, now, 'elder.awaken', elder.elderId);
       const def = PRIMORDIAL_ELDERS[elder.elderId];
       pushLog(r, now, `${def?.name ?? elder.elderId} rises over ${def?.region ?? 'Veyra'}.`, 'red');

@@ -878,6 +878,12 @@ export function validate(raw: any): GameState | null {
           if (ev.affected !== undefined && (!obj(ev.affected) || ![ev.affected.humans, ev.affected.structures, ev.affected.downed, ev.affected.skippedLocal, ev.affected.interposed, ev.affected.ammoSpent].every(integer))) return null;
         }
       }
+      // A bounty banked from a body that fell outside the loaded window: real items, real ground.
+      if (elder.pendingLoot !== undefined) {
+        const pl = elder.pendingLoot;
+        if (!obj(pl) || !finite(pl.gx) || !finite(pl.gy) || !Array.isArray(pl.keys) || pl.keys.length === 0) return null;
+        for (const pair of pl.keys as any[]) if (!Array.isArray(pair) || pair.length !== 2 || typeof pair[0] !== 'string' || !integer(pair[1]) || pair[1] < 1) return null;
+      }
     }
   }
   if (Object.keys(r.custody).some(id => !ownedContainers.has(id))) return null;
