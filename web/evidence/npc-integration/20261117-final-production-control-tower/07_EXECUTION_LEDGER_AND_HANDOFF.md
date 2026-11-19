@@ -294,3 +294,35 @@ If any answer indicates mandatory omission, mark PARTIAL and CONTINUE CODE, neve
 **Next autonomous action:** unchanged from the sixth package (natural-input dual-rescue campaign; then the remaining non-Elder gates; then the final-SHA qualification pass).
 **Branch safety:** branch `arena/3bce0158-soul-of-hero`; committed on this branch only.
 **Gate verdict:** SOURCE IMPLEMENTED (incident identity). ENGINEERING/BROWSER/CREATOR: NOT VERIFIED. PARTIAL.
+
+### 2026-11-19 (eighth package) / Elder crossing, cover, garrison recovery, island ledger, first qualification pass
+**Workstream/gate:** END/ELDER §B–§D plus the first engineering gate the Creator deferred until the plan closed.
+**Production source diff**
+- `humanworld.ts::elderTargetInBounds` — bounds are the GLOBAL canonical frame (`inFrame`), not the loaded window. A previous window-sized bound silently made every settlement on the island untargetable.
+- `humanworld.ts::eldersRouteExists` — a bounded 4-neighbour search (3000 expansions, 160 steps) over `globalBaseGeometry` replaces the straight-line corridor sample, so a dog-leg around a wall is a lawful crossing while unwalkable or unknown ground never is. `elderCrossingOpen` (straight sample) survives only as the guard→Elder line-of-fire test.
+- `humanworld.ts::launchElderWave` — waves start from the CANONICAL body's position and walk toward the **medoid of a settlement's living members**, not its storehouse tile: members routinely sit 20–90 tiles from their own store, so the old target struck empty ground and hurt nobody. Candidates are capped at the three nearest reachable settlements.
+- `humanworld.ts::resolveElderContact` — a `deferred` canonical position REFUSES the contact (`elder.contact.deferred`) instead of damaging a place the body is not at; the ledger's `gx/gy` only advance after a real move.
+- `humanworld.ts::resolveElderContact` (cover) — an interposing guard now actually shields the civilian it covers: that body takes no damage from that wave (`covered` set), which is what "a guard took the blow that was meant for me" has to mean.
+- `humanworld.ts::guardAfterContact` — after a contact the garrison triages (fit bodies hold the line first; a body under 30 % only holds when the line is spent and that is recorded as `human.guard.withdraw`), treats wounded from owned `bandage`/`herb` (`human.guard.treat`), and refills quivers to six from the community's own store containers with `removeItem` + `addStack` (`human.guard.resupply`). Nothing is minted; a full pack ends the transfer.
+- `humanworld.ts` volleys — a volley additionally requires a real terrain line (`elder.volley.no_line`), not just the 40-tile radius.
+- `panels.tsx::EvacPanel` — read-only **island ledger**: ashore / sailed / lost / met-an-Elder counts plus each Elder's last strike, built only from records already written.
+- WITHDRAWN: the incident-identity package (`1b886c5`) was reverted. `tests/npc-shelter-incidents.test.ts` pins "one landed damage event → one incident", which is the existing repo contract; its expectations were not rewritten and the contradicting fixture was deleted.
+**Bugs found by qualification and fixed**
+1. `persist.ts` rejected a seeded Elder ledger because `integer()` is non-negative and Veyra lairs sit on floor −1 — every Veyra save refused to serialize. Now `Number.isSafeInteger`.
+2. Elder waves could never target anything: the bounds bug above.
+3. Elder waves reached settlements but hurt nobody: store-tile targeting (medoid fix).
+4. Guard cover protected nobody: both bodies were struck.
+**Verification actually performed (this sandbox)**
+- `npx tsc --noEmit -p .` clean; `npx tsc --noEmit -p tsconfig.test.json` clean.
+- `tests/npc-*.test.ts` (excluding two pre-existing slow/failing files): **112 passed, 2 skipped**. Includes the new `npc-elder-global-assault` (8), `npc-evac-physical-service` (8), `npc-dual-rescue-same-run` (1), `npc-p0-corrective` (27).
+- `tests/global-source-ledger.test.ts` 4/4; `tests/final-item-set.test.ts` + `tests/npc-p0-corrective.test.ts` 51/51 after the −1 floor fix.
+- `npm run build` succeeds (14 s, 5.7 MB bundle); `vite preview` serves index/JS/CSS 200.
+- Remaining failures are IDENTICAL to the integration baseline `79ac5f0`, verified by running the same files in a worktree of that commit: `cal01-world-calendar` (4), `control-tower-audit-regressions` B7 (1), `control-tower-journey-durability` (2), `g1a-industrial-salvage` tool matrix (1), `npc-runtime-throughput` (90 s timeout), `npc-natural-procurement` (81 s).
+- The full suite cannot complete in this sandbox: `src/veyra05/review-r2-acceptance.test.ts` runs past 15 minutes on the BASELINE too (it is an evidence harness, not a unit test), and several endurance tests exceed their own timeouts. No test was skipped, disabled, or loosened to produce this result.
+**Not verified / open risk**
+- BROWSER VERIFIED: no. Playwright browsers are not installed in this sandbox and cannot be downloaded from the permitted hosts, so no human-visible run, no 640×360 layout pass, no natural-input dual-rescue campaign.
+- The Elder's route search is 4-neighbour and expansion-capped: a reachable settlement beyond 3000 expansions is still refused (conservative). Geometry queries compile a 200×200 region per 64-tile block; this is bounded to wave launches but has NOT been measured against the (already red) h1 throughput gate.
+- Deferred positions are now refused rather than desynced, so an Elder whose body a window cannot represent simply cannot strike — truthful, but it also means such an Elder may go quiet for a run.
+- Vessel damage/crew/fuel cost, NPC projectile flight, 8-occupation natural completeness, multi-item barter/crime, and destroyed-store ecology re-plan remain UNIMPLEMENTED.
+**Gate verdict:** Elder crossing/cover/garrison = SOURCE IMPLEMENTED + ENGINEERING VERIFIED (typecheck, fixtures, build, serving). BROWSER: NOT VERIFIED. CREATOR: NOT REVIEWED. Whole product: PARTIAL.
+**Next exact source task:** NPC projectile flight for human ranged attacks (arrow leaves the bow, travels, collides) — the last named END defect; then the browser campaign once a browser is available.
