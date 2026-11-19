@@ -357,3 +357,11 @@ If any answer indicates mandatory omission, mark PARTIAL and CONTINUE CODE, neve
 **Remaining defects:** arrows are anonymous beyond `owner`/`victim` (no recoverable arrow entity), friendly fire is excluded by construction, turret arrows still use the player origin, and a human arrow that hits a creature still receives the player's combat-skill scaling inside `damageCreature`.
 **Gate verdict:** SOURCE IMPLEMENTED + ENGINEERING VERIFIED. BROWSER: NOT VERIFIED. CREATOR: NOT REVIEWED. PARTIAL.
 **Next exact task:** the natural-input browser campaign (dual rescue in one run, save/reload mid-crossing, 640×360), which is the only gate left that this sandbox cannot run.
+
+### 2026-11-19 (eleventh package) / multi-item barter is one committed transaction
+**Workstream/gate:** G3 social/economy — `tradeWithHuman` could only ever move ONE kind.
+**Production source diff:** `humanworld.ts::tradeBasketWithHuman(r, hw, h, fromCid, lines, now)` — every line of the basket moves or none does. The source is debited by exactly what landed in the pack (whole stacks by UID, partials as a split stack), a failed line rolls back what was already moved into its original slot, and the commit writes one `human.trade.basket` receipt. `tradeWithHuman` is untouched, so every existing caller keeps its law.
+**Physical receipt path:** real source container → per-key availability check → per-line move into the survivor's own pack → rollback on any refusal → one receipt → save/reload keeps UIDs.
+**Tests:** `tests/npc-basket-trade.test.ts` (NEW, 2 cases) — a two-line basket moves both and debits exactly that; a basket whose second line is unmeetable refuses as a whole, leaves the player's container byte-identical and writes no receipt. **2/2 pass.**
+**Remaining defects:** the basket is one-directional (player → survivor); barter still has no price model, so this is a transfer, not a haggle; robbery/theft baskets are not implemented.
+**Gate verdict:** SOURCE IMPLEMENTED + ENGINEERING VERIFIED. BROWSER/CREATOR: NOT VERIFIED. PARTIAL.
