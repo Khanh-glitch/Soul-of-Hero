@@ -259,3 +259,17 @@ If any answer indicates mandatory omission, mark PARTIAL and CONTINUE CODE, neve
 **Next autonomous action:** give guard volleys a real ranged-contact gate (range/LOS to the canonical body) or route them through the shared projectile authority, then model the Elder crossing on the canonical terrain query so an unwalkable corridor is refused with a reason; after that, the natural-input browser walkthrough of the two routes in one run.
 **Branch safety:** branch `arena/3bce0158-soul-of-hero`; committed on this branch only.
 **Gate verdict:** SOURCE IMPLEMENTED (coverage + volley + fixture only). ENGINEERING/BROWSER/CREATOR: NOT VERIFIED. Whole product: PARTIAL.
+
+### 2026-11-19 (fifth package) / canonical Elder position + ranged-volley contact gate
+**Workstream/gate:** END/ELDER §B "ONE identity including current position" — partial closure of the previous entry's stated defect.
+**Actual source diff (`humanworld.ts`):**
+- `canonicalElderGlobalTile` — reads the canonical body's global tile correctly for BOTH storage forms: archived bodies (`veyraOffscreenCreatures`) store global pixels, window-projected bodies store window pixels and are converted with the run's own window origin.
+- `syncCanonicalElderPosition` — at a resolved arrival the CANONICAL body is moved to the struck settlement (global pixels when archived; window pixels when the destination lies inside the loaded window). If the destination is outside the loaded window while the body is window-projected, the move is refused with `elder.position.deferred` instead of inventing a projection. Position changes only at arrival instants, exactly like the assault ledger.
+- Volley contact gate — a ranged guard may only contribute a volley when the canonical body is within 40 real tiles of THAT guard; otherwise the round is still spent but the receipt is `elder.volley.out_of_range` and no Elder damage flows. Melee guards interpose but contribute no volley.
+- Local-authority skip now considers ONLY a body loaded in the active window (`localBody`); an archived Elder no longer suppresses damage to bodies standing in the visible settlement.
+**Physical receipt path:** arrival → `elder.position` (canonical body moves, one authority) → guard round spent → `elder.volley` (in range) or `elder.volley.out_of_range` → `elder.wounded` on the canonical HP → `killCreature` at zero → `defeatElder` on the next assault tick.
+**Tests:** no new fixture in this package; the existing Elder fixture's "armed guard interposes" case now also exercises the range gate path at runtime once qualification begins. **Still NOT RUN.**
+**Remaining defects:** the crossing itself is still distance-bounded (terrain query not yet used for the Elder's own path); a deferred position leaves the canonical body elsewhere, so the global contact and the visible body can disagree until the player enters that window; volleys abstract away projectile flight/collision; guards do not reload/retreat/treat.
+**Next autonomous action:** replace the distance-bounded crossing with a canonical terrain-query crossing (refuse unwalkable corridors with a reason, never a fabricated reach), then the natural-input two-route browser campaign.
+**Branch safety:** branch `arena/3bce0158-soul-of-hero`; committed on this branch only.
+**Gate verdict:** SOURCE IMPLEMENTED (position sync + volley gate). ENGINEERING/BROWSER/CREATOR: NOT VERIFIED. PARTIAL.

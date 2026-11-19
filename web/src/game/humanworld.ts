@@ -1823,6 +1823,38 @@ export function elderCanonicalCreature(r: RunState, elderId: string): Creature |
   if (hit) return hit;
   return Object.values(r.veyraOffscreenCreatures ?? {}).find(m => m.elder?.key === elderId);
 }
+/** Global tile of a canonical Elder body. Archived bodies store GLOBAL pixels; a body projected in
+ *  the active window stores window pixels, so its global tile needs the run's window origin. */
+function canonicalElderGlobalTile(r: RunState, m: Creature): { gx: number; gy: number; archived: boolean } {
+  const archived = Object.values(r.veyraOffscreenCreatures ?? {}).includes(m);
+  if (archived) return { gx: Math.floor(m.x / TILE), gy: Math.floor(m.y / TILE), archived };
+  const o = r.sourceMap?.veyra?.originAu;
+  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  return { gx: ox + Math.floor(m.x / TILE), gy: oy + Math.floor(m.y / TILE), archived };
+}
+/** The canonical body is the single position authority: it moves only at a resolved arrival, and
+ *  only when the destination can be expressed without inventing a projection. */
+function syncCanonicalElderPosition(r: RunState, m: Creature, gx: number, gy: number, now: number, elderId: string): 'moved' | 'deferred' {
+  const at = canonicalElderGlobalTile(r, m);
+  if (at.gx === gx && at.gy === gy) return 'moved';
+  if (at.archived) {
+    m.x = gx * TILE + 8; m.y = gy * TILE + 8; m.floor = 0;
+    receipt(r, now, 'elder.position', `${elderId}:archived:${at.gx},${at.gy}->${gx},${gy}`);
+    return 'moved';
+  }
+  const o = r.sourceMap?.veyra?.originAu;
+  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  const lx = gx - ox, ly = gy - oy;
+  if (lx < 0 || ly < 0 || lx >= WW || ly >= WH) {
+    // The destination is outside the loaded window: leave the body where it physically is.
+    receipt(r, now, 'elder.position.deferred', `${elderId}:${gx},${gy}:outside active window`);
+    return 'deferred';
+  }
+  m.x = lx * TILE + 8; m.y = ly * TILE + 8; m.floor = 0;
+  receipt(r, now, 'elder.position', `${elderId}:window:${at.gx},${at.gy}->${gx},${gy}`);
+  return 'moved';
+}
+
 /** SOH_PROVISIONAL threat reach: how far a walking Elder can lawfully threaten a settlement.
  *  Bounded so no Elder "reaches" the whole island, and every corridor is sampled physically. */
 function elderReachTiles(): number { return 64; }
@@ -1894,7 +1926,10 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
   const radius = elderImpactTiles();
   // If the canonical boss body is loaded in the active window, local combat owns the loaded area:
   // the same swing must not be applied twice to a body the player can see.
-  const canonical = r.creatures.find(m => m.elder?.key === elder.elderId && m.state !== 'dead');
+  const canonical = elderCanonicalCreature(r, elder.elderId);
+  if (canonical && canonical.state !== 'dead') syncCanonicalElderPosition(r, canonical, ev.targetGx, ev.targetGy, now, elder.elderId);
+  // Only a body loaded in the ACTIVE window hands authority to local combat; an archived body does not.
+  const localBody = r.creatures.find(m => m.elder?.key === elder.elderId && m.state !== 'dead');
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
   let humans = 0, structures = 0, downed = 0, skippedLocal = 0, interposed = 0, ammoSpent = 0;
@@ -1903,7 +1938,7 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
     if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'ON_VESSEL') continue;
     if (h.floor !== 0) continue;
     if (Math.hypot(h.gx - ev.targetGx, h.gy - ev.targetGy) > radius) continue;
-    if (canonical && h.gx >= ox && h.gy >= oy && h.gx < ox + WW && h.gy < oy + WH) { skippedLocal++; continue; }
+    if (localBody && h.gx >= ox && h.gy >= oy && h.gx < ox + WW && h.gy < oy + WH) { skippedLocal++; (h.threat ??= { waves: 0, hit: 0, guarded: 0 }).lastThreatAt = now; continue; }
     inBlast.push(h);
   }
   // Coverage evidence is stamped for every body the wave actually reached.
@@ -1933,7 +1968,15 @@ function resolveElderContact(r: RunState, hw: HumanWorld, elder: ElderAssault, e
     }
     spentGuards.add(guard.actorId);
     interposed++;
-    if (ranged) { volleyDmg += weapon.dmg * proficiencyMul(guard.combatProficiency); volleyGuards.push(guard.actorId); }
+    if (ranged) {
+      // A volley needs the canonical body within a real ranged reach of THIS guard; an Elder whose
+      // body is provably elsewhere cannot be shot from here.
+      const body = canonical && canonical.state !== 'dead' ? canonicalElderGlobalTile(r, canonical) : undefined;
+      const reach = 40;
+      if (!body || Math.hypot(body.gx - guard.gx, body.gy - guard.gy) > reach) {
+        receipt(r, now, 'elder.volley.out_of_range', `${elder.elderId}:${guard.actorId}:${body ? `${body.gx},${body.gy}` : 'no-body'}`);
+      } else { volleyDmg += weapon.dmg * proficiencyMul(guard.combatProficiency); volleyGuards.push(guard.actorId); }
+    }
     (civilian.threat ??= { waves: 1, hit: 0, guarded: 0 }).guarded++;
     const wasDownGuard = guard.state === 'DOWNED';
     if (applyDamage(r, hw, guard, dmg, Math.atan2(ev.targetGy - guard.gy, ev.targetGx - guard.gx), now, 'enemy', `elder:${elder.elderId}`, 0)) {
