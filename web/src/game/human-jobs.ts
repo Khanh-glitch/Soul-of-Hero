@@ -2,7 +2,7 @@
  * item repair rules, garden laws and physical structures. No work output loot table. */
 import { WW, WH, TILE, uid, type RunState, type Entity, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, GARDEN_CROPS, isGardenCrop, stationBurnable } from './catalog';
-import { C, hasAll, removeItem, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, clearPhysicalLine, productionFits, findRunEntity, allRunEntities } from './engine';
+import { C, hasAll, removeItem, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, markDirty, clearPhysicalLine, productionFits, findRunEntity, allRunEntities } from './engine';
 import { recoveryPlan, recoveryFits } from './recycler';
 import type { HumanRecord, HumanWorld } from './humanworld';
 export type HumanJobKind = 'cook' | 'recycle' | 'repair_item' | 'garden' | 'medical' | 'engineer' | 'build' | 'guard';
@@ -102,6 +102,14 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
     if (h.occupation === 'engineer' && e.basePower && e.c && (!e.basePower.enabled || e.basePower.energy<=0 && !C(r,e.c).slots.some(s=>s&&ITEMS[s.key].fuel))) tasks.push(start('engineer',e,[],3000));
   }
   if(h.occupation==='guard') {
+    // A kill earmarks an existing loose stack, not a second loot roll. Another
+    // claimant may collect it before the guard arrives.
+    if(h.gameDrop){
+      const drop=findRunEntity(r,h.gameDrop.entityId);
+      if(drop?.kind==='drop' && drop.c && r.custody[drop.c]?.slots.some(s=>s?.uid===h.gameDrop!.stackUid && s.key==='meat'))
+        tasks.push({...start('guard',drop,[],1200),itemUid:h.gameDrop.stackUid});
+      else delete h.gameDrop;
+    }
     const posts=entities.filter(e=>e.kind==='door'||e.id===comm.storeEntityId).sort((a,b)=>a.id.localeCompare(b.id));
     if(posts.length)tasks.push(start('guard',posts[(h.patrolPostIndex??0)%posts.length],[],8000));
   }
@@ -206,6 +214,18 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
     delete p.nextMedicalReviewAt;delete p.lastWorkBlock;
     p.wounds.forEach(w=>{w.treated=true;w.bleeding=false;});p.hp=Math.min(p.maxHp,p.hp+30);p.downedAt=undefined;p.state='IDLE';
     receipt(r,now,'human.treat',`${h.actorId}:${p.actorId}:${medicine.map(m=>m[0]).join('+')}`);
+  } else if(task.kind==='guard' && task.itemUid){
+    const claim=h.gameDrop;
+    if(!claim || !e?.c || e.kind!=='drop' || e.id!==claim.entityId || !humanCanUseEntity(r,h,e))return fail('carcass moved or inaccessible');
+    const c=r.custody[e.c],stack=c?.slots.find(s=>s!==null && s.uid===task.itemUid && s.uid===claim.stackUid && s.key==='meat' && !s.production);
+    if(!stack){delete h.gameDrop;return fail('carcass already claimed');}
+    const slot=pack(r,h).slots.indexOf(null);if(slot<0)return fail('pack full; meat stays on the ground');
+    c.slots[c.slots.indexOf(stack)]=null;pack(r,h).slots[slot]=stack;
+    stack.production={workerId:h.actorId,jobId:intent.intentId};
+    (h.workOutputs??={})[stack.uid]=stack.qty;
+    (h.workOutputSources??={})[stack.uid]={jobId:intent.intentId,sourceId:claim.creatureId};
+    if(c.slots.every(s=>!s)){delete r.custody[c.id];delete r.entities[e.id];if(r.veyraOffscreenEntities)delete r.veyraOffscreenEntities[e.id];markDirty();}
+    receipt(r,now,'human.hunt.pickup',`${h.actorId}:${claim.creatureId}:${stack.uid}:${stack.qty}`);delete h.gameDrop;
   } else {
     if(!e || !(comm.workStations.includes(e.id)||e.poi===comm.poi && e.owner===comm.id || task.kind==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)) || !humanCanUseEntity(r,h,e))return fail('work target inaccessible or unauthorized');
     if(task.kind==='guard') {

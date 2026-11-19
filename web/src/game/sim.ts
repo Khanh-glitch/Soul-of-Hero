@@ -106,7 +106,7 @@ export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number,
   if (p.hp <= 0) { killPlayer(gs, now, cause); fx('pdeath', { x: p.x, y: p.y }); }
   return true;
 }
-function damageCreature(gs: GameState, m: Creature, dmg: number, a: number, now: number, kb = 130) {
+export function damageCreature(gs: GameState, m: Creature, dmg: number, a: number, now: number, kb = 130, hunterId?:string) {
   const r = gs.run!;
   if (m.state === 'dead' || m.elder?.submerged || m.atk?.burrow || ((m as any).floor ?? 0) !== activeFloor(r)) return false;
   if (m.type === 'crab' && m.atk?.tuck > 0) dmg *= 0.25;
@@ -129,7 +129,7 @@ function damageCreature(gs: GameState, m: Creature, dmg: number, a: number, now:
   }
   if (m.elder && m.state === 'sleep') wakeElder(gs, m, now);
   fx('mhit', { x: m.x, y: m.y, n: dmg, a, big: !!(m.elder || m.sideBoss) }); fx('hitstop', { ms: m.elder || m.sideBoss ? 70 : 55 });
-  if (m.hp <= 0) { killCreature(gs, m, now); fx('mdeath', { x: m.x, y: m.y, type: m.type }); fx('shake', { m: m.elder ? 6 : m.sideBoss ? 4 : 2 }); }
+  if (m.hp <= 0) { killCreature(gs, m, now, hunterId); fx('mdeath', { x: m.x, y: m.y, type: m.type }); fx('shake', { m: m.elder ? 6 : m.sideBoss ? 4 : 2 }); }
   return true;
 }
 function wakeElder(gs: GameState, m: Creature, now: number) {
@@ -1314,7 +1314,7 @@ export function tickProj(gs: GameState, dtMs: number, now: number, opts?: { iner
             dead = true;
             if (pr.kind === 'nature_rock') impactRock(gs, pr, now);
             else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now);
-            else { damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); if (pr.kind === 'elsa_shard' && m.hp > 0 && rngNext(r) < BAL.creatorCoreElsa.freezeChance) m.frozenUntil = now + BAL.creatorCoreElsa.enemyMs; }
+            else { damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80, pr.from==='human'?pr.owner:undefined); if (pr.kind === 'elsa_shard' && m.hp > 0 && rngNext(r) < BAL.creatorCoreElsa.freezeChance) m.frozenUntil = now + BAL.creatorCoreElsa.enemyMs; }
             break;
           }
         }
@@ -1719,7 +1719,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   tickPlayer(gs, playerAtSea(r) ? { ...inp, up: false, down: false, left: false, right: false, attack: false, attackPressed: false, roll: false, cancel: false, skill: undefined } : inp, dtMs, now);
   if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
   tickCreatures(gs, dtMs, now);
-  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle) => damageCreature(gs, m, dmg, angle, now), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); }, (shot) => spawnHumanShot(gs, shot));
+  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle, attacker) => damageCreature(gs, m, dmg, angle, now,130,attacker.actorId), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); }, (shot) => spawnHumanShot(gs, shot));
   tickDragonDive(gs, dtMs, now);
   tickTurrets(gs, dtMs, now);
   tickProj(gs, dtMs, now);

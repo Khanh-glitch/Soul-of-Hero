@@ -197,6 +197,7 @@ export interface HumanRecord {
   guardedEntityId?: string;
   nextPerceptionAt?: number;
   lastTalkAt?: number;
+  gameDrop?: {entityId:string;stackUid:string;creatureId:string};
   nextMedicalReviewAt?: number;
   lastWorkBlock?: string;
   tradeTrustReceipts?: Record<string, number>;

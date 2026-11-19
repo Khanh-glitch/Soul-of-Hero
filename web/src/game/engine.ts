@@ -1896,7 +1896,8 @@ export function harvestHit(gs: GameState, tx: number, ty: number, power: Partial
   return { result: 'yield', key: s.key, got, mat: s.def.mat, depleted, quality: richGot };
 }
 
-export function killCreature(gs: GameState, m: Creature, now: number) {
+export function killCreature(gs: GameState, m: Creature, now: number, hunterId?:string) {
+  if(m.state==='dead')return;
   const r = gs.run!; m.state = 'dead'; m.t = 0; m.deadAt = r.clock.simMs / 1000;
   if (m.elder) {
     const d = lookupElderDef(m.elder.key);
@@ -1950,7 +1951,15 @@ export function killCreature(gs: GameState, m: Creature, now: number) {
       for (const [k, q, ch] of d.drops) {
         if (k === 'cash' && rag) continue;
         if (k === 'grouse_egg' && grouseSex === 'm') continue;
-        if (rngNext(r) < ch) spawnDrop(r, k, q, m.x, m.y, now);
+        if (rngNext(r) < ch) {
+          const drop=spawnDrop(r,k,q,m.x,m.y,now);
+          const guard=hunterId && r.humanWorld?.people[hunterId];
+          if(k==='meat' && guard && guard.occupation==='guard' && !m.husbandry?.tamed && !guard.gameDrop){
+            const stack=C(r,drop.c!).slots[0]!;
+            guard.gameDrop={entityId:drop.id,stackUid:stack.uid,creatureId:m.id};
+            receipt(r,now,'human.hunt.kill',`${guard.actorId}:${m.id}:${drop.id}:${stack.uid}`);
+          }
+        }
       }
     }
     r.player.skills.combat += 2;
