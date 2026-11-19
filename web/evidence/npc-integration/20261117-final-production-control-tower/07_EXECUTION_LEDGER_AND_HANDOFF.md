@@ -239,7 +239,7 @@ If any answer indicates mandatory omission, mark PARTIAL and CONTINUE CODE, neve
 **Gate verdict:** SOURCE IMPLEMENTED (defense interposition only). ENGINEERING/BROWSER/CREATOR: NOT VERIFIED. Whole product: PARTIAL.
 
 ### 2026-11-19 CURRENT HEAD / SESSION HANDOFF SNAPSHOT
-- **Branch:** `arena/3bce0158-soul-of-hero` (pushed). **HEAD:** `49c735c95805952dcd5b3e5705722592e0f7b08e` (this snapshot commit; its parent `19528db1f3179ef56b1591ffc65866cae8f8c161` is the last production source change).
+- **Branch:** `arena/3bce0158-soul-of-hero` (pushed). **HEAD:** the branch tip after this ledger snapshot; the LAST PRODUCTION SOURCE CHANGE is `19528db1f3179ef56b1591ffc65866cae8f8c161` (everything after it is ledger text only). Verify the live tip with `git log --oneline -1`..
 - **Commit chain this session:** `16a5a02` (integrate the 302-commit historical lineage — strict descendant of the base, tree identical to `79ac5f0`) → `5c1224b` (physical evacuation service) → `6ba794f` (six-Elder global assault) → `c883516` (ledger SHAs + aboard bodies unavailable) → `57d8146` (guard interposition) → `d713877` (ledger) → `162752c` (companion orders refused aboard) → `19528db` (legacy ledger normalisation on load).
 - **SOURCE IMPLEMENTED:** physical three-site evacuation state machine with finite seats/manifests/arrivals; six-Elder timed assault with real contact and canonical-identity defeat; guard interposition with real ammunition; per-run threat coverage gating `SURVIVED_ON_ISLAND`.
 - **NOT VERIFIED (this build):** app/test TypeScript, every suite including the two new fixtures (explicitly NOT RUN), production build, 336 h endurance, matched FPS, browser A–I, Vietnamese Creator walkthrough. No PASS is claimed anywhere.
