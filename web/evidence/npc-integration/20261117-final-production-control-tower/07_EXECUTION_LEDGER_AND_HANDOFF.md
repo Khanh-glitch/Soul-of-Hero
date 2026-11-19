@@ -430,3 +430,6 @@ Playwright + Chromium headless 140.0.7339.0 sur build production, 640×360 DPR 1
 
 ### 2026-11-19 · T7 — début campagne navigateur
 Deux processus Chromium réels, commandes normales, save sorti du jeu; même run 286 personnes après relance et 17.435s d'avancement. `browser-field-log/` contient captures, seed, positions, IDs et checklist A–I. F et I partiels; pas de certification de visite sociale, Elder, sauvetage ni de recrutement. Verdict campagne PARTIAL, CREATOR non effectué. T8 peut réutiliser le checkpoint enregistré en mouvement sans modifier le monde.
+
+### 2026-11-19 · T8 — ma trận offline và save lịch sử
+`humanEventBoundary` cắt đúng giờ hao mòn hành trình và hạn xét lại cấp cứu. `npc-offline-matrix` 8/8 (16.5s): 5 snapshot shipping/LR01/G1A/research/paid; giữ container, ID queue, không hồi tố tạo dân, round trip không nhân custody. Snapshot thật từ Chromium có 3 harvestJob; settle 45s có output từ job đã tồn tại, serialize/validate, settle lại cùng instant không đổi byte. Hai mẫu kiểm mốc: đưa đồng hồ fixture tới ngay trước deadline đã **sinh thật** của tàu và của Elder đang APPROACH (thức qua advanceElderPressure); settle → một lần arrival/contact. Không dùng phép kiểm này thay cho endurance h336. Hai tsc pass, build 14.15s. ENGINEERING VERIFIED cho ma trận này. Tiếp T9 full regression và so baseline.

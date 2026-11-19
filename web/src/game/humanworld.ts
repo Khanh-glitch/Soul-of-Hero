@@ -2621,6 +2621,7 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
   if(starving&&BAL.player.starveDamagePerMin>0)dt=Math.min(dt,Math.max(1,h.hp)/(starving*BAL.player.starveDamagePerMin)*60000);
   for(const w of h.wounds)if(w.bleeding&&!w.treated&&w.bleedingUntil){const due=w.bleedingUntil+12*60000;if(due>at)dt=Math.min(dt,due-at);}
   if(h.rest<.5)dt=Math.min(dt,(.5-h.rest)*8*HOUR);
+  if(h.state==='DOWNED' && h.nextMedicalReviewAt!==undefined && h.nextMedicalReviewAt>at)dt=Math.min(dt,h.nextMedicalReviewAt-at);
   if(h.state==='MOVING'&&h.intent?.route?.length)dt=Math.min(dt,Math.max(.001,TILE/PROFILES[h.profile].speed*1000-(h.motion?.elapsedMs??0)));
   if(h.state==='WORKING'&&h.intent&&h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
   if(!h.following&&h.state==='IDLE'&&(!h.intent||!!h.intent.work)){
@@ -2637,6 +2638,7 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
  // arrival must be settled exactly at its own timestamp, including offline.
  for(const trip of Object.values(hw.evacuation ?? {})){
   if((trip.phase==='BOARDING'||trip.phase==='BERTHED')&&trip.dockUntil!==undefined&&trip.dockUntil>at)dt=Math.min(dt,trip.dockUntil-at);
+  if(trip.vessel?.wearAt!==undefined && (trip.phase==='IN_TRANSIT'||trip.phase==='BERTHED') && trip.vessel.wearAt+HOUR>at)dt=Math.min(dt,trip.vessel.wearAt+HOUR-at);
   if(trip.phase==='IN_TRANSIT'&&trip.arriveAt!==undefined&&trip.arriveAt>at)dt=Math.min(dt,trip.arriveAt-at);
  }
  return dt;
