@@ -284,3 +284,13 @@ If any answer indicates mandatory omission, mark PARTIAL and CONTINUE CODE, neve
 **Next autonomous action:** natural-input browser campaign of both rescue routes in one run; in parallel the still-open non-Elder gates (eight-occupation natural completeness, multi-item barter/crime, NPC projectile/Core, 640×360 UX clarity) and the final-SHA qualification pass the Creator deferred until the plan closes.
 **Branch safety:** branch `arena/3bce0158-soul-of-hero`; committed on this branch only.
 **Gate verdict:** SOURCE IMPLEMENTED (crossing law). ENGINEERING/BROWSER/CREATOR: NOT VERIFIED. PARTIAL.
+
+### 2026-11-19 (seventh package) / one incident per committed assault
+**Workstream/gate:** NPC/persistence §B negative case "same assault produces one incident" (04 §D).
+**Actual source diff (`humanworld.ts::ongoingAssaultIncident`, `applyDamage`)** — before recording an assault, the victim's own incident book is searched for an UNRESOLVED assault by the same aggressor, within 60 s of simulated time and 4 tiles of the same place. A match updates that incident's `injury` and emits `human.incident.continued`; otherwise a new incident is recorded exactly as before. Witnesses, grievances and retaliatory intent therefore reference one event per real fight instead of accumulating per hit. Nothing is deleted, no incident is force-resolved, and the receipt trail shows which hits were continuations.
+**Physical receipt path:** damage actually applied → lookup over the victim's knowledge → one incident row + one grievance (or a continuation receipt) → grievance/retaliation intents → save/reload carries the same ids → negative case (different aggressor / detached place / later time) opens a new incident.
+**Tests:** `web/tests/npc-incident-dedup.test.ts` (NEW, **NOT RUN**) — two in-window hits ⇒ one incident and one book entry; different aggressor ⇒ two; same aggressor +90 s ⇒ three; victim alive and book free of duplicate ids.
+**Remaining defects:** incident dedup is time+place bounded rather than scene-bounded; witness recording still happens per incident (correct) but witness *travel* to testimony is not implemented; robbery/theft incidents are not deduped by this change.
+**Next autonomous action:** unchanged from the sixth package (natural-input dual-rescue campaign; then the remaining non-Elder gates; then the final-SHA qualification pass).
+**Branch safety:** branch `arena/3bce0158-soul-of-hero`; committed on this branch only.
+**Gate verdict:** SOURCE IMPLEMENTED (incident identity). ENGINEERING/BROWSER/CREATOR: NOT VERIFIED. PARTIAL.
