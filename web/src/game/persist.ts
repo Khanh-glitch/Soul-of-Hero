@@ -810,6 +810,10 @@ export function validate(raw: any): GameState | null {
       const owners = Object.values(hw.communities ?? {}) as any[];
       if (!obj(c.origin) || c.kind !== 'bag' || c.origin.authority !== 'REGIONAL_HUMAN_ECONOMY' || typeof c.origin.sourceId !== 'string' || owners.filter(comm => comm?.storeContainers?.includes(cid) && comm.storeEntityId && c.origin.sourceId === `regional-human-economy:${comm.poi}`).length !== 1) return null;
     }
+    // A humanWorld written before these ledgers existed is normalised to "no services / no Elders"
+    // rather than being destroyed: nothing is minted by an empty table, and the run keeps its people.
+    if (hw.evacuation === undefined) hw.evacuation = {};
+    if (hw.elderPressure === undefined) hw.elderPressure = {};
     // Physical evacuation services: a seat exists only as a well-formed manifest entry on one of
     // the three approved sites. A save cannot invent a berth, a fourth service, an anonymous seat,
     // a duplicate seat, a passenger on two vessels, or a body "aboard" a vessel that is not carrying it.
