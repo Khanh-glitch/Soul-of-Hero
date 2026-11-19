@@ -427,3 +427,6 @@ Kho vật lý có HP; Elder đánh theo tọa độ toàn cục chính xác kể
 
 ### 2026-11-19 · T6 — contrôle native réel (partiel)
 Playwright + Chromium headless 140.0.7339.0 sur build production, 640×360 DPR 1. Entrées ordinaires, pas de QA: New run → Begin, I/C/B/M puis Esc. Sept captures PNG et observations DOM dans `native-640-review/`; seed et départ consignés. La légende du field chart à 7 px était difficile à lire; passage à 9 px sans réduire la scène. Le document reste 640×360 pour les sept vues, sans pageerror. Build production et tests map-package/ui-5pillars 9/9. BROWSER VERIFIED pour ces vues uniquement. Panneaux contextuels sociaux, navire, Elder et densité maximale des prompts restent à tester; pas de CREATOR REVIEW.
+
+### 2026-11-19 · T7 — début campagne navigateur
+Deux processus Chromium réels, commandes normales, save sorti du jeu; même run 286 personnes après relance et 17.435s d'avancement. `browser-field-log/` contient captures, seed, positions, IDs et checklist A–I. F et I partiels; pas de certification de visite sociale, Elder, sauvetage ni de recrutement. Verdict campagne PARTIAL, CREATOR non effectué. T8 peut réutiliser le checkpoint enregistré en mouvement sans modifier le monde.

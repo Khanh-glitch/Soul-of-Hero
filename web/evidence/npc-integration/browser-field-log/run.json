@@ -1,0 +1,314 @@
+{
+  "before": {
+    "id": "run_tpxh9y_mwnwuwb3",
+    "seed": 1797071542,
+    "at": 1795114565740,
+    "layout": "veyra05-at-1152-640",
+    "player": [
+      1274,
+      785
+    ],
+    "nearest": [
+      {
+        "actorId": "h4d",
+        "gx": 1123,
+        "gy": 702,
+        "floor": 0,
+        "community": "com:po_typhon",
+        "state": "IDLE",
+        "occupation": "guard",
+        "packId": "c23o"
+      },
+      {
+        "actorId": "h4c",
+        "gx": 1114,
+        "gy": 720,
+        "floor": 0,
+        "community": "com:po_typhon",
+        "state": "IDLE",
+        "occupation": "salvager",
+        "packId": "c23h"
+      },
+      {
+        "actorId": "h2c",
+        "gx": 1429,
+        "gy": 871,
+        "floor": 0,
+        "community": "com:po_falls",
+        "state": "IDLE",
+        "occupation": "mechanic",
+        "packId": "c1o4"
+      },
+      {
+        "actorId": "h49",
+        "gx": 1382,
+        "gy": 608,
+        "floor": 0,
+        "community": "com:po_kestrel",
+        "state": "IDLE",
+        "occupation": "engineer",
+        "packId": "c22x"
+      },
+      {
+        "actorId": "h4b",
+        "gx": 1388,
+        "gy": 610,
+        "floor": 0,
+        "community": "com:po_kestrel",
+        "state": "IDLE",
+        "occupation": "salvager",
+        "packId": "c236"
+      }
+    ],
+    "people": 286,
+    "receipts": [
+      {
+        "id": "r2",
+        "seq": 2,
+        "at": 1795114556176,
+        "kind": "human.equipment",
+        "detail": "{\"actorId\":\"h4c\",\"uid\":\"s23j\",\"from\":\"c23h\",\"into\":\"weapon\"}"
+      },
+      {
+        "id": "r3",
+        "seq": 3,
+        "at": 1795114557176,
+        "kind": "human.equipment",
+        "detail": "{\"actorId\":\"h2\",\"uid\":\"s16j\",\"from\":\"c16h\",\"into\":\"weapon\"}"
+      },
+      {
+        "id": "r4",
+        "seq": 4,
+        "at": 1795114560176,
+        "kind": "human.harvest.select",
+        "detail": "hj2t5:h5:0:4673578:herb"
+      },
+      {
+        "id": "r5",
+        "seq": 5,
+        "at": 1795114561176,
+        "kind": "human.harvest.select",
+        "detail": "hj2t7:h6:0:4837595:grass"
+      },
+      {
+        "id": "r6",
+        "seq": 6,
+        "at": 1795114562176,
+        "kind": "human.harvest.select",
+        "detail": "hj2tb:h7:0:4737668:oak"
+      },
+      {
+        "id": "r7",
+        "seq": 7,
+        "at": 1795114565176,
+        "kind": "human.equipment",
+        "detail": "{\"actorId\":\"ha\",\"uid\":\"s17v\",\"from\":\"c17t\",\"into\":\"weapon\"}"
+      }
+    ]
+  },
+  "after": {
+    "id": "run_tpxh9y_mwnwuwb3",
+    "seed": 1797071542,
+    "at": 1795114583175,
+    "layout": "veyra05-at-1152-640",
+    "player": [
+      1274,
+      785
+    ],
+    "nearest": [
+      {
+        "actorId": "h4d",
+        "gx": 1123,
+        "gy": 702,
+        "floor": 0,
+        "community": "com:po_typhon",
+        "state": "IDLE",
+        "occupation": "guard",
+        "packId": "c23o"
+      },
+      {
+        "actorId": "h4c",
+        "gx": 1114,
+        "gy": 720,
+        "floor": 0,
+        "community": "com:po_typhon",
+        "state": "IDLE",
+        "occupation": "salvager",
+        "packId": "c23h"
+      },
+      {
+        "actorId": "h2c",
+        "gx": 1429,
+        "gy": 871,
+        "floor": 0,
+        "community": "com:po_falls",
+        "state": "IDLE",
+        "occupation": "mechanic",
+        "packId": "c1o4"
+      },
+      {
+        "actorId": "h49",
+        "gx": 1382,
+        "gy": 608,
+        "floor": 0,
+        "community": "com:po_kestrel",
+        "state": "IDLE",
+        "occupation": "engineer",
+        "packId": "c22x"
+      },
+      {
+        "actorId": "h4b",
+        "gx": 1388,
+        "gy": 610,
+        "floor": 0,
+        "community": "com:po_kestrel",
+        "state": "IDLE",
+        "occupation": "salvager",
+        "packId": "c236"
+      }
+    ],
+    "people": 286,
+    "receipts": [
+      {
+        "id": "r37",
+        "seq": 37,
+        "at": 1795114576376.0022,
+        "kind": "human.work",
+        "detail": "he:harvest:road_salvage_bale:2"
+      },
+      {
+        "id": "r38",
+        "seq": 38,
+        "at": 1795114576509.3462,
+        "kind": "human.access.yield",
+        "detail": "{\"actorId\":\"h9\",\"for\":\"h8\",\"from\":[1588,1161],\"into\":{\"tx\":1587,\"ty\":1161,\"floor\":0}}"
+      },
+      {
+        "id": "r39",
+        "seq": 39,
+        "at": 1795114577064.934,
+        "kind": "human.guard.duty",
+        "detail": "h3:hw2t4:e15x:1"
+      },
+      {
+        "id": "r40",
+        "seq": 40,
+        "at": 1795114577064.934,
+        "kind": "human.work.commit",
+        "detail": "h3:hw2t4:guard:e15x:"
+      },
+      {
+        "id": "r41",
+        "seq": 41,
+        "at": 1795114578704.5737,
+        "kind": "human.work",
+        "detail": "hh:strike:road_salvage_bale@2364,2593"
+      },
+      {
+        "id": "r42",
+        "seq": 42,
+        "at": 1795114579604.574,
+        "kind": "human.work",
+        "detail": "hh:strike:road_salvage_bale@2364,2593"
+      },
+      {
+        "id": "r43",
+        "seq": 43,
+        "at": 1795114579746.5715,
+        "kind": "human.procurement.ration",
+        "detail": "{\"workerId\":\"h8\",\"uid\":\"s15r\",\"from\":\"c15m\",\"into\":\"c179\",\"qty\":1}"
+      },
+      {
+        "id": "r44",
+        "seq": 44,
+        "at": 1795114580176,
+        "kind": "human.harvest.select",
+        "detail": "hj2to:hp:0:2518610:herb"
+      },
+      {
+        "id": "r45",
+        "seq": 45,
+        "at": 1795114580504.574,
+        "kind": "human.harvest",
+        "detail": "hh:road_salvage_bale@2364,2593:-1"
+      },
+      {
+        "id": "r46",
+        "seq": 46,
+        "at": 1795114580504.574,
+        "kind": "human.harvest.output",
+        "detail": "{\"jobId\":\"hj2th\",\"sourceId\":\"0:10374364\",\"workerId\":\"hh\",\"uid\":\"s2tp\",\"key\":\"spares\",\"qty\":2}"
+      },
+      {
+        "id": "r47",
+        "seq": 47,
+        "at": 1795114580504.574,
+        "kind": "human.work",
+        "detail": "hh:harvest:road_salvage_bale:2"
+      },
+      {
+        "id": "r48",
+        "seq": 48,
+        "at": 1795114580813,
+        "kind": "human.door.open",
+        "detail": "h6:0:1598,1196"
+      },
+      {
+        "id": "r49",
+        "seq": 49,
+        "at": 1795114581176,
+        "kind": "human.harvest.select",
+        "detail": "hj2tq:hq:0:2826583:grass"
+      },
+      {
+        "id": "r50",
+        "seq": 50,
+        "at": 1795114582161.7168,
+        "kind": "human.work",
+        "detail": "hk:strike:grass@2555,644"
+      },
+      {
+        "id": "r51",
+        "seq": 51,
+        "at": 1795114582553,
+        "kind": "human.access.yield",
+        "detail": "{\"actorId\":\"h8\",\"for\":\"h4\",\"from\":[1588,1161],\"into\":{\"tx\":1588,\"ty\":1162,\"floor\":0}}"
+      },
+      {
+        "id": "r52",
+        "seq": 52,
+        "at": 1795114582604.573,
+        "kind": "human.access.yield",
+        "detail": "{\"actorId\":\"hj\",\"for\":\"hl\",\"from\":[2585,654],\"into\":{\"tx\":2586,\"ty\":654,\"floor\":0}}"
+      },
+      {
+        "id": "r53",
+        "seq": 53,
+        "at": 1795114582861.7146,
+        "kind": "human.procurement.ration",
+        "detail": "{\"workerId\":\"hr\",\"uid\":\"s19n\",\"from\":\"c19i\",\"into\":\"c1bb\",\"qty\":1}"
+      },
+      {
+        "id": "r54",
+        "seq": 54,
+        "at": 1795114583061.717,
+        "kind": "human.harvest",
+        "detail": "hk:grass@2555,644:-1"
+      },
+      {
+        "id": "r55",
+        "seq": 55,
+        "at": 1795114583061.717,
+        "kind": "human.harvest.output",
+        "detail": "{\"jobId\":\"hj2tl\",\"sourceId\":\"0:2578555\",\"workerId\":\"hk\",\"uid\":\"s2tr\",\"key\":\"fiber\",\"qty\":1}"
+      },
+      {
+        "id": "r56",
+        "seq": 56,
+        "at": 1795114583061.717,
+        "kind": "human.work",
+        "detail": "hk:harvest:grass:1"
+      }
+    ]
+  }
+}
