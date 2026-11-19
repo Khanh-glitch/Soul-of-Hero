@@ -237,3 +237,11 @@ If any answer indicates mandatory omission, mark PARTIAL and CONTINUE CODE, neve
 **Next autonomous action:** per-human coverage records (which wave threatened which body and what reduced it), then a single-run proof of community A physically evacuating while community B survives a real h312–h336 contact; then the canonical guard→remote-Elder damage path.
 **Branch safety:** branch `arena/3bce0158-soul-of-hero`; committed on this branch only.
 **Gate verdict:** SOURCE IMPLEMENTED (defense interposition only). ENGINEERING/BROWSER/CREATOR: NOT VERIFIED. Whole product: PARTIAL.
+
+### 2026-11-19 CURRENT HEAD / SESSION HANDOFF SNAPSHOT
+- **Branch:** `arena/3bce0158-soul-of-hero` (pushed). **HEAD:** `19528db1f3179ef56b1591ffc65866cae8f8c161`.
+- **Commit chain this session:** `16a5a02` (integrate the 302-commit historical lineage — strict descendant of the base, tree identical to `79ac5f0`) → `5c1224b` (physical evacuation service) → `6ba794f` (six-Elder global assault) → `c883516` (ledger SHAs + aboard bodies unavailable) → `57d8146` (guard interposition) → `d713877` (ledger) → `162752c` (companion orders refused aboard) → `19528db` (legacy ledger normalisation on load).
+- **SOURCE IMPLEMENTED:** physical three-site evacuation state machine with finite seats/manifests/arrivals; six-Elder timed assault with real contact and canonical-identity defeat; guard interposition with real ammunition; per-run threat coverage gating `SURVIVED_ON_ISLAND`.
+- **NOT VERIFIED (this build):** app/test TypeScript, every suite including the two new fixtures (explicitly NOT RUN), production build, 336 h endurance, matched FPS, browser A–I, Vietnamese Creator walkthrough. No PASS is claimed anywhere.
+- **Inherited but still open:** h1 throughput acceptance (last documented RED at `33a1f12`, unmeasured here), eight-occupation natural completeness, multi-item barter/crime in full, real NPC projectile/Core combat, dual-route same-run certificate, native 640×360 UX clarity pass, performance A/B.
+- **Next exact source task:** per-human threat-coverage records + one-run dual-rescue proof (community boarding and sailing while another community survives a real h312–h336 contact), then terrain-graph Elder crossing and guard→remote-Elder damage through the canonical kill path.
