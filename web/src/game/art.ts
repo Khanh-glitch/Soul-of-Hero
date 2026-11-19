@@ -1,5 +1,9 @@
 // Original pixel art for Soul of Hero, painted pixel-by-pixel into offscreen canvases at boot.
-import { drawParcel, drawVehicleSide, drawVehicleFront, drawVehicleBack, drawVehicleCrate, drawRefinery, drawLubricantJug, drawOilPump, drawCrudeDrum } from './industrial-art';
+import { drawParcel, drawRefinery, drawLubricantJug, drawOilPump, drawCrudeDrum } from './industrial-art';
+// VISUAL ARENA: reconstructed hero animation + motorbike silhouettes.
+import { buildHeroV2 } from './hero-art';
+import { drawBikeSide, drawBikeFront, drawBikeBack, drawBikeCrate } from './vehicle-art';
+import { drawBespokeIcon } from './core-art';
 // (GOLD_SOURCE_NOT_AVAILABLE — these are original replacements; no third-party sprites used.)
 import { hash2 } from './core';
 import { ITEMS } from './catalog';
@@ -82,18 +86,11 @@ function drawHeroDead(g: G, female: boolean) {
   const t = female ? '#2f8f8a' : '#b4532a', h = female ? '#b4482a' : '#5a3a22';
   R(g, 2, 17, 4, 5, h); R(g, 3, 18, 3, 3, '#eab894'); R(g, 6, 17, 7, 5, t); R(g, 13, 18, 3, 3, '#33304a');
 }
-export function buildHero(female: boolean): HeroSet {
-  const set: HeroSet = {};
-  for (let dir = 0; dir < 4; dir++) {
-    set['idle' + dir] = [0, 1].map(f => mk(16, 24, g => drawHero(g, dir, 'idle', f, female)));
-    set['walk' + dir] = [0, 1, 2, 3].map(f => mk(16, 24, g => drawHero(g, dir, 'walk', f, female)));
-    set['wind' + dir] = [mk(16, 24, g => drawHero(g, dir, 'wind', 0, female))];
-    set['hit' + dir] = [mk(16, 24, g => drawHero(g, dir, 'hit', 0, female))];
-  }
-  set.roll = [0, 1, 2, 3].map(f => mk(16, 24, g => drawHeroRoll(g, f, female)));
-  set.dead = [mk(16, 24, g => drawHeroDead(g, female))];
-  return set;
-}
+/** VISUAL ARENA: delegates to hero-art.ts, which owns the 6-frame contact/down/pass
+ *  gait, the anticipation→contact→follow-through attack, the cast pose and the
+ *  heavy-load gait. drawHero/drawHeroRoll/drawHeroDead above are the superseded
+ *  B0x poses, kept only as an audit reference. */
+export function buildHero(female: boolean): HeroSet { return buildHeroV2(female); }
 
 // ===================== CREATURES (facing right) =====================
 function legs(g: G, xs: number[], y: number, f: number, c: string, len = 3) { xs.forEach((x, i) => { const o = (i + f) % 2 ? 1 : 0; R(g, x, y - o, 1, len + o - (o ? 1 : 0), c); }); }
@@ -213,6 +210,70 @@ function scrap(g: G, v: number) { R(g, 2, 10, 12, 4, '#5a5e64'); R(g, 4, 7, 6, 4
 function wreck(g: G, v: number) { const body = v % 2 ? '#7a3a2a' : '#4a5a6a';
   R(g, 2, 8, 28, 9, body); R(g, 6, 4, 16, 5, body); R(g, 8, 5, 5, 3, '#2a3a4a'); R(g, 14, 5, 6, 3, '#3a4a5a'); P(g, 15, 6, '#8ab0c0');
   for (let k = 0; k < 18; k++) P(g, 2 + hash2(k, v, 12) * 28 | 0, 8 + hash2(k, v, 13) * 9 | 0, '#a0602a'); ell(g, 8, 17, 3, 2.5, '#1a1a1e'); ell(g, 24, 17, 3, 2.5, '#1a1a1e'); R(g, 2, 12, 28, 1, '#2a2a2e'); R(g, 28, 10, 2, 2, '#e0c060'); }
+/* G1A in-house pixel art: three industrial salvage archetypes. stage 0 = intact, 1 = half broken, 2 = depleted debris.
+ * Each silhouette is its own drawing (no recolour of `scrap`, `wreck` or a barrel). Sprites are anchored bottom-centre on the tile. */
+function salvageBale(g: G, st: number) {
+  if (st === 2) { R(g, 2, 13, 6, 2, '#565a61'); R(g, 3, 13, 4, 1, '#7d838b'); R(g, 9, 14, 5, 1, '#4a4e55'); P(g, 12, 13, '#8a4a2a'); R(g, 6, 12, 3, 1, '#b8862e'); P(g, 1, 14, '#3d4046'); return; }
+  if (st === 1) {
+    // G1A-R1 (seen in play: the old half-broken frame read as intact): the bundle has burst. Half its height is gone, the
+    // right side has slumped into loose sheets, one strap lies snapped on the ground.
+    R(g, 1, 10, 9, 5, '#6b6f76'); R(g, 1, 10, 9, 1, '#a3a9b1'); R(g, 1, 14, 9, 1, '#3d4046'); R(g, 2, 12, 7, 1, '#565a61');
+    R(g, 4, 9, 2, 6, '#b8862e'); P(g, 4, 9, '#e8c060');                                   // the one strap still holding
+    R(g, 10, 12, 3, 3, '#565a61'); R(g, 10, 12, 3, 1, '#8a9098'); R(g, 13, 13, 2, 2, '#4a4e55'); P(g, 13, 13, '#7d838b');   // slumped sheets
+    P(g, 10, 11, '#6b6f76'); P(g, 15, 14, '#3d4046');
+    P(g, 11, 15, '#b8862e'); P(g, 12, 15, '#b8862e'); P(g, 13, 15, '#e8c060'); P(g, 14, 15, '#b8862e');                    // snapped strap on the ground
+    P(g, 7, 9, '#c4cad2'); P(g, 8, 8, '#e6ebf0'); P(g, 1, 9, '#9aa0a8'); P(g, 3, 11, '#8a4a2a'); P(g, 7, 13, '#8a4a2a'); P(g, 11, 13, '#9a5a30');
+    return;
+  }
+  const top = 7;
+  R(g, 1, top, 14, 15 - top, '#6b6f76'); R(g, 1, top, 14, 1, '#a3a9b1'); R(g, 1, 14, 14, 1, '#3d4046'); R(g, 15, top + 1, 1, 14 - top, '#4a4e55');
+  for (let y = top + 2; y < 14; y += 2) R(g, 2, y, 12, 1, '#565a61');           // pressed sheet layers
+  P(g, 3, top + 1, '#8a4a2a'); P(g, 8, top + 3, '#8a4a2a'); P(g, 12, 12, '#9a5a30'); P(g, 6, 13, '#8a4a2a');
+  R(g, 4, top - 1, 2, 16 - top, '#b8862e'); P(g, 4, top - 1, '#e8c060');          // strap 1
+  R(g, 10, top - 1, 2, 16 - top, '#b8862e'); P(g, 10, top - 1, '#e8c060');        // strap 2
+  // steel bars sticking out of the bundle
+  P(g, 12, top - 1, '#c4cad2'); P(g, 13, top - 2, '#c4cad2'); P(g, 14, top - 3, '#e6ebf0');
+  P(g, 7, top - 1, '#9aa0a8'); P(g, 7, top - 2, '#c4cad2'); P(g, 7, top - 3, '#e6ebf0');
+  P(g, 1, top - 1, '#9aa0a8'); P(g, 0, top - 2, '#c4cad2');
+}
+function relayWreck(g: G, st: number) {
+  // canvas 16x24; concrete footing, cabinet leaning right
+  R(g, 2, 21, 12, 2, '#7d8088'); R(g, 2, 21, 12, 1, '#a6a9b0'); P(g, 3, 23, '#4a4c52'); P(g, 12, 23, '#4a4c52');
+  if (st === 2) { R(g, 4, 18, 6, 3, '#3e4852'); R(g, 4, 18, 6, 1, '#566270'); P(g, 6, 19, '#2f8a55'); P(g, 10, 20, '#d04a3a'); P(g, 11, 21, '#d04a3a'); P(g, 12, 20, '#e0c040'); P(g, 1, 22, '#566270'); return; }
+  const y0 = st ? 9 : 3;
+  for (let y = y0; y < 21; y++) { const o = ((20 - y) / 6) | 0; R(g, 4 + o, y, 8, 1, '#566270'); P(g, 4 + o, y, '#7a8794'); P(g, 11 + o, y, '#36404a'); }
+  { const o = ((20 - y0) / 6) | 0; R(g, 4 + o, y0, 8, 1, st ? '#36404a' : '#8a97a4'); if (st) { P(g, 5 + o, y0 - 1, '#566270'); P(g, 9 + o, y0 - 1, '#7a8794'); P(g, 10 + o, y0 - 2, '#566270'); } }
+  // torn-open panel: circuit board
+  for (let y = 11; y < 18; y++) { const o = ((20 - y) / 6) | 0; R(g, 6 + o, y, 4, 1, '#1e5a3a'); }
+  P(g, 7, 12, '#9be07a'); P(g, 9, 13, '#e8c040'); P(g, 8, 14, '#9be07a'); P(g, 7, 16, '#e8c040'); P(g, 9, 16, '#9be07a'); P(g, 8, 12, '#2f8a55'); P(g, 7, 14, '#2f8a55');
+  // hanging wires
+  P(g, 10, 17, '#d04a3a'); P(g, 11, 18, '#d04a3a'); P(g, 12, 19, '#d04a3a'); P(g, 12, 20, '#d04a3a');
+  P(g, 6, 18, '#e0c040'); P(g, 5, 19, '#e0c040'); P(g, 5, 20, '#e0c040'); P(g, 3, 20, '#4a8ad0'); P(g, 4, 19, '#4a8ad0');
+  if (!st) { // relay head: insulators + bent mast
+    R(g, 8, 1, 1, 2, '#c4cad2'); P(g, 9, 0, '#c4cad2'); P(g, 10, 0, '#e6ebf0'); R(g, 11, 2, 2, 1, '#d8d0b0'); R(g, 6, 2, 2, 1, '#d8d0b0'); P(g, 13, 4, '#ffb040');
+    R(g, 8, 5, 3, 2, '#2a323a'); P(g, 9, 6, '#6ad0ff');
+  } else { P(g, 13, 14, '#36404a'); P(g, 14, 20, '#566270'); P(g, 1, 20, '#7a8794'); }
+}
+function fuelRack(g: G, st: number) {
+  // canvas 16x20; rusty tube frame, fuel cans on two shelves.
+  // G1A-R1 (seen in play: 1px posts and olive cans sank into grass and bushes): posts are 2px with a dark edge, the shelves
+  // are lit, and the cans are fuel-red / mustard so the rack reads as "fuel" at 640x360.
+  const fr = '#9a5f38', hi = '#d09a62', dk = '#3e2616';
+  if (st === 2) { R(g, 1, 17, 13, 1, fr); R(g, 2, 16, 5, 1, hi); R(g, 1, 18, 14, 1, dk); P(g, 5, 15, fr); R(g, 10, 15, 3, 2, '#7a2a1e'); P(g, 10, 15, '#b8483a'); P(g, 13, 16, '#2a2e22'); P(g, 8, 16, '#7a5a10'); return; }
+  const top = st ? 8 : 2;
+  R(g, 1, top, 2, 19 - top, fr); R(g, 1, top, 1, 19 - top, hi); R(g, 12, top, 2, 19 - top, fr); R(g, 13, top, 1, 19 - top, dk);     // posts
+  R(g, 0, 18, 4, 1, dk); R(g, 11, 18, 4, 1, dk);                                                                                  // feet
+  R(g, 3, 15, 9, 1, hi); R(g, 3, 16, 9, 1, dk);                                                                                    // lower shelf
+  const can = (x: number, y: number, c: string, h: string) => { R(g, x, y, 3, 4, c); R(g, x, y, 1, 4, h); P(g, x + 1, y - 1, '#2a2e22'); P(g, x + 2, y + 3, '#2a1a12'); };
+  can(4, 11, '#b8322a', '#ee6a55'); can(8, 11, '#c8a030', '#f0d070');                    // lower shelf: fuel red + mustard
+  if (!st) {
+    R(g, 1, 2, 13, 1, fr); R(g, 1, 2, 13, 1, hi); R(g, 3, 9, 9, 1, hi); R(g, 3, 10, 9, 1, dk);                                     // top rail + upper shelf
+    can(5, 5, '#b8322a', '#ee6a55'); P(g, 10, 8, '#4a6a86'); P(g, 10, 7, '#7a9ab6');
+  } else {
+    // upper half torn off: bent post stubs, the upper shelf hangs by one end, one can gone
+    P(g, 2, 7, fr); P(g, 3, 6, hi); P(g, 12, 7, dk); R(g, 3, 9, 5, 1, hi); P(g, 8, 10, fr); P(g, 9, 11, dk); P(g, 14, 17, '#b8322a'); P(g, 15, 18, '#7a2a1e');
+  }
+}
 export function buildSources() {
   const S: Record<string, Sprite[]> = {};
   S.oak = [0, 1, 2].map(v => mk(24, 32, g => oak(g, v))); S.pine = [0, 1].map(v => mk(24, 32, g => pine(g, v, false))); S.snowpine = [0, 1].map(v => mk(24, 32, g => pine(g, v, true)));
@@ -222,6 +283,7 @@ export function buildSources() {
   S.bush = [0, 1].map(v => mk(16, 16, g => bush(g, true, v))); S.bush_empty = [0, 1].map(v => mk(16, 16, g => bush(g, false, v)));
   S.grass = [0, 1, 2].map(v => mk(16, 16, g => grass(g, v), null)); S.reed = [0, 1].map(v => mk(16, 16, g => reed(g, v), null)); S.herb = [mk(16, 16, g => herb(g))]; S.mush = [mk(16, 16, g => mush(g))];
   S.scrap = [0, 1].map(v => mk(16, 16, g => scrap(g, v))); S.wreck = [0, 1].map(v => mk(32, 20, g => wreck(g, v)));
+  S.salvage_bale = [0, 1, 2].map(v => mk(16, 16, g => salvageBale(g, v))); S.relay_wreck = [0, 1, 2].map(v => mk(16, 24, g => relayWreck(g, v))); S.fuel_rack = [0, 1, 2].map(v => mk(16, 20, g => fuelRack(g, v)));
   S.stump = [mk(16, 16, g => { ell(g, 8, 11, 4, 2.5, '#7a5232'); ell(g, 8, 10, 3, 1.5, '#c9935a'); P(g, 8, 10, '#8a5a32'); })];
   S.rubble = [mk(16, 16, g => { for (const [x, y] of [[4, 11], [8, 12], [11, 10], [6, 9]]) ell(g, x, y, 1.5, 1, '#6e7078'); })];
   S.picked = [mk(16, 16, g => { for (let k = 0; k < 4; k++) R(g, 5 + k * 2, 12, 1, 2, '#4a6a2a'); }, null)];
@@ -232,20 +294,74 @@ export function buildSources() {
 export function buildStructs() {
   const S: Record<string, Sprite> = {};
   S.floor_wood = mk(16, 16, g => { for (let y = 0; y < 16; y += 4) { R(g, 0, y, 16, 4, y % 8 ? '#9a6a3e' : '#8a5e36'); R(g, 0, y + 3, 16, 1, '#5a3a22'); P(g, (y * 5) % 16, y + 1, '#b0804a'); } }, null);
+  // PA1: authored wooden shape silhouettes. Transparent pixels matter: open
+  // frames, triangular tiles and apertures must NOT be disguised as solid slabs.
+  S.floor_triangle_wood = mk(16,16,g => {
+    g.fillStyle='#8c5d34';g.beginPath();g.moveTo(1,1);g.lineTo(15,8);g.lineTo(1,15);g.closePath();g.fill();
+    R(g,1,1,2,14,'#c18b4e');R(g,2,7,11,2,'#a87242');
+    for(let y=4;y<13;y+=4)R(g,2,y,8,1,'#58361f');
+  },null);
   S.floor_stone = mk(16, 16, g => { R(g, 0, 0, 16, 16, '#8a8a90'); for (const [x, y, w, h] of [[0, 0, 8, 8], [8, 0, 8, 8], [0, 8, 8, 8], [8, 8, 8, 8]]) { R(g, x, y, w, 1, '#a8a8b0'); R(g, x, y + h - 1, w, 1, '#5e5e66'); R(g, x + w - 1, y, 1, h, '#6a6a72'); } }, null);
   const wall = (top: string, face: string, line: string, kind: string) => mk(16, 24, g => { R(g, 0, 0, 16, 10, top); R(g, 0, 10, 16, 14, face);
     if (kind === 'wood') { for (let x = 0; x < 16; x += 4) { R(g, x, 0, 1, 24, line); R(g, x + 1, 0, 1, 10, '#b08050'); P(g, x + 2, 1, '#c89a60'); } R(g, 0, 15, 16, 1, line); }
     // Sawn planks: horizontal boards, staggered butt joints, no vertical log grain (R8C closeout).
-    if (kind === 'plank') { for (let y = 10; y < 24; y += 4) { R(g, 0, y, 16, 1, line); R(g, 0, y + 1, 16, 1, '#d4a868'); for (let x = (y % 8 ? 5 : 11); x < 16; x += 12) R(g, x, y, 1, 4, line); } R(g, 0, 15, 16, 1, line); }
+    if (kind === 'plank') { for (let y = 10; y < 24; y += 4) { R(g, 0, y, 16, 1, line); R(g, y % 8 ? 0 : 0, y + 1, 16, 1, '#d4a868'); for (let x = (y % 8 ? 5 : 11); x < 16; x += 12) R(g, x, y, 1, 4, line); } R(g, 0, 15, 16, 1, line); }
     if (kind === 'stone') { for (let y = 10; y < 24; y += 4) { R(g, 0, y, 16, 1, line); for (let x = (y % 8 ? 0 : 4); x < 16; x += 8) R(g, x, y, 1, 4, line); } R(g, 0, 0, 16, 1, '#c0c0c8'); }
     if (kind === 'brick') { for (let y = 10; y < 24; y += 3) { R(g, 0, y, 16, 1, line); for (let x = (y % 6 ? 0 : 3); x < 16; x += 6) R(g, x, y, 1, 3, line); } R(g, 0, 0, 16, 1, '#e09a7a'); }
     R(g, 0, 9, 16, 1, 'rgba(0,0,0,0.35)'); });
   S.wall_wood = wall('#8a5e36', '#7a5230', '#4a2e1a', 'wood'); S.wall_plank = wall('#c49a5c', '#a87c44', '#5e4220', 'plank'); S.wall_stone = wall('#9a9aa2', '#7a7a82', '#55555e', 'stone'); S.wall_brick = wall('#b0624a', '#9a4e3a', '#5a2a1e', 'brick');
+  S.wall_window_wood = mk(16,24,g=>{
+    R(g,0,0,16,5,'#b88a50');R(g,0,21,16,3,'#6a4326');
+    for(const x of [0,13]){R(g,x,0,3,24,'#8f633b');R(g,x+1,0,1,24,'#c1965c');}
+    R(g,3,5,10,2,'#5a3d29');R(g,3,19,10,2,'#bd8b53');
+    R(g,7,7,2,12,'#a97d49');R(g,3,12,10,1,'#a97d49');
+    for(const [x,y] of [[3,7],[9,7],[3,13],[9,13]])R(g,x,y,4,4,'rgba(145,203,216,.15)');
+  });
+  S.wall_doorframe_wood = mk(16,24,g=>{
+    R(g,0,0,16,6,'#9e7443');R(g,0,6,3,18,'#94643b');R(g,13,6,3,18,'#94643b');
+    R(g,1,0,1,24,'#d0a36a');R(g,14,0,1,24,'#d0a36a');R(g,2,8,1,16,'#5b391e');R(g,13,8,1,16,'#5b391e');
+  });
+  S.wall_half_wood = mk(16,16,g=>{
+    R(g,0,5,16,11,'#815432');R(g,0,5,16,2,'#b38650');
+    for(let x=0;x<16;x+=4){R(g,x,6,1,9,'#57361e');P(g,x+2,9,'#cd9c62');}
+    R(g,0,14,16,2,'#58371f');
+  });
+  S.wall_pillar_wood = mk(16,24,g=>{
+    R(g,5,0,6,24,'#83522d');R(g,4,0,8,4,'#b18750');R(g,4,20,8,4,'#5e3d20');
+    R(g,6,4,1,16,'#c99d61');R(g,10,4,1,16,'#49301d');R(g,7,9,2,3,'#ba8750');
+  });
+  S.wall_triangle_wood = mk(16,24,g=>{
+    g.fillStyle='#885a32';g.beginPath();g.moveTo(8,0);g.lineTo(16,10);g.lineTo(16,24);g.lineTo(0,24);g.lineTo(0,10);g.closePath();g.fill();
+    for(let x=2;x<16;x+=4)R(g,x,10,1,14,'#593820');
+    R(g,0,20,16,2,'#ad7745');R(g,3,10,10,1,'#bb8b52');P(g,8,2,'#d5a268');
+  });
+  S.fence_wood = mk(16,16,g=>{
+    for(const x of [1,5,9,13]){R(g,x,3,2,13,'#8e5e35');P(g,x,2,'#c39355');}
+    R(g,0,7,16,2,'#b48449');R(g,0,13,16,2,'#6b492b');
+  });
   const door = (c: string, band: string, open: boolean) => mk(16, 24, g => { R(g, 0, 0, 16, 10, '#5a3a22'); if (open) { R(g, 0, 10, 2, 14, c); R(g, 14, 10, 2, 14, c); R(g, 2, 10, 12, 14, 'rgba(20,12,20,0.6)'); } else { R(g, 1, 8, 14, 16, c); R(g, 1, 12, 14, 1, band); R(g, 1, 19, 14, 1, band); P(g, 12, 16, '#e0c060'); R(g, 7, 8, 1, 16, 'rgba(0,0,0,0.3)'); } });
   S.door_wood = door('#9a6a3e', '#4a4e56', false); S.door_wood_open = door('#9a6a3e', '#4a4e56', true); S.door_iron = door('#6a7280', '#3a3e46', false); S.door_iron_open = door('#6a7280', '#3a3e46', true);
   S.poi_door = mk(16, 24, g => { R(g, 0, 6, 16, 18, '#4a5058'); R(g, 2, 8, 12, 16, '#6a7280'); for (let y = 10; y < 24; y += 3) R(g, 2, y, 12, 1, '#3a3e46'); R(g, 12, 13, 2, 3, '#ff3a2a'); });
   S.poi_door_open = mk(16, 24, g => { R(g, 0, 6, 16, 18, '#4a5058'); R(g, 2, 8, 12, 16, '#1a141a'); R(g, 12, 13, 2, 3, '#3aff6a'); });
   S.roof_thatch = mk(16, 16, g => { for (let y = 0; y < 16; y += 3) { R(g, 0, y, 16, 3, y % 6 ? '#c8a050' : '#b08a40'); for (let x = (y % 6 ? 1 : 3); x < 16; x += 4) P(g, x, y + 2, '#8a6a2a'); } }, null);
+  S.ceiling_wood=mk(16,16,g=>{
+    R(g,0,0,16,16,'#805a35');
+    for(let y=1;y<16;y+=4){R(g,0,y,16,1,'#b48a58');R(g,0,y+2,16,1,'#52371f');}
+    for(const x of [2,13])R(g,x,0,1,16,'#6e492b');
+  },null);
+  S.ceiling_triangle_wood=mk(16,16,g=>{
+    g.fillStyle='#8b6038';g.beginPath();g.moveTo(1,1);g.lineTo(15,8);g.lineTo(1,15);g.closePath();g.fill();
+    R(g,2,7,11,2,'#c0935e');R(g,2,4,7,1,'#613c25');R(g,2,11,7,1,'#613c25');
+  },null);
+  S.roof_slope_thatch=mk(16,16,g=>{
+    for(let y=0;y<16;y+=2){R(g,0,y,16,2,y%4?'#c4a059':'#9d7738');R(g,0,y+1,16,1,'#73542a');}
+    for(let x=0;x<16;x+=4)R(g,x,0,1,16,'rgba(255,225,153,.15)');
+  },null);
+  S.roof_corner_thatch=mk(16,16,g=>{
+    R(g,0,0,16,16,'#a88443');
+    for(let n=0;n<8;n++){R(g,n,n,16-2*n,1,n%2?'#ddbd70':'#785726');}
+    R(g,7,0,2,16,'#8b602d');R(g,0,7,16,2,'#8b602d');
+  },null);
   S.roof_tile = mk(16, 16, g => { for (let y = 0; y < 16; y += 4) for (let x = (y % 8 ? 0 : 2); x < 16; x += 4) { R(g, x, y, 4, 4, '#a84a32'); R(g, x, y + 3, 4, 1, '#6a2a1e'); P(g, x + 1, y, '#d07a5a'); } }, null);
   S.roof_tin = mk(16, 16, g => { R(g, 0, 0, 16, 16, '#7a8288'); for (let x = 0; x < 16; x += 3) R(g, x, 0, 1, 16, '#5a6268'); for (let k = 0; k < 6; k++) P(g, hash2(k, 1, 3) * 16 | 0, hash2(k, 2, 3) * 16 | 0, '#a0602a'); }, null);
   S.roof_wood = mk(16, 16, g => { for (let y = 0; y < 16; y += 2) R(g, 0, y, 16, 2, y % 4 ? '#7a5230' : '#6a4426'); for (let x = 0; x < 16; x += 5) R(g, x, 0, 1, 16, '#4a2e1a'); }, null);
@@ -268,6 +384,11 @@ export function buildStructs() {
   S.feed_trough = mk(16, 16, g => { R(g, 1, 6, 14, 7, '#7a5232'); R(g, 1, 6, 14, 1, '#b8864e'); R(g, 2, 13, 2, 2, '#52361e'); R(g, 12, 13, 2, 2, '#52361e'); R(g, 2, 7, 6, 4, '#d8c45e'); P(g, 3, 8, '#9e8e38'); P(g, 6, 9, '#f0e48a'); R(g, 8, 7, 1, 5, '#5a3a22'); R(g, 9, 7, 5, 4, '#3a7ab8'); R(g, 10, 8, 3, 1, '#8ed4ff'); });
   S.spikes = mk(16, 16, g => { for (let k = 0; k < 5; k++) { const x = 2 + k * 3; R(g, x, 9, 1, 5, '#8a6a3e'); P(g, x, 8, '#d0d0d8'); } R(g, 1, 13, 14, 1, '#5a3a22'); });
   S.barricade = mk(16, 16, g => { for (const [x1, x2] of [[1, 14], [14, 1]]) for (let k = 0; k < 14; k++) R(g, x1 + (x2 - x1) * k / 13, 4 + k * 0.7, 2, 2, '#7a5232'); R(g, 1, 11, 14, 2, '#6a4426'); P(g, 2, 4, '#d0d0d8'); P(g, 13, 4, '#d0d0d8'); });
+  // Item set v3: Large Furnace (wider than the Furnace, two fire doors, a stack) and the two ladders (build-menu icon; the world draw is per tile).
+  const bigFurnace = (lit: boolean) => mk(24, 24, g => { R(g, 1, 8, 22, 15, '#6e6e76'); R(g, 1, 8, 22, 2, '#8a8a90'); R(g, 2, 21, 20, 2, '#55555e'); R(g, 4, 14, 6, 6, lit ? '#ff8a2a' : '#1a1214'); R(g, 14, 14, 6, 6, lit ? '#ff8a2a' : '#1a1214'); if (lit) { R(g, 5, 17, 4, 2, '#ffe070'); R(g, 15, 17, 4, 2, '#ffe070'); } R(g, 10, 1, 4, 8, '#55555e'); R(g, 9, 1, 6, 2, '#3c3c44'); R(g, 1, 12, 22, 1, '#4a3a32'); });
+  S.large_furnace = bigFurnace(false); S.large_furnace_lit = bigFurnace(true);
+  const ladderIcon = (rail: string, rung: string, hinge?: string) => mk(16, 16, g => { R(g, 4, 1, 2, 14, rail); R(g, 10, 1, 2, 14, rail); for (let y = 3; y < 15; y += 3) R(g, 6, y, 4, 1, rung); if (hinge) { P(g, 4, 8, hinge); P(g, 11, 8, hinge); } });
+  S.ladder_wood = ladderIcon('#7a5a32', '#c9a064'); S.ladder_steel = ladderIcon('#71c3c6', '#e4f4f4', '#2c4a52');
   S.torch_post = mk(16, 24, g => { R(g, 7, 8, 2, 15, '#6a4426'); R(g, 6, 6, 4, 3, '#4a4e56'); });
   S.claim = mk(16, 32, g => { R(g, 1, 9, 14, 22, '#34251f'); R(g, 2, 10, 12, 20, '#805538'); R(g, 3, 11, 10, 18, '#ac7950'); R(g, 4, 12, 8, 16, '#694432'); R(g, 7, 12, 1, 16, '#cfa46c'); R(g, 5, 19, 1, 2, '#f7d66a'); R(g, 9, 19, 1, 2, '#f7d66a'); R(g, 1, 8, 14, 2, '#d5ae70'); R(g, 2, 30, 12, 2, '#39271f'); });
   S.vendor = mk(16, 24, g => { R(g, 4, 10, 8, 9, '#6a3a8a'); R(g, 4, 15, 8, 1, '#ffd040'); R(g, 5, 19, 2, 4, '#33304a'); R(g, 9, 19, 2, 4, '#33304a'); ell(g, 8, 7, 3.5, 3.5, '#e0b090'); R(g, 3, 3, 10, 2, '#4a2a1a'); R(g, 5, 1, 6, 3, '#4a2a1a'); R(g, 5, 3, 6, 1, '#ffd040'); P(g, 7, 7, '#2a1a2a'); P(g, 9, 7, '#2a1a2a'); R(g, 6, 9, 4, 1, '#8a6a5a'); R(g, 12, 12, 3, 4, '#c08a50'); });
@@ -302,21 +423,40 @@ export function buildStructs() {
   // B05 oil refinery: idle column, and lit (burning fuel for a queued job). Previously unregistered → invisible station.
   S.refinery = mk(16, 24, g => drawRefinery(g, 'idle'));
   S.refinery_lit = mk(16, 24, g => drawRefinery(g, 'lit'));
-  // B05 motorbike: three views × ok/dead (lamp, tank, rust), plus the strapped cargo crate. Left-facing uses a mirrored side sprite.
-  for (const st of ['ok', 'dead'] as const) {
-    for (const v of ['ok', 'empty', 'broken'] as const) for (const rider of [false, true]) {
-      const k = `${v}${rider ? '_rider' : ''}`;
-      S[`vehicle_side_${k}`] = mk(24, 16, g => drawVehicleSide(g, v, rider));
-      S[`vehicle_front_${k}`] = mk(12, 22, g => drawVehicleFront(g, v, rider));
-      S[`vehicle_back_${k}`] = mk(12, 22, g => drawVehicleBack(g, v, rider));
-    }
+  // Vehicle art is the machine only. The mounted rider is composed from the
+  // same character + equipment layers used on foot (render.ts), never a proxy.
+  for (const v of ['ok', 'empty', 'broken'] as const) {
+    S[`vehicle_side_${v}`] = mk(24, 16, g => drawBikeSide(g, v));
+    S[`vehicle_front_${v}`] = mk(12, 22, g => drawBikeFront(g, v));
+    S[`vehicle_back_${v}`] = mk(12, 22, g => drawBikeBack(g, v));
   }
-  S.vehicle_crate = mk(7, 5, g => drawVehicleCrate(g));
+  S.vehicle_crate = mk(7, 5, g => drawBikeCrate(g));
   // B05-R oil pump: idle, dry (empty source), and two frames of the running beam.
   S.oil_pump_idle = mk(20, 24, g => drawOilPump(g, 'idle'));
   S.oil_pump_dry = mk(20, 24, g => drawOilPump(g, 'dry'));
   S.oil_pump_run_0 = mk(20, 24, g => drawOilPump(g, 'run', 0));
   S.oil_pump_run_1 = mk(20, 24, g => drawOilPump(g, 'run', 1));
+  // Catalog aliases & circuit device icons so BuildBar / SurvivorScreen / canvas preview never fall back to blank slots.
+  S.oil_pump = S.oil_pump_idle;
+  S.farm_controller = S.gen;
+  S.power_cable = mk(16, 16, g => {
+    R(g, 1, 9, 14, 4, '#302b2a'); R(g, 1, 10, 14, 2, '#d99a38');
+    R(g, 6, 3, 4, 8, '#302b2a'); R(g, 7, 3, 2, 8, '#d99a38');
+    P(g, 7, 10, '#ffe39a'); P(g, 8, 10, '#ffe39a');
+  });
+  S.power_switch = mk(16, 16, g => {
+    R(g, 1, 10, 14, 4, '#302b2a'); R(g, 1, 11, 14, 2, '#d99a38');
+    R(g, 3, 3, 10, 8, '#474750'); R(g, 5, 5, 6, 3, '#d76760'); P(g, 6, 5, '#ffb0a0');
+  });
+  S.pressure_switch = mk(16, 16, g => {
+    R(g, 1, 10, 14, 4, '#302b2a'); R(g, 1, 11, 14, 2, '#d99a38');
+    R(g, 3, 4, 10, 7, '#474750'); R(g, 4, 5, 8, 4, '#e3c65a'); R(g, 5, 5, 6, 1, '#fff3b0');
+  });
+  S.door_powered = mk(16, 24, g => {
+    R(g, 0, 0, 16, 10, '#5a3a22'); R(g, 1, 8, 14, 16, '#6a7280');
+    R(g, 1, 12, 14, 1, '#3a3e46'); R(g, 1, 19, 14, 1, '#3a3e46');
+    R(g, 7, 8, 1, 16, 'rgba(0,0,0,0.3)'); R(g, 11, 14, 3, 3, '#e2bf52'); P(g, 12, 15, '#fff3b0');
+  });
   return S;
 }
 
@@ -429,7 +569,7 @@ function icon(g: G, kind: string, c1: string, c2: string) {
     default: R(g, 4, 4, 8, 8, c1);
   }
 }
-export function buildIcons() { const out: Record<string, Sprite> = {}; for (const [k, d] of Object.entries(ITEMS)) out[k] = mk(16, 16, g => icon(g, d.icon, d.c1, d.c2)); out.fists = mk(16, 16, g => { ell(g, 8, 9, 4, 3.5, '#eab894'); R(g, 5, 6, 6, 2, '#c08060'); }); return out; }
+export function buildIcons() { const out: Record<string, Sprite> = {}; for (const [k, d] of Object.entries(ITEMS)) out[k] = mk(16, 16, g => { if (!drawBespokeIcon(g, k)) icon(g, d.icon, d.c1, d.c2); }); out.fists = mk(16, 16, g => { ell(g, 8, 9, 4, 3.5, '#eab894'); R(g, 5, 6, 6, 2, '#c08060'); }); return out; }
 
 // pixel font for in-world numbers (3x5)
 const DIG: Record<string, string> = { '0': '111101101101111', '1': '010110010010111', '2': '111001111100111', '3': '111001111001111', '4': '101101111001001', '5': '111100111001111', '6': '111100111101111', '7': '111001001001001', '8': '111101111101111', '9': '111101111001111', '+': '000010111010000', '-': '000000111000000' };

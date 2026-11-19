@@ -1,0 +1,15 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ tests/npc-p0-corrective.test.ts (27 tests) 4682ms
+     ✓ P0.1: first tick after startRun does not zero hunger/thirst or down humans  2070ms
+     ✓ human melee uses K5 reach, floor and cadence gates and wears its equipped weapon  433ms
+ ✓ tests/npc-global-navigation.test.ts (6 tests) 2908ms
+     ✓ derived sorted entity views observe direct add/delete/replacement/archive changes immediately  2219ms
+     ✓ walks a real offscreen cardinal route with saved partial tile time and no repeated settlement  396ms
+
+ Test Files  2 passed (2)
+      Tests  33 passed (33)
+   Start at  02:05:13
+   Duration  12.93s (transform 3.48s, setup 0ms, import 5.03s, tests 7.59s, environment 0ms)
+

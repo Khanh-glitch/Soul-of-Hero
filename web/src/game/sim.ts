@@ -1,4 +1,6 @@
+import {countWorldWork,timedWorldWork} from './world-work';
 import { combatStimulus, pushCombatStimulus, type CombatKind } from './stimulus';
+import { syncVeyraPlacement } from '../veyra05/window';
 import { airdropBoundary, stepAirdrops } from './engine';
 import { airdropView } from './airdrop';
 import { advancePoiAccess, poiDoorLabel, poiGenLabel } from './poi-access';
@@ -8,15 +10,18 @@ import { LOOT_CLASSES, lootClass } from './loot-ecology';
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInReach, coldDamageActive } from './thermal';
 import { calendarAt, climateAt, calendarEventV1, phaseBoundaryAt, seasonTransitionsBetween, normalizeCalendarLedger, type Season, type PrecipWeather } from './calendar';
-import { ITEMS, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable } from './catalog';
+import { LADDER_CLIMB_SPEED, ITEMS, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable, wornProtection } from './catalog';
+import { g1bChestName, G1B_SITES } from './g1b';
 import { getWorld } from './world';
-import { maybeSlideVeyraWindow } from '../veyra05/continuity';
+import { maybeSlideVeyraWindow, windowOrigin } from '../veyra05/continuity';
 import { activeFloor, onActiveFloor } from '../veyra05/floors';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { computeCreatureEnvFactors } from '../veyra05/ecosystem';
 import { stepHusbandry, inspectPenAt } from './husbandry';
 import { stepPrimordialHost, damagePrimordialSummonsMelee, damagePrimordialSummonsProjectile, damagePrimordialSummonsAoE } from './primordials/host-bridge';
-import { regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
+import { beginDailyOfflineSettle, dateKey, endDailyOfflineSettle, syncRunDailyLedger } from './journey';
+import { tickNeeds, advanceElderPressure, stepHumans, humanEventBoundary, stepHumanCombat, applyDamage as applyHumanDamage, humanWorldPosition } from './humanworld';
+import { stepG1b, settleCoreOwed, g1bGateOf, g1bDoorLabel, g1bEta, coreCastBlock, coreCastCommit, ensureOilSeeps, regrowNote, settleRegrowthAt, irSensorStatus, irSensorDownstream, restStep, dispatch, effTile, blockGrid, harvestHit, killCreature, killPlayer, markDirty, sourceAt, stepStations, stepGardensBarrels, stepTenders, stepTenderStates, tenderBoundary, weatherAt, isWet, isSheltered, phaseOf, darkness, endRun, destroyStructure, receipt, pushLog, C, countItem, removeItem, award, trySpawnCreature, mkCreature, entsAt, isRagnarok, countStones, cartLimit, carryLimit, invWeight, clearInteraction, clearPhysicalLine, withRunEntityRead, allRunEntities, stepBasePower, basePowerBoundary, powerAllocation, turretStatus, syncElectricDoors, electricDoorPowered, electricInterior, stepLootRespawn, migrateLootRespawn, initializeCabinets, territoryBoundary, territoryForecast, stepTerritory, spawnDrop } from './engine';
 
 export interface Input { up: boolean; down: boolean; left: boolean; right: boolean; mx: number; my: number; attack: boolean; attackPressed: boolean; roll: boolean; cancel: boolean; skill?: 'refined' | 'signature'; skillAim?: { uid:string; slot:number; mx:number; my:number; viewX:number; viewY:number }; viewX?: number; viewY?: number }
 export const FX: any[] = []; // observed effects for renderer/audio (never authoritative)
@@ -26,14 +31,23 @@ export type { Proj, Haz } from './core';
 export const PROJ: Proj[] = [];
 export const HAZ: Haz[] = [];
 let boundCombat: RunState | null = null;
+let boundCombatFloor = 0;
 /** Bind the renderer's arrays to this run, detaching the previous run first. */
 export function bindCombat(r: RunState) {
-  if (boundCombat === r) return;
+  const fl = activeFloor(r);
+  if (boundCombat === r) {
+    if (fl !== boundCombatFloor) {
+      PROJ.length = 0;
+      HAZ.length = 0;
+      boundCombatFloor = fl;
+    }
+    return;
+  }
   if (boundCombat) boundCombat.combat = { projectiles: [...PROJ], hazards: [...HAZ] };
   const saved = r.combat;
   PROJ.splice(0, PROJ.length, ...(saved?.projectiles || []));
   HAZ.splice(0, HAZ.length, ...(saved?.hazards || []));
-  r.combat = { projectiles: PROJ, hazards: HAZ }; boundCombat = r;
+  r.combat = { projectiles: PROJ, hazards: HAZ }; boundCombat = r; boundCombatFloor = fl;
 }
 let slowTimer = 0, rootTimer = 0, shelterAcc = 0, fireAcc = 0, lightningAcc = 0, discoverAcc = 0;
 let ragAnnounced = '';
@@ -53,6 +67,7 @@ function solidFor(r: RunState, x: number, y: number, who: 'player' | 'creature' 
   const w = getWorld(); const i=ty*WW+tx;
   if (who === 'cart' && (w.packageContract || w.enforceMasks) && !w.economyMap.cargoPassable[i] && !w.statics.some(s=>s.kind==='door' && s.tx===tx && s.ty===ty)) return true;
   if (b === 4) return who === 'cart' || (who === 'creature' && false);
+  if (b === 6) return who !== 'player' || !!r.player.vehicle;
   return b === 1 || b === 2 || b === 3 || b === 5;
 }
 function moveBody(r: RunState, o: { x: number; y: number }, dx: number, dy: number, rad: number, who: 'player' | 'creature' | 'cart') {
@@ -75,16 +90,18 @@ function observePlayer(r: RunState, m: Creature, now: number, range: number, eli
 export function rayLen(r: RunState, x: number, y: number, a: number, max: number) { const g = blockGrid(r); for (let d = 8; d < max; d += 4) { const tx=tileOf(x+Math.cos(a)*d),ty=tileOf(y+Math.sin(a)*d); if(tx<0||ty<0||tx>=WW||ty>=WH)return d; const b=g[ty*WW+tx]; if (b === 1 || b === 2 || b === 3 || b === 5) return d; } return max; }
 
 // ---------- player damage ----------
-export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number, cause: string, now: number, kb = 140) {
+export function hurtPlayer(gs: GameState, dmg: number, fx0: number, fy0: number, cause: string, now: number, kb = 140, groundHit = cause === 'fire' || cause === 'lava') {
   const r = gs.run!; const p = r.player; if (p.dead) return false;
   if ((r.spiritTransit && now < r.spiritTransit.arriveAt) || p.invuln > 0 || (p.iceUntil !== undefined && now < p.iceUntil) || p.action?.kind === 'roll') { fx('dodge', { x: p.x, y: p.y }); return false; }
-  let armor = 0; for (const s of C(r, 'eq').slots) if (s) armor += ITEMS[s.key].armor || 0;
-  const d = Math.max(1, Math.round(dmg * (1 - Math.min(0.6, armor))));
+  // Item set v3 armour model: head + body + legs + feet add into the capped general reduction; boots additionally cut
+  // damage that comes from the ground, and leg armour cuts knock-back and the hurt stagger.
+  const worn = wornProtection(C(r, 'eq').slots); kb *= 1 - worn.steady;
+  const d = Math.max(1, Math.round(dmg * (1 - worn.armor) * (groundHit ? 1 - worn.ground : 1)));
   if((p.channelUntil||0)>now){delete p.channelUntil;fx('fizzle',{x:p.x,y:p.y});}
   p.hp -= d; p.invuln = 520; const a = Math.atan2(p.y - fy0, p.x - fx0);
   moveBody(r, p, Math.cos(a) * kb * 0.06, Math.sin(a) * kb * 0.06, 4, 'player');
   if (p.action?.kind === 'cast') { fx('fizzle', { x: p.x, y: p.y }); dispatch(gs, { id: 'cc' + now + Math.random(), type: 'castCancel' }, now); }
-  p.action = { kind: 'hurt', t: 0, dur: 220, angle: a };
+  p.action = { kind: 'hurt', t: 0, dur: Math.round(220 * (1 - worn.steady)), angle: a };
   fx('phit', { x: p.x, y: p.y, n: d, a }); fx('shake', { m: Math.min(4, 1 + d / 8) });
   if (p.hp <= 0) { killPlayer(gs, now, cause); fx('pdeath', { x: p.x, y: p.y }); }
   return true;
@@ -258,21 +275,23 @@ export function spiritDestination(r:RunState,x:number,y:number):string|null {
   if((r.combat?.hazards||[]).some(h=>h.owner!=='player' && h.t<h.tell+h.dur && (h.kind==='ring'?dist(h.x,h.y,x,y)<(h.r||0)+10:inHaz(h,x,y))))return 'Destination threatened by an active hazard.';
   // Match the survival system's actual adjacent lava and burning-source radii.
   for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const nx=tx+dx,ny=ty+dy;if(nx<0||ny<0||nx>=WW||ny>=WH)continue;if(effTile(r,nx,ny)===T.LAVA)return 'Destination threatened by nearby lava.';const fire=r.sources[ny*WW+nx]?.fire;if(fire && fire>r.clock.simMs && dist(x,y,nx*TILE+8,ny*TILE+8)<18)return 'Destination threatened by nearby fire.';}
-  if(r.creatures.some(m=>m.state!=='dead'&&dist(m.x,m.y,x,y)<16))return 'Destination occupied.';
+  if(r.creatures.some(m=>m.state!=='dead'&&((m as any).floor??0)===activeFloor(r)&&dist(m.x,m.y,x,y)<16))return 'Destination occupied.';
   for(const [dx,dy] of [[-4,-4],[4,-4],[-4,4],[4,4]])if(solidFor(r,x+dx,y+dy,'player'))return 'Not enough landing clearance.';
   const start=sy*WW+sx,seen=new Uint8Array(WW*WH),q=new Int32Array(WW*WH);let head=0,tail=0;q[tail++]=start;seen[start]=1;while(head<tail){const p=q[head++];if(p===i)return null;const px=p%WW,py=Math.floor(p/WW);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=px+dx,ny=py+dy;if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;const v=ny*WW+nx;if(!seen[v]&&(grid[v]===0||grid[v]===4)){seen[v]=1;q[tail++]=v;}}}return 'No legal physical route; sealed areas cannot be bypassed.';
 }
 /** The physical UID captured at windup must still occupy the same slot at commit. */
 function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: string, mode: 'basic'|'refined'|'signature', a: number, aim: Input) {
   const r = gs.run!, p = r.player, s = C(r, 'inv').slots[slot];
-  if (!s || p.active !== slot || s.uid !== uid0 || !ITEMS[s.key]?.creatorCore || !s.reserves || s.reserves[mode] <= 0) { fx('fizzle', {x:p.x,y:p.y}); return; }
+  if (!s || p.active !== slot || s.uid !== uid0 || !ITEMS[s.key]?.creatorCore || coreCastBlock(r, s, mode, now)) { fx('fizzle', {x:p.x,y:p.y}); return; }
   let grove:{tx:number;ty:number;d:number}[] | undefined;
   if(ITEMS[s.key].creatorCore==='earthmother' && mode==='refined') { const len=Math.min(BAL.creatorCoreEarthmother.groveRange,dist(p.x,p.y,aim.mx,aim.my),rayLen(r,p.x,p.y,a,BAL.creatorCoreEarthmother.groveRange));grove=groveCells(r,p.x+Math.cos(a)*len,p.y+Math.sin(a)*len);if(grove.length!==BAL.creatorCoreEarthmother.treeCount || (r.natureTrees?.length||0)+grove.length>100){fx('toast',{text:'Need open ground for all ten trees.'});return;} }
   if(ITEMS[s.key].creatorCore==='demon'&&mode==='signature'){const reason=spiritDestination(r,aim.mx,aim.my);if(reason){fx('toast',{text:reason});return;}}
-  s.reserves[mode]--; receipt(r, now, 'core.commit', `${s.uid}:${mode}:${s.reserves[mode]}`); award(gs,'first_core',now);
+  // Core V2: every refusal above this line (no ammunition, worn out, recharging, no ground for the grove, blocked teleport) cost nothing.
+  if (!coreCastCommit(r, s, mode, now)) { fx('fizzle', {x:p.x,y:p.y}); return; }
+  receipt(r, now, 'core.commit', `${s.uid}:${mode}:dur=${s.dur}`); award(gs,'first_core',now);
   const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
   const visualCore=ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire';
-  fx('cast',{x:hx,y:hy,core:visualCore,a});
+  fx('cast',{x:hx,y:hy,core:visualCore,a,ck:ITEMS[s.key].creatorCore,mode,tx:aim.mx,ty:aim.my});
   if(ITEMS[s.key].creatorCore==='demon') {const e=BAL.creatorCoreDemon;
     if(mode==='basic')PROJ.push({x:hx,y:hy,vx:Math.cos(a)*e.raySpeed,vy:Math.sin(a)*e.raySpeed,life:e.rayLife,dmg:e.rayDamage,from:'player',kind:'spirit_ray',r:3});
     if(mode==='refined'){const len=rayLen(r,p.x,p.y,a,e.beamRange);p.channelUntil=now+e.beamMs;HAZ.push({kind:'line',x:p.x,y:p.y,angle:a,len,w:e.beamWidth,t:0,tell:0,dur:e.beamMs,dmg:e.beamDamage,style:'beam',effect:'spiritBeam',owner:'player',expiresSimMs:r.clock.simMs+e.beamMs});}
@@ -281,7 +300,7 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
   }
   if(ITEMS[s.key].creatorCore==='mjolnir') {
     const e=BAL.creatorCoreMjolnir;
-    if(mode==='basic') {let from={x:p.x,y:p.y};const hit=new Set<string>();for(let j=0;j<3;j++){const candidates=r.creatures.filter(m=>m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&!hit.has(m.id)&&dist(from.x,from.y,m.x,m.y)<(j?e.chainRange:e.punchRange)&&(j||Math.abs(angDiff(Math.atan2(m.y-p.y,m.x-p.x),a))<0.8)&&clearPhysicalLine(r,from,m,true)).sort((u,v)=>dist(from.x,from.y,u.x,u.y)-dist(from.x,from.y,v.x,v.y));const m=candidates[0];if(!m)break;hit.add(m.id);const wet=isWet(weatherAt(r,now))||[T.SHALLOW,T.RIVER].includes(effTile(r,tileOf(m.x),tileOf(m.y)));fx('bolt',{x0:from.x,y0:from.y,x1:m.x,y1:m.y});damageCreature(gs,m,(j?e.chainDamage:e.punchDamage)*(wet?e.wetMultiplier:1),a,now,j?25:130);from={x:m.x,y:m.y};} }
+    if(mode==='basic') {let from={x:p.x,y:p.y};const hit=new Set<string>();for(let j=0;j<3;j++){const candidates=r.creatures.filter(m=>m.state!=='dead'&&((m as any).floor??0)===activeFloor(r)&&!m.elder?.submerged&&!m.atk?.burrow&&!hit.has(m.id)&&dist(from.x,from.y,m.x,m.y)<(j?e.chainRange:e.punchRange)&&(j||Math.abs(angDiff(Math.atan2(m.y-p.y,m.x-p.x),a))<0.8)&&clearPhysicalLine(r,from,m,true)).sort((u,v)=>dist(from.x,from.y,u.x,u.y)-dist(from.x,from.y,v.x,v.y));const m=candidates[0];if(!m)break;hit.add(m.id);const wet=isWet(weatherAt(r,now))||[T.SHALLOW,T.RIVER].includes(effTile(r,tileOf(m.x),tileOf(m.y)));fx('bolt',{x0:from.x,y0:from.y,x1:m.x,y1:m.y});damageCreature(gs,m,(j?e.chainDamage:e.punchDamage)*(wet?e.wetMultiplier:1),a,now,j?25:130);from={x:m.x,y:m.y};} }
     if(mode==='refined'||mode==='signature'){const len=Math.min(e.targetRange,dist(p.x,p.y,aim.mx,aim.my),rayLen(r,p.x,p.y,a,e.targetRange)),x=p.x+Math.cos(a)*len,y=p.y+Math.sin(a)*len;
       if(mode==='refined')for(let i=0;i<e.strikeCount;i++)HAZ.push({kind:'circle',x,y,r:e.strikeRadius,t:0,tell:250+i*e.strikeIntervalMs,dur:100,dmg:e.strikeDamage,style:'lightning',effect:'mjolnirStrike',owner:'player'});
       else {emitCombatSound(r, now, 'signature', x, y); HAZ.push({kind:'pool',x,y,r:e.attractRadius,t:0,tell:0,dur:e.attractMs,dmg:0,style:'lightning',effect:'mjolnirPull',owner:'player',expiresSimMs:r.clock.simMs+e.attractMs});HAZ.push({kind:'circle',x,y,r:e.attractRadius,t:0,tell:e.attractMs,dur:150,dmg:e.burstDamage,style:'lightning',effect:'mjolnirStrike',owner:'player',expiresSimMs:r.clock.simMs+e.attractMs+150});}
@@ -297,12 +316,12 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
   if (ITEMS[s.key].creatorCore === 'elsa') {
     const e=BAL.creatorCoreElsa;
     if(mode==='basic') PROJ.push({x:hx,y:hy,vx:Math.cos(a)*e.shardSpeed,vy:Math.sin(a)*e.shardSpeed,life:e.shardLife,dmg:e.shardDamage,from:'player',kind:'elsa_shard',r:3});
-    if(mode==='refined') { p.iceUntil=now+e.selfMs; fx('cast',{x:p.x,y:p.y,core:'frost',a}); }
+    if(mode==='refined') { p.iceUntil=now+e.selfMs; fx('cast',{x:p.x,y:p.y,core:'frost',a,ck:'elsa',sub:1}); }
     if(mode==='signature') {
       const vx=clamp(Number.isFinite(aim.viewX)?aim.viewX!:p.x-VIEW_W/2,0,WW*TILE-VIEW_W),vy=clamp(Number.isFinite(aim.viewY)?aim.viewY!:p.y-VIEW_H/2,0,WH*TILE-VIEW_H);
-      for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&m.x>=vx&&m.x<vx+VIEW_W&&m.y>=vy&&m.y<vy+VIEW_H&&clearPhysicalLine(r,p,m,true))m.frozenUntil=Math.max(m.frozenUntil||0,now+e.enemyMs);
+      for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===activeFloor(r)&&!m.elder?.submerged&&!m.atk?.burrow&&m.x>=vx&&m.x<vx+VIEW_W&&m.y>=vy&&m.y<vy+VIEW_H&&clearPhysicalLine(r,p,m,true))m.frozenUntil=Math.max(m.frozenUntil||0,now+e.enemyMs);
       let cells=0; for(let y=Math.floor(vy/TILE);y<=Math.floor((vy+VIEW_H-1)/TILE);y++)for(let x=Math.floor(vx/TILE);x<=Math.floor((vx+VIEW_W-1)/TILE);x++)if(freezeTile(r,x,y,e.terrainMs,now))cells++;
-      if(cells)markDirty();receipt(r,now,'core.elsa.freeze',`${s.uid}:${cells}`);fx('cast',{x:p.x,y:p.y,core:'frost',a});
+      if(cells)markDirty();receipt(r,now,'core.elsa.freeze',`${s.uid}:${cells}`);fx('cast',{x:p.x,y:p.y,core:'frost',a,ck:'elsa',sub:1});
     }
     return;
   }
@@ -314,7 +333,7 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
       const vx=clamp(Number.isFinite(aim.viewX)?aim.viewX!:p.x-VIEW_W/2,0,WW*TILE-VIEW_W),vy=clamp(Number.isFinite(aim.viewY)?aim.viewY!:p.y-VIEW_H/2,0,WH*TILE-VIEW_H);
       // Route is built only from physically connected visible targets. Anchors
       // and order are captured once; later camera movement cannot change it.
-      const visible=r.creatures.filter(m=>m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&m.hp>0&&m.x>=vx&&m.x<vx+VIEW_W&&m.y>=vy&&m.y<vy+VIEW_H);
+      const visible=r.creatures.filter(m=>m.state!=='dead'&&((m as any).floor??0)===activeFloor(r)&&!m.elder?.submerged&&!m.atk?.burrow&&m.hp>0&&m.x>=vx&&m.x<vx+VIEW_W&&m.y>=vy&&m.y<vy+VIEW_H);
       const remaining=[...visible], route:{id:string;x:number;y:number}[]=[];let cursor={x:p.x,y:p.y};
       while(remaining.length){const choices=remaining.filter(m=>clearPhysicalLine(r,cursor,m,true)).sort((u,v)=>dist(cursor.x,cursor.y,u.x,u.y)-dist(cursor.x,cursor.y,v.x,v.y)||u.id.localeCompare(v.id));if(!choices.length)break;const m=choices[0];route.push({id:m.id,x:m.x,y:m.y});remaining.splice(remaining.indexOf(m),1);cursor={x:m.x,y:m.y};}
       const last=route[route.length-1];if(last)r.dragonDive={ids:route.map(q=>q.id),x:last.x,y:last.y,left:d.collectMs,route,index:0,dragonX:p.x,dragonY:p.y,phase:'traverse',hitIds:[]};
@@ -346,19 +365,20 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   const act = p.action;
   // start actions
   const selfFrozen=(p.iceUntil||0)>now || (p.channelUntil||0)>now || !!r.spiritTransit;
-  if ((p.iceUntil||0)>now) { for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&dist(p.x,p.y,m.x,m.y)<BAL.creatorCoreElsa.auraRadius&&los(r,p.x,p.y,m.x,m.y,true))m.frozenUntil=Math.max(m.frozenUntil||0,now+BAL.creatorCoreElsa.enemyMs); }
+  if ((p.iceUntil||0)>now) { for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===activeFloor(r)&&!m.elder?.submerged&&!m.atk?.burrow&&dist(p.x,p.y,m.x,m.y)<BAL.creatorCoreElsa.auraRadius&&los(r,p.x,p.y,m.x,m.y,true))m.frozenUntil=Math.max(m.frozenUntil||0,now+BAL.creatorCoreElsa.enemyMs); }
   if (!p.vehicle && !selfFrozen && inp.roll && p.stamina >= B.rollCost && (!act || act.kind === 'hurt' || (act.kind === 'swing' && act.done))) {
     p.stamina -= B.rollCost; p.action = { kind: 'roll', t: 0, dur: B.rollMs, angle: ml ? Math.atan2(my, mx) : p.aim }; p.invuln = Math.max(p.invuln, B.rollMs - 40); fx('roll', { x: p.x, y: p.y });
   } else if (inp.cancel && act?.kind === 'cast') { dispatch(gs, { id: 'cc' + now, type: 'castCancel' }, now); p.action = null; fx('fizzle', { x: p.x, y: p.y }); }
   else if (!p.vehicle && !selfFrozen && inp.skill && !p.action) {
     const s = activeStack(r), mode=inp.skill, chosen=inp.skillAim;
-    if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && s.reserves && s.reserves[mode]>0) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,dur:380,contact:300,angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire'}); }
-    else fx('toast',{text:'Creator Core reserve empty — reload with R.'});
+    const why = s && ITEMS[s.key]?.creatorCore ? coreCastBlock(r, s, mode, now) : 'Hold a Creator Core.';
+    if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && !why) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,dur:380,contact:300,angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire',ck:ITEMS[s.key].creatorCore,mode,a:Math.atan2(ty-p.y,tx-p.x)}); }
+    else fx('toast',{text:why || 'That Core is no longer in hand.'});
   }
   else if (!p.vehicle && !selfFrozen && (inp.attackPressed || inp.attack) && !p.action) {
     const s = activeStack(r); const d = s ? ITEMS[s.key] : null;
     if (d?.repair && s?.dur !== undefined && s.dur <= 0) { if (inp.attackPressed) fx('toast', { text: `${d.name} is broken. Repair it at a workbench.` }); }
-    else if (d?.creatorCore) { if (s!.reserves && s!.reserves.basic>0) { p.action={kind:'cast',t:0,dur:d.creatorCore==='meteor'?400:d.creatorCore==='dragon'?280:180,contact:d.creatorCore==='meteor'?300:d.creatorCore==='dragon'?170:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed) fx('toast',{text:'Basic reserve empty — press R to reload.'}); }
+    else if (d?.creatorCore) { const why = coreCastBlock(r, s!, 'basic', now); if (!why) { p.action={kind:'cast',t:0,dur:d.creatorCore==='meteor'?400:d.creatorCore==='dragon'?280:180,contact:d.creatorCore==='meteor'?300:d.creatorCore==='dragon'?170:100,angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed && !why.startsWith('LMB recharging')) fx('toast',{text:why}); }
     else if (d?.core) { if ((s!.charge ?? 0) > 0) { p.action = { kind: 'cast', t: 0, dur: 520, contact: 460, angle: p.aim, slot: p.active }; fx('windup', { x: p.x, y: p.y, core: d.core }); } else if (inp.attackPressed) fx('toast', { text: 'This Core is spent. Study it at a Research Table.' }); }
     else if (d && d.food && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx(res.ok ? 'eat' : 'toast', { x: p.x, y: p.y, text: res.ok ? '' : (res as any).reason }); }
     else if (d && d.cat === 'bp' && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx('toast', { text: res.ok ? res.msg : (res as any).reason }); }
@@ -381,6 +401,7 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   const t = effTile(r, tileOf(p.x), tileOf(p.y));
   if ((p.iceUntil||0)>now || (p.channelUntil||0)>now || r.spiritTransit) speedMul=0;
   let sp = B.speed * (BAL.terrainSpeed[SPEED_KEY[t]] ?? 1) * speedMul;
+  if (blockGrid(r)[tileOf(p.y) * WW + tileOf(p.x)] === 6) sp *= LADDER_CLIMB_SPEED; // item set v3: climbing a ladder
   const w = invWeight(r), limit = carryLimit(r), personalLoad = w > limit ? Math.max(0.35, 1 - (w - limit) / limit) : 1;
   let condition = 1;
   if (slowTimer > 0) { condition *= 0.5; slowTimer -= dtMs; }
@@ -485,6 +506,21 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
     if (!los(r, p.x, p.y, m.x, m.y)) continue;
     if (damageCreature(gs, m, d.dmg, a, now)) hitAny = true;
   }
+  // Humans share the physical swing geometry and clear-line check with creature targets.
+  // Their positions are global tiles, so project them through the active window origin.
+  if (r.humanWorld) {
+    const [ox, oy] = windowOrigin(r);
+    for (const h of Object.values(r.humanWorld.people)) {
+      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== activeFloor(r)) continue;
+      const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
+      const dd = dist(p.x, p.y, hx, hy) - 8;
+      if (dd > R) continue;
+      const ang = Math.atan2(hy - p.y, hx - p.x);
+      if (dd > 6 && Math.abs(angDiff(ang, a)) > A / 2 + 0.15) continue;
+      if (!los(r, p.x, p.y, hx, hy)) continue;
+      if (applyHumanDamage(r, r.humanWorld, h, d.dmg, a, now, 'player', 'player', activeFloor(r))) hitAny = true;
+    }
+  }
   const summonHits = damagePrimordialSummonsMelee(
     r,
     p.x,
@@ -513,7 +549,7 @@ function resolveSwing(gs: GameState, now: number, slot: number, a: number) {
   }
   best ||= exhausted;
   if (best) {
-    const res = harvestHit(gs, best.tx, best.ty, d.power || {}, now, p.x, p.y, { extraction: 'playerTool' });
+    const res = harvestHit(gs, best.tx, best.ty, d.power || {}, now, p.x, p.y, { extraction: 'playerTool', tool: s?.key });
     const x = best.tx * TILE + 8, y = best.ty * TILE + 8;
     const ignited = s?.key === 'torch' && ignite(gs, best.tx, best.ty, now);
     if (res.result === 'yield') { fx('chip', { x, y, mat: res.mat, key: res.key, depleted: res.depleted, rich: (res.quality ?? 0) > 0 }); hitAny = true; if (res.depleted) fx('fell', { x, y, key: res.key }); }
@@ -925,7 +961,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
           : m.sideBoss && m.atk?.move === 1 ? Math.round(d.tell * 1.15)
           : d.tell;
         if (m.t >= tellDur) {
-          m.state = 'attack'; m.t = 0; m.atk = { ...(m.atk || {}), hit: false };
+          m.state = 'attack'; m.t = 0; m.atk = { ...(m.atk || {}), hit: false, humanVictims: [] };
           if (d.style === 'shoot' || d.style === 'spit_hop') { PROJ.push({ x: m.x, y: m.y - 4, vx: Math.cos(m.angle) * 145, vy: Math.sin(m.angle) * 145, life: 1.5, dmg: d.dmg, from: 'enemy', kind: 'bolt', r: 3 }); fx('zap', { x: m.x, y: m.y }); }
           if (d.style === 'acid_pool') { const tx0 = m.atk.target?.x ?? p.x, ty0 = m.atk.target?.y ?? p.y; HAZ.push({ kind: 'pool', x: tx0, y: ty0, r: 16, t: 0, tell: 620, dur: 2200, dmg: d.dmg, style: 'bog', owner: m.id }); }
           if (d.style === 'ember_burst') { const tx0 = m.atk.target?.x ?? p.x, ty0 = m.atk.target?.y ?? p.y; HAZ.push({ kind: 'circle', x: tx0, y: ty0, r: 20, t: 0, tell: 640, dur: 220, dmg: d.dmg, style: 'magma', effect: 'ignite', owner: m.id }); ignite(gs, tileOf(tx0), tileOf(ty0), now); }
@@ -1188,9 +1224,10 @@ function tickTurrets(gs: GameState, dtMs: number, now: number) {
 function blockedAtTurret(r: RunState,x:number,y:number) { const b=blockGrid(r)[tileOf(y)*WW+tileOf(x)]; return b===1||b===2||b===3||b===5; }
 
 // ---------- projectiles & hazards ----------
-function impactRock(gs:GameState,pr:Proj,now:number){if((pr as any).exploded)return;(pr as any).exploded=true;const r=gs.run!;for(const m of r.creatures)if(m.state!=='dead'&&dist(m.x,m.y,pr.x,pr.y)<BAL.creatorCoreEarthmother.rockRadius&&clearPhysicalLine(r,pr,m,true))damageCreature(gs,m,pr.dmg,Math.atan2(m.y-pr.y,m.x-pr.x),now,190);damagePrimordialSummonsAoE(r,pr.x,pr.y,BAL.creatorCoreEarthmother.rockRadius,pr.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true));fx('chip',{x:pr.x,y:pr.y,mat:'stone'});}
+function impactRock(gs:GameState,pr:Proj,now:number){if((pr as any).exploded)return;(pr as any).exploded=true;const r=gs.run!,fl=activeFloor(r);for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&dist(m.x,m.y,pr.x,pr.y)<BAL.creatorCoreEarthmother.rockRadius&&clearPhysicalLine(r,pr,m,true))damageCreature(gs,m,pr.dmg,Math.atan2(m.y-pr.y,m.x-pr.x),now,190);damagePrimordialSummonsAoE(r,pr.x,pr.y,BAL.creatorCoreEarthmother.rockRadius,pr.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true));fx('rockhit',{x:pr.x,y:pr.y});fx('chip',{x:pr.x,y:pr.y,mat:'stone'});}
 function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?: boolean }) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const g = blockGrid(r);
+  const [humanOx, humanOy] = r.humanWorld ? windowOrigin(r) : [0, 0];
   for (let i = PROJ.length - 1; i >= 0; i--) {
     const pr = PROJ[i];
     // R5.1 P1-D committed-projectile policy: hostile projectiles aimed at the absent player are
@@ -1217,10 +1254,21 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
           if (m.state === 'dead' || ((m as any).floor ?? 0) !== activeFloor(r)) continue;
           const rr = m.elder ? (lookupElderDef(m.elder.key)?.r ?? 14) : 6;
           if (Math.hypot(x - m.x, y - m.y) < rr + pr.r) {
+            pr.x = x; pr.y = y;
             dead = true;
             if (pr.kind === 'nature_rock') impactRock(gs, pr, now);
             else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now);
             else { damageCreature(gs, m, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 80); if (pr.kind === 'elsa_shard' && m.hp > 0 && rngNext(r) < BAL.creatorCoreElsa.freezeChance) m.frozenUntil = now + BAL.creatorCoreElsa.enemyMs; }
+            break;
+          }
+        }
+        if (!dead && pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado' && r.humanWorld) {
+          for (const h of Object.values(r.humanWorld.people)) {
+            if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== activeFloor(r)) continue;
+            const hx = (h.gx - humanOx + 0.5) * TILE, hy = (h.gy - humanOy + 0.5) * TILE;
+            if (Math.hypot(x - hx, y - hy) >= 8 + pr.r) continue;
+            pr.x = x; pr.y = y; dead = true;
+            applyHumanDamage(r, r.humanWorld, h, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 'player', 'player', activeFloor(r));
             break;
           }
         }
@@ -1266,7 +1314,7 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
       }
       pr.x = x; pr.y = y;
     }
-    if(pr.kind==='fire_tornado') { for(const m of r.creatures){if(m.state==='dead'||m.elder?.submerged||m.atk?.burrow||dist(m.x,m.y,pr.x,pr.y)>BAL.creatorCoreDragon.tornadoRadius||!los(r,m.x,m.y,pr.x,pr.y,true))continue;const a=Math.atan2(pr.y-m.y,pr.x-m.x);moveBody(r,m,Math.cos(a)*20*dt,Math.sin(a)*20*dt,5,'creature');if(now>=(m.tornadoNext||0)){m.tornadoNext=now+500;damageCreature(gs,m,pr.dmg,a,now,0);}}if(now>=((pr as any).summonTornadoNext||0)){(pr as any).summonTornadoNext=now+500;damagePrimordialSummonsAoE(r,pr.x,pr.y,BAL.creatorCoreDragon.tornadoRadius,pr.dmg,(ax,ay,bx,by)=>los(r,ax,ay,bx,by,true));}ignite(gs,tileOf(pr.x),tileOf(pr.y),now); }
+    if(pr.kind==='fire_tornado') { const fl=activeFloor(r); for(const m of r.creatures){if(m.state==='dead'||((m as any).floor??0)!==fl||m.elder?.submerged||m.atk?.burrow||dist(m.x,m.y,pr.x,pr.y)>BAL.creatorCoreDragon.tornadoRadius||!los(r,m.x,m.y,pr.x,pr.y,true))continue;const a=Math.atan2(pr.y-m.y,pr.x-m.x);moveBody(r,m,Math.cos(a)*20*dt,Math.sin(a)*20*dt,5,'creature');if(now>=(m.tornadoNext||0)){m.tornadoNext=now+500;damageCreature(gs,m,pr.dmg,a,now,0);}}if(now>=((pr as any).summonTornadoNext||0)){(pr as any).summonTornadoNext=now+500;damagePrimordialSummonsAoE(r,pr.x,pr.y,BAL.creatorCoreDragon.tornadoRadius,pr.dmg,(ax,ay,bx,by)=>los(r,ax,ay,bx,by,true));}ignite(gs,tileOf(pr.x),tileOf(pr.y),now); }
     if (pr.kind === 'blast_signature') {
       const trailSteps=Math.max(1,Math.ceil(dist(ox,oy,pr.x,pr.y)/12));
       for(let k=1;k<=trailSteps;k++){const x=ox+(pr.x-ox)*k/trailSteps,y=oy+(pr.y-oy)*k/trailSteps;ignite(gs,tileOf(x),tileOf(y),now);HAZ.push({kind:'pool',x,y,r:8,t:0,tell:0,dur:BAL.creatorCoreBlast.signatureBurnMs,dmg:BAL.creatorCoreBlast.signatureBurnDamage,style:'burn',owner:'player'});}
@@ -1278,7 +1326,7 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
     // player projectiles vs creatures are resolved inside the substep sweep above (R5.1 coarse-slice fix).
     if (dead && (pr.kind === 'fireball' || pr.kind === 'blast_signature') && pr.life <= 0) explode(gs, pr, now);
     if (dead && pr.kind === 'nature_rock') impactRock(gs,pr,now);
-    if (dead && pr.kind === 'elsa_shard') {freezeAround(r,pr.x,pr.y,BAL.creatorCoreElsa.terrainMs,now);fx('cast',{x:pr.x,y:pr.y,core:'frost',a:0});}
+    if (dead && pr.kind === 'elsa_shard') {freezeAround(r,pr.x,pr.y,BAL.creatorCoreElsa.terrainMs,now);fx('cast',{x:pr.x,y:pr.y,core:'frost',a:Math.atan2(pr.vy,pr.vx),ck:'elsa',sub:'shard'});}
     if (dead && pr.kind === 'blast_bomb' && pr.life <= 0) {
       explode(gs,pr,now); const base=rngNext(r)*Math.PI*2;
       for(let k=0;k<BAL.creatorCoreBlast.fragmentCount;k++){const angle=base+k*Math.PI*2/BAL.creatorCoreBlast.fragmentCount;PROJ.push({x:pr.x,y:pr.y,vx:Math.cos(angle)*120,vy:Math.sin(angle)*120,life:0.65,dmg:BAL.creatorCoreBlast.fragmentDamage,from:'player',kind:'blast_round',r:2});}
@@ -1288,8 +1336,16 @@ function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?
   }
 }
 function explode(gs: GameState, pr: Proj, now: number) {
-  const r = gs.run!; if ((pr as any).exploded) return; (pr as any).exploded = true; fx('boom', { x: pr.x, y: pr.y }); fx('shake', { m: 4 });
-  for (const m of r.creatures) if (m.state !== 'dead' && dist(pr.x, pr.y, m.x, m.y) < 30 && los(r, pr.x, pr.y, m.x, m.y)) damageCreature(gs, m, pr.dmg, Math.atan2(m.y - pr.y, m.x - pr.x), now, 160);
+  const r = gs.run!, fl = activeFloor(r); if ((pr as any).exploded) return; (pr as any).exploded = true; fx('boom', { x: pr.x, y: pr.y }); fx('shake', { m: 4 });
+  for (const m of r.creatures) if (m.state !== 'dead' && ((m as any).floor ?? 0) === fl && dist(pr.x, pr.y, m.x, m.y) < 30 && los(r, pr.x, pr.y, m.x, m.y)) damageCreature(gs, m, pr.dmg, Math.atan2(m.y - pr.y, m.x - pr.x), now, 160);
+  if (r.humanWorld) {
+    const [ox, oy] = windowOrigin(r);
+    for (const h of Object.values(r.humanWorld.people)) {
+      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== fl) continue;
+      const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
+      if (dist(pr.x, pr.y, hx, hy) < 30 && los(r, pr.x, pr.y, hx, hy)) applyHumanDamage(r, r.humanWorld, h, pr.dmg, Math.atan2(hy - pr.y, hx - pr.x), now, 'player', 'player', fl);
+    }
+  }
   damagePrimordialSummonsAoE(r, pr.x, pr.y, 30, pr.dmg, (ax, ay, bx, by) => los(r, ax, ay, bx, by));
   const cx = tileOf(pr.x), cy = tileOf(pr.y); for (let y = cy - 1; y <= cy + 1; y++) for (let x = cx - 1; x <= cx + 1; x++) ignite(gs, x, y, now);
 }
@@ -1302,15 +1358,26 @@ function inHaz(h: Haz, x: number, y: number) {
   const px = x - ox, py = y - oy; const along = px * Math.cos(a) + py * Math.sin(a); const perp = Math.abs(-px * Math.sin(a) + py * Math.cos(a)); return along > 0 && along < len && perp < h.w! / 2 + 3;
 }
 function tickHaz(gs: GameState, dtMs: number, now: number) {
-  const r = gs.run!; const p = r.player;
+  const r = gs.run!; const p = r.player; const fl = activeFloor(r);
   for (let i = HAZ.length - 1; i >= 0; i--) {
     const h = HAZ[i]; if(h.expiresSimMs!==undefined && r.clock.simMs>=h.expiresSimMs){HAZ.splice(i,1);continue;} h.t += dtMs; if (h.t < h.tell) continue;
     const first = !h.done; h.done = true;
     if (first) onHazActivate(gs, h, now);
-    if(h.owner==='player' && h.effect==='spiritBeam'){if(p.dead || (p.channelUntil||0)<=now){HAZ.splice(i,1);continue;}for(const m of r.creatures)if(m.state!=='dead'&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)&&now>=(m.beamHitNext||0)){m.beamHitNext=now+BAL.creatorCoreDemon.beamTickMs;if(damageCreature(gs,m,h.dmg,h.angle||0,now,0))fx('spiritHit',{x:m.x,y:m.y});}if(now>=((h as any).summonTickNext||0)){(h as any).summonTickNext=now+BAL.creatorCoreDemon.beamTickMs;damagePrimordialSummonsAoE(r,h.x,h.y,h.len||0,h.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true),(sx,sy)=>inHaz(h,sx,sy));}}
-    else if(h.owner==='player' && h.effect==='mjolnirPull'){for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){const a=Math.atan2(h.y-m.y,h.x-m.x),step=Math.min(dist(h.x,h.y,m.x,m.y),BAL.creatorCoreMjolnir.attractSpeed*dtMs/1000*(m.elder?0.15:1));moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}}
-    else if(h.owner==='player' && h.effect==='natureRoot'){for(const m of r.creatures)if(m.state!=='dead'&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){m.rootedUntil=Math.max(m.rootedUntil||0,Math.min(now+150,now+Math.max(0,h.tell+h.dur-h.t)));if(now >= (m.rootHitNext||0)){m.rootHitNext=now+BAL.creatorCoreEarthmother.rootTickMs;damageCreature(gs,m,h.dmg,0,now,0);}}if(now>=((h as any).summonRootNext||0)){(h as any).summonRootNext=now+BAL.creatorCoreEarthmother.rootTickMs;damagePrimordialSummonsAoE(r,h.x,h.y,h.r||0,h.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true),(sx,sy)=>inHaz(h,sx,sy));}}
-    else if (h.owner === 'player' && h.kind === 'pool' && h.style === 'burn') { h.tickAcc=(h.tickAcc||0)-dtMs; if(h.tickAcc<=0){h.tickAcc=500;for(const m of r.creatures)if(m.state!=='dead'&&inHaz(h,m.x,m.y)&&los(r,h.x,h.y,m.x,m.y)&&now >= (m.signatureBurnNext||0)){m.signatureBurnNext=now+500;damageCreature(gs,m,h.dmg,Math.atan2(m.y-h.y,m.x-h.x),now,10);}damagePrimordialSummonsAoE(r,h.x,h.y,h.r||0,h.dmg,(ax,ay,bx,by)=>los(r,ax,ay,bx,by),(sx,sy)=>inHaz(h,sx,sy));} }
+    if (h.owner === 'player' && h.dmg > 0 && r.humanWorld) {
+      const [ox, oy] = windowOrigin(r);
+      for (const person of Object.values(r.humanWorld.people)) {
+        if (person.state === 'DEAD' || person.state === 'EVACUATED' || person.floor !== fl || (h as any)[`human_${person.actorId}`]) continue;
+        const hx = (person.gx - ox + 0.5) * TILE, hy = (person.gy - oy + 0.5) * TILE;
+        if (inHaz(h, hx, hy) && clearPhysicalLine(r, h, { x: hx, y: hy }, true)) {
+          (h as any)[`human_${person.actorId}`] = 1;
+          applyHumanDamage(r, r.humanWorld, person, h.dmg, Math.atan2(hy - h.y, hx - h.x), now, 'player', 'player', fl);
+        }
+      }
+    }
+    if(h.owner==='player' && h.effect==='spiritBeam'){if(p.dead || (p.channelUntil||0)<=now){HAZ.splice(i,1);continue;}for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)&&now>=(m.beamHitNext||0)){m.beamHitNext=now+BAL.creatorCoreDemon.beamTickMs;if(damageCreature(gs,m,h.dmg,h.angle||0,now,0))fx('spiritHit',{x:m.x,y:m.y});}if(now>=((h as any).summonTickNext||0)){(h as any).summonTickNext=now+BAL.creatorCoreDemon.beamTickMs;damagePrimordialSummonsAoE(r,h.x,h.y,h.len||0,h.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true),(sx,sy)=>inHaz(h,sx,sy));}}
+    else if(h.owner==='player' && h.effect==='mjolnirPull'){for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){const a=Math.atan2(h.y-m.y,h.x-m.x),step=Math.min(dist(h.x,h.y,m.x,m.y),BAL.creatorCoreMjolnir.attractSpeed*dtMs/1000*(m.elder?0.15:1));moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}}
+    else if(h.owner==='player' && h.effect==='natureRoot'){for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){m.rootedUntil=Math.max(m.rootedUntil||0,Math.min(now+150,now+Math.max(0,h.tell+h.dur-h.t)));if(now >= (m.rootHitNext||0)){m.rootHitNext=now+BAL.creatorCoreEarthmother.rootTickMs;damageCreature(gs,m,h.dmg,0,now,0);}}if(now>=((h as any).summonRootNext||0)){(h as any).summonRootNext=now+BAL.creatorCoreEarthmother.rootTickMs;damagePrimordialSummonsAoE(r,h.x,h.y,h.r||0,h.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true),(sx,sy)=>inHaz(h,sx,sy));}}
+    else if (h.owner === 'player' && h.kind === 'pool' && h.style === 'burn') { h.tickAcc=(h.tickAcc||0)-dtMs; if(h.tickAcc<=0){h.tickAcc=500;for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&inHaz(h,m.x,m.y)&&los(r,h.x,h.y,m.x,m.y)&&now >= (m.signatureBurnNext||0)){m.signatureBurnNext=now+500;damageCreature(gs,m,h.dmg,Math.atan2(m.y-h.y,m.x-h.x),now,10);}damagePrimordialSummonsAoE(r,h.x,h.y,h.r||0,h.dmg,(ax,ay,bx,by)=>los(r,ax,ay,bx,by),(sx,sy)=>inHaz(h,sx,sy));} }
     else if (h.owner === 'player') {
       if (first || h.kind === 'ring') {
         damagePrimordialSummonsAoE(
@@ -1328,7 +1395,7 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
           },
         );
         for (const m of r.creatures) {
-          if (m.state === 'dead' || (h as any)['h_' + m.id]) continue;
+          if (m.state === 'dead' || ((m as any).floor ?? 0) !== fl || (h as any)['h_' + m.id]) continue;
           if (inHaz(h, m.x, m.y) && los(r, h.x, h.y, m.x, m.y)) {
             (h as any)['h_' + m.id] = 1;
             damageCreature(gs, m, h.dmg * (h.effect==='mjolnirStrike' && (isWet(weatherAt(r,now)) || [T.SHALLOW,T.RIVER].includes(effTile(r,tileOf(m.x),tileOf(m.y)))) ? BAL.creatorCoreMjolnir.wetMultiplier : 1), Math.atan2(m.y - h.y, m.x - h.x), now, 90);
@@ -1339,7 +1406,7 @@ function tickHaz(gs: GameState, dtMs: number, now: number) {
     }
     else {
       const dot = h.kind === 'pool' || h.effect === 'dot' || h.kind === 'sweep' || h.style === 'burn';
-      if (dot) { h.tickAcc = (h.tickAcc || 0) - dtMs; if (h.tickAcc <= 0 && inHaz(h, p.x, p.y)) { h.tickAcc = h.kind === 'pool' ? 500 : 220; hurtPlayer(gs, h.kind === 'pool' ? 5 : h.dmg * 0.45, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, 30); if (h.kind === 'pool') p.rad = Math.min(100, p.rad + 4); } }
+      if (dot) { h.tickAcc = (h.tickAcc || 0) - dtMs; if (h.tickAcc <= 0 && inHaz(h, p.x, p.y)) { h.tickAcc = h.kind === 'pool' ? 500 : 220; hurtPlayer(gs, h.kind === 'pool' ? 5 : h.dmg * 0.45, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, 30, h.kind === 'pool' || h.style === 'burn'); if (h.kind === 'pool') p.rad = Math.min(100, p.rad + 4); } }
       else if (!h.hit && inHaz(h, p.x, p.y)) { if (hurtPlayer(gs, h.dmg, h.x, h.y, h.elder ? (lookupElderDef(h.elder)?.name ?? 'hazard') : 'hazard', now, h.effect === 'knock' ? 320 : 140)) { h.hit = true; if (h.effect === 'slow') slowTimer = 2200; if (h.effect === 'root') rootTimer = 900; if (h.effect === 'pull') { const a = Math.atan2(h.y - p.y, h.x - p.x); moveBody(r, p, Math.cos(a) * 14, Math.sin(a) * 14, 4, 'player'); } } }
     }
     if (h.t >= h.tell + h.dur) HAZ.splice(i, 1);
@@ -1413,7 +1480,7 @@ export function commitSeasonBoundaries(r: RunState, from: number, to: number): n
 }
 /** Advance existing autonomous helpers at weather and finite fire/terrain boundaries.
  * Physical actors, spread, damage, lightning and player input are deliberately not replayed. */
-function advanceWorld(gs: GameState, start: number, end: number, report?: string[], visual = true) {
+function advanceWorld(gs: GameState, start: number, end: number, report?: string[], visual = true) {return timedWorldWork('advanceWorld',()=>{
   const r = gs.run!; let t = start; const slotMs = BAL.weather.slotMinutes * 60000;
   initializeCabinets(r);
   const syncPoi=(at:number)=>{const events=advancePoiAccess(r,at);if(events.closed.length)markDirty();for(const id of events.expired)receipt(r,at,'poi.power.expire',id);for(const id of events.closed)receipt(r,at,'poi.door.close',id);};
@@ -1422,10 +1489,11 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
   syncPoi(t); syncHome(t);
   commitSeasonBoundaries(r, t, t);
   resolveFires(gs, t, visual);
-  stepLootRespawn(r, t);
+  stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
   syncDrops(t);
   stepNatureTrees(r,t);
   while (t < end) {
+    countWorldWork('worldSlices');
     // Commit already-finished jobs first; their next jobs determine the next boundary.
     stepStations(gs, 0, t, report);
     stepTenders(gs, t);
@@ -1437,32 +1505,42 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     // the local climate and every seasonal multiplier change exactly here, so the slice
     // must end on it rather than interpolate across it.
     let dt = Math.min(end - t, nextWeather - t, seasonBoundaryAt(r, t));
-    const powered=new Set(Object.values(r.entities).filter(e=>e.basePower).flatMap(g=>powerAllocation(r,g,visual).filter(e=>e.industrial).map(e=>e.id)));
-    for (const e of Object.values(r.entities)) {
-      const st = e.station; if (!st) continue; const kind = e.kind==='recycler'?'recycler':STRUCTS[e.type!].station; const job = st.queue[0];
-      const fuelled = kind === 'campfire' || kind === 'furnace';
-      if (kind === 'furnace' && (!job || job.left <= 0)) continue;
-      if (!job && kind !== 'campfire') continue;
-      let fuel = st.burn;
-      // W07: boundary uses the same burnable rule as stepStations (canisters are never station fuel).
-      if (fuelled && fuel <= 0) { const next = C(r, st.fuelC).slots.find(s => s && stationBurnable(s.key)); if (!next) continue; fuel = ITEMS[next.key].fuel! * 1000; }
-      if (fuelled) dt = Math.min(dt, fuel);
-      if (job && job.left > 0) dt = Math.min(dt, job.left / (powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1));
-    }
-    dt = airdropBoundary(r,t,dt);
-    dt = basePowerBoundary(r, dt, visual);
-    dt = territoryBoundary(r, dt);
-    dt = tenderBoundary(r, isWet(weather), dt, t);
-    for (const tree of r.natureTrees||[]) if(tree.until>r.clock.simMs)dt=Math.min(dt,tree.until-r.clock.simMs);
-    for(const e of Object.values(r.entities)){if(e.poiPower&&e.power===1&&e.poiPower.expiresAt>t)dt=Math.min(dt,e.poiPower.expiresAt-t);if(e.open&&e.poiDoor&&e.poiDoor.closeAt>t)dt=Math.min(dt,e.poiDoor.closeAt-t);if(e.open&&e.electricDoor?.releaseUntil&&e.electricDoor.releaseUntil>t)dt=Math.min(dt,e.electricDoor.releaseUntil-t);}
-    for (const due of Object.values(r.lootRespawnAt || {})) if (due > t) dt = Math.min(dt, due - t);
-    for (const st of Object.values(r.sources)) { if (st.fire && st.fire > r.clock.simMs) dt = Math.min(dt, st.fire - r.clock.simMs); if(st.fireSpreadAt && st.fireSpreadAt > r.clock.simMs) dt = Math.min(dt, st.fireSpreadAt - r.clock.simMs); }
-    for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
+    let powered:Set<string>=new Set();
+    withRunEntityRead(r,()=>{
+      powered=new Set(allRunEntities(r).filter(e=>e.basePower).flatMap(g=>powerAllocation(r,g,visual).filter(e=>e.industrial).map(e=>e.id)));
+      for (const e of [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})]) {
+        if (!r.entities[e.id] && e.type === 'oil_pump') continue;
+        const st = e.station; if (!st) continue; const kind = e.kind==='recycler'?'recycler':STRUCTS[e.type!].station; const job = st.queue[0];
+        const fuelled = kind === 'campfire' || kind === 'furnace';
+        if (kind === 'furnace' && (!job || job.left <= 0)) continue;
+        if (!job && kind !== 'campfire') continue;
+        let fuel = st.burn;
+        // W07: boundary uses the same burnable rule as stepStations (canisters are never station fuel).
+        if (fuelled && fuel <= 0) { const next = C(r, st.fuelC).slots.find(s => s && stationBurnable(s.key)); if (!next) continue; fuel = ITEMS[next.key].fuel! * 1000; }
+        if (fuelled) dt = Math.min(dt, fuel);
+        if (job && job.left > 0) dt = Math.min(dt, job.left / (powered.has(e.id) ? BAL.industrialPower.workSpeedMultiplier : 1));
+      }
+      if(r.humanWorld)dt=humanEventBoundary(r,r.humanWorld,t,dt);
+      dt = airdropBoundary(r,t,dt);
+      dt = basePowerBoundary(r, dt, visual);
+      dt = territoryBoundary(r, dt);
+      dt = tenderBoundary(r, isWet(weather), dt, t);
+      for (const tree of r.natureTrees||[]) if(tree.until>r.clock.simMs)dt=Math.min(dt,tree.until-r.clock.simMs);
+      for(const e of Object.values(r.entities)){if(e.poiPower&&e.power===1&&e.poiPower.expiresAt>t)dt=Math.min(dt,e.poiPower.expiresAt-t);if(e.open&&e.poiDoor&&e.poiDoor.closeAt>t)dt=Math.min(dt,e.poiDoor.closeAt-t);}
+      for(const e of allRunEntities(r)){if(e.open&&e.electricDoor?.releaseUntil&&e.electricDoor.releaseUntil>t)dt=Math.min(dt,e.electricDoor.releaseUntil-t);}
+      for (const due of Object.values(r.lootRespawnAt || {})) if (due > t) dt = Math.min(dt, due - t);
+      for (const st of Object.values(r.sources)) { if (st.fire && st.fire > r.clock.simMs) dt = Math.min(dt, st.fire - r.clock.simMs); if(st.fireSpreadAt && st.fireSpreadAt > r.clock.simMs) dt = Math.min(dt, st.fireSpreadAt - r.clock.simMs); }
+      for (const terrain of Object.values(r.terrain)) if (terrain.until && terrain.until > r.clock.simMs) dt = Math.min(dt, terrain.until - r.clock.simMs);
+      if (!(dt > 0)) return;
+      dt = Math.min(end - t, Math.max(dt, 0.001));
+      // These device updates mutate fuel/jobs/crops, never entity membership.
+      // Retain the same membership snapshot; end before territory destruction,
+      // loot spawns, human death/cargo or any archive/projection transaction.
+      stepBasePower(r, dt, t + dt, visual);
+      stepStations(gs, dt, t + dt, report, powered);
+      stepGardensBarrels(gs, dt, isWet(weather), t);
+    });
     if (!(dt > 0)) break;
-    dt = Math.min(end - t, Math.max(dt, 0.001)); // avoid sub-millisecond timestamp stalls
-    stepBasePower(r, dt, t + dt, visual);
-    stepStations(gs, dt, t + dt, report, powered);
-    stepGardensBarrels(gs, dt, isWet(weather), t);
     stepHusbandry(gs, dt / 1000, t + dt, isWet(weather));
     decayTraces(r, dt, weather, t);
     if(stepTerritory(r,dt,t+dt,report)) offlineStructureChange++;
@@ -1488,13 +1566,14 @@ function advanceWorld(gs: GameState, start: number, end: number, report?: string
     // ground from there. Only the entries expiring in this slice are visited (no world scan).
     let dirty = false; for (const k in r.terrain) { const m = r.terrain[k]; if (m.until && m.until <= r.clock.simMs) { const ci = +k; settleRegrowthAt(r, ci % WW, Math.floor(ci / WW), m.untilAt ?? t); delete r.terrain[k]; dirty = true; } } if (dirty) markDirty();
     resolveFires(gs, t, visual);
-    stepLootRespawn(r, t);
+    stepLootRespawn(r, t); stepG1b(r, t); settleCoreOwed(r, t);
+    if (r.humanWorld) { tickNeeds(r, r.humanWorld, t); advanceElderPressure(r, r.humanWorld, t); stepHumans(r, r.humanWorld, t); }
     syncDrops(t);
     stepNatureTrees(r,t);
   }
   stepTenders(gs, end);
   stepTenderStates(r, end);
-}
+});}
 
 /** Bring the single run clock forward before a frame or an input transaction. */
 export function syncWorld(gs: GameState, now: number): boolean {
@@ -1507,6 +1586,7 @@ export function syncWorld(gs: GameState, now: number): boolean {
   if (!gs.run || r.clock.lastSimAt < activeStart) return false;
   advanceWorld(gs, r.clock.lastSimAt, now);
   r.clock.lastSimAt = now;
+  syncRunDailyLedger(r, dateKey(now));
   return true;
 }
 
@@ -1542,7 +1622,9 @@ function tickDragonDive(gs: GameState, dtMs: number, now: number) {
 }
 
 // ---------- main tick ----------
+
 export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
+  syncVeyraPlacement(gs.run);
   const r = gs.run; if (!r || r.ended) return;
   bindCombat(r);
   r.clock.defenseFrames = 0;   // the fine-defense budget is per absence window; presence online refreshes it
@@ -1550,6 +1632,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   if (!syncWorld(gs, now)) { if (!gs.run) fx('banner', { text: 'The run has ended', sub: 'Ragnarok consumed the island.' }); return; }
   // Resting hands the online clock to the same chronological settlement used offline (no online drain while asleep).
   if (r.rest) { settle(gs, now, true); return; }
+  ensureOilSeeps(r); // item set v3: Veyra crude seeps exist from the first frame, pump or no pump
   const ph = phaseOf(r, now);
   if (ph !== 'calm' && ragAnnounced !== r.id + ph) { ragAnnounced = r.id + ph; if (ph === 'danger') { award(gs, 'ragnarok', now); fx('banner', { text: 'RAGNAROK', sub: 'The final 72 hours. Sealed chests can now be opened.' }); } if (ph === 'awakening') fx('banner', { text: 'DAY 14', sub: 'The six Elders awaken.' }); }
   const weather = weatherAt(r, now);
@@ -1558,6 +1641,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   tickPlayer(gs, inp, dtMs, now);
   if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
   tickCreatures(gs, dtMs, now);
+  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle) => damageCreature(gs, m, dmg, angle, now), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); });
   tickDragonDive(gs, dtMs, now);
   tickTurrets(gs, dtMs, now);
   tickProj(gs, dtMs, now);
@@ -1569,7 +1653,8 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   for (const e of Object.values(r.entities)) {
     if (e.kind !== 'drop' || !onActiveFloor(r, e)) continue;
     if (e.vx || e.vy) { e.x += e.vx! * dtMs / 1000; e.y += e.vy! * dtMs / 1000; e.vx! *= 0.88; e.vy! *= 0.88; if (Math.abs(e.vx!) + Math.abs(e.vy!) < 2) { e.vx = 0; e.vy = 0; } }
-    if (p.dead) continue; const d = dist(e.x, e.y, p.x, p.y); const age = now - (e.born || 0);
+    if (p.dead || e.manual) continue; // G1B: something put down on purpose stays put; F picks it up
+    const d = dist(e.x, e.y, p.x, p.y); const age = now - (e.born || 0);
     if (age > 380 && d < 30) { const s = C(r, e.c!)?.slots[0]; if (!s) continue; const full = ITEMS[s.key].max > 1 && !s.meta ? false : !C(r, 'inv').slots.includes(null);
       if (full) continue; e.x += (p.x - e.x) * Math.min(1, dtMs / 90); e.y += (p.y - e.y) * Math.min(1, dtMs / 90);
       if (d < 9) { const key = s.key, q = s.qty; const res = dispatch(gs, { id: 'ap_' + e.id + '_' + q, type: 'pickup', eid: e.id }, now); if (res.ok) fx('pickup', { x: p.x, y: p.y, key, q }); else e.born = now + 1500; } }
@@ -1589,7 +1674,7 @@ function discover(gs: GameState, now: number) {
   const zi = w.zone[tileOf(p.y) * WW + tileOf(p.x)]; const ZN = ['Heartland', 'Meadow Bay', "Fisher's Point", 'Pinewatch', 'Eastcove', 'Frostcrown Peaks', 'Caldera Wastes', 'Dead Foundry', 'Drowned Fen', 'Oldgrowth', 'Lighthouse Spit', 'Harbor Reach', 'Serpent Strand', 'Wreck Coast', 'Old Mill', 'The Sea'];
   const regionName=(w.zoneNames || ZN)[zi]; if (regionName !== p.regionName) { p.regionName = regionName; fx('region', { name: regionName }); }
   const poiRad = isVeyra05Layout(r.layoutId || '') ? 26 * TILE : 13 * TILE;
-  for (const pl of w.places) if (!r.poiSeen.includes(pl.id) && Math.hypot(pl.tx * TILE - p.x, pl.ty * TILE - p.y) < poiRad) { r.poiSeen.push(pl.id); pushLog(r, now, `Discovered: ${pl.name}`, 'gold'); fx('discover', { name: pl.name }); }
+  for (const pl of w.places) if (!r.poiSeen.includes(pl.id) && Math.hypot(pl.tx * TILE - p.x, pl.ty * TILE - p.y) < poiRad) { r.poiSeen.push(pl.id); receipt(r, now, 'poi.discover', pl.id); pushLog(r, now, `Discovered: ${pl.name}`, 'gold'); fx('discover', { name: pl.name }); }
   // stones
   r.elderStones = []; for (const s of C(r, 'inv').slots) if (s && ITEMS[s.key]?.cat === 'stone' && !r.elderStones.includes(s.key)) r.elderStones.push(s.key);
   void countStones;
@@ -1609,6 +1694,10 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   // A corrupt/legacy pre-run checkpoint cannot cause more than one run's duration of replay.
   const start = Math.max(r.clock.lastSimAt, expiry - BAL.run.maxRunHours * HOUR);
   const end = Math.min(now, expiry), gap = Math.max(0, end - start);
+  syncRunDailyLedger(r, dateKey(start));
+  const markOffline = interruptTransit && gap > 5000;
+  if (markOffline) beginDailyOfflineSettle();
+  try {
   // R5.1 P1-D committed-projectile policy: hostile instruments aimed at the absent player cannot resolve
   // during settlement, offline or after return. Hostile hazards and hostile in-flight projectiles are
   // discarded (never stepped, never re-armed); the player's own committed instruments persist for online law.
@@ -1660,7 +1749,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   let shelterPrev = sheltered;
   const startHp = p.hp, startHunger = p.hunger, startThirst = p.thirst;
   // W07-R: turrets that were armed, supplied and wired when the player left (evaluated at the start, not at return).
-  const standbyTurrets = Object.values(r.entities).filter(t => t.turret?.enabled && t.c && countItem(r, t.c, 'arrow') > 0).filter(t => Object.values(r.entities).some(g => g.basePower && powerAllocation(r, g, false).includes(t)));
+  const standbyTurrets = allRunEntities(r).filter(t => t.turret?.enabled && t.c && countItem(r, t.c, 'arrow') > 0).filter(t => allRunEntities(r).some(g => g.basePower && powerAllocation(r, g, false).includes(t)));
   const territoryBefore = new Map(Object.values(r.entities).filter(e=>e.kind==='struct' && (e.owner===undefined||e.owner==='player') && e.hp!==undefined).map(e=>[e.id,{name:STRUCTS[e.type!]?.name||e.type||'Structure',hp:e.hp!}]));
   // Minute-sized survival integration, not frame replay; world helper splits further at weather/fire boundaries.
   while (t < end) {
@@ -1687,8 +1776,8 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     }
     if ((p.iceUntil||0)>t) dtMs=Math.min(dtMs,p.iceUntil!-t);
     const activeFire = !isWet(weatherAt(r,t)) && Object.entries(r.sources).some(([key,st])=>!!st.fire && st.fire>r.clock.simMs && dist(p.x,p.y,(+key%WW)*TILE+8,Math.floor(+key/WW)*TILE+8)<18);
-    const armor = C(r,'eq').slots.reduce((n,s)=>n+(s ? ITEMS[s.key].armor||0 : 0),0);
-    const fireRate = activeFire && (p.iceUntil||0)<=t ? Math.max(1,Math.round(B.offlineFireHitDamage*(1-Math.min(0.6,armor))))/B.offlineFireHitMs : 0;
+    const worn = wornProtection(C(r,'eq').slots);
+    const fireRate = activeFire && (p.iceUntil||0)<=t ? Math.max(1,Math.round(B.offlineFireHitDamage*(1-worn.armor)*(1-worn.ground)))/B.offlineFireHitMs : 0;
     const unit = B.offlineDrainFactor / 60000;
     const hungerRate = B.offlineHungerPerHour / HOUR;
     // CAL-01: summer heat/dryness at THIS Map cell raises water demand, exactly as the
@@ -1803,7 +1892,11 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   if (Math.round(startThirst - p.thirst) > 0) report.push(`Thirst ${Math.round(startThirst)} → ${Math.round(p.thirst)} (shelter does not prevent thirst death).`);
   if (!p.dead && startHp - p.hp >= 1) report.push(`HP ${Math.round(startHp)} → ${Math.round(p.hp)}.`);
   receipt(r, now, 'offline.settle', `${Math.round(gap / 1000)}s`);
+  syncRunDailyLedger(r, dateKey(end));
   return report;
+  } finally {
+    if (markOffline) endDailyOfflineSettle();
+  }
 }
 
 // ---------- interaction finder (for E prompts) ----------
@@ -1822,14 +1915,22 @@ export function findInteract(gs: GameState, now: number): Interact | null {
   const r = gs.run!; const p = r.player; if (p.dead) return null; let best: Interact | null = null; let bd = 30;
   const fx0 = p.x + Math.cos(p.aim) * 6, fy0 = p.y + Math.sin(p.aim) * 6;
   for (const e of Object.values(r.entities)) {
-    if (e.kind === 'drop' || !onActiveFloor(r, e)) continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
+    if ((e.kind === 'drop' && !e.manual) || !onActiveFloor(r, e)) continue; const d = dist(fx0, fy0, e.x, e.y); if (d > bd || !clearInteraction(r, e)) continue;
     let label = ''; let kind = e.kind as string;
+    if (e.kind === 'drop') { const s0 = C(r, e.c!)?.slots[0]; if (!s0) continue; label = `Pick up ${ITEMS[s0.key].name}${s0.qty > 1 ? ' ×' + s0.qty : ''}`; bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y }; continue; }
+    if (e.kind === 'loot' && e.g1b) {
+      const g = e.g1b; kind = 'g1b:' + g.kind;
+      if (g.kind === 'gen') label = (g.poweredUntil ?? 0) > now ? `Circuit generator · running ${Math.ceil((g.poweredUntil! - now) / 1000)}s` : 'Circuit generator · add 1 Fuel Canister';
+      else if (g.kind === 'card') label = g.state === 'empty' ? 'Access-card case · empty' : 'Open access-card case';
+      else { const name = g1bChestName(G1B_SITES[g.sid]?.variant); label = g.state === 'closed' ? `Open ${name}` : g.state === 'opened' ? `Search ${name}` : `${name} · empty${g.refillAt ? ' · restocks in ' + g1bEta(g.refillAt - now) : ''}`; }
+      bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y }; continue;
+    }
     if (e.kind === 'bag') { if (!C(r,e.c!).slots.some(Boolean) && !e.legacyJobs?.queue.length) continue; label = `Open ${e.label || 'bag'}`; }
     else if (e.kind === 'airdrop') { if(!e.airdrop || ['signal','descending'].includes(e.airdrop.phase))continue; const v=airdropView(e.airdrop,e.tx!,e.ty!,now,C(r,e.c!).slots.filter(Boolean).length); label = v.key==='locked' ? `Airdrop locked · opens in ${v.lockedRemainS}s` : v.key==='emptied' ? 'Airdrop empty' : v.key==='partial' ? 'Airdrop partly claimed · take only' : v.key==='expiring' ? `Airdrop expiring · take only` : 'Search airdrop · take only'; }
     else if (e.kind === 'loot') { const site=r.lootEcology && getWorld(r.layoutId||'shipping').statics.find(s=>s.kind==='loot'&&s.tx===e.tx&&s.ty===e.ty);const cls=site && lootClass(site);label=C(r,e.c!).slots.some(Boolean) ? `Search ${cls ? LOOT_CLASSES[cls].name : 'crate'}` : 'Empty crate'; }
     else if (e.kind === 'cash') label = isRagnarok(r, now) ? (e.minted ? 'Ragnarok chest' : 'Break the Ragnarok seal') : 'Sealed Ragnarok chest';
     else if (e.kind === 'vendor') label = `Trade with ${e.label}`;
-    else if (e.kind === 'door') label = e.locked || e.poiDoor ? poiDoorLabel(r,e,now) : e.open ? 'Close door' : 'Open door';
+    else if (e.kind === 'door') { const gate = g1bGateOf(r, e); label = gate ? g1bDoorLabel(r, e, gate, now) : e.locked || e.poiDoor ? poiDoorLabel(r,e,now) : e.open ? 'Close door' : 'Open door'; }
     else if (e.kind === 'recycler') label = 'Use Foundry Recycler';
     else if (e.kind === 'gen') label = poiGenLabel(r,e,now);
     else if (e.type === 'ir_sensor') label = `Infrared sensor ${e.irSensor?.enabled ? 'ON' : 'OFF'}: ${irSensorStatus(r, e)}${irSensorDownstream(r, e)} (E toggles)`;
@@ -1842,7 +1943,22 @@ export function findInteract(gs: GameState, now: number): Interact | null {
     if((e.kind==='door'||e.kind==='gen') && (effTile(r,tileOf(p.x),tileOf(p.y))===T.TOXIC || (getWorld().zone[tileOf(p.y)*WW+tileOf(p.x)]===7 && effTile(r,tileOf(p.x),tileOf(p.y))===T.FLOOR)))label+=' · radiation exposure';
     bd = d; best = { kind, label, eid: e.id, x: e.x, y: e.y };
   }
+  if (r.humanWorld) {
+    const [ox, oy] = windowOrigin(r);
+    for (const h of Object.values(r.humanWorld.people)) {
+      if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== activeFloor(r)) continue;
+      const pos = humanWorldPosition(h, now);
+      const x = (pos.gx - ox) * TILE, y = (pos.gy - oy) * TILE;
+      const d = dist(fx0, fy0, x, y);
+      if (d > bd || !clearInteraction(r, { x, y })) continue;
+      bd = d;
+      best = { kind: 'human', label: `${h.name} · ${h.state.toLowerCase()} · F talk`, eid: h.actorId, x, y };
+    }
+  }
   for (const key in r.sources) { const st=r.sources[key]; if(!st.fire || st.fire<=r.clock.simMs)continue; const i=+key,x=(i%WW)*TILE+8,y=Math.floor(i/WW)*TILE+8,d=dist(fx0,fy0,x,y); if(d<bd && dist(p.x,p.y,x,y)<=2.2*TILE && clearInteraction(r,{x,y})){bd=d;best={kind:'fire',label:'Douse burning tree (1 flask water)',x,y};} }
   if (!best) { const w = getWorld(); for (const [dx, dy] of [[0, 0], [Math.cos(p.aim) * 14, Math.sin(p.aim) * 14], [0, 12], [0, -12], [12, 0], [-12, 0]]) { const tx = tileOf(p.x + dx), ty = tileOf(p.y + dy); if (w.fresh[ty * WW + tx] && effTile(r, tx, ty) !== T.ICE && [T.SHALLOW, T.RIVER].includes(effTile(r, tx, ty))) return { kind: 'water', label: 'Drink fresh water', x: tx * TILE + 8, y: ty * TILE + 8 }; } }
   return best;
 }
+
+/** QA Sandbox VFX Showcase helper: put the player on a free tile beside a creature (best effort, same floor). */
+export function vfxTestWarp(gs: GameState, m: Creature): boolean { const r = gs.run!, g = blockGrid(r); for (const d of [64, 48, 84, 32]) for (let k = 0; k < 12; k++) { const a = k * Math.PI / 6, x = m.x + Math.cos(a) * d, y = m.y + Math.sin(a) * d, tx = tileOf(x), ty = tileOf(y); if (tx > 1 && ty > 1 && tx < WW - 2 && ty < WH - 2 && g[ty * WW + tx] === 0) { r.player.x = x; r.player.y = y; return true; } } return false; }

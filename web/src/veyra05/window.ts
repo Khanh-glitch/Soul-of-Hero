@@ -1,3 +1,5 @@
+import {timedWorldWork} from '../game/world-work';
+import {countWorldWork} from '../game/world-work';
 /**
  * ENGINE WINDOW MATERIALISER — cuts a bounded 200x200 live-engine `World` out of
  * the streamed U=0.5 frame:
@@ -15,7 +17,7 @@
  */
 import { T, TILE, WW, WH } from '../game/core';
 import type { World, Place } from '../game/world';
-import { compileEconomy, reachable, type Biome, type EconomyMap } from '../game/world-economy';
+import { compileEconomy, reachableUnion, type Biome, type EconomyMap } from '../game/world-economy';
 import { mapDigest } from '../game/map-package';
 import type { VeyraViewIdentity } from '../game/veyra/projection';
 import { MAP_SOURCE_SHA, BODY_SHA } from '../game/veyra/intake';
@@ -24,8 +26,11 @@ import { U, FRAME_AU, FRAME_W, FRAME_H, CHUNK, auToTile, windowOriginAu, type Wi
 import { getChunk, FL, CL, type Chunk } from './chunks';
 import { POIS, GOLD } from './reader';
 import { slicePoisForWindow, getPoiLayout, type PoiLandmarkProp } from './poi-kit';
-import { windowForLayout, U05_WORLD_LAYOUT_ID, type Veyra05Scene } from './scenes';
-import { buildFloorStack, type FloorStack } from './floors';
+import { layoutIdAt, windowForLayout, isVeyra05Layout, U05_WORLD_LAYOUT_ID, type Veyra05Scene } from './scenes';
+import { hash2 } from '../game/core';
+import { SOURCES, isIndustrialSalvage } from '../game/catalog';
+import { pickWeighted } from '../game/world-economy';
+import { buildFloorStack, type FloorStack, type FloorLayer } from './floors';
 
 const CODE_BIOME: Biome[] = ['meadow', 'forest', 'forest', 'forest', 'marsh', 'sand', 'hill', 'hill', 'snow', 'ash', 'toxic', 'sand'];
 const TILE_BIOME: Partial<Record<number, Biome>> = {
@@ -45,14 +50,16 @@ export interface WindowWorld {
   bridgeNodes: { id: string; tx: number; ty: number; tile: number }[];
   landmarks: PoiLandmarkProp[];
   floors: FloorStack;
+  /** G1A: index into POIS of the site that owns each cell (-1 = open world). Read-only census/placement aid. */
+  poiAt?: Int16Array;
   reservations: { x: number; y: number; w: number; h: number; label: string }[];
 }
 
 /** Read a global tile through the stream, with chunk reuse inside one window build. */
 function reader() {
-  const local = new Map<string, Chunk>(); const touched: string[] = [];
+  const local = new Map<number, Chunk>(); const touched: string[] = [];
   const get = (tx: number, ty: number) => {
-    const cx = Math.floor(tx / CHUNK), cy = Math.floor(ty / CHUNK), k = cx + ':' + cy;
+    const cx = Math.floor(tx / CHUNK), cy = Math.floor(ty / CHUNK), k = cy * Math.ceil(FRAME_W/CHUNK) + cx;
     let c = local.get(k);
     if (!c) { c = getChunk(cx, cy); local.set(k, c); touched.push(c.key); }
     return { c, i: (ty - cy * CHUNK) * CHUNK + (tx - cx * CHUNK) };
@@ -60,7 +67,117 @@ function reader() {
   return { get, touched };
 }
 
-export function buildWindowWorld(layoutId: string): WindowWorld {
+/* ---------------------------------------------------------------------------------------------
+ * G1A — versioned salvage placement.
+ * rules 3: frozen legacy placement (`scrap` / `wreck`), pinned by the digest of every existing save.
+ * rules 4: the three industrial salvage archetypes replace the legacy salvage share on the roadside,
+ *          plus a few archetype-matched slots inside industrial POI yards.
+ * A run pins its rules in `sourceMap.rules`; the window cache is keyed by (layout, rules) so an old
+ * save and a new run never share a compiled source layer.
+ * ------------------------------------------------------------------------------------------- */
+export type VeyraPlacementRules = 3 | 4;
+let placementRules: VeyraPlacementRules = 4;
+export const getVeyraPlacementRules = (): VeyraPlacementRules => placementRules;
+export function setVeyraPlacementRules(v: VeyraPlacementRules) { placementRules = v === 3 ? 3 : 4; }
+/** Point the window builder at the placement a run was created under. Cheap; call wherever a run becomes the active one. */
+export function syncVeyraPlacement(r: { layoutId?: string; sourceMap?: { rules: number } } | null | undefined) {
+  if (r && r.layoutId && isVeyra05Layout(r.layoutId) && r.sourceMap) placementRules = r.sourceMap.rules === 4 ? 4 : 3;
+}
+
+/** POI context: which archetypes fit which existing site archetype (weights). Sites not listed get none. */
+export const G1A_POI_WEIGHTS: Readonly<Record<string, readonly [string, number][]>> = {
+  warehouse: [['road_salvage_bale', 4], ['road_relay_wreck', 1]],
+  port: [['road_salvage_bale', 3], ['road_fuel_rack', 2]],
+  pier: [['road_salvage_bale', 3], ['road_fuel_rack', 1]],
+  quarry: [['road_salvage_bale', 4], ['road_fuel_rack', 1]],
+  sawmill: [['road_salvage_bale', 4], ['road_fuel_rack', 1]],
+  mill: [['road_salvage_bale', 1]],
+  mine: [['road_salvage_bale', 3], ['road_relay_wreck', 1], ['road_fuel_rack', 1]],
+  ruins: [['road_salvage_bale', 3], ['road_relay_wreck', 1]],
+  facility: [['road_relay_wreck', 4], ['road_salvage_bale', 1]],
+  research: [['road_relay_wreck', 1]],
+  observatory: [['road_relay_wreck', 1]],
+  smelter: [['road_relay_wreck', 2], ['road_salvage_bale', 2], ['road_fuel_rack', 1]],
+  filter: [['road_relay_wreck', 2], ['road_fuel_rack', 2]],
+  powerplant: [['road_fuel_rack', 3], ['road_relay_wreck', 2]],
+  roadstop: [['road_fuel_rack', 3], ['road_salvage_bale', 1]],
+  evac: [['road_fuel_rack', 2], ['road_salvage_bale', 1]],
+};
+const G1A_POI_RATE = 0.05, G1A_POI_SPACING = 4, G1A_POI_SALT = 0x61a7;
+
+/** G1A-R1: a solid salvage node must never cost the player a walkable cell. Compare what can be walked to with and
+ *  without the G1A nodes; wherever a cell is lost, withdraw the node(s) that close it in. Never adds or moves anything. */
+function unplugSalvage(ww: {floors:FloorStack;world:{economyMap:EconomyMap}}): number {
+  const g = ww.floors.ground, n = WW * WH; let removed = 0;
+  const base = (i: number) => !g.walkable[i] || !!g.solidProps[i] || !!(g.sources[i] && !isIndustrialSalvage(g.sources[i]) && SOURCES[g.sources[i]!]?.block);
+  const flood = (solid: (i: number) => boolean) => {
+    const r = new Uint8Array(n), q = new Int32Array(n); let h = 0, t = 0;
+    for (const a of ww.world.economyMap.starts) { const i = a.y * WW + a.x; if (!solid(i) && !r[i]) { r[i] = 1; q[t++] = i; } }
+    // The window rim continues into the next window: an open rim cell counts as reached, so a node is never withdrawn (or kept)
+    // because of where the window edge happens to fall.
+    for (let i = 0; i < n; i++) { const x = i % WW, y = (i / WW) | 0; if ((x === 0 || y === 0 || x === WW - 1 || y === WH - 1) && !solid(i) && !r[i]) { r[i] = 1; q[t++] = i; } }
+    while (h < t) { const i = q[h++], x = i % WW, y = (i / WW) | 0; for(let d=0;d<4;d++){if(d===0?x===WW-1:d===1?x===0:d===2?y===WH-1:y===0)continue;const j=i+(d===0?1:d===1?-1:d===2?WW:-WW);if(!r[j]&&!solid(j)){r[j]=1;q[t++]=j;}} }
+    return r;
+  };
+  const open = flood(base);
+  for (let pass = 0; pass < 6; pass++) {
+    const now = flood(i => base(i) || isIndustrialSalvage(g.sources[i])); let cut = 0;
+    for (let i = 0; i < n; i++) {
+      if (!open[i] || now[i] || isIndustrialSalvage(g.sources[i])) continue;
+      const x = i % WW, y = (i / WW) | 0;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= WW || ny >= WH) continue; const j = ny * WW + nx; if (isIndustrialSalvage(g.sources[j])) { g.sources[j] = null; cut++; } }
+    }
+    removed += cut; if (!cut) break;
+  }
+  return removed;
+}
+
+/** Stand archetype-matched salvage in the open yard of industrial POIs (ground storey only).
+ *  Reads the authored layer, never writes masks/tiles/props: a slot must be open yard ground beside a
+ *  building, clear of every authored object, with all eight neighbours free so it can always be walked round. */
+function placePoiSalvage(ww: {win:WindowSpec;floors:FloorStack;world:{economyMap:EconomyMap}}, poiAt: Int16Array) {
+  const g = ww.floors.ground, ox = ww.win.originTx, oy = ww.win.originTy, n = WW * WH, road = ww.world.economyMap.road;
+  const busy = new Uint8Array(n);
+  const mark = (x: number, y: number, rad: number) => { for (let dy = -rad; dy <= rad; dy++) for (let dx = -rad; dx <= rad; dx++) { const nx = x + dx, ny = y + dy; if (nx >= 0 && ny >= 0 && nx < WW && ny < WH) busy[ny * WW + nx] = 1; } };
+  for (const st of g.statics) mark(st.tx, st.ty, 2);
+  for (const st of g.lootStatics) mark(st.tx, st.ty, 2);
+  for (const st of g.stairs as unknown as { tx?: number; ty?: number; x?: number; y?: number }[]) mark(st.tx ?? st.x ?? -9, st.ty ?? st.y ?? -9, 2);
+  for (const p of g.props) mark(Math.floor(p.x), Math.floor(p.y), 1);
+  const solid = (i: number) => !g.walkable[i] || !!g.solidProps[i] || !!(g.sources[i] && SOURCES[g.sources[i]!]?.block);
+  // ground reachability with every existing obstacle in place
+  const reach = new Uint8Array(n), q = new Int32Array(n); let h = 0, t = 0;
+  for (const a of ww.world.economyMap.starts) { const i = a.y * WW + a.x; if (!solid(i) && !reach[i]) { reach[i] = 1; q[t++] = i; } }
+  while (h < t) { const i = q[h++], x = i % WW, y = (i / WW) | 0; for(let d=0;d<4;d++){if(d===0?x===WW-1:d===1?x===0:d===2?y===WH-1:y===0)continue;const j=i+(d===0?1:d===1?-1:d===2?WW:-WW);if(!reach[j]&&!solid(j)){reach[j]=1;q[t++]=j;}} }
+  const cand = new Float32Array(n).fill(2);
+  for (let y = 1; y < WH - 1; y++) for (let x = 1; x < WW - 1; x++) {
+    const i = y * WW + x, pi = poiAt[i]; if (pi < 0) continue;
+    const weights = G1A_POI_WEIGHTS[POIS[pi]?.arche ?? '']; if (!weights) continue;
+    const u = hash2(ox + x, oy + y, G1A_POI_SALT); if (u >= G1A_POI_RATE) continue;
+    const tl = g.tiles[i];
+    if (tl === T.FLOOR || tl === T.ROAD || tl === T.PWALL || tl === T.CLIFF || tl === T.DEEP || tl === T.SHALLOW || tl === T.RIVER || tl === T.MARSH) continue;
+    if (!reach[i] || busy[i] || g.sources[i] || road[i]) continue;
+    let open = true, roadNear = false;
+    for (let dy = -1; dy <= 1 && open; dy++) for (let dx = -1; dx <= 1; dx++) { const j = (y + dy) * WW + x + dx; if (solid(j) || (j !== i && g.sources[j])) { open = false; break; } if (g.tiles[j] === T.ROAD || road[j]) roadNear = true; }
+    if (!open || roadNear) continue;
+    // "by a building": 2..5 tiles from a wall/floor of the site
+    let near = false, tooClose = false;
+    for (let dy = -5; dy <= 5 && !tooClose; dy++) for (let dx = -5; dx <= 5; dx++) { const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= WW || ny >= WH) continue; const tt = g.tiles[ny * WW + nx]; if (tt === T.PWALL || tt === T.FLOOR) { if (Math.max(Math.abs(dx), Math.abs(dy)) < 2) { tooClose = true; break; } near = true; } }
+    if (!near || tooClose) continue;
+    cand[i] = u;
+  }
+  let placed = 0;
+  for (let y = 1; y < WH - 1; y++) for (let x = 1; x < WW - 1; x++) {
+    const i = y * WW + x, u = cand[i]; if (u >= 2) continue;
+    let best = true;
+    for (let dy = -G1A_POI_SPACING; dy <= G1A_POI_SPACING && best; dy++) for (let dx = -G1A_POI_SPACING; dx <= G1A_POI_SPACING; dx++) { const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= WW || ny >= WH || (!dx && !dy)) continue; const v = cand[ny * WW + nx]; if (v < u || (v === u && ny * WW + nx < i)) { best = false; break; } }
+    if (!best) continue;
+    g.sources[i] = pickWeighted(G1A_POI_WEIGHTS[POIS[poiAt[i]].arche], hash2(ox + x, oy + y, G1A_POI_SALT ^ 0x55));
+    placed++;
+  }
+  return placed;
+}
+
+function compileCanonicalTerrainRegion(layoutId:string){return timedWorldWork('compileCanonicalTerrainRegion',()=>{
   const spec = windowForLayout(layoutId);
   if (!spec) throw Error(`Unknown Veyra U=0.5 layout ${layoutId}`);
   const { win, scene } = spec;
@@ -125,9 +242,10 @@ export function buildWindowWorld(layoutId: string): WindowWorld {
   }
 
   // Extract 200x200 window arrays from the padded grid (NO artificial T.CLIFF on window borders!)
-  const tiles = new Uint8Array(n), fresh = new Uint8Array(n), zone = new Uint8Array(n), seaDist = new Uint8Array(n).fill(255);
+  const poiAt = new Int16Array(n).fill(-1);
+  const tiles = new Uint8Array(n), fresh = new Uint8Array(n), zone = new Uint8Array(n);
   const biome: Biome[] = new Array(n), elevation = new Float32Array(n), slope = new Float32Array(n), moisture = new Float32Array(n), temperature = new Float32Array(n);
-  const walkable = new Uint8Array(n), buildable = new Uint8Array(n), cargoPassable = new Uint8Array(n), road = new Uint8Array(n), protectedCells = new Uint8Array(n), industrial = new Uint8Array(n), coast = new Uint8Array(n), spawnEligible = new Uint8Array(n);
+  const walkable = new Uint8Array(n), buildable = new Uint8Array(n), cargoPassable = new Uint8Array(n), road = new Uint8Array(n), protectedCells = new Uint8Array(n), industrial = new Uint8Array(n), coast = new Uint8Array(n);
 
   for (let y = 0; y < WH; y++) {
     for (let x = 0; x < WW; x++) {
@@ -139,6 +257,7 @@ export function buildWindowWorld(layoutId: string): WindowWorld {
       const ov = poiSlice.tileOverrides.get(i);
       const t = ov !== undefined ? ov : c.tile[ci];
       tiles[i] = t;
+      poiAt[i] = c.poi[ci] !== 255 ? c.poi[ci] : -1;
       fresh[i] = pFresh[pi];
       zone[i] = poiSlice.stoneCells.has(i) ? 7 : 0;
       biome[i] = pBiome[pi];
@@ -169,20 +288,6 @@ export function buildWindowWorld(layoutId: string): WindowWorld {
         const j = ny * WW + nx;
         if (walkable[j] && !protectedCells[j]) industrial[j] = 1;
       }
-    }
-  }
-
-  // Sea coast distance BFS (for shore foam rendering)
-  const queue = new Int32Array(n); let head = 0, tail = 0;
-  for (let i = 0; i < n; i++) if (tiles[i] === T.DEEP) { seaDist[i] = 0; queue[tail++] = i; }
-  while (head < tail) {
-    const i = queue[head++], x = i % WW, y = (i / WW) | 0;
-    if (seaDist[i] >= 8) continue;
-    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-      const nx = x + dx, ny = y + dy;
-      if (nx < 0 || ny < 0 || nx >= WW || ny >= WH) continue;
-      const j = ny * WW + nx;
-      if (seaDist[j] > seaDist[i] + 1) { seaDist[j] = seaDist[i] + 1; queue[tail++] = j; }
     }
   }
 
@@ -227,6 +332,18 @@ export function buildWindowWorld(layoutId: string): WindowWorld {
     starts: anchors, origin: { x: win.originTx, y: win.originTy },
   };
 
+  return {win,scene,t0,n,rd,poiSlice,poiAt,tiles,fresh,zone,economyMap,pAnchors,PW,PH,pBiome,pElev,pSlope,pMoist,pTemp,pFresh,pCoast,pWalk,pBuild,pCargo,pRoad,pProt,pInd,paddedWin};
+});}
+const terrainRegions=new Map<string,ReturnType<typeof compileCanonicalTerrainRegion>>();
+function canonicalTerrain(layout:string){let c=terrainRegions.get(layout);if(!c){c=compileCanonicalTerrainRegion(layout);terrainRegions.set(layout,c);while(terrainRegions.size>32)terrainRegions.delete(terrainRegions.keys().next().value!);}return c;}
+function compileCanonicalGeometryRegion(layoutId:string,rules:VeyraPlacementRules=placementRules){return timedWorldWork('compileCanonicalGeometryRegion',()=>{
+ countWorldWork('regionCompilations');
+ const cached=canonicalTerrain(layoutId);
+ // Render materialization may annotate its input masks. Keep cached terrain
+ // immutable and never share those mutable arrays between rules3/4 or windows.
+ const {win,scene,t0,n,rd,poiSlice,pAnchors,PW,PH,pBiome,pElev,pSlope,pMoist,pTemp,pFresh,pCoast,pWalk,pBuild,pCargo,pRoad,pProt,pInd,paddedWin}=cached;
+ const tiles=cached.tiles.slice(),fresh=cached.fresh.slice(),zone=cached.zone.slice(),poiAt=cached.poiAt.slice(),economyMap={...cached.economyMap,walkable:Uint8Array.from(cached.economyMap.walkable),protected:Uint8Array.from(cached.economyMap.protected),buildable:Uint8Array.from(cached.economyMap.buildable)};
+ const PAD=8;
   let sourceV3: (string | null)[];
   if (pAnchors.length) {
     const paddedMap: EconomyMap = {
@@ -236,15 +353,11 @@ export function buildWindowWorld(layoutId: string): WindowWorld {
       road: pRoad, protected: pProt, industrial: pInd, starts: pAnchors,
       origin: { x: paddedWin.originTx, y: paddedWin.originTy },
     };
-    const pCompiled = compileEconomy(paddedMap);
+    const pCompiled = compileEconomy(paddedMap, rules);
     if (pCompiled.errors.length) throw Error(`Veyra U=0.5 padded compiler: ${pCompiled.errors.join('; ')}`);
     sourceV3 = new Array(n).fill(null);
     // Verify 200x200 reachability so every source inside the window is reachable from window anchors
-    const wReached = new Uint8Array(n);
-    for (const a of anchors) {
-      const d = reachable(economyMap, a.x, a.y);
-      for (let i = 0; i < n; i++) if (d[i] >= 0) wReached[i] = 1;
-    }
+    const wReached=reachableUnion(economyMap);
     for (let y = 0; y < WH; y++) {
       for (let x = 0; x < WW; x++) {
         const i = y * WW + x, pi = (y + PAD) * PW + (x + PAD);
@@ -253,9 +366,35 @@ export function buildWindowWorld(layoutId: string): WindowWorld {
       }
     }
   } else {
-    const compiled = compileEconomy(economyMap);
+    const compiled = compileEconomy(economyMap, rules);
     if (compiled.errors.length) throw Error(`Veyra U=0.5 source compiler: ${compiled.errors.join('; ')}`);
     sourceV3 = compiled.sources;
+  }
+
+  const input={win,world:{tiles,zone,economyMap,sourceV3,buildings:poiSlice.buildings,statics:poiSlice.statics},poiIds:poiSlice.poiIds,landmarks:poiSlice.landmarks,floors:null as unknown as FloorStack};
+  input.floors=buildFloorStack(input);
+  if(rules===4){placePoiSalvage(input,poiAt);unplugSalvage(input);}
+  return {win,scene,t0,n,rd,poiSlice,poiAt,tiles,fresh,zone,economyMap,sourceV3,floors:input.floors};
+});}
+
+/** Render materialization is not a navigation read. Both consume the SAME
+ * canonical chunk/source/floor compiler; only this path builds spawn/render data. */
+export function buildWindowWorld(layoutId:string,rules:VeyraPlacementRules=placementRules):WindowWorld {
+  countWorldWork('renderCompilations');
+  const {win,scene,t0,n,rd,poiSlice,poiAt,tiles,fresh,zone,economyMap,sourceV3,floors}=compileCanonicalGeometryRegion(layoutId,rules);
+  const seaDist=new Uint8Array(n).fill(255),spawnEligible=new Uint8Array(n),walkable=economyMap.walkable;
+  // Sea coast distance BFS (for shore foam rendering)
+  const queue = new Int32Array(n); let head = 0, tail = 0;
+  for (let i = 0; i < n; i++) if (tiles[i] === T.DEEP) { seaDist[i] = 0; queue[tail++] = i; }
+  while (head < tail) {
+    const i = queue[head++], x = i % WW, y = (i / WW) | 0;
+    if (seaDist[i] >= 8) continue;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nx = x + dx, ny = y + dy;
+      if (nx < 0 || ny < 0 || nx >= WW || ny >= WH) continue;
+      const j = ny * WW + nx;
+      if (seaDist[j] > seaDist[i] + 1) { seaDist[j] = seaDist[i] + 1; queue[tail++] = j; }
+    }
   }
 
   // Fast freshwater-distance prefilter for spawnEligible (so chooseLegalSpawn runs in <5ms)
@@ -294,7 +433,12 @@ export function buildWindowWorld(layoutId: string): WindowWorld {
         }
       }
     }
-    if (anyWet === 0) spawnEligible.fill(1);
+    // A window with no viable freshwater-nearby cells can never satisfy
+    // chooseLegalSpawn's mandatory 30-step freshwater rule.  Previously this
+    // fallback marked ALL 40k cells eligible, causing futile rejection scans
+    // (and misleading diagnostics) without creating a single legal spawn.
+    // Reject it explicitly; do not mint water or relax the survival contract.
+    if (anyWet === 0) spawnEligible.fill(0);
   }
 
   const originAu = windowOriginAu(win);
@@ -358,9 +502,9 @@ export function buildWindowWorld(layoutId: string): WindowWorld {
   const ww: WindowWorld = {
     world, win, scene, chunksTouched: rd.touched, buildMs: performance.now() - t0,
     poiIds: poiSlice.poiIds, bridgeNodes, landmarks: poiSlice.landmarks, reservations: poiSlice.reservations,
-    floors: null as unknown as FloorStack,
+    floors: null as unknown as FloorStack, poiAt,
   };
-  ww.floors = buildFloorStack(ww);
+  ww.floors = floors;
   resetWindowToGround(ww);
   // Pin ground-level mapDigest in map-package WeakMap so storey switches never alter mapDigest(world).
   mapDigest(world);
@@ -380,12 +524,98 @@ export function resetWindowToGround(ww: WindowWorld) {
 }
 
 const cache = new Map<string, WindowWorld>();
-export function getWindowWorld(layoutId: string): WindowWorld {
-  let w = cache.get(layoutId);
+export function getWindowWorld(layoutId: string, rules: VeyraPlacementRules = placementRules): WindowWorld {
+  const key = rules === 3 ? layoutId : `${layoutId}|r${rules}`;
+  let w = cache.get(key);
   if (!w) {
-    w = buildWindowWorld(layoutId);
-    cache.set(layoutId, w);
-    if (cache.size > 8) cache.delete(cache.keys().next().value!);
+    w = buildWindowWorld(layoutId, rules);
+    cache.set(key, w);
+    if (cache.size > 16) cache.delete(cache.keys().next().value!);
   }
   return w;
+}
+
+/** Resolve a canonical cached `WindowWorld` covering global tile `(gx, gy)` so offscreen
+ *  homesteads read the exact same Map-owned `economyMap`, `floors`, `sources`, and `solidProps`
+ *  as when onscreen, while sharing one cached window per 64-tile region. */
+export function getWindowWorldForGlobalTile(gx: number, gy: number, rules: VeyraPlacementRules = placementRules): WindowWorld {
+  const ox = Math.max(0, Math.min(FRAME_W - WW, Math.floor((gx - 68) / 64) * 64));
+  const oy = Math.max(0, Math.min(FRAME_H - WH, Math.floor((gy - 68) / 64) * 64));
+  return getWindowWorld(layoutIdAt(ox, oy),rules);
+}
+
+interface GlobalBaseCell {
+  originTx:number;originTy:number;tile:number;walkable:boolean;source:string|null;
+  solidProp:boolean;fresh:boolean;statics:FloorLayer['statics'];
+  biome:Biome;temperature:number;moisture:number;slope:number;
+}
+interface GeometryRegion {
+  originTx:number;originTy:number;tiles:Uint8Array;walkable:Uint8Array;solidProps:Uint8Array;
+  fresh?:Uint8Array;sources:Map<number,string>;statics:Map<number,FloorLayer['statics']>;
+  climate:Pick<EconomyMap,'biome'|'temperature'|'moisture'|'slope'>;
+}
+// Only query geometry, NOT compiled render/economy worlds, is retained. Three
+// masks + sparse source/static records per queried floor; bounded512 floor regions.
+// This avoids the 16-view render cache thrashing across81 inhabited sites.
+const geometryRegions=new Map<string,GeometryRegion|null>();
+/** Immutable compiler output only. All door/source/terrain/entity deltas remain
+ * RunState reads in the caller. Never cache a mutable stock or access decision. */
+export function globalBaseGeometry(gx:number,gy:number,floor:number,rules:VeyraPlacementRules,layout?:string):GlobalBaseCell|null {
+  const ox=Math.max(0,Math.min(FRAME_W-WW,Math.floor((gx-68)/64)*64));
+  const oy=Math.max(0,Math.min(FRAME_H-WH,Math.floor((gy-68)/64)*64));
+  const id=layout??layoutIdAt(ox,oy),key=`${rules}:${id}:${floor}`;
+  let region=geometryRegions.get(key);
+  if(region===undefined){
+    const c=compileCanonicalGeometryRegion(id,rules);
+    for(const [level,layer]of c.floors.layers){
+      const sources=new Map<number,string>(),statics=new Map<number,FloorLayer['statics']>();
+      for(let i=0;i<layer.sources.length;i++)if(layer.sources[i])sources.set(i,layer.sources[i]!);
+      for(const s of layer.statics){const k=s.ty*WW+s.tx,list=statics.get(k);if(list)list.push(s);else statics.set(k,[s]);}
+      geometryRegions.set(`${rules}:${id}:${level}`,{originTx:c.win.originTx,originTy:c.win.originTy,tiles:layer.tiles,walkable:layer.walkable,solidProps:layer.solidProps,fresh:level===0?c.fresh:undefined,sources,statics,climate:{biome:c.economyMap.biome,temperature:c.economyMap.temperature,moisture:c.economyMap.moisture,slope:c.economyMap.slope}});
+    }
+    if(!geometryRegions.has(key))geometryRegions.set(key,null);
+    region=geometryRegions.get(key)!;
+    while(geometryRegions.size>512)geometryRegions.delete(geometryRegions.keys().next().value!);
+  } else {geometryRegions.delete(key);geometryRegions.set(key,region);}
+  if(!region)return null;
+  const x=gx-region.originTx,y=gy-region.originTy;
+  if(x<0||y<0||x>=WW||y>=WH)return null;
+  const i=y*WW+x;
+  return {originTx:region.originTx,originTy:region.originTy,tile:region.tiles[i],walkable:!!region.walkable[i],source:region.sources.get(i)??null,solidProp:!!region.solidProps[i],fresh:!!region.fresh?.[i],statics:region.statics.get(i)??[],biome:region.climate.biome[i],temperature:region.climate.temperature[i],moisture:region.climate.moisture[i],slope:region.climate.slope[i]};
+}
+/** Bounded known-catchment discovery over the compiled sparse source index.
+ * No per-cell geometry queries, stock copies or render materialization. */
+export function globalSourceCandidates(gx:number,gy:number,floor:number,rules:VeyraPlacementRules,allowed:ReadonlySet<string>,layout?:string){return timedWorldWork('globalSourceCandidates',()=>{
+  globalBaseGeometry(gx,gy,floor,rules,layout);
+  const ox=Math.max(0,Math.min(FRAME_W-WW,Math.floor((gx-68)/64)*64)),oy=Math.max(0,Math.min(FRAME_H-WH,Math.floor((gy-68)/64)*64));
+  const region=geometryRegions.get(`${rules}:${layout??layoutIdAt(ox,oy)}:${floor}`);
+  if(!region)return [];
+  const out:{gx:number;gy:number;key:string;distance:number}[]=[];
+  // Manhattan rings generate exactly distance/gy/gx order. Probe only the
+  // bounded known catchment, not every source in the compiled 200x200 region.
+  for(let distance=0;distance<=24;distance++)for(let dy=-distance;dy<=distance;dy++){
+    const dx=distance-Math.abs(dy);
+    for(let side=0;side<(dx?2:1);side++){
+      const x=gx+(side?dx:-dx),y=gy+dy,lx=x-region.originTx,ly=y-region.originTy;
+      if(lx<0||ly<0||lx>=WW||ly>=WH)continue;
+      const key=region.sources.get(ly*WW+lx);if(!key||!allowed.has(key))continue;
+      out.push({gx:x,gy:y,key,distance});if(out.length===32)return out;
+    }
+  }
+  return out;
+});}
+/** Static potable mask from the SAME canonical terrain compilation, without
+ * compiling resource placement/floors for a water-only discovery probe. Ground
+ * architectural overlays may not pave GOLD water; transient ice is run-owned. */
+export function globalBaseFreshMask(gx:number,gy:number):boolean {
+ if(gx<0||gy<0||gx>=FRAME_W||gy>=FRAME_H)return false;
+ const ox=Math.max(0,Math.min(FRAME_W-WW,Math.floor((gx-68)/64)*64)),oy=Math.max(0,Math.min(FRAME_H-WH,Math.floor((gy-68)/64)*64));
+ const c=canonicalTerrain(layoutIdAt(ox,oy)),x=gx-c.win.originTx,y=gy-c.win.originTy;
+ return x>=0&&y>=0&&x<WW&&y<WH&&!!c.fresh[y*WW+x];
+}
+/** Same compiler freshwater mask as player; transient ice is read by engine. */
+export function globalBaseWaterCell(gx:number,gy:number,rules:VeyraPlacementRules): {fresh:boolean;tile:number} {
+  if(gx<0||gy<0||gx>=FRAME_W||gy>=FRAME_H)return {fresh:false,tile:T.CLIFF};
+  const cell=globalBaseGeometry(gx,gy,0,rules);
+  return {fresh:cell?.fresh??false,tile:cell?.tile??T.CLIFF};
 }

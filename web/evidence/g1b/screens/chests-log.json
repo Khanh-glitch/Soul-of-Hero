@@ -1,0 +1,984 @@
+[
+ {
+  "info": {
+   "layout": "veyra05-at-1984-1728",
+   "rules": 4,
+   "seed": 2130440099,
+   "origin": [
+    1984,
+    1728
+   ],
+   "tile": [
+    91,
+    126
+   ],
+   "counts": {
+    "road_relay_wreck": 6,
+    "road_fuel_rack": 2,
+    "road_salvage_bale": 12
+   },
+   "inv": [
+    "knife",
+    "water_flask",
+    "berries",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "active": 0
+  },
+  "chests": {
+   "supply_damaged": {
+    "family": "supply",
+    "grade": "damaged"
+   },
+   "supply_low": {
+    "family": "supply",
+    "grade": "low"
+   },
+   "supply_mid": {
+    "family": "supply",
+    "grade": "mid"
+   },
+   "supply_high": {
+    "family": "supply",
+    "grade": "high"
+   },
+   "toolbox_damaged": {
+    "family": "toolbox",
+    "grade": "damaged"
+   },
+   "toolbox_low": {
+    "family": "toolbox",
+    "grade": "low"
+   },
+   "toolbox_high": {
+    "family": "toolbox",
+    "grade": "high"
+   },
+   "military_low": {
+    "family": "military",
+    "grade": "low"
+   },
+   "military_mid": {
+    "family": "military",
+    "grade": "mid"
+   },
+   "military_high": {
+    "family": "military",
+    "grade": "high"
+   },
+   "food_low": {
+    "family": "food",
+    "grade": "low"
+   },
+   "food_mid": {
+    "family": "food",
+    "grade": "mid"
+   },
+   "food_high": {
+    "family": "food",
+    "grade": "high"
+   },
+   "medical_low": {
+    "family": "medical",
+    "grade": "low"
+   },
+   "medical_mid": {
+    "family": "medical",
+    "grade": "mid"
+   },
+   "medical_high": {
+    "family": "medical",
+    "grade": "high"
+   }
+  },
+  "errsAtStart": []
+ },
+ {
+  "shot": "food_high-1-closed.png",
+  "variant": "food_high",
+  "sid": "veyra.g1b:po_siloc:food_high:01",
+  "place": "interior:po_siloc@2203,1502",
+  "global": [
+   2192,
+   1491
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "e1i",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open High Food Box",
+   "eid": "e1i"
+  }
+ },
+ {
+  "shot": "food_high-2-opened-ui.png",
+  "variant": "food_high",
+  "sid": "veyra.g1b:po_siloc:food_high:01",
+  "entity": {
+   "eid": "e1i",
+   "state": "opened",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 33946824,
+    "at": 1794772881040
+   },
+   "stock": [
+    "cropx15",
+    "seed_wildberryx2",
+    "canned_meatx2"
+   ]
+  },
+  "receipts": [
+   "run.start female@VEYRA · U=0.5",
+   "g1b.roll veyra.g1b:po_siloc:food_high:01:g1b-approved-v1:cycle0:seed33946824:slot0:cropx15:s92",
+   "g1b.roll veyra.g1b:po_siloc:food_high:01:g1b-approved-v1:cycle0:seed33946824:slot1:seed_wildberryx2:s93",
+   "g1b.roll veyra.g1b:po_siloc:food_high:01:g1b-approved-v1:cycle0:seed33946824:slot2:canned_meatx2:s94",
+   "g1b.open veyra.g1b:po_siloc:food_high:01:cycle0"
+  ]
+ },
+ {
+  "shot": "food_high-3-after-take-all-ui.png",
+  "variant": "food_high",
+  "sid": "veyra.g1b:po_siloc:food_high:01",
+  "entity": {
+   "eid": "e1i",
+   "state": "empty",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 33946824,
+    "at": 1794772881040
+   },
+   "refillAt": 1794945683984,
+   "stock": []
+  },
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "cropx15",
+   "seed_wildberryx2",
+   "canned_meatx2",
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ]
+ },
+ {
+  "shot": "food_high-4-world-after.png",
+  "variant": "food_high",
+  "sid": "veyra.g1b:po_siloc:food_high:01",
+  "entity": {
+   "eid": "e1i",
+   "state": "empty",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 33946824,
+    "at": 1794772881040
+   },
+   "refillAt": 1794945683984,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "High Food Box · empty · restocks in 48h 00m",
+   "eid": "e1i"
+  }
+ },
+ {
+  "shot": "food_low-1-closed.png",
+  "variant": "food_low",
+  "sid": "veyra.g1b:po_greywater:food_low:01",
+  "place": "interior:po_greywater@1600,1173",
+  "global": [
+   1603,
+   1167
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "em",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Food Box",
+   "eid": "em"
+  }
+ },
+ {
+  "shot": "food_mid-1-closed.png",
+  "variant": "food_mid",
+  "sid": "veyra.g1b:po_mill:food_mid:01",
+  "place": "interior:po_mill@1960,1436",
+  "global": [
+   1961,
+   1431
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "e16",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Mid Food Box",
+   "eid": "e16"
+  }
+ },
+ {
+  "shot": "medical_high-1-closed.png",
+  "variant": "medical_high",
+  "sid": "veyra.g1b:po_archive:medical_high:01",
+  "place": "interior:po_archive@2035,437",
+  "global": [
+   2032,
+   431
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "e2o",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open High Medical Case",
+   "eid": "e2o"
+  }
+ },
+ {
+  "shot": "medical_low-1-closed.png",
+  "variant": "medical_low",
+  "sid": "veyra.g1b:po_greywater:medical_low:01",
+  "place": "yard",
+  "global": [
+   1611,
+   1175
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "eo",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Medical Case",
+   "eid": "eo"
+  }
+ },
+ {
+  "shot": "medical_mid-1-closed.png",
+  "variant": "medical_mid",
+  "sid": "veyra.g1b:po_academy:medical_mid:01",
+  "place": "interior:po_academy@1897,534",
+  "global": [
+   1898,
+   531
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "e2e",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Mid Medical Case",
+   "eid": "e2e"
+  }
+ },
+ {
+  "shot": "medical_mid-2-opened-ui.png",
+  "variant": "medical_mid",
+  "sid": "veyra.g1b:po_academy:medical_mid:01",
+  "entity": {
+   "eid": "e2e",
+   "state": "opened",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 385450457,
+    "at": 1794772925681
+   },
+   "stock": [
+    "bandagex3",
+    "herbx9",
+    "needle_tubex2"
+   ]
+  },
+  "receipts": [
+   "poi.discover po_greywater",
+   "poi.discover po_archive",
+   "g1b.roll veyra.g1b:po_academy:medical_mid:01:g1b-approved-v1:cycle0:seed385450457:slot0:bandagex3:sdg",
+   "g1b.roll veyra.g1b:po_academy:medical_mid:01:g1b-approved-v1:cycle0:seed385450457:slot1:herbx9:sdh",
+   "g1b.roll veyra.g1b:po_academy:medical_mid:01:g1b-approved-v1:cycle0:seed385450457:slot2:needle_tubex2:sdi",
+   "g1b.open veyra.g1b:po_academy:medical_mid:01:cycle0"
+  ]
+ },
+ {
+  "shot": "medical_mid-3-after-take-all-ui.png",
+  "variant": "medical_mid",
+  "sid": "veyra.g1b:po_academy:medical_mid:01",
+  "entity": {
+   "eid": "e2e",
+   "state": "empty",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 385450457,
+    "at": 1794772925681
+   },
+   "refillAt": 1794902528327,
+   "stock": []
+  },
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "cropx15",
+   "seed_wildberryx2",
+   "canned_meatx2",
+   "bandagex3",
+   "herbx9",
+   "needle_tubex2",
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ]
+ },
+ {
+  "shot": "medical_mid-4-world-after.png",
+  "variant": "medical_mid",
+  "sid": "veyra.g1b:po_academy:medical_mid:01",
+  "entity": {
+   "eid": "e2e",
+   "state": "empty",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 385450457,
+    "at": 1794772925681
+   },
+   "refillAt": 1794902528327,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Mid Medical Case · empty · restocks in 36h 00m",
+   "eid": "e2e"
+  }
+ },
+ {
+  "shot": "military_high-1-closed.png",
+  "variant": "military_high",
+  "sid": "veyra.g1b:po_falls:military_high:01",
+  "place": "interior:po_falls@1464,904",
+  "global": [
+   1458,
+   900
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "e24",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open High Military Case",
+   "eid": "e24"
+  }
+ },
+ {
+  "shot": "military_low-1-closed.png",
+  "variant": "military_low",
+  "sid": "veyra.g1b:po_freightyard:military_low:01",
+  "place": "interior:po_freightyard@1404,991",
+  "global": [
+   1404,
+   988
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "e20",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Military Case",
+   "eid": "e20"
+  }
+ },
+ {
+  "shot": "military_mid-1-closed.png",
+  "variant": "military_mid",
+  "sid": "veyra.g1b:po_slag:military_mid:01",
+  "place": "yard",
+  "global": [
+   2380,
+   1872
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "e1m",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Mid Military Case",
+   "eid": "e1m"
+  }
+ },
+ {
+  "shot": "military_mid-2-opened-ui.png",
+  "variant": "military_mid",
+  "sid": "veyra.g1b:po_slag:military_mid:01",
+  "entity": {
+   "eid": "e1m",
+   "state": "opened",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 2297823004,
+    "at": 1794772953068
+   },
+   "stock": [
+    "energy_basicx5",
+    "medkitx1",
+    "energy_refinedx3",
+    "electronic_partsx1",
+    "machetex1"
+   ]
+  },
+  "receipts": [
+   "g1b.roll veyra.g1b:po_slag:military_mid:01:g1b-approved-v1:cycle0:seed2297823004:slot0:energy_basicx5:sfv",
+   "g1b.roll veyra.g1b:po_slag:military_mid:01:g1b-approved-v1:cycle0:seed2297823004:slot1:medkitx1:sfw",
+   "g1b.roll veyra.g1b:po_slag:military_mid:01:g1b-approved-v1:cycle0:seed2297823004:slot2:energy_refinedx3:sfx",
+   "g1b.roll veyra.g1b:po_slag:military_mid:01:g1b-approved-v1:cycle0:seed2297823004:slot3:electronic_partsx1:sfy",
+   "g1b.roll veyra.g1b:po_slag:military_mid:01:g1b-approved-v1:cycle0:seed2297823004:slot4:machetex1:sfz",
+   "g1b.open veyra.g1b:po_slag:military_mid:01:cycle0"
+  ]
+ },
+ {
+  "shot": "military_mid-3-after-take-all-ui.png",
+  "variant": "military_mid",
+  "sid": "veyra.g1b:po_slag:military_mid:01",
+  "entity": {
+   "eid": "e1m",
+   "state": "empty",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 2297823004,
+    "at": 1794772953068
+   },
+   "refillAt": 1794945755612,
+   "stock": []
+  },
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "cropx15",
+   "seed_wildberryx2",
+   "canned_meatx2",
+   "bandagex3",
+   "herbx9",
+   "needle_tubex2",
+   "energy_basicx5",
+   "medkitx1",
+   "energy_refinedx3",
+   "electronic_partsx1",
+   "machetex1 dur350",
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ]
+ },
+ {
+  "shot": "military_mid-4-world-after.png",
+  "variant": "military_mid",
+  "sid": "veyra.g1b:po_slag:military_mid:01",
+  "entity": {
+   "eid": "e1m",
+   "state": "empty",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 2297823004,
+    "at": 1794772953068
+   },
+   "refillAt": 1794945755612,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Mid Military Case · empty · restocks in 48h 00m",
+   "eid": "e1m"
+  }
+ },
+ {
+  "shot": "supply_damaged-1-closed.png",
+  "variant": "supply_damaged",
+  "sid": "veyra.g1b:po_confluence:supply_damaged:01",
+  "place": "interior:po_confluence@1851,1319",
+  "global": [
+   1847,
+   1315
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "ey",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Damaged Supply Crate",
+   "eid": "ey"
+  }
+ },
+ {
+  "shot": "supply_high-1-closed.png",
+  "variant": "supply_high",
+  "sid": "veyra.g1b:po_slag:supply_high:01",
+  "place": "interior:po_slag@2346,1854",
+  "global": [
+   2340,
+   1849
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "e1o",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open High Supply Crate",
+   "eid": "e1o"
+  }
+ },
+ {
+  "shot": "supply_low-1-closed.png",
+  "variant": "supply_low",
+  "sid": "veyra.g1b:po_greywater:supply_low:01",
+  "place": "interior:po_greywater@1660,1169",
+  "global": [
+   1664,
+   1167
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "ei",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Supply Crate",
+   "eid": "ei"
+  }
+ },
+ {
+  "shot": "supply_low-2-opened-ui.png",
+  "variant": "supply_low",
+  "sid": "veyra.g1b:po_greywater:supply_low:01",
+  "entity": {
+   "eid": "ei",
+   "state": "opened",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 2497561061,
+    "at": 1794772979936
+   },
+   "stock": [
+    "sparesx4",
+    "tin_canx2"
+   ]
+  },
+  "receipts": [
+   "move machetex1 c1l->inv",
+   "g1b.empty veyra.g1b:po_slag:military_mid:01:cycle0:refill=1794945755612",
+   "poi.discover po_confluence",
+   "g1b.roll veyra.g1b:po_greywater:supply_low:01:g1b-approved-v1:cycle0:seed2497561061:slot0:sparesx4:sht",
+   "g1b.roll veyra.g1b:po_greywater:supply_low:01:g1b-approved-v1:cycle0:seed2497561061:slot1:tin_canx2:shu",
+   "g1b.open veyra.g1b:po_greywater:supply_low:01:cycle0"
+  ]
+ },
+ {
+  "shot": "supply_low-3-after-take-all-ui.png",
+  "variant": "supply_low",
+  "sid": "veyra.g1b:po_greywater:supply_low:01",
+  "entity": {
+   "eid": "ei",
+   "state": "empty",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 2497561061,
+    "at": 1794772979936
+   },
+   "refillAt": 1794859382809,
+   "stock": []
+  },
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "cropx15",
+   "seed_wildberryx2",
+   "canned_meatx2",
+   "bandagex3",
+   "herbx9",
+   "needle_tubex2",
+   "energy_basicx5",
+   "medkitx1",
+   "energy_refinedx3",
+   "electronic_partsx1",
+   "machetex1 dur350",
+   "sparesx4",
+   "tin_canx2",
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ]
+ },
+ {
+  "shot": "supply_low-4-world-after.png",
+  "variant": "supply_low",
+  "sid": "veyra.g1b:po_greywater:supply_low:01",
+  "entity": {
+   "eid": "ei",
+   "state": "empty",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 2497561061,
+    "at": 1794772979936
+   },
+   "refillAt": 1794859382809,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Low Supply Crate · empty · restocks in 24h 00m",
+   "eid": "ei"
+  }
+ },
+ {
+  "shot": "supply_mid-1-closed.png",
+  "variant": "supply_mid",
+  "sid": "veyra.g1b:po_sawaion:supply_mid:01",
+  "place": "interior:po_sawaion@1482,1312",
+  "global": [
+   1477,
+   1305
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "e12",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Mid Supply Crate",
+   "eid": "e12"
+  }
+ },
+ {
+  "shot": "toolbox_damaged-1-closed.png",
+  "variant": "toolbox_damaged",
+  "sid": "veyra.g1b:po_confluence:toolbox_damaged:01",
+  "place": "yard",
+  "global": [
+   1836,
+   1336
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "e10",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Damaged Toolbox",
+   "eid": "e10"
+  }
+ },
+ {
+  "shot": "toolbox_high-1-closed.png",
+  "variant": "toolbox_high",
+  "sid": "veyra.g1b:po_slag:toolbox_high:01",
+  "place": "interior:po_slag@2410,1852",
+  "global": [
+   2399,
+   1843
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "e1k",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open High Toolbox",
+   "eid": "e1k"
+  }
+ },
+ {
+  "shot": "toolbox_high-2-opened-ui.png",
+  "variant": "toolbox_high",
+  "sid": "veyra.g1b:po_slag:toolbox_high:01",
+  "entity": {
+   "eid": "e1k",
+   "state": "opened",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 3587355658,
+    "at": 1794773007869
+   },
+   "stock": [
+    "sparesx7",
+    "electric_resistorx3",
+    "metal_bladex3"
+   ]
+  },
+  "receipts": [
+   "move tin_canx2 ch->inv",
+   "g1b.empty veyra.g1b:po_greywater:supply_low:01:cycle0:refill=1794859382809",
+   "g1b.roll veyra.g1b:po_slag:toolbox_high:01:g1b-approved-v1:cycle0:seed3587355658:slot0:sparesx7:sja",
+   "g1b.roll veyra.g1b:po_slag:toolbox_high:01:g1b-approved-v1:cycle0:seed3587355658:slot1:electric_resistorx3:sjb",
+   "g1b.roll veyra.g1b:po_slag:toolbox_high:01:g1b-approved-v1:cycle0:seed3587355658:slot2:metal_bladex3:sjc",
+   "g1b.open veyra.g1b:po_slag:toolbox_high:01:cycle0"
+  ]
+ },
+ {
+  "shot": "toolbox_high-3-after-take-all-ui.png",
+  "variant": "toolbox_high",
+  "sid": "veyra.g1b:po_slag:toolbox_high:01",
+  "entity": {
+   "eid": "e1k",
+   "state": "empty",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 3587355658,
+    "at": 1794773007869
+   },
+   "refillAt": 1794945810776,
+   "stock": []
+  },
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "cropx15",
+   "seed_wildberryx2",
+   "canned_meatx2",
+   "bandagex3",
+   "herbx9",
+   "needle_tubex2",
+   "energy_basicx5",
+   "medkitx1",
+   "energy_refinedx3",
+   "electronic_partsx1",
+   "machetex1 dur350",
+   "sparesx11",
+   "tin_canx2",
+   "electric_resistorx3",
+   "metal_bladex3",
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ]
+ },
+ {
+  "shot": "toolbox_high-4-world-after.png",
+  "variant": "toolbox_high",
+  "sid": "veyra.g1b:po_slag:toolbox_high:01",
+  "entity": {
+   "eid": "e1k",
+   "state": "empty",
+   "cycle": 0,
+   "roll": {
+    "rev": "g1b-approved-v1",
+    "seed": 3587355658,
+    "at": 1794773007869
+   },
+   "refillAt": 1794945810776,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "High Toolbox · empty · restocks in 48h 00m",
+   "eid": "e1k"
+  }
+ },
+ {
+  "shot": "toolbox_low-1-closed.png",
+  "variant": "toolbox_low",
+  "sid": "veyra.g1b:po_greywater:toolbox_low:01",
+  "place": "interior:po_greywater@1642,1174",
+  "global": [
+   1637,
+   1171
+  ],
+  "playerSide": [
+   0,
+   1
+  ],
+  "entity": {
+   "eid": "eq",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Toolbox",
+   "eid": "eq"
+  }
+ },
+ {
+  "pageErrors": []
+ }
+]

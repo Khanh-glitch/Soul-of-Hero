@@ -71,6 +71,17 @@ const POI_RINGS = P.pois.map((p, i) => p.foot && p.foot.length >= 3 ? ring(p.id,
 const ZONES = P.zones.map((z, i) => ring(z.id, z.name, z.ring, i));
 const ELDER_RINGS = P.elders.map((e, i) => ring(e.id, e.name, e.outer, i));
 
+// Conservative AABB broadphase only: exact ray tests and original authored
+// order remain authoritative. One bucket query replaces scanning every POI and
+// island ring for every tile in a distributed canonical compiler transaction.
+const ringBuckets=new Map<number,{land:Ring[];holes:Ring[];lakes:Ring[];pois:Ring[];zones:Ring[];elders:Ring[]}>();
+function ringsAt(ax:number,ay:number){
+ const bx=Math.floor(ax/BUCKET),by=Math.floor(ay/BUCKET),key=bk(bx,by);let value=ringBuckets.get(key);
+ if(!value){const select=(rings:Ring[])=>rings.filter(r=>r.maxX>=bx*BUCKET&&r.minX<=(bx+1)*BUCKET&&r.maxY>=by*BUCKET&&r.minY<=(by+1)*BUCKET);
+ value={land:select(LAND_OUTER),holes:select(LAND_HOLES),lakes:select(LAKES),pois:select(POI_RINGS),zones:select(ZONES),elders:select(ELDER_RINGS)};ringBuckets.set(key,value);if(ringBuckets.size>2048)ringBuckets.delete(ringBuckets.keys().next().value!);}
+ return value;
+}
+
 interface Seg { a: Pt; b: Pt; id: string; w: number; kind: 'road' | 'river'; idx: number; roadKind?: string }
 const SEGS: Seg[] = [];
 // 9 AU is the MapLab analytical stroke, not an approved physical width. The live
@@ -101,14 +112,42 @@ for (const n of NODES) for (let bx = Math.floor((n.at[0] - n.r) / BUCKET); bx <=
 // land edge segments bucketed for coast distance
 const COAST_BUCKETS = new Map<number, [Pt, Pt][]>();
 for (const r of [...LAND_OUTER, ...LAND_HOLES]) for (let i = 0, j = r.pts.length - 1; i < r.pts.length; j = i++) {
-  const a = r.pts[j], b = r.pts[i]; const x0 = Math.min(a[0], b[0]) - 8, y0 = Math.min(a[1], b[1]) - 8, x1 = Math.max(a[0], b[0]) + 8, y1 = Math.max(a[1], b[1]) + 8;
-  for (let bx = Math.floor(x0 / BUCKET); bx <= Math.floor(x1 / BUCKET); bx++) for (let by = Math.floor(y0 / BUCKET); by <= Math.floor(y1 / BUCKET); by++) { const k = bk(bx, by); let c = COAST_BUCKETS.get(k); if (!c) COAST_BUCKETS.set(k, c = []); c.push([a, b]); }
+  const a = r.pts[j], b = r.pts[i], edge:[Pt,Pt]=[a,b]; const x0 = Math.min(a[0], b[0]) - 8, y0 = Math.min(a[1], b[1]) - 8, x1 = Math.max(a[0], b[0]) + 8, y1 = Math.max(a[1], b[1]) + 8;
+  for (let bx = Math.floor(x0 / BUCKET); bx <= Math.floor(x1 / BUCKET); bx++) for (let by = Math.floor(y0 / BUCKET); by <= Math.floor(y1 / BUCKET); by++) { const k = bk(bx, by); let c = COAST_BUCKETS.get(k); if (!c) COAST_BUCKETS.set(k, c = []); c.push(edge); }
 }
 
-function inside(pts: Pt[], x: number, y: number) { let c = false; for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) { const xi = pts[i][0], yi = pts[i][1], xj = pts[j][0], yj = pts[j][1]; if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c; } return c; }
+// Tile-centre sampling reuses the SAME ordinate across many cells/chunks.
+// Compile exact ray intersections once per ordinate; binary parity is identical
+// to the original edge-order XOR, including strict boundary comparisons.
+const polygonRays=new WeakMap<Pt[],Map<number,readonly number[]>>();
+function inside(pts:Pt[],x:number,y:number){
+  let rows=polygonRays.get(pts);if(!rows){rows=new Map();polygonRays.set(pts,rows);}
+  let crossings=rows.get(y);
+  if(!crossings){const values:number[]=[];
+    for(let i=0,j=pts.length-1;i<pts.length;j=i++){const xi=pts[i][0],yi=pts[i][1],xj=pts[j][0],yj=pts[j][1];if((yi>y)!==(yj>y))values.push(((xj-xi)*(y-yi))/(yj-yi)+xi);}
+    values.sort((a,b)=>a-b);crossings=values;rows.set(y,crossings);if(rows.size>256)rows.delete(rows.keys().next().value!);
+  }
+  let lo=0,hi=crossings.length;while(lo<hi){const mid=(lo+hi)>>>1;if(x<crossings[mid])hi=mid;else lo=mid+1;}
+  return !!((crossings.length-lo)&1);
+}
 const inRing = (r: Ring, x: number, y: number) => x >= r.minX && x <= r.maxX && y >= r.minY && y <= r.maxY && inside(r.pts, x, y);
 function dSeg(x: number, y: number, a: Pt, b: Pt) { const dx = b[0] - a[0], dy = b[1] - a[1], l2 = dx * dx + dy * dy; let t = l2 ? ((x - a[0]) * dx + (y - a[1]) * dy) / l2 : 0; t = t < 0 ? 0 : t > 1 ? 1 : t; return Math.hypot(x - (a[0] + t * dx), y - (a[1] + t * dy)); }
-function coastDistance(x: number, y: number) { let best = Infinity; const bx = Math.floor(x / BUCKET), by = Math.floor(y / BUCKET); for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const c = COAST_BUCKETS.get(bk(bx + i, by + j)); if (!c) continue; for (const [a, b] of c) { const d = dSeg(x, y, a, b); if (d < best) best = d; } } return best; }
+const coastCandidates=new Map<number,readonly [Pt,Pt][]>();
+/** Same exact authored segments and Math.hypot projection as the original reader.
+ * An edge can occupy all nine neighboring buckets; testing it nine times per tile
+ * is redundant. Compile the union once for a spatial bucket, not per tile sample. */
+export function coastDistanceAtAu(x:number,y:number):number {
+  const bx=Math.floor(x/BUCKET),by=Math.floor(y/BUCKET),k=bk(bx,by);
+  let candidates=coastCandidates.get(k);
+  if(!candidates){
+    const unique=new Set<[Pt,Pt]>();
+    for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++)for(const edge of COAST_BUCKETS.get(bk(bx+i,by+j))??[])unique.add(edge);
+    candidates=[...unique];coastCandidates.set(k,candidates);
+    if(coastCandidates.size>2048)coastCandidates.delete(coastCandidates.keys().next().value!);
+  }
+  let best=Infinity;for(const [a,b]of candidates){const d=dSeg(x,y,a,b);if(d<best)best=d;}
+  return best;
+}
 
 export const BIOME_NAMES = ['meadow', 'forest', 'ancient', 'conifer', 'marsh', 'desert', 'scrub_dry_steppe', 'rock', 'snow', 'volcanic', 'toxic', 'beach'] as const;
 /** WMP-04R1 code -> existing SOH tile. Same mapping as the live WMP-04R1 scenes (no new tileset). */
@@ -127,18 +166,18 @@ export interface TileSample {
 }
 /** EXACT authored sample at the tile centre. Pure & deterministic. */
 export function sampleTile(tx: number, ty: number): TileSample {
-  const [ax, ay] = tileToAu(tx, ty);
-  let landIdx = -1; for (const r of LAND_OUTER) if (inRing(r, ax, ay)) { landIdx = r.idx; break; }
-  if (landIdx >= 0) for (const h of LAND_HOLES) if (h.idx === landIdx && inRing(h, ax, ay)) { landIdx = -1; break; }
+  const [ax, ay] = tileToAu(tx, ty),rings=ringsAt(ax,ay);
+  let landIdx = -1; for (const r of rings.land) if (inRing(r, ax, ay)) { landIdx = r.idx; break; }
+  if (landIdx >= 0) for (const h of rings.holes) if (h.idx === landIdx && inRing(h, ax, ay)) { landIdx = -1; break; }
   const land = landIdx >= 0;
-  let lake = false; if (land) for (const r of LAKES) if (inRing(r, ax, ay)) { lake = true; break; }
+  let lake = false; if (land) for (const r of rings.lakes) if (inRing(r, ax, ay)) { lake = true; break; }
   let river = false, road = false, roadKind: string | null = null;
   const segs = SEG_BUCKETS.get(bk(Math.floor(ax / BUCKET), Math.floor(ay / BUCKET)));
   if (segs && land) for (const s of segs) { if (dSeg(ax, ay, s.a, s.b) > s.w) continue; if (s.kind === 'river') river = true; else { road = true; roadKind = s.roadKind || 'road'; } }
-  let poi = -1; for (const r of POI_RINGS) if (inRing(r, ax, ay)) { poi = r.idx; break; }
-  let zone = -1; for (const r of ZONES) if (inRing(r, ax, ay)) { zone = r.idx; break; }
-  let elder = -1; for (const r of ELDER_RINGS) if (inRing(r, ax, ay)) { elder = r.idx; break; }
-  const coastDist = coastDistance(ax, ay);
+  let poi = -1; for (const r of rings.pois) if (inRing(r, ax, ay)) { poi = r.idx; break; }
+  let zone = -1; for (const r of rings.zones) if (inRing(r, ax, ay)) { zone = r.idx; break; }
+  let elder = -1; for (const r of rings.elders) if (inRing(r, ax, ay)) { elder = r.idx; break; }
+  const coastDist = coastDistanceAtAu(ax, ay);
   const biome = biomeCodeAt(ax, ay, tx, ty);
   let node: GoldNode | null = null, bridgeNode: GoldNode | null = null, dockNode: GoldNode | null = null;
   const nodes = NODE_BUCKETS.get(bk(Math.floor(ax / BUCKET), Math.floor(ay / BUCKET)));
@@ -147,12 +186,30 @@ export function sampleTile(tx: number, ty: number): TileSample {
   const seaWater = !land;
   let tile: number;
   if (!land) tile = T.DEEP; else if (lake || river) tile = T.SHALLOW; else if (road) tile = T.ROAD; else tile = BIOME_TILE[biome] ?? T.MEADOW;
+  const climateIndex=Math.min(ANALYSIS_H-1,Math.max(0,Math.floor(ay/ANALYSIS_CELL_AU)))*ANALYSIS_W+Math.min(ANALYSIS_W-1,Math.max(0,Math.floor(ax/ANALYSIS_CELL_AU)));
   return { tile, land, lake, river, road: road && !river && !lake, roadKind, coast: land && coastDist < 3.2, coastDist, poi, zone, elder, biome,
-    cold: rasterAt('coldTransition', ax, ay), marine: rasterAt('marineRegion', ax, ay), cliff: rasterAt('cliffCandidate', ax, ay), height: rasterAt('heightClass', ax, ay),
-    elevation: elevationAt(ax, ay), node, bridgeNode, dockNode, landIdx, seaWater };
+    cold: raster('coldTransition')[climateIndex], marine: raster('marineRegion')[climateIndex], cliff: raster('cliffCandidate')[climateIndex], height: raster('heightClass')[climateIndex],
+    elevation: ELEVATION[climateIndex], node, bridgeNode, dockNode, landIdx, seaWater };
 }
 export const SOURCE = Object.freeze({
   goldSha256: CANON_SHA, lr01BodySha256: BODY_SHA, wmp04r1: WMP04R1_META.activeRevision, wmp04r1Manifest: WMP04R1_META.provenance?.manifestR1Sha256,
   frameAu: FRAME_AU, counts: { land: P.land.length, lakes: P.lakes.length, rivers: P.rivers.length, roads: P.roads.length, bridges: P.bridges.length, docks: P.docks.length, pois: P.pois.length, zones: P.zones.length, resources: P.resources.length, spawns: P.spawns.length, elders: P.elders.length, labels: P.labels.length },
   roadHalfWidthAu: { cart: 1.0, other: 0.75 }, riverHalfWidthRule: 'GOLD width / 2 (default 2 AU)', ferryRoutesExcluded: FERRY_ROUTES.length,
 });
+
+/** Authored dry-ground predicate used by both POI and floor compilers. This
+ * deliberately excludes roads/biomes/climate/coast sampling: none can change
+ * land/lake/river membership. No run terrain or mutable source stock is cached. */
+const dryPages=new Map<string,Uint8Array>();
+export function authoredDryTile(tx:number,ty:number):boolean {
+ const cx=Math.floor(tx/64),cy=Math.floor(ty/64),key=`${cx}:${cy}`,i=(ty-cy*64)*64+tx-cx*64;
+ let page=dryPages.get(key);if(!page){page=new Uint8Array(4096);dryPages.set(key,page);if(dryPages.size>256)dryPages.delete(dryPages.keys().next().value!);}
+ if(page[i])return page[i]===2;
+ const [ax,ay]=tileToAu(tx,ty),rings=ringsAt(ax,ay);let landIdx=-1;
+ for(const r of rings.land)if(inRing(r,ax,ay)){landIdx=r.idx;break;}
+ if(landIdx>=0)for(const r of rings.holes)if(r.idx===landIdx&&inRing(r,ax,ay)){landIdx=-1;break;}
+ let dry=landIdx>=0;
+ if(dry)for(const r of rings.lakes)if(inRing(r,ax,ay)){dry=false;break;}
+ if(dry)for(const s of SEG_BUCKETS.get(bk(Math.floor(ax/BUCKET),Math.floor(ay/BUCKET)))??[])if(s.kind==='river'&&dSeg(ax,ay,s.a,s.b)<=s.w){dry=false;break;}
+ page[i]=dry?2:1;return dry;
+}

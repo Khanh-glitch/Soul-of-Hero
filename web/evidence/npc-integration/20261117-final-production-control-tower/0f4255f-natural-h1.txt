@@ -1,0 +1,15 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90m/home/user/Soul-of-Hero/web[39m
+
+[90mstdout[2m | tests/npc-runtime-throughput.test.ts[2m > [22m[2mbounded actual-world throughput[2m > [22m[2msettles one real hour with every generated actor retained and no replay on repeated timestamp
+[22m[39m{"case":"natural-population-h1","elapsedMs":73437.04188,"actors":286,"needsAt":1794733200000,"states":{"IDLE":285,"WORKING":1}}
+
+ [32m✓[39m tests/npc-runtime-throughput.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 75063[2mms[22m[39m
+     [33m[2m✓[22m[39m settles one real hour with every generated actor retained and no replay on repeated timestamp [33m 75061[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 04:04:10
+[2m   Duration [22m 79.18s[2m (transform 3.29s, setup 0ms, import 3.98s, tests 75.06s, environment 0ms)[22m
+
+WATCHDOG_EXIT=0

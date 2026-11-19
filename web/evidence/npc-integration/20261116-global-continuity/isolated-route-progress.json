@@ -1,0 +1,29 @@
+[
+  {
+    "function": "step",
+    "file": "file:///home/user/Soul-of-Hero/web/tests/helpers/newgame-bot.ts",
+    "line": 124,
+    "value": {
+      "type": "string",
+      "value": "{\"ticks\":13046,\"minutes\":10.873333333333333,\"seed\":11}"
+    }
+  },
+  {
+    "function": "wait",
+    "file": "file:///home/user/Soul-of-Hero/web/tests/helpers/newgame-bot.ts",
+    "line": 142,
+    "value": {
+      "type": "string",
+      "value": "{\"ticks\":13046,\"minutes\":10.873333333333333,\"seed\":11}"
+    }
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/tests/arena1-round2-newgame-routes.test.ts",
+    "line": 554,
+    "value": {
+      "type": "string",
+      "value": "{\"seed\":11,\"minutes\":10.873333333333333,\"ticks\":13046,\"now\":1794658252400,\"log\":[]}"
+    }
+  }
+]

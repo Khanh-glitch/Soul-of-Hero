@@ -116,6 +116,9 @@ function wild(s:RestSite):ArchPlan{
  if(isSacred){
   open(p,'grove_ring','Ancient open clearing',0,[[x-6,y-9,13,9],[x-11,y-4,21,4]],'stone');
   p.prop(x-1,y-1,0,'sundial'); // Existing stone marker only, the real forest canopy is GOLD terrain.
+  if(s.id==='po_glade'){
+   hut(p,'glade_sanctum','Glade Keeper Shelter',[x+10,y-11,13,10],'W','thatch','wood');
+  }
  }else if(s.id==='po_fishcamp'){
   hut(p,'netshed','Small Fishing Netshed',[x-28,y+9,14,10],'E','thatch','wood');
   open(p,'net_path','Narrow forest track to net shed',0,[[x-17,y+7,5,8]],'stone');

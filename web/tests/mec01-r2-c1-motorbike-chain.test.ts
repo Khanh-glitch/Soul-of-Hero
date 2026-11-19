@@ -22,7 +22,7 @@ const east:Input={...still,right:true,mx:100,my:100};
 afterEach(()=>setActiveLayout('shipping'));
 const act=(g:GameState,type:string,p:object={},at=START+10)=>dispatch(g,{id:'c1-'+(++n),type,...p} as any,at);
 const place=(r:RunState,tx:number,ty:number)=>{r.player.x=tx*TILE+8;r.player.y=ty*TILE+8;markDirty();};
-const cacheOf=(r:RunState)=>Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='iron_sword'))!;
+const cacheOf=(r:RunState)=>Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='machete'))!;
 function start(){setActiveLayout('shipping_fresh');const g=newGame();expect(act(g,'startRun',{character:'female',seed:303},START).ok).toBe(true);g.run!.creatures=[];markDirty();return g;}
 function legalTileNear(g:GameState,cx:number,cy:number,struct='workbench'):[number,number]{
   const r=g.run!;for(let k=1;k<=10;k++)for(let dy=-k;dy<=k;dy++)for(let dx=-k;dx<=k;dx++){if(Math.max(Math.abs(dx),Math.abs(dy))!==k)continue;const tx=cx+dx,ty=cy+dy;place(r,tx-1,ty);if(!buildReason(g,struct,tx,ty))return [tx,ty];}

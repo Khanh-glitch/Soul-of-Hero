@@ -611,3 +611,19 @@ export function computeCreatureEnvFactors(
 
   return { speedMul, sightMul };
 }
+
+/** QA Sandbox VFX Showcase helper (see game/vfx/testkit.ts): place the n-th optional side boss on a free tile
+ *  beside the player inside an isolated QA session, using the same actor factory as the authored sites. */
+export function vfxTestSummonBoss(r: RunState, n: number, isFree: (tx: number, ty: number) => boolean): string | null {
+  const sb = VEYRA_SIDE_BOSS_SITES[((n % VEYRA_SIDE_BOSS_SITES.length) + VEYRA_SIDE_BOSS_SITES.length) % VEYRA_SIDE_BOSS_SITES.length];
+  const def = CREATURES[sb.species]; if (!def) return null;
+  const id = `vy:boss:${sb.species}`, p = r.player, ptx = Math.floor(p.x / TILE), pty = Math.floor(p.y / TILE);
+  for (const d of [5, 4, 6, 3]) for (let k = 0; k < 12; k++) {
+    const a = k * Math.PI / 6, tx = Math.round(ptx + Math.cos(a) * d), ty = Math.round(pty + Math.sin(a) * d);
+    if (tx < 5 || ty < 5 || tx >= WW - 5 || ty >= WH - 5 || !isFree(tx, ty)) continue;
+    const old = r.creatures.findIndex(m => m.id === id); if (old >= 0) r.creatures.splice(old, 1);
+    r.creatures.push(makeVeyraActor(id, sb.species, tx, ty, activeFloor(r), sb.leashTiles, { maxHp: def.hp, sideBoss: { key: sb.species, phase: 0, moveIdx: 0, leashPx: sb.leashTiles * TILE } }));
+    return sb.name;
+  }
+  return null;
+}

@@ -1,0 +1,68 @@
+diff --git a/web/tests/wp3-veyra-recycler-integration.test.ts b/web/tests/wp3-veyra-recycler-integration.test.ts
+index c2f5426f7..05ad71314 100644
+--- a/web/tests/wp3-veyra-recycler-integration.test.ts
++++ b/web/tests/wp3-veyra-recycler-integration.test.ts
+@@ -553,6 +553,63 @@ describe('WP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> F
+     expect(walkPathTo(gs, adjacentWalkableGoals(r, bench.tx!, bench.ty!), nowRef)).not.toBeNull();
+     expect(dispatch(gs, { id: `upg-bench-${nowRef.t}`, type: 'upgradeStation', eid: bench.id }, nowRef.t).ok).toBe(true);
+     expect(bench.station!.level).toBe(2);
++    // Recipe revision 3 (Item Ontology V2, PR #61): the Utility Frame needs 1 Metal Pipe. The pipe is obtained here the way a
++    // player obtains it — Tall Grass -> Fiber -> Rope, Boulder -> Stone, hand-crafted Stone Pickaxe, a real Coal Seam in this
++    // window, Furnace-refined iron, Workbench L2 pipe. Zero injection. On a tree where the frame has no pipe line (revision 2)
++    // this block does nothing, so the same test is valid before and after the two PRs meet.
++    if (RECIPES.vehicle_frame.ins.some(([k]) => k === 'metal_pipe')) {
++      const gather = (srcKeys: string[], item: string, want: number, tool: string) => {
++        if (tool !== 'knife') expect(countItem(r, 'inv', tool), `${tool} must be in the pack before its power is used`).toBeGreaterThanOrEqual(1);
++        for (const src of findReachableSources(r, srcKeys, nowRef.t)) {
++          if (countItem(r, 'inv', item) >= want) break;
++          harvestSourceNaturally(gs, src.tx, src.ty, tool, nowRef, [item]);
++        }
++        expect(countItem(r, 'inv', item), `natural ${item}`).toBeGreaterThanOrEqual(want);
++      };
++      const handCraft = (recipe: string) => {
++        expect(dispatch(gs, { id: `hand-${recipe}-${nowRef.t}`, type: 'craft', recipe }, nowRef.t).ok, `hand craft ${recipe}`).toBe(true);
++        settle(gs, nowRef.t + 4_000, true);
++        nowRef.t += 5_000;
++      };
++      const collect = (st: Entity, key: string) => {
++        const slot = C(r, st.station!.outC).slots.findIndex((x) => x?.key === key);
++        expect(slot, `${key} in ${st.kind} output`).toBeGreaterThanOrEqual(0);
++        expect(dispatch(gs, { id: `col-${key}-${nowRef.t}`, type: 'move', from: st.station!.outC, fs: slot, to: 'inv' }, nowRef.t).ok).toBe(true);
++      };
++      expect(countItem(r, 'inv', 'coal')).toBe(0);
++      expect(countItem(r, 'inv', 'metal_pipe')).toBe(0);
++      gather(['grass'], 'fiber', 3, 'knife');
++      handCraft('rope');
++      gather(['rock'], 'stone', 4, 'knife');
++      handCraft('stone_pick');
++      expect(countItem(r, 'inv', 'stone_pick')).toBe(1);
++      gather(['coalv'], 'coal', 1, 'stone_pick');
++
++      // Two more ingots from wreck scrap, then refine 3 ingots + 1 coal -> 2 Refined Iron Ingot at the same Furnace.
++      expect(walkPathTo(gs, adjacentWalkableGoals(r, furnace.tx!, furnace.ty!), nowRef)).not.toBeNull();
++      const ironShort = Math.max(0, 5 - countItem(r, 'inv', 'iron_ingot'));
++      for (let i = 0; i < ironShort; i++) {
++        expect(dispatch(gs, { id: `smelt-c-${i}-${nowRef.t}`, type: 'craft', recipe: 'scrap_ingot', eid: furnace.id }, nowRef.t).ok).toBe(true);
++        nowRef.t += 50;
++      }
++      if (ironShort) { settle(gs, nowRef.t + 12_000 * ironShort + 3_000, true); nowRef.t += 12_000 * ironShort + 4_000; collect(furnace, 'iron_ingot'); }
++      expect(countItem(r, 'inv', 'iron_ingot')).toBeGreaterThanOrEqual(5);
++      const coalBeforeRefine = countItem(r, 'inv', 'coal');
++      expect(dispatch(gs, { id: `refine-${nowRef.t}`, type: 'craft', recipe: 'refined_iron_ingot', eid: furnace.id }, nowRef.t).ok).toBe(true);
++      settle(gs, nowRef.t + 23_000, true);
++      nowRef.t += 24_000;
++      collect(furnace, 'refined_iron_ingot');
++      expect(countItem(r, 'inv', 'refined_iron_ingot')).toBe(2);
++      expect(countItem(r, 'inv', 'coal')).toBe(coalBeforeRefine - 1);
++
++      // Workbench L2: 2 Refined Iron Ingot + 1 Machine Part -> 2 Metal Pipe.
++      expect(walkPathTo(gs, adjacentWalkableGoals(r, bench.tx!, bench.ty!), nowRef)).not.toBeNull();
++      expect(dispatch(gs, { id: `craft-pipe-${nowRef.t}`, type: 'craft', recipe: 'metal_pipe', eid: bench.id }, nowRef.t).ok).toBe(true);
++      settle(gs, nowRef.t + 21_000, true);
++      nowRef.t += 22_000;
++      collect(bench, 'metal_pipe');
++      expect(countItem(r, 'inv', 'metal_pipe')).toBe(2);
++    }
+     expect(dispatch(gs, { id: `craft-frame-${nowRef.t}`, type: 'craft', recipe: 'vehicle_frame', eid: bench.id }, nowRef.t).ok).toBe(true);
+     settle(gs, nowRef.t + 26_000, true);
+     nowRef.t += 27_000;

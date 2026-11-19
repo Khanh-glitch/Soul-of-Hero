@@ -1,0 +1,321 @@
+[
+ {
+  "runId": "run_yfatop_mwimxapc",
+  "ungatedGroundChestsThatRollACoreThisRun": 12,
+  "list": [
+   "veyra.g1b:po_falls:military_mid:01 → core_meteor Lv1",
+   "veyra.g1b:po_ironmine:toolbox_low:01 → core_blast Lv1",
+   "veyra.g1b:po_ironmine:military_low:01 → core_mjolnir Lv1",
+   "veyra.g1b:po_ironwh:military_low:01 → core_blast Lv1",
+   "veyra.g1b:po_wreck:military_mid:01 → core_meteor Lv1",
+   "veyra.g1b:po_sulfur:supply_mid:01 → core_mjolnir Lv1",
+   "veyra.g1b:po_dpier:toolbox_low:f0.boat_grave.01 → core_earthmother Lv1",
+   "veyra.g1b:po_fracquarry:toolbox_low:f0.rim_return.01 → core_earthmother Lv1",
+   "veyra.g1b:po_filter:supply_low:f0.settling_cells.01 → core_earthmother Lv1",
+   "veyra.g1b:po_hall_eyes:supply_mid:f0.right_scriptorium.02 → core_earthmother Lv1",
+   "veyra.g1b:po_necropolis:military_mid:f0.east_tomb.01 → core_blast Lv1",
+   "veyra.g1b:po_netcamp:supply_low:f0.shore_foot.01 → core_blast Lv1"
+  ]
+ },
+ {
+  "shot": "core-roll-1-chest-closed.png",
+  "source": "veyra.g1b:po_falls:military_mid:01",
+  "variant": "military_mid",
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Mid Military Case",
+   "eid": "e1y"
+  },
+  "entity": {
+   "eid": "e1y",
+   "live": true,
+   "floor": 0,
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "note": "no item was granted; this is the run's own roll",
+  "saveValid": true
+ },
+ {
+  "shot": "core-roll-2-chest-opened-core-inside.png",
+  "entity": {
+   "eid": "e1y",
+   "live": true,
+   "floor": 0,
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "arrowx12",
+    "energy_refinedx3",
+    "cleaverx1",
+    "core_meteorx1 Lv1"
+   ]
+  },
+  "receipts": [
+   "run.start female@VEYRA · U=0.5",
+   "poi.discover po_mere",
+   "g1b.roll veyra.g1b:po_falls:military_mid:01:g1b-approved-v1:cycle0:seed1139443249:slot0:arrowx12:swu",
+   "g1b.roll veyra.g1b:po_falls:military_mid:01:g1b-approved-v1:cycle0:seed1139443249:slot1:energy_refinedx3:swv",
+   "g1b.roll veyra.g1b:po_falls:military_mid:01:g1b-approved-v1:cycle0:seed1139443249:slot2:cleaverx1:sww",
+   "g1b.roll veyra.g1b:po_falls:military_mid:01:g1b-approved-v1:cycle0:seed1139443249:slot3:core_meteor:lv1x1:swx",
+   "g1b.open veyra.g1b:po_falls:military_mid:01:cycle0"
+  ],
+  "icons": {
+   "atlas157": 8,
+   "drawn": [],
+   "sizes": [
+    "16x16/32",
+    "8x8/32"
+   ],
+   "rendering": [
+    "pixelated"
+   ]
+  },
+  "saveValid": true
+ },
+ {
+  "shot": "core-roll-3-taken.png",
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "arrowx12",
+   "energy_refinedx3",
+   "cleaverx1 dur260",
+   "core_meteorx1 Lv1 dur300"
+  ],
+  "entity": {
+   "eid": "e1y",
+   "live": true,
+   "floor": 0,
+   "state": "empty",
+   "cycle": 0,
+   "refillAt": 1794968358591,
+   "stock": []
+  },
+  "saveValid": true
+ },
+ {
+  "rolledCore": "core_meteor",
+  "uid": "swx"
+ },
+ {
+  "rolledLevel": 1,
+  "upgradeTo": 2
+ },
+ {
+  "qaGrant": {
+   "energy_basic": 6,
+   "energy_refined": 3,
+   "spares": 9,
+   "iron_ingot": 5,
+   "crystal": 3,
+   "sulfur": 3,
+   "deploy_workbench": 1
+  }
+ },
+ {
+  "workbench": {
+   "bench": [
+    1409,
+    840
+   ],
+   "levelBefore": 1,
+   "qaSetLevel": 2
+  },
+  "note": "QA: bench built by the real build intent from a granted packed Workbench; its level is set to 2 (a Lv2 bench is the rule for Lv1→Lv2)"
+ },
+ {
+  "shot": "core-svc-1-held-at-workbench.png",
+  "slot": 6,
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "arrowx12",
+   "energy_refinedx6",
+   "cleaverx1 dur260",
+   "core_meteorx1 Lv1 dur300",
+   "energy_basicx6",
+   "sparesx9",
+   "iron_ingotx5",
+   "crystalx3",
+   "sulfurx3"
+  ],
+  "saveValid": true
+ },
+ {
+  "shot": "core-svc-2-lmb-cast-lv1.png",
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "arrowx12",
+   "energy_refinedx6",
+   "cleaverx1 dur260",
+   "core_meteorx1 Lv1 dur300",
+   "energy_basicx6",
+   "sparesx9",
+   "iron_ingotx5",
+   "crystalx3",
+   "sulfurx3"
+  ],
+  "receipts": [
+   "move core_meteorx1 c1x->inv",
+   "g1b.empty veyra.g1b:po_falls:military_mid:01:cycle0:refill=1794968358591",
+   "build workbench@65,98"
+  ],
+  "saveValid": true
+ },
+ {
+  "shot": "core-svc-3-panel-lv1.png",
+  "visible": 1,
+  "text": "CORE SERVICE · Lv1/3 · durability 299/300\nLMB · cd 0.9s · wear 1\nQ · Lv2\nE · Lv3\nUpgrade → Lv2\nWorkbench Lv2 · 45s\nParts 7/7\nIron Ingot 4/4\nFrost Crystal 3/3\nSulfur 3/3\nRepair +75\nany Workbench\nParts 2/2\nIron Ingot 1/1",
+  "saveValid": true
+ },
+ {
+  "shot": "core-svc-4-upgrade-started.png",
+  "text": "CORE SERVICE · Lv1/3 · durability 299/300\nLMB · cd 0.9s · wear 1\nQ · Lv2\nE · Lv3\nUpgrading to Lv2 · 45s\nRepair +75\nany Workbench\nParts 2/2\nIron Ingot 1/1",
+  "toasts": [
+   "✓Meteor → Lv2 in 45s.",
+   "✓Meteor → Lv2 in 45s.",
+   "✓"
+  ],
+  "receipts": [
+   "fire.scorch 64,98",
+   "fire.scorch 66,98",
+   "core.upgrade.start swx:core_meteor:lv2:ready=1794795617157"
+  ],
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "arrowx12",
+   "energy_refinedx6",
+   "cleaverx1 dur260",
+   "core_meteorx1 Lv1 dur299",
+   "energy_basicx5",
+   "sparesx2",
+   "iron_ingotx1"
+  ],
+  "saveValid": true
+ },
+ {
+  "shot": "core-svc-5-upgraded-same-uid.png",
+  "text": "CORE SERVICE · Lv2/3 · durability 299/300\nLMB · cd 0.9s · wear 1\nQ · cd 14s · wear 5\nE · Lv3\nUpgrade → Lv3\nWorkbench Lv3 · 75s\nParts 2/12\nRefined Iron Ingot 0/4\nFrost Crystal 0/5\nSulfur 0/5\nMechanical Gear 0/1\nRepair +75\nany Workbench\nParts 2/2\nIron Ingot 1/1",
+  "uidBefore": "swx",
+  "coreNow": {
+   "uid": "swx",
+   "key": "core_meteor",
+   "lvl": 1,
+   "dur": 299,
+   "upg": {
+    "to": 2,
+    "readyAt": 1794795617157
+   }
+  },
+  "receipts": [
+   "fire.scorch 64,98",
+   "fire.scorch 66,98",
+   "core.upgrade.start swx:core_meteor:lv2:ready=1794795617157"
+  ],
+  "saveValid": true
+ },
+ {
+  "qaSet": "durability = 3",
+  "qWear": {
+   "basic": 1,
+   "refined": 5,
+   "signature": 14
+  }
+ },
+ {
+  "shot": "core-svc-6-q-refused-too-worn.png",
+  "toasts": [
+   "•Meteor is too worn for Q: needs 5 durability, 3 left. Repair it at a Workbench.",
+   "•Meteor is too worn for Q: needs 5 durability, 3 left. Repair it at a Workbench.",
+   "•"
+  ],
+  "invBefore": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "arrowx12",
+   "energy_refinedx6",
+   "cleaverx1 dur260",
+   "core_meteorx1 Lv1 dur3",
+   "energy_basicx5",
+   "sparesx2",
+   "iron_ingotx1"
+  ],
+  "invAfter": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "arrowx12",
+   "energy_refinedx6",
+   "cleaverx1 dur260",
+   "core_meteorx1 Lv2 dur3",
+   "energy_basicx5",
+   "sparesx2",
+   "iron_ingotx1"
+  ],
+  "receipts": [
+   "fire.scorch 64,98",
+   "fire.scorch 66,98",
+   "core.upgrade.start swx:core_meteor:lv2:ready=1794795617157"
+  ],
+  "expect": "refused; durability stays 3; no energy spent; no cooldown; no effect",
+  "saveValid": true
+ },
+ {
+  "shot": "core-svc-7-repaired-plus-75.png",
+  "text": "CORE SERVICE · Lv2/3 · durability 78/300\nLMB · cd 0.9s · wear 1\nQ · cd 14s · wear 5\nE · Lv3\nUpgrade → Lv3\nWorkbench Lv3 · 75s\nParts 0/12\nRefined Iron Ingot 0/4\nFrost Crystal 0/5\nSulfur 0/5\nMechanical Gear 0/1\nRepair +75\nany Workbench\nParts 0/2\nIron Ingot 0/1",
+  "toasts": [
+   "✓Meteor repaired to 78/300.",
+   "✓Meteor repaired to 78/300.",
+   "✓"
+  ],
+  "receipts": [
+   "fire.scorch 66,98",
+   "core.upgrade.start swx:core_meteor:lv2:ready=1794795617157",
+   "core.repair swx:core_meteor:dur=78"
+  ],
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "arrowx12",
+   "energy_refinedx6",
+   "cleaverx1 dur260",
+   "core_meteorx1 Lv2 dur78",
+   "energy_basicx5"
+  ],
+  "saveValid": true
+ },
+ {
+  "shot": "core-svc-8-owed-energy-paid-back-into-pack.png",
+  "qaSet": "owed {energy_basic:4, energy_refined:3} (what the loader writes for reserves b4/q3/e0)",
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "arrowx12",
+   "energy_refinedx9",
+   "cleaverx1 dur260",
+   "core_meteorx1 Lv2 dur78",
+   "energy_basicx9"
+  ],
+  "receipts": [
+   "core.upgrade.start swx:core_meteor:lv2:ready=1794795617157",
+   "core.repair swx:core_meteor:dur=78",
+   "core.legacy.refund swx:energy_basicx4->inv",
+   "core.legacy.refund swx:energy_refinedx3->inv"
+  ],
+  "saveValid": true
+ },
+ {
+  "pageErrors": []
+ }
+]

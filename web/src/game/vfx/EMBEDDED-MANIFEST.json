@@ -1,0 +1,447 @@
+{
+ "note": "PNG atlas pages embedded in vfx-pack.css as base64 custom properties (--vN on #vfx-pack); sha256 is of the original PNG bytes.",
+ "upstream": "https://github.com/patch-gg/pixelfx@a84159688af3ca37a4be05a0d422b94451b2e24e",
+ "pages": [
+  {
+   "block": "--v5",
+   "id": "arcane/portal",
+   "file": "combined-0.png",
+   "bytes": 1018063,
+   "sha256": "5b64a9a77c72c988f01992493c522aa871cf1ee22a136aea17e5867492a59493"
+  },
+  {
+   "block": "--v6",
+   "id": "arcane/rune-circle",
+   "file": "combined-0.png",
+   "bytes": 1396562,
+   "sha256": "4b00bb3b1a3718478c1f90215a4368917343bb861788eae5e7614d8cb71f1b24"
+  },
+  {
+   "block": "--v8",
+   "id": "arcane/time-stop",
+   "file": "combined-0.png",
+   "bytes": 749102,
+   "sha256": "e4e1e8e5a9e52e8cd2e362bce45a380d8225b388a34f5abec150273b0c01f54e"
+  },
+  {
+   "block": "--v9",
+   "id": "explosions/big-explosion",
+   "file": "combined-0.png",
+   "bytes": 1180218,
+   "sha256": "edcdf78357db9f5ddf94645625c6221bbf6539f8a5ffa5690eb87c224c153ad7"
+  },
+  {
+   "block": "--v10",
+   "id": "explosions/big-explosion",
+   "file": "combined-1.png",
+   "bytes": 1373523,
+   "sha256": "4793a8956828d3511c1d30e51abfcd5e1c5341ee047362b26f20682bc6a2342c"
+  },
+  {
+   "block": "--v11",
+   "id": "explosions/big-explosion",
+   "file": "combined-2.png",
+   "bytes": 1090296,
+   "sha256": "bd7a1bed4b2975abe8f2a9e0587a45c240ea4678696ceb37ca86de6ad67b3ade"
+  },
+  {
+   "block": "--v12",
+   "id": "explosions/big-explosion",
+   "file": "combined-3.png",
+   "bytes": 570610,
+   "sha256": "b638eb8612c5348ba5d699a61a4b25fbeda25b082769353e413c86434fd910db"
+  },
+  {
+   "block": "--v13",
+   "id": "explosions/big-explosion",
+   "file": "combined-4.png",
+   "bytes": 308484,
+   "sha256": "890e65283ad4a4858b19c9ee9b9192697d579dfb6b4b3732648ebec57a63c4a5"
+  },
+  {
+   "block": "--v14",
+   "id": "explosions/big-explosion",
+   "file": "combined-5.png",
+   "bytes": 321419,
+   "sha256": "d382785dbdac58de9e14f143a70b902f3ebaac81c8a2fcd6624868dd6e25dd66"
+  },
+  {
+   "block": "--v15",
+   "id": "explosions/big-explosion",
+   "file": "combined-6.png",
+   "bytes": 135481,
+   "sha256": "7a7c2d1fe3208032bc44d2c2dd5aef27de2605041b25d894a4010551fa033530"
+  },
+  {
+   "block": "--v16",
+   "id": "explosions/big-explosion",
+   "file": "combined-7.png",
+   "bytes": 5674,
+   "sha256": "63ab7d3ff5780371b7cceb60c984f05169d48e985dc3d0941238a98103c82f8f"
+  },
+  {
+   "block": "--v17",
+   "id": "explosions/dirt-explosion",
+   "file": "combined-0.png",
+   "bytes": 653793,
+   "sha256": "b98c03e37938d1bc1b47020647f254aa2b19bccb35ed301763f9f9e8e723254a"
+  },
+  {
+   "block": "--v18",
+   "id": "explosions/dirt-explosion",
+   "file": "combined-1.png",
+   "bytes": 101961,
+   "sha256": "ae345c7dba99c8864984360f0973b7c3bc936efc767996a5f12045bb10b03855"
+  },
+  {
+   "block": "--v19",
+   "id": "explosions/implosion",
+   "file": "combined-0.png",
+   "bytes": 491451,
+   "sha256": "6a776f4a35ca38de42456c9c1196d5001340876c467c89881f027478d1c9c41c"
+  },
+  {
+   "block": "--v20",
+   "id": "explosions/plasma-explosion",
+   "file": "combined-0.png",
+   "bytes": 478222,
+   "sha256": "d46f726e2c107e8897c1708cd408fdf33f357d1d65498c082e6da343e5459a05"
+  },
+  {
+   "block": "--v26",
+   "id": "fire/fire-ring",
+   "file": "combined-0.png",
+   "bytes": 1282607,
+   "sha256": "507bf50c34bbe8106de795e618c8fecec7274723f3160353c274adb889f8d319"
+  },
+  {
+   "block": "--v29",
+   "id": "fire/flame-pillar",
+   "file": "combined-0.png",
+   "bytes": 1755531,
+   "sha256": "a4bb945832931048ed18e351bb8ac4eaba2412bb53dffe68ec7e297bc4aee325"
+  },
+  {
+   "block": "--v30",
+   "id": "fire/flame-pillar",
+   "file": "combined-1.png",
+   "bytes": 258808,
+   "sha256": "35f3eb756da14257e93f12823f506f783ca629ec3c392acceb7a5f9ceca70185"
+  },
+  {
+   "block": "--v31",
+   "id": "fire/meteor",
+   "file": "combined-0.png",
+   "bytes": 1044988,
+   "sha256": "598fb5760d0559fb767e4ebb05b4608ac29a857ed06fd51772042e88ce125e2a"
+  },
+  {
+   "block": "--v32",
+   "id": "fire/meteor",
+   "file": "combined-1.png",
+   "bytes": 630892,
+   "sha256": "9914992108b4848ea384a275dd3b3c38bff246fb27733f390c7964810517b68e"
+  },
+  {
+   "block": "--v33",
+   "id": "fire/meteor",
+   "file": "combined-2.png",
+   "bytes": 20451,
+   "sha256": "bb36799d735b4f3b546355260ab9c125427879016b0e979d76c2d27b42977f1b"
+  },
+  {
+   "block": "--v34",
+   "id": "holy/heal-aoe",
+   "file": "combined-0.png",
+   "bytes": 893791,
+   "sha256": "6f37d1ec60d7c9de49a1e8425ad0e8deefc9a9fe61dde1d48343bc55cd86f5ea"
+  },
+  {
+   "block": "--v35",
+   "id": "ice/freeze",
+   "file": "combined-0.png",
+   "bytes": 654240,
+   "sha256": "90e192e99dfdabab2e6480bb55b19d6e2ef89e4f2e7a3e563d7c05f42f309463"
+  },
+  {
+   "block": "--v36",
+   "id": "ice/frost-breath",
+   "file": "combined-0.png",
+   "bytes": 373556,
+   "sha256": "472414d4b6890e64a7416d9e9222d9bf3c3c2b51913c7c7d1dd165cef13cb63a"
+  },
+  {
+   "block": "--v41",
+   "id": "ice/ice-spikes",
+   "file": "combined-0.png",
+   "bytes": 1131030,
+   "sha256": "46c11cea4f44480c96b164d23610a116cc238e276f02a4d14ef0b2dd015f2477"
+  },
+  {
+   "block": "--v43",
+   "id": "impacts/blunt-hit",
+   "file": "combined-0.png",
+   "bytes": 127669,
+   "sha256": "f78e85e7147f7cbe28ec5d6673b581246f492e0b0ec587e7f60ab4daacf35557"
+  },
+  {
+   "block": "--v44",
+   "id": "impacts/bullet-impact",
+   "file": "combined-0.png",
+   "bytes": 46323,
+   "sha256": "a28718e8a30fe332985a7f14b4ada5ec73d9ef2f71c94ea1de390a68d55bd609"
+  },
+  {
+   "block": "--v45",
+   "id": "impacts/crit-hit",
+   "file": "combined-0.png",
+   "bytes": 171155,
+   "sha256": "aa72641815cf1e78fd4f13d827fbdfa6818a6a7f4a208814d4de74f0b217721d"
+  },
+  {
+   "block": "--v46",
+   "id": "impacts/ground-slam",
+   "file": "combined-0.png",
+   "bytes": 905263,
+   "sha256": "1e3435539bb8fffbac74631999b8a814e58ef61c2867ffbec1f381489ab1aa70"
+  },
+  {
+   "block": "--v47",
+   "id": "impacts/ground-slam",
+   "file": "combined-1.png",
+   "bytes": 73669,
+   "sha256": "7c487f0c05f62e98b47eabffb1050fa7a5c88f4c691ffff53f5ccdb02b2439ca"
+  },
+  {
+   "block": "--v48",
+   "id": "impacts/hit-spark",
+   "file": "combined-0.png",
+   "bytes": 29239,
+   "sha256": "219171f4515765ca6479677eaefc44034d14b17d57d049c8ec71281e8bbb93af"
+  },
+  {
+   "block": "--v50",
+   "id": "lightning/ball-lightning",
+   "file": "combined-0.png",
+   "bytes": 528606,
+   "sha256": "79f399a469d7aa118dfbb63160e99e38f0462ec156a41ca152094bc207732b98"
+  },
+  {
+   "block": "--v52",
+   "id": "lightning/electrified",
+   "file": "combined-0.png",
+   "bytes": 232091,
+   "sha256": "4f44f0b0afaf6c9c7196dda7d61c1a49e4548a6d90c1b3a55d02f7115139b47a"
+  },
+  {
+   "block": "--v55",
+   "id": "lightning/storm-cloud",
+   "file": "combined-0.png",
+   "bytes": 457723,
+   "sha256": "ff1433442e089802caf24e1dbf6c2e7cd1ca05fecb7c85ae7b40473384fb84ef"
+  },
+  {
+   "block": "--v56",
+   "id": "lightning/thunderclap",
+   "file": "combined-0.png",
+   "bytes": 444454,
+   "sha256": "4eabb58fece25a2c16bb02a5fab4876adac10d56ca64b6aebc7fe0f69c178c47"
+  },
+  {
+   "block": "--v57",
+   "id": "lightning/zap-hit",
+   "file": "combined-0.png",
+   "bytes": 119693,
+   "sha256": "a5a5b37d1e427e1fd3b7461c94d9b411da99b2e398050d777631d93d9266be01"
+  },
+  {
+   "block": "--v58",
+   "id": "melee/dagger-flurry",
+   "file": "combined-0.png",
+   "bytes": 130326,
+   "sha256": "a13089b485bd07cdfc53d21007c1f37188b55a48873c7672f4ae2786aa45449c"
+  },
+  {
+   "block": "--v59",
+   "id": "melee/double-slash",
+   "file": "combined-0.png",
+   "bytes": 104150,
+   "sha256": "ff8c98b7fc64a3ce22c03d82193308e104511e35d3656597f4e04baee156bbcf"
+  },
+  {
+   "block": "--v60",
+   "id": "melee/heavy-cleave",
+   "file": "combined-0.png",
+   "bytes": 348322,
+   "sha256": "f8b642207ecc0e743c1a61f5d1d0a95378d7809a0c5acb9c3f674c1e817bc2f3"
+  },
+  {
+   "block": "--v61",
+   "id": "melee/spin-slash",
+   "file": "combined-0.png",
+   "bytes": 159752,
+   "sha256": "7588b0051a8d5d193f5930e777387097ec83ee9be2c0c86879a7ee5976cf68bf"
+  },
+  {
+   "block": "--v62",
+   "id": "melee/sword-slash",
+   "file": "combined-0.png",
+   "bytes": 75990,
+   "sha256": "ae5ab284e91e213179d3fdd1301be59ad544e41502745fc398136baa8379581d"
+  },
+  {
+   "block": "--v63",
+   "id": "melee/thrust",
+   "file": "combined-0.png",
+   "bytes": 55055,
+   "sha256": "241cd061605b50807061248ea65a58e9defee44302fb964ec0afd5cd5e3f2b81"
+  },
+  {
+   "block": "--v64",
+   "id": "nature/earth-spike",
+   "file": "combined-0.png",
+   "bytes": 485125,
+   "sha256": "29c85fb2f929d52ddf9915cfba3b2a6ae6449cad0d1ac9ad4f675a8b01808521"
+  },
+  {
+   "block": "--v65",
+   "id": "nature/earth-spike",
+   "file": "combined-1.png",
+   "bytes": 3813,
+   "sha256": "ddcef24bbe8a50a9e98247fe80a13f497f57875d85fb55d0670a25eb2499f341"
+  },
+  {
+   "block": "--v66",
+   "id": "nature/healing-bloom",
+   "file": "combined-0.png",
+   "bytes": 540164,
+   "sha256": "4819ad2b707be9d22a971c9ec1152cbb5d3db5f9bf90b76596b7579a6d779723"
+  },
+  {
+   "block": "--v69",
+   "id": "nature/root-snare",
+   "file": "combined-0.png",
+   "bytes": 225310,
+   "sha256": "a82a3810ac233f8c1749a26b2f268c546d991effa64237e7f3ebd1f26ebac539"
+  },
+  {
+   "block": "--v70",
+   "id": "nature/thorns",
+   "file": "combined-0.png",
+   "bytes": 408265,
+   "sha256": "a76be60c790ad4f8f480309e93cc904a77feef1dfa79d4d287ec0b7ed3ccabc5"
+  },
+  {
+   "block": "--v71",
+   "id": "projectiles/bullet-tracer",
+   "file": "combined-0.png",
+   "bytes": 20857,
+   "sha256": "34e4b511f7e6975a56ab16bf014e054913bb9d009588ead93282c77cd62ee0c6"
+  },
+  {
+   "block": "--v72",
+   "id": "projectiles/energy-disc",
+   "file": "combined-0.png",
+   "bytes": 22693,
+   "sha256": "29789f92b6a40e0b549b6ad477a8111db60fba224e86de2b3d42ca826ce31188"
+  },
+  {
+   "block": "--v73",
+   "id": "projectiles/laser-bolt",
+   "file": "combined-0.png",
+   "bytes": 26007,
+   "sha256": "0b4f87990ad4894bf76212010eabfb57993657fd9f497002c8c393c6cf44a4c5"
+  },
+  {
+   "block": "--v74",
+   "id": "projectiles/muzzle-shotgun",
+   "file": "combined-0.png",
+   "bytes": 109783,
+   "sha256": "bd5f053ea1defff21c3cac22fce4462d01d4fc6d02f4cb00e3281d3e0cb13adf"
+  },
+  {
+   "block": "--v75",
+   "id": "projectiles/muzzle-smg",
+   "file": "combined-0.png",
+   "bytes": 79853,
+   "sha256": "579a19e8071761062b0dda929ce4bb3f1b84d136439b0d135df8d3768a70cc29"
+  },
+  {
+   "block": "--v76",
+   "id": "projectiles/rocket",
+   "file": "combined-0.png",
+   "bytes": 297299,
+   "sha256": "edce4355a1d18e62ba2c30a35ca4dc7260aff7bba635942166ce1115639bb4aa"
+  },
+  {
+   "block": "--v77",
+   "id": "spawn/poof",
+   "file": "combined-0.png",
+   "bytes": 110171,
+   "sha256": "4adabbec71b1b3f1fc4ae200ca730818be3608fdfea3d78b09ccd1b068cc0aa2"
+  },
+  {
+   "block": "--v78",
+   "id": "status/burning",
+   "file": "combined-0.png",
+   "bytes": 81677,
+   "sha256": "7aa8ced0a853094cfc8c9f08f889f231c99d9ca823c3e37c17166e0bcbec217a"
+  },
+  {
+   "block": "--v79",
+   "id": "status/rage",
+   "file": "combined-0.png",
+   "bytes": 92138,
+   "sha256": "0db0cce4e1270e87f6ff8efded569891d2d89a6a63e3ade72a675dc79fe856d8"
+  },
+  {
+   "block": "--v80",
+   "id": "status/stunned",
+   "file": "combined-0.png",
+   "bytes": 129454,
+   "sha256": "0efb23091ec0c548e0b373ed31b1dbbc93f99abaeb5af6106eeaf7ef6887da8c"
+  },
+  {
+   "block": "--v81",
+   "id": "water/geyser",
+   "file": "combined-0.png",
+   "bytes": 1173890,
+   "sha256": "4949233b4b9975d2e0a2ee83a88b851ced68d41724d0cb8d9eda380d5c0f6b76"
+  },
+  {
+   "block": "--v82",
+   "id": "water/geyser",
+   "file": "combined-1.png",
+   "bytes": 17821,
+   "sha256": "ebbf2f92c2c6c0663cfa46786d53b243159dddb39a1a4e253923d1ae8a965b31"
+  },
+  {
+   "block": "--v83",
+   "id": "water/ripples",
+   "file": "combined-0.png",
+   "bytes": 213538,
+   "sha256": "ea5007c2640afbddc3ae8af7acc28c669ce5658cc6a327062abf7a85744df863"
+  },
+  {
+   "block": "--v84",
+   "id": "water/splash",
+   "file": "combined-0.png",
+   "bytes": 324052,
+   "sha256": "cb56d48e1928b43ccccd120a31b95879e5b27698a96d6c7963d1e07eb7cda464"
+  },
+  {
+   "block": "--v85",
+   "id": "water/water-orb",
+   "file": "combined-0.png",
+   "bytes": 493054,
+   "sha256": "0f4463851223ff77a41aecfb61e8e147d50369c3c7a8978f1983386e39c56d49"
+  },
+  {
+   "block": "--v86",
+   "id": "water/whirlpool",
+   "file": "combined-0.png",
+   "bytes": 523920,
+   "sha256": "5bc01baaf4d89d6a2831babe88de86a50560d613e379867c261d0129eaad8ce3"
+  }
+ ]
+}

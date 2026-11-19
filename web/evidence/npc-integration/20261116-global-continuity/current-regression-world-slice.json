@@ -1,0 +1,81 @@
+[
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/humanworld.ts",
+    "line": 1678
+  },
+  {
+    "function": "stepHumans",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/humanworld.ts",
+    "line": 1678
+  },
+  {
+    "function": "advanceWorld",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/sim.ts",
+    "line": 2674,
+    "value": {
+      "type": "string",
+      "value": "{\"t\":1760034584001,\"end\":1760034620000,\"dt\":111.07421875,\"remainingMs\":35999,\"humanPlannerAt\":1760034584001,\"humans\":{\"IDLE\":284,\"MOVING\":1,\"WORKING\":1}}"
+    }
+  },
+  {
+    "function": "settle",
+    "file": "file:///home/user/Soul-of-Hero/web/src/game/sim.ts",
+    "line": 2999
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/src/veyra05/review-r2-acceptance.test.ts",
+    "line": 1153
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 302
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 1903
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2326
+  },
+  {
+    "function": "runWithCancel",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2323
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2305
+  },
+  {
+    "function": "runWithTimeout",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2272
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2956
+  },
+  {
+    "function": "run",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 1150
+  },
+  {
+    "function": "limiterFn",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 1162
+  },
+  {
+    "function": "",
+    "file": "file:///home/user/Soul-of-Hero/web/node_modules/@vitest/runner/dist/chunk-artifact.js",
+    "line": 2956
+  }
+]

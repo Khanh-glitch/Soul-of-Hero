@@ -1,0 +1,16 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ tests/npc-p0-corrective.test.ts (27 tests) 3076ms
+     ✓ P0.1: first tick after startRun does not zero hunger/thirst or down humans  1523ms
+ ✓ tests/npc-physical-authority.test.ts (10 tests) 1766ms
+     ✓ one food debit grants one serving, not the full stack  1434ms
+ ✓ tests/npc-humanworld.test.ts (7 tests) 1698ms
+     ✓ startRun seeds a finite HumanWorld from the 81-POI census geometry  1472ms
+ ✓ tests/npc-art.test.ts (4 tests) 21ms
+
+ Test Files  4 passed (4)
+      Tests  48 passed (48)
+   Start at  19:07:39
+   Duration  11.28s (transform 2.71s, setup 0ms, import 4.25s, tests 6.56s, environment 0ms)
+

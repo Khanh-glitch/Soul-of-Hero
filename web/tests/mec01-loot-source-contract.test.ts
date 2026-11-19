@@ -114,7 +114,7 @@ describe('save/reload: the recorded contract and drawn stock survive; withdrawal
   });
   it('partial withdrawal then reload: remaining stacks keep their UIDs and the cache is not re-rolled', () => {
     const g=freshGame();const r=g.run!;
-    const crate=Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='iron_sword'))!;
+    const crate=Object.values(r.entities).find(e=>e.kind==='loot'&&e.poi==='factory'&&e.c&&r.custody[e.c]?.slots.some(s=>s?.key==='machete'))!;
     const slots=r.custody[crate.c!].slots;
     const gi=slots.findIndex(s=>s?.key==='mechanical_gear');expect(gi).toBeGreaterThanOrEqual(0);
     r.creatures=[];r.player.x=crate.tx!*TILE+8;r.player.y=(crate.ty!+1)*TILE+8;

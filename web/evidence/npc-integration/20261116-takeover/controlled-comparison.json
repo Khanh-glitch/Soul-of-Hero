@@ -1,0 +1,49 @@
+{
+  "results": [
+    {
+      "port": 5202,
+      "snapshot": {
+        "runId": "run_5va_mwjmuhnd",
+        "people": 286,
+        "states": {
+          "IDLE": 286
+        },
+        "origin": [
+          871,
+          209
+        ]
+      },
+      "frames": {
+        "samples": 300,
+        "mean": 77.27466666666668,
+        "p95": 100.10000000000218,
+        "p99": 166.70000000000073
+      },
+      "errors": []
+    },
+    {
+      "port": 5201,
+      "snapshot": {
+        "runId": "run_5va_mwjmvgfa",
+        "people": 286,
+        "states": {
+          "IDLE": 286
+        },
+        "origin": [
+          871,
+          209
+        ]
+      },
+      "frames": {
+        "samples": 300,
+        "mean": 83.21900000000001,
+        "p95": 116.70000000000073,
+        "p99": 166.59999999999854
+      },
+      "errors": []
+    }
+  ],
+  "scope": "Disclosed QA start fixture: seed 7606, Greywater (921,259 AU), same Chromium software renderer, 640x360, 300 rAF samples per source. NPC audited source vs current, NOT main/G1B/settlement/combat acceptance.",
+  "validComparison": false,
+  "invalidReason": "Baseline symlinked node_modules caused Vite fs.allow to reject font files, discovered in server log after capture. Do not use these numbers to claim same graphics, <=10% overhead or acceptance. Both runs also had 286 IDLE actors; not a settlement/combat benchmark."
+}

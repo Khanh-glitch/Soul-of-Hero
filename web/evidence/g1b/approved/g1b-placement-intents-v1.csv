@@ -1,0 +1,107 @@
+poi_id,variant,count,zone,access
+po_greywater,supply_low,2,POI,POI exterior or safe interior: verify physical route
+po_greywater,food_low,1,POI,POI exterior or safe interior: verify physical route
+po_greywater,medical_low,1,POI,POI exterior or safe interior: verify physical route
+po_greywater,toolbox_low,1,POI,POI exterior or safe interior: verify physical route
+po_pumphouse,supply_low,1,POI,POI exterior or safe interior: verify physical route
+po_pumphouse,toolbox_low,1,POI,POI exterior or safe interior: verify physical route
+po_pumphouse,medical_low,1,POI,POI exterior or safe interior: verify physical route
+po_confluence,supply_damaged,1,POI,POI exterior or safe interior: verify physical route
+po_confluence,toolbox_damaged,1,POI,POI exterior or safe interior: verify physical route
+po_sawaion,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_sawaion,toolbox_low,1,POI,POI exterior or safe interior: verify physical route
+po_mill,food_mid,1,POI,POI exterior or safe interior: verify physical route
+po_mill,supply_low,1,POI,POI exterior or safe interior: verify physical route
+po_ranger,food_low,1,POI,POI exterior or safe interior: verify physical route
+po_ranger,medical_low,1,POI,POI exterior or safe interior: verify physical route
+po_siloc,supply_mid,2,POI,POI exterior or safe interior: verify physical route
+po_siloc,food_high,1,POI,POI exterior or safe interior: verify physical route
+po_slag,toolbox_high,1,POI,POI exterior or safe interior: verify physical route
+po_slag,military_mid,1,POI,POI exterior or safe interior: verify physical route
+po_slag,supply_high,1,POI,POI exterior or safe interior: verify physical route
+po_gulfhead,supply_low,2,POI,POI exterior or safe interior: verify physical route
+po_gulfhead,food_low,1,POI,POI exterior or safe interior: verify physical route
+po_freightyard,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_freightyard,toolbox_low,1,POI,POI exterior or safe interior: verify physical route
+po_freightyard,military_low,1,POI,POI exterior or safe interior: verify physical route
+po_falls,military_mid,1,POI,POI exterior or safe interior: verify physical route
+po_falls,military_high,1,POI,"DEEP: verify powered door, manual release & escape"
+po_falls,toolbox_high,1,POI,POI exterior or safe interior: verify physical route
+po_falls,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_academy,toolbox_high,1,POI,POI exterior or safe interior: verify physical route
+po_academy,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_academy,medical_mid,1,POI,POI exterior or safe interior: verify physical route
+po_observatory,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_observatory,toolbox_low,1,POI,POI exterior or safe interior: verify physical route
+po_archive,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_archive,military_high,1,POI,DEEP: verify keycard+power+PPE & escape
+po_archive,medical_high,1,POI,DEEP: verify keycard+power+PPE & escape
+po_ironmine,toolbox_low,1,POI,POI exterior or safe interior: verify physical route
+po_ironmine,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_ironmine,military_low,1,POI,POI exterior or safe interior: verify physical route
+po_ironwh,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_ironwh,toolbox_high,1,POI,POI exterior or safe interior: verify physical route
+po_ironwh,military_low,1,POI,POI exterior or safe interior: verify physical route
+po_ironharbor,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_ironharbor,food_mid,1,POI,POI exterior or safe interior: verify physical route
+po_wreck,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_wreck,toolbox_high,1,POI,POI exterior or safe interior: verify physical route
+po_wreck,military_mid,1,POI,POI exterior or safe interior: verify physical route
+po_filter,medical_mid,1,POI,POI exterior or safe interior: verify physical route
+po_filter,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_meridian,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_meridian,medical_mid,1,POI,POI exterior or safe interior: verify physical route
+po_meridian,medical_high,1,POI,"DEEP: verify keyed door, power & escape"
+po_kestrel,toolbox_low,1,POI,POI exterior or safe interior: verify physical route
+po_kestrel,military_low,1,POI,POI exterior or safe interior: verify physical route
+po_tidecamp,food_low,1,POI,POI exterior or safe interior: verify physical route
+po_tidecamp,supply_low,1,POI,POI exterior or safe interior: verify physical route
+po_fishcamp,food_low,1,POI,POI exterior or safe interior: verify physical route
+po_fishcamp,medical_low,1,POI,POI exterior or safe interior: verify physical route
+po_saltpans,supply_low,1,POI,POI exterior or safe interior: verify physical route
+po_saltpans,toolbox_low,1,POI,POI exterior or safe interior: verify physical route
+po_ember,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_ember,military_low,1,POI,POI exterior or safe interior: verify physical route
+po_sulfur,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_sulfur,toolbox_high,1,POI,POI exterior or safe interior: verify physical route
+po_geo,supply_high,1,POI,POI exterior or safe interior: verify physical route
+po_geo,military_mid,1,POI,POI exterior or safe interior: verify physical route
+po_emberwatch,military_low,1,POI,POI exterior or safe interior: verify physical route
+po_emberwatch,medical_low,1,POI,POI exterior or safe interior: verify physical route
+po_kilns,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_kilns,toolbox_low,1,POI,POI exterior or safe interior: verify physical route
+po_greyquarry,toolbox_damaged,1,POI,POI exterior or safe interior: verify physical route
+po_greyquarry,supply_damaged,1,POI,POI exterior or safe interior: verify physical route
+po_saltharbor,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_saltharbor,food_mid,1,POI,POI exterior or safe interior: verify physical route
+po_ironvein,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_ironvein,toolbox_low,1,POI,POI exterior or safe interior: verify physical route
+po_lantern,supply_low,1,POI,POI exterior or safe interior: verify physical route
+po_lantern,medical_low,1,POI,POI exterior or safe interior: verify physical route
+po_strait,supply_mid,1,POI,POI exterior or safe interior: verify physical route
+po_strait,food_mid,1,POI,POI exterior or safe interior: verify physical route
+po_strait,medical_low,1,POI,POI exterior or safe interior: verify physical route
+rd_b,supply_low,2,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_b,toolbox_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_b,food_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_6,supply_low,2,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_6,toolbox_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_6,military_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_11,supply_damaged,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_11,toolbox_damaged,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_13,supply_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_13,food_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_16,supply_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_16,medical_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_19,supply_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_19,toolbox_damaged,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_1a,supply_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_1a,military_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_1b,supply_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_1b,medical_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_1c,supply_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_1c,toolbox_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_2,supply_damaged,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_2,toolbox_damaged,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_3,supply_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A
+rd_3,food_low,1,ROAD,verify GOLD road ID + walkable shoulder; not colliding with G1A

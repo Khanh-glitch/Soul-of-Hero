@@ -1,0 +1,367 @@
+{
+ "note": "ENGINE-LEVEL measurement via tick(); ms = sim time from first to last landed hit; units = stock released per hit. SOH_PROVISIONAL tuning.",
+ "swingMs": {
+  "stone_axe": 420,
+  "knife": 300,
+  "cleaver": 330,
+  "machete": 330,
+  "iron_pick": 430,
+  "stone_pick": 450,
+  "industrial_pick": 410,
+  "iron_axe": 400
+ },
+ "table": {
+  "road_salvage_bale": {
+   "stone_axe": {
+    "hits": 9,
+    "ms": 3600,
+    "units": [
+     0,
+     0,
+     1,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1
+    ]
+   },
+   "knife": {
+    "hits": 5,
+    "ms": 1200,
+    "units": [
+     0,
+     1,
+     1,
+     0,
+     1
+    ]
+   },
+   "cleaver": {
+    "hits": 3,
+    "ms": 700,
+    "units": [
+     1,
+     1,
+     1
+    ]
+   },
+   "machete": {
+    "hits": 3,
+    "ms": 700,
+    "units": [
+     1,
+     1,
+     1
+    ]
+   },
+   "iron_pick": {
+    "hits": 9,
+    "ms": 3600,
+    "units": [
+     0,
+     0,
+     1,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1
+    ]
+   },
+   "stone_pick": {
+    "hits": 9,
+    "ms": 3600,
+    "units": [
+     0,
+     0,
+     1,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1
+    ]
+   },
+   "industrial_pick": {
+    "hits": 9,
+    "ms": 3600,
+    "units": [
+     0,
+     0,
+     1,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1
+    ]
+   },
+   "iron_axe": {
+    "hits": 9,
+    "ms": 3200,
+    "units": [
+     0,
+     0,
+     1,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  "road_relay_wreck": {
+   "stone_axe": {
+    "hits": 12,
+    "ms": 4950,
+    "units": [
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1
+    ]
+   },
+   "knife": {
+    "hits": 6,
+    "ms": 1500,
+    "units": [
+     0,
+     1,
+     0,
+     1,
+     0,
+     1
+    ]
+   },
+   "cleaver": {
+    "hits": 4,
+    "ms": 1050,
+    "units": [
+     0,
+     1,
+     1,
+     1
+    ]
+   },
+   "machete": {
+    "hits": 3,
+    "ms": 700,
+    "units": [
+     1,
+     1,
+     1
+    ]
+   },
+   "iron_pick": {
+    "hits": 12,
+    "ms": 5200,
+    "units": [
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1
+    ]
+   },
+   "stone_pick": {
+    "hits": 12,
+    "ms": 4950,
+    "units": [
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1
+    ]
+   },
+   "industrial_pick": {
+    "hits": 12,
+    "ms": 4950,
+    "units": [
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1
+    ]
+   },
+   "iron_axe": {
+    "hits": 12,
+    "ms": 4400,
+    "units": [
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  "road_fuel_rack": {
+   "stone_axe": {
+    "hits": 12,
+    "ms": 4950,
+    "units": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ]
+   },
+   "knife": {
+    "hits": 6,
+    "ms": 1500,
+    "units": [
+     0,
+     0,
+     1,
+     0,
+     0,
+     1
+    ]
+   },
+   "cleaver": {
+    "hits": 4,
+    "ms": 1050,
+    "units": [
+     0,
+     1,
+     0,
+     1
+    ]
+   },
+   "machete": {
+    "hits": 3,
+    "ms": 700,
+    "units": [
+     0,
+     1,
+     1
+    ]
+   },
+   "iron_pick": {
+    "hits": 12,
+    "ms": 4950,
+    "units": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ]
+   },
+   "stone_pick": {
+    "hits": 12,
+    "ms": 4950,
+    "units": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ]
+   },
+   "industrial_pick": {
+    "hits": 12,
+    "ms": 4950,
+    "units": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ]
+   },
+   "iron_axe": {
+    "hits": 12,
+    "ms": 4400,
+    "units": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ]
+   }
+  }
+ }
+}

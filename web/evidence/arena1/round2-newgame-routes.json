@@ -1,0 +1,399 @@
+{
+ "schema": "soh-arena1-round2-newgame-routes-v1",
+ "generated_by": "web/tests/arena1-round2-newgame-routes.test.ts (SOH_WRITE_ARENA1=1)",
+ "method": "ENGINE_BOT: real New Game on Veyra; movement and swings are tick() input, everything else is a dispatch() intent; no granted items, stations, recipes or positions; creatures untouched. NOT a browser play-through. Times are lower bounds (the bot knows the source map).",
+ "route_oil": {
+  "seed": 7,
+  "startingPack": [
+   "knife x1",
+   "water_flask x1",
+   "berries x3"
+  ],
+  "startingRecipes": 72,
+  "stages": [
+   {
+    "stage": "reach a crude seep",
+    "status": "PROVEN",
+    "atMinute": 0.4,
+    "detail": {
+     "seepsInStartWindow": 5,
+     "walkedTiles": 77,
+     "seepStock": 60
+    }
+   },
+   {
+    "stage": "camp (campfire, stone tools, furnace)",
+    "status": "PROVEN",
+    "atMinute": 1.8,
+    "detail": {
+     "tools": [
+      "stone_pick",
+      "stone_axe"
+     ]
+    }
+   },
+   {
+    "stage": "iron ore -> 22 ingots",
+    "status": "PROVEN",
+    "atMinute": 9.2,
+    "detail": {
+     "ingots": 22
+    }
+   },
+   {
+    "stage": "Parts from roadside scrap and wrecks",
+    "status": "PROVEN",
+    "atMinute": 11.1,
+    "detail": {
+     "parts": 33,
+     "alsoDropped": {
+      "tin_can": 9,
+      "electronic_parts": 3,
+      "needle_tube": 1
+     }
+    }
+   },
+   {
+    "stage": "research Glass",
+    "status": "PROVEN",
+    "atMinute": 13.5,
+    "detail": {
+     "cost": "9 Parts, 45 s"
+    }
+   },
+   {
+    "stage": "Glass, Charcoal, Refined Iron",
+    "status": "PROVEN",
+    "atMinute": 16.5,
+    "detail": {
+     "glass": 4,
+     "refined": 4
+    }
+   },
+   {
+    "stage": "Workbench level 2 beside the seep",
+    "status": "PROVEN",
+    "atMinute": 16.7,
+    "detail": {
+     "upgradeBill": [
+      [
+       "iron_ingot",
+       2
+      ],
+      [
+       "spares",
+       4
+      ]
+     ]
+    }
+   },
+   {
+    "stage": "craft Gear and Pipe",
+    "status": "PROVEN",
+    "atMinute": 17.6,
+    "detail": {
+     "gear": 1,
+     "pipe": 4
+    }
+   },
+   {
+    "stage": "Oil Pump placed on the seep",
+    "status": "PROVEN",
+    "atMinute": 17.6,
+    "detail": {
+     "refusedOffSeep": "This tile is not an oil site. Stand the Oil Pump on a crude seep: a dark, shining pool on open ground."
+    }
+   },
+   {
+    "stage": "pump Crude Petroleum",
+    "status": "PROVEN",
+    "atMinute": 19,
+    "detail": {
+     "crude": 6,
+     "seepStockLeft": 54,
+     "secondsEach": 12
+    }
+   },
+   {
+    "stage": "Refinery -> Fuel Canister",
+    "status": "PROVEN",
+    "atMinute": 19.8,
+    "detail": {
+     "fuelCans": 2,
+     "bill": [
+      [
+       "crude_petroleum",
+       3
+      ],
+      [
+       "glass",
+       1
+      ]
+     ]
+    }
+   }
+  ],
+  "extensions": [
+   {
+    "stage": "Electric Resistor from a wreck",
+    "status": "PROVEN",
+    "atMinute": 20.6,
+    "detail": {
+     "carried": 3
+    }
+   },
+   {
+    "stage": "Wooden Ladder: study, craft, lean on a cliff, cross on foot",
+    "status": "PROVEN",
+    "atMinute": 25.4,
+    "detail": {
+     "windowsSearched": [
+      {
+       "around": [
+        1881,
+        689
+       ],
+       "cliffTiles": 77,
+       "oneTileFaces": 16
+      }
+     ],
+     "cliffTilesInWindow": 77,
+     "oneTileFaces": 16,
+     "facesTried": 1,
+     "refusals": {},
+     "tilesFromCamp": 139,
+     "crossedFrom": [
+      1822,
+      767
+     ],
+     "over": [
+      1822,
+      768
+     ],
+     "crossedTo": [
+      1822,
+      769
+     ],
+     "farSideNeededADetourBefore": true
+    }
+   },
+   {
+    "stage": "Large Furnace: study, plates, craft, place, smelt",
+    "status": "PROVEN",
+    "atMinute": 39.9,
+    "detail": {
+     "smeltSeconds": 5,
+     "ordinaryFurnaceSeconds": 10,
+     "packBillKg": 59.2,
+     "carryLimitKg": 60,
+     "packKg": 30
+    }
+   },
+   {
+    "stage": "Iron Plate Pants: study, hunt hide, sew, wear",
+    "status": "PROVEN",
+    "atMinute": 50.4,
+    "detail": {
+     "worn": [
+      null,
+      null,
+      null,
+      "iron_plate_pants",
+      null
+     ]
+    }
+   }
+  ],
+  "end": {
+   "seed": 7,
+   "minutes": 50.4,
+   "ticks": 60364,
+   "hp": 96,
+   "hunger": 60,
+   "thirst": 91,
+   "drinks": 6,
+   "toolsRemade": 1,
+   "toolRepairs": 3,
+   "nodesStruckFromAnotherSide": 4,
+   "stacksStashed": 26,
+   "bandages": 0,
+   "hunts": 5,
+   "refuels": 1,
+   "fightSeconds": 7,
+   "shifts": 15,
+   "damageTaken": 147,
+   "failures": {},
+   "ate": {
+    "berries": 12
+   },
+   "kills": {
+    "vampire_2": 2,
+    "hare": 3,
+    "grouse": 1,
+    "boar": 2,
+    "deer": 1
+   }
+  },
+  "swingsThatNeverConnected": {},
+  "notes": [
+   "[0.8m] placed Campfire",
+   "[1.8m] placed Furnace",
+   "[12.7m] placed Research Table",
+   "[16.7m] placed Workbench",
+   "[19.3m] placed Oil Refinery",
+   "[25.8m] placed Wood Chest",
+   "[25.8m] placed Wood Chest",
+   "[36.7m] remade stone_axe (the old one wore out)",
+   "[36.8m] gather wood: no reachable tree/pine/jungle/deadtree (have 1/4)",
+   "[37.3m] gather wood: no reachable tree/pine/jungle/deadtree (have 1/4)",
+   "[37.3m] gather wood: no reachable tree/pine/jungle/deadtree (have 1/4)",
+   "[38.1m] placed Large Furnace"
+  ]
+ },
+ "route_food": [
+  {
+   "seed": 7,
+   "survivedMinutes": 60.1,
+   "died": null,
+   "hungerDrainPoints": 144,
+   "hungerEatenPoints": 132,
+   "ate": {
+    "berries": 3,
+    "grilled_mushroom": 9
+   },
+   "sourcesUsed": {
+    "marsh_caps": 2
+   },
+   "minutesSpentOnFood": 2.5,
+   "minutesSpentOnWater": 0.4,
+   "shareOfTimeOnFoodAndWater": 0.049,
+   "hpMin": 15,
+   "hungerMin": 60,
+   "thirstMin": 55,
+   "end": {
+    "seed": 7,
+    "minutes": 60.1,
+    "ticks": 72082,
+    "hp": 94,
+    "hunger": 73,
+    "thirst": 57,
+    "drinks": 8,
+    "toolsRemade": 0,
+    "toolRepairs": 0,
+    "nodesStruckFromAnotherSide": 0,
+    "stacksStashed": 0,
+    "bandages": 0,
+    "hunts": 0,
+    "refuels": 0,
+    "fightSeconds": 6,
+    "shifts": 0,
+    "damageTaken": 91,
+    "failures": {},
+    "ate": {
+     "berries": 3,
+     "grilled_mushroom": 9
+    },
+    "kills": {
+     "boar": 1
+    }
+   },
+   "notes": [
+    "[20.4m] gather berries: no reachable bush (have 0/9)",
+    "[21.2m] placed Campfire",
+    "[50.5m] gather berries: no reachable bush (have 0/9)"
+   ]
+  },
+  {
+   "seed": 11,
+   "survivedMinutes": 60,
+   "died": null,
+   "hungerDrainPoints": 144,
+   "hungerEatenPoints": 128,
+   "ate": {
+    "berries": 16
+   },
+   "sourcesUsed": {
+    "berry_bush": 2
+   },
+   "minutesSpentOnFood": 0.2,
+   "minutesSpentOnWater": 0.1,
+   "shareOfTimeOnFoodAndWater": 0.004,
+   "hpMin": 67,
+   "hungerMin": 60,
+   "thirstMin": 55,
+   "end": {
+    "seed": 11,
+    "minutes": 60,
+    "ticks": 72007,
+    "hp": 67,
+    "hunger": 69,
+    "thirst": 64,
+    "drinks": 6,
+    "toolsRemade": 0,
+    "toolRepairs": 0,
+    "nodesStruckFromAnotherSide": 0,
+    "stacksStashed": 0,
+    "bandages": 0,
+    "hunts": 0,
+    "refuels": 0,
+    "fightSeconds": 3,
+    "shifts": 1,
+    "damageTaken": 59,
+    "failures": {},
+    "ate": {
+     "berries": 16
+    },
+    "kills": {
+     "boar": 1
+    }
+   },
+   "notes": []
+  },
+  {
+   "seed": 23,
+   "survivedMinutes": 60.1,
+   "died": null,
+   "hungerDrainPoints": 144,
+   "hungerEatenPoints": 128,
+   "ate": {
+    "berries": 16
+   },
+   "sourcesUsed": {
+    "berry_bush": 2
+   },
+   "minutesSpentOnFood": 0.2,
+   "minutesSpentOnWater": 0.1,
+   "shareOfTimeOnFoodAndWater": 0.004,
+   "hpMin": 100,
+   "hungerMin": 60,
+   "thirstMin": 55,
+   "end": {
+    "seed": 23,
+    "minutes": 60.1,
+    "ticks": 72079,
+    "hp": 100,
+    "hunger": 69,
+    "thirst": 64,
+    "drinks": 6,
+    "toolsRemade": 0,
+    "toolRepairs": 0,
+    "nodesStruckFromAnotherSide": 0,
+    "stacksStashed": 0,
+    "bandages": 0,
+    "hunts": 0,
+    "refuels": 0,
+    "fightSeconds": 0,
+    "shifts": 1,
+    "damageTaken": 0,
+    "failures": {},
+    "ate": {
+     "berries": 16
+    },
+    "kills": {
+     "grouse": 1
+    }
+   },
+   "notes": []
+  }
+ ]
+}

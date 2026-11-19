@@ -1,0 +1,295 @@
+{
+  "status": "Natural food chain PASS, overall integration PARTIAL",
+  "genesisSource": "d799270",
+  "consumerSource": "d799270 + equivalent restored-and-removed warehouse preflight and test-only edits; production final 33a1f12",
+  "seed": 7606,
+  "population": 286,
+  "setup": "Ordinary New Game; no injected intent, ingredients, station, output, or hunger",
+  "genesisTestMs": 92362,
+  "consumerTestMs": 451471,
+  "paid": [
+    {
+      "id": "r3664",
+      "at": 1794730176658.143,
+      "kind": "human.production.pay",
+      "detail": {
+        "workerId": "hu",
+        "jobId": "j3f6",
+        "recipe": "jam",
+        "stationId": "e1ch",
+        "inputs": [
+          {
+            "uid": "s1cw",
+            "key": "berries",
+            "qty": 4,
+            "containerId": "c1cu"
+          },
+          {
+            "uid": "s3f0",
+            "key": "berries",
+            "qty": 6,
+            "containerId": "c1cu"
+          },
+          {
+            "uid": "s36d",
+            "key": "cloth",
+            "qty": 1,
+            "containerId": "c1cu"
+          },
+          {
+            "uid": "s35s",
+            "key": "tin_can",
+            "qty": 1,
+            "containerId": "c1cu"
+          }
+        ],
+        "totalMs": 20000
+      }
+    }
+  ],
+  "tinHarvestAndDelivery": [
+    {
+      "id": "r2127",
+      "at": 1794729917372.4329,
+      "kind": "human.harvest.output",
+      "detail": {
+        "jobId": "hj357",
+        "sourceId": "0:7761295",
+        "workerId": "hw",
+        "uid": "s35s",
+        "key": "tin_can",
+        "qty": 1
+      }
+    },
+    {
+      "id": "r2260",
+      "at": 1794729939804.1777,
+      "kind": "human.cargo.lineage",
+      "detail": {
+        "containerId": "c1c1",
+        "transferUid": "s35s",
+        "lineage": [
+          {
+            "at": 1794729939804.1777,
+            "jobId": "hj357",
+            "sourceId": "0:7761295",
+            "workerId": "hw",
+            "fromUid": "s35s",
+            "intoUid": "s35s",
+            "qty": 1,
+            "key": "tin_can"
+          }
+        ]
+      }
+    },
+    {
+      "id": "r3803",
+      "at": 1794730199896.298,
+      "kind": "human.cargo.lineage",
+      "detail": {
+        "containerId": "c1c1",
+        "transferUid": "s3fx",
+        "lineage": [
+          {
+            "at": 1794730199896.298,
+            "jobId": "j3f6",
+            "recipe": "jam",
+            "inputs": [
+              {
+                "uid": "s1cw",
+                "key": "berries",
+                "qty": 4,
+                "containerId": "c1cu"
+              },
+              {
+                "uid": "s3f0",
+                "key": "berries",
+                "qty": 6,
+                "containerId": "c1cu"
+              },
+              {
+                "uid": "s36d",
+                "key": "cloth",
+                "qty": 1,
+                "containerId": "c1cu"
+              },
+              {
+                "uid": "s35s",
+                "key": "tin_can",
+                "qty": 1,
+                "containerId": "c1cu"
+              }
+            ],
+            "stationId": "e1ch",
+            "workerId": "hu",
+            "fromUid": "s3fx",
+            "intoUid": "s3fx",
+            "qty": 1,
+            "key": "jam"
+          }
+        ]
+      }
+    }
+  ],
+  "clothContribution": [
+    {
+      "id": "r2023",
+      "at": 1794729894001,
+      "kind": "human.procurement.contribute",
+      "detail": {
+        "requestId": "rq2u5",
+        "workerId": "hr",
+        "fromContainer": "c1bw",
+        "from": [
+          {
+            "uid": "s1bz",
+            "qty": 2
+          }
+        ],
+        "intoContainer": "c1a4",
+        "key": "cloth",
+        "qty": 1,
+        "received": [
+          {
+            "uid": "s352",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "r2088",
+      "at": 1794729909229.5715,
+      "kind": "human.procurement.contribute",
+      "detail": {
+        "requestId": "rq2ub",
+        "workerId": "h19",
+        "fromContainer": "c1fg",
+        "from": [
+          {
+            "uid": "s1fj",
+            "qty": 2
+          }
+        ],
+        "intoContainer": "c1dt",
+        "key": "cloth",
+        "qty": 1,
+        "received": [
+          {
+            "uid": "s35i",
+            "qty": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "r2253",
+      "at": 1794729937437.0913,
+      "kind": "human.procurement.contribute",
+      "detail": {
+        "requestId": "rq2u7",
+        "workerId": "h11",
+        "fromContainer": "c1do",
+        "from": [
+          {
+            "uid": "s1dr",
+            "qty": 2
+          }
+        ],
+        "intoContainer": "c1c1",
+        "key": "cloth",
+        "qty": 1,
+        "received": [
+          {
+            "uid": "s36d",
+            "qty": 1
+          }
+        ]
+      }
+    }
+  ],
+  "jamDelivery": [
+    {
+      "id": "r3803",
+      "at": 1794730199896.298,
+      "kind": "human.cargo.lineage",
+      "detail": {
+        "containerId": "c1c1",
+        "transferUid": "s3fx",
+        "lineage": [
+          {
+            "at": 1794730199896.298,
+            "jobId": "j3f6",
+            "recipe": "jam",
+            "inputs": [
+              {
+                "uid": "s1cw",
+                "key": "berries",
+                "qty": 4,
+                "containerId": "c1cu"
+              },
+              {
+                "uid": "s3f0",
+                "key": "berries",
+                "qty": 6,
+                "containerId": "c1cu"
+              },
+              {
+                "uid": "s36d",
+                "key": "cloth",
+                "qty": 1,
+                "containerId": "c1cu"
+              },
+              {
+                "uid": "s35s",
+                "key": "tin_can",
+                "qty": 1,
+                "containerId": "c1cu"
+              }
+            ],
+            "stationId": "e1ch",
+            "workerId": "hu",
+            "fromUid": "s3fx",
+            "intoUid": "s3fx",
+            "qty": 1,
+            "key": "jam"
+          }
+        ]
+      }
+    }
+  ],
+  "consumption": [
+    {
+      "id": "r36850",
+      "at": 1794764454335.3462,
+      "kind": "human.consume",
+      "detail": {
+        "actorId": "h11",
+        "uid": "s3fx",
+        "key": "jam",
+        "containerId": "c1c1",
+        "qty": 1
+      }
+    }
+  ],
+  "hungerBefore": 39.71174739937964,
+  "hungerAfter": 79.36439290196539,
+  "checks": [
+    "full 286 IDs retained",
+    "serialized separate-process biological continuation",
+    "repeated timestamp no mutation",
+    "validate reload no duplicate consumption"
+  ],
+  "regression": {
+    "focused": "72/72 in 11 suites; added bill contention test then paid-work5/5",
+    "appTypecheck": "PASS",
+    "testTypecheck": "PASS",
+    "build": "PASS",
+    "unchangedHour": "RED: external original100s watchdog exit124, internal90s unchanged"
+  },
+  "limitations": [
+    "Natural lifecycle interruption matrix incomplete",
+    "Other professions/social/combat/Elders/evacuation/h336/browser acceptance incomplete",
+    "No performance acceptance or release claim"
+  ]
+}

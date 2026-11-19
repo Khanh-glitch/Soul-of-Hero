@@ -1,12 +1,19 @@
 import React from 'react';
 import { ITEMS } from '../game/catalog';
 import { getArt } from '../game/art';
+import { atlasIconUrl } from '../game/item-atlas';
 import type { Stack, GameState } from '../game/core';
 import type { Intent, Result } from '../game/engine';
 
 let iconUrls: Record<string, string> | null = null;
-export function iconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || ''; }
-export function Icon({ k, size = 16, style }: { k: string; size?: number; style?: React.CSSProperties }) { return <img className="px" src={iconUrl(k)} width={size} height={size} style={{ width: size, height: size, ...style }} draggable={false} alt="" />; }
+function drawnIconUrl(key: string) { if (!iconUrls) { iconUrls = {}; const A = getArt(); for (const [k, c] of Object.entries(A.icon)) iconUrls[k] = c.toDataURL(); for (const [k, c] of Object.entries(A.st)) iconUrls['st:' + k] = c.toDataURL(); } return iconUrls[key] || ''; }
+/** Item icon: the approved 157-atlas cell for every mapped id; the drawn icon only for ids outside the 157 and for `st:` structure art. */
+export function iconUrl(key: string) { return atlasIconUrl(key) || drawnIconUrl(key); }
+export function Icon({ k, size = 16, style }: { k: string; size?: number; style?: React.CSSProperties }) {
+  const approved = atlasIconUrl(k), src = approved || drawnIconUrl(k);
+  if (!src) return <span className="px" style={{ display: 'inline-block', width: size, height: size, ...style }} aria-hidden="true" />;
+  return <img className="px" src={src} width={size} height={size} data-icon={approved ? 'atlas157' : 'drawn'} data-item={k} style={{ width: size, height: size, ...style }} draggable={false} alt="" />;
+}
 
 export interface Api {
   gs: GameState; now: () => number;
@@ -16,24 +23,35 @@ export interface Api {
   sel: { c: string; slot: number } | null; setSel: (s: { c: string; slot: number } | null) => void;
   setBuild: (t: string | null) => void; buildType: string | null; reclaim: boolean; setReclaim: (b: boolean) => void; repairMode: boolean; setRepairMode: (b: boolean) => void; setUpgradeMode: (b: boolean) => void;
   sfx: (t: string) => void; rerender: () => void;
+  /** Test/inspection seam forwarded to StationConsole by ContainerPanel; never set in the shipped loop. */
+  stationConsoleTab?: 'make' | 'study' | 'families';
 }
-export type PanelState = { kind: 'inv' | 'craft' | 'build' | 'map' | 'skills' | 'rest' | 'menu' | 'container' | 'vendor' | 'escrow' | 'evac' | 'report' | 'research'; eid?: string; recipe?: string; lines?: string[]; report?: import('../game/return-report').OfflineReturnV1 | null };
+export type PanelState = { kind: 'inv' | 'craft' | 'build' | 'map' | 'skills' | 'rest' | 'menu' | 'container' | 'vendor' | 'escrow' | 'evac' | 'report' | 'research' | 'notes' | 'journey' | 'human'; eid?: string; actorId?: string; recipe?: string; lines?: string[]; report?: import('../game/return-report').OfflineReturnV1 | null };
 export const mkIntent = (type: string, p: Record<string, any> = {}): Intent => ({ id: `${type}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`, type, ...p });
 
-export function Slot({ s, sel, active, onClick, onContext, hotkey, title }: { s: Stack | null; sel?: boolean; active?: boolean; onClick?: (e: React.MouseEvent) => void; onContext?: (e: React.MouseEvent) => void; hotkey?: string; title?: string }) {
+export function Slot({ s, sel, active, onClick, onContext, hotkey, title, slotIndex }: { s: Stack | null; sel?: boolean; active?: boolean; onClick?: (e: React.MouseEvent) => void; onContext?: (e: React.MouseEvent) => void; hotkey?: string; title?: string; slotIndex?: number }) {
   const d = s ? ITEMS[s.key] : null;
-  return <div className={`slot ${sel ? 'sel' : ''} ${active ? 'active' : ''}`} onMouseDown={e => { if (e.button === 0) onClick?.(e); }} onContextMenu={e => { e.preventDefault(); onContext?.(e); }} title={title ?? (d ? `${d.name}${s!.meta ? ' — ' + s!.meta : ''}` : '')}>
+  const depleted = s && ((d?.charge && (s.charge ?? 0) <= 0) || (d?.creatorCore && s.dur === 0) || (s.dur === 0 && d?.repair));
+  return <div className={`slot ${sel ? 'sel' : ''} ${active ? 'active' : ''} ${s ? 'filled' : 'empty'} ${depleted ? 'depleted' : ''}`}
+    data-hotbar-slot={slotIndex}
+    onMouseDown={e => { if (e.button === 0) onClick?.(e); }}
+    onContextMenu={e => { e.preventDefault(); onContext?.(e); }}
+    title={title ?? (d ? `${d.name}${s!.meta ? ' — ' + s!.meta : ''}${s!.qty > 1 ? ` ×${s!.qty}` : ''}` : hotkey ? `Quickbar ${hotkey} (empty)` : '')}>
     {hotkey && <span className="k">{hotkey}</span>}
-    {s && <Icon k={s.key} style={{ position: 'absolute', left: 1, top: 1 }} />}
+    {active && <span className="slot__pip" aria-hidden="true" />}
+    {s && <Icon k={s.key} size={18} style={{ position: 'absolute', left: 1, top: 1 }} />}
     {s && s.dur === 0 && d?.repair && <span className="q" style={{ color: '#ff7a6a' }}>!</span>}
     {s && s.qty > 1 && <span className="q">{s.qty}</span>}
     {s && d?.charge && s.charge !== undefined && <span className="q" style={{ color: s.charge ? '#9ae0ff' : '#ff7a6a' }}>{s.charge}⚡</span>}
-    {s && s.dur !== undefined && d?.dur && <span className="dur"><i style={{ width: `${(s.dur / d.dur) * 100}%`, background: s.dur / d.dur < 0.25 ? '#ff5a3a' : '#7aff6a' }} /></span>}
+    {s && d?.creatorCore && <span className="slot__res" aria-hidden="true">
+      {[1, 2, 3].map(n => <i key={n} style={{ background: (s.lvl ?? 3) >= n ? (n === 1 ? 'var(--paper)' : n === 2 ? 'var(--info)' : 'var(--brassLit)') : '#3a2222' }} />)}
+    </span>}
+    {s && s.dur !== undefined && (d?.dur || d?.creatorCore) && (() => { const f = s.dur / (d.creatorCore ? 300 : d.dur!); return <span className="dur"><i style={{ width: `${f * 100}%`, background: f < 0.25 ? '#ff5a3a' : f < 0.5 ? '#e8b23c' : '#7aff6a' }} /></span>; })()}
   </div>;
 }
-export function Panel({ title, children, style, onClose, className = '' }: { title: React.ReactNode; children: React.ReactNode; style?: React.CSSProperties; onClose?: () => void; className?: string }) {
-  return <div className={`panel absolute fadein ${className}`} style={{ padding: 6, ...style }} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
-    <div className="flex items-center justify-between" style={{ marginBottom: 4 }}><div className="panel-h">{title}</div>{onClose && <button className="btn ghost" style={{ padding: '0 4px', fontSize: 11 }} onClick={onClose}>✕</button>}</div>
+export function Panel({ title, children, style, onClose, className = '', testId }: { title: React.ReactNode; children: React.ReactNode; style?: React.CSSProperties; onClose?: () => void; className?: string; testId?: string }) {
+  return <div className={`panel absolute fadein ${className}`} data-testid={testId} style={{ padding: 6, ...style }} onMouseDown={e => e.stopPropagation()} onContextMenu={e => e.preventDefault()}>
+    <div className="flex items-center justify-between" style={{ marginBottom: 4 }}><div className="panel-h">{title}</div>{onClose && <button className="btn ghost" aria-label="Close panel" style={{ padding: '0 4px', fontSize: 11 }} onClick={onClose}>✕</button>}</div>
     {children}
   </div>;
 }

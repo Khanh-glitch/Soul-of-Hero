@@ -1,0 +1,183 @@
+
+> react-vite-tailwind@0.0.0 build
+> vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 267 modules transformed.
+[plugin vite:reporter] 
+(!) /home/user/Soul-of-Hero/web/src/veyra05/chunks.ts is dynamically imported by /home/user/Soul-of-Hero/web/src/veyra05/decor-client.ts but also statically imported by /home/user/Soul-of-Hero/web/src/veyra05/art-nature.ts, /home/user/Soul-of-Hero/web/src/veyra05/decor-client.ts, /home/user/Soul-of-Hero/web/src/veyra05/inspector/Inspector.tsx, /home/user/Soul-of-Hero/web/src/veyra05/preview-render.ts, /home/user/Soul-of-Hero/web/src/veyra05/window.ts, dynamic import will not move module into another chunk.
+
+rendering chunks...
+computing gzip size...
+dist/index.html                                                    0.46 kB │ gzip:     0.31 kB
+dist/assets/pixelify-sans-cyrillic-700-normal-CFLw9XVy.woff2       3.17 kB
+dist/assets/pixelify-sans-cyrillic-400-normal-BP-OuUjl.woff2       3.19 kB
+dist/assets/light-0-mjh30p1q.png                                   3.59 kB
+dist/assets/vfx-ddcef24bbe8a50a9e982.png                           3.81 kB
+dist/assets/vt323-vietnamese-400-normal-CwhZGgAM.woff              4.21 kB
+dist/assets/pixelify-sans-cyrillic-700-normal-C0MIA15z.woff        4.38 kB
+dist/assets/pixelify-sans-cyrillic-400-normal-DN59EtPa.woff        4.39 kB
+dist/assets/pixelify-sans-latin-ext-400-normal-BVwcVCgP.woff2      5.30 kB
+dist/assets/pixelify-sans-latin-ext-700-normal-CWuc2Mtu.woff2      5.34 kB
+dist/assets/vfx-63ab7d3ff5780371b7cc.png                           5.67 kB
+dist/assets/pixelify-sans-latin-ext-400-normal-BLqhni0U.woff       7.40 kB
+dist/assets/pixelify-sans-latin-ext-700-normal-DOh6obRt.woff       7.43 kB
+dist/assets/vt323-vietnamese-400-normal-DXYSXa9B.woff2             7.50 kB
+dist/assets/pixelify-sans-latin-400-normal-DZxf1tpg.woff2          7.72 kB
+dist/assets/pixelify-sans-latin-700-normal-Bq5zIolO.woff2          7.98 kB
+dist/assets/vt323-latin-ext-400-normal-QkjK6OZo.woff               8.80 kB
+dist/assets/light-3-Dq2xezrH.png                                   8.93 kB
+dist/assets/combined-3-DDw-NGDp.png                                9.06 kB
+dist/assets/vfx-568fa7e809966af78b9d.png                           9.06 kB
+dist/assets/vt323-latin-400-normal-JZdnI__-.woff                   9.23 kB
+dist/assets/pixelify-sans-latin-400-normal-En2ys_zY.woff          10.39 kB
+dist/assets/pixelify-sans-latin-700-normal-DZtJe3sx.woff          10.60 kB
+dist/assets/vt323-latin-ext-400-normal-C0dxqyaI.woff2             15.72 kB
+dist/assets/vt323-latin-400-normal-C5q55ueI.woff2                 17.67 kB
+dist/assets/light-2-BMjq6dme.png                                  17.72 kB
+dist/assets/vfx-ebbf2f92c2c6c0663cfa.png                          17.82 kB
+dist/assets/combined-2-DaOYvcT-.png                               18.94 kB
+dist/assets/vfx-ab41bc210440141504d7.png                          18.94 kB
+dist/assets/vfx-bb36799d735b4f3b5463.png                          20.45 kB
+dist/assets/vfx-34e4b511f7e6975a56ab.png                          20.86 kB
+dist/assets/vfx-29789f92b6a40e0b549b.png                          22.69 kB
+dist/assets/vfx-0b4f87990ad4894bf762.png                          26.01 kB
+dist/assets/vfx-219171f4515765ca6479.png                          29.24 kB
+dist/assets/combined-0-DrLTvlPS.png                               38.39 kB
+dist/assets/vfx-6a2fca650d4458b9e307.png                          38.39 kB
+dist/assets/light-1-xE_b3v_L.png                                  45.51 kB
+dist/assets/vfx-a28718e8a30fe332985a.png                          46.32 kB
+dist/assets/light-0-B95V2q7u.png                                  47.34 kB
+dist/assets/vfx-241cd061605b50807061.png                          55.06 kB
+dist/assets/light-1-BrLWrhaN.png                                  72.72 kB
+dist/assets/vfx-7c487f0c05f62e98b47e.png                          73.67 kB
+dist/assets/combined-0-6aO3a4re.png                               74.20 kB
+dist/assets/vfx-ffdbbd8ccbec8a1b3aa3.png                          74.20 kB
+dist/assets/vfx-ae5ab284e91e213179d3.png                          75.99 kB
+dist/assets/vfx-579a19e8071761062b0d.png                          79.85 kB
+dist/assets/vfx-7aa8ced0a853094cfc8c.png                          81.68 kB
+dist/assets/vfx-0db0cce4e1270e87f6ff.png                          92.14 kB
+dist/assets/light-1-Hl6EHUV2.png                                  95.99 kB
+dist/assets/vfx-ae345c7dba99c8864984.png                         101.96 kB
+dist/assets/vfx-ff8c98b7fc64a3ce22c0.png                         104.15 kB
+dist/assets/combined-1-Mm4zG3_D.png                              109.40 kB
+dist/assets/vfx-452c9eb4970014be5836.png                         109.40 kB
+dist/assets/vfx-bd5f053ea1defff21c3c.png                         109.78 kB
+dist/assets/vfx-4adabbec71b1b3f1fc4a.png                         110.17 kB
+dist/assets/light-0-Zu7wztyE.png                                 110.75 kB
+dist/assets/light-0-DKT04bP9.png                                 111.30 kB
+dist/assets/light-1-KCgNqHVj.png                                 114.88 kB
+dist/assets/vfx-a5a5b37d1e427e1fd3b7.png                         119.69 kB
+dist/assets/vfx-f78e85e7147f7cbe28ec.png                         127.67 kB
+dist/assets/light-0-CVS6vQ68.png                                 128.64 kB
+dist/assets/vfx-0efb23091ec0c548e0b3.png                         129.45 kB
+dist/assets/vfx-a13089b485bd07cdfc53.png                         130.33 kB
+dist/assets/vfx-7a7c2d1fe3208032bc44.png                         135.48 kB
+dist/assets/combined-1-Cgyoc-7B.png                              141.38 kB
+dist/assets/vfx-dcb4d3c4d70805eaa67f.png                         141.38 kB
+dist/assets/combined-0-CKWze5Ym.png                              153.81 kB
+dist/assets/vfx-58df32232237c7e36ea0.png                         153.81 kB
+dist/assets/vfx-7588b0051a8d5d193f59.png                         159.75 kB
+dist/assets/combined-1-B1DCWWK0.png                              160.45 kB
+dist/assets/vfx-867f6c22c34266abb827.png                         160.45 kB
+dist/assets/vfx-aa72641815cf1e78fd4f.png                         171.16 kB
+dist/assets/light-0-D23kDstP.png                                 186.22 kB
+dist/assets/combined-0-CHuPXZZj.png                              190.42 kB
+dist/assets/vfx-7c656d14934a2f345008.png                         190.42 kB
+dist/assets/vfx-ea5007c2640afbddc3ae.png                         213.54 kB
+dist/assets/combined-1-BML1dFY0.png                              221.71 kB
+dist/assets/vfx-4fd6f607fab94f6441a1.png                         221.71 kB
+dist/assets/vfx-a82a3810ac233f8c1749.png                         225.31 kB
+dist/assets/vfx-4f44f0b0afaf6c9c7196.png                         232.09 kB
+dist/assets/light-0-DMAIPqPf.png                                 252.81 kB
+dist/assets/combined-0-C3J2IROF.png                              255.10 kB
+dist/assets/vfx-bb4500f8f1657db0bfa3.png                         255.10 kB
+dist/assets/vfx-35f3eb756da14257e93f.png                         258.81 kB
+dist/assets/light-0--GuXSKxS.png                                 274.31 kB
+dist/assets/light-0-D9FQfqj7.png                                 275.21 kB
+dist/assets/light-0-Cu5aLn5t.png                                 277.90 kB
+dist/assets/vfx-edce4355a1d18e62ba2c.png                         297.30 kB
+dist/assets/vfx-890e65283ad4a4858b19.png                         308.48 kB
+dist/assets/vfx-d382785dbdac58de9e14.png                         321.42 kB
+dist/assets/vfx-cb56d48e1928b43ccccd.png                         324.05 kB
+dist/assets/light-0-BlYlkjgQ.png                                 337.66 kB
+dist/assets/combined-0-CoOK-F48.png                              344.74 kB
+dist/assets/vfx-ec0bc1ebb15b5cf01753.png                         344.74 kB
+dist/assets/vfx-f8b642207ecc0e743c1a.png                         348.32 kB
+dist/assets/vfx-472414d4b6890e64a741.png                         373.56 kB
+dist/assets/combined-0-C40ot4YV.png                              384.53 kB
+dist/assets/vfx-4e1395f95a0116c2381c.png                         384.53 kB
+dist/assets/light-0-BUBmTTtD.png                                 390.78 kB
+dist/assets/combined-0-D2C58rQw.png                              393.76 kB
+dist/assets/vfx-16d5f7581888da6f64bd.png                         393.76 kB
+dist/assets/combined-0-C5uz9ahG.png                              397.22 kB
+dist/assets/vfx-670d8051231c717123d9.png                         397.22 kB
+dist/assets/light-0-BMoNEhry.png                                 398.89 kB
+dist/assets/vfx-a76be60c790ad4f8f480.png                         408.27 kB
+dist/assets/light-0-b1jumfjm.png                                 418.42 kB
+dist/assets/light-0-C2vfLl2U.png                                 421.19 kB
+dist/assets/light-0-ChUX5Imm.png                                 425.75 kB
+dist/assets/vfx-4eabb58fece25a2c16bb.png                         444.45 kB
+dist/assets/vfx-ff1433442e089802caf2.png                         457.72 kB
+dist/assets/vfx-d46f726e2c107e8897c1.png                         478.22 kB
+dist/assets/vfx-29c85fb2f929d52ddf99.png                         485.13 kB
+dist/assets/vfx-6a776f4a35ca38de4245.png                         491.45 kB
+dist/assets/vfx-0f4463851223ff77a41a.png                         493.05 kB
+dist/assets/light-0-CBNtKxvh.png                                 498.72 kB
+dist/assets/combined-0-OcJs3bHU.png                              513.76 kB
+dist/assets/vfx-43af9954d874f8006133.png                         513.76 kB
+dist/assets/vfx-5bc01baaf4d89d6a2831.png                         523.92 kB
+dist/assets/vfx-79f399a469d7aa118dfb.png                         528.61 kB
+dist/assets/vfx-4819ad2b707be9d22a97.png                         540.16 kB
+dist/assets/light-0-HAlNrrbR.png                                 544.31 kB
+dist/assets/vfx-b638eb8612c5348ba5d6.png                         570.61 kB
+dist/assets/light-0-uNpYGyaT.png                                 591.90 kB
+dist/assets/combined-0-DRoqESFn.png                              597.30 kB
+dist/assets/vfx-3dbb306394fa78c3beb0.png                         597.30 kB
+dist/assets/combined-0-Cc2422Jm.png                              605.78 kB
+dist/assets/vfx-888a92954e62fb68c509.png                         605.78 kB
+dist/assets/combined-0-Dingd8Ls.png                              627.30 kB
+dist/assets/vfx-6ea9523170fa5df1d922.png                         627.30 kB
+dist/assets/vfx-9914992108b4848ea384.png                         630.89 kB
+dist/assets/light-0-CIEg0_pV.png                                 652.48 kB
+dist/assets/vfx-b98c03e37938d1bc1b47.png                         653.79 kB
+dist/assets/vfx-90e192e99dfdabab2e64.png                         654.24 kB
+dist/assets/combined-0-JE5BvWua.png                              671.44 kB
+dist/assets/vfx-365eca2b50fdee6c73cd.png                         671.44 kB
+dist/assets/combined-0-DXvu5Vam.png                              696.42 kB
+dist/assets/vfx-5447b536c8fa4bdfdac6.png                         696.42 kB
+dist/assets/combined-0-CNu8DnEu.png                              744.78 kB
+dist/assets/vfx-793f4db42743f584380f.png                         744.78 kB
+dist/assets/vfx-e4e1e8e5a9e52e8cd2e3.png                         749.10 kB
+dist/assets/combined-0-ByUBJJUW.png                              787.13 kB
+dist/assets/vfx-ec604b868a3016cac3f2.png                         787.13 kB
+dist/assets/light-0-g1j6xYAF.png                                 793.86 kB
+dist/assets/combined-0-DPcwftW-.png                              811.01 kB
+dist/assets/vfx-06ed6edf87c213eeb976.png                         811.01 kB
+dist/assets/vfx-6f37d1ec60d7c9de49a1.png                         893.79 kB
+dist/assets/vfx-1e3435539bb8fffbac74.png                         905.26 kB
+dist/assets/combined-0-Bgek3PsK.png                              957.82 kB
+dist/assets/vfx-96435f5b6fe40eacf183.png                         957.82 kB
+dist/assets/vfx-5b64a9a77c72c988f019.png                       1,018.06 kB
+dist/assets/vfx-598fb5760d0559fb767e.png                       1,044.99 kB
+dist/assets/vfx-bd7a1bed4b2975abe8f2.png                       1,090.30 kB
+dist/assets/combined-0-DgutbJKp.png                            1,108.43 kB
+dist/assets/vfx-a729cb18000f91d0b93f.png                       1,108.43 kB
+dist/assets/vfx-46c11cea4f44480c96b1.png                       1,131.03 kB
+dist/assets/vfx-4949233b4b9975d2e0a2.png                       1,173.89 kB
+dist/assets/vfx-edcdf78357db9f5ddf94.png                       1,180.22 kB
+dist/assets/combined-0-Beq7B_Rc.png                            1,199.73 kB
+dist/assets/vfx-d8dedb98b83c07bcfa8c.png                       1,199.73 kB
+dist/assets/vfx-507bf50c34bbe8106de7.png                       1,282.61 kB
+dist/assets/vfx-4793a8956828d3511c1d.png                       1,373.52 kB
+dist/assets/vfx-4b00bb3b1a3718478c1f.png                       1,396.56 kB
+dist/assets/vfx-a4bb945832931048ed18.png                       1,755.53 kB
+dist/assets/index-Can0aGeN.css                                   115.95 kB │ gzip:    24.32 kB
+dist/assets/index-Dp8HnE_T.js                                  5,607.71 kB │ gzip: 1,110.36 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 13.25s

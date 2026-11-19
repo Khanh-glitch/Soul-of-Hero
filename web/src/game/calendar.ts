@@ -217,47 +217,41 @@ export interface LocalClimate {
 const climateCache = new Map<string, LocalClimate>();
 const CLIMATE_CACHE_MAX = 4096;
 
-/** Bounded seasonal climate at one tile at one run-clock instant.
- *  Deterministic: same (map cell, phase, weather) -> same result. The Map's own
- *  `temperature`/`moisture`/`biome` arrays remain the only ground truth. */
-export function climateAt(r: Pick<RunState, 'startedAt' | 'qaOffset'>, tx: number, ty: number, at: number, weather: PrecipWeather, surface?: number): LocalClimate {
+export interface ClimateCellInput {
+  cacheKey: string;
+  biome: string;
+  mapTemperature: number;
+  mapMoisture: number;
+  tile: number;
+}
+
+/** Bounded seasonal climate from a canonical Map cell (onscreen or offscreen). */
+export function climateFromCell(
+  r: Pick<RunState, 'startedAt' | 'qaOffset'>,
+  cell: ClimateCellInput,
+  at: number,
+  weather: PrecipWeather,
+  surface?: number,
+): LocalClimate {
   const cal = calendarAt(r, at);
-  const w = getWorld();
-  const x = clamp(Math.floor(tx), 0, WW - 1), y = clamp(Math.floor(ty), 0, WH - 1);
-  const key = `${w.economyMap.id}#${w.economyMap.revision}|${y * WW + x}|${cal.phaseIndex}|${weather}|${surface ?? '-'}`;
+  const key = `${cell.cacheKey}|${cal.phaseIndex}|${weather}|${surface ?? '-'}`;
   const hit = climateCache.get(key);
   if (hit) return hit;
-  const m = w.economyMap, i = y * WW + x;
   const cfg = BAL.seasonClimateV1;
-  const mapTemperature = m.temperature[i], mapMoisture = m.moisture[i];
+  const mapTemperature = cell.mapTemperature, mapMoisture = cell.mapMoisture;
   const dT = cfg.temperatureOffset[cal.season] ?? 0, dM = cfg.moistureOffset[cal.season] ?? 0;
   const temperature = clamp(mapTemperature + dT, 0, 1);
   const moisture = clamp(mapMoisture + dM, 0, 1);
 
-  // Precipitation phase: the global weather family decides whether the sky gives
-  // anything; the season's own cold deviation and the LOCAL Map temperature decide
-  // whether it lands as rain or snow. A neutral (spring) phase can never snow, so the
-  // measured spring baseline — rain-filled barrels, rain-cooled soil, rain-washed
-  // footprints — is preserved exactly. Cold seasons snow first on Map-cold cells.
   const snowing = (weather === 'rain' || weather === 'storm') && dT < 0 && temperature < cfg.snowTemperatureBelow;
   const liquid = (weather === 'rain' || weather === 'storm') && !snowing;
   const precipitation: Precipitation = snowing ? 'snow' : liquid ? 'rain' : 'none';
 
-  // Cold exposure. Two independent factors, both bounded:
-  //  * how much the season really drops temperature below its neutral value
-  //    (`drop` is exactly 0 in the neutral season, so spring keeps the measured
-  //    comfort baseline byte-for-byte), and
-  //  * how cold the LOCAL Map cell actually becomes (a Frostcrown snow cell and a
-  //    warm sand coast are not the same winter even in the same season).
-  // The product is the reason two regions behave differently in the same season.
   const drop = Math.max(0, -dT);
   const dropRatio = clamp(drop / Math.max(1e-6, cfg.cold.fullDeviation), 0, 1);
   const coldSeverity = clamp((cfg.cold.comfortReference - temperature) / cfg.cold.comfortReference, 0, 1);
   const coldPoints = Math.round(cfg.cold.maxPoints * coldSeverity * dropRatio * 10) / 10;
 
-  // Water demand (SYS15-C01/C03). The seasonal harshness term is exactly 0 in the
-  // neutral season, so the measured thirst baseline is never silently retuned; the
-  // local term makes a dry sand coast and a wet fen diverge in the same summer.
   const harshness = clamp(
     (Math.max(0, dT) / Math.max(1e-6, cfg.heat.temperatureSpan)) +
     (Math.max(0, -dM) / Math.max(1e-6, cfg.heat.moistureSpan)), 0, 1);
@@ -272,19 +266,15 @@ export function climateAt(r: Pick<RunState, 'startedAt' | 'qaOffset'>, tx: numbe
     : weather === 'storm' ? BAL.traces.stormDecayMult
     : weather === 'rain' && liquid ? BAL.traces.rainDecayMult
     : 1;
-  // A footprint is cut into the surface it was left on (`surface`), which for a print is
-  // the trace's own `s`, not whatever the Map currently renders on that cell.
-  const tile = surface ?? w.tiles[i];
+  const tile = surface ?? cell.tile;
   const snowSurface = tile === T.SNOW || tile === T.ICE;
-  // Fresh snow buries bare ground prints but preserves prints already cut into a
-  // snow/ice surface (the mechanism the existing BAL.traces.snowfallSnowMult key names).
   const traceDecayMultiplier = precipitation === 'snow' && snowSurface ? baseTrace / BAL.traces.snowfallSnowMult : baseTrace;
 
   const out: LocalClimate = {
     version: 'seasonal-climate-v1', phaseIndex: cal.phaseIndex, year: cal.year, season: cal.season,
-    biome: m.biome[i], mapTemperature, mapMoisture, temperature, moisture, weather, precipitation,
+    biome: cell.biome, mapTemperature, mapMoisture, temperature, moisture, weather, precipitation,
     wet: liquid, snowing,
-    coldPoints, coldReason: coldPoints > 0 ? `season_cold_${cal.season}_${m.biome[i]}` : null,
+    coldPoints, coldReason: coldPoints > 0 ? `season_cold_${cal.season}_${cell.biome}` : null,
     thirstMultiplier, evaporationMultiplier,
     catchMultiplier: liquid ? 1 : 0,
     traceDecayMultiplier,
@@ -292,6 +282,28 @@ export function climateAt(r: Pick<RunState, 'startedAt' | 'qaOffset'>, tx: numbe
   if (climateCache.size > CLIMATE_CACHE_MAX) climateCache.clear();
   climateCache.set(key, out);
   return out;
+}
+
+/** Bounded seasonal climate at one tile at one run-clock instant.
+ *  Deterministic: same (map cell, phase, weather) -> same result. The Map's own
+ *  `temperature`/`moisture`/`biome` arrays remain the only ground truth. */
+export function climateAt(r: Pick<RunState, 'startedAt' | 'qaOffset'>, tx: number, ty: number, at: number, weather: PrecipWeather, surface?: number): LocalClimate {
+  const w = getWorld();
+  const x = clamp(Math.floor(tx), 0, WW - 1), y = clamp(Math.floor(ty), 0, WH - 1);
+  const m = w.economyMap, i = y * WW + x;
+  return climateFromCell(
+    r,
+    {
+      cacheKey: `${m.id}#${m.revision}|${i}`,
+      biome: m.biome[i],
+      mapTemperature: m.temperature[i],
+      mapMoisture: m.moisture[i],
+      tile: w.tiles[i],
+    },
+    at,
+    weather,
+    surface,
+  );
 }
 
 /** Convenience for callers that hold a world position instead of a tile. */

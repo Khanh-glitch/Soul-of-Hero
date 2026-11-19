@@ -150,10 +150,19 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
   const out: Record<ReturnSectionId, Omit<ReturnRow, "source">[]> = { body: [], home: [], production: [], loss: [], world: [] };
   const r = gs.run; const after = captureReturnSnapshot(gs);
   const gapMs = Math.max(0, end - start);
-  const quiet = !!before && !!after && receipts.length === 0 && gapMs < 4000;
+  // A duration by itself never proves that something happened. Quiet is decided
+  // after comparing actual physical snapshots and committed receipts below.
+  let quiet = false;
   if (before && after) {
     const bp = before.player, ap = after.player;
-    out.body.push({ id: 'vitals', tone: ap.dead ? 'bad' : 'muted', text: `Hunger ${r1(bp.hunger)} → ${r1(ap.hunger)} · Thirst ${r1(bp.thirst)} → ${r1(ap.thirst)} · HP ${r1(bp.hp)} → ${r1(ap.hp)} · Warmth ${r1(bp.warmth)} → ${r1(ap.warmth)}`, receipts: [] });
+    const vitalsDanger = ap.dead || ap.hp < 25 || ap.hunger < 20 || ap.thirst < 20 || ap.warmth < 25;
+    const vitalsWarn = ap.hp < 50 || ap.hunger < 45 || ap.thirst < 45 || ap.warmth < 45;
+    out.body.push({ id: 'vitals', tone: vitalsDanger ? 'bad' : vitalsWarn ? 'warn' : 'muted', text: `NOW · HP ${r1(ap.hp)} · Hunger ${r1(ap.hunger)} · Thirst ${r1(ap.thirst)} · Warmth ${r1(ap.warmth)}`, receipts: [] });
+    // An actual before/after change is NOT a timed engine receipt. Distinguish
+    // observed physical deterioration from a generic live reading.
+    const shifts = ([['HP', bp.hp, ap.hp], ['Hunger', bp.hunger, ap.hunger], ['Thirst', bp.thirst, ap.thirst], ['Warmth', bp.warmth, ap.warmth]] as const)
+      .filter(([, before, after]) => before - after >= 15);
+    if (shifts.length) out.body.push({ id: 'shift:vitals', tone: vitalsDanger ? 'bad' : 'warn', text: `Observed decline: ${shifts.map(([name, before, after]) => `${name} ${r1(before)} → ${r1(after)}`).join(' · ')}`, receipts: [] });
     out.body.push({ id: 'shelter', tone: ap.sheltered ? 'ok' : 'warn', text: ap.sheltered ? 'Sheltered now (roofed, enclosed).' : 'Not sheltered now.', receipts: [] });
     if (ap.dead) {
       const deadBag = r && Object.values(r.entities).find(x => x.kind === 'bag' && x.c && Math.floor(x.x / TILE) === Math.floor(r.player.x / TILE) && Math.floor(x.y / TILE) === Math.floor(r.player.y / TILE));
@@ -169,7 +178,7 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
     }
     for (const [id, s] of Object.entries(after.structs)) {
       const b = before.structs[id];
-      if (b && s.hp < b.hp - 0.01) out.home.push({ id: `hp:${id}`, tone: 'bad', text: `${s.name} ${s.tx},${s.ty}: ${Math.round(b.hp)} → ${Math.round(s.hp)} HP.`, where: { tx: s.tx, ty: s.ty, name: s.name }, receipts: [] });
+      if (b && s.hp < b.hp - 0.01) out.home.push({ id: `hp:${id}`, tone: s.hp < s.maxHp * 0.5 || b.hp - s.hp >= Math.max(8, s.maxHp * 0.15) ? 'bad' : 'warn', text: `${s.name} ${s.tx},${s.ty}: ${Math.round(b.hp)} → ${Math.round(s.hp)} HP.`, where: { tx: s.tx, ty: s.ty, name: s.name }, receipts: [] });
       if (s.hp < s.maxHp * 0.5 && s.hp > 0) out.home.push({ id: `rep:${id}`, tone: 'warn', text: `${s.name} ${s.tx},${s.ty} needs repair (${Math.round(s.hp)}/${s.maxHp} HP).`, where: { tx: s.tx, ty: s.ty, name: s.name }, receipts: [] });
       if (!b && s.hp <= 0) out.loss.push({ id: `gone:${id}`, tone: 'bad', text: `${s.name} at ${s.tx},${s.ty} is gone.`, receipts: [] });
     }
@@ -188,17 +197,91 @@ export function buildOfflineReturn(gs: GameState, before: Snap | null, receipts:
     const nearby = r.traces.filter(tr => Math.hypot(tr.x - r.player.x, tr.y - r.player.y) <= 64).length;
     out.world.push({ id: 'weather', tone: 'muted', text: `Weather now: ${weatherAt(r, end)}. ${nearby} footprint${nearby === 1 ? '' : 's'} visible in the immediate area.`, receipts: [] });
   }
-  // Next physical actions (text only; the report never operates a remote station or moves items).
+  // Next physical actions (prioritize critical losses/body/stalls/unfunded cabinets before minor wear).
   const next: string[] = [];
-  for (const row of [...out.production, ...out.home, ...out.loss, ...out.body]) {
-    if (row.tone === 'bad' && row.where) next.push(`Go to ${row.where.name} ${row.where.tx},${row.where.ty}.`);
+  const pushNext = (line: string) => { if (!next.includes(line)) next.push(line); };
+  for (const row of [...out.body, ...out.loss]) {
+    if ((row.tone === 'bad' || row.tone === 'warn') && row.where) pushNext(`Go to ${row.where.name} ${row.where.tx},${row.where.ty}.`);
   }
-  for (const row of out.production) if (row.tone === 'warn' && row.where && !next.includes(`Go to ${row.where.name} ${row.where.tx},${row.where.ty}.`)) next.push(`Walk to ${row.where.name} ${row.where.tx},${row.where.ty} and clear the pause.`);
-  if (before && after) for (const [id, c] of Object.entries(after.cabinets)) if (!c.funded) next.push(`Fund Cabinet ${c.tx},${c.ty} with materials on hand.`);
+  for (const row of out.production) if (row.tone === 'warn' && row.where) pushNext(`Walk to ${row.where.name} ${row.where.tx},${row.where.ty} and clear the pause.`);
+  if (before && after) for (const [id, c] of Object.entries(after.cabinets)) if (!c.funded) pushNext(`Fund Cabinet ${c.tx},${c.ty} with materials on hand.`);
+  for (const row of out.home) {
+    if (!row.id.startsWith('rep:') && row.tone === 'bad' && row.where) pushNext(`Go to ${row.where.name} ${row.where.tx},${row.where.ty}.`);
+  }
+  const repCount = out.home.filter(row => row.id.startsWith('rep:')).length;
+  if (repCount > 0) pushNext(`Repair ${repCount} worn base structure${repCount === 1 ? '' : 's'} below 50% HP.`);
+  // No imaginary offline milestones: no receipt + no measured inventory/base
+  // delta is a quiet return even after a long absence. Current shelter/station
+  // warnings still appear under NOW and urgent HUD, but aren't forged events.
+  const measuredChange = out.body.some(x => x.id === 'food' || x.id.startsWith('shift:')) ||
+    out.home.some(x => x.id.startsWith('hp:') || (x.id.startsWith('cab:') && !x.text.includes('stock unchanged'))) ||
+    out.loss.some(x => x.id.startsWith('lost:') || x.id.startsWith('gone:'));
+  quiet = !expired && receipts.length === 0 && !measuredChange;
   // Tag provenance: rows with receipts are events; rows derived from the read-only snapshot are current state.
   for (const k of Object.keys(out) as ReturnSectionId[]) out[k] = out[k].map(row => ({ ...row, source: row.receipts.length ? 'event' : 'state' }));
-  const summary = expired ? 'The 336-hour run ended while you were away.' : quiet ? `No changes since your last visit (${gapMs >= 60000 ? Math.round(gapMs / 60000) + ' min' : 'a few seconds'} away). Nothing new was produced or lost.` : `Away ${gapMs >= HOUR ? (gapMs / HOUR).toFixed(1) + ' h' : Math.round(gapMs / 60000) + ' min'}. ${receipts.length} timed event${receipts.length === 1 ? '' : 's'} recorded; the rest of the rows are current readings.`;
+  const summary = expired ? 'The 336-hour run ended while you were away.' : quiet ? `No recorded production or asset changes during ${gapMs >= HOUR ? (gapMs / HOUR).toFixed(1) + ' h' : Math.round(gapMs / 60000) + ' min'} away. Current condition is shown separately.` : `Away ${gapMs >= HOUR ? (gapMs / HOUR).toFixed(1) + ' h' : Math.round(gapMs / 60000) + ' min'}. ${receipts.length} timed event${receipts.length === 1 ? '' : 's'} recorded; observed changes and current conditions are separated below.`;
   return { version: 'offline-return-v1', away: { fromAt: start, toAt: end, gapMs, expired, quiet }, summary, sections: out as Record<ReturnSectionId, ReturnRow[]>, next: next.slice(0, 6), receiptCount: receipts.length };
+}
+
+export type ReturnSeverity = 'minimal' | 'notable' | 'critical';
+
+/** Classify real offline report importance without inventing outcomes. */
+export function classifyOfflineReturn(report: OfflineReturnV1): ReturnSeverity {
+  if (report.away.expired) return 'critical';
+  const hasCriticalBody = report.sections.body.some(r => r.tone === 'bad');
+  const hasLoss = report.sections.loss.some(r => r.tone === 'bad');
+  const hasSevereHome = report.sections.home.some(r => r.source === 'event' && r.tone === 'bad') || report.sections.home.some(r => r.id.startsWith('hp:') && r.tone === 'bad');
+  if (hasCriticalBody || hasLoss || hasSevereHome) return 'critical';
+  // A long absence, one routine receipt, or an already-unfunded Cabinet
+  // must not hijack the whole screen. This threshold represents accumulated
+  // *confirmed* events, not raw elapsed time or current-state warnings.
+  const observedRisk = report.sections.body.some(r => r.id.startsWith('shift:') && r.tone === 'warn');
+  const materialLoss = report.sections.loss.some(r => r.tone === 'warn');
+  if (report.receiptCount >= 2 || observedRisk || materialLoss) return 'notable';
+  return 'minimal';
+}
+
+export interface StoredReturnEntry {
+  id: string;
+  recordedAt: number;
+  severity: ReturnSeverity;
+  report: OfflineReturnV1;
+}
+
+const qaReturnHistory = new WeakMap<RunState, StoredReturnEntry[]>();
+
+function historyKey(r: RunState): string {
+  return `soh.return-history.v1:${r.id}`;
+}
+
+export function readReturnHistory(r: RunState, qaSession: boolean): StoredReturnEntry[] {
+  if (qaSession) return qaReturnHistory.get(r) ?? [];
+  try {
+    const data = JSON.parse(localStorage.getItem(historyKey(r)) || '[]');
+    return Array.isArray(data) ? data.filter((x: any) => x && x.report?.version === 'offline-return-v1').slice(0, 8) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function recordReturnHistory(r: RunState | null, qaSession: boolean, report: OfflineReturnV1 | null): StoredReturnEntry[] {
+  if (!r || !report) return [];
+  const prev = readReturnHistory(r, qaSession);
+  if (prev[0]?.report.away.fromAt === report.away.fromAt && prev[0]?.report.away.toAt === report.away.toAt && prev[0]?.report.receiptCount === report.receiptCount) {
+    return prev;
+  }
+  const entry: StoredReturnEntry = {
+    id: `ret-${report.away.toAt}-${report.receiptCount}`,
+    recordedAt: report.away.toAt,
+    severity: classifyOfflineReturn(report),
+    report,
+  };
+  const next = [entry, ...prev].slice(0, 8);
+  if (qaSession) qaReturnHistory.set(r, next);
+  else {
+    try { localStorage.setItem(historyKey(r), JSON.stringify(next)); } catch { /* ignore storage quota */ }
+  }
+  return next;
 }
 
 /** Continue route: runs the same settle() and returns both the legacy strings and the typed report. */

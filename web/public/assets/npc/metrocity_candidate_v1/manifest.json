@@ -1,0 +1,115 @@
+{
+  "schema": "soh-npc-art-candidate-v1",
+  "status": "SOURCE_IMPORTED_ONLY_NOT_WEB_INTEGRATED_NOT_CREATOR_ACCEPTED",
+  "description": "Six original MetroCity character sprites retrieved as actual PNG bytes from a public GitHub mirror. This is NOT the earlier eight-variant 32x32 ChatGPT ZIP.",
+  "frameSize": {
+    "width": 16,
+    "height": 32
+  },
+  "sheetSize": {
+    "width": 112,
+    "height": 96
+  },
+  "directions": {
+    "down": {
+      "row": 0
+    },
+    "side": {
+      "row": 1
+    },
+    "up": {
+      "row": 2
+    },
+    "left": {
+      "row": 1,
+      "flipX": false
+    },
+    "right": {
+      "row": 1,
+      "flipX": true
+    }
+  },
+  "columns": {
+    "idle": 0,
+    "walk": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  "notes": [
+    "Mirror side direction to derive fourth facing direction, verify handedness and held items in native Web.",
+    "Each sheet has 7 columns and 3 rows; these six images do NOT provide validated use, strike, hurt, downed or death actions.",
+    "Only source import and file-level PNG dimensions verified; no runtime preview, animations, Creator visual acceptance, art expansion or gameplay activation.",
+    "Asset license attribution is based on donor NOTICE and LICENSE-THIRD-PARTY; independently verify official upstream terms before commercial release."
+  ],
+  "source": {
+    "artist": "JIK-A-4",
+    "upstream": "https://jik-a-4.itch.io/metrocity-free-topdown-character-pack",
+    "mirrorRepository": "mhmmdglc/crewdesk",
+    "mirrorRef": "main",
+    "mirrorPrefix": "public/assets/characters/",
+    "mirrorNotice": "https://github.com/mhmmdglc/crewdesk/blob/main/public/assets/characters/NOTICE.md",
+    "mirrorThirdPartyNotice": "https://github.com/mhmmdglc/crewdesk/blob/main/LICENSE-THIRD-PARTY.md",
+    "licenseClaim": "CC0 1.0 Universal (as declared by donor NOTICE; pending upstream-independent revalidation)"
+  },
+  "sprites": [
+    {
+      "id": "metrocity_0",
+      "file": "char_0.png",
+      "sourceGitBlobSha": "68a86c5035b77c0a2f752404080b4bfeb023fa2f",
+      "width": 112,
+      "height": 96,
+      "frameWidth": 16,
+      "frameHeight": 32
+    },
+    {
+      "id": "metrocity_1",
+      "file": "char_1.png",
+      "sourceGitBlobSha": "13676875af4411e1bc85bc732a16679a82c710e3",
+      "width": 112,
+      "height": 96,
+      "frameWidth": 16,
+      "frameHeight": 32
+    },
+    {
+      "id": "metrocity_2",
+      "file": "char_2.png",
+      "sourceGitBlobSha": "d07293bd08665ec1b3b4cb91a00022601d06a0fe",
+      "width": 112,
+      "height": 96,
+      "frameWidth": 16,
+      "frameHeight": 32
+    },
+    {
+      "id": "metrocity_3",
+      "file": "char_3.png",
+      "sourceGitBlobSha": "89f858c63939e8f1637e0fffef987a84e69bacc4",
+      "width": 112,
+      "height": 96,
+      "frameWidth": 16,
+      "frameHeight": 32
+    },
+    {
+      "id": "metrocity_4",
+      "file": "char_4.png",
+      "sourceGitBlobSha": "32dbc619a3b1f724cbf8777175efe9fab4d93a57",
+      "width": 112,
+      "height": 96,
+      "frameWidth": 16,
+      "frameHeight": 32
+    },
+    {
+      "id": "metrocity_5",
+      "file": "char_5.png",
+      "sourceGitBlobSha": "b5cfa27e8c4c95be748111bacfabdd1e149be052",
+      "width": 112,
+      "height": 96,
+      "frameWidth": 16,
+      "frameHeight": 32
+    }
+  ]
+}

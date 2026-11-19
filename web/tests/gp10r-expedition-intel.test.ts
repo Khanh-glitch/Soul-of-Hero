@@ -5,7 +5,8 @@ import {TILE,type GameState} from '../src/game/core';
 import {addItem,dispatch,newGame,mkStack} from '../src/game/engine';
 import {setActiveLayout} from '../src/game/world';
 import {serializeSnapshot,selectSnapshots} from '../src/game/persist';
-import {expeditionNotes,validIntel,MAX_INTEL_KEY} from '../src/game/expedition-intel';
+import {expeditionNotes,validIntel,MAX_INTEL_KEY,FUEL_ROUTES} from '../src/game/expedition-intel';
+import {RECIPES} from '../src/game/catalog';
 const START=Date.UTC(2026,10,5);
 let serial=0;
 afterAll(()=>setActiveLayout('shipping'));
@@ -73,14 +74,22 @@ describe('GP11 expedition intel invariants', () => {
     r.intel=['gate:light:power','loot:light:fuel_can','gate:factory:keycard_vault','loot:wreck:bp_bow'];
     let n=expeditionNotes(r).find(x=>x.place==='light')!;
     expect(n.gates[0]).toMatchObject({item:'fuel_can',have:0,carried:false,seenIn:['light'],craft:undefined});  // recipe not known yet
-    r.knowledge.recipes.push('fuel_can');
+    // Item set v3: `refine_salvaged_oil` is retired. Guidance names the first LIVE fuel route and only once it is known.
+    expect(RECIPES.refine_salvaged_oil).toBeUndefined();
+    expect(FUEL_ROUTES.every(k=>RECIPES[k]?.out==='fuel_can')).toBe(true);
+    const route=FUEL_ROUTES[0],bill=RECIPES[route].ins;
+    r.knowledge.recipes=r.knowledge.recipes.filter(k=>k!==route);
+    expect(expeditionNotes(r).find(x=>x.place==='light')!.gates[0].craft).toBeUndefined();
+    r.knowledge.recipes.push(route);
     n=expeditionNotes(r).find(x=>x.place==='light')!;
-    expect(n.gates[0].craft!.missing.map(i=>i.key).sort()).toEqual(['charcoal','glass','sulfur']);
-    addItem(r,'inv','charcoal',1);
+    expect(n.gates[0].craft!.recipe).toBe(route);
+    expect(n.gates[0].craft!.missing.map(i=>i.key).sort()).toEqual(bill.map(([k])=>k).sort());
+    addItem(r,'inv',bill[0][0],bill[0][1]);
     n=expeditionNotes(r).find(x=>x.place==='light')!;
-    expect(n.gates[0].craft!.missing.map(i=>i.key).sort()).toEqual(['glass','sulfur']);
+    expect(n.gates[0].craft!.missing.map(i=>i.key).sort()).toEqual(bill.slice(1).map(([k])=>k).sort());
     const kc=expeditionNotes(r).find(x=>x.place==='factory')!.gates[0];
-    expect(kc.item).toBe('keycard');expect(kc.carried).toBe(false);expect(kc.craft).toBeUndefined();
+    expect(kc.item).toBe('green_card');expect(kc.carried).toBe(false);   // the vault takes a Green Card
+    expect(kc.craft).toBeUndefined();
   });
 
   it('blueprints distinguish seen, owned-not-learned and learned from live state', () => {

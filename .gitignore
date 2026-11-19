@@ -9,6 +9,7 @@ tmp/
 *.write.lock/
 user_data/
 tools/mcp/node_modules/
+node_modules/
 web/node_modules/
 web/dist/
 

@@ -1,0 +1,234 @@
+[
+ {
+  "shot": "eco-road_trail-1-closed.png",
+  "source": "veyra.g1b:rd_1e:food_low:k0264.01",
+  "variant": "food_low",
+  "place": "trail cache",
+  "space": "road/rd_1e",
+  "storey": 0,
+  "global": [
+   1531,
+   636
+  ],
+  "floorNow": 0,
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Food Box",
+   "eid": "etk"
+  },
+  "entity": {
+   "eid": "etk",
+   "live": true,
+   "floor": 0,
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  }
+ },
+ {
+  "shot": "eco-road_trail-2-opened-ui.png",
+  "source": "veyra.g1b:rd_1e:food_low:k0264.01",
+  "entity": {
+   "eid": "etk",
+   "live": true,
+   "floor": 0,
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "berriesx4",
+    "mushroomx8"
+   ]
+  },
+  "icons": {
+   "atlas157": 6,
+   "drawn": [],
+   "sizes": [
+    "16x16/32",
+    "8x8/32"
+   ],
+   "rendering": [
+    "pixelated"
+   ]
+  },
+  "receipts": [
+   "g1b.roll veyra.g1b:rd_1e:food_low:k0264.01:g1b-approved-v1:cycle0:seed2028423593:slot0:berriesx4:sw3",
+   "g1b.roll veyra.g1b:rd_1e:food_low:k0264.01:g1b-approved-v1:cycle0:seed2028423593:slot1:mushroomx8:sw4",
+   "g1b.open veyra.g1b:rd_1e:food_low:k0264.01:cycle0"
+  ]
+ },
+ {
+  "shot": "eco-road_fork-1-closed.png",
+  "source": "veyra.g1b:jn_00:supply_low:fork.01",
+  "variant": "supply_low",
+  "place": "waypoint cache at the fork",
+  "space": "road/jn_00",
+  "storey": 0,
+  "global": [
+   2101,
+   1566
+  ],
+  "floorNow": 0,
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Supply Crate",
+   "eid": "euo"
+  },
+  "entity": {
+   "eid": "euo",
+   "live": true,
+   "floor": 0,
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  }
+ },
+ {
+  "shot": "eco-road_fork-2-opened-ui.png",
+  "source": "veyra.g1b:jn_00:supply_low:fork.01",
+  "entity": {
+   "eid": "euo",
+   "live": true,
+   "floor": 0,
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "sparesx4",
+    "fiberx5",
+    "clothx2"
+   ]
+  },
+  "icons": {
+   "atlas157": 7,
+   "drawn": [],
+   "sizes": [
+    "16x16/32",
+    "8x8/32"
+   ],
+   "rendering": [
+    "pixelated"
+   ]
+  },
+  "receipts": [
+   "g1b.roll veyra.g1b:jn_00:supply_low:fork.01:g1b-approved-v1:cycle0:seed4265949315:slot1:fiberx5:swi",
+   "g1b.roll veyra.g1b:jn_00:supply_low:fork.01:g1b-approved-v1:cycle0:seed4265949315:slot2:clothx2:swj",
+   "g1b.open veyra.g1b:jn_00:supply_low:fork.01:cycle0"
+  ]
+ },
+ {
+  "shot": "eco-road_bridge-1-closed.png",
+  "source": "veyra.g1b:br_9:toolbox_damaged:head.01",
+  "variant": "toolbox_damaged",
+  "place": "bridgehead repair cache",
+  "space": "road/br_9",
+  "storey": 0,
+  "global": [
+   1548,
+   911
+  ],
+  "floorNow": 0,
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Damaged Toolbox",
+   "eid": "eu8"
+  },
+  "entity": {
+   "eid": "eu8",
+   "live": true,
+   "floor": 0,
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  }
+ },
+ {
+  "shot": "eco-road_bridge-2-opened-ui.png",
+  "source": "veyra.g1b:br_9:toolbox_damaged:head.01",
+  "entity": {
+   "eid": "eu8",
+   "live": true,
+   "floor": 0,
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "iron_ingotx1",
+    "clothx1"
+   ]
+  },
+  "icons": {
+   "atlas157": 6,
+   "drawn": [],
+   "sizes": [
+    "16x16/32",
+    "8x8/32"
+   ],
+   "rendering": [
+    "pixelated"
+   ]
+  },
+  "receipts": [
+   "g1b.roll veyra.g1b:br_9:toolbox_damaged:head.01:g1b-approved-v1:cycle0:seed1081106407:slot0:iron_ingotx1:sy7",
+   "g1b.roll veyra.g1b:br_9:toolbox_damaged:head.01:g1b-approved-v1:cycle0:seed1081106407:slot1:clothx1:sy8",
+   "g1b.open veyra.g1b:br_9:toolbox_damaged:head.01:cycle0"
+  ]
+ },
+ {
+  "shot": "eco-road_dock-1-closed.png",
+  "source": "veyra.g1b:dk_hook:food_low:landing.01",
+  "variant": "food_low",
+  "place": "landing cache",
+  "space": "road/dk_hook",
+  "storey": 0,
+  "global": [
+   2823,
+   741
+  ],
+  "floorNow": 0,
+  "prompt": {
+   "kind": "g1b:chest",
+   "label": "Open Low Food Box",
+   "eid": "euc"
+  },
+  "entity": {
+   "eid": "euc",
+   "live": true,
+   "floor": 0,
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  }
+ },
+ {
+  "shot": "eco-road_dock-2-opened-ui.png",
+  "source": "veyra.g1b:dk_hook:food_low:landing.01",
+  "entity": {
+   "eid": "euc",
+   "live": true,
+   "floor": 0,
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "mushroomx6",
+    "meatx3"
+   ]
+  },
+  "icons": {
+   "atlas157": 6,
+   "drawn": [],
+   "sizes": [
+    "16x16/32",
+    "8x8/32"
+   ],
+   "rendering": [
+    "pixelated"
+   ]
+  },
+  "receipts": [
+   "g1b.roll veyra.g1b:dk_hook:food_low:landing.01:g1b-approved-v1:cycle0:seed1011351343:slot0:mushroomx6:szj",
+   "g1b.roll veyra.g1b:dk_hook:food_low:landing.01:g1b-approved-v1:cycle0:seed1011351343:slot1:meatx3:szk",
+   "g1b.open veyra.g1b:dk_hook:food_low:landing.01:cycle0"
+  ]
+ },
+ {
+  "pageErrors": []
+ }
+]

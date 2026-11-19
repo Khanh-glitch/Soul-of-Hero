@@ -19,6 +19,8 @@ import type { StaticEnt } from '../src/game/world';
 
 const START = Date.UTC(2026, 10, 8, 9, 0, 0);
 const SEED = 4242;
+// item set v3 added the folding ladder; structure costs (pump, powered door, upgrades) spend gears too but are not recipes.
+const GEAR_CONSUMERS = ['industrial_pick_geared', 'motorbike_kit', 'steel_folding_ladder'];
 let n = 0;
 const act = (g: GameState, type: string, data: object = {}, now = START) => dispatch(g, { id: `b-${++n}`, type, ...data } as any, now);
 function start() { setActiveLayout('shipping_fresh'); const g = newGame(); expect(act(g, 'startRun', { character: 'female', seed: SEED }).ok).toBe(true); g.run!.creatures = []; return g; }
@@ -45,6 +47,12 @@ function craftCollect(g: GameState, bench: any, recipe: string, at: number): str
 }
 function bringUpL2(g: GameState): any {
   const r = g.run!;
+  // PA1 §24 device custody: a Workbench is placed by SPENDING a packed device, so buildReason
+  // answers "Need an intact packed device." on every tile until one is carried. legalBench could
+  // therefore never return — the real cause of every failure in this file at 023ec62, and the fix
+  // is to follow the shipped flow (pay the ore at the bench, then place the pack) instead of
+  // teaching legalBench to ignore the rule.
+  expect(act(g, 'craft', { recipe: 'deploy_workbench' }, START).ok).toBe(true);
   const [bx, by] = legalBench(g);
   expect(act(g, 'build', { struct: 'workbench', tx: bx, ty: by }, START + 1).ok).toBe(true);
   const bench = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'workbench')!;
@@ -84,22 +92,30 @@ describe('B1: role × grade × access × stock — the three authorized sources 
   });
 });
 
-describe('B2: consumer choice — gear and pipe each feed at least two real, paid recipes', () => {
-  it('same craft order, two worlds: vehicle_drive_geared beats industrial_pick_geared for the same gear stack (drive path)', () => {
+// PA1 changed the pipe half of this claim: the recovered paper retires the invented iron_plate pipe
+// sink, so a metal pipe now feeds ONE paid craft (the piped frame) plus the recycler route X:pipe-v3.
+// The gear still legitimately feeds two. Saying "two" for both would be a false pin.
+describe('B2: consumer choice — the gear feeds two real paid recipes, the pipe feeds one craft sink plus a recovery route', () => {
+  // Final item set (rev 4): the Motor Drive and both its formulas are retired. The gear's two paid consumers are now
+  // the Salvager Pick (below) and the Motorbike Kit itself (2 gears, bench III — exercised in final-item-set.test.ts).
+  it('the retired drive formula is refused and the gear stack is left intact; the kit is the gear\'s other live consumer', () => {
     const g = start(); const r = g.run!;
-    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 2], ['mechanical_parts', 4], ['fasteners', 4], ['spares', 6], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
+    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 2], ['spares', 20], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const bench = bringUpL2(g);
     const gearUid = craftCollect(g, bench, 'mechanical_gear', START + 10_000);
     expect(r.custody.inv.slots.some(s => s?.uid === gearUid && s.key === 'mechanical_gear')).toBe(true);
-    // CONSUMER A: the geared motor drive (what the C1 chain uses for the motorbike)
-    const driveUid = craftCollect(g, bench, 'vehicle_drive_geared', START + 20_000);
-    expect(r.custody.inv.slots.some(s => s?.uid === driveUid && s.key === 'vehicle_drive')).toBe(true);
-    expect(countItem(r, 'inv', 'mechanical_gear')).toBe(0);   // the gear is GONE — consumed, not copied
-    expect(countItem(r, 'inv', 'vehicle_drive')).toBe(1);
+    const before = JSON.stringify(r.custody.inv);
+    expect(RECIPES.vehicle_drive_geared).toBeUndefined(); expect(RECIPES.vehicle_drive).toBeUndefined();
+    expect(act(g, 'craft', { eid: bench.id, recipe: 'vehicle_drive_geared' }, START + 20_000).ok).toBe(false);
+    expect(JSON.stringify(r.custody.inv), 'a refused craft consumes nothing').toBe(before);
+    expect(countItem(r, 'inv', 'mechanical_gear')).toBe(1);
+    expect(Object.keys(RECIPES).filter(k => !k.startsWith('deploy_') && RECIPES[k].ins.some(([i]) => i === 'mechanical_gear')).sort()).toEqual(GEAR_CONSUMERS);
+    expect(RECIPES.motorbike_kit.ins).toContainEqual(['mechanical_gear', 2]);
   });
   it('the SAME gear stack instead feeds the salvager pick (the other live consumer) — one gear, one outcome, no duplication', () => {
     const g = start(); const r = g.run!;
-    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 3], ['mechanical_parts', 4], ['fasteners', 1], ['spares', 4], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
+    // rev-5 gear BOM: 2 iron ingots + 3 Parts.
+    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 1], ['spares', 20], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const bench = bringUpL2(g);
     const gearUid = craftCollect(g, bench, 'mechanical_gear', START + 10_000);
     const pickUid = craftCollect(g, bench, 'industrial_pick_geared', START + 20_000);
@@ -108,40 +124,45 @@ describe('B2: consumer choice — gear and pipe each feed at least two real, pai
     expect(r.custody.inv.slots.some(s => s?.uid === gearUid)).toBe(false);
     expect(countItem(r, 'inv', 'mechanical_gear')).toBe(0);
   });
-  it('metal_pipe feeds the piped frame (motorbike path) — consumer A', () => {
+  it('metal_pipe feeds the piped frame (motorbike path) — the one surviving pipe sink', () => {
     const g = start(); const r = g.run!;
-    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 2], ['mechanical_parts', 5], ['fasteners', 1], ['spares', 4]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
+    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 4], ['spares', 20]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const bench = bringUpL2(g);
     craftCollect(g, bench, 'metal_pipe', START + 10_000);
-    expect(countItem(r, 'inv', 'metal_pipe')).toBe(1);
-    craftCollect(g, bench, 'vehicle_frame_piped', START + 20_000);
+    expect(countItem(r, 'inv', 'metal_pipe')).toBe(2);   // PA1 rev-2: one paid cycle pays for TWO sections
+    craftCollect(g, bench, 'vehicle_frame', START + 20_000);   // rev 3: the piped BOM is the frame recipe
     expect(countItem(r, 'inv', 'vehicle_frame')).toBe(1);
-    expect(countItem(r, 'inv', 'metal_pipe')).toBe(0);
+    expect(countItem(r, 'inv', 'metal_pipe')).toBe(1);   // one section consumed, the other kept
   });
-  it('metal_pipe feeds the iron plate instead — consumer B — and the plate exists for walls/doors (repairStructure path)', () => {
+  it('the plate is NOT a pipe sink any more: recovered BOM, and the plate still exists for walls/doors (repairStructure path)', () => {
     const g = start(); const r = g.run!;
-    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 2], ['refined_iron_ingot', 4], ['mechanical_parts', 4]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
+    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 4], ['spares', 20]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);   // item set v3: plate and pipe are both paid in Parts
     const bench = bringUpL2(g);
     craftCollect(g, bench, 'metal_pipe', START + 10_000);
-    expect(countItem(r, 'inv', 'metal_pipe')).toBe(1);
+    expect(countItem(r, 'inv', 'metal_pipe')).toBe(2);
+    expect(RECIPES.iron_plate.ins).toEqual([['refined_iron_ingot', 2], ['spares', 2]]);   // rev-5 BOM (Fasteners retired into Parts)
     const plateUid = craftCollect(g, bench, 'iron_plate', START + 20_000);
     expect(countItem(r, 'inv', 'iron_plate')).toBe(2);   // iron_plate recipe yields 2
-    expect(countItem(r, 'inv', 'metal_pipe')).toBe(0);
+    // The invented third sink is gone: crafting plates leaves every paid pipe section alone. This is
+    // the assertion that replaces the retired "pipe feeds the plate" consumer-B claim.
+    expect(countItem(r, 'inv', 'metal_pipe')).toBe(2);
     expect(r.custody.inv.slots.some(s => s?.uid === plateUid && s.key === 'iron_plate')).toBe(true);
   });
   it('writes the consumer-choice evidence with real UIDs and the sources B actually read', () => {
     const g = start(); const r = g.run!;
-    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 3], ['mechanical_parts', 4], ['fasteners', 1], ['spares', 2], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
+    for (const [k, q] of [['wood', 20], ['stone', 10], ['iron_ingot', 6], ['refined_iron_ingot', 1], ['spares', 20], ['iron_pick', 1]] as const) expect(addItem(r, 'inv', k, q)).toBe(0);
     const bench = bringUpL2(g);
     const gearUid = craftCollect(g, bench, 'mechanical_gear', START + 10_000);
     const pickUid = craftCollect(g, bench, 'industrial_pick_geared', START + 20_000);
     mkdirSync('evidence/mec01-b', { recursive: true });
     writeFileSync('evidence/mec01-b/consumer-choice.json', JSON.stringify({
-      note: 'B: two real consumer choices executed for the crafted gear (vehicle_drive_geared / industrial_pick_geared); pipe covered in the sibling tests (vehicle_frame_piped / iron_plate). One stack, one outcome — UIDs never duplicated.',
+      note: 'B: two real consumer choices executed for the crafted gear (vehicle_drive_geared / industrial_pick_geared); the only craft sink a pipe feeds is the piped frame since PA1 retired the invented iron_plate sink, and recovery runs through the recycler route X:pipe-v3. One stack, one outcome — UIDs never duplicated.',
       seed: SEED,
       sourcesRead: SHIPPING_LOOT_SOURCES.map(s => ({ id: s.id, sourceId: s.sourceId, role: s.role, grade: s.grade, access: s.access, stock: s.stock, cooldownHours: s.cooldownHours, capacity: s.capacity })),
       gearConsumersProven: ['vehicle_drive_geared', 'industrial_pick_geared'],
-      pipeConsumersProvenInSiblingTests: ['vehicle_frame_piped', 'iron_plate'],
+      pipeConsumersProvenInSiblingTests: ['vehicle_frame_piped'],
+      pipeSinkRetiredByPa1: 'iron_plate',
+      pipeRecoveryRoute: 'X:pipe-v3',
       uiDs: { gear: gearUid, industrialPick: pickUid },
       contractValid: validLootSourceContract(r.lootEcology!.sourceContract!),
       b01GrammarStillResolves: isKnownLootGrammar('b01-v1'),

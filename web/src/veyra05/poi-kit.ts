@@ -21,7 +21,7 @@
  */
 import { T, WW, WH } from '../game/core';
 import type { Building, StaticEnt } from '../game/world';
-import { POIS, sampleTile, type GoldPoi } from './reader';
+import { POIS, sampleTile, authoredDryTile, type GoldPoi } from './reader';
 import { POI_ARCH, type PoiArchSpec } from './poi-arch.generated';
 import { auToTile, FRAME_W, FRAME_H, type WindowSpec } from './frame';
 import { AUTHORED_SITES } from './arch/sites';
@@ -83,8 +83,7 @@ export interface GlobalPoiLayout {
 const gKey = (tx: number, ty: number) => ty * FRAME_W + tx;
 const isDry = (tx: number, ty: number) => {
   if (tx < 1 || ty < 1 || tx >= FRAME_W - 1 || ty >= FRAME_H - 1) return false;
-  const s = sampleTile(tx, ty);
-  return s.land && !s.river && !s.lake;
+  return authoredDryTile(tx,ty);
 };
 const isWaterTile = (tx: number, ty: number) => {
   if (tx < 0 || ty < 0 || tx >= FRAME_W || ty >= FRAME_H) return true;

@@ -1,0 +1,170 @@
+{
+  "first_profile": {
+    "case": "wp2-hour-profile",
+    "result": [],
+    "counts": {
+      "sourceLookups": 4143,
+      "sourceIndexReads": 2310,
+      "worldSlices": 27605,
+      "plannerActivations": 3600,
+      "actorPlans": 9328,
+      "regionCompilations": 175,
+      "renderCompilations": 0,
+      "routeExpansions": 338322,
+      "entityScans": 146976
+    },
+    "elapsedMs": 106767.59008000001,
+    "timings": {
+      "humanEventBoundary": {
+        "calls": 27605,
+        "ms": 6405.589271001144
+      },
+      "navigationRead": {
+        "calls": 33711,
+        "ms": 4213.540486002281
+      },
+      "compileCanonicalGeometryRegion": {
+        "calls": 175,
+        "ms": 49218.19507
+      },
+      "globalSourceCandidates": {
+        "calls": 2310,
+        "ms": 22191.049268999664
+      },
+      "globalSourceAt": {
+        "calls": 4143,
+        "ms": 4276.703889999801
+      },
+      "resumeHarvestJob": {
+        "calls": 5423,
+        "ms": 6431.4922809994605
+      },
+      "planAutonomousWork": {
+        "calls": 9328,
+        "ms": 50798.27616899996
+      },
+      "stepHumans": {
+        "calls": 27605,
+        "ms": 77415.88994099872
+      },
+      "depositHumanOutputs": {
+        "calls": 1023,
+        "ms": 392.6691840000167
+      }
+    }
+  },
+  "final_profile": {
+    "case": "wp2-hour-profile",
+    "result": [],
+    "counts": {
+      "sourceLookups": 4143,
+      "sourceIndexReads": 2310,
+      "worldSlices": 27605,
+      "plannerActivations": 3600,
+      "actorPlans": 9328,
+      "regionCompilations": 175,
+      "renderCompilations": 0,
+      "routeExpansions": 338322,
+      "entityScans": 146976
+    },
+    "elapsedMs": 80230.114155,
+    "timings": {
+      "stepLootRespawn": {
+        "calls": 27665,
+        "ms": 16.32414799975868
+      },
+      "stepG1b": {
+        "calls": 27665,
+        "ms": 90.85738199982552
+      },
+      "stepStations": {
+        "calls": 55210,
+        "ms": 1736.58922500065
+      },
+      "stepTenders": {
+        "calls": 27665,
+        "ms": 630.7917040016418
+      },
+      "stepTenderStates": {
+        "calls": 27665,
+        "ms": 603.3000210009168
+      },
+      "humanEventBoundary": {
+        "calls": 27605,
+        "ms": 4597.792905999635
+      },
+      "basePowerBoundary": {
+        "calls": 27605,
+        "ms": 75.83725299863636
+      },
+      "tenderBoundary": {
+        "calls": 27605,
+        "ms": 55.63751100066929
+      },
+      "stepBasePower": {
+        "calls": 27605,
+        "ms": 105.04827999933786
+      },
+      "stepGardensBarrels": {
+        "calls": 27605,
+        "ms": 110.71184999996149
+      },
+      "tickNeeds": {
+        "calls": 27605,
+        "ms": 10980.608967000182
+      },
+      "navigationRead": {
+        "calls": 33711,
+        "ms": 4142.651409001249
+      },
+      "compileCanonicalGeometryRegion": {
+        "calls": 175,
+        "ms": 33239.72084399995
+      },
+      "globalSourceCandidates": {
+        "calls": 2310,
+        "ms": 14970.861373000142
+      },
+      "globalSourceAt": {
+        "calls": 4143,
+        "ms": 3091.930203000601
+      },
+      "resumeHarvestJob": {
+        "calls": 5423,
+        "ms": 5010.489934000589
+      },
+      "planAutonomousWork": {
+        "calls": 9328,
+        "ms": 35288.3833719999
+      },
+      "stepHumans": {
+        "calls": 27605,
+        "ms": 56058.95962199864
+      },
+      "compileCanonicalTerrainRegion": {
+        "calls": 174,
+        "ms": 23947.296066999992
+      },
+      "depositHumanOutputs": {
+        "calls": 1023,
+        "ms": 394.2552620002698
+      },
+      "advanceWorld": {
+        "calls": 60,
+        "ms": 80203.20105299997
+      }
+    }
+  },
+  "committed_acceptance": {
+    "case": "natural-population-h1",
+    "elapsedMs": 81501.592801,
+    "actors": 286,
+    "needsAt": 1794733200000,
+    "states": {
+      "IDLE": 285,
+      "WORKING": 1
+    }
+  },
+  "production_sha": "956e3f43f86467af89b6453c5149cbdca4c12c9f",
+  "timing_scope": "Inclusive performance.now elapsed timings, not additive; inspector sampling corroborates hot call stacks. Counters identical between first and final optional hour profiles. First profile already includes initial changes, not fdcd0be pristine baseline."
+}

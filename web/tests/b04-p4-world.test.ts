@@ -124,7 +124,7 @@ describe('B04-P4 IR sensor visual state mirrors the prompt rule (sprite key sour
 });
 
 import { RECIPES, ITEMS } from '../src/game/catalog';
-describe('B04-P4 Metal Pipe at the physical Foundry Recycler (X:pipe-v1)', () => {
+describe('B04-P4 Metal Pipe at the physical Foundry Recycler (X:pipe-v3 for new jobs)', () => {
   function recyclerRun() {
     const g = newGame(); expect(act(g, 'startRun', { character: 'female', seed: 97 }, T0).ok).toBe(true);
     const r = g.run!, tx = 80, ty = 80;
@@ -148,12 +148,15 @@ describe('B04-P4 Metal Pipe at the physical Foundry Recycler (X:pipe-v1)', () =>
     expect(ok.ok, JSON.stringify(ok)).toBe(true);
     expect(countItem(r, 'inv', 'metal_pipe')).toBe(1);             // exactly one pipe left the carried inventory (2 -> 1)
     const job = r.entities[id].station!.queue[0];
-    expect(job.recipe).toBe('X:pipe-v2'); expect(job.reserved?.length).toBe(1);   // MEC-01 A2: NEW pipe jobs use v2 (1 ingot + 1 MP, 12 s); X:pipe-v1 is kept for stored jobs
-    stepStations(g, 11000, T0 + 11000);
-    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(0);    // not finished before the real 12 s
-    stepStations(g, 1000, T0 + 12000);
-    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(1);    // one ingot + one Mechanical Part out: a net loss against the 2 ingots + parts that made the pipe
-    expect(countItem(r, out.id, 'mechanical_parts')).toBe(1);
+    // PA1 R1: new pipe jobs use X:pipe-v3 (the recovered paper return: 1 ingot in 10 s). v1/v2 stay
+    // frozen for jobs a save already holds — v2's extra Mechanical Part became an over-return the
+    // moment a craft began yielding two sections, so it can no longer be selected for a new job.
+    expect(job.recipe).toBe('X:pipe-v3'); expect(job.reserved?.length).toBe(1);
+    stepStations(g, 9000, T0 + 9000);
+    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(0);    // not finished before the real 10 s
+    stepStations(g, 1500, T0 + 10500);
+    expect(countItem(r, out.id, 'refined_iron_ingot')).toBe(1);    // one ingot back: a net loss against the 2 ingots + 1 part that made the pair
+    expect(countItem(r, out.id, 'mechanical_parts')).toBe(0);
     expect(r.entities[id].station!.queue.length).toBe(0);
   });
   it('a full output blocks the job without losing the reserved pipe; cancel returns that same UID', () => {

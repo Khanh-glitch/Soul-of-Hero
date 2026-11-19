@@ -2,6 +2,7 @@
 // Writes evidence/b05-loot/matrix.json. Asserts: deterministic rolls, legacy b01 saves keep their grammar, every item the
 // loot can emit has at least one real consumer (no orphan), and no Fuel Canister / crude / cash comes from a container.
 import { describe, it, expect } from 'vitest';
+import { liveItemId } from '../src/game/final-item-set';
 import { mkdirSync, readFileSync } from 'node:fs';
 import { writeFileSync } from './_evidenceFs';
 import { stationBurnable } from '../src/game/catalog';
@@ -9,7 +10,9 @@ import { RECIPES, STRUCTS, ITEMS } from '../src/game/catalog';
 import { LOOT_CLASSES, LOOT_B04_ROLES, LOOT_B01_ROLES, LOOT_GRAMMAR_CURRENT, LOOT_GRAMMAR_VERSION, lootClass, lootGrammarRoll, lootRoll } from '../src/game/loot-ecology';
 import type { RunState } from '../src/game/core';
 
-const MATERIALS = ['metal_pipe', 'iron_plate', 'mechanical_gear', 'refined_iron_ingot', 'mechanical_parts', 'spares', 'salvaged_oil', 'crude_petroleum', 'fuel_can', 'metal_blade', 'fasteners'];
+// Item set v3: Machine Parts, Fasteners and Salvaged Oil are retired. The loot tables still name them (they are digest-pinned) but a crate
+// only ever holds the successor, so coverage is asked of the id the player actually receives.
+const MATERIALS = [...new Set(['metal_pipe', 'iron_plate', 'mechanical_gear', 'refined_iron_ingot', 'mechanical_parts', 'spares', 'salvaged_oil', 'crude_petroleum', 'fuel_can', 'metal_blade', 'fasteners'].map(liveItemId))];
 /** Non-recipe consumers that the engine reads directly (engine.ts repairStructure: material 'iron_plate' patches walls and doors). */
 const DIRECT_CONSUMERS: Record<string, string[]> = {
   iron_plate: ['action:repairStructure material=iron_plate (engine.ts)'],
@@ -67,7 +70,7 @@ describe('B05-R C1 loot → industry matrix (real rolls, real consumers)', () =>
   });
   it('no emitted loot item is an orphan: each has at least one real consumer', () => {
     const emitted = new Set<string>();
-    for (const [, st] of classes) for (let c = 0; c < 64; c++) for (const [k] of lootRoll(run(LOOT_GRAMMAR_CURRENT), st, c)) emitted.add(k);
+    for (const [, st] of classes) for (let c = 0; c < 64; c++) for (const [k] of lootRoll(run(LOOT_GRAMMAR_CURRENT), st, c)) emitted.add(liveItemId(k));
     for (const item of emitted) expect(consumers(item).length, `orphan loot item: ${item}`).toBeGreaterThan(0);
   });
   it('important-item consumer coverage is asserted directly, not only for items the loot roll emits', () => {

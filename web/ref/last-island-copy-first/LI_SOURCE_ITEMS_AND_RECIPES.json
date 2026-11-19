@@ -1,0 +1,4311 @@
+{
+  "schema": "soh.li_copy_first.source.v1",
+  "created_on": "2026-11-14",
+  "source_head": "bb2d4a7f544d9c5ec8436bc08b1e449fc6abb7f9",
+  "method": "137 historical items + 86 Atlas crosswalk = 139 union source IDs, not all distinct same-version items",
+  "canonical_rule": "Copy Last Island facts when sourced; only transform where current SOH Bible explicitly differs; no invented numbers or loot rates; version variants remain edition-scoped.",
+  "source_quality_warning": "Some original citations were unverified/unsupported; preserve labels, never assert historical numeric fidelity for those rows.",
+  "source_roots": [
+    "web/ref/item-ontology-v2/li-historical/LI_137_ITEM_HISTORICAL_ATLAS_AUDIT.csv",
+    "web/ref/item-ontology-v2/li-historical-crosswalk.csv",
+    "web/ref/atlas/extracted/ATLAS_v2.json",
+    "web/ref/bible.md"
+  ],
+  "statistics": {
+    "source_union_ids": 139,
+    "historical_rows": 137,
+    "atlas_crosswalk_rows": 86,
+    "nonempty_ingredient_formulas": 82,
+    "by_policy": {
+      "COPY_LI_SOURCE": 115,
+      "HISTORICAL_FORMULA_VARIANT": 7,
+      "PRESERVE_UNVERIFIED_NO_INVENTION": 15,
+      "KEEP_EDITION_SCOPED": 2
+    }
+  },
+  "items": [
+    {
+      "li_id": "akm",
+      "li_name": "Akm",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "rifle_body": 1,
+          "refined_iron_ingot": 50,
+          "metal_pipe": 2,
+          "torsion_spring": 4
+        },
+        "station": "3",
+        "raw_description": "bench 3: 1 rifle_body + 50 refined_iron_ingot + 2 metal_pipe + 4 torsion_spring",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "military_box [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "airdrop [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://a.4399.cn/gl/020918173_115226.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_12g",
+      "li_name": "Ammo 12G",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 5,
+          "gunpowder": 10
+        },
+        "station": "2",
+        "raw_description": "bench 2: 5 iron_ingot + 10 gunpowder",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "supply_box [ATLAS POSSIBLE]",
+        "military_box [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3279791.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_12g_ap",
+      "li_name": "Ammo 12G Ap",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 5,
+          "gunpowder": 10,
+          "sulfur_powder": 20
+        },
+        "station": "3",
+        "raw_description": "bench 3: 5 iron_ingot + 10 gunpowder + 20 sulfur_powder",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "airdrop [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3279791.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_556",
+      "li_name": "Ammo 556",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "supply_box [ATLAS POSSIBLE]",
+        "military_box [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_556_base",
+      "li_name": "Ammo 556 Base",
+      "category": "combat",
+      "relation": "VERSION_VARIANT",
+      "variant_of": "ammo_556",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 10,
+          "gunpowder": 5
+        },
+        "station": "Workbench II",
+        "raw_description": "bench Workbench II: 10 iron_ingot + 5 gunpowder",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_556_he",
+      "li_name": "Ammo 556 He",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "supply_box [ATLAS POSSIBLE]",
+        "military_box [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "airdrop [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_556_he_old",
+      "li_name": "Ammo 556 He Old",
+      "category": "combat",
+      "relation": "VERSION_VARIANT",
+      "variant_of": "ammo_556_he",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 10,
+          "gunpowder": 20,
+          "sulfur_powder": 10
+        },
+        "station": "Workbench III",
+        "raw_description": "bench Workbench III: 10 iron_ingot + 20 gunpowder + 10 sulfur_powder",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_762",
+      "li_name": "Ammo 762",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "supply_box [ATLAS POSSIBLE]",
+        "military_box [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_762_base",
+      "li_name": "Ammo 762 Base",
+      "category": "combat",
+      "relation": "VERSION_VARIANT",
+      "variant_of": "ammo_762",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 10,
+          "gunpowder": 5
+        },
+        "station": "Workbench II",
+        "raw_description": "bench Workbench II: 10 iron_ingot + 5 gunpowder",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_762_he",
+      "li_name": "Ammo 762 He",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "airdrop [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_762_he_old",
+      "li_name": "Ammo 762 He Old",
+      "category": "combat",
+      "relation": "VERSION_VARIANT",
+      "variant_of": "ammo_762_he",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 10,
+          "gunpowder": 20,
+          "sulfur_powder": 10
+        },
+        "station": "Workbench III",
+        "raw_description": "bench Workbench III: 10 iron_ingot + 20 gunpowder + 10 sulfur_powder",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_8mm_handmade",
+      "li_name": "Ammo 8Mm Handmade",
+      "category": "combat",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 5,
+          "gunpowder": 3
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 5 iron_ingot + 3 gunpowder",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_9mm",
+      "li_name": "Ammo 9Mm",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "supply_box [ATLAS POSSIBLE]",
+        "military_box [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "ammo_9mm_base",
+      "li_name": "Ammo 9Mm Base",
+      "category": "combat",
+      "relation": "VERSION_VARIANT",
+      "variant_of": "ammo_9mm",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 10,
+          "gunpowder": 5
+        },
+        "station": "Workbench I",
+        "raw_description": "bench Workbench I: 10 iron_ingot + 5 gunpowder",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254982.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "animal_fat",
+      "li_name": "Animal Fat",
+      "category": "raw",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "animal_hide",
+      "li_name": "Animal Hide",
+      "category": "raw",
+      "relation": "ALIAS_OF_SOH_ITEM",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"animal_hide\" does not occur anywhere in that file. The citation is not proof of this row.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": "hide",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "animal_meat",
+      "li_name": "Animal Meat",
+      "category": "food",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "meat",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "auto_rifle_turret",
+      "li_name": "Auto Rifle Turret",
+      "category": "defense",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "electronic_parts": 10,
+          "iron_ingot": 50,
+          "semi_auto_rifle": 1
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 10 electronic_parts + 50 iron_ingot + 1 semi_auto_rifle",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://m.duote.com/tech/wmcq/135566.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "structure:arrow_turret",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "auto_shotgun_turret",
+      "li_name": "Auto Shotgun Turret",
+      "category": "defense",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 50,
+          "mechanical_gear": 6,
+          "rope": 1,
+          "single_shot_shotgun": 1
+        },
+        "station": "3",
+        "raw_description": "bench 3: 50 iron_ingot + 6 mechanical_gear + 1 rope + 1 single_shot_shotgun",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.hiwifi.com/news/gaoshou/156918.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "bandage",
+      "li_name": "Bandage",
+      "category": "medical",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "cloth": 5
+        },
+        "station": null,
+        "raw_description": "bench not recorded: 5 cloth",
+        "atlas_confidence": "C"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "bandage",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "barrel_bomb",
+      "li_name": "Barrel Bomb",
+      "category": "defense",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "gunpowder": 60,
+          "iron_ingot": 20
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 60 gunpowder + 20 iron_ingot",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "supply_box [ATLAS POSSIBLE]",
+        "military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.biubiu001.com/wpzzwmcq/39025.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "bear_trap",
+      "li_name": "Bear Trap",
+      "category": "defense",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 50,
+          "mechanical_gear": 1
+        },
+        "station": "1",
+        "raw_description": "bench 1: 50 iron_ingot + 1 mechanical_gear",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.onlinedown.net/article/10012371.htm",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "deploy_bear_trap",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "birthday_cake_2022",
+      "li_name": "Birthday Cake 2022",
+      "category": "access",
+      "relation": "EVENT_LIMITED",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": true,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_READ_AND_SUPPORTS",
+      "historical_recipe": {
+        "ingredients": {
+          "cream": 10,
+          "egg": 10,
+          "flour": 10
+        },
+        "station": "event",
+        "raw_description": "bench event: 10 cream + 10 egg + 10 flour",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "verified_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "Official notice: Event recipe and effect, 2022-11-10 to 2022-11-16. The notice calls it 狂欢蛋糕 in the recipe line and 生日蛋糕 in the exchange line. Notice text: 使用奶油*10、鸡蛋*10、面粉*10可制作狂欢蛋糕，蛋糕可以食用，增加饥饿值和生命值",
+      "copy_policy": "KEEP_EDITION_SCOPED",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "bizon_smg",
+      "li_name": "Bizon SMG",
+      "category": "combat",
+      "relation": "MODERN_ADDITION",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "OFFICIAL_MODERN",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "nostalgia_military_crate"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"bizon_smg\" does not occur anywhere in that file. The citation is not proof of this row. OFFICIAL_MODERN is the label inherited from the historical CSV. No official source for this id was opened here; the label is not verification.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "blue_card",
+      "li_name": "Blue Card",
+      "category": "access",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_MENTIONS_ONLY",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json ; https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The historical row cites ATLAS_v2.json; \"blue_card\" is not an atlas id there, the string occurs only inside another name or in prose. Official notice: Blue-card rooms are named. The card item itself is not described. Notice text: 中级补给箱（蓝卡房产出）",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": {
+        "runtime_alias": null,
+        "reason": "Bible K6: giữ cấp khóa nếu POI có thật, không bắt mọi POI đi ba màu",
+        "kind": "SOH_BIBLE"
+      },
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "canned_meat",
+      "li_name": "Canned Meat",
+      "category": "food",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "animal_meat": 10,
+          "tin_can": 1
+        },
+        "station": null,
+        "raw_description": "bench not recorded: 10 animal_meat + 1 tin_can",
+        "atlas_confidence": "C"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "salted_meat",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "charcoal",
+      "li_name": "Charcoal",
+      "category": "metal",
+      "relation": "ALIAS_OF_SOH_ITEM",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"charcoal\" does not occur anywhere in that file. The citation is not proof of this row.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": "charcoal",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "cleaver",
+      "li_name": "Cleaver",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 15,
+          "metal_blade": 1
+        },
+        "station": "1",
+        "raw_description": "bench 1: 15 iron_ingot + 1 metal_blade",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "supply_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.dlyybbs.com/t28",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "iron_sword",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "cloth",
+      "li_name": "Cloth",
+      "category": "metal",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "cloth",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "cream",
+      "li_name": "Cream",
+      "category": "food",
+      "relation": "EVENT_LIMITED",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"cream\" does not occur anywhere in that file. The citation is not proof of this row. Official notice: Event drop and cake input. Notice text: 打碎油桶、开箱子、击杀怪物，有概率获得奶油、鸡蛋、面粉等物品",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "crude_oil",
+      "li_name": "Crude Oil",
+      "category": "oil",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "red_oil_barrel",
+        "red_barrel [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": {
+        "runtime_alias": "crude_petroleum",
+        "reason": "Giữ dầu thô khai thác đúng nguồn; không nhầm với Salvaged Oil từ xác xe",
+        "kind": "SOH_COMPATIBILITY"
+      },
+      "soh_current_match": "salvaged_oil",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "dirt_grenade",
+      "li_name": "Dirt Grenade",
+      "category": "defense",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "double_barrel_shotgun",
+      "li_name": "Double Barrel Shotgun",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "shotgun_body": 1,
+          "refined_iron_ingot": 20,
+          "metal_pipe": 2,
+          "torsion_spring": 1
+        },
+        "station": "3",
+        "raw_description": "bench 3: 1 shotgun_body + 20 refined_iron_ingot + 2 metal_pipe + 1 torsion_spring",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "airdrop [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.dlyybbs.com/t28",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "drawing_bench",
+      "li_name": "Drawing Bench",
+      "category": "production",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 200,
+          "parts": 75
+        },
+        "station": null,
+        "raw_description": "bench not recorded: 200 iron_ingot + 75 parts",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3786502.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": {
+        "runtime_alias": "research",
+        "reason": "Bible K4: hệ công thức chung run-local; bàn nghiên cứu hỗ trợ mẫu và R&D",
+        "kind": "SOH_BIBLE"
+      },
+      "soh_current_match": "deploy_research",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "dried_meat",
+      "li_name": "Dried Meat",
+      "category": "food",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "animal_meat": 1
+        },
+        "station": null,
+        "raw_description": "bench not recorded: 1 animal_meat",
+        "atlas_confidence": "C"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "cooked_meat",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "egg",
+      "li_name": "Egg",
+      "category": "food",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"egg\" does not occur anywhere in that file. The citation is not proof of this row. Official notice: Event drop and cake input. Notice text: 打碎油桶、开箱子、击杀怪物，有概率获得奶油、鸡蛋、面粉等物品",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "grouse_egg",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "egg_flour",
+      "li_name": "Egg Flour",
+      "category": "food",
+      "relation": "EVENT_LIMITED",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"egg_flour\" does not occur anywhere in that file. The citation is not proof of this row.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "electric_door",
+      "li_name": "Electric Door",
+      "category": "power",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 50,
+          "electronic_parts": 5,
+          "mechanical_gear": 1,
+          "iron_plate": 10
+        },
+        "station": "3",
+        "raw_description": "bench 3: 50 iron_ingot + 5 electronic_parts + 1 mechanical_gear + 10 iron_plate",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3336352.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": {
+        "runtime_alias": "door_powered",
+        "reason": "Bible K6: cửa có điện, collision và đường thoát vật lý; không được xem module đang live",
+        "kind": "SOH_BIBLE"
+      },
+      "soh_current_match": "structure:door_powered",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "electric_resistor",
+      "li_name": "POI Electrical Resistor",
+      "category": "power",
+      "relation": "MODERN_ADDITION",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "OFFICIAL_MODERN",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"electric_resistor\" does not occur anywhere in that file. The citation is not proof of this row. Official notice: Only that the toolbox category drops it. Its function is not described. Notice text: 工具箱类（掉落电阻丝、近战武器、防御装置等） OFFICIAL_MODERN is an inherited label; here it is backed by the notice to the extent stated.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "electronic_parts",
+      "li_name": "Electronic Parts",
+      "category": "power",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "spares",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "energy_extractor",
+      "li_name": "Energy Extractor",
+      "category": "power",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 30,
+          "metal_pipe": 5,
+          "electronic_parts": 10,
+          "mechanical_gear": 10
+        },
+        "station": "3",
+        "raw_description": "bench 3: 30 refined_iron_ingot + 5 metal_pipe + 10 electronic_parts + 10 mechanical_gear",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.biubiu001.com/wpzzwmcq/38708.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "BACKLOG"
+    },
+    {
+      "li_id": "energy_refinery",
+      "li_name": "Energy Refinery",
+      "category": "power",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 200,
+          "parts": 500,
+          "electronic_parts": 50
+        },
+        "station": "3",
+        "raw_description": "bench 3: 200 refined_iron_ingot + 500 parts + 50 electronic_parts",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.biubiu001.com/wpzzwmcq/38708.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "BACKLOG"
+    },
+    {
+      "li_id": "explosive_material",
+      "li_name": "Explosive Material",
+      "category": "combat",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "gunpowder": 50,
+          "iron_ingot": 10,
+          "low_quality_fuel": 3
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 50 gunpowder + 10 iron_ingot + 3 low_quality_fuel",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.biubiu001.com/wpzzwmcq/39025.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "famas",
+      "li_name": "Famas",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "smg_body": 1,
+          "refined_iron_ingot": 15,
+          "torsion_spring": 2
+        },
+        "station": "3",
+        "raw_description": "bench 3: 1 smg_body + 15 refined_iron_ingot + 2 torsion_spring",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "airdrop [ATLAS POSSIBLE]",
+        "login_day3_reward [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.dlyybbs.com/t28",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "flamethrower",
+      "li_name": "Flamethrower",
+      "category": "access",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": {},
+        "station": "research",
+        "raw_description": "bench research: inputs UNKNOWN",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"flamethrower\" does not occur anywhere in that file. The citation is not proof of this row.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "flamethrower_gas_ammo",
+      "li_name": "Burning Gas",
+      "category": "combat",
+      "relation": "MODERN_ADDITION",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "OFFICIAL_MODERN",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"flamethrower_gas_ammo\" does not occur anywhere in that file. The citation is not proof of this row. OFFICIAL_MODERN is the label inherited from the historical CSV. No official source for this id was opened here; the label is not verification.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "flour",
+      "li_name": "Flour",
+      "category": "food",
+      "relation": "EVENT_LIMITED",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"flour\" does not occur anywhere in that file. The citation is not proof of this row. Official notice: Event drop and cake input. Notice text: 打碎油桶、开箱子、击杀怪物，有概率获得奶油、鸡蛋、面粉等物品",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "fruit_juice",
+      "li_name": "Fruit Juice",
+      "category": "food",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "wild_berry": 3
+        },
+        "station": null,
+        "raw_description": "bench not recorded: 3 wild_berry",
+        "atlas_confidence": "C"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "water_flask",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "fruit_wine",
+      "li_name": "Fruit Wine",
+      "category": "food",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "wild_berry": 5,
+          "tin_can": 1
+        },
+        "station": null,
+        "raw_description": "bench not recorded: 5 wild_berry + 1 tin_can",
+        "atlas_confidence": "C"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "fuel_generator",
+      "li_name": "Fuel Generator",
+      "category": "power",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 20,
+          "iron_ingot": 100,
+          "electronic_parts": 30,
+          "parts": 100
+        },
+        "station": "3",
+        "raw_description": "bench 3: 20 refined_iron_ingot + 100 iron_ingot + 30 electronic_parts + 100 parts",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3336352.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "deploy_base_generator",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "glider_legacy",
+      "li_name": "Glider Legacy",
+      "category": "armor",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 50,
+          "mechanical_gear": 10,
+          "iron_plate": 10
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 50 refined_iron_ingot + 10 mechanical_gear + 10 iron_plate",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/5709048.html",
+      "verified_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim. Official notice: A glider exists at this date. The \"legacy\" recipe is not described. Notice text: 【修复】滑翔翼在空中离线无法降落的问题",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "green_card",
+      "li_name": "Green Card",
+      "category": "access",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_MENTIONS_ONLY",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json ; https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The historical row cites ATLAS_v2.json; \"green_card\" is not an atlas id there, the string occurs only inside another name or in prose. Official notice: Green-card rooms are named. The card item itself is not described. Notice text: 低级补给箱（绿卡房产出）",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": {
+        "runtime_alias": null,
+        "reason": "Bible K6: giữ cấp khóa nếu POI có thật, không bắt mọi POI đi ba màu",
+        "kind": "SOH_BIBLE"
+      },
+      "soh_current_match": "keycard",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "grilled_mushroom",
+      "li_name": "Grilled Mushroom",
+      "category": "food",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "mushroom": 1
+        },
+        "station": null,
+        "raw_description": "bench not recorded: 1 mushroom",
+        "atlas_confidence": "C"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "gunpowder",
+      "li_name": "Gunpowder",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": {
+          "charcoal": 30,
+          "sulfur_powder": 20
+        },
+        "station": "1",
+        "raw_description": "bench 1: 30 charcoal + 20 sulfur_powder",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "gunpowder_legacy",
+      "li_name": "Gunpowder Legacy",
+      "category": "combat",
+      "relation": "VERSION_VARIANT",
+      "variant_of": "gunpowder",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "charcoal": 30,
+          "sulfur_powder": 20
+        },
+        "station": "Workbench I",
+        "raw_description": "bench Workbench I: 30 charcoal + 20 sulfur_powder",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3271154.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "handgun_body",
+      "li_name": "Handgun Body",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "handmade_explosive_pack",
+      "li_name": "Handmade Explosive Pack",
+      "category": "defense",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "explosive_material": 5,
+          "rope": 2
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 5 explosive_material + 2 rope",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.biubiu001.com/wpzzwmcq/39025.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "handmade_explosives",
+      "li_name": "Handmade Explosives",
+      "category": "defense",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "military_box [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "airdrop [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "improved_grenade",
+      "li_name": "Improved Grenade",
+      "category": "defense",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "military_box [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "inferno_chariot",
+      "li_name": "Inferno Chariot",
+      "category": "transport",
+      "relation": "MODERN_ADDITION",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "OFFICIAL_MODERN",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "patrolling_armed_truck"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"inferno_chariot\" does not occur anywhere in that file. The citation is not proof of this row. OFFICIAL_MODERN is the label inherited from the historical CSV. No official source for this id was opened here; the label is not verification.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "inferno_chariot_blueprint",
+      "li_name": "Inferno Chariot Blueprint",
+      "category": "access",
+      "relation": "MODERN_ADDITION",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "OFFICIAL_MODERN",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "patrolling_armed_truck"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"inferno_chariot_blueprint\" does not occur anywhere in that file. The citation is not proof of this row. OFFICIAL_MODERN is the label inherited from the historical CSV. No official source for this id was opened here; the label is not verification.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "infrared_switch",
+      "li_name": "Infrared Switch",
+      "category": "power",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 30,
+          "electronic_parts": 10,
+          "parts": 15
+        },
+        "station": "3",
+        "raw_description": "bench 3: 30 iron_ingot + 10 electronic_parts + 15 parts",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3336352.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "deploy_ir_sensor",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "iron_axe",
+      "li_name": "Iron Axe",
+      "category": "tools",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 75,
+          "wood": 100
+        },
+        "station": "1",
+        "raw_description": "bench 1: 75 iron_ingot + 100 wood",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "supply_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.aspxhome.com/youxi/2023/397622.htm",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "iron_axe",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "iron_folding_ladder",
+      "li_name": "Iron Folding Ladder",
+      "category": "building",
+      "relation": "VERSION_VARIANT",
+      "variant_of": "steel_folding_ladder",
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 300,
+          "mechanical_gear": 3,
+          "wooden_ladder": 1
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 300 iron_ingot + 3 mechanical_gear + 1 wooden_ladder",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3334137.html",
+      "verified_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim. Official notice: The item exists at this date. No recipe. Notice text: 【修复】铁质折叠梯子|新纪元远距离下显示透明的问题",
+      "copy_policy": "HISTORICAL_FORMULA_VARIANT",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "iron_ingot",
+      "li_name": "Iron Ingot",
+      "category": "metal",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "iron_ingot",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "iron_plate",
+      "li_name": "Iron Plate",
+      "category": "metal",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 5,
+          "parts": 30
+        },
+        "station": "2",
+        "raw_description": "bench 2: 5 refined_iron_ingot + 30 parts",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3334146.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "iron_plate",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "iron_plate_boots",
+      "li_name": "Iron Plate Boots",
+      "category": "armor",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_plate": 1,
+          "animal_hide": 30,
+          "needle_thread": 3
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 1 iron_plate + 30 animal_hide + 3 needle_thread",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3459098.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "iron_plate_chest",
+      "li_name": "Iron Plate Chest",
+      "category": "armor",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_plate": 3,
+          "animal_hide": 40,
+          "needle_thread": 3
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 3 iron_plate + 40 animal_hide + 3 needle_thread",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3459098.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "leather_armor",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "iron_plate_helmet",
+      "li_name": "Iron Plate Helmet",
+      "category": "armor",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_plate": 1,
+          "animal_hide": 30,
+          "needle_thread": 3
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 1 iron_plate + 30 animal_hide + 3 needle_thread",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3459098.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "scrap_helm",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "iron_plate_pants",
+      "li_name": "Iron Plate Pants",
+      "category": "armor",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_plate": 2,
+          "animal_hide": 30,
+          "needle_thread": 3
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 2 iron_plate + 30 animal_hide + 3 needle_thread",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3459098.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "jam",
+      "li_name": "Jam",
+      "category": "food",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "wild_berry": 10,
+          "cloth": 5,
+          "tin_can": 1
+        },
+        "station": null,
+        "raw_description": "bench not recorded: 10 wild_berry + 5 cloth + 1 tin_can",
+        "atlas_confidence": "C"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "k31",
+      "li_name": "K31",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "sniper_body": 1,
+          "refined_iron_ingot": 20,
+          "metal_pipe": 1,
+          "torsion_spring": 1
+        },
+        "station": "2",
+        "raw_description": "bench 2: 1 sniper_body + 20 refined_iron_ingot + 1 metal_pipe + 1 torsion_spring",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "advanced_military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.dlyybbs.com/t28",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "large_furnace",
+      "li_name": "Large Furnace",
+      "category": "production",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"large_furnace\" does not occur anywhere in that file. The citation is not proof of this row. Official notice: Named as a skin target. No recipe or throughput. Notice text: 大熔炉|雷霆之怒",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "structure:furnace",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "launcher_mechanism",
+      "li_name": "Launcher Mechanism",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "low_quality_fuel",
+      "li_name": "Low Quality Fuel",
+      "category": "oil",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "animal_fat": 3,
+          "cloth": 1
+        },
+        "station": null,
+        "raw_description": "bench not recorded: 3 animal_fat + 1 cloth",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "red_oil_barrel",
+        "red_barrel [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.9game.cn/news/3448709.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": {
+        "runtime_alias": null,
+        "reason": "Khác đơn vị tiêu thụ Fuel Canister SOH; không tùy tiện đánh đồng khi chưa map chi tiết",
+        "kind": "MEASUREMENT"
+      },
+      "soh_current_match": "fuel_can",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "low_quality_fuel_can",
+      "li_name": "Low Quality Fuel Can",
+      "category": "oil",
+      "relation": "ALIAS_OF_ATLAS_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"low_quality_fuel_can\" does not occur anywhere in that file. The citation is not proof of this row.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": "fuel_can",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "m24",
+      "li_name": "M24",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "sniper_body": 1,
+          "refined_iron_ingot": 50,
+          "metal_pipe": 2,
+          "torsion_spring": 4
+        },
+        "station": "3",
+        "raw_description": "bench 3: 1 sniper_body + 50 refined_iron_ingot + 2 metal_pipe + 4 torsion_spring",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "airdrop [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.dlyybbs.com/t28",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "machete",
+      "li_name": "Machete",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 100,
+          "metal_blade": 3
+        },
+        "station": "2",
+        "raw_description": "bench 2: 100 iron_ingot + 3 metal_blade",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "supply_box [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3298149.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "iron_sword",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "mechanical_gear",
+      "li_name": "Mechanical Gear",
+      "category": "metal",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 50,
+          "parts": 65
+        },
+        "station": "2",
+        "raw_description": "bench 2: 50 iron_ingot + 65 parts",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "yellow_blue_barrel [ATLAS POSSIBLE]",
+        "military_box [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "supply_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3279007.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "mechanical_gear",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "medkit",
+      "li_name": "Medkit",
+      "category": "medical",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "syringe": 2,
+          "low_quality_fuel": 50,
+          "wood": 100,
+          "iron_ingot": 2
+        },
+        "station": "3",
+        "raw_description": "bench 3: 2 syringe + 50 low_quality_fuel + 100 wood + 2 iron_ingot",
+        "atlas_confidence": "C"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "medkit",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "metal_blade",
+      "li_name": "Metal Blade",
+      "category": "metal",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 30,
+          "parts": 15
+        },
+        "station": "2",
+        "raw_description": "bench 2: 30 iron_ingot + 15 parts",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3294352.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "metal_blade",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "metal_pipe",
+      "li_name": "Metal Pipe",
+      "category": "metal",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 5,
+          "parts": 30
+        },
+        "station": "2",
+        "raw_description": "bench 2: 5 refined_iron_ingot + 30 parts",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.aspxhome.com/youxi/2023/388245.htm",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "metal_pipe",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "mg4",
+      "li_name": "Mg4",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "launcher_mechanism": 1,
+          "refined_iron_ingot": 80,
+          "metal_pipe": 6,
+          "torsion_spring": 5
+        },
+        "station": "3",
+        "raw_description": "bench 3: 1 launcher_mechanism + 80 refined_iron_ingot + 6 metal_pipe + 5 torsion_spring",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "airdrop [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3270545.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "military_c4",
+      "li_name": "Military C4",
+      "category": "defense",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "airdrop [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "molotov_cocktail",
+      "li_name": "Molotov Cocktail",
+      "category": "defense",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": {},
+        "station": "research",
+        "raw_description": "bench research: inputs UNKNOWN",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"molotov_cocktail\" does not occur anywhere in that file. The citation is not proof of this row.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "motorcycle",
+      "li_name": "Motorcycle",
+      "category": "transport",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 200,
+          "vehicle_frame": 1,
+          "mechanical_gear": 30,
+          "iron_plate": 30
+        },
+        "station": "3",
+        "raw_description": "bench 3: 200 refined_iron_ingot + 1 vehicle_frame + 30 mechanical_gear + 30 iron_plate",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3676549.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": {
+        "runtime_alias": "motorbike_kit",
+        "reason": "Bible K7: xe là vật thể có tải/đường/fuel; run-local; không sao chép điều kiện PvP",
+        "kind": "SOH_BIBLE"
+      },
+      "soh_current_match": "motorbike_kit",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "mountain_bicycle_blueprint",
+      "li_name": "Mountain Bicycle Blueprint",
+      "category": "transport",
+      "relation": "MODERN_ADDITION",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "OFFICIAL_MODERN",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "all_toolboxes"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"mountain_bicycle_blueprint\" does not occur anywhere in that file. The citation is not proof of this row. Official notice: New one-seat vehicle; blueprint can drop from every toolbox; pedalling consumes lung air and exhaustion costs HP. Notice text: 新载具-山地自行车 … 所有工具箱有几率掉落自行车图纸 … 踩动自行车时将消耗人物肺部的空气 … 在肺部空气消耗完毕时会开始扣除人物血量 OFFICIAL_MODERN is an inherited label; here it is backed by the notice to the extent stated.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "mushroom",
+      "li_name": "Mushroom",
+      "category": "food",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "mushroom",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "mushroom_soup",
+      "li_name": "Mushroom Soup",
+      "category": "food",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "mushroom": 5,
+          "tin_can": 1
+        },
+        "station": null,
+        "raw_description": "bench not recorded: 5 mushroom + 1 tin_can",
+        "atlas_confidence": "C"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "root_broth",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "needle_thread",
+      "li_name": "Needle Thread",
+      "category": "metal",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "cloth": 10,
+          "iron_ingot": 5
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 10 cloth + 5 iron_ingot",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3459098.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "needle_tube",
+      "li_name": "Needle Tube",
+      "category": "medical",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "nettle",
+      "li_name": "Nettle",
+      "category": "food",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_MENTIONS_ONLY",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The historical row cites ATLAS_v2.json; \"nettle\" is not an atlas id there, the string occurs only inside another name or in prose.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "fiber",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "nettle_seed",
+      "li_name": "Nettle Seed",
+      "category": "food",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"nettle_seed\" does not occur anywhere in that file. The citation is not proof of this row.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": "seed",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "oil_refinery",
+      "li_name": "Oil Refinery",
+      "category": "oil",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 500,
+          "wood": 200,
+          "low_quality_fuel": 250
+        },
+        "station": "3",
+        "raw_description": "bench 3: 500 iron_ingot + 200 wood + 250 low_quality_fuel",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3448709.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "deploy_refinery",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "old_military_mine",
+      "li_name": "Old Military Mine",
+      "category": "defense",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"old_military_mine\" does not occur anywhere in that file. The citation is not proof of this row.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": "deploy_bear_trap",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "parts",
+      "li_name": "Parts",
+      "category": "metal",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "yellow_blue_oil_barrel",
+        "yellow_blue_barrel [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": {
+        "runtime_alias": "spares",
+        "reason": "Bible §0.2 giữ Parts run-local: dùng nghiên cứu và chế tạo; không lưu qua run",
+        "kind": "SOH_BIBLE"
+      },
+      "soh_current_match": "spares",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "pressure_switch",
+      "li_name": "Pressure Switch",
+      "category": "power",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 50,
+          "parts": 15,
+          "electronic_parts": 10,
+          "iron_plate": 2
+        },
+        "station": "3",
+        "raw_description": "bench 3: 50 iron_ingot + 15 parts + 10 electronic_parts + 2 iron_plate",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3336352.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "deploy_pressure_switch",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "purple_card",
+      "li_name": "Purple Card",
+      "category": "access",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_MENTIONS_ONLY",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json ; https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The historical row cites ATLAS_v2.json; \"purple_card\" is not an atlas id there, the string occurs only inside another name or in prose. Official notice: Purple-card rooms are named. The card item itself is not described. Notice text: 高级补给箱（紫卡房产出）",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": {
+        "runtime_alias": null,
+        "reason": "Bible K6: giữ cấp khóa nếu POI có thật, không bắt mọi POI đi ba màu",
+        "kind": "SOH_BIBLE"
+      },
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "qbz97",
+      "li_name": "Qbz97",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "rifle_body": 1,
+          "refined_iron_ingot": 50,
+          "metal_pipe": 2,
+          "torsion_spring": 4
+        },
+        "station": "3",
+        "raw_description": "bench 3: 1 rifle_body + 50 refined_iron_ingot + 2 metal_pipe + 4 torsion_spring",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "military_box [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.dlyybbs.com/t28",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "raw_iron_ore",
+      "li_name": "-",
+      "category": "Mined ore",
+      "relation": "ATLAS_ONLY_NAMING",
+      "variant_of": null,
+      "edition": "ATLAS_INDEX_ONLY",
+      "event_only": false,
+      "source_provenance": "NOT_IN_HISTORICAL_SET",
+      "source_support": "DIRECT",
+      "citation_check": "NOT_APPLICABLE",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not in historical set",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not in historical set"
+      ],
+      "source_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "iron_ore",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "red_bean_paste",
+      "li_name": "Red Bean Paste",
+      "category": "food",
+      "relation": "EVENT_LIMITED",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"red_bean_paste\" does not occur anywhere in that file. The citation is not proof of this row.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "refined_iron_axe",
+      "li_name": "Refined Iron Axe",
+      "category": "tools",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 2,
+          "metal_blade": 5,
+          "metal_pipe": 1
+        },
+        "station": "2",
+        "raw_description": "bench 2: 2 refined_iron_ingot + 5 metal_blade + 1 metal_pipe",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "advanced_military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/4515476.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "industrial_axe",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "refined_iron_boots",
+      "li_name": "Refined Iron Boots",
+      "category": "armor",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "animal_hide": 50,
+          "needle_thread": 6,
+          "refined_iron_ingot": 15
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 50 animal_hide + 6 needle_thread + 15 refined_iron_ingot",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3342093.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "refined_iron_chest",
+      "li_name": "Refined Iron Chest",
+      "category": "armor",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "animal_hide": 50,
+          "needle_thread": 8,
+          "refined_iron_ingot": 25
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 50 animal_hide + 8 needle_thread + 25 refined_iron_ingot",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3342093.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "chitin_armor",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "refined_iron_helmet",
+      "li_name": "Refined Iron Helmet",
+      "category": "armor",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "animal_hide": 50,
+          "needle_thread": 6,
+          "refined_iron_ingot": 15
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 50 animal_hide + 6 needle_thread + 15 refined_iron_ingot",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3342093.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "refined_iron_ingot",
+      "li_name": "Refined Iron Ingot",
+      "category": "metal",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "refined_iron_ingot",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "refined_iron_legs",
+      "li_name": "Refined Iron Legs",
+      "category": "armor",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "animal_hide": 50,
+          "needle_thread": 6,
+          "refined_iron_ingot": 15
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 50 animal_hide + 6 needle_thread + 15 refined_iron_ingot",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3342093.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "refined_iron_ore",
+      "li_name": "-",
+      "category": "Rare ore yield for refined metal",
+      "relation": "ATLAS_ONLY_NAMING",
+      "variant_of": null,
+      "edition": "ATLAS_INDEX_ONLY",
+      "event_only": false,
+      "source_provenance": "NOT_IN_HISTORICAL_SET",
+      "source_support": "DIRECT",
+      "citation_check": "NOT_APPLICABLE",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not in historical set",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not in historical set"
+      ],
+      "source_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "rich_iron_ore",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "reunion_mooncake_lottery_pack",
+      "li_name": "Reunion Mooncake Lottery Pack",
+      "category": "access",
+      "relation": "EVENT_LIMITED",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": true,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "egg_flour": 2,
+          "red_bean_paste": 2
+        },
+        "station": "event",
+        "raw_description": "bench event: 2 egg_flour + 2 red_bean_paste",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://hero.yingxiong.com/info/2026/0922/15022.html",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "KEEP_EDITION_SCOPED",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "rifle_body",
+      "li_name": "Rifle Body",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "rocket_ammo",
+      "li_name": "Rocket Ammo",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "explosive_material": 15,
+          "metal_pipe": 2
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 15 explosive_material + 2 metal_pipe",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "airdrop [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.9game.cn/news/3431000.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "rocket_launcher",
+      "li_name": "Rocket Launcher",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 50,
+          "metal_pipe": 6,
+          "torsion_spring": 5,
+          "launcher_mechanism": 1
+        },
+        "station": "3",
+        "raw_description": "bench 3: 50 refined_iron_ingot + 6 metal_pipe + 5 torsion_spring + 1 launcher_mechanism",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "advanced_military_box [ATLAS POSSIBLE]",
+        "airdrop [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.aspxhome.com/youxi/2023/388245.htm",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "rocket_turret",
+      "li_name": "Rocket Turret",
+      "category": "defense",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "electronic_parts": 20,
+          "iron_ingot": 50,
+          "mechanical_gear": 10,
+          "rocket_launcher": 1
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 20 electronic_parts + 50 iron_ingot + 10 mechanical_gear + 1 rocket_launcher",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.aspxhome.com/youxi/2022/399928.htm",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "rope",
+      "li_name": "Rope",
+      "category": "metal",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": {
+          "nettle": 10
+        },
+        "station": "UNKNOWN",
+        "raw_description": "bench UNKNOWN: 10 nettle",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "rope",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "self_revive_defibrillator",
+      "li_name": "Self-revive Defibrillator",
+      "category": "medical",
+      "relation": "MODERN_ADDITION",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "OFFICIAL_MODERN",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "port_boss",
+        "avenger_boss"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"self_revive_defibrillator\" does not occur anywhere in that file. The citation is not proof of this row. Official notice: New revive item; dropped by the port boss and the Avenger; used while downed over 10 seconds. Notice text: 新道具-自救除颤器 … 击杀港口boss每次必掉落4个 … 可在倒地状态下使用，使用时间为10秒 OFFICIAL_MODERN is an inherited label; here it is backed by the notice to the extent stated.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "semi_auto_pistol",
+      "li_name": "Semi Auto Pistol",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "handgun_body": 1,
+          "refined_iron_ingot": 4,
+          "metal_pipe": 1
+        },
+        "station": "2",
+        "raw_description": "bench 2: 1 handgun_body + 4 refined_iron_ingot + 1 metal_pipe",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]",
+        "supply_box [ATLAS POSSIBLE]",
+        "military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.dlyybbs.com/t28",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "semi_auto_rifle",
+      "li_name": "Semi Auto Rifle",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 450,
+          "refined_iron_ingot": 30,
+          "torsion_spring": 2
+        },
+        "station": "2",
+        "raw_description": "bench 2: 450 iron_ingot + 30 refined_iron_ingot + 2 torsion_spring",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.9game.cn/news/3425504.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "shotgun_body",
+      "li_name": "Shotgun Body",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "simple_revolver",
+      "li_name": "Simple Revolver",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 125,
+          "cloth": 25,
+          "metal_pipe": 1
+        },
+        "station": "1",
+        "raw_description": "bench 1: 125 iron_ingot + 25 cloth + 1 metal_pipe",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "starter_quest_reward [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.dlyybbs.com/t28",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "single_shot_shotgun",
+      "li_name": "Single Shot Shotgun",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 15,
+          "iron_ingot": 30,
+          "torsion_spring": 1,
+          "metal_pipe": 1
+        },
+        "station": "2",
+        "raw_description": "bench 2: 15 refined_iron_ingot + 30 iron_ingot + 1 torsion_spring + 1 metal_pipe",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "supply_box [ATLAS POSSIBLE]",
+        "military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.dlyybbs.com/t28",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "smg",
+      "li_name": "Smg",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 30,
+          "refined_iron_ingot": 12,
+          "torsion_spring": 2
+        },
+        "station": "2",
+        "raw_description": "bench 2: 30 iron_ingot + 12 refined_iron_ingot + 2 torsion_spring",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "supply_box [ATLAS POSSIBLE]",
+        "military_box [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.dlyybbs.com/t28",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "smg_body",
+      "li_name": "Smg Body",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "sniper_body",
+      "li_name": "Sniper Body",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "steel_folding_ladder",
+      "li_name": "Steel Folding Ladder",
+      "category": "building",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 30,
+          "wooden_ladder": 1,
+          "mechanical_gear": 3
+        },
+        "station": "3",
+        "raw_description": "bench 3: 30 refined_iron_ingot + 1 wooden_ladder + 3 mechanical_gear",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "unspecified_loot_crate [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.9game.cn/news/3442605.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "suicide_robot",
+      "li_name": "Self-destruct Robot",
+      "category": "defense",
+      "relation": "MODERN_ADDITION",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "OFFICIAL_MODERN",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"suicide_robot\" does not occur anywhere in that file. The citation is not proof of this row. OFFICIAL_MODERN is the label inherited from the historical CSV. No official source for this id was opened here; the label is not verification.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "sulfur_powder",
+      "li_name": "Sulfur Powder",
+      "category": "raw",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "sulfur",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "switch",
+      "li_name": "Switch",
+      "category": "power",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 10,
+          "electronic_parts": 2,
+          "parts": 10
+        },
+        "station": "3",
+        "raw_description": "bench 3: 10 iron_ingot + 2 electronic_parts + 10 parts",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3336352.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "deploy_power_switch",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "syringe",
+      "li_name": "Syringe",
+      "category": "medical",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "needle_tube": 1,
+          "low_quality_fuel": 10,
+          "iron_ingot": 10
+        },
+        "station": "2",
+        "raw_description": "bench 2: 1 needle_tube + 10 low_quality_fuel + 10 iron_ingot",
+        "atlas_confidence": "C"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/10769547.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "territory_cabinet",
+      "li_name": "Territory Cabinet",
+      "category": "building",
+      "relation": "ALIAS_OF_SOH_ITEM",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "wood": 1000
+        },
+        "station": "hand",
+        "raw_description": "bench hand: 1000 wood",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/daihaoyingxiong/3254056.html",
+      "verified_url": "https://hero.yingxiong.com/info/2022/1109/13052.html",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim. Official notice: Named as a skin target. No recipe. Notice text: 领地柜|雷霆之怒",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": {
+        "runtime_alias": "claim",
+        "reason": "Bible K6: cabinet là entity claim; xây tự do, PvE, upkeep run-local",
+        "kind": "SOH_BIBLE"
+      },
+      "soh_current_match": "structure:claim",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "tin_can",
+      "li_name": "Tin Can",
+      "category": "metal",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "torsion_spring",
+      "li_name": "Torsion Spring",
+      "category": "metal",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "refined_iron_ingot": 5,
+          "parts": 65
+        },
+        "station": "2",
+        "raw_description": "bench 2: 5 refined_iron_ingot + 65 parts",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3305575.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "tracking_auto_turret",
+      "li_name": "Tracking Auto Turret",
+      "category": "defense",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "LEGACY_CLAIM",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "akm": 1,
+          "iron_ingot": 50,
+          "mechanical_gear": 6
+        },
+        "station": "3",
+        "raw_description": "bench 3: 1 akm + 50 iron_ingot + 6 mechanical_gear",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.aspxhome.com/youxi/2023/388310.htm",
+      "verified_url": "-",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    },
+    {
+      "li_id": "vehicle_frame",
+      "li_name": "Vehicle Frame",
+      "category": "transport",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "iron_ingot": 100,
+          "refined_iron_ingot": 30,
+          "parts": 50
+        },
+        "station": "3",
+        "raw_description": "bench 3: 100 iron_ingot + 30 refined_iron_ingot + 50 parts",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://shouyou.3dmgame.com/gl/135015.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "vehicle_frame",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "wild_berry",
+      "li_name": "Wild Berry",
+      "category": "food",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "INDIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "berries",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "wild_berry_seed",
+      "li_name": "Wild Berry Seed",
+      "category": "food",
+      "relation": "DISTINCT_HISTORICAL",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "EXTERNAL_CRAFT_OR_INPUT",
+      "source_support": "UNSUPPORTED_CITATION",
+      "citation_check": "CITED_SOURCE_LACKS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "-",
+      "source_notes": "The historical row cites ATLAS_v2.json, and the string \"wild_berry_seed\" does not occur anywhere in that file. The citation is not proof of this row.",
+      "copy_policy": "PRESERVE_UNVERIFIED_NO_INVENTION",
+      "soh_exception": null,
+      "soh_current_match": "seed",
+      "old_v2_verdict": "HAVE_DIFFERENT_SHAPE"
+    },
+    {
+      "li_id": "wood",
+      "li_name": "Wood",
+      "category": "raw",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_CONTAINS_ID",
+      "historical_recipe": {
+        "ingredients": null,
+        "station": null,
+        "raw_description": "not recorded",
+        "atlas_confidence": null
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://github.com/Khanh-glitch/Soul-of-Hero/blob/934f4471326116737f206d2fb2d9a84ba77328da/web/ref/atlas/extracted/ATLAS_v2.json",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "-",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "wood",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "wood_club",
+      "li_name": "Wood Club",
+      "category": "combat",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "wood": 300
+        },
+        "station": "0",
+        "raw_description": "bench 0: 300 wood",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "toolbox [ATLAS POSSIBLE]"
+      ],
+      "source_url": "https://www.dlyybbs.com/t28",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "wood_spear",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "wood_spikes",
+      "li_name": "Wood Spikes",
+      "category": "defense",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "wood": 300
+        },
+        "station": "1",
+        "raw_description": "bench 1: 300 wood",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.onlinedown.net/article/10012371.htm",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": "deploy_spikes",
+      "old_v2_verdict": "HAVE_SAME_ROLE"
+    },
+    {
+      "li_id": "wooden_ladder",
+      "li_name": "Wooden Ladder",
+      "category": "building",
+      "relation": "EXACT_ID",
+      "variant_of": null,
+      "edition": "LI: nhiều phiên bản/mode (phần lớn tư liệu lịch sử)",
+      "event_only": false,
+      "source_provenance": "ATLAS_INDEXED",
+      "source_support": "DIRECT",
+      "citation_check": "CITED_SOURCE_NOT_REREAD",
+      "historical_recipe": {
+        "ingredients": {
+          "wood": 300,
+          "rope": 3
+        },
+        "station": "1",
+        "raw_description": "bench 1: 300 wood + 3 rope",
+        "atlas_confidence": "B"
+      },
+      "historical_loot": [
+        "not recorded"
+      ],
+      "source_url": "https://www.9game.cn/news/3442605.html",
+      "verified_url": "web/ref/atlas/extracted/ATLAS_v2.json",
+      "source_notes": "The cited external page was not re-read in this correction; the row is carried as a claim.",
+      "copy_policy": "COPY_LI_SOURCE",
+      "soh_exception": null,
+      "soh_current_match": null,
+      "old_v2_verdict": "NOT_ADDED"
+    }
+  ]
+}

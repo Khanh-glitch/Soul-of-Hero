@@ -2,6 +2,7 @@
  * Agent; this adapter consumes their geometry without painting or relocating it. */
 import { BAL, TILE, WW, WH } from './core';
 import { ELDERS, ITEMS, RECIPES } from './catalog';
+import { liveRecipeId } from './final-item-set'; // a package may still name a formula the final item set replaced; the crate then holds the successor's sheet
 import { validateGeographicHandoff, type GeographicHandoff } from './geography-contract';
 import type { Building, Place, StaticEnt, World } from './world';
 import { compileEconomy } from './world-economy';
@@ -41,7 +42,7 @@ function validatePackage(value:unknown):string[] {
   if(!Array.isArray(p.buildings)||p.buildings.some(b=>!b||!b.id||!b.name||typeof b.roof!=='string'||!point(b.x,b.y)||!Number.isInteger(b.w)||!Number.isInteger(b.h)||b.w<1||b.h<1||b.x+b.w>WW||b.y+b.h>WH))errors.push('invalid authored buildings');
   if(!Array.isArray(p.places)||p.places.some(a=>!a||!a.id||!a.name||!point(a.tx,a.ty)||!['start','poi','elder','evac'].includes(a.kind)))errors.push('invalid authored places');
   else {const ids=p.places.map(a=>a.id);if(new Set(ids).size!==ids.length)errors.push('duplicate place ids');const starts=p.places.filter(a=>a.kind==='start');if(!starts.length||starts.some(s=>!e.starts.some(a=>a.id===s.id&&a.x===s.tx&&a.y===s.ty))||starts.length!==e.starts.length)errors.push('starts disagree with geography');const elders=p.places.filter(a=>a.kind==='elder').map(a=>a.id);if(elders.length!==Object.keys(ELDERS).length||Object.keys(ELDERS).some(id=>!elders.includes(id)))errors.push('runtime requires all six uniquely identified Elder sites');}
-  if(!Array.isArray(p.statics)||p.statics.some(s=>!s||!point(s.tx,s.ty)||!['loot','cash','vendor','evac','door','gen'].includes(s.kind)||s.kind==='cash'&&(!Number.isSafeInteger(s.cash)||s.cash!<=0||s.cash!>ITEMS.rcash.max*2)||s.kind==='door'&&s.locked!==undefined&&!['keycard','power'].includes(s.locked)||s.kind==='loot'&&(!Array.isArray(s.loot)||s.loot.length>8||s.loot.some(([k,q])=>!Number.isSafeInteger(q)||q<1||(k.startsWith('blueprint:')?q!==1||!RECIPES[k.slice(10)]:!ITEMS[k]||q>ITEMS[k].max)))))errors.push('invalid finite static entity or loot');
+  if(!Array.isArray(p.statics)||p.statics.some(s=>!s||!point(s.tx,s.ty)||!['loot','cash','vendor','evac','door','gen'].includes(s.kind)||s.kind==='cash'&&(!Number.isSafeInteger(s.cash)||s.cash!<=0||s.cash!>ITEMS.rcash.max*2)||s.kind==='door'&&s.locked!==undefined&&!['keycard','power'].includes(s.locked)||s.kind==='loot'&&(!Array.isArray(s.loot)||s.loot.length>8||s.loot.some(([k,q])=>!Number.isSafeInteger(q)||q<1||(k.startsWith('blueprint:')?q!==1||!RECIPES[liveRecipeId(k.slice(10))??k.slice(10)]:!ITEMS[k]||q>ITEMS[k].max)))))errors.push('invalid finite static entity or loot');
   if(!errors.length){
     for(let i=0;i<n;i++){if(p.fresh[i]!==e.freshwater[i]){errors.push(`freshwater mismatch at ${i}`);break;} if (!!e.road[i] !== (p.tiles[i]===12 || p.tiles[i]===13)){errors.push(`road raster mismatch at ${i}`);break;} if (e.cargoPassable[i] && [0,1,8,15,16,18,19].includes(p.tiles[i])){errors.push(`cargo raster contradicts terrain at ${i}`);break;}}
     const at=(kind:string,i:number)=>p.statics.some(s=>s.kind===kind&&s.ty*WW+s.tx===i);

@@ -1,0 +1,520 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/tmp/audited-baseline/web
+
+ ❯ tests/cal01-world-calendar.test.ts (29 tests | 4 failed) 12831ms
+     ✓ has the Creator-locked scope: 336 h run, last 72 h Ragnarok, 2 years x 4 seasons 2ms
+     ✓ identifies the full eight-phase vector at 0/42/84/126/168/210/252/294/336 h  966ms
+     ✓ is exact one millisecond either side of every boundary and never negative 42ms
+     ✓ keeps the fixed 336 h expiry and last-72 h Ragnarok window unchanged 43ms
+     ✓ delegates one run-clock formula to the calendar (no second time authority) 47ms
+     ✓ never writes the Map arrays it reads (geography is Map-owned) 77ms
+     ✓ two regions diverge in the SAME season (winter cold exposure is local, not global) 32ms
+     ✓ the same biome costs more in winter than in the neutral season, through the shared thermal evaluator 31ms
+     ✓ summer raises water demand, the neutral season keeps the measured baseline exactly 37ms
+     ✓ freezing regions convert a rain slot into snowfall; the neutral season never snows 30ms
+     ✓ footprints respond to real local precipitation and surface, not to a global flag 29ms
+     ✓ weather family probabilities move with the season and stay deterministic 38ms
+     ✓ reconstructs an absent pre-season record from the clock without granting or resetting 41ms
+     ✓ normalises a corrupt or future-dated record under one policy: re-anchor, never skip, never grant 30ms
+     ✓ a corrupt stored record is repaired on load, keeps the run and grants nothing 36ms
+     ✓ survives serialize -> validate -> reload with the same season and the same ledger 36ms
+     ✓ one long absence, four partitions and a save/reload between them agree on the season timeline  4097ms
+     ✓ a long absence is settled in bounded chronological slices, not a 336 h frame replay  2535ms
+     ✓ never repeats a season event on a repeated Continue or a reload at the same instant  753ms
+     ✓ a season change alone never gives a creature knowledge of the player or the home  1020ms
+     × a cold frame costs real materials and changes the winter outcome on the same plot and seed 92ms
+     × offline winter: the framed plot really produces where the exposed plot is stalled, with no free output 87ms
+     × water: an exposed plot loses its reserve faster in a hot dry season than in the neutral season 90ms
+     ✓ crop choice competes by season: Sunroot out-grows Bitterleaf in summer, the reverse is not true in winter 0ms
+     × the Garden Tender keeps its receipts single-shot across a season boundary (no duplicate harvest) 61ms
+     ✓ a season boundary grants nothing: no items, cash, score or achievement  2197ms
+     ✓ the calendar read model is what other owners consume, and it exposes a genuine transition list 30ms
+     ✓ accepts the qaAdvance fixture only as a labelled time acceleration, and it moves the season 31ms
+     ✓ keeps the fixed run expiry boundary while the season wraps (no season-driven death or reset)  314ms
+ ❯ tests/control-tower-audit-regressions.test.tsx (12 tests | 1 failed) 3821ms
+     ✓ rejects forged client points when authoritative run receipts have zero waypoint progress  927ms
+     ✓ rejects impossible calendar dates, past/future date farming, and QA-tainted runs 54ms
+     ✓ blocks duplicate claims with different intent IDs, across save/reload, and across a new run on the same UTC day 129ms
+     ✓ updates charted % and Fit zoom level when r.discovered mutates in place while ExpeditionMap stays mounted 92ms
+     ✓ B1: dying on Veyra Floor -1 respawns cleanly at Ground-Floor bed or legal Ground spawn without softlocking the run  1630ms
+     ✓ B2: Veyra applyFloor rejects mounted motorbike (preserving save validity) and detaches pulled cart 86ms
+     ✓ B3: Creator Core AoEs, explosions, hazards & spiritDestination on Floor 0 do not bleed into Floor -1 creatures 46ms
+     ✓ B4: nature_rock detonates AoE at substep contact point (not stale pre-step) and emits Gold rockhit FX 45ms
+     ✓ B5: blocks placeCart and husbandry actions through solid walls 66ms
+     ✓ B6: Veyra offscreen stations smelt, offscreen cabinets fund edge walls, and offscreen deathBagView stays present  577ms
+     ✓ B6b: harvested non-ground Veyra floor sources do not refill across window shifts (K3) 104ms
+     × B7: Gold SurvivorScreen and ContainerPanel InvSide resolve every category & equipment ghost icon without empty src="" 65ms
+ ❯ tests/b02-bear-trap.test.ts (8 tests | 8 failed) 1274ms
+     × costs gear, ingots and fasteners; placed unarmed, so a creature stepping on it is not hit 938ms
+     × arming consumes exactly one Iron Plate; refused without one and the state stays unarmed 67ms
+     × one paid hit per arming: armed trigger damages and stuns once, becomes spent, and does not retrigger 49ms
+     × rearm is paid (one plate) and worn after the third hit: no further arming, reclaim only 45ms
+     × a sleeping creature on the plate does not trigger, and an adjacent creature cannot reach through the footprint 43ms
+     × live only: offline settlement with a creature on the armed trap never fires it (no offline kill) 43ms
+     × reclaim of a used trap returns at most the bounded refund of its build cost, never more 43ms
+     × persists armed/spent state and uses across save and reload; corrupt trap state is refused 46ms
+ ❯ tests/b02-ir-sensor.test.ts (12 tests | 12 failed) 1394ms
+     × costs real parts (mechanical gear, iron, fasteners), is owned, and build is refused without the parts 877ms
+     × sensor off: no conduction even with a visible player; toggling on conducts and feeds the door 59ms
+     × no through-wall detection: a solid wall in the line stops conduction and the status says so 44ms
+     × bounded range: a player beyond 6 tiles is not sensed 44ms
+     × empty fuel and off generator: no conduction, no capacity claimed, and the status says why 42ms
+     × capacity: a single-slot generator is consumed by the sensor, so the door is starved until reinforced 41ms
+     × second consumer: an arrow turret wired through the sensor is powered only while the sensor sees a target 50ms
+     × sleeping and offline-unresolved creatures are never sensed (no synthetic offline detection) 49ms
+     × disabled, destroyed or unpowered sensors cannot conduct; sensor fuel is drawn while enabled 44ms
+     × persists enabled state, status and door power across save and reload 47ms
+     × rejects corrupt sensor state at save time (no silent acceptance) 48ms
+     × offline settle with the sensor enabled and a target absent is deterministic and burns the same fuel as direct 48ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 25 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/b02-bear-trap.test.ts > B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn > costs gear, ingots and fasteners; placed unarmed, so a creature stepping on it is not hit
+AssertionError: expected [ [ 'mechanical_gear', 1 ], …(1) ] to deeply equal [ [ 'mechanical_gear', 1 ], …(2) ]
+
+- Expected
++ Received
+
+@@ -5,10 +5,6 @@
+    ],
+    [
+      "iron_ingot",
+      2,
+    ],
+-   [
+-     "fasteners",
+-     2,
+-   ],
+  ]
+
+ ❯ tests/b02-bear-trap.test.ts:20:52
+     18| describe('B02-P1-B bear trap: physical arm, one paid hit, spent, rearm…
+     19|   it('costs gear, ingots and fasteners; placed unarmed, so a creature …
+     20|     const o=setup();expect(STRUCTS.bear_trap.cost).toEqual([['mechanic…
+       |                                                    ^
+     21|     const t=o.build('bear_trap',o.x+2,o.y);expect(t.bearTrap).toEqual(…
+     22|     const m=stepOn(o,o.x+2,o.y);triggerBearTrap(o.g,m,T0);expect(m.hp)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/25]⎯
+
+ FAIL  tests/b02-bear-trap.test.ts > B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn > arming consumes exactly one Iron Plate; refused without one and the state stays unarmed
+AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ Object.build tests/b02-bear-trap.test.ts:15:227
+
+ ❯ tests/b02-bear-trap.test.ts:25:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/25]⎯
+
+ FAIL  tests/b02-bear-trap.test.ts > B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn > one paid hit per arming: armed trigger damages and stuns once, becomes spent, and does not retrigger
+AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ Object.build tests/b02-bear-trap.test.ts:15:227
+
+ ❯ tests/b02-bear-trap.test.ts:32:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/25]⎯
+
+ FAIL  tests/b02-bear-trap.test.ts > B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn > rearm is paid (one plate) and worn after the third hit: no further arming, reclaim only
+AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ Object.build tests/b02-bear-trap.test.ts:15:227
+
+ ❯ tests/b02-bear-trap.test.ts:38:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/25]⎯
+
+ FAIL  tests/b02-bear-trap.test.ts > B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn > a sleeping creature on the plate does not trigger, and an adjacent creature cannot reach through the footprint
+AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ Object.build tests/b02-bear-trap.test.ts:15:227
+
+ ❯ tests/b02-bear-trap.test.ts:45:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/25]⎯
+
+ FAIL  tests/b02-bear-trap.test.ts > B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn > live only: offline settlement with a creature on the armed trap never fires it (no offline kill)
+AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ Object.build tests/b02-bear-trap.test.ts:15:227
+
+ ❯ tests/b02-bear-trap.test.ts:50:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/25]⎯
+
+ FAIL  tests/b02-bear-trap.test.ts > B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn > reclaim of a used trap returns at most the bounded refund of its build cost, never more
+AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ Object.build tests/b02-bear-trap.test.ts:15:227
+
+ ❯ tests/b02-bear-trap.test.ts:56:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/25]⎯
+
+ FAIL  tests/b02-bear-trap.test.ts > B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn > persists armed/spent state and uses across save and reload; corrupt trap state is refused
+AssertionError: bear_trap: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ Object.build tests/b02-bear-trap.test.ts:15:227
+
+ ❯ tests/b02-bear-trap.test.ts:64:31
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > costs real parts (mechanical gear, iron, fasteners), is owned, and build is refused without the parts
+AssertionError: expected [ [ 'iron_ingot', 1 ], …(2) ] to deeply equal [ [ 'mechanical_gear', 1 ], …(2) ]
+
+- Expected
++ Received
+
+  [
+    [
+-     "mechanical_gear",
+-     1,
+-   ],
+-   [
+      "iron_ingot",
+      1,
+    ],
+    [
+-     "fasteners",
++     "electronic_parts",
+      2,
++   ],
++   [
++     "spares",
++     1,
+    ],
+  ]
+
+ ❯ tests/b02-ir-sensor.test.ts:25:36
+     23|   it('costs real parts (mechanical gear, iron, fasteners), is owned, a…
+     24|     const o=setup();o.pos(o.x,o.y+1);expect(o.act('build',{struct:'ir_…
+     25|     expect(STRUCTS.ir_sensor.cost).toEqual([['mechanical_gear',1],['ir…
+       |                                    ^
+     26|     const s=o.build('ir_sensor',o.x+2,o.y);expect(s.irSensor).toEqual(…
+     27|     expect(countItem(o.r,'inv','mechanical_gear')).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > sensor off: no conduction even with a visible player; toggling on conducts and feeds the door
+AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ build tests/b02-ir-sensor.test.ts:15:227
+
+ ❯ rig tests/b02-ir-sensor.test.ts:18:73
+ ❯ tests/b02-ir-sensor.test.ts:30:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > no through-wall detection: a solid wall in the line stops conduction and the status says so
+AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ build tests/b02-ir-sensor.test.ts:15:227
+
+ ❯ rig tests/b02-ir-sensor.test.ts:18:73
+ ❯ tests/b02-ir-sensor.test.ts:40:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > bounded range: a player beyond 6 tiles is not sensed
+AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ build tests/b02-ir-sensor.test.ts:15:227
+
+ ❯ rig tests/b02-ir-sensor.test.ts:18:73
+ ❯ tests/b02-ir-sensor.test.ts:45:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > empty fuel and off generator: no conduction, no capacity claimed, and the status says why
+AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ build tests/b02-ir-sensor.test.ts:15:227
+
+ ❯ rig tests/b02-ir-sensor.test.ts:18:73
+ ❯ tests/b02-ir-sensor.test.ts:49:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > capacity: a single-slot generator is consumed by the sensor, so the door is starved until reinforced
+AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ build tests/b02-ir-sensor.test.ts:15:227
+
+ ❯ rig tests/b02-ir-sensor.test.ts:18:73
+ ❯ tests/b02-ir-sensor.test.ts:56:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > second consumer: an arrow turret wired through the sensor is powered only while the sensor sees a target
+AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ build tests/b02-ir-sensor.test.ts:15:227
+
+ ❯ rig tests/b02-ir-sensor.test.ts:18:73
+ ❯ tests/b02-ir-sensor.test.ts:62:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > sleeping and offline-unresolved creatures are never sensed (no synthetic offline detection)
+AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ build tests/b02-ir-sensor.test.ts:15:227
+
+ ❯ rig tests/b02-ir-sensor.test.ts:18:73
+ ❯ tests/b02-ir-sensor.test.ts:69:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > disabled, destroyed or unpowered sensors cannot conduct; sensor fuel is drawn while enabled
+AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ build tests/b02-ir-sensor.test.ts:15:227
+
+ ❯ rig tests/b02-ir-sensor.test.ts:18:73
+ ❯ tests/b02-ir-sensor.test.ts:75:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > persists enabled state, status and door power across save and reload
+AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ build tests/b02-ir-sensor.test.ts:15:227
+
+ ❯ rig tests/b02-ir-sensor.test.ts:18:73
+ ❯ tests/b02-ir-sensor.test.ts:81:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > rejects corrupt sensor state at save time (no silent acceptance)
+AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ build tests/b02-ir-sensor.test.ts:15:227
+
+ ❯ rig tests/b02-ir-sensor.test.ts:18:73
+ ❯ tests/b02-ir-sensor.test.ts:87:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/25]⎯
+
+ FAIL  tests/b02-ir-sensor.test.ts > B02-P1-A infrared sensor: physical, paid, wired, bounded > offline settle with the sensor enabled and a target absent is deterministic and burns the same fuel as direct
+AssertionError: base_generator: Need an intact packed device.: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ build tests/b02-ir-sensor.test.ts:15:227
+
+ ❯ rig tests/b02-ir-sensor.test.ts:18:73
+ ❯ tests/b02-ir-sensor.test.ts:91:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/25]⎯
+
+ FAIL  tests/cal01-world-calendar.test.ts > CAL-01 E — seasonal gardening with real structures, costs and receipts > a cold frame costs real materials and changes the winter outcome on the same plot and seed
+AssertionError: expected 'Need an intact packed device.' to be null
+
+- Expected:
+null
+
++ Received:
+"Need an intact packed device."
+
+ ❯ plot tests/cal01-world-calendar.test.ts:447:54
+    445|     r.player.x = cell.x * TILE + 8; r.player.y = cell.y * TILE + 8; ma…
+    446|     put(r, 'wood', 40); put(r, 'fiber', 40); put(r, 'glass', 4); put(r…
+    447|     expect(buildReason(g, 'garden', cell.x, cell.y)).toBeNull();
+       |                                                      ^
+    448|     expect(act(g, 'build', { struct: 'garden', tx: cell.x, ty: cell.y …
+    449|     const e = Object.values(r.entities).find(x => x.type === 'garden' …
+ ❯ tests/cal01-world-calendar.test.ts:464:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/25]⎯
+
+ FAIL  tests/cal01-world-calendar.test.ts > CAL-01 E — seasonal gardening with real structures, costs and receipts > offline winter: the framed plot really produces where the exposed plot is stalled, with no free output
+AssertionError: expected 'Need an intact packed device.' to be null
+
+- Expected:
+null
+
++ Received:
+"Need an intact packed device."
+
+ ❯ plot tests/cal01-world-calendar.test.ts:447:54
+    445|     r.player.x = cell.x * TILE + 8; r.player.y = cell.y * TILE + 8; ma…
+    446|     put(r, 'wood', 40); put(r, 'fiber', 40); put(r, 'glass', 4); put(r…
+    447|     expect(buildReason(g, 'garden', cell.x, cell.y)).toBeNull();
+       |                                                      ^
+    448|     expect(act(g, 'build', { struct: 'garden', tx: cell.x, ty: cell.y …
+    449|     const e = Object.values(r.entities).find(x => x.type === 'garden' …
+ ❯ tests/cal01-world-calendar.test.ts:479:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/25]⎯
+
+ FAIL  tests/cal01-world-calendar.test.ts > CAL-01 E — seasonal gardening with real structures, costs and receipts > water: an exposed plot loses its reserve faster in a hot dry season than in the neutral season
+AssertionError: expected 'Need an intact packed device.' to be null
+
+- Expected:
+null
+
++ Received:
+"Need an intact packed device."
+
+ ❯ plot tests/cal01-world-calendar.test.ts:447:54
+    445|     r.player.x = cell.x * TILE + 8; r.player.y = cell.y * TILE + 8; ma…
+    446|     put(r, 'wood', 40); put(r, 'fiber', 40); put(r, 'glass', 4); put(r…
+    447|     expect(buildReason(g, 'garden', cell.x, cell.y)).toBeNull();
+       |                                                      ^
+    448|     expect(act(g, 'build', { struct: 'garden', tx: cell.x, ty: cell.y …
+    449|     const e = Object.values(r.entities).find(x => x.type === 'garden' …
+ ❯ tests/cal01-world-calendar.test.ts:501:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/25]⎯
+
+ FAIL  tests/cal01-world-calendar.test.ts > CAL-01 E — seasonal gardening with real structures, costs and receipts > the Garden Tender keeps its receipts single-shot across a season boundary (no duplicate harvest)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/cal01-world-calendar.test.ts:529:87
+    527|     if (bench) expect(act(g, 'upgradeStation', { eid: bench.id }).ok).…
+    528|     else {
+    529|       expect(act(g, 'build', { struct: 'workbench', tx: cell.x + 2, ty…
+       |                                                                                       ^
+    530|       const b = Object.values(r.entities).find(e => e.type === 'workbe…
+    531|       expect(act(g, 'upgradeStation', { eid: b.id }).ok).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/25]⎯
+
+ FAIL  tests/control-tower-audit-regressions.test.tsx > Phase B — Independent Gameplay & Gold-Seam Defect Regressions > B7: Gold SurvivorScreen and ContainerPanel InvSide resolve every category & equipment ghost icon without empty src=""
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/control-tower-audit-regressions.test.tsx:662:113
+    660|     r.player.y = ty * TILE + 8;
+    661|     addItem(r, 'inv', 'wood', 30);
+    662|     expect(dispatch(gs, { id: 'b7-chest', type: 'build', struct: 'ches…
+       |                                                                                                                 ^
+    663|     const chest = Object.values(r.entities).find(e => e.type === 'ches…
+    664|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/25]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  25 failed | 36 passed (61)
+   Start at  19:00:32
+   Duration  26.55s (transform 4.44s, setup 0ms, import 6.81s, tests 19.32s, environment 0ms)
+

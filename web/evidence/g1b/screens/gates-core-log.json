@@ -1,0 +1,649 @@
+[
+ {
+  "info": {
+   "layout": "veyra05-at-896-768",
+   "rules": 4,
+   "seed": 2130556530,
+   "origin": [
+    896,
+    768
+   ],
+   "tile": [
+    24,
+    100
+   ],
+   "counts": {
+    "road_fuel_rack": 1,
+    "road_salvage_bale": 1
+   },
+   "inv": [
+    "knife",
+    "water_flask",
+    "berries",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "active": 0
+  },
+  "gates": [
+   {
+    "id": "veyra.g1b:gate:po_falls:deep",
+    "site": "po_falls",
+    "building": "po_falls@1464,904",
+    "door": [
+     1464,
+     899
+    ],
+    "interior": [
+     0,
+     1
+    ],
+    "power": "veyra.g1b:gen:po_falls"
+   },
+   {
+    "id": "veyra.g1b:gate:po_academy:room_green",
+    "site": "po_academy",
+    "building": "po_academy@1877,510",
+    "door": [
+     1868,
+     506
+    ],
+    "interior": [
+     1,
+     0
+    ],
+    "card": "green"
+   },
+   {
+    "id": "veyra.g1b:gate:po_archive:room_purple",
+    "site": "po_archive",
+    "building": "po_archive@2053,443",
+    "door": [
+     2047,
+     443
+    ],
+    "interior": [
+     1,
+     0
+    ],
+    "card": "purple",
+    "power": "veyra.g1b:gen:po_archive",
+    "ppe": true
+   },
+   {
+    "id": "veyra.g1b:gate:po_archive:deep",
+    "site": "po_archive",
+    "building": "po_archive@2035,437",
+    "door": [
+     2035,
+     443
+    ],
+    "interior": [
+     0,
+     -1
+    ],
+    "card": "purple",
+    "power": "veyra.g1b:gen:po_archive",
+    "ppe": true
+   },
+   {
+    "id": "veyra.g1b:gate:po_meridian:room_blue",
+    "site": "po_meridian",
+    "building": "po_meridian@2256,1361",
+    "door": [
+     2249,
+     1361
+    ],
+    "interior": [
+     1,
+     0
+    ],
+    "card": "blue",
+    "power": "veyra.g1b:gen:po_meridian"
+   }
+  ],
+  "fixtures": [
+   {
+    "id": "veyra.g1b:card:green",
+    "kind": "card",
+    "site": "po_kestrel",
+    "gx": 1390,
+    "gy": 613,
+    "card": "green_card",
+    "place": "yard"
+   },
+   {
+    "id": "veyra.g1b:card:blue",
+    "kind": "card",
+    "site": "po_freightyard",
+    "gx": 1408,
+    "gy": 989,
+    "card": "blue_card",
+    "place": "interior:po_freightyard@1404,991"
+   },
+   {
+    "id": "veyra.g1b:card:purple",
+    "kind": "card",
+    "site": "po_slag",
+    "gx": 2402,
+    "gy": 1843,
+    "card": "purple_card",
+    "place": "interior:po_slag@2410,1852"
+   },
+   {
+    "id": "veyra.g1b:gen:po_falls",
+    "kind": "gen",
+    "site": "po_falls",
+    "gx": 1464,
+    "gy": 896,
+    "place": "yard"
+   },
+   {
+    "id": "veyra.g1b:gen:po_archive",
+    "kind": "gen",
+    "site": "po_archive",
+    "gx": 2045,
+    "gy": 444,
+    "place": "yard"
+   },
+   {
+    "id": "veyra.g1b:gen:po_meridian",
+    "kind": "gen",
+    "site": "po_meridian",
+    "gx": 2254,
+    "gy": 1367,
+    "place": "yard"
+   }
+  ]
+ },
+ {
+  "shot": "gate-green-1-refused-no-card.png",
+  "gate": "veyra.g1b:gate:po_academy:room_green",
+  "door": [
+   1868,
+   506
+  ],
+  "playerSide": [
+   -1,
+   0
+  ],
+  "prompt": {
+   "kind": "door",
+   "label": "Sealed door · Green Card required",
+   "eid": "e8f"
+  },
+  "toasts": [
+   "✕Sealed. A Green Card is required.",
+   "✕Sealed. A Green Card is required.",
+   "✕"
+  ],
+  "receipts": [
+   "run.start female@VEYRA · U=0.5",
+   "poi.discover po_academy"
+  ],
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3"
+  ],
+  "expect": "refused: Green Card required"
+ },
+ {
+  "shot": "card-green-a-approach.png",
+  "fixture": "veyra.g1b:card:green",
+  "global": [
+   1390,
+   613
+  ],
+  "prompt": {
+   "kind": "g1b:card",
+   "label": "Open access-card case",
+   "eid": "e7h"
+  },
+  "entity": {
+   "eid": "e7h",
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "green_cardx1"
+   ]
+  }
+ },
+ {
+  "shot": "card-green-b-after-F.png",
+  "fixture": "veyra.g1b:card:green",
+  "entity": {
+   "eid": "e7h",
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "green_cardx1"
+   ]
+  },
+  "toasts": [],
+  "receipts": [
+   "run.start female@VEYRA · U=0.5",
+   "poi.discover po_academy",
+   "poi.discover po_kestrel",
+   "g1b.search veyra.g1b:card:green"
+  ]
+ },
+ {
+  "shot": "card-green-c-taken.png",
+  "fixture": "veyra.g1b:card:green",
+  "entity": {
+   "eid": "e7h",
+   "state": "empty",
+   "cycle": 0,
+   "stock": []
+  },
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "green_cardx1 ch3"
+  ]
+ },
+ {
+  "shot": "gate-green-2-opened-with-card.png",
+  "gate": "veyra.g1b:gate:po_academy:room_green",
+  "door": [
+   1868,
+   506
+  ],
+  "playerSide": [
+   -1,
+   0
+  ],
+  "prompt": {
+   "kind": "door",
+   "label": "Sealed door · Green Card · 3 uses",
+   "eid": "e96"
+  },
+  "toasts": [
+   "✓Green Card accepted.",
+   "✓Green Card accepted.",
+   "✓"
+  ],
+  "receipts": [
+   "poi.discover po_academy",
+   "poi.discover po_kestrel",
+   "g1b.search veyra.g1b:card:green",
+   "move green_cardx1 c7f->inv",
+   "g1b.card.taken veyra.g1b:card:green",
+   "g1b.door.open veyra.g1b:gate:po_academy:room_green:s7g:remaining=2"
+  ],
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "green_cardx1 ch2"
+  ],
+  "expect": "opens, one card use spent"
+ },
+ {
+  "shot": "gate-falls-1-refused-no-power.png",
+  "gate": "veyra.g1b:gate:po_falls:deep",
+  "door": [
+   1464,
+   899
+  ],
+  "playerSide": [
+   0,
+   -1
+  ],
+  "prompt": {
+   "kind": "door",
+   "label": "Sealed door · circuit dead · fuel the generator",
+   "eid": "e9m"
+  },
+  "toasts": [
+   "✕Sealed: the door circuit is dead. Fuel the generator outside with 1 Fuel Canister.",
+   "✕Sealed: the door circuit is dead. Fuel the generator outside with 1 Fuel Canister.",
+   "✕"
+  ],
+  "receipts": [
+   "poi.discover po_academy",
+   "poi.discover po_kestrel",
+   "g1b.search veyra.g1b:card:green",
+   "move green_cardx1 c7f->inv",
+   "g1b.card.taken veyra.g1b:card:green",
+   "g1b.door.open veyra.g1b:gate:po_academy:room_green:s7g:remaining=2"
+  ],
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "green_cardx1 ch2"
+  ],
+  "expect": "refused: circuit dead"
+ },
+ {
+  "shot": "gen-falls-1-no-fuel-a-approach.png",
+  "fixture": "veyra.g1b:gen:po_falls",
+  "global": [
+   1464,
+   896
+  ],
+  "prompt": {
+   "kind": "g1b:gen",
+   "label": "Circuit generator · add 1 Fuel Canister",
+   "eid": "e7p"
+  },
+  "entity": {
+   "eid": "e7p",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "expect": "refused: needs a Fuel Canister"
+ },
+ {
+  "shot": "gen-falls-1-no-fuel-b-after-F.png",
+  "fixture": "veyra.g1b:gen:po_falls",
+  "entity": {
+   "eid": "e7p",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "toasts": [
+   "✕Generator needs one physical Fuel Canister.",
+   "✕Generator needs one physical Fuel Canister.",
+   "✕"
+  ],
+  "receipts": [
+   "poi.discover po_academy",
+   "poi.discover po_kestrel",
+   "g1b.search veyra.g1b:card:green",
+   "move green_cardx1 c7f->inv",
+   "g1b.card.taken veyra.g1b:card:green",
+   "g1b.door.open veyra.g1b:gate:po_academy:room_green:s7g:remaining=2"
+  ]
+ },
+ {
+  "qaGrant": "fuel_can x1",
+  "left": 0
+ },
+ {
+  "shot": "gen-falls-2-fuelled-a-approach.png",
+  "fixture": "veyra.g1b:gen:po_falls",
+  "global": [
+   1464,
+   896
+  ],
+  "prompt": {
+   "kind": "g1b:gen",
+   "label": "Circuit generator · add 1 Fuel Canister",
+   "eid": "e7p"
+  },
+  "entity": {
+   "eid": "e7p",
+   "state": "closed",
+   "cycle": 0,
+   "stock": []
+  },
+  "qaGrant": "fuel_can x1",
+  "expect": "burns exactly one canister, circuit live"
+ },
+ {
+  "shot": "gen-falls-2-fuelled-b-after-F.png",
+  "fixture": "veyra.g1b:gen:po_falls",
+  "entity": {
+   "eid": "e7p",
+   "state": "closed",
+   "cycle": 0,
+   "poweredUntil": 1794772981588,
+   "stock": []
+  },
+  "toasts": [
+   "✓Generator running for 180 seconds.",
+   "✓Generator running for 180 seconds.",
+   "✓"
+  ],
+  "receipts": [
+   "poi.discover po_kestrel",
+   "g1b.search veyra.g1b:card:green",
+   "move green_cardx1 c7f->inv",
+   "g1b.card.taken veyra.g1b:card:green",
+   "g1b.door.open veyra.g1b:gate:po_academy:room_green:s7g:remaining=2",
+   "g1b.power veyra.g1b:gen:po_falls:until=1794772981588"
+  ]
+ },
+ {
+  "shot": "gate-falls-2-opened-powered.png",
+  "gate": "veyra.g1b:gate:po_falls:deep",
+  "door": [
+   1464,
+   899
+  ],
+  "playerSide": [
+   0,
+   -1
+  ],
+  "prompt": {
+   "kind": "door",
+   "label": "Sealed door · circuit live",
+   "eid": "e9m"
+  },
+  "toasts": [
+   "✓Powered door opened.",
+   "✓Powered door opened.",
+   "✓"
+  ],
+  "receipts": [
+   "g1b.search veyra.g1b:card:green",
+   "move green_cardx1 c7f->inv",
+   "g1b.card.taken veyra.g1b:card:green",
+   "g1b.door.open veyra.g1b:gate:po_academy:room_green:s7g:remaining=2",
+   "g1b.power veyra.g1b:gen:po_falls:until=1794772981588",
+   "g1b.door.open veyra.g1b:gate:po_falls:deep:powered"
+  ],
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "green_cardx1 ch2"
+  ],
+  "expect": "opens"
+ },
+ {
+  "qaGrant": "keycard_purple via real case below"
+ },
+ {
+  "shot": "card-purple-a-approach.png",
+  "fixture": "veyra.g1b:card:purple",
+  "global": [
+   2402,
+   1843
+  ],
+  "prompt": {
+   "kind": "g1b:card",
+   "label": "Open access-card case",
+   "eid": "e7n"
+  },
+  "entity": {
+   "eid": "e7n",
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "purple_cardx1"
+   ]
+  }
+ },
+ {
+  "shot": "card-purple-b-after-F.png",
+  "fixture": "veyra.g1b:card:purple",
+  "entity": {
+   "eid": "e7n",
+   "state": "opened",
+   "cycle": 0,
+   "stock": [
+    "purple_cardx1"
+   ]
+  },
+  "toasts": [],
+  "receipts": [
+   "move green_cardx1 c7f->inv",
+   "g1b.card.taken veyra.g1b:card:green",
+   "g1b.door.open veyra.g1b:gate:po_academy:room_green:s7g:remaining=2",
+   "g1b.power veyra.g1b:gen:po_falls:until=1794772981588",
+   "g1b.door.open veyra.g1b:gate:po_falls:deep:powered",
+   "g1b.search veyra.g1b:card:purple"
+  ]
+ },
+ {
+  "shot": "card-purple-c-taken.png",
+  "fixture": "veyra.g1b:card:purple",
+  "entity": {
+   "eid": "e7n",
+   "state": "empty",
+   "cycle": 0,
+   "stock": []
+  },
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "green_cardx1 ch2",
+   "purple_cardx1 ch3"
+  ]
+ },
+ {
+  "shot": "gate-purple-1-refused-no-power.png",
+  "gate": "veyra.g1b:gate:po_archive:room_purple",
+  "door": [
+   2047,
+   443
+  ],
+  "playerSide": [
+   -1,
+   0
+  ],
+  "prompt": {
+   "kind": "door",
+   "label": "Sealed door · Purple Card · 3 uses · circuit dead · fuel the generator · Filter Mask required",
+   "eid": "ed5"
+  },
+  "toasts": [
+   "✕Sealed: the door circuit is dead. Fuel the generator outside with 1 Fuel Canister.",
+   "✕Sealed: the door circuit is dead. Fuel the generator outside with 1 Fuel Canister.",
+   "✕"
+  ],
+  "receipts": [
+   "g1b.power veyra.g1b:gen:po_falls:until=1794772981588",
+   "g1b.door.open veyra.g1b:gate:po_falls:deep:powered",
+   "g1b.search veyra.g1b:card:purple",
+   "move purple_cardx1 c7l->inv",
+   "g1b.card.taken veyra.g1b:card:purple",
+   "poi.discover po_archive"
+  ],
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "green_cardx1 ch2",
+   "purple_cardx1 ch3"
+  ],
+  "expect": "refused: circuit dead (has card)"
+ },
+ {
+  "qaGrant": {
+   "core_blast": 1,
+   "energy_basic": 10,
+   "energy_refined": 4,
+   "essence_fire": 2
+  }
+ },
+ {
+  "shot": "core-1-held-lv1-hud.png",
+  "slot": 5,
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "green_cardx1 ch2",
+   "purple_cardx1 ch3",
+   "core_blastx1 Lv1 dur300",
+   "energy_basicx10",
+   "energy_refinedx4",
+   "essence_firex2"
+  ]
+ },
+ {
+  "shot": "core-2-lmb-cast.png",
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "green_cardx1 ch2",
+   "purple_cardx1 ch3",
+   "core_blastx1 Lv1 dur299",
+   "energy_basicx9",
+   "energy_refinedx4",
+   "essence_firex2"
+  ],
+  "receipts": [
+   "g1b.search veyra.g1b:card:purple",
+   "move purple_cardx1 c7l->inv",
+   "g1b.card.taken veyra.g1b:card:purple",
+   "poi.discover po_archive",
+   "core.commit sd8:basic:dur=299",
+   "achievement first_core"
+  ]
+ },
+ {
+  "shot": "core-3-q-refused-at-lv1.png",
+  "toasts": [
+   "•Q needs Big Bang Lv2. Upgrade it at a Workbench.",
+   "•Q needs Big Bang Lv2. Upgrade it at a Workbench.",
+   "•"
+  ],
+  "inv": [
+   "knifex1 dur300",
+   "water_flaskx1 ch2",
+   "berriesx3",
+   "green_cardx1 ch2",
+   "purple_cardx1 ch3",
+   "core_blastx1 Lv1 dur299",
+   "energy_basicx9",
+   "energy_refinedx4",
+   "essence_firex2"
+  ],
+  "receipts": [
+   "g1b.search veyra.g1b:card:purple",
+   "move purple_cardx1 c7l->inv",
+   "g1b.card.taken veyra.g1b:card:purple",
+   "poi.discover po_archive",
+   "core.commit sd8:basic:dur=299",
+   "achievement first_core"
+  ]
+ },
+ {
+  "shot": "core-4-pack-service-panel.png",
+  "serviceVisible": 0,
+  "text": null
+ },
+ {
+  "pageErrors": []
+ }
+]
