@@ -39,7 +39,7 @@ export function HumanPanel({ api, actorId, onClose }: { api: Api; actorId: strin
     setTradePending(false);
   };
   const isDown = h.state === 'DOWNED';
-  const isUnavailable = isDown || h.state === 'DEAD' || h.state === 'EVACUATED';
+  const isUnavailable = isDown || h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'ON_VESSEL';
   return <Panel title={`${h.name} · ${h.occupation}`} onClose={onClose} className="scroll" style={{ right: 6, top: 42, width: 242, maxHeight: 276, overflowY: 'auto', fontSize: 11, lineHeight: 1.2 }} testId="human-panel">
     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
       <HumanPortrait h={h} simSec={(r.clock.simMs ?? 0) / 1000} />
@@ -65,7 +65,7 @@ export function HumanPanel({ api, actorId, onClose }: { api: Api; actorId: strin
       </div>
     </>}
     {reply && <div role="status" aria-live="polite" style={{ color: '#ffe4a2', borderLeft: '2px solid #bd8d47', padding: '3px 5px', margin: '3px 0 5px', lineHeight: 1.25 }}>{reply}</div>}
-    {!['DEAD','EVACUATED','FIGHTING'].includes(h.state)&&<div style={{margin:'4px 0'}}>
+    {!['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(h.state)&&<div style={{margin:'4px 0'}}>
       <div style={{fontWeight:700}}>Help · urgent needs</div>
       {playerStacks.filter(({s})=>['bandage','herb'].includes(s.key)&&(isDown||h.wounds.some(w=>!w.treated)) || ITEMS[s.key]?.food?.hunger&&h.hunger<35&&!isDown || ITEMS[s.key]?.waterContainer&&(s.charge??0)>0&&h.thirst<35&&!isDown).map(({s})=><button key={s.uid} className="btn sm" disabled={!!hw.playerAid} onClick={()=>respond('humanAid',{stackUid:s.uid})}>Offer {ITEMS[s.key].name}</button>)}
       {hw.playerAid?.actorId===actorId&&<div role="status">Helping · remain beside them…</div>}

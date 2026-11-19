@@ -1971,10 +1971,14 @@ export function elderCoverage(hw: HumanWorld): { complete: boolean; pending: str
   const pending: string[] = [];
   let events = 0;
   for (const elder of Object.values(hw.elderPressure)) {
-    for (const ev of elder.events ?? []) {
+    const own = elder.events ?? [];
+    for (const ev of own) {
       events++;
       if (ev.state === 'APPROACH') pending.push(ev.id);
     }
+    // An awakened, undefeated Elder with no resolved wave is an UNPROVEN threat (a legacy save
+    // loaded straight into the assault window), never a silent "no danger today".
+    if (elder.alive && !elder.defeatedAt && elder.awakenedAt !== undefined && own.length === 0) pending.push(`${elder.elderId}:no-wave`);
   }
   return { complete: pending.length === 0, pending, events };
 }
