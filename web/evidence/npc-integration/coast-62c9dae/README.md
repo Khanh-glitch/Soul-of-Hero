@@ -26,3 +26,12 @@ Lệnh cuối **phải** trả mã khác 0 với gói ngày đầu này. Dùng t
 Lượt đi lại `mere-walk-retry.json` ghi bốn bước định hướng, không có câu trả lời hay biên nhận trao đổi; driver hết thời gian chờ “Save now”. Đã sửa driver để phân biệt đóng bảng tương tác với mở menu tạm dừng, không ghi trực tiếp vào save. Chưa có lượt thành công sau thay đổi này.
 
 **h24, mã đối chứng `62c9dae`:** 167 người hoạt động, 7 gục, 112 chết. 62/81 địa điểm có giao hàng kèm nguồn. Trong 112 người đã chết, 25 đã gục ở h8; 47 kết thúc với chỉ số khát bằng 0, 65 với chỉ số đói bằng 0 (chỉ số cuối, không tự suy ra nguyên nhân). Ba bến còn 1/3, 0/3, 1/3 cư dân hoạt động theo thứ tự West/South/Hook. Trong toàn ngày đầu có 2 biên nhận xây thùng hứng mưa, 18 biên nhận uống nước từ thùng. Đây **không phải** người đã sơ tán hay số người sẽ sống đến h336. Tái tạo bảng h24 bằng cùng lệnh `npc-hour-census.mjs`, thay `8` bằng `24`.
+
+**h51: điểm để phát lại việc tìm nước.** `h51.save.gz` là bản sao giữa chiến dịch của cùng lượt đối chứng (SHA256 sau giải nén `903ce9ef0150115ffae25e35c6325d9eaf91a489169844f2827c6ac0ce8d2d22`, không thay bộ kiểm kê h1/h8/h24). Hai nơi đáng đối chiếu:
+
+| Làng | Người cần nước | Có gì tại kho, có gì đang vướng? |
+|---|---|---|
+| Glade | Y sĩ `h4t` ở (1534,1380), chỉ số khát 9,06; đã ghi không tìm được bờ nước | Kho có 60 gỗ và 10 sợi không bị giữ. Thợ xây `h4s` ở (1536,1385), HP 49, thể lực 37,3; vẫn mang 1 gỗ `sg0e` của việc `hjg0d`, đang chờ giao vào `c25z`. Chưa có thùng. |
+| Westwood | Thợ máy `h5k`, chỉ số khát 1,37; còn phụ tùng và than trong túi nhưng không có bình | Thợ xây `h5p` đã chết. Kho còn 94 gỗ nhưng chỉ 1 sợi và không có dây. Không thể kết luận rằng chỉ cần đánh thức người lập kế hoạch là có thể lắp thùng. |
+
+Bước kiểm chứng ở Glade: nạp đúng save này, theo dõi liệu thợ xây **nhìn thấy** người cần nước, có lối đến kho và ô xây hợp lệ không; sau đó kiểm UID gỗ đã giữ, vật liệu thanh toán, lượng mưa và người thật đến uống. Hai người ở gần nhau và kho đủ vật liệu chưa chứng minh bất cứ mắt xích nào trong số đó; không cộng nước, không xóa nghĩa vụ giao gỗ để ép kết quả.
