@@ -55,6 +55,20 @@ describe('causal human biology and transaction-scoped housing (fixtures)',()=>{
   expect(humanEventBoundary(r,hw,T0,60000)).toBe(1000);h.recipeBoardPending=true;
   expect(humanEventBoundary(r,hw,T0,60000)).toBe(350);
  });
+ it('full-store cargo sleeps, but a separate interrupted medical fetch owns its retry',()=>{
+  const r=scene(),hw=r.humanWorld!,h=Object.values(hw.people).find(p=>p.occupation==='medic')!;
+  const store=r.custody[hw.communities[h.community!].storeContainers[0]];
+  hw.people={[h.actorId]:h};h.state='IDLE';h.following=false;h.intent=undefined;h.gx=hw.communities[h.community!].storeTile![0]+1;h.gy=hw.communities[h.community!].storeTile![1];h.floor=0;
+  h.hunger=h.thirst=100;h.rest=0;hw.plannerAt=T0+10000;h.nextThinkAt=T0+250;
+  const wait={containerId:store.id,signature:JSON.stringify(store.slots)};h.deliveryWait=wait;
+  expect(humanEventBoundary(r,hw,T0,60000)).toBe(10000);
+  h.intent={intentId:'interrupted-fetch',actorId:h.actorId,kind:'work',target:'occupation:medical',reserved:[],preconditions:[],startAt:T0,dueAt:T0,work:{kind:'medical',phase:'fetch',inputs:[['bandage',1]],duration:6000,patientId:'departed-patient'}};
+  const pack=JSON.stringify(r.custody[h.inv.packId]);expect(humanEventBoundary(r,hw,T0,60000)).toBe(250);
+  stepHumans(r,hw,T0+250);expect(h.state).toBe('WORKING');expect(h.intent?.work?.phase).toBe('fetch');
+  expect(humanEventBoundary(r,hw,T0+250,60000)).toBe(800);
+  stepHumans(r,hw,T0+1050);expect(h.intent).toBeUndefined();expect(h.lastWorkBlock).toBe('patient no longer needs this dose');
+  expect(h.deliveryWait).toEqual(wait);expect(JSON.stringify(store.slots)).toBe(wait.signature);expect(JSON.stringify(r.custody[h.inv.packId])).toBe(pack);
+ });
  it('retains the exact movement/work deadlines instead of coarsening contact',()=>{
   const r=scene(),hw=r.humanWorld!,h=Object.values(hw.people)[0];hw.people={[h.actorId]:h};
   h.state='WORKING';h.intent={intentId:'timed-contact',actorId:h.actorId,kind:'work',preconditions:[],reserved:[],startAt:T0,dueAt:T0+1500};

@@ -1,0 +1,163 @@
+{
+  "method": "Three independent processes load the same pre-nutrition h8 access save; settle 300000 ms with the new physiology, write identical snapshots. Then advance in ten one-second settles: original run, snapshot-decoded run, or snapshot-decoded run supplied only with structured clones of searches, failedSearches, componentFailures from its own warmup. Diagnostic copy in an external checkout, NOT a production serializer.",
+  "seed": 7606,
+  "sha256": "6fe03b1b2a31fcb12b0314eab63d4f9f718cd0e57c3d11167693ec91c3d8e4e7",
+  "navMemoryAtFork": {
+    "pending": 7,
+    "open": 29081,
+    "failed": 8,
+    "components": 8
+  },
+  "samples": [
+    {
+      "second": 1,
+      "coldDifferentPeople": [
+        "h5t"
+      ],
+      "coldCustodyEqual": true,
+      "warmRunSha256": "1bd1863c0b7e27c8a99d8a16a05bd6cbbbed41ee653225b63dc0b4c12ad46e4c",
+      "coldRunSha256": "9ba445d79957eadaff6696c5dfc7829d535609590257cb23b77847cfa0f90f64",
+      "navControlRunSha256": "1bd1863c0b7e27c8a99d8a16a05bd6cbbbed41ee653225b63dc0b4c12ad46e4c"
+    },
+    {
+      "second": 2,
+      "coldDifferentPeople": [
+        "h5t"
+      ],
+      "coldCustodyEqual": true,
+      "warmRunSha256": "bdd1afa2918cc7768835e4e1bc6e0ae67d4dfd43bf2b78a26c5e0e643e7ffbd1",
+      "coldRunSha256": "21f58ffcca5f6eea6f0c0d6b18ec159bb606e5be2760af823d27c1b23024d6b9",
+      "navControlRunSha256": "bdd1afa2918cc7768835e4e1bc6e0ae67d4dfd43bf2b78a26c5e0e643e7ffbd1"
+    },
+    {
+      "second": 3,
+      "coldDifferentPeople": [
+        "h1v",
+        "h5t"
+      ],
+      "coldCustodyEqual": true,
+      "warmRunSha256": "ca5e42c8c704f0dd61bf35a1ed3db59e2c170ca48e944feb94b75f589f19d6a0",
+      "coldRunSha256": "49ed932a3f049aff29c94aeae1b38bfc6594a8da4e789753e0468eb5f9f2e17c",
+      "navControlRunSha256": "ca5e42c8c704f0dd61bf35a1ed3db59e2c170ca48e944feb94b75f589f19d6a0"
+    },
+    {
+      "second": 4,
+      "coldDifferentPeople": [
+        "h1v",
+        "h5t"
+      ],
+      "coldCustodyEqual": true,
+      "warmRunSha256": "bb860d7cd997c4917355f3becf07e8ba4a8db289bc2d4ee77b49094c02c8dc8a",
+      "coldRunSha256": "b89fd6ac32e8761abb39c38d670fc741a33a4248e21cb8c044803d6d9dbf0159",
+      "navControlRunSha256": "bb860d7cd997c4917355f3becf07e8ba4a8db289bc2d4ee77b49094c02c8dc8a"
+    },
+    {
+      "second": 5,
+      "coldDifferentPeople": [
+        "h1v",
+        "h5t"
+      ],
+      "coldCustodyEqual": true,
+      "warmRunSha256": "adc260bd70668e52490d0bb588bea81d72a58d1f1ee656d4f557578724aa204e",
+      "coldRunSha256": "2d73dc9cd4c3e5079a73469f64b87a2f48785eb8feee678cb9a94c97e82c526c",
+      "navControlRunSha256": "adc260bd70668e52490d0bb588bea81d72a58d1f1ee656d4f557578724aa204e"
+    },
+    {
+      "second": 6,
+      "coldDifferentPeople": [
+        "h1v",
+        "h5t"
+      ],
+      "coldCustodyEqual": true,
+      "warmRunSha256": "964e6ff35def2aaa28eedd2b4744e31fce27965eddfd5a24fa5c6c534e8409be",
+      "coldRunSha256": "278d074af9d4b4ef4aea6d0acb93896d6e1dc5d115e11a515b12d07903d6d108",
+      "navControlRunSha256": "964e6ff35def2aaa28eedd2b4744e31fce27965eddfd5a24fa5c6c534e8409be"
+    },
+    {
+      "second": 7,
+      "coldDifferentPeople": [
+        "h1v",
+        "h5t"
+      ],
+      "coldCustodyEqual": true,
+      "warmRunSha256": "3075d38ca63bbd28cec26a5d8beb81db7308569d8f2c42bb4ad111a0692525d5",
+      "coldRunSha256": "0b39315dc1de0746dea07ce3384ea4599e5e5b3b7f13a7f3e4536574eb16b658",
+      "navControlRunSha256": "3075d38ca63bbd28cec26a5d8beb81db7308569d8f2c42bb4ad111a0692525d5"
+    },
+    {
+      "second": 8,
+      "coldDifferentPeople": [
+        "h1v",
+        "h5t"
+      ],
+      "coldCustodyEqual": true,
+      "warmRunSha256": "f8b4b754e5bafc1c12e91677d078bbb33d44eef19eac33f042cc13e04865cf0d",
+      "coldRunSha256": "1d4cb271c16fd783a77633db7c699163425756da6e8e350b1c54cf112ac5f3a8",
+      "navControlRunSha256": "f8b4b754e5bafc1c12e91677d078bbb33d44eef19eac33f042cc13e04865cf0d"
+    },
+    {
+      "second": 9,
+      "coldDifferentPeople": [
+        "h1v",
+        "h5t"
+      ],
+      "coldCustodyEqual": true,
+      "warmRunSha256": "c8de37359409a9e3ba52734c83b0155437ccd75ae6097930e293a7641caf8c31",
+      "coldRunSha256": "692aac21f7f142646bd2ff50de7ab2e0196464e4bc784b3d5d3af1fdeda63048",
+      "navControlRunSha256": "c8de37359409a9e3ba52734c83b0155437ccd75ae6097930e293a7641caf8c31"
+    },
+    {
+      "second": 10,
+      "coldDifferentPeople": [
+        "h1v",
+        "h3v",
+        "h5t"
+      ],
+      "coldCustodyEqual": true,
+      "warmRunSha256": "c9eba9b4e9760049eaa37f04a4f0c75cee6d9015846209d372b124143dcd785d",
+      "coldRunSha256": "03afee644076004e31e9c4a2d0ba0a3a70f6bb316174a16220d25e66741baf0a",
+      "navControlRunSha256": "c9eba9b4e9760049eaa37f04a4f0c75cee6d9015846209d372b124143dcd785d"
+    }
+  ],
+  "distinctWorkAtSecond10": {
+    "warm": {
+      "state": "IDLE",
+      "nextThinkAt": 1794758715005,
+      "routeSearch": {
+        "status": "NO_PATH",
+        "target": "0:2034,427",
+        "expanded": 326
+      },
+      "harvestJob": null
+    },
+    "cold": {
+      "state": "IDLE",
+      "nextThinkAt": 1794758712005,
+      "routeSearch": {
+        "status": "PENDING_SEARCH",
+        "target": "0:2034,427",
+        "expanded": 256
+      },
+      "harvestJob": {
+        "id": "hjfmc",
+        "sourceId": "0:1710034",
+        "gx": 2034,
+        "gy": 427,
+        "floor": 0,
+        "key": "road_relay_wreck",
+        "phase": "source",
+        "startedAt": 1794758709005
+      }
+    },
+    "memory": {
+      "state": "IDLE",
+      "nextThinkAt": 1794758715005,
+      "routeSearch": {
+        "status": "NO_PATH",
+        "target": "0:2034,427",
+        "expanded": 326
+      },
+      "harvestJob": null
+    }
+  }
+}

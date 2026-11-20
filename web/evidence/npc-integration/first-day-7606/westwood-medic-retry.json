@@ -1,0 +1,140 @@
+{
+  "note": "Read-only in-flight snapshot from the original post-access warm arm, NOT a serializable checkpoint at a settle boundary. Five consecutive human event boundaries and stepHumans calls from separate cold copies. No world catch-up, needs ticks or edits to actors.",
+  "seed": 7606,
+  "hours": 22.672257756212023,
+  "actor": "h5l",
+  "order": "hwur8",
+  "patient": "h5k",
+  "patientState": "DEAD",
+  "cargo": {
+    "srik": 1
+  },
+  "store": "c2bt",
+  "before": [
+    {
+      "dt": 1,
+      "state": "IDLE",
+      "intent": "hwur8",
+      "phase": "fetch",
+      "steps": 0,
+      "next": -1979884.9821777344
+    },
+    {
+      "dt": 1,
+      "state": "IDLE",
+      "intent": "hwur8",
+      "phase": "fetch",
+      "steps": 0,
+      "next": -1979884.9821777344
+    },
+    {
+      "dt": 1,
+      "state": "IDLE",
+      "intent": "hwur8",
+      "phase": "fetch",
+      "steps": 0,
+      "next": -1979884.9821777344
+    },
+    {
+      "dt": 1,
+      "state": "IDLE",
+      "intent": "hwur8",
+      "phase": "fetch",
+      "steps": 0,
+      "next": -1979884.9821777344
+    },
+    {
+      "dt": 1,
+      "state": "IDLE",
+      "intent": "hwur8",
+      "phase": "fetch",
+      "steps": 0,
+      "next": -1979884.9821777344
+    }
+  ],
+  "fixed": [
+    {
+      "dt": 1,
+      "state": "MOVING",
+      "intent": "hwur8",
+      "phase": "fetch",
+      "steps": 1,
+      "next": 3001
+    },
+    {
+      "dt": 228.57142857142856,
+      "state": "WORKING",
+      "intent": "hwur8",
+      "phase": "fetch",
+      "steps": 0,
+      "next": 3001
+    },
+    {
+      "dt": 800,
+      "state": "IDLE",
+      "next": 11029.571533203125
+    },
+    {
+      "dt": 1325.3322728926876,
+      "state": "IDLE",
+      "next": 11029.571533203125
+    },
+    {
+      "dt": 303.674072265625,
+      "state": "IDLE",
+      "next": 11029.571533203125
+    }
+  ],
+  "unchangedPack": [
+    [
+      "s2bx",
+      1
+    ],
+    [
+      "srik",
+      1
+    ]
+  ],
+  "unchangedStore": [
+    [
+      "sdzc",
+      1
+    ],
+    [
+      "s2bv",
+      8
+    ],
+    [
+      "s2bw",
+      41
+    ],
+    [
+      "s30w",
+      30
+    ],
+    [
+      "s318",
+      60
+    ],
+    [
+      "sfur",
+      2
+    ],
+    [
+      "s2c0",
+      5
+    ],
+    [
+      "s2c1",
+      30
+    ],
+    [
+      "s2c2",
+      2
+    ],
+    [
+      "s30t",
+      1
+    ]
+  ]
+}

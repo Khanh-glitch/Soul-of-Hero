@@ -869,33 +869,23 @@ export function humanConsume(r: RunState, hw: HumanWorld, h: HumanRecord, kind: 
   }
   for (const c of containers) {
     for (const s of c.slots) {
-      if (!s || s.production || s.qty <= 0) continue;
-      const d = ITEMS[s.key];
-      if (kind === 'food' && d.food?.hunger) {
-        const want = 100 - h.hunger;
-        const got = Math.min(want, d.food.hunger);
-        h.hunger = clamp(h.hunger + got, 0, 100);
-        if (d.food.thirst) h.thirst = clamp(h.thirst + d.food.thirst, 0, 100);
-        if (d.food.hp) h.hp = clamp(h.hp + d.food.hp, 0, h.maxHp);
-        s.qty--; if (s.qty <= 0) { const i = c.slots.indexOf(s); c.slots[i] = null; }
-        h.blockedPlanCount=0;h.nextThinkAt=now;
-        receipt(r, now, 'human.eat', `${h.actorId}:${s.key}`);
-        receipt(r,now,'human.consume',JSON.stringify({actorId:h.actorId,uid:s.uid,key:s.key,containerId:c.id,qty:1}));
-        return true;
-      }
-      if (kind === 'water' && (d.food?.thirst || d.waterContainer)) {
-        // A water container grants thirst only while it has charge.
-        if (d.charge != null && (s.charge ?? 0) <= 0) continue;
-        const want = 100 - h.thirst;
-        const per = d.food?.thirst ?? 30;
-        const got = Math.min(want, per);
-        h.thirst = clamp(h.thirst + got, 0, 100);
-        if (d.charge != null) s.charge = Math.max(0, (s.charge ?? 0) - 1);
-        else { s.qty--; if (s.qty <= 0) c.slots[c.slots.indexOf(s)] = null; }
-        h.blockedPlanCount=0;h.nextThinkAt=now;
-        receipt(r, now, 'human.drink', `${h.actorId}:${s.key}`);
-        return true;
-      }
+      if (!s || !edible(s)) continue;
+      // Need selects the item, not which nutrients exist in the item. Drinking
+      // a berry debits the same berry and feeds the same body as eating it.
+      const d = ITEMS[s.key], food = d.food;
+      const charged = d.charge != null;
+      if (charged && (s.charge ?? 0) <= 0) continue;
+      h.hunger = clamp(h.hunger + (food?.hunger ?? 0), 0, 100);
+      h.thirst = clamp(h.thirst + (food?.thirst ?? (d.waterContainer ? 30 : 0)), 0, 100);
+      h.hp = clamp(h.hp + (food?.hp ?? 0), 0, h.maxHp);
+      h.warmth = clamp(h.warmth + (food?.warmth ?? 0), 0, 100);
+      h.rad = clamp(h.rad + (food?.rad ?? 0), 0, 100);
+      if (charged) s.charge = s.charge! - 1;
+      else if (--s.qty <= 0) c.slots[c.slots.indexOf(s)] = null;
+      h.blockedPlanCount=0;h.nextThinkAt=now;
+      receipt(r, now, kind==='food'?'human.eat':'human.drink', `${h.actorId}:${s.key}`);
+      receipt(r,now,'human.consume',JSON.stringify({actorId:h.actorId,uid:s.uid,key:s.key,containerId:c.id,...(charged?{qty:0,charges:1}:{qty:1})}));
+      return true;
     }
   }
   return false;
@@ -3000,7 +2990,10 @@ function plannerSources(r: RunState): Set<string> {
 /** A committed delivery or job retries on its own clock. Only discretionary
  * planning is rate limited by the island's rotating planner. */
 function committedRetry(h:HumanRecord){
-  return !h.deliveryWait && !!(h.harvestJob || h.recipeBoardPending || h.intent?.work || h.workOutputs && Object.values(h.workOutputs).some(q=>q>0));
+  // A full warehouse suspends delivery of the cargo, not a different
+  // accepted occupation (notably a medic fetching a dose). The work retry
+  // below neither unloads that pack nor releases its deliveryWait.
+  return !!h.intent?.work || !h.deliveryWait && !!(h.harvestJob || h.recipeBoardPending || h.workOutputs && Object.values(h.workOutputs).some(q=>q>0));
 }
 export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:number):number {return timedWorldWork('humanEventBoundary',()=>{
  let dt=maximum;
