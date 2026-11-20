@@ -17,6 +17,10 @@ function census(r:RunState){
  const states=(hs:typeof people)=>{const active=hs.filter(h=>!['DEAD','DOWNED','EVACUATED','ON_VESSEL'].includes(h.state));return {count:hs.length,states:counts(hs.map(h=>h.state)),active:active.length,hungry:active.filter(h=>h.hunger<40).length,thirsty:active.filter(h=>h.thirst<40).length};};
  return {clock:r.clock.lastSimAt,all:states(people),playerDead:r.player.dead,regions:['com:po_hook','com:po_greywater'].map(id=>{
   const c=hw.communities[id];return {id,...states(c.memberIds.map(k=>hw.people[k])),stock:c.storeContainers.flatMap(k=>r.custody[k].slots.filter(Boolean).map(s=>[s!.uid,s!.key,s!.qty])),delivered:counts(Object.values(c.cargoLedger??{}).flat().map(v=>v.key))};}),
+  // JSON omits undefined optional properties. On a later assignment, restored
+  // actors may insert e.g. routeSearch in a different position. Hash all its
+  // values, preserving roster order, nested record order and array order.
+  actorValuesDigest:hash(people.map(h=>[h.actorId,Object.entries(h).sort(([a],[b])=>a<b?-1:a>b?1:0).filter(([,v])=>v!==undefined)])),
   digests:{ids:hash(Object.keys(hw.people).sort()),people:hash(hw.people),jobs:hash(people.map(h=>[h.actorId,h.intent,h.harvestJob,h.workOutputs])),custody:hash(r.custody),communities:hash(hw.communities)}};
 }
 it.skipIf(!dir)('audits an unchanged geographic first day and a fresh-process Continue at h8',()=>{

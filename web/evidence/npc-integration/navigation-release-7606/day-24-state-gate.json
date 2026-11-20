@@ -1,0 +1,153 @@
+{
+  "seed": 7606,
+  "actorCount": 286,
+  "h24WholeGameEqual": true,
+  "h24ActorTraversalOrderEqual": true,
+  "h24ActorsWithDifferentObjectKeyOrder": [
+    "h2",
+    "h3",
+    "hl",
+    "hm",
+    "hn",
+    "hp",
+    "hq",
+    "hr",
+    "h15",
+    "h16",
+    "h17",
+    "h1e",
+    "h1f",
+    "h1h",
+    "h1l",
+    "h1t",
+    "h1x",
+    "h1y",
+    "h29",
+    "h2d",
+    "h2f",
+    "h2g",
+    "h2j",
+    "h2o",
+    "h2w",
+    "h2x",
+    "h2y",
+    "h2z",
+    "h30",
+    "h31",
+    "h32",
+    "h33",
+    "h34",
+    "h36",
+    "h38",
+    "h39",
+    "h3c",
+    "h3m",
+    "h3n",
+    "h3o",
+    "h44",
+    "h4c",
+    "h4i",
+    "h4l",
+    "h4m",
+    "h4t",
+    "h4z",
+    "h51",
+    "h53",
+    "h56",
+    "h5c",
+    "h5q",
+    "h5r",
+    "h62",
+    "h63",
+    "h67",
+    "h6b",
+    "h6c",
+    "h6j",
+    "h6k",
+    "h7a",
+    "h7c"
+  ],
+  "allHourlyCensusesJobsCustodyCommunitiesAndEventCountsEqual": true,
+  "observations": [
+    {
+      "hour": 9,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 10,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 11,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 12,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 13,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 14,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 15,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 16,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 17,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 18,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 19,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 20,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 21,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 22,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 23,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    },
+    {
+      "hour": 24,
+      "orderedPeopleDigestEqual": false,
+      "actorValuesDigestEqual": null
+    }
+  ]
+}
