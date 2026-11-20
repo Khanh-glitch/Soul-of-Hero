@@ -555,3 +555,7 @@ Seed 7606, bản lưu h24 cũ, vắng 3 phút: [đối chứng](../controlled-re
 ### Hook: đầu bếp dỡ được suất ăn trả nguyên liệu; chưa chứng nhận cả xã hội
 
 [Biên nhận hai nhánh](../hook-pantry/README.md). Từ đúng save h8, Continue và mô phỏng bình thường cho `hm` bàn giao `saha` ở h8:19 thay vì h13:06 trên `62c9dae`. Kho chỉ gộp thực phẩm thường tại nơi dỡ; nguồn, UID phần ăn, dung lượng và hàng đang được giữ vẫn có kiểm tra. Ca tự nhiên qua; 27/27 ca kho/nguồn/bếp/quyền sở hữu và đồng hồ liên quan qua. [Census h24](../coast-62c9dae/h24.csv) là **đối chứng trước sửa**: 167 hoạt động, 112 chết, 7 gục. Hồi quy đầy đủ trên `62c9dae` dừng khi bộ nhớ khả dụng xuống 24 MB, sau một file đạt và khi `src/veyra05/audit-closure.test.ts` chưa có kết quả; không tuyên bố 256 file đạt. Tiếp tục giữ lượt dài này làm đối chứng, không tráo SHA giữa chừng.
+
+### Fishcamp: nhân chứng đến lấy một liều băng cho người gục
+
+[Xem hai lần Continue cùng save h24](../fishcamp-first-aid/README.md). Trên nhánh sửa, người làm vườn `h5w` thấy thợ xây `h5v`, tự tới kho và trở lại dùng một liều, 1→31 HP; trên mã cũ bệnh nhân vẫn gục ở +60 giây. Không mở rộng tầm nhìn/tiếp cận kho, không cho người thường chăm sóc tiếp như thầy thuốc. Nhánh âm xác nhận bệnh nhân đã ổn định thì không bị trừ thêm thuốc. Westbank và Tidecamp trên lệnh `npm test` của repo (kèm đủ hai checkpoint): 5/5. Không dùng các số này để xóa timeout đã ghi trên checkout cũ.

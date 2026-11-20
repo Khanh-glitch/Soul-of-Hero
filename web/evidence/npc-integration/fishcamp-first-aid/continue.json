@@ -1,0 +1,59 @@
+{
+  "run": "run_5va_mwhjny80",
+  "seed": 7606,
+  "start": 1794816000000,
+  "call": {
+    "id": "r131320",
+    "at": 1794816026386.716,
+    "kind": "human.medical.respond",
+    "detail": "h5w:h5v:fetch:11"
+  },
+  "fetched": {
+    "workerId": "h5w",
+    "orderId": "hw128c",
+    "containerId": "c2d5",
+    "into": "c2e8",
+    "inputs": [
+      {
+        "uid": "s2de",
+        "key": "bandage",
+        "qty": 1
+      }
+    ],
+    "received": [
+      {
+        "uid": "s128g",
+        "key": "bandage",
+        "qty": 1
+      }
+    ]
+  },
+  "paidAt": 1794816037987.7183,
+  "payment": {
+    "worker": "h5w",
+    "patient": "h5v",
+    "job": "hw128c",
+    "seen": {
+      "gx": 694,
+      "gy": 1676,
+      "floor": 0
+    },
+    "at": {
+      "gx": 694,
+      "gy": 1676,
+      "floor": 0
+    },
+    "hpBefore": 1,
+    "hpAfter": 31,
+    "inputs": [
+      {
+        "slot": 3,
+        "uid": "s128g",
+        "key": "bandage",
+        "qty": 1,
+        "containerId": "c2e8"
+      }
+    ]
+  },
+  "qa": false
+}

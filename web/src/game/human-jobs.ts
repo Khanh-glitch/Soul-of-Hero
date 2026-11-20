@@ -246,7 +246,8 @@ export const needsFollowup=(p:HumanRecord)=>p.state==='IDLE' && p.hp>0 && p.hp<3
 const patientTile=(p:HumanRecord)=>({gx:p.gx,gy:p.gy,floor:p.floor});
 function eligiblePatient(h:HumanRecord,p:HumanRecord|undefined):p is HumanRecord {
   return !!p && p!==h && p.community===h.community && p.floor===h.floor && !p.transit &&
-    !['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(p.state) && (p.state==='DOWNED'||p.wounds.some(w=>!w.treated)||needsFollowup(p));
+    !['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(p.state) &&
+    (p.state==='DOWNED'||h.occupation==='medic'&&(p.wounds.some(w=>!w.treated)||needsFollowup(p)));
 }
 function target(r: RunState, hw: HumanWorld, h: HumanRecord, task: HumanWorkTask): [number,number,number] | null {
   if (task.phase==='fetch') {
@@ -278,7 +279,10 @@ export function dispatchMedicalResponse(r:RunState,hw:HumanWorld,p:HumanRecord,n
     if(!clearSurvivorSight(r,h,p))continue;witnessed=true;
     const medicine=['bandage','herb'];let key=medicine.find(k=>count(r,h.inv.packId,k)>0),phase:HumanWorkTask['phase']='travel';
     let dest:[number,number,number]=[p.gx,p.gy,p.floor];
-    if(!key && h.occupation==='medic'){
+    // Emergency first aid already permits an eyewitness to use a carried dose.
+    // A conscious member can also collect one from their OWN physical store;
+    // this is not a remote debit and only medics handle non-emergency care.
+    if(!key){
       const store=findRunEntity(r,c.storeEntityId);
       if(store?.c && store.owner===c.id && c.storeContainers.includes(store.c) && (store.hp??1)>0){
         key=medicine.find(k=>count(r,store.c!,k)>0);phase='fetch';dest=[...humanEntityTile(r,store),store.floor??0];
