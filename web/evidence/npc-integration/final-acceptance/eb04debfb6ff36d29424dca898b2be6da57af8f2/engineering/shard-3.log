@@ -36,3 +36,1450 @@
  [32m✓[39m tests/cal01-world-calendar.test.ts[2m > [22mCAL-01 F — real gameplay consequences and no exploits[2m > [22mkeeps the fixed run expiry boundary while the season wraps (no season-driven death or reset)[33m 623[2mms[22m[39m
  [31m×[39m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mdelivers the full crate by walking (inventory carry)[33m 42240[2mms[22m[39m
 [31m   → no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)[39m
+ [31m×[39m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mdelivers the full crate by hand cart on the same route class[33m 29597[2mms[22m[39m
+[31m   → no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)[39m
+[90mstderr[2m | tests/mec01-c2-delivery.test.ts[2m > [22m[2mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22m[2mdelivers the full crate to the SAME far depot in all three modes (long corridor route class)
+[22m[39m[C2 far] masked candidates=662 road-adjacent=2 farthestMasked=113,180 d=85.4
+
+ [31m×[39m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mdelivers the full crate by motorbike with measured fuel and wear[33m 34929[2mms[22m[39m
+[31m   → no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)[39m
+ [31m×[39m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mthe same cargo UIDs left the crate in all three runs (same seed, same world)[32m 4[2mms[22m[39m
+[31m   → expected +0 to be 3 // Object.is equality[39m
+ [31m×[39m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mdelivers the full crate to the SAME far depot in all three modes (long corridor route class)[33m 322[2mms[22m[39m
+[31m   → no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)[39m
+ [31m×[39m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mwrites the delivery evidence JSON (SIM_FIXTURE_MEASUREMENT timing; real custody)[32m 2[2mms[22m[39m
+[31m   → expected +0 to be 3 // Object.is equality[39m
+ [32m✓[39m tests/control-tower-corrective-wp1-wp2.test.ts[2m > [22mWP1 — Authoritative Daily Reroll (A1 Corrective)[2m > [22mWP1-1/2 (RED->GREEN): rejects an uncommitted client rerolledFrom that would turn <25 base points into >=25 milestone points[33m 1474[2mms[22m[39m
+ [32m✓[39m tests/control-tower-corrective-wp1-wp2.test.ts[2m > [22mWP1 — Authoritative Daily Reroll (A1 Corrective)[2m > [22mWP1-3..6 (RED->GREEN): enforces run-authoritative once-per-UTC-day reroll, zero-progress restriction, duplicate rejection, save/reload, run restart, UTC rollover, and real-gameplay E2E claim[33m 948[2mms[22m[39m
+ [31m×[39m tests/control-tower-corrective-wp1-wp2.test.ts[2m > [22mWP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)[2m > [22mWP2-1..5 & 8 (RED->GREEN): completes full offscreen plant->grow->harvest->chest-transfer->replant cycles across repeated window shifts, save/reload, overnight settle, and full storage[33m 5144[2mms[22m[39m
+[31m   → build: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/control-tower-corrective-wp1-wp2.test.ts[2m > [22mWP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)[2m > [22mWP2-6,7,9 (RED->GREEN): enforces exact onscreen vs offscreen parity (Map climate, soil, cold-frame, roof, evaporation, links across window edge)[33m 1010[2mms[22m[39m
+[31m   → build: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/wp3-veyra-recycler-integration.test.ts[2m > [22mWP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> Floor -1 -> Save/Reload Integration Proof[2m > [22mharvests natural Veyra wrecks/resources (zero item injection), recycles damaged_drive at po_slag into spares, spends spares in real craft/build, and survives mandatory Floor -1 reload[33m 21548[2mms[22m[39m
+[31m   → expected 0 to be greater than or equal to 3[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP2 — round-3 ruling (Fasteners stay) is SUPERSEDED by item set v3: both retire into Parts[2m > [22mthe round-3 record is kept as history; the live game follows the owner roster: one Parts item, no formula for either[33m 3141[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP10 — Field Core / Lõi dã chiến is a class of its own beside the seven Creator Cores[2m > [22mANALYTIC: every core item is in exactly one of the two classes, read from the fields the engine branches on[32m 2[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP10 — Field Core / Lõi dã chiến is a class of its own beside the seven Creator Cores[2m > [22mANALYTIC: ids, names, formulas, charge counts and effect keys of the four Field Cores are exactly what they were[32m 1[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP10 — Field Core / Lõi dã chiến is a class of its own beside the seven Creator Cores[2m > [22mUI: the item details tell the two classes apart (chip, Vietnamese class name, one rule line)[32m 118[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP10 — Field Core / Lõi dã chiến is a class of its own beside the seven Creator Cores[2m > [22mREGRESSION: the three Creator Core crates that are located by a Field Core still resolve, with the Field Core still inside[33m 1112[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP10 — Field Core / Lõi dã chiến is a class of its own beside the seven Creator Cores[2m > [22mINTENT: a part-spent Field Core and a loaded Creator Core survive save → restart with their own state[32m 60[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP9 — oil text tells the truth: Shipping has no crude seep; Veyra seeps are the item-set-v3 source[2m > [22ma fresh run has no oil site; every surface says so and nothing claims a site can be found[32m 46[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP9 — oil text tells the truth: Shipping has no crude seep; Veyra seeps are the item-set-v3 source[2m > [22mno player-facing source file still promises an "authorized" oil site or source[32m 33[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP9 — oil text tells the truth: Shipping has no crude seep; Veyra seeps are the item-set-v3 source[2m > [22mFIXTURE: with a registered test site the wording follows the real state (elsewhere / here / dry); ids and systems unchanged[32m 32[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP9 — oil text tells the truth: Shipping has no crude seep; Veyra seeps are the item-set-v3 source[2m > [22mitem set v3: Crude Petroleum → Fuel Canister is the one refinery route; Salvaged Oil is retired into crude[32m 1[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP8 — nothing invented; the recipe line is honest on Veyra[2m > [22mANALYTIC: no source, drop or probability moved for the four repair-order items[32m 1[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mP8 — nothing invented; the recipe line is honest on Veyra[2m > [22mreadiness wording: on Veyra the missing input is named as unsourced; on Shipping it is an ordinary shortage[33m 959[2mms[22m[39m
+ [32m✓[39m tests/item-ontology-v2-round3.test.tsx[2m > [22mmigration and restart — rev-1, rev-2 and rev-3 saves with queued Frame / Axe work and a Recycler job[2m > [22mANALYTIC: the definition a job is paid under, per revision[32m 1[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/item-ontology-v2-round3.test.tsx[2m > [22mmigration and restart — rev-1, rev-2 and rev-3 saves with queued Frame / Axe work and a Recycler job[2m > [22ma rev-1 save: Frame + Axe + Recycler jobs keep UIDs and stock, survive two restarts mid-job, pay out once under rev-1 economics (INTENT on FIXTURE stock)
+ [2m[90m↓[39m[22m tests/item-ontology-v2-round3.test.tsx[2m > [22mmigration and restart — rev-1, rev-2 and rev-3 saves with queued Frame / Axe work and a Recycler job[2m > [22ma rev-2 save: Frame + Axe + Recycler jobs keep UIDs and stock, survive two restarts mid-job, pay out once under rev-2 economics (INTENT on FIXTURE stock)
+ [2m[90m↓[39m[22m tests/item-ontology-v2-round3.test.tsx[2m > [22mmigration and restart — rev-1, rev-2 and rev-3 saves with queued Frame / Axe work and a Recycler job[2m > [22ma rev-3 save: Frame + Axe + Recycler jobs keep UIDs and stock, survive two restarts mid-job, pay out once under rev-3 economics (INTENT on FIXTURE stock)
+ [32m✓[39m tests/d1-d5-corrective.test.tsx[2m > [22mD1 Corrective: Journey Cash-Mint Isolation (Positive & Negative Contracts)[2m > [22mnever mints off-map securedCash, drops items into overflow bag when pack is full, and preserves pre-existing escrow securedCash untouched[33m 1733[2mms[22m[39m
+ [32m✓[39m tests/d1-d5-corrective.test.tsx[2m > [22mD2 Corrective: Classic BuildPanel Defense Parity (ir_sensor & bear_trap)[2m > [22mlists ir_sensor and bear_trap in BUILD_ORDER matching BUILD_GROUPS.Defense and renders both in Classic BuildPanel DOM[32m 125[2mms[22m[39m
+ [32m✓[39m tests/d1-d5-corrective.test.tsx[2m > [22mD3 Corrective: Veyra po_greywater Tackle Box & po_glade Archetype Sanctum[2m > [22mmaterializes po_greywater Tackle Box cleanly away from Cottage Ladder and po_glade Mosslight cache while keeping Elderwood sanctum intact[33m 1935[2mms[22m[39m
+ [31m×[39m tests/d1-d5-corrective.test.tsx[2m > [22mD4 Corrective: Offscreen/Boundary-Straddling Wire-v1 Power Parity & 12h Decay Copy[2m > [22mallocates loads, powers doors/stations/turrets, and drains generator fuel across offscreen window boundaries with online/offline parity[33m 2064[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [32m✓[39m tests/d1-d5-corrective.test.tsx[2m > [22mD5 Corrective: Veyra po_slag Foundry Recycler, Offscreen Streaming & Legacy Save Safety[2m > [22mspawns one physical Foundry Recycler at po_slag on veyra05-world, recycles X:drive, validates across floor -1 reload, and leaves legacy static Veyra direct-v1[33m 3598[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-mechanics.test.ts[2m > [22mcatalog stays valid with the round-2 rows[2m > [22mvalidateGameplayCatalog passes and no structure is left module-pending[32m 6[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-mechanics.test.ts[2m > [22mlegs and feet: two new worn slots that change what a hit does[2m > [22mequips into slots 3 and 4 through the real use intent and never into another slot[33m 7127[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-mechanics.test.ts[2m > [22mlegs and feet: two new worn slots that change what a hit does[2m > [22marmour adds up under one cap; leg plates cut knock-back; boots cut ground damage only[33m 2462[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-mechanics.test.ts[2m > [22mlegs and feet: two new worn slots that change what a hit does[2m > [22ma save written with three worn slots loads with five and loses nothing[33m 327[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-mechanics.test.ts[2m > [22mladders: a foot-only crossing over a cliff[2m > [22ma wooden ladder crosses one cliff tile, slowly, and comes back as the same item[33m 5775[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-mechanics.test.ts[2m > [22mladders: a foot-only crossing over a cliff[2m > [22ma wooden ladder refuses a thick cliff; the steel folding ladder spans three tiles[33m 4698[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-mechanics.test.ts[2m > [22mLarge Furnace: same formulas, twice the pace, half the fuel per load[2m > [22mfinishes a smelt in half the time and burns half the fuel a Furnace does[33m 1089[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-mechanics.test.ts[2m > [22mPowered Door: a lock module fitted into a door you own[2m > [22mis refused on bare ground, converts an owned door in place, consumes Resistor Wire, and comes out again[33m 501[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-mechanics.test.ts[2m > [22mcrude seep -> Oil Pump -> Oil Refinery -> Fuel Canister, on the Veyra map with no test fixture[2m > [22mthe seep rule is a pure function of global cells and about half the cells aim at a seep[32m 84[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-mechanics.test.ts[2m > [22mcrude seep -> Oil Pump -> Oil Refinery -> Fuel Canister, on the Veyra map with no test fixture[2m > [22ma new run has seeps in its window; a pump on one draws it down; the refinery turns crude into fuel[33m 1858[2mms[22m[39m
+ [32m✓[39m tests/arena1-round2-mechanics.test.ts[2m > [22mcrude seep -> Oil Pump -> Oil Refinery -> Fuel Canister, on the Veyra map with no test fixture[2m > [22ma seep runs dry and stays dry: the pump stops, the tile reports SITE_DRY[33m 478[2mms[22m[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mstarts from a real bed intent and moves the exact chosen UIDs into locked reserve custody[33m 1848[2mms[22m[39m
+[31m   → expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mrefuses raw meat, unknown UIDs, bad durations, too many stacks and a bed beyond reach[33m 386[2mms[22m[39m
+[31m   → expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22ma legitimate 8 h interval consumes real food and flask charge at the trigger and wakes exactly on time[33m 351[2mms[22m[39m
+[31m   → expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mshared online/offline chronology: a partitioned settle equals one long settle, and hunger is never frozen[33m 319[2mms[22m[39m
+[31m   → expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22msave and reload mid-rest keeps the same reserve custody, charge, and resumes to the same wake[33m 318[2mms[22m[39m
+[31m   → expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22man explicit cancel wakes at once and returns leftovers to the same chest with the same UIDs[33m 361[2mms[22m[39m
+[31m   → expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mdestroying the bed ends rest and returns every reserved UID; losing the chest sends them to a bag at the bed[33m 342[2mms[22m[39m
+[31m   → expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mdeath ends the rest before the bag forms, so no reserved item is stranded[33m 338[2mms[22m[39m
+[31m   → expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mthe forecast is the same arithmetic the simulator uses: food-limited rest wakes when food runs out[33m 336[2mms[22m[39m
+[31m   → expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22mhomeStatus external coverage (audit fix)[2m > [22ma foundation on the horizontal neighbour is external coverage and not idle[32m 100[2mms[22m[39m
+[31m   → expected 'Need an intact packed device.' to be '' // Object.is equality[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22mhomeStatus external coverage (audit fix)[2m > [22ma foundation on the vertical neighbour is external coverage and not idle[32m 81[2mms[22m[39m
+[31m   → expected 'Need an intact packed device.' to be '' // Object.is equality[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22mhomeStatus external coverage (audit fix)[2m > [22ma foundation on the diagonal neighbour is external coverage and not idle[32m 82[2mms[22m[39m
+[31m   → expected 'Need an intact packed device.' to be '' // Object.is equality[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22mhomeStatus external coverage (audit fix)[2m > [22ma lone self-only Cabinet on its own tile is still idle (self does not count)[32m 78[2mms[22m[39m
+[31m   → expected 'Need an intact packed device.' to be '' // Object.is equality[39m
+ [31m×[39m tests/rest-supply.test.ts[2m > [22mrest V1 in a frigid unheated shelter (lawful exposure death, exact custody)[2m > [22man 8 h unheated rest in a frigid site ends in exposure death at a real time, with every reserve UID restored[33m 329[2mms[22m[39m
+[31m   → expected { s: 'bed_straw', tx: 153, …(2) } to deeply equal { s: 'bed_straw', tx: 153, …(2) }[39m
+ [2m[90m↓[39m[22m src/veyra05/full-world-spawn-industrial.audit.test.ts[2m > [22mVEYRA full-world terrain and industrial spawn audit (bounded chunk streaming)[2m > [22mscans all 11.2M global terrain tiles + 4-neighbour terrain components
+ [2m[90m↓[39m[22m src/veyra05/full-world-spawn-industrial.audit.test.ts[2m > [22mVEYRA full-world terrain and industrial spawn audit (bounded chunk streaming)[2m > [22mprobes actual source-compiled windows and seeded startRun across geography
+ [32m✓[39m tests/b03-thermal.test.ts[2m > [22mB03-A comfortV1 physical thermal evaluator[2m > [22mbalance is source-scoped: LI 40 is a historical cap, not 40 SOH warmth units[32m 9[2mms[22m[39m
+ [31m×[39m tests/b03-thermal.test.ts[2m > [22mB03-A comfortV1 physical thermal evaluator[2m > [22msnow cold alone gives base 19; a burning campfire in line of sight adds 13.5 (0.75 per score)[33m 1851[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-thermal.test.ts[2m > [22mB03-A comfortV1 physical thermal evaluator[2m > [22mno paid fuel means no heat; a sheltered shelter alone gives +6; stacked score is capped at 40[32m 144[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-thermal.test.ts[2m > [22mB03-A comfortV1 physical thermal evaluator[2m > [22ma wall between player and campfire blocks the heat; a destroyed heater contributes nothing[32m 160[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-thermal.test.ts[2m > [22mB03-A comfortV1 physical thermal evaluator[2m > [22mwarmth integrator is exact exponential approach and the cold boundary splits the slice[32m 128[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-thermal.test.ts[2m > [22mB03-A offline chronology and save custody[2m > [22mone 2h settle equals eight 15-minute partitions for warmth, HP, fuel stock and the exact heat-out receipt[32m 142[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-thermal.test.ts[2m > [22mB03-A offline chronology and save custody[2m > [22msave and reload keeps the thermal state; a repeated settle at the same time adds no second heat-out receipt[32m 162[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [31m×[39m tests/b03-thermal.test.ts[2m > [22mB03-A offline chronology and save custody[2m > [22ma live survival tick with a burning fire warms the player toward the physical target, not to a fixed 100[32m 94[2mms[22m[39m
+[31m   → expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+ [32m✓[39m tests/b03-thermal.test.ts[2m > [22mB03-A shelter collapse ends the shelter contribution[2m > [22ma roofed enclosure gives +8 comfort; destroying one roof tile removes it from the physical target[33m 525[2mms[22m[39m
+ [32m✓[39m tests/mec01-r4-offline-defense.test.ts[2m > [22mMEC-01 R4 P3 — offline causal defense: no fabricated outcomes[2m > [22man idle boar and wolf with zero traces anywhere in the world do nothing to anything[33m 1981[2mms[22m[39m
+ [32m✓[39m tests/mec01-r4-offline-defense.test.ts[2m > [22mMEC-01 R4 P3 — offline causal defense: no fabricated outcomes[2m > [22mpre-decayed and future-stamped traces never re-arm a search[32m 121[2mms[22m[39m
+ [32m✓[39m tests/mec01-r4-offline-defense.test.ts[2m > [22mMEC-01 R4 P3 — offline causal defense: no fabricated outcomes[2m > [22mrain sweeping the trail before logout never leaves a re-usable target behind[32m 96[2mms[22m[39m
+ [32m✓[39m tests/mec01-r4-offline-defense.test.ts[2m > [22mMEC-01 R4 P3 — offline causal defense: no fabricated outcomes[2m > [22ma wolf committed to a sight-range attack at the instant of exit becomes unresolved — no combat is reconstructed offline[32m 79[2mms[22m[39m
+ [32m✓[39m tests/mec01-r4-offline-defense.test.ts[2m > [22mMEC-01 R4 P3 — offline causal defense: no fabricated outcomes[2m > [22ma stimulus-anchored investigator at the instant of exit becomes unresolved — the investigation never completes mid-absence[32m 137[2mms[22m[39m
+ [32m✓[39m tests/mec01-r4-offline-defense.test.ts[2m > [22mMEC-01 R4 P3 — offline causal defense: no fabricated outcomes[2m > [22mCONTROL: a provoked charge-style boar with a live chain ending at the blocking wall batters exactly that wall[33m 312[2mms[22m[39m
+ [32m✓[39m tests/mec01-r4-offline-defense.test.ts[2m > [22mMEC-01 R4 P3 — offline causal defense: no fabricated outcomes[2m > [22mthe same geometry with a lunge-style predator never reaches a swing — the bash gate is style-denied[33m 1348[2mms[22m[39m
+ [32m✓[39m tests/mec01-r4-offline-defense.test.ts[2m > [22mMEC-01 R4 P3 — offline causal defense: no fabricated outcomes[2m > [22mthree turret variants never fire offline — even a fully armed, powered, supplied standby turret[33m 481[2mms[22m[39m
+ [32m✓[39m tests/mec01-r4-offline-defense.test.ts[2m > [22mMEC-01 R4 P3 — offline causal defense: no fabricated outcomes[2m > [22mbeyond 24 trace-anchored eligible creatures are deferred at settle start, not simulated[32m 96[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 stranded motorbike: emergency unload into a physical ground bag[2m > [22ma broken motorbike moves its real cargo stacks (same UIDs, qty, dur) into ONE bag at its tile; nothing copied[33m 1642[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 stranded motorbike: emergency unload into a physical ground bag[2m > [22mout of fuel (hp intact) also allows the unload; the bike keeps its UID and fuel stays at zero[32m 98[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 stranded motorbike: emergency unload into a physical ground bag[2m > [22ma repeated intent moves nothing and creates no duplicate bag[32m 72[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 stranded motorbike: emergency unload into a physical ground bag[2m > [22ma running motorbike (hp and fuel present) refuses; cargo stays in the bike[32m 110[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 stranded motorbike: emergency unload into a physical ground bag[2m > [22mmounted, out-of-reach and not-owned motorbikes refuse with no change[32m 90[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 stranded motorbike: emergency unload into a physical ground bag[2m > [22ma partial unload moves only the chosen UIDs; the rest stays in the motorbike[32m 47[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 stranded motorbike: emergency unload into a physical ground bag[2m > [22ma full ground bag refuses without moving anything (no silent loss)[32m 60[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 stranded motorbike: emergency unload into a physical ground bag[2m > [22msaved and reloaded: the bag, its UIDs and the emptied motorbike survive; old unload receipts are not replayed[32m 130[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 OfflineReturnV1 truth repairs (R1-R3)[2m > [22mR3: a synthetic station receipt for an unseen, non-owned POI station is dropped; an owned workbench receipt is shown[32m 64[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 OfflineReturnV1 truth repairs (R1-R3)[2m > [22mR2: an unrelated bag on a vanished structure tile is labelled origin not verified, never as its wreckage[32m 40[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 OfflineReturnV1 truth repairs (R1-R3)[2m > [22mR1: a dead player with no real bag on the death tile is told no bag is confirmed, not that a bag keeps their items[32m 64[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04 OfflineReturnV1 truth repairs (R1-R3)[2m > [22mR1: a dead player standing on a real bag is told which bag entity holds the items[32m 61[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04-P2 source provenance, reuse, cleanup and validation[2m > [22man unrelated bag on the motorbike exit spot is never mixed in; the unload is refused with stock untouched[32m 58[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04-P2 source provenance, reuse, cleanup and validation[2m > [22ma partial unload then the rest reuses the SAME motorbike bag (one bag, all UIDs, no duplicate)[32m 46[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04-P2 source provenance, reuse, cleanup and validation[2m > [22mphysical pickup: one named UID moves into real inventory; the remaining stacks stay; the last pickup removes the empty bag[32m 108[2mms[22m[39m
+ [32m✓[39m tests/b04-vehicle-unload.test.ts[2m > [22mB04-P2 source provenance, reuse, cleanup and validation[2m > [22ma bag with no vehicleSource (any older or other bag) still validates; a malformed vehicleSource is refused on load[32m 109[2mms[22m[39m
+[90mstderr[2m | tests/b1-storage.test.ts[2m > [22m[2mselects latest local snapshot after an interrupted IDB write, quarantines corrupt bytes, and reports dual-write failure
+[22m[39m[save] idb-transaction
+
+ [32m✓[39m tests/b1-storage.test.ts[2m > [22mselects latest local snapshot after an interrupted IDB write, quarantines corrupt bytes, and reports dual-write failure[33m 1668[2mms[22m[39m
+ [32m✓[39m tests/b1-storage.test.ts[2m > [22mdoes not open a new game or overwrite copies when IDB cannot be read[32m 212[2mms[22m[39m
+ [32m✓[39m tests/b1-storage.test.ts[2m > [22mcontinues an actual original save with its profile, inventory and queued job intact through autosave and catch-up[33m 1794[2mms[22m[39m
+ [32m✓[39m tests/b1-storage.test.ts[2m > [22mcontinues a real same-revision legacy pair, preserving the alternative (later is local: true)[33m 1935[2mms[22m[39m
+[90mstderr[2m | tests/b1-storage.test.ts[2m > [22m[2muses readable local fallback if IDB read fails, without writing the unreadable store
+[22m[39m[save] ok:idb-init
+
+ [32m✓[39m tests/b1-storage.test.ts[2m > [22mcontinues a real same-revision legacy pair, preserving the alternative (later is local: false)[33m 1997[2mms[22m[39m
+[90mstderr[2m | tests/b1-storage.test.ts[2m > [22m[2mcontinues from local storage when IndexedDB cannot open, leaving its contents untouched
+[22m[39m[save] ok:idb-init
+
+ [32m✓[39m tests/b1-storage.test.ts[2m > [22muses readable local fallback if IDB read fails, without writing the unreadable store[33m 1909[2mms[22m[39m
+ [32m✓[39m tests/b1-storage.test.ts[2m > [22mcontinues from local storage when IndexedDB cannot open, leaving its contents untouched[33m 1797[2mms[22m[39m
+ [32m✓[39m tests/b1-storage.test.ts[2m > [22muses readable IDB if local storage cannot be read, without touching local storage[33m 1791[2mms[22m[39m
+ [32m✓[39m tests/b1-storage.test.ts[2m > [22mleaves genuinely ambiguous same-time copies untouched and starts new only when both stores are empty[33m 2097[2mms[22m[39m
+ [32m✓[39m tests/b1-storage.test.ts[2m > [22mdoes not overwrite the alternate legacy copy when preservation fails[33m 1849[2mms[22m[39m
+ [32m✓[39m tests/g1b-historical-save.test.ts[2m > [22mG1B P0 — genuine historical Batch-2 save fixture[2m > [22mthe fixture is a real stamped layout=2 Batch-2 save with persistent conditions[32m 10[2mms[22m[39m
+ [32m✓[39m tests/g1b-historical-save.test.ts[2m > [22mG1B P0 — genuine historical Batch-2 save fixture[2m > [22mthe current engine migrates the genuine fixture to layout=3, preserving every Batch-2 possession[33m 1580[2mms[22m[39m
+ [32m✓[39m tests/g1b-historical-save.test.ts[2m > [22mG1B P0 — genuine historical Batch-2 save fixture[2m > [22msaving and relaunching in separate processes is stable across 2 reloads (no reroll, no dup)[32m 158[2mms[22m[39m
+ [32m✓[39m tests/g1b-historical-save.test.ts[2m > [22mG1B P0 — genuine historical Batch-2 save fixture[2m > [22ma forged / future layout revision still fails closed on the genuine fixture[32m 17[2mms[22m[39m
+ [32m✓[39m tests/npc-evac-physical-service.test.ts[2m > [22mphysical evacuation service (NOT RUN — authored for the post-implementation qualification gate)[2m > [22mrefuses every boarding attempt while the service is still staged[33m 2317[2mms[22m[39m
+ [32m✓[39m tests/npc-evac-physical-service.test.ts[2m > [22mphysical evacuation service (NOT RUN — authored for the post-implementation qualification gate)[2m > [22mopens a finite berth at h288 and refuses distance, corpses, the downed and duplicate seats[32m 84[2mms[22m[39m
+ [32m✓[39m tests/npc-evac-physical-service.test.ts[2m > [22mphysical evacuation service (NOT RUN — authored for the post-implementation qualification gate)[2m > [22mdeparts with a manifest and certifies EVACUATED only on arrival — exactly once[32m 43[2mms[22m[39m
+ [32m✓[39m tests/npc-evac-physical-service.test.ts[2m > [22mphysical evacuation service (NOT RUN — authored for the post-implementation qualification gate)[2m > [22ma failed voyage releases living passengers at the berth and certifies nobody[32m 51[2mms[22m[39m
+ [32m✓[39m tests/npc-evac-physical-service.test.ts[2m > [22mphysical evacuation service (NOT RUN — authored for the post-implementation qualification gate)[2m > [22ma body downed at the berth loses its seat instead of sailing as cargo[32m 57[2mms[22m[39m
+ [32m✓[39m tests/npc-evac-physical-service.test.ts[2m > [22mphysical evacuation service (NOT RUN — authored for the post-implementation qualification gate)[2m > [22ma vessel at sea is out of reach of island weapons[32m 107[2mms[22m[39m
+ [32m✓[39m tests/npc-evac-physical-service.test.ts[2m > [22mphysical evacuation service (NOT RUN — authored for the post-implementation qualification gate)[2m > [22mthe player takes a seat without ending the run; only arrival certifies the ending[32m 79[2mms[22m[39m
+ [32m✓[39m tests/npc-evac-physical-service.test.ts[2m > [22mphysical evacuation service (NOT RUN — authored for the post-implementation qualification gate)[2m > [22ma run that ends while people are aboard leaves them UNRESOLVED, never EVACUATED[32m 31[2mms[22m[39m
+ [32m✓[39m tests/visual-readmodels.test.ts[2m > [22msame live readiness on recipe tile, detail, and station[2m > [22mhas materials but no reachable station: blocked, not green-ready[32m 8[2mms[22m[39m
+ [32m✓[39m tests/visual-readmodels.test.ts[2m > [22msame live readiness on recipe tile, detail, and station[2m > [22mchooses the reachable level-3 workbench over a level-1 bench; submits that exact ID[32m 62[2mms[22m[39m
+ [32m✓[39m tests/visual-readmodels.test.ts[2m > [22msame live readiness on recipe tile, detail, and station[2m > [22mdistinguishes accepting a queued job from actually working without fuel[32m 19[2mms[22m[39m
+ [32m✓[39m tests/visual-readmodels.test.ts[2m > [22msame live readiness on recipe tile, detail, and station[2m > [22mblocks a full queue; a batch against a full output is accepted and marked waiting (single product since item set v3)[32m 14[2mms[22m[39m
+ [32m✓[39m tests/visual-readmodels.test.ts[2m > [22msame live readiness on recipe tile, detail, and station[2m > [22msingle-output job may queue with full output, explicitly marked waiting[32m 14[2mms[22m[39m
+ [32m✓[39m tests/visual-readmodels.test.ts[2m > [22msame live readiness on recipe tile, detail, and station[2m > [22mhand recipe with a truly full pack is blocked even with enough inputs[32m 1[2mms[22m[39m
+ [32m✓[39m tests/visual-readmodels.test.ts[2m > [22msame live readiness on recipe tile, detail, and station[2m > [22ma physically busy input is blocked before the player spends it[32m 1[2mms[22m[39m
+ [32m✓[39m tests/visual-readmodels.test.ts[2m > [22mdeath receipt, not nearest bag; no invented stock[2m > [22mshows the exact bag ID committed by the last death[32m 2[2mms[22m[39m
+ [32m✓[39m tests/visual-readmodels.test.ts[2m > [22mdeath receipt, not nearest bag; no invented stock[2m > [22mno bag, no receipt, and a removed bag each remain explicit[32m 1[2mms[22m[39m
+ [32m✓[39m tests/visual-readmodels.test.ts[2m > [22mfield notes never reveal unseen cells or write to the ordinary save in QA[2m > [22mrejects unexplored terrain; accepts known ground and survives QA reopening only in memory[32m 2[2mms[22m[39m
+ [32m✓[39m tests/visual-readmodels.test.ts[2m > [22mfield notes never reveal unseen cells or write to the ordinary save in QA[2m > [22ma stale warning receipt disappears when the real machine has since been refuelled[32m 1[2mms[22m[39m
+ [32m✓[39m tests/s12-airdrop.test.ts[2m > [22mS12 physical airdrops[2m > [22mhas deterministic finite timing, authored safe reachable sites and bounded rewards[33m 1904[2mms[22m[39m
+ [32m✓[39m tests/s12-airdrop.test.ts[2m > [22mS12 physical airdrops[2m > [22mlocks physical custody, preserves partial UIDs after reload, and expires exactly[32m 208[2mms[22m[39m
+ [32m✓[39m tests/s12-airdrop.test.ts[2m > [22mS12 physical airdrops[2m > [22maborts if the selected landing is obstructed, never minting stock[32m 150[2mms[22m[39m
+ [32m✓[39m tests/s12-airdrop.test.ts[2m > [22mS12 physical airdrops[2m > [22mrejects forged phase, rewards, map and coordinates without weakening static loot[32m 111[2mms[22m[39m
+ [32m✓[39m tests/s12-airdrop.test.ts[2m > [22mS12 physical airdrops[2m > [22mreports offline expiry without awarding inventory and is idempotent[33m 342[2mms[22m[39m
+ [32m✓[39m tests/s12-airdrop.test.ts[2m > [22mS12 physical airdrops[2m > [22mdoes not enable imported maps and retains legacy saves without retroactive drops[33m 1793[2mms[22m[39m
+ [32m✓[39m tests/s12-airdrop.test.ts[2m > [22mS12 physical airdrops[2m > [22mphysically carries a generated part through bike cargo and consumes it in repair[32m 202[2mms[22m[39m
+ [32m✓[39m tests/s12-airdrop.test.ts[2m > [22mS12 physical airdrops[2m > [22mruns all fourteen finite signals before the 336-hour wipe[33m 6066[2mms[22m[39m
+ [32m✓[39m tests/s12-airdrop.test.ts[2m > [22mS12 physical airdrops[2m > [22mskips without minting if no reachable site is available[32m 84[2mms[22m[39m
+ [32m✓[39m tests/s12-airdrop.test.ts[2m > [22mS12 physical airdrops[2m > [22mmatches segmented and offline boundary times, stock and physical placement[33m 329[2mms[22m[39m
+ [32m✓[39m tests/s12-airdrop.test.ts[2m > [22mS12 physical airdrops[2m > [22mcan carry a real generated fuel canister in bike cargo and spend it on fuel[32m 171[2mms[22m[39m
+ [32m✓[39m tests/territory-cabinet.test.ts[2m > [22mterritory cabinet (controlled fixtures)[2m > [22mbuilds foundation first, then a 24-slot supported cabinet; explicit repair spends physical stock[33m 1971[2mms[22m[39m
+ [32m✓[39m tests/territory-cabinet.test.ts[2m > [22mterritory cabinet (controlled fixtures)[2m > [22mdecays without a cabinet, stops without restoring HP when funded, and expires after the stock boundary[33m 438[2mms[22m[39m
+ [32m✓[39m tests/territory-cabinet.test.ts[2m > [22mterritory cabinet (controlled fixtures)[2m > [22mupkeep arithmetic remains deterministic across partitions[33m 1008[2mms[22m[39m
+ [32m✓[39m tests/territory-cabinet.test.ts[2m > [22mterritory cabinet (controlled fixtures)[2m > [22maccounts for 335 hours against the 336-hour run clock without fractional physical items[33m 6995[2mms[22m[39m
+ [32m✓[39m tests/territory-cabinet.test.ts[2m > [22mterritory cabinet (controlled fixtures)[2m > [22massigns overlaps to the nearest cabinet with stable ID tie-breaking and never double-bills[32m 201[2mms[22m[39m
+ [32m✓[39m tests/territory-cabinet.test.ts[2m > [22mterritory cabinet (controlled fixtures)[2m > [22mcollapses at the actual zero boundary, spills cabinet custody, and reports the reason[33m 352[2mms[22m[39m
+ [32m✓[39m tests/territory-cabinet.test.ts[2m > [22mterritory cabinet (controlled fixtures)[2m > [22mrejects backdated transactions without debiting or recording them[32m 87[2mms[22m[39m
+ [32m✓[39m tests/territory-cabinet.test.ts[2m > [22mterritory cabinet (controlled fixtures)[2m > [22mmatches partitioned upkeep across serialization and restart[32m 255[2mms[22m[39m
+ [32m✓[39m tests/territory-cabinet.test.ts[2m > [22mterritory cabinet (controlled fixtures)[2m > [22mreports prepaid credit separately from empty physical stock on return[32m 114[2mms[22m[39m
+ [32m✓[39m tests/pa1-deploy-custody.test.ts[2m > [22mPA1 device custody — every Deploy row states what placement really spends[2m > [22mdeclares exactly the device list this test walks, so a new device cannot dodge it[32m 3[2mms[22m[39m
+ [32m✓[39m tests/pa1-deploy-custody.test.ts[2m > [22mPA1 device custody — every Deploy row states what placement really spends[2m > [22mfor every device: raw materials alone never read as prepared, and the engine refuses too[33m 1933[2mms[22m[39m
+ [32m✓[39m tests/pa1-deploy-custody.test.ts[2m > [22mPA1 device custody — every Deploy row states what placement really spends[2m > [22mfor every device: an intact pack flips the projection green and placement spends only the pack[33m 615[2mms[22m[39m
+ [32m✓[39m tests/pa1-deploy-custody.test.ts[2m > [22mPA1 device custody — every Deploy row states what placement really spends[2m > [22ma spent-down pack reads as blocked and asks for a repair, and the engine refuses it too[32m 128[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/g1a-r1-census.test.ts[2m > [22mG1A-R1 whole-map census[2m > [22mwrites evidence/g1a/world-census.json
+ [32m✓[39m tests/emergent-fire.test.ts[2m > [22mbounded physical fire, water and soil[2m > [22mspreads to an adjacent living tree at the same causal time offline and across online intervals[33m 2043[2mms[22m[39m
+ [32m✓[39m tests/emergent-fire.test.ts[2m > [22mbounded physical fire, water and soil[2m > [22mdousing uses one real water charge and prevents spread, and cannot repeat[32m 201[2mms[22m[39m
+ [32m✓[39m tests/emergent-fire.test.ts[2m > [22mbounded physical fire, water and soil[2m > [22mdoes not douse through a wall or consume water on a failed attempt[32m 199[2mms[22m[39m
+ [32m✓[39m tests/emergent-fire.test.ts[2m > [22mbounded physical fire, water and soil[2m > [22mrespects a stone firebreak and lets rain win at an equal spread boundary[33m 317[2mms[22m[39m
+ [32m✓[39m tests/emergent-fire.test.ts[2m > [22mbounded physical fire, water and soil[2m > [22mkeeps partial harvesting paid when remaining wood chars and does not recreate stock[32m 197[2mms[22m[39m
+ [32m✓[39m tests/emergent-fire.test.ts[2m > [22mbounded physical fire, water and soil[2m > [22mcontinues an older in-flight fire with no new spread metadata without inventing earlier events[32m 212[2mms[22m[39m
+ [32m✓[39m tests/emergent-fire.test.ts[2m > [22mbounded physical fire, water and soil[2m > [22mchopping a burning tree cancels its fire and never creates a fresh charcoal source later[32m 193[2mms[22m[39m
+ [32m✓[39m tests/emergent-fire.test.ts[2m > [22mbounded physical fire, water and soil[2m > [22ma spreading fire scars nearby garden soil at its event boundary and slows subsequent growth[32m 172[2mms[22m[39m
+ [32m✓[39m tests/emergent-fire.test.ts[2m > [22mbounded physical fire, water and soil[2m > [22mscarred ground slows a physical plot until paid soil restoration, without erasing charred source state[32m 250[2mms[22m[39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mcosts real parts (mechanical gear, iron, fasteners), is owned, and build is refused without the parts[33m 2014[2mms[22m[39m
+[31m   → expected [ [ 'iron_ingot', 1 ], …(2) ] to deeply equal [ [ 'mechanical_gear', 1 ], …(2) ][39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22msensor off: no conduction even with a visible player; toggling on conducts and feeds the door[32m 108[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mno through-wall detection: a solid wall in the line stops conduction and the status says so[32m 70[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mbounded range: a player beyond 6 tiles is not sensed[32m 98[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mempty fuel and off generator: no conduction, no capacity claimed, and the status says why[32m 64[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mcapacity: a single-slot generator is consumed by the sensor, so the door is starved until reinforced[32m 62[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22msecond consumer: an arrow turret wired through the sensor is powered only while the sensor sees a target[32m 82[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22msleeping and offline-unresolved creatures are never sensed (no synthetic offline detection)[32m 107[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mdisabled, destroyed or unpowered sensors cannot conduct; sensor fuel is drawn while enabled[32m 66[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mpersists enabled state, status and door power across save and reload[32m 119[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mrejects corrupt sensor state at save time (no silent acceptance)[32m 82[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [31m×[39m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22moffline settle with the sensor enabled and a target absent is deterministic and burns the same fuel as direct[32m 98[2mms[22m[39m
+[31m   → base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+ [32m✓[39m tests/b05-loot-matrix.test.ts[2m > [22mB05-R C1 loot → industry matrix (real rolls, real consumers)[2m > [22mbuilds the matrix from the live roll and writes it as evidence[32m 16[2mms[22m[39m
+ [32m✓[39m tests/b05-loot-matrix.test.ts[2m > [22mB05-R C1 loot → industry matrix (real rolls, real consumers)[2m > [22mrolls are deterministic per seed, source and cycle, and never consume world RNG[32m 7[2mms[22m[39m
+ [32m✓[39m tests/b05-loot-matrix.test.ts[2m > [22mB05-R C1 loot → industry matrix (real rolls, real consumers)[2m > [22mlegacy b01-v1 saves keep their own pools (no gear/pipe/plate in toolbox; no blade in advanced)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/b05-loot-matrix.test.ts[2m > [22mB05-R C1 loot → industry matrix (real rolls, real consumers)[2m > [22mno emitted loot item is an orphan: each has at least one real consumer[32m 18[2mms[22m[39m
+ [32m✓[39m tests/b05-loot-matrix.test.ts[2m > [22mB05-R C1 loot → industry matrix (real rolls, real consumers)[2m > [22mimportant-item consumer coverage is asserted directly, not only for items the loot roll emits[32m 1[2mms[22m[39m
+ [32m✓[39m tests/b05-loot-matrix.test.ts[2m > [22mB05-R C1 loot → industry matrix (real rolls, real consumers)[2m > [22mevery engine-action consumer of Fuel Canister exists in engine.ts source; producer stations never burn it[32m 2[2mms[22m[39m
+ [32m✓[39m tests/b05-loot-matrix.test.ts[2m > [22mB05-R C1 loot → industry matrix (real rolls, real consumers)[2m > [22mcontainers never emit Fuel Canister, crude petroleum, cash or blueprints[32m 59[2mms[22m[39m
+ [32m✓[39m src/veyra05/phase-b-contracts.test.ts[2m > [22mVEYRA Phase B — multi-region spawn, economy statics, floor isolation & cold-reload custody[2m > [22mspawns legally across all 4 canonical Veyra regions and validates snapshots[33m 5985[2mms[22m[39m
+ [32m✓[39m src/veyra05/phase-b-contracts.test.ts[2m > [22mVEYRA Phase B — multi-region spawn, economy statics, floor isolation & cold-reload custody[2m > [22mkeeps cold reload on floor -1 valid even when world cache starts on ground floor 0[33m 743[2mms[22m[39m
+ [32m✓[39m src/veyra05/phase-b-contracts.test.ts[2m > [22mVEYRA Phase B — multi-region spawn, economy statics, floor isolation & cold-reload custody[2m > [22mpreserves offscreen container custody and depleted POI loot across window slides without duplication[33m 1236[2mms[22m[39m
+ [32m✓[39m src/veyra05/phase-b-contracts.test.ts[2m > [22mVEYRA Phase B — multi-region spawn, economy statics, floor isolation & cold-reload custody[2m > [22mexposes canonical Ragnarok caches, Chest Vendors, and Evacuation Beacons on walkable floor tiles[33m 4848[2mms[22m[39m
+ [32m✓[39m tests/npc-physical-authority.test.ts[2m > [22mhuman mutation boundaries[2m > [22mone food debit grants one serving, not the full stack[33m 2387[2mms[22m[39m
+ [32m✓[39m tests/npc-physical-authority.test.ts[2m > [22mhuman mutation boundaries[2m > [22mthe last potable charge preserves the same empty vessel UID[32m 68[2mms[22m[39m
+ [32m✓[39m tests/npc-physical-authority.test.ts[2m > [22mhuman mutation boundaries[2m > [22mnon-vessel hydration consumes one real item and cannot be repeated for free[32m 64[2mms[22m[39m
+ [32m✓[39m tests/npc-physical-authority.test.ts[2m > [22mhuman mutation boundaries[2m > [22mcommunity permission grants neither remote food nor cross-floor hydration[32m 41[2mms[22m[39m
+ [32m✓[39m tests/npc-physical-authority.test.ts[2m > [22mhuman mutation boundaries[2m > [22mremote and wrong-floor harvest calls cannot damage source or mint output[32m 102[2mms[22m[39m
+ [32m✓[39m tests/npc-physical-authority.test.ts[2m > [22mhuman mutation boundaries[2m > [22ma generic shared custody chest does not erase sleep debt[32m 238[2mms[22m[39m
+ [32m✓[39m tests/npc-physical-authority.test.ts[2m > [22mhuman mutation boundaries[2m > [22mawakening does not forge attack evidence, and early exit saves nobody speculatively[33m 4706[2mms[22m[39m
+ [32m✓[39m tests/npc-physical-authority.test.ts[2m > [22mhuman mutation boundaries[2m > [22ma downed body takes subsequent lethal damage instead of becoming immortal[32m 54[2mms[22m[39m
+ [32m✓[39m tests/npc-physical-authority.test.ts[2m > [22mhuman mutation boundaries[2m > [22ma chase is not a hit, and each creature attack contacts a human only once across reload[33m 341[2mms[22m[39m
+ [32m✓[39m tests/npc-physical-authority.test.ts[2m > [22mhuman mutation boundaries[2m > [22ma hostile human physically closes distance along a legal lane[32m 199[2mms[22m[39m
+ [32m✓[39m tests/k6-spatial.test.ts[2m > [22mK6 room and physical access[2m > [22mTIME-CONTROLLED FIXTURE: collapse opens a shelter and removes hunger-only protection[33m 1843[2mms[22m[39m
+ [32m✓[39m tests/k6-spatial.test.ts[2m > [22mK6 room and physical access[2m > [22mrecognizes a rectangular room larger than 90 cells and changes with an opening[32m 54[2mms[22m[39m
+ [32m✓[39m tests/k6-spatial.test.ts[2m > [22mK6 room and physical access[2m > [22mtreats an L-shaped room as enclosed and rejects missing roof support[32m 75[2mms[22m[39m
+ [32m✓[39m tests/k6-spatial.test.ts[2m > [22mK6 room and physical access[2m > [22mreveals only a physically connected room, joining it through an open door[32m 36[2mms[22m[39m
+ [32m✓[39m tests/k6-spatial.test.ts[2m > [22mK6 room and physical access[2m > [22mdenies container access through a wall, allows it through an open door[32m 122[2mms[22m[39m
+ [31m×[39m tests/k6-spatial.test.ts[2m > [22mK6 paid structural lifecycle[2m > [22mupgrades in place at preserved condition, pays exactly once, and reloads[32m 98[2mms[22m[39m
+[31m   → expected false to be true // Object.is equality[39m
+ [32m✓[39m tests/k6-spatial.test.ts[2m > [22mK6 paid structural lifecycle[2m > [22mexpands a chest without duplicating contents and bags them on destruction[32m 110[2mms[22m[39m
+ [32m✓[39m tests/k6-spatial.test.ts[2m > [22mK6 paid structural lifecycle[2m > [22mrejects upgrades beyond reach or without ownership/materials and drops unsupported roofs on floor destruction[32m 83[2mms[22m[39m
+ [31m×[39m tests/w08-home-status.test.ts[2m > [22mW08 homeStatus (controlled fixtures)[2m > [22man unfunded cabinet covers structures, funding changes state to funded, and protection does not heal damage[33m 1945[2mms[22m[39m
+[31m   → claim: Need an intact packed device.[39m
+ [32m✓[39m tests/w08-home-status.test.ts[2m > [22mW08 homeStatus (controlled fixtures)[2m > [22muncovered outpost reports the 12h provisional collapse fraction and disappears at zero HP[33m 641[2mms[22m[39m
+ [31m×[39m tests/w08-home-status.test.ts[2m > [22mW08 homeStatus (controlled fixtures)[2m > [22mnearestHomeStructure is bounded, deterministic and ignores items on the ground[32m 107[2mms[22m[39m
+[31m   → claim: Need an intact packed device.[39m
+ [31m×[39m tests/w08-home-status.test.ts[2m > [22mW08 homeStatus (controlled fixtures)[2m > [22mdestroying the cabinet demotes covered structures to unfunded and never restores lost stock[32m 127[2mms[22m[39m
+[31m   → claim: Need an intact packed device.[39m
+ [31m×[39m tests/w08-home-status.test.ts[2m > [22mW08 homeStatus (controlled fixtures)[2m > [22ma Cabinet standing alone is idle (no external coverage), not unreachable; billing for itself is unchanged[32m 89[2mms[22m[39m
+[31m   → claim: Need an intact packed device.[39m
+ [31m×[39m tests/w08-home-status.test.ts[2m > [22mW08 homeStatus (controlled fixtures)[2m > [22ma Cabinet funded only by its own upkeep does not count as covered structures[32m 98[2mms[22m[39m
+[31m   → claim: Need an intact packed device.[39m
+ [32m✓[39m tests/mec01-industrial-graph.test.ts[2m > [22mMEC-01 five-chain SOH benchmark is anchored to the registry[2m > [22mmetal blade: 3 iron + 1 Parts at bench II (recipe revision 6)[32m 3[2mms[22m[39m
+ [32m✓[39m tests/mec01-industrial-graph.test.ts[2m > [22mMEC-01 five-chain SOH benchmark is anchored to the registry[2m > [22mmetal pipe: 2 refined iron + 2 Parts -> 2 sections at bench II[32m 1[2mms[22m[39m
+ [32m✓[39m tests/mec01-industrial-graph.test.ts[2m > [22mMEC-01 five-chain SOH benchmark is anchored to the registry[2m > [22mmechanical gear: 2 iron + 3 Parts at bench II (LI: iron + Parts, Parts-heavy)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/mec01-industrial-graph.test.ts[2m > [22mMEC-01 five-chain SOH benchmark is anchored to the registry[2m > [22miron plate: 2 refined iron + 2 Parts → 2 plates (no pipe sink)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/mec01-industrial-graph.test.ts[2m > [22mMEC-01 five-chain SOH benchmark is anchored to the registry[2m > [22mutility frame (rev 5): 1 pipe + 4 iron + 2 refined + 4 Parts at bench II[32m 0[2mms[22m[39m
+ [32m✓[39m tests/mec01-industrial-graph.test.ts[2m > [22mrecycler economic proof (cumulative tiers, actual recovery plans)[2m > [22mrecyclerV4 (every NEW job): priced OK at every tier for every tool, and never pays out Parts[32m 13[2mms[22m[39m
+ [32m✓[39m tests/mec01-industrial-graph.test.ts[2m > [22mrecycler economic proof (cumulative tiers, actual recovery plans)[2m > [22mnew component jobs are priced OK: gear-v2, blade-v2, pipe-v3, plate-v1[32m 1[2mms[22m[39m
+ [32m✓[39m tests/mec01-industrial-graph.test.ts[2m > [22mrecycler economic proof (cumulative tiers, actual recovery plans)[2m > [22mKNOWN, BOUNDED: frozen tables read through the retirement ratios over-return Parts — they can only pay a job that was already queued[32m 2[2mms[22m[39m
+ [32m✓[39m tests/mec01-industrial-graph.test.ts[2m > [22mrecycler economic proof (cumulative tiers, actual recovery plans)[2m > [22mcraft cost is priced in live atoms only: no route through a retired id[32m 5[2mms[22m[39m
+ [32m✓[39m tests/mec01-industrial-graph.test.ts[2m > [22mrecycler economic proof (cumulative tiers, actual recovery plans)[2m > [22mcharcoal is costed, not zero: a plate and a pipe section each carry one charcoal and one Parts[32m 0[2mms[22m[39m
+ [31m×[39m tests/mec01-r8b-plank.test.ts[2m > [22mMEC-01 R8B plank chain[2m > [22mtwo wood make one plank at the bench, after 6 real seconds; too little wood is refused with no change[33m 10056[2mms[22m[39m
+[31m   → no legal tile for workbench[39m
+ [31m×[39m tests/mec01-r8b-plank.test.ts[2m > [22mMEC-01 R8B plank chain[2m > [22ma plank wall needs three real planks: with two it is refused and nothing is spent; with three it builds at 240 HP[33m 7624[2mms[22m[39m
+[31m   → no legal tile for workbench[39m
+ [32m✓[39m tests/mec01-r8b-plank.test.ts[2m > [22mMEC-01 R8B plank chain[2m > [22mshelter stays buildable from raw wood alone: a log wall needs no plank[32m 120[2mms[22m[39m
+ [32m✓[39m tests/pa1-research-proof.test.ts[2m > [22mPA1 research visibility proof — the CI check that refuses a hollow green run[2m > [22mparses and runs standalone (no YAML, no shell quoting in the middle)[32m 67[2mms[22m[39m
+ [32m✓[39m tests/pa1-research-proof.test.ts[2m > [22mPA1 research visibility proof — the CI check that refuses a hollow green run[2m > [22maccepts a manifest whose frames are inside the viewport AND inside the pane[32m 89[2mms[22m[39m
+ [32m✓[39m tests/pa1-research-proof.test.ts[2m > [22mPA1 research visibility proof — the CI check that refuses a hollow green run[2m > [22mrefuses a PASS manifest with a row the pane clipped, and names it[32m 75[2mms[22m[39m
+ [32m✓[39m tests/pa1-research-proof.test.ts[2m > [22mPA1 research visibility proof — the CI check that refuses a hollow green run[2m > [22mrefuses a PASS manifest that never clicked the tab, or lost a family[32m 107[2mms[22m[39m
+ [32m✓[39m tests/pa1-research-proof.test.ts[2m > [22mPA1 research visibility proof — the CI check that refuses a hollow green run[2m > [22mrefuses a PASS manifest whose ENERGY row lost its authorised price wording[32m 76[2mms[22m[39m
+ [32m✓[39m tests/pa1-research-proof.test.ts[2m > [22mPA1 research visibility proof — the CI check that refuses a hollow green run[2m > [22mdoes not double-fail a run whose browser gate is already red, but still publishes why[32m 93[2mms[22m[39m
+ [32m✓[39m tests/pa1-research-proof.test.ts[2m > [22mPA1 research visibility proof — the CI check that refuses a hollow green run[2m > [22mreports a missing manifest instead of throwing an opaque stack[32m 105[2mms[22m[39m
+ [32m✓[39m tests/g1b-reachability.test.ts[2m > [22mG1B batch-3.2 P3A — unreachable-space classification[2m > [22mclassifies every unreachable space from the compiled census fields[32m 24[2mms[22m[39m
+ [31m×[39m tests/mec01-f3-joined.test.ts[2m > [22mF3 joined: deposit -> evacuate -> save/reload -> run 2[2m > [22mcarries the real deposit receipt through evacuation and reload into run 2 with zero run-local cash[33m 2051[2mms[22m[39m
+[31m   → expected false to be true // Object.is equality[39m
+ [32m✓[39m tests/economic-network-m3.test.ts[2m > [22mSOH M3 Counterfactual Study (DESIGN_PROPOSED / Non-Authoritative) & Authoritative LOCKED_CANON Guards[2m > [22mExecutes counterfactual study with honest PROPOSED_AFTER / CANON_REJECTED labels & writes M3_BEFORE_AFTER_SIM.json[33m 2042[2mms[22m[39m
+ [32m✓[39m tests/economic-network-m3.test.ts[2m > [22mSOH M3 Counterfactual Study (DESIGN_PROPOSED / Non-Authoritative) & Authoritative LOCKED_CANON Guards[2m > [22mEnforces LOCKED_CANON Corrective invariants (24-slot cabinet, 7 Creator vs 4 Legacy Cores, biome drops, Tier-3 research lock)[32m 1[2mms[22m[39m
+ [32m✓[39m tests/economic-network-m3.test.ts[2m > [22mSOH M3 Counterfactual Study (DESIGN_PROPOSED / Non-Authoritative) & Authoritative LOCKED_CANON Guards[2m > [22mEnforces LOCKED_CANON Ragnarok full wipe & finite non-plant source identity[32m 212[2mms[22m[39m
+ [32m✓[39m tests/g1b-ecology.test.ts[2m > [22mG1B ecology (frozen data)[2m > [22madds sources without touching the 130 round-1 ids, on distinct tiles and real variants[32m 223[2mms[22m[39m
+ [32m✓[39m tests/g1b-ecology.test.ts[2m > [22mG1B ecology (frozen data)[2m > [22mmatches the census: every source (base + added) belongs to exactly one surveyed space or road feature[32m 68[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/g1b-ecology.test.ts[2m > [22mG1B ecology (survey of the compiled runtime)[2m > [22mre-surveys Veyra and reproduces the frozen ecology
+[90mstdout[2m | tests/npc-occupation-coverage.test.ts[2m > [22m[2mnatural occupation coverage[2m > [22m[2mrecords which roles work on their own in three real settlements
+[22m[39mVILLAGE veyra05-greywater {"guard:human.guard.duty":60,"gardener:human.harvest":16,"gardener:human.harvest.output":16,"builder:human.harvest":14,"builder:human.harvest.output":14,"mechanic:human.harvest":53,"mechanic:human.harvest.output":64,"salvager:human.harvest":41,"salvager:human.harvest.output":48,"engineer:human.harvest":17,"engineer:human.harvest.output":19,"engineer:human.harvest.complete":16,"medic:human.harvest":5,"medic:human.harvest.output":5,"salvager:human.harvest.complete":37,"cook:human.harvest":10,"cook:human.harvest.output":10,"builder:human.harvest.complete":11,"mechanic:human.harvest.complete":47,"gardener:human.harvest.complete":13,"cook:human.harvest.complete":10,"medic:human.harvest.complete":5,"cook:human.work.start":1,"cook:human.production.pickup":1}
+VILLAGE veyra05-saltwick {"salvager:human.harvest":45,"salvager:human.harvest.output":52,"engineer:human.harvest":17,"engineer:human.harvest.output":19,"mechanic:human.harvest":55,"mechanic:human.harvest.output":66,"guard:human.guard.duty":69,"mechanic:human.harvest.complete":47,"builder:human.harvest":12,"builder:human.harvest.output":12,"gardener:human.harvest":14,"gardener:human.harvest.output":14,"engineer:human.harvest.complete":15,"medic:human.harvest":5,"medic:human.harvest.output":5,"salvager:human.harvest.complete":41,"cook:human.harvest":11,"cook:human.harvest.output":11,"builder:human.harvest.complete":9,"gardener:human.harvest.complete":12,"cook:human.harvest.complete":10,"medic:human.harvest.complete":5,"cook:human.work.start":1,"cook:human.production.pickup":1}
+VILLAGE veyra05-cinder {"guard:human.guard.duty":220,"salvager:human.harvest":42,"salvager:human.harvest.output":49,"builder:human.harvest":12,"builder:human.harvest.output":12,"gardener:human.harvest":14,"gardener:human.harvest.output":14,"mechanic:human.harvest":49,"mechanic:human.harvest.output":59,"engineer:human.harvest":16,"engineer:human.harvest.output":18,"engineer:human.harvest.complete":15,"medic:human.harvest":5,"medic:human.harvest.output":5,"salvager:human.harvest.complete":37,"cook:human.harvest":11,"cook:human.harvest.output":11,"builder:human.harvest.complete":9,"mechanic:human.harvest.complete":42,"gardener:human.harvest.complete":12,"cook:human.harvest.complete":10,"medic:human.harvest.complete":5,"cook:human.work.start":1,"cook:human.production.pickup":1,"medic:human.treat":1}
+ROLES IN LEDGER builder,cook,engineer,gardener,guard,mechanic,medic,salvager
+PROVEN BY THEIR OWN TRADE builder,cook,engineer,gardener,guard,mechanic,medic,salvager
+UNION ROLES builder,cook,engineer,gardener,guard,mechanic,medic,salvager
+
+ [32m✓[39m tests/npc-occupation-coverage.test.ts[2m > [22mnatural occupation coverage[2m > [22mrecords which roles work on their own in three real settlements[33m 119184[2mms[22m[39m
+ [32m✓[39m tests/map-package.test.ts[2m > [22mversioned map loader, no geography rewrite[2m > [22mrejects malformed or unsupported inputs with diagnostics[33m 1822[2mms[22m[39m
+ [32m✓[39m tests/map-package.test.ts[2m > [22mversioned map loader, no geography rewrite[2m > [22minstalls a valid descriptor, instantiates it in the game, and pins geometry and source custody[33m 1350[2mms[22m[39m
+ [32m✓[39m tests/map-package.test.ts[2m > [22mversioned map loader, no geography rewrite[2m > [22mretains separate immutable revisions under the same map id[33m 1195[2mms[22m[39m
+ [32m✓[39m tests/map-package.test.ts[2m > [22mversioned map loader, no geography rewrite[2m > [22mhonors an authored cargo restriction during real loaded-cart collision[33m 925[2mms[22m[39m
+ [32m✓[39m tests/map-package.test.ts[2m > [22mversioned map loader, no geography rewrite[2m > [22mrejects changed source stock and preserves legacy v3 without the new digest[32m 98[2mms[22m[39m
+ [32m✓[39m tests/g1b-sheen.test.ts[2m > [22mG1B surface sheen[2m > [22mreads the mask it was built for: 240×144, five 48px families, material / plane ids on the CLOSED row[32m 37[2mms[22m[39m
+ [32m✓[39m tests/g1b-sheen.test.ts[2m > [22mG1B surface sheen[2m > [22mnever lights the outline or a pixel outside the object, in any family at any moment of the sweep[33m 3139[2mms[22m[39m
+ [32m✓[39m tests/g1b-sheen.test.ts[2m > [22mG1B surface sheen[2m > [22mresponds to the surface: metal out-shines timber, the lid and the front are lit at different moments, bevel raises the step[32m 83[2mms[22m[39m
+[90mstdout[2m | tests/mec01-r6-freight-speed.test.ts[2m > [22m[2mMEC-01 R6 P0 freight speed (same road, same 40-ingot load)[2m > [22m[2mwalking empty and loaded, cart empty and loaded, motorbike empty and loaded
+[22m[39mR6ROWS {"walk_empty":{"carriedKg":1.4,"seconds":9.05,"outTiles":26,"pathPx":834,"returnedToStart":true,"avgPxPerSec":92.2,"fuelUsed":0,"wearHp":0,"turnAt":{"x":2331,"y":1752}},"walk_loaded":{"carriedKg":41.4,"seconds":9.05,"outTiles":26,"pathPx":834,"returnedToStart":true,"avgPxPerSec":92.2,"fuelUsed":0,"wearHp":0,"turnAt":{"x":2331,"y":1752}},"cart_empty":{"cartKg":0,"seconds":9.15,"outTiles":26,"pathPx":835,"returnedToStart":true,"avgPxPerSec":91.3,"fuelUsed":0,"wearHp":0,"turnAt":{"x":2331,"y":1752}},"cart_loaded":{"cartKg":40,"seconds":9.85,"outTiles":26,"pathPx":834,"returnedToStart":true,"avgPxPerSec":84.7,"fuelUsed":0,"wearHp":0,"turnAt":{"x":2331,"y":1752}},"bike_empty":{"cargoKg":0,"maxKg":80,"fuelBefore":300,"seconds":2.2,"outTiles":26,"pathPx":858,"returnedToStart":true,"avgPxPerSec":390,"fuelUsed":42.9,"wearHp":6.86,"turnAt":{"x":2341,"y":1752}},"bike_loaded":{"cargoKg":40,"maxKg":80,"fuelBefore":300,"seconds":2.6,"outTiles":26,"pathPx":837,"returnedToStart":true,"avgPxPerSec":321.8,"fuelUsed":52.28,"wearHp":8.37,"turnAt":{"x":2330,"y":1752}}}
+
+ [32m✓[39m tests/mec01-r6-freight-speed.test.ts[2m > [22mMEC-01 R6 P0 freight speed (same road, same 40-ingot load)[2m > [22mwalking empty and loaded, cart empty and loaded, motorbike empty and loaded[33m 2830[2mms[22m[39m
+ [32m✓[39m tests/poi-route-physical.test.ts[2m > [22mphysical POI layering on the existing development layout[2m > [22mrejects vault transfers through a closed wall even when within interaction radius[33m 2025[2mms[22m[39m
+ [32m✓[39m tests/poi-route-physical.test.ts[2m > [22mphysical POI layering on the existing development layout[2m > [22mwalks exterior to finite access items, keycard, powered door, vault and retreats[33m 899[2mms[22m[39m
+ [32m✓[39m tests/b05r-oil-ui.test.tsx[2m > [22mB05-R P0 defect 1: Oil Pump is in the build menu and is locked without an authorized source[2m > [22mthe Work group and BUILD_ORDER both list oil_pump, so the Find box and the Work tab reach it[32m 3[2mms[22m[39m
+ [32m✓[39m tests/b05r-oil-ui.test.tsx[2m > [22mB05-R P0 defect 1: Oil Pump is in the build menu and is locked without an authorized source[2m > [22mis locked with no authorized source, and unlocked once a test-fixture source has stock[33m 1906[2mms[22m[39m
+ [32m✓[39m tests/b05r-oil-ui.test.tsx[2m > [22mB05-R P0 defect 1: Oil Pump is in the build menu and is locked without an authorized source[2m > [22mnever locks other structures[32m 119[2mms[22m[39m
+ [32m✓[39m tests/b05r-oil-ui.test.tsx[2m > [22mB05-R P0 defect 2: source-stock line is rendered (not discarded) and changes positive → dry[2m > [22mrenders the stock line with the live stock value[32m 155[2mms[22m[39m
+ [32m✓[39m tests/b05r-oil-ui.test.tsx[2m > [22mB05-R P0 defect 2: source-stock line is rendered (not discarded) and changes positive → dry[2m > [22mchanges on screen to the dry state when the source stock reaches zero[32m 107[2mms[22m[39m
+ [32m✓[39m tests/b05r-oil-ui.test.tsx[2m > [22mB05-R P0 defect 2: source-stock line is rendered (not discarded) and changes positive → dry[2m > [22ma pump with no authorized source says so instead of drawing a blank[32m 42[2mms[22m[39m
+ [32m✓[39m tests/home-ecology.test.ts[2m > [22mreal local garden ecology[2m > [22mdistinguishes actual snowy and temperate cells without modifying source geography[33m 1840[2mms[22m[39m
+ [32m✓[39m tests/home-ecology.test.ts[2m > [22mreal local garden ecology[2m > [22mpays once for reversible physical preparation, blocks rain and preserves state over reload[32m 219[2mms[22m[39m
+ [32m✓[39m tests/home-ecology.test.ts[2m > [22mreal local garden ecology[2m > [22muses the same weather and ecological growth across offline and sliced time, without retroactive preparation[33m 450[2mms[22m[39m
+ [32m✓[39m tests/loot-respawn.test.ts[2m > [22mauthored ordinary loot respawn[2m > [22mpreserves partial contents indefinitely; final withdrawal starts the exact typed cooldown[33m 3076[2mms[22m[39m
+ [32m✓[39m tests/loot-respawn.test.ts[2m > [22mauthored ordinary loot respawn[2m > [22msettles online/offline to one fresh, authenticated instance; never duplicates and never recreates blueprint or cash[33m 2080[2mms[22m[39m
+ [32m✓[39m tests/loot-respawn.test.ts[2m > [22mauthored ordinary loot respawn[2m > [22mmigrates W00 timerless saves conservatively and rejects orphan and malformed timers[33m 2681[2mms[22m[39m
+ [32m✓[39m tests/b05-recycler-reload.test.ts[2m > [22mB05-R C2 Recycler in-flight pipe job across save/reload[2m > [22mcompletes once after reload, returns one ingot, and the reserved pipe UID is preserved in the saved job[33m 1986[2mms[22m[39m
+ [32m✓[39m tests/npc-basket-trade.test.ts[2m > [22mmulti-item barter[2m > [22mmoves every line of a basket and debits the source by exactly what landed[33m 2566[2mms[22m[39m
+ [32m✓[39m tests/npc-basket-trade.test.ts[2m > [22mmulti-item barter[2m > [22mrefuses the whole basket when one line cannot be met, moving nothing[32m 79[2mms[22m[39m
+ [32m✓[39m src/veyra05/global-start-discovery.test.ts[2m > [22mglobal Veyra first-window safety foundation[2m > [22menumerates a unique full geographic grid with bounded valid origins[33m 835[2mms[22m[39m
+ [32m✓[39m src/veyra05/global-start-discovery.test.ts[2m > [22mglobal Veyra first-window safety foundation[2m > [22mgives stable traversal for the same seed and different order for others[32m 14[2mms[22m[39m
+ [32m✓[39m src/veyra05/global-start-discovery.test.ts[2m > [22mglobal Veyra first-window safety foundation[2m > [22mdoes not confuse the whole-frame origin grid with accepted spawn cells[32m 1[2mms[22m[39m
+ [32m✓[39m src/veyra05/global-start-discovery.test.ts[2m > [22mglobal Veyra first-window safety foundation[2m > [22mrejects Westmouth centroid while retaining legal Greywater control[33m 7097[2mms[22m[39m
+ [32m✓[39m tests/v17-spares-market.test.ts[2m > [22mrun-local finite Spares market[2m > [22mrequires the real trader and physical Spares, spends bounded stock exactly once, survives reload, and cannot buy or resell arbitrary items[33m 2044[2mms[22m[39m
+ [32m✓[39m tests/v17-spares-market.test.ts[2m > [22mrun-local finite Spares market[2m > [22mkeeps purchased output physical if inventory is full[32m 142[2mms[22m[39m
+[90mstdout[2m | tests/npc-natural-cook.test.ts[2m > [22m[2mnormal New Game exposes the canonical ingredient catchment blocker without inventing paid meals
+[22m[39m{"case":"natural-cook","counts":{"routeBoundaryChecks":15272,"sourceLookups":1114,"sourceIndexReads":212,"worldSlices":8186,"plannerActivations":180,"actorPlans":241,"regionCompilations":122,"renderCompilations":0,"routeExpansions":89056,"entityScans":42533},"elapsedMs":67740.78207300001,"events":[{"id":"r48","at":1794729614223.2397,"kind":"human.work.commit","detail":"hb:hw2tv:guard:e18e:"},{"id":"r53","at":1794729616758.147,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c18z\",\"transferUid\":\"s2ua\",\"lineage\":[{\"at\":1794729616758.147,\"jobId\":\"hj2tx\",\"sourceId\":\"0:10202356\",\"workerId\":\"he\",\"fromUid\":\"s2ua\",\"intoUid\":\"s190\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r66","at":1794729618445.4878,"kind":"human.work.commit","detail":"h5:hw2tt:guard:e16j:"},{"id":"r67","at":1794729618772.4329,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c18z\",\"transferUid\":\"s2u7\",\"lineage\":[{\"at\":1794729618772.4329,\"jobId\":\"hj2tz\",\"sourceId\":\"0:10242331\",\"workerId\":\"hg\",\"fromUid\":\"s2u7\",\"intoUid\":\"s2u7\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r74","at":1794729620315.289,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2u1\",\"lineage\":[{\"at\":1794729620315.289,\"jobId\":\"hj2ts\",\"sourceId\":\"0:4769575\",\"workerId\":\"h4\",\"fromUid\":\"s2u1\",\"intoUid\":\"s16b\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r79","at":1794729620558.1511,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2u0\",\"lineage\":[{\"at\":1794729620558.1511,\"jobId\":\"hj2tu\",\"sourceId\":\"0:4633644\",\"workerId\":\"h9\",\"fromUid\":\"s2u0\",\"intoUid\":\"s2u0\",\"qty\":1,\"key\":\"wood\"}]}"},{"id":"r96","at":1794729626778.7935,"kind":"human.work.commit","detail":"ho:hw2ub:guard:e1af:"},{"id":"r108","at":1794729628651.7961,"kind":"human.work.commit","detail":"hh:hw2u2:guard:e19a:"},{"id":"r120","at":1794729633108.9392,"kind":"human.work.commit","detail":"h6:hw2ty:guard:e16j:"},{"id":"r126","at":1794729634715.2927,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1a4\",\"transferUid\":\"s2uj\",\"lineage\":[{\"at\":1794729634715.2927,\"jobId\":\"hj2uc\",\"sourceId\":\"0:2526580\",\"workerId\":\"hq\",\"fromUid\":\"s2uj\",\"intoUid\":\"s2uj\",\"qty\":1,\"key\":\"fiber\"}]}"},{"id":"r130","at":1794729635629.5818,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1a4\",\"transferUid\":\"s2ud\",\"lineage\":[{\"at\":1794729635629.5818,\"jobId\":\"hj2u9\",\"sourceId\":\"0:2826601\",\"workerId\":\"hn\",\"fromUid\":\"s2ud\",\"intoUid\":\"s2ud\",\"qty\":1,\"key\":\"berries\"}]}"},{"id":"r141","at":1794729637343.8591,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2u8\",\"lineage\":[{\"at\":1794729637343.8591,\"jobId\":\"hj2tq\",\"sourceId\":\"0:4625658\",\"workerId\":\"h2\",\"fromUid\":\"s2u8\",\"intoUid\":\"s2u8\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r160","at":1794729642372.4329,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2u3\",\"lineage\":[{\"at\":1794729642372.4329,\"jobId\":\"hj2tr\",\"sourceId\":\"0:4749667\",\"workerId\":\"h3\",\"fromUid\":\"s2u3\",\"intoUid\":\"s2u3\",\"qty\":1,\"key\":\"fiber\"}]}"},{"id":"r178","at":1794729644758.1453,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1dt\",\"transferUid\":\"s2uv\",\"lineage\":[{\"at\":1794729644758.1453,\"jobId\":\"hj2uq\",\"sourceId\":\"0:6955166\",\"workerId\":\"h1b\",\"fromUid\":\"s2uv\",\"intoUid\":\"s2uv\",\"qty\":1,\"key\":\"wood\"}]}"},{"id":"r191","at":1794729647286.719,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1a4\",\"transferUid\":\"s2ue\",\"lineage\":[{\"at\":1794729647286.719,\"jobId\":\"hj2u4\",\"sourceId\":\"0:2662653\",\"workerId\":\"hj\",\"fromUid\":\"s2ue\",\"intoUid\":\"s2ue\",\"qty\":1,\"key\":\"herb\"}]}"},{"id":"r198","at":1794729647643.8613,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1a4\",\"transferUid\":\"s2uf\",\"lineage\":[{\"at\":1794729647643.8613,\"jobId\":\"hj2u6\",\"sourceId\":\"0:2738558\",\"workerId\":\"hm\",\"fromUid\":\"s2uf\",\"intoUid\":\"s2uf\",\"qty\":1,\"key\":\"mushroom\"}]}"},{"id":"r213","at":1794729648443.8613,"kind":"human.work.fetch","detail":"hm:hw2v2:e1af"},{"id":"r228","at":1794729650937.5115,"kind":"human.work.commit","detail":"h12:hw2uk:guard:e1e4:"},{"id":"r234","at":1794729651440.098,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1dt\",\"transferUid\":\"s2uu\",\"lineage\":[{\"at\":1794729651440.098,\"jobId\":\"hj2uo\",\"sourceId\":\"0:6947192\",\"workerId\":\"h16\",\"fromUid\":\"s2uu\",\"intoUid\":\"s2uu\",\"qty\":1,\"key\":\"berries\"}]}"},{"id":"r238","at":1794729651511.5283,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1fu\",\"transferUid\":\"s2uz\",\"lineage\":[{\"at\":1794729651511.5283,\"jobId\":\"hj2ut\",\"sourceId\":\"0:3966518\",\"workerId\":\"h1d\",\"fromUid\":\"s2uz\",\"intoUid\":\"s2uz\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r263","at":1794729654195.7383,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1h6\",\"transferUid\":\"s2va\",\"lineage\":[{\"at\":1794729654195.7383,\"jobId\":\"hj2uy\",\"sourceId\":\"0:8534369\",\"workerId\":\"h1i\",\"fromUid\":\"s2va\",\"intoUid\":\"s2va\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r270","at":1794729654558.8955,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1hu\",\"transferUid\":\"s2vd\",\"lineage\":[{\"at\":1794729654558.8955,\"jobId\":\"hj2v6\",\"sourceId\":\"0:7333825\",\"workerId\":\"h1m\",\"fromUid\":\"s2vd\",\"intoUid\":\"s2vd\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r288","at":1794729657669.4229,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1h6\",\"transferUid\":\"s2vf\",\"lineage\":[{\"at\":1794729657669.4229,\"jobId\":\"hj2v0\",\"sourceId\":\"0:8510367\",\"workerId\":\"h1k\",\"fromUid\":\"s2vf\",\"intoUid\":\"s2vf\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r290","at":1794729657669.4229,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1h6\",\"transferUid\":\"s2vg\",\"lineage\":[{\"at\":1794729657669.4229,\"jobId\":\"hj2v0\",\"sourceId\":\"0:8510367\",\"workerId\":\"h1k\",\"fromUid\":\"s2vg\",\"intoUid\":\"s2vg\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r305","at":1794729659422.0564,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2v5\",\"lineage\":[{\"at\":1794729659422.0564,\"jobId\":\"hj2ur\",\"sourceId\":\"0:4653582\",\"workerId\":\"h1\",\"fromUid\":\"s2v5\",\"intoUid\":\"s2v5\",\"qty\":1,\"key\":\"berries\"}]}"},{"id":"r319","at":1794729661874.6855,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1jb\",\"transferUid\":\"s2vn\",\"lineage\":[{\"at\":1794729661874.6855,\"jobId\":\"hj2ve\",\"sourceId\":\"0:3787717\",\"workerId\":\"h1r\",\"fromUid\":\"s2vn\",\"intoUid\":\"s2vn\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r334","at":1794729664334.3389,"kind":"human.work.commit","detail":"h1s:hw2vh:guard:e1jk:"},{"id":"r336","at":1794729665453.6367,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1fu\",\"transferUid\":\"s2vj\",\"lineage\":[{\"at\":1794729665453.6367,\"jobId\":\"hj2us\",\"sourceId\":\"0:3802526\",\"workerId\":\"h1c\",\"fromUid\":\"s2vj\",\"intoUid\":\"s2vj\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r341","at":1794729665900.2522,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1gi\",\"transferUid\":\"s2v8\",\"lineage\":[{\"at\":1794729665900.2522,\"jobId\":\"hj2uw\",\"sourceId\":\"0:3054504\",\"workerId\":\"h1h\",\"fromUid\":\"s2v8\",\"intoUid\":\"s2v8\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r348","at":1794729666525.8228,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2v4\",\"lineage\":[{\"at\":1794729666525.8228,\"jobId\":\"hj2un\",\"sourceId\":\"0:4645583\",\"workerId\":\"h7\",\"fromUid\":\"s2v4\",\"intoUid\":\"s169\",\"qty\":1,\"key\":\"berries\"}]}"},{"id":"r355","at":1794729668591.67,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1im\",\"transferUid\":\"s2vl\",\"lineage\":[{\"at\":1794729668591.67,\"jobId\":\"hj2v9\",\"sourceId\":\"0:4160424\",\"workerId\":\"h1o\",\"fromUid\":\"s2vl\",\"intoUid\":\"s2vl\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r362","at":1794729668778.81,"kind":"human.work.commit","detail":"h1q:hw2vc:guard:e1iv:"},{"id":"r369","at":1794729670422.0547,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1jb\",\"transferUid\":\"s2vo\",\"lineage\":[{\"at\":1794729670422.0547,\"jobId\":\"hj2vk\",\"sourceId\":\"0:3795739\",\"workerId\":\"h1t\",\"fromUid\":\"s2vo\",\"intoUid\":\"s2vo\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r371","at":1794729670422.0547,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1jb\",\"transferUid\":\"s2vp\",\"lineage\":[{\"at\":1794729670422.0547,\"jobId\":\"hj2vk\",\"sourceId\":\"0:3795739\",\"workerId\":\"h1t\",\"fromUid\":\"s2vp\",\"intoUid\":\"s2vp\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r377","at":1794729670879.1958,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2ux\",\"lineage\":[{\"at\":1794729670879.1958,\"jobId\":\"hj2ug\",\"sourceId\":\"0:4637585\",\"workerId\":\"h9\",\"fromUid\":\"s2ux\",\"intoUid\":\"s2u0\",\"qty\":1,\"key\":\"wood\"}]}"},{"id":"r387","at":1794729672112.149,"kind":"human.work.commit","detail":"h6:hw2vi:guard:e4:"},{"id":"r404","at":1794729674411.5273,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1m7\",\"transferUid\":\"s2vv\",\"lineage\":[{\"at\":1794729674411.5273,\"jobId\":\"hj2vs\",\"sourceId\":\"0:9850218\",\"workerId\":\"h23\",\"fromUid\":\"s2vv\",\"intoUid\":\"s2vv\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r423","at":1794729677340.862,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1hu\",\"transferUid\":\"s2vb\",\"lineage\":[{\"at\":1794729677340.862,\"jobId\":\"hj2v3\",\"sourceId\":\"0:7465873\",\"workerId\":\"h1l\",\"fromUid\":\"s2vb\",\"intoUid\":\"s2vb\",\"qty\":1,\"key\":\"stone\"}]}"},{"id":"r465","at":1794729684569.4248,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1k1\",\"transferUid\":\"s2w9\",\"lineage\":[{\"at\":1794729684569.4248,\"jobId\":\"hj2vm\",\"sourceId\":\"0:6890104\",\"workerId\":\"h1w\",\"fromUid\":\"s2w9\",\"intoUid\":\"s2w9\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r473","at":1794729685223.2231,"kind":"human.work.commit","detail":"h5:hw2ui:guard:e4:"},{"id":"r487","at":1794729688053.6357,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1lh\",\"transferUid\":\"s2vz\",\"lineage\":[{\"at\":1794729688053.6357,\"jobId\":\"hj2vr\",\"sourceId\":\"0:2767092\",\"workerId\":\"h22\",\"fromUid\":\"s2vz\",\"intoUid\":\"s2vz\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r489","at":1794729688053.6357,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1lh\",\"transferUid\":\"s2w0\",\"lineage\":[{\"at\":1794729688053.6357,\"jobId\":\"hj2vr\",\"sourceId\":\"0:2767092\",\"workerId\":\"h22\",\"fromUid\":\"s2w0\",\"intoUid\":\"s1li\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r505","at":1794729688889.9092,"kind":"human.work.commit","detail":"h6:hw2w5:guard:e5:"},{"id":"r520","at":1794729691572.4316,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1q5\",\"transferUid\":\"s2wq\",\"lineage\":[{\"at\":1794729691572.4316,\"jobId\":\"hj2we\",\"sourceId\":\"0:5317464\",\"workerId\":\"h2k\",\"fromUid\":\"s2wq\",\"intoUid\":\"s1q6\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r536","at":1794729693601.0066,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1od\",\"transferUid\":\"s2wc\",\"lineage\":[{\"at\":1794729693601.0066,\"jobId\":\"hj2w1\",\"sourceId\":\"0:3581428\",\"workerId\":\"h2c\",\"fromUid\":\"s2wc\",\"intoUid\":\"s1oe\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r557","at":1794729697001.006,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1p9\",\"transferUid\":\"s2wr\",\"lineage\":[{\"at\":1794729697001.006,\"jobId\":\"hj2wa\",\"sourceId\":\"0:7817684\",\"workerId\":\"h2h\",\"fromUid\":\"s2wr\",\"intoUid\":\"s1pa\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r565","at":1794729697778.7935,"kind":"human.work.commit","detail":"h2n:hw2wl:guard:e1qg:"},{"id":"r581","at":1794729700757.3972,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2wg\",\"lineage\":[{\"at\":1794729700757.3972,\"jobId\":\"hj2vw\",\"sourceId\":\"0:4653582\",\"workerId\":\"h7\",\"fromUid\":\"s2wg\",\"intoUid\":\"s169\",\"qty\":1,\"key\":\"berries\"}]}"},{"id":"r604","at":1794729704680.3662,"kind":"human.work.commit","detail":"h5:hw2ws:guard:e5:"},{"id":"r610","at":1794729705572.4343,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1q5\",\"transferUid\":\"s2x0\",\"lineage\":[{\"at\":1794729705572.4343,\"jobId\":\"hj2wh\",\"sourceId\":\"0:5397471\",\"workerId\":\"h2l\",\"fromUid\":\"s2x0\",\"intoUid\":\"s2x0\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r612","at":1794729705572.4343,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1q5\",\"transferUid\":\"s2x1\",\"lineage\":[{\"at\":1794729705572.4343,\"jobId\":\"hj2wh\",\"sourceId\":\"0:5397471\",\"workerId\":\"h2l\",\"fromUid\":\"s2x1\",\"intoUid\":\"s1q6\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r638","at":1794729707645.457,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1lh\",\"transferUid\":\"s2w3\",\"lineage\":[{\"at\":1794729707645.457,\"jobId\":\"hj2vq\",\"sourceId\":\"0:2803113\",\"workerId\":\"h21\",\"fromUid\":\"s2w3\",\"intoUid\":\"s2w3\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r640","at":1794729707645.457,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1lh\",\"transferUid\":\"s2w4\",\"lineage\":[{\"at\":1794729707645.457,\"jobId\":\"hj2vq\",\"sourceId\":\"0:2803113\",\"workerId\":\"h21\",\"fromUid\":\"s2w4\",\"intoUid\":\"s1li\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r648","at":1794729708134.3687,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1rx\",\"transferUid\":\"s2xa\",\"lineage\":[{\"at\":1794729708134.3687,\"jobId\":\"hj2ww\",\"sourceId\":\"0:3698032\",\"workerId\":\"h2t\",\"fromUid\":\"s2xa\",\"intoUid\":\"s1ry\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r652","at":1794729708201.0112,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1p9\",\"transferUid\":\"s2wp\",\"lineage\":[{\"at\":1794729708201.0112,\"jobId\":\"hj2wd\",\"sourceId\":\"0:7953707\",\"workerId\":\"h2j\",\"fromUid\":\"s2wp\",\"intoUid\":\"s2wp\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r658","at":1794729708896.2566,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1od\",\"transferUid\":\"s2wu\",\"lineage\":[{\"at\":1794729708896.2566,\"jobId\":\"hj2w8\",\"sourceId\":\"0:3449470\",\"workerId\":\"h2f\",\"fromUid\":\"s2wu\",\"intoUid\":\"s2wu\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r667","at":1794729709178.4473,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1od\",\"transferUid\":\"s2wm\",\"lineage\":[{\"at\":1794729709178.4473,\"jobId\":\"hj2w6\",\"sourceId\":\"0:3601450\",\"workerId\":\"h2e\",\"fromUid\":\"s2wm\",\"intoUid\":\"s2wm\",\"qty\":1,\"key\":\"crystal\"}]}"},{"id":"r673","at":1794729709867.6902,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1q5\",\"transferUid\":\"s2wx\",\"lineage\":[{\"at\":1794729709867.6902,\"jobId\":\"hj2wk\",\"sourceId\":\"0:5397484\",\"workerId\":\"h2m\",\"fromUid\":\"s2wx\",\"intoUid\":\"s2wx\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r679","at":1794729710575.608,"kind":"human.work.commit","detail":"h2p:hw2wo:guard:e1rc:"},{"id":"r681","at":1794729710743.862,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2x2\",\"lineage\":[{\"at\":1794729710743.862,\"jobId\":\"hj2w7\",\"sourceId\":\"0:4637585\",\"workerId\":\"h9\",\"fromUid\":\"s2x2\",\"intoUid\":\"s2u0\",\"qty\":1,\"key\":\"wood\"}]}"},{"id":"r686","at":1794729710889.9258,"kind":"human.work.commit","detail":"h2v:hw2wz:guard:e1s8:"},{"id":"r692","at":1794729711972.4343,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1st\",\"transferUid\":\"s2xb\",\"lineage\":[{\"at\":1794729711972.4343,\"jobId\":\"hj2x5\",\"sourceId\":\"0:4129175\",\"workerId\":\"h2y\",\"fromUid\":\"s2xb\",\"intoUid\":\"s2xb\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r708","at":1794729713467.6873,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2w2\",\"lineage\":[{\"at\":1794729713467.6873,\"jobId\":\"hj2v7\",\"sourceId\":\"0:4633587\",\"workerId\":\"h3\",\"fromUid\":\"s2w2\",\"intoUid\":\"s2u3\",\"qty\":1,\"key\":\"fiber\"}]}"},{"id":"r712","at":1794729713581.4558,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1rx\",\"transferUid\":\"s2x7\",\"lineage\":[{\"at\":1794729713581.4558,\"jobId\":\"hj2wv\",\"sourceId\":\"0:3826048\",\"workerId\":\"h2s\",\"fromUid\":\"s2x7\",\"intoUid\":\"s2x7\",\"qty\":1,\"key\":\"crystal\"}]}"},{"id":"r719","at":1794729714140.856,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1rx\",\"transferUid\":\"s2x9\",\"lineage\":[{\"at\":1794729714140.856,\"jobId\":\"hj2ww\",\"sourceId\":\"0:3698032\",\"workerId\":\"h2t\",\"fromUid\":\"s2x9\",\"intoUid\":\"s2x9\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r727","at":1794729714832.5845,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1p9\",\"transferUid\":\"s2wt\",\"lineage\":[{\"at\":1794729714832.5845,\"jobId\":\"hj2wb\",\"sourceId\":\"0:7861729\",\"workerId\":\"h2i\",\"fromUid\":\"s2wt\",\"intoUid\":\"s2wt\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r734","at":1794729715372.4338,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1tn\",\"transferUid\":\"s2xo\",\"lineage\":[{\"at\":1794729715372.4338,\"jobId\":\"hj2xc\",\"sourceId\":\"0:5116992\",\"workerId\":\"h33\",\"fromUid\":\"s2xo\",\"intoUid\":\"s1to\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r742","at":1794729715422.0576,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1mx\",\"transferUid\":\"s2vx\",\"lineage\":[{\"at\":1794729715422.0576,\"jobId\":\"hj2vu\",\"sourceId\":\"0:6834494\",\"workerId\":\"h27\",\"fromUid\":\"s2vx\",\"intoUid\":\"s2vx\",\"qty\":1,\"key\":\"stone\"}]}"},{"id":"r747","at":1794729715975.4421,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2wf\",\"lineage\":[{\"at\":1794729715975.4421,\"jobId\":\"hj2vt\",\"sourceId\":\"0:4645583\",\"workerId\":\"h1\",\"fromUid\":\"s2wf\",\"intoUid\":\"s169\",\"qty\":1,\"key\":\"berries\"}]}"},{"id":"r752","at":1794729716042.451,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1r1\",\"transferUid\":\"s2x3\",\"lineage\":[{\"at\":1794729716042.451,\"jobId\":\"hj2wn\",\"sourceId\":\"0:5826009\",\"workerId\":\"h2o\",\"fromUid\":\"s2x3\",\"intoUid\":\"s1r2\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r757","at":1794729716445.4585,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1nn\",\"transferUid\":\"s2wi\",\"lineage\":[{\"at\":1794729716445.4585,\"jobId\":\"hj2vy\",\"sourceId\":\"0:9005442\",\"workerId\":\"h2b\",\"fromUid\":\"s2wi\",\"intoUid\":\"s2wi\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r759","at":1794729716445.4585,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1nn\",\"transferUid\":\"s2wj\",\"lineage\":[{\"at\":1794729716445.4585,\"jobId\":\"hj2vy\",\"sourceId\":\"0:9005442\",\"workerId\":\"h2b\",\"fromUid\":\"s2wj\",\"intoUid\":\"s1no\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r769","at":1794729719169.4297,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1st\",\"transferUid\":\"s2xd\",\"lineage\":[{\"at\":1794729719169.4297,\"jobId\":\"hj2x6\",\"sourceId\":\"0:4149224\",\"workerId\":\"h2z\",\"fromUid\":\"s2xd\",\"intoUid\":\"s2xd\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r774","at":1794729719301.0073,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1tn\",\"transferUid\":\"s2xn\",\"lineage\":[{\"at\":1794729719301.0073,\"jobId\":\"hj2x8\",\"sourceId\":\"0:5149037\",\"workerId\":\"h31\",\"fromUid\":\"s2xn\",\"intoUid\":\"s2xn\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r791","at":1794729720778.7935,"kind":"human.work.commit","detail":"h3a:hw2xr:guard:e1vo:"},{"id":"r797","at":1794729721601.0054,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1vf\",\"transferUid\":\"s2xs\",\"lineage\":[{\"at\":1794729721601.0054,\"jobId\":\"hj2xp\",\"sourceId\":\"0:6365809\",\"workerId\":\"h39\",\"fromUid\":\"s2xs\",\"intoUid\":\"s2xs\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r817","at":1794729724972.43,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1st\",\"transferUid\":\"s2xh\",\"lineage\":[{\"at\":1794729724972.43,\"jobId\":\"hj2x4\",\"sourceId\":\"0:4121159\",\"workerId\":\"h2x\",\"fromUid\":\"s2xh\",\"intoUid\":\"s2xh\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r819","at":1794729724972.43,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1st\",\"transferUid\":\"s2xi\",\"lineage\":[{\"at\":1794729724972.43,\"jobId\":\"hj2x4\",\"sourceId\":\"0:4121159\",\"workerId\":\"h2x\",\"fromUid\":\"s2xi\",\"intoUid\":\"s2xi\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r837","at":1794729727015.2886,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1rx\",\"transferUid\":\"s2xj\",\"lineage\":[{\"at\":1794729727015.2886,\"jobId\":\"hj2wy\",\"sourceId\":\"0:3886065\",\"workerId\":\"h2u\",\"fromUid\":\"s2xj\",\"intoUid\":\"s2x7\",\"qty\":1,\"key\":\"crystal\"}]}"},{"id":"r845","at":1794729728464.1592,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1xz\",\"transferUid\":\"s2yg\",\"lineage\":[{\"at\":1794729728464.1592,\"jobId\":\"hj2y3\",\"sourceId\":\"0:6030155\",\"workerId\":\"h3k\",\"fromUid\":\"s2yg\",\"intoUid\":\"s2yg\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r852","at":1794729728608.9724,"kind":"human.work.commit","detail":"h6:hw2xf:guard:e6:"},{"id":"r869","at":1794729733415.2915,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1x5\",\"transferUid\":\"s2yf\",\"lineage\":[{\"at\":1794729733415.2915,\"jobId\":\"hj2y2\",\"sourceId\":\"0:7171526\",\"workerId\":\"h3j\",\"fromUid\":\"s2yf\",\"intoUid\":\"s2yf\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r875","at":1794729733445.4795,"kind":"human.work.commit","detail":"h3i:hw2y0:guard:e1xe:"},{"id":"r878","at":1794729734915.2935,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1vf\",\"transferUid\":\"s2xw\",\"lineage\":[{\"at\":1794729734915.2935,\"jobId\":\"hj2xl\",\"sourceId\":\"0:6421817\",\"workerId\":\"h38\",\"fromUid\":\"s2xw\",\"intoUid\":\"s2xw\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r904","at":1794729739001.0083,"kind":"human.work.commit","detail":"h3u:hw2yj:guard:e1zq:"},{"id":"r905","at":1794729739172.4314,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2y8\",\"lineage\":[{\"at\":1794729739172.4314,\"jobId\":\"hj2xm\",\"sourceId\":\"0:4645583\",\"workerId\":\"h7\",\"fromUid\":\"s2y8\",\"intoUid\":\"s169\",\"qty\":1,\"key\":\"berries\"}]}"},{"id":"r921","at":1794729740858.1533,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1uj\",\"transferUid\":\"s2xy\",\"lineage\":[{\"at\":1794729740858.1533,\"jobId\":\"hj2xg\",\"sourceId\":\"0:6227338\",\"workerId\":\"h36\",\"fromUid\":\"s2xy\",\"intoUid\":\"s1uk\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r932","at":1794729741778.7852,"kind":"human.work.commit","detail":"h6:hw2yn:guard:e7:"},{"id":"r935","at":1794729743387.467,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1x5\",\"transferUid\":\"s2yb\",\"lineage\":[{\"at\":1794729743387.467,\"jobId\":\"hj2xz\",\"sourceId\":\"0:7231545\",\"workerId\":\"h3h\",\"fromUid\":\"s2yb\",\"intoUid\":\"s2yb\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r937","at":1794729743387.467,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1x5\",\"transferUid\":\"s2yc\",\"lineage\":[{\"at\":1794729743387.467,\"jobId\":\"hj2xz\",\"sourceId\":\"0:7231545\",\"workerId\":\"h3h\",\"fromUid\":\"s2yc\",\"intoUid\":\"s2yc\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r947","at":1794729745058.1482,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1zh\",\"transferUid\":\"s2z0\",\"lineage\":[{\"at\":1794729745058.1482,\"jobId\":\"hj2yi\",\"sourceId\":\"0:1313901\",\"workerId\":\"h3t\",\"fromUid\":\"s2z0\",\"intoUid\":\"s2z0\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r960","at":1794729746429.5803,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1w9\",\"transferUid\":\"s2ya\",\"lineage\":[{\"at\":1794729746429.5803,\"jobId\":\"hj2xv\",\"sourceId\":\"0:7582394\",\"workerId\":\"h3f\",\"fromUid\":\"s2ya\",\"intoUid\":\"s1wa\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r967","at":1794729746556.562,"kind":"human.work.commit","detail":"h42:hw2ys:guard:e21u:"},{"id":"r989","at":1794729748815.2869,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c233\",\"transferUid\":\"s2z8\",\"lineage\":[{\"at\":1794729748815.2869,\"jobId\":\"hj2z1\",\"sourceId\":\"0:2393394\",\"workerId\":\"h48\",\"fromUid\":\"s2z8\",\"intoUid\":\"s2z8\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r1006","at":1794729749316.791,"kind":"human.work.commit","detail":"h40:hw2yp:guard:e21a:"},{"id":"r1012","at":1794729750515.2893,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c21l\",\"transferUid\":\"s2z6\",\"lineage\":[{\"at\":1794729750515.2893,\"jobId\":\"hj2yu\",\"sourceId\":\"0:1174086\",\"workerId\":\"h44\",\"fromUid\":\"s2z6\",\"intoUid\":\"s2z6\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r1025","at":1794729751932.581,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c22f\",\"transferUid\":\"s2ze\",\"lineage\":[{\"at\":1794729751932.581,\"jobId\":\"hj2yx\",\"sourceId\":\"0:2470142\",\"workerId\":\"h45\",\"fromUid\":\"s2ze\",\"intoUid\":\"s2ze\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r1027","at":1794729751932.581,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c22f\",\"transferUid\":\"s2zf\",\"lineage\":[{\"at\":1794729751932.581,\"jobId\":\"hj2yx\",\"sourceId\":\"0:2470142\",\"workerId\":\"h45\",\"fromUid\":\"s2zf\",\"intoUid\":\"s2zf\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r1033","at":1794729752148.37,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c22f\",\"transferUid\":\"s2zb\",\"lineage\":[{\"at\":1794729752148.37,\"jobId\":\"hj2yz\",\"sourceId\":\"0:2446142\",\"workerId\":\"h46\",\"fromUid\":\"s2zb\",\"intoUid\":\"s2zb\",\"qty\":1,\"key\":\"crystal\"}]}"},{"id":"r1039","at":1794729753686.7183,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2yl\",\"lineage\":[{\"at\":1794729753686.7183,\"jobId\":\"hj2y1\",\"sourceId\":\"0:4637585\",\"workerId\":\"h9\",\"fromUid\":\"s2yl\",\"intoUid\":\"s2u0\",\"qty\":1,\"key\":\"wood\"}]}"},{"id":"r1044","at":1794729754086.7212,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1yn\",\"transferUid\":\"s2yv\",\"lineage\":[{\"at\":1794729754086.7212,\"jobId\":\"hj2yd\",\"sourceId\":\"0:7203494\",\"workerId\":\"h3p\",\"fromUid\":\"s2yv\",\"intoUid\":\"s2yv\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r1046","at":1794729754086.7212,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1yn\",\"transferUid\":\"s2yw\",\"lineage\":[{\"at\":1794729754086.7212,\"jobId\":\"hj2yd\",\"sourceId\":\"0:7203494\",\"workerId\":\"h3p\",\"fromUid\":\"s2yw\",\"intoUid\":\"s2yw\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r1059","at":1794729755556.562,"kind":"human.work.commit","detail":"h4b:hw2z4:guard:e23c:"},{"id":"r1070","at":1794729757829.5767,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c233\",\"transferUid\":\"s2zi\",\"lineage\":[{\"at\":1794729757829.5767,\"jobId\":\"hj2z2\",\"sourceId\":\"0:2465387\",\"workerId\":\"h49\",\"fromUid\":\"s2zi\",\"intoUid\":\"s2zi\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r1081","at":1794729758223.2231,"kind":"human.work.commit","detail":"h4f:hw2zd:guard:e24l:"},{"id":"r1085","at":1794729758649.128,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2yq\",\"lineage\":[{\"at\":1794729758649.128,\"jobId\":\"hj2y9\",\"sourceId\":\"0:4653582\",\"workerId\":\"h1\",\"fromUid\":\"s2yq\",\"intoUid\":\"s169\",\"qty\":1,\"key\":\"berries\"}]}"},{"id":"r1096","at":1794729760301.002,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c24d\",\"transferUid\":\"s2zq\",\"lineage\":[{\"at\":1794729760301.002,\"jobId\":\"hj2z9\",\"sourceId\":\"0:5245847\",\"workerId\":\"h4e\",\"fromUid\":\"s2zq\",\"intoUid\":\"s2zq\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r1102","at":1794729760934.8433,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1zh\",\"transferUid\":\"s2z7\",\"lineage\":[{\"at\":1794729760934.8433,\"jobId\":\"hj2ye\",\"sourceId\":\"0:1261914\",\"workerId\":\"h3r\",\"fromUid\":\"s2z7\",\"intoUid\":\"s2z7\",\"qty\":1,\"key\":\"crystal\"}]}"},{"id":"r1110","at":1794729761705.7708,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1w9\",\"transferUid\":\"s2yy\",\"lineage\":[{\"at\":1794729761705.7708,\"jobId\":\"hj2xt\",\"sourceId\":\"0:7410422\",\"workerId\":\"h3d\",\"fromUid\":\"s2yy\",\"intoUid\":\"s2yy\",\"qty\":1,\"key\":\"iron_ore\"}]}"},{"id":"r1119","at":1794729762401.004,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c251\",\"transferUid\":\"s2zm\",\"lineage\":[{\"at\":1794729762401.004,\"jobId\":\"hj2zj\",\"sourceId\":\"0:6005603\",\"workerId\":\"h4h\",\"fromUid\":\"s2zm\",\"intoUid\":\"s2zm\",\"qty\":1,\"key\":\"berries\"}]}"},{"id":"r1137","at":1794729765776.1902,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c24d\",\"transferUid\":\"s2zu\",\"lineage\":[{\"at\":1794729765776.1902,\"jobId\":\"hj2zg\",\"sourceId\":\"0:5305844\",\"workerId\":\"h4g\",\"fromUid\":\"s2zu\",\"intoUid\":\"s2zu\",\"qty\":1,\"key\":\"tin_can\"}]}"},{"id":"r1139","at":1794729765776.1902,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c24d\",\"transferUid\":\"s2zv\",\"lineage\":[{\"at\":1794729765776.1902,\"jobId\":\"hj2zg\",\"sourceId\":\"0:5305844\",\"workerId\":\"h4g\",\"fromUid\":\"s2zv\",\"intoUid\":\"s2zv\",\"qty\":1,\"key\":\"spares\"}]}"},{"id":"r1147","at":1794729765886.7168,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c1zh\",\"transferUid\":\"s2zc\",\"lineage\":[{\"at\":1794729765886.7168,\"jobId\":\"hj2yh\",\"sourceId\":\"0:1249915\",\"workerId\":\"h3s\",\"fromUid\":\"s2zc\",\"intoUid\":\"s2zc\",\"qty\":1,\"key\":\"crystal\"}]}"},{"id":"r1161","at":1794729768229.5715,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c233\",\"transferUid\":\"s2zo\",\"lineage\":[{\"at\":1794729768229.5715,\"jobId\":\"hj2z3\",\"sourceId\":\"0:2465376\",\"workerId\":\"h4a\",\"fromUid\":\"s2zo\",\"intoUid\":\"s2zo\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r1168","at":1794729768334.372,"kind":"human.work.commit","detail":"h6:hw2zh:guard:e8:"},{"id":"r1174","at":1794729768896.2483,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c168\",\"transferUid\":\"s2za\",\"lineage\":[{\"at\":1794729768896.2483,\"jobId\":\"hj2y4\",\"sourceId\":\"0:4633587\",\"workerId\":\"h3\",\"fromUid\":\"s2za\",\"intoUid\":\"s2u3\",\"qty\":1,\"key\":\"fiber\"}]}"},{"id":"r1187","at":1794729771743.8628,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c251\",\"transferUid\":\"s2zx\",\"lineage\":[{\"at\":1794729771743.8628,\"jobId\":\"hj2zk\",\"sourceId\":\"0:6001604\",\"workerId\":\"h4j\",\"fromUid\":\"s2zx\",\"intoUid\":\"s254\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r1197","at":1794729772743.8628,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c251\",\"transferUid\":\"s302\",\"lineage\":[{\"at\":1794729772743.8628,\"jobId\":\"hj2zs\",\"sourceId\":\"0:5993604\",\"workerId\":\"h4n\",\"fromUid\":\"s302\",\"intoUid\":\"s302\",\"qty\":2,\"key\":\"spares\"}]}"},{"id":"r1203","at":1794729772778.8184,"kind":"human.work.commit","detail":"h4k:hw2zl:guard:e25b:"},{"id":"r1204","at":1794729772801.003,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c268\",\"transferUid\":\"s309\",\"lineage\":[{\"at\":1794729772801.003,\"jobId\":\"hj2zz\",\"sourceId\":\"0:5613535\",\"workerId\":\"h4t\",\"fromUid\":\"s309\",\"intoUid\":\"s309\",\"qty\":1,\"key\":\"herb\"}]}"},{"id":"r1210","at":1794729773186.7183,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c268\",\"transferUid\":\"s308\",\"lineage\":[{\"at\":1794729773186.7183,\"jobId\":\"hj2zy\",\"sourceId\":\"0:5561559\",\"workerId\":\"h4s\",\"fromUid\":\"s308\",\"intoUid\":\"s308\",\"qty\":1,\"key\":\"wood\"}]}"},{"id":"r1235","at":1794729777458.1475,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c268\",\"transferUid\":\"s30c\",\"lineage\":[{\"at\":1794729777458.1475,\"jobId\":\"hj300\",\"sourceId\":\"0:5549561\",\"workerId\":\"h4u\",\"fromUid\":\"s30c\",\"intoUid\":\"s30c\",\"qty\":1,\"key\":\"berries\"}]}"},{"id":"r1241","at":1794729777872.4329,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c268\",\"transferUid\":\"s305\",\"lineage\":[{\"at\":1794729777872.4329,\"jobId\":\"hj2zw\",\"sourceId\":\"0:5557577\",\"workerId\":\"h4r\",\"fromUid\":\"s305\",\"intoUid\":\"s305\",\"qty\":1,\"key\":\"fiber\"}]}"},{"id":"r1247","at":1794729778372.4373,"kind":"human.cargo.lineage","detail":"{\"containerId\":\"c251\",\"transferUid\":\"s2zr\",\"lineage\":[{\"at\":1794729778372.4373,\"jobId\":\"hj2zn\",\"sourceId\":\"0:6009603\",\"workerId\":\"h4l\",\"fromUid\":\"s2zr\",\"intoUid\":\"s2zr\",\"qty\":1,\"key\":\"wood\"}]}"}],"cooks":[{"id":"h1","community":"com:po_greywater","job":{"id":"hj301","sourceId":"0:4613589","gx":1589,"gy":1153,"floor":0,"key":"bush","phase":"source","startedAt":1794729765001},"intent":{"intentId":"hj301","actorId":"h1","kind":"work","target":"global-harvest:0:1589,1153","preconditions":["known source","timed physical shared harvest"],"reserved":["0:4613589"],"startAt":1794729779515.295,"dueAt":1794729781015.295,"route":[{"tx":1582,"ty":1171,"floor":0},{"tx":1582,"ty":1170,"floor":0},{"tx":1583,"ty":1170,"floor":0},{"tx":1583,"ty":1169,"floor":0},{"tx":1583,"ty":1168,"floor":0},{"tx":1583,"ty":1167,"floor":0},{"tx":1583,"ty":1166,"floor":0},{"tx":1583,"ty":1165,"floor":0},{"tx":1582,"ty":1165,"floor":0},{"tx":1581,"ty":1165,"floor":0},{"tx":1581,"ty":1164,"floor":0},{"tx":1581,"ty":1163,"floor":0},{"tx":1581,"ty":1162,"floor":0},{"tx":1582,"ty":1162,"floor":0},{"tx":1583,"ty":1162,"floor":0},{"tx":1583,"ty":1161,"floor":0},{"tx":1583,"ty":1160,"floor":0},{"tx":1583,"ty":1159,"floor":0},{"tx":1584,"ty":1159,"floor":0},{"tx":1584,"ty":1158,"floor":0},{"tx":1585,"ty":1158,"floor":0},{"tx":1586,"ty":1158,"floor":0},{"tx":1586,"ty":1157,"floor":0},{"tx":1586,"ty":1156,"floor":0},{"tx":1586,"ty":1155,"floor":0},{"tx":1587,"ty":1155,"floor":0},{"tx":1588,"ty":1155,"floor":0},{"tx":1589,"ty":1155,"floor":0},{"tx":1589,"ty":1154,"floor":0}]},"block":"Checking physical route (256 cells examined; no travel claimed).","pack":[{"uid":"s170","key":"berries","qty":4},{"uid":"s171","key":"charcoal","qty":2},{"uid":"s16f","key":"water_flask","qty":1,"charge":4},null,null,null,null,null,null,null,null,null],"stations":["campfire","workbench","furnace"],"store":[[{"uid":"s169","key":"berries","qty":21},{"uid":"s16a","key":"charcoal","qty":8},{"uid":"s16b","key":"spares","qty":7},{"uid":"s2u0","key":"wood","qty":4},{"uid":"s2u8","key":"spares","qty":2},{"uid":"s2u3","key":"fiber","qty":3},{"uid":"s2v5","key":"berries","qty":1},{"uid":"s16g","key":"seed_sunroot","qty":5},{"uid":"s16h","key":"herb","qty":3},{"uid":"s16i","key":"bandage","qty":2}]]},{"id":"h7","community":"com:po_greywater","job":{"id":"hj2z5","sourceId":"0:4649580","gx":1580,"gy":1162,"floor":0,"key":"herb","phase":"delivery","startedAt":1794729746001,"storeId":"e16j"},"block":"Checking physical route (256 cells examined; no travel claimed).","pack":[{"uid":"s17s","key":"berries","qty":4},{"uid":"s17t","key":"charcoal","qty":2},{"uid":"s16e","key":"water_flask","qty":1,"charge":4},{"uid":"s303","key":"herb","qty":1,"production":{"jobId":"hj2z5","workerId":"h7"}},null,null,null,null,null,null,null,null],"stations":["campfire","workbench","furnace"],"store":[[{"uid":"s169","key":"berries","qty":21},{"uid":"s16a","key":"charcoal","qty":8},{"uid":"s16b","key":"spares","qty":7},{"uid":"s2u0","key":"wood","qty":4},{"uid":"s2u8","key":"spares","qty":2},{"uid":"s2u3","key":"fiber","qty":3},{"uid":"s2v5","key":"berries","qty":1},{"uid":"s16g","key":"seed_sunroot","qty":5},{"uid":"s16h","key":"herb","qty":3},{"uid":"s16i","key":"bandage","qty":2}]]},{"id":"hl","community":"com:po_hook","block":"Checking physical route (256 cells examined; no travel claimed).","pack":[{"uid":"s1b8","key":"berries","qty":4},{"uid":"s1b9","key":"charcoal","qty":2},{"uid":"s1aa","key":"water_flask","qty":1,"charge":4},null,null,null,null,null,null,null,null,null],"stations":["campfire","workbench"],"store":[[{"uid":"s1a5","key":"berries","qty":18},{"uid":"s1a6","key":"charcoal","qty":8},{"uid":"s1a7","key":"spares","qty":5},{"uid":"s2uj","key":"fiber","qty":1},{"uid":"s2ud","key":"berries","qty":1},{"uid":"s2ue","key":"herb","qty":1},null,null,{"uid":"s1ad","key":"seed_sunroot","qty":5},{"uid":"s1ae","key":"herb","qty":3}]]},{"id":"hm","community":"com:po_hook","intent":{"intentId":"hw2v2","actorId":"hm","kind":"work","target":"occupation:cook","preconditions":["community permission","physical access","canonical paid bill"],"reserved":[],"startAt":1794729778001,"dueAt":1794729779201,"route":[],"work":{"kind":"cook","entityId":"e1am","inputs":[["mushroom",1],["charcoal",1]],"duration":1200,"phase":"travel","recipe":"grilled_mushroom","outputs":[["grilled_mushroom",1]]},"blockReason":"blocked by a wall, closed door, or another survivor"},"block":"Checking physical route (768 cells examined; no travel claimed).","pack":[{"uid":"s1bc","key":"berries","qty":4},{"uid":"s1bd","key":"charcoal","qty":2},{"uid":"s2uf","key":"mushroom","qty":1},null,null,null,null,null,null,null,null,null],"stations":["campfire","workbench"],"store":[[{"uid":"s1a5","key":"berries","qty":18},{"uid":"s1a6","key":"charcoal","qty":8},{"uid":"s1a7","key":"spares","qty":5},{"uid":"s2uj","key":"fiber","qty":1},{"uid":"s2ud","key":"berries","qty":1},{"uid":"s2ue","key":"herb","qty":1},null,null,{"uid":"s1ad","key":"seed_sunroot","qty":5},{"uid":"s1ae","key":"herb","qty":3}]]},{"id":"hu","community":"com:po_oasis","pack":[{"uid":"s1cw","key":"berries","qty":4},{"uid":"s1cx","key":"charcoal","qty":2},{"uid":"s1c5","key":"water_flask","qty":1,"charge":4},null,null,null,null,null,null,null,null,null],"stations":["campfire"],"store":[[{"uid":"s1c2","key":"berries","qty":18},{"uid":"s1c3","key":"charcoal","qty":8},{"uid":"s1c4","key":"spares","qty":5},null,null,null,null,{"uid":"s1c9","key":"water_flask","qty":1,"charge":4},{"uid":"s1ca","key":"seed_sunroot","qty":5},{"uid":"s1cb","key":"herb","qty":3}]]},{"id":"hv","community":"com:po_oasis","block":"Checking physical route (256 cells examined; no travel claimed).","pack":[{"uid":"s1d0","key":"berries","qty":4},{"uid":"s1d1","key":"charcoal","qty":2},{"uid":"s1c7","key":"water_flask","qty":1,"charge":4},null,null,null,null,null,null,null,null,null],"stations":["campfire"],"store":[[{"uid":"s1c2","key":"berries","qty":18},{"uid":"s1c3","key":"charcoal","qty":8},{"uid":"s1c4","key":"spares","qty":5},null,null,null,null,{"uid":"s1c9","key":"water_flask","qty":1,"charge":4},{"uid":"s1ca","key":"seed_sunroot","qty":5},{"uid":"s1cb","key":"herb","qty":3}]]},{"id":"h13","community":"com:po_cindercamp","pack":[{"uid":"s1es","key":"berries","qty":4},{"uid":"s1et","key":"charcoal","qty":2},{"uid":"s1dx","key":"water_flask","qty":1,"charge":4},null,null,null,null,null,null,null,null,null],"stations":["campfire","furnace","workbench","furnace"],"store":[[{"uid":"s1du","key":"berries","qty":18},{"uid":"s1dv","key":"charcoal","qty":8},{"uid":"s1dw","key":"spares","qty":5},{"uid":"s2uv","key":"wood","qty":1},{"uid":"s2uu","key":"berries","qty":1},null,null,{"uid":"s1e1","key":"water_flask","qty":1,"charge":4},{"uid":"s1e2","key":"seed_sunroot","qty":5},{"uid":"s1e3","key":"herb","qty":3}]]},{"id":"h1a","community":"com:po_cindercamp","block":"Checking physical route (256 cells examined; no travel claimed).","pack":[{"uid":"s1fn","key":"berries","qty":4},{"uid":"s1fo","key":"charcoal","qty":2},{"uid":"s1dz","key":"water_flask","qty":1,"charge":4},null,null,null,null,null,null,null,null,null],"stations":["campfire","furnace","workbench","furnace"],"store":[[{"uid":"s1du","key":"berries","qty":18},{"uid":"s1dv","key":"charcoal","qty":8},{"uid":"s1dw","key":"spares","qty":5},{"uid":"s2uv","key":"wood","qty":1},{"uid":"s2uu","key":"berries","qty":1},null,null,{"uid":"s1e1","key":"water_flask","qty":1,"charge":4},{"uid":"s1e2","key":"seed_sunroot","qty":5},{"uid":"s1e3","key":"herb","qty":3}]]},{"id":"h4m","community":"com:po_ranger","job":{"id":"hj2zp","sourceId":"0:5981620","gx":1620,"gy":1495,"floor":0,"key":"bush","phase":"delivery","startedAt":1794729757001,"storeId":"e25b"},"pack":[{"uid":"s261","key":"berries","qty":4},{"uid":"s262","key":"charcoal","qty":2},{"uid":"s306","key":"berries","qty":1,"production":{"jobId":"hj2zp","workerId":"h4m"}},null,null,null,null,null,null,null,null,null],"stations":[],"store":[[{"uid":"s252","key":"berries","qty":14},{"uid":"s253","key":"charcoal","qty":8},{"uid":"s254","key":"spares","qty":7},{"uid":"s302","key":"spares","qty":2},{"uid":"s2zr","key":"wood","qty":1},null,{"uid":"s258","key":"seed_sunroot","qty":5},{"uid":"s259","key":"herb","qty":3},{"uid":"s25a","key":"bandage","qty":2},{"uid":"s2zm","key":"berries","qty":1}]]},{"id":"h4u","community":"com:po_glade","pack":[{"uid":"s27d","key":"berries","qty":4},{"uid":"s27e","key":"charcoal","qty":2},{"uid":"s26e","key":"water_flask","qty":1,"charge":4},null,null,null,null,null,null,null,null,null],"stations":[],"store":[[{"uid":"s269","key":"berries","qty":14},{"uid":"s26a","key":"charcoal","qty":8},{"uid":"s26b","key":"spares","qty":5},{"uid":"s308","key":"wood","qty":1},{"uid":"s30c","key":"berries","qty":1},{"uid":"s305","key":"fiber","qty":1},{"uid":"s26f","key":"seed_sunroot","qty":5},{"uid":"s26g","key":"herb","qty":3},{"uid":"s26h","key":"bandage","qty":2},{"uid":"s309","key":"herb","qty":1}]]},{"id":"h4z","community":"com:po_sapgrove","job":{"id":"hj30a","sourceId":"0:5189916","gx":1916,"gy":1297,"floor":0,"key":"bush","phase":"delivery","startedAt":1794729770001,"storeId":"e27p"},"intent":{"intentId":"hj30a","actorId":"h4z","kind":"work","target":"store","preconditions":["owned output","exact destination contact"],"reserved":[],"startAt":1794729778143.8657,"dueAt":1794729778143.8657,"route":[{"tx":1911,"ty":1292,"floor":0},{"tx":1911,"ty":1291,"floor":0},{"tx":1911,"ty":1290,"floor":0},{"tx":1911,"ty":1289,"floor":0},{"tx":1911,"ty":1288,"floor":0},{"tx":1910,"ty":1288,"floor":0},{"tx":1910,"ty":1287,"floor":0},{"tx":1909,"ty":1287,"floor":0},{"tx":1908,"ty":1287,"floor":0},{"tx":1907,"ty":1287,"floor":0},{"tx":1907,"ty":1286,"floor":0},{"tx":1907,"ty":1285,"floor":0},{"tx":1907,"ty":1284,"floor":0},{"tx":1907,"ty":1283,"floor":0},{"tx":1907,"ty":1282,"floor":0},{"tx":1907,"ty":1281,"floor":0},{"tx":1907,"ty":1280,"floor":0},{"tx":1907,"ty":1279,"floor":0},{"tx":1907,"ty":1278,"floor":0},{"tx":1906,"ty":1278,"floor":0},{"tx":1906,"ty":1277,"floor":0},{"tx":1906,"ty":1276,"floor":0},{"tx":1905,"ty":1276,"floor":0},{"tx":1904,"ty":1276,"floor":0},{"tx":1904,"ty":1275,"floor":0},{"tx":1903,"ty":1275,"floor":0},{"tx":1903,"ty":1274,"floor":0},{"tx":1902,"ty":1274,"floor":0},{"tx":1902,"ty":1273,"floor":0},{"tx":1901,"ty":1273,"floor":0},{"tx":1900,"ty":1273,"floor":0},{"tx":1900,"ty":1272,"floor":0},{"tx":1900,"ty":1271,"floor":0},{"tx":1900,"ty":1270,"floor":0},{"tx":1900,"ty":1269,"floor":0},{"tx":1900,"ty":1268,"floor":0},{"tx":1900,"ty":1267,"floor":0},{"tx":1900,"ty":1266,"floor":0},{"tx":1900,"ty":1265,"floor":0},{"tx":1900,"ty":1264,"floor":0},{"tx":1899,"ty":1264,"floor":0}]},"pack":[{"uid":"s28c","key":"berries","qty":4},{"uid":"s28d","key":"charcoal","qty":2},{"uid":"s30h","key":"berries","qty":1,"production":{"jobId":"hj30a","workerId":"h4z"}},null,null,null,null,null,null,null,null,null],"stations":[],"store":[[{"uid":"s27g","key":"berries","qty":14},{"uid":"s27h","key":"charcoal","qty":8},{"uid":"s27i","key":"spares","qty":5},{"uid":"s27j","key":"water_flask","qty":1,"charge":4},{"uid":"s27k","key":"water_flask","qty":1,"charge":4},{"uid":"s27l","key":"water_flask","qty":1,"charge":4},{"uid":"s27m","key":"seed_sunroot","qty":5},{"uid":"s27n","key":"herb","qty":3},{"uid":"s27o","key":"bandage","qty":2},null]]},{"id":"h5n","community":"com:po_westwood","pack":[{"uid":"s2d2","key":"berries","qty":4},{"uid":"s2d3","key":"charcoal","qty":2},null,null,null,null,null,null,null,null,null,null],"stations":[],"store":[[{"uid":"s2c3","key":"berries","qty":14},{"uid":"s2c4","key":"charcoal","qty":8},{"uid":"s2c5","key":"spares","qty":5},{"uid":"s2c6","key":"water_flask","qty":1,"charge":4},{"uid":"s2c7","key":"water_flask","qty":1,"charge":4},{"uid":"s2c8","key":"water_flask","qty":1,"charge":4},{"uid":"s2c9","key":"seed_sunroot","qty":5},{"uid":"s2ca","key":"herb","qty":3},{"uid":"s2cb","key":"bandage","qty":2},null]]},{"id":"h5q","community":"com:po_fishcamp","pack":[{"uid":"s2dr","key":"berries","qty":4},{"uid":"s2ds","key":"charcoal","qty":2},null,null,null,null,null,null,null,null,null,null],"stations":[],"store":[[{"uid":"s2df","key":"berries","qty":14},{"uid":"s2dg","key":"charcoal","qty":8},{"uid":"s2dh","key":"spares","qty":5},{"uid":"s2di","key":"water_flask","qty":1,"charge":4},{"uid":"s2dj","key":"water_flask","qty":1,"charge":4},{"uid":"s2dk","key":"water_flask","qty":1,"charge":4},{"uid":"s2dl","key":"seed_sunroot","qty":5},{"uid":"s2dm","key":"herb","qty":3},{"uid":"s2dn","key":"bandage","qty":2},null]]},{"id":"h6b","community":"com:po_tidecamp","pack":[{"uid":"s2i1","key":"berries","qty":4},{"uid":"s2i2","key":"charcoal","qty":2},null,null,null,null,null,null,null,null,null,null],"stations":[],"store":[[{"uid":"s2hp","key":"berries","qty":14},{"uid":"s2hq","key":"charcoal","qty":8},{"uid":"s2hr","key":"spares","qty":5},{"uid":"s2hs","key":"water_flask","qty":1,"charge":4},{"uid":"s2ht","key":"water_flask","qty":1,"charge":4},{"uid":"s2hu","key":"water_flask","qty":1,"charge":4},{"uid":"s2hv","key":"seed_sunroot","qty":5},{"uid":"s2hw","key":"herb","qty":3},{"uid":"s2hx","key":"bandage","qty":2},null]]},{"id":"h6k","community":"com:po_gullnest","pack":[{"uid":"s2jh","key":"berries","qty":4},{"uid":"s2ji","key":"charcoal","qty":2},null,null,null,null,null,null,null,null,null,null],"stations":[],"store":[[{"uid":"s2iw","key":"berries","qty":14},{"uid":"s2ix","key":"charcoal","qty":8},{"uid":"s2iy","key":"spares","qty":5},{"uid":"s2iz","key":"water_flask","qty":1,"charge":4},{"uid":"s2j0","key":"water_flask","qty":1,"charge":4},{"uid":"s2j1","key":"water_flask","qty":1,"charge":4},{"uid":"s2j2","key":"seed_sunroot","qty":5},{"uid":"s2j3","key":"herb","qty":3},{"uid":"s2j4","key":"bandage","qty":2},null]]},{"id":"h6v","community":"com:po_netcamp","pack":[{"uid":"s2l7","key":"berries","qty":4},{"uid":"s2l8","key":"charcoal","qty":2},null,null,null,null,null,null,null,null,null,null],"stations":[],"store":[[{"uid":"s2k3","key":"berries","qty":14},{"uid":"s2k4","key":"charcoal","qty":8},{"uid":"s2k5","key":"spares","qty":5},{"uid":"s2k6","key":"water_flask","qty":1,"charge":4},{"uid":"s2k7","key":"water_flask","qty":1,"charge":4},{"uid":"s2k8","key":"water_flask","qty":1,"charge":4},{"uid":"s2k9","key":"seed_sunroot","qty":5},{"uid":"s2ka","key":"herb","qty":3},{"uid":"s2kb","key":"bandage","qty":2},null]]},{"id":"h7g","community":"com:po_racks","pack":[{"uid":"s2pf","key":"berries","qty":4},{"uid":"s2pg","key":"charcoal","qty":2},null,null,null,null,null,null,null,null,null,null],"stations":[],"store":[[{"uid":"s2ob","key":"berries","qty":14},{"uid":"s2oc","key":"charcoal","qty":8},{"uid":"s2od","key":"spares","qty":5},{"uid":"s2oe","key":"water_flask","qty":1,"charge":4},{"uid":"s2of","key":"water_flask","qty":1,"charge":4},{"uid":"s2og","key":"water_flask","qty":1,"charge":4},{"uid":"s2oh","key":"seed_sunroot","qty":5},{"uid":"s2oi","key":"herb","qty":3},{"uid":"s2oj","key":"bandage","qty":2},null]]}]}
+{"case":"cook-supply-blocker","audit":[{"actor":"h1","wanted":["meat","mushroom"],"recipes":[{"recipe":"dried_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"grilled_mushroom","missing":[{"key":"mushroom","need":1,"have":0}]},{"recipe":"mushroom_soup","missing":[{"key":"mushroom","need":5,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"canned_meat","missing":[{"key":"meat","need":3,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"fruit_wine","missing":[{"key":"tin_can","need":1,"have":0}]},{"recipe":"jam","missing":[{"key":"cloth","need":1,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"cooked_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"stew","missing":[{"key":"crop","need":2,"have":0},{"key":"meat","need":1,"have":0}]}],"candidateCount":0},{"actor":"h7","wanted":["meat","mushroom"],"recipes":[{"recipe":"dried_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"grilled_mushroom","missing":[{"key":"mushroom","need":1,"have":0}]},{"recipe":"mushroom_soup","missing":[{"key":"mushroom","need":5,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"canned_meat","missing":[{"key":"meat","need":3,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"fruit_wine","missing":[{"key":"tin_can","need":1,"have":0}]},{"recipe":"jam","missing":[{"key":"cloth","need":1,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"cooked_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"stew","missing":[{"key":"crop","need":2,"have":0},{"key":"meat","need":1,"have":0}]}],"candidateCount":0},{"actor":"hl","wanted":["meat","mushroom"],"recipes":[{"recipe":"dried_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"grilled_mushroom","missing":[{"key":"mushroom","need":1,"have":0}]},{"recipe":"mushroom_soup","missing":[{"key":"mushroom","need":5,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"canned_meat","missing":[{"key":"meat","need":3,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"fruit_wine","missing":[{"key":"tin_can","need":1,"have":0}]},{"recipe":"jam","missing":[{"key":"cloth","need":1,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"cooked_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"stew","missing":[{"key":"crop","need":2,"have":0},{"key":"meat","need":1,"have":0}]}],"candidateCount":0},{"actor":"hm","wanted":["meat","mushroom"],"recipes":[{"recipe":"dried_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"grilled_mushroom","missing":[]},{"recipe":"mushroom_soup","missing":[{"key":"mushroom","need":5,"have":1},{"key":"tin_can","need":1,"have":0}]},{"recipe":"canned_meat","missing":[{"key":"meat","need":3,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"fruit_wine","missing":[{"key":"tin_can","need":1,"have":0}]},{"recipe":"jam","missing":[{"key":"cloth","need":1,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"cooked_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"stew","missing":[{"key":"crop","need":2,"have":0},{"key":"meat","need":1,"have":0}]}],"candidateCount":0},{"actor":"hu","wanted":["meat","mushroom"],"recipes":[{"recipe":"dried_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"grilled_mushroom","missing":[{"key":"mushroom","need":1,"have":0}]},{"recipe":"mushroom_soup","missing":[{"key":"mushroom","need":5,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"canned_meat","missing":[{"key":"meat","need":3,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"fruit_wine","missing":[{"key":"tin_can","need":1,"have":0}]},{"recipe":"jam","missing":[{"key":"cloth","need":1,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"cooked_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"stew","missing":[{"key":"crop","need":2,"have":0},{"key":"meat","need":1,"have":0}]}],"candidateCount":0},{"actor":"hv","wanted":["meat","mushroom"],"recipes":[{"recipe":"dried_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"grilled_mushroom","missing":[{"key":"mushroom","need":1,"have":0}]},{"recipe":"mushroom_soup","missing":[{"key":"mushroom","need":5,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"canned_meat","missing":[{"key":"meat","need":3,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"fruit_wine","missing":[{"key":"tin_can","need":1,"have":0}]},{"recipe":"jam","missing":[{"key":"cloth","need":1,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"cooked_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"stew","missing":[{"key":"crop","need":2,"have":0},{"key":"meat","need":1,"have":0}]}],"candidateCount":0},{"actor":"h13","wanted":["meat","mushroom"],"recipes":[{"recipe":"dried_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"grilled_mushroom","missing":[{"key":"mushroom","need":1,"have":0}]},{"recipe":"mushroom_soup","missing":[{"key":"mushroom","need":5,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"canned_meat","missing":[{"key":"meat","need":3,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"fruit_wine","missing":[{"key":"tin_can","need":1,"have":0}]},{"recipe":"jam","missing":[{"key":"cloth","need":1,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"cooked_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"stew","missing":[{"key":"crop","need":2,"have":0},{"key":"meat","need":1,"have":0}]}],"candidateCount":0},{"actor":"h1a","wanted":["meat","mushroom"],"recipes":[{"recipe":"dried_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"grilled_mushroom","missing":[{"key":"mushroom","need":1,"have":0}]},{"recipe":"mushroom_soup","missing":[{"key":"mushroom","need":5,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"canned_meat","missing":[{"key":"meat","need":3,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"fruit_wine","missing":[{"key":"tin_can","need":1,"have":0}]},{"recipe":"jam","missing":[{"key":"cloth","need":1,"have":0},{"key":"tin_can","need":1,"have":0}]},{"recipe":"cooked_meat","missing":[{"key":"meat","need":1,"have":0}]},{"recipe":"stew","missing":[{"key":"crop","need":2,"have":0},{"key":"meat","need":1,"have":0}]}],"candidateCount":0}]}
+
+ [31m×[39m tests/npc-natural-cook.test.ts[2m > [22mnormal New Game exposes the canonical ingredient catchment blocker without inventing paid meals[33m 70107[2mms[22m[39m
+[31m   → expected false to be true // Object.is equality[39m
+[90mstdout[2m | tests/mec01-r11-weather-outlook.test.ts[2m > [22m[2mR11 exit weather outlook (K2 honesty)[2m > [22m[2mBEFORE/AFTER: the 24h outlook does not depend on the realized weather beyond the exact horizon
+[22m[39m[R11 outlook] seed310 {"hours":24,"wetHours":6.814285714285696,"exactHours":0.15,"exactWetHours":0,"seasonalWetHours":6.814285714285696,"reliability":"exact-near-term+seasonal-probability"} | seed311 {"hours":24,"wetHours":6.814285714285696,"exactHours":0.15,"exactWetHours":0,"seasonalWetHours":6.814285714285696,"reliability":"exact-near-term+seasonal-probability"}
+
+ [32m✓[39m tests/mec01-r11-weather-outlook.test.ts[2m > [22mR11 exit weather outlook (K2 honesty)[2m > [22mBEFORE/AFTER: the 24h outlook does not depend on the realized weather beyond the exact horizon[33m 2059[2mms[22m[39m
+ [32m✓[39m tests/mec01-r11-weather-outlook.test.ts[2m > [22mR11 exit weather outlook (K2 honesty)[2m > [22mexact horizon is only the configured near-term slot(s); the rest is a seasonal probability[32m 97[2mms[22m[39m
+ [32m✓[39m tests/mec01-r11-weather-outlook.test.ts[2m > [22mR11 exit weather outlook (K2 honesty)[2m > [22mseasonal part equals the season weight share x remaining hours (spring 4/14, summer 4/16)[32m 76[2mms[22m[39m
+ [32m✓[39m tests/mec01-r11-weather-outlook.test.ts[2m > [22mR11 exit weather outlook (K2 honesty)[2m > [22mbounded by the remaining run: zero after the run ends, clamped near the end[32m 79[2mms[22m[39m
+ [32m✓[39m tests/item-atlas-157.test.ts[2m > [22m157-item icon atlas[2m > [22mhas 157 distinct 32×32 cells inside the real PNG[32m 65[2mms[22m[39m
+ [32m✓[39m tests/item-atlas-157.test.ts[2m > [22m157-item icon atlas[2m > [22mmaps 156 catalog ids by their own id; the rest of the catalog is the disclosed no-art list[32m 1[2mms[22m[39m
+ [32m✓[39m tests/wmp04r1-current.test.ts[2m > [22mMap owner WMP-04R1 diagnostic on current Gameplay[2m > [22mverifies all seven pinned rasters, current source compilation and conservative water collision[33m 4113[2mms[22m[39m
+ [32m✓[39m tests/wmp04r1-current.test.ts[2m > [22mMap owner WMP-04R1 diagnostic on current Gameplay[2m > [22mstarts a physical run and saves its exact WMP identity without altering legacy layouts[32m 269[2mms[22m[39m
+ [2m[90m↓[39m[22m tests/npc-hour-profile.test.ts[2m > [22mbounded actual-world throughput[2m > [22msettles one real hour with every generated actor retained and no replay on repeated timestamp
+ [32m✓[39m tests/mec01-runid-unique.test.ts[2m > [22mtwo runs with the same seed get distinct ids and both survive in history[33m 1985[2mms[22m[39m
+ [32m✓[39m tests/mec01-runid-unique.test.ts[2m > [22mnegative: a run started at the same instant with the same seed does not overwrite the earlier history id[32m 154[2mms[22m[39m
+[90mstdout[2m | tests/npc-runtime-throughput.test.ts[2m > [22m[2mbounded actual-world throughput[2m > [22m[2msettles one real hour with every generated actor retained and no replay on repeated timestamp
+[22m[39m{"case":"natural-population-h1","elapsedMs":271539.44029299996,"actors":286,"needsAt":1794733200000,"states":{"IDLE":263,"DOWNED":20,"WORKING":3}}
+
+ [31m×[39m tests/npc-runtime-throughput.test.ts[2m > [22mbounded actual-world throughput[2m > [22msettles one real hour with every generated actor retained and no replay on repeated timestamp[33m 273918[2mms[22m[39m
+[31m   → Test timed out in 90000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+ [32m✓[39m tests/veyra-procurement-chunk-parity.test.ts[2m > [22mbranch-local pure FBM preserves every canonical byte including original decor (not a visual quality reduction)[33m 1894[2mms[22m[39m
+ [32m✓[39m tests/spirit-vfx-editor.test.ts[2m > [22mSpirit VFX prototype data[2m > [22maccepts the default four layers and rejects malformed or unsafe values[32m 3[2mms[22m[39m
+ [32m✓[39m tests/spirit-vfx-editor.test.ts[2m > [22mSpirit VFX prototype data[2m > [22mkeeps existing beam anchor, baseline scale, orientation, and length by default[32m 1[2mms[22m[39m
+[90mstdout[2m | tests/npc-work-counters.test.ts[2m > [22m[2mcounts bounded natural-population work without changing world authority
+[22m[39m{"case":"natural-10s","result":[],"counts":{"routeBoundaryChecks":986,"sourceLookups":39,"sourceIndexReads":16,"worldSlices":333,"plannerActivations":10,"actorPlans":20,"regionCompilations":11,"renderCompilations":0,"routeExpansions":4294,"entityScans":1696},"elapsedMs":4893.256979,"actors":286}
+
+ [32m✓[39m tests/npc-work-counters.test.ts[2m > [22mcounts bounded natural-population work without changing world authority[33m 6671[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 58 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mcosts real parts (mechanical gear, iron, fasteners), is owned, and build is refused without the parts
+[31m[1mAssertionError[22m: expected [ [ 'iron_ingot', 1 ], …(2) ] to deeply equal [ [ 'mechanical_gear', 1 ], …(2) ][39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  [[22m
+[2m    [[22m
+[32m-     "mechanical_gear",[39m
+[32m-     1,[39m
+[32m-   ],[39m
+[32m-   [[39m
+[2m      "iron_ingot",[22m
+[2m      1,[22m
+[2m    ],[22m
+[2m    [[22m
+[32m-     "fasteners",[39m
+[31m+     "electronic_parts",[39m
+[2m      2,[22m
+[31m+   ],[39m
+[31m+   [[39m
+[31m+     "spares",[39m
+[31m+     1,[39m
+[2m    ],[22m
+[2m  ][22m
+
+[36m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m25:36[22m[39m
+    [90m 23|[39m   it('costs real parts (mechanical gear, iron, fasteners), is owned, a…
+    [90m 24|[39m     const o=setup();o.pos(o.x,o.y+1);expect(o.act('build',{struct:'ir_…
+    [90m 25|[39m     expect(STRUCTS.ir_sensor.cost).toEqual([['mechanical_gear',1],['ir…
+    [90m   |[39m                                    [31m^[39m
+    [90m 26|[39m     const s=o.build('ir_sensor',o.x+2,o.y);expect(s.irSensor).toEqual(…
+    [90m 27|[39m     [34mexpect[39m([34mcountItem[39m(o[33m.[39mr[33m,[39m[32m'inv'[39m[33m,[39m[32m'mechanical_gear'[39m))[33m.[39m[34mtoBe[39m([34m0[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22msensor off: no conduction even with a visible player; toggling on conducts and feeds the door
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m build tests/b02-ir-sensor.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m rig tests/b02-ir-sensor.test.ts:[2m18:73[22m[39m
+[90m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m30:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mno through-wall detection: a solid wall in the line stops conduction and the status says so
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m build tests/b02-ir-sensor.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m rig tests/b02-ir-sensor.test.ts:[2m18:73[22m[39m
+[90m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m40:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mbounded range: a player beyond 6 tiles is not sensed
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m build tests/b02-ir-sensor.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m rig tests/b02-ir-sensor.test.ts:[2m18:73[22m[39m
+[90m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m45:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mempty fuel and off generator: no conduction, no capacity claimed, and the status says why
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m build tests/b02-ir-sensor.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m rig tests/b02-ir-sensor.test.ts:[2m18:73[22m[39m
+[90m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m49:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mcapacity: a single-slot generator is consumed by the sensor, so the door is starved until reinforced
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m build tests/b02-ir-sensor.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m rig tests/b02-ir-sensor.test.ts:[2m18:73[22m[39m
+[90m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m56:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22msecond consumer: an arrow turret wired through the sensor is powered only while the sensor sees a target
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m build tests/b02-ir-sensor.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m rig tests/b02-ir-sensor.test.ts:[2m18:73[22m[39m
+[90m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m62:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22msleeping and offline-unresolved creatures are never sensed (no synthetic offline detection)
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m build tests/b02-ir-sensor.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m rig tests/b02-ir-sensor.test.ts:[2m18:73[22m[39m
+[90m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m69:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mdisabled, destroyed or unpowered sensors cannot conduct; sensor fuel is drawn while enabled
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m build tests/b02-ir-sensor.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m rig tests/b02-ir-sensor.test.ts:[2m18:73[22m[39m
+[90m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m75:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mpersists enabled state, status and door power across save and reload
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m build tests/b02-ir-sensor.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m rig tests/b02-ir-sensor.test.ts:[2m18:73[22m[39m
+[90m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m81:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22mrejects corrupt sensor state at save time (no silent acceptance)
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m build tests/b02-ir-sensor.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m rig tests/b02-ir-sensor.test.ts:[2m18:73[22m[39m
+[90m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m87:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b02-ir-sensor.test.ts[2m > [22mB02-P1-A infrared sensor: physical, paid, wired, bounded[2m > [22moffline settle with the sensor enabled and a target absent is deterministic and burns the same fuel as direct
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m build tests/b02-ir-sensor.test.ts:[2m15:227[22m[39m
+
+[90m [2m❯[22m rig tests/b02-ir-sensor.test.ts:[2m18:73[22m[39m
+[90m [2m❯[22m tests/b02-ir-sensor.test.ts:[2m91:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-thermal.test.ts[2m > [22mB03-A comfortV1 physical thermal evaluator[2m > [22msnow cold alone gives base 19; a burning campfire in line of sight adds 13.5 (0.75 per score)
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m campSetup tests/b03-thermal.test.ts:[2m30:17[22m[39m
+    [90m 28|[39m   r.player.x = s.x * TILE + 8; r.player.y = s.y * TILE + 8; markDirty(…
+    [90m 29|[39m   const built = act(g, 'build', { struct: 'campfire', tx: s.x + 2, ty:…
+    [90m 30|[39m   [34mexpect[39m(built)[33m.[39m[34mtoMatchObject[39m({ ok[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m   |[39m                 [31m^[39m
+    [90m 31|[39m   const fire = Object.values(r.entities).find(e => e.type === 'campfir…
+    [90m 32|[39m   [35mif[39m (fuelWood) [34maddItem[39m(r[33m,[39m fire[33m.[39mstation[33m![39m[33m.[39mfuelC[33m,[39m [32m'wood'[39m[33m,[39m fuelWood)[33m;[39m
+[90m [2m❯[22m tests/b03-thermal.test.ts:[2m51:28[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-thermal.test.ts[2m > [22mB03-A comfortV1 physical thermal evaluator[2m > [22mno paid fuel means no heat; a sheltered shelter alone gives +6; stacked score is capped at 40
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m campSetup tests/b03-thermal.test.ts:[2m30:17[22m[39m
+    [90m 28|[39m   r.player.x = s.x * TILE + 8; r.player.y = s.y * TILE + 8; markDirty(…
+    [90m 29|[39m   const built = act(g, 'build', { struct: 'campfire', tx: s.x + 2, ty:…
+    [90m 30|[39m   [34mexpect[39m(built)[33m.[39m[34mtoMatchObject[39m({ ok[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m   |[39m                 [31m^[39m
+    [90m 31|[39m   const fire = Object.values(r.entities).find(e => e.type === 'campfir…
+    [90m 32|[39m   [35mif[39m (fuelWood) [34maddItem[39m(r[33m,[39m fire[33m.[39mstation[33m![39m[33m.[39mfuelC[33m,[39m [32m'wood'[39m[33m,[39m fuelWood)[33m;[39m
+[90m [2m❯[22m tests/b03-thermal.test.ts:[2m61:31[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-thermal.test.ts[2m > [22mB03-A comfortV1 physical thermal evaluator[2m > [22ma wall between player and campfire blocks the heat; a destroyed heater contributes nothing
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m campSetup tests/b03-thermal.test.ts:[2m30:17[22m[39m
+    [90m 28|[39m   r.player.x = s.x * TILE + 8; r.player.y = s.y * TILE + 8; markDirty(…
+    [90m 29|[39m   const built = act(g, 'build', { struct: 'campfire', tx: s.x + 2, ty:…
+    [90m 30|[39m   [34mexpect[39m(built)[33m.[39m[34mtoMatchObject[39m({ ok[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m   |[39m                 [31m^[39m
+    [90m 31|[39m   const fire = Object.values(r.entities).find(e => e.type === 'campfir…
+    [90m 32|[39m   [35mif[39m (fuelWood) [34maddItem[39m(r[33m,[39m fire[33m.[39mstation[33m![39m[33m.[39mfuelC[33m,[39m [32m'wood'[39m[33m,[39m fuelWood)[33m;[39m
+[90m [2m❯[22m tests/b03-thermal.test.ts:[2m84:28[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-thermal.test.ts[2m > [22mB03-A comfortV1 physical thermal evaluator[2m > [22mwarmth integrator is exact exponential approach and the cold boundary splits the slice
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m campSetup tests/b03-thermal.test.ts:[2m30:17[22m[39m
+    [90m 28|[39m   r.player.x = s.x * TILE + 8; r.player.y = s.y * TILE + 8; markDirty(…
+    [90m 29|[39m   const built = act(g, 'build', { struct: 'campfire', tx: s.x + 2, ty:…
+    [90m 30|[39m   [34mexpect[39m(built)[33m.[39m[34mtoMatchObject[39m({ ok[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m   |[39m                 [31m^[39m
+    [90m 31|[39m   const fire = Object.values(r.entities).find(e => e.type === 'campfir…
+    [90m 32|[39m   [35mif[39m (fuelWood) [34maddItem[39m(r[33m,[39m fire[33m.[39mstation[33m![39m[33m.[39mfuelC[33m,[39m [32m'wood'[39m[33m,[39m fuelWood)[33m;[39m
+[90m [2m❯[22m tests/b03-thermal.test.ts:[2m100:22[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-thermal.test.ts[2m > [22mB03-A offline chronology and save custody[2m > [22mone 2h settle equals eight 15-minute partitions for warmth, HP, fuel stock and the exact heat-out receipt
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m campSetup tests/b03-thermal.test.ts:[2m30:17[22m[39m
+    [90m 28|[39m   r.player.x = s.x * TILE + 8; r.player.y = s.y * TILE + 8; markDirty(…
+    [90m 29|[39m   const built = act(g, 'build', { struct: 'campfire', tx: s.x + 2, ty:…
+    [90m 30|[39m   [34mexpect[39m(built)[33m.[39m[34mtoMatchObject[39m({ ok[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m   |[39m                 [31m^[39m
+    [90m 31|[39m   const fire = Object.values(r.entities).find(e => e.type === 'campfir…
+    [90m 32|[39m   [35mif[39m (fuelWood) [34maddItem[39m(r[33m,[39m fire[33m.[39mstation[33m![39m[33m.[39mfuelC[33m,[39m [32m'wood'[39m[33m,[39m fuelWood)[33m;[39m
+[90m [2m❯[22m tests/b03-thermal.test.ts:[2m110:25[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-thermal.test.ts[2m > [22mB03-A offline chronology and save custody[2m > [22msave and reload keeps the thermal state; a repeated settle at the same time adds no second heat-out receipt
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m campSetup tests/b03-thermal.test.ts:[2m30:17[22m[39m
+    [90m 28|[39m   r.player.x = s.x * TILE + 8; r.player.y = s.y * TILE + 8; markDirty(…
+    [90m 29|[39m   const built = act(g, 'build', { struct: 'campfire', tx: s.x + 2, ty:…
+    [90m 30|[39m   [34mexpect[39m(built)[33m.[39m[34mtoMatchObject[39m({ ok[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m   |[39m                 [31m^[39m
+    [90m 31|[39m   const fire = Object.values(r.entities).find(e => e.type === 'campfir…
+    [90m 32|[39m   [35mif[39m (fuelWood) [34maddItem[39m(r[33m,[39m fire[33m.[39mstation[33m![39m[33m.[39mfuelC[33m,[39m [32m'wood'[39m[33m,[39m fuelWood)[33m;[39m
+[90m [2m❯[22m tests/b03-thermal.test.ts:[2m131:25[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/b03-thermal.test.ts[2m > [22mB03-A offline chronology and save custody[2m > [22ma live survival tick with a burning fire warms the player toward the physical target, not to a fixed 100
+[31m[1mAssertionError[22m: expected { ok: false, …(1) } to match object { ok: true }
+(1 matching property omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "ok": true,[39m
+[31m+   "ok": false,[39m
+[2m  }[22m
+
+[36m [2m❯[22m campSetup tests/b03-thermal.test.ts:[2m30:17[22m[39m
+    [90m 28|[39m   r.player.x = s.x * TILE + 8; r.player.y = s.y * TILE + 8; markDirty(…
+    [90m 29|[39m   const built = act(g, 'build', { struct: 'campfire', tx: s.x + 2, ty:…
+    [90m 30|[39m   [34mexpect[39m(built)[33m.[39m[34mtoMatchObject[39m({ ok[33m:[39m [35mtrue[39m })[33m;[39m
+    [90m   |[39m                 [31m^[39m
+    [90m 31|[39m   const fire = Object.values(r.entities).find(e => e.type === 'campfir…
+    [90m 32|[39m   [35mif[39m (fuelWood) [34maddItem[39m(r[33m,[39m fire[33m.[39mstation[33m![39m[33m.[39mfuelC[33m,[39m [32m'wood'[39m[33m,[39m fuelWood)[33m;[39m
+[90m [2m❯[22m tests/b03-thermal.test.ts:[2m144:28[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/cal01-world-calendar.test.ts[2m > [22mCAL-01 E — seasonal gardening with real structures, costs and receipts[2m > [22ma cold frame costs real materials and changes the winter outcome on the same plot and seed
+[31m[1mAssertionError[22m: expected 'Need an intact packed device.' to be null[39m
+
+[32m- Expected:[39m
+null
+
+[31m+ Received:[39m
+"Need an intact packed device."
+
+[36m [2m❯[22m plot tests/cal01-world-calendar.test.ts:[2m447:54[22m[39m
+    [90m445|[39m     r.player.x = cell.x * TILE + 8; r.player.y = cell.y * TILE + 8; ma…
+    [90m446|[39m     put(r, 'wood', 40); put(r, 'fiber', 40); put(r, 'glass', 4); put(r…
+    [90m447|[39m     [34mexpect[39m([34mbuildReason[39m(g[33m,[39m [32m'garden'[39m[33m,[39m cell[33m.[39mx[33m,[39m cell[33m.[39my))[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m   |[39m                                                      [31m^[39m
+    [90m448|[39m     expect(act(g, 'build', { struct: 'garden', tx: cell.x, ty: cell.y …
+    [90m449|[39m     const e = Object.values(r.entities).find(x => x.type === 'garden' …
+[90m [2m❯[22m tests/cal01-world-calendar.test.ts:[2m464:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/cal01-world-calendar.test.ts[2m > [22mCAL-01 E — seasonal gardening with real structures, costs and receipts[2m > [22moffline winter: the framed plot really produces where the exposed plot is stalled, with no free output
+[31m[1mAssertionError[22m: expected 'Need an intact packed device.' to be null[39m
+
+[32m- Expected:[39m
+null
+
+[31m+ Received:[39m
+"Need an intact packed device."
+
+[36m [2m❯[22m plot tests/cal01-world-calendar.test.ts:[2m447:54[22m[39m
+    [90m445|[39m     r.player.x = cell.x * TILE + 8; r.player.y = cell.y * TILE + 8; ma…
+    [90m446|[39m     put(r, 'wood', 40); put(r, 'fiber', 40); put(r, 'glass', 4); put(r…
+    [90m447|[39m     [34mexpect[39m([34mbuildReason[39m(g[33m,[39m [32m'garden'[39m[33m,[39m cell[33m.[39mx[33m,[39m cell[33m.[39my))[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m   |[39m                                                      [31m^[39m
+    [90m448|[39m     expect(act(g, 'build', { struct: 'garden', tx: cell.x, ty: cell.y …
+    [90m449|[39m     const e = Object.values(r.entities).find(x => x.type === 'garden' …
+[90m [2m❯[22m tests/cal01-world-calendar.test.ts:[2m479:21[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/cal01-world-calendar.test.ts[2m > [22mCAL-01 E — seasonal gardening with real structures, costs and receipts[2m > [22mwater: an exposed plot loses its reserve faster in a hot dry season than in the neutral season
+[31m[1mAssertionError[22m: expected 'Need an intact packed device.' to be null[39m
+
+[32m- Expected:[39m
+null
+
+[31m+ Received:[39m
+"Need an intact packed device."
+
+[36m [2m❯[22m plot tests/cal01-world-calendar.test.ts:[2m447:54[22m[39m
+    [90m445|[39m     r.player.x = cell.x * TILE + 8; r.player.y = cell.y * TILE + 8; ma…
+    [90m446|[39m     put(r, 'wood', 40); put(r, 'fiber', 40); put(r, 'glass', 4); put(r…
+    [90m447|[39m     [34mexpect[39m([34mbuildReason[39m(g[33m,[39m [32m'garden'[39m[33m,[39m cell[33m.[39mx[33m,[39m cell[33m.[39my))[33m.[39m[34mtoBeNull[39m()[33m;[39m
+    [90m   |[39m                                                      [31m^[39m
+    [90m448|[39m     expect(act(g, 'build', { struct: 'garden', tx: cell.x, ty: cell.y …
+    [90m449|[39m     const e = Object.values(r.entities).find(x => x.type === 'garden' …
+[90m [2m❯[22m tests/cal01-world-calendar.test.ts:[2m501:20[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/cal01-world-calendar.test.ts[2m > [22mCAL-01 E — seasonal gardening with real structures, costs and receipts[2m > [22mthe Garden Tender keeps its receipts single-shot across a season boundary (no duplicate harvest)
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/cal01-world-calendar.test.ts:[2m529:87[22m[39m
+    [90m527|[39m     if (bench) expect(act(g, 'upgradeStation', { eid: bench.id }).ok).…
+    [90m528|[39m     [35melse[39m {
+    [90m529|[39m       expect(act(g, 'build', { struct: 'workbench', tx: cell.x + 2, ty…
+    [90m   |[39m                                                                                       [31m^[39m
+    [90m530|[39m       const b = Object.values(r.entities).find(e => e.type === 'workbe…
+    [90m531|[39m       [34mexpect[39m([34mact[39m(g[33m,[39m [32m'upgradeStation'[39m[33m,[39m { eid[33m:[39m b[33m.[39mid })[33m.[39mok)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/control-tower-corrective-wp1-wp2.test.ts[2m > [22mWP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)[2m > [22mWP2-1..5 & 8 (RED->GREEN): completes full offscreen plant->grow->harvest->chest-transfer->replant cycles across repeated window shifts, save/reload, overnight settle, and full storage
+[31m[1mAssertionError[22m: build: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m act tests/control-tower-corrective-wp1-wp2.test.ts:[2m375:61[22m[39m
+    [90m373|[39m     now [33m+=[39m [34m50[39m[33m;[39m
+    [90m374|[39m     const res = dispatch(gs, { id: `vy-farm-${++seq}`, type, ...extra …
+    [90m375|[39m     [34mexpect[39m(res[33m.[39mok[33m,[39m [33m![39mres[33m.[39mok [33m?[39m [32m`[39m[36m${[39mtype[36m}[39m[32m: [39m[36m${[39mres[33m.[39mreason[36m}[39m[32m`[39m [33m:[39m [32m''[39m)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   |[39m                                                             [31m^[39m
+    [90m376|[39m     [35mreturn[39m res[33m;[39m
+    [90m377|[39m   }[33m;[39m
+[90m [2m❯[22m buildAt tests/control-tower-corrective-wp1-wp2.test.ts:[2m393:5[22m[39m
+[90m [2m❯[22m buildRealVeyraHomestead tests/control-tower-corrective-wp1-wp2.test.ts:[2m398:19[22m[39m
+[90m [2m❯[22m tests/control-tower-corrective-wp1-wp2.test.ts:[2m453:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/control-tower-corrective-wp1-wp2.test.ts[2m > [22mWP2 — Complete Veyra Offscreen Garden Tender (B6 Corrective)[2m > [22mWP2-6,7,9 (RED->GREEN): enforces exact onscreen vs offscreen parity (Map climate, soil, cold-frame, roof, evaporation, links across window edge)
+[31m[1mAssertionError[22m: build: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m act tests/control-tower-corrective-wp1-wp2.test.ts:[2m375:61[22m[39m
+    [90m373|[39m     now [33m+=[39m [34m50[39m[33m;[39m
+    [90m374|[39m     const res = dispatch(gs, { id: `vy-farm-${++seq}`, type, ...extra …
+    [90m375|[39m     [34mexpect[39m(res[33m.[39mok[33m,[39m [33m![39mres[33m.[39mok [33m?[39m [32m`[39m[36m${[39mtype[36m}[39m[32m: [39m[36m${[39mres[33m.[39mreason[36m}[39m[32m`[39m [33m:[39m [32m''[39m)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   |[39m                                                             [31m^[39m
+    [90m376|[39m     [35mreturn[39m res[33m;[39m
+    [90m377|[39m   }[33m;[39m
+[90m [2m❯[22m buildAt tests/control-tower-corrective-wp1-wp2.test.ts:[2m393:5[22m[39m
+[90m [2m❯[22m buildRealVeyraHomestead tests/control-tower-corrective-wp1-wp2.test.ts:[2m398:19[22m[39m
+[90m [2m❯[22m tests/control-tower-corrective-wp1-wp2.test.ts:[2m560:18[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/d1-d5-corrective.test.tsx[2m > [22mD4 Corrective: Offscreen/Boundary-Straddling Wire-v1 Power Parity & 12h Decay Copy[2m > [22mallocates loads, powers doors/stations/turrets, and drains generator fuel across offscreen window boundaries with online/offline parity
+[31m[1mAssertionError[22m: base_generator: Need an intact packed device.: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m buildAt tests/d1-d5-corrective.test.tsx:[2m367:59[22m[39m
+    [90m365|[39m         for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, …
+    [90m366|[39m         const res = dispatch(gs, { id: `b-${type}-${tx}-${ty}`, type: …
+    [90m367|[39m         [34mexpect[39m(res[33m.[39mok[33m,[39m [32m`[39m[36m${[39mtype[36m}[39m[32m: [39m[36m${[39m(res [35mas[39m any)[33m.[39mreason[36m}[39m[32m`[39m)[33m.[39m[34mtoBe[39m([35mtrue[39m)[33m;[39m
+    [90m   |[39m                                                           [31m^[39m
+    [90m368|[39m         return Object.values(r.entities).find((e) => e.kind === 'struc…
+    [90m369|[39m       }[33m;[39m
+[90m [2m❯[22m tests/d1-d5-corrective.test.tsx:[2m371:19[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/k6-spatial.test.ts[2m > [22mK6 paid structural lifecycle[2m > [22mupgrades in place at preserved condition, pays exactly once, and reloads
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/k6-spatial.test.ts:[2m17:552[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mdelivers the full crate by walking (inventory carry)
+[31m[1mError[22m: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)[39m
+[36m [2m❯[22m setupDepot tests/mec01-c2-delivery.test.ts:[2m163:9[22m[39m
+    [90m161|[39m     removeItem(r, 'inv', 'wood', 12); removeItem(r, 'inv', 'iron_ingot…
+    [90m162|[39m   }
+    [90m163|[39m   throw new Error('no buildable three-mode-reachable depot cell found …
+    [90m   |[39m         [31m^[39m
+    [90m164|[39m }
+    [90m165|[39m const GOAL_NEIGHBOURS = [[0, 1], [1, 0], [-1, 0], [0, -1], [1, 1], [-1…
+[90m [2m❯[22m haul tests/mec01-c2-delivery.test.ts:[2m194:34[22m[39m
+[90m [2m❯[22m tests/mec01-c2-delivery.test.ts:[2m374:17[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mdelivers the full crate by hand cart on the same route class
+[31m[1mError[22m: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)[39m
+[36m [2m❯[22m setupDepot tests/mec01-c2-delivery.test.ts:[2m163:9[22m[39m
+    [90m161|[39m     removeItem(r, 'inv', 'wood', 12); removeItem(r, 'inv', 'iron_ingot…
+    [90m162|[39m   }
+    [90m163|[39m   throw new Error('no buildable three-mode-reachable depot cell found …
+    [90m   |[39m         [31m^[39m
+    [90m164|[39m }
+    [90m165|[39m const GOAL_NEIGHBOURS = [[0, 1], [1, 0], [-1, 0], [0, -1], [1, 1], [-1…
+[90m [2m❯[22m haul tests/mec01-c2-delivery.test.ts:[2m194:34[22m[39m
+[90m [2m❯[22m tests/mec01-c2-delivery.test.ts:[2m381:17[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mdelivers the full crate by motorbike with measured fuel and wear
+[31m[1mError[22m: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)[39m
+[36m [2m❯[22m setupDepot tests/mec01-c2-delivery.test.ts:[2m163:9[22m[39m
+    [90m161|[39m     removeItem(r, 'inv', 'wood', 12); removeItem(r, 'inv', 'iron_ingot…
+    [90m162|[39m   }
+    [90m163|[39m   throw new Error('no buildable three-mode-reachable depot cell found …
+    [90m   |[39m         [31m^[39m
+    [90m164|[39m }
+    [90m165|[39m const GOAL_NEIGHBOURS = [[0, 1], [1, 0], [-1, 0], [0, -1], [1, 1], [-1…
+[90m [2m❯[22m haul tests/mec01-c2-delivery.test.ts:[2m194:34[22m[39m
+[90m [2m❯[22m tests/mec01-c2-delivery.test.ts:[2m387:17[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mthe same cargo UIDs left the crate in all three runs (same seed, same world)
+[31m[1mAssertionError[22m: expected +0 to be 3 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 3[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m tests/mec01-c2-delivery.test.ts:[2m394:28[22m[39m
+    [90m392|[39m   })[33m;[39m
+    [90m393|[39m   it('the same cargo UIDs left the crate in all three runs (same seed,…
+    [90m394|[39m     [34mexpect[39m(results[33m.[39mlength)[33m.[39m[34mtoBe[39m([34m3[39m)[33m;[39m
+    [90m   |[39m                            [31m^[39m
+    [90m395|[39m     const [a, b, c] = results.map(r => r.crateStacks.map(s => s.uid).s…
+    [90m396|[39m     [34mexpect[39m(a)[33m.[39m[34mtoBe[39m(b)[33m;[39m [34mexpect[39m(b)[33m.[39m[34mtoBe[39m(c)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mdelivers the full crate to the SAME far depot in all three modes (long corridor route class)
+[31m[1mError[22m: no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)[39m
+[36m [2m❯[22m setupDepot tests/mec01-c2-delivery.test.ts:[2m163:9[22m[39m
+    [90m161|[39m     removeItem(r, 'inv', 'wood', 12); removeItem(r, 'inv', 'iron_ingot…
+    [90m162|[39m   }
+    [90m163|[39m   throw new Error('no buildable three-mode-reachable depot cell found …
+    [90m   |[39m         [31m^[39m
+    [90m164|[39m }
+    [90m165|[39m const GOAL_NEIGHBOURS = [[0, 1], [1, 0], [-1, 0], [0, -1], [1, 1], [-1…
+[90m [2m❯[22m haul tests/mec01-c2-delivery.test.ts:[2m194:34[22m[39m
+[90m [2m❯[22m tests/mec01-c2-delivery.test.ts:[2m402:15[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-c2-delivery.test.ts[2m > [22mMEC-01 R2 C2: same physical cargo, factory toolbox -> field depot, three freight modes[2m > [22mwrites the delivery evidence JSON (SIM_FIXTURE_MEASUREMENT timing; real custody)
+[31m[1mAssertionError[22m: expected +0 to be 3 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 3[39m
+[31m+ 0[39m
+
+[36m [2m❯[22m tests/mec01-c2-delivery.test.ts:[2m436:28[22m[39m
+    [90m434|[39m       }[33m,[39m
+    [90m435|[39m     }[33m,[39m [35mnull[39m[33m,[39m [34m2[39m))[33m;[39m
+    [90m436|[39m     [34mexpect[39m(results[33m.[39mlength)[33m.[39m[34mtoBe[39m([34m3[39m)[33m;[39m
+    [90m   |[39m                            [31m^[39m
+    [90m437|[39m     [34mexpect[39m(resultsFar[33m.[39mlength)[33m.[39m[34mtoBe[39m([34m3[39m)[33m;[39m
+    [90m438|[39m   })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-f3-joined.test.ts[2m > [22mF3 joined: deposit -> evacuate -> save/reload -> run 2[2m > [22mcarries the real deposit receipt through evacuation and reload into run 2 with zero run-local cash
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/mec01-f3-joined.test.ts:[2m27:517[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-r8b-plank.test.ts[2m > [22mMEC-01 R8B plank chain[2m > [22mtwo wood make one plank at the bench, after 6 real seconds; too little wood is refused with no change
+[31m[1mError[22m: no legal tile for workbench[39m
+[36m [2m❯[22m legalTileNear tests/mec01-r8b-plank.test.ts:[2m18:9[22m[39m
+
+[90m [2m❯[22m tests/mec01-r8b-plank.test.ts:[2m36:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/mec01-r8b-plank.test.ts[2m > [22mMEC-01 R8B plank chain[2m > [22ma plank wall needs three real planks: with two it is refused and nothing is spent; with three it builds at 240 HP
+[31m[1mError[22m: no legal tile for workbench[39m
+[36m [2m❯[22m legalTileNear tests/mec01-r8b-plank.test.ts:[2m18:9[22m[39m
+
+[90m [2m❯[22m tests/mec01-r8b-plank.test.ts:[2m61:14[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/npc-natural-cook.test.ts[2m > [22mnormal New Game exposes the canonical ingredient catchment blocker without inventing paid meals
+[31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[36m [2m❯[22m tests/npc-natural-cook.test.ts:[2m23:163[22m[39m
+    [90m 21|[39m  return {actor:h.actorId,wanted:[...wanted],recipes,candidateCount:glo…
+    [90m 22|[39m  console[33m.[39m[34mlog[39m([33mJSON[39m[33m.[39m[34mstringify[39m({[35mcase[39m[33m:[39m[32m'cook-supply-blocker'[39m[33m,[39maudit}))[33m;[39m
+    [90m 23|[39m  expect(audit.length).toBeGreaterThan(0);expect(audit.every(a=>a.candi…
+    [90m   |[39m                                                                                                                                                                   [31m^[39m
+    [90m 24|[39m  expect(receipts.some(e=>e.kind==='human.production.pay')).toBe(false)…
+    [90m 25|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/npc-runtime-throughput.test.ts[2m > [22mbounded actual-world throughput[2m > [22msettles one real hour with every generated actor retained and no replay on repeated timestamp
+[31m[1mError[22m: Test timed out in 90000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[36m [2m❯[22m tests/npc-runtime-throughput.test.ts:[2m10:2[22m[39m
+    [90m  8|[39m // Trust, removal or metabolic immunity. CPU timing is diagnostic, not…
+    [90m  9|[39m [34mdescribe[39m([32m'bounded actual-world throughput'[39m[33m,[39m()[33m=>[39m{
+    [90m 10|[39m  it('settles one real hour with every generated actor retained and no …
+    [90m   |[39m  [31m^[39m
+    [90m 11|[39m   setActiveLayout('veyra05-greywater');const gs=newGame();expect(start…
+    [90m 12|[39m   const r=gs.run!,ids=Object.keys(r.humanWorld!.people),at=performance…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mstarts from a real bed intent and moves the exact chosen UIDs into locked reserve custody
+[31m[1mAssertionError[22m: expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "s": "bed_straw",[22m
+[2m    "tx": 143,[22m
+[2m    "ty": 42,[22m
+[32m-   "why": "",[39m
+[31m+   "why": "Need an intact packed device.",[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/rest-supply.test.ts:[2m39:152[22m[39m
+    [90m 37|[39m   r[33m.[39mplayer[33m.[39mx[33m=[39mx[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39mr[33m.[39mplayer[33m.[39my[33m=[39m(y[33m+[39m[34m1[39m)[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39m
+    [90m 38|[39m   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'…
+    [90m 39|[39m   const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"b…
+    [90m   |[39m                                                                                                                                                        [31m^[39m
+    [90m 40|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+d…
+    [90m 41|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+…
+[90m [2m❯[22m shelter tests/rest-supply.test.ts:[2m50:3[22m[39m
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m64:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mrefuses raw meat, unknown UIDs, bad durations, too many stacks and a bed beyond reach
+[31m[1mAssertionError[22m: expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "s": "bed_straw",[22m
+[2m    "tx": 143,[22m
+[2m    "ty": 42,[22m
+[32m-   "why": "",[39m
+[31m+   "why": "Need an intact packed device.",[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/rest-supply.test.ts:[2m39:152[22m[39m
+    [90m 37|[39m   r[33m.[39mplayer[33m.[39mx[33m=[39mx[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39mr[33m.[39mplayer[33m.[39my[33m=[39m(y[33m+[39m[34m1[39m)[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39m
+    [90m 38|[39m   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'…
+    [90m 39|[39m   const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"b…
+    [90m   |[39m                                                                                                                                                        [31m^[39m
+    [90m 40|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+d…
+    [90m 41|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+…
+[90m [2m❯[22m shelter tests/rest-supply.test.ts:[2m50:3[22m[39m
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m78:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22ma legitimate 8 h interval consumes real food and flask charge at the trigger and wakes exactly on time
+[31m[1mAssertionError[22m: expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "s": "bed_straw",[22m
+[2m    "tx": 143,[22m
+[2m    "ty": 42,[22m
+[32m-   "why": "",[39m
+[31m+   "why": "Need an intact packed device.",[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/rest-supply.test.ts:[2m39:152[22m[39m
+    [90m 37|[39m   r[33m.[39mplayer[33m.[39mx[33m=[39mx[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39mr[33m.[39mplayer[33m.[39my[33m=[39m(y[33m+[39m[34m1[39m)[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39m
+    [90m 38|[39m   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'…
+    [90m 39|[39m   const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"b…
+    [90m   |[39m                                                                                                                                                        [31m^[39m
+    [90m 40|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+d…
+    [90m 41|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+…
+[90m [2m❯[22m shelter tests/rest-supply.test.ts:[2m50:3[22m[39m
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m90:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mshared online/offline chronology: a partitioned settle equals one long settle, and hunger is never frozen
+[31m[1mAssertionError[22m: expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "s": "bed_straw",[22m
+[2m    "tx": 143,[22m
+[2m    "ty": 42,[22m
+[32m-   "why": "",[39m
+[31m+   "why": "Need an intact packed device.",[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/rest-supply.test.ts:[2m39:152[22m[39m
+    [90m 37|[39m   r[33m.[39mplayer[33m.[39mx[33m=[39mx[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39mr[33m.[39mplayer[33m.[39my[33m=[39m(y[33m+[39m[34m1[39m)[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39m
+    [90m 38|[39m   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'…
+    [90m 39|[39m   const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"b…
+    [90m   |[39m                                                                                                                                                        [31m^[39m
+    [90m 40|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+d…
+    [90m 41|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+…
+[90m [2m❯[22m shelter tests/rest-supply.test.ts:[2m50:3[22m[39m
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m113:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22msave and reload mid-rest keeps the same reserve custody, charge, and resumes to the same wake
+[31m[1mAssertionError[22m: expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "s": "bed_straw",[22m
+[2m    "tx": 143,[22m
+[2m    "ty": 42,[22m
+[32m-   "why": "",[39m
+[31m+   "why": "Need an intact packed device.",[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/rest-supply.test.ts:[2m39:152[22m[39m
+    [90m 37|[39m   r[33m.[39mplayer[33m.[39mx[33m=[39mx[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39mr[33m.[39mplayer[33m.[39my[33m=[39m(y[33m+[39m[34m1[39m)[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39m
+    [90m 38|[39m   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'…
+    [90m 39|[39m   const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"b…
+    [90m   |[39m                                                                                                                                                        [31m^[39m
+    [90m 40|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+d…
+    [90m 41|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+…
+[90m [2m❯[22m shelter tests/rest-supply.test.ts:[2m50:3[22m[39m
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m127:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22man explicit cancel wakes at once and returns leftovers to the same chest with the same UIDs
+[31m[1mAssertionError[22m: expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "s": "bed_straw",[22m
+[2m    "tx": 143,[22m
+[2m    "ty": 42,[22m
+[32m-   "why": "",[39m
+[31m+   "why": "Need an intact packed device.",[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/rest-supply.test.ts:[2m39:152[22m[39m
+    [90m 37|[39m   r[33m.[39mplayer[33m.[39mx[33m=[39mx[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39mr[33m.[39mplayer[33m.[39my[33m=[39m(y[33m+[39m[34m1[39m)[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39m
+    [90m 38|[39m   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'…
+    [90m 39|[39m   const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"b…
+    [90m   |[39m                                                                                                                                                        [31m^[39m
+    [90m 40|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+d…
+    [90m 41|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+…
+[90m [2m❯[22m shelter tests/rest-supply.test.ts:[2m50:3[22m[39m
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m142:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[44/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mdestroying the bed ends rest and returns every reserved UID; losing the chest sends them to a bag at the bed
+[31m[1mAssertionError[22m: expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "s": "bed_straw",[22m
+[2m    "tx": 143,[22m
+[2m    "ty": 42,[22m
+[32m-   "why": "",[39m
+[31m+   "why": "Need an intact packed device.",[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/rest-supply.test.ts:[2m39:152[22m[39m
+    [90m 37|[39m   r[33m.[39mplayer[33m.[39mx[33m=[39mx[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39mr[33m.[39mplayer[33m.[39my[33m=[39m(y[33m+[39m[34m1[39m)[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39m
+    [90m 38|[39m   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'…
+    [90m 39|[39m   const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"b…
+    [90m   |[39m                                                                                                                                                        [31m^[39m
+    [90m 40|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+d…
+    [90m 41|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+…
+[90m [2m❯[22m shelter tests/rest-supply.test.ts:[2m50:3[22m[39m
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m155:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[45/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mdeath ends the rest before the bag forms, so no reserved item is stranded
+[31m[1mAssertionError[22m: expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "s": "bed_straw",[22m
+[2m    "tx": 143,[22m
+[2m    "ty": 42,[22m
+[32m-   "why": "",[39m
+[31m+   "why": "Need an intact packed device.",[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/rest-supply.test.ts:[2m39:152[22m[39m
+    [90m 37|[39m   r[33m.[39mplayer[33m.[39mx[33m=[39mx[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39mr[33m.[39mplayer[33m.[39my[33m=[39m(y[33m+[39m[34m1[39m)[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39m
+    [90m 38|[39m   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'…
+    [90m 39|[39m   const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"b…
+    [90m   |[39m                                                                                                                                                        [31m^[39m
+    [90m 40|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+d…
+    [90m 41|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+…
+[90m [2m❯[22m shelter tests/rest-supply.test.ts:[2m50:3[22m[39m
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m176:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[46/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22msupplied bed rest (real intents, physical custody)[2m > [22mthe forecast is the same arithmetic the simulator uses: food-limited rest wakes when food runs out
+[31m[1mAssertionError[22m: expected { s: 'bed_straw', tx: 143, …(2) } to deeply equal { s: 'bed_straw', tx: 143, …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "s": "bed_straw",[22m
+[2m    "tx": 143,[22m
+[2m    "ty": 42,[22m
+[32m-   "why": "",[39m
+[31m+   "why": "Need an intact packed device.",[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/rest-supply.test.ts:[2m39:152[22m[39m
+    [90m 37|[39m   r[33m.[39mplayer[33m.[39mx[33m=[39mx[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39mr[33m.[39mplayer[33m.[39my[33m=[39m(y[33m+[39m[34m1[39m)[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39m
+    [90m 38|[39m   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'…
+    [90m 39|[39m   const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"b…
+    [90m   |[39m                                                                                                                                                        [31m^[39m
+    [90m 40|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+d…
+    [90m 41|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+…
+[90m [2m❯[22m shelter tests/rest-supply.test.ts:[2m50:3[22m[39m
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m186:33[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[47/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22mhomeStatus external coverage (audit fix)[2m > [22ma foundation on the horizontal neighbour is external coverage and not idle
+[31m[1mAssertionError[22m: expected 'Need an intact packed device.' to be '' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[31m+ Need an intact packed device.[39m
+
+[36m [2m❯[22m cabinetWith tests/rest-supply.test.ts:[2m209:60[22m[39m
+
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m216:19[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[48/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22mhomeStatus external coverage (audit fix)[2m > [22ma foundation on the vertical neighbour is external coverage and not idle
+[31m[1mAssertionError[22m: expected 'Need an intact packed device.' to be '' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[31m+ Need an intact packed device.[39m
+
+[36m [2m❯[22m cabinetWith tests/rest-supply.test.ts:[2m209:60[22m[39m
+
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m222:19[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[49/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22mhomeStatus external coverage (audit fix)[2m > [22ma foundation on the diagonal neighbour is external coverage and not idle
+[31m[1mAssertionError[22m: expected 'Need an intact packed device.' to be '' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[31m+ Need an intact packed device.[39m
+
+[36m [2m❯[22m cabinetWith tests/rest-supply.test.ts:[2m209:60[22m[39m
+
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m228:19[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[50/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22mhomeStatus external coverage (audit fix)[2m > [22ma lone self-only Cabinet on its own tile is still idle (self does not count)
+[31m[1mAssertionError[22m: expected 'Need an intact packed device.' to be '' // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[31m+ Need an intact packed device.[39m
+
+[36m [2m❯[22m tests/rest-supply.test.ts:[2m238:60[22m[39m
+
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[51/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/rest-supply.test.ts[2m > [22mrest V1 in a frigid unheated shelter (lawful exposure death, exact custody)[2m > [22man 8 h unheated rest in a frigid site ends in exposure death at a real time, with every reserve UID restored
+[31m[1mAssertionError[22m: expected { s: 'bed_straw', tx: 153, …(2) } to deeply equal { s: 'bed_straw', tx: 153, …(2) }[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "s": "bed_straw",[22m
+[2m    "tx": 153,[22m
+[2m    "ty": 22,[22m
+[32m-   "why": "",[39m
+[31m+   "why": "Need an intact packed device.",[39m
+[2m  }[22m
+
+[36m [2m❯[22m build tests/rest-supply.test.ts:[2m39:152[22m[39m
+    [90m 37|[39m   r[33m.[39mplayer[33m.[39mx[33m=[39mx[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39mr[33m.[39mplayer[33m.[39my[33m=[39m(y[33m+[39m[34m1[39m)[33m*[39m[33mTILE[39m[33m+[39m[34m8[39m[33m;[39m
+    [90m 38|[39m   addItem(r,'inv','wood',400);addItem(r,'inv','fiber',200);addItem(r,'…
+    [90m 39|[39m   const build=(struct:string,tx:number,ty:number)=>{const res=act(g,"b…
+    [90m   |[39m                                                                                                                                                        [31m^[39m
+    [90m 40|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('floor_wood',x+d…
+    [90m 41|[39m   for(let dx=0;dx<2;dx++)for(let dy=0;dy<2;dy++)build('roof_thatch',x+…
+[90m [2m❯[22m shelter tests/rest-supply.test.ts:[2m50:3[22m[39m
+[90m [2m❯[22m tests/rest-supply.test.ts:[2m249:41[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[52/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/w08-home-status.test.ts[2m > [22mW08 homeStatus (controlled fixtures)[2m > [22man unfunded cabinet covers structures, funding changes state to funded, and protection does not heal damage
+[31m[1mError[22m: claim: Need an intact packed device.[39m
+[36m [2m❯[22m buildAt tests/w08-home-status.test.ts:[2m20:135[22m[39m
+
+[90m [2m❯[22m homeWithCabinet tests/w08-home-status.test.ts:[2m25:120[22m[39m
+[90m [2m❯[22m tests/w08-home-status.test.ts:[2m30:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[53/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/w08-home-status.test.ts[2m > [22mW08 homeStatus (controlled fixtures)[2m > [22mnearestHomeStructure is bounded, deterministic and ignores items on the ground
+[31m[1mError[22m: claim: Need an intact packed device.[39m
+[36m [2m❯[22m buildAt tests/w08-home-status.test.ts:[2m20:135[22m[39m
+
+[90m [2m❯[22m homeWithCabinet tests/w08-home-status.test.ts:[2m25:120[22m[39m
+[90m [2m❯[22m tests/w08-home-status.test.ts:[2m74:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[54/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/w08-home-status.test.ts[2m > [22mW08 homeStatus (controlled fixtures)[2m > [22mdestroying the cabinet demotes covered structures to unfunded and never restores lost stock
+[31m[1mError[22m: claim: Need an intact packed device.[39m
+[36m [2m❯[22m buildAt tests/w08-home-status.test.ts:[2m20:135[22m[39m
+
+[90m [2m❯[22m homeWithCabinet tests/w08-home-status.test.ts:[2m25:120[22m[39m
+[90m [2m❯[22m tests/w08-home-status.test.ts:[2m82:13[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[55/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/w08-home-status.test.ts[2m > [22mW08 homeStatus (controlled fixtures)[2m > [22ma Cabinet standing alone is idle (no external coverage), not unreachable; billing for itself is unchanged
+[31m[1mError[22m: claim: Need an intact packed device.[39m
+[36m [2m❯[22m buildAt tests/w08-home-status.test.ts:[2m20:135[22m[39m
+
+[90m [2m❯[22m tests/w08-home-status.test.ts:[2m93:44[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[56/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/w08-home-status.test.ts[2m > [22mW08 homeStatus (controlled fixtures)[2m > [22ma Cabinet funded only by its own upkeep does not count as covered structures
+[31m[1mError[22m: claim: Need an intact packed device.[39m
+[36m [2m❯[22m buildAt tests/w08-home-status.test.ts:[2m20:135[22m[39m
+
+[90m [2m❯[22m tests/w08-home-status.test.ts:[2m105:44[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[57/58]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/wp3-veyra-recycler-integration.test.ts[2m > [22mWP3: End-to-End Veyra Natural-Source -> Foundry Recycler -> Spend -> Floor -1 -> Save/Reload Integration Proof[2m > [22mharvests natural Veyra wrecks/resources (zero item injection), recycles damaged_drive at po_slag into spares, spends spares in real craft/build, and survives mandatory Floor -1 reload
+[31m[1mAssertionError[22m: expected 0 to be greater than or equal to 3[39m
+[36m [2m❯[22m tests/wp3-veyra-recycler-integration.test.ts:[2m303:24[22m[39m
+    [90m301|[39m
+    [90m302|[39m     [35mconst[39m driveCount [33m=[39m [34mcountItem[39m(r[33m,[39m [32m'inv'[39m[33m,[39m [32m'damaged_drive'[39m)[33m;[39m
+    [90m303|[39m     [34mexpect[39m(driveCount)[33m.[39m[34mtoBeGreaterThanOrEqual[39m([34m3[39m)[33m;[39m
+    [90m   |[39m                        [31m^[39m
+    [90m304|[39m
+    [90m305|[39m     // Every natural damaged_drive must have a harvest.component recei…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[58/58]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m14 failed[39m[22m[2m | [22m[1m[32m39 passed[39m[22m[2m | [22m[33m3 skipped[39m[90m (56)[39m
+[2m      Tests [22m [1m[31m58 failed[39m[22m[2m | [22m[1m[32m248 passed[39m[22m[2m | [22m[33m8 skipped[39m[90m (314)[39m
+[2m   Start at [22m 19:30:33
+[2m   Duration [22m 926.55s[2m (transform 10.44s, setup 0ms, import 63.93s, tests 848.46s, environment 6ms)[22m
+
+JSON report written to /home/user/Soul-of-Hero/tmp/verification/full-eb04deb/shard-3.json

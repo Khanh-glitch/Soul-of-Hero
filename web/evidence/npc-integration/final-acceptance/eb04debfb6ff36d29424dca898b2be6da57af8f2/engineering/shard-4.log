@@ -1,0 +1,62 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90m/tmp/soh-regression/web[39m
+
+ [31m×[39m tests/arena1-round2-newgame-routes.test.ts[2m > [22mARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)[2m > [22mROUTE OIL: spawn -> camp at a crude seep -> iron -> Parts -> research Glass -> L2 bench -> Gear + Pipe -> Oil Pump on the seep -> Crude -> Refinery -> Fuel Canister[33m 347366[2mms[22m[39m
+[31m   → [
+ {
+  "stage": "Electric Resistor from a wreck",
+  "status": "PROVEN",
+  "atMinute": 20.2,
+  "detail": {
+   "carried": 2
+  }
+ },
+ {
+  "stage": "Wooden Ladder: study, craft, lean on a cliff, cross on foot",
+  "status": "PROVEN",
+  "atMinute": 26.4,
+  "detail": {
+   "windowsSearched": [
+    {
+     "around": [
+      1881,
+      689
+     ],
+     "cliffTiles": 77,
+     "oneTileFaces": 16
+    }
+   ],
+   "cliffTilesInWindow": 77,
+   "oneTileFaces": 16,
+   "facesTried": 1,
+   "refusals": {},
+   "tilesFromCamp": 139,
+   "crossedFrom": [
+    1822,
+    767
+   ],
+   "over": [
+    1822,
+    768
+   ],
+   "crossedTo": [
+    1822,
+    769
+   ],
+   "farSideNeededADetourBefore": true
+  }
+ },
+ {
+  "stage": "Large Furnace: study, plates, craft, place, smelt",
+  "status": "NOT_PROVEN",
+  "atMinute": 27.1,
+  "detail": "craft {\"recipe\":\"deploy_chest_small\"} refused: Inventory full."
+ },
+ {
+  "stage": "Iron Plate Pants: study, hunt hide, sew, wear",
+  "status": "NOT_PROVEN",
+  "atMinute": 27.9,
+  "detail": "craft {\"recipe\":\"deploy_chest_small\"} refused: Inventory full."
+ }
+]: expected [ { …(4) }, { …(4) } ] to deeply equal [][39m
+ [32m✓[39m tests/arena1-round2-newgame-routes.test.ts[2m > [22mARENA 1 round 2 — New-Game routes on Veyra (engine bot, no grants)[2m > [22mROUTE FOOD (seed 7): one game-hour from spawn on berries, marsh caps and hunted meat — no retired food[33m 324475[2mms[22m[39m
