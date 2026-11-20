@@ -20,3 +20,7 @@ node scripts/npc-campaign-gate.mjs "$d" /tmp/campaign-check.json
 ```
 
 Lệnh cuối **phải** trả mã khác 0 với gói h1/h8 này. Dùng thư mục đầu ra đầy đủ của `npc-endurance.mjs` để xét h264/h312, h335 và lịch sử K8 h336. Kể cả khi qua cổng kỹ thuật, vẫn cần hồi quy, hai nhánh chơi thực, số liệu hiệu năng cùng điều kiện và Creator review.
+
+**Chạy lại trên checkout bất biến:** `checkpoint-replay.txt` ghi **1 đạt, 4 hết thời gian** trong 5 ca với cả hai checkpoint. Worker ưu tiên thấp (`nice -n 12`, pool threads) chạy cùng chiến dịch và hồi quy toàn bộ; không dùng thời gian này để đo FPS hay tuyên bố hồi quy hiệu năng. Trước khi timeout, biên nhận Tidecamp khớp từng byte với `../tidecamp-water/paid-catchment.json`; ở Westbank `h1m` ăn quả hái được, chỉ số lương thực từ 4,0 lên 43,4. Biên nhận không thay thế kết quả test: cần chạy riêng, giữ nguyên ngưỡng thời gian.
+
+Lượt đi lại `mere-walk-retry.json` ghi bốn bước định hướng, không có câu trả lời hay biên nhận trao đổi; driver hết thời gian chờ “Save now”. Đã sửa driver để phân biệt đóng bảng tương tác với mở menu tạm dừng, không ghi trực tiếp vào save. Chưa có lượt thành công sau thay đổi này.

@@ -31,7 +31,12 @@ try{
    await p.close();p=null;
  }
  if(!p){log.block='No landing within 32 tiles of a conscious resident in the sampled ordinary starts.';console.log(log.block);}
- async function snapshot(){await p.keyboard.press('Escape');await btn('Save now').click();await p.waitForTimeout(300);const r=await p.evaluate(()=>{const k=Object.keys(localStorage).find(k=>/^soh\.state\.v\d+$/.test(k));return JSON.parse(JSON.parse(localStorage.getItem(k)).payload).run;});await p.keyboard.press('Escape');return r;}
+ async function snapshot(){
+   const save=btn('Save now');
+   // Escape first closes a survivor/field panel; only the next press opens pause.
+   for(let attempt=0;attempt<2&&!await save.isVisible();attempt++){await p.keyboard.press('Escape');try{await save.waitFor({state:'visible',timeout:1000});}catch{}}
+   if(!await save.isVisible()){log.lastScreen=(await p.locator('body').innerText()).slice(-2000);throw Error('Normal Save now action unavailable; no fresh observation');}
+   await save.click();await p.waitForTimeout(300);const r=await p.evaluate(()=>{const k=Object.keys(localStorage).find(k=>/^soh\.state\.v\d+$/.test(k));return JSON.parse(JSON.parse(localStorage.getItem(k)).payload).run;});await p.keyboard.press('Escape');return r;}
  async function conversation(){
    if(!(await btn('Ask question').isVisible()))return false;
    const panel=p.getByTestId('human-panel');log.contact=await panel.innerText();
