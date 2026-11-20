@@ -1,3 +1,5 @@
+import { recoveryPlan } from './recycler';
+import { VEYRA_RECYCLER_SITE } from './world';
 import {spiritDestination} from './core-sites';
 import {availableCore,chooseHumanCast,humanCastReach,safeAreaAim} from './human-core-tactics';
 import type {CoreMode} from './g1b';
@@ -908,7 +910,7 @@ function simulateHumanOutput(slots: (Stack | null)[], yields: [string, number][]
     const key = liveItemId(rawKey), d = ITEMS[key]; let qty = Math.ceil(rawQty * liveItemPer(rawKey));
     const mergeable = !claim && d.max > 1 && !d.dur && !d.charge;
     if (mergeable) for (const s of trial) {
-      if (!s || s.key !== key || s.meta !== undefined || s.dur !== undefined || s.charge !== undefined || qty <= 0) continue;
+      if (!s || s.key !== key || s.production || s.meta !== undefined || s.dur !== undefined || s.charge !== undefined || qty <= 0) continue;
       const moved = Math.min(qty, d.max - s.qty); s.qty += moved; qty -= moved;
     }
     for (let i = 0; i < trial.length && qty > 0; i++) if (!trial[i]) {
@@ -919,6 +921,11 @@ function simulateHumanOutput(slots: (Stack | null)[], yields: [string, number][]
   slots.splice(0, slots.length, ...trial);
   return true;
 }
+// Only component bonuses from the existing outdoor source table qualify.
+// Do not turn the player's authored caches or general bonus loot into NPC pay.
+const fieldComponents = Object.fromEntries(Object.entries(SOURCES).map(([key,def])=>[key,
+  (def.bonus??[]).filter(([item])=>recoveryPlan({uid:'preview',key:item,qty:1})!==null)
+]));
 export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: number, ty: number, now: number, global=false): { result: 'yield' | 'empty' | 'none' | 'blocked'; got?: number; key?: string; reason?: string } {
   if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED') return { result: 'blocked', reason: 'actor unavailable' };
   const s = global?globalSourceAt(r,tx,ty,h.floor,now):sourceAt(r, tx, ty, now);
@@ -965,12 +972,21 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
     receipt(r, now, 'human.work', `${h.actorId}:strike:${s.key}@${tx},${ty}`);
     return { result: 'yield', got: 0, key: s.key };
   }
+  const bonuses = h.occupation==='salvager' ? fieldComponents[s.key] : [];
+  const lots: [string,number][][]=[];
   let acceptedUnits = 0;
   // Simulate successive units on a private copy. Never mutate custody during admission:
   // physical output is committed exactly once below, after source damage is bounded.
   const capacityProbe = pack.slots.map(s => s ? { ...s } : null);
   for (let n = 1; n <= potentialUnits; n++) {
-    if (!simulateHumanOutput(capacityProbe, s.def.yields.map(([k, q]) => [k, q] as [string, number]),claim)) break;
+    const lot=s.def.yields.slice();
+    // A finite stock unit has one component roll for salvagers, even if a
+    // full pack forces a retry or a different salvager returns after reload.
+    for(const [i,[item,chance]] of bonuses.entries()) {
+      if(hash2(targetGx,targetGy,r.seed ^ ((st.stock-n+1)*131 + h.floor*17 + i))<chance)lot.push([item,1]);
+    }
+    if (!simulateHumanOutput(capacityProbe, lot,claim)) break;
+    lots.push(lot);
     acceptedUnits++;
   }
   if (acceptedUnits <= 0) return { result: 'blocked', key: s.key, reason: 'pack full; no harvest was taken' };
@@ -978,12 +994,13 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   const desiredHp = Math.max(0, (before - acceptedUnits) * per);
   const hitPower = Math.min(power, Math.max(0, st.hp - desiredHp));
   if (hitPower <= 0) return { result: 'blocked', key: s.key, reason: 'source cannot release an admissible unit' };
+  const hpBefore=st.hp, durBefore=tool?.dur;
   st.hp = Math.max(0, st.hp - hitPower);
   const after = Math.ceil(st.hp / per - 1e-9);
   const units = Math.min(st.stock, before - after, acceptedUnits);
   // The capacity simulation is against the same normalized addItem laws. Any mismatch is an invariant failure.
   let got = 0;
-  for (let u = 0; u < units; u++) for (const [k, q] of s.def.yields) {
+  for (let u = 0; u < units; u++) for (const [k, q] of lots[u]) {
     const left = addItem(r, pack.id, k, q,claim?{production:claim}:undefined);
     if (left > 0) throw new Error(`human harvest capacity invariant: ${left} ${k} could not enter ${pack.id}`);
     got += Math.ceil(q * liveItemPer(k));
@@ -993,6 +1010,11 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   h.stamina -= 2;
   if (tool?.dur !== undefined) { tool.dur = Math.max(0, tool.dur - 1); if (tool.dur === 0) h.equip.weapon = null; }
   if (st.stock <= 0 && s.def.regrow) { st.regrowFrom = now; st.regrowAcc = 0; }
+  if (claim && lots.slice(0,units).some(lot=>lot.length>s.def.yields.length)) {
+    receipt(r,now,'human.salvage.extract',JSON.stringify({...claim,sourceId:h.harvestJob!.sourceId,source:s.key,
+      gx:targetGx,gy:targetGy,floor:h.floor,stockBefore:st.stock+units,stockAfter:st.stock,hpBefore,hpAfter:st.hp,
+      toolUid:tool?.uid,durBefore,durAfter:tool?.dur}));
+  }
   receipt(r, now, 'human.harvest', `${h.actorId}:${s.key}@${tx},${ty}:-${units}`);
   // WORK ACCIDENT: solid material can hurt the hand that works it. Deterministic on the actor, the
   // node and the moment (no Math.random in the sim), small, and it wounds rather than kills — so a
@@ -3157,6 +3179,10 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   const wantedGoods=new Set(communityFoodDeficit(r,hw,h).map(v=>v.key));
   if(['salvager','gardener','mechanic','builder','engineer'].includes(h.occupation))for(const [key,def]of Object.entries(SOURCES))if(def.yields.some(([k])=>wantedGoods.has(k))&&harvestToolPower(h,key)>0){allowed.add(key);h.procurementSourceKeys.push(key);}
   const ordinarySources=allowed;
+  if(h.occupation==='salvager' && comm.poi===VEYRA_RECYCLER_SITE.poi){
+    const components=new Set([...allowed].filter(key=>fieldComponents[key]?.length));
+    if(components.size)allowed=components;
+  }
   if(h.occupation==='builder'){
     const missing=new Set<string>();
     for(const site of Object.values(comm.lostWorksites??{}))for(const [key,qty] of RECIPES[STRUCTS[site.type]?.item??'']?.ins??[]){
@@ -3176,7 +3202,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   countWorldWork('sourceIndexReads');
   const local=h.gx>=ox&&h.gy>=oy&&h.gx<ox+WW&&h.gy<oy+WH;
   let candidates=globalSourceCandidates(h.gx,h.gy,h.floor,r.sourceMap?.rules===4?4:3,allowed,local?r.layoutId:undefined);
-  // Check the adjoining field catchments for a known kitchen ingredient. Each
+  // Check the adjoining field catchments for professional inputs. Each
   // survey is a sparse geometry query, not a stock read or a player window load.
   // The live ledger, protection, reservation and route are checked below.
   if (!candidates.length && (allowed !== ordinarySources || h.occupation === 'gardener' && wantedGoods.size)) {
@@ -3190,7 +3216,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     }
   }
   if(h.occupation==='cook' && (!candidates.length || allowed===ordinarySources) && visitBoard())return;
-  if(!candidates.length&&allowed!==ordinarySources){h.lastWorkBlock='Known recipe ingredients absent from bounded catchment; continuing lawful general food gathering.';candidates=globalSourceCandidates(h.gx,h.gy,h.floor,r.sourceMap?.rules===4?4:3,ordinarySources,local?r.layoutId:undefined);}
+  if(!candidates.length&&allowed!==ordinarySources){h.lastWorkBlock='Preferred materials absent from the local catchment; looking for other shared sources.';candidates=globalSourceCandidates(h.gx,h.gy,h.floor,r.sourceMap?.rules===4?4:3,ordinarySources,local?r.layoutId:undefined);}
   if(h.occupation==='cook'&&!candidates.length)h.lastWorkBlock='No known harvestable recipe ingredient in the bounded catchment; no food or station was fabricated.';
   const reports=requestedSourceReports(r,hw,h).filter(p=>allowed.has(p.key)).map(p=>({...p,distance:Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)}));
   candidates=[...reports,...candidates].sort((a,b)=>Number(!SOURCES[a.key].yields.some(([k])=>wantedGoods.has(k)))-Number(!SOURCES[b.key].yields.some(([k])=>wantedGoods.has(k)))||a.distance-b.distance);
@@ -3309,7 +3335,7 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
     // An arrived ingredient is a physical planning event, not a timer. The
     // forager at the store can fetch the next paid bill without waiting for
     // another island-wide discretionary turn.
-    if(h.occupation==='cook' && moved && h.state==='IDLE'){
+    if((h.occupation==='cook'||h.occupation==='salvager') && moved && h.state==='IDLE'){
       h.intent=undefined;
       planHumanOccupation(r,r.humanWorld!,h,now,(tx,ty,floor)=>humanNavigation(r).route(h,{tx,ty,floor}));
     }

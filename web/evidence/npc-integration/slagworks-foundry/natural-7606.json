@@ -1,0 +1,98 @@
+{
+  "startAt": 1794729600000,
+  "seed": 7606,
+  "population": 286,
+  "storeId": "c1w0",
+  "extraction": {
+    "jobId": "hj36i",
+    "workerId": "h3e",
+    "sourceId": "0:7374357",
+    "source": "road_salvage_bale",
+    "gx": 2357,
+    "gy": 1843,
+    "floor": 0,
+    "stockBefore": 3,
+    "stockAfter": 2,
+    "hpBefore": 7,
+    "hpAfter": 6,
+    "toolUid": "s1wo",
+    "durBefore": 297,
+    "durAfter": 296,
+    "at": 1794730001029.5745
+  },
+  "raw": {
+    "at": 1794730025650.6243,
+    "jobId": "hj36i",
+    "sourceId": "0:7374357",
+    "workerId": "h3e",
+    "fromUid": "s36q",
+    "intoUid": "s36q",
+    "qty": 1,
+    "key": "metal_pipe"
+  },
+  "fetch": {
+    "workerId": "h3e",
+    "orderId": "hw37j",
+    "containerId": "c1w0",
+    "into": "c1wm",
+    "receivedUid": "s36q",
+    "inputs": [
+      {
+        "uid": "s36q",
+        "key": "metal_pipe",
+        "qty": 1
+      }
+    ],
+    "at": 1794730026450.6243
+  },
+  "pay": {
+    "workerId": "h3e",
+    "jobId": "j38v",
+    "recipe": "X:pipe-v3",
+    "stationId": "eh",
+    "inputs": [
+      {
+        "uid": "s36q",
+        "key": "metal_pipe",
+        "qty": 1,
+        "containerId": "c1wm"
+      }
+    ],
+    "totalMs": 10000,
+    "at": 1794730062808.7776
+  },
+  "finish": {
+    "workerId": "h3e",
+    "jobId": "j38v",
+    "recipe": "X:pipe-v3",
+    "stationId": "eh",
+    "totalMs": 10000,
+    "outputs": [
+      {
+        "uid": "s398",
+        "key": "refined_iron_ingot",
+        "qty": 1
+      }
+    ],
+    "at": 1794730072808.785
+  },
+  "final": {
+    "at": 1794730107743.8584,
+    "jobId": "j38v",
+    "recipe": "X:pipe-v3",
+    "inputs": [
+      {
+        "uid": "s36q",
+        "key": "metal_pipe",
+        "qty": 1,
+        "containerId": "c1wm"
+      }
+    ],
+    "stationId": "eh",
+    "workerId": "h3e",
+    "fromUid": "s398",
+    "intoUid": "s398",
+    "qty": 1,
+    "key": "refined_iron_ingot"
+  }
+}
