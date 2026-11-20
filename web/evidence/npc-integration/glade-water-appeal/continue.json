@@ -1,0 +1,67 @@
+{
+  "seed": 7606,
+  "run": "run_5va_mwhjny80",
+  "qa": false,
+  "start": 1794913200000,
+  "accepted": {
+    "id": "r269839",
+    "at": 1794913472938.875,
+    "kind": "human.water.appeal",
+    "detail": "{\"requester\":\"h4t\",\"builder\":\"h4s\",\"from\":{\"gx\":1538,\"gy\":1380,\"floor\":0},\"seenBy\":{\"gx\":1536,\"gy\":1385,\"floor\":0},\"job\":\"hw2e2j\"}"
+  },
+  "fetch": [
+    {
+      "id": "r269846",
+      "at": 1794913476938.8765,
+      "kind": "human.work.input",
+      "detail": "{\"workerId\":\"h4s\",\"orderId\":\"hw2e2j\",\"containerId\":\"c25z\",\"into\":\"c26u\",\"inputs\":[{\"uid\":\"s2zx\",\"key\":\"wood\",\"qty\":4}],\"received\":[{\"uid\":\"s2e2n\",\"key\":\"wood\",\"qty\":4}]}"
+    },
+    {
+      "id": "r269847",
+      "at": 1794913476938.8765,
+      "kind": "human.work.input",
+      "detail": "{\"workerId\":\"h4s\",\"orderId\":\"hw2e2j\",\"containerId\":\"c25z\",\"into\":\"c26u\",\"inputs\":[{\"uid\":\"s2zu\",\"key\":\"fiber\",\"qty\":3}],\"received\":[{\"uid\":\"s2e2o\",\"key\":\"fiber\",\"qty\":3}]}"
+    }
+  ],
+  "firstSiteBlock": {
+    "id": "r269861",
+    "at": 1794913487397.0195,
+    "kind": "human.work.blocked",
+    "detail": "h4s:hw2e2j:Rain barrel site obstructed or materials unavailable."
+  },
+  "construction": {
+    "id": "r269932",
+    "at": 1794913534253.1604,
+    "kind": "human.barrel.built",
+    "detail": "{\"actor\":\"h4s\",\"entity\":\"e2e3x\",\"kit\":\"s2e3w\",\"inputs\":[{\"slot\":0,\"uid\":\"s26w\",\"key\":\"wood\",\"qty\":4,\"containerId\":\"c26u\"},{\"slot\":4,\"uid\":\"s2e2n\",\"key\":\"wood\",\"qty\":4,\"containerId\":\"c26u\"},{\"slot\":5,\"uid\":\"s2e2o\",\"key\":\"fiber\",\"qty\":3,\"containerId\":\"c26u\"}],\"twistedRope\":true}"
+  },
+  "originalFreight": [
+    {
+      "at": 1794913497854.1626,
+      "jobId": "hjg0d",
+      "sourceId": "0:5557545",
+      "workerId": "h4s",
+      "fromUid": "sg0e",
+      "intoUid": "s2zx",
+      "qty": 1,
+      "key": "wood"
+    }
+  ],
+  "sameAfterContinue": true,
+  "until": 1794915120000,
+  "water": 12,
+  "requester": {
+    "state": "IDLE",
+    "hp": 95,
+    "thirst": 30.721358404610477
+  },
+  "drinks": [
+    {
+      "id": "r271956",
+      "at": 1794915068538.8757,
+      "kind": "human.barrel.drink",
+      "detail": "h4t:e2e3x:1",
+      "weather": "rain"
+    }
+  ]
+}

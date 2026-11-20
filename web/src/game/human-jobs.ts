@@ -118,6 +118,20 @@ function shellPatchBill(e:Entity|undefined,owner:string,type?:string){
      !Number.isFinite(e.hp)||!Number.isFinite(e.maxHp)||e.hp!<=0||e.hp!>=e.maxHp!)return null;
   const cost=structureRepairCost(e);return cost.length?cost:null;
 }
+function dryWitness(r:RunState,h:HumanRecord,p:HumanRecord|undefined){
+  return !!p && p.community===h.community && p.floor===0 && !p.transit && !['DEAD','EVACUATED','ON_VESSEL'].includes(p.state) &&
+    p.thirst<40 && p.lastWorkBlock===NO_LOCAL_BANK && clearSurvivorSight(r,h,p);
+}
+function catchmentTask(r:RunState,hw:HumanWorld,h:HumanRecord):HumanWorkTask|undefined {
+  const comm=h.community?hw.communities[h.community]:undefined;
+  if(!comm || h.occupation!=='builder' || h.floor!==0 || communityBarrel(r,comm))return;
+  const store=findRunEntity(r,comm.storeEntityId);
+  if(!store?.c || store.owner!==comm.id || !comm.storeContainers.includes(store.c) || (store.hp??0)<=0)return;
+  const held=(k:string)=>count(r,h.inv.packId,k)+count(r,store.c!,k);
+  const twist=held('rope')<1,inputs=barrelBill(twist);
+  if(inputs.some(([k,n])=>held(k)<n))return;
+  const site=rainSite(r,hw,comm);if(site)return {kind:'build',phase:'travel',inputs,catchment:{...site,twist},duration:8000+(RECIPES.deploy_barrel.secs+(twist?RECIPES.rope.secs:0))*1000};
+}
 function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkTask[] {
   const comm = h.community ? hw.communities[h.community] : undefined; if (!comm) return [];
   const entities = allRunEntities(r).filter(e => (e.hp ?? 1) > 0 && (h.occupation==='salvager' && localRecycler(r,comm.poi,e) || comm.workStations.includes(e.id) || e.poi === comm.poi && e.owner === comm.id || h.occupation==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)));
@@ -137,10 +151,8 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
     if(bill.every(([k,n])=>available(k,n)))tasks.push({...start('build',undefined,bill,8000+recipe.secs*1000),rebuildSite:siteId});
     else h.lastWorkBlock=`Need a packed ${site.type} or its materials to rebuild.`;
   }
-  if(h.occupation==='builder' && h.floor===0 && warehouse?.owner===comm.id && !collapsed && !communityBarrel(r,comm) &&
-     comm.memberIds.some(id=>{const p=hw.people[id];return p?.floor===0 && p.state!=='DEAD' && p.thirst<40 && p.lastWorkBlock===NO_LOCAL_BANK && clearSurvivorSight(r,h,p);})){
-    const twist=!available('rope',1),bill=barrelBill(twist);
-    if(bill.every(([k,n])=>available(k,n))){const site=rainSite(r,hw,comm);if(site)tasks.push({...start('build',undefined,bill,8000+(RECIPES.deploy_barrel.secs+(twist?RECIPES.rope.secs:0))*1000),catchment:{...site,twist}});}
+  if(h.occupation==='builder' && comm.memberIds.some(id=>dryWitness(r,h,hw.people[id]))){
+    const task=catchmentTask(r,hw,h);if(task)tasks.push(task);
   }
   const preparedKeys=new Set((h.knownRecipes??[]).flatMap(k=>RECIPES[k]?[RECIPES[k].out]:[]));
   const prepared=stores.reduce((n,cid)=>n+C(r,cid).slots.reduce((q,s)=>q+(s&&preparedKeys.has(s.key)?s.qty:0),0),0);
@@ -294,28 +306,44 @@ export function dispatchMedicalResponse(r:RunState,hw:HumanWorld,p:HumanRecord,n
   }
   p.lastWorkBlock=hasDose?'No certified medical route yet.':witnessed?'No available community responder with medicine.':'No available responder has seen the casualty.';
 }
+/** A dry resident may ask on the physical walk to their own warehouse. A
+ * suspended freight lot stays in custody; only an idle, fit eyewitness may
+ * accept, using exactly the ordinary paid construction task and route. */
+export function answerWaterAppeal(r:RunState,hw:HumanWorld,p:HumanRecord,now:number,route:(h:HumanRecord,...dest:[number,number,number])=>ReturnType<Router>){
+  const c=p.community?hw.communities[p.community]:undefined;
+  if(!c || p.thirst>=25 || p.transit || p.following || !['IDLE','MOVING'].includes(p.state) || p.lastWorkBlock!==NO_LOCAL_BANK || communityBarrel(r,c))return false;
+  if(c.memberIds.some(id=>hw.people[id]?.intent?.work?.catchment))return false;
+  for(const id of c.memberIds){const h=hw.people[id];
+    if(!h || h===p || h.occupation!=='builder' || h.state!=='IDLE' || h.following || h.transit || h.motion || h.intent || (h.harvestJob&&!h.deliveryWait) ||
+       h.hp<30 || h.stamina<12 || h.hunger<25 || h.thirst<25 || !dryWitness(r,h,p))continue;
+    const task=catchmentTask(r,hw,h);if(!task)continue;
+    if(!startCandidate(r,hw,h,now,(...dest)=>route(h,...dest),task))continue;
+    receipt(r,now,'human.water.appeal',JSON.stringify({requester:p.actorId,builder:id,from:patientTile(p),seenBy:patientTile(h),job:h.intent!.intentId}));return true;
+  }
+  return false;
+}
+function startCandidate(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,route:Router,candidate:HumanWorkTask){
+  const needs=candidate.phase==='fetch' || candidate.inputs.some(([k,q])=>count(r,h.inv.packId,k)<q);
+  candidate.phase=needs?'fetch':candidate.machineJobId?(candidate.phase==='machine'?'machine':'collect'):'travel';
+  const dest=target(r,hw,h,candidate); if(!dest)return false;
+  const path=route(...dest);
+  // A funded repair can require several bounded searches just to reach
+  // the store. Keep its target on the committed retry clock, not behind
+  // another full island census. No path means no travel or work yet.
+  const pending=!path && (candidate.patchType || candidate.kind==='repair_item' || candidate.kind==='engineer' || candidate.kind==='garden') && h.routeSearch?.status==='PENDING_SEARCH' &&
+    h.routeSearch.target===`${dest[2]}:${dest[0]},${dest[1]}`;
+  if(!path && !pending)return false;
+  if(candidate.patchType&&!needs){const payment=materialPayment(pack(r,h),candidate.inputs);if(!payment)return false;candidate.patchLots=payment.map(l=>l.uid);}
+  const task=candidate;
+  h.intent={intentId:uid(r,'hw'),actorId:h.actorId,kind:'work',target:`occupation:${task.kind}`,preconditions:['community permission','physical access','canonical paid bill'],reserved:[],startAt:now,dueAt:now,route:path??[],work:task};
+  if(!path){h.state='IDLE';h.nextThinkAt=now+3000;return true;}
+  h.state=path.length?'MOVING':'WORKING'; h.intent.dueAt=now+(task.phase==='fetch'?800:task.duration); return true;
+}
 export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, route: Router): boolean {
   if (h.following || !h.community) return false;
-  let task=h.intent?.work;
+  const task=h.intent?.work;
   if (!task) {
-    for (const candidate of taskCandidates(r,hw,h)) {
-      const needs=candidate.phase==='fetch' || candidate.inputs.some(([k,q])=>count(r,h.inv.packId,k)<q);
-      candidate.phase=needs?'fetch':candidate.machineJobId?(candidate.phase==='machine'?'machine':'collect'):'travel';
-      const dest=target(r,hw,h,candidate); if(!dest)continue;
-      const path=route(...dest);
-      // A funded repair can require several bounded searches just to reach
-      // the store. Keep its target on the committed retry clock, not behind
-      // another full island census. No path means no travel or work yet.
-      const pending=!path && (candidate.patchType || candidate.kind==='repair_item' || candidate.kind==='engineer' || candidate.kind==='garden') && h.routeSearch?.status==='PENDING_SEARCH' &&
-        h.routeSearch.target===`${dest[2]}:${dest[0]},${dest[1]}`;
-      if(!path && !pending)continue;
-      if(candidate.patchType&&!needs){const payment=materialPayment(pack(r,h),candidate.inputs);if(!payment)continue;candidate.patchLots=payment.map(l=>l.uid);}
-      task=candidate;
-      h.intent={intentId:uid(r,'hw'),actorId:h.actorId,kind:'work',target:`occupation:${task.kind}`,preconditions:['community permission','physical access','canonical paid bill'],reserved:[],startAt:now,dueAt:now,route:path??[],work:task};
-      if(!path){h.state='IDLE';h.nextThinkAt=now+3000;return true;}
-      h.state=path.length?'MOVING':'WORKING'; h.intent.dueAt=now+(task.phase==='fetch'?800:task.duration); return true;
-    }
-    return false;
+    return taskCandidates(r,hw,h).some(candidate=>startCandidate(r,hw,h,now,route,candidate));
   }
   if (!['travel','fetch','machine','collect'].includes(task.phase)) return false;
   const dest=target(r,hw,h,task); if(!dest){
@@ -326,7 +354,7 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
     h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000;return false;
   }
   const path=route(...dest); if(!path){
-    if((h.intent?.watchResponse||task.patchType||task.kind==='repair_item'||task.kind==='engineer'||task.kind==='garden'||task.kind==='medical') && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
+    if((h.intent?.watchResponse||task.patchType||task.kind==='repair_item'||task.kind==='engineer'||task.kind==='garden'||task.kind==='medical'||task.catchment) && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
       h.lastWorkBlock='No confirmed work route; retaining carried supplies.';
       receipt(r,now,'human.work.blocked',`${h.actorId}:${h.intent!.intentId}:${h.lastWorkBlock}`);
       h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+30000;

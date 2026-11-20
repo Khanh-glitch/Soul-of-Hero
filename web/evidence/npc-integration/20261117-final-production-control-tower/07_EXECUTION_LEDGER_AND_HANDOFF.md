@@ -568,3 +568,9 @@ Seed 7606, bản lưu h24 cũ, vắng 3 phút: [đối chứng](../controlled-re
 ### Nghề y: phân biệt lấy mẫu theo phút và chạy đồng hồ sản phẩm
 
 Bộ hồi quy cứu hộ ban đầu đạt 28/29: phép quét `stepHumans` một lần mỗi phút không ghi nhận nghề y. Giữ nguyên các mẫu sản xuất 6 giờ và mẫu Cinder 12 giờ. Nạp lại đúng save mở đầu Cinder, cho `settle` xử lý các hạn di chuyển/chữa trị như khi Continue. Không tạo người bị nạn hay cấp thuốc. Biên nhận `r3907`: y sĩ `h50` dùng **một** băng `s27w` từ túi `c27t`, việc `hw3gw`, tại (1897,1264,tầng 0); `h4w` từ 1 → 31 HP, có biên nhận chữa cùng thời điểm. Ca `npc-occupation-coverage.test.ts` chạy lại riêng đạt 1/1. Đây là đối chiếu cơ chế nghề; không thay cho việc Creator xem đủ tám nghề trên giao diện hay chứng minh sống tới h336.
+
+### Glade h51: trợ giúp chỉ sau khi nhìn thấy, uống chỉ sau khi có mưa
+
+[Đối chứng, biên nhận và lệnh phát lại](../glade-water-appeal/README.md). Thợ xây không thấy người khát ở chỗ ban đầu; không mở rộng tầm nhìn. Khi không còn cách tự uống tại chỗ, y sĩ đi bộ về kho quen thuộc. +4′33″ gặp thợ xây trên đường. Thợ lấy 4 gỗ + 3 sợi từ chính kho và trả thêm 4 gỗ từ túi; ô xây đầu tiên bị chặn. Không mất vật liệu; gỗ `sg0e` của đơn khác giao đúng một lần. Dựng một thùng rỗng, +31′09″ chính y sĩ uống khi mưa đến. Save/Continue giữa lúc thợ đi lấy vật liệu khớp chạy liên tục ở phút 12. Không áp dụng kết quả này cho nơi đã mất thợ hoặc thiếu vật liệu.
+
+Hai kiểm tra TS và build production đạt. Hồi quy liên quan 28 đạt, 1 bỏ qua (Greywater yêu cầu save trước sửa lối vào); gồm ca tự nhiên Glade, Fishcamp, Hook, Tidecamp. Đã chạy lại riêng Glade 2/2 với biên nhận. Đối chiếu riêng h51→h61 dùng bước giờ giống nhau ở hai bản; chỉ dùng kết quả khi cả hai tới h61. Chưa đạt cổng h264/h312/h336, chưa xác nhận phát hành.

@@ -40,7 +40,7 @@ import {owned, coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, add
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import {communityBarrel,drinkCommunityRain,NO_LOCAL_BANK} from './human-rainwater';
-import { isGuardPost, humanCanUseEntity, humanEntityTile, executeHumanWork, dispatchMedicalResponse, needsFollowup, planHumanOccupation, type HumanWorkTask } from './human-jobs';
+import { isGuardPost, humanCanUseEntity, humanEntityTile, executeHumanWork, answerWaterAppeal, dispatchMedicalResponse, needsFollowup, planHumanOccupation, type HumanWorkTask } from './human-jobs';
 import { withHumanNavigationRead, humanNavigation } from './human-navigation';
 import { humanShelter, humanShelterContext, type HumanShelterContext } from './human-shelter';
 import {consolidatePantry} from './human-pantry';
@@ -3145,6 +3145,21 @@ function planHumanWater(r:RunState,h:HumanRecord,now:number,occupied:Set<string>
  }
  h.lastWorkBlock=NO_LOCAL_BANK;return false;
 }
+// After pack, pantry, bank and local forage have failed, a severely thirsty
+// resident can walk to the one warehouse they know. No distant builder lookup
+// to choose the destination, no unseen distress signal or remote withdrawal.
+function seekWaterHelp(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occupied:Set<string>){
+  if(h.thirst>=25 || h.floor!==0 || h.lastWorkBlock!==NO_LOCAL_BANK || h.transit || !h.community)return false;
+  const c=hw.communities[h.community],store=findRunEntity(r,c?.storeEntityId);
+  if(!c || communityBarrel(r,c) || !store?.c || store.owner!==c.id || !c.storeContainers.includes(store.c) || (store.hp??0)<=0 || (store.floor??0)!==h.floor)return false;
+  if(humanPack(r,h).slots.some(s=>canServe(s,'water')) || r.custody[store.c].slots.some(s=>canServe(s,'water')) && reachableHumanStores(r,hw,h).length)return false;
+  const route=(builder:HumanRecord,tx:number,ty:number,floor:number)=>humanNavigation(r,occupied,true).route(builder,{tx,ty,floor});
+  const accepted=answerWaterAppeal(r,hw,h,now,route);
+  const [tx,ty]=humanEntityTile(r,store);
+  if(Math.abs(tx-h.gx)+Math.abs(ty-h.gy)<=1)return accepted;
+  const path=route(h,tx,ty,h.floor);if(!path?.length)return accepted;
+  h.intent={intentId:uid(r,'hw'),kind:'move',actorId:h.actorId,target:`water-help:${store.id}`,startAt:now,dueAt:now,route:path,reserved:[],preconditions:['unable to find local water','seek help at own warehouse']};h.state='MOVING';return true;
+}
 function commitHumanWater(r:RunState,h:HumanRecord,now:number):boolean {
  if(h.intent?.target?.startsWith('barrel:')){
    if(now<h.intent.dueAt)return false;
@@ -3196,6 +3211,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   }
   if(planHumanWater(r,h,now,occupied))return;
   if(planPersonalForage(r,h,now,occupied))return;
+  if(seekWaterHelp(r,hw,h,now,occupied))return;
   if (h.hp < 30 || h.stamina < 12 || h.hunger < 25 || h.thirst < 25) return;
   if(h.reportIncident && reportToGuard(r,hw,h,now,occupied))return;
   if(h.recoveryLead && pursueProperty(r,hw,h,now,occupied))return;
@@ -3721,6 +3737,9 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
           const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
           h.gx = h.motion.toGx; h.gy = h.motion.toGy; h.floor = h.motion.toFloor ?? h.floor; h.motion = undefined; moveRoute.shift();
           h.lastSimAt = now; occupied.add(humanCellKey(h.floor, h.gx, h.gy));
+          if(moveIntent.target?.startsWith('water-help:') && h.community && moveIntent.target===`water-help:${hw.communities[h.community]?.storeEntityId}`){
+            answerWaterAppeal(r,hw,h,now,(builder,tx,ty,floor)=>humanNavigation(r,occupied,true).route(builder,{tx,ty,floor}));
+          }
           if (!moveRoute.length) {
             if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.nextThinkAt = now; }
             else if (moveIntent.kind === 'follow' || moveIntent.delivery || returningHome(moveIntent)) { h.state = 'IDLE'; moveRoute.length = 0; }

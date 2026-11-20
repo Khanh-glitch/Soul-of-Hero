@@ -1,0 +1,168 @@
+{
+  "revision": "34b7c8a",
+  "saveSHA256": "903ce9ef0150115ffae25e35c6325d9eaf91a489169844f2827c6ac0ce8d2d22",
+  "scope": "Probe on a separate loaded copy; trace on a fresh load using real settle without forced jobs, weather or state edits.",
+  "preflight": {
+    "sight": false,
+    "site": {
+      "gx": 1540,
+      "gy": 1394
+    },
+    "store": 60,
+    "route": 14,
+    "eligible": []
+  },
+  "trace": [
+    {
+      "sec": 600,
+      "builder": [
+        1536,
+        1385,
+        "IDLE",
+        40.047818229444175,
+        null,
+        "c25z",
+        9007199254740991
+      ],
+      "patient": [
+        1534,
+        1380,
+        "IDLE",
+        8.019709100643906,
+        "I need water; no reachable potable bank was found in my local catchment."
+      ],
+      "sight": false,
+      "rows": []
+    },
+    {
+      "sec": 640,
+      "builder": [
+        1536,
+        1385,
+        "IDLE",
+        39.97837378499969,
+        null,
+        "c25z",
+        1794913827543.301
+      ],
+      "patient": [
+        1534,
+        1380,
+        "IDLE",
+        7.950264656199463,
+        "I need water; no reachable potable bank was found in my local catchment."
+      ],
+      "sight": false,
+      "rows": []
+    },
+    {
+      "sec": 700,
+      "builder": [
+        1536,
+        1385,
+        "IDLE",
+        43.87316545166637,
+        null,
+        "c25z",
+        1794913852424.5889
+      ],
+      "patient": [
+        1534,
+        1380,
+        "IDLE",
+        7.846097989532802,
+        "I need water; no reachable potable bank was found in my local catchment."
+      ],
+      "sight": false,
+      "rows": [
+        {
+          "id": "r270363",
+          "at": 1794913848524.5889,
+          "kind": "human.work",
+          "detail": "h4s:strike:bush@1536,1384"
+        },
+        {
+          "id": "r270366",
+          "at": 1794913849424.5889,
+          "kind": "human.harvest",
+          "detail": "h4s:bush@1536,1384:-1"
+        },
+        {
+          "id": "r270367",
+          "at": 1794913849424.5889,
+          "kind": "human.drink",
+          "detail": "h4s:berries"
+        },
+        {
+          "id": "r270368",
+          "at": 1794913849424.5889,
+          "kind": "human.consume",
+          "detail": "{\"actorId\":\"h4s\",\"uid\":\"s2e9k\",\"key\":\"berries\",\"containerId\":\"c26u\",\"qty\":1}"
+        }
+      ]
+    },
+    {
+      "sec": 900,
+      "builder": [
+        1536,
+        1385,
+        "IDLE",
+        43.52594322944404,
+        null,
+        "c25z",
+        9007199254740991
+      ],
+      "patient": [
+        1534,
+        1380,
+        "IDLE",
+        7.498875767310679,
+        "I need water; no reachable potable bank was found in my local catchment."
+      ],
+      "sight": false,
+      "rows": []
+    },
+    {
+      "sec": 1200,
+      "builder": [
+        1536,
+        1385,
+        "IDLE",
+        43.0051098961109,
+        null,
+        "c25z",
+        9007199254740991
+      ],
+      "patient": [
+        1534,
+        1380,
+        "IDLE",
+        10.977391392310794,
+        "I need water; no reachable potable bank was found in my local catchment."
+      ],
+      "sight": false,
+      "rows": []
+    },
+    {
+      "sec": 1800,
+      "builder": [
+        1536,
+        1385,
+        "IDLE",
+        41.96344322944339,
+        null,
+        "c25z",
+        9007199254740991
+      ],
+      "patient": [
+        1534,
+        1380,
+        "IDLE",
+        9.935724725644498,
+        "I need water; no reachable potable bank was found in my local catchment."
+      ],
+      "sight": false,
+      "rows": []
+    }
+  ]
+}
