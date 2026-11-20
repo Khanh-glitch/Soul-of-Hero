@@ -1,0 +1,6 @@
+{
+  "schema": "soh-pixelfx-distribution-v1",
+  "distribution": "embedded-only",
+  "description": "The pilot and owner effects ship inside this build. No external Foundry atlas is installed at this URL.",
+  "effects": []
+}

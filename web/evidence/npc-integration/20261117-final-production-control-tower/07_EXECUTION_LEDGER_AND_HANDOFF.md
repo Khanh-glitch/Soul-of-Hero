@@ -453,3 +453,6 @@ Nguồn `eb04deb` tự hái theo T1 đã phủ định **giả định chẩn đ
 
 ### T9 — tiếp tục thật tại eb04deb sau timeout (không lặp full suite)
 Shard 3 trả 56 file/248 pass/58 fail/8 pending; với shard 1 tổng đã có JSON 112/225 file, 608/86/40 assertion. Shard 0,2 hết watchdog; singleton được lưu riêng, không coi là xanh. `regression-serial.mjs` kiểm SHA+fingerprint và tận dụng shard đầy đủ, checkpoint từng file. `regression-finish.mjs` chỉ điều tra baseline cho lỗi chưa khớp, `regression-reconcile.mjs` không biến bỏ chọn, suite lỗi hoặc JSON thiếu thành PASS. `node --test scripts/regression-reconcile.test.mjs` qua cả missing/timeout/differential/collection. Đã khởi động phục hồi tự nối tiếp và so bản gốc; đợi dữ liệu chứ không cấp verdict trước. 43 dấu lỗi khớp baseline ở mốc này.
+
+### Khắc phục lỗi HTTP của lượt F (sau eb04deb)
+Không hạ chất lượng, không bỏ VFX, không giả full pack. Build mặc định có descriptor khai đúng chế độ embedded; `?pfxbase=` vẫn nhận manifest ngoài, file offline vẫn không fetch. Hai test pass; production build rồi hai process Chromium 640×360 với Save & quit/Continue: run `run_t1dxhr_mwobewdy`, đóng 90.056 s, chênh save 150.696 s; 0 page error / 0 HTTP lỗi đã ghi. Dữ liệu trong `../post-t9-hardening/pixelfx/`. Không sửa số liệu lịch sử của lượt F tại eb04deb.
