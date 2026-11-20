@@ -3944,8 +3944,6 @@ function resolveGardenMapCell(r: RunState, e: Entity): {
 export function buildEntityBlockMap(r: RunState, entities: Entity[]): Map<string, number> {
   const map = new Map<string, number>();
   for (const o of entities) {
-    const op = entityGlobalCoords(r, o);
-    const key = `${op.floor}:${op.gtx},${op.gty}`;
     let c = 0;
     if (o.kind === 'struct') {
       const sd = STRUCTS[o.type!];
@@ -3958,6 +3956,8 @@ export function buildEntityBlockMap(r: RunState, entities: Entity[]): Map<string
       c = 3;
     }
     if (c !== 0) {
+      const op = entityGlobalCoords(r, o);
+      const key = `${op.floor}:${op.gtx},${op.gty}`;
       const prev = map.get(key) ?? 0;
       if (c === 3 || prev === 0) map.set(key, c);
     }

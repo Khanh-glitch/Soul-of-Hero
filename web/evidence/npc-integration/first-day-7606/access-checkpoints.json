@@ -1,0 +1,1384 @@
+{
+  "seed": 7606,
+  "method": "Warm samples through h22, cold through h24 after access repair. Elapsed ms is for the sampled hour only. h22 is NOT a 24h terminal result.",
+  "warm": [
+    {
+      "hour": 1,
+      "state": {
+        "clock": 1794733200000,
+        "all": {
+          "count": 286,
+          "states": {
+            "IDLE": 261,
+            "DOWNED": 22,
+            "WORKING": 3
+          },
+          "active": 264,
+          "hungry": 0,
+          "thirsty": 0
+        },
+        "playerDead": false,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "IDLE": 10
+            },
+            "active": 10,
+            "hungry": 0,
+            "thirsty": 0,
+            "stock": [
+              [
+                "s19w",
+                "berries",
+                18
+              ],
+              [
+                "s19x",
+                "charcoal",
+                8
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                1
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ]
+            ],
+            "delivered": {
+              "mushroom": 1,
+              "herb": 1
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "IDLE": 9
+            },
+            "active": 9,
+            "hungry": 0,
+            "thirsty": 0,
+            "stock": [
+              [
+                "s160",
+                "berries",
+                22
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                12
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 13,
+              "berries": 6
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "e226ec5e3d569597dca83caaca2ba5cccbad8d5722fc4005216d02f4e6856f4e",
+          "jobs": "6bb4d351f63610c748a16f6fe2e6a0d334144ef60f66b582c3f3bf045f492460",
+          "custody": "bd3f880c5ba14ca1e298b94c2315953295e5a8fbee8c4ea9709db69b2771254a",
+          "communities": "90af0b9338ff4571f8f7ffbb9412a507699050790dcd0e8fa7d576682e37ecf0"
+        }
+      },
+      "elapsedMs": 228880.246399
+    },
+    {
+      "hour": 8,
+      "state": {
+        "clock": 1794758400000,
+        "all": {
+          "count": 286,
+          "states": {
+            "IDLE": 254,
+            "DOWNED": 25,
+            "WORKING": 7
+          },
+          "active": 261,
+          "hungry": 0,
+          "thirsty": 24
+        },
+        "playerDead": false,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "IDLE": 10
+            },
+            "active": 10,
+            "hungry": 0,
+            "thirsty": 3,
+            "stock": [
+              [
+                "s19w",
+                "berries",
+                17
+              ],
+              [
+                "s19x",
+                "charcoal",
+                8
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                1
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s34o",
+                "fiber",
+                4
+              ],
+              [
+                "s34q",
+                "fiber",
+                1
+              ],
+              [
+                "sad8",
+                "wood",
+                7
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                6
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ],
+              [
+                "sad9",
+                "crop",
+                12
+              ],
+              [
+                "sada",
+                "seed_sunroot",
+                1
+              ]
+            ],
+            "delivered": {
+              "mushroom": 1,
+              "herb": 1,
+              "fiber": 5,
+              "wood": 7,
+              "crop": 4,
+              "seed_sunroot": 4
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "IDLE": 9
+            },
+            "active": 9,
+            "hungry": 0,
+            "thirsty": 4,
+            "stock": [
+              [
+                "s160",
+                "berries",
+                24
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                20
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 21,
+              "berries": 9
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "a3ba5d913f8d6129dc5069e0a0fe0bf805ed5e48fa96c58e874ad2acf9145110",
+          "jobs": "af932c7380badb89eaf1a194147cec60faa5b3b7bf5fcc137a3ff1a6008c5bc3",
+          "custody": "0b05331d3528a586963f60d11477e678de860c2c5b1e8bd497aaa0a64b444afc",
+          "communities": "4b40d6b6070cab670e5012ebd1ce12f6392063a8a5ac3942092dc1ce7017e8b8"
+        }
+      },
+      "elapsedMs": 77418.74028399994
+    },
+    {
+      "hour": 9,
+      "state": {
+        "clock": 1794762000000,
+        "all": {
+          "count": 286,
+          "states": {
+            "IDLE": 258,
+            "DOWNED": 25,
+            "WORKING": 3
+          },
+          "active": 261,
+          "hungry": 0,
+          "thirsty": 26
+        },
+        "playerDead": false,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "IDLE": 10
+            },
+            "active": 10,
+            "hungry": 0,
+            "thirsty": 3,
+            "stock": [
+              [
+                "s19w",
+                "berries",
+                17
+              ],
+              [
+                "s19x",
+                "charcoal",
+                8
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                1
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s34o",
+                "fiber",
+                4
+              ],
+              [
+                "s34q",
+                "fiber",
+                1
+              ],
+              [
+                "sad8",
+                "wood",
+                7
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                6
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ],
+              [
+                "sad9",
+                "crop",
+                12
+              ],
+              [
+                "sada",
+                "seed_sunroot",
+                1
+              ]
+            ],
+            "delivered": {
+              "mushroom": 1,
+              "herb": 1,
+              "fiber": 5,
+              "wood": 7,
+              "crop": 4,
+              "seed_sunroot": 4
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "IDLE": 9
+            },
+            "active": 9,
+            "hungry": 0,
+            "thirsty": 2,
+            "stock": [
+              [
+                "s160",
+                "berries",
+                15
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                20
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 21,
+              "berries": 9
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "5752f4b5b3c784fcd8dd4d8147ff2324cef816321f0f32acdce06828a5cd2d6e",
+          "jobs": "0fcd1a7bc0b49c7063d7f005f726e2b6126769ae43d80ae932fb52ef45379cae",
+          "custody": "27e1a2d71a486c14873a860afcb905d7f90d683afb3b62bd4725abd252eb7b22",
+          "communities": "befb5166edd666191a917c61694618af5061fb2f03e662512643004731cb81f2"
+        }
+      },
+      "elapsedMs": 74320.98851599998
+    },
+    {
+      "hour": 22,
+      "state": {
+        "clock": 1794808800000,
+        "all": {
+          "count": 286,
+          "states": {
+            "DEAD": 145,
+            "IDLE": 136,
+            "WORKING": 2,
+            "MOVING": 1,
+            "DOWNED": 2
+          },
+          "active": 139,
+          "hungry": 128,
+          "thirsty": 26
+        },
+        "playerDead": true,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "WORKING": 1,
+              "DEAD": 2,
+              "MOVING": 1,
+              "IDLE": 5,
+              "DOWNED": 1
+            },
+            "active": 7,
+            "hungry": 0,
+            "thirsty": 0,
+            "stock": [
+              [
+                "smf2",
+                "grilled_mushroom",
+                1
+              ],
+              [
+                "s19x",
+                "charcoal",
+                8
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                1
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s34o",
+                "fiber",
+                16
+              ],
+              [
+                "s34q",
+                "fiber",
+                1
+              ],
+              [
+                "sad8",
+                "wood",
+                28
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                9
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ],
+              [
+                "sad9",
+                "crop",
+                9
+              ],
+              [
+                "sada",
+                "seed_sunroot",
+                1
+              ]
+            ],
+            "delivered": {
+              "mushroom": 4,
+              "herb": 1,
+              "fiber": 17,
+              "wood": 28,
+              "crop": 16,
+              "seed_sunroot": 16,
+              "berries": 4,
+              "grilled_mushroom": 3
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "DEAD": 5,
+              "IDLE": 4
+            },
+            "active": 4,
+            "hungry": 4,
+            "thirsty": 1,
+            "stock": [
+              [
+                "s34c",
+                "wood",
+                1
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                21
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 22,
+              "berries": 9,
+              "wood": 1
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "5b48911b826a450327c82ac100d05660bb5f6a79538263d9b0949445e0ec680d",
+          "jobs": "78a27f44fed4686e7a0bcbad27dc6334f12518d0c3be271bef39363da6167f54",
+          "custody": "6276c3a7afc47570416b8993312f35761c48056deeea0dae4a18137bafc8c5f4",
+          "communities": "2f8a62faaea53f291e6568ce61af631a8e4d5d0967c8c256d28f54055b1d1d69"
+        }
+      },
+      "elapsedMs": 18186.48878600006
+    }
+  ],
+  "cold": [
+    {
+      "hour": 9,
+      "state": {
+        "clock": 1794762000000,
+        "all": {
+          "count": 286,
+          "states": {
+            "IDLE": 259,
+            "DOWNED": 25,
+            "WORKING": 2
+          },
+          "active": 261,
+          "hungry": 0,
+          "thirsty": 26
+        },
+        "playerDead": false,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "IDLE": 10
+            },
+            "active": 10,
+            "hungry": 0,
+            "thirsty": 3,
+            "stock": [
+              [
+                "s19w",
+                "berries",
+                17
+              ],
+              [
+                "s19x",
+                "charcoal",
+                8
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                1
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s34o",
+                "fiber",
+                4
+              ],
+              [
+                "s34q",
+                "fiber",
+                1
+              ],
+              [
+                "sad8",
+                "wood",
+                7
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                6
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ],
+              [
+                "sad9",
+                "crop",
+                12
+              ],
+              [
+                "sada",
+                "seed_sunroot",
+                1
+              ]
+            ],
+            "delivered": {
+              "mushroom": 1,
+              "herb": 1,
+              "fiber": 5,
+              "wood": 7,
+              "crop": 4,
+              "seed_sunroot": 4
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "IDLE": 9
+            },
+            "active": 9,
+            "hungry": 0,
+            "thirsty": 2,
+            "stock": [
+              [
+                "s160",
+                "berries",
+                15
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                20
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 21,
+              "berries": 9
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "76aa034cdeae473ed4d6e14b0c458f0dececb734c6274f4a02b7d7862bac4bc5",
+          "jobs": "56ef7959e34a3d07e22a7e6dfa5f7bd2aa0adb6eb596e4bbacd76b1cb4129340",
+          "custody": "914b03462ef6792fd980b38cd34f6245b5a548a203870100dc2612f9f9a18409",
+          "communities": "e323ebc357473a8a520c25dac591fcecd045f13ccabba0fd238ecde7e9ad895c"
+        }
+      },
+      "elapsedMs": 126752.36188499999
+    },
+    {
+      "hour": 22,
+      "state": {
+        "clock": 1794808800000,
+        "all": {
+          "count": 286,
+          "states": {
+            "DEAD": 144,
+            "IDLE": 137,
+            "DOWNED": 4,
+            "WORKING": 1
+          },
+          "active": 138,
+          "hungry": 134,
+          "thirsty": 27
+        },
+        "playerDead": true,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "IDLE": 8,
+              "DEAD": 2
+            },
+            "active": 8,
+            "hungry": 8,
+            "thirsty": 2,
+            "stock": [
+              [
+                "s19x",
+                "charcoal",
+                7
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                3
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s34o",
+                "fiber",
+                7
+              ],
+              [
+                "s34q",
+                "fiber",
+                1
+              ],
+              [
+                "sad8",
+                "wood",
+                8
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                9
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ],
+              [
+                "sada",
+                "seed_sunroot",
+                1
+              ]
+            ],
+            "delivered": {
+              "mushroom": 5,
+              "herb": 3,
+              "fiber": 8,
+              "wood": 8,
+              "crop": 9,
+              "seed_sunroot": 9,
+              "grilled_mushroom": 3,
+              "berries": 4
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "DEAD": 5,
+              "IDLE": 4
+            },
+            "active": 4,
+            "hungry": 4,
+            "thirsty": 0,
+            "stock": [
+              [
+                "s34c",
+                "wood",
+                1
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                21
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 22,
+              "berries": 9,
+              "wood": 1
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "cfb03495f58cbc4a67139e28951a40fecf1cd4ddab971d36720d99ed29304aa4",
+          "jobs": "4d12bb01d6854f851332b34230932e9372c40179414573f702c046455c992e43",
+          "custody": "6c7668284153bcfd7ea590c6b1550705d1fbc73f08107fce6fcaf579cb1e6da6",
+          "communities": "a94064639765b5476bcba454b0e7b47cba4e9d530634c959b93ad514a8197e77"
+        }
+      },
+      "elapsedMs": 44518.457962000044
+    },
+    {
+      "hour": 24,
+      "state": {
+        "clock": 1794816000000,
+        "all": {
+          "count": 286,
+          "states": {
+            "DEAD": 214,
+            "IDLE": 66,
+            "DOWNED": 2,
+            "WORKING": 4
+          },
+          "active": 70,
+          "hungry": 69,
+          "thirsty": 12
+        },
+        "playerDead": true,
+        "regions": [
+          {
+            "id": "com:po_hook",
+            "count": 10,
+            "states": {
+              "DEAD": 4,
+              "IDLE": 6
+            },
+            "active": 6,
+            "hungry": 6,
+            "thirsty": 1,
+            "stock": [
+              [
+                "s19x",
+                "charcoal",
+                7
+              ],
+              [
+                "s19y",
+                "spares",
+                5
+              ],
+              [
+                "s2uk",
+                "herb",
+                3
+              ],
+              [
+                "s34n",
+                "cloth",
+                1
+              ],
+              [
+                "s34o",
+                "fiber",
+                7
+              ],
+              [
+                "s34q",
+                "fiber",
+                1
+              ],
+              [
+                "sad8",
+                "wood",
+                8
+              ],
+              [
+                "s1a4",
+                "seed_sunroot",
+                9
+              ],
+              [
+                "s1a5",
+                "herb",
+                3
+              ],
+              [
+                "sada",
+                "seed_sunroot",
+                1
+              ]
+            ],
+            "delivered": {
+              "mushroom": 5,
+              "herb": 3,
+              "fiber": 8,
+              "wood": 8,
+              "crop": 9,
+              "seed_sunroot": 9,
+              "grilled_mushroom": 3,
+              "berries": 4
+            }
+          },
+          {
+            "id": "com:po_greywater",
+            "count": 9,
+            "states": {
+              "DEAD": 9
+            },
+            "active": 0,
+            "hungry": 0,
+            "thirsty": 0,
+            "stock": [
+              [
+                "s34c",
+                "wood",
+                1
+              ],
+              [
+                "s161",
+                "charcoal",
+                8
+              ],
+              [
+                "s162",
+                "spares",
+                7
+              ],
+              [
+                "s2u0",
+                "fiber",
+                21
+              ],
+              [
+                "s341",
+                "cloth",
+                1
+              ],
+              [
+                "s2u4",
+                "spares",
+                2
+              ],
+              [
+                "s34m",
+                "fiber",
+                1
+              ],
+              [
+                "s167",
+                "seed_sunroot",
+                5
+              ],
+              [
+                "s168",
+                "herb",
+                3
+              ],
+              [
+                "s169",
+                "bandage",
+                2
+              ]
+            ],
+            "delivered": {
+              "spares": 2,
+              "fiber": 22,
+              "berries": 9,
+              "wood": 1
+            }
+          }
+        ],
+        "digests": {
+          "ids": "a15dcbb3f53c0e727d074b9c2f6dde319eb1ef02cf4466f0483e741dd1c9f1c4",
+          "people": "70a76035fbb85efe29f5066999e5a0a0f15be4f5ed2f68c018e4131d50e9c3cb",
+          "jobs": "71eb858528a91578e3acb267f74c025ca2169cdb1afb6ef1225eded05c3cb8c4",
+          "custody": "99ee281e7159845031ec68c0b30d04b961d59ca26712b18e6545fa19cfb8cae2",
+          "communities": "91495d1af600a0beaa06a96bd7cd668c7179e16371a565583e3b18b3e4f3dc91"
+        }
+      },
+      "elapsedMs": 37264.4479860001
+    }
+  ],
+  "coldTotalSettleMs": 1072351.300865,
+  "warmTotalThrough22Ms": 1381493.1468830002,
+  "coldAt24": {
+    "hook": [
+      {
+        "actorId": "hi",
+        "occupation": "guard",
+        "gx": 2584,
+        "gy": 654,
+        "state": "DEAD",
+        "hunger": 29.405898348861427,
+        "thirst": 0
+      },
+      {
+        "actorId": "hj",
+        "occupation": "medic",
+        "gx": 2588,
+        "gy": 642,
+        "state": "DEAD",
+        "hunger": 26.999971494830508,
+        "thirst": 0
+      },
+      {
+        "actorId": "hk",
+        "occupation": "mechanic",
+        "gx": 2589,
+        "gy": 655,
+        "state": "IDLE",
+        "hunger": 25.873289286805498,
+        "thirst": 67.80993393021977
+      },
+      {
+        "actorId": "hl",
+        "occupation": "cook",
+        "gx": 2591,
+        "gy": 655,
+        "state": "IDLE",
+        "hunger": 23.075145110114924,
+        "thirst": 48.61271766516289
+      },
+      {
+        "actorId": "hm",
+        "occupation": "cook",
+        "gx": 2590,
+        "gy": 655,
+        "state": "IDLE",
+        "hunger": 23.70008632349569,
+        "thirst": 49.55012948526822
+      },
+      {
+        "actorId": "hn",
+        "occupation": "gardener",
+        "gx": 2585,
+        "gy": 657,
+        "state": "DEAD",
+        "hunger": 29.666495053116147,
+        "thirst": 0
+      },
+      {
+        "actorId": "ho",
+        "occupation": "guard",
+        "gx": 2588,
+        "gy": 654,
+        "state": "DEAD",
+        "hunger": 22.047034236471756,
+        "thirst": 0
+      },
+      {
+        "actorId": "hp",
+        "occupation": "builder",
+        "gx": 2587,
+        "gy": 656,
+        "state": "IDLE",
+        "hunger": 15.959144535997694,
+        "thirst": 60.93871680393104
+      },
+      {
+        "actorId": "hq",
+        "occupation": "gardener",
+        "gx": 2585,
+        "gy": 656,
+        "state": "IDLE",
+        "hunger": 25.961164833506878,
+        "thirst": 37.94174725028027
+      },
+      {
+        "actorId": "hr",
+        "occupation": "salvager",
+        "gx": 2585,
+        "gy": 654,
+        "state": "IDLE",
+        "hunger": 25.962186386546282,
+        "thirst": 67.94327957983525
+      }
+    ],
+    "greywater": [
+      {
+        "actorId": "h1",
+        "occupation": "cook",
+        "gx": 1595,
+        "gy": 1179,
+        "state": "DEAD",
+        "hunger": 0,
+        "thirst": 63.499506140959376
+      },
+      {
+        "actorId": "h2",
+        "occupation": "mechanic",
+        "gx": 1586,
+        "gy": 1139,
+        "state": "DEAD",
+        "hunger": 0,
+        "thirst": 58.493157269803106
+      },
+      {
+        "actorId": "h3",
+        "occupation": "gardener",
+        "gx": 1585,
+        "gy": 1161,
+        "state": "DEAD",
+        "hunger": 0,
+        "thirst": 47.49914174707502
+      },
+      {
+        "actorId": "h4",
+        "occupation": "salvager",
+        "gx": 1591,
+        "gy": 1163,
+        "state": "DEAD",
+        "hunger": 0,
+        "thirst": 61.49946684469464
+      },
+      {
+        "actorId": "h5",
+        "occupation": "guard",
+        "gx": 1588,
+        "gy": 1139,
+        "state": "DEAD",
+        "hunger": 0,
+        "thirst": 48.10844351807996
+      },
+      {
+        "actorId": "h6",
+        "occupation": "guard",
+        "gx": 1587,
+        "gy": 1139,
+        "state": "DEAD",
+        "hunger": 0,
+        "thirst": 52.10905540696474
+      },
+      {
+        "actorId": "h7",
+        "occupation": "cook",
+        "gx": 1591,
+        "gy": 1162,
+        "state": "DEAD",
+        "hunger": 0,
+        "thirst": 63.49955847489721
+      },
+      {
+        "actorId": "h8",
+        "occupation": "medic",
+        "gx": 1586,
+        "gy": 1138,
+        "state": "DEAD",
+        "hunger": 0,
+        "thirst": 57.367378155145815
+      },
+      {
+        "actorId": "h9",
+        "occupation": "builder",
+        "gx": 1585,
+        "gy": 1163,
+        "state": "DEAD",
+        "hunger": 0,
+        "thirst": 61.49721559951337
+      }
+    ]
+  }
+}

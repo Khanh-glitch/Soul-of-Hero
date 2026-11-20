@@ -1,0 +1,38 @@
+# First day on Veyra — engineering audit, seed 7606
+
+**Experiment.** Geographic `veyra05-world`, `newGame/startRun`, default spawn, 2026-11-15 08:00 UTC. No actions, staged injuries, extra stock, changed metabolic rates, missing actors, QA or forced travel. This is a **new** run, not the player-assisted Hook kitchen save. Each arm uses the production offline `settle` in one-hour increments. The warm arm saves at h8 without discarding its process-local state; both arms start h8→9 from that same persisted world and use identical subsequent deadlines. The resumed arm uses the checksum-checked snapshot selector in a fresh process and explicitly selects the saved window (`veyra05-at-2048-1600`), not the map menu's `veyra05-world`. It tests engine persistence, not browser storage/UI or frame-by-frame online play. Every hour checks IDs, the needs clock and no replay at the same timestamp. Hook and Greywater are two named, populated communities, not island-wide averages.
+
+**Reproduce** (from `web/`, use a new empty directory, two sequential processes; this takes tens of minutes, not part of default CI):
+
+```sh
+SOH_DAY_DIR=/tmp/soh-day npm test -- --maxWorkers=1 tests/npc-first-day.test.ts
+SOH_DAY_DIR=/tmp/soh-day SOH_DAY_CONTINUE=1 npm test -- --maxWorkers=1 tests/npc-first-day.test.ts
+SOH_DAY_CHECK=/tmp/soh-day npm test -- --maxWorkers=1 tests/npc-first-day.test.ts
+node scripts/npc-first-day-report.mjs /tmp/soh-day /tmp/day-report.json
+```
+
+Raw saves and hourly counters go outside Git. Thresholds below use hunger/thirst **<40**, among active (not downed/dead/evacuated/on vessel) bodies. Empty/missing terminal counts are zero; dead bodies retain their actor IDs. Wall timings include instrumentation and host contention, not FPS, and nested categories must not be summed.
+
+**Measured engine change, before changing personal supply routes.** The opening hour before the change spent 120.5 s in `stepHumans` of 185.1 s in `settle`; 91,983 navigation-index reads took 12.2 s. Medical reviews now build occupancy/navigation only once a legal responder has actually requested a route. The door/collocated-wall lookup no longer indexes unrelated entities, and the block-map builder projects only physical blockers. No change to the range, aid bill, search budget, passability or step admission rules. [Paired h0–8 counters](navigation-benchmark.json): 447,939 → 426,202 navigation reads (58.5 → 34.3 s in that label); all hourly actor/job/stock/community digests matched and the **h8 save bytes matched**. No demonstrated end-to-end speedup or 336-hour performance approval. Baseline: source `23f2f27`, same test harness, stopped after h9. An earlier diagnostic resumed in the menu layout and is excluded from all conclusions.
+
+**Access failure and isolated repair.** [First full 24h pair, before the access change](before-access.json): Greywater's mechanic `h2` finished the warm arm DEAD at `(1588,1162)` with thirst 0, two tiles from the Greywater warehouse, hunger 25. This is not evidence that every death was due to a blocked lane. [Matched diagnostic](greywater-access-pair.json): resume that arm's unedited h8 save, ten identical one-minute windows. `h2` starts thirsty with spares and charcoal only; 24 ordinary berries in `s160` in the community pantry. Before: ten minutes still at the same tile, zero drinks. After: a personal supply trip scores occupied cells using the existing navigation penalty instead of choosing the geometrically shortest side of the store. Three `h2:berries` receipts in the first 15 seconds, thirst 29.98 → 41.87 at minute 1. Others used the store too; the entire 5-berry stock delta is not attributed to `h2`. Nothing grants items, opens walls or extends interaction range. The small `npc-pantry-approach` fixture also checks contact, exact finite debits and no displacement of a committed worker; it fails on `23f2f27`.
+
+**Reload hypothesis (not a universal cause).** Fresh-process validation preserves the actual digests at h8. Derived route-search progress is not a physical inventory. In a separate diagnostic copy of the pre-access h8 save, asking for the same three pending targets on cold navigation gives 256 examined cells on the first call, versus previously recorded 512 (`hk`, `hv`) and 2816 (`h1v`). This is one concrete way later decisions can differ without deleting an actor or stack at load. It does not isolate the cause of every later difference. Regional `delivered` values in the JSON are counts of lineage entries by key, not item quantities.
+
+### Results (286 real actors; low means hunger **or** thirst <40)
+
+| Run | Hour | Active | Of active, low | Down | Dead |
+|---|---:|---:|---:|---:|---:|
+| Before access repair | 1 | 264 | 0 | 22 | 0 |
+| Before access repair | 8 | 259 | 37 | 27 | 0 |
+| Before access repair, warm | 24 | 85 | 63 | 1 | 200 |
+| Before access repair, Continue | 24 | 88 | 73 | 0 | 198 |
+| After repair | 1 | 264 | 0 | 22 | 0 |
+| After repair | 8 | 261 | 24 | 25 | 0 |
+| After repair, Continue | 24 | 70 | 69 | 2 | 214 |
+
+Before repair: 24 harvest-crush receipts and 2 treatments in the opening hour. By h24 on the warm arm, 37/68 populated communities had no living members. Of the 200 dead, 128 ended with hunger alone at zero, 71 with thirst alone at zero and one with both zero; these are terminal signs, not individual medical cause-of-death certificates. Hook had crop deliveries and 8/10 active, Greywater 3/9 active despite 9 berries remaining. Before repair `settle` took 24m31s for h0–24 vs 16m22s for h8–24 cold (12m59s for the **matching** warm interval). All IDs survived as records in both arms, but ten people had different dead/not-dead outcomes. Physical UID and terminal round-trip checks passed; that does not make the trajectories interchangeable. Pass `--require-parity` to the reducer to turn the first hourly digest mismatch into a failing gate.
+
+After repair: [matched new-game samples and completed Continue arm](access-checkpoints.json). Immediate save/load matches; all four non-ID hashes again differ by the h9 sample. The Continue arm took 17m52s in `settle` after h8. Hook ended with six active; **all nine** Greywater members died with hunger 0 and positive thirst, including `h2`. Easier access for drinking has not made a finite shared berry supply sustainable. At h22 the warm arm still had 139 active, 2 down and 145 dead; do not substitute the cold h24 census for it.
+
+**New late-day time cost:** in the post-access warm arm between h22 and h23, read-only debugger sampling found `h5l` IDLE with an overdue medical `fetch` and a full-store `deliveryWait`. `humanEventBoundary` schedules IDLE `intent.work` reviews with a 1 ms minimum even when `committedRetry` is false; the discretionary planner only accepts missing intents or `work.phase === 'travel'`. This clock can request repeated tiny whole-world slices with no eligible plan. The sampled run was left intact, not accelerated by patching the actor or skipping time. This and the observed cold/warm divergence block a longer endurance claim.

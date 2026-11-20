@@ -1,0 +1,187 @@
+{
+  "before": {
+    "before": {
+      "pos": [
+        1588,
+        1162
+      ],
+      "thirst": 29.976874508708068,
+      "hunger": 46.651249672469966,
+      "pack": [
+        {
+          "uid": "s16w",
+          "key": "spares",
+          "qty": 3
+        },
+        {
+          "uid": "s16x",
+          "key": "charcoal",
+          "qty": 2
+        }
+      ],
+      "stock": {
+        "uid": "s160",
+        "key": "berries",
+        "qty": 24
+      }
+    },
+    "samples": [
+      {
+        "i": 1,
+        "pos": [
+          1588,
+          1162
+        ],
+        "thirst": 29.872707842041304,
+        "hunger": 46.58180522802538,
+        "pack": [
+          {
+            "uid": "s16w",
+            "key": "spares",
+            "qty": 3
+          },
+          {
+            "uid": "s16x",
+            "key": "charcoal",
+            "qty": 2
+          }
+        ],
+        "stock": {
+          "uid": "s160",
+          "key": "berries",
+          "qty": 24
+        },
+        "drinks": []
+      },
+      {
+        "i": 10,
+        "pos": [
+          1588,
+          1162
+        ],
+        "thirst": 28.935207842040374,
+        "hunger": 45.95680522802527,
+        "pack": [
+          {
+            "uid": "s16w",
+            "key": "spares",
+            "qty": 3
+          },
+          {
+            "uid": "s16x",
+            "key": "charcoal",
+            "qty": 2
+          }
+        ],
+        "stock": {
+          "uid": "s160",
+          "key": "berries",
+          "qty": 24
+        },
+        "drinks": []
+      }
+    ]
+  },
+  "after": {
+    "before": {
+      "pos": [
+        1588,
+        1162
+      ],
+      "thirst": 29.976874508708068,
+      "hunger": 46.651249672469966,
+      "pack": [
+        {
+          "uid": "s16w",
+          "key": "spares",
+          "qty": 3
+        },
+        {
+          "uid": "s16x",
+          "key": "charcoal",
+          "qty": 2
+        }
+      ],
+      "stock": {
+        "uid": "s160",
+        "key": "berries",
+        "qty": 24
+      }
+    },
+    "samples": [
+      {
+        "i": 1,
+        "pos": [
+          1589,
+          1162
+        ],
+        "thirst": 41.87241022285751,
+        "hunger": 46.58160681523616,
+        "pack": [
+          {
+            "uid": "s16w",
+            "key": "spares",
+            "qty": 3
+          },
+          {
+            "uid": "s16x",
+            "key": "charcoal",
+            "qty": 2
+          }
+        ],
+        "stock": {
+          "uid": "s160",
+          "key": "berries",
+          "qty": 19
+        },
+        "drinks": [
+          {
+            "id": "r62995",
+            "at": 1794758414328.5713,
+            "kind": "human.drink",
+            "detail": "h2:berries"
+          },
+          {
+            "id": "r62996",
+            "at": 1794758414827.3174,
+            "kind": "human.drink",
+            "detail": "h2:berries"
+          },
+          {
+            "id": "r62998",
+            "at": 1794758414896.4255,
+            "kind": "human.drink",
+            "detail": "h2:berries"
+          }
+        ]
+      },
+      {
+        "i": 10,
+        "pos": [
+          1597,
+          1180
+        ],
+        "thirst": 40.93233085659733,
+        "hunger": 45.95488723773012,
+        "pack": [
+          {
+            "uid": "s16w",
+            "key": "spares",
+            "qty": 3
+          },
+          {
+            "uid": "s16x",
+            "key": "charcoal",
+            "qty": 2
+          }
+        ],
+        "stock": {
+          "uid": "s160",
+          "key": "berries",
+          "qty": 19
+        },
+        "drinks": []
+      }
+    ]
+  }
+}

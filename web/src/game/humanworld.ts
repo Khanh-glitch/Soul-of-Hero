@@ -3136,7 +3136,11 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     const stock = comm.foodStores.flatMap(id => r.custody[id]?.slots ?? []);
     const hasSupply = stock.some(s => s && (need === 'eat' ? (ITEMS[s.key].food?.hunger ?? 0) > 0 : (ITEMS[s.key].food?.thirst ?? 0) > 0 && (ITEMS[s.key].charge == null || (s.charge ?? 0) > 0)));
     if (hasSupply && !reachableHumanStores(r, hw, h).length) {
-      const route = humanRouteToAdjacent(r, h, comm.storeTile[0], comm.storeTile[1], grid, ox, oy, occupied,findRunEntity(r,comm.storeEntityId)?.floor??0);
+      // The nearest edge of a finite pantry can be occupied while another
+      // side is open. Prefer the open approach for a personal food/water trip;
+      // actual entry and consumption still require legal physical contact.
+      const [tx,ty]=comm.storeTile,floor=findRunEntity(r,comm.storeEntityId)?.floor??0;
+      const route=humanNavigation(r,occupied,true).route(h,{tx,ty,floor});
       if (route?.length) {
         h.intent = { intentId: `supply:${h.actorId}:${now}`, actorId: h.actorId, kind: need, target: comm.storeEntityId, preconditions: ['authorized finite stock'], reserved: [], startAt: now, dueAt: now, route };
         h.state = 'MOVING'; return;
@@ -3417,9 +3421,13 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     if(patient.state!=='DOWNED'||!patient.community||(patient.nextMedicalReviewAt??0)>now)continue;
     patient.nextMedicalReviewAt=now+30000;
     if(actors.some(h=>h.intent?.work?.patientId===patient.actorId))continue;
-    const occupied=new Set(actors.filter(h=>!['DEAD','EVACUATED','ON_VESSEL'].includes(h.state)).map(h=>humanCellKey(h.floor,h.gx,h.gy)));
-    const nav=humanNavigation(r,occupied,true);
-    dispatchMedicalResponse(r,hw,patient,now,(h,tx,ty,floor)=>nav.route(h,{tx,ty,floor}));
+    // Most outstanding injuries have no witness with a dose. Do not build
+    // an island navigation index until an eligible responder asks for a route.
+    let nav:ReturnType<typeof humanNavigation>|undefined;
+    dispatchMedicalResponse(r,hw,patient,now,(h,tx,ty,floor)=>{
+      if(!nav){const occupied=new Set(actors.filter(p=>!['DEAD','EVACUATED','ON_VESSEL'].includes(p.state)).map(p=>humanCellKey(p.floor,p.gx,p.gy)));nav=humanNavigation(r,occupied,true);}
+      return nav.route(h,{tx,ty,floor});
+    });
   }
   for(const h of actors){if(!h.intent?.target?.startsWith('harvest:'))continue;const m=h.intent.target.match(/^harvest:(\d+),(\d+)$/);if(!m)continue;
     const o=r.sourceMap?.veyra?.originAu,gx=Number(m[1])+(o?o[0]*2:0),gy=Number(m[2])+(o?o[1]*2:0),source=globalSourceAt(r,gx,gy,h.floor,now);

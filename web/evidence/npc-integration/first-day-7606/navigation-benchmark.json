@@ -1,0 +1,172 @@
+{
+  "before": {
+    "hour8SaveSha256": "b1255e43df42cd62df8177ad4001c0551b2ea55cfc867a73f2538a150e476baf",
+    "hourly": [
+      {
+        "hour": 1,
+        "settleMs": 185124,
+        "navigationRead": {
+          "calls": 91983,
+          "ms": 12167.78879799833
+        },
+        "worldSlices": 57549,
+        "routeExpansions": 975747
+      },
+      {
+        "hour": 2,
+        "settleMs": 67844,
+        "navigationRead": {
+          "calls": 56023,
+          "ms": 7310.691387997038
+        },
+        "worldSlices": 23498,
+        "routeExpansions": 649757
+      },
+      {
+        "hour": 3,
+        "settleMs": 55030,
+        "navigationRead": {
+          "calls": 50981,
+          "ms": 6249.9305799929425
+        },
+        "worldSlices": 19658,
+        "routeExpansions": 636798
+      },
+      {
+        "hour": 4,
+        "settleMs": 57490,
+        "navigationRead": {
+          "calls": 50896,
+          "ms": 6399.670023998362
+        },
+        "worldSlices": 19643,
+        "routeExpansions": 636840
+      },
+      {
+        "hour": 5,
+        "settleMs": 65209,
+        "navigationRead": {
+          "calls": 48020,
+          "ms": 6303.196661006368
+        },
+        "worldSlices": 24253,
+        "routeExpansions": 614665
+      },
+      {
+        "hour": 6,
+        "settleMs": 69150,
+        "navigationRead": {
+          "calls": 53346,
+          "ms": 6873.398882004316
+        },
+        "worldSlices": 26770,
+        "routeExpansions": 613241
+      },
+      {
+        "hour": 7,
+        "settleMs": 90417,
+        "navigationRead": {
+          "calls": 51237,
+          "ms": 6943.57639000495
+        },
+        "worldSlices": 27350,
+        "routeExpansions": 578065
+      },
+      {
+        "hour": 8,
+        "settleMs": 72787,
+        "navigationRead": {
+          "calls": 45453,
+          "ms": 6227.981518997345
+        },
+        "worldSlices": 25195,
+        "routeExpansions": 517693
+      }
+    ]
+  },
+  "after": {
+    "hour8SaveSha256": "b1255e43df42cd62df8177ad4001c0551b2ea55cfc867a73f2538a150e476baf",
+    "hourly": [
+      {
+        "hour": 1,
+        "settleMs": 198964,
+        "navigationRead": {
+          "calls": 90090,
+          "ms": 7525.81178300258
+        },
+        "worldSlices": 57549,
+        "routeExpansions": 975747
+      },
+      {
+        "hour": 2,
+        "settleMs": 64439,
+        "navigationRead": {
+          "calls": 53312,
+          "ms": 3914.432093000505
+        },
+        "worldSlices": 23498,
+        "routeExpansions": 649757
+      },
+      {
+        "hour": 3,
+        "settleMs": 61955,
+        "navigationRead": {
+          "calls": 48221,
+          "ms": 3964.047816006816
+        },
+        "worldSlices": 19658,
+        "routeExpansions": 636798
+      },
+      {
+        "hour": 4,
+        "settleMs": 75308,
+        "navigationRead": {
+          "calls": 48136,
+          "ms": 4632.765959007782
+        },
+        "worldSlices": 19643,
+        "routeExpansions": 636840
+      },
+      {
+        "hour": 5,
+        "settleMs": 61712,
+        "navigationRead": {
+          "calls": 45260,
+          "ms": 3329.2162680017645
+        },
+        "worldSlices": 24253,
+        "routeExpansions": 614665
+      },
+      {
+        "hour": 6,
+        "settleMs": 68434,
+        "navigationRead": {
+          "calls": 50586,
+          "ms": 3865.9308130022255
+        },
+        "worldSlices": 26770,
+        "routeExpansions": 613241
+      },
+      {
+        "hour": 7,
+        "settleMs": 88718,
+        "navigationRead": {
+          "calls": 48353,
+          "ms": 3761.0626539838267
+        },
+        "worldSlices": 27350,
+        "routeExpansions": 578065
+      },
+      {
+        "hour": 8,
+        "settleMs": 73334,
+        "navigationRead": {
+          "calls": 42244,
+          "ms": 3323.666443992872
+        },
+        "worldSlices": 25195,
+        "routeExpansions": 517693
+      }
+    ]
+  }
+}

@@ -47,7 +47,11 @@ export function withHumanNavigationRead<T>(r:RunState,read:()=>T):T {
 function navigationRead(r:RunState):NavigationRead {return timedWorldWork('navigationRead',()=>{
  const all=allRunEntities(r),blockMap=buildEntityBlockMap(r,all),at=new Map<string,Entity[]>();
  const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
- for(const e of all){const local=r.entities[e.id]===e;const p={tx:(e.tx??Math.floor(e.x/TILE))+(local?ox:0),ty:(e.ty??Math.floor(e.y/TILE))+(local?oy:0),floor:e.floor??0};const k=key(p);const list=at.get(k);if(list)list.push(e);else at.set(k,[e]);}
+ // Only door admission/entry consults this index; terrain and all other
+ // blockers remain authoritative in blockMap. Keep co-located wall blockers.
+ for(const e of all){
+  if(e.kind!=='door' && !(e.kind==='struct' && (STRUCTS[e.type!]?.block || e.type?.startsWith('door'))))continue;
+  const local=r.entities[e.id]===e;const p={tx:(e.tx??Math.floor(e.x/TILE))+(local?ox:0),ty:(e.ty??Math.floor(e.y/TILE))+(local?oy:0),floor:e.floor??0};const k=key(p);const list=at.get(k);if(list)list.push(e);else at.set(k,[e]);}
  const terrain=(states:RunState['terrain']|undefined)=>Object.entries(states??{}).map(([k,s])=>[k,s.t,!s.until||s.until>r.clock.simMs]);
  let fingerprint:string|undefined;
  const physical=()=>fingerprint??=JSON.stringify([r.layoutId,r.veyraFloor,r.sourceMap?.rules,o,[...blockMap],all.filter(e=>e.kind==='door'||e.type?.startsWith('door')).map(e=>[e.id,e.owner,e.locked,!!e.g1b,!!e.poiDoor,!!e.electricDoor]),terrain(r.terrain),terrain(r.veyraGlobalTerrain),r.veyraGlobalDoors,r.veyraGlobalDepletedLoot,r.natureTrees,Object.entries(r.veyraFloorState??{}).map(([f,s])=>[f,s.doors]),Object.entries(r.veyraGlobalFloorState??{}).map(([f,s])=>[f,s.doors])]);
