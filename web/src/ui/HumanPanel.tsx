@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Api } from './common';
 import { Icon, Panel } from './common';
 import { drawNpcSprite } from '../game/npc-art';
 import { ITEMS } from '../game/catalog';
-import { evaluateHumanExchange, humanPack } from '../game/humanworld';
+import { counterHumanBarter, quoteHumanBarter, humanPack, type BarterLine } from '../game/humanworld';
 import type { Stack } from '../game/core';
 import { TILE } from '../game/core';
 import { CREATURES } from '../game/catalog';
@@ -16,30 +16,39 @@ export function HumanPanel({ api, actorId, onClose }: { api: Api; actorId: strin
   const [playerSlot, setPlayerSlot] = useState(0);
   const [humanSlot, setHumanSlot] = useState(0);
   const [demand, setDemand] = useState<'back_off' | 'disarm' | 'item' | 'stop_attack'>('back_off');
+  const [section, setSection] = useState<'Talk'|'Help'|'Barter'|'Confront'|'Companion'>('Talk');
   const [reply, setReply] = useState('');
   const [orderTarget,setOrderTarget]=useState('');
-  const tradedPairs = useRef(new Set<string>());
+  const [offer,setOffer] = useState<BarterLine[]>([]), [ask,setAsk] = useState<BarterLine[]>([]);
+  const [review,setReview]=useState<string>();
   const [tradePending, setTradePending] = useState(false);
-  const playerStacks = useMemo(() => r?.custody.inv.slots.map((s, i) => s ? { s, i } : null).filter((v): v is {s: Stack; i:number} => v !== null) ?? [], [r?.custody.inv.slots, r?.seq]);
+  const playerStacks = r?.custody.inv.slots.map((s, i) => s ? { s, i } : null).filter((v): v is {s: Stack; i:number} => v !== null) ?? [];
   const humanStacks = h && r ? humanPack(r, h).slots.map((s, i) => s ? { s, i } : null).filter((v): v is {s: Stack; i:number} => v !== null) : [];
   if (!h || !r || !hw) return <Panel title="Survivor" onClose={onClose} style={{ right: 6, top: 42, width: 238 }}>They are no longer here.</Panel>;
   const act = (type: string, extra: Record<string, unknown> = {}) => api.act(type, { actorId, ...extra });
   const respond = (type: string, extra: Record<string, unknown> = {}) => { const result = act(type, extra); setReply(result.ok ? result.msg ?? 'No response.' : result.reason); };
   const selectedPlayer = playerStacks.find(v => v.i === playerSlot) ?? playerStacks[0];
   const selectedHuman = humanStacks.find(v => v.i === humanSlot) ?? humanStacks[0];
-  const evaluation = selectedPlayer && selectedHuman ? evaluateHumanExchange(r, h, selectedPlayer.i, selectedHuman.i) : null;
-  const pairKey = selectedPlayer && selectedHuman ? [selectedPlayer.s.uid, selectedHuman.s.uid].sort().join('|') : '';
+  const evaluation = section==='Barter' ? quoteHumanBarter(r,h,offer,ask) : null;
   const commitTrade = () => {
-    if (!evaluation?.ok || !selectedPlayer || !selectedHuman || tradePending) return;
-    if (tradedPairs.current.has(pairKey)) { setReply('Those same two stacks have already been exchanged. Choose a different offer.'); return; }
-    setTradePending(true); tradedPairs.current.add(pairKey);
-    const result = act('humanExchange', { playerSlot: selectedPlayer.i, humanSlot: selectedHuman.i });
-    setReply(result.ok ? result.msg ?? evaluation.reason : result.reason);
-    if (!result.ok) tradedPairs.current.delete(pairKey);
-    setTradePending(false);
+    if (!evaluation?.ok || tradePending || !review || review!==evaluation.revision) return;
+    setTradePending(true);
+    try {
+      const result=act('humanExchange',{offer,ask,revision:review});
+      setReply(result.ok ? result.msg ?? 'Goods exchanged.' : result.reason);
+      if(result.ok){setReview(undefined);setOffer([]);setAsk([]);}
+    } finally {setTradePending(false);}
   };
   const isDown = h.state === 'DOWNED';
   const isUnavailable = isDown || h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'ON_VESSEL';
+  const sections = (['Talk','Help','Barter','Confront','Companion'] as const).filter(s => {
+    if (isDown) return s === 'Help';
+    if (isUnavailable) return false;
+    if (h.state === 'FIGHTING') return s === 'Confront';
+    return s !== 'Companion' || !!h.following;
+  });
+  // The actor can be downed, recruited or dismissed while this panel is open.
+  const visible = sections.find(s => s === section) ?? sections[0];
   return <Panel title={`${h.name} · ${h.occupation}`} onClose={onClose} className="scroll" style={{ right: 6, top: 42, width: 242, maxHeight: 276, overflowY: 'auto', fontSize: 11, lineHeight: 1.2 }} testId="human-panel">
     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 5 }}>
       <HumanPortrait h={h} simSec={(r.clock.simMs ?? 0) / 1000} />
@@ -49,11 +58,16 @@ export function HumanPanel({ api, actorId, onClose }: { api: Api; actorId: strin
         <div style={{ color: '#b8c6a8' }}>Trust {Math.round(h.trust ?? 50)} · {Math.round(h.hp)}/{h.maxHp} HP</div>
       </div>
     </div>
-    {!isUnavailable && <>
+    {sections.length > 1 && <div role="group" aria-label="Survivor actions" style={{display:'flex',flexWrap:'wrap',gap:3,marginBottom:5}}>
+      {sections.map(s=><button key={s} className="btn sm" aria-pressed={s===visible} style={s===visible?{borderColor:'#c59b4c',color:'#ffe4a2'}:undefined} onClick={()=>{setSection(s);setReview(undefined);setReply('');}}>{s}</button>)}
+    </div>}
+    {visible === 'Talk' && <>
       <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', marginBottom: 5 }}>
         {([['activity', 'Work?'], ['needs', 'Need?'], ['place', 'Place?'], ['goods', 'Goods?'], ['accompany', 'Join?']] as const).map(([topic, label]) => <button key={topic} className="btn sm" onClick={() => respond('humanTalk', { topic })}>{label}</button>)}
         <button className="btn sm" onClick={() => respond(h.following ? 'humanDismiss' : 'humanRecruit')}>{h.following ? 'Dismiss' : 'Recruit'}</button>
       </div>
+    </>}
+    {visible === 'Confront' && <>
       <div style={{ display: 'flex', gap: 3, alignItems: 'center', marginBottom: 4 }}>
         <select aria-label="Confrontation demand" value={demand} onChange={e => setDemand(e.target.value as typeof demand)} style={{ flex: 1, minWidth: 0 }}>
           <option value="back_off">Back away</option>
@@ -61,34 +75,38 @@ export function HumanPanel({ api, actorId, onClose }: { api: Api; actorId: strin
           {humanStacks.length > 0 && <option value="item">Hand over carried item</option>}
           {h.state === 'FIGHTING' && <option value="stop_attack">Stop attacking</option>}
         </select>
+        {demand==='item' && <select aria-label="Demanded item" value={selectedHuman?.i??''} onChange={e=>setHumanSlot(Number(e.target.value))}>{humanStacks.map(({s,i})=><option key={s.uid} value={i}>{ITEMS[s.key]?.name} ×{s.qty}</option>)}</select>}
         <button className="btn sm" onClick={() => respond('humanThreaten', { demand, stackUid: demand === 'item' ? humanStacks.find(v => v.i === humanSlot)?.s.uid : undefined })}>Confront</button>
       </div>
     </>}
     {reply && <div role="status" aria-live="polite" style={{ color: '#ffe4a2', borderLeft: '2px solid #bd8d47', padding: '3px 5px', margin: '3px 0 5px', lineHeight: 1.25 }}>{reply}</div>}
-    {!['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(h.state)&&<div style={{margin:'4px 0'}}>
+    {visible==='Help'&&<div style={{margin:'4px 0'}}>
       <div style={{fontWeight:700}}>Help · urgent needs</div>
       {playerStacks.filter(({s})=>['bandage','herb'].includes(s.key)&&(isDown||h.wounds.some(w=>!w.treated)) || ITEMS[s.key]?.food?.hunger&&h.hunger<35&&!isDown || ITEMS[s.key]?.waterContainer&&(s.charge??0)>0&&h.thirst<35&&!isDown).map(({s})=><button key={s.uid} className="btn sm" disabled={!!hw.playerAid} onClick={()=>respond('humanAid',{stackUid:s.uid})}>Offer {ITEMS[s.key].name}</button>)}
       {hw.playerAid?.actorId===actorId&&<div role="status">Helping · remain beside them…</div>}
       {!isDown&&h.hunger>=35&&h.thirst>=35&&!h.wounds.some(w=>!w.treated)&&<div style={{opacity:.7}}>No urgent need. Talk to learn about their work.</div>}
     </div>}
-    {isDown ? <button className="btn sm" style={{ width: '100%', marginBottom: 4 }} onClick={() => respond('humanLoot')}>Recover carried items</button> : !isUnavailable ? <>
+    {isDown ? <button className="btn sm" style={{ width: '100%', marginBottom: 4 }} onClick={() => respond('humanLoot')}>Recover carried items</button> : visible==='Barter' ? <>
       <div style={{ fontWeight: 700, margin: '3px 0' }}>Barter · personal packs only</div>
       {playerStacks.length && humanStacks.length ? <>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
-          <TradeSide title="YOUR OFFER" stacks={playerStacks} selected={selectedPlayer?.i ?? -1} onSelect={setPlayerSlot} />
-          <TradeSide title="THEIR ASK" stacks={humanStacks} selected={selectedHuman?.i ?? -1} onSelect={setHumanSlot} />
+          <TradeSide title="Your offer" stacks={playerStacks} lines={offer} onChange={lines=>{setReview(undefined);setOffer(lines);}}/>
+          <TradeSide title="Their goods" stacks={humanStacks} lines={ask} onChange={lines=>{setReview(undefined);setAsk(lines);}}/>
         </div>
-        {selectedPlayer && selectedHuman && <div style={{ marginTop: 4, padding: '4px 5px', background: '#191d21', border: '1px solid #4e493e' }}>
-          <div style={{ color: '#e1cf9b', fontSize: 9 }}>{ITEMS[selectedPlayer.s.key]?.name ?? selectedPlayer.s.key} ×{selectedPlayer.s.qty} <span style={{ color: '#8a9a9e' }}>↔</span> {ITEMS[selectedHuman.s.key]?.name ?? selectedHuman.s.key} ×{selectedHuman.s.qty}</div>
-          <div style={{ color: evaluation?.ok ? '#a8d8a0' : '#e69484', marginTop: 2 }}>{evaluation?.reason ?? 'Select one carried stack from each person.'}</div>
-          {evaluation && <div style={{ color: '#96a5aa', fontSize: 8, marginTop: 2 }}>Their needs-adjusted value: you {evaluation.offeredValue?.toFixed(1) ?? '—'} · them {evaluation.requestedValue?.toFixed(1) ?? '—'}</div>}
-          <button className="btn sm" disabled={!evaluation?.ok || tradedPairs.current.has(pairKey) || tradePending} onClick={commitTrade} style={{ marginTop: 3 }}>
-            {tradedPairs.current.has(pairKey) ? 'Already exchanged' : tradePending ? 'Committing…' : 'Accept & exchange'}
-          </button>
-        </div>}
-      </> : <div style={{ opacity: .75, marginBottom: 4 }}>Both people need a carried item. Community stores are not personal trade inventory.</div>}
+        <div style={{marginTop:4,color:evaluation?.ok?'#a8d8a0':'#ffe4a2'}}>{evaluation?.reason}</div>
+        {evaluation?.offeredValue!==undefined && <div>Value: offer {evaluation.offeredValue.toFixed(1)} · ask {evaluation.requestedValue?.toFixed(1)}</div>}
+        {evaluation?.reason.startsWith('Counter-offer') && <button className="btn sm" onClick={()=>{
+          const counter=counterHumanBarter(r,h,offer,ask);
+          if(!counter){setReply('No workable alternative using these goods. Change your selection.');return;}
+          setReview(undefined);setOffer(counter.offer);setAsk(counter.ask);setReply('Review the proposed quantities before accepting.');
+        }}>Request counter-offer</button>}
+        {review && review!==evaluation?.revision && <div role="status">The terms changed. Review the basket again.</div>}
+        {review && review===evaluation?.revision ? <button className="btn sm" disabled={tradePending} onClick={commitTrade}>Accept &amp; exchange</button>
+         : <button className="btn sm" disabled={!evaluation?.ok} onClick={()=>setReview(evaluation?.revision)}>Review exchange</button>}
+        {(offer.length>0 || ask.length>0) && <button className="btn sm" onClick={()=>{setReview(undefined);setOffer([]);setAsk([]);}}>Clear basket</button>}
+      </> : <div>Both people need a carried item. Community stores are not personal trade inventory.</div>}
     </> : null}
-    {h.following && !isUnavailable && <div style={{marginTop:5,borderTop:'1px solid #66543c',paddingTop:4}}>
+    {visible==='Companion' && <div style={{marginTop:5,borderTop:'1px solid #66543c',paddingTop:4}}>
       <div style={{color:'#a8d8a0'}}>Companion · {h.intent?.kind==='follow'?'Following':h.intent?.target==='home'?'Returning home':h.state.toLowerCase()}</div>
       <div style={{display:'flex',gap:3,flexWrap:'wrap',margin:'3px 0'}}>
         {(['follow','hold','retreat','home','carry'] as const).map(order=><button key={order} className="btn sm" onClick={()=>respond('humanOrder',{order})}>{({follow:'Follow',hold:'Hold',retreat:'Retreat',home:'Return home',carry:'Carry'})[order]}</button>)}
@@ -101,27 +119,26 @@ export function HumanPanel({ api, actorId, onClose }: { api: Api; actorId: strin
       <button className="btn sm" disabled={!orderTarget} onClick={()=>respond('humanOrder',{order:'defend',target:orderTarget})}>Defend against</button>{' '}
       <button className="btn sm" disabled={!orderTarget} onClick={()=>respond('humanOrder',{order:'engage',target:orderTarget})}>Engage</button>
       <div style={{marginTop:4}}>Cargo · {r.custody[h.inv.cartId]?.slots.filter(Boolean).length??0}/6 slots</div>
+      {selectedPlayer&&<select aria-label="Companion cargo item" value={selectedPlayer.i} onChange={e=>setPlayerSlot(Number(e.target.value))}>{playerStacks.map(({s,i})=><option key={s.uid} value={i}>{ITEMS[s.key]?.name} ×{s.qty}</option>)}</select>}
       {selectedPlayer&&<button className="btn sm" onClick={()=>respond('humanCargo',{direction:'give',stackUid:selectedPlayer.s.uid})}>Carry {ITEMS[selectedPlayer.s.key]?.name} ×{selectedPlayer.s.qty}</button>}
       {r.custody[h.inv.cartId]?.slots.filter((s):s is Stack=>!!s).map(s=><button key={s.uid} className="btn sm" onClick={()=>respond('humanCargo',{direction:'return',stackUid:s.uid})}>Take back {ITEMS[s.key]?.name} ×{s.qty}</button>)}
       {h.intent?.blockReason&&<div style={{color:'#e69484'}}>{h.intent.blockReason}</div>}
     </div>}
-    {h.followOrder && <div style={{ opacity: .75, marginTop: 3 }}>{h.followOrder.result}: {h.followOrder.reason}</div>}
+    {visible==='Companion' && h.followOrder && <div style={{ opacity: .75, marginTop: 3 }}>{h.followOrder.result}: {h.followOrder.reason}</div>}
   </Panel>;
 }
 
-function TradeSide({ title, stacks, selected, onSelect }: { title: string; stacks: {s: Stack; i:number}[]; selected: number; onSelect: (slot: number) => void }) {
-  return <div style={{ minWidth: 0 }}>
-    <div style={{ color: '#a8b0a6', fontSize: 8, marginBottom: 2 }}>{title}</div>
-    <div style={{ maxHeight: 82, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2 }}>
-      {stacks.map(({s, i}) => {
-        const def = ITEMS[s.key];
-        const condition = s.dur !== undefined ? ` · ${Math.round(100 * s.dur / (def?.dur ?? 100))}%` : s.charge !== undefined ? ` · ${s.charge} charge` : '';
-        return <button key={s.uid} aria-label={`${title === 'YOUR OFFER' ? 'Offer' : 'Request'} ${def?.name ?? s.key} ×${s.qty}${condition}`} aria-pressed={selected === i} onClick={() => onSelect(i)} style={{ display: 'flex', alignItems: 'center', gap: 3, minWidth: 0, width: '100%', padding: 2, textAlign: 'left', background: selected === i ? '#55452c' : '#202326', border: `1px solid ${selected === i ? '#c59b4c' : '#47433b'}`, color: '#eadfbd', cursor: 'pointer' }}>
-          <Icon k={s.key} size={18} />
-          <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: 8 }}>{def?.name ?? s.key} ×{s.qty}{condition}</span>
-        </button>;
-      })}
-    </div>
+function TradeSide({title,stacks,lines,onChange}:{title:string;stacks:{s:Stack;i:number}[];lines:BarterLine[];onChange:(v:BarterLine[])=>void}) {
+  function change(s:Stack,qty:number){ const rest=lines.filter(l=>l.uid!==s.uid);onChange(qty>0?[...rest,{uid:s.uid,qty}]:rest); }
+  return <div style={{minWidth:0}}><strong>{title}</strong>
+    {stacks.map(({s})=>{const qty=lines.find(l=>l.uid===s.uid)?.qty??0,name=ITEMS[s.key]?.name??s.key;
+      return <div key={s.uid} style={{borderBottom:'1px solid #504c42',padding:'3px 0'}}>
+        <div><Icon k={s.key} size={14}/> {name} ×{s.qty}</div>
+        <div style={{display:'flex',gap:3,alignItems:'center'}}>
+          <button className="btn sm" disabled={!qty} aria-label={`${title}: remove one ${name}`} onClick={()=>change(s,qty-1)}>−</button>
+          <span>{qty}</span><button className="btn sm" disabled={qty>=s.qty||!!s.production} aria-label={`${title}: add one ${name}`} onClick={()=>change(s,qty+1)}>+</button>
+          {s.dur!==undefined && <small>{s.dur} dur.</small>}{s.charge!==undefined && <small>{s.charge} charge</small>}
+        </div></div>;})}
   </div>;
 }
 

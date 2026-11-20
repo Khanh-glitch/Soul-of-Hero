@@ -1,0 +1,14 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ tests/npc-basket-trade.test.ts > multi-item barter > moves every line of a basket and debits the source by exactly what landed 2338ms
+ ✓ tests/npc-basket-trade.test.ts > multi-item barter > refuses the whole basket when one line cannot be met, moving nothing 87ms
+ ✓ tests/npc-basket-trade.test.ts > multi-item barter > restores both packs and next UID after a merge then a capacity refusal 48ms
+ ✓ tests/npc-basket-trade.test.ts > multi-item barter > restores both packs and next UID after a empty slot then a capacity refusal 30ms
+ ✓ tests/npc-basket-trade.test.ts > dispatch exchanges the exact selected quantities, refusing stale UIDs, unaffordable asks and unreachable partners 456ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  01:52:20
+   Duration  9.73s (transform 5.54s, setup 0ms, import 6.54s, tests 2.97s, environment 0ms)
+

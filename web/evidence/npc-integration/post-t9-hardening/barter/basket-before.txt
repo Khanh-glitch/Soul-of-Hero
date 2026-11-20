@@ -1,0 +1,50 @@
+
+ RUN  v4.1.12 /tmp/soh-regression/web
+
+ ↓ tests/tmp-basket-capacity.test.ts > multi-item barter > moves every line of a basket and debits the source by exactly what landed
+ ↓ tests/tmp-basket-capacity.test.ts > multi-item barter > refuses the whole basket when one line cannot be met, moving nothing
+ × tests/tmp-basket-capacity.test.ts > multi-item barter > restores both packs and next UID after a merge then a capacity refusal 2233ms
+   → expected '[{"id":"inv","kind":"inv","slots":[{"…' to be '[{"id":"inv","kind":"inv","slots":[{"…' // Object.is equality
+ × tests/tmp-basket-capacity.test.ts > multi-item barter > restores both packs and next UID after a empty slot then a capacity refusal 54ms
+   → expected '[{"id":"inv","kind":"inv","slots":[{"…' to be '[{"id":"inv","kind":"inv","slots":[{"…' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/tmp-basket-capacity.test.ts > multi-item barter > restores both packs and next UID after a merge then a capacity refusal
+AssertionError: expected '[{"id":"inv","kind":"inv","slots":[{"…' to be '[{"id":"inv","kind":"inv","slots":[{"…' // Object.is equality
+
+Expected: "[{"id":"inv","kind":"inv","slots":[{"uid":"s2tf","key":"herb","qty":3},{"uid":"s2tg","key":"bandage","qty":2},null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"id":"c16n","kind":"bag","slots":[{"uid":"receiver","key":"herb","qty":1},{"uid":"fixture-1","key":"stone","qty":1},{"uid":"fixture-2","key":"stone","qty":1},{"uid":"fixture-3","key":"stone","qty":1},{"uid":"fixture-4","key":"stone","qty":1},{"uid":"fixture-5","key":"stone","qty":1},{"uid":"fixture-6","key":"stone","qty":1},{"uid":"fixture-7","key":"stone","qty":1},{"uid":"fixture-8","key":"stone","qty":1},{"uid":"fixture-9","key":"stone","qty":1},{"uid":"fixture-10","key":"stone","qty":1},{"uid":"fixture-11","key":"stone","qty":1}]},3653,[{"id":"r1","seq":1,"at":1794729600000,"kind":"run.start","detail":"female@Creator Inspection (QA only)"}]]"
+Received: "[{"id":"inv","kind":"inv","slots":[{"uid":"s2tf","key":"herb","qty":3},{"uid":"s2tg","key":"bandage","qty":2},null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"id":"c16n","kind":"bag","slots":[{"uid":"receiver","key":"herb","qty":2},{"uid":"fixture-1","key":"stone","qty":1},{"uid":"fixture-2","key":"stone","qty":1},{"uid":"fixture-3","key":"stone","qty":1},{"uid":"fixture-4","key":"stone","qty":1},{"uid":"fixture-5","key":"stone","qty":1},{"uid":"fixture-6","key":"stone","qty":1},{"uid":"fixture-7","key":"stone","qty":1},{"uid":"fixture-8","key":"stone","qty":1},{"uid":"fixture-9","key":"stone","qty":1},{"uid":"fixture-10","key":"stone","qty":1},{"uid":"fixture-11","key":"stone","qty":1}]},3655,[{"id":"r1","seq":1,"at":1794729600000,"kind":"run.start","detail":"female@Creator Inspection (QA only)"}]]"
+
+ ❯ tests/tmp-basket-capacity.test.ts:71:21
+     69|     const deal = tradeBasketWithHuman(r, hw, h, 'inv', [{key:'herb',qt…
+     70|     expect(deal).toMatchObject({ok:false,reason:'no carrying capacity'…
+     71|     expect(state()).toBe(before);
+       |                     ^
+     72|   });
+     73|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/tmp-basket-capacity.test.ts > multi-item barter > restores both packs and next UID after a empty slot then a capacity refusal
+AssertionError: expected '[{"id":"inv","kind":"inv","slots":[{"…' to be '[{"id":"inv","kind":"inv","slots":[{"…' // Object.is equality
+
+Expected: "[{"id":"inv","kind":"inv","slots":[{"uid":"s2tf","key":"herb","qty":3},{"uid":"s2tg","key":"bandage","qty":2},null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"id":"c16n","kind":"bag","slots":[null,{"uid":"fixture-1","key":"stone","qty":1},{"uid":"fixture-2","key":"stone","qty":1},{"uid":"fixture-3","key":"stone","qty":1},{"uid":"fixture-4","key":"stone","qty":1},{"uid":"fixture-5","key":"stone","qty":1},{"uid":"fixture-6","key":"stone","qty":1},{"uid":"fixture-7","key":"stone","qty":1},{"uid":"fixture-8","key":"stone","qty":1},{"uid":"fixture-9","key":"stone","qty":1},{"uid":"fixture-10","key":"stone","qty":1},{"uid":"fixture-11","key":"stone","qty":1}]},3653,[{"id":"r1","seq":1,"at":1794729600000,"kind":"run.start","detail":"female@Creator Inspection (QA only)"}]]"
+Received: "[{"id":"inv","kind":"inv","slots":[{"uid":"s2tf","key":"herb","qty":3},{"uid":"s2tg","key":"bandage","qty":2},null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},{"id":"c16n","kind":"bag","slots":[{"uid":"s2th","key":"herb","qty":1},{"uid":"fixture-1","key":"stone","qty":1},{"uid":"fixture-2","key":"stone","qty":1},{"uid":"fixture-3","key":"stone","qty":1},{"uid":"fixture-4","key":"stone","qty":1},{"uid":"fixture-5","key":"stone","qty":1},{"uid":"fixture-6","key":"stone","qty":1},{"uid":"fixture-7","key":"stone","qty":1},{"uid":"fixture-8","key":"stone","qty":1},{"uid":"fixture-9","key":"stone","qty":1},{"uid":"fixture-10","key":"stone","qty":1},{"uid":"fixture-11","key":"stone","qty":1}]},3655,[{"id":"r1","seq":1,"at":1794729600000,"kind":"run.start","detail":"female@Creator Inspection (QA only)"}]]"
+
+ ❯ tests/tmp-basket-capacity.test.ts:71:21
+     69|     const deal = tradeBasketWithHuman(r, hw, h, 'inv', [{key:'herb',qt…
+     70|     expect(deal).toMatchObject({ok:false,reason:'no carrying capacity'…
+     71|     expect(state()).toBe(before);
+       |                     ^
+     72|   });
+     73|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 skipped (4)
+   Start at  01:44:55
+   Duration  8.97s (transform 5.43s, setup 0ms, import 6.38s, tests 2.29s, environment 0ms)
+

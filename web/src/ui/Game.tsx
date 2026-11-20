@@ -889,7 +889,7 @@ export default function Game({
       {panel?.kind === 'escrow' && panel.eid && <EscrowPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'rest' && panel.eid && <RestPanel api={api} eid={panel.eid} />}
       {panel?.kind === 'evac' && panel.eid && <EvacPanel api={api} eid={panel.eid} />}
-      {panel?.kind === 'human' && panel.actorId && <HumanPanel api={api} actorId={panel.actorId} onClose={() => setPanel(null)} />}
+      {panel?.kind === 'human' && panel.actorId && <HumanPanel key={panel.actorId} api={api} actorId={panel.actorId} onClose={() => setPanel(null)} />}
       {panel?.kind === 'report' && <ReportPanel api={api} lines={panel.lines || []} report={panel.report ?? null} history={returnHistory} />}
       <DragGhost />
       {p.dead && <DeathRecoveryOverlay gs={gs} onRespawn={() => act('respawn')} />}

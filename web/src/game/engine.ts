@@ -39,7 +39,7 @@ import {
 import { syncVeyraEcosystemActors, VEYRA_PRIMORDIAL_SITES, resolvePrimordialGlobalTile } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
-import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerBoardEvac, leaveEvacBerth, nearestEvacTrip, startHumanAid, commandHuman, talkToHuman, threatenHuman, recruitHuman, setFollowing, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
+import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerBoardEvac, leaveEvacBerth, nearestEvacTrip, startHumanAid, commandHuman, talkToHuman, threatenHuman, recruitHuman, setFollowing, commitHumanBarter, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
 import { NPC_POI_CENSUS } from './npc-census';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
@@ -2443,6 +2443,10 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if (it.type === 'humanThreaten') { const demand = (['item', 'disarm', 'back_off', 'stop_attack'] as string[]).includes(it.demand) ? it.demand as HumanDemand : 'back_off'; const out = threatenHuman(r, hw, h, now, demand, typeof it.stackUid === 'string' ? it.stackUid : undefined); return out.ok ? { ok: true, receipt: latestReceipt(), msg: out.msg } : fail(out.reason ?? 'Confrontation failed.'); }
       if (it.type === 'humanRecruit') { const out = recruitHuman(r, hw, h, now); return out.ok ? { ok: true, receipt: latestReceipt(), msg: `${h.name} joined you.` } : fail(out.reason ?? 'Recruitment refused.'); }
       if (it.type === 'humanExchange') {
+        if ('offer' in it || 'ask' in it) {
+          const result = commitHumanBarter(r,hw,h,it.offer,it.ask,now,it.revision);
+          return result.ok ? {ok:true,receipt:latestReceipt(),msg:'Selected goods exchanged.'} : fail(result.reason ?? 'Trade refused.');
+        }
         const out = exchangeHumanStacks(r, hw, h, Number(it.playerSlot), Number(it.humanSlot), now);
         return out.ok ? { ok: true, receipt: latestReceipt(), msg: 'Items exchanged; both stack identities were preserved.' } : fail(out.reason ?? 'Trade refused.');
       }

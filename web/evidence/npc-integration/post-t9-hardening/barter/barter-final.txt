@@ -1,0 +1,41 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.1: first tick after startRun does not zero hunger/thirst or down humans
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > seeds distinct Primordial lairs and all evacuation trips from authored global POI statics
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > doorway occupation includes a survivor body in global-to-window coordinates
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > needs advancement does not suppress autonomous human movement at the same timestamp
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.2: work never mints from a stale abstract community stock mirror
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > autonomous builder selects a real shared wood source, routes legally, harvests, and carries real output
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > returns tracked harvest UID and quantity by a real legal route to authorized community storage and survives reload
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > harvest capacity is transactional: merges one admitted unit, then a full pack causes no further source damage
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > human talk and barter commit through dispatch; save/reload preserves trust, memory and both UIDs 2728ms
+ ✓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > refuses a trivial barter for a carried rare Core without moving either UID 196ms
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > confrontation compliance physically transfers the demanded carried stack and records evidenced witnesses only
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > does not reroll repeated confrontation clicks against an unchanged scene
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > a survivor who chooses FIGHT lands a timed, facing- and LOS-gated K5 hit on the player
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > rejects remote human social actions without success receipts or state changes
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > remote robbery of a downed survivor is rejected without moving any carried UID
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.3: custody survives JSON round-trip with owner + UID stock conservation
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.4: trade debits the player and preserves UID — no free mint
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.4: loot preserves UID and does not mint replacements
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.4: killHuman transfers equipped stacks by UID and empties the pack
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > accepted recruitment creates a real collision-aware companion follow route
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.7: companion refusal is deterministic across reload for the same orderId
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > human melee uses K5 reach, floor and cadence gates and wears its equipped weapon
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.8: applyDamage floors the hit and DOWNS (not auto-kills) on zero HP
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.9: boardEvac requires an operating berth at physical contact and one vessel per person
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.9: finalizeHumanOutcomes does not default everyone to SURVIVED
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.9: endRun stores human outcome history in profile
+ ↓ tests/npc-p0-corrective.test.ts > NPC P0 corrective > P0.6: stepHumans runs consume/work/move without corrupting state
+ ✓ tests/npc-basket-trade.test.ts > multi-item barter > moves every line of a basket and debits the source by exactly what landed 2406ms
+ ✓ tests/npc-basket-trade.test.ts > multi-item barter > refuses the whole basket when one line cannot be met, moving nothing 92ms
+ ✓ tests/npc-basket-trade.test.ts > multi-item barter > restores both packs and next UID after a merge then a capacity refusal 36ms
+ ✓ tests/npc-basket-trade.test.ts > multi-item barter > restores both packs and next UID after a empty slot then a capacity refusal 62ms
+ ✓ tests/npc-basket-trade.test.ts > dispatch exchanges the exact selected quantities, refusing stale UIDs, unaffordable asks and unreachable partners 376ms
+
+ Test Files  2 passed (2)
+      Tests  7 passed | 25 skipped (32)
+   Start at  01:49:58
+   Duration  14.43s (transform 5.79s, setup 0ms, import 8.02s, tests 5.91s, environment 0ms)
+

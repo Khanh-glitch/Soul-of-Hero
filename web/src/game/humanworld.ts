@@ -27,7 +27,7 @@ import {countWorldWork} from './world-work';
  */
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
 import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import { addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
+import { carryLimit, invWeight, addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import { humanCanUseEntity, humanEntityTile, executeHumanWork, dispatchMedicalResponse, planHumanOccupation, type HumanWorkTask } from './human-jobs';
@@ -1169,6 +1169,89 @@ export function evaluateHumanExchange(r: RunState, h: HumanRecord, playerSlot: n
     return { ok: false, reason: `Counter-offer: choose something less valuable from me, or add about ${gap} value points to your offer.`, offeredName, requestedName, offeredValue, requestedValue, ratio };
   }
   return { ok: true, reason: `That is a fair exchange: your ${offeredName} for my ${requestedName}.`, offeredName, requestedName, offeredValue, requestedValue, ratio };
+}
+
+export type BarterLine = { uid: string; qty: number };
+/** Selection is keyed by physical UID, never by a slot that might now hold another item. */
+function planBarter(r: RunState, h: HumanRecord, offer: BarterLine[], ask: BarterLine[]) {
+  const player = r.custody.inv, pack = humanPack(r, h);
+  if (['DOWNED','DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(h.state)) return {ok:false as const, reason:'It is not safe to barter right now.'};
+  if (!Array.isArray(offer) || !Array.isArray(ask) || !offer.length || !ask.length) return {ok:false as const, reason:'Choose at least one item from each pack.'};
+  // Only two small containers participate. Stage withdrawals first (full packs
+  // can swap), then use the real empty-slot/merge rules. Failed quotes allocate
+  // no persistent identity, consume no goods, and never reward Trust.
+  const copy = (c: Container): Container => ({...c, slots:c.slots.map(s=>s?{...s}:null)});
+  const src=copy(player), dst=copy(pack), draft={...r, custody:{[src.id]:src,[dst.id]:dst}};
+  const withdraw=(c:Container, lines:BarterLine[])=>{
+    if(lines.length>c.slots.length)return null;
+    const seen=new Set<string>(), moved:Stack[]=[];
+    for(const l of lines){
+      if(!l || !Number.isSafeInteger(l.qty) || l.qty<1 || seen.has(l.uid))return null;
+      const i=c.slots.findIndex(s=>s?.uid===l.uid), s=c.slots[i];
+      if(!s || l.qty>s.qty || s.production)return null;
+      seen.add(l.uid);
+      if(l.qty===s.qty){moved.push(s);c.slots[i]=null;}
+      else{moved.push({...s,uid:uid(draft,'s'),qty:l.qty});s.qty-=l.qty;}
+    }
+    return moved;
+  };
+  const give=withdraw(src,offer), take=withdraw(dst,ask);
+  if(!give||!take)return {ok:false as const,reason:'A selected item or quantity is unavailable, or reserved for work.'};
+  const offeredValue=give.reduce((n,s)=>n+humanTradeItemValue(s,h),0);
+  const requestedValue=take.reduce((n,s)=>{
+    const lastNeeded=!dst.slots.some(v=>v?.key===s.key)&&((ITEMS[s.key].food?.hunger&&h.hunger<45)||(ITEMS[s.key].food?.thirst&&h.thirst<45));
+    return n+humanTradeItemValue(s,h)*(lastNeeded?1.8:1);
+  },0);
+  const corePremium=take.some(s=>ITEMS[s.key].creatorCore)&&!give.some(s=>ITEMS[s.key].creatorCore);
+  const gap=Math.ceil(requestedValue*(corePremium?0.9:0.85)-offeredValue);
+  if(gap>0)return {ok:false as const,gap,offeredValue,requestedValue,reason:`Counter-offer: add ${gap} value points or ask for fewer goods.`};
+  const lineage:{from:string;parent:string;portion:string;to:string;uid:string;qty:number}[]=[];
+  function deposit(c:Container,from:Container,stacks:Stack[],lines:BarterLine[]){
+    return stacks.every((s,i)=>{
+      const before=new Map(c.slots.flatMap(v=>v?[[v.uid,v.qty] as const]:[]));
+      if(!addStack(draft,c.id,s))return false;
+      for(const v of c.slots){if(!v)continue;const qty=v.qty-(before.get(v.uid)??0);if(qty>0)lineage.push({from:from.id,parent:lines[i].uid,portion:s.uid,to:c.id,uid:v.uid,qty});}
+      return true;
+    });
+  }
+  if(!deposit(dst,src,give,offer)||!deposit(src,dst,take,ask))return {ok:false as const,reason:'Not enough room in both packs for this exchange.'};
+  const mass=(stacks:Stack[])=>stacks.reduce((n,s)=>n+ITEMS[s.key].w*s.qty,0);
+  const delta=mass(take)-mass(give), worn=Object.values(h.equip).filter((s):s is Stack=>!!s);
+  const humanLimit=BAL.player.carryLimit+worn.reduce((n,s)=>n+(ITEMS[s.key].carryBonus??0),0);
+  const humanMass=mass(pack.slots.filter((s):s is Stack=>!!s))+mass(worn);
+  if((delta>0 && invWeight(r)+delta>carryLimit(r)+1e-6) || (delta<0 && humanMass-delta>humanLimit+1e-6))return {ok:false as const,reason:'The added weight is more than one of us can carry.'};
+  return {ok:true as const,reason:'Both packs can make this exchange.', offeredValue,requestedValue,src,dst,lineage,nextId:draft.nextId};
+}
+function barterRevision(r:RunState,h:HumanRecord,offer:BarterLine[],ask:BarterLine[],offeredValue:number,requestedValue:number) {
+  return JSON.stringify([r.id,h.actorId,h.floor,h.gx,h.gy,r.custody.inv.id,h.inv.packId,r.custody.inv.slots,humanPack(r,h).slots,offer,ask,offeredValue,requestedValue]);
+}
+export function quoteHumanBarter(r:RunState,h:HumanRecord,offer:BarterLine[],ask:BarterLine[]):HumanTradeEvaluation & {revision?:string} {
+  const plan=planBarter(r,h,offer,ask);const {ok,reason,offeredValue,requestedValue}=plan;
+  return {ok,reason,offeredValue,requestedValue,revision:plan.ok?barterRevision(r,h,offer,ask,plan.offeredValue,plan.requestedValue):undefined};
+}
+/** Return a proposal, never a transfer. Only ask for items already selected by the player. */
+export function counterHumanBarter(r:RunState,h:HumanRecord,offer:BarterLine[],ask:BarterLine[]) {
+  const initial=planBarter(r,h,offer,ask);
+  if(initial.ok||!initial.gap)return null;
+  const more=offer.map(l=>({...l}));
+  for(const l of more){const stack=r.custody.inv.slots.find(s=>s?.uid===l.uid);if(!stack) return null;
+    const unit=humanTradeItemValue({...stack,qty:1},h), gap=initial.gap;
+    l.qty=Math.min(stack.qty,l.qty+Math.max(1,Math.ceil(gap/unit)));
+    if(planBarter(r,h,more,ask).ok)return {offer:more,ask:ask.map(l=>({...l}))};
+  }
+  for(const l of ask){const less=[{uid:l.uid,qty:1}];if(planBarter(r,h,offer,less).ok)return {offer:offer.map(l=>({...l})),ask:less};}
+  return null;
+}
+export function commitHumanBarter(r:RunState,hw:HumanWorld,h:HumanRecord,offer:BarterLine[],ask:BarterLine[],now:number,revision:unknown):TradeResult {
+  const plan=planBarter(r,h,offer,ask);if(!plan.ok)return {ok:false,reason:plan.reason};
+  if(revision!==barterRevision(r,h,offer,ask,plan.offeredValue,plan.requestedValue))return {ok:false,reason:'The quoted goods or terms changed. Review the offer again.'};
+  r.custody.inv.slots=plan.src.slots;humanPack(r,h).slots=plan.dst.slots;r.nextId=plan.nextId;
+  faceTowardPlayer(r,h);const ids=[...offer,...ask].map(l=>l.uid);
+  h.tradeTrustReceipts??={};if(!Object.keys(h.tradeTrustReceipts).length)h.trust=clamp((h.trust??50)+1,0,100);
+  h.tradeTrustReceipts[ids.slice().sort().join('|')]??=now;
+  recordIncident(r,hw,{kind:'trade',victim:h.actorId,aggressor:'player',witnesses:[],at:now,place:{tx:h.gx,ty:h.gy,floor:h.floor},property:ids,resolved:true},now);
+  receipt(r,now,'human.exchange',JSON.stringify({actor:h.actorId,lines:plan.lineage}));
+  return {ok:true,transferred:[...offer,...ask].reduce((n,l)=>n+l.qty,0)};
 }
 
 /** Equal-stack barter. Both stacks move by identity; neither side mints or destroys stock. */

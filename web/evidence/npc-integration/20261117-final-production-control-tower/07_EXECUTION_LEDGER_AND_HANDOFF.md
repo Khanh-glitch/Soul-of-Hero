@@ -456,3 +456,6 @@ Shard 3 trả 56 file/248 pass/58 fail/8 pending; với shard 1 tổng đã có 
 
 ### Khắc phục lỗi HTTP của lượt F (sau eb04deb)
 Không hạ chất lượng, không bỏ VFX, không giả full pack. Build mặc định có descriptor khai đúng chế độ embedded; `?pfxbase=` vẫn nhận manifest ngoài, file offline vẫn không fetch. Hai test pass; production build rồi hai process Chromium 640×360 với Save & quit/Continue: run `run_t1dxhr_mwobewdy`, đóng 90.056 s, chênh save 150.696 s; 0 page error / 0 HTTP lỗi đã ghi. Dữ liệu trong `../post-t9-hardening/pixelfx/`. Không sửa số liệu lịch sử của lượt F tại eb04deb.
+
+### 04 §C/G — giao dịch hai pack: thay đổi sản phẩm sau T9 đóng băng
+Đã tái hiện 2 lỗi rollback trên eb04deb, sửa cả nguồn/đích, triển khai giỏ UID/số lượng hai chiều trên dispatch + 5 chế độ tương tác theo ngữ cảnh. Counter thực có thể sửa; Review/Accept riêng, check stale terms, slot, weight, proximity và K1 split lineage. 5/5 ca giỏ, selector barter 7/7 được chọn và 25 skipped; production/test TS và build qua. Chromium fixture dùng panel thật trong viewport 640×360: `ha`, 9 wood + 1 stone ↔ 4 berries, một giao dịch, 0 page/resource errors được ghi. Chi tiết `../post-t9-hardening/barter/README.md`; đây **không phải campaign tự nhiên** hoặc số liệu T9 đóng băng.
