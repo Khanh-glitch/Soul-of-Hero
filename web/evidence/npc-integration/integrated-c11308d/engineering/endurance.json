@@ -1,0 +1,283 @@
+{
+  "sha": "c11308d23f7bcb2bedb5239d44b104250b1ad521",
+  "seed": 7606,
+  "runId": "run_5va_mwhjny80",
+  "actors": 286,
+  "minute": 60,
+  "complete": false,
+  "reports": [
+    {
+      "minute": 1,
+      "elapsedMs": 22943.236465,
+      "counts": {
+        "routeBoundaryChecks": 6139,
+        "sourceLookups": 271,
+        "sourceIndexReads": 76,
+        "worldSlices": 2883,
+        "plannerActivations": 60,
+        "actorPlans": 86,
+        "regionCompilations": 39,
+        "renderCompilations": 0,
+        "routeExpansions": 32381,
+        "entityScans": 14788
+      },
+      "timings": {
+        "stepLootRespawn": {
+          "calls": 2884,
+          "ms": 13.753066000028412
+        },
+        "stepG1b": {
+          "calls": 2884,
+          "ms": 26.184802999940075
+        },
+        "stepStations": {
+          "calls": 5766,
+          "ms": 348.3158340001037
+        },
+        "stepTenders": {
+          "calls": 2884,
+          "ms": 94.47445499999776
+        },
+        "stepTenderStates": {
+          "calls": 2884,
+          "ms": 157.91635499996846
+        },
+        "humanEventBoundary": {
+          "calls": 2883,
+          "ms": 1063.8117109999566
+        },
+        "basePowerBoundary": {
+          "calls": 2883,
+          "ms": 25.29551000000356
+        },
+        "tenderBoundary": {
+          "calls": 2883,
+          "ms": 18.072352000074716
+        },
+        "stepBasePower": {
+          "calls": 2883,
+          "ms": 24.727672000030907
+        },
+        "stepGardensBarrels": {
+          "calls": 2883,
+          "ms": 30.17728700000771
+        },
+        "tickNeeds": {
+          "calls": 2883,
+          "ms": 2443.122419999945
+        },
+        "navigationRead": {
+          "calls": 3135,
+          "ms": 731.8056899999392
+        },
+        "compileCanonicalGeometryRegion": {
+          "calls": 39,
+          "ms": 11861.587789999992
+        },
+        "globalSourceCandidates": {
+          "calls": 128,
+          "ms": 6242.646514999996
+        },
+        "globalSourceAt": {
+          "calls": 271,
+          "ms": 846.9685320000099
+        },
+        "planAutonomousWork": {
+          "calls": 86,
+          "ms": 11838.604545000002
+        },
+        "resumeHarvestJob": {
+          "calls": 100,
+          "ms": 1303.106296999993
+        },
+        "stepHumans": {
+          "calls": 2883,
+          "ms": 17569.264269999974
+        },
+        "compileCanonicalTerrainRegion": {
+          "calls": 38,
+          "ms": 7900.686664999988
+        },
+        "depositHumanOutputs": {
+          "calls": 16,
+          "ms": 8.331110999984958
+        },
+        "advanceWorld": {
+          "calls": 1,
+          "ms": 22914.271784999997
+        }
+      },
+      "playerDead": false,
+      "states": {
+        "IDLE": 275,
+        "MOVING": 7,
+        "WORKING": 4
+      },
+      "receipts": {
+        "human.harvest.select": 28,
+        "human.equipment": 13,
+        "human.door.open": 13,
+        "human.work": 58,
+        "human.harvest": 24,
+        "human.harvest.output": 25,
+        "human.guard.duty": 6,
+        "human.work.commit": 6,
+        "human.cargo.lineage": 17,
+        "human.cargo.deliver": 17,
+        "human.store": 16,
+        "human.procurement.ration": 20,
+        "human.harvest.complete": 16,
+        "human.access.yield": 41,
+        "human.procurement.request": 5,
+        "human.work.input": 1,
+        "human.work.fetch": 1,
+        "human.harvest.accident": 1
+      },
+      "saveBytes": 884143,
+      "digest": "bc7708865558bfda0a45a8e18193936ddfa32a8f9c4b31b30cea060b7116ae76"
+    },
+    {
+      "minute": 60,
+      "elapsedMs": 365877.56094399997,
+      "counts": {
+        "routeBoundaryChecks": 1888911,
+        "sourceLookups": 14470,
+        "sourceIndexReads": 2801,
+        "worldSlices": 57740,
+        "plannerActivations": 3540,
+        "actorPlans": 3922,
+        "regionCompilations": 215,
+        "renderCompilations": 0,
+        "routeExpansions": 1153629,
+        "entityScans": 325876
+      },
+      "timings": {
+        "stepLootRespawn": {
+          "calls": 57799,
+          "ms": 104.4323369979702
+        },
+        "stepG1b": {
+          "calls": 57799,
+          "ms": 490.13858999573495
+        },
+        "stepStations": {
+          "calls": 115480,
+          "ms": 5579.84988099666
+        },
+        "stepTenders": {
+          "calls": 57799,
+          "ms": 835.4556170061132
+        },
+        "stepTenderStates": {
+          "calls": 57799,
+          "ms": 632.4485019988679
+        },
+        "humanEventBoundary": {
+          "calls": 57740,
+          "ms": 35384.383718005796
+        },
+        "basePowerBoundary": {
+          "calls": 57740,
+          "ms": 482.1952959954415
+        },
+        "tenderBoundary": {
+          "calls": 57740,
+          "ms": 298.668405999033
+        },
+        "stepBasePower": {
+          "calls": 57740,
+          "ms": 565.6849080037337
+        },
+        "stepGardensBarrels": {
+          "calls": 57740,
+          "ms": 622.5576790022096
+        },
+        "tickNeeds": {
+          "calls": 57740,
+          "ms": 61742.88263299913
+        },
+        "navigationRead": {
+          "calls": 90090,
+          "ms": 22291.625398012176
+        },
+        "compileCanonicalTerrainRegion": {
+          "calls": 214,
+          "ms": 56326.65923799998
+        },
+        "compileCanonicalGeometryRegion": {
+          "calls": 215,
+          "ms": 81006.10942199973
+        },
+        "globalSourceCandidates": {
+          "calls": 3397,
+          "ms": 25018.659263000252
+        },
+        "planAutonomousWork": {
+          "calls": 3922,
+          "ms": 68379.1259569999
+        },
+        "stepHumans": {
+          "calls": 57740,
+          "ms": 244513.64969299932
+        },
+        "resumeHarvestJob": {
+          "calls": 9947,
+          "ms": 42190.58984499816
+        },
+        "globalSourceAt": {
+          "calls": 14470,
+          "ms": 12589.166994000036
+        },
+        "depositHumanOutputs": {
+          "calls": 1311,
+          "ms": 1337.848066999817
+        },
+        "advanceWorld": {
+          "calls": 59,
+          "ms": 365839.05311100004
+        }
+      },
+      "playerDead": false,
+      "states": {
+        "IDLE": 255,
+        "DOWNED": 23,
+        "MOVING": 3,
+        "WORKING": 5
+      },
+      "receipts": {
+        "human.harvest": 969,
+        "human.harvest.output": 1020,
+        "human.work": 2217,
+        "human.procurement.ration": 108,
+        "human.access.yield": 1969,
+        "human.cargo.lineage": 982,
+        "human.cargo.deliver": 982,
+        "human.store": 936,
+        "human.harvest.complete": 932,
+        "human.equipment": 55,
+        "human.door.open": 37,
+        "human.harvest.select": 1046,
+        "human.guard.duty": 1092,
+        "human.work.commit": 1103,
+        "human.harvest.accident": 21,
+        "human.down": 32,
+        "human.harvest.crush": 32,
+        "human.harvest.cancel": 77,
+        "human.procurement.request": 10,
+        "human.procurement.contribute": 3,
+        "human.medical.respond": 9,
+        "human.treat": 9,
+        "human.work.input": 5,
+        "human.work.fetch": 2,
+        "human.production.pay": 1,
+        "human.work.start": 1,
+        "human.production.fuel": 1,
+        "human.production.finish": 1,
+        "job.done": 1,
+        "human.production.pickup": 1
+      },
+      "saveBytes": 1367239,
+      "digest": "776169148917c7d66b5e813475c924c28b4f2659c04a97b8945d0aaad70e284a"
+    }
+  ]
+}
