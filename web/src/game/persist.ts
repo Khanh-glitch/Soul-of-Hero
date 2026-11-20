@@ -1,3 +1,4 @@
+import {saveNavigation,loadNavigation} from './navigation-save';
 import { G1B_VERSION, G1B_CHEST_SLOTS, G1B_SITES, G1B_FIXTURE_BY_ID, G1B_GATE_BY_ID, G1B_SOURCE_SITES, G1B_BASE_SOURCE_SITES, G1B_LAYOUT_REVISION, G1B_FIXTURES, g1bSeed, CORE_V2 } from './g1b';
 import { G1B_BATCH2_ECOLOGY } from './g1b-ecology-batch2.frozen';
 import { G1B_BATCH3_ECOLOGY } from './g1b-ecology-batch3.frozen';
@@ -85,7 +86,7 @@ export function validate(raw: any): GameState | null {
   if (!obj(raw) || !integer(raw.version) || raw.version > SAVE_VERSION || !integer(raw.revision)) return null;
   const p = raw.profile;
   if (!obj(p) || !integer(p.securedCash) || !obj(p.achievements) || !Array.isArray(p.history) || !obj(p.settings) || !finite(p.settings.volume) || typeof p.settings.muted !== 'boolean' || !stringArray(p.profileReceipts)) return null;
-  if (raw.run === null) return raw as GameState;
+  if (raw.run === null) return raw.navigation === undefined ? raw as GameState : null;
   const r = raw.run;
   if (!obj(r) || typeof r.id !== 'string' || !r.id || !integer(r.nextId) || r.nextId < 1 || !finite(r.startedAt) || !finite(r.qaOffset) || !integer(r.seed) || !integer(r.rng) || !integer(r.seq) || !obj(r.player) || !obj(r.custody) || !obj(r.entities) || !obj(r.clock)) return null;
   if (r.sourceLayoutVersion !== undefined && r.sourceLayoutVersion !== 2 && r.sourceLayoutVersion !== 3) return null;
@@ -974,6 +975,11 @@ export function validate(raw: any): GameState | null {
     if (cal.changed) r.calendar = cal.ledger;
     if (r.calendar.version !== CALENDAR_VERSION) return null;
   }
+  if (raw.navigation !== undefined) {
+    try { loadNavigation(r, raw.navigation); } catch { return null; }
+    // Consume the wire representation; the restored run now owns its maps.
+    delete raw.navigation;
+  }
   return raw as GameState;
 }
 
@@ -991,7 +997,8 @@ export function serializeSnapshot(gs: GameState): string {
   if (gs.run && !gs.run.wreckEconomy) gs.run.wreckEconomy = wreckEconomy(gs.run);
   if (!Number.isSafeInteger(gs.revision + 1)) throw new Error('Snapshot sequence exhausted.');
   gs.revision++;
-  const payload = JSON.stringify(gs);
+  const nav=gs.run && saveNavigation(gs.run);
+  const payload = JSON.stringify(nav?{...gs,navigation:nav}:gs);
   return JSON.stringify({ format: FORMAT, payload, checksum: checksum(payload) });
 }
 type Candidate = { gs: GameState; payload: string; legacy: boolean; index: number };
@@ -1003,8 +1010,10 @@ function decode(text: string, index: number): Candidate | null {
       if (raw.format !== FORMAT || typeof raw.payload !== 'string' || raw.checksum !== checksum(raw.payload)) return null;
       payload = raw.payload; state = JSON.parse(payload);
     }
+    const nav=state?.navigation;
     const v = validate(state); if (!v) return null;
-    return { gs: v, payload: JSON.stringify(v), legacy: raw?.format === undefined, index };
+    const normalized=JSON.stringify(nav===undefined?v:{...v,navigation:nav});
+    return { gs: v, payload: normalized, legacy: raw?.format === undefined, index };
   } catch { return null; }
 }
 /** Legacy writes did not increment revision for simulation. Same-run old copies can
@@ -1012,7 +1021,20 @@ function decode(text: string, index: number): Candidate | null {
  * New-format ties or ties without an ordering signal remain ambiguous. */
 export function selectSnapshots(copies: (string | null)[]): { gs: GameState | null; bad: number[]; conflict: boolean; unsupported: boolean; legacyAlternate: number | null } {
   const bad: number[] = []; const valid: Candidate[] = []; let unsupported = false;
-  copies.forEach((text, i) => { if (text === null) return; try { const outer = JSON.parse(text); const value = outer?.format === FORMAT && typeof outer.payload === 'string' ? JSON.parse(outer.payload) : outer; if (Number.isInteger(value?.version) && value.version > SAVE_VERSION) unsupported = true; } catch { /* reported as damaged */ } const v = decode(text, i); if (v) valid.push(v); else bad.push(i); });
+  copies.forEach((text, i) => {
+    if (text === null) return;
+    // Usually both stores hold identical bytes. Hydrate large search maps just
+    // once in that case; keep per-copy damage diagnostics for quarantine.
+    const same = copies.indexOf(text);
+    if (same < i) { if (bad.includes(same)) bad.push(i); return; }
+    try {
+      const outer = JSON.parse(text);
+      const value = outer?.format === FORMAT && typeof outer.payload === 'string' ? JSON.parse(outer.payload) : outer;
+      if (Number.isInteger(value?.version) && value.version > SAVE_VERSION) unsupported = true;
+    } catch { /* reported as damaged */ }
+    const v = decode(text, i);
+    if (v) valid.push(v); else bad.push(i);
+  });
   valid.sort((a, b) => b.gs.revision - a.gs.revision);
   let top = valid[0]; let conflict = false; let legacyAlternate: number | null = null;
   if (top && valid[1] && top.gs.revision === valid[1].gs.revision && top.payload !== valid[1].payload) {

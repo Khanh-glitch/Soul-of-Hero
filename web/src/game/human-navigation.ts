@@ -1,3 +1,4 @@
+import {searches,failedSearches,componentFailures} from './navigation-save';
 import {timedWorldWork} from './world-work';
 import {countWorldWork} from './world-work';
 /** Global physical navigation. Routes contain actual cardinal steps or authored stair edges.
@@ -24,16 +25,6 @@ function indexArchitecture(){
  }
 }
 type SearchNode={p:HumanWaypoint;g:number;score:number};
-type SearchState={heap:SearchNode[];costs:Map<string,number>;parent:Map<string,string>;points:Map<string,HumanWaypoint>;expanded:number;checked:string;resources?:string;blocked:Map<string,HumanWaypoint>};
-// Search progress is derived, not an economic authority. Reload reconstructs it from the
-// same physical origin; persisted actors/routes/items never depend on a hidden completion.
-const searches=new WeakMap<RunState,Map<string,SearchState>>();
-const failedSearches=new WeakMap<RunState,Map<string,{checked:string;resources?:string;blocked:HumanWaypoint[];status:'NO_PATH'|'SEARCH_LIMIT';expanded:number}>>();
-interface ComponentFailure {access:string;checked:string;resources?:string;points:Set<string>;blocked:HumanWaypoint[];expanded:number}
-// A fully exhausted search proves an enclosed physical component, not merely
-// one actor's failure. Equivalent access can reuse that proof at any cell inside
-// it. SEARCH_LIMIT is never promoted to a component/no-path certificate.
-const componentFailures=new WeakMap<RunState,ComponentFailure[]>();
 interface NavigationRead { all:Entity[]; blockMap:Map<string,number>; at:Map<string,Entity[]>;physical:()=>string }
 const planningReads=new WeakMap<RunState,NavigationRead>();
 /** Synchronous planning read only; never retained across work, save or external edits. */

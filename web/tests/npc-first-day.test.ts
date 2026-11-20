@@ -36,6 +36,7 @@ it.skipIf(!dir)('audits an unchanged geographic first day and a fresh-process Co
    output(`${label}.json`,JSON.stringify(report));
    if(hour===8&&!fork){const snapshot=serializeSnapshot(gs);expect(census(r)).toEqual(state);output('fork-origin.json',JSON.stringify(state));output('h8.save',snapshot);}
    if(hour===1||hour===24)output(`${label}-h${hour}.json`,JSON.stringify(gs));
+   if(hour===24 && fork)output('continued-h24.save',serializeSnapshot(gs));
  }
 },14400000);
 

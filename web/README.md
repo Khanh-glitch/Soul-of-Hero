@@ -8,10 +8,18 @@ This is a standalone browser build that follows the Soul of Hero Gameplay Bible 
 ```
 npm install
 npm run dev        # dev server
-npm run build      # single-file production build → dist/index.html
-npm test           # vitest: engine/simulation contract tests (13)
+npm run build      # production HTTP game → dist/ (serve this whole directory)
+npm test           # Vitest engine/simulation tests
 node scripts/qa.mjs    # real-browser QA (Playwright Chromium) → qa-shots/
 node scripts/qa2.mjs   # combat / Elder / Ragnarok cash / vendor browser pass
+```
+
+## Play the packaged browser game
+
+Download `releases/Soul-of-Hero-Web.zip`, extract the whole archive, then run `Play.cmd` on Windows or `python3 play.py` in the extracted directory on macOS/Linux. Requires Python 3.7+ and a modern browser; no Node installation or network connection is required to play. Use the same browser profile and `http://127.0.0.1:4173/` each time to keep local saves. The archive includes a Vietnamese quick-start. To rebuild it after `npm run build`:
+
+```sh
+python3 scripts/package-playable.py releases/Soul-of-Hero-Web.zip
 ```
 
 ## Controls
