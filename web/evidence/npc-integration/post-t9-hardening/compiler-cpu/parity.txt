@@ -1,0 +1,15 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+stdout | tests/npc-natural-cook.test.ts > normal New Game has no opening meal inputs; only a physical delivery can close the supply deficit
+{"case":"natural-cook-supply","openingDeficits":8,"supplied":[{"actor":"hm","recipe":"grilled_mushroom"}],"drop":{"at":1794729647643.8613,"jobId":"hj2u6","sourceId":"0:2738558","workerId":"hm","fromUid":"s2uf","intoUid":"s2uf","qty":1,"key":"mushroom"},"paidMeals":0}
+
+ ✓ tests/npc-natural-cook.test.ts > normal New Game has no opening meal inputs; only a physical delivery can close the supply deficit 41597ms
+ ✓ tests/veyra-query-parity.test.ts > query regions preserve751f80a masks, all floors, source eligibility and authored statics without render materialization 24991ms
+ ✓ tests/veyra-offshore-query.test.ts > investigating a remote sea cell does not require a player spawn or create a resource or floor 199ms
+
+ Test Files  3 passed (3)
+      Tests  3 passed (3)
+   Start at  02:04:55
+   Duration  73.28s (transform 4.25s, setup 0ms, import 6.02s, tests 66.79s, environment 0ms)
+

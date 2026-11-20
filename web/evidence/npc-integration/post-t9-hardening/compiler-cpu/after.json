@@ -1,0 +1,570 @@
+{
+  "sha": "4bfea69d8b1599081e82c3fbeafb705c9c27d64f",
+  "seed": 7606,
+  "seconds": 60,
+  "actors": 286,
+  "elapsedMs": 17119.162353,
+  "scope": "includes descheduling; CPU sampling diagnostic, not frame timing",
+  "top": [
+    [
+      "src/game/world-work.ts:timedWorldWork:19",
+      {
+        "self": 1552.2950000000012,
+        "samples": 945
+      }
+    ],
+    [
+      "src/veyra05/window.ts::253",
+      {
+        "self": 1126.0030000000008,
+        "samples": 951
+      }
+    ],
+    [
+      ":(garbage collector):-1",
+      {
+        "self": 892.2340000000014,
+        "samples": 517
+      }
+    ],
+    [
+      "src/game/humanworld.ts::3032",
+      {
+        "self": 709.4080000000004,
+        "samples": 515
+      }
+    ],
+    [
+      "src/game/world-economy.ts:compileEconomy:212",
+      {
+        "self": 618.1089999999999,
+        "samples": 431
+      }
+    ],
+    [
+      "src/veyra05/reader.ts:sampleTile:178",
+      {
+        "self": 556.037,
+        "samples": 444
+      }
+    ],
+    [
+      "src/veyra05/chunks.ts:buildChunk:140",
+      {
+        "self": 503.49700000000036,
+        "samples": 361
+      }
+    ],
+    [
+      "src/game/humanworld.ts::552",
+      {
+        "self": 483.0270000000001,
+        "samples": 336
+      }
+    ],
+    [
+      "src/veyra05/window.ts:getWindowWorld:654",
+      {
+        "self": 482.2300000000002,
+        "samples": 368
+      }
+    ],
+    [
+      "src/veyra05/reader.ts:dSeg:147",
+      {
+        "self": 464.8720000000006,
+        "samples": 385
+      }
+    ],
+    [
+      "src/veyra05/window.ts::431",
+      {
+        "self": 413.642,
+        "samples": 236
+      }
+    ],
+    [
+      "src/veyra05/window.ts:flood:108",
+      {
+        "self": 394.8820000000001,
+        "samples": 304
+      }
+    ],
+    [
+      "src/game/humanworld.ts::2555",
+      {
+        "self": 347.31300000000005,
+        "samples": 266
+      }
+    ],
+    [
+      "src/game/engine.ts:allRunEntities:4949",
+      {
+        "self": 339.0279999999999,
+        "samples": 261
+      }
+    ],
+    [
+      "src/game/human-shelter.ts:humanShelter:62",
+      {
+        "self": 305.9530000000004,
+        "samples": 238
+      }
+    ],
+    [
+      "src/veyra05/window.ts:placePoiSalvage:160",
+      {
+        "self": 258.08900000000006,
+        "samples": 166
+      }
+    ],
+    [
+      "src/veyra05/chunks.ts:isWater:85",
+      {
+        "self": 256.26800000000014,
+        "samples": 196
+      }
+    ],
+    [
+      "src/veyra05/reader.ts:coastDistanceAtAu:154",
+      {
+        "self": 252.7830000000001,
+        "samples": 202
+      }
+    ],
+    [
+      "src/game/core.ts::2",
+      {
+        "self": 239.97300000000013,
+        "samples": 203
+      }
+    ],
+    [
+      "src/veyra05/poi-kit.ts:buildPoiLayout:442",
+      {
+        "self": 235.78200000000004,
+        "samples": 126
+      }
+    ],
+    [
+      "src/game/engine.ts:cellClass:935",
+      {
+        "self": 203.32799999999997,
+        "samples": 150
+      }
+    ],
+    [
+      "src/veyra05/floors.ts:buildFloorStack:535",
+      {
+        "self": 202.56299999999993,
+        "samples": 132
+      }
+    ],
+    [
+      "src/veyra05/chunks.ts:composeFeature:205",
+      {
+        "self": 199.95100000000008,
+        "samples": 151
+      }
+    ],
+    [
+      "src/game/core.ts::12",
+      {
+        "self": 197.588,
+        "samples": 175
+      }
+    ],
+    [
+      "src/veyra05/floors.ts:wouldSeverFootprint:329",
+      {
+        "self": 187.81400000000005,
+        "samples": 122
+      }
+    ],
+    [
+      "src/game/human-navigation.ts::52",
+      {
+        "self": 182.43100000000007,
+        "samples": 130
+      }
+    ],
+    [
+      "src/game/humanworld.ts:humanNeedsContext:534",
+      {
+        "self": 180.5770000000001,
+        "samples": 140
+      }
+    ],
+    [
+      "src/game/world-economy.ts:reachableUnion:81",
+      {
+        "self": 178.86299999999994,
+        "samples": 147
+      }
+    ],
+    [
+      "src/game/engine.ts::4781",
+      {
+        "self": 170.58600000000004,
+        "samples": 124
+      }
+    ],
+    [
+      "src/game/sim.ts::2674",
+      {
+        "self": 142.75499999999997,
+        "samples": 114
+      }
+    ],
+    [
+      "src/veyra05/window.ts:globalBaseGeometry:670",
+      {
+        "self": 135.76899999999992,
+        "samples": 84
+      }
+    ],
+    [
+      "src/game/engine.ts:planTerritory:1100",
+      {
+        "self": 135.00099999999995,
+        "samples": 107
+      }
+    ],
+    [
+      "src/veyra05/chunks.ts:getChunk:98",
+      {
+        "self": 134.7159999999999,
+        "samples": 87
+      }
+    ],
+    [
+      "src/game/engine.ts:blockGrid:954",
+      {
+        "self": 129.17899999999995,
+        "samples": 61
+      }
+    ],
+    [
+      "src/game/human-navigation.ts:route:138",
+      {
+        "self": 127.30000000000001,
+        "samples": 73
+      }
+    ],
+    [
+      "src/veyra05/poi-kit.ts:getPoiLayout:665",
+      {
+        "self": 123.658,
+        "samples": 54
+      }
+    ],
+    [
+      "src/game/engine.ts:buildEntityBlockMap:5064",
+      {
+        "self": 120.7829999999999,
+        "samples": 90
+      }
+    ],
+    [
+      "node:inspector:post:117",
+      {
+        "self": 117.425,
+        "samples": 1
+      }
+    ],
+    [
+      "src/veyra05/reader.ts:authoredDryTile:278",
+      {
+        "self": 117.40699999999994,
+        "samples": 85
+      }
+    ],
+    [
+      "src/game/human-shelter.ts:humanShelterContext:29",
+      {
+        "self": 109.13399999999993,
+        "samples": 84
+      }
+    ],
+    [
+      "src/veyra05/chunks.ts::192",
+      {
+        "self": 108.35699999999994,
+        "samples": 95
+      }
+    ],
+    [
+      "src/game/engine.ts:globalCellTileAndClass:5095",
+      {
+        "self": 108.28399999999998,
+        "samples": 68
+      }
+    ],
+    [
+      "src/veyra05/window.ts:get:64",
+      {
+        "self": 106.317,
+        "samples": 86
+      }
+    ],
+    [
+      "src/veyra05/reader.ts:biomeCodeAt:173",
+      {
+        "self": 103.76699999999998,
+        "samples": 77
+      }
+    ],
+    [
+      "src/game/engine.ts:withRunEntityRead:4938",
+      {
+        "self": 89.36699999999998,
+        "samples": 34
+      }
+    ],
+    [
+      "src/veyra05/reader.ts:inside:120",
+      {
+        "self": 85.172,
+        "samples": 60
+      }
+    ],
+    [
+      "src/veyra05/window.ts:unplugSalvage:103",
+      {
+        "self": 84.77599999999997,
+        "samples": 55
+      }
+    ],
+    [
+      "src/veyra05/floors.ts:isPassable:308",
+      {
+        "self": 84.72499999999998,
+        "samples": 66
+      }
+    ],
+    [
+      "src/game/sim.ts::2634",
+      {
+        "self": 83.23599999999995,
+        "samples": 56
+      }
+    ],
+    [
+      "src/veyra05/floors.ts:canPlaceProceduralSolidProp:384",
+      {
+        "self": 81.74799999999999,
+        "samples": 44
+      }
+    ],
+    [
+      "src/veyra05/scenes.ts:windowForLayout:31",
+      {
+        "self": 80.77999999999999,
+        "samples": 61
+      }
+    ],
+    [
+      "src/game/core.ts::3",
+      {
+        "self": 78.65499999999999,
+        "samples": 62
+      }
+    ],
+    [
+      "src/veyra05/poi-kit.ts:paveWalkablePath:245",
+      {
+        "self": 75.36499999999998,
+        "samples": 44
+      }
+    ],
+    [
+      "src/game/human-shelter.ts:indexPlans:17",
+      {
+        "self": 73.26499999999997,
+        "samples": 61
+      }
+    ],
+    [
+      "src/game/world.ts:getWorld:112",
+      {
+        "self": 72.63099999999997,
+        "samples": 62
+      }
+    ],
+    [
+      "src/veyra05/reader.ts:inRing:146",
+      {
+        "self": 68.845,
+        "samples": 57
+      }
+    ],
+    [
+      "src/game/human-navigation.ts:cell:90",
+      {
+        "self": 65.95100000000001,
+        "samples": 40
+      }
+    ],
+    [
+      "src/game/world-economy.ts:validateEconomyMap:21",
+      {
+        "self": 62.02600000000002,
+        "samples": 49
+      }
+    ],
+    [
+      "src/veyra05/window.ts:base:107",
+      {
+        "self": 57.608999999999995,
+        "samples": 48
+      }
+    ],
+    [
+      "src/veyra05/arch/interior.ts:detailInteriors:46",
+      {
+        "self": 57.15099999999999,
+        "samples": 26
+      }
+    ],
+    [
+      "src/game/engine.ts:tileClass:932",
+      {
+        "self": 55.88900000000001,
+        "samples": 48
+      }
+    ],
+    [
+      "src/veyra05/frame.ts::3",
+      {
+        "self": 55.477000000000004,
+        "samples": 36
+      }
+    ],
+    [
+      "src/veyra05/window.ts::140",
+      {
+        "self": 53.996,
+        "samples": 46
+      }
+    ],
+    [
+      "src/game/engine.ts:effTile:748",
+      {
+        "self": 51.779999999999994,
+        "samples": 40
+      }
+    ],
+    [
+      "src/game/humanworld.ts::3068",
+      {
+        "self": 51.07100000000001,
+        "samples": 43
+      }
+    ],
+    [
+      "src/game/engine.ts:entityGlobalCoords:4971",
+      {
+        "self": 50.66299999999998,
+        "samples": 39
+      }
+    ],
+    [
+      "src/game/humanworld.ts:humanCellKey:2444",
+      {
+        "self": 47.897999999999996,
+        "samples": 37
+      }
+    ],
+    [
+      "src/veyra05/reader.ts:ringsAt:64",
+      {
+        "self": 47.82000000000001,
+        "samples": 30
+      }
+    ],
+    [
+      "src/veyra05/frame.ts::5",
+      {
+        "self": 47.07199999999999,
+        "samples": 36
+      }
+    ],
+    [
+      "src/game/core.ts::10",
+      {
+        "self": 44.04800000000001,
+        "samples": 33
+      }
+    ],
+    [
+      "src/game/world-economy.ts:placementRates:143",
+      {
+        "self": 43.607,
+        "samples": 45
+      }
+    ],
+    [
+      "src/veyra05/floors.ts:stampProceduralSolidProp:397",
+      {
+        "self": 41.592000000000006,
+        "samples": 9
+      }
+    ],
+    [
+      "src/game/engine.ts:sourceAt:816",
+      {
+        "self": 41.414999999999985,
+        "samples": 37
+      }
+    ],
+    [
+      "src/veyra05/chunks.ts:fbm:22",
+      {
+        "self": 39.59900000000001,
+        "samples": 35
+      }
+    ],
+    [
+      "src/veyra05/chunks.ts:h:139",
+      {
+        "self": 38.69,
+        "samples": 23
+      }
+    ],
+    [
+      "src/veyra05/window.ts::701",
+      {
+        "self": 38.623,
+        "samples": 24
+      }
+    ],
+    [
+      "src/veyra05/poi-kit.ts:gKey:13",
+      {
+        "self": 34.662000000000006,
+        "samples": 23
+      }
+    ],
+    [
+      "src/veyra05/poi-kit.ts:isDry:14",
+      {
+        "self": 33.47599999999999,
+        "samples": 24
+      }
+    ],
+    [
+      "src/game/human-navigation.ts:free:106",
+      {
+        "self": 32.648999999999994,
+        "samples": 13
+      }
+    ],
+    [
+      "src/veyra05/poi-kit.ts:connectedDrySet:115",
+      {
+        "self": 32.295,
+        "samples": 17
+      }
+    ]
+  ]
+}
