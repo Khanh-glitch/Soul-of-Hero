@@ -43,6 +43,7 @@ import {communityBarrel,drinkCommunityRain,NO_LOCAL_BANK} from './human-rainwate
 import { isGuardPost, humanCanUseEntity, humanEntityTile, executeHumanWork, dispatchMedicalResponse, needsFollowup, planHumanOccupation, type HumanWorkTask } from './human-jobs';
 import { withHumanNavigationRead, humanNavigation } from './human-navigation';
 import { humanShelter, humanShelterContext, type HumanShelterContext } from './human-shelter';
+import {consolidatePantry} from './human-pantry';
 import { liveItemId, liveItemPer } from './final-item-set';
 
 export const HUMAN_WORLD_VERSION = 'human-world-v1';
@@ -3349,7 +3350,7 @@ function performHumanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, now: n
   return true;
 }
 export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): void {return timedWorldWork('depositHumanOutputs',()=>{
-  if (!h.community || !h.workOutputs||['DOWNED','DEAD','EVACUATED'].includes(h.state)) return;
+  if (!h.community || !h.workOutputs || h.transit || h.following || ['DOWNED','DEAD','EVACUATED','ON_VESSEL'].includes(h.state)) return;
   const comm = r.humanWorld?.communities[h.community]; if (!comm) return;
   const reached=reachableHumanStores(r,r.humanWorld!,h)[0];if(!reached)return;
   if(h.harvestJob?.storeId&&h.harvestJob.storeId!==comm.storeEntityId)return;
@@ -3362,7 +3363,14 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
     const i = pack.slots.findIndex(s => s?.uid === stackUid); if (i < 0 || qty <= 0) { delete h.workOutputs[stackUid]; continue; }
     const s = pack.slots[i]!;
     const ownedOutput=s.production?.workerId===h.actorId&&!!h.workOutputSources?.[s.uid];
-    const room=dst.slots.includes(null)?s.qty:((s.production&&!ownedOutput)||s.meta!==undefined||s.dur!==undefined||s.charge!==undefined?0:spaceFor(r,dstId,s.key));
+    let room=dst.slots.includes(null)?s.qty:((s.production&&!ownedOutput)||s.meta!==undefined||s.dur!==undefined||s.charge!==undefined?0:spaceFor(r,dstId,s.key));
+    // A cook at their own pantry can make room for this already paid meal.
+    // No remote housekeeping, extra slots or new meal when a warehouse fills.
+    if(room===0 && h.occupation==='cook' && ownedOutput && s.production?.recipe &&
+       h.workOutputSources?.[s.uid]?.jobId===s.production.jobId && canServe({...s,production:undefined},'food')){
+      const merge=consolidatePantry(dst,comm,r.humanWorld!);
+      if(merge){receipt(r,now,'human.pantry.repack',JSON.stringify({actor:h.actorId,meal:s.uid,...merge}));room=s.qty;}
+    }
     const take=Math.min(qty,s.qty,room);if(take<=0){h.lastWorkBlock='Reached output store is full; cargo remains in my pack.';continue;}
     const transfer=take===s.qty&&!ownedOutput?s:{...s,uid:take===s.qty?s.uid:uid(r,'s'),qty:take,...(ownedOutput?{production:undefined}:{})};
     const whole = take === s.qty;

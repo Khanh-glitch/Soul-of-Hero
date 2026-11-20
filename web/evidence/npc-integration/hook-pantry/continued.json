@@ -1,0 +1,36 @@
+{
+  "seed": 7606,
+  "run": "run_5va_mwhjny80",
+  "start": 1794758400000,
+  "at": 1794759600000,
+  "repack": [
+    {
+      "id": "r60831",
+      "at": 1794759592599.4985,
+      "kind": "human.pantry.repack",
+      "detail": "{\"actor\":\"hm\",\"meal\":\"saha\",\"containerId\":\"c19v\",\"fromUid\":\"s1a5\",\"intoUid\":\"s2uk\",\"key\":\"herb\",\"qty\":3}"
+    }
+  ],
+  "line": [
+    {
+      "at": 1794759592599.4985,
+      "jobId": "jah5",
+      "recipe": "grilled_mushroom",
+      "inputs": [
+        {
+          "uid": "s2uo",
+          "key": "mushroom",
+          "qty": 1,
+          "containerId": "c1b1"
+        }
+      ],
+      "stationId": "e1ad",
+      "workerId": "hm",
+      "fromUid": "saha",
+      "intoUid": "saha",
+      "qty": 1,
+      "key": "grilled_mushroom"
+    }
+  ],
+  "qa": false
+}
