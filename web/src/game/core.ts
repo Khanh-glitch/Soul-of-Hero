@@ -220,6 +220,7 @@ export interface RunRecord {
   score: number; stones: number; deposited: number; achievements: string[]; qa: boolean; verified: 'LOCAL/UNVERIFIED';
 }
 export interface Profile {
+  humanRunHistory?: {runId:string; ending:RunRecord['ending']; schema:string; outcomes:import('./humanworld').HumanOutcomeSummary}[];
   securedCash: number; achievements: Record<string, { at: number; score: number; runId: string }>;
   history: RunRecord[]; settings: { volume: number; muted: boolean }; profileReceipts: string[];
 }

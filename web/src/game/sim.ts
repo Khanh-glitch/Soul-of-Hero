@@ -1829,7 +1829,7 @@ function settleProjectile(pr:Proj){return pr.from==='player'||pr.from==='human'&
 function humanHazardCaster(r:RunState,h:Haz){return (h.effect==='flameLine'||h.effect==='mjolnirStrike'||h.effect==='mjolnirPull'||h.effect==='meteorBurn'||h.effect==='meteorPool'||h.effect==='natureRoot'||h.effect==='blastTrail'||h.effect==='spiritBeam')&&h.coreUid&&h.owner?r.humanWorld?.people[h.owner]:undefined;}
 function settleHumanHazard(r:RunState,h:Haz){return h.victim && h.victim!=='player' && !!humanHazardCaster(r,h);}
 // ---------- offline settlement (C09) ----------
-export function settle(gs: GameState, now: number, silent = false, interruptTransit = true): string[] {
+export function settle(gs: GameState, now: number, silent = false, interruptTransit = true, progress?:(fraction:number)=>void): string[] {
   const r = gs.run; if (!r) return [];
   // R5.1 P0-A: the offline boundary binds the run's combat arrays exactly like tick() does.
   // Without this, a fresh process (Continue) steps zero persisted projectiles offline, and the
@@ -1897,6 +1897,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   const territoryBefore = new Map(Object.values(r.entities).filter(e=>e.kind==='struct' && (e.owner===undefined||e.owner==='player') && e.hp!==undefined).map(e=>[e.id,{name:STRUCTS[e.type!]?.name||e.type||'Structure',hp:e.hp!}]));
   // Minute-sized survival integration, not frame replay; world helper splits further at weather/fire boundaries.
   while (t < end) {
+    progress?.((t-start)/gap);
     const atSea = playerAtSea(r);
     const slotMs = BAL.weather.slotMinutes * 60000;
     const nextWeather = r.startedAt - r.qaOffset + (Math.floor((t - r.startedAt + r.qaOffset) / slotMs) + 1) * slotMs;

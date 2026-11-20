@@ -710,6 +710,10 @@ describe('NPC P0 corrective', () => {
     expect(after.length).toBe(before + 1);
     expect(after[after.length - 1].outcomes).toBeTruthy();
     expect(after[after.length - 1].schema).toBe('human-history-v1');
+    expect(validate(gs)).toBeTruthy();
+    const corrupt = structuredClone(gs); corrupt.profile.humanRunHistory![0].outcomes.total++;
+    expect(validate(corrupt)).toBeNull();
+    delete corrupt.profile.humanRunHistory; expect(validate(corrupt)).toBeTruthy();
   });
 
   it('P0.6: stepHumans runs consume/work/move without corrupting state', () => {

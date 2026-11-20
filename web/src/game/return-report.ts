@@ -289,13 +289,13 @@ export function recordReturnHistory(r: RunState | null, qaSession: boolean, repo
 }
 
 /** Continue route: runs the same settle() and returns both the legacy strings and the typed report. */
-export function settleWithReturn(gs: GameState, now: number): { lines: string[]; report: OfflineReturnV1 | null } {
+export function settleWithReturn(gs: GameState, now: number, progress?:(fraction:number)=>void): { lines: string[]; report: OfflineReturnV1 | null } {
   const before = captureReturnSnapshot(gs);
   const start = gs.run?.clock.lastSimAt ?? now;
   beginReceiptSink();
   let lines: string[] = [];
   let receipts: { id: string; at: number; kind: string; detail: string }[] = [];
-  try { lines = settle(gs, now, false); } finally { receipts = endReceiptSink(); }
+  try { lines = settle(gs, now, false, true, progress); } finally { receipts = endReceiptSink(); }
   if (!before) return { lines, report: null };
   const ending = gs.run ? undefined : gs.profile.history[0];
   const report = buildOfflineReturn(gs, before, receipts, start, ending?.endedAt ?? now, ending?.ending === 'expired');

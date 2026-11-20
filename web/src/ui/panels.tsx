@@ -694,7 +694,7 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
   const sailing = trip?.dockUntil !== undefined ? new Date(trip.dockUntil).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
   return <Panel title="Evacuation Service" style={{ left: 160, top: 40, width: 340 }} onClose={() => api.open(null)}>
     <div className="lbl" style={{ fontSize: 9, color: 'var(--info)', marginBottom: 3 }}>
-      {trip ? evacBerthStatus(trip) : 'No service is registered at this berth.'}
+      {trip ? evacBerthStatus(trip) : hw ? 'No service is registered at this berth.' : 'Classic evacuation beacon · leaving ends this run.'}
     </div>
     {trip && <>
       <div className="lbl" style={{ fontSize: 8, color: 'var(--paper)' }}>Seats free: <b>{seatsLeft}</b> of {trip.capacity} · currently aboard: {aboard}</div>
@@ -706,7 +706,7 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
             : trip.phase === 'BERTHED'
               ? `The vessel is on its way back; the berth reopens at ${sailing}.`
               : trip.phase === 'STAGING'
-                ? `The service opens on day ${Math.floor((S.serviceOpensHour ?? 288) / 24)} of the run.`
+                ? `The service opens on day ${1 + Math.floor((S.serviceOpensHour ?? 288) / 24)} of the run.`
                 : 'This service will not sail again in this run.'}
       </div>
       {trip.phase==='BOARDING' && trip.vessel && (()=>{
@@ -740,8 +740,8 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
       <button className="btn ghost" disabled={trip?.phase!=='BOARDING'} onClick={() => { if(api.act('leaveEvac', { eid }).ok) api.open(null); }}>Step ashore</button>
     </div> : <div className="flex gap-1">
       {!sure
-        ? <button className="btn gold" style={{ flex: 1 }} disabled={!trip || trip.phase !== 'BOARDING' || seatsLeft === 0} onClick={() => setSure(true)} title={!trip || trip.phase !== 'BOARDING' ? 'The berth is not taking passengers' : seatsLeft === 0 ? 'No free seat' : 'Take a physical seat'}>Request a Seat…</button>
-        : <button className="btn danger" style={{ flex: 1 }} onClick={() => api.act('evacuate', { eid })}>Board the Vessel</button>}
+        ? <button className="btn gold" style={{ flex: 1 }} disabled={!!hw && (!trip || trip.phase !== 'BOARDING' || seatsLeft === 0)} onClick={() => setSure(true)} title={!hw ? 'Confirm before ending this run' : !trip || trip.phase !== 'BOARDING' ? 'The berth is not taking passengers' : seatsLeft === 0 ? 'No free seat' : 'Take a physical seat'}>{hw ? 'Request a Seat…' : 'Leave the Island…'}</button>
+        : <button className="btn danger" style={{ flex: 1 }} onClick={() => api.act('evacuate', { eid })}>{hw ? 'Board the Vessel' : 'Confirm evacuation'}</button>}
       <button className="btn ghost" onClick={() => api.open(null)}>Stay on Island</button>
     </div>}
     {hw && <div style={{ borderTop: '1px solid var(--line)', marginTop: 6, paddingTop: 4 }}>

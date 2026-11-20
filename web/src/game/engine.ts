@@ -2249,7 +2249,7 @@ export function endRun(gs: GameState, ending: 'evacuated' | 'abandoned' | 'expir
     const summary = finalizeHumanOutcomes(r, r.humanWorld, now);
     const agg = humanHistoryAggregate(r.humanWorld);
     // Preserve the human outcome summary across the K8 wipe in profile history.
-    (gs.profile as any).humanRunHistory = [...((gs.profile as any).humanRunHistory ?? []), { runId: r.id, ending, outcomes: summary, schema: agg.schema }].slice(-20);
+    gs.profile.humanRunHistory = [...(Array.isArray(gs.profile.humanRunHistory) ? gs.profile.humanRunHistory : []), { runId: r.id, ending, outcomes: summary, schema: agg.schema }].slice(-20);
   }
   r.ended = ending;
   gs.profile.history.unshift({ runId: r.id, character: r.character, startedAt: r.startedAt, endedAt: now, ending, score: r.score, stones: countStones(r), deposited: r.deposited, achievements: [...r.achievements], qa: r.qaUsed, verified: 'LOCAL/UNVERIFIED' });

@@ -28,7 +28,7 @@ it.skipIf(!dir)('audits an unchanged geographic first day and a fresh-process Co
  setActiveLayout('veyra05-world');let gs:GameState;
  if(fork){const loaded=selectSnapshots([readFileSync(join(dir!,'h8.save'),'utf8')]);expect(loaded.bad).toEqual([]);gs=loaded.gs!;expect(setActiveLayout(gs.run!.layoutId!)).toBe(true);
   expect(census(gs.run!)).toEqual(JSON.parse(readFileSync(join(dir!,'fork-origin.json'),'utf8')));
- }else{gs=newGame();expect(startRun(gs,'female',T0,null,7606).ok).toBe(true);}
+ }else{gs=newGame();expect(startRun(gs,'female',T0,null,Number(process.env.SOH_DAY_SEED ?? 7606)).ok).toBe(true);}
  const r=gs.run!,ids=Object.keys(r.humanWorld!.people).sort(),label=fork?'continued':'uninterrupted';expect(ids).toHaveLength(286);
  const report=[];const until=Number(process.env.SOH_DAY_END??24);expect(until).toBeGreaterThan(fork?8:0);expect(until).toBeLessThanOrEqual(24);
  for(let hour=fork?9:1;hour<=until;hour++){
@@ -40,7 +40,7 @@ it.skipIf(!dir)('audits an unchanged geographic first day and a fresh-process Co
    output(`${label}.json`,JSON.stringify(report));
    if(hour===8&&!fork){const snapshot=serializeSnapshot(gs);expect(census(r)).toEqual(state);output('fork-origin.json',JSON.stringify(state));output('h8.save',snapshot);}
    if(hour===1||hour===24)output(`${label}-h${hour}.json`,JSON.stringify(gs));
-   if(hour===24 && fork)output('continued-h24.save',serializeSnapshot(gs));
+   if(hour===24)output(`${label}-h24.save`,serializeSnapshot(gs));
  }
 },14400000);
 

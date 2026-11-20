@@ -86,6 +86,20 @@ export function validate(raw: any): GameState | null {
   if (!obj(raw) || !integer(raw.version) || raw.version > SAVE_VERSION || !integer(raw.revision)) return null;
   const p = raw.profile;
   if (!obj(p) || !integer(p.securedCash) || !obj(p.achievements) || !Array.isArray(p.history) || !obj(p.settings) || !finite(p.settings.volume) || typeof p.settings.muted !== 'boolean' || !stringArray(p.profileReceipts)) return null;
+  // Pre-chronicle profiles legitimately have no census. If recorded, each
+  // person must be counted once, under exactly one ending for that run.
+  if (p.humanRunHistory !== undefined) {
+    if (!Array.isArray(p.humanRunHistory) || p.humanRunHistory.length > 20) return null;
+    const ids = new Set<string>();
+    for (const row of p.humanRunHistory) {
+      if (!obj(row) || typeof row.runId !== 'string' || !row.runId || ids.has(row.runId) ||
+          row.schema !== 'human-history-v1' || !['expired','abandoned','evacuated'].includes(row.ending)) return null;
+      const o = row.outcomes;
+      if (!obj(o) || ![o.total,o.evacuated,o.survived,o.dead,o.unresolved].every(integer) ||
+          o.total !== o.evacuated + o.survived + o.dead + o.unresolved) return null;
+      ids.add(row.runId);
+    }
+  }
   if (raw.run === null) return raw.navigation === undefined ? raw as GameState : null;
   const r = raw.run;
   if (!obj(r) || typeof r.id !== 'string' || !r.id || !integer(r.nextId) || r.nextId < 1 || !finite(r.startedAt) || !finite(r.qaOffset) || !integer(r.seed) || !integer(r.rng) || !integer(r.seq) || !obj(r.player) || !obj(r.custody) || !obj(r.entities) || !obj(r.clock)) return null;

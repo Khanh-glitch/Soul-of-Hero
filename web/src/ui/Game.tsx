@@ -692,8 +692,20 @@ export default function Game({
     preparePack: () => qaPrepareFullPack(gs.run!), fillPack: () => qaFillPack(gs.run!), setSecuredCash: (n: number) => qaSetSecuredCash(gs, n),
   };
   (window as any).__sohJourney = () => journeyRef.current; // read-only QA view, no authority
-  const r = gs.run; if (!r) return <div className="stage" />;
-  const p = r.player; const now = Date.now(); const ph = phaseOf(r, now); const hrs = runHours(r, now); const day = Math.floor(hrs / 24) + 1;
+  // A dispatched ending clears gs.run before the next animation frame.
+  // Keep the same hooks even during that one render before the title takes over.
+  const r = gs.run, now = Date.now();
+  const hrs = r ? runHours(r, now) : 0;
+  const fieldEval = r ? evaluateFieldNotes(r, now, fieldActionsRef.current, fieldNoteStore) : null;
+  const nextStore = fieldEval?.nextStore;
+  useEffect(() => {
+    if (r && nextStore && nextStore !== fieldNoteStore) setFieldNoteStore(writeFieldNoteStore(r, qaMode, nextStore));
+  }, [nextStore, fieldNoteStore, r, qaMode]);
+  const trackView = r ? resolveTrack(journey, hrs) : null;
+  // A suggestion that has actually been displayed counts as "seen" (never as progress).
+  useEffect(() => { if (trackView?.ref.type === 'lesson' && lessonState(journeyRef.current, trackView.ref.id).status === 'unseen') { const id = trackView.ref.id; setJourney({ ...journeyRef.current, lessons: { ...journeyRef.current.lessons, [id]: { ...lessonState(journeyRef.current, id), status: 'seen' } } }); } }, [trackView?.ref.id]);
+  if (!r || !fieldEval) return <div className="stage" />;
+  const p = r.player, ph = phaseOf(r, now); const day = Math.floor(hrs / 24) + 1;
   const dtm = dayTime(r, now); const clock = `${String(Math.floor(dtm * 24)).padStart(2, '0')}:${String(Math.floor((dtm * 24 % 1) * 60)).padStart(2, '0')}`;
   const w = weatherAt(r, now); const slot = Math.floor((now - r.startedAt + r.qaOffset) / (BAL.weather.slotMinutes * 60000)); const next = weatherSlot(r.seed, slot + 1);
   const WICON: Record<string, string> = { clear: '☀', cloudy: '☁', rain: '☂', storm: '⚡', fog: '≋' };
@@ -743,18 +755,11 @@ export default function Game({
     : buildMode ? (nearHome ? 'home' : null)
       : heatUrgent ? 'heat' : nearHome && (homeAtRisk) ? 'home' : null;
   const rigBottom = bike || cart ? 74 : 32;
-  const fieldEval = evaluateFieldNotes(r, now, fieldActionsRef.current, fieldNoteStore);
-  useEffect(() => {
-    if (fieldEval.nextStore !== fieldNoteStore) {
-      setFieldNoteStore(writeFieldNoteStore(r, qaMode, fieldEval.nextStore));
-    }
-  }, [fieldEval.nextStore, fieldNoteStore, r, qaMode]);
   const updateFieldStore = (patch: Partial<FieldNoteStore>) => {
     setFieldNoteStore(cur => writeFieldNoteStore(r, qaMode, { ...cur, ...patch }));
   };
   const criticalEdge = !p.dead && !fullScreen && (p.hp < 25 || thermal.cold);
   // ---------------- JOURNEY / ATTENTION view model ----------------
-  const trackView = resolveTrack(journey, hrs);
   const wmVisible = !fullScreen && !p.dead && !qaOpen;
   const calmish = !combatFocus && p.hp >= 35;
   gateRef.current = { stamp: wmVisible && !panel && calmish, flare: !fullScreen && !combatFocus && !p.dead, cine: !fullScreen && !p.dead };
@@ -770,8 +775,7 @@ export default function Game({
   const track = (t: TrackRef) => { setJourney({ ...journeyRef.current, tracked: t, trackQuiet: !t }); sfx({ type: 'ui' }); };
   const showBeacon = wmVisible && !panel && calmish && !!trackView && !trackView.done; // world-space guidance never collides with the HUD stamp
   const cine0 = cines[0] ?? null;
-  // A suggestion that has actually been displayed counts as "seen" (never as progress).
-  useEffect(() => { if (trackView?.ref.type === 'lesson' && lessonState(journeyRef.current, trackView.ref.id).status === 'unseen') { const id = trackView.ref.id; setJourney({ ...journeyRef.current, lessons: { ...journeyRef.current.lessons, [id]: { ...lessonState(journeyRef.current, id), status: 'seen' } } }); } }, [trackView?.ref.id]);
+
 
   const voyage = playerVoyage(r);
   return <div style={{ position: 'fixed', inset: 0, cursor: buildType || reclaim || repairMode || upgradeMode ? 'cell' : 'crosshair' }} onMouseMove={onMouseMove} onMouseDown={onMouseDown} onMouseUp={onMouseUp} onContextMenu={e => e.preventDefault()}>

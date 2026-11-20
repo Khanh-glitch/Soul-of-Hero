@@ -75,13 +75,15 @@ export default function Title({
   const [qaPreset, setQaPreset] = useState<QaPresetId>('full_gear');
   useEffect(() => { if (!gs.run) { setActiveLayout(selectedLayout); resetRenderCaches(); } }, [gs.run, selectedLayout]);
   const pf = gs.profile; const run = gs.run;
+  const census = (id: string) => pf.humanRunHistory?.find(row => row.runId === id)?.outcomes;
+  const outcomes = summary && census(summary.runId);
   const click = () => { initAudio(); sfx({ type: 'ui' }); };
   const activeRegions = selectedLayout === U05_WORLD_LAYOUT_ID ? [] : CLASSIC_REGIONS;
 
   return <div style={{ position: 'fixed', inset: 0, background: '#05040a' }}>
     <div className="stage" style={{ transform: `translate(${s.x}px, ${s.y}px) scale(${s.k})` }}>
       <Backdrop layout={selectedLayout} />
-      {summary ? <div className="panel absolute fadein" style={{ left: 120, top: 44, width: 400, padding: 10 }}>
+      {summary ? <div className="panel absolute fadein" style={{ left: 120, top: 24, width: 400, maxHeight:312, overflowY:'auto', padding: 10 }}>
         <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', letterSpacing: 1 }}>RUN CHRONICLE · 14-DAY CYCLE CONCLUDED</div>
         <div className="title-font" style={{ fontSize: 22, color: summary.ending === 'evacuated' ? 'var(--info)' : summary.ending === 'expired' ? 'var(--bad)' : 'var(--paper)' }}>
           {summary.ending === 'evacuated' ? 'Evacuated from the Island' : summary.ending === 'expired' ? 'Consumed by Ragnarok' : 'Run Abandoned'}
@@ -100,6 +102,11 @@ export default function Title({
             </div>
           </div>
         </div>
+        {outcomes && <section aria-label="Island survivors" style={{marginTop:6}}>
+          <div className="console-h">People of Veyra · {outcomes.total}</div>
+          <div style={{fontSize:12}}>Reached safe water: <b>{outcomes.evacuated}</b> · Survived on the island: <b>{outcomes.survived}</b></div>
+          <div style={{fontSize:11,color:'var(--muted)'}}>Died: {outcomes.dead} · Fate unknown: {outcomes.unresolved}</div>
+        </section>}
         {summary.achievements.length > 0 && <div style={{ fontSize: 11, marginTop: 5 }}>{summary.achievements.map(a => <span key={a} style={{ marginRight: 6, color: 'var(--brassLit)' }}>★ {ACHIEVEMENTS[a]?.name}</span>)}</div>}
         <button className="btn gold" style={{ marginTop: 8, width: '100%' }} onClick={() => { click(); clearSummary(); }}>Continue to Title</button>
       </div> : <>
@@ -173,7 +180,7 @@ export default function Title({
           <div style={{ fontSize: 11, color: '#ffd98a', marginTop: 4 }}>Achievements</div>
           <div className="flex flex-wrap gap-x-3" style={{ fontSize: 10 }}>{Object.entries(ACHIEVEMENTS).map(([k, a]) => <span key={k} style={{ color: pf.achievements[k] ? '#ffe27a' : '#5a4a6a' }}>{pf.achievements[k] ? '★' : '☆'} {a.name}</span>)}</div>
           <div style={{ fontSize: 11, color: '#ffd98a', marginTop: 4 }}>Run history</div>
-          <div className="scroll" style={{ maxHeight: 110, overflowY: 'auto', fontSize: 10 }}>{pf.history.length === 0 && <div style={{ color: '#8a7a9a' }}>No finished runs yet.</div>}{pf.history.map(h => <div key={h.runId + h.endedAt} className="flex gap-2" style={{ borderBottom: '1px solid #2a2034' }}><span style={{ width: 70 }}>{new Date(h.endedAt).toLocaleDateString()}</span><span style={{ width: 70, color: h.ending === 'evacuated' ? '#9ae0ff' : '#cfc2dc' }}>{h.ending}</span><span style={{ width: 60 }}>score {h.score}</span><span style={{ width: 70 }}>deposit {h.deposited}</span><span>stones {h.stones}</span>{h.qa && <span style={{ color: '#ff9a7a' }}>QA</span>}</div>)}</div>
+          <div className="scroll" style={{ maxHeight: 110, overflowY: 'auto', fontSize: 10 }}>{pf.history.length === 0 && <div style={{ color: '#8a7a9a' }}>No finished runs yet.</div>}{pf.history.map(h => { const o = census(h.runId); return <div key={h.runId + h.endedAt} style={{ borderBottom: '1px solid #2a2034' }}><div className="flex gap-2"><span style={{ width: 70 }}>{new Date(h.endedAt).toLocaleDateString()}</span><span style={{ width: 70, color: h.ending === 'evacuated' ? '#9ae0ff' : '#cfc2dc' }}>{h.ending}</span><span style={{ width: 60 }}>score {h.score}</span><span style={{ width: 70 }}>deposit {h.deposited}</span><span>stones {h.stones}</span>{h.qa && <span style={{ color: '#ff9a7a' }}>QA</span>}</div>{o && <div>Evacuated {o.evacuated} · Survived {o.survived} · Died {o.dead} · Unknown {o.unresolved}</div>}</div>; })}</div>
           <button className="btn ghost" style={{ marginTop: 6 }} onClick={() => setMode('menu')}>Back</button>
         </div>}
       </>}

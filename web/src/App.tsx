@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { GameState } from './game/core';
 import { dispatch, markDirty, mkStack, startRun } from './game/engine';
 import { settleWithReturn, type OfflineReturnV1 } from './game/return-report';
-import { load, save } from './game/persist';
+import type { ReturnMessage } from './game/offline-return-worker';
+import { load, save, selectSnapshots, serializeSnapshot } from './game/persist';
 import { getArt } from './game/art';
 import { getActiveLayout, getWorld, setActiveLayout } from './game/world';
 import { U05_WORLD_LAYOUT_ID, isVeyra05Layout } from './veyra05/scenes';
@@ -49,6 +50,9 @@ export default function App() {
     return () => { cancelled = true; };
   }, []);
 
+  const catchUp=useRef<Worker|null>(null);
+  const [progress,setProgress]=useState<number|null>(null);
+  useEffect(()=>()=>{catchUp.current?.terminate();catchUp.current=null;},[]);
   const savedGs = gsRef.current;
   const gs = qaMode ? qaGsRef.current : (inspectionGs ?? savedGs);
   if (loadError) return <div style={{ padding: 24, color: '#ffd98a', background: '#120c18', minHeight: '100vh' }}><h1>Save recovery required</h1><p>{loadError}</p><p>No new game was started and the original save copies were not overwritten.</p><button onClick={() => window.location.reload()}>Retry</button></div>;
@@ -132,6 +136,12 @@ export default function App() {
     setScreen('game');
   };
 
+  if(progress!==null)return <main className="panel" aria-label="Returning to the island" style={{maxWidth:390,margin:'12vh auto',padding:16}}>
+    <h1 className="title-font">While you were away</h1>
+    <p>Resolving the saved island’s food, work and travel. Your original save stays intact until this finishes.</p>
+    <progress aria-label="Island time resolved" value={progress} max={1} style={{width:'100%'}} /> {Math.floor(progress*100)}%
+    <button className="btn" onClick={()=>{catchUp.current?.terminate();catchUp.current=null;setProgress(null);}}>Back to title</button>
+  </main>;
   if (screen === 'inspector') {
     return <Inspector gs={savedGs} initialMode="creator" onClose={closeInspector} onLaunchCreatorInspect={launchInspection} />;
   }
@@ -148,11 +158,30 @@ export default function App() {
           resetQaSandboxFlags();
           setQaMode(false);
           setInitialBanner(null);
-          const rep = settleWithReturn(savedGs, Date.now());
-          save(savedGs);
-          if (!savedGs.run) { setSummary(savedGs.profile.history[0]); return; }
-          setReport(rep.lines.length || (rep.report && !rep.report.away.quiet) ? rep : null);
-          enter(savedGs);
+          const now=Date.now();
+          const finish=(next:GameState,rep:ReturnType<typeof settleWithReturn>)=>{
+            gsRef.current=next;save(next);
+            if(!next.run){setSummary(next.profile.history[0]);return;}
+            setReport(rep.lines.length||(rep.report&&!rep.report.away.quiet)?rep:null);enter(next);
+          };
+          if(!savedGs.run || now-savedGs.run.clock.lastSimAt<120000 || typeof Worker==='undefined'){
+            finish(savedGs,settleWithReturn(savedGs,now));return;
+          }
+          if(catchUp.current)return;
+          const fail=(reason:string)=>{catchUp.current?.terminate();catchUp.current=null;setProgress(null);setNote(`Continue did not finish. Your previous save is unchanged. ${reason}`);};
+          try {
+            const w=new Worker(new URL('./game/offline-return-worker.ts',import.meta.url),{type:'module'});catchUp.current=w;setProgress(0);
+            w.onerror=e=>{if(catchUp.current===w)fail(e.message);};
+            w.onmessage=({data}:{data:ReturnMessage})=>{
+              if(catchUp.current!==w)return;
+              if(data.kind==='progress'){setProgress(data.fraction);return;}
+              if(data.kind==='failed'){fail(data.reason);return;}
+              try{const next=selectSnapshots([data.snapshot]).gs;if(!next)throw Error('Invalid return snapshot.');
+                w.terminate();catchUp.current=null;setProgress(null);finish(next,data.result);
+              }catch(e){fail(String(e));}
+            };
+            w.postMessage({snapshot:serializeSnapshot(savedGs),now});
+          }catch(e){fail(String(e));}
         }}
         onStart={(c, region, layoutId) => {
           initAudio();
