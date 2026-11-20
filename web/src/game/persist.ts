@@ -828,6 +828,10 @@ export function validate(raw: any): GameState | null {
       if(alarm!==undefined && (!obj(alarm)||typeof alarm.postId!=='string'||!alarm.postId||typeof alarm.enemyId!=='string'||!alarm.enemyId||!finite(alarm.alertAt)||
         !(h.intent.kind==='fight' && h.intent.target===alarm.enemyId || h.intent.kind==='work' && h.intent.work?.kind==='guard' && !h.intent.work.itemUid && h.intent.work.entityId===alarm.postId)))return null;
       const work=h.intent?.work,seen=work?.observedPatient;
+      if(work?.catchment!==undefined){const s=work.catchment,c=hw.communities?.[h.community];
+        if(work.kind!=='build'||work.rebuildSite!==undefined||work.patchType!==undefined||work.entityId!==undefined||!obj(s)||!integer(s.gx)||s.gx>=FRAME_W||!integer(s.gy)||s.gy>=FRAME_H||typeof s.twist!=='boolean'||!Array.isArray(c?.storeTile))return null;
+        const dist=Math.abs(c.storeTile[0]-s.gx)+Math.abs(c.storeTile[1]-s.gy);if(dist<2||dist>8)return null;
+      }
       if(work?.patchType!==undefined && (work.kind!=='build'||typeof work.patchType!=='string'||!Object.prototype.hasOwnProperty.call(STRUCTS,work.patchType)||STRUCTS[work.patchType].item||typeof work.entityId!=='string'||work.rebuildSite!==undefined))return null;
       if(work?.patchLots!==undefined && (!work.patchType||!Array.isArray(work.patchLots)||!work.patchLots.length||work.patchLots.some((id:any)=>typeof id!=='string'||!/^s[a-z0-9]+$/.test(id))||new Set(work.patchLots).size!==work.patchLots.length))return null;
       if(work?.patchType!==undefined && work.phase!=='fetch'&&!work.patchLots)return null;
@@ -854,6 +858,11 @@ export function validate(raw: any): GameState | null {
       for (const c of [h?.inv?.packId, h?.inv?.cartId]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
     }
     for (const comm of Object.values(hw.communities ?? {}) as any[]) {
+      if(comm.rainBarrelId!==undefined){
+        if(typeof comm.rainBarrelId!=='string'||!beforeNext(comm.rainBarrelId,/^e([a-z0-9]+)$/))return null;
+        const barrel=r.entities[comm.rainBarrelId]??r.veyraOffscreenEntities?.[comm.rainBarrelId];
+        if(barrel&&(barrel.kind!=='struct'||barrel.type!=='barrel'||barrel.owner!==comm.id||!finite(barrel.water)||barrel.water<0||barrel.water>12))return null;
+      }
       if(comm.lostWorksites!==undefined && (!obj(comm.lostWorksites)||Object.entries(comm.lostWorksites).some(([id,v]:[string,any])=>!comm.workStations?.includes(id)||!obj(v)||!['campfire','workbench','furnace'].includes(v.type)||!integer(v.tx)||!integer(v.ty)||!Number.isInteger(v.floor))))return null;
       // Pre-residential saves stored an empty chest ID as a bed. Preserve its custody,
       // but remove the false sleeping entitlement. Never create furniture on load.

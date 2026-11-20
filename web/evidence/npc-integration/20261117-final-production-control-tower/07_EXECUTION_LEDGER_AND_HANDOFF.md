@@ -541,3 +541,7 @@ The current production preview and `web/releases/Soul-of-Hero-Web.zip` include t
 ### Continue dài và kết cục — kiểm tra có kiểm soát, chưa phát hành
 
 Seed 7606, bản lưu h24 cũ, vắng 3 phút: [đối chứng](../controlled-return-7606/result.json) và [màn hình bỏ lượt ở 640×360](../controlled-return-7606/ending.png). Worker bị hủy không ghi đè save; thử lại hoàn thành. So toàn bộ payload và báo cáo với settle đồng bộ trong tiến trình khác: khớp. Thử lần đầu phát hiện React #300 khi K8 xóa run trước frame kế tiếp; sau sửa đã tới chronicle mà không có page error. Kết cục này là **bỏ lượt**, không phải cứu người ở h336. Save cũ thiếu tổng kết không bị điền số giả. Năm phép kiểm tra cũ ở `soh.test.ts` và route ký quỹ: 24/24 cùng nhau; hai suite kinh tế và K8: 34/34. Không phải kết quả toàn bộ bộ hồi quy. Lượt nối từ h24 (`dad5317`) ở h48: 218 chết, 68 còn sống. Chưa khóa mã giao cuối.
+
+### Tidecamp — tìm ra hai mắt xích đứt
+
+[Checkpoint h61 + cách tái hiện + biên nhận thực](../tidecamp-water/README.md). Thợ xây đã được cầm máu nhưng không đủ HP làm việc; bờ biển không phải nguồn nước ngọt. Chăm sóc tiếp vẫn tốn một liều và phải tới bên bệnh nhân; thùng hứng mưa vẫn tốn bộ vật liệu và phải đợi mưa thật. Đối chứng cũ dừng ở h80, không phải bằng chứng tới h336. Seed độc lập 7542 trước thay đổi đã lưu điểm h8; không dùng làm chứng nhận cho mã mới. Kiểm tra mã mới phải bắt đầu lại bằng New Game.

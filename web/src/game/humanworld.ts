@@ -39,7 +39,8 @@ import {materialPayment} from './material-payment';
 import {owned, coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
-import { isGuardPost, humanCanUseEntity, humanEntityTile, executeHumanWork, dispatchMedicalResponse, planHumanOccupation, type HumanWorkTask } from './human-jobs';
+import {communityBarrel,drinkCommunityRain,NO_LOCAL_BANK} from './human-rainwater';
+import { isGuardPost, humanCanUseEntity, humanEntityTile, executeHumanWork, dispatchMedicalResponse, needsFollowup, planHumanOccupation, type HumanWorkTask } from './human-jobs';
 import { withHumanNavigationRead, humanNavigation } from './human-navigation';
 import { humanShelter, humanShelterContext, type HumanShelterContext } from './human-shelter';
 import { liveItemId, liveItemPer } from './final-item-set';
@@ -247,6 +248,7 @@ export interface Community {
   class: SiteClass;
   homeBeds: string[];         // actual single-sleeper bed ENTITY ids (never a chest)
   legacyHouseholdContainers?: string[];
+  rainBarrelId?: string;
   waterSources: string[];     // source ids
   foodStores: string[];       // container ids
   workStations: string[];     // station entity ids
@@ -3025,7 +3027,7 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
   if(starving&&BAL.player.starveDamagePerMin>0)dt=Math.min(dt,Math.max(1,h.hp)/(starving*BAL.player.starveDamagePerMin)*60000);
   for(const w of h.wounds)if(w.bleeding&&!w.treated&&w.bleedingUntil){const due=w.bleedingUntil+12*60000;if(due>at)dt=Math.min(dt,due-at);}
   if(h.rest<.5)dt=Math.min(dt,(.5-h.rest)*8*HOUR);
-  if(h.state==='DOWNED' && h.nextMedicalReviewAt!==undefined && h.nextMedicalReviewAt>at)dt=Math.min(dt,h.nextMedicalReviewAt-at);
+  if((h.state==='DOWNED'||needsFollowup(h)) && h.nextMedicalReviewAt!==undefined && h.nextMedicalReviewAt>at)dt=Math.min(dt,h.nextMedicalReviewAt-at);
   if(h.state==='MOVING'&&h.intent?.route?.length)dt=Math.min(dt,Math.max(.001,TILE/PROFILES[h.profile].speed*1000-(h.motion?.elapsedMs??0)));
   if(h.following && h.state==='IDLE' && h.intent && (returningHome(h.intent)||h.intent.delivery) && h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
   if(h.state==='WORKING'&&h.intent&&h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
@@ -3118,6 +3120,9 @@ function commitPersonalForage(r:RunState,hw:HumanWorld,h:HumanRecord,now:number)
 }
 function planHumanWater(r:RunState,h:HumanRecord,now:number,occupied:Set<string>):boolean {
  if(h.floor!==0 || h.thirst>=40)return false;
+ const comm=h.community?r.humanWorld?.communities[h.community]:undefined,barrel=comm&&communityBarrel(r,comm);
+ if(barrel&&(barrel.water??0)>=1){const [gx,gy]=humanEntityTile(r,barrel),route=humanNavigation(r,occupied,true).route(h,{tx:gx,ty:gy,floor:0});
+   if(route){h.intent={kind:'drink',actorId:h.actorId,intentId:`rain:${h.actorId}:${now}`,target:`barrel:${barrel.id}`,preconditions:['water in our physical barrel','cardinal contact'],reserved:[],startAt:now,dueAt:now+2000,route};h.state=route.length?'MOVING':'WORKING';return true;}}
  const candidates:{gx:number;gy:number;distance:number}[]=[];
  // A local known catchment, not psychic island-wide water knowledge. Search and travel are separate.
  waterSearch:for(let distance=0;distance<=24;distance++)for(let dy=-distance;dy<=distance;dy++){
@@ -3133,9 +3138,14 @@ function planHumanWater(r:RunState,h:HumanRecord,now:number,occupied:Set<string>
   h.intent={intentId:`water:${h.actorId}:${now}`,actorId:h.actorId,kind:'drink',target:`water:${p.gx},${p.gy}`,preconditions:['actual mapped potable source','physical bank contact','timed drink/refill'],reserved:[],startAt:now,dueAt:now+2000,route};
   h.state=route.length?'MOVING':'WORKING';return true;
  }
- h.lastWorkBlock='I need water; no reachable potable bank was found in my local catchment.';return false;
+ h.lastWorkBlock=NO_LOCAL_BANK;return false;
 }
 function commitHumanWater(r:RunState,h:HumanRecord,now:number):boolean {
+ if(h.intent?.target?.startsWith('barrel:')){
+   if(now<h.intent.dueAt)return false;
+   h.lastWorkBlock=drinkCommunityRain(r,h,h.intent.target,now)?undefined:'Barrel is dry, inaccessible or no longer ours.';
+   h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+1000;return true;
+ }
  const intent=h.intent,m=intent?.target?.match(/^water:(\d+),(\d+)$/);if(!intent||!m||now<intent.dueAt)return false;
  const gx=Number(m[1]),gy=Number(m[2]);
  if(h.floor!==0||Math.abs(h.gx-gx)+Math.abs(h.gy-gy)>1||!globalFreshWater(r,gx,gy,0)){h.lastWorkBlock='Water access changed before the drink completed.';h.intent=undefined;h.state='IDLE';return false;}
@@ -3449,8 +3459,9 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     if(!refused){h.gx=trip.gx;h.gy=trip.gy;h.motion=undefined;if(h.intent)h.intent.route=[];}
     receipt(r,now,refused?'core.spirit.abort':'core.spirit.arrive',trip.uid);
   }
-  for(const patient of actors){
-    if(patient.state!=='DOWNED'||!patient.community||(patient.nextMedicalReviewAt??0)>now)continue;
+  // A medic who can reach both patients must respond to the fallen one first.
+  const reviews=actors.filter(p=>(p.state==='DOWNED'||needsFollowup(p))&&p.community&&(p.nextMedicalReviewAt??0)<=now);
+  for(const patient of reviews.sort((a,b)=>Number(b.state==='DOWNED')-Number(a.state==='DOWNED'))){
     patient.nextMedicalReviewAt=now+30000;
     if(actors.some(h=>h.intent?.work?.patientId===patient.actorId))continue;
     // Most outstanding injuries have no witness with a dose. Do not build
@@ -3625,7 +3636,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     if (h.hunger < 40) humanConsume(r, hw, h, 'food', now);
     if (h.thirst < 40) humanConsume(r, hw, h, 'water', now);
     if(h.state==='WORKING'&&h.intent?.kind==='eat'&&h.intent.target?.startsWith('forage:'))commitPersonalForage(r,hw,h,now);
-    if(h.state==='WORKING'&&h.intent?.kind==='drink'&&h.intent.target?.startsWith('water:'))commitHumanWater(r,h,now);
+    if(h.state==='WORKING'&&h.intent?.kind==='drink'&&h.intent.target?.match(/^(water|barrel):/))commitHumanWater(r,h,now);
     if (h.state === 'WORKING' && h.intent?.work) humanWorkTick(r, hw, h, now);
     // 2. A work action commits only after arrival and a visible work duration; no output is animated or minted in transit.
     if (h.state === 'WORKING' && h.intent?.kind === 'work' && h.intent.target?.match(/^(global-harvest|harvest):/) && now >= h.intent.dueAt) performHumanHarvest(r, hw, h, now,occupied);
@@ -3702,7 +3713,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
             if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.nextThinkAt = now; }
             else if (moveIntent.kind === 'follow' || moveIntent.delivery || returningHome(moveIntent)) { h.state = 'IDLE'; moveRoute.length = 0; }
             else if(moveIntent.kind==='eat'&&moveIntent.target?.startsWith('forage:')){h.state='WORKING';moveIntent.dueAt=now+1500;}
-            else if(moveIntent.kind==='drink'&&moveIntent.target?.startsWith('water:')){h.state='WORKING';moveIntent.dueAt=now+2000;}
+            else if(moveIntent.kind==='drink'&&moveIntent.target?.match(/^(water|barrel):/)){h.state='WORKING';moveIntent.dueAt=now+2000;}
             else if (moveIntent.work) { h.state = 'WORKING'; moveIntent.dueAt = now + (moveIntent.work.phase === 'fetch' ? 800 : moveIntent.work.duration); }
             else if (moveIntent.kind === 'work' && moveIntent.target?.match(/^(global-harvest|harvest):/)) {
               const target = moveIntent.target.match(/^(?:global-harvest:(-?\d+):|harvest:)(\d+),(\d+)$/);

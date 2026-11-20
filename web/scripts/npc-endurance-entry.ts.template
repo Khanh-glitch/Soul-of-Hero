@@ -1,28 +1,40 @@
 // Opt-in runner template. Copied to measured web/ by npc-endurance.mjs.
 import {it,expect} from 'vitest';import fs from 'node:fs';import path from 'node:path';import {gzipSync,gunzipSync} from 'node:zlib';import {createHash} from 'node:crypto';
+import {elderCanonicalCreature} from './src/game/humanworld';
 import {newGame,startRun,beginReceiptSink,endReceiptSink} from './src/game/engine';import {setActiveLayout} from './src/game/world';import {settle} from './src/game/sim';import {serializeSnapshot,selectSnapshots} from './src/game/persist';import {profileWorldWork} from './src/game/world-work';
 const T0=Date.UTC(2026,10,15,8),out=process.env.SOH_ENDURANCE_OUT!,sha=process.env.SOH_ENDURANCE_SHA!,target=Number(process.env.SOH_ENDURANCE_END),cp=path.join(out,'checkpoint.json.gz');
+const seed=Number(process.env.SOH_ENDURANCE_SEED??7606);
 const hash=(s:string)=>createHash('sha256').update(s).digest('hex');const save=(f:string,d:string|Buffer)=>{fs.writeFileSync(f+'.pending',d);fs.renameSync(f+'.pending',f);};
 const counts=(strings:string[])=>strings.reduce<Record<string,number>>((a,k)=>(a[k]=(a[k]??0)+1,a),{});
 it('advances one unchanged generated population with real needs, offline jobs, mortality and strict checkpoints',()=>{
- let gs=newGame(),minute=0;setActiveLayout('veyra05-greywater');let runId:string,actors:string[],reports:unknown[]=[];
- if(fs.existsSync(cp)){const data=JSON.parse(gunzipSync(fs.readFileSync(cp)).toString());expect(data.sha).toBe(sha);expect(hash(data.snapshot)).toBe(data.digest);gs=selectSnapshots([data.snapshot]).gs!;expect(gs).toBeTruthy();({minute,runId,actors,reports}=data);if(gs.run)setActiveLayout(gs.run.layoutId!);}
+ let gs=newGame(),minute=0;setActiveLayout('veyra05-world');let runId:string,actors:string[],reports:unknown[]=[];
+ if(fs.existsSync(cp)){const data=JSON.parse(gunzipSync(fs.readFileSync(cp)).toString());expect(data.sha).toBe(sha);expect(data.seed??7606).toBe(seed);expect(hash(data.snapshot)).toBe(data.digest);gs=selectSnapshots([data.snapshot]).gs!;expect(gs).toBeTruthy();({minute,runId,actors,reports}=data);if(gs.run)setActiveLayout(gs.run.layoutId!);}
  else if(process.env.SOH_ENDURANCE_FROM){
    // Extend the verified geographic day; do not rebuild h24 from raw JSON
    // (that would lose in-flight search work). Refuse a QA or unrelated run.
    gs=selectSnapshots([fs.readFileSync(process.env.SOH_ENDURANCE_FROM,'utf8')]).gs!;
-   expect(gs?.run).toBeTruthy();const r=gs.run!;expect(r.seed).toBe(7606);expect(r.startedAt).toBe(T0);expect(r.qaUsed).toBeFalsy();
+   expect(gs?.run).toBeTruthy();const r=gs.run!;expect(r.seed).toBe(seed);expect(r.startedAt).toBe(T0);expect(r.qaUsed).toBeFalsy();
    expect(r.clock.lastSimAt).toBe(T0+24*3600000);minute=24*60;expect(setActiveLayout(r.layoutId!)).toBe(true);
    runId=r.id;actors=Object.keys(r.humanWorld!.people).sort();expect(actors).toHaveLength(286);
  }
- else {expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(true);runId=gs.run!.id;actors=Object.keys(gs.run!.humanWorld!.people).sort();}
+ else {expect(startRun(gs,'female',T0,null,seed).ok).toBe(true);runId=gs.run!.id;actors=Object.keys(gs.run!.humanWorld!.people).sort();}
  expect(minute).toBeLessThanOrEqual(target);
  while(minute<target){const next=Math.min(target,(Math.floor(minute/60)+1)*60),now=T0+next*60000,r=gs.run!;expect(r.id).toBe(runId);expect(r.clock.lastSimAt).toBe(T0+minute*60000);
    beginReceiptSink();let work,events;try{work=profileWorldWork(()=>settle(gs,now,true));}finally{events=endReceiptSink();}
    expect(Object.keys(r.humanWorld!.people).sort()).toEqual(actors);expect(r.clock.lastSimAt).toBe(now);
    if(next<20160){expect(gs.run).toBe(r);expect(r.humanWorld!.lastNeedsAt).toBe(now);const before=hash(JSON.stringify(gs.run));settle(gs,now,true);expect(hash(JSON.stringify(gs.run))).toBe(before);}else{expect(gs.run).toBeNull();expect(gs.profile.history[0]).toMatchObject({runId,ending:'expired'});}
    const snapshot=serializeSnapshot(gs),digest=hash(snapshot);expect(selectSnapshots([snapshot]).gs).toBeTruthy();
+   const hour=next/60,hw=r.humanWorld!;
+   if([1,8,24,264,288,312,324,335,336].includes(hour)){
+     save(path.join(out,`h${hour}.save.gz`),gzipSync(snapshot));
+     const people=Object.values(hw.people);const ended=gs.profile.humanRunHistory?.find(row=>row.runId===runId);
+     if(hour===336){expect(ended?.outcomes.total).toBe(actors.length);expect(ended!.outcomes.dead+ended!.outcomes.evacuated+ended!.outcomes.survived+ended!.outcomes.unresolved).toBe(actors.length);}
+     save(path.join(out,`h${hour}.json`),JSON.stringify({sha,seed,runId,hour,qa:r.qaUsed,communities:Object.fromEntries(Object.values(hw.communities).map(c=>[c.poi,counts(c.memberIds.map(id=>hw.people[id].state))])),
+       elders:Object.values(hw.elderPressure).map(e=>({id:e.elderId,awake:e.awakenedAt,hp:elderCanonicalCreature(r,e.elderId)?.hp,alive:e.alive,waves:e.events?.length})),
+       ports:Object.values(hw.evacuation).map(t=>({site:t.site,phase:t.phase,capacity:t.capacity,boarded:t.boarded,departures:t.departures})),
+       ending:ended,defenders:people.filter(p=>p.threat?.waves).map(p=>({id:p.actorId,state:p.state,outcome:p.outcome,threat:p.threat})),digest},null,2));
+   }
    reports.push({minute:next,elapsedMs:work.elapsedMs,counts:work.counts,timings:work.timings,playerDead:r.player.dead,states:counts(Object.values(r.humanWorld!.people).map(h=>h.state)),receipts:counts(events.map(e=>e.kind)),saveBytes:Buffer.byteLength(snapshot),digest,history:next===20160?gs.profile.history[0]:undefined});
-   minute=next;save(cp,gzipSync(JSON.stringify({sha,runId,actors,minute,snapshot,digest,reports})));save(path.join(out,'progress.json'),JSON.stringify({sha,seed:7606,runId,actors:actors.length,minute,complete:minute===20160,reports},null,2));console.log('Checkpoint',minute,'minutes; elapsed',Math.round(work.elapsedMs),'ms');
+   minute=next;save(cp,gzipSync(JSON.stringify({sha,seed,runId,actors,minute,snapshot,digest,reports})));save(path.join(out,'progress.json'),JSON.stringify({sha,seed,runId,actors:actors.length,minute,complete:minute===20160,reports},null,2));console.log('Checkpoint',minute,'minutes; elapsed',Math.round(work.elapsedMs),'ms');
  }
 },2147483647);

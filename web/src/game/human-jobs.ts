@@ -1,5 +1,6 @@
 /** Occupation execution on real shared K1 custody, canonical recipes, station queues,
  * item repair rules, garden laws and physical structures. No work output loot table. */
+import {NO_LOCAL_BANK,communityBarrel,barrelBill,rainSite,installCatchment,type RainSite} from './human-rainwater';
 import { materialPayment } from './material-payment';
 import { WW, WH, TILE, uid, type RunState, type Entity, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, GARDEN_CROPS, isGardenCrop, stationBurnable } from './catalog';
@@ -16,7 +17,7 @@ export interface HumanWorkTask {
   machineJobId?: string; readyAt?: number; outputs?: [string, number][];
   observedPatient?:{gx:number;gy:number;floor:number};
   gardenAction?:'plant'|'water'|'harvest'; sowingId?:string;
-  rebuildSite?:string; patchType?:string; patchLots?:string[];
+  catchment?:RainSite; rebuildSite?:string; patchType?:string; patchLots?:string[];
   resumePhase?:'machine';
 }
 type Router = (gx: number, gy: number, floor: number) => { tx: number; ty: number; floor: number }[] | null;
@@ -136,6 +137,11 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
     if(bill.every(([k,n])=>available(k,n)))tasks.push({...start('build',undefined,bill,8000+recipe.secs*1000),rebuildSite:siteId});
     else h.lastWorkBlock=`Need a packed ${site.type} or its materials to rebuild.`;
   }
+  if(h.occupation==='builder' && h.floor===0 && warehouse?.owner===comm.id && !collapsed && !communityBarrel(r,comm) &&
+     comm.memberIds.some(id=>{const p=hw.people[id];return p?.floor===0 && p.state!=='DEAD' && p.thirst<40 && p.lastWorkBlock===NO_LOCAL_BANK && clearSurvivorSight(r,h,p);})){
+    const twist=!available('rope',1),bill=barrelBill(twist);
+    if(bill.every(([k,n])=>available(k,n))){const site=rainSite(r,hw,comm);if(site)tasks.push({...start('build',undefined,bill,8000+(RECIPES.deploy_barrel.secs+(twist?RECIPES.rope.secs:0))*1000),catchment:{...site,twist}});}
+  }
   const preparedKeys=new Set((h.knownRecipes??[]).flatMap(k=>RECIPES[k]?[RECIPES[k].out]:[]));
   const prepared=stores.reduce((n,cid)=>n+C(r,cid).slots.reduce((q,s)=>q+(s&&preparedKeys.has(s.key)?s.qty:0),0),0);
   const foodNeed=prepared<comm.memberIds.length; // one canonical prepared meal per resident; finite pantry target
@@ -233,16 +239,21 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
   }
   return tasks;
 }
+// Stabilisation stops bleeding, but a seriously injured survivor may still
+// be below the ordinary work threshold. Follow-up is not regeneration:
+// a medic must see the patient, reach them and consume another real dose.
+export const needsFollowup=(p:HumanRecord)=>p.state==='IDLE' && p.hp>0 && p.hp<30 && p.wounds.some(w=>w.treated);
 const patientTile=(p:HumanRecord)=>({gx:p.gx,gy:p.gy,floor:p.floor});
 function eligiblePatient(h:HumanRecord,p:HumanRecord|undefined):p is HumanRecord {
   return !!p && p!==h && p.community===h.community && p.floor===h.floor && !p.transit &&
-    !['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(p.state) && (p.state==='DOWNED'||p.wounds.some(w=>!w.treated));
+    !['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(p.state) && (p.state==='DOWNED'||p.wounds.some(w=>!w.treated)||needsFollowup(p));
 }
 function target(r: RunState, hw: HumanWorld, h: HumanRecord, task: HumanWorkTask): [number,number,number] | null {
   if (task.phase==='fetch') {
     const c=h.community ? hw.communities[h.community] : undefined,e=findRunEntity(r,c?.storeEntityId);
     return e?[...humanEntityTile(r,e),e.floor??0]:null;
   }
+  if(task.catchment)return [task.catchment.gx,task.catchment.gy,0];
   if(task.rebuildSite){const site=h.community?hw.communities[h.community]?.lostWorksites?.[task.rebuildSite]:undefined;return site?[site.tx,site.ty,site.floor]:null;}
   if (task.patientId) {
     // Legacy tasks had no sighting. Reacquire locally rather than tracking the
@@ -257,9 +268,9 @@ function target(r: RunState, hw: HumanWorld, h: HumanRecord, task: HumanWorkTask
 /** A nearby responder must see the body. Only a real route starts a response;
  * a fetched dose remains in the responder's custody on interruption. */
 export function dispatchMedicalResponse(r:RunState,hw:HumanWorld,p:HumanRecord,now:number,route:(h:HumanRecord,...dest:[number,number,number])=>ReturnType<Router>){
-  const c=p.community && hw.communities[p.community];if(!c || p.state!=='DOWNED')return;
+  const c=p.community && hw.communities[p.community];if(!c || p.state!=='DOWNED'&&!needsFollowup(p))return;
   const distance=(h:HumanRecord)=>Math.abs(h.gx-p.gx)+Math.abs(h.gy-p.gy);
-  const helpers=c.memberIds.map(id=>hw.people[id]).filter(h=>h && h.community===p.community && h.floor===p.floor && !h.following && !h.motion && !h.intent?.work &&
+  const helpers=c.memberIds.map(id=>hw.people[id]).filter(h=>h && h!==p && (p.state==='DOWNED' || h.occupation==='medic') && h.community===p.community && h.floor===p.floor && !h.following && !h.motion && !h.intent?.work &&
     (h.state==='IDLE'||(h.harvestJob?.phase==='source' && ['WORKING','MOVING'].includes(h.state))) && !h.transit && (!h.intent || h.intent.target?.startsWith('global-harvest:')))
     .sort((a,b)=>Number(b.occupation==='medic')-Number(a.occupation==='medic') || distance(a)-distance(b) || a.actorId.localeCompare(b.actorId));
   let hasDose=false,witnessed=false;
@@ -356,6 +367,8 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       if(!rule || !e || !(comm.workStations.includes(e.id) || e.poi===comm.poi && e.owner===comm.id))return fail('repair target or workbench changed');
       if(!fetchWorkMaterials(r,store.c,h.inv.packId,rule.cost,h.actorId,intent.intentId,now))return fail('repair supplies unavailable or pack full');
       task.inputs=rule.cost; // resume with the same canonical bill that was admitted
+    } else if(task.kind==='build' && task.catchment){
+      const bill=barrelBill(task.catchment.twist);if(communityBarrel(r,comm)||!fetchWorkMaterials(r,store.c,h.inv.packId,bill,h.actorId,intent.intentId,now))return fail('Rain collection supplies unavailable or already installed.');task.inputs=bill;
     } else if(task.kind==='build' && !task.rebuildSite && e?.id!==comm.storeEntityId){
       const bill=shellPatchBill(e,comm.id,task.patchType);
       if(!bill || !e || e.poi!==comm.poi && !comm.workStations.includes(e.id))return fail('repair site no longer needs this patch');
@@ -390,6 +403,8 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
     if(p.state==='DOWNED'){p.downedAt=undefined;p.state='IDLE';}
     receipt(r,now,'human.medical.payment',JSON.stringify({worker:h.actorId,patient:p.actorId,job:intent.intentId,seen:task.observedPatient,at:patientTile(p),hpBefore,hpAfter:p.hp,inputs}));
     receipt(r,now,'human.treat',`${h.actorId}:${p.actorId}:${medicine.map(m=>m[0]).join('+')}`);
+  } else if(task.kind==='build' && task.catchment){
+    if(!installCatchment(r,hw,h,comm,task.catchment,now))return fail('Rain barrel site obstructed or materials unavailable.');
   } else if(task.kind==='build' && task.rebuildSite){
     const old=task.rebuildSite,site=comm.lostWorksites?.[old];
     if(!site || !comm.workStations.includes(old) || findRunEntity(r,old) || site.floor!==h.floor || Math.abs(h.gx-site.tx)+Math.abs(h.gy-site.ty)!==1)return fail('lost worksite no longer accessible');
