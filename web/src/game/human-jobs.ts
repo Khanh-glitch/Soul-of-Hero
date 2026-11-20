@@ -3,7 +3,7 @@
 import { materialPayment } from './material-payment';
 import { WW, WH, TILE, uid, type RunState, type Entity, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, GARDEN_CROPS, isGardenCrop, stationBurnable } from './catalog';
-import { authoredStationFootprint,globalCellTileAndClass,mkStack,mkContainer,C, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, markDirty, clearSurvivorSight, clearPhysicalLine, productionFits, findRunEntity, allRunEntities } from './engine';
+import { connectedWorkLight,hasPowerFuel,authoredStationFootprint,globalCellTileAndClass,mkStack,mkContainer,C, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, markDirty, clearSurvivorSight, clearPhysicalLine, productionFits, findRunEntity, allRunEntities } from './engine';
 import { VEYRA_RECYCLER_SITE } from './world';
 import { recoveryPlan, recoveryPlanFor } from './recycler';
 import type { HumanRecord, HumanWorld } from './humanworld';
@@ -99,6 +99,10 @@ function salvagePlan(s: Stack, fromWarehouse = false) {
   if (s.production || ITEMS[s.key].dur !== undefined) return null;
   return recoveryPlan(fromWarehouse ? { ...s, qty: 1 } : s);
 }
+type Generator=Entity & {basePower:NonNullable<Entity['basePower']>;c:string};
+function serviceableGenerator(r:RunState,e:Entity|undefined,owner:string):e is Generator {
+  return !!e && e.type==='base_generator' && !!e.basePower && !!e.c && !!C(r,e.c) && e.owner===owner && (e.hp??0)>0 && (!e.basePower.workLightId || !!connectedWorkLight(r,e));
+}
 function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkTask[] {
   const comm = h.community ? hw.communities[h.community] : undefined; if (!comm) return [];
   const entities = allRunEntities(r).filter(e => (e.hp ?? 1) > 0 && (h.occupation==='salvager' && localRecycler(r,comm.poi,e) || comm.workStations.includes(e.id) || e.poi === comm.poi && e.owner === comm.id || h.occupation==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)));
@@ -178,11 +182,13 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
     if (h.occupation === 'builder' && e.kind === 'struct' && e.hp !== undefined && e.maxHp && e.hp < e.maxHp && !STRUCTS[e.type!]?.item) {
       const cost=structureRepairCost(e); if(cost.length && cost.every(([k,q])=>available(k,q))) tasks.push(start('build',e,cost,8000));
     }
-    if (h.occupation === 'engineer' && e.basePower && e.c) {
-      const loaded=C(r,e.c).slots.some(s=>s&&!s.production&&ITEMS[s.key].fuel);
-      if(!e.basePower.enabled || (!loaded && e.basePower.energy<=0)){
-        const fuel=loaded?null:[...pack(r,h).slots,...stores.flatMap(cid=>C(r,cid).slots)].find(s=>s&&!s.production&&ITEMS[s.key].fuel);
-        if(loaded || fuel)tasks.push(start('engineer',e,fuel?[[fuel.key,1]]:[],3000));
+    if (h.occupation === 'engineer' && serviceableGenerator(r,e,comm.id)) {
+      const supplied=hasPowerFuel(r,e);
+      if(!supplied && !C(r,e.c).slots.includes(null)){h.lastWorkBlock='Generator fuel tank full.';continue;}
+      if(!e.basePower.enabled || !supplied){
+        const held=pack(r,h).slots.find(s=>s&&!s.production&&ITEMS[s.key].fuel);
+        const fuel=held??stores.flatMap(cid=>C(r,cid).slots).find(s=>s&&!s.production&&ITEMS[s.key].fuel);
+        if(supplied || fuel)tasks.push({...start('engineer',e,!supplied&&fuel?[[fuel.key,1]]:[],3000),itemUid:supplied?undefined:held?.uid});
         else h.lastWorkBlock='Generator needs fuel; none in my pack or our store.';
       }
     }
@@ -266,7 +272,7 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
       // A funded repair can require several bounded searches just to reach
       // the store. Keep its target on the committed retry clock, not behind
       // another full island census. No path means no travel or work yet.
-      const pending=!path && (candidate.kind==='repair_item' || candidate.kind==='garden') && h.routeSearch?.status==='PENDING_SEARCH' &&
+      const pending=!path && (candidate.kind==='repair_item' || candidate.kind==='engineer' || candidate.kind==='garden') && h.routeSearch?.status==='PENDING_SEARCH' &&
         h.routeSearch.target===`${dest[2]}:${dest[0]},${dest[1]}`;
       if(!path && !pending)continue;
       task=candidate;
@@ -285,7 +291,7 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
     h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000;return false;
   }
   const path=route(...dest); if(!path){
-    if((task.kind==='repair_item'||task.kind==='garden'||task.kind==='medical') && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
+    if((task.kind==='repair_item'||task.kind==='engineer'||task.kind==='garden'||task.kind==='medical') && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
       h.lastWorkBlock='No confirmed work route; retaining carried supplies.';
       receipt(r,now,'human.work.blocked',`${h.actorId}:${h.intent!.intentId}:${h.lastWorkBlock}`);
       h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+30000;
@@ -330,6 +336,11 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       if(!rule || !e || !(comm.workStations.includes(e.id) || e.poi===comm.poi && e.owner===comm.id))return fail('repair target or workbench changed');
       if(!fetchWorkMaterials(r,store.c,h.inv.packId,rule.cost,h.actorId,intent.intentId,now))return fail('repair supplies unavailable or pack full');
       task.inputs=rule.cost; // resume with the same canonical bill that was admitted
+    } else if(task.kind==='engineer'){
+      if(!serviceableGenerator(r,e,comm.id)||hasPowerFuel(r,e))return fail('generator no longer needs this fuel');
+      if(!C(r,e.c).slots.includes(null))return fail('generator fuel full');
+      const key=task.inputs[0]?.[0];if(task.inputs.length!==1||task.inputs[0][1]!==1||!ITEMS[key]?.fuel || !fetchWorkMaterials(r,store.c,h.inv.packId,[[key,1]],h.actorId,intent.intentId,now))return fail('fuel missing, reserved or pack full');
+      task.itemUid=pack(r,h).slots.find(s=>s?.key===key&&!s.production)!.uid;
     } else if(task.kind==='medical'){
       if(!fetchWorkMaterials(r,store.c,h.inv.packId,task.inputs,h.actorId,intent.intentId,now))return fail('medicine missing, reserved or pack full');
     } else for(const [key,qty] of task.inputs) {
@@ -459,12 +470,16 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       const before=e.hp;e.hp=Math.min(e.maxHp,e.hp+Math.ceil(e.maxHp/4));
       receipt(r,now,'human.structure.patch',JSON.stringify({worker:h.actorId,job:intent.intentId,site:e.id,before,after:e.hp,inputs}));
     } else if(task.kind==='engineer') {
-      if(!e.basePower || !e.c)return fail('no actual generator');
-      const loaded=C(r,e.c).slots.some(s=>s&&!s.production&&ITEMS[s.key].fuel);
-      if(e.basePower.enabled && (loaded || e.basePower.energy>0))return fail('generator already operating');
-      if(!loaded && e.basePower.energy<=0) {
-        const fuel=pack(r,h).slots.find(s=>s&&!s.production&&ITEMS[s.key].fuel);if(!fuel)return fail('carry fuel to generator');
-        if(!moveHumanGoods(r,h.inv.packId,e.c,fuel.key,1))return fail('generator fuel full');
+      if(!serviceableGenerator(r,e,comm.id))return fail('generator missing, disconnected or unauthorized');
+      const supplied=hasPowerFuel(r,e);
+      if(e.basePower.enabled && supplied)return fail('generator already operating');
+      if(!supplied){
+        const bag=pack(r,h),tank=C(r,e.c),i=bag.slots.findIndex(s=>s && s.uid===task.itemUid && s.key===task.inputs[0]?.[0] && !s.production && ITEMS[s.key].fuel),s=bag.slots[i];
+        if(!s)return fail('selected fuel missing or reserved');
+        const j=tank.slots.indexOf(null);if(j<0)return fail('generator fuel full');
+        const unit=s.qty===1?s:{...s,uid:uid(r,'s'),qty:1};if(unit===s)bag.slots[i]=null;else s.qty--;
+        tank.slots[j]=unit;
+        receipt(r,now,'human.generator.load',JSON.stringify({worker:h.actorId,job:intent.intentId,generator:e.id,from:bag.id,sourceUid:s.uid,into:tank.id,fuelUid:unit.uid,key:s.key,qty:1}));
       }
       e.basePower.enabled=true;
     } else if(task.kind==='garden') {

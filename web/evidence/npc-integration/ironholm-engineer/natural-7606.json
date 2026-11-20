@@ -1,0 +1,60 @@
+{
+  "seed": 7606,
+  "start": 1794729600000,
+  "site": "po_ironmine",
+  "generator": "e2ti",
+  "light": "e2tk",
+  "cable": "e2tj",
+  "checkpoint": {
+    "at": 610,
+    "energy": 45990.36341222855,
+    "job": "hw3ce",
+    "worker": "he",
+    "uid": "s3cp"
+  },
+  "offAt": 660,
+  "events": [
+    {
+      "id": "r94",
+      "at": 1794729624915.2898,
+      "kind": "human.generator.load",
+      "detail": "{\"worker\":\"he\",\"job\":\"hw2u1\",\"generator\":\"e2ti\",\"from\":\"c19c\",\"sourceUid\":\"s19f\",\"into\":\"c2tl\",\"fuelUid\":\"s2ug\",\"key\":\"charcoal\",\"qty\":1}"
+    },
+    {
+      "id": "r97",
+      "at": 1794729624915.2898,
+      "kind": "power.yard.burn",
+      "detail": "{\"generator\":\"e2ti\",\"tank\":\"c2tl\",\"uid\":\"s2ug\",\"key\":\"charcoal\",\"ms\":55000}"
+    },
+    {
+      "id": "r1882",
+      "at": 1794729894001,
+      "kind": "human.generator.load",
+      "detail": "{\"worker\":\"he\",\"job\":\"hw34a\",\"generator\":\"e2ti\",\"from\":\"c19c\",\"sourceUid\":\"s19f\",\"into\":\"c2tl\",\"fuelUid\":\"s19f\",\"key\":\"charcoal\",\"qty\":1}"
+    },
+    {
+      "id": "r1885",
+      "at": 1794729894001,
+      "kind": "power.yard.burn",
+      "detail": "{\"generator\":\"e2ti\",\"tank\":\"c2tl\",\"uid\":\"s19f\",\"key\":\"charcoal\",\"ms\":55000}"
+    },
+    {
+      "id": "r3261",
+      "at": 1794730178475.0676,
+      "kind": "human.work.input",
+      "detail": "{\"workerId\":\"he\",\"orderId\":\"hw3ce\",\"containerId\":\"c18q\",\"into\":\"c19c\",\"inputs\":[{\"uid\":\"s18s\",\"key\":\"charcoal\",\"qty\":1}],\"received\":[{\"uid\":\"s3cp\",\"key\":\"charcoal\",\"qty\":1}]}"
+    },
+    {
+      "id": "r3373",
+      "at": 1794730200990.3582,
+      "kind": "human.generator.load",
+      "detail": "{\"worker\":\"he\",\"job\":\"hw3ce\",\"generator\":\"e2ti\",\"from\":\"c19c\",\"sourceUid\":\"s3cp\",\"into\":\"c2tl\",\"fuelUid\":\"s3cp\",\"key\":\"charcoal\",\"qty\":1}"
+    },
+    {
+      "id": "r3376",
+      "at": 1794730200990.3582,
+      "kind": "power.yard.burn",
+      "detail": "{\"generator\":\"e2ti\",\"tank\":\"c2tl\",\"uid\":\"s3cp\",\"key\":\"charcoal\",\"ms\":55000}"
+    }
+  ]
+}

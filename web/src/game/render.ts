@@ -16,7 +16,7 @@ import { drawArchitecturalBuilding } from '../veyra05/building-art';
 import { onVeyraWindowShift, windowOrigin } from '../veyra05/continuity';
 import * as life from '../veyra05/living/life';
 import { oakArt, pineArt, palmArt, willowArt, rockArt, bushArt, type TreeArt } from '../veyra05/living/flora';
-import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual } from './engine';
+import { effTile, sourceAt, darkness, weatherAt, isRagnarok, entsAt, buildReason, C, roofRoom, clearPhysicalLine, irSensorVisual,workLightPowered } from './engine';
 import { airdropView } from './airdrop';
 import { lootSpriteKey } from './loot-ecology';
 import { vehicleView, vehicleVisualKey, refineryStateKey, pumpStateKey } from './industrial-art';
@@ -572,7 +572,8 @@ function drawEntity(g: CanvasRenderingContext2D, r: RunState, e: Entity, time: n
       if (e.basePower) { g.fillStyle=e.basePower.enabled && e.basePower.energy>0 ? '#9cf26b' : '#d96758'; g.fillRect(X+3,Y-5,2,2); }
       if (e.turret) { const a=e.turret.angle; g.strokeStyle=e.turret.cooldown>750?'#ffe36a':e.turret.enabled?'#e2d4a0':'#746d5f'; g.lineWidth=2; g.beginPath(); g.moveTo(X,Y-4); g.lineTo(Math.round(X+Math.cos(a)*8),Math.round(Y-4+Math.sin(a)*8)); g.stroke(); if(e.turret.tracking){ g.fillStyle='#ffd76a'; g.fillRect(X+6,Y-15,2,5); g.fillRect(X+6,Y-9,2,2); } }
       if (e.type === 'campfire' && e.station && e.station.burn > 0) drawFlame(g, X, Y - 1, time, 1);
-      if (e.type === 'torch_post') drawFlame(g, X, Y - 12, time, 0.6);
+      if(e.workLight){g.fillStyle=workLightPowered(r,e)?'#fff2b4':'#4e5254';g.fillRect(X-3,Y-13,6,3);}
+      else if (e.type === 'torch_post') drawFlame(g, X, Y - 12, time, 0.6);
       if (e.type === 'escrow' && Math.random() < 0.06) add({ x: X - 6 + Math.random() * 12, y: Y - 6, vx: 0, vy: -10, col: '#c8a0ff', max: 900, s: 1, g: -2 });
       if (e.station && e.station.queue.length) { const j = e.station.queue[0]; const f = 1 - j.left / j.total; g.fillStyle = '#140c14'; g.fillRect(X - 7, Y - 16, 14, 3); g.fillStyle = (e.station.burn > 0 || d.station === 'workbench' || d.station === 'research') ? '#7aff6a' : '#ff7a3a'; g.fillRect(X - 6, Y - 15, Math.round(12 * f), 1); }
       if (e.station && C(r, e.station.outC)?.slots.some(Boolean) && Math.floor(time / 400) % 2) { g.fillStyle = '#ffe27a'; g.fillRect(X + 5, Y - 14, 2, 2); }
@@ -857,7 +858,7 @@ function drawLight(g: CanvasRenderingContext2D, r: RunState, now: number, time: 
   lights.push([p.x, p.y - 6, 34, '']);
   if (activeStack(r)?.key === 'torch') lights.push([p.x, p.y - 8, 78 + Math.sin(time / 90) * 3, '#ffb040']);
   for (const e of ents) { if (e.x < cx - 100 || e.x > cx + VIEW_W + 100 || e.y < cy - 100 || e.y > cy + VIEW_H + 100) continue;
-    if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.light && (e.type === 'torch_post' || (e.station && e.station.burn > 0 && (e.type === 'campfire' || e.station.queue.length)))) lights.push([e.x, e.y - 4, d.light + Math.sin(time / 110 + e.x) * 3, '#ff9a3a']); }
+    if (e.kind === 'struct') { const d = STRUCTS[e.type!]; if (d.light && ((e.type === 'torch_post' && (!e.workLight || workLightPowered(r,e))) || (e.station && e.station.burn > 0 && (e.type === 'campfire' || e.station.queue.length)))) lights.push([e.x, e.y - 4, d.light + Math.sin(time / 110 + e.x) * 3, '#ff9a3a']); }
     if (e.kind === 'vehicle' && e.vehicle && (e.vehicle.fuel ?? 0) > 0 && (e.hp ?? 0) > 0 && r.player.vehicle === e.id) { const a = e.vehicle.angle || 0; lights.push([e.x + Math.cos(a) * 18, e.y + Math.sin(a) * 14, 52, '#ffe89a']); lights.push([e.x + Math.cos(a) * 40, e.y + Math.sin(a) * 32, 34, '#ffd070']); }
     if (e.kind === 'evac') lights.push([e.x, e.y - 30, 40, '#ff5a3a']); if (e.kind === 'vendor') lights.push([e.x, e.y - 10, 50, '#ffd070']); if (e.kind === 'cash' && rag && !e.minted) lights.push([e.x, e.y, 30, '#ffd040']); if (e.kind === 'bag') lights.push([e.x, e.y, 20, '#ffe27a']); }
   for (const pr of PROJ) if (pr.kind === 'fireball' || pr.kind === 'bolt') lights.push([pr.x, pr.y, pr.kind === 'fireball' ? 50 : 18, '#ff7a2a']);

@@ -4,7 +4,7 @@ import { itemClass, itemClassLabel, coreClassLine, ITEM_CLASS_MEANING, ITEM_CLAS
 import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
 import type { RunState } from '../game/core';
-import { anyAuthorizedOilSource, owned, clearInteraction, oilAvailability, OIL_TEXT } from '../game/engine';
+import { workLightPowered,findRunEntity as lookupRunEntity,anyAuthorizedOilSource, owned, clearInteraction, oilAvailability, OIL_TEXT } from '../game/engine';
 import { stationBurnable, GARDEN_CROP_KINDS, isGardenCrop, gardenClimateClass, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, PA1_BASE_GEOMETRY, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, recipeForJob, familyOfRecipe, familyMembers, isFamilyGated, RESEARCH_FAMILIES, EQ_SLOTS, ARMOR_CAP, wornProtection } from '../game/catalog';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
@@ -226,6 +226,14 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   // Same entity, same station state, same intents — only the presentation changes.
   // `stationConsoleTab` is a test/inspection seam only: the shipped path never sets it, so the router's
   // behaviour is unchanged for a player.
+  if(e.workLight || e.basePower?.workLightId){
+    const light=e.workLight?e:lookupRunEntity(r,e.basePower?.workLightId),gen=e.basePower?e:lookupRunEntity(r,e.workLight?.generatorId);
+    return <Panel title={e.label || 'Works lighting'} style={{left:168,top:54,width:230}} onClose={()=>api.open(null)}>
+      <b>Ore yard light · {light&&workLightPowered(r,light)?'lit':'dark'}</b>
+      <div>Generator energy: {((gen?.basePower?.energy??0)/1000).toFixed(1)} fuel-seconds</div>
+      <div>Foundry equipment · serviced by the local engineer.</div>
+    </Panel>;
+  }
   if (st && !compact && kind) return <StationConsole api={api} eid={eid} initialTab={api.stationConsoleTab} />;
   if (compact && inventoryOnly) return <InventoryPanel api={api} quickTo={quickTo} x={168} top={54} backToContainer onClose={()=>{api.setSel(null);setInventoryOnly(false);}} />;
   return <>

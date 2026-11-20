@@ -944,14 +944,14 @@ export function isSheltered(r: RunState, px: number, py: number) { return roofRo
 /** Built wire-v1 nodes are physical tiles, not proximity links or POI circuits.
  * Player-only pressure plates are evaluated from actual position (same floor only), including the
  * stationary saved player during offline settlement. No speculative AI movement. */
-function wireNodeBaseOn(r: RunState, e: Entity, entityBlockMap?: Map<string, number>): boolean {
-  if (e.kind !== 'struct' || !['power_cable', 'power_switch', 'pressure_switch', 'ir_sensor'].includes(e.type || '') || !owned(e) || (e.hp ?? 0) <= 0 || e.tx === undefined || e.ty === undefined) return false;
+function wireNodeBaseOn(r: RunState, e: Entity, entityBlockMap?: Map<string, number>, circuitOwner?:string): boolean {
+  if (e.kind !== 'struct' || !['power_cable', 'power_switch', 'pressure_switch', 'ir_sensor'].includes(e.type || '') || (circuitOwner?e.owner!==circuitOwner:!owned(e)) || (e.hp ?? 0) <= 0 || e.tx === undefined || e.ty === undefined) return false;
   const np = entityGlobalCoords(r, e);
   if (np.onscreen && np.floor === activeFloor(r) && (!isVeyra05Layout(r.layoutId || '') || r.layoutId === getActiveLayout())) {
     const t = effTile(r, e.tx, e.ty), i = e.ty * WW + e.tx;
     if ([T.DEEP, T.SHALLOW, T.RIVER, T.ICE, T.LAVA, T.CLIFF, T.PWALL].includes(t) || [1, 2, 3, 4, 5].includes(blockGrid(r)[i])) return false;
   } else {
-    const cell = globalCellTileAndClass(r, np.gtx, np.gty, np.floor, undefined, entityBlockMap);
+    const cell = globalCellTileAndClass(r, np.gtx, np.gty, np.floor, circuitOwner&&!entityBlockMap?allRunEntities(r):undefined, entityBlockMap);
     if ([T.DEEP, T.SHALLOW, T.RIVER, T.ICE, T.LAVA, T.CLIFF, T.PWALL].includes(cell.tile) || [1, 2, 3, 4, 5].includes(cell.cls)) return false;
   }
   if (e.type === 'power_switch') return !!e.wireSwitch?.on;
@@ -1258,12 +1258,28 @@ export function connectedPower(r: RunState, g: Entity, e: Entity, floorGraph?: R
   if (gp.floor !== ep.floor || dist(gp.gx, gp.gy, ep.gx, ep.gy) > BAL.industrialPower.connectionTiles * TILE) return false;
   return clearGlobalPhysicalLine(r, e, g, floorGraph?.all, floorGraph?.blockMap);
 }
-function hasPowerFuel(r: RunState, g: Entity) {
-  return !!g.basePower && !!g.c && (g.basePower.energy > 1e-8 || C(r, g.c).slots.some(s => s && !!ITEMS[s.key]?.fuel));
+export function hasPowerFuel(r: RunState, g: Entity) {
+  return !!g.basePower && !!g.c && (g.basePower.energy > 1e-8 || C(r, g.c).slots.some(s => s && !s.production && !!ITEMS[s.key]?.fuel));
+}
+/** A dedicated three-terminal yard circuit, electrically isolated from player wiring. */
+export function connectedWorkLight(r:RunState,g:Entity){
+  const light=findRunEntity(r,g.basePower?.workLightId);
+  const wire=findRunEntity(r,light?.workLight?.cableId);
+  if(g.type!=='base_generator' || g.basePower?.network!=='wire-v1' || !g.owner?.startsWith('com:') ||
+    light?.type!=='torch_post' || light.workLight?.generatorId!==g.id || wire?.type!=='power_cable')return undefined;
+  if([g,wire,light].some(e=>e.owner!==g.owner || (e.hp??0)<=0))return undefined;
+  const [a,b,c]=[g,wire,light].map(e=>entityGlobalCoords(r,e));
+  const adjacent=(p:typeof b)=>p.floor===b.floor && Math.abs(p.gtx-b.gtx)+Math.abs(p.gty-b.gty)===1;
+  return adjacent(a)&&adjacent(c)&&wireNodeBaseOn(r,wire,undefined,g.owner)?light:undefined;
+}
+export function workLightPowered(r:RunState,e:Entity){
+  const g=findRunEntity(r,e.workLight?.generatorId);
+  return !!g?.basePower?.enabled && hasPowerFuel(r,g) && connectedWorkLight(r,g)===e;
 }
 /** Stable allocation order; priority is a player choice, not a magic extra load. */
 export function powerAllocation(r: RunState, g: Entity, _online = true, floorGraph?: FloorPowerGraph): Entity[] {
-  if (!g.basePower?.enabled || !owned(g) || (g.hp ?? 1) <= 0 || !hasPowerFuel(r, g)) return [];
+  if (!g.basePower?.enabled || (g.hp ?? 1) <= 0 || !hasPowerFuel(r, g)) return [];
+  if (!owned(g)){const lamp=connectedWorkLight(r,g);return lamp?[lamp]:[];}
   const gp = entityGlobalCoords(r, g);
   const gph = floorGraph ?? buildFloorPowerGraph(r, gp.floor);
   const sensors = g.basePower.network === 'wire-v1' ? sensorClaims(r, g, gph) : [];
@@ -1343,13 +1359,13 @@ export function basePowerBoundary(r: RunState, limit: number, online = true): nu
     if (!g.basePower?.enabled || !g.c) continue;
     let fuel = g.basePower.energy;
     if (fuel <= 1e-8) {
-      const s = C(r, g.c).slots.find(s => s && ITEMS[s.key]?.fuel);
+      const s = C(r, g.c).slots.find(s => s && !s.production && ITEMS[s.key]?.fuel);
       fuel = s ? ITEMS[s.key].fuel! * 1000 : 0;
     }
     if (fuel > 1e-8) {
       const fl = entityGlobalCoords(r, g).floor;
       let gph = graphs.get(fl);
-      if (!gph) {
+      if (!gph && owned(g)) {
         blockMap ??= buildEntityBlockMap(r, all);
         gph = buildFloorPowerGraph(r, fl, all, blockMap);
         graphs.set(fl, gph);
@@ -1364,15 +1380,17 @@ export function stepBasePower(r: RunState, dt: number, now: number, online = tru
   const all = allRunEntities(r);
   const gens = all.filter(e => e.basePower?.enabled && !!e.c);
   if (!gens.length) return;
-  const blockMap = buildEntityBlockMap(r, all);
+  let blockMap:Map<string,number>|undefined;
   const graphs = new Map<number, FloorPowerGraph>();
   const dirtyFloors = new Set<number>();
   for (const e of gens) {
     const power = e.basePower;
     if (!power?.enabled || !e.c) continue;
+    if(!hasPowerFuel(r,e))continue;
     const fl = entityGlobalCoords(r, e).floor;
     let gph = dirtyFloors.has(fl) ? undefined : graphs.get(fl);
-    if (!gph) {
+    if (!gph && owned(e)) {
+      blockMap??=buildEntityBlockMap(r,all);
       gph = buildFloorPowerGraph(r, fl, all, blockMap);
       graphs.set(fl, gph);
       dirtyFloors.delete(fl);
@@ -1381,12 +1399,13 @@ export function stepBasePower(r: RunState, dt: number, now: number, online = tru
     let left = dt * load;
     while (left > 1e-8) {
       if (power.energy <= 1e-8) {
-        const slot = C(r, e.c).slots.find(s => s && ITEMS[s.key]?.fuel);
+        const slot = C(r, e.c).slots.find(s => s && !s.production && ITEMS[s.key]?.fuel);
         if (!slot) { power.energy = 0; break; }
         power.energy = ITEMS[slot.key].fuel! * 1000;
         const key = slot.key;
-        removeItem(r,e.c,key,1);
+        if(--slot.qty===0){const slots=C(r,e.c).slots;slots[slots.indexOf(slot)]=null;}
         receipt(r, now - left / load, 'power.fuel', `${e.id}:${key}`);
+        if(power.workLightId)receipt(r,now-left/load,'power.yard.burn',JSON.stringify({generator:e.id,tank:e.c,uid:slot.uid,key,ms:power.energy}));
       }
       const used = Math.min(left, power.energy);
       power.energy -= used;
@@ -1662,6 +1681,28 @@ export function seedHumanWorld(r: RunState): void {
   }));
   seedPopulation(r, hw, sites, elderLairs, evacSites);
   seedHookGarden(r);
+  seedOreYardLighting(r);
+}
+/** Foundry-owned infrastructure at genesis. No stored fuel or prepaid energy. */
+function seedOreYardLighting(r:RunState){
+  const comm=r.humanWorld?.communities['com:po_ironmine'],room=authoredPlan('po_ironmine')?.levels.get(0)?.rooms.find(q=>q.id==='po_ironmine.ore_yard');
+  if(!room||!comm)return;
+  const all=allRunEntities(r),occupied=new Set(all.map(e=>{const p=entityGlobalCoords(r,e);return `${p.floor}:${p.gtx},${p.gty}`;}));
+  // Choose an unobstructed three-cell strip on the authored yard, not a station,
+  // doorway, resource, resident spawn or warehouse tile.
+  for(const h of Object.values(r.humanWorld!.people))occupied.add(`${h.floor}:${h.gx},${h.gy}`);
+  const clear=(x:number,y:number)=>{const b=globalBaseGeometry(x,y,0,r.sourceMap?.rules===4?4:3);
+    return room.cells.includes(y*FRAME_W+x)&&!occupied.has(`0:${x},${y}`)&&b&&!b.source&&!b.solidProp&&!b.statics.length&&globalCellTileAndClass(r,x,y,0,all).cls===0;};
+  const [ox,oy]=windowOrigin(r);
+  for(let y=2585;y>=2571;y--)for(let x=2365;x<2380;x++){
+    if(![0,1,2].every(i=>clear(x+i,y)))continue;
+    const install=(gx:number,type:string,label:string)=>{const local=gx>=ox&&gx<ox+WW&&y>=oy&&y<oy+WH,tx=local?gx-ox:gx,ty=local?y-oy:y;
+      const e:Entity={id:uid(r,'e'),kind:'struct',type,label,owner:comm.id,poi:comm.poi,floor:0,tx,ty,x:(tx+.5)*TILE,y:(ty+.5)*TILE,hp:STRUCTS[type].hp,maxHp:STRUCTS[type].hp};
+      (local?r.entities:(r.veyraOffscreenEntities??={}))[e.id]=e;return e;};
+    const gen=install(x,'base_generator','Ore Yard Generator'),wire=install(x+1,'power_cable','Ore Yard Feed'),light=install(x+2,'torch_post','Ore Yard Work Light');
+    gen.c=mkContainer(r,'chest',STRUCTS.base_generator.slots!).id;gen.basePower={workLightId:light.id,enabled:false,network:'wire-v1',energy:0};
+    light.workLight={generatorId:gen.id,cableId:wire.id};comm.workStations.push(gen.id);return;
+  }
 }
 /** One empty community plot in Hook's authored South Garden Plots. Genesis
  * only: the normal entity ledger streams/saves it; loading never sows or refills. */

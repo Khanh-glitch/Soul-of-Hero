@@ -550,6 +550,12 @@ export function validate(raw: any): GameState | null {
   if(([...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})] as any[]).filter(e=>e.kind==='recycler').length>1)return null;
   for(const [key,offer] of Object.entries(VENDOR_SPARES)){const stock=r.vendorStock[`spares:${key}`];if(stock!==undefined && (!integer(stock) || stock>offer.stock))return null;}
   const allValidatedEntities = [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})] as any[];
+  // Broken circuits may legitimately refer to removed equipment; never create
+  // the missing terminal or refill a tank during validation.
+  for(const e of allValidatedEntities){
+    if(e.workLight!==undefined && (e.type!=='torch_post'||!obj(e.workLight)||typeof e.workLight.generatorId!=='string'||typeof e.workLight.cableId!=='string'))return null;
+    if(e.basePower?.workLightId!==undefined && typeof e.basePower.workLightId!=='string')return null;
+  }
   for(const e of allValidatedEntities)if(e?.garden?.sowing!==undefined){
     const g=e.garden,lot=g.sowing;
     if(e.type!=='garden'||!isGardenCrop(g.crop)||!obj(lot)||typeof lot.id!=='string'||!/^hj[a-z0-9]+$/.test(lot.id)||!Array.isArray(lot.inputs))return null;

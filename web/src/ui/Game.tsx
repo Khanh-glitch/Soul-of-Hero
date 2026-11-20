@@ -360,7 +360,7 @@ export default function Game({
       else if (e.type === 'escrow') setPanel({ kind: 'escrow', eid: e.id });
       else if (e.type === 'bed_straw' && (e.hp ?? 0) > 0) setPanel({ kind: 'rest', eid: e.id });
       else if (e.type === 'claim') setPanel({ kind: 'container', eid: e.id });
-      else if (e.type === 'garden') setPanel({ kind: 'container', eid: e.id });
+      else if (e.type === 'garden' || e.workLight) setPanel({ kind: 'container', eid: e.id });
       else if (e.type === 'barrel') act('barrel', { eid: e.id });
       else if (d.station || d.slots) setPanel({ kind: 'container', eid: e.id });
     }

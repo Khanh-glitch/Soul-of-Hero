@@ -100,7 +100,9 @@ function buildAt(
   const r = gs.run!;
   r.player.x = tx * TILE + 8;
   r.player.y = (ty + 1) * TILE + 8;
-  for (const [k, q] of STRUCTS[type].cost) addItem(r, 'inv', k, q);
+  // Current placement bill: deploy a packed device; fit a powered lock to an existing door.
+  if(type==='door_powered')buildAt(gs,'door_wood',tx,ty,now);
+  const def=STRUCTS[type];if(def.item)addItem(r,'inv',def.item,1);else for(const [k,q] of def.cost)addItem(r,'inv',k,q);
   const res = dispatch(gs, { id: `b-${type}-${tx}-${ty}-${now}`, type: 'build', struct: type, tx, ty }, now);
   expect(res.ok, `${type} at (${tx},${ty}): ${(res as any).reason}`).toBe(true);
   return Object.values(r.entities).find((e) => e.kind === 'struct' && e.tx === tx && e.ty === ty && e.type === type)!;

@@ -133,7 +133,8 @@ export interface Entity {
   /** Item set v3: the door type a Powered Door module was fitted into (reclaim hands that door back). */
   poweredHost?: string;
   bearTrap?: { version: 'trap-v1'; state: 'unarmed' | 'armed' | 'spent' | 'worn'; uses: number; snapAt?: number };
-  basePower?: { enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production'; network?: 'wire-v1' };
+  workLight?: {generatorId:string;cableId:string};
+  basePower?: { workLightId?:string; enabled: boolean; energy: number; capacity?: 2; priority?: 'defense' | 'production'; network?: 'wire-v1' };
   wireSwitch?: {version:'wire-v1'; on:boolean};
   electricDoor?: {version:'wire-v1'; interior:[number,number]; releaseUntil?:number};
   cabinet?: { credit: Record<string, number>; legacy: boolean };
