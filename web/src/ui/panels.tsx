@@ -4,7 +4,7 @@ import { itemClass, itemClassLabel, coreClassLine, ITEM_CLASS_MEANING, ITEM_CLAS
 import { LOOT_CLASSES, LOOT_B04_ROLES, lootClass } from '../game/loot-ecology';
 import { useEffect, useRef, useState } from 'react';
 import type { RunState } from '../game/core';
-import { workLightPowered,findRunEntity as lookupRunEntity,anyAuthorizedOilSource, owned, clearInteraction, oilAvailability, OIL_TEXT } from '../game/engine';
+import { kitchenShortfall,workLightPowered,findRunEntity as lookupRunEntity,anyAuthorizedOilSource, owned, clearInteraction, oilAvailability, OIL_TEXT } from '../game/engine';
 import { stationBurnable, GARDEN_CROP_KINDS, isGardenCrop, gardenClimateClass, ITEMS, RECIPES, permitsDirectedResearch, isRecipeKnown, STRUCTS, BUILD_ORDER, PA1_BASE_GEOMETRY, VENDOR_SECURED, VENDOR_SPARES, ACHIEVEMENTS, ELDERS, PRIMORDIAL_ELDERS, CORE_STUDY, WORKBENCH_UPGRADE, WORKBENCH_UPGRADE_III, CART_FREIGHT_UPGRADE, GENERATOR_CAPACITY_UPGRADE, INDUSTRIAL_MODULE, GARDEN_CROPS, GARDEN_FRAME_COST, FURNACE_LINING, recipeForJob, familyOfRecipe, familyMembers, isFamilyGated, RESEARCH_FAMILIES, EQ_SLOTS, ARMOR_CAP, wornProtection } from '../game/catalog';
 import { isVeyra05Layout } from '../veyra05/scenes';
 import { BAL, TILE, WW, type Stack, type Entity } from '../game/core';
@@ -226,6 +226,15 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   // Same entity, same station state, same intents — only the presentation changes.
   // `stationConsoleTab` is a test/inspection seam only: the shipped path never sets it, so the router's
   // behaviour is unchanged for a player.
+  if(e.kind==='bag' && e.owner && e.c && r.humanWorld?.communities[e.owner]?.storeEntityId===e.id){
+    const kitchen=kitchenShortfall(r,e),lot=kitchen&&C(r,'inv').slots.find(s=>s?.key===kitchen.key&&!s.production);
+    return <Panel title={title} style={{left:168,top:54,width:240}} onClose={()=>api.open(null)}>
+      <b>Village pantry · community stock</b>
+      <div>{C(r,e.c).slots.flatMap(s=>s?[`${s.qty} ${ITEMS[s.key].name}`]:[]).join(' · ')||'Empty'}</div>
+      {kitchen?<><div>{ITEMS[RECIPES[kitchen.recipe].out].name} needs {kitchen.qty} more {ITEMS[kitchen.key].name}.</div>
+        <button className="btn" disabled={!lot} onClick={()=>api.act('kitchenContribution',{eid:e.id,recipe:kitchen.recipe,stackUid:lot?.uid})}>Donate 1 {ITEMS[kitchen.key].name}</button></>:<div>No outstanding garden-meal ingredient.</div>}
+    </Panel>;
+  }
   if(e.kind==='struct' && e.owner?.startsWith('com:') && STRUCTS[e.type!]?.layer==='wall'){
     const cost=structureRepairCost(e),damaged=(e.hp??0)<(e.maxHp??0);
     return <Panel title={e.label || STRUCTS[e.type!].name} style={{left:168,top:54,width:230}} onClose={()=>api.open(null)}>

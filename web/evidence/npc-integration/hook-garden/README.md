@@ -26,3 +26,11 @@ Verification: 20 distinct tests passed across the three suites above plus `npc-p
 [Kitchen custody audit](kitchen-7606.json), current geographic New Game seed 7606. This is a fresh trace; runtime IDs are not taken from the historical garden run above. At +600.072 s `hn` delivers **3 Sunroot**, lot `s3eg`, to `c19v`. The stack retains its harvest UID and the harvest cites the planted seed `s1b7`. From +630 through +840 s, at each 30-second observation, all three units are still in that warehouse. Both Hook cooks (`hl`, `hm`) know **stew** and have a listed community campfire (`e1ad`). Each has access to 3/2 Sunroot and 4/1 herb across pack and authorized stock, but **0/1 meat**. The recipe bill is therefore not payable by either cook at those samples; no stew made from this lot is demonstrated. This does not establish permanent scarcity, nor is it a claim that route, queue, fuel and demand would all be ready if meat arrived. No item, recipe or job was added to obtain this result.
 
 Reproduce: `npm test -- --maxWorkers=1 tests/npc-hook-kitchen.test.ts` from `web/`.
+
+### Player-assisted follow-up: one boar, one stew
+
+[Verified custody trace](boar-stew-7606.json). A fresh New Game on `veyra05-world`, seed 7606, delivers the same first Sunroot lot `s3eg`. A player-input driver pursues a wild, full-health Bristleback Boar, kills it and picks up its two raw meat. **Only arrival at the village is staged**: the driver shifts the active region and places the player beside the pantry. It does not demonstrate a continuous journey, autonomous hunting or NPC freight. No goods, NPC orders, loot or damage are injected.
+
+One meat leaves the player’s stack and enters Hook’s existing 12-slot warehouse. To free the slot, the pantry consolidates two compatible herb lots and records both UIDs. Cook `hl` withdraws two of the three Sunroot, the contributed meat and one herb, pays once at campfire `e1ad`, and picks up the one finished stew in pack `c1ax`. The active queue survives a save round-trip. Evidence stops at pickup, not a warehouse delivery or a meal eaten.
+
+From `web/`: `npm test -- --maxWorkers=1 tests/{npc-hook-boar-stew,npc-kitchen-contribution}.test.ts`. The second test uses controlled stock to exercise refusal/ownership rules; it is not hunting evidence.

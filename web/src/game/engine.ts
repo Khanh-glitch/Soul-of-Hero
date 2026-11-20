@@ -2521,10 +2521,50 @@ export function clearSegment(r: RunState, p: { x: number; y: number }, e: { x: n
 export function clearWallLine(r: RunState, p: {x:number;y:number}, e: {x:number;y:number}) { return clearPhysicalLine(r, p, e, false, true, true); }
 export function clearInteraction(r:RunState,e:{x:number;y:number}) { return clearSegment(r,r.player,e); }
 
+/** A deposit-only offer for the last missing ingredient of a garden meal.
+ * Read loose warehouse lots, not the historical freight ledger. Never grants
+ * the donor access to the warehouse or to a cook's personal pack. */
+export function kitchenShortfall(r:RunState,e:Entity|undefined){
+  const hw=r.humanWorld,c=e?.owner?hw?.communities[e.owner]:undefined;
+  if(!hw||!c||!e||e.kind!=='bag'||c.storeEntityId!==e.id||!e.c||!c.storeContainers.includes(e.c)||(e.hp??0)<=0)return;
+  if(!c.workStations.some(id=>{const fire=findRunEntity(r,id);return fire?.type==='campfire'&&fire.owner===c.id&&fire.station&&(fire.hp??1)>0;}))return;
+  const slots=C(r,e.c).slots,held=(key:string)=>slots.reduce((n,s)=>n+(s?.key===key&&!s.production?s.qty:0),0);
+  for(const id of c.memberIds){const h=hw.people[id];if(h?.occupation!=='cook'||h.following||h.transit||['DEAD','DOWNED','EVACUATED','ON_VESSEL'].includes(h.state))continue;
+    for(const recipe of h.knownRecipes??[]){const rc=RECIPES[recipe];if(rc?.station!=='campfire'||!rc.ins.some(([k,q])=>k==='crop'&&held(k)>=q))continue;
+      const missing=rc.ins.filter(([k,n])=>held(k)<n);if(missing.length!==1)continue;
+      const [key,n]=missing[0];return {recipe,key,qty:n-held(key)};
+    }
+  }
+}
 function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
   const p = r.player; const ok = (kind: string, detail: string, msg?: string): Result => ({ ok: true, receipt: receipt(r, now, kind, detail), msg });
   if (p.dead && !['respawn', 'abandon', 'qaAdvance'].includes(it.type)) return fail('You are dead.');
   switch (it.type) {
+    case 'kitchenContribution': {
+      const e=r.entities[it.eid],offer=kitchenShortfall(r,e);
+      if(!e?.c||!offer||offer.recipe!==it.recipe||!near(r,e,2.2)||!clearInteraction(r,e))return fail('No matching kitchen request within reach.');
+      const bag=C(r,'inv'),slot=bag.slots.findIndex(s=>s?.uid===it.stackUid),s=bag.slots[slot];
+      if(!s||s.production||s.key!==offer.key)return fail('Bring the requested loose ingredient.');
+      const dest=C(r,e.c),empty=dest.slots.indexOf(null),merge=dest.slots.find(v=>v&&mergeable(v,s)&&v.qty<ITEMS[v.key].max);
+      let bin=empty;
+      if(bin<0&&!merge){
+        // No extra slots. Consolidate at most one whole plain lot of a co-ingredient;
+        // never retire a delivered lot, a selected UID or a marked/claimed stack.
+        const c=r.humanWorld!.communities[e.owner!],keys=new Set(RECIPES[offer.recipe].ins.map(([k])=>k));
+        const plain=(v:Stack|null):v is Stack=>!!v&&keys.has(v.key)&&Object.keys(v).every(k=>['key','qty','uid'].includes(k));
+        for(const [i,src] of dest.slots.entries()){
+          if(!plain(src)||c.cargoLedger?.[src.uid]?.length||Object.values(r.humanWorld!.people).some(h=>h.intent?.work?.itemUid===src.uid||h.intent?.reserved.includes(src.uid)))continue;
+          const dst=dest.slots.find(v=>v!==src&&plain(v)&&v.key===src.key&&v.qty+src.qty<=ITEMS[src.key].max);
+          if(dst){dst.qty+=src.qty;dest.slots[i]=null;bin=i;receipt(r,now,'human.kitchen.repack',JSON.stringify({containerId:dest.id,key:src.key,qty:src.qty,fromUid:src.uid,intoUid:dst.uid}));break;}
+        }
+        if(bin<0)return fail('Pantry full. You keep the ingredient.');
+      }
+      const unit=bin<0?merge!:s.qty===1?s:portion(r,s,1);
+      if(s.qty===1)bag.slots[slot]=null;else s.qty--;
+      if(bin>=0)dest.slots[bin]=unit;else unit.qty++;
+      for(const id of r.humanWorld!.communities[e.owner!].memberIds){const cook=r.humanWorld!.people[id];if(cook?.occupation==='cook'&&cook.state==='IDLE'&&!cook.intent) cook.nextThinkAt=Math.min(cook.nextThinkAt??now,now);}
+      return ok('human.kitchen.contribute',JSON.stringify({recipe:offer.recipe,key:s.key,qty:1,from:bag.id,sourceUid:s.uid,into:dest.id,receivedUid:unit.uid}),'One ingredient delivered.');
+    }
     case 'humanRepair': case 'humanAid': case 'humanOrder': case 'humanCargo': case 'humanTalk': case 'humanThreaten': case 'humanRecruit': case 'humanDismiss': case 'humanExchange': case 'humanLoot': {
       const hw = r.humanWorld as HumanWorld | undefined;
       const h = hw?.people[it.actorId];

@@ -160,7 +160,10 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
       for(const [jobId,outputs]of claims)tasks.push({...start(h.occupation==='salvager'?'recycle':'cook',e,[],800),phase:'collect',machineJobId:jobId,outputs});
     }
     if (h.occupation === 'cook' && foodNeed && !Object.values(h.workOutputs??{}).some(q=>q>0) && e.station && !e.station.queue.length && STRUCTS[e.type!]?.station === 'campfire') {
-      for (const [recipe, rc] of Object.entries(RECIPES)) if (rc.station === 'campfire' && (ITEMS[rc.out]?.food?.hunger??0)>0 && knownRecipe(h,recipe) && rc.ins.every(([k,q])=>available(k,q))) {
+      // Use available garden produce for a full meal before drying the same meat.
+      const recipes=(h.knownRecipes??[]).map(key=>[key,RECIPES[key]] as const).filter(([,rc])=>rc?.station==='campfire');
+      recipes.sort((a,b)=>Number(b[1].ins.some(([k])=>k==='crop'))-Number(a[1].ins.some(([k])=>k==='crop')));
+      for (const [recipe, rc] of recipes) if (rc.station === 'campfire' && (ITEMS[rc.out]?.food?.hunger??0)>0 && knownRecipe(h,recipe) && rc.ins.every(([k,q])=>available(k,q))) {
         const ins=rc.ins.map(([k,q])=>[k,q] as [string,number]);
         if(e.station.burn<=0&&!C(r,e.station.fuelC).slots.some(s=>s&&!s.production&&stationBurnable(s.key))){
           const fuel=[...pack(r,h).slots,...stores.flatMap(c=>C(r,c).slots)].find(s=>s&&!s.production&&stationBurnable(s.key));
@@ -363,6 +366,8 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       if(!C(r,e.c).slots.includes(null))return fail('generator fuel full');
       const key=task.inputs[0]?.[0];if(task.inputs.length!==1||task.inputs[0][1]!==1||!ITEMS[key]?.fuel || !fetchWorkMaterials(r,store.c,h.inv.packId,[[key,1]],h.actorId,intent.intentId,now))return fail('fuel missing, reserved or pack full');
       task.itemUid=pack(r,h).slots.find(s=>s?.key===key&&!s.production)!.uid;
+    } else if(task.kind==='cook'){
+      if(!fetchWorkMaterials(r,store.c,h.inv.packId,task.inputs,h.actorId,intent.intentId,now))return fail('kitchen bill unavailable or pack full');
     } else if(task.kind==='medical'){
       if(!fetchWorkMaterials(r,store.c,h.inv.packId,task.inputs,h.actorId,intent.intentId,now))return fail('medicine missing, reserved or pack full');
     } else for(const [key,qty] of task.inputs) {
