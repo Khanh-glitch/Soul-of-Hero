@@ -291,6 +291,7 @@ export const SOURCES: Record<string, SourceDef> = {
 
 // ---------- Creatures (K5) ----------
 export interface CreatureDef { name: string; hp: number; dmg: number; speed: number; r: number; sight: number; drops: [string, number, number][]; biome: string; style: string; tell: number; aggro: boolean; night?: boolean; leashTiles?: number; uniqueDrop?: string; tamable?: boolean }
+export const passiveWildlife = (type:string) => type==='deer' || type==='hare' || type==='grouse';
 export const CREATURES: Record<string, CreatureDef> = {
   boar: { name: 'Bristleback Boar', hp: 40, dmg: 13, speed: 46, r: 6, sight: 90, drops: [['meat', 2, 1], ['hide', 1, 1], ['animal_fat', 1, 0.8], ['boar_tusk', 1, 0.3]], biome: 'meadow', style: 'charge', tell: 650, aggro: false, tamable: true },
   wolf: { name: 'Greyfang Wolf', hp: 30, dmg: 9, speed: 74, r: 6, sight: 120, drops: [['meat', 1, 1], ['fur', 2, 1], ['wolf_fang', 1, 0.4]], biome: 'forest', style: 'lunge', tell: 380, aggro: true },

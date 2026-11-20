@@ -809,6 +809,9 @@ export function validate(raw: any): GameState | null {
       if (h.threat !== undefined && (!obj(h.threat) || ![h.threat.waves, h.threat.hit, h.threat.guarded].every(integer))) return null;
       const d=h.intent?.delivery;
       if(d!==undefined && (!obj(d)||typeof d.storeId!=='string'||typeof d.containerId!=='string'||!Array.isArray(d.cargo)||!d.cargo.length||d.cargo.some((q:any)=>!obj(q)||typeof q.uid!=='string'||!integer(q.qty)||q.qty<1)||new Set(d.cargo.map((q:any)=>q.uid)).size!==d.cargo.length))return null;
+      const alarm=h.intent?.watchResponse;
+      if(alarm!==undefined && (!obj(alarm)||typeof alarm.postId!=='string'||!alarm.postId||typeof alarm.enemyId!=='string'||!alarm.enemyId||!finite(alarm.alertAt)||
+        !(h.intent.kind==='fight' && h.intent.target===alarm.enemyId || h.intent.kind==='work' && h.intent.work?.kind==='guard' && !h.intent.work.itemUid && h.intent.work.entityId===alarm.postId)))return null;
       const work=h.intent?.work,seen=work?.observedPatient;
       if(work?.patchType!==undefined && (work.kind!=='build'||typeof work.patchType!=='string'||!Object.prototype.hasOwnProperty.call(STRUCTS,work.patchType)||STRUCTS[work.patchType].item||typeof work.entityId!=='string'||work.rebuildSite!==undefined))return null;
       if(work?.patchLots!==undefined && (!work.patchType||!Array.isArray(work.patchLots)||!work.patchLots.length||work.patchLots.some((id:any)=>typeof id!=='string'||!/^s[a-z0-9]+$/.test(id))||new Set(work.patchLots).size!==work.patchLots.length))return null;

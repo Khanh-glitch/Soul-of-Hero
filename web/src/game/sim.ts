@@ -14,7 +14,7 @@ import { LOOT_CLASSES, lootClass } from './loot-ecology';
 import { BAL, TILE, WW, WH, HOUR, VIEW_W, VIEW_H, T, rngNext, uid, dist, clamp, angDiff, dirFromAngle, type GameState, type RunState, type Creature, type Entity, type Proj, type Haz } from './core';
 import { thermalEnv, thermalEvaluate, thermalStep, thermalBoundaryMs, heatersInReach, coldDamageActive } from './thermal';
 import { calendarAt, climateAt, calendarEventV1, phaseBoundaryAt, seasonTransitionsBetween, normalizeCalendarLedger, type Season, type PrecipWeather } from './calendar';
-import { LADDER_CLIMB_SPEED, ITEMS, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable, wornProtection } from './catalog';
+import { LADDER_CLIMB_SPEED, ITEMS, CREATURES, passiveWildlife, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS, STRUCTS, SOURCES, stationBurnable, wornProtection } from './catalog';
 import { g1bChestName, G1B_SITES } from './g1b';
 import { getWorld } from './world';
 import { maybeSlideVeyraWindow, windowOrigin } from '../veyra05/continuity';
@@ -857,7 +857,7 @@ function tickCreatures(gs: GameState, dtMs: number, now: number) {
       continue;
     }
 
-    const passiveWild = m.type === 'deer' || m.type === 'hare' || m.type === 'grouse';
+    const passiveWild = passiveWildlife(m.type);
     const aggro = !passiveWild && (d.aggro || rag || (m as any).prov || (night && m.type === 'boar'));
     // sensing
     const sight = (night ? BAL.ai.sightNight : BAL.ai.sightDay) * (d.sight / 100) * env.sightMul * (w === 'fog' ? 0.6 : 1) * (p.sheltered ? 0.5 : 1);

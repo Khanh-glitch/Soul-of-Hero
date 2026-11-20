@@ -1,0 +1,57 @@
+{
+  "seed": 7606,
+  "start": 1794729600000,
+  "post": "e2q4",
+  "guard": "h7l",
+  "from": [
+    2129,
+    1786
+  ],
+  "saved": 12250,
+  "weapon": "s2qa",
+  "durBefore": 100,
+  "durAfter": 97,
+  "hits": [
+    {
+      "at": 13000,
+      "before": 30,
+      "after": 18,
+      "gx": 2132,
+      "gy": 1786
+    },
+    {
+      "at": 13500,
+      "before": 18,
+      "after": 6,
+      "gx": 2132,
+      "gy": 1786
+    },
+    {
+      "at": 14000,
+      "before": 6,
+      "after": -6,
+      "gx": 2132,
+      "gy": 1786
+    }
+  ],
+  "trace": [
+    {
+      "id": "r31",
+      "at": 1794729612001,
+      "kind": "human.guard.alert",
+      "detail": "{\"guard\":\"h7l\",\"job\":\"defend:h7l:1794729612001\",\"postId\":\"e2q4\",\"enemyId\":\"m2u1\",\"alertAt\":1794729612001,\"gx\":2129,\"gy\":1786}"
+    },
+    {
+      "id": "r44",
+      "at": 1794729614001,
+      "kind": "human.guard.recall",
+      "detail": "{\"guard\":\"h7l\",\"job\":\"defend:h7l:1794729612001\",\"postId\":\"e2q4\",\"enemyId\":\"m2u1\",\"alertAt\":1794729612001,\"gx\":2132,\"gy\":1786}"
+    },
+    {
+      "id": "r100",
+      "at": 1794729625667.71,
+      "kind": "human.guard.duty",
+      "detail": "h7l:defend:h7l:1794729612001:e2q4:2"
+    }
+  ]
+}

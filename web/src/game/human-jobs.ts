@@ -29,6 +29,13 @@ export function humanEntityTile(r: RunState, e: Entity): [number, number] {
 export function humanCanUseEntity(r: RunState, h: HumanRecord, e: Entity): boolean {
   return (e.hp??1)>0 && atWorksite(r,h,e);
 }
+/** A warehouse or local door may be a watch post, but not a lost,
+ * destroyed or newly foreign-owned one. This is permission, not proximity. */
+export function isGuardPost(hw:HumanWorld,h:HumanRecord,e:Entity|undefined):e is Entity {
+  const c=h.community?hw.communities[h.community]:undefined;
+  return !!c && !!e && (e.hp??1)>0 && (e.id===c.storeEntityId && e.owner===c.id ||
+    e.kind==='door' && e.poi===c.poi && (!e.owner || e.owner===c.id));
+}
 function atWorksite(r:RunState,h:HumanRecord,e:Entity){
   if ((e.floor ?? 0) !== h.floor) return false;
   const [gx, gy] = humanEntityTile(r, e);
@@ -209,7 +216,7 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
         tasks.push({...start('guard',drop,[],1200),itemUid:h.gameDrop.stackUid});
       else delete h.gameDrop;
     }
-    const posts=entities.filter(e=>e.kind==='door'||e.id===comm.storeEntityId).sort((a,b)=>a.id.localeCompare(b.id));
+    const posts=entities.filter(e=>isGuardPost(hw,h,e)).sort((a,b)=>a.id.localeCompare(b.id));
     if(posts.length)tasks.push(start('guard',posts[(h.patrolPostIndex??0)%posts.length],[],8000));
   }
   if (h.occupation === 'medic') {
@@ -240,7 +247,9 @@ function target(r: RunState, hw: HumanWorld, h: HumanRecord, task: HumanWorkTask
     if(!task.observedPatient){const p=hw.people[task.patientId];if(!eligiblePatient(h,p)||!clearSurvivorSight(r,h,p))return null;task.observedPatient=patientTile(p);}
     const p=task.observedPatient;return p.floor===h.floor?[p.gx,p.gy,p.floor]:null;
   }
-  const e=task.entityId && findRunEntity(r,task.entityId); return e ? [...humanEntityTile(r,e),e.floor??0] : null;
+  const e=findRunEntity(r,task.entityId);
+  if(task.kind==='guard' && !task.itemUid && !isGuardPost(hw,h,e))return null;
+  return e ? [...humanEntityTile(r,e),e.floor??0] : null;
 }
 /** A nearby responder must see the body. Only a real route starts a response;
  * a fetched dose remains in the responder's custody on interruption. */
@@ -299,7 +308,7 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
     h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000;return false;
   }
   const path=route(...dest); if(!path){
-    if((task.patchType||task.kind==='repair_item'||task.kind==='engineer'||task.kind==='garden'||task.kind==='medical') && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
+    if((h.intent?.watchResponse||task.patchType||task.kind==='repair_item'||task.kind==='engineer'||task.kind==='garden'||task.kind==='medical') && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
       h.lastWorkBlock='No confirmed work route; retaining carried supplies.';
       receipt(r,now,'human.work.blocked',`${h.actorId}:${h.intent!.intentId}:${h.lastWorkBlock}`);
       h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+30000;
@@ -422,6 +431,7 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
   } else {
     if(!e || !(task.kind==='recycle' && localRecycler(r,comm.poi,e) || comm.workStations.includes(e.id)||e.poi===comm.poi && e.owner===comm.id || task.kind==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)) || !humanCanUseEntity(r,h,e))return fail('work target inaccessible or unauthorized');
     if(task.kind==='guard') {
+      if(!isGuardPost(hw,h,e))return fail('watch post unavailable');
       h.lastWatchAt=now;h.guardedEntityId=e.id;h.patrolPostIndex=(h.patrolPostIndex??0)+1;
       // Duty is a physical act on a real post: it leaves an auditable receipt like any other work.
       receipt(r,now,'human.guard.duty',`${h.actorId}:${intent.intentId}:${e.id}:${h.patrolPostIndex}`);

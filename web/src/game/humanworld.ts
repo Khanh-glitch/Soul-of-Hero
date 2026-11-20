@@ -33,13 +33,13 @@ import {countWorldWork} from './world-work';
  *    humans. No retroactive population/loot mint on old saves.
  */
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
-import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
+import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, passiveWildlife, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
 import {type CoreEffectCast} from './core-ray';
 import {materialPayment} from './material-payment';
 import {owned, coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
-import { humanCanUseEntity, humanEntityTile, executeHumanWork, dispatchMedicalResponse, planHumanOccupation, type HumanWorkTask } from './human-jobs';
+import { isGuardPost, humanCanUseEntity, humanEntityTile, executeHumanWork, dispatchMedicalResponse, planHumanOccupation, type HumanWorkTask } from './human-jobs';
 import { withHumanNavigationRead, humanNavigation } from './human-navigation';
 import { humanShelter, humanShelterContext, type HumanShelterContext } from './human-shelter';
 import { liveItemId, liveItemPer } from './final-item-set';
@@ -106,6 +106,8 @@ export interface HumanKnowledge {
 }
 export interface HumanIntent {
   guardPlayer?: boolean;
+  // Only a guard actually at this post when alerted can resume its watch.
+  watchResponse?: {postId:string;enemyId:string;alertAt:number};
   swing?: {uid:string;victim:string;floor:number;angle:number;distance:number;contactAt:number};
   coreCast?: {mode?:CoreMode;distance?:number;uid:string;victim:string;readyAt:number;floor:number;angle:number};
   delivery?: {storeId:string;containerId:string;cargo:{uid:string;qty:number}[]};
@@ -1101,7 +1103,7 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
     receipt(r,now,'human.medical.interrupted',`${h.intent.intentId}:${h.actorId}:${h.intent.work.patientId}`);
     h.intent=undefined;h.motion=undefined;h.state='IDLE';h.nextThinkAt=now+3000;
   }
-  if(h.hp>0 && attackerId && (source==='human'||source==='player'||source==='enemy') && h.state!=='DOWNED' && (humanWeapon(h)||availableCore(r,h,now))) {
+  if(h.hp>0 && attackerId && !(h.intent?.kind==='fight' && h.intent.watchResponse?.enemyId===attackerId) && (source==='human'||source==='player'||source==='enemy') && h.state!=='DOWNED' && (humanWeapon(h)||availableCore(r,h,now))) {
     h.motion=undefined;h.state='FIGHTING';h.intent={intentId:`defend:${h.actorId}:${now}`,actorId:h.actorId,kind:'fight',target:attackerId,preconditions:['direct physical assault'],reserved:[],startAt:now,dueAt:now};
   }
   if (h.hp <= 0) {
@@ -1536,6 +1538,7 @@ export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     const s=m?(m[1]!==undefined?globalSourceAt(r,Number(m[2]),Number(m[3]),Number(m[1]),now):sourceAt(r,Number(m[2]),Number(m[3]),now)):null;
     facts.push(h.state === 'WORKING' ? `Working at ${s?.def.name ?? 'a shared source'}.` : `Heading to ${s?.def.name ?? 'a shared source'}${h.intent.blockReason ? ` · ${h.intent.blockReason}` : '.'}`);
   } else if (h.following) facts.push(h.state === 'MOVING' ? 'Keeping pace with you.' : 'Waiting nearby for your next move.');
+  else if(h.intent?.watchResponse)facts.push(h.intent.kind==='fight' ? 'I saw trouble near my post.' : h.state==='WORKING' ? 'Back on watch.' : 'Returning to my post.');
   else if (h.intent?.blockReason) facts.push(`Cannot continue: ${h.intent.blockReason}.`);
   else if (h.state === 'WORKING') facts.push(`Currently working as a ${h.occupation}.`);
   if (h.lastWorkBlock) facts.push(h.lastWorkBlock);
@@ -3360,6 +3363,18 @@ function combatEquipmentBlock(r:RunState,h:HumanRecord,now:number){
   if(w && (!ranged || humanPack(r,h).slots.some(s=>s?.key==='arrow'&&!s.production&&s.qty>0)))return;
   if(!availableCore(r,h,now))return w?'no ammunition':'no usable weapon';
 }
+function visibleWatchThreat(r:RunState,h:HumanRecord,m:Creature|undefined,continuing=false) {
+  if(!m || m.hp<=0 || m.husbandry?.tamed || passiveWildlife(m.type) || !(['chase','tell','attack'].includes(m.state) || continuing && m.state==='recover') ||
+    (m.floor??0)!==h.floor || h.floor!==(r.veyraFloor??0))return false;
+  const o=r.sourceMap?.veyra?.originAu, lx=h.gx-(o?.[0]??0)*2, ly=h.gy-(o?.[1]??0)*2;
+  const p={x:(lx+.5)*TILE,y:(ly+.5)*TILE};
+  return lx>=0 && lx<WW && ly>=0 && ly<WH && Math.hypot(m.x-p.x,m.y-p.y)<8*TILE && clearPhysicalLine(r,p,m,true);
+}
+function watchStillThreatened(r:RunState,hw:HumanWorld,h:HumanRecord,now:number){
+  const alarm=h.intent?.watchResponse;if(!alarm || h.following || h.occupation!=='guard' || h.transit || now-alarm.alertAt>=60000 || combatEquipmentBlock(r,h,now))return false;
+  const post=r.entities[alarm.postId],enemy=r.creatures.find(m=>m.id===alarm.enemyId);
+  return isGuardPost(hw,h,post) && (post.floor??0)===h.floor && !!enemy && Math.hypot(post.x-enemy.x,post.y-enemy.y)<=8*TILE && visibleWatchThreat(r,h,enemy,true);
+}
 function threatensPlayer(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,now:number){
   if(h.floor!==(r.veyraFloor??0)||r.player.dead||playerAtSea(r)||h.hp<h.maxHp*.3 || h.stamina<3)return false;
   const target=humanCombatTarget(r,hw,id,h.floor);
@@ -3456,13 +3471,29 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     for(const m of r.creatures)if(m.state!=='dead')occupied.add(humanCellKey(m.floor??0,ox+Math.floor(m.x/TILE),oy+Math.floor(m.y/TILE)));
   }
   for(const h of actors) {
-    if(h.occupation!=='guard' || h.floor!==(r.veyraFloor??0) || h.following || ['DOWNED','DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(h.state) || (h.nextPerceptionAt??0)>now)continue;
+    const intent=h.intent,alarm=intent?.watchResponse;
+    if(alarm && intent){
+      // Recheck even during an approach step or windup. The return is an
+      // ordinary, interruptible guard work order, not a teleport to the post.
+      if(intent.kind==='fight' && !watchStillThreatened(r,hw,h,now) && ['FIGHTING','MOVING'].includes(h.state)){
+        h.motion=undefined;h.state='IDLE';h.nextThinkAt=now;
+        h.intent={actorId:h.actorId,intentId:intent.intentId,kind:'work',target:'occupation:guard',watchResponse:alarm,
+          reserved:[],preconditions:['return to original watch post'],startAt:now,dueAt:now,route:[],
+          work:{kind:'guard',entityId:alarm.postId,phase:'travel',duration:8000,inputs:[]}};
+        receipt(r,now,'human.guard.recall',JSON.stringify({guard:h.actorId,job:intent.intentId,...alarm,gx:h.gx,gy:h.gy}));
+      }
+      continue;
+    }
+    if(h.occupation!=='guard' || h.floor!==(r.veyraFloor??0) || h.following || h.transit || intent?.kind==='fight' || ['DOWNED','DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(h.state) || (h.nextPerceptionAt??0)>now)continue;
     h.nextPerceptionAt=now+1000;
-    const p={x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE};
-    const enemy=r.creatures.find(m=>!m.husbandry?.tamed && (m.floor??0)===h.floor && ['attack','chase'].includes(m.state) && Math.hypot(m.x-p.x,m.y-p.y)<TILE*8 && clearPhysicalLine(r,p,m,true));
-    if(!enemy)continue;
-    h.motion=undefined;
-    h.intent={intentId:`defend:${h.actorId}:${now}`,actorId:h.actorId,kind:'fight',target:enemy.id,preconditions:['direct sight of nearby threat'],reserved:[],startAt:now,dueAt:now};h.state='FIGHTING';
+    const enemy=r.creatures.find(m=>visibleWatchThreat(r,h,m));if(!enemy || combatEquipmentBlock(r,h,now))continue;
+    const post=[intent?.work?.kind==='guard' && !intent.work.itemUid ? intent.work.entityId : undefined,h.guardedEntityId]
+      .map(id=>findRunEntity(r,id)).find(e=>isGuardPost(hw,h,e)&&humanCanUseEntity(r,h,e));
+    if(post && Math.hypot(post.x-enemy.x,post.y-enemy.y)>8*TILE)continue;
+    const watchResponse=post ? {postId:post.id,enemyId:enemy.id,alertAt:now} : undefined;
+    h.motion=undefined;h.nextThinkAt=now;
+    h.intent={intentId:`defend:${h.actorId}:${now}`,actorId:h.actorId,kind:'fight',target:enemy.id,watchResponse,preconditions:['direct sight of nearby threat'],reserved:[],startAt:now,dueAt:now};h.state='FIGHTING';
+    if(watchResponse)receipt(r,now,'human.guard.alert',JSON.stringify({guard:h.actorId,job:h.intent.intentId,...watchResponse,gx:h.gx,gy:h.gy}));
   }
   if (wantsPlan) withHumanNavigationRead(r,()=>{
     countWorldWork('plannerActivations');
@@ -3515,7 +3546,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     const distance=Math.hypot(origin.x-enemy.x,origin.y-enemy.y);
     if(weapon && distance<=weapon.reach+8 || chooseHumanCast(r,h,origin,enemy,now))continue;
     if(!weapon && !availableCore(r,h,now)){h.intent.blockReason='no usable weapon';continue;}
-    if ((h.nextThinkAt ?? 0) > now || combatRoutes >= 4) continue;
+    if (!hasMovement || (h.nextThinkAt ?? 0) > now || combatRoutes >= 4) continue;
     h.nextThinkAt = now + 750; combatRoutes++;
     // No psychic pursuit: the approach must begin with actual line of sight.
     if (distance > TILE * 18 || !clearPhysicalLine(r, { x: (h.gx - ox + 0.5) * TILE, y: (h.gy - oy + 0.5) * TILE }, enemy, true)) {
@@ -3675,7 +3706,7 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
   for (const h of people) {
     const intent=h.intent;
     if(!intent || intent.kind!=='fight' || !intent.target)continue;
-    if(h.state!=='FIGHTING' || h.transit || h.floor!==activeFloor || h.stamina<3 || h.gx<ox || h.gy<oy || h.gx>=ox+WW || h.gy>=oy+WH || (intent.guardPlayer&&!threatensPlayer(r,hw,h,intent.target,now))){
+    if(h.state!=='FIGHTING' || h.transit || h.floor!==activeFloor || h.stamina<3 || h.gx<ox || h.gy<oy || h.gx>=ox+WW || h.gy>=oy+WH || (intent.guardPlayer&&!threatensPlayer(r,hw,h,intent.target,now)) || (intent.watchResponse&&!watchStillThreatened(r,hw,h,now))){
       delete intent.swing;delete intent.coreCast;continue;
     }
     if(coreImmobilized(h,now) || (h.attackReadyAt??0)>now)continue;
