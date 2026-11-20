@@ -131,7 +131,7 @@ export function StationConsole({ api, eid, initialTab = 'make' }: { api: Api; ei
           <Icon k={job.recipe.startsWith('R:') ? 'blueprint' : RECIPES[job.recipe]?.out || 'gear'} size={11} />
           <span className="lbl" style={{ fontSize: 9 }}>{job.recipe.startsWith('R:') ? `Study: ${ITEMS[RECIPES[job.recipe.slice(2)]?.out]?.name ?? '?'}` : ITEMS[RECIPES[job.recipe]?.out]?.name ?? job.recipe}</span>
           <span className="lbl" style={{ fontSize: 8, marginLeft: 'auto', color: running ? 'var(--info)' : 'var(--bad)' }}>{Math.ceil(job.left / 1000)}s{running ? '' : ' · held'}</span>
-          <button className="btn ghost sm" onClick={() => api.act('cancelJob', { eid, jobId: job.id })} title="Cancel — reserved inputs are returned">✕</button>
+          <button className="btn ghost sm" disabled={!!job.workerId} onClick={() => api.act('cancelJob', { eid, jobId: job.id })} title={job.workerId ? "Reserved by worker" : "Cancel — reserved inputs are returned"}>✕</button>
         </div>
       </div>}
       {st.queue.length > 1 && <div className="lbl" style={{ fontSize: 8, color: 'var(--muted)', marginTop: 2 }}>+{st.queue.length - 1} more queued</div>}

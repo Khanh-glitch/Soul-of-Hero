@@ -1,0 +1,7 @@
+# Slagworks: warehouse component → worker-owned recycler job → warehouse ingot
+
+The regression uses the shipping site, its generated salvager and the community warehouse. It supplies a two-pipe warehouse stack and puts the worker at the store for the first fetch. It uses the navigation graph and validates each step to the Foundry and back, stepping the machine directly rather than waiting for the autonomous scheduler. A JSON save is validated mid-job after clearing the actor's task; the worker must rediscover the reservation, not start a replacement. The deposited ingot's ledger entry identifies the station and paid pipe UID. Negative cases cover wrong-floor contact, a substituted input UID, reserved cargo, intact tools and player actions on claimed goods.
+
+From `web/`: `npm test -- --maxWorkers=1 tests/{npc-foundry-salvage,npc-paid-work,b05-recycler-reload,sys03-recycler}.test.ts` (20/20 passed). The separately included `wp3-veyra-recycler-integration.test.ts` failed at line 303: it expects at least three natural Damaged Drives, while `wreckBonuses` intentionally removes that retired item. No loot rule or assertion was weakened for this change.
+
+This is not a natural New Game outdoor harvest proof. The remaining question is whether an unassisted salvager can obtain a current recyclable component from a shared outdoor source and deliver it to this warehouse before starting a job; do not count the controlled pipe as evidence of that.

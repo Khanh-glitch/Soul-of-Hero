@@ -2674,14 +2674,14 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return ok('move', `${s.key} ${from.id}->${to.id}`);
     }
     case 'split': { const c = C(r, it.c); if (!c || !canAccess(r, it.c) || !validSlot(c, it.slot)) return fail('Invalid or out of reach container.');
-      const s = c.slots[it.slot]; if (!s || s.qty < 2) return fail('Cannot split.'); const i = c.slots.findIndex((v, n) => !v && accepts(c, n, s)); if (i < 0) return fail('No free slot.'); const h = Math.floor(s.qty / 2); s.qty -= h; c.slots[i] = portion(r, s, h); return ok('split', `${s.key} ${h}`); }
+      const s = c.slots[it.slot]; if (!s || s.production || s.qty < 2) return fail('Cannot split.'); const i = c.slots.findIndex((v, n) => !v && accepts(c, n, s)); if (i < 0) return fail('No free slot.'); const h = Math.floor(s.qty / 2); s.qty -= h; c.slots[i] = portion(r, s, h); return ok('split', `${s.key} ${h}`); }
     case 'sort': { const c = C(r, it.c); if (!c || !canAccess(r, it.c) || c.kind === 'eq') return fail('Cannot sort.'); const items = c.slots.filter(Boolean) as Stack[]; const merged: Stack[] = [];
       for (const s of items) { const m = merged.find(x => mergeable(x, s) && x.qty < ITEMS[s.key].max); if (m) { const k = Math.min(s.qty, ITEMS[s.key].max - m.qty); m.qty += k; s.qty -= k; if (s.qty > 0) merged.push(s); } else merged.push(s); }
       const keep = it.c === 'inv' ? c.slots.slice(0, 8) : []; const rest = merged.filter(s => !keep.includes(s));
       const order = ['tool', 'weapon', 'core', 'armor', 'food', 'res', 'kit', 'bp', 'misc', 'stone', 'cash'];
       rest.sort((a, b) => order.indexOf(ITEMS[a.key].cat) - order.indexOf(ITEMS[b.key].cat) || a.key.localeCompare(b.key));
       const out = it.c === 'inv' ? [...keep.map(s => (s && s.qty > 0 ? s : null))] : []; while (out.length < c.slots.length) out.push(rest.shift() || null); c.slots = out; return ok('sort', c.id); }
-    case 'drop': { const c = C(r, it.c); const s = c && validSlot(c, it.slot) ? c.slots[it.slot] : null; if (!s || !canAccess(r, it.c)) return fail('Nothing to drop.'); c.slots[it.slot] = null; if (p.pulling && s.key === 'x') p.pulling = null; dropStackEntity(r, s, p.x + Math.cos(p.aim) * 12, p.y + Math.sin(p.aim) * 12, now).manual = true; pruneEmptyBag(r, it.c); return ok('drop', `${s.key}x${s.qty}`); }
+    case 'drop': { const c = C(r, it.c); const s = c && validSlot(c, it.slot) ? c.slots[it.slot] : null; if (!s || !canAccess(r, it.c)) return fail('Nothing to drop.'); if (s.production) return fail('Reserved output belongs to its worker.'); c.slots[it.slot] = null; if (p.pulling && s.key === 'x') p.pulling = null; dropStackEntity(r, s, p.x + Math.cos(p.aim) * 12, p.y + Math.sin(p.aim) * 12, now).manual = true; pruneEmptyBag(r, it.c); return ok('drop', `${s.key}x${s.qty}`); }
     case 'upgradeStructure': {
       const e = r.entities[it.eid];
       if (!e || e.kind !== 'struct' || !owned(e) || !near(r, e, 3)) return fail('Use your structure within reach.');
@@ -2831,7 +2831,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       return ok('recycle.start',`${s.uid}:${s.key}@${e.id}`,`Recycling ${ITEMS[s.key].name}: ${plan.total/1000} seconds.`);
     }
     case 'cancelJob': { const e = r.entities[it.eid]; if (!e?.station || !((e.kind === 'struct' && owned(e)) || (e.kind === 'recycler' && clearInteraction(r,e))) || !near(r, e, e.kind==='recycler'?2.8:3)) return fail('Not here.'); const j = e.station.queue.findIndex(q => q.id === it.jobId); if (j < 0) return fail('No such job.');
-      const job = e.station.queue[j]; if (!job.reserved) return fail('Legacy job has no recoverable input record; let it finish.');
+      const job = e.station.queue[j]; if (job.workerId) return fail('Reserved inputs belong to the worker who started this job.'); if (!job.reserved) return fail('Legacy job has no recoverable input record; let it finish.');
       e.station.queue.splice(j, 1); returnReservations(r, job.reserved, p.x, p.y, now); return ok('job.cancel', job.recipe, 'Reserved inputs returned to inventory or dropped nearby.'); }
     case 'recoverLegacyJobs': {
       const bag = r.entities[it.eid], station = r.entities[it.stationId];
@@ -3427,6 +3427,7 @@ export function homeComplete(r: RunState) {
 function useItem(gs: GameState, r: RunState, it: Intent, now: number, ok: (k: string, d: string, m?: string) => Result): Result {
   const cid = it.c ?? 'inv'; const c = C(r, cid); if (!c || !canAccess(r, cid) || !validSlot(c, it.slot)) return fail('Invalid or out of reach container.');
   const s = c.slots[it.slot]; if (!s) return fail('Empty.');
+  if (s.production) return fail('Reserved output belongs to its worker.');
   const d = ITEMS[s.key]; const p = r.player;
   if (d.cat === 'bp') {
     const rec = s.meta!;
@@ -3584,7 +3585,7 @@ export function stepStations(gs: GameState, dtMs: number, now: number, report?: 
           const plan=job.reserved?.length===1?recoveryPlanFor(job.reserved[0],job.recipe):null;
           if(e.kind!=='recycler'||!plan||plan.recipe!==job.recipe||!(job.workerId ? productionFits(r,st.outC,plan.outputs) : recoveryFits(C(r,st.outC),plan.outputs))){blocked=true;note('Recycler: output full or invalid reservation.');stationState(r,e,'output_full',at);continue;}
           // Capacity was checked for the whole set before any output is committed.
-          for(const [key,qty] of plan.outputs)addItem(r,st.outC,key,qty,job.workerId?{production:{jobId:job.id,workerId:job.workerId}}:undefined);
+          for(const [key,qty] of plan.outputs)addItem(r,st.outC,key,qty,job.workerId?{production:{jobId:job.id,workerId:job.workerId,recipe:job.recipe,stationId:e.id,inputs:job.inputProvenance}}:undefined);
           if(job.recipe!=='X:drive')receipt(r,at,'recycle.finish',`${job.reserved![0].uid}:${job.reserved![0].key}:${plan.outputs.map(([key,qty])=>`${key}x${qty}`).join(',')}`);
           note(`Recycler finished: ${plan.outputs.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(', ')} in output.`);
         } else if (job.recipe === 'pump_crude') {

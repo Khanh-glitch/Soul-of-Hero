@@ -4,7 +4,8 @@ import { materialPayment } from './material-payment';
 import { WW, WH, TILE, uid, type RunState, type Entity, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, GARDEN_CROPS, isGardenCrop, stationBurnable } from './catalog';
 import { authoredStationFootprint,globalCellTileAndClass,mkStack,mkContainer,C, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, markDirty, clearPhysicalLine, productionFits, findRunEntity, allRunEntities } from './engine';
-import { recoveryPlan } from './recycler';
+import { VEYRA_RECYCLER_SITE } from './world';
+import { recoveryPlan, recoveryPlanFor } from './recycler';
 import type { HumanRecord, HumanWorld } from './humanworld';
 export type HumanJobKind = 'cook' | 'recycle' | 'repair_item' | 'garden' | 'medical' | 'engineer' | 'build' | 'guard';
 export interface HumanWorkTask {
@@ -53,9 +54,22 @@ function knownRecipe(h: HumanRecord, key: string) {
   // Profession-origin training is finite, run-persistent knowledge, not the player's research ledger.
   return h.knownRecipes?.includes(key) === true;
 }
+// The Foundry Recycler is public. Slagworks workers know this single authored
+// machine; do not grant a settlement every public machine in the active window.
+function localRecycler(r: RunState, poi: string, e: Entity) {
+  if (poi !== VEYRA_RECYCLER_SITE.poi || e.kind !== 'recycler' || e.poi !== 'factory' || e.owner || (e.floor ?? 0) !== 0) return false;
+  const [gx, gy] = humanEntityTile(r,e);
+  return gx === VEYRA_RECYCLER_SITE.tx && gy === VEYRA_RECYCLER_SITE.ty;
+}
+// Only loose components are autonomous inputs. The player's voluntary tool
+// recovery rules also accept intact tools, which workers must keep for work.
+function salvagePlan(s: Stack, fromWarehouse = false) {
+  if (s.production || ITEMS[s.key].dur !== undefined) return null;
+  return recoveryPlan(fromWarehouse ? { ...s, qty: 1 } : s);
+}
 function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkTask[] {
   const comm = h.community ? hw.communities[h.community] : undefined; if (!comm) return [];
-  const entities = allRunEntities(r).filter(e => (e.hp ?? 1) > 0 && (comm.workStations.includes(e.id) || e.poi === comm.poi && e.owner === comm.id || h.occupation==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)));
+  const entities = allRunEntities(r).filter(e => (e.hp ?? 1) > 0 && (h.occupation==='salvager' && localRecycler(r,comm.poi,e) || comm.workStations.includes(e.id) || e.poi === comm.poi && e.owner === comm.id || h.occupation==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)));
   const tasks: HumanWorkTask[] = [], start = (kind: HumanJobKind, e: Entity | undefined, inputs: [string,number][], duration: number): HumanWorkTask => ({kind,entityId:e?.id,inputs,duration,phase:'travel'});
   const warehouse=findRunEntity(r,comm.storeEntityId);
   const collapsed=warehouse?.hp===0 && warehouse.kind==='bag' && warehouse.owner===comm.id;
@@ -80,7 +94,13 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
     // Completed paid work outlives a temporary combat/recruitment intent. The
     // physical stack's claim is sufficient to recover it, never a matching item key.
     if(e.station) {
-      const pending=e.station.queue.find(j=>j.workerId===h.actorId);if(pending){const rc=RECIPES[pending.recipe];if(rc){
+      const pending=e.station.queue.find(j=>j.workerId===h.actorId);if(pending){
+        if(e.kind==='recycler') {
+          const plan=pending.reserved?.[0] && recoveryPlanFor(pending.reserved[0],pending.recipe);
+          if(plan)tasks.push({...start('recycle',e,[],800),phase:'machine',machineJobId:pending.id,recipe:pending.recipe,outputs:plan.outputs});
+          continue;
+        }
+        const rc=RECIPES[pending.recipe];if(rc){
         const needsFuel=e.station.burn<=0&&!C(r,e.station.fuelC).slots.some(s=>s&&!s.production&&stationBurnable(s.key));
         const fuel=needsFuel?[...pack(r,h).slots,...stores.flatMap(id=>C(r,id).slots)].find(s=>s&&!s.production&&stationBurnable(s.key)):undefined;
         tasks.push({...start('cook',e,fuel?[[fuel.key,1]]:[],1000),phase:'machine',resumePhase:'machine',machineJobId:pending.id,recipe:pending.recipe,outputs:rc.outs??[[rc.out,rc.qty]]});
@@ -102,7 +122,13 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
       }
     }
     if (h.occupation === 'salvager' && e.kind === 'recycler' && e.station && !e.station.queue.length) {
-      for (const s of pack(r,h).slots) if (s && !s.production) { const plan=recoveryPlan(s); if (plan) tasks.push({...start('recycle',e,[],1500),itemUid:s.uid,outputs:plan.outputs}); }
+      for (const s of pack(r,h).slots) if (s && !h.workOutputs?.[s.uid]) { const plan=salvagePlan(s); if (plan && productionFits(r,e.station.outC,plan.outputs)) tasks.push({...start('recycle',e,[],1500),itemUid:s.uid,outputs:plan.outputs}); }
+      // Fetch one unclaimed component (never dismantle community tools).
+      if(warehouse?.owner===comm.id && warehouse.c && stores.includes(warehouse.c) && pack(r,h).slots.includes(null))
+      for(const s of C(r,warehouse.c).slots)if(s){
+        const plan=salvagePlan(s,true);
+        if(plan && productionFits(r,e.station.outC,plan.outputs))tasks.push({...start('recycle',e,[],1500),phase:'fetch',itemUid:s.uid,outputs:plan.outputs});
+      }
     }
     if (h.occupation === 'mechanic' && e.type === 'workbench') {
       const items = [...pack(r,h).slots, ...Object.values(h.equip)].filter((s): s is Stack => !!s);
@@ -185,7 +211,7 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
   let task=h.intent?.work;
   if (!task) {
     for (const candidate of taskCandidates(r,hw,h)) {
-      const needs=candidate.inputs.some(([k,q])=>count(r,h.inv.packId,k)<q);
+      const needs=candidate.phase==='fetch' || candidate.inputs.some(([k,q])=>count(r,h.inv.packId,k)<q);
       candidate.phase=needs?'fetch':candidate.machineJobId?(candidate.phase==='machine'?'machine':'collect'):'travel';
       const dest=target(r,hw,h,candidate); if(!dest)continue;
       const path=route(...dest); if(!path)continue;
@@ -225,6 +251,15 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
   if(task.phase==='fetch') {
     const store=comm.storeEntityId && findRunEntity(r,comm.storeEntityId);
     if(!store || !store.c || !comm.storeContainers.includes(store.c) || store.owner!==comm.id || !humanCanUseEntity(r,h,store))return fail('cannot reach authorized store');
+    if(task.kind==='recycle') {
+      const stock=C(r,store.c),slot=stock.slots.findIndex(s=>s?.uid===task.itemUid),s=stock.slots[slot];
+      const into=pack(r,h),empty=into.slots.indexOf(null);
+      if(!s || !salvagePlan(s,true) || empty<0)return fail('salvage lot missing, reserved or pack full');
+      const unit=s.qty===1?s:{...s,qty:1,uid:uid(r,'s')};
+      if(unit===s)stock.slots[slot]=null;else s.qty--;
+      into.slots[empty]=unit;task.itemUid=unit.uid;
+      receipt(r,now,'human.work.input',JSON.stringify({workerId:h.actorId,orderId:intent.intentId,containerId:stock.id,into:into.id,receivedUid:unit.uid,inputs:[{uid:s.uid,key:s.key,qty:1}]}));
+    }
     for(const [key,qty] of task.inputs) {
       const need=Math.max(0,qty-count(r,h.inv.packId,key));
       if(need){const before=C(r,store.c).slots.filter((s):s is Stack=>!!s).map(s=>({uid:s.uid,qty:s.qty,key:s.key}));const moved=moveHumanGoods(r,store.c,h.inv.packId,key,need);if(moved)receipt(r,now,'human.work.input',JSON.stringify({workerId:h.actorId,orderId:intent.intentId,containerId:store.c,into:h.inv.packId,inputs:before.flatMap(s=>{const qty=s.qty-(C(r,store.c!).slots.find(v=>v?.uid===s.uid)?.qty??0);return qty>0?[{...s,qty}]:[];})}));}
@@ -291,7 +326,7 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
     if(c.slots.every(s=>!s)){delete r.custody[c.id];delete r.entities[e.id];if(r.veyraOffscreenEntities)delete r.veyraOffscreenEntities[e.id];markDirty();}
     receipt(r,now,'human.hunt.pickup',`${h.actorId}:${claim.creatureId}:${stack.uid}:${stack.qty}`);delete h.gameDrop;
   } else {
-    if(!e || !(comm.workStations.includes(e.id)||e.poi===comm.poi && e.owner===comm.id || task.kind==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)) || !humanCanUseEntity(r,h,e))return fail('work target inaccessible or unauthorized');
+    if(!e || !(task.kind==='recycle' && localRecycler(r,comm.poi,e) || comm.workStations.includes(e.id)||e.poi===comm.poi && e.owner===comm.id || task.kind==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)) || !humanCanUseEntity(r,h,e))return fail('work target inaccessible or unauthorized');
     if(task.kind==='guard') {
       h.lastWatchAt=now;h.guardedEntityId=e.id;h.patrolPostIndex=(h.patrolPostIndex??0)+1;
       // Duty is a physical act on a real post: it leaves an auditable receipt like any other work.
@@ -299,12 +334,17 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
     } else if(task.phase==='machine') {
       if(task.readyAt===undefined){
         if(!e.station?.queue.some(j=>j.id===task.machineJobId))return fail('job interrupted; no output claim');
-        if(e.station.burn<=0&&!C(r,e.station.fuelC).slots.some(s=>s&&!s.production&&stationBurnable(s.key))){
+        if(e.kind!=='recycler' && e.station.burn<=0&&!C(r,e.station.fuelC).slots.some(s=>s&&!s.production&&stationBurnable(s.key))){
           const fuel=pack(r,h).slots.find(s=>s&&!s.production&&stationBurnable(s.key));
           if(!fuel)return fail('machine paused; procure physical fuel');
           if(!moveHumanGoods(r,h.inv.packId,e.station.fuelC,fuel.key,1))return fail('machine fuel container full');
         }
         return {done:false,reason:'machine processing or paused'};
+      }
+      if (e.kind==='recycler' && e.station) {
+        // Old job versions may pay a retired material as its live successor.
+        task.outputs=C(r,e.station.outC).slots.flatMap(s=>s?.production?.workerId===h.actorId && s.production.jobId===task.machineJobId ? [[s.key,s.qty] as [string,number]] : []);
+        if (!task.outputs.length) return fail('no paid recycler output');
       }
       task.phase='collect';
     }
@@ -329,9 +369,11 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       task.machineJobId=queued.jobId;task.phase='machine';intent.reserved=[queued.jobId!];
       receipt(r,now,'human.work.start',`${h.actorId}:${intent.intentId}:${task.recipe}:${queued.jobId}`);return {done:false,reason:'machine running'};
     } else if(task.kind==='recycle') {
-      const i=pack(r,h).slots.findIndex(s=>s && s.uid===task.itemUid && !s.production),s=pack(r,h).slots[i], plan=s&&recoveryPlan(s);
+      const i=pack(r,h).slots.findIndex(s=>s && s.uid===task.itemUid && !s.production),s=pack(r,h).slots[i], plan=s&&!h.workOutputs?.[s.uid]&&salvagePlan(s);
       if(!s || !plan || e.kind!=='recycler' || !e.station || e.station.queue.length || !productionFits(r,e.station.outC,plan.outputs))return fail('recycler input, queue or output blocked');
-      pack(r,h).slots[i]=null;const id=uid(r,'j');e.station.queue.push({id,recipe:plan.recipe,left:plan.total,total:plan.total,reserved:[s],workerId:h.actorId});
+      const inputs=[{uid:s.uid,key:s.key,qty:s.qty,containerId:h.inv.packId}];
+      pack(r,h).slots[i]=null;const id=uid(r,'j');e.station.queue.push({id,recipe:plan.recipe,left:plan.total,total:plan.total,reserved:[s],workerId:h.actorId,inputProvenance:inputs});
+      receipt(r,now,'human.production.pay',JSON.stringify({workerId:h.actorId,jobId:id,recipe:plan.recipe,stationId:e.id,inputs,totalMs:plan.total}));
       task.machineJobId=id;task.phase='machine';intent.reserved=[id];return {done:false,reason:'recycler running'};
     } else if(task.kind==='repair_item') {
       const s=[...pack(r,h).slots,...Object.values(h.equip)].find(s=>s?.uid===task.itemUid);
