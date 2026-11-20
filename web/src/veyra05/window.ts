@@ -615,14 +615,24 @@ export function globalSourceCandidates(gx:number,gy:number,floor:number,rules:Ve
   }
   return out;
 });}
-/** Static potable mask from the SAME canonical terrain compilation, without
- * compiling resource placement/floors for a water-only discovery probe. Ground
- * architectural overlays may not pave GOLD water; transient ice is run-owned. */
+// The full terrain cache holds 32 heavy regions. A water search spanning
+// several settlements used to evict them and repeatedly rebuild 216×216
+// terrain/POI/economy layers just to ask for one bit. Cache only the exact
+// immutable post-overlay mask; no run-owned ice, sources or route results.
+const potableMasks=new Map<number,{x:number;y:number;bits:Uint8Array}>();
 export function globalBaseFreshMask(gx:number,gy:number):boolean {
  if(gx<0||gy<0||gx>=FRAME_W||gy>=FRAME_H)return false;
  const ox=Math.max(0,Math.min(FRAME_W-WW,Math.floor((gx-68)/64)*64)),oy=Math.max(0,Math.min(FRAME_H-WH,Math.floor((gy-68)/64)*64));
- const c=canonicalTerrain(layoutIdAt(ox,oy)),x=gx-c.win.originTx,y=gy-c.win.originTy;
- return x>=0&&y>=0&&x<WW&&y<WH&&!!c.fresh[y*WW+x];
+ const key=oy*FRAME_W+ox;
+ let mask=potableMasks.get(key);
+ if(!mask){const c=canonicalTerrain(layoutIdAt(ox,oy)),bits=new Uint8Array(Math.ceil(c.fresh.length/8));
+   for(let i=0;i<c.fresh.length;i++)if(c.fresh[i])bits[i>>>3]|=1<<(i&7);
+   mask={x:c.win.originTx,y:c.win.originTy,bits};potableMasks.set(key,mask);
+   // 512 × 5,000 bytes in the 200² world, independent of run duration.
+   if(potableMasks.size>512)potableMasks.delete(potableMasks.keys().next().value!);
+ }
+ const x=gx-mask.x,y=gy-mask.y,i=y*WW+x;
+ return Number.isInteger(x)&&Number.isInteger(y)&&x>=0&&y>=0&&x<WW&&y<WH&&!!(mask.bits[i>>>3]&(1<<(i&7)));
 }
 /** Same compiler freshwater mask as player; transient ice is read by engine. */
 export function globalBaseWaterCell(gx:number,gy:number,rules:VeyraPlacementRules): {fresh:boolean;tile:number} {

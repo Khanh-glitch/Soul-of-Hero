@@ -13,7 +13,7 @@ import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
 import { auToTile, windowAround } from '../src/veyra05/frame';
 import { T0 } from './helpers/g1b-kit';
-import { humanPack, tradeBasketWithHuman, counterHumanBarter, quoteHumanBarter } from '../src/game/humanworld';
+import { tickNeeds, humanPack, tradeBasketWithHuman, counterHumanBarter, quoteHumanBarter } from '../src/game/humanworld';
 
 function runAt(ax = 921, ay = 259, seed = 7606): GameState {
   const [gtx, gty] = auToTile(ax, ay);
@@ -91,7 +91,11 @@ it('dispatch exchanges the exact selected quantities, refusing stale UIDs, unaff
  expect(quoteHumanBarter(r,h,offer,ask).ok).toBe(true);expect(snapshot()).toBe(before);
  const counter=counterHumanBarter(r,h,[line(wood,1)],[line(berries,4)]);expect(counter).not.toBeNull();
  expect(quoteHumanBarter(r,h,counter!.offer,counter!.ask).ok).toBe(true);expect(snapshot()).toBe(before);
- const revision=quoteHumanBarter(r,h,offer,ask).revision;
+ h.hunger=60;const first=quoteHumanBarter(r,h,offer,ask),revision=first.revision;expect(revision).toBeDefined();
+ tickNeeds(r,hw,T0+500);const later=quoteHumanBarter(r,h,offer,ask);
+ expect(later.requestedValue).not.toBe(first.requestedValue);expect(later.revision).toBe(revision);
+ // An actual change in the visible price still needs a fresh review.
+ const actual=h.hunger;h.hunger-=2;expect(quoteHumanBarter(r,h,offer,ask).revision).not.toBe(revision);h.hunger=actual;
  const intent={type:'humanExchange',actorId:h.actorId,offer,ask,revision};
  r.player.x=x+160;r.player.y=y;expect(dispatch(gs,{...intent,id:'far'},T0+1000).ok).toBe(false);
  r.player.x=x;expect(dispatch(gs,{...intent,id:'stale',ask:[{uid:'gone',qty:1}]},T0+1001).ok).toBe(false);

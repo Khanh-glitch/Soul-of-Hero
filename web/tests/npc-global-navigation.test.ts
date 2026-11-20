@@ -6,7 +6,7 @@ import {humanNavigation} from '../src/game/human-navigation';
 import {stepHumans,PROFILES,humanEventBoundary,humanConsume} from '../src/game/humanworld';
 import {authoredPlan,authoredPoiIds} from '../src/veyra05/floors';
 import {TILE,T} from '../src/game/core';
-import {getWindowWorldForGlobalTile,globalBaseWaterCell,setVeyraPlacementRules} from '../src/veyra05/window';
+import {getWindowWorldForGlobalTile,globalBaseFreshMask,globalBaseWaterCell,setVeyraPlacementRules} from '../src/veyra05/window';
 import {FRAME_W} from '../src/veyra05/frame';
 import {SOURCES} from '../src/game/catalog';
 import {validate} from '../src/game/persist';
@@ -100,6 +100,8 @@ describe('global human route and source execution (engineering fixtures, not bro
   const i=w.world.fresh.findIndex(v=>v>0);expect(i).toBeGreaterThanOrEqual(0);
   const x=w.win.originTx+i%200,y=w.win.originTy+Math.floor(i/200),gi=y*FRAME_W+x;
   const base=globalBaseWaterCell(x,y,4);expect(base.fresh).toBe(true);expect(globalFreshWater(r,x,y,0)).toBe(true);
+  // Sample both sides of byte and row boundaries in the packed static view.
+  for(const dy of [-1,0,1])for(let dx=-8;dx<=8;dx++)expect(globalBaseFreshMask(x+dx,y+dy)).toBe(globalBaseWaterCell(x+dx,y+dy,4).fresh);
   (r.veyraGlobalTerrain??={})[gi]={t:T.ICE,until:r.clock.simMs+1000};
   expect(globalFreshWater(r,x,y,0)).toBe(false);r.clock.simMs+=1000;
   expect(globalFreshWater(r,x,y,0)).toBe(true);expect(globalFreshWater(r,x,y,1)).toBe(false);

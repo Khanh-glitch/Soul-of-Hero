@@ -3,7 +3,7 @@ import type { Api } from './common';
 import { Icon, Panel } from './common';
 import { drawNpcSprite } from '../game/npc-art';
 import { ITEMS } from '../game/catalog';
-import { demandableGoods, canPointOut, humanRepairOffers, humanContact, counterHumanBarter, quoteHumanBarter, humanPack, type BarterLine } from '../game/humanworld';
+import { barterPrice, demandableGoods, canPointOut, humanRepairOffers, humanContact, counterHumanBarter, quoteHumanBarter, humanPack, type BarterLine } from '../game/humanworld';
 import { BAL, type Stack } from '../game/core';
 import { CREATURES } from '../game/catalog';
 import type { HumanRecord } from '../game/humanworld';
@@ -127,7 +127,7 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
           <TradeSide title="Their goods" stacks={humanStacks} lines={ask} onChange={lines=>{setReview(undefined);setAsk(lines);}}/>
         </div>
         <div style={{marginTop:4,color:evaluation?.ok?'#a8d8a0':'#ffe4a2'}}>{evaluation?.reason}</div>
-        {evaluation?.offeredValue!==undefined && <div>Value: offer {evaluation.offeredValue.toFixed(1)} · ask {evaluation.requestedValue?.toFixed(1)}</div>}
+        {evaluation?.offeredValue!==undefined && <div>Value: offer {barterPrice(evaluation.offeredValue)} · ask {evaluation.requestedValue!==undefined&&barterPrice(evaluation.requestedValue)}</div>}
         {evaluation?.reason.startsWith('Counter-offer') && <button className="btn sm" onClick={()=>{
           const counter=counterHumanBarter(r,h,offer,ask);
           if(!counter){setReply('No workable alternative using these goods. Change your selection.');return;}

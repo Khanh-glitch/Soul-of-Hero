@@ -1282,8 +1282,12 @@ function planBarter(r: RunState, h: HumanRecord, offer: BarterLine[], ask: Barte
   if((delta>0 && invWeight(r)+delta>carryLimit(r)+1e-6) || (delta<0 && humanMass-delta>humanLimit+1e-6))return {ok:false as const,reason:'The added weight is more than one of us can carry.'};
   return {ok:true as const,reason:'Both packs can make this exchange.', offeredValue,requestedValue,src,dst,lineage,nextId:draft.nextId};
 }
+// Review binds the actual basket and its displayed price. Ordinary need decay
+// between two UI frames must not invalidate identical terms. Commit still
+// recomputes fairness, carrying limits and real inventory at full precision.
+export const barterPrice=(v:number)=>v.toFixed(1);
 function barterRevision(r:RunState,h:HumanRecord,offer:BarterLine[],ask:BarterLine[],offeredValue:number,requestedValue:number) {
-  return JSON.stringify([r.id,h.actorId,h.floor,h.gx,h.gy,r.custody.inv.id,h.inv.packId,r.custody.inv.slots,humanPack(r,h).slots,offer,ask,offeredValue,requestedValue]);
+  return JSON.stringify([r.id,h.actorId,h.floor,h.gx,h.gy,r.custody.inv.id,h.inv.packId,r.custody.inv.slots,humanPack(r,h).slots,offer,ask,barterPrice(offeredValue),barterPrice(requestedValue)]);
 }
 export function quoteHumanBarter(r:RunState,h:HumanRecord,offer:BarterLine[],ask:BarterLine[]):HumanTradeEvaluation & {revision?:string} {
   const plan=planBarter(r,h,offer,ask);const {ok,reason,offeredValue,requestedValue}=plan;

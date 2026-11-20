@@ -559,3 +559,8 @@ Seed 7606, bản lưu h24 cũ, vắng 3 phút: [đối chứng](../controlled-re
 ### Fishcamp: nhân chứng đến lấy một liều băng cho người gục
 
 [Xem hai lần Continue cùng save h24](../fishcamp-first-aid/README.md). Trên nhánh sửa, người làm vườn `h5w` thấy thợ xây `h5v`, tự tới kho và trở lại dùng một liều, 1→31 HP; trên mã cũ bệnh nhân vẫn gục ở +60 giây. Không mở rộng tầm nhìn/tiếp cận kho, không cho người thường chăm sóc tiếp như thầy thuốc. Nhánh âm xác nhận bệnh nhân đã ổn định thì không bị trừ thêm thuốc. Westbank và Tidecamp trên lệnh `npm test` của repo (kèm đủ hai checkpoint): 5/5. Không dùng các số này để xóa timeout đã ghi trên checkout cũ.
+
+### Nước và trao đổi: hai bước nhỏ không đổi quyền sở hữu
+
+- [Đo truy vấn tại 68 kho h24](../water-mask-replay/README.md): trên lượt quét lặp, cùng 81.668 câu trả lời từng bit với đối chứng, 172 → 0 lần dựng toàn vùng. Không phải phép đo FPS. Các ca kiểm tra băng tan, ô âm/ngoài đảo, định tuyến và giỏ hàng: 17/17; TS ứng dụng và tests đạt.
+- Chấp nhận trao đổi vẫn định giá lại, kiểm tra UID/số lượng, khoảng cách và tải trọng. Bản xem trước không tự hết hiệu lực chỉ vì nhu cầu thay đổi ở chữ số mà bảng không hiển thị. Giá hiển thị đổi hay hàng đổi vẫn phải xác nhận lại. 5/5 giỏ hàng (đã nằm trong 17 ca trên). Lượt chơi thường ở Mere có vào được bảng hai túi, nhưng người thu hồi phế liệu rời đi trước khi nhận đề nghị: **chưa** tính là giao dịch. Script xét đúng biên nhận `human.exchange` của lệnh qua UI, không nhận biên nhận của API cũ.
