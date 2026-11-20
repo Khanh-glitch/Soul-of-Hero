@@ -35,3 +35,5 @@ Lượt đi lại `mere-walk-retry.json` ghi bốn bước định hướng, kh�
 | Westwood | Thợ máy `h5k`, chỉ số khát 1,37; còn phụ tùng và than trong túi nhưng không có bình | Thợ xây `h5p` đã chết. Kho còn 94 gỗ nhưng chỉ 1 sợi và không có dây. Không thể kết luận rằng chỉ cần đánh thức người lập kế hoạch là có thể lắp thùng. |
 
 Bước kiểm chứng ở Glade: nạp đúng save này, theo dõi liệu thợ xây **nhìn thấy** người cần nước, có lối đến kho và ô xây hợp lệ không; sau đó kiểm UID gỗ đã giữ, vật liệu thanh toán, lượng mưa và người thật đến uống. Hai người ở gần nhau và kho đủ vật liệu chưa chứng minh bất cứ mắt xích nào trong số đó; không cộng nước, không xóa nghĩa vụ giao gỗ để ép kết quả.
+
+**Trao đổi qua UI (lượt riêng, không phải save h51):** Hai lượt seed 7542 trên asset `index-CoFQuBlJ.js` dùng phím thường và đọc tọa độ để định hướng. `mere-basket-contact.json`: thấy cả hai túi ở bảng trao đổi với `h1f`; nút thêm bình nước biến mất trước khi bấm xong. `mere-guard-walk.json`: ưu tiên tiếp cận lính gác, hết 45 bước định hướng, không có cuộc trao đổi. Cả hai đều thiếu biên nhận `human.exchange`; bộ kiểm tra giỏ hàng không thay thế bằng chứng chơi thật này.
