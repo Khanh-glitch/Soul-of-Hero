@@ -217,7 +217,8 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   const lootKind=lootSite ? lootClass(lootSite) : null;
   const poiId=e.poi==='factory_vault'?'factory':e.poi==='light_top'?'light':e.poi;
   const lootPlace=e.label || (lootSite && getWorld(r.layoutId||'shipping').places.find(p=>p.id===poiId)?.name) || e.poi || 'authored site';
-  const title = e.kind === 'airdrop' ? 'Airdrop · take only' : e.kind === 'recycler' ? 'Foundry Recycler' : e.kind === 'bag' ? (e.label || 'Bag') : e.kind === 'loot' ? (e.g1b ? (e.g1b.kind === 'card' ? 'Access-card case' : g1bChestName(G1B_SITES[e.g1b.sid]?.variant)) : lootKind ? LOOT_CLASSES[lootKind].name : 'Crate') : e.kind === 'cash' ? 'Ragnarok Chest' : e.kind === 'vehicle' ? 'Utility Motorbike' : e.kind === 'cart' ? 'Cart Cargo' : STRUCTS[e.type!]?.name || 'Storage';
+  const communityPlot=!!e.garden && !owned(e);
+  const title = communityPlot ? (e.label || 'Community Garden') : e.kind === 'airdrop' ? 'Airdrop · take only' : e.kind === 'recycler' ? 'Foundry Recycler' : e.kind === 'bag' ? (e.label || 'Bag') : e.kind === 'loot' ? (e.g1b ? (e.g1b.kind === 'card' ? 'Access-card case' : g1bChestName(G1B_SITES[e.g1b.sid]?.variant)) : lootKind ? LOOT_CLASSES[lootKind].name : 'Crate') : e.kind === 'cash' ? 'Ragnarok Chest' : e.kind === 'vehicle' ? 'Utility Motorbike' : e.kind === 'cart' ? 'Cart Cargo' : STRUCTS[e.type!]?.name || 'Storage';
   const takeAll = (cid: string) => { const c = C(r, cid); for (let i = 0; i < c.slots.length; i++) if (c.slots[i]) { const res = api.act('move', { from: cid, fs: i, to: 'inv' }); if (!res.ok) break; } };
   const quickTo = st ? (kind === 'research' || e.kind === 'recycler' ? undefined : st.fuelC) : e.c;
   const compact = !!e.farm || !!e.garden || !!e.basePower || !!e.turret || e.type==='claim';
@@ -257,7 +258,13 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
           {e.farm.barrelId && <button className="btn" onClick={()=>api.act('fillBarrel',{eid:e.farm!.barrelId})}>Pour 1 flask charge into barrel</button>}<div>Replant: <button className="btn" onClick={()=>api.act('farmConfigure',{eid,field:'crop',value:GARDEN_CROP_KINDS[(GARDEN_CROP_KINDS.indexOf(e.farm!.crop)+1)%GARDEN_CROP_KINDS.length]})}>{GARDEN_CROPS[e.farm.crop].name}</button> <button className="btn gold" onClick={()=>api.act('farmConfigure',{eid,field:'enabled',value:!e.farm!.enabled})}>{e.farm.enabled?'Stop':'Start'}</button></div>
           <div style={{color:'#b7a8bf'}}>Chest: seeds + produce (Bitterleaf also needs herb). Barrel: water. Plant / pump / harvest: 8 / 4 / 8 fuel-seconds.</div>
         </div>}
-        {e.garden && <div style={{ fontSize: 10 }}>
+        {e.garden && communityPlot && <div style={{ fontSize: 10, marginTop: 6 }}>
+          <b style={{color:'#ffd98a'}}>Community garden · observation only</b>
+          <div>{isGardenCrop(e.garden.crop) ? `${GARDEN_CROPS[e.garden.crop].name} · ${e.garden.growth>=1?'ready to harvest':`${Math.floor(e.garden.growth*100)}% grown`}` : 'Empty plot · awaiting seed'}</div>
+          <div>Soil water {e.garden.water.toFixed(1)}/3</div>
+          <div style={{color:'#b7a8bf'}}>Residents tend this plot and carry its harvest to their store.</div>
+        </div>}
+        {e.garden && !communityPlot && <div style={{ fontSize: 10 }}>
           {(()=>{const climate=gardenEnvironment(r,e,isWet(weatherAt(r,api.now())));return <div style={{color:'#ffd98a'}}>Climate {climate.climate} · {climate.biome} soil · {Math.round(climate.rate*100)}% growth {climate.frame?'· framed':''}{climate.scorched?' · scorched':''}</div>;})()}
           {gardenEnvironment(r,e,isWet(weatherAt(r,api.now()))).scorched && <div style={{color:'#ffbb80'}}>Scorched soil slows growth. <button className="btn" onClick={()=>api.act('restoreGardenSoil',{eid})}>Restore: 2 fiber + 1 Bitterleaf</button></div>}
           <div style={{color:'#b7a8bf'}}>Local temperature and soil change growth; water is consumed in real time. {e.garden.coldFrame?'Frame blocks rain.':'Rain waters uncovered soil.'}</div>
@@ -273,7 +280,7 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
         {e.kind === 'recycler' && st && <RecyclerBody api={api} eid={eid} />}
         {st && e.kind !== 'recycler' && kind !== 'research' && <StationBody api={api} eid={eid} />}
         {st && kind === 'research' && <ResearchBody api={api} eid={eid} />}
-        {e.kind === 'struct' && <div style={{ marginTop: 6, fontSize: 10, color: '#8a7a9a' }}>HP {Math.round(e.hp!)}/{e.maxHp} <button className="btn ghost" style={{ marginLeft: 6 }} onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Reclaim</button></div>}
+        {e.kind === 'struct' && <div style={{ marginTop: 6, fontSize: 10, color: '#8a7a9a' }}>HP {Math.round(e.hp!)}/{e.maxHp} {owned(e) && <button className="btn ghost" style={{ marginLeft: 6 }} onClick={() => { api.act('reclaim', { eid }); api.open(null); }}>Reclaim</button>}</div>}
       </div>
     </Panel>
     {!compact && <InventoryPanel api={api} quickTo={quickTo} top={54} />}

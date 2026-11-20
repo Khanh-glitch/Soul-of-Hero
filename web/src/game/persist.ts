@@ -36,7 +36,7 @@ function g1bEntityOk(r: any, e: any, offscreen: boolean, seen: Set<string>): boo
   seen.add(g.sid); return true;
 }
 const oilAuthorityOk = (r: any, a: unknown) => a === 'test-fixture-v1' ? r.oilTestFixture === true : a === OIL_SEEP_AUTHORITY ? veyraRun(r) : false;
-import { LADDER_SPAN, POWERED_DOOR_HOSTS, EQ_SLOTS, starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
+import { GARDEN_CROPS, isGardenCrop, LADDER_SPAN, POWERED_DOOR_HOSTS, EQ_SLOTS, starterKnowledge, ITEMS, RECIPES, STRUCTS, SOURCES, ELDERS, PRIMORDIAL_ELDERS, LEGACY_TO_PRIMORDIAL_ELDER, lookupElderDef, CREATURES, VENDOR_SPARES, VENDOR_SECURED, recipeForJob, RECIPE_REVISION, RESEARCH_FAMILIES } from './catalog';
 import { RETIRED_RECIPES, hasLegacyDefinition } from './recipe-migration';
 import { ITEM_SET_VERSION, isAccessCard, isRetiredLive, RETIRED_ITEM_IDS, liveItemId, liveItemPer, liveRecipeId, RECIPE_SUCCESSOR } from './final-item-set';
 import { newGame, renewableLoot, markDirty, g1bEnsureSources } from './engine';
@@ -550,6 +550,20 @@ export function validate(raw: any): GameState | null {
   if(([...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})] as any[]).filter(e=>e.kind==='recycler').length>1)return null;
   for(const [key,offer] of Object.entries(VENDOR_SPARES)){const stock=r.vendorStock[`spares:${key}`];if(stock!==undefined && (!integer(stock) || stock>offer.stock))return null;}
   const allValidatedEntities = [...Object.values(r.entities), ...Object.values(r.veyraOffscreenEntities || {})] as any[];
+  for(const e of allValidatedEntities)if(e?.garden?.sowing!==undefined){
+    const g=e.garden,lot=g.sowing;
+    if(e.type!=='garden'||!isGardenCrop(g.crop)||!obj(lot)||typeof lot.id!=='string'||!/^hj[a-z0-9]+$/.test(lot.id)||!Array.isArray(lot.inputs))return null;
+    const rule=GARDEN_CROPS[g.crop as keyof typeof GARDEN_CROPS];
+    const remaining=new Map(rule.inputs),seen=new Set<string>();
+    for(const line of lot.inputs){
+      if(!obj(line)||typeof line.uid!=='string'||!/^s[a-z0-9]+$/.test(line.uid)||seen.has(line.uid)||
+        !integer(line.qty)||line.qty<1||!integer(line.slot)||line.slot<0||typeof line.containerId!=='string')return null;
+      seen.add(line.uid);const need=remaining.get(line.key);
+      if(need===undefined||line.qty>need)return null;
+      if(need===line.qty)remaining.delete(line.key);else remaining.set(line.key,need-line.qty);
+    }
+    if(remaining.size)return null;
+  }
   for(const g of allValidatedEntities) if(g.basePower&&g.basePower.network!=='wire-v1'){const links=allValidatedEntities.filter(t=>t.turret?.generatorId===g.id).length;if(links>(g.basePower.capacity??1))return null;}
   // B05-R oil sources: registry keyed by tile; only the labelled test-fixture authority is accepted (production oil sites are not authorized).
   // domain separation: a fixture row needs the fixture marker; a seep row needs a Veyra run and a ledger row at the same global tile that never holds less than the live row (a pump only draws down)

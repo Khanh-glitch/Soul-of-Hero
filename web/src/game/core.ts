@@ -125,7 +125,7 @@ export interface Entity {
   c?: string; // container id
   open?: boolean; locked?: string; poi?: string; label?: string; stock?: Record<string, number>;
   station?: { queue: Job[]; burn: number; fuelC: string; outC: string; level?: 1 | 2 | 3; upgrade?: 'kiln_lining'; stateCode?: string };
-  garden?: { crop: string | null; growth: number; water: number; coldFrame?: boolean };
+  garden?: { crop: string | null; growth: number; water: number; coldFrame?: boolean; sowing?: {id:string;inputs:NonNullable<Job['inputProvenance']>} };
   farm?: { enabled: boolean; crop: 'crop' | 'herb' | 'berry'; energy: number; gardenId?: string; barrelId?: string; chestId?: string; lastCode?: string };
   irSensor?: { version: 'ir-v1'; enabled: boolean };
   /** Item set v3: a placed ladder covers `len` cliff tiles from its own tile in direction `dir`. */

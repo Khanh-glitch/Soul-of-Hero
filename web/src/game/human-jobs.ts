@@ -14,6 +14,7 @@ export interface HumanWorkTask {
   phase: 'fetch' | 'travel' | 'act' | 'machine' | 'collect';
   inputs: [string, number][]; duration: number;
   machineJobId?: string; readyAt?: number; outputs?: [string, number][];
+  gardenAction?:'plant'|'water'|'harvest'; sowingId?:string;
   rebuildSite?:string;
   resumePhase?:'machine';
 }
@@ -164,11 +165,14 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
       const items = [...pack(r,h).slots, ...Object.values(h.equip)].filter((s): s is Stack => !!s);
       for(const s of items){const rule=repairRule(s,e,comm.id);if(rule && rule.cost.every(([k,q])=>available(k,q)))tasks.push({...start('repair_item',e,rule.cost,8000),itemUid:s.uid});}
     }
-    if (h.occupation === 'gardener' && e.garden) {
+    if (h.occupation === 'gardener' && e.owner===comm.id && e.garden) {
       const g=e.garden;
-      if (isGardenCrop(g.crop) && g.growth >= 1) tasks.push(start('garden',e,[],2000));
-      else if (!g.crop) { for (const crop of ['crop','herb','berry'] as const) if (GARDEN_CROPS[crop].inputs.every(([k,q])=>available(k,q))) { tasks.push({...start('garden',e,GARDEN_CROPS[crop].inputs,2500),crop}); break; } }
-      else if (g.water < 2) tasks.push(start('garden',e,[],1500));
+      if (isGardenCrop(g.crop) && g.growth >= 1) tasks.push({...start('garden',e,[],2000),gardenAction:'harvest',crop:g.crop,sowingId:g.sowing?.id});
+      else if (!g.crop) { for (const crop of ['crop','herb','berry'] as const) if (GARDEN_CROPS[crop].inputs.every(([k,q])=>available(k,q))) { tasks.push({...start('garden',e,GARDEN_CROPS[crop].inputs,2500),gardenAction:'plant',crop}); break; } }
+      else if (isGardenCrop(g.crop) && g.water<2){
+        const flask=pack(r,h).slots.find(s=>s && !s.production && ITEMS[s.key].waterContainer && (s.charge??0)>0);
+        if(flask)tasks.push({...start('garden',e,[],1500),gardenAction:'water',crop:g.crop,itemUid:flask.uid,sowingId:g.sowing?.id});
+      }
     }
     if (h.occupation === 'builder' && e.kind === 'struct' && e.hp !== undefined && e.maxHp && e.hp < e.maxHp && !STRUCTS[e.type!]?.item) {
       const cost=structureRepairCost(e); if(cost.length && cost.every(([k,q])=>available(k,q))) tasks.push(start('build',e,cost,8000));
@@ -248,7 +252,7 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
       // A funded repair can require several bounded searches just to reach
       // the store. Keep its target on the committed retry clock, not behind
       // another full island census. No path means no travel or work yet.
-      const pending=!path && candidate.kind==='repair_item' && h.routeSearch?.status==='PENDING_SEARCH' &&
+      const pending=!path && (candidate.kind==='repair_item' || candidate.kind==='garden') && h.routeSearch?.status==='PENDING_SEARCH' &&
         h.routeSearch.target===`${dest[2]}:${dest[0]},${dest[1]}`;
       if(!path && !pending)continue;
       task=candidate;
@@ -267,8 +271,8 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
     h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000;return false;
   }
   const path=route(...dest); if(!path){
-    if(task.kind==='repair_item' && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
-      h.lastWorkBlock='No confirmed route to repair work; retaining tool and materials.';
+    if((task.kind==='repair_item'||task.kind==='garden') && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
+      h.lastWorkBlock='No confirmed work route; retaining carried supplies.';
       receipt(r,now,'human.work.blocked',`${h.actorId}:${h.intent!.intentId}:${h.lastWorkBlock}`);
       h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+30000;
     }
@@ -304,6 +308,7 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       into.slots[empty]=unit;task.itemUid=unit.uid;
       receipt(r,now,'human.work.input',JSON.stringify({workerId:h.actorId,orderId:intent.intentId,containerId:stock.id,into:into.id,receivedUid:unit.uid,inputs:[{uid:s.uid,key:s.key,qty:1}]}));
     }
+    if(task.kind==='garden' && (!e?.garden || e.owner!==comm.id || (e.hp??1)<=0 || task.gardenAction!=='plant' || e.garden.crop))return fail('plot no longer needs seed');
     if(task.kind==='repair_item'){
       const item=[...pack(r,h).slots,...Object.values(h.equip)].find(s=>s?.uid===task.itemUid);
       const rule=repairRule(item,e,comm.id);
@@ -448,21 +453,36 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       }
       e.basePower.enabled=true;
     } else if(task.kind==='garden') {
-      const g=e.garden;if(!g)return fail('plot lost');
-      if(isGardenCrop(g.crop) && g.growth>=1) {
+      const g=e.garden;if(!g || e.owner!==comm.id)return fail('plot lost or unauthorized');
+      if(task.sowingId!==g.sowing?.id)return fail('planting changed before work finished');
+      if(task.gardenAction==='harvest' && task.crop===g.crop && isGardenCrop(g.crop) && g.growth>=1) {
         const outputs=GARDEN_CROPS[g.crop].output;
         if(!productionFits(r,h.inv.packId,outputs))return fail('harvest pack full');
-        for(const [k,q]of outputs)addItem(r,h.inv.packId,k,q,{production:{workerId:h.actorId,jobId:intent.intentId,stationId:e.id}});recordOutputs();g.crop=null;g.growth=0;
-      } else if(!g.crop && task.crop) {
-        const rule=GARDEN_CROPS[task.crop];if(!materialPayment(pack(r,h),rule.inputs,true))return fail('planting seed missing');
-        g.crop=task.crop;g.growth=0;
-      } else if(g.crop && g.water<3) {
-        const flask=pack(r,h).slots.find(s=>s&&!s.production&&ITEMS[s.key].waterContainer&&(s.charge??0)>0);if(!flask)return fail('carry charged potable water');
-        flask.charge!--;g.water=Math.min(3,g.water+1);
+        const job=g.sowing?.id??uid(r,'hj');
+        const claim={workerId:h.actorId,jobId:job,stationId:e.id,inputs:g.sowing?.inputs};
+        for(const [k,q]of outputs)addItem(r,h.inv.packId,k,q,{production:claim});
+        recordOutputs();receipt(r,now,'human.garden.harvest',JSON.stringify({worker:h.actorId,plot:e.id,crop:g.crop,job,outputs}));
+        g.crop=null;g.growth=0;delete g.sowing;
+      } else if(task.gardenAction==='plant' && !g.crop && isGardenCrop(task.crop)) {
+        const rule=GARDEN_CROPS[task.crop],inputs=materialPayment(pack(r,h),rule.inputs,true);if(!inputs)return fail('planting seed missing');
+        g.sowing={id:uid(r,'hj'),inputs};g.crop=task.crop;g.growth=0;receipt(r,now,'human.garden.plant',JSON.stringify({worker:h.actorId,plot:e.id,crop:g.crop,job:g.sowing.id,inputs}));
+      } else if(task.gardenAction==='water' && g.crop===task.crop && g.growth<1 && g.water<2) {
+        const flask=pack(r,h).slots.find(s=>s&&s.uid===task.itemUid&&!s.production&&ITEMS[s.key].waterContainer&&(s.charge??0)>0);if(!flask)return fail('carry charged potable water');
+        flask.charge!--;g.water=Math.min(3,g.water+1);receipt(r,now,'human.garden.water',JSON.stringify({worker:h.actorId,plot:e.id,crop:g.crop,flask:flask.uid,charge:flask.charge,water:g.water}));
       } else return fail('plot does not need this work');
     } else return fail('work kind unsupported');
   }
   receipt(r,now,'human.work.commit',`${h.actorId}:${intent.intentId}:${task.kind}:${task.entityId??task.patientId}:${task.itemUid??''}`);
   h.lastCommittedAt=now;h.lastWorkBlock=undefined;h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000;
+  // A gardener standing over a newly sown, nearly dry bed may tend it next.
+  // This schedules, rather than grants, irrigation: contact, lot and flask UID
+  // must still be good when the separate watering action comes due.
+  if(task.gardenAction==='plant' && e?.garden && e.garden.water<1 && isGardenCrop(e.garden.crop)){
+    const flask=pack(r,h).slots.find(s=>s && !s.production && ITEMS[s.key].waterContainer && (s.charge??0)>0);
+    if(flask){
+      h.intent={...intent,intentId:uid(r,'hw'),reserved:[],startAt:now,dueAt:now+1500,route:[],work:{kind:'garden',phase:'act',gardenAction:'water',crop:e.garden.crop,sowingId:e.garden.sowing?.id,entityId:e.id,itemUid:flask.uid,duration:1500,inputs:[]}};
+      h.state='WORKING';
+    }
+  }
   return {done:true};
 }

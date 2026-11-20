@@ -1661,6 +1661,26 @@ export function seedHumanWorld(r: RunState): void {
     return pos ? [[id, pos]] : [];
   }));
   seedPopulation(r, hw, sites, elderLairs, evacSites);
+  seedHookGarden(r);
+}
+/** One empty community plot in Hook's authored South Garden Plots. Genesis
+ * only: the normal entity ledger streams/saves it; loading never sows or refills. */
+function seedHookGarden(r:RunState){
+  const comm=r.humanWorld?.communities['com:po_hook'];
+  const layer=authoredPlan('po_hook')?.levels.get(0),gx=2586,gy=696;
+  if(!comm || !layer?.rooms.some(room=>room.id==='po_hook.south_gardens' && room.open && room.cells.includes(gy*FRAME_W+gx)))return;
+  const base=globalBaseGeometry(gx,gy,0,r.sourceMap?.rules===4?4:3);
+  if(!base || base.source || base.solidProp || base.statics.length || globalCellTileAndClass(r,gx,gy,0).cls!==0)return;
+  const [ox,oy]=windowOrigin(r),local=gx>=ox && gy>=oy && gx<ox+WW && gy<oy+WH;
+  const tx=local?gx-ox:gx,ty=local?gy-oy:gy;
+  const e:Entity={id:uid(r,'e'),kind:'struct',type:'garden',owner:comm.id,poi:comm.poi,label:'Hook South Garden Plot',floor:0,
+    tx,ty,x:(tx+.5)*TILE,y:(ty+.5)*TILE,hp:STRUCTS.garden.hp,maxHp:STRUCTS.garden.hp,garden:{crop:null,growth:0,water:0}};
+  (local?r.entities:(r.veyraOffscreenEntities??={}))[e.id]=e;
+  comm.workStations.push(e.id);
+  // Fit two empty receiving bins (produce and seed) in the already physical
+  // village store. New plot infrastructure only: no goods, no load-time resize.
+  const store=findRunEntity(r,comm.storeEntityId);
+  if(store?.owner===comm.id && store.c && comm.storeContainers.includes(store.c))C(r,store.c).slots.push(null,null);
 }
 /**
  * Brings a run up to the current source layout: every approved source id that the run does not have yet is created
