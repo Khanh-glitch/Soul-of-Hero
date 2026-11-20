@@ -226,6 +226,14 @@ export function ContainerPanel({ api, eid }: { api: Api; eid: string }) {
   // Same entity, same station state, same intents — only the presentation changes.
   // `stationConsoleTab` is a test/inspection seam only: the shipped path never sets it, so the router's
   // behaviour is unchanged for a player.
+  if(e.kind==='struct' && e.owner?.startsWith('com:') && STRUCTS[e.type!]?.layer==='wall'){
+    const cost=structureRepairCost(e),damaged=(e.hp??0)<(e.maxHp??0);
+    return <Panel title={e.label || STRUCTS[e.type!].name} style={{left:168,top:54,width:230}} onClose={()=>api.open(null)}>
+      <b>Community structure · {Math.round(e.hp??0)}/{e.maxHp} HP</b>
+      <div>{damaged?`Patch materials: ${cost.map(([k,q])=>`${q} ${ITEMS[k].name}`).join(' + ')}`:'Sound · no repair needed'}</div>
+      <div>Maintained by the village builder.</div>
+    </Panel>;
+  }
   if(e.workLight || e.basePower?.workLightId){
     const light=e.workLight?e:lookupRunEntity(r,e.basePower?.workLightId),gen=e.basePower?e:lookupRunEntity(r,e.workLight?.generatorId);
     return <Panel title={e.label || 'Works lighting'} style={{left:168,top:54,width:230}} onClose={()=>api.open(null)}>

@@ -810,6 +810,9 @@ export function validate(raw: any): GameState | null {
       const d=h.intent?.delivery;
       if(d!==undefined && (!obj(d)||typeof d.storeId!=='string'||typeof d.containerId!=='string'||!Array.isArray(d.cargo)||!d.cargo.length||d.cargo.some((q:any)=>!obj(q)||typeof q.uid!=='string'||!integer(q.qty)||q.qty<1)||new Set(d.cargo.map((q:any)=>q.uid)).size!==d.cargo.length))return null;
       const work=h.intent?.work,seen=work?.observedPatient;
+      if(work?.patchType!==undefined && (work.kind!=='build'||typeof work.patchType!=='string'||!Object.prototype.hasOwnProperty.call(STRUCTS,work.patchType)||STRUCTS[work.patchType].item||typeof work.entityId!=='string'||work.rebuildSite!==undefined))return null;
+      if(work?.patchLots!==undefined && (!work.patchType||!Array.isArray(work.patchLots)||!work.patchLots.length||work.patchLots.some((id:any)=>typeof id!=='string'||!/^s[a-z0-9]+$/.test(id))||new Set(work.patchLots).size!==work.patchLots.length))return null;
+      if(work?.patchType!==undefined && work.phase!=='fetch'&&!work.patchLots)return null;
       if(seen!==undefined && (work.kind!=='medical'||!hw.people[work.patientId]||!obj(seen)||!integer(seen.gx)||seen.gx>=FRAME_W||!integer(seen.gy)||seen.gy>=FRAME_H||![-1,0,1,2].includes(seen.floor)))return null;
       const swing=h.intent?.swing;
       if(swing!==undefined && (!obj(swing)||typeof swing.uid!=='string'||typeof swing.victim!=='string'||!Number.isInteger(swing.floor)||![swing.angle,swing.distance,swing.contactAt].every(finite)||swing.distance<0))return null;

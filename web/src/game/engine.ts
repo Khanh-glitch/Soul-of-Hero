@@ -1682,6 +1682,33 @@ export function seedHumanWorld(r: RunState): void {
   seedPopulation(r, hw, sites, elderLairs, evacSites);
   seedHookGarden(r);
   seedOreYardLighting(r);
+  seedGreywaterButtress(r);
+}
+/** New-run condition of the old north flood wall. The reinforcement is on the
+ * dry village side, never in the entrance or on top of the map-owned wall. */
+function seedGreywaterButtress(r:RunState){
+  const hw=r.humanWorld!,comm=hw.communities['com:po_greywater'];
+  const plan=authoredPlan('po_greywater');
+  const north=plan?.plan.rooms.find(q=>q.id==='po_greywater.wall_n'),apron=plan?.levels.get(0)?.rooms.find(q=>q.id==='po_greywater.apron');
+  if(!comm||!north||!apron)return;
+  const all=allRunEntities(r),people=Object.values(hw.people);
+  for(let gx=1623;gx>=1587;gx--){
+    const gy=1161,i=gy*FRAME_W+gx;
+    if(!north.rects.some(([x,y,w,h])=>gx>=x&&gx<x+w&&gy-1>=y&&gy-1<y+h)||!apron.cells.includes(i))continue;
+    const b=globalBaseGeometry(gx,gy,0,r.sourceMap?.rules===4?4:3);
+    if(!b||b.source||b.solidProp||b.statics.length||globalCellTileAndClass(r,gx,gy,0,all).cls!==0||
+      people.some(h=>h.floor===0&&h.gx===gx&&h.gy===gy)||all.some(e=>{const p=entityGlobalCoords(r,e);return p.floor===0&&p.gtx===gx&&p.gty===gy;}))continue;
+    const [ox,oy]=windowOrigin(r),local=gx>=ox&&gx<ox+WW&&gy>=oy&&gy<oy+WH,tx=local?gx-ox:gx,ty=local?gy-oy:gy;
+    const maxHp=STRUCTS.wall_stone.hp,e:Entity={id:uid(r,'e'),kind:'struct',type:'wall_stone',label:'North Flood Wall Buttress',owner:comm.id,poi:comm.poi,floor:0,tx,ty,x:(tx+.5)*TILE,y:(ty+.5)*TILE,hp:maxHp-Math.ceil(maxHp/4),maxHp};
+    (local?r.entities:(r.veyraOffscreenEntities??={}))[e.id]=e;
+    // Stage the mason's existing stone in the warehouse. At a full pantry
+    // exchange it for one field flask, preserving both UIDs and slot counts.
+    const builder=comm.memberIds.map(id=>hw.people[id]).find(h=>h.occupation==='builder'),store=findRunEntity(r,comm.storeEntityId);
+    if(builder&&store?.c&&store.owner===comm.id){const bag=C(r,builder.inv.packId),stock=C(r,store.c),src=bag.slots.findIndex(s=>s?.key==='stone'&&!s.production);
+      const empty=stock.slots.indexOf(null),dst=empty>=0?empty:stock.slots.findIndex(s=>s?.key==='water_flask'&&!s.production);
+      if(src>=0&&dst>=0)[stock.slots[dst],bag.slots[src]]=[bag.slots[src],stock.slots[dst]];}
+    return;
+  }
 }
 /** Foundry-owned infrastructure at genesis. No stored fuel or prepaid energy. */
 function seedOreYardLighting(r:RunState){

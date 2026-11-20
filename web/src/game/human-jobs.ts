@@ -16,7 +16,7 @@ export interface HumanWorkTask {
   machineJobId?: string; readyAt?: number; outputs?: [string, number][];
   observedPatient?:{gx:number;gy:number;floor:number};
   gardenAction?:'plant'|'water'|'harvest'; sowingId?:string;
-  rebuildSite?:string;
+  rebuildSite?:string; patchType?:string; patchLots?:string[];
   resumePhase?:'machine';
 }
 type Router = (gx: number, gy: number, floor: number) => { tx: number; ty: number; floor: number }[] | null;
@@ -103,6 +103,13 @@ type Generator=Entity & {basePower:NonNullable<Entity['basePower']>;c:string};
 function serviceableGenerator(r:RunState,e:Entity|undefined,owner:string):e is Generator {
   return !!e && e.type==='base_generator' && !!e.basePower && !!e.c && !!C(r,e.c) && e.owner===owner && (e.hp??0)>0 && (!e.basePower.workLightId || !!connectedWorkLight(r,e));
 }
+/** Ordinary shell patch only. Device packs, lost stations and collapsed
+ * stores have their own repair/rebuild laws; a registry entry is not ownership. */
+function shellPatchBill(e:Entity|undefined,owner:string,type?:string){
+  if(!e||e.kind!=='struct'||!e.type||e.owner!==owner||(type!==undefined&&e.type!==type)||!STRUCTS[e.type]||STRUCTS[e.type].item||
+     !Number.isFinite(e.hp)||!Number.isFinite(e.maxHp)||e.hp!<=0||e.hp!>=e.maxHp!)return null;
+  const cost=structureRepairCost(e);return cost.length?cost:null;
+}
 function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkTask[] {
   const comm = h.community ? hw.communities[h.community] : undefined; if (!comm) return [];
   const entities = allRunEntities(r).filter(e => (e.hp ?? 1) > 0 && (h.occupation==='salvager' && localRecycler(r,comm.poi,e) || comm.workStations.includes(e.id) || e.poi === comm.poi && e.owner === comm.id || h.occupation==='guard' && (e.id===comm.storeEntityId || e.kind==='door' && e.poi===comm.poi)));
@@ -179,8 +186,8 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
         if(flask)tasks.push({...start('garden',e,[],1500),gardenAction:'water',crop:g.crop,itemUid:flask.uid,sowingId:g.sowing?.id});
       }
     }
-    if (h.occupation === 'builder' && e.kind === 'struct' && e.hp !== undefined && e.maxHp && e.hp < e.maxHp && !STRUCTS[e.type!]?.item) {
-      const cost=structureRepairCost(e); if(cost.length && cost.every(([k,q])=>available(k,q))) tasks.push(start('build',e,cost,8000));
+    if (h.occupation === 'builder') {
+      const cost=shellPatchBill(e,comm.id);if(cost && cost.every(([k,q])=>available(k,q)))tasks.push({...start('build',e,cost,8000),patchType:e.type});
     }
     if (h.occupation === 'engineer' && serviceableGenerator(r,e,comm.id)) {
       const supplied=hasPowerFuel(r,e);
@@ -272,9 +279,10 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
       // A funded repair can require several bounded searches just to reach
       // the store. Keep its target on the committed retry clock, not behind
       // another full island census. No path means no travel or work yet.
-      const pending=!path && (candidate.kind==='repair_item' || candidate.kind==='engineer' || candidate.kind==='garden') && h.routeSearch?.status==='PENDING_SEARCH' &&
+      const pending=!path && (candidate.patchType || candidate.kind==='repair_item' || candidate.kind==='engineer' || candidate.kind==='garden') && h.routeSearch?.status==='PENDING_SEARCH' &&
         h.routeSearch.target===`${dest[2]}:${dest[0]},${dest[1]}`;
       if(!path && !pending)continue;
+      if(candidate.patchType&&!needs){const payment=materialPayment(pack(r,h),candidate.inputs);if(!payment)continue;candidate.patchLots=payment.map(l=>l.uid);}
       task=candidate;
       h.intent={intentId:uid(r,'hw'),actorId:h.actorId,kind:'work',target:`occupation:${task.kind}`,preconditions:['community permission','physical access','canonical paid bill'],reserved:[],startAt:now,dueAt:now,route:path??[],work:task};
       if(!path){h.state='IDLE';h.nextThinkAt=now+3000;return true;}
@@ -291,7 +299,7 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
     h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000;return false;
   }
   const path=route(...dest); if(!path){
-    if((task.kind==='repair_item'||task.kind==='engineer'||task.kind==='garden'||task.kind==='medical') && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
+    if((task.patchType||task.kind==='repair_item'||task.kind==='engineer'||task.kind==='garden'||task.kind==='medical') && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
       h.lastWorkBlock='No confirmed work route; retaining carried supplies.';
       receipt(r,now,'human.work.blocked',`${h.actorId}:${h.intent!.intentId}:${h.lastWorkBlock}`);
       h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+30000;
@@ -336,6 +344,11 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       if(!rule || !e || !(comm.workStations.includes(e.id) || e.poi===comm.poi && e.owner===comm.id))return fail('repair target or workbench changed');
       if(!fetchWorkMaterials(r,store.c,h.inv.packId,rule.cost,h.actorId,intent.intentId,now))return fail('repair supplies unavailable or pack full');
       task.inputs=rule.cost; // resume with the same canonical bill that was admitted
+    } else if(task.kind==='build' && !task.rebuildSite && e?.id!==comm.storeEntityId){
+      const bill=shellPatchBill(e,comm.id,task.patchType);
+      if(!bill || !e || e.poi!==comm.poi && !comm.workStations.includes(e.id))return fail('repair site no longer needs this patch');
+      if(!fetchWorkMaterials(r,store.c,h.inv.packId,bill,h.actorId,intent.intentId,now))return fail('patch materials unavailable or pack full');
+      task.inputs=bill;task.patchType=e.type;task.patchLots=materialPayment(pack(r,h),bill)!.map(l=>l.uid);
     } else if(task.kind==='engineer'){
       if(!serviceableGenerator(r,e,comm.id)||hasPowerFuel(r,e))return fail('generator no longer needs this fuel');
       if(!C(r,e.c).slots.includes(null))return fail('generator fuel full');
@@ -464,9 +477,9 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       const before=s.dur;s.dur=ITEMS[s.key].dur;
       receipt(r,now,'human.maintenance',JSON.stringify({worker:h.actorId,job:intent.intentId,station:e.id,item:s.uid,before,after:s.dur,inputs}));
     } else if(task.kind==='build') {
-      const cost=structureRepairCost(e);
-      if(!cost.length || !e.hp || !e.maxHp || e.hp>=e.maxHp || STRUCTS[e.type!]?.item)return fail('repair target or materials changed');
-      const inputs=materialPayment(pack(r,h),cost,true);if(!inputs)return fail('repair materials missing or reserved');
+      const cost=shellPatchBill(e,comm.id,task.patchType);
+      if(!cost || !e.hp || !e.maxHp)return fail('repair target or materials changed');
+      const inputs=materialPayment(pack(r,h),cost,true,task.patchType ? task.patchLots??[] : undefined);if(!inputs)return fail('repair materials missing or reserved');
       const before=e.hp;e.hp=Math.min(e.maxHp,e.hp+Math.ceil(e.maxHp/4));
       receipt(r,now,'human.structure.patch',JSON.stringify({worker:h.actorId,job:intent.intentId,site:e.id,before,after:e.hp,inputs}));
     } else if(task.kind==='engineer') {
