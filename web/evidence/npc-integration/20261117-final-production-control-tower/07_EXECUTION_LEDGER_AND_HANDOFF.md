@@ -564,3 +564,7 @@ Seed 7606, bản lưu h24 cũ, vắng 3 phút: [đối chứng](../controlled-re
 
 - [Đo truy vấn tại 68 kho h24](../water-mask-replay/README.md): trên lượt quét lặp, cùng 81.668 câu trả lời từng bit với đối chứng, 172 → 0 lần dựng toàn vùng. Không phải phép đo FPS. Các ca kiểm tra băng tan, ô âm/ngoài đảo, định tuyến và giỏ hàng: 17/17; TS ứng dụng và tests đạt.
 - Chấp nhận trao đổi vẫn định giá lại, kiểm tra UID/số lượng, khoảng cách và tải trọng. Bản xem trước không tự hết hiệu lực chỉ vì nhu cầu thay đổi ở chữ số mà bảng không hiển thị. Giá hiển thị đổi hay hàng đổi vẫn phải xác nhận lại. 5/5 giỏ hàng (đã nằm trong 17 ca trên). Lượt chơi thường ở Mere có vào được bảng hai túi, nhưng người thu hồi phế liệu rời đi trước khi nhận đề nghị: **chưa** tính là giao dịch. Script xét đúng biên nhận `human.exchange` của lệnh qua UI, không nhận biên nhận của API cũ.
+
+### Nghề y: phân biệt lấy mẫu theo phút và chạy đồng hồ sản phẩm
+
+Bộ hồi quy cứu hộ ban đầu đạt 28/29: phép quét `stepHumans` một lần mỗi phút không ghi nhận nghề y. Giữ nguyên các mẫu sản xuất 6 giờ và mẫu Cinder 12 giờ. Nạp lại đúng save mở đầu Cinder, cho `settle` xử lý các hạn di chuyển/chữa trị như khi Continue. Không tạo người bị nạn hay cấp thuốc. Biên nhận `r3907`: y sĩ `h50` dùng **một** băng `s27w` từ túi `c27t`, việc `hw3gw`, tại (1897,1264,tầng 0); `h4w` từ 1 → 31 HP, có biên nhận chữa cùng thời điểm. Ca `npc-occupation-coverage.test.ts` chạy lại riêng đạt 1/1. Đây là đối chiếu cơ chế nghề; không thay cho việc Creator xem đủ tám nghề trên giao diện hay chứng minh sống tới h336.

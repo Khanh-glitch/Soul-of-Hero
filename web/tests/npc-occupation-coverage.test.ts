@@ -11,6 +11,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import { newGame, startRun, stepStations, beginReceiptSink, endReceiptSink } from '../src/game/engine';
+import {serializeSnapshot,selectSnapshots} from '../src/game/persist';
+import {settle} from '../src/game/sim';
 import { stepHumans } from '../src/game/humanworld';
 import { setActiveLayout } from '../src/game/world';
 import { T0 } from './helpers/g1b-kit';
@@ -27,6 +29,7 @@ describe('natural occupation coverage', () => {
       const gs = newGame();
       expect(startRun(gs, 'female', T0, null, 7606, { tx: 100, ty: 100 }).ok).toBe(true);
       const r = gs.run!; const hw = r.humanWorld!;
+      const cinderStart=layout==='veyra05-cinder'?serializeSnapshot(gs):undefined;
       beginReceiptSink();
       for (let t = 0; t < HOURS * 60; t++) {
         const now = T0 + t * 60000;
@@ -56,6 +59,22 @@ describe('natural occupation coverage', () => {
           if(hw.people[worker]?.occupation!=='medic'||!hw.people[patient]?.wounds.some(w=>w.treated))continue;
           const k='medic:human.treat';local[k]=(local[k]??0)+1;union[k]=(union[k]??0)+1;
         }
+      }
+      // Keep the historical coarse 6/12-hour samples above. Calling stepHumans
+      // just once a minute is not the production clock: a six-second treatment,
+      // movement and station work have distinct deadlines. Verify a paid medic
+      // on the real clock, starting from the SAME Cinder opening, not a forced job.
+      if(cinderStart){
+        const live=selectSnapshots([cinderStart]).gs!,world=live.run!.humanWorld!;
+        let treatment:ReturnType<typeof endReceiptSink>[number]|undefined;
+        for(let minute=1;minute<=30&&!treatment;minute++){
+          beginReceiptSink();let rows;try{settle(live,T0+minute*60000,true);}finally{rows=endReceiptSink();}
+          treatment=rows.find(q=>{if(q.kind!=='human.medical.payment')return false;const pay=JSON.parse(q.detail),medic=world.people[pay.worker];
+            return medic?.occupation==='medic'&&pay.hpAfter>pay.hpBefore&&pay.inputs.length===1&&pay.inputs[0].qty===1&&pay.inputs[0].containerId===medic.inv.packId&&
+              ['herb','bandage'].includes(pay.inputs[0].key)&&rows.some(t=>t.at===q.at&&t.kind==='human.treat'&&t.detail.startsWith(`${pay.worker}:${pay.patient}:`));});
+        }
+        expect(treatment,'a medic must reach a real casualty and pay for treatment on the production clock').toBeDefined();
+        console.log('CINDER_SETTLE_MEDIC',treatment);union['medic:human.treat']=(union['medic:human.treat']??0)+1;
       }
       console.log('VILLAGE', layout, JSON.stringify(local));
     }
