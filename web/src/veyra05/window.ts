@@ -109,6 +109,8 @@ const G1A_POI_RATE = 0.05, G1A_POI_SPACING = 4, G1A_POI_SALT = 0x61a7;
  *  without the G1A nodes; wherever a cell is lost, withdraw the node(s) that close it in. Never adds or moves anything. */
 function unplugSalvage(ww: {floors:FloorStack;world:{economyMap:EconomyMap}}): number {
   const g = ww.floors.ground, n = WW * WH; let removed = 0;
+  // With no industrial node the two flood masks are identical by definition.
+  if (!g.sources.some(isIndustrialSalvage)) return 0;
   const base = (i: number) => !g.walkable[i] || !!g.solidProps[i] || !!(g.sources[i] && !isIndustrialSalvage(g.sources[i]) && SOURCES[g.sources[i]!]?.block);
   const flood = (solid: (i: number) => boolean) => {
     const r = new Uint8Array(n), q = new Int32Array(n); let h = 0, t = 0;
@@ -137,6 +139,9 @@ function unplugSalvage(ww: {floors:FloorStack;world:{economyMap:EconomyMap}}): n
  *  building, clear of every authored object, with all eight neighbours free so it can always be walked round. */
 function placePoiSalvage(ww: {win:WindowSpec;floors:FloorStack;world:{economyMap:EconomyMap}}, poiAt: Int16Array) {
   const g = ww.floors.ground, ox = ww.win.originTx, oy = ww.win.originTy, n = WW * WH, road = ww.world.economyMap.road;
+  // Only a cell of a weighted POI can become a yard candidate. Avoid the
+  // ground flood and candidate buffers in all other compiler regions.
+  if (!poiAt.some(pi => pi >= 0 && !!G1A_POI_WEIGHTS[POIS[pi]?.arche])) return 0;
   const busy = new Uint8Array(n);
   const mark = (x: number, y: number, rad: number) => { for (let dy = -rad; dy <= rad; dy++) for (let dx = -rad; dx <= rad; dx++) { const nx = x + dx, ny = y + dy; if (nx >= 0 && ny >= 0 && nx < WW && ny < WH) busy[ny * WW + nx] = 1; } };
   for (const st of g.statics) mark(st.tx, st.ty, 2);
@@ -207,6 +212,10 @@ function compileCanonicalTerrainRegion(layoutId:string){return timedWorldWork('c
   const pFresh = new Uint8Array(PN), pCoast = new Uint8Array(PN), pWalk = new Uint8Array(PN), pBuild = new Uint8Array(PN);
   const pCargo = new Uint8Array(PN), pRoad = new Uint8Array(PN), pProt = new Uint8Array(PN), pInd = new Uint8Array(PN);
 
+  // Remember the raw tile/POI for the inner window while the GOLD chunk is
+  // already in hand. Inner tiles may use a different authored overlay than
+  // padded economy tiles: do not substitute the composed padded tile here.
+  const rawTiles = new Uint8Array(n), poiAt = new Int16Array(n).fill(-1);
   for (let py = 0; py < PH; py++) {
     for (let px = 0; px < PW; px++) {
       const pi = py * PW + px, gx = paddedWin.originTx + px, gy = paddedWin.originTy + py;
@@ -214,6 +223,10 @@ function compileCanonicalTerrainRegion(layoutId:string){return timedWorldWork('c
         pBiome[pi] = 'wall'; pElev[pi] = 0; pSlope[pi] = 1; pMoist[pi] = 0.5; pTemp[pi] = 0.5; pProt[pi] = 1; continue;
       }
       const { c, i: ci } = rd.get(gx, gy);
+      if (px >= PAD && px < WW+PAD && py >= PAD && py < WH+PAD) {
+        const i = (py-PAD)*WW + px-PAD;
+        rawTiles[i] = c.tile[ci]; poiAt[i] = c.poi[ci] === 255 ? -1 : c.poi[ci];
+      }
       const ov = paddedPoiTiles.get(pi);
       const t = ov !== undefined ? ov : c.tile[ci];
       const fl = c.flags[ci], cl = c.clim[ci], code = c.biome[ci];
@@ -242,7 +255,6 @@ function compileCanonicalTerrainRegion(layoutId:string){return timedWorldWork('c
   }
 
   // Extract 200x200 window arrays from the padded grid (NO artificial T.CLIFF on window borders!)
-  const poiAt = new Int16Array(n).fill(-1);
   const tiles = new Uint8Array(n), fresh = new Uint8Array(n), zone = new Uint8Array(n);
   const biome: Biome[] = new Array(n), elevation = new Float32Array(n), slope = new Float32Array(n), moisture = new Float32Array(n), temperature = new Float32Array(n);
   const walkable = new Uint8Array(n), buildable = new Uint8Array(n), cargoPassable = new Uint8Array(n), road = new Uint8Array(n), protectedCells = new Uint8Array(n), industrial = new Uint8Array(n), coast = new Uint8Array(n);
@@ -253,11 +265,7 @@ function compileCanonicalTerrainRegion(layoutId:string){return timedWorldWork('c
       if (gx <= 0 || gy <= 0 || gx >= FRAME_W - 1 || gy >= FRAME_H - 1) {
         tiles[i] = T.CLIFF; biome[i] = 'wall'; protectedCells[i] = 1; continue;
       }
-      const { c, i: ci } = rd.get(gx, gy);
-      const ov = poiSlice.tileOverrides.get(i);
-      const t = ov !== undefined ? ov : c.tile[ci];
-      tiles[i] = t;
-      poiAt[i] = c.poi[ci] !== 255 ? c.poi[ci] : -1;
+      tiles[i] = poiSlice.tileOverrides.get(i) ?? rawTiles[i];
       fresh[i] = pFresh[pi];
       zone[i] = poiSlice.stoneCells.has(i) ? 7 : 0;
       biome[i] = pBiome[pi];
@@ -280,8 +288,7 @@ function compileCanonicalTerrainRegion(layoutId:string){return timedWorldWork('c
     for (let x = 1; x < WW - 1; x++) {
       const i = y * WW + x;
       if (!industrial[i] || tiles[i] === T.FLOOR || tiles[i] === T.PWALL) continue;
-      const { c, i: ci } = rd.get(win.originTx + x, win.originTy + y);
-      if (c.poi[ci] === 255) continue;
+      if (poiAt[i] < 0) continue;
       for (let dy = -6; dy <= 6; dy++) for (let dx = -6; dx <= 6; dx++) {
         const nx = x + dx, ny = y + dy;
         if (nx < 1 || ny < 1 || nx >= WW - 1 || ny >= WH - 1) continue;
