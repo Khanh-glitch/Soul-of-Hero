@@ -25,3 +25,17 @@ SOH_GLADE_REPORT=/tmp/glade.json npm test -- --maxWorkers=1 tests/npc-glade-wate
 ```sh
 node scripts/npc-follow-checkpoint.mjs "$PWD" evidence/npc-integration/coast-62c9dae/h51.save.gz h4t 61 /tmp/glade-h61.json
 ```
+
+### Đối chiếu thêm 10 giờ: cùng người, cùng save, cùng mốc dừng
+
+Hai tiến trình độc lập đều nạp `h51.save.gz`, dừng mỗi giờ tròn tới h61. Đã so SHA256 của save, hai tệp mã thay đổi với Git, seed, run ID và trạng thái h51. [Trước sửa `34b7c8a`](before-h61.json) và [sau sửa `b4a1196`](after-h61.json):
+
+| Mốc | Y sĩ trước sửa | Y sĩ sau sửa |
+|---|---|---|
+| h51 | 95 HP, nước 9,06 | Cùng trạng thái |
+| h55 | 95 HP, nước 0,05 | 95 HP, nước 59,05 |
+| h56 | 10,66 HP, nước 0 | 95 HP, nước 52,80 |
+| h57 | Đã chết; làng không có thùng | 95 HP, nước 46,55 |
+| h61 | Vẫn chết; 5/7 dân làng còn hoạt động | 95 HP, nước 46,54; 6/7 còn hoạt động |
+
+Từ h51 đến h61 có **4 biên nhận uống của chính `h4t`** từ cùng thùng: hai lần trong giờ đầu, rồi trong khoảng h54–55 và h58–59. Một người khác (`h4q`) đã chết từ h51 ở cả hai nhánh; không ai được hồi sinh. Mức chênh ở đây là kết quả tại Glade từ checkpoint này, **không** phải tỷ lệ cứu được trên toàn đảo, seed khác hay tới Ragnarok.
