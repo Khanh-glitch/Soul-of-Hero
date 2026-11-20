@@ -323,7 +323,6 @@ function compileCanonicalTerrainRegion(layoutId:string){return timedWorldWork('c
       }
     }
   }
-  if (!anchors.length) throw Error('No walkable terrain in this Veyra U=0.5 window');
 
   const economyMap: EconomyMap = {
     id: 'veyra05', revision: 1, seed: 2026, width: WW, height: WH, tileSize: TILE,
@@ -345,7 +344,11 @@ function compileCanonicalGeometryRegion(layoutId:string,rules:VeyraPlacementRule
  const tiles=cached.tiles.slice(),fresh=cached.fresh.slice(),zone=cached.zone.slice(),poiAt=cached.poiAt.slice(),economyMap={...cached.economyMap,walkable:Uint8Array.from(cached.economyMap.walkable),protected:Uint8Array.from(cached.economyMap.protected),buildable:Uint8Array.from(cached.economyMap.buildable)};
  const PAD=8;
   let sourceV3: (string | null)[];
-  if (pAnchors.length) {
+  // A remote query (unlike a playable window) can legitimately be open sea.
+  // Preserve actual terrain and climate, but no reachable economy source can
+  // exist without a local anchor. Never fabricate a dry tile to placate spawn.
+  if (!economyMap.starts.length) sourceV3 = new Array(n).fill(null);
+  else if (pAnchors.length) {
     const paddedMap: EconomyMap = {
       id: 'veyra05', revision: 1, seed: 2026, width: PW, height: PH, tileSize: TILE,
       biome: pBiome, elevation: pElev, slope: pSlope, moisture: pMoist, temperature: pTemp,
@@ -373,7 +376,7 @@ function compileCanonicalGeometryRegion(layoutId:string,rules:VeyraPlacementRule
 
   const input={win,world:{tiles,zone,economyMap,sourceV3,buildings:poiSlice.buildings,statics:poiSlice.statics},poiIds:poiSlice.poiIds,landmarks:poiSlice.landmarks,floors:null as unknown as FloorStack};
   input.floors=buildFloorStack(input);
-  if(rules===4){placePoiSalvage(input,poiAt);unplugSalvage(input);}
+  if(rules===4 && economyMap.starts.length){placePoiSalvage(input,poiAt);unplugSalvage(input);}
   return {win,scene,t0,n,rd,poiSlice,poiAt,tiles,fresh,zone,economyMap,sourceV3,floors:input.floors};
 });}
 
@@ -382,6 +385,7 @@ function compileCanonicalGeometryRegion(layoutId:string,rules:VeyraPlacementRule
 export function buildWindowWorld(layoutId:string,rules:VeyraPlacementRules=placementRules):WindowWorld {
   countWorldWork('renderCompilations');
   const {win,scene,t0,n,rd,poiSlice,poiAt,tiles,fresh,zone,economyMap,sourceV3,floors}=compileCanonicalGeometryRegion(layoutId,rules);
+  if (!economyMap.starts.length) throw Error('No walkable terrain in this Veyra U=0.5 window');
   const seaDist=new Uint8Array(n).fill(255),spawnEligible=new Uint8Array(n),walkable=economyMap.walkable;
   // Sea coast distance BFS (for shore foam rendering)
   const queue = new Int32Array(n); let head = 0, tail = 0;

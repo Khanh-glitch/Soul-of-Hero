@@ -1,0 +1,11 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ ✓ tests/veyra-offshore-query.test.ts > investigating a remote sea cell does not require a player spawn or create a resource or floor 180ms
+ ✓ tests/veyra-query-parity.test.ts > query regions preserve751f80a masks, all floors, source eligibility and authored statics without render materialization 24321ms
+
+ Test Files  2 passed (2)
+      Tests  2 passed (2)
+   Start at  02:00:58
+   Duration  28.23s (transform 2.48s, setup 0ms, import 3.45s, tests 24.51s, environment 0ms)
+

@@ -1,0 +1,34 @@
+
+ RUN  v4.1.12 /home/user/Soul-of-Hero/web
+
+ × tests/veyra-offshore-query.test.ts > investigating a remote sea cell does not require a player spawn or create a resource or floor 176ms
+   → No walkable terrain in this Veyra U=0.5 window
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/veyra-offshore-query.test.ts > investigating a remote sea cell does not require a player spawn or create a resource or floor
+Error: No walkable terrain in this Veyra U=0.5 window
+ ❯ src/veyra05/window.ts:326:30
+    324|     }
+    325|   }
+    326|   if (!anchors.length) throw Error('No walkable terrain in this Veyra …
+       |                              ^
+    327|
+    328|   const economyMap: EconomyMap = {
+ ❯ timedWorldWork src/game/world-work.ts:14:20
+ ❯ compileCanonicalTerrainRegion src/veyra05/window.ts:180:64
+ ❯ canonicalTerrain src/veyra05/window.ts:338:84
+ ❯ src/veyra05/window.ts:341:15
+ ❯ timedWorldWork src/game/world-work.ts:14:20
+ ❯ compileCanonicalGeometryRegion src/veyra05/window.ts:339:106
+ ❯ globalBaseGeometry src/veyra05/window.ts:569:13
+ ❯ tests/veyra-offshore-query.test.ts:6:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  02:00:46
+   Duration  3.41s (transform 2.59s, setup 0ms, import 3.08s, tests 178ms, environment 0ms)
+
