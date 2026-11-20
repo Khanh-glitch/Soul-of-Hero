@@ -55,4 +55,20 @@ describe('multi-item barter', () => {
     expect(JSON.stringify(C(r, 'inv').slots)).toBe(before);          // nothing left the player
     expect(r.receipts.some(x => x.kind === 'human.trade.basket')).toBe(false);
   });
+  it.each(['merge', 'empty slot'])('restores both packs and next UID after a %s then a capacity refusal', mode => {
+    const r = runAt().run!, hw = r.humanWorld!, h = Object.values(hw.people)[0];
+    const pack = humanPack(r, h), player = C(r, 'inv');
+    pack.slots.fill(null); player.slots.fill(null);
+    addItem(r, 'inv', 'herb', 3); addItem(r, 'inv', 'bandage', 2);
+    // Only one destination is usable, by the first line. In merge mode it
+    // already contains a compatible stack; the second line has no room.
+    for (let i = 0; i < pack.slots.length; i++) pack.slots[i] = { uid: `fixture-${i}`, key: 'stone', qty: 1 };
+    pack.slots[0] = mode === 'merge' ? { uid: 'receiver', key: 'herb', qty: 1 } : null;
+    const state = () => JSON.stringify([player, pack, r.nextId, r.receipts]);
+    const before = state();
+    const deal = tradeBasketWithHuman(r, hw, h, 'inv', [{key:'herb',qty:1},{key:'bandage',qty:1}], T0+1000);
+    expect(deal).toMatchObject({ok:false,reason:'no carrying capacity'});
+    expect(state()).toBe(before);
+  });
+
 });

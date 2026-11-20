@@ -1228,23 +1228,28 @@ export function tradeBasketWithHuman(r: RunState, hw: HumanWorld, h: HumanRecord
   if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED') return { ok: false, reason: 'incapacitated' };
   if (h.state === 'FIGHTING') return { ok: false, reason: 'too dangerous to trade' };
   const src = r.custody[fromCid]; if (!src) return { ok: false, reason: 'no source custody' };
+  const pack = humanPack(r, h);
+  if (src === pack) return { ok: false, reason: 'source and destination are the same pack' };
   const want = new Map<string, number>();
-  for (const l of lines) if (l.qty > 0) want.set(l.key, (want.get(l.key) ?? 0) + l.qty);
+  for (const l of lines) {
+    if (!Number.isSafeInteger(l.qty) || l.qty <= 0) return { ok: false, reason: 'invalid basket quantity' };
+    want.set(l.key, (want.get(l.key) ?? 0) + l.qty);
+  }
   if (!want.size) return { ok: false, reason: 'empty basket' };
   for (const [key, qty] of want) {
     let have = 0; for (const s of src.slots) if (s?.key === key) have += s.qty;
     if (have < qty) return { ok: false, reason: `not enough ${key}` };
   }
-  const pack = humanPack(r, h);
-  const undo: { idx: number; stack: Stack; qty: number }[] = [];
+  // A later line can fail *after* addStack placed or merged an earlier
+  // line. Restore both containers, including receiver quantities and split
+  // UID allocation. Keep original objects for other live custody readers.
+  const beforeId = r.nextId;
+  const before = [src, pack].map(c => ({ c, slots: c.slots.slice(), quantities: c.slots.map(s => s?.qty) }));
   const rollback = () => {
-    for (let k = undo.length - 1; k >= 0; k--) {
-      const u = undo[k];
-      if (!src.slots[u.idx]) src.slots[u.idx] = u.stack;
-      else if (src.slots[u.idx]!.key === u.stack.key) src.slots[u.idx]!.qty += u.qty;
-      else { const free = src.slots.indexOf(null); if (free >= 0) src.slots[free] = u.stack; }
+    for (const { c, slots, quantities } of before) {
+      slots.forEach((s, i) => { if (s) s.qty = quantities[i]!; c.slots[i] = s; });
     }
-    undo.length = 0;
+    r.nextId = beforeId;
   };
   const moved: { key: string; qty: number }[] = [];
   for (const [key, qtyWant] of want) {
@@ -1254,8 +1259,8 @@ export function tradeBasketWithHuman(r: RunState, hw: HumanWorld, h: HumanRecord
       const take = Math.min(left, s.qty);
       const stack: Stack = take === s.qty ? s : { ...s, uid: uid(r, 's'), qty: take };
       if (!addStack(r, pack.id, stack)) { rollback(); return { ok: false, reason: 'no carrying capacity' }; }
-      if (take === s.qty) { undo.push({ idx: i, stack: s, qty: s.qty }); src.slots[i] = null; }
-      else { undo.push({ idx: i, stack, qty: take }); s.qty -= take; }
+      if (take === s.qty) src.slots[i] = null;
+      else s.qty -= take;
       left -= take;
     }
     if (left > 0) { rollback(); return { ok: false, reason: `not enough ${key}` }; }
