@@ -19,3 +19,5 @@ npm test -- --maxWorkers=1 tests/{npc-natural-guard,npc-guard-response}.test.ts
 ```
 
 Verification: 50/50 tests in eight suites (the two above plus occupation coverage, companion missions, corrective NPC cases, hunting custody, medical response and the natural builder). Test TypeScript and production build passed; Vite reported its chunk-size warning.
+
+[Native browser follow-up](native-640/README.md): the same response through WASD, Save & quit, document reload and Continue, with before/after 640×360 captures.

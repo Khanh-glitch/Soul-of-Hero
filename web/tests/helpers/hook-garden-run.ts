@@ -5,7 +5,7 @@ import {settle} from '../../src/game/sim';
 import {validate} from '../../src/game/persist';
 
 /** Only time and a validated JSON round-trip drive this normal geographic start. */
-export function naturalHookGarden(){
+export function naturalHookGarden(observe?:(r:NonNullable<ReturnType<typeof newGame>['run']>,sec:number)=>void){
  const start=Date.UTC(2026,10,15,8);setActiveLayout('veyra05-world');let gs=newGame();assert(startRun(gs,'female',start,null,7606).ok);
  const community=()=>gs.run!.humanWorld!.communities['com:po_hook'];
  const plotId=community().workStations.find(id=>findRunEntity(gs.run!,id)?.type==='garden');assert(plotId);
@@ -15,6 +15,7 @@ export function naturalHookGarden(){
  for(let sec=30;sec<=1200;sec+=30){
   beginReceiptSink();try{settle(gs,start+sec*1000,true);}finally{events.push(...endReceiptSink().filter(e=>e.kind.startsWith('human.garden.')&&JSON.parse(e.detail).plot===plotId));}
   if(!growthAtReload && plot().garden!.growth>0 && plot().garden!.growth<1){const before=JSON.stringify(plot().garden);growthAtReload=plot().garden!.growth;gs=validate(JSON.parse(JSON.stringify(gs)))!;assert(gs);assert.equal(JSON.stringify(plot().garden),before);}
+  observe?.(gs.run!,sec);
   const firstHarvest=events.find(e=>e.kind==='human.garden.harvest');
   if(firstHarvest && events.filter(e=>e.kind==='human.garden.plant').length>=2 && rows().some(row=>row.jobId===JSON.parse(firstHarvest.detail).job && row.key==='crop'))break;
  }

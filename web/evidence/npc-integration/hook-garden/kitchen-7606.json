@@ -1,0 +1,152 @@
+{
+  "seed": 7606,
+  "delivery": {
+    "at": 1794730200071.677,
+    "jobId": "hj2ul",
+    "inputs": [
+      {
+        "slot": 0,
+        "uid": "s1b7",
+        "key": "seed_sunroot",
+        "qty": 1,
+        "containerId": "c1b5"
+      }
+    ],
+    "stationId": "e2th",
+    "workerId": "hn",
+    "fromUid": "s3eg",
+    "intoUid": "s3eg",
+    "qty": 3,
+    "key": "crop"
+  },
+  "first": {
+    "sec": 630,
+    "uid": "s3eg",
+    "store": "c19v",
+    "qty": 3,
+    "cooks": [
+      {
+        "id": "hl",
+        "fires": [
+          "e1ad"
+        ],
+        "bills": [
+          {
+            "recipe": "stew",
+            "inputs": [
+              {
+                "key": "crop",
+                "need": 2,
+                "have": 3
+              },
+              {
+                "key": "meat",
+                "need": 1,
+                "have": 0
+              },
+              {
+                "key": "herb",
+                "need": 1,
+                "have": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "hm",
+        "fires": [
+          "e1ad"
+        ],
+        "bills": [
+          {
+            "recipe": "stew",
+            "inputs": [
+              {
+                "key": "crop",
+                "need": 2,
+                "have": 3
+              },
+              {
+                "key": "meat",
+                "need": 1,
+                "have": 0
+              },
+              {
+                "key": "herb",
+                "need": 1,
+                "have": 4
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "last": {
+    "sec": 840,
+    "uid": "s3eg",
+    "store": "c19v",
+    "qty": 3,
+    "cooks": [
+      {
+        "id": "hl",
+        "fires": [
+          "e1ad"
+        ],
+        "bills": [
+          {
+            "recipe": "stew",
+            "inputs": [
+              {
+                "key": "crop",
+                "need": 2,
+                "have": 3
+              },
+              {
+                "key": "meat",
+                "need": 1,
+                "have": 0
+              },
+              {
+                "key": "herb",
+                "need": 1,
+                "have": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "hm",
+        "fires": [
+          "e1ad"
+        ],
+        "bills": [
+          {
+            "recipe": "stew",
+            "inputs": [
+              {
+                "key": "crop",
+                "need": 2,
+                "have": 3
+              },
+              {
+                "key": "meat",
+                "need": 1,
+                "have": 0
+              },
+              {
+                "key": "herb",
+                "need": 1,
+                "have": 4
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "minQty": 3,
+  "payable": []
+}

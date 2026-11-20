@@ -20,3 +20,9 @@ npm test -- --maxWorkers=1 tests/{npc-natural-hook-garden,npc-hook-plot-custody,
 ```
 
 Verification: 20 distinct tests passed across the three suites above plus `npc-paid-work` and `npc-mechanic-fetch`. `npm run typecheck:tests` and `npm run build` passed (Vite chunk-size warning).
+
+### Does the first garden lot reach a cook?
+
+[Kitchen custody audit](kitchen-7606.json), current geographic New Game seed 7606. This is a fresh trace; runtime IDs are not taken from the historical garden run above. At +600.072 s `hn` delivers **3 Sunroot**, lot `s3eg`, to `c19v`. The stack retains its harvest UID and the harvest cites the planted seed `s1b7`. From +630 through +840 s, at each 30-second observation, all three units are still in that warehouse. Both Hook cooks (`hl`, `hm`) know **stew** and have a listed community campfire (`e1ad`). Each has access to 3/2 Sunroot and 4/1 herb across pack and authorized stock, but **0/1 meat**. The recipe bill is therefore not payable by either cook at those samples; no stew made from this lot is demonstrated. This does not establish permanent scarcity, nor is it a claim that route, queue, fuel and demand would all be ready if meat arrived. No item, recipe or job was added to obtain this result.
+
+Reproduce: `npm test -- --maxWorkers=1 tests/npc-hook-kitchen.test.ts` from `web/`.

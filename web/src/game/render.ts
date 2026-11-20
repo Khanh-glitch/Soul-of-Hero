@@ -5,6 +5,7 @@ import { BAL, TILE, WW, WH, VIEW_W, VIEW_H, T, hash2, clamp, type GameState, typ
 import { STRUCTS, ELDERS, PRIMORDIAL_ELDERS, lookupElderDef, CREATURES, ITEMS } from './catalog';
 import { hasCreatureAtlas, preloadCreatureAtlases, drawCreatureAtlasSprite, creatureHeadTopY } from './creature-sprites';
 import { drawNpcSprite, drawNpcShadow, preloadNpcArt, resolveNpcClip } from './npc-art';
+import { watchCue, drawWatchCue } from './watch-cue';
 import { humanWorldPosition } from './humanworld';
 import { isCreatureRenderedByPrimordialRig, renderPrimordialOverlay } from './primordials/host-bridge';
 import { getFrame as getPrimordialRasterFrame, frameRGBA } from './primordials/art/sprites';
@@ -298,6 +299,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   for(const s of r.worldStimuli||[])if(now>=s.at&&now<s.expiresAt&&Math.hypot(s.x-p.x,s.y-p.y)<s.range&&clearPhysicalLine(r,p,s,true,true)){const age=(now-s.at)/(s.expiresAt-s.at);g.save();g.strokeStyle=`rgba(255,218,148,${(1-age)*0.8})`;g.lineWidth=1;g.beginPath();g.arc(s.x,s.y,6+age*16,0,Math.PI*2);g.stroke();g.restore();}
   // y-sorted drawables
   const list: { y: number; f: () => void }[] = [];
+  let watch:ReturnType<typeof watchCue>;
   for (let ty = vy0; ty <= vy1 + 1 && ty < WH; ty++) for (let tx = vx0; tx <= vx1; tx++) {
     const s = sourceAt(r, tx, ty, now); if (!s) continue; if (life.undergroundHides(r, tx * 16 + 8, ty * 16 + 8)) continue; if (s.stock <= 0 && entsAt(r, tx, ty).length) continue; list.push({ y: ty * 16 + 14, f: () => drawSource(g, r, s, tx, ty, time, p) });
   }
@@ -314,6 +316,8 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
       const wx = (pos.gx - ox) * TILE, wy = (pos.gy - oy) * TILE;
       if (wx < cx - 40 || wx > cx + VIEW_W + 40 || wy < cy - 40 || wy > cy + VIEW_H + 60) continue;
       if (life.undergroundHides(r, wx, wy)) continue;
+      const cue=watchCue(r,h,{x:wx,y:wy},now);
+      if(cue && (!watch || cue.priority>watch.priority || cue.priority===watch.priority && Math.hypot(wx-p.x,wy-p.y)<Math.hypot(watch.body.x-p.x,watch.body.y-p.y)))watch=cue;
       const moving = h.state === 'MOVING' || (h.intent?.route?.length ?? 0) > 0;
       list.push({ y: wy + 4, f: () => { drawNpcShadow(g, wx, wy + 2, 6, 3, 0.32); drawNpcSprite(g, h, wx, wy, now / 1000, moving);
         if((h.iceUntil??0)>now){g.save();g.globalAlpha=.7;g.drawImage(A.st.icepillar,Math.round(wx)-8,Math.round(wy)-16);g.restore();}
@@ -382,6 +386,7 @@ export function draw(g: CanvasRenderingContext2D, gs: GameState, now: number, dt
   comp.drawPostNight(g,{x:cx,y:cy},Math.min(0.85,darkness(r,now)+(weatherAt(r,now)==='storm'?0.15:0)));
   if (flash > 0) { g.fillStyle = `rgba(255,255,255,${flash * flashScale()})`; g.fillRect(0, 0, VIEW_W, VIEW_H); flash = Math.max(0, flash - dtMs / 400); }
   gradeWorld(g, VIEW_W, VIEW_H, Math.min(1, darkness(r, now)));
+  if(watch){g.save();g.translate(-cx,-cy);drawWatchCue(g,watch);g.restore();}
   if (p.hp < 30 && !p.dead) { const a = (1 - p.hp / 30) * (0.25 + Math.sin(time / 200) * 0.08); g.fillStyle = `rgba(160,0,0,${a})`; g.fillRect(0, 0, VIEW_W, 6); g.fillRect(0, VIEW_H - 6, VIEW_W, 6); g.fillRect(0, 0, 6, VIEW_H); g.fillRect(VIEW_W - 6, 0, 6, VIEW_H); }
 }
 
