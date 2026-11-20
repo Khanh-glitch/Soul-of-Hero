@@ -13,7 +13,7 @@ import { ReturnChronicle } from './ReturnChronicle';
 import { CabinetReadout } from './HomeStatus';
 import { StationConsole } from './StationConsole';
 import { ResearchFamilies } from './ResearchFamilies';
-import { nearestEvacTrip, evacBerthStatus } from '../game/humanworld';
+import { serviceAtBeacon, evacBerthStatus } from '../game/humanworld';
 import { C, countItem, invWeight, isRagnarok, runHours, cartWeight, cartLimit, carryLimit, spaceFor, phaseOf, tenderStatus, gardenEnvironment, weatherAt, isWet, isSheltered, wetOutlook, turretStatus, industrialStatus, powerAllocation, connectedPower, offlineSurvivalEstimate, territoryForecast, claimAt, structureRepairCost } from '../game/engine';
 import { getWorld, ZONES } from '../game/world';
 import { recipeOutputs } from '../game/engine';
@@ -654,15 +654,7 @@ export function EscrowPanel({ api, eid }: { api: Api; eid: string }) {
 export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
   const r = api.gs.run!; const cash = countItem(r, 'inv', 'rcash'); const [sure, setSure] = useState(false);
   const hw = r.humanWorld;
-  const trip = (() => {
-    if (!hw) return undefined;
-    const e = r.entities[eid];
-    if (e?.poi && hw.evacuation[`evac:${e.poi}`]) return hw.evacuation[`evac:${e.poi}`];
-    if (!e) return undefined;
-    const o = r.sourceMap?.veyra?.originAu;
-    const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
-    return nearestEvacTrip(hw, ox + Math.floor(e.x / TILE), oy + Math.floor(e.y / TILE));
-  })();
+  const trip=serviceAtBeacon(r,r.entities[eid]);
   const aboard = (trip?.manifest ?? []).length;
   const seatsLeft = trip ? Math.max(0, trip.capacity - aboard) : 0;
   const playerAboard = !!trip?.playerAboard;
@@ -678,13 +670,19 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
         {trip.phase === 'BOARDING'
           ? `Sails at ${sailing} or the moment the last seat is taken. Arrival is only certified when the vessel reaches safe water (~${S.transitHours ?? 4} h at sea).`
           : trip.phase === 'IN_TRANSIT'
-            ? 'The vessel is at sea. You are ashore; the berth is empty until it returns.'
+            ? (playerAboard?'You are aboard, crossing to safe water.':'The vessel is at sea; the berth is empty until it returns.')
             : trip.phase === 'BERTHED'
               ? `The vessel is on its way back; the berth reopens at ${sailing}.`
               : trip.phase === 'STAGING'
                 ? `The service opens on day ${Math.floor((S.serviceOpensHour ?? 288) / 24)} of the run.`
                 : 'This service will not sail again in this run.'}
       </div>
+      {trip.phase==='BOARDING' && trip.vessel && (()=>{
+        const hold=r.custody[trip.vessel.holdId];if(!hold)return null;
+        const supplies=r.custody.inv.slots.filter((s):s is Stack=>!!s && !s.production && (s.key==='berries'||s.key==='spares'||s.key==='water_flask'&&(s.charge??0)>0));
+        return <div style={{fontSize:10}}>Hull {trip.vessel.hull} · Hold: {hold.slots.filter(Boolean).map(s=>s!.key==='water_flask'?`${s!.charge??0} water`:`${ITEMS[s!.key].name} ×${s!.qty}`).join(', ')||'empty'}
+          <div>{supplies.map(s=><button className="btn sm" key={s.uid} onClick={()=>api.act('supplyEvac',{eid,stackUid:s.uid})}>Load 1 {ITEMS[s.key].name}</button>)}</div></div>;
+      })()}
     </>}
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5, margin: '5px 0' }}>
       <div className="console-col">
@@ -706,8 +704,8 @@ export function EvacPanel({ api, eid }: { api: Api; eid: string }) {
       You are carrying {cash} unsecured coin{cash === 1 ? '' : 's'}. Deposit them in your Escrow Chest before the run ends.
     </div>}
     {playerAboard ? <div className="flex gap-1">
-      <div className="lbl" style={{ flex: 1, fontSize: 8, color: 'var(--info)' }}>You hold a seat. The crossing ends the run only when the vessel arrives.</div>
-      <button className="btn ghost" onClick={() => { api.act('leaveEvac', { eid }); api.open(null); }}>Step ashore</button>
+      <div className="lbl" style={{ flex: 1, fontSize: 8, color: 'var(--info)' }}>You hold a seat. Stay at the berth until departure. Arrival ends the run.</div>
+      <button className="btn ghost" disabled={trip?.phase!=='BOARDING'} onClick={() => { if(api.act('leaveEvac', { eid }).ok) api.open(null); }}>Step ashore</button>
     </div> : <div className="flex gap-1">
       {!sure
         ? <button className="btn gold" style={{ flex: 1 }} disabled={!trip || trip.phase !== 'BOARDING' || seatsLeft === 0} onClick={() => setSure(true)} title={!trip || trip.phase !== 'BOARDING' ? 'The berth is not taking passengers' : seatsLeft === 0 ? 'No free seat' : 'Take a physical seat'}>Request a Seat…</button>

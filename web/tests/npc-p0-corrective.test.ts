@@ -344,6 +344,20 @@ describe('NPC P0 corrective', () => {
     expect(incident.witnesses).toEqual([]);
   });
 
+  it('demands the exact worn UID, not its replacement or an item in the shop', () => {
+    const gs=startAt(921,259),r=gs.run!,hw=r.humanWorld!,h=Object.values(hw.people)[0];
+    for(const other of Object.values(hw.people))if(other!==h)other.state='DEAD';
+    const o=r.sourceMap!.veyra!.originAu;
+    h.gx=o[0]*2+Math.floor(r.player.x/TILE);h.gy=o[1]*2+Math.floor(r.player.y/TILE);h.floor=r.veyraFloor??0;
+    h.state='IDLE';h.equip.weapon=null;h.protectedPeople=[];h.combatProficiency=0;h.disposition='neutral';h.hp=h.maxHp/4;
+    const item=mkStack(r,'leather_armor',1);h.equip.body=item;
+    const send=(id:string,stackUid:string)=>dispatch(gs,{id,type:'humanThreaten',actorId:h.actorId,demand:'item',stackUid},T0+1);
+    expect(send('stale','not-in-personal-custody').ok).toBe(false);expect(h.confrontationAttempt).toBeUndefined();
+    chooseActorHash(hw,h,id=>stableHash(`${id}:${confrontationScene(h,r)}:item:${item.uid}:1`)%100<78);
+    expect(send('surrender',item.uid)).toMatchObject({ok:true,msg:expect.stringContaining('Hands over')});expect(h.equip.body).toBeNull();
+    expect(r.custody.inv.slots.filter(s=>s?.uid===item.uid)).toHaveLength(1);expect(Object.values(hw.incidents).at(-1)).toMatchObject({kind:'robbery',property:[item.uid]});
+  });
+
   it('does not reroll repeated confrontation clicks against an unchanged scene', () => {
     const gs = startAt(921, 259), r = gs.run!, hw = r.humanWorld!;
     const h = Object.values(hw.people)[0];

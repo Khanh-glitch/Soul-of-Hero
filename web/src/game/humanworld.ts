@@ -33,7 +33,8 @@ import {countWorldWork} from './world-work';
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
 import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
 import {type CoreEffectCast} from './core-ray';
-import {owned, hasAll, coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
+import {materialPayment} from './material-payment';
+import {owned, coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import { humanCanUseEntity, humanEntityTile, executeHumanWork, dispatchMedicalResponse, planHumanOccupation, type HumanWorkTask } from './human-jobs';
@@ -1067,7 +1068,7 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
   h.lastDamageAt = now;
   if (attackerId && attackerId !== h.actorId) {
     const incident = recordIncident(r, hw, {
-      kind: 'assault', victim: h.actorId, aggressor: attackerId, witnesses: incidentWitnesses(r,hw,h,attackerId), at: now,
+      kind: 'assault', victim: h.actorId, aggressor: attackerId, witnesses: incidentWitnesses(r,hw,h,attackerId,now), at: now,
       place: { tx: h.gx, ty: h.gy, floor: h.floor }, injury: true, resolved: false,
     }, now);
     formGrievance(r, hw, h, attackerId, now, incident.id);
@@ -1394,7 +1395,7 @@ export function lootHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
     // If addStack refused (no room / non-mergeable), the stack stays in the pack — identity preserved.
   }
   if(taken>0){
-    if(intoContainerId==='inv')recordIncident(r,hw,{kind:'theft',victim:h.actorId,aggressor:'player',witnesses:incidentWitnesses(r,hw,h,'player'),property,at:now,place:{tx:h.gx,ty:h.gy,floor:h.floor},resolved:false},now);
+    if(intoContainerId==='inv')recordIncident(r,hw,{kind:'theft',victim:h.actorId,aggressor:'player',witnesses:incidentWitnesses(r,hw,h,'player',now),property,at:now,place:{tx:h.gx,ty:h.gy,floor:h.floor},resolved:false},now);
     receipt(r, now, 'human.loot', `${h.actorId}:-${taken}`);
   }
   return { taken };
@@ -1427,7 +1428,7 @@ export function humanRepairOffers(r: RunState, h: HumanRecord, now: number) {
   return items.flatMap(item => {
     if (!item || item.qty !== 1 || item.production || item.dur === undefined || item.dur < 0) return [];
     const def = ITEMS[item.key], rule = def.repair;
-    if (!rule || !def.dur || item.dur > def.dur / 2 || !hasAll(r,'inv',rule.cost)) return [];
+    if (!rule || !def.dur || item.dur > def.dur / 2 || !materialPayment(C(r,'inv'),rule.cost)) return [];
     const station = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === rule.station && e.station && owned(e) &&
       (e.hp ?? 1) > 0 && (e.floor ?? 0) === h.floor && Math.hypot(r.player.x-e.x,r.player.y-e.y) <= 3*TILE &&
       Math.hypot(body.x-e.x,body.y-e.y) <= 3*TILE && clearPhysicalLine(r,body,e,true,true) && clearPhysicalLine(r,r.player,e,true,true));
@@ -1438,10 +1439,10 @@ export function repairHumanGear(r: RunState, hw: HumanWorld, h: HumanRecord, sta
   const offer = humanRepairOffers(r,h,now).find(o=>o.item.uid === stackUid && o.station.id === stationId);
   if (!offer) return false;
   const before = offer.item.dur;
-  for (const [key,qty] of offer.cost) removeItem(r,'inv',key,qty);
+  const inputs=materialPayment(C(r,'inv'),offer.cost,true);if(!inputs)return false;
   offer.item.dur = offer.max;
   rewardHelpOnce(hw,h,'repair',id,3);
-  receipt(r,now,'human.repair',JSON.stringify({actor:h.actorId,stationId,stackUid,before,after:offer.max,cost:offer.cost}));
+  receipt(r,now,'human.repair',JSON.stringify({actor:h.actorId,stationId,stackUid,before,after:offer.max,cost:offer.cost,inputs}));
   return true;
 }
 function rewardHelpOnce(hw:HumanWorld,h:HumanRecord,kind:keyof NonNullable<HumanRecord['helpTrustReceipts']>,id:string,amount:number) {
@@ -1452,7 +1453,7 @@ function rewardHelpOnce(hw:HumanWorld,h:HumanRecord,kind:keyof NonNullable<Human
 export function startHumanAid(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,stackUid:string,now:number): {ok:boolean;reason?:string;msg?:string} {
   if(hw.playerAid)return {ok:false,reason:'Finish or cancel your current aid first.'};
   if(['DEAD','EVACUATED','FIGHTING'].includes(h.state))return {ok:false,reason:'It is not safe to help right now.'};
-  const s=C(r,'inv').slots.find(s=>s?.uid===stackUid);if(!s)return {ok:false,reason:'Choose supplies from your own pack.'};
+  const s=C(r,'inv').slots.find(s=>s?.uid===stackUid);if(!s||s.production)return {ok:false,reason:'Choose supplies from your own pack.'};
   const d=ITEMS[s.key];
   const kind=(['bandage','herb'].includes(s.key)&&(h.state==='DOWNED'||h.wounds.some(w=>!w.treated)))?'medical':d.waterContainer&&(s.charge??0)>0&&h.thirst<35?'water':d.food?.hunger&&h.hunger<35&&h.state!=='DOWNED'?'food':undefined;
   if(!kind)return {ok:false,reason:'That item does not meet a current urgent need.'};
@@ -1464,7 +1465,7 @@ export function startHumanAid(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,s
 export function stepPlayerHumanAid(r:RunState,hw:HumanWorld,now:number):void {
   const a=hw.playerAid;if(!a)return;
   const h=hw.people[a.actorId],s=C(r,'inv').slots.find(s=>s?.uid===a.stackUid);
-  if(!h||!s||!humanContact(r,h,now)||r.player.hp<a.hp||h.state==='FIGHTING'||a.floor!==h.floor||Math.hypot(r.player.x-a.px,r.player.y-a.py)>TILE){
+  if(!h||!s||s.production||!humanContact(r,h,now)||r.player.hp<a.hp||h.state==='FIGHTING'||a.floor!==h.floor||Math.hypot(r.player.x-a.px,r.player.y-a.py)>TILE){
     delete hw.playerAid;receipt(r,now,'human.aid.cancel',a.id);return;
   }
   if(now<a.dueAt)return;
@@ -1553,67 +1554,78 @@ function retreatHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number):
     if (lx < 1 || ly < 1 || lx >= WW - 1 || ly >= WH - 1 || !(grid[ly * WW + lx] === 0 || grid[ly * WW + lx] === 4)) continue;
     const route = humanRouteToAdjacent(r, h, gx, gy, grid, ox, oy, occupied);
     if (!route?.length) continue;
-    h.following = false; h.state = 'MOVING';
+    h.following = false; h.motion=undefined; h.state = 'MOVING';
     h.intent = { intentId: `flee:${h.actorId}:${now}`, actorId: h.actorId, kind: 'move', target: 'retreat:player', preconditions: ['actor chose an open legal retreat path'], reserved: [], startAt: now, dueAt: now, route };
     return true;
   }
   return false;
 }
+/** A demand names one personally held UID, never a warehouse, shop or reserved output. */
+export function demandableGoods(r:RunState,h:HumanRecord) {
+  const pack=humanPack(r,h);
+  const carried=pack.slots.flatMap((s,i)=>s && !s.production ? [{s,where:'pack',release:()=>{pack.slots[i]=null;}}] : []);
+  for(const key of Object.keys(h.equip) as (keyof HumanEquipSlots)[]){const s=h.equip[key];if(s&&!s.production)carried.push({s,where:key,release:()=>{h.equip[key]=null;}});}
+  return carried;
+}
 export function threatenHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, demand: HumanDemand = 'back_off', stackUid?: string): ConfrontationResult {
   if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'DOWNED') return { ok: false, reason: 'This person cannot answer a confrontation.' };
   const pack = humanPack(r, h);
-  const demanded = demand === 'item' ? pack.slots.find(s => s?.uid === stackUid) ?? null : demand === 'disarm' ? h.equip.weapon : null;
+  const selected=demand==='item'?demandableGoods(r,h).find(v=>v.s.uid===stackUid):undefined;
+  const demanded = demand === 'item' ? selected?.s ?? null : demand === 'disarm' ? h.equip.weapon : null;
   const demandedQuantity=demanded?.qty;
   if (demand === 'item' && (!demanded || demanded.production)) return { ok: false, reason: 'That carried item is no longer accessible.' };
-  if (demand === 'disarm' && !h.equip.weapon) return { ok: false, reason: 'They are not carrying an equipped weapon.' };
+  if (demand === 'disarm' && (!h.equip.weapon || h.equip.weapon.uid!==stackUid)) return { ok: false, reason: 'They are not carrying an equipped weapon.' };
   if (demand === 'stop_attack' && h.state !== 'FIGHTING') return { ok: false, reason: 'They are not attacking anyone right now.' };
   faceTowardPlayer(r, h);
-  const witnesses=incidentWitnesses(r,hw,h,'player');
+  const witnesses=incidentWitnesses(r,hw,h,'player',now);
   const playerWeapon = r.custody.inv.slots[r.player.active];
   const scene = JSON.stringify([h.gx, h.gy, h.floor, h.state, h.equip.weapon?.uid ?? '', h.equip.weapon?.dur ?? -1, Math.round(h.hp), witnesses.sort(), playerWeapon?.uid ?? '', playerWeapon?.dur ?? -1, Math.round(r.player.hp), r.player.active]);
   if (h.confrontationAttempt?.scene === scene && now - h.confrontationAttempt.at < 15000) {
     return { ok: false, reason: `${h.name} has already answered this threat. Give them time or change the situation before pressing again.` };
   }
   const attemptNo = (h.confrontationAttempt?.attempts ?? 0) + 1;
-  const playerThreat = (playerWeapon ? ITEMS[playerWeapon.key]?.dmg ?? 0 : 0) + (r.player.hp < 30 ? 0 : 5);
+  const playerThreat = (playerWeapon && playerWeapon.dur!==0 ? ITEMS[playerWeapon.key]?.dmg ?? 0 : 0) + (r.player.hp < 30 ? 0 : 5);
   const valuable = demanded ? (ITEMS[demanded.key]?.creatorCore ? 50 : demanded.key.includes('weapon') || ITEMS[demanded.key]?.dmg ? 18 : ITEMS[demanded.key]?.food ? 7 : 3) * Math.max(1, Math.min(5, demanded.qty)) : 0;
-  const resolve = (h.equip.weapon ? 20 : 0) + h.combatProficiency * 7 + (h.disposition === 'predatory' ? 10 : h.disposition === 'protective' ? 4 : 0) + witnesses.length * 8 + h.protectedPeople.length * 2 + (h.hp < h.maxHp * 0.35 ? -16 : 0) + ((h.trust ?? 50) - 50) * 0.2;
+  const ready=!!humanWeapon(h) && !combatEquipmentBlock(r,h,now);
+  const helpers=witnesses.map(id=>hw.people[id]).filter(p=>!combatEquipmentBlock(r,p,now) && (!!h.community && p.community===h.community || p.protectedPeople.includes(h.actorId)));
+  const resolve = (ready ? 20 : 0) + h.combatProficiency * 7 + (h.disposition === 'predatory' ? 10 : h.disposition === 'protective' ? 4 : 0) + witnesses.length * 8 + h.protectedPeople.length * 2 + (h.hp < h.maxHp * 0.35 ? -16 : 0) + ((h.trust ?? 50) - 50) * 0.2;
   const pressure = playerThreat + (demand === 'item' ? 20 + valuable : demand === 'disarm' ? 22 : 18);
   const roll = hashInt(`${h.actorId}:${scene}:${demand}:${stackUid ?? ''}:${attemptNo}`) % 100;
   let reaction: ConfrontationResult['reaction'];
   if (pressure - resolve >= 18 && (demand !== 'item' || valuable < 18) && roll < 78) reaction = 'COMPLY';
   else if (pressure - resolve >= 5 && roll < 42) reaction = 'NEGOTIATE';
-  else if (witnesses.length && h.disposition === 'protective' && roll < 62) reaction = 'CALL_FOR_HELP';
-  else if ((h.hp < h.maxHp * 0.45 || !h.equip.weapon) && roll < 70) reaction = 'FLEE';
-  else if (h.equip.weapon && roll < 68) reaction = 'FIGHT';
+  else if (helpers.length && h.disposition === 'protective' && roll < 62) reaction = 'CALL_FOR_HELP';
+  else if ((h.hp < h.maxHp * 0.45 || !ready) && roll < 70) reaction = 'FLEE';
+  else if (ready && roll < 68) reaction = 'FIGHT';
   else reaction = 'REFUSE';
   // A failed capacity check is negotiation, not a deleted or duplicated UID.
   if (reaction === 'COMPLY' && demanded) {
     if (demand === 'item') {
-      const i = pack.slots.indexOf(demanded); pack.slots[i] = null;
-      if (!addStack(r, 'inv', demanded)) { pack.slots[i] = demanded; reaction = 'NEGOTIATE'; }
+      // Mixing a stolen lot into another UID would erase the victim's recovery evidence.
+      const inv=C(r,'inv'),slot=inv.slots.indexOf(null);
+      if (slot<0 || invWeight(r)+ITEMS[demanded.key].w*demanded.qty>carryLimit(r)+1e-6) reaction='NEGOTIATE';
+      else { inv.slots[slot]=demanded;selected!.release(); }
     } else if (!addStack(r, pack.id, demanded)) reaction = 'NEGOTIATE';
     else h.equip.weapon = null;
   }
   if (reaction === 'COMPLY' && (demand === 'back_off' || demand === 'stop_attack')) {
-    if (demand === 'stop_attack') { h.state = 'IDLE'; h.intent = undefined; }
+    if (demand === 'stop_attack') { h.motion=undefined; h.state = 'IDLE'; h.intent = undefined; }
     else if (!retreatHuman(r, hw, h, now)) reaction = 'REFUSE';
   }
   if (reaction === 'FLEE' && !retreatHuman(r, hw, h, now)) reaction = 'REFUSE';
-  if (reaction === 'FIGHT') { h.following = false; h.state = 'FIGHTING'; h.intent = { intentId: `retaliate:${h.actorId}:${now}`, actorId: h.actorId, kind: 'fight', target: 'player', preconditions: ['chose to resist this confrontation'], reserved: [], startAt: now, dueAt: now }; }
+  if (reaction === 'FIGHT') { h.motion=undefined; h.following = false; h.state = 'FIGHTING'; h.intent = { intentId: `retaliate:${h.actorId}:${now}`, actorId: h.actorId, kind: 'fight', target: 'player', preconditions: ['chose to resist this confrontation'], reserved: [], startAt: now, dueAt: now }; }
   if (reaction === 'COMPLY' || reaction === 'NEGOTIATE' || reaction === 'REFUSE' || reaction === 'CALL_FOR_HELP' || reaction === 'FIGHT' || reaction === 'FLEE') {
     h.trust = clamp((h.trust ?? 50) - (reaction === 'COMPLY' ? 8 : 22), 0, 100);
     const comm = h.community ? hw.communities[h.community] : null; if (comm) comm.threat = clamp(comm.threat + 0.12, 0, 1);
     recordIncident(r, hw, { kind: reaction === 'COMPLY' && demand === 'item' ? 'robbery' : 'assault', victim: h.actorId, aggressor: 'player', witnesses, at: now, place: { tx: h.gx, ty: h.gy, floor: h.floor }, property: reaction === 'COMPLY' && demanded ? [demanded.uid] : undefined, robbedQuantity:reaction==='COMPLY'&&demand==='item'?demandedQuantity:undefined, injury: false, resolved: reaction === 'COMPLY' && demand!=='item' }, now);
-    if (reaction === 'CALL_FOR_HELP') for (const id of witnesses) {
-      const ally = hw.people[id];
-      if (!ally?.equip.weapon || (ally.community !== h.community && !ally.protectedPeople.includes(h.actorId))) continue;
+    if (reaction === 'CALL_FOR_HELP') for (const ally of helpers) {
+      ally.motion=undefined;
       ally.state = 'FIGHTING'; ally.intent = { intentId: `help:${ally.actorId}:${now}`, actorId: ally.actorId, kind: 'fight', target: 'player', preconditions: [`witnessed confrontation with ${h.actorId}`], reserved: [], startAt: now, dueAt: now };
     }
     const reasons: Record<NonNullable<ConfrontationResult['reaction']>, string> = {
       COMPLY: demand === 'item' ? `Hands over ${ITEMS[demanded!.key]?.name ?? demanded!.key}.` : demand === 'disarm' ? 'Puts the equipped weapon away.' : demand === 'stop_attack' ? 'Stops the attack.' : 'Backs away along an open route.',
       NEGOTIATE: `Refuses the demand for now; ${demanded ? `${ITEMS[demanded.key]?.name ?? demanded.key} is valuable to them.` : 'they are weighing the risk.'}`,
-      REFUSE: 'Refuses and holds position.', FLEE: 'Retreats along an open route.', CALL_FOR_HELP: `Calls out to ${witnesses.length} visible ally/allies.`, FIGHT: 'Raises their weapon and fights back.',
+      REFUSE: 'Refuses and holds position.', FLEE: 'Retreats along an open route.', CALL_FOR_HELP: `Calls out to ${helpers.length} visible ally/allies.`, FIGHT: 'Raises their weapon and fights back.',
     };
     h.confrontationAttempt = { scene, at: now, attempts: attemptNo, demand, reaction, message: reasons[reaction] };
     receipt(r, now, 'human.threaten', `${h.actorId}:${demand}:${reaction}`);
@@ -1694,7 +1706,7 @@ export function resolveOrder(r: RunState, hw: HumanWorld, h: HumanRecord, orderI
   // no order can be executed from there, and the honest answer says so.
   if (h.state === 'ON_VESSEL' || h.transit) return finish('CANNOT_EXECUTE', 'aboard the evacuation vessel');
   if (!h.following) return finish('REFUSE_WITH_REASON','not a companion');
-  if (order === 'home' && !h.home) return finish('CANNOT_EXECUTE','no home to return to');
+  if (order === 'home' && !homeSite(r,hw,h)) return finish('CANNOT_EXECUTE','no home to return to');
   if (order === 'carry' && !targetActorId && humanCart(r,h).slots.every(Boolean)) return finish('CANNOT_EXECUTE','cart full');
   if (order==='carry' && targetActorId) {
     const store=deliveryStore(r,hw,h,targetActorId);
@@ -1728,6 +1740,29 @@ function deliveryStore(r:RunState,hw:HumanWorld,h:HumanRecord,id:string){
   const e=findRunEntity(r,id);
   if(e?.c && r.custody[e.c] && e.owner===c.id && c.storeContainers.includes(e.c) && (e.hp??1)>0)return e;
 }
+/** The home order is tied to an assigned physical site. A POI coordinate
+ * alone is not permission to leave the expedition. */
+function homeSite(r:RunState,hw:HumanWorld,h:HumanRecord) {
+  const home=h.home && hw.communities[h.home];
+  if(!home || home.id!==h.community)return;
+  const bed=findRunEntity(r,h.bedId);
+  if(bed?.type==='bed_straw' && bed.owner===home.id && (bed.hp??0)>0 && home.homeBeds.includes(bed.id))return bed;
+  return home.storeEntityId ? deliveryStore(r,hw,h,home.storeEntityId) : undefined;
+}
+function returningHome(intent:HumanIntent) { return intent.kind==='move' && intent.target==='home'; }
+function stepReturnHome(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occupied:Set<string>) {
+  const intent=h.intent!;
+  if(intent.dueAt>now)return;
+  const site=homeSite(r,hw,h);
+  if(site && humanCanUseEntity(r,h,site)) {
+    receipt(r,now,'human.companion.home',JSON.stringify({actor:h.actorId,order:intent.intentId,site:site.id,floor:h.floor,gx:h.gx,gy:h.gy}));
+    setFollowing(r,hw,h,false,now);h.state='IDLE';h.nextThinkAt=now+1000;return;
+  }
+  const route=site ? humanNavigation(r,occupied,true).route(h,siteWaypoint(r,site)) : null;
+  if(!route?.length){intent.blockReason=site?'Waiting for a legal path home.':'My home site is no longer accessible.';intent.dueAt=now+(site&&h.routeSearch?.status==='PENDING_SEARCH'?750:5000);return;}
+  intent.route=route;intent.startAt=now;intent.blockReason=undefined;h.state='MOVING';
+}
+function siteWaypoint(r:RunState,e:Entity){const [tx,ty]=humanEntityTile(r,e);return {tx,ty,floor:e.floor??0};}
 /** Reach the actual warehouse first. Stage the entire load so a full last slot
  * or a changed manifest never leaves half a delivery behind. */
 function stepCompanionDelivery(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occupied:Set<string>){
@@ -1782,9 +1817,8 @@ export function commandHuman(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,or
   const grid=blockGrid(r),occupied=new Set(Object.values(hw.people).filter(p=>p!==h&&p.state!=='DEAD'&&p.state!=='EVACUATED').map(p=>humanCellKey(p.floor,p.gx,p.gy)));
   let route:HumanIntent['route']|null=null;
   if(order==='home') {
-    const bed=findRunEntity(r,h.bedId),comm=h.home?hw.communities[h.home]:undefined;
-    const dest=bed?humanEntityTile(r,bed):comm?.storeTile;
-    if(dest)route=humanRouteToAdjacent(r,h,dest[0],dest[1],grid,ox,oy,occupied,bed?.floor??h.floor);
+    begin('move','home');stepReturnHome(r,hw,h,now,occupied);
+    return {ok:true,msg:!h.following?'Already home. Resuming my duties.':h.intent?.blockReason??'Walking home; I will resume my duties on arrival.'};
   } else {
     // Retreat is a real walk to a reachable nearby tile farther from perceived danger.
     const observer={x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE};
@@ -1798,7 +1832,7 @@ export function commandHuman(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,or
   }
   if(!route){hold();const d=h.orderDecisions![id];d.result='CANNOT_EXECUTE';d.reason='No legal route to that destination is currently known.';receipt(r,now,'human.order.blocked',`${h.actorId}:${id}:${order}`);return {ok:false,reason:d.reason};}
   begin('move',order,route);
-  return {ok:true,msg:order==='home'?'Walking home; I will resume my own duties when I arrive.':'Withdrawing along an open route.'};
+  return {ok:true,msg:'Withdrawing along an open route.'};
 }
 
 // ---------------------------------------------------------------------------
@@ -1806,17 +1840,17 @@ export function commandHuman(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,or
 // ---------------------------------------------------------------------------
 /** Only identify an aggressor if both bodies can be seen from the witness.
  * No remote-window raycasts and no inference from an unexplained impact. */
-function incidentWitnesses(r:RunState,hw:HumanWorld,victim:HumanRecord,aggressor:string){
+function incidentWitnesses(r:RunState,hw:HumanWorld,victim:HumanRecord,aggressor:string,now:number){
   if(victim.floor!==(r.veyraFloor??0))return [];
   const o=r.sourceMap?.veyra?.originAu,ox=o?o[0]*2:0,oy=o?o[1]*2:0;
-  const pos=(h:HumanRecord)=>({x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE});
+  const pos=(h:HumanRecord)=>{const p=humanWorldPosition(h,now);return {x:(p.gx-ox)*TILE,y:(p.gy-oy)*TILE};};
   const v=pos(victim),attacker=hw.people[aggressor];
   const a=aggressor==='player'?r.player:attacker?.floor===victim.floor&&!attacker.transit?pos(attacker):undefined;
   const local=(p:{x:number;y:number})=>p.x>=0&&p.y>=0&&p.x<WW*TILE&&p.y<WH*TILE;
   if(!a || !local(v) || !local(a))return [];
   return Object.values(hw.people).filter(h=>{
-    if(h===victim || h===attacker || h.floor!==victim.floor || h.transit || ['DEAD','DOWNED','ON_VESSEL','EVACUATED'].includes(h.state) || Math.hypot(h.gx-victim.gx,h.gy-victim.gy)>8)return false;
-    const w=pos(h);return local(w)&&Math.hypot(w.x-a.x,w.y-a.y)<=8*TILE&&clearPhysicalLine(r,w,v,true)&&clearPhysicalLine(r,w,a,true);
+    if(h===victim || h===attacker || h.floor!==victim.floor || h.transit || ['DEAD','DOWNED','ON_VESSEL','EVACUATED'].includes(h.state))return false;
+    const w=pos(h);return local(w)&&Math.hypot(w.x-v.x,w.y-v.y)<=8*TILE&&Math.hypot(w.x-a.x,w.y-a.y)<=8*TILE&&clearPhysicalLine(r,w,v,true)&&clearPhysicalLine(r,w,a,true);
   }).map(h=>h.actorId);
 }
 /** First-hand reports travel with the witness. A listener never becomes a
@@ -1943,11 +1977,18 @@ export function boardEvac(r: RunState, hw: HumanWorld, h: HumanRecord, tripId: s
   if (h.state === 'DEAD') return { ok: false, reason: 'cannot board a corpse' };
   if (h.state === 'DOWNED') return { ok: false, reason: 'too injured to board' };
   if (h.state === 'EVACUATED') return { ok: false, reason: 'already evacuated' };
+  if (h.motion || h.spiritStep) return {ok:false,reason:'Finish the physical approach before boarding.'};
   if (h.transit || trip.boarded.includes(h.actorId)) return { ok: false, reason: 'already aboard' };
   for (const t of Object.values(hw.evacuation)) if (t !== trip && (t.manifest ?? []).some(p => p.actorId === h.actorId)) return { ok: false, reason: 'already aboard another vessel' };
   if (h.floor !== 0) return { ok: false, reason: 'the berth is on the surface' };
   const dx = h.gx - trip.siteGx, dy = h.gy - trip.siteGy;
   if (Math.hypot(dx, dy) > evacSchedule().boardingRadius) return { ok: false, reason: 'not at the boarding berth' };
+  if(dx && dy){
+    // With a 1.5-tile berth, diagonal boarding may not cut a closed corner,
+    // including when the berth has streamed out of the player's window.
+    const nav=humanNavigation(r);
+    if(![[h.gx,trip.siteGy],[trip.siteGx,h.gy]].every(([tx,ty])=>[0,4].includes(nav.cell({tx,ty,floor:0}).cls)))return {ok:false,reason:'Access to the gangway is obstructed.'};
+  }
   const manifest = trip.manifest!;
   if (manifest.length >= trip.capacity) return { ok: false, reason: 'no free seat' };
   if (h.state === 'FIGHTING') return { ok: false, reason: 'cannot board while fighting' };
@@ -1985,6 +2026,25 @@ function freeEvacSeat(manifest: EvacManifestEntry[], capacity: number): number {
   return -1;
 }
 
+/** Never resolve a random beacon to the nearest service on another coast. */
+export function serviceAtBeacon(r:RunState,e:Entity|undefined) {
+  if(!r.humanWorld || !e || e.kind!=='evac' || (e.floor??0)!==0)return;
+  const [gx,gy]=humanEntityTile(r,e);
+  return Object.values(r.humanWorld.evacuation).find(t=>t.siteGx===gx && t.siteGy===gy && (!e.poi || t.site===e.poi));
+}
+function atPlayerBerth(r:RunState,trip:EvacTrip) {
+  if(r.player.dead || r.player.vehicle || r.spiritTransit || (r.veyraFloor??0)!==0)return false;
+  const [ox,oy]=windowOrigin(r),dock={x:(trip.siteGx-ox+.5)*TILE,y:(trip.siteGy-oy+.5)*TILE};
+  return Math.hypot(r.player.x-dock.x,r.player.y-dock.y)<=evacSchedule().playerRadius*TILE && clearPhysicalLine(r,r.player,dock,true,true);
+}
+function playerManifestCargo(r:RunState){
+  const cargo=[...C(r,'inv').slots,...C(r,'eq').slots].flatMap(s=>s?[{uid:s.uid,key:s.key,qty:s.qty}]:[]);
+  return {cargo,carryWeight:cargo.reduce((n,s)=>n+ITEMS[s.key].w*s.qty,0)};
+}
+/** Walking away before cast-off relinquishes the seat. At sea the manifest is sealed. */
+function reviewQuaySeat(r:RunState,hw:HumanWorld,trip:EvacTrip,now:number){
+  if(trip.playerAboard && trip.phase==='BOARDING' && !atPlayerBerth(r,trip))leaveEvacBerth(r,hw,trip.tripId,now);
+}
 /** Physical seat for the player at the same berth law. Boarding does NOT end the run:
  *  the voyage must actually arrive (see advanceEvacuation -> playerEvacArrivedAt). */
 export function playerBoardEvac(r: RunState, hw: HumanWorld, tripId: string, now: number): { ok: boolean; reason?: string; msg?: string } {
@@ -1995,18 +2055,12 @@ export function playerBoardEvac(r: RunState, hw: HumanWorld, tripId: string, now
   if (Object.values(hw.evacuation).some(t=>t.playerAboard || t.manifest?.some(p=>p.actorId==='player'))) return { ok: false, reason: 'You are already aboard.' };
   if (trip.phase === 'IN_TRANSIT') return { ok: false, reason: 'The vessel is already at sea.' };
   if (trip.phase !== 'BOARDING') return { ok: false, reason: trip.phase === 'STAGING' ? 'This service has not opened yet.' : 'This service is no longer taking passengers.' };
-  const o = r.sourceMap?.veyra?.originAu;
-  const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
-  const dx = ox+r.player.x/TILE-trip.siteGx-.5, dy = oy+r.player.y/TILE-trip.siteGy-.5;
-  if (Math.hypot(dx, dy) > evacSchedule().playerRadius) return { ok: false, reason: 'You are not at the boarding berth.' };
-  if (r.player.dead) return { ok: false, reason: 'The dead cannot board.' };
+  if (!atPlayerBerth(r,trip)) return {ok:false,reason:'Reach the berth on foot with a clear path to the vessel.'};
   const manifest = trip.manifest!;
   if (manifest.length >= trip.capacity) return { ok: false, reason: 'No free seat on this vessel.' };
   const seat = freeEvacSeat(manifest, trip.capacity);
   if (seat < 0) return { ok: false, reason: 'No free seat on this vessel.' };
-  const pack = C(r, 'inv');
-  const cargo = [...pack.slots,...C(r,'eq').slots].filter((s): s is Stack => !!s).map(s => ({ uid: s.uid, key: s.key, qty: s.qty }));
-  manifest.push({ actorId: 'player', seat, boardedAt: now, cargo, carryWeight: cargo.reduce((n, c) => n + (ITEMS[c.key]?.w ?? 0) * c.qty, 0) });
+  manifest.push({actorId:'player',seat,boardedAt:now,...playerManifestCargo(r)});
   trip.boarded.push('player'); trip.playerAboard = true;
   receipt(r, now, 'player.board', `${tripId}:seat${seat}`);
   const departs = trip.dockUntil !== undefined ? Math.max(0, trip.dockUntil - now) / HOUR : 0;
@@ -2034,7 +2088,7 @@ export function leaveEvacBerth(r: RunState, hw: HumanWorld, tripId: string, now:
 /** Cast off: one manifest, one departure receipt, one real transit duration. */
 function departEvacTrip(r: RunState, hw:HumanWorld, trip: EvacTrip, now: number): boolean {
   const S = evacSchedule();
-  const manifest = (trip.manifest ?? []).map(p => ({ ...p }));
+  const manifest = (trip.manifest ?? []).map(p => p.actorId==='player'?{...p,...playerManifestCargo(r)}:{...p});
   const round = trip.round ?? 1;
   const vessel=trip.vessel,hold=vessel && r.custody[vessel.holdId];
   const volunteers=manifest.filter(p=>hw.people[p.actorId]?.occupation==='guard');
@@ -2127,6 +2181,7 @@ export function advanceEvacuation(r: RunState, hw: HumanWorld, now: number): { p
         continue;
       }
       if (phase === 'BOARDING') {
+        reviewQuaySeat(r,hw,trip,now);
         const manifest = trip.manifest!;
         const lastCall = trip.dockUntil !== undefined && now >= trip.dockUntil;
         if (manifest.length >= trip.capacity) { departEvacTrip(r, hw, trip, now); continue; }
@@ -2175,6 +2230,7 @@ export function departEvac(r: RunState, hw: HumanWorld, tripId: string, now: num
   if (!trip) return { ok: false, reason: 'no such service' };
   ensureEvacPhase(r, trip, now);
   if (trip.phase !== 'BOARDING') return { ok: false, reason: 'the vessel is not at the berth' };
+  reviewQuaySeat(r,hw,trip,now);
   if ((trip.manifest ?? []).length === 0) return { ok: false, reason: 'nothing boarded' };
   trip.phase = 'BOARDING';
   return departEvacTrip(r, hw, trip, now)?{ok:true}:{ok:false,reason:trip.failureReason};
@@ -2930,6 +2986,7 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
   if(h.rest<.5)dt=Math.min(dt,(.5-h.rest)*8*HOUR);
   if(h.state==='DOWNED' && h.nextMedicalReviewAt!==undefined && h.nextMedicalReviewAt>at)dt=Math.min(dt,h.nextMedicalReviewAt-at);
   if(h.state==='MOVING'&&h.intent?.route?.length)dt=Math.min(dt,Math.max(.001,TILE/PROFILES[h.profile].speed*1000-(h.motion?.elapsedMs??0)));
+  if(h.following && h.state==='IDLE' && h.intent && (returningHome(h.intent)||h.intent.delivery) && h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
   if(h.state==='WORKING'&&h.intent&&h.intent.dueAt>at)dt=Math.min(dt,h.intent.dueAt-at);
   if(!h.following&&h.state==='IDLE'&&(!h.intent||!!h.intent.work)){
    const review=h.nextThinkAt??at;
@@ -3432,8 +3489,17 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     h.intent.blockReason = undefined; h.state = 'MOVING';
   }
   for (const h of actors) {
+    if(h.following && h.state==='IDLE' && h.intent && returningHome(h.intent)){stepReturnHome(r,hw,h,now,occupied);continue;}
     if(h.following && h.state==='IDLE' && h.intent?.delivery){stepCompanionDelivery(r,hw,h,now,occupied);continue;}
-    if (!h.following || h.state !== 'IDLE' || h.intent?.kind !== 'follow') continue;
+    if (!h.following || h.intent?.kind !== 'follow') continue;
+    if(h.state==='MOVING' && !h.motion){
+      const end=h.intent.route?.at(-1);
+      if(r.player.dead || playerAtSea(r) || end && (end.floor!==(r.veyraFloor??0) || Math.abs(end.tx-playerGx)+Math.abs(end.ty-playerGy)>2)) {
+        h.intent.route=[];h.state='IDLE';h.intent.dueAt=now;
+      }
+    }
+    if(h.state!=='IDLE')continue;
+    if(r.player.dead || playerAtSea(r)){h.intent.blockReason='Waiting: no reachable player on the island.';continue;}
     if (h.floor===(r.veyraFloor??0) && Math.abs(h.gx - playerGx) + Math.abs(h.gy - playerGy) <= 1) { h.intent.route = []; h.intent.blockReason = undefined; continue; }
     if(h.intent.dueAt>now)continue;
     const route=humanNavigation(r,occupied,true).route(h,{tx:playerGx,ty:playerGy,floor:r.veyraFloor??0});
@@ -3484,7 +3550,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
            if(side){colleague.intent={intentId:`yield:${colleague.actorId}:${now}`,actorId:colleague.actorId,kind:'move',target:'colleague-yield',preconditions:['physical sidestep for a blocked community colleague'],reserved:[],startAt:now,dueAt:now,route:[side]};colleague.state='MOVING';receipt(r,now,'human.access.yield',JSON.stringify({actorId:colleague.actorId,for:h.actorId,from:[colleague.gx,colleague.gy],into:side}));}
           }
 
-          if (moveIntent.kind === 'follow' || moveIntent.delivery){moveRoute.length=0;h.state='IDLE';moveIntent.dueAt=now+750;}
+          if (moveIntent.kind === 'follow' || moveIntent.delivery || returningHome(moveIntent)){moveRoute.length=0;h.state='IDLE';moveIntent.dueAt=now+750;}
           else if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.motion = undefined; moveRoute.length = 0; h.nextThinkAt = now + 750; }
           else { if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000; }
         } else {
@@ -3503,7 +3569,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
         if (h.motion.elapsedMs >= travelMs) {
           const destinationKey=humanCellKey(next.floor,next.tx,next.ty);occupied.delete(destinationKey);
           if(!(navigation??=humanNavigation(r,occupied)).enter(h,next,now)){
-            h.motion=undefined;h.state='IDLE';moveIntent.blockReason='The physical step became blocked before arrival.';h.lastWorkBlock=moveIntent.blockReason;if(moveIntent.delivery || moveIntent.kind==='follow'){moveRoute.length=0;moveIntent.dueAt=now+750;}else if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.nextThinkAt=now+3000;
+            h.motion=undefined;h.state='IDLE';moveIntent.blockReason='The physical step became blocked before arrival.';h.lastWorkBlock=moveIntent.blockReason;if(moveIntent.delivery || returningHome(moveIntent) || moveIntent.kind==='follow'){moveRoute.length=0;moveIntent.dueAt=now+750;}else if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.nextThinkAt=now+3000;
             continue;
           }
           const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
@@ -3511,7 +3577,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
           h.lastSimAt = now; occupied.add(humanCellKey(h.floor, h.gx, h.gy));
           if (!moveRoute.length) {
             if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.nextThinkAt = now; }
-            else if (moveIntent.kind === 'follow' || moveIntent.delivery) { h.state = 'IDLE'; moveRoute.length = 0; }
+            else if (moveIntent.kind === 'follow' || moveIntent.delivery || returningHome(moveIntent)) { h.state = 'IDLE'; moveRoute.length = 0; }
             else if(moveIntent.kind==='drink'&&moveIntent.target?.startsWith('water:')){h.state='WORKING';moveIntent.dueAt=now+2000;}
             else if (moveIntent.work) { h.state = 'WORKING'; moveIntent.dueAt = now + (moveIntent.work.phase === 'fetch' ? 800 : moveIntent.work.duration); }
             else if (moveIntent.kind === 'work' && moveIntent.target?.match(/^(global-harvest|harvest):/)) {
@@ -3522,7 +3588,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
             else if(moveIntent.kind==='evacuate'){h.state='IDLE';const tid=moveIntent.target;const trip=tid?hw.evacuation[tid]:undefined;const boarded=trip?boardEvac(r,hw,h,tid!,now):{ok:false,reason:'the service closed before you arrived'};h.intent=undefined;if(!boarded.ok){h.lastWorkBlock=boarded.reason??'cannot board';h.nextThinkAt=now+2000;}}
             else if(moveIntent.target==='recipe-board'){h.state='IDLE';h.intent=undefined;serviceRecipeBoard(r,hw,h,now);h.recipeBoardPending=false;h.nextThinkAt=now;}
             else if (moveIntent.kind === 'work' && moveIntent.target === 'store') { h.state = 'IDLE'; depositHumanOutputs(r, h, now); if((h as HumanRecord).state==='IDLE')h.intent = undefined; h.nextThinkAt = Math.max(h.nextThinkAt??0,now + 6000); }
-            else { if(moveIntent.target==='home')h.following=false; h.state = 'IDLE'; h.intent = undefined; }
+            else { h.state = 'IDLE'; h.intent = undefined; }
           }
         }
       }

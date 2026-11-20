@@ -10,18 +10,35 @@ const log={scope:'normal control, read-only saved-map pathfinding aid',steps:[],
 try{
  const engine=await vite.ssrLoadModule('/src/game/engine.ts'),world=await vite.ssrLoadModule('/src/game/world.ts');
  const windows=await vite.ssrLoadModule('/src/veyra05/window.ts'), sites=await vite.ssrLoadModule('/src/game/core-sites.ts');
- const p=await browser.newPage({viewport:{width:640,height:360},deviceScaleFactor:1});p.setDefaultTimeout(60000);p.on('pageerror',e=>log.errors.push(e.message));p.on('response',r=>{if(r.status()>=400)log.httpErrors.push([r.status(),r.url()]);});
- const btn=name=>p.getByRole('button',{name,exact:true});await p.goto(url);await btn('New run').click();await btn('Begin the 14 days').click();await btn('Begin the 14 days').waitFor({state:'hidden'});
+ // Optional bounded sampling: discard distant *normal* new runs, never edit a
+ // spawn/seed or transport a save. Report every rejected seed, not just the selected one.
+ const trials=Math.max(1,Math.min(20,Number(process.env.NEAR_START_TRIALS)||1));
+ let p;const btn=name=>p.getByRole('button',{name,exact:true});log.landings=[];
+ for(let trial=0;trial<trials;trial++){
+   p=await browser.newPage({viewport:{width:640,height:360},deviceScaleFactor:1});p.setDefaultTimeout(60000);p.on('pageerror',e=>log.errors.push(e.message));p.on('response',r=>{if(r.status()>=400)log.httpErrors.push([r.status(),r.url()]);});
+   await p.goto(url);await btn('New run').click();await btn('Begin the 14 days').click();await btn('Begin the 14 days').waitFor({state:'hidden'});
+   const landing=await p.evaluate(()=>{
+     const k=Object.keys(localStorage).find(k=>/^soh\.state\.v\d+$/.test(k)),r=JSON.parse(JSON.parse(localStorage.getItem(k)).payload).run;
+     const [ax,ay]=r.sourceMap.veyra.originAu,px=ax*2+r.player.x/16,py=ay*2+r.player.y/16;
+     const nearest=Math.min(...Object.values(r.humanWorld.people).filter(h=>h.floor===(r.veyraFloor??0)&&!h.transit&&!['DEAD','DOWNED','EVACUATED','ON_VESSEL'].includes(h.state)).map(h=>Math.hypot(px-h.gx-.5,py-h.gy-.5)));
+     return {seed:r.seed,run:r.id,nearestTiles:nearest};
+   });log.landings.push(landing);fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(log,null,2));
+   if(trials===1 || landing.nearestTiles<=32)break;
+   await p.close();p=null;
+ }
+ if(!p){log.block='No landing within 32 tiles of a conscious resident in the sampled ordinary starts.';console.log(log.block);}
  async function snapshot(){await p.keyboard.press('Escape');await btn('Save now').click();await p.waitForTimeout(300);const r=await p.evaluate(()=>{const k=Object.keys(localStorage).find(k=>/^soh\.state\.v\d+$/.test(k));return JSON.parse(JSON.parse(localStorage.getItem(k)).payload).run;});await p.keyboard.press('Escape');return r;}
  async function conversation(){
    if(!(await btn('Work?').isVisible()))return false;
    const panel=p.getByTestId('human-panel');log.contact=await panel.innerText();
    for(const q of ['Work?','Need?','Place?','Join?']){await btn(q).click();log.talk.push([q,await panel.getByRole('status').last().innerText()]);}
    await p.screenshot({path:path.join(out,'conversation.png')});await btn('Recruit').click();log.recruit=await panel.getByRole('status').last().innerText();
+   await btn('Help').click();log.help=await panel.innerText();const supply=panel.getByRole('button',{name:/^Offer /}).first();
+   if(await supply.isVisible()){await supply.click();await p.waitForTimeout(6500);log.afterHelp=await panel.innerText();}
    await btn('Barter').click();log.barter=await p.getByText('Barter · personal packs only').isVisible();await p.screenshot({path:path.join(out,'personal-packs.png')});return true;
  }
  const width=200;let target;const excluded=new Set();
- for(let i=0;i<45;i++){
+ for(let i=0;p && i<45;i++){
    const r=await snapshot();log.seed=r.seed;log.run=r.id;windows.syncVeyraPlacement(r);assert.ok(world.setActiveLayout(r.layoutId),r.layoutId);engine.markDirty();const grid=engine.blockGrid(r),o=r.sourceMap.veyra.originAu;
    const px=Math.floor(r.player.x/16),py=Math.floor(r.player.y/16),start=py*width+px,fl=r.veyraFloor??0;
    const win=windows.getWindowWorld(r.layoutId).win;

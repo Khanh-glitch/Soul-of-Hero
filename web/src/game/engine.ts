@@ -39,7 +39,7 @@ import {
 import { syncVeyraEcosystemActors, VEYRA_PRIMORDIAL_SITES, resolvePrimordialGlobalTile } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
-import { repairHumanGear, humanContact, newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerBoardEvac, leaveEvacBerth, nearestEvacTrip, startHumanAid, commandHuman, talkToHuman, threatenHuman, recruitHuman, setFollowing, observeRobbedDeposit, commitHumanBarter, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
+import { repairHumanGear, humanContact, newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerBoardEvac, leaveEvacBerth, playerAtSea, serviceAtBeacon, startHumanAid, commandHuman, talkToHuman, threatenHuman, recruitHuman, setFollowing, observeRobbedDeposit, commitHumanBarter, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
 import { NPC_POI_CENSUS } from './npc-census';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
@@ -2449,15 +2449,22 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       if(it.type==='humanCargo') {
         if(!h.following || h.transit || ['DOWNED','DEAD','ON_VESSEL','EVACUATED','FIGHTING'].includes(h.state))return fail('Companion cannot transfer cargo now.');
         if(h.intent?.delivery)return fail('Cancel the delivery with Hold before changing its load.');
-        const from=it.direction==='return'?C(r,h.inv.cartId):C(r,'inv'),to=it.direction==='return'?C(r,'inv'):C(r,h.inv.cartId);
+        if(!['load','give','return'].includes(it.direction))return fail('Choose a cargo direction.');
+        const unload=it.direction==='return';
+        const from=C(r,unload?h.inv.cartId:'inv'),to=C(r,unload?'inv':h.inv.cartId);
         const s=from.slots.find(s=>s?.uid===it.stackUid);
         if(!s || s.production)return fail('That carried item is no longer available.');
-        const incoming=ITEMS[s.key].w*s.qty;
-        if(it.direction==='return'?invWeight(r)+incoming>carryLimit(r)+1e-6:cartWeight(r,to.id)+incoming>BAL.cart.maxWeight+1e-6)return fail('This load is too heavy for the destination.');
-        const sourceSlot=from.slots.indexOf(s);
-        from.slots[sourceSlot]=null;
-        if(!addStack(r,to.id,s)){from.slots[sourceSlot]=s;return fail('Destination is full.');}
-        return ok('human.cargo',`${h.actorId}:${from.id}:${to.id}:${s.uid}:${s.qty}`,'Cargo transferred.');
+        const qty=it.qty===undefined?s.qty:it.qty;
+        if(!Number.isSafeInteger(qty)||qty<1||qty>s.qty || (qty<s.qty&&!mergeable(s,s)))return fail('Invalid cargo quantity.');
+        const incoming=ITEMS[s.key].w*qty;
+        if(unload?invWeight(r)+incoming>carryLimit(r)+1e-6:cartWeight(r,to.id)+incoming>BAL.cart.maxWeight+1e-6)return fail('This load is too heavy for the destination.');
+        const staged={...to,slots:to.slots.map(v=>v?{...v}:null)},draft={...r,custody:{[to.id]:staged}};
+        const moved=qty===s.qty?s:portion(draft,s,qty);
+        if(!addStack(draft,to.id,moved))return fail('Destination is full.');
+        const landed=staged.slots.flatMap((v,i)=>v && v.qty>(to.slots[i]?.qty??0)?[{uid:v.uid,qty:v.qty-(to.slots[i]?.qty??0)}]:[]);
+        if(qty===s.qty)from.slots[from.slots.indexOf(s)]=null;else s.qty-=qty;
+        to.slots=staged.slots;r.nextId=draft.nextId;
+        return ok('human.cargo',JSON.stringify({actor:h.actorId,from:from.id,to:to.id,parent:s.uid,portion:moved.uid,qty,landed}),`${qty} ${ITEMS[s.key].name} transferred.`);
       }
       if (it.type === 'humanTalk') { const topic = (['activity', 'needs', 'place', 'goods', 'accompany'] as string[]).includes(it.topic) ? it.topic as HumanTalkTopic : undefined; const msg = talkToHuman(r, hw, h, now, topic); return { ok: true, receipt: latestReceipt(), msg }; }
       if (it.type === 'humanDismiss') {
@@ -3342,16 +3349,23 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       C(r, 'inv').slots[fi]!.charge! -= 1; g.water = Math.min(3, g.water + 1); return ok('garden.water', e.id);
     }
     case 'grabCart': { if(p.vehicle)return fail('Exit the vehicle first.'); const e = r.entities[it.eid]; if (!e || e.kind !== 'cart' || !owned(e) || !near(r, e, 2)) return fail('Out of reach.'); p.pulling = p.pulling === e.id ? null : e.id; return ok('cart.grab', `${e.id}:${!!p.pulling}`); }
+    case 'supplyEvac': {
+      const e=r.entities[it.eid],trip=serviceAtBeacon(r,e);
+      if(!e || !trip?.vessel || playerAtSea(r) || trip.phase!=='BOARDING' || !near(r,e,2.5) || !clearInteraction(r,e) || p.vehicle || r.spiritTransit)return fail('Reach the operating berth on foot before cast-off.');
+      const inv=C(r,'inv'),hold=C(r,trip.vessel.holdId),slot=inv.slots.findIndex(s=>s?.uid===it.stackUid),s=inv.slots[slot];
+      if(!hold || !s || s.production || !(s.key==='berries'||s.key==='spares'||s.key==='water_flask'&&(s.charge??0)>0))return fail('Select loose rations, a filled flask, or repair parts from your pack.');
+      const draft={...r},unit=s.qty===1?s:portion(draft,s,1);
+      if(!addStack(draft,hold.id,unit))return fail('No room in the hold.');
+      if(s.qty===1)inv.slots[slot]=null;else s.qty--;r.nextId=draft.nextId;
+      return ok('evac.load',JSON.stringify({trip:trip.tripId,from:inv.id,to:hold.id,parent:s.uid,portion:unit.uid,key:s.key,qty:1}),`Loaded one ${ITEMS[s.key].name}.`);
+    }
     case 'evacuate': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'evac' || !near(r, e, 2.5)) return fail('You must be at the evacuation beacon.');
       // Real transport: the player takes a physical seat at the authored berth. Boarding does NOT
       // end the run — the vessel must cast off and actually arrive (see advanceEvacuation), so an
       // early death at sea or a failed voyage cannot be certified as EVACUATED.
       if (r.humanWorld) {
-        let tripId: string | null = e.poi && r.humanWorld.evacuation[`evac:${e.poi}`] ? `evac:${e.poi}` : null;
-        if(!tripId){const [ox,oy]=windowOrigin(r),gx=ox+Math.floor(e.x/TILE),gy=oy+Math.floor(e.y/TILE);
-          tripId=Object.values(r.humanWorld.evacuation).find(t=>t.siteGx===gx&&t.siteGy===gy)?.tripId??null;
-        }
+        const tripId=serviceAtBeacon(r,e)?.tripId;
         if (!tripId) return fail('No evacuation service is registered at this berth.');
         const res = playerBoardEvac(r, r.humanWorld, tripId, now);
         if (!res.ok) return fail(res.reason ?? 'cannot evacuate');
@@ -3362,8 +3376,7 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
     case 'leaveEvac': {
       const e = r.entities[it.eid]; if (!e || e.kind !== 'evac' || !near(r, e, 2.5)) return fail('You must be at the evacuation berth.');
       if (!r.humanWorld) return fail('No evacuation service exists in this run.');
-      const [ox2, oy2] = windowOrigin(r);
-      const trip = nearestEvacTrip(r.humanWorld, ox2 + Math.floor(e.x / TILE), oy2 + Math.floor(e.y / TILE));
+      const trip=serviceAtBeacon(r,e);
       if (!trip) return fail('No evacuation service is registered here.');
       const res = leaveEvacBerth(r, r.humanWorld, trip.tripId, now);
       if (!res.ok) return fail(res.reason ?? 'cannot disembark');

@@ -1,9 +1,10 @@
 /** Occupation execution on real shared K1 custody, canonical recipes, station queues,
  * item repair rules, garden laws and physical structures. No work output loot table. */
+import { materialPayment } from './material-payment';
 import { WW, WH, TILE, uid, type RunState, type Entity, type Stack } from './core';
 import { ITEMS, RECIPES, STRUCTS, GARDEN_CROPS, isGardenCrop, stationBurnable } from './catalog';
-import { authoredStationFootprint,globalCellTileAndClass,mkStack,mkContainer,C, hasAll, removeItem, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, markDirty, clearPhysicalLine, productionFits, findRunEntity, allRunEntities } from './engine';
-import { recoveryPlan, recoveryFits } from './recycler';
+import { authoredStationFootprint,globalCellTileAndClass,mkStack,mkContainer,C, addItem, addStack, queuePaidRecipe, structureRepairCost, receipt, markDirty, clearPhysicalLine, productionFits, findRunEntity, allRunEntities } from './engine';
+import { recoveryPlan } from './recycler';
 import type { HumanRecord, HumanWorld } from './humanworld';
 export type HumanJobKind = 'cook' | 'recycle' | 'repair_item' | 'garden' | 'medical' | 'engineer' | 'build' | 'guard';
 export interface HumanWorkTask {
@@ -101,11 +102,11 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
       }
     }
     if (h.occupation === 'salvager' && e.kind === 'recycler' && e.station && !e.station.queue.length) {
-      for (const s of pack(r,h).slots) if (s) { const plan=recoveryPlan(s); if (plan) tasks.push({...start('recycle',e,[],1500),itemUid:s.uid,outputs:plan.outputs}); }
+      for (const s of pack(r,h).slots) if (s && !s.production) { const plan=recoveryPlan(s); if (plan) tasks.push({...start('recycle',e,[],1500),itemUid:s.uid,outputs:plan.outputs}); }
     }
     if (h.occupation === 'mechanic' && e.type === 'workbench') {
       const items = [...pack(r,h).slots, ...Object.values(h.equip)].filter((s): s is Stack => !!s);
-      for (const s of items) { const d=ITEMS[s.key]; if (d.repair?.station===e.type && d.dur && s.dur!==undefined && s.dur<d.dur && d.repair.cost.every(([k,q])=>available(k,q))) tasks.push({...start('repair_item',e,d.repair.cost,8000),itemUid:s.uid}); }
+      for (const s of items) { const d=ITEMS[s.key]; if (!s.production && e.station && d.repair?.station===e.type && d.dur && s.dur!==undefined && s.dur<d.dur && d.repair.cost.every(([k,q])=>available(k,q))) tasks.push({...start('repair_item',e,d.repair.cost,8000),itemUid:s.uid}); }
     }
     if (h.occupation === 'gardener' && e.garden) {
       const g=e.garden;
@@ -138,7 +139,7 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
     if(posts.length)tasks.push(start('guard',posts[(h.patrolPostIndex??0)%posts.length],[],8000));
   }
   if (h.occupation === 'medic') for (const patient of Object.values(hw.people)) {
-    if (patient.actorId===h.actorId || patient.community!==h.community || patient.floor!==h.floor || patient.state==='DEAD' || patient.state==='EVACUATED') continue;
+    if (patient.actorId===h.actorId || patient.community!==h.community || patient.floor!==h.floor || patient.transit || ['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(patient.state)) continue;
     if (patient.state==='DOWNED' || patient.wounds.some(w=>!w.treated)) {
       const key = available('bandage',1) ? 'bandage' : available('herb',1) ? 'herb' : undefined;
       if(key) tasks.push({...start('medical',undefined,[[key,1]],6000),patientId:patient.actorId});
@@ -228,22 +229,23 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       const need=Math.max(0,qty-count(r,h.inv.packId,key));
       if(need){const before=C(r,store.c).slots.filter((s):s is Stack=>!!s).map(s=>({uid:s.uid,qty:s.qty,key:s.key}));const moved=moveHumanGoods(r,store.c,h.inv.packId,key,need);if(moved)receipt(r,now,'human.work.input',JSON.stringify({workerId:h.actorId,orderId:intent.intentId,containerId:store.c,into:h.inv.packId,inputs:before.flatMap(s=>{const qty=s.qty-(C(r,store.c!).slots.find(v=>v?.uid===s.uid)?.qty??0);return qty>0?[{...s,qty}]:[];})}));}
     }
-    if(!hasAll(r,h.inv.packId,task.inputs))return fail('supplies unavailable or pack full');
+    if(!materialPayment(pack(r,h),task.inputs))return fail('supplies unavailable or pack full');
     receipt(r,now,'human.work.fetch',`${h.actorId}:${intent.intentId}:${store.id}`);
     task.phase=task.resumePhase??'travel';delete task.resumePhase; h.state='IDLE';h.nextThinkAt=now; return {done:false,reason:'carrying paid materials to work'};
   }
   if(task.patientId) {
     const p=hw.people[task.patientId];
-    if(!p || p.community!==h.community || p.floor!==h.floor || Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)>1 || p.state!=='DOWNED')return fail('patient moved or cannot be treated');
+    if(!p || p.transit || p.community!==h.community || p.floor!==h.floor || Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)>1 || ['DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(p.state))return fail('patient moved or cannot be treated');
     const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
     if(p.floor===(r.veyraFloor??0) && p.gx>=ox && p.gx<ox+WW && p.gy>=oy && p.gy<oy+WH && !clearPhysicalLine(r,{x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE},{x:(p.gx-ox+.5)*TILE,y:(p.gy-oy+.5)*TILE},true))return fail('patient obstructed');
     if(p.state!=='DOWNED' && p.wounds.every(w=>w.treated))return fail('patient already treated');
     const medicine = task.inputs.length===1 && task.inputs[0][1]===1 && ['bandage','herb'].includes(task.inputs[0][0]) ? task.inputs : [];
-    if(!medicine.length || !hasAll(r,h.inv.packId,medicine))return fail('medicine missing');
-    const dose=pack(r,h).slots.find(s=>s?.key===medicine[0][0] && !s.production);if(!dose)return fail('medicine reserved');
-    if(--dose.qty===0)pack(r,h).slots[pack(r,h).slots.indexOf(dose)]=null;
+    const inputs=medicine.length && materialPayment(pack(r,h),medicine,true);
+    if(!inputs)return fail('medicine missing or reserved');
     delete p.nextMedicalReviewAt;delete p.lastWorkBlock;
-    p.wounds.forEach(w=>{w.treated=true;w.bleeding=false;});p.hp=Math.min(p.maxHp,p.hp+30);p.downedAt=undefined;p.state='IDLE';
+    p.wounds.forEach(w=>{w.treated=true;w.bleeding=false;});p.hp=Math.min(p.maxHp,p.hp+30);
+    if(p.state==='DOWNED'){p.downedAt=undefined;p.state='IDLE';}
+    receipt(r,now,'human.medical.payment',JSON.stringify({worker:h.actorId,patient:p.actorId,job:intent.intentId,inputs}));
     receipt(r,now,'human.treat',`${h.actorId}:${p.actorId}:${medicine.map(m=>m[0]).join('+')}`);
   } else if(task.kind==='build' && task.rebuildSite){
     const old=task.rebuildSite,site=comm.lostWorksites?.[old];
@@ -327,38 +329,43 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       task.machineJobId=queued.jobId;task.phase='machine';intent.reserved=[queued.jobId!];
       receipt(r,now,'human.work.start',`${h.actorId}:${intent.intentId}:${task.recipe}:${queued.jobId}`);return {done:false,reason:'machine running'};
     } else if(task.kind==='recycle') {
-      const i=pack(r,h).slots.findIndex(s=>s?.uid===task.itemUid),s=pack(r,h).slots[i], plan=s&&recoveryPlan(s);
+      const i=pack(r,h).slots.findIndex(s=>s && s.uid===task.itemUid && !s.production),s=pack(r,h).slots[i], plan=s&&recoveryPlan(s);
       if(!s || !plan || e.kind!=='recycler' || !e.station || e.station.queue.length || !productionFits(r,e.station.outC,plan.outputs))return fail('recycler input, queue or output blocked');
       pack(r,h).slots[i]=null;const id=uid(r,'j');e.station.queue.push({id,recipe:plan.recipe,left:plan.total,total:plan.total,reserved:[s],workerId:h.actorId});
       task.machineJobId=id;task.phase='machine';intent.reserved=[id];return {done:false,reason:'recycler running'};
     } else if(task.kind==='repair_item') {
       const s=[...pack(r,h).slots,...Object.values(h.equip)].find(s=>s?.uid===task.itemUid);
       const d=s&&ITEMS[s.key], rule=d?.repair;
-      if(!s || !d?.dur || !rule || rule.station!==e.type || s.dur===undefined || s.dur>=d.dur || !hasAll(r,h.inv.packId,rule.cost))return fail('repair condition or materials changed');
-      for(const [k,q]of rule.cost)removeItem(r,h.inv.packId,k,q);s.dur=d.dur;
+      if(!s || s.production || !d?.dur || !rule || rule.station!==e.type || !e.station || s.dur===undefined || s.dur>=d.dur)return fail('repair condition or materials changed');
+      const inputs=materialPayment(pack(r,h),rule.cost,true);if(!inputs)return fail('repair materials missing or reserved');
+      const before=s.dur;s.dur=d.dur;
+      receipt(r,now,'human.maintenance',JSON.stringify({worker:h.actorId,job:intent.intentId,station:e.id,item:s.uid,before,after:s.dur,inputs}));
     } else if(task.kind==='build') {
       const cost=structureRepairCost(e);
-      if(!cost.length || !e.hp || !e.maxHp || e.hp>=e.maxHp || STRUCTS[e.type!]?.item || !hasAll(r,h.inv.packId,cost))return fail('repair target or materials changed');
-      for(const [k,q]of cost)removeItem(r,h.inv.packId,k,q);e.hp=Math.min(e.maxHp,e.hp+Math.ceil(e.maxHp/4));
+      if(!cost.length || !e.hp || !e.maxHp || e.hp>=e.maxHp || STRUCTS[e.type!]?.item)return fail('repair target or materials changed');
+      const inputs=materialPayment(pack(r,h),cost,true);if(!inputs)return fail('repair materials missing or reserved');
+      const before=e.hp;e.hp=Math.min(e.maxHp,e.hp+Math.ceil(e.maxHp/4));
+      receipt(r,now,'human.structure.patch',JSON.stringify({worker:h.actorId,job:intent.intentId,site:e.id,before,after:e.hp,inputs}));
     } else if(task.kind==='engineer') {
       if(!e.basePower || !e.c)return fail('no actual generator');
-      if(!C(r,e.c).slots.some(s=>s&&ITEMS[s.key].fuel)) {
+      const loaded=C(r,e.c).slots.some(s=>s&&!s.production&&ITEMS[s.key].fuel);
+      if(e.basePower.enabled && (loaded || e.basePower.energy>0))return fail('generator already operating');
+      if(!loaded && e.basePower.energy<=0) {
         const fuel=pack(r,h).slots.find(s=>s&&!s.production&&ITEMS[s.key].fuel);if(!fuel)return fail('carry fuel to generator');
         if(!moveHumanGoods(r,h.inv.packId,e.c,fuel.key,1))return fail('generator fuel full');
       }
-      if(e.basePower.enabled && e.basePower.energy>0)return fail('generator already operating');
       e.basePower.enabled=true;
     } else if(task.kind==='garden') {
       const g=e.garden;if(!g)return fail('plot lost');
       if(isGardenCrop(g.crop) && g.growth>=1) {
         const outputs=GARDEN_CROPS[g.crop].output;
-        if(!recoveryFits(pack(r,h),outputs))return fail('harvest pack full');
-        for(const [k,q]of outputs)addItem(r,h.inv.packId,k,q);recordOutputs();g.crop=null;g.growth=0;
+        if(!productionFits(r,h.inv.packId,outputs))return fail('harvest pack full');
+        for(const [k,q]of outputs)addItem(r,h.inv.packId,k,q,{production:{workerId:h.actorId,jobId:intent.intentId,stationId:e.id}});recordOutputs();g.crop=null;g.growth=0;
       } else if(!g.crop && task.crop) {
-        const rule=GARDEN_CROPS[task.crop];if(!hasAll(r,h.inv.packId,rule.inputs))return fail('planting seed missing');
-        for(const [k,q]of rule.inputs)removeItem(r,h.inv.packId,k,q);g.crop=task.crop;g.growth=0;
+        const rule=GARDEN_CROPS[task.crop];if(!materialPayment(pack(r,h),rule.inputs,true))return fail('planting seed missing');
+        g.crop=task.crop;g.growth=0;
       } else if(g.crop && g.water<3) {
-        const flask=pack(r,h).slots.find(s=>s&&ITEMS[s.key].waterContainer&&(s.charge??0)>0);if(!flask)return fail('carry charged potable water');
+        const flask=pack(r,h).slots.find(s=>s&&!s.production&&ITEMS[s.key].waterContainer&&(s.charge??0)>0);if(!flask)return fail('carry charged potable water');
         flask.charge!--;g.water=Math.min(3,g.water+1);
       } else return fail('plot does not need this work');
     } else return fail('work kind unsupported');

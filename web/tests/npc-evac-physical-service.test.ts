@@ -1,9 +1,7 @@
 /**
  * PHYSICAL EVACUATION SERVICE — control-tower 05 §D acceptance matrix.
  *
- * STATUS: **NOT RUN** in this implementation pass. The Creator's standing order is
- * "finish the production plan first, qualify afterwards", so these cases are authored now and
- * executed when the implementation scope closes. Nothing here is evidence of natural play.
+ * Controlled engineering checks. Nothing here is evidence of natural play.
  *
  * Law under test (web/evidence/npc-integration/20261117-final-production-control-tower/05 §D):
  *  - a trip record is not a ship: no boarding before the service opens, no boarding at distance,
@@ -15,7 +13,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { HOUR, WW, type GameState } from '../src/game/core';
-import { newGame, startRun } from '../src/game/engine';
+import { newGame, startRun, mkStack, dispatch, markDirty } from '../src/game/engine';
 import { setActiveLayout } from '../src/game/world';
 import { layoutIdAt } from '../src/veyra05/scenes';
 import { auToTile, windowAround } from '../src/veyra05/frame';
@@ -48,7 +46,7 @@ function atHour(gs: GameState, hour: number): number {
 
 function trip(hw: HumanWorld, i = 0): EvacTrip { return Object.values(hw.evacuation)[i]; }
 
-describe('physical evacuation service (NOT RUN — authored for the post-implementation qualification gate)', () => {
+describe('physical evacuation service', () => {
   it('refuses every boarding attempt while the service is still staged', () => {
     const gs = runAt();
     const r = gs.run!; const hw = r.humanWorld!;
@@ -194,6 +192,25 @@ describe('physical evacuation service (NOT RUN — authored for the post-impleme
     expect(hw.playerEvacTripId).toBe(t.tripId);
   });
 
+  it('leaving the quay releases the seat; the sealed departure records the cargo actually carried at cast-off',()=>{
+    const gs=runAt(),r=gs.run!,hw=r.humanWorld!,t=trip(hw),at=atHour(gs,evacSchedule().openHour);
+    const [ax,ay]=r.sourceMap!.veyra!.originAu;const x=(t.siteGx-ax*2+.5)*16;r.player.x=x;r.player.y=(t.siteGy-ay*2+.5)*16;
+    expect(playerBoardEvac(r,hw,t.tripId,at).ok).toBe(true);r.player.x+=4*16;advanceEvacuation(r,hw,at+1);
+    expect(t.playerAboard).toBe(false);expect(t.manifest).toHaveLength(0);expect(t.departures).toHaveLength(0);
+    r.player.x=x;expect(playerBoardEvac(r,hw,t.tripId,at+2).ok).toBe(true);const item=mkStack(r,'wood',2);r.custody.inv.slots[0]=item;
+    expect(departEvac(r,hw,t.tripId,at+3).ok).toBe(true);expect(t.departures![0].passengers[0].cargo).toContainEqual({uid:item.uid,key:'wood',qty:2});
+  });
+  it('loads a real ration from the player, only at the matching berth and before departure',()=>{
+    const gs=runAt(),r=gs.run!,hw=r.humanWorld!,t=trip(hw),at=atHour(gs,evacSchedule().openHour);
+    const tx=Math.floor(r.player.x/16),ty=Math.floor(r.player.y/16),[ax,ay]=r.sourceMap!.veyra!.originAu;
+    const e=r.entities['supply-berth']={id:'supply-berth',kind:'evac' as const,poi:t.site,x:r.player.x,y:r.player.y,tx,ty};markDirty();
+    const item=mkStack(r,'berries',3);r.custody.inv.slots[0]=item;
+    const send=(id:string)=>dispatch(gs,{id,type:'supplyEvac',eid:e.id,stackUid:item.uid},at);
+    expect(send('different-coast').ok).toBe(false);t.siteGx=tx+ax*2;t.siteGy=ty+ay*2;
+    const hold=r.custody[t.vessel!.holdId],count=()=>hold.slots.reduce((n,s)=>n+(s?.key==='berries'?s.qty:0),0),before=count();
+    expect(send('load').ok).toBe(true);expect(count()).toBe(before+1);expect(item.qty).toBe(2);expect(send('load').ok).toBe(false);
+    t.phase='IN_TRANSIT';expect(send('too-late').ok).toBe(false);expect(count()).toBe(before+1);
+  });
   it('a run that ends while people are aboard leaves them UNRESOLVED, never EVACUATED', () => {
     const gs = runAt();
     const r = gs.run!; const hw = r.humanWorld!;

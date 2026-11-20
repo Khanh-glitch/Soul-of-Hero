@@ -1,5 +1,7 @@
 // Normal-input production-build smoke. No fixture, page-side state mutation or QA clock.
 // DEVICE_SCALE=1, viewport=640x360. Start the built site and pass its URL.
+import {readSaveCensus} from './npc-save-census.mjs';
+import {NPC_POI_CENSUS} from '../src/game/npc-census.ts';
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {mkdirSync, writeFileSync} from 'node:fs';
@@ -12,6 +14,11 @@ try{await p.goto(process.argv[2]||'http://127.0.0.1:4180');const start=p.getByRo
  for(const [key,view] of [['i','inventory'],['c','recipes'],['b','build'],['m','map']]){await p.keyboard.press(key);await capture(view);await p.keyboard.press('Escape');}
  const chart=p.locator('.field-map');await chart.waitFor({state:'hidden'});
  notes.run=await p.evaluate(()=>{const key=Object.keys(localStorage).find(k=>/^soh\.state\.v\d+$/.test(k));if(!key)return null;const raw=JSON.parse(localStorage.getItem(key));const r=JSON.parse(raw.payload).run;return {seed:r.seed,layout:r.layoutId,spawn:r.spawnChoice,clock:r.clock.lastSimAt,people:Object.keys(r.humanWorld.people).length};});
+ const census=await p.evaluate(readSaveCensus,NPC_POI_CENSUS.map(({id,name,archetype,spaces})=>({id,name,archetype,spaces})));
+ writeFileSync(`${out}/census.json`,JSON.stringify(census,null,2));
+ assert.equal(census.rows.length,81);assert.ok(census.rows.every(row=>!row.missing && row.members.every(m=>!m.missing)));
+ const members=census.rows.flatMap(row=>row.members);assert.equal(members.length,census.totalActors);
+ assert.equal(new Set(members.map(m=>m.id)).size,census.totalActors);assert.equal(new Set(members.map(m=>m.origin)).size,census.totalActors);
  for(const v of Object.values(notes.views))assert.deepEqual(v.size,[640,360]);
  assert.match(notes.views.inventory.text,/BACKPACK/);assert.match(notes.views.map.text,/FIELD CHART/);assert.deepEqual(notes.errors,[]);
 }finally{writeFileSync(`${out}/observations.json`,JSON.stringify(notes,null,2));await b.close();}

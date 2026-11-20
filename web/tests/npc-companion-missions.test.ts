@@ -42,3 +42,36 @@ it('only a witnessed deposit becomes a recovery route; the stolen UID survives r
  expect(loaded.custody[cid].slots[0]).toBeNull();expect(loaded.custody[actor.inv.packId].slots.some(s=>s?.uid===stolen.uid)).toBe(true);
  expect(Math.abs(actor.gx-tx-o[0]*2)+Math.abs(actor.gy-ty-o[1]*2)).toBeLessThanOrEqual(1);expect(loaded.receipts.filter(r=>r.kind==='human.grievance.recover')).toHaveLength(1);
 });
+it('home is a physical arrival, including already-there, lost site and reload during the expedition',()=>{
+ const {gs,r,hw,h}=scene(),comm=hw.communities[h.home!],store=findRunEntity(r,comm.storeEntityId)!;
+ h.bedId=undefined;const at=[h.gx,h.gy];expect(commandHuman(r,hw,h,'go','home',T0).ok).toBe(true);
+ expect(h.following).toBe(true);expect([h.gx,h.gy]).toEqual(at);
+ const saved=JSON.parse(JSON.stringify(gs)) as typeof gs,lr=saved.run!,world=lr.humanWorld!,walker=world.people[h.actorId],ls=findRunEntity(lr,store.id)!;
+ const hp=ls.hp;ls.hp=0;markDirty();
+ for(let n=1;n<=100&&!walker.intent?.blockReason?.includes('home site');n++)stepHumans(lr,world,T0+n*1000);
+ expect(walker.intent?.blockReason).toContain('home site');expect(walker.following).toBe(true);
+ expect(lr.receipts.some(e=>e.kind==='human.companion.home')).toBe(false);
+ ls.hp=hp;markDirty();for(let n=101;n<=220&&walker.following;n++)stepHumans(lr,world,T0+n*1000);
+ expect(walker.following).toBe(false);const [gx,gy]=humanEntityTile(lr,ls);
+ expect(Math.abs(walker.gx-gx)+Math.abs(walker.gy-gy)).toBeLessThanOrEqual(1);expect(walker.floor).toBe(ls.floor??0);
+ const arrivals=()=>lr.receipts.filter(e=>e.kind==='human.companion.home');expect(arrivals()).toHaveLength(1);
+ walker.following=true;const here=[walker.gx,walker.gy];expect(commandHuman(lr,world,walker,'already-home','home',T0+221000).msg).toContain('Already home');expect([walker.gx,walker.gy]).toEqual(here);expect(walker.following).toBe(false);expect(arrivals()).toHaveLength(2);
+});
+it('cargo splits conserve parent and landed UIDs, reject invalid quantities and replay after reload',()=>{
+ const {gs,r,h}=scene(),o=r.sourceMap!.veyra!.originAu;
+ h.gx=o[0]*2+Math.floor(r.player.x/TILE);h.gy=o[1]*2+Math.floor(r.player.y/TILE);h.floor=r.veyraFloor??0;
+ const cart=humanCart(r,h),s=mkStack(r,'wood',7);r.custody.inv.slots[0]=s;cart.slots.fill(null);
+ const put=(qty:number,id:string)=>dispatch(gs,{id,type:'humanCargo',actorId:h.actorId,stackUid:s.uid,qty,direction:'give'},T0);
+ const next=r.nextId;for(const bad of [0,8,1.5,-1])expect(put(bad,`bad-${bad}`).ok).toBe(false);
+ cart.slots.fill(mkStack(r,'knife',1));const fullNext=r.nextId;
+ expect(put(2,'full').ok).toBe(false);expect(r.nextId).toBe(fullNext);expect(s.qty).toBe(7);cart.slots.fill(null);
+ expect(put(3,'split').ok).toBe(true);const child=cart.slots[0]!;expect(child.uid).not.toBe(s.uid);expect(child.qty).toBe(3);expect(s.qty).toBe(4);expect(r.nextId).toBe(next+2);
+ expect(JSON.parse(r.receipts.at(-1)!.detail)).toMatchObject({parent:s.uid,portion:child.uid,landed:[{uid:child.uid,qty:3}]});
+ const other=JSON.parse(JSON.stringify(gs)) as typeof gs;expect(dispatch(other,{id:'split',type:'humanCargo',actorId:h.actorId,stackUid:s.uid,qty:3,direction:'give'},T0+1).ok).toBe(false);
+ expect(dispatch(other,{id:'unload',type:'humanCargo',actorId:h.actorId,stackUid:child.uid,qty:3,direction:'return'},T0+2).ok).toBe(true);
+ expect(other.run!.custody.inv.slots.find(c=>c?.uid===child.uid)?.qty).toBe(3);
+});
+it('follow does not finish an obsolete trail after the player dies',()=>{
+ const {r,hw,h}=scene();h.state='MOVING';h.intent={intentId:'follow-live',actorId:h.actorId,kind:'follow',startAt:T0,dueAt:T0,preconditions:[],reserved:[],route:[{tx:h.gx+1,ty:h.gy,floor:h.floor}]};r.player.dead=true;
+ const start=[h.gx,h.gy];stepHumans(r,hw,T0+1000);expect(h.following).toBe(true);expect(h.intent?.blockReason).toContain('Waiting');expect(h.intent?.route).toEqual([]);expect([h.gx,h.gy]).toEqual(start);
+});

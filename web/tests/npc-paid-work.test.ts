@@ -120,3 +120,26 @@ it('missing or claimed recipe inputs and two cooks competing for one bill never 
  expect(JSON.stringify([C(r,cid),e.station])).toBe(once);
  expect(e.station!.queue[0].id).toBe(first.jobId);
 });
+it('mechanic never spends a reserved delivery lot; the paid repair records the material UIDs and original tool',()=>{
+ setActiveLayout('veyra05-greywater');const gs=newGame();expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(true);
+ const r=gs.run!,hw=r.humanWorld!,h=Object.values(hw.people).find(p=>p.occupation==='mechanic')!,o=r.sourceMap!.veyra!.originAu;
+ h.gx=o[0]*2+100;h.gy=o[1]*2+100;h.floor=0;
+ const e:Entity={id:'test-bench',kind:'struct',type:'workbench',tx:101,ty:100,x:1624,y:1608,station:{burn:0,queue:[],fuelC:mkContainer(r,'fuel',1).id,outC:mkContainer(r,'out',1).id}};
+ r.entities[e.id]=e;hw.communities[h.community!].workStations.push(e.id);
+ const tool=mkStack(r,'wood_club',1);tool.dur=1;h.equip.weapon=tool;
+ const pack=C(r,h.inv.packId);pack.slots.fill(null);const held=mkStack(r,'wood',9);held.production={workerId:h.actorId,jobId:'other-delivery'};pack.slots[0]=held;
+ const assignment=()=>{h.state='WORKING';h.intent={intentId:'local-repair',kind:'work',actorId:h.actorId,reserved:[],preconditions:[],startAt:T0,dueAt:T0,work:{kind:'repair_item',phase:'act',inputs:[['wood',3]],duration:8000,entityId:e.id,itemUid:tool.uid}};};
+ assignment();expect(executeHumanWork(r,hw,h,T0+8000).done).toBe(false);expect(tool.dur).toBe(1);expect(held.qty).toBe(9);
+ const free=mkStack(r,'wood',3);pack.slots[1]=free;assignment();expect(executeHumanWork(r,hw,h,T0+16000).done).toBe(true);
+ expect(tool.dur).toBe(ITEMS.wood_club.dur);expect(held.qty).toBe(9);expect(pack.slots[1]).toBeNull();expect(JSON.parse(r.receipts.find(q=>q.kind==='human.maintenance')!.detail)).toMatchObject({worker:h.actorId,item:tool.uid,before:1,inputs:[{uid:free.uid,qty:3}]});
+});
+it('treats a conscious injured resident without dismissing their work; treating twice does not spend twice',()=>{
+ setActiveLayout('veyra05-greywater');const gs=newGame();expect(startRun(gs,'female',T0,null,7606,{tx:100,ty:100}).ok).toBe(true);
+ const r=gs.run!,hw=r.humanWorld!,h=Object.values(hw.people).find(p=>p.occupation==='medic')!,p=Object.values(hw.people).find(p=>p.community===h.community&&p!==h)!;
+ p.floor=h.floor;p.gx=h.gx;p.gy=h.gy;p.state='WORKING';p.hp=p.maxHp-20;p.wounds=[{severity:1,bleeding:true,treated:false}];
+ const dose=mkStack(r,'bandage',2);C(r,h.inv.packId).slots.fill(null);C(r,h.inv.packId).slots[0]=dose;
+ const assign=()=>{h.state='WORKING';h.intent={intentId:'dress-wound',actorId:h.actorId,kind:'work',startAt:T0,dueAt:T0+6000,preconditions:[],reserved:[],work:{kind:'medical',phase:'act',duration:6000,inputs:[['bandage',1]],patientId:p.actorId}};};
+ assign();expect(executeHumanWork(r,hw,h,T0+5999).done).toBe(false);expect(dose.qty).toBe(2);
+ expect(executeHumanWork(r,hw,h,T0+6000).done).toBe(true);expect(p.state).toBe('WORKING');expect(p.wounds[0]).toMatchObject({treated:true,bleeding:false});expect(dose.qty).toBe(1);
+ assign();expect(executeHumanWork(r,hw,h,T0+12000).done).toBe(false);expect(dose.qty).toBe(1);
+});

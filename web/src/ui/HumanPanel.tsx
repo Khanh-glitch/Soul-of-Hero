@@ -3,8 +3,8 @@ import type { Api } from './common';
 import { Icon, Panel } from './common';
 import { drawNpcSprite } from '../game/npc-art';
 import { ITEMS } from '../game/catalog';
-import { canPointOut, humanRepairOffers, humanContact, counterHumanBarter, quoteHumanBarter, humanPack, type BarterLine } from '../game/humanworld';
-import type { Stack } from '../game/core';
+import { demandableGoods, canPointOut, humanRepairOffers, humanContact, counterHumanBarter, quoteHumanBarter, humanPack, type BarterLine } from '../game/humanworld';
+import { BAL, type Stack } from '../game/core';
 import { CREATURES } from '../game/catalog';
 import type { HumanRecord } from '../game/humanworld';
 
@@ -21,10 +21,11 @@ export function HumanPanel({ api, actorId, onClose }: { api: Api; actorId: strin
 function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; onClose: () => void }) {
   const r = api.gs.run!, hw = r.humanWorld!, h = hw.people[actorId];
   const [playerSlot, setPlayerSlot] = useState(0);
-  const [humanSlot, setHumanSlot] = useState(0);
+  const [demandUid,setDemandUid]=useState('');
   const [demand, setDemand] = useState<'back_off' | 'disarm' | 'item' | 'stop_attack'>('back_off');
   const [section, setSection] = useState<'Talk'|'Help'|'Barter'|'Confront'|'Companion'>('Talk');
   const [reply, setReply] = useState('');
+  const [cargoQty,setCargoQty]=useState('');
   const [orderTarget,setOrderTarget]=useState('');
   const [offer,setOffer] = useState<BarterLine[]>([]), [ask,setAsk] = useState<BarterLine[]>([]);
   const [review,setReview]=useState<string>();
@@ -34,7 +35,8 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
   const act = (type: string, extra: Record<string, unknown> = {}) => api.act(type, { actorId, ...extra });
   const respond = (type: string, extra: Record<string, unknown> = {}) => { const result = act(type, extra); setReply(result.ok ? result.msg ?? 'No response.' : result.reason); };
   const selectedPlayer = playerStacks.find(v => v.i === playerSlot) ?? playerStacks[0];
-  const selectedHuman = humanStacks.find(v => v.i === humanSlot) ?? humanStacks[0];
+  const personal=section==='Confront'||h.state==='FIGHTING'?demandableGoods(r,h):[];
+  const choice=personal.find(g=>g.s.uid===demandUid);
   const evaluation = section==='Barter' ? quoteHumanBarter(r,h,offer,ask) : null;
   const commitTrade = () => {
     if (!evaluation?.ok || tradePending || !review || review!==evaluation.revision) return;
@@ -55,6 +57,9 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
   });
   // The actor can be downed, recruited or dismissed while this panel is open.
   const visible = sections.find(s => s === section) ?? sections[0];
+  const cargoCount=(s:Stack)=>cargoQty===''?s.qty:Number(cargoQty);
+  const cargoUnavailable=(s:Stack)=>!!h.intent?.delivery||!!s.production||!Number.isSafeInteger(cargoCount(s))||cargoCount(s)<1||cargoCount(s)>s.qty;
+  const cargo=r.custody[h.inv.cartId];
   const targets = visible === 'Companion' ? [...r.creatures,...Object.values(hw.people)].filter(t=>canPointOut(r,h,t,api.now())).map(t=>
     'actorId' in t ? {id:t.actorId,name:t.name} : {id:t.id,name:CREATURES[t.type]?.name??'Creature'}) : [];
   const visibleTarget = targets.find(t=>t.id===orderTarget)?.id ?? '';
@@ -81,17 +86,17 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
         <select aria-label="Confrontation demand" value={demand} onChange={e => setDemand(e.target.value as typeof demand)} style={{ flex: 1, minWidth: 0 }}>
           <option value="back_off">Back away</option>
           {!!h.equip.weapon && <option value="disarm">Put away weapon</option>}
-          {humanStacks.length > 0 && <option value="item">Hand over carried item</option>}
+          {personal.length > 0 && <option value="item">Hand over personal item</option>}
           {h.state === 'FIGHTING' && <option value="stop_attack">Stop attacking</option>}
         </select>
-        {demand==='item' && <select aria-label="Demanded item" value={selectedHuman?.i??''} onChange={e=>setHumanSlot(Number(e.target.value))}>{humanStacks.map(({s,i})=><option key={s.uid} value={i}>{ITEMS[s.key]?.name} ×{s.qty}</option>)}</select>}
-        <button className="btn sm" onClick={() => respond('humanThreaten', { demand, stackUid: demand === 'item' ? humanStacks.find(v => v.i === humanSlot)?.s.uid : undefined })}>Confront</button>
+        {demand==='item' && <select aria-label="Demanded item" value={choice?.s.uid??''} onChange={e=>setDemandUid(e.target.value)}><option value="">Choose item</option>{personal.map(({s,where})=><option key={s.uid} value={s.uid}>{ITEMS[s.key]?.name} ×{s.qty} · {where}</option>)}</select>}
+        <button className="btn sm" disabled={demand==='item'&&!choice || demand==='disarm'&&!h.equip.weapon || demand==='stop_attack'&&h.state!=='FIGHTING'} onClick={() => respond('humanThreaten', { demand, stackUid: demand==='item'?choice?.s.uid:demand==='disarm'?h.equip.weapon?.uid:undefined })}>Confront</button>
       </div>
     </>}
     {reply && <div role="status" aria-live="polite" style={{ color: '#ffe4a2', borderLeft: '2px solid #bd8d47', padding: '3px 5px', margin: '3px 0 5px', lineHeight: 1.25 }}>{reply}</div>}
     {visible==='Help'&&<div style={{margin:'4px 0'}}>
       <div style={{fontWeight:700}}>Help · urgent needs</div>
-      {playerStacks.filter(({s})=>['bandage','herb'].includes(s.key)&&(isDown||h.wounds.some(w=>!w.treated)) || ITEMS[s.key]?.food?.hunger&&h.hunger<35&&!isDown || ITEMS[s.key]?.waterContainer&&(s.charge??0)>0&&h.thirst<35&&!isDown).map(({s})=><button key={s.uid} className="btn sm" disabled={!!hw.playerAid} onClick={()=>respond('humanAid',{stackUid:s.uid})}>Offer {ITEMS[s.key].name}</button>)}
+      {playerStacks.filter(({s})=>!s.production && (['bandage','herb'].includes(s.key)&&(isDown||h.wounds.some(w=>!w.treated)) || ITEMS[s.key]?.food?.hunger&&h.hunger<35&&!isDown || ITEMS[s.key]?.waterContainer&&(s.charge??0)>0&&h.thirst<35&&!isDown)).map(({s})=><button key={s.uid} className="btn sm" disabled={!!hw.playerAid} onClick={()=>respond('humanAid',{stackUid:s.uid})}>Offer {ITEMS[s.key].name}</button>)}
       {humanRepairOffers(r,h,api.now()).map(({item,station,cost})=><button key={item.uid} className="btn sm" onClick={()=>respond('humanRepair',{stackUid:item.uid,eid:station.id})}>Repair {ITEMS[item.key].name} · spend {cost.map(([key,qty])=>`${qty} ${ITEMS[key].name}`).join(', ')}</button>)}
       {hw.playerAid?.actorId===actorId&&<div role="status">Helping · remain beside them…</div>}
       {!isDown&&h.hunger>=35&&h.thirst>=35&&!h.wounds.some(w=>!w.treated)&&<div style={{opacity:.7}}>No urgent food, water or medical need.</div>}
@@ -127,10 +132,11 @@ function ContactPanel({ api, actorId, onClose }: { api: Api; actorId: string; on
       </select>
       <button className="btn sm" onClick={()=>respond('humanOrder',{order:'defend'})}>Guard me</button>{' '}
       <button className="btn sm" disabled={!visibleTarget} onClick={()=>respond('humanOrder',{order:'engage',target:visibleTarget})}>Engage</button>
-      <div style={{marginTop:4}}>Cargo · {r.custody[h.inv.cartId]?.slots.filter(Boolean).length??0}/6 slots</div>
+      <div style={{marginTop:4}}>Cargo · {cargo.slots.filter(Boolean).length}/{cargo.slots.length} slots · {cargo.slots.reduce((n,s)=>n+(s?ITEMS[s.key].w*s.qty:0),0).toFixed(1)}/{BAL.cart.maxWeight} kg</div>
+      <label>Quantity <input type="number" min="1" step="1" value={cargoQty} placeholder="All" style={{width:48}} onChange={e=>setCargoQty(e.target.value)} /></label>
       {selectedPlayer&&<select aria-label="Companion cargo item" value={selectedPlayer.i} onChange={e=>setPlayerSlot(Number(e.target.value))}>{playerStacks.map(({s,i})=><option key={s.uid} value={i}>{ITEMS[s.key]?.name} ×{s.qty}</option>)}</select>}
-      {selectedPlayer&&<button className="btn sm" onClick={()=>respond('humanCargo',{direction:'give',stackUid:selectedPlayer.s.uid})}>Carry {ITEMS[selectedPlayer.s.key]?.name} ×{selectedPlayer.s.qty}</button>}
-      {r.custody[h.inv.cartId]?.slots.filter((s):s is Stack=>!!s).map(s=><button key={s.uid} className="btn sm" onClick={()=>respond('humanCargo',{direction:'return',stackUid:s.uid})}>Take back {ITEMS[s.key]?.name} ×{s.qty}</button>)}
+      {selectedPlayer&&<button className="btn sm" disabled={cargoUnavailable(selectedPlayer.s)} onClick={()=>respond('humanCargo',{direction:'give',stackUid:selectedPlayer.s.uid,qty:cargoCount(selectedPlayer.s)})}>Carry {ITEMS[selectedPlayer.s.key]?.name} ×{cargoCount(selectedPlayer.s)}</button>}
+      {r.custody[h.inv.cartId]?.slots.filter((s):s is Stack=>!!s).map(s=><button key={s.uid} className="btn sm" disabled={cargoUnavailable(s)} onClick={()=>respond('humanCargo',{direction:'return',stackUid:s.uid,qty:cargoCount(s)})}>Take back {ITEMS[s.key]?.name} ×{cargoCount(s)}</button>)}
       {h.community && hw.communities[h.community]?.storeEntityId && <button className="btn sm" disabled={!!h.intent?.delivery || !r.custody[h.inv.cartId]?.slots.some(Boolean)} onClick={()=>respond('humanOrder',{order:'carry',target:hw.communities[h.community!].storeEntityId})}>Deliver load to home warehouse</button>}
       {h.intent?.delivery && <div>Delivering to the warehouse · Hold to cancel</div>}
       {h.intent?.blockReason&&<div style={{color:'#e69484'}}>{h.intent.blockReason}</div>}
