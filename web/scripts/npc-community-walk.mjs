@@ -12,17 +12,21 @@ try{
  const windows=await vite.ssrLoadModule('/src/veyra05/window.ts'), sites=await vite.ssrLoadModule('/src/game/core-sites.ts');
  // Optional bounded sampling: discard distant *normal* new runs, never edit a
  // spawn/seed or transport a save. Report every rejected seed, not just the selected one.
- const trials=Math.max(1,Math.min(20,Number(process.env.NEAR_START_TRIALS)||1));
+ const selectedSeed=process.env.SOH_WALK_SEED===undefined?undefined:Number(process.env.SOH_WALK_SEED);
+ if(selectedSeed!==undefined)assert.ok(Number.isInteger(selectedSeed)&&selectedSeed>=0&&selectedSeed<=0xffffffff,'Expected a uint32 landing seed');
+ const trials=selectedSeed!==undefined?1:Math.max(1,Math.min(20,Number(process.env.NEAR_START_TRIALS)||1));
  let p;const btn=name=>p.getByRole('button',{name,exact:true});log.landings=[];
  for(let trial=0;trial<trials;trial++){
    p=await browser.newPage({viewport:{width:640,height:360},deviceScaleFactor:1});p.setDefaultTimeout(60000);p.on('pageerror',e=>log.errors.push(e.message));p.on('response',r=>{if(r.status()>=400)log.httpErrors.push([r.status(),r.url()]);});
-   await p.goto(url);await btn('New run').click();await btn('Begin the 14 days').click();await btn('Begin the 14 days').waitFor({state:'hidden'});
+   await p.goto(url);await btn('New run').click();
+   const seed=selectedSeed;if(seed!==undefined){const at=418*2**32+((seed^0x9e3779b9)>>>0);await p.evaluate(at=>{Date.now=()=>at;},at);log.startClock=at;}
+   await btn('Begin the 14 days').click();if(seed!==undefined)await p.evaluate(at=>{const base=performance.now();Date.now=()=>Math.floor(at+performance.now()-base);},log.startClock);await btn('Begin the 14 days').waitFor({state:'hidden'});
    const landing=await p.evaluate(()=>{
      const k=Object.keys(localStorage).find(k=>/^soh\.state\.v\d+$/.test(k)),r=JSON.parse(JSON.parse(localStorage.getItem(k)).payload).run;
      const [ax,ay]=r.sourceMap.veyra.originAu,px=ax*2+r.player.x/16,py=ay*2+r.player.y/16;
      const nearest=Math.min(...Object.values(r.humanWorld.people).filter(h=>h.floor===(r.veyraFloor??0)&&!h.transit&&!['DEAD','DOWNED','EVACUATED','ON_VESSEL'].includes(h.state)).map(h=>Math.hypot(px-h.gx-.5,py-h.gy-.5)));
      return {seed:r.seed,run:r.id,nearestTiles:nearest};
-   });log.landings.push(landing);fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(log,null,2));
+   });if(seed!==undefined)assert.equal(landing.seed,seed);log.landings.push(landing);fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(log,null,2));
    if(trials===1 || landing.nearestTiles<=32)break;
    await p.close();p=null;
  }
@@ -31,11 +35,23 @@ try{
  async function conversation(){
    if(!(await btn('Ask question').isVisible()))return false;
    const panel=p.getByTestId('human-panel');log.contact=await panel.innerText();
-   for(const q of ['activity','needs','place','accompany']){await panel.getByLabel('Conversation topic').selectOption(q);await btn('Ask question').click();log.talk.push([q,await panel.getByRole('status').last().innerText()]);}
+   for(const q of ['activity','needs','place','accompany']){await panel.getByLabel('Conversation topic').selectOption(q);const ask=btn('Ask question');
+     try{await ask.click({timeout:2000});log.talk.push([q,await panel.getByRole('status').last().innerText({timeout:2000})]);}
+     catch(e){if(!(await panel.isVisible())){(log.lostContacts??=[]).push({actor:target,topic:q});return false;}throw e;}}
    await p.screenshot({path:path.join(out,'conversation.png')});await btn('Invite to join you').click();log.recruit=await panel.getByRole('status').last().innerText();
    await panel.getByLabel('Survivor action').selectOption('Help');log.help=await panel.innerText();const supply=panel.getByRole('button',{name:/^Offer /}).first();
    if(await supply.isVisible()){await supply.click();await p.waitForTimeout(6500);log.afterHelp=await panel.innerText();}
-   await panel.getByLabel('Survivor action').selectOption('Barter');log.barter=await p.getByText('Barter · personal packs only').isVisible();await p.screenshot({path:path.join(out,'personal-packs.png')});return true;
+   await panel.getByLabel('Survivor action').selectOption('Barter');log.barter=await p.getByText('Barter · personal packs only').isVisible();await p.screenshot({path:path.join(out,'personal-packs.png')});if(process.env.SOH_WALK_TRADE==='1'){
+     const give=panel.getByRole('button',{name:/^Your offer: add one (?!.*club)/i}),take=panel.getByRole('button',{name:/^Their goods: add one /});
+     const available=async b=>{const opts=[];for(let n=0;n<await b.count();n++)if(await b.nth(n).isEnabled())opts.push(b.nth(n));return opts;};
+     const offers=await available(give),asks=await available(take);if(offers.length&&asks.length){
+       // Try a real pair; an unworkable offer is reported, never force-accepted.
+       await offers[0].click();await asks[0].click();const counter=btn('Request counter-offer');if(await counter.isVisible())await counter.click();
+       if(await btn('Review exchange').isEnabled()){await btn('Review exchange').click();await btn('Accept & exchange').click();log.exchange=await panel.getByRole('status').last().innerText();}
+       else log.refusedTerms=await panel.innerText();
+     }
+     await p.keyboard.press('Escape');const after=await snapshot();log.afterContact={actor:target,at:after.clock.lastSimAt,trust:after.humanWorld.people[target]?.trust,pack:after.custody[after.humanWorld.people[target]?.inv.packId]?.slots,player:after.custody.inv.slots,receipts:after.receipts.filter(v=>/talk|barter|trade|trust|recruit|aid|exchange/.test(v.kind))};
+   }return true;
  }
  const width=200;let target;const excluded=new Set();
  for(let i=0;p && i<45;i++){
@@ -48,11 +64,11 @@ try{
      if(!await picker.isVisible())return false;
      const ids=await picker.locator('option').evaluateAll(opts=>opts.filter(o=>o.value&&!o.textContent.includes(' · downed')).map(o=>o.value));
      const id=ids.find(id=>!excluded.has(id));if(!id)return false;
-     await picker.selectOption(id,{timeout:3000});
+     target=id;await picker.selectOption(id,{timeout:3000});
      if(await conversation())return true;
      excluded.add(id);await p.keyboard.press('Escape');return false;
    }
-   if(await meet())break;
+   log.beforeContact={at:r.clock.lastSimAt,player:r.custody.inv.slots};if(await meet())break;
    if(r.player.dead){log.block='player died during approach';break;}
    const people=Object.values(r.humanWorld.people).filter(h=>!excluded.has(h.actorId)&&h.floor===fl&&h.state!=='DEAD'&&h.state!=='DOWNED'&&h.state!=='EVACUATED'&&h.state!=='ON_VESSEL'&&!h.transit).map(h=>({h,x:h.gx-o[0]*2,y:h.gy-o[1]*2}));
    const cost=t=>Math.hypot(t.x-px,t.y-py)+(t.h.occupation==='guard'?12:0)+(t.h.state==='MOVING'?8:0)-(t.h.actorId===target?1:0);
@@ -96,4 +112,5 @@ try{
    fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(log,null,2));if(met)break;
  }
  assert.deepEqual(log.errors,[]);assert.deepEqual(log.httpErrors,[]);if(!log.talk.length)log.block??='step budget without conversation';console.log(JSON.stringify({seed:log.seed,steps:log.steps.length,talk:log.talk,block:log.block}));
+ if(process.env.SOH_WALK_TRADE==='1'&&!log.afterContact?.receipts.some(v=>v.kind==='human.trade.basket'&&v.detail.startsWith(`${log.afterContact.actor}:`)&&v.at>=log.beforeContact.at)){log.block??='No confirmed basket exchange with the contacted actor';process.exitCode=1;}
 } catch(e){log.failure=String(e);throw e;}finally{fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(log,null,2));await browser.close();await vite.close();}

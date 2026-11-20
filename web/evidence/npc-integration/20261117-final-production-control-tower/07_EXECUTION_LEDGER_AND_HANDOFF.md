@@ -545,3 +545,9 @@ Seed 7606, bản lưu h24 cũ, vắng 3 phút: [đối chứng](../controlled-re
 ### Tidecamp — tìm ra hai mắt xích đứt
 
 [Checkpoint h61 + cách tái hiện + biên nhận thực](../tidecamp-water/README.md). Thợ xây đã được cầm máu nhưng không đủ HP làm việc; bờ biển không phải nguồn nước ngọt. Chăm sóc tiếp vẫn tốn một liều và phải tới bên bệnh nhân; thùng hứng mưa vẫn tốn bộ vật liệu và phải đợi mưa thật. Đối chứng cũ dừng ở h80, không phải bằng chứng tới h336. Seed độc lập 7542 trước thay đổi đã lưu điểm h8; không dùng làm chứng nhận cho mã mới. Kiểm tra mã mới phải bắt đầu lại bằng New Game.
+
+### Kiểm kê sau một giờ và cổng phân biệt chạy hết giờ với cứu được người
+
+[CSV 81 địa điểm, bản lưu, cách tái tạo và giới hạn](../coast-62c9dae/README.md). Chiến dịch mới bắt đầu từ h0 trên `62c9dae`, không dùng ngày đầu từ phiên bản cũ. Ở h1 có 264 người còn hoạt động, 22 gục; 58/81 nơi đã có biên nhận hàng giao kèm nguồn. Bằng chứng này không cho biết cư dân còn sống ở h312, hay có người cập bến. `npc-campaign-gate.mjs` từ chối gói h1; khi có đủ dữ liệu phải đối chiếu hash, mốc thức tỉnh, ba cảng, ghi nhận che chắn, chuyến tàu và phân hoạch K8 ở cùng lượt. Không thay cho kiểm tra trực quan.
+
+6 file hồi quy liên quan chăm sóc/xây dựng/nước/dịch vụ vận chuyển: 27 đạt, 1 bỏ qua do thiếu checkpoint Westbank trong lần chạy đó. Biên nhận h61 khớp `tidecamp-water/paid-catchment.json`; TypeScript app + tests và production build thành công. Giữa lúc suite đang chạy đã chốt hai điều kiện về ưu tiên bệnh nhân và người có thể uống; không gọi lần chạy hỗn hợp này là full regression của SHA. Bộ đầy đủ 256 file đo riêng trên checkout bất biến. Khi xem log shard cũ `83ac289`, chỉ tính `×` **đầu dòng** là lỗi: tên ca migration `count × its preservation ratio` và `role × grade` không phải bằng chứng lỗi `final-item-set` hay `mec01-b-consumer-choice`. Không suy ra kết quả cuối của hai file từ log dở dang.

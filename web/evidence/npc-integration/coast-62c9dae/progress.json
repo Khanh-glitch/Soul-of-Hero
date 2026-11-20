@@ -1,0 +1,164 @@
+{
+  "sha": "62c9dae4d9a5f01f2ae440aef60c882849c50b69",
+  "seed": 7606,
+  "runId": "run_5va_mwhjny80",
+  "actors": 286,
+  "minute": 60,
+  "complete": false,
+  "reports": [
+    {
+      "minute": 60,
+      "elapsedMs": 228537.734123,
+      "counts": {
+        "routeBoundaryChecks": 2652647,
+        "sourceLookups": 12652,
+        "sourceIndexReads": 2507,
+        "worldSlices": 57549,
+        "plannerActivations": 3600,
+        "actorPlans": 3691,
+        "regionCompilations": 210,
+        "renderCompilations": 0,
+        "routeExpansions": 975747,
+        "entityScans": 325088
+      },
+      "timings": {
+        "stepLootRespawn": {
+          "calls": 57609,
+          "ms": 46.18690500302728
+        },
+        "stepG1b": {
+          "calls": 57609,
+          "ms": 303.0861800005987
+        },
+        "stepStations": {
+          "calls": 115098,
+          "ms": 5424.002064998787
+        },
+        "stepTenders": {
+          "calls": 57609,
+          "ms": 1772.0830320000714
+        },
+        "stepTenderStates": {
+          "calls": 57609,
+          "ms": 1673.6166780005387
+        },
+        "humanEventBoundary": {
+          "calls": 57549,
+          "ms": 19471.205104999262
+        },
+        "basePowerBoundary": {
+          "calls": 57549,
+          "ms": 896.9626950015609
+        },
+        "tenderBoundary": {
+          "calls": 57549,
+          "ms": 243.35312599722783
+        },
+        "stepBasePower": {
+          "calls": 57549,
+          "ms": 909.2417270028782
+        },
+        "stepGardensBarrels": {
+          "calls": 57549,
+          "ms": 2672.3955730042053
+        },
+        "tickNeeds": {
+          "calls": 57549,
+          "ms": 34071.83598699939
+        },
+        "navigationRead": {
+          "calls": 90090,
+          "ms": 8400.053803002582
+        },
+        "globalSourceCandidates": {
+          "calls": 3015,
+          "ms": 17949.23304199989
+        },
+        "globalSourceAt": {
+          "calls": 12652,
+          "ms": 6440.518080998503
+        },
+        "compileCanonicalTerrainRegion": {
+          "calls": 209,
+          "ms": 30771.329315999967
+        },
+        "compileCanonicalGeometryRegion": {
+          "calls": 210,
+          "ms": 45215.01061299992
+        },
+        "planAutonomousWork": {
+          "calls": 3691,
+          "ms": 43233.692425000794
+        },
+        "resumeHarvestJob": {
+          "calls": 8631,
+          "ms": 25769.410645
+        },
+        "stepHumans": {
+          "calls": 57549,
+          "ms": 146249.17195699835
+        },
+        "depositHumanOutputs": {
+          "calls": 1166,
+          "ms": 637.2531960002489
+        },
+        "advanceWorld": {
+          "calls": 60,
+          "ms": 228516.6011750001
+        }
+      },
+      "playerDead": false,
+      "states": {
+        "IDLE": 261,
+        "DOWNED": 22,
+        "WORKING": 3
+      },
+      "receipts": {
+        "human.equipment": 68,
+        "human.harvest.select": 992,
+        "human.work": 2158,
+        "human.harvest": 914,
+        "human.harvest.output": 976,
+        "human.door.open": 49,
+        "human.access.yield": 2819,
+        "human.guard.duty": 1136,
+        "human.work.commit": 1159,
+        "human.cargo.lineage": 931,
+        "human.cargo.deliver": 931,
+        "human.store": 883,
+        "human.procurement.ration": 128,
+        "human.harvest.complete": 869,
+        "human.generator.load": 15,
+        "power.fuel": 15,
+        "power.yard.burn": 15,
+        "human.work.input": 21,
+        "human.work.fetch": 18,
+        "human.garden.plant": 1,
+        "human.garden.water": 1,
+        "human.procurement.request": 15,
+        "human.work.blocked": 1,
+        "human.structure.patch": 1,
+        "human.harvest.accident": 21,
+        "human.maintenance": 1,
+        "human.salvage.extract": 11,
+        "human.down": 24,
+        "human.harvest.crush": 24,
+        "human.harvest.cancel": 76,
+        "human.procurement.contribute": 4,
+        "human.production.pay": 2,
+        "station.state": 2,
+        "recycle.finish": 1,
+        "human.production.finish": 2,
+        "job.done": 2,
+        "human.production.pickup": 2,
+        "human.medical.respond": 2,
+        "human.medical.payment": 2,
+        "human.treat": 2,
+        "human.work.start": 1,
+        "human.production.fuel": 1
+      },
+      "saveBytes": 1477873,
+      "digest": "9f6f859922e92df4e0fa96a6307e7ec0a8762c9f5215484b7d5731f331a5387d"
+    }
+  ]
+}
