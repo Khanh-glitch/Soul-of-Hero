@@ -3620,6 +3620,18 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
            if(side){colleague.intent={intentId:`yield:${colleague.actorId}:${now}`,actorId:colleague.actorId,kind:'move',target:'colleague-yield',preconditions:['physical sidestep for a blocked community colleague'],reserved:[],startAt:now,dueAt:now,route:[side]};colleague.state='MOVING';receipt(r,now,'human.access.yield',JSON.stringify({actorId:colleague.actorId,for:h.actorId,from:[colleague.gx,colleague.gy],into:side}));}
           }
 
+          // If a committed colleague cannot yield on the final approach, try
+          // a different physical lane before retrying the same shortest step.
+          if(moveIntent.kind==='work' && moveIntent.target==='store' && !colleague && h.community && occupied.has(humanCellKey(next.floor,next.tx,next.ty))){
+            const store=findRunEntity(r,hw.communities[h.community]?.storeEntityId);
+            if(store && (store.floor??0)===h.floor){
+              const [tx,ty]=humanEntityTile(r,store);
+              if(Math.abs(h.gx-tx)+Math.abs(h.gy-ty)<=6){
+                const nav=humanNavigation(r,occupied,true),alternate=nav.route(h,{tx,ty,floor:h.floor});
+                if(alternate?.length && nav.legalEdge(h,alternate[0])){moveIntent.route=alternate;delete moveIntent.blockReason;continue;}
+              }
+            }
+          }
           if (moveIntent.kind === 'follow' || moveIntent.delivery || returningHome(moveIntent)){moveRoute.length=0;h.state='IDLE';moveIntent.dueAt=now+750;}
           else if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.motion = undefined; moveRoute.length = 0; h.nextThinkAt = now + 750; }
           else { if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000; }

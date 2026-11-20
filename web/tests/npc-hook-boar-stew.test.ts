@@ -67,5 +67,22 @@ it('makes one Hook stew from the first garden lot and a hunted boar; only inter-
  const packId=r().humanWorld!.people[pay.workerId].inv.packId;expect(finish[0].outputs).toEqual([{uid:pickup[0].uid,key:'stew',qty:1}]);
  expect(pickup[0]).toMatchObject({qty:1,workerId:pay.workerId,containerId:packId,production:{inputs:pay.inputs}});
  expect(C(r(),packId).slots.find(s=>s?.uid===pickup[0].uid)).toMatchObject({key:'stew',qty:1,production:{jobId:saved}});
+ // Follow the paid lot without moving the player, reserving a bin, or changing
+ // any villager. A route marked FOUND is not a delivery receipt.
+ const cook=()=>r().humanWorld!.people[pay.workerId];
+ const end=r().clock.lastSimAt+150000;
+ while(!cook().deliveryWait && r().clock.lastSimAt<end) settle(gs,r().clock.lastSimAt+2000,true);
+ const waiting=()=>{
+   const h=cook(),c=stock(),[sx,sy]=community().storeTile!;
+   expect(h.deliveryWait?.containerId).toBe(c.id);
+   expect(Math.abs(h.gx-sx)+Math.abs(h.gy-sy)).toBeLessThanOrEqual(1);
+   expect(c.slots).toHaveLength(12);expect(c.slots.every(Boolean)).toBe(true);
+   expect(h.workOutputs?.[pickup[0].uid]).toBe(1);
+   expect(C(r(),packId).slots.find(s=>s?.uid===pickup[0].uid)).toMatchObject({key:'stew',qty:1,production:{jobId:saved}});
+   expect(Object.values(community().cargoLedger??{}).flat().some(row=>row.jobId===saved)).toBe(false);
+   return {at:r().clock.lastSimAt,position:[h.gx,h.gy,h.floor],store:[sx,sy],containerId:c.id,reason:h.lastWorkBlock,occupied:c.slots.filter(Boolean).length,carried:pickup[0].uid};
+ };
+ const arrival=waiting();gs=validate(JSON.parse(JSON.stringify(gs)))!;waiting();settle(gs,arrival.at+30000,true);const afterReload=waiting();
+ console.log('HOOK_STEW_RETURN',JSON.stringify({seed:r().seed,start:T0,jobId:saved,worker:pay.workerId,arrival,afterReload}));
  console.log('HOOK_BOAR_STEW',JSON.stringify({seed:r().seed,start:T0,scope:'player hunt; controlled inter-region arrival; autonomous cooking',crop,game,pack:rows('human.kitchen.repack'),gift,bill,pay,saved,finish,pickup}));
 },600000);

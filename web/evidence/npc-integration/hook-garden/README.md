@@ -34,3 +34,9 @@ Reproduce: `npm test -- --maxWorkers=1 tests/npc-hook-kitchen.test.ts` from `web
 One meat leaves the player’s stack and enters Hook’s existing 12-slot warehouse. To free the slot, the pantry consolidates two compatible herb lots and records both UIDs. Cook `hl` withdraws two of the three Sunroot, the contributed meat and one herb, pays once at campfire `e1ad`, and picks up the one finished stew in pack `c1ax`. The active queue survives a save round-trip. Evidence stops at pickup, not a warehouse delivery or a meal eaten.
 
 From `web/`: `npm test -- --maxWorkers=1 tests/{npc-hook-boar-stew,npc-kitchen-contribution}.test.ts`. The second test uses controlled stock to exercise refusal/ownership rules; it is not hunting evidence.
+
+### Return trip: reached the pantry, no transfer
+
+[Return-attempt trace](pantry-return-7606.json), rerun from geographic New Game 7606 with the same controlled player arrival as above. Before the routing change, the carrier repeatedly tried the crowded shortest approach and was observed three tiles from the pantry, still carrying the stew. On a blocked approach the carrier can now plan another nearby lane; this neither moves another villager nor bypasses the normal per-step collision checks.
+
+The fresh run uses first crop `s3eg` and the boar meat again. Its stew UID is `s3kd` (the previous trace's `s3ke` is not an input to this run). At +701.1 s `hl` is at `(2586,655,0)`, one tile from the store, with `deliveryWait` for `c19v`. All 12 slots are occupied. After a save round-trip and another 30 simulation seconds the stew is still in `c1ax`, claimed to `j3jw`; there is no warehouse lineage for that job. This is a failed unload, not delivery, loss, or consumption. No bin was emptied to pass this test. Reproduce with `npm test -- --maxWorkers=1 tests/npc-hook-boar-stew.test.ts` from `web/`.
