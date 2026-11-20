@@ -388,6 +388,7 @@ describe('NPC P0 corrective', () => {
     if (!confrontation.ok) throw new Error(confrontation.reason);
     expect(confrontation.msg).toMatch(/fights back/);
     let hits = 0;
+    stepHumanCombat(r, hw, at, undefined, () => hits++);expect(hits).toBe(0);
     stepHumanCombat(r, hw, at + 500, undefined, () => hits++);
     expect(hits).toBe(1);
     expect(h.equip.weapon?.dur).toBe(119);
@@ -577,6 +578,8 @@ describe('NPC P0 corrective', () => {
     delete r.entities[wallId]; markDirty();
     stepHumanCombat(r, hw, T0 + 1100, () => hits++);
     stepHumanCombat(r, hw, T0 + 1200, () => hits++);
+    expect(hits).toBe(0); // still in windup
+    const contact=h.intent!.swing!.contactAt;stepHumanCombat(r,hw,contact,()=>hits++);stepHumanCombat(r,hw,contact,()=>hits++);
     expect(hits).toBe(1); // cadence blocks the second release
     expect(h.equip.weapon?.dur).toBe(9);
     m.floor = 1;
@@ -587,6 +590,7 @@ describe('NPC P0 corrective', () => {
     expect(hits).toBe(1); // out of reach
     m.x = (lane![0] + 1.5) * TILE;
     stepHumanCombat(r, hw, T0 + 4000, () => hits++);
+    stepHumanCombat(r,hw,h.intent!.swing!.contactAt,()=>hits++);
     expect(hits).toBe(2);
   });
 

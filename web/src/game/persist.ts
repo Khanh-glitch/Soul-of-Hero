@@ -251,6 +251,9 @@ export function validate(raw: any): GameState | null {
     // A survivor's shot names who it was aimed at; that name must be a body (or the player) in this run.
     if (c.projectiles.some((q: any) => q.from === 'human' && (typeof q.victim !== 'string' || !q.victim ||
       (q.victim !== 'player' && !raw.run?.humanWorld?.people?.[q.victim] && !(raw.run?.creatures ?? []).some((m: any) => m?.id === q.victim))))) return null;
+    // The UID is provenance, not a claim that the caster must still own the item at impact.
+    if(c.projectiles.some((q:any)=>q.coreUid!==undefined&&(typeof q.coreUid!=='string'||!q.coreUid)))return null;
+    if(c.hazards.some((h:any)=>h?.coreUid!==undefined && (typeof h.coreUid!=='string'||!h.coreUid||h.owner!=='player'&&(!r.humanWorld?.people?.[h.owner]||typeof h.victim!=='string'))))return null;
     if (c.hazards.some((h: any) => !obj(h) || !['circle','line','ring','wave','sweep','pool'].includes(h.kind) || !['x','y','t','tell','dur','dmg'].every(k => finite(h[k])) || typeof h.style !== 'string' || (h.elder !== undefined && !lookupElderDef(h.elder)) || ['r','angle','len','w','tickAcc','a0','a1','expiresSimMs'].some(k => h[k] !== undefined && !finite(h[k])))) return null;
   }
   if (r.sourceLayoutVersion === 3) for (const [key, st] of Object.entries(r.sources) as [string, any][]) {
@@ -783,6 +786,9 @@ export function validate(raw: any): GameState | null {
       if (h.threat !== undefined && (!obj(h.threat) || ![h.threat.waves, h.threat.hit, h.threat.guarded].every(integer))) return null;
       const d=h.intent?.delivery;
       if(d!==undefined && (!obj(d)||typeof d.storeId!=='string'||typeof d.containerId!=='string'||!Array.isArray(d.cargo)||!d.cargo.length||d.cargo.some((q:any)=>!obj(q)||typeof q.uid!=='string'||!integer(q.qty)||q.qty<1)||new Set(d.cargo.map((q:any)=>q.uid)).size!==d.cargo.length))return null;
+      const swing=h.intent?.swing;
+      if(swing!==undefined && (!obj(swing)||typeof swing.uid!=='string'||typeof swing.victim!=='string'||!Number.isInteger(swing.floor)||![swing.angle,swing.distance,swing.contactAt].every(finite)||swing.distance<0))return null;
+      if(h.attackReadyAt!==undefined&&!finite(h.attackReadyAt))return null;
       const cast=h.intent?.coreCast;
       if(cast!==undefined && (!obj(cast)||typeof cast.uid!=='string'||typeof cast.victim!=='string'||!Number.isInteger(cast.floor)||!finite(cast.angle)||!finite(cast.readyAt)))return null;
       const lead=h.recoveryLead;

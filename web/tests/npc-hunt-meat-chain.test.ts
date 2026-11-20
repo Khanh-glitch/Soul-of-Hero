@@ -17,8 +17,8 @@ it('only a lethal guard strike drops meat, then the guard moves that UID into vi
   const wolf={...r.creatures[0],id:'hunt-wolf',type:'wolf',state:'chase' as const,x:px(guard.gx)+1,y:py(guard.gy),floor:0 as const,hp:100,maxHp:100,elder:undefined,sideBoss:undefined,husbandry:undefined};r.creatures.push(wolf);
   guard.state='FIGHTING';guard.intent={intentId:'defend',actorId:guard.actorId,kind:'fight',target:wolf.id,reserved:[],preconditions:[],startAt:T0,dueAt:T0};
   const strike=(now:number)=>stepHumanCombat(r,hw,now,(m,dmg,a,h)=>damageCreature(gs,m,dmg,a,now,130,h.actorId));
-  strike(T0+1000);expect(wolf.hp).toBeLessThan(100);expect(wolf.hp).toBeGreaterThan(0);expect(guard.gameDrop).toBeUndefined();
-  wolf.hp=1;strike(T0+6000);expect(wolf.state).toBe('dead');const claim=guard.gameDrop!;expect(claim.creatureId).toBe(wolf.id);
+  strike(T0+1000);expect(wolf.hp).toBe(100);strike(guard.intent!.swing!.contactAt);expect(wolf.hp).toBeLessThan(100);expect(wolf.hp).toBeGreaterThan(0);expect(guard.gameDrop).toBeUndefined();
+  wolf.hp=1;strike(T0+5000);strike(T0+6000);expect(wolf.state).toBe('dead');const claim=guard.gameDrop!;expect(claim.creatureId).toBe(wolf.id);
   const drop=r.entities[claim.entityId];expect(r.custody[drop.c!].slots[0]?.uid).toBe(claim.stackUid);
   stepHumans(r,hw,T0+6100);expect(guard.state).toBe('IDLE');
   expect(planHumanOccupation(r,hw,guard,T0+6200,(tx,ty,floor)=>nav.route(guard,{tx,ty,floor}))).toBe(true);

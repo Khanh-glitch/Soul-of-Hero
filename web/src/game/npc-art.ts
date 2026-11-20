@@ -44,7 +44,7 @@ export function resolveNpcClip(h: HumanRecord, simSec: number, moving: boolean):
   const now = simSec * 1000;
   if (h.lastDamageAt !== undefined && now >= h.lastDamageAt && now - h.lastDamageAt < 180) return 'hurt';
   if (moving) return 'walk';
-  if (h.state==='FIGHTING' && h.intent?.coreCast) return 'attack';
+  if (h.state==='FIGHTING' && (h.intent?.coreCast || h.intent?.swing)) return 'attack';
   if (h.lastAttackAt !== undefined && now >= h.lastAttackAt && now - h.lastAttackAt < 240) return 'attack';
   if (h.state === 'WORKING' && h.intent?.kind === 'work' && (h.intent.target?.startsWith('harvest:') || !!h.intent.work && h.intent.work.phase !== 'machine')) return 'use';
   return moving ? 'walk' : 'idle';
@@ -150,6 +150,10 @@ function drawNpcActionMark(g: CanvasRenderingContext2D, h: HumanRecord, X: numbe
     // The equipped item's hand remains attached to the same body; unarmed strikes show no weapon.
     if (h.intent?.coreCast){
       const hx=X+8+fx*6,hy=Y+18+fy*3;g.fillStyle='#72bbef';g.fillRect(hx-1,hy-1,3,3);g.fillStyle='#f2faff';g.fillRect(hx,hy,1,1);
+    } else if(h.intent?.swing){
+      // Raised hand before actual contact; no slash or muzzle flash yet.
+      const hx=X+8-fx*4,hy=Y+13-fy*2;g.fillStyle='#b89162';g.fillRect(hx,hy,2,6);
+      g.fillStyle='#fff0bb';g.fillRect(hx-1,hy-2,3,2);
     } else if (h.equip.weapon) {
       const hx = X + 8 + fx * 5, hy = Y + 19 + fy * 3;
       g.fillStyle = '#9e7847'; g.fillRect(hx, hy, 1, 5);

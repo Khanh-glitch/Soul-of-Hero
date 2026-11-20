@@ -1,3 +1,4 @@
+import {swingTiming,basicCastTiming} from './combat-timing';
 import {observeRecipeSources,serviceRecipeBoard,recipeBoardDestination,requestedSourceReports,communityFoodDeficit,type FoodRequest,type SourceReport} from './human-procurement';
 import {timedWorldWork} from './world-work';
 import {globalSourceCandidates, globalBaseGeometry} from '../veyra05/window';
@@ -25,9 +26,9 @@ import {countWorldWork} from './world-work';
  *  - Legacy runs without `humanWorld` remain solo-compatible; new runs seed finite source-authorized
  *    humans. No retroactive population/loot mint on old saves.
  */
-import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature, type Proj } from './core';
+import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
 import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import {basicCoreRay,coreRayProjectile} from './core-ray';
+import {basicCoreReach,type BasicCast} from './core-ray';
 import {coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
@@ -89,6 +90,7 @@ export function humanCart(r: RunState, h: HumanRecord): Container { return r.cus
 export interface HumanCore { uid: string; lvl: 1 | 2 | 3; dur: number; cd: { basic?: number; refined?: number; signature?: number }; }
 export interface HumanWound { severity: number; bleeding: boolean; bleedingUntil?: number; treated: boolean; }
 export interface HumanKnowledge {
+  testimony?:Record<string,{from:string;at:number}>;
   observedSources: string[];
   witnesses: string[];        // actorIds who witnessed an incident with this actor
   incidents: string[];        // incident ids this actor knows about
@@ -97,6 +99,7 @@ export interface HumanKnowledge {
 }
 export interface HumanIntent {
   guardPlayer?: boolean;
+  swing?: {uid:string;victim:string;floor:number;angle:number;distance:number;contactAt:number};
   coreCast?: {uid:string;victim:string;readyAt:number;floor:number;angle:number};
   delivery?: {storeId:string;containerId:string;cargo:{uid:string;qty:number}[]};
   work?: HumanWorkTask;
@@ -144,6 +147,7 @@ export interface HumanRecord {
   occupation: Occupation;
   civilDecision?: {kind:"stay"|"seek_berth";reason:string};
   berthRetryAt?:Record<string,number>;
+  reportIncident?:string; // freshest first-hand event to tell a local guard
   recoveryLead?: {incidentId:string;uid:string;chestId:string;containerId:string;tx:number;ty:number;floor:number;seenAt:number};
   combatProficiency: 0 | 1 | 2 | 3;   // untrained/trained/skilled/specialist
   disposition: HumanDisposition;
@@ -182,6 +186,7 @@ export interface HumanRecord {
   orderDecisions?: Record<string, {orderId:string;result:OrderResult;reason:string;at:number;order:CompanionCommand;target?:string}>;
   /** Persistent social standing with the player; changes only through witnessed social acts. */
   trust?: number;
+  attackReadyAt?:number; // recovery follows the body across a change of intent
   lastAttackAt?: number;
   lastDamageAt?: number;
   /** Throttled autonomous planner; movement interpolation is presentation of the tile-legal route. */
@@ -1052,12 +1057,12 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
   h.lastDamageAt = now;
   if (attackerId && attackerId !== h.actorId) {
     const incident = recordIncident(r, hw, {
-      kind: 'assault', victim: h.actorId, aggressor: attackerId, witnesses: [], at: now,
+      kind: 'assault', victim: h.actorId, aggressor: attackerId, witnesses: incidentWitnesses(r,hw,h,attackerId), at: now,
       place: { tx: h.gx, ty: h.gy, floor: h.floor }, injury: true, resolved: false,
     }, now);
     formGrievance(r, hw, h, attackerId, now, incident.id);
   }
-  if(h.hp>0 && attackerId && (source==='human'||source==='player'||source==='enemy') && h.state!=='DOWNED' && humanWeapon(h)) {
+  if(h.hp>0 && attackerId && (source==='human'||source==='player'||source==='enemy') && h.state!=='DOWNED' && (humanWeapon(h)||readyCore(r,h,now))) {
     h.motion=undefined;h.state='FIGHTING';h.intent={intentId:`defend:${h.actorId}:${now}`,actorId:h.actorId,kind:'fight',target:attackerId,preconditions:['direct physical assault'],reserved:[],startAt:now,dueAt:now};
   }
   if (h.hp <= 0) {
@@ -1372,13 +1377,16 @@ export function lootHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: numb
   if (h.state !== 'DOWNED') return { taken: 0, reason: 'must be downed to loot' };
   const dst = r.custody[intoContainerId]; if (!dst) return { taken: 0, reason: 'no destination custody' };
   const pack = humanPack(r, h);
-  let taken = 0;
+  let taken = 0;const property:string[]=[];
   for (let i = 0; i < pack.slots.length; i++) {
     const s = pack.slots[i]; if (!s) continue;
-    if (addStack(r, dst.id, s)) { pack.slots[i] = null; taken += s.qty; }
+    if (addStack(r, dst.id, s)) { pack.slots[i] = null; taken += s.qty;property.push(s.uid); }
     // If addStack refused (no room / non-mergeable), the stack stays in the pack — identity preserved.
   }
-  if (taken > 0) receipt(r, now, 'human.loot', `${h.actorId}:-${taken}`);
+  if(taken>0){
+    if(intoContainerId==='inv')recordIncident(r,hw,{kind:'theft',victim:h.actorId,aggressor:'player',witnesses:incidentWitnesses(r,hw,h,'player'),property,at:now,place:{tx:h.gx,ty:h.gy,floor:h.floor},resolved:false},now);
+    receipt(r, now, 'human.loot', `${h.actorId}:-${taken}`);
+  }
   return { taken };
 }
 
@@ -1456,11 +1464,14 @@ export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   if (!needs.length) needs.push('I have no urgent need right now.');
   const packSummary = carried.length ? `I am carrying ${carried.join(', ')}.` : 'I have nothing in my personal pack to offer.';
   const place = h.community ? `This is my community at ${hw.communities[h.community]?.poi ?? 'this settlement'}. I can only tell you what I have personally seen.` : 'I have not learned enough about this place to guide you yet.';
+  const latest=knownIncidents.filter(i=>['theft','assault','robbery','murder'].includes(i.kind)).at(-1);
+  const heard=latest && h.disposition_known.testimony?.[latest.id];
+  const news=latest?(heard?`${hw.people[heard.from]?.name??'A witness'} told me about the ${latest.kind}. I did not see it myself.`:latest.witnesses.includes(h.actorId)?`I saw the ${latest.kind} here.`:undefined):undefined;
   const response = topic === 'activity' ? activity
     : topic === 'needs' ? needs.join(' ')
-    : topic === 'place' ? place
+    : topic === 'place' ? news??place
     : topic === 'goods' ? packSummary
-    : topic === 'accompany' ? (h.following ? 'I am already traveling with you.' : h.disposition === 'predatory' ? 'No. I will not travel with you.' : (h.trust ?? 50) < 55 ? 'I do not know you well enough to travel together. Show me I can rely on you first.' : 'I would consider traveling with you. Ask me to join when you are ready.')
+    : topic === 'accompany' ? (h.following ? 'I am already traveling with you.' : h.disposition === 'predatory' ? 'No. I will not travel with you.' : recentWarning(hw,h,now)??((h.trust ?? 50) < 55 ? 'I do not know you well enough to travel together. Show me I can rely on you first.' : 'I would consider traveling with you. Ask me to join when you are ready.'))
     : facts.slice(0, 4).join(' ');
   receipt(r, now, 'human.talk', `${h.actorId}:${topic ?? 'status'}`);
   return response;
@@ -1495,14 +1506,7 @@ export function threatenHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: 
   if (demand === 'disarm' && !h.equip.weapon) return { ok: false, reason: 'They are not carrying an equipped weapon.' };
   if (demand === 'stop_attack' && h.state !== 'FIGHTING') return { ok: false, reason: 'They are not attacking anyone right now.' };
   faceTowardPlayer(r, h);
-  const origin = r.sourceMap?.veyra?.originAu;
-  const ox = origin ? Math.round(origin[0] / 0.5) : 0, oy = origin ? Math.round(origin[1] / 0.5) : 0;
-  const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
-  const witnesses = Object.values(hw.people).filter(other => {
-    if (other.actorId === h.actorId || other.state === 'DEAD' || other.state === 'EVACUATED' || other.state === 'DOWNED' || other.floor !== h.floor) return false;
-    const wx = (other.gx - ox + 0.5) * TILE, wy = (other.gy - oy + 0.5) * TILE;
-    return Math.hypot(other.gx - h.gx, other.gy - h.gy) <= 8 && clearPhysicalLine(r, { x: wx, y: wy }, { x: hx, y: hy }, true);
-  }).map(other => other.actorId);
+  const witnesses=incidentWitnesses(r,hw,h,'player');
   const playerWeapon = r.custody.inv.slots[r.player.active];
   const scene = JSON.stringify([h.gx, h.gy, h.floor, h.state, h.equip.weapon?.uid ?? '', h.equip.weapon?.dur ?? -1, Math.round(h.hp), witnesses.sort(), playerWeapon?.uid ?? '', playerWeapon?.dur ?? -1, Math.round(r.player.hp), r.player.active]);
   if (h.confrontationAttempt?.scene === scene && now - h.confrontationAttempt.at < 15000) {
@@ -1556,9 +1560,18 @@ export function threatenHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: 
   return { ok: false, reason: 'No feasible response.' };
 }
 
+function recentWarning(hw:HumanWorld,h:HumanRecord,now:number){
+  if(h.disposition!=='protective'&&h.occupation!=='guard')return;
+  for(const id of Object.keys(h.disposition_known.testimony??{}).reverse()){
+    const i=hw.incidents[id],victim=i?.victim?hw.people[i.victim]:null;
+    if(i?.aggressor==='player' && !i.resolved && victim && (victim.community===h.community || h.protectedPeople.includes(victim.actorId)) && now-i.at<=30*60000)return 'Someone here reported that you hurt or robbed one of ours. I am staying with them.';
+  }
+}
 export function recruitHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): { ok: boolean; reason?: string } {
   if (h.following) return { ok: false, reason: 'already a companion' };
   if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'FIGHTING') return { ok: false, reason: 'not available to recruit' };
+  if(h.transit||h.state==='ON_VESSEL')return {ok:false,reason:'I am already aboard.'};
+  const warning=recentWarning(hw,h,now);if(warning)return {ok:false,reason:warning};
   if (h.disposition === 'predatory') return { ok: false, reason: 'this survivor will not join you' };
   if ((h.trust ?? 50) < 55) return { ok: false, reason: 'I do not know you well enough yet. Show that I can rely on you first.' };
   faceTowardPlayer(r, h);
@@ -1710,19 +1723,52 @@ export function commandHuman(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,or
 // ---------------------------------------------------------------------------
 // Crime, witnesses, retaliation — bounded incident ledger (no GPS, no morale currency).
 // ---------------------------------------------------------------------------
+/** Only identify an aggressor if both bodies can be seen from the witness.
+ * No remote-window raycasts and no inference from an unexplained impact. */
+function incidentWitnesses(r:RunState,hw:HumanWorld,victim:HumanRecord,aggressor:string){
+  if(victim.floor!==(r.veyraFloor??0))return [];
+  const o=r.sourceMap?.veyra?.originAu,ox=o?o[0]*2:0,oy=o?o[1]*2:0;
+  const pos=(h:HumanRecord)=>({x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE});
+  const v=pos(victim),attacker=hw.people[aggressor];
+  const a=aggressor==='player'?r.player:attacker?.floor===victim.floor&&!attacker.transit?pos(attacker):undefined;
+  const local=(p:{x:number;y:number})=>p.x>=0&&p.y>=0&&p.x<WW*TILE&&p.y<WH*TILE;
+  if(!a || !local(v) || !local(a))return [];
+  return Object.values(hw.people).filter(h=>{
+    if(h===victim || h===attacker || h.floor!==victim.floor || h.transit || ['DEAD','DOWNED','ON_VESSEL','EVACUATED'].includes(h.state) || Math.hypot(h.gx-victim.gx,h.gy-victim.gy)>8)return false;
+    const w=pos(h);return local(w)&&Math.hypot(w.x-a.x,w.y-a.y)<=8*TILE&&clearPhysicalLine(r,w,v,true)&&clearPhysicalLine(r,w,a,true);
+  }).map(h=>h.actorId);
+}
+/** First-hand reports travel with the witness. A listener never becomes a
+ * witness, learns current coordinates, or starts a fight on hearsay. */
+function reportToGuard(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occupied:Set<string>){
+  const inc=h.reportIncident?hw.incidents[h.reportIncident]:undefined;
+  if(!inc || !inc.witnesses.includes(h.actorId) || inc.resolved || now-inc.at>30*60000){delete h.reportIncident;return false;}
+  const comm=h.community?hw.communities[h.community]:null;if(!comm || h.floor!==(r.veyraFloor??0))return false;
+  const o=r.sourceMap?.veyra?.originAu,ox=o?o[0]*2:0,oy=o?o[1]*2:0;
+  const x=(h.gx-ox+.5)*TILE,y=(h.gy-oy+.5)*TILE;if(x<0||y<0||x>=WW*TILE||y>=WH*TILE)return false;
+  const guard=comm.memberIds.map(id=>hw.people[id]).filter(p=>p && p!==h && p.actorId!==inc.aggressor && p.occupation==='guard' && p.state==='IDLE' && !p.following && !p.transit && p.floor===h.floor && !p.disposition_known.incidents.includes(inc.id) && Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)<=8 && clearPhysicalLine(r,{x,y},{x:(p.gx-ox+.5)*TILE,y:(p.gy-oy+.5)*TILE},true)).sort((a,b)=>Math.hypot(a.gx-h.gx,a.gy-h.gy)-Math.hypot(b.gx-h.gx,b.gy-h.gy))[0];
+  if(!guard)return false;
+  if(Math.abs(guard.gx-h.gx)+Math.abs(guard.gy-h.gy)>1){
+    const route=humanNavigation(r,occupied,true).route(h,{tx:guard.gx,ty:guard.gy,floor:h.floor});if(!route?.length)return false;
+    h.intent={intentId:`report:${inc.id}:${h.actorId}`,actorId:h.actorId,kind:'move',target:guard.actorId,preconditions:['saw the incident and a guard'],reserved:[],startAt:now,dueAt:now,route};h.state='MOVING';return true;
+  }
+  guard.disposition_known.incidents.push(inc.id);(guard.disposition_known.testimony??={})[inc.id]={from:h.actorId,at:now};delete h.reportIncident;
+  receipt(r,now,'human.incident.report',`${inc.id}:${h.actorId}->${guard.actorId}`);return true;
+}
 export function recordIncident(r: RunState, hw: HumanWorld, inc: Omit<HumanIncident, 'id'>, now: number): HumanIncident {
   let id: string;
   do { const n = hw.nextIncidentSeq ?? 0; hw.nextIncidentSeq = n + 1; id = `inc:${r.id}:${n}`; } while (hw.incidents[id]);
   const full: HumanIncident = { id, ...inc };
   hw.incidents[id] = full;
   if(inc.kind==='robbery' && inc.robbedQuantity && inc.aggressor==='player')for(const uid of inc.property??[])(hw.robberyByUid??={})[uid]=id;
-  if (inc.victim && hw.people[inc.victim]) {
+  if (inc.victim && hw.people[inc.victim] && !(inc.kind==='theft'&&hw.people[inc.victim].state==='DOWNED')) {
     const v = hw.people[inc.victim];
     if (!v.disposition_known.incidents.includes(id)) v.disposition_known.incidents.push(id);
     if (inc.aggressor && !v.disposition_known.knownPeople.includes(inc.aggressor)) v.disposition_known.knownPeople.push(inc.aggressor);
   }
   for (const w of inc.witnesses) {
     const wit = hw.people[w]; if (!wit) continue;
+    if(!inc.resolved && ['theft','robbery','assault','murder'].includes(inc.kind)){wit.reportIncident=id;if(wit.state==='IDLE')wit.nextThinkAt=Math.min(wit.nextThinkAt??now,now);}
     if (!wit.disposition_known.incidents.includes(id)) wit.disposition_known.incidents.push(id);
     if (inc.aggressor && !wit.disposition_known.knownPeople.includes(inc.aggressor)) wit.disposition_known.knownPeople.push(inc.aggressor);
   }
@@ -2914,6 +2960,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   }
   if(planHumanWater(r,h,now,occupied))return;
   if (h.hunger < 25 || h.thirst < 25) return;
+  if(h.reportIncident && reportToGuard(r,hw,h,now,occupied))return;
   if(h.recoveryLead && pursueProperty(r,hw,h,now,occupied))return;
   if(h.deliveryWait){h.nextThinkAt=Number.MAX_SAFE_INTEGER;return;}
   const pack = humanPack(r, h);
@@ -3114,7 +3161,7 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
   }
 });}
 function humanCombatTarget(r:RunState,hw:HumanWorld,id:string|undefined,floor:number): {x:number;y:number;human?:HumanRecord}|null {
-  if(id==='player')return r.player.dead?null:r.player;
+  if(id==='player')return r.player.dead||playerAtSea(r)?null:r.player;
   const h=id?hw.people[id]:undefined;
   if(h){if(h.transit||h.floor!==floor||['DEAD','EVACUATED','DOWNED','ON_VESSEL'].includes(h.state))return null;const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;return {x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE,human:h};}
   return r.creatures.find(m=>m.id===id && m.state!=='dead' && (m.floor??0)===floor)??null;
@@ -3122,7 +3169,7 @@ function humanCombatTarget(r:RunState,hw:HumanWorld,id:string|undefined,floor:nu
 /** A guard leash is relative to the protected player, not to the camera or
  * a remembered enemy ID. Never turn an idle passerby into an engage target. */
 function readyCore(r:RunState,h:HumanRecord,now:number){
-  return humanPack(r,h).slots.find(s=>s && basicCoreRay(s.key) && !coreCastBlock(r,s,'basic',now,h.inv.packId));
+  return humanPack(r,h).slots.find(s=>s && basicCoreReach(s.key) && !coreCastBlock(r,s,'basic',now,h.inv.packId));
 }
 function combatEquipmentBlock(r:RunState,h:HumanRecord,now:number){
   const w=humanWeapon(h),ranged=w&&ITEMS[h.equip.weapon!.key].ranged;
@@ -3247,7 +3294,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     if(!h.following || !intent?.guardPlayer || !['IDLE','MOVING','FIGHTING'].includes(h.state))continue;
     if(intent.kind==='fight'){
       if(intent.target && threatensPlayer(r,hw,h,intent.target,now))continue;
-      h.motion=undefined;delete intent.coreCast;intent.kind='follow';intent.target=undefined;intent.route=[];h.state='IDLE';intent.dueAt=now;
+      h.motion=undefined;delete intent.coreCast;delete intent.swing;intent.kind='follow';intent.target=undefined;intent.route=[];h.state='IDLE';intent.dueAt=now;
     }
     if((h.nextPerceptionAt??0)>now || h.floor!==(r.veyraFloor??0))continue;
     h.nextPerceptionAt=now+500;
@@ -3263,12 +3310,13 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     if (h.state !== 'FIGHTING' || h.intent?.kind !== 'fight' || h.floor !== (r.veyraFloor ?? 0)) continue;
     const enemy=humanCombatTarget(r,hw,h.intent.target,h.floor);
     if (!enemy) { h.intent= h.following?{intentId:`follow:${h.actorId}:${now}`,actorId:h.actorId,kind:'follow',preconditions:[],reserved:[],startAt:now,dueAt:now}:undefined;h.state='IDLE';continue; }
+    if(h.intent.swing || h.intent.coreCast)continue; // committed aim: do not turn or chase through windup
     faceHumanToward(h, ox + enemy.x / TILE, oy + enemy.y / TILE);
     const weapon = humanWeapon(h);
-    const core=readyCore(r,h,now), ray=core && basicCoreRay(core.key);
-    if (!weapon && !ray) { h.intent.blockReason = 'no usable weapon'; continue; }
+    const core=readyCore(r,h,now), coreReach=core?basicCoreReach(core.key):0;
+    if (!weapon && !coreReach) { h.intent.blockReason = 'no usable weapon'; continue; }
     const distance = Math.hypot((h.gx - ox + 0.5) * TILE - enemy.x, (h.gy - oy + 0.5) * TILE - enemy.y);
-    if (h.intent.coreCast || distance <= Math.max(weapon?weapon.reach+8:0,ray?ray.speed*ray.life:0)) continue;
+    if (h.intent.coreCast || distance <= Math.max(weapon?weapon.reach+8:0,coreReach)) continue;
     if ((h.nextThinkAt ?? 0) > now || combatRoutes >= 4) continue;
     h.nextThinkAt = now + 750; combatRoutes++;
     // No psychic pursuit: the approach must begin with actual line of sight.
@@ -3390,16 +3438,17 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
  *  exists only on impact, so a shot can miss, be blocked, or be outrun. */
 export interface HumanShot { shooterId: string; gx: number; gy: number; dmg: number; victim: string; tx: number; ty: number }
 
-export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void, hitPlayer?: (attacker: HumanRecord, damage: number, angle: number) => void, spawnShot?: (shot: HumanShot) => boolean, emitCore?: (p:Proj)=>void): void {
+export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void, hitPlayer?: (attacker: HumanRecord, damage: number, angle: number) => void, spawnShot?: (shot: HumanShot) => boolean, emitCore?: (cast:BasicCast)=>void): void {
   const activeFloor = r.veyraFloor ?? 0;
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
+  const people=Object.values(hw.people);
   // 1. Creatures damage humans in their attack range.
   for (const m of r.creatures) {
     if (m.state !== 'attack') continue;
     const cFloor = m.floor ?? activeFloor;
     const cDmg = CREATURES[m.type]?.dmg ?? 10;
-    for (const h of Object.values(hw.people)) {
+    for (const h of people) {
       if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== cFloor || m.atk?.humanVictims?.includes(h.actorId)) continue;
       const dx = (h.gx + 0.5) * TILE - ox * TILE - m.x, dy = (h.gy + 0.5) * TILE - oy * TILE - m.y;
       const reach = (CREATURES[m.type]?.r ?? 16) + TILE * 0.5;
@@ -3414,73 +3463,62 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
     }
   }
   // 2. Humans use the same physical range/cone/LOS and weapon cadence as player melee.
-  for (const h of Object.values(hw.people)) {
-    if (h.state !== 'FIGHTING' || h.transit || h.floor !== activeFloor || h.stamina < 3 || h.gx<ox||h.gy<oy||h.gx>=ox+WW||h.gy>=oy+WH) continue;
+  for (const h of people) {
     const intent=h.intent;
-    if(intent?.guardPlayer && (!intent.target || !threatensPlayer(r,hw,h,intent.target,now))){delete intent.coreCast;continue;}
-    if(emitCore && intent?.target && intent.kind==='fight'){
+    if(!intent || intent.kind!=='fight' || !intent.target)continue;
+    if(h.state!=='FIGHTING' || h.transit || h.floor!==activeFloor || h.stamina<3 || h.gx<ox || h.gy<oy || h.gx>=ox+WW || h.gy>=oy+WH || (intent.guardPlayer&&!threatensPlayer(r,hw,h,intent.target,now))){
+      delete intent.swing;delete intent.coreCast;continue;
+    }
+    if((h.attackReadyAt??0)>now)continue;
+    if(emitCore && !intent.swing){
       const pending=intent.coreCast, pack=humanPack(r,h), core=pending?pack.slots.find(s=>s?.uid===pending.uid):readyCore(r,h,now);
-      const ray=core&&basicCoreRay(core.key),target=humanCombatTarget(r,hw,intent.target,h.floor);
+      const reach=core?basicCoreReach(core.key):0,target=humanCombatTarget(r,hw,intent.target,h.floor);
       const x=(h.gx-ox+.5)*TILE,y=(h.gy-oy+.5)*TILE;
-      if(core && ray && target && (!target.human || (!h.protectedPeople.includes(intent.target)&&(!h.community||target.human.community!==h.community))) &&
-        (!pending || (pending.victim===intent.target&&pending.floor===h.floor)) && Math.hypot(target.x-x,target.y-y)<=ray.speed*ray.life && clearPhysicalLine(r,{x,y},target,true) && !coreCastBlock(r,core,'basic',now,pack.id)){
-        if(!pending){faceHumanToward(h,ox+target.x/TILE,oy+target.y/TILE);intent.coreCast={uid:core.uid,victim:intent.target,floor:h.floor,angle:Math.atan2(target.y-y,target.x-x),readyAt:now+180};continue;}
+      if(core && reach && target && (!target.human || (!h.protectedPeople.includes(intent.target)&&(!h.community||target.human.community!==h.community))) &&
+        (!pending || (pending.victim===intent.target&&pending.floor===h.floor)) && Math.hypot(target.x-x,target.y-y)<=reach && clearPhysicalLine(r,{x,y},target,true) && !coreCastBlock(r,core,'basic',now,pack.id)){
+        if(!pending){faceHumanToward(h,ox+target.x/TILE,oy+target.y/TILE);intent.coreCast={uid:core.uid,victim:intent.target,floor:h.floor,angle:Math.atan2(target.y-y,target.x-x),readyAt:now+basicCastTiming(ITEMS[core.key].creatorCore!).contact};continue;}
         if(now<pending.readyAt)continue;
         delete intent.coreCast;
         if(coreCastCommit(r,core,'basic',now,pack.id)){
-          emitCore(coreRayProjectile(ray,x,y,pending.angle,{from:'human',owner:h.actorId,victim:intent.target},core.uid));
+          emitCore({key:core.key,uid:core.uid,x,y,angle:pending.angle,owner:h.actorId,victim:intent.target});
+          const timing=basicCastTiming(ITEMS[core.key].creatorCore!);h.attackReadyAt=now+timing.dur-timing.contact;
           h.lastAttackAt=now;h.stamina-=3;receipt(r,now,'human.core.commit',`${h.actorId}:${core.uid}:basic:${intent.target}`);continue;
         }
       }
       if(pending){delete intent.coreCast;continue;}
     }
-    if(ITEMS[h.equip.weapon?.key??'']?.ranged && !humanPack(r,h).slots.some(s=>s?.key==='arrow'&&!s.production&&s.qty>0)){if(intent)intent.blockReason='no arrows';continue;}
-    const w = humanWeapon(h); if (!w) continue;
-    if (now - (h.lastAttackAt ?? -Infinity) < w.swing * proficiencyMul(h.combatProficiency)) continue;
-    const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
-    const seenTarget=humanCombatTarget(r,hw,h.intent?.target,h.floor);
-    if (seenTarget && clearPhysicalLine(r, { x: hx, y: hy }, seenTarget, true)) faceHumanToward(h, ox + seenTarget.x / TILE, oy + seenTarget.y / TILE);
-    const facing = h.dir === 0 ? Math.PI / 2 : h.dir === 1 ? Math.PI : h.dir === 2 ? 0 : -Math.PI / 2;
-    // Only a committed swing or a projectile accepted by the flight system costs
-    // stamina/wear. A refused launch is not a second, instantaneous hit mode.
-    const strike = (victim:string, tx:number, ty:number, melee:()=>void) => {
-      const weapon=h.equip.weapon!, ranged=!!ITEMS[weapon.key].ranged;
-      if(ranged){
-        const slots=humanPack(r,h).slots, i=slots.findIndex(s=>s?.key==='arrow'&&!s.production&&s.qty>0);
-        if(i<0 || !spawnShot?.({shooterId:h.actorId,gx:h.gx,gy:h.gy,dmg:w.dmg,victim,tx,ty})){
-          if(h.intent)h.intent.blockReason=i<0?'no arrows':'cannot launch a projectile here';
-          return;
-        }
-        if(--slots[i]!.qty===0)slots[i]=null;
-      }
-      if(h.intent)h.intent.blockReason=undefined;
-      h.lastAttackAt=now;h.stamina=clamp(h.stamina-3,0,h.maxStamina);
-      if(weapon.dur!==undefined && (weapon.dur=Math.max(0,weapon.dur-1))===0)h.equip.weapon=null;
-      if(!ranged)melee();
-    };
-    if(seenTarget?.human) {
-      const victim=seenTarget.human;
-      if(h.protectedPeople.includes(victim.actorId) || !!h.community&&victim.community===h.community){h.intent=undefined;h.state='IDLE';continue;}
-      const dx=seenTarget.x-hx,dy=seenTarget.y-hy,angle=Math.atan2(dy,dx);
-      if(Math.hypot(dx,dy)>w.reach+8 || Math.abs(Math.atan2(Math.sin(angle-facing),Math.cos(angle-facing)))>w.arc/2+.15 || !clearPhysicalLine(r,{x:hx,y:hy},seenTarget,true))continue;
-      strike(victim.actorId,seenTarget.x,seenTarget.y,()=>applyDamage(r,hw,victim,w.dmg,angle,now,'human',h.actorId,h.floor));
-      continue;
+    const weapon=h.equip.weapon, w=humanWeapon(h), pending=intent.swing;
+    const target=humanCombatTarget(r,hw,intent.target,h.floor);
+    if(!weapon || !w || !target || (pending && (pending.uid!==weapon.uid || pending.floor!==h.floor || pending.victim!==intent.target))){delete intent.swing;continue;}
+    if(target.human && (h.protectedPeople.includes(intent.target)||!!h.community&&target.human.community===h.community)){h.intent=undefined;h.state='IDLE';continue;}
+    const x=(h.gx-ox+.5)*TILE,y=(h.gy-oy+.5)*TILE,dx=target.x-x,dy=target.y-y;
+    const angle=Math.atan2(dy,dx),distance=Math.hypot(dx,dy),ranged=!!ITEMS[weapon.key].ranged;
+    const radius=target.human || intent.target==='player'?8:CREATURES[(target as Creature).type]?.r??6;
+    const timing=swingTiming(w.swing,ranged,proficiencyMul(h.combatProficiency));
+    const ammo=ranged?humanPack(r,h).slots:undefined,round=ammo?.findIndex(s=>s?.key==='arrow'&&!s.production&&s.qty>0)??-1;
+    if(ranged && round<0){delete intent.swing;intent.blockReason='no arrows';continue;}
+    if(!pending){
+      if(distance>w.reach+radius || !clearPhysicalLine(r,{x,y},target,true))continue;
+      faceHumanToward(h,ox+target.x/TILE,oy+target.y/TILE);
+      intent.swing={uid:weapon.uid,victim:intent.target,floor:h.floor,angle,distance,contactAt:now+timing.contact};
+      delete intent.blockReason;continue;
     }
-    if (h.intent?.target === 'player') {
-      const dx = r.player.x - hx, dy = r.player.y - hy, distance = Math.hypot(dx, dy), angle = Math.atan2(dy, dx);
-      const inArc = Math.abs(Math.atan2(Math.sin(angle - facing), Math.cos(angle - facing))) <= w.arc / 2 + 0.15;
-      if (distance <= w.reach + 8 && inArc && clearPhysicalLine(r, { x: hx, y: hy }, r.player, true)) {
-        strike('player',r.player.x,r.player.y,()=>hitPlayer?.(h,w.dmg,angle));
+    if(now<pending.contactAt)continue;
+    delete intent.swing; // consume the windup exactly once, including misses and refused launches
+    const a=pending.angle;
+    if(ranged){
+      if(!spawnShot?.({shooterId:h.actorId,gx:h.gx,gy:h.gy,dmg:w.dmg,victim:intent.target,tx:x+Math.cos(a)*pending.distance,ty:y+Math.sin(a)*pending.distance})){
+        intent.blockReason='cannot launch a projectile here';continue;
       }
-      continue;
+      if(--ammo![round]!.qty===0)ammo![round]=null;
     }
-    const target = r.creatures.filter(m => m.state !== 'dead' && (m.floor ?? activeFloor) === h.floor && (!h.intent?.target || h.intent.target === m.id))
-      .map(m => ({ m, dx: m.x - hx, dy: m.y - hy, d: Math.hypot(m.x - hx, m.y - hy) }))
-      .filter(v => v.d <= w.reach + (CREATURES[v.m.type]?.r ?? 6) && Math.abs(Math.atan2(Math.sin(Math.atan2(v.dy, v.dx) - facing), Math.cos(Math.atan2(v.dy, v.dx) - facing))) <= w.arc / 2 + 0.15 && clearPhysicalLine(r, { x: hx, y: hy }, v.m, true))
-      .sort((a, b) => a.d - b.d)[0];
-    if (!target) continue;
-    strike(target.m.id,target.m.x,target.m.y,()=>hitCreature?.(target.m,w.dmg,Math.atan2(target.dy,target.dx),h));
+    h.lastAttackAt=now;h.attackReadyAt=now+timing.dur-timing.contact;h.stamina-=3;
+    if(!ranged){
+      if(distance>w.reach+radius || Math.abs(Math.atan2(Math.sin(angle-a),Math.cos(angle-a)))>w.arc/2 || !clearPhysicalLine(r,{x,y},target,true))continue;
+      if(target.human)applyDamage(r,hw,target.human,w.dmg,a,now,'human',h.actorId,h.floor);
+      else if(intent.target==='player')hitPlayer?.(h,w.dmg,a);
+      else hitCreature?.(target as Creature,w.dmg,a,h);
+    }
+    if(weapon.dur!==undefined && (weapon.dur=Math.max(0,weapon.dur-1))===0)h.equip.weapon=null;
   }
 }
-
-
