@@ -49,6 +49,36 @@ export function moveHumanGoods(r: RunState, from: string, into: string, key: str
   }
   return moved;
 }
+/** At the warehouse, stage a mechanic's whole bill against copies of the two
+ * inventories. A vanished last ingredient or a full pack must not withdraw the
+ * first ingredient. Use the same transfer rules (including splits and merges)
+ * for preflight and commit; never publish preview UIDs or advance live nextId. */
+function fetchRepairMaterials(r:RunState, from:string, into:string, bill:[string,number][], workerId:string, orderId:string, now:number) {
+  const copy=(id:string)=>({...C(r,id), slots:C(r,id).slots.map(s=>s?{...s}:null)});
+  const trial={...r,custody:{[from]:copy(from),[into]:copy(into)}};
+  const missing:[string,number][]=[];
+  for(const [key,qty] of bill){
+    const need=qty-count(trial,into,key);if(need<=0)continue;
+    if(moveHumanGoods(trial,from,into,key,need)!==need)return false;
+    missing.push([key,need]);
+  }
+  if(!materialPayment(C(trial,into),bill))return false;
+  for(const [key,qty] of missing){
+    const quantities=(id:string)=>new Map(C(r,id).slots.flatMap(s=>s?.key===key?[[s.uid,s.qty] as const]:[]));
+    const source=quantities(from),pack=quantities(into);
+    moveHumanGoods(r,from,into,key,qty);
+    const left=quantities(from);
+    const inputs=[...source].flatMap(([uid,n])=>n>(left.get(uid)??0)?[{uid,key,qty:n-(left.get(uid)??0)}]:[]);
+    const received=[...quantities(into)].flatMap(([uid,n])=>n>(pack.get(uid)??0)?[{uid,key,qty:n-(pack.get(uid)??0)}]:[]);
+    receipt(r,now,'human.work.input',JSON.stringify({workerId,orderId,containerId:from,into,inputs,received}));
+  }
+  return true;
+}
+function repairRule(s:Stack|null|undefined, e:Entity|undefined, community:string){
+  if(!s || s.production || s.qty!==1 || s.dur===undefined || !Number.isFinite(s.dur) || s.dur<0 ||
+    !e?.station || e.kind!=='struct' || (e.owner && e.owner!==community) || (e.hp??1)<=0)return null;
+  const def=ITEMS[s.key];return def?.dur && s.dur<def.dur && def.repair?.station===e.type ? def.repair : null;
+}
 function count(r: RunState, cid: string, key: string) { return C(r, cid).slots.reduce((n,s) => n + (s?.key === key && !s.production ? s.qty : 0), 0); }
 function knownRecipe(h: HumanRecord, key: string) {
   // Profession-origin training is finite, run-persistent knowledge, not the player's research ledger.
@@ -132,7 +162,7 @@ function taskCandidates(r: RunState, hw: HumanWorld, h: HumanRecord): HumanWorkT
     }
     if (h.occupation === 'mechanic' && e.type === 'workbench') {
       const items = [...pack(r,h).slots, ...Object.values(h.equip)].filter((s): s is Stack => !!s);
-      for (const s of items) { const d=ITEMS[s.key]; if (!s.production && e.station && d.repair?.station===e.type && d.dur && s.dur!==undefined && s.dur<d.dur && d.repair.cost.every(([k,q])=>available(k,q))) tasks.push({...start('repair_item',e,d.repair.cost,8000),itemUid:s.uid}); }
+      for(const s of items){const rule=repairRule(s,e,comm.id);if(rule && rule.cost.every(([k,q])=>available(k,q)))tasks.push({...start('repair_item',e,rule.cost,8000),itemUid:s.uid});}
     }
     if (h.occupation === 'gardener' && e.garden) {
       const g=e.garden;
@@ -214,9 +244,16 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
       const needs=candidate.phase==='fetch' || candidate.inputs.some(([k,q])=>count(r,h.inv.packId,k)<q);
       candidate.phase=needs?'fetch':candidate.machineJobId?(candidate.phase==='machine'?'machine':'collect'):'travel';
       const dest=target(r,hw,h,candidate); if(!dest)continue;
-      const path=route(...dest); if(!path)continue;
+      const path=route(...dest);
+      // A funded repair can require several bounded searches just to reach
+      // the store. Keep its target on the committed retry clock, not behind
+      // another full island census. No path means no travel or work yet.
+      const pending=!path && candidate.kind==='repair_item' && h.routeSearch?.status==='PENDING_SEARCH' &&
+        h.routeSearch.target===`${dest[2]}:${dest[0]},${dest[1]}`;
+      if(!path && !pending)continue;
       task=candidate;
-      h.intent={intentId:uid(r,'hw'),actorId:h.actorId,kind:'work',target:`occupation:${task.kind}`,preconditions:['community permission','physical access','canonical paid bill'],reserved:[],startAt:now,dueAt:now,route:path,work:task};
+      h.intent={intentId:uid(r,'hw'),actorId:h.actorId,kind:'work',target:`occupation:${task.kind}`,preconditions:['community permission','physical access','canonical paid bill'],reserved:[],startAt:now,dueAt:now,route:path??[],work:task};
+      if(!path){h.state='IDLE';h.nextThinkAt=now+3000;return true;}
       h.state=path.length?'MOVING':'WORKING'; h.intent.dueAt=now+(task.phase==='fetch'?800:task.duration); return true;
     }
     return false;
@@ -229,8 +266,15 @@ export function planHumanOccupation(r: RunState, hw: HumanWorld, h: HumanRecord,
     receipt(r,now,'human.work.blocked',`${h.actorId}:${h.intent!.intentId}:${h.lastWorkBlock}`);
     h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000;return false;
   }
-  const path=route(...dest); if(!path)return false;
-  h.intent!.route=path; h.intent!.startAt=now; h.intent!.dueAt=now+task.duration;
+  const path=route(...dest); if(!path){
+    if(task.kind==='repair_item' && (h.routeSearch?.status==='NO_PATH'||h.routeSearch?.status==='SEARCH_LIMIT')){
+      h.lastWorkBlock='No confirmed route to repair work; retaining tool and materials.';
+      receipt(r,now,'human.work.blocked',`${h.actorId}:${h.intent!.intentId}:${h.lastWorkBlock}`);
+      h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+30000;
+    }
+    return false;
+  }
+  h.intent!.route=path; h.intent!.startAt=now; h.intent!.dueAt=now+(task.phase==='fetch'?800:task.duration);
   h.state=path.length?'MOVING':'WORKING'; return true;
 }
 export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: number): {done:boolean;reason?:string} {
@@ -260,7 +304,13 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       into.slots[empty]=unit;task.itemUid=unit.uid;
       receipt(r,now,'human.work.input',JSON.stringify({workerId:h.actorId,orderId:intent.intentId,containerId:stock.id,into:into.id,receivedUid:unit.uid,inputs:[{uid:s.uid,key:s.key,qty:1}]}));
     }
-    for(const [key,qty] of task.inputs) {
+    if(task.kind==='repair_item'){
+      const item=[...pack(r,h).slots,...Object.values(h.equip)].find(s=>s?.uid===task.itemUid);
+      const rule=repairRule(item,e,comm.id);
+      if(!rule || !e || !(comm.workStations.includes(e.id) || e.poi===comm.poi && e.owner===comm.id))return fail('repair target or workbench changed');
+      if(!fetchRepairMaterials(r,store.c,h.inv.packId,rule.cost,h.actorId,intent.intentId,now))return fail('repair supplies unavailable or pack full');
+      task.inputs=rule.cost; // resume with the same canonical bill that was admitted
+    } else for(const [key,qty] of task.inputs) {
       const need=Math.max(0,qty-count(r,h.inv.packId,key));
       if(need){const before=C(r,store.c).slots.filter((s):s is Stack=>!!s).map(s=>({uid:s.uid,qty:s.qty,key:s.key}));const moved=moveHumanGoods(r,store.c,h.inv.packId,key,need);if(moved)receipt(r,now,'human.work.input',JSON.stringify({workerId:h.actorId,orderId:intent.intentId,containerId:store.c,into:h.inv.packId,inputs:before.flatMap(s=>{const qty=s.qty-(C(r,store.c!).slots.find(v=>v?.uid===s.uid)?.qty??0);return qty>0?[{...s,qty}]:[];})}));}
     }
@@ -377,10 +427,10 @@ export function executeHumanWork(r: RunState, hw: HumanWorld, h: HumanRecord, no
       task.machineJobId=id;task.phase='machine';intent.reserved=[id];return {done:false,reason:'recycler running'};
     } else if(task.kind==='repair_item') {
       const s=[...pack(r,h).slots,...Object.values(h.equip)].find(s=>s?.uid===task.itemUid);
-      const d=s&&ITEMS[s.key], rule=d?.repair;
-      if(!s || s.production || !d?.dur || !rule || rule.station!==e.type || !e.station || s.dur===undefined || s.dur>=d.dur)return fail('repair condition or materials changed');
+      const rule=repairRule(s,e,comm.id);
+      if(!s || !rule)return fail('repair condition or materials changed');
       const inputs=materialPayment(pack(r,h),rule.cost,true);if(!inputs)return fail('repair materials missing or reserved');
-      const before=s.dur;s.dur=d.dur;
+      const before=s.dur;s.dur=ITEMS[s.key].dur;
       receipt(r,now,'human.maintenance',JSON.stringify({worker:h.actorId,job:intent.intentId,station:e.id,item:s.uid,before,after:s.dur,inputs}));
     } else if(task.kind==='build') {
       const cost=structureRepairCost(e);
