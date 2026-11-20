@@ -1,0 +1,153 @@
+{
+  "seed": 7542,
+  "start": 1797950760143,
+  "viewport": [
+    640,
+    360
+  ],
+  "errors": [],
+  "phases": [
+    {
+      "label": "01-watch",
+      "ms": 16000,
+      "p": [
+        2483.2665,
+        735.5825000000001
+      ],
+      "guard": [
+        2476,
+        731
+      ],
+      "state": "WORKING",
+      "post": "e1ga",
+      "work": "e1ga",
+      "kind": "work",
+      "job": "hw2ti",
+      "weapon": "s1gl",
+      "dur": 100,
+      "enemy": {
+        "id": "vy:roam:49:14",
+        "type": "slime_2",
+        "state": "wander",
+        "hp": 46
+      },
+      "qa": false
+    },
+    {
+      "label": "02-intercept",
+      "ms": 22150,
+      "p": [
+        2477.8845,
+        734.6060000000001
+      ],
+      "guard": [
+        2474,
+        733
+      ],
+      "state": "FIGHTING",
+      "post": "e1ga",
+      "watched": "e1ga",
+      "lastWatch": 1797950778366.2646,
+      "kind": "fight",
+      "alarm": {
+        "postId": "e1ga",
+        "enemyId": "vy:roam:49:14",
+        "alertAt": 1797950781144
+      },
+      "job": "defend:h1h:1797950781144",
+      "weapon": "s1gl",
+      "dur": 99,
+      "enemy": {
+        "id": "vy:roam:49:14",
+        "type": "slime_2",
+        "state": "recover",
+        "hp": 34
+      },
+      "qa": false
+    },
+    {
+      "label": "03-return",
+      "ms": 25950,
+      "p": [
+        2478.3345,
+        734.6060000000001
+      ],
+      "guard": [
+        2476,
+        735
+      ],
+      "state": "MOVING",
+      "post": "e1ga",
+      "watched": "e1ga",
+      "lastWatch": 1797950778366.2646,
+      "work": "e1ga",
+      "kind": "work",
+      "alarm": {
+        "postId": "e1ga",
+        "enemyId": "vy:roam:49:14",
+        "alertAt": 1797950781144
+      },
+      "job": "defend:h1h:1797950781144",
+      "weapon": "s1gl",
+      "dur": 96,
+      "enemy": {
+        "id": "vy:roam:49:14",
+        "type": "slime_2",
+        "state": "dead",
+        "hp": -2
+      },
+      "qa": false
+    },
+    {
+      "label": "04-on-post",
+      "ms": 34850,
+      "p": [
+        2478.447,
+        734.6060000000001
+      ],
+      "guard": [
+        2476,
+        731
+      ],
+      "state": "IDLE",
+      "post": "e1ga",
+      "watched": "e1ga",
+      "lastWatch": 1797950794948.1824,
+      "weapon": "s1gl",
+      "dur": 96,
+      "qa": false
+    }
+  ],
+  "resume": {
+    "ms": 22150,
+    "p": [
+      2477.8845,
+      734.6060000000001
+    ],
+    "guard": [
+      2474,
+      733
+    ],
+    "state": "FIGHTING",
+    "post": "e1ga",
+    "watched": "e1ga",
+    "lastWatch": 1797950778366.2646,
+    "kind": "fight",
+    "alarm": {
+      "postId": "e1ga",
+      "enemyId": "vy:roam:49:14",
+      "alertAt": 1797950781144
+    },
+    "job": "defend:h1h:1797950781144",
+    "weapon": "s1gl",
+    "dur": 99,
+    "enemy": {
+      "id": "vy:roam:49:14",
+      "type": "slime_2",
+      "state": "recover",
+      "hp": 34
+    },
+    "qa": false
+  },
+  "browser": "140.0.7339.0"
+}
