@@ -12,12 +12,12 @@ function setup(){const g=newGame();expect(dispatch(g,{id:'bt-start'+ ++n,type:'s
   for(let yy=y-6;yy<=y+6;yy++)for(let xx=x-6;xx<=x+8;xx++){const i=yy*WW+xx;r.terrain[i]={t:T.GRASS};if(getWorld().sourceV3[i])r.sources[i]={stock:0,hp:0};}
   markDirty();const pos=(tx:number,ty:number)=>{r.player.x=tx*TILE+8;r.player.y=ty*TILE+8;markDirty();};
   const act=(type:string,args:object={},now=T0)=>dispatch(g,{id:'bt-'+ ++n,type,...args},now);
-  const build=(type:string,tx:number,ty:number,px=tx,py=ty+1)=>{pos(px,py);for(const [k,q] of STRUCTS[type].cost)addItem(r,'inv',k,q);const res=act('build',{struct:type,tx,ty});expect(res.ok,`${type}: ${(res as any).reason}`).toBe(true);return Object.values(r.entities).find(e=>e.kind==='struct'&&e.tx===tx&&e.ty===ty&&e.type===type)!;};
+  const build=(type:string,tx:number,ty:number,px=tx,py=ty+1)=>{pos(px,py);for(const [k,q] of STRUCTS[type].cost)addItem(r,'inv',k,q);expect(act('craft',{recipe:'deploy_'+type}).ok).toBe(true);const res=act('build',{struct:type,tx,ty});expect(res.ok,`${type}: ${(res as any).reason}`).toBe(true);return Object.values(r.entities).find(e=>e.kind==='struct'&&e.tx===tx&&e.ty===ty&&e.type===type)!;};
   return {g,r,x,y,pos,act,build};}
 const stepOn=(o:ReturnType<typeof setup>,tx:number,ty:number,state='chase')=>{const m=mkCreature(o.r,'wolf',tx*TILE+8,ty*TILE+8,40);m.state=state as any;m.cd=0;o.r.creatures.push(m);return m;};
 describe('B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn',()=>{
-  it('costs gear, ingots and fasteners; placed unarmed, so a creature stepping on it is not hit',()=>{
-    const o=setup();expect(STRUCTS.bear_trap.cost).toEqual([['mechanical_gear',1],['iron_ingot',2],['fasteners',2]]);
+  it('costs gear and ingots; placed unarmed, so a creature stepping on it is not hit',()=>{
+    const o=setup();expect(STRUCTS.bear_trap.cost).toEqual([['mechanical_gear',1],['iron_ingot',2]]);
     const t=o.build('bear_trap',o.x+2,o.y);expect(t.bearTrap).toEqual({version:'trap-v1',state:'unarmed',uses:3});
     const m=stepOn(o,o.x+2,o.y);triggerBearTrap(o.g,m,T0);expect(m.hp).toBe(40);expect(t.bearTrap!.state).toBe('unarmed');
   });
@@ -52,12 +52,13 @@ describe('B02-P1-B bear trap: physical arm, one paid hit, spent, rearm, worn',()
     settle(snap,T0+120000,true);
     const after=snap.run!.entities[t.id];expect(after.bearTrap!.state).toBe('armed');expect(after.bearTrap!.uses).toBe(3);void m;
   });
-  it('reclaim of a used trap returns at most the bounded refund of its build cost, never more',()=>{
+  it('reclaim returns the same worn device without loose materials or plates',()=>{
     const o=setup();const t=o.build('bear_trap',o.x+2,o.y);o.pos(o.x+2,o.y+1);addItem(o.r,'inv','iron_plate',1);o.act('bearTrapSet',{eid:t.id});
     const m=stepOn(o,o.x+2,o.y);triggerBearTrap(o.g,m,T0);
-    const before=new Map(STRUCTS.bear_trap.cost.map(([k])=>[k,countItem(o.r,'inv',k)]));
+    const device=t.deployed!.uid,condition=t.hp;
     expect(o.act('reclaim',{eid:t.id}).ok).toBe(true);
-    for(const [k,q] of STRUCTS.bear_trap.cost){const back=countItem(o.r,'inv',k)-(before.get(k)??0);expect(back).toBeLessThanOrEqual(Math.floor(q*BAL.economy.reclaimRefund));}
+    expect(o.r.custody.inv.slots.find(s=>s?.uid===device)).toMatchObject({key:'deploy_bear_trap',dur:condition});
+    for(const [k] of STRUCTS.bear_trap.cost){expect(countItem(o.r,'inv',k)).toBe(0);}
     expect(countItem(o.r,'inv','iron_plate')).toBe(0);expect(Object.values(o.r.entities).some(e=>e.id===t.id)).toBe(false);
   });
   it('persists armed/spent state and uses across save and reload; corrupt trap state is refused',()=>{

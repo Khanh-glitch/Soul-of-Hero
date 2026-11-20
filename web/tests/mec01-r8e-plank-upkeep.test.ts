@@ -19,7 +19,7 @@ function setup(){
 }
 function buildAt(o:ReturnType<typeof setup>,type:string,dx:number,dy:number){
   const px=o.r.player.x,py=o.r.player.y;o.r.player.x=(o.x+dx)*TILE+8;o.r.player.y=(o.y+dy+2)*TILE+8;markDirty();
-  try{const res=dispatch(o.gs,{id:'hs'+ ++serial,type:'build',struct:type,tx:o.x+dx,ty:o.y+dy},o.r.clock.lastSimAt);if(!res.ok) throw new Error(`${type}: ${res.reason}`);return Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===o.x+dx&&e.ty===o.y+dy)!;}
+  try{if(type==='claim')expect(dispatch(o.gs,{id:'pack'+ ++serial,type:'craft',recipe:'deploy_claim'},o.r.clock.lastSimAt).ok).toBe(true);const res=dispatch(o.gs,{id:'hs'+ ++serial,type:'build',struct:type,tx:o.x+dx,ty:o.y+dy},o.r.clock.lastSimAt);if(!res.ok) throw new Error(`${type}: ${res.reason}`);return Object.values(o.r.entities).find(e=>e.kind==='struct'&&e.type===type&&e.tx===o.x+dx&&e.ty===o.y+dy)!;}
   finally{o.r.player.x=px;o.r.player.y=py;markDirty();}
 }
 function homeWithCabinet(){
@@ -29,10 +29,12 @@ function homeWithCabinet(){
 }
 
 function homeWithPlankWall(){
-  const o=setup();
-  for(const [k,q] of [['wood',200],['stone',80],['fiber',20],['plank',3]] as const) addItem(o.r,'inv',k,q);   // FIXTURE: 3 planks for one wall_plank
-  buildAt(o,'floor_wood',0,0);const plank=buildAt(o,'wall_plank',1,0);buildAt(o,'floor_wood',3,-2);const cab=buildAt(o,'claim',3,-2);
-  return {...o,plank,cab};
+  // Plank walls are legacy saved geometry, not a current build or upgrade.
+  // Load a representative old wall in a genuinely paid and placed home.
+  const o=homeWithCabinet(), bytes=JSON.parse(serializeSnapshot(o.gs)).payload, state=JSON.parse(bytes);
+  Object.assign(state.run.entities[o.wall.id],{type:'wall_plank',hp:STRUCTS.wall_plank.hp,maxHp:STRUCTS.wall_plank.hp});
+  const gs=validate(state)!;expect(gs).toBeTruthy();markDirty();
+  return {...o,gs,r:gs.run!,plank:gs.run!.entities[o.wall.id],cab:gs.run!.entities[o.cab.id]};
 }
 const cabOf=(o:ReturnType<typeof homeWithPlankWall>)=>o.r.entities[o.cab.id];
 
