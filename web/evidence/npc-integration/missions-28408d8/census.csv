@@ -1,0 +1,82 @@
+poi,place,runtime class,roster,assigned healthy bed,no assigned bed,store entity,registered stations
+po_greywater,Greywater Hamlet,HABITABLE_COMMUNITY,9,5,4,e160,3
+po_academy,Argus Academy,WORK_SITE,4,0,4,e17v,0
+po_ironmine,Ironholm Foundry,WORK_SITE,4,0,4,e18r,3
+po_hook,Hook Village,HABITABLE_COMMUNITY,10,6,4,e19w,2
+po_oasis,Mirage Camp,HABITABLE_COMMUNITY,10,4,6,e1bt,1
+po_cindercamp,Cinder Camp,HABITABLE_COMMUNITY,10,4,6,e1dl,4
+po_strait,Strait Landing,TRADE_OR_TRANSIT,3,0,3,e1fj,0
+po_mere,Hook Mere Pier,TRADE_OR_TRANSIT,3,0,3,e1g7,0
+po_southfoot,Southfoot Landing,TRADE_OR_TRANSIT,3,0,3,e1gv,0
+po_westbank,Westbank Landing,TRADE_OR_TRANSIT,3,0,3,e1hk,1
+po_dpier,Drowned Pier,TRADE_OR_TRANSIT,3,0,3,e1ic,0
+po_gullpier,Tern Hut Pier,TRADE_OR_TRANSIT,3,1,2,e1j1,0
+po_gulfhead,Gulfhead Port Quarter,TRADE_OR_TRANSIT,3,0,3,e1js,0
+po_westmouth,Westmouth Canal Port,TRADE_OR_TRANSIT,3,0,3,e1ki,0
+po_saltharbor,Saltwick Harbor,TRADE_OR_TRANSIT,3,0,3,e1l8,0
+po_ironharbor,Ironholm Harbor / Ore Quay,TRADE_OR_TRANSIT,3,0,3,e1ly,0
+po_ember,Emberport / Ashworks Quay,TRADE_OR_TRANSIT,3,0,3,e1mo,0
+po_sandgate,Sandgate / Sluice Port,TRADE_OR_TRANSIT,3,0,3,e1ne,0
+po_falls,Falls Powerhouse,WORK_SITE,4,0,4,e1o5,0
+po_pumphouse,Greywater Pumphouse,INACCESSIBLE_OR_UNVERIFIED,0,0,0,,0
+po_oldpump,Old Pumping Plant,WORK_SITE,4,0,4,e1p1,0
+po_sawaion,Aion Edge Sawmill,WORK_SITE,4,0,4,e1px,0
+po_mill,Mossbrook Mill,WORK_SITE,4,0,4,e1qt,0
+po_timberyard,Verdant Timberyard,WORK_SITE,4,0,4,e1rp,0
+po_fracquarry,Fracture Quarry,WORK_SITE,4,0,4,e1sj,0
+po_greyquarry,Greyback Quarry,WORK_SITE,4,0,4,e1tf,0
+po_obsq,Obsidian Quarry,WORK_SITE,4,0,4,e1ub,0
+po_kilns,Charcoal Kilns,WORK_SITE,4,0,4,e1v5,0
+po_slag,Slagworks Foundry,WORK_SITE,4,0,4,e1w1,0
+po_sulfur,Sulfur Works,WORK_SITE,4,0,4,e1wv,0
+po_siloc,Grain Silo Complex,TRADE_OR_TRANSIT,3,0,3,e1xo,0
+po_filter,Delta Sluice & Filter Station,INACCESSIBLE_OR_UNVERIFIED,0,0,0,,0
+po_geo,Geothermal Station,WORK_SITE,4,0,4,e1yd,0
+po_observatory,Argus Observatory,WORK_SITE,4,0,4,e1z7,0
+po_archive,Argus Archive Vaults,WORK_SITE,4,0,4,e201,0
+po_hall_eyes,Hall of Eyes,HOSTILE_OR_DANGEROUS,2,0,2,e20r,0
+po_lantern,Lantern Light,WORK_SITE,4,0,4,e21b,0
+po_lanternstn,Lantern Cove Station,TRADE_OR_TRANSIT,3,0,3,e224,0
+po_kestrel,Kestrel Radio Tower,WORK_SITE,4,0,4,e22t,0
+po_typhon,Typhon's Fracture,HOSTILE_OR_DANGEROUS,2,0,2,e23j,0
+po_viaduct,Crushed Viaduct,ABANDONED,0,0,0,,0
+po_freightyard,Shattered Freight Yard,ABANDONED,0,0,0,,0
+po_confluence,Confluence Waystation,TRADE_OR_TRANSIT,3,0,3,e242,0
+po_ranger,Ranger Hut,HABITABLE_COMMUNITY,7,0,7,e24s,0
+po_glade,Mosslight Glade,HABITABLE_COMMUNITY,7,0,7,e25z,0
+po_sapgrove,Sap Grove,HABITABLE_COMMUNITY,7,0,7,e276,0
+po_elderwood,Heart of the Elderwood,HOSTILE_OR_DANGEROUS,2,0,2,e288,0
+po_meridian,Meridian Research Station,WORK_SITE,4,0,4,e28s,0
+po_ironvein,Ironvein Mine,WORK_SITE,4,0,4,e29m,0
+po_ridgestop,Ridge Pass Station,TRADE_OR_TRANSIT,3,0,3,e2af,0
+po_rapids,Rapids Portage Hut,TRADE_OR_TRANSIT,3,0,3,e2b3,0
+po_westwood,Westwood Hamlet,HABITABLE_COMMUNITY,8,0,8,e2bt,0
+po_fishcamp,Fish Camp,HABITABLE_COMMUNITY,7,0,7,e2d5,0
+po_necropolis,Necropolis of the Hollow Sun,HOSTILE_OR_DANGEROUS,2,0,2,e2e7,0
+po_tombs,Dune Tombs,HOSTILE_OR_DANGEROUS,2,0,2,e2en,0
+po_cairns,Sunken Cairns,ABANDONED,0,0,0,,0
+po_bonestop,Bone Road Waystation,TRADE_OR_TRANSIT,3,0,3,e2f6,0
+po_gate,Threshold Gate,TRADE_OR_TRANSIT,3,0,3,e2fv,0
+po_beacon,Beacon Rock Light,WORK_SITE,4,0,4,e2gk,0
+po_wreck,Wreck Isle Salvage,ABANDONED,0,0,0,,0
+po_tidecamp,Tidepool Fishing Camp,HABITABLE_COMMUNITY,7,0,7,e2hf,0
+po_gullnest,Seabird Nesting Cliffs,HABITABLE_COMMUNITY,7,0,7,e2im,0
+po_netcamp,Gull Net Camp,HABITABLE_COMMUNITY,7,0,7,e2jt,0
+po_emberwatch,Ember Watch,WORK_SITE,4,0,4,e2kz,0
+po_surtur,Foundry of the First Fire,HOSTILE_OR_DANGEROUS,2,0,2,e2lp,1
+po_saltpans,Salt Pans,WORK_SITE,4,0,4,e2mc,0
+po_saltlight,Saltwick Light,WORK_SITE,4,0,4,e2n6,0
+po_racks,Kelp Racks,HABITABLE_COMMUNITY,7,0,7,e2o1,0
+po_gullwreck,Gull Isle Wreck,ABANDONED,0,0,0,,0
+po_ironwh,Ironholm Depot,TRADE_OR_TRANSIT,3,0,3,e2p6,0
+po_rc_meridian,Meridian Archive Cache,ABANDONED,0,0,0,,0
+po_rc_ironvein,Foreman's Strongbox,ABANDONED,0,0,0,,0
+po_rc_kestrel,Kestrel Tower Safe,ABANDONED,0,0,0,,0
+po_rc_dam,Falls Dam Vault,ABANDONED,0,0,0,,0
+po_rc_sandgate,Sandgate Customs Strongbox,ABANDONED,0,0,0,,0
+po_rc_salt,Saltwick Harbor Safe,ABANDONED,0,0,0,,0
+po_vend_gulf,Gulfhead Trading House [ĐỀ XUẤT],TRADE_OR_TRANSIT,3,0,3,e2pu,0
+po_vend_strait,Strait Landing Counter [ĐỀ XUẤT],TRADE_OR_TRANSIT,3,0,3,e2qi,0
+po_evac_west,Westmouth Evac Pier,TRADE_OR_TRANSIT,3,0,3,e2r9,0
+po_evac_south,Southfoot Evac Beach,TRADE_OR_TRANSIT,3,0,3,e2s0,0
+po_evac_hook,Hook Evac Point,TRADE_OR_TRANSIT,3,0,3,e2sr,0
