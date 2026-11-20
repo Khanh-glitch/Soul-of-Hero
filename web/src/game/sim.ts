@@ -289,6 +289,12 @@ export function releaseCoreEffect(gs:GameState,cast:CoreEffectCast,now:number){
     // Advanced ground-targeted effects are fixed at windup, not attached to
     // a moving victim. Arrival/damage is owned by the normal hazard clock.
     if(cast.distance===undefined)return;
+    if(cast.key==='core_dragon' && cast.mode==='refined'){
+      const d=BAL.creatorCoreDragon,offset=player?10:0;
+      PROJ.push({kind:'fire_tornado',from:player?'player':'human',owner,coreUid:cast.uid,victim:cast.victim,floor:fl,
+        x:x+Math.cos(a)*offset,y:y+Math.sin(a)*offset,vx:Math.cos(a)*d.tornadoSpeed,vy:Math.sin(a)*d.tornadoSpeed,
+        life:clamp(cast.distance/d.tornadoSpeed,.2,d.tornadoSeconds),r:8,dmg:d.tornadoDamage});return;
+    }
     if(cast.key==='core_meteor' && cast.mode==='refined'){
       const m=BAL.creatorCoreMeteor,len=Math.min(m.targetRange,cast.distance,rayLen(r,x,y,a,m.targetRange));
       HAZ.push({kind:'circle',x:x+Math.cos(a)*len,y:y+Math.sin(a)*len,r:m.radius,t:0,tell:m.tellMs,dur:120,dmg:m.targetDamage,style:'meteor',effect:'meteorBurn',owner,coreUid:cast.uid,victim:cast.victim});return;
@@ -374,7 +380,7 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
   }
   if (ITEMS[s.key].creatorCore === 'dragon') {
     const d=BAL.creatorCoreDragon;
-    if(mode==='refined') { const distance=Math.min(d.tornadoSpeed*d.tornadoSeconds,dist(p.x,p.y,aim.mx,aim.my));PROJ.push({x:hx,y:hy,vx:Math.cos(a)*d.tornadoSpeed,vy:Math.sin(a)*d.tornadoSpeed,life:Math.max(0.2,distance/d.tornadoSpeed),dmg:d.tornadoDamage,from:'player',kind:'fire_tornado',r:8}); }
+    if(mode==='refined')releaseCoreEffect(gs,{key:s.key,uid:s.uid,x:p.x,y:p.y,angle:a,owner:'player',mode,distance:dist(p.x,p.y,aim.mx,aim.my)},now);
     if(mode==='signature') {
       const vx=clamp(Number.isFinite(aim.viewX)?aim.viewX!:p.x-VIEW_W/2,0,WW*TILE-VIEW_W),vy=clamp(Number.isFinite(aim.viewY)?aim.viewY!:p.y-VIEW_H/2,0,WH*TILE-VIEW_H);
       // Route is built only from physically connected visible targets. Anchors
@@ -1333,6 +1339,7 @@ export function tickProj(gs: GameState, dtMs: number, now: number, opts?: { iner
   }):[];
   for (let i = PROJ.length - 1; i >= 0; i--) {
     const pr = PROJ[i];
+    if(pr.floor!==undefined && pr.floor!==activeFloor(r)){PROJ.splice(i,1);continue;}
     const radial=pr.kind==='nature_rock'||pr.kind==='fireball'||pr.kind==='blast_signature';
     // R5.1 P1-D committed-projectile policy: hostile projectiles aimed at the absent player are
     // aged (their own committed life/delay) but never moved, never detonate and never reach
@@ -1347,7 +1354,8 @@ export function tickProj(gs: GameState, dtMs: number, now: number, opts?: { iner
     // The same 2 px substeps are tested against bodies for player projectiles: a hit lands on the crossing
     // substep, with the identical damage law as live play (offline 50 ms slices at 260 px/s used to step
     // straight over small targets; this closes that artifact without a new damage function).
-    const ox = pr.x, oy = pr.y, nx = ox + pr.vx * dt, ny = oy + pr.vy * dt;
+    const flightDt=pr.kind==='fire_tornado'?Math.min(dt,Math.max(0,pr.life)):dt;
+    const ox = pr.x, oy = pr.y, nx = ox + pr.vx * flightDt, ny = oy + pr.vy * flightDt;
     const steps = Math.max(1, Math.ceil(dist(ox, oy, nx, ny) / 2)); let blocked = false, b = 0, dead = false;
     for (let j = 1; j <= steps; j++) {
       const x = ox + (nx - ox) * j / steps, y = oy + (ny - oy) * j / steps;
@@ -1413,7 +1421,26 @@ export function tickProj(gs: GameState, dtMs: number, now: number, opts?: { iner
       }
       pr.x = x; pr.y = y;
     }
-    if(pr.kind==='fire_tornado') { const fl=activeFloor(r); for(const m of r.creatures){if(m.state==='dead'||((m as any).floor??0)!==fl||m.elder?.submerged||m.atk?.burrow||dist(m.x,m.y,pr.x,pr.y)>BAL.creatorCoreDragon.tornadoRadius||!los(r,m.x,m.y,pr.x,pr.y,true))continue;const a=Math.atan2(pr.y-m.y,pr.x-m.x);moveBody(r,m,Math.cos(a)*20*dt,Math.sin(a)*20*dt,5,'creature');if(now>=(m.tornadoNext||0)){m.tornadoNext=now+500;damageCreature(gs,m,pr.dmg,a,now,0);}}if(now>=((pr as any).summonTornadoNext||0)){(pr as any).summonTornadoNext=now+500;damagePrimordialSummonsAoE(r,pr.x,pr.y,BAL.creatorCoreDragon.tornadoRadius,pr.dmg,(ax,ay,bx,by)=>los(r,ax,ay,bx,by,true));}ignite(gs,tileOf(pr.x),tileOf(pr.y),now); }
+    if(pr.kind==='fire_tornado') {
+      const fl=activeFloor(r),radius=BAL.creatorCoreDragon.tornadoRadius;
+      const touches=(x:number,y:number)=>dist(x,y,pr.x,pr.y)<=radius && los(r,x,y,pr.x,pr.y,true);
+      for(const m of r.creatures){
+        if(m.state==='dead'||(m.floor??0)!==fl||m.elder?.submerged||m.atk?.burrow||!touches(m.x,m.y))continue;
+        const a=Math.atan2(pr.y-m.y,pr.x-m.x);
+        moveBody(r,m,Math.cos(a)*20*flightDt,Math.sin(a)*20*flightDt,5,'creature');
+        if(now>=(m.tornadoNext??0)){m.tornadoNext=now+500;damageCreature(gs,m,pr.dmg,a,now,0,pr.from==='human'?pr.owner:undefined);}
+      }
+      if(now>=(pr.summonTornadoNext??0)){
+        pr.summonTornadoNext=now+500;
+        damagePrimordialSummonsAoE(r,pr.x,pr.y,radius,pr.dmg,(ax,ay,bx,by)=>los(r,ax,ay,bx,by,true));
+        for(const {h,x,y} of bodies){
+          if(h.actorId===pr.owner || h.state==='DEAD' || h.state==='EVACUATED' || !touches(x,y))continue;
+          applyHumanDamage(r,r.humanWorld!,h,pr.dmg,Math.atan2(y-pr.y,x-pr.x),now,pr.from==='human'?'human':'player',pr.owner??'player',fl);
+        }
+        if(pr.from==='human' && !opts?.inertEnemy && !p.dead && touches(p.x,p.y) && !playerAtSea(r))hurtPlayer(gs,pr.dmg,pr.x,pr.y,pr.owner!,now,0);
+      }
+      ignite(gs,tileOf(pr.x),tileOf(pr.y),now);
+    }
     if (pr.kind === 'blast_signature') {
       const trailSteps=Math.max(1,Math.ceil(dist(ox,oy,pr.x,pr.y)/12));
       for(let k=1;k<=trailSteps;k++){const x=ox+(pr.x-ox)*k/trailSteps,y=oy+(pr.y-oy)*k/trailSteps;ignite(gs,tileOf(x),tileOf(y),now);HAZ.push({kind:'pool',x,y,r:8,t:0,tell:0,dur:BAL.creatorCoreBlast.signatureBurnMs,dmg:BAL.creatorCoreBlast.signatureBurnDamage,style:'burn',owner:'player'});}

@@ -17,7 +17,7 @@ export const HOUR = 3600_000;
  *  be attributed to a body that did not fire it. */
 export interface Proj { x: number; y: number; vx: number; vy: number; life: number; dmg: number; from: 'player' | 'enemy' | 'human'; kind: string; r: number; delay?: number; homing?: number; owner?: string;
   /** A survivor's declared victim: a human actorId, 'player', or a creature id. A shot that misses is a miss. */
-  victim?: string; coreUid?: string }
+  victim?: string; coreUid?: string; floor?:number; summonTornadoNext?:number }
 export interface Haz { kind: 'circle' | 'line' | 'ring' | 'wave' | 'sweep' | 'pool'; x: number; y: number; r?: number; angle?: number; len?: number; w?: number; t: number; tell: number; dur: number; dmg: number; style: string; effect?: string; hit?: boolean; tickAcc?: number; a0?: number; a1?: number; done?: boolean; owner?: string; coreUid?:string; victim?:string; elder?: string; expiresSimMs?:number }
 
 // ---------- Seeded RNG ----------

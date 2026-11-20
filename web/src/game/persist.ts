@@ -245,12 +245,14 @@ export function validate(raw: any): GameState | null {
   if (r.combat !== undefined) {
     const c = r.combat;
     if (!obj(c) || !Array.isArray(c.projectiles) || !Array.isArray(c.hazards) || c.projectiles.length > 5000 || c.hazards.length > 5000) return null;
-    if (c.projectiles.some((q: any) => !obj(q) || !['x','y','vx','vy','life','dmg','r'].every(k => finite(q[k])) || !['player','enemy','human'].includes(q.from) || typeof q.kind !== 'string' || (q.delay !== undefined && !finite(q.delay)) || (q.homing !== undefined && !finite(q.homing)))) return null;
+    if (c.projectiles.some((q: any) => !obj(q) || !['x','y','vx','vy','life','dmg','r'].every(k => finite(q[k])) || !['player','enemy','human'].includes(q.from) || typeof q.kind !== 'string' || (q.floor !== undefined && ![-1,0,1,2].includes(q.floor)) || (q.summonTornadoNext !== undefined && !finite(q.summonTornadoNext)) || (q.delay !== undefined && !finite(q.delay)) || (q.homing !== undefined && !finite(q.homing)))) return null;
     // A survivor's arrow carries the body that fired it; an unattributed human arrow is not a lawful rule.
     if (c.projectiles.some((q: any) => q.from === 'human' && (typeof q.owner !== 'string' || !q.owner || !raw.run?.humanWorld?.people?.[q.owner]))) return null;
     // A survivor's shot names who it was aimed at; that name must be a body (or the player) in this run.
+    // A paid, non-homing tornado can outlive its original creature. Its victim
+    // is historical provenance for settlement, not a target to reacquire.
     if (c.projectiles.some((q: any) => q.from === 'human' && (typeof q.victim !== 'string' || !q.victim ||
-      (q.victim !== 'player' && !raw.run?.humanWorld?.people?.[q.victim] && !(raw.run?.creatures ?? []).some((m: any) => m?.id === q.victim))))) return null;
+      (q.victim !== 'player' && !(q.kind==='fire_tornado' && q.coreUid && q.floor!==undefined && !q.homing) && !raw.run?.humanWorld?.people?.[q.victim] && !(raw.run?.creatures ?? []).some((m: any) => m?.id === q.victim))))) return null;
     // The UID is provenance, not a claim that the caster must still own the item at impact.
     if(c.projectiles.some((q:any)=>q.coreUid!==undefined&&(typeof q.coreUid!=='string'||!q.coreUid)))return null;
     if(c.hazards.some((h:any)=>h?.coreUid!==undefined && (typeof h.coreUid!=='string'||!h.coreUid||h.owner!=='player'&&(!r.humanWorld?.people?.[h.owner]||typeof h.victim!=='string'))))return null;
