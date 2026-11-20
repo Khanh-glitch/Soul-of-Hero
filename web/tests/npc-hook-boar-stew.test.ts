@@ -5,6 +5,7 @@ import {validate} from '../src/game/persist';
 import {settle,tick} from '../src/game/sim';
 import {setActiveLayout} from '../src/game/world';
 import {shiftVeyraWindowBy,windowOrigin} from '../src/veyra05/continuity';
+import {watchPantry} from './helpers/hook-pantry-watch';
 import {T0} from './helpers/g1b-kit';
 
 // Driver for ordinary walking and swinging the starter weapon. Follow the
@@ -85,4 +86,5 @@ it('makes one Hook stew from the first garden lot and a hunted boar; only inter-
  const arrival=waiting();gs=validate(JSON.parse(JSON.stringify(gs)))!;waiting();settle(gs,arrival.at+30000,true);const afterReload=waiting();
  console.log('HOOK_STEW_RETURN',JSON.stringify({seed:r().seed,start:T0,jobId:saved,worker:pay.workerId,arrival,afterReload}));
  console.log('HOOK_BOAR_STEW',JSON.stringify({seed:r().seed,start:T0,scope:'player hunt; controlled inter-region arrival; autonomous cooking',crop,game,pack:rows('human.kitchen.repack'),gift,bill,pay,saved,finish,pickup}));
-},600000);
+ if(process.env.SOH_HOOK_WATCH)watchPantry(gs,pay.workerId,saved,pickup[0].uid,process.env.SOH_HOOK_WATCH);
+},process.env.SOH_HOOK_WATCH?14400000:600000);

@@ -40,3 +40,15 @@ From `web/`: `npm test -- --maxWorkers=1 tests/{npc-hook-boar-stew,npc-kitchen-c
 [Return-attempt trace](pantry-return-7606.json), rerun from geographic New Game 7606 with the same controlled player arrival as above. Before the routing change, the carrier repeatedly tried the crowded shortest approach and was observed three tiles from the pantry, still carrying the stew. On a blocked approach the carrier can now plan another nearby lane; this neither moves another villager nor bypasses the normal per-step collision checks.
 
 The fresh run uses first crop `s3eg` and the boar meat again. Its stew UID is `s3kd` (the previous trace's `s3ke` is not an input to this run). At +701.1 s `hl` is at `(2586,655,0)`, one tile from the store, with `deliveryWait` for `c19v`. All 12 slots are occupied. After a save round-trip and another 30 simulation seconds the stew is still in `c1ax`, claimed to `j3jw`; there is no warehouse lineage for that job. This is a failed unload, not delivery, loss, or consumption. No bin was emptied to pass this test. Reproduce with `npm test -- --maxWorkers=1 tests/npc-hook-boar-stew.test.ts` from `web/`.
+
+### The next vacancy and the meal
+
+[Pantry-to-resident receipts](pantry-meal-7606.json). The long opt-in continuation of the **same** 7606 scenario follows `s3kd` after the confirmed full-store wait (+731.1 s). From here only `settle` advances the world. Nothing consumes room on the cook's behalf: no stock edits, extra bins, forced hunger, player purchases, or job injection. The player-assisted hunt/controlled arrival limitation upstream still applies.
+
+By +15 h 12 min the original berry lot `s19w` is down to two and all 12 bins are occupied. `hq` eats one, then `hl` eats the last from `c19v` (r94437). About 29 ms later **on the simulation clock**, `hl` delivers the same stew UID `s3kd` for `j3jw` into `c19v` (r94438–39). The ledger still cites the exact three paid inputs. Another 4.953 s later the gardener `hn` eats `s3kd` from that warehouse (r94449). Thus a full warehouse with no stew at the end of the sample does **not** imply that no meal was delivered. This demonstrates one meal, not steady-state village provisioning.
+
+Reproduce from `web/` (around 25 minutes wall time here, ordinary tests do not run the long watch):
+
+```sh
+SOH_HOOK_WATCH=/tmp/hook-meal.json npm test -- --maxWorkers=1 tests/npc-hook-boar-stew.test.ts
+```
