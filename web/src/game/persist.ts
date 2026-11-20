@@ -791,6 +791,7 @@ export function validate(raw: any): GameState | null {
       if(h.attackReadyAt!==undefined&&!finite(h.attackReadyAt))return null;
       const cast=h.intent?.coreCast;
       if(cast!==undefined && (!obj(cast)||typeof cast.uid!=='string'||typeof cast.victim!=='string'||!Number.isInteger(cast.floor)||!finite(cast.angle)||!finite(cast.readyAt)))return null;
+      if(cast?.mode!==undefined && (!['basic','refined','signature'].includes(cast.mode)||!finite(cast.distance)||cast.distance<0))return null;
       const lead=h.recoveryLead;
       if(lead!==undefined){const inc=hw.incidents?.[lead?.incidentId];if(!obj(lead)||!inc||inc.victim!==h.actorId||inc.kind!=='robbery'||!inc.property?.includes(lead.uid)||typeof lead.chestId!=='string'||typeof lead.containerId!=='string'||![lead.tx,lead.ty].every(integer)||!Number.isInteger(lead.floor)||!finite(lead.seenAt))return null;}
       // Embedded equipment UIDs must be unique across the run (no duplicate claimant).

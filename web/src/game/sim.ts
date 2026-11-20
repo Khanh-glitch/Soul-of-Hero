@@ -1,5 +1,5 @@
-import {swingTiming,basicCastTiming} from './combat-timing';
-import {basicCoreRay,coreRayProjectile,type BasicCast} from './core-ray';
+import {swingTiming,castTiming} from './combat-timing';
+import {basicCoreRay,coreRayProjectile,type CoreEffectCast} from './core-ray';
 import {countWorldWork,timedWorldWork} from './world-work';
 import { combatStimulus, pushCombatStimulus, type CombatKind } from './stimulus';
 import { syncVeyraPlacement } from '../veyra05/window';
@@ -281,10 +281,30 @@ export function spiritDestination(r:RunState,x:number,y:number):string|null {
   for(const [dx,dy] of [[-4,-4],[4,-4],[-4,4],[4,4]])if(solidFor(r,x+dx,y+dy,'player'))return 'Not enough landing clearance.';
   const start=sy*WW+sx,seen=new Uint8Array(WW*WH),q=new Int32Array(WW*WH);let head=0,tail=0;q[tail++]=start;seen[start]=1;while(head<tail){const p=q[head++];if(p===i)return null;const px=p%WW,py=Math.floor(p/WW);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=px+dx,ny=py+dy;if(nx<1||ny<1||nx>=WW-1||ny>=WH-1)continue;const v=ny*WW+nx;if(!seen[v]&&(grid[v]===0||grid[v]===4)){seen[v]=1;q[tail++]=v;}}}return 'No legal physical route; sealed areas cannot be bypassed.';
 }
-/** Resolve the paid, aimed basic effect. Neither this function nor the effects
+/** Resolve the paid, aimed combat effect. Neither this function nor the effects
  * it creates can draw ammunition from an inventory or start another cast. */
-export function releaseBasicCore(gs:GameState,cast:BasicCast,now:number){
+export function releaseCoreEffect(gs:GameState,cast:CoreEffectCast,now:number){
   const r=gs.run!,{x,y,angle:a,owner}=cast,player=owner==='player',fl=activeFloor(r);
+  if(cast.mode && cast.mode!=='basic'){
+    // Advanced ground-targeted effects are fixed at windup, not attached to
+    // a moving victim. Arrival/damage is owned by the normal hazard clock.
+    if(cast.distance===undefined)return;
+    if(cast.key==='core_meteor' && cast.mode==='refined'){
+      const m=BAL.creatorCoreMeteor,len=Math.min(m.targetRange,cast.distance,rayLen(r,x,y,a,m.targetRange));
+      HAZ.push({kind:'circle',x:x+Math.cos(a)*len,y:y+Math.sin(a)*len,r:m.radius,t:0,tell:m.tellMs,dur:120,dmg:m.targetDamage,style:'meteor',effect:'meteorBurn',owner,coreUid:cast.uid,victim:cast.victim});return;
+    }
+    if(ITEMS[cast.key]?.creatorCore!=='mjolnir')return;
+    const e=BAL.creatorCoreMjolnir,len=Math.min(e.targetRange,cast.distance,rayLen(r,x,y,a,e.targetRange));
+    const at={x:x+Math.cos(a)*len,y:y+Math.sin(a)*len,owner,coreUid:cast.uid,victim:cast.victim};
+    if(cast.mode==='refined'){
+      for(let i=0;i<e.strikeCount;i++)HAZ.push({...at,kind:'circle',r:e.strikeRadius,t:0,tell:250+i*e.strikeIntervalMs,dur:100,dmg:e.strikeDamage,style:'lightning',effect:'mjolnirStrike'});
+    }else{
+      emitCombatSound(r,now,'signature',at.x,at.y);
+      HAZ.push({...at,kind:'pool',r:e.attractRadius,t:0,tell:0,dur:e.attractMs,dmg:0,style:'lightning',effect:'mjolnirPull',expiresSimMs:r.clock.simMs+e.attractMs});
+      HAZ.push({...at,kind:'circle',r:e.attractRadius,t:0,tell:e.attractMs,dur:150,dmg:e.burstDamage,style:'lightning',effect:'mjolnirStrike',expiresSimMs:r.clock.simMs+e.attractMs+150});
+    }
+    return;
+  }
   const ray=basicCoreRay(cast.key);
   if(ray){
     const muzzle=player?10:0;
@@ -326,18 +346,14 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
   const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
   const visualCore=ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire';
   fx('cast',{x:hx,y:hy,core:visualCore,a,ck:ITEMS[s.key].creatorCore,mode,tx:aim.mx,ty:aim.my});
-  if(mode==='basic'){releaseBasicCore(gs,{key:s.key,uid:s.uid,x:p.x,y:p.y,angle:a,owner:'player'},now);return;}
+  if(mode==='basic'){releaseCoreEffect(gs,{key:s.key,uid:s.uid,x:p.x,y:p.y,angle:a,owner:'player'},now);return;}
   if(ITEMS[s.key].creatorCore==='demon') {const e=BAL.creatorCoreDemon;
     if(mode==='refined'){const len=rayLen(r,p.x,p.y,a,e.beamRange);p.channelUntil=now+e.beamMs;HAZ.push({kind:'line',x:p.x,y:p.y,angle:a,len,w:e.beamWidth,t:0,tell:0,dur:e.beamMs,dmg:e.beamDamage,style:'beam',effect:'spiritBeam',owner:'player',expiresSimMs:r.clock.simMs+e.beamMs});}
     if(mode==='signature'){p.pulling=null;r.spiritTransit={x:aim.mx,y:aim.my,arriveAt:now+e.teleportMs,uid:s.uid};fx('spiritDepart',{x:p.x,y:p.y});receipt(r,now,'core.spirit.depart',s.uid);}
     return;
   }
-  if(ITEMS[s.key].creatorCore==='mjolnir') {
-    const e=BAL.creatorCoreMjolnir;
-    if(mode==='refined'||mode==='signature'){const len=Math.min(e.targetRange,dist(p.x,p.y,aim.mx,aim.my),rayLen(r,p.x,p.y,a,e.targetRange)),x=p.x+Math.cos(a)*len,y=p.y+Math.sin(a)*len;
-      if(mode==='refined')for(let i=0;i<e.strikeCount;i++)HAZ.push({kind:'circle',x,y,r:e.strikeRadius,t:0,tell:250+i*e.strikeIntervalMs,dur:100,dmg:e.strikeDamage,style:'lightning',effect:'mjolnirStrike',owner:'player'});
-      else {emitCombatSound(r, now, 'signature', x, y); HAZ.push({kind:'pool',x,y,r:e.attractRadius,t:0,tell:0,dur:e.attractMs,dmg:0,style:'lightning',effect:'mjolnirPull',owner:'player',expiresSimMs:r.clock.simMs+e.attractMs});HAZ.push({kind:'circle',x,y,r:e.attractRadius,t:0,tell:e.attractMs,dur:150,dmg:e.burstDamage,style:'lightning',effect:'mjolnirStrike',owner:'player',expiresSimMs:r.clock.simMs+e.attractMs+150});}
-    }return;
+  if(ITEMS[s.key].creatorCore==='mjolnir'){
+    releaseCoreEffect(gs,{key:s.key,uid:s.uid,x:p.x,y:p.y,angle:a,owner:'player',mode,distance:dist(p.x,p.y,aim.mx,aim.my)},now);return;
   }
   if(ITEMS[s.key].creatorCore==='earthmother') {
     const e=BAL.creatorCoreEarthmother;
@@ -373,7 +389,7 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
   }
   if (ITEMS[s.key].creatorCore === 'meteor') {
     const m=BAL.creatorCoreMeteor;
-    if(mode==='refined') { const len=Math.min(m.targetRange,dist(p.x,p.y,aim.mx,aim.my),rayLen(r,p.x,p.y,a,m.targetRange)); HAZ.push({kind:'circle',x:p.x+Math.cos(a)*len,y:p.y+Math.sin(a)*len,r:m.radius,t:0,tell:m.tellMs,dur:120,dmg:m.targetDamage,style:'meteor',effect:'meteorBurn',owner:'player'}); }
+    if(mode==='refined')releaseCoreEffect(gs,{key:s.key,uid:s.uid,x:p.x,y:p.y,angle:a,owner:'player',mode,distance:dist(p.x,p.y,aim.mx,aim.my)},now);
     if(mode==='signature') { const vx=clamp(Number.isFinite(aim.viewX)?aim.viewX!:p.x-VIEW_W/2,0,WW*TILE-VIEW_W),vy=clamp(Number.isFinite(aim.viewY)?aim.viewY!:p.y-VIEW_H/2,0,WH*TILE-VIEW_H);for(let i=0;i<m.stormCount;i++)HAZ.push({kind:'circle',x:vx+rngNext(r)*VIEW_W,y:vy+rngNext(r)*VIEW_H,r:m.radius,t:0,tell:m.tellMs+i*m.staggerMs,dur:120,dmg:m.stormDamage,style:'meteor',effect:'meteorBurn',owner:'player'});receipt(r,now,'core.meteorStorm',`${s.uid}:${m.stormCount}`); }
     return;
   }
@@ -400,13 +416,13 @@ function tickPlayer(gs: GameState, inp: Input, dtMs: number, now: number) {
   else if (!p.vehicle && !selfFrozen && inp.skill && !p.action) {
     const s = activeStack(r), mode=inp.skill, chosen=inp.skillAim;
     const why = s && ITEMS[s.key]?.creatorCore ? coreCastBlock(r, s, mode, now) : 'Hold a Creator Core.';
-    if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && !why) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,dur:380,contact:300,angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire',ck:ITEMS[s.key].creatorCore,mode,a:Math.atan2(ty-p.y,tx-p.x)}); }
+    if (s && (!chosen || (chosen.uid===s.uid && chosen.slot===p.active)) && ITEMS[s.key]?.creatorCore && !why) { const tx=chosen?.mx ?? inp.mx,ty=chosen?.my ?? inp.my; p.action={kind:'cast',t:0,...castTiming(ITEMS[s.key].creatorCore!,mode),angle:Math.atan2(ty-p.y,tx-p.x),slot:p.active,coreUid:s.uid,mode,targetX:tx,targetY:ty,viewX:chosen?.viewX ?? inp.viewX,viewY:chosen?.viewY ?? inp.viewY}; fx('windup',{x:p.x,y:p.y,core:ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire',ck:ITEMS[s.key].creatorCore,mode,a:Math.atan2(ty-p.y,tx-p.x)}); }
     else fx('toast',{text:why || 'That Core is no longer in hand.'});
   }
   else if (!p.vehicle && !selfFrozen && (inp.attackPressed || inp.attack) && !p.action) {
     const s = activeStack(r); const d = s ? ITEMS[s.key] : null;
     if (d?.repair && s?.dur !== undefined && s.dur <= 0) { if (inp.attackPressed) fx('toast', { text: `${d.name} is broken. Repair it at a workbench.` }); }
-    else if (d?.creatorCore) { const why = coreCastBlock(r, s!, 'basic', now); if (!why) { p.action={kind:'cast',t:0,...basicCastTiming(d.creatorCore),angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed && !why.startsWith('LMB recharging')) fx('toast',{text:why}); }
+    else if (d?.creatorCore) { const why = coreCastBlock(r, s!, 'basic', now); if (!why) { p.action={kind:'cast',t:0,...castTiming(d.creatorCore),angle:p.aim,slot:p.active,coreUid:s!.uid,mode:'basic'}; } else if(inp.attackPressed && !why.startsWith('LMB recharging')) fx('toast',{text:why}); }
     else if (d?.core) { if ((s!.charge ?? 0) > 0) { p.action = { kind: 'cast', t: 0, dur: 520, contact: 460, angle: p.aim, slot: p.active }; fx('windup', { x: p.x, y: p.y, core: d.core }); } else if (inp.attackPressed) fx('toast', { text: 'This Core is spent. Study it at a Research Table.' }); }
     else if (d && d.food && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx(res.ok ? 'eat' : 'toast', { x: p.x, y: p.y, text: res.ok ? '' : (res as any).reason }); }
     else if (d && d.cat === 'bp' && inp.attackPressed) { const res = dispatch(gs, { id: 'use' + now, type: 'useItem', slot: p.active }, now); fx('toast', { text: res.ok ? res.msg : (res as any).reason }); }
@@ -1449,11 +1465,12 @@ function inHaz(h: Haz, x: number, y: number) {
 export function tickHaz(gs: GameState, dtMs: number, now: number, offlineHumanOnly=false) {
   const r = gs.run!; const p = r.player; const fl = activeFloor(r);
   for (let i = HAZ.length - 1; i >= 0; i--) {
-    const h = HAZ[i]; if(offlineHumanOnly && !settleHumanFlame(r,h))continue;
+    const h = HAZ[i]; if(offlineHumanOnly && !settleHumanHazard(r,h))continue;
     if(h.expiresSimMs!==undefined && r.clock.simMs>=h.expiresSimMs){HAZ.splice(i,1);continue;} h.t += dtMs; if (h.t < h.tell) continue;
     const first = !h.done; h.done = true;
     if (first) onHazActivate(gs, h, now);
-    const humanCaster=h.effect==='flameLine' && h.owner && r.humanWorld?.people[h.owner];
+    const humanCaster=humanHazardCaster(r,h);
+    const contactDamage=(x:number,y:number)=>h.dmg*(h.effect==='mjolnirStrike' && (isWet(weatherAt(r,now))||[T.SHALLOW,T.RIVER].includes(effTile(r,tileOf(x),tileOf(y))))?BAL.creatorCoreMjolnir.wetMultiplier:1);
     if ((h.owner === 'player'||humanCaster) && h.dmg > 0 && r.humanWorld) {
       const [ox, oy] = windowOrigin(r);
       for (const person of Object.values(r.humanWorld.people)) {
@@ -1461,15 +1478,15 @@ export function tickHaz(gs: GameState, dtMs: number, now: number, offlineHumanOn
         const hx = (person.gx - ox + 0.5) * TILE, hy = (person.gy - oy + 0.5) * TILE;
         if (inHaz(h, hx, hy) && clearPhysicalLine(r, h, { x: hx, y: hy }, true)) {
           (h as any)[`human_${person.actorId}`] = 1;
-          applyHumanDamage(r, r.humanWorld, person, h.dmg, Math.atan2(hy - h.y, hx - h.x), now,humanCaster?'human':'player',h.owner,fl);
+          applyHumanDamage(r, r.humanWorld, person, contactDamage(hx,hy), Math.atan2(hy - h.y, hx - h.x), now,humanCaster?'human':'player',h.owner,fl);
         }
       }
     }
-    if(humanCaster && !offlineHumanOnly && !h.hit && !p.dead && inHaz(h,p.x,p.y) && clearPhysicalLine(r,h,p,true)){h.hit=true;hurtPlayer(gs,h.dmg,h.x,h.y,humanCaster.name,now,90);}
+    if(humanCaster && h.dmg>0 && !offlineHumanOnly && !h.hit && !p.dead && !playerAtSea(r) && inHaz(h,p.x,p.y) && clearPhysicalLine(r,h,p,true)){h.hit=true;hurtPlayer(gs,contactDamage(p.x,p.y),h.x,h.y,humanCaster.name,now,90);}
     if(h.owner==='player' && h.effect==='spiritBeam'){if(p.dead || (p.channelUntil||0)<=now){HAZ.splice(i,1);continue;}for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)&&now>=(m.beamHitNext||0)){m.beamHitNext=now+BAL.creatorCoreDemon.beamTickMs;if(damageCreature(gs,m,h.dmg,h.angle||0,now,0))fx('spiritHit',{x:m.x,y:m.y});}if(now>=((h as any).summonTickNext||0)){(h as any).summonTickNext=now+BAL.creatorCoreDemon.beamTickMs;damagePrimordialSummonsAoE(r,h.x,h.y,h.len||0,h.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true),(sx,sy)=>inHaz(h,sx,sy));}}
-    else if(h.owner==='player' && h.effect==='mjolnirPull'){for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){const a=Math.atan2(h.y-m.y,h.x-m.x),step=Math.min(dist(h.x,h.y,m.x,m.y),BAL.creatorCoreMjolnir.attractSpeed*dtMs/1000*(m.elder?0.15:1));moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}}
+    else if((h.owner==='player'||humanCaster) && h.effect==='mjolnirPull'){for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){const a=Math.atan2(h.y-m.y,h.x-m.x),step=Math.min(dist(h.x,h.y,m.x,m.y),BAL.creatorCoreMjolnir.attractSpeed*dtMs/1000*(m.elder?0.15:1));moveBody(r,m,Math.cos(a)*step,Math.sin(a)*step,5,'creature');}}
     else if(h.owner==='player' && h.effect==='natureRoot'){for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&!m.elder?.submerged&&!m.atk?.burrow&&inHaz(h,m.x,m.y)&&clearPhysicalLine(r,h,m,true)){m.rootedUntil=Math.max(m.rootedUntil||0,Math.min(now+150,now+Math.max(0,h.tell+h.dur-h.t)));if(now >= (m.rootHitNext||0)){m.rootHitNext=now+BAL.creatorCoreEarthmother.rootTickMs;damageCreature(gs,m,h.dmg,0,now,0);}}if(now>=((h as any).summonRootNext||0)){(h as any).summonRootNext=now+BAL.creatorCoreEarthmother.rootTickMs;damagePrimordialSummonsAoE(r,h.x,h.y,h.r||0,h.dmg,(ax,ay,bx,by)=>clearPhysicalLine(r,{x:ax,y:ay},{x:bx,y:by},true),(sx,sy)=>inHaz(h,sx,sy));}}
-    else if (h.owner === 'player' && h.kind === 'pool' && h.style === 'burn') { h.tickAcc=(h.tickAcc||0)-dtMs; if(h.tickAcc<=0){h.tickAcc=500;for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&inHaz(h,m.x,m.y)&&los(r,h.x,h.y,m.x,m.y)&&now >= (m.signatureBurnNext||0)){m.signatureBurnNext=now+500;damageCreature(gs,m,h.dmg,Math.atan2(m.y-h.y,m.x-h.x),now,10);}damagePrimordialSummonsAoE(r,h.x,h.y,h.r||0,h.dmg,(ax,ay,bx,by)=>los(r,ax,ay,bx,by),(sx,sy)=>inHaz(h,sx,sy));} }
+    else if ((h.owner==='player'||humanCaster) && h.kind === 'pool' && h.style === 'burn') { h.tickAcc=(h.tickAcc||0)-dtMs; if(h.tickAcc<=0){h.tickAcc=500;for(const m of r.creatures)if(m.state!=='dead'&&((m as any).floor??0)===fl&&inHaz(h,m.x,m.y)&&los(r,h.x,h.y,m.x,m.y)&&now >= (m.signatureBurnNext||0)){m.signatureBurnNext=now+500;damageCreature(gs,m,h.dmg,Math.atan2(m.y-h.y,m.x-h.x),now,10,humanCaster?humanCaster.actorId:undefined);}damagePrimordialSummonsAoE(r,h.x,h.y,h.r||0,h.dmg,(ax,ay,bx,by)=>los(r,ax,ay,bx,by),(sx,sy)=>inHaz(h,sx,sy));} }
     else if (h.owner === 'player'||humanCaster) {
       if (first || h.kind === 'ring') {
         damagePrimordialSummonsAoE(
@@ -1490,7 +1507,7 @@ export function tickHaz(gs: GameState, dtMs: number, now: number, offlineHumanOn
           if (m.state === 'dead' || ((m as any).floor ?? 0) !== fl || (h as any)['h_' + m.id]) continue;
           if (inHaz(h, m.x, m.y) && los(r, h.x, h.y, m.x, m.y)) {
             (h as any)['h_' + m.id] = 1;
-            damageCreature(gs, m, h.dmg * (h.effect==='mjolnirStrike' && (isWet(weatherAt(r,now)) || [T.SHALLOW,T.RIVER].includes(effTile(r,tileOf(m.x),tileOf(m.y)))) ? BAL.creatorCoreMjolnir.wetMultiplier : 1), Math.atan2(m.y - h.y, m.x - h.x), now, 90,humanCaster?humanCaster.actorId:undefined);
+            damageCreature(gs, m, contactDamage(m.x,m.y), Math.atan2(m.y - h.y, m.x - h.x), now, 90,humanCaster?humanCaster.actorId:undefined);
             if (h.effect === 'slowm') m.slow = 3000;
           }
         }
@@ -1511,7 +1528,7 @@ function onHazActivate(gs: GameState, h: Haz, now: number) {
   if (h.effect === 'quake') { const res = harvestHit(gs, tileOf(h.x), tileOf(h.y), { stone: 6, ore: 5 }, now, h.x, h.y); if (res.result === 'yield') fx('chip', { x: h.x, y: h.y, mat: res.mat }); }
   if (h.effect === 'ignite' || h.effect === 'burnline') { if (h.kind === 'line') { for (let d = 10; d < h.len!; d += 14) { const x = h.x + Math.cos(h.angle!) * d, y = h.y + Math.sin(h.angle!) * d; ignite(gs, tileOf(x), tileOf(y), now); } HAZ.push({ ...h, t: 0, tell: 0, dur: 3000, style: 'burn', effect: undefined, done: false, hit: false, dmg: 10 }); } else ignite(gs, tileOf(h.x), tileOf(h.y), now); }
   if (h.effect === 'flameLine') for(let d=10;d<(h.len||0);d+=14) ignite(gs,tileOf(h.x+Math.cos(h.angle!)*d),tileOf(h.y+Math.sin(h.angle!)*d),now);
-  if (h.effect === 'meteorBurn') { ignite(gs,tileOf(h.x),tileOf(h.y),now); HAZ.push({kind:'pool',x:h.x,y:h.y,r:h.r,t:0,tell:0,dur:BAL.creatorCoreMeteor.burnMs,dmg:BAL.creatorCoreMeteor.burnDamage,style:'burn',owner:'player'}); }
+  if (h.effect === 'meteorBurn') { ignite(gs,tileOf(h.x),tileOf(h.y),now); HAZ.push({kind:'pool',x:h.x,y:h.y,r:h.r,t:0,tell:0,dur:BAL.creatorCoreMeteor.burnMs,dmg:BAL.creatorCoreMeteor.burnDamage,style:'burn',effect:'meteorPool',owner:h.owner,coreUid:h.coreUid,victim:h.victim}); }
   if (h.effect === 'pool') HAZ.push({ kind: 'pool', x: h.x, y: h.y, r: h.r, t: 0, tell: 0, dur: 6500, dmg: 5, style: 'pool', owner: h.owner, done: false });
   if (h.effect === 'pillar' || h.effect === 'cage') { const tx = tileOf(h.x), ty = tileOf(h.y); const t = effTile(r, tx, ty); const p = r.player;
     if (![T.DEEP, T.PWALL, T.CLIFF].includes(t) && !(tileOf(p.x) === tx && tileOf(p.y) === ty)) { settleRegrowthAt(r, tx, ty, now); r.terrain[ty * WW + tx] = { t: T.PWALL, until: r.clock.simMs + (h.effect === 'cage' ? 7000 : 11000), untilAt: now + (h.effect === 'cage' ? 7000 : 11000), ...({ by: h.elder } as any) }; markDirty(); } }
@@ -1744,7 +1761,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   tickPlayer(gs, playerAtSea(r) ? { ...inp, up: false, down: false, left: false, right: false, attack: false, attackPressed: false, roll: false, cancel: false, skill: undefined } : inp, dtMs, now);
   if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
   tickCreatures(gs, dtMs, now);
-  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle, attacker) => damageCreature(gs, m, dmg, angle, now,130,attacker.actorId), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); }, (shot) => spawnHumanShot(gs, shot), cast=>releaseBasicCore(gs,cast,now));
+  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle, attacker) => damageCreature(gs, m, dmg, angle, now,130,attacker.actorId), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); }, (shot) => spawnHumanShot(gs, shot), cast=>releaseCoreEffect(gs,cast,now));
   tickDragonDive(gs, dtMs, now);
   tickTurrets(gs, dtMs, now);
   tickProj(gs, dtMs, now);
@@ -1786,7 +1803,8 @@ function discover(gs: GameState, now: number) {
 /** Fine defense-contact slices per absence window (persisted via r.clock.defenseFrames). */
 const DEFENSE_FRAME_BUDGET = 14400;
 function settleProjectile(pr:Proj){return pr.from==='player'||pr.from==='human'&&pr.victim!=='player';}
-function settleHumanFlame(r:RunState,h:Haz){return h.effect==='flameLine'&&!!h.owner&&!!r.humanWorld?.people[h.owner]&&!!h.victim&&h.victim!=='player';}
+function humanHazardCaster(r:RunState,h:Haz){return (h.effect==='flameLine'||h.effect==='mjolnirStrike'||h.effect==='mjolnirPull'||h.effect==='meteorBurn'||h.effect==='meteorPool')&&h.coreUid&&h.owner?r.humanWorld?.people[h.owner]:undefined;}
+function settleHumanHazard(r:RunState,h:Haz){return h.victim && h.victim!=='player' && !!humanHazardCaster(r,h);}
 // ---------- offline settlement (C09) ----------
 export function settle(gs: GameState, now: number, silent = false, interruptTransit = true): string[] {
   const r = gs.run; if (!r) return [];
@@ -1806,7 +1824,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
   // R5.1 P1-D committed-projectile policy: hostile instruments aimed at the absent player cannot resolve
   // during settlement, offline or after return. Hostile hazards and hostile in-flight projectiles are
   // discarded (never stepped, never re-armed); the player's own committed instruments persist for online law.
-  const keptHaz=HAZ.filter(h=>h.owner==='player'||settleHumanFlame(r,h));
+  const keptHaz=HAZ.filter(h=>h.owner==='player'||settleHumanHazard(r,h));
   const clearedHazards=HAZ.length-keptHaz.length;
   if(clearedHazards){HAZ.splice(0,HAZ.length,...keptHaz);receipt(r,start,'offline.hazards_cleared',String(clearedHazards));}
   const keptProj=PROJ.filter(settleProjectile);
@@ -1862,7 +1880,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     // R5-SIM2: bounded defense contact window — a ready, supplied turret that can legally see a target,
     // or any player arrow committed at logout (including a declared spell projectile still counting down),
     // force fine-grained slices so offline defense uses the identical online law.
-    const inFlight = PROJ.some(settleProjectile)||HAZ.some(h=>settleHumanFlame(r,h));
+    const inFlight = PROJ.some(settleProjectile)||HAZ.some(h=>settleHumanHazard(r,h));
     const contact = inFlight || turretContactWindow(r, t);
     if (contact && defenseFrames < DEFENSE_FRAME_BUDGET) dtMs = Math.min(dtMs, 50);
     dtMs = territoryBoundary(r,dtMs);
@@ -1926,7 +1944,7 @@ export function settle(gs: GameState, now: number, silent = false, interruptTran
     }
     // R5.1 P0-B/P0-C: the online law runs in full on contact slices; EVERY other chronological slice
     // advances each turret cooldown by exactly its own span — one authority, no freeze, no double count.
-    const committedInFlight = PROJ.some(settleProjectile)||HAZ.some(h=>settleHumanFlame(r,h));
+    const committedInFlight = PROJ.some(settleProjectile)||HAZ.some(h=>settleHumanHazard(r,h));
     if (dtMs <= 50 && defenseFrames < DEFENSE_FRAME_BUDGET && (committedInFlight || turretContactWindow(r, until))) {
       // Turret resolution shares the exact online functions: same range, same LOS, same cooldown, same ammo cost (1 arrow per shot).
       tickTurrets(gs, dtMs, until);

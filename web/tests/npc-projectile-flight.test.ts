@@ -14,7 +14,7 @@ import { auToTile, windowAround } from '../src/veyra05/frame';
 import { T0 } from './helpers/g1b-kit';
 import { stepHumanCombat, humanPack, type HumanRecord } from '../src/game/humanworld';
 import { validate } from "../src/game/persist";
-import { bindCombat, settle, HAZ, tickHaz, PROJ, releaseBasicCore, spawnHumanShot, tickProj } from '../src/game/sim';
+import { bindCombat, settle, HAZ, tickHaz, PROJ, releaseCoreEffect, spawnHumanShot, tickProj } from '../src/game/sim';
 
 function runAt(ax = 921, ay = 259, seed = 7606): GameState {
   const [gtx, gty] = auToTile(ax, ay);
@@ -103,7 +103,7 @@ it('a survivor winds up the actual Core, cannot borrow player energy, and commit
  h.intent={intentId:'watch',actorId:h.actorId,kind:'fight',target:'player',reserved:[],preconditions:[],startAt:T0,dueAt:T0};
  const pack=humanPack(r,h),core=mkStack(r,'core_elsa',1);pack.slots.fill(null);pack.slots[0]=core;core.dur=120;
  r.custody.inv.slots[0]=mkStack(r,'energy_basic',12);PROJ.length=0;
- const cast=(ms:number)=>stepHumanCombat(r,hw,T0+ms,undefined,undefined,undefined,c=>releaseBasicCore(gs,c,T0+ms));
+ const cast=(ms:number)=>stepHumanCombat(r,hw,T0+ms,undefined,undefined,undefined,c=>releaseCoreEffect(gs,c,T0+ms));
  cast(1);expect(h.intent.coreCast).toBeUndefined();pack.slots[1]=mkStack(r,'energy_basic',2);cast(2);expect(h.intent.coreCast?.uid).toBe(core.uid);
  pack.slots[0]=null;cast(190);expect(PROJ).toHaveLength(0);expect(core.dur).toBe(120);pack.slots[0]=core;
  cast(200);cast(381);cast(382);expect(PROJ).toHaveLength(1);expect(PROJ[0]).toMatchObject({kind:'elsa_shard',from:'human',owner:h.actorId,victim:'player',coreUid:core.uid});
@@ -119,7 +119,7 @@ it.each(['core_blast','core_earthmother','core_meteor','core_dragon','core_mjoln
   victim.gx=caster.gx+1;victim.gy=caster.gy;victim.floor=0;victim.state='IDLE';victim.equip.weapon=null;victim.hp=victim.maxHp=500;
   caster.intent={intentId:'core',kind:'fight',actorId:caster.actorId,target:victim.actorId,preconditions:[],reserved:[],startAt:T0,dueAt:T0};
   const slots=humanPack(r,caster).slots;slots.fill(null);const core=mkStack(r,key,1),energy=mkStack(r,'energy_basic',2);slots[0]=core;slots[1]=energy;PROJ.length=0;HAZ.length=0;
-  const cast=(t:number)=>stepHumanCombat(r,hw,t,undefined,undefined,undefined,c=>releaseBasicCore(gs,c,t));
+  const cast=(t:number)=>stepHumanCombat(r,hw,t,undefined,undefined,undefined,c=>releaseCoreEffect(gs,c,t));
   cast(T0+1);const commit=caster.intent!.coreCast!.readyAt;cast(commit-1);expect([energy.qty,victim.hp]).toEqual([2,500]);cast(commit);
   expect(energy.qty).toBe(1);expect(core.cd!.basic).toBeGreaterThan(commit);
   if(key==='core_dragon')expect(HAZ[0]).toMatchObject({owner:caster.actorId,coreUid:core.uid});

@@ -1,4 +1,6 @@
-import {swingTiming,basicCastTiming} from './combat-timing';
+import {availableCore,chooseHumanCast,humanCastReach,safeAreaAim} from './human-core-tactics';
+import type {CoreMode} from './g1b';
+import {swingTiming,castTiming} from './combat-timing';
 import {observeRecipeSources,serviceRecipeBoard,recipeBoardDestination,requestedSourceReports,communityFoodDeficit,type FoodRequest,type SourceReport} from './human-procurement';
 import {timedWorldWork} from './world-work';
 import {globalSourceCandidates, globalBaseGeometry} from '../veyra05/window';
@@ -28,7 +30,7 @@ import {countWorldWork} from './world-work';
  */
 import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
 import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import {basicCoreReach,type BasicCast} from './core-ray';
+import {type CoreEffectCast} from './core-ray';
 import {coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
@@ -100,7 +102,7 @@ export interface HumanKnowledge {
 export interface HumanIntent {
   guardPlayer?: boolean;
   swing?: {uid:string;victim:string;floor:number;angle:number;distance:number;contactAt:number};
-  coreCast?: {uid:string;victim:string;readyAt:number;floor:number;angle:number};
+  coreCast?: {mode?:CoreMode;distance?:number;uid:string;victim:string;readyAt:number;floor:number;angle:number};
   delivery?: {storeId:string;containerId:string;cargo:{uid:string;qty:number}[]};
   work?: HumanWorkTask;
   intentId: string;
@@ -1062,7 +1064,7 @@ export function applyDamage(r: RunState, hw: HumanWorld, h: HumanRecord, dmg: nu
     }, now);
     formGrievance(r, hw, h, attackerId, now, incident.id);
   }
-  if(h.hp>0 && attackerId && (source==='human'||source==='player'||source==='enemy') && h.state!=='DOWNED' && (humanWeapon(h)||readyCore(r,h,now))) {
+  if(h.hp>0 && attackerId && (source==='human'||source==='player'||source==='enemy') && h.state!=='DOWNED' && (humanWeapon(h)||availableCore(r,h,now))) {
     h.motion=undefined;h.state='FIGHTING';h.intent={intentId:`defend:${h.actorId}:${now}`,actorId:h.actorId,kind:'fight',target:attackerId,preconditions:['direct physical assault'],reserved:[],startAt:now,dueAt:now};
   }
   if (h.hp <= 0) {
@@ -3168,13 +3170,10 @@ function humanCombatTarget(r:RunState,hw:HumanWorld,id:string|undefined,floor:nu
 }
 /** A guard leash is relative to the protected player, not to the camera or
  * a remembered enemy ID. Never turn an idle passerby into an engage target. */
-function readyCore(r:RunState,h:HumanRecord,now:number){
-  return humanPack(r,h).slots.find(s=>s && basicCoreReach(s.key) && !coreCastBlock(r,s,'basic',now,h.inv.packId));
-}
 function combatEquipmentBlock(r:RunState,h:HumanRecord,now:number){
   const w=humanWeapon(h),ranged=w&&ITEMS[h.equip.weapon!.key].ranged;
   if(w && (!ranged || humanPack(r,h).slots.some(s=>s?.key==='arrow'&&!s.production&&s.qty>0)))return;
-  if(!readyCore(r,h,now))return w?'no ammunition':'no usable weapon';
+  if(!availableCore(r,h,now))return w?'no ammunition':'no usable weapon';
 }
 function threatensPlayer(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,now:number){
   if(h.floor!==(r.veyraFloor??0)||r.player.dead||h.hp<h.maxHp*.3 || h.stamina<3)return false;
@@ -3313,10 +3312,10 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     if(h.intent.swing || h.intent.coreCast)continue; // committed aim: do not turn or chase through windup
     faceHumanToward(h, ox + enemy.x / TILE, oy + enemy.y / TILE);
     const weapon = humanWeapon(h);
-    const core=readyCore(r,h,now), coreReach=core?basicCoreReach(core.key):0;
-    if (!weapon && !coreReach) { h.intent.blockReason = 'no usable weapon'; continue; }
-    const distance = Math.hypot((h.gx - ox + 0.5) * TILE - enemy.x, (h.gy - oy + 0.5) * TILE - enemy.y);
-    if (h.intent.coreCast || distance <= Math.max(weapon?weapon.reach+8:0,coreReach)) continue;
+    const origin={x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE};
+    const distance=Math.hypot(origin.x-enemy.x,origin.y-enemy.y);
+    if(weapon && distance<=weapon.reach+8 || chooseHumanCast(r,h,origin,enemy,now))continue;
+    if(!weapon && !availableCore(r,h,now)){h.intent.blockReason='no usable weapon';continue;}
     if ((h.nextThinkAt ?? 0) > now || combatRoutes >= 4) continue;
     h.nextThinkAt = now + 750; combatRoutes++;
     // No psychic pursuit: the approach must begin with actual line of sight.
@@ -3438,7 +3437,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
  *  exists only on impact, so a shot can miss, be blocked, or be outrun. */
 export interface HumanShot { shooterId: string; gx: number; gy: number; dmg: number; victim: string; tx: number; ty: number }
 
-export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void, hitPlayer?: (attacker: HumanRecord, damage: number, angle: number) => void, spawnShot?: (shot: HumanShot) => boolean, emitCore?: (cast:BasicCast)=>void): void {
+export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void, hitPlayer?: (attacker: HumanRecord, damage: number, angle: number) => void, spawnShot?: (shot: HumanShot) => boolean, emitCore?: (cast:CoreEffectCast)=>void): void {
   const activeFloor = r.veyraFloor ?? 0;
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
@@ -3471,18 +3470,28 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
     }
     if((h.attackReadyAt??0)>now)continue;
     if(emitCore && !intent.swing){
-      const pending=intent.coreCast, pack=humanPack(r,h), core=pending?pack.slots.find(s=>s?.uid===pending.uid):readyCore(r,h,now);
-      const reach=core?basicCoreReach(core.key):0,target=humanCombatTarget(r,hw,intent.target,h.floor);
-      const x=(h.gx-ox+.5)*TILE,y=(h.gy-oy+.5)*TILE;
-      if(core && reach && target && (!target.human || (!h.protectedPeople.includes(intent.target)&&(!h.community||target.human.community!==h.community))) &&
-        (!pending || (pending.victim===intent.target&&pending.floor===h.floor)) && Math.hypot(target.x-x,target.y-y)<=reach && clearPhysicalLine(r,{x,y},target,true) && !coreCastBlock(r,core,'basic',now,pack.id)){
-        if(!pending){faceHumanToward(h,ox+target.x/TILE,oy+target.y/TILE);intent.coreCast={uid:core.uid,victim:intent.target,floor:h.floor,angle:Math.atan2(target.y-y,target.x-x),readyAt:now+basicCastTiming(ITEMS[core.key].creatorCore!).contact};continue;}
-        if(now<pending.readyAt)continue;
-        delete intent.coreCast;
-        if(coreCastCommit(r,core,'basic',now,pack.id)){
-          emitCore({key:core.key,uid:core.uid,x,y,angle:pending.angle,owner:h.actorId,victim:intent.target});
-          const timing=basicCastTiming(ITEMS[core.key].creatorCore!);h.attackReadyAt=now+timing.dur-timing.contact;
-          h.lastAttackAt=now;h.stamina-=3;receipt(r,now,'human.core.commit',`${h.actorId}:${core.uid}:basic:${intent.target}`);continue;
+      const pending=intent.coreCast,pack=humanPack(r,h),target=humanCombatTarget(r,hw,intent.target,h.floor);
+      const x=(h.gx-ox+.5)*TILE,y=(h.gy-oy+.5)*TILE,origin={x,y};
+      if(target && (!target.human || (!h.protectedPeople.includes(intent.target)&&(!h.community||target.human.community!==h.community))) && clearPhysicalLine(r,origin,target,true)){
+        const choice=pending?{core:pack.slots.find(s=>s?.uid===pending.uid),mode:pending.mode??'basic'}:chooseHumanCast(r,h,origin,target,now);
+        if(choice?.core){
+          const {core,mode}=choice,reach=humanCastReach(core,mode),distance=Math.hypot(target.x-x,target.y-y);
+          const timing=castTiming(ITEMS[core.key].creatorCore!,mode);
+          if(!pending && distance<=reach){
+            faceHumanToward(h,ox+target.x/TILE,oy+target.y/TILE);
+            intent.coreCast={uid:core.uid,mode,victim:intent.target,floor:h.floor,angle:Math.atan2(target.y-y,target.x-x),distance,readyAt:now+timing.contact};continue;
+          }
+          if(pending && pending.victim===intent.target && pending.floor===h.floor && distance<=reach && reach>0 && !coreCastBlock(r,core,mode,now,pack.id)){
+            if(now<pending.readyAt)continue;
+            const len=pending.distance??distance,aim={x:x+Math.cos(pending.angle)*len,y:y+Math.sin(pending.angle)*len};
+            delete intent.coreCast;
+            if(mode!=='basic' && (len>reach || !clearPhysicalLine(r,origin,aim,true) || !safeAreaAim(r,h,origin,aim,core,mode)))continue;
+            if(coreCastCommit(r,core,mode,now,pack.id)){
+              emitCore({key:core.key,uid:core.uid,x,y,angle:pending.angle,owner:h.actorId,victim:intent.target,mode,distance:len});
+              h.attackReadyAt=now+timing.dur-timing.contact;h.lastAttackAt=now;h.stamina-=3;
+              receipt(r,now,'human.core.commit',`${h.actorId}:${core.uid}:${mode}:${intent.target}`);continue;
+            }
+          }
         }
       }
       if(pending){delete intent.coreCast;continue;}
