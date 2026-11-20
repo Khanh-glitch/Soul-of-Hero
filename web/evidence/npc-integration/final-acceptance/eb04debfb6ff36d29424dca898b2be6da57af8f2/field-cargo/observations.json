@@ -1,0 +1,182 @@
+{
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:4180/pixelfx-assets/index.json",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:4180/pixelfx-assets/index.json",
+      "status": 404
+    }
+  ],
+  "saves": [
+    {
+      "stage": "01-departure",
+      "id": "run_t2852h_mwoam0wg",
+      "seed": 1757258153,
+      "layout": "veyra05-at-1856-1536",
+      "at": 1795137677406,
+      "origin": [
+        928,
+        768
+      ],
+      "local": [
+        105,
+        114
+      ],
+      "people": 286,
+      "jobs": [
+        {
+          "actor": "h9",
+          "role": "builder",
+          "location": [
+            1612,
+            1155,
+            0
+          ],
+          "community": "com:po_greywater",
+          "pack": "c17d",
+          "state": "MOVING",
+          "block": "Checking physical route (256 cells examined; no travel claimed).",
+          "job": {
+            "id": "hj2t4",
+            "sourceId": "0:4585605",
+            "gx": 1605,
+            "gy": 1146,
+            "floor": 0,
+            "key": "oak",
+            "phase": "source",
+            "startedAt": 1795137664849
+          }
+        },
+        {
+          "actor": "ha",
+          "role": "engineer",
+          "location": [
+            1902,
+            499,
+            0
+          ],
+          "community": "com:po_academy",
+          "pack": "c17u",
+          "state": "IDLE",
+          "block": "Checking physical route (512 cells examined; no travel claimed).",
+          "job": {
+            "id": "hj2t6",
+            "sourceId": "0:1993902",
+            "gx": 1902,
+            "gy": 498,
+            "floor": 0,
+            "key": "crystal",
+            "phase": "delivery",
+            "startedAt": 1795137665849,
+            "storeId": "e17s"
+          },
+          "output": {
+            "s2te": 1
+          }
+        },
+        {
+          "actor": "hb",
+          "role": "mechanic",
+          "location": [
+            1881,
+            492,
+            0
+          ],
+          "community": "com:po_academy",
+          "pack": "c17z",
+          "state": "IDLE",
+          "block": "Checking physical route (512 cells examined; no travel claimed).",
+          "job": {
+            "id": "hj2t7",
+            "sourceId": "0:1969880",
+            "gx": 1880,
+            "gy": 492,
+            "floor": 0,
+            "key": "crystal",
+            "phase": "delivery",
+            "startedAt": 1795137666849,
+            "storeId": "e17s"
+          },
+          "output": {
+            "s2tc": 1
+          }
+        },
+        {
+          "actor": "he",
+          "role": "engineer",
+          "location": [
+            2363,
+            2591,
+            0
+          ],
+          "community": "com:po_ironmine",
+          "pack": "c18z",
+          "state": "MOVING",
+          "job": {
+            "id": "hj2t9",
+            "sourceId": "0:10374364",
+            "gx": 2364,
+            "gy": 2593,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "delivery",
+            "startedAt": 1795137669849,
+            "storeId": "e18o"
+          },
+          "output": {
+            "s2tf": 2
+          }
+        },
+        {
+          "actor": "hf",
+          "role": "salvager",
+          "location": [
+            2356,
+            2551,
+            0
+          ],
+          "community": "com:po_ironmine",
+          "pack": "c193",
+          "state": "WORKING",
+          "job": {
+            "id": "hj2ta",
+            "sourceId": "0:10202356",
+            "gx": 2356,
+            "gy": 2550,
+            "floor": 0,
+            "key": "road_salvage_bale",
+            "phase": "source",
+            "startedAt": 1795137670849
+          }
+        },
+        {
+          "actor": "hl",
+          "role": "gardener",
+          "location": [
+            2587,
+            653,
+            0
+          ],
+          "community": "com:po_hook",
+          "pack": "c1ak",
+          "state": "IDLE",
+          "block": "Checking physical route (256 cells examined; no travel claimed).",
+          "job": {
+            "id": "hj2tg",
+            "sourceId": "0:2534586",
+            "gx": 2586,
+            "gy": 633,
+            "floor": 0,
+            "key": "bush",
+            "phase": "source",
+            "startedAt": 1795137676849
+          }
+        }
+      ]
+    }
+  ],
+  "closedMs": 111385
+}

@@ -36,3 +36,5 @@ Ngày 2026-11-19 · `arena/25e24231-soul-of-hero` · SHA nguồn và test: `eb04
 11. Bảng gate CODE/ENGINEERING/BROWSER/CREATOR ở đầu trang. **REVIEW REQUIRED; không merge.**
 
 **Cập nhật T9 lúc 19:32 UTC:** shard đầu tiên hoàn tất (index 1): 47 file qua, 9 lỗi; 360 assertion qua, 28 lỗi, 32 pending. Shard 0 hết watchdog 1800s. Tính cả phép đối chứng chọn lọc, **37 dấu lỗi** (gồm một lỗi cấp suite) khớp baseline; một assertion freight mới quan sát chưa phân loại. Không phải verdict cho 225 file. Xem [checkpoint có stack và từng file](engineering/regression-review.json).
+
+**Bổ sung trình duyệt:** [F: công việc khi đóng game](field-cargo-confirmation/README.md) có hai save gốc cùng run. Theo 6 job đã tồn tại, đối chiếu chuyển UID và merge vào kho sau hơn 90 giây đóng Chromium. Còn thiếu đi khỏi/đi lại làng trên tầng khác. Hai HTTP 404 của manifest VFX đã được ghi, không được coi là nghiệm thu sạch lỗi request.
