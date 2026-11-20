@@ -39,7 +39,7 @@ import {
 import { syncVeyraEcosystemActors, VEYRA_PRIMORDIAL_SITES, resolvePrimordialGlobalTile } from '../veyra05/ecosystem';
 import { cleanupPrimordialBoss } from './primordials/host-bridge';
 import { TAMING_SPECIES, BUTCHER_YIELDS, createTamedState, deterministicAnimalSex, inspectPenAt } from './husbandry';
-import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerBoardEvac, leaveEvacBerth, nearestEvacTrip, startHumanAid, commandHuman, talkToHuman, threatenHuman, recruitHuman, setFollowing, commitHumanBarter, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
+import { newHumanWorld, seedPopulation, tickNeeds, advanceElderPressure, defeatElder, finalizeHumanOutcomes, humanHistoryAggregate, playerBoardEvac, leaveEvacBerth, nearestEvacTrip, startHumanAid, commandHuman, talkToHuman, threatenHuman, recruitHuman, setFollowing, observeRobbedDeposit, commitHumanBarter, exchangeHumanStacks, lootHuman, type HumanWorld, type HumanDemand, type HumanTalkTopic } from './humanworld';
 import { NPC_POI_CENSUS } from './npc-census';
 // CAL-01: one authoritative two-year/eight-season calendar (pure; engine-free module).
 import { CALENDAR_VERSION, runClockMs, calendarAt, climateAt, climateAtPx, climateFromCell, cropSeasonFactor, normalizeCalendarLedger, phaseBoundaryAt, phaseMs, phaseCount, seasonTransitionsBetween, seasonWeatherWeights, seasonLabel, calendarView, seasonOfPhase, type Season, type CalendarLedgerV1 } from './calendar';
@@ -770,9 +770,25 @@ export function territoryBoundary(r:RunState,limit:number) {
   for(const e of plan.structures){const c=plan.assigned.get(e.id);if(!c||!plan.forecast.get(c.id)?.funded)dt=Math.min(dt,e.hp!/(e.maxHp!/(BAL.territory[c?'unfundedCollapseHours':'unprotectedCollapseHours']*HOUR)));}
   return dt;
 }
+const stationByProp:Record<string,string>={hearth:'campfire',forge:'furnace',furnace_big:'large_furnace',anvil:'workbench'};
+/** Replacing a destroyed station reuses its authored hearth/anvil, a solid prop
+ * under the original working entity. This is not permission to build on trees. */
+export function authoredStationFootprint(poi:string,type:string,tx:number,ty:number,floor:number){
+  return authoredPlan(poi)?.plan.props.some(p=>p.level===floor&&p.x===tx&&p.y===ty&&stationByProp[p.kind]===type)??false;
+}
+/** Keep the address of a destroyed, community-owned working site, never its
+ * old fuel, paid queue or outputs. Those follow normal wreck custody. */
+function noteLostWorksite(r:RunState,e:Entity,now:number){
+  const c=e.owner?r.humanWorld?.communities[e.owner]:undefined;
+  if(!c || !e.station || !c.workStations.includes(e.id) || !['campfire','workbench','furnace'].includes(e.type??''))return;
+  const p=entityGlobalCoords(r,e);(c.lostWorksites??={})[e.id]={type:e.type!,tx:p.gtx,ty:p.gty,floor:p.floor};
+  for(const id of c.memberIds){const h=r.humanWorld!.people[id];if(h?.occupation==='builder'&&h.state==='IDLE')h.nextThinkAt=now;}
+  receipt(r,now,'human.worksite.lost',`${c.id}:${e.id}:${e.type}`);
+}
 export function destroyOffscreenStructure(r: RunState, e: Entity, now: number) {
   const off = r.veyraOffscreenEntities;
   if (!off || off[e.id] !== e || e.kind !== 'struct') return null;
+  noteLostWorksite(r,e,now);
   const efl = (e as any).floor ?? 0;
   if (STRUCTS[e.type!]?.layer === 'floor') {
     for (const other of Object.values(off)) {
@@ -1625,7 +1641,6 @@ export function seedHumanWorld(r: RunState): void {
           if (!blocked.has(`${gx},${gy}`)) spawnTiles.push([gx, gy]);
         }
       }
-      const stationByProp: Record<string, string> = { hearth: 'campfire', forge: 'furnace', furnace_big: 'large_furnace', anvil: 'workbench' };
       const stationTiles = compiled?.plan.props.filter(v => v.level === 0 && stationByProp[v.kind]).map(v => ({ gx: v.x, gy: v.y, struct: stationByProp[v.kind] })) ?? [];
       const bedTiles = (compiled?.plan.props ?? []).filter(v=>v.kind==='bed').flatMap(v=>{
         const layer=compiled!.levels.get(v.level);
@@ -1730,17 +1745,19 @@ export function stepG1b(r: RunState, now: number) {return timedWorldWork('stepG1
 /** Finish a same-UID upgrade whose real-time timer has elapsed (also while the game was closed). */
 export function settleCore(s: Stack, now: number) { if (s.upg && now >= s.upg.readyAt) { s.lvl = s.upg.to; delete s.upg; } }
 /** Why this cast cannot start right now, or null. Never mutates anything except settling a finished upgrade. */
-export function coreCastBlock(r: RunState, s: Stack, mode: CoreMode, now: number): string | null {
+export function coreCastBlock(r: RunState, s: Stack, mode: CoreMode, now: number, packId = 'inv'): string | null {
   const d = ITEMS[s.key]; if (!d?.creatorCore) return 'Not a Creator Core.';
+  if(packId!=='inv' && (!r.custody[packId]?.slots.includes(s) || s.production))return 'Core is not available in this pack.';
+  const free=VFX_TEST_KIT && packId==='inv';
   settleCore(s, now);
   if (s.upg) return `${d.name} is being upgraded: ${Math.ceil((s.upg.readyAt - now) / 1000)}s left.`;
   if (coreLevel(s) < CORE_V2.modeLevel[mode]) return `${mode === 'refined' ? 'Q' : 'E'} needs ${d.name} Lv${CORE_V2.modeLevel[mode]}. Upgrade it at a Workbench.`;
   if (coreDur(s) <= 0) return `${d.name} is worn out. Repair it at a Workbench.`;
   // the whole wear of the skill must be payable: 3 points left never buys a 16-point cast
-  const wear = CORE_SPECS[s.key]?.wear[mode] ?? 0; if (!VFX_TEST_KIT && coreDur(s) < wear) return `${d.name} is too worn for ${mode === 'basic' ? 'LMB' : mode === 'refined' ? 'Q' : 'E'}: needs ${wear} durability, ${coreDur(s)} left. Repair it at a Workbench.`;
+  const wear = CORE_SPECS[s.key]?.wear[mode] ?? 0; if (!free && coreDur(s) < wear) return `${d.name} is too worn for ${mode === 'basic' ? 'LMB' : mode === 'refined' ? 'Q' : 'E'}: needs ${wear} durability, ${coreDur(s)} left. Repair it at a Workbench.`;
   const ready = s.cd?.[mode] ?? 0; if (ready > now) return `${mode === 'basic' ? 'LMB' : mode === 'refined' ? 'Q' : 'E'} recharging: ${((ready - now) / 1000).toFixed(1)}s.`;
-  if (VFX_TEST_KIT) return null;
-  const missing = coreAmmo(mode, d.essence).filter(([k, q]) => countItem(r, 'inv', k) < q);
+  if (free) return null;
+  const missing = coreAmmo(mode, d.essence).filter(([k, q]) => r.custody[packId].slots.reduce((n,v)=>n+(v?.key===k&&!v.production?v.qty:0),0) < q);
   return missing.length ? `No ${missing.map(([k]) => ITEMS[k]?.name ?? k).join(' or ')} in your pack.` : null;
 }
 /**
@@ -1768,13 +1785,14 @@ export function settleCoreOwed(r: RunState, now: number): number {
   return moved;
 }
 /** The accepted cast: ammunition, wear and the per-UID cooldown are charged together, or not at all. */
-export function coreCastCommit(r: RunState, s: Stack, mode: CoreMode, now: number): boolean {
-  if (coreCastBlock(r, s, mode, now)) return false;
-  const d = ITEMS[s.key], sp = CORE_SPECS[s.key];
-  if (!VFX_TEST_KIT) {
-    for (const [k, q] of coreAmmo(mode, d.essence)) removeItem(r, 'inv', k, q);
+export function coreCastCommit(r: RunState, s: Stack, mode: CoreMode, now: number, packId = 'inv'): boolean {
+  if (coreCastBlock(r, s, mode, now, packId)) return false;
+  const d = ITEMS[s.key], sp = CORE_SPECS[s.key], free=VFX_TEST_KIT && packId==='inv';
+  if (!free) for(const [k,q] of coreAmmo(mode,d.essence)) {
+    const slots=r.custody[packId].slots;let left=q;
+    for(let i=slots.length-1;i>=0&&left;i--){const v=slots[i];if(v?.key!==k||v.production)continue;const n=Math.min(left,v.qty);v.qty-=n;left-=n;if(!v.qty)slots[i]=null;}
   }
-  if (sp) { if (!VFX_TEST_KIT) s.dur = coreDur(s) - sp.wear[mode]; (s.cd ??= {})[mode] = now + sp.cooldownMs[mode]; }
+  if (sp) { if (!free) s.dur = coreDur(s) - sp.wear[mode]; (s.cd ??= {})[mode] = now + sp.cooldownMs[mode]; }
   return true;
 }
 
@@ -1853,6 +1871,7 @@ export function destroyStructure(r: RunState, e: Entity, now: number) {
   if (r.entities[e.id] !== e) {
     return r.veyraOffscreenEntities?.[e.id] === e ? destroyOffscreenStructure(r, e, now) : null;
   }
+  noteLostWorksite(r,e,now);
   if (r.rest && (e.id === r.rest.bedId || e.id === r.rest.chestId)) endRest(r, now, 'bed or chest destroyed');
   if (STRUCTS[e.type!]?.layer === 'floor') for (const cabinet of [...entsAt(r,e.tx!,e.ty!)]) if(cabinet.type==='claim' && cabinet.cabinet?.legacy!==true) { destroyStructure(r,cabinet,now); receipt(r,now,'territory.collapse',`${cabinet.id}:lost foundation`); }
   if (STRUCTS[e.type!]?.layer === 'floor') for (const roof of [...entsAt(r, e.tx!, e.ty!)]) if (roof.kind === 'struct' && STRUCTS[roof.type!]?.layer === 'roof') { destroyStructure(r, roof, now); receipt(r, now, 'struct.destroyed', `${roof.type}:lost support`); }
@@ -2425,10 +2444,13 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         return out.ok?{ok:true,receipt:latestReceipt(),msg:out.msg}:fail(out.reason??'Cannot execute.');
       }
       if(it.type==='humanCargo') {
-        if(!h.following || ['DOWNED','DEAD','EVACUATED','FIGHTING'].includes(h.state))return fail('Companion cannot transfer cargo now.');
+        if(!h.following || h.transit || ['DOWNED','DEAD','ON_VESSEL','EVACUATED','FIGHTING'].includes(h.state))return fail('Companion cannot transfer cargo now.');
+        if(h.intent?.delivery)return fail('Cancel the delivery with Hold before changing its load.');
         const from=it.direction==='return'?C(r,h.inv.cartId):C(r,'inv'),to=it.direction==='return'?C(r,'inv'):C(r,h.inv.cartId);
         const s=from.slots.find(s=>s?.uid===it.stackUid);
         if(!s || s.production)return fail('That carried item is no longer available.');
+        const incoming=ITEMS[s.key].w*s.qty;
+        if(it.direction==='return'?invWeight(r)+incoming>carryLimit(r)+1e-6:cartWeight(r,to.id)+incoming>BAL.cart.maxWeight+1e-6)return fail('This load is too heavy for the destination.');
         const sourceSlot=from.slots.indexOf(s);
         from.slots[sourceSlot]=null;
         if(!addStack(r,to.id,s)){from.slots[sourceSlot]=s;return fail('Destination is full.');}
@@ -2633,9 +2655,11 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
         if (s.qty === 0) from.slots[it.fs] = null;
         if (to.kind === 'cart' && cartWeight(r, to.id) > cartLimit(Object.values(r.entities).find(e => e.kind === 'cart' && e.c === to.id))) pushLog(r, now, 'The cart is overloaded — it will crawl.', 'red');
         pruneEmptyBag(r, from.id);
+        if(from.id==='inv'&&to!==from)observeRobbedDeposit(r,to.id,s.uid,now);
         return ok('move', `${s.key}x${moved} ${from.id}->${to.id}`);
       }
       pruneEmptyBag(r, from.id);
+      if(from.id==='inv'&&to!==from)observeRobbedDeposit(r,to.id,s.uid,now);
       return ok('move', `${s.key} ${from.id}->${to.id}`);
     }
     case 'split': { const c = C(r, it.c); if (!c || !canAccess(r, it.c) || !validSlot(c, it.slot)) return fail('Invalid or out of reach container.');
@@ -3322,12 +3346,8 @@ function apply(gs: GameState, r: RunState, it: Intent, now: number): Result {
       // early death at sea or a failed voyage cannot be certified as EVACUATED.
       if (r.humanWorld) {
         let tripId: string | null = e.poi && r.humanWorld.evacuation[`evac:${e.poi}`] ? `evac:${e.poi}` : null;
-        let best = Infinity;
-        const [ox, oy] = windowOrigin(r);
-        const egx = ox + Math.floor(e.x / TILE), egy = oy + Math.floor(e.y / TILE);
-        for (const t of Object.values(r.humanWorld.evacuation)) {
-          const dx = (egx + 0.5) - t.siteGx, dy = (egy + 0.5) - t.siteGy;
-          const d = Math.hypot(dx, dy); if (!tripId && d < best) { best = d; tripId = t.tripId; }
+        if(!tripId){const [ox,oy]=windowOrigin(r),gx=ox+Math.floor(e.x/TILE),gy=oy+Math.floor(e.y/TILE);
+          tripId=Object.values(r.humanWorld.evacuation).find(t=>t.siteGx===gx&&t.siteGy===gy)?.tripId??null;
         }
         if (!tripId) return fail('No evacuation service is registered at this berth.');
         const res = playerBoardEvac(r, r.humanWorld, tripId, now);

@@ -781,6 +781,12 @@ export function validate(raw: any): GameState | null {
       if (!h || typeof h.actorId !== 'string' || !h.actorId || typeof h.sourceId !== 'string' || !h.sourceId) return null;
       if (typeof h.inv?.packId !== 'string' || typeof h.inv?.cartId !== 'string') return null;
       if (h.threat !== undefined && (!obj(h.threat) || ![h.threat.waves, h.threat.hit, h.threat.guarded].every(integer))) return null;
+      const d=h.intent?.delivery;
+      if(d!==undefined && (!obj(d)||typeof d.storeId!=='string'||typeof d.containerId!=='string'||!Array.isArray(d.cargo)||!d.cargo.length||d.cargo.some((q:any)=>!obj(q)||typeof q.uid!=='string'||!integer(q.qty)||q.qty<1)||new Set(d.cargo.map((q:any)=>q.uid)).size!==d.cargo.length))return null;
+      const cast=h.intent?.coreCast;
+      if(cast!==undefined && (!obj(cast)||typeof cast.uid!=='string'||typeof cast.victim!=='string'||!Number.isInteger(cast.floor)||!finite(cast.angle)||!finite(cast.readyAt)))return null;
+      const lead=h.recoveryLead;
+      if(lead!==undefined){const inc=hw.incidents?.[lead?.incidentId];if(!obj(lead)||!inc||inc.victim!==h.actorId||inc.kind!=='robbery'||!inc.property?.includes(lead.uid)||typeof lead.chestId!=='string'||typeof lead.containerId!=='string'||![lead.tx,lead.ty].every(integer)||!Number.isInteger(lead.floor)||!finite(lead.seenAt))return null;}
       // Embedded equipment UIDs must be unique across the run (no duplicate claimant).
       for (const slot of ['weapon', 'body', 'head', 'legs', 'feet'] as const) {
         const st = h.equip?.[slot]; if (st && typeof st.uid === 'string' && st.uid) {
@@ -793,6 +799,7 @@ export function validate(raw: any): GameState | null {
       for (const c of [h?.inv?.packId, h?.inv?.cartId]) if (typeof c === 'string' && r.custody[c]) ownedContainers.add(c);
     }
     for (const comm of Object.values(hw.communities ?? {}) as any[]) {
+      if(comm.lostWorksites!==undefined && (!obj(comm.lostWorksites)||Object.entries(comm.lostWorksites).some(([id,v]:[string,any])=>!comm.workStations?.includes(id)||!obj(v)||!['campfire','workbench','furnace'].includes(v.type)||!integer(v.tx)||!integer(v.ty)||!Number.isInteger(v.floor))))return null;
       // Pre-residential saves stored an empty chest ID as a bed. Preserve its custody,
       // but remove the false sleeping entitlement. Never create furniture on load.
       if(Array.isArray(comm?.homeBeds)) {

@@ -116,12 +116,14 @@ export function HumanPanel({ api, actorId, onClose }: { api: Api; actorId: strin
         {r.creatures.filter(m=>m.state!=='dead'&&(m.floor??0)===h.floor&&Math.hypot(m.x-r.player.x,m.y-r.player.y)<TILE*10).map(m=><option key={m.id} value={m.id}>{CREATURES[m.type]?.name??'Creature'}</option>)}
         {Object.values(hw.people).filter(p=>p!==h&&p.floor===h.floor&&!['DEAD','EVACUATED'].includes(p.state)&&Math.hypot(p.gx-h.gx,p.gy-h.gy)<10).map(p=><option key={p.actorId} value={p.actorId}>{p.name}</option>)}
       </select>
-      <button className="btn sm" disabled={!orderTarget} onClick={()=>respond('humanOrder',{order:'defend',target:orderTarget})}>Defend against</button>{' '}
+      <button className="btn sm" onClick={()=>respond('humanOrder',{order:'defend'})}>Guard me</button>{' '}
       <button className="btn sm" disabled={!orderTarget} onClick={()=>respond('humanOrder',{order:'engage',target:orderTarget})}>Engage</button>
       <div style={{marginTop:4}}>Cargo · {r.custody[h.inv.cartId]?.slots.filter(Boolean).length??0}/6 slots</div>
       {selectedPlayer&&<select aria-label="Companion cargo item" value={selectedPlayer.i} onChange={e=>setPlayerSlot(Number(e.target.value))}>{playerStacks.map(({s,i})=><option key={s.uid} value={i}>{ITEMS[s.key]?.name} ×{s.qty}</option>)}</select>}
       {selectedPlayer&&<button className="btn sm" onClick={()=>respond('humanCargo',{direction:'give',stackUid:selectedPlayer.s.uid})}>Carry {ITEMS[selectedPlayer.s.key]?.name} ×{selectedPlayer.s.qty}</button>}
       {r.custody[h.inv.cartId]?.slots.filter((s):s is Stack=>!!s).map(s=><button key={s.uid} className="btn sm" onClick={()=>respond('humanCargo',{direction:'return',stackUid:s.uid})}>Take back {ITEMS[s.key]?.name} ×{s.qty}</button>)}
+      {h.community && hw.communities[h.community]?.storeEntityId && <button className="btn sm" disabled={!!h.intent?.delivery || !r.custody[h.inv.cartId]?.slots.some(Boolean)} onClick={()=>respond('humanOrder',{order:'carry',target:hw.communities[h.community!].storeEntityId})}>Deliver load to home warehouse</button>}
+      {h.intent?.delivery && <div>Delivering to the warehouse · Hold to cancel</div>}
       {h.intent?.blockReason&&<div style={{color:'#e69484'}}>{h.intent.blockReason}</div>}
     </div>}
     {visible==='Companion' && h.followOrder && <div style={{ opacity: .75, marginTop: 3 }}>{h.followOrder.result}: {h.followOrder.reason}</div>}

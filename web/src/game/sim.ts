@@ -1,3 +1,4 @@
+import {basicCoreRay,coreRayProjectile} from './core-ray';
 import {countWorldWork,timedWorldWork} from './world-work';
 import { combatStimulus, pushCombatStimulus, type CombatKind } from './stimulus';
 import { syncVeyraPlacement } from '../veyra05/window';
@@ -292,8 +293,9 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
   const b = BAL.creatorCoreBlast, hx=p.x+Math.cos(a)*10, hy=p.y+Math.sin(a)*10;
   const visualCore=ITEMS[s.key].essence==='water'?'frost':ITEMS[s.key].essence==='nature'?(ITEMS[s.key].creatorCore==='mjolnir'?'storm':'earth'):ITEMS[s.key].essence==='spirit'?'spirit':'fire';
   fx('cast',{x:hx,y:hy,core:visualCore,a,ck:ITEMS[s.key].creatorCore,mode,tx:aim.mx,ty:aim.my});
+  const ray=basicCoreRay(s.key);
+  if(mode==='basic' && ray){PROJ.push(coreRayProjectile(ray,hx,hy,a,{from:'player'},s.uid));return;}
   if(ITEMS[s.key].creatorCore==='demon') {const e=BAL.creatorCoreDemon;
-    if(mode==='basic')PROJ.push({x:hx,y:hy,vx:Math.cos(a)*e.raySpeed,vy:Math.sin(a)*e.raySpeed,life:e.rayLife,dmg:e.rayDamage,from:'player',kind:'spirit_ray',r:3});
     if(mode==='refined'){const len=rayLen(r,p.x,p.y,a,e.beamRange);p.channelUntil=now+e.beamMs;HAZ.push({kind:'line',x:p.x,y:p.y,angle:a,len,w:e.beamWidth,t:0,tell:0,dur:e.beamMs,dmg:e.beamDamage,style:'beam',effect:'spiritBeam',owner:'player',expiresSimMs:r.clock.simMs+e.beamMs});}
     if(mode==='signature'){p.pulling=null;r.spiritTransit={x:aim.mx,y:aim.my,arriveAt:now+e.teleportMs,uid:s.uid};fx('spiritDepart',{x:p.x,y:p.y});receipt(r,now,'core.spirit.depart',s.uid);}
     return;
@@ -315,7 +317,6 @@ function commitCreatorCore(gs: GameState, now: number, slot: number, uid0: strin
   }
   if (ITEMS[s.key].creatorCore === 'elsa') {
     const e=BAL.creatorCoreElsa;
-    if(mode==='basic') PROJ.push({x:hx,y:hy,vx:Math.cos(a)*e.shardSpeed,vy:Math.sin(a)*e.shardSpeed,life:e.shardLife,dmg:e.shardDamage,from:'player',kind:'elsa_shard',r:3});
     if(mode==='refined') { p.iceUntil=now+e.selfMs; fx('cast',{x:p.x,y:p.y,core:'frost',a,ck:'elsa',sub:1}); }
     if(mode==='signature') {
       const vx=clamp(Number.isFinite(aim.viewX)?aim.viewX!:p.x-VIEW_W/2,0,WW*TILE-VIEW_W),vy=clamp(Number.isFinite(aim.viewY)?aim.viewY!:p.y-VIEW_H/2,0,WH*TILE-VIEW_H);
@@ -1284,12 +1285,16 @@ export function resolveElderVolley(gs: GameState, elderId: string, shots: ElderV
 export function tickProj(gs: GameState, dtMs: number, now: number, opts?: { inertEnemy?: boolean }) {
   const r = gs.run!; const p = r.player; const dt = dtMs / 1000; const g = blockGrid(r);
   const [humanOx, humanOy] = r.humanWorld ? windowOrigin(r) : [0, 0];
+  // Build the local body list once, not a full population scan per two-pixel substep.
+  const bodies=PROJ.some(q=>q.from!=='enemy')&&r.humanWorld?Object.values(r.humanWorld.people).filter(h=>h.floor===activeFloor(r)&&!h.transit&&h.gx>=humanOx&&h.gx<humanOx+WW&&h.gy>=humanOy&&h.gy<humanOy+WH).map(h=>{
+    const pos=humanWorldPosition(h);return {h,x:(pos.gx-humanOx)*TILE,y:(pos.gy-humanOy)*TILE};
+  }):[];
   for (let i = PROJ.length - 1; i >= 0; i--) {
     const pr = PROJ[i];
     // R5.1 P1-D committed-projectile policy: hostile projectiles aimed at the absent player are
     // aged (their own committed life/delay) but never moved, never detonate and never reach
     // hurtPlayer(). Player-origin projectiles still run the full online law.
-    if (opts?.inertEnemy && pr.from === 'enemy') {
+    if (opts?.inertEnemy && (pr.from === 'enemy'||pr.from==='human'&&pr.victim==='player')) {
       if (pr.delay && pr.delay > 0) pr.delay -= dtMs;
       pr.life -= dt; if (pr.life <= 0) PROJ.splice(i, 1); continue;
     }
@@ -1318,25 +1323,14 @@ export function tickProj(gs: GameState, dtMs: number, now: number, opts?: { iner
             break;
           }
         }
-        if (!dead && pr.from === 'human' && pr.victim && pr.victim !== 'player' && r.humanWorld) {
-          const victim = r.humanWorld.people[pr.victim];
-          if (victim && victim.state !== 'DEAD' && victim.state !== 'EVACUATED' && victim.floor === activeFloor(r)) {
-            const vx = (victim.gx - humanOx + 0.5) * TILE, vy = (victim.gy - humanOy + 0.5) * TILE;
-            if (Math.hypot(x - vx, y - vy) < 8 + pr.r) {
-              pr.x = x; pr.y = y; dead = true;
-              applyHumanDamage(r, r.humanWorld, victim, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 'human', pr.owner, activeFloor(r));
-            }
-          }
+        if (!dead && pr.from==='human' && pr.victim==='player' && !p.dead && dist(x,y,p.x,p.y)<pr.r+4){
+          pr.x=x;pr.y=y;dead=true;hurtPlayer(gs,pr.dmg,x-pr.vx,y-pr.vy,pr.owner??'projectile',now,60);
         }
-        if (!dead && pr.from === 'player' && pr.kind !== 'blast_bomb' && pr.kind !== 'fire_tornado' && r.humanWorld) {
-          for (const h of Object.values(r.humanWorld.people)) {
-            if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.floor !== activeFloor(r)) continue;
-            const hx = (h.gx - humanOx + 0.5) * TILE, hy = (h.gy - humanOy + 0.5) * TILE;
-            if (Math.hypot(x - hx, y - hy) >= 8 + pr.r) continue;
-            pr.x = x; pr.y = y; dead = true;
-            applyHumanDamage(r, r.humanWorld, h, pr.dmg, Math.atan2(pr.vy, pr.vx), now, 'player', 'player', activeFloor(r));
-            break;
-          }
+        if (!dead && r.humanWorld) for(const body of bodies){
+          const h=body.h;
+          if(h.actorId===pr.owner || h.state==='DEAD' || h.state==='EVACUATED' || dist(x,y,body.x,body.y)>=8+pr.r)continue;
+          pr.x=x;pr.y=y;dead=true;
+          applyHumanDamage(r,r.humanWorld,h,pr.dmg,Math.atan2(pr.vy,pr.vx),now,pr.from,pr.from==='human'?pr.owner:'player',activeFloor(r));break;
         }
         if (!dead) {
           const prevX = ox + ((nx - ox) * (j - 1)) / steps;
@@ -1388,7 +1382,6 @@ export function tickProj(gs: GameState, dtMs: number, now: number, opts?: { iner
     pr.life -= dt; dead = dead || pr.life <= 0;
     if (pr.kind === 'blast_bomb' && blocked && !dead) { pr.vx=0; pr.vy=0; blocked=false; }
     if (blocked) { dead = true; if(pr.kind==='nature_rock')impactRock(gs,pr,now); else if (pr.kind === 'fireball' || pr.kind === 'blast_signature') explode(gs, pr, now); else fx('ping', { x: pr.x, y: pr.y, kind: pr.kind }); }
-    else if (pr.from === 'human' && pr.victim === 'player' && dist(pr.x, pr.y, p.x, p.y) < pr.r + 4) { dead = true; hurtPlayer(gs, pr.dmg, pr.x - pr.vx, pr.y - pr.vy, 'projectile', now, 60); }
     else if (pr.from === 'enemy' && dist(pr.x, pr.y, p.x, p.y) < pr.r + 4) { dead = true; if (pr.kind === 'mine') { fx('boom', { x: pr.x, y: pr.y, small: true }); } hurtPlayer(gs, pr.dmg, pr.x - pr.vx, pr.y - pr.vy, 'projectile', now, 100); }
     // player projectiles vs creatures are resolved inside the substep sweep above (R5.1 coarse-slice fix).
     if (dead && (pr.kind === 'fireball' || pr.kind === 'blast_signature') && pr.life <= 0) explode(gs, pr, now);
@@ -1719,7 +1712,7 @@ export function tick(gs: GameState, inp: Input, dtMs: number, now: number) {
   tickPlayer(gs, playerAtSea(r) ? { ...inp, up: false, down: false, left: false, right: false, attack: false, attackPressed: false, roll: false, cancel: false, skill: undefined } : inp, dtMs, now);
   if (activeFloor(r) === 0) maybeSlideVeyraWindow(gs, markDirty);
   tickCreatures(gs, dtMs, now);
-  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle, attacker) => damageCreature(gs, m, dmg, angle, now,130,attacker.actorId), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); }, (shot) => spawnHumanShot(gs, shot));
+  if (r.humanWorld) stepHumanCombat(r, r.humanWorld, now, (m, dmg, angle, attacker) => damageCreature(gs, m, dmg, angle, now,130,attacker.actorId), (h, dmg) => { const [ox, oy] = windowOrigin(r); hurtPlayer(gs, dmg, (h.gx - ox + 0.5) * TILE, (h.gy - oy + 0.5) * TILE, h.name, now, 200); }, (shot) => spawnHumanShot(gs, shot), projectile=>PROJ.push(projectile));
   tickDragonDive(gs, dtMs, now);
   tickTurrets(gs, dtMs, now);
   tickProj(gs, dtMs, now);

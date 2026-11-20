@@ -25,9 +25,10 @@ import {countWorldWork} from './world-work';
  *  - Legacy runs without `humanWorld` remain solo-compatible; new runs seed finite source-authorized
  *    humans. No retroactive population/loot mint on old saves.
  */
-import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature } from './core';
+import { BAL, TILE, WW, WH, HOUR, clamp, uid, type RunState, type Stack, type Container, type Entity, type Dir, type Creature, type Proj } from './core';
 import { SOURCES, STRUCTS, RECIPES, ITEMS, ARMOR_CAP, wornProtection, CREATURES, ELDERS, lookupElderDef, PRIMORDIAL_ELDERS } from './catalog';
-import { carryLimit, invWeight, addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
+import {basicCoreRay,coreRayProjectile} from './core-ray';
+import {coreCastBlock,coreCastCommit, carryLimit, invWeight, addItem, addStack, removeItem, mkStack, mkContainer, receipt, pushLog, spawnDrop, C, sourceAt, effTile, entsAt, blockGrid, clearPhysicalLine, isSheltered, roofRoom, findRunEntity, markDirty, spaceFor, globalFreshWater, globalSourceAt, destroyStructure } from './engine';
 import { rngNext, mulberry, hash2 } from './core';
 import { phaseOf, isRagnarok, runHours } from './engine';
 import { humanCanUseEntity, humanEntityTile, executeHumanWork, dispatchMedicalResponse, planHumanOccupation, type HumanWorkTask } from './human-jobs';
@@ -95,6 +96,9 @@ export interface HumanKnowledge {
   playerHomeKnown: boolean;   // whether the actor has physically observed the player's base
 }
 export interface HumanIntent {
+  guardPlayer?: boolean;
+  coreCast?: {uid:string;victim:string;readyAt:number;floor:number;angle:number};
+  delivery?: {storeId:string;containerId:string;cargo:{uid:string;qty:number}[]};
   work?: HumanWorkTask;
   intentId: string;
   actorId: string;
@@ -123,6 +127,8 @@ export interface HumanIncident {
   witnesses: string[];
   at: number;
   place: { tx: number; ty: number; floor: number };
+  robbedQuantity?: number;
+  recoveredAt?: number;
   property?: string[];        // item UIDs / source ids involved
   injury?: boolean;
   death?: boolean;
@@ -136,6 +142,9 @@ export interface HumanRecord {
   appearance: number;         // 0..5 MetroCity base sheet
   profile: ProfileKey;
   occupation: Occupation;
+  civilDecision?: {kind:"stay"|"seek_berth";reason:string};
+  berthRetryAt?:Record<string,number>;
+  recoveryLead?: {incidentId:string;uid:string;chestId:string;containerId:string;tx:number;ty:number;floor:number;seenAt:number};
   combatProficiency: 0 | 1 | 2 | 3;   // untrained/trained/skilled/specialist
   disposition: HumanDisposition;
   // body / position
@@ -212,6 +221,7 @@ export interface HumanRecord {
   transit?: { tripId: string; seat: number; boardedAt: number };
 }
 export interface Community {
+  lostWorksites?:Record<string,{type:string;tx:number;ty:number;floor:number}>;
   foodRequest?:FoodRequest;
   recipeSourceReports?:SourceReport[];
   id: string;
@@ -320,6 +330,7 @@ export interface HumanWorld {
   elderPressure: Record<string, ElderAssault>;
   events: Record<string, HumanEvent>;
   incidents: Record<string, HumanIncident>;
+  robberyByUid?: Record<string,string>;
   /** Legacy needs-clock field retained for save compatibility. */
   lastResolvedAt: number;
   /** Independent clocks prevent needs advancement from suppressing autonomous movement. */
@@ -1420,6 +1431,7 @@ export function talkToHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   if (!h.disposition_known.knownPeople.includes('player')) h.disposition_known.knownPeople.push('player');
   h.lastTalkAt = now;
   const facts: string[] = [`${h.name} · ${h.occupation} · ${h.community ? hw.communities[h.community]?.poi ?? 'traveler' : 'traveler'}`];
+  if(h.civilDecision)facts.push(h.civilDecision.reason);
   if (h.intent?.kind === 'work' && h.intent.target?.match(/^(global-harvest|harvest):/)) {
     const m=h.intent.target.match(/^(?:global-harvest:(-?\d+):|harvest:)(\d+),(\d+)$/);
     const s=m?(m[1]!==undefined?globalSourceAt(r,Number(m[2]),Number(m[3]),Number(m[1]),now):sourceAt(r,Number(m[2]),Number(m[3]),now)):null;
@@ -1478,7 +1490,8 @@ export function threatenHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: 
   if (h.state === 'DEAD' || h.state === 'EVACUATED' || h.state === 'DOWNED') return { ok: false, reason: 'This person cannot answer a confrontation.' };
   const pack = humanPack(r, h);
   const demanded = demand === 'item' ? pack.slots.find(s => s?.uid === stackUid) ?? null : demand === 'disarm' ? h.equip.weapon : null;
-  if (demand === 'item' && !demanded) return { ok: false, reason: 'That carried item is no longer accessible.' };
+  const demandedQuantity=demanded?.qty;
+  if (demand === 'item' && (!demanded || demanded.production)) return { ok: false, reason: 'That carried item is no longer accessible.' };
   if (demand === 'disarm' && !h.equip.weapon) return { ok: false, reason: 'They are not carrying an equipped weapon.' };
   if (demand === 'stop_attack' && h.state !== 'FIGHTING') return { ok: false, reason: 'They are not attacking anyone right now.' };
   faceTowardPlayer(r, h);
@@ -1525,7 +1538,7 @@ export function threatenHuman(r: RunState, hw: HumanWorld, h: HumanRecord, now: 
   if (reaction === 'COMPLY' || reaction === 'NEGOTIATE' || reaction === 'REFUSE' || reaction === 'CALL_FOR_HELP' || reaction === 'FIGHT' || reaction === 'FLEE') {
     h.trust = clamp((h.trust ?? 50) - (reaction === 'COMPLY' ? 8 : 22), 0, 100);
     const comm = h.community ? hw.communities[h.community] : null; if (comm) comm.threat = clamp(comm.threat + 0.12, 0, 1);
-    recordIncident(r, hw, { kind: reaction === 'COMPLY' && demand === 'item' ? 'robbery' : 'assault', victim: h.actorId, aggressor: 'player', witnesses, at: now, place: { tx: h.gx, ty: h.gy, floor: h.floor }, property: reaction === 'COMPLY' && demanded ? [demanded.uid] : undefined, injury: false, resolved: reaction === 'COMPLY' }, now);
+    recordIncident(r, hw, { kind: reaction === 'COMPLY' && demand === 'item' ? 'robbery' : 'assault', victim: h.actorId, aggressor: 'player', witnesses, at: now, place: { tx: h.gx, ty: h.gy, floor: h.floor }, property: reaction === 'COMPLY' && demanded ? [demanded.uid] : undefined, robbedQuantity:reaction==='COMPLY'&&demand==='item'?demandedQuantity:undefined, injury: false, resolved: reaction === 'COMPLY' && demand!=='item' }, now);
     if (reaction === 'CALL_FOR_HELP') for (const id of witnesses) {
       const ally = hw.people[id];
       if (!ally?.equip.weapon || (ally.community !== h.community && !ally.protectedPeople.includes(h.actorId))) continue;
@@ -1584,8 +1597,18 @@ export function resolveOrder(r: RunState, hw: HumanWorld, h: HumanRecord, orderI
   if (h.state === 'ON_VESSEL' || h.transit) return finish('CANNOT_EXECUTE', 'aboard the evacuation vessel');
   if (!h.following) return finish('REFUSE_WITH_REASON','not a companion');
   if (order === 'home' && !h.home) return finish('CANNOT_EXECUTE','no home to return to');
-  if (order === 'carry' && humanCart(r,h).slots.every(Boolean)) return finish('CANNOT_EXECUTE','cart full');
-  if(order==='engage'||order==='defend') {
+  if (order === 'carry' && !targetActorId && humanCart(r,h).slots.every(Boolean)) return finish('CANNOT_EXECUTE','cart full');
+  if (order==='carry' && targetActorId) {
+    const store=deliveryStore(r,hw,h,targetActorId);
+    if(!store)return finish('CANNOT_EXECUTE','That is not an operating warehouse of my community.');
+    if(!humanCart(r,h).slots.some(Boolean))return finish('CANNOT_EXECUTE','Load goods into my cart first.');
+  }
+  if(order==='defend'){
+    const blocked=combatEquipmentBlock(r,h,now);if(blocked)return finish('CANNOT_EXECUTE',blocked);
+    if(h.hp<h.maxHp*.3 || h.stamina<6 || h.rest>.9)return finish('RETREAT_OR_HOLD','I cannot protect you in this condition.');
+    return finish('OBEY','stay near the player and watch for threats');
+  }
+  if(order==='engage') {
     const p=targetActorId ? hw.people[targetActorId] : undefined;
     const m=r.creatures.find(m=>m.id===targetActorId && m.state!=='dead');
     if(!p&&!m)return finish('CANNOT_EXECUTE','identify a visible target first');
@@ -1597,16 +1620,47 @@ export function resolveOrder(r: RunState, hw: HumanWorld, h: HumanRecord, orderI
     if(Math.hypot(dest.x-origin.x,dest.y-origin.y)>TILE*10 || !clearPhysicalLine(r,origin,dest,true))return finish('CANNOT_EXECUTE','target is not in sight');
     if(p && (h.protectedPeople.includes(p.actorId)||!!h.community&&p.community===h.community))return finish('PROTECT_TARGET',"I will not harm someone I protect.");
     if(p && ['DOWNED','DEAD','EVACUATED'].includes(p.state))return finish('REFUSE_WITH_REASON','I will not attack an incapacitated person.');
-    const weapon=humanWeapon(h);
-    if(!weapon || h.equip.weapon?.dur===0)return finish('CANNOT_EXECUTE','no usable weapon');
-    const d=ITEMS[h.equip.weapon!.key];
-    if(h.equip.weapon!.key==='bow' && !humanPack(r,h).slots.some(s=>s?.key==='arrow'))return finish('CANNOT_EXECUTE','no ammunition');
+    const blocked=combatEquipmentBlock(r,h,now);if(blocked)return finish('CANNOT_EXECUTE',blocked);
     const knownAttack=p ? p.intent?.kind==='fight' && (p.intent.target==='player'||p.intent.target===h.actorId||h.protectedPeople.includes(p.intent.target??'')) || h.disposition_known.incidents.some(id=>{const i=hw.incidents[id];return i?.aggressor===p.actorId && (i.victim===h.actorId||i.victim==='player'||h.protectedPeople.includes(i.victim??''));}) : ['attack','chase'].includes(m!.state);
     if(!knownAttack && (h.disposition==='neutral'||h.disposition==='protective'))return finish('REFUSE_WITH_REASON','I will not start a fight with someone who has not threatened us.');
     if(h.hp<h.maxHp*.3 || h.stamina<6 || h.rest>.9)return finish('RETREAT_OR_HOLD','I cannot survive that fight in this condition.');
     if(p && p.hp>h.hp*2 && h.combatProficiency<2 && h.disposition!=='predatory')return finish('RETREAT_OR_HOLD','That opponent is too strong for me.');
   }
   return finish('OBEY','accepts the order');
+}
+
+function deliveryStore(r:RunState,hw:HumanWorld,h:HumanRecord,id:string){
+  const c=h.community?hw.communities[h.community]:undefined;
+  if(c?.storeEntityId!==id)return;
+  const e=findRunEntity(r,id);
+  if(e?.c && r.custody[e.c] && e.owner===c.id && c.storeContainers.includes(e.c) && (e.hp??1)>0)return e;
+}
+/** Reach the actual warehouse first. Stage the entire load so a full last slot
+ * or a changed manifest never leaves half a delivery behind. */
+function stepCompanionDelivery(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occupied:Set<string>){
+  const intent=h.intent!, job=intent.delivery!;
+  if(intent.dueAt>now)return;
+  intent.dueAt=now+1000;
+  const store=deliveryStore(r,hw,h,job.storeId);
+  if(!store || store.c!==job.containerId){intent.blockReason='My warehouse is unavailable; cargo stays in the cart.';return;}
+  if(!humanCanUseEntity(r,h,store)){
+    const [tx,ty]=humanEntityTile(r,store),route=humanNavigation(r,occupied,true).route(h,{tx,ty,floor:store.floor??0});
+    if(!route?.length){intent.blockReason='No confirmed access to the warehouse yet.';return;}
+    intent.route=route;intent.startAt=now;intent.blockReason=undefined;h.state='MOVING';return;
+  }
+  const cart=humanCart(r,h),dest=r.custody[job.containerId];
+  const staged={...dest,slots:dest.slots.map(s=>s?{...s}:null)}, draft={...r,custody:{[dest.id]:staged}};
+  const indices:number[]=[];
+  for(const line of job.cargo){
+    const i=cart.slots.findIndex(s=>s?.uid===line.uid),stack=cart.slots[i];
+    if(!stack || stack.qty!==line.qty || indices.includes(i) || stack.production){intent.blockReason='The loaded goods changed; cancel and select a new delivery.';return;}
+    if(!addStack(draft,dest.id,{...stack})){intent.blockReason='Warehouse full; the entire load is still in my cart.';return;}
+    indices.push(i);
+  }
+  dest.slots=staged.slots;r.nextId=draft.nextId;for(const i of indices)cart.slots[i]=null;
+  receipt(r,now,'human.companion.deliver',JSON.stringify({actor:h.actorId,order:intent.intentId,from:cart.id,to:dest.id,cargo:job.cargo}));
+  h.intent=undefined;h.state='IDLE';
+  if(h.followOrder)h.followOrder.reason='Delivered the cart load. Holding at the warehouse.';
 }
 
 /** Commit the resolved command to the same locomotion/combat intent as autonomous actors. */
@@ -1619,9 +1673,18 @@ export function commandHuman(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,or
     return {ok:false,reason:result.reason};
   }
   const begin=(kind:HumanIntent['kind'],target?:string,route:HumanIntent['route']=[])=>{h.motion=undefined;h.intent={intentId:id,actorId:h.actorId,kind,target,route,preconditions:['consented companion command'],reserved:[],startAt:now,dueAt:now};h.state=route?.length?'MOVING':kind==='fight'?'FIGHTING':'IDLE';};
+  if(order==='defend'){
+    begin('follow');h.intent!.guardPlayer=true;
+    return {ok:true,msg:'Guarding you. I will not chase a retreating threat.'};
+  }
+  if(order==='carry' && target){
+    const store=deliveryStore(r,hw,h,target)!;
+    begin('move',target);h.intent!.delivery={storeId:target,containerId:store.c!,cargo:humanCart(r,h).slots.flatMap(s=>s?[{uid:s.uid,qty:s.qty}]:[])};
+    return {ok:true,msg:'Taking the loaded cart to our warehouse.'};
+  }
   if(order==='follow'||order==='carry'){begin('follow');return {ok:true,msg:order==='carry'?'Ready to carry your supplies; use the cargo transfer below.':'Following by the open path.'};}
   if(order==='hold'){hold();return {ok:true,msg:'Holding this position.'};}
-  if(order==='engage'||order==='defend'){begin('fight',target);return {ok:true,msg:'Approaching the visible threat.'};}
+  if(order==='engage'){begin('fight',target);return {ok:true,msg:'Approaching the visible threat.'};}
   const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;
   const grid=blockGrid(r),occupied=new Set(Object.values(hw.people).filter(p=>p!==h&&p.state!=='DEAD'&&p.state!=='EVACUATED').map(p=>humanCellKey(p.floor,p.gx,p.gy)));
   let route:HumanIntent['route']|null=null;
@@ -1652,6 +1715,7 @@ export function recordIncident(r: RunState, hw: HumanWorld, inc: Omit<HumanIncid
   do { const n = hw.nextIncidentSeq ?? 0; hw.nextIncidentSeq = n + 1; id = `inc:${r.id}:${n}`; } while (hw.incidents[id]);
   const full: HumanIncident = { id, ...inc };
   hw.incidents[id] = full;
+  if(inc.kind==='robbery' && inc.robbedQuantity && inc.aggressor==='player')for(const uid of inc.property??[])(hw.robberyByUid??={})[uid]=id;
   if (inc.victim && hw.people[inc.victim]) {
     const v = hw.people[inc.victim];
     if (!v.disposition_known.incidents.includes(id)) v.disposition_known.incidents.push(id);
@@ -1664,6 +1728,53 @@ export function recordIncident(r: RunState, hw: HumanWorld, inc: Omit<HumanIncid
   }
   receipt(r, now, 'human.incident', `${id}:${inc.kind}`);
   return full;
+}
+
+function isRecoveryChest(e:Entity){
+  // Not community stock, G1B treasure, or an unowned scenery prop. A placed
+  // player chest has build provenance; legacy ownerless scenery need not.
+  return e.kind==='struct' && (e.type==='chest_small'||e.type==='chest_large') &&
+    (e.owner==='player'||(e.owner===undefined&&e.born!==undefined)) && !e.g1b && !e.locked && (e.hp??0)>0;
+}
+/** Only the victim actually watching the player put the recognizable UID away
+ * learns a destination. No search over private containers or player GPS. */
+export function observeRobbedDeposit(r:RunState,cid:string,itemUid:string,now:number){
+  const hw=r.humanWorld, id=hw?.robberyByUid?.[itemUid];
+  if(!hw || !id)return;
+  const inc=hw.incidents[id],h=inc?.victim?hw.people[inc.victim]:null;
+  if(!h || inc.recoveredAt!==undefined || !inc.property?.includes(itemUid) || h.transit || ['DEAD','DOWNED','EVACUATED'].includes(h.state))return;
+  const chest=Object.values(r.entities).find(e=>e.c===cid&&isRecoveryChest(e));
+  if(!chest || !r.custody[cid]?.slots.some(s=>s?.uid===itemUid&&s.qty===inc.robbedQuantity))return;
+  const [tx,ty]=humanEntityTile(r,chest),floor=chest.floor??0;
+  if(h.floor!==floor || floor!==(r.veyraFloor??0) || Math.hypot(h.gx-tx,h.gy-ty)>8)return;
+  const origin={x:chest.x+(h.gx-tx)*TILE,y:chest.y+(h.gy-ty)*TILE};
+  if(!clearPhysicalLine(r,origin,r.player,true)||!clearPhysicalLine(r,origin,chest,true,true))return;
+  h.recoveryLead={incidentId:inc.id,uid:itemUid,chestId:chest.id,containerId:cid,tx,ty,floor,seenAt:now};
+  h.nextThinkAt=Math.min(h.nextThinkAt??now,now);receipt(r,now,'human.grievance.sighting',`${inc.id}:${h.actorId}:${chest.id}`);
+}
+
+function pursueProperty(r:RunState,hw:HumanWorld,h:HumanRecord,now:number,occupied:Set<string>){
+  const lead=h.recoveryLead;if(!lead)return false;
+  const inc=hw.incidents[lead.incidentId];
+  if(!inc || inc.kind!=='robbery' || inc.victim!==h.actorId || !inc.property?.includes(lead.uid) || inc.recoveredAt!==undefined || now-lead.seenAt>30*60000){delete h.recoveryLead;return false;}
+  if(h.floor!==lead.floor || Math.abs(h.gx-lead.tx)+Math.abs(h.gy-lead.ty)>1){
+    const route=humanNavigation(r,occupied,true).route(h,{tx:lead.tx,ty:lead.ty,floor:lead.floor});
+    if(route?.length){h.intent={intentId:`recover:${inc.id}`,actorId:h.actorId,kind:'pursue',target:lead.chestId,preconditions:['witnessed deposit of my property'],reserved:[],startAt:now,dueAt:now,route};h.state='MOVING';return true;}
+    if(h.routeSearch?.status==='PENDING_SEARCH'){h.nextThinkAt=now+1000;return true;}
+    delete h.recoveryLead;h.lastWorkBlock='I cannot reach the place I saw my goods.';return false;
+  }
+  // The remembered location, not its current contents, was known at planning time.
+  const chest=findRunEntity(r,lead.chestId),pack=humanPack(r,h),src=r.custody[lead.containerId];
+  const i=src?.slots.findIndex(s=>s?.uid===lead.uid)??-1,stack=src?.slots[i];
+  delete h.recoveryLead;
+  if(!chest || !isRecoveryChest(chest) || chest.c!==lead.containerId || !humanCanUseEntity(r,h,chest) || !stack || stack.production || stack.qty!==(inc.robbedQuantity??0)){
+    h.lastWorkBlock='My goods are gone, changed or inaccessible.';return false;
+  }
+  if(!addStack(r,pack.id,stack)){h.lastWorkBlock='No room to recover my goods.';return false;}
+  src.slots[i]=null;inc.recoveredAt=now;inc.resolved=true;
+  if(hw.robberyByUid)delete hw.robberyByUid[lead.uid];
+  receipt(r,now,'human.grievance.recover',JSON.stringify({incident:inc.id,actor:h.actorId,uid:lead.uid,from:src.id,to:pack.id,qty:inc.robbedQuantity}));
+  return true;
 }
 
 /** A directly attacked/wounded survivor forms a persistent retaliatory intent. */
@@ -1708,7 +1819,7 @@ export function boardEvac(r: RunState, hw: HumanWorld, h: HumanRecord, tripId: s
   if (h.transit || trip.boarded.includes(h.actorId)) return { ok: false, reason: 'already aboard' };
   for (const t of Object.values(hw.evacuation)) if (t !== trip && (t.manifest ?? []).some(p => p.actorId === h.actorId)) return { ok: false, reason: 'already aboard another vessel' };
   if (h.floor !== 0) return { ok: false, reason: 'the berth is on the surface' };
-  const dx = (h.gx + 0.5) - trip.siteGx, dy = (h.gy + 0.5) - trip.siteGy;
+  const dx = h.gx - trip.siteGx, dy = h.gy - trip.siteGy;
   if (Math.hypot(dx, dy) > evacSchedule().boardingRadius) return { ok: false, reason: 'not at the boarding berth' };
   const manifest = trip.manifest!;
   if (manifest.length >= trip.capacity) return { ok: false, reason: 'no free seat' };
@@ -1716,7 +1827,7 @@ export function boardEvac(r: RunState, hw: HumanWorld, h: HumanRecord, tripId: s
   const seat = freeEvacSeat(manifest, trip.capacity);
   if (seat < 0) return { ok: false, reason: 'no free seat' };
   const pack = humanPack(r, h);
-  const cargo = pack.slots.filter((s): s is Stack => !!s).map(s => ({ uid: s.uid, key: s.key, qty: s.qty }));
+  const cargo = [...pack.slots,...humanCart(r,h).slots,...Object.values(h.equip)].filter((s): s is Stack => !!s).map(s => ({ uid: s.uid, key: s.key, qty: s.qty }));
   const entry: EvacManifestEntry = { actorId: h.actorId, seat, boardedAt: now, cargo, carryWeight: cargo.reduce((n, c) => n + (ITEMS[c.key]?.w ?? 0) * c.qty, 0) };
   manifest.push(entry);
   trip.boarded.push(h.actorId);
@@ -1753,13 +1864,13 @@ export function playerBoardEvac(r: RunState, hw: HumanWorld, tripId: string, now
   const trip = hw.evacuation[tripId];
   if (!trip) return { ok: false, reason: 'no such service' };
   ensureEvacPhase(r, trip, now);
-  if (trip.playerAboard || (trip.manifest ?? []).some(p => p.actorId === 'player')) return { ok: false, reason: 'You are already aboard.' };
+  if ((r.veyraFloor??0)!==0)return {ok:false,reason:'The berth is on the surface.'};
+  if (Object.values(hw.evacuation).some(t=>t.playerAboard || t.manifest?.some(p=>p.actorId==='player'))) return { ok: false, reason: 'You are already aboard.' };
   if (trip.phase === 'IN_TRANSIT') return { ok: false, reason: 'The vessel is already at sea.' };
   if (trip.phase !== 'BOARDING') return { ok: false, reason: trip.phase === 'STAGING' ? 'This service has not opened yet.' : 'This service is no longer taking passengers.' };
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
-  const px = ox + Math.floor(r.player.x / TILE), py = oy + Math.floor(r.player.y / TILE);
-  const dx = (px + 0.5) - trip.siteGx, dy = (py + 0.5) - trip.siteGy;
+  const dx = ox+r.player.x/TILE-trip.siteGx-.5, dy = oy+r.player.y/TILE-trip.siteGy-.5;
   if (Math.hypot(dx, dy) > evacSchedule().playerRadius) return { ok: false, reason: 'You are not at the boarding berth.' };
   if (r.player.dead) return { ok: false, reason: 'The dead cannot board.' };
   const manifest = trip.manifest!;
@@ -1767,7 +1878,7 @@ export function playerBoardEvac(r: RunState, hw: HumanWorld, tripId: string, now
   const seat = freeEvacSeat(manifest, trip.capacity);
   if (seat < 0) return { ok: false, reason: 'No free seat on this vessel.' };
   const pack = C(r, 'inv');
-  const cargo = pack.slots.filter((s): s is Stack => !!s).map(s => ({ uid: s.uid, key: s.key, qty: s.qty }));
+  const cargo = [...pack.slots,...C(r,'eq').slots].filter((s): s is Stack => !!s).map(s => ({ uid: s.uid, key: s.key, qty: s.qty }));
   manifest.push({ actorId: 'player', seat, boardedAt: now, cargo, carryWeight: cargo.reduce((n, c) => n + (ITEMS[c.key]?.w ?? 0) * c.qty, 0) });
   trip.boarded.push('player'); trip.playerAboard = true;
   receipt(r, now, 'player.board', `${tripId}:seat${seat}`);
@@ -1975,7 +2086,7 @@ export function openEvacBerth(r: RunState, hw: HumanWorld, h: HumanRecord, now: 
   let best: EvacTrip | null = null, bestD = Infinity;
   for (const trip of Object.values(hw.evacuation)) {
     ensureEvacPhase(r, trip, now);
-    if (trip.phase !== 'BOARDING') continue;
+    if (trip.phase !== 'BOARDING' || (h.berthRetryAt?.[trip.tripId]??0)>now || (trip.dockUntil??Infinity)<=now) continue;
     if ((trip.manifest ?? []).length >= trip.capacity) continue;
     const d = Math.abs(h.gx - trip.siteGx) + Math.abs(h.gy - trip.siteGy);
     if (d < bestD) { bestD = d; best = trip; }
@@ -2617,33 +2728,6 @@ function humanRouteToAdjacent(r: RunState, h: HumanRecord, targetGx: number, tar
   return humanNavigation(r,occupied).route(h,{tx:targetGx,ty:targetGy,floor:targetFloor});
 }
 
-function companionRoute(r: RunState, h: HumanRecord, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): { tx: number; ty: number; floor: number }[] | null {
-  const floor = r.veyraFloor ?? 0;
-  if (h.floor !== floor || h.gx < ox || h.gy < oy || h.gx >= ox+WW || h.gy >= oy+WH) return humanNavigation(r,occupied).route(h,{tx:ox+Math.floor(r.player.x/TILE),ty:oy+Math.floor(r.player.y/TILE),floor});
-  const sx = h.gx - ox, sy = h.gy - oy;
-  const px = Math.floor(r.player.x / TILE), py = Math.floor(r.player.y / TILE);
-  if (sx < 0 || sy < 0 || sx >= WW || sy >= WH || px < 0 || py < 0 || px >= WW || py >= WH) return null;
-  const size = WW * WH, parent = new Int32Array(size); parent.fill(-2);
-  const queue = new Int32Array(size); let head = 0, tail = 0;
-  const start = sy * WW + sx; parent[start] = -1; queue[tail++] = start;
-  let goal = -1;
-  while (head < tail) {
-    const at = queue[head++], x = at % WW, y = Math.floor(at / WW);
-    if (Math.abs(x - px) + Math.abs(y - py) === 1) { goal = at; break; }
-    for (const [dx, dy] of [[0,-1],[1,0],[0,1],[-1,0]] as const) {
-      const nx = x + dx, ny = y + dy;
-      if (nx < 1 || ny < 1 || nx >= WW - 1 || ny >= WH - 1) continue;
-      const ni = ny * WW + nx;
-      if (parent[ni] !== -2 || !(grid[ni] === 0 || grid[ni] === 4) || occupied.has(humanCellKey(floor, ox + nx, oy + ny))) continue;
-      parent[ni] = at; queue[tail++] = ni;
-    }
-  }
-  if (goal < 0 || goal === start) return goal === start ? [] : humanNavigation(r,occupied).route(h,{tx:ox+px,ty:oy+py,floor});
-  const path: number[] = [];
-  for (let at = goal; at !== start; at = parent[at]) path.push(at);
-  path.reverse();
-  return path.map(i => ({ tx: ox + i % WW, ty: oy + Math.floor(i / WW), floor }));
-}
 function canHumanOccupy(r: RunState, h: HumanRecord, gx: number, gy: number, grid: Uint8Array, ox: number, oy: number, occupied: Set<string>): boolean {
   if (occupied.has(humanCellKey(h.floor, gx, gy))) return false;
   const lx = gx - ox, ly = gy - oy;
@@ -2741,18 +2825,24 @@ export function humanEventBoundary(r:RunState,hw:HumanWorld,at:number,maximum:nu
 function planEvacuation(r: RunState, hw: HumanWorld, h: HumanRecord, now: number, occupied: Set<string>): boolean {
   const S = evacSchedule();
   if (runHours(r, now) < S.openHour) return false;
-  if (h.occupation === 'guard' || h.occupation === 'medic') return false;
-  if (h.disposition === 'predatory') return false;
-  if (hashInt(`${h.actorId}:leave-island`) % 100 >= 55) return false;
-  const trip = openEvacBerth(r, hw, h, now);
-  if (!trip) return false;
-  const nav = humanNavigation(r, occupied);
-  let route = nav.route(h, { tx: trip.siteGx, ty: trip.siteGy, floor: 0 });
-  if (!route) for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
-    route = nav.route(h, { tx: trip.siteGx + dx, ty: trip.siteGy + dy, floor: 0 });
-    if (route) break;
+  // Conditions of this body and nearby people override a stable personal
+  // preference. A profession alone neither abandons nor imprisons a survivor.
+  const trip=openEvacBerth(r,hw,h,now);if(!trip)return false;
+  const comm=h.community?hw.communities[h.community]:undefined;
+  const casualty=comm?.memberIds.some(id=>{const p=hw.people[id];return p?.state==='DOWNED' && p.floor===h.floor && Math.abs(p.gx-h.gx)+Math.abs(p.gy-h.gy)<=5;});
+  let reason:string,leave:boolean;
+  if(casualty && (h.occupation==='medic'||h.disposition==='protective')){leave=false;reason='I am staying to help an injured neighbor.';}
+  else if(h.hp<h.maxHp*.55 || !!h.threat?.hit && h.warmth<40){leave=true;reason='I need a passage out; I cannot weather another attack here.';}
+  else if(h.occupation==='guard' && h.hp>=h.maxHp*.6 && !combatEquipmentBlock(r,h,now)){leave=false;reason='I can still defend this place.';}
+  else if(h.hunger>=50 && h.thirst>=50 && h.bedId && humanShelter(r,h.gx,h.gy,h.floor)){leave=false;reason='I am fed and sheltered. I will stay here.';}
+  else {leave=hashInt(`${h.actorId}:leave-island`)%100<55;reason=leave?'I will try to reach the berth.':'I would rather remain on the island.';}
+  h.civilDecision={kind:leave?'seek_berth':'stay',reason};if(!leave)return false;
+  const route=humanNavigation(r,occupied,true).route(h,{tx:trip.siteGx,ty:trip.siteGy,floor:0});
+  if(!route){
+    if(h.routeSearch?.status==='PENDING_SEARCH'){h.nextThinkAt=now+1000;return true;}
+    (h.berthRetryAt??={})[trip.tripId]=now+300000;
+    h.lastWorkBlock='I cannot reach that berth; I will reconsider the other services.';return false;
   }
-  if (!route) { h.lastWorkBlock = 'I cannot find a way to the evacuation berth.'; return false; }
   h.intent = {
     intentId: `evacuate:${h.actorId}:${now}`, actorId: h.actorId, kind: 'evacuate', target: trip.tripId,
     preconditions: ['operating evacuation service', 'real route to the berth', 'free physical seat'],
@@ -2824,6 +2914,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   }
   if(planHumanWater(r,h,now,occupied))return;
   if (h.hunger < 25 || h.thirst < 25) return;
+  if(h.recoveryLead && pursueProperty(r,hw,h,now,occupied))return;
   if(h.deliveryWait){h.nextThinkAt=Number.MAX_SAFE_INTEGER;return;}
   const pack = humanPack(r, h);
   if(!h.equip.weapon||h.equip.weapon.dur===0){const tool=pack.slots.find(s=>s&&!s.production&&s.dur!==0&&!!ITEMS[s.key]?.power);if(tool)equipHumanTool(r,h,tool.uid,now);}
@@ -2864,6 +2955,15 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   const wantedGoods=new Set(communityFoodDeficit(r,hw,h).map(v=>v.key));
   if(['salvager','gardener','mechanic','builder','engineer'].includes(h.occupation))for(const [key,def]of Object.entries(SOURCES))if(def.yields.some(([k])=>wantedGoods.has(k))&&harvestToolPower(h,key)>0){allowed.add(key);h.procurementSourceKeys.push(key);}
   const ordinarySources=allowed;
+  if(h.occupation==='builder'){
+    const missing=new Set<string>();
+    for(const site of Object.values(comm.lostWorksites??{}))for(const [key,qty] of RECIPES[STRUCTS[site.type]?.item??'']?.ins??[]){
+      const available=[...pack.slots,...comm.storeContainers.flatMap(cid=>r.custody[cid]?.slots??[])].reduce((n,s)=>n+(s?.key===key&&!s.production?s.qty:0),0);
+      if(available<qty)missing.add(key);
+    }
+    const materials=new Set(Object.keys(SOURCES).filter(k=>harvestToolPower(h,k)>0 && SOURCES[k].yields.some(([key])=>missing.has(key))));
+    if(materials.size){allowed=materials;h.procurementSourceKeys.push(...materials);}
+  }
   // A trained cook's known station recipe gives ingredient purpose to lawful
   // gathering. Still bounded to the existing known catchment; never invent stock.
   if(h.occupation==='cook'&&comm.workStations.some(id=>findRunEntity(r,id)?.type==='campfire')){
@@ -3016,8 +3116,32 @@ export function depositHumanOutputs(r: RunState, h: HumanRecord, now: number): v
 function humanCombatTarget(r:RunState,hw:HumanWorld,id:string|undefined,floor:number): {x:number;y:number;human?:HumanRecord}|null {
   if(id==='player')return r.player.dead?null:r.player;
   const h=id?hw.people[id]:undefined;
-  if(h){if(h.floor!==floor||['DEAD','EVACUATED','DOWNED'].includes(h.state))return null;const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;return {x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE,human:h};}
+  if(h){if(h.transit||h.floor!==floor||['DEAD','EVACUATED','DOWNED','ON_VESSEL'].includes(h.state))return null;const o=r.sourceMap?.veyra?.originAu,ox=o?Math.round(o[0]/.5):0,oy=o?Math.round(o[1]/.5):0;return {x:(h.gx-ox+.5)*TILE,y:(h.gy-oy+.5)*TILE,human:h};}
   return r.creatures.find(m=>m.id===id && m.state!=='dead' && (m.floor??0)===floor)??null;
+}
+/** A guard leash is relative to the protected player, not to the camera or
+ * a remembered enemy ID. Never turn an idle passerby into an engage target. */
+function readyCore(r:RunState,h:HumanRecord,now:number){
+  return humanPack(r,h).slots.find(s=>s && basicCoreRay(s.key) && !coreCastBlock(r,s,'basic',now,h.inv.packId));
+}
+function combatEquipmentBlock(r:RunState,h:HumanRecord,now:number){
+  const w=humanWeapon(h),ranged=w&&ITEMS[h.equip.weapon!.key].ranged;
+  if(w && (!ranged || humanPack(r,h).slots.some(s=>s?.key==='arrow'&&!s.production&&s.qty>0)))return;
+  if(!readyCore(r,h,now))return w?'no ammunition':'no usable weapon';
+}
+function threatensPlayer(r:RunState,hw:HumanWorld,h:HumanRecord,id:string,now:number){
+  if(h.floor!==(r.veyraFloor??0)||r.player.dead||h.hp<h.maxHp*.3 || h.stamina<3)return false;
+  const target=humanCombatTarget(r,hw,id,h.floor);
+  if(!target || Math.hypot(target.x-r.player.x,target.y-r.player.y)>4*TILE)return false;
+  const enemy=target.human;
+  if(enemy){
+    if(enemy.intent?.kind!=='fight' || enemy.intent.target!=='player' || h.protectedPeople.includes(id) || (h.community&&enemy.community===h.community))return false;
+  }else{
+    const m=r.creatures.find(m=>m.id===id);
+    if(!m || m.husbandry?.tamed || m.knows?.kind!=='sight' || Math.hypot(m.knows.x-r.player.x,m.knows.y-r.player.y)>2*TILE || !['attack','chase','tell'].includes(m.state))return false;
+  }
+  const o=r.sourceMap?.veyra?.originAu,x=(h.gx-(o?o[0]*2:0)+.5)*TILE,y=(h.gy-(o?o[1]*2:0)+.5)*TILE;
+  return Math.hypot(x-r.player.x,y-r.player.y)<=6*TILE && !combatEquipmentBlock(r,h,now) && clearPhysicalLine(r,{x,y},target,true) && clearPhysicalLine(r,r.player,target,true);
 }
 /** A failed resource/path review is not a new physical event every six seconds.
  * Pending searches keep their short bounded service slot; genuinely unavailable
@@ -3082,6 +3206,10 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
   const occupied=new Set<string>();
   if(hasMovement)for(const h of actors){if(h.state==='DEAD'||h.state==='EVACUATED'||h.state==='ON_VESSEL')continue;occupied.add(humanCellKey(h.floor,h.gx,h.gy));if(h.motion)occupied.add(humanCellKey(h.motion.toFloor??h.floor,h.motion.toGx,h.motion.toGy));}
   const playerGx = ox + Math.floor(r.player.x / TILE), playerGy = oy + Math.floor(r.player.y / TILE);
+  if(hasMovement){
+    if(!r.player.dead)occupied.add(humanCellKey(r.veyraFloor??0,playerGx,playerGy));
+    for(const m of r.creatures)if(m.state!=='dead')occupied.add(humanCellKey(m.floor??0,ox+Math.floor(m.x/TILE),oy+Math.floor(m.y/TILE)));
+  }
   for(const h of actors) {
     if(h.occupation!=='guard' || h.floor!==(r.veyraFloor??0) || h.following || ['DOWNED','DEAD','EVACUATED','ON_VESSEL','FIGHTING'].includes(h.state) || (h.nextPerceptionAt??0)>now)continue;
     h.nextPerceptionAt=now+1000;
@@ -3114,6 +3242,20 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     // must not move the cursor past a whole remote region indefinitely.
     hw.plannerCursor = deferredCursor??cursor; hw.plannerAt = now + 1000;
   });
+  for(const h of actors){
+    const intent=h.intent;
+    if(!h.following || !intent?.guardPlayer || !['IDLE','MOVING','FIGHTING'].includes(h.state))continue;
+    if(intent.kind==='fight'){
+      if(intent.target && threatensPlayer(r,hw,h,intent.target,now))continue;
+      h.motion=undefined;delete intent.coreCast;intent.kind='follow';intent.target=undefined;intent.route=[];h.state='IDLE';intent.dueAt=now;
+    }
+    if((h.nextPerceptionAt??0)>now || h.floor!==(r.veyraFloor??0))continue;
+    h.nextPerceptionAt=now+500;
+    if(Math.hypot(h.gx-playerGx,h.gy-playerGy)>7)continue;
+    const threat=r.creatures.find(m=>['chase','tell','attack'].includes(m.state)&&threatensPlayer(r,hw,h,m.id,now))?.id ?? actors.find(p=>p.intent?.target==='player'&&threatensPlayer(r,hw,h,p.actorId,now))?.actorId;
+    if(!threat)continue;
+    h.motion=undefined;intent.kind='fight';intent.target=threat;intent.route=[];h.state='FIGHTING';h.nextThinkAt=now;
+  }
   // Combat locomotion uses the same cardinal route executor and occupancy as work/follow.
   // Limit new searches per update; do not perform an island-wide BFS per hostile per frame.
   let combatRoutes = 0;
@@ -3123,9 +3265,10 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     if (!enemy) { h.intent= h.following?{intentId:`follow:${h.actorId}:${now}`,actorId:h.actorId,kind:'follow',preconditions:[],reserved:[],startAt:now,dueAt:now}:undefined;h.state='IDLE';continue; }
     faceHumanToward(h, ox + enemy.x / TILE, oy + enemy.y / TILE);
     const weapon = humanWeapon(h);
-    if (!weapon) { h.intent.blockReason = 'no usable weapon'; continue; }
+    const core=readyCore(r,h,now), ray=core && basicCoreRay(core.key);
+    if (!weapon && !ray) { h.intent.blockReason = 'no usable weapon'; continue; }
     const distance = Math.hypot((h.gx - ox + 0.5) * TILE - enemy.x, (h.gy - oy + 0.5) * TILE - enemy.y);
-    if (distance <= weapon.reach + 8) continue;
+    if (h.intent.coreCast || distance <= Math.max(weapon?weapon.reach+8:0,ray?ray.speed*ray.life:0)) continue;
     if ((h.nextThinkAt ?? 0) > now || combatRoutes >= 4) continue;
     h.nextThinkAt = now + 750; combatRoutes++;
     // No psychic pursuit: the approach must begin with actual line of sight.
@@ -3139,9 +3282,12 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     h.intent.blockReason = undefined; h.state = 'MOVING';
   }
   for (const h of actors) {
+    if(h.following && h.state==='IDLE' && h.intent?.delivery){stepCompanionDelivery(r,hw,h,now,occupied);continue;}
     if (!h.following || h.state !== 'IDLE' || h.intent?.kind !== 'follow') continue;
     if (h.floor===(r.veyraFloor??0) && Math.abs(h.gx - playerGx) + Math.abs(h.gy - playerGy) <= 1) { h.intent.route = []; h.intent.blockReason = undefined; continue; }
-    const route = companionRoute(r, h, grid, ox, oy, occupied);
+    if(h.intent.dueAt>now)continue;
+    const route=humanNavigation(r,occupied,true).route(h,{tx:playerGx,ty:playerGy,floor:r.veyraFloor??0});
+    h.intent.dueAt=now+(route?0:750);
     if (!route) { h.intent.blockReason = 'No certified physical route to the player within the current search budget.'; continue; }
     h.intent.route = route; h.state = route.length ? 'MOVING' : 'IDLE'; h.intent.blockReason = undefined;
   }
@@ -3186,7 +3332,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
            if(side){colleague.intent={intentId:`yield:${colleague.actorId}:${now}`,actorId:colleague.actorId,kind:'move',target:'colleague-yield',preconditions:['physical sidestep for a blocked community colleague'],reserved:[],startAt:now,dueAt:now,route:[side]};colleague.state='MOVING';receipt(r,now,'human.access.yield',JSON.stringify({actorId:colleague.actorId,for:h.actorId,from:[colleague.gx,colleague.gy],into:side}));}
           }
 
-          if (moveIntent.kind === 'follow') moveRoute.length = 0;
+          if (moveIntent.kind === 'follow' || moveIntent.delivery){moveRoute.length=0;h.state='IDLE';moveIntent.dueAt=now+750;}
           else if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.motion = undefined; moveRoute.length = 0; h.nextThinkAt = now + 750; }
           else { if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000; }
         } else {
@@ -3205,7 +3351,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
         if (h.motion.elapsedMs >= travelMs) {
           const destinationKey=humanCellKey(next.floor,next.tx,next.ty);occupied.delete(destinationKey);
           if(!(navigation??=humanNavigation(r,occupied)).enter(h,next,now)){
-            h.motion=undefined;h.state='IDLE';moveIntent.blockReason='The physical step became blocked before arrival.';h.lastWorkBlock=moveIntent.blockReason;if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.nextThinkAt=now+3000;
+            h.motion=undefined;h.state='IDLE';moveIntent.blockReason='The physical step became blocked before arrival.';h.lastWorkBlock=moveIntent.blockReason;if(moveIntent.delivery || moveIntent.kind==='follow'){moveRoute.length=0;moveIntent.dueAt=now+750;}else if(moveIntent.work){if(moveIntent.work.phase==='act')moveIntent.work.phase='travel';moveRoute.length=0;}else h.intent=undefined;h.nextThinkAt=now+3000;
             continue;
           }
           const key = humanCellKey(h.floor, h.gx, h.gy); occupied.delete(key);
@@ -3213,7 +3359,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
           h.lastSimAt = now; occupied.add(humanCellKey(h.floor, h.gx, h.gy));
           if (!moveRoute.length) {
             if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.nextThinkAt = now; }
-            else if (moveIntent.kind === 'follow') { h.state = 'IDLE'; moveRoute.length = 0; }
+            else if (moveIntent.kind === 'follow' || moveIntent.delivery) { h.state = 'IDLE'; moveRoute.length = 0; }
             else if(moveIntent.kind==='drink'&&moveIntent.target?.startsWith('water:')){h.state='WORKING';moveIntent.dueAt=now+2000;}
             else if (moveIntent.work) { h.state = 'WORKING'; moveIntent.dueAt = now + (moveIntent.work.phase === 'fetch' ? 800 : moveIntent.work.duration); }
             else if (moveIntent.kind === 'work' && moveIntent.target?.match(/^(global-harvest|harvest):/)) {
@@ -3244,7 +3390,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
  *  exists only on impact, so a shot can miss, be blocked, or be outrun. */
 export interface HumanShot { shooterId: string; gx: number; gy: number; dmg: number; victim: string; tx: number; ty: number }
 
-export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void, hitPlayer?: (attacker: HumanRecord, damage: number, angle: number) => void, spawnShot?: (shot: HumanShot) => boolean): void {
+export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCreature?: (creature: Creature, damage: number, angle: number, attacker: HumanRecord) => void, hitPlayer?: (attacker: HumanRecord, damage: number, angle: number) => void, spawnShot?: (shot: HumanShot) => boolean, emitCore?: (p:Proj)=>void): void {
   const activeFloor = r.veyraFloor ?? 0;
   const o = r.sourceMap?.veyra?.originAu;
   const ox = o ? Math.round(o[0] / 0.5) : 0, oy = o ? Math.round(o[1] / 0.5) : 0;
@@ -3269,37 +3415,62 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
   }
   // 2. Humans use the same physical range/cone/LOS and weapon cadence as player melee.
   for (const h of Object.values(hw.people)) {
-    if (h.state !== 'FIGHTING' || h.floor !== activeFloor || h.stamina < 3) continue;
-    if(ITEMS[h.equip.weapon?.key??'']?.ranged && !humanPack(r,h).slots.some(s=>s?.key==='arrow')){if(h.intent)h.intent.blockReason='no arrows';continue;}
+    if (h.state !== 'FIGHTING' || h.transit || h.floor !== activeFloor || h.stamina < 3 || h.gx<ox||h.gy<oy||h.gx>=ox+WW||h.gy>=oy+WH) continue;
+    const intent=h.intent;
+    if(intent?.guardPlayer && (!intent.target || !threatensPlayer(r,hw,h,intent.target,now))){delete intent.coreCast;continue;}
+    if(emitCore && intent?.target && intent.kind==='fight'){
+      const pending=intent.coreCast, pack=humanPack(r,h), core=pending?pack.slots.find(s=>s?.uid===pending.uid):readyCore(r,h,now);
+      const ray=core&&basicCoreRay(core.key),target=humanCombatTarget(r,hw,intent.target,h.floor);
+      const x=(h.gx-ox+.5)*TILE,y=(h.gy-oy+.5)*TILE;
+      if(core && ray && target && (!target.human || (!h.protectedPeople.includes(intent.target)&&(!h.community||target.human.community!==h.community))) &&
+        (!pending || (pending.victim===intent.target&&pending.floor===h.floor)) && Math.hypot(target.x-x,target.y-y)<=ray.speed*ray.life && clearPhysicalLine(r,{x,y},target,true) && !coreCastBlock(r,core,'basic',now,pack.id)){
+        if(!pending){faceHumanToward(h,ox+target.x/TILE,oy+target.y/TILE);intent.coreCast={uid:core.uid,victim:intent.target,floor:h.floor,angle:Math.atan2(target.y-y,target.x-x),readyAt:now+180};continue;}
+        if(now<pending.readyAt)continue;
+        delete intent.coreCast;
+        if(coreCastCommit(r,core,'basic',now,pack.id)){
+          emitCore(coreRayProjectile(ray,x,y,pending.angle,{from:'human',owner:h.actorId,victim:intent.target},core.uid));
+          h.lastAttackAt=now;h.stamina-=3;receipt(r,now,'human.core.commit',`${h.actorId}:${core.uid}:basic:${intent.target}`);continue;
+        }
+      }
+      if(pending){delete intent.coreCast;continue;}
+    }
+    if(ITEMS[h.equip.weapon?.key??'']?.ranged && !humanPack(r,h).slots.some(s=>s?.key==='arrow'&&!s.production&&s.qty>0)){if(intent)intent.blockReason='no arrows';continue;}
     const w = humanWeapon(h); if (!w) continue;
     if (now - (h.lastAttackAt ?? -Infinity) < w.swing * proficiencyMul(h.combatProficiency)) continue;
     const hx = (h.gx - ox + 0.5) * TILE, hy = (h.gy - oy + 0.5) * TILE;
     const seenTarget=humanCombatTarget(r,hw,h.intent?.target,h.floor);
     if (seenTarget && clearPhysicalLine(r, { x: hx, y: hy }, seenTarget, true)) faceHumanToward(h, ox + seenTarget.x / TILE, oy + seenTarget.y / TILE);
     const facing = h.dir === 0 ? Math.PI / 2 : h.dir === 1 ? Math.PI : h.dir === 2 ? 0 : -Math.PI / 2;
+    // Only a committed swing or a projectile accepted by the flight system costs
+    // stamina/wear. A refused launch is not a second, instantaneous hit mode.
+    const strike = (victim:string, tx:number, ty:number, melee:()=>void) => {
+      const weapon=h.equip.weapon!, ranged=!!ITEMS[weapon.key].ranged;
+      if(ranged){
+        const slots=humanPack(r,h).slots, i=slots.findIndex(s=>s?.key==='arrow'&&!s.production&&s.qty>0);
+        if(i<0 || !spawnShot?.({shooterId:h.actorId,gx:h.gx,gy:h.gy,dmg:w.dmg,victim,tx,ty})){
+          if(h.intent)h.intent.blockReason=i<0?'no arrows':'cannot launch a projectile here';
+          return;
+        }
+        if(--slots[i]!.qty===0)slots[i]=null;
+      }
+      if(h.intent)h.intent.blockReason=undefined;
+      h.lastAttackAt=now;h.stamina=clamp(h.stamina-3,0,h.maxStamina);
+      if(weapon.dur!==undefined && (weapon.dur=Math.max(0,weapon.dur-1))===0)h.equip.weapon=null;
+      if(!ranged)melee();
+    };
     if(seenTarget?.human) {
       const victim=seenTarget.human;
       if(h.protectedPeople.includes(victim.actorId) || !!h.community&&victim.community===h.community){h.intent=undefined;h.state='IDLE';continue;}
       const dx=seenTarget.x-hx,dy=seenTarget.y-hy,angle=Math.atan2(dy,dx);
       if(Math.hypot(dx,dy)>w.reach+8 || Math.abs(Math.atan2(Math.sin(angle-facing),Math.cos(angle-facing)))>w.arc/2+.15 || !clearPhysicalLine(r,{x:hx,y:hy},seenTarget,true))continue;
-      const rangedShot=!!ITEMS[h.equip.weapon!.key].ranged;
-      if(rangedShot){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
-      h.lastAttackAt=now;h.stamina=Math.max(0,h.stamina-3);const weapon=h.equip.weapon!;if(weapon.dur!==undefined)weapon.dur=Math.max(0,weapon.dur-1);
-      // A bow shot leaves the body: the victim is only hurt when the arrow lands.
-      if(rangedShot&&spawnShot?.({shooterId:h.actorId,gx:h.gx,gy:h.gy,dmg:w.dmg,victim:victim.actorId,tx:seenTarget.x,ty:seenTarget.y}))continue;
-      applyDamage(r,hw,victim,w.dmg,angle,now,'human',h.actorId,h.floor);
+      strike(victim.actorId,seenTarget.x,seenTarget.y,()=>applyDamage(r,hw,victim,w.dmg,angle,now,'human',h.actorId,h.floor));
       continue;
     }
     if (h.intent?.target === 'player') {
       const dx = r.player.x - hx, dy = r.player.y - hy, distance = Math.hypot(dx, dy), angle = Math.atan2(dy, dx);
       const inArc = Math.abs(Math.atan2(Math.sin(angle - facing), Math.cos(angle - facing))) <= w.arc / 2 + 0.15;
       if (distance <= w.reach + 8 && inArc && clearPhysicalLine(r, { x: hx, y: hy }, r.player, true)) {
-        const rangedShot=!!ITEMS[h.equip.weapon!.key]?.ranged;
-        if(rangedShot){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
-        h.lastAttackAt = now; h.stamina = clamp(h.stamina - 3, 0, h.maxStamina);
-        const weapon = h.equip.weapon!; if (weapon.dur !== undefined) { weapon.dur = Math.max(0, weapon.dur - 1); if (weapon.dur === 0) h.equip.weapon = null; }
-        if(rangedShot&&spawnShot?.({shooterId:h.actorId,gx:h.gx,gy:h.gy,dmg:w.dmg,victim:'player',tx:r.player.x,ty:r.player.y}))continue;
-        hitPlayer?.(h, w.dmg, angle);
+        strike('player',r.player.x,r.player.y,()=>hitPlayer?.(h,w.dmg,angle));
       }
       continue;
     }
@@ -3308,14 +3479,7 @@ export function stepHumanCombat(r: RunState, hw: HumanWorld, now: number, hitCre
       .filter(v => v.d <= w.reach + (CREATURES[v.m.type]?.r ?? 6) && Math.abs(Math.atan2(Math.sin(Math.atan2(v.dy, v.dx) - facing), Math.cos(Math.atan2(v.dy, v.dx) - facing))) <= w.arc / 2 + 0.15 && clearPhysicalLine(r, { x: hx, y: hy }, v.m, true))
       .sort((a, b) => a.d - b.d)[0];
     if (!target) continue;
-    const rangedShot=!!ITEMS[h.equip.weapon!.key]?.ranged;
-    if(rangedShot){const s=humanPack(r,h).slots.find(s=>s?.key==='arrow')!;if(--s.qty===0)humanPack(r,h).slots[humanPack(r,h).slots.indexOf(s)]=null;}
-    h.lastAttackAt = now;
-    h.stamina = clamp(h.stamina - 3, 0, h.maxStamina);
-    const weapon = h.equip.weapon!;
-    if (weapon.dur !== undefined) { weapon.dur = Math.max(0, weapon.dur - 1); if (weapon.dur === 0) h.equip.weapon = null; }
-    if(rangedShot&&spawnShot?.({shooterId:h.actorId,gx:h.gx,gy:h.gy,dmg:w.dmg,victim:target.m.id,tx:target.m.x,ty:target.m.y}))continue;
-    hitCreature?.(target.m, w.dmg, Math.atan2(target.dy, target.dx), h);
+    strike(target.m.id,target.m.x,target.m.y,()=>hitCreature?.(target.m,w.dmg,Math.atan2(target.dy,target.dx),h));
   }
 }
 
