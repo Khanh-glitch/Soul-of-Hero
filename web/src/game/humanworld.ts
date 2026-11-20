@@ -925,10 +925,13 @@ function simulateHumanOutput(slots: (Stack | null)[], yields: [string, number][]
 const fieldComponents = Object.fromEntries(Object.entries(SOURCES).map(([key,def])=>[key,
   (def.bonus??[]).filter(([item])=>recoveryPlan({uid:'preview',key:item,qty:1})!==null)
 ]));
-export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: number, ty: number, now: number, global=false): { result: 'yield' | 'empty' | 'none' | 'blocked'; got?: number; key?: string; reason?: string } {
+export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: number, ty: number, now: number, global=false, personalForage=false): { result: 'yield' | 'empty' | 'none' | 'blocked'; got?: number; key?: string; reason?: string } {
   if (h.state === 'DOWNED' || h.state === 'DEAD' || h.state === 'EVACUATED') return { result: 'blocked', reason: 'actor unavailable' };
   const s = global?globalSourceAt(r,tx,ty,h.floor,now):sourceAt(r, tx, ty, now);
   if (!s) return { result: 'none', reason: 'source unavailable' };
+  // Personal gathering uses a free hand, not the equipped weapon, and never
+  // appropriates a paid output lot from an interrupted warehouse delivery.
+  if(personalForage && (!global || !wildFoodKeys.has(s.key)))return {result:'blocked',reason:'not hand-gatherable food'};
   // PLAYER_EXPLORATION sources are never depleted by NPC autonomous scavenging.
   if ((global&&'protected' in s&&s.protected)||(!global&&isPlayerExplorationSource(r,s.key,tx,ty))) return { result: 'blocked', key: s.key, reason: 'player-exploration cache protected' };
   const o = r.sourceMap?.veyra?.originAu;
@@ -949,13 +952,13 @@ export function humanHarvest(r: RunState, hw: HumanWorld, h: HumanRecord, tx: nu
   const st=states[s.i]??(states[s.i]={stock:s.stock,hp:s.hp});
   if('localSources' in s&&s.localSources)s.localSources[s.localIndex]=st;
   if (st.stock <= 0) return { result: 'empty', key: s.key, reason: 'source depleted' };
-  const tool = h.equip.weapon;
+  const tool = personalForage ? null : h.equip.weapon;
   const toolKey = tool?.key;
   if (h.stamina < 2 || tool?.dur !== undefined && tool.dur <= 0) return { result: 'blocked', key: s.key, reason: 'exhausted or broken tool' };
   // Hand-gatherable plants are real shared sources; solid timber/ore/scrap still require an equipped tool.
   const power = s.def.harvestBy ? (toolKey ? (s.def.harvestBy[toolKey] ?? 0) : 0) : (toolKey ? (ITEMS[toolKey]?.power?.[s.def.mat] ?? 0) : s.def.mat === 'plant' ? 1 : 0);
   if (power <= 0) return { result: 'blocked', key: s.key, reason: 'required tool is unavailable' };
-  const claim=global&&h.harvestJob?{jobId:h.harvestJob.id,workerId:h.actorId}:undefined;
+  const claim=global&&!personalForage&&h.harvestJob?{jobId:h.harvestJob.id,workerId:h.actorId}:undefined;
   const per = s.def.hp / s.def.stock;
   const pack = humanPack(r, h);
   const oneUnitProbe = pack.slots.map(s => s ? { ...s } : null);
@@ -3085,6 +3088,34 @@ function planEvacuation(r: RunState, hw: HumanWorld, h: HumanRecord, now: number
   if (!route.length) { h.intent = undefined; boardEvac(r, hw, h, trip.tripId, now); }
   return true;
 }
+const wildFoodKeys = new Set(Object.keys(SOURCES).filter(key=>SOURCES[key].mat==='plant' && SOURCES[key].yields.some(([item])=>(ITEMS[item]?.food?.hunger??0)>0)));
+const wildDrinkKeys = new Set([...wildFoodKeys].filter(key=>SOURCES[key].yields.some(([item])=>(ITEMS[item]?.food?.thirst??0)>0)));
+function planPersonalForage(r:RunState,h:HumanRecord,now:number,occupied:Set<string>):boolean {
+  if(h.hunger>=40 && h.thirst>=40 || h.stamina<2 || !isVeyra05Layout(r.layoutId??''))return false;
+  const kind=h.hunger<40?'food':'water';
+  if(humanPack(r,h).slots.some(s=>canServe(s,kind)))return false;
+  const [ox,oy]=windowOrigin(r),inside=h.gx>=ox&&h.gx<ox+WW&&h.gy>=oy&&h.gy<oy+WH;
+  const candidates=globalSourceCandidates(h.gx,h.gy,h.floor,r.sourceMap?.rules===4?4:3,kind==='food'?wildFoodKeys:wildDrinkKeys,inside?r.layoutId:undefined);
+  const nav=humanNavigation(r,occupied,true);
+  for(const p of candidates){
+    const s=globalSourceAt(r,p.gx,p.gy,h.floor,now);
+    if(!s||s.key!==p.key||s.protected||s.stock<=0||!simulateHumanOutput(humanPack(r,h).slots.slice(),s.def.yields))continue;
+    const route=nav.route(h,{tx:p.gx,ty:p.gy,floor:h.floor});if(!route)continue;
+    h.intent={kind:'eat',actorId:h.actorId,intentId:`forage:${h.actorId}:${now}`,target:`forage:${h.floor}:${p.gx},${p.gy}`,preconditions:['edible shared plant','physical contact','free pack space'],reserved:[],startAt:now,dueAt:now+1500,route};
+    h.state=route.length?'MOVING':'WORKING';return true;
+  }
+  return false;
+}
+function commitPersonalForage(r:RunState,hw:HumanWorld,h:HumanRecord,now:number){
+  const i=h.intent,m=i?.target?.match(/^forage:(-?\d+):(\d+),(\d+)$/);if(!i||!m||now<i.dueAt)return;
+  if(h.floor===Number(m[1]) && (h.hunger<40||h.thirst<40)){
+    const result=humanHarvest(r,hw,h,Number(m[2]),Number(m[3]),now,true,true);
+    if(result.result==='yield'&&!result.got){i.dueAt=now+900;return;}
+    if(result.got){humanConsume(r,hw,h,h.hunger<40?'food':'water',now);h.lastWorkBlock=undefined;}
+    else h.lastWorkBlock=result.reason;
+  }
+  h.intent=undefined;h.state='IDLE';h.nextThinkAt=now+3000;
+}
 function planHumanWater(r:RunState,h:HumanRecord,now:number,occupied:Set<string>):boolean {
  if(h.floor!==0 || h.thirst>=40)return false;
  const candidates:{gx:number;gy:number;distance:number}[]=[];
@@ -3126,7 +3157,7 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
   if(h.harvestJob && !h.deliveryWait && !h.following && h.state==='IDLE' && !h.intent){resumeHarvestJob(r,hw,h,now,occupied);return;}
   if (h.following || h.state !== 'IDLE' || h.intent || (h.nextThinkAt ?? 0) > now) return;
   h.nextThinkAt = now + 6000;
-  if (h.hp < 30 || h.stamina < 12) return;
+
   // An operating evacuation service takes precedence over ordinary work for those who chose it.
   if (planEvacuation(r, hw, h, now, occupied)) return;
   if (!h.community) return;
@@ -3149,7 +3180,8 @@ function planAutonomousWork(r: RunState, hw: HumanWorld, h: HumanRecord, now: nu
     }
   }
   if(planHumanWater(r,h,now,occupied))return;
-  if (h.hunger < 25 || h.thirst < 25) return;
+  if(planPersonalForage(r,h,now,occupied))return;
+  if (h.hp < 30 || h.stamina < 12 || h.hunger < 25 || h.thirst < 25) return;
   if(h.reportIncident && reportToGuard(r,hw,h,now,occupied))return;
   if(h.recoveryLead && pursueProperty(r,hw,h,now,occupied))return;
   if(h.deliveryWait){h.nextThinkAt=Number.MAX_SAFE_INTEGER;return;}
@@ -3592,6 +3624,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
     // 1. Survival consume: eat when hungry, drink when thirsty.
     if (h.hunger < 40) humanConsume(r, hw, h, 'food', now);
     if (h.thirst < 40) humanConsume(r, hw, h, 'water', now);
+    if(h.state==='WORKING'&&h.intent?.kind==='eat'&&h.intent.target?.startsWith('forage:'))commitPersonalForage(r,hw,h,now);
     if(h.state==='WORKING'&&h.intent?.kind==='drink'&&h.intent.target?.startsWith('water:'))commitHumanWater(r,h,now);
     if (h.state === 'WORKING' && h.intent?.work) humanWorkTick(r, hw, h, now);
     // 2. A work action commits only after arrival and a visible work duration; no output is animated or minted in transit.
@@ -3668,6 +3701,7 @@ export function stepHumans(r: RunState, hw: HumanWorld, now: number): void {retu
           if (!moveRoute.length) {
             if (moveIntent.kind === 'fight') { h.state = 'FIGHTING'; h.nextThinkAt = now; }
             else if (moveIntent.kind === 'follow' || moveIntent.delivery || returningHome(moveIntent)) { h.state = 'IDLE'; moveRoute.length = 0; }
+            else if(moveIntent.kind==='eat'&&moveIntent.target?.startsWith('forage:')){h.state='WORKING';moveIntent.dueAt=now+1500;}
             else if(moveIntent.kind==='drink'&&moveIntent.target?.startsWith('water:')){h.state='WORKING';moveIntent.dueAt=now+2000;}
             else if (moveIntent.work) { h.state = 'WORKING'; moveIntent.dueAt = now + (moveIntent.work.phase === 'fetch' ? 800 : moveIntent.work.duration); }
             else if (moveIntent.kind === 'work' && moveIntent.target?.match(/^(global-harvest|harvest):/)) {
