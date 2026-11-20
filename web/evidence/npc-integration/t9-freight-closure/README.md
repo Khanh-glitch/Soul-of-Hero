@@ -1,0 +1,8 @@
+# MEC C2 — hai nguyên nhân khác nhau trước và sau khi sửa setup
+
+Cùng file, `--maxWorkers=1 --testTimeout=120000` ở `79ac5f0` và runtime `eb04deb`: **6/6 fail giống nhau**, không phải 6 lỗi mất hàng mới. Bốn phép chạy không dựng được depot, hai phép tổng hợp đòi ba lô hàng nhưng nhận không lô nào. Không có bằng chứng ở bước này rằng UID bị mất trên đường.
+
+- Fixture cũ đặt `chest_large` từ wood/iron thô. Trái [ontology đã duyệt](../../../../docs/design/pa1-recovery/README_GIT_ONLY_AGENT_TAKEOVER.md) §1: device phải qua pack. Sửa **chỉ thiết lập phép thử**: cấp đúng vật liệu cũ; craft thật một `deploy_chest_large`; đọc số lượng trước/sau; đặt đúng một lần, không hạ giá hay cấp pack miễn phí. Walk và bike mới tới được chặng vận chuyển.
+- Phép đo thứ hai (đã sửa pack, chưa sửa điều khiển): cart gần **18/49**, xa **18/66**, đều ở `(2344.5,1753.6)`, chưa vượt mặt phẳng của checkpoint `(2344,1752)`. Driver 50ms đổi hướng liên tục khi sát tâm. Trong 3 px cuối, giữ phím theo hướng của chặng; **vẫn phải tự vượt checkpoint**. Không tăng bán kính, tắt va chạm, sửa tốc độ, đổi map/đích, xóa sinh vật hay dịch chuyển giữa hai đầu.
+- Tất cả assertion cũ về UID, khối lượng, fuel, wear, đúng một depot, ≥45 tiles, cùng seed và chứng từ được giữ nguyên. Báo cáo sau sửa: 6/6 PASS. Cùng depot xa `(104,122)` cách factory 49.8 tiles: đi bộ 12.65s, xe kéo 13.45s, xe máy 8.93s, chi 68.95 nhiên liệu, hao 11.03 HP. Các số là thời gian mô phỏng có điều khiển, không phải FPS hay chơi tay.
+- `freight-baseline.json` / `freight-regression.json`: file gốc trên hai SHA. `freight-final.json` / `delivery.json`: fixture đã sửa với mã game nguyên vẹn. Không đổi trạng thái FAIL lịch sử của shard tại `eb04deb`; không lấy kết quả sửa một file làm verdict cho cả suite.

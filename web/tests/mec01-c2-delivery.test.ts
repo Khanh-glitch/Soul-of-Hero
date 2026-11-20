@@ -15,7 +15,7 @@
 //        (mounted, real receipts) exactly when the tank drops below 120 — the intended use of the granted cans.
 //        Producing the kit through the full chain is proven in tests/mec01-c1-motorbike-chain.test.ts; granting it
 //        here keeps the freight comparison isolated from the build test.
-//   [F3] Depot build materials (wood/ingot) are grants; the build itself is a real paid action.
+//   [F3] Only depot raw materials are granted. PA1 requires crafting the carried pack, then paying it once at placement.
 //   [F4] Creatures are NOT cleared: exposure (damage taken) is recorded per row, not neutralized.
 // ROUTE CLASSES: 'near' = depot in the [118..152]x[112..128] window (short haul); 'far' = whole-map scan, >=45 tiles from the
 //   factory, the SAME three-mode-feasible cell for walk/cart/bike (long-haul class; the map has only 97 vehicleGeometry road
@@ -27,7 +27,7 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { mkdirSync } from 'node:fs';
 import { writeFileSync } from './_evidenceFs';
 import { BAL, TILE, WW, WH, T, type Entity, type GameState, type Stack } from '../src/game/core';
-import { addItem, C, dispatch, newGame, cartWeight, invWeight, carryLimit, buildReason, removeItem } from '../src/game/engine';
+import { addItem, C, dispatch, newGame, cartWeight, invWeight, carryLimit, buildReason, countItem } from '../src/game/engine';
 import { getWorld, setActiveLayout } from '../src/game/world';
 import { weatherAt, isWet } from '../src/game/engine';
 import { settle, tick, type Input } from '../src/game/sim';
@@ -147,18 +147,29 @@ function setupDepot(g: GameState, far = false) {
     if (roadish.length === 0) console.warn('[C2 far] no buildable road-adjacent far depot cell; falling back to masked scan');
     return roadish.length ? roadish : masked;
   })() : cellsRaw;
+  // PA1 device ontology: physical chest packs are not wall geometry. Pay the
+  // raw bill once, then inspect candidate tiles with that same carried UID.
+  const packed = 'deploy_chest_large';
+  expect(countItem(r, 'inv', packed)).toBe(0);
+  const wood = countItem(r, 'inv', 'wood'), ingots = countItem(r, 'inv', 'iron_ingot');
+  addItem(r, 'inv', 'wood', 12); addItem(r, 'inv', 'iron_ingot', 2);
+  const craft = act(g, 'craft', { recipe: packed });
+  expect(craft.ok, craft.ok ? 'packed chest crafted' : craft.reason).toBe(true);
+  expect(countItem(r, 'inv', 'wood')).toBe(wood);
+  expect(countItem(r, 'inv', 'iron_ingot')).toBe(ingots);
+  expect(countItem(r, 'inv', packed)).toBe(1);
   for (const cell of cells.slice(0, far ? 150 : undefined)) {   // cap the far scan even after masking
     if (!threeModeReachable(r, cell)) continue;   // no real build happens for a corridor-hostile cell
     r.player.x = cell.x * TILE + 8 + TILE; r.player.y = cell.y * TILE + 8;  // stand EAST of the chest tile, never on it
-    addItem(r, 'inv', 'wood', 12); addItem(r, 'inv', 'iron_ingot', 2);
-    const why = buildReason(g, 'chest_large', cell.x, cell.y);               // real rule check with cost visible in inv
-    if (why) { removeItem(r, 'inv', 'wood', 12); removeItem(r, 'inv', 'iron_ingot', 2); continue; }
+    const why = buildReason(g, 'chest_large', cell.x, cell.y);               // real rule check with pack in inv
+    if (why) continue;
     const res = act(g, 'build', { struct: 'chest_large', tx: cell.x, ty: cell.y });
     if (res.ok) {
       const chest = Object.values(r.entities).find(e => e.kind === 'struct' && e.type === 'chest_large' && e.tx === cell.x && e.ty === cell.y)!;
+      expect(countItem(r, 'inv', packed)).toBe(0);
       return { chest, cell, builtWith: { wood: 12, iron_ingot: 2 } };
     }
-    removeItem(r, 'inv', 'wood', 12); removeItem(r, 'inv', 'iron_ingot', 2);
+    expect(countItem(r, 'inv', packed), 'refused placement retains packed chest').toBe(1);
   }
   throw new Error('no buildable three-mode-reachable depot cell found (all candidates rejected before a single build)');
 }
@@ -306,7 +317,11 @@ function haul(mode: 'walk' | 'cart' | 'bike', far = false): ModeResult {
     // bang-bang controller (per-tick step 6.25 px >> alignment gap); the box only ever needs |perp| <= 2 px to stay
     // inside the corridor cell, which the bike's axis-priority steering preserves by construction.
     if (d < 1.5 || passed) { cp++; continue; }
-    const inp = input(dx, dy, dx / d, dy / d, p.x + dx, p.y + dy, legHoriz) as any;
+    // On a 50-ms step the loaded cart can oscillate about the target centre
+    // without ever crossing its plane. In the last 3 px keep pulling *along*
+    // the leg; tick still has to move us across the unmodified checkpoint.
+    const finishLeg = mode === 'cart' && d <= 3;
+    const inp = input(dx, dy, finishLeg ? leg.x : dx / d, finishLeg ? leg.y : dy / d, p.x + dx, p.y + dy, legHoriz);
     // Bike steps at a 60 fps frame (16 ms): at the R6 road speed a 50 ms step moves ~20 px, past a 16 px corridor cell.
     // Walkers and carts keep the 50 ms step. Time is still ticks x dt.
     const dtMs = mode === 'bike' ? 16 : 50;
